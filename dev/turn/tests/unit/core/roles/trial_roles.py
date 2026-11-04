@@ -7,7 +7,7 @@ trials.
 Each run passes where the role's files are in form, Turn's checks give 0 on them, the role gave the
 result its files call for, and evaluator and proofreader read nothing of the run beside their
 standard and their own answers file. Run as `python3 dev/turn/tests/unit/core/roles/trial_roles.py
-<role> [runs] [first]`, the role one of planner, designer, builder, evaluator, refactorer and
+<role> [runs] [first]`, the role one of planner, designer, generator, evaluator, refactorer and
 proofreader."""
 
 from __future__ import annotations
@@ -142,7 +142,7 @@ def laid(place: str, role: str) -> tuple[str, dict[str, str], dict[str, Any]]:
         with open(os.path.join(run, name), "w", encoding="utf-8") as f:
             json.dump(data, f)
     common = {**values, "work": WORK["paths"], "commands": WORK["commands"]}
-    if role == "builder":
+    if role == "generator":
         return (
             repo,
             copies,

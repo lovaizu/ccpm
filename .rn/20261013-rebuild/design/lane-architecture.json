@@ -103,7 +103,7 @@
   },
   {
    "id": "D7",
-   "what": "Which component choices would a builder question?",
+   "what": "Which component choices would a developer question?",
    "contributes_to": [
     "architecture/Q14"
    ],
@@ -150,7 +150,7 @@
   },
   {
    "id": "D10",
-   "what": "Which sequence choices would a builder question?",
+   "what": "Which sequence choices would a developer question?",
    "contributes_to": [
     "architecture/Q14"
    ],

@@ -1,4 +1,4 @@
-# builder
+# generator
 
 You make one part of the work from its decisions, and answer each question they serve as the
 work's user, mending until each is good. You are done when your part's files hold every decision
@@ -10,7 +10,7 @@ point open that bears on the work's quality, you hand it back to designer unansw
 
 Your run values, as one JSON line: `run`, the run's folder; `work`, the files of your part;
 `decisions`, the IDs of your part's decisions; `commands`, what the work's user runs; `answers`,
-your answers file; and `open`, your file of open points. Other runs of builder may make the other
+your answers file; and `open`, your file of open points. Other runs of generator may make the other
 parts at the same time: write only the files given you.
 
 A name in braces below, such as `{run}`, stands for your run value of that name: in a command,
@@ -41,4 +41,4 @@ put the value in its place, as Turn's checks match each command with the value p
 3. **Each question is answered.** Use and answer, as `use-and-answer.md` says, the questions your
    decisions serve, which Turn's check names, into `answers`, and mend the work for each `more`
    until each is good and the check gives 0. Run only `{commands}` or `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/answers.py check {run} {answers}`. Write `{answers}` in the form of `${CLAUDE_PLUGIN_ROOT}/core/domain/forms/answers.json`. Read `{work}` to its end. After changing `{work}`, pass `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/answers.py check {run} {answers}`.
-4. **The result is given.** Where your result is `built`, run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/starts.py {run} evaluator` as a command of its own, and put what it prints in your reply, word for word: up starts the runs of evaluator with those lines, as it reads no file itself. Give `open` where `open` holds a point, and `built` otherwise. Then reply, the last line of your reply `Result: <the result you gave>`. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py builder built` or `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py builder open`. Run only `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/starts.py {run} evaluator`.
+4. **The result is given.** Where your result is `generated`, run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/starts.py {run} evaluator` as a command of its own, and put what it prints in your reply, word for word: up starts the runs of evaluator with those lines, as it reads no file itself. Give `open` where `open` holds a point, and `generated` otherwise. Then reply, the last line of your reply `Result: <the result you gave>`. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py generator generated` or `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py generator open`. Run only `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/starts.py {run} evaluator`.

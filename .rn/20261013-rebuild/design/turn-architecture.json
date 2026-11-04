@@ -34,12 +34,12 @@
    "builds_on": [
     "D1"
    ],
-   "decided": "Four roles take a work in turn: the planner gives the best practice of its kind, the designer decides the design from it, the builder makes the work, and the evaluator, given only the kind's Standard, uses the work as its user would; Lane's flow moves the work through them in two phases, first what the work says, then how it says it.",
+   "decided": "Four roles take a work in turn: the planner gives the best practice of its kind, the designer decides the design from it, the generator makes the work, and the evaluator, given only the kind's Standard, uses the work as its user would; Lane's flow moves the work through them in two phases, first what the work says, then how it says it.",
    "settled_by": "user",
    "grounds": [
     ".rn/20261013-rebuild/turn-rebuild.md:3: \"What the user and the assistant agreed on 2026-10-31 for the new turn.\"",
     ".rn/20261013-rebuild/turn-rebuild.md, Roles: \"planner | designs the intended state of a kind of work from its best practice\" ... \"evaluator | uses the work as its user would and verifies it against the Checklist\"",
-    ".rn/20261013-rebuild/turn-rebuild.md:167-168: \"lane's flow declares the six positions: planner, designer, builder, evaluator, builder, evaluator.\""
+    ".rn/20261013-rebuild/turn-rebuild.md:167-168: \"lane's flow declares the six positions: planner, designer, generator, evaluator, generator, evaluator.\""
    ]
   },
   {
@@ -172,7 +172,7 @@
    "settled_by": "user",
    "grounds": [
     ".rn/20261013-rebuild/turn-rebuild.md:164-173, The refactoring phase",
-    ".rn/20261013-rebuild/turn-rebuild.md:175: \"Keeping the two phases apart keeps builder and evaluator on the content while it is made.\""
+    ".rn/20261013-rebuild/turn-rebuild.md:175: \"Keeping the two phases apart keeps generator and evaluator on the content while it is made.\""
    ]
   },
   {
@@ -187,7 +187,7 @@
    "decided": "Principle: each role starts fresh at each move and works from the run's files alone.",
    "settled_by": "user",
    "grounds": [
-    ".rn/20261013-rebuild/turn-rebuild.md, Flow: \"designer, builder and evaluator start fresh at each move and carry on from the run's files\""
+    ".rn/20261013-rebuild/turn-rebuild.md, Flow: \"designer, generator and evaluator start fresh at each move and carry on from the run's files\""
    ]
   },
   {
@@ -257,7 +257,7 @@
     "D12",
     "D14"
    ],
-   "decided": "turn:up, the planner, the designer, the builder and the evaluator as subagents in Markdown; check.py, standard.py, wait.py and the items adapter as scripts in Python 3.9 stdlib; Lane's check script; stores Best practices, Run files, Forms and the work.",
+   "decided": "turn:up, the planner, the designer, the generator and the evaluator as subagents in Markdown; check.py, standard.py, wait.py and the items adapter as scripts in Python 3.9 stdlib; Lane's check script; stores Best practices, Run files, Forms and the work.",
    "settled_by": "reasoning",
    "grounds": [
     ".rn/20261013-rebuild/turn-rebuild.md, Files: \"A script verifies every part is looked at by a question, and every question has a method.\" and \"taken out by a script\"",
@@ -288,7 +288,7 @@
   },
   {
    "id": "D17",
-   "what": "How does the builder return a point the design leaves open?",
+   "what": "How does the generator return a point the design leaves open?",
    "contributes_to": [
     "architecture/Q5",
     "architecture/Q7"
@@ -316,10 +316,10 @@
     "D12",
     "D17"
    ],
-   "decided": "Six positions, planner, designer, builder, evaluator, builder, evaluator; back from 3 to 2 on `open`, from 4 to 2 on `more`, from 5 to 2 on `open`, and from 6 to 5 on `more`.",
+   "decided": "Six positions, planner, designer, generator, evaluator, generator, evaluator; back from 3 to 2 on `open`, from 4 to 2 on `more`, from 5 to 2 on `open`, and from 6 to 5 on `more`.",
    "settled_by": "research",
    "grounds": [
-    ".rn/20261013-rebuild/turn-rebuild.md:167-168 and :171-173: \"A more goes back to builder.\" ... \"a point that would change what it says goes back to designer\"",
+    ".rn/20261013-rebuild/turn-rebuild.md:167-168 and :171-173: \"A more goes back to generator.\" ... \"a point that would change what it says goes back to designer\"",
     "plugins/lane/docs/flow.md, The flow: \"`to` comes before `from`, and one position is the `from` of one `back` at most.\""
    ]
   },
@@ -334,7 +334,7 @@
     "D16",
     "D18"
    ],
-   "decided": "turn:up the run and its phase, starting each role with the request and the phase; the planner the kind and its best practice; the designer each point of the design and the work's files; the builder the small points and, in the refactoring phase, the wording; the evaluator each answer, held by a lane to read only the work, so standard.py gives it all it has of the best practice; check.py, standard.py, the items adapter and wait.py their one job; Lane's check script each move; the main conversation puts each ask to the person in their language.",
+   "decided": "turn:up the run and its phase, starting each role with the request and the phase; the planner the kind and its best practice; the designer each point of the design and the work's files; the generator the small points and, in the refactoring phase, the wording; the evaluator each answer, held by a lane to read only the work, so standard.py gives it all it has of the best practice; check.py, standard.py, the items adapter and wait.py their one job; Lane's check script each move; the main conversation puts each ask to the person in their language.",
    "settled_by": "research",
    "grounds": [
     ".rn/20261013-rebuild/turn-rebuild.md, Roles",
@@ -360,7 +360,7 @@
   },
   {
    "id": "D21",
-   "what": "Which choices of the components and the deployment would a builder question?",
+   "what": "Which choices of the components and the deployment would a developer question?",
    "contributes_to": [
     "architecture/Q12",
     "architecture/Q13"
@@ -371,7 +371,7 @@
     "D19",
     "D20"
    ],
-   "decided": "Under Components: turn:up a subagent; started in the background; approvals through the main conversation; the evaluator's answers through the files; the course in Lane's flow; builder and evaluator serving both phases; the refactoring more going to the builder; lessons left to the caller. Under Deployment: `.turn/` in the folder Claude Code runs in.",
+   "decided": "Under Components: turn:up a subagent; started in the background; approvals through the main conversation; the evaluator's answers through the files; the course in Lane's flow; generator and evaluator serving both phases; the refactoring more going to the generator; lessons left to the caller. Under Deployment: `.turn/` in the folder Claude Code runs in.",
    "settled_by": "reasoning",
    "grounds": [
     "plugins/turn/best-practices/architecture.json, Q13 step: \"Where the product departs on purpose from a principle of the architecture it is built on, say why among the choices.\"",

@@ -2,7 +2,7 @@
 
 Sources for the best practice of meta: how to build a best practice.
 A best practice here is a standard, which a deliverable is judged by, and a practice, which it is built by.
-Its users are the planner who builds it, the builder and the evaluator who use it, and in the end the user of each deliverable.
+Its users are the planner who builds it, the generator and the evaluator who use it, and in the end the user of each deliverable.
 Every quote below was copied from the page at its URL, opened on 2026-11-02.
 The sources already cited in meta.json's grounds are left out: Anthropic "Demystifying evals for AI agents", CheckEval (arXiv:2403.18771), Shankar et al. (arXiv:2404.12272) and Brookhart 2018.
 
@@ -88,7 +88,7 @@ The sources already cited in meta.json's grounds are left out: Anthropic "Demyst
 
   > But keep in mind that indicators are easily corrupted, and once it becomes known that they are being used as an indicator for something important in an evaluation, people are very ingenious about faking the score on them; you can’t do this with a criterion of merit, since it’s valid by definition.
 
-- What it says: a builder who knows the checks will meet a checked sign without meeting the need behind it.
+- What it says: a generator who knows the checks will meet a checked sign without meeting the need behind it.
 
 ### The test of the skill is not the skill
 
@@ -108,7 +108,7 @@ The sources already cited in meta.json's grounds are left out: Anthropic "Demyst
 
   > Teachers need evaluative criteria that capture the essential ingredients of the skill being measured, not the particular display of that skill applied to a specific task.
 
-- What it says: a question tied to one example deliverable cannot guide the builder of the next one.
+- What it says: a question tied to one example deliverable cannot guide the generator of the next one.
 
 ### Criteria so general that they say nothing
 
@@ -118,7 +118,7 @@ The sources already cited in meta.json's grounds are left out: Anthropic "Demyst
 
   > In essence, these overly general criteria allow both teachers and students to conclude that really good student responses to the task are, well, really good. And, of course, really bad student responses are—you guessed it—really bad.
 
-- What it says: a question that only asks whether the work is good gives neither the builder nor the evaluator anything to act on.
+- What it says: a question that only asks whether the work is good gives neither the generator nor the evaluator anything to act on.
 
 ## The list is complete, without overlap, clear, short and checkable
 
@@ -180,7 +180,7 @@ The sources already cited in meta.json's grounds are left out: Anthropic "Demyst
 
   > For example, in the laundry list itself, if the function is to control the actions of the laundry person, colored articles need to be listed separately from the white ones. But if the task is simply to make a record of what went to the laundry, the color of the shirts is irrelevant.
 
-- What it says: the same items are divided differently for a builder's practice and for an evaluator's standard.
+- What it says: the same items are divided differently for a generator's practice and for an evaluator's standard.
 
 ### Combine overlapping criteria, but do not bury the ones that matter
 
@@ -232,7 +232,7 @@ The sources already cited in meta.json's grounds are left out: Anthropic "Demyst
 
   > It’s not actionable: People don’t know what to do with a 3 or 4. It’s not immediately obvious how this number is better than a 2. You need to be able to say “this interaction passed because…” and “this interaction failed because…”.
 
-- What it says: the verdict carries its reason, so the builder knows what to fix.
+- What it says: the verdict carries its reason, so the generator knows what to fix.
 
 ### Uncalibrated scales are read differently by each judge
 
@@ -336,7 +336,7 @@ The sources already cited in meta.json's grounds are left out: Anthropic "Demyst
 
   > This is an iterative checklist, not a one-shot checklist. You should expect to go through it several times, even for design purposes, since discoveries or problems that come up under later checkpoints will often require modification of what was entered under earlier ones (and no rearrangement of the order will avoid this).
 
-- What it says: the practice expects the builder to return to earlier parts when a later one changes them.
+- What it says: the practice expects the generator to return to earlier parts when a later one changes them.
 
 ### Guidelines can conflict, so each states its reason
 

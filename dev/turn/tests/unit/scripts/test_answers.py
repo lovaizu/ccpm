@@ -1,4 +1,4 @@
-"""scripts/answers.py, the command builder, evaluator, refactorer and proofreader run on their
+"""scripts/answers.py, the command generator, evaluator, refactorer and proofreader run on their
 answers file: 0 where every question they were given is answered and each line lies in the work,
 1 with each fault, and 2 where it cannot check."""
 

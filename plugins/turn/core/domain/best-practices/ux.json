@@ -34,37 +34,37 @@
   {
    "id": "Q1",
    "about": "objective",
-   "what": "Reading an objective, does the builder know which user the product is for and what that user gets from it?"
+   "what": "Reading an objective, does the developer know which user the product is for and what that user gets from it?"
   },
   {
    "id": "Q2",
    "about": "okrs",
-   "what": "Weighing a piece of work, can the builder tell which one objective it brings closer?"
+   "what": "Weighing a piece of work, can the developer tell which one objective it brings closer?"
   },
   {
    "id": "Q3",
    "about": "objective, key-result",
-   "what": "After a change, can the builder tell from the key results whether users came closer to the objective?"
+   "what": "After a change, can the developer tell from the key results whether users came closer to the objective?"
   },
   {
    "id": "Q4",
    "about": "key-result",
-   "what": "Weighing a change that shortens the lead time, can the builder tell whether it keeps how well the user gets what the objective says?"
+   "what": "Weighing a change that shortens the lead time, can the developer tell whether it keeps how well the user gets what the objective says?"
   },
   {
    "id": "Q5",
    "about": "objective, scenarios",
-   "what": "For each objective, can the builder follow, step by step, how its user goes from when they first need it to having what the objective says?"
+   "what": "For each objective, can the developer follow, step by step, how its user goes from when they first need it to having what the objective says?"
   },
   {
    "id": "Q6",
    "about": "participants, scenario",
-   "what": "Building a step of a scenario, can the builder tell whether it waits for a person, is taken by an AI, or runs as a script?"
+   "what": "Building a step of a scenario, can the developer tell whether it waits for a person, is taken by an AI, or runs as a script?"
   },
   {
    "id": "Q7",
    "about": "the whole",
-   "what": "Can the builder change how the product works inside, while its users see the same, and leave the document as it is?"
+   "what": "Can the developer change how the product works inside, while its users see the same, and leave the document as it is?"
   }
  ],
  "practices": [
@@ -310,7 +310,7 @@
   },
   {
    "benefit": "Q6",
-   "thinking": "Each one that takes a step is named by its role and its kind, so the builder knows which step waits for a person and which runs without one.",
+   "thinking": "Each one that takes a step is named by its role and its kind, so the developer knows which step waits for a person and which runs without one.",
    "steps": [
     "In each scenario, name each participant it uses, with its kind, as the list of participants gives them, such as by declaring them at the start of a diagram.",
     "Check each scenario: every message's sender and receiver is named there, and every name and kind is the one the list of participants gives."

@@ -11,11 +11,11 @@
   },
   {
    "id": "benefits",
-   "what": "Questions that check, by the essence, whether the deliverable achieves the goal: what each part, each dependency among parts and the whole bring the user, each asked so it is answered yes or no, in the order the builder thinks them."
+   "what": "Questions that check, by the essence, whether the deliverable achieves the goal: what each part, each dependency among parts and the whole bring the user, each asked so it is answered yes or no, in the order the generator thinks them."
   },
   {
    "id": "practices",
-   "what": "For each question, in the benefits' order, the best way of thinking that meets its essence, and steps only where the thinking alone does not lead the builder, with the grounds where they have worked."
+   "what": "For each question, in the benefits' order, the best way of thinking that meets its essence, and steps only where the thinking alone does not lead the generator, with the grounds where they have worked."
   }
  ],
  "benefits": [
@@ -27,7 +27,7 @@
   {
    "id": "Q2",
    "about": "parts",
-   "what": "Looking at the parts, does the builder know what to write in which part, and in what order?"
+   "what": "Looking at the parts, does the generator know what to write in which part, and in what order?"
   },
   {
    "id": "Q3",
@@ -47,7 +47,7 @@
   {
    "id": "Q6",
    "about": "practices",
-   "what": "Following the way of thinking and the steps, can the builder make the content the question asks for?"
+   "what": "Following the way of thinking and the steps, can the generator make the content the question asks for?"
   },
   {
    "id": "Q7",
@@ -222,11 +222,11 @@
   },
   {
    "benefit": "Q6",
-   "thinking": "A way of making is taken from where it has met the essence before and kept only once it meets it here; the way of thinking carries it, and a step is there only for what the thinking alone does not lead the builder to.",
+   "thinking": "A way of making is taken from where it has met the essence before and kept only once it meets it here; the way of thinking carries it, and a step is there only for what the thinking alone does not lead the generator to.",
    "steps": [
     "For the essence the question holds, find how good deliverables met it: guides, studies and examples.",
     "Write the way of thinking in one sentence.",
-    "Write a step only for what the way of thinking alone does not lead the builder to, one action each, in order.",
+    "Write a step only for what the way of thinking alone does not lead the generator to, one action each, in order.",
     "Where a step or a source names one way of doing it, such as a place, a file or a tool, write what that way achieves, so a project that achieves it another way keeps its own.",
     "Add as grounds the words of the sources, quoted from the pages opened, each with its page's title and link; cut a step that no source holds and the way of thinking already implies.",
     "Make one real deliverable by the way, and judge it by the question; where it stays no, mend the way."
@@ -242,9 +242,9 @@
   },
   {
    "benefit": "Q7",
-   "thinking": "Every essence of every question has its way, so the builder never meets a question with nothing to go by.",
+   "thinking": "Every essence of every question has its way, so the generator never meets a question with nothing to go by.",
    "steps": [
-    "Order the questions in the order the builder thinks them, so that one is answered before those that build on it.",
+    "Order the questions in the order the generator thinks them, so that one is answered before those that build on it.",
     "Give each question one practice, in that order, and make one by Q6's way for a question that has none."
    ],
    "grounds": []

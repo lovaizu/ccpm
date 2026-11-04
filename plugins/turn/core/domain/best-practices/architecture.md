@@ -7,7 +7,7 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 ## Parts
 
 - **summary**: The opening: which product the document is for, and a sentence or two that say how the product delivers its UX, pointing to the UX instead of repeating it.
-- **principles**: The principles, after a pointer to the principles of the architecture this one is built on, where there is one. Each has a short name the reader finds it by, the rule, one sentence that every part is built by, and the reason, which says what the rule is there for and what goes wrong for the user or the builder without it.
+- **principles**: The principles, after a pointer to the principles of the architecture this one is built on, where there is one. Each has a short name the reader finds it by, the rule, one sentence that every part is built by, and the reason, which says what the rule is there for and what goes wrong for the user or the developer without it.
 - **user-stories**: The user stories: one for each way the user uses the product at its edge, such as a command they run, each naming the user, that way, and the UX's scenarios or steps that rest on it.
 - **components**: A figure of the roles the user stories need and each store of data, read without the text around it. Each element holds its name, its type and its technology, such as a web app in React and TypeScript or a database in PostgreSQL, and nothing more. Each arrow says what one does to another, with the data it hands on, named as in the data model, and the protocol where it matters, such as HTTPS with JSON. A legend explains every symbol the figure uses. The arrows are laid out so the reader follows them in the order they act.
 - **responsibilities**: Read with the components figure: what each role alone is responsible for that no arrow shows.
@@ -21,26 +21,26 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 
 ## Benefits
 
-- **Q1** (user-stories): For each step of the UX's scenarios, can the builder name the one way of using the product at its edge that carries it?
-- **Q2** (summary): Having read the opening, can the builder say how the product delivers its UX, as one idea that every part carries out?
-- **Q3** (user-stories, components, responsibilities): For anything the user stories need decided, can the builder point to the one role that decides it?
-- **Q4** (components): Starting on a role, can the builder begin without choosing for themselves what kind of thing it is and what it is made with?
-- **Q5** (data-model): When one builder makes the role that writes a data and another makes the role that reads it, do both join it to the other data the same way?
-- **Q6** (user-stories, components, data-model, sequences): For each user story, can the builder follow it from the user's first request to its end, knowing at each step which role acts and what data it hands on?
-- **Q7** (user-stories, components, responsibilities, data-model, sequences): Of any user story, role or data, can the builder tell which objective of the UX needs it?
-- **Q8** (principles): When two builders of different parts meet a case the document does not name, does a principle's reason lead both to the same decision?
-- **Q9** (components, data-model, deployment): Setting the product up from nothing, can the builder put each role where it runs and each data where it is kept, and start the product, without asking anyone?
-- **Q10** (components, data-model, directory): Making or changing a role or a data, can the builder find the one place its files belong?
-- **Q11** (deployment, test-table): Asked whether anything in the product goes untested, can the builder answer, for each deployment unit, which levels of test cover it, how heavily, and why a level is missing?
-- **Q12** (test-table, test-rules): Writing a test at one level, can the builder do it without deciding for themselves what to run real, what to stand in with a double, what to cover and when it passes?
-- **Q13** (test-table, test-rules): When the unit and architecture tests pass, can the builder be sure the product does what this document says, leaving ux only to confirm the UX?
-- **Q14** (principles, components, responsibilities, sequences, deployment, directory, test-table, test-rules): Following a principle while building a part, does the builder find every figure, list and table asking the same of that part, so they never have to choose which to follow?
-- **Q15** (choices, test-rules): When the builder doubts a choice the document makes, can they tell what would be lost by taking the other way?
-- **Q16** (the whole): When the builder changes how a role works inside, while the UX and the principles stay, does every line of the document still hold?
+- **Q1** (user-stories): For each step of the UX's scenarios, can the developer name the one way of using the product at its edge that carries it?
+- **Q2** (summary): Having read the opening, can the developer say how the product delivers its UX, as one idea that every part carries out?
+- **Q3** (user-stories, components, responsibilities): For anything the user stories need decided, can the developer point to the one role that decides it?
+- **Q4** (components): Starting on a role, can the developer begin without choosing for themselves what kind of thing it is and what it is made with?
+- **Q5** (data-model): When one developer makes the role that writes a data and another makes the role that reads it, do both join it to the other data the same way?
+- **Q6** (user-stories, components, data-model, sequences): For each user story, can the developer follow it from the user's first request to its end, knowing at each step which role acts and what data it hands on?
+- **Q7** (user-stories, components, responsibilities, data-model, sequences): Of any user story, role or data, can the developer tell which objective of the UX needs it?
+- **Q8** (principles): When two developers of different parts meet a case the document does not name, does a principle's reason lead both to the same decision?
+- **Q9** (components, data-model, deployment): Setting the product up from nothing, can the developer put each role where it runs and each data where it is kept, and start the product, without asking anyone?
+- **Q10** (components, data-model, directory): Making or changing a role or a data, can the developer find the one place its files belong?
+- **Q11** (deployment, test-table): Asked whether anything in the product goes untested, can the developer answer, for each deployment unit, which levels of test cover it, how heavily, and why a level is missing?
+- **Q12** (test-table, test-rules): Writing a test at one level, can the developer do it without deciding for themselves what to run real, what to stand in with a double, what to cover and when it passes?
+- **Q13** (test-table, test-rules): When the unit and architecture tests pass, can the developer be sure the product does what this document says, leaving ux only to confirm the UX?
+- **Q14** (principles, components, responsibilities, sequences, deployment, directory, test-table, test-rules): Following a principle while building a part, does the developer find every figure, list and table asking the same of that part, so they never have to choose which to follow?
+- **Q15** (choices, test-rules): When the developer doubts a choice the document makes, can they tell what would be lost by taking the other way?
+- **Q16** (the whole): When the developer changes how a role works inside, while the UX and the principles stay, does every line of the document still hold?
 
 ## Practices
 
-### Q1: For each step of the UX's scenarios, can the builder name the one way of using the product at its edge that carries it?
+### Q1: For each step of the UX's scenarios, can the developer name the one way of using the product at its edge that carries it?
 
 **Thinking**: A user story is one way the user meets the product at its edge, such as one command or one call, and the stories together carry every step of the UX where the user meets the product.
 
@@ -55,7 +55,7 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 - [User Stories: What They Are, How to Write Them, and Examples](https://www.mountaingoatsoftware.com/agile/user-stories), Mountain Goat Software, mountaingoatsoftware.com, 2026: "A common template is: As a [type of user], I [need/want/am required] to [do something], so that [reason or benefit]."
 - [Architectural Blueprints—The “4+1” View Model of Software Architecture](https://www.cs.ubc.ca/~gregor/teaching/papers/4+1view-architecture.pdf), Kruchten, IEEE Software, 1995: "as a driver to discover the architectural elements during the architecture design as we will describe later"
 
-### Q2: Having read the opening, can the builder say how the product delivers its UX, as one idea that every part carries out?
+### Q2: Having read the opening, can the developer say how the product delivers its UX, as one idea that every part carries out?
 
 **Thinking**: The opening says, in one idea seen from above and with none of a part's inner workings, how the product turns what the user brings into what the UX promises, so every part after it reads as a piece of that idea.
 
@@ -72,7 +72,7 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 - [1. Introduction and Goals](https://docs.arc42.org/section-1/), Hruschka and Starke, arc42 documentation, docs.arc42.org, no date: "If requirements documents exist this overview should refer to these documents."
 - [4. Solution Strategy](https://docs.arc42.org/section-4/), Hruschka and Starke, arc42 documentation, docs.arc42.org, no date: "These decisions form the cornerstones for your architecture. They are the basis for many other detailed decisions or implementation rules."
 
-### Q3: For anything the user stories need decided, can the builder point to the one role that decides it?
+### Q3: For anything the user stories need decided, can the developer point to the one role that decides it?
 
 **Thinking**: Roles are cut so that each decision the stories need, above all one hard to make or likely to change, is made in one role alone and hidden from the others.
 
@@ -89,9 +89,9 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 - [Notation](https://c4model.com/diagrams/notation), Brown, C4 model, c4model.com, no date: "Every line should be labelled, the label being consistent with the direction and intent of the relationship (e.g. dependency or data flow). Try to be as specific as possible with the label, ideally avoiding single words like, “Uses”."
 - [Software architecture diagram review checklist](https://c4model.com/diagrams/checklist), Brown, C4 model, c4model.com, no date: "Do you understand what every element does?"
 
-### Q4: Starting on a role, can the builder begin without choosing for themselves what kind of thing it is and what it is made with?
+### Q4: Starting on a role, can the developer begin without choosing for themselves what kind of thing it is and what it is made with?
 
-**Thinking**: Each role's box says what kind of thing it is and what it is made with, so the builder starts on it with nothing left to choose.
+**Thinking**: Each role's box says what kind of thing it is and what it is made with, so the developer starts on it with nothing left to choose.
 
 **Steps**
 
@@ -105,7 +105,7 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 - [Notation](https://c4model.com/diagrams/notation), Brown, C4 model, c4model.com, no date: "Any notation used should be as self-describing as possible, but all diagrams should have a key/legend to make the notation explicit."
 - [Notation](https://c4model.com/diagrams/notation), Brown, C4 model, c4model.com, no date: "A good way to think about this is to ask yourself whether each diagram can stand alone, and be (mostly) understood without a narrative."
 
-### Q5: When one builder makes the role that writes a data and another makes the role that reads it, do both join it to the other data the same way?
+### Q5: When one developer makes the role that writes a data and another makes the role that reads it, do both join it to the other data the same way?
 
 **Thinking**: Each data the roles pass or keep is drawn once, by its name alone, with its fields left to where it is built, and each relation to another data is named with how many of each it joins.
 
@@ -119,7 +119,7 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 - [Entity Relationship Diagrams](https://mermaid.js.org/syntax/entityRelationshipDiagram.html), Mermaid, mermaid.js.org, no date: "Cardinality is a property that describes how many elements of another entity can be related to the entity in question."
 - [Design Docs at Google](https://www.industrialempathy.com/posts/design-docs-at-google/), Ubl, industrialempathy.com, 2020: "Similar to the advice on APIs, and for the same reasons, copy-pasting complete schema definitions should be avoided."
 
-### Q6: For each user story, can the builder follow it from the user's first request to its end, knowing at each step which role acts and what data it hands on?
+### Q6: For each user story, can the developer follow it from the user's first request to its end, knowing at each step which role acts and what data it hands on?
 
 **Thinking**: Each story is drawn as its steps in order, such as a sequence diagram, from the user's first request to what the story gives them, so every step has a role that takes it and data that it hands on.
 
@@ -135,7 +135,7 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 - [Sequence diagrams](https://mermaid.js.org/syntax/sequenceDiagram.html), Mermaid, mermaid.js.org, no date: "A Sequence diagram is an interaction diagram that shows how processes operate with one another and in what order."
 - [Architectural Blueprints—The “4+1” View Model of Software Architecture](https://www.cs.ubc.ca/~gregor/teaching/papers/4+1view-architecture.pdf), Kruchten, IEEE Software, 1995: "as a validation and illustration role after this architecture design is complete, both on paper and as the starting point for the tests of an architectural prototype."
 
-### Q7: Of any user story, role or data, can the builder tell which objective of the UX needs it?
+### Q7: Of any user story, role or data, can the developer tell which objective of the UX needs it?
 
 **Thinking**: Every story, role and data is there because an objective of the UX needs it, on the main path a scenario shows or off it, so each can go once no objective needs it.
 
@@ -147,15 +147,15 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 
 - [Yagni](https://martinfowler.com/bliki/Yagni.html), Fowler, martinfowler.com, 2015: "The code for the presumptive feature adds some complexity to the software, this complexity makes it harder to modify and debug that software, thus increasing the cost of other features."
 
-### Q8: When two builders of different parts meet a case the document does not name, does a principle's reason lead both to the same decision?
+### Q8: When two developers of different parts meet a case the document does not name, does a principle's reason lead both to the same decision?
 
-**Thinking**: A principle is a rule that every part meeting the same decision follows the same way, written with what it is there for, so a builder can carry it to a case it does not name.
+**Thinking**: A principle is a rule that every part meeting the same decision follows the same way, written with what it is there for, so a developer can carry it to a case it does not name.
 
 **Steps**
 
 1. Write as a rule also what must be absent, such as a dependency no role may have.
 2. Link the principles of the architecture this one is built on, and write only what this product adds or changes.
-3. Take a case no rule names, and have two builders of different parts decide it from the reasons alone; where they differ, sharpen the reason.
+3. Take a case no rule names, and have two developers of different parts decide it from the reasons alone; where they differ, sharpen the reason.
 
 **Grounds**
 
@@ -169,9 +169,9 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 - [Documenting Software Architectures: Views and Beyond](https://www.informit.com/articles/article.aspx?p=1641654&seqNum=5), Clements et al., 2nd edition, section P.5, informit.com, 2010: "The most dangerous kind of ambiguity is undetected ambiguity. Here, each reader will think he or she understands the document, but unwittingly each reader will come to different conclusions about what it is saying."
 - [Documenting Software Architectures: Views and Beyond](https://www.informit.com/articles/article.aspx?p=1641654&seqNum=5), Clements et al., 2nd edition, section P.5, informit.com, 2010: "Each kind of information should be recorded in exactly one place."
 
-### Q9: Setting the product up from nothing, can the builder put each role where it runs and each data where it is kept, and start the product, without asking anyone?
+### Q9: Setting the product up from nothing, can the developer put each role where it runs and each data where it is kept, and start the product, without asking anyone?
 
-**Thinking**: Each role and each data is placed in a deployment unit within the environment where it runs or is kept, so the builder knows what it can reach, and how the product starts.
+**Thinking**: Each role and each data is placed in a deployment unit within the environment where it runs or is kept, so the developer knows what it can reach, and how the product starts.
 
 **Steps**
 
@@ -186,9 +186,9 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 - [7. Deployment View](https://docs.arc42.org/section-7/), Hruschka and Starke, arc42 documentation, docs.arc42.org, no date: "Software does not run without hardware."
 - [7. Deployment View](https://docs.arc42.org/section-7/), Hruschka and Starke, arc42 documentation, docs.arc42.org, no date: "From a software perspective it is sufficient to capture those elements of the infrastructure that are needed to show the deployment of your building blocks."
 
-### Q10: Making or changing a role or a data, can the builder find the one place its files belong?
+### Q10: Making or changing a role or a data, can the developer find the one place its files belong?
 
-**Thinking**: The tree of the folders and files that hold the roles and the data, as they lie on disk, joins each role and each data to the one place where it is made, so the builder finds where to change it.
+**Thinking**: The tree of the folders and files that hold the roles and the data, as they lie on disk, joins each role and each data to the one place where it is made, so the developer finds where to change it.
 
 **Steps**
 
@@ -202,7 +202,7 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 - [ARCHITECTURE.md](https://matklad.github.io/2021/02/06/ARCHITECTURE.md.html), matklad, matklad.github.io, 2021: "A codemap is a map of a country, not an atlas of maps of its states."
 - [ARCHITECTURE.md](https://matklad.github.io/2021/02/06/ARCHITECTURE.md.html), matklad, matklad.github.io, 2021: "Are the things you want to put near each other in the codemap adjacent when you run tree .?"
 
-### Q11: Asked whether anything in the product goes untested, can the builder answer, for each deployment unit, which levels of test cover it, how heavily, and why a level is missing?
+### Q11: Asked whether anything in the product goes untested, can the developer answer, for each deployment unit, which levels of test cover it, how heavily, and why a level is missing?
 
 **Thinking**: Each level checks against one thing, a part's contract, this document's sequences or the UX, so a deployment unit is tested at each level whose thing says what the unit must do, and a cell is empty only where it says nothing; a level is named by that thing, not by its means, as a means such as end to end can serve any level.
 
@@ -223,9 +223,9 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 - [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html), Vocke, martinfowler.com, 2018: "The more high-level you get the fewer tests you should have"
 - [Documenting Software Architectures: Views and Beyond](https://www.informit.com/articles/article.aspx?p=1641654&seqNum=5), Clements et al., 2nd edition, section P.5, informit.com, 2010: "If the section is blank, the reader will wonder whether the information is coming later or whether it is indeed supposed to be blank."
 
-### Q12: Writing a test at one level, can the builder do it without deciding for themselves what to run real, what to stand in with a double, what to cover and when it passes?
+### Q12: Writing a test at one level, can the developer do it without deciding for themselves what to run real, what to stand in with a double, what to cover and when it passes?
 
-**Thinking**: A test is drawn, not chosen, from the one thing its level checks against: the ways a part's contract divides, the paths the sequences draw, or an objective's scenario at the size of a real request; only that thing runs real and the rest is stood in, so two builders draw the same tests and a failure points to that thing alone.
+**Thinking**: A test is drawn, not chosen, from the one thing its level checks against: the ways a part's contract divides, the paths the sequences draw, or an objective's scenario at the size of a real request; only that thing runs real and the rest is stood in, so two developers draw the same tests and a failure points to that thing alone.
 
 **Steps**
 
@@ -274,7 +274,7 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 - [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html), Vocke, martinfowler.com, 2018: "Given the shortcomings of the original names it's totally okay to come up with other names for your test layers, as long as you keep it consistent within your codebase and your team's discussions."
 - [Documenting Software Architectures: Views and Beyond](https://www.informit.com/articles/article.aspx?p=1641654&seqNum=5), Clements et al., 2nd edition, section P.5, informit.com, 2010: "Each kind of information should be recorded in exactly one place."
 
-### Q13: When the unit and architecture tests pass, can the builder be sure the product does what this document says, leaving ux only to confirm the UX?
+### Q13: When the unit and architecture tests pass, can the developer be sure the product does what this document says, leaving ux only to confirm the UX?
 
 **Thinking**: The design is the paths its sequences draw, joined by what each part promises: unit tests show each real part keeps its promise, architecture tests show every path holds with doubles that keep only those promises, so the two hold for the real parts together, and ux tests are left only what real size shows, such as lead time.
 
@@ -296,9 +296,9 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 - [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html), Vocke, martinfowler.com, 2018: "If a higher-level test spots an error and there's no lower-level test failing, you need to write a lower-level test"
 - [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html), Vocke, martinfowler.com, 2018: "The first rule is important because lower-level tests allow you to better narrow down errors and replicate them in an isolated way."
 
-### Q14: Following a principle while building a part, does the builder find every figure, list and table asking the same of that part, so they never have to choose which to follow?
+### Q14: Following a principle while building a part, does the developer find every figure, list and table asking the same of that part, so they never have to choose which to follow?
 
-**Thinking**: Each principle is read against every part it rules, so a builder never meets a figure, a list or a table that breaks one.
+**Thinking**: Each principle is read against every part it rules, so a developer never meets a figure, a list or a table that breaks one.
 
 **Steps**
 
@@ -310,13 +310,13 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 - [Architectural Blueprints—The “4+1” View Model of Software Architecture](https://www.cs.ubc.ca/~gregor/teaching/papers/4+1view-architecture.pdf), Kruchten, IEEE Software, 1995: "A Software Design Guidelines, which captures (among other things) the most important design decisions that must be respected to maintain the architectural integrity of the system."
 - [Documenting Software Architectures: Views and Beyond](https://www.informit.com/articles/article.aspx?p=1641654&seqNum=5), Clements et al., 2nd edition, section P.5, informit.com, 2010: "Documentation that is incomplete or out of date does not reflect truth, does not obey its own rules for form and internal consistency, and is not used."
 
-### Q15: When the builder doubts a choice the document makes, can they tell what would be lost by taking the other way?
+### Q15: When the developer doubts a choice the document makes, can they tell what would be lost by taking the other way?
 
-**Thinking**: A choice a builder would question, such as a technology, a tool or a unit's weight, carries why it beat the other way and what it costs, beside the figure or table that shows it, so the builder keeps it or changes it knowing what it was for.
+**Thinking**: A choice a developer would question, such as a technology, a tool or a unit's weight, carries why it beat the other way and what it costs, beside the figure or table that shows it, so the developer keeps it or changes it knowing what it was for.
 
 **Steps**
 
-1. Read each figure and the table as a builder new to the product, and check that each choice they would question has its reason and its cost beside it.
+1. Read each figure and the table as a developer new to the product, and check that each choice they would question has its reason and its cost beside it.
 
 **Grounds**
 
@@ -328,7 +328,7 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 - [Documenting Architecture Decisions](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions), Nygard, Cognitect blog, 2011: "All consequences should be listed here, not just the "positive" ones."
 - [9. Architecture Decisions](https://docs.arc42.org/section-9/), Hruschka and Starke, arc42 documentation, docs.arc42.org, no date: "Please use your judgement to decide whether an architectural decision should be documented here in this central section or whether you better document it locally (e.g. within the white box template of one building block). Avoid redundant texts."
 
-### Q16: When the builder changes how a role works inside, while the UX and the principles stay, does every line of the document still hold?
+### Q16: When the developer changes how a role works inside, while the UX and the principles stay, does every line of the document still hold?
 
 **Thinking**: The document holds only what stays while the UX and the principles stay, and leaves how each role works inside to where it is built.
 

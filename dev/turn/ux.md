@@ -49,7 +49,7 @@ participants:
   the kind has, and the questions it answers yes to.
 - designer (AI): the role that settles this work's purpose and each decision the work needs, and
   asks the person what is theirs.
-- builder (AI): the role that makes the work from the decisions.
+- generator (AI): the role that makes the work from the decisions.
 - evaluator (AI): the role that uses the work as its user would, and answers each question of the
   template.
 - refactorer and proofreader (AI): the roles that improve how the finished work says what it says,
@@ -79,7 +79,7 @@ sequenceDiagram
   participant PL as planner (AI)
   participant D as designer (AI)
   participant R as researcher (AI)
-  participant B as builder (AI)
+  participant B as generator (AI)
   participant E as evaluator (AI)
   participant RF as refactorer and proofreader (AI)
   participant C as checks (script)
@@ -108,9 +108,9 @@ sequenceDiagram
   P-->>D: yes
   D->>C: every question is served by a decision, and the order holds
   D-->>U: ends, the design approved
-  L-->>U: next, builder
-  U->>B: starts builder
-  B->>C: builder has answered every question of the template itself
+  L-->>U: next, generator
+  U->>B: starts generator
+  B->>C: generator has answered every question of the template itself
   B-->>U: ends, the README made
   L-->>U: next, evaluator
   U->>E: starts evaluator, with the README and the questions alone
@@ -119,7 +119,7 @@ sequenceDiagram
     E-->>U: ends, a question not yet met
     L-->>U: next, designer
     U->>D: starts designer, which finds the decision behind it
-    Note over D,E: designer decides it again, or keeps it, and builder and evaluator go again.
+    Note over D,E: designer decides it again, or keeps it, and generator and evaluator go again.
   else every question is met
     E-->>U: ends, every question met
   end
@@ -181,6 +181,6 @@ sequenceDiagram
     N-->>D: through up: the answer
   end
   D-->>U: ends, the design approved
-  Note over U,C: builder, evaluator, refactorer and proofreader go as in O1.
+  Note over U,C: generator, evaluator, refactorer and proofreader go as in O1.
   U-->>N: done: README.md
 ```

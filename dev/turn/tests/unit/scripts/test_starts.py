@@ -13,7 +13,7 @@ from helpers import starts
 
 USAGE = (
     "usage: python3 ${CLAUDE_PLUGIN_ROOT}/scripts/starts.py <run>"
-    " builder|evaluator|refactorer|proofreader\n"
+    " generator|evaluator|refactorer|proofreader\n"
 )
 
 
@@ -54,7 +54,7 @@ class TestMain(helpers.RunTest):
         )
 
     def test_a_command_it_does_not_take_gives_2_and_its_usage(self):
-        for argv in ((), (self.folder,), (self.folder, "builder", "x")):
+        for argv in ((), (self.folder,), (self.folder, "generator", "x")):
             with self.subTest(argv=argv):
                 self.assertEqual(self.ran(*argv), (2, "", USAGE))
 

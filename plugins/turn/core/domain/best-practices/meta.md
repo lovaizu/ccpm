@@ -8,17 +8,17 @@ A best practice it makes produces deliverables that achieve their user's purpose
 
 - **goal**: What the user achieves with the deliverable.
 - **parts**: The deliverable's parts that meet the goal: each part and what it holds, in the order the user meets them; how they are written out is decided when the deliverable is made.
-- **benefits**: Questions that check, by the essence, whether the deliverable achieves the goal: what each part, each dependency among parts and the whole bring the user, each asked so it is answered yes or no, in the order the builder thinks them.
-- **practices**: For each question, in the benefits' order, the best way of thinking that meets its essence, and steps only where the thinking alone does not lead the builder, with the grounds where they have worked.
+- **benefits**: Questions that check, by the essence, whether the deliverable achieves the goal: what each part, each dependency among parts and the whole bring the user, each asked so it is answered yes or no, in the order the generator thinks them.
+- **practices**: For each question, in the benefits' order, the best way of thinking that meets its essence, and steps only where the thinking alone does not lead the generator, with the grounds where they have worked.
 
 ## Benefits
 
 - **Q1** (goal): Reading the goal, does one see a single thing the user achieves with the deliverable?
-- **Q2** (parts): Looking at the parts, does the builder know what to write in which part, and in what order?
+- **Q2** (parts): Looking at the parts, does the generator know what to write in which part, and in what order?
 - **Q3** (goal, parts): Do the parts hold, neither more nor less, the parts the goal needs?
 - **Q4** (benefits): With each question, can one who judges the deliverable tell whether that part serves the user?
 - **Q5** (parts, benefits): For each part, each dependency among parts and the whole, is there a question asking whether it serves the user?
-- **Q6** (practices): Following the way of thinking and the steps, can the builder make the content the question asks for?
+- **Q6** (practices): Following the way of thinking and the steps, can the generator make the content the question asks for?
 - **Q7** (benefits, practices): Does every question have, in the benefits' order, a way of thinking that meets its essence?
 - **Q8** (the whole): Does a deliverable made by this best practice, and passed, let its user achieve their purpose?
 
@@ -40,7 +40,7 @@ A best practice it makes produces deliverables that achieve their user's purpose
 - [The Goal Question Metric Approach](https://www.cs.umd.edu/~mvz/handouts/gqm.pdf), Basili, Caldiera and Rombach, University of Maryland: "A goal is defined for an object, for a variety of reasons, with respect to various models of quality, from various points of view, relative to a particular environment."
 - [Jobs to Be Done (JTBD): The Original Framework by Tony Ulwick](https://strategyn.com/jobs-to-be-done/), Strategyn, strategyn.com, 2024: "Identify who is executing the job and define the core functional job in a single, solution-free statement."
 
-### Q2: Looking at the parts, does the builder know what to write in which part, and in what order?
+### Q2: Looking at the parts, does the generator know what to write in which part, and in what order?
 
 **Thinking**: The parts are learned from good and poor deliverables of the kind, each part written as what its user needs from it rather than as one way some deliverables give it, and laid out in the order its user meets it.
 
@@ -113,15 +113,15 @@ A best practice it makes produces deliverables that achieve their user's purpose
 - [Key Evaluation Checklist](https://wmich.edu/sites/default/files/attachments/u350/2014/key%20evaluation%20checklist.pdf), Scriven, Western Michigan University, 2007: "We can describe this as a case where they failed to clear a holistic (or overall) bar that was implicit in this example, but can often be made explicit through dialog."
 - [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), Anthropic, anthropic.com/engineering, 2026: "Converting user-reported failures into test cases ensures your suite reflects actual usage"
 
-### Q6: Following the way of thinking and the steps, can the builder make the content the question asks for?
+### Q6: Following the way of thinking and the steps, can the generator make the content the question asks for?
 
-**Thinking**: A way of making is taken from where it has met the essence before and kept only once it meets it here; the way of thinking carries it, and a step is there only for what the thinking alone does not lead the builder to.
+**Thinking**: A way of making is taken from where it has met the essence before and kept only once it meets it here; the way of thinking carries it, and a step is there only for what the thinking alone does not lead the generator to.
 
 **Steps**
 
 1. For the essence the question holds, find how good deliverables met it: guides, studies and examples.
 2. Write the way of thinking in one sentence.
-3. Write a step only for what the way of thinking alone does not lead the builder to, one action each, in order.
+3. Write a step only for what the way of thinking alone does not lead the generator to, one action each, in order.
 4. Where a step or a source names one way of doing it, such as a place, a file or a tool, write what that way achieves, so a project that achieves it another way keeps its own.
 5. Add as grounds the words of the sources, quoted from the pages opened, each with its page's title and link; cut a step that no source holds and the way of thinking already implies.
 6. Make one real deliverable by the way, and judge it by the question; where it stays no, mend the way.
@@ -132,11 +132,11 @@ A best practice it makes produces deliverables that achieve their user's purpose
 
 ### Q7: Does every question have, in the benefits' order, a way of thinking that meets its essence?
 
-**Thinking**: Every essence of every question has its way, so the builder never meets a question with nothing to go by.
+**Thinking**: Every essence of every question has its way, so the generator never meets a question with nothing to go by.
 
 **Steps**
 
-1. Order the questions in the order the builder thinks them, so that one is answered before those that build on it.
+1. Order the questions in the order the generator thinks them, so that one is answered before those that build on it.
 2. Give each question one practice, in that order, and make one by Q6's way for a question that has none.
 
 ### Q8: Does a deliverable made by this best practice, and passed, let its user achieve their purpose?

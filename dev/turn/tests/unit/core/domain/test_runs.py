@@ -11,7 +11,7 @@ COMMANDS = helpers.RUN["work.json"]["commands"]
 
 
 class TestRuns(helpers.RunTest):
-    def test_builder_runs_once_for_each_part(self):
+    def test_generator_runs_once_for_each_part(self):
         made = helpers.run()
         made["work.json"]["paths"] = ["a.md", "b.md"]
         made["work.json"]["parts"] = [
@@ -20,7 +20,7 @@ class TestRuns(helpers.RunTest):
         ]
         self.lay(made)
         self.assertEqual(
-            runs.runs(RUN, "builder"),
+            runs.runs(RUN, "generator"),
             [
                 {
                     "run": RUN,
@@ -41,7 +41,7 @@ class TestRuns(helpers.RunTest):
             ],
         )
 
-    def test_after_a_remake_builder_runs_for_the_parts_it_reaches_alone(self):
+    def test_after_a_remake_generator_runs_for_the_parts_it_reaches_alone(self):
         made = helpers.run()
         made["work.json"]["parts"] = [
             {"id": "P1", "decisions": ["D1"], "paths": ["README.md"]},
@@ -51,7 +51,7 @@ class TestRuns(helpers.RunTest):
             "decisions": [{"decision": "D3", "question": "readme/Q2", "good_when": "w"}]
         }
         self.lay(made)
-        self.assertEqual([r["decisions"] for r in runs.runs(RUN, "builder")], [["D2", "D3"]])
+        self.assertEqual([r["decisions"] for r in runs.runs(RUN, "generator")], [["D2", "D3"]])
 
     def test_evaluator_and_proofreader_run_once_for_each_group(self):
         self.lay()
@@ -101,7 +101,7 @@ class TestRuns(helpers.RunTest):
             runs.runs(RUN, "planner")
         self.assertEqual(
             str(refused.exception),
-            "planner is not builder, evaluator, refactorer or proofreader, whose runs this gives",
+            "planner is not generator, evaluator, refactorer or proofreader, whose runs this gives",
         )
 
     def test_a_run_without_its_groups_is_refused(self):

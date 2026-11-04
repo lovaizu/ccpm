@@ -40,7 +40,7 @@ practices together produce it.
    - The format and the questions are judged from the goal alone, and carry no grounds.
 2. **The content's best practice (Practice)**: **for each essence a question holds, the best way of
    thinking and the steps that meet it**, with the grounds of the best practice where they have
-   worked, so the builder sees why the way is the best one.
+   worked, so the generator sees why the way is the best one.
 
 ## What turn takes and gives
 
@@ -77,7 +77,7 @@ and one decision serves many questions, one question rests on many decisions.
 |---|---|
 | planner | designs the intended state of a kind of work from its best practice |
 | designer | designs the work from the intended state |
-| builder | makes the work from the design |
+| generator | makes the work from the design |
 | evaluator | uses the work as its user would and verifies it against the Checklist |
 
 ### planner
@@ -107,17 +107,17 @@ The purpose of this one work is not planner's: designer asks it.
    what only they decide, one at a time, with a recommendation.
 5. Show the user the design, the decisions in short lines, for approval; on a change, go back to
    that decision.
-6. Pass the design to builder.
-7. Take back what builder or evaluator returns, and trace it to the decisions that serve its
+6. Pass the design to generator.
+7. Take back what generator or evaluator returns, and trace it to the decisions that serve its
    question. Where a decision cannot make its questions good, decide it again as 4 says, with the
    decisions that build on it, asking the user and waiting for the answer where the fact is
    theirs; where the decisions hold and the work strays from them, keep them. Either way, pass the
-   design to builder again.
+   design to generator again.
 
 designer alone changes the design and alone asks the user about it, so the work is always made from
 one design.
 
-### builder
+### generator
 
 1. Take the design, the Format and the Checklist.
 2. Take the decisions in the order they build on one another, one at a time: make each into the
@@ -128,7 +128,7 @@ one design.
    unanswered.
 4. With every decision made in, use and answer every question into `self-check.json`, mending each
    more, until every question is good. No one reads it: writing an answer for each question makes
-   the builder look at every one.
+   the generator look at every one.
 5. Pass the work to evaluator.
 
 ### evaluator
@@ -140,7 +140,7 @@ one design.
 
 ### Use and answer
 
-Both builder and evaluator do this, in the same way.
+Both generator and evaluator do this, in the same way.
 
 1. Read the work whole, and run what runs as its user would.
 2. Using it as its user would, write for each question of the Checklist good, with the lines that
@@ -156,23 +156,23 @@ splitting would lower its quality. Every role runs in the background, so the con
 to put a role's question to the user at once, and Lane joins each run to its values by the ID the
 start gives back.
 
-designer, builder and evaluator start fresh at each move and carry on from the run's files, so the
+designer, generator and evaluator start fresh at each move and carry on from the run's files, so the
 evaluator reads each round with fresh eyes while the files hold the design. In the content phase
-they go always in that order: each return goes to designer, which passes the design to builder,
+they go always in that order: each return goes to designer, which passes the design to generator,
 whose work goes to evaluator.
 
 1. The content phase: what the work says and does. The kind's own questions alone, made up
    decision by decision from the design tree, until evaluator finds every one good. A more is
    mended at the decision that serves its question, never added onto the work. Every change, a
    more or a point the user raises, enters by the design tree: designer traces it to the
-   decision, decides that again naming the questions it answers, and builder remakes the work
+   decision, decides that again naming the questions it answers, and generator remakes the work
    from it and from the decisions built on it. So a fix is no kind of its own: rn's fix.md
    conditions are met there, and how to trace a more to its decision is part of Turn's own
    Practice, the same for every kind. rn's fix.md goes when rn is rebuilt, as rn's code reads it.
 2. The refactoring phase: how the work says and shows it, its structure bettered while what it
    says stays (Fowler, Refactoring). The questions of `refactor-doc` for a document, or of
-   `refactor-code` for code, as planner decided with the kind, which hold over the whole work. builder finishes the work by them and evaluator
-   verifies it by them, with no design tree, each started fresh. This phase's builder and
+   `refactor-code` for code, as planner decided with the kind, which hold over the whole work. generator finishes the work by them and evaluator
+   verifies it by them, with no design tree, each started fresh. This phase's generator and
    evaluator are roles of their own, `refactorer` and `proofreader`, as a route names the next
    role from the role that ended and its result alone: evaluator's `good` leads to refactorer,
    proofreader's to the end. A `more` goes back to refactorer. Only how the work says a thing
@@ -184,9 +184,9 @@ Lane's routes, each from a role on its result to the next:
 |---|---|---|
 | up, the orchestrator | | planner |
 | planner | `planned` | designer |
-| designer | `designed` | builder |
-| builder | `built` | evaluator |
-| builder | `open`, a point the design leaves open | designer |
+| designer | `designed` | generator |
+| generator | `generated` | evaluator |
+| generator | `open`, a point the design leaves open | designer |
 | evaluator | `more` | designer |
 | evaluator | `good` | refactorer |
 | refactorer | `refactored` | proofreader |
@@ -198,7 +198,7 @@ A role that needs the user's answer, such as designer asking the work's purpose,
 question and is resumed by SendMessage with the answer, keeping its context. Each role gives its
 result by its plugin's result script, which checks the form of the role's files.
 
-Keeping the two phases apart keeps builder and evaluator on the content while it is made. A phase
+Keeping the two phases apart keeps generator and evaluator on the content while it is made. A phase
 is named so as not to meet rn's stages, inside one of which turn runs.
 
 ## Files
@@ -221,10 +221,10 @@ Keys follow the steering's rules: a name says its intent, a one-to-many join is 
   and `decisions`, each `id`, `what`, `contributes_to`, `builds_on`, `decided`, `settled_by`
   (`research`, `reasoning` or `user`) and `grounds`. A script verifies every question is served,
   every decision reaches the root, and the order of deciding follows `builds_on`.
-- `verification.json` from evaluator, and `self-check.json` from builder, in the same form: `kind`;
-  `good`, each question whose aim the work meets, with the `lines` that meet it; and `more`, each
-  question it is close to, with `good_when`, what the user gets once it is good, never how to make
-  it. A script verifies every question stands in one of the two, and each line is there.
+- `verification.json` from evaluator, and `self-check.json` from generator, in the same form:
+  `kind`; `good`, each question whose aim the work meets, with the `lines` that meet it; and `more`,
+  each question it is close to, with `good_when`, what the user gets once it is good, never how to
+  make it. A script verifies every question stands in one of the two, and each line is there.
 
 Questions that hold for every document, or for all code, are written once, in refactor-doc or
 refactor-code; each question is named with its file, as `refactor-doc/Q3`. A refactoring best

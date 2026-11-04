@@ -1,6 +1,6 @@
 # Use and answer
 
-How builder, evaluator, refactorer and proofreader each answer the questions their run was given,
+How generator, evaluator, refactorer and proofreader each answer the questions their run was given,
 in the same way, so that what one finds good another finds good on the same work.
 
 1. **The work is read whole, and what runs is run.** Read each file of the work given you, `work`,

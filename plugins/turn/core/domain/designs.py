@@ -2,7 +2,7 @@
 question of the template as the template asks it, each named `<kind>/Q<n>`; the work's parts each
 hold every decision joined to their own and paths of the work no other part holds; a remake names
 decisions and questions of the tree; and the decisions split into branches, the groups that build
-on none in another, each of which a run of builder of its own makes."""
+on none in another, each of which a run of generator of its own makes."""
 
 from __future__ import annotations
 

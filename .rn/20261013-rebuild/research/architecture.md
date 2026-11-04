@@ -24,7 +24,7 @@ written as plain letters.
   applicable: users of the system; operators of the system; acquirers of the system; owners of the
   system; suppliers of the system; developers of the system; builders of the system; maintainers of
   the system."
-- Says: the standard asks the description to name who reads it, builders and maintainers among them.
+- Says: the standard asks the description to name who reads it, developers and maintainers among them.
 
 ### ISO/IEC/IEEE 42010, concerns to consider
 
@@ -203,7 +203,7 @@ written as plain letters.
 - URL: https://www.cs.ubc.ca/~gregor/teaching/papers/4+1view-architecture.pdf
 - Quote: "A Software Design Guidelines, which captures (among other things) the most important design
   decisions that must be respected to maintain the architectural integrity of the system."
-- Says: the rules that keep the architecture whole are written for every builder to follow.
+- Says: the rules that keep the architecture whole are written for every developer to follow.
 
 ### matklad, architectural invariants
 
@@ -227,7 +227,7 @@ written as plain letters.
 - URL: https://github.com/rust-lang/rust-analyzer/blob/master/docs/book/src/contributing/architecture.md
 - Quote: "**Architecture Invariant:** `syntax` crate is completely independent from the rest of
   rust-analyzer. It knows nothing about salsa or LSP."
-- Says: an invariant is one sentence a builder can check their change against.
+- Says: an invariant is one sentence a developer can check their change against.
 
 ### Clements et al., record rationale
 
@@ -244,7 +244,7 @@ written as plain letters.
 - URL: https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
 - Quote: "Without understanding the rationale or consequences, this person has only two choices:"
   followed by "Blindly accept the decision." and "Blindly change it."
-- Says: a builder without the reason either keeps a stale rule or breaks a sound one.
+- Says: a developer without the reason either keeps a stale rule or breaks a sound one.
 
 ### Michael Nygard, the cost of decisions kept without understanding
 
@@ -269,9 +269,9 @@ written as plain letters.
 - Quote: "Providing context or motivation behind your instructions, such as explaining to Claude why
   such behavior is important, can give Claude more information about your goals and help it deliver
   more targeted responses." and "Claude can generalize from the explanation."
-- Says: an AI builder carries a principle to a new case from its reason.
+- Says: an AI developer carries a principle to a new case from its reason.
 
-## Choices a builder would question
+## Choices a developer would question
 
 ### Malte Ubl, trade-offs
 
@@ -324,7 +324,7 @@ written as plain letters.
 - URL: https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
 - Quote: "We will write each ADR as if it is a conversation with a future developer. This requires
   good writing style, with full sentences organized into paragraphs."
-- Says: a choice is written in full sentences for the builder who comes later.
+- Says: a choice is written in full sentences for the developer who comes later.
 
 ### arc42, architecture decisions
 
@@ -415,7 +415,7 @@ written as plain letters.
   that [reason or benefit]."
 - Says: a user story names who uses the product and what they want of it.
 
-## The parts, and figures a builder can read alone
+## The parts, and figures a developer can read alone
 
 ### C4 model, common diagram problems
 
@@ -622,7 +622,7 @@ written as plain letters.
 - URL: https://matklad.github.io/2021/02/06/ARCHITECTURE.md.html
 - Quote: "The codemap should answer “where’s the thing that does X?”." and "It should also answer
   “what does the thing that I am looking at do?”."
-- Says: the map of the code answers the builder's two questions in both directions.
+- Says: the map of the code answers the developer's two questions in both directions.
 
 ### matklad, a map of a country
 
@@ -719,13 +719,13 @@ written as plain letters.
 - Quote: "Scope refers to the specific code paths we are verifying."
 - Says: the columns of the test table run from narrow scope to wide.
 
-### The Scrum Guide, a bar every builder reads one way
+### The Scrum Guide, a bar every developer reads one way
 
 - Source: Ken Schwaber and Jeff Sutherland, "The Scrum Guide", scrumguides.org, November 2020.
 - URL: https://scrumguides.org/scrum-guide.html
 - Quote: "The Definition of Done is a formal description of the state of the Increment when it meets
   the quality measures required for the product."
-- Says: when a test passes is written once, for every builder.
+- Says: when a test passes is written once, for every developer.
 
 ### Anthropic, a result that varies from run to run
 
@@ -768,7 +768,7 @@ written as plain letters.
 - Quote: "The most dangerous kind of ambiguity is undetected ambiguity. Here, each reader will think he
   or she understands the document, but unwittingly each reader will come to different conclusions
   about what it is saying."
-- Says: builders who read one sentence two ways build parts that do not fit.
+- Says: developers who read one sentence two ways build parts that do not fit.
 
 ### Clements et al., use a standard organization
 
@@ -785,7 +785,7 @@ written as plain letters.
 - URL: https://www.informit.com/articles/article.aspx?p=1641654&seqNum=5
 - Quote: "Software documentation may be read from cover to cover at most once, probably never. But a
   document is likely to be referenced hundreds or thousands of times."
-- Says: the builder looks things up in the document, so it is laid out for looking up.
+- Says: the developer looks things up in the document, so it is laid out for looking up.
 
 ### Clements et al., no blank sections
 
@@ -812,7 +812,7 @@ written as plain letters.
 - URL: https://www.informit.com/articles/article.aspx?p=1641654&seqNum=5
 - Quote: "Only the intended users of a document will be able to tell you whether it contains the right
   information presented in the right way."
-- Says: the document is checked by its readers, here the builders.
+- Says: the document is checked by its readers, here the developers.
 
 ### Lima Neto et al., what practitioners find wrong
 
@@ -884,5 +884,5 @@ written as plain letters.
   entries cite the Mermaid documentation instead.
 - A source on test weight per deployment unit, or on a test table by unit and test type: none of the
   pages I opened gives one.
-- A source on an architecture document read by an AI builder: none of the pages I opened addresses
+- A source on an architecture document read by an AI developer: none of the pages I opened addresses
   that reader.

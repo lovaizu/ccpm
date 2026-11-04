@@ -130,7 +130,7 @@ one form and read in another.
 
 ### Q-4: Each data and how it relates
 
-Can the builder tell from the data model each data the roles pass or hold, and how each relates to
+Can the developer tell from the data model each data the roles pass or hold, and how each relates to
 the others?
 
 Why: a data the roles pass is read by one role as another made it. A relation no figure draws is
@@ -144,16 +144,16 @@ such as work run in parallel, a context kept apart, a stance of its own or what 
 
 Why: components cut by function or by stage of processing grow with each function, and scatter what
 one thing knows among them; cut by the stories' roles and data, they come out fewer than the
-functions or the stages. A split with no such reason adds a path for users to learn and builders to
-keep right, and leaves one responsibility decided in two places.
+functions or the stages. A split with no such reason adds a path for users to learn and developers
+to keep right, and leaves one responsibility decided in two places.
 
 ### Q-6: Where the files of each component are kept
 
-Can the builder find, from the directory structure, the one place that holds the code of each role
+Can the developer find, from the directory structure, the one place that holds the code of each role
 or the files of each data, and what it is made of?
 
-Why: the builder makes and changes each component where its files are kept, and that place decides
-who owns it. A component kept in no place is put where the builder guesses, and one kept in two is
+Why: the developer makes and changes each component where its files are kept, and that place decides
+who owns it. A component kept in no place is put where the developer guesses, and one kept in two is
 made twice and drifts.
 
 ### Q-7: Where each component runs or is kept

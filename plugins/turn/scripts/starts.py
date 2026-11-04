@@ -20,7 +20,7 @@ from runs import ROLES, runs
 
 USAGE = (
     "usage: python3 ${CLAUDE_PLUGIN_ROOT}/scripts/starts.py <run>"
-    " builder|evaluator|refactorer|proofreader"
+    " generator|evaluator|refactorer|proofreader"
 )
 
 

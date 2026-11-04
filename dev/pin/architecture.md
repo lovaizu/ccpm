@@ -381,7 +381,7 @@ plugins/pin/
 └── README.md, CHANGELOG.md         for users <Markdown>
 
 dev/pin/
-├── ux.md, architecture.md, README.md   for builders <Markdown>
+├── ux.md, architecture.md, README.md   for developers <Markdown>
 ├── cosmic-ray.toml                 the mutation testing <TOML>
 └── tests/
     ├── unit/core/domain/           unit and property tests of tree.py <Python 3>

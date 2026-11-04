@@ -241,8 +241,8 @@ want above, and otherwise say what is to change."""
 # Each role's start that may follow the start of another, as Turn's routes give them.
 FOLLOWS = {
     "planner": {"designer"},
-    "designer": {"builder"},
-    "builder": {"evaluator", "designer"},
+    "designer": {"generator"},
+    "generator": {"evaluator", "designer"},
     "evaluator": {"designer", "refactorer"},
     "refactorer": {"proofreader"},
     "proofreader": {"refactorer", "designer"},

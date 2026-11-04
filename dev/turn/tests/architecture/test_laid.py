@@ -9,16 +9,16 @@ import unittest
 
 import helpers
 
-ROLES = ["up", "planner", "designer", "builder", "evaluator", "refactorer", "proofreader"]
+ROLES = ["up", "planner", "designer", "generator", "evaluator", "refactorer", "proofreader"]
 # Turn's routes, as dev/turn/architecture.md's Routes table gives them.
 ROUTES = [
     {"from": "up", "to": "planner"},
     {"from": "planner", "on": "planned", "to": "designer"},
     {"from": "planner", "on": "asks"},
-    {"from": "designer", "on": "designed", "to": "builder"},
+    {"from": "designer", "on": "designed", "to": "generator"},
     {"from": "designer", "on": "asks"},
-    {"from": "builder", "on": "built", "to": "evaluator"},
-    {"from": "builder", "on": "open", "to": "designer"},
+    {"from": "generator", "on": "generated", "to": "evaluator"},
+    {"from": "generator", "on": "open", "to": "designer"},
     {"from": "evaluator", "on": "more", "to": "designer"},
     {"from": "evaluator", "on": "good", "to": "refactorer"},
     {"from": "refactorer", "on": "refactored", "to": "proofreader"},

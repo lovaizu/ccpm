@@ -22,11 +22,11 @@ holding its run values, alone on its first line, then on the next line a sentenc
 to do: Lane reads a run's values only from a line that is JSON whole. The run values of each:
 
 - planner: `run`, `request`, `given`.
-- designer: `run`, `request`, `given`, and `returns`: `null` on its first start; after builder's
+- designer: `run`, `request`, `given`, and `returns`: `null` on its first start; after generator's
   `open`, `<run>/open`; after evaluator's `more`, `<run>/verification`; after proofreader's
   `content`, `<run>/proofreading`; or, where the request names a change to a run made before,
   `null` with the change in `request`.
-- builder, evaluator, refactorer and proofreader: one run for each line the role before printed
+- generator, evaluator, refactorer and proofreader: one run for each line the role before printed
   in its reply under `Runs of turn:<role>, each started with its line:`, all started at once,
   each run's prompt that line as it is, then the sentence.
 

@@ -151,7 +151,7 @@ flowchart LR
   P([you]) -- "your request, then each answer" --> M["the conversation"]
   M -- "each question, one at a time" --> P
   M -- "starts, then hands each answer to" --> U["up"]
-  U -- "starts each role" --> R["planner, designer, builder,<br>evaluator, refactorer, proofreader"]
+  U -- "starts each role" --> R["planner, designer, generator,<br>evaluator, refactorer, proofreader"]
   R -- "a question for you, or its end" --> U
   U -- "the question, or done" --> M
   R -- "write and read" --> F[("the run's folder, and the work")]
@@ -160,13 +160,13 @@ flowchart LR
 ```
 
 - Each role is an AI with one job: planner settles the kind and its template, designer the
-  design, builder makes the work, evaluator uses it as its user would, refactorer improves how it
+  design, generator makes the work, evaluator uses it as its user would, refactorer improves how it
   reads, and proofreader checks that.
 - Each role runs in the background, as a subagent of `up`, Turn's orchestrator. A role cannot ask
   you itself, so one with a question ends with it. The conversation puts it to you, and your answer
   goes back to the same role, which goes on where it was.
 - The next role comes from how the last one ended, as Turn's routes say: the design goes to
-  builder, the work to evaluator, a question not yet met back to designer, and every question met
+  generator, the work to evaluator, a question not yet met back to designer, and every question met
   on to refactorer. [Lane](../lane/README.md), a plugin whose checks are laid into Turn's own
   files, tells `up` each next role, and stops a role from ending before its files are in form.
 - Each role starts fresh, and carries on from the run's folder. So the evaluator reads each round

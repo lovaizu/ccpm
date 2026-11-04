@@ -7,7 +7,7 @@
   },
   {
    "id": "principles",
-   "what": "The principles, after a pointer to the principles of the architecture this one is built on, where there is one. Each has a short name the reader finds it by, the rule, one sentence that every part is built by, and the reason, which says what the rule is there for and what goes wrong for the user or the builder without it."
+   "what": "The principles, after a pointer to the principles of the architecture this one is built on, where there is one. Each has a short name the reader finds it by, the rule, one sentence that every part is built by, and the reason, which says what the rule is there for and what goes wrong for the user or the developer without it."
   },
   {
    "id": "user-stories",
@@ -54,82 +54,82 @@
   {
    "id": "Q1",
    "about": "user-stories",
-   "what": "For each step of the UX's scenarios, can the builder name the one way of using the product at its edge that carries it?"
+   "what": "For each step of the UX's scenarios, can the developer name the one way of using the product at its edge that carries it?"
   },
   {
    "id": "Q2",
    "about": "summary",
-   "what": "Having read the opening, can the builder say how the product delivers its UX, as one idea that every part carries out?"
+   "what": "Having read the opening, can the developer say how the product delivers its UX, as one idea that every part carries out?"
   },
   {
    "id": "Q3",
    "about": "user-stories, components, responsibilities",
-   "what": "For anything the user stories need decided, can the builder point to the one role that decides it?"
+   "what": "For anything the user stories need decided, can the developer point to the one role that decides it?"
   },
   {
    "id": "Q4",
    "about": "components",
-   "what": "Starting on a role, can the builder begin without choosing for themselves what kind of thing it is and what it is made with?"
+   "what": "Starting on a role, can the developer begin without choosing for themselves what kind of thing it is and what it is made with?"
   },
   {
    "id": "Q5",
    "about": "data-model",
-   "what": "When one builder makes the role that writes a data and another makes the role that reads it, do both join it to the other data the same way?"
+   "what": "When one developer makes the role that writes a data and another makes the role that reads it, do both join it to the other data the same way?"
   },
   {
    "id": "Q6",
    "about": "user-stories, components, data-model, sequences",
-   "what": "For each user story, can the builder follow it from the user's first request to its end, knowing at each step which role acts and what data it hands on?"
+   "what": "For each user story, can the developer follow it from the user's first request to its end, knowing at each step which role acts and what data it hands on?"
   },
   {
    "id": "Q7",
    "about": "user-stories, components, responsibilities, data-model, sequences",
-   "what": "Of any user story, role or data, can the builder tell which objective of the UX needs it?"
+   "what": "Of any user story, role or data, can the developer tell which objective of the UX needs it?"
   },
   {
    "id": "Q8",
    "about": "principles",
-   "what": "When two builders of different parts meet a case the document does not name, does a principle's reason lead both to the same decision?"
+   "what": "When two developers of different parts meet a case the document does not name, does a principle's reason lead both to the same decision?"
   },
   {
    "id": "Q9",
    "about": "components, data-model, deployment",
-   "what": "Setting the product up from nothing, can the builder put each role where it runs and each data where it is kept, and start the product, without asking anyone?"
+   "what": "Setting the product up from nothing, can the developer put each role where it runs and each data where it is kept, and start the product, without asking anyone?"
   },
   {
    "id": "Q10",
    "about": "components, data-model, directory",
-   "what": "Making or changing a role or a data, can the builder find the one place its files belong?"
+   "what": "Making or changing a role or a data, can the developer find the one place its files belong?"
   },
   {
    "id": "Q11",
    "about": "deployment, test-table",
-   "what": "Asked whether anything in the product goes untested, can the builder answer, for each deployment unit, which levels of test cover it, how heavily, and why a level is missing?"
+   "what": "Asked whether anything in the product goes untested, can the developer answer, for each deployment unit, which levels of test cover it, how heavily, and why a level is missing?"
   },
   {
    "id": "Q12",
    "about": "test-table, test-rules",
-   "what": "Writing a test at one level, can the builder do it without deciding for themselves what to run real, what to stand in with a double, what to cover and when it passes?"
+   "what": "Writing a test at one level, can the developer do it without deciding for themselves what to run real, what to stand in with a double, what to cover and when it passes?"
   },
   {
    "id": "Q13",
    "about": "test-table, test-rules",
-   "what": "When the unit and architecture tests pass, can the builder be sure the product does what this document says, leaving ux only to confirm the UX?"
+   "what": "When the unit and architecture tests pass, can the developer be sure the product does what this document says, leaving ux only to confirm the UX?"
   },
   {
    "id": "Q14",
    "about": "principles, components, responsibilities, sequences, deployment, directory, test-table, test-rules",
-   "what": "Following a principle while building a part, does the builder find every figure, list and table asking the same of that part, so they never have to choose which to follow?"
+   "what": "Following a principle while building a part, does the developer find every figure, list and table asking the same of that part, so they never have to choose which to follow?"
   },
   {
    "id": "Q15",
    "about": "choices, test-rules",
-   "what": "When the builder doubts a choice the document makes, can they tell what would be lost by taking the other way?"
+   "what": "When the developer doubts a choice the document makes, can they tell what would be lost by taking the other way?"
   },
   {
    "id": "Q16",
    "about": "the whole",
-   "what": "When the builder changes how a role works inside, while the UX and the principles stay, does every line of the document still hold?"
+   "what": "When the developer changes how a role works inside, while the UX and the principles stay, does every line of the document still hold?"
   }
  ],
  "practices": [
@@ -238,7 +238,7 @@
   },
   {
    "benefit": "Q4",
-   "thinking": "Each role's box says what kind of thing it is and what it is made with, so the builder starts on it with nothing left to choose.",
+   "thinking": "Each role's box says what kind of thing it is and what it is made with, so the developer starts on it with nothing left to choose.",
    "steps": [
     "Add a legend that explains every shape, tag and other symbol the figure uses.",
     "Read the figure without the text around it, and add to the legend or the boxes whatever the reader would still have to ask."
@@ -353,11 +353,11 @@
   },
   {
    "benefit": "Q8",
-   "thinking": "A principle is a rule that every part meeting the same decision follows the same way, written with what it is there for, so a builder can carry it to a case it does not name.",
+   "thinking": "A principle is a rule that every part meeting the same decision follows the same way, written with what it is there for, so a developer can carry it to a case it does not name.",
    "steps": [
     "Write as a rule also what must be absent, such as a dependency no role may have.",
     "Link the principles of the architecture this one is built on, and write only what this product adds or changes.",
-    "Take a case no rule names, and have two builders of different parts decide it from the reasons alone; where they differ, sharpen the reason."
+    "Take a case no rule names, and have two developers of different parts decide it from the reasons alone; where they differ, sharpen the reason."
    ],
    "grounds": [
     {
@@ -418,7 +418,7 @@
   },
   {
    "benefit": "Q9",
-   "thinking": "Each role and each data is placed in a deployment unit within the environment where it runs or is kept, so the builder knows what it can reach, and how the product starts.",
+   "thinking": "Each role and each data is placed in a deployment unit within the environment where it runs or is kept, so the developer knows what it can reach, and how the product starts.",
    "steps": [
     "Draw each thing outside the product that the roles depend on, with an arrow saying what is used.",
     "Leave out any infrastructure the parts do not need.",
@@ -453,7 +453,7 @@
   },
   {
    "benefit": "Q10",
-   "thinking": "The tree of the folders and files that hold the roles and the data, as they lie on disk, joins each role and each data to the one place where it is made, so the builder finds where to change it.",
+   "thinking": "The tree of the folders and files that hold the roles and the data, as they lie on disk, joins each role and each data to the one place where it is made, so the developer finds where to change it.",
    "steps": [
     "Keep the folders and files that hold a role or a data, and leave out what lies inside each.",
     "Check that each role and each data stands on one line; where it stands on none or on two, move the files or the line."
@@ -546,7 +546,7 @@
   },
   {
    "benefit": "Q12",
-   "thinking": "A test is drawn, not chosen, from the one thing its level checks against: the ways a part's contract divides, the paths the sequences draw, or an objective's scenario at the size of a real request; only that thing runs real and the rest is stood in, so two builders draw the same tests and a failure points to that thing alone.",
+   "thinking": "A test is drawn, not chosen, from the one thing its level checks against: the ways a part's contract divides, the paths the sequences draw, or an objective's scenario at the size of a real request; only that thing runs real and the rest is stood in, so two developers draw the same tests and a failure points to that thing alone.",
    "steps": [
     "Link the project's shared test rules, and write only where this product differs from them.",
     "At unit, divide each input and each result the contract names into classes that the part treats alike, the ones it refuses among them, and write one test for each class.",
@@ -805,7 +805,7 @@
   },
   {
    "benefit": "Q14",
-   "thinking": "Each principle is read against every part it rules, so a builder never meets a figure, a list or a table that breaks one.",
+   "thinking": "Each principle is read against every part it rules, so a developer never meets a figure, a list or a table that breaks one.",
    "steps": [
     "Read each part against each principle it rules; where a line breaks it, change the part, or the principle and its reason, until the two say the same."
    ],
@@ -832,9 +832,9 @@
   },
   {
    "benefit": "Q15",
-   "thinking": "A choice a builder would question, such as a technology, a tool or a unit's weight, carries why it beat the other way and what it costs, beside the figure or table that shows it, so the builder keeps it or changes it knowing what it was for.",
+   "thinking": "A choice a developer would question, such as a technology, a tool or a unit's weight, carries why it beat the other way and what it costs, beside the figure or table that shows it, so the developer keeps it or changes it knowing what it was for.",
    "steps": [
-    "Read each figure and the table as a builder new to the product, and check that each choice they would question has its reason and its cost beside it."
+    "Read each figure and the table as a developer new to the product, and check that each choice they would question has its reason and its cost beside it."
    ],
    "grounds": [
     {

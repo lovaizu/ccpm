@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "work.json",
-  "description": "Where the work lies, what its user runs, and its parts, each made by a run of builder of its own.",
+  "description": "Where the work lies, what its user runs, and its parts, each made by a run of generator of its own.",
   "type": "object",
   "required": ["paths", "commands", "parts"],
   "additionalProperties": false,

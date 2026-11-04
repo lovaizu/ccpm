@@ -1,4 +1,4 @@
-"""The run values of each run of a step, read from the run's folder: one run of builder for each
+"""The run values of each run of a step, read from the run's folder: one run of generator for each
 part of the work, only those a remake reaches where there is one; one of evaluator or proofreader
 for each group of questions; and one of refactorer. The role before the step hands them to up, as
 Lane lets up make no call but the start due once a step has ended."""
@@ -17,8 +17,8 @@ READERS = {
 }
 
 
-def builders(run: str, work: dict[str, Any], common: dict[str, Any]) -> list[dict[str, Any]]:
-    """A run of builder for each part, only the parts a remake reaches where there is one."""
+def generators(run: str, work: dict[str, Any], common: dict[str, Any]) -> list[dict[str, Any]]:
+    """A run of generator for each part, only the parts a remake reaches where there is one."""
     remake = os.path.join(run, "remake.json")
     again = (
         {d["decision"] for d in files.load(remake, "remake")["decisions"]}
@@ -66,7 +66,7 @@ def readers(role: str) -> Callable[[str, dict[str, Any], dict[str, Any]], list[d
 
 
 STEPS = {
-    "builder": builders,
+    "generator": generators,
     "evaluator": readers("evaluator"),
     "refactorer": refactorers,
     "proofreader": readers("proofreader"),
@@ -79,7 +79,7 @@ def runs(run: str, role: str) -> list[dict[str, Any]]:
     files.Unreadable, a role that has no step of runs, and a file it cannot read."""
     if role not in STEPS:
         raise files.Unreadable(
-            f"{role} is not builder, evaluator, refactorer or proofreader, whose runs this gives"
+            f"{role} is not generator, evaluator, refactorer or proofreader, whose runs this gives"
         )
     work = files.load(os.path.join(run, "work.json"), "work")
     common = {"run": run, "work": work["paths"], "commands": work["commands"]}

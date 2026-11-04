@@ -137,7 +137,7 @@
   },
   {
    "id": "D9",
-   "what": "How does the builder weigh a change that shortens the lead time?",
+   "what": "How does the developer weigh a change that shortens the lead time?",
    "contributes_to": [
     "ux/Q4"
    ],
@@ -225,7 +225,7 @@
    "builds_on": [
     "D12"
    ],
-   "decided": "As its exact text, a line told headed by the plugin's name, so that a builder reads what the developer AI and its subagents read, and a change to the text shows as a change to the UX.",
+   "decided": "As its exact text, a line told headed by the plugin's name, so that a developer reads what the developer AI and its subagents read, and a change to the text shows as a change to the UX.",
    "settled_by": "reasoning",
    "grounds": [
     "plugins/lane/hooks/lane/hook.py heads each line a check tells with the plugin's name."

@@ -128,20 +128,20 @@ An evaluator, an AI that did not make a work, uses it first, standing in for the
 what the work's user has. Each item of the checklist asks what the work's user should get from the
 work: the item's Good. For each item, the evaluator gives the item's Good lines, the lines of the
 work that give its Good; where it finds none, it gives the item's need, what the work's user would
-still need, in one sentence, never how to make it. It tells the builder directly. Before that, the
-builder checks its own work item by item, giving each item as its Good lines with no words, and on
+still need, in one sentence, never how to make it. It tells the generator directly. Before that, the
+generator checks its own work item by item, giving each item as its Good lines with no words, and on
 a remake only the items sent back. When the work's user is the caller and the caller reads the work
 in full to approve it, such as a plan, the caller reads it first.
 
 - **When**: a work whose user must get something from it that no machine can check.
-- **Why**: The builder finds the Good it meant; an evaluator that did not make the work finds only
+- **Why**: The generator finds the Good it meant; an evaluator that did not make the work finds only
   the Good its lines give, which is what the work's user gets. An evaluator shown someone else's
-  verdict finds what it was told, so two readings add a check only when each is made on its own.
-  An evaluator that hunts for defects finds one in every work, and the rounds go on without the
-  work getting better for its user. The builder holds the sources, so how to give each Good is the
-  builder's to decide; an evaluator that names a fault starts an argument about the fault. Lines can
-  be checked by a script, an evaluator or the caller, and finding them makes the builder look at
-  the place; a claim in words is read by no one and costs its writing at every round. Each item
+  verdict finds what it was told, so two readings add a check only when each is made on its own. An
+  evaluator that hunts for defects finds one in every work, and the rounds go on without the work
+  getting better for its user. The generator holds the sources, so how to give each Good is the
+  generator's to decide; an evaluator that names a fault starts an argument about the fault. Lines
+  can be checked by a script, an evaluator or the caller, and finding them makes the generator look
+  at the place; a claim in words is read by no one and costs its writing at every round. Each item
   says what is run and how far, so when one of them finds no Good, it is not because the two ran
   different things. A caller who reads the work in full anyway gains nothing from an evaluator in
   their place, and loses its time at every remake.
@@ -150,7 +150,7 @@ in full to approve it, such as a plan, the caller reads it first.
 
 A script, a hook or the project's own tools check what a machine can check. A project whose work is
 code has a formatter, a linter and a type checker set up, and the command that checks the work runs
-them. Builders and evaluators read only for what no machine can check.
+them. Generators and evaluators read only for what no machine can check.
 
 - **When**: a work part of whose checks a tool can make.
 - **Why**: A tool finds the same thing every time, at once. An AI reading for it finds only some,
@@ -288,11 +288,11 @@ opens it only on the user's own yes. A plugin called by an AI leaves this to its
   main conversation directly ([Where the orchestrator runs](#where-the-orchestrator-runs)).
 - The orchestrator holds the whole run and decides each move
   ([The orchestrator holds the whole and decides](#the-orchestrator-holds-the-whole-and-decides)).
-- The builder makes the work, and gives each item of the checklist its Good lines
+- The generator makes the work, and gives each item of the checklist its Good lines
   ([Read by those who did not make it](#read-by-those-who-did-not-make-it)).
 - The evaluator uses the work as the work's user would, item by item
   ([Read by those who did not make it](#read-by-those-who-did-not-make-it)).
-- The builder and the evaluator pass the work and its needs between them, with no one relaying
+- The generator and the evaluator pass the work and its needs between them, with no one relaying
   ([Messages](#messages)).
 - The router, from the role that ended and its result, gives the orchestrator the next move, and
   keeps the run's state in a file. A plugin has a router only where its run is a fixed loop that
@@ -310,7 +310,7 @@ sequenceDiagram
   participant C as caller<br/>#lt;person or AI#gt;
   participant M as main conversation<br/>#lt;AI#gt;
   participant O as orchestrator<br/>#lt;main conversation or subagent#gt;
-  participant G as builder<br/>#lt;subagent#gt;
+  participant G as generator<br/>#lt;subagent#gt;
   participant R as evaluator<br/>#lt;subagent#gt;
   C->>O: request
   O->>G: prompt

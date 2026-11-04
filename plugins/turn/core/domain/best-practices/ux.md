@@ -15,17 +15,17 @@ Whoever builds or changes the product, a person or an AI, makes it give its user
 
 ## Benefits
 
-- **Q1** (objective): Reading an objective, does the builder know which user the product is for and what that user gets from it?
-- **Q2** (okrs): Weighing a piece of work, can the builder tell which one objective it brings closer?
-- **Q3** (objective, key-result): After a change, can the builder tell from the key results whether users came closer to the objective?
-- **Q4** (key-result): Weighing a change that shortens the lead time, can the builder tell whether it keeps how well the user gets what the objective says?
-- **Q5** (objective, scenarios): For each objective, can the builder follow, step by step, how its user goes from when they first need it to having what the objective says?
-- **Q6** (participants, scenario): Building a step of a scenario, can the builder tell whether it waits for a person, is taken by an AI, or runs as a script?
-- **Q7** (the whole): Can the builder change how the product works inside, while its users see the same, and leave the document as it is?
+- **Q1** (objective): Reading an objective, does the developer know which user the product is for and what that user gets from it?
+- **Q2** (okrs): Weighing a piece of work, can the developer tell which one objective it brings closer?
+- **Q3** (objective, key-result): After a change, can the developer tell from the key results whether users came closer to the objective?
+- **Q4** (key-result): Weighing a change that shortens the lead time, can the developer tell whether it keeps how well the user gets what the objective says?
+- **Q5** (objective, scenarios): For each objective, can the developer follow, step by step, how its user goes from when they first need it to having what the objective says?
+- **Q6** (participants, scenario): Building a step of a scenario, can the developer tell whether it waits for a person, is taken by an AI, or runs as a script?
+- **Q7** (the whole): Can the developer change how the product works inside, while its users see the same, and leave the document as it is?
 
 ## Practices
 
-### Q1: Reading an objective, does the builder know which user the product is for and what that user gets from it?
+### Q1: Reading an objective, does the developer know which user the product is for and what that user gets from it?
 
 **Thinking**: An objective is the progress one user is trying to make, said from where they stand, not what the product does.
 
@@ -45,7 +45,7 @@ Whoever builds or changes the product, a person or an AI, makes it give its user
 - [Google's OKR Playbook](https://www.whatmatters.com/resources/google-okr-playbook), Google, whatmatters.com, no date: "Could the OKR get a 1.0 under reasonable circumstances — without providing direct enduser or economic benefit? If so, then reword the OKR to focus on the tangible benefit."
 - [Google's OKR Playbook](https://www.whatmatters.com/resources/google-okr-playbook), Google, whatmatters.com, no date: "If your Objective doesn’t fit on one line, it probably isn’t crisp enough."
 
-### Q2: Weighing a piece of work, can the builder tell which one objective it brings closer?
+### Q2: Weighing a piece of work, can the developer tell which one objective it brings closer?
 
 **Thinking**: Objectives are cut so that each piece of work brings one of them closer, no gain is written twice, and none is left out.
 
@@ -60,7 +60,7 @@ Whoever builds or changes the product, a person or an AI, makes it give its user
 - [Set goals with OKRs](https://rework.withgoogle.com/en/guides/set-goals-with-okrs), Google re:Work, rework.withgoogle.com, 2016: "Once the organization knows what it’s focused on and how it will measure success, it can become easier for individuals to connect their projects with the organizational objectives."
 - [Set goals with OKRs](https://rework.withgoogle.com/en/guides/set-goals-with-okrs), Google re:Work, rework.withgoogle.com, 2016: "Do the team priorities connect to any of the organizational key results?"
 
-### Q3: After a change, can the builder tell from the key results whether users came closer to the objective?
+### Q3: After a change, can the developer tell from the key results whether users came closer to the objective?
 
 **Thinking**: A key result counts what users do or feel as they come closer to the objective, so it cannot get better while they get nothing more.
 
@@ -81,7 +81,7 @@ Whoever builds or changes the product, a person or an AI, makes it give its user
 - ['Improving ratings': audit in the British University system](https://gwern.net/doc/statistics/decision/1997-strathern.pdf), Strathern, European Review 5(3), 1997, p. 308: "When a measure becomes a target, it ceases to be a good measure."
 - [Google's OKR Playbook](https://www.whatmatters.com/resources/google-okr-playbook), Google, whatmatters.com, no date: "Is it reasonably possible to score 1.0 on all the Key Results, but still not achieve the intent of the Objective? If so, add or rework the Key Results until their successful completion guarantees that the Objective is also successfully completed."
 
-### Q4: Weighing a change that shortens the lead time, can the builder tell whether it keeps how well the user gets what the objective says?
+### Q4: Weighing a change that shortens the lead time, can the developer tell whether it keeps how well the user gets what the objective says?
 
 **Thinking**: Quality first, then lead time: each stage from the user's need to the result, such as asking, deciding, making and redoing, is made shorter only where the result stays as good, since a result had fast but not well is no gain.
 
@@ -99,7 +99,7 @@ Whoever builds or changes the product, a person or an AI, makes it give its user
 - [Measuring the User Experience on a Large Scale: User-Centered Metrics for Web Applications](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/36299.pdf), Rodden, Hutchinson and Fu, CHI 2010: "Use the HEART framework to prompt articulation of goals (e.g. is it more important to attract new users, or to encourage existing users to become more engaged?)."
 - [Risk-Aware Product Decisions in A/B Tests with Multiple Metrics](https://engineering.atspotify.com/2024/03/risk-aware-product-decisions-in-a-b-tests-with-multiple-metrics), Schultzberg, Ankargren and Frånberg, engineering.atspotify.com, 2024: "By articulating the heuristics that govern your decision-making process, you can design and analyze the experiment in a way that respects how you make decisions in the end."
 
-### Q5: For each objective, can the builder follow, step by step, how its user goes from when they first need it to having what the objective says?
+### Q5: For each objective, can the developer follow, step by step, how its user goes from when they first need it to having what the objective says?
 
 **Thinking**: A scenario is one run of the main path to the objective, the one most users take, from the request that starts it to the gain that ends it.
 
@@ -120,9 +120,9 @@ Whoever builds or changes the product, a person or an AI, makes it give its user
 - [Sequence diagrams](https://mermaid.js.org/syntax/sequenceDiagram.html), Mermaid, mermaid.js.org: "It is possible to express loops in a sequence diagram."
 - [Writing Effective Use Cases](https://web.archive.org/web/20210301131704id_/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf), Cockburn, draft in preparation for Addison-Wesley, 1999: "Does it run from trigger to delivery of the success end condition?"
 
-### Q6: Building a step of a scenario, can the builder tell whether it waits for a person, is taken by an AI, or runs as a script?
+### Q6: Building a step of a scenario, can the developer tell whether it waits for a person, is taken by an AI, or runs as a script?
 
-**Thinking**: Each one that takes a step is named by its role and its kind, so the builder knows which step waits for a person and which runs without one.
+**Thinking**: Each one that takes a step is named by its role and its kind, so the developer knows which step waits for a person and which runs without one.
 
 **Steps**
 
@@ -136,7 +136,7 @@ Whoever builds or changes the product, a person or an AI, makes it give its user
 - [Sequence diagrams](https://mermaid.js.org/syntax/sequenceDiagram.html), Mermaid, mermaid.js.org: "The actor can have a convenient identifier and a descriptive label."
 - [Writing Effective Use Cases](https://web.archive.org/web/20210301131704id_/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf), Cockburn, draft in preparation for Addison-Wesley, 1999: "Is it clear which actor is operating the goal (who is "kicking the ball?)"
 
-### Q7: Can the builder change how the product works inside, while its users see the same, and leave the document as it is?
+### Q7: Can the developer change how the product works inside, while its users see the same, and leave the document as it is?
 
 **Thinking**: The product is one closed box: the document says only what users mean to do, see and receive, so any design that gives them the same leaves it true.
 

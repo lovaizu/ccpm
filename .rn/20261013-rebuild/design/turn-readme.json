@@ -243,7 +243,7 @@
     "D6",
     "D7"
    ],
-   "decided": "how-it-works.svg: you; planner, designer, builder and evaluator; the Standard, the Practice, the design tree and the deliverable. The planner draws both from best practice and shows the Standard for approval; the designer asks only your points, decides by the Practice and writes the design tree; the builder builds from it; the evaluator, walled off from the Practice and the design tree, uses the Standard's questions and the deliverable as its user would, and sends back what the user would get or hands you the deliverable. The design tree is added to the old figure, and the wall extended to it.",
+   "decided": "how-it-works.svg: you; planner, designer, generator and evaluator; the Standard, the Practice, the design tree and the deliverable. The planner draws both from best practice and shows the Standard for approval; the designer asks only your points, decides by the Practice and writes the design tree; the generator builds from it; the evaluator, walled off from the Practice and the design tree, uses the Standard's questions and the deliverable as its user would, and sends back what the user would get or hands you the deliverable. The design tree is added to the old figure, and the wall extended to it.",
    "settled_by": "research",
    "grounds": [
     ".rn/20261013-rebuild/turn-rebuild.md:74-81, Roles table",
@@ -260,7 +260,7 @@
    "builds_on": [
     "D14"
    ],
-   "decided": "Only what the figure cannot show: the roles follow Anthropic's harness of planner, generator and evaluator; the designer asks one point at a time with a recommendation; a more says what the user gets, the designer decides that decision again and the builder remakes from it, so nothing is patched; then the builder betters how the deliverable says it, and the evaluator checks that too.",
+   "decided": "Only what the figure cannot show: the roles follow Anthropic's harness of planner, generator and evaluator; the designer asks one point at a time with a recommendation; a more says what the user gets, the designer decides that decision again and the generator remakes from it, so nothing is patched; then the generator betters how the deliverable says it, and the evaluator checks that too.",
    "settled_by": "research",
    "grounds": [
     ".rn/20261013-rebuild/turn-rebuild.md:156-163, the content phase",

@@ -1,4 +1,4 @@
-"""What builder and evaluator run each of a work's commands by, as `python3
+"""What generator and evaluator run each of a work's commands by, as `python3
 ${CLAUDE_PLUGIN_ROOT}/scripts/throwaway.py [--file <path under ~>]... -- <command>`, so a command
 used as the work's user uses it never reaches the person's own files and needs no shell set-up of
 its own: it makes a throwaway home and a throwaway copy of the folder it is run in, makes each file

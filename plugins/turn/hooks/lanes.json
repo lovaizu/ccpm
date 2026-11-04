@@ -101,7 +101,7 @@
             {
               "lane": "run_only",
               "takes": [
-                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/starts.py {run} builder"
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/starts.py {run} generator"
               ]
             }
           ]
@@ -109,7 +109,7 @@
       ]
     },
     {
-      "name": "builder",
+      "name": "generator",
       "steps": [
         {
           "step": 1,
@@ -372,14 +372,14 @@
     "orchestrator": "up",
     "step": 2,
     "fan_out": [
-      "builder",
+      "generator",
       "evaluator",
       "proofreader"
     ],
     "precedence": {
-      "builder": [
+      "generator": [
         "open",
-        "built"
+        "generated"
       ],
       "evaluator": [
         "more",
@@ -408,19 +408,19 @@
       {
         "from": "designer",
         "on": "designed",
-        "to": "builder"
+        "to": "generator"
       },
       {
         "from": "designer",
         "on": "asks"
       },
       {
-        "from": "builder",
-        "on": "built",
+        "from": "generator",
+        "on": "generated",
         "to": "evaluator"
       },
       {
-        "from": "builder",
+        "from": "generator",
         "on": "open",
         "to": "designer"
       },

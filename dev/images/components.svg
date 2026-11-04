@@ -67,7 +67,7 @@
   <text class="kind" x="810" y="243">&lt;script, Python&gt;</text>
 
   <rect class="box" x="260" y="390" width="220" height="76" rx="30"/>
-  <text class="name" x="370" y="423">builder</text>
+  <text class="name" x="370" y="423">generator</text>
   <text class="kind" x="370" y="443">&lt;subagent&gt;</text>
 
   <rect class="box" x="600" y="390" width="220" height="76" rx="30"/>
@@ -107,13 +107,13 @@
   <text class="label" x="610" y="320">prompt,</text>
   <text class="label" x="610" y="337">reply</text>
 
-  <!-- builder and main conversation -->
+  <!-- generator and main conversation -->
   <path class="line" d="M290,390 L160,266" marker-end="url(#arrow)"/>
   <path class="line" d="M120,266 L260,410" marker-end="url(#arrow)"/>
   <text class="label" text-anchor="end" x="180" y="350">question,</text>
   <text class="label" text-anchor="end" x="180" y="367">answer</text>
 
-  <!-- builder and evaluator -->
+  <!-- generator and evaluator -->
   <path class="line" d="M480,414 H600" marker-end="url(#arrow)"/>
   <text class="label" text-anchor="middle" x="540" y="406">work</text>
   <path class="line" d="M600,446 H480" marker-end="url(#arrow)"/>

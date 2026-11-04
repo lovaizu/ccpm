@@ -1,4 +1,4 @@
-"""What builder, evaluator, refactorer and proofreader run on their answers file, as `python3
+"""What generator, evaluator, refactorer and proofreader run on their answers file, as `python3
 ${CLAUDE_PLUGIN_ROOT}/scripts/answers.py check <run> <answers>`: 0 where every question their run
 was given is answered once and each line lies in the work, 1 with each fault, and 2 with why it
 could not check. It hands the check to answering.py in core/domain/."""

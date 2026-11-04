@@ -8,7 +8,7 @@ be made at once, and made as one where they stand apart.
 
 A run counts where Turn handed back both modules and the design split the work into two parts or
 more. It passes where, beside what trial_readme.py's runs pass on: the person would change nothing
-in the modules, and two runs of builder that `up` started for two parts went at the same time.
+in the modules, and two runs of generator that `up` started for two parts went at the same time.
 Run as `python3 dev/turn/tests/ux/trial_module.py [runs] [first]`."""
 
 from __future__ import annotations
@@ -66,8 +66,8 @@ def run(number: int) -> bool:
         return turning.verdict(untried, [])
     runs = turning.starts(session)
     wrong = turning.asked_wrong(turns) + turning.routes_wrong(runs)
-    if not turning.overlapped(runs, "builder"):
-        wrong.append("no two runs of builder went at the same time")
+    if not turning.overlapped(runs, "generator"):
+        wrong.append("no two runs of generator went at the same time")
     wrong += turning.work_wrong(repo, work["paths"], place, INTENT)
     return turning.verdict([], wrong)
 

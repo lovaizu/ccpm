@@ -70,23 +70,23 @@ From the main point and the users and goals, can the reader tell whom the produc
 goal each of them wants to achieve?
 
 Why: everything else in the UX is the experience of these users reaching these goals. Without them,
-the user cannot tell what they agree to, and the builder cannot tell whom the product is for or when
-it has done its work. A goal said as what the product does, rather than what the user achieves, is
-met while the user is no better off.
+the user cannot tell what they agree to, and the developer cannot tell whom the product is for or
+when it has done its work. A goal said as what the product does, rather than what the user achieves,
+is met while the user is no better off.
 
 ### Q-2: How close a version comes
 
-From the key results, can the builder tell how close a version brings the users to their goals?
+From the key results, can the developer tell how close a version brings the users to their goals?
 
 Why: a measure taken because it is easy to count, such as work done or things made, moves while the
 user comes no closer. A key result says what counts as one, which way is better and why a better
-value shows the user closer, or each builder counts it their own way.
+value shows the user closer, or each developer counts it their own way.
 
 ### Q-3: Which result comes first
 
-From the key results, can the builder tell which to favor when two of them move apart?
+From the key results, can the developer tell which to favor when two of them move apart?
 
-Why: without an order, the builder trades the result that matters more for one easier to move. A
+Why: without an order, the developer trades the result that matters more for one easier to move. A
 version comes closer from the highest key result, and a lower one is never brought closer by moving
 a higher one away.
 
@@ -95,7 +95,7 @@ a higher one away.
 From the scenes, can the reader tell what the user does and gets back, in order, from asking to
 achieving the goal?
 
-Why: the builder builds what the scenes show the user doing and getting, and the user agrees to
+Why: the developer builds what the scenes show the user doing and getting, and the user agrees to
 that. A step no scene shows is built by guess, or not at all. The whole way keeps the scenes from
 leaving a gap between them.
 
@@ -103,7 +103,7 @@ leaving a gap between them.
 
 From the benefits, can the reader tell what the user gains by achieving the goal with this product?
 
-Why: the benefits are why the user chooses the product and what its README promises. A builder who
+Why: the benefits are why the user chooses the product and what its README promises. A developer who
 does not know them can build every scene and still give the user nothing worth choosing.
 
 ### Q-6: Only what the user deals with

@@ -137,7 +137,7 @@ I read each PDF through a text extractor I wrote for this, so I compared the wor
 
   > Make sure the metrics are unambiguous. If you say “1 million users,” is that all-time users or seven-day actives?
 
-- What it says: the builder reads each key result one way only.
+- What it says: the developer reads each key result one way only.
 
 ### A measure made a target stops measuring
 
@@ -201,7 +201,7 @@ I read each PDF through a text extractor I wrote for this, so I compared the wor
 
   > Well done OKRs are a motivational management tool that helps make it clear to teams what’s important, what to optimize, and what tradeoffs to make during their day-to-day work.
 
-- What it says: the OKRs tell the builder which key result to keep when two pull apart.
+- What it says: the OKRs tell the developer which key result to keep when two pull apart.
 
 ### Metrics can move in conflicting directions
 
@@ -231,7 +231,7 @@ I read each PDF through a text extractor I wrote for this, so I compared the wor
 
   > This OKR anticipates that reducing pit stop time can lead to cutting corners or at the very least unintentional mistakes as the team speeds up their work.
 
-- What it says: for each pair, the builder imagines one change that makes one better and the other worse.
+- What it says: for each pair, the developer imagines one change that makes one better and the other worse.
 
 ### Ask which goal is more important
 
@@ -241,7 +241,7 @@ I read each PDF through a text extractor I wrote for this, so I compared the wor
 
   > Use the HEART framework to prompt articulation of goals (e.g. is it more important to attract new users, or to encourage existing users to become more engaged?).
 
-- What it says: the builder asks which of the two matters more to what the objective says.
+- What it says: the developer asks which of the two matters more to what the objective says.
 
 ### The rule is written before it is used
 

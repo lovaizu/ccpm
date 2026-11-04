@@ -3,7 +3,7 @@
 Turn makes a work in two phases, each a loop of roles that Lane's routes carry from one role to the
 next. In the content phase, designer settles a design tree: pin's file of the decisions the work
 needs, each joined to the question of the kind's template it serves, under the work's purpose.
-builder makes the work decision by decision. evaluator answers each question as the work's user,
+generator makes the work decision by decision. evaluator answers each question as the work's user,
 and each shortfall goes back to its decision. In the refactoring phase, refactorer improves how
 the work says what it says, and proofreader checks it. Every role runs in the background and
 carries on from the run's files, and parts that stand apart run at once. What this gives the
@@ -70,7 +70,7 @@ the design, not what its user gets (KR1.1).
 A question that evaluator finds not yet met goes back to designer, which traces it to the decisions
 that serve the question. Where a decision cannot make its question good, designer decides it
 again, with the decisions that build on it; where the decisions hold and the work strays from
-them, it keeps them. Either way builder makes the work again from those decisions. A point the
+them, it keeps them. Either way generator makes the work again from those decisions. A point the
 person raises enters the same way.
 
 A fix put onto the work beside its design is a part no decision holds, so the next remake loses it
@@ -82,12 +82,12 @@ The content phase makes what the work says and does, by the kind's own questions
 phase then improves how it says it, by `refactor-doc` for a document or `refactor-code` for code,
 and changes nothing it says. A point that would change what it says goes back to designer.
 
-builder and evaluator then look only at the content while it is made, and no sentence is improved
+generator and evaluator then look only at the content while it is made, and no sentence is improved
 before its content is settled, only to be improved again once the content changes (KR1.2).
 
 ### Each role starts fresh, from the run's files
 
-designer, builder, evaluator, refactorer and proofreader start fresh at each move, and carry on
+designer, generator, evaluator, refactorer and proofreader start fresh at each move, and carry on
 from the run's files. A role resumed with the person's answer goes on in its own context.
 
 evaluator then reads each round with fresh eyes, and a run stopped anywhere goes on from its
@@ -96,7 +96,7 @@ folder in a new session (KR1.1, KR1.2).
 ### Parts that stand apart run at once
 
 Decisions that build on one another are made in order, in one run. Branches of the design tree
-that do not are made side by side: `up` starts one run of builder for each, all at once, each
+that do not are made side by side: `up` starts one run of generator for each, all at once, each
 writing only files no other run writes. The questions a work is checked by are answered the same
 way, one run of evaluator or proofreader for each group of questions. The next route is taken
 once every run of the step has ended. A part is not split where splitting would make it worse,
@@ -141,7 +141,7 @@ flowchart LR
   U["up<br>#lt;AI · Claude Code subagent#gt;"]
   PL["planner<br>#lt;AI · subagent, with pin:down#gt;"]
   D["designer<br>#lt;AI · subagent, with pin:down#gt;"]
-  B["builder<br>#lt;AI · subagent#gt;"]
+  B["generator<br>#lt;AI · subagent#gt;"]
   E["evaluator<br>#lt;AI · subagent#gt;"]
   RF["refactorer<br>#lt;AI · subagent#gt;"]
   PR["proofreader<br>#lt;AI · subagent#gt;"]
@@ -184,13 +184,13 @@ calls Turn.
 - designer alone changes the design and alone asks the person about the work, so the work is
   always made from one design (KR1.1, KR3.1). It also settles the work's paths and the commands its
   user runs.
-- builder alone makes the work in the content phase, and refactorer in the refactoring phase.
-  builder decides the small points of making, such as a phrase or a function's name, from the
+- generator alone makes the work in the content phase, and refactorer in the refactoring phase.
+  generator decides the small points of making, such as a phrase or a function's name, from the
   design and the template's ways of meeting the questions. A point the design leaves open that
   bears on the work's quality it returns to designer unanswered.
 - evaluator alone judges the content, and proofreader how the work says it. Neither changes the
   work (KR1.1, KR2.1, KR3.1).
-- builder, evaluator, refactorer and proofreader each use and answer, in the same way: read the
+- generator, evaluator, refactorer and proofreader each use and answer, in the same way: read the
   work whole, run what runs as its user would, and write for each question either the lines that
   meet it, or what the user gets once it is good, never how to make it. This way lies once, in
   `core/domain/use-and-answer.md`, and each of the four parts names it.
@@ -216,9 +216,9 @@ writes is also held to its form by an `in_form` lane, the form a JSON Schema in
 | `up` | nothing | nothing | having started each role Lane named |
 | planner | `{run}`, `.turn/best-practices/` | pin's check, `practices.py ready` | `practices.py ready` passed after the run's last change |
 | designer | `{run}` | pin's check, `tree.py check`, `tree.py parts` | `tree.py check` passed after the run's last change |
-| builder | `{work}`, `{answers}`, `{open}` | `{commands}`, `answers.py check` | the work read whole; `answers.py check` passed after the work's last change |
+| generator | `{work}`, `{answers}`, `{open}` | `{commands}`, `answers.py check` | the work read whole; `answers.py check` passed after the work's last change |
 | evaluator | `{answers}` | `{commands}`, `answers.py check` | the work read whole; `answers.py check` passed |
-| refactorer | `{work}`, `{answers}` | `{commands}`, `answers.py check` | as builder |
+| refactorer | `{work}`, `{answers}` | `{commands}`, `answers.py check` | as generator |
 | proofreader | `{answers}` | `{commands}`, `answers.py check` | as evaluator |
 
 evaluator and proofreader also read only the work, `{standard}`, the template's goal, parts and
@@ -233,7 +233,7 @@ read the design would judge whether the work follows it, not what the work's use
   ([subagents](https://code.claude.com/docs/en/sub-agents)). The skill's body tells the main
   conversation how to pass each question on and resume `up` with the answer. A fork's body would
   reach only the fork, and the main conversation would be left to guess what to do with its end.
-- **Each of a work's commands runs inside `scripts/throwaway.py`.** builder and evaluator run each
+- **Each of a work's commands runs inside `scripts/throwaway.py`.** generator and evaluator run each
   command as written, as the work's user would, so a command that reached the person's own files,
   such as their Downloads, would change what cannot be undone. `throwaway.py` makes a throwaway
   home, holding each file `--file` names, and a throwaway copy of the repository, runs the command
@@ -247,8 +247,8 @@ read the design would judge whether the work follows it, not what the work's use
   free to end with the question. Resumed with the answer, the role gives a later result, which Lane
   takes over `asks`, and the routes go on from it.
 - **`up` fans out a step, and Lane joins it.** Where `work.json` holds several parts, `up` starts
-  one run of builder for each part at once, with the part's run values, and one run of evaluator or
-  proofreader for each group of questions in `run.json`. Lane holds each run to its own values by
+  one run of generator for each part at once, with the part's run values, and one run of evaluator
+  or proofreader for each group of questions in `run.json`. Lane holds each run to its own values by
   the `agentId` its start gives back, and takes the next route once all of them have ended. A role
   that started runs of its own would need a layer more than Claude Code gives under a caller
   ([subagents](https://code.claude.com/docs/en/sub-agents)).
@@ -256,11 +256,11 @@ read the design would judge whether the work follows it, not what the work's use
   call but the start due, so `up` cannot read `work.json` or `run.json` then. The role that ends
   the step before runs `starts.py`, which prints the values of each run of the next step from the
   run's folder, and puts them in its reply; `up` starts a run with each line.
-- **Results of runs at once taken by their precedence.** Turn's routes name builder, evaluator
+- **Results of runs at once taken by their precedence.** Turn's routes name generator, evaluator
   and proofreader in `fan_out`, and declare `precedence`, as
   [Lane's routes](../../plugins/lane/docs/routes.md#runs-at-once) take it: `content`, `more`,
-  `good` for proofreader, `more`, `good` for evaluator, and `open`, `built` for builder, first to
-  last. A point of what the work says goes to designer before one of how it says it, and a work
+  `good` for proofreader, `more`, `good` for evaluator, and `open`, `generated` for generator, first
+  to last. A point of what the work says goes to designer before one of how it says it, and a work
   sent back goes back before it goes on.
 - **Commands hold run values.** Each command a role runs names the run's files by its run values,
   as `python3 ${dependency:pin}/scripts/check.py {run}/design-tree.json`, and Lane puts each value
@@ -326,12 +326,12 @@ one-to-many join is nested, and a many-to-many join lists IDs.
   which `tree.py check` verifies. planner's `kind-tree.json` has the same form, its root the kind's
   purpose.
 - **Work**: `work.json`: `paths`, the files the work is; `commands`, what its user runs, so
-  builder and evaluator run the same; and `parts`, each `id`, `decisions` and `paths`. designer
+  generator and evaluator run the same; and `parts`, each `id`, `decisions` and `paths`. designer
   writes the parts from `tree.py parts`, which groups the decisions that build on none in another
   group, and joins two groups whose files meet. A work that does not split has one part.
-- **Remake**: `remake.json`: `decisions`, each the ID of a decision builder makes again, with the
-  `question` and `good_when` that sent it back. Without it, builder makes every decision.
-- **Answers**: from builder, evaluator, refactorer and proofreader, in one form:
+- **Remake**: `remake.json`: `decisions`, each the ID of a decision generator makes again, with the
+  `question` and `good_when` that sent it back. Without it, generator makes every decision.
+- **Answers**: from generator, evaluator, refactorer and proofreader, in one form:
   `good`, each a `question` with the `lines` that meet it, as `<path>:<from>-<to>`; `more`, each a
   `question` with `good_when`, what the user gets once it is good; and, from proofreader only,
   `content`, in the form of `more`, a point that would change what the work says. `answers.py
@@ -339,10 +339,10 @@ one-to-many join is nested, and a many-to-many join lists IDs.
   in the work. Each run of a step writes a file of its own, as `self-check/<part>.json`,
   `verification/<group>.json` and `proofreading/<group>.json`; refactorer, one run, writes
   `refactor-check.json`. The role that reads them after reads the whole folder.
-- **Open point**: `open/<part>.json` from a run of builder: `open`, each a `question` with `what`
+- **Open point**: `open/<part>.json` from a run of generator: `open`, each a `question` with `what`
   the design leaves open.
 - **Run values**: the JSON object `up` starts or resumes a role with: `run`, the run's folder;
-  `work` and `commands`, from `work.json`, once designer has written it; for a run of builder,
+  `work` and `commands`, from `work.json`, once designer has written it; for a run of generator,
   `decisions` and `work` narrowed to its part, and `answers` and `open`, its own files; for a run
   of evaluator or proofreader, `questions`, its group, and `answers`, its own file; for designer,
   `given`, the Call's, and `returns`, the folders whose points it takes back, as
@@ -357,10 +357,10 @@ one-to-many join is nested, and a many-to-many join lists IDs.
 | `up`, the orchestrator | | planner |
 | planner | `planned` | designer |
 | planner | `asks`, a question for the person | no next role |
-| designer | `designed` | builder |
+| designer | `designed` | generator |
 | designer | `asks`, a question for the person | no next role |
-| builder | `built` | evaluator |
-| builder | `open`, a point the design leaves open | designer |
+| generator | `generated` | evaluator |
+| generator | `open`, a point the design leaves open | designer |
 | evaluator | `more` | designer |
 | evaluator | `good` | refactorer |
 | refactorer | `refactored` | proofreader |
@@ -370,7 +370,7 @@ one-to-many join is nested, and a many-to-many join lists IDs.
 
 `up` gives designer, as `returns`, the folder whose points it takes back: `open/` after `open`,
 `verification/` after `more`, and `proofreading/` after `content`. After a Remake, `up` starts a
-run of builder only for each part that holds a decision the Remake names.
+run of generator only for each part that holds a decision the Remake names.
 
 ### Sequences
 
@@ -433,17 +433,17 @@ sequenceDiagram
   D->>S: pin's check and tree.py check
   D->>G: gives designed (Result)
   D-->>U: ends
-  G-->>U: the next role, builder (Route)
+  G-->>U: the next role, generator (Route)
 ```
 
-builder and evaluator, each fanned out, with each send-back, O1 of the UX from the design to
+generator and evaluator, each fanned out, with each send-back, O1 of the UX from the design to
 `good`:
 
 ```mermaid
 sequenceDiagram
   participant U as up
   participant G as Lane's guard
-  participant B as builder, one run for each part
+  participant B as generator, one run for each part
   participant E as evaluator, one run for each group
   participant D as designer
   participant S as scripts
@@ -457,16 +457,16 @@ sequenceDiagram
     else every point is decided
       B->>F: writes its part's files, and its Answers in self-check/
       B->>S: answers.py check
-      B->>G: gives built (Result)
+      B->>G: gives generated (Result)
     end
   end
-  alt a run gave open, which goes before built
+  alt a run gave open, which goes before generated
     G-->>U: the next role, designer, with open/ as returns (Route)
     U->>D: starts (Run values)
     D->>F: decides the Decisions again, or keeps them, and writes Remake
     D->>G: gives designed, or asks where the point is the person's (Result)
-    Note over U,D: Back to builder, one run for each part the Remake reaches.
-  else every run gave built
+    Note over U,D: Back to generator, one run for each part the Remake reaches.
+  else every run gave generated
     G-->>U: the next role, evaluator (Route)
     par one run for each group of questions, all at once
       U->>E: starts, with the work, Standard and its group alone (Run values)
@@ -480,7 +480,7 @@ sequenceDiagram
       U->>D: starts (Run values)
       D->>F: decides the Decisions again, or keeps them, and writes Remake
       D->>G: gives designed (Result)
-      Note over U,D: Back to builder, one run for each part the Remake reaches.
+      Note over U,D: Back to generator, one run for each part the Remake reaches.
     else every run gave good
       G-->>U: the next role, refactorer (Route)
     end
@@ -511,7 +511,7 @@ sequenceDiagram
   end
   alt a run gave content, which goes before more and good
     G-->>U: the next role, designer, with proofreading/ as returns (Route)
-    Note over U,D: As a send-back of evaluator, back to builder.
+    Note over U,D: As a send-back of evaluator, back to generator.
   else a run gave more, which goes before good
     G-->>U: the next role, refactorer (Route)
     Note over U,RF: Back to the start of this sequence.
@@ -566,7 +566,7 @@ sequenceDiagram
   participant U as up
   participant PL as planner
   participant D as designer
-  participant W as builder, evaluator, refactorer, proofreader
+  participant W as generator, evaluator, refactorer, proofreader
   participant F as run's folder
   N->>U: starts in the background (Call, with Given)
   U->>PL: starts (Run values, Given)
@@ -584,7 +584,7 @@ sequenceDiagram
   end
   D-->>U: gives designed, and ends
   loop until proofreader gives good, as the second and third sequences draw
-    U->>W: starts builder, evaluator, refactorer or proofreader, as the routes say (Run values)
+    U->>W: starts generator, evaluator, refactorer or proofreader, as the routes say (Run values)
     W-->>U: gives its result, and ends
     opt the result sends the work back to designer: open, more or content
       U->>D: starts, with the folder it takes back (Run values)
@@ -677,7 +677,7 @@ plugins/turn/
 ├── skills/up/SKILL.md                  /turn:up, for the main conversation <Markdown>
 ├── agents/<role>.md                    the entry of up and of each role, naming its part <Markdown>
 ├── core/roles/<role>.md                each role's flow, up's among them <Markdown>
-├── core/domain/use-and-answer.md       how builder, evaluator, refactorer and proofreader use and answer <Markdown>
+├── core/domain/use-and-answer.md       how generator, evaluator, refactorer and proofreader use and answer <Markdown>
 ├── core/domain/forms/<file>.json       the form of each file of a run <JSON Schema>
 ├── core/domain/best-practices/<kind>.json, <kind>.md   Template, and the Markdown made from it <JSON, Markdown>
 ├── core/domain/templates.py, designs.py, answering.py, files.py   the checks of Template, Design tree and Answers, and each file held to its form <modules · Python 3.9>
@@ -689,7 +689,7 @@ plugins/turn/
 └── README.md, CHANGELOG.md             for users <Markdown>
 
 dev/turn/
-├── ux.md, architecture.md, README.md   for builders <Markdown>
+├── ux.md, architecture.md, README.md   for developers <Markdown>
 ├── cosmic-ray.toml                     the mutation testing <TOML>
 └── tests/
     ├── unit/core/domain/               unit and property tests of the checks <Python 3>
@@ -721,7 +721,7 @@ laid in Turn. pin's `check.py` has none: pin tests it, and Turn's architecture t
   give, as [Routes](#routes) names them, and, for planner and designer, the points it settles
   itself and those it asks, as
   [The person is asked only what is theirs](#the-person-is-asked-only-what-is-theirs-one-point-at-a-time)
-  says. Each class is tried where the role must give it and where it must not, such as builder's
+  says. Each class is tried where the role must give it and where it must not, such as generator's
   `open` on a design that leaves a point open and on one that does not. Scripts stand in for the
   person, answering from a set of answers, and for the roles before and after it, giving set
   files. A trial passes where the role writes its files in form and gives the result the files call
@@ -737,7 +737,7 @@ laid in Turn. pin's `check.py` has none: pin tests it, and Turn's architecture t
   | Sequence | Paths |
   |---|---|
   | O1 up to the design | the main flow, the kind named by the request; the kind asked and answered; a ready Run and a Design tree left by a stopped run; a point of the design put to the person |
-  | builder and evaluator | every run `built`, then every run `good`; a run `open` beside a run `built`, sent back to designer with `open/`, then builder only for the parts the Remake reaches; a run `more` beside a run `good`, sent back with `verification/`; designer asking the person on a send-back |
+  | generator and evaluator | every run `generated`, then every run `good`; a run `open` beside a run `generated`, sent back to designer with `open/`, then generator only for the parts the Remake reaches; a run `more` beside a run `good`, sent back with `verification/`; designer asking the person on a send-back |
   | the refactoring phase | every run `good`, the work done; a run `more`, back to refactorer; a run `content` beside a run `more`, sent back to designer with `proofreading/` |
   | O2 | each point of the kind approved; a point changed, and what builds on it opened again; a Template whose fault `practices.py ready` names, mended |
   | O3 | the kind and the goal as the caller gave them, a question for the person put through the caller; no question left for the person; a send-back whose point is the person's, its question put through the caller; a send-back designer settles itself |
@@ -762,7 +762,7 @@ laid in Turn. pin's `check.py` has none: pin tests it, and Turn's architecture t
   and O3 say. For KR1.1, KR2.1 and KR3.1 the trial measures the share of works the stand-in would
   change and of questions that are not theirs, and for KR1.2, KR2.2 and KR3.2 the time from the
   request to the work handed back, with the tokens. Lower and shorter are better. On the module of
-  code it also measures how long the two runs of builder that `up` starts for its two parts
+  code it also measures how long the two runs of generator that `up` starts for its two parts
   overlap, which only real runs show.
 - Turn's scripts weigh ●●● in unit and architecture tests, as a check that passes wrongly sends a
   gap into the work unseen. The roles weigh ●●● in their unit trials and in the architecture tests,
