@@ -48,6 +48,7 @@ PRACTICE: dict[str, Any] = {
 # Where a run's folder lies, and the repository's best practice of `note`.
 RUN = os.path.join(".turn", "20261103-tidy-note")
 NOTE = os.path.join(".turn", "best-practices", "note.json")
+VERIFICATION = os.path.join(RUN, "verification")
 # A Call of the kind `note`, as the planner writes it.
 CALL: dict[str, Any] = {
     "request": "a note on tidy",
@@ -123,3 +124,65 @@ def work(**given: Any) -> dict[str, Any]:
 def line(data: dict[str, Any]) -> str:
     """The data as one JSON line, as Turn's scripts print run values."""
     return json.dumps(data, ensure_ascii=False)
+
+
+# A best practice of how a note reads, of one question about the whole.
+READING = {
+    "goal": "The reader takes in what it says.",
+    "benefits": [{"id": "Q1", "about": "the whole", "what": "Is each fact said once?"}],
+}
+# The design of the note: D1 serves note/Q1 and note/Q3, D2 serves note/Q2, D3 serves D2.
+TREE = {
+    "goal": {"what": "A newcomer sorts their folder.", "grounds": ["the person"]},
+    "questions": [{"id": f"note/Q{n}", "what": f"Q{n}?"} for n in (1, 2, 3)],
+    "decisions": [
+        {"id": "D1", "contributes_to": ["note/Q1", "note/Q3"], "builds_on": []},
+        {"id": "D2", "contributes_to": ["note/Q2"], "builds_on": []},
+        {"id": "D3", "contributes_to": ["D2"], "builds_on": ["D2"]},
+    ],
+}
+NOTES = "# tidy\n\ntidy sorts a folder.\n\n## Steps\n\nRun tidy --dry-run.\n"
+
+
+def met(*questions, line="NOTES.md:1"):
+    """Answers that meet each question, by the line given."""
+    return {"met": [{"question": q, "lines": [line]} for q in questions], "not_met": []}
+
+
+def short(*questions):
+    """Answers that meet none of the questions."""
+    return {"met": [], "not_met": [{"question": q, "lacks": f"{q} lacks"} for q in questions]}
+
+
+class RoundsTest(RepositoryTest):
+    """A run of one work of `note`, in its rounds, its design, its Standards and the note laid."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.lay_run([work()])
+        self.write_json(os.path.join(RUN, "design-tree.json"), TREE)
+        self.write_json(os.path.join(RUN, "standard.json"), practices.standard(PRACTICE))
+        self.write_json(os.path.join(RUN, "reading-standard.json"), READING)
+        self.write("NOTES.md", NOTES)
+
+    def answers(self, name, data):
+        """Writes the Answers of the name into the round's folder."""
+        self.write_json(os.path.join(VERIFICATION, name), data)
+
+    def round(self):
+        """The Round on disk."""
+        return self.read_json(os.path.join(VERIFICATION, "round.json"))
+
+    def content_round(self, *groups):
+        """A content round settled, each group's Answers given in order, the generator's meeting
+        every question."""
+        phases.settle(RUN)
+        self.answers("generator.json", met("note/Q1", "note/Q2", "note/Q3"))
+        for n, data in enumerate(groups, 1):
+            self.answers(f"G{n}.json", data)
+
+    def finished(self):
+        """A content round and then a reading round, each meeting every question."""
+        self.content_round(met("note/Q1"), met("note/Q2"), met("note/Q3"))
+        phases.settle(RUN)
+        self.answers("G1.json", met("refactor-doc/Q1"))

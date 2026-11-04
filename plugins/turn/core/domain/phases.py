@@ -256,6 +256,7 @@ def evaluator_values(run: str, work: dict[str, Any], settled: dict[str, Any]) ->
         json.dumps(
             {
                 "run": run,
+                "phase": settled["phase"],
                 "work": work["paths"],
                 "standard": os.path.join(work["folder"], name),
                 "questions": g["questions"],

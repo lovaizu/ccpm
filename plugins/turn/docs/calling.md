@@ -20,7 +20,7 @@ request, so Turn does not ask them again:
  "given": {"kind": "readme",
            "goal": {"what": "<who uses the work, and for what>", "grounds": ["the person, 2026-11-03"]},
            "decisions": [{"id": "D1", "what": "<what is decided>", "contributes_to": [],
-                          "builds_on": [], "decided": "<what was decided>", "settled_by": "user",
+                          "builds_on": [], "decided": "<what was decided>", "settled_by": "maker",
                           "grounds": ["the person, 2026-11-03"]}],
            "work": ["README.md"],
            "run": ".turn/20261103-readme"}}
@@ -31,9 +31,10 @@ Each key of `given` is optional.
 - `kind`: the kind of work, such as `readme`, or one Turn has no best practice for yet, such as
   `man-page`. Turn takes it without asking.
 - `goal`: this work's purpose, in the form of Pin's design tree. Turn takes it without asking.
-- `decisions`: each other point settled, in the form of Pin's design tree. Turn joins each to the
-  questions it serves, and builds the rest of the design on it. Leave `contributes_to` empty where
-  you do not know the questions of the kind's best practice: Turn joins it.
+- `decisions`: each other point settled, in the form of Pin's design tree, each with its `decided`
+  and with `settled_by` `maker`, so Pin keeps it as given and never asks it again. Turn hands each
+  to Pin word for word, and Pin builds the rest of the design on it. Leave `contributes_to` empty
+  where you do not know the questions of the kind's best practice: Pin's pinner joins it.
 - `work`: the paths the work is to lie at.
 - `run`: the folder Turn keeps the run in, under `.turn/` or where your plugin keeps its own.
 
@@ -61,5 +62,5 @@ each check, as `verification/`. So your plugin can show the person what was deci
 ## Depth
 
 Claude Code lets subagents start subagents down to three layers below the main conversation.
-Turn's roles stand one layer below `turn:up`, and their researchers one more. So start `turn:up`
-from the main conversation, or from a subagent one layer below it at most.
+Turn's roles, and Pin's pinner among them, stand one layer below `turn:up`, and start none of their
+own. So start `turn:up` from the main conversation, or from a subagent one layer below it at most.

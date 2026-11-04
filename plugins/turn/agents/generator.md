@@ -1,8 +1,8 @@
 ---
 name: generator
-description: Turn's role that makes one part of a work from its decisions, and answers each question they serve. Started by Turn's up alone.
-tools: Read, Write, Edit, Bash, Glob, Grep
+description: Turn's role that makes the work in one round, from its design and against its kind's best practice, or rewords how it reads, and answers each question of the round as the work's user. Started by Turn's up alone.
+tools: Read, Grep, Glob, Write, Edit, Bash
 background: true
 ---
 
-Turn's folder is `${CLAUDE_PLUGIN_ROOT}`. Your steps are in `${CLAUDE_PLUGIN_ROOT}/core/roles/generator.md`. Read it whole first, unless it was given to you as you start, and take its steps on what you are given.
+Turn's folder is `${CLAUDE_PLUGIN_ROOT}`. Your steps are in `${CLAUDE_PLUGIN_ROOT}/core/roles/generator.md`, given to you as you start. Take them on what you are given.

@@ -4,60 +4,23 @@
       "name": "planner",
       "steps": [
         {
-          "step": 3,
-          "lanes": [
-            {
-              "lane": "run_only",
-              "takes": [
-                "python3 ${dependency:pin}/scripts/check.py {run}/kind-tree.json"
-              ]
-            }
-          ]
-        },
-        {
-          "step": 4,
-          "lanes": [
-            {
-              "lane": "write_only",
-              "takes": [
-                "{run}",
-                ".turn/best-practices"
-              ]
-            }
-          ]
-        },
-        {
-          "step": 5,
-          "lanes": [
-            {
-              "lane": "run_only",
-              "takes": [
-                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/practices.py ready {run}"
-              ]
-            },
-            {
-              "lane": "test_after",
-              "takes": [
-                "{run}",
-                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/practices.py ready {run}"
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "designer",
-      "steps": [
-        {
           "step": 1,
           "lanes": [
             {
               "lane": "run_only",
               "takes": [
-                "python3 ${dependency:pin}/scripts/check.py {run}/design-tree.json"
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/plan.py check {run}",
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/plan.py start {run}",
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/plan.py hand {run}",
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/plan.py ready {run}",
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/plan.py next {run}"
               ]
-            },
+            }
+          ]
+        },
+        {
+          "step": 2,
+          "lanes": [
             {
               "lane": "write_only",
               "takes": [
@@ -67,41 +30,13 @@
           ]
         },
         {
-          "step": 3,
+          "step": 7,
           "lanes": [
-            {
-              "lane": "run_only",
-              "takes": [
-                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py parts {run}"
-              ]
-            }
-          ]
-        },
-        {
-          "step": 4,
-          "lanes": [
-            {
-              "lane": "run_only",
-              "takes": [
-                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py check {run}"
-              ]
-            },
             {
               "lane": "test_after",
               "takes": [
                 "{run}",
-                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py check {run}"
-              ]
-            }
-          ]
-        },
-        {
-          "step": 5,
-          "lanes": [
-            {
-              "lane": "run_only",
-              "takes": [
-                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/starts.py {run} generator"
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/plan.py check {run}"
               ]
             }
           ]
@@ -115,11 +50,11 @@
           "step": 1,
           "lanes": [
             {
-              "lane": "write_only",
+              "lane": "run_only",
               "takes": [
-                "{work}",
-                "{answers}",
-                "{open}"
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/rounds.py round {run}",
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/rounds.py check {run} {answers}",
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/throwaway.py {run}"
               ]
             }
           ]
@@ -128,10 +63,10 @@
           "step": 2,
           "lanes": [
             {
-              "lane": "in_form",
+              "lane": "write_only",
               "takes": [
-                "{open}",
-                "${CLAUDE_PLUGIN_ROOT}/core/domain/forms/open.json"
+                "{work}",
+                "{answers}"
               ]
             }
           ]
@@ -139,13 +74,6 @@
         {
           "step": 3,
           "lanes": [
-            {
-              "lane": "run_only",
-              "takes": [
-                "{commands}",
-                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/answers.py check {run} {answers}"
-              ]
-            },
             {
               "lane": "in_form",
               "takes": [
@@ -163,18 +91,14 @@
               "lane": "test_after",
               "takes": [
                 "{work}",
-                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/answers.py check {run} {answers}"
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/rounds.py check {run} {answers}"
               ]
-            }
-          ]
-        },
-        {
-          "step": 4,
-          "lanes": [
+            },
             {
-              "lane": "run_only",
+              "lane": "test_after",
               "takes": [
-                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/starts.py {run} evaluator"
+                "{answers}",
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/rounds.py check {run} {answers}"
               ]
             }
           ]
@@ -197,16 +121,27 @@
               ]
             },
             {
-              "lane": "write_only",
+              "lane": "read_whole",
               "takes": [
-                "{answers}"
+                "{work}"
               ]
             },
             {
               "lane": "run_only",
               "takes": [
-                "{commands}",
-                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/answers.py check {run} {answers}"
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/throwaway.py {run}",
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/rounds.py check {run} {answers}"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 2,
+          "lanes": [
+            {
+              "lane": "write_only",
+              "takes": [
+                "{answers}"
               ]
             },
             {
@@ -217,150 +152,10 @@
               ]
             },
             {
-              "lane": "read_whole",
-              "takes": [
-                "{work}"
-              ]
-            },
-            {
               "lane": "test_after",
               "takes": [
                 "{answers}",
-                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/answers.py check {run} {answers}"
-              ]
-            }
-          ]
-        },
-        {
-          "step": 2,
-          "lanes": [
-            {
-              "lane": "run_only",
-              "takes": [
-                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/starts.py {run} refactorer"
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "refactorer",
-      "steps": [
-        {
-          "step": 1,
-          "lanes": [
-            {
-              "lane": "write_only",
-              "takes": [
-                "{work}",
-                "{answers}"
-              ]
-            }
-          ]
-        },
-        {
-          "step": 2,
-          "lanes": [
-            {
-              "lane": "run_only",
-              "takes": [
-                "{commands}",
-                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/answers.py check {run} {answers}"
-              ]
-            },
-            {
-              "lane": "in_form",
-              "takes": [
-                "{answers}",
-                "${CLAUDE_PLUGIN_ROOT}/core/domain/forms/answers.json"
-              ]
-            },
-            {
-              "lane": "read_whole",
-              "takes": [
-                "{work}"
-              ]
-            },
-            {
-              "lane": "test_after",
-              "takes": [
-                "{work}",
-                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/answers.py check {run} {answers}"
-              ]
-            }
-          ]
-        },
-        {
-          "step": 3,
-          "lanes": [
-            {
-              "lane": "run_only",
-              "takes": [
-                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/starts.py {run} proofreader"
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "proofreader",
-      "steps": [
-        {
-          "step": 1,
-          "lanes": [
-            {
-              "lane": "read_only",
-              "takes": [
-                "{work}",
-                "{standard}",
-                "{answers}",
-                "${CLAUDE_PLUGIN_ROOT}/core/domain/use-and-answer.md"
-              ]
-            },
-            {
-              "lane": "write_only",
-              "takes": [
-                "{answers}"
-              ]
-            },
-            {
-              "lane": "run_only",
-              "takes": [
-                "{commands}",
-                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/answers.py check {run} {answers}"
-              ]
-            },
-            {
-              "lane": "in_form",
-              "takes": [
-                "{answers}",
-                "${CLAUDE_PLUGIN_ROOT}/core/domain/forms/answers.json"
-              ]
-            },
-            {
-              "lane": "read_whole",
-              "takes": [
-                "{work}"
-              ]
-            },
-            {
-              "lane": "test_after",
-              "takes": [
-                "{answers}",
-                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/answers.py check {run} {answers}"
-              ]
-            }
-          ]
-        },
-        {
-          "step": 2,
-          "lanes": [
-            {
-              "lane": "run_only",
-              "takes": [
-                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/starts.py {run} refactorer"
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/rounds.py check {run} {answers}"
               ]
             }
           ]
@@ -372,22 +167,13 @@
     "orchestrator": "up",
     "step": 2,
     "fan_out": [
-      "generator",
-      "evaluator",
-      "proofreader"
+      "evaluator"
     ],
     "precedence": {
-      "generator": [
-        "open",
-        "generated"
-      ],
       "evaluator": [
         "more",
-        "good"
-      ],
-      "proofreader": [
-        "content",
-        "more",
+        "reword",
+        "met",
         "good"
       ]
     },
@@ -398,60 +184,60 @@
       },
       {
         "from": "planner",
-        "on": "planned",
-        "to": "designer"
+        "on": "asks"
       },
       {
         "from": "planner",
-        "on": "asks"
+        "on": "handed",
+        "to": "pin:pinner"
       },
       {
-        "from": "designer",
-        "on": "designed",
+        "from": "planner",
+        "on": "ready",
         "to": "generator"
       },
       {
-        "from": "designer",
+        "from": "planner",
+        "on": "done"
+      },
+      {
+        "from": "pin:pinner",
         "on": "asks"
       },
       {
+        "from": "pin:pinner",
+        "on": "done",
+        "to": "planner"
+      },
+      {
         "from": "generator",
-        "on": "generated",
+        "on": "made",
         "to": "evaluator"
       },
       {
         "from": "generator",
         "on": "open",
-        "to": "designer"
+        "to": "planner"
       },
       {
         "from": "evaluator",
         "on": "more",
-        "to": "designer"
+        "to": "planner"
+      },
+      {
+        "from": "evaluator",
+        "on": "met",
+        "to": "generator"
+      },
+      {
+        "from": "evaluator",
+        "on": "reword",
+        "to": "generator"
       },
       {
         "from": "evaluator",
         "on": "good",
-        "to": "refactorer"
-      },
-      {
-        "from": "refactorer",
-        "on": "refactored",
-        "to": "proofreader"
-      },
-      {
-        "from": "proofreader",
-        "on": "more",
-        "to": "refactorer"
-      },
-      {
-        "from": "proofreader",
-        "on": "content",
-        "to": "designer"
-      },
-      {
-        "from": "proofreader",
-        "on": "good"
+        "to": "planner"
       }
     ]
   }

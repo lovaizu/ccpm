@@ -11,9 +11,7 @@ import unittest
 from unittest import mock
 
 import helpers
-from helpers import phases, rounds, runs
-
-from unit.core.domain.test_phases import READING, TREE, met, short
+from helpers import met, phases, rounds, runs, short
 
 RUN = helpers.RUN
 VERIFICATION = os.path.join(RUN, "verification")
@@ -46,21 +44,7 @@ class Usage(unittest.TestCase):
         self.assertEqual(end.exception.code, 2)
 
 
-class RoundsTest(helpers.RepositoryTest):
-    def setUp(self) -> None:
-        super().setUp()
-        self.lay_run([helpers.work()])
-        self.write_json(os.path.join(RUN, "design-tree.json"), TREE)
-        standard = helpers.practices.standard(helpers.PRACTICE)
-        self.write_json(os.path.join(RUN, "standard.json"), standard)
-        self.write_json(os.path.join(RUN, "reading-standard.json"), READING)
-        self.write("NOTES.md", "# tidy\n")
-
-    def answers(self, name, data):
-        self.write_json(os.path.join(VERIFICATION, name), data)
-
-
-class Round(RoundsTest):
+class Round(helpers.RoundsTest):
     def test_a_content_round_names_its_best_practice_design_answers_and_questions(self):
         self.assertEqual(
             ran("round", RUN),
@@ -131,7 +115,7 @@ class Round(RoundsTest):
         )
 
 
-class Check(RoundsTest):
+class Check(helpers.RoundsTest):
     def setUp(self) -> None:
         super().setUp()
         phases.settle(RUN)

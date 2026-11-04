@@ -107,7 +107,10 @@ def where(run: str, data: dict) -> str:
     work = runs.current(data)
     change = f"To hand Pin a change, run plan.py hand {run}."
     if work["at"] == runs.DONE:
-        return f"The run is done.\n{change}"
+        return (
+            "The run is done. Give `done`, and end with this Message as it is:\n"
+            f"{runs.done(work)}\n{change}"
+        )
     if work["at"] == runs.PIN:
         return (
             f"The design of {work['kind']} is with Pin, at"

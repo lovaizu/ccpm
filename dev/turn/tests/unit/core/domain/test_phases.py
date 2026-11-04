@@ -9,43 +9,17 @@ import os
 import unittest
 
 import helpers
-from helpers import files, phases, runs
+from helpers import TREE, files, met, phases, runs, short
 
 RUN = helpers.RUN
 VERIFICATION = os.path.join(RUN, "verification")
 GENERATOR = os.path.join(VERIFICATION, "generator.json")
-# A best practice of how a note reads, of one question about the whole.
-READING = {
-    "goal": "The reader takes in what it says.",
-    "benefits": [{"id": "Q1", "about": "the whole", "what": "Is each fact said once?"}],
-}
-# The design of the note: D1 serves note/Q1 and note/Q3, D2 serves note/Q2, D3 serves D2.
-TREE = {
-    "goal": {"what": "A newcomer sorts their folder.", "grounds": ["the person"]},
-    "questions": [{"id": f"note/Q{n}", "what": f"Q{n}?"} for n in (1, 2, 3)],
-    "decisions": [
-        {"id": "D1", "contributes_to": ["note/Q1", "note/Q3"], "builds_on": []},
-        {"id": "D2", "contributes_to": ["note/Q2"], "builds_on": []},
-        {"id": "D3", "contributes_to": ["D2"], "builds_on": ["D2"]},
-    ],
-}
-NOTE = "# tidy\n\ntidy sorts a folder.\n\n## Steps\n\nRun tidy --dry-run.\n"
 # The groups of the note's content questions, as practices.groups gives them.
 CONTENT_GROUPS = [
     {"id": "G1", "questions": ["note/Q1"]},
     {"id": "G2", "questions": ["note/Q2"]},
     {"id": "G3", "questions": ["note/Q3"]},
 ]
-
-
-def met(*questions, line="NOTES.md:1"):
-    """Answers that meet each question, by the line given."""
-    return {"met": [{"question": q, "lines": [line]} for q in questions], "not_met": []}
-
-
-def short(*questions):
-    """Answers that meet none of the questions."""
-    return {"met": [], "not_met": [{"question": q, "lacks": f"{q} lacks"} for q in questions]}
 
 
 def settled_round():
@@ -96,37 +70,7 @@ class Serving(unittest.TestCase):
         self.assertEqual(phases.serving(TREE, "note/Q9"), [])
 
 
-class RoundTest(helpers.RepositoryTest):
-    """A run of one work of `note`, in its rounds, its design, its Standards and the note laid."""
-
-    def setUp(self) -> None:
-        super().setUp()
-        self.lay_run([helpers.work()])
-        self.write_json(os.path.join(RUN, "design-tree.json"), TREE)
-        self.write_json(
-            os.path.join(RUN, "standard.json"), helpers.practices.standard(helpers.PRACTICE)
-        )
-        self.write_json(os.path.join(RUN, "reading-standard.json"), READING)
-        self.write("NOTES.md", NOTE)
-
-    def answers(self, name, data):
-        """Writes the Answers of the name into the round's folder."""
-        self.write_json(os.path.join(VERIFICATION, name), data)
-
-    def round(self):
-        """The Round on disk."""
-        return self.read_json(os.path.join(VERIFICATION, "round.json"))
-
-    def content_round(self, *groups):
-        """A content round settled, each group's Answers given in order, the generator's meeting
-        every question."""
-        phases.settle(RUN)
-        self.answers("generator.json", met("note/Q1", "note/Q2", "note/Q3"))
-        for n, data in enumerate(groups, 1):
-            self.answers(f"G{n}.json", data)
-
-
-class Settle(RoundTest):
+class Settle(helpers.RoundsTest):
     def test_the_first_round_is_of_the_content_and_groups_its_questions(self):
         settled = settled_round()
         self.assertEqual(
@@ -220,7 +164,7 @@ class Settle(RoundTest):
             phases.settle(RUN)
 
 
-class Shortfalls(RoundTest):
+class Shortfalls(helpers.RoundsTest):
     def test_each_question_not_met_and_each_point_open_in_the_runs_order(self):
         phases.settle(RUN)
         self.answers(
@@ -246,7 +190,7 @@ class Shortfalls(RoundTest):
         self.assertEqual(phases.shortfalls(RUN, self.round()), [])
 
 
-class Where(RoundTest):
+class Where(helpers.RoundsTest):
     def test_none_before_the_first_round(self):
         self.assertEqual(phases.where(RUN), "none")
 
@@ -269,7 +213,7 @@ class Where(RoundTest):
         self.assertEqual(phases.where(RUN), "finished")
 
 
-class Check(RoundTest):
+class Check(helpers.RoundsTest):
     def setUp(self) -> None:
         super().setUp()
         phases.settle(RUN)
@@ -288,6 +232,7 @@ class Check(RoundTest):
                 helpers.line(
                     {
                         "run": RUN,
+                        "phase": "content",
                         "work": ["NOTES.md"],
                         "standard": os.path.join(RUN, "standard.json"),
                         "questions": g["questions"],

@@ -15,9 +15,8 @@ import urllib.request
 from unittest import mock
 
 import helpers
-from helpers import phases, plan, practices, runs
+from helpers import met, phases, plan, practices, runs, short
 
-from unit.core.domain.test_phases import READING, TREE, met, short
 from unit.core.domain.test_practices import DATA, response
 
 RUN = helpers.RUN
@@ -102,30 +101,7 @@ class Ready(helpers.RepositoryTest):
         self.assertIn("has no paths", err)
 
 
-class RoundsTest(helpers.RepositoryTest):
-    """A run of one work of `note` in its rounds, its design and Standards laid."""
-
-    def setUp(self) -> None:
-        super().setUp()
-        self.lay_run([helpers.work()])
-        self.write_json(DESIGN, TREE)
-        self.write_json(os.path.join(RUN, "standard.json"), practices.standard(helpers.PRACTICE))
-        self.write_json(os.path.join(RUN, "reading-standard.json"), READING)
-        self.write("NOTES.md", "# tidy\n")
-
-    def answers(self, name, data):
-        self.write_json(os.path.join(RUN, "verification", name), data)
-
-    def finished(self):
-        """A content round and then a reading round, each meeting every question."""
-        phases.settle(RUN)
-        for n in (1, 2, 3):
-            self.answers(f"G{n}.json", met(f"note/Q{n}"))
-        phases.settle(RUN)
-        self.answers("G1.json", met("refactor-doc/Q1"))
-
-
-class Hand(RoundsTest):
+class Hand(helpers.RoundsTest):
     def test_the_shortfalls_go_to_pin_each_with_the_decisions_that_serve_its_question(self):
         phases.settle(RUN)
         self.answers("generator.json", {**met(), "open": [{"question": "note/Q3", "what": "w"}]})
@@ -156,7 +132,7 @@ class Hand(RoundsTest):
         self.assertIn(f"plan.py: {RUN} cannot hand: there is no file {DESIGN}", err)
 
 
-class Next(RoundsTest):
+class Next(helpers.RoundsTest):
     def test_the_last_work_finished_ends_the_run_with_the_message(self):
         self.finished()
         self.assertEqual(
@@ -206,7 +182,7 @@ class Next(RoundsTest):
         )
 
 
-class Check(RoundsTest):
+class Check(helpers.RoundsTest):
     def checked(self):
         return ran("check", RUN)
 
@@ -274,7 +250,11 @@ class Check(RoundsTest):
         self.lay_run([helpers.work(at="done")])
         self.assertEqual(
             self.checked(),
-            self.holds(f"The run is done.\nTo hand Pin a change, run plan.py hand {RUN}."),
+            self.holds(
+                "The run is done. Give `done`, and end with this Message as it is:\n"
+                + runs.done(helpers.work(at="done"))
+                + f"\nTo hand Pin a change, run plan.py hand {RUN}."
+            ),
         )
 
     def test_a_work_in_its_rounds_with_no_paths_does_not_hold(self):

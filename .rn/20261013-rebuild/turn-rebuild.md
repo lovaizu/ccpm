@@ -44,7 +44,8 @@ practices together produce it.
 
 ## What turn takes and gives
 
-turn needs nothing given: planner asks the kind of work, and designer asks this work's purpose.
+turn needs nothing given: planner asks the kind of work where the request does not name it, and
+Pin asks this work's purpose.
 turn keeps a template for each kind, and gives a work of that kind. A caller such as rn may give
 what it has already settled, so the user is not asked it again.
 
@@ -73,133 +74,71 @@ and one decision serves many questions, one question rests on many decisions.
 
 ## Roles
 
+The roles and the course, as [Turn's architecture](../../dev/turn/architecture.md) settled them on
+2026-11-04, which supersedes the roles agreed on 2026-10-31.
+
 | Role | Does |
 |---|---|
-| planner | designs the intended state of a kind of work from its best practice |
-| designer | designs the work from the intended state |
-| generator | makes the work from the design |
-| evaluator | uses the work as its user would and verifies it against the Checklist |
+| up | carries each point to whoever started Turn, and each answer back, as given; starts each role Lane names |
+| planner | settles the kind of work, hands Pin the design file, reads the confirmed design out, hands each shortfall back to Pin, and hands the work back |
+| Pin's pinner | settles the design with the person, one point at a time, as Pin is built; Turn is Pin's maker AI |
+| generator | makes the work from the design against the kind's best practice, then makes how it reads better |
+| evaluator | uses the work as its user would and answers the questions, never given the design |
 
-### planner
-
-1. Decide the kind of work from the request, and with it whether the work is a document or code,
-   and confirm them with the user.
-2. Where a template for the kind exists, pass it to designer and end.
-3. Research the kind's best practice.
-4. Put the kind's purpose, who uses such a work and for what, at the root of a design tree, and
-   split it down. Every decision comes from the best practice.
-5. Write the leaf conditions as the Checklist's questions, by the meta-checklist's way of writing,
-   and the shape as the Format.
-6. Show the kind's purpose and the conditions to the user for approval; on a change, go back to 4.
-7. Keep the Format and the Checklist as the kind's template, and pass them to designer.
-
-The purpose of this one work is not planner's: designer asks it.
-
-### designer
-
-1. Take the Format and the Checklist.
-2. Make a design tree: this work's purpose at the root, the Checklist's questions under it, and
-   under each question the decisions that make it yes, the same decisions merged.
-3. A script verifies that every question is served by a decision and every decision reaches the
-   root.
-4. Decide in the order the decisions build on one another, the goal first: ask the user this work's
-   purpose. Research each fact. Decide what the purpose and the best practice settle. Ask the user
-   what only they decide, one at a time, with a recommendation.
-5. Show the user the design, the decisions in short lines, for approval; on a change, go back to
-   that decision.
-6. Pass the design to generator.
-7. Take back what generator or evaluator returns, and trace it to the decisions that serve its
-   question. Where a decision cannot make its questions good, decide it again as 4 says, with the
-   decisions that build on it, asking the user and waiting for the answer where the fact is
-   theirs; where the decisions hold and the work strays from them, keep them. Either way, pass the
-   design to generator again.
-
-designer alone changes the design and alone asks the user about it, so the work is always made from
-one design.
-
-### generator
-
-1. Take the design, the Format and the Checklist.
-2. Take the decisions in the order they build on one another, one at a time: make each into the
-   work along the Format, use and answer the questions it contributes to, as below, and mend each
-   more before the next. Decide the small points of making, such as a phrase or a function's name,
-   from the design and the best practice.
-3. Where a point the design leaves open bears on the work's quality, return it to designer
-   unanswered.
-4. With every decision made in, use and answer every question into `self-check.json`, mending each
-   more, until every question is good. No one reads it: writing an answer for each question makes
-   the generator look at every one.
-5. Pass the work to evaluator.
-
-### evaluator
-
-1. Take the work and the Checklist alone. The design is not given: the user never sees it, and an
-   evaluator who has it judges whether the work follows the design, not what its user gets.
-2. Use and answer, as below, into `verification.json`.
-3. Where every question is good, the work goes on. Otherwise return the answers to designer.
+- The planner asks the person one point only, the kind, and only before there is a design. Pin
+  alone settles the design: the planner hands it each point a calling AI settled word for word,
+  each settled by `maker`, and Pin puts every other point to the person or settles it from the goal
+  and the facts.
+- A kind new to Turn gets its best practice first, as a work of its own made by the same course,
+  with `meta` as its best practice. The person approves its purpose and its questions as they
+  approve any design.
+- No role starts a subagent. The pinner and the generator find facts themselves.
 
 ### Use and answer
 
 Both generator and evaluator do this, in the same way.
 
-1. Read the work whole, and run what runs as its user would.
-2. Using it as its user would, write for each question of the Checklist good, with the lines that
-   meet its aim, or more, with what the user gets once it is good, never how to make it.
+1. Read the work whole, and run what runs as its user would, in a throwaway copy.
+2. Using it as its user would, write for each question met, with the lines that meet it, or not
+   met, with what the user still lacks, never how to make it.
 
 ## Flow
 
-The aim is to shorten the lead time without lowering quality. So the work is split where its parts
-stand apart and run at once: decisions that build on one another are made in order, and branches of
-the design tree that do not are made, checked and researched side by side, each role's run writing
-only files no other run writes, which Lane holds by each run's values. A part is not split where
-splitting would lower its quality. Every role runs in the background, so the conversation stays free
-to put a role's question to the user at once, and Lane joins each run to its values by the ID the
-start gives back.
+A round is one making by the generator and its check by the evaluator, which starts fresh in each.
+A phase is the set of questions a round asks, and a value of the run that `rounds.py` settles from
+the run's folder.
 
-designer, generator and evaluator start fresh at each move and carry on from the run's files, so the
-evaluator reads each round with fresh eyes while the files hold the design. In the content phase
-they go always in that order: each return goes to designer, which passes the design to generator,
-whose work goes to evaluator.
-
-1. The content phase: what the work says and does. The kind's own questions alone, made up
-   decision by decision from the design tree, until evaluator finds every one good. A more is
-   mended at the decision that serves its question, never added onto the work. Every change, a
-   more or a point the user raises, enters by the design tree: designer traces it to the
-   decision, decides that again naming the questions it answers, and generator remakes the work
-   from it and from the decisions built on it. So a fix is no kind of its own: rn's fix.md
-   conditions are met there, and how to trace a more to its decision is part of Turn's own
-   Practice, the same for every kind. rn's fix.md goes when rn is rebuilt, as rn's code reads it.
-2. The refactoring phase: how the work says and shows it, its structure bettered while what it
-   says stays (Fowler, Refactoring). The questions of `refactor-doc` for a document, or of
-   `refactor-code` for code, as planner decided with the kind, which hold over the whole work. generator finishes the work by them and evaluator
-   verifies it by them, with no design tree, each started fresh. This phase's generator and
-   evaluator are roles of their own, `refactorer` and `proofreader`, as a route names the next
-   role from the role that ended and its result alone: evaluator's `good` leads to refactorer,
-   proofreader's to the end. A `more` goes back to refactorer. Only how the work says a thing
-   changes; a point that would change what it says goes back to designer and the content phase.
+1. The content phase: what the work says and does, by the kind's own questions, until every run of
+   the evaluator finds every one met. A question not met goes back through Pin to the decisions
+   that serve it, and the generator makes the work again from the design. A point the design leaves
+   open goes back to Pin the same way. No role puts a fix onto the work beside the design.
+2. The reading phase: how the work says it, by `refactor-doc` for a document or `refactor-code` for
+   code, its structure bettered while what it says stays (Fowler, Refactoring). A question of how it
+   reads that only a change to what it says can meet goes back to Pin, and the content phase
+   follows again.
 
 Lane's routes, each from a role on its result to the next:
 
 | From | On | To |
 |---|---|---|
 | up, the orchestrator | | planner |
-| planner | `planned` | designer |
-| designer | `designed` | generator |
-| generator | `generated` | evaluator |
-| generator | `open`, a point the design leaves open | designer |
-| evaluator | `more` | designer |
-| evaluator | `good` | refactorer |
-| refactorer | `refactored` | proofreader |
-| proofreader | `more` | refactorer |
-| proofreader | `content`, a point that would change what the work says | designer |
-| proofreader | `good` | the end |
+| planner | `asks`, the kind for the person | none, while the point waits |
+| planner | `handed`, a Request for Pin | Pin's pinner |
+| planner | `ready`, the design read out | generator |
+| planner | `done`, the work handed back | the end |
+| pinner | `asks`, a point or the design for the person | none, while the point waits |
+| pinner | `done`, the design confirmed | planner |
+| generator | `made` | evaluator, a run for each group of questions |
+| generator | `open`, a point the design leaves open, or a change to what the work says | planner |
+| evaluator | `more`, a question of what the work says not met | planner |
+| evaluator | `met`, every question of the content phase met | generator |
+| evaluator | `reword`, a question of how the work reads not met | generator |
+| evaluator | `good`, every question of the reading phase met | planner |
 
-A role that needs the user's answer, such as designer asking the work's purpose, ends with its
-question and is resumed by SendMessage with the answer, keeping its context. Each role gives its
-result by its plugin's result script, which checks the form of the role's files.
-
-Keeping the two phases apart keeps generator and evaluator on the content while it is made. A phase
-is named so as not to meet rn's stages, inside one of which turn runs.
+Where the evaluator's runs give different results, the first in the order `more`, `reword`, `met`,
+`good` is taken. A role that needs the person's answer ends with its point, and is resumed by
+SendMessage with the answer, keeping its context. Each role gives its result by its plugin's result
+script.
 
 ## Files
 
@@ -219,12 +158,13 @@ Keys follow the steering's rules: a name says its intent, a one-to-many join is 
   a method.
 - `design-tree.json`, one for each work: `kind`; `goal`, this work's purpose, with its `grounds`;
   and `decisions`, each `id`, `what`, `contributes_to`, `builds_on`, `decided`, `settled_by`
-  (`research`, `reasoning` or `user`) and `grounds`. A script verifies every question is served,
-  every decision reaches the root, and the order of deciding follows `builds_on`.
-- `verification.json` from evaluator, and `self-check.json` from generator, in the same form:
-  `kind`; `good`, each question whose aim the work meets, with the `lines` that meet it; and `more`,
-  each question it is close to, with `good_when`, what the user gets once it is good, never how to
-  make it. A script verifies every question stands in one of the two, and each line is there.
+  (`research`, `reasoning`, `user` or `maker`) and `grounds`, in Pin's form. Pin's check verifies
+  every question is served, every decision reaches the root, and the order of deciding follows
+  `builds_on`.
+- The Answers of the generator and of each run of the evaluator, in `verification/`, in one form:
+  `met`, each question whose aim the work meets, with the `lines` that meet it; and `not_met`, each
+  question it is short of, with `lacks`, what the user still lacks, never how to make it. A script
+  verifies every question stands in one of the two, and each line is there.
 
 Questions that hold for every document, or for all code, are written once, in refactor-doc or
 refactor-code; each question is named with its file, as `refactor-doc/Q3`. A refactoring best
