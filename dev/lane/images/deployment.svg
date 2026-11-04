@@ -57,7 +57,7 @@
   <rect class="unit" x="320" y="160" width="380" height="110" rx="4"/>
   <text class="name" x="510.0" y="182">lay.py process</text>
   <text class="kind" x="510.0" y="198">[python3 3.9 or later]</text>
-  <text class="label small" x="510.0" y="220" text-anchor="middle">lay.py · proposal.py · lanes/</text>
+  <text class="label small" x="510.0" y="220" text-anchor="middle">lay.py · proposal.py · lanes/ · routes.py · ports.py</text>
   <rect class="unit" x="320" y="320" width="380" height="80" rx="4"/>
   <text class="name" x="510.0" y="342">Adapter process</text>
   <text class="kind" x="510.0" y="358">[python3]</text>
@@ -71,7 +71,7 @@
   <text class="name" x="540.0" y="472">The plugin&#x27;s folder</text>
   <text class="kind" x="540.0" y="488">[Claude Code plugin]</text>
   <text class="label small" x="540.0" y="510" text-anchor="middle">Plugin files · Adapter · Test cases</text>
-  <text class="label small" x="540.0" y="526" text-anchor="middle">Lane&#x27;s code, as a copy or a link</text>
+  <text class="label small" x="540.0" y="526" text-anchor="middle">Lane&#x27;s code, as a link or a copy</text>
   <rect class="frame" x="780" y="130" width="700" height="590" rx="10"/>
   <text class="frame-name" x="792" y="710" text-anchor="start">The computer where the plugin runs</text>
   <text class="kind start" x="1052" y="710" text-anchor="start">[Claude Code · Python 3.9+]</text>

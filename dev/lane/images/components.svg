@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1590 900" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 930" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
   <title>Lane&#x27;s components</title>
   <style>
     .bg { fill: #ffffff; }
@@ -44,187 +44,175 @@
       <path class="head" d="M0,0 L10,5 L0,10 z"/>
     </marker>
   </defs>
-  <rect class="bg" x="0" y="0" width="1590" height="900"/>
-  <rect class="frame" x="22" y="352" width="1283" height="308" rx="10"/>
-  <text class="frame-name" x="34" y="370" text-anchor="start"></text>
-  <text class="frame-name" x="34" y="652" text-anchor="start">Lane's code</text>
-  <text class="kind start" x="132" y="652" text-anchor="start">[script · Python 3.9]</text>
-  <rect class="box" x="30" y="40" width="180" height="64" rx="14"/>
-  <text class="name" x="120.0" y="69.0">Developer AI</text>
-  <text class="kind" x="120.0" y="86.0">[AI · Claude Code]</text>
-  <path class="store" d="M300,49 A90.0,9 0 0 1 480,49 V95 A90.0,9 0 0 1 300,95 Z"/>
-  <path class="store" d="M300,49 A90.0,9 0 0 0 480,49"/>
-  <text class="name" x="390.0" y="75.0">Proposal</text>
-  <text class="kind" x="390.0" y="92.0">[file · JSON]</text>
-  <path class="store" d="M570,49 A90.0,9 0 0 1 750,49 V95 A90.0,9 0 0 1 570,95 Z"/>
-  <path class="store" d="M570,49 A90.0,9 0 0 0 750,49"/>
-  <text class="name" x="660.0" y="75.0">Test cases</text>
-  <text class="kind" x="660.0" y="92.0">[files · JSON]</text>
-  <rect class="ext" x="840" y="40" width="180" height="64" rx="4"/>
-  <text class="name" x="930.0" y="69.0">Claude Code</text>
-  <text class="kind" x="930.0" y="86.0">[CLI]</text>
-  <rect class="box" x="1110" y="40" width="180" height="64" rx="14"/>
-  <text class="name" x="1200.0" y="69.0">Subagent</text>
-  <text class="kind" x="1200.0" y="86.0">[AI · Claude Code]</text>
-  <rect class="box" x="30" y="210" width="180" height="64" rx="0"/>
-  <text class="name" x="120.0" y="239.0">lay.py</text>
-  <text class="kind" x="120.0" y="256.0">[command line · Python 3.9]</text>
-  <rect class="box" x="300" y="210" width="180" height="64" rx="0"/>
-  <text class="name" x="390.0" y="239.0">proposal.py</text>
-  <text class="kind" x="390.0" y="256.0">[module · Python 3.9]</text>
-  <rect class="ext" x="570" y="210" width="180" height="64" rx="4"/>
-  <text class="name" x="660.0" y="239.0">Adapter</text>
-  <text class="kind" x="660.0" y="256.0">[script · Python 3]</text>
-  <circle class="box" cx="1200.0" cy="208" r="11"/>
-  <rect class="box" x="1110" y="218" width="180" height="64" rx="22"/>
-  <text class="name" x="1200.0" y="247.0">Operator</text>
-  <text class="kind" x="1200.0" y="264.0">[person or AI]</text>
-  <rect class="box" x="300" y="380" width="180" height="64" rx="0"/>
-  <text class="name" x="390.0" y="409.0">ports.py</text>
-  <text class="kind" x="390.0" y="426.0">[module · Python 3.9]</text>
-  <rect class="box" x="840" y="380" width="180" height="64" rx="0"/>
-  <text class="name" x="930.0" y="409.0">hook.py</text>
-  <text class="kind" x="930.0" y="426.0">[hook entry · Python 3.9]</text>
-  <rect class="box" x="1110" y="380" width="180" height="64" rx="0"/>
-  <text class="name" x="1200.0" y="409.0">called.py</text>
-  <text class="kind" x="1200.0" y="426.0">[module · Python 3.9]</text>
-  <path class="store" d="M1380,389 A90.0,9 0 0 1 1560,389 V435 A90.0,9 0 0 1 1380,435 Z"/>
-  <path class="store" d="M1380,389 A90.0,9 0 0 0 1560,389"/>
-  <text class="name" x="1470.0" y="415.0">Calls kept</text>
-  <text class="kind" x="1470.0" y="432.0">[file · JSONL]</text>
-  <rect class="box" x="30" y="560" width="180" height="64" rx="0"/>
-  <text class="name" x="120.0" y="589.0">lanes/</text>
-  <text class="kind" x="120.0" y="606.0">[modules · Python 3.9]</text>
-  <rect class="box" x="300" y="560" width="180" height="64" rx="0"/>
-  <text class="name" x="390.0" y="589.0">guard.py</text>
-  <text class="kind" x="390.0" y="606.0">[module · Python 3.9]</text>
-  <rect class="box" x="840" y="560" width="180" height="64" rx="0"/>
-  <text class="name" x="930.0" y="589.0">routes.py</text>
-  <text class="kind" x="930.0" y="606.0">[module · Python 3.9]</text>
-  <rect class="box" x="570" y="380" width="180" height="64" rx="0"/>
-  <text class="name" x="660.0" y="409.0">result.py</text>
-  <text class="kind" x="660.0" y="426.0">[command line · Python 3.9]</text>
-  <path class="store" d="M30,749 A630.0,9 0 0 1 1290,749 V795 A630.0,9 0 0 1 30,795 Z"/>
-  <path class="store" d="M30,749 A630.0,9 0 0 0 1290,749"/>
-  <text class="name" x="660.0" y="775.0">Plugin files</text>
-  <text class="kind" x="660.0" y="792.0">[files · Markdown, JSON]</text>
-  <path class="line" d="M120,104 L120,210" marker-end="url(#arrow)"/>
-  <text class="label small" x="128" y="146" text-anchor="start">runs print,</text>
-  <text class="label small" x="128" y="160" text-anchor="start">write, up [Bash]</text>
-  <text class="data" x="128" y="174" text-anchor="start">Proposal</text>
-  <path class="line" d="M210,72 L300,72" marker-end="url(#arrow)"/>
-  <text class="label small" x="255" y="64" text-anchor="middle">writes</text>
-  <path class="line" d="M210,246 L300,246" marker-end="url(#arrow)"/>
-  <text class="label small" x="255" y="226" text-anchor="middle">reads,</text>
-  <text class="label small" x="255" y="240" text-anchor="middle">checks</text>
-  <text class="data" x="255" y="262" text-anchor="middle">Proposal</text>
-  <path class="line" d="M200,210 L310,104" marker-end="url(#arrow)"/>
-  <text class="label small" x="262" y="182" text-anchor="start">removes</text>
-  <path class="line" d="M390,210 L390,104" marker-end="url(#arrow)"/>
-  <text class="label small" x="398" y="162" text-anchor="start">reads</text>
-  <path class="line" d="M470,210 L590,104" marker-end="url(#arrow)"/>
-  <text class="label small" x="536" y="186" text-anchor="start">reads</text>
-  <text class="data" x="536" y="200" text-anchor="start">Test case</text>
-  <path class="line" d="M480,246 L570,246" marker-end="url(#arrow)"/>
-  <text class="label small" x="525" y="226" text-anchor="middle">runs on</text>
-  <text class="label small" x="525" y="240" text-anchor="middle">test cases</text>
-  <text class="data" x="525" y="262" text-anchor="middle">Port JSON</text>
-  <path class="line" d="M180,274 L180,560" marker-end="url(#arrow)"/>
-  <text class="label small" x="172" y="300" text-anchor="end">makes each</text>
-  <text class="label small" x="172" y="314" text-anchor="end">sentence</text>
-  <text class="data" x="172" y="328" text-anchor="end">Rule</text>
-  <path class="line" d="M30,254 L14,254 L14,772 L30,772" marker-end="url(#arrow)"/>
-  <text class="label small" x="36" y="688" text-anchor="start">reads, writes</text>
-  <text class="data" x="36" y="702" text-anchor="start">Step, Hook entry,</text>
-  <text class="data" x="36" y="716" text-anchor="start">Rule, Route,</text>
-  <text class="data" x="36" y="730" text-anchor="start">Order of results</text>
-  <path class="line" d="M30,224 L14,224 L14,16 L930,16 L930,40" marker-end="url(#arrow)"/>
-  <text class="label small" x="560" y="31" text-anchor="middle">checks the plugin [claude plugin validate]</text>
-  <path class="line" d="M930,104 L930,380" marker-end="url(#arrow)"/>
-  <text class="label small" x="922" y="296" text-anchor="end">runs on each event,</text>
-  <text class="label small" x="922" y="310" text-anchor="end">as Hook entries say</text>
-  <text class="label small" x="922" y="324" text-anchor="end">[sh, JSON on stdin, stdout]</text>
-  <text class="data" x="922" y="338" text-anchor="end">Event, Decision</text>
-  <path class="line" d="M1020,62 L1110,62" marker-end="url(#arrow)"/>
-  <text class="label small" x="1065" y="56" text-anchor="middle">runs, tells</text>
-  <text class="data" x="1065" y="78" text-anchor="middle">Decision</text>
-  <path class="line" d="M1110,90 L1020,90" marker-end="url(#arrow)"/>
-  <text class="label small" x="1065" y="120" text-anchor="middle">makes tool</text>
-  <text class="label small" x="1065" y="134" text-anchor="middle">calls, ends</text>
-  <path class="line" d="M990,104 L990,246 L1110,246" marker-end="url(#arrow)"/>
-  <text class="label small" x="998" y="152" text-anchor="start">gives the answer,</text>
-  <text class="label small" x="998" y="166" text-anchor="start">shows errors</text>
-  <text class="label small" x="998" y="180" text-anchor="start">[system message]</text>
-  <text class="data" x="998" y="194" text-anchor="start">Answer, Decision</text>
-  <path class="line" d="M1290,236 L1320,236 L1320,22 L1000,22 L1000,40" marker-end="url(#arrow)"/>
-  <text class="label small" x="1160" y="14" text-anchor="middle">runs the plugin, asks for work</text>
-  <path class="line" d="M840,436 L480,566" marker-end="url(#arrow)"/>
-  <text class="label small" x="600" y="474" text-anchor="middle">checks the rules</text>
-  <text class="data" x="600" y="488" text-anchor="middle">Event</text>
-  <path class="line" d="M1020,422 L1110,422" marker-end="url(#arrow)"/>
-  <text class="label small" x="1065" y="414" text-anchor="middle">keeps, tells</text>
-  <text class="data" x="1065" y="438" text-anchor="middle">Event</text>
-  <path class="line" d="M1290,422 L1380,422" marker-end="url(#arrow)"/>
-  <text class="label small" x="1335" y="400" text-anchor="middle">writes,</text>
-  <text class="label small" x="1335" y="414" text-anchor="middle">reads</text>
-  <text class="data" x="1335" y="438" text-anchor="middle">Kept call,</text>
-  <text class="data" x="1335" y="452" text-anchor="middle">Result</text>
-  <path class="line" d="M860,104 L700,380" marker-end="url(#arrow)"/>
-  <text class="label small" x="808" y="140" text-anchor="end">runs it with</text>
-  <text class="label small" x="808" y="154" text-anchor="end">a result [Bash]</text>
-  <text class="data" x="808" y="168" text-anchor="end">Result</text>
-  <path class="line" d="M570,412 L480,412" marker-end="url(#arrow)"/>
-  <text class="label small" x="525" y="404" text-anchor="middle">reads</text>
-  <text class="data" x="525" y="428" text-anchor="middle">Port JSON</text>
-  <path class="line" d="M660,444 L660,749" marker-end="url(#arrow)"/>
-  <text class="label small" x="668" y="676" text-anchor="start">reads the work</text>
-  <text class="data" x="668" y="690" text-anchor="start">Rule</text>
-  <path class="line" d="M1140,444 L1000,560" marker-end="url(#arrow)"/>
-  <text class="label small" x="1086" y="500" text-anchor="start">asks the</text>
-  <text class="label small" x="1086" y="514" text-anchor="start">next start</text>
-  <text class="data" x="1086" y="528" text-anchor="start">Route,</text>
-  <text class="data" x="1086" y="542" text-anchor="start">Result</text>
-  <path class="line" d="M1200,444 L1200,740" marker-end="url(#arrow)"/>
-  <text class="label small" x="1208" y="690" text-anchor="start">reads</text>
-  <text class="data" x="1208" y="704" text-anchor="start">Route</text>
-  <path class="line" d="M300,596 L210,596" marker-end="url(#arrow)"/>
-  <text class="label small" x="255" y="576" text-anchor="middle">runs each</text>
-  <text class="label small" x="255" y="590" text-anchor="middle">check</text>
-  <text class="data" x="255" y="612" text-anchor="middle">Rule,</text>
-  <text class="data" x="255" y="626" text-anchor="middle">Run value</text>
-  <path class="line" d="M390,560 L390,444" marker-end="url(#arrow)"/>
-  <text class="label small" x="398" y="500" text-anchor="start">reads a text</text>
-  <text class="data" x="398" y="514" text-anchor="start">Port JSON</text>
-  <path class="line" d="M450,380 L620,274" marker-end="url(#arrow)"/>
-  <text class="label small" x="556" y="332" text-anchor="start">runs [JSON, stdio]</text>
-  <text class="data" x="556" y="346" text-anchor="start">Port JSON</text>
-  <path class="line" d="M480,606 L840,606" marker-end="url(#arrow)"/>
-  <text class="label small" x="565" y="598" text-anchor="middle">asks the next start</text>
-  <text class="data" x="565" y="622" text-anchor="middle">Route, Order of results,</text>
-  <text class="data" x="565" y="636" text-anchor="middle">Result</text>
-  <path class="line" d="M480,580 L1110,444" marker-end="url(#arrow)"/>
-  <text class="label small" x="770" y="548" text-anchor="middle">reads earlier calls,</text>
-  <text class="label small" x="770" y="562" text-anchor="middle">keeps an end</text>
-  <text class="data" x="770" y="576" text-anchor="middle">Kept call, Result</text>
-  <path class="line" d="M390,624 L390,740" marker-end="url(#arrow)"/>
-  <text class="label small" x="398" y="690" text-anchor="start">reads</text>
-  <text class="data" x="398" y="704" text-anchor="start">Step, Rule, Route,</text>
-  <text class="data" x="398" y="718" text-anchor="start">Order of results</text>
-  <text class="frame-name" x="30" y="855" text-anchor="start">Legend</text>
-  <rect class="box" x="100" y="840" width="36" height="22" rx="8"/>
-  <text class="label small" x="144" y="855" text-anchor="start">AI</text>
-  <circle class="box" cx="198" cy="842" r="6"/>
-  <rect class="box" x="180" y="846" width="36" height="16" rx="8"/>
-  <text class="label small" x="224" y="855" text-anchor="start">person</text>
-  <rect class="box" x="286" y="840" width="36" height="22" rx="0"/>
-  <text class="label small" x="330" y="855" text-anchor="start">code of Lane</text>
-  <path class="store" d="M420,844 A18,4 0 0 1 456,844 V860 A18,4 0 0 1 420,860 Z"/>
-  <path class="store" d="M420,844 A18,4 0 0 0 456,844"/>
-  <text class="label small" x="464" y="855" text-anchor="start">store of data</text>
-  <rect class="ext" x="560" y="840" width="36" height="22" rx="3"/>
-  <text class="label small" x="604" y="855" text-anchor="start">outside Lane</text>
-  <rect class="frame" x="694" y="840" width="36" height="22" rx="4"/>
-  <text class="label small" x="738" y="855" text-anchor="start">Lane's code, put into a plugin</text>
-  <text class="label small" x="1000" y="848" text-anchor="start">[type · technology] in a box; [protocol] on an arrow</text>
-  <text class="data" x="1000" y="864" text-anchor="start">data handed on, named as in the data model</text>
+  <rect class="bg" x="0" y="0" width="1600" height="930"/>
+  <rect class="frame" x="290" y="385" width="740" height="296" rx="10"/>
+  <text class="frame-name" x="300" y="674" text-anchor="start">the check script</text>
+  <text class="kind start" x="420" y="674" text-anchor="start">[hook script · Python 3.9]</text>
+  <rect class="frame" x="1100" y="385" width="200" height="112" rx="10"/>
+  <text class="frame-name" x="1110" y="490" text-anchor="start">the result script</text>
+  <rect class="box" x="30" y="60" width="180" height="64" rx="14"/>
+  <text class="name" x="120.0" y="89" text-anchor="middle">Developer AI</text>
+  <text class="kind" x="120.0" y="106" text-anchor="middle">[AI · Claude Code]</text>
+  <path class="store" d="M300,69 A90.0,9 0 0 1 480,69 V115 A90.0,9 0 0 1 300,115 Z"/>
+  <path class="store" d="M300,69 A90.0,9 0 0 0 480,69"/>
+  <text class="name" x="390.0" y="95" text-anchor="middle">Proposal</text>
+  <text class="kind" x="390.0" y="112" text-anchor="middle">[files · JSON, Python]</text>
+  <rect class="ext" x="840" y="60" width="180" height="64" rx="4"/>
+  <text class="name" x="930.0" y="89" text-anchor="middle">Claude Code</text>
+  <text class="kind" x="930.0" y="106" text-anchor="middle">[CLI]</text>
+  <rect class="box" x="1110" y="60" width="180" height="64" rx="14"/>
+  <text class="name" x="1200.0" y="89" text-anchor="middle">Subagent</text>
+  <text class="kind" x="1200.0" y="106" text-anchor="middle">[AI · Claude Code]</text>
+  <circle class="box" cx="1470.0" cy="50" r="11"/>
+  <rect class="box" x="1380" y="60" width="180" height="64" rx="22"/>
+  <text class="name" x="1470.0" y="89" text-anchor="middle">Operator</text>
+  <text class="kind" x="1470.0" y="106" text-anchor="middle">[person or AI]</text>
+  <rect class="box" x="30" y="220" width="180" height="64" rx="0"/>
+  <text class="name" x="120.0" y="249" text-anchor="middle">lay.py</text>
+  <text class="kind" x="120.0" y="266" text-anchor="middle">[command line · Python 3.9]</text>
+  <rect class="box" x="300" y="220" width="180" height="64" rx="0"/>
+  <text class="name" x="390.0" y="249" text-anchor="middle">proposal.py</text>
+  <text class="kind" x="390.0" y="266" text-anchor="middle">[module · Python 3.9]</text>
+  <rect class="box" x="300" y="410" width="180" height="64" rx="0"/>
+  <text class="name" x="390.0" y="439" text-anchor="middle">lanes/</text>
+  <text class="kind" x="390.0" y="456" text-anchor="middle">[modules · Python 3.9]</text>
+  <rect class="box" x="570" y="410" width="180" height="64" rx="0"/>
+  <text class="name" x="660.0" y="439" text-anchor="middle">routes.py</text>
+  <text class="kind" x="660.0" y="456" text-anchor="middle">[module · Python 3.9]</text>
+  <rect class="box" x="840" y="410" width="180" height="64" rx="0"/>
+  <text class="name" x="930.0" y="439" text-anchor="middle">hook.py</text>
+  <text class="kind" x="930.0" y="456" text-anchor="middle">[hook entry · Python 3.9]</text>
+  <rect class="box" x="1110" y="410" width="180" height="64" rx="0"/>
+  <text class="name" x="1200.0" y="439" text-anchor="middle">result.py</text>
+  <text class="kind" x="1200.0" y="456" text-anchor="middle">[command line · Python 3.9]</text>
+  <rect class="ext" x="30" y="590" width="180" height="64" rx="4"/>
+  <text class="name" x="120.0" y="619" text-anchor="middle">Adapter</text>
+  <text class="kind" x="120.0" y="636" text-anchor="middle">[script · Python 3]</text>
+  <rect class="box" x="300" y="590" width="180" height="64" rx="0"/>
+  <text class="name" x="390.0" y="619" text-anchor="middle">ports.py</text>
+  <text class="kind" x="390.0" y="636" text-anchor="middle">[module · Python 3.9]</text>
+  <rect class="box" x="570" y="590" width="180" height="64" rx="0"/>
+  <text class="name" x="660.0" y="619" text-anchor="middle">guard.py</text>
+  <text class="kind" x="660.0" y="636" text-anchor="middle">[module · Python 3.9]</text>
+  <rect class="box" x="840" y="590" width="180" height="64" rx="0"/>
+  <text class="name" x="930.0" y="619" text-anchor="middle">called.py</text>
+  <text class="kind" x="930.0" y="636" text-anchor="middle">[module · Python 3.9]</text>
+  <path class="store" d="M1110,599 A90.0,9 0 0 1 1290,599 V645 A90.0,9 0 0 1 1110,645 Z"/>
+  <path class="store" d="M1110,599 A90.0,9 0 0 0 1290,599"/>
+  <text class="name" x="1200.0" y="625" text-anchor="middle">Calls kept</text>
+  <text class="kind" x="1200.0" y="642" text-anchor="middle">[files · JSONL]</text>
+  <path class="store" d="M30,789 A630.0,9 0 0 1 1290,789 V835 A630.0,9 0 0 1 30,835 Z"/>
+  <path class="store" d="M30,789 A630.0,9 0 0 0 1290,789"/>
+  <text class="name" x="660.0" y="815" text-anchor="middle">Plugin files</text>
+  <text class="kind" x="660.0" y="832" text-anchor="middle">[files · Markdown, JSON]</text>
+  <path class="line" d="M210,92 L300,92" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="255" y="84" text-anchor="middle">writes</text>
+  <text class="data halo" x="255" y="110" text-anchor="middle">Proposal,</text>
+  <text class="data halo" x="255" y="124" text-anchor="middle">Adapter,</text>
+  <text class="data halo" x="255" y="138" text-anchor="middle">Test case</text>
+  <path class="line" d="M120,124 L120,220" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="128" y="160" text-anchor="start">runs print,</text>
+  <text class="label small halo" x="128" y="174" text-anchor="start">write, up [Bash]</text>
+  <path class="line" d="M200,220 L320,124" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="268" y="186" text-anchor="start">reads,</text>
+  <text class="label small halo" x="268" y="200" text-anchor="start">removes</text>
+  <text class="data halo" x="268" y="214" text-anchor="start">Proposal</text>
+  <path class="line" d="M30,236 L14,236 L14,16 L930,16 L930,60" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="480" y="34" text-anchor="middle">validates the plugin [claude plugin validate]</text>
+  <path class="line" d="M30,268 L14,268 L14,803 L30,803" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="22" y="694" text-anchor="start">reads, writes, lays Lane&#x27;s code</text>
+  <text class="data halo" x="22" y="708" text-anchor="start">Step, Hook entry, Rules laid,</text>
+  <text class="data halo" x="22" y="722" text-anchor="start">Adapter, Test case</text>
+  <path class="line" d="M210,252 L300,252" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="255" y="244" text-anchor="middle">has it checked</text>
+  <text class="data halo" x="255" y="266" text-anchor="middle">Proposal, Step</text>
+  <path class="line" d="M390,220 L390,124" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="398" y="166" text-anchor="start">reads</text>
+  <text class="data halo" x="398" y="180" text-anchor="start">Test case</text>
+  <path class="line" d="M180,284 L180,442 L300,442" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="172" y="330" text-anchor="end">makes each</text>
+  <text class="label small halo" x="172" y="344" text-anchor="end">sentence</text>
+  <text class="data halo" x="172" y="358" text-anchor="end">Rule</text>
+  <path class="line" d="M390,284 L390,410" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="398" y="330" text-anchor="start">checks each rule</text>
+  <text class="data halo" x="398" y="344" text-anchor="start">Rule</text>
+  <path class="line" d="M470,284 L610,410" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="540" y="316" text-anchor="start">checks the routes</text>
+  <text class="data halo" x="540" y="330" text-anchor="start">Route,</text>
+  <text class="data halo" x="540" y="344" text-anchor="start">Order of results</text>
+  <path class="line" d="M300,276 L255,276 L255,565 L330,565 L330,590" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="248" y="500" text-anchor="end">runs each adapter</text>
+  <text class="label small halo" x="248" y="514" text-anchor="end">on its test cases</text>
+  <text class="data halo" x="248" y="528" text-anchor="end">Test case, Port JSON</text>
+  <path class="line" d="M1020,82 L1110,82" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="1065" y="76" text-anchor="middle">runs, tells</text>
+  <text class="data halo" x="1065" y="100" text-anchor="middle">Decision</text>
+  <path class="line" d="M1110,112 L1020,112" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="1065" y="140" text-anchor="middle">makes tool</text>
+  <text class="label small halo" x="1065" y="154" text-anchor="middle">calls, ends</text>
+  <path class="line" d="M1010,60 L1010,36 L1440,36 L1440,60" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="1022" y="52" text-anchor="start">shows replies, prompts and Lane&#x27;s messages</text>
+  <text class="data halo" x="1300" y="52" text-anchor="start">Decision</text>
+  <path class="line" d="M1500,60 L1500,8 L985,8 L985,60" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="1240" y="28" text-anchor="middle">runs the plugin, answers prompts</text>
+  <path class="line" d="M930,124 L930,410" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="922" y="300" text-anchor="end">runs on each event,</text>
+  <text class="label small halo" x="922" y="314" text-anchor="end">as the Hook entries say</text>
+  <text class="label small halo" x="922" y="328" text-anchor="end">[sh, JSON on stdin, stdout]</text>
+  <text class="data halo" x="922" y="342" text-anchor="end">Event, Decision</text>
+  <path class="line" d="M1000,124 L1000,330 L1200,330 L1200,410" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="1100" y="322" text-anchor="middle">runs it for a subagent [Bash]</text>
+  <text class="data halo" x="1100" y="348" text-anchor="middle">Result</text>
+  <path class="line" d="M870,474 L722,590" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="808" y="528" text-anchor="start">hands on the event,</text>
+  <text class="label small halo" x="808" y="542" text-anchor="start">gets the answer</text>
+  <text class="data halo" x="808" y="556" text-anchor="start">Event, Decision</text>
+  <path class="line" d="M660,590 L660,474" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="652" y="512" text-anchor="end">asks the</text>
+  <text class="label small halo" x="652" y="526" text-anchor="end">next start</text>
+  <text class="data halo" x="652" y="540" text-anchor="end">Route, Order of</text>
+  <text class="data halo" x="652" y="554" text-anchor="end">results, Result</text>
+  <path class="line" d="M585,590 L470,474" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="470" y="498" text-anchor="end">runs each check</text>
+  <text class="data halo" x="470" y="512" text-anchor="end">Rule, Run value,</text>
+  <text class="data halo" x="470" y="526" text-anchor="end">Kept call, Port JSON</text>
+  <path class="line" d="M570,630 L480,630" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="525" y="622" text-anchor="middle">reads a text</text>
+  <text class="data halo" x="525" y="648" text-anchor="middle">Port JSON</text>
+  <path class="line" d="M300,630 L210,630" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="255" y="622" text-anchor="middle">runs [stdio]</text>
+  <text class="data halo" x="255" y="648" text-anchor="middle">Port JSON</text>
+  <path class="line" d="M750,622 L840,622" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="795" y="614" text-anchor="middle">keeps, reads</text>
+  <text class="data halo" x="795" y="640" text-anchor="middle">Kept call,</text>
+  <text class="data halo" x="795" y="654" text-anchor="middle">Run value,</text>
+  <text class="data halo" x="795" y="668" text-anchor="middle">Result</text>
+  <path class="line" d="M1020,622 L1110,622" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="1065" y="614" text-anchor="middle">writes, reads</text>
+  <text class="data halo" x="1065" y="640" text-anchor="middle">Kept call,</text>
+  <text class="data halo" x="1065" y="654" text-anchor="middle">Run value,</text>
+  <text class="data halo" x="1065" y="668" text-anchor="middle">Result</text>
+  <path class="line" d="M660,654 L660,780" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="668" y="720" text-anchor="start">reads</text>
+  <text class="data halo" x="668" y="734" text-anchor="start">Step, Rules laid</text>
+  <path class="line" d="M1290,442 L1330,442 L1330,803 L1290,803" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="1338" y="600" text-anchor="start">reads the routes</text>
+  <text class="data halo" x="1338" y="614" text-anchor="start">Route</text>
+  <text class="frame-name" x="30" y="895" text-anchor="start">Legend</text>
+  <rect class="box" x="100" y="880" width="36" height="22" rx="8"/>
+  <text class="label small" x="144" y="895" text-anchor="start">AI</text>
+  <circle class="box" cx="198" cy="882" r="6"/>
+  <rect class="box" x="180" y="886" width="36" height="16" rx="8"/>
+  <text class="label small" x="224" y="895" text-anchor="start">person</text>
+  <rect class="box" x="286" y="880" width="36" height="22" rx="0"/>
+  <text class="label small" x="330" y="895" text-anchor="start">role of Lane</text>
+  <path class="store" d="M420,884 A18,4 0 0 1 456,884 V900 A18,4 0 0 1 420,900 Z"/>
+  <path class="store" d="M420,884 A18,4 0 0 0 456,884"/>
+  <text class="label small" x="464" y="895" text-anchor="start">store of data</text>
+  <rect class="ext" x="560" y="880" width="36" height="22" rx="3"/>
+  <text class="label small" x="604" y="895" text-anchor="start">outside Lane</text>
+  <rect class="frame" x="694" y="880" width="36" height="22" rx="4"/>
+  <text class="label small" x="738" y="895" text-anchor="start">Lane&#x27;s code, put into the developer AI&#x27;s plugin</text>
+  <text class="label small" x="1060" y="888" text-anchor="start">[type · technology] in a box; [protocol] on an arrow</text>
+  <text class="data" x="1060" y="904" text-anchor="start">data handed on, named as in the data model</text>
 </svg>

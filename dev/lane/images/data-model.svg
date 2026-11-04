@@ -246,7 +246,7 @@
   <path class="line" d="M686.5,246.1 L675.0,238.0"/>
   <path class="line" d="M686.5,246.1 L679.6,231.5"/>
   <circle class="hole" cx="696.3" cy="253.0" r="5"/>
-  <text class="label small" x="784" y="286" text-anchor="start">runs at once</text>
+  <text class="label small" x="784" y="286" text-anchor="start">lets run at once</text>
   <path class="line" d="M290.0,52.0 L250.0,52.0 L250.0,76.0 L290.0,76.0"/>
   <path class="line" d="M282.0,45.0 L282.0,59.0"/>
   <circle class="hole" cx="264.0" cy="52.0" r="5"/>
