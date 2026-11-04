@@ -71,7 +71,8 @@ usage: lay.py print <proposal>
 ```
 
 After an update, run `lay.py up <your plugin's folder>`. It puts Lane's new checks into your
-plugin and lists the rules your plugin has.
+plugin and lists the rules your plugin has. Where the update words a rule's sentence anew, it
+rewrites that sentence in your steps, and names each step it wrote.
 
 ## Walkthrough
 
