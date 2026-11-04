@@ -1,24 +1,42 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1210 690" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
   <title>Rn's deployment</title>
   <style>
+    .bg { fill: #ffffff; }
     .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
-    .outside { stroke-dasharray: 5 4; }
-    .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
-    .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
-    .held { fill: #1f2328; font-size: 13px; }
-    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
-    .head { fill: #59636e; }
-    .label { fill: #1f2328; font-size: 13px; }
+    .lane { fill: #ddf4ff; stroke: #54aeff; }
+    .store { fill: #fff8c5; stroke: #9a6700; stroke-width: 1.5; }
+    .ext { fill: #eaeef2; stroke: #d0d7de; stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .unit { fill: #ddf4ff; fill-opacity: 0.35; stroke: #0969da; stroke-width: 1.2; }
     .frame { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 6 4; }
     .frame-name { fill: #0969da; font-size: 13px; font-weight: 600; }
+    .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
+    .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
+    .label { fill: #1f2328; font-size: 13px; }
+    .small { font-size: 12px; }
+    .data { fill: #8250df; font-size: 12px; font-style: italic; }
+    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .dashed { stroke-dasharray: 5 4; }
+    .head { fill: #59636e; }
+    .hole { fill: #ffffff; stroke: #59636e; stroke-width: 1.5; }
+    .halo { stroke: #ffffff; stroke-width: 7; stroke-linejoin: round; paint-order: stroke; }
+    .mid { text-anchor: middle; }
+    .start { text-anchor: start; }
     @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; }
       .box { fill: #161b22; stroke: #3d444d; }
-      .name, .label, .held { fill: #f0f6fc; }
-      .kind { fill: #9198a1; }
-      .line { stroke: #9198a1; }
-      .head { fill: #9198a1; }
+      .lane { fill: #0c2d6b; stroke: #4493f8; }
+      .store { fill: #2e2a1a; stroke: #d29922; }
+      .ext { fill: #21262d; stroke: #3d444d; }
+      .unit { fill: #0c2d6b; stroke: #4493f8; }
       .frame { stroke: #4493f8; }
       .frame-name { fill: #4493f8; }
+      .name, .label { fill: #f0f6fc; }
+      .kind { fill: #9198a1; }
+      .data { fill: #c297ff; }
+      .line { stroke: #9198a1; }
+      .head { fill: #9198a1; }
+      .hole { fill: #0d1117; stroke: #9198a1; }
+      .halo { stroke: #0d1117; }
     }
   </style>
   <defs>
@@ -50,24 +68,24 @@
   <text class="name" x="720" y="112">Rn's plugin folder</text>
   <text class="kind" x="720" y="132">Rn's skills, prompts and forms, read-only</text>
 
-  <rect class="box outside" x="560" y="178" width="320" height="60" rx="8"/>
+  <rect class="box dashed" x="560" y="178" width="320" height="60" rx="8"/>
   <text class="name" x="720" y="202">Turn</text>
   <text class="kind" x="720" y="222">installed with Rn</text>
 
-  <rect class="box outside" x="560" y="268" width="320" height="60" rx="8"/>
+  <rect class="box dashed" x="560" y="268" width="320" height="60" rx="8"/>
   <text class="name" x="720" y="292">python3 3.9 or later</text>
   <text class="kind" x="720" y="312">Rn's scripts</text>
 
   <rect class="frame" x="40" y="380" width="840" height="110" rx="10"/>
   <text class="frame-name" x="52" y="399">the user's repository, on the piece of work's branch</text>
-  <text class="held" x="60" y="430">steering, steering Markdown, each CCS with its decisions and choices, template copy, result,</text>
-  <text class="held" x="60" y="450">learning, issue, replaced record, user's addition, and the work itself</text>
+  <text class="label" x="60" y="430">steering, steering Markdown, each CCS with its decisions and choices, template copy, result,</text>
+  <text class="label" x="60" y="450">learning, issue, replaced record, user's addition, and the work itself</text>
 
-  <rect class="box outside" x="990" y="268" width="170" height="60" rx="8"/>
+  <rect class="box dashed" x="990" y="268" width="170" height="60" rx="8"/>
   <text class="name" x="1075" y="292">git, gh, jq</text>
   <text class="kind" x="1075" y="312">command-line tools</text>
 
-  <rect class="box outside" x="940" y="580" width="250" height="84" rx="8"/>
+  <rect class="box dashed" x="940" y="580" width="250" height="84" rx="8"/>
   <text class="name" x="1065" y="604">GitHub</text>
   <text class="kind" x="1065" y="624">the branch, the pull request, each issue,</text>
   <text class="kind" x="1065" y="640">and the default branch, protected</text>
@@ -94,7 +112,7 @@
   <!-- legend -->
   <rect class="box" x="40" y="620" width="40" height="22" rx="5"/>
   <text class="label" x="88" y="636">Rn's</text>
-  <rect class="box outside" x="140" y="620" width="40" height="22" rx="5"/>
+  <rect class="box dashed" x="140" y="620" width="40" height="22" rx="5"/>
   <text class="label" x="188" y="636">outside Rn</text>
   <rect class="frame" x="280" y="620" width="40" height="22" rx="5"/>
   <text class="label" x="328" y="636">where it runs or is kept</text>

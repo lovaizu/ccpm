@@ -31,6 +31,10 @@ pyrefly check --search-path dev/lane dev/*.py
 # a person to read, for being left behind it, as either says what Turn does not hold.
 python3 plugins/turn/scripts/practices.py check plugins/turn/core/domain/best-practices/*.json
 
+# Every figure carries the one style of dev/images/figures.css, so the figures look alike and a
+# colour is changed in one place (dev/architecture.md, Images beside their document).
+python3 dev/figures.py check
+
 # The unit tests, `test*.py`, unittest's own pattern, count the lines and branches; the property
 # tests, whose inputs change from run to run, are run apart by dev/properties.sh.
 for plugin in $plugins; do

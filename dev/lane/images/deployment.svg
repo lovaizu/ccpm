@@ -2,34 +2,41 @@
   <title>Lane&#x27;s deployment</title>
   <style>
     .bg { fill: #ffffff; }
-    .box { fill: #f6f8fa; stroke: #59636e; stroke-width: 1.5; }
+    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .lane { fill: #ddf4ff; stroke: #54aeff; }
     .store { fill: #fff8c5; stroke: #9a6700; stroke-width: 1.5; }
-    .ext { fill: #eaeef2; stroke: #59636e; stroke-width: 1.5; stroke-dasharray: 5 3; }
-    .env { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 7 4; }
+    .ext { fill: #eaeef2; stroke: #d0d7de; stroke-width: 1.5; stroke-dasharray: 5 4; }
     .unit { fill: #ddf4ff; fill-opacity: 0.35; stroke: #0969da; stroke-width: 1.2; }
+    .frame { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    .frame-name { fill: #0969da; font-size: 13px; font-weight: 600; }
     .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
-    .tag { fill: #59636e; font-size: 12px; text-anchor: middle; }
-    .utag { fill: #59636e; font-size: 12px; }
-    .envname { fill: #0969da; font-size: 13px; font-weight: 600; }
-    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
-    .head { fill: #59636e; }
-    .label { fill: #1f2328; font-size: 12px; }
+    .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
+    .label { fill: #1f2328; font-size: 13px; }
+    .small { font-size: 12px; }
     .data { fill: #8250df; font-size: 12px; font-style: italic; }
+    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .dashed { stroke-dasharray: 5 4; }
+    .head { fill: #59636e; }
     .hole { fill: #ffffff; stroke: #59636e; stroke-width: 1.5; }
+    .halo { stroke: #ffffff; stroke-width: 7; stroke-linejoin: round; paint-order: stroke; }
+    .mid { text-anchor: middle; }
+    .start { text-anchor: start; }
     @media (prefers-color-scheme: dark) {
       .bg { fill: #0d1117; }
-      .box { fill: #161b22; stroke: #9198a1; }
+      .box { fill: #161b22; stroke: #3d444d; }
+      .lane { fill: #0c2d6b; stroke: #4493f8; }
       .store { fill: #2e2a1a; stroke: #d29922; }
-      .ext { fill: #21262d; stroke: #9198a1; }
-      .env { stroke: #4493f8; }
-      .unit { fill: #0c2d6b; fill-opacity: 0.35; stroke: #4493f8; }
+      .ext { fill: #21262d; stroke: #3d444d; }
+      .unit { fill: #0c2d6b; stroke: #4493f8; }
+      .frame { stroke: #4493f8; }
+      .frame-name { fill: #4493f8; }
       .name, .label { fill: #f0f6fc; }
-      .tag, .utag { fill: #9198a1; }
-      .envname { fill: #4493f8; }
+      .kind { fill: #9198a1; }
+      .data { fill: #c297ff; }
       .line { stroke: #9198a1; }
       .head { fill: #9198a1; }
-      .data { fill: #c297ff; }
       .hole { fill: #0d1117; stroke: #9198a1; }
+      .halo { stroke: #0d1117; }
     }
   </style>
   <defs>
@@ -40,97 +47,97 @@
   <rect class="bg" x="0" y="0" width="1500" height="860"/>
   <rect class="ext" x="40" y="30" width="240" height="64" rx="4"/>
   <text class="name" x="160.0" y="59.0">GitHub: lovaizu/ccpm</text>
-  <text class="tag" x="160.0" y="76.0">[marketplace]</text>
-  <rect class="env" x="20" y="130" width="700" height="590" rx="10"/>
-  <text class="envname" x="32" y="710" text-anchor="start">The developer AI&#x27;s computer</text>
-  <text class="utag" x="240" y="710" text-anchor="start">[Claude Code · Python 3.9+]</text>
+  <text class="kind" x="160.0" y="76.0">[marketplace]</text>
+  <rect class="frame" x="20" y="130" width="700" height="590" rx="10"/>
+  <text class="frame-name" x="32" y="710" text-anchor="start">The developer AI&#x27;s computer</text>
+  <text class="kind start" x="240" y="710" text-anchor="start">[Claude Code · Python 3.9+]</text>
   <rect class="ext" x="40" y="170" width="200" height="64" rx="4"/>
   <text class="name" x="140.0" y="199.0">Claude Code</text>
-  <text class="tag" x="140.0" y="216.0">[CLI]</text>
+  <text class="kind" x="140.0" y="216.0">[CLI]</text>
   <rect class="unit" x="320" y="160" width="380" height="110" rx="4"/>
   <text class="name" x="510.0" y="182">lay.py process</text>
-  <text class="tag" x="510.0" y="198">[python3 3.9 or later]</text>
-  <text class="label" x="510.0" y="220" text-anchor="middle">lay.py · proposal.py · lanes/</text>
+  <text class="kind" x="510.0" y="198">[python3 3.9 or later]</text>
+  <text class="label small" x="510.0" y="220" text-anchor="middle">lay.py · proposal.py · lanes/</text>
   <rect class="unit" x="320" y="320" width="380" height="80" rx="4"/>
   <text class="name" x="510.0" y="342">Adapter process</text>
-  <text class="tag" x="510.0" y="358">[python3]</text>
-  <text class="label" x="510" y="390" text-anchor="middle">Adapter, on each test case</text>
+  <text class="kind" x="510.0" y="358">[python3]</text>
+  <text class="label small" x="510" y="390" text-anchor="middle">Adapter, on each test case</text>
   <rect class="unit" x="40" y="450" width="300" height="110" rx="4"/>
   <text class="name" x="190.0" y="472">.lane/&lt;yyyymmdd&gt;-&lt;plugin&gt;/</text>
-  <text class="tag" x="190.0" y="488">[folder · repository root]</text>
-  <text class="label" x="190.0" y="510" text-anchor="middle">Proposal · Adapter</text>
-  <text class="label" x="190.0" y="526" text-anchor="middle">Test cases</text>
+  <text class="kind" x="190.0" y="488">[folder · repository root]</text>
+  <text class="label small" x="190.0" y="510" text-anchor="middle">Proposal · Adapter</text>
+  <text class="label small" x="190.0" y="526" text-anchor="middle">Test cases</text>
   <rect class="unit" x="380" y="450" width="320" height="130" rx="4"/>
   <text class="name" x="540.0" y="472">The plugin&#x27;s folder</text>
-  <text class="tag" x="540.0" y="488">[Claude Code plugin]</text>
-  <text class="label" x="540.0" y="510" text-anchor="middle">Plugin files · Adapter · Test cases</text>
-  <text class="label" x="540.0" y="526" text-anchor="middle">Lane&#x27;s code, as a copy or a link</text>
-  <rect class="env" x="780" y="130" width="700" height="590" rx="10"/>
-  <text class="envname" x="792" y="710" text-anchor="start">The computer where the plugin runs</text>
-  <text class="utag" x="1052" y="710" text-anchor="start">[Claude Code · Python 3.9+]</text>
+  <text class="kind" x="540.0" y="488">[Claude Code plugin]</text>
+  <text class="label small" x="540.0" y="510" text-anchor="middle">Plugin files · Adapter · Test cases</text>
+  <text class="label small" x="540.0" y="526" text-anchor="middle">Lane&#x27;s code, as a copy or a link</text>
+  <rect class="frame" x="780" y="130" width="700" height="590" rx="10"/>
+  <text class="frame-name" x="792" y="710" text-anchor="start">The computer where the plugin runs</text>
+  <text class="kind start" x="1052" y="710" text-anchor="start">[Claude Code · Python 3.9+]</text>
   <rect class="ext" x="800" y="170" width="200" height="64" rx="4"/>
   <text class="name" x="900.0" y="199.0">Claude Code</text>
-  <text class="tag" x="900.0" y="216.0">[CLI]</text>
+  <text class="kind" x="900.0" y="216.0">[CLI]</text>
   <rect class="unit" x="1080" y="160" width="380" height="150" rx="4"/>
   <text class="name" x="1270.0" y="182">Hook process</text>
-  <text class="tag" x="1270.0" y="198">[python3 3.9 or later · one for each event]</text>
-  <text class="label" x="1270.0" y="220" text-anchor="middle">hook.py · guard.py · lanes/</text>
-  <text class="label" x="1270.0" y="236" text-anchor="middle">called.py · routes.py · ports.py</text>
+  <text class="kind" x="1270.0" y="198">[python3 3.9 or later · one for each event]</text>
+  <text class="label small" x="1270.0" y="220" text-anchor="middle">hook.py · guard.py · lanes/</text>
+  <text class="label small" x="1270.0" y="236" text-anchor="middle">called.py · routes.py · ports.py</text>
   <rect class="unit" x="1080" y="340" width="380" height="70" rx="4"/>
   <text class="name" x="1270.0" y="362">Adapter process</text>
-  <text class="tag" x="1270.0" y="378">[python3]</text>
-  <text class="label" x="1270" y="398" text-anchor="middle">Adapter</text>
+  <text class="kind" x="1270.0" y="378">[python3]</text>
+  <text class="label small" x="1270" y="398" text-anchor="middle">Adapter</text>
   <rect class="unit" x="800" y="450" width="180" height="100" rx="4"/>
   <text class="name" x="890.0" y="472">Temporary folder</text>
-  <text class="tag" x="890.0" y="488">[the system&#x27;s]</text>
-  <text class="label" x="890.0" y="510" text-anchor="middle">Calls kept</text>
+  <text class="kind" x="890.0" y="488">[the system&#x27;s]</text>
+  <text class="label small" x="890.0" y="510" text-anchor="middle">Calls kept</text>
   <rect class="unit" x="800" y="600" width="200" height="80" rx="4"/>
   <text class="name" x="900.0" y="622">Result process</text>
-  <text class="tag" x="900.0" y="638">[python3 3.9 or later]</text>
-  <text class="label" x="900.0" y="660" text-anchor="middle">result.py</text>
+  <text class="kind" x="900.0" y="638">[python3 3.9 or later]</text>
+  <text class="label small" x="900.0" y="660" text-anchor="middle">result.py</text>
   <rect class="unit" x="1080" y="450" width="380" height="130" rx="4"/>
   <text class="name" x="1270.0" y="472">The installed plugin</text>
-  <text class="tag" x="1270.0" y="488">[Claude Code plugin folder]</text>
-  <text class="label" x="1270.0" y="510" text-anchor="middle">Plugin files · Adapter · Test cases</text>
-  <text class="label" x="1270.0" y="526" text-anchor="middle">Lane&#x27;s code</text>
+  <text class="kind" x="1270.0" y="488">[Claude Code plugin folder]</text>
+  <text class="label small" x="1270.0" y="510" text-anchor="middle">Plugin files · Adapter · Test cases</text>
+  <text class="label small" x="1270.0" y="526" text-anchor="middle">Lane&#x27;s code</text>
   <path class="line" d="M140,94 L140,170" marker-end="url(#arrow)"/>
-  <text class="label" x="148" y="108" text-anchor="start">installs Lane</text>
-  <text class="label" x="148" y="122" text-anchor="start">[claude plugin install]</text>
+  <text class="label small" x="148" y="108" text-anchor="start">installs Lane</text>
+  <text class="label small" x="148" y="122" text-anchor="start">[claude plugin install]</text>
   <path class="line" d="M240,192 L320,192" marker-end="url(#arrow)"/>
-  <text class="label" x="280" y="186" text-anchor="middle">runs [Bash]</text>
+  <text class="label small" x="280" y="186" text-anchor="middle">runs [Bash]</text>
   <path class="line" d="M320,222 L240,222" marker-end="url(#arrow)"/>
-  <text class="label" x="44" y="252" text-anchor="start">validates the plugin</text>
-  <text class="label" x="44" y="266" text-anchor="start">[claude plugin validate]</text>
+  <text class="label small" x="44" y="252" text-anchor="start">validates the plugin</text>
+  <text class="label small" x="44" y="266" text-anchor="start">[claude plugin validate]</text>
   <path class="line" d="M510,270 L510,320" marker-end="url(#arrow)"/>
-  <text class="label" x="518" y="300" text-anchor="start">runs [JSON, stdio]</text>
+  <text class="label small" x="518" y="300" text-anchor="start">runs [JSON, stdio]</text>
   <path class="line" d="M320,258 L290,258 L290,450" marker-end="url(#arrow)"/>
-  <text class="label" x="282" y="330" text-anchor="end">reads,</text>
-  <text class="label" x="282" y="344" text-anchor="end">removes</text>
+  <text class="label small" x="282" y="330" text-anchor="end">reads,</text>
+  <text class="label small" x="282" y="344" text-anchor="end">removes</text>
   <path class="line" d="M700,240 L712,240 L712,500 L700,500" marker-end="url(#arrow)"/>
-  <text class="label" x="706" y="420" text-anchor="end">writes</text>
+  <text class="label small" x="706" y="420" text-anchor="end">writes</text>
   <path class="line" d="M1000,200 L1080,200" marker-end="url(#arrow)"/>
-  <text class="label" x="1040" y="230" text-anchor="middle">starts it</text>
-  <text class="label" x="1040" y="244" text-anchor="middle">[sh, JSON</text>
-  <text class="label" x="1040" y="258" text-anchor="middle">on stdio]</text>
+  <text class="label small" x="1040" y="230" text-anchor="middle">starts it</text>
+  <text class="label small" x="1040" y="244" text-anchor="middle">[sh, JSON</text>
+  <text class="label small" x="1040" y="258" text-anchor="middle">on stdio]</text>
   <path class="line" d="M1270,310 L1270,340" marker-end="url(#arrow)"/>
-  <text class="label" x="1278" y="330" text-anchor="start">runs [JSON, stdio]</text>
+  <text class="label small" x="1278" y="330" text-anchor="start">runs [JSON, stdio]</text>
   <path class="line" d="M1460,240 L1472,240 L1472,500 L1460,500" marker-end="url(#arrow)"/>
-  <text class="label" x="1466" y="430" text-anchor="end">reads</text>
+  <text class="label small" x="1466" y="430" text-anchor="end">reads</text>
   <path class="line" d="M1080,290 L1050,290 L1050,500 L980,500" marker-end="url(#arrow)"/>
   <path class="line" d="M990,234 L990,600" marker-end="url(#arrow)"/>
-  <text class="label" x="984" y="590" text-anchor="end">runs [Bash]</text>
+  <text class="label small" x="984" y="590" text-anchor="end">runs [Bash]</text>
   <path class="line" d="M1000,660 L1350,660 L1350,580" marker-end="url(#arrow)"/>
-  <text class="label" x="1044" y="476" text-anchor="end">writes,</text>
-  <text class="label" x="1044" y="490" text-anchor="end">reads</text>
-  <text class="label" x="1358" y="630" text-anchor="start">reads</text>
+  <text class="label small" x="1044" y="476" text-anchor="end">writes,</text>
+  <text class="label small" x="1044" y="490" text-anchor="end">reads</text>
+  <text class="label small" x="1358" y="630" text-anchor="start">reads</text>
   <path class="line" d="M540,580 L540,760 L1270,760 L1270,580" marker-end="url(#arrow)"/>
-  <text class="label" x="897" y="752" text-anchor="middle">installs the plugin with Lane&#x27;s code [its marketplace]</text>
-  <text class="envname" x="20" y="815" text-anchor="start">Legend</text>
-  <rect class="env" x="90" y="800" width="36" height="22" rx="4"/>
-  <text class="label" x="134" y="815" text-anchor="start">execution environment</text>
+  <text class="label small" x="897" y="752" text-anchor="middle">installs the plugin with Lane&#x27;s code [its marketplace]</text>
+  <text class="frame-name" x="20" y="815" text-anchor="start">Legend</text>
+  <rect class="frame" x="90" y="800" width="36" height="22" rx="4"/>
+  <text class="label small" x="134" y="815" text-anchor="start">execution environment</text>
   <rect class="unit" x="290" y="800" width="36" height="22" rx="4"/>
-  <text class="label" x="334" y="815" text-anchor="start">deployment unit [technology]</text>
+  <text class="label small" x="334" y="815" text-anchor="start">deployment unit [technology]</text>
   <rect class="ext" x="530" y="800" width="36" height="22" rx="3"/>
-  <text class="label" x="574" y="815" text-anchor="start">outside Lane</text>
-  <text class="label" x="680" y="815" text-anchor="start">inside a unit: roles and data, named as in Components and the data model</text>
+  <text class="label small" x="574" y="815" text-anchor="start">outside Lane</text>
+  <text class="label small" x="680" y="815" text-anchor="start">inside a unit: roles and data, named as in Components and the data model</text>
 </svg>

@@ -1,94 +1,120 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1515 676" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
   <title>Rn's data model</title>
   <style>
+    .bg { fill: #ffffff; }
     .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
-    .name { fill: #1f2328; font-size: 14px; font-weight: 600; text-anchor: middle; }
+    .lane { fill: #ddf4ff; stroke: #54aeff; }
+    .store { fill: #fff8c5; stroke: #9a6700; stroke-width: 1.5; }
+    .ext { fill: #eaeef2; stroke: #d0d7de; stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .unit { fill: #ddf4ff; fill-opacity: 0.35; stroke: #0969da; stroke-width: 1.2; }
+    .frame { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    .frame-name { fill: #0969da; font-size: 13px; font-weight: 600; }
+    .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
+    .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
+    .label { fill: #1f2328; font-size: 13px; }
+    .small { font-size: 12px; }
+    .data { fill: #8250df; font-size: 12px; font-style: italic; }
     .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
-    .label { fill: #1f2328; font-size: 12px; text-anchor: middle; }
+    .dashed { stroke-dasharray: 5 4; }
+    .head { fill: #59636e; }
+    .hole { fill: #ffffff; stroke: #59636e; stroke-width: 1.5; }
     .halo { stroke: #ffffff; stroke-width: 7; stroke-linejoin: round; paint-order: stroke; }
+    .mid { text-anchor: middle; }
+    .start { text-anchor: start; }
     @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; }
       .box { fill: #161b22; stroke: #3d444d; }
+      .lane { fill: #0c2d6b; stroke: #4493f8; }
+      .store { fill: #2e2a1a; stroke: #d29922; }
+      .ext { fill: #21262d; stroke: #3d444d; }
+      .unit { fill: #0c2d6b; stroke: #4493f8; }
+      .frame { stroke: #4493f8; }
+      .frame-name { fill: #4493f8; }
       .name, .label { fill: #f0f6fc; }
+      .kind { fill: #9198a1; }
+      .data { fill: #c297ff; }
       .line { stroke: #9198a1; }
+      .head { fill: #9198a1; }
+      .hole { fill: #0d1117; stroke: #9198a1; }
       .halo { stroke: #0d1117; }
     }
   </style>
 
   <!-- each relation, labelled with what it is -->
   <path class="line" d="M1465,434 H1495 V626 H1210"/>
-  <text class="label halo" x="1350" y="630">serves</text>
+  <text class="label small mid halo" x="1350" y="630">serves</text>
   <path class="line" d="M360,222 L360,166"/>
-  <text class="label halo" x="360" y="198">leaves open</text>
+  <text class="label small mid halo" x="360" y="198">leaves open</text>
   <path class="line" d="M190,146 L275,146"/>
-  <text class="label halo" x="232" y="150">may be</text>
+  <text class="label small mid halo" x="232" y="150">may be</text>
   <path class="line" d="M530,146 L445,146"/>
-  <text class="label halo" x="488" y="150">may return</text>
+  <text class="label small mid halo" x="488" y="150">may return</text>
   <path class="line" d="M588,318 L387,166"/>
-  <text class="label halo" x="488" y="246">has behind it</text>
+  <text class="label small mid halo" x="488" y="246">has behind it</text>
   <path class="line" d="M360,126 L360,70"/>
-  <text class="label halo" x="360" y="102">answered by</text>
+  <text class="label small mid halo" x="360" y="102">answered by</text>
   <path class="line" d="M445,50 L785,50"/>
-  <text class="label halo" x="615" y="54">kept as</text>
+  <text class="label small mid halo" x="615" y="54">kept as</text>
   <path class="line" d="M870,70 L870,126"/>
-  <text class="label halo" x="870" y="102">listed once replaced</text>
+  <text class="label small mid halo" x="870" y="102">listed once replaced</text>
   <path class="line" d="M897,70 L1098,222"/>
-  <text class="label halo" x="998" y="150">held by</text>
+  <text class="label small mid halo" x="998" y="150">held by</text>
   <path class="line" d="M700,162 L1040,226"/>
-  <text class="label halo" x="870" y="198">put into</text>
+  <text class="label small mid halo" x="870" y="198">put into</text>
   <path class="line" d="M1072,262 L923,318"/>
-  <text class="label halo" x="998" y="294">holds</text>
+  <text class="label small mid halo" x="998" y="294">holds</text>
   <path class="line" d="M1125,262 L1125,318"/>
-  <text class="label halo" x="1125" y="294">answered by</text>
+  <text class="label small mid halo" x="1125" y="294">answered by</text>
   <path class="line" d="M1040,338 L955,338"/>
-  <text class="label halo" x="998" y="342">holds</text>
+  <text class="label small mid halo" x="998" y="342">holds</text>
   <path class="line" d="M1178,222 L1327,166"/>
-  <text class="label halo" x="1252" y="198">names</text>
+  <text class="label small mid halo" x="1252" y="198">names</text>
   <path class="line" d="M1210,242 L1295,242"/>
-  <text class="label halo" x="1252" y="246">names</text>
+  <text class="label small mid halo" x="1252" y="246">names</text>
   <path class="line" d="M1380,222 L1380,166"/>
-  <text class="label halo" x="1380" y="198">cut from</text>
+  <text class="label small mid halo" x="1380" y="198">cut from</text>
   <path class="line" d="M1380,70 L1380,126"/>
-  <text class="label halo" x="1380" y="102">adds to</text>
+  <text class="label small mid halo" x="1380" y="102">adds to</text>
   <path class="line" d="M1353,414 L1152,262"/>
-  <text class="label halo" x="1252" y="342">made from</text>
+  <text class="label small mid halo" x="1252" y="342">made from</text>
   <path class="line" d="M1178,510 L1327,454"/>
-  <text class="label halo" x="1252" y="486">holds</text>
+  <text class="label small mid halo" x="1252" y="486">holds</text>
   <path class="line" d="M1125,550 L1125,606"/>
-  <text class="label halo" x="1125" y="582">holds</text>
+  <text class="label small mid halo" x="1125" y="582">holds</text>
   <path class="line" d="M1210,530 L1295,530"/>
-  <text class="label halo" x="1252" y="534">holds</text>
+  <text class="label small mid halo" x="1252" y="534">holds</text>
   <path class="line" d="M1380,454 L1380,510"/>
-  <text class="label halo" x="1380" y="486">serves</text>
+  <text class="label small mid halo" x="1380" y="486">serves</text>
   <path class="line" d="M1178,606 L1327,550"/>
-  <text class="label halo" x="1252" y="582">reach</text>
+  <text class="label small mid halo" x="1252" y="582">reach</text>
   <path class="line" d="M955,530 L1040,530"/>
-  <text class="label halo" x="998" y="534">holds</text>
+  <text class="label small mid halo" x="998" y="534">holds</text>
   <path class="line" d="M923,510 L1072,454"/>
-  <text class="label halo" x="998" y="486">written with</text>
+  <text class="label small mid halo" x="998" y="486">written with</text>
   <path class="line" d="M870,550 L870,606"/>
-  <text class="label halo" x="870" y="582">made from</text>
+  <text class="label small mid halo" x="870" y="582">made from</text>
   <path class="line" d="M870,454 L870,510"/>
-  <text class="label halo" x="870" y="486">made from</text>
+  <text class="label small mid halo" x="870" y="486">made from</text>
   <path class="line" d="M870,414 L870,358"/>
-  <text class="label halo" x="870" y="390">shows</text>
+  <text class="label small mid halo" x="870" y="390">shows</text>
   <path class="line" d="M700,434 L785,434"/>
-  <text class="label halo" x="742" y="438">answers</text>
+  <text class="label small mid halo" x="742" y="438">answers</text>
   <path class="line" d="M668,358 L817,414"/>
-  <text class="label halo" x="742" y="390">answers</text>
+  <text class="label small mid halo" x="742" y="390">answers</text>
   <path class="line" d="M445,434 L530,434"/>
-  <text class="label halo" x="488" y="438">shows typed</text>
+  <text class="label small mid halo" x="488" y="438">shows typed</text>
   <path class="line" d="M413,414 L562,358"/>
-  <text class="label halo" x="488" y="390">shows typed</text>
+  <text class="label small mid halo" x="488" y="390">shows typed</text>
   <path class="line" d="M445,530 L785,530"/>
-  <text class="label halo" x="615" y="534">keeps each state of</text>
+  <text class="label small mid halo" x="615" y="534">keeps each state of</text>
   <path class="line" d="M158,454 L307,510"/>
-  <text class="label halo" x="232" y="486">found in</text>
+  <text class="label small mid halo" x="232" y="486">found in</text>
   <path class="line" d="M190,434 L275,434"/>
-  <text class="label halo" x="232" y="438">checked in</text>
+  <text class="label small mid halo" x="232" y="438">checked in</text>
   <path class="line" d="M105,510 L105,454"/>
-  <text class="label halo" x="105" y="486">written from</text>
+  <text class="label small mid halo" x="105" y="486">written from</text>
   <path class="line" d="M360,606 L360,550"/>
-  <text class="label halo" x="360" y="582">shows</text>
+  <text class="label small mid halo" x="360" y="582">shows</text>
 
   <!-- each data, by its name -->
   <rect class="box" x="275" y="222" width="170" height="40" rx="8"/>

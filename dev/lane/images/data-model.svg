@@ -2,34 +2,41 @@
   <title>Lane&#x27;s data model</title>
   <style>
     .bg { fill: #ffffff; }
-    .box { fill: #f6f8fa; stroke: #59636e; stroke-width: 1.5; }
+    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .lane { fill: #ddf4ff; stroke: #54aeff; }
     .store { fill: #fff8c5; stroke: #9a6700; stroke-width: 1.5; }
-    .ext { fill: #eaeef2; stroke: #59636e; stroke-width: 1.5; stroke-dasharray: 5 3; }
-    .env { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 7 4; }
+    .ext { fill: #eaeef2; stroke: #d0d7de; stroke-width: 1.5; stroke-dasharray: 5 4; }
     .unit { fill: #ddf4ff; fill-opacity: 0.35; stroke: #0969da; stroke-width: 1.2; }
+    .frame { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    .frame-name { fill: #0969da; font-size: 13px; font-weight: 600; }
     .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
-    .tag { fill: #59636e; font-size: 12px; text-anchor: middle; }
-    .utag { fill: #59636e; font-size: 12px; }
-    .envname { fill: #0969da; font-size: 13px; font-weight: 600; }
-    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
-    .head { fill: #59636e; }
-    .label { fill: #1f2328; font-size: 12px; }
+    .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
+    .label { fill: #1f2328; font-size: 13px; }
+    .small { font-size: 12px; }
     .data { fill: #8250df; font-size: 12px; font-style: italic; }
+    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .dashed { stroke-dasharray: 5 4; }
+    .head { fill: #59636e; }
     .hole { fill: #ffffff; stroke: #59636e; stroke-width: 1.5; }
+    .halo { stroke: #ffffff; stroke-width: 7; stroke-linejoin: round; paint-order: stroke; }
+    .mid { text-anchor: middle; }
+    .start { text-anchor: start; }
     @media (prefers-color-scheme: dark) {
       .bg { fill: #0d1117; }
-      .box { fill: #161b22; stroke: #9198a1; }
+      .box { fill: #161b22; stroke: #3d444d; }
+      .lane { fill: #0c2d6b; stroke: #4493f8; }
       .store { fill: #2e2a1a; stroke: #d29922; }
-      .ext { fill: #21262d; stroke: #9198a1; }
-      .env { stroke: #4493f8; }
-      .unit { fill: #0c2d6b; fill-opacity: 0.35; stroke: #4493f8; }
+      .ext { fill: #21262d; stroke: #3d444d; }
+      .unit { fill: #0c2d6b; stroke: #4493f8; }
+      .frame { stroke: #4493f8; }
+      .frame-name { fill: #4493f8; }
       .name, .label { fill: #f0f6fc; }
-      .tag, .utag { fill: #9198a1; }
-      .envname { fill: #4493f8; }
+      .kind { fill: #9198a1; }
+      .data { fill: #c297ff; }
       .line { stroke: #9198a1; }
       .head { fill: #9198a1; }
-      .data { fill: #c297ff; }
       .hole { fill: #0d1117; stroke: #9198a1; }
+      .halo { stroke: #0d1117; }
     }
   </style>
   <defs>
@@ -73,7 +80,7 @@
   <path class="line" d="M332.1,99.3 L343.0,108.0"/>
   <path class="line" d="M160.5,338.1 L149.5,329.4"/>
   <circle class="hole" cx="166.2" cy="319.6" r="5"/>
-  <text class="label" x="232" y="220" text-anchor="end">gives</text>
+  <text class="label small" x="232" y="220" text-anchor="end">gives</text>
   <path class="line" d="M460.0,64.0 L540.0,64.0"/>
   <path class="line" d="M468.0,71.0 L468.0,57.0"/>
   <path class="line" d="M480.0,71.0 L480.0,57.0"/>
@@ -81,19 +88,19 @@
   <path class="line" d="M526.0,64.0 L540.0,64.0"/>
   <path class="line" d="M526.0,64.0 L540.0,72.0"/>
   <circle class="hole" cx="514.0" cy="64.0" r="5"/>
-  <text class="label" x="500" y="80" text-anchor="middle">holds</text>
+  <text class="label small" x="500" y="80" text-anchor="middle">holds</text>
   <path class="line" d="M375.0,190.0 L375.0,88.0"/>
   <path class="line" d="M382.0,182.0 L368.0,182.0"/>
   <path class="line" d="M382.0,170.0 L368.0,170.0"/>
   <path class="line" d="M368.0,96.0 L382.0,96.0"/>
   <circle class="hole" cx="375.0" cy="114.0" r="5"/>
-  <text class="label" x="383" y="144" text-anchor="start">is kept as</text>
+  <text class="label small" x="383" y="144" text-anchor="start">is kept as</text>
   <path class="line" d="M375.0,238.0 L375.0,340.0"/>
   <path class="line" d="M368.0,246.0 L382.0,246.0"/>
   <path class="line" d="M368.0,258.0 L382.0,258.0"/>
   <path class="line" d="M382.0,332.0 L368.0,332.0"/>
   <circle class="hole" cx="375.0" cy="314.0" r="5"/>
-  <text class="label" x="383" y="294" text-anchor="start">gets</text>
+  <text class="label small" x="383" y="294" text-anchor="start">gets</text>
   <path class="line" d="M415.0,238.0 L585.0,340.0"/>
   <path class="line" d="M427.0,245.2 L410.9,244.9"/>
   <path class="line" d="M427.0,245.2 L415.0,238.0"/>
@@ -103,7 +110,7 @@
   <path class="line" d="M573.0,332.8 L585.0,340.0"/>
   <path class="line" d="M573.0,332.8 L580.9,346.9"/>
   <path class="line" d="M571.5,323.7 L564.2,335.7"/>
-  <text class="label" x="478" y="306" text-anchor="middle">runs on</text>
+  <text class="label small" x="478" y="306" text-anchor="middle">runs on</text>
   <path class="line" d="M625.0,238.0 L625.0,340.0"/>
   <path class="line" d="M618.0,246.0 L632.0,246.0"/>
   <path class="line" d="M618.0,258.0 L632.0,258.0"/>
@@ -111,7 +118,7 @@
   <path class="line" d="M625.0,326.0 L625.0,340.0"/>
   <path class="line" d="M625.0,326.0 L617.0,340.0"/>
   <circle class="hole" cx="625.0" cy="314.0" r="5"/>
-  <text class="label" x="617" y="294" text-anchor="end">is watched by</text>
+  <text class="label small" x="617" y="294" text-anchor="end">is watched by</text>
   <path class="line" d="M710.0,214.0 L790.0,214.0"/>
   <path class="line" d="M718.0,221.0 L718.0,207.0"/>
   <path class="line" d="M730.0,221.0 L730.0,207.0"/>
@@ -119,7 +126,7 @@
   <path class="line" d="M776.0,214.0 L790.0,214.0"/>
   <path class="line" d="M776.0,214.0 L790.0,222.0"/>
   <path class="line" d="M770.0,207.0 L770.0,221.0"/>
-  <text class="label" x="750" y="230" text-anchor="middle">holds</text>
+  <text class="label small" x="750" y="230" text-anchor="middle">holds</text>
   <path class="line" d="M960.0,214.0 L1040.0,214.0"/>
   <path class="line" d="M968.0,221.0 L968.0,207.0"/>
   <path class="line" d="M980.0,221.0 L980.0,207.0"/>
@@ -127,7 +134,7 @@
   <path class="line" d="M1026.0,214.0 L1040.0,214.0"/>
   <path class="line" d="M1026.0,214.0 L1040.0,222.0"/>
   <circle class="hole" cx="1014.0" cy="214.0" r="5"/>
-  <text class="label" x="1000" y="230" text-anchor="middle">says</text>
+  <text class="label small" x="1000" y="230" text-anchor="middle">says</text>
   <path class="line" d="M680.0,88.0 L1070.0,190.0"/>
   <path class="line" d="M693.5,91.5 L678.0,95.7"/>
   <path class="line" d="M693.5,91.5 L680.0,88.0"/>
@@ -135,7 +142,7 @@
   <circle class="hole" cx="705.2" cy="94.6" r="5"/>
   <path class="line" d="M1064.0,181.2 L1060.5,194.7"/>
   <path class="line" d="M1052.4,178.2 L1048.9,191.7"/>
-  <text class="label" x="885" y="154" text-anchor="middle">takes</text>
+  <text class="label small" x="885" y="154" text-anchor="middle">takes</text>
   <path class="line" d="M1085.0,238.0 L915.0,340.0"/>
   <path class="line" d="M1073.0,245.2 L1080.9,231.1"/>
   <path class="line" d="M1073.0,245.2 L1085.0,238.0"/>
@@ -143,7 +150,7 @@
   <path class="line" d="M1064.2,242.3 L1071.5,254.3"/>
   <path class="line" d="M925.5,341.9 L918.3,329.9"/>
   <path class="line" d="M935.8,335.7 L928.5,323.7"/>
-  <text class="label" x="1016" y="304" text-anchor="middle">keeps</text>
+  <text class="label small" x="1016" y="304" text-anchor="middle">keeps</text>
   <path class="line" d="M1125.0,238.0 L1125.0,340.0"/>
   <path class="line" d="M1125.0,252.0 L1117.0,238.0"/>
   <path class="line" d="M1125.0,252.0 L1125.0,238.0"/>
@@ -151,7 +158,7 @@
   <path class="line" d="M1118.0,258.0 L1132.0,258.0"/>
   <path class="line" d="M1132.0,332.0 L1118.0,332.0"/>
   <circle class="hole" cx="1125.0" cy="314.0" r="5"/>
-  <text class="label" x="1133" y="294" text-anchor="start">gives</text>
+  <text class="label small" x="1133" y="294" text-anchor="start">gives</text>
   <path class="line" d="M1335.0,238.0 L1165.0,340.0"/>
   <path class="line" d="M1323.0,245.2 L1330.9,231.1"/>
   <path class="line" d="M1323.0,245.2 L1335.0,238.0"/>
@@ -159,7 +166,7 @@
   <circle class="hole" cx="1312.7" cy="251.4" r="5"/>
   <path class="line" d="M1175.5,341.9 L1168.3,329.9"/>
   <path class="line" d="M1185.8,335.7 L1178.5,323.7"/>
-  <text class="label" x="1268" y="304" text-anchor="middle">names</text>
+  <text class="label small" x="1268" y="304" text-anchor="middle">names</text>
   <path class="line" d="M1165.0,88.0 L1335.0,190.0"/>
   <path class="line" d="M1177.0,95.2 L1160.9,94.9"/>
   <path class="line" d="M1177.0,95.2 L1165.0,88.0"/>
@@ -167,13 +174,13 @@
   <path class="line" d="M1178.5,104.3 L1185.8,92.3"/>
   <path class="line" d="M1331.7,179.9 L1324.5,191.9"/>
   <path class="line" d="M1321.5,173.7 L1314.2,185.7"/>
-  <text class="label" x="1218" y="154" text-anchor="middle">is tested by</text>
+  <text class="label small" x="1218" y="154" text-anchor="middle">is tested by</text>
   <path class="line" d="M1210.0,64.0 L1290.0,64.0"/>
   <path class="line" d="M1218.0,71.0 L1218.0,57.0"/>
   <path class="line" d="M1230.0,71.0 L1230.0,57.0"/>
   <path class="line" d="M1282.0,57.0 L1282.0,71.0"/>
   <path class="line" d="M1270.0,57.0 L1270.0,71.0"/>
-  <text class="label" x="1250" y="80" text-anchor="middle">holds</text>
+  <text class="label small" x="1250" y="80" text-anchor="middle">holds</text>
   <path class="line" d="M1375.0,88.0 L1375.0,190.0"/>
   <path class="line" d="M1375.0,102.0 L1367.0,88.0"/>
   <path class="line" d="M1375.0,102.0 L1375.0,88.0"/>
@@ -181,7 +188,7 @@
   <path class="line" d="M1368.0,108.0 L1382.0,108.0"/>
   <path class="line" d="M1382.0,182.0 L1368.0,182.0"/>
   <circle class="hole" cx="1375.0" cy="164.0" r="5"/>
-  <text class="label" x="1383" y="144" text-anchor="start">converts</text>
+  <text class="label small" x="1383" y="144" text-anchor="start">converts</text>
   <path class="line" d="M875.0,388.0 L875.0,490.0"/>
   <path class="line" d="M868.0,396.0 L882.0,396.0"/>
   <path class="line" d="M868.0,408.0 L882.0,408.0"/>
@@ -189,7 +196,7 @@
   <path class="line" d="M875.0,476.0 L875.0,490.0"/>
   <path class="line" d="M875.0,476.0 L867.0,490.0"/>
   <circle class="hole" cx="875.0" cy="464.0" r="5"/>
-  <text class="label" x="883" y="444" text-anchor="start">keeps</text>
+  <text class="label small" x="883" y="444" text-anchor="start">keeps</text>
   <path class="line" d="M1085.0,388.0 L915.0,490.0"/>
   <path class="line" d="M1074.5,386.1 L1081.7,398.1"/>
   <circle class="hole" cx="1062.7" cy="401.4" r="5"/>
@@ -197,7 +204,7 @@
   <path class="line" d="M927.0,482.8 L915.0,490.0"/>
   <path class="line" d="M927.0,482.8 L910.9,483.1"/>
   <circle class="hole" cx="937.3" cy="476.6" r="5"/>
-  <text class="label" x="1016" y="454" text-anchor="middle">gives</text>
+  <text class="label small" x="1016" y="454" text-anchor="middle">gives</text>
   <path class="line" d="M840.0,490.0 L650.0,238.0"/>
   <path class="line" d="M831.6,478.8 L846.4,485.2"/>
   <path class="line" d="M831.6,478.8 L840.0,490.0"/>
@@ -205,7 +212,7 @@
   <circle class="hole" cx="824.3" cy="469.2" r="5"/>
   <path class="line" d="M649.2,248.6 L660.4,240.2"/>
   <path class="line" d="M656.5,258.2 L667.6,249.8"/>
-  <text class="label" x="752" y="380" text-anchor="end">names</text>
+  <text class="label small" x="752" y="380" text-anchor="end">names</text>
   <path class="line" d="M210.0,376.0 L790.0,514.0"/>
   <path class="line" d="M223.6,379.2 L208.1,383.8"/>
   <path class="line" d="M223.6,379.2 L210.0,376.0"/>
@@ -213,7 +220,7 @@
   <circle class="hole" cx="235.3" cy="382.0" r="5"/>
   <path class="line" d="M783.8,505.3 L780.6,519.0"/>
   <circle class="hole" cx="764.7" cy="508.0" r="5"/>
-  <text class="label" x="500" y="432" text-anchor="middle">matches</text>
+  <text class="label small" x="500" y="432" text-anchor="middle">matches</text>
   <rect class="box" x="1040" y="490" width="170" height="48" rx="0"/>
   <text class="name" x="1125.0" y="518.5">Order of results</text>
   <path class="line" d="M1125.0,388.0 L1125.0,490.0"/>
@@ -223,7 +230,7 @@
   <path class="line" d="M1125.0,476.0 L1125.0,490.0"/>
   <path class="line" d="M1125.0,476.0 L1117.0,490.0"/>
   <circle class="hole" cx="1125.0" cy="464.0" r="5"/>
-  <text class="label" x="1133" y="444" text-anchor="start">gives</text>
+  <text class="label small" x="1133" y="444" text-anchor="start">gives</text>
   <path class="line" d="M1040.0,514.0 L960.0,514.0"/>
   <path class="line" d="M1032.0,507.0 L1032.0,521.0"/>
   <circle class="hole" cx="1014.0" cy="514.0" r="5"/>
@@ -231,7 +238,7 @@
   <path class="line" d="M974.0,514.0 L960.0,514.0"/>
   <path class="line" d="M974.0,514.0 L960.0,506.0"/>
   <path class="line" d="M980.0,521.0 L980.0,507.0"/>
-  <text class="label" x="1000" y="506" text-anchor="middle">picks</text>
+  <text class="label small" x="1000" y="506" text-anchor="middle">picks</text>
   <path class="line" d="M820.0,340.0 L675.0,238.0"/>
   <path class="line" d="M817.5,329.7 L809.4,341.1"/>
   <circle class="hole" cx="798.7" cy="325.0" r="5"/>
@@ -239,7 +246,7 @@
   <path class="line" d="M686.5,246.1 L675.0,238.0"/>
   <path class="line" d="M686.5,246.1 L679.6,231.5"/>
   <circle class="hole" cx="696.3" cy="253.0" r="5"/>
-  <text class="label" x="784" y="286" text-anchor="start">runs at once</text>
+  <text class="label small" x="784" y="286" text-anchor="start">runs at once</text>
   <path class="line" d="M290.0,52.0 L250.0,52.0 L250.0,76.0 L290.0,76.0"/>
   <path class="line" d="M282.0,45.0 L282.0,59.0"/>
   <circle class="hole" cx="264.0" cy="52.0" r="5"/>
@@ -247,28 +254,28 @@
   <path class="line" d="M276.0,76.0 L290.0,76.0"/>
   <path class="line" d="M276.0,76.0 L290.0,84.0"/>
   <circle class="hole" cx="264.0" cy="76.0" r="5"/>
-  <text class="label" x="242" y="68" text-anchor="end">joins</text>
-  <text class="envname" x="40" y="654" text-anchor="start">Legend</text>
+  <text class="label small" x="242" y="68" text-anchor="end">joins</text>
+  <text class="frame-name" x="40" y="654" text-anchor="start">Legend</text>
   <path class="line" d="M120,650 L170,650"/>
   <path class="line" d="M162.0,643.0 L162.0,657.0"/>
   <path class="line" d="M150.0,643.0 L150.0,657.0"/>
-  <text class="label" x="178" y="654" text-anchor="start">exactly one</text>
+  <text class="label small" x="178" y="654" text-anchor="start">exactly one</text>
   <path class="line" d="M310,650 L360,650"/>
   <path class="line" d="M352.0,643.0 L352.0,657.0"/>
   <circle class="hole" cx="334.0" cy="650.0" r="5"/>
-  <text class="label" x="368" y="654" text-anchor="start">zero or one</text>
+  <text class="label small" x="368" y="654" text-anchor="start">zero or one</text>
   <path class="line" d="M500,650 L550,650"/>
   <path class="line" d="M536.0,650.0 L550.0,658.0"/>
   <path class="line" d="M536.0,650.0 L550.0,650.0"/>
   <path class="line" d="M536.0,650.0 L550.0,642.0"/>
   <path class="line" d="M530.0,643.0 L530.0,657.0"/>
-  <text class="label" x="558" y="654" text-anchor="start">one or many</text>
+  <text class="label small" x="558" y="654" text-anchor="start">one or many</text>
   <path class="line" d="M690,650 L740,650"/>
   <path class="line" d="M726.0,650.0 L740.0,658.0"/>
   <path class="line" d="M726.0,650.0 L740.0,650.0"/>
   <path class="line" d="M726.0,650.0 L740.0,642.0"/>
   <circle class="hole" cx="714.0" cy="650.0" r="5"/>
-  <text class="label" x="748" y="654" text-anchor="start">zero or many</text>
-  <text class="label" x="890" y="654" text-anchor="start">at the end of the data it counts; a box holds a data&#x27;s name</text>
+  <text class="label small" x="748" y="654" text-anchor="start">zero or many</text>
+  <text class="label small" x="890" y="654" text-anchor="start">at the end of the data it counts; a box holds a data&#x27;s name</text>
 
 </svg>

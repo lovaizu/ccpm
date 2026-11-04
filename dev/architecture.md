@@ -499,6 +499,11 @@ An image lies in `images/` beside the document that shows it, as `dev/images/` f
 A folder then shows its documents and parts when it is opened, and an image is found from the
 document that shows it.
 
+A figure is an SVG whose style is the one in `dev/images/figures.css`, its colours light by default
+and dark under `prefers-color-scheme`, which follows the page's theme. An image shown by `<img>`
+reads no file beside it, so each SVG carries a copy: `python3 dev/figures.py write` puts it in, and
+`dev/check.sh` fails on a copy left behind.
+
 ### The READMEs
 
 - `plugins/<plugin>/README.md` is for the plugin's users.
