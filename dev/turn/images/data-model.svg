@@ -1,0 +1,280 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1320 820" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+  <title>Turn&#x27;s data model</title>
+  <style>
+    .bg { fill: #ffffff; }
+    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .lane { fill: #ddf4ff; stroke: #54aeff; }
+    .store { fill: #fff8c5; stroke: #9a6700; stroke-width: 1.5; }
+    .ext { fill: #eaeef2; stroke: #d0d7de; stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .unit { fill: #ddf4ff; fill-opacity: 0.35; stroke: #0969da; stroke-width: 1.2; }
+    .frame { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    .frame-name { fill: #0969da; font-size: 13px; font-weight: 600; }
+    .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
+    .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
+    .label { fill: #1f2328; font-size: 13px; }
+    .small { font-size: 12px; }
+    .data { fill: #8250df; font-size: 12px; font-style: italic; }
+    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .dashed { stroke-dasharray: 5 4; }
+    .head { fill: #59636e; }
+    .hole { fill: #ffffff; stroke: #59636e; stroke-width: 1.5; }
+    .halo { stroke: #ffffff; stroke-width: 7; stroke-linejoin: round; paint-order: stroke; }
+    .mid { text-anchor: middle; }
+    .start { text-anchor: start; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; }
+      .box { fill: #161b22; stroke: #3d444d; }
+      .lane { fill: #0c2d6b; stroke: #4493f8; }
+      .store { fill: #2e2a1a; stroke: #d29922; }
+      .ext { fill: #21262d; stroke: #3d444d; }
+      .unit { fill: #0c2d6b; stroke: #4493f8; }
+      .frame { stroke: #4493f8; }
+      .frame-name { fill: #4493f8; }
+      .name, .label { fill: #f0f6fc; }
+      .kind { fill: #9198a1; }
+      .data { fill: #c297ff; }
+      .line { stroke: #9198a1; }
+      .head { fill: #9198a1; }
+      .hole { fill: #0d1117; stroke: #9198a1; }
+      .halo { stroke: #0d1117; }
+    }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path class="head" d="M0,0 L10,5 L0,10 z"/>
+    </marker>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1320" height="820"/>
+  <rect class="box" x="40" y="60" width="170" height="48" rx="0"/>
+  <text class="name" x="125.0" y="89" text-anchor="middle">Answer</text>
+  <rect class="box" x="300" y="60" width="170" height="48" rx="0"/>
+  <text class="name" x="385.0" y="89" text-anchor="middle">Message</text>
+  <rect class="box" x="560" y="60" width="170" height="48" rx="0"/>
+  <text class="name" x="645.0" y="89" text-anchor="middle">Call</text>
+  <rect class="box" x="820" y="60" width="170" height="48" rx="0"/>
+  <text class="name" x="905.0" y="89" text-anchor="middle">Result</text>
+  <rect class="box" x="1100" y="60" width="170" height="48" rx="0"/>
+  <text class="name" x="1185.0" y="89" text-anchor="middle">Rules laid</text>
+  <rect class="box" x="40" y="240" width="170" height="48" rx="0"/>
+  <text class="name" x="125.0" y="269" text-anchor="middle">Request</text>
+  <rect class="box" x="300" y="240" width="170" height="48" rx="0"/>
+  <text class="name" x="385.0" y="269" text-anchor="middle">Design file</text>
+  <rect class="box" x="560" y="240" width="170" height="48" rx="0"/>
+  <text class="name" x="645.0" y="269" text-anchor="middle">Run</text>
+  <rect class="box" x="820" y="240" width="170" height="48" rx="0"/>
+  <text class="name" x="905.0" y="269" text-anchor="middle">Run values</text>
+  <rect class="box" x="40" y="420" width="170" height="48" rx="0"/>
+  <text class="name" x="125.0" y="449" text-anchor="middle">Decision</text>
+  <rect class="box" x="300" y="420" width="170" height="48" rx="0"/>
+  <text class="name" x="385.0" y="449" text-anchor="middle">Question</text>
+  <rect class="box" x="560" y="420" width="170" height="48" rx="0"/>
+  <text class="name" x="645.0" y="449" text-anchor="middle">Work</text>
+  <rect class="box" x="820" y="420" width="170" height="48" rx="0"/>
+  <text class="name" x="905.0" y="449" text-anchor="middle">Round</text>
+  <rect class="box" x="1100" y="420" width="170" height="48" rx="0"/>
+  <text class="name" x="1185.0" y="449" text-anchor="middle">Answers</text>
+  <rect class="box" x="300" y="600" width="170" height="48" rx="0"/>
+  <text class="name" x="385.0" y="629" text-anchor="middle">Standard</text>
+  <rect class="box" x="560" y="600" width="170" height="48" rx="0"/>
+  <text class="name" x="645.0" y="629" text-anchor="middle">Best practice</text>
+  <path class="line" d="M300,84.0 L210,84.0"/>
+  <path class="line" d="M292.0,91.0 L292.0,77.0"/>
+  <path class="line" d="M282.0,91.0 L282.0,77.0"/>
+  <path class="line" d="M218.0,77.0 L218.0,91.0"/>
+  <circle class="hole" cx="234.0" cy="84.0" r="5"/>
+  <text class="label small halo" x="255" y="76" text-anchor="middle">answers</text>
+  <path class="line" d="M385.0,108 L385.0,240"/>
+  <path class="line" d="M385.0,122.0 L393.0,108.0"/>
+  <path class="line" d="M385.0,122.0 L385.0,108.0"/>
+  <path class="line" d="M385.0,122.0 L377.0,108.0"/>
+  <circle class="hole" cx="385.0" cy="132.0" r="5"/>
+  <path class="line" d="M378.0,232.0 L392.0,232.0"/>
+  <circle class="hole" cx="385.0" cy="216.0" r="5"/>
+  <text class="label small halo" x="393" y="170" text-anchor="start">puts a point of</text>
+  <path class="line" d="M470,76 L520,76 L520,436 L560,436"/>
+  <path class="line" d="M484.0,76.0 L470.0,68.0"/>
+  <path class="line" d="M484.0,76.0 L470.0,76.0"/>
+  <path class="line" d="M484.0,76.0 L470.0,84.0"/>
+  <circle class="hole" cx="494.0" cy="76.0" r="5"/>
+  <path class="line" d="M552.0,443.0 L552.0,429.0"/>
+  <circle class="hole" cx="536.0" cy="436.0" r="5"/>
+  <text class="label small halo" x="528" y="200" text-anchor="start">names, once done</text>
+  <path class="line" d="M645.0,108 L645.0,240"/>
+  <path class="line" d="M645.0,122.0 L653.0,108.0"/>
+  <path class="line" d="M645.0,122.0 L645.0,108.0"/>
+  <path class="line" d="M645.0,122.0 L637.0,108.0"/>
+  <path class="line" d="M652.0,128.0 L638.0,128.0"/>
+  <path class="line" d="M638.0,232.0 L652.0,232.0"/>
+  <path class="line" d="M638.0,222.0 L652.0,222.0"/>
+  <text class="label small halo" x="653" y="170" text-anchor="start">names</text>
+  <path class="line" d="M990,84.0 L1100,84.0"/>
+  <path class="line" d="M1004.0,84.0 L990.0,76.0"/>
+  <path class="line" d="M1004.0,84.0 L990.0,84.0"/>
+  <path class="line" d="M1004.0,84.0 L990.0,92.0"/>
+  <circle class="hole" cx="1014.0" cy="84.0" r="5"/>
+  <path class="line" d="M1092.0,91.0 L1092.0,77.0"/>
+  <path class="line" d="M1082.0,91.0 L1082.0,77.0"/>
+  <text class="label small halo" x="1050" y="76" text-anchor="middle">is routed by</text>
+  <path class="line" d="M210,264.0 L300,264.0"/>
+  <path class="line" d="M224.0,264.0 L210.0,256.0"/>
+  <path class="line" d="M224.0,264.0 L210.0,264.0"/>
+  <path class="line" d="M224.0,264.0 L210.0,272.0"/>
+  <circle class="hole" cx="234.0" cy="264.0" r="5"/>
+  <path class="line" d="M292.0,271.0 L292.0,257.0"/>
+  <path class="line" d="M282.0,271.0 L282.0,257.0"/>
+  <text class="label small halo" x="255" y="256" text-anchor="middle">names</text>
+  <path class="line" d="M85.0,288 L85,760 L1145,760 L1145.0,468"/>
+  <path class="line" d="M92.0,296.0 L78.0,296.0"/>
+  <circle class="hole" cx="85.0" cy="312.0" r="5"/>
+  <path class="line" d="M1145.0,482.0 L1153.0,468.0"/>
+  <path class="line" d="M1145.0,482.0 L1145.0,468.0"/>
+  <path class="line" d="M1145.0,482.0 L1137.0,468.0"/>
+  <circle class="hole" cx="1145.0" cy="492.0" r="5"/>
+  <text class="label small halo" x="620" y="752" text-anchor="middle">carries the shortfalls of</text>
+  <path class="line" d="M335.0,288 L175.0,420"/>
+  <path class="line" d="M333.3,298.5 L324.4,287.7"/>
+  <path class="line" d="M325.6,304.9 L316.7,294.1"/>
+  <path class="line" d="M185.8,411.1 L169.9,413.8"/>
+  <path class="line" d="M185.8,411.1 L175.0,420.0"/>
+  <path class="line" d="M185.8,411.1 L180.1,426.2"/>
+  <circle class="hole" cx="193.5" cy="404.7" r="5"/>
+  <text class="label small halo" x="232" y="345" text-anchor="middle">holds</text>
+  <path class="line" d="M405.0,288 L405.0,420"/>
+  <path class="line" d="M405.0,302.0 L413.0,288.0"/>
+  <path class="line" d="M405.0,302.0 L405.0,288.0"/>
+  <path class="line" d="M405.0,302.0 L397.0,288.0"/>
+  <circle class="hole" cx="405.0" cy="312.0" r="5"/>
+  <path class="line" d="M405.0,406.0 L397.0,420.0"/>
+  <path class="line" d="M405.0,406.0 L405.0,420.0"/>
+  <path class="line" d="M405.0,406.0 L413.0,420.0"/>
+  <path class="line" d="M398.0,400.0 L412.0,400.0"/>
+  <text class="label small halo" x="413" y="340" text-anchor="start">asks each</text>
+  <path class="line" d="M300,444.0 L210,444.0"/>
+  <path class="line" d="M286.0,444.0 L300.0,452.0"/>
+  <path class="line" d="M286.0,444.0 L300.0,444.0"/>
+  <path class="line" d="M286.0,444.0 L300.0,436.0"/>
+  <circle class="hole" cx="276.0" cy="444.0" r="5"/>
+  <path class="line" d="M224.0,444.0 L210.0,436.0"/>
+  <path class="line" d="M224.0,444.0 L210.0,444.0"/>
+  <path class="line" d="M224.0,444.0 L210.0,452.0"/>
+  <path class="line" d="M230.0,437.0 L230.0,451.0"/>
+  <text class="label small halo" x="255" y="428" text-anchor="middle">serves</text>
+  <path class="line" d="M595.0,420 L445.0,288"/>
+  <path class="line" d="M584.4,420.0 L593.6,409.5"/>
+  <path class="line" d="M576.9,413.4 L586.1,402.9"/>
+  <path class="line" d="M455.6,288.0 L446.4,298.5"/>
+  <path class="line" d="M463.1,294.6 L453.9,305.1"/>
+  <text class="label small halo" x="556" y="372" text-anchor="start">is designed in</text>
+  <path class="line" d="M645.0,288 L645.0,420"/>
+  <path class="line" d="M652.0,296.0 L638.0,296.0"/>
+  <path class="line" d="M652.0,306.0 L638.0,306.0"/>
+  <path class="line" d="M645.0,406.0 L637.0,420.0"/>
+  <path class="line" d="M645.0,406.0 L645.0,420.0"/>
+  <path class="line" d="M645.0,406.0 L653.0,420.0"/>
+  <path class="line" d="M638.0,400.0 L652.0,400.0"/>
+  <text class="label small halo" x="653" y="350" text-anchor="start">makes, in order</text>
+  <path class="line" d="M820,264.0 L730,264.0"/>
+  <path class="line" d="M806.0,264.0 L820.0,272.0"/>
+  <path class="line" d="M806.0,264.0 L820.0,264.0"/>
+  <path class="line" d="M806.0,264.0 L820.0,256.0"/>
+  <circle class="hole" cx="796.0" cy="264.0" r="5"/>
+  <path class="line" d="M738.0,257.0 L738.0,271.0"/>
+  <path class="line" d="M748.0,257.0 L748.0,271.0"/>
+  <text class="label small halo" x="775" y="256" text-anchor="middle">starts a role on</text>
+  <path class="line" d="M905.0,288 L905.0,420"/>
+  <path class="line" d="M905.0,302.0 L913.0,288.0"/>
+  <path class="line" d="M905.0,302.0 L905.0,288.0"/>
+  <path class="line" d="M905.0,302.0 L897.0,288.0"/>
+  <circle class="hole" cx="905.0" cy="312.0" r="5"/>
+  <path class="line" d="M898.0,412.0 L912.0,412.0"/>
+  <circle class="hole" cx="905.0" cy="396.0" r="5"/>
+  <text class="label small halo" x="913" y="350" text-anchor="start">names a group of</text>
+  <path class="line" d="M615.0,468 L615.0,600"/>
+  <path class="line" d="M615.0,482.0 L623.0,468.0"/>
+  <path class="line" d="M615.0,482.0 L615.0,468.0"/>
+  <path class="line" d="M615.0,482.0 L607.0,468.0"/>
+  <circle class="hole" cx="615.0" cy="492.0" r="5"/>
+  <path class="line" d="M608.0,592.0 L622.0,592.0"/>
+  <path class="line" d="M608.0,582.0 L622.0,582.0"/>
+  <text class="label small halo" x="610" y="540" text-anchor="end">is made by</text>
+  <path class="line" d="M675.0,468 L675.0,600"/>
+  <path class="line" d="M675.0,482.0 L683.0,468.0"/>
+  <path class="line" d="M675.0,482.0 L675.0,468.0"/>
+  <path class="line" d="M675.0,482.0 L667.0,468.0"/>
+  <circle class="hole" cx="675.0" cy="492.0" r="5"/>
+  <path class="line" d="M668.0,592.0 L682.0,592.0"/>
+  <path class="line" d="M668.0,582.0 L682.0,582.0"/>
+  <text class="label small halo" x="680" y="540" text-anchor="start">is read by</text>
+  <path class="line" d="M575.0,600 L425.0,468"/>
+  <path class="line" d="M564.4,600.0 L573.6,589.5"/>
+  <path class="line" d="M556.9,593.4 L566.1,582.9"/>
+  <path class="line" d="M435.5,477.2 L430.3,462.0"/>
+  <path class="line" d="M435.5,477.2 L425.0,468.0"/>
+  <path class="line" d="M435.5,477.2 L419.7,474.0"/>
+  <path class="line" d="M444.6,476.0 L435.4,486.5"/>
+  <text class="label small halo" x="470" y="560" text-anchor="start">asks</text>
+  <path class="line" d="M470,624.0 L560,624.0"/>
+  <path class="line" d="M484.0,624.0 L470.0,616.0"/>
+  <path class="line" d="M484.0,624.0 L470.0,624.0"/>
+  <path class="line" d="M484.0,624.0 L470.0,632.0"/>
+  <circle class="hole" cx="494.0" cy="624.0" r="5"/>
+  <path class="line" d="M552.0,631.0 L552.0,617.0"/>
+  <path class="line" d="M542.0,631.0 L542.0,617.0"/>
+  <text class="label small halo" x="515" y="616" text-anchor="middle">is taken from</text>
+  <path class="line" d="M820,444.0 L730,444.0"/>
+  <path class="line" d="M806.0,444.0 L820.0,452.0"/>
+  <path class="line" d="M806.0,444.0 L820.0,444.0"/>
+  <path class="line" d="M806.0,444.0 L820.0,436.0"/>
+  <circle class="hole" cx="796.0" cy="444.0" r="5"/>
+  <path class="line" d="M738.0,437.0 L738.0,451.0"/>
+  <path class="line" d="M748.0,437.0 L748.0,451.0"/>
+  <text class="label small halo" x="775" y="436" text-anchor="middle">checks</text>
+  <path class="line" d="M990,444.0 L1100,444.0"/>
+  <path class="line" d="M998.0,437.0 L998.0,451.0"/>
+  <path class="line" d="M1008.0,437.0 L1008.0,451.0"/>
+  <path class="line" d="M1086.0,444.0 L1100.0,452.0"/>
+  <path class="line" d="M1086.0,444.0 L1100.0,444.0"/>
+  <path class="line" d="M1086.0,444.0 L1100.0,436.0"/>
+  <path class="line" d="M1080.0,451.0 L1080.0,437.0"/>
+  <text class="label small halo" x="1055" y="436" text-anchor="middle">is answered in</text>
+  <path class="line" d="M865.0,468 L715.0,600"/>
+  <path class="line" d="M854.5,477.2 L870.3,474.0"/>
+  <path class="line" d="M854.5,477.2 L865.0,468.0"/>
+  <path class="line" d="M854.5,477.2 L859.7,462.0"/>
+  <circle class="hole" cx="847.0" cy="483.9" r="5"/>
+  <path class="line" d="M716.4,589.5 L725.6,600.0"/>
+  <path class="line" d="M723.9,582.9 L733.1,593.4"/>
+  <text class="label small halo" x="830" y="530" text-anchor="start">asks the Questions of</text>
+  <path class="line" d="M1215.0,468 L1215,700 L345,700 L345.0,468"/>
+  <path class="line" d="M1215.0,482.0 L1223.0,468.0"/>
+  <path class="line" d="M1215.0,482.0 L1215.0,468.0"/>
+  <path class="line" d="M1215.0,482.0 L1207.0,468.0"/>
+  <circle class="hole" cx="1215.0" cy="492.0" r="5"/>
+  <path class="line" d="M345.0,482.0 L353.0,468.0"/>
+  <path class="line" d="M345.0,482.0 L345.0,468.0"/>
+  <path class="line" d="M345.0,482.0 L337.0,468.0"/>
+  <path class="line" d="M352.0,488.0 L338.0,488.0"/>
+  <text class="label small halo" x="1000" y="692" text-anchor="middle">answers each</text>
+  <text class="frame-name" x="40" y="805" text-anchor="start">Legend</text>
+  <path class="line" d="M115,800 L165,800"/>
+  <path class="line" d="M157.0,807.0 L157.0,793.0"/>
+  <path class="line" d="M147.0,807.0 L147.0,793.0"/>
+  <text class="label small" x="177" y="805" text-anchor="start">exactly one</text>
+  <path class="line" d="M300,800 L350,800"/>
+  <path class="line" d="M342.0,807.0 L342.0,793.0"/>
+  <circle class="hole" cx="326.0" cy="800.0" r="5"/>
+  <text class="label small" x="362" y="805" text-anchor="start">zero or one</text>
+  <path class="line" d="M485,800 L535,800"/>
+  <path class="line" d="M521.0,800.0 L535.0,808.0"/>
+  <path class="line" d="M521.0,800.0 L535.0,800.0"/>
+  <path class="line" d="M521.0,800.0 L535.0,792.0"/>
+  <path class="line" d="M515.0,807.0 L515.0,793.0"/>
+  <text class="label small" x="547" y="805" text-anchor="start">one or many</text>
+  <path class="line" d="M670,800 L720,800"/>
+  <path class="line" d="M706.0,800.0 L720.0,808.0"/>
+  <path class="line" d="M706.0,800.0 L720.0,800.0"/>
+  <path class="line" d="M706.0,800.0 L720.0,792.0"/>
+  <circle class="hole" cx="696.0" cy="800.0" r="5"/>
+  <text class="label small" x="732" y="805" text-anchor="start">zero or many</text>
+  <text class="label small" x="865" y="805" text-anchor="start">at the end of the data it counts; a box holds a data&#x27;s name</text>
+</svg>

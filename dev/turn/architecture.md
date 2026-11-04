@@ -1,776 +1,671 @@
 # Turn architecture
 
-Turn makes a work in two phases. Each phase is a loop of roles, and Lane's routes carry the work
-from one role to the next. In the content phase, designer settles a design tree. The design tree is
-Pin's file of the decisions the work needs, under the work's purpose, and joins each decision to the
-question of the kind's template that it serves. generator makes the work decision by decision.
-evaluator answers each question as the work's user, and each shortfall goes back to its decision.
-In the refactoring phase, refactorer improves how the work says what it says, and proofreader
-checks it. Every role runs in the background and carries on from the run's files. Parts that stand
-apart run at once. [Turn's UX](ux.md) says what this gives the person and the caller.
+This document says how Turn is built to give [Turn's UX](ux.md). It is for a developer, a person or
+an AI, who builds or changes Turn.
+
+Turn makes every kind of work by one course of subagents. Lane, the plugin that holds a subagent to
+the rules of its steps, moves the course: its routes name the subagent to start next from the
+result that the last one gave. The planner settles the kind of work. It hands Pin the work's goal,
+the questions of the kind's best practice and the points that a calling AI settled. Pin's
+subagent, the pinner, settles the design from there with the person, one point at a time. The
+generator makes the work from the design, against the kind's best practice. The evaluator then
+answers each question as the work's user would, and is never given the design. A round is one such
+making and check, and the evaluator starts fresh in each. A question not met goes back through Pin
+to the decision behind it. Once every question is met, the rounds go on with the questions of how
+the work reads. up, the subagent that starts each of them, carries each point to whoever started
+Turn, and each answer back, as given.
 
 ## Principles
 
-Turn takes the principles of [the plugin best practice](../plugin-best-practice.md#principles) that its
-requirements call for. It differs on three:
+Turn builds on [the principles of the plugin best practice](../plugin-best-practice.md#principles)
+and on its Development section, with these differences:
 
-- [The orchestrator holds the whole and decides](../plugin-best-practice.md#the-orchestrator-holds-the-whole-and-decides):
-  the orchestrator, `up`, decides no move. Lane's routes give each next role from the result the
-  last role gave. [Where the router keeps the course](../plugin-best-practice.md#where-the-router-keeps-the-course)
-  keeps the course of a fixed loop outside the AI in this way.
-- [Messages](../plugin-best-practice.md#messages) and
-  [Where the orchestrator runs](../plugin-best-practice.md#where-the-orchestrator-runs): a role's question
-  for the person reaches them through `up` and the main conversation. A subagent reaches no one
-  but the one that started it, and only by its end
-  ([subagents](https://code.claude.com/docs/en/sub-agents)). `up` and the main conversation each
-  pass the question on word for word.
-- [Learning from each run](../plugin-best-practice.md#learning-from-each-run): Turn leaves the lessons of a
-  run to its caller. When the person types `/turn:up`, they are the caller. The run's folder keeps
-  each send-back, a point sent back to designer, for them.
+- Turn departs from
+  [Where the orchestrator runs](../plugin-best-practice.md#where-the-orchestrator-runs): its
+  orchestrator, up, is always a subagent, as
+  [Choices in the components](#choices-in-the-components-and-their-costs) says.
+- Turn departs from
+  [The orchestrator holds the whole and decides](../plugin-best-practice.md#the-orchestrator-holds-the-whole-and-decides):
+  up decides no move. Lane's routes give each next start, as
+  [Where the router keeps the course](../plugin-best-practice.md#where-the-router-keeps-the-course)
+  says. The planner decides what Turn hands Pin.
+- Under [Messages](../plugin-best-practice.md#messages), up and whoever started it carry each point
+  and each answer, as only the main conversation can ask the person.
+- Under [A plugin that uses another](../plugin-best-practice.md#a-plugin-that-uses-another), Turn
+  starts Pin's pinner as one of its roles, as that subagent is Pin's orchestrator.
+- Turn does not take
+  [Learning from each run](../plugin-best-practice.md#learning-from-each-run). No step of the UX
+  follows the work handed back, and a step there would ask the person more (KR1.2). The run's
+  folder keeps each check of the work for whoever looks.
+- Turn departs from [Unit: prompts](../plugin-best-practice.md#unit-prompts), as [Tests](#tests)
+  says.
 
-The principles below are what Turn adds.
+The principles below are what Turn adds. Each gives its rule, then why.
 
-### One way for every kind
+### One course for every kind
 
-How Turn moves a work, its roles and its routes, is the same for every kind of work. What differs
-between kinds lies only in the kind's template: its goal, its parts, its questions and its ways of
-meeting them.
+Every kind of work goes through the same roles, routes and rounds. A kind differs only in its best
+practice. A kind new to Turn gets its best practice as a work of its own, made by the same course
+with `meta` as its best practice. No role names a kind of work, but the planner, which names
+`meta`, `refactor-doc` and `refactor-code`.
 
-A new kind then needs only a template, which planner makes and the person approves (O2). A change
-to how Turn moves a work reaches every kind at once.
+*Why*: a new kind then needs only a best practice, and the person approves it as they approve any
+design (KR1.1). A fix to the course reaches every kind at once.
 
-### Every decision comes from the purpose down
+### Pin alone settles the design
 
-designer settles the work by [Pin](../../plugins/pin/README.md)'s design tree: the work's purpose
-at the root, the template's questions under it, and under each question the decisions that make it
-yes. planner makes a new kind's template the same way, the kind's purpose at the root.
+After the planner's hand-over, only the pinner writes the design file and puts a point of the
+design to the person. Each point that the work raises goes back to Pin in a Request, the text that
+up starts the pinner with. Such a point is a question not met, or a point that the design leaves
+open. No role of Turn changes a decision itself. The planner asks the person one point only, the
+kind, and only before there is a design.
 
-A decision that serves no question costs the person a question for nothing. A question that no
-decision serves is a point the work will guess (KR1.1, KR2.1).
-
-### The person is asked only what is theirs, one point at a time
-
-The roles find facts themselves, and ask the person only what they decide, as Pin's `pin:down`
-does. The roles take a point the caller settled as given, and never ask it again.
-
-A question about a fact spends the person's time on what an AI could look up. A point asked again
-tells the caller that Turn lost what it settled (KR1.1, KR3.1).
+*Why*: the design file is then the one record of each point and who settled it, which the README
+promises. Pin asks the person only what is theirs, and keeps what a calling AI settled. A point
+that a role of Turn settles beside Pin could come out otherwise than the person means it, or be
+asked again (KR1.1, KR2.1). A decision changed outside Pin also leaves each decision built on it
+as it was.
 
 ### The evaluator has only what the work's user has
 
-evaluator gets the work and the template's goal, parts and questions. It gets neither the design
-nor the template's ways of meeting the questions. proofreader gets the same of the refactoring
-template.
+The evaluator reads the work and the Standard: the best practice's goal, parts and questions,
+without the ways of meeting them. It never reads the design, the best practice's ways or the
+generator's answers to the questions.
 
-The work's user never sees the design. An evaluator that has it judges whether the work follows
-the design, not what its user gets (KR1.1).
-
-### A shortfall is mended at its decision
-
-A question that evaluator finds not yet met goes back to designer, which traces it to the decisions
-that serve the question. Where a decision cannot make its question good, designer decides it
-again, with the decisions that build on it. Where the decisions hold and the work strays from
-them, designer keeps them. Either way, generator makes the work again from those decisions. A
-point the person raises enters the same way.
-
-A fix put onto the work beside its design is a part no decision holds. So when generator next makes
-the work again, it loses the fix, or keeps it without asking the person (KR1.1).
+*Why*: the work's user never sees any of these. An evaluator that has the design judges whether
+the work follows it, not what its user gets (KR1.1). One that has the ways checks how the work was
+made, not what it gives.
 
 ### What the work says before how it says it
 
-The content phase makes what the work says and does, by the kind's own questions. The refactoring
-phase then improves how it says it, by `refactor-doc` for a document or `refactor-code` for code,
-and changes nothing it says. A point that would change what it says goes back to designer.
+A phase is the set of questions that a round asks. The rounds of the content phase make what the
+work says and does, by the kind's questions. The rounds of the reading phase then improve how the
+work says it, by `refactor-doc` for a document or `refactor-code` for code. They change nothing
+that the work says. A change to what the work says goes back to Pin, and the content phase follows
+again.
 
-generator and evaluator then look only at the content while generator makes it. No role improves a
-sentence before its content is settled, only to improve it again once the content changes (KR1.2).
+*Why*: the README promises that the last rounds change only how the work says a thing. No role
+improves a sentence before its content is settled, only to improve it again once the content
+changes (KR1.2).
 
-### Each role starts fresh, from the run's files
+### A shortfall goes back to its decision
 
-designer, generator, evaluator, refactorer and proofreader start fresh at each move, and carry on
-from the run's files. A role resumed with the person's answer goes on in its own context.
+The generator makes the work only from the design. A question not met in the content phase goes
+back to the decisions that serve it, through Pin. The generator then makes the work again from
+the design. No role puts a fix onto the work beside the design.
 
-evaluator then reads each round with fresh eyes. A run stopped anywhere goes on from its folder in
-a new session (KR1.1, KR1.2).
+*Why*: a fix beside the design is a part that no decision holds. The next round makes the work
+again from the design, and loses the fix or keeps it with no one having settled it (KR1.1).
 
-### Parts that stand apart run at once
+### Each role starts fresh from the run's folder
 
-One run of generator makes the decisions that build on one another, in order. Branches of the
-design tree that do not build on one another are made side by side: `up` starts one run of
-generator for each branch, all at once. Each run writes only files that no other run writes.
-evaluator and proofreader answer the questions in the same way, one run for each group of
-questions. Lane takes the next route once every run of the step has ended. designer does not split
-a part where splitting would make it worse, such as one document written in two voices. refactorer
-is always one run, as how a work says things holds over the whole of it.
+The planner, the generator and the evaluator start fresh each time up starts them, and carry on
+from the files in the run's folder. A role resumed with the person's answer keeps its context. up
+keeps no file.
 
-This shortens the lead time without leaving out a step (KR1.2, KR2.2, KR3.2). Only `up` starts
-runs. A role that started runs of its own would stand a layer deeper. Under a caller, the depth
-limit would then leave it no Agent tool, and the work would go in order again.
+*Why*: the evaluator then reads each round with fresh eyes, as the README promises. A run that
+stopped goes on from its folder in a new session, and asks nothing again (KR1.2).
 
-### Turn knows its caller only by the call
+### Passed on as given
 
-No line of Turn's code or prompts names a caller. A caller gives what it settled in the form
-[the call](#data-model) has, and puts each question to the person as the call says.
+up passes on each point, each Request and each answer as it got them, and answers nothing of the
+work itself. The planner hands Pin each point that the calling AI settled as it was given.
 
-rn and any other caller then take Turn as it is. A change for one caller reaches the others in the
-open.
+*Why*: a point reworded on the way is a question that no role asked. An answer summed up loses
+what the person meant (KR1.1). The UX counts as gone wrong a settled point asked again or held
+otherwise, and a question that the calling AI cannot pass on as given (KR2.1).
+
+### Turn knows no calling AI
+
+No line of Turn names a plugin that calls it. A calling AI reaches Turn only through `turn:up`, in
+the forms that [Calling Turn](../../plugins/turn/docs/calling.md) gives.
+
+*Why*: every calling AI takes the same Turn. A change made for one would reach the others unseen,
+and could settle their points otherwise than they settled them (KR2.1).
+
+### Turn changes only the work
+
+The generator writes only the work and the run's folder. The generator and the evaluator run the
+work's commands only in a throwaway copy of the repository, with a throwaway home. No role
+commits, pushes or publishes.
+
+*Why*: the README promises that Turn writes the files, and that the person chooses what happens to
+them. A command run as the work's user runs it, such as `tidy` on a Downloads folder, would
+otherwise change the person's own files, which cannot be undone. The person would then stop the
+run (KR1.1).
 
 ## User stories
 
-- As the person, I want to type `/turn:up` with my request, answer each question that is mine, and
-  get the work. Carries O1 from the request to the work handed back, and O2 with the next story.
-- As the person, I want to approve the purpose and the questions of a kind new to Turn, and have
-  later runs use them. Carries O2 from the kind settled to the template kept.
-- As a caller, I want to start `turn:up` with what I settled, put each question it ends with to the
-  person, resume it with the answer, and get the work. Carries O3 from the start to the work handed
-  back.
-- As the person, I want to go on with a stopped run from its folder. Off the main path, serves
-  KR1.2.
-- As the person, I want to name a run's folder and a change, and have the work made again from the
-  design with the change in it. Off the main path, serves KR1.1.
+Each story names its user, the way that user meets Turn, and the steps of
+[the UX's scenarios](ux.md#scenarios) that it carries.
 
-## Logical view
+- **S1**: As the person, I want to type `/turn:up` with my request, and get the first point that is
+  mine. Carries the first steps of O1: the request, the purpose and questions of a kind new to
+  Turn, and the work's purpose put to the person.
+- **S2**: As the person, I want to answer the point that Turn puts to me, and get the next point,
+  the design to approve, or the work. Carries the rest of O1: each answer, each round of the loop,
+  the design approved, a point that comes up while the work is made, and the work handed over.
+- **S3**: As the calling AI, I want to start `turn:up` with the request and the points I settled,
+  and get the first point for the person. Carries the first steps of O2: the hand-over, and the
+  points kept as given.
+- **S4**: As the calling AI, I want to resume `turn:up` with the person's answer word for word, and
+  get the next point, the design, or the work where I said. Carries the rest of O2: each point
+  passed on and answered, the design approved, and the work handed back.
+- **S5**: As the person, I want to type `/turn:up` with a run's folder, alone or with a change, and
+  have the run go on from its folder, or the work made again with the change in its design. Off
+  the main path, serves KR1.2 for a run that stopped, and KR1.1 for a change: the person would
+  otherwise mend the work themselves.
 
-### Components
+## Components
 
-```mermaid
-flowchart LR
-  P(["person<br>#lt;person#gt;"])
-  M["main conversation<br>#lt;AI · Claude Code, following /turn:up#gt;"]
-  N["caller<br>#lt;AI · a plugin's subagent#gt;"]
-  U["up<br>#lt;AI · Claude Code subagent#gt;"]
-  PL["planner<br>#lt;AI · subagent, with pin:down#gt;"]
-  D["designer<br>#lt;AI · subagent, with pin:down#gt;"]
-  B["generator<br>#lt;AI · subagent#gt;"]
-  E["evaluator<br>#lt;AI · subagent#gt;"]
-  RF["refactorer<br>#lt;AI · subagent#gt;"]
-  PR["proofreader<br>#lt;AI · subagent#gt;"]
-  RS["researcher<br>#lt;AI · Claude Code subagent#gt;"]
-  G["Lane's guard and result.py<br>#lt;hook and command line · Python 3.9#gt;"]
-  S["Turn's scripts and Pin's check.py<br>#lt;command line · Python 3.9#gt;"]
-  F[("the run's folder<br>#lt;JSON files#gt;")]
-  T[("templates<br>#lt;JSON files#gt;")]
-  W[("the work<br>#lt;the repository's files#gt;")]
-  P -->|"1 the request, then each answer"| M
-  M -->|"2 starts with the Call, resumes with each answer"| U
-  N -->|"2 starts with the Call, resumes with each answer"| U
-  G -->|"3 the next role, as Route"| U
-  U -->|"4 starts with Run values, resumes with each answer"| PL & D & B & E & RF & PR
-  PL & D -->|"5 a fact to find"| RS
-  PL -->|"6 writes Run and Template, and has practices.py ready write Standard"| F & T
-  D -->|"6 writes Design tree, Work, Remake"| F
-  B & RF -->|"6 writes"| W
-  B & E & RF & PR -->|"6 writes Answers, Open point"| F
-  PL & D & B & E & RF & PR -->|"7 run"| S
-  S -->|"8 read"| F & T & W
-  PL & D & B & E & RF & PR -->|"9 give Result"| G
-  U -->|"10 ends with a question for the person, or with the Work's paths"| M & N
-  M -->|"11 puts each question"| P
-```
+The figure shows each role of Turn and each store of data that the stories need. The starter is
+whoever starts up: the main conversation, which follows the steps of the skill `/turn:up`, or the
+calling AI, which follows [Calling Turn](../../plugins/turn/docs/calling.md). The guard is Lane's
+check script, which Lane's command `lay.py` lays into Turn, as the plugin best practice names a
+plugin's hooks. The pinner lies outside Turn, and Pin's own guard holds it.
 
-Legend: a rounded box is a person; a box is an AI or a script, with its kind and what it is made
-with in angle brackets; a cylinder is a store of files. Each arrow says what one does to another.
-It names the data it hands on as the data model names it, and its number gives the order. Arrows 2
-and 10 go to the main conversation when the person types `/turn:up`, and to the caller when a
-plugin calls Turn.
+![Turn's components](images/components.svg)
 
-- Only `up` starts and resumes Turn's roles, and only as Lane tells it. It reads and writes no
-  file: the role before a step of runs hands it each run's values, as `starts.py` prints them. It
-  serves every objective, as each role's start and each answer pass through it.
-- planner alone settles the kind, whether the work is a document or code, and the kind's template.
-  It looks for a template in `.turn/best-practices/` first, then in Turn's own, and makes one by
-  [meta](../../plugins/turn/core/domain/best-practices/meta.json) where neither has the kind. It is
-  there for O2; in O1 and O3 it only finds the template.
-- designer alone changes the design and alone asks the person about the work, so the work is
-  always made from one design (KR1.1, KR3.1). It also settles the work's paths and the commands its
-  user runs.
-- generator alone makes the work in the content phase, and refactorer in the refactoring phase.
-  generator decides the small points of making, such as a phrase or a function's name, from the
-  design and the template's ways of meeting the questions. Where the design leaves open a point
-  that bears on the work's quality, generator returns it to designer unanswered.
-- evaluator alone judges the content, and proofreader how the work says it. Neither changes the
-  work (KR1.1, KR2.1, KR3.1).
-- generator, evaluator, refactorer and proofreader each use and answer, in the same way: read the
-  work whole, run what runs as its user would, and write for each question either the lines that
-  meet it, or what the user gets once it is good, never how to make it.
-  `core/domain/use-and-answer.md` holds this way once, and each of the four parts names it.
-- A researcher finds one fact. It is a subagent that Claude Code ships, such as Explore, so Turn
-  holds no agent of its own for it.
-- Lane's guard, the check script Lane lays into Turn, alone decides the next role, from Turn's
-  routes and the result each role gave, and holds each role to its lanes. Lane's `result.py` alone
-  checks that a result is one a route is on.
-- Turn's scripts alone check what Lane does not: `practices.py` a template's form, `tree.py` that
-  the design tree asks the template's questions, and `answers.py` each answers file. Pin's
-  `check.py` alone checks that the design tree holds together. `tree.py parts` and
-  `practices.py ready` alone split a step's work into the runs `up` starts.
-- The main conversation follows `/turn:up`'s skill only to start `up` and to pass on its questions,
-  answers and end. Lane does not check the main conversation, so it holds none of Turn's work.
+### What each role alone decides
 
-The table below gives the roles' lanes, the rules Lane holds a role's steps to. Lane's `lay.py`
-laid each lane from Turn's proposal, and `{name}` stands for a run value that `up` gives. An
-`in_form` lane also holds each answers file and open file a role writes to its form, a JSON Schema
-in `core/domain/forms/`. Turn's scripts hold the run's other files to their forms as they read
-them.
+- The starter decides nothing of the work. It puts each point to the person, and passes the
+  answer back word for word.
+- up decides the run's folder: the one the calling AI gave, else the one the request names, else a
+  new one in `.turn/`. It also decides which role to resume with an answer: the one whose point it
+  passed on.
+- The planner decides the kind, the best practice that the work is made by, and whether the run
+  first makes a new kind's best practice. It decides what each Request to Pin carries. Once Pin
+  hands the design back, it reads out where the work lies and what its user runs. It decides when
+  the run is done.
+- The pinner decides everything in the design, as
+  [Pin's architecture](../pin/architecture.md#what-each-role-alone-decides) says.
+- The generator decides the work, and each small point of making it, such as a phrase or a
+  function's name.
+- The evaluator decides whether each question of its group is met.
+- `plan.py` decides whether a best practice holds its form. It writes the hand-over, the Standard
+  and the Run.
+- `rounds.py` decides each round's phase and questions, how the questions are grouped among the
+  evaluator's runs, and whether a role's Answers hold.
+- `throwaway.py` decides where a work's command runs.
+- The guard decides whether a call or an end of a role keeps the role's rules, and which start is
+  due next.
 
-| Role | Writes only | Runs only, beside its result command | Is held, as it ends, to |
+### What the guard holds each role to
+
+Lane lays these rules from Turn's proposal, as [Lane's lanes](../../plugins/lane/docs/lanes.md)
+say. Pin's guard holds the pinner to Pin's rules.
+
+| Role | Writes only | Runs only, beside its result | Before it gives its result |
 |---|---|---|---|
-| `up` | nothing | nothing | having started each role Lane named |
-| planner | `{run}`, `.turn/best-practices/` | Pin's check, `practices.py ready` | `practices.py ready` passed after the run's last change |
-| designer | `{run}` | Pin's check, `tree.py check`, `tree.py parts` | `tree.py check` passed after the run's last change |
-| generator | `{work}`, `{answers}`, `{open}` | `{commands}`, `answers.py check` | the work read whole; `answers.py check` passed after the work's last change |
-| evaluator | `{answers}` | `{commands}`, `answers.py check` | the work read whole; `answers.py check` passed |
-| refactorer | `{work}`, `{answers}` | `{commands}`, `answers.py check` | as generator |
-| proofreader | `{answers}` | `{commands}`, `answers.py check` | as evaluator |
+| up | nothing | nothing | has made each start that the routes name |
+| planner | the run's folder | `plan.py` | has passed `plan.py` after its last change |
+| generator | the work, and its own Answers | `rounds.py`, and the work's commands in `throwaway.py` | has answered every question of the round, and passed `rounds.py` after its last change |
+| evaluator | its own Answers | `rounds.py`, and the work's commands in `throwaway.py` | has read the work to its end, and nothing but the work, the Standard and its own Answers; has answered every question of its group |
 
-A `read_only` lane also holds evaluator and proofreader to read only four things: the work;
-`{standard}`, the template's goal, parts and questions, which Standard in the data model holds;
-their own `{answers}`, as Claude Code edits a file only after it is read or written; and
-`core/domain/use-and-answer.md`. An evaluator or proofreader that read the design would judge
-whether the work follows it, not what the work's user gets.
+### Choices in the components, and their costs
 
-#### Choices
+- **up always runs as Turn's subagent, for the person too.** Run in the main conversation, it
+  would need no carrier between it and the person. But Lane checks only subagents, so only a
+  subagent's course is held to the routes. The cost: each point passes up and the starter, and
+  costs a resume of up (KR1.2). The main conversation passes each point by its steps alone, which
+  no hook sees. Turn runs only in an interactive session, where Claude Code starts the
+  orchestrator again as a subagent it started ends
+  ([the routes](../../plugins/lane/docs/routes.md#what-the-orchestrator-is-told)).
+- **Turn uses Pin as Pin is built: Turn is Pin's maker AI.** The planner hands over in the design
+  file. up is Pin's go-between: it starts the pinner as one of Turn's roles, puts each of its
+  points to the starter, and resumes it with the answer. A role of Turn that followed the
+  pinner's steps itself would need nothing new from Lane or Pin. But Turn would then copy Pin's
+  rules, and they would drift apart. Pin, used as built, runs as it was tested. The cost: Lane
+  must let a route name a subagent of a dependency and keep its results, and the pinner must give
+  one result while a point waits and another once the design is confirmed.
+- **The planner stands on both sides of Pin.** up could hand Pin each point, and the generator
+  could read the design itself. But one role then decides what Turn hands Pin and what it takes
+  from the design, and up stays a carrier. The cost: a run of the planner each time the design is
+  handed over or comes back (KR1.2).
+- **A kind new to Turn gets its best practice as a work of its own.** A step of its own could make
+  a best practice faster. But the person then approves the kind's purpose and questions as they
+  approve any design, and the course stays one for every kind. The cost: the first work of a new
+  kind takes a whole course more, as the README says.
+- **One run of the generator makes the whole work in each round.** Runs side by side, one for each
+  part that stands apart, would shorten the lead time. But parts made apart drift in voice and in
+  what joins them, and the first key result comes first, as the UX says. The cost: a work whose
+  parts stand apart is made one part after another (KR1.2).
+- **The evaluator runs once for each group of the round's questions, all at once.** One run could
+  answer every question. But each run is fresh on fewer questions, and the runs go side by side
+  (KR1.1, KR1.2). The cost: each run reads the whole work.
+- **The role before a step hands up the next role's run values.** up could read them from the
+  run's folder. But Lane lets up make no call but the start due. So the planner ends with the
+  generator's run values, and the generator ends with a line for each run of the evaluator. The
+  cost: those two replies carry what up starts with.
+- **No role of Turn starts a subagent.** A researcher in the background would let a role go on
+  meanwhile. But Claude Code lets subagents start subagents only three layers below the main
+  conversation, and a calling AI may stand one layer down. A child's end would also start its
+  role again while a point waits. So the pinner and the generator find facts themselves. The
+  cost: they find facts one after another, in their own context (KR1.2).
 
-- **`/turn:up` runs in the main conversation, not as a forked skill.** Only the main conversation
-  can ask the person, and a subagent has no `AskUserQuestion`
-  ([subagents](https://code.claude.com/docs/en/sub-agents)). The skill's body tells the main
-  conversation how to pass each question on and resume `up` with the answer. A fork's body would
-  reach only the fork, and the main conversation would be left to guess what to do with its end.
-- **Each of a work's commands runs inside `scripts/throwaway.py`.** generator and evaluator run each
-  command as written, as the work's user would, so a command that reached the person's own files,
-  such as their Downloads, would change what cannot be undone. `throwaway.py` makes a throwaway
-  home, which holds each file that `--file` names, and a throwaway copy of the repository. It runs
-  the command there with the home as `HOME`, and then removes both with Python's `shutil`. designer
-  writes inside it only what the user types, and `tree.py check` names a command written otherwise.
-  Claude Code stops to ask the person about a set-up of the shell's own, such as `rm -r "$HOME"`,
-  whatever the permission mode.
-- **A role that asks gives `asks`, which ends the routes.** Lane keeps a role that ends with no
-  result going once, and lets `up` end with a start due only as a fault. So planner and designer
-  give `asks` before they end with a question. Turn's routes take `asks` to no next role, so `up`
-  is free to end with the question. Once resumed with the answer, the role gives a later result.
-  Lane takes that result over `asks`, and the routes go on from it.
-- **`up` fans out a step, and Lane joins it.** Where `work.json` holds several parts, `up` starts
-  one run of generator for each part at once, with the part's run values, and one run of evaluator
-  or proofreader for each group of questions in `run.json`. Lane holds each run to its own values by
-  the `agentId` its start gives back, and takes the next route once all of them have ended. A role
-  that started runs of its own would need a layer more than Claude Code gives under a caller
-  ([subagents](https://code.claude.com/docs/en/sub-agents)).
-- **The role before a step hands up its runs.** Once a step has ended, Lane lets `up` make no
-  call but the start due, so `up` cannot read `work.json` or `run.json` then. The role that ends
-  the step before runs `starts.py`, which prints the values of each run of the next step from the
-  run's folder, and puts them in its reply; `up` starts a run with each line.
-- **Results of runs at once taken by their precedence.** Turn's routes name generator, evaluator
-  and proofreader in `fan_out`, and declare `precedence`, as
-  [Lane's routes](../../plugins/lane/docs/routes.md#runs-at-once) take it: `content`, `more`,
-  `good` for proofreader, `more`, `good` for evaluator, and `open`, `generated` for generator, first
-  to last. A point of what the work says goes to designer before one of how it says it, and a work
-  sent back goes back before it goes on.
-- **Commands hold run values.** Each command a role runs names the run's files by its run values,
-  as `python3 ${dependency:pin}/scripts/check.py {run}/design-tree.json`. Lane puts each value in
-  as one word of the shell before it matches the command. A role's work commands, `commands`, are
-  a whole value, and Lane matches each of them as designer wrote it.
-- **Templates kept in `.turn/best-practices/`.** Every later run in the repository uses a template
-  made for the person's kind, so the template lies outside any one run's folder. planner takes the
-  repository's own template over Turn's of the same kind, as the person approved it for their
-  work.
+## Data model
 
-### Data model
+The figure shows each data that Turn's roles pass or keep, and how each joins another.
 
-```mermaid
-erDiagram
-  CALL ||--o| GIVEN : holds
-  RUN ||--|| TEMPLATE : "is of the kind of"
-  RUN ||--|| REFACTORING_TEMPLATE : "is refactored by"
-  TEMPLATE ||--|| STANDARD : "gives evaluator"
-  REFACTORING_TEMPLATE ||--|| REFACTORING_STANDARD : "gives proofreader"
-  TEMPLATE ||--|{ PART : has
-  TEMPLATE ||--|{ QUESTION : has
-  QUESTION }|--|{ PART : "is about"
-  QUESTION ||--|| PRACTICE : "is met by"
-  RUN ||--|| DESIGN_TREE : has
-  DESIGN_TREE ||--|{ QUESTION : "asks each"
-  DESIGN_TREE ||--o{ DECISION : holds
-  DECISION }o--|{ QUESTION : "contributes to"
-  DECISION }o--o{ DECISION : "builds on"
-  RUN ||--o| WORK : "is made at"
-  WORK ||--|{ WORK_PART : "is split into"
-  WORK_PART }o--|{ DECISION : holds
-  RUN ||--o| REMAKE : has
-  REMAKE }o--|{ DECISION : names
-  RUN ||--o{ ANSWERS : has
-  ANSWERS ||--|{ ANSWER : holds
-  ANSWER }o--|| QUESTION : answers
-  RUN ||--o| OPEN_POINT : has
-  OPEN_POINT }o--|| QUESTION : "bears on"
-  RUN ||--o{ RESULT : "is moved by"
-```
+![Turn's data model](images/data-model.svg)
 
-A question for the person and their answer are messages, not data kept: the role that asked writes
-the answer into its tree. Each data below is a JSON file, which the roles read and change with
-`jq`, as [JSON between agents](../plugin-best-practice.md#json-between-agents) says. Keys say
-their intent, a one-to-many join is nested, and a many-to-many join lists IDs.
+- **Call**: what the starter starts up with: the request in its own words, and what the calling AI
+  settled.
+- **Run**: the run's own file: the kind, the works to make in order, and where each lies and what
+  its user runs.
+- **Work**: what the person wants made. A run makes one work, or first the best practice of a new
+  kind.
+- **Best practice**: a kind's goal, parts, questions, and a way to make each question yes.
+- **Question**: one question of a best practice, such as `readme/Q3`.
+- **Standard**: a best practice without its ways, which is all the evaluator gets.
+- **Design file**: Pin's `design-tree.json`: the work's goal, the questions, and the Decisions that
+  make each question yes.
+- **Decision**: one point of the design, with who settled it.
+- **Request**: what up starts the pinner with: the design file's path, and each point that the
+  work raised.
+- **Run values**: one line that a role is started with, naming its own files.
+- **Round**: one round's phase and questions, as `rounds.py` settles them.
+- **Answers**: what the generator or one run of the evaluator gives for each question of its round:
+  met, with the lines that meet it, or not met, with what the user still lacks. The generator's
+  also hold each point that the design leaves open.
+- **Result**: the word that a role gives as it ends, kept by the guard.
+- **Rules laid**: Turn's rules and routes, as Lane laid them.
+- **Message**: what up ends with, under a heading that tells the starter what to do.
+- **Answer**: the person's words, passed back word for word.
 
-- **Call**: the prompt a caller starts `up` with: the `request` in its own words and, under
-  `given`, what it settled, each optional: `kind`, `goal`, `decisions` in the design tree's form,
-  `work` and `run`, the run's folder. `/turn:up` gives the request alone.
-- **Template**: `<kind>.json` in Turn's `core/domain/best-practices/` or in `.turn/best-practices/`,
-  the kind its name: `goal`; `parts`, each `id`, `what` and its own `parts`; `benefits`, the
-  questions, each `id`, `about`, the parts it asks of or `the whole`, and `what`; and `practices`,
-  for each question its `benefit`, `thinking`, `steps` and `grounds`. `practices.py check` verifies
-  that a question asks of every part, and that every question has a practice. A refactoring
-  template, `refactor-doc` or `refactor-code`, has no `parts`, as the work keeps its kind's shape.
-- **Standard**: a template's `goal`, `parts` and `benefits`, written by `practices.py ready` into
-  `standard.json`, and `refactoring-standard.json` for the refactoring template.
-- **Run**: `run.json`: `kind`; `template`, its path; `refactoring`, `refactor-doc` or
-  `refactor-code`; and `groups` and `refactoring_groups`, the template's questions in groups, each
-  `id` and `questions`, as `practices.py ready` writes them: the questions that ask of the same
-  parts together, and those of `the whole` in one group.
-- **Design tree**: `design-tree.json`, in Pin's form: `goal`, `questions` and `decisions`. Its
-  questions are the template's benefits, each `id` named with the template's file as `readme/Q3`,
-  which `tree.py check` verifies. planner's `kind-tree.json` has the same form, its root the kind's
-  purpose.
-- **Work**: `work.json`: `paths`, the files the work is; `commands`, what its user runs, so
-  generator and evaluator run the same; and `parts`, each `id`, `decisions` and `paths`. designer
-  writes the parts from `tree.py parts`, which groups the decisions that build on none in another
-  group. designer joins two groups whose files meet. A work that does not split has one part.
-- **Remake**: `remake.json`: `decisions`, each the ID of a decision generator makes again, with the
-  `question` and `good_when` that sent it back. Without it, generator makes every decision.
-- **Answers**: from generator, evaluator, refactorer and proofreader, in one form:
-  `good`, each a `question` with the `lines` that meet it, as `<path>:<from>-<to>`; `more`, each a
-  `question` with `good_when`, what the user gets once it is good; and, from proofreader only,
-  `content`, in the form of `more`, a point that would change what the work says. `answers.py
-  check` verifies that every question a run was given stands in one list only and each line lies
-  in the work. Each run of a step writes a file of its own, as `self-check/<part>.json`,
-  `verification/<group>.json` and `proofreading/<group>.json`; refactorer, one run, writes
-  `refactor-check.json`. The role that reads them after reads the whole folder.
-- **Open point**: `open/<part>.json` from a run of generator: `open`, each a `question` with `what`
-  the design leaves open.
-- **Run values**: the JSON object `up` starts or resumes a role with: `run`, the run's folder;
-  `work` and `commands`, from `work.json`, once designer has written it; for a run of generator,
-  `decisions` and `work` narrowed to its part, and `answers` and `open`, its own files; for a run
-  of evaluator or proofreader, `questions`, its group, and `answers`, its own file; for designer,
-  `given`, the Call's, and `returns`, the folders whose points it takes back, as
-  [Routes](#routes) gives them. Lane reads them from the start's prompt.
-- **Result**: the word a role gives by Lane's result command, kept by Lane, as the routes below
-  name it.
+The fields of each data lie where it is built, as [Directory structure](#directory-structure) gives
+them. [Calling Turn](../../plugins/turn/docs/calling.md) gives the Call and the headings of a
+Message. [The design tree](../../plugins/pin/core/roles/pinner.md#the-design-tree) gives the
+Design file.
 
-### Routes
+## Sequences
 
-| From | On | To |
+Each story's steps follow in order. The participants are named as in [Components](#components).
+The data in brackets are named as in [Data model](#data-model). The stories pair by who carries
+the point, so three sequences draw the five stories.
+
+### The routes
+
+Each role gives one of these results as it ends, and the guard names the next start by them.
+
+| From | On | Start next |
 |---|---|---|
-| `up`, the orchestrator | | planner |
-| planner | `planned` | designer |
-| planner | `asks`, a question for the person | no next role |
-| designer | `designed` | generator |
-| designer | `asks`, a question for the person | no next role |
-| generator | `generated` | evaluator |
-| generator | `open`, a point the design leaves open | designer |
-| evaluator | `more` | designer |
-| evaluator | `good` | refactorer |
-| refactorer | `refactored` | proofreader |
-| proofreader | `more` | refactorer |
-| proofreader | `content`, a point that would change what the work says | designer |
-| proofreader | `good` | no next role, the work done |
+| up | | planner |
+| planner | `asks`, the kind for the person | none, while the point waits |
+| planner | `handed`, a Request for Pin | the pinner |
+| planner | `ready`, the design read out | generator |
+| planner | `done`, the work handed back | none, the run ends |
+| pinner | `asks`, a point or the design for the person | none, while the point waits |
+| pinner | `done`, the design confirmed | planner |
+| generator | `made` | evaluator, a run for each group |
+| generator | `open`, a point that the design leaves open, or a change to what the work says | planner |
+| evaluator | `more`, a question of what the work says not met | planner |
+| evaluator | `met`, every question of the content phase met | generator |
+| evaluator | `reword`, a question of how the work reads not met | generator |
+| evaluator | `good`, every question of the reading phase met | planner |
 
-`up` gives designer, as `returns`, the folder whose points it takes back: `open/` after `open`,
-`verification/` after `more`, and `proofreading/` after `content`. After a Remake, `up` starts a
-run of generator only for each part that holds a decision the Remake names.
+Where the evaluator's runs give different results, the guard takes the first in this order:
+`more`, `reword`, `met`, `good`.
 
-### Sequences
-
-The first sequence draws O1 of the UX, from the person typing `/turn:up` up to the design. A
-question for the person, from any role that asks, goes the way this sequence draws for planner's:
+### S1, S3 and S5: the start
 
 ```mermaid
 sequenceDiagram
   participant P as person
-  participant M as main conversation
+  participant ST as starter
   participant U as up
-  participant G as Lane's guard
+  participant G as guard
   participant PL as planner
-  participant D as designer
-  participant RS as researcher
-  participant S as scripts
+  participant PS as plan.py
+  participant PN as pinner
   participant F as run's folder
-  P->>M: /turn:up with the request
-  M->>U: starts in the background (Call)
-  G-->>U: the next role, planner (Route)
-  U->>PL: starts, with the run's folder (Run values)
-  alt run.json is ready, left by a stopped run
-    PL->>G: gives planned (Result)
-  else no Run is ready
-    opt the request leaves the kind open
+  alt S1 or S5
+    P->>ST: types /turn:up with the request, or with a run's folder (Call)
+  else S3
+    ST->>ST: the calling AI takes the steps of Calling Turn (Call)
+  end
+  ST->>U: starts it in the background (Call)
+  G-->>U: Start planner
+  U->>PL: starts it, with the run's folder (Run values)
+  alt S5, the folder holds a Run
+    PL->>F: reads Run and the Design file
+    alt the design is confirmed, and no change is named
+      PL->>G: gives ready (Result)
+      Note over U,PL: The rounds go on, as The rounds draws.
+    else the design is open, or a change is named
+      PL->>G: gives handed (Result)
+      PL-->>U: ends with a Request to go on, with the change (Request)
+    end
+  else a new run
+    opt neither the Call nor its words name the kind
       PL->>G: gives asks (Result)
-      PL-->>U: ends with the kind, to confirm (a question for the person)
-      G-->>U: no next role
-      U-->>M: ends with the question
-      M->>P: puts it
-      P->>M: the answer
-      M->>U: resumes, with the answer
-      U->>PL: resumes, with the answer
+      PL-->>U: ends with the kind, to confirm (Message)
+      U-->>ST: ends with it as given (Message)
+      ST->>P: puts it as given
+      P->>ST: answers (Answer)
+      ST->>U: resumes it, word for word (Answer)
+      U->>PL: resumes it, word for word (Answer)
     end
-    PL->>F: writes Run, the Template found named in it
-    PL->>S: practices.py ready on the Run
-    S->>F: writes Standard, and the groups into Run
-    PL->>G: gives planned (Result)
+    PL->>PS: runs it with the kind and the Call
+    PS->>F: writes Run, the Standard and the hand-over (Design file)
+    Note over PL,PS: For a new kind, the hand-over is its best practice's, by meta.
+    PL->>G: gives handed (Result)
+    PL-->>U: ends with a Request for the hand-over (Request)
   end
-  PL-->>U: ends
-  G-->>U: the next role, designer (Route)
-  U->>D: starts (Run values, Given)
-  alt a Design tree is there, left by a stopped run
-    D->>F: reads it, and goes on from its open Decisions
-  else none is there
-    D->>RS: in the background, a fact to find
-    D->>F: writes Design tree, the template's Questions under the goal
-  end
-  D->>S: Pin's check and tree.py check
-  loop while a point is the person's, as pin:down settles it
-    D->>G: gives asks (Result)
-    D-->>U: ends with the point (a question for the person)
-    Note over P,D: The point reaches the person, and the answer comes back, as planner's did.
-    U->>D: resumes, with the answer
-    D->>F: writes the Design tree
-    D->>S: Pin's check and tree.py check
-  end
-  D->>S: tree.py parts
-  D->>F: writes Design tree, every Decision settled, and Work with its parts
-  D->>S: Pin's check and tree.py check
-  D->>G: gives designed (Result)
-  D-->>U: ends
-  G-->>U: the next role, generator (Route)
+  G-->>U: Start the pinner
+  U->>PN: starts it, with the Request as given (Request)
+  PN->>F: settles each point it can, as Pin's architecture draws (Design file)
+  PN->>G: gives asks (Result)
+  PN-->>U: ends with one point for the person (Message)
+  U-->>ST: ends with it as given (Message)
+  ST->>P: puts it as given
 ```
 
-generator and evaluator, each fanned out, with each send-back, O1 of the UX from the design to
-`good`:
+- **A role that asks gives `asks`, whose route starts no one.** The guard keeps a role going once
+  where it ends with no result, and keeps up going while a start is due. A role that ends to wait
+  for the person would then be kept going. With `asks`, up is free to end with the point. Once
+  resumed, the role gives a later result, and the guard takes it over `asks`
+  ([How a subagent gives its result](../../plugins/lane/docs/routes.md#how-a-subagent-gives-its-result)).
+  The cost: each role that asks gives one result more.
+
+### S2 and S4: an answer
+
+In S4, the calling AI is the starter, and the person answers it.
 
 ```mermaid
 sequenceDiagram
+  participant P as person
+  participant ST as starter
   participant U as up
-  participant G as Lane's guard
-  participant B as generator, one run for each part
-  participant E as evaluator, one run for each group
-  participant D as designer
-  participant S as scripts
-  participant F as run's folder and the work
-  par one run for each part the design or the Remake reaches, all at once
-    U->>B: starts, with its part (Run values)
-    B->>F: makes its Decisions in order, mending each more
-    alt the design leaves a point open
-      B->>F: writes its Open point in open/
-      B->>G: gives open (Result)
-    else every point is decided
-      B->>F: writes its part's files, and its Answers in self-check/
-      B->>S: answers.py check
-      B->>G: gives generated (Result)
-    end
-  end
-  alt a run gave open, which goes before generated
-    G-->>U: the next role, designer, with open/ as returns (Route)
-    U->>D: starts (Run values)
-    D->>F: decides the Decisions again, or keeps them, and writes Remake
-    D->>G: gives designed, or asks where the point is the person's (Result)
-    Note over U,D: Back to generator, one run for each part the Remake reaches.
-  else every run gave generated
-    G-->>U: the next role, evaluator (Route)
-    par one run for each group of questions, all at once
-      U->>E: starts, with the work, Standard and its group alone (Run values)
-      E->>F: reads the work whole, runs its commands
-      E->>F: writes its Answers in verification/
-      E->>S: answers.py check
-      E->>G: gives good or more (Result)
-    end
-    alt a run gave more, which goes before good
-      G-->>U: the next role, designer, with verification/ as returns (Route)
-      U->>D: starts (Run values)
-      D->>F: decides the Decisions again, or keeps them, and writes Remake
-      D->>G: gives designed (Result)
-      Note over U,D: Back to generator, one run for each part the Remake reaches.
-    else every run gave good
-      G-->>U: the next role, refactorer (Route)
+  participant G as guard
+  participant PL as planner
+  participant PN as pinner
+  participant F as run's folder
+  P->>ST: answers, or says anything while the point waits (Answer)
+  ST->>U: resumes it, word for word (Answer)
+  alt the point is the kind, from the planner
+    U->>PL: resumes it, word for word (Answer)
+    Note over U,PL: The start goes on from the kind, as S1 draws.
+  else the point is from the pinner
+    U->>PN: resumes it, word for word (Answer)
+    PN->>F: writes the answer, and settles what follows (Design file)
+    alt a point is open, or the design waits to be confirmed
+      PN->>G: gives asks (Result)
+      PN-->>U: ends with the next point, or the whole design (Message)
+      U-->>ST: ends with it as given (Message)
+      ST->>P: puts it as given
+    else the person confirmed the design
+      PN->>G: gives done (Result)
+      PN-->>U: ends with the design file's path
+      G-->>U: Start planner
+      U->>PL: starts it (Run values)
+      PL->>F: reads where the work lies and what its user runs (Design file)
+      PL->>F: writes them into Run (Run)
+      PL->>G: gives ready (Result)
+      PL-->>U: ends with the generator's run values (Run values)
+      Note over U,PL: The rounds start, as The rounds draws.
     end
   end
 ```
 
-The refactoring phase, from evaluator's `good` to the end:
+### S2 and S4: the rounds
 
 ```mermaid
 sequenceDiagram
+  participant ST as starter
   participant U as up
-  participant G as Lane's guard
-  participant RF as refactorer, one run
-  participant PR as proofreader, one run for each group
-  participant D as designer
-  participant S as scripts
+  participant G as guard
+  participant GE as generator
+  participant RS as rounds.py
+  participant E as evaluator
+  participant PL as planner
+  participant PN as pinner
   participant F as run's folder and the work
-  U->>RF: starts (Run values)
-  RF->>F: improves how the work says it, and writes refactor-check.json
-  RF->>S: answers.py check
-  RF->>G: gives refactored (Result)
-  G-->>U: the next role, proofreader (Route)
-  par one run for each group of the refactoring questions, all at once
-    U->>PR: starts, with the work, the refactoring Standard and its group alone (Run values)
-    PR->>F: reads the work whole, writes its Answers in proofreading/
-    PR->>S: answers.py check
-    PR->>G: gives content, more or good (Result)
+  G-->>U: Start generator
+  U->>GE: starts it, with the planner's run values (Run values)
+  GE->>RS: has it settle the round
+  RS->>F: reads the Answers before, and writes the Round with its phase
+  GE->>F: reads the Design file, the Best practice and the shortfalls of the last round
+  GE->>F: writes the work, and its own Answers
+  alt the design leaves a point open, or a change would change what the work says
+    GE->>G: gives open (Result)
+  else every point is made
+    GE->>RS: has it check the Answers, and print the evaluator's runs (Run values)
+    GE->>G: gives made (Result)
+    GE-->>U: ends with a line for each run of the evaluator (Run values)
+    G-->>U: Start evaluator, a run for each line
+    par a run for each group of the round's questions
+      U->>E: starts it (Run values)
+      E->>F: reads the work whole and the Standard, and runs its commands in a throwaway home
+      E->>F: writes its Answers
+      E->>RS: has it check them
+      E->>G: gives more, met, reword or good (Result)
+    end
   end
-  alt a run gave content, which goes before more and good
-    G-->>U: the next role, designer, with proofreading/ as returns (Route)
-    Note over U,D: As a send-back of evaluator, back to generator.
-  else a run gave more, which goes before good
-    G-->>U: the next role, refactorer (Route)
-    Note over U,RF: Back to the start of this sequence.
+  alt the generator gave open, or a run gave more
+    G-->>U: Start planner
+    U->>PL: starts it (Run values)
+    PL->>F: reads the shortfalls in the Answers (Answers)
+    PL->>G: gives handed (Result)
+    PL-->>U: ends with a Request that carries each shortfall (Request)
+    G-->>U: Start the pinner
+    U->>PN: starts it, with the Request as given (Request)
+    Note over U,PN: Pin settles each point again, as An answer draws. Its done starts a round.
+  else the runs gave met, or a run gave reword
+    G-->>U: Start generator
+    Note over U,GE: The next round, in the reading phase.
   else every run gave good
-    G-->>U: no next role, the work done
-    Note over U,F: up ends with the Work's paths.
-  end
-```
-
-planner makes a template, O2 of the UX:
-
-```mermaid
-sequenceDiagram
-  participant U as up
-  participant PL as planner
-  participant RS as researcher
-  participant S as scripts
-  participant T as .turn/best-practices/
-  participant F as run's folder
-  U->>PL: starts (Run values)
-  Note over U,PL: The kind is confirmed as in the first sequence.
-  PL->>RS: in the background, how good works of the kind are made, with sources
-  PL->>F: writes kind-tree.json, the kind's purpose at its root
-  RS-->>PL: what each source says, quoted
-  loop the kind's purpose, then its conditions and parts, as pin:down settles them
-    PL-->>U: gives asks, and ends with the point for the person
-    Note over U,PL: The point reaches the person, and the answer comes back, as in the first sequence.
-    U->>PL: resumes, with the answer
-    alt the person approves it
-      PL->>F: writes kind-tree.json, the point settled
-    else the person changes it
-      PL->>F: writes the change, and opens again what builds on it
+    G-->>U: Start planner
+    U->>PL: starts it (Run values)
+    alt the work was a new kind's best practice
+      PL->>F: has plan.py write the work's own hand-over (Design file)
+      PL->>G: gives handed (Result)
+      Note over U,PN: The pinner starts on the work itself, as S1 draws.
+    else the work is done
+      PL->>G: gives done (Result)
+      PL-->>U: ends with Done, the work's paths and the run's folder (Message)
+      U-->>ST: ends with it as given (Message)
     end
   end
-  PL->>T: writes Template, by meta
-  PL->>S: practices.py ready on the Run
-  alt it names a fault of the Template
-    S-->>PL: the fault
-    PL->>T: mends the Template, and runs it again
-  else it passes
-    S->>F: writes Standard, and the groups into Run
-  end
-  PL-->>U: gives planned, and ends
 ```
 
-A caller calls Turn, O3 of the UX:
+- **`rounds.py` settles the phase from the run's folder.** up could pass the phase as a run
+  value, from the result it was told. But up then decides a point of the work, and a run that
+  stopped would lose the phase. The cost: the generator runs `rounds.py` at each start.
 
-```mermaid
-sequenceDiagram
-  participant P as person
-  participant N as caller
-  participant U as up
-  participant PL as planner
-  participant D as designer
-  participant W as generator, evaluator, refactorer, proofreader
-  participant F as run's folder
-  N->>U: starts in the background (Call, with Given)
-  U->>PL: starts (Run values, Given)
-  PL->>F: writes Run, the kind as given
-  PL-->>U: gives planned, and ends
-  U->>D: starts (Run values, Given)
-  D->>F: writes Design tree, Given's goal and Decisions as given
-  loop for each Decision the caller did not settle that is the person's
-    D-->>U: gives asks, and ends with the question
-    U-->>N: ends with the question
-    N->>P: puts it
-    P->>N: the answer
-    N->>U: resumes, with the answer
-    U->>D: resumes, with the answer
-  end
-  D-->>U: gives designed, and ends
-  loop until proofreader gives good, as the second and third sequences draw
-    U->>W: starts generator, evaluator, refactorer or proofreader, as the routes say (Run values)
-    W-->>U: gives its result, and ends
-    opt the result sends the work back to designer: open, more or content
-      U->>D: starts, with the folder it takes back (Run values)
-      alt a point it takes back is the person's
-        D-->>U: gives asks, and ends with the question
-        U-->>N: ends with the question
-        N->>P: puts it
-        P->>N: the answer
-        N->>U: resumes, with the answer
-        U->>D: resumes, with the answer
-        D->>F: writes the Decision, the person's words as its Ground, and Remake
-      else designer settles every point itself
-        D->>F: writes Remake
-      end
-      D-->>U: gives designed, and ends
-    end
-  end
-  U-->>N: ends with the Work's paths
-```
+## Deployment
 
-The person names a run's folder and a change:
+Turn runs on the person's computer. Where a calling AI uses Turn, Turn runs on the computer where
+the calling AI runs for its person.
 
-```mermaid
-sequenceDiagram
-  participant P as person
-  participant M as main conversation
-  participant U as up
-  participant PL as planner
-  participant D as designer
-  participant F as run's folder
-  P->>M: /turn:up with the run's folder and the change
-  M->>U: starts in the background (Call, with the run)
-  U->>PL: starts (Run values)
-  PL->>F: finds run.json ready
-  PL-->>U: gives planned, and ends
-  U->>D: starts, with the change as a point to take back (Run values)
-  D->>F: decides the Decisions the change reaches again, and writes Remake
-  Note over U,D: From designed on, as in the second and third sequences.
-```
+![Turn's deployment](images/deployment.svg)
 
-- A stopped run goes on when `up` is started with the run's folder, as the first sequence draws:
-  planner finds `run.json` and gives `planned`, designer finds the tree and goes on from it, as
-  Pin's `pin:down` does, and the roles after carry on from the files.
-- A role resumed by SendMessage keeps its `agent_id`, and gives a result again for the resumed run.
-  Lane takes the later result over `asks`, as
-  [Lane's routes](../../plugins/lane/docs/routes.md#how-a-subagent-gives-its-result) say. The
-  routes then go on from the start that asked.
+To start Turn, the person installs it as [the README](../../plugins/turn/README.md#installation)
+says, which installs Pin with it, and types `/turn:up`. A plugin whose subagent is a calling AI
+lists `turn` in its `dependencies`, and starts `turn:up` as
+[Calling Turn](../../plugins/turn/docs/calling.md) says. Claude Code starts the guards through the
+plugins' hook entries, and each role runs Turn's scripts through the Bash tool.
 
-## Physical view
+- **Turn's scripts use Python 3.9 and its standard library only**, as
+  [Python 3.9 and the standard library](../plugin-best-practice.md#python-39-and-the-standard-library)
+  says. The guard is Lane's code, which needs the same. The person installs nothing else for Turn.
+- **A run's folder lies in `.turn/<yyyymmdd>-<name>/` at the root of the repository**, or where
+  the calling AI says, as
+  [Where a plugin writes its files](../plugin-best-practice.md#where-a-plugin-writes-its-files)
+  says for what may be kept. The person reads each check of the work there.
+- **The best practice of a kind new to Turn lies in `.turn/best-practices/`**, outside any run's
+  folder. Every later run in the repository then finds it. The planner takes it over Turn's own
+  best practice of the same kind, as the person approved it for their work.
+- **A work's command runs in a throwaway copy of the repository, with a throwaway home in the
+  temporary folder**, as [Turn changes only the work](#turn-changes-only-the-work) says. The cost: a
+  command that needs a file outside the repository, such as one in the person's Downloads folder,
+  gets a made-up one that `throwaway.py` puts in the throwaway home.
 
-### Deployment
+## Directory structure
 
-```mermaid
-flowchart TB
-  subgraph PC["the person's computer"]
-    subgraph CCP["Claude Code process #lt;Claude Code 2.1.317 or later, interactive#gt;"]
-      MC["main conversation, or the caller"]
-      RO["up and Turn's roles"]
-      RS2["researchers"]
-    end
-    PY["Python processes #lt;python3 3.9 or later#gt;:<br>Lane's guard and result.py, Turn's scripts, Pin's check.py"]
-    REPO[("the repository: the work, .turn/#lt;yyyymmdd#gt;-#lt;name#gt;/, .turn/best-practices/")]
-    TMP[("the system's temporary folder: Lane's kept calls")]
-  end
-  API[["Anthropic's API, which Claude Code uses"]]
-  WEB[["public pages, which planner's researchers read"]]
-  CCP -- "runs, through the Bash tool and the hooks" --> PY
-  CCP -- "reads and writes" --> REPO
-  PY -- "reads and writes" --> REPO
-  PY -- "keeps calls in" --> TMP
-  CCP -- "the model's turns" --> API
-  RS2 -- "reads" --> WEB
-```
-
-- The person installs Turn as [the README](../../plugins/turn/README.md#installation) says. Turn's
-  manifest lists `pin` in its `dependencies`, so installing Turn installs Pin. Lane's `lay.py` lays
-  Lane into Turn's `hooks/lane/`, so Lane needs no install.
-- The person starts Turn with `/turn:up`; a caller starts the agent `turn:up`. Claude Code runs
-  each of Turn's agents in the background, as each sets `background: true`.
-- Turn's scripts use Python 3.9 and its standard library only, as
-  [Python 3.9 and the standard library](../plugin-best-practice.md#python-39-and-the-standard-library) says.
-- A run's folder is `.turn/<yyyymmdd>-<name>/` at the root of the repository, as
-  [Where a plugin writes its files](../plugin-best-practice.md#where-a-plugin-writes-its-files) says, or the
-  folder the caller names.
-
-### Directory structure
+Each role and each data lies on one line below, named as in [Components](#components) and the data
+model. The files inside a role are left out.
 
 ```text
 plugins/turn/
-├── .claude-plugin/plugin.json          Turn's manifest, its version and dependencies <JSON>
-├── skills/up/SKILL.md                  /turn:up, for the main conversation <Markdown>
-├── agents/<role>.md                    the entry of up and of each role, naming its part <Markdown>
-├── core/roles/<role>.md                each role's flow, up's among them <Markdown>
-├── core/domain/use-and-answer.md       how generator, evaluator, refactorer and proofreader use and answer <Markdown>
-├── core/domain/forms/<file>.json       the form of each file of a run <JSON Schema>
-├── core/domain/best-practices/<kind>.json, <kind>.md   Template, and the Markdown made from it <JSON, Markdown>
-├── core/domain/templates.py, designs.py, answering.py, files.py   the checks of Template, Design tree and Answers, and each file held to its form <modules · Python 3.9>
-├── core/domain/runs.py                 Run values of each run of a step <module · Python 3.9>
-├── core/domain/schema.py               Lane's reading of a JSON Schema, through a link <module · Python 3.9>
-├── scripts/practices.py, tree.py, answers.py, starts.py, throwaway.py   their entries <command line · Python 3.9>
-├── hooks/hooks.json, hooks/lanes.json, hooks/lane/     Lane's guard and result.py, and Turn's lanes and Routes, laid by Lane <JSON, Python 3.9>
-├── docs/calling.md                     the Call, for callers <Markdown>
-└── README.md, CHANGELOG.md             for users <Markdown>
+├── .claude-plugin/plugin.json       Turn's manifest, version and dependency on Pin <JSON>
+├── skills/up/SKILL.md               /turn:up, the starter's steps <Markdown>
+├── agents/<role>.md                 up's, planner's, generator's, evaluator's entry <Markdown>
+├── core/roles/<role>.md             up's, planner's, generator's, evaluator's steps <Markdown>
+├── core/domain/best-practices/      Best practice and its Questions, Turn's own <JSON, Markdown>
+├── core/domain/forms/               the form of Run, Run values, Round, Answers, Standard <JSON>
+├── core/domain/                     the code of plan.py, rounds.py, throwaway.py <Python 3.9>
+├── scripts/                         plan.py, rounds.py, throwaway.py <command line · Python 3.9>
+├── hooks/hooks.json                 the guard's hook entries <JSON>
+├── hooks/lanes.json                 Rules laid, with the routes on each Result <JSON>
+├── hooks/lane/                      the guard, Lane's code <Python 3.9>
+├── docs/calling.md                  Calling Turn: the form of Call, Message and Answer <Markdown>
+└── README.md, CHANGELOG.md, images/   for Turn's users <Markdown, SVG>
 
 dev/turn/
-├── ux.md, architecture.md, README.md   for developers <Markdown>
-├── cosmic-ray.toml                     the mutation testing <TOML>
+├── ux.md, architecture.md, images/, README.md   for Turn's developers <Markdown, SVG>
+├── cosmic-ray.toml                  the mutation testing <TOML>
 └── tests/
-    ├── unit/core/domain/               unit and property tests of the checks <Python 3>
-    ├── unit/core/roles/                the trials of each role alone, trial_*.py <Python 3>
-    ├── architecture/                   each path of the sequences, the roles doubles, and Turn's entries and lanes as laid <Python 3>
-    └── ux/                             the trials of O1, O2 and O3, trial_*.py, and the stand-in caller <Python 3>
+    ├── unit/                        unit tests, at the path of what each tests <Python 3>
+    ├── architecture/                a test for each path of each sequence <Python 3>
+    └── ux/                          the trials of O1 and O2, and O2's calling AI <Python 3>
 
-.turn/best-practices/<kind>.json        Template made for the repository
-.turn/<yyyymmdd>-<name>/                Run, Standard, Design tree, Work, Remake; Answers and Open point in self-check/, verification/, refactor-check.json, proofreading/, open/
+.turn/<yyyymmdd>-<name>/               Run, Design file, Standard
+.turn/<yyyymmdd>-<name>/verification/  Round, Answers
+.turn/best-practices/                  Best practice, the repository's own
+<the paths that the design gives>      Work
+<temporary folder>/lane/               Result, as the guard keeps it
 ```
 
-The best practices lie in `core/domain/`, as they are the knowledge of Turn's work that every role
-reads alike.
+- **The Request, the Design file and its Decisions take Pin's form**, which
+  [the pinner](../../plugins/pin/core/roles/pinner.md) gives. Turn keeps no copy of that form.
+- **`hooks/lane/` is a link to Lane's code in this marketplace**, as
+  [Code kept once](../plugin-best-practice.md#code-kept-once) says. `lay.py` lays it with
+  `hooks/hooks.json` and `hooks/lanes.json` from Turn's proposal. The cost: a fix in Lane reaches
+  Turn's guard only once a developer lays Turn's rules again.
+- **The best practices lie in `core/domain/`**, as they are the knowledge of Turn's work. Every
+  role reads them alike, and `meta.json` among them is the best practice of a best practice.
 
-## Test
+## Tests
 
-Turn's tests follow [Test](../plugin-best-practice.md#test). What follows is what Turn adds.
+Turn is tested as [Test](../plugin-best-practice.md#test) in the plugin best practice says. The
+table and the rules below give only what Turn adds.
 
-| Deployment unit | unit | architecture | ux |
-|---|---|---|---|
-| Turn's scripts [python3 3.9 or later] | unittest, Cosmic Ray, Hypothesis · ●●● · each check of a Template, a Design tree and Answers, the parts, the groups, the run values and the throwaway home | unittest, the scripts real, the roles as doubles · ●●● · run at each step of every path, on the files the role doubles write | trials on Opus · ●○○ · run by the roles on each move |
-| Claude Code process: `/turn:up`, `up` and the roles [Claude Code 2.1.317 or later] | trials on Opus · ●●● · each role alone, one input for each result it may give and each point it asks or settles, with the person, its neighbours and the researchers stood in for | unittest, Turn's lanes and routes and Lane's hooks as laid, real; the roles and Claude Code as doubles · ●●● · each path of the six sequences | trials on Opus · ●○○ · O1 on a README and on a module of code with two parts apart, O2 on a man page, and O3 with a stand-in caller |
+![Turn's test table](images/tests.svg)
 
-Lane's guard and result.py have no row: Lane tests them, and Turn's architecture tests run them as
-laid in Turn. Pin's `check.py` has none: Pin tests it, and Turn's architecture tests run it.
+Installed Turn, installed Pin, the repository and the temporary folder have no row. They hold files
+and run nothing, and the tests reach them through the processes that read them. Pin's code and
+Lane's code are tested by their own plugins. Turn's architecture tests run Pin's `check.py` and the
+guard real where they join Turn.
 
-- **unit, the roles**: a trial runs one role alone, as
-  [Unit: prompts](../plugin-best-practice.md#unit-prompts) says. Its classes are the results the role may
-  give, as [Routes](#routes) names them, and, for planner and designer, the points it settles
-  itself and those it asks, as
-  [The person is asked only what is theirs](#the-person-is-asked-only-what-is-theirs-one-point-at-a-time)
-  says. A trial tries each class where the role must give it and where it must not, such as
-  generator's `open` on a design that leaves a point open and on one that does not. Scripts stand
-  in for the person, answering from a set of answers, and for the roles before and after it,
-  giving set files. A trial passes where the role writes its files in form and gives the result the files call
-  for, each question to the person is one point and is theirs, and evaluator and proofreader read
-  nothing but the work and their standard.
-- **architecture**: what joins Turn's parts runs real: Turn's scripts, Turn's lanes and routes as
-  laid in `hooks/`, Lane's hooks and `result.py` laid there, and Pin's `check.py`, on a run's folder
-  on disk. `up`, each role and the researcher are roles an AI runs, so a double stands in for
-  each. A double of the main conversation, or of a caller, answers each question with a set
-  answer. The double of Claude Code, from Lane's `dev/lane/testing.py`,
-  sends the hook events. Each test runs one path of [Sequences](#sequences), and checks at each step
-  the role Lane names next and the run values it is started with. The paths:
+### No level tries a prompt alone
 
-  | Sequence | Paths |
-  |---|---|
-  | O1 up to the design | the main flow, the kind named by the request; the kind asked and answered; a ready Run and a Design tree left by a stopped run; a point of the design put to the person |
-  | generator and evaluator | every run `generated`, then every run `good`; a run `open` beside a run `generated`, sent back to designer with `open/`, then generator only for the parts the Remake reaches; a run `more` beside a run `good`, sent back with `verification/`; designer asking the person on a send-back |
-  | the refactoring phase | every run `good`, the work done; a run `more`, back to refactorer; a run `content` beside a run `more`, sent back to designer with `proofreading/` |
-  | O2 | each point of the kind approved; a point changed, and what builds on it opened again; a Template whose fault `practices.py ready` names, mended |
-  | O3 | the kind and the goal as the caller gave them, a question for the person put through the caller; no question left for the person; a send-back whose point is the person's, its question put through the caller; a send-back designer settles itself |
-  | a change named | the change taken back by designer, and only the parts its Remake reaches made again |
+Turn departs from [Unit: prompts](../plugin-best-practice.md#unit-prompts): no level runs a role of
+Turn alone on a model. A prompt written by the repository's best practice for prompts leaves only
+the model's variance and the faults of the design. The guard holds the rules that must hold, and
+the architecture tests run the guard on each path. The ux trials find the faults of the design,
+and measure the variance by the key results. The cost: a fault in a prompt shows only in a ux
+trial, which runs once every lower level passes.
 
-  A test passes where each start is the one the routes name, with the run values the role before
-  handed on as `starts.py` printed them, and each script gives the answer the files call for. On
-  some path, a start of evaluator or proofreader reads the design, and Lane stops it. Each file a
-  role's double writes passes the check that the role's unit trial makes of the role's files: the
-  JSON Schema of its `in_form` lane, and `answers.py check`, `tree.py check` or
-  `practices.py ready`. So a change to a form fails the double as it fails the role. Another test
-  reads Turn's entries and laid files as Claude Code and Lane take them: each agent in the
-  background naming its part, each script a part names, and the routes and lanes as this document
-  gives them.
-- **ux**: a trial runs Claude Code on Opus on copies of Turn and Pin, as
-  [ux: the plugin in real use](../plugin-best-practice.md#ux-the-plugin-in-real-use) says, in an interactive
-  session, as `claude -p` does not hand a background role's end back to `up`. Each runs an
-  objective's scenario on `tidy`, a repository of a real tool's size. An AI stands in for the
-  person, answering from an intent written beforehand and never shown to Turn. A run passes where
-  the stand-in, given the work and their intent, would change nothing in it, and every question put
-  to them is one their intent marks as theirs, never a point the caller gave. That is what O1, O2
-  and O3 say. For KR1.1, KR2.1 and KR3.1 the trial measures the share of works the stand-in would
-  change and of questions that are not theirs, and for KR1.2, KR2.2 and KR3.2 the time from the
-  request to the work handed back, with the tokens. Lower and shorter are better. On the module of
-  code it also measures how long the two runs of generator that `up` starts for its two parts
-  overlap, which only real runs show.
-- Turn's scripts weigh ●●● in unit and architecture tests, as a check that passes wrongly sends a
-  gap into the work unseen. The roles weigh ●●● in their unit trials and in the architecture tests,
-  as a work the person must mend, or a question that is not theirs, is what Turn is there to stop,
-  and these levels try each case.
-- The ux trials weigh ●○○. They only confirm, in real use, what the lower levels have checked.
+### The weights
+
+- The scripts weigh ●●● at unit and at architecture. A check that passes wrongly sends a gap into
+  the work unseen, or hands the evaluator what its user never sees (KR1.1, KR2.1).
+- The hook process weighs ●●● at architecture. Only the guard holds each role to its rules and the
+  course to its routes. A rule let through lets the evaluator read the design, or the generator
+  write beside the work (KR1.1).
+- The Claude Code process weighs ●●○ at architecture. A test there only finds sooner an entry that
+  Claude Code would not load as Turn needs, which every ux trial would also meet.
+- The Claude Code process weighs ●●○ at ux, as only these trials run the prompts. The other rows
+  weigh ●○○ at ux: the trials only confirm what lower levels have checked.
+
+### Unit
+
+- The tests of `plan.py` come from the classes of a best practice: in form and out of form; a part
+  that no question asks of; a question with no way to meet it. They also come from the classes of
+  a Call: no Given; a kind given; a goal and decisions given, which the hand-over keeps word for
+  word; a kind with no best practice, whose hand-over is the best practice's own.
+- The tests of `rounds.py` come from the classes of Answers: every question answered once; a
+  question not answered, or answered twice; a line that the work does not hold. The phase turns on
+  three conditions: whether the design changed since the last content round, whether that round
+  met every question, and whether the last reading round met every question. A table gives one
+  rule for each combination that can occur, and each rule has one test.
+- The tests of `throwaway.py` come from where a command reaches: inside the copy, the throwaway
+  home, and the person's own files, which it must not reach.
+- The tests also cover each script's three results, as
+  [No check passes what it did not check](../plugin-best-practice.md#no-check-passes-what-it-did-not-check)
+  says: no problem, a problem, and could not check.
+- No person takes part at unit, so nothing stands in for one.
+- The tests pass as [Unit: code](../plugin-best-practice.md#unit-code) says.
+
+### Architecture
+
+Each test runs one path of [Sequences](#sequences).
+
+- What joins Turn's parts runs real: Turn's scripts by the commands that the rules name, the guard
+  by Turn's hook entries on Turn's Rules laid, Pin's `check.py`, and the entries' files as Claude
+  Code takes them.
+- Doubles stand in for up, the planner, the pinner, the generator, the evaluator, the starter, the
+  person and Claude Code. A double of Claude Code sends the hook events of each role in order, and
+  runs the hooks' commands. A set answer stands in for the person.
+- Each double gives only what the contract of its part allows. A double of the pinner writes only
+  design files that Pin's `check.py` passes, and gives `asks` or `done`, with a Reply in the form
+  that [the pinner](../../plugins/pin/core/roles/pinner.md) gives. A double of the generator or the
+  evaluator writes only Answers that `rounds.py`'s check passes. A double of the planner writes a
+  hand-over only through `plan.py`. A double of up passes each Message and Answer unchanged. A
+  double of Claude Code sends what Claude Code's hooks reference documents. Where that says
+  nothing, it sends what a try of the real Claude Code showed, recorded beside the double with the
+  Claude Code version and the date.
+- At each step, the test checks the role that acts and the data it hands on: the start that the
+  guard names, the run values, the files on disk, and what the guard lets through or stops.
+- The tests pass as
+  [Architecture: the parts joined](../plugin-best-practice.md#architecture-the-parts-joined) says.
+
+The paths, one test each:
+
+| Sequence | Paths |
+|---|---|
+| S1, S3 and S5, the start | the kind named, a new run; the kind open, asked and answered; the calling AI's kind, goal and decisions handed over word for word, the goal not put; a kind new to Turn, its best practice handed over first; a stopped run whose design is open, gone on through Pin; a stopped run whose design is confirmed, gone on at the rounds; a change named, handed to Pin |
+| S2 and S4, an answer | an answer to the kind; an answer to a point, then the next point; any words while a point waits, passed on word for word; the design confirmed, read out, and the rounds started; S4 with each of these through the calling AI |
+| S2 and S4, the rounds | `made`, every run `met`, a reading round, every run `good`, done; a run `more` beside a run `met`, back to Pin, then a content round; the generator's `open`, back to Pin; a reading run `reword`, another reading round; a reading run `more`, back to Pin and the content phase; a new kind's best practice `good`, the work handed over next; an evaluator that reads the design or the ways of the best practice, stopped; a run that ends with no result, started again |
+
+### ux
+
+A trial runs the scenario of O1 or of O2, as
+[ux: the plugin in real use](../plugin-best-practice.md#ux-the-plugin-in-real-use) says, in an
+interactive session.
+
+- The subject is `tidy` at the size of a real request: a repository of several modules, with tests
+  and its packaging, and no README. The trials bring out the frequent cases: the kind named and
+  the kind open, a fact found and confirmed, a decision of the person's, a decision left to Turn, a
+  question not met and sent back, and a reading round. One trial of O1 asks for a kind new to
+  Turn, a man page.
+- An AI on Opus stands in for the person. It is given an intent written before the run and never
+  shown to Turn, and answers each point from it.
+- For O2, a plugin made for the test stands in for a calling AI's plugin. Its calling AI hands Turn
+  the kind, a goal and two settled points, and passes the README on.
+- A run passes where the stand-in gets what the objective says. A trial passes where 3 runs of 3
+  pass, as
+  [Results that vary from run to run](../plugin-best-practice.md#results-that-vary-from-run-to-run)
+  says.
+
+The trial measures each key result from the session's records, the run's folder and the work:
+
+| Key result | What the trial measures |
+|---|---|
+| KR1.1 | of the works made, the share that went wrong in any of the UX's five ways, judged by the stand-in from its intent |
+| KR1.2 | the time from `/turn:up` to the work that the stand-in puts to use |
+| KR2.1 | of the works that the calling AI got back, the share that went wrong in any of the UX's four ways |
+| KR2.2 | the time from the calling AI's start of `turn:up` to the work it gets back |
+
+The UX gives no key result a target. So each measure is set against the last trial's, in the
+direction that the UX gives it.
+
+### A fault found at a higher level
+
+A fault that a trial finds goes down as
+[A fault is tested at the level that must catch it](../plugin-best-practice.md#a-fault-is-tested-at-the-level-that-must-catch-it)
+says. A step that a role broke, where a hook can see the break, becomes a rule of the guard, with
+an architecture test that fails first. Any other fault of a prompt is mended in the prompt, for a
+cause that the trial's records confirm. A fault in how Claude Code acts is recorded beside the
+double of Claude Code, which then sends what the try showed.

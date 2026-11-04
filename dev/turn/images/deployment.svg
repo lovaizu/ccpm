@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 760" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+  <title>Turn&#x27;s deployment</title>
+  <style>
+    .bg { fill: #ffffff; }
+    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .lane { fill: #ddf4ff; stroke: #54aeff; }
+    .store { fill: #fff8c5; stroke: #9a6700; stroke-width: 1.5; }
+    .ext { fill: #eaeef2; stroke: #d0d7de; stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .unit { fill: #ddf4ff; fill-opacity: 0.35; stroke: #0969da; stroke-width: 1.2; }
+    .frame { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    .frame-name { fill: #0969da; font-size: 13px; font-weight: 600; }
+    .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
+    .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
+    .label { fill: #1f2328; font-size: 13px; }
+    .small { font-size: 12px; }
+    .data { fill: #8250df; font-size: 12px; font-style: italic; }
+    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .dashed { stroke-dasharray: 5 4; }
+    .head { fill: #59636e; }
+    .hole { fill: #ffffff; stroke: #59636e; stroke-width: 1.5; }
+    .halo { stroke: #ffffff; stroke-width: 7; stroke-linejoin: round; paint-order: stroke; }
+    .mid { text-anchor: middle; }
+    .start { text-anchor: start; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; }
+      .box { fill: #161b22; stroke: #3d444d; }
+      .lane { fill: #0c2d6b; stroke: #4493f8; }
+      .store { fill: #2e2a1a; stroke: #d29922; }
+      .ext { fill: #21262d; stroke: #3d444d; }
+      .unit { fill: #0c2d6b; stroke: #4493f8; }
+      .frame { stroke: #4493f8; }
+      .frame-name { fill: #4493f8; }
+      .name, .label { fill: #f0f6fc; }
+      .kind { fill: #9198a1; }
+      .data { fill: #c297ff; }
+      .line { stroke: #9198a1; }
+      .head { fill: #9198a1; }
+      .hole { fill: #0d1117; stroke: #9198a1; }
+      .halo { stroke: #0d1117; }
+    }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path class="head" d="M0,0 L10,5 L0,10 z"/>
+    </marker>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1500" height="760"/>
+  <rect class="frame" x="20" y="40" width="1150" height="640" rx="8"/>
+  <text class="frame-name" x="36" y="64" text-anchor="start">the person&#x27;s computer</text>
+  <rect class="unit" x="40" y="80" width="520" height="140" rx="6"/>
+  <text class="name start" x="54" y="106" text-anchor="start">Claude Code process</text>
+  <text class="kind start" x="54" y="124" text-anchor="start">[Claude Code 2.1.317 or later, run as a conversation, not claude -p]</text>
+  <text class="label start" x="54" y="148" text-anchor="start">starter: the main conversation, or the calling AI</text>
+  <text class="label start" x="54" y="166" text-anchor="start">up, planner, generator and evaluator: Turn&#x27;s subagents</text>
+  <text class="label start" x="54" y="184" text-anchor="start">pinner: Pin&#x27;s subagent</text>
+  <rect class="unit" x="620" y="80" width="520" height="130" rx="6"/>
+  <text class="name start" x="634" y="106" text-anchor="start">installed Turn</text>
+  <text class="kind start" x="634" y="124" text-anchor="start">[plugin folder, installed by Claude Code]</text>
+  <text class="label start" x="634" y="148" text-anchor="start">the entries and the steps of each role</text>
+  <text class="label start" x="634" y="166" text-anchor="start">the scripts&#x27; and the guard&#x27;s code</text>
+  <text class="data start" x="634" y="184" text-anchor="start">Best practice, Turn&#x27;s own; Rules laid</text>
+  <rect class="unit" x="620" y="230" width="520" height="80" rx="6"/>
+  <text class="name start" x="634" y="256" text-anchor="start">installed Pin</text>
+  <text class="kind start" x="634" y="274" text-anchor="start">[plugin folder, installed with Turn]</text>
+  <text class="label start" x="634" y="298" text-anchor="start">the pinner&#x27;s steps, check.py and Pin&#x27;s guard</text>
+  <rect class="unit" x="40" y="300" width="240" height="110" rx="6"/>
+  <text class="name start" x="54" y="326" text-anchor="start">hook process</text>
+  <text class="kind start" x="54" y="344" text-anchor="start">[python3 3.9 or later]</text>
+  <text class="label start" x="54" y="368" text-anchor="start">Turn&#x27;s guard, Pin&#x27;s guard</text>
+  <rect class="unit" x="320" y="300" width="240" height="150" rx="6"/>
+  <text class="name start" x="334" y="326" text-anchor="start">script process</text>
+  <text class="kind start" x="334" y="344" text-anchor="start">[python3 3.9 or later]</text>
+  <text class="label start" x="334" y="368" text-anchor="start">plan.py, rounds.py,</text>
+  <text class="label start" x="334" y="386" text-anchor="start">throwaway.py, Pin&#x27;s check.py;</text>
+  <text class="label start" x="334" y="404" text-anchor="start">a work&#x27;s command, in</text>
+  <text class="label start" x="334" y="422" text-anchor="start">a throwaway home</text>
+  <rect class="unit" x="620" y="360" width="520" height="130" rx="6"/>
+  <text class="name start" x="634" y="386" text-anchor="start">the repository</text>
+  <text class="kind start" x="634" y="404" text-anchor="start">[git working tree]</text>
+  <text class="data start" x="634" y="428" text-anchor="start">Work, at the paths its design gives</text>
+  <text class="data start" x="634" y="446" text-anchor="start">.turn/&lt;yyyymmdd&gt;-&lt;name&gt;/: Design file, Run, Standard, Round, Answers</text>
+  <text class="data start" x="634" y="464" text-anchor="start">.turn/best-practices/: Best practice, the repository&#x27;s own</text>
+  <rect class="unit" x="40" y="550" width="520" height="100" rx="6"/>
+  <text class="name start" x="54" y="576" text-anchor="start">the temporary folder</text>
+  <text class="kind start" x="54" y="594" text-anchor="start">[the system&#x27;s, as tempfile.gettempdir() gives it]</text>
+  <text class="label start" x="54" y="618" text-anchor="start">the throwaway homes and copies</text>
+  <text class="data start" x="54" y="636" text-anchor="start">Lane&#x27;s kept calls: Result</text>
+  <rect class="ext" x="1220" y="80" width="240" height="64" rx="4"/>
+  <text class="name" x="1340.0" y="108.5" text-anchor="middle">Anthropic&#x27;s API</text>
+  <text class="kind" x="1340.0" y="125.5" text-anchor="middle">[HTTPS]</text>
+  <rect class="ext" x="1220" y="250" width="240" height="64" rx="4"/>
+  <text class="name" x="1340.0" y="278.5" text-anchor="middle">public pages</text>
+  <text class="kind" x="1340.0" y="295.5" text-anchor="middle">[HTTPS]</text>
+  <rect class="ext" x="1220" y="430" width="240" height="64" rx="4"/>
+  <text class="name" x="1340.0" y="458.5" text-anchor="middle">marketplace</text>
+  <text class="kind" x="1340.0" y="475.5" text-anchor="middle">[git repository on GitHub]</text>
+  <path class="line" d="M300,80 L300,54 L1340,54 L1340,80" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="820" y="70" text-anchor="middle">the model&#x27;s turns</text>
+  <path class="line" d="M420,80 L420,22 L1485,22 L1485,282 L1460,282" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="820" y="16" text-anchor="middle">the generator reads them for a new kind [WebFetch]</text>
+  <path class="line" d="M560,120 L620,120" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="590" y="112" text-anchor="middle">loads</text>
+  <path class="line" d="M560,200 L585,200 L585,270 L620,270" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="578" y="250" text-anchor="end">loads</text>
+  <path class="line" d="M560,160 L600,160 L600,400 L620,400" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="628" y="330" text-anchor="start">reads facts, writes the work</text>
+  <text class="label small halo" x="628" y="344" text-anchor="start">and the run&#x27;s files</text>
+  <path class="line" d="M160,220 L160,300" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="168" y="248" text-anchor="start">runs it on each call and end</text>
+  <text class="label small halo" x="168" y="262" text-anchor="start">[sh, JSON on stdin]</text>
+  <path class="line" d="M440,220 L440,300" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="448" y="276" text-anchor="start">runs them [Bash tool]</text>
+  <path class="line" d="M560,430 L620,430" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="590" y="448" text-anchor="middle">reads, writes</text>
+  <path class="line" d="M100,410 L100,550" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="108" y="470" text-anchor="start">keeps calls in</text>
+  <path class="line" d="M220,410 L220,520 L1155,520 L1155,180 L1140,180" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="860" y="512" text-anchor="middle">reads Rules laid</text>
+  <path class="line" d="M440,450 L440,550" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="448" y="540" text-anchor="start">makes them in</text>
+  <path class="line" d="M1220,462 L1190,462 L1190,150 L1140,150" marker-end="url(#arrow)"/>
+  <path class="line" d="M1190,270 L1140,270" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="1198" y="360" text-anchor="start">installs Turn, and Pin</text>
+  <text class="label small halo" x="1198" y="374" text-anchor="start">with it [claude plugin install]</text>
+  <text class="frame-name" x="36" y="730" text-anchor="start">Legend</text>
+  <rect class="frame" x="110" y="715" width="36" height="22" rx="4"/>
+  <text class="label small" x="154" y="730" text-anchor="start">environment</text>
+  <rect class="unit" x="260" y="715" width="36" height="22" rx="4"/>
+  <text class="label small" x="304" y="730" text-anchor="start">deployment unit, [technology]: the roles that run in it</text>
+  <text class="data" x="660" y="730" text-anchor="start">data kept</text>
+  <rect class="ext" x="740" y="715" width="36" height="22" rx="4"/>
+  <text class="label small" x="784" y="730" text-anchor="start">outside Turn; an arrow says what is used [protocol or tool]</text>
+</svg>
