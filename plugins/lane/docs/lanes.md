@@ -25,8 +25,8 @@ under that ID as the call comes back, so many runs of one subagent at once are e
 own values. A run starts a moment before its call comes back, so a call the run makes that needs a
 value waits for it up to 3 seconds, and is an error where it has not come back by then. A
 SendMessage call counts where its `to` is the run's `agentId`; one an orchestrator sends to a run
-that ended with no result is stopped, as [the routes](routes.md#how-a-subagent-gives-its-result)
-say.
+that ended with no result is stopped, and a result such a run gives once resumed by another does
+not count, as [the routes](routes.md#how-a-subagent-gives-its-result) say.
 
 | Action | Lane | Sentence | Told when the subagent |
 |---|---|---|---|
@@ -226,8 +226,9 @@ The ports' JSON Schemas:
 ## What each lane is given
 
 The guard first holds the event to the form Claude Code hands it, and `hooks/lanes.json` to the
-form `lay.py write` writes it in. Then, before any lane's check, it holds what each lane is given to
-the lane's IN, a JSON Schema. A lane is given two things:
+form `lay.py write` writes it in, its routes to the order of results `lay.py print` asks of them,
+as [the routes](routes.md#runs-at-once) say. Then, before any lane's check, it holds what each lane
+is given to the lane's IN, a JSON Schema. A lane is given two things:
 
 - the texts put in each place of its sentence, with each `{<name>}` given for the run put in and
   its empty texts left out, one or more in each place;

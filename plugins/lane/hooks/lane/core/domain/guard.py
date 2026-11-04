@@ -177,6 +177,7 @@ class Subagent(NamedTuple):
                 started,
                 lambda a: called.result(self.session, a),
                 lambda a: called.ended(self.session, a),
+                lambda a: called.left_without_result(self.session, a),
             )
         except routes.Unordered as why:
             fix = ORDER.format(plugin=self.plugin, name=why.name)
@@ -282,6 +283,10 @@ def subagent(
         routed = None
     if laid is None and routed is None:
         return None
+    why = routes.unordered(routed) if routed is not None else None
+    if why:
+        fix = LAY_AGAIN.format(plugin=plugin)
+        raise Cannot(cannot(f"the lanes of {name}", f"{rules.FILE} {why}", fix))
     if wrong:
         raise Cannot(unshaped(name, wrong))
     entry = step.agent_file(root, name)

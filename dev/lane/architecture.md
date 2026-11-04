@@ -31,7 +31,9 @@ The subagent meets the same words in both places, and no change can make them di
 ### What was approved is what runs
 
 `lay.py write` writes from the file that `lay.py print` showed, and the check script takes its rules
-and routes only from what `lay.py write` wrote.
+and routes only from what `lay.py write` wrote. It holds the routes laid to the check `lay.py print`
+makes of an order of results, kept once for both, and stops each event of a subagent they name, as
+a call that cannot be checked, where that check would refuse them.
 
 A rule copied by hand could be one that no one approved
 ([The caller approves what is theirs](../architecture.md#the-caller-approves-what-is-theirs)).
@@ -448,12 +450,21 @@ sequenceDiagram
   participant H as hook.py
   participant RT as routes.py
   participant S as runs of one subagent (Subagent)
+  opt the routes laid are ones `lay.py print` would refuse, as when edited by hand
+    O->>CC: makes a call, such as a start
+    CC->>H: PreToolUse of it (Event)
+    H-->>CC: deny, as a call that cannot be checked, the operator told too (Decision)
+  end
   O->>CC: starts a run, then another while the first still runs
   CC->>S: runs each in the background, each with its own values
   loop until every run has ended
     S->>CC: ends with its result, or with none
     opt a run ends with no result after it was kept going once
       H-->>CC: context: start it again once the others have ended (Decision)
+    end
+    opt a run that ended with no result, started again, is resumed by another and gives a result
+      CC->>H: PostToolUse of its result command (Event)
+      H-->>CC: nothing to tell, the result kept out of the count, the run started again in its place
     end
     opt the orchestrator starts the next subagent before every run has ended
       H-->>CC: deny, with the wait for every run (Decision)
@@ -464,7 +475,7 @@ sequenceDiagram
   alt every run gave one result, or their results stand in `precedence`
     RT-->>H: the next start, from the result of the runs
     H-->>CC: context with the next start (Decision)
-  else their results differ and `precedence` does not hold them
+  else their results differ and `precedence` does not hold them, the routes laid again meanwhile
     RT-->>H: no result can be told
     H-->>CC: an error the plugin's maker must fix, the operator told too (Decision)
   end
@@ -542,10 +553,13 @@ sequenceDiagram
   taken is the first of them in the order the routes give in `precedence`, as only the plugin knows
   which of its results outweighs another ([Lane knows no plugin](#lane-knows-no-plugin)). Where no
   order holds them, the result cannot be told, so the orchestrator is told an error the plugin's
-  maker must fix ([A call that cannot be checked is stopped](#a-call-that-cannot-be-checked-is-stopped));
-  `lay.py print` refuses routes that would meet it. A run started again stands for one that ended
-  with no result, so the route is taken once as many runs have given a result as were started
-  but those started again.
+  maker must fix ([A call that cannot be checked is stopped](#a-call-that-cannot-be-checked-is-stopped)).
+  `lay.py print` refuses routes that would meet it, and the check script holds the routes laid to
+  that check, so only routes laid again while runs go on meet it, the runs and their results kept
+  under the routes before. A run started again takes the place of one that ended with no result,
+  the first of them in order: the route is taken once each run in the count has given a result,
+  and a result the run replaced gives once resumed, by the main conversation or another subagent,
+  is kept but not counted.
 - A start counts once the started subagent has ended. While a started subagent runs in the
   background, only another start is stopped, so the orchestrator may end and wait. Claude Code
   starts it again once that subagent has ended, in an interactive session. In `claude -p`, Claude
@@ -649,7 +663,7 @@ is tested in the rows of the lay.py process and the hook process.
   | `lay.py up` | a folder with no manifest; Lane's code older, and the hook entries in another form; nothing to bring up |
   | writer's run | each call its rules allow going through; `git commit` stopped with its sentence; a command with the run's own value going through; a command with another value, or with the value as two words, stopped; the run's prompt kept too late, stopped as a call that cannot be checked; a dependency's command by its folder going through; the same command by a folder with no such manifest, or in other words, stopped; a text read through an adapter, in form and out of form; an adapter that fails; an event that cannot be read; the operator told of each call that cannot be checked |
   | lead's run | `written`, then `good`; `written`, then `more`, sent back to writer, then `good`; the work not in form for its result, then mended; a result no route is on, stopped with the commands it may run, then one it is on; a start no route names; a subagent ending with no result, kept going once; a run with no result resumed by SendMessage, stopped; lead kept going once with a start due, then let end |
-  | runs at once | every run giving one result; results ordered by `precedence`; results `precedence` does not hold; a start before every run ended; a run ending with no result, started again |
+  | runs at once | every run giving one result; results ordered by `precedence`; results `precedence` does not hold, the routes laid again during the runs; laid routes `lay.py print` would refuse, the operator told; a start before every run ended; a run ending with no result, started again; a run with no result resumed by another, its result out of the count |
   | a held command | the person says yes; the person says no |
 
   Each type of rule is laid on some path.

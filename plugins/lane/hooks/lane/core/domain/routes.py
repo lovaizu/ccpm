@@ -99,6 +99,22 @@ def order(routes: dict[str, Any], name: str) -> list[str] | None:
     return given.get(name) if isinstance(given, dict) else given
 
 
+def unordered(routes: dict[str, Any]) -> str | None:
+    """What is wrong where the routes fan out a subagent giving several results that its order
+    does not hold each of, so the result of its runs at once could not be told: the first such,
+    as `lay.py print` refuses it and the guard holds the routes laid to it; None where none is."""
+    for name in routes.get("fan_out", []):
+        ons_ = ons(routes, name)
+        taken = order(routes, name) or []
+        if ons_[1:] and not all(on in taken for on in ons_):
+            results = listed([f"`{on}`" for on in ons_])
+            return (
+                f"gives {name} in `fan_out`, whose results {results} the routes do not order in"
+                " `precedence`, so the result of its runs at once could not be told"
+            )
+    return None
+
+
 def combined(routes: dict[str, Any], name: str, given: list[str]) -> str:
     """The result of the runs of the subagent of the name, which gave the results: the one they
     share, or the first of them in its order. Stops with Unordered where they differ and the order
@@ -120,12 +136,14 @@ def next_start(
     starts: list[Start],
     result: Callable[[str], str | None],
     ended: Callable[[str], bool],
+    left: Callable[[str], bool] = lambda agent: False,
 ) -> Next:
     """The next start after the starts, as `result` gives the result of a subagent's run by its ID,
-    and `ended` whether it has ended: the orchestrator's route at first; after each start, with
-    those joined to it, the route of their subagent on their result once every run has ended, or
-    the same subagent again where a run is left with no result; a wait while any runs in the
-    background. Stops with Unordered where their results cannot be told one."""
+    `ended` whether it has ended, and `left` whether a run of it ended with no result once: the
+    orchestrator's route at first; after each start, with those joined to it, the route of their
+    subagent on their result once every run has ended, or the same subagent again where a run is
+    left with no result; a wait while any runs in the background. Stops with Unordered where their
+    results cannot be told one."""
     first = next(r["to"] for r in routes["routes"] if r["from"] == routes["orchestrator"])
     found = Next("start", first, None)
     name, runs = "", list[Start]()
@@ -137,7 +155,7 @@ def next_start(
         if over and not joins:
             break
         name, runs = s.name, [*runs, s] if joins else [s]
-        found = taken(routes, name, runs, result, ended)
+        found = taken(routes, name, runs, result, ended, left)
     return found
 
 
@@ -154,15 +172,15 @@ def taken(
     runs: list[Start],
     result: Callable[[str], str | None],
     ended: Callable[[str], bool],
+    left: Callable[[str], bool],
 ) -> Next:
     """The next start after the runs of the subagent of the name, joined, as `next_start` has
     it."""
     if any(running(s, ended) for s in runs):
         return Next("wait", name, None, more=fans_out(routes, name))
-    given = [on for on in (result(s.agent) for s in runs) if on is not None]
-    # Each run started again stands for one that ended with no result.
-    owed = len(runs) - sum(s.joined == AGAIN for s in runs)
-    if len(given) < owed:
+    counted = in_place(runs, result, left)
+    given = [on for on in (result(s.agent) for s in counted) if on is not None]
+    if len(given) < len(counted):
         return Next("start", name, None, True)
     on = combined(routes, name, given)
     route = next((r for r in routes["routes"] if (r["from"], r.get("on")) == (name, on)), None)
@@ -170,6 +188,17 @@ def taken(
         return Next("start", name, None, True)
     kind = "start" if "to" in route else "end"
     return Next(kind, route.get("to", ""), (name, on), runs=len(given))
+
+
+def in_place(
+    runs: list[Start], result: Callable[[str], str | None], left: Callable[[str], bool]
+) -> list[Start]:
+    """The runs that count: each run started again takes the place of one that ended with no result,
+    the first of them in order, so that run is out of the count even where it gives a result once
+    resumed."""
+    replaced = [s for s in runs if left(s.agent) or result(s.agent) is None]
+    out = replaced[: sum(s.joined == AGAIN for s in runs)]
+    return [s for s in runs if s not in out]
 
 
 def line(found: Next, plugin: str) -> str:

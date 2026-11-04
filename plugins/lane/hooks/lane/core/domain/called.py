@@ -114,6 +114,20 @@ def result(session: str, agent: str) -> str | None:
     return given[-1] if given else None
 
 
+def left_without_result(session: str, agent: str) -> bool:
+    """Whether a run of the agent ended with no result: its entries from a start to an end hold no
+    result, in any of its runs."""
+    gave = False
+    for e in kept(session, agent):
+        kind = e.get("kind")
+        if kind == "start":
+            gave = False
+        gave = gave or kind == "result"
+        if kind == "end" and not gave:
+            return True
+    return False
+
+
 def ended(session: str, agent: str) -> bool:
     """Whether the agent's run has ended."""
     return END in this_run(session, agent)

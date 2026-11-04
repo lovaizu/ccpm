@@ -102,12 +102,16 @@ them still runs. Each run is held to its own values, as [the lanes](lanes.md) sa
   `more` gives `more`, however many gave `good`.
 - Where the runs gave different results and the order does not hold each of them, lane cannot tell
   the result. It tells the orchestrator and you, as [the lanes](lanes.md#what-each-lane-is-given)
-  give an error, that the maker of your plugin must order them in `precedence`.
+  give an error, that the maker of your plugin must order them in `precedence`. `lay.py print`
+  refuses routes that fan out a subagent whose results they do not order, and lane holds the
+  routes laid to the same check, so this is met only where the routes are laid again while runs go
+  on.
 - A run about to end without a result is kept going once, as any subagent is. Where it ends with
   no result still, the orchestrator is told to start the subagent again once the others have
   ended, and the run it starts joins them in place of the one with no result. lane stops a
   message the orchestrator sends to the run with no result, as
-  [How a subagent gives its result](#how-a-subagent-gives-its-result) says.
+  [How a subagent gives its result](#how-a-subagent-gives-its-result) says. A result that run
+  gives once resumed by anyone else is kept, but does not count toward the start.
 - The orchestrator is told the next start only once every run has ended.
 
 ## How a subagent gives its result
@@ -131,7 +135,8 @@ names the results the subagent may give, or with none.
   last step, headed by your plugin's name.
 - A subagent resumed with SendMessage keeps its ID, and gives a result again for the resumed run.
 - A run that ended with no result, after it was kept going once, is not resumed: the run started
-  again in its place gives the result. lane stops the orchestrator's SendMessage to it, before or
+  again in its place gives the result, and a result it gives once resumed by the main conversation
+  or another subagent does not count. lane stops the orchestrator's SendMessage to it, before or
   after that start, and tells it the start due, as [What the orchestrator is told](#what-the-orchestrator-is-told)
   gives it.
 

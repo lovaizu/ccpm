@@ -136,9 +136,12 @@ class TestNextStart(unittest.TestCase):
 FANNED = {**helpers.ROUTES, "fan_out": ["reviewer"], "precedence": ["more", "good"]}
 
 
-def fanned(starts: list, results: dict, ended: tuple = (), given: dict = FANNED) -> routes.Next:
-    """The next start after the starts by the routes given, reviewer fanned out by default."""
-    return routes.next_start(given, starts, results.get, lambda a: a in ended)
+def fanned(
+    starts: list, results: dict, ended: tuple = (), given: dict = FANNED, left: tuple = ()
+) -> routes.Next:
+    """The next start after the starts by the routes given, reviewer fanned out by default, the
+    runs of `left` having ended with no result once."""
+    return routes.next_start(given, starts, results.get, lambda a: a in ended, lambda a: a in left)
 
 
 def reviewer(agent: str, joined: str = "") -> routes.Start:
@@ -236,6 +239,30 @@ class TestFanOut(unittest.TestCase):
                 ended = ("r1", "r2", "r3", "r4")
                 self.assertEqual(fanned(starts, results, ended), found)
 
+    def test_a_run_started_again_takes_the_place_of_one_with_no_result_given_one_after(self):
+        for given, starts, results, found in (
+            (
+                helpers.ROUTES,
+                [WRITER, reviewer("r1"), reviewer("r2", routes.AGAIN)],
+                {"r1": "more", "r2": "good"},
+                routes.Next("end", "", ("reviewer", "good")),
+            ),
+            (
+                FANNED,
+                [WRITER, reviewer("r1"), reviewer("r2", "more"), reviewer("r3", routes.AGAIN)],
+                {"r1": "more", "r2": "good", "r3": "good"},
+                routes.Next("end", "", ("reviewer", "good"), runs=2),
+            ),
+        ):
+            with self.subTest(given=given):
+                # Given: reviewer, alone or fanned out, its run r1 ended with no result and
+                # started again, then resumed, giving `more`
+                results = {"w1": "written", **results}
+                ended = ("r1", "r2", "r3")
+                # When: the next start is decided, every run ended
+                # Then: r1 is out of the count, the run started again in its place
+                self.assertEqual(fanned(starts, results, ended, given, ("r1",)), found)
+
     def test_a_start_not_joined_counts_alone_whatever_its_subagent(self):
         # Given: two runs of reviewer, the second not joined to the first, both ended
         starts = [WRITER, reviewer("r1"), reviewer("r2")]
@@ -294,6 +321,35 @@ class TestFanOut(unittest.TestCase):
         # Then: lead waits for it, starting no more of it
         found = fanned(starts, {})
         self.assertEqual(found, routes.Next("wait", "writer", None))
+
+
+# What is wrong with routes fanning out reviewer with its results not ordered.
+UNORDERED = (
+    "gives reviewer in `fan_out`, whose results `more` and `good` the routes do not order in"
+    " `precedence`, so the result of its runs at once could not be told"
+)
+
+
+class TestUnordered(unittest.TestCase):
+    def test_a_subagent_fanned_out_whose_results_the_order_does_not_hold_is_named(self):
+        for given, said in (
+            (FANNED, None),
+            ({**helpers.ROUTES, "fan_out": ["writer"]}, None),
+            (
+                {**helpers.ROUTES, "fan_out": ["reviewer"]},
+                UNORDERED,
+            ),
+            (
+                {**helpers.ROUTES, "fan_out": ["reviewer"], "precedence": ["good"]},
+                UNORDERED,
+            ),
+        ):
+            with self.subTest(given=given):
+                # Given: reviewer fanned out with its results in order, writer of one result
+                # fanned out, or reviewer fanned out with no order or one not holding `more`
+                # When: the routes are checked for an order of results they lack
+                # Then: the subagent whose results are not ordered is named, or none is
+                self.assertEqual(routes.unordered(given), said)
 
 
 class TestLine(unittest.TestCase):

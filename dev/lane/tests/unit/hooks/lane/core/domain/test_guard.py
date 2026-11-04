@@ -549,13 +549,15 @@ class TestFanOut(RoutedTest):
         told = [guard.Said("The 2 runs of reviewer gave `more`. Start `changelog:writer`.")]
         self.assertEqual(self.lead_started(), told)
 
-    def test_runs_giving_differing_results_with_no_order_are_an_error_for_the_maker(self):
-        # Given: reviewer fanned out with no order of its results
-        self.fan_out(None)
+    def test_runs_giving_differing_results_the_routes_laid_again_do_not_order_are_an_error(self):
+        # Given: two runs of reviewer at once, giving `more` and `good`
         self.launched("r1", "r2")
-        # When: its runs give `more` and `good`
         self.ran("reviewer", "r1", "more")
         self.ran("reviewer", "r2", "good")
+        # When: the routes are laid again with reviewer no longer fanned out nor its results
+        # ordered, before lead is told the next start
+        laid = {**helpers.RULES, "routes": helpers.ROUTES}
+        self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), laid)
         # Then: lead is told the error, with who must fix it
         told = self.lead_started()
         self.assertEqual(
@@ -711,6 +713,30 @@ class TestRoutedCannot(RoutedTest):
                 self.assertEqual(len(told), 1)
                 self.assertTrue(told[0].error)
                 self.assertIn(f"lane cannot check {gone} of {name}: step", told[0].text)
+
+    def test_routes_laid_that_lay_py_print_would_refuse_are_an_error_at_each_event(self):
+        # Given: the laid routes fanning out reviewer with no order of its results, as no
+        # `lay.py print` lets through
+        laid = self.read_json(os.path.join(self.plugin, "hooks", "lanes.json"))
+        laid["routes"] = {**laid["routes"], "fan_out": ["reviewer"]}
+        self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), laid)
+        for check, event, name in (
+            (guard.check, self.start("writer"), "lead"),
+            (guard.started, self.subagent("SubagentStart", "reviewer", "r1"), "reviewer"),
+        ):
+            with self.subTest(name=name):
+                # When: lead starts writer, or reviewer starts
+                told = self.told(check, event, name)
+                # Then: it is an error of the laid file, the maker told to lay the routes again
+                self.assertEqual(len(told), 1)
+                self.assertTrue(told[0].error)
+                self.assertEqual(
+                    told[0].text,
+                    f"lane cannot check the lanes of {name}: hooks/lanes.json gives reviewer in"
+                    " `fan_out`, whose results `more` and `good` the routes do not order in"
+                    " `precedence`, so the result of its runs at once could not be told. "
+                    + LAY_AGAIN,
+                )
 
     def test_kept_calls_that_cannot_be_read_are_an_error(self):
         # Given: lead's calls kept holding a line that is no entry

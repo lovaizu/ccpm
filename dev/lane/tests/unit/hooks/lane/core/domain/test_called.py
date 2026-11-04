@@ -3,6 +3,7 @@ end of its runs, under its agent_id in the session's folder of the system's temp
 back for the run it is in."""
 
 import os
+import shutil
 import unittest
 from unittest import mock
 
@@ -123,6 +124,27 @@ class TestThisRun(CalledTest):
         # When: whether it ended is read
         # Then: it did
         self.assertTrue(called.ended("s1", "a1"))
+
+
+class TestLeftWithoutResult(CalledTest):
+    def test_an_agent_left_without_a_result_is_one_whose_run_ended_giving_none(self):
+        gave = called.gave("written")
+        for entries, left in (
+            ((called.START, called.END), True),
+            ((called.START, gave, called.END), False),
+            ((called.START, called.END, called.START, gave, called.END), True),
+            ((called.START, gave, called.END, called.START, called.END), True),
+            ((called.START,), False),
+            ((), False),
+        ):
+            with self.subTest(entries=entries):
+                # Given: a run that ended with no result, one that gave a result, one resumed
+                # after it ended with none or with one, one still running, or none kept
+                self.keep("a1", *entries)
+                # When: whether a run of it ended with no result is read
+                # Then: it is, where any of its runs ended giving none
+                self.assertEqual(called.left_without_result("s1", "a1"), left)
+                shutil.rmtree(os.path.join(self.base, "lane"), ignore_errors=True)
 
 
 class TestStarts(CalledTest):

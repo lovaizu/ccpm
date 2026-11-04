@@ -231,16 +231,9 @@ def fanned(given: dict[str, Any], froms: list[str]) -> None:
     for name in given.get("fan_out", []):
         if name not in starts:
             raise wrong(f"gives {name} in `fan_out`, which no route starts", ROUTES_AGAIN)
-        ons = routes.ons(given, name)
-        taken = routes.order(given, name) or []
-        if ons[1:] and not all(on in taken for on in ons):
-            results = routes.listed([f"`{on}`" for on in ons])
-            raise wrong(
-                f"gives {name} in `fan_out`, whose results {results}"
-                " the routes do not order in `precedence`, so the result of its runs at once could"
-                " not be told",
-                f"order them there, as {ROUTES_MD} says, and run again",
-            )
+    why = routes.unordered(given)
+    if why:
+        raise wrong(why, f"order them there, as {ROUTES_MD} says, and run again")
 
 
 def in_background(root: str, name: str, told: str = LANES_MD) -> None:
