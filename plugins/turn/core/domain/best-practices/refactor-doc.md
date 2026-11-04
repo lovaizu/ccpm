@@ -58,7 +58,7 @@ The reader is a person or an AI who reads the document for a purpose, at any tim
 **Steps**
 
 1. Choose a form whose shape shows that order or relation, such as a numbered list for steps in order, a bulleted list for items whose order does not matter, a table for things compared on the same points, or a diagram for who passes what to whom.
-2. Draw a diagram as an SVG file beside the document, and show it as an image. Set its colours under prefers-color-scheme, so that it follows the page's light or dark scheme.
+2. Draw a sequence diagram in Mermaid inside the document: its steps go from top to bottom, so it has no layout to choose, and the page draws it. Draw a diagram of structure, such as parts and what passes between them, as an SVG file beside the document, and show it as an image: its layout carries its meaning. Draw a table the reader takes in whole at a glance, such as which tests cover which part, as an SVG in the same way, so its marks and groups line up. Keep a table the reader looks a row up in as Markdown, so they can search and copy it. Set the SVG's colours under prefers-color-scheme, so that it follows the page's light or dark scheme.
 3. Show the form alone to a reader who has not read the text, and have them say back what it tells. Where they say it otherwise, mend the form.
 
 **Grounds**
@@ -71,6 +71,7 @@ The reader is a person or an AI who reads the document for a purpose, at any tim
 - [Use tables to make complex material easier to understand](https://github.com/GSA/plainlanguage.gov/blob/main/_pages/guidelines/design/use-tables-to-make-complex-material-easier-to-understand.md), PLAIN, plainlanguage.gov archive on GitHub, no date: "Tables help your audience see relationships that are often times hidden in dense text."
 - [Paraphrase testing](https://github.com/GSA/plainlanguage.gov/blob/main/_pages/guidelines/test/paraphrase-testing.md), PLAIN, plainlanguage.gov archive on GitHub, no date: "Paraphrase testing will tell you what a reader thinks a piece of writing means and will help you know if they're interpreting the message as you intended."
 - [prefers-color-scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme), MDN Web Docs, developer.mozilla.org, no date: "For SVG and iframes, prefers-color-scheme lets you set a CSS style for the SVG or iframe based on the color-scheme of the parent element in the web page."
+- [Creating diagrams](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-diagrams), GitHub, GitHub Docs: "Diagram rendering is available in GitHub Issues, GitHub Discussions, pull requests, wikis, and Markdown files."
 
 ### Q4: Reading from the top, can the reader understand each sentence from what they have read before it, without turning back, reading ahead, or knowing what the document neither says nor points to?
 

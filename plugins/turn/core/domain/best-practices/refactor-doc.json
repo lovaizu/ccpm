@@ -128,7 +128,7 @@
    "thinking": "The reader sees at once an order or a relation that the form of a list, a table or a diagram shows. When sentences tell the same, the reader must piece it together.",
    "steps": [
     "Choose a form whose shape shows that order or relation, such as a numbered list for steps in order, a bulleted list for items whose order does not matter, a table for things compared on the same points, or a diagram for who passes what to whom.",
-    "Draw a diagram as an SVG file beside the document, and show it as an image. Set its colours under prefers-color-scheme, so that it follows the page's light or dark scheme.",
+    "Draw a sequence diagram in Mermaid inside the document: its steps go from top to bottom, so it has no layout to choose, and the page draws it. Draw a diagram of structure, such as parts and what passes between them, as an SVG file beside the document, and show it as an image: its layout carries its meaning. Draw a table the reader takes in whole at a glance, such as which tests cover which part, as an SVG in the same way, so its marks and groups line up. Keep a table the reader looks a row up in as Markdown, so they can search and copy it. Set the SVG's colours under prefers-color-scheme, so that it follows the page's light or dark scheme.",
     "Show the form alone to a reader who has not read the text, and have them say back what it tells. Where they say it otherwise, mend the form."
    ],
    "grounds": [
@@ -179,6 +179,12 @@
      "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme",
      "by": "MDN Web Docs, developer.mozilla.org, no date",
      "quote": "For SVG and iframes, prefers-color-scheme lets you set a CSS style for the SVG or iframe based on the color-scheme of the parent element in the web page."
+    },
+    {
+     "title": "Creating diagrams",
+     "url": "https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-diagrams",
+     "by": "GitHub, GitHub Docs",
+     "quote": "Diagram rendering is available in GitHub Issues, GitHub Discussions, pull requests, wikis, and Markdown files."
     }
    ]
   },
