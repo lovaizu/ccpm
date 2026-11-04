@@ -164,7 +164,8 @@ The figure shows how you and a maker AI use Pin. A maker AI also needs to know t
 that the figure cannot show:
 
 - A maker AI writes the goal of the work, its questions and what it has settled into the design
-  file, in the form [the design tree](core/roles/pinner.md#the-design-tree) gives. It then starts
+  file, in the form [the design tree](core/roles/pinner.md#the-design-tree) gives. It marks each
+  decision it settled with `"settled_by": "maker"`, so Pin keeps it as given. It then starts
   `pin:down` with the file's path. Without a path, the file lies in
   `.pin/<yyyymmdd>-<name>/design-tree.json` at the top of the repository.
 - Pin runs as a subagent, so it cannot ask the person itself. It ends each run with its

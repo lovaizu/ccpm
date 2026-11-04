@@ -26,8 +26,8 @@ hold for it; and under each question, the decisions that make it hold.
   decision reaches a question, and every question has a decision that serves it.
 - `builds_on` names the decisions that must be decided before it.
 - `decided` is what was decided, or null while it is open. `settled_by` is who settled it: `user`
-  for the person, `research` for a fact found, or `reasoning` for what follows from the goal and
-  the decisions before it.
+  for the person, `research` for a fact found, `reasoning` for what follows from the goal and
+  the decisions before it, or `maker` for the maker AI that handed the tree over.
 - `grounds` is what it rests on: the person's words with the date, a source quoted as
   `path:line "words"` or a URL with the words, or the IDs it follows from.
 - Keep as it is each key that the one who started you put in the tree.

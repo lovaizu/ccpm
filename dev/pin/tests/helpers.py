@@ -59,9 +59,11 @@ def decision(name: str, **given: Any) -> dict[str, Any]:
 
 
 def settled(name: str, **given: Any) -> dict[str, Any]:
-    """A decision of the ID name, decided by the person, as decision makes it otherwise."""
+    """A decision of the ID name, decided by the person, as decision makes it otherwise, with
+    each field given in its place."""
     return decision(
-        name, decided=f"{name} decided", settled_by="user", grounds=["the person"], **given
+        name,
+        **{"decided": f"{name} decided", "settled_by": "user", "grounds": ["the person"], **given},
     )
 
 

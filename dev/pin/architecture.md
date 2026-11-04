@@ -78,7 +78,8 @@ not Pin.
 
 Pin neither asks the person nor changes a point that the maker AI settled, the goal among them.
 Only a new request of the maker AI opens such a point again. The maker AI changes no point of the
-design itself: it starts Pin again with the point.
+design itself: it starts Pin again with the point. The design file marks each decision that the
+maker AI settled as settled by `maker`, so the pinner tells it from the file alone.
 
 *Why*: the UX counts as gone wrong a point settled otherwise than the maker AI settled it, a point
 asked again, and the maker AI changing the design (KR2.1). A point changed outside Pin also leaves

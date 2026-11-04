@@ -88,7 +88,7 @@ class TestLoad(testing.FolderTest):
             ({"decided": 1}, "decisions[0].decided must be a text that is not empty, or null"),
             (
                 {"settled_by": "chance"},
-                "decisions[0].settled_by must be user, research or reasoning, or null",
+                "decisions[0].settled_by must be user, research, reasoning or maker, or null",
             ),
             ({"grounds": None}, "decisions[0].grounds must be a list of texts"),
         ]
@@ -99,6 +99,17 @@ class TestLoad(testing.FolderTest):
                 # When: it is loaded
                 # Then: it is refused, naming the field and what it must be
                 self.assertIn(why, self.loaded_or_why(data))
+
+    def test_each_who_a_decision_may_be_settled_by_is_in_form(self):
+        for by in ("user", "research", "reasoning", "maker"):
+            with self.subTest(by=by):
+                # Given: a tree whose one decision is settled by the person, a fact found, what
+                # follows, or the maker AI that handed the tree over
+                data = made(settled("D1", settled_by=by))
+                self.write_json("design-tree.json", data)
+                # When: it is loaded
+                # Then: it is given as written
+                self.assertEqual(tree.load("design-tree.json"), data)
 
     def test_a_missing_field_of_a_decision_is_named(self):
         # Given: a decision with no builds_on

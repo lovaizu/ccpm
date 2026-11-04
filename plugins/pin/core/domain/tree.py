@@ -7,7 +7,9 @@ from __future__ import annotations
 import json
 from typing import Any
 
-SETTLED_BY = ("user", "research", "reasoning")
+# Who settles a decision: the person, a fact found and confirmed, what follows from the goal and the
+# decisions before it, or the maker AI that handed the tree over, whose points the pinner keeps.
+SETTLED_BY = ("user", "research", "reasoning", "maker")
 # The tree's form, said once for each message that names a part of it.
 TREE = "the tree must be an object with goal, questions and decisions"
 TEXT = "must be a text that is not empty"
@@ -96,7 +98,7 @@ def decision_faults(n: int, decision: Any) -> list[str]:
         (
             "settled_by",
             lambda v: v is None or v in SETTLED_BY,
-            "must be user, research or reasoning, or null",
+            "must be user, research, reasoning or maker, or null",
         ),
         ("grounds", is_texts, TEXTS),
     ]
