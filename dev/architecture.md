@@ -145,9 +145,9 @@ dev/                              what only the builders need
     ├── images/                   the images its UX and architecture show
     ├── cosmic-ray.toml           the plugin's mutation testing <TOML>
     └── tests/
-        ├── unit/                 at the path of what each tests, as tests/unit/core/domain/
-        ├── integration/          the plugin's parts together
-        └── e2e/                  the plugin's user stories
+        ├── unit/                 each part against its contract, at the path of what each tests
+        ├── architecture/         all the parts joined, against the plugin's architecture
+        └── ux/                   the plugin in real use, against its UX
 ```
 
 [Repository structure](#repository-structure) says why each lies where it does.
@@ -565,15 +565,40 @@ it. A check in a file of its own can be read, fixed and tested on its own.
 
 ## Test
 
-Each plugin's architecture tests it at three levels, the columns of its test table: unit, a part
-alone; integration, its parts together; and end-to-end, its user stories. A part made of code is
-tested by unit tests, and a part run by an AI by a trial, a run of it judged from its records.
-The tests lie in `dev/<plugin>/tests/`, a folder for each level: `unit/`, at the path of what each
-tests, as `tests/unit/core/domain/`, `integration/` and `e2e/`. A file of tests of code is named
+Each plugin is tested at three levels. Each level is named by what its tests check against:
+
+- **unit** checks one part against its contract: what the part takes, what it gives, and the
+  forms its results take.
+- **architecture** joins all the parts and checks them against the plugin's architecture. It runs
+  every user story's sequence from start to end.
+- **ux** checks the plugin in real use against its UX.
+
+A **double** is a stand-in for a part that gives set results. A part made of code is tested by
+tests of code, and a part run by an AI by a **trial**: a run of the AI, judged from its records.
+Each test is drawn from the one thing its level checks against, not chosen by its writer: unit
+from the ways a part's contract divides, architecture from the paths the plugin's sequences draw,
+and ux from an objective's scenario. Two builders then draw the same tests, and a failure points to
+that one thing. The levels compare as follows; the sections below give each rule's reason.
+
+| | unit | architecture | ux |
+|---|---|---|---|
+| Runs real | the part alone; a part run by an AI on Opus | what joins the parts: the hooks, the scripts, and the entries, lanes and routes as they are laid | the whole plugin, installed as its user installs it, on Opus |
+| Doubles stand in for | the part's neighbours, and Claude Code where the part meets it | each role an AI runs, and each thing outside the plugin, such as Claude Code, so no model is called | nothing of the plugin |
+| Stands in for the person | a script with set answers, or an AI given an intent | the double of the main conversation, with set answers | an AI holding an intent written before the run and never shown the plugin |
+| Covers | each class, each edge and each rule of the part's contract | every path through each sequence: the main flow, each branch, each send-back and each question | each objective's scenario, on a subject as big as a real request |
+| Passes when | code: every test passes, every line and branch run, every mutant caught; a trial: as [Results that vary from run to run](#results-that-vary-from-run-to-run) says | every test passes, with the role and the data checked at each step | the stand-in gets what the objective says, as [Results that vary from run to run](#results-that-vary-from-run-to-run) says |
+| Runs | code: before each push and in CI; a trial: as the part is made | before each push and in CI | once every lower level passes, at the end of the whole |
+| Is written as | `test_*.py`, or `trial_*.py` for a trial | `test_*.py` | `trial_*.py` |
+
+The tests lie in `dev/<plugin>/tests/`, in a folder for each level: `unit/`, at the path of what
+each tests, as `tests/unit/core/domain/`; `architecture/`; and `ux/`. What the tests of more than
+one level share lies in `tests/` itself, as `tests/helpers.py`. A file of tests of code is named
 `test_*.py`, and the code that runs a trial `trial_*.py`, so `unittest` finds only the tests that
 CI runs.
 
-A test is then found from what it tests, and the names of the folders are those of the table.
+A test is then found from what it tests, and the folders bear the names of the test table's
+columns. Each plugin's architecture holds that table, a row for each deployment unit, and its own
+test rules give only what differs from these.
 
 ### No check passes what it did not check
 
@@ -593,7 +618,21 @@ by whoever meets it.
 ### Unit: code
 
 Each part made of code has unit tests, written with `unittest` in `dev/<plugin>/tests/unit/`.
-They run every line and every branch of it: C0 and C1 coverage, 100%.
+Each double in them stands in for a neighbour of the part, such as a module it calls or an event
+of Claude Code. The tests are drawn from the part's contract:
+
+1. Divide each input and each result the contract names into classes that the part treats alike,
+   the ones it refuses among them, and write one test for each class.
+2. Where a class ends on an ordered scale, such as a length or a count, write one test at each end
+   and one at the nearest value in the next class.
+3. Where the result turns on a combination of conditions, write a table with one rule for each
+   combination that can occur and the result it gives, and write one test for each rule.
+
+A part treats every input of a class alike, so one test stands for the class, and faults gather at
+the edges of a class. A table shows each combination at once, so none is left out unseen.
+
+The unit tests run every line and every branch of the part: C0 and C1 coverage, 100%, counted on
+the unit tests alone.
 
 Two more checks confirm that the unit tests are enough.
 
@@ -604,17 +643,19 @@ Two more checks confirm that the unit tests are enough.
   adds each input a property test fails on as a unit test.
 
 The unit tests hold every behavior the code must have. A line or branch that none of them runs goes
-unnoticed. A gap the other two checks find is a missing unit test, and the assistant adds it so that
-every push catches it again.
+unnoticed. A line that only an architecture test runs is one whose contract no unit test holds. A
+gap the other two checks find is a missing unit test, and the assistant adds it so that every push
+catches it again.
 
 What runs when:
 
-- Before each push, `dev/githooks/pre-push` runs the unit tests of each plugin the push changes,
-  counting lines and branches. It also runs the linter, the formatter, the type checker and the
-  manifests' check, and stops the push on a failure.
-- On every push, CI runs every plugin's unit tests, counts the lines and branches they run, and
-  fails on any line or branch not run. It runs the mutation testing and the property tests on what
-  the push changed, the property tests on many inputs, each plugin in its own job, all at once.
+- Before each push, `dev/githooks/pre-push` runs the unit and architecture tests of each plugin the
+  push changes, counting lines and branches. It also runs the linter, the formatter, the type
+  checker and the manifests' check, and stops the push on a failure.
+- On every push, CI runs every plugin's unit and architecture tests, counts the lines and branches
+  the unit tests run, and fails on any line or branch not run. It runs the mutation testing and the
+  property tests on what the push changed, the property tests on many inputs, each plugin in its
+  own job, all at once.
 - On a push that changes a plugin's version, CI runs both on the whole plugin, before it is
   released.
 - Each check runs on Python 3.9 and the newest Python. Cosmic Ray and Hypothesis run on the newest
@@ -641,40 +682,79 @@ Mutation testing runs the tests once for each mutant, so a slow test run makes e
 
 ### Unit: prompts
 
-The assistant tries each role, a skill or an agent, on its own, with mocks standing in for
-everything else. It names the model in each run: Opus, the model the maintainer uses. It judges the
-role from its input, its output and the records of the run, against its Role and Steps.
+The assistant tries each role, a skill or an agent, on its own, with doubles standing in for its
+neighbours and for the researchers, and a stand-in for the person. It names the model in each run:
+Opus, the model the maintainer uses. It judges the role from its input, its output and the records
+of the run, against its Role and Steps. The trial is drawn from the role's contract as a unit test
+of code is: one input for each class and each rule of its steps, both where the steps say the role
+acts and where they say it does not, such as a point it asks the person and a fact it finds itself.
 
 A prompt is known by what the AI does with it, and only the records show where a run went wrong. A
 role tried together with what lies around it does not show which of them went wrong. A smaller
 model makes different slips from the ones users meet. A model left to the runner's settings changes
 with whoever runs the trial.
 
-### End-to-end: user stories
+### Architecture: the parts joined
 
-The assistant tries the whole plugin as its user uses it, and checks its results. Then it shows the
-maintainer:
+The architecture tests run real what joins the parts: the hooks, the scripts, and the entries,
+lanes and routes as they are laid. They stand in with a double each role an AI runs and each
+thing outside the plugin. Each plugin's test rules name what runs real in it. A double of Claude
+Code sends the hook events and runs the hooks' commands in `sh`, as
+Claude Code does. A double of the main conversation, or of a caller, answers each question with a
+set answer. The double of Claude Code is kept once, in Lane's `dev/lane/testing.py`, as
+[Code kept once](#code-kept-once) says.
+
+The tests are drawn from the plugin's sequences:
+
+1. For each user story, list the paths through its sequence: the main flow first, then each branch,
+   each step that sends work back to an earlier one, and each question put to the caller or the
+   person.
+2. Add paths until every move from one step to the next lies on some path.
+3. Write one test for each path, from its first step to its end. At each step, check the role that
+   acts and the data it hands on.
+
+Each plugin's test rules list its paths. A path the sequences draw that no test runs is a gap in
+the architecture tests, and a path no sequence draws is a gap in the sequences.
+
+A fault of a sequence lies between parts, where each part's unit tests pass, so what joins them
+runs real. With each role an AI runs a double, no model is called. So the tests take seconds and give the same result on each run, and
+every push checks every path.
+
+### ux: the plugin in real use
+
+Once every unit and architecture test passes, the assistant tries the whole plugin as its user
+uses it, on each objective's scenario, on a subject as big as a real request. The trial confirms
+the objective and its key results that no lower level can measure, such as the lead time. It does
+not aim to cover every case, as the lower levels cover them.
+
+An AI stands in for the person, answering from an intent written before the run and never shown to
+the plugin. A run passes where the stand-in gets what the objective says, judged against that
+intent. For each key result, the plugin's test rules say what is measured, such as the lead time
+from the request to the result. Each measure is set against the last run's in the direction the UX
+gives it, as the UX gives a key result no target value. The assistant then shows the maintainer:
 
 - how close it came to the goal and to each key result of the UX;
 - the time and the tokens it took, beside the size of the work;
 - what could be improved.
 
-The maintainer judges. The assistant keeps each run's time and tokens with the trial's records, so
-runs can be compared.
+The maintainer decides from these whether the plugin reaches users. The assistant keeps each
+run's time and tokens with the trial's records, so runs can be compared.
 
-Each part can pass while a story is missed. And what reaches users is the maintainer's decision.
-Whether the time and the tokens fit the work is judged by feel, since no bar is known before runs
-gather. Runs kept side by side show whether a change made things better or worse, with the purpose
-met as fully (Principle 8).
+Each part can pass, and every sequence too, while the user's objective is missed. What reaches
+users is the maintainer's decision. No bar for the time and the tokens is known before runs gather,
+so each run is set against the last. Runs kept side by side show whether a change made things
+better or worse, with the purpose met as fully (Principle 8). A trial takes minutes and calls the
+model on each move, so a few trials confirm what the lower levels have already checked.
 
-Each Claude Code a trial starts, and each stand-in for a person, runs on a configuration folder of
-its own, made fresh by `dev/lane/trials/trying.py`, with only the plugins under test, so it reads
-none of the developer's CLAUDE.md, settings or memory: a trial shows how a plugin behaves for any
-user, not for the one who runs it. A configuration folder holds its own login
+A plugin made for the test stands in for a plugin that calls the one tried. Each Claude Code a
+trial starts, and each stand-in for a person, runs on a configuration folder of its own, made fresh
+by `dev/lane/trials/trying.py`, with only the plugins under test, so it reads none of
+the developer's CLAUDE.md, settings or memory: a trial shows how a plugin behaves for any user, not
+for the one who runs it. A configuration folder holds its own login
 ([multiple accounts](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts)),
-so the trial gives the developer's as `CLAUDE_CODE_OAUTH_TOKEN`, read from their own folder and never
-written there. Where Claude Code asks the person to allow a call, the stand-in sees what the screen
-shows and chooses, as a person would.
+so the trial gives the developer's as `CLAUDE_CODE_OAUTH_TOKEN`, read from their own folder and
+never written there. Where Claude Code asks the person to allow a call, the stand-in sees what the
+screen shows and chooses, as a person would.
 
 A trial that needs a real GitHub repository runs in `lovaizu/playground`, one at a time, on a branch
 of its own. When it ends, the trial removes the branch, its pull requests and anything else it made
@@ -684,6 +764,55 @@ branches.
 CI cannot start Claude Code, so each trial is a check of its own. The pull requests and pushes a
 trial makes stay out of every repository people use, and `main` there takes nothing except a
 reviewed pull request. Two trials at once, or one left behind, would mix with the next.
+
+### Where a double's results come from
+
+A double is built from the form that the part's contract gives its results, and is set only to
+results that form allows, the refusals among them.
+
+- A role's double writes files in the forms the role's part must write, and gives only results
+  that a route from the role is on. The architecture test checks each file the double writes by
+  the same check that the role's unit test makes of the role's files, such as the JSON Schema of an
+  `in_form` lane or a plugin's own check script.
+- The double of Claude Code sends the hook events in the fields and the order that Claude Code
+  documents. Where its documentation says nothing, the double sends what a try of the real Claude
+  Code showed. The plugin's architecture records each such try with the Claude Code version and
+  the date, as [Lane's sequences](lane/architecture.md#sequences) do.
+- The double of the `claude` command, a script on `PATH`, prints what `claude plugin validate`
+  prints.
+
+A pass of unit and architecture then holds for the real parts. A double that gave what the part
+never would would pass a test that the real part fails. A double held to the part's contract fails
+as soon as the contract changes, as the part's own unit tests do.
+
+### A fault is tested at the level that must catch it
+
+Each fault belongs to the lowest level whose check it breaks:
+
+| The fault | The level that must catch it |
+|---|---|
+| A part gives what its contract does not allow, or a case of the contract goes wrong | unit |
+| A handoff, a route or a result between roles goes wrong, such as a role started that no route names, or a file one role writes that the next cannot read | architecture |
+| It shows only in real use at real size, such as the lead time, a work the person would still change, or Claude Code acting otherwise than its double | ux |
+
+Where a higher level finds a fault, the assistant names the case or the path the lower level
+missed. It adds that test at the level that must catch it, runs it and sees it fail, and then fixes
+the fault there. Where Claude Code acts otherwise than its
+double, the assistant first corrects the record of the try and the double, and then sees an
+architecture test fail.
+
+A fault found by a higher level is one that a lower level missed. A lower-level test points to the
+part or the handoff at fault, runs in seconds, and catches the fault again on every push. A fault
+fixed only where a trial found it comes back unseen, as no trial runs on every push.
+
+### Results that vary from run to run
+
+A trial passes where its expectation holds in three runs of three, unless the plugin's test rules
+give other counts. A run counts only where it tried what the trial invites, such as a break of a
+rule. A run that does not count is no pass.
+
+What an AI does varies from run to run. An AI that keeps a step once may break it the next time,
+and a user meets every run. So each run must meet the expectation, not most of them.
 
 ## Release
 

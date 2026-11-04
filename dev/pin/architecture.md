@@ -27,7 +27,7 @@ A question about a fact spends the person's time on what the AI could look up, a
 for the person is a guess they never saw (KR1.1, KR1.2). A subagent started for what the pinner
 already holds adds a start and a wait, with nothing found that it did not have (KR1.2); a quote
 not seen at its line may be wrong, as when one listing numbered the lines of several files as one
-(E2E test of 2026-11-03). The split of facts and decisions is that of
+(trial of 2026-11-03). The split of facts and decisions is that of
 Matt Pocock's
 [grilling](https://github.com/mattpocock/skills/blob/4ae2317ddb22b046e26455e4f9c9b3aaaf62212d/skills/productivity/grilling/SKILL.md):
 "Finding _facts_ is your job, never the user's", and "The _decisions_ are the user's: put each to
@@ -157,7 +157,7 @@ number gives the order.
   resumes it with the person's answer under the line `The person's answer, word for word:`, the
   one form the pinner takes as the person's words: Claude Code hands a resuming message on as the
   coordinator's, and a pinner left to guess who speaks asked again what the person had answered,
-  in pin's E2E test of a caller and in Turn's, until the caller gave it in that form.
+  in pin's trial of a caller and in Turn's, until the caller gave it in that form.
 - `pin:down` is a skill that the AI may call: a caller's role takes it by the `skills` field of its
   frontmatter or by the Skill tool, and Claude Code preloads only a skill the AI may call
   ([subagents](https://code.claude.com/docs/en/sub-agents#preload-skills-into-subagents)).
@@ -186,7 +186,7 @@ erDiagram
 
 ### Sequences
 
-The person runs `/pin:down`, O1 of the UX:
+The person runs `/pin:down`, O1 of the UX, and goes on with a stopped run the same way:
 
 ```mermaid
 sequenceDiagram
@@ -196,32 +196,73 @@ sequenceDiagram
   participant C as check.py
   participant T as design-tree.json
   P->>M: /pin:down with the plan
-  M->>R: in the background, a fact to find
-  M->>T: writes the Goal to confirm, and the Questions under it
-  M->>P: the Goal, with a recommendation
-  P->>M: the answer
-  M->>T: writes the Goal confirmed
-  R-->>M: the fact, with its Ground
-  M->>P: the fact, alone, to confirm
-  P->>M: confirms it, or corrects it
-  M->>T: writes the Decision it settles, with the fact and the person's words as its Grounds
-  M->>C: runs on the path
-  C->>T: reads the Design tree
-  C-->>M: Check result
-  loop until no Decision is left open
-    M->>P: one Decision to make, with a recommendation, or a fact found since, to confirm
+  alt a tree for the plan already lies in .pin/, left by a stopped run
+    M->>T: reads the Design tree
+    Note over M,T: Goes on from the loop below, asking nothing answered before.
+  else no tree lies there
+    M->>T: writes the Goal to confirm, the Questions under it, every Decision open
+    loop until the Check result says the tree holds
+      M->>C: runs on the path
+      C->>T: reads the Design tree
+      C-->>M: Check result
+      opt it names a question no decision serves, or a decision that serves none
+        M->>T: mends the Design tree
+      end
+    end
+    M->>R: in the background, a fact to find
+    M->>P: the Goal, with a recommendation
     P->>M: the answer
-    M->>T: writes the Decision, with the person's words as its Ground
+    M->>T: writes the Goal confirmed, the person's words as its Ground
+  end
+  loop until no Decision is left open, or the person asks to wrap up
+    alt the researcher has given a fact
+      R-->>M: the fact, with its Ground
+      M->>P: the fact, alone, to confirm
+      alt the person confirms it
+        P->>M: right
+        M->>T: writes the Decision it settles, by research
+      else the person corrects it
+        P->>M: the correction
+        M->>T: writes the Decision, by the person where the correction changes it
+      end
+    else a Decision open now is the pinner's to settle
+      M->>T: writes the Decision, by reasoning, with what favors it
+    else a Decision open now rests on a fact only the person knows
+      M->>P: that fact, alone, to tell
+      P->>M: the answer
+      M->>T: writes it into the Decision's Grounds
+    else a Decision open now is the person's
+      M->>P: one Decision to make, with a recommendation
+      alt the person decides it
+        P->>M: the answer
+        M->>T: writes the Decision, by the person
+      else the person leaves it to the pinner
+        P->>M: you decide
+        M->>T: writes the Decision, by reasoning, saying so
+      end
+    end
+    opt the answer raises a point not in the tree
+      M->>T: adds an open Decision, joined to what it serves and builds on
+    end
     M->>C: runs on the path
     C->>T: reads the Design tree
     C-->>M: Check result
   end
-  M->>P: the design, each Decision in a short line, with what settled it
-  P->>M: confirms it
-  M-->>P: the path of the Design tree
+  M->>P: the design, each Decision in a short line, with what settled it, and each left open
+  alt the person changes something
+    P->>M: the change
+    M->>T: opens that Decision again, with each that builds on it
+    Note over P,T: Back to the loop above.
+  else the person confirms it
+    P->>M: confirms it
+    M->>C: runs on the path
+    C-->>M: Check result
+    M-->>P: the path of the Design tree, and what the check printed
+  end
 ```
 
-Turn's designer has a work's design pinned down, O2 of the UX:
+Turn's designer has a work's design pinned down, O2 of the UX. Each step that the first sequence
+draws between the pinner and the person goes here through the main conversation:
 
 ```mermaid
 sequenceDiagram
@@ -232,33 +273,67 @@ sequenceDiagram
   participant M as main conversation
   participant P as person
   D->>T: writes Turn's settled points: the Goal, the Questions, the Decisions it has
-  D->>R: in the background, a fact to find
-  R-->>D: the fact, with its Ground
-  D->>M: the fact, alone, to confirm
-  M->>P: puts it
-  P->>M: confirms it, or corrects it
-  M->>D: the answer
-  D->>T: writes the Decision it settles
-  D->>C: runs on the path
-  C->>T: reads the Design tree
-  C-->>D: Check result
-  loop until no Decision is left open
-    D->>M: one Decision to make, with a recommendation, or a fact found since, to confirm
-    M->>P: puts it
-    P->>M: the answer
-    M->>D: the answer
-    D->>T: writes the Decision
+  loop until the Check result says the tree holds
     D->>C: runs on the path
     C-->>D: Check result
+    opt it names a problem
+      D->>T: mends the Design tree, Turn's points kept as given
+    end
   end
-  D->>M: the design
+  D->>R: in the background, a fact to find
+  loop until no Decision is left open, or the person asks to wrap up
+    alt a point is the person's: a fact to confirm, a fact only they know, or a Decision
+      D->>M: ends with the point, headed `For the person:`
+      M->>P: puts it
+      alt the person answers it
+        P->>M: the answer
+        M->>D: resumes it, under `The person's answer, word for word:`
+        D->>T: writes it, the person's words as its Ground
+      else the person asks to wrap up
+        P->>M: wrap up
+        M->>D: resumes it, under `The person's answer, word for word:`
+        D->>T: leaves each open Decision open, and asks no more
+      end
+    else a Decision open now is the pinner's to settle
+      D->>T: writes the Decision, by reasoning
+    end
+    D->>C: runs on the path
+    C->>T: reads the Design tree
+    C-->>D: Check result
+  end
+  D->>M: ends with the design, headed `For the person:`
   M->>P: puts it
-  P->>M: confirms it
-  M->>D: the confirmation
+  alt the person changes something
+    P->>M: the change
+    M->>D: resumes it with the change
+    D->>T: opens that Decision again, with each that builds on it
+    Note over D,P: Back to the loop above.
+  else the person confirms it
+    P->>M: confirms it
+    M->>D: resumes it with the confirmation
+    D->>C: runs on the path
+    C-->>D: Check result
+    D-->>D: ends with the path of the Design tree
+  end
 ```
 
-A decision reopened takes the same loop: the pinner marks it and each decision that builds on it
-open again in the tree, and settles them in order.
+Turn or rn reopens a decision:
+
+```mermaid
+sequenceDiagram
+  participant D as caller's role (pinner)
+  participant C as check.py
+  participant T as design-tree.json
+  D->>T: reads the Design tree, every Decision settled
+  alt the point is held by a Decision
+    D->>T: opens it again, with each Decision that builds on it, the person's words kept in its Grounds
+  else no Decision holds the point
+    D->>T: adds an open Decision, joined to what it serves and builds on
+  end
+  D->>C: runs on the path
+  C-->>D: Check result, the open Decisions named
+  Note over D,T: Then as the loop of O2, from the first open Decision.
+```
 
 ## Physical view
 
@@ -308,8 +383,9 @@ dev/pin/
 ├── cosmic-ray.toml                 the mutation testing <TOML>
 └── tests/
     ├── unit/core/domain/           unit and property tests of tree.py <Python 3>
-    ├── integration/                scripts/check.py on real files <Python 3>
-    └── e2e/                        the E2E tests and the prompt tests, and their plugin <Python 3>
+    ├── unit/core/roles/            the pinner's trials, trial_*.py <Python 3>
+    ├── architecture/               scripts/check.py on each tree of the sequences, and pin:down's entry <Python 3>
+    └── ux/                         the trials of O1 and O2, trial_*.py, and the plugin standing in for a caller <Python 3>
 
 .pin/<yyyymmdd>-<name>/design-tree.json   a person's Design tree
 ```
@@ -321,12 +397,12 @@ License asks that its notice go with each copy of a substantial portion.
 
 pin is tested as [Test](../architecture.md#test) says. What follows is what pin adds.
 
-| Deployment unit | Unit | Integration | End-to-end |
+| Deployment unit | unit | architecture | ux |
 |---|---|---|---|
-| check.py process [python3 3.9 or later] | unittest, Cosmic Ray, Hypothesis · ●●● · each of the three checks, and the tree's form | unittest, real files · ●●○ · the exit and its message | E2E tests · ●●○ · run by the pinner on each answer |
-| Claude Code process: the pinner [Claude Code 2.1.317 or later] | prompt tests · ●●○ · `pin:down` alone, with the person and the researcher stood in for | empty: the pinner's only parts are itself, the researcher Claude Code ships, and `check.py`, whose meeting with the pinner the E2E tests run | E2E tests · ●●● · O1 by `/pin:down`, and O2 by a caller's role that takes `pin:down` |
+| check.py process [python3 3.9 or later] | unittest, Cosmic Ray, Hypothesis · ●●● · each of the three checks, the tree's form, and the exit and its message | unittest, check.py and the tree on disk real, the pinner as a double · ●●● · each path of O1, O2 and a reopen, check.py run by the command as `pin:down` writes it on each tree the double writes | trials on Opus · ●○○ · run by the pinner on each answer |
+| Claude Code process: the pinner [Claude Code 2.1.317 or later] | trials on Opus · ●●● · `pin:down` alone, one input for each class of point and each step of its flow, with the person and the researcher stood in for | unittest · ●●○ · `pin:down`'s entry as Claude Code takes it: the AI may call it, it links the pinner's part, and it names the check in its one form | trials on Opus · ●○○ · O1 by `/pin:down`, and O2 by a caller's role that takes `pin:down` |
 
-The researcher has no row of its own: Claude Code ships it, and pin gives it only a prompt, tested
+The researcher has no row of its own: Claude Code ships it, and pin gives it only a prompt, tried
 with the pinner's.
 
 pin lays no lanes. Its only role, the pinner, runs in the main conversation, where a hook is not
@@ -334,24 +410,52 @@ told which skill runs, or inside a caller's role, which the caller's own lanes h
 ([The guard tells each role its steps again](../architecture.md#the-guard-tells-each-role-its-steps-again)).
 So pin's steps are held by the check and by these tests.
 
-- A prompt test runs `pin:down` alone as [Unit: prompts](../architecture.md#unit-prompts) says,
-  with Opus. A script stands in for the person, answering "Yes." to every message, and a project
-  subagent named Explore, which Claude Code takes in place of its own, stands in for the
-  researcher with set facts. An AI given the person's intent judges each message. It passes in
-  three runs of three: each message to the person holds one point, a fact found is shown to the
-  person before the design, no decision asked is one the pinner could settle, and the tree passes
-  `check.py` with no decision open.
-- An E2E test runs Claude Code with Opus on a copy of pin and of a plugin standing in for a caller,
-  as [End-to-end: user stories](../architecture.md#end-to-end-user-stories) says. An AI stands in
-  for the person, answering from an intent written beforehand and never shown pin. There is one for
-  O1, one for O2, one for a stopped run gone on in a new conversation, and one for a decision a
-  caller reopens. Each passes in three runs of three, as the top of its file says: each message
-  holds one point and asks no fact and nothing settled again; the design is shown to confirm; and
-  the tree holds what the person wants, their own decisions settled by them, with no decision open.
-  A caller's role also runs the check in the form that
-  [The check command keeps one form](#the-check-command-keeps-one-form) gives.
-- `check.py` weighs ●●● in unit tests, as a tree it passes wrongly sends a gap into the work
-  unseen. The pinner weighs ●●● in E2E tests, as a question that is not the person's, or a decision
-  taken for them, is what pin is there to stop.
-- Integration tests and the prompt tests weigh ●●○: the unit tests hold every behavior of
-  `check.py`, and the E2E tests run the pinner whole.
+- **unit, the pinner**: a trial runs `pin:down` alone, as
+  [Unit: prompts](../architecture.md#unit-prompts) says. Its classes are the kinds of point in
+  [Facts are found, decisions are asked](#facts-are-found-decisions-are-asked): a fact a search
+  finds, a fact in a file already read, a fact only the person knows, a decision the pinner
+  settles, and a decision that is the person's. Each is tried where the pinner must ask and where it
+  must not. Its flow adds a tree a caller settled part of, a tree left by a stopped run, a decision
+  reopened, and a design the person changes. A script stands in for the person, answering "Yes."
+  to every message, or an AI answers from an intent where a case needs the person's own answer,
+  such as a correction. A project subagent named Explore, which Claude Code takes in place of its
+  own, stands in for the researcher with set facts. A plugin made for the test stands in for a
+  caller whose role takes `pin:down`. An AI given the person's intent judges each message. A trial
+  passes where each message to the person holds one point, a fact found is shown to the person
+  before the design, no decision asked is one the pinner could settle or one the caller settled,
+  and the tree passes `check.py` with no decision open, or with only those the person left open.
+- **architecture**: what joins pin's parts runs real: `check.py`, run by the command that
+  `pin:down` names, on the tree on disk. The pinner is a role an AI runs, so a double stands in for
+  it, and runs one path of [Sequences](#sequences) each. At each step of the path, the double writes the tree the step
+  calls for, and runs `check.py` by the command that `pin:down` names, with pin's folder put in,
+  from the folder the pinner works in. The test checks that `check.py` reads that tree and gives
+  the `Check result` the step calls for: that the tree holds, or the problem it names, such as a
+  question no decision serves or the decisions open to decide now. The paths:
+
+  | Sequence | Paths |
+  |---|---|
+  | O1 | the main flow: a new tree, the goal confirmed, a fact confirmed, a decision the pinner settles, a decision the person makes, the design confirmed; a tree mended after the check names a problem; a fact corrected; a fact only the person knows; a decision left to the pinner; a point an answer raises; a wrap-up with decisions left open; the design changed, and its decisions settled again; a tree left by a stopped run, gone on from |
+  | O2 | the main flow, from the caller's settled points, with keys of the caller's own; a tree mended, the caller's points kept; a wrap-up the person asks for through the main conversation, with decisions left open; the design changed, and its decisions settled again |
+  | a reopen | a decision reopened with each that builds on it; a point no decision holds, added |
+
+  Each tree the double writes holds the form that `check.py`'s unit tests hold the tree to, so a
+  change to that form fails the double too. A tree that breaks the form is a class of `check.py`'s
+  unit tests, as no path of the pinner writes one. A second test reads `skills/down/SKILL.md` as Claude
+  Code takes it, as [The check command keeps one form](#the-check-command-keeps-one-form) promises.
+- **ux**: a trial runs Claude Code on Opus on a copy of pin and of a plugin standing in for a
+  caller, as [ux: the plugin in real use](../architecture.md#ux-the-plugin-in-real-use) says, on the
+  notes app's `--json` option, a plan of several decisions that build on one another. There is one
+  for O1 by `/pin:down`, and one for O2 by a caller's role. An AI stands in for the person with an
+  intent never shown pin, and a run passes where the confirmed tree holds what that intent wants,
+  the person's own decisions settled by them, with no decision open, which is what O1 and O2 say.
+  For KR1.1 and KR2.1 the trial measures the share of the intent's decisions that the tree does not
+  hold as the person holds them, and the share of messages that ask a fact or a settled point. For
+  KR1.2 and KR2.2 it measures the time from the request to the confirmed tree. Lower and shorter
+  are better.
+- `check.py` weighs ●●● in unit and architecture tests, as a tree it passes wrongly sends a gap into
+  the work unseen. The pinner weighs ●●● in its unit trials, as a question that is not the
+  person's, or a decision taken for them, is what pin is there to stop, and those trials try each
+  of its cases.
+- The test of `pin:down`'s entry weighs ●●○: the trials run the entry too, and the test only finds
+  sooner an entry that Claude Code would not load as pin needs.
+- The ux trials weigh ●○○. They only confirm, in real use, what the lower levels have checked.

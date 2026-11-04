@@ -1,8 +1,8 @@
 """The prompt tests of Turn's roles, each run alone as dev/architecture.md's Unit: prompts says:
 Claude Code on Opus, with copies of Turn and pin, Lane laid; the main conversation starts the role
 with its run values on tidy's repository, its run's folder laid as the roles before it would lay
-it, and hands back what it gave. The person, where the role asks, is stood in for as in the E2E
-tests.
+it, and hands back what it gave. The person, where the role asks, is stood in for as in the ux
+trials.
 
 Each run passes where the role's files are in form, Turn's checks give 0 on them, the role gave the
 result its files call for, and evaluator and proofreader read nothing of the run beside their
@@ -19,7 +19,9 @@ import sys
 from typing import Any
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.normpath(os.path.join(HERE, "..", "..", "..", "e2e")))
+# What the trials of more than one level share lies in tests/.
+sys.path.insert(0, os.path.normpath(os.path.join(HERE, "..", "..", "..")))
+sys.path.insert(0, os.path.normpath(os.path.join(HERE, "..", "..", "..", "ux")))
 
 import trial_readme
 import turning

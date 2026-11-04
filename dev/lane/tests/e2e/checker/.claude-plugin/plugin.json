@@ -1,1 +1,0 @@
-{"name": "checker", "description": "A stand-in dependency for lane's E2E tests: a skill naming a check script of its own.", "version": "0.1.0"}

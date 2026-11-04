@@ -369,8 +369,8 @@ run of builder only for each part that holds a decision the Remake names.
 
 ### Sequences
 
-The person types `/turn:up`, and planner, where the request leaves the kind open, asks it, O1 of
-the UX up to the design:
+The person types `/turn:up`, O1 of the UX up to the design. A question for the person goes the way
+this sequence draws it for planner's, from every role that asks:
 
 ```mermaid
 sequenceDiagram
@@ -387,25 +387,42 @@ sequenceDiagram
   M->>U: starts in the background (Call)
   G-->>U: the next role, planner (Route)
   U->>PL: starts, with the run's folder (Run values)
-  PL->>G: gives asks (Result)
-  PL-->>U: ends with the kind, to confirm (a question for the person)
-  G-->>U: no next role
-  U-->>M: ends with the question
-  M->>P: puts it
-  P->>M: the answer
-  M->>U: resumes, with the answer
-  U->>PL: resumes, with the answer
-  PL->>F: writes Run, the Template found named in it
-  PL->>S: practices.py ready on the Run
-  S->>F: writes Standard, and the groups into Run
-  PL->>G: gives planned (Result)
+  alt run.json is ready, left by a stopped run
+    PL->>G: gives planned (Result)
+  else no Run is ready
+    opt the request leaves the kind open
+      PL->>G: gives asks (Result)
+      PL-->>U: ends with the kind, to confirm (a question for the person)
+      G-->>U: no next role
+      U-->>M: ends with the question
+      M->>P: puts it
+      P->>M: the answer
+      M->>U: resumes, with the answer
+      U->>PL: resumes, with the answer
+    end
+    PL->>F: writes Run, the Template found named in it
+    PL->>S: practices.py ready on the Run
+    S->>F: writes Standard, and the groups into Run
+    PL->>G: gives planned (Result)
+  end
   PL-->>U: ends
   G-->>U: the next role, designer (Route)
   U->>D: starts (Run values, Given)
-  D->>RS: in the background, a fact to find
-  D->>F: writes Design tree, the template's Questions under the goal
+  alt a Design tree is there, left by a stopped run
+    D->>F: reads it, and goes on from its open Decisions
+  else none is there
+    D->>RS: in the background, a fact to find
+    D->>F: writes Design tree, the template's Questions under the goal
+  end
   D->>S: pin's check and tree.py check
-  Note over P,D: Each question goes as planner's did, one at a time, the facts as they come.
+  loop while a point is the person's, as pin:down settles it
+    D->>G: gives asks (Result)
+    D-->>U: ends with the point (a question for the person)
+    Note over P,D: The point reaches the person, and the answer comes back, as planner's did.
+    U->>D: resumes, with the answer
+    D->>F: writes the Design tree
+    D->>S: pin's check and tree.py check
+  end
   D->>S: tree.py parts
   D->>F: writes Design tree, every Decision settled, and Work with its parts
   D->>S: pin's check and tree.py check
@@ -414,7 +431,8 @@ sequenceDiagram
   G-->>U: the next role, builder (Route)
 ```
 
-builder and evaluator, each fanned out, with a send-back, O1 of the UX from the design to `good`:
+builder and evaluator, each fanned out, with each send-back, O1 of the UX from the design to
+`good`:
 
 ```mermaid
 sequenceDiagram
@@ -425,36 +443,78 @@ sequenceDiagram
   participant D as designer
   participant S as scripts
   participant F as run's folder and the work
-  U->>F: reads Work's parts
-  par one run for each part, all at once
+  par one run for each part the design or the Remake reaches, all at once
     U->>B: starts, with its part (Run values)
     B->>F: makes its Decisions in order, mending each more
-    B->>F: writes its part's files, and its Answers in self-check/
-    B->>S: answers.py check
-    B->>G: gives built (Result)
+    alt the design leaves a point open
+      B->>F: writes its Open point in open/
+      B->>G: gives open (Result)
+    else every point is decided
+      B->>F: writes its part's files, and its Answers in self-check/
+      B->>S: answers.py check
+      B->>G: gives built (Result)
+    end
   end
-  G-->>U: every run ended with built, so the next role, evaluator (Route)
-  par one run for each group of questions, all at once
-    U->>E: starts, with the work, Standard and its group alone (Run values)
-    E->>F: reads the work whole, runs its commands
-    E->>F: writes its Answers in verification/
-    E->>S: answers.py check
-    E->>G: gives good or more (Result)
-  end
-  alt a run gave more
-    G-->>U: the next role, designer (Route)
-    U->>D: starts, with verification/ (Run values)
+  alt a run gave open, which goes before built
+    G-->>U: the next role, designer, with open/ as returns (Route)
+    U->>D: starts (Run values)
     D->>F: decides the Decisions again, or keeps them, and writes Remake
-    D->>G: gives designed (Result)
-    G-->>U: the next role, builder, one run for each part the Remake reaches
-  else every run gave good
-    G-->>U: the next role, refactorer (Route)
+    D->>G: gives designed, or asks where the point is the person's (Result)
+    Note over U,D: Back to builder, one run for each part the Remake reaches.
+  else every run gave built
+    G-->>U: the next role, evaluator (Route)
+    par one run for each group of questions, all at once
+      U->>E: starts, with the work, Standard and its group alone (Run values)
+      E->>F: reads the work whole, runs its commands
+      E->>F: writes its Answers in verification/
+      E->>S: answers.py check
+      E->>G: gives good or more (Result)
+    end
+    alt a run gave more, which goes before good
+      G-->>U: the next role, designer, with verification/ as returns (Route)
+      U->>D: starts (Run values)
+      D->>F: decides the Decisions again, or keeps them, and writes Remake
+      D->>G: gives designed (Result)
+      Note over U,D: Back to builder, one run for each part the Remake reaches.
+    else every run gave good
+      G-->>U: the next role, refactorer (Route)
+    end
   end
 ```
 
-The refactoring phase goes the same way, with no design tree: refactorer, one run, in builder's
-place, and proofreader, one run for each group of the refactoring questions, in evaluator's. On
-proofreader's `good`, `up` ends with the work's paths.
+The refactoring phase, from evaluator's `good` to the end:
+
+```mermaid
+sequenceDiagram
+  participant U as up
+  participant G as Lane's guard
+  participant RF as refactorer, one run
+  participant PR as proofreader, one run for each group
+  participant D as designer
+  participant S as scripts
+  participant F as run's folder and the work
+  U->>RF: starts (Run values)
+  RF->>F: improves how the work says it, and writes refactor-check.json
+  RF->>S: answers.py check
+  RF->>G: gives refactored (Result)
+  G-->>U: the next role, proofreader (Route)
+  par one run for each group of the refactoring questions, all at once
+    U->>PR: starts, with the work, the refactoring Standard and its group alone (Run values)
+    PR->>F: reads the work whole, writes its Answers in proofreading/
+    PR->>S: answers.py check
+    PR->>G: gives content, more or good (Result)
+  end
+  alt a run gave content, which goes before more and good
+    G-->>U: the next role, designer, with proofreading/ as returns (Route)
+    Note over U,D: As a send-back of evaluator, back to builder.
+  else a run gave more, which goes before good
+    G-->>U: the next role, refactorer (Route)
+    Note over U,RF: Back to the start of this sequence.
+  else every run gave good
+    G-->>U: no next role, the work done
+    Note over U,F: up ends with the Work's paths.
+  end
+```
 
 planner makes a template, O2 of the UX:
 
@@ -471,10 +531,24 @@ sequenceDiagram
   PL->>RS: in the background, how good works of the kind are made, with sources
   PL->>F: writes kind-tree.json, the kind's purpose at its root
   RS-->>PL: what each source says, quoted
-  Note over U,PL: The kind's purpose, then its parts and questions, go to the person as questions.
+  loop the kind's purpose, then its conditions and parts, as pin:down settles them
+    PL-->>U: gives asks, and ends with the point for the person
+    Note over U,PL: The point reaches the person, and the answer comes back, as in the first sequence.
+    U->>PL: resumes, with the answer
+    alt the person approves it
+      PL->>F: writes kind-tree.json, the point settled
+    else the person changes it
+      PL->>F: writes the change, and opens again what builds on it
+    end
+  end
   PL->>T: writes Template, by meta
   PL->>S: practices.py ready on the Run
-  S->>F: writes Standard, and the groups into Run
+  alt it names a fault of the Template
+    S-->>PL: the fault
+    PL->>T: mends the Template, and runs it again
+  else it passes
+    S->>F: writes Standard, and the groups into Run
+  end
   PL-->>U: gives planned, and ends
 ```
 
@@ -487,6 +561,7 @@ sequenceDiagram
   participant U as up
   participant PL as planner
   participant D as designer
+  participant W as builder, evaluator, refactorer, proofreader
   participant F as run's folder
   N->>U: starts in the background (Call, with Given)
   U->>PL: starts (Run values, Given)
@@ -502,15 +577,52 @@ sequenceDiagram
     N->>U: resumes, with the answer
     U->>D: resumes, with the answer
   end
-  Note over U,D: From designed on, as in the second sequence.
+  D-->>U: gives designed, and ends
+  loop until proofreader gives good, as the second and third sequences draw
+    U->>W: starts builder, evaluator, refactorer or proofreader, as the routes say (Run values)
+    W-->>U: gives its result, and ends
+    opt the result sends the work back to designer: open, more or content
+      U->>D: starts, with the folder it takes back (Run values)
+      alt a point it takes back is the person's
+        D-->>U: gives asks, and ends with the question
+        U-->>N: ends with the question
+        N->>P: puts it
+        P->>N: the answer
+        N->>U: resumes, with the answer
+        U->>D: resumes, with the answer
+        D->>F: writes the Decision, the person's words as its Ground, and Remake
+      else designer settles every point itself
+        D->>F: writes Remake
+      end
+      D-->>U: gives designed, and ends
+    end
+  end
   U-->>N: ends with the Work's paths
 ```
 
-- A stopped run goes on when `up` is started with the run's folder. Lane's routes start at planner
-  again; planner finds `run.json` and gives `planned`, designer finds the tree and goes on from it,
-  as pin's `pin:down` does, and the roles after carry on from the files.
-- A change the person names with a run's folder reaches designer as a point to take back, as a
-  `more` does.
+The person names a run's folder and a change:
+
+```mermaid
+sequenceDiagram
+  participant P as person
+  participant M as main conversation
+  participant U as up
+  participant PL as planner
+  participant D as designer
+  participant F as run's folder
+  P->>M: /turn:up with the run's folder and the change
+  M->>U: starts in the background (Call, with the run)
+  U->>PL: starts (Run values)
+  PL->>F: finds run.json ready
+  PL-->>U: gives planned, and ends
+  U->>D: starts, with the change as a point to take back (Run values)
+  D->>F: decides the Decisions the change reaches again, and writes Remake
+  Note over U,D: From designed on, as in the second and third sequences.
+```
+
+- A stopped run goes on when `up` is started with the run's folder, as the first sequence draws:
+  planner finds `run.json` and gives `planned`, designer finds the tree and goes on from it, as
+  pin's `pin:down` does, and the roles after carry on from the files.
 - A role resumed by SendMessage keeps its `agent_id`, and gives a result again for the resumed run,
   the later over `asks`, as [Lane's routes](../../plugins/lane/docs/routes.md#how-a-subagent-gives-its-result)
   say. The routes then go on from the start that asked.
@@ -576,9 +688,9 @@ dev/turn/
 ├── cosmic-ray.toml                     the mutation testing <TOML>
 └── tests/
     ├── unit/core/domain/               unit and property tests of the checks <Python 3>
-    ├── unit/core/roles/                the prompt tests of each role, trial_*.py <Python 3>
-    ├── integration/                    the scripts on real files, and Turn's lanes laid <Python 3>
-    └── e2e/                            the E2E tests, trial_*.py, and the stand-in person's intents <Python 3>
+    ├── unit/core/roles/                the trials of each role alone, trial_*.py <Python 3>
+    ├── architecture/                   each path of the sequences, the roles doubles, and Turn's entries and lanes as laid <Python 3>
+    └── ux/                             the trials of O1, O2 and O3, trial_*.py, and the stand-in caller <Python 3>
 
 .turn/best-practices/<kind>.json        Template made for the repository
 .turn/<yyyymmdd>-<name>/                Run, Standard, Design tree, Work, Remake; Answers and Open point in self-check/, verification/, refactor-check.json, proofreading/, open/
@@ -591,32 +703,64 @@ reads alike.
 
 Turn is tested as [Test](../architecture.md#test) says. What follows is what Turn adds.
 
-| Deployment unit | Unit | Integration | End-to-end |
+| Deployment unit | unit | architecture | ux |
 |---|---|---|---|
-| Turn's scripts [python3 3.9 or later] | unittest, Cosmic Ray, Hypothesis · ●●● · each check of a Template, a Design tree and Answers, the parts and the groups | unittest, real files · ●●○ · the exit and its message; `lay.py print` on Turn's proposal | E2E tests · ●●○ · run by the roles on each move |
-| Claude Code process: `/turn:up`, `up` and the roles [Claude Code 2.1.317 or later] | prompt tests · ●●○ · each role alone, the person, its neighbors and the researchers stood in for | prompt tests with Turn's lanes laid · ●●○ · each role keeps its lanes and gives its results | E2E tests · ●●● · O1, O2 and O3 of the UX |
+| Turn's scripts [python3 3.9 or later] | unittest, Cosmic Ray, Hypothesis · ●●● · each check of a Template, a Design tree and Answers, the parts, the groups, the run values and the throwaway home | unittest, the scripts real, the roles as doubles · ●●● · run at each step of every path, on the files the role doubles write | trials on Opus · ●○○ · run by the roles on each move |
+| Claude Code process: `/turn:up`, `up` and the roles [Claude Code 2.1.317 or later] | trials on Opus · ●●● · each role alone, one input for each result it may give and each point it asks or settles, with the person, its neighbours and the researchers stood in for | unittest, Turn's lanes and routes and Lane's hooks as laid, real; the roles and Claude Code as doubles · ●●● · each path of the six sequences | trials on Opus · ●○○ · O1 on a README and on a module of code with two parts apart, O2 on a man page, and O3 with a stand-in caller |
 
-Lane's guard and result.py have no row: Lane tests them, and Turn tests only its lanes laid. pin's
-`check.py` has none: pin tests it.
+Lane's guard and result.py have no row: Lane tests them, and Turn's architecture tests run them as
+laid in Turn. pin's `check.py` has none: pin tests it, and Turn's architecture tests run it.
 
-- A prompt test runs one role alone, as [Unit: prompts](../architecture.md#unit-prompts) says, with
-  Opus. Scripts stand in for the person, answering from a set of answers, and for the roles before
-  and after it, giving set files. It passes in three runs of three: the role writes its files in
-  form and gives the result the files call for, each question to the person is one point and is
-  theirs, and evaluator and proofreader read nothing but the work and their standard.
-- An E2E test runs Claude Code with Opus on copies of Turn and pin, as
-  [End-to-end: user stories](../architecture.md#end-to-end-user-stories) says, in an interactive
-  session, as `claude -p` does not hand a background role's end back to `up`. An AI stands in for
-  the person, answering from an intent written beforehand in `tests/e2e/` and never shown to Turn.
-  O1 runs on a README and on a module of code with two parts apart, O2 on a kind Turn ships no
-  template for, and O3 with a stand-in caller that settles part of the design.
-- An E2E test passes in three runs of three where: the stand-in person, given the work and their
-  intent, would change nothing in it; every question put to the person is one their intent marks
-  as theirs, and none is a point the caller gave; the roles start as the routes say; and, on the
-  module of code, the two runs of builder that `up` starts for its two parts overlap in time. Each
-  run's time and tokens are kept with its records, so runs can be compared.
-- Turn's scripts weigh ●●● in unit tests, as a check that passes wrongly sends a gap into the work
-  unseen. The roles weigh ●●● in E2E tests, as a work the person must mend, or a question that is
-  not theirs, is what Turn is there to stop.
-- The integration tests and the prompt tests weigh ●●○: the unit tests hold every behavior of the
-  scripts, and the E2E tests run the roles whole.
+- **unit, the roles**: a trial runs one role alone, as
+  [Unit: prompts](../architecture.md#unit-prompts) says. Its classes are the results the role may
+  give, as [Routes](#routes) names them, and, for planner and designer, the points it settles
+  itself and those it asks, as
+  [The person is asked only what is theirs](#the-person-is-asked-only-what-is-theirs-one-point-at-a-time)
+  says. Each class is tried where the role must give it and where it must not, such as builder's
+  `open` on a design that leaves a point open and on one that does not. Scripts stand in for the
+  person, answering from a set of answers, and for the roles before and after it, giving set
+  files. A trial passes where the role writes its files in form and gives the result the files call
+  for, each question to the person is one point and is theirs, and evaluator and proofreader read
+  nothing but the work and their standard.
+- **architecture**: what joins Turn's parts runs real: Turn's scripts, Turn's lanes and routes as
+  laid in `hooks/`, Lane's hooks and `result.py` laid there, and pin's `check.py`, on a run's folder
+  on disk. `up`, each role and the researcher are roles an AI runs, so a double stands in for each. A double of the main conversation, or of a caller, answers
+  each question with a set answer. The double of Claude Code, from Lane's `dev/lane/testing.py`,
+  sends the hook events. Each test runs one path of [Sequences](#sequences), and checks at each step
+  the role Lane names next and the run values it is started with. The paths:
+
+  | Sequence | Paths |
+  |---|---|
+  | O1 up to the design | the main flow, the kind named by the request; the kind asked and answered; a ready Run and a Design tree left by a stopped run; a point of the design put to the person |
+  | builder and evaluator | every run `built`, then every run `good`; a run `open` beside a run `built`, sent back to designer with `open/`, then builder only for the parts the Remake reaches; a run `more` beside a run `good`, sent back with `verification/`; designer asking the person on a send-back |
+  | the refactoring phase | every run `good`, the work done; a run `more`, back to refactorer; a run `content` beside a run `more`, sent back to designer with `proofreading/` |
+  | O2 | each point of the kind approved; a point changed, and what builds on it opened again; a Template whose fault `practices.py ready` names, mended |
+  | O3 | the kind and the goal as the caller gave them, a question for the person put through the caller; no question left for the person; a send-back whose point is the person's, its question put through the caller; a send-back designer settles itself |
+  | a change named | the change taken back by designer, and only the parts its Remake reaches made again |
+
+  A test passes where each start is the one the routes name, with the run values the role before
+  handed on as `starts.py` printed them, and each script gives the answer the files call for. A
+  start of evaluator or proofreader that reads the design is stopped on some path. Each file a
+  role's double writes passes the check that the role's unit trial makes of the role's files: the
+  JSON Schema of its `in_form` lane, and `answers.py check`, `tree.py check` or
+  `practices.py ready`. So a change to a form fails the double as it fails the role. Another test
+  reads Turn's entries and laid files as Claude Code and Lane take them: each agent in the
+  background naming its part, each script a part names, and the routes and lanes as this document
+  gives them.
+- **ux**: a trial runs Claude Code on Opus on copies of Turn and pin, as
+  [ux: the plugin in real use](../architecture.md#ux-the-plugin-in-real-use) says, in an interactive
+  session, as `claude -p` does not hand a background role's end back to `up`. Each runs an
+  objective's scenario on `tidy`, a repository of a real tool's size. An AI stands in for the
+  person, answering from an intent written beforehand and never shown to Turn. A run passes where
+  the stand-in, given the work and their intent, would change nothing in it, and every question put
+  to them is one their intent marks as theirs, never a point the caller gave, which is what O1, O2
+  and O3 say. For KR1.1, KR2.1 and KR3.1 the trial measures the share of works the stand-in would
+  change and of questions that are not theirs, and for KR1.2, KR2.2 and KR3.2 the time from the
+  request to the work handed back, with the tokens. Lower and shorter are better. On the module of
+  code it also measures how long the two runs of builder that `up` starts for its two parts
+  overlap, which only real runs show.
+- Turn's scripts weigh ●●● in unit and architecture tests, as a check that passes wrongly sends a
+  gap into the work unseen. The roles weigh ●●● in their unit trials and in the architecture tests,
+  as a work the person must mend, or a question that is not theirs, is what Turn is there to stop,
+  and these levels try each case.
+- The ux trials weigh ●○○. They only confirm, in real use, what the lower levels have checked.

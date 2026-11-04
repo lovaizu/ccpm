@@ -66,32 +66,39 @@ their readers would, and settle each finding by fixing the decision or principle
 - Rationale: a reading after every fix turns each finding into a patch, and the documents drift
   from their aim while every reading passes.
 
-### 5. List the units
+### 5. List the slices
 
-**List the units to build. A unit is the smallest slice through which the user meets one or more of
-the key results in the UX, from start to end. The first unit moves one key result by the
-thinnest path.**
+**List the slices to build. A slice is the smallest part of the plugin through which the user meets
+one or more of the key results in the UX, from start to end. The first slice moves one key result
+by the thinnest path.**
 
-- Rationale: a unit run end to end shows early whether the plugin keeps its promise, and the first
-  shows soonest whether the user would choose it at all.
+- Rationale: a slice built through shows early that its parts join as the architecture says, and
+  the first lays soonest the parts that every later slice stands on. The word "unit" is kept for
+  the test level, so a slice has another name.
 
-### 6. Build each unit
+### 6. Build each slice
 
-**For each unit, in order, do a to e.**
+**For each slice, in order, do a to e. Each part gets its unit tests first, seen to fail, and only
+then its code or its prompt.**
 
-a. **Write its tests with `code.json` open, as
-   [Unit: code](../../dev/architecture.md#unit-code) says, run them and see them
-   fail.**
-   - Rationale: a test written after the code is fitted to what the code does, not to what it must
-     do.
+- Rationale: a test written after the code or the prompt is fitted to what they do, not to what
+  they must do.
+
+a. **Write the unit tests of its code with `code.json` open, one for each class, each edge and
+   each rule of the part's contract, as [Unit: code](../../dev/architecture.md#unit-code) says, run
+   them and see them fail.**
+   - Rationale: a test that never failed may pass whatever the code does.
 
 b. **Write the code with `code.json` open until the tests pass**, as
    [Code](../../dev/architecture.md#code) says.
+   - Rationale: code written to pass tests that hold its contract does what the contract asks, and
+     no more.
 
-c. **Write each prompt, a skill or an agent, with `prompt.json` open, and try it as
-   [Unit: prompts](../../dev/architecture.md#unit-prompts) says.**
-   - Rationale: a trial on unchecked prompts finds the prompts' slips, not whether the plugin keeps
-     its promises.
+c. **For each prompt, a skill or an agent, write its trial with an input for each class and each
+   rule of its steps, as [Unit: prompts](../../dev/architecture.md#unit-prompts) says, run it and
+   see it fail; then write the prompt with `prompt.json` open until the trial passes.**
+   - Rationale: a role's slips show only alone; tried later beside other roles, a slip cannot be
+     told from theirs.
 
 d. **Lay the lanes the prompts' steps call for with `plugins/lane/scripts/lay.py`, with
    `prompt.json` open:** write them in a proposal as
@@ -99,9 +106,15 @@ d. **Lay the lanes the prompts' steps call for with `plugins/lane/scripts/lay.py
    prints of it, and lay it with `lay.py write`. A check no lane holds is added
    to lane with `code.json` open, as
    [Checks kept in lane](../../dev/architecture.md#checks-kept-in-lane) says.
+   - Rationale: the architecture tests run the lanes and routes as they are laid, so they are laid
+     before those tests.
 
-e. **Try the unit as its user, as
-   [End-to-end: user stories](../../dev/architecture.md#end-to-end-user-stories) says.**
+e. **Write the slice's architecture tests, one for each path through its sequences, with what
+   joins the parts run real and each role an AI runs a double, as
+   [Architecture: the parts joined](../../dev/architecture.md#architecture-the-parts-joined) says,
+   run them, and fix what fails at the part or the handoff it lies in.**
+   - Rationale: each part passed alone; a handoff, a route or a result between parts shows only
+     once they are joined, and with no model called the tests run on every push from then on.
 
 **Change a prompt or a document after a trial only for a cause confirmed in the records and traced
 to what the README and the architecture say it should be.**
@@ -109,14 +122,25 @@ to what the README and the architecture say it should be.**
 - Rationale: what an AI does varies from run to run; a line added for one run's slip meets a
   different slip in the next, and the additions never settle.
 
-### 7. Check the whole
+### 7. Confirm the whole in real use
 
-**Try the plugin as its user from start to end, as
-[End-to-end: user stories](../../dev/architecture.md#end-to-end-user-stories) says.**
-Settle what it finds at the unit its cause lies in, then check the whole again.
+**Once every slice is built and every unit and architecture test passes, try the plugin as its
+user on each objective's scenario, at the size of a real request, with a stand-in that holds an
+intent the plugin never sees, as
+[ux: the plugin in real use](../../dev/architecture.md#ux-the-plugin-in-real-use) says, to confirm
+the UX.**
 
-- Rationale: each unit was checked on its own; what lies between units, and key results that show
-  only over the whole, such as the time a whole run takes, show only here.
+- Rationale: the lower levels cover every case; key results that show only in real use at real
+  size, such as the time a whole run takes, show only here. A trial run before the lower levels
+  pass finds their faults, slowly and one at a time.
+
+**Test a fault the trial finds first at the level that missed it, as
+[A fault is tested at the level that must catch it](../../dev/architecture.md#a-fault-is-tested-at-the-level-that-must-catch-it)
+says: name the case or the path that level missed, add its test there, see it fail, fix the
+fault, and then confirm the whole again.**
+
+- Rationale: a fault fixed only where a trial found it comes back unseen, as no trial runs on every
+  push.
 
 ### 8. Check the structure
 
