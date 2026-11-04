@@ -10,7 +10,8 @@ is judged by its read_only lanes together, and a write by its write_only lanes t
 through where there is none; a write of an in_form lane's output is held to its form. Any other
 tool goes through. A result command is let through only once the lanes checked at the end hold.
 The orchestrator makes no call but the start due while one is due, and starts none while a
-subagent it started runs in the background, but more runs of it where the routes fan it out.
+subagent it started runs in the background, but more runs of it where the routes fan it out. It
+sends no message to a run that ended with no result, as the run started again takes its place.
 
 A take `{<name>}` is the run's value of the name, read at the values port from the texts the run
 was given: the prompt of the Agent call that started it, kept under the ID of the run as the call
@@ -182,6 +183,16 @@ class Subagent(NamedTuple):
             raise Cannot(cannot(f"the lanes of {self.name}", str(why), fix)) from None
         except ValueError as why:
             raise Cannot(cannot(f"the lanes of {self.name}", str(why), LANES_FAULT)) from None
+
+    def ended_with_none(self) -> list[str]:
+        """The IDs of the orchestrator's runs that ended with no result, after each was kept going
+        once, each of a subagent that gives one."""
+        started = called.starts(self.session, self.agent, self.giving(), self.plugin)
+        return [
+            r.agent
+            for r in started
+            if called.ended(self.session, r.agent) and called.result(self.session, r.agent) is None
+        ]
 
     def keep(self, entry: dict[str, Any]) -> None:
         """Keeps the entry under the subagent's run."""
@@ -412,7 +423,8 @@ def tool_checked(s: Subagent, event: dict[str, Any]) -> list[Said]:
     tool, given = event["tool_name"], event["tool_input"]
     for lane in s.of("follow_routes"):
         due = s.due()
-        if not follow_routes.allows(tool, given, due, s.plugin):
+        allowed = follow_routes.allows(tool, given, due, s.plugin)
+        if not allowed or follow_routes.resumes(tool, given, s.ended_with_none()):
             return [Said(follow_routes.WORDING), s.told(due)]
     if tool not in WATCHED:
         return []

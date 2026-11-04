@@ -383,6 +383,50 @@ class TestFollow(RoutedTest):
         )
         self.assertEqual(self.told(guard.stopping, stop, "lead"), [guard.Said(said, note=True)])
 
+    def ended_with_none(self) -> None:
+        """writer started by lead, ending with no result after it was kept going once, and lead's
+        start of it come back."""
+        self.told(guard.started, self.subagent("SubagentStart", "writer", "w1"), "writer")
+        for active in (False, True):
+            stop = self.subagent("SubagentStop", "writer", "w1", active=active)
+            self.told(guard.stopping, stop, "writer")
+        self.started_by_lead("writer", helpers.back("w1"))
+
+    def sent(self, to: str) -> dict:
+        """lead's SendMessage call to the run of the ID."""
+        given = {"to": to, "message": "Go on."}
+        return self.event("SendMessage", given, "changelog:lead", agent_id="lead1")
+
+    def test_a_message_to_a_run_ended_with_no_result_before_its_start_again_is_stopped(self):
+        # Given: writer ended with no result after it was kept going once
+        self.ended_with_none()
+        # When: lead sends a message to that run before it starts writer again
+        told = self.told(guard.check, self.sent("w1"), "lead")
+        # Then: it is denied with follow_routes' sentence and the start due
+        again = "writer ended with no result. Start `changelog:writer` again."
+        self.assertEqual(told, [guard.Said(helpers.FOLLOW), guard.Said(again)])
+
+    def test_a_message_to_a_run_ended_with_no_result_after_its_start_again_is_stopped(self):
+        # Given: writer ended with no result after it was kept going once, and lead started it
+        # again, which runs
+        self.ended_with_none()
+        self.started_by_lead("writer", helpers.back("w2", "async_launched"))
+        # When: lead sends a message to the run that ended with no result
+        told = self.told(guard.check, self.sent("w1"), "lead")
+        # Then: it is denied with follow_routes' sentence and the start due, the wait for the run
+        # started again
+        waits = "Wait for `changelog:writer` to end: you are told the next start once it has."
+        self.assertEqual(told, [guard.Said(helpers.FOLLOW), guard.Said(waits)])
+
+    def test_a_message_to_a_run_that_gave_a_result_goes_through(self):
+        # Given: writer gave `written`, and lead started reviewer, which runs
+        self.ran("writer", "w1", "written")
+        self.started_by_lead("writer", helpers.back("w1"))
+        self.started_by_lead("reviewer", helpers.back("r1", "async_launched"))
+        # When: lead sends a message to writer's run
+        # Then: it goes through, telling nothing
+        self.assertEqual(self.told(guard.check, self.sent("w1"), "lead"), [])
+
     def test_lead_ends_once_no_start_is_left(self):
         # Given: writer's `written` and reviewer's `good`
         self.ran("writer", "w1", "written")

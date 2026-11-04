@@ -16,6 +16,24 @@ def start(name: str) -> dict:
     return {"description": "d", "prompt": "p", "subagent_type": name}
 
 
+class TestResumes(unittest.TestCase):
+    def test_only_a_message_sent_to_one_of_the_runs_resumes_it(self):
+        for tool, given, resumes in (
+            ("SendMessage", {"to": "w1", "message": "m"}, True),
+            ("SendMessage", {"to": "w2", "message": "m"}, False),
+            ("SendMessage", {"message": "m"}, False),
+            # Tools named before and after SendMessage, given a `to` of the run.
+            ("Read", {"to": "w1"}, False),
+            ("Write", {"to": "w1"}, False),
+        ):
+            with self.subTest(tool=tool, given=given):
+                # Given: the run w1 among the runs
+                # When: lead sends a message to w1, to another run, to none, or calls another
+                # tool given w1
+                # Then: only the message to w1 resumes one of the runs
+                self.assertEqual(follow_routes.resumes(tool, given, ["w1"]), resumes)
+
+
 class TestAllows(unittest.TestCase):
     def test_while_a_start_is_due_only_that_start_goes_through(self):
         for tool, given, through in (

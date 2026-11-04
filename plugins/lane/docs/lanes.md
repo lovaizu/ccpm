@@ -24,7 +24,9 @@ call that starts it comes back at once with the `agentId` of its run. lane keeps
 under that ID as the call comes back, so many runs of one subagent at once are each held to their
 own values. A run starts a moment before its call comes back, so a call the run makes that needs a
 value waits for it up to 3 seconds, and is an error where it has not come back by then. A
-SendMessage call counts where its `to` is the run's `agentId`.
+SendMessage call counts where its `to` is the run's `agentId`; one an orchestrator sends to a run
+that ended with no result is stopped, as [the routes](routes.md#how-a-subagent-gives-its-result)
+say.
 
 | Action | Lane | Sentence | Told when the subagent |
 |---|---|---|---|
@@ -79,7 +81,7 @@ gives its result, so `lay.py write` gives a subagent with one of them a result c
 step, `done` where no route names it. The guard checks them as the subagent runs that command, from
 the calls it kept, and stops the command with each lane's sentence and, on the next line, what is
 missing. It holds each in_form output there to its form again too, as a command its lanes name may
-have written it. The result script is given no run's ID, so it checks the result alone, as
+have written it. The result script is given no run's ID, so it checks only the result, as
 [the routes](routes.md#how-a-subagent-gives-its-result) say.
 
 in_form takes the form by the path the subagent reads it by, as

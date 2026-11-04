@@ -136,10 +136,13 @@ wherever Lane is missing.
   result needs: each text in its form, each item answered, and the tests run on the files as they
   are. It stops the command with what is missing. Only the hook is given the run's `agent_id`, which
   the calls these checks rest on are kept under, so the result script cannot make them.
-- `result.py`, the result script, alone checks that the result is one a route from the subagent is
-  on, or `done` where none is. It exits with an error that names the results the subagent may
-  give, or with none. It keeps nothing itself: the check script keeps the result from the run's
-  hook event.
+- The check script stops a result command whose result no route from the subagent is on, or that
+  is not `done` where none is, before it runs, as a command its lanes do not name, and tells the
+  subagent the commands it may run, its result commands among them. `result.py`, the result
+  script, checks the result again where the check script lets a command through unchecked, as
+  where a value its lanes take is given as null. It exits with an error that names the results the
+  subagent may give, or with none. It keeps nothing itself: the check script keeps the result from
+  the run's hook event.
 - Hooks are entries of the plugin's `hooks/hooks.json` and run on every tool call of the plugin, as
   Claude Code reads no hooks from a plugin agent's own file
   ([How a plugin works](../architecture.md#the-guard-tells-each-role-its-steps-again)). `hook.py`
@@ -385,6 +388,12 @@ sequenceDiagram
     O->>CC: ends, waiting
     S->>CC: runs the result script with its result
     CC->>H: PreToolUse of the result command (Event)
+    opt no route is on the result
+      H-->>CC: deny, with the commands it may run (Decision)
+      CC-->>S: the plugin's name and the commands it may run
+      S->>CC: runs the result script again with a result a route is on
+      CC->>H: PreToolUse of the result command (Event)
+    end
     opt the work is not in the form its result needs
       H-->>CC: deny, with what is missing (Decision)
       CC-->>S: the plugin's name and what is missing
@@ -393,11 +402,6 @@ sequenceDiagram
     end
     H-->>CC: the work is in form, so the command goes on
     CC->>RS: runs it
-    opt no route is on the result
-      RS-->>S: exits with an error naming the results it may give
-      S->>CC: runs the result script again with one of them
-      CC->>RS: runs it
-    end
     RS-->>S: a route is on the result
     CC->>H: PostToolUse of the result script (Event)
     H->>C: keeps the result (Result)
@@ -421,6 +425,10 @@ sequenceDiagram
   opt lead starts a subagent the routes do not name, or a subagent ends with no result
     H-->>CC: deny the start, or keep the subagent going, with the sentence (Decision)
     CC-->>O: the plugin's name and the sentence
+  end
+  opt lead sends a message to a run that ended with no result
+    H-->>CC: deny, with the sentence and the start due (Decision)
+    CC-->>O: the plugin's name, the sentence and the start due
   end
   opt lead, kept going once with a start due, is about to end again
     H-->>CC: let it end, with what is left and the step to fix (Decision)
@@ -494,6 +502,11 @@ sequenceDiagram
 - A subagent resumed by SendMessage keeps its `agent_id`, and SubagentStart and SubagentStop come
   again for the resumed run (tried on 2026-11-03). So the calls and results kept under that ID carry
   on across a resume.
+- A run that ended with no result, after it was kept going once, is not resumed: the orchestrator
+  is told to start its subagent again, and the run it starts takes its place. So the check script
+  stops the orchestrator's SendMessage to that run, before or after the start again, and tells it
+  the start due. A resumed run would give a result beside the run in its place, and the two would
+  stand for one start. A run that ended with a result is resumed as any is.
 - Each subagent with rules runs in the background, as `lay.py print` refuses one whose file does not
   set `background: true`, and the check script stops each call of one whose file no longer does.
   So the conversation that starts it stays free, independent runs go at once, and the Agent call
@@ -635,7 +648,7 @@ is tested in the rows of the lay.py process and the hook process.
   | `lay.py write` | the proposal written, without an adapter and with one; the proposal refused, nothing written; `claude plugin validate` failing, and `claude` missing, the proposal kept |
   | `lay.py up` | a folder with no manifest; Lane's code older, and the hook entries in another form; nothing to bring up |
   | writer's run | each call its rules allow going through; `git commit` stopped with its sentence; a command with the run's own value going through; a command with another value, or with the value as two words, stopped; the run's prompt kept too late, stopped as a call that cannot be checked; a dependency's command by its folder going through; the same command by a folder with no such manifest, or in other words, stopped; a text read through an adapter, in form and out of form; an adapter that fails; an event that cannot be read; the operator told of each call that cannot be checked |
-  | lead's run | `written`, then `good`; `written`, then `more`, sent back to writer, then `good`; the work not in form for its result, then mended; a result no route is on, then one it is on; a start no route names; a subagent ending with no result, kept going once; lead kept going once with a start due, then let end |
+  | lead's run | `written`, then `good`; `written`, then `more`, sent back to writer, then `good`; the work not in form for its result, then mended; a result no route is on, stopped with the commands it may run, then one it is on; a start no route names; a subagent ending with no result, kept going once; a run with no result resumed by SendMessage, stopped; lead kept going once with a start due, then let end |
   | runs at once | every run giving one result; results ordered by `precedence`; results `precedence` does not hold; a start before every run ended; a run ending with no result, started again |
   | a held command | the person says yes; the person says no |
 

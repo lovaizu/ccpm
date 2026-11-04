@@ -86,6 +86,66 @@ class TestLeadRun(helpers.RoutesTest):
         told = self.claude.started(helpers.LEAD_RUN)
         self.assertEqual(told, ["changelog: writer gave `written`. Start `changelog:reviewer`."])
 
+    def test_a_result_no_route_is_on_is_stopped_with_the_commands_it_may_run_then_one_it_is_on(
+        self,
+    ):
+        # Given: the routes laid, and lead started writer, which runs
+        run = writer(1)
+        self.claude.start(helpers.LEAD_RUN, run, "Write the entries.")
+        self.claude.stop(helpers.LEAD_RUN)
+        # When: writer gives `good`, which no route from it is on, then `written`, and ends
+        stopped = self.result(run, "good")
+        gave = self.result(run, "written")
+        ended = self.claude.stop(run)
+        # Then: the first is denied before the result script runs, with run_only's sentence and
+        # the commands it may run, its result command among them
+        said = (
+            "changelog: Run only `git log --oneline`.\n"
+            "The commands you may run, each word for word: `git log --oneline`,"
+            f" `{self.gives(run, 'written')}`."
+        )
+        self.assertEqual((stopped.made, stopped.reason()), (False, said))
+        # And: the second goes through and is kept, and lead, started again, is told reviewer
+        self.assertEqual((gave.made, gave.said, ended.made), (True, {}, True))
+        self.assertEqual(
+            [e for e in self.kept(run) if e["kind"] == "result"],
+            [{"kind": "result", "on": "written"}],
+        )
+        told = self.claude.started(helpers.LEAD_RUN)
+        self.assertEqual(told, ["changelog: writer gave `written`. Start `changelog:reviewer`."])
+
+    def test_a_run_with_no_result_resumed_by_sendmessage_is_stopped(self):
+        # Given: writer gave `written`, and lead started reviewer, which ended with no result after
+        # it was kept going once
+        self.through(writer(1), "written")
+        first = reviewer(1)
+        self.claude.start(helpers.LEAD_RUN, first, "Review the entries.")
+        self.claude.stop(helpers.LEAD_RUN)
+        self.claude.stop(first)
+        self.claude.stop(first)
+        told = self.claude.started(helpers.LEAD_RUN)
+        message = {"to": first.agent_id, "message": "Go on."}
+        # When: lead sends a message to that run, then starts reviewer again, and sends a message
+        # to that run again
+        before = self.claude.call(helpers.LEAD_RUN, "SendMessage", message)
+        again = self.claude.start(helpers.LEAD_RUN, reviewer(2), "Review the entries.")
+        after = self.claude.call(helpers.LEAD_RUN, "SendMessage", message)
+        # Then: lead is told to start reviewer again, and each message is denied with
+        # follow_routes' sentence and the start due: the start again, then the wait for it
+        start_again = "changelog: reviewer ended with no result. Start `changelog:reviewer` again."
+        self.assertEqual(told, [start_again])
+        self.assertEqual((before.made, before.reason()), (False, f"{FOLLOWED}\n{start_again}"))
+        self.assertTrue(again.made, again.said)
+        self.assertEqual(
+            (after.made, after.reason()), (False, f"{FOLLOWED}\n{self.waits('reviewer')}")
+        )
+        # And: once the run started again gives `good`, lead is told no more starts
+        self.claude.stop(helpers.LEAD_RUN)
+        self.assertTrue(self.result(reviewer(2), "good").made)
+        self.claude.stop(reviewer(2))
+        told = self.claude.started(helpers.LEAD_RUN)
+        self.assertEqual(told, ["changelog: reviewer gave `good`. Start no more subagents."])
+
     def test_lead_kept_going_once_with_a_start_due_is_then_let_end_the_operator_told(self):
         # Given: the routes laid, and lead started, told to start writer
         # When: lead ends with writer's start due, and, kept going, ends again

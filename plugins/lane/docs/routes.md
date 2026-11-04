@@ -105,17 +105,21 @@ them still runs. Each run is held to its own values, as [the lanes](lanes.md) sa
   give an error, that the maker of your plugin must order them in `precedence`.
 - A run about to end without a result is kept going once, as any subagent is. Where it ends with
   no result still, the orchestrator is told to start the subagent again once the others have
-  ended, and the run it starts joins them in place of the one with no result.
+  ended, and the run it starts joins them in place of the one with no result. lane stops a
+  message the orchestrator sends to the run with no result, as
+  [How a subagent gives its result](#how-a-subagent-gives-its-result) says.
 - The orchestrator is told the next start only once every run has ended.
 
 ## How a subagent gives its result
 
 A subagent gives a result by running the result script with its own name and the result, as its
-step writes the command. Before the command runs, lane checks that the subagent's work is in the
+step writes the command. Before the command runs, lane checks that a route from the subagent is on
+the result, or, where none is from it, that the result is `done`, and stops a command of any other
+result with the commands the subagent may run. It then checks that the subagent's work is in the
 form its lanes ask, as [the lanes](lanes.md) say for the lanes checked at the end, and stops the
-command with what is missing. The result script checks that a route from the subagent is on the
-result, or, where none is from it, that the result is `done`. It exits with an error that names the
-results the subagent may give, or with none.
+command with what is missing. The result script checks the result again where lane lets the command
+through unchecked, as where a value its lanes take is given as `null`. It exits with an error that
+names the results the subagent may give, or with none.
 
 - The run counts only where it exits with none. Claude Code then gives the hooks PostToolUse, and
   lane keeps the result. A run stopped, or that exits with an error, which gives
@@ -126,6 +130,10 @@ results the subagent may give, or with none.
 - A subagent that is about to end without a result is kept going once, and told the sentence of its
   last step, headed by your plugin's name.
 - A subagent resumed with SendMessage keeps its ID, and gives a result again for the resumed run.
+- A run that ended with no result, after it was kept going once, is not resumed: the run started
+  again in its place gives the result. lane stops the orchestrator's SendMessage to it, before or
+  after that start, and tells it the start due, as [What the orchestrator is told](#what-the-orchestrator-is-told)
+  gives it.
 
 ## What the orchestrator is told
 

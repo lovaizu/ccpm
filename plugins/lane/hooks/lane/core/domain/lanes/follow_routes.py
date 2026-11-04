@@ -1,7 +1,8 @@
 """follow_routes: the orchestrator starts the subagent it is told to start, by the routes, and makes
 no other call while that start is due; while a subagent it started runs in the background, it
 starts no other, but more runs of that one where the routes fan it out, its other calls and its end
-going on; once no start is left, it is free. Laid from
+going on; it resumes no run that ended with no result, as a run started again stands in its place;
+once no start is left, it is free. Laid from
 the routes, with the result command on the last step of each subagent that gives a result."""
 
 from __future__ import annotations
@@ -14,8 +15,9 @@ ACTION = "follow"
 WORDING = "Start each subagent you are told to start, until you are told to start no more."
 # What the last step of a subagent giving a result says, with the commands it gives them by.
 RESULT = "End by running `<commands>`."
-# The tool the orchestrator starts a subagent with.
+# The tool the orchestrator starts a subagent with, and the one it resumes a run with.
 AGENT = "Agent"
+MESSAGE = "SendMessage"
 
 
 def started(tool: str, given: dict[str, Any], named: list[str], plugin: str) -> str | None:
@@ -46,6 +48,11 @@ def allows(tool: str, given: dict[str, Any], due: Next, plugin: str) -> bool:
         return True
     # No tool Claude Code names sorts before Agent.
     return tool != AGENT  # pragma: no mutate
+
+
+def resumes(tool: str, given: dict[str, Any], runs: list[str]) -> bool:
+    """Whether the call resumes one of the runs, by their IDs, with a message sent to it."""
+    return tool == MESSAGE and given.get("to") in runs
 
 
 def ends(due: Next) -> bool:
