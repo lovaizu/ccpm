@@ -43,11 +43,11 @@
   },
   {
    "id": "test-table",
-   "what": "A table the reader takes in at a glance: a row for each deployment unit, named as in Deployment with its technology; a column for each test type the product uses, from narrow scope to wide, such as unit, integration and end-to-end; in each cell the tool, a weight, such as ●●● or ●●○, and what it checks in a few words; each empty cell marked as empty, with why it is empty; and the units left out because every cell of their row would be empty, with why."
+   "what": "A table the reader takes in at a glance: a row for each deployment unit, named as in Deployment with its technology; a column for each test level, from narrow to wide, each named by what its tests check against: unit, which checks one part against its contract; architecture, which joins all the parts and checks them against this document, running every user story's sequence from start to end; and ux, which checks the product in real use against the UX; in each cell the tool, a weight, such as ●●● or ●●○, and what it checks in a few words; each empty cell marked as empty, with why it is empty; and the units left out because every cell of their row would be empty, with why."
   },
   {
    "id": "test-rules",
-   "what": "For each test type, including any the product adds, what it makes real, what it fakes and when it passes, and, for a result that varies from run to run, how many runs of how many must meet the expectation; each unit's weight with what a failure costs the user; and, before the table, a pointer to the project's shared test rules, with only what differs written here."
+   "what": "For each test level, what it runs real, what doubles stand in for, who stands in for the person, what it covers and when it passes, a double being a stand-in for a part that gives set results; where each double's results come from; how a fault one level finds is brought to the level that must catch it; for a result that varies from run to run, how many runs of how many must meet the expectation; each unit's weight with what a failure costs the user; and, before the table, a pointer to the project's shared test rules, with only what differs written here."
   }
  ],
  "benefits": [
@@ -104,25 +104,35 @@
   {
    "id": "Q11",
    "about": "deployment, test-table",
-   "what": "Asked whether anything in the product goes untested, can the builder answer, for each deployment unit, which types of test cover it, how heavily, and why a type is missing?"
+   "what": "Asked whether anything in the product goes untested, can the builder answer, for each deployment unit, which levels of test cover it, how heavily, and why a level is missing?"
   },
   {
    "id": "Q12",
    "about": "test-table, test-rules",
-   "what": "Writing a test of one type, can the builder do it without deciding for themselves what to make real, what to fake and when it passes?"
+   "what": "Writing a test at one level, can the builder do it without deciding for themselves what to run real, what to stand in with a double, what to cover and when it passes?"
   },
   {
    "id": "Q13",
+   "about": "test-rules",
+   "what": "Does each double give only what the part's contract allows?"
+  },
+  {
+   "id": "Q14",
+   "about": "test-table, test-rules",
+   "what": "Given any fault, can the builder tell from the test rules the one level that must catch it?"
+  },
+  {
+   "id": "Q15",
    "about": "principles, components, responsibilities, sequences, deployment, directory, test-table, test-rules",
    "what": "Following a principle while building a part, does the builder find every figure, list and table asking the same of that part, so they never have to choose which to follow?"
   },
   {
-   "id": "Q14",
+   "id": "Q16",
    "about": "choices, test-rules",
    "what": "When the builder doubts a choice the document makes, can they tell what would be lost by taking the other way?"
   },
   {
-   "id": "Q15",
+   "id": "Q17",
    "about": "the whole",
    "what": "When the builder changes how a role works inside, while the UX and the principles stay, does every line of the document still hold?"
   }
@@ -482,12 +492,31 @@
   },
   {
    "benefit": "Q11",
-   "thinking": "A table of each deployment unit against each scope of test, from narrow to wide, shows at a glance what is tested, how heavily, and why a gap is there.",
+   "thinking": "A table of each deployment unit against each test level shows at a glance what is tested, how heavily, and why a gap is there; each level is named by what its tests check against, a part's contract, the architecture or the UX, and not by the means it uses, as a means such as integration or end to end can serve any level.",
    "steps": [
     "Leave out a unit whose every cell would be empty, and say why under the table.",
-    "Check that the wider tests are fewer, and that each user story is run end to end in some row."
+    "Check that unit and architecture carry most of the checking and run on every change, and that ux tests are few.",
+    "Check that each user story's sequence runs from start to end at the architecture level in some row."
    ],
    "grounds": [
+    {
+     "title": "Certified Tester Foundation Level Syllabus",
+     "url": "https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf",
+     "by": "ISTQB, version 4.0.1, istqb.org, 2024",
+     "quote": "Test levels are distinguished by the following non-exhaustive list of attributes, to avoid overlapping of test activities"
+    },
+    {
+     "title": "Certified Tester Foundation Level Syllabus",
+     "url": "https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf",
+     "by": "ISTQB, version 4.0.1, istqb.org, 2024",
+     "quote": "Test types are groups of test activities related to specific quality characteristics and most of those test activities can be performed at every test level."
+    },
+    {
+     "title": "Certified Tester Foundation Level Syllabus",
+     "url": "https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf",
+     "by": "ISTQB, version 4.0.1, istqb.org, 2024",
+     "quote": "While testing involves verification, i.e., checking whether the system meets specified requirements, it also involves validation, which means checking whether the system meets users’ and other stakeholders’ needs in its operational environment."
+    },
     {
      "title": "The Practical Test Pyramid",
      "url": "https://martinfowler.com/articles/practical-test-pyramid.html",
@@ -498,13 +527,13 @@
      "title": "The Practical Test Pyramid",
      "url": "https://martinfowler.com/articles/practical-test-pyramid.html",
      "by": "Vocke, martinfowler.com, 2018",
-     "quote": "The more high-level you get the fewer tests you should have"
+     "quote": "Push your tests as far down the test pyramid as you can"
     },
     {
-     "title": "Testing Overview",
-     "url": "https://abseil.io/resources/swe-book/html/ch11.html",
-     "by": "Bender, Software Engineering at Google, chapter 11, abseil.io, 2020",
-     "quote": "Scope refers to the specific code paths we are verifying."
+     "title": "The Practical Test Pyramid",
+     "url": "https://martinfowler.com/articles/practical-test-pyramid.html",
+     "by": "Vocke, martinfowler.com, 2018",
+     "quote": "The more high-level you get the fewer tests you should have"
     },
     {
      "title": "Documenting Software Architectures: Views and Beyond",
@@ -516,11 +545,14 @@
   },
   {
    "benefit": "Q12",
-   "thinking": "Each test type is set once, with what it makes real, what it fakes and when it passes, so every test of that type means the same to every builder.",
+   "thinking": "Each level is set once, with what it runs real, what doubles stand in for, what it covers and when it passes, so every test at that level means the same to every builder.",
    "steps": [
     "Link the project's shared test rules, and write only where this product differs from them.",
+    "At unit, cover each case of a part's contract, with its neighbours stood in by doubles and the person stood in for, and run a part done by an AI on the real model.",
+    "At architecture, stand every role in with a double and cover each handoff between roles, each route and each kind of result, in every combination, so the level calls no model, runs fast and gives the same result each run.",
+    "At ux, once unit and architecture pass, run the real product, with the person stood in for, on a subject that takes as long as a real request, and confirm the UX's objective and its non-functional key results, such as lead time, without aiming to cover every case.",
     "For a test whose result varies from run to run, write how many runs of how many must meet the expectation.",
-    "Use each type's name the same way throughout the document."
+    "Use each level's name the same way throughout the document."
    ],
    "grounds": [
     {
@@ -530,10 +562,40 @@
      "quote": "A unit test typically replaces external collaborators with test doubles"
     },
     {
+     "title": "Testing Overview",
+     "url": "https://abseil.io/resources/swe-book/html/ch11.html",
+     "by": "Bender, Software Engineering at Google, chapter 11, abseil.io, 2020",
+     "quote": "the most important qualities we want from our test suite are speed and determinism, regardless of the scope of the test."
+    },
+    {
+     "title": "Larger Testing",
+     "url": "https://abseil.io/resources/swe-book/html/ch14.html",
+     "by": "Graves, Software Engineering at Google, chapter 14, abseil.io, 2020",
+     "quote": "The primary reason larger tests exist is to address fidelity."
+    },
+    {
+     "title": "Larger Testing",
+     "url": "https://abseil.io/resources/swe-book/html/ch14.html",
+     "by": "Graves, Software Engineering at Google, chapter 14, abseil.io, 2020",
+     "quote": "Tests can also be measured in terms of how faithful the test content is to reality."
+    },
+    {
      "title": "The Practical Test Pyramid",
      "url": "https://martinfowler.com/articles/practical-test-pyramid.html",
      "by": "Vocke, martinfowler.com, 2018",
-     "quote": "For your automated tests this means you don't just need to run your own application but also the component you're integrating with."
+     "quote": "Make sure that the higher-level test focuses on the part that the lower-level tests couldn't cover."
+    },
+    {
+     "title": "Certified Tester Foundation Level Syllabus",
+     "url": "https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf",
+     "by": "ISTQB, version 4.0.1, istqb.org, 2024",
+     "quote": "In sequential SDLC models, the test levels are often defined such that the exit criteria of one level are part of the entry criteria for the next level."
+    },
+    {
+     "title": "Certified Tester Foundation Level Syllabus",
+     "url": "https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf",
+     "by": "ISTQB, version 4.0.1, istqb.org, 2024",
+     "quote": "Acceptance testing focuses on validation and on demonstrating readiness for deployment, which means that the system fulfills the user’s business needs."
     },
     {
      "title": "The Scrum Guide",
@@ -563,6 +625,60 @@
   },
   {
    "benefit": "Q13",
+   "thinking": "A double's set results come from the same contract the part's unit tests hold the part to, such as the forms its results must take, so the double cannot drift from the part it stands in for.",
+   "steps": [
+    "Check each double's results by the same check the part's unit tests make of the part's results, so a change to the contract fails the double as it fails the part."
+   ],
+   "grounds": [
+    {
+     "title": "Contract Test",
+     "url": "https://martinfowler.com/bliki/ContractTest.html",
+     "by": "Fowler, martinfowler.com, 2011",
+     "quote": "These check that all the calls against your test doubles return the same results as a call to the external service would."
+    },
+    {
+     "title": "The Practical Test Pyramid",
+     "url": "https://martinfowler.com/articles/practical-test-pyramid.html",
+     "by": "Vocke, martinfowler.com, 2018",
+     "quote": "Running contract tests against the fake and the real server ensures that the fake we use in our integration tests is a faithful test double."
+    },
+    {
+     "title": "Larger Testing",
+     "url": "https://abseil.io/resources/swe-book/html/ch14.html",
+     "by": "Graves, Software Engineering at Google, chapter 14, abseil.io, 2020",
+     "quote": "Moreover, mocks become stale."
+    },
+    {
+     "title": "Larger Testing",
+     "url": "https://abseil.io/resources/swe-book/html/ch14.html",
+     "by": "Graves, Software Engineering at Google, chapter 14, abseil.io, 2020",
+     "quote": "Then, the real service uses this input/output pair in a real test to ensure that it produces that output given those inputs."
+    }
+   ]
+  },
+  {
+   "benefit": "Q14",
+   "thinking": "Each fault belongs to the lowest level whose check it breaks: a broken contract to unit, a wrong handoff, route or result between roles to architecture, and only what shows in real use at real size, such as lead time, to ux; so a fault a higher level finds is one a lower level missed.",
+   "steps": [
+    "For a fault a higher level finds, add a test at the level that must catch it, see it fail, then fix the fault there."
+   ],
+   "grounds": [
+    {
+     "title": "The Practical Test Pyramid",
+     "url": "https://martinfowler.com/articles/practical-test-pyramid.html",
+     "by": "Vocke, martinfowler.com, 2018",
+     "quote": "If a higher-level test spots an error and there's no lower-level test failing, you need to write a lower-level test"
+    },
+    {
+     "title": "The Practical Test Pyramid",
+     "url": "https://martinfowler.com/articles/practical-test-pyramid.html",
+     "by": "Vocke, martinfowler.com, 2018",
+     "quote": "The first rule is important because lower-level tests allow you to better narrow down errors and replicate them in an isolated way."
+    }
+   ]
+  },
+  {
+   "benefit": "Q15",
    "thinking": "Each principle is read against every part it rules, so a builder never meets a figure, a list or a table that breaks one.",
    "steps": [
     "Read each part against each principle it rules; where a line breaks it, change the part, or the principle and its reason, until the two say the same."
@@ -589,7 +705,7 @@
    ]
   },
   {
-   "benefit": "Q14",
+   "benefit": "Q16",
    "thinking": "A choice a builder would question, such as a technology, a tool or a unit's weight, carries why it beat the other way and what it costs, beside the figure or table that shows it, so the builder keeps it or changes it knowing what it was for.",
    "steps": [
     "Read each figure and the table as a builder new to the product, and check that each choice they would question has its reason and its cost beside it."
@@ -640,7 +756,7 @@
    ]
   },
   {
-   "benefit": "Q15",
+   "benefit": "Q17",
    "thinking": "The document holds only what stays while the UX and the principles stay, and leaves how each role works inside to where it is built.",
    "steps": [
     "Imagine a change to how a role works inside, such as its steps, a value it uses or a data's fields, that leaves the UX and the principles as they are, and mark each line the change would make untrue.",
