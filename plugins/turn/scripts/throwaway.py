@@ -3,9 +3,9 @@ ${CLAUDE_PLUGIN_ROOT}/scripts/throwaway.py <run>`, so a command its user runs ne
 person's own files: it makes a throwaway home and a throwaway copy of the folder it is run in,
 makes each file the work names, empty, at its path under the home, runs each command of the work
 the run is at in order in the copy by the shell, the home as HOME so that `~` names it, prints each
-command, what it printed and its exit code, and removes both with shutil whatever the commands do,
-giving 0; or, where it cannot read the run or a file lies out of the home, prints why and gives 2,
-running nothing."""
+command, what it printed and its exit code as the command ends, and removes both with shutil
+whatever the commands do, giving 0; or, where it cannot read the run or a file lies out of the home,
+prints why and gives 2, running nothing."""
 
 from __future__ import annotations
 
@@ -33,8 +33,9 @@ def main(argv: list[str]) -> int:
     if len(argv) != 1:
         print(USAGE, file=sys.stderr)
         return 2
+    [run] = argv
     try:
-        work = runs.current(runs.load(argv[0]))
+        work = runs.current(runs.load(run))
         out = [f for f in work["files"] if not under_home(f)]
         if out:
             raise files.Unreadable(f"the file {out[0]} lies out of the home")

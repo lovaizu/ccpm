@@ -6,8 +6,12 @@ it printed shown, giving 0; or why it could not, giving 2."""
 import contextlib
 import io
 import os
+import queue
 import runpy
 import shutil
+import subprocess
+import sys
+import threading
 import unittest
 from unittest import mock
 
@@ -15,6 +19,12 @@ import helpers
 from helpers import throwaway
 
 USAGE = "usage: python3 ${CLAUDE_PLUGIN_ROOT}/scripts/throwaway.py <run>\n"
+
+
+def put_each(stream, lines):
+    """Puts each line read from the stream into the queue, as it comes."""
+    for line in stream:
+        lines.put(line)
 
 
 class TestMain(helpers.RepositoryTest):
@@ -99,6 +109,30 @@ class TestMain(helpers.RepositoryTest):
                 self.assertEqual(code, 2)
                 self.assertIn(f"the file {made} lies out of the home", err)
                 self.assertFalse(os.path.exists(os.path.join(self.seen, "ran")))
+
+    def test_of_files_out_of_the_home_the_first_is_named(self):
+        self.lays([], ["/etc/x", "../y"])
+        self.assertIn("the file /etc/x lies out of the home", self.ran(helpers.RUN)[2])
+
+    def test_each_command_is_shown_while_the_next_runs(self):
+        # Given: a work whose second command waits until the test lets it end
+        go = os.path.join(self.seen, "go")
+        self.lays(["echo first", f"for _ in $(seq 100); do [ -e {go} ] && break; sleep 0.05; done"])
+        lines: queue.Queue[str] = queue.Queue()
+        # When: the commands are run as the generator runs them, its output read as it comes
+        with subprocess.Popen(
+            [sys.executable, throwaway.__file__, helpers.RUN], stdout=subprocess.PIPE, text=True
+        ) as running:
+            threading.Thread(target=put_each, args=(running.stdout, lines), daemon=True).start()
+            try:
+                # Then: the first is shown with its exit code before the second ends
+                seen = [lines.get(timeout=4) for _ in range(3)]
+            except queue.Empty:
+                seen = []
+            finally:
+                with open(go, "w", encoding="utf-8"):
+                    pass
+        self.assertEqual(seen, ["$ echo first\n", "first\n", "(exit 0)\n"])
 
     def test_a_file_whose_name_begins_with_dots_lies_under_the_home(self):
         self.lays([f"ls -A ~ > {self.seen}/ls"], ["..notes"])
