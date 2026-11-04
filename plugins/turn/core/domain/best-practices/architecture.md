@@ -234,7 +234,7 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 3. Where a class ends on an ordered scale, such as a length or a count, write one test at each end and one at the nearest value in the next class.
 4. Where the contract's result turns on a combination of conditions, write a table with one rule for each combination that can occur and the result it gives, and write one test for each rule.
 5. Stand in the part's neighbours with doubles and the person with a stand-in, and run a part done by an AI on the real model, with one input for each class and each rule, both where the contract says the part acts and where it says it does not.
-6. At architecture, stand every role in with a double, so the level calls no model, runs fast and gives the same result each run.
+6. At architecture, run real what joins the parts, such as the hooks, the scripts and the rules laid, and stand in with a double each role an AI runs and each thing outside the product, so the level calls no model, runs fast and gives the same result each run.
 7. For each user story, list the paths through its sequence: the main flow first, then each branch, each step that sends work back to an earlier one, and each question put to the caller or the person, until every move from one step to the next lies on some path; write one test for each path, and check at each step the role that acts and the data it hands on.
 8. At ux, once unit and architecture pass, run the real product on each objective's scenario, on a subject the size of a real request, without aiming to cover every case.
 9. Give the AI that stands in for the person an intent written before the run and never shown to the product; a run passes when the stand-in gets what the objective says.
