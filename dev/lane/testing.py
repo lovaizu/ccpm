@@ -2,7 +2,9 @@
 and read; for a test that reads git, a repository made once a run and copied into each test's
 folder, git reading no setting of the machine it runs on, since a repository made by git commands
 for every test spends most of the tests' time; and, for a plugin whose lanes lane laid, lane's code
-as the plugin takes it through a link, and each lane its hooks/lanes.json lays. What a run of a
+as the plugin takes it through a link, and each lane its hooks/lanes.json lays; and, for an
+architecture test, a double of Claude Code that sends the hook events and runs the hooks' commands
+in sh, as dev/architecture.md's Architecture: the parts joined keeps it here. What a run of a
 plugin's tests writes is in one folder of its own, `<plugin>/<yyyymmdd>-tests-<random>/` in the
 system's temporary folder, as dev/architecture.md's Where a plugin writes its files has it, the
 plugin's tests being in dev/<plugin>/tests/; and such a folder for what a trial uses only
@@ -15,6 +17,7 @@ import importlib
 import inspect
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -159,6 +162,213 @@ def hypothesis() -> Any:
         raise unittest.SkipTest("Hypothesis runs on the newest Python alone") from None
     load_hypothesis_profile()
     return hypothesis
+
+
+# What an Agent call gives back of a run started in the background, as Claude Code 2.1.317 gave it.
+LAUNCHED = "async_launched"
+
+
+class Run:
+    """A run of a subagent, as the hooks see it: its type, `<plugin>:<name>`, and its ID."""
+
+    def __init__(self, kind: str, agent_id: str) -> None:
+        self.kind = kind
+        self.agent_id = agent_id
+
+
+class Told:
+    """What a call or an end came to, as the double of Claude Code saw it: whether it was made, what
+    the hooks said of it, and the context the hooks added after it."""
+
+    def __init__(self, made: bool, said: dict[str, Any], context: list[str]) -> None:
+        self.made = made
+        self.said = said
+        self.context = context
+
+    def reason(self) -> str:
+        """The reason the hooks gave for a call denied or asked, or for an end blocked."""
+        specific = self.said.get("hookSpecificOutput", {})
+        return str(specific.get("permissionDecisionReason") or self.said.get("reason") or "")
+
+    def decision(self) -> str:
+        """`deny` or `ask` for a call, `block` for an end, or "" where the hooks let it go on."""
+        specific = self.said.get("hookSpecificOutput", {})
+        return str(specific.get("permissionDecision") or self.said.get("decision") or "")
+
+    def operator(self) -> str:
+        """What the hooks told the operator, as Claude Code shows it, the systemMessage."""
+        return str(self.said.get("systemMessage", ""))
+
+
+class ClaudeCode:
+    """A double of Claude Code for an architecture test: it sends each hook event in the fields the
+    hooks reference documents, runs each command the plugin's hooks/hooks.json gives the event in
+    sh, as Claude Code does, and acts on what the commands print. A call denied is not made; a call
+    asked of the person is made where the person's next set answer is yes; any other is made for
+    real in the folder the session works in, and comes back as PostToolUse, or PostToolUseFailure
+    where it failed. An end blocked keeps its run going. A hook command that fails fails the test,
+    as no path through Lane has one fail. Where the hooks reference says nothing, it does what
+    dev/lane/architecture.md's Sequences recorded of Claude Code: a Bash command that exits with an
+    error comes back as PostToolUseFailure, as tried on 2026-11-03."""
+
+    def __init__(
+        self, root: str, cwd: str, env: dict[str, str], answers: list[bool] | None = None
+    ) -> None:
+        self.root = root
+        self.cwd = cwd
+        self.env = env
+        self.answers = list(answers or [])
+        self.uses = 0
+        # The runs a stop hook kept going, so their next SubagentStop says so.
+        self.kept_going: set[str] = set()
+
+    def common(self, held: str, run: Run | None) -> dict[str, Any]:
+        """The fields every event of the name has, of the run, or of the main conversation where
+        none is given, as the hooks reference documents them."""
+        event: dict[str, Any] = {
+            "session_id": "s1",
+            "transcript_path": os.path.join(self.cwd, "s1.jsonl"),
+            "cwd": self.cwd,
+            "permission_mode": "default",
+            "hook_event_name": held,
+        }
+        if run is not None:
+            event.update(agent_id=run.agent_id, agent_type=run.kind)
+        return event
+
+    def send(self, event: dict[str, Any]) -> dict[str, Any]:
+        """What the commands of the event's entries print, as JSON, each entry's matcher `*`, or a
+        regular expression on the tool's name or the subagent's type, run in sh within its
+        timeout."""
+        held = event["hook_event_name"]
+        with open(os.path.join(self.root, "hooks", "hooks.json"), encoding="utf-8") as f:
+            entries = json.load(f)["hooks"].get(held, [])
+        on = str(event.get("tool_name", event.get("agent_type", "")))
+        said: dict[str, Any] = {}
+        for entry in entries:
+            matcher = entry.get("matcher", "")
+            if matcher not in ("", "*") and not re.fullmatch(matcher, on):
+                continue
+            for h in entry["hooks"]:
+                done = subprocess.run(
+                    ["sh", "-c", h["command"]],
+                    input=json.dumps(event),
+                    capture_output=True,
+                    text=True,
+                    env={**self.env, "CLAUDE_PLUGIN_ROOT": self.root},
+                    cwd=self.cwd,
+                    timeout=h.get("timeout", 600),
+                    check=False,
+                )
+                if done.returncode or done.stderr:
+                    raise AssertionError(f"the hook of {held} failed: {done.stderr}")
+                said.update(json.loads(done.stdout) if done.stdout else {})
+        return said
+
+    def call(self, run: Run | None, tool: str, given: dict[str, Any]) -> Told:
+        """A tool call of the run, or of the main conversation, with its input: PreToolUse, then,
+        where the hooks let it go on or the person says yes, the call made and PostToolUse or
+        PostToolUseFailure."""
+        self.uses += 1
+        use = {"tool_name": tool, "tool_input": given, "tool_use_id": f"toolu_{self.uses}"}
+        said = self.send({**self.common("PreToolUse", run), **use})
+        decision = said.get("hookSpecificOutput", {}).get("permissionDecision")
+        if decision == "deny" or (decision == "ask" and not self.answers.pop(0)):
+            return Told(False, said, [])
+        response, error = self.made(tool, given)
+        if error is None:
+            after = {**self.common("PostToolUse", run), **use, "tool_response": response}
+        else:
+            failed = {"error": error, "is_interrupt": False}
+            after = {**self.common("PostToolUseFailure", run), **use, **failed}
+        return Told(True, said, self.context(self.send(after)))
+
+    def made(self, tool: str, given: dict[str, Any]) -> tuple[Any, str | None]:
+        """What the call gives back, made for real in the session's folder: a Bash command run in
+        sh, a file written, edited or read; and the error where it failed, None where it did
+        not."""
+        if tool == "Bash":
+            done = subprocess.run(
+                ["sh", "-c", given["command"]],
+                capture_output=True,
+                text=True,
+                env=self.env,
+                cwd=self.cwd,
+                check=False,
+            )
+            if done.returncode:
+                return None, f"Exit code {done.returncode}\n{done.stderr}"
+            return {"stdout": done.stdout, "stderr": done.stderr, "interrupted": False}, None
+        path = os.path.join(self.cwd, str(given.get("file_path", "")))
+        if tool == "Write":
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(given["content"])
+            return {"type": "create", "filePath": path}, None
+        if tool == "Edit":
+            with open(path, encoding="utf-8") as f:
+                text = f.read()
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(text.replace(given["old_string"], given["new_string"], 1))
+            return {"filePath": path}, None
+        if tool == "Read":
+            with open(path, encoding="utf-8") as f:
+                return {"type": "text", "file": {"filePath": path, "content": f.read()}}, None
+        return {}, None
+
+    def start(
+        self,
+        by: Run | None,
+        run: Run,
+        prompt: str,
+        meanwhile: Callable[[], object] = lambda: None,
+    ) -> Told:
+        """An Agent call of the run `by`, or of the main conversation, starting the run in the
+        background with the prompt: PreToolUse; where it goes on, SubagentStart of the run, what
+        the run does `meanwhile`, before its start comes back, then PostToolUse with the run's ID,
+        as Claude Code 2.1.317 gave the start's PostToolUse within 1 ms after the run had started
+        (dev/lane/architecture.md, Sequences); the context the hooks added at either."""
+        self.uses += 1
+        given = {"description": "d", "prompt": prompt, "subagent_type": run.kind}
+        use = {"tool_name": "Agent", "tool_input": given, "tool_use_id": f"toolu_{self.uses}"}
+        said = self.send({**self.common("PreToolUse", by), **use})
+        if said.get("hookSpecificOutput", {}).get("permissionDecision") == "deny":
+            return Told(False, said, [])
+        started = self.started(run)
+        meanwhile()
+        back = {"status": LAUNCHED, "agentId": run.agent_id, "content": []}
+        after = {**self.common("PostToolUse", by), **use, "tool_response": back}
+        return Told(True, said, started + self.context(self.send(after)))
+
+    def started(self, run: Run) -> list[str]:
+        """SubagentStart of the run, as Claude Code sends it as the run starts, and again, of the
+        same ID, as it starts an orchestrator again once a run it started in the background has
+        ended, a resumed run keeping its ID (dev/lane/architecture.md, Sequences): the context the
+        hooks added."""
+        return self.context(self.send(self.common("SubagentStart", run)))
+
+    def stop(self, run: Run) -> Told:
+        """SubagentStop of the run, as it is about to end, `stop_hook_active` where a stop hook kept
+        it going before: blocked, the run goes on; let end otherwise."""
+        transcript = os.path.join(self.cwd, "s1", "subagents", f"agent-{run.agent_id}.jsonl")
+        event = {
+            **self.common("SubagentStop", run),
+            "stop_hook_active": run.agent_id in self.kept_going,
+            "agent_transcript_path": transcript,
+            "last_assistant_message": "done",
+        }
+        said = self.send(event)
+        if said.get("decision") == "block":
+            self.kept_going.add(run.agent_id)
+            return Told(False, said, [])
+        self.kept_going.discard(run.agent_id)
+        return Told(True, said, [])
+
+    @staticmethod
+    def context(said: dict[str, Any]) -> list[str]:
+        """The context the hooks added, as Claude Code gives it to the run."""
+        added = said.get("hookSpecificOutput", {}).get("additionalContext")
+        return [added] if added else []
 
 
 def lane_code(plugin: str, *names: str) -> list[Any]:

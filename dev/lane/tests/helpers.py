@@ -2,12 +2,17 @@
 modules taken by each test from here, so they are found whichever test runs first; and the
 README's plugin `changelog`, made in a test's folder, with its subagent `writer`, the routes of
 docs/routes.md with its `lead` and `reviewer`, and the events Claude Code hands its hooks as the
-hooks reference documents them."""
+hooks reference documents them; and, for the architecture tests of a run, the plugin `changelog`
+kept with the trials, laid by `lay.py write` in a project of its own, with the double of Claude
+Code."""
 
 from __future__ import annotations
 
+import glob
 import json
 import os
+import shutil
+import subprocess
 import sys
 import tempfile
 from typing import Any
@@ -395,3 +400,122 @@ def back(agent_id: str, status: str = "completed") -> dict:
     """What an Agent call gives back of the subagent of the ID, as Claude Code 2.1.317 gave it,
     run in the foreground and ended, or launched in the background."""
     return {"status": status, "agentId": agent_id, "content": [{"type": "text", "text": "done"}]}
+
+
+# The plugin the architecture tests and the trials lay their proposals on, its adapters, and the
+# stand-in dependency `checker`, kept with the trials.
+UX = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ux")
+# The project changelog works on: CHANGELOG.md at 0.1.0, and a commit after it.
+CHANGELOG = (
+    "# Changelog\n\n## Unreleased\n\n## 0.1.0\n\n- Added: notes are kept as Markdown files.\n"
+)
+# A stand-in for `claude`, whose `plugin validate` passes.
+VALIDATES = "#!/bin/sh\necho '✔ Validation passed'\n"
+
+
+class RunTest(testing.GitTest):
+    """A test of a path through a run, in a git repository `repo` in `base`, with CHANGELOG.md and a
+    commit after it, and a copy of the plugin `changelog` in `repo/changelog`, laid by `lay.py
+    write` with a stand-in for `claude` on PATH; with a double of Claude Code working in `repo`,
+    whose hooks keep the calls in `base` as the system's temporary folder."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.repo = self.copied("project", self.project)
+        self.plugin = os.path.join(self.repo, "changelog")
+        shutil.copytree(os.path.join(UX, "changelog"), self.plugin)
+        claude = os.path.join(self.base, "bin", "claude")
+        self.write(claude, VALIDATES)
+        os.chmod(claude, 0o755)
+        path = os.path.dirname(claude) + os.pathsep + os.environ["PATH"]
+        self.env = {**os.environ, "PATH": path, "TMPDIR": self.base}
+        self.claude = testing.ClaudeCode(self.plugin, self.repo, self.env)
+
+    def project(self) -> None:
+        """Makes the project where the test stands: CHANGELOG.md committed, and a commit after."""
+        self.git("init", "-q", "-b", "main")
+        self.write("CHANGELOG.md", CHANGELOG)
+        self.commit()
+        self.write("note.md", "Add a search over the notes\n")
+        self.commit()
+
+    def lay(self, proposed: dict[str, Any], adapters: tuple[str, ...] = ()) -> str:
+        """Lays the proposal on the plugin with `lay.py write`, with the adapters of the names kept
+        in ux/adapters/ beside it, as docs/lanes.md keeps them; fails the test where it does not
+        exit 0, and gives what it printed."""
+        beside = os.path.join(os.path.dirname(PROPOSED), "changelog", "adapters")
+        for name in adapters:
+            for kind in (".py", ".json"):
+                os.makedirs(beside, exist_ok=True)
+                kept = os.path.join(UX, "adapters", name + kind)
+                shutil.copyfile(kept, os.path.join(beside, name + kind))
+        self.write_json(PROPOSED, proposed)
+        done = subprocess.run(
+            [sys.executable, os.path.join(SCRIPTS, "lay.py"), "write", PROPOSED],
+            capture_output=True,
+            text=True,
+            env=self.env,
+            check=False,
+        )
+        assert done.returncode == 0, done.stdout
+        return done.stdout
+
+    def ux_proposal(self, name: str) -> dict[str, Any]:
+        """The proposal of the name kept with the trials in ux/."""
+        with open(os.path.join(UX, name), encoding="utf-8") as f:
+            return json.load(f)
+
+    def kept(self, run: testing.Run) -> list[dict[str, Any]]:
+        """The entries the hooks kept of the run, in the session's folder of the calls kept."""
+        found = []
+        for path in glob.glob(os.path.join(self.base, "lane", "*-s1", f"{run.agent_id}.jsonl")):
+            with open(path, encoding="utf-8") as f:
+                found += [json.loads(line) for line in f]
+        return found
+
+
+# lead's run, and the sentence of follow_routes as lead is told it.
+LEAD_RUN = testing.Run("changelog:lead", "L1")
+FOLLOWED = f"changelog: {FOLLOW}"
+
+
+class RoutesTest(RunTest):
+    """A test of a path through lead's run: the routes laid, and lead started by the main
+    conversation, `told` what it was told as it started."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.lay(self.proposed())
+        self.told = self.claude.start(None, LEAD_RUN, "Update CHANGELOG.md for the next release.")
+
+    def proposed(self) -> dict:
+        """The proposal laid: routes.json, docs/routes.md's routes with writer's and reviewer's
+        lanes."""
+        return self.ux_proposal("routes.json")
+
+    def gives(self, run: testing.Run, on: str) -> str:
+        """The result command of the run's subagent on the result, as its step writes it, the
+        plugin's folder put in."""
+        name = run.kind.split(":")[1]
+        return f"python3 {self.plugin}/hooks/lane/result.py {name} {on}"
+
+    def result(self, run: testing.Run, on: str) -> testing.Told:
+        """The run's call of its result command on the result."""
+        return self.claude.call(run, "Bash", {"command": self.gives(run, on), "description": "d"})
+
+    def through(self, run: testing.Run, on: str) -> list[str]:
+        """lead starts the run, is told to wait and ends; the run gives the result and ends; and
+        lead, started again, is told the next start: what lead was told, in order."""
+        started = self.claude.start(LEAD_RUN, run, "Do your steps.")
+        self.assertTrue(started.made, started.said)
+        self.assertTrue(self.claude.stop(LEAD_RUN).made)
+        self.assertTrue(self.result(run, on).made)
+        self.assertTrue(self.claude.stop(run).made)
+        return started.context + self.claude.started(LEAD_RUN)
+
+    def waits(self, name: str) -> str:
+        """What lead is told as its start of the subagent of the name comes back."""
+        return (
+            f"changelog: Wait for `changelog:{name}` to end: you are told the next start once it"
+            " has."
+        )
