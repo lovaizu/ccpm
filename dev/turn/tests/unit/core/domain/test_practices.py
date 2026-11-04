@@ -1,6 +1,7 @@
-"""How practices.py checks a best practice's form and makes the Markdown a person reads: the check
-names each fault and each Markdown not as its JSON makes it, write puts the Markdown beside the
-JSON, and sources names each ground whose page is not the one meant."""
+"""How practices.py checks a best practice's form and makes what is read of it: faults names each
+fault of its form, markdown makes the Markdown a person reads, sources names each ground whose page
+is not the one meant, standard leaves out its ways, and groups shares its questions among the
+evaluator's runs."""
 
 import copy
 import email.message
@@ -12,7 +13,7 @@ import urllib.request
 from typing import Any
 from unittest import mock
 
-from helpers import templates as practices
+from helpers import practices
 
 G = {"title": "T", "url": "https://x.example/t", "by": "X, 2020", "quote": "y"}
 DATA = {
@@ -212,7 +213,7 @@ class Fetch(unittest.TestCase):
         request = urlopen.call_args.args[0]
         self.assertEqual(request.full_url, "https://x.example/t")
         self.assertEqual(request.get_header("User-agent"), practices.AGENT)
-        self.assertIn("practices.py", practices.AGENT)
+        self.assertIn("plan.py", practices.AGENT)
 
     def test_reads_a_file_on_github_as_its_own_text(self):
         with self.opened(response("text/plain", b"file")) as urlopen:
@@ -365,7 +366,7 @@ class Markdown(unittest.TestCase):
 
 class Standard(unittest.TestCase):
     def test_gives_the_goal_parts_and_questions_alone(self):
-        # Given: a template with its practices
+        # Given: a best practice with its practices
         # When: its standard is taken out
         # Then: the practices are left out, the rest as written
         self.assertEqual(
@@ -373,7 +374,7 @@ class Standard(unittest.TestCase):
             {"goal": DATA["goal"], "parts": DATA["parts"], "benefits": DATA["benefits"]},
         )
 
-    def test_a_template_of_no_parts_gives_none(self):
+    def test_a_best_practice_of_no_parts_gives_none(self):
         data = copy.deepcopy(DATA)
         del data["parts"]
         self.assertNotIn("parts", practices.standard(data))
@@ -381,7 +382,7 @@ class Standard(unittest.TestCase):
 
 class Groups(unittest.TestCase):
     def questions(self, *abouts):
-        """A template whose questions are about the parts given, one each, in order."""
+        """A best practice whose questions are about the parts given, one each, in order."""
         return {"benefits": [{"id": f"Q{n}", "about": a} for n, a in enumerate(abouts, 1)]}
 
     def test_questions_about_the_same_parts_go_together(self):

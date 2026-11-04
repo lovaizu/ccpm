@@ -1,8 +1,8 @@
-"""A kind's template, its best practice, a JSON that Turn's roles read: the faults its form shows,
-checked before anything reads it; the Markdown a person reads of it, written beside it, the JSON
-staying the one source so the two cannot say different things; the standard evaluator is given,
-the template without its ways of meeting the questions; and the groups of questions, each answered
-by a run of evaluator or proofreader of its own."""
+"""A kind's best practice, a JSON that Turn's roles read: the faults its form shows, checked before
+anything reads it; the Markdown a person reads of it, written beside it, the JSON staying the one
+source so the two cannot say different things; the Standard the evaluator is given, the best
+practice without its ways of meeting the questions; and the groups of its questions, each answered
+by a run of the evaluator of its own."""
 
 from __future__ import annotations
 
@@ -118,7 +118,7 @@ def plain(text: str) -> str:
 RAW = r"https://raw.githubusercontent.com/\1/\2/"
 # Who asks for a page: this script, named as a browser-like client, as some sites refuse a bare
 # "Mozilla/5.0".
-AGENT = "Mozilla/5.0 (compatible; practices.py; +https://github.com/lovaizu/ccpm)"
+AGENT = "Mozilla/5.0 (compatible; plan.py; +https://github.com/lovaizu/ccpm)"
 # How often a page that asks to be called again later is asked again, and how long is waited first.
 TRIES = 4
 WAIT = 15
@@ -210,8 +210,8 @@ def markdown(kind: str, data: dict[str, Any]) -> str:
 
 
 def standard(data: dict[str, Any]) -> dict[str, Any]:
-    """The template's goal, parts and questions, without its practices: what evaluator is given,
-    as the work's user never sees how the work was made."""
+    """The best practice's goal, parts and questions, without its practices: the Standard, what the
+    evaluator is given, as the work's user never sees how the work was made."""
     kept = {"goal": data["goal"]}
     if "parts" in data:
         kept["parts"] = data["parts"]
@@ -220,9 +220,9 @@ def standard(data: dict[str, Any]) -> dict[str, Any]:
 
 
 def groups(data: dict[str, Any], kind: str) -> list[dict[str, Any]]:
-    """The template's questions in groups, each named with the kind, as `<kind>/Q1`: the questions
-    about the whole in one group, and the others joined where they ask of a part in common; the
-    groups in the order of their first question, numbered G1 on."""
+    """The best practice's questions in groups, each named with the kind, as `<kind>/Q1`: the
+    questions about the whole in one group, and the others joined where they ask of a part in
+    common; the groups in the order of their first question, numbered G1 on."""
     found: list[tuple[set[str], list[str]]] = []
     for q in data["benefits"]:
         abouts = {a.strip() for a in q["about"].split(",")}

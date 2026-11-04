@@ -244,7 +244,7 @@ The figure shows each data that Turn's roles pass or keep, and how each joins an
 ![Turn's data model](images/data-model.svg)
 
 - **Call**: what the starter starts up with: the request in its own words, and what the calling AI
-  settled.
+  settled. The planner keeps it in the run's folder with the kind it settled, for `plan.py`.
 - **Run**: the run's own file: the kind, the works to make in order, and where each lies and what
   its user runs.
 - **Work**: what the person wants made. A run makes one work, or first the best practice of a new
@@ -494,6 +494,11 @@ plugins' hook entries, and each role runs Turn's scripts through the Bash tool.
   temporary folder**, as [Turn changes only the work](#turn-changes-only-the-work) says. The cost: a
   command that needs a file outside the repository, such as one in the person's Downloads folder,
   gets a made-up one that `throwaway.py` puts in the throwaway home.
+- **`throwaway.py` runs every command of the work, in order, in one copy**, as the Run lists them.
+  The guard then names one command whole, with the run's folder as its value. A rule that named
+  each command as a value of its own would let every command through for a work that has none, as
+  Lane lets a lane through on a value given as null. The cost: a role cannot run one command
+  alone, and each run of `throwaway.py` runs them all.
 
 ## Directory structure
 
@@ -524,8 +529,9 @@ dev/turn/
     ├── architecture/                a test for each path of each sequence <Python 3>
     └── ux/                          the trials of O1 and O2, and O2's calling AI <Python 3>
 
-.turn/<yyyymmdd>-<name>/               Run, Design file, Standard
-.turn/<yyyymmdd>-<name>/verification/  Round, Answers
+.turn/<yyyymmdd>-<name>/               Run, Call, Design file, Standard
+.turn/<yyyymmdd>-<name>/verification/  Round, Answers; each round before in a folder of its number
+.turn/<yyyymmdd>-<name>/best-practice/ the same, of a new kind's best practice made first
 .turn/best-practices/                  Best practice, the repository's own
 <the paths that the design gives>      Work
 <temporary folder>/lane/               Result, as the guard keeps it

@@ -1,10 +1,11 @@
-"""What generator and evaluator run each of a work's commands by, as `python3
-${CLAUDE_PLUGIN_ROOT}/scripts/throwaway.py [--file <path under ~>]... -- <command>`, so a command
-used as the work's user uses it never reaches the person's own files and needs no shell set-up of
-its own: it makes a throwaway home and a throwaway copy of the folder it is run in, makes each file
-given, empty, at its path under the home, runs the command in the copy by the shell, the home as
-HOME so that `~` names it, and removes both with shutil whatever the command does, giving the
-command's exit code; or, where it is not called as it takes, prints its usage and gives 2."""
+"""What the generator and the evaluator run the work's commands by, as `python3
+${CLAUDE_PLUGIN_ROOT}/scripts/throwaway.py <run>`, so a command its user runs never reaches the
+person's own files: it makes a throwaway home and a throwaway copy of the folder it is run in,
+makes each file the work names, empty, at its path under the home, runs each command of the work
+the run is at in order in the copy by the shell, the home as HOME so that `~` names it, prints each
+command, what it printed and its exit code, and removes both with shutil whatever the commands do,
+giving 0; or, where it cannot read the run or a file lies out of the home, prints why and gives 2,
+running nothing."""
 
 from __future__ import annotations
 
@@ -14,41 +15,60 @@ import subprocess
 import sys
 import tempfile
 
-USAGE = (
-    "usage: python3 ${CLAUDE_PLUGIN_ROOT}/scripts/throwaway.py [--file <path under ~>]..."
-    " -- <command>"
+# No module before it on the path has the name of Turn's.
+sys.path.insert(
+    0,  # pragma: no mutate
+    os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "core", "domain"),
 )
+
+import files
+import runs
+
+USAGE = "usage: python3 ${CLAUDE_PLUGIN_ROOT}/scripts/throwaway.py <run>"
 
 
 def main(argv: list[str]) -> int:
-    """Runs the command given after `--` as the module says, giving its exit code; or prints the
-    usage and gives 2, running nothing, where no one command follows `--` or a file given does not
-    lie under the home."""
-    at = argv.index("--") if "--" in argv else len(argv)
-    options, command = argv[:at], argv[at:][1:]
-    files = options[1::2]
-    if (
-        len(command) != 1
-        or options[::2] != ["--file"] * len(files)
-        or not all(map(under_home, files))
-    ):
+    """Runs the commands of the run given as the module says, giving 0; or prints why it cannot,
+    or the usage, and gives 2."""
+    if len(argv) != 1:
         print(USAGE, file=sys.stderr)
         return 2
+    try:
+        work = runs.current(runs.load(argv[0]))
+        out = [f for f in work["files"] if not under_home(f)]
+        if out:
+            raise files.Unreadable(f"the file {out[0]} lies out of the home")
+    except files.Unreadable as why:
+        print(f"throwaway.py: could not run the work's commands: {why}", file=sys.stderr)
+        return 2
+    if not work["commands"]:
+        print("throwaway.py: the work has no commands.")
+        return 0
     top = tempfile.mkdtemp(prefix="turn-throwaway-")
     try:
-        home, work = os.path.join(top, "home"), os.path.join(top, "work")
+        home, copy = os.path.join(top, "home"), os.path.join(top, "work")
         # A link is copied as the file it reaches, so a write in the copy reaches nothing outside.
-        shutil.copytree(os.getcwd(), work, ignore_dangling_symlinks=True)
-        for name in files:
+        shutil.copytree(os.getcwd(), copy, ignore_dangling_symlinks=True)
+        for name in work["files"]:
             path = os.path.join(home, name)
             os.makedirs(os.path.dirname(path), exist_ok=True)
             with open(path, "w", encoding="utf-8"):
                 pass
         os.makedirs(home, exist_ok=True)
         env = {**os.environ, "HOME": home}
-        return subprocess.run(
-            " ".join(command), shell=True, cwd=work, env=env, check=False
-        ).returncode
+        for command in work["commands"]:
+            done = subprocess.run(
+                command,
+                shell=True,
+                cwd=copy,
+                env=env,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                check=False,
+            )
+            print(f"$ {command}\n{done.stdout}(exit {done.returncode})", flush=True)
+        return 0
     finally:
         shutil.rmtree(top)
 

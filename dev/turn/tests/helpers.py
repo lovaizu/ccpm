@@ -1,6 +1,7 @@
 """What Turn's tests stand on beside what every plugin's tests do: Turn's code on sys.path, its
-modules taken by each test from here, so they are found whichever test runs first; and a run's
-folder that holds, for each test to change one thing of."""
+modules taken by each test from here, so they are found whichever test runs first; a small best
+practice of the kind `note`, kept as the repository's own, for a test to change; and a test whose
+folder is the top of a repository, with that best practice laid and a Call written."""
 
 from __future__ import annotations
 
@@ -17,127 +18,108 @@ DOMAIN = os.path.join(TURN, "core", "domain")
 SCRIPTS = os.path.join(TURN, "scripts")
 sys.path[:0] = [DOMAIN, SCRIPTS, os.path.join(TURN, "..", "..", "dev", "lane")]
 
-import answering
-import answers
-import designs
 import files
+import phases
+import plan
 import practices
+import rounds
 import runs
-import starts
-import templates
 import testing
 import throwaway
-import tree
 
-# A work's command as designer writes it, inside Turn's throwaway.py.
-THROWN = (
-    f"python3 {os.path.join(SCRIPTS, 'throwaway.py')} --file Downloads/a.jpg"
-    " -- 'python3 tidy.py --dry-run ~/Downloads'"
-)
-__all__ = [
-    "answering",
-    "answers",
-    "designs",
-    "files",
-    "practices",
-    "runs",
-    "starts",
-    "templates",
-    "testing",
-    "throwaway",
-    "tree",
-]
+__all__ = ["files", "phases", "plan", "practices", "rounds", "runs", "testing", "throwaway"]
 
-# A template of the kind `readme`: two parts, three questions, the last of the whole.
-TEMPLATE: dict[str, Any] = {
-    "goal": "The reader starts using the product only when it serves their work.",
+# A best practice of the kind `note`: two parts, three questions, the last of the whole.
+PRACTICE: dict[str, Any] = {
+    "goal": "The reader acts on the note.",
     "parts": [
         {"id": "summary", "what": "One sentence."},
-        {"id": "walkthrough", "what": "One run."},
+        {"id": "steps", "what": "The steps."},
     ],
     "benefits": [
-        {"id": "Q1", "about": "summary", "what": "Can the reader say what it does?"},
-        {"id": "Q2", "about": "walkthrough", "what": "Can the reader get the result?"},
+        {"id": "Q1", "about": "summary", "what": "Can the reader say what it asks?"},
+        {"id": "Q2", "about": "steps", "what": "Can the reader take each step?"},
         {"id": "Q3", "about": "the whole", "what": "Does each answer come when needed?"},
     ],
     "practices": [
         {"benefit": f"Q{n}", "thinking": "Think.", "steps": [], "grounds": []} for n in (1, 2, 3)
     ],
 }
-# The refactoring template, of one question about the whole.
-REFACTORING: dict[str, Any] = {
-    "goal": "The reader takes in what it says.",
-    "benefits": [{"id": "Q1", "about": "the whole", "what": "Is each fact said once?"}],
-    "practices": [{"benefit": "Q1", "thinking": "Think.", "steps": [], "grounds": []}],
+# Where a run's folder lies, and the repository's best practice of `note`.
+RUN = os.path.join(".turn", "20261103-tidy-note")
+NOTE = os.path.join(".turn", "best-practices", "note.json")
+# A Call of the kind `note`, as the planner writes it.
+CALL: dict[str, Any] = {
+    "request": "a note on tidy",
+    "kind": "note",
+    "reading": "refactor-doc",
+    "goal": "Someone new to tidy sorts their folder with it.",
+}
+# A decision the calling AI settled, as Calling Turn gives it.
+SETTLED: dict[str, Any] = {
+    "id": "D1",
+    "what": "Which run the steps show",
+    "contributes_to": [],
+    "builds_on": [],
+    "decided": "tidy --dry-run, then tidy",
+    "settled_by": "maker",
+    "grounds": ["the person, 2026-11-03"],
 }
 
 
-def question(n: int, kind: str = "readme") -> str:
-    """The ID a run gives question n of the kind's template."""
-    return f"{kind}/Q{n}"
+def practice() -> dict[str, Any]:
+    """A copy of the best practice of `note`, for a test to change."""
+    return copy.deepcopy(PRACTICE)
 
 
-def decision(name: str, serves: list[str], on: list[str] | None = None) -> dict[str, Any]:
-    """A decision of the ID name, decided, serving what it is given and building on `on`."""
-    return {
-        "id": name,
-        "what": f"what {name} decides",
-        "contributes_to": serves,
-        "builds_on": on or [],
-        "decided": f"{name} decided",
-        "settled_by": "reasoning",
-        "grounds": ["the goal"],
+def call(**given: Any) -> dict[str, Any]:
+    """A copy of the Call, each field given put in its place."""
+    return {**copy.deepcopy(CALL), **given}
+
+
+class RepositoryTest(testing.FolderTest):
+    """Each test stands at the top of a repository, `base`, which holds the best practice of
+    `note`, and may write a Call into the run's folder."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.write_json(NOTE, PRACTICE)
+
+    def calls(self, data: dict[str, Any] | None = None) -> None:
+        """Writes the Call, `data` or the one of `note`, into the run's folder."""
+        self.write_json(os.path.join(RUN, runs.CALL), CALL if data is None else data)
+
+    def run_data(self) -> dict[str, Any]:
+        """The Run on disk."""
+        return self.read_json(os.path.join(RUN, runs.RUN))
+
+    def started(self, data: dict[str, Any] | None = None) -> str:
+        """A run begun from the Call, `data` or the one of `note`: its Request."""
+        self.calls(data)
+        return runs.start(RUN)
+
+    def lay_run(self, works: list[dict[str, Any]]) -> None:
+        """Writes the Run of the works, the Call of `note` beside it."""
+        self.calls()
+        self.write_json(os.path.join(RUN, runs.RUN), {"works": works})
+
+
+def work(**given: Any) -> dict[str, Any]:
+    """A work of `note`, in its rounds, lying at NOTES.md, each field given put in its place."""
+    made = {
+        "kind": "note",
+        "practice": NOTE,
+        "reading": "refactor-doc",
+        "folder": RUN,
+        "paths": ["NOTES.md"],
+        "commands": [],
+        "files": [],
+        "at": "rounds",
     }
+    made.update(given)
+    return made
 
 
-# A run's folder that holds, its files by name: D1 serves Q1, D2 serves Q2, D3 serves D2 and builds
-# on it; the work is README.md alone, of one part.
-RUN: dict[str, Any] = {
-    "run.json": {
-        "kind": "readme",
-        "template": "plugins/turn/core/domain/best-practices/readme.json",
-        "refactoring": "refactor-doc",
-        "groups": [
-            {"id": "G1", "questions": ["readme/Q1"]},
-            {"id": "G2", "questions": ["readme/Q2"]},
-            {"id": "G3", "questions": ["readme/Q3"]},
-        ],
-        "refactoring_groups": [{"id": "G1", "questions": ["refactor-doc/Q1"]}],
-    },
-    "standard.json": templates.standard(TEMPLATE),
-    "refactoring-standard.json": templates.standard(REFACTORING),
-    "design-tree.json": {
-        "goal": {"what": "A newcomer sorts their folder.", "grounds": ["the person"]},
-        "questions": [
-            {"id": question(n), "what": TEMPLATE["benefits"][n - 1]["what"]} for n in (1, 2, 3)
-        ],
-        "decisions": [
-            decision("D1", [question(1), question(3)]),
-            decision("D2", [question(2)]),
-            decision("D3", ["D2"], ["D2"]),
-        ],
-    },
-    "work.json": {
-        "paths": ["README.md"],
-        "commands": [THROWN],
-        "parts": [{"id": "P1", "decisions": ["D1", "D2", "D3"], "paths": ["README.md"]}],
-    },
-}
-WORK = "# tidy\n\ntidy sorts a folder.\n\n## Walkthrough\n\nRun tidy --dry-run.\n"
-
-
-def run() -> dict[str, Any]:
-    """A copy of the run's files, for a test to change."""
-    return copy.deepcopy(RUN)
-
-
-class RunTest(testing.FolderTest):
-    """Each test has a run's folder, `run`, in its own folder, and the work beside it."""
-
-    folder = ".turn/20261103-tidy-readme"
-
-    def lay(self, made: dict[str, Any] | None = None, work: str = WORK) -> None:
-        """Writes each file of the run, `made` or the one that holds, and the work."""
-        for name, data in (RUN if made is None else made).items():
-            self.write(os.path.join(self.folder, name), json.dumps(data))
-        self.write("README.md", work)
+def line(data: dict[str, Any]) -> str:
+    """The data as one JSON line, as Turn's scripts print run values."""
+    return json.dumps(data, ensure_ascii=False)

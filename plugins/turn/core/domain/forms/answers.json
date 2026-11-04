@@ -1,12 +1,12 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "answers",
-  "description": "A run's answers to the questions it was given: each good, with the lines that meet it, or more, with what the user gets once it is good; and content, from proofreader alone, for a point that would change what the work says.",
+  "description": "The Answers of a run of the generator or of the evaluator: each question it was given, met, with the lines of the work that meet it, or not met, with what the user still lacks; and each point open, the generator's that the design leaves open, or, in a reading round, a change to what the work says.",
   "type": "object",
-  "required": ["good", "more"],
+  "required": ["met", "not_met"],
   "additionalProperties": false,
   "properties": {
-    "good": {
+    "met": {
       "type": "array",
       "items": {
         "type": "object",
@@ -18,19 +18,27 @@
         }
       }
     },
-    "more": {"$ref": "#/$defs/short"},
-    "content": {"$ref": "#/$defs/short"}
-  },
-  "$defs": {
-    "short": {
+    "not_met": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["question", "good_when"],
+        "required": ["question", "lacks"],
         "additionalProperties": false,
         "properties": {
           "question": {"type": "string"},
-          "good_when": {"type": "string"}
+          "lacks": {"type": "string", "description": "what the work's user still lacks, in their terms, never how to make it"}
+        }
+      }
+    },
+    "open": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["question", "what"],
+        "additionalProperties": false,
+        "properties": {
+          "question": {"type": "string"},
+          "what": {"type": "string"}
         }
       }
     }

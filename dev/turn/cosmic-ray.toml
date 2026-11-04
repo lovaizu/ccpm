@@ -10,8 +10,7 @@ timeout = 30.0
 # A line marked `# pragma: no mutate` compares a value with one of the few the code ever gives it,
 # where no input tells a mutant of it apart: the place Turn's code goes on sys.path, no module
 # before it there having the name of one of Turn's; `__name__`, which is "__main__" or, imported by
-# the tests, the script's name; a command of practices.py by order with the last of those it takes;
-# a count at values the code there never meets, such as one counting up by one to its limit, or of
+# the tests, the script's name; a count at values the code there never meets, such as one counting up by one to its limit, or of
 # an item in the list it is taken from; flags joined that are bits apart, the same by `|`, `+` or
 # `^`; and a line Cosmic Ray 8.7.0 fails to mutate, its ExceptionReplacer failing on a dotted name
 # among the exceptions, so no mutant of it can be tested.

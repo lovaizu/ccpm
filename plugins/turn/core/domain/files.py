@@ -1,6 +1,6 @@
 """A file of a run read and held to its form, a JSON Schema in forms/ beside this module, by Lane's
-reading of a schema; or refused, with why, so a check that cannot read a file says so and never
-passes it."""
+reading of a schema, or read as it is where another plugin holds its form, as Pin holds its design
+file; or refused, with why, so a check that cannot read a file says so and never passes it."""
 
 from __future__ import annotations
 
@@ -26,9 +26,9 @@ def form(name: str) -> dict[str, Any]:
         return json.load(f)
 
 
-def load(path: str, name: str) -> Any:
-    """The JSON at the path, held to the form of the name; refuses, by Unreadable, a file that is
-    missing, is no JSON or is out of the form."""
+def read(path: str) -> Any:
+    """The JSON at the path, held to no form, as one of Pin's files, which Pin holds to its own;
+    refuses, by Unreadable, a file that is missing or is no JSON."""
     if not os.path.isfile(path):
         raise Unreadable(f"there is no file {path}")
     with open(path, encoding="utf-8") as f:
@@ -39,6 +39,13 @@ def load(path: str, name: str) -> Any:
         raise Unreadable(
             f"{path} is not JSON: {e.msg} at line {e.lineno} column {e.colno}"
         ) from None
+    return data
+
+
+def load(path: str, name: str) -> Any:
+    """The JSON at the path, held to the form of the name; refuses, by Unreadable, a file that is
+    missing, is no JSON or is out of the form."""
+    data = read(path)
     out = schema.held(form(name), data)
     if out:
         raise Unreadable(f"{path} is out of its form: {out.told()}")

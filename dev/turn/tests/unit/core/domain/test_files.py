@@ -11,10 +11,11 @@ from helpers import files
 class TestLoad(helpers.testing.FolderTest):
     def test_a_file_in_its_form_is_given_as_written(self):
         # Given: a run.json in its form
-        self.write_json("run.json", helpers.RUN["run.json"])
+        data = {"works": [helpers.work()]}
+        self.write_json("run.json", data)
         # When: it is loaded to the run form
         # Then: it is given as written
-        self.assertEqual(files.load("run.json", "run"), helpers.RUN["run.json"])
+        self.assertEqual(files.load("run.json", "run"), data)
 
     def test_a_missing_file_is_refused(self):
         with self.assertRaises(files.Unreadable) as refused:
@@ -22,7 +23,7 @@ class TestLoad(helpers.testing.FolderTest):
         self.assertEqual(str(refused.exception), "there is no file run.json")
 
     def test_a_file_that_is_no_json_is_refused_with_where(self):
-        self.write("run.json", '{"kind":\n')
+        self.write("run.json", '{"works":\n')
         with self.assertRaises(files.Unreadable) as refused:
             files.load("run.json", "run")
         self.assertEqual(
@@ -31,14 +32,25 @@ class TestLoad(helpers.testing.FolderTest):
         )
 
     def test_a_file_out_of_its_form_is_refused_with_the_point(self):
-        self.write_json("run.json", {"kind": "readme", "template": "t.json"})
+        self.write_json("run.json", {"kind": "readme"})
         with self.assertRaises(files.Unreadable) as refused:
             files.load("run.json", "run")
         self.assertEqual(
             str(refused.exception),
-            'run.json is out of its form: $: expected the key "refactoring", found an object'
-            " without it",
+            'run.json is out of its form: $: expected the key "works", found an object without it',
         )
+
+    def test_read_gives_the_json_as_it_is_or_refuses_it(self):
+        self.write_json("tree.json", {"any": ["form"]})
+        self.write("bad.json", "[")
+        self.assertEqual(files.read("tree.json"), {"any": ["form"]})
+        for path, said in (
+            ("gone.json", "there is no file gone.json"),
+            ("bad.json", "bad.json is not JSON"),
+        ):
+            with self.subTest(path=path), self.assertRaises(files.Unreadable) as refused:
+                files.read(path)
+            self.assertIn(said, str(refused.exception))
 
     def test_each_form_is_one_structured_outputs_take(self):
         # Given: every form Turn holds a file to

@@ -29,7 +29,7 @@ pyrefly check --search-path dev/lane dev/scripts/*.py
 
 # A best practice is checked for the faults its form shows, and its Markdown, made from its JSON for
 # a person to read, for being left behind it, as either says what Turn does not hold.
-python3 plugins/turn/scripts/practices.py check plugins/turn/core/domain/best-practices/*.json
+python3 plugins/turn/scripts/plan.py form plugins/turn/core/domain/best-practices/*.json
 
 # Every figure carries the one style of dev/images/figures.css, so the figures look alike and a
 # colour is changed in one place (dev/plugin-best-practice.md, Directory structure).
