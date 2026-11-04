@@ -291,20 +291,19 @@ so the code is written, tested and fixed in one place.
 
 ## Test
 
-A plugin is tested at three levels, each named by what its tests check against. Each test is drawn
-from one rule, path or scenario of that one thing, never chosen by its writer, and is designed
-before the code or the prompt and seen to fail first.
+A plugin is tested at three levels, each named by what its tests check against. The developer
+draws each test from one rule, path or scenario of that one thing, and never chooses a test by
+taste. The developer designs each test before the code or the prompt, and sees it fail first.
 
-*Why*: no test is left to its writer's taste, and a failing test names the rule, path or scenario
-it breaks.
+*Why*: a failing test then names the rule, path or scenario it breaks.
 
 ![A plugin's test levels](images/test-levels.svg)
 
 ### Unit: code
 
-Drawn from the classes, edges and decision-table rules of the part's contract. Passes when every
-test passes, every line and branch runs and every mutant is caught. Runs before each push and in
-CI.
+The tests come from the classes, edges and decision-table rules of the part's contract. They pass
+when every test passes, every line and branch runs, and every mutant is caught. They run before
+each push and in CI.
 
 Coverage, mutation testing and property tests confirm that the unit tests hold the contract; each
 gap they find becomes a unit test. Mutation and property tests run in CI on what changed.
@@ -314,8 +313,8 @@ every push they would make every change wait.
 
 ### Unit: prompts
 
-Drawn from the cases of the role's contract, one case at a time. Passes when each case's
-expectation holds in every run. Runs as the prompt is made.
+The trials come from the cases of the role's contract, one case at a time. A case passes when its
+expectation holds in every run. The trials run while the prompt is made.
 
 Each role, a skill or an agent, is tried alone, on the model its users run, and judged from the
 run's records. Each part of a trial, such as its judge, is checked on a kept record before a run
@@ -327,17 +326,17 @@ and the additions never settle.
 
 ### Architecture: the parts joined
 
-Drawn from every path through each sequence: the main flow, each branch, each send-back and each
-question. Passes when every test passes, with the role and the data checked at each step. Runs
-before each push and in CI.
+The tests come from every path through each sequence: the main flow, each branch, each send-back
+and each question. They pass when every test passes, with the role and the data checked at each
+step. They run before each push and in CI.
 
 *Why*: a fault of a sequence lies between parts whose unit tests pass; with no model called, every
 push checks every path in seconds.
 
 ### ux: the plugin in real use
 
-Drawn from each objective's scenario, on a subject as big as a real request. Passes when the
-stand-in gets what the objective says. Runs once every lower level passes.
+The trials come from each objective's scenario, on a subject as big as a real request. They pass
+when the stand-in gets what the objective says. They run once every lower level passes.
 
 It confirms what no lower level can measure, such as the lead time, and does not aim to cover
 cases. Each Claude Code it starts runs on a configuration folder of its own, holding only the
