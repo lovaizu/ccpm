@@ -1,0 +1,521 @@
+{
+ "kind": "architecture",
+ "goal": {
+  "what": "Whoever builds or changes Pin, a person or an AI, makes each part of Pin without hesitating, on the same thinking as every other part, so that the parts together settle every point of a plan with the person as they mean it, asking them only what is theirs, and keep what a maker AI settled, and Pin stays easy to read and to change.",
+  "grounds": [
+   "plugins/turn/core/domain/best-practices/architecture.json goal: \"Whoever builds or changes the product, a person or an AI, makes each part without hesitating, on the same thinking as every other part. Together, the parts then deliver the UX. The product stays easy to read and to change.\"",
+   "dev/pin/ux.md:19-20: \"O1: The person has every point of their plan settled as they mean it before any work starts, asked only what is theirs.\"",
+   "dev/pin/ux.md:31-32: \"O2: The maker AI has a work's design settled with the person it is for, keeping what it settled, and builds on it as given.\""
+  ]
+ },
+ "questions": [
+  {
+   "id": "architecture/Q1",
+   "what": "For each step of the UX's scenarios, can the developer name the one way of using the product at its edge that carries it?"
+  },
+  {
+   "id": "architecture/Q2",
+   "what": "Having read the opening, can the developer say how the product delivers its UX, as one idea that every part carries out?"
+  },
+  {
+   "id": "architecture/Q3",
+   "what": "For anything the user stories need decided, can the developer point to the one role that decides it?"
+  },
+  {
+   "id": "architecture/Q4",
+   "what": "Starting on a role, can the developer begin without choosing for themselves what kind of thing it is and what it is made with?"
+  },
+  {
+   "id": "architecture/Q5",
+   "what": "When one developer makes the role that writes a data and another makes the role that reads it, do both join it to the other data the same way?"
+  },
+  {
+   "id": "architecture/Q6",
+   "what": "For each user story, can the developer follow it from the user's first request to its end, knowing at each step which role acts and what data it hands on?"
+  },
+  {
+   "id": "architecture/Q7",
+   "what": "Of any user story, role or data, can the developer tell which objective of the UX needs it?"
+  },
+  {
+   "id": "architecture/Q8",
+   "what": "When two developers of different parts meet a case the document does not name, does a principle's reason lead both to the same decision?"
+  },
+  {
+   "id": "architecture/Q9",
+   "what": "Setting the product up from nothing, can the developer put each role where it runs and each data where it is kept, and start the product, without asking anyone?"
+  },
+  {
+   "id": "architecture/Q10",
+   "what": "Making or changing a role or a data, can the developer find the one place its files belong?"
+  },
+  {
+   "id": "architecture/Q11",
+   "what": "Asked whether anything in the product goes untested, can the developer answer, for each deployment unit, which levels of test cover it, how heavily, and why a level is missing?"
+  },
+  {
+   "id": "architecture/Q12",
+   "what": "Writing a test at one level, can the developer do it without deciding for themselves what to run real, what to stand in with a double, what to cover and when it passes?"
+  },
+  {
+   "id": "architecture/Q13",
+   "what": "When the unit and architecture tests pass, can the developer be sure the product does what this document says, leaving ux only to confirm the UX?"
+  },
+  {
+   "id": "architecture/Q14",
+   "what": "Following a principle while building a part, does the developer find every figure, list and table asking the same of that part, so they never have to choose which to follow?"
+  },
+  {
+   "id": "architecture/Q15",
+   "what": "When the developer doubts a choice the document makes, can they tell what would be lost by taking the other way?"
+  },
+  {
+   "id": "architecture/Q16",
+   "what": "When the developer changes how a role works inside, while the UX and the principles stay, does every line of the document still hold?"
+  }
+ ],
+ "decisions": [
+  {
+   "id": "D1",
+   "what": "Who reads the document, and which names does it give Pin's things?",
+   "contributes_to": [
+    "architecture/Q2",
+    "architecture/Q4",
+    "architecture/Q6"
+   ],
+   "builds_on": [],
+   "decided": "A developer, a person or an AI, who builds or changes Pin. The document keeps the UX's and the README's names: the person, the maker AI, a point, the design, the design file. It adds four names, each defined where first used: the pinner, the subagent pin:pinner that settles the design; the go-between, the steps of pin:down that whoever starts Pin follows, the main conversation for the person or the maker AI itself; check.py; and the guard, Lane's check script laid into Pin, as the plugin best practice names a plugin's hooks. It names Lane, whose code Pin's hooks are, and no other plugin.",
+   "settled_by": "research",
+   "grounds": [
+    "dev/pin/ux.md:3-9: \"Pin has two users: [...] the person [...] the maker AI\"",
+    "plugins/pin/README.md:7-8: \"A point is one thing the plan must settle\"",
+    "plugins/pin/README.md:40: \"Pin writes each answer into the design file, `design-tree.json`\"",
+    "dev/plugin-best-practice.md:22: \"**guard**: the plugin's hooks.\"",
+    "the brief: \"Pin names no plugin it does not depend on.\""
+   ]
+  },
+  {
+   "id": "D2",
+   "what": "How does Pin deliver its UX, as one idea?",
+   "contributes_to": [
+    "architecture/Q2"
+   ],
+   "builds_on": [
+    "D1",
+    "D3",
+    "D4"
+   ],
+   "decided": "The pinner settles the design in the design file from the goal down, one point for each run: each run ends with one point for the person, and the next run starts from the person's answer. The pinner is a subagent, so Lane's hooks hold it to its rules on every call. Whoever starts it, the main conversation for the person or the maker AI, is the go-between: it puts each point to the person as given and passes the answer back word for word. check.py checks the design file after each answer. The opening links the UX for what this gives.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "architecture.json Q2 Practice thinking: \"The opening says how the product turns what the user brings into what the UX promises. It says this in one idea seen from above, with none of a part's inner workings.\"",
+    "architecture.json Q2 Practice step: \"Link the UX instead of repeating it.\"",
+    "plugins/pin/README.md:169-171: \"It then ends each run with its message headed `For the person:`. The maker AI puts that message to the person as given, and resumes Pin\""
+   ]
+  },
+  {
+   "id": "D3",
+   "what": "Where does the pinner run, for the person and for the maker AI?",
+   "contributes_to": [
+    "architecture/Q3",
+    "architecture/Q15",
+    "architecture/Q8"
+   ],
+   "builds_on": [
+    "D1"
+   ],
+   "decided": "Always as Pin's own subagent pin:pinner, started in the background, for the person too. Why it beat the main conversation for the person: Lane checks only subagents, and no level tries a prompt alone, so the rules that must hold, such as writing only the design file and checking it after each change, hold only where the guard sees the pinner's calls. The cost: each point costs a resume of the pinner (KR1.2); the main conversation passes each point and could reword it, which no hook sees; and Pin runs in an interactive session, where Claude Code tells the one that started the pinner that it ended. This departs from the plugin best practice's Where the orchestrator runs.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "plugins/lane/README.md:24-25: \"Lane checks only subagents that have rules. It does not check the main conversation\"",
+    "dev/plugin-best-practice.md:129: \"a hook runs every time, while an instruction is only advice.\"",
+    "the user's decision of 2026-11-04, in the brief: \"No unit trial of a prompt [...] the rules that must hold are held by Lane's hooks and tested at architecture\"",
+    "plugins/lane/docs/routes.md:191-193: \"In `claude -p`, Claude Code 2.1.317 does not start the orchestrator again [...] Run a plugin with routes in an interactive session.\"",
+    "plugins/pin/README.md:20: \"Pin needs a person to answer\""
+   ]
+  },
+  {
+   "id": "D4",
+   "what": "Who passes points and answers between the pinner and the person?",
+   "contributes_to": [
+    "architecture/Q3",
+    "architecture/Q2"
+   ],
+   "builds_on": [
+    "D3"
+   ],
+   "decided": "The go-between: the steps of the skill pin:down, in core/roles/go-between.md. The main conversation follows them when the person types /pin:down; a maker AI follows them when it takes pin:down. The go-between picks the design file's path, starts the pinner with the Request, puts each Reply to the person as given, and resumes the pinner with the person's words under the line the README names. It answers nothing of the plan itself. One set of steps serves both users, so O1 and O2 run the same path past the start.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "dev/pin/ux.md:90-93: \"N->>M: one point for the person / M->>P: passes the point on as given / P->>M: right, or the answer / M->>N: the answer, word for word\"",
+    "plugins/pin/README.md:166-171: \"A maker AI starts `pin:down` with the goal of the work [...] resumes Pin with the person's answer under the line `The person's answer, word for word:`.\"",
+    "dev/plugin-best-practice.md:13-14: \"main conversation: [...] Only it can ask the person.\""
+   ]
+  },
+  {
+   "id": "D5",
+   "what": "Who finds each fact?",
+   "contributes_to": [
+    "architecture/Q3",
+    "architecture/Q15",
+    "architecture/Q7"
+   ],
+   "builds_on": [
+    "D3"
+   ],
+   "decided": "The pinner itself, with Read and Grep, and no subagent for research. Why it beat a researcher in the background: the pinner ends at each point to wait for the person, and the end of a subagent it started would start it again while a point waits, so a second point could reach the person before the first is answered (KR1.1). The cost: facts are found one after another, in the pinner's own context (KR1.2). The researcher of the old design goes.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "plugins/lane/docs/routes.md:186-187: \"Once that subagent has ended, Claude Code starts the orchestrator again to tell it so.\"",
+    "dev/pin/ux.md:71: \"N->>P: one point: a fact found, to confirm, or a decision of theirs, with a recommendation\"",
+    "plugins/pin/README.md:35: \"Each message from Pin holds one point.\""
+   ]
+  },
+  {
+   "id": "D6",
+   "what": "How does the maker AI hand over its goal, questions and settled points?",
+   "contributes_to": [
+    "architecture/Q5",
+    "architecture/Q15",
+    "architecture/Q3"
+   ],
+   "builds_on": [
+    "D4"
+   ],
+   "decided": "It writes them into the design file, in the design file's form, before it takes pin:down with the file's path. Each point it settled is marked as settled by the maker AI. The pinner goes on from a design file that already lies at the path, the same way for a stopped run and for a point the maker AI's work found. Why it beat the request's text: the pinner keeps the maker AI's points as written, never retyped (KR2.1), and agents pass data as JSON in files. The cost: the maker AI writes the design file's form, which pinner.md's The design tree gives.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "dev/plugin-best-practice.md:227: \"Agents pass data to each other as JSON, in files.\"",
+    "dev/pin/ux.md:35-36: \"it settles a point otherwise than the maker AI settled it, or the person is asked that point again\"",
+    "plugins/pin/README.md:178-179: \"[The design tree](core/roles/pinner.md#the-design-tree): each key of the design file, for an AI that reads it or builds on it.\""
+   ]
+  },
+  {
+   "id": "D7",
+   "what": "Which rules does the guard hold the pinner to?",
+   "contributes_to": [
+    "architecture/Q3",
+    "architecture/Q8",
+    "architecture/Q13"
+   ],
+   "builds_on": [
+    "D3",
+    "D6"
+   ],
+   "decided": "Four, laid by Lane from Pin's proposal: write only the design file, its path given for each run as the value design; run only the check command on it; after changing the design file, pass the check; and end each run by giving the result done, so the last check is held at each end. The design file's form is held by check.py through that check, not by a second rule of form, so one role decides whether the file holds. No rule holds the pinner's words to the person: no hook sees them.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "plugins/lane/docs/lanes.md:36-46: the lanes write_only, in_form, run_only, test_after and end_when",
+    "plugins/lane/docs/routes.md:123: \"where no route is from it, that the result is `done`\"",
+    "plugins/lane/docs/routes.md:140: \"A subagent resumed with SendMessage keeps its ID, and gives a result again for the resumed run.\"",
+    "plugins/pin/README.md:40-42: \"Pin writes each answer into the design file [...] before its next message. After each answer, it checks that every point in the file serves the goal.\""
+   ]
+  },
+  {
+   "id": "D8",
+   "what": "Which principles of the plugin best practice does Pin take, and which not?",
+   "contributes_to": [
+    "architecture/Q8",
+    "architecture/Q14"
+   ],
+   "builds_on": [
+    "D3",
+    "D4"
+   ],
+   "decided": "Pin takes every principle of Structure and Development but three. It departs from Where the orchestrator runs, as D3 says. It does not take Learning from each run: the UX has no step after the person confirms, Pin ends there, and a lesson of the design shows only in the work, which Pin never sees. Read by those who did not make it holds with no evaluator, as the person reads the whole design to confirm it. Under Messages, the go-between is the one who has the person, so the pinner asks it. It departs from Unit: prompts, as the tests say.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "architecture.json Q8 Practice step: \"Link the principles of the architecture this one is built on, and write only what this product adds or changes.\"",
+    "dev/plugin-best-practice.md:272-273: \"Once the caller approves the work, the orchestrator looks once through what the run kept\"",
+    "plugins/pin/README.md:47: \"Pin does not make the work. It ends once you confirm the design.\"",
+    "dev/plugin-best-practice.md:250-251: \"Where the caller reads the whole work to approve it, such as a plan, no evaluator reads it first\""
+   ]
+  },
+  {
+   "id": "D9",
+   "what": "Which principles does Pin add, each with its rule and its reason?",
+   "contributes_to": [
+    "architecture/Q8",
+    "architecture/Q14"
+   ],
+   "builds_on": [
+    "D8",
+    "D7",
+    "D6"
+   ],
+   "decided": "Six. Whose a decision is (the person's only where two ways serve the goal as well and nothing found favors either, or where it is hard to undo; KR1.1). One point for each run (each run of the pinner ends with one point, and a point waits for the decisions it builds on; KR1.1). The design file is the only record (every answer is in it before the next point; the pinner learns what is open from check.py; KR1.1, KR1.2). Passed on as given (the go-between changes no point and no answer, answers nothing of the plan itself, and passes whatever the person says while a point waits; KR1.1, KR2.1). What the maker AI settled stays (Pin neither asks nor changes it; only the maker AI's own new request opens it, and the maker AI never changes the design itself; KR2.1). Pin knows no maker AI (absent: a line naming a plugin that uses Pin; a key Pin does not know is kept; KR2.1). Two say what must be absent.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "architecture.json Q8 Practice step: \"Write as a rule also what must be absent, such as a dependency no role may have.\"",
+    "dev/pin/ux.md:23-28: the four ways a point goes wrong",
+    "dev/pin/ux.md:34-41: the four ways a design goes wrong",
+    "plugins/pin/README.md:31-34: \"It asks you a decision only where two ways serve the goal equally well, or where the decision is hard to undo\""
+   ]
+  },
+  {
+   "id": "D10",
+   "what": "Do two developers of different parts reach the same decision on a case no rule names?",
+   "contributes_to": [
+    "architecture/Q8"
+   ],
+   "builds_on": [
+    "D9"
+   ],
+   "decided": "Tried on a person who, while a point waits, asks the main conversation a question of their own about the plan. The developer of the go-between and the developer of the pinner both send it to the pinner word for word, as an answer: Passed on as given says why, as a point answered by the main conversation is a point settled apart from Pin. Its reason was sharpened to name this. Tried on a maker AI that adds a key of its own to the design file: the developer of check.py and the developer of the pinner both keep it and read nothing from it (Pin knows no maker AI).",
+   "settled_by": "reasoning",
+   "grounds": [
+    "architecture.json Q8 Practice step: \"Take a case no rule names, and have two developers of different parts decide it from the reasons alone. Where they differ, sharpen the reason.\"",
+    "dev/pin/ux.md:28: \"the person settles it apart from Pin, such as in a chat with the AI that makes the work.\""
+   ]
+  },
+  {
+   "id": "D11",
+   "what": "Which user stories carry the UX's steps?",
+   "contributes_to": [
+    "architecture/Q1",
+    "architecture/Q7"
+   ],
+   "builds_on": [
+    "D4",
+    "D6"
+   ],
+   "decided": "S1: the person types /pin:down with the plan and gets the goal to confirm (O1: the request, the goal put); a design file the plan left from a stopped run is a branch. S2: the person answers the point put and gets the next point, the whole design to confirm, or once confirmed the design file's path (O1: yes, the loop, the design confirmed, the design handed). S3: the maker AI writes its hand-over into a design file, takes pin:down with its path, and gets the first point for the person (O2: the hand-over, what it settled kept); a design file holding a point its work found is a branch (KR2.1). S4: the maker AI resumes the pinner with the person's answer word for word and gets the next point, the design to confirm or the design back (O2: the loop, the design passed and confirmed, the design kept). The maker AI's building on the design is outside Pin.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "architecture.json Q1 Practice step: \"Walk each scenario of the UX step by step. Check that one story carries each step where the user, a person or an AI, meets the product. Add a story for a step that none carries.\"",
+    "dev/pin/ux.md:66-76: O1's steps",
+    "dev/pin/ux.md:86-100: O2's steps",
+    "plugins/pin/README.md:172-174: \"the maker AI starts Pin again with that point and does not change the design itself\""
+   ]
+  },
+  {
+   "id": "D12",
+   "what": "Which roles and stores are there, each with its type and technology?",
+   "contributes_to": [
+    "architecture/Q4",
+    "architecture/Q9"
+   ],
+   "builds_on": [
+    "D3",
+    "D4",
+    "D5",
+    "D7"
+   ],
+   "decided": "Roles of Pin: go-between [AI steps · Markdown, run by the main conversation or the maker AI]; pinner [subagent · Claude Code, Markdown]; check.py [command line · Python 3.9]; guard [hook script · Lane's code, Python 3.9]. Stores: Design file [file · JSON]; Rules laid [file · JSON]. Outside Pin: the person [person], the maker AI [AI · Claude Code], the repository [files]. A legend explains each shape; the figure is an SVG.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "architecture.json Q4 Practice thinking: \"Each role's box says what kind of thing it is and what it is made with.\"",
+    "architecture.json Q4 Practice step: \"Add a legend that explains every shape, tag and other symbol the figure uses.\""
+   ]
+  },
+  {
+   "id": "D13",
+   "what": "Which arrows does the components figure draw?",
+   "contributes_to": [
+    "architecture/Q3",
+    "architecture/Q6"
+   ],
+   "builds_on": [
+    "D12",
+    "D16"
+   ],
+   "decided": "In the order they act: the person types /pin:down and answers (Request, Answer); the maker AI writes its hand-over into the design file and takes pin:down; the go-between looks for the plan's design file and picks its path; the go-between starts the pinner, then resumes it with each answer (Request, Answer) [Agent, SendMessage]; the pinner reads facts in the repository [Read, Grep]; the pinner writes each point with who settled it (Design file) [Write, Edit]; the pinner runs check.py [Bash], which reads the design file and gives the Check result; the guard reads Rules laid and lets each call and end of the pinner through or stops it with its step's sentence [Claude Code hooks]; the pinner ends with a Reply; the go-between puts it to the person as given; the maker AI reads the design to build on.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "architecture.json Q3 Practice step: \"Draw an arrow for each thing one role asks of another, labelled with what it does and the data it hands on, not with a word such as \\\"uses\\\".\""
+   ]
+  },
+  {
+   "id": "D14",
+   "what": "Which role alone decides each point the stories need?",
+   "contributes_to": [
+    "architecture/Q3"
+   ],
+   "builds_on": [
+    "D12",
+    "D13"
+   ],
+   "decided": "The go-between: where the design file lies (the path given; else the plan's file in .pin/; else a new path). The pinner: what the design file holds, which point comes next, whose each decision is, what it recommends, the words of each Reply, and when the person has confirmed the design. check.py: whether the design file holds, in its form and its joins, and which decisions are open to decide now. The guard: whether a call or an end of the pinner keeps its rules. No decision has two roles: the maker AI writes the design file only before it starts Pin, and the guard holds no form of its own.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "architecture.json Q3 Practice step: \"Ask of each decision which role makes it. Where two roles or none answer, move the decision or split the role.\""
+   ]
+  },
+  {
+   "id": "D15",
+   "what": "Does every story, role and data reach an objective?",
+   "contributes_to": [
+    "architecture/Q7"
+   ],
+   "builds_on": [
+    "D11",
+    "D14",
+    "D16"
+   ],
+   "decided": "Each story names its UX steps. The go-between, the pinner, check.py and the design file are reached by every story; the guard and Rules laid by every story through the pinner's calls; Request by S1 and S3, Answer by S2 and S4, Reply and Check result by all. The researcher goes (D5). The check command kept in one form for a maker AI's own rules goes: the maker AI no longer runs check.py, as the pinner always runs as Pin's subagent. The stopped run and the point found during the work stay as branches: README promises both, and each serves KR1.1 or KR2.1.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "architecture.json Q7 Practice step: \"Trace each role and each data to the stories whose sequences reach it. Trace each story to the step of the UX it carries or, off the main path, to the key result it serves. Remove what reaches none.\"",
+    "plugins/pin/README.md:41-42: \"A stopped run goes on from the file in a new conversation.\""
+   ]
+  },
+  {
+   "id": "D16",
+   "what": "Which data does the data model draw, and how do they join?",
+   "contributes_to": [
+    "architecture/Q5"
+   ],
+   "builds_on": [
+    "D6",
+    "D12"
+   ],
+   "decided": "Ten data by name alone, as an SVG: Request, Design file, Goal, Question, Decision, Ground, Reply, Answer, Check result, Rules laid. Relations: a Request names one Design file; a Design file has one Goal, holds one or more Questions and any Decisions; a Question must hold for the Goal; a Decision serves Questions and Decisions (contributes_to) and builds on Decisions (builds_on), named apart so the pinner that writes them and check.py that reads them keep them the same way; a Goal and a Decision rest on Grounds; a Reply puts the Goal, one Decision or the whole Design file; an Answer answers one Reply and is kept as a Ground; a Check result is of one Design file; Rules laid take the design file's path from each Request. The fields lie in pinner.md's The design tree. Under the figure, one line says what each data is, so a reader meets each name defined.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "architecture.json Q5 Practice step: \"For each relation, ask whether the role that writes it and the role that reads it would keep it the same way. Where they would not, name the relation more exactly.\"",
+    "plugins/pin/core/roles/pinner.md:38-39: \"`contributes_to` names the questions or the decisions a decision serves.\""
+   ]
+  },
+  {
+   "id": "D17",
+   "what": "Which sequences are drawn, and how?",
+   "contributes_to": [
+    "architecture/Q6"
+   ],
+   "builds_on": [
+    "D11",
+    "D13",
+    "D16"
+   ],
+   "decided": "Two Mermaid sequences, each for two stories that differ only in who the user is: the start (S1, S3) and an answer (S2, S4). Participants named as in Components; each message labelled with the data handed on, named as in the data model. The start draws the path pick, the start of the pinner, the new design file or the one gone on from (a stopped run, the maker AI's hand-over, a point its work found), the check loop and the first Reply. An answer draws each kind of answer as a branch: a fact confirmed or corrected, a decision made or left to Pin, a new point raised, a wrap-up, a change at the design, the confirmation. The guard's check of a call is drawn once, with its stop. Every step runs along an arrow of Components. No message holds a semicolon.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "architecture.json Q6 Practice step: \"Check that each step runs along an arrow of Components. Where none does, add the arrow or give the step to another role.\""
+   ]
+  },
+  {
+   "id": "D18",
+   "what": "Which choices would a developer question, where do they stand, and what does each cost?",
+   "contributes_to": [
+    "architecture/Q15"
+   ],
+   "builds_on": [
+    "D3",
+    "D5",
+    "D6",
+    "D7"
+   ],
+   "decided": "Beside Components: the pinner always a subagent (D3); the pinner finds facts itself (D5); the maker AI hands over in the design file (D6); the form held by check.py, not by a rule of form (D7); the path given for each run. Beside the sequences: each run of the pinner ends with one Reply, over a pinner that waits in one run. Beside Directory: the guard laid as a link to Lane's code. Beside the tests: no unit trial of a prompt, and the weights. Each with why it beat the other way and its cost.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "architecture.json Q15 Practice step: \"Read each figure and the table as a developer new to the product, and check that each choice they would question has its reason and its cost beside it.\""
+   ]
+  },
+  {
+   "id": "D19",
+   "what": "What leaves the document, as it holds how a role works inside?",
+   "contributes_to": [
+    "architecture/Q16"
+   ],
+   "builds_on": [
+    "D2",
+    "D9"
+   ],
+   "decided": "Out: the five lines a decision is put in, the step numbers and wording of the pinner, the text check.py prints, the keys of the design file and the values of settled_by, the sentence of each of Lane's rules, and how a stopped run's file is matched to a plan. The document links pinner.md's The design tree and Lane's lanes.md where a reader needs them. Kept, as the README promises them and two roles share them: the headings of a Reply and an Answer, by a link to the README. Checked by two changes: check.py also reporting a decision with no ground, and the pinner putting a decision in four lines; no line becomes untrue.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "architecture.json Q16 Practice step: \"Imagine a change to how a role works inside, such as its steps, a value it uses or a data's fields, that leaves the UX and the principles as they are. Mark each line the change would make untrue.\""
+   ]
+  },
+  {
+   "id": "D20",
+   "what": "Where does each role run and each data lie, and how does Pin start?",
+   "contributes_to": [
+    "architecture/Q9"
+   ],
+   "builds_on": [
+    "D12",
+    "D16"
+   ],
+   "decided": "One environment, the person's computer, with: the Claude Code process [Claude Code 2.1.317 or later], holding the go-between in the main conversation or the maker AI, and the pinner as a subagent; the hook process [python3 3.9 or later], holding the guard; the check.py process [python3 3.9 or later]; the installed Pin [plugin folder], holding Rules laid; the repository, holding the design file in .pin/<yyyymmdd>-<name>/ or at the maker AI's path. Outside: Anthropic's API for the model's turns, and the marketplace on GitHub to install from. Start: install as the README says; the person types /pin:down; a maker AI's plugin lists pin in its dependencies and takes pin:down. As an SVG.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "architecture.json Q9 Practice step: \"Check that each role and each data of Components sits in one unit.\"",
+    "plugins/pin/README.md:57-73: Requirements and Installation"
+   ]
+  },
+  {
+   "id": "D21",
+   "what": "Where do the files of each role and data lie?",
+   "contributes_to": [
+    "architecture/Q10"
+   ],
+   "builds_on": [
+    "D12",
+    "D16"
+   ],
+   "decided": "A tree with one line for each role and data: skills/down/SKILL.md (pin:down's entry), agents/pinner.md (pin:pinner's entry), core/roles/go-between.md (the go-between, with the form of Request and Answer), core/roles/pinner.md (the pinner, with the form of Reply and of the design file), scripts/check.py and core/domain/tree.py (check.py, with the form of Check result), hooks/hooks.json, hooks/lanes.json (Rules laid) and hooks/lane/ (the guard); dev/pin/ with tests/unit, tests/architecture, tests/ux; .pin/<yyyymmdd>-<name>/design-tree.json (Design file). The guard is a link to Lane's code in this marketplace, a copy elsewhere, laid by lay.py.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "architecture.json Q10 Practice step: \"Check that each role and each data stands on one line. Where it stands on none or on two, move the files or the line.\"",
+    "dev/lane/architecture.md:604-607: \"In this marketplace, a plugin's `hooks/lane/` is a link to Lane's code\""
+   ]
+  },
+  {
+   "id": "D22",
+   "what": "Which levels test each deployment unit, how heavily, and which level is empty?",
+   "contributes_to": [
+    "architecture/Q11"
+   ],
+   "builds_on": [
+    "D20",
+    "D23"
+   ],
+   "decided": "A test table as an SVG, rows the check.py process, the hook process and the Claude Code process. check.py: unit ●●● unittest with coverage, Cosmic Ray and Hypothesis; architecture ●●● run real on each design file of each path; ux ●○○. Hook process: unit empty, as Lane's unit tests test the guard and Pin writes none of it; architecture ●●● the guard run real on Pin's Rules laid; ux ●○○. Claude Code process: unit empty, as no level tries a prompt alone; architecture ●●○ the entries as Claude Code takes them, the go-between and the pinner as doubles; ux ●●○ trials on Opus, which find design faults and measure the variance. Each story's sequence runs from start to end at architecture.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "architecture.json Q11 Practice step: \"Check that each user story's sequence runs from start to end at the architecture level in some row.\"",
+    "the user's decision of 2026-11-04, in the brief: \"ux trials (E2E on a subject big enough to bring out the frequent cases) find design faults and measure the variance by the key results.\""
+   ]
+  },
+  {
+   "id": "D23",
+   "what": "What does each level run real, stand in with a double, cover, and pass on?",
+   "contributes_to": [
+    "architecture/Q12",
+    "architecture/Q13",
+    "architecture/Q15"
+   ],
+   "builds_on": [
+    "D17",
+    "D7"
+   ],
+   "decided": "Link the plugin best practice's Test; write what Pin adds. Unit: check.py's classes (in form or not, no question and one, a question unserved, a decision reaching no question, a decision before one it builds on, a key it does not know), its three results, and a decision table of which decisions are open to decide now. Architecture: check.py by the command the rule names, the guard by Pin's hook entries on Pin's Rules laid, and the entries' files run real; doubles of the go-between, the pinner, Claude Code and the person; one test for each path of each sequence, in a table looked up by row. Each double of the pinner writes only design files that check.py's unit tests hold to the form, and Replies in the form pinner.md gives; a double of Claude Code sends the documented hook input, or a recorded try. ux: the notes app at the size of a real request, about ten points with each frequent case; an AI stand-in for the person with an intent never shown to Pin; a plugin made for the test as the maker AI for O2; 3 runs of 3; a measure for each key result set against the last. A fault found higher goes down to the level that must catch it.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "architecture.json Q12 Practice step: \"At architecture, run real what joins the parts, such as the hooks, the scripts and the rules laid. Put a double in place of each role an AI runs and each thing outside the product.\"",
+    "architecture.json Q13 Practice step: \"Build each double from the form that the part's contract gives its results. Set it only to results that this form allows, the refusals among them.\"",
+    "dev/plugin-best-practice.md:387: \"A trial passes only when its expectation holds in every run, three of three by default.\""
+   ]
+  },
+  {
+   "id": "D24",
+   "what": "Does every figure, list and table ask the same of each part as the principles?",
+   "contributes_to": [
+    "architecture/Q14"
+   ],
+   "builds_on": [
+    "D9",
+    "D13",
+    "D17",
+    "D21",
+    "D22"
+   ],
+   "decided": "Read each part against each principle: only the pinner's arrow writes into the design file after the hand-over (What the maker AI settled stays; The design file is the only record); every Reply in the sequences holds one point (One point for each run); the go-between's arrows carry Reply and Answer unchanged and none writes the design (Passed on as given); no box or line names a plugin that uses Pin (Pin knows no maker AI); each sequence runs check.py before each Reply, and the guard stops an end with the file unchecked (The design file is the only record); the tests' paths hold a point kept and a point reopened.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "architecture.json Q14 Practice step: \"Read each part against each principle that rules it. Where a line breaks the principle, change the part, or the principle and its reason, until the two say the same.\""
+   ]
+  }
+ ]
+}

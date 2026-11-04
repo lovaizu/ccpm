@@ -163,10 +163,11 @@ grounds, so the AI has nothing to guess.
 The figure shows how you and a maker AI use Pin. A maker AI also needs to know three things
 that the figure cannot show:
 
-- A maker AI starts `pin:down` with the goal of the work, its questions, what it has settled and
-  the path where the design file is to lie. Without a path, the file lies in
+- A maker AI writes the goal of the work, its questions and what it has settled into the design
+  file, in the form [the design tree](core/roles/pinner.md#the-design-tree) gives. It then starts
+  `pin:down` with the file's path. Without a path, the file lies in
   `.pin/<yyyymmdd>-<name>/design-tree.json` at the top of the repository.
-- Where Pin runs as a subagent, it cannot ask the person itself. It then ends each run with its
+- Pin runs as a subagent, so it cannot ask the person itself. It ends each run with its
   message headed `For the person:`. The maker AI puts that message to the person as given, and
   resumes Pin with the person's answer under the line `The person's answer, word for word:`.
 - Where the work finds a point that the design does not settle, or that must change, the maker AI

@@ -1,465 +1,486 @@
 # Pin architecture
 
-Pin gives its users a design tree, a JSON file that holds a plan's goal, the questions that must
-hold for the goal, and the decisions that make each question hold. The pinner, the AI that follows
-the skill `pin:down`, builds the tree from the goal down and settles each decision. A subagent
-finds each fact. The person confirms each fact and decides what is theirs, one point at a time.
-The pinner is the main conversation when the person runs `/pin:down`, or a role of Turn or rn that
-takes the skill. One script, `check.py`, checks after each answer that the tree holds together.
-[Pin's UX](ux.md) says what this gives the person, Turn and rn.
+This document says how Pin is built to give [Pin's UX](ux.md). It is for a developer, a person or
+an AI, who builds or changes Pin.
+
+Pin settles a plan in its design file one point at a time. The pinner, a subagent of Pin, writes
+the design file from the plan's goal down. Each run of the pinner ends with one point for the
+person, and the next run starts from the person's answer. Whoever starts the pinner carries each
+point to the person and each answer back: the main conversation when the person types `/pin:down`,
+or the maker AI itself. This document calls that part the go-between. It follows the steps of the
+skill `pin:down`. As the pinner is a subagent, hooks hold it to its rules on every call: it writes
+only the design file, and has `check.py` check the file after each change. Lane, the plugin that
+holds a subagent to the rules of its steps, lays those hooks into Pin. This document calls them the
+guard, as the plugin best practice names a plugin's hooks.
 
 ## Principles
 
-Pin follows all the principles of [the plugin best practice](../plugin-best-practice.md#principles).
-Under [Read by those who did not make it](../plugin-best-practice.md#read-by-those-who-did-not-make-it),
-the person reads the design first, as they read it in full to confirm it. The principles below
-are what Pin adds.
+Pin builds on [the principles of the plugin best practice](../plugin-best-practice.md#principles)
+and on its Development section, with these differences:
 
-### Facts are found, decisions are asked
+- Pin departs from
+  [Where the orchestrator runs](../plugin-best-practice.md#where-the-orchestrator-runs): the pinner
+  runs as a subagent for the person too, as
+  [Choices in the components](#choices-in-the-components-and-their-costs) says.
+- Pin does not take
+  [Learning from each run](../plugin-best-practice.md#learning-from-each-run). Pin ends once the
+  person confirms the design, and the UX has no step after that. A design's faults show only in the
+  work made from it, which Pin never sees.
+- Under [Read by those who did not make it](../plugin-best-practice.md#read-by-those-who-did-not-make-it),
+  no evaluator reads the design: the person reads all of it to confirm it.
+- Under [Messages](../plugin-best-practice.md#messages), the go-between is the one who has the
+  person, so the pinner asks the go-between.
+- Pin departs from [Unit: prompts](../plugin-best-practice.md#unit-prompts), as [Tests](#tests)
+  says.
 
-The pinner finds each fact itself, never by asking the person. A fact that a search must find
-goes to a subagent. The pinner quotes a fact in a file it has already read directly, after it
-sees that the quoted words stand at the line it names. It shows the person each fact as it is
-found, alone, to confirm. It asks the person only a decision that is theirs. It settles a decision
-itself where the decision follows from the goal and the decisions before it, and shows it in the
-design with what settled it.
+The principles below are what Pin adds. Each gives its rule, then why.
 
-A question about a fact spends the person's time on what the AI could look up, and a decision taken
-for the person is a guess they never saw (KR1.1, KR1.2). A subagent started for what the pinner
-already holds adds a start and a wait, with nothing found that it did not have (KR1.2). A quote
-not seen at its line may be wrong, as when one listing numbered the lines of several files as one
-(trial of 2026-11-03). Pin takes the split of facts and decisions from Matt Pocock's
-[grilling](https://github.com/mattpocock/skills/blob/4ae2317ddb22b046e26455e4f9c9b3aaaf62212d/skills/productivity/grilling/SKILL.md):
-"Finding _facts_ is your job, never the user's", and "The _decisions_ are the user's: put each to
-them and wait." grilling does not show the facts it finds. Pin shows each one, as
+### Whose a decision is
+
+A decision is the person's only where two ways serve the goal equally well and nothing found
+favors either, or where the decision is hard to undo. Pin settles every other decision itself. It
+finds every fact itself and shows it to the person to confirm.
+
+*Why*: a fact that Pin could find, or a decision that follows from the goal, spends the person's
+answer on Pin's job. A decision taken for the person where their view decides it holds a point
+otherwise than they mean it. The UX counts both as a point gone wrong (KR1.1).
 [Asking until nothing is left to decide](../plugin-best-practice.md#asking-until-nothing-is-left-to-decide)
-says, since a fact found but not shown is still a guess made for the person.
+says this in general. This principle gives the test.
 
-### One point at a time
+### One point for each run
 
-The pinner puts one point to the person in each message, a fact to confirm or a decision with a
-recommendation worded so that "yes" takes it, and waits for the answer before the next.
+The pinner ends each run with one point for the person: the goal, one fact, one decision, or the
+whole design to confirm. It puts a decision to the person only once each decision it builds on is
+settled.
 
-grilling asks a whole round of questions at once, but its own documentation says that "it can put
-two questions in one round and only later find that one answer should have changed the other".
-With one point at a time, the pinner weighs each answer before it chooses the next point. The same
-page offers this way as "a supported setting, not a workaround". Each point costs a message of its
-own. The next principle, and asking only what is the person's, keep the lead time down (KR1.2).
+*Why*: two points in one message let one answer change the other unseen. A decision put before
+the decisions under it rests on a guess of how they go. Either way a point comes out otherwise than
+the person means it (KR1.1).
 
-### Research runs beside the questions
+### The design file is the only record
 
-The pinner starts each subagent that finds a fact in the background, and meanwhile asks the
-decisions that do not build on that fact. Only the decisions that build on it wait for it.
+Every answer is in the design file before the next point goes out. The pinner learns which
+decisions are open to decide now from `check.py`, not from its conversation. Every other reader
+reads the plan only from the file.
 
-A decision that waits for research it does not need adds the research's time to the lead time, with
-nothing gained (KR1.2, KR2.2).
+*Why*: the pinner's conversation can end or be compacted, and the go-between's is another
+conversation. With the plan in the file, a stopped run goes on from it and asks nothing again
+(KR1.2). The AI that makes the work then reads the same plan that the person confirmed.
 
-### The tree is the only record
+### Passed on as given
 
-The pinner writes every fact, decision and answer into `design-tree.json` before the next point. It
-asks a decision only once each decision it builds on is decided, and it reads which decisions those
-are from the tree, not from the conversation.
+The go-between puts each point to the person whole. It passes back word for word whatever the
+person says while a point waits, as their answer. It answers nothing of the plan itself and writes
+nothing into the design file.
 
-A conversation can end, be cleared or be compacted, so a plan kept only in it is lost
-([Where the router keeps the course](../plugin-best-practice.md#where-the-router-keeps-the-course)).
-`check.py`, a new conversation and the AI that makes the work all read a tree in a file the same
-way.
+*Why*: a point reworded is a question that the pinner did not ask, and an answer summed up loses
+what the person meant (KR1.1, KR2.1). A point that the go-between answers itself is settled apart
+from Pin, which the UX counts as gone wrong (KR1.1), even where the person asked the go-between and
+not Pin.
 
-### Every decision reaches the goal
+### What the maker AI settled stays
 
-`contributes_to` joins each decision to the questions or decisions it serves, and through them to
-the goal. The pinner cuts a decision that reaches no question. A question that no decision serves
-is a gap. `check.py` finds both, and also a decision decided before one it builds on.
+Pin neither asks the person nor changes a point that the maker AI settled, the goal among them.
+Only a new request of the maker AI opens such a point again. The maker AI changes no point of the
+design itself: it starts Pin again with the point.
 
-A decision that serves nothing costs the person a question for nothing, and a gap is a point the
-work will guess (KR1.1, KR2.1).
+*Why*: the UX counts as gone wrong a point settled otherwise than the maker AI settled it, a point
+asked again, and the maker AI changing the design (KR2.1). A point changed outside Pin also leaves
+each point built on it as it was.
 
-### Pin knows no caller
+### Pin knows no maker AI
 
-No line of Pin names a plugin that uses it. A caller gives `pin:down` the goal, the questions the
-work must answer and the path of the tree, and the decisions it has already settled; Pin fills the
-rest. A caller may add keys of its own to the tree, and `check.py` leaves them.
+No line of Pin names a plugin that uses it. A maker AI reaches Pin only through `pin:down` and the
+form of the design file. Pin keeps each key of the design file that it does not know, and reads
+nothing from it.
 
-Turn and rn each take Pin in as it is, and a change for one of them would reach the other unseen.
-
-### The check command keeps one form
-
-`pin:down` names the check as `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/<name>.py <args>`, today
-`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/check.py <design tree>`. This form stays the same across
-Pin's versions; only the folder that Claude Code puts in place of `${CLAUDE_PLUGIN_ROOT}` differs.
-Claude Code puts Pin's folder there wherever the text of `pin:down` is loaded, in a caller's role
-too (tried on Claude Code 2.1.317, 2026-11-03). The Bash tool's environment holds no
-`CLAUDE_PLUGIN_ROOT`
-([plugins reference](https://code.claude.com/docs/en/plugins-reference#where-each-variable-resolves)),
-so the command carries the folder written out.
-
-A caller's role runs the command as `pin:down` writes it. A check that a caller lays on its role's
-commands matches each command as it is written. A command whose form changed would be
-stopped, or would go unchecked, in every caller at once.
+*Why*: every maker AI takes the same Pin. A change made for one maker AI would reach the others
+unseen, and could settle their points otherwise than they settled them (KR2.1).
 
 ## User stories
 
-- As the person, I want to run `/pin:down` with my plan in rough words, confirm each fact found
-  and decide only what is mine, one point at a time, and confirm the design at the end. Carries O1
-  from the request to the confirmed design tree.
-- As Turn or rn, I want to give my role `pin:down` with a work's goal, its questions, what I have
-  settled and the path of the tree, and get back the confirmed design tree. Carries O2 from the
-  call to the design tree.
-- As Turn or rn, I want my role to run the check command as `pin:down` writes it, and learn whether
-  the tree holds together, or what is wrong. Carries each check step of O2; in O1 the pinner runs
-  it within the first story.
-- As Turn or rn, I want to reopen one decision with `pin:down`, and have it and each decision that
-  builds on it decided again. Off the main path, serves KR2.1.
-- As the person, I want to go on with a stopped run in a new conversation, from the tree it kept.
-  Off the main path, serves KR1.2.
+Each story names its user, the way that user meets Pin, and the steps of
+[the UX's scenarios](ux.md#scenarios) that it carries.
 
-## Logical view
+- **S1**: As the person, I want to type `/pin:down` with my plan in my own words, and get the goal
+  as Pin reads it, to confirm. Carries the first two steps of O1: the request, and the goal put to
+  the person. A design file that a stopped run of the same plan left is a branch: Pin goes on from
+  it.
+- **S2**: As the person, I want to answer the point that Pin puts to me, and get the next point,
+  or the whole design to confirm, or once I confirm it, the design file's path. Carries the rest of
+  O1: the yes to the goal, each round of the loop, the design confirmed and the design handed over.
+- **S3**: As the maker AI, I want to write the work's goal, its questions and what I settled into a
+  design file, take `pin:down` with the file's path, and get the first point for the person.
+  Carries the first two steps of O2: the request, and the step where Pin keeps what the maker AI
+  settled. A design file that holds a point which the maker AI's work found is a branch: Pin opens
+  that point again (KR2.1).
+- **S4**: As the maker AI, I want to resume Pin with the person's answer word for word, and get the
+  next point for the person, or the design to confirm, or once the person confirms it, the design
+  back. Carries the rest of O2 up to the design kept. The maker AI then builds on the design
+  outside Pin.
 
-### Components
+## Components
 
-```mermaid
-flowchart LR
-  P(["person<br>#lt;person#gt;"])
-  MC["main conversation<br>#lt;AI · Claude Code#gt;"]
-  PN["pinner<br>#lt;AI · Claude Code, following pin:down#gt;"]
-  RS["researcher<br>#lt;AI · Claude Code subagent#gt;"]
-  CK["check.py<br>#lt;command line · Python 3.9#gt;"]
-  TR[("design-tree.json<br>#lt;JSON file#gt;")]
-  SRC[["the project's files and public pages"]]
-  P -- "1 the plan, then each answer and the confirmation" --> MC
-  MC -- "2 the plan, or a Caller's settled points (Goal, Question, Decision)" --> PN
-  PN -- "3 a fact to find" --> RS
-  RS -- "4 reads" --> SRC
-  RS -- "5 the fact, with its Ground" --> PN
-  PN -- "6 writes Decision" --> TR
-  PN -- "7 runs scripts/check.py on the tree's path" --> CK
-  CK -- "8 reads Design tree" --> TR
-  CK -- "9 Check result" --> PN
-  PN -- "10 one fact to confirm, or one Decision to make with a recommendation, and at the end the design" --> MC
-  MC -- "11 puts it" --> P
-```
+The figure shows each role of Pin and each store of data that the stories need. The data on its
+arrows are named as in [Data model](#data-model).
 
-Legend: a rounded box is a person; a box is an AI or a script, with its kind and what it is made
-with in angle brackets; a cylinder is a file; a box with double sides lies outside Pin. Each
-arrow says what one part does to another, and names the data it hands on as the data model names
-it. Its number gives the order.
+![Pin's components](images/components.svg)
 
-- Where the pinner is the main conversation, arrows 2, 10 and 11 are the main conversation's own.
-- The pinner alone decides which decision to settle next, who settles it, and what to recommend.
-  It alone writes the tree.
-- The researcher finds one fact that a search must find, and nothing else, as
-  [Facts are found, decisions are asked](#facts-are-found-decisions-are-asked) says. It is a
-  subagent that Claude Code ships, such as Explore, so Pin holds no agent of its own.
-- `check.py` alone decides whether the tree holds together. It reads the tree and writes nothing.
-- Pin has no roles of its own, so a caller starts no orchestrator of Pin's, as
-  [A plugin that uses another](../plugin-best-practice.md#a-plugin-that-uses-another) would have it.
-  The caller's role takes `pin:down` and runs its steps itself.
-- A pinner that is a caller's role asks the person through the main conversation, as
-  [Where the orchestrator runs](../plugin-best-practice.md#where-the-orchestrator-runs) says. The caller
-  resumes it with the person's answer under the line `The person's answer, word for word:`. The
-  pinner takes only that form as the person's words. Claude Code hands a resuming message on as the
-  coordinator's. A pinner left to guess who speaks asked again what the person had answered, in
-  Pin's trial of a caller and in Turn's, until the caller gave the answer in that form.
-- `pin:down` is a skill that the AI may call: a caller's role takes it by the `skills` field of its
-  frontmatter or by the Skill tool, and Claude Code preloads only a skill the AI may call
-  ([subagents](https://code.claude.com/docs/en/sub-agents#preload-skills-into-subagents)).
+### What each role alone decides
 
-### Data model
+- The go-between decides where the design file lies: the path the maker AI gives, else the file in
+  `.pin/` whose goal is this plan's, else a new path in `.pin/`. It decides nothing of the plan.
+- The pinner decides what the design file holds, which point comes next, whose each decision is,
+  what it recommends, the words of each point, and when the person has confirmed the design. After
+  the maker AI's hand-over, no other role writes the design file.
+- `check.py` decides whether the design file holds: whether it is in form, every question is
+  served, every decision reaches the goal, and each decision comes after those it builds on. It
+  also decides which decisions are open to decide now. It writes nothing.
+- The guard decides whether a call or an end of the pinner keeps the pinner's rules. Pin writes
+  none of its code. Lane lays it, with the rules from Pin's proposal, as
+  [Lane's lanes](../../plugins/lane/docs/lanes.md) say.
 
-```mermaid
-erDiagram
-  DESIGN_TREE ||--|| GOAL : "has at its root"
-  DESIGN_TREE ||--|{ QUESTION : holds
-  DESIGN_TREE ||--o{ DECISION : holds
-  GOAL ||--|{ QUESTION : "is served by"
-  QUESTION }|--|{ DECISION : "is served by (contributes_to)"
-  DECISION }o--o{ DECISION : "serves (contributes_to)"
-  DECISION }o--o{ DECISION : "builds on (builds_on)"
-  GOAL ||--o{ GROUND : "rests on"
-  DECISION ||--o{ GROUND : "rests on"
-  CHECK_RESULT }o--|| DESIGN_TREE : "is of"
-```
+### Choices in the components, and their costs
 
-- A Caller's settled points are a Goal, Questions and Decisions already decided, in the tree's own
-  form, so a caller hands them over by writing the first tree.
-- The person, research or reasoning settles a Decision. Each settled one rests on at least one
-  Ground: the person's words, a source quoted, or the goal and decisions it follows from.
-  A fact found is a source quoted, and the person's confirmation of it is their words.
+- **The pinner always runs as Pin's subagent, for the person too.** Run in the main conversation
+  for the person, it would need no go-between and no resume. But Lane checks only subagents, and no
+  level of test tries a prompt alone. So the rules that must hold, such as writing only the design
+  file and checking it after each change, hold only where the guard sees the pinner's calls. The
+  cost: each point costs a resume of the pinner (KR1.2). The main conversation passes each point
+  and could reword it, which no hook sees. Pin runs in an interactive session, where Claude Code
+  tells whoever started the pinner that it ended
+  ([the routes](../../plugins/lane/docs/routes.md#what-the-orchestrator-is-told)).
+- **The pinner finds each fact itself, with Read and Grep.** A subagent that searches in the
+  background would let the pinner go on meanwhile. But the pinner ends at each point to wait for
+  the person, and the end of a subagent it started would start it again while that point waits.
+  A second point could then reach the person before the first is answered (KR1.1). The cost: the
+  pinner finds facts one after another, in its own context (KR1.2).
+- **The maker AI hands over in the design file, not in the text it starts Pin with.** The pinner
+  then keeps the maker AI's points as written, never typed again (KR2.1), as
+  [JSON between agents](../plugin-best-practice.md#json-between-agents) says. The pinner goes on
+  from a file at the path in the same way for a stopped run. The cost: the maker AI writes the
+  design file's form, which [the design tree](../../plugins/pin/core/roles/pinner.md#the-design-tree)
+  gives.
+- **`check.py` holds the design file's form, and the guard has no rule of form.** A rule of form
+  would stop a bad write at once. But `check.py` must read the form anyway to check the joins,
+  which a JSON Schema cannot express, and two roles would then each decide the form. The guard
+  still holds the pinner to pass `check.py` after each change. The cost: a write out of form is
+  found at the next check, not at the write.
+- **The design file's path is a value given for each run.** A fixed path would need no value. But
+  each run of the pinner then writes only its own design file, and a maker AI keeps its design
+  where it said. The cost: the go-between puts the path in the request in the form that
+  [Lane's values port](../../plugins/lane/docs/lanes.md#the-ports) reads.
 
-### Sequences
+## Data model
 
-The person runs `/pin:down`, O1 of the UX, and goes on with a stopped run the same way:
+The figure shows each data that Pin's roles pass or keep, and how each joins another.
+
+![Pin's data model](images/data-model.svg)
+
+- **Request**: what the go-between starts the pinner with. It holds the plan in the person's words,
+  or the maker AI's request with any point that its work found, and the design file's path.
+- **Design file**: the design, `design-tree.json`. It holds the Goal, the Questions that must hold
+  for it, and the Decisions that make each Question hold. A Ground is what a Goal or a Decision
+  rests on, such as the person's words or a source quoted.
+- **Reply**: what the pinner ends a run with: one point for the person, the whole design to
+  confirm, or once confirmed, the design file's path.
+- **Answer**: the person's words, which the go-between passes back to the pinner.
+- **Check result**: what `check.py` prints and the code it exits with.
+- **Rules laid**: the pinner's rules, as Lane laid them from Pin's proposal.
+
+The fields of the design file lie in
+[the design tree](../../plugins/pin/core/roles/pinner.md#the-design-tree). The README's
+[How it works](../../plugins/pin/README.md#how-it-works) gives the headings that a Reply and an
+Answer carry.
+
+## Sequences
+
+Each story's steps follow in order. The participants are named as in [Components](#components).
+The data in brackets are named as in [Data model](#data-model). S1 and S3 differ only up to the
+start of the pinner, and S2 and S4 not at all, so each pair has one sequence.
+
+### S1 and S3: the start
+
+In S3 the maker AI is the go-between, so it puts the first point to the person itself.
 
 ```mermaid
 sequenceDiagram
   participant P as person
-  participant M as main conversation (pinner)
-  participant R as researcher
-  participant C as check.py
-  participant T as design-tree.json
-  P->>M: /pin:down with the plan
-  alt a tree for the plan already lies in .pin/, left by a stopped run
-    M->>T: reads the Design tree
-    Note over M,T: Goes on from the loop below, asking nothing answered before.
-  else no tree lies there
-    M->>T: writes the Goal to confirm, the Questions under it, every Decision open
-    loop until the Check result says the tree holds
-      M->>C: runs on the path
-      C->>T: reads the Design tree
-      C-->>M: Check result
-      opt it names a question no decision serves, or a decision that serves none
-        M->>T: mends the Design tree
-      end
-    end
-    M->>R: in the background, a fact to find
-    M->>P: the Goal, with a recommendation
-    P->>M: the answer
-    M->>T: writes the Goal confirmed, the person's words as its Ground
+  participant M as maker AI
+  participant GB as go-between
+  participant PN as pinner
+  participant GD as guard
+  participant CK as check.py
+  participant DF as Design file
+  participant RP as repository
+  alt S1
+    P->>GB: types /pin:down with the plan (Request)
+  else S3
+    M->>DF: writes its hand-over (Goal, Question, Decision)
+    M->>GB: takes pin:down with the path
   end
-  loop until no Decision is left open, or the person asks to wrap up
-    alt the researcher has given a fact
-      R-->>M: the fact, with its Ground
-      M->>P: the fact, alone, to confirm
-      alt the person confirms it
-        P->>M: right
-        M->>T: writes the fact and the confirmation into the Grounds of the Decision it settles
-      else the person corrects it
-        P->>M: the correction
-        M->>T: writes the correction into the Grounds of that Decision
-      end
-    else a Decision open now is the pinner's to settle
-      M->>T: writes the Decision, by research where a fact confirmed settles it, by the person where their correction changed it, else by reasoning, with what favors it
-    else a Decision open now rests on a fact only the person knows
-      M->>P: that fact, alone, to tell
-      P->>M: the answer
-      M->>T: writes it into the Decision's Grounds
-    else a Decision open now is the person's
-      M->>P: one Decision to make, with a recommendation
-      alt the person decides it
-        P->>M: the answer
-        M->>T: writes the Decision, by the person
-      else the person leaves it to the pinner
-        P->>M: you decide
-        M->>T: writes the Decision, by reasoning, saying so
-      end
+  GB->>DF: looks for the plan's design file, and picks the path
+  GB->>PN: starts it in the background (Request)
+  alt no design file lies at the path
+    PN->>DF: writes the Goal to confirm, the Questions, each Decision open
+  else a stopped run or the maker AI left one there
+    PN->>DF: reads it (Design file)
+    opt the Request names a point that the maker AI's work found
+      PN->>DF: opens that Decision again, and each Decision built on it
     end
-    opt the answer raises a point not in the tree
-      M->>T: adds an open Decision, joined to what it serves and builds on
-    end
-    M->>C: runs on the path
-    C->>T: reads the Design tree
-    C-->>M: Check result
   end
-  M->>P: the design, each Decision in a short line, with what settled it, and each left open
-  alt the person changes something
-    P->>M: the change
-    M->>T: opens that Decision again, with each that builds on it
-    Note over P,T: Back to the loop above.
-  else the person confirms it
-    P->>M: confirms it
-    M->>C: runs on the path
-    C-->>M: Check result
-    M-->>P: the path of the Design tree, and what the check printed
-  end
-```
-
-Turn's designer has a work's design pinned down, O2 of the UX. Each step that the first sequence
-draws between the pinner and the person goes here through the main conversation:
-
-```mermaid
-sequenceDiagram
-  participant D as designer (pinner)
-  participant R as researcher
-  participant C as check.py
-  participant T as design-tree.json
-  participant M as main conversation
-  participant P as person
-  D->>T: writes Turn's settled points: the Goal, the Questions, the Decisions it has
-  loop until the Check result says the tree holds
-    D->>C: runs on the path
-    C-->>D: Check result
+  loop until the Check result says the file holds
+    PN->>CK: runs it on the path
+    CK->>DF: reads it (Design file)
+    CK-->>PN: Check result
     opt it names a problem
-      D->>T: mends the Design tree, Turn's points kept as given
+      PN->>DF: mends it, the maker AI's points kept
     end
   end
-  D->>R: in the background, a fact to find
-  loop until no Decision is left open, or the person asks to wrap up
-    alt a point is the person's: a fact to confirm, a fact only they know, or a Decision
-      D->>M: ends with the point, headed `For the person:`
-      M->>P: puts it
-      alt the person answers it
-        P->>M: the answer
-        M->>D: resumes it, under `The person's answer, word for word:`
-        D->>T: writes it, the person's words as its Ground
-      else the person asks to wrap up
-        P->>M: wrap up
-        M->>D: resumes it, under `The person's answer, word for word:`
-        D->>T: leaves each open Decision open, and asks no more
-      end
-    else a Decision open now is the pinner's to settle
-      D->>T: writes the Decision, by reasoning
-    end
-    D->>C: runs on the path
-    C->>T: reads the Design tree
-    C-->>D: Check result
+  opt the Goal is settled and decisions are open to decide now
+    PN->>RP: reads each fact that such a Decision rests on
+    PN->>DF: settles each such Decision that is its own (Decision, Ground)
+    PN->>CK: runs it on the path
+    CK-->>PN: Check result
   end
-  D->>M: ends with the design, headed `For the person:`
-  M->>P: puts it
-  alt the person changes something
-    P->>M: the change
-    M->>D: resumes it with the change
-    D->>T: opens that Decision again, with each that builds on it
-    Note over D,P: Back to the loop above.
-  else the person confirms it
-    P->>M: confirms it
-    M->>D: resumes it with the confirmation
-    D->>C: runs on the path
-    C-->>D: Check result
-    D-->>D: ends with the path of the Design tree
+  GD->>PN: checks each call and the end against Rules laid
+  alt the call or the end keeps the rules
+    GD-->>PN: lets it through
+  else it writes another file, runs another command, or ends with the file unchecked
+    GD-->>PN: stops it with its step's sentence
   end
+  PN-->>GB: ends with one point, the Goal where it is not settled (Reply)
+  GB->>P: puts it as given
 ```
 
-Turn or rn reopens a decision:
+The guard checks every call of the pinner in this way, in both sequences. Each sequence draws the
+check once, before the end that it holds.
+
+### S2 and S4: an answer
+
+In S4 the maker AI is the go-between, and the person answers it.
 
 ```mermaid
 sequenceDiagram
-  participant D as caller's role (pinner)
-  participant C as check.py
-  participant T as design-tree.json
-  D->>T: reads the Design tree, every Decision settled
-  alt the point is held by a Decision
-    D->>T: opens it again, with each Decision that builds on it, the person's words kept in its Grounds
-  else no Decision holds the point
-    D->>T: adds an open Decision, joined to what it serves and builds on
+  participant P as person
+  participant GB as go-between
+  participant PN as pinner
+  participant GD as guard
+  participant CK as check.py
+  participant DF as Design file
+  participant RP as repository
+  participant M as maker AI
+  P->>GB: answers, or says anything while the point waits
+  GB->>PN: resumes it with the person's words, word for word (Answer)
+  alt a fact confirmed or corrected
+    PN->>DF: writes it into the Grounds of the Decision it rests on (Ground)
+  else a decision made
+    PN->>DF: writes the Decision, settled by the person (Decision, Ground)
+  else a decision left to Pin
+    PN->>DF: writes the Decision, settled by reasoning, saying so (Decision, Ground)
+  else a point not in the file
+    PN->>DF: adds an open Decision, joined to what it serves and builds on
+  else a change to the design
+    PN->>DF: opens that Decision again, and each Decision built on it
+  else a wrap-up
+    PN->>DF: leaves each open Decision open
+  else the design confirmed
+    PN->>DF: writes the person's words as the confirmation (Ground)
   end
-  D->>C: runs on the path
-  C-->>D: Check result, the open Decisions named
-  Note over D,T: Then as the loop of O2, from the first open Decision.
-```
-
-## Physical view
-
-### Deployment
-
-```mermaid
-flowchart TB
-  subgraph PC["the person's computer"]
-    subgraph CCP["Claude Code process #lt;Claude Code 2.1.317 or later#gt;"]
-      MC2["main conversation, or the caller's role: the pinner"]
-      RS2["researcher"]
+  loop until no Decision is open to decide now, or the person asked to wrap up
+    PN->>CK: runs it on the path
+    CK->>DF: reads it (Design file)
+    CK-->>PN: Check result, with each Decision open to decide now
+    opt a Decision open now is the pinner's own
+      PN->>RP: reads each fact it rests on
+      PN->>DF: settles it (Decision, Ground)
     end
-    CKP["check.py process #lt;python3 3.9 or later#gt;"]
-    REPO[("the repository: .pin/#lt;yyyymmdd#gt;-#lt;name#gt;/design-tree.json,<br>or the path the caller names")]
   end
-  API[["Anthropic's API, which Claude Code uses"]]
-  CCP -- "runs python3 on scripts/check.py, through the Bash tool" --> CKP
-  CCP -- "reads and writes" --> REPO
-  CKP -- "reads" --> REPO
-  CCP -- "the model's turns" --> API
+  GD->>PN: checks each call and the end against Rules laid
+  alt a point is open, and the person did not ask to wrap up
+    PN-->>GB: ends with the next point (Reply)
+  else no point is open or the person asked to wrap up, and the design is not confirmed
+    PN-->>GB: ends with the whole design, each point with who settled it (Reply)
+  else the person confirmed the design
+    PN-->>GB: ends with the design file's path and the Check result (Reply)
+  end
+  GB->>P: puts it as given
+  opt S4, the design confirmed
+    M->>DF: reads the design, to build on it as given
+  end
 ```
 
-- The person installs Pin as [the README](../../plugins/pin/README.md#installation) says. A plugin
-  that uses Pin lists it in its `dependencies`, and installing that plugin installs Pin.
-- The person starts Pin with `/pin:down`. A caller's role starts it by taking the skill.
-- `check.py` uses Python 3.9 and its standard library only, as
-  [Python 3.9 and the standard library](../plugin-best-practice.md#python-39-and-the-standard-library)
-  says.
-- The pinner keeps a person's tree in `.pin/<yyyymmdd>-<name>/` at the root of the repository, as
-  [Where a plugin writes its files](../plugin-best-practice.md#where-a-plugin-writes-its-files) says.
-  It keeps a caller's tree where the caller names.
+- **Each run of the pinner ends with one Reply.** A pinner that waited for the answer inside one
+  run would need no resume. But a subagent cannot ask the person, so it can only end. Its end is
+  also where the guard holds the last check of the design file. The cost: each point costs a
+  resume of the pinner (KR1.2).
 
-### Directory structure
+## Deployment
+
+Pin runs on the person's computer. Where a maker AI uses Pin, Pin runs on the computer where the
+maker AI runs for the person.
+
+![Pin's deployment](images/deployment.svg)
+
+To start Pin, the person installs it as [the README](../../plugins/pin/README.md#installation)
+says, and types `/pin:down`. A plugin whose skill or subagent is a maker AI lists `pin` in its
+`dependencies`, and its maker AI takes `pin:down`. Claude Code starts the guard through Pin's hook
+entries, and the pinner runs `check.py` through the Bash tool.
+
+- **`check.py` uses Python 3.9 and its standard library only**, as
+  [Python 3.9 and the standard library](../plugin-best-practice.md#python-39-and-the-standard-library)
+  says. The guard is Lane's code, which needs the same. The person installs nothing else for Pin.
+- **The design file lies in `.pin/<yyyymmdd>-<name>/` at the root of the repository**, or where the
+  maker AI says, as
+  [Where a plugin writes its files](../plugin-best-practice.md#where-a-plugin-writes-its-files) says
+  for what may be kept. The AI that makes the work reads it there.
+
+## Directory structure
+
+Each role and each data lies on one line below, named as in [Components](#components) and the data
+model. The files inside a role are left out.
 
 ```text
 plugins/pin/
-├── .claude-plugin/plugin.json      pin's manifest and version <JSON>
-├── skills/down/SKILL.md            pin:down's entry, which links the pinner's part <Markdown>
+├── .claude-plugin/plugin.json      Pin's manifest and version <JSON>
+├── skills/down/SKILL.md            pin:down, the go-between's entry <Markdown>
+├── agents/pinner.md                pin:pinner, the pinner's entry <Markdown>
+├── core/roles/go-between.md        the go-between; the form of Request, Answer <Markdown>
+├── core/roles/pinner.md            the pinner; the form of Reply, Design file <Markdown>
 ├── scripts/check.py                check.py's entry <command line · Python 3.9>
-├── core/domain/tree.py             check.py: the Design tree and its Check result <module · Python 3.9>
-├── core/roles/pinner.md            the pinner's flow <Markdown>
-├── LICENSE-grilling                Matt Pocock's copyright and permission notice for grilling <text>
-└── README.md, CHANGELOG.md         for users <Markdown>
+├── core/domain/tree.py             check.py; the form of Check result <module · Python 3.9>
+├── hooks/hooks.json                the guard's hook entries <JSON>
+├── hooks/lanes.json                Rules laid <JSON>
+├── hooks/lane/                     the guard, Lane's code <Python 3.9>
+├── LICENSE-grilling                Matt Pocock's notice for grilling <text>
+└── README.md, CHANGELOG.md, images/   for Pin's users <Markdown, SVG>
 
 dev/pin/
-├── ux.md, architecture.md, README.md   for developers <Markdown>
+├── ux.md, architecture.md, images/, README.md   for Pin's developers <Markdown, SVG>
 ├── cosmic-ray.toml                 the mutation testing <TOML>
 └── tests/
-    ├── unit/core/domain/           unit and property tests of tree.py <Python 3>
-    ├── unit/core/roles/            the pinner's trials, trial_*.py <Python 3>
-    ├── architecture/               scripts/check.py on each tree of the sequences, and pin:down's entry <Python 3>
-    └── ux/                         the trials of O1 and O2, trial_*.py, and the plugin standing in for a caller <Python 3>
+    ├── unit/                       unit tests, at the path of what each tests <Python 3>
+    ├── architecture/               a test for each path of each sequence <Python 3>
+    └── ux/                         the trials of O1 and O2, and O2's maker AI <Python 3>
 
-.pin/<yyyymmdd>-<name>/design-tree.json   a person's Design tree
+.pin/<yyyymmdd>-<name>/design-tree.json   Design file
 ```
 
-`LICENSE-grilling` lies in Pin's folder. Installing copies only that folder, and the MIT License
-asks that its notice go with each copy of a substantial portion.
+- **`hooks/lane/` is a link to Lane's code in this marketplace**, as
+  [Code kept once](../plugin-best-practice.md#code-kept-once) says. `lay.py`, Lane's command, lays
+  it with `hooks/hooks.json` and `hooks/lanes.json` from Pin's proposal. The cost: a fix in Lane
+  reaches Pin's guard only once a developer lays Pin's rules again.
+- **`LICENSE-grilling` lies in Pin's folder.** `pin:down` is made from Matt Pocock's skill grilling.
+  Installing copies only Pin's folder, and the MIT License asks that its notice go with each copy.
 
-## Test
+## Tests
 
-Pin is tested as [Test](../plugin-best-practice.md#test) says. What follows is what Pin adds.
+Pin is tested as [Test](../plugin-best-practice.md#test) in the plugin best practice says. The
+table and the rules below give only what Pin adds.
 
-| Deployment unit | unit | architecture | ux |
-|---|---|---|---|
-| check.py process [python3 3.9 or later] | unittest, Cosmic Ray, Hypothesis · ●●● · each of the three checks, the tree's form, and the exit and its message | unittest, check.py and the tree on disk real, the pinner as a double · ●●● · each path of O1, O2 and a reopen, check.py run by the command as `pin:down` writes it on each tree the double writes | trials on Opus · ●○○ · run by the pinner on each answer |
-| Claude Code process: the pinner [Claude Code 2.1.317 or later] | trials on Opus · ●●● · `pin:down` alone, one input for each class of point and each step of its flow, with the person and the researcher stood in for | unittest · ●●○ · `pin:down`'s entry as Claude Code takes it: the AI may call it, it links the pinner's part, and it names the check in its one form | trials on Opus · ●○○ · O1 by `/pin:down`, and O2 by a caller's role that takes `pin:down` |
+![Pin's test table](images/tests.svg)
 
-The researcher has no row of its own: Claude Code ships it, and Pin gives it only a prompt, tried
-with the pinner's.
+Every deployment unit has a row, as each has a level that tests it.
 
-Pin lays no lanes. Its only role, the pinner, runs in the main conversation, where a hook is not
-told which skill runs, or inside a caller's role, which the caller's own lanes hold
-([The guard tells each role its steps again](../plugin-best-practice.md#the-guard-tells-each-role-its-steps-again)).
-So the check and these tests hold Pin's steps.
+### No level tries a prompt alone
 
-- **unit, the pinner**: a trial runs `pin:down` alone, as [Unit:
-  prompts](../plugin-best-practice.md#unit-prompts) says. Its classes are the kinds of point in
-  [Facts are found, decisions are asked](#facts-are-found-decisions-are-asked): a fact a search
-  finds, a fact in a file already read, a fact only the person knows, a decision the pinner settles,
-  and a decision that is the person's. Each class has a case where the pinner must ask and one where
-  it must not. The cases of its flow add a tree a caller settled part of, a tree left by a stopped
-  run, a decision reopened, and a design the person changes. A script stands in for the person and
-  answers "Yes." to every message. Where a case needs the person's own answer, such as a correction,
-  an AI answers from an intent instead. A project subagent named Explore, which Claude Code takes in
-  place of its own, stands in for the researcher with set facts. A plugin made for the test stands
-  in for a caller whose role takes `pin:down`. An AI given the person's intent judges each message.
-  A trial passes where each message to the person holds one point, a fact found is shown to the
-  person before the design, no decision asked is one the pinner could settle or one the caller
-  settled, and the tree passes `check.py` with no decision open, or with only those the person left
-  open.
-- **architecture**: what joins Pin's parts runs real: `check.py`, run by the command that `pin:down`
-  names, on the tree on disk. The pinner is a role an AI runs, so a double stands in for it. Each
-  double runs one path of [Sequences](#sequences). At each step of the path, the double writes the
-  tree the step calls for, and runs `check.py` by the command that `pin:down` names, with Pin's
-  folder put in, from the folder the pinner works in. The test checks that `check.py` reads that
-  tree and gives the `Check result` the step calls for: that the tree holds, or the problem it
-  names, such as a question no decision serves or the decisions open to decide now. The paths:
+Pin departs from [Unit: prompts](../plugin-best-practice.md#unit-prompts): no level runs the
+go-between or the pinner alone on a model. A prompt written by the repository's best practice
+for prompts leaves only the model's variance and faults of the design. The guard holds the rules
+that must hold, and the architecture tests run the guard on each path. The ux trials find the
+faults of the design, and measure the variance by the key results. The cost: a fault in a prompt
+shows only in a ux trial, which runs once every lower level passes.
 
-  | Sequence | Paths |
-  |---|---|
-  | O1 | the main flow: a new tree, the goal confirmed, a fact confirmed, a decision the pinner settles, a decision the person makes, the design confirmed; a tree mended after the check names a problem; a fact corrected; a fact only the person knows; a decision left to the pinner; a point an answer raises; a wrap-up with decisions left open; the design changed, and its decisions settled again; a tree left by a stopped run, gone on from |
-  | O2 | the main flow, from the caller's settled points, with keys of the caller's own; a tree mended, the caller's points kept; a wrap-up the person asks for through the main conversation, with decisions left open; the design changed, and its decisions settled again |
-  | a reopen | a decision reopened with each that builds on it; a point no decision holds, added |
+### The weights
 
-  Each tree the double writes holds the form that `check.py`'s unit tests hold the tree to, so a
-  change to that form fails the double too. A tree that breaks the form is a class of `check.py`'s
-  unit tests, as no path of the pinner writes one. A second test reads `skills/down/SKILL.md` as
-  Claude Code takes it, as [The check command keeps one form](#the-check-command-keeps-one-form)
-  promises.
-- **ux**: a trial runs Claude Code on Opus on a copy of Pin and of a plugin standing in for a
-  caller, as [ux: the plugin in real use](../plugin-best-practice.md#ux-the-plugin-in-real-use) says, on the
-  notes app's `--json` option, a plan of several decisions that build on one another. There is one
-  for O1 by `/pin:down`, and one for O2 by a caller's role. An AI stands in for the person, with an
-  intent never shown to Pin. A run passes where the confirmed tree holds what that intent wants,
-  with the person's own decisions settled by them and no decision open, as O1 and O2 say.
-  For KR1.1 and KR2.1 the trial measures the share of the intent's decisions that the tree does not
-  hold as the person holds them, and the share of messages that ask a fact or a settled point. For
-  KR1.2 and KR2.2 it measures the time from the request to the confirmed tree. Lower and shorter
-  are better.
-- `check.py` weighs ●●● in unit and architecture tests, as a tree it passes wrongly sends a gap into
-  the work unseen. The pinner weighs ●●● in its unit trials, as a question that is not the
-  person's, or a decision taken for them, is what Pin is there to stop, and those trials try each
-  of its cases.
-- The test of `pin:down`'s entry weighs ●●○: the trials run the entry too, and the test only finds
-  sooner an entry that Claude Code would not load as Pin needs.
-- The ux trials weigh ●○○. They only confirm, in real use, what the lower levels have checked.
+- `check.py` weighs ●●● at unit and at architecture. A design file that it passes wrongly sends a
+  gap into the work unseen (KR1.1, KR2.1).
+- The guard weighs ●●● at architecture. It alone holds the pinner's rules on every run. A rule let
+  through lets the pinner write what is not the design, or hand on a design file left unchecked
+  (KR1.1, KR2.1). Lane's own unit tests test its code.
+- The entries weigh ●●○ at architecture. A test there only finds sooner an entry that Claude Code
+  would not load as Pin needs, which every ux trial would also meet.
+- The Claude Code process weighs ●●○ at ux, as only these trials run the prompts. The other rows
+  weigh ●○○ at ux: the trials only confirm what lower levels have checked.
+
+### Unit
+
+- The tests of `check.py` come from the classes of the design file: in form and out of form; no
+  question, and one question; every question served, and a question that no decision serves; every
+  decision reaching the goal, and one that reaches none; a decision decided before one it builds on;
+  and a key it does not know.
+- Which decisions are open to decide now turns on two conditions: whether a decision is decided,
+  and whether each decision it builds on is decided. A table gives one rule for each combination,
+  and each rule has one test.
+- The tests also cover each of the three results of `check.py`, as
+  [No check passes what it did not check](../plugin-best-practice.md#no-check-passes-what-it-did-not-check)
+  says: the file holds, the file has a problem, and the file cannot be read.
+- No person takes part at unit, so nothing stands in for one.
+- The tests pass as [Unit: code](../plugin-best-practice.md#unit-code) says.
+
+### Architecture
+
+Each test runs one path of [Sequences](#sequences).
+
+- What joins Pin's parts runs real: `check.py` by the command that the pinner's rule names, the
+  guard by Pin's hook entries on Pin's Rules laid, and the entries' files as Claude Code takes them.
+- Doubles stand in for the go-between, the pinner, Claude Code and the person. A double of Claude
+  Code sends the pinner's hook events in order and runs the hooks' commands. A set answer stands in
+  for the person.
+- Each double gives only what the contract of its part allows. A double of the pinner writes only
+  design files that `check.py`'s unit tests hold to the form, and Replies in the form that
+  [the pinner](../../plugins/pin/core/roles/pinner.md) gives. A double of the go-between passes each
+  Reply and Answer unchanged. A double of Claude Code sends what Claude Code's hooks reference
+  documents. Where that says nothing, it sends what a try of the real Claude Code showed, recorded
+  beside the double with the Claude Code version and the date.
+- At each step, the test checks the role that acts and the data it hands on: the design file on
+  disk, the Check result, and what the guard lets through or stops.
+- The tests pass as
+  [Architecture: the parts joined](../plugin-best-practice.md#architecture-the-parts-joined) says.
+
+The paths, one test each:
+
+| Sequence | Paths |
+|---|---|
+| S1 and S3, the start | a new plan, with a new design file; a stopped run's design file found in `.pin/` and gone on from, nothing asked again; the maker AI's hand-over, its points kept and its goal not put; a settled design with a point that the maker AI's work found, that point and each built on it opened; a design file that the check finds at fault, mended; the pinner writing another file, running another command, and ending with the file changed since its last check, each stopped |
+| S2 and S4, an answer | a fact confirmed; a fact corrected; a decision made; a decision left to Pin; a point that an answer raises; a change to the design, its decision and each built on it settled again; a wrap-up, with decisions left open; the design confirmed, its path handed back; S4 with each of these through the maker AI |
+
+### ux
+
+A trial runs the scenario of O1 or of O2, as
+[ux: the plugin in real use](../plugin-best-practice.md#ux-the-plugin-in-real-use) says.
+
+- The subject is the UX's notes app at the size of a real request: a repository with several
+  scripts that read `notes list`, and a plan of about ten points. The subject brings out the
+  frequent cases: a fact found and confirmed, a fact corrected, a decision of the person's, a
+  decision left to Pin, a point that an answer raises, and a change at the design.
+- An AI on Opus stands in for the person. It is given an intent written before the run and never
+  shown to Pin, and answers each point from it.
+- For O2, a plugin made for the test stands in for a maker AI's plugin. Its maker AI hands over
+  a goal, its questions and two settled points, and builds the JSON output on the design it gets
+  back.
+- A run passes where the stand-in gets what the objective says. A trial passes where 3 runs of 3
+  pass, as
+  [Results that vary from run to run](../plugin-best-practice.md#results-that-vary-from-run-to-run)
+  says.
+
+The trial measures each key result from the session's records and the design file:
+
+| Key result | What the trial measures |
+|---|---|
+| KR1.1 | of the intent's points and the points put to the person, the share that went wrong in any of the UX's four ways |
+| KR1.2 | the time from `/pin:down` to the design that the stand-in confirms |
+| KR2.1 | of the designs that the maker AI got back, the share that went wrong in any of the UX's four ways |
+| KR2.2 | the time from the maker AI's take of `pin:down` to the design it gets back |
+
+The UX gives no key result a target. So each measure is set against the last trial's, in the
+direction that the UX gives it.
+
+### A fault found at a higher level
+
+A fault that a trial finds goes down as
+[A fault is tested at the level that must catch it](../plugin-best-practice.md#a-fault-is-tested-at-the-level-that-must-catch-it)
+says. A step that the pinner broke, where a hook can see the break, becomes a rule of the guard,
+with an architecture test that fails first. Any other fault of a prompt is mended in the prompt,
+for a cause that the trial's records confirm. A fault in how Claude Code acts is recorded beside
+the double of Claude Code, which then sends what the try showed.

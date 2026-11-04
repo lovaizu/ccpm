@@ -1,0 +1,139 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 900" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+  <title>Pin&#x27;s components</title>
+  <style>
+    .bg { fill: #ffffff; }
+    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .lane { fill: #ddf4ff; stroke: #54aeff; }
+    .store { fill: #fff8c5; stroke: #9a6700; stroke-width: 1.5; }
+    .ext { fill: #eaeef2; stroke: #d0d7de; stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .unit { fill: #ddf4ff; fill-opacity: 0.35; stroke: #0969da; stroke-width: 1.2; }
+    .frame { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    .frame-name { fill: #0969da; font-size: 13px; font-weight: 600; }
+    .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
+    .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
+    .label { fill: #1f2328; font-size: 13px; }
+    .small { font-size: 12px; }
+    .data { fill: #8250df; font-size: 12px; font-style: italic; }
+    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .dashed { stroke-dasharray: 5 4; }
+    .head { fill: #59636e; }
+    .hole { fill: #ffffff; stroke: #59636e; stroke-width: 1.5; }
+    .halo { stroke: #ffffff; stroke-width: 7; stroke-linejoin: round; paint-order: stroke; }
+    .mid { text-anchor: middle; }
+    .start { text-anchor: start; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; }
+      .box { fill: #161b22; stroke: #3d444d; }
+      .lane { fill: #0c2d6b; stroke: #4493f8; }
+      .store { fill: #2e2a1a; stroke: #d29922; }
+      .ext { fill: #21262d; stroke: #3d444d; }
+      .unit { fill: #0c2d6b; stroke: #4493f8; }
+      .frame { stroke: #4493f8; }
+      .frame-name { fill: #4493f8; }
+      .name, .label { fill: #f0f6fc; }
+      .kind { fill: #9198a1; }
+      .data { fill: #c297ff; }
+      .line { stroke: #9198a1; }
+      .head { fill: #9198a1; }
+      .hole { fill: #0d1117; stroke: #9198a1; }
+      .halo { stroke: #0d1117; }
+    }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path class="head" d="M0,0 L10,5 L0,10 z"/>
+    </marker>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1500" height="900"/>
+  <circle class="ext" cx="160.0" cy="70" r="11"/>
+  <rect class="ext" x="40" y="80" width="240" height="64" rx="22"/>
+  <text class="name" x="160.0" y="108.5" text-anchor="middle">person</text>
+  <text class="kind" x="160.0" y="125.5" text-anchor="middle">[person]</text>
+  <rect class="box" x="880" y="80" width="280" height="64" rx="0"/>
+  <text class="name" x="1020.0" y="108.5" text-anchor="middle">guard</text>
+  <text class="kind" x="1020.0" y="125.5" text-anchor="middle">[hook script · Lane&#x27;s code, Python 3.9]</text>
+  <path class="store" d="M1260,85 A110.0,9 0 0 1 1480,85 V139 A110.0,9 0 0 1 1260,139 Z"/>
+  <path class="store" d="M1260,85 A110.0,9 0 0 0 1480,85"/>
+  <text class="name" x="1370.0" y="118.0" text-anchor="middle">Rules laid</text>
+  <text class="kind" x="1370.0" y="134.0" text-anchor="middle">[file · JSON]</text>
+  <rect class="box" x="400" y="300" width="280" height="80" rx="0"/>
+  <text class="name" x="540.0" y="329.0" text-anchor="middle">go-between</text>
+  <text class="kind" x="540.0" y="346.0" text-anchor="middle">[steps · Markdown, followed by the</text>
+  <text class="kind" x="540.0" y="361.0" text-anchor="middle">main conversation or the maker AI]</text>
+  <rect class="box" x="880" y="300" width="280" height="80" rx="0"/>
+  <text class="name" x="1020.0" y="329.0" text-anchor="middle">pinner</text>
+  <text class="kind" x="1020.0" y="346.0" text-anchor="middle">[subagent · Claude Code,</text>
+  <text class="kind" x="1020.0" y="361.0" text-anchor="middle">steps in Markdown]</text>
+  <rect class="ext" x="1280" y="304" width="200" height="64" rx="4"/>
+  <text class="name" x="1380.0" y="332.5" text-anchor="middle">repository</text>
+  <text class="kind" x="1380.0" y="349.5" text-anchor="middle">[files]</text>
+  <rect class="ext" x="40" y="580" width="240" height="64" rx="12"/>
+  <text class="name" x="160.0" y="608.5" text-anchor="middle">maker AI</text>
+  <text class="kind" x="160.0" y="625.5" text-anchor="middle">[AI · Claude Code]</text>
+  <rect class="box" x="1260" y="580" width="220" height="64" rx="0"/>
+  <text class="name" x="1370.0" y="608.5" text-anchor="middle">check.py</text>
+  <text class="kind" x="1370.0" y="625.5" text-anchor="middle">[command line · Python 3.9]</text>
+  <path class="store" d="M400,749 A380.0,9 0 0 1 1160,749 V803 A380.0,9 0 0 1 400,803 Z"/>
+  <path class="store" d="M400,749 A380.0,9 0 0 0 1160,749"/>
+  <text class="name" x="780.0" y="782.0" text-anchor="middle">Design file</text>
+  <text class="kind" x="780.0" y="798.0" text-anchor="middle">[file · JSON]</text>
+  <path class="line" d="M110,144 L110,320 L400,320" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="118" y="206" text-anchor="start">1 types /pin:down,</text>
+  <text class="label small halo" x="118" y="220" text-anchor="start">then answers</text>
+  <text class="data halo" x="118" y="234" text-anchor="start">Request, Answer</text>
+  <path class="line" d="M160,644 L160,776 L400,776" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="170" y="690" text-anchor="start">2 writes its hand-over,</text>
+  <text class="label small halo" x="170" y="704" text-anchor="start">and at the end reads</text>
+  <text class="label small halo" x="170" y="718" text-anchor="start">the design to build on</text>
+  <text class="data halo" x="170" y="732" text-anchor="start">Goal, Question,</text>
+  <text class="data halo" x="170" y="746" text-anchor="start">Decision</text>
+  <path class="line" d="M230,580 L230,360 L400,360" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="238" y="470" text-anchor="start">3 takes pin:down&#x27;s steps</text>
+  <path class="line" d="M500,380 L500,740" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="508" y="540" text-anchor="start">4 looks for the plan&#x27;s file,</text>
+  <text class="label small halo" x="508" y="554" text-anchor="start">and picks its path</text>
+  <text class="data halo" x="508" y="568" text-anchor="start">Design file</text>
+  <path class="line" d="M680,318 L880,318" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="688" y="280" text-anchor="start">5 starts it, then resumes it</text>
+  <text class="label small halo" x="688" y="294" text-anchor="start">[Agent, SendMessage]</text>
+  <text class="data halo" x="688" y="308" text-anchor="start">Request, Answer</text>
+  <path class="line" d="M880,362 L680,362" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="688" y="382" text-anchor="start">12 ends with one point,</text>
+  <text class="label small halo" x="688" y="396" text-anchor="start">the design, or its path</text>
+  <text class="data halo" x="688" y="410" text-anchor="start">Reply</text>
+  <path class="line" d="M1160,112 L1260,112" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="1210" y="102" text-anchor="middle">6 reads</text>
+  <path class="line" d="M1020,144 L1020,300" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="1028" y="196" text-anchor="start">7 lets each call and end through,</text>
+  <text class="label small halo" x="1028" y="210" text-anchor="start">or stops it with its step&#x27;s sentence</text>
+  <text class="label small halo" x="1028" y="224" text-anchor="start">[Claude Code hooks]</text>
+  <path class="line" d="M580,300 L580,112 L280,112" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="430" y="104" text-anchor="middle">13 puts each Reply as given</text>
+  <path class="line" d="M1160,336 L1280,336" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="1220" y="326" text-anchor="middle">8 reads facts</text>
+  <text class="label small halo" x="1220" y="354" text-anchor="middle">[Read, Grep]</text>
+  <path class="line" d="M960,380 L960,740" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="968" y="520" text-anchor="start">9 writes each point,</text>
+  <text class="label small halo" x="968" y="534" text-anchor="start">with who settled it</text>
+  <text class="label small halo" x="968" y="548" text-anchor="start">[Write, Edit]</text>
+  <text class="data halo" x="968" y="562" text-anchor="start">Goal, Question,</text>
+  <text class="data halo" x="968" y="576" text-anchor="start">Decision, Ground</text>
+  <path class="line" d="M1110,380 L1110,612 L1260,612" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="1118" y="460" text-anchor="start">10 runs it on the path,</text>
+  <text class="label small halo" x="1118" y="474" text-anchor="start">and gets its result</text>
+  <text class="label small halo" x="1118" y="488" text-anchor="start">[Bash]</text>
+  <text class="data halo" x="1118" y="502" text-anchor="start">Check result</text>
+  <path class="line" d="M1370,644 L1370,776 L1160,776" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="1378" y="700" text-anchor="start">11 reads</text>
+  <text class="data halo" x="1378" y="714" text-anchor="start">Design file</text>
+  <text class="frame-name" x="40" y="866" text-anchor="start">Legend</text>
+  <rect class="box" x="110" y="851" width="36" height="22" rx="0"/>
+  <text class="label small" x="154" y="866" text-anchor="start">role of Pin</text>
+  <path class="store" d="M250,856 A18,5 0 0 1 286,856 V870 A18,5 0 0 1 250,870 Z"/>
+  <path class="store" d="M250,856 A18,5 0 0 0 286,856"/>
+  <text class="label small" x="294" y="866" text-anchor="start">store of Pin&#x27;s data</text>
+  <rect class="ext" x="430" y="851" width="36" height="22" rx="4"/>
+  <text class="label small" x="474" y="866" text-anchor="start">outside Pin; rounder corners for an AI, round with a head for a person</text>
+  <text class="label small" x="940" y="858" text-anchor="start">[type · technology] in a box; [protocol or tool] on an arrow; number: the order</text>
+  <text class="data" x="940" y="874" text-anchor="start">data handed on, named as in the data model</text>
+</svg>
