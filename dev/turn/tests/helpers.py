@@ -159,6 +159,12 @@ class RoundsTest(RepositoryTest):
 
     def setUp(self) -> None:
         super().setUp()
+        self.lays()
+
+    def lays(self) -> None:
+        """Lays the run, its design, its Standards and the note where the test stands, as a
+        property test does again for each of its examples."""
+        self.write_json(NOTE, PRACTICE)
         self.lay_run([work()])
         self.write_json(os.path.join(RUN, "design-tree.json"), TREE)
         self.write_json(os.path.join(RUN, "standard.json"), practices.standard(PRACTICE))
