@@ -1,186 +1,118 @@
 # Turn UX
 
-Turn's user is the person who wants a work, such as a README or a module of code. A plugin such as
-rn may stand between that person and Turn: rn calls Turn for each work its plan needs, and so
-becomes Turn's caller.
+Turn makes a work that someone asks for. A work is what the person wants made, such as a README
+or a module of code. Its kind is the sort of work it is, such as a README. Turn has two users:
+
+- **the person**: the one who wants the work made and will put it to use;
+- **the calling AI**: an AI that connects a person and Turn, such as a role of another plugin that
+  carries a larger plan for the person. It has Turn make a work the plan needs. It hands Turn the
+  points it has already settled with the person, and passes the work on.
+
+A point is one thing the work's design must settle: a fact, such as what a tool prints, or a
+decision, such as which run a walkthrough shows. Each kind has its questions: those that a good
+work of the kind answers yes to. For a kind new to Turn, the person approves its questions first.
 
 ## OKRs
 
-- O1: The person gets a work that meets their purpose well, and decides only what only they can
-  decide.
-  - KR1.1: Of the works Turn hands back, and the questions it puts to the person on the way, the
-    share that goes wrong: a work the person changes, or asks to have changed, before they put it to
-    use; or a question about a point the person did not need to decide, such as a fact Turn could
-    find. Lower is better.
-  - KR1.2: The lead time from the person's request to the work handed back, their answers included.
-    Shorter is better.
-- O2: The person gets a work of a kind that Turn has made none of before, as well made as a work of
-  a kind it knows, and approves only the purpose of the kind and the conditions a good work of it
-  meets.
-  - KR2.1: Of the works of a kind new to Turn, the share that goes wrong: as KR1.1 says, or a
-    condition of the kind that the person adds or changes after they approved the conditions. Lower
-    is better.
-  - KR2.2: The lead time from the person's request to the work handed back, the time to make the
-    kind's conditions included. Shorter is better.
-- O3: A caller such as rn hands Turn what it has already settled, and gets back a work it can pass
-  on as it is.
-  - KR3.1: Of the works Turn hands back to a caller, the share that goes wrong: a work the caller or
-    the person changes before it is used, or a point the caller had settled that Turn puts to the
-    person again. Lower is better.
-  - KR3.2: The lead time from when the caller starts Turn to the work handed back. Shorter is
-    better.
+Each objective (O) says what one user gains. Its key results (KR) measure how close it is.
 
-In each objective, the first key result comes first: a change may shorten the second only where it
-keeps the first.
+- O1: The person gets a work they put to use as it is handed over, having decided only what is
+  theirs.
+  - KR1.1: Of the works the person has Turn make, directly or through a calling AI, the share that
+    goes wrong. Lower is better. A work goes wrong in any of five ways, and counts once:
+    - the person changes the work, or sends it back for a change, before they first put it to use;
+    - the person is asked a point that is not theirs, such as a fact Turn could find, so they leave
+      it to Turn or tell Turn the fact;
+    - the person settles a point outside the run, or has the work made another way;
+    - the person stops the run, or sets the work aside;
+    - for a kind new to Turn, the person changes a question of the kind after they approved it.
+  - KR1.2: The lead time from the person's request to the work they put to use, their answers and
+    any rounds of change included. Shorter is better.
+- O2: The calling AI has a work made for its person on the points it settled, and passes it on as
+  it is.
+  - KR2.1: Of the works the calling AI has Turn make, the share that goes wrong. Lower is better. A
+    work goes wrong in any of four ways, and counts once:
+    - Turn asks the person a point that the calling AI settled, or the work holds such a point
+      otherwise than it was settled;
+    - the calling AI cannot pass a question on as given, so it rewords or answers the question;
+    - the calling AI changes the work, or settles a point with the person itself, before it passes
+      the work on;
+    - the calling AI gets no work back, as the run stops.
+  - KR2.2: The lead time from the calling AI's request to the work it gets back, the person's
+    answers included. Shorter is better.
 
-Key results have no target values. When a measure becomes a target, it stops being a good measure
-(Goodhart's law). Use the key results to judge how close the objective is.
+In each objective, the first key result comes first. A change shortens the lead time only if it
+keeps the first key result as good. For example, a change that asks the person fewer points
+shortens KR1.2. It is kept only if each point that Turn then settles itself is one the person
+would settle the same way.
+
+Key results have no target values. A measure that becomes a target stops being a good measure
+(Goodhart's law), so the key results serve only to judge how close the objective is.
 
 ## Scenarios
 
-Each scenario makes a work for `tidy`, a command-line tool that sorts a Downloads folder. The
-participants:
+Both scenarios make a README for `tidy`, a command-line tool that sorts a Downloads folder. Turn
+already knows the questions of a README. The participants:
 
-- person (person): wants the work, and decides what is theirs.
-- main conversation (AI): the Claude Code conversation the person talks in. It runs `/turn:up`, puts
-  each question to the person as it comes, and hands each answer back.
-- `up` (AI): Turn's orchestrator, the subagent that starts Turn's other subagents, its roles.
-- planner (AI): the role that settles the kind of work and its template: the parts a good work of
-  the kind has, and the questions it answers yes to.
-- designer (AI): the role that settles this work's purpose and each decision the work needs, and
-  asks the person what is theirs.
-- generator (AI): the role that makes the work from the decisions.
-- evaluator (AI): the role that uses the work as its user would, and answers each question of the
-  template.
-- refactorer and proofreader (AI): the roles that improve how the finished work says what it says,
-  and check it, without changing what it says.
-- researcher (AI): a subagent that finds one fact, such as what `tidy --help` prints.
-- Lane (script): the checks laid into Turn, which tell `up` each next role to start from how the
-  last one ended, such as with every question met.
-- checks (script): the scripts that check the run's files, such as that each question of the
-  template has an answer.
-- rn (AI): the caller in O3.
+- **person** (person): O1's user, and the one the calling AI works for in O2. Each step the person
+  takes waits for them.
+- **calling AI** (AI): has Turn make the README as part of the person's plan, in O2.
+- **Turn** (AI): Claude running Turn. What runs inside Turn takes no part here, so no step here
+  runs as a script.
 
-Every role runs in the background, so the main conversation stays free to put a question to the
-person as soon as a role asks one. A role that asks ends with its question, and goes on once it
-gets the answer back. Turn makes and checks at the same time the parts of the work that stand
-apart, such as two modules that use nothing of each other.
-
-### O1: The person gets a README for tidy
-
-Turn knows the kind `readme`: it ships a template for it.
+### O1: The person has tidy's README made, deciding only what is theirs
 
 ```mermaid
 sequenceDiagram
   participant P as person (person)
-  participant M as main conversation (AI)
-  participant U as up (AI)
-  participant L as Lane (script)
-  participant PL as planner (AI)
-  participant D as designer (AI)
-  participant R as researcher (AI)
-  participant B as generator (AI)
-  participant E as evaluator (AI)
-  participant RF as refactorer and proofreader (AI)
-  participant C as checks (script)
-  P->>M: /turn:up a README for tidy
-  M->>U: starts up in the background with the request
-  L-->>U: next, planner
-  U->>PL: starts planner
-  PL->>C: the run's files hold the kind the request names, and its template
-  PL-->>U: ends, the kind settled
-  L-->>U: next, designer
-  U->>D: starts designer
-  D->>R: in the background, what tidy --help prints, and what tidy's code does
-  D-->>U: ends with the work's purpose to confirm
-  U-->>M: ends with designer's question for the person
-  M->>P: puts the question
-  P->>M: the answer
-  M->>U: the answer
-  U->>D: the answer
-  Note over P,D: Each question reaches the person and comes back the same way.
-  R-->>D: the facts, each with the line it rests on
-  loop until no decision is open
-    D-->>P: one fact to confirm, or one decision with a recommendation
-    P-->>D: the answer
+  participant T as Turn (AI)
+  P->>T: /turn:up a README for tidy
+  opt the kind is new to Turn
+    T->>P: the purpose of such works and their questions, to approve
+    P->>T: yes, or a change
   end
-  D-->>P: the design, each decision in a short line, to approve
-  P-->>D: yes
-  D->>C: every question is served by a decision, and the order holds
-  D-->>U: ends, the design approved
-  L-->>U: next, generator
-  U->>B: starts generator
-  B->>C: generator has answered every question of the template itself
-  B-->>U: ends, the README made
-  L-->>U: next, evaluator
-  U->>E: starts evaluator, with the README and the questions alone
-  E->>C: every question has its answer, with the lines of the README that meet it
-  alt a question is not yet met
-    E-->>U: ends, a question not yet met
-    L-->>U: next, designer
-    U->>D: starts designer, which finds the decision behind it
-    Note over D,E: designer decides it again, or keeps it, and generator and evaluator go again.
-  else every question is met
-    E-->>U: ends, every question met
+  T->>P: the README's purpose as Turn reads it, to confirm
+  P->>T: yes
+  loop until no point is open
+    T->>T: settles each point that follows from the purpose and the facts
+    T->>P: one point: a fact found, to confirm, or a decision of theirs, with a recommendation
+    P->>T: right, or the answer
   end
-  L-->>U: next, refactorer
-  U->>RF: starts refactorer, then proofreader, as Lane says
-  RF-->>U: proofreader ends, every question met
-  L-->>U: no next role
-  U-->>M: done: README.md
-  M->>P: the README
+  T->>P: the design, each point in a short line, to approve
+  P->>T: yes
+  loop until the README meets every question of its kind and of how it reads
+    T->>T: makes the README, or makes it again where it falls short
+    opt a point comes up that is the person's
+      T->>P: the point, with a recommendation
+      P->>T: the answer
+    end
+  end
+  T-->>P: README.md, written and not committed, with each question shown met
 ```
 
-### O2: The person gets a man page for tidy
-
-Turn ships no template for a man page, so planner makes one before designer starts.
+### O2: The calling AI has tidy's README made on the points it settled
 
 ```mermaid
 sequenceDiagram
+  participant C as calling AI (AI)
+  participant T as Turn (AI)
   participant P as person (person)
-  participant M as main conversation (AI)
-  participant U as up (AI)
-  participant PL as planner (AI)
-  participant R as researcher (AI)
-  participant C as checks (script)
-  P->>M: /turn:up a man page for tidy
-  M->>U: starts up in the background with the request
-  U->>PL: starts planner, as Lane says
-  PL->>R: in the background, how good man pages are made: guides, and pages people praise
-  R-->>PL: what each source says, quoted
-  PL-->>P: the purpose of a man page, to confirm
-  P-->>PL: yes
-  PL-->>P: the conditions a good man page meets, and its parts, to approve
-  P-->>PL: yes
-  PL->>C: every part is asked of by a question, and every question has a way to meet it
-  PL-->>U: ends, the template kept for later runs
-  Note over P,U: From here the run goes as in O1.
-```
-
-### O3: rn has Turn make tidy's README
-
-rn has already settled the kind, the README's purpose and where it lies.
-
-```mermaid
-sequenceDiagram
-  participant P as person (person)
-  participant N as rn (AI)
-  participant U as up (AI)
-  participant PL as planner (AI)
-  participant D as designer (AI)
-  participant C as checks (script)
-  N->>U: starts up in the background, with the kind, the purpose, the decisions it settled and the README's path
-  U->>PL: starts planner, as Lane says
-  PL-->>U: ends, the kind taken as rn gave it
-  U->>D: starts designer, with what rn settled
-  D->>C: the tree holds rn's points as given
-  loop until no decision is open
-    D-->>N: through up: one decision rn did not settle, for the person
-    N->>P: puts it
-    P->>N: the answer
-    N-->>D: through up: the answer
+  C->>T: the work, the points it settled, and where the work goes
+  T->>T: keeps those points as given, the purpose among them
+  loop until no point is open
+    T->>T: settles each point that follows from the purpose and the facts
+    T->>C: one point for the person
+    C->>P: passes the point on as given
+    P->>C: right, or the answer
+    C->>T: the answer, word for word
   end
-  D-->>U: ends, the design approved
-  Note over U,C: generator, evaluator, refactorer and proofreader go as in O1.
-  U-->>N: done: README.md
+  T->>C: the design, for the person to approve
+  C->>P: passes the design on
+  P->>C: approves it
+  C->>T: the approval
+  loop until the README meets every question of its kind and of how it reads
+    T->>T: makes the README, or makes it again where it falls short
+  end
+  T-->>C: README.md, kept where the calling AI said
+  C->>P: passes README.md on as it is
 ```
