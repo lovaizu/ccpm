@@ -94,7 +94,7 @@ class TestCodePut(PlacedTest):
             # When: lane's code is put in it
             placed.code_put(lane)
         # Then: its hooks/lane/ is its code still, with no VERSION
-        self.assertTrue(os.path.isfile(os.path.join(code, "core", "domain", "placed.py")))
+        self.assertTrue(os.path.isfile(os.path.join(code, "core", "domain", "guard.py")))
         self.assertFalse(os.path.exists(os.path.join(code, "VERSION")))
 
 

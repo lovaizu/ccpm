@@ -9,9 +9,9 @@ import os
 import re
 import shutil
 
-# lane's folder, and its code, which this module lies in.
-CODE = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-LANE = os.path.dirname(os.path.dirname(CODE))
+# lane's folder, above the scripts/ this module lies in, and its code, laid into each plugin.
+LANE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+CODE = os.path.join(LANE, "hooks", "lane")
 # The marketplace whose plugins take lane's code through a link to lane beside them; it keeps its
 # plugins in its plugins/.
 MARKETPLACE = "ccpm"

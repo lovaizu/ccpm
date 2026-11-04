@@ -395,5 +395,60 @@ class TestLine(unittest.TestCase):
                 self.assertEqual(routes.line(found, "changelog"), said)
 
 
+class TestRefused(unittest.TestCase):
+    """The checks of the routes alone that `lay.py print` makes and the guard makes again on the
+    routes laid, kept in routes.py alone (dev/lane/architecture.md, What each role alone
+    decides)."""
+
+    def given(self, **changed) -> dict:
+        """docs/routes.md's routes, changed as given."""
+        return {**helpers.ROUTES, **changed}
+
+    def test_docs_routes_mds_routes_are_refused_by_nothing(self):
+        # Given: docs/routes.md's routes
+        # When: they are checked
+        # Then: nothing refuses them
+        self.assertEqual(routes.refused(helpers.ROUTES), "")
+
+    def test_routes_that_cannot_be_followed_are_refused_saying_why(self):
+        each = helpers.ROUTES["routes"]
+        for changed, said in (
+            ({"routes": each[1:]}, "gives the routes no one route from lead with a `to`"),
+            ({"routes": [{"from": "lead"}, *each[1:]]}, "gives the routes no one route from lead"),
+            ({"routes": [*each, {"from": "writer"}]}, "gives a route from writer with no `on`"),
+            ({"routes": [*each, each[1]]}, "gives two routes from writer on `written`"),
+            (
+                {"routes": [*each, {"from": "reviewer", "on": "x", "to": "lead"}]},
+                "gives a route to lead, the orchestrator",
+            ),
+            (
+                {"routes": [*each, {"from": "reviewer", "on": "x", "to": "linter"}]},
+                "gives a route to linter, which no route is from",
+            ),
+            (
+                {"routes": [*each[:3], {"from": "reviewer", "on": "good", "to": "writer"}]},
+                "gives no route without a `to`",
+            ),
+            (
+                {"precedence": {"lead": ["more"]}},
+                "gives an order of the results of lead, which no route is from",
+            ),
+            ({"precedence": ["more", "more"]}, "gives `more` twice in an order of results"),
+            ({"precedence": ["late"]}, "gives `late` in an order of results, which no route is on"),
+            (
+                {"precedence": {"writer": ["more"]}},
+                "gives `more` in an order of results, which no route from writer is on",
+            ),
+            ({"fan_out": ["lead"]}, "gives lead in `fan_out`, which no route starts"),
+            ({"fan_out": ["reviewer"]}, "gives reviewer in `fan_out`, whose results"),
+        ):
+            with self.subTest(changed=changed):
+                # Given: docs/routes.md's routes, changed so they cannot be followed
+                # When: they are checked
+                # Then: they are refused, saying why, as the proposal's error goes on
+                found = routes.refused(self.given(**changed))
+                self.assertTrue(found.startswith(said), found)
+
+
 if __name__ == "__main__":
     unittest.main()

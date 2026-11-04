@@ -910,7 +910,11 @@ class TestInForm(LanesTest):
         told = self.check(self.event("Write", {"file_path": "entry.json", "content": "{}"}))
         # Then: it is an error of in_form, telling to lay the lanes again
         self.assertTrue(told[0].error)
-        self.assertIn("lane cannot check in_form on step 3 of writer: names the form", told[0].text)
+        self.assertIn(
+            "lane cannot check in_form on step 3 of writer: `lay.py write` would now refuse it:"
+            " in_form, which names the form",
+            told[0].text,
+        )
         self.assertIn("`lay.py write`", told[0].text)
 
     def test_an_in_form_lane_after_one_given_null_is_held(self):
@@ -1182,14 +1186,29 @@ class TestValues(LanesTest):
         self.assertEqual(len(told), 1)
         self.assertTrue(told[0].text.startswith(f"Write `{{work}}` in the form of `{FORM}`.\n$:"))
 
-    def test_values_putting_a_lane_out_of_its_in_is_an_error(self):
+    def test_a_form_given_as_a_value_that_cannot_be_read_is_an_error(self):
+        # Given: in_form holding entry.json to the form the run gives, given one not there
+        self.lay_lanes([lane("in_form", "entry.json", "{form}")])
+        self.given('{"form": "forms/none.json"}')
+        # When: writer writes entry.json
+        told = self.check(self.event("Write", {"file_path": "entry.json", "content": "{}"}))
+        # Then: it is an error naming the form, as `lay.py write` would refuse it laid so
+        self.assertTrue(told[0].error)
+        self.assertIn(
+            "lane cannot check in_form on step 3 of writer: names the form forms/none.json",
+            told[0].text,
+        )
+
+    def test_a_lane_laid_out_of_its_in_is_an_error_whatever_its_values(self):
         # Given: in_form taking its output and form from one value, given one text
         self.lay_lanes([lane("in_form", "{entry}")])
         self.given('{"entry": "entry.json"}')
         # When: writer writes a file
         told = self.check(self.written("entry.json"))
-        # Then: it is an error, naming the place out of the IN
-        self.assertIn("what it is given is out of its IN at $.takes.form", told[0].text)
+        # Then: it is an error, as `lay.py write` would refuse the lane, naming the place
+        self.assertIn(
+            "would now refuse it: in_form takes out of its places at $.form", told[0].text
+        )
 
 
 class TestValueInCommand(LanesTest):

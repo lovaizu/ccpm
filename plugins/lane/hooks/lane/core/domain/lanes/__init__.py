@@ -16,7 +16,9 @@ the subagent did, "" where nothing is."""
 from __future__ import annotations
 
 import re
-from typing import Any
+from typing import Any, NamedTuple
+
+import schema
 
 from lanes import (
     end_when,
@@ -57,6 +59,8 @@ ROUTED = {
 }
 # Where a wording shows what the lane takes, in quotes, by the name of its place.
 TAKEN = re.compile(r"`<([a-z]+)>`")
+# A thing given for each run: a name in braces, the braces wrapping the whole take.
+GIVEN = re.compile(r"\{[^{}]+\}")
 
 
 def action(lane: str) -> str:
@@ -131,3 +135,47 @@ def sentence(lane: str, takes: list[str]) -> str:
     found = placed(lane, takes)
     # Given as a function, the text put in is taken as it is, a backslash in it among the rest.
     return TAKEN.sub(lambda m: listed(found[m[1]]) if found[m[1]] else "", wording(lane))
+
+
+class Refused(NamedTuple):
+    """Why a lane's takes cannot be laid, as the proposal's error goes on after `gives <lane> on
+    <step>`, "" where they can; and whether the fix is to declare a dependency in the plugin's
+    manifest."""
+
+    said: str
+    declare: bool = False
+
+
+def refused(lane: str, takes: list[str], root: str) -> Refused:
+    """Why the lane cannot be laid taking the things in the plugin at root, as `lay.py print`
+    refuses it and the guard holds a lane laid to it: it takes nothing or an empty thing, its takes
+    in its places are out of its IN, a take names a dependency's folder outside a command or a
+    dependency the plugin's manifest does not declare, a take outside a command holds a value as a
+    part, or in_form names a form it cannot read."""
+    if not takes:
+        return Refused("with no take")
+    if not all(takes):
+        return Refused("with a take that is empty")
+    found = placed(lane, takes)
+    out = schema.held(given_in(lane)["properties"]["takes"], found)
+    if out is not None:
+        return Refused(f"takes out of its places at {out.told()}")
+    for place, each in found.items():
+        command = (lane, place) in run_only.COMMANDS
+        for named in (m for t in each for m in run_only.DEPENDENCY.finditer(t)):
+            if not command:
+                return Refused(f"`{named[0]}`, which only a command may name")
+            if named["name"] not in run_only.dependencies(root):
+                return Refused(
+                    f"`{named[0]}`, which .claude-plugin/plugin.json does not declare among its"
+                    " dependencies",
+                    True,
+                )
+        for take in [] if command else each:
+            for name in [] if GIVEN.fullmatch(take) else run_only.values_in(take):
+                return Refused(f"`{{{name}}}` in a take, which only a command may hold as a part")
+    for form in found.get("form", []) if lane == "in_form" else []:
+        why = "" if GIVEN.fullmatch(form) else in_form.refused(form, root)
+        if why:
+            return Refused(f", which {why}")
+    return Refused("")

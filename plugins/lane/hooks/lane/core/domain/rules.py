@@ -1,13 +1,13 @@
 """The rules laid in a plugin, kept in its hooks/lanes.json in the shape of the proposal's
 subagents and its routes: written by `lay.py write` and read by the guard and the result script, so
 what runs is what was approved; and what every part of lane shares about a plugin's hooks, the
-names a hook's command carries and the seconds Claude Code gives each hook."""
+names a hook's command carries, the seconds Claude Code gives each hook, and the form of an error
+where lane cannot check a lane."""
 
 from __future__ import annotations
 
 import json
 import os
-import re
 from typing import Any, NamedTuple
 
 import lanes
@@ -109,8 +109,22 @@ SHAPE = shape(
 )
 # The result a subagent with a lane checked at its end gives where no route is from it.
 DONE = "done"
-# A thing given for each run: a name in braces, the braces wrapping the whole take.
-GIVEN = re.compile(r"\{[^{}]+\}")
+# A thing given for each run, as lanes/ reads it.
+GIVEN = lanes.GIVEN
+# What a subagent is told to do where lane cannot check a lane, given who must fix it: a role asks
+# the main conversation for what lies outside its work and goes on with the rest, as
+# dev/plugin-best-practice.md's Asking for what lies outside the work says.
+ASK = "Ask the main conversation for the fix: {fix}. Go on with the rest of your work meanwhile."
+LAY_AGAIN = (
+    "the maker of {plugin} must lay its lanes again with `lay.py write`, so they match its steps"
+)
+
+
+def cannot(on: str, wrong: str, fix: str) -> str:
+    """The error where lane cannot check what `on` names, such as `the lanes of <subagent>` or
+    `<lane> on step <n> of <subagent>`, in the form docs/lanes.md gives, which the guard and the
+    result script both tell."""
+    return f"lane cannot check {on}: {wrong}. {ASK.format(fix=fix)}"
 
 
 class Laid(NamedTuple):

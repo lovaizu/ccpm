@@ -166,7 +166,8 @@ developer AI's plugin.
   [the proposal](../../plugins/lane/docs/lanes.md#the-proposal), and checks it against the
   plugin's files.
 - `lanes/` decides, for each type of rule, its sentence, what it is given and what breaks it. Each
-  type lies in a module of its own.
+  type lies in a module of its own. It also decides whether a rule can be laid at all, a check that
+  `proposal.py` makes before laying and `guard.py` makes again on the rules laid.
 - `hook.py` decides how Claude Code's hook input is read and how the check script's answer is
   written. No other role knows that form. `hook.py` hands on only the events of a subagent with
   rules, and the calls that start a subagent or send one a message.
@@ -175,12 +176,14 @@ developer AI's plugin.
 - `called.py` decides what is kept of each run: its calls as they come back, its results, and the
   texts it was given. It also decides how the runs of one subagent join one another.
 - `routes.py` decides whether routes can be followed, which start is due from the routes and the
-  results kept, and which result runs at once give together.
+  results kept, and which result runs at once give together. `proposal.py` and `guard.py` both
+  hold the routes to its check, as with the rules.
 - `ports.py` decides how a text of the plugin, such as a list of items to answer, is read into Port
   JSON, the JSON in which a check takes the text. It reads Lane's own form, or runs the plugin's
   adapter.
 - `result.py` decides whether the result that a subagent gives is one that the subagent may give.
-  It keeps nothing: the check script keeps the result from the run's hook event.
+  It keeps nothing, and reads no text through `ports.py`: the check script keeps the result from
+  the run's hook event, and checks the rest of the end before the command runs.
 
 ### Choices in the components, and their costs
 
@@ -624,7 +627,8 @@ plugins/lane/
 │       ├── lanes/                  lanes/, a module for each type of rule <modules>
 │       ├── called.py               called.py <module>
 │       ├── routes.py               routes.py <module>
-│       └── ports.py                ports.py <module>
+│       ├── ports.py                ports.py <module>
+│       └── rules.py, step.py, template.py, schema.py   code that several roles share <modules>
 └── README.md, docs/, CHANGELOG.md, images/   for Lane's users <Markdown, SVG>
 
 dev/lane/
@@ -645,6 +649,14 @@ dev/lane/
 <the plugin>/hooks/lane/            Lane's code
 ```
 
+- **Code that several roles share lies beside them in `core/domain/`**, each module for one
+  data or one form: `rules.py` reads and writes the Rules laid, `step.py` reads a Step,
+  `template.py` reads a Markdown file's frontmatter and headings, and `schema.py` holds JSON to a
+  JSON Schema. A module inside one role lies in that role, as `lanes/` holds the forms of
+  `in_form`, and `scripts/` holds the parts of `lay.py` beside it. A copy of a shared module in each
+  role would be fixed in one and left wrong in another, as
+  [Code kept once](../plugin-best-practice.md#code-kept-once) says. The cost: a change to a shared
+  module reaches every role that uses it, whose tests must all pass.
 - **Lane's core lies in `hooks/lane/core/domain/`**, not in `core/` at the plugin's root as
   [The core apart from Claude Code](../plugin-best-practice.md#the-core-apart-from-claude-code) puts
   it. `lay.py` lays `hooks/lane/` into each plugin whole, by one link or one copy, and a core

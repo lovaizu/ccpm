@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import re
 
-from done import Done, text, written
+from lanes.done import Done, text, written
 
 ACTION = "end"
 WORDING = "Answer every item of `<input>`."

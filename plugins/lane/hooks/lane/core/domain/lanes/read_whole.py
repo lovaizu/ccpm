@@ -4,8 +4,7 @@ limit covering as many lines as the Read tool gives by default."""
 
 from __future__ import annotations
 
-from done import Done, lines_read, text
-
+from lanes.done import Done, lines_read, text
 from lanes.write_only import in_plugin
 
 ACTION = "read"

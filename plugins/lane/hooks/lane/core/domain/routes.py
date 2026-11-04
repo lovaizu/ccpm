@@ -115,6 +115,72 @@ def unordered(routes: dict[str, Any]) -> str | None:
     return None
 
 
+def refused(routes: dict[str, Any]) -> str:
+    """Why the routes, in their JSON Schema, cannot be followed, as `lay.py print` refuses them and
+    the guard holds the routes laid to it, said as the proposal's error goes on; "" where they can:
+    no one first route, from the orchestrator, with a `to` and no `on`; another route with no
+    `on`, or two from one subagent on one result; a route to the orchestrator, which gives no
+    result, or to a subagent no route is from; no route that ends; an order of results, or a
+    subagent fanned out, as `ordered` checks them."""
+    lead, each = routes["orchestrator"], routes["routes"]
+    first = [r for r in each if r["from"] == lead]
+    # A first route alone is the start; with none or two, there is none, which has no `to`.
+    start: dict[str, Any] = {}
+    if len(first) == 1:
+        start = first[0]  # pragma: no mutate
+    if "on" in start or "to" not in start:
+        return (
+            f"gives the routes no one route from {lead} with a `to` and no `on`, which starts the"
+            " run"
+        )
+    seen: list[tuple[str, str]] = []
+    for r in each:
+        if r["from"] == lead:
+            continue
+        if "on" not in r:
+            return f"gives a route from {r['from']} with no `on`"
+        if (r["from"], r["on"]) in seen:
+            return f"gives two routes from {r['from']} on `{r['on']}`"
+        seen.append((r["from"], r["on"]))
+    froms = [f for f, _ in seen]
+    for r in each:
+        to = r.get("to")
+        if to == lead:
+            return f"gives a route to {lead}, the orchestrator, which gives no result"
+        if to is not None and to not in froms:
+            return (
+                f"gives a route to {to}, which no route is from, so it would have no result to give"
+            )
+    if all("to" in r for r in each):
+        return "gives no route without a `to`, so the run cannot end"
+    return ordered(routes, froms)
+
+
+def ordered(routes: dict[str, Any], froms: list[str]) -> str:
+    """Why the routes' orders of results, or the subagents they fan out, cannot be followed, the
+    subagents routes are from being `froms`; "" where they can: an order of the results of a
+    subagent no route is from, naming a result twice or one no route from its subagent is on; a
+    subagent fanned out that no route starts, or one giving several results its order does not
+    hold each of, as `unordered` says."""
+    precedence = routes.get("precedence")
+    orders = precedence if isinstance(precedence, dict) else {"": precedence or []}
+    for name, taken in orders.items():
+        if name and name not in froms:
+            return f"gives an order of the results of {name}, which no route is from"
+        given = ons(routes, name) if name else [r["on"] for r in routes["routes"] if "on" in r]
+        for at, on in enumerate(taken):
+            if on in taken[:at]:
+                return f"gives `{on}` twice in an order of results"
+            if on not in given:
+                which = f"no route from {name}" if name else "no route"
+                return f"gives `{on}` in an order of results, which {which} is on"
+    starts = [r["to"] for r in routes["routes"] if "to" in r]
+    for name in routes.get("fan_out", []):
+        if name not in starts:
+            return f"gives {name} in `fan_out`, which no route starts"
+    return unordered(routes) or ""
+
+
 def combined(routes: dict[str, Any], name: str, given: list[str]) -> str:
     """The result of the runs of the subagent of the name, which gave the results: the one they
     share, or the first of them in its order. Stops with Unordered where they differ and the order

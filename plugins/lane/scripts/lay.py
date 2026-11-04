@@ -1,6 +1,6 @@
 """What the developer AI runs to print the lanes it proposes, write them into its plugin once
 approved, or bring up a plugin laid before: reads the action and its path, hands them to the
-layer, lane's code in hooks/lane/core/domain/, and prints what it gives, or what stopped it."""
+layer, its parts beside it, and prints what it gives, or what stopped it."""
 
 from __future__ import annotations
 

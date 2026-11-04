@@ -15,20 +15,21 @@ import re
 from typing import Any
 
 import lanes
-import placed
 import ports
 import routes
 import rules
 import schema
 import step
 import template
-from lanes import in_form, run_only
 
 # What the proposal is told to be, when it is not: in the shape docs/lanes.md gives, named by its
 # whole path, as the developer AI may run lay.py from any folder.
-LANES_MD = os.path.join(placed.LANE, "docs", "lanes.md")
+# Lane's folder, as lay.py runs this module from Lane: four above its own, core/domain/ in
+# hooks/lane/.
+LANE = os.path.realpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), *[".."] * 4))
+LANES_MD = os.path.join(LANE, "docs", "lanes.md")
 AGAIN = f"write the proposal again in the shape {LANES_MD} gives"
-ROUTES_MD = os.path.join(placed.LANE, "docs", "routes.md")
+ROUTES_MD = os.path.join(LANE, "docs", "routes.md")
 ROUTES_AGAIN = f"write the routes again as {ROUTES_MD} says"
 # The proposal's JSON Schema, as docs/lanes.md gives it.
 NAMED = list(lanes.LANES)
@@ -135,53 +136,20 @@ def entry_lines(root: str, name: str) -> list[str]:
 
 
 def routes_checked(root: str, given: dict[str, Any]) -> dict[str, Any]:
-    """The routes, held to their schema and checked as docs/routes.md says: one first route, from
-    the orchestrator, with a `to` and no `on`; each other from another subagent, on a result, one
-    route a result; each `to` a subagent routed from, not the orchestrator, which gives no result;
-    a route that ends; each order of results and each subagent fanned out as `fanned` checks them;
-    the orchestrator's step in its file, its tools, where named, with Agent; no
-    subagent they name set to run in the foreground; and each subagent giving a result with a last
-    step."""
+    """The routes, held to their schema, checked as `routes.refused` says, and then against the
+    files of the subagents they name: the orchestrator's step in its file, its tools, where named,
+    with Agent; no subagent they name set to run in the foreground; and each subagent giving a
+    result with a last step."""
     out = schema.held(rules.ROUTES, given)
     if out is not None:
         raise wrong(f"is out of its shape at $.routes{out.told()[1:]}", ROUTES_AGAIN)
-    lead, each = given["orchestrator"], given["routes"]
-    first = [r for r in each if r["from"] == lead]
-    # A first route alone is the start; with none or two, there is none, which has no `to`.
-    start: dict[str, Any] = {}
-    if len(first) == 1:
-        start = first[0]  # pragma: no mutate
-    if "on" in start or "to" not in start:
-        raise wrong(
-            f"gives the routes no one route from {lead} with a `to` and no `on`, which starts the"
-            " run",
-            ROUTES_AGAIN,
-        )
-    seen: list[tuple[str, str]] = []
-    for r in each:
-        if r["from"] == lead:
-            continue
-        if "on" not in r:
-            raise wrong(f"gives a route from {r['from']} with no `on`", ROUTES_AGAIN)
-        if (r["from"], r["on"]) in seen:
-            raise wrong(f"gives two routes from {r['from']} on `{r['on']}`", ROUTES_AGAIN)
-        seen.append((r["from"], r["on"]))
-    froms = [f for f, _ in seen]
-    for r in each:
-        to = r.get("to")
-        if to == lead:
-            raise wrong(
-                f"gives a route to {lead}, the orchestrator, which gives no result", ROUTES_AGAIN
-            )
-        if to is not None and to not in froms:
-            raise wrong(
-                f"gives a route to {to}, which no route is from, so it would have no result to"
-                " give",
-                ROUTES_AGAIN,
-            )
-    if all("to" in r for r in each):
-        raise wrong("gives no route without a `to`, so the run cannot end", ROUTES_AGAIN)
-    fanned(given, froms)
+    why = routes.refused(given)
+    if why and why == routes.unordered(given):
+        raise wrong(why, f"order them there, as {ROUTES_MD} says, and run again")
+    if why:
+        raise wrong(why, ROUTES_AGAIN)
+    lead = given["orchestrator"]
+    froms = routes.giving(given)
     for name in routes.named(given):
         _, lines = agent_lines(root, name, ROUTES_AGAIN)
         bare = [line.rstrip("\n") for line in lines]
@@ -204,36 +172,6 @@ def routes_checked(root: str, given: dict[str, Any]) -> dict[str, Any]:
             raise wrong(f"gives {name}, whose file has no step to end by its result", ROUTES_AGAIN)
         in_background(root, name, ROUTES_MD)
     return given
-
-
-def fanned(given: dict[str, Any], froms: list[str]) -> None:
-    """Stops where the routes' orders of results, of the subagents routes are from, name a result
-    twice or one no route from their subagent is on, or a subagent no route is from; or where they
-    fan out a subagent no route starts, or one giving several results its order does not hold
-    each of, so the result of its runs at once could not be told."""
-    precedence = given.get("precedence")
-    orders = precedence if isinstance(precedence, dict) else {"": precedence or []}
-    for name, taken in orders.items():
-        if name and name not in froms:
-            raise wrong(
-                f"gives an order of the results of {name}, which no route is from", ROUTES_AGAIN
-            )
-        ons = routes.ons(given, name) if name else [r["on"] for r in given["routes"] if "on" in r]
-        for at, on in enumerate(taken):
-            if on in taken[:at]:
-                raise wrong(f"gives `{on}` twice in an order of results", ROUTES_AGAIN)
-            if on not in ons:
-                which = f"no route from {name}" if name else "no route"
-                raise wrong(
-                    f"gives `{on}` in an order of results, which {which} is on", ROUTES_AGAIN
-                )
-    starts = [r["to"] for r in given["routes"] if "to" in r]
-    for name in given.get("fan_out", []):
-        if name not in starts:
-            raise wrong(f"gives {name} in `fan_out`, which no route starts", ROUTES_AGAIN)
-    why = routes.unordered(given)
-    if why:
-        raise wrong(why, f"order them there, as {ROUTES_MD} says, and run again")
 
 
 def in_background(root: str, name: str, told: str = LANES_MD) -> None:
@@ -286,40 +224,18 @@ def subagent(root: str, given: dict[str, Any], beside: str = "") -> dict[str, An
 
 
 def lane_check(lane: dict[str, Any], on: str, root: str) -> None:
-    """Stops where the lane, held to its schema, on the step `on` names, takes nothing or an empty
-    thing, its takes in its places are out of its IN, a take names a dependency's folder outside a
-    command or a dependency the plugin's manifest does not declare, a take outside a command holds
-    a value as a part, or in_form names a form it cannot read."""
-    kind, takes = lane["lane"], lane["takes"]
-    if not takes:
-        raise wrong(f"gives {kind} on {on} with no take")
-    if not all(takes):
-        raise wrong(f"gives {kind} on {on} with a take that is empty")
-    shape = lanes.given_in(kind)["properties"]["takes"]
-    out = schema.held(shape, lanes.placed(kind, takes))
-    if out is not None:
-        raise wrong(f"gives {kind} on {on} takes out of its places at {out.told()}")
-    for place, each in lanes.placed(kind, takes).items():
-        for found in (m for t in each for m in run_only.DEPENDENCY.finditer(t)):
-            if (kind, place) not in run_only.COMMANDS:
-                raise wrong(f"gives {kind} on {on} `{found[0]}`, which only a command may name")
-            if found["name"] not in run_only.dependencies(root):
-                raise wrong(
-                    f"gives {kind} on {on} `{found[0]}`, which .claude-plugin/plugin.json does not"
-                    " declare among its dependencies",
-                    f"declare it there, as {LANES_MD} says, and run again",
-                )
-        for take in each if (kind, place) not in run_only.COMMANDS else []:
-            for name in [] if rules.GIVEN.fullmatch(take) else run_only.values_in(take):
-                raise wrong(
-                    f"gives {kind} on {on} `{{{name}}}` in a take, which only a command may hold as"
-                    " a part"
-                )
-    if kind == "in_form":
-        for named in lanes.placed(kind, takes)["form"]:
-            why = "" if rules.GIVEN.fullmatch(named) else in_form.refused(named, root)
-            if why:
-                raise wrong(f"gives in_form on {on}, which {why}")
+    """Stops where the lane, held to its schema, on the step `on` names, is one lanes/ refuses, as
+    `lanes.refused` says."""
+    kind = lane["lane"]
+    why = lanes.refused(kind, lane["takes"], root)
+    if why.declare:
+        raise wrong(
+            f"gives {kind} on {on} {why.said}",
+            f"declare it there, as {LANES_MD} says, and run again",
+        )
+    if why.said:
+        space = "" if why.said.startswith(",") else " "
+        raise wrong(f"gives {kind} on {on}{space}{why.said}")
 
 
 def adapter(named: str, port: str, root: str, beside: str, on: str) -> dict[str, Any]:

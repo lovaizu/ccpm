@@ -198,5 +198,28 @@ class TestAdapters(helpers.PluginTest):
         )
 
 
+class TestCannot(unittest.TestCase):
+    def test_an_error_names_what_cannot_be_checked_what_is_wrong_and_who_must_fix_it(self):
+        # Given: the lanes of writer, hooks/lanes.json not there, and the maker to lay them again
+        # When: the error is made
+        said = rules.cannot("the lanes of writer", "hooks/lanes.json is not there", "fix it")
+        # Then: it is in the form docs/lanes.md gives, telling the subagent to ask and go on
+        self.assertEqual(
+            said,
+            "lane cannot check the lanes of writer: hooks/lanes.json is not there. Ask the main"
+            " conversation for the fix: fix it. Go on with the rest of your work meanwhile.",
+        )
+
+    def test_laying_again_names_the_plugins_maker(self):
+        # Given: the plugin changelog
+        # When: the fix of laying its lanes again is asked for
+        # Then: it names changelog's maker and `lay.py write`
+        self.assertEqual(
+            rules.LAY_AGAIN.format(plugin="changelog"),
+            "the maker of changelog must lay its lanes again with `lay.py write`, so they match"
+            " its steps",
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

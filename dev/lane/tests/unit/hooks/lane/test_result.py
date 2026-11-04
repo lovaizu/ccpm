@@ -5,6 +5,7 @@ commands the subagent may end by."""
 import io
 import os
 import runpy
+import subprocess
 import sys
 import unittest
 from unittest import mock
@@ -88,6 +89,20 @@ class TestRefused(ResultTest):
 
 
 class TestRun(unittest.TestCase):
+    def test_the_script_checks_the_result_alone_with_no_guard_and_no_port(self):
+        # Given: lane's result script, as a step runs it, in a Python of its own
+        script = os.path.join(helpers.CODE, "result.py")
+        shown = "import sys; sys.argv = [sys.argv[0], 'w', 'x']; import runpy\n"
+        shown += "try:\n    runpy.run_path(%r, run_name='__main__')\nexcept SystemExit:\n    pass\n"
+        shown += "print(sorted({'guard', 'ports', 'called'} & set(sys.modules)))"
+        # When: it is run
+        done = subprocess.run(
+            [sys.executable, "-c", shown % script], capture_output=True, text=True, check=True
+        )
+        # Then: it loads neither the guard, the calls kept nor the ports, as it checks the result
+        # alone (dev/lane/architecture.md, Components)
+        self.assertEqual(done.stdout.strip().splitlines()[-1], "[]")
+
     def test_the_script_run_as_a_command_finds_the_plugin_by_its_own_path(self):
         # Given: lane's own result script, in lane, which lays no routes in itself
         script = os.path.join(helpers.CODE, "result.py")

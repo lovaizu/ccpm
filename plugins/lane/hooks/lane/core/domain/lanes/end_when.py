@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import os
 
-from done import Done
+from lanes.done import Done
 
 ACTION = "end"
 WORDING = "End only once `<output>` is made."

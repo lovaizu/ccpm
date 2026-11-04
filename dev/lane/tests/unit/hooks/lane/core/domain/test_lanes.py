@@ -181,5 +181,54 @@ class TestSentence(unittest.TestCase):
         self.assertEqual(lanes.sentence("run_only", [take]), f"Run only `{take}`.")
 
 
+class TestRefused(helpers.PluginTest):
+    """The checks of a lane's takes that `lay.py print` makes and the guard makes again on the lanes
+    laid, kept in lanes/ alone (dev/lane/architecture.md, What each role alone decides)."""
+
+    def test_takes_lay_py_lays_are_refused_by_nothing(self):
+        for kind, takes in (
+            ("run_only", ["git log --oneline"]),
+            ("run_only", ["python3 check.py {file}"]),
+            ("write_only", ["{work}"]),
+            ("in_form", ["notes.json", "{form}"]),
+        ):
+            with self.subTest(kind=kind, takes=takes):
+                # Given: the lane, taking things lay.py lays
+                # When: its takes are checked
+                # Then: nothing refuses them
+                self.assertEqual(lanes.refused(kind, takes, self.plugin), lanes.Refused(""))
+
+    def test_takes_that_cannot_be_laid_are_refused_saying_why(self):
+        for kind, takes, said in (
+            ("run_only", [], "with no take"),
+            ("run_only", ["git log", ""], "with a take that is empty"),
+            ("in_form", ["notes.json"], "takes out of its places at $.form: expected at least 1"),
+            ("write_only", ["${dependency:pin}/x"], "`${dependency:pin}`, which only a command"),
+            ("read_only", ["notes/{name}.md"], "`{name}` in a take, which only a command"),
+            ("in_form", ["notes.json", "forms/none.json"], ", which names the form"),
+        ):
+            with self.subTest(kind=kind, takes=takes):
+                # Given: the lane, taking things lay.py cannot lay
+                # When: its takes are checked
+                found = lanes.refused(kind, takes, self.plugin)
+                # Then: they are refused, saying why, as the proposal's error goes on
+                self.assertTrue(found.said.startswith(said), found.said)
+                self.assertFalse(found.declare)
+
+    def test_a_dependency_the_manifest_does_not_declare_is_refused_to_be_declared(self):
+        # Given: run_only naming the folder of pin, which changelog's manifest does not declare
+        # When: its takes are checked
+        found = lanes.refused("run_only", ["python3 ${dependency:pin}/x.py"], self.plugin)
+        # Then: it is refused, the fix being to declare it
+        self.assertEqual(
+            found,
+            lanes.Refused(
+                "`${dependency:pin}`, which .claude-plugin/plugin.json does not declare among its"
+                " dependencies",
+                True,
+            ),
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -43,8 +43,8 @@ import routes
 import rules
 import schema
 import step
-from done import Done
 from lanes import follow_routes, in_form, read_only, run_only, write_only
+from lanes.done import Done
 
 # Each tool a lane judges, with the action its call is and the field of its input the lane judges.
 WATCHED = {
@@ -64,13 +64,7 @@ DEPENDENCY_FOLDER = (
     "Each `${dependency:<name>}` is the folder the plugin of the name is installed in, as its skill"
     " gives the command."
 )
-# What a subagent is told to do where lane cannot check a lane, given who must fix it: a role asks
-# the main conversation for what lies outside its work and goes on with the rest, as
-# dev/plugin-best-practice.md's Asking for what lies outside the work says.
-ASK = "Ask the main conversation for the fix: {fix}. Go on with the rest of your work meanwhile."
-LAY_AGAIN = (
-    "the maker of {plugin} must lay its lanes again with `lay.py write`, so they match its steps"
-)
+LAY_AGAIN = rules.LAY_AGAIN
 ADAPTER = (
     "the maker of {plugin} must fix its adapter {adapter}, and lay it again with `lay.py write`"
 )
@@ -254,7 +248,7 @@ class Subagent(NamedTuple):
 def cannot(on: str, wrong: str, fix: str) -> Said:
     """The error where lane cannot check what `on` names, such as `the lanes of <subagent>` or
     `<lane> on step <n> of <subagent>`, in the form docs/lanes.md gives."""
-    return Said(f"lane cannot check {on}: {wrong}. {ASK.format(fix=fix)}", True)
+    return Said(rules.cannot(on, wrong, fix), True)
 
 
 def unshaped(name: str, wrong: str) -> Said:
@@ -283,7 +277,7 @@ def subagent(
         routed = None
     if laid is None and routed is None:
         return None
-    why = routes.unordered(routed) if routed is not None else None
+    why = routes.refused(routed) if routed is not None else ""
     if why:
         fix = LAY_AGAIN.format(plugin=plugin)
         raise Cannot(cannot(f"the lanes of {name}", f"{rules.FILE} {why}", fix))
@@ -315,7 +309,13 @@ def on(lane: rules.Laid, s: Subagent) -> str:
 
 
 def held(lane: rules.Laid, s: Subagent) -> None:
-    """Stops with Cannot where the lane's step no longer says its sentence."""
+    """Stops with Cannot where the lane is one `lay.py write` would now refuse, as lanes/ checks
+    it, or its step no longer says its sentence."""
+    # The result command is laid from the routes, which `subagent` holds to their checks.
+    why = lanes.refused(lane.lane, lane.takes, s.root) if lane.lane in lanes.LANES else None
+    if why and why.said:
+        wrong = f"`lay.py write` would now refuse it: {lane.lane} {why.said}".replace(" ,", ",")
+        raise Cannot(cannot(on(lane, s), wrong, LAY_AGAIN.format(plugin=s.plugin)))
     said = lanes.sentence(lane.lane, lane.takes)
     if not step.holds(s.root, s.name, lane.step, said):
         gone = f"step {lane.step} no longer says: {said}".rstrip(".")
@@ -327,7 +327,7 @@ def places_of(lane: rules.Laid, s: Subagent) -> dict[str, list[str]] | None:
     the name, its empty texts left out, in the place the take is in, and a command holding a value
     as a part as it is, its value read by `parts_of`; None where a value is given as null, which
     lets the lane's call or end through. Stops with Cannot where a value cannot be read, is not
-    given or is given empty, or the places are out of the lane's IN."""
+    given or is given empty."""
     if parts_of(lane, s) is None:
         return None
     found: dict[str, list[str]] = {}
@@ -338,13 +338,8 @@ def places_of(lane: rules.Laid, s: Subagent) -> dict[str, list[str]] | None:
             if texts is None:
                 return None
             found[place] += texts
-    given: dict[str, Any] = {"takes": found}
-    if lanes.calls(lane.lane):
-        given["calls"] = called.calls(s.session, s.agent)
-    out = schema.held(lanes.given_in(lane.lane), given)
-    if out is not None:
-        wrong = f"what it is given is out of its IN at {out.told()}"
-        raise Cannot(cannot(on(lane, s), wrong, LAY_AGAIN.format(plugin=s.plugin)))
+    # A value adds texts only to a place its take is in, and `held` holds the takes laid to the
+    # lane's IN, so what the lane is given stays in it.
     return found
 
 

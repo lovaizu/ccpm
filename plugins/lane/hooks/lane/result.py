@@ -22,7 +22,6 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 # No module before it on the path has the name of one of lane's.
 sys.path.insert(0, os.path.join(HERE, "core", "domain"))  # pragma: no mutate
 
-import guard
 import lanes
 import routes
 import rules
@@ -57,8 +56,8 @@ def said(argv: list[str], root: str) -> str:
     try:
         laid = rules.read(root)
     except ValueError as why:
-        fix = guard.LAY_AGAIN.format(plugin=plugin_name(root))
-        return guard.cannot(f"the lanes of {name}", str(why), fix).text
+        fix = rules.LAY_AGAIN.format(plugin=plugin_name(root))
+        return rules.cannot(f"the lanes of {name}", str(why), fix)
     kinds = [g.lane for g in rules.of(laid, name) or []]
     ons = rules.gives(rules.routes_of(laid), name, kinds)
     if not ons:

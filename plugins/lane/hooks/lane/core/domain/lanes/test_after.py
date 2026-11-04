@@ -6,9 +6,8 @@ not kept."""
 
 from __future__ import annotations
 
-from done import Done, under, written
-
 from lanes import run_only
+from lanes.done import Done, under, written
 
 ACTION = "test"
 WORDING = "After changing `<output>`, pass `<test>`."
