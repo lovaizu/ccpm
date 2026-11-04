@@ -7,6 +7,7 @@ the command pin:down names."""
 from __future__ import annotations
 
 import copy
+import glob
 import json
 import os
 import re
@@ -76,84 +77,210 @@ def made(*decisions: dict[str, Any], questions: tuple[str, ...] = ("Q1",)) -> di
     }
 
 
-with open(os.path.join(PIN, "skills", "down", "SKILL.md"), encoding="utf-8") as f:
-    SKILL = f.read()
-# The check command as pin:down's text names it, with pin's folder in place of
-# ${CLAUDE_PLUGIN_ROOT}, as Claude Code puts it there wherever the text is loaded.
-CHECK_COMMAND = (
-    re.search(r"The check below is `([^`]+)`", SKILL)  # type: ignore[union-attr]
-    .group(1)
-    .replace("${CLAUDE_PLUGIN_ROOT}", PIN)
-)
+# The notes app of the UX's scenarios: notes.py prints each note as a line of tab-separated fields,
+# and two scripts read that text; sync.py reads `updated` as ISO 8601, a fact the pinner finds.
+NOTES = {
+    "README.md": "# notes\n\nKeeps notes as Markdown files. `python3 notes.py list` lists them.\n",
+    "notes.py": (
+        '"""notes: `python3 notes.py list` prints each note as id, title, tags and updated,'
+        ' tab-separated."""\n\nimport sys\n\nNOTES = [\n'
+        '    ("1", "Groceries", ["home"], "2026-11-01T09:30:00+00:00"),\n'
+        '    ("2", "Trip plan", ["travel", "family"], "2026-11-02T18:05:00+00:00"),\n]\n\n\n'
+        "def main(argv):\n"
+        '    if argv[:1] != ["list"]:\n'
+        '        print("usage: notes.py list")\n'
+        "        return 2\n"
+        "    for id, title, tags, updated in NOTES:\n"
+        '        print("\\t".join([id, title, ",".join(tags), updated]))\n'
+        "    return 0\n\n\n"
+        'if __name__ == "__main__":\n'
+        "    sys.exit(main(sys.argv[1:]))\n"
+    ),
+    "scripts/sync.py": (
+        '"""Sends each note changed since the last sync to the calendar."""\n\n'
+        "import subprocess\nfrom datetime import datetime\n\nLAST = datetime(2026, 11, 1)\n\n\n"
+        "def changed():\n"
+        "    out = subprocess.run(\n"
+        '        ["python3", "notes.py", "list"], capture_output=True, text=True\n'
+        "    )\n"
+        "    found = []\n"
+        "    for line in out.stdout.splitlines():\n"
+        '        fields = line.split("\\t")\n'
+        "        if datetime.fromisoformat(fields[3]).replace(tzinfo=None) > LAST:\n"
+        "            found.append(fields[1])\n"
+        "    return found\n"
+    ),
+    "scripts/export.py": (
+        '"""Writes the notes\' titles and tags to notes.csv."""\n\n'
+        "import subprocess\n\n\n"
+        "def export():\n"
+        "    out = subprocess.run(\n"
+        '        ["python3", "notes.py", "list"], capture_output=True, text=True\n'
+        "    )\n"
+        '    with open("notes.csv", "w") as f:\n'
+        "        for line in out.stdout.splitlines():\n"
+        '            id, title, tags, _ = line.split("\\t")\n'
+        '            f.write(f"{title},{tags}\\n")\n'
+    ),
+}
+
+
+def entry(*path: str) -> str:
+    """The text of a file of Pin's, at its path in Pin's folder."""
+    with open(os.path.join(PIN, *path), encoding="utf-8") as f:
+        return f.read()
+
+
+# The guard's modules, as Pin takes them through its link to Lane's code.
+hook, schema, guard, result = testing.lane_code(PIN, "hook", "schema", "guard", "result")
+PINNER_PART = entry("core", "roles", "pinner.md")
+# The line a Reply begins with, and the line an Answer begins with, as the pinner's part gives them.
+FOR_THE_PERSON = "For the person:"
+ANSWERED = "The person's answer, word for word:"
+assert f"begins with the line `{FOR_THE_PERSON}`" in PINNER_PART
+assert f"first line is `{ANSWERED}`" in PINNER_PART
+# Pin's Rules laid, as lay.py wrote them.
+LAID: dict[str, Any] = json.loads(entry("hooks", "lanes.json"))
+# The check command, as the pinner's rule on step 1 names it, of the design file's path.
+(CHECK,) = [
+    lane["takes"][0]
+    for step in LAID["subagents"][0]["steps"]
+    for lane in step["lanes"]
+    if (step["step"], lane["lane"]) == (1, "run_only")
+]
+# Where the person's design file lies, as the go-between picks it for a new plan, and where the
+# maker AI of the tests keeps its own.
+PERSONS = os.path.join(".pin", "20261103-notes-json", "design-tree.json")
+MAKERS = os.path.join(".maker", "notes-json", "design-tree.json")
+PINNER = testing.Run("pin:pinner", "p1")
+# The maker AI that is the go-between in S3 and S4, a subagent of a plugin that uses Pin.
+MAKER = testing.Run("maker:maker", "m1")
+
+
+def handed(event: dict[str, Any]) -> str:
+    """What is wrong with the event as Claude Code hands it, by the guard's own check of the fields
+    the hooks reference documents, and an Agent call's tool_response held to what the guard reads
+    of it; "" where nothing is. An event of the main conversation has no subagent's fields, so it
+    is held with them filled."""
+    held = event["hook_event_name"]
+    wrong = hook.event_wrong({"agent_id": "main", "agent_type": "", **event}, held)
+    if wrong or held != "PostToolUse" or event["tool_name"] != "Agent":
+        return wrong
+    out = schema.held(guard.BACK, event["tool_response"])
+    return out.told() if out is not None else ""
+
+
+def new(source: dict[str, Any]) -> dict[str, Any]:
+    """The tree as the pinner writes it first for a plan: the goal not confirmed, every decision
+    open."""
+    first = copy.deepcopy(source)
+    first["goal"]["grounds"] = []
+    for d in first["decisions"]:
+        d.update(decided=None, settled_by=None, grounds=[])
+    return first
 
 
 class PinnerTest(testing.FolderTest):
-    """For an architecture test, a double of the pinner on one path of pin's Sequences: in the
-    folder it works in, the test's own, it writes at each step the tree the step calls for, in the
-    form of the walkthrough's tree, and runs check.py by the command pin:down names."""
+    """A test of a path of Pin's Sequences, in the notes app's repository `repo` in `base`: Pin's
+    guard runs real, by Pin's hook entries on Pin's Rules laid, through a double of Claude Code
+    working in `repo`, whose hooks keep their records in `base` as the system's temporary folder;
+    check.py runs real, by the command the pinner's rule names. Doubles stand in for the pinner, the
+    go-between, `starter`, the main conversation where None, and the person, set answers."""
 
-    # Where the tree lies: a person's tree, as pinner.md's "Where the tree lies" gives it.
-    path = os.path.join(".pin", "20261103-notes-json", "design-tree.json")
+    starter: testing.Run | None = None
+    path = PERSONS
 
     def setUp(self) -> None:
         super().setUp()
-        # The tree the double holds, the walkthrough's, kept on disk by each step.
-        self.tree = walkthrough()
+        self.repo = os.path.join(self.base, "notes")
+        for name, text in NOTES.items():
+            self.write(os.path.join(self.repo, name), text)
+        self.env = {**os.environ, "TMPDIR": self.base}
+        self.claude = testing.ClaudeCode(PIN, self.repo, self.env, check=handed)
+        self.check = CHECK.replace("${CLAUDE_PLUGIN_ROOT}", PIN).replace("{design}", self.path)
+        # What reached the person from the go-between, in order.
+        self.heard: list[str] = []
 
-    def writes(self) -> None:
-        """Writes the tree the double holds at the tree's path, as the pinner does with Write."""
-        self.write(self.path, json.dumps(self.tree, indent=1))
+    def on_disk(self) -> dict[str, Any]:
+        """The design file on disk."""
+        return self.read_json(os.path.join(self.repo, self.path))
 
-    def writes_new(self) -> None:
-        """Writes the walkthrough's tree as the pinner writes it first: the goal not confirmed,
-        every decision open."""
-        self.tree["goal"]["grounds"] = []
-        for d in self.tree["decisions"]:
-            d.update(decided=None, settled_by=None, grounds=[])
-        self.writes()
+    def lies(self, data: dict[str, Any]) -> None:
+        """Lays the design file on disk before the run, as a stopped run or a maker AI left it."""
+        self.write_json(os.path.join(self.repo, self.path), data)
 
-    def at(self, name: str) -> dict[str, Any]:
-        """The decision of the ID name in the tree the double holds."""
-        return next(d for d in self.tree["decisions"] if d["id"] == name)
+    def picks(self, words: str) -> str:
+        """The design file's path, as the go-between picks it for a plan of the person's: the file
+        in `.pin/` whose goal holds the words, else a new path there, PERSONS."""
+        for path in sorted(glob.glob(os.path.join(self.repo, ".pin", "*", "design-tree.json"))):
+            if words in self.read_json(path)["goal"]["what"]:
+                return os.path.relpath(path, self.repo)
+        return PERSONS
 
-    def confirms_goal(self) -> None:
-        """Writes the goal confirmed, the person's words as its ground."""
-        self.tree["goal"]["grounds"] = ["the person, 2026-11-03"]
-        self.writes()
+    def starts(self, request: str) -> testing.Told:
+        """The go-between starts the pinner with the Request: the design file's path as one JSON
+        object on its first line, then the request; fails the test where the start is not made or
+        the pinner is not given its part whole as it starts."""
+        prompt = json.dumps({"design": self.path}) + "\n" + request
+        told = self.claude.start(self.starter, PINNER, prompt)
+        self.assertTrue(told.made, told.said)
+        part = PINNER_PART.replace("${CLAUDE_PLUGIN_ROOT}", PIN)
+        self.assertTrue(any(part in said for said in told.context), told.context)
+        return told
 
-    def rests(self, name: str, *grounds: str) -> None:
-        """Writes the grounds added to those the decision of the ID name holds, left open, as the
-        pinner writes a fact confirmed or told before the decision's own turn."""
-        self.at(name)["grounds"] += list(grounds)
-        self.writes()
+    def writes(self, data: dict[str, Any], path: str = "") -> testing.Told:
+        """The pinner writes the data with Write, at the design file's path or the path given: only
+        a tree in the form check.py's unit tests hold it to, as the pinner's contract allows."""
+        self.assertEqual(tree.form_faults(data), [])
+        given = {
+            "file_path": os.path.join(self.repo, path or self.path),
+            "content": json.dumps(data),
+        }
+        return self.claude.call(PINNER, "Write", given)
 
-    def decides(self, name: str, by: str, *grounds: str, what: str = "") -> None:
-        """Writes the decision of the ID name decided, as what or else as the walkthrough decides
-        it, settled by `by`, its grounds added to those it holds."""
-        d = self.at(name)
-        d.update(decided=what or WALKTHROUGH_DECIDED[name], settled_by=by)
-        d["grounds"] += list(grounds)
-        self.writes()
+    def reads(self, path: str) -> testing.Told:
+        """The pinner reads a file of the repository with Read."""
+        return self.claude.call(PINNER, "Read", {"file_path": os.path.join(self.repo, path)})
 
-    def opens(self, *names: str) -> None:
-        """Writes each decision of the names open again, its grounds kept."""
-        for name in names:
-            self.at(name).update(decided=None, settled_by=None)
-        self.writes()
+    def runs(self, command: str) -> testing.Told:
+        """The pinner runs the command with Bash."""
+        return self.claude.call(PINNER, "Bash", {"command": command, "description": "d"})
 
-    def checked(self) -> tuple[int, str, str]:
-        """The exit code and what check.py prints to its output and its error output, run on the
-        tree's path in sh by pin:down's command, from the folder the pinner works in."""
-        command = CHECK_COMMAND.replace("<design tree>", self.path)
-        done = subprocess.run(["sh", "-c", command], capture_output=True, text=True, check=False)
-        return done.returncode, done.stdout, done.stderr
+    def checks(self) -> tuple[int, str]:
+        """The pinner runs the check by its rule's command, which goes through; the Check result,
+        the exit code and what check.py printed, as the run gave them."""
+        told = self.runs(self.check)
+        self.assertTrue(told.made, told.said)
+        done = subprocess.run(
+            ["sh", "-c", self.check], capture_output=True, text=True, cwd=self.repo, check=False
+        )
+        return done.returncode, done.stdout + done.stderr
 
-    def holds(self, *open_now: str) -> tuple[int, str, str]:
-        """What check.py gives on the tree's path where it holds, with the decisions open now."""
+    def gives(self, on: str) -> testing.Told:
+        """The pinner gives its result by the command its last step names: only a result Pin's
+        result script takes, as the pinner's contract allows."""
+        self.assertEqual(result.said(["pinner", on], PIN), "")
+        return self.runs(f"python3 {PIN}/hooks/lane/result.py pinner {on}")
+
+    def ends(self, reply: str) -> str:
+        """The pinner ends with the Reply, which must be in the form the pinner's part gives, and is
+        let end; the go-between passes it to the person as given: what the person heard."""
+        self.assertTrue(reply.startswith(FOR_THE_PERSON + "\n"), reply)
+        ended = self.claude.stop(PINNER)
+        self.assertTrue(ended.made, ended.said)
+        heard = reply[len(FOR_THE_PERSON) + 1 :]
+        self.heard.append(heard)
+        return heard
+
+    def answers(self, words: str) -> None:
+        """The person answers; the go-between resumes the pinner by SendMessage with their words,
+        word for word, under the Answer's line, and Claude Code starts the pinner again."""
+        message = {"to": PINNER.agent_id, "message": f"{ANSWERED}\n{words}"}
+        sent = self.claude.call(self.starter, "SendMessage", message)
+        self.assertTrue(sent.made, sent.said)
+        self.claude.started(PINNER)
+
+    def holds(self, *open_now: str) -> tuple[int, str]:
+        """The Check result where the design file holds, with the decisions open now."""
         said = f"Open to decide now: {', '.join(open_now)}." if open_now else "No decision is open."
-        return 0, f"check.py: {self.path} holds: {check.HOLDS}\n{said}\n", ""
-
-    def does_not_hold(self, *found: str) -> tuple[int, str, str]:
-        """What check.py gives on the tree's path where it names the problems found."""
-        listed = "".join(f"- {problem}\n" for problem in found)
-        return 1, f"check.py: {self.path} does not hold:\n{listed}", ""
+        return 0, f"check.py: {self.path} holds: {check.HOLDS}\n{said}\n"

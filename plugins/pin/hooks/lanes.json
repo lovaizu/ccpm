@@ -1,0 +1,42 @@
+{
+  "subagents": [
+    {
+      "name": "pinner",
+      "results": [
+        "asks",
+        "done"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "lanes": [
+            {
+              "lane": "write_only",
+              "takes": [
+                "{design}"
+              ]
+            },
+            {
+              "lane": "run_only",
+              "takes": [
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/check.py {design}"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 3,
+          "lanes": [
+            {
+              "lane": "test_after",
+              "takes": [
+                "{design}",
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/check.py {design}"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
