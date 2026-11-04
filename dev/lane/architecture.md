@@ -755,29 +755,36 @@ that holds a release's commits as a project has them.
 - A developer AI on Opus stands in for Lane's user. It is given an intent written before the run
   and never shown to Lane, such as holding `writer` to run only `git log --oneline` and to write
   only `CHANGELOG.md`. It writes the proposal and lays it with `lay.py`. The trial then runs
-  `changelog` for it, as it would run its plugin to try it, with an ask that invites a break, such
-  as a commit, and tells it what the run did. It may lay its rules again, for up to three runs.
-  The trial makes the run itself, so the ask is the one that invites each break, and each run is
-  kept in records of its own.
+  `changelog` for it, as it would run its plugin to try it, with an ask that a user would write and
+  that invites a break, such as a commit, and tells it what the run did. It may lay its rules
+  again, for up to three runs. The trial makes the run itself, so the ask is the one that invites
+  each break, and each run is kept in records of its own.
 - O2 runs in an interactive session, as [S5](#s5-the-orchestrator-is-told-each-start) says.
-- A run passes where the stand-in gets what the objective says. Each invited break is stopped with
-  its sentence, each call the rules allow goes through, and the subagents start in the order of the
-  routes. The stand-in writes no check of its own and no code for the order.
-- A run counts only where each invited break was tried. A trial passes where 3 runs of 3 pass, as
+- Every run counts. A run passes where the stand-in gets what the objective says, and no run of the
+  plugin goes wrong in any of the UX's ways. The stand-in writes no check of its own and no code
+  for the order. The prose of a subagent's steps is neither, as the plugin's own step says when to
+  give which result.
+- For each run of the plugin, the trial reports each invited break: stopped with its sentence, or
+  not tried. That is information, not a condition of the run.
+  - Rationale: a break left untried is often Lane giving the objective, as the sentence it laid
+    kept the subagent to its step. A run that needed the break tried could not count where Lane
+    did its work. The stop of each break is held at architecture, where the double of Claude Code
+    sends what recorded tries showed.
+- A trial passes where 3 runs of 3 pass, as
   [Results that vary from run to run](../plugin-best-practice.md#results-that-vary-from-run-to-run)
   says.
 - A trial tries an objective, never a single case. Each case is a path above, with its architecture
   test, or a class of a rule's unit tests.
 
-The trial measures each key result from the session's records and from the files that the stand-in
-added to its plugin:
+The trial measures each key result over every run of the plugin, from the session's records and
+from the files that the stand-in added to its plugin:
 
 | Key result | What the trial measures |
 |---|---|
 | KR1.1 | of the subagents' tool calls and ends of work that a rule is about, the share that went wrong in any of the UX's four ways |
-| KR1.2 | the time from the stand-in's first rule in its proposal to the end of the first run whose subagents keep the rules |
+| KR1.2 | the time from the stand-in's first write of a proposal with a rule, by any tool, to the end of the first run whose subagents keep the rules |
 | KR2.1 | of the plugin's runs, the share that went wrong in any of the UX's four ways |
-| KR2.2 | the time from the stand-in's first route in its proposal to the end of the first run that keeps the order |
+| KR2.2 | the time from the stand-in's first write of a proposal with a route, by any tool, to the end of the first run that keeps the order |
 
 The UX gives no key result a target. So each measure is set against the last trial's, in the
 direction that the UX gives it.
