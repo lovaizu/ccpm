@@ -12,6 +12,7 @@ Given the prompt for a request it is made for, an AI agent does the task as the 
 - **context**: What the AI needs and cannot find or know on its own: the situation, its inputs and where they are, and the rules of this place.
 - **steps**: The steps in the order the AI takes them, each step the result that holds when it ends, with the rules the step needs, each with its reason, or the script that does it and how to run it.
 - **output**: What the AI hands back, in what form, and to whom.
+- **trials**: The trials that try the prompt: one case for each class of input and each rule of its steps, where the AI must act and where it must not; the set-up of each case, the stand-ins for the person and for the prompt's neighbours, the judges, and the checks made on each run's record.
 
 ## Benefits
 
@@ -28,6 +29,9 @@ Given the prompt for a request it is made for, an AI agent does the task as the 
 - **Q11** (description, goal): Once the host has chosen the prompt by its description, does the AI do the task the description says, all of it and nothing more?
 - **Q12** (the whole): When the prompt is run several times on each kind of request it is made for, does the AI reach the result the prompt names on every run?
 - **Q13** (the whole): Does every line of the prompt change what the AI does toward the task, so that none draws its attention from the lines that do?
+- **Q14** (trials, steps): For each rule of the steps, where the AI must act and where it must not, can the maintainer point to the trial case that tries it, and see from that case's record that the situation it tries arose?
+- **Q15** (trials): When a trial fails, can the maintainer tell from its record that the prompt went wrong and not the trial: its set-up, a stand-in, a judge or a check?
+- **Q16** (trials, steps): When the maintainer takes out of the prompt what a trial case tries, does that case fail?
 
 ## Practices
 
@@ -253,3 +257,56 @@ Given the prompt for a request it is made for, an AI agent does the task as the 
 - [Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices), Anthropic, Claude Platform Docs, no date: "Only add context Claude doesn’t already have."
 - [Extend Claude with skills](https://code.claude.com/docs/en/skills), Anthropic, Claude Code Docs, no date: "so every line is a recurring token cost."
 - [Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices), Anthropic, Claude Platform Docs, no date: "Keep references one level deep from `SKILL.md`. All reference files should link directly from `SKILL.md` to ensure Claude reads complete files when needed."
+
+### Q14: For each rule of the steps, where the AI must act and where it must not, can the maintainer point to the trial case that tries it, and see from that case's record that the situation it tries arose?
+
+**Thinking**: A trial is drawn from the prompt's steps as a unit test is drawn from a contract, one case for each class and each rule, on both sides of it; and a case counts only where its run met the situation it tries, as an AI may take another good path past it.
+
+**Steps**
+
+1. List each rule of the steps and each class of input it treats alike, and for each, a case where the AI must act and a case where it must not.
+2. Set up each case so that the AI cannot pass the situation by, such as by giving the fact it must find only where a search finds it, and write a check on the run's record that the situation arose.
+3. Write the cases one at a time: run the new case, read its record whole, and write the next only once the situation arose and the verdict is right.
+
+**Grounds**
+
+- [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), Grace, Hadfield, Olivares and De Jonghe, Anthropic Engineering, 2026: "Test both the cases where a behavior should occur and where it shouldn't."
+- [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), Grace, Hadfield, Olivares and De Jonghe, Anthropic Engineering, 2026: "Read the transcripts!"
+- [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), Grace, Hadfield, Olivares and De Jonghe, Anthropic Engineering, 2026: "it's useful to create a reference solution: a known working output that passes all graders."
+- [Canon TDD](https://newsletter.kentbeck.com/p/canon-tdd), Beck, newsletter.kentbeck.com, 2023: "Write a list of the test scenarios you want to cover"
+- [Canon TDD](https://newsletter.kentbeck.com/p/canon-tdd), Beck, newsletter.kentbeck.com, 2023: "Turn exactly one item on the list into an actual, concrete, runnable test"
+
+### Q15: When a trial fails, can the maintainer tell from its record that the prompt went wrong and not the trial: its set-up, a stand-in, a judge or a check?
+
+**Thinking**: A trial's own parts, the set-up, the stand-ins, the judges and the checks, are code and prompts of their own, so each is built test first and seen right on a record kept from an earlier run before a whole run trusts it; a whole run then only confirms, and a failure tells of the prompt.
+
+**Steps**
+
+1. Decide by code every point the record decides, such as a tool called, a file's content or a command's output, and leave to a judge only what code cannot decide.
+2. Give each judge one point, its definitions and a pass or fail; give it messages whose answer is known, of each kind, and use it only once it judges them right.
+3. Give the stand-in for the person only their intent, which the prompt never sees, and the whole of each message it answers; check on kept conversations that it answers from the intent alone and makes nothing up.
+4. Build each part alone and run it small on a kept record before any whole run.
+5. Change one thing between two runs, the prompt or a part of the trial, never both; where a trial fails, look in its record first at the trial's own parts, and mend the prompt only for a cause in the prompt.
+
+**Grounds**
+
+- [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), Grace, Hadfield, Olivares and De Jonghe, Anthropic Engineering, 2026: "We recommend choosing deterministic graders where possible, LLM graders where necessary or for additional flexibility"
+- [AI Evals: Everything You Need to Know](https://hamel.dev/blog/posts/evals-faq/), Husain and Shankar, hamel.dev, 2026: "First check whether you can test the condition with code assertions"
+- [AI Evals: Everything You Need to Know](https://hamel.dev/blog/posts/evals-faq/), Husain and Shankar, hamel.dev, 2026: "Binary evaluations force clearer thinking and more consistent labeling"
+- [AI Evals: Everything You Need to Know](https://hamel.dev/blog/posts/evals-faq/), Husain and Shankar, hamel.dev, 2026: "For an evaluator that makes judgments, test it against human-labeled examples of the failure you want to detect."
+- [τ²-Bench: Evaluating Conversational Agents in a Dual-Control Environment](https://arxiv.org/html/2506.07982), Barres, Dong, Ray, Si and Narasimhan, arXiv:2506.07982, 2025: "Never make up or hallucinate information not provided in the scenario instructions."
+- [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), Grace, Hadfield, Olivares and De Jonghe, Anthropic Engineering, 2026: "When scores don't climb, we need confidence that it's due to agent performance and not the eval."
+
+### Q16: When the maintainer takes out of the prompt what a trial case tries, does that case fail?
+
+**Thinking**: A trial that passes whatever the prompt says tries nothing, so each case is seen to fail before the prompt holds what it tries, as a test is before its code.
+
+**Steps**
+
+1. Run each new case before writing into the prompt what it tries, and see it fail.
+2. Write that into the prompt, and run the case until it passes.
+
+**Grounds**
+
+- [Canon TDD](https://newsletter.kentbeck.com/p/canon-tdd), Beck, newsletter.kentbeck.com, 2023: "Turn exactly one item on the list into an actual, concrete, runnable test"
+- [Canon TDD](https://newsletter.kentbeck.com/p/canon-tdd), Beck, newsletter.kentbeck.com, 2023: "Change the code to make the test (& all previous tests) pass (adding items to the list as you discover them)"

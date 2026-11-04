@@ -685,9 +685,9 @@ Mutation testing runs the tests once for each mutant, so a slow test run makes e
 The assistant tries each role, a skill or an agent, on its own, with doubles standing in for its
 neighbours and for the researchers, and a stand-in for the person. It names the model in each run:
 Opus, the model the maintainer uses. It judges the role from its input, its output and the records
-of the run, against its Role and Steps. The trial is drawn from the role's contract as a unit test
-of code is: one input for each class and each rule of its steps, both where the steps say the role
-acts and where they say it does not, such as a point it asks the person and a fact it finds itself.
+of the run, against its Role and Steps. The trials are made as `prompt.json`'s trials part, its
+questions and its practices say: drawn from the role's contract, one case at a time, each part of
+a trial checked on a kept record before a run trusts it.
 
 A prompt is known by what the AI does with it, and only the records show where a run went wrong. A
 role tried together with what lies around it does not show which of them went wrong. A smaller

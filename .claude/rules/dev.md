@@ -94,11 +94,13 @@ b. **Write the code with `code.json` open until the tests pass**, as
    - Rationale: code written to pass tests that hold its contract does what the contract asks, and
      no more.
 
-c. **For each prompt, a skill or an agent, write its trial with an input for each class and each
-   rule of its steps, as [Unit: prompts](../../dev/architecture.md#unit-prompts) says, run it and
-   see it fail; then write the prompt with `prompt.json` open until the trial passes.**
+c. **For each prompt, a skill or an agent, write its trials with `prompt.json` open, as its
+   trials' questions and practices say and as [Unit: prompts](../../dev/architecture.md#unit-prompts)
+   says, one case at a time: build each part of the trial and check it on a kept record, run the
+   case and see it fail; then write the prompt with `prompt.json` open until the case passes.**
    - Rationale: a role's slips show only alone; tried later beside other roles, a slip cannot be
-     told from theirs.
+     told from theirs. A trial whose own parts were never checked fails for its own faults, and a
+     prompt mended for them never settles.
 
 d. **Lay the lanes the prompts' steps call for with `plugins/lane/scripts/lay.py`, with
    `prompt.json` open:** write them in a proposal as
