@@ -53,7 +53,7 @@ sequenceDiagram
   participant L as lay.py (script)
   participant K as check script (script)
   participant W as writer (AI)
-  A->>L: lay.py print, with two rules for writer:<br>on step 2, run only git log --oneline;<br>on step 3, write only CHANGELOG.md
+  A->>L: lay.py print, with two rules for writer:<br>on step 2, run only git log --oneline,<br>on step 3, write only CHANGELOG.md
   L-->>A: steps 2 and 3 as they will read, ending<br>"Run only `git log --oneline`." and "Write only `CHANGELOG.md`."
   A->>L: lay.py write, once it approves what print showed
   L-->>A: steps 2 and 3 written,<br>and the check script put into changelog
@@ -79,7 +79,7 @@ sequenceDiagram
   participant O as lead (AI)
   participant W as writer (AI)
   participant R as reviewer (AI)
-  A->>L: lay.py print, with the routes: lead starts writer first;<br>writer's `written` leads to reviewer;<br>reviewer's `more` leads back to writer, and its `good` to the end
+  A->>L: lay.py print, with the routes: lead starts writer first,<br>writer's `written` leads to reviewer,<br>reviewer's `more` leads back to writer, and its `good` to the end
   L-->>A: the routes, and the steps of lead, writer and reviewer as they will read
   A->>L: lay.py write, once it approves what print showed
   L-->>A: the steps written,<br>and the check script and the result script put into changelog
