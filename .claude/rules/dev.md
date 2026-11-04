@@ -28,6 +28,13 @@ committed.
 - Rationale: work made earlier was checked against what the rules said then; committed unread, it
   brings back what the change was made to stop.
 
+Install nothing, and send nothing to a service outside the repository's git and GitHub, such as a
+translator or a web API, until the user says yes; fetching a public page to read it needs no ask.
+Every brief to a subagent, and every `claude -p` started, says so.
+
+- Rationale: text sent out may hold what the user never meant to share, such as their email
+  address.
+
 Source: facts confirmed in the official docs (plugins reference / plugin marketplaces, prompting
 best practices / skill authoring best practices) and the official plugins.
 
