@@ -2,7 +2,7 @@
 
 ## Goal
 
-Whoever reads the document for a purpose, a person or an AI, at any time after it is written and in its own language or through a machine translation into theirs, takes in what it says as its writer meant, reading once from the top, and only the parts that purpose needs.
+The reader is a person or an AI who reads the document for a purpose, at any time after it is written. They read it in its own language or through a machine translation into theirs. The reader reads once from the top and only the parts their purpose needs, and takes in what the document says as its writer meant.
 
 ## Benefits
 
@@ -10,7 +10,7 @@ Whoever reads the document for a purpose, a person or an AI, at any time after i
 - **Q2** (the whole): Coming to the document for a purpose, can the reader tell from each heading and the sentence under it what the section gives them, so they read the sections their purpose needs and skip the rest?
 - **Q3** (the whole): Where the document tells steps in order, choices that depend on a case, or how several things relate, does the reader see it at a glance, without piecing it together from sentences?
 - **Q4** (the whole): Reading from the top, can the reader understand each sentence from what they have read before it, without turning back, reading ahead, or knowing what the document neither says nor points to?
-- **Q5** (the whole): Reading any sentence once, as written or through a machine translation into their own language, can the reader say who or what does what in it?
+- **Q5** (the whole): When the reader reads any sentence once, as written or through a machine translation into their own language, can they say who or what does what in it?
 - **Q6** (the whole): Each time the reader meets a name, can they tell rightly whether it names a thing they have already met, and which one?
 - **Q7** (the whole): When the reader meets a word they have not used themselves, can they tell what it means right where they meet it?
 - **Q8** (the whole): Does each word the reader reads carry part of what the document says, so that no word costs them time and gives them nothing?
@@ -19,11 +19,11 @@ Whoever reads the document for a purpose, a person or an AI, at any time after i
 
 ### Q1: Does the reader find each fact said in one place only, in the document or in what they read beside it, with every other place pointing there, so that two places never tell them different things?
 
-**Thinking**: Each fact, including one a figure draws or the work itself shows, is said in the one place where the reader looks for it, and every other place points there, so a change made once reaches every reader.
+**Thinking**: The document says each fact, including one that a figure draws or the work itself shows, in the one place where the reader looks for it. Every other place points there. A change made in that one place then reaches every reader.
 
 **Steps**
 
-1. Where two places say a fact in different ways, keep both and send it back to be settled with what the document says, for choosing one would change what it says.
+1. Where two places say a fact in different ways, keep both, and send the difference back to be settled with what the document says. Choosing one would change what the document says.
 2. Replace each other place's copy with a link to that place, saying in a few words what the reader finds there.
 
 **Grounds**
@@ -34,12 +34,12 @@ Whoever reads the document for a purpose, a person or an AI, at any time after i
 
 ### Q2: Coming to the document for a purpose, can the reader tell from each heading and the sentence under it what the section gives them, so they read the sections their purpose needs and skip the rest?
 
-**Thinking**: The reader picks sections by their headings and first sentences, so each section holds one thing and says at its start what it gives.
+**Thinking**: The reader picks sections by their headings and first sentences. So each section holds one thing and says at its start what it gives.
 
 **Steps**
 
 1. Start each heading with the words that tell the most.
-2. Name the reader and the purposes they come with; for each purpose, read only the headings and first sentences, and where the reader would miss a section the purpose needs, or read one it does not, rewrite that heading or first sentence.
+2. Name the reader and the purposes they come with. For each purpose, read only the headings and first sentences. Where the reader would miss a section that the purpose needs, or read one that it does not need, rewrite that heading or first sentence.
 
 **Grounds**
 
@@ -53,13 +53,13 @@ Whoever reads the document for a purpose, a person or an AI, at any time after i
 
 ### Q3: Where the document tells steps in order, choices that depend on a case, or how several things relate, does the reader see it at a glance, without piecing it together from sentences?
 
-**Thinking**: Order and relations shown by the form of a list, a table or a diagram are seen at once, while the same told in sentences must be pieced together.
+**Thinking**: The reader sees at once an order or a relation that the form of a list, a table or a diagram shows. When sentences tell the same, the reader must piece it together.
 
 **Steps**
 
 1. Choose a form whose shape shows that order or relation, such as a numbered list for steps in order, a bulleted list for items whose order does not matter, a table for things compared on the same points, or a diagram for who passes what to whom.
-2. Draw a diagram as an SVG file beside the document, shown as an image, its colours set under prefers-color-scheme so it follows the page's light or dark scheme.
-3. Show the form alone to a reader who has not read the text, and have them say back what it tells; where they say it otherwise, mend the form.
+2. Draw a diagram as an SVG file beside the document, and show it as an image. Set its colours under prefers-color-scheme, so that it follows the page's light or dark scheme.
+3. Show the form alone to a reader who has not read the text, and have them say back what it tells. Where they say it otherwise, mend the form.
 
 **Grounds**
 
@@ -80,7 +80,7 @@ Whoever reads the document for a purpose, a person or an AI, at any time after i
 
 1. Where a sentence rests on something outside the document, such as an earlier talk, say it in the sentence or link to where it is written.
 2. Start each sentence with what the reader already has, and end it with what is new.
-3. Put a rule's conditions and exceptions where the reader takes them in most easily, beside the rule; put a short condition before its instruction, so a reader whose case it is not can skip the instruction.
+3. Put a rule's conditions and exceptions beside the rule, where the reader takes them in most easily. Put a short condition before its instruction, so that a reader whose case it is not can skip the instruction.
 
 **Grounds**
 
@@ -94,18 +94,18 @@ Whoever reads the document for a purpose, a person or an AI, at any time after i
 - [Place the main idea before exceptions and conditions](https://github.com/GSA/plainlanguage.gov/blob/main/_pages/guidelines/organize/place-the-main-idea-before-exceptions-and-conditions.md), PLAIN, plainlanguage.gov archive on GitHub, no date: "The audience must absorb the exception, then the rule, and then usually has to go back to grasp the relationship between the two."
 - [Sentence structure](https://developers.google.com/style/sentence-structure), Google, Google developer documentation style guide, 2024: "If you want to tell the reader to do something, try to mention the circumstance, conditions, or goal before you provide the instruction. Mentioning the circumstance first lets the reader skip the instruction if it doesn't apply."
 
-### Q5: Reading any sentence once, as written or through a machine translation into their own language, can the reader say who or what does what in it?
+### Q5: When the reader reads any sentence once, as written or through a machine translation into their own language, can they say who or what does what in it?
 
-**Thinking**: A sentence that makes one point, names who acts and keeps plain order is read one way, by the reader and by a machine translator alike.
+**Thinking**: A sentence that makes one point, names who acts and keeps plain order has one reading, for the reader and for a machine translator alike.
 
 **Steps**
 
 1. Split a sentence that makes more than one point, or that links more than two clauses with "and", "or" or "but", into one sentence for each point.
-2. Follow the subject at once with an active verb that carries the action, keep the object close after it, and turn a noun made from a verb back into the verb.
+2. Follow the subject at once with an active verb that carries the action. Keep the object close after the verb. Turn a noun made from a verb back into the verb.
 3. Keep the small words that show how a sentence is built, such as articles, "that", "who", "then" and "of".
-4. Replace a pronoun, or a "which", that could point to two nouns with the noun it means, and break a string of nouns apart with prepositions.
-5. Read each sentence once as a machine translator would, word by word in its order and with nothing from outside it, and say who does what; where it reads two ways, reword it.
-6. Have a reader who did not write the document say a section back in their own words; where they say it otherwise, reword the sentence, and do not correct the reader.
+4. Where a pronoun, or a "which", could point to two nouns, replace it with the noun it means. Break a string of nouns apart with prepositions.
+5. Read each sentence once as a machine translator would, word by word in its order and with nothing from outside it, and say who does what. Where the sentence reads two ways, reword it.
+6. Have a reader who did not write the document say a section back in their own words. Where they say it otherwise, reword the sentence, and do not correct the reader.
 
 **Grounds**
 
@@ -129,7 +129,7 @@ Whoever reads the document for a purpose, a person or an AI, at any time after i
 
 ### Q6: Each time the reader meets a name, can they tell rightly whether it names a thing they have already met, and which one?
 
-**Thinking**: Each thing has one name, the one its reader already uses, written the same way each time, and each name one thing, so the reader, and a translator, keep one picture of each thing from start to end.
+**Thinking**: Each thing has one name, the one its reader already uses, written the same way each time. Each name names one thing. The reader, and a translator, then keep one picture of each thing from start to end.
 
 **Grounds**
 
@@ -142,7 +142,7 @@ Whoever reads the document for a purpose, a person or an AI, at any time after i
 
 ### Q7: When the reader meets a word they have not used themselves, can they tell what it means right where they meet it?
 
-**Thinking**: The reader takes each word with the meaning they already give it, so a word new to them, even one the writer's team uses every day, is replaced by everyday words, or given its meaning where they first meet it.
+**Thinking**: The reader takes each word with the meaning they already give it. So the writer replaces a word new to the reader with everyday words, even a word the writer's team uses every day, or gives its meaning where the reader first meets it.
 
 **Steps**
 
@@ -158,7 +158,7 @@ Whoever reads the document for a purpose, a person or an AI, at any time after i
 
 ### Q8: Does each word the reader reads carry part of what the document says, so that no word costs them time and gives them nothing?
 
-**Thinking**: A word or a sentence that carries nothing of what the document says still costs the reader time, so it goes, while a word that shows how a sentence is built stays.
+**Thinking**: A word or a sentence that carries nothing of what the document says still costs the reader time, so it goes. A word that shows how a sentence is built stays.
 
 **Steps**
 

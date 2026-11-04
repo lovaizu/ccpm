@@ -10,7 +10,7 @@ for a plugin that makes things for a person, such as rn: it hands Turn what it h
 and gets back the work.
 
 Asked alone, an AI writes from what it happens to know, and judges its own work. Turn starts from
-how good works of the same kind are made, and has the work judged by an AI that did not make it.
+how good works of the same kind are made, and an AI that did not make the work judges it.
 
 - **A template for each kind.** A kind is what sort of work it is, such as a README or a man page.
   Its template holds the parts a good work of the kind has, and questions that a good work answers
@@ -24,15 +24,16 @@ how good works of the same kind are made, and has the work judged by an AI that 
   time, with a recommendation. You approve the design before anything is made. Turn does this
   with [Pin](../pin/README.md), a plugin installed with Turn.
 - **Used by an AI that did not make it.** Once the work is made, another AI uses it as its user
-  would. It is given the work and the template's questions, not the design, as the work's user
+  would. Turn gives it the work and the template's questions, not the design, as the work's user
   never sees the design. It answers each question with the lines of the work that meet it, or with
-  what the user would still need. A question not yet met goes back to the decision behind it, which
-  is decided again, and the work is made again from there.
+  what the user would still need. A question not yet met goes back to the decision behind it. Turn
+  decides that decision again, and makes the work again from there.
 - **Then how it reads.** Once every question is met, Turn improves how the work says what it says,
-  such as a sentence that must be read twice to be understood, and checks it again. What the work says stays.
-- **At once where it can.** Parts of the work that stand apart, such as two modules that use
-  nothing of each other, are made and checked at the same time, so you wait less. A part is not
-  split where that would make it worse.
+  such as a sentence that a reader must read twice to understand, and checks it again. What the
+  work says stays.
+- **At once where it can.** Turn makes and checks at the same time the parts of the work that
+  stand apart, such as two modules that use nothing of each other, so you wait less. Turn does not
+  split a part where that would make it worse.
 
 **Non-goals**
 
@@ -67,8 +68,8 @@ installed with it. In a new Claude Code session, `/turn:up` is then one of its c
 At the end, you have a README for your tool that its readers can use as it is, and you have
 answered only what was yours.
 
-This walkthrough is not yet from a real run: it shows what Turn is being rebuilt to show, and its
-output is replaced by a real run's once Turn is built.
+This walkthrough does not yet come from a real run. It shows what Turn is being rebuilt to show.
+A real run's output replaces it once Turn is built.
 
 Your tool `tidy` sorts a Downloads folder into folders by type. Its repository has the code and no
 README. In Claude Code, at the root of the repository, you type:
@@ -162,16 +163,18 @@ flowchart LR
 - Each role is an AI with one job: planner settles the kind and its template, designer the
   design, generator makes the work, evaluator uses it as its user would, refactorer improves how it
   reads, and proofreader checks that.
-- Each role runs in the background, as a subagent of `up`, Turn's orchestrator. A role cannot ask
-  you itself, so one with a question ends with it. The conversation puts it to you, and your answer
-  goes back to the same role, which goes on where it was.
+- Each role runs in the background, as a subagent of `up`, Turn's orchestrator: the subagent that
+  starts each role. A role cannot ask you itself, so a role with a question ends with it. The
+  conversation puts it to you, and your answer goes back to the same role, which goes on where it
+  was.
 - The next role comes from how the last one ended, as Turn's routes say: the design goes to
   generator, the work to evaluator, a question not yet met back to designer, and every question met
-  on to refactorer. [Lane](../lane/README.md), a plugin whose checks are laid into Turn's own
-  files, tells `up` each next role, and stops a role from ending before its files are in form.
+  on to refactorer. [Lane](../lane/README.md) is a plugin whose checks are written into Turn's own
+  files. It tells `up` each next role, and stops a role from ending before its files are in the
+  right form.
 - Each role starts fresh, and carries on from the run's folder. So the evaluator reads each round
   with fresh eyes, and a stopped run goes on from its folder.
-- A template Turn makes for a new kind is kept in `.turn/best-practices/`, and later runs in the
+- Turn keeps a template it makes for a new kind in `.turn/best-practices/`, and later runs in the
   same repository use it.
 
 ## Documentation

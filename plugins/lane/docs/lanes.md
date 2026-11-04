@@ -1,32 +1,33 @@
 # lane's lanes
 
-Each lane lane can lay, under the action it watches, so your AI can tell which lanes to propose for
-your plugin's steps and you can tell what each hook tells your subagent; and the proposal your AI
-writes them in.
+This page gives each lane that lane can lay, under the action it watches, and the proposal your AI
+writes them in. With it, your AI can tell which lanes to propose for your plugin's steps, and you
+can tell what each hook tells your subagent.
 
-The sentence is what the step says, and what the hook tells the subagent on a drift. What the lane
-takes goes where the sentence shows `<...>`. The hook tells the sentence when the subagent does what
-the last column says.
+The sentence is what the step says. The hook tells the subagent the sentence on a drift, that is,
+when the subagent does what the last column says. What the lane takes goes where the sentence shows
+`<...>`.
 
-What a lane takes is fixed in the step, such as `CHANGELOG.md`, or given for each run, written
-`{<name>}`, as a whole take or, in a command, as a part of it, as below. A thing given for each run is the value under that name that the values port reads in
-what the subagent is given: the prompt of the Agent call that started it, and each message a
-SendMessage call sent to it after, the later over the earlier. So the hook holds a file added to
-the run while the subagent works, as by an answer, from then on. The sentence `Write only {work}.`
+What a lane takes is either fixed in the step, such as `CHANGELOG.md`, or given for each run,
+written `{<name>}`. A thing given for each run may be a whole take, or, in a command, a part of it,
+as below. It is the value under that name that the values port reads in what the subagent is
+given: the prompt of the Agent call that started it, and each message a SendMessage call sent to it
+after, the later over the earlier. So the hook holds a file added to the run while the subagent
+works, as by an answer, from then on. The sentence `Write only {work}.`
 holds a subagent to the files and folders its run's `work` names, whichever they are. A value given
 as `null` is the caller saying there is none: each lane taking that name lets the call or the end
 through on that run, with nothing told. A thing taken holds any text, a comma among the rest.
 
-Each subagent with lanes, or that routes name, sets `background: true` in its frontmatter, and
+Each subagent with lanes, or that routes name, sets `background: true` in its frontmatter.
 `lay.py print` refuses a proposal where one does not. Claude Code then runs it in the background
 however it is started ([background](https://code.claude.com/docs/en/sub-agents)), and the Agent
 call that starts it comes back at once with the `agentId` of its run. lane keeps the call's prompt
-under that ID as the call comes back, so many runs of one subagent at once are each held to their
-own values. A run starts a moment before its call comes back, so a call the run makes that needs a
-value waits for it up to 3 seconds, and is an error where it has not come back by then. A
-SendMessage call counts where its `to` is the run's `agentId`; one an orchestrator sends to a run
-that ended with no result is stopped, and a result such a run gives once resumed by another does
-not count, as [the routes](routes.md#how-a-subagent-gives-its-result) say.
+under that ID as the call comes back. So lane holds each of many runs of one subagent at once to
+its own values. A run starts a moment before its call comes back. So a call the run makes that
+needs a value waits up to 3 seconds for the Agent call to come back, and is an error where it has
+not come back by then. A SendMessage call counts where its `to` is the run's `agentId`. lane stops
+one that an orchestrator sends to a run that ended with no result. A result such a run gives once
+another resumes it does not count, as [the routes](routes.md#how-a-subagent-gives-its-result) say.
 
 | Action | Lane | Sentence | Told when the subagent |
 |---|---|---|---|
@@ -41,48 +42,50 @@ not count, as [the routes](routes.md#how-a-subagent-gives-its-result) say.
 | end | end_when | End only once `<output>` is made. | gives its result before |
 | end | every_item | Answer every item of `<input>`. | gives its result with an item unanswered |
 
-A subagent with rules reads files with Read and Grep, writes them with Write and Edit, and runs a
+A subagent with lanes reads files with Read and Grep, writes them with Write and Edit, and runs a
 command with Bash only where a run_only, hold or test_after lane names it, or its result command
-does. lane matches a command whole, as the step writes it, and reads no part of it. A command in any
-other words is stopped and told the sentence and, on the next line, the commands it may run.
+does. lane matches a command whole, as the step writes it, and reads no part of it. lane stops a
+command in any other words, and tells the subagent the sentence and, on the next line, the commands
+it may run.
 
-A command may be one that a skill of a dependency names, a plugin your plugin declares in the
-`dependencies` of its own `.claude-plugin/plugin.json`
+A command may be one that a skill of a dependency names. A dependency is a plugin that your plugin
+declares in the `dependencies` of its own `.claude-plugin/plugin.json`
 ([dependencies](https://code.claude.com/docs/en/plugins/dependencies)). The skill names its script
 by its own `${CLAUDE_PLUGIN_ROOT}`, which Claude Code fills with the folder it installed the
-dependency in, and no hook is told that folder. So a run_only, hold or test_after lane writes the
+dependency in. No hook is told that folder. So a run_only, hold or test_after lane writes the
 folder as `${dependency:<name>}`, the dependency's name as your manifest declares it, such as
 `python3 ${dependency:pin}/scripts/check.py design-tree.json`. lane takes that part as any folder,
 from the root, that holds `.claude-plugin/plugin.json` whose `name` is that dependency, and matches
 the rest of the command whole. It reads the dependency from your plugin's own manifest alone, not
-from a marketplace's entry, and `lay.py print` refuses a lane that names a dependency the manifest
-does not declare, or that names one in a place other than a command. A stopped subagent is told, on
-the line after the commands it may run, what `${dependency:<name>}` stands for.
+from a marketplace's entry. `lay.py print` refuses a lane that names a dependency the manifest
+does not declare, or that names one in a place other than a command. lane tells a stopped subagent,
+on the line after the commands it may run, what `${dependency:<name>}` stands for.
 
 A command of a run_only, hold or test_after lane may hold a value given for the run as one part,
-written `{<name>}` with no `$` before it, its name of letters, digits, `_` and `-`, such as
-`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/check.py {file}`. lane matches the rest whole, and that part
-to each text of the run's own value of the name, put in as one word of the shell: as it is, where
-it holds no other character than a letter, a digit or one of `@%+=:,./-_`, and in single quotes
+written `{<name>}` with no `$` before it, its name of letters, digits, `_` and `-`, such as `python3
+${CLAUDE_PLUGIN_ROOT}/scripts/check.py {file}`. lane matches the rest whole. It matches that part to
+each text of the run's own value of the name, put in as one word of the shell: as it is, where it
+holds no other character than a letter, a digit or one of `@%+=:,./-_`, and in single quotes
 otherwise, as Python's `shlex.quote` gives it. So the run given `{"file": "my notes.json"}` runs
-`python3 <your plugin's folder>/scripts/check.py 'my notes.json'`, and no value adds a word to the
-command, such as by a blank or a `;`, or stands for anything but itself. A stopped subagent is
-told, on the line after the sentence, each command it may run with its value put in. Braces that
+`python3 <your plugin's folder>/scripts/check.py 'my notes.json'`. No value adds a word to the
+command, such as by a blank or a `;`, or stands for anything but itself. lane tells a stopped
+subagent, on the line after the sentence, each command it may run with its value put in. Braces that
 name no value, as in `find . -exec ls {} +` or `${HOME}`, are the command's own. `lay.py print`
-refuses a value held as a part of any take but a command, as only a command is matched by its
+refuses a value held as a part of any take but a command, as lane matches only a command by its
 parts.
 
 hold does not stop the command: lane answers Claude Code to ask the person, and Claude Code shows
 its permission prompt with the sentence, even under `bypassPermissions`. In `claude -p` no one can
 be asked, so Claude Code refuses the command.
 
-The lanes of the end, read_whole, test_after, end_when and every_item, are checked as the subagent
-gives its result, so `lay.py write` gives a subagent with one of them a result command on its last
-step, `done` where no route names it. The guard checks them as the subagent runs that command, from
-the calls it kept, and stops the command with each lane's sentence and, on the next line, what is
-missing. It holds each in_form output there to its form again too, as a command its lanes name may
-have written it. The result script is given no run's ID, so it checks only the result, as
-[the routes](routes.md#how-a-subagent-gives-its-result) say.
+lane checks the lanes of the end, read_whole, test_after, end_when and every_item, as the subagent
+gives its result. So `lay.py write` gives a subagent with one of them a result command on its last
+step, with the result `done` where no route names it. The guard, the check script that lane's hooks
+run, checks them as the subagent runs that command, from the calls it kept. It stops the command
+with each lane's sentence and, on the next line, what is missing. It holds each in_form output there
+to its form again too, as a command its lanes name may have written it. The result script is given
+no run's ID, so it checks only the result, as [the
+routes](routes.md#how-a-subagent-gives-its-result) say.
 
 in_form takes the form by the path the subagent reads it by, as
 `${CLAUDE_PLUGIN_ROOT}/<path in the plugin>`. The form is one of two kinds:
@@ -94,38 +97,38 @@ in_form takes the form by the path the subagent reads it by, as
 
 read_only lets the subagent read, beside its inputs, the form each of its in_form lanes names: its
 step tells it to write in that form, and the form, a file of your plugin, holds nothing of the
-project's work.
-It lets the subagent read its own part too, the file its steps lie in, which
-lane gives it whole as it starts: reading what it was given breaks no rule.
+project's work. It lets the subagent read its own part too, the file its steps lie in, which lane
+gives it whole as it starts: reading what it was given breaks no rule.
 
 read_only and write_only each take a file or a folder, and a folder lets the subagent read or write
 anything under it. A path of read_only, write_only or read_whole may begin with
 `${CLAUDE_PLUGIN_ROOT}`, such as `${CLAUDE_PLUGIN_ROOT}/core/domain/how.md`, and lane puts your
 plugin's folder in for it, as it does in a command, so a step can name a file of your plugin by
-the path the subagent reads it by. test_after's output may be a folder too, and a change of any file under it is a
-change of the output. read_only and write_only check the path that Read, Grep, Write or Edit is
-given, a Grep given none reading the folder it runs in; a command a run_only lane names reads and
-writes what it does unchecked, so name only commands whose reads and writes you accept.
+the path the subagent reads it by. test_after's output may be a folder too, and a change of any
+file under it is a change of the output. read_only and write_only check the path that Read, Grep,
+Write or Edit is given, a Grep given none reading the folder it runs in. A command a run_only lane
+names reads and writes what it does unchecked, so name only commands whose reads and writes you
+accept.
 
 read_whole counts a file read to its end where the Read calls of the subagent, by their `offset`
 and `limit`, have covered every line of it, a Read with no `limit` covering the 2000 lines the Read
-tool reads by default. test_after counts a test passed where the test's command
-came back without an error, and the output changes after it where a Write or Edit of a file under it
-came later.
+tool reads by default. test_after counts a test passed where the test's command came back without
+an error. It counts the output changed after the test where a Write or Edit of a file under it came
+later.
 
 follow_routes takes nothing. `lay.py write` lays it from your proposal's routes on the
 orchestrator's step, and lane tells the orchestrator each start, as [the routes](routes.md) say.
 
 every_item reads its input's items at the items port, as the ports below say. It counts an item
 answered where its ID stands as a word of its own in a file the subagent wrote in this run other
-than the input, so `B-1` is answered by neither `B-12`, `B-1.2` nor `AB-1`. An item with no ID is
-not counted, as no text tells an answer to it from any other.
+than the input, so `B-1` is answered by neither `B-12`, `B-1.2` nor `AB-1`. every_item does not
+count an item with no ID, as no text tells an answer to it from any other.
 
 ## The proposal
 
-Your AI writes the lanes it proposes as one JSON file, has `lay.py print` show them as they will be
-laid, and once it approves them has `lay.py write` lay them from the same file, held to this JSON
-Schema:
+Your AI writes the lanes it proposes in one JSON file. It has `lay.py print` show them as they
+will be laid, and once it approves them, has `lay.py write` lay them from the same file. The file
+is held to this JSON Schema:
 
 ```json
 {"type": "object", "required": ["plugin"], "additionalProperties": false,
@@ -154,26 +157,27 @@ Schema:
 - A lane goes only on a sentence whose drift shows in a tool call or in how the subagent ends, and
   only where the step alone is not sure to hold.
 
-  What the subagent only weighs no hook sees.
+  No hook sees what the subagent only weighs.
 - A lane's `takes` are its things in the order of its places under
-  [What each lane is given](#what-each-lane-is-given), one in each place but the last, which takes
-  the rest, each written as the step writes it, a script or a command word for word. So in_form
+  [What each lane is given](#what-each-lane-is-given). Each place takes one, and the last takes the
+  rest. Write each as the step writes it, a script or a command word for word. So in_form
   takes its output and then its forms, and test_after its output and then its tests.
 - An adapter is named only where your text is in another form than lane's, as the ports below say.
-- Routes are written under `routes`, held to the JSON Schema [the routes](routes.md#the-routes)
-  give, and laid as a follow_routes lane on the orchestrator's step and a result command on the last
-  step of each subagent they name. A proposal may hold routes alone, with no `subagents`.
-- A subagent the proposal gives has, once it is written, the proposal's lanes alone. Put in each
-  lane that `lay.py up` says was laid before in it and that you keep, as `lay.py up` says the lane.
+- Your AI writes routes under `routes`, held to the JSON Schema
+  [the routes](routes.md#the-routes) give. `lay.py write` lays them as a follow_routes lane on the
+  orchestrator's step and a result command on the last step of each subagent they name. A
+  proposal may hold routes alone, with no `subagents`.
+- Once written, a subagent the proposal gives has the proposal's lanes alone. So put in each lane
+  that `lay.py up` says was laid in it before and that you keep, as `lay.py up` says the lane.
 
-  `lay.py write` takes the sentence of each lane left out out of its step.
+  `lay.py write` removes from its step the sentence of each lane left out.
 - Keep the proposal as `.lane/<yyyymmdd>-<plugin>/<plugin>.json` at the root of the repository
   your plugin is in, the nearest folder above it holding `.git`, or your plugin's folder where none
   does, and its adapters beside it.
 
   Your AI reads and writes them with its tools, and Claude Code lets it do so without asking only
-  inside the folder it works in; `lay.py write` removes them, and their folder, once they are
-  written into your plugin.
+  inside the folder it works in. `lay.py write` removes them, and their folder, once it has written
+  them into your plugin.
 
 ## The ports
 
@@ -235,7 +239,7 @@ is given to the lane's IN, a JSON Schema. A lane is given two things:
 - where its check rests on what the subagent did before, the calls the guard kept of it, where a
   call counts once it has come back, and a call a hook stopped is left out.
 
-The layer holds a proposal's takes to the same IN, so a wrong take shows when the lanes are laid,
+`lay.py` holds a proposal's takes to the same IN, so a wrong take shows when the lanes are laid,
 not on a run.
 
 Anything not as these say is an error, not a drift. Errors include a value not given or given
@@ -243,8 +247,8 @@ empty, or of a run whose start has not come back with its `agentId` within 3 sec
 failing, giving no answer in time or answering out of its port; the event or `hooks/lanes.json` not
 as Claude Code and `lay.py write` write them; a subagent's file no longer setting
 `background: true`; a step no longer saying its lane's sentence; and a thing a lane takes that
-`lay.py write` would now refuse, such as in_form's form gone. On an error the guard stops the call, or keeps the subagent going once
-as it ends, and tells it and you
+`lay.py write` would now refuse, such as in_form's form gone. On an error the guard stops the
+call, or keeps the subagent going once as it ends, and tells it and you
 
 ```
 <plugin>: lane cannot check <lane> on step <n> of <subagent>: <what is wrong>. Ask the main conversation for the fix: <who must fix it>. Go on with the rest of your work meanwhile.
@@ -260,8 +264,8 @@ subagent can be checked,
 and, where the hook's command does not name your plugin as `lay.py write` writes it, so your plugin
 is not known, the same headed `lane:` and naming `the lanes of this hook`.
 
-The IN of a lane, `<place>` standing for each of its places below, and `calls` required only where
-it rests on the calls kept:
+Here is the IN of a lane. `<place>` stands for each of its places below, and `calls` is required
+only where the lane rests on the calls kept:
 
 ```json
 {
@@ -297,17 +301,18 @@ it rests on the calls kept:
 
 ## A subagent's part
 
-Where your subagent's file is its entry, its frontmatter and a body naming its part, such as
+Your subagent's file may be only its entry: its frontmatter and a body naming its part, such as
 
 ```markdown
 Your steps are in `${CLAUDE_PLUGIN_ROOT}/prompts/writer.md`, given to you as you start. Take them on what you are given.
 ```
 
-its steps are those of the part, the one file under your plugin's `prompts/` or `core/roles/` the
-body names in backticks, such as `${CLAUDE_PLUGIN_ROOT}/core/roles/writing.md`, where a role's flow
-lies apart from Claude Code. The part's name need not be the subagent's. `lay.py print` shows the part's steps, `lay.py write` writes each lane's sentence into
-them, and the guard reads them there. Where a body names no such file, or more than one, lane reads
-the steps from the subagent's file itself.
+Then its steps are those of the part: the one file under your plugin's `prompts/` or
+`core/roles/` that the body names in backticks, such as
+`${CLAUDE_PLUGIN_ROOT}/core/roles/writing.md`, where a role's flow lies apart from Claude Code. The
+part's name need not be the subagent's. `lay.py print` shows the part's steps, `lay.py write`
+writes each lane's sentence into them, and the guard reads them there. Where a body names no such
+file, or more than one, lane reads the steps from the subagent's file itself.
 
 Subagents whose entries name one part share its steps, and the part carries one set of sentences.
 So `lay.py print` refuses a proposal where subagents sharing a part would lay different lanes on a
@@ -316,6 +321,6 @@ step of it, those it gives and those laid before alike, and names them and the s
 Once lanes are laid in the subagent, the guard gives it the part whole as it starts, through the
 SubagentStart hook's `additionalContext`, with your plugin's folder put in place of
 `${CLAUDE_PLUGIN_ROOT}`, as Claude Code does in the entry's body. So the subagent has its steps
-before its first call, and no lane is needed for reading them. The part not there is an error,
-which the guard tells in the form `<plugin>: lane cannot check the lanes of <subagent>: <what is
-wrong>.` above.
+before its first call, and no lane is needed for reading them. Where the part is missing, that is
+an error, and the guard tells it in the form
+`<plugin>: lane cannot check the lanes of <subagent>: <what is wrong>.` above.

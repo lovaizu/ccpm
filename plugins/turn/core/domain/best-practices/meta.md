@@ -7,8 +7,8 @@ A best practice it makes produces deliverables that achieve their user's purpose
 ## Parts
 
 - **goal**: What the user achieves with the deliverable.
-- **parts**: The deliverable's parts that meet the goal: each part and what it holds, in the order the user meets them; how they are written out is decided when the deliverable is made.
-- **benefits**: Questions that check, by the essence, whether the deliverable achieves the goal: what each part, each dependency among parts and the whole bring the user, each asked so it is answered yes or no, in the order the generator thinks them.
+- **parts**: The deliverable's parts that meet the goal: each part and what it holds, in the order the user meets them. The one who makes the deliverable decides how the parts are written out.
+- **benefits**: Questions that check, by the essence, whether the deliverable achieves the goal. They ask what each part, each dependency among parts and the whole bring the user. Each is answered yes or no, and they stand in the order the generator thinks them.
 - **practices**: For each question, in the benefits' order, the best way of thinking that meets its essence, and steps only where the thinking alone does not lead the generator, with the grounds where they have worked.
 
 ## Benefits
@@ -33,7 +33,7 @@ A best practice it makes produces deliverables that achieve their user's purpose
 1. Name the one who uses the deliverable.
 2. Ask what they are trying to get done when they reach for it.
 3. Write that as one sentence with them as its subject, free of what the deliverable holds or how it is made.
-4. Ask whether two readers would name the same achievement from it; where they would name two, keep the one the other serves.
+4. Ask whether two readers would name the same achievement from it. Where they would name two, keep the one the other serves.
 
 **Grounds**
 
@@ -42,7 +42,7 @@ A best practice it makes produces deliverables that achieve their user's purpose
 
 ### Q2: Looking at the parts, does the generator know what to write in which part, and in what order?
 
-**Thinking**: The parts are learned from good and poor deliverables of the kind, each part written as what its user needs from it rather than as one way some deliverables give it, and laid out in the order its user meets it.
+**Thinking**: Good and poor deliverables of the kind teach the parts; each part says what its user needs from it rather than one way some deliverables give it, and the parts follow the order its user meets them.
 
 **Steps**
 
@@ -58,11 +58,11 @@ A best practice it makes produces deliverables that achieve their user's purpose
 
 ### Q3: Do the parts hold, neither more nor less, the parts the goal needs?
 
-**Thinking**: Each part is there because the goal needs it, and what the goal needs is found by imagining a deliverable that has every part and still fails its user.
+**Thinking**: Each part is there because the goal needs it, and a deliverable imagined with every part that still fails its user shows what the goal needs.
 
 **Steps**
 
-1. For each part, say what the user could not do toward the goal without it; cut a part with no answer.
+1. For each part, say what the user could not do toward the goal without it. Cut a part with no answer.
 2. Imagine a deliverable that has every part and still fails its user, and make what it lacks a part.
 3. Repeat until no such deliverable can be imagined.
 
@@ -81,9 +81,9 @@ A best practice it makes produces deliverables that achieve their user's purpose
 1. Name who uses what the question asks of, and the moment they use it.
 2. Ask what they need from it there toward the goal.
 3. Write the question as whether they get that, answered yes or no.
-4. Ask whether a deliverable could meet the question's words while the user still does not get it; if so, rewrite the question to ask the getting itself.
-5. Ask whether the question says more than whether the work is good; if not, name what the user gets.
-6. Have two evaluators judge one real deliverable by the question; where they differ, rewrite the question until it is read one way.
+4. Ask whether a deliverable could meet the question's words while the user still does not get it. If so, rewrite the question to ask whether the user gets it.
+5. Ask whether the question says more than whether the work is good. If not, name what the user gets.
+6. Have two evaluators judge one real deliverable by the question. Where they differ, rewrite the question until every evaluator reads it one way.
 
 **Grounds**
 
@@ -95,7 +95,7 @@ A best practice it makes produces deliverables that achieve their user's purpose
 
 ### Q5: For each part, each dependency among parts and the whole, is there a question asking whether it serves the user?
 
-**Thinking**: The questions are complete when no deliverable can pass them all and still fail its user, and each need is asked in one place.
+**Thinking**: The questions are complete when no deliverable can pass them all and still fail its user, and they ask each need in one place.
 
 **Steps**
 
@@ -103,7 +103,7 @@ A best practice it makes produces deliverables that achieve their user's purpose
 2. Give each one its question.
 3. Merge questions that would fail the same deliverables for the same reason, keeping a key one on its own.
 4. Imagine a deliverable that passes every question and still fails its user, and add the question that would fail it.
-5. Judge real deliverables their users found short; where one passes, add or mend the question that should have failed it.
+5. Judge real deliverables their users found short. Where one passes, add or mend the question that should have failed it.
 
 **Grounds**
 
@@ -115,7 +115,7 @@ A best practice it makes produces deliverables that achieve their user's purpose
 
 ### Q6: Following the way of thinking and the steps, can the generator make the content the question asks for?
 
-**Thinking**: A way of making is taken from where it has met the essence before and kept only once it meets it here; the way of thinking carries it, and a step is there only for what the thinking alone does not lead the generator to.
+**Thinking**: A way of making comes from where it has met the essence before, and it stays only once it meets the essence here; the way of thinking carries it, and a step stands only for what the thinking alone does not lead the generator to.
 
 **Steps**
 
@@ -123,8 +123,8 @@ A best practice it makes produces deliverables that achieve their user's purpose
 2. Write the way of thinking in one sentence.
 3. Write a step only for what the way of thinking alone does not lead the generator to, one action each, in order.
 4. Where a step or a source names one way of doing it, such as a place, a file or a tool, write what that way achieves, so a project that achieves it another way keeps its own.
-5. Add as grounds the words of the sources, quoted from the pages opened, each with its page's title and link; cut a step that no source holds and the way of thinking already implies.
-6. Make one real deliverable by the way, and judge it by the question; where it stays no, mend the way.
+5. Add as grounds the words of the sources, quoted from the pages opened, each with its page's title and link. Cut a step that no source holds and the way of thinking already implies.
+6. Make one real deliverable by the way, and judge it by the question. Where the answer stays no, mend the way.
 
 **Grounds**
 
@@ -141,7 +141,7 @@ A best practice it makes produces deliverables that achieve their user's purpose
 
 ### Q8: Does a deliverable made by this best practice, and passed, let its user achieve their purpose?
 
-**Thinking**: Only a deliverable made and used shows whether the whole works, and the user's own verdict is what a verdict by the questions is set against.
+**Thinking**: Only a deliverable made and used shows whether the whole works, and a verdict by the questions is measured against the user's own verdict.
 
 **Steps**
 

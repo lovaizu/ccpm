@@ -1,8 +1,8 @@
 # Turn UX
 
 Turn's user is the person who wants a work, such as a README or a module of code. A plugin such as
-rn may stand between that person and Turn: rn calls Turn for each work its plan needs, and is then
-Turn's caller.
+rn may stand between that person and Turn: rn calls Turn for each work its plan needs, and so
+becomes Turn's caller.
 
 ## OKRs
 
@@ -20,17 +20,17 @@ Turn's caller.
   - KR2.1: Of the works of a kind new to Turn, the share that goes wrong: as KR1.1 says, or a
     condition of the kind that the person adds or changes after they approved the conditions. Lower
     is better.
-  - KR2.2: The lead time from the person's request to the work handed back, the making of the
+  - KR2.2: The lead time from the person's request to the work handed back, the time to make the
     kind's conditions included. Shorter is better.
 - O3: A caller such as rn hands Turn what it has already settled, and gets back a work it can pass
   on as it is.
   - KR3.1: Of the works Turn hands back to a caller, the share that goes wrong: a work the caller or
     the person changes before it is used, or a point the caller had settled that Turn puts to the
     person again. Lower is better.
-  - KR3.2: The lead time from the caller's start of Turn to the work handed back. Shorter is
+  - KR3.2: The lead time from when the caller starts Turn to the work handed back. Shorter is
     better.
 
-In each objective, the first key result comes first: the second is shortened only by a change that
+In each objective, the first key result comes first: a change may shorten the second only where it
 keeps the first.
 
 Key results have no target values. When a measure becomes a target, it stops being a good measure
@@ -62,9 +62,9 @@ participants:
 - rn (AI): the caller in O3.
 
 Every role runs in the background, so the main conversation stays free to put a question to the
-person as soon as a role asks one. A role that asks ends with its question, and goes on with the
-answer once it is handed back. Parts of the work that stand apart, such as two modules that use
-nothing of each other, are made and checked at the same time.
+person as soon as a role asks one. A role that asks ends with its question, and goes on once it
+gets the answer back. Turn makes and checks at the same time the parts of the work that stand
+apart, such as two modules that use nothing of each other.
 
 ### O1: The person gets a README for tidy
 

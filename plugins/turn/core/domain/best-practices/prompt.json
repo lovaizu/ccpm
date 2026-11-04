@@ -1,5 +1,5 @@
 {
- "goal": "Given the prompt for a request it is made for, an AI agent does the task as the prompt's writer means, with only what its run gives it, on every run and in cases the writer did not foresee.",
+ "goal": "When an AI agent gets the prompt for a request that the prompt is made for, it does the task as the prompt's writer means. It does so with only what its run gives it, on every run, and in cases that the writer did not foresee.",
  "parts": [
   {
    "id": "description",
@@ -7,7 +7,7 @@
   },
   {
    "id": "tools",
-   "what": "The tools the AI may use, listed where the host reads them and refuses any other, when the host allows such a list."
+   "what": "The tools the AI may use. The prompt lists them where the host reads them, when the host allows such a list. The host refuses any tool not on it."
   },
   {
    "id": "goal",
@@ -19,7 +19,7 @@
   },
   {
    "id": "steps",
-   "what": "The steps in the order the AI takes them, each step the result that holds when it ends, with the rules the step needs, each with its reason, or the script that does it and how to run it."
+   "what": "The steps, in the order the AI takes them. Each step names the result that holds when it ends. It gives either the rules the step needs, each with its reason, or the script that does the step and how to run it."
   },
   {
    "id": "output",
@@ -27,7 +27,7 @@
   },
   {
    "id": "trials",
-   "what": "The trials that try the prompt: one case for each class of input and each rule of its steps, where the AI must act and where it must not; the set-up of each case, the stand-ins for the person and for the prompt's neighbours, the judges, and the checks made on each run's record."
+   "what": "The trials that try the prompt. They hold one case for each class of input and each rule of its steps, both where the AI must act and where it must not. They also hold the set-up of each case, the stand-ins that play the person and the parts the prompt works with, the judges, each an AI that gives pass or fail on one point, and the checks on each run's record."
   }
  ],
  "benefits": [
@@ -125,10 +125,10 @@
  "practices": [
   {
    "benefit": "Q1",
-   "thinking": "The AI stops when its work looks done, so the prompt says what the result is for and gives a check that tells done from looking done.",
+   "thinking": "The AI stops when its work looks done. So the prompt says what the result is for, and gives a check that tells done from looking done.",
    "steps": [
     "For each thing that holds once the task is met, give the check that shows it: a command to run where one exists, or else what to look up and where.",
-    "Write when the AI stops: once every check passes, or at a blocker it cannot pass, which it hands back with what it found."
+    "Write when the AI stops: once every check passes, or at a blocker it cannot pass. At a blocker, the AI hands it back with what it found."
    ],
    "grounds": [
     {
@@ -159,7 +159,7 @@
   },
   {
    "benefit": "Q2",
-   "thinking": "A choice is the user's where the AI has no ground to pick one option over another, or where it is hard to undo, so the prompt names those choices and how the AI asks, and leaves every other choice to the AI.",
+   "thinking": "A choice is the user's where the AI has no ground to pick one option over another, or where the choice is hard to undo. The prompt names those choices and how the AI asks about them. It leaves every other choice to the AI.",
    "steps": [
     "Among the choices the task meets, mark each action that is hard to undo, touches what others share, or destroys something."
    ],
@@ -186,7 +186,7 @@
   },
   {
    "benefit": "Q3",
-   "thinking": "The AI is able but new to this place, and sees nothing of the conversation that started it, so the prompt gives what it cannot find or know, and where the rest lies.",
+   "thinking": "The AI is able but new to this place. It sees nothing of the conversation that started it. So the prompt gives what the AI cannot find or know, and says where the rest lies.",
    "steps": [
     "For each step, list the facts it needs: its inputs and where they lie, the terms it uses, the rules of the place, and what the writer knows without saying.",
     "Give the prompt to a fresh AI with only what a run gives it, see where it guesses, and add the fact it lacked."
@@ -232,7 +232,7 @@
   },
   {
    "benefit": "Q4",
-   "thinking": "Each step is a result on the way to the goal, so the AI chooses how to reach it and knows when to go on.",
+   "thinking": "Each step is a result on the way to the goal. The AI then chooses how to reach it, and knows when to go on.",
    "steps": [
     "Write the steps in the order their results must hold, so the AI sees that order, such as in a numbered list.",
     "Check that a later step or the goal uses each step's result, and cut a step whose result nothing uses.",
@@ -255,12 +255,12 @@
   },
   {
    "benefit": "Q5",
-   "thinking": "A rule that says what it is for lets the AI apply it where it was meant and judge a case no rule names, so each rule carries its reason.",
+   "thinking": "A rule that says what it is for lets the AI apply it where the writer meant it. It also lets the AI judge a case that no rule names. So each rule carries its reason.",
    "steps": [
     "Write the rule as what to do, in plain words, with no capitals or warnings for emphasis.",
     "Where a rule says always or never, say what the AI does when the rule cannot be met.",
     "In place of a list of edge cases, give the way of judging and a few typical examples that differ from one another.",
-    "Think of a case the rule does not name, read only the rule and its reason, and check that they lead where the writer would go; where they do not, mend the reason."
+    "Think of a case the rule does not name, read only the rule and its reason, and check that they lead where the writer would go. Where they do not, mend the reason."
    ],
    "grounds": [
     {
@@ -315,7 +315,7 @@
   },
   {
    "benefit": "Q6",
-   "thinking": "The AI's judgment varies from run to run, which suits a step with many good ways, so a step with one right result is done by a program that gives it every run and handles its own errors, which the AI runs.",
+   "thinking": "The AI's judgment varies from run to run. That suits a step that has many good ways. So a program does a step that has one right result. The program gives that result on every run and handles its own errors. The AI runs the program.",
    "steps": [
     "Run the prompt twice on one input, and compare what those steps gave."
    ],
@@ -348,10 +348,10 @@
   },
   {
    "benefit": "Q7",
-   "thinking": "Each action a step calls for needs a tool the AI is allowed, or the step cannot be taken however well it is written.",
+   "thinking": "Each action that a step calls for needs a tool that the AI is allowed. Without that tool, the AI cannot take the step, however well the writer writes it.",
    "steps": [
     "For each step, list each action it takes and the tool that takes it, a script's command among them.",
-    "Check each tool against those the prompt allows, and add the tool or change the step.",
+    "Check each tool against those the prompt allows. Where the prompt does not allow a tool, add the tool or change the step.",
     "Run the prompt, and read the record of the run for a tool call the host refused."
    ],
    "grounds": [
@@ -365,7 +365,7 @@
   },
   {
    "benefit": "Q8",
-   "thinking": "A rule in words holds only while the AI follows it, so an action that must never happen is made one the host refuses.",
+   "thinking": "A rule in words holds only while the AI follows it. So the writer makes the host refuse each action that must never happen.",
    "steps": [
     "List the actions the task must never take, such as writing where it only reads.",
     "Allow only the tools Q7's list needs.",
@@ -401,7 +401,7 @@
   },
   {
    "benefit": "Q9",
-   "thinking": "The caller sees only what comes back, so the prompt says what that is, in what form and to whom, and a step makes each of it.",
+   "thinking": "The caller sees only what comes back. So the prompt says what that is, in what form, and to whom. A step makes each thing in it.",
    "steps": [
     "Name the caller, and what it does next with the result.",
     "List what it needs for that: the result, what was done, and what was not done and why.",
@@ -432,11 +432,11 @@
   },
   {
    "benefit": "Q10",
-   "thinking": "The host reads the name and the description alone, among many, to pick a prompt for a request, so they say what the prompt does and when it is used, in the words users ask in, and tell it apart from the others.",
+   "thinking": "To pick a prompt for a request, the host reads only the name and the description of each of many prompts. So the name and the description say what the prompt does and when to use it, in the words users ask in. They also tell the prompt apart from the others.",
    "steps": [
     "Write down several requests the prompt is made for, in a user's own words, and several near ones it is not made for.",
     "Write the description: what the prompt does, then the requests and situations it is used for, the main use first.",
-    "Give each request written down to a fresh session with the prompt installed, see which prompt the host chooses, and mend the description where it chooses wrongly."
+    "Give each request written down to a fresh session with the prompt installed, and see which prompt the host chooses. Where it chooses wrongly, mend the description."
    ],
    "grounds": [
     {
@@ -479,9 +479,9 @@
   },
   {
    "benefit": "Q11",
-   "thinking": "The description and the body say one task, so what the host chose the prompt for is what the AI does.",
+   "thinking": "The description and the body say the same one task. The AI then does the task that the host chose the prompt for.",
    "steps": [
-    "Set what the description says the prompt does against what the goal and the steps have the AI do, and for each thing in one and not the other, add it to the body or take it out of the description."
+    "Set what the description says the prompt does against what the goal and the steps have the AI do. For each thing in one and not the other, add it to the body or take it out of the description."
    ],
    "grounds": [
     {
@@ -494,12 +494,12 @@
   },
   {
    "benefit": "Q12",
-   "thinking": "A prompt is known by what a fresh AI does with it, so it is run on real requests of each kind, several times, and judged from the record of what the AI did.",
+   "thinking": "The writer knows a prompt by what a fresh AI does with it. So the writer runs it on real requests of each kind, several times, and judges it from the record of what the AI did.",
    "steps": [
-    "Gather requests of each kind the prompt is made for, and hold some back from its making.",
+    "Gather requests of each kind the prompt is made for. Hold some back, and do not use them while making the prompt.",
     "Run each with a fresh AI that has only the prompt and what a run gives it, several times, on the model the prompt will run on.",
     "Mend the prompt only for a cause seen in a record.",
-    "Run the requests held back last, to see whether the prompt holds beyond the ones it was mended on."
+    "Run the requests held back last. They show whether the prompt holds beyond the requests that the writer mended it on."
    ],
    "grounds": [
     {
@@ -554,9 +554,9 @@
   },
   {
    "benefit": "Q13",
-   "thinking": "Every line takes some of the AI's attention, so the prompt keeps only the lines that change what it does, and keeps detail it needs only sometimes where the AI reads it only then.",
+   "thinking": "Every line takes some of the AI's attention. So the prompt keeps only the lines that change what the AI does. It keeps detail that the AI needs only sometimes in a place that the AI reads only then.",
    "steps": [
-    "Move detail needed only in some runs out of the prompt to where the AI reads it only when it needs it, such as a file the prompt links directly, and say when to read it.",
+    "Move detail that only some runs need out of the prompt, to a place the AI reads only when it needs the detail, such as a file the prompt links directly. Say in the prompt when to read it.",
     "Run Q12's trials again after cutting, and put back what a run then lacked."
    ],
    "grounds": [
@@ -612,10 +612,10 @@
   },
   {
    "benefit": "Q14",
-   "thinking": "A trial is drawn from the prompt's steps as a unit test is drawn from a contract, one case for each class and each rule, on both sides of it; and a case counts only where its run met the situation it tries, as an AI may take another good path past it.",
+   "thinking": "The writer draws a trial from the prompt's steps, as a developer draws a unit test from a part's contract, which says what the part promises. The trial holds one case for each class and each rule, on both sides of it: where the AI must act and where it must not. A case counts only where its run met the situation that the case tries, as an AI may take another good path past that situation.",
    "steps": [
     "List each rule of the steps and each class of input it treats alike, and for each, a case where the AI must act and a case where it must not.",
-    "Set up each case so that the AI cannot pass the situation by, such as by giving the fact it must find only where a search finds it, and write a check on the run's record that the situation arose.",
+    "Set up each case so that the AI cannot pass the situation by, such as by putting the fact it must find only where a search finds it. Write a check on the run's record that the situation arose.",
     "Write the cases one at a time: run the new case, read its record whole, and write the next only once the situation arose and the verdict is right."
    ],
    "grounds": [
@@ -653,13 +653,13 @@
   },
   {
    "benefit": "Q15",
-   "thinking": "A trial's own parts, the set-up, the stand-ins, the judges and the checks, are code and prompts of their own, so each is built test first and seen right on a record kept from an earlier run before a whole run trusts it; a whole run then only confirms, and a failure tells of the prompt.",
+   "thinking": "A trial's own parts are the set-up, the stand-ins, the judges and the checks. These parts are code and prompts of their own. So the maintainer builds each part test first. Before a whole run trusts a part, the maintainer sees the part work right on a record kept from an earlier run. A whole run then only confirms, and a failure in it points to the prompt.",
    "steps": [
-    "Decide by code every point the record decides, such as a tool called, a file's content or a command's output, and leave to a judge only what code cannot decide.",
-    "Give each judge one point, its definitions and a pass or fail; give it messages whose answer is known, of each kind, and use it only once it judges them right.",
-    "Give the stand-in for the person only their intent, which the prompt never sees, and the whole of each message it answers; check on kept conversations that it answers from the intent alone and makes nothing up.",
+    "Decide by code every point that the record shows, such as a tool called, a file's content or a command's output. Leave to a judge only what code cannot decide.",
+    "Give each judge one point, its definitions and a pass or fail. Give it messages of each kind whose answer is known, and use it only once it judges them right.",
+    "Give the stand-in for the person only their intent, which the prompt never sees, and the whole of each message it answers. Check on kept conversations that it answers from the intent alone and makes nothing up.",
     "Build each part alone and run it small on a kept record before any whole run.",
-    "Change one thing between two runs, the prompt or a part of the trial, never both; where a trial fails, look in its record first at the trial's own parts, and mend the prompt only for a cause in the prompt."
+    "Between two runs, change one thing, the prompt or a part of the trial, never both. Where a trial fails, look in its record first at the trial's own parts. Mend the prompt only for a cause in the prompt."
    ],
    "grounds": [
     {
@@ -702,7 +702,7 @@
   },
   {
    "benefit": "Q16",
-   "thinking": "A trial that passes whatever the prompt says tries nothing, so each case is seen to fail before the prompt holds what it tries, as a test is before its code.",
+   "thinking": "A trial that passes whatever the prompt says tries nothing. So the maintainer sees each case fail before the prompt holds what the case tries, as a developer sees a test fail before writing its code.",
    "steps": [
     "Run each new case before writing into the prompt what it tries, and see it fail.",
     "Write that into the prompt, and run the case until it passes."
@@ -724,10 +724,10 @@
   },
   {
    "benefit": "Q17",
-   "thinking": "The person approves from the conclusion and its grounds, and reads further only where these leave them unsure, so a message opens with what it asks or reports and why, in plain sentences, and keeps the rest for when it is asked.",
+   "thinking": "The person approves from the conclusion and its grounds. They read further only where these leave them unsure. So a message opens with what it asks or reports and why, in plain sentences. It keeps the rest until the person asks for it.",
    "steps": [
     "Write a few plain sentences with no headings or labels, in short paragraphs, one point each: the context and the conclusion; the grounds; the purpose and what it should be.",
-    "Put what the person is to decide alone on the last line, one decision a message, with one recommendation.",
+    "Put what the person is to decide alone on the last line, with one recommendation. Ask for one decision in each message.",
     "Where the person asks for more, add what it is now, with the place it rests on, and the gap between that and what it should be.",
     "Use the words the person uses, and say a term of your own in everyday words or leave it out."
    ],
@@ -778,7 +778,7 @@
   },
   {
    "benefit": "Q18",
-   "thinking": "The caller cannot tell a claim the AI checked from one it guessed, so each claim rests on a check run on the real thing, every item it names, and the report says what was left unchecked.",
+   "thinking": "The caller cannot tell a claim the AI checked from one it guessed. So each claim rests on a check that the AI ran on the real thing, on every item the claim names. The report says what the AI left unchecked.",
    "steps": [
     "Check each claim on the real thing before reporting it: read the file, run the check, open the record; never from memory, a guess or what another agent's summary says.",
     "Judge a check by a result that comes back pass or fail, such as a command's exit code, not by a few lines of its output.",

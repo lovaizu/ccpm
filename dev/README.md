@@ -3,8 +3,8 @@
 Each plugin's UX, architecture, tests and trials live here. Installing a plugin copies only its own
 folder, so nothing here reaches its users' machines.
 
-Every plugin is built by [the plugin best practice](./plugin-best-practice.md). The order the work
-on a plugin goes in is in [.claude/rules/dev.md](../.claude/rules/dev.md).
+Every plugin is built by [the plugin best practice](./plugin-best-practice.md).
+[.claude/rules/dev.md](../.claude/rules/dev.md) gives the order the work on a plugin goes in.
 
 - [Turn](./turn/)
 - [Rn](./rn/)
@@ -24,12 +24,13 @@ uv run sh dev/scripts/check.sh
 ```
 
 `uv sync --locked` sets up the tools of `pyproject.toml`'s `dev` group in `.venv`, with
-[uv](https://docs.astral.sh/uv/). Run the checks there: a `coverage` installed outside a virtual
+[uv](https://docs.astral.sh/uv/). Run the checks there. A `coverage` installed outside a virtual
 environment does not count the scripts the tests start as separate processes.
 
-Each tool the checks install is held to the hashes of the files it was locked with, so a version
-replaced on PyPI or npm after it was locked does not install. The Python tools come from `uv.lock`,
-which `uv lock` makes from `pyproject.toml`, each at the newest version that runs on each Python.
+Each tool the checks install must match the hashes of the files it was locked with, so a version
+replaced on PyPI or npm after it was locked does not install. The Python tools come from `uv.lock`.
+`uv lock` makes that file from `pyproject.toml`, with each tool at the newest version that runs on
+each Python.
 Claude Code comes from `dev/scripts/package-lock.json`.
 
 ## The property tests and the mutation testing

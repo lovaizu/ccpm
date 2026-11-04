@@ -6,7 +6,7 @@ Whoever builds or changes the product, a person or an AI, makes it give its user
 
 ## Parts
 
-- **okrs**: The objectives, each with its key results, and a note that key results have no target values, because a measure made a target stops being a good measure (Goodhart's law), so they serve to judge how close the objective is.
+- **okrs**: The objectives, each with its key results, and a note that key results have no target values, with its reason: a measure made a target stops being a good measure (Goodhart's law), so key results serve to judge how close the objective is.
   - **objective**: Each objective, with an ID the rest of the document points to: one short sentence of what a user gets from the product, with the user as its subject.
   - **key-result**: Under each objective, two key results, each with an ID the rest of the document points to and the direction that is better: first how well the user gets what the objective says, then the lead time from when the user needs it, on their request or on an event, to having it. The first comes first: lead time is shortened only by changes that keep how well.
 - **scenarios**: The participants, then one scenario for each objective.
@@ -33,7 +33,7 @@ Whoever builds or changes the product, a person or an AI, makes it give its user
 
 1. List each one who comes to the product with a goal of their own, a person or an AI, by the role they play.
 2. Write each one's objective as one sentence that fits on one line: that user as its subject, then a verb, its object and the context it is done in, with no feature or mechanism of the product.
-3. Ask whether the product could do all the sentence says while that user is no better off; if so, rewrite the sentence around what the user gains.
+3. Ask whether the product could do all the sentence says while that user is no better off. If so, rewrite the sentence around what the user gains.
 
 **Grounds**
 
@@ -47,11 +47,11 @@ Whoever builds or changes the product, a person or an AI, makes it give its user
 
 ### Q2: Weighing a piece of work, can the developer tell which one objective it brings closer?
 
-**Thinking**: Objectives are cut so that each piece of work brings one of them closer, no gain is written twice, and none is left out.
+**Thinking**: The developer cuts objectives so that each piece of work brings one of them closer, no gain appears twice, and none is left out.
 
 **Steps**
 
-1. List each user and what each gets from the product, and give each pair one objective; merge objectives that one piece of work would bring closer together, and split an objective that holds gains a piece of work could bring closer apart, until each piece of work brings exactly one closer.
+1. List each user and what each gets from the product, and give each pair one objective. Merge objectives that one piece of work would bring closer together. Split an objective that holds gains a piece of work could bring closer apart. Go on until each piece of work brings exactly one closer.
 2. Take each change planned or recently made that alters what a user gets, and name the one objective it brings closer.
 
 **Grounds**
@@ -67,8 +67,8 @@ Whoever builds or changes the product, a person or an AI, makes it give its user
 **Steps**
 
 1. For the objective, list how success or failure would show in what the user does or feels, such as giving up, undoing a result or working around the product.
-2. Turn the signs kept into two measures, each a share, an average per user, a count or a time, and name what it is counted out of: one of how well the user gets what the objective says, and the lead time from when the user needs it, on their request or on an event, to having it.
-3. Ask whether all the objective's key results could get better while the user still does not get what the objective says; if so, add or rework key results until they could not.
+2. Turn the signs kept into two measures: one of how well the user gets what the objective says, and the lead time from when the user needs it, on their request or on an event, to having it. Make each a share, an average per user, a count or a time, and name what it is counted out of.
+3. Ask whether all the objective's key results could get better while the user still does not get what the objective says. If so, add or rework key results until they could not.
 
 **Grounds**
 
@@ -83,7 +83,7 @@ Whoever builds or changes the product, a person or an AI, makes it give its user
 
 ### Q4: Weighing a change that shortens the lead time, can the developer tell whether it keeps how well the user gets what the objective says?
 
-**Thinking**: Quality first, then lead time: each stage from the user's need to the result, such as asking, deciding, making and redoing, is made shorter only where the result stays as good, since a result had fast but not well is no gain.
+**Thinking**: Quality first, then lead time: each stage from the user's need to the result, such as asking, deciding, making and redoing, gets shorter only where the result stays as good, since a result had fast but not well is no gain.
 
 **Steps**
 
@@ -122,7 +122,7 @@ Whoever builds or changes the product, a person or an AI, makes it give its user
 
 ### Q6: Building a step of a scenario, can the developer tell whether it waits for a person, is taken by an AI, or runs as a script?
 
-**Thinking**: Each one that takes a step is named by its role and its kind, so the developer knows which step waits for a person and which runs without one.
+**Thinking**: The scenarios name each one that takes a step by its role and its kind, so the developer knows which step waits for a person and which runs without one.
 
 **Steps**
 

@@ -27,7 +27,7 @@ from the goal down.
   - KR2.2: The lead time from the call of Turn or rn to the design tree it gets back. Shorter is
     better.
 
-In each objective, the first key result comes first: the second is shortened only by a change that
+In each objective, the first key result comes first. A change may shorten the second only where it
 keeps the first. All of ccpm aims to shorten the lead time without lowering quality.
 
 Key results have no target values. When a measure becomes a target, it stops being a good measure
@@ -35,8 +35,8 @@ Key results have no target values. When a measure becomes a target, it stops bei
 
 ## Scenarios
 
-Both scenarios plan one change: the notes app `notes` gets a `--json` option on `notes list`. The
-participants:
+Both scenarios plan one change: the notes app `notes` gets a `--json` option on `notes list`. These
+are the participants:
 
 - person (person): the one whose plan it is, and who decides what is theirs.
 - main conversation (AI): the Claude Code conversation the person talks in. In O1 it runs

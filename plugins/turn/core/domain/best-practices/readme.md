@@ -8,7 +8,7 @@ From the README alone, someone who meets the product for the first time starts u
 
 - **summary**: The product's name first, and under it one sentence that says what kind of thing the product is and what it does.
 - **gain**: The paragraph after the summary: whom the product is for and what they gain with it.
-- **idea**: After the gain: the idea that makes the gain possible, in a paragraph; where the idea has parts, how they fit together, and each part with what it is and what it ensures for the reader.
+- **idea**: After the gain: the idea that makes the gain possible, in a paragraph. Where the idea has parts: how they fit together, and each part with what it is and what it ensures for the reader.
 - **non-goals**: At the end of the opening, before anything about installing: each thing the product does not do that a reader might expect of it, set apart so the reader sees it as what the product does not do.
 - **requirements**: Each thing that must be in place before installing.
 - **installation**: The steps that install the product.
@@ -39,7 +39,7 @@ From the README alone, someone who meets the product for the first time starts u
 **Steps**
 
 1. Write one sentence on its own line under the title, such as "<Name> is a <kind> that <does what>.", saying what the product does with no feature names or mechanisms.
-2. Ask whether a colleague who hears only the sentence could say what the product does; if not, replace each vague or praising word with what the product does.
+2. Ask whether a colleague who hears only the sentence could say what the product does. If not, replace each vague or praising word with what the product does.
 
 **Grounds**
 
@@ -55,7 +55,7 @@ From the README alone, someone who meets the product for the first time starts u
 **Steps**
 
 1. Name whom the product is for by the work they want done.
-2. Ask whether a reader outside that group can tell from it that the product is not for them; if not, name the group and the work more closely.
+2. Ask whether a reader outside that group can tell from it that the product is not for them. If not, name the group and the work more closely.
 
 **Grounds**
 
@@ -71,7 +71,7 @@ From the README alone, someone who meets the product for the first time starts u
 **Steps**
 
 1. Write it as one paragraph that names the other way and says what the product does instead.
-2. Ask whether the reader could say the difference to a colleague in their own words; if not, replace each word that only praises with what the product does.
+2. Ask whether the reader could say the difference to a colleague in their own words. If not, replace each word that only praises with what the product does.
 
 **Grounds**
 
@@ -98,7 +98,7 @@ From the README alone, someone who meets the product for the first time starts u
 
 1. Say at the start what the reader will have at the end.
 2. Take what the user gives and what the product shows from the record of a real run, cutting only what the reader does not need to see the result.
-3. End with the result, and ask whether it shows the gain the opening promised; if not, pick another piece of work or another scenario.
+3. End with the result, and ask whether it shows the gain the opening promised. If not, pick another piece of work or another scenario.
 
 **Grounds**
 
@@ -111,13 +111,13 @@ From the README alone, someone who meets the product for the first time starts u
 
 ### Q6: Starting with nothing set up, can the reader install the product by the README's steps alone, and tell that it works?
 
-**Thinking**: The steps are written for a reader who has nothing set up, and tried that way, because the author's own setup hides the gaps.
+**Thinking**: The author writes the steps for a reader who has nothing set up, and tries them that way, because the author's own setup hides the gaps.
 
 **Steps**
 
 1. List each thing that must be in place, by what it is and how the reader tells they have it.
-2. Write each install step so the reader can do it without working out what to type, such as a command to copy, even a common one, and after it what the reader sees when it worked.
-3. From a machine or sandbox where nothing the product needs is in place, follow the requirements and the install steps as written, and do nothing they do not say; where a step fails, or needs something the README does not say, write it in and start again.
+2. Write each install step so the reader can do it without working out what to type, such as a command to copy, even a common one. After each step, write what the reader sees when it worked.
+3. From a machine or sandbox where nothing the product needs is in place, follow the requirements and the install steps as written, and do nothing they do not say. Where a step fails, or needs something the README does not say, write it in and start again.
 
 **Grounds**
 
@@ -131,11 +131,11 @@ From the README alone, someone who meets the product for the first time starts u
 
 ### Q7: For each gain and the idea, can the reader see in the figure of how the product works how the product keeps it?
 
-**Thinking**: How it works shows, at a glance, who does what to whom so that each gain and the idea hold, at a grain a reader new to the product follows; a non-goal, being what the product does not do, is said once in the opening.
+**Thinking**: How it works shows at a glance who does what to whom so that each gain and the idea hold, in as much detail as a reader new to the product can follow; the opening alone says each non-goal, as a non-goal is what the product does not do.
 
 **Steps**
 
-1. Point to each gain and the idea, and find the lines of the figure that keep it; where none does, mend the figure or the promise.
+1. Point to each gain and the idea, and find the lines of the figure that keep it. Where none does, mend the figure or the promise.
 
 **Grounds**
 
@@ -150,7 +150,7 @@ From the README alone, someone who meets the product for the first time starts u
 
 **Steps**
 
-1. Write each link so it reaches its document wherever the README is read, such as relative to the README, and open each one.
+1. Write each link so it reaches its document wherever the README is read, such as by a path relative to the README. Open each link.
 
 **Grounds**
 
@@ -181,7 +181,7 @@ From the README alone, someone who meets the product for the first time starts u
 **Steps**
 
 1. Read the README from the top as someone who meets the product for the first time, and after each part, write the question the reader now has.
-2. Check that the next part answers that question; move a part that answers a later one.
+2. Check that the next part answers that question. Move a part that answers a later one.
 3. Cut what no reader needs at the point where it stands, or move it to the document a link leads to.
 
 **Grounds**

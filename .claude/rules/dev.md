@@ -11,27 +11,27 @@ Build each plugin by [the plugin best practice](../../dev/plugin-best-practice.m
 its requirements call for.
 
 This file holds the order the work goes in. Each step names the best practice in
-`plugins/turn/core/domain/best-practices/` to open while doing it. Its goal says what the deliverable's user
-achieves, and its parts say what the deliverable holds. Its benefits ask the questions that the
-deliverable must pass, and its practices hold a way to make each question pass. A document is also
-finished by `refactor-doc.json`, and code by `refactor-code.json`; open that one with it.
+`plugins/turn/core/domain/best-practices/` to open while doing it. A best practice's goal says what
+the deliverable's user achieves. Its parts say what the deliverable holds. Its benefits ask the
+questions that the deliverable must pass. Its practices hold a way to make each question pass.
+Open `refactor-doc.json` as well when the work is a document, and `refactor-code.json` when it is
+code: that one finishes it.
 
 When a step's work needs something that its best practice does not ask, mend that best practice as
-Q8 of [meta.json](../../plugins/turn/core/domain/best-practices/meta.md) says, whichever plugin is
-being built, and make the work again against it.
+Q8 of [meta.json](../../plugins/turn/core/domain/best-practices/meta.md) says. Do so whichever
+plugin you are building. Then make the work again against the mended best practice.
 
-- Rationale: every plugin here is made with the same best practices, so a gap left in one is met
-  again by every plugin made with it.
+- Rationale: every plugin here uses the same best practices, so a gap left in one comes back in
+  every plugin that uses it.
 
-Work made before a rule or a best practice changed is read against the new one before it is
-committed.
+Before you commit work made before a rule or a best practice changed, read it against the new one.
 
-- Rationale: work made earlier was checked against what the rules said then; committed unread, it
-  brings back what the change was made to stop.
+- Rationale: that work passed the rules as they were then. Committed unread, it brings back what
+  the change set out to stop.
 
-Install nothing, and send nothing to a service outside the repository's git and GitHub, such as a
-translator or a web API, until the user says yes; fetching a public page to read it needs no ask.
-Every brief to a subagent, and every `claude -p` started, says so.
+Until the user says yes, install nothing, and send nothing to a service outside the repository's
+git and GitHub, such as a translator or a web API. Fetching a public page to read it needs no ask.
+Say so in every brief to a subagent and in every `claude -p` you start.
 
 - Rationale: text sent out may hold what the user never meant to share, such as their email
   address.
@@ -43,38 +43,38 @@ best practices / skill authoring best practices) and the official plugins.
 
 ### 1. Write the UX
 
-**Write `dev/<plugin>/ux.md` with `ux.json` open, and have the user agree to it before anything else
-is made.**
+**Write `dev/<plugin>/ux.md` with `ux.json` open. Have the user agree to it before you make
+anything else.**
 
 - Rationale: the README takes two things from the UX: what the user gains, and the scenario that
-  its walkthrough runs. The architecture says how the plugin gives the UX. If they are made before
-  the UX, they are built on a goal that the user has not agreed to.
+  its walkthrough runs. The architecture says how the plugin gives the UX. If you make them before
+  the UX, they rest on a goal that the user has not agreed to.
 
 ### 2. Write the README
 
-**Write `plugins/<plugin>/README.md` from the UX with `readme.json` open, and have the user agree to
-it before the architecture is made.**
+**Write `plugins/<plugin>/README.md` from the UX with `readme.json` open. Have the user agree to it
+before you make the architecture.**
 
-- Rationale: everything after is built to what the README promises the user; built first, it would
-  stand on a measure no one has settled.
+- Rationale: everything after the README is built to what it promises the user. Built before it,
+  that work would stand on a measure that no one has settled.
 
 ### 3. Write the architecture
 
-**Write `dev/<plugin>/architecture.md` on [the plugin best practice](../../dev/plugin-best-practice.md), with
-`architecture.json` open, and have the user agree to it.** Place its files as
-[Directory structure](../../dev/plugin-best-practice.md#directory-structure) says, and design the plugin
-to take in what is general, as [Learning from each run](../../dev/plugin-best-practice.md#learning-from-each-run)
-says.
+**Write `dev/<plugin>/architecture.md` on [the plugin best practice](../../dev/plugin-best-practice.md),
+with `architecture.json` open. Have the user agree to it.** Place its files as
+[Directory structure](../../dev/plugin-best-practice.md#directory-structure) says. Design the
+plugin to take in what is general, as
+[Learning from each run](../../dev/plugin-best-practice.md#learning-from-each-run) says.
 
 **Put the style of `dev/images/figures.css` into each figure with `python3 dev/scripts/figures.py
-write`;** `dev/scripts/check.sh` fails on a figure whose copy is left behind.
+write`.** `dev/scripts/check.sh` fails on a figure whose copy of the style differs from that file.
 
 ### 4. Have the README and the architecture read once
 
-**Have a first user who does not know the discussion read the README and the architecture once, as
-their readers would, and settle each finding by fixing the decision or principle it comes from.**
+**Have a new reader who does not know the discussion read the README and the architecture once, as
+their readers would. Settle each finding by fixing the decision or principle it comes from.**
 
-- Rationale: a reading after every fix turns each finding into a patch, and the documents drift
+- Rationale: a reading after every fix turns each finding into a patch. The documents then drift
   from their aim while every reading passes.
 
 ### 5. List the slices
@@ -83,69 +83,71 @@ their readers would, and settle each finding by fixing the decision or principle
 one or more of the key results in the UX, from start to end. The first slice moves one key result
 by the thinnest path.**
 
-- Rationale: a slice built through shows early that its parts join as the architecture says, and
-  the first lays soonest the parts that every later slice stands on. The word "unit" is kept for
-  the test level, so a slice has another name.
+- Rationale: a slice built from start to end shows early that its parts join as the architecture
+  says. The first slice lays, soonest, the parts that every later slice stands on. The word "unit"
+  names a test level, so a slice has another name.
 
 ### 6. Build each slice
 
-**For each slice, in order, do a to e. Each part gets its unit tests first, seen to fail, and only
-then its code or its prompt, as Q6 of
+**For each slice, in order, do a to e. Write each part's unit tests first, and see them fail. Only
+then write its code or its prompt, as Q6 of
 [code.json](../../plugins/turn/core/domain/best-practices/code.md) and Q16 of
 [prompt.json](../../plugins/turn/core/domain/best-practices/prompt.md) say.**
 
-a. **Write the unit tests of its code with `code.json` open, one for each class, each edge and
-   each rule of the part's contract, as [Unit: code](../../dev/plugin-best-practice.md#unit-code) says, run
-   them and see them fail.**
+a. **Write the unit tests of its code with `code.json` open, as
+   [Unit: code](../../dev/plugin-best-practice.md#unit-code) says: one for each class, each edge
+   and each rule of the part's contract. Run them and see them fail.**
 
 b. **Write the code with `code.json` open until the tests pass**, as
    [Development](../../dev/plugin-best-practice.md#development) says.
 
-c. **For each prompt, a skill or an agent, write its trials with `prompt.json` open, as its Q14 to
-   Q16 say and as [Unit: prompts](../../dev/plugin-best-practice.md#unit-prompts) says, one case at a time:
-   build each part of the trial and check it on a kept record, run the case and see it fail; then
-   write the prompt with `prompt.json` open until the case passes.**
+c. **For each prompt, a skill or an agent, write its trials with `prompt.json` open, one case at a
+   time, as its Q14 to Q16 and [Unit: prompts](../../dev/plugin-best-practice.md#unit-prompts)
+   say. For each case, build each part of the trial and check it on a kept record. Run the case and
+   see it fail. Then write the prompt with `prompt.json` open until the case passes.**
 
 d. **Lay the lanes the prompts' steps call for with `plugins/lane/scripts/lay.py`, with
-   `prompt.json` open:** write them in a proposal as
-   [the lanes](../../plugins/lane/docs/lanes.md#the-proposal) gives it, read what `lay.py print`
-   prints of it, and lay it with `lay.py write`. A check no lane holds is added
-   to Lane with `code.json` open, as a lane of its own in a file of its own, so each check is
-   written and tested once.
-   - Rationale: the architecture tests run the lanes and routes as they are laid, so they are laid
-     before those tests.
+   `prompt.json` open.** Write them in a proposal in the form
+   [the lanes](../../plugins/lane/docs/lanes.md#the-proposal) gives. Read what `lay.py print`
+   prints of it, and lay it with `lay.py write`. Add a check that no lane holds to Lane with
+   `code.json` open, as a lane of its own in a file of its own. Each check is then written and
+   tested once.
+   - Rationale: the architecture tests run the lanes and routes as laid, so lay them before those
+     tests.
 
-e. **Write the slice's architecture tests, one for each path through its sequences, with what
-   joins the parts run real and each role an AI runs a double, as
-   [Architecture: the parts joined](../../dev/plugin-best-practice.md#architecture-the-parts-joined) says,
-   run them, and fix what fails at the part or the handoff it lies in.**
+e. **Write the slice's architecture tests, as
+   [Architecture: the parts joined](../../dev/plugin-best-practice.md#architecture-the-parts-joined)
+   says: one for each path through its sequences, with what joins the parts run real and a double
+   for each role an AI runs. Run them, and fix each failure at the part or the handoff where it
+   lies.**
 
-**Change a prompt or a document after a trial only for a cause confirmed in the records, as Q15 of
-`prompt.json` says, and traced to what the README and the architecture say it should be.**
+**After a trial, change a prompt or a document only for a cause that the records confirm, as Q15 of
+`prompt.json` says. Trace that cause to what the README and the architecture say the prompt or
+document should be.**
 
-- Rationale: what an AI does varies from run to run; a line added for one run's slip meets a
-  different slip in the next, and the additions never settle.
+- Rationale: what an AI does varies from run to run. A line added for one run's slip meets a
+  different slip in the next run, so the additions never settle.
 
-**Run every trial, here and in step 7, on Opus, and name it in the run.**
+**Run every trial, here and in step 7, on Opus, and name the model in the run.**
 
-- Rationale: Opus is the model the plugins' users run, which
-  [Unit: prompts](../../dev/plugin-best-practice.md#unit-prompts) asks each trial to name.
+- Rationale: Opus is the model the plugins' users run.
+  [Unit: prompts](../../dev/plugin-best-practice.md#unit-prompts) asks each trial to name its model.
 
-**Run a trial that needs a real GitHub repository in `lovaizu/playground`**, the repository kept
-for trials that [ux: the plugin in real use](../../dev/plugin-best-practice.md#ux-the-plugin-in-real-use)
-asks for.
+**Run a trial that needs a real GitHub repository in `lovaizu/playground`.** This repository is
+kept for the trials that
+[ux: the plugin in real use](../../dev/plugin-best-practice.md#ux-the-plugin-in-real-use) asks for.
 
 ### 7. Confirm the whole in real use
 
 **Once every slice is built and every unit and architecture test passes, try the plugin as its
-user on each objective's scenario, at the size of a real request, with a stand-in that holds an
-intent the plugin never sees, as
-[ux: the plugin in real use](../../dev/plugin-best-practice.md#ux-the-plugin-in-real-use) says, to confirm
-the UX.**
+user to confirm the UX, as
+[ux: the plugin in real use](../../dev/plugin-best-practice.md#ux-the-plugin-in-real-use) says.**
+Try it on each objective's scenario, at the size of a real request. Use a stand-in that holds an
+intent the plugin never sees.
 
-**Test a fault the trial finds first at the level that missed it, as
+**When the trial finds a fault, first test it at the level that missed it, as
 [A fault is tested at the level that must catch it](../../dev/plugin-best-practice.md#a-fault-is-tested-at-the-level-that-must-catch-it)
-says, and then confirm the whole again.**
+says. Then confirm the whole again.**
 
 ### 8. Check the structure
 
@@ -153,9 +155,9 @@ says, and then confirm the whole again.**
 
 ### 9. Release
 
-**Release as [Release](../../dev/plugin-best-practice.md#release) says, only when the user says so.
-Before asking the user to merge, make the [final check](final-check.md); never merge the pull
+**Release as [Release](../../dev/plugin-best-practice.md#release) says, and only when the user says
+so. Before you ask the user to merge, make the [final check](final-check.md). Never merge the pull
 request yourself, and never use `--admin`.**
 
-- Rationale: the user decides what reaches users, and `main` is protected, so only the user can
-  clear its required review.
+- Rationale: the user decides what reaches users. `main` is protected, so only the user can clear
+  its required review.

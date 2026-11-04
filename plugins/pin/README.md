@@ -4,33 +4,32 @@ Pin is a Claude Code plugin that settles every decision your plan needs before a
 starts, and asks you only the decisions that are yours, one at a time.
 
 Pin is for you when you are about to have an AI make something that takes more than one sitting,
-such as a feature or a document, and you want it to make what you meant. With Pin, every decision
-the plan needs is settled before the work starts. You decide each one that is yours, the AI finds
-each fact itself, and nothing is left for the AI to guess along the way. A point settled before the
-work does not come back later as rework. Pin is also for a plugin that makes something for a
-person, such as Turn or rn: the plugin hands Pin the goal of what it makes, and gets back a design
-it can build on.
+such as a feature or a document, and you want it to make what you meant. You make each decision
+that is yours. The AI finds each fact itself. Nothing is left for the AI to guess along the way, and
+a point settled before the work does not come back later as rework. Pin is also for a plugin that
+makes something for a person, such as Turn or rn. The plugin hands Pin the goal of what it makes,
+and gets back a design it can build on.
 
-A plan talked over in a chat lives only in the chat: questions come as they occur to the AI, and
-a point no one raised is guessed later. Pin keeps the plan as a design tree, a file that holds the
+A plan talked over in a chat lives only in the chat. The AI asks questions as they occur to it, and
+later guesses a point that no one raised. Pin keeps the plan as a design tree, a file that holds the
 goal at its root and, under it, each decision joined to what it serves and to the decisions it
 builds on.
 
 - **From the goal down.** Pin asks of the goal what must hold for it, and of each of those the
-  decisions that make it hold, until a fact or you settle each one. A decision that serves nothing
-  is cut, so you are not asked it.
-- **Facts are found, decisions are asked.** A subagent looks up each fact, such as what reads a
-  file today, while Pin goes on with the questions that do not wait for it. Pin shows you each fact
-  as it is found, for you to confirm, and asks you only the decisions that are yours, each with a
-  recommendation.
+  decisions that make it hold, until a fact or you settle each one. Pin cuts a decision that serves
+  nothing, so it does not ask you it.
+- **Facts are found, decisions are asked.** A subagent looks up each fact, such as what reads a file
+  today, while Pin goes on with the questions that do not wait for it. Pin shows you each fact as
+  the subagent finds it, for you to confirm, and asks you only the decisions that are yours, each
+  with a recommendation.
 - **One point at a time, in order.** Each message from Pin holds one fact to confirm or one
   decision to make. Pin asks a decision only once the decisions it builds on are settled, so your
   answer to one question can still change the next.
-- **Checked by a script.** The script `check.py` checks the file after each answer: every question
-  is served by a decision, every decision reaches the goal, and each decision comes after the ones
-  it builds on.
-- **Kept in a file.** Each decision and answer is written to the file before the next question,
-  so a stopped run goes on from there in a new conversation.
+- **Checked by a script.** The script `check.py` checks the file after each answer: that a decision
+  serves every question, that every decision reaches the goal, and that each decision comes after
+  the ones it builds on.
+- **Kept in a file.** Pin writes each decision and answer to the file before the next question. So
+  a stopped run goes on from there in a new conversation.
 
 **Non-goals**
 
@@ -38,8 +37,8 @@ builds on.
   same way.
 - Pin does not judge whether a decision is right. Its script checks only that the decisions hold
   together; you judge each one as you answer it.
-- Pin does not decide what is yours. A decision you leave unanswered stays open, and Pin does not
-  go on as if you had answered.
+- Pin does not decide what is yours. A decision you leave unanswered stays open. Pin does not go
+  on as if you had answered.
 - Pin does not ask several questions in one message, and it sets no limit on the number of
   questions. To end sooner, tell it to wrap up; the decisions still open stay marked as open.
 
@@ -60,15 +59,15 @@ claude plugin install pin@ccpm
 its commands.
 
 A plugin that uses Pin lists it in the `dependencies` of its `.claude-plugin/plugin.json`, as
-`"dependencies": ["pin"]`, and installing that plugin installs Pin with it.
+`"dependencies": ["pin"]`. Installing that plugin installs Pin with it.
 
 ## Walkthrough
 
 At the end, you have your plan's design tree in a file, every decision in it settled, and each one
 that is yours decided by you.
 
-This walkthrough is not yet from a real run: it shows what Pin is being built to show, and its
-output is replaced by a real run's once Pin is built.
+This walkthrough is not yet from a real run. It shows what Pin is being built to show. A real
+run's output will replace its output once Pin is built.
 
 Your notes app `notes` prints your notes as text with `notes list`. You want it to give JSON too.
 In Claude Code, at the root of the app's repository, you type:
@@ -88,7 +87,8 @@ Gap: they do not say who reads the JSON, or what it spares them.
 Proposal: the goal is that scripts that read `notes list` get its notes as JSON, so they stop parsing text; yes?
 ```
 
-You answer `yes`. Meanwhile the subagent has found a fact, and Pin shows it to you alone:
+You answer `yes`. Meanwhile the subagent has found a fact, and Pin shows it to you in a message of
+its own:
 
 ```text
 Found: scripts/sync.py:14 reads `updated` with `datetime.fromisoformat(fields[3])`, so it
@@ -105,9 +105,9 @@ Gap: the JSON has no fields yet.
 Proposal: each note has id, title, tags and updated, the fields the text output shows today; yes?
 ```
 
-Questions and facts go on like this, one at a time. Pin decides itself what follows from the
-goal, such as keeping the text output the default, and does not ask you it. When no decision is left open, it
-shows you the design:
+Questions and facts go on like this, one at a time. Pin itself decides what follows from the
+goal, such as keeping the text output the default, and does not ask you it. When no decision is
+left open, it shows you the design:
 
 ```text
 Goal: scripts that read `notes list` get its notes as JSON.        (you)
@@ -162,8 +162,8 @@ flowchart LR
   that must hold for it and where to keep the tree. The role then works as the conversation does
   above, and puts each fact and each question to you through the conversation you talk in.
 - A role run as a subagent ends with its message for you headed `For the person:`. The caller
-  resumes it with your answer, headed on a line of its own `The person's answer, word for word:`:
-  the role takes only a message in that form as your words.
+  resumes it with your answer under a line of its own, `The person's answer, word for word:`. The
+  role takes only a message in that form as your words.
 
 ## Documentation
 

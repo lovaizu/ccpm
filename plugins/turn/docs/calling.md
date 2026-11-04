@@ -39,8 +39,8 @@ Each key of `given` is optional.
 
 ## Each message of Turn
 
-Turn's roles run in the background, so `turn:up` ends each time it needs something, and you are
-told. Its last message is headed by what to do:
+Turn's roles run in the background, so `turn:up` ends each time it needs something, and Claude
+Code tells you. The heading of its last message says what to do:
 
 | Headed | Do |
 |---|---|
@@ -50,13 +50,13 @@ told. Its last message is headed by what to do:
 | `For the maker of Turn:` | Turn stopped on a fault of its own. Tell the person, with the message as it is. |
 
 A question is one point, worded so that "yes" takes Turn's recommendation. Put it to the person as
-it is: a question changed on the way is answered for something Turn did not ask.
+it is: if you change it on the way, the person answers something Turn did not ask.
 
 ## What comes back
 
-The work's files lie at the paths `Done:` names, not committed. The run's folder holds the design
-tree, `design-tree.json`, with each decision and who settled it, and each check, as
-`verification/`, so your plugin can show the person what was decided.
+The work's files lie at the paths `Done:` names, and Turn does not commit them. The run's folder
+holds the design tree, `design-tree.json`, with each decision and who settled it. It also holds
+each check, as `verification/`. So your plugin can show the person what was decided.
 
 ## Depth
 

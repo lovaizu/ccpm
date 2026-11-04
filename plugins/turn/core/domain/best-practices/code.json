@@ -1,17 +1,17 @@
 {
- "goal": "The maintainer, a person or an AI who takes the code over, changes what it does and knows that whoever runs it still gets each behavior its specification asks and, where something from outside is wrong, learns how to put it right.",
+ "goal": "The maintainer is a person or an AI who takes the code over. The maintainer changes what the code does. They know that whoever runs the code still gets each behavior its specification asks for. They also know that whoever runs it learns how to put right anything wrong that comes from outside.",
  "parts": [
   {
    "id": "manifest",
-   "what": "What the maintainer needs to set the code up on a fresh machine and run its tests: all the code needs to run, with the versions it runs on, and how to run the tests."
+   "what": "What the maintainer needs to set the code up on a fresh machine and run its tests: everything the code needs to run, with the versions it runs on, and how to run the tests."
   },
   {
    "id": "module-opening",
-   "what": "For each module, what this module alone decides, said briefly where the maintainer meets it first on opening the module."
+   "what": "For each module, a few words on what this module alone decides, at the place the maintainer meets first when they open the module."
   },
   {
    "id": "interface",
-   "what": "Each name a module offers to others, with all a caller needs to call it without reading its body: the types it takes and gives, what it gives, what it expects of what it takes and each way it refuses."
+   "what": "Each name a module offers to others, with everything a caller needs to call it without reading its body: the types it takes and gives, what it gives, what it expects of what it takes and each way it refuses."
   },
   {
    "id": "body",
@@ -19,24 +19,24 @@
   },
   {
    "id": "tests",
-   "what": "Tests that hold the specification's cases, one test for each case, so the maintainer can tell which test checks which case and which code: each named for the behavior it holds, and each showing the situation, what is done and what must be so."
+   "what": "Tests of the specification's cases, one test for each case, so the maintainer can tell which test checks which case and which code. Each test has a name that says the behavior it checks, and shows the situation, what is done and what must be so."
   }
  ],
  "benefits": [
   {
    "id": "Q1",
    "about": "manifest, tests",
-   "what": "Setting the code up on a fresh machine from what the code gives for its setup alone, and running the tests again and in any order, does the maintainer see them pass each time?"
+   "what": "When the maintainer sets the code up on a fresh machine from only what the code gives for its setup, and runs the tests again and in any order, do they see the tests pass each time?"
   },
   {
    "id": "Q2",
    "about": "module-opening",
-   "what": "With one behavior to change, can the maintainer tell which module to open from what each module says it alone decides, without reading their bodies?"
+   "what": "With one behavior to change, can the maintainer tell which module to open from what each module says it alone decides, without reading the modules' bodies?"
   },
   {
    "id": "Q3",
    "about": "interface",
-   "what": "Calling a name another module offers, can the maintainer write a call that works from its interface alone, without reading its body?"
+   "what": "When the maintainer calls a name that another module offers, can they write a call that works from the name's interface alone, without reading its body?"
   },
   {
    "id": "Q4",
@@ -46,12 +46,12 @@
   {
    "id": "Q5",
    "about": "body",
-   "what": "When something the code takes from outside is wrong, can whoever ran it put it right from what the code tells them alone, with nothing left half done?"
+   "what": "When something the code takes from outside is wrong, can whoever ran the code put it right from only what the code tells them, with nothing left half done?"
   },
   {
    "id": "Q6",
    "about": "tests",
-   "what": "For each case the specification names, its edges and refusals included, can the maintainer point to the one test that holds it, and tell the case from the test's name?"
+   "what": "For each case the specification names, its edges and refusals included, can the maintainer point to the one test that checks it, and tell the case from that test's name?"
   },
   {
    "id": "Q7",
@@ -61,18 +61,18 @@
   {
    "id": "Q8",
    "about": "body, tests",
-   "what": "When the maintainer breaks the behavior a test holds, does that test fail?"
+   "what": "When the maintainer breaks the behavior a test checks, does that test fail?"
   },
   {
    "id": "Q9",
    "about": "the whole",
-   "what": "Given the code and its specification alone, can the maintainer make a change the specification asks and know from the tests that every other behavior still holds?"
+   "what": "With only the code and its specification, can the maintainer make a change the specification asks for, and know from the tests that every other behavior still holds?"
   }
  ],
  "practices": [
   {
    "benefit": "Q1",
-   "thinking": "What the code gives for its setup names all the code needs, and each test sets up and clears all it uses, so a test's result rests on the code alone.",
+   "thinking": "What the code gives for its setup names everything the code needs. Each test sets up and clears everything it uses. A test's result then rests on the code alone.",
    "steps": [
     "Set the code up on a clean machine or container, from what the code gives for its setup alone.",
     "Add to what the setup reads each thing the setup or the tests found missing, such as a runtime or a library, with the versions the code runs on.",
@@ -119,10 +119,10 @@
   },
   {
    "benefit": "Q2",
-   "thinking": "Each module alone decides one thing the specification leaves to the code, and says that thing briefly where the maintainer meets it first, such as at its top.",
+   "thinking": "Each module alone decides one thing that the specification leaves to the code. The module says that thing briefly where the maintainer meets it first, such as at its top.",
    "steps": [
-    "Where that cannot be said briefly, split the module.",
-    "Take a behavior the specification might change, read only what the modules say they decide, and check that it points to one module; where it does not, rewrite it or move the decision."
+    "Where the module cannot say that thing briefly, split the module.",
+    "Take a behavior that the specification might change, and read only what the modules say they decide. Check that what they say points to one module. Where it does not, rewrite what the modules say, or move the decision."
    ],
    "grounds": [
     {
@@ -147,13 +147,13 @@
   },
   {
    "benefit": "Q3",
-   "thinking": "The interface tells a caller all they need to call it, so the body can stay unread and can change behind it.",
+   "thinking": "The interface tells a caller everything they need to make the call. The caller then need not read the body, and the body can change behind the interface.",
    "steps": [
     "Choose the names other modules may use, and mark every other name as internal.",
     "Say for each name the types it takes and gives, such as in its signature where the language allows.",
     "Write beside it, such as in a doc comment, what it gives, what comes back when there is nothing to give, what it expects of what it takes, what else it changes, and each way it refuses a right call.",
     "Leave out of that what the types already say.",
-    "Have someone who has not read the body write a call from the interface alone, and run it; where it fails or they had to guess, add what was missing."
+    "Have someone who has not read the body write a call from the interface alone, and run the call. Where the call fails or they had to guess, add what was missing."
    ],
    "grounds": [
     {
@@ -220,7 +220,7 @@
   },
   {
    "benefit": "Q4",
-   "thinking": "The code gives the behaviors the specification asks, in the form the cases ask for now, and no more, so the maintainer carries nothing no one needs.",
+   "thinking": "The code gives only the behaviors the specification asks for, in the form its cases ask for now. The maintainer then carries nothing that no one needs.",
    "steps": [
     "For each option, mode and case the code handles, name the case of the specification that asks for it."
    ],
@@ -247,12 +247,12 @@
   },
   {
    "benefit": "Q5",
-   "thinking": "What comes from outside, such as arguments, files, settings and the replies of other programs, is checked where it comes in, before anything is done, and a refusal tells whoever ran the code which program refused, what was wrong, where, and what is accepted.",
+   "thinking": "The code checks what comes from outside, such as arguments, files, settings and the replies of other programs, where it comes in and before the code does anything. When the code refuses an input, its message tells whoever ran the code which program refused, what was wrong, where, and what the code accepts.",
    "steps": [
-    "At that place, read it into the form the inside uses, checking its type and format and whether its value makes sense for what is to be done.",
-    "Refuse a value that cannot be read rather than guess it, and catch only the error you mean to handle.",
-    "Write each check so it runs however the code is run, not as one that can be turned off, such as an assert.",
-    "Give the code each wrong input the specification names, and read the message as the one who ran it: check that they can put it right from that alone."
+    "At that place, read the input into the form the inside of the code uses. Check its type and format, and whether its value makes sense for what the code is to do.",
+    "Refuse a value that the code cannot read, rather than guess it. Catch only the error you mean to handle.",
+    "Write each check so that it runs however the code is run. Do not write it as a check that can be turned off, such as an assert.",
+    "Give the code each wrong input that the specification names. Read each message as the one who ran the code, and check that they can put the input right from the message alone."
    ],
    "grounds": [
     {
@@ -319,14 +319,14 @@
   },
   {
    "benefit": "Q6",
-   "thinking": "The tests come from the specification's cases, one behavior each, before the code, so each test says which case it holds.",
+   "thinking": "The tests come from the specification's cases, and they come before the code. Each test checks one behavior, so it says which case it checks.",
    "steps": [
     "List every case the specification names: the usual one, each edge and each refusal.",
-    "Name each test for the behavior it holds; where the name needs \"and\", split the test.",
+    "Name each test for the behavior it checks. Where the name needs \"and\", split the test.",
     "Write each test so its reader sees the situation, what is done and what must be so, such as in three parts: Given, When and Then.",
     "Write each expected value from the specification, not from what the code gives.",
-    "Run each test before its code is written, and see it fail.",
-    "Set the list of cases against the tests, and check that each case points to one test."
+    "Run each test before you write its code, and see it fail.",
+    "Compare the list of cases with the tests, and check that each case points to one test."
    ],
    "grounds": [
     {
@@ -384,7 +384,7 @@
    "thinking": "The tests call the code as its callers do, so they fail only where a caller would break.",
    "steps": [
     "Use the real parts where they run fast and wholly inside the test, and a stand-in only for what is slow or outside it.",
-    "Change a body without changing what its interface says, and run the tests; rewrite through the interface each test that fails."
+    "Change a body without changing what its interface says, and run the tests. Rewrite each test that fails so that it calls the code through the interface."
    ],
    "grounds": [
     {
@@ -427,11 +427,11 @@
   },
   {
    "benefit": "Q8",
-   "thinking": "A test is worth the faults it catches, so each one checks the result its case asks, and a broken behavior fails it.",
+   "thinking": "A test is worth the faults it catches. So each test checks the result that its case asks for, and a broken behavior makes the test fail.",
    "steps": [
     "Find each line or branch no test runs, such as by counting them while the tests run, and add a test for each.",
-    "Change the code in small ways, such as by a mutation testing tool, and for each change that the tests still pass, add or mend the test of the behavior it breaks.",
-    "Run the code over many inputs the specification allows, such as by property tests, and keep each input it fails on as a fixed test."
+    "Change the code in small ways, such as with a mutation testing tool. For each change under which the tests still pass, add or mend the test of the behavior that the change breaks.",
+    "Run the code over many inputs that the specification allows, such as with property tests. Keep each input that the code fails on as a fixed test."
    ],
    "grounds": [
     {
@@ -486,12 +486,12 @@
   },
   {
    "benefit": "Q9",
-   "thinking": "Only a change made by someone new to the code shows whether the code lets them change it and trust the result.",
+   "thinking": "Only a change that someone new to the code makes shows whether the code lets them change it and trust the result.",
    "steps": [
-    "Have someone who has not seen the code, a person or an AI, set it up and make one change the specification asks, with only the code and its specification.",
+    "Have someone who has not seen the code, a person or an AI, set it up and make one change the specification asks for, with only the code and its specification.",
     "Note each body they read to find the place or to write a call, and each time they could not tell whether another behavior broke.",
     "Have them run the changed code with a wrong input, and note where its message did not tell them how to put it right.",
-    "Trace each note to the part whose question it fails, and mend it there."
+    "Trace each note to the part whose question it fails, and mend that part."
    ],
    "grounds": [
     {

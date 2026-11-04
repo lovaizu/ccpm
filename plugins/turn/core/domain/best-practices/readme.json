@@ -11,7 +11,7 @@
   },
   {
    "id": "idea",
-   "what": "After the gain: the idea that makes the gain possible, in a paragraph; where the idea has parts, how they fit together, and each part with what it is and what it ensures for the reader."
+   "what": "After the gain: the idea that makes the gain possible, in a paragraph. Where the idea has parts: how they fit together, and each part with what it is and what it ensures for the reader."
   },
   {
    "id": "non-goals",
@@ -100,7 +100,7 @@
    "thinking": "The sentence names the kind of thing the product is and what it does, in words the reader already uses, so they can say it again to a colleague.",
    "steps": [
     "Write one sentence on its own line under the title, such as \"<Name> is a <kind> that <does what>.\", saying what the product does with no feature names or mechanisms.",
-    "Ask whether a colleague who hears only the sentence could say what the product does; if not, replace each vague or praising word with what the product does."
+    "Ask whether a colleague who hears only the sentence could say what the product does. If not, replace each vague or praising word with what the product does."
    ],
    "grounds": [
     {
@@ -134,7 +134,7 @@
    "thinking": "The gain is what the reader can do with the product, taken from what the product's users want, such as the objectives in its UX, so the reader tells from it whether the product meets their need.",
    "steps": [
     "Name whom the product is for by the work they want done.",
-    "Ask whether a reader outside that group can tell from it that the product is not for them; if not, name the group and the work more closely."
+    "Ask whether a reader outside that group can tell from it that the product is not for them. If not, name the group and the work more closely."
    ],
    "grounds": [
     {
@@ -168,7 +168,7 @@
    "thinking": "The idea is the one thing the product does that other ways of doing the same work do not, and it is what brings the gain.",
    "steps": [
     "Write it as one paragraph that names the other way and says what the product does instead.",
-    "Ask whether the reader could say the difference to a colleague in their own words; if not, replace each word that only praises with what the product does."
+    "Ask whether the reader could say the difference to a colleague in their own words. If not, replace each word that only praises with what the product does."
    ],
    "grounds": [
     {
@@ -206,7 +206,7 @@
    "steps": [
     "Say at the start what the reader will have at the end.",
     "Take what the user gives and what the product shows from the record of a real run, cutting only what the reader does not need to see the result.",
-    "End with the result, and ask whether it shows the gain the opening promised; if not, pick another piece of work or another scenario."
+    "End with the result, and ask whether it shows the gain the opening promised. If not, pick another piece of work or another scenario."
    ],
    "grounds": [
     {
@@ -249,11 +249,11 @@
   },
   {
    "benefit": "Q6",
-   "thinking": "The steps are written for a reader who has nothing set up, and tried that way, because the author's own setup hides the gaps.",
+   "thinking": "The author writes the steps for a reader who has nothing set up, and tries them that way, because the author's own setup hides the gaps.",
    "steps": [
     "List each thing that must be in place, by what it is and how the reader tells they have it.",
-    "Write each install step so the reader can do it without working out what to type, such as a command to copy, even a common one, and after it what the reader sees when it worked.",
-    "From a machine or sandbox where nothing the product needs is in place, follow the requirements and the install steps as written, and do nothing they do not say; where a step fails, or needs something the README does not say, write it in and start again."
+    "Write each install step so the reader can do it without working out what to type, such as a command to copy, even a common one. After each step, write what the reader sees when it worked.",
+    "From a machine or sandbox where nothing the product needs is in place, follow the requirements and the install steps as written, and do nothing they do not say. Where a step fails, or needs something the README does not say, write it in and start again."
    ],
    "grounds": [
     {
@@ -302,9 +302,9 @@
   },
   {
    "benefit": "Q7",
-   "thinking": "How it works shows, at a glance, who does what to whom so that each gain and the idea hold, at a grain a reader new to the product follows; a non-goal, being what the product does not do, is said once in the opening.",
+   "thinking": "How it works shows at a glance who does what to whom so that each gain and the idea hold, in as much detail as a reader new to the product can follow; the opening alone says each non-goal, as a non-goal is what the product does not do.",
    "steps": [
-    "Point to each gain and the idea, and find the lines of the figure that keep it; where none does, mend the figure or the promise."
+    "Point to each gain and the idea, and find the lines of the figure that keep it. Where none does, mend the figure or the promise."
    ],
    "grounds": [
     {
@@ -337,7 +337,7 @@
    "benefit": "Q8",
    "thinking": "The README holds what the reader needs to decide and to start, and points to one place for each need that comes after.",
    "steps": [
-    "Write each link so it reaches its document wherever the README is read, such as relative to the README, and open each one."
+    "Write each link so it reaches its document wherever the README is read, such as by a path relative to the README. Open each link."
    ],
    "grounds": [
     {
@@ -404,7 +404,7 @@
    "thinking": "The README goes in the order the reader decides in, from what every reader needs to what only a reader who has chosen the product needs.",
    "steps": [
     "Read the README from the top as someone who meets the product for the first time, and after each part, write the question the reader now has.",
-    "Check that the next part answers that question; move a part that answers a later one.",
+    "Check that the next part answers that question. Move a part that answers a later one.",
     "Cut what no reader needs at the point where it stands, or move it to the document a link leads to."
    ],
    "grounds": [
