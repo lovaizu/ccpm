@@ -77,52 +77,15 @@ def made(*decisions: dict[str, Any], questions: tuple[str, ...] = ("Q1",)) -> di
     }
 
 
-# The notes app of the UX's scenarios: notes.py prints each note as a line of tab-separated fields,
-# and two scripts read that text; sync.py reads `updated` as ISO 8601, a fact the pinner finds.
-NOTES = {
-    "README.md": "# notes\n\nKeeps notes as Markdown files. `python3 notes.py list` lists them.\n",
-    "notes.py": (
-        '"""notes: `python3 notes.py list` prints each note as id, title, tags and updated,'
-        ' tab-separated."""\n\nimport sys\n\nNOTES = [\n'
-        '    ("1", "Groceries", ["home"], "2026-11-01T09:30:00+00:00"),\n'
-        '    ("2", "Trip plan", ["travel", "family"], "2026-11-02T18:05:00+00:00"),\n]\n\n\n'
-        "def main(argv):\n"
-        '    if argv[:1] != ["list"]:\n'
-        '        print("usage: notes.py list")\n'
-        "        return 2\n"
-        "    for id, title, tags, updated in NOTES:\n"
-        '        print("\\t".join([id, title, ",".join(tags), updated]))\n'
-        "    return 0\n\n\n"
-        'if __name__ == "__main__":\n'
-        "    sys.exit(main(sys.argv[1:]))\n"
-    ),
-    "scripts/sync.py": (
-        '"""Sends each note changed since the last sync to the calendar."""\n\n'
-        "import subprocess\nfrom datetime import datetime\n\nLAST = datetime(2026, 11, 1)\n\n\n"
-        "def changed():\n"
-        "    out = subprocess.run(\n"
-        '        ["python3", "notes.py", "list"], capture_output=True, text=True\n'
-        "    )\n"
-        "    found = []\n"
-        "    for line in out.stdout.splitlines():\n"
-        '        fields = line.split("\\t")\n'
-        "        if datetime.fromisoformat(fields[3]).replace(tzinfo=None) > LAST:\n"
-        "            found.append(fields[1])\n"
-        "    return found\n"
-    ),
-    "scripts/export.py": (
-        '"""Writes the notes\' titles and tags to notes.csv."""\n\n'
-        "import subprocess\n\n\n"
-        "def export():\n"
-        "    out = subprocess.run(\n"
-        '        ["python3", "notes.py", "list"], capture_output=True, text=True\n'
-        "    )\n"
-        '    with open("notes.csv", "w") as f:\n'
-        "        for line in out.stdout.splitlines():\n"
-        '            id, title, tags, _ = line.split("\\t")\n'
-        '            f.write(f"{title},{tags}\\n")\n'
-    ),
-}
+# The notes app of the UX's scenarios, kept in ux/notes/ for the trials too: notes.py prints each
+# note as a line of tab-separated fields, and the scripts read that text; sync.py reads `updated`
+# as ISO 8601, a fact the pinner finds. Each file by its path in the app.
+SUBJECT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ux", "notes")
+NOTES: dict[str, str] = {}
+for folder, _, names in os.walk(SUBJECT):
+    for name in names:
+        with open(os.path.join(folder, name), encoding="utf-8") as f:
+            NOTES[os.path.relpath(os.path.join(folder, name), SUBJECT)] = f.read()
 
 
 def entry(*path: str) -> str:
@@ -153,6 +116,18 @@ LAID: dict[str, Any] = json.loads(entry("hooks", "lanes.json"))
 PERSONS = os.path.join(".pin", "20261103-notes-json", "design-tree.json")
 MAKERS = os.path.join(".maker", "notes-json", "design-tree.json")
 PINNER = testing.Run("pin:pinner", "p1")
+# A decision put to the person, the form of the JSON, as the pinner's part gives a Reply; and the
+# fact found that the form of updated rests on, as the pinner quotes it.
+FORM = (
+    "For the person:\n"
+    "**Purpose**: each script reads the JSON in the form it expects.\n"
+    "**To-be**: the JSON comes in the one form that suits how you read it.\n"
+    "**As-is**: notes list gives text only.\n"
+    "**Gap**: one JSON array and one object a line serve equally well.\n"
+    "**Proposal**: one JSON array of all notes; yes?"
+)
+FOUND = 'scripts/sync.py:14 "datetime.fromisoformat(fields[3])"'
+
 # The maker AI that is the go-between in S3 and S4, a subagent of a plugin that uses Pin.
 MAKER = testing.Run("maker:maker", "m1")
 

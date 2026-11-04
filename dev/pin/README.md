@@ -19,3 +19,9 @@ checked, is in [architecture.md](architecture.md).
   check on it, passes the check after each change, and gives `asks` or `done` as each run ends, its
   `results`. `python3 plugins/lane/scripts/lay.py up plugins/pin` prints each lane laid, for a
   proposal that lays them again.
+- ux trials: `python3 dev/pin/tests/ux/trial.py` tries O1 and O2 of the UX three times each, as
+  the architecture's ux says: an AI on Opus stands in for the person, given the intent of
+  `tests/ux/intent_o1.md` or `tests/ux/intent_o2.md`, on a copy of the notes app in
+  `tests/ux/notes/`, which the architecture tests read too; for O2, the plugin `tests/ux/maker/`
+  stands in for a maker AI's plugin. Give `o1` or `o2`, and a number of runs, to try one alone. The
+  top of the file says what each run must show and how each key result is measured.

@@ -11,19 +11,10 @@ from typing import Any
 import helpers
 from helpers import check
 
-FOUND = 'scripts/sync.py:14 "datetime.fromisoformat(fields[3])"'
 CONFIRMED = "the person confirmed, 2026-11-03"
 FACT = (
     "For the person:\nFound: scripts/sync.py:14 reads `updated` with"
     " `datetime.fromisoformat(fields[3])`, so it expects ISO 8601. Is that right?"
-)
-FORM = (
-    "For the person:\n"
-    "**Purpose**: each script reads the JSON in the form it expects.\n"
-    "**To-be**: the JSON comes in the one form that suits how you read it.\n"
-    "**As-is**: notes list gives text only.\n"
-    "**Gap**: one JSON array and one object a line serve equally well.\n"
-    "**Proposal**: one JSON array of all notes; yes?"
 )
 DESIGN = (
     "For the person:\n"
@@ -91,11 +82,11 @@ class Answer(helpers.PinnerTest):
         # When: the person answers right, and the pinner writes the fact and their confirmation
         # into the decision's grounds, leaving it open
         self.answers("right")
-        confirmed = self.state(D1=OPEN, D3={**OPEN, "grounds": [FOUND, CONFIRMED]})
+        confirmed = self.state(D1=OPEN, D3={**OPEN, "grounds": [helpers.FOUND, CONFIRMED]})
         # Then: the file holds, the decision it builds on open now and it waiting for that one
         self.assertEqual(self.settles(confirmed), self.holds("D1"))
         self.assertEqual(self.on_disk(), confirmed)
-        self.asks_next(FORM)
+        self.asks_next(helpers.FORM)
 
     def test_a_fact_corrected_decides_its_decision_by_the_person(self):
         # Given: the fact put to the person, the decision it rests on open now
@@ -106,7 +97,10 @@ class Answer(helpers.PinnerTest):
             D3={
                 "decided": "ISO 8601, in local time with its offset",
                 "settled_by": "user",
-                "grounds": [FOUND, "the person: it is local time with its offset, 2026-11-03"],
+                "grounds": [
+                    helpers.FOUND,
+                    "the person: it is local time with its offset, 2026-11-03",
+                ],
             }
         )
         # Then: the file holds with no decision open, the correction kept, and the whole design
@@ -117,7 +111,7 @@ class Answer(helpers.PinnerTest):
 
     def test_a_decision_made_is_settled_by_the_person_and_each_on_it_follows(self):
         # Given: the form of the JSON put to the person, the fact under it confirmed
-        self.waits(self.state(D1=OPEN, D3=OPEN), FORM)
+        self.waits(self.state(D1=OPEN, D3=OPEN), helpers.FORM)
         # When: the person answers yes, and the pinner writes their decision
         self.answers("yes, jq reads it whole")
         made = self.state(D3=OPEN)
@@ -133,7 +127,7 @@ class Answer(helpers.PinnerTest):
 
     def test_a_decision_left_to_pin_is_settled_by_reasoning_saying_so(self):
         # Given: the form of the JSON put to the person
-        self.waits(self.state(D1=OPEN, D3=OPEN), FORM)
+        self.waits(self.state(D1=OPEN, D3=OPEN), helpers.FORM)
         # When: the person leaves it to Pin, and the pinner settles it by reasoning, saying so
         self.answers("you decide")
         left = self.state(D3=OPEN)
@@ -152,7 +146,7 @@ class Answer(helpers.PinnerTest):
 
     def test_a_point_an_answer_raises_is_added_open_joined_and_then_settled(self):
         # Given: the form of the JSON put to the person
-        self.waits(self.state(D1=OPEN, D3=OPEN), FORM)
+        self.waits(self.state(D1=OPEN, D3=OPEN), helpers.FORM)
         # When: the person answers yes and raises a point the file does not hold, which the pinner
         # adds open, joined to what it serves and builds on
         self.answers("yes, and tags must come as a list")
@@ -189,7 +183,7 @@ class Answer(helpers.PinnerTest):
         self.assertEqual(
             self.on_disk()["decisions"][2]["grounds"], settled["decisions"][2]["grounds"]
         )
-        self.asks_next(FORM)
+        self.asks_next(helpers.FORM)
         # When: the person decides it again, and the pinner settles the one built on it again
         self.answers("no: one object a line")
         again = self.state(D3=OPEN)
@@ -203,7 +197,7 @@ class Answer(helpers.PinnerTest):
     def test_a_wrap_up_leaves_the_open_decisions_open_and_shows_the_design(self):
         # Given: the form of the JSON put to the person
         before = self.state(D1=OPEN, D3=OPEN)
-        self.waits(before, FORM)
+        self.waits(before, helpers.FORM)
         # When: the person asks to wrap up; the pinner changes nothing and runs the check
         self.answers("wrap up")
         # Then: the file holds as it was, its open decisions open, and the design goes out with

@@ -19,15 +19,6 @@ GOAL = (
     "**Gap**: they do not say who reads the JSON, or what it spares them.\n"
     "**Proposal**: scripts that read `notes list` get its notes as JSON; yes?"
 )
-FORM = (
-    "For the person:\n"
-    "**Purpose**: each script reads the JSON in the form it expects.\n"
-    "**To-be**: the JSON comes in the one form that suits how you read it.\n"
-    "**As-is**: notes list gives text only.\n"
-    "**Gap**: one JSON array and one object a line serve equally well.\n"
-    "**Proposal**: one JSON array of all notes; yes?"
-)
-FOUND = 'scripts/sync.py:14 "datetime.fromisoformat(fields[3])"'
 CONFIRMED = "the person, 2026-11-03"
 # What the pinner is told where it gives its result with the design file changed since its check.
 UNCHECKED = (
@@ -80,7 +71,9 @@ class TestPersonStarts(helpers.PinnerTest):
         # Given: a design file a stopped run left in .pin/, the goal confirmed and the pinner's own
         # decision settled
         left = walkthrough_with(D1=new(helpers.WALKTHROUGH)["decisions"][0])
-        left["decisions"][2].update(decided=None, settled_by=None, grounds=[FOUND, CONFIRMED])
+        left["decisions"][2].update(
+            decided=None, settled_by=None, grounds=[helpers.FOUND, CONFIRMED]
+        )
         self.lies(left)
         # When: the go-between finds the file whose goal is this plan's, and starts the pinner on
         # it; the pinner reads it and runs the check
@@ -94,9 +87,9 @@ class TestPersonStarts(helpers.PinnerTest):
         self.assertEqual(self.on_disk(), left)
         # When: it gives asks and ends with that decision, the next point
         self.assertTrue(self.gives("asks").made)
-        heard = self.ends(FORM)
+        heard = self.ends(helpers.FORM)
         # Then: the person hears that decision, and not the goal or the fact they confirmed again
-        self.assertEqual(heard, FORM.split("\n", 1)[1])
+        self.assertEqual(heard, helpers.FORM.split("\n", 1)[1])
         self.assertNotIn("Found:", heard)
 
     def test_a_design_file_the_check_finds_at_fault_is_mended(self):
@@ -210,9 +203,9 @@ class TestMakerStarts(helpers.PinnerTest):
         # the person's decision
         self.assertTrue(self.reads("scripts/sync.py").made)
         self.assertTrue(self.gives("asks").made)
-        heard = self.ends(FORM)
+        heard = self.ends(helpers.FORM)
         # Then: the maker AI gets that decision, not the goal, and the file is as handed over
-        self.assertEqual(heard, FORM.split("\n", 1)[1])
+        self.assertEqual(heard, helpers.FORM.split("\n", 1)[1])
         self.assertEqual(self.on_disk(), handed_over())
 
     def test_a_point_the_makers_work_found_opens_it_and_each_decision_built_on_it(self):
@@ -238,7 +231,7 @@ class TestMakerStarts(helpers.PinnerTest):
         )
         self.assertEqual(self.on_disk()["decisions"][1], MAKER_SETTLED)
         self.assertTrue(self.gives("asks").made)
-        self.ends(FORM)
+        self.ends(helpers.FORM)
 
 
 if __name__ == "__main__":
