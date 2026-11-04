@@ -16,11 +16,12 @@ achieves, and its parts say what the deliverable holds. Its benefits ask the que
 deliverable must pass, and its practices hold a way to make each question pass. A document is also
 finished by `refactor-doc.json`, and code by `refactor-code.json`; open that one with it.
 
-When a step's work needs something that its best practice does not ask, add the question to that
-best practice, whichever plugin is being built, and make the work again against it.
+When a step's work needs something that its best practice does not ask, mend that best practice as
+Q8 of [meta.json](../../plugins/turn/core/domain/best-practices/meta.md) says, whichever plugin is
+being built, and make the work again against it.
 
-- Rationale: what is made with the best practice open is made right as it is made; a gap left in a
-  best practice is met again by every plugin made with it.
+- Rationale: every plugin here is made with the same best practices, so a gap left in one is met
+  again by every plugin made with it.
 
 Work made before a rule or a best practice changed is read against the new one before it is
 committed.
@@ -86,28 +87,21 @@ by the thinnest path.**
 ### 6. Build each slice
 
 **For each slice, in order, do a to e. Each part gets its unit tests first, seen to fail, and only
-then its code or its prompt.**
-
-- Rationale: a test written after the code or the prompt is fitted to what they do, not to what
-  they must do.
+then its code or its prompt, as Q6 of
+[code.json](../../plugins/turn/core/domain/best-practices/code.md) and Q16 of
+[prompt.json](../../plugins/turn/core/domain/best-practices/prompt.md) say.**
 
 a. **Write the unit tests of its code with `code.json` open, one for each class, each edge and
    each rule of the part's contract, as [Unit: code](../../dev/architecture.md#unit-code) says, run
    them and see them fail.**
-   - Rationale: a test that never failed may pass whatever the code does.
 
 b. **Write the code with `code.json` open until the tests pass**, as
    [Code](../../dev/architecture.md#code) says.
-   - Rationale: code written to pass tests that hold its contract does what the contract asks, and
-     no more.
 
-c. **For each prompt, a skill or an agent, write its trials with `prompt.json` open, as its
-   trials' questions and practices say and as [Unit: prompts](../../dev/architecture.md#unit-prompts)
-   says, one case at a time: build each part of the trial and check it on a kept record, run the
-   case and see it fail; then write the prompt with `prompt.json` open until the case passes.**
-   - Rationale: a role's slips show only alone; tried later beside other roles, a slip cannot be
-     told from theirs. A trial whose own parts were never checked fails for its own faults, and a
-     prompt mended for them never settles.
+c. **For each prompt, a skill or an agent, write its trials with `prompt.json` open, as its Q14 to
+   Q16 say and as [Unit: prompts](../../dev/architecture.md#unit-prompts) says, one case at a time:
+   build each part of the trial and check it on a kept record, run the case and see it fail; then
+   write the prompt with `prompt.json` open until the case passes.**
 
 d. **Lay the lanes the prompts' steps call for with `plugins/lane/scripts/lay.py`, with
    `prompt.json` open:** write them in a proposal as
@@ -122,11 +116,9 @@ e. **Write the slice's architecture tests, one for each path through its sequenc
    joins the parts run real and each role an AI runs a double, as
    [Architecture: the parts joined](../../dev/architecture.md#architecture-the-parts-joined) says,
    run them, and fix what fails at the part or the handoff it lies in.**
-   - Rationale: each part passed alone; a handoff, a route or a result between parts shows only
-     once they are joined, and with no model called the tests run on every push from then on.
 
-**Change a prompt or a document after a trial only for a cause confirmed in the records and traced
-to what the README and the architecture say it should be.**
+**Change a prompt or a document after a trial only for a cause confirmed in the records, as Q15 of
+`prompt.json` says, and traced to what the README and the architecture say it should be.**
 
 - Rationale: what an AI does varies from run to run; a line added for one run's slip meets a
   different slip in the next, and the additions never settle.
@@ -139,17 +131,9 @@ intent the plugin never sees, as
 [ux: the plugin in real use](../../dev/architecture.md#ux-the-plugin-in-real-use) says, to confirm
 the UX.**
 
-- Rationale: the lower levels cover every case; key results that show only in real use at real
-  size, such as the time a whole run takes, show only here. A trial run before the lower levels
-  pass finds their faults, slowly and one at a time.
-
 **Test a fault the trial finds first at the level that missed it, as
 [A fault is tested at the level that must catch it](../../dev/architecture.md#a-fault-is-tested-at-the-level-that-must-catch-it)
-says: name the case or the path that level missed, add its test there, see it fail, fix the
-fault, and then confirm the whole again.**
-
-- Rationale: a fault fixed only where a trial found it comes back unseen, as no trial runs on every
-  push.
+says, and then confirm the whole again.**
 
 ### 8. Check the structure
 
