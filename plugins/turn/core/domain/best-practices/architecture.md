@@ -16,8 +16,8 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 - **sequences**: For each user story, its steps in the order they happen, drawn so the reader follows them from first to last. It shows the user, each role the story reaches, named as in Components, and each thing outside the product it reaches; and each step, labelled in a few words with what one does to another and the data handed on, named as in the data model.
 - **deployment**: A figure of each execution environment, such as a cloud service, a phone, the user's computer or CI, with its technology. Each environment holds its deployment units, such as an app or a container, each with its technology and, by their names in Components, the roles that run in it and the data kept in it. Each thing outside the product that they depend on is shown, with what is used. With the figure, how the product is started, and choices.
 - **directory**: The place where each role and each data lies: the folders and files that hold them, nested as on disk, each naming the role or the data it holds as in Components, with its technology, and none of the files inside a role.
-- **test-table**: A table the reader takes in at a glance: a row for each deployment unit, named as in Deployment with its technology; a column for each test type the product uses, from narrow scope to wide, such as unit, integration and end-to-end; in each cell the tool, a weight, such as ●●● or ●●○, and what it checks in a few words; each empty cell marked as empty, with why it is empty; and the units left out because every cell of their row would be empty, with why.
-- **test-rules**: For each test type, including any the product adds, what it makes real, what it fakes and when it passes, and, for a result that varies from run to run, how many runs of how many must meet the expectation; each unit's weight with what a failure costs the user; and, before the table, a pointer to the project's shared test rules, with only what differs written here.
+- **test-table**: A table the reader takes in at a glance: a row for each deployment unit, named as in Deployment with its technology; a column for each test level, from narrow to wide, each named by what its tests check against: unit, which checks one part against its contract; architecture, which joins all the parts and checks them against this document, running every user story's sequence from start to end; and ux, which checks the product in real use against the UX; in each cell the tool, a weight, such as ●●● or ●●○, and what it checks in a few words; each empty cell marked as empty, with why it is empty; and the units left out because every cell of their row would be empty, with why.
+- **test-rules**: For each test level, what it runs real, what doubles stand in for, who stands in for the person, what it covers and when it passes, a double being a stand-in for a part that gives set results; where each double's results come from; how a fault one level finds is brought to the level that must catch it; for a result that varies from run to run, how many runs of how many must meet the expectation; each unit's weight with what a failure costs the user; and, before the table, a pointer to the project's shared test rules, with only what differs written here.
 
 ## Benefits
 
@@ -31,11 +31,13 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 - **Q8** (principles): When two builders of different parts meet a case the document does not name, does a principle's reason lead both to the same decision?
 - **Q9** (components, data-model, deployment): Setting the product up from nothing, can the builder put each role where it runs and each data where it is kept, and start the product, without asking anyone?
 - **Q10** (components, data-model, directory): Making or changing a role or a data, can the builder find the one place its files belong?
-- **Q11** (deployment, test-table): Asked whether anything in the product goes untested, can the builder answer, for each deployment unit, which types of test cover it, how heavily, and why a type is missing?
-- **Q12** (test-table, test-rules): Writing a test of one type, can the builder do it without deciding for themselves what to make real, what to fake and when it passes?
-- **Q13** (principles, components, responsibilities, sequences, deployment, directory, test-table, test-rules): Following a principle while building a part, does the builder find every figure, list and table asking the same of that part, so they never have to choose which to follow?
-- **Q14** (choices, test-rules): When the builder doubts a choice the document makes, can they tell what would be lost by taking the other way?
-- **Q15** (the whole): When the builder changes how a role works inside, while the UX and the principles stay, does every line of the document still hold?
+- **Q11** (deployment, test-table): Asked whether anything in the product goes untested, can the builder answer, for each deployment unit, which levels of test cover it, how heavily, and why a level is missing?
+- **Q12** (test-table, test-rules): Writing a test at one level, can the builder do it without deciding for themselves what to run real, what to stand in with a double, what to cover and when it passes?
+- **Q13** (test-rules): Does each double give only what the part's contract allows?
+- **Q14** (test-table, test-rules): Given any fault, can the builder tell from the test rules the one level that must catch it?
+- **Q15** (principles, components, responsibilities, sequences, deployment, directory, test-table, test-rules): Following a principle while building a part, does the builder find every figure, list and table asking the same of that part, so they never have to choose which to follow?
+- **Q16** (choices, test-rules): When the builder doubts a choice the document makes, can they tell what would be lost by taking the other way?
+- **Q17** (the whole): When the builder changes how a role works inside, while the UX and the principles stay, does every line of the document still hold?
 
 ## Practices
 
@@ -201,42 +203,82 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 - [ARCHITECTURE.md](https://matklad.github.io/2021/02/06/ARCHITECTURE.md.html), matklad, matklad.github.io, 2021: "A codemap is a map of a country, not an atlas of maps of its states."
 - [ARCHITECTURE.md](https://matklad.github.io/2021/02/06/ARCHITECTURE.md.html), matklad, matklad.github.io, 2021: "Are the things you want to put near each other in the codemap adjacent when you run tree .?"
 
-### Q11: Asked whether anything in the product goes untested, can the builder answer, for each deployment unit, which types of test cover it, how heavily, and why a type is missing?
+### Q11: Asked whether anything in the product goes untested, can the builder answer, for each deployment unit, which levels of test cover it, how heavily, and why a level is missing?
 
-**Thinking**: A table of each deployment unit against each scope of test, from narrow to wide, shows at a glance what is tested, how heavily, and why a gap is there.
+**Thinking**: A table of each deployment unit against each test level shows at a glance what is tested, how heavily, and why a gap is there; each level is named by what its tests check against, a part's contract, the architecture or the UX, and not by the means it uses, as a means such as integration or end to end can serve any level.
 
 **Steps**
 
 1. Leave out a unit whose every cell would be empty, and say why under the table.
-2. Check that the wider tests are fewer, and that each user story is run end to end in some row.
+2. Check that unit and architecture carry most of the checking and run on every change, and that ux tests are few.
+3. Check that each user story's sequence runs from start to end at the architecture level in some row.
 
 **Grounds**
 
+- [Certified Tester Foundation Level Syllabus](https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf), ISTQB, version 4.0.1, istqb.org, 2024: "Test levels are distinguished by the following non-exhaustive list of attributes, to avoid overlapping of test activities"
+- [Certified Tester Foundation Level Syllabus](https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf), ISTQB, version 4.0.1, istqb.org, 2024: "Test types are groups of test activities related to specific quality characteristics and most of those test activities can be performed at every test level."
+- [Certified Tester Foundation Level Syllabus](https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf), ISTQB, version 4.0.1, istqb.org, 2024: "While testing involves verification, i.e., checking whether the system meets specified requirements, it also involves validation, which means checking whether the system meets users’ and other stakeholders’ needs in its operational environment."
 - [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html), Vocke, martinfowler.com, 2018: "Write tests with different granularity"
+- [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html), Vocke, martinfowler.com, 2018: "Push your tests as far down the test pyramid as you can"
 - [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html), Vocke, martinfowler.com, 2018: "The more high-level you get the fewer tests you should have"
-- [Testing Overview](https://abseil.io/resources/swe-book/html/ch11.html), Bender, Software Engineering at Google, chapter 11, abseil.io, 2020: "Scope refers to the specific code paths we are verifying."
 - [Documenting Software Architectures: Views and Beyond](https://www.informit.com/articles/article.aspx?p=1641654&seqNum=5), Clements et al., 2nd edition, section P.5, informit.com, 2010: "If the section is blank, the reader will wonder whether the information is coming later or whether it is indeed supposed to be blank."
 
-### Q12: Writing a test of one type, can the builder do it without deciding for themselves what to make real, what to fake and when it passes?
+### Q12: Writing a test at one level, can the builder do it without deciding for themselves what to run real, what to stand in with a double, what to cover and when it passes?
 
-**Thinking**: Each test type is set once, with what it makes real, what it fakes and when it passes, so every test of that type means the same to every builder.
+**Thinking**: Each level is set once, with what it runs real, what doubles stand in for, what it covers and when it passes, so every test at that level means the same to every builder.
 
 **Steps**
 
 1. Link the project's shared test rules, and write only where this product differs from them.
-2. For a test whose result varies from run to run, write how many runs of how many must meet the expectation.
-3. Use each type's name the same way throughout the document.
+2. At unit, cover each case of a part's contract, with its neighbours stood in by doubles and the person stood in for, and run a part done by an AI on the real model.
+3. At architecture, stand every role in with a double and cover each handoff between roles, each route and each kind of result, in every combination, so the level calls no model, runs fast and gives the same result each run.
+4. At ux, once unit and architecture pass, run the real product, with the person stood in for, on a subject that takes as long as a real request, and confirm the UX's objective and its non-functional key results, such as lead time, without aiming to cover every case.
+5. For a test whose result varies from run to run, write how many runs of how many must meet the expectation.
+6. Use each level's name the same way throughout the document.
 
 **Grounds**
 
 - [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html), Vocke, martinfowler.com, 2018: "A unit test typically replaces external collaborators with test doubles"
-- [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html), Vocke, martinfowler.com, 2018: "For your automated tests this means you don't just need to run your own application but also the component you're integrating with."
+- [Testing Overview](https://abseil.io/resources/swe-book/html/ch11.html), Bender, Software Engineering at Google, chapter 11, abseil.io, 2020: "the most important qualities we want from our test suite are speed and determinism, regardless of the scope of the test."
+- [Larger Testing](https://abseil.io/resources/swe-book/html/ch14.html), Graves, Software Engineering at Google, chapter 14, abseil.io, 2020: "The primary reason larger tests exist is to address fidelity."
+- [Larger Testing](https://abseil.io/resources/swe-book/html/ch14.html), Graves, Software Engineering at Google, chapter 14, abseil.io, 2020: "Tests can also be measured in terms of how faithful the test content is to reality."
+- [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html), Vocke, martinfowler.com, 2018: "Make sure that the higher-level test focuses on the part that the lower-level tests couldn't cover."
+- [Certified Tester Foundation Level Syllabus](https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf), ISTQB, version 4.0.1, istqb.org, 2024: "In sequential SDLC models, the test levels are often defined such that the exit criteria of one level are part of the entry criteria for the next level."
+- [Certified Tester Foundation Level Syllabus](https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf), ISTQB, version 4.0.1, istqb.org, 2024: "Acceptance testing focuses on validation and on demonstrating readiness for deployment, which means that the system fulfills the user’s business needs."
 - [The Scrum Guide](https://scrumguides.org/scrum-guide.html), Schwaber and Sutherland, scrumguides.org, 2020: "The Definition of Done is a formal description of the state of the Increment when it meets the quality measures required for the product."
 - [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), Anthropic, anthropic.com/engineering, 2026: "pass^k measures the probability that all k trials succeed."
 - [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html), Vocke, martinfowler.com, 2018: "Given the shortcomings of the original names it's totally okay to come up with other names for your test layers, as long as you keep it consistent within your codebase and your team's discussions."
 - [Documenting Software Architectures: Views and Beyond](https://www.informit.com/articles/article.aspx?p=1641654&seqNum=5), Clements et al., 2nd edition, section P.5, informit.com, 2010: "Each kind of information should be recorded in exactly one place."
 
-### Q13: Following a principle while building a part, does the builder find every figure, list and table asking the same of that part, so they never have to choose which to follow?
+### Q13: Does each double give only what the part's contract allows?
+
+**Thinking**: A double's set results come from the same contract the part's unit tests hold the part to, such as the forms its results must take, so the double cannot drift from the part it stands in for.
+
+**Steps**
+
+1. Check each double's results by the same check the part's unit tests make of the part's results, so a change to the contract fails the double as it fails the part.
+
+**Grounds**
+
+- [Contract Test](https://martinfowler.com/bliki/ContractTest.html), Fowler, martinfowler.com, 2011: "These check that all the calls against your test doubles return the same results as a call to the external service would."
+- [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html), Vocke, martinfowler.com, 2018: "Running contract tests against the fake and the real server ensures that the fake we use in our integration tests is a faithful test double."
+- [Larger Testing](https://abseil.io/resources/swe-book/html/ch14.html), Graves, Software Engineering at Google, chapter 14, abseil.io, 2020: "Moreover, mocks become stale."
+- [Larger Testing](https://abseil.io/resources/swe-book/html/ch14.html), Graves, Software Engineering at Google, chapter 14, abseil.io, 2020: "Then, the real service uses this input/output pair in a real test to ensure that it produces that output given those inputs."
+
+### Q14: Given any fault, can the builder tell from the test rules the one level that must catch it?
+
+**Thinking**: Each fault belongs to the lowest level whose check it breaks: a broken contract to unit, a wrong handoff, route or result between roles to architecture, and only what shows in real use at real size, such as lead time, to ux; so a fault a higher level finds is one a lower level missed.
+
+**Steps**
+
+1. For a fault a higher level finds, add a test at the level that must catch it, see it fail, then fix the fault there.
+
+**Grounds**
+
+- [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html), Vocke, martinfowler.com, 2018: "If a higher-level test spots an error and there's no lower-level test failing, you need to write a lower-level test"
+- [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html), Vocke, martinfowler.com, 2018: "The first rule is important because lower-level tests allow you to better narrow down errors and replicate them in an isolated way."
+
+### Q15: Following a principle while building a part, does the builder find every figure, list and table asking the same of that part, so they never have to choose which to follow?
 
 **Thinking**: Each principle is read against every part it rules, so a builder never meets a figure, a list or a table that breaks one.
 
@@ -250,7 +292,7 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 - [Architectural Blueprints—The “4+1” View Model of Software Architecture](https://www.cs.ubc.ca/~gregor/teaching/papers/4+1view-architecture.pdf), Kruchten, IEEE Software, 1995: "A Software Design Guidelines, which captures (among other things) the most important design decisions that must be respected to maintain the architectural integrity of the system."
 - [Documenting Software Architectures: Views and Beyond](https://www.informit.com/articles/article.aspx?p=1641654&seqNum=5), Clements et al., 2nd edition, section P.5, informit.com, 2010: "Documentation that is incomplete or out of date does not reflect truth, does not obey its own rules for form and internal consistency, and is not used."
 
-### Q14: When the builder doubts a choice the document makes, can they tell what would be lost by taking the other way?
+### Q16: When the builder doubts a choice the document makes, can they tell what would be lost by taking the other way?
 
 **Thinking**: A choice a builder would question, such as a technology, a tool or a unit's weight, carries why it beat the other way and what it costs, beside the figure or table that shows it, so the builder keeps it or changes it knowing what it was for.
 
@@ -268,7 +310,7 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 - [Documenting Architecture Decisions](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions), Nygard, Cognitect blog, 2011: "All consequences should be listed here, not just the "positive" ones."
 - [9. Architecture Decisions](https://docs.arc42.org/section-9/), Hruschka and Starke, arc42 documentation, docs.arc42.org, no date: "Please use your judgement to decide whether an architectural decision should be documented here in this central section or whether you better document it locally (e.g. within the white box template of one building block). Avoid redundant texts."
 
-### Q15: When the builder changes how a role works inside, while the UX and the principles stay, does every line of the document still hold?
+### Q17: When the builder changes how a role works inside, while the UX and the principles stay, does every line of the document still hold?
 
 **Thinking**: The document holds only what stays while the UX and the principles stay, and leaves how each role works inside to where it is built.
 
