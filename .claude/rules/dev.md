@@ -110,8 +110,8 @@ d. **Lay the lanes the prompts' steps call for with `plugins/lane/scripts/lay.py
    `prompt.json` open:** write them in a proposal as
    [the lanes](../../plugins/lane/docs/lanes.md#the-proposal) gives it, read what `lay.py print`
    prints of it, and lay it with `lay.py write`. A check no lane holds is added
-   to lane with `code.json` open, as
-   [Checks on what an AI does](../../dev/plugin-best-practice.md#checks-on-what-an-ai-does) says.
+   to Lane with `code.json` open, as a lane of its own in a file of its own, so each check is
+   written and tested once.
    - Rationale: the architecture tests run the lanes and routes as they are laid, so they are laid
      before those tests.
 

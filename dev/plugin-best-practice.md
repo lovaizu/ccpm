@@ -90,13 +90,6 @@ is used. What must outlast an update of the plugin, such as a cache, goes in
 - **Source**: [working directories](https://code.claude.com/docs/en/permissions#working-directories);
   [environment variables](https://code.claude.com/docs/en/plugins/manifest-reference#environment-variables).
 
-#### The purpose before performance
-
-A change is taken only if it still meets the requirements. Time or cost is cut only after that.
-
-- **Why**: A work that misses the purpose costs the caller the fixing as well as the wait, so time
-  saved by leaving them more to fix is spent again by them.
-
 #### Asking for what lies outside the work
 
 When something outside the work keeps it from going on, such as a permission not given or a tool
@@ -225,39 +218,27 @@ work's user is the caller and the caller reads the work in full to approve it, s
 caller reads it first.
 
 - **When**: a work whose user must get something from it that no machine can check.
-- **Why**: The generator finds what it meant; an evaluator that did not make the work finds only
-  what the lines give, which is what the work's user gets. An evaluator shown someone else's verdict
-  finds what it was told, so two readings add a check only when each is made on its own. An
-  evaluator that hunts for defects finds one in every work, and the rounds go on without the work
-  getting better for its user. The generator holds the sources, so how to make a question `good` is
-  the generator's to decide; an evaluator that names a fault starts an argument about the fault.
-  Lines can be checked by a script, an evaluator or the caller, and finding them makes the
-  generator look at the place; a claim in words is read by no one and costs its writing at every
-  round. Each question says what is run and how far, so a `more` does not come from the two running
-  different things. A caller who reads the work in full anyway gains nothing from an evaluator in
-  their place, and loses its time at every remake.
+- **Why**: The generator finds what it meant; an evaluator that did not make the work, reading on
+  its own, finds only what the lines give, which is what the work's user gets. An evaluator that
+  hunts for defects finds one in every work, and the rounds go on without the work getting better
+  for its user. The generator holds the sources, so how to make a question `good` is the generator's
+  to decide; an evaluator that names a fault starts an argument about the fault.
 
 #### Where the router keeps the course
 
 A run that goes in a fixed loop keeps its course in a router of its own, a Python script. From the
-role that ended and its result, the router gives the orchestrator each next move. It gives the
-orchestrator only the moves that need it, such as starting a role, sending a message, asking or
-returning the result, and does itself what a script can do, such as checking a reply's form or
-waiting for a role to end. A run that keeps a state, what it has decided and been answered so far,
-writes it to a file in its work folder before each next move, and commits and pushes what is kept
-at the end of a step. A run whose course changes with what it finds keeps its course in its skill's
-steps and its plan in a document.
+role that ended and its result, the router gives the orchestrator each next move, and does itself
+what a script can do, such as checking a reply's form. A run that keeps a state, what it has
+decided and been answered so far, writes it to a file in its work folder before each next move. A
+run whose course changes with what it finds keeps its course in its skill's steps and its plan in a
+document.
 
 - **When**: the router, a run that goes in a fixed loop; the state file, a run that keeps a state.
 - **Why**: A course kept in code is followed the same way every time; an AI deciding may not follow
-  it. Spec Kit, BMAD-METHOD, OpenSpec, superpowers and cc-sdd all keep a fixed course outside the
-  AI; OpenSpec calls its own steps "prompt-level behavior contracts, not enforceable checks". A
-  course fixed in code has no move for what it did not foresee, so it does not suit a run whose
-  findings keep changing the course. Each move of the orchestrator is a turn of the model, which
-  reads the whole conversation, so a move the router could make costs time and adds to what every
-  later move reads. A conversation can end, be cleared or be compacted, and what lives only in it is
-  lost; with the state in a file, a run stopped anywhere goes on from its last move in a new
-  conversation, and takes an answer in where it stands, rather than making again what it had made.
+  it, and each move it makes is a turn of the model that reads the whole conversation. A course
+  fixed in code has no move for what it did not foresee, so it does not suit a run whose findings
+  keep changing it. A conversation can end, be cleared or be compacted, and what lives only in it
+  is lost; with the state in a file, a stopped run goes on from its last move.
 
 #### Learning from each run
 
@@ -369,9 +350,6 @@ Each plugin's architecture draws a sequence for each of its own user stories on 
   every plugin.
 - A document's images lie in `images/` beside it, as `dev/images/` for this document, so a folder
   shows its documents and parts when opened, and an image is found from its document.
-- A figure is an SVG in the style of `dev/images/figures.css`, light by default and dark under
-  `prefers-color-scheme`. An image shown by `<img>` reads no file beside it, so each SVG carries a
-  copy of the style, put in by a script, and the checks fail on a copy left behind.
 
 ## Development
 
@@ -394,27 +372,6 @@ once and copied for each test, is kept beside them.
 Installing copies the target of a link within the marketplace into the plugin
 ([share files within a marketplace with symlinks](https://code.claude.com/docs/en/plugins/host-marketplace#share-files-within-a-marketplace-with-symlinks)),
 so each plugin carries the shared code while it is written, tested and fixed in one place.
-
-### No lines copied
-
-No lines are copied between files, except a test's expected value, which is written out from the
-specification, as Q6 of [code.json](../plugins/turn/core/domain/best-practices/code.md) says. The
-checks fail when two files share four or more similar lines of Python, not counting comments,
-docstrings and imports, as pylint's `duplicate-code` finds them; they do not tell a test's expected
-value apart.
-
-A copy gets fixed in one file and left wrong in the other.
-
-### Checks on what an AI does
-
-A check on what an AI does is a hook, in a file of its own named after the check, with one entry
-file for each hook event, as the official
-[`hookify`](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/hookify) plugin
-does. A check that more than one plugin needs is kept once, as [Code kept once](#code-kept-once)
-says.
-
-A check in a file of its own can be read, fixed and tested on its own. A check kept in each plugin
-apart would drift from the others.
 
 ## Test
 
@@ -446,10 +403,9 @@ to that one thing.
 The tests lie in `dev/<plugin>/tests/`, in a folder for each level: `unit/`, at the path of what
 each tests, as `tests/unit/core/domain/`; `architecture/`; and `ux/`. What the tests of more than
 one level share lies in `tests/` itself, as `tests/helpers.py`. A test is then found from what it
-tests, and the folders bear the names of the table's columns. A file of tests of code is named
-`test_*.py`, and the code that runs a trial `trial_*.py`, so `unittest` finds only the tests that
-CI runs. Each plugin's architecture holds the table, a row for each deployment unit, and its own
-test rules give only what differs from these.
+tests, and the folders bear the names of the table's columns. The names in the table's last row keep
+trials out of what `unittest` finds, which CI runs. Each plugin's architecture holds the table, a
+row for each deployment unit, and its own test rules give only what differs from these.
 
 ### No check passes what it did not check
 
@@ -468,17 +424,10 @@ whoever meets it.
 Each part made of code has unit tests, written with `unittest` in `dev/<plugin>/tests/unit/`, each
 double standing in for a neighbour of the part, such as a module it calls or an event of Claude
 Code. Each test is written as Q6 of [code.json](../plugins/turn/core/domain/best-practices/code.md)
-says, and the cases are drawn from the part's contract:
-
-1. one test for each class of input or result that the part treats alike, the refused ones among
-   them;
-2. where a class ends on an ordered scale, such as a length, one test at each end and one at the
-   nearest value in the next class;
-3. where the result turns on a combination of conditions, a table with one rule for each
-   combination that can occur, and one test for each rule.
-
-A part treats every input of a class alike, so one test stands for the class; faults gather at the
-edges of a class; and a table shows each combination at once, so none is left out unseen.
+says, and the cases are drawn from the part's contract: one test for each class of input or result
+the part treats alike, the refused ones among them, its edges, and each rule of a decision table
+where the result turns on a combination of conditions. Faults gather at the edges of a class, and a
+table shows each combination at once, so none is left out unseen.
 
 Three checks, made as Q8 of code.json says, confirm that the unit tests are enough:
 
@@ -492,26 +441,11 @@ The unit tests hold every behavior the code must have. A line that only an archi
 is one whose contract no unit test holds. A gap the other two checks find is a missing unit test,
 added so that every push catches it again.
 
-What runs when, and why:
-
-- Before each push, a hook runs the unit and architecture tests of each plugin the push changes,
-  counting lines and branches, with the linter, the formatter, the type checker and the manifests'
-  check, and stops the push on a failure. A check left to be run by hand gets forgotten, and is
-  found only by CI after the push.
-- On every push, CI runs every plugin's unit and architecture tests and fails on any line or branch
-  the unit tests do not run. It runs the mutation testing and the property tests, on many inputs,
-  only on what changed. The tests are designed before the code and the coverage shows each line
-  run, so these two only confirm that design; run before every push, they would make every change
-  wait. A survivor that CI finds goes back to the test design that missed it.
-- When a plugin's version changes, CI runs both on the whole plugin. Checking the whole takes long,
-  so it is checked when it reaches users; a test weakened with no line of code changed is among
-  what only the whole run finds.
-- Each check runs on the oldest Python users run and on the newest; a test tool that needs a newer
-  Python runs on the newest only. The code must run on the oldest, and the tools need newer
-  versions only to test.
-
-A plugin's whole test run takes seconds, and the time each check takes is read on every run, as
-mutation testing runs the tests once for each mutant, and a slow test run makes every change wait.
+The unit and architecture tests run before each push and in CI, so a fault is caught before it
+reaches the branch. Mutation testing and property tests run in CI on what changed, as the tests
+designed before the code already hold the behavior and these two only confirm that; run before
+every push, they would make every change wait. A survivor goes back to the test design that missed
+it.
 
 ### Unit: prompts
 
@@ -552,27 +486,20 @@ the same result on each run, and every push checks every path.
 
 ### ux: the plugin in real use
 
-Once every unit and architecture test passes, the developer tries the whole plugin as its user
-uses it, on each objective's scenario, on a subject as big as a real request. The trial confirms
-the objective and the key results that no lower level can measure, such as the lead time, and does
-not aim to cover every case. An AI stands in for the person, answering from an intent written
-before the run and never shown to the plugin, and a run passes where the stand-in gets what the
-objective says, judged against that intent. For each key result, the plugin's test rules say what
-is measured, and each measure is set against the last run's in the direction the UX gives it. The
-developer keeps each run's time and tokens with the trial's records, and shows whoever decides what
-reaches users:
+Once every unit and architecture test passes, the developer tries the whole plugin as its user uses
+it, on each objective's scenario, on a subject as big as a real request. The trial confirms the
+objective and the key results that no lower level can measure, such as the lead time, and does not
+aim to cover every case. An AI stands in for the person, answering from an intent written before the
+run and never shown to the plugin, and a run passes where the stand-in gets what the objective says,
+judged against that intent. For each key result, the plugin's test rules say what is measured, and
+each measure is set against the last run's in the direction the UX gives it. Each run's time and
+tokens are kept with the trial's records.
 
-- how close it came to the goal and to each key result of the UX;
-- the time and the tokens it took, beside the size of the work;
-- what could be improved.
-
-That person decides from these whether the plugin reaches users.
-
-Each part can pass, and every sequence too, while the user's objective is missed. The UX gives a
-key result no target value, and no bar for time and tokens is known before runs gather, so runs
-kept side by side show whether a change made things better or worse, with the purpose met as fully
-([The purpose before performance](#the-purpose-before-performance)). A trial takes minutes and
-calls the model on each move, so a few trials confirm what the lower levels have already checked.
+Each part can pass, and every sequence too, while the user's objective is missed. The UX gives a key
+result no target value, and no bar for time and tokens is known before runs gather, so runs kept
+side by side show whether a change made things better or worse, with the purpose met as fully. A
+trial takes minutes and calls the model on each move, so a few trials confirm what the lower levels
+have already checked.
 
 How a trial runs:
 
