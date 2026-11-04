@@ -113,26 +113,21 @@
   },
   {
    "id": "Q13",
-   "about": "test-rules",
-   "what": "Does each double give only what the part's contract allows?"
+   "about": "test-table, test-rules",
+   "what": "When the unit and architecture tests pass, can the builder be sure the product does what this document says, leaving ux only to confirm the UX?"
   },
   {
    "id": "Q14",
-   "about": "test-table, test-rules",
-   "what": "Given any fault, can the builder tell from the test rules the one level that must catch it?"
-  },
-  {
-   "id": "Q15",
    "about": "principles, components, responsibilities, sequences, deployment, directory, test-table, test-rules",
    "what": "Following a principle while building a part, does the builder find every figure, list and table asking the same of that part, so they never have to choose which to follow?"
   },
   {
-   "id": "Q16",
+   "id": "Q15",
    "about": "choices, test-rules",
    "what": "When the builder doubts a choice the document makes, can they tell what would be lost by taking the other way?"
   },
   {
-   "id": "Q17",
+   "id": "Q16",
    "about": "the whole",
    "what": "When the builder changes how a role works inside, while the UX and the principles stay, does every line of the document still hold?"
   }
@@ -625,9 +620,10 @@
   },
   {
    "benefit": "Q13",
-   "thinking": "A double's set results come from the same contract the part's unit tests hold the part to, such as the forms its results must take, so the double cannot drift from the part it stands in for.",
+   "thinking": "Each fault belongs to the lowest level whose check it breaks: a broken contract to unit, a wrong handoff, route or result between roles to architecture, and only what shows in real use at real size, such as lead time, to ux; and each double gives only what the part's contract allows, so a pass of the lower levels holds for the real parts.",
    "steps": [
-    "Check each double's results by the same check the part's unit tests make of the part's results, so a change to the contract fails the double as it fails the part."
+    "Check each double's results by the same check the part's unit tests make of the part's results, so a change to the contract fails the double as it fails the part.",
+    "For a fault a higher level finds, add a test at the level that must catch it, see it fail, then fix the fault there."
    ],
    "grounds": [
     {
@@ -653,16 +649,7 @@
      "url": "https://abseil.io/resources/swe-book/html/ch14.html",
      "by": "Graves, Software Engineering at Google, chapter 14, abseil.io, 2020",
      "quote": "Then, the real service uses this input/output pair in a real test to ensure that it produces that output given those inputs."
-    }
-   ]
-  },
-  {
-   "benefit": "Q14",
-   "thinking": "Each fault belongs to the lowest level whose check it breaks: a broken contract to unit, a wrong handoff, route or result between roles to architecture, and only what shows in real use at real size, such as lead time, to ux; so a fault a higher level finds is one a lower level missed.",
-   "steps": [
-    "For a fault a higher level finds, add a test at the level that must catch it, see it fail, then fix the fault there."
-   ],
-   "grounds": [
+    },
     {
      "title": "The Practical Test Pyramid",
      "url": "https://martinfowler.com/articles/practical-test-pyramid.html",
@@ -678,7 +665,7 @@
    ]
   },
   {
-   "benefit": "Q15",
+   "benefit": "Q14",
    "thinking": "Each principle is read against every part it rules, so a builder never meets a figure, a list or a table that breaks one.",
    "steps": [
     "Read each part against each principle it rules; where a line breaks it, change the part, or the principle and its reason, until the two say the same."
@@ -705,7 +692,7 @@
    ]
   },
   {
-   "benefit": "Q16",
+   "benefit": "Q15",
    "thinking": "A choice a builder would question, such as a technology, a tool or a unit's weight, carries why it beat the other way and what it costs, beside the figure or table that shows it, so the builder keeps it or changes it knowing what it was for.",
    "steps": [
     "Read each figure and the table as a builder new to the product, and check that each choice they would question has its reason and its cost beside it."
@@ -756,7 +743,7 @@
    ]
   },
   {
-   "benefit": "Q17",
+   "benefit": "Q16",
    "thinking": "The document holds only what stays while the UX and the principles stay, and leaves how each role works inside to where it is built.",
    "steps": [
     "Imagine a change to how a role works inside, such as its steps, a value it uses or a data's fields, that leaves the UX and the principles as they are, and mark each line the change would make untrue.",

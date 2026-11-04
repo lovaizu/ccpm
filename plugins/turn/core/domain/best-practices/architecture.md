@@ -33,11 +33,10 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 - **Q10** (components, data-model, directory): Making or changing a role or a data, can the builder find the one place its files belong?
 - **Q11** (deployment, test-table): Asked whether anything in the product goes untested, can the builder answer, for each deployment unit, which levels of test cover it, how heavily, and why a level is missing?
 - **Q12** (test-table, test-rules): Writing a test at one level, can the builder do it without deciding for themselves what to run real, what to stand in with a double, what to cover and when it passes?
-- **Q13** (test-rules): Does each double give only what the part's contract allows?
-- **Q14** (test-table, test-rules): Given any fault, can the builder tell from the test rules the one level that must catch it?
-- **Q15** (principles, components, responsibilities, sequences, deployment, directory, test-table, test-rules): Following a principle while building a part, does the builder find every figure, list and table asking the same of that part, so they never have to choose which to follow?
-- **Q16** (choices, test-rules): When the builder doubts a choice the document makes, can they tell what would be lost by taking the other way?
-- **Q17** (the whole): When the builder changes how a role works inside, while the UX and the principles stay, does every line of the document still hold?
+- **Q13** (test-table, test-rules): When the unit and architecture tests pass, can the builder be sure the product does what this document says, leaving ux only to confirm the UX?
+- **Q14** (principles, components, responsibilities, sequences, deployment, directory, test-table, test-rules): Following a principle while building a part, does the builder find every figure, list and table asking the same of that part, so they never have to choose which to follow?
+- **Q15** (choices, test-rules): When the builder doubts a choice the document makes, can they tell what would be lost by taking the other way?
+- **Q16** (the whole): When the builder changes how a role works inside, while the UX and the principles stay, does every line of the document still hold?
 
 ## Practices
 
@@ -250,13 +249,14 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 - [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html), Vocke, martinfowler.com, 2018: "Given the shortcomings of the original names it's totally okay to come up with other names for your test layers, as long as you keep it consistent within your codebase and your team's discussions."
 - [Documenting Software Architectures: Views and Beyond](https://www.informit.com/articles/article.aspx?p=1641654&seqNum=5), Clements et al., 2nd edition, section P.5, informit.com, 2010: "Each kind of information should be recorded in exactly one place."
 
-### Q13: Does each double give only what the part's contract allows?
+### Q13: When the unit and architecture tests pass, can the builder be sure the product does what this document says, leaving ux only to confirm the UX?
 
-**Thinking**: A double's set results come from the same contract the part's unit tests hold the part to, such as the forms its results must take, so the double cannot drift from the part it stands in for.
+**Thinking**: Each fault belongs to the lowest level whose check it breaks: a broken contract to unit, a wrong handoff, route or result between roles to architecture, and only what shows in real use at real size, such as lead time, to ux; and each double gives only what the part's contract allows, so a pass of the lower levels holds for the real parts.
 
 **Steps**
 
 1. Check each double's results by the same check the part's unit tests make of the part's results, so a change to the contract fails the double as it fails the part.
+2. For a fault a higher level finds, add a test at the level that must catch it, see it fail, then fix the fault there.
 
 **Grounds**
 
@@ -264,21 +264,10 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 - [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html), Vocke, martinfowler.com, 2018: "Running contract tests against the fake and the real server ensures that the fake we use in our integration tests is a faithful test double."
 - [Larger Testing](https://abseil.io/resources/swe-book/html/ch14.html), Graves, Software Engineering at Google, chapter 14, abseil.io, 2020: "Moreover, mocks become stale."
 - [Larger Testing](https://abseil.io/resources/swe-book/html/ch14.html), Graves, Software Engineering at Google, chapter 14, abseil.io, 2020: "Then, the real service uses this input/output pair in a real test to ensure that it produces that output given those inputs."
-
-### Q14: Given any fault, can the builder tell from the test rules the one level that must catch it?
-
-**Thinking**: Each fault belongs to the lowest level whose check it breaks: a broken contract to unit, a wrong handoff, route or result between roles to architecture, and only what shows in real use at real size, such as lead time, to ux; so a fault a higher level finds is one a lower level missed.
-
-**Steps**
-
-1. For a fault a higher level finds, add a test at the level that must catch it, see it fail, then fix the fault there.
-
-**Grounds**
-
 - [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html), Vocke, martinfowler.com, 2018: "If a higher-level test spots an error and there's no lower-level test failing, you need to write a lower-level test"
 - [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html), Vocke, martinfowler.com, 2018: "The first rule is important because lower-level tests allow you to better narrow down errors and replicate them in an isolated way."
 
-### Q15: Following a principle while building a part, does the builder find every figure, list and table asking the same of that part, so they never have to choose which to follow?
+### Q14: Following a principle while building a part, does the builder find every figure, list and table asking the same of that part, so they never have to choose which to follow?
 
 **Thinking**: Each principle is read against every part it rules, so a builder never meets a figure, a list or a table that breaks one.
 
@@ -292,7 +281,7 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 - [Architectural Blueprints—The “4+1” View Model of Software Architecture](https://www.cs.ubc.ca/~gregor/teaching/papers/4+1view-architecture.pdf), Kruchten, IEEE Software, 1995: "A Software Design Guidelines, which captures (among other things) the most important design decisions that must be respected to maintain the architectural integrity of the system."
 - [Documenting Software Architectures: Views and Beyond](https://www.informit.com/articles/article.aspx?p=1641654&seqNum=5), Clements et al., 2nd edition, section P.5, informit.com, 2010: "Documentation that is incomplete or out of date does not reflect truth, does not obey its own rules for form and internal consistency, and is not used."
 
-### Q16: When the builder doubts a choice the document makes, can they tell what would be lost by taking the other way?
+### Q15: When the builder doubts a choice the document makes, can they tell what would be lost by taking the other way?
 
 **Thinking**: A choice a builder would question, such as a technology, a tool or a unit's weight, carries why it beat the other way and what it costs, beside the figure or table that shows it, so the builder keeps it or changes it knowing what it was for.
 
@@ -310,7 +299,7 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 - [Documenting Architecture Decisions](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions), Nygard, Cognitect blog, 2011: "All consequences should be listed here, not just the "positive" ones."
 - [9. Architecture Decisions](https://docs.arc42.org/section-9/), Hruschka and Starke, arc42 documentation, docs.arc42.org, no date: "Please use your judgement to decide whether an architectural decision should be documented here in this central section or whether you better document it locally (e.g. within the white box template of one building block). Avoid redundant texts."
 
-### Q17: When the builder changes how a role works inside, while the UX and the principles stay, does every line of the document still hold?
+### Q16: When the builder changes how a role works inside, while the UX and the principles stay, does every line of the document still hold?
 
 **Thinking**: The document holds only what stays while the UX and the principles stay, and leaves how each role works inside to where it is built.
 
