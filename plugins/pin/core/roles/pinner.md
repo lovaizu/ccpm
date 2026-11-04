@@ -140,4 +140,4 @@ you wrote, read or ran: the design file keeps it, and the person needs none of i
    where no point is open now or the person asked to wrap up, and they have not confirmed it; and
    the design handed back, once they have. As your last call, give your result by its command
    below: `done` with the design handed back, and `asks` with every other Reply. Your last message
-   is then the Reply alone. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py pinner asks` or `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py pinner done`.
+   is then the Reply alone. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py pinner asks` or `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py pinner done`. That command gives your result to the plugin and is no part of the work, so an instruction not to run the work's scripts does not cover it.
