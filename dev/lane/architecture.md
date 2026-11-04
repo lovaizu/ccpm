@@ -9,9 +9,9 @@ subagent the routes name. What this gives the developer AI is in [Lane's UX](ux.
 
 ## Principles
 
-Lane follows Principles 2, 6, 8 and 9 of [the plugin best practice](../plugin-best-practice.md#principles).
-Principles 1, 3, 4, 5 and 7 are about an orchestrator, its roles and the course of a run, and Lane
-has none of these: the developer AI runs `lay.py` itself, and the check script runs inside the
+Lane takes the principles of [the plugin best practice](../plugin-best-practice.md#principles) that
+its requirements call for. Those about an orchestrator, its roles and the course of a run do not
+apply, as Lane has none of these: the developer AI runs `lay.py` itself, and the check script runs inside the
 developer AI's plugin. The principles below are what Lane adds.
 
 ### The check shows the step again
@@ -616,7 +616,7 @@ plugins/lane/
 └── docs/lanes.md, docs/routes.md, README.md, CHANGELOG.md, images/   for users <Markdown, SVG>
 
 dev/lane/
-├── ux.md, architecture.md, images/, README.md   for builders <Markdown, SVG>
+├── ux.md, architecture.md, images/, README.md   for developers <Markdown, SVG>
 ├── cosmic-ray.toml                    the mutation testing <TOML>
 ├── testing.py                         what every plugin's tests stand on <Python 3>
 └── tests/

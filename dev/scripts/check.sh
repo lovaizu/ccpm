@@ -11,7 +11,7 @@ ruff check .
 ruff format --check .
 
 # Code copied between files is fixed in one and left wrong in the other, so code more than one file
-# needs is kept once (dev/plugin-best-practice.md, Code); every file is read at once, whichever plugins are
+# needs is kept once (dev/plugin-best-practice.md, No lines copied); every file is read at once, whichever plugins are
 # given, as a copy can lie in any two. A link is the file it points to, so is left out.
 if command -v pylint >/dev/null 2>&1; then
   git ls-files '*.py' | while read -r file; do [ -L "$file" ] || echo "$file"; done \
@@ -32,7 +32,7 @@ pyrefly check --search-path dev/lane dev/scripts/*.py
 python3 plugins/turn/scripts/practices.py check plugins/turn/core/domain/best-practices/*.json
 
 # Every figure carries the one style of dev/images/figures.css, so the figures look alike and a
-# colour is changed in one place (dev/plugin-best-practice.md, Images beside their document).
+# colour is changed in one place (dev/plugin-best-practice.md, Directory structure).
 python3 dev/scripts/figures.py check
 
 # The unit tests, `test*.py`, unittest's own pattern, count the lines and branches; the property

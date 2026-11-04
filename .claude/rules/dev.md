@@ -62,7 +62,7 @@ it before the architecture is made.**
 
 **Write `dev/<plugin>/architecture.md` on [the plugin best practice](../../dev/plugin-best-practice.md), with
 `architecture.json` open, and have the user agree to it.** Place its files as
-[Repository structure](../../dev/plugin-best-practice.md#repository-structure) says, and design the plugin
+[Development view](../../dev/plugin-best-practice.md#development-view) says, and design the plugin
 to take in what is general, as [Learning from each run](../../dev/plugin-best-practice.md#learning-from-each-run)
 says.
 
@@ -96,7 +96,7 @@ a. **Write the unit tests of its code with `code.json` open, one for each class,
    them and see them fail.**
 
 b. **Write the code with `code.json` open until the tests pass**, as
-   [Code](../../dev/plugin-best-practice.md#code) says.
+   [Development](../../dev/plugin-best-practice.md#development) says.
 
 c. **For each prompt, a skill or an agent, write its trials with `prompt.json` open, as its Q14 to
    Q16 say and as [Unit: prompts](../../dev/plugin-best-practice.md#unit-prompts) says, one case at a time:
@@ -108,7 +108,7 @@ d. **Lay the lanes the prompts' steps call for with `plugins/lane/scripts/lay.py
    [the lanes](../../plugins/lane/docs/lanes.md#the-proposal) gives it, read what `lay.py print`
    prints of it, and lay it with `lay.py write`. A check no lane holds is added
    to lane with `code.json` open, as
-   [Checks kept in lane](../../dev/plugin-best-practice.md#checks-kept-in-lane) says.
+   [Checks on what an AI does](../../dev/plugin-best-practice.md#checks-on-what-an-ai-does) says.
    - Rationale: the architecture tests run the lanes and routes as they are laid, so they are laid
      before those tests.
 

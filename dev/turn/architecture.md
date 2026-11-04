@@ -11,17 +11,22 @@ person and the caller is in [Turn's UX](ux.md).
 
 ## Principles
 
-Turn follows Principles 2, 3, 5, 6, 7 and 8 of [the plugin best practice](../plugin-best-practice.md#principles).
-It differs on three:
+Turn takes the principles of [the plugin best practice](../plugin-best-practice.md#principles) that its
+requirements call for. It differs on three:
 
-- Principle 1: the orchestrator, `up`, decides no move. Lane's routes give each next role from the
-  result the last one gave, as Principle 7 has the course of a fixed loop kept outside the AI.
-- Principle 4: a role's question for the person reaches them through `up` and the main
-  conversation. A subagent reaches no one but the one that started it, and only by its end
+- [The orchestrator holds the whole and decides](../plugin-best-practice.md#the-orchestrator-holds-the-whole-and-decides):
+  the orchestrator, `up`, decides no move. Lane's routes give each next role from the result the
+  last one gave, as [Where the router keeps the course](../plugin-best-practice.md#where-the-router-keeps-the-course)
+  has the course of a fixed loop kept outside the AI.
+- [Messages](../plugin-best-practice.md#messages) and
+  [Where the orchestrator runs](../plugin-best-practice.md#where-the-orchestrator-runs): a role's question
+  for the person reaches them through `up` and the main conversation. A subagent reaches no one
+  but the one that started it, and only by its end
   ([subagents](https://code.claude.com/docs/en/sub-agents)). Each passes the question on word for
   word.
-- Principle 9: Turn leaves the lessons of a run to its caller. When the person types `/turn:up`,
-  they are the caller, and the run's folder keeps each send-back for them.
+- [Learning from each run](../plugin-best-practice.md#learning-from-each-run): Turn leaves the lessons of a
+  run to its caller. When the person types `/turn:up`, they are the caller, and the run's folder
+  keeps each send-back for them.
 
 The principles below are what Turn adds.
 

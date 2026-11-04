@@ -10,8 +10,9 @@ together. What this gives the person, Turn and rn is in [pin's UX](ux.md).
 
 ## Principles
 
-pin follows all nine principles of [the plugin best practice](../plugin-best-practice.md#principles). Under
-Principle 5, the person reads the design first, as they read it in full to confirm it. The
+pin follows all the principles of [the plugin best practice](../plugin-best-practice.md#principles).
+Under [Read by those who did not make it](../plugin-best-practice.md#read-by-those-who-did-not-make-it),
+the person reads the design first, as they read it in full to confirm it. The
 principles below are what pin adds.
 
 ### Facts are found, decisions are asked

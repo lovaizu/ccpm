@@ -76,7 +76,7 @@
 
   <rect class="box" x="430" y="550" width="220" height="70" rx="0"/>
   <text class="name" x="540" y="576">guard</text>
-  <text class="kind" x="540" y="596">&lt;Lane's hooks, Python&gt;</text>
+  <text class="kind" x="540" y="596">&lt;hooks, Python&gt;</text>
 
   <!-- caller and orchestrator -->
   <path class="line" d="M465,96 V190" marker-end="url(#arrow)"/>

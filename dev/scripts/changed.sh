@@ -16,7 +16,7 @@ if printf '%s\n' "$changed" | grep -qvE "^(plugins|dev)/($(echo $all | tr ' ' '|
   exit 0
 fi
 # Each link of the commit, as the plugin it is in and the path it points to from the top, as a
-# plugin takes another's code through a link (dev/plugin-best-practice.md, Code).
+# plugin takes another's code through a link (dev/plugin-best-practice.md, Code kept once).
 links=$(git ls-tree -r "$2" | awk '$1 == "120000" {print $3, $4}' | while read -r blob link; do
   plugin=${link#plugins/}
   echo "${plugin%%/*} $(dirname "$link")/$(git cat-file -p "$blob")"

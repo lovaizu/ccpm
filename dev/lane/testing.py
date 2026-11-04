@@ -4,7 +4,7 @@ folder, git reading no setting of the machine it runs on, since a repository mad
 for every test spends most of the tests' time; and, for a plugin whose lanes lane laid, lane's code
 as the plugin takes it through a link, and each lane its hooks/lanes.json lays; and, for an
 architecture test, a double of Claude Code that sends the hook events and runs the hooks' commands
-in sh, as dev/plugin-best-practice.md's Architecture: the parts joined keeps it here. What a run
+in sh, kept once as dev/plugin-best-practice.md's Architecture: the parts joined has it. What a run
 of a plugin's tests writes is in one folder of its own, `<plugin>/<yyyymmdd>-tests-<random>/` in the
 system's temporary folder, as dev/plugin-best-practice.md's Where a plugin writes its files has it,
 the plugin's tests being in dev/<plugin>/tests/; and such a folder for what a trial uses only
