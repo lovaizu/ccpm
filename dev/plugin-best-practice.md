@@ -3,6 +3,84 @@
 This is the best practice for a Claude Code plugin whose roles work together to make something,
 such as a document or code. A plugin is built on it, taking what its requirements call for.
 
+## Architecture
+
+### Logical view
+
+#### Components
+
+![A plugin's components](images/components.svg)
+
+- **caller**: the person or the AI that calls the plugin, and decides what is theirs.
+- **main conversation**: the Claude Code conversation the person talks in, the only one that can ask
+  the person.
+- **orchestrator**: the AI that runs the work from the call to the result: the main conversation, or
+  a subagent where an AI calls the plugin.
+- **generator**: a subagent that makes the work. A subagent started for one job, such as the
+  generator or the evaluator, is a role.
+- **evaluator**: a subagent that did not make the work, and checks it in its user's place.
+- **router**: a script that gives the orchestrator each next move, where the run goes in fixed
+  steps.
+- **guard**: the plugin's hooks, which tell a subagent its step again when it drifts.
+
+#### Sequences
+
+```mermaid
+sequenceDiagram
+  participant C as caller<br/>#lt;person or AI#gt;
+  participant M as main conversation<br/>#lt;AI#gt;
+  participant O as orchestrator<br/>#lt;main conversation or subagent#gt;
+  participant G as generator<br/>#lt;subagent#gt;
+  participant R as evaluator<br/>#lt;subagent#gt;
+  C->>O: request
+  O->>G: prompt
+  G->>M: question, only the person can decide
+  M->>G: answer
+  O->>R: prompt
+  R->>G: more
+  G->>R: work mended, or a question back
+  R-->>O: reply
+  O->>C: approval asked
+  C->>O: approval
+  O->>C: result, the work and the report
+```
+
+### Development view
+
+#### Directory structure
+
+```text
+<repository>/
+├── .claude-plugin/marketplace.json     the marketplace: the plugins it lists <JSON>
+├── README.md                           leads users to each plugin's README, and developers to dev/ <Markdown>
+├── plugins/                            what runs on users' machines, installed by Claude Code
+│   └── <plugin>/
+│       ├── .claude-plugin/plugin.json  the manifest, holding the version <JSON>
+│       ├── skills/<command>/SKILL.md   a skill's entry <Markdown>
+│       ├── agents/<name>.md            an agent's entry <Markdown>
+│       ├── hooks/
+│       │   ├── hooks.json              the hooks' entries <JSON>
+│       │   └── <hook>.py               the hooks' code, the guard among them <Python 3>
+│       ├── scripts/                    what runs as a command and depends on Claude Code <Python 3>
+│       ├── core/                       the plugin's own logic, apart from Claude Code
+│       │   ├── domain/                 the knowledge and rules of the plugin's work
+│       │   └── roles/                  each role's flow, which uses the domain
+│       ├── README.md                   for the plugin's users <Markdown>
+│       └── CHANGELOG.md                what changed for users in each version <Markdown>
+└── dev/                                what only the developers need, never installed
+    ├── plugin-best-practice.md         this document
+    └── <plugin>/                       one for each folder in plugins/
+        ├── ux.md                       the plugin's UX <Markdown>
+        ├── architecture.md             the plugin's architecture <Markdown>
+        └── tests/                      unit/, architecture/ and ux/, as Test says
+```
+
+An entry is a file whose form Claude Code fixes: a skill, an agent, a hook or a command line. Its
+part is the file in `core/` that does the entry's job.
+
+Installing a plugin copies only its folder, so what only developers need stays in `dev/`. A
+repository of one plugin keeps the same tree with one folder in `plugins/`.
+
 ## Principles
 
 A plugin takes the principles its requirements call for, and its architecture names them. Each
@@ -160,8 +238,8 @@ work in full to approve it, the caller reads it first.
 
 *When*: a work whose user gets something no machine can check.
 
-*Why*: the maker reads what it meant; a defect hunt finds something in every work and never ends;
-how to mend is the maker's call, as the maker holds the sources
+*Why*: the generator reads what it meant; a defect hunt finds something in every work and never
+ends; how to mend is the generator's call, as the generator holds the sources
 ([harness design](https://www.anthropic.com/engineering/harness-design-long-running-apps)).
 
 #### Where the router keeps the course
@@ -183,69 +261,6 @@ a general one goes to the plugin's repository as an issue, only on the user's ye
 *When*: a plugin a person calls.
 
 *Why*: a lesson met once improves every later run, and the user chooses what leaves their project.
-
-## Architecture
-
-### Logical view
-
-#### Components
-
-![A plugin's components](images/components.svg)
-
-#### Sequences
-
-```mermaid
-sequenceDiagram
-  participant C as caller<br/>#lt;person or AI#gt;
-  participant M as main conversation<br/>#lt;AI#gt;
-  participant O as orchestrator<br/>#lt;main conversation or subagent#gt;
-  participant G as generator<br/>#lt;subagent#gt;
-  participant R as evaluator<br/>#lt;subagent#gt;
-  C->>O: request
-  O->>G: prompt
-  G->>M: question, only the person can decide
-  M->>G: answer
-  O->>R: prompt
-  R->>G: more
-  G->>R: work mended, or a question back
-  R-->>O: reply
-  O->>C: approval asked
-  C->>O: approval
-  O->>C: result, the work and the report
-```
-
-### Development view
-
-#### Directory structure
-
-```text
-<repository>/
-├── .claude-plugin/marketplace.json     the marketplace: the plugins it lists <JSON>
-├── README.md                           leads users to each plugin's README, and developers to dev/ <Markdown>
-├── plugins/                            what runs on users' machines, installed by Claude Code
-│   └── <plugin>/
-│       ├── .claude-plugin/plugin.json  the manifest, holding the version <JSON>
-│       ├── skills/<command>/SKILL.md   a skill's entry <Markdown>
-│       ├── agents/<name>.md            an agent's entry <Markdown>
-│       ├── hooks/
-│       │   ├── hooks.json              the hooks' entries <JSON>
-│       │   └── <hook>.py               the hooks' code, the guard among them <Python 3>
-│       ├── scripts/                    what runs as a command and depends on Claude Code <Python 3>
-│       ├── core/                       the plugin's own logic, apart from Claude Code
-│       │   ├── domain/                 the knowledge and rules of the plugin's work
-│       │   └── roles/                  each role's flow, which uses the domain
-│       ├── README.md                   for the plugin's users <Markdown>
-│       └── CHANGELOG.md                what changed for users in each version <Markdown>
-└── dev/                                what only the developers need, never installed
-    ├── plugin-best-practice.md         this document
-    └── <plugin>/                       one for each folder in plugins/
-        ├── ux.md                       the plugin's UX <Markdown>
-        ├── architecture.md             the plugin's architecture <Markdown>
-        └── tests/                      unit/, architecture/ and ux/, as Test says
-```
-
-Installing a plugin copies only its folder, so what only developers need stays in `dev/`. A
-repository of one plugin keeps the same tree with one folder in `plugins/`.
 
 ## Development
 
