@@ -30,6 +30,8 @@ import practices
 import runs
 
 CONTENT, READING = "content", "reading"
+# Whether a round of each phase asks how the work reads.
+READS = {CONTENT: False, READING: True}
 ROUND = "round.json"
 # A run of the evaluator's Answers, by its group.
 GROUP = re.compile(r"G\d+\.json")
@@ -103,16 +105,16 @@ def settle(run: str) -> dict[str, Any] | None:
     if before is not None:
         number = before["round"]
         done = met(work, before)
-        if before["phase"] == CONTENT:
-            content = {"design": before["design"], "met": done}
-        else:
+        if READS[before["phase"]]:
             content, reading_met = before["content"], done
+        else:
+            content = {"design": before["design"], "met": done}
     at = phase(content, reading_met, design)
     if at is None:
         return None
     if before is not None:
         keep(work, number)
-    name, kind = (runs.STANDARD, work["kind"]) if at == CONTENT else (runs.READING, work["reading"])
+    name, kind = (runs.READING, work["reading"]) if READS[at] else (runs.STANDARD, work["kind"])
     standard = files.load(os.path.join(work["folder"], name), "standard")
     settled = {
         "round": number + 1,
@@ -162,7 +164,7 @@ def where(run: str) -> str:
         return "none"
     if shortfalls(run, settled):
         return "short"
-    if settled["phase"] == READING and met(work, settled):
+    if READS[settled["phase"]] and met(work, settled):
         return "finished"
     return "going"
 
@@ -171,12 +173,12 @@ def serving(tree: dict[str, Any], question: str) -> list[str]:
     """The decisions that serve the question, directly or through others, in the tree's order."""
     serves = {d.get("id"): d.get("contributes_to", []) for d in tree.get("decisions", [])}
 
-    def reaches(at: str, seen: frozenset[str]) -> bool:
+    def reaches(at: str, seen: tuple[str, ...]) -> bool:
         return at not in seen and any(
-            q == question or reaches(q, seen | {at}) for q in serves.get(at, [])
+            q == question or reaches(q, (*seen, at)) for q in serves.get(at, [])
         )
 
-    return [d for d in serves if reaches(d, frozenset())]
+    return [d for d in serves if reaches(d, ())]
 
 
 def line_fault(line: str, paths: list[str]) -> str:
@@ -242,7 +244,7 @@ def result(answers: dict[str, Any], generator: bool, at: str) -> str:
     """The result the run gives on its Answers."""
     if generator:
         return "open" if answers.get("open") else "made"
-    if at == CONTENT:
+    if not READS[at]:
         return "more" if answers["not_met"] else "met"
     if answers.get("open"):
         return "more"
@@ -251,7 +253,7 @@ def result(answers: dict[str, Any], generator: bool, at: str) -> str:
 
 def evaluator_values(run: str, work: dict[str, Any], settled: dict[str, Any]) -> list[str]:
     """The run values of each run of the evaluator in the round, a JSON line each."""
-    name = runs.STANDARD if settled["phase"] == CONTENT else runs.READING
+    name = runs.READING if READS[settled["phase"]] else runs.STANDARD
     return [
         json.dumps(
             {
@@ -289,7 +291,7 @@ def check(run: str, path: str) -> tuple[list[str], str, list[str]]:
         )
     given = [q for g in settled["groups"] for q in g["questions"]] if generator else groups[name]
     answers = files.load(path, "answers")
-    opens = generator or settled["phase"] == READING
+    opens = generator or READS[settled["phase"]]
     found = faults(answers, given, work["paths"], opens)
     found += made_faults(work) if generator else []
     if found:
@@ -297,4 +299,5 @@ def check(run: str, path: str) -> tuple[list[str], str, list[str]]:
     gave = result(answers, generator, settled["phase"])
     if not generator:
         return [], gave, [runs.generator_values(run, work)]
-    return [], gave, evaluator_values(run, work, settled) if gave == "made" else []
+    # The generator's run is made where it left no point open.
+    return [], gave, [] if answers.get("open") else evaluator_values(run, work, settled)

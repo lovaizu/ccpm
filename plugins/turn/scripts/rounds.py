@@ -45,17 +45,17 @@ def settled(run: str) -> int:
             " is left."
         )
         return 1
-    content = made["phase"] == phases.CONTENT
-    name = runs.STANDARD if content else runs.READING
+    reads = phases.READS[made["phase"]]
+    name = runs.READING if reads else runs.STANDARD
     standard = files.load(os.path.join(work["folder"], name), "standard")
-    kind = work["kind"] if content else work["reading"]
+    kind = work["reading"] if reads else work["kind"]
     asks = {f"{kind}/{q['id']}": q["what"] for q in standard["benefits"]}
-    practice = work["practice"] if content else os.path.join(runs.OWN, f"{work['reading']}.json")
+    practice = os.path.join(runs.OWN, f"{work['reading']}.json") if reads else work["practice"]
     lines = [
         f"rounds.py: round {made['round']} of {work['kind']} is of {OF[made['phase']]}.",
         f"Best practice: {practice}",
     ]
-    if content:
+    if not reads:
         lines.append(f"Design: {os.path.join(work['folder'], runs.DESIGN)}")
     answers = os.path.join(phases.folder_of(work), runs.GENERATOR)
     lines.append(f"Answers: {answers}, in the form of {os.path.join(files.FORMS, 'answers.json')}")

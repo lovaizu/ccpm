@@ -106,6 +106,18 @@ class Settle(helpers.RoundsTest):
         )
         self.assertEqual(sorted(os.listdir(VERIFICATION)), ["1", "round.json"])
 
+    def test_a_round_kept_into_a_folder_already_there_keeps_its_files(self):
+        # Given: a content round met, and its folder verification/1/ made by a run that stopped
+        self.content_round(met("note/Q1"), met("note/Q2"), met("note/Q3"))
+        os.makedirs(os.path.join(VERIFICATION, "1"))
+        # When: the next round is settled
+        settled_round()
+        # Then: the round before lies in verification/1/ with its Answers
+        self.assertEqual(
+            sorted(os.listdir(os.path.join(VERIFICATION, "1"))),
+            ["G1.json", "G2.json", "G3.json", "generator.json", "round.json"],
+        )
+
     def test_a_content_round_short_of_one_question_is_followed_by_content(self):
         self.content_round(met("note/Q1"), short("note/Q2"), met("note/Q3"))
         settled = settled_round()
@@ -213,6 +225,13 @@ class Where(helpers.RoundsTest):
         self.assertEqual(phases.where(RUN), "finished")
 
 
+class EvaluatorValues(unittest.TestCase):
+    def test_a_run_out_of_ascii_is_written_as_it_is(self):
+        settled = {"phase": "content", "groups": [{"id": "G1", "questions": ["note/Q1"]}]}
+        (values,) = phases.evaluator_values("ノート", helpers.work(), settled)
+        self.assertIn('"run": "ノート"', values)
+
+
 class Check(helpers.RoundsTest):
     def setUp(self) -> None:
         super().setUp()
@@ -301,6 +320,11 @@ class Check(helpers.RoundsTest):
         )
         self.assertEqual((result, lines), ("", []))
 
+    def test_a_line_or_lines_in_order_lie_in_the_work(self):
+        data = met("note/Q1", "note/Q2", line="NOTES.md:2-7")
+        data["met"].append({"question": "note/Q3", "lines": ["NOTES.md:3-3", "NOTES.md:7"]})
+        self.assertEqual(self.checked("generator.json", data)[:2], ([], "made"))
+
     def test_a_line_before_the_first_or_of_a_file_not_there(self):
         self.lay_run([helpers.work(paths=["NOTES.md", "GONE.md"])])
         data = met("note/Q1", "note/Q2", line="NOTES.md:0")
@@ -332,6 +356,11 @@ class Check(helpers.RoundsTest):
         self.write(made, json.dumps(helpers.PRACTICE, indent=1))
         data = met("meta/Q1", "meta/Q2", "meta/Q3", line=f"{made}:1")
         self.assertEqual(self.checked("generator.json", data)[:2], ([], "made"))
+
+    def test_a_work_of_another_kind_is_not_held_to_the_form_of_a_best_practice(self):
+        for kind in ("man-page", "readme"):
+            with self.subTest(kind=kind):
+                self.assertEqual(phases.made_faults(helpers.work(kind=kind)), [])
 
     def test_a_file_of_no_run_is_refused(self):
         for name in ("G9.json", "other.json"):

@@ -30,7 +30,16 @@ def ran(*argv):
 
 class Usage(unittest.TestCase):
     def test_a_call_it_does_not_take_gives_2_and_its_usage(self):
-        for argv in ((), ("round",), ("round", "a", "b"), ("check", "a"), ("go", "a")):
+        for argv in (
+            (),
+            ("round",),
+            ("round", "a", "b"),
+            ("check", "a"),
+            ("check", "a", "b", "c"),
+            ("go", "a"),
+            ("sort", "a"),
+            ("apply", "a", "b"),
+        ):
             with self.subTest(argv=argv):
                 self.assertEqual(ran(*argv), (2, "", USAGE))
 
@@ -42,6 +51,18 @@ class Usage(unittest.TestCase):
         ):
             runpy.run_path(rounds.__file__, run_name="__main__")
         self.assertEqual(end.exception.code, 2)
+
+
+class Script(helpers.RoundsTest):
+    def test_the_script_runs_the_command_given_after_its_own_path(self):
+        with (
+            mock.patch.object(rounds.sys, "argv", ["rounds.py", "round", RUN]),
+            contextlib.redirect_stdout(io.StringIO()) as out,
+            self.assertRaises(SystemExit) as end,
+        ):
+            runpy.run_path(rounds.__file__, run_name="__main__")
+        self.assertEqual(end.exception.code, 0)
+        self.assertTrue(out.getvalue().startswith("rounds.py: round 1 of note"))
 
 
 class Round(helpers.RoundsTest):
@@ -158,6 +179,25 @@ class Check(helpers.RoundsTest):
             (
                 0,
                 f"rounds.py: {path} answers each question it was given. Give `more`, and end with"
+                " this line, for up to start the generator with:\n"
+                + runs.generator_values(RUN, helpers.work())
+                + "\n",
+                "",
+            ),
+        )
+
+    def test_an_evaluator_in_a_reading_round_meeting_its_questions_gives_good(self):
+        self.answers("generator.json", met("note/Q1", "note/Q2", "note/Q3"))
+        for n in (1, 2, 3):
+            self.answers(f"G{n}.json", met(f"note/Q{n}"))
+        phases.settle(RUN)
+        path = os.path.join(VERIFICATION, "G1.json")
+        self.answers("G1.json", met("refactor-doc/Q1"))
+        self.assertEqual(
+            ran("check", RUN, path),
+            (
+                0,
+                f"rounds.py: {path} answers each question it was given. Give `good`, and end with"
                 " this line, for up to start the generator with:\n"
                 + runs.generator_values(RUN, helpers.work())
                 + "\n",
