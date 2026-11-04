@@ -1,10 +1,11 @@
 # Best practice for building a Claude Code plugin
 
 This is the best practice for building a Claude Code plugin. It says how a plugin's roles work
-together, how it builds on what Claude Code gives, where its files go, how its code is written, and
-how it is developed, tested and released. A plugin takes from it what its requirements call for. Its
-own architecture names what it takes, and holds its UX's user stories and what only that plugin
-adds.
+together when the work takes several steps and ends in something made, such as a document or code.
+It also says where a plugin's files go, how its code is written, and how it is tested and released.
+A plugin takes from it what its requirements call for. It has no UX and no user stories of its own:
+each plugin's architecture links this one, names what it takes, and holds its own UX's user stories
+and what only that plugin adds.
 
 ## Principles
 
