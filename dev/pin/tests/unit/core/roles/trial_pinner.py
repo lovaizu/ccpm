@@ -5,20 +5,32 @@ subagent named Explore, which Claude Code takes in place of its own, stands in f
 researcher, giving set facts. An AI given the person's intent judges each message, but answers
 none.
 
+The classes it tries: a fact a search finds, which the pinner shows and does not ask; a fact only
+the person knows, given in the first message, which it does not ask again; a decision the pinner
+settles, which it does not ask; and a decision that is the person's, the JSON's shape, one array
+or one object a line, which it asks.
+
 Breaks it invites: those of trial_down.py, and asking the person a decision that follows from the
 plan, as a "yes" to everything leaves the pinner no answer that tells it otherwise. A run counts
 only where a decision rests on a fact quoted from scripts/, and check.py once named more than one
 decision open at once.
 
-Each run passes where: each message held one point; no message asked a fact of the repository or a
-decision the AI could settle itself; a fact was shown to the person before the design, where a
-decision rests on one; the design was shown to confirm; and the tree passes check.py with no
-decision open. Run as `python3 dev/pin/tests/unit/core/roles/trial_pinner.py [runs] [first]`."""
+The repository holds, beside the app, sixteen tools and their notes that do not run
+`notes.py list`, so which scripts run it is a fact a search finds.
+
+Each run passes where: the researcher was started; each message held one point; no message asked a
+fact of the repository, a decision the AI could settle itself, or what the person had said; a fact
+was shown to the person before the design, where a decision rests on one; the design was shown to
+confirm; the JSON's shape is decided by the person; and the tree passes check.py with no decision
+open. Run as
+`python3 dev/pin/tests/unit/core/roles/trial_pinner.py [runs] [first]`."""
 
 from __future__ import annotations
 
 import os
+import subprocess
 import sys
+from typing import Any
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 # What the trials of more than one level share lies in tests/.
@@ -31,56 +43,63 @@ FIRST = (
     "/pin:down notes list should give JSON as well, so my scripts stop parsing its text. No"
     " script outside this repository reads it."
 )
+INTENT = pinning.INTENT + (
+    "\n\nYou told the AI in your first message that no script outside this repository reads"
+    " notes list. Being asked it again wastes your time."
+)
+# The person's decision of the plan: two ways serve the goal alike.
+WANTS = [("the JSON's shape is decided: one array of objects, or one object per line", True)]
+# Tools and notes beside the app, none running `notes.py list`, so the repository is too big to read
+# whole and which scripts read the list is a fact a search must find.
+TOOLS = ("backup", "stats", "lint", "rename", "archive", "dedupe", "spell", "wordcount")
+TOOLS += ("index", "prune", "tagcloud", "mirror", "rotate", "digest", "verify", "compact")
+WIDER = {
+    **{
+        f"tools/{name}.py": f'"""{name}: works on the Markdown files in notes/ directly."""\n\n'
+        "import pathlib\n\n\n"
+        "def main():\n"
+        '    for path in sorted(pathlib.Path("notes").glob("*.md")):\n'
+        f'        print("{name}", path.name, len(path.read_text()))\n'
+        for name in TOOLS
+    },
+    **{f"docs/{name}.md": f"# {name}\n\nHow tools/{name}.py treats notes/.\n" for name in TOOLS},
+}
 
 
-def line_of(path: str, words: str) -> str:
-    """`path:line "the line"`, for the first line of the notes app's file at the path that holds
-    the words."""
-    for number, line in enumerate(pinning.NOTES[path].splitlines(), 1):
-        if words in line:
-            return f'{path}:{number} "{line.strip()}"'
-    raise SystemExit(f"{path} holds no {words!r}")
-
-
-def researcher() -> str:
-    """The stand-in for the researcher: a subagent named Explore that gives set facts, quoted as
-    the notes app's files hold them, for whatever it is asked."""
-    facts = [
-        "scripts/sync.py and scripts/export.py run `notes.py list` and split each line on tabs:",
-        "- " + line_of("scripts/sync.py", 'split("\\t")'),
-        "- " + line_of("scripts/export.py", 'split("\\t")'),
-        "sync.py reads updated as ISO 8601:",
-        "- " + line_of("scripts/sync.py", "fromisoformat"),
-        "No other file runs `notes.py list`.",
-    ]
-    return (
-        "---\nname: Explore\ndescription: Finds facts in the repository. Use to look something"
-        " up.\ntools: Read\n---\n\nGive back these facts, word for word, whatever you are asked,"
-        " and nothing else; where they do not answer what you are asked, say so.\n\n"
-        + "\n".join(facts)
-        + "\n"
-    )
-
-
-def run(number: int) -> bool:
-    """One run of the prompt test; prints what it found, and gives whether it passed and
-    counted."""
-    place = trying.folder("pin", f"trial-pinner-{number}")
+def tried(
+    name: str, first: str, wider: bool = False, **talk: Any
+) -> tuple[dict[str, str], str, str, list[Any]]:
+    """One conversation of `pin:down` alone in the notes app's repository, from the first message,
+    in the folder of the trial's name, with the stand-in for the researcher laid there, the person
+    as talk names, and, where wider, WIDER committed beside the app; gives the copies' folders, the
+    repository, the stream and the turns."""
+    place = trying.folder("pin", name)
     repo, copies = pinning.made(place, {})
-    os.makedirs(os.path.join(repo, ".claude", "agents"))
-    with open(os.path.join(repo, ".claude", "agents", "Explore.md"), "w", encoding="utf-8") as f:
-        f.write(researcher())
+    if wider:
+        for path, text in WIDER.items():
+            os.makedirs(os.path.dirname(os.path.join(repo, path)), exist_ok=True)
+            with open(os.path.join(repo, path), "w", encoding="utf-8") as f:
+                f.write(text)
+        who = ["-c", "user.name=e2e", "-c", "user.email=e2e@example.com"]
+        subprocess.run(["git", "-C", repo, "add", "."], check=True)
+        subprocess.run(["git", "-C", repo, *who, "commit", "-q", "-m", "tools"], check=True)
+    pinning.researched(repo)
     stream = os.path.join(place, "stream.jsonl")
-    turns = pinning.conversed([copies["pin"]], repo, FIRST, place, stream, answer="Yes.")
-    found = pinning.tree_and_untried(repo, stream)
-    if not found:
-        return False
-    path, _, untried = found
+    turns = pinning.conversed([copies["pin"]], repo, first, place, stream, **talk)
+    return copies, repo, stream, turns
+
+
+def wrong_in(turns: list[dict[str, Any]]) -> list[str]:
+    """What the person's view of the messages finds wrong: a message of more than one point, one
+    that asks a fact, what the pinner could settle or what was said, no design shown, or no fact
+    shown before it."""
     wrong = []
+    keys = (("asks_fact", "a fact"), ("asks_not_theirs", "what it could settle"))
+    keys += (("asks_settled", "again what was said"),)
     for n, t in enumerate(turns, 1):
         if int(t.get("points") or 0) > 1:
             wrong.append(f"message {n} put {t['points']} points to the person")
-        for key, what in (("asks_fact", "a fact"), ("asks_not_theirs", "what it could settle")):
+        for key, what in keys:
             if t.get(key):
                 wrong.append(f"message {n} asked the person {what}")
     designed = next((n for n, t in enumerate(turns) if t.get("confirms_design")), None)
@@ -88,7 +107,25 @@ def run(number: int) -> bool:
         wrong.append("the design was not shown to the person to confirm")
     elif not any(t.get("shows_fact") for t in turns[:designed]):
         wrong.append("no fact was shown to the person before the design")
-    return pinning.verdict(untried, wrong + pinning.held(copies["pin"], path))
+    return wrong
+
+
+def run(number: int) -> bool:
+    """One run of the prompt test; prints what it found, and gives whether it passed and
+    counted."""
+    copies, repo, stream, turns = tried(
+        f"trial-pinner-{number}", FIRST, wider=True, intent=INTENT, answer="Yes."
+    )
+    found = pinning.tree_and_untried(repo, stream)
+    if not found:
+        return False
+    path, _, untried = found
+    wrong = wrong_in(turns) + pinning.held(copies["pin"], path)
+    agents = trying.agents(pinning.session_of(stream))
+    if not any(trying.record.agent_type(a) == "Explore" for a in agents):
+        wrong.append("no researcher was started for the fact a search finds")
+    wrong += pinning.unheld(pinning.judged_tree(path, os.path.dirname(repo), WANTS), WANTS)
+    return pinning.verdict(untried, wrong)
 
 
 if __name__ == "__main__":

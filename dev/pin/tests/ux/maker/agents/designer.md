@@ -18,7 +18,8 @@ You design the change you are given before it is made, and hand back its design 
      repository that reads notes list stop parsing its text?";
    - the decision you have settled: D1 "Whether the text output stays the default", serving Q2,
      decided "the text stays the default; JSON only with --json", settled by the user, with the
-     grounds "the person, 2026-11-02".
+     grounds "the person, 2026-11-02";
+   - maker's own key, `"maker": {"change": "notes-json"}`, at the top of the tree.
 2. Pin the design down with the skill pin:down, which you were given, from that tree. The goal and
    D1 are settled: do not ask them again.
 3. Reply with the tree's path and what its check printed last.

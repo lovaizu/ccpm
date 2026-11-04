@@ -2,10 +2,10 @@
 for Turn or rn, `maker`, kept beside this file, declares pin in its dependencies, and its subagent
 `designer` takes `pin:down` by its frontmatter and pins down the notes app's `--json` option from a
 tree that holds the goal, three questions, of which the JSON's form and the scripts' change are
-decided apart, so more than one decision is open at once, and one decision already settled. Claude
-Code runs on Opus with copies of pin and of maker; the main conversation starts designer and puts
-each of its messages to the person, stood in for by an AI that answers from an intent written
-beforehand and never shown pin.
+decided apart, so more than one decision is open at once, one decision already settled, and a key
+of maker's own. Claude Code runs on Opus with copies of pin and of maker; the main conversation
+starts designer and puts each of its messages to the person, stood in for by an AI that answers
+from an intent written beforehand and never shown pin.
 
 Breaks it invites, beside those of trial_down.py: asking the person again what maker settled, the
 goal and the text staying the default; and running the check in a form other than the one pin's
@@ -13,8 +13,8 @@ architecture promises. A run counts only where, beside what trial_down.py's runs
 designer ran the check.
 
 Each run passes where, beside what trial_down.py's runs pass on: each run of the check by designer
-is `python3 <pin's folder>/scripts/check.py <path>`, word for word; and the decision maker settled
-is in the tree as it was given. Run as
+is `python3 <pin's folder>/scripts/check.py <path>`, word for word; and the decision maker settled,
+and maker's own key, are in the tree as they were given. Run as
 `python3 dev/pin/tests/ux/trial_caller.py [runs] [first]`."""
 
 from __future__ import annotations
@@ -56,10 +56,21 @@ def run(number: int) -> bool:
     turns = pinning.conversed(
         [copies["pin"], copies["maker"]], repo, FIRST, place, stream, intent=INTENT
     )
+    found = designed(copies["pin"], repo, stream)
+    if not found:
+        return False
+    path, untried, wrong = found
+    return pinning.verdict(untried, wrong + pinning.judged(copies["pin"], path, place, turns))
+
+
+def designed(pin: str, repo: str, stream: str) -> tuple[str, list[str], list[str]] | None:
+    """The path of the tree designer kept, with the invited breaks the run did not meet and what is
+    wrong in what designer did: a check run in another form than pin's, or the decision maker
+    settled not as given; None, printing why, where there is no tree."""
     path = os.path.join(repo, ".maker", "notes-json", "design-tree.json")
     if not os.path.exists(path):
         print(f"  failed: no design tree at {path}")
-        return False
+        return None
     with open(path, encoding="utf-8") as f:
         tree = json.load(f)
     session = pinning.session_of(stream)
@@ -70,12 +81,13 @@ def run(number: int) -> bool:
     untried = pinning.tried_in(tree, [out for _, out in runs])
     if not runs:
         untried.append("designer never ran the check")
-    form = re.compile(re.escape(f"python3 {copies['pin']}/scripts/check.py ") + r"\S+")
+    form = re.compile(re.escape(f"python3 {pin}/scripts/check.py ") + r"\S+")
     wrong = [f"the check was run as {c!r}" for c, _ in runs if not form.fullmatch(c.strip())]
-    wrong += pinning.judged(copies["pin"], path, place, turns)
     if not any(d.get("decided") == SETTLED for d in tree.get("decisions", [])):
         wrong.append("the decision maker settled is not in the tree as given")
-    return pinning.verdict(untried, wrong)
+    if tree.get("maker") != {"change": "notes-json"}:
+        wrong.append(f"maker's own key is not as given: {tree.get('maker')!r}")
+    return path, untried, wrong
 
 
 if __name__ == "__main__":

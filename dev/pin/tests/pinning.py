@@ -117,6 +117,8 @@ you truly want; the AI cannot see it:""",
   the facts and what you said, so the AI could have settled it itself; otherwise false;
 - "confirms_design": true where it shows you the whole design and asks whether you understand it
   the same way; otherwise false;
+- "changes_design": true where it shows you the whole design and your answer asks for something in
+  it to change; otherwise false;
 - "finished": true where the message asks you nothing and says the planning is done; otherwise
   false.""",
 )
@@ -184,9 +186,10 @@ def talked(
         turns.append({"message": message, **heard})
         print(f"  AI: {message[:300]!r}")
         print(f"  person: {str(heard.get('answer'))[:200]!r} {heard_of(heard)}")
-        # The AI's reply to the person's answer on the design ends the run, unless it shows the
-        # design again, as after a change the person asked for.
-        after_design = len(turns) > 1 and turns[-2].get("confirms_design")
+        # The AI's reply to the person's confirmation of the design ends the run, unless it shows
+        # the design again; after a change the person asked for, the run goes on.
+        last = turns[-2] if len(turns) > 1 else {}
+        after_design = last.get("confirms_design") and not last.get("changes_design")
         if heard.get("finished") or (after_design and not heard.get("confirms_design")):
             return turns
         said += [f"AI: {message}", f"You: {heard['answer']}"]
@@ -231,7 +234,7 @@ def session_of(stream: str) -> str:
 def heard_of(heard: dict[str, Any]) -> str:
     """What the person said of a message, in a few words."""
     keys = ("points", "asks_fact", "asks_settled", "shows_fact", "asks_not_theirs")
-    keys += ("confirms_design", "finished")
+    keys += ("confirms_design", "changes_design", "finished")
     return " ".join(f"{k}={heard.get(k)}" for k in keys)
 
 
@@ -270,6 +273,13 @@ def wrong_in(
             wrong.append(f"message {n} asked again what was settled")
     if not any(t.get("confirms_design") for t in turns):
         wrong.append("the design was not shown to the person to confirm")
+    return wrong + unheld(points, wanted)
+
+
+def unheld(points: list[dict[str, Any]], wanted: list[tuple[str, bool]] | None = None) -> list[str]:
+    """What the judge of the tree finds wrong against the intent's points or each point wanted: a
+    point the tree does not hold, or one of the person's settled without them."""
+    wrong = []
     for p, (want, theirs) in zip(points, wanted or WANTS):
         if not p.get("held"):
             wrong.append(f"the tree does not hold: {want}")
@@ -311,12 +321,57 @@ def main_outputs(stream: str, repo: str) -> list[str]:
 def check_outputs(record: str, cwd: str) -> list[tuple[str, str]]:
     """Each run of check.py in the records the path or glob pattern names, as the command and what
     it printed."""
-    found = [e for path in glob.glob(record) for e in trying.record.read(path) or []]
     return [
         (str(d.given.get("command", "")), d.result)
-        for d in trying.record.done(found, cwd)
-        if d.tool == "Bash" and "scripts/check.py" in str(d.given.get("command", ""))
+        for d in used(record, "Bash", cwd)
+        if "scripts/check.py" in str(d.given.get("command", ""))
     ]
+
+
+def used(record: str, tool: str, cwd: str) -> list[Any]:
+    """Each use of the tool in the records the path or glob pattern names, in order, as
+    trying.record.done gives it."""
+    found = [e for path in glob.glob(record) for e in trying.record.read(path) or []]
+    return [d for d in trying.record.done(found, cwd) if d.tool == tool]
+
+
+def line_of(path: str, words: str) -> str:
+    """`path:line "the line"`, for the first line of the notes app's file at the path that holds
+    the words."""
+    for number, line in enumerate(NOTES[path].splitlines(), 1):
+        if words in line:
+            return f'{path}:{number} "{line.strip()}"'
+    raise SystemExit(f"{path} holds no {words!r}")
+
+
+def researched(repo: str) -> None:
+    """Lays in the repository the stand-in for the researcher, as pin's architecture's Test has
+    it: a project subagent named Explore, which Claude Code takes in place of its own, that gives
+    set facts, quoted as the notes app's files hold them, for whatever it is asked; none of
+    notes.py's, which a pinner reads for itself."""
+    facts = [
+        "scripts/sync.py and scripts/export.py run `notes.py list` and split each line on tabs:",
+        "- " + line_of("scripts/sync.py", 'split("\\t")'),
+        "- " + line_of("scripts/export.py", 'split("\\t")'),
+        "sync.py reads updated as ISO 8601:",
+        "- " + line_of("scripts/sync.py", "fromisoformat"),
+        "No other file runs `notes.py list`, and no file imports notes.py.",
+        "No file prints JSON or takes a `--json` or `--format` option.",
+    ]
+    # A stand-in that said its facts were given it, not searched for, was searched after by the
+    # pinner itself, in a trial of 2026-11-04.
+    agent = (
+        "---\nname: Explore\ndescription: Finds facts in the repository. Use to look something"
+        " up.\ntools: Read\n---\n\nYou have searched the repository already, and found what"
+        " follows. Whatever you are asked, give back the findings that bear on it, word for word,"
+        " as what your search found, and use no tool; where none bears on it, say that your search"
+        " found nothing on it. Do not say that the findings were given to you.\n\n"
+        + "\n".join(facts)
+        + "\n"
+    )
+    os.makedirs(os.path.join(repo, ".claude", "agents"))
+    with open(os.path.join(repo, ".claude", "agents", "Explore.md"), "w", encoding="utf-8") as f:
+        f.write(agent)
 
 
 def judged(
