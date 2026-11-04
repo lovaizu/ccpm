@@ -469,6 +469,16 @@ class TestBroughtUp(LayerTest):
         self.assertNotIn("current wording", said)
         self.assertIn("Laid before on step 9 of writer, whose step no longer says", said)
 
+    def test_a_subagent_whose_file_is_gone_is_passed_over(self):
+        # Given: the routes laid, then reviewer's file taken out of the plugin
+        self.route()
+        os.remove(os.path.join(self.plugin, "agents", "reviewer.md"))
+        # When: the plugin is brought up
+        said = layer.brought_up(self.plugin)
+        # Then: writer's file is as it was, and no step is said to be written
+        self.assertEqual(self.read(self.agent_file), helpers.WRITER_LAID)
+        self.assertNotIn("current wording", said)
+
     def test_a_plugin_up_to_date_is_said_so(self):
         # Given: the README's lanes laid just now
         # When: the plugin is brought up
