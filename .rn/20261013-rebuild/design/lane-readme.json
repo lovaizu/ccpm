@@ -1,12 +1,54 @@
 {
  "kind": "readme",
  "goal": {
-  "what": "From the README alone, a developer AI that meets Lane for the first time starts using it when it would hold its plugin's subagents to the rules of their steps and to the order of its flow, with the person it works for behind the choice, and leaves it when it would not.",
+  "what": "From the README alone, a developer AI that meets Lane for the first time starts using it only when Lane would hold its plugin's subagents to the rules of their steps and to the order it sets.",
   "grounds": [
-   "plugins/turn/best-practices/readme.json, standard.goal: \"From the README alone, someone who meets the product for the first time starts using it when it serves their work, with their team behind the choice, and leaves it when it does not.\"",
-   "dev/lane/ux.md:3-4: \"Lane's user is the developer AI: an AI that builds a Claude Code plugin whose subagents work in numbered steps.\""
+   "plugins/turn/core/domain/best-practices/readme.json goal: \"From the README alone, someone who meets the product for the first time starts using it only when it serves their work.\"",
+   "dev/lane/ux.md:3: \"Lane's user is the developer AI, an AI that builds a Claude Code plugin whose subagents work in numbered steps.\""
   ]
  },
+ "questions": [
+  {
+   "id": "readme/Q1",
+   "what": "When a colleague asks what the product is, can the reader answer in one sentence that tells them what it does?"
+  },
+  {
+   "id": "readme/Q2",
+   "what": "Reading the gain, can the reader tell what the product would let them do, and so whether it is for them?"
+  },
+  {
+   "id": "readme/Q3",
+   "what": "When a colleague asks why this product and not another way of doing the same work, can the reader name what it does differently that brings the gain?"
+  },
+  {
+   "id": "readme/Q4",
+   "what": "Before installing, can the reader tell what the product does not do that they might have expected of it?"
+  },
+  {
+   "id": "readme/Q5",
+   "what": "After the walkthrough, can the reader tell that the product would give them, on work of their own, the gain the opening promised?"
+  },
+  {
+   "id": "readme/Q6",
+   "what": "Starting with nothing set up, can the reader install the product by the README's steps alone, and tell that it works?"
+  },
+  {
+   "id": "readme/Q7",
+   "what": "For each gain and the idea, can the reader see in the figure of how the product works how the product keeps it?"
+  },
+  {
+   "id": "readme/Q8",
+   "what": "When the reader needs more than the README gives, such as fuller use or a change to the product, can they tell from it where to read next?"
+  },
+  {
+   "id": "readme/Q9",
+   "what": "Can the reader tell from the README the terms on which they and their team may use the product?"
+  },
+  {
+   "id": "readme/Q10",
+   "what": "Reading from the top, does the reader find each answer just when they come to need it, so they can stop as soon as they have what they came for?"
+  }
+ ],
  "decisions": [
   {
    "id": "D1",
@@ -66,10 +108,11 @@
     "D1",
     "D3"
    ],
-   "decided": "Lane is a Claude Code plugin that checks the subagents of your plugin, so that they keep the rules of their steps and start one another by the routes that you set.",
+   "decided": "Lane is a Claude Code plugin that holds the subagents of your plugin to the rules of their steps and to the order that you set for them. The word route is new to the reader, so it waits for the gain, where it is defined; and the orchestrator starts the subagents, so they do not start one another.",
    "settled_by": "reasoning",
    "grounds": [
-    "The kind the reader places it among is a Claude Code plugin; the two halves are the UX's O1 and O2, dev/lane/ux.md:11 and 28."
+    "readme.json Q1 thinking: \"The sentence names the kind of thing the product is and what it does, in words the reader already uses, so they can say it again to a colleague.\"",
+    "readme.json Q1 step 2: \"Ask whether a colleague who hears only the sentence could say what the product does.\""
    ]
   },
   {
@@ -172,12 +215,11 @@
     "D2",
     "D5"
    ],
-   "decided": "The UX's O1 on the example plugin changelog: run only git log --oneline on step 2 and write only CHANGELOG.md on step 3 of writer. It ends with writer keeping both, with no stop, as the UX's main path does. One closing line points to the routes.",
+   "decided": "The UX's O1 on the example plugin changelog: run only git log --oneline on step 2 and write only CHANGELOG.md on step 3 of writer. Asked for an entry and a commit, writer runs git log and writes CHANGELOG.md, both let through, then tries git commit, is stopped with \"changelog: Run only `git log --oneline`.\", goes back to its steps and ends with no commit made. A run with nothing stopped would read the same without Lane, so it would not show the gain. One closing line points to the routes.",
    "settled_by": "reasoning",
    "grounds": [
-    ".claude/rules/dev.md:41-42: \"the README takes two things from the UX: what the user gains, and the scenario that its walkthrough runs.\"",
-    "plugins/turn/best-practices/readme.json Q5 steps: \"Pick the scenario in the UX of the objective most readers come for.\" Every user of Lane lays rules; a flow needs an orchestrator, and plugins/lane/docs/lanes.md:80, `\"anyOf\": [{\"required\": [\"subagents\"]}, {\"required\": [\"flow\"]}]`, lets a proposal hold rules with no flow, so O1 is chosen.",
-    "dev/lane/ux.md:55-71, the O1 scenario"
+    "readme.json Q5 step 3: \"End with the result, and ask whether it shows the gain the opening promised. If not, pick another piece of work or another scenario.\"",
+    "dev/lane/ux.md O1 scenario: \"lets it through, or stops it with the sentence of its step\""
    ]
   },
   {
@@ -224,11 +266,10 @@
     "D6",
     "D7"
    ],
-   "decided": "The figure keeps its boxes and lines; you propose the rules and the routes; a subagent makes a tool call, gives its result or ends, and Claude Code sends each to the check script, which stops a break and shows the sentence again, and tells the orchestrator which subagent to start next.",
+   "decided": "The figure keeps its boxes and lines; you propose the rules and the routes; a subagent makes a tool call, gives its result or ends, and Claude Code sends each to the check script, which stops a break and shows the sentence again, and tells the orchestrator which subagent to start next. The subagent's arrow reads \"makes a tool call, runs the result script, or ends\", so the figure shows the idea that Lane takes the result from the run of the result script.",
    "settled_by": "reasoning",
    "grounds": [
-    "plugins/lane/how-it-works.svg:27: \"you, the developer\"; :36: \"a subagent (an AI)\"",
-    "D1: the reader is an AI, spoken to as you"
+    "readme.json Q7 step 1: \"Point to each gain and the idea, and find the lines of the figure that keep it. Where none does, mend the figure or the promise.\""
    ]
   },
   {

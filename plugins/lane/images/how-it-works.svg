@@ -88,7 +88,7 @@
 
   <path class="line" d="M200,348 H430" marker-end="url(#arrow)"/>
   <text class="label mid" x="315" y="320">makes a tool call,</text>
-  <text class="label mid" x="315" y="338">gives its result or ends</text>
+  <text class="label mid" x="315" y="338">runs the result script, or ends</text>
 
   <path class="line" d="M610,348 H830" marker-end="url(#arrow)"/>
   <text class="label mid" x="725" y="320">sends each tool call</text>

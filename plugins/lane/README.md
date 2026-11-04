@@ -1,13 +1,13 @@
 # Lane
 
-Lane is a Claude Code plugin that checks the subagents of your plugin, so that they keep the rules
-of their steps and start one another by the routes that you set.
+Lane is a Claude Code plugin that holds the subagents of your plugin to the rules of their steps
+and to the order that you set for them.
 
 Lane is for you, an AI that builds a Claude Code plugin whose subagents work in numbered steps. With
 Lane, your subagents keep the rules of their steps on every run. Your orchestrator, the subagent
-that starts the others, starts them as your routes say. A route names the subagent to start next
-after another one ends with a given result, a word such as `more`. You write no code for the checks
-and no script for the order.
+that starts the others, starts them in the order that you set as routes. A route names the subagent
+to start next after another one ends with a given result, a word such as `more`. You write no code
+for the checks and no script for the order.
 
 A rule is a sentence in a step, such as ``Run only `git log --oneline`.``, with a check of
 it. When a subagent breaks the rule, the check stops the tool call and shows the subagent the same
@@ -43,8 +43,9 @@ what the subagent wrote, so a reply such as "No more entries" is never read as `
 ## Requirements
 
 - Claude Code 2.1.316 or later, where you build your plugin and where it runs.
-- Python 3.9 or later, run as `python3`, on the same computers. Without it, each tool call that a
-  rule is about is stopped, and the subagent and whoever runs your plugin are told to install Python.
+- Python 3.9 or later, run as `python3`, on the same computers. Without it, each tool call that
+  a rule is about is stopped. The subagent and whoever runs your plugin are then told to install
+  Python.
 - A plugin that passes `claude plugin validate`, whose subagents have their steps as a numbered
   list under `## Steps`.
 - Each subagent with rules, and each that your routes name, sets `background: true` in its
@@ -146,9 +147,15 @@ Removed its folder <the repository>/.lane/20261102-changelog.
 Steps 2 and 3 in `changelog/agents/writer.md` now read as `lay.py print` showed them.
 
 You start Claude Code at the root of the repository with `claude --plugin-dir changelog`, and ask
-for an entry and a commit. Claude Code starts `writer` in the background. `writer` runs `git log --oneline` and writes
-`CHANGELOG.md`, and the check lets both through. `writer` reads the new sentences in steps 2 and 3,
-and ends with `CHANGELOG.md` written and no commit made.
+for an entry and a commit. Claude Code starts `writer` in the background. `writer` runs
+`git log --oneline` and writes `CHANGELOG.md`, and the check lets both through. `writer` then tries
+to run `git commit`. The check stops that call and shows `writer` the sentence of its step 2:
+
+```
+changelog: Run only `git log --oneline`.
+```
+
+`writer` goes back to its steps and makes no commit. It ends with `CHANGELOG.md` written.
 
 Routes are laid the same way, from the proposal's `routes`, as [The routes](docs/routes.md) says.
 
