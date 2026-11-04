@@ -199,7 +199,7 @@
    "builds_on": [
     "D10"
    ],
-   "decided": "developer AI (AI); Lane (script), one box for all Lane gives, as its scripts are inside the product; lead, writer and reviewer (AI). No step waits for a person.",
+   "decided": "developer AI (AI); Lane (plugin), one box for all Lane gives, as its scripts are inside the product; lead, writer and reviewer (AI). No step waits for a person.",
    "settled_by": "reasoning",
    "grounds": [
     "plugins/turn/core/domain/best-practices/ux.json Q6 step: \"every message's sender and receiver is named there\""

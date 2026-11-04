@@ -33,7 +33,7 @@ Both scenarios run on `changelog`, a plugin that the developer AI builds to writ
 `CHANGELOG.md`. The participants:
 
 - **developer AI** (AI): builds `changelog`, and runs it to try it.
-- **Lane** (script): what the developer AI gives its rules and routes to.
+- **Lane** (plugin): what the developer AI gives its rules and routes to.
 - **`lead`** (AI): the subagent of `changelog` that starts the others.
 - **`writer`** (AI): the subagent of `changelog` that writes the new entries into `CHANGELOG.md`.
 - **`reviewer`** (AI): the subagent of `changelog` that compares the entries with the commits.
@@ -46,7 +46,7 @@ conversation stays free while it runs.
 ```mermaid
 sequenceDiagram
   participant A as developer AI (AI)
-  participant L as Lane (script)
+  participant L as Lane (plugin)
   participant W as writer (AI)
   A->>L: two rules for writer's steps
   L-->>A: the steps as they will read
@@ -64,7 +64,7 @@ after another one ends with a given result, a word such as `more`.
 ```mermaid
 sequenceDiagram
   participant A as developer AI (AI)
-  participant L as Lane (script)
+  participant L as Lane (plugin)
   participant O as lead (AI)
   participant W as writer (AI)
   participant R as reviewer (AI)
