@@ -166,6 +166,37 @@ def hypothesis() -> Any:
 
 # What an Agent call gives back of a run started in the background, as Claude Code 2.1.317 gave it.
 LAUNCHED = "async_launched"
+# What the double of Claude Code does where the hooks reference says nothing, each as a try of the
+# real Claude Code showed it, with the version and the day of the try, as
+# dev/plugin-best-practice.md's Where a double's results come from asks. A double that does what
+# no try showed passes a test that the real Claude Code fails.
+TRIES = [
+    {
+        "showed": "an Agent call starting a subagent in the background gives SubagentStart of the"
+        " run, then PostToolUse of the call within 1 ms, its tool_response holding `status`"
+        " `async_launched` and the run's `agentId`",
+        "version": "2.1.317",
+        "day": "2026-11-03",
+    },
+    {
+        "showed": "a run's first call comes seconds after the PostToolUse of the Agent call that"
+        " started it",
+        "version": "2.1.317",
+        "day": "2026-11-03",
+    },
+    {
+        "showed": "once a subagent started in the background ends, Claude Code starts the subagent"
+        " that started it again, sending SubagentStart of the same agent_id, in an interactive"
+        " session alone; `claude -p` hands the end to the main conversation instead",
+        "version": "2.1.317",
+        "day": "2026-11-03",
+    },
+    {
+        "showed": "a Bash command that exits with an error comes back as PostToolUseFailure",
+        "version": "not recorded",
+        "day": "2026-11-03",
+    },
+]
 
 
 class Run:
@@ -202,22 +233,32 @@ class Told:
 
 class ClaudeCode:
     """A double of Claude Code for an architecture test: it sends each hook event in the fields the
-    hooks reference documents, runs each command the plugin's hooks/hooks.json gives the event in
-    sh, as Claude Code does, and acts on what the commands print. A call denied is not made; a call
-    asked of the person is made where the person's next set answer is yes; any other is made for
-    real in the folder the session works in, and comes back as PostToolUse, or PostToolUseFailure
-    where it failed. An end blocked keeps its run going. A hook command that fails fails the test,
-    as no path through Lane has one fail. Where the hooks reference says nothing, it does what
-    dev/lane/architecture.md's Sequences recorded of Claude Code: a Bash command that exits with an
-    error comes back as PostToolUseFailure, as tried on 2026-11-03."""
+    hooks reference documents, runs each command the hooks/hooks.json of each plugin enabled gives
+    the event in sh, as Claude Code merges every plugin's hooks, and acts on what the commands
+    print. A call denied is not made; a call asked of the person is made where the person's next
+    set answer is yes; any other is made for real in the folder the session works in, and comes
+    back as PostToolUse, or PostToolUseFailure where it failed. An end blocked keeps its run going.
+    A hook command that fails fails the test, as no path through Lane has one fail, and so do two
+    plugins' hooks that both answer one event, as the hooks reference documents no way they
+    combine. Where the hooks reference says nothing, it does what TRIES recorded of the real Claude
+    Code. Each event it sends of a call, a start or an end is first held to `check`, the part's own
+    check of what Claude Code hands it, which gives what is wrong, "" where nothing is."""
 
     def __init__(
-        self, root: str, cwd: str, env: dict[str, str], answers: list[bool] | None = None
+        self,
+        root: str,
+        cwd: str,
+        env: dict[str, str],
+        answers: list[bool] | None = None,
+        others: tuple[str, ...] = (),
+        check: Callable[[dict[str, Any]], str] = lambda event: "",
     ) -> None:
         self.root = root
+        self.roots = [root, *others]
         self.cwd = cwd
         self.env = env
         self.answers = list(answers or [])
+        self.check = check
         self.uses = 0
         # The runs a stop hook kept going, so their next SubagentStop says so.
         self.kept_going: set[str] = set()
@@ -237,11 +278,33 @@ class ClaudeCode:
         return event
 
     def send(self, event: dict[str, Any]) -> dict[str, Any]:
-        """What the commands of the event's entries print, as JSON, each entry's matcher `*`, or a
-        regular expression on the tool's name or the subagent's type, run in sh within its
-        timeout."""
+        """What the commands of the event's entries print, as JSON, of the one plugin whose hooks
+        answer it, each run with that plugin's folder as CLAUDE_PLUGIN_ROOT."""
+        said: dict[str, Any] = {}
+        for root in self.roots:
+            found = self.sent(root, event)
+            if found and said:
+                raise AssertionError(f"two plugins' hooks answered {event['hook_event_name']}")
+            said = found or said
+        return said
+
+    def held(self, event: dict[str, Any]) -> dict[str, Any]:
+        """The event, held to `check`; fails the test where it is out of what Claude Code
+        hands."""
+        wrong = self.check(event)
+        if wrong:
+            raise AssertionError(f"the double made an event Claude Code would not hand: {wrong}")
+        return event
+
+    def sent(self, root: str, event: dict[str, Any]) -> dict[str, Any]:
+        """What the commands of the event's entries in the plugin at root print, as JSON, each
+        entry's matcher `*`, or a regular expression on the tool's name or the subagent's type, run
+        in sh within its timeout; nothing where the plugin has no hooks."""
         held = event["hook_event_name"]
-        with open(os.path.join(self.root, "hooks", "hooks.json"), encoding="utf-8") as f:
+        path = os.path.join(root, "hooks", "hooks.json")
+        if not os.path.exists(path):
+            return {}
+        with open(path, encoding="utf-8") as f:
             entries = json.load(f)["hooks"].get(held, [])
         on = str(event.get("tool_name", event.get("agent_type", "")))
         said: dict[str, Any] = {}
@@ -255,7 +318,7 @@ class ClaudeCode:
                     input=json.dumps(event),
                     capture_output=True,
                     text=True,
-                    env={**self.env, "CLAUDE_PLUGIN_ROOT": self.root},
+                    env={**self.env, "CLAUDE_PLUGIN_ROOT": root},
                     cwd=self.cwd,
                     timeout=h.get("timeout", 600),
                     check=False,
@@ -271,7 +334,7 @@ class ClaudeCode:
         PostToolUseFailure."""
         self.uses += 1
         use = {"tool_name": tool, "tool_input": given, "tool_use_id": f"toolu_{self.uses}"}
-        said = self.send({**self.common("PreToolUse", run), **use})
+        said = self.send(self.held({**self.common("PreToolUse", run), **use}))
         decision = said.get("hookSpecificOutput", {}).get("permissionDecision")
         if decision == "deny" or (decision == "ask" and not self.answers.pop(0)):
             return Told(False, said, [])
@@ -281,7 +344,7 @@ class ClaudeCode:
         else:
             failed = {"error": error, "is_interrupt": False}
             after = {**self.common("PostToolUseFailure", run), **use, **failed}
-        return Told(True, said, self.context(self.send(after)))
+        return Told(True, said, self.context(self.send(self.held(after))))
 
     def made(self, tool: str, given: dict[str, Any]) -> tuple[Any, str | None]:
         """What the call gives back, made for real in the session's folder: a Bash command run in
@@ -326,26 +389,25 @@ class ClaudeCode:
         """An Agent call of the run `by`, or of the main conversation, starting the run in the
         background with the prompt: PreToolUse; where it goes on, SubagentStart of the run, what
         the run does `meanwhile`, before its start comes back, then PostToolUse with the run's ID,
-        as Claude Code 2.1.317 gave the start's PostToolUse within 1 ms after the run had started
-        (dev/lane/architecture.md, Sequences); the context the hooks added at either."""
+        as the first of TRIES showed; the context the hooks added at either."""
         self.uses += 1
         given = {"description": "d", "prompt": prompt, "subagent_type": run.kind}
         use = {"tool_name": "Agent", "tool_input": given, "tool_use_id": f"toolu_{self.uses}"}
-        said = self.send({**self.common("PreToolUse", by), **use})
+        said = self.send(self.held({**self.common("PreToolUse", by), **use}))
         if said.get("hookSpecificOutput", {}).get("permissionDecision") == "deny":
             return Told(False, said, [])
         started = self.started(run)
         meanwhile()
         back = {"status": LAUNCHED, "agentId": run.agent_id, "content": []}
         after = {**self.common("PostToolUse", by), **use, "tool_response": back}
-        return Told(True, said, started + self.context(self.send(after)))
+        return Told(True, said, started + self.context(self.send(self.held(after))))
 
     def started(self, run: Run) -> list[str]:
         """SubagentStart of the run, as Claude Code sends it as the run starts, and again, of the
-        same ID, as it starts an orchestrator again once a run it started in the background has
-        ended, a resumed run keeping its ID (dev/lane/architecture.md, Sequences): the context the
-        hooks added."""
-        return self.context(self.send(self.common("SubagentStart", run)))
+        same ID, as the hooks reference documents for a run resumed and as TRIES showed for an
+        orchestrator started again once a run it started in the background has ended: the context
+        the hooks added."""
+        return self.context(self.send(self.held(self.common("SubagentStart", run))))
 
     def stop(self, run: Run) -> Told:
         """SubagentStop of the run, as it is about to end, `stop_hook_active` where a stop hook kept
@@ -357,7 +419,7 @@ class ClaudeCode:
             "agent_transcript_path": transcript,
             "last_assistant_message": "done",
         }
-        said = self.send(event)
+        said = self.send(self.held(event))
         if said.get("decision") == "block":
             self.kept_going.add(run.agent_id)
             return Told(False, said, [])

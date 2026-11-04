@@ -11,11 +11,12 @@ from __future__ import annotations
 import glob
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
 import tempfile
-from typing import Any
+from typing import Any, Callable
 from unittest import mock
 
 LANE = os.path.normpath(
@@ -28,18 +29,18 @@ sys.path[:0] = [CODE, DOMAIN, SCRIPTS, os.path.join(LANE, "..", "..", "dev", "la
 
 import called
 import entries  # noqa: F401
-import guard  # noqa: F401
-import hook  # noqa: F401
+import guard
+import hook
 import lanes
 import lay  # noqa: F401
 import layer  # noqa: F401
 import placed  # noqa: F401
 import ports
 import proposal  # noqa: F401
-import result  # noqa: F401
+import result
 import routes  # noqa: F401
 import rules  # noqa: F401
-import schema  # noqa: F401
+import schema
 import step
 import steps  # noqa: F401
 import template  # noqa: F401
@@ -458,6 +459,22 @@ CHANGELOG = (
 VALIDATES = "#!/bin/sh\necho '✔ Validation passed'\n"
 
 
+def handed(event: dict[str, Any]) -> str:
+    """What is wrong with the event as Claude Code hands it, by hook.py's own check of the fields
+    the hooks reference documents, the subagent's left out of an event of the main conversation,
+    and an Agent call's tool_response held to what the guard reads of it; "" where nothing is."""
+    held = event["hook_event_name"]
+    shape = hook.event_in(held)
+    if "agent_type" not in event:
+        shape = {**shape, "required": [f for f in shape["required"] if not f.startswith("agent_")]}
+    out = schema.held(shape, event)
+    if out is not None:
+        return out.told()
+    if held == "PostToolUse" and event["tool_name"] == "Agent":
+        out = schema.held(guard.BACK, event["tool_response"])
+    return out.told() if out is not None else ""
+
+
 class RunTest(testing.GitTest):
     """A test of a path through a run, in a git repository `repo` in `base`, with CHANGELOG.md and a
     commit after it, and a copy of the plugin `changelog` in `repo/changelog`, laid by `lay.py
@@ -474,7 +491,7 @@ class RunTest(testing.GitTest):
         os.chmod(claude, 0o755)
         path = os.path.dirname(claude) + os.pathsep + os.environ["PATH"]
         self.env = {**os.environ, "PATH": path, "TMPDIR": self.base}
-        self.claude = testing.ClaudeCode(self.plugin, self.repo, self.env)
+        self.claude = testing.ClaudeCode(self.plugin, self.repo, self.env, check=handed)
 
     def project(self) -> None:
         """Makes the project where the test stands: CHANGELOG.md committed, and a commit after."""
@@ -484,19 +501,21 @@ class RunTest(testing.GitTest):
         self.write("note.md", "Add a search over the notes\n")
         self.commit()
 
-    def lay(self, proposed: dict[str, Any], adapters: tuple[str, ...] = ()) -> str:
-        """Lays the proposal on the plugin with `lay.py write`, with the adapters of the names kept
-        in ux/adapters/ beside it, as docs/lanes.md keeps them; fails the test where it does not
-        exit 0, and gives what it printed."""
-        beside = os.path.join(os.path.dirname(PROPOSED), "changelog", "adapters")
+    def lay(
+        self, proposed: dict[str, Any], adapters: tuple[str, ...] = (), path: str = PROPOSED
+    ) -> str:
+        """Lays the proposal kept at the path with `lay.py write`, with the adapters of the names
+        kept in ux/adapters/ beside it, as docs/lanes.md keeps them; fails the test where it does
+        not exit 0, and gives what it printed."""
+        beside = os.path.join(os.path.dirname(path), "changelog", "adapters")
         for name in adapters:
             for kind in (".py", ".json"):
                 os.makedirs(beside, exist_ok=True)
                 kept = os.path.join(UX, "adapters", name + kind)
                 shutil.copyfile(kept, os.path.join(beside, name + kind))
-        self.write_json(PROPOSED, proposed)
+        self.write_json(path, proposed)
         done = subprocess.run(
-            [sys.executable, os.path.join(SCRIPTS, "lay.py"), "write", PROPOSED],
+            [sys.executable, os.path.join(SCRIPTS, "lay.py"), "write", path],
             capture_output=True,
             text=True,
             env=self.env,
@@ -546,8 +565,13 @@ class RoutesTest(RunTest):
         name = run.kind.split(":")[1]
         return f"python3 {self.plugin}/hooks/lane/result.py {name} {on}"
 
-    def result(self, run: testing.Run, on: str) -> testing.Told:
-        """The run's call of its result command on the result."""
+    def result(self, run: testing.Run, on: str, refused: bool = False) -> testing.Told:
+        """The run's call of its result command on the result, a result the result script's own
+        check takes, or, where `refused`, one it refuses, so the double gives only what a subagent
+        can give."""
+        name = run.kind.split(":")[1]
+        taken = result.said([name, on], self.plugin) == ""
+        assert taken != refused, f"{name} would not give `{on}` as the test says"
         return self.claude.call(run, "Bash", {"command": self.gives(run, on), "description": "d"})
 
     def through(self, run: testing.Run, on: str) -> list[str]:
@@ -566,3 +590,59 @@ class RoutesTest(RunTest):
             f"changelog: Wait for `changelog:{name}` to end: you are told the next start once it"
             " has."
         )
+
+
+LAY = os.path.join(SCRIPTS, "lay.py")
+with open(os.path.join(LANE, "README.md"), encoding="utf-8") as f:
+    WALKTHROUGH = f.read().split("\n## Walkthrough")[1].split("\n## How it works")[0]
+# The walkthrough's blocks, in order: the manifest, writer, the proposal, the two runs of lay.py,
+# and the sentence writer is told.
+BLOCKS = re.findall(r"```[a-z]*\n(.*?)```", WALKTHROUGH, re.DOTALL)
+README_MANIFEST, README_WRITER, README_PROPOSAL, README_PRINTED, README_WROTE = BLOCKS[:5]
+
+
+def shown(block: str) -> str:
+    """What the walkthrough shows a run printing, the line of the command left out."""
+    return block.split("\n", 1)[1]
+
+
+class WalkthroughTest(testing.FolderTest):
+    """A test of lay.py run as the developer AI runs it, at the root of the repository `base`, on
+    the README's walkthrough: its plugin `changelog`, its subagent `writer` and its proposal, kept
+    where the walkthrough keeps it, with a stand-in for Claude Code's `claude` on PATH."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.write(os.path.join("changelog", ".claude-plugin", "plugin.json"), README_MANIFEST)
+        self.write(os.path.join("changelog", "agents", "writer.md"), README_WRITER)
+        self.write(PROPOSED, README_PROPOSAL)
+        self.write(os.path.join("bin", "claude"), VALIDATES)
+        os.chmod(os.path.join("bin", "claude"), 0o755)
+        self.env = {
+            **os.environ,
+            "PATH": os.path.join(self.base, "bin") + os.pathsep + os.environ["PATH"],
+        }
+
+    def lay_py(self, action: str, path: str = PROPOSED) -> subprocess.CompletedProcess:
+        """lay.py run with the action on the path at the root of the repository."""
+        return subprocess.run(
+            [sys.executable, LAY, action, path],
+            capture_output=True,
+            text=True,
+            env=self.env,
+            check=False,
+        )
+
+    def propose(self, change: Callable[[dict[str, Any]], None]) -> None:
+        """Keeps the walkthrough's proposal changed by `change` where the walkthrough keeps it."""
+        given = json.loads(README_PROPOSAL)
+        change(given)
+        self.write(PROPOSED, json.dumps(given))
+
+    def adapter(self) -> str:
+        """Keeps a values adapter, with its cases, beside the proposal, as docs/lanes.md says, the
+        folder it lies in given back."""
+        beside = os.path.join(os.path.dirname(PROPOSED), "changelog", "adapters")
+        self.write(os.path.join(beside, "values-w.py"), VALUES_ADAPTER)
+        self.write(os.path.join(beside, "values-w.json"), json.dumps(VALUES_CASES))
+        return beside

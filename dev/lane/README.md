@@ -4,9 +4,12 @@ The experience lane must give is in [ux.md](ux.md). How lane is built to give it
 checked, is in [architecture.md](architecture.md).
 
 - Tests: run `python3 -m unittest discover -s dev/lane/tests` from the repository root. They lie
-  in `tests/unit/`, at the path of what each tests, and `tests/architecture/`. The architecture
-  tests lay the proposals of `tests/ux/` on a copy of `tests/ux/changelog/`, with the adapter in
-  `tests/ux/adapters/` and the stand-in dependency `tests/ux/checker/`.
+  in `tests/unit/`, at the path of what each tests, and `tests/architecture/`, a file for each
+  sequence of the architecture, `test_s<n>_*.py`, with a test for each of its paths. The
+  architecture tests lay the proposals of `tests/ux/` on a copy of `tests/ux/changelog/`, with the
+  adapter in `tests/ux/adapters/` and the stand-in dependency `tests/ux/checker/`. What the double
+  of Claude Code does beyond the hooks reference is in `TRIES` in `testing.py`, each with the
+  version and the day of the try that showed it.
 
   `sh dev/scripts/properties.sh lane` runs the property tests, `properties_*.py`, and
   `sh dev/scripts/mutate.sh lane` runs the mutation testing set in `cosmic-ray.toml`, as

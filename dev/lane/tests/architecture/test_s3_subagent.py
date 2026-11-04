@@ -1,8 +1,8 @@
-"""A subagent with lanes on a run, writer's of the UX's O1 and the subagents of the trials' cases,
-each path of its sequence in dev/lane/architecture.md from start to end: the proposal laid by
-`lay.py write` on a copy of `changelog`, the hooks' commands as laid run in sh by a double of
-Claude Code, which starts each run from the main conversation and makes each call a double of the
-subagent makes, and the result script run as the step writes it."""
+"""S3 of dev/lane/architecture.md, a subagent with rules on a run, one test for each of its paths:
+the proposal laid by `lay.py write` on a copy of `changelog`; the hooks' commands as laid run in sh
+by a double of Claude Code, which starts each run from the main conversation, makes each call a
+double of the subagent makes, and puts a held command to a double of the person, a set answer, as
+its permission prompt does; and the adapters and the scripts the steps name run real."""
 
 import json
 import os
@@ -125,6 +125,18 @@ class TestValueCommand(helpers.RunTest):
                 # Then: it is denied with run_only's sentence and the command it may run, its
                 # value put in
                 self.assertEqual((told.made, told.reason()), (False, self.may))
+
+    def test_a_value_not_given_stops_the_call_as_one_that_cannot_be_checked(self):
+        # Given: linter run_only on check.py {notes}, started with no notes
+        self.claude.start(None, LINTER, "Check the notes.")
+        # When: linter runs the check
+        told = self.claude.call(LINTER, *bash(f"{self.check} 'notes v2.json'"))
+        # Then: it is denied as a call that cannot be checked, whoever starts linter told to give
+        # it notes, and the operator told too
+        self.assertEqual((told.made, told.decision()), (False, "deny"))
+        self.assertIn("`{notes}` was given no value", told.reason())
+        self.assertIn("whoever starts linter must give it `notes`", told.reason())
+        self.assertEqual(told.operator(), told.reason())
 
     def test_a_call_before_the_runs_prompt_is_kept_is_stopped_as_one_that_cannot_be_checked(self):
         # Given: linter run_only on check.py {notes}
@@ -275,6 +287,50 @@ class TestAdapterRun(helpers.RunTest):
         self.assertIn("the adapter hooks/adapters/items-findings.py exited 1", told.reason())
         self.assertIn("the maker of changelog must fix its adapter", told.reason())
         self.assertEqual(told.operator(), told.reason())
+
+
+ADD = "git add CHANGELOG.md"
+SAID = f"changelog: Run `{ADD}` only with the person's approval."
+
+
+class TestHeldCommand(helpers.RunTest):
+    def setUp(self) -> None:
+        super().setUp()
+        given = self.ux_proposal("changelog.json")
+        held = {"lane": "hold", "takes": [ADD]}
+        given["subagents"][0]["steps"][1]["lanes"].append(held)
+        self.lay(given)
+        self.claude.start(None, WRITER, "Write the entries and stage them.")
+        self.claude.call(WRITER, "Write", {"file_path": "CHANGELOG.md", "content": "x\n"})
+
+    def staged(self) -> str:
+        """The files staged in the project."""
+        done = subprocess.run(
+            ["git", "diff", "--cached", "--name-only"], capture_output=True, text=True, check=True
+        )
+        return done.stdout
+
+    def held(self, yes: bool) -> testing.Told:
+        """writer's run of the held command, the person answering yes or no."""
+        self.claude.answers = [yes]
+        return self.claude.call(WRITER, "Bash", {"command": ADD, "description": "d"})
+
+    def test_the_person_says_yes_and_the_command_runs(self):
+        # Given: writer holding git add CHANGELOG.md, CHANGELOG.md written
+        # When: writer runs it, and the person says yes
+        told = self.held(True)
+        # Then: it was asked of the person with hold's sentence, and it ran
+        self.assertEqual((told.decision(), told.reason(), told.made), ("ask", SAID, True))
+        self.assertEqual(self.staged(), "CHANGELOG.md\n")
+        self.assertEqual(self.claude.answers, [])
+
+    def test_the_person_says_no_and_the_command_does_not_run(self):
+        # Given: writer holding git add CHANGELOG.md, CHANGELOG.md written
+        # When: writer runs it, and the person says no
+        told = self.held(False)
+        # Then: it was asked of the person with hold's sentence, and it did not run
+        self.assertEqual((told.decision(), told.reason(), told.made), ("ask", SAID, False))
+        self.assertEqual(self.staged(), "")
 
 
 if __name__ == "__main__":
