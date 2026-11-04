@@ -3,8 +3,8 @@
  "goal": {
   "what": "Whoever builds or changes Lane, a person or an AI, makes it give the developer AI what it comes for: subagents that keep the rules of their steps, and an orchestrator that starts them as the routes say, on every run, with no check code or script of its own.",
   "grounds": [
-   "plugins/turn/best-practices/ux.json goal: \"Whoever builds or changes the product, a person or an AI, makes it give its users what they come for.\"",
-   ".rn/20261013-rebuild/steering.md:76: \"Lane's flow becomes routing ... from a declaration of routes (from a role, on a result, to a role) it takes each role's result, tells the next and stops any other start\""
+   "plugins/turn/core/domain/best-practices/ux.json goal: \"Whoever builds or changes the product, a person or an AI, makes it give its users what they come for.\"",
+   ".rn/20261013-rebuild/steering.md T49: \"lane holds a plugin's flow: the plugin declares the order its roles go in, and lane gives each next move and holds the orchestrator to it.\""
   ]
  },
  "questions": [
@@ -45,10 +45,11 @@
     "ux/Q1"
    ],
    "builds_on": [],
-   "decided": "The developer AI, an AI that builds a Claude Code plugin whose subagents work in numbered steps. The one who later runs that plugin did not choose Lane, so is no user of it.",
+   "decided": "The developer AI, an AI that builds a Claude Code plugin whose subagents work in numbered steps. The one who later runs that plugin did not choose Lane and sets no rule or route, so is no user of it.",
    "settled_by": "research",
    "grounds": [
-    "plugins/turn/core/domain/best-practices/ux.json Q1 step: \"List each one who comes to the product with a goal of their own, a person or an AI, by the role they play.\""
+    "ux.json Q1 step 1: \"List each one who comes to the product with a goal of their own, a person or an AI, by the role they play.\"",
+    "ux.json Q1 grounds, Ulwick: \"Products don’t have jobs-to-be-done—people do.\""
    ]
   },
   {
@@ -62,7 +63,7 @@
    "decided": "Lane and the example plugin changelog only.",
    "settled_by": "reasoning",
    "grounds": [
-    "Lane depends on no plugin (steering T49)."
+    ".rn/20261013-rebuild/steering.md T49: \"lane depends on no plugin: no code, document or example of it names turn, rn or another ccpm plugin.\""
    ]
   },
   {
@@ -74,10 +75,11 @@
    "builds_on": [
     "D1"
    ],
-   "decided": "Two: the rules of each step kept (O1), and the subagents started in the order the developer AI set (O2). A plugin can have rules without an order, or an order without rules, so each piece of work brings one of them closer.",
+   "decided": "Two: the rules of each step kept (O1), and the subagents started in the order the developer AI set (O2). A plugin can have rules without an order, or an order without rules, so a piece of work on the checks of calls brings O1 closer and one on the starts brings O2 closer. Checked by ux.json Q2 step 2: the result script and the end of a subagent's work serve both, but each piece of work on them is for a rule (O1) or for the next start (O2).",
    "settled_by": "research",
    "grounds": [
-    "plugins/turn/core/domain/best-practices/ux.json Q2 step: \"Merge objectives that one piece of work would bring closer together.\""
+    "ux.json Q2 step 1: \"Merge objectives that one piece of work would bring closer together. Split an objective that holds gains a piece of work could bring closer apart.\"",
+    "ux.json Q2 thinking: \"each piece of work brings one of them closer, no gain appears twice, and none is left out.\""
    ]
   },
   {
@@ -90,10 +92,11 @@
    "builds_on": [
     "D3"
    ],
-   "decided": "O1: The developer AI has its plugin's subagents keep the rules of their steps on every run, without writing checks. A rule is a sentence in a step that the subagent must keep, defined in the line after.",
+   "decided": "O1: The developer AI has its plugin's subagents keep the rules of their steps on every run, without writing checks. A rule is a sentence in a step that the subagent must keep, defined in the line after with an example. Checked by ux.json Q1 step 3: Lane cannot make the subagents keep the rules on every run while the developer AI is no better off, as a rule kept is the plugin doing what its steps say.",
    "settled_by": "reasoning",
    "grounds": [
-    "plugins/turn/core/domain/best-practices/ux.json Q1 step: \"Write each one's objective as one sentence that fits on one line ... with no feature or mechanism of the product.\""
+    "ux.json Q1 step 2: \"Write each one's objective as one sentence that fits on one line: that user as its subject, then a verb, its object and the context it is done in, with no feature or mechanism of the product.\"",
+    "ux.json Q1 step 3: \"Ask whether the product could do all the sentence says while that user is no better off.\""
    ]
   },
   {
@@ -106,10 +109,27 @@
    "builds_on": [
     "D3"
    ],
-   "decided": "O2: The developer AI has its plugin's subagents started in the order it set, on every run, without writing code for the order. The order it sets, its routes, is shown in O2's scenario.",
+   "decided": "O2: The developer AI has its plugin's subagents started in the order it set, on every run, without writing code for the order. The order it sets, its routes, is defined where O2's scenario first needs it. Checked by ux.json Q1 step 3 as D4.",
    "settled_by": "reasoning",
    "grounds": [
-    "plugins/turn/core/domain/best-practices/ux.json Q1 step, as for D4."
+    "ux.json Q1 step 2, as for D4."
+   ]
+  },
+  {
+   "id": "D18",
+   "what": "How do success and failure of each objective show in what the developer AI and its subagents do?",
+   "contributes_to": [
+    "ux/Q3"
+   ],
+   "builds_on": [
+    "D4",
+    "D5"
+   ],
+   "decided": "O1 fails where a call or an end breaks a rule and goes through, where it is stopped and the subagent does the same another way, where the rules allow it and it is stopped, and where the developer AI works around Lane: it writes a check of its own, or leaves a rule unchecked, as Lane cannot hold it. O2 fails where a subagent starts that the routes do not name, where a start they name is stopped, where the orchestrator ends while the routes name a next subagent, and where the developer AI writes code for an order the routes cannot say.",
+   "settled_by": "research",
+   "grounds": [
+    "ux.json Q3 step 1: \"list how success or failure would show in what the user does or feels, such as giving up, undoing a result or working around the product.\"",
+    "ux.json Q3 grounds, Rodden et al.: \"Sometimes failure is easier to identify than success\""
    ]
   },
   {
@@ -119,13 +139,13 @@
     "ux/Q3"
    ],
    "builds_on": [
-    "D4",
-    "D5"
+    "D18"
    ],
-   "decided": "For each objective, a share of what the subagents do on runs that goes wrong, counted out of a named whole, then the lead time from the first rules or routes to the first run that keeps them. Lower and shorter are better.",
+   "decided": "For each objective, a share of what goes wrong, counted out of a named whole and with D18's ways listed under it, then the lead time from the developer AI's first rules or routes to the first run that keeps them. Lower and shorter are better. Checked by ux.json Q3 step 3: as the ways include the developer AI working around Lane, the first key result cannot get better while the developer AI still writes checks or code for the order.",
    "settled_by": "research",
    "grounds": [
-    "plugins/turn/core/domain/best-practices/ux.json Q3 step: \"Turn the signs kept into two measures: one of how well the user gets what the objective says, and the lead time\""
+    "ux.json Q3 step 2: \"Make each a share, an average per user, a count or a time, and name what it is counted out of.\"",
+    "ux.json Q3 step 3: \"Ask whether all the objective's key results could get better while the user still does not get what the objective says.\""
    ]
   },
   {
@@ -137,10 +157,11 @@
    "builds_on": [
     "D6"
    ],
-   "decided": "KR1.1: of the subagents' tool calls and ends of their work, the share that goes wrong: a broken rule that goes through, a broken rule stopped and then done another way, or an allowed call that is stopped. KR1.2: the lead time from the first rule for a plugin to the first run whose subagents keep the rules.",
+   "decided": "KR1.1: of the subagents' tool calls and ends of their work that a rule the developer AI wants is about, the share that goes wrong, in D18's four ways for O1. KR1.2: the lead time from the developer AI's first rule for a plugin to the first run whose subagents keep the rules.",
    "settled_by": "reasoning",
    "grounds": [
-    "D6"
+    "D6",
+    "D18"
    ]
   },
   {
@@ -152,10 +173,11 @@
    "builds_on": [
     "D6"
    ],
-   "decided": "KR2.1: of the plugin's runs, the share that goes wrong: a subagent started that the routes do not name, or a start the routes name that is stopped. KR2.2: the lead time from the first routes for a plugin to the first run that keeps them.",
+   "decided": "KR2.1: of the plugin's runs, the share that goes wrong, in D18's four ways for O2. KR2.2: the lead time from the developer AI's first order for a plugin to the first run that keeps it.",
    "settled_by": "reasoning",
    "grounds": [
-    "D6"
+    "D6",
+    "D18"
    ]
   },
   {
@@ -168,10 +190,11 @@
     "D7",
     "D8"
    ],
-   "decided": "Said once under the OKRs: the first key result of each objective comes first, and the second is shortened only by a change that keeps the first. Key results have no target values (Goodhart's law).",
+   "decided": "Said once under the OKRs: in each objective the first key result comes first, and a change shortens the lead time only if it keeps the first as good. Key results have no target values (Goodhart's law).",
    "settled_by": "research",
    "grounds": [
-    "plugins/turn/core/domain/best-practices/ux.json Q4 thinking: \"Quality first, then lead time\""
+    "ux.json Q4 thinking: \"Quality first, then lead time\"",
+    "ux.json Q4 steps: \"Imagine the change, and ask whether it could make the first key result worse.\" \"Keep it only where it could not.\""
    ]
   },
   {
@@ -184,10 +207,10 @@
     "D1",
     "D2"
    ],
-   "decided": "changelog, which writes a project's CHANGELOG.md: lead starts the others, writer writes the new entries, reviewer compares them with the commits.",
+   "decided": "changelog, which writes a project's CHANGELOG.md: lead starts the others, writer writes the new entries, reviewer compares them with the commits. A plugin small enough to read at once, whose work any developer AI knows.",
    "settled_by": "reasoning",
    "grounds": [
-    "The README's walkthrough runs the same plugin."
+    "ux.json Q5 thinking: \"A scenario is one run of the main path to the objective, the one most users take\""
    ]
   },
   {
@@ -202,7 +225,8 @@
    "decided": "developer AI (AI); Lane (plugin), one box for all Lane gives, as its scripts are inside the product; lead, writer and reviewer (AI). No step waits for a person.",
    "settled_by": "reasoning",
    "grounds": [
-    "plugins/turn/core/domain/best-practices/ux.json Q6 step: \"every message's sender and receiver is named there\""
+    "ux.json Q6 step 1: \"name each participant it uses, with its kind, as the list of participants gives them\"",
+    "ux.json Q6 step 2: \"every message's sender and receiver is named there\""
    ]
   },
   {
@@ -214,10 +238,11 @@
    "builds_on": [
     "D11"
    ],
-   "decided": "Only what the developer AI does, sees and receives, and what its subagents do in its sight. Lane's scripts, the words they tell lead and how they check each call are inside the box, left to the README and the architecture.",
+   "decided": "Only what the developer AI does, sees and receives, and what its subagents meet in a run: a call let through, or stopped with the sentence of its own step. How Lane checks a call, how it learns a result and how it tells lead the next start are inside the box, left to the README and the architecture. Checked by ux.json Q7 step 1 on one change, Lane telling lead nothing and only stopping each start the routes do not name: every line stays true.",
    "settled_by": "research",
    "grounds": [
-    "plugins/turn/core/domain/best-practices/ux.json Q7 thinking: \"the document says only what users mean to do, see and receive\""
+    "ux.json Q7 thinking: \"the document says only what users mean to do, see and receive\"",
+    "ux.json Q7 step 1: \"Pick one change the design could make while users see the same, read every line, and flag each line that would have to change.\""
    ]
   },
   {
@@ -233,6 +258,7 @@
    "decided": "Each arrow says in a few words what one does to another. The content passed, such as the rules or the routes, is the spec, left to the README and Lane's docs.",
    "settled_by": "reasoning",
    "grounds": [
+    "ux.json Q5 step 2: \"Write each step as one message, from the one who takes it to the one it acts on, saying what it passes, checks or changes\"",
     "A label that holds the content crowds the diagram, and the reader cannot follow the steps at a glance (the user, 2026-11-04)."
    ]
   },
@@ -250,7 +276,7 @@
    "decided": "By its objective's ID and a short active phrase, the developer AI its subject: \"O1: The developer AI holds writer to two rules\", \"O2: The developer AI has lead start writer and reviewer in its order\".",
    "settled_by": "reasoning",
    "grounds": [
-    "plugins/turn/core/domain/best-practices/ux.json Q5 step: \"Name each scenario by its objective's ID and a short active verb phrase\""
+    "ux.json Q5 step 1: \"Name each scenario by its objective's ID and a short active verb phrase, the user its subject, saying how they reach it.\""
    ]
   },
   {
@@ -269,6 +295,23 @@
    ]
   },
   {
+   "id": "D19",
+   "what": "Where does O1's gain show in its run?",
+   "contributes_to": [
+    "ux/Q5"
+   ],
+   "builds_on": [
+    "D12",
+    "D15"
+   ],
+   "decided": "In a loop over writer's tool calls: Lane lets a call that keeps the rules through, and stops one that breaks a rule with the sentence of that step, and writer goes back to the step. Without it, the scenario would read the same with no Lane, and the developer AI could not see what it gains.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "ux.json Q5 step 4: \"each step moves toward it.\"",
+    "ux.json Q5 step 3: \"Mark a part that repeats as a loop with its condition, holding each step that repeats.\""
+   ]
+  },
+  {
    "id": "D16",
    "what": "O1's main path",
    "contributes_to": [
@@ -279,12 +322,13 @@
     "D11",
     "D13",
     "D14",
-    "D15"
+    "D15",
+    "D19"
    ],
-   "decided": "The developer AI gives Lane two rules for writer's steps, sees the steps as they will read, and approves them. Lane writes them. The developer AI starts writer, and writer ends with both rules kept.",
+   "decided": "The developer AI gives Lane two rules for writer's steps, sees the steps as they will read, and approves them. Lane writes them. The developer AI starts writer. Each tool call of writer goes through Lane as D19 says. writer ends with both rules kept.",
    "settled_by": "reasoning",
    "grounds": [
-    "plugins/turn/core/domain/best-practices/ux.json Q5 step: \"the first message is the user's request, the last gives the user the end\""
+    "ux.json Q5 step 4: \"the first message is the user's request, the last gives the user the end\""
    ]
   },
   {
@@ -303,7 +347,7 @@
    "decided": "The developer AI gives Lane the routes, sees the routes and the steps as they will read, and approves them. Lane writes them. The developer AI starts lead. In a loop until reviewer ends with good, lead starts writer and then reviewer, as the routes say. lead ends with the reviewed entries.",
    "settled_by": "reasoning",
    "grounds": [
-    "plugins/turn/core/domain/best-practices/ux.json Q5 step: \"Mark a part that repeats as a loop with its condition\""
+    "ux.json Q5 step 3: \"Mark a part that repeats as a loop with its condition\""
    ]
   }
  ]

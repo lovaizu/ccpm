@@ -9,19 +9,23 @@ numbered steps.
   without writing checks.
   - A rule is a sentence in a step that the subagent must keep, such as "Run only
     `git log --oneline`."
-  - KR1.1: Of the subagents' tool calls and their ends of work, the share that goes wrong. Lower
-    is better. A call or an end goes wrong in three ways:
+  - KR1.1: Of the subagents' tool calls and their ends of work that a rule is about, the share
+    that goes wrong. Lower is better. A call or an end goes wrong in four ways:
     - it breaks a rule, and goes through;
     - it breaks a rule, is stopped, and is then done another way;
-    - the rules allow it, and it is stopped.
+    - the rules allow it, and it is stopped;
+    - Lane cannot hold the rule, so the developer AI writes a check of its own or leaves the rule
+      unchecked.
   - KR1.2: The lead time from the developer AI's first rule for a plugin to the first run whose
     subagents keep the rules. Shorter is better.
 - O2: The developer AI has its plugin's subagents started in the order it set, on every run,
   without writing code for the order.
-  - KR2.1: Of the plugin's runs, the share that goes wrong. Lower is better. A run goes wrong in two
-    ways:
+  - KR2.1: Of the plugin's runs, the share that goes wrong. Lower is better. A run goes wrong in
+    four ways:
     - a subagent starts that the order does not name;
-    - a start that the order names is stopped.
+    - a start that the order names is stopped;
+    - the subagent that starts the others ends while the order names a subagent to start next;
+    - Lane cannot hold the order, so the developer AI writes code for it.
   - KR2.2: The lead time from the developer AI's first order for a plugin to the first run that
     keeps it. Shorter is better.
 
@@ -37,7 +41,7 @@ Both scenarios run on `changelog`, a plugin that the developer AI builds to writ
 `CHANGELOG.md`. The participants:
 
 - **developer AI** (AI): builds `changelog`, and runs it to try it.
-- **Lane** (plugin): what the developer AI gives its rules and routes to.
+- **Lane** (plugin): takes the developer AI's rules and order, and holds the subagents to them.
 - **`lead`** (AI): the subagent of `changelog` that starts the others.
 - **`writer`** (AI): the subagent of `changelog` that writes the new entries into `CHANGELOG.md`.
 - **`reviewer`** (AI): the subagent of `changelog` that compares the entries with the commits.
@@ -57,6 +61,10 @@ sequenceDiagram
   A->>L: approves them
   L-->>A: the steps written
   A->>W: starts writer
+  loop each tool call of writer
+    W->>L: a tool call
+    L-->>W: lets it through, or stops it with the sentence of its step
+  end
   W-->>A: ends, both rules kept
 ```
 
