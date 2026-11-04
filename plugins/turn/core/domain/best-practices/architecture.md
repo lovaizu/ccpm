@@ -13,7 +13,7 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 - **responsibilities**: Read with the components figure: what each role alone is responsible for that no arrow shows.
 - **choices**: For each choice the reader would question, such as a technology or a tool, why it was made over the other way, set where the reader meets the choice.
 - **data-model**: A figure of each data the roles pass or keep, showing its name alone, and of each relation between two data, labelled with the relation's name and marked at both ends with how many of each it joins, such as one to many.
-- **sequences**: For each user story, its steps in the order they happen, drawn so the reader follows them from first to last. It shows the user, each role the story reaches, named as in Components, and each thing outside the product it reaches; and each step, labelled in a few words with what one does to another and the data handed on, named as in the data model.
+- **sequences**: For each user story, its steps in the order they happen, with each branch, each step that sends work back to an earlier one and each question put to the caller or the person, drawn so the reader follows them from first to last. It shows the user, each role the story reaches, named as in Components, and each thing outside the product it reaches; and each step, labelled in a few words with what one does to another and the data handed on, named as in the data model.
 - **deployment**: A figure of each execution environment, such as a cloud service, a phone, the user's computer or CI, with its technology. Each environment holds its deployment units, such as an app or a container, each with its technology and, by their names in Components, the roles that run in it and the data kept in it. Each thing outside the product that they depend on is shown, with what is used. With the figure, how the product is started, and choices.
 - **directory**: The place where each role and each data lies: the folders and files that hold them, nested as on disk, each naming the role or the data it holds as in Components, with its technology, and none of the files inside a role.
 - **test-table**: A table the reader takes in at a glance: a row for each deployment unit, named as in Deployment with its technology; a column for each test level, from narrow to wide, each named by what its tests check against: unit, which checks one part against its contract; architecture, which joins all the parts and checks them against this document, running every user story's sequence from start to end; and ux, which checks the product in real use against the UX; in each cell the tool, a weight, such as ●●● or ●●○, and what it checks in a few words; each empty cell marked as empty, with why it is empty; and the units left out because every cell of their row would be empty, with why.
@@ -204,7 +204,7 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 
 ### Q11: Asked whether anything in the product goes untested, can the builder answer, for each deployment unit, which levels of test cover it, how heavily, and why a level is missing?
 
-**Thinking**: A table of each deployment unit against each test level shows at a glance what is tested, how heavily, and why a gap is there; each level is named by what its tests check against, a part's contract, the architecture or the UX, and not by the means it uses, as a means such as integration or end to end can serve any level.
+**Thinking**: Each level checks against one thing, a part's contract, this document's sequences or the UX, so a deployment unit is tested at each level whose thing says what the unit must do, and a cell is empty only where it says nothing; a level is named by that thing, not by its means, as a means such as end to end can serve any level.
 
 **Steps**
 
@@ -215,6 +215,7 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 **Grounds**
 
 - [Certified Tester Foundation Level Syllabus](https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf), ISTQB, version 4.0.1, istqb.org, 2024: "Test levels are distinguished by the following non-exhaustive list of attributes, to avoid overlapping of test activities"
+- [Certified Tester Foundation Level Syllabus](https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf), ISTQB, version 4.0.1, istqb.org, 2024: "Test analysis includes analyzing the test basis to identify testable features."
 - [Certified Tester Foundation Level Syllabus](https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf), ISTQB, version 4.0.1, istqb.org, 2024: "Test types are groups of test activities related to specific quality characteristics and most of those test activities can be performed at every test level."
 - [Certified Tester Foundation Level Syllabus](https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf), ISTQB, version 4.0.1, istqb.org, 2024: "While testing involves verification, i.e., checking whether the system meets specified requirements, it also involves validation, which means checking whether the system meets users’ and other stakeholders’ needs in its operational environment."
 - [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html), Vocke, martinfowler.com, 2018: "Write tests with different granularity"
@@ -224,26 +225,50 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 
 ### Q12: Writing a test at one level, can the builder do it without deciding for themselves what to run real, what to stand in with a double, what to cover and when it passes?
 
-**Thinking**: Each level is set once, with what it runs real, what doubles stand in for, what it covers and when it passes, so every test at that level means the same to every builder.
+**Thinking**: A test is drawn, not chosen, from the one thing its level checks against: the ways a part's contract divides, the paths the sequences draw, or an objective's scenario at the size of a real request; only that thing runs real and the rest is stood in, so two builders draw the same tests and a failure points to that thing alone.
 
 **Steps**
 
 1. Link the project's shared test rules, and write only where this product differs from them.
-2. At unit, cover each case of a part's contract, with its neighbours stood in by doubles and the person stood in for, and run a part done by an AI on the real model.
-3. At architecture, stand every role in with a double and cover each handoff between roles, each route and each kind of result, in every combination, so the level calls no model, runs fast and gives the same result each run.
-4. At ux, once unit and architecture pass, run the real product, with the person stood in for, on a subject that takes as long as a real request, and confirm the UX's objective and its non-functional key results, such as lead time, without aiming to cover every case.
-5. For a test whose result varies from run to run, write how many runs of how many must meet the expectation.
-6. Use each level's name the same way throughout the document.
+2. At unit, divide each input and each result the contract names into classes that the part treats alike, the ones it refuses among them, and write one test for each class.
+3. Where a class ends on an ordered scale, such as a length or a count, write one test at each end and one at the nearest value in the next class.
+4. Where the contract's result turns on a combination of conditions, write a table with one rule for each combination that can occur and the result it gives, and write one test for each rule.
+5. Stand in the part's neighbours with doubles and the person with a stand-in, and run a part done by an AI on the real model, with one input for each class and each rule, both where the contract says the part acts and where it says it does not.
+6. At architecture, stand every role in with a double, so the level calls no model, runs fast and gives the same result each run.
+7. For each user story, list the paths through its sequence: the main flow first, then each branch, each step that sends work back to an earlier one, and each question put to the caller or the person, until every move from one step to the next lies on some path; write one test for each path, and check at each step the role that acts and the data it hands on.
+8. At ux, once unit and architecture pass, run the real product on each objective's scenario, on a subject the size of a real request, without aiming to cover every case.
+9. Give the AI that stands in for the person an intent written before the run and never shown to the product; a run passes when the stand-in gets what the objective says.
+10. For each key result, say what is measured, such as the lead time from the request to the result, and set each measure against the last one by the direction the UX gives it, since the UX gives a key result no target value.
+11. For a test whose result varies from run to run, write how many runs of how many must meet the expectation.
+12. Use each level's name the same way throughout the document.
 
 **Grounds**
 
+- [Certified Tester Foundation Level Syllabus](https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf), ISTQB, version 4.0.1, istqb.org, 2024: "Black-box test techniques (also known as specification-based techniques) are based on an analysis of the specified behavior of the test object without reference to its internal structure."
+- [Certified Tester Foundation Level Syllabus](https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf), ISTQB, version 4.0.1, istqb.org, 2024: "Test techniques help to develop a relatively small, but sufficient, set of test cases in a systematic way."
+- [Unit Testing](https://abseil.io/resources/swe-book/html/ch12.html), Kuefler, Software Engineering at Google, chapter 12, abseil.io, 2020: "A behavior is any guarantee that a system makes about how it will respond to a series of inputs while in a particular state."
 - [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html), Vocke, martinfowler.com, 2018: "A unit test typically replaces external collaborators with test doubles"
 - [Testing Overview](https://abseil.io/resources/swe-book/html/ch11.html), Bender, Software Engineering at Google, chapter 11, abseil.io, 2020: "the most important qualities we want from our test suite are speed and determinism, regardless of the scope of the test."
 - [Larger Testing](https://abseil.io/resources/swe-book/html/ch14.html), Graves, Software Engineering at Google, chapter 14, abseil.io, 2020: "The primary reason larger tests exist is to address fidelity."
 - [Larger Testing](https://abseil.io/resources/swe-book/html/ch14.html), Graves, Software Engineering at Google, chapter 14, abseil.io, 2020: "Tests can also be measured in terms of how faithful the test content is to reality."
 - [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html), Vocke, martinfowler.com, 2018: "Make sure that the higher-level test focuses on the part that the lower-level tests couldn't cover."
+- [Certified Tester Foundation Level Syllabus](https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf), ISTQB, version 4.0.1, istqb.org, 2024: "Therefore, one test for each partition is sufficient."
+- [Certified Tester Foundation Level Syllabus](https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf), ISTQB, version 4.0.1, istqb.org, 2024: "To achieve 100% coverage with this test technique, test cases must exercise all identified partitions (including invalid partitions) by covering each partition at least once."
+- [Certified Tester Foundation Level Syllabus](https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf), ISTQB, version 4.0.1, istqb.org, 2024: "BVA focuses on the boundary values of the partitions because developers are more likely to make errors with these boundary values."
+- [Certified Tester Foundation Level Syllabus](https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf), ISTQB, version 4.0.1, istqb.org, 2024: "In 2-value BVA (Craig 2002, Myers 2011), for each boundary value there are two coverage items: this boundary value and its closest neighbor belonging to the adjacent partition."
+- [Certified Tester Foundation Level Syllabus](https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf), ISTQB, version 4.0.1, istqb.org, 2024: "Decision tables are used for testing the implementation of requirements that specify how different combinations of conditions result in different outcomes."
+- [Certified Tester Foundation Level Syllabus](https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf), ISTQB, version 4.0.1, istqb.org, 2024: "In decision table testing, the coverage items are the columns containing feasible combinations of conditions."
+- [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), Anthropic, anthropic.com/engineering, 2026: "Test both the cases where a behavior should occur and where it shouldn't."
+- [Certified Tester Foundation Level Syllabus](https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf), ISTQB, version 4.0.1, istqb.org, 2024: "A test case based on a state diagram or state table is usually represented as a sequence of events, which results in a sequence of state changes (and actions, if needed)."
+- [Certified Tester Foundation Level Syllabus](https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf), ISTQB, version 4.0.1, istqb.org, 2024: "Valid transitions coverage is the most widely used coverage criterion."
+- [Certified Tester Foundation Level Syllabus](https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf), ISTQB, version 4.0.1, istqb.org, 2024: "Typically, the first test cases are positive, confirming the correct behavior without exceptions or error conditions, and comprising the sequence of activities executed if everything goes as expected."
+- [Certified Tester Foundation Level Syllabus](https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf), ISTQB, version 4.0.1, istqb.org, 2024: "After the positive test cases are done, the team should perform negative testing."
 - [Certified Tester Foundation Level Syllabus](https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf), ISTQB, version 4.0.1, istqb.org, 2024: "In sequential SDLC models, the test levels are often defined such that the exit criteria of one level are part of the entry criteria for the next level."
 - [Certified Tester Foundation Level Syllabus](https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf), ISTQB, version 4.0.1, istqb.org, 2024: "Acceptance testing focuses on validation and on demonstrating readiness for deployment, which means that the system fulfills the user’s business needs."
+- [Certified Tester Foundation Level Syllabus](https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf), ISTQB, version 4.0.1, istqb.org, 2024: "For some non-functional quality characteristics, it is preferable to test them on a complete system in a representative test environment (e.g., usability)."
+- [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), Anthropic, anthropic.com/engineering, 2026: "Unlike most other evals, they often require a second LLM to simulate the user."
+- [𝜏-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains](https://arxiv.org/html/2406.12045v1), Yao et al., arXiv:2406.12045, 2024: "Task annotation is not visible to the agent and is used only for user simulation and evaluation."
+- [𝜏-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains](https://arxiv.org/html/2406.12045v1), Yao et al., arXiv:2406.12045, 2024: "The instruction sets up user identity, intent, and preferences in a way that guarantees only one possible outcome under the domain policy."
 - [The Scrum Guide](https://scrumguides.org/scrum-guide.html), Schwaber and Sutherland, scrumguides.org, 2020: "The Definition of Done is a formal description of the state of the Increment when it meets the quality measures required for the product."
 - [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), Anthropic, anthropic.com/engineering, 2026: "pass^k measures the probability that all k trials succeed."
 - [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html), Vocke, martinfowler.com, 2018: "Given the shortcomings of the original names it's totally okay to come up with other names for your test layers, as long as you keep it consistent within your codebase and your team's discussions."
@@ -251,15 +276,19 @@ Whoever builds or changes the product, a person or an AI, makes each part withou
 
 ### Q13: When the unit and architecture tests pass, can the builder be sure the product does what this document says, leaving ux only to confirm the UX?
 
-**Thinking**: Each fault belongs to the lowest level whose check it breaks: a broken contract to unit, a wrong handoff, route or result between roles to architecture, and only what shows in real use at real size, such as lead time, to ux; and each double gives only what the part's contract allows, so a pass of the lower levels holds for the real parts.
+**Thinking**: The design is the paths its sequences draw, joined by what each part promises: unit tests show each real part keeps its promise, architecture tests show every path holds with doubles that keep only those promises, so the two hold for the real parts together, and ux tests are left only what real size shows, such as lead time.
 
 **Steps**
 
-1. Check each double's results by the same check the part's unit tests make of the part's results, so a change to the contract fails the double as it fails the part.
-2. For a fault a higher level finds, add a test at the level that must catch it, see it fail, then fix the fault there.
+1. Build each double from the form the part's contract gives its results, and set it only to results that form allows, the refusals among them.
+2. Check each double's results by the same check the part's unit tests make of the part's results, so a change to the contract fails the double as it fails the part.
+3. For a fault a higher level finds, name the case or the path the lower level missed, add its test at the level that must catch it, see it fail, then fix the fault there.
 
 **Grounds**
 
+- [Test Doubles](https://abseil.io/resources/swe-book/html/ch13.html), Trenk and Bly, Software Engineering at Google, chapter 13, abseil.io, 2020: "Fidelity refers to how closely the behavior of a test double resembles the behavior of the real implementation that it’s replacing."
+- [Test Doubles](https://abseil.io/resources/swe-book/html/ch13.html), Trenk and Bly, Software Engineering at Google, chapter 13, abseil.io, 2020: "These test doubles are very likely to exhibit behavior that violates the API contract of the type being mocked—for instance, returning null for a method that can never return null."
+- [Contract Test](https://martinfowler.com/bliki/ContractTest.html), Fowler, martinfowler.com, 2011: "Contract tests check the contract of external service calls, but not necessarily the exact data."
 - [Contract Test](https://martinfowler.com/bliki/ContractTest.html), Fowler, martinfowler.com, 2011: "These check that all the calls against your test doubles return the same results as a call to the external service would."
 - [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html), Vocke, martinfowler.com, 2018: "Running contract tests against the fake and the real server ensures that the fake we use in our integration tests is a faithful test double."
 - [Larger Testing](https://abseil.io/resources/swe-book/html/ch14.html), Graves, Software Engineering at Google, chapter 14, abseil.io, 2020: "Moreover, mocks become stale."
