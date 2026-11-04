@@ -101,35 +101,43 @@ sequenceDiagram
 #### Directory structure
 
 ```text
-plugins/<plugin>/                 what runs on users' machines, installed by Claude Code
-├── .claude-plugin/plugin.json    the manifest, holding the version <JSON>
-├── skills/<command>/SKILL.md     a skill's entry <Markdown>
-├── agents/<name>.md              an agent's entry <Markdown>
-├── hooks/hooks.json              the hooks' entries <JSON>
-├── hooks/lane/                   the guard, laid by Lane <Python 3>
-├── scripts/                      what runs as a command and depends on Claude Code <Python 3>
-├── core/domain/                  the knowledge and rules of the plugin's work
-├── core/roles/                   each role's flow
-├── docs/                         fuller use, named by the README's Documentation <Markdown>
-├── images/                       the images the README shows
-├── README.md                     for the plugin's users <Markdown>
-└── CHANGELOG.md                  what changed for users in each version <Markdown>
-
-dev/                              what only the builders need
-├── README.md                     the plugins' folders, and how to run the shared checks
-├── plugin-best-practice.md       this document
-├── images/                       the images this document shows
-├── scripts/                      the checks every plugin shares, and the hook before a push <sh, Python>
-└── <plugin>/
-    ├── README.md                 the way to the plugin's UX, architecture and tests
-    ├── ux.md                     the plugin's UX <Markdown>
-    ├── architecture.md           the plugin's architecture <Markdown>
-    ├── images/                   the images its UX and architecture show
-    ├── cosmic-ray.toml           the plugin's mutation testing <TOML>
-    └── tests/
-        ├── unit/                 each part against its contract, at the path of what each tests
-        ├── architecture/         all the parts joined, against the plugin's architecture
-        └── ux/                   the plugin in real use, against its UX
+<repository>/
+├── .claude-plugin/marketplace.json     the marketplace: the plugins it lists <JSON>
+├── README.md                           the plugins listed, and how to install them <Markdown>
+├── pyproject.toml, uv.lock             the check tools and their locked versions <TOML>
+├── .github/workflows/                  CI, which runs the checks on every push <YAML>
+├── .claude/rules/                      the repository's rules, such as the order a plugin is built in <Markdown>
+├── plugins/                            what runs on users' machines, installed by Claude Code
+│   └── <plugin>/
+│       ├── .claude-plugin/plugin.json  the manifest, holding the version <JSON>
+│       ├── skills/<command>/SKILL.md   a skill's entry <Markdown>
+│       ├── agents/<name>.md            an agent's entry <Markdown>
+│       ├── hooks/
+│       │   ├── hooks.json              the hooks' entries <JSON>
+│       │   └── lane/                   the guard, laid by Lane <Python 3>
+│       ├── scripts/                    what runs as a command and depends on Claude Code <Python 3>
+│       ├── core/
+│       │   ├── domain/                 the knowledge and rules of the plugin's work
+│       │   └── roles/                  each role's flow
+│       ├── docs/                       fuller use, named by the README's Documentation <Markdown>
+│       ├── images/                     the images the README shows
+│       ├── README.md                   for the plugin's users <Markdown>
+│       └── CHANGELOG.md                what changed for users in each version <Markdown>
+└── dev/                                what only the builders need, never installed
+    ├── README.md                       the plugins' folders, and how to run the shared checks
+    ├── plugin-best-practice.md         this document
+    ├── images/                         the images this document shows
+    ├── scripts/                        the checks every plugin shares, and the hook before a push <sh, Python>
+    └── <plugin>/                       one for each folder in plugins/
+        ├── README.md                   the way to the plugin's UX, architecture and tests
+        ├── ux.md                       the plugin's UX <Markdown>
+        ├── architecture.md             the plugin's architecture <Markdown>
+        ├── images/                     the images its UX and architecture show
+        ├── cosmic-ray.toml             the plugin's mutation testing <TOML>
+        └── tests/
+            ├── unit/                   each part against its contract, at the path of what each tests
+            ├── architecture/           all the parts joined, against the plugin's architecture
+            └── ux/                     the plugin in real use, against its UX
 ```
 
 [Repository structure](#repository-structure) says why each lies where it does.
