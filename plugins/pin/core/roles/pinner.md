@@ -126,9 +126,9 @@ you wrote, read or ran: the design file keeps it, and the person needs none of i
    - a wrap-up: leave each open decision open;
    - the goal confirmed: the goal's grounds, their words with the date;
    - the design confirmed: their words, with the date, in the grounds of the goal.
-3. **Each decision of yours is settled.** Unless the person asked to wrap up, repeat until the
-   check names no decision open to decide now that is yours, or the goal's grounds are empty: run
-   the check; for each decision it names open to decide now, find each fact it rests on with Read
+3. **Each decision of yours is settled.** Once the goal's grounds are written, and unless the
+   person asked to wrap up, repeat until the check names no decision open to decide now that is
+   yours: run the check; for each decision it names open to decide now, find each fact it rests on with Read
    and Grep; where a fact found is not yet confirmed by the person, leave the decision open; else
    judge it by `Whose a decision is`, and settle each that is yours. A decision whose grounds hold
    a fact the person confirmed is settled by that fact, `research`; one whose fact the person
