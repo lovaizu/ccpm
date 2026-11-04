@@ -240,14 +240,14 @@ plugins/rn/
 
 Rn is tested as [Test](../architecture.md#test) says.
 
-| Deployment unit | Unit | Integration | End-to-end |
+| Deployment unit | unit | architecture | ux |
 |---|---|---|---|
 | Rn's scripts [Python 3.9] | unittest, Cosmic Ray, Hypothesis · ●●● · the steering, each CCS, each proposal and answer | ▨[^1] | ▨[^2] |
 | the orchestrator and the compressor [Claude Code · Markdown] | a trial of each move · ●●○ · the move from a state made beforehand | ▨[^1] | ▨[^2] |
 | Rn with Turn [Claude Code] | ▨[^3] | ▨[^3] | the acceptance test · ●●○ · KR1.1 and KR1.2 |
 
 [^1]: The trial of each move also checks how the moves follow one another.
-[^2]: End-to-end tests run on the whole, in the last row.
+[^2]: ux tests run on the whole, in the last row.
 [^3]: Its units are tested in their own rows.
 
 - Rn's scripts get unit tests, property tests and mutation testing in full: a failure loses the

@@ -281,13 +281,19 @@ sequenceDiagram
     end
   end
   D->>R: in the background, a fact to find
-  loop until no Decision is left open
+  loop until no Decision is left open, or the person asks to wrap up
     alt a point is the person's: a fact to confirm, a fact only they know, or a Decision
       D->>M: ends with the point, headed `For the person:`
       M->>P: puts it
-      P->>M: the answer
-      M->>D: resumes it, under `The person's answer, word for word:`
-      D->>T: writes it, the person's words as its Ground
+      alt the person answers it
+        P->>M: the answer
+        M->>D: resumes it, under `The person's answer, word for word:`
+        D->>T: writes it, the person's words as its Ground
+      else the person asks to wrap up
+        P->>M: wrap up
+        M->>D: resumes it, under `The person's answer, word for word:`
+        D->>T: leaves each open Decision open, and asks no more
+      end
     else a Decision open now is the pinner's to settle
       D->>T: writes the Decision, by reasoning
     end
@@ -428,7 +434,7 @@ So pin's steps are held by the check and by these tests.
   | Sequence | Paths |
   |---|---|
   | O1 | the main flow: a new tree, the goal confirmed, a fact confirmed, a decision the pinner settles, a decision the person makes, the design confirmed; a tree mended after the check names a problem; a fact corrected; a fact only the person knows; a decision left to the pinner; a point an answer raises; a wrap-up with decisions left open; the design changed, and its decisions settled again; a tree left by a stopped run, gone on from |
-  | O2 | the main flow, from the caller's settled points, with keys of the caller's own; a tree mended, the caller's points kept; the design changed, and its decisions settled again |
+  | O2 | the main flow, from the caller's settled points, with keys of the caller's own; a tree mended, the caller's points kept; a wrap-up the person asks for through the main conversation, with decisions left open; the design changed, and its decisions settled again |
   | a reopen | a decision reopened with each that builds on it; a point no decision holds, added |
 
   Each tree the double writes holds the form that `check.py`'s unit tests hold the tree to, so a

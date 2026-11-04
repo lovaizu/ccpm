@@ -561,6 +561,7 @@ sequenceDiagram
   participant U as up
   participant PL as planner
   participant D as designer
+  participant W as builder, evaluator, refactorer, proofreader
   participant F as run's folder
   N->>U: starts in the background (Call, with Given)
   U->>PL: starts (Run values, Given)
@@ -576,7 +577,26 @@ sequenceDiagram
     N->>U: resumes, with the answer
     U->>D: resumes, with the answer
   end
-  Note over U,D: From designed on, as in the second and third sequences, each question of a send-back put to the person through the caller.
+  D-->>U: gives designed, and ends
+  loop until proofreader gives good, as the second and third sequences draw
+    U->>W: starts builder, evaluator, refactorer or proofreader, as the routes say (Run values)
+    W-->>U: gives its result, and ends
+    opt the result sends the work back to designer: open, more or content
+      U->>D: starts, with the folder it takes back (Run values)
+      alt a point it takes back is the person's
+        D-->>U: gives asks, and ends with the question
+        U-->>N: ends with the question
+        N->>P: puts it
+        P->>N: the answer
+        N->>U: resumes, with the answer
+        U->>D: resumes, with the answer
+        D->>F: writes the Decision, the person's words as its Ground, and Remake
+      else designer settles every point itself
+        D->>F: writes Remake
+      end
+      D-->>U: gives designed, and ends
+    end
+  end
   U-->>N: ends with the Work's paths
 ```
 
@@ -715,7 +735,7 @@ laid in Turn. pin's `check.py` has none: pin tests it, and Turn's architecture t
   | builder and evaluator | every run `built`, then every run `good`; a run `open` beside a run `built`, sent back to designer with `open/`, then builder only for the parts the Remake reaches; a run `more` beside a run `good`, sent back with `verification/`; designer asking the person on a send-back |
   | the refactoring phase | every run `good`, the work done; a run `more`, back to refactorer; a run `content` beside a run `more`, sent back to designer with `proofreading/` |
   | O2 | each point of the kind approved; a point changed, and what builds on it opened again; a Template whose fault `practices.py ready` names, mended |
-  | O3 | the kind and the goal as the caller gave them, a question for the person put through the caller; no question left for the person |
+  | O3 | the kind and the goal as the caller gave them, a question for the person put through the caller; no question left for the person; a send-back whose point is the person's, its question put through the caller; a send-back designer settles itself |
   | a change named | the change taken back by designer, and only the parts its Remake reaches made again |
 
   A test passes where each start is the one the routes name, with the run values the role before

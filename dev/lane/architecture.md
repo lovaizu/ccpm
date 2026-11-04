@@ -270,6 +270,9 @@ sequenceDiagram
   participant G as guard.py
   participant C as called.py
   participant LN as lanes/
+  participant P as ports.py
+  participant AD as Adapter
+  participant PF as Plugin files
   OP->>CC: asks changelog for an entry and a commit
   CC->>SA: starts writer in the background
   CC->>H: PostToolUse of the start, with writer's agentId (Event)
@@ -295,7 +298,52 @@ sequenceDiagram
     H-->>CC: deny, with the rule's sentence (Decision)
     CC-->>SA: the plugin's name and the sentence
   end
-  opt a call cannot be checked, such as one whose adapter fails
+  opt writer runs a command that holds a run's value as a part
+    SA->>CC: runs the command
+    CC->>H: PreToolUse (Event)
+    H->>G: checks (Event)
+    G->>C: the run's values (Run value)
+    alt the start's prompt is not kept within 3 seconds
+      H-->>CC: deny, as a call that cannot be checked, the operator told too (Decision)
+    else the command holds the run's own value, as one word of the shell
+      LN-->>G: no break
+      H-->>CC: nothing to tell, so the call goes on
+    else it holds another value, or the value as more than one word
+      LN-->>G: a command its rules do not name
+      H-->>CC: deny, with the command it may run, its value put in (Decision)
+    end
+  end
+  opt writer runs a command of a dependency's skill
+    SA->>CC: runs the command
+    CC->>H: PreToolUse (Event)
+    H->>G: checks (Event)
+    G->>PF: reads the folder the command names, and the plugin's manifest
+    alt the folder holds the manifest of the dependency the plugin declares
+      LN-->>G: no break
+      H-->>CC: nothing to tell, so the call goes on
+    else it holds none, or the rest of the command differs
+      LN-->>G: a command its rules do not name
+      H-->>CC: deny, with the rule's sentence (Decision)
+    end
+  end
+  opt a rule reads a text of the plugin through its adapter
+    SA->>CC: makes the call the rule checks, such as its result command
+    CC->>H: PreToolUse (Event)
+    H->>G: checks (Event)
+    G->>P: reads the text (Port JSON)
+    P->>AD: runs on the text
+    alt the adapter gives Port JSON
+      AD-->>P: Port JSON
+      P-->>G: Port JSON
+      G->>LN: runs each check (Rule, Port JSON)
+      LN-->>G: no break, or what is missing
+      H-->>CC: nothing to tell, or deny with what is missing (Decision)
+    else the adapter fails
+      AD-->>P: an error
+      H-->>CC: deny, as a call that cannot be checked, the operator told too (Decision)
+    end
+  end
+  opt a call cannot be checked for another cause, such as an event it cannot read
     SA->>CC: makes the call
     CC->>H: PreToolUse (Event)
     H-->>CC: deny, with why and who must fix it, the operator told too (Decision)
@@ -584,13 +632,12 @@ is tested in the rows of the lay.py process and the hook process.
   | `lay.py print` | the proposal laid, without an adapter and with one; the proposal refused |
   | `lay.py write` | the proposal written, without an adapter and with one; the proposal refused, nothing written; `claude plugin validate` failing, and `claude` missing, the proposal kept |
   | `lay.py up` | a folder with no manifest; Lane's code older, and the hook entries in another form; nothing to bring up |
-  | writer's run | each call its rules allow going through; `git commit` stopped with its sentence; a call that cannot be checked, the operator told |
+  | writer's run | each call its rules allow going through; `git commit` stopped with its sentence; a command with the run's own value going through; a command with another value, or with the value as two words, stopped; the run's prompt kept too late, stopped as a call that cannot be checked; a dependency's command by its folder going through; the same command by a folder with no such manifest, or in other words, stopped; a text read through an adapter, in form and out of form; an adapter that fails; an event that cannot be read; the operator told of each call that cannot be checked |
   | lead's run | `written`, then `good`; `written`, then `more`, sent back to writer, then `good`; the work not in form for its result, then mended; a result no route is on, then one it is on; a start no route names; a subagent ending with no result, kept going once; lead kept going once with a start due, then let end |
   | runs at once | every run giving one result; results ordered by `precedence`; results `precedence` does not hold; a start before every run ended; a run ending with no result, started again |
   | a held command | the person says yes; the person says no |
 
-  Each type of rule is laid on some path, and a run's value, a command of a dependency's skill and
-  an adapter's Port JSON are each held on some path of writer's run.
+  Each type of rule is laid on some path.
 - **Where a double's results come from**: the double of Claude Code sends what the hooks reference
   documents, and, where it says nothing, what each try in [Sequences](#sequences) recorded, with
   its Claude Code version and date. A double subagent makes tool calls that its lanes name or that
@@ -599,14 +646,18 @@ is tested in the rows of the lay.py process and the hook process.
 - **ux**: a trial lays the proposal of O1 or of O2 with `lay.py write` on a copy of `changelog` in
   a git repository of its own, with a release's commits, as a project has them. It runs Claude
   Code on Opus with the developer AI's ask, which invites a break, such as `git commit` for writer.
-  O2 runs in an
-  interactive session, as `claude -p` does not start the orchestrator again. The developer AI's
-  intent is the ask itself, so no stand-in answers: no step of the scenarios waits for a person. A
-  run passes where, by the session's records, each invited break is stopped with its sentence,
+  O2 runs in an interactive session, as `claude -p` does not start the orchestrator again. The
+  developer AI's intent is the ask itself, so no stand-in answers: no step of the scenarios waits
+  for a person. A run passes where, by the session's records, each invited break is stopped with its sentence,
   each allowed call goes through, and the subagents start as the routes say, which is what O1 and
   O2 say. A run counts only where each invited break was tried. The trial measures for KR1.1 and
   KR2.1 the share of calls and of starts that went wrong, and for KR1.2 and KR2.2 the time from
   `lay.py print` to the end of the run. Lower and shorter are better.
+- Five trials try cases, not an objective: `trial_lanes.py`, `trial_at_once.py`,
+  `trial_fan_out.py`, `trial_dependency.py` and `trial_value_command.py`. Each case they try is a
+  path above. Once each of those paths has its architecture test, the five trials are removed,
+  with the files only they use, as ux does not aim to cover every case. Until then they stay, so
+  no case goes untested in the meantime.
 - A fault the trials find in how Claude Code acts, such as the order of two events, is brought down
   as [A fault is tested at the level that must catch it](../architecture.md#a-fault-is-tested-at-the-level-that-must-catch-it)
   says: the try is recorded in Sequences, the double of Claude Code sends it, and an architecture
