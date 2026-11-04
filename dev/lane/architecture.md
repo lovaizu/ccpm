@@ -195,10 +195,15 @@ sequenceDiagram
     P->>AD: runs on each test case (Port JSON)
     AD-->>P: Port JSON
   end
-  P-->>L: Rule, Route, or what is wrong
-  L->>PF: reads each step (Step)
-  L->>LN: makes each sentence (Rule)
-  L-->>DA: the routes, and each step as it will read, or what is wrong
+  alt the proposal can be laid
+    P-->>L: Rule, Route
+    L->>PF: reads each step (Step)
+    L->>LN: makes each sentence (Rule)
+    L-->>DA: the routes, and each step as it will read
+  else it cannot
+    P-->>L: what is wrong
+    L-->>DA: what is wrong, and exits 1
+  end
 ```
 
 `lay.py write`:
@@ -212,14 +217,46 @@ sequenceDiagram
   participant CC as Claude Code
   DA->>L: write (Proposal)
   L->>P: checks (Proposal)
-  P-->>L: Rule, Route
-  L->>PF: writes Step, Hook entry, Rules laid, Lane's code
-  opt the proposal names an adapter
-    L->>PF: writes Adapter, Test cases
+  alt the proposal cannot be laid
+    P-->>L: what is wrong
+    L-->>DA: what is wrong, nothing written, and exits 1
+  else it can
+    P-->>L: Rule, Route
+    L->>PF: writes Step, Hook entry, Rules laid, Lane's code
+    opt the proposal names an adapter
+      L->>PF: writes Adapter, Test cases
+    end
+    L->>CC: claude plugin validate
+    alt it passed
+      CC-->>L: passed
+      L-->>DA: what it wrote, and the proposal removed
+    else it found the plugin malformed, or claude is not on PATH
+      CC-->>L: what it found
+      L-->>DA: what to fix, the proposal kept to run again, and exits 1
+    end
   end
-  L->>CC: claude plugin validate
-  CC-->>L: passed
-  L-->>DA: what it wrote, and the proposal removed
+```
+
+`lay.py up`, after Lane is updated:
+
+```mermaid
+sequenceDiagram
+  participant DA as Developer AI
+  participant L as lay.py
+  participant PF as Plugin files
+  DA->>L: up (the plugin's folder)
+  alt the folder holds no plugin's manifest
+    L-->>DA: what is wrong, nothing brought up, and exits 1
+  else it holds one
+    L->>PF: reads Lane's code, Hook entry and Rules laid
+    opt the plugin's copy of Lane's code is older than Lane
+      L->>PF: writes Lane's code
+    end
+    opt the hook entries are in another form than Lane's
+      L->>PF: writes Hook entry
+    end
+    L-->>DA: what it did, and each rule laid before, marked where its step no longer says it
+  end
 ```
 
 A subagent with rules on a run, `writer` of the UX's O1:
@@ -258,6 +295,13 @@ sequenceDiagram
     H-->>CC: deny, with the rule's sentence (Decision)
     CC-->>SA: the plugin's name and the sentence
   end
+  opt a call cannot be checked, such as one whose adapter fails
+    SA->>CC: makes the call
+    CC->>H: PreToolUse (Event)
+    H-->>CC: deny, with why and who must fix it, the operator told too (Decision)
+    CC-->>SA: the plugin's name and why
+    CC-->>OP: the message, headed by the plugin's name
+  end
   SA->>CC: ends with CHANGELOG.md written
   CC-->>OP: writer's answer, once it has ended (Answer)
 ```
@@ -293,8 +337,19 @@ sequenceDiagram
     O->>CC: ends, waiting
     S->>CC: runs the result script with its result
     CC->>H: PreToolUse of the result command (Event)
+    opt the work is not in the form its result needs
+      H-->>CC: deny, with what is missing (Decision)
+      CC-->>S: the plugin's name and what is missing
+      S->>CC: mends the work, and runs the result script again
+      CC->>H: PreToolUse of the result command (Event)
+    end
     H-->>CC: the work is in form, so the command goes on
     CC->>RS: runs it
+    opt no route is on the result
+      RS-->>S: exits with an error naming the results it may give
+      S->>CC: runs the result script again with one of them
+      CC->>RS: runs it
+    end
     RS-->>S: a route is on the result
     CC->>H: PostToolUse of the result script (Event)
     H->>C: keeps the result (Result)
@@ -303,9 +358,17 @@ sequenceDiagram
     H->>C: a result is kept, so it may end
     CC->>H: SubagentStart of lead, started again to be told it ended (Event)
     H->>RT: asks the next start (Route, Result)
-    RT-->>H: writer after `more`, reviewer after `written`, or none after `good`
-    H-->>CC: context with the next start, or that no start is left (Decision)
-    CC-->>O: the next start, as context
+    alt writer gave `written`
+      RT-->>H: reviewer
+      H-->>CC: context with the next start (Decision)
+    else reviewer gave `more`
+      RT-->>H: writer
+      H-->>CC: context with the next start, sent back to writer (Decision)
+    else reviewer gave `good`
+      RT-->>H: none
+      H-->>CC: context that no start is left (Decision)
+    end
+    CC-->>O: the next start, or none, as context
   end
   opt lead starts a subagent the routes do not name, or a subagent ends with no result
     H-->>CC: deny the start, or keep the subagent going, with the sentence (Decision)
@@ -317,6 +380,39 @@ sequenceDiagram
   end
   O->>CC: ends
   CC-->>OP: lead's answer, the reviewed entries (Answer)
+```
+
+Runs at once of a subagent the routes name in `fan_out`, as
+[Lane's routes](../../plugins/lane/docs/routes.md#runs-at-once) give them:
+
+```mermaid
+sequenceDiagram
+  participant O as Orchestrator (Subagent)
+  participant CC as Claude Code
+  participant H as hook.py
+  participant RT as routes.py
+  participant S as runs of one subagent (Subagent)
+  O->>CC: starts a run, then another while the first still runs
+  CC->>S: runs each in the background, each with its own values
+  loop until every run has ended
+    S->>CC: ends with its result, or with none
+    opt a run ends with no result after it was kept going once
+      H-->>CC: context: start it again once the others have ended (Decision)
+    end
+    opt the orchestrator starts the next subagent before every run has ended
+      H-->>CC: deny, with the wait for every run (Decision)
+    end
+  end
+  CC->>H: SubagentStart of the orchestrator (Event)
+  H->>RT: asks the next start (Route, Result)
+  alt every run gave one result, or their results stand in `precedence`
+    RT-->>H: the next start, from the result of the runs
+    H-->>CC: context with the next start (Decision)
+  else their results differ and `precedence` does not hold them
+    RT-->>H: no result can be told
+    H-->>CC: an error the plugin's maker must fix, the operator told too (Decision)
+  end
+  CC-->>O: the next start, or the error, as context
 ```
 
 A held command on a run:
@@ -331,8 +427,13 @@ sequenceDiagram
   CC->>H: PreToolUse (Event)
   H-->>CC: ask, with the rule's sentence (Decision)
   CC->>P: the permission prompt, with the sentence
-  P-->>CC: yes, or no
-  CC-->>SA: the command's output, or that it was refused
+  alt the person says yes
+    P-->>CC: yes
+    CC-->>SA: the command's output
+  else the person says no
+    P-->>CC: no
+    CC-->>SA: that it was refused
+  end
 ```
 
 - A result counts only from a run of the result script that succeeded. Claude Code sends a run that
@@ -445,8 +546,8 @@ dev/lane/
 ├── testing.py                         what every plugin's tests stand on <Python 3>
 └── tests/
     ├── unit/hooks/lane/core/domain/   unit and property tests, at the path of what each tests, a lane's beside the others <Python 3>
-    ├── integration/                   lay.py, the hooks' commands and result.py on real files <Python 3>
-    └── e2e/                           the E2E tests, trial_*.py, and their plugins <Python 3>
+    ├── architecture/                  lay.py, the hooks' commands and result.py on real files, each sequence from start to end <Python 3>
+    └── ux/                            the trials of O1 and O2, trial_*.py, and the plugin changelog they run on <Python 3>
 
 .lane/<yyyymmdd>-<plugin>/             Proposal, and <plugin>/adapters/ with Adapter and Test cases
 <temporary folder>/lane/<yyyymmdd>-<session>/<agent_id>.jsonl   Calls kept, and the texts each run was given
@@ -458,37 +559,59 @@ dev/lane/
 
 Lane is tested as [Test](../architecture.md#test) says. What follows is what Lane adds.
 
-| Deployment unit | Unit | Integration | End-to-end |
+| Deployment unit | unit | architecture | ux |
 |---|---|---|---|
-| lay.py process [python3 3.9 or later] | unittest, Cosmic Ray, Hypothesis · ●●● · the proposal checked, steps and hook entries written | unittest, real files, a stand-in `claude` · ●●○ · print, write and up on a plugin | E2E tests · ●●○ · the lanes and the routes laid on a test plugin |
-| Hook process [python3 3.9 or later] | unittest, Cosmic Ray, Hypothesis · ●●● · each type of rule, tool calls, the next start | unittest, the hook's command in `sh` · ●●○ · the answer JSON, the Python check | E2E tests · ●●○ · each type of rule and the routes on a run of the test plugin |
-| Result process [python3 3.9 or later] | unittest, Cosmic Ray, Hypothesis · ●●● · each result a subagent may give | unittest, real files · ●●○ · the exit and its message | E2E tests · ●●○ · results given on a run of the test plugin |
+| lay.py process [python3 3.9 or later] | unittest, Cosmic Ray, Hypothesis · ●●● · the proposal checked; steps, hook entries and Lane's code written | unittest, real files, a double of `claude` · ●●● · each path of `lay.py print`, `write` and `up` | trials on Opus · ●○○ · the proposals of O1 and O2 laid on `changelog` |
+| Hook process [python3 3.9 or later] | unittest, Cosmic Ray, Hypothesis · ●●● · each type of rule, tool calls, the next start | unittest, the hooks' commands in `sh`, doubles of Claude Code and the subagents · ●●● · each path of writer's run, lead's run, runs at once and a held command | trials on Opus · ●○○ · writer kept to its rules in O1, and lead to its routes in O2 |
+| Result process [python3 3.9 or later] | unittest, Cosmic Ray, Hypothesis · ●●● · each result a subagent may give | unittest, `result.py` run as a step writes it · ●●● · each path of lead's run that gives a result | trials on Opus · ●○○ · the results of O2 |
 
 The adapter processes have no row. An adapter is the developer AI's code, and Lane's running of it
-is tested in the hook process's row.
+is tested in the rows of the lay.py process and the hook process.
 
-- Unit and integration tests fake Claude Code. Each event is JSON in the fields Claude Code
-  documents, and `claude` is a script on `PATH`. They pass as the shared rules say.
-- An E2E test runs Claude Code with Opus on copies of Lane and of a test plugin, with a prompt that
-  invites a break, and is judged from the session's records. It passes in three runs of three:
-  each invited break is stopped with its sentence, each allowed call goes through, and the
-  subagents start as the routes say. An AI that goes back to its step once may go around the rule
-  the next time. A run counts only where each invited break was tried. One E2E test starts two runs
-  of one subagent at once with different values, and passes where each run is held to its own.
-  Another loads a stand-in dependency beside the test plugin and passes where the command of its
-  skill goes through by the folder it is loaded from, and the same script by another folder or in
-  other words is stopped. One has the orchestrator start two runs of one subagent at once, the
-  second given work that a script of the test plugin answers late, so the orchestrator's start
-  between their ends is tried, and passes where the next start goes through only once both have
-  ended. Another holds a run's value
-  inside a command, and passes where the command with the run's own value goes through and the
-  command with another value, or with the value as more than one word, is stopped. The
-  routes and a held command are tried in an interactive session, as `claude -p` neither starts the
-  orchestrator again nor asks anyone. The files are named `trial_*.py`, so unittest finds none of
-  them.
-- Each process weighs ●●● in unit tests. A failure writes what no one approved, or lets a break
-  through in a plugin whose operator never sees Lane.
-- Integration and end-to-end tests weigh ●●○. The unit tests hold every behavior, as
-  [Unit: code](../architecture.md#unit-code) says. So integration tests check only how
-  the code meets `sh`, the files and `claude`, and the E2E tests only how an AI meets the sentences
-  and the starts.
+- **unit**: the classes of each type of rule are a call it allows, a call that breaks it, and a
+  call it cannot check, each for a subagent with rules and for one without. The double of Claude
+  Code is each event as JSON, in the fields that Claude Code's hooks reference documents, and the
+  double of `claude` is a script on `PATH`.
+- **architecture**: the tests lay a proposal with `lay.py write` on a copy of `changelog`, and
+  then run one path of [Sequences](#sequences) each. Lane's code, the hooks' commands in `sh`,
+  `result.py` and the files on disk run real. A double of Claude Code sends the events of the path
+  in order and runs the hooks' commands. Doubles of the developer AI and of the subagents make set
+  calls and give set results. The person of a held command is a set answer of the double. The
+  paths:
+
+  | Sequence | Paths |
+  |---|---|
+  | `lay.py print` | the proposal laid, without an adapter and with one; the proposal refused |
+  | `lay.py write` | the proposal written, without an adapter and with one; the proposal refused, nothing written; `claude plugin validate` failing, and `claude` missing, the proposal kept |
+  | `lay.py up` | a folder with no manifest; Lane's code older, and the hook entries in another form; nothing to bring up |
+  | writer's run | each call its rules allow going through; `git commit` stopped with its sentence; a call that cannot be checked, the operator told |
+  | lead's run | `written`, then `good`; `written`, then `more`, sent back to writer, then `good`; the work not in form for its result, then mended; a result no route is on, then one it is on; a start no route names; a subagent ending with no result, kept going once; lead kept going once with a start due, then let end |
+  | runs at once | every run giving one result; results ordered by `precedence`; results `precedence` does not hold; a start before every run ended; a run ending with no result, started again |
+  | a held command | the person says yes; the person says no |
+
+  Each type of rule is laid on some path, and a run's value, a command of a dependency's skill and
+  an adapter's Port JSON are each held on some path of writer's run.
+- **Where a double's results come from**: the double of Claude Code sends what the hooks reference
+  documents, and, where it says nothing, what each try in [Sequences](#sequences) recorded, with
+  its Claude Code version and date. A double subagent makes tool calls that its lanes name or that
+  they stop. Each result it gives passes `result.py`, as the real subagent's must, or is one that
+  `result.py` refuses, on the path that tries a refusal.
+- **ux**: a trial lays the proposal of O1 or of O2 with `lay.py write` on a copy of `changelog` in
+  a git repository of its own, with a release's commits, as a project has them. It runs Claude
+  Code on Opus with the developer AI's ask, which invites a break, such as `git commit` for writer.
+  O2 runs in an
+  interactive session, as `claude -p` does not start the orchestrator again. The developer AI's
+  intent is the ask itself, so no stand-in answers: no step of the scenarios waits for a person. A
+  run passes where, by the session's records, each invited break is stopped with its sentence,
+  each allowed call goes through, and the subagents start as the routes say, which is what O1 and
+  O2 say. A run counts only where each invited break was tried. The trial measures for KR1.1 and
+  KR2.1 the share of calls and of starts that went wrong, and for KR1.2 and KR2.2 the time from
+  `lay.py print` to the end of the run. Lower and shorter are better.
+- A fault the trials find in how Claude Code acts, such as the order of two events, is brought down
+  as [A fault is tested at the level that must catch it](../architecture.md#a-fault-is-tested-at-the-level-that-must-catch-it)
+  says: the try is recorded in Sequences, the double of Claude Code sends it, and an architecture
+  test fails before Lane's code is fixed.
+- Each process weighs ●●● in unit and architecture tests. A failure writes what no one approved,
+  or lets a break through in a plugin whose operator never sees Lane, and only these levels cover
+  every case on every push.
+- The trials weigh ●○○. They only confirm, in real use, what the lower levels have checked.
