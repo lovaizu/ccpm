@@ -14,4 +14,6 @@ timeout = 30.0
 # an item in the list it is taken from; flags joined that are bits apart, the same by `|`, `+` or
 # `^`; and a line Cosmic Ray 8.7.0 fails to mutate, its ExceptionReplacer failing on a dotted name
 # among the exceptions, so no mutant of it can be tested.
-test-command = "sh -c 'ruff check --select F632 plugins/turn && sh dev/scripts/typecheck.sh turn && python -m unittest discover -f -s dev/turn/tests'"
+# The unit tests alone run on each mutant, as Unit: code is the level whose tests catch every mutant;
+# the architecture tests run the guards of two plugins on each path, longer than the timeout.
+test-command = "sh -c 'ruff check --select F632 plugins/turn && sh dev/scripts/typecheck.sh turn && python -m unittest discover -f -s dev/turn/tests/unit -t dev/turn/tests'"

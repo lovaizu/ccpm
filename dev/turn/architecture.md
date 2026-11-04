@@ -587,7 +587,9 @@ guard real where they join Turn.
   [No check passes what it did not check](../plugin-best-practice.md#no-check-passes-what-it-did-not-check)
   says: no problem, a problem, and could not check.
 - No person takes part at unit, so nothing stands in for one.
-- The tests pass as [Unit: code](../plugin-best-practice.md#unit-code) says.
+- The tests pass as [Unit: code](../plugin-best-practice.md#unit-code) says. The mutation testing
+  runs on the unit tests alone, as they are the ones that must catch every mutant. The architecture
+  tests run two plugins' guards on every call, and outlast a mutant's time.
 
 ### Architecture
 
@@ -609,6 +611,9 @@ Each test runs one path of [Sequences](#sequences).
   Claude Code version and the date.
 - At each step, the test checks the role that acts and the data it hands on: the start that the
   guard names, the run values, the files on disk, and what the guard lets through or stops.
+- The subject is `tidy`, the trials' own. The paths of the rounds run on the repository's own best
+  practice of a README, of three questions, which Turn takes over its own. Each round then has
+  three runs of the evaluator, not seven, and the tests stay short.
 - The tests pass as
   [Architecture: the parts joined](../plugin-best-practice.md#architecture-the-parts-joined) says.
 
