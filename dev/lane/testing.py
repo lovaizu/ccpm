@@ -469,16 +469,3 @@ def lane_code(plugin: str, *names: str) -> list[Any]:
         for n in shared:
             sys.modules.pop(n, None)
         sys.modules.update(own)
-
-
-def laid(plugin: str) -> list[tuple[str, int, str, list[str]]]:
-    """Each lane the plugin's hooks/lanes.json lays, as (agent, step, lane, takes), the agent as
-    `<plugin>:<name>`, read by lane's code as the plugin takes it, as the guard reads them."""
-    (lanes_json,) = lane_code(plugin, "lanes_json")
-    with open(os.path.join(plugin, ".claude-plugin", "plugin.json"), encoding="utf-8") as f:
-        name = json.load(f)["name"]
-    found = []
-    for agent in lanes_json.laid(plugin)["subagents"]:
-        for number, lane, takes, _ in lanes_json.lanes_of(agent):
-            found.append((f"{name}:{agent['name']}", number, lane, takes))
-    return found
