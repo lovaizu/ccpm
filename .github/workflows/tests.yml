@@ -5,12 +5,18 @@ on: push
 # The tests only read the repository, so the token they are given can change nothing.
 permissions:
   contents: read
-  checks: read
+  actions: read
+
+# A push stops the run of the push before it on the same branch, as the newer run checks all it
+# would have: what changed since the last commit whose run passed.
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   # The unit tests of every plugin run on each push, and the property tests and the mutation
-  # testing, which check that the unit tests are enough, on what changed since the commit before
-  # it where that passed, else since the branch left main, for each plugin `sh dev/changed.sh`
+  # testing, which check that the unit tests are enough, on what changed since the last commit of
+  # the branch whose run passed, else since the branch left main, for each plugin `sh dev/changed.sh`
   # names, each in a job of its own, all at once; whole on main after a commit not passed, and for a
   # plugin whose version the push changes, as before a release. A push that changes only what no
   # check reads, such as the session records and the documents of dev/, is not checked, and `tests`
@@ -26,14 +32,21 @@ jobs:
           fetch-depth: 0
       - id: changed
         env:
-          BEFORE: ${{ github.event.before }}
+          BRANCH: ${{ github.ref_name }}
           GH_TOKEN: ${{ github.token }}
         run: |
-          passed=$(gh api "repos/$GITHUB_REPOSITORY/commits/$BEFORE/check-runs" \
-            --jq '[.check_runs[] | select(.name == "tests") | select(.conclusion == "success")] | length' \
-            2>/dev/null || echo 0)
-          if [ "$passed" -gt 0 ] && git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
-            base=$BEFORE
+          # The newest commit of HEAD's history whose run passed; a run stopped or failed checked
+          # nothing that holds, so what it changed is checked again here.
+          passed=""
+          for sha in $(gh run list -R "$GITHUB_REPOSITORY" --workflow tests.yml --branch "$BRANCH" \
+            --status success --limit 50 --json headSha --jq '.[].headSha' 2>/dev/null); do
+            if git merge-base --is-ancestor "$sha" HEAD 2>/dev/null; then
+              passed=$sha
+              break
+            fi
+          done
+          if [ -n "$passed" ]; then
+            base=$passed
           elif [ "$GITHUB_REF" != refs/heads/main ]; then
             base=$(git merge-base HEAD origin/main)
           else

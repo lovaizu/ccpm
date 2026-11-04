@@ -659,14 +659,16 @@ What runs when:
   checker and the manifests' check, and stops the push on a failure.
 - On every push, CI runs every plugin's unit and architecture tests, counts the lines and branches
   the unit tests run, and fails on any line or branch not run. It runs the mutation testing and the
-  property tests on what the push changed, the property tests on many inputs, each plugin in its
-  own job, all at once.
+  property tests on what changed since the last commit whose run passed, the property tests on many
+  inputs, each plugin in its own job, all at once. A push stops the run still going for the push
+  before it on the same branch.
 - On a push that changes a plugin's version, CI runs both on the whole plugin, before it is
   released.
 - Each check runs on Python 3.9 and the newest Python. Cosmic Ray and Hypothesis run on the newest
   only.
 - CI's `tests` job runs on every push. It skips the checks when the push changes only what no check
-  reads, such as the session records and the documents in `dev/`, and the commit before it passed.
+  reads, such as the session records and the documents in `dev/`, and the last commit whose run
+  passed is in its history.
 
 The reasons:
 
@@ -676,6 +678,9 @@ The reasons:
   property tests and the mutation testing only confirm that design. Run before every push, on many
   inputs or once per mutant, they would make every change wait. A survivor that CI finds goes back
   to the test design that missed it.
+- A run stopped or failed confirms nothing, so the next run checks from the last one that passed;
+  started from the push before, every push made while a run was going would check the whole
+  branch again, and the runs would pile up.
 - Checking what a change touches takes minutes; checking the whole takes long. So the whole is
   checked when it reaches users. A test weakened with no line of code changed is among what only
   the whole run finds.
