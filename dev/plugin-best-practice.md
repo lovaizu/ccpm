@@ -373,15 +373,6 @@ Each plugin's architecture draws a sequence for each of its own user stories on 
   `prefers-color-scheme`. An image shown by `<img>` reads no file beside it, so each SVG carries a
   copy of the style, put in by a script, and the checks fail on a copy left behind.
 
-### Physical view
-
-#### Deployment
-
-![A plugin's deployment](images/deployment.svg)
-
-The figure places the roles as [Where the orchestrator runs](#where-the-orchestrator-runs) says,
-and a run's files as [Where a plugin writes its files](#where-a-plugin-writes-its-files) says.
-
 ## Development
 
 ### Python 3.9 and the standard library
