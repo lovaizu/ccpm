@@ -8,7 +8,11 @@ The developer builds what the product's users want.
 
 [ux-template.md](ux-template.md)
 
-## Benefits
+## Example
+
+[ux-example.md](ux-example.md)
+
+## User benefits
 
 - **Q1** (Roles, OKRs): Does the developer find each one who comes to the product with a want of their own, and an objective for that want, so they leave out nothing the product's users want?
 - **Q2** (Roles, OKRs): Reading an objective, does the developer know which role it is for and what that role gets from the product?

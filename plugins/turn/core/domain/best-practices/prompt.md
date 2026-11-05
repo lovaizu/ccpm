@@ -14,7 +14,7 @@ When an AI agent gets the prompt for a request that the prompt is made for, it d
 - **output**: What the AI hands back, in what form, and to whom.
 - **trials**: The trials that try the prompt in real use: runs of the whole that the prompt is part of, on requests as big as real ones. They also hold the stand-ins that play the person and the parts the prompt works with, the judges, each an AI that gives pass or fail on one point, and the checks on each run's record.
 
-## Benefits
+## User benefits
 
 - **Q1** (goal): When the AI believes it has finished, can it tell from the prompt whether it has reached what the task is for?
 - **Q2** (goal): When the AI meets a choice that is the user's, such as one between options that serve equally or an action hard to undo, does it hand the choice to the user rather than make it?

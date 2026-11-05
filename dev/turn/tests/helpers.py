@@ -36,13 +36,14 @@ PRACTICE: dict[str, Any] = {
         {"id": "summary", "what": "One sentence."},
         {"id": "steps", "what": "The steps."},
     ],
-    "benefits": [
+    "user_benefits": [
         {"id": "Q1", "about": "summary", "what": "Can the reader say what it asks?"},
         {"id": "Q2", "about": "steps", "what": "Can the reader take each step?"},
         {"id": "Q3", "about": "the whole", "what": "Does each answer come when needed?"},
     ],
     "practices": [
-        {"benefit": f"Q{n}", "thinking": "Think.", "steps": [], "grounds": []} for n in (1, 2, 3)
+        {"user_benefit": f"Q{n}", "thinking": "Think.", "steps": [], "grounds": []}
+        for n in (1, 2, 3)
     ],
 }
 # Where a run's folder lies, and the repository's best practice of `note`.
@@ -129,7 +130,7 @@ def line(data: dict[str, Any]) -> str:
 # A best practice of how a note reads, of one question about the whole.
 READING = {
     "goal": "The reader takes in what it says.",
-    "benefits": [{"id": "Q1", "about": "the whole", "what": "Is each fact said once?"}],
+    "user_benefits": [{"id": "Q1", "about": "the whole", "what": "Is each fact said once?"}],
 }
 # The design of the note: D1 serves note/Q1 and note/Q3, D2 serves note/Q2, D3 serves D2.
 TREE = {

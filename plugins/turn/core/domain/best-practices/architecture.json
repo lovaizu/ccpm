@@ -50,7 +50,7 @@
    "what": "For each test level: what it runs real, what doubles stand in for, who stands in for the person, what it covers and when it passes. A double stands in for a part and gives set results. The test rules also say where each double's results come from, and how the developer brings a fault that one level finds to the level that must catch it. For a result that varies from run to run, they say how many runs of how many must meet the expectation. They give each unit's weight, with what a failure costs the user. Before the table, they point to the project's shared test rules, and write only what differs from them."
   }
  ],
- "benefits": [
+ "user_benefits": [
   {
    "id": "Q1",
    "about": "user-stories",
@@ -134,7 +134,7 @@
  ],
  "practices": [
   {
-   "benefit": "Q1",
+   "user_benefit": "Q1",
    "thinking": "A user story is one way the user meets the product at its edge, such as one command or one call. Together, the stories carry every step of the UX where the user meets the product.",
    "steps": [
     "Write each story naming the user, the way and the scenarios or steps it carries, such as \"As <the user>, I want <the way>. Carries <the scenarios or steps>.\"",
@@ -162,7 +162,7 @@
    ]
   },
   {
-   "benefit": "Q2",
+   "user_benefit": "Q2",
    "thinking": "The opening says how the product turns what the user brings into what the UX promises. It says this in one idea seen from above, with none of a part's inner workings. Every part after it then reads as a piece of that idea.",
    "steps": [
     "Link the UX instead of repeating it.",
@@ -202,7 +202,7 @@
    ]
   },
   {
-   "benefit": "Q3",
+   "user_benefit": "Q3",
    "thinking": "The architecture cuts the roles so that one role alone makes each decision the stories need, above all a decision hard to make or likely to change. That role hides the decision from the others.",
    "steps": [
     "Draw an arrow for each thing one role asks of another, labelled with what it does and the data it hands on, not with a word such as \"uses\".",
@@ -237,7 +237,7 @@
    ]
   },
   {
-   "benefit": "Q4",
+   "user_benefit": "Q4",
    "thinking": "Each role's box says what kind of thing it is and what it is made with. The developer then starts on it with nothing left to choose.",
    "steps": [
     "Add a legend that explains every shape, tag and other symbol the figure uses.",
@@ -271,7 +271,7 @@
    ]
   },
   {
-   "benefit": "Q5",
+   "user_benefit": "Q5",
    "thinking": "The data model draws each data that the roles pass or keep once, by its name alone. It leaves the data's fields to where the data is built. It names each relation to another data, with how many of each the relation joins.",
    "steps": [
     "For each relation, ask whether the role that writes it and the role that reads it would keep it the same way. Where they would not, name the relation more exactly."
@@ -298,7 +298,7 @@
    ]
   },
   {
-   "benefit": "Q6",
+   "user_benefit": "Q6",
    "thinking": "The sequences draw each story as its steps in order, such as in a sequence diagram, from the user's first request to what the story gives them. In the drawing, every step has a role that takes it and data that it hands on.",
    "steps": [
     "Check that each step runs along an arrow of Components. Where none does, add the arrow or give the step to another role."
@@ -337,7 +337,7 @@
    ]
   },
   {
-   "benefit": "Q7",
+   "user_benefit": "Q7",
    "thinking": "Every story, role and data is there because an objective of the UX needs it, on the main path that a scenario shows or off it. So each can go once no objective needs it.",
    "steps": [
     "Trace each role and each data to the stories whose sequences reach it. Trace each story to the step of the UX it carries or, off the main path, to the key result it serves. Remove what reaches none."
@@ -352,7 +352,7 @@
    ]
   },
   {
-   "benefit": "Q8",
+   "user_benefit": "Q8",
    "thinking": "A principle is a rule that every part meeting the same decision follows the same way. The principle says what it is there for, so a developer can carry it to a case it does not name.",
    "steps": [
     "Write as a rule also what must be absent, such as a dependency no role may have.",
@@ -417,7 +417,7 @@
    ]
   },
   {
-   "benefit": "Q9",
+   "user_benefit": "Q9",
    "thinking": "Deployment places each role and each data in a deployment unit, within the environment where the role runs or the data is kept. The developer then knows what each can reach, and how the product starts.",
    "steps": [
     "Draw each thing outside the product that the roles depend on, with an arrow saying what is used.",
@@ -452,7 +452,7 @@
    ]
   },
   {
-   "benefit": "Q10",
+   "user_benefit": "Q10",
    "thinking": "The tree shows the folders and files that hold the roles and the data, as they lie on disk. It joins each role and each data to the one place where it is made. The developer then finds where to change it.",
    "steps": [
     "Keep the folders and files that hold a role or a data, and leave out what lies inside each.",
@@ -486,7 +486,7 @@
    ]
   },
   {
-   "benefit": "Q11",
+   "user_benefit": "Q11",
    "thinking": "Each level checks against one thing: a part's contract, this document's sequences or the UX. So each level whose thing says what a deployment unit must do tests that unit. A cell is empty only where that thing says nothing of the unit. The document names a level by that thing, not by its means, as a means such as end to end can serve any level.",
    "steps": [
     "Leave out a unit whose every cell would be empty, and say why under the table.",
@@ -545,7 +545,7 @@
    ]
   },
   {
-   "benefit": "Q12",
+   "user_benefit": "Q12",
    "thinking": "The developer does not choose a test but draws it from the one thing its level checks against: the ways a part's contract divides, the paths the sequences draw, or an objective's scenario at the size of a real request. Only that thing runs real, and stand-ins take the place of the rest. A failing test then names the rule, path or scenario it breaks.",
    "steps": [
     "Link the project's shared test rules, and write only where this product differs from them.",
@@ -739,7 +739,7 @@
    ]
   },
   {
-   "benefit": "Q13",
+   "user_benefit": "Q13",
    "thinking": "The design is the paths its sequences draw, joined by what each part promises. Unit tests show that each real part keeps its promise. Architecture tests show that every path holds with doubles that keep only those promises. Together, the two show that every path holds for the real parts. That leaves to ux tests only what real size shows, such as lead time.",
    "steps": [
     "Build each double from the form that the part's contract gives its results. Set it only to results that this form allows, the refusals among them.",
@@ -804,7 +804,7 @@
    ]
   },
   {
-   "benefit": "Q14",
+   "user_benefit": "Q14",
    "thinking": "The writer reads each principle against every part it rules. A developer then never meets a figure, a list or a table that breaks a principle.",
    "steps": [
     "Read each part against each principle that rules it. Where a line breaks the principle, change the part, or the principle and its reason, until the two say the same."
@@ -831,7 +831,7 @@
    ]
   },
   {
-   "benefit": "Q15",
+   "user_benefit": "Q15",
    "thinking": "A choice that a developer would question, such as a technology, a tool or a unit's weight, carries why it beat the other way and what it costs. These stand beside the figure or table that shows the choice. The developer then keeps the choice or changes it, knowing what it was for.",
    "steps": [
     "Read each figure and the table as a developer new to the product, and check that each choice they would question has its reason and its cost beside it."
@@ -882,7 +882,7 @@
    ]
   },
   {
-   "benefit": "Q16",
+   "user_benefit": "Q16",
    "thinking": "The document holds only what stays while the UX and the principles stay. It leaves how each role works inside to where the role is built.",
    "steps": [
     "Imagine a change to how a role works inside, such as its steps, a value it uses or a data's fields, that leaves the UX and the principles as they are. Mark each line the change would make untrue.",

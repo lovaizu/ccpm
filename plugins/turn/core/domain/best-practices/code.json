@@ -22,7 +22,7 @@
    "what": "Tests of the specification's cases, one test for each case, so the maintainer can tell which test checks which case and which code. Each test has a name that says the behavior it checks, and shows the situation, what is done and what must be so."
   }
  ],
- "benefits": [
+ "user_benefits": [
   {
    "id": "Q1",
    "about": "manifest, tests",
@@ -71,7 +71,7 @@
  ],
  "practices": [
   {
-   "benefit": "Q1",
+   "user_benefit": "Q1",
    "thinking": "What the code gives for its setup names everything the code needs. Each test sets up and clears everything it uses. A test's result then rests on the code alone.",
    "steps": [
     "Set the code up on a clean machine or container, from what the code gives for its setup alone.",
@@ -118,7 +118,7 @@
    ]
   },
   {
-   "benefit": "Q2",
+   "user_benefit": "Q2",
    "thinking": "Each module alone decides one thing that the specification leaves to the code. The module says that thing briefly where the maintainer meets it first, such as at its top.",
    "steps": [
     "Where the module cannot say that thing briefly, split the module.",
@@ -146,7 +146,7 @@
    ]
   },
   {
-   "benefit": "Q3",
+   "user_benefit": "Q3",
    "thinking": "The interface tells a caller everything they need to make the call. The caller then need not read the body, and the body can change behind the interface.",
    "steps": [
     "Choose the names other modules may use, and mark every other name as internal.",
@@ -219,7 +219,7 @@
    ]
   },
   {
-   "benefit": "Q4",
+   "user_benefit": "Q4",
    "thinking": "The code gives only the behaviors the specification asks for, in the form its cases ask for now. The maintainer then carries nothing that no one needs.",
    "steps": [
     "For each option, mode and case the code handles, name the case of the specification that asks for it."
@@ -246,7 +246,7 @@
    ]
   },
   {
-   "benefit": "Q5",
+   "user_benefit": "Q5",
    "thinking": "The code checks what comes from outside, such as arguments, files, settings and the replies of other programs, where it comes in and before the code does anything. When the code refuses an input, its message tells whoever ran the code which program refused, what was wrong, where, and what the code accepts.",
    "steps": [
     "At that place, read the input into the form the inside of the code uses. Check its type and format, and whether its value makes sense for what the code is to do.",
@@ -318,7 +318,7 @@
    ]
   },
   {
-   "benefit": "Q6",
+   "user_benefit": "Q6",
    "thinking": "The tests come from the specification's cases, and they come before the code. Each test checks one behavior, so it says which case it checks.",
    "steps": [
     "List every case the specification names: the usual one, each edge and each refusal.",
@@ -380,7 +380,7 @@
    ]
   },
   {
-   "benefit": "Q7",
+   "user_benefit": "Q7",
    "thinking": "The tests call the code as its callers do, so they fail only where a caller would break.",
    "steps": [
     "Use the real parts where they run fast and wholly inside the test, and a stand-in only for what is slow or outside it.",
@@ -426,7 +426,7 @@
    ]
   },
   {
-   "benefit": "Q8",
+   "user_benefit": "Q8",
    "thinking": "A test is worth the faults it catches. So each test checks the result that its case asks for, and a broken behavior makes the test fail.",
    "steps": [
     "Find each line or branch no test runs, such as by counting them while the tests run, and add a test for each.",
@@ -485,7 +485,7 @@
    ]
   },
   {
-   "benefit": "Q9",
+   "user_benefit": "Q9",
    "thinking": "Only a change that someone new to the code makes shows whether the code lets them change it and trust the result.",
    "steps": [
     "Have someone who has not seen the code, a person or an AI, set it up and make one change the specification asks for, with only the code and its specification.",

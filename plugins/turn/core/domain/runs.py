@@ -48,7 +48,7 @@ def read_practice(path: str) -> dict[str, Any]:
     """The best practice at the path; refuses, by files.Unreadable, one that is missing, is no JSON,
     or is out of its form, the JSON Schema of a best practice or the faults its form shows."""
     data = files.load(path, "best-practice")
-    found = practices.faults(data, practices.template(path))
+    found = practices.missing(path, data) or practices.faults(data, practices.template(path, data))
     if found:
         raise files.Unreadable(f"the best practice {path} is out of its form: {'; '.join(found)}")
     return data
@@ -72,7 +72,7 @@ def current(data: dict[str, Any]) -> dict[str, Any]:
 def questions(kind: str, data: dict[str, Any]) -> list[dict[str, str]]:
     """The best practice's questions as a design tree asks them, each named with the kind, as
     `readme/Q1`."""
-    return [{"id": f"{kind}/{q['id']}", "what": q["what"]} for q in data["benefits"]]
+    return [{"id": f"{kind}/{q['id']}", "what": q["what"]} for q in data["user_benefits"]]
 
 
 def given_faults(call: dict[str, Any]) -> list[str]:

@@ -9,6 +9,8 @@ from __future__ import annotations
 import functools
 import html
 import http.client
+import json
+import os
 import re
 import time
 import urllib.error
@@ -65,14 +67,35 @@ def sections(template: str) -> list[str]:
     return ([OPENING] if said else []) + SECTION.findall(template)
 
 
-def template(path: str) -> list[str] | None:
-    """The sections of the template beside the best practice at the path, `<kind>-template.md`, or
-    None where the kind has none."""
-    try:
-        with open(path.removesuffix(".json") + "-template.md", encoding="utf-8") as f:
-            return sections(f.read())
-    except FileNotFoundError:
+def keys(template: str) -> list[str]:
+    """The sections of a template in JSON a question may be about: its keys, in order, but the
+    comments, `$comment`."""
+    return [key for key in json.loads(template) if key != "$comment"]
+
+
+def beside(path: str, name: str) -> str:
+    """The path of the file of the name beside the best practice at the path."""
+    return os.path.join(os.path.dirname(path), name)
+
+
+def template(path: str, data: dict[str, Any]) -> list[str] | None:
+    """The sections of the template the best practice at the path names, read as its format is,
+    or None where it names none; refuses, by FileNotFoundError, one that is not there."""
+    if "template" not in data:
         return None
+    with open(beside(path, data["template"]), encoding="utf-8") as f:
+        text = f.read()
+    return keys(text) if data["template"].endswith(".json") else sections(text)
+
+
+def missing(path: str, data: dict[str, Any]) -> list[str]:
+    """Each file the best practice at the path names, its template and its example, that is not
+    beside it, in words."""
+    return [
+        f"its {key} {data[key]} is not beside it"
+        for key in ("template", "example")
+        if key in data and not os.path.isfile(beside(path, data[key]))
+    ]
 
 
 def texts(value: Any) -> list[str]:
@@ -101,31 +124,31 @@ def faults(data: dict[str, Any], template: list[str] | None = None) -> list[str]
     # Each id counts once or more in ids, which it is taken from.
     for part in sorted({i for i in ids if ids.count(i) > 1}):  # pragma: no mutate
         found.append(f"{what} {part} is named more than once")
-    named_parts = {a.strip() for q in data["benefits"] for a in q["about"].split(",")}
+    named_parts = {a.strip() for q in data["user_benefits"] for a in q["about"].split(",")}
     for part in leaves:
         if part not in named_parts:
             found.append(f"{what} {part} has no question about it")
     if WHOLE not in named_parts:
         found.append(f"no question is about {WHOLE}")
-    questions = [q["id"] for q in data["benefits"]]
+    questions = [q["id"] for q in data["user_benefits"]]
     expected = [f"Q{n}" for n in range(1, len(questions) + 1)]
     if questions != expected:
         found.append(f"questions are {', '.join(questions)}, not numbered in order from Q1")
-    for q in data["benefits"]:
+    for q in data["user_benefits"]:
         for about in (a.strip() for a in q["about"].split(",")):
             if about != WHOLE and about not in ids:
                 where = "part" if template is None else "section of the template"
                 found.append(f"{q['id']} is about {about}, which is no {where}")
-    answered = [p["benefit"] for p in data["practices"]]
+    answered = [p["user_benefit"] for p in data["practices"]]
     if answered != questions:
         found.append(f"practices meet {', '.join(answered)}, not each question once in its order")
     for practice in data["practices"]:
         for n, item in enumerate(practice["grounds"], 1):
             missing = [k for k in GROUND if not item.get(k)]
             if missing:
-                found.append(f"{practice['benefit']} ground {n} has no {', '.join(missing)}")
+                found.append(f"{practice['user_benefit']} ground {n} has no {', '.join(missing)}")
             elif not item["url"].startswith("https://"):
-                found.append(f"{practice['benefit']} ground {n} links no https page")
+                found.append(f"{practice['user_benefit']} ground {n} links no https page")
     for named in sorted({n for t in texts(data) for n in QUESTION.findall(t)} - set(questions)):
         found.append(f"{named} is named, but there is no such question")
     return found
@@ -183,7 +206,7 @@ def sources(data: dict[str, Any], get: Callable[[str], tuple[str, bytes]] = fetc
     found = []
     for practice in data["practices"]:
         for n, item in enumerate(practice["grounds"], 1):
-            where = f"{practice['benefit']} ground {n} ({item['url']})"
+            where = f"{practice['user_benefit']} ground {n} ({item['url']})"
             try:
                 kind, body = get(item["url"])
             # A page fails to open as the network or the server fails, a refusal and a timeout
@@ -217,20 +240,22 @@ def ground(item: dict[str, str]) -> str:
     return f'- [{item["title"]}]({item["url"]}), {item["by"]}: "{item["quote"]}"'
 
 
-def markdown(kind: str, data: dict[str, Any], template: bool = False) -> str:
-    """The best practice of the kind as Markdown: its goal, its template or its parts, and its
-    benefits, then the practice for each benefit, under the question it meets."""
-    questions = {q["id"]: q for q in data["benefits"]}
+def markdown(kind: str, data: dict[str, Any]) -> str:
+    """The best practice of the kind as Markdown: its goal, a link to its template and its example
+    or else its parts, and its user benefits, then the practice for each user benefit, under the
+    question it meets."""
+    questions = {q["id"]: q for q in data["user_benefits"]}
     out = [f"# {kind}", "", "## Goal", "", data["goal"]]
-    if template:
-        out += ["", "## Template", "", f"[{kind}-template.md]({kind}-template.md)"]
+    for key in ("template", "example"):
+        if key in data:
+            out += ["", f"## {key.capitalize()}", "", f"[{data[key]}]({data[key]})"]
     if data.get("parts"):
         out += ["", "## Parts", "", *parts(data["parts"])]
-    out += ["", "## Benefits", ""]
-    out += [f"- **{q['id']}** ({q['about']}): {q['what']}" for q in data["benefits"]]
+    out += ["", "## User benefits", ""]
+    out += [f"- **{q['id']}** ({q['about']}): {q['what']}" for q in data["user_benefits"]]
     out += ["", "## Practices"]
     for practice in data["practices"]:
-        question = questions[practice["benefit"]]
+        question = questions[practice["user_benefit"]]
         out += ["", f"### {question['id']}: {question['what']}", ""]
         out.append(f"**Thinking**: {practice['thinking']}")
         if practice["steps"]:
@@ -246,7 +271,7 @@ def standard(data: dict[str, Any]) -> dict[str, Any]:
     kept = {"goal": data["goal"]}
     if "parts" in data:
         kept["parts"] = data["parts"]
-    kept["benefits"] = data["benefits"]
+    kept["user_benefits"] = data["user_benefits"]
     return kept
 
 
@@ -255,7 +280,7 @@ def groups(data: dict[str, Any], kind: str) -> list[dict[str, Any]]:
     questions about the whole in one group, and the others joined where they ask of a part in
     common; the groups in the order of their first question, numbered G1 on."""
     found: list[tuple[set[str], list[str]]] = []
-    for q in data["benefits"]:
+    for q in data["user_benefits"]:
         abouts = {a.strip() for a in q["about"].split(",")}
         if WHOLE in abouts:
             abouts = {WHOLE}

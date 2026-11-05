@@ -19,8 +19,8 @@ and the finished work, and an AI that did not make it uses it in your place befo
 - Rn does not merge: it marks the pull request ready, and the merge is yours.
 - Rn does not push to your default branch: it works on a branch of its own.
 - Rn sends nothing to its makers without your yes.
-- Rn does not change the best practices Turn ships: a question you add to the benefits of a kind
-  of work goes into `.turn/best-practices/` in your repository.
+- Rn does not change the best practices Turn ships: a question you add to the user benefits of a
+  kind of work goes into `.turn/best-practices/` in your repository.
 
 ## Requirements
 
@@ -107,7 +107,7 @@ again. Rn stops at the finished work with each choice it made without asking you
 ```
 
 Last, Rn offers what the work taught, one learning per message, as a question to add to the
-benefits of that kind of work in `.turn/best-practices/`, or as an issue to Rn's makers, and marks the
+user benefits of that kind of work in `.turn/best-practices/`, or as an issue to Rn's makers, and marks the
 pull request ready:
 
 ```console

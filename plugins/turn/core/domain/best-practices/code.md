@@ -12,7 +12,7 @@ The maintainer is a person or an AI who takes the code over. The maintainer chan
 - **body**: The code under each interface that gives the behavior.
 - **tests**: Tests of the specification's cases, one test for each case, so the maintainer can tell which test checks which case and which code. Each test has a name that says the behavior it checks, and shows the situation, what is done and what must be so.
 
-## Benefits
+## User benefits
 
 - **Q1** (manifest, tests): When the maintainer sets the code up on a fresh machine from only what the code gives for its setup, and runs the tests again and in any order, do they see the tests pass each time?
 - **Q2** (module-opening): With one behavior to change, can the maintainer tell which module to open from what each module says it alone decides, without reading the modules' bodies?

@@ -1,6 +1,8 @@
 {
  "goal": "From the README alone, someone who meets the product for the first time starts using it only when it serves their work.",
- "benefits": [
+ "template": "readme-template.md",
+ "example": "readme-example.md",
+ "user_benefits": [
   {
    "id": "Q1",
    "about": "the opening",
@@ -54,7 +56,7 @@
  ],
  "practices": [
   {
-   "benefit": "Q1",
+   "user_benefit": "Q1",
    "thinking": "The sentence names the kind of thing the product is and what it does, in words the reader already uses, so they can say it again to a colleague.",
    "steps": [
     "Write one sentence on its own line under the title, such as \"<Name> is a <kind> that <does what>.\", saying what the product does with no feature names or mechanisms.",
@@ -88,7 +90,7 @@
    ]
   },
   {
-   "benefit": "Q2",
+   "user_benefit": "Q2",
    "thinking": "The gain is what the reader can do with the product, taken from what the product's users want, such as the objectives in its UX, so the reader tells from it whether the product meets their need.",
    "steps": [
     "Name whom the product is for by the work they want done.",
@@ -122,7 +124,7 @@
    ]
   },
   {
-   "benefit": "Q3",
+   "user_benefit": "Q3",
    "thinking": "The idea is the one thing the product does that other ways of doing the same work do not, and it is what brings the gain.",
    "steps": [
     "Write it as one paragraph that names the other way and says what the product does instead.",
@@ -144,7 +146,7 @@
    ]
   },
   {
-   "benefit": "Q4",
+   "user_benefit": "Q4",
    "thinking": "A non-goal is something the reader could reasonably expect of the product that it does not do, so a reader who needs it learns that before they install.",
    "steps": [
     "Keep only what the product does not do and a reader could reasonably expect of it."
@@ -159,7 +161,7 @@
    ]
   },
   {
-   "benefit": "Q5",
+   "user_benefit": "Q5",
    "thinking": "The walkthrough shows one real run of the use most readers come for, on work like the reader's, with the product's real output, so the reader sees that the product works and what they would get; it shows a run, not steps for the reader to follow.",
    "steps": [
     "Say at the start what the reader will have at the end.",
@@ -206,7 +208,7 @@
    ]
   },
   {
-   "benefit": "Q6",
+   "user_benefit": "Q6",
    "thinking": "The author writes the steps for a reader who has nothing set up, and tries them that way, because the author's own setup hides the gaps.",
    "steps": [
     "List each thing that must be in place, by what it is and how the reader tells they have it.",
@@ -259,7 +261,7 @@
    ]
   },
   {
-   "benefit": "Q7",
+   "user_benefit": "Q7",
    "thinking": "How it works shows at a glance who does what to whom so that each gain and the idea hold, in as much detail as a reader new to the product can follow; the opening alone says each non-goal, as a non-goal is what the product does not do.",
    "steps": [
     "Point to each gain and the idea, and find the lines of the figure that keep it. Where none does, mend the figure or the promise."
@@ -292,7 +294,7 @@
    ]
   },
   {
-   "benefit": "Q8",
+   "user_benefit": "Q8",
    "thinking": "The README holds what the reader needs to decide and to start, and points to one place for each need that comes after.",
    "steps": [
     "Write each link so it reaches its document wherever the README is read, such as by a path relative to the README. Open each link."
@@ -337,7 +339,7 @@
    ]
   },
   {
-   "benefit": "Q9",
+   "user_benefit": "Q9",
    "thinking": "A reader may rule the product out by its license alone, so the README names the license and links its full text.",
    "steps": [
     "Open the link, and check that the text it reaches is the license the name says."
@@ -358,7 +360,7 @@
    ]
   },
   {
-   "benefit": "Q10",
+   "user_benefit": "Q10",
    "thinking": "The README goes in the order the reader decides in, from what every reader needs to what only a reader who has chosen the product needs.",
    "steps": [
     "Read the README from the top as someone who meets the product for the first time, and after each section, write the question the reader now has.",

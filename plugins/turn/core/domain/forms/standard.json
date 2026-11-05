@@ -3,12 +3,12 @@
   "title": "standard",
   "description": "The Standard: a best practice's goal, parts and questions, without its ways of meeting them, which is all the evaluator is given.",
   "type": "object",
-  "required": ["goal", "benefits"],
+  "required": ["goal", "user_benefits"],
   "additionalProperties": false,
   "properties": {
     "goal": {"type": "string"},
     "parts": {"type": "array", "items": {"$ref": "#/$defs/part"}},
-    "benefits": {
+    "user_benefits": {
       "type": "array",
       "minItems": 1,
       "items": {

@@ -1,6 +1,8 @@
 {
  "goal": "The developer builds what the product's users want.",
- "benefits": [
+ "template": "ux-template.md",
+ "example": "ux-example.md",
+ "user_benefits": [
   {
    "id": "Q1",
    "about": "Roles, OKRs",
@@ -34,7 +36,7 @@
  ],
  "practices": [
   {
-   "benefit": "Q1",
+   "user_benefit": "Q1",
    "thinking": "Roles are cut by the want each brings to the product, not by what kind of thing takes them, and a want with no objective is never built.",
    "steps": [
     "List each one who comes to the product with a want of their own, by the role they play, such as a guest, a member or an admin.",
@@ -62,7 +64,7 @@
    ]
   },
   {
-   "benefit": "Q2",
+   "user_benefit": "Q2",
    "thinking": "An objective is the progress one role is trying to make, said from where they stand, not what the product does.",
    "steps": [
     "Write each objective as one sentence that fits on one line: the role as its subject, then a verb, its object and the context it is done in, with no feature or mechanism of the product.",
@@ -102,7 +104,7 @@
    ]
   },
   {
-   "benefit": "Q3",
+   "user_benefit": "Q3",
    "thinking": "The developer cuts objectives so that each piece of work brings one of them closer, and no gain appears twice.",
    "steps": [
     "Merge objectives that one piece of work would bring closer together. Split an objective that holds gains a piece of work could bring closer apart. Go on until each piece of work brings exactly one closer.",
@@ -124,7 +126,7 @@
    ]
   },
   {
-   "benefit": "Q4",
+   "user_benefit": "Q4",
    "thinking": "Each objective has two key results that count what its role does or feels: KR.1 how well the role gets what the objective says, and KR.2 the lead time to having it, which may get shorter only while KR.1 does not get worse, as a result had fast but not well is no gain.",
    "steps": [
     "List how success or failure would show in what the role does or feels, such as giving up, undoing a result or working around the product.",
@@ -189,7 +191,7 @@
    ]
   },
   {
-   "benefit": "Q5",
+   "user_benefit": "Q5",
    "thinking": "A scenario is one run of the main path to the objective, the one most of its role take, from the request that starts it to the gain that ends it, each exchange between those Roles names, the product and those outside it.",
    "steps": [
     "Name each scenario by its objective's ID and a short active verb phrase saying how the role reaches it.",
@@ -248,7 +250,7 @@
    ]
   },
   {
-   "benefit": "Q6",
+   "user_benefit": "Q6",
    "thinking": "The product is one closed box: the UX says only what its roles mean to do, see and receive, so any design that gives them the same leaves it true.",
    "steps": [
     "Pick one change the design could make while the roles see the same, read every line, and flag each line that would have to change.",

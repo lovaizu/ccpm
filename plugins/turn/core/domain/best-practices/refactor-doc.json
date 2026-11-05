@@ -1,6 +1,6 @@
 {
  "goal": "The reader is a person or an AI who reads the document for a purpose, at any time after it is written. They read it in its own language or through a machine translation into theirs. The reader reads once from the top and only the parts their purpose needs, and takes in what the document says as its writer meant.",
- "benefits": [
+ "user_benefits": [
   {
    "id": "Q1",
    "about": "the whole",
@@ -44,7 +44,7 @@
  ],
  "practices": [
   {
-   "benefit": "Q1",
+   "user_benefit": "Q1",
    "thinking": "The document says each fact, including one that a figure draws or the work itself shows, in the one place where the reader looks for it. Every other place points there. A change made in that one place then reaches every reader.",
    "steps": [
     "Where two places say a fact in different ways, keep both, and send the difference back to be settled with what the document says. Choosing one would change what the document says.",
@@ -72,7 +72,7 @@
    ]
   },
   {
-   "benefit": "Q2",
+   "user_benefit": "Q2",
    "thinking": "The reader picks sections by their headings and first sentences. So each section holds one thing and says at its start what it gives.",
    "steps": [
     "Start each heading with the words that tell the most.",
@@ -124,7 +124,7 @@
    ]
   },
   {
-   "benefit": "Q3",
+   "user_benefit": "Q3",
    "thinking": "The reader sees at once an order or a relation that the form of a list, a table or a diagram shows. When sentences tell the same, the reader must piece it together.",
    "steps": [
     "Choose a form whose shape shows that order or relation, such as a numbered list for steps in order, a bulleted list for items whose order does not matter, a table for things compared on the same points, or a diagram for who passes what to whom.",
@@ -189,7 +189,7 @@
    ]
   },
   {
-   "benefit": "Q4",
+   "user_benefit": "Q4",
    "thinking": "Each sentence comes after everything it rests on, so the reader never holds a sentence open while they look for what it needs.",
    "steps": [
     "Where a sentence rests on something outside the document, such as an earlier talk, say it in the sentence or link to where it is written.",
@@ -254,7 +254,7 @@
    ]
   },
   {
-   "benefit": "Q5",
+   "user_benefit": "Q5",
    "thinking": "A sentence that makes one point, names who acts and keeps plain order has one reading, for the reader and for a machine translator alike.",
    "steps": [
     "Split a sentence that makes more than one point, or that links more than two clauses with \"and\", \"or\" or \"but\", into one sentence for each point.",
@@ -370,7 +370,7 @@
    ]
   },
   {
-   "benefit": "Q6",
+   "user_benefit": "Q6",
    "thinking": "Each thing has one name, the one its reader already uses, written the same way each time. Each name names one thing. The reader, and a translator, then keep one picture of each thing from start to end.",
    "steps": [],
    "grounds": [
@@ -413,7 +413,7 @@
    ]
   },
   {
-   "benefit": "Q7",
+   "user_benefit": "Q7",
    "thinking": "The reader takes each word with the meaning they already give it. So the writer replaces a word new to the reader with everyday words, even a word the writer's team uses every day, or gives its meaning where the reader first meets it.",
    "steps": [
     "Write each abbreviation out in full where the reader first meets it.",
@@ -447,7 +447,7 @@
    ]
   },
   {
-   "benefit": "Q8",
+   "user_benefit": "Q8",
    "thinking": "A word or a sentence that carries nothing of what the document says still costs the reader time, so it goes. A word that shows how a sentence is built stays.",
    "steps": [
     "Read each changed section again from the top, and check that it still says all it said before."

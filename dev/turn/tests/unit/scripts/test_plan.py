@@ -325,8 +325,9 @@ class Practices(helpers.testing.FolderTest):
     def test_form_holds_the_questions_to_the_template_beside_it(self):
         data = copy.deepcopy(DATA)
         del data["parts"]
-        for question in data["benefits"]:
+        for question in data["user_benefits"]:
             question["about"] = "the whole"
+        data["template"] = "kind-template.md"
         self.write_json(self.path, data)
         self.write(os.path.join(self.base, "kind-template.md"), "# <P>\n\n## Use\n")
         ran("markdown", self.path)
@@ -336,6 +337,12 @@ class Practices(helpers.testing.FolderTest):
         self.assertIn(
             "[kind-template.md](kind-template.md)", self.read(os.path.join(self.base, "kind.md"))
         )
+
+    def test_form_fails_on_a_file_it_names_that_is_not_beside_it(self):
+        self.write_json(self.path, dict(DATA, example="kind-example.md"))
+        code, _, err = ran("form", self.path)
+        self.assertEqual(code, 1)
+        self.assertIn(f"plan.py: {self.path}: its example kind-example.md is not beside it", err)
 
     def test_form_fails_on_a_json_out_of_its_schema(self):
         self.write_json(self.path, {"goal": "g"})

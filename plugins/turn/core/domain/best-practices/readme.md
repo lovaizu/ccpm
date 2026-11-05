@@ -8,7 +8,11 @@ From the README alone, someone who meets the product for the first time starts u
 
 [readme-template.md](readme-template.md)
 
-## Benefits
+## Example
+
+[readme-example.md](readme-example.md)
+
+## User benefits
 
 - **Q1** (the opening): When a colleague asks what the product is, can the reader answer in one sentence that tells them what it does?
 - **Q2** (the opening): Reading the gain, can the reader tell what the product would let them do, and so whether it is for them?
