@@ -40,28 +40,30 @@ This document says how `<Product>` is built to give [its UX](<ux>). `<idea>`.
 
 ## Components
 
-![<Product>'s components](images/components.svg)
+![The product's components](images/template-components.svg)
 
 - **`<choice>`** over `<other way>`: `<why>`. It costs `<cost>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - images/components.svg: each role the stories need and each store of data, each box holding its
->   name, its type and technology, and what it alone decides; each arrow what one does to another,
->   with the data it hands on, named as in the data model; a legend for every symbol.
+> - The figure: the deliverable's own at images/components.svg, the product named in its alt text:
+>   each role the stories need and each store of data, each box holding its name, its type and
+>   technology, and what it alone decides; each arrow what one does to another, with the data it
+>   hands on, named as in the data model; a legend for every symbol.
 > - `<choice>`, `<other way>`: each choice a developer would question, such as a technology or a
 >   tool, and the way it beat; optional.
 > - `<why>`, `<cost>`: what the choice gives, and what it costs.
 
 ## Data model
 
-![<Product>'s data](images/data-model.svg)
+![The product's data](images/template-data-model.svg)
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - images/data-model.svg: each data the components pass or keep, by its name and what it is in a
->   few words, without its fields, and each relation between two data, with its name and how many of
->   each it joins at both ends.
+> - The figure: the deliverable's own at images/data-model.svg, the product named in its alt text:
+>   each data the components pass or keep, by its name and what it is in a few words, without its
+>   fields, and each relation between two data, with its name and how many of each it joins at both
+>   ends.
 
 ## Sequences
 
@@ -90,7 +92,7 @@ sequenceDiagram
 
 ## Deployment
 
-![<Product>'s deployment](images/deployment.svg)
+![The product's deployment](images/template-deployment.svg)
 
 `<start>`.
 
@@ -98,10 +100,11 @@ sequenceDiagram
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - images/deployment.svg: each environment the product runs in, such as the user's computer or CI,
->   with its technology; in each, its deployment units, each with its technology and the components
->   and data it holds, by their names in Components; each thing outside the product the components
->   depend on, with what they use of it.
+> - The figure: the deliverable's own at images/deployment.svg, the product named in its alt text:
+>   each environment the product runs in, such as the user's computer or CI, with its technology; in
+>   each, its deployment units, each with its technology and the components and data it holds, by
+>   their names in Components; each thing outside the product the components depend on, with what
+>   they use of it.
 > - `<start>`: how the product starts, in one sentence.
 > - `<choice>`, `<other way>`, `<why>`, `<cost>`: as in Components; optional.
 
@@ -124,18 +127,19 @@ sequenceDiagram
 
 `<Product>` tests by [`<shared rules>`](<path>), and differs from them where this section says.
 
-![<Product>'s tests](images/tests.svg)
+![The product's tests](images/template-tests.svg)
 
 - **`<choice>`** over `<other way>`: `<why>`. It costs `<cost>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - `<shared rules>`, `<path>`: the project's shared test rules.
-> - images/tests.svg: a table with a row for each deployment unit, by its name in Deployment, and a
->   column for each test level from narrow to wide, each named by what it checks against: unit, a
->   part's contract; architecture, this document; ux, the UX. Each cell holds the tool, a weight,
->   such as ●●○, and what it checks in a few words; an empty cell says why. Under it, for each
->   level: what runs real, what doubles stand in for and where their results come from, who stands
->   in for the role, and when it passes, with how many runs of how many where a result varies; only
->   where the product differs from the shared rules.
+> - The figure: the deliverable's own at images/tests.svg, the product named in its alt text: a
+>   table with a row for each deployment unit, by its name in Deployment, and a column for each test
+>   level from narrow to wide, each named by what it checks against: unit, a part's contract;
+>   architecture, this document; ux, the UX. Each cell holds the tool, a weight, such as ●●○, and
+>   what it checks in a few words; an empty cell says why. Under it, for each level: what runs real,
+>   what doubles stand in for and where their results come from, who stands in for the role, and
+>   when it passes, with how many runs of how many where a result varies; only where the product
+>   differs from the shared rules.
 > - `<choice>`, `<other way>`, `<why>`, `<cost>`: as in Components; optional.

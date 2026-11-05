@@ -46,7 +46,8 @@ The generator can make deliverables with which their role achieves its purpose.
 4. Where the deliverable is JSON, write each note as a key `DELETE_TEMPLATE_COMMENT`, as JSON holds no comment.
 5. Give the content found by digging a slot for its intent and why alone, in the fewest words, and a figure in place of prose wherever a figure can say it.
 6. Draw a sequence in Mermaid, and any other figure in SVG, a table among them, as a table stands in for prose.
-7. Name the template's file in `template`.
+7. Give each SVG figure of the template a skeleton of its own beside it, `images/template-<name>.svg`, that shows the figure's layout by the slots' names, give it an alt text with no slot, and say in the section's note where the deliverable puts its own figure, as a figure the template names but does not hold shows broken, and the example's figure shows one product's content in place of the layout.
+8. Name the template's file in `template`.
 
 ### Q3: Setting the template against the goal, does the generator find each section the goal needs, and none it does not?
 

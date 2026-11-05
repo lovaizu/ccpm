@@ -8,7 +8,7 @@
 
 `<The usual way>`. `<Product>` instead `<idea>`.
 
-![<The usual way> and <Product>](images/idea.svg)
+![The usual way and the product](images/template-idea.svg)
 
 **Non-goals**
 
@@ -24,8 +24,9 @@
 > - `<gain>`: what the reader can then do.
 > - `<The usual way>`: how the same work goes without the product, and where it falls short.
 > - `<idea>`: what the product does differently that brings the gain, in one sentence.
-> - images/idea.svg: the usual way above the product, each as who does what to whom, so the reader
->   sees where the usual way falls short and what the product does there instead.
+> - The figure: the deliverable's own at images/idea.svg, the product named in its alt text: the
+>   usual way above the product, each as who does what to whom, so the reader sees where the usual
+>   way falls short and what the product does there instead.
 > - `<expectation>`: each thing a reader might expect of the product that it does not do; optional.
 
 ## Requirements
@@ -75,14 +76,15 @@ At the end, you have `<result>`.
 
 ## How it works
 
-![How <Product> works](images/how-it-works.svg)
+![How the product works](images/template-how-it-works.svg)
 
 - `<point>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - images/how-it-works.svg: the user, the product's parts and what they pass, each by its name,
->   with what each does to another.
+> - The figure: the deliverable's own at images/how-it-works.svg, the product named in its alt text:
+>   the user, the product's parts and what they pass, each by its name, with what each does to
+>   another.
 > - `<point>`: each point a gain or the idea needs that the figure cannot show, in one sentence;
 >   optional. A convenience, such as going on with a run that stopped, is no point here.
 
