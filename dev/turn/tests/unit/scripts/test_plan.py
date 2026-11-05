@@ -2,7 +2,7 @@
 work the run is at, each printing what the planner gives and ends with, 0, or why it cannot, 1;
 check says whether the Run holds and where the run is, 0, each fault, 1, or why it could not
 check, 2. And what a person or CI runs on a best practice: form, its faults and its Markdown left
-behind; markdown, written beside it; and sources, each ground whose page is not the one meant."""
+behind; and markdown, written beside it."""
 
 import contextlib
 import copy
@@ -11,20 +11,18 @@ import json
 import os
 import runpy
 import unittest
-import urllib.request
 from unittest import mock
 
 import helpers
 from helpers import met, phases, plan, practices, runs, short
 
-from unit.core.domain.test_practices import DATA, response
+from unit.core.domain.test_practices import DATA
 
 RUN = helpers.RUN
 DESIGN = os.path.join(RUN, runs.DESIGN)
 USAGE = (
     "usage: python3 ${CLAUDE_PLUGIN_ROOT}/scripts/plan.py start|hand|ready|next|check <run>\n"
-    "       python3 ${CLAUDE_PLUGIN_ROOT}/scripts/plan.py form|markdown|sources"
-    " <best practice json>...\n"
+    "       python3 ${CLAUDE_PLUGIN_ROOT}/scripts/plan.py form|markdown <best practice json>...\n"
 )
 
 
@@ -298,7 +296,7 @@ class Check(helpers.RoundsTest):
 
 
 class Practices(helpers.testing.FolderTest):
-    """form, markdown and sources, on a best practice of the kind `kind`."""
+    """form and markdown, on a best practice of the kind `kind`."""
 
     def setUp(self) -> None:
         super().setUp()
@@ -361,24 +359,12 @@ class Practices(helpers.testing.FolderTest):
 
     def test_each_command_names_a_json_it_cannot_read(self):
         self.write(self.path, "{")
-        for command in ("form", "markdown", "sources"):
+        for command in ("form", "markdown"):
             with self.subTest(command=command):
                 code, _, err = ran(command, self.path)
                 self.assertEqual(code, 1)
                 self.assertIn(f"plan.py: {self.path}: {self.path} is not JSON", err)
         self.assertFalse(os.path.exists(os.path.join(self.base, "kind.md")))
-
-    def test_sources_fails_on_a_ground_whose_page_is_not_the_one_meant(self):
-        practices.fetch.cache_clear()
-        self.addCleanup(practices.fetch.cache_clear)
-        page = response("text/html", b"<title>T</title> y")
-        with mock.patch.object(urllib.request, "urlopen", return_value=page):
-            self.assertEqual(ran("sources", self.path), (0, "", ""))
-        practices.fetch.cache_clear()
-        with mock.patch.object(urllib.request, "urlopen", return_value=response("text/html", b"T")):
-            code, _, err = ran("sources", self.path)
-        self.assertEqual(code, 1)
-        self.assertIn("does not hold its quote", err)
 
 
 if __name__ == "__main__":

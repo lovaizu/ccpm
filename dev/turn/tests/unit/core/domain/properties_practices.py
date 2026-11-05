@@ -1,9 +1,7 @@
-"""Properties of practices.py over many best practices and pages: a best practice whose questions
-ask of every part and the whole, each met by one practice in order, shows no fault of its form, and
-a part no question asks of is named; the groups hold each question once, join exactly the questions
-that ask of a part in common or of the whole, and come in the order of their first question; and a
-page reads as the same words whatever inline tags, blocks, spaces, quotes and case it writes them
-with."""
+"""Properties of practices.py over many best practices: a best practice whose questions ask of
+every part and the whole, each met by one practice in order, shows no fault of its form, and a part
+no question asks of is named; and the groups hold each question once, join exactly the questions
+that ask of a part in common or of the whole, and come in the order of their first question."""
 
 import unittest
 
@@ -19,8 +17,8 @@ PARTS = ["a", "b", "c", "d", "e"]
 @st.composite
 def sound(draw) -> dict:
     """A best practice in form: parts p1 on, some made of parts, each part that holds none asked of
-    by a question, one question about the whole, a practice for each question in order, and each
-    ground whole with an https link."""
+    by a question, one question about the whole, and a practice for each question in
+    order."""
     parts, leaves = [], []
     for _ in range(draw(st.integers(0, 4))):
         made: dict = {"id": f"p{len(leaves) + len(parts) + 1}", "what": "w"}
@@ -34,7 +32,6 @@ def sound(draw) -> dict:
         abouts[draw(st.integers(0, len(abouts) - 1))].append(leaf)
     abouts = [a for a in abouts if a]
     draw(st.randoms()).shuffle(abouts)
-    ground = {"title": "t", "url": "https://example.com", "by": "b", "quote": "q"}
     return {
         "goal": "g",
         "parts": parts,
@@ -42,7 +39,7 @@ def sound(draw) -> dict:
             {"id": f"Q{n}", "about": ", ".join(a), "what": "w"} for n, a in enumerate(abouts, 1)
         ],
         "practices": [
-            {"user_benefit": f"Q{n}", "thinking": "t", "steps": [], "grounds": [ground]}
+            {"user_benefit": f"Q{n}", "thinking": "t", "steps": []}
             for n in range(1, len(abouts) + 1)
         ],
     }
@@ -120,30 +117,6 @@ class TestGroups(unittest.TestCase):
         for n in numbers:
             self.assertEqual(n, sorted(n))
         self.assertEqual([n[0] for n in numbers], sorted(n[0] for n in numbers))
-
-
-# What may stand between two words, and inside one, without changing how a page reads.
-BETWEEN = st.sampled_from(
-    [" ", "  ", "\n", "\t ", "<p>", "</div>", "<br>", "<li>", "<style>x</style>"]
-)
-INSIDE = st.sampled_from(["", "", "<em>", "</em>", '<a href="x">', "</a>", "<span>", "</code>"])
-WORDS = st.lists(st.text("abcXYZ'\"-", min_size=1, max_size=6), min_size=1, max_size=6)
-# Marks a page may write for the plain ones.
-MARKS = {"'": "’", '"': "“", "-": "—"}
-
-
-class TestPlain(unittest.TestCase):
-    @given(WORDS, st.data())
-    def test_a_page_reads_as_its_words_however_it_writes_them(self, words, data):
-        written = []
-        for word in words:
-            chars = [
-                data.draw(st.sampled_from([c, c.swapcase(), MARKS.get(c, c)])) + data.draw(INSIDE)
-                for c in word
-            ]
-            written.append(data.draw(INSIDE) + "".join(chars))
-        page = "".join(w + data.draw(BETWEEN) for w in written)
-        self.assertEqual(practices.plain(page), practices.plain(" ".join(words)))
 
 
 if __name__ == "__main__":

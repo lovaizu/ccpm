@@ -49,26 +49,6 @@
    "steps": [
     "Where two places say a fact in different ways, keep both, and send the difference back to be settled with what the document says. Choosing one would change what the document says.",
     "Replace each other place's copy with a link to that place, saying in a few words what the reader finds there."
-   ],
-   "grounds": [
-    {
-     "title": "Orthogonality and the DRY Principle",
-     "url": "https://www.artima.com/articles/orthogonality-and-the-dry-principle",
-     "by": "Venners with Hunt and Thomas, artima.com, 2003",
-     "quote": "DRY says that every piece of system knowledge should have one authoritative, unambiguous representation."
-    },
-    {
-     "title": "Orthogonality and the DRY Principle",
-     "url": "https://www.artima.com/articles/orthogonality-and-the-dry-principle",
-     "by": "Venners with Hunt and Thomas, artima.com, 2003",
-     "quote": "The obvious answer is, if you have more than one way to express the same thing, at some point the two or three different representations will most likely fall out of step with each other."
-    },
-    {
-     "title": "Minimize cross-references",
-     "url": "https://github.com/GSA/plainlanguage.gov/blob/main/_pages/guidelines/design/minimize-cross-references.md",
-     "by": "PLAIN, plainlanguage.gov archive on GitHub, no date",
-     "quote": "Be sure that the reference you insert clearly describes the referenced material."
-    }
    ]
   },
   {
@@ -77,50 +57,6 @@
    "steps": [
     "Start each heading with the words that tell the most.",
     "Name the reader and the purposes they come with. For each purpose, read only the headings and first sentences. Where the reader would miss a section that the purpose needs, or read one that it does not need, rewrite that heading or first sentence."
-   ],
-   "grounds": [
-    {
-     "title": "Do your research",
-     "url": "https://github.com/GSA/plainlanguage.gov/blob/main/_pages/guidelines/audience/do-your-research.md",
-     "by": "PLAIN, plainlanguage.gov archive on GitHub, no date",
-     "quote": "Understanding what users are trying to do when visiting your website or reading your communications will help you write clearly and focus on their needs."
-    },
-    {
-     "title": "How Users Read on the Web",
-     "url": "https://www.nngroup.com/articles/how-users-read-on-the-web/",
-     "by": "Nielsen, Nielsen Norman Group, 1997",
-     "quote": "In research on how people read websites we found that 79 percent of our test users always scanned any new page they came across; only 16 percent read word-by-word."
-    },
-    {
-     "title": "Add useful headings",
-     "url": "https://github.com/GSA/plainlanguage.gov/blob/main/_pages/guidelines/organize/add-useful-headings.md",
-     "by": "PLAIN, plainlanguage.gov archive on GitHub, no date",
-     "quote": "Well organized writing will still be difficult for users to follow if they can't see how it's organized. An effective way to reveal your document's organization is to use lots of useful headings."
-    },
-    {
-     "title": "Write short sections",
-     "url": "https://github.com/GSA/plainlanguage.gov/blob/main/_pages/guidelines/concise/write-short-sections.md",
-     "by": "PLAIN, plainlanguage.gov archive on GitHub, no date",
-     "quote": "Long sections are impossible to summarize meaningfully in a heading. When you break up different concepts into short sections, each heading can give the reader a clear picture of what's in that section."
-    },
-    {
-     "title": "F-Shaped Pattern of Reading on the Web: Misunderstood, But Still Relevant (Even on Mobile)",
-     "url": "https://www.nngroup.com/articles/f-shaped-pattern-reading-web-content/",
-     "by": "Pernice, Nielsen Norman Group, 2017",
-     "quote": "Start headings and subheadings with the words carrying most information: if users see only the first 2 words, they should still get the gist of the following section."
-    },
-    {
-     "title": "Scannable content",
-     "url": "https://learn.microsoft.com/en-us/style-guide/scannable-content/",
-     "by": "Microsoft, Microsoft Writing Style Guide, 2023",
-     "quote": "Lead with what's most important. Place important keywords near the beginning of headings, table entries, and paragraphs so they're easy to spot."
-    },
-    {
-     "title": "Have a topic sentence",
-     "url": "https://github.com/GSA/plainlanguage.gov/blob/main/_pages/guidelines/organize/have-a-topic-sentence.md",
-     "by": "PLAIN, plainlanguage.gov archive on GitHub, no date",
-     "quote": "Readers should be able to get good general understanding of your document by skimming your topic sentences."
-    }
    ]
   },
   {
@@ -130,62 +66,6 @@
     "Choose a form whose shape shows that order or relation, such as a numbered list for steps in order, a bulleted list for items whose order does not matter, a table for things compared on the same points, or a diagram for who passes what to whom.",
     "Draw a sequence diagram in Mermaid inside the document: its steps go from top to bottom, so it has no layout to choose, and the page draws it. Draw a diagram of structure, such as parts and what passes between them, as an SVG file beside the document, and show it as an image: its layout carries its meaning. Draw a table the reader takes in whole at a glance, such as which tests cover which part, as an SVG in the same way, so its marks and groups line up. Keep a table the reader looks a row up in as Markdown, so they can search and copy it. Set the SVG's colours under prefers-color-scheme, so that it follows the page's light or dark scheme.",
     "Show the form alone to a reader who has not read the text, and have them say back what it tells. Where they say it otherwise, mend the form."
-   ],
-   "grounds": [
-    {
-     "title": "The Science of Scientific Writing",
-     "url": "https://human.libretexts.org/Bookshelves/Composition/Technical_Composition/Effective_Technical_Writing_in_the_Information_Age_(Schall)/10%3A_Journal_Articles_about_Writing/10.06%3A_The_Science_of_Scientific_Writing",
-     "by": "Gopen and Swan, American Scientist, 1990",
-     "quote": "readers make many of their most important interpretive decisions about the substance of prose based on clues they receive from its structure."
-    },
-    {
-     "title": "Writing tips",
-     "url": "https://learn.microsoft.com/en-us/style-guide/global-communications/writing-tips",
-     "by": "Microsoft, Microsoft Writing Style Guide, 2023",
-     "quote": "Replace complex sentences and paragraphs with lists and tables."
-    },
-    {
-     "title": "Highlights",
-     "url": "https://developers.google.com/style/highlights",
-     "by": "Google, Google developer documentation style guide, 2026",
-     "quote": "Use numbered lists for sequences."
-    },
-    {
-     "title": "Highlights",
-     "url": "https://developers.google.com/style/highlights",
-     "by": "Google, Google developer documentation style guide, 2026",
-     "quote": "Use bulleted lists for most other lists."
-    },
-    {
-     "title": "Use lists",
-     "url": "https://github.com/GSA/plainlanguage.gov/blob/main/_pages/guidelines/organize/use-lists.md",
-     "by": "PLAIN, plainlanguage.gov archive on GitHub, no date",
-     "quote": "Help the reader understand the order in which things happen"
-    },
-    {
-     "title": "Use tables to make complex material easier to understand",
-     "url": "https://github.com/GSA/plainlanguage.gov/blob/main/_pages/guidelines/design/use-tables-to-make-complex-material-easier-to-understand.md",
-     "by": "PLAIN, plainlanguage.gov archive on GitHub, no date",
-     "quote": "Tables help your audience see relationships that are often times hidden in dense text."
-    },
-    {
-     "title": "Paraphrase testing",
-     "url": "https://github.com/GSA/plainlanguage.gov/blob/main/_pages/guidelines/test/paraphrase-testing.md",
-     "by": "PLAIN, plainlanguage.gov archive on GitHub, no date",
-     "quote": "Paraphrase testing will tell you what a reader thinks a piece of writing means and will help you know if they're interpreting the message as you intended."
-    },
-    {
-     "title": "prefers-color-scheme",
-     "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme",
-     "by": "MDN Web Docs, developer.mozilla.org, no date",
-     "quote": "For SVG and iframes, prefers-color-scheme lets you set a CSS style for the SVG or iframe based on the color-scheme of the parent element in the web page."
-    },
-    {
-     "title": "Creating diagrams",
-     "url": "https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-diagrams",
-     "by": "GitHub, GitHub Docs",
-     "quote": "Diagram rendering is available in GitHub Issues, GitHub Discussions, pull requests, wikis, and Markdown files."
-    }
    ]
   },
   {
@@ -195,62 +75,6 @@
     "Where a sentence rests on something outside the document, such as an earlier talk, say it in the sentence or link to where it is written.",
     "Start each sentence with what the reader already has, and end it with what is new.",
     "Put a rule's conditions and exceptions beside the rule, where the reader takes them in most easily. Put a short condition before its instruction, so that a reader whose case it is not can skip the instruction."
-   ],
-   "grounds": [
-    {
-     "title": "The Science of Scientific Writing",
-     "url": "https://human.libretexts.org/Bookshelves/Composition/Technical_Composition/Effective_Technical_Writing_in_the_Information_Age_(Schall)/10%3A_Journal_Articles_about_Writing/10.06%3A_The_Science_of_Scientific_Writing",
-     "by": "Gopen and Swan, American Scientist, 1990",
-     "quote": "In general, provide context for your reader before asking that reader to consider anything new."
-    },
-    {
-     "title": "Minimize cross-references",
-     "url": "https://github.com/GSA/plainlanguage.gov/blob/main/_pages/guidelines/design/minimize-cross-references.md",
-     "by": "PLAIN, plainlanguage.gov archive on GitHub, no date",
-     "quote": "They may also overtax your users' short-term memory."
-    },
-    {
-     "title": "Have a topic sentence",
-     "url": "https://github.com/GSA/plainlanguage.gov/blob/main/_pages/guidelines/organize/have-a-topic-sentence.md",
-     "by": "PLAIN, plainlanguage.gov archive on GitHub, no date",
-     "quote": "Don't make readers hold a lot of information in their heads before getting to the point."
-    },
-    {
-     "title": "Write for a global audience",
-     "url": "https://developers.google.com/style/translation",
-     "by": "Google, Google developer documentation style guide, 2026",
-     "quote": "Provide context. Don't assume that the reader already knows what you're talking about."
-    },
-    {
-     "title": "The Science of Scientific Writing",
-     "url": "https://human.libretexts.org/Bookshelves/Composition/Technical_Composition/Effective_Technical_Writing_in_the_Information_Age_(Schall)/10%3A_Journal_Articles_about_Writing/10.06%3A_The_Science_of_Scientific_Writing",
-     "by": "Gopen and Swan, American Scientist, 1990",
-     "quote": "Put in the topic position the old information that links backward; put in the stress position the new information you want the reader to emphasize."
-    },
-    {
-     "title": "Make it easy to follow",
-     "url": "https://github.com/GSA/plainlanguage.gov/blob/main/_pages/guidelines/organize/make-it-easy-to-follow.md",
-     "by": "PLAIN, plainlanguage.gov archive on GitHub, no date",
-     "quote": "Present the steps chronologically, in the order your user and your agency will follow them."
-    },
-    {
-     "title": "Place the main idea before exceptions and conditions",
-     "url": "https://github.com/GSA/plainlanguage.gov/blob/main/_pages/guidelines/organize/place-the-main-idea-before-exceptions-and-conditions.md",
-     "by": "PLAIN, plainlanguage.gov archive on GitHub, no date",
-     "quote": "There is no absolute rule about where to put exceptions and conditions. Put them where they can be absorbed most easily."
-    },
-    {
-     "title": "Place the main idea before exceptions and conditions",
-     "url": "https://github.com/GSA/plainlanguage.gov/blob/main/_pages/guidelines/organize/place-the-main-idea-before-exceptions-and-conditions.md",
-     "by": "PLAIN, plainlanguage.gov archive on GitHub, no date",
-     "quote": "The audience must absorb the exception, then the rule, and then usually has to go back to grasp the relationship between the two."
-    },
-    {
-     "title": "Sentence structure",
-     "url": "https://developers.google.com/style/sentence-structure",
-     "by": "Google, Google developer documentation style guide, 2024",
-     "quote": "If you want to tell the reader to do something, try to mention the circumstance, conditions, or goal before you provide the instruction. Mentioning the circumstance first lets the reader skip the instruction if it doesn't apply."
-    }
    ]
   },
   {
@@ -263,154 +87,12 @@
     "Where a pronoun, or a \"which\", could point to two nouns, replace it with the noun it means. Break a string of nouns apart with prepositions.",
     "Read each sentence once as a machine translator would, word by word in its order and with nothing from outside it, and say who does what. Where the sentence reads two ways, reword it.",
     "Have a reader who did not write the document say a section back in their own words. Where they say it otherwise, reword the sentence, and do not correct the reader."
-   ],
-   "grounds": [
-    {
-     "title": "Write short sentences",
-     "url": "https://github.com/GSA/plainlanguage.gov/blob/main/_pages/guidelines/concise/write-short-sentences.md",
-     "by": "PLAIN, plainlanguage.gov archive on GitHub, no date",
-     "quote": "Express only one idea in each sentence."
-    },
-    {
-     "title": "Write short sentences",
-     "url": "https://github.com/GSA/plainlanguage.gov/blob/main/_pages/guidelines/concise/write-short-sentences.md",
-     "by": "PLAIN, plainlanguage.gov archive on GitHub, no date",
-     "quote": "Resist the temptation to put everything in one sentence; break up your idea into its parts and make each one the subject of its own sentence."
-    },
-    {
-     "title": "Writing tips",
-     "url": "https://learn.microsoft.com/en-us/style-guide/global-communications/writing-tips",
-     "by": "Microsoft, Microsoft Writing Style Guide, 2023",
-     "quote": "Avoid linking more than three phrases or clauses by using coordinate conjunctions such as and, or, or but. Better yet, avoid linking more than two."
-    },
-    {
-     "title": "Active voice",
-     "url": "https://developers.google.com/style/voice",
-     "by": "Google, Google developer documentation style guide, 2024",
-     "quote": "In passive voice, it's easy to neglect to indicate who or what is performing a particular action."
-    },
-    {
-     "title": "The Science of Scientific Writing",
-     "url": "https://human.libretexts.org/Bookshelves/Composition/Technical_Composition/Effective_Technical_Writing_in_the_Information_Age_(Schall)/10%3A_Journal_Articles_about_Writing/10.06%3A_The_Science_of_Scientific_Writing",
-     "by": "Gopen and Swan, American Scientist, 1990",
-     "quote": "Follow a grammatical subject as soon as possible with its verb."
-    },
-    {
-     "title": "The Science of Scientific Writing",
-     "url": "https://human.libretexts.org/Bookshelves/Composition/Technical_Composition/Effective_Technical_Writing_in_the_Information_Age_(Schall)/10%3A_Journal_Articles_about_Writing/10.06%3A_The_Science_of_Scientific_Writing",
-     "by": "Gopen and Swan, American Scientist, 1990",
-     "quote": "Articulate the action of every clause or sentence in its verb."
-    },
-    {
-     "title": "Avoid hidden verbs",
-     "url": "https://github.com/GSA/plainlanguage.gov/blob/main/_pages/guidelines/words/avoid-hidden-verbs.md",
-     "by": "PLAIN, plainlanguage.gov archive on GitHub, no date",
-     "quote": "A hidden verb (or nominalization) is a verb converted into a noun. It often needs an extra verb to make sense."
-    },
-    {
-     "title": "Keep the subject, verb, and object close together",
-     "url": "https://github.com/GSA/plainlanguage.gov/blob/main/_pages/guidelines/concise/keep-the-subject-verb-and-object-close-together.md",
-     "by": "PLAIN, plainlanguage.gov archive on GitHub, no date",
-     "quote": "When you put modifiers, phrases, or clauses between two or all three of these essential parts, you make it harder for the user to understand you."
-    },
-    {
-     "title": "Writing tips",
-     "url": "https://learn.microsoft.com/en-us/style-guide/global-communications/writing-tips",
-     "by": "Microsoft, Microsoft Writing Style Guide, 2023",
-     "quote": "Writing style affects the quality of machine translation."
-    },
-    {
-     "title": "Writing tips",
-     "url": "https://learn.microsoft.com/en-us/style-guide/global-communications/writing-tips",
-     "by": "Microsoft, Microsoft Writing Style Guide, 2023",
-     "quote": "Write sentences that use standard word order (that is, subject + verb + object) whenever possible."
-    },
-    {
-     "title": "Writing tips",
-     "url": "https://learn.microsoft.com/en-us/style-guide/global-communications/writing-tips",
-     "by": "Microsoft, Microsoft Writing Style Guide, 2023",
-     "quote": "Articles help readers and translation software identify the nouns and modifiers in a sentence."
-    },
-    {
-     "title": "Writing tips",
-     "url": "https://learn.microsoft.com/en-us/style-guide/global-communications/writing-tips",
-     "by": "Microsoft, Microsoft Writing Style Guide, 2023",
-     "quote": "Include that and who. They help to clarify the sentence structure."
-    },
-    {
-     "title": "Write for a global audience",
-     "url": "https://developers.google.com/style/translation",
-     "by": "Google, Google developer documentation style guide, 2026",
-     "quote": "Use helper words. Helper words such as then, that, and of are frequently left out of conversational English. Use these words to avoid ambiguity."
-    },
-    {
-     "title": "Write for a global audience",
-     "url": "https://developers.google.com/style/translation",
-     "by": "Google, Google developer documentation style guide, 2026",
-     "quote": "if a pronoun is ambiguous, then replace it with the appropriate noun."
-    },
-    {
-     "title": "Avoid noun strings",
-     "url": "https://github.com/GSA/plainlanguage.gov/blob/main/_pages/guidelines/words/avoid-noun-strings.md",
-     "by": "PLAIN, plainlanguage.gov archive on GitHub, no date",
-     "quote": "However, many users will think they've found the noun when they're still reading adjectives, and will become confused."
-    },
-    {
-     "title": "The Science of Scientific Writing",
-     "url": "https://human.libretexts.org/Bookshelves/Composition/Technical_Composition/Effective_Technical_Writing_in_the_Information_Age_(Schall)/10%3A_Journal_Articles_about_Writing/10.06%3A_The_Science_of_Scientific_Writing",
-     "by": "Gopen and Swan, American Scientist, 1990",
-     "quote": "We cannot succeed in making even a single sentence mean one and only one thing; we can only increase the odds that a large majority of readers will tend to interpret our discourse according to our intentions."
-    },
-    {
-     "title": "Paraphrase testing",
-     "url": "https://github.com/GSA/plainlanguage.gov/blob/main/_pages/guidelines/test/paraphrase-testing.md",
-     "by": "PLAIN, plainlanguage.gov archive on GitHub, no date",
-     "quote": "Do not correct the participant. When you review your notes later, wherever participants misunderstood the message, the document has a problem that you should fix."
-    }
    ]
   },
   {
    "user_benefit": "Q6",
    "thinking": "Each thing has one name, the one its reader already uses, written the same way each time. Each name names one thing. The reader, and a translator, then keep one picture of each thing from start to end.",
-   "steps": [],
-   "grounds": [
-    {
-     "title": "Write for a global audience",
-     "url": "https://developers.google.com/style/translation",
-     "by": "Google, Google developer documentation style guide, 2026",
-     "quote": "If you use a particular term for a concept in one place, then use that exact same term elsewhere, including the same capitalization. If you use different names for the same thing, translators might think you're referring to different concepts, and thus might use different translations."
-    },
-    {
-     "title": "Use the same terms consistently",
-     "url": "https://github.com/GSA/plainlanguage.gov/blob/main/_pages/guidelines/words/use-the-same-terms-consistently.md",
-     "by": "PLAIN, plainlanguage.gov archive on GitHub, no date",
-     "quote": "Using a different term may cause the reader to wonder if you're referring to the same group."
-    },
-    {
-     "title": "Use the same terms consistently",
-     "url": "https://github.com/GSA/plainlanguage.gov/blob/main/_pages/guidelines/words/use-the-same-terms-consistently.md",
-     "by": "PLAIN, plainlanguage.gov archive on GitHub, no date",
-     "quote": "You don't need to use synonyms to make your writing more interesting."
-    },
-    {
-     "title": "Writing tips",
-     "url": "https://learn.microsoft.com/en-us/style-guide/global-communications/writing-tips",
-     "by": "Microsoft, Microsoft Writing Style Guide, 2023",
-     "quote": "Use one word for a concept, and use it consistently. Avoid using synonyms to refer to the same concept or feature. And don’t use the same word to refer to multiple concepts or features."
-    },
-    {
-     "title": "About ASD-STE100",
-     "url": "https://www.asd-ste100.org/about.html",
-     "by": "ASD STEMG, asd-ste100.org, 2023",
-     "quote": "Many readers have limited knowledge of English, and are easily confused by complex sentence structures and by the number of meanings and synonyms which English words can have."
-    },
-    {
-     "title": "About ASD-STE100",
-     "url": "https://www.asd-ste100.org/about.html",
-     "by": "ASD STEMG, asd-ste100.org, 2023",
-     "quote": "In general, there is only one word for one meaning, and one part of speech for one word."
-    }
-   ]
+   "steps": []
   },
   {
    "user_benefit": "Q7",
@@ -418,32 +100,6 @@
    "steps": [
     "Write each abbreviation out in full where the reader first meets it.",
     "Where the document gives a common word a meaning of its own, replace it with a word the reader does not already read another way."
-   ],
-   "grounds": [
-    {
-     "title": "Write for your audience",
-     "url": "https://github.com/GSA/plainlanguage.gov/blob/main/_pages/guidelines/audience/index.md",
-     "by": "PLAIN, plainlanguage.gov archive on GitHub, no date",
-     "quote": "Think about what your audience knows about the situation or topic you're writing about. Then, guide them through the information they need to know."
-    },
-    {
-     "title": "Avoid jargon",
-     "url": "https://github.com/GSA/plainlanguage.gov/blob/main/_pages/guidelines/words/avoid-jargon.md",
-     "by": "PLAIN, plainlanguage.gov archive on GitHub, no date",
-     "quote": "writers often fail to realize that terms they know well may be difficult or meaningless to their audience."
-    },
-    {
-     "title": "Write for a global audience",
-     "url": "https://developers.google.com/style/translation",
-     "by": "Google, Google developer documentation style guide, 2026",
-     "quote": "Define abbreviations."
-    },
-    {
-     "title": "Minimize definitions",
-     "url": "https://github.com/GSA/plainlanguage.gov/blob/main/_pages/guidelines/words/minimize-definitions.md",
-     "by": "PLAIN, plainlanguage.gov archive on GitHub, no date",
-     "quote": "readers are likely to forget that you'd assigned some common word a new meaning, and when they come upon the word later in your document they assign the common meaning, rather than your specialized one."
-    }
    ]
   },
   {
@@ -451,26 +107,6 @@
    "thinking": "A word or a sentence that carries nothing of what the document says still costs the reader time, so it goes. A word that shows how a sentence is built stays.",
    "steps": [
     "Read each changed section again from the top, and check that it still says all it said before."
-   ],
-   "grounds": [
-    {
-     "title": "Be concise",
-     "url": "https://github.com/GSA/plainlanguage.gov/blob/main/_pages/guidelines/concise/index.md",
-     "by": "PLAIN, plainlanguage.gov archive on GitHub, no date",
-     "quote": "Unnecessary words waste your audience's time."
-    },
-    {
-     "title": "Be concise",
-     "url": "https://github.com/GSA/plainlanguage.gov/blob/main/_pages/guidelines/concise/index.md",
-     "by": "PLAIN, plainlanguage.gov archive on GitHub, no date",
-     "quote": "Challenge every word—do you need it?"
-    },
-    {
-     "title": "How Users Read on the Web",
-     "url": "https://www.nngroup.com/articles/how-users-read-on-the-web/",
-     "by": "Nielsen, Nielsen Norman Group, 1997",
-     "quote": "As shown in the table, measured usability was dramatically higher for the concise version (58% better) and for the scannable version (47% better)."
-    }
    ]
   }
  ]

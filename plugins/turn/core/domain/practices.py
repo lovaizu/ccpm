@@ -6,16 +6,9 @@ by a run of the evaluator of its own."""
 
 from __future__ import annotations
 
-import functools
-import html
-import http.client
 import json
 import os
 import re
-import time
-import urllib.error
-import urllib.request
-from collections.abc import Callable
 from typing import Any
 
 # What the about of a question may name beside the parts or sections: the whole deliverable.
@@ -24,20 +17,7 @@ WHOLE = "the whole"
 OPENING = "the opening"
 SECTION = re.compile(r"^## (.+)$", re.MULTILINE)
 COMMENT = re.compile(r"<!--.*?-->", re.DOTALL)
-GROUND = ("title", "url", "by", "quote")
-# The marks a page may write for one another: curly and plain quotes, and every dash.
-SAME = (("\u2018\u2019\u2032", "'"), ("\u201c\u201d\u2033", '"'), ("\u2013\u2014\u2212", "-"))
 QUESTION = re.compile(r"\bQ\d+\b")
-# What a page holds that a browser does not show as text.
-# The two flags are bits apart, so joined by `|`, `+` or `^` they are one value.
-UNSHOWN_FLAGS = re.DOTALL | re.IGNORECASE  # pragma: no mutate
-UNSHOWN = re.compile(r"<(style|script)\b.*?</\1\s*>", UNSHOWN_FLAGS)
-# The tags a browser shows inside a line, joining the text on either side: the rest start a block,
-# which a browser sets apart from the text beside it.
-INLINE = re.compile(
-    r"</?(?:a|abbr|b|cite|code|dfn|em|i|kbd|mark|q|s|samp|small|span|strong|sub|sup|u|var)\b[^>]*>",
-    re.IGNORECASE,
-)
 
 
 def part_ids(items: list[dict[str, Any]]) -> list[str]:
@@ -99,21 +79,21 @@ def missing(path: str, data: dict[str, Any]) -> list[str]:
 
 
 def texts(value: Any) -> list[str]:
-    """Each string in the value at any depth, but a ground's, whose words are its source's."""
+    """Each string in the value at any depth."""
     if isinstance(value, str):
         return [value]
     if isinstance(value, list):
         return [t for item in value for t in texts(item)]
     if isinstance(value, dict):
-        return [t for k, v in value.items() if k != "grounds" for t in texts(v)]
+        return [t for v in value.values() for t in texts(v)]
     return []
 
 
 def faults(data: dict[str, Any], template: list[str] | None = None) -> list[str]:
     """Each fault of the best practice's form, in words: questions numbered in their order, each
     about a part it has, a section of its template where it has one, or the whole, every part or
-    section and the whole asked of, each question with one practice in the same order, each ground
-    whole, and each question named in the text one that is there."""
+    section and the whole asked of, each question with one practice in the same order, and each
+    question named in the text one that is there."""
     found = []
     if template is None:
         ids, leaves, what = part_ids(data.get("parts", [])), leaf_ids(data.get("parts", [])), "part"
@@ -142,87 +122,8 @@ def faults(data: dict[str, Any], template: list[str] | None = None) -> list[str]
     answered = [p["user_benefit"] for p in data["practices"]]
     if answered != questions:
         found.append(f"practices meet {', '.join(answered)}, not each question once in its order")
-    for practice in data["practices"]:
-        for n, item in enumerate(practice["grounds"], 1):
-            missing = [k for k in GROUND if not item.get(k)]
-            if missing:
-                found.append(f"{practice['user_benefit']} ground {n} has no {', '.join(missing)}")
-            elif not item["url"].startswith("https://"):
-                found.append(f"{practice['user_benefit']} ground {n} links no https page")
     for named in sorted({n for t in texts(data) for n in QUESTION.findall(t)} - set(questions)):
         found.append(f"{named} is named, but there is no such question")
-    return found
-
-
-def plain(text: str) -> str:
-    """Text as it reads, for finding words in a page: styles and scripts gone, the text of a tag
-    inside a line joined to the text beside it, the text of each block set apart, entities gone,
-    quotes, dashes and spaces of every kind made one, a space a tag left before a stop gone, code
-    marks dropped, and case set aside."""
-    text = INLINE.sub("", UNSHOWN.sub(" ", text))
-    text = html.unescape(re.sub(r"<[^>]+>", " ", text))
-    for kinds, one in SAME:
-        text = re.sub(f"[{kinds}]", one, text)
-    text = re.sub(r"\s+", " ", text.replace("`", ""))
-    return re.sub(r" ([.,:;?!])", r"\1", text).strip().lower()
-
-
-RAW = r"https://raw.githubusercontent.com/\1/\2/"
-# Who asks for a page: this script, named as a browser-like client, as some sites refuse a bare
-# "Mozilla/5.0".
-AGENT = "Mozilla/5.0 (compatible; plan.py; +https://github.com/lovaizu/ccpm)"
-# How often a page that asks to be called again later is asked again, and how long is waited first.
-TRIES = 4
-WAIT = 15
-
-
-@functools.cache
-def fetch(url: str) -> tuple[str, bytes]:
-    """The page at the URL, its content type and its body, as a browser would be given it, each
-    page opened once however many grounds quote it; a page that answers too many requests is
-    asked again after a wait."""
-    # A file on GitHub is read as its own text, not the page around it that holds it as data.
-    url = re.sub(r"^https://github\.com/([^/]+)/([^/]+)/blob/", RAW, url)
-    request = urllib.request.Request(url, headers={"User-Agent": AGENT})
-    tried = 0
-    while True:
-        try:
-            with urllib.request.urlopen(request, timeout=30) as response:
-                return response.headers.get("Content-Type", ""), response.read()
-        except urllib.error.HTTPError as error:
-            tried += 1
-            if error.code != 429:
-                raise
-            # tried counts up from 0 by one, so it meets TRIES before it could pass it.
-            if tried == TRIES:  # pragma: no mutate
-                raise
-            time.sleep(WAIT * tried)
-
-
-def sources(data: dict[str, Any], get: Callable[[str], tuple[str, bytes]] = fetch) -> list[str]:
-    """Each ground whose page is not the one meant, in words: a page that does not open, or whose
-    text does not hold the title and the words quoted; a page that is no HTML or text, such as a
-    PDF, is named as not checked."""
-    found = []
-    for practice in data["practices"]:
-        for n, item in enumerate(practice["grounds"], 1):
-            where = f"{practice['user_benefit']} ground {n} ({item['url']})"
-            try:
-                kind, body = get(item["url"])
-            # A page fails to open as the network or the server fails, a refusal and a timeout
-            # among them, as its answer breaks off, or as its URL is none that can be asked for.
-            # Cosmic Ray 8.7.0's ExceptionReplacer fails on a dotted name among the exceptions, so
-            # makes no mutant of this line to test.
-            except (OSError, http.client.HTTPException, ValueError) as error:  # pragma: no mutate
-                found.append(f"{where} does not open: {error}")
-                continue
-            if not kind.startswith(("text/", "application/xhtml")):
-                found.append(f"{where} not checked: the page is {kind or 'of no type'}")
-                continue
-            page = plain(body.decode("utf-8", "replace"))
-            for field in ("title", "quote"):
-                if plain(item[field]) not in page:
-                    found.append(f"{where} does not hold its {field}")
     return found
 
 
@@ -233,11 +134,6 @@ def parts(items: list[dict[str, Any]], depth: int = 0) -> list[str]:
         lines.append(f"{'  ' * depth}- **{item['id']}**: {item['what']}")
         lines.extend(parts(item.get("parts", []), depth + 1))
     return lines
-
-
-def ground(item: dict[str, str]) -> str:
-    """A ground as a link labelled with its page's title, then who wrote it and the words quoted."""
-    return f'- [{item["title"]}]({item["url"]}), {item["by"]}: "{item["quote"]}"'
 
 
 def markdown(kind: str, data: dict[str, Any]) -> str:
@@ -260,8 +156,6 @@ def markdown(kind: str, data: dict[str, Any]) -> str:
         out.append(f"**Thinking**: {practice['thinking']}")
         if practice["steps"]:
             out += ["", "**Steps**", "", *(f"{n}. {s}" for n, s in enumerate(practice["steps"], 1))]
-        if practice["grounds"]:
-            out += ["", "**Grounds**", "", *(ground(g) for g in practice["grounds"])]
     return "\n".join(out) + "\n"
 
 

@@ -4,10 +4,9 @@ the shortfalls of the last round; `ready` puts the work into its rounds; `next` 
 rounds met every question and begins the next; each prints what the planner gives and ends with,
 giving 0, or why it cannot, giving 1. `check` says whether the Run holds and where the run is,
 giving 0, each fault, giving 1, or why it could not check, giving 2. And what a person or CI runs
-on a best practice, as `... plan.py form|markdown|sources <best practice json>...`: its faults and
-its Markdown left behind, its Markdown written beside it, and each ground whose page is not the one
-meant, each failing where it names any. It hands each to runs.py, phases.py and practices.py in
-core/domain/."""
+on a best practice, as `... plan.py form|markdown <best practice json>...`: its faults and its
+Markdown left behind, and its Markdown written beside it, each failing where it names any. It
+hands each to runs.py, phases.py and practices.py in core/domain/."""
 
 from __future__ import annotations
 
@@ -28,8 +27,7 @@ import runs
 
 USAGE = (
     "usage: python3 ${CLAUDE_PLUGIN_ROOT}/scripts/plan.py start|hand|ready|next|check <run>\n"
-    "       python3 ${CLAUDE_PLUGIN_ROOT}/scripts/plan.py form|markdown|sources"
-    " <best practice json>..."
+    "       python3 ${CLAUDE_PLUGIN_ROOT}/scripts/plan.py form|markdown <best practice json>..."
 )
 HANDED = "Give `handed`, and end with this Request as it is"
 
@@ -194,18 +192,9 @@ def markdown(path: str) -> list[str]:
     return []
 
 
-def sources(path: str) -> list[str]:
-    """Each ground of the best practice whose page is not the one meant, where it can be read."""
-    try:
-        return practices.sources(files.load(path, "best-practice"))
-    except files.Unreadable as why:
-        return [str(why)]
-
-
 PRACTICES: dict[str, Callable[[str], list[str]]] = {
     "form": form,
     "markdown": markdown,
-    "sources": sources,
 }
 
 

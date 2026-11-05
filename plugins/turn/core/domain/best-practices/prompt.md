@@ -45,13 +45,6 @@ When an AI agent gets the prompt for a request that the prompt is made for, it d
 1. For each thing that holds once the task is met, give the check that shows it: a command to run where one exists, or else what to look up and where.
 2. Write when the AI stops: once every check passes, or at a blocker it cannot pass. At a blocker, the AI hands it back with what it found.
 
-**Grounds**
-
-- [Best practices for Claude Code](https://code.claude.com/docs/en/best-practices), Anthropic, Claude Code Docs, no date: "Claude stops when the work looks done. If it has nothing to run that tells it whether the work actually is done, "looks done" is all it has to go on."
-- [Reasoning best practices](https://platform.openai.com/docs/guides/reasoning-best-practices), OpenAI, OpenAI API docs, no date: "Be very specific about your end goal"
-- [GPT-5 prompting guide](https://cookbook.openai.com/examples/gpt-5/gpt-5_prompting_guide), OpenAI, OpenAI Cookbook, 2025: "Generally, it can be helpful to clearly state the stop conditions of the agentic tasks, outline safe versus unsafe actions, and define when, if ever, it’s acceptable for the model to hand back to the user."
-- [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents), Erik S. and Zhang, anthropic.com/engineering, 2024: "During execution, it's crucial for the agents to gain “ground truth” from the environment at each step (such as tool call results or code execution) to assess its progress."
-
 ### Q2: When the AI meets a choice that is the user's, such as one between options that serve equally or an action hard to undo, does it hand the choice to the user rather than make it?
 
 **Thinking**: A choice is the user's where the AI has no ground to pick one option over another, or where the choice is hard to undo. The prompt names those choices and how the AI asks about them. It leaves every other choice to the AI.
@@ -59,12 +52,6 @@ When an AI agent gets the prompt for a request that the prompt is made for, it d
 **Steps**
 
 1. Among the choices the task meets, mark each action that is hard to undo, touches what others share, or destroys something.
-
-**Grounds**
-
-- [Prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices), Anthropic, Claude Platform Docs, no date: "for actions that are hard to reverse, affect shared systems, or could be destructive, ask the user before proceeding."
-- [GPT-5 prompting guide](https://cookbook.openai.com/examples/gpt-5/gpt-5_prompting_guide), OpenAI, OpenAI Cookbook, 2025: "the checkout and payment tools should explicitly have a lower uncertainty threshold for requiring user clarification, while the search tool should have an extremely high threshold"
-- [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents), Erik S. and Zhang, anthropic.com/engineering, 2024: "Agents can then pause for human feedback at checkpoints or when encountering blockers."
 
 ### Q3: Given the prompt and only what its run gives it, can the AI do each step without guessing a fact, such as where its inputs are or a rule of the place it works in?
 
@@ -75,15 +62,6 @@ When an AI agent gets the prompt for a request that the prompt is made for, it d
 1. For each step, list the facts it needs: its inputs and where they lie, the terms it uses, the rules of the place, and what the writer knows without saying.
 2. Give the prompt to a fresh AI with only what a run gives it, see where it guesses, and add the fact it lacked.
 
-**Grounds**
-
-- [Prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices), Anthropic, Claude Platform Docs, no date: "Think of Claude as a brilliant but new employee who lacks context on your norms and workflows."
-- [Prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices), Anthropic, Claude Platform Docs, no date: "Key test: Show your prompt to a colleague with minimal context on the task and ask them to follow it. If they’d be confused, Claude will be too."
-- [Best practices for Claude Code](https://code.claude.com/docs/en/best-practices), Anthropic, Claude Code Docs, no date: "Only write down what Claude can't find by reading the repo, or what it would otherwise spend time rediscovering every session."
-- [Writing effective tools for agents — with agents](https://www.anthropic.com/engineering/writing-tools-for-agents), Aizawa, anthropic.com/engineering, 2025: "Consider the context that you might implicitly bring—specialized query formats, definitions of niche terminology, relationships between underlying resources—and make it explicit."
-- [Create custom subagents](https://code.claude.com/docs/en/sub-agents), Anthropic, Claude Code Docs, no date: "Each subagent starts with a fresh, isolated context window. It doesn't see your conversation history, the skills you've already invoked, or the files Claude has already read."
-- [Create custom subagents](https://code.claude.com/docs/en/sub-agents), Anthropic, Claude Code Docs, no date: "Subagents receive only this system prompt plus basic environment details like the working directory, not the Claude Code system prompt."
-
 ### Q4: Taking the steps in order, does the AI arrive at what the goal says the task is for, with no step that leads it elsewhere?
 
 **Thinking**: Each step is a result on the way to the goal. The AI then chooses how to reach it, and knows when to go on.
@@ -93,11 +71,6 @@ When an AI agent gets the prompt for a request that the prompt is made for, it d
 1. Write the steps in the order their results must hold, so the AI sees that order, such as in a numbered list.
 2. Check that a later step or the goal uses each step's result, and cut a step whose result nothing uses.
 3. Check that the last step leaves what the goal says the task is for.
-
-**Grounds**
-
-- [Prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices), Anthropic, Claude Platform Docs, no date: "Provide instructions as sequential steps using numbered lists or bullet points when the order or completeness of steps matters."
-- [Extend Claude with skills](https://code.claude.com/docs/en/skills), Anthropic, Claude Code Docs, no date: "If your skill contains guidelines like "use these API conventions" without a task, the subagent receives the guidelines but no actionable prompt, and returns without meaningful output."
 
 ### Q5: When the AI meets a case a step's rule does not name, can it decide the case as the writer would, from the reason the rule gives?
 
@@ -110,17 +83,6 @@ When an AI agent gets the prompt for a request that the prompt is made for, it d
 3. In place of a list of edge cases, give the way of judging and a few typical examples that differ from one another.
 4. Think of a case the rule does not name, read only the rule and its reason, and check that they lead where the writer would go. Where they do not, mend the reason.
 
-**Grounds**
-
-- [Prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices), Anthropic, Claude Platform Docs, no date: "Providing context or motivation behind your instructions, such as explaining to Claude why such behavior is important, can give Claude more information about your goals and help it deliver more targeted responses."
-- [Prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices), Anthropic, Claude Platform Docs, no date: "Claude can generalize from the explanation."
-- [Best practices for Claude Code](https://code.claude.com/docs/en/best-practices), Anthropic, Claude Code Docs, no date: "Most of the time, you want Claude to decide. Almost every guideline has exceptions, and current models are good at reading the code in front of them and judging whether a guideline fits the situation."
-- [Prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices), Anthropic, Claude Platform Docs, no date: "Tell Claude what to do instead of what not to do"
-- [Best practices for Claude Code](https://code.claude.com/docs/en/best-practices), Anthropic, Claude Code Docs, no date: "Older models sometimes needed the emphasis. Current ones follow a plainly worded line, and piling on emphasis mostly makes Claude over-apply the rule."
-- [GPT-4.1 Prompting Guide](https://cookbook.openai.com/examples/gpt4-1_prompting_guide), MacCallum, Lee et al., OpenAI Cookbook, 2025: "Instructing a model to always follow a specific behavior can occasionally induce adverse effects."
-- [How we built our multi-agent research system](https://www.anthropic.com/engineering/multi-agent-research-system), Hadfield et al., anthropic.com/engineering, 2025: "Our prompting strategy focuses on instilling good heuristics rather than rigid rules."
-- [Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents), Rajasekaran et al., anthropic.com/engineering, 2025: "Instead, we recommend working to curate a set of diverse, canonical examples that effectively portray the expected behavior of the agent."
-
 ### Q6: When the AI is run twice on the same input, does each step whose result must not vary, such as a check or a file's form, give the same result both times?
 
 **Thinking**: The AI's judgment varies from run to run. That suits a step that has many good ways. So a program does a step that has one right result. The program gives that result on every run and handles its own errors. The AI runs the program.
@@ -128,13 +90,6 @@ When an AI agent gets the prompt for a request that the prompt is made for, it d
 **Steps**
 
 1. Run the prompt twice on one input, and compare what those steps gave.
-
-**Grounds**
-
-- [Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices), Anthropic, Claude Platform Docs, no date: "Narrow bridge with cliffs on both sides: There’s only one safe way forward. Provide specific guardrails and exact instructions (low freedom)."
-- [Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices), Anthropic, Claude Platform Docs, no date: "Are more reliable than generated code"
-- [Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices), Anthropic, Claude Platform Docs, no date: "When writing scripts for Skills, handle error conditions rather than deferring to Claude."
-- [Best practices for Claude Code](https://code.claude.com/docs/en/best-practices), Anthropic, Claude Code Docs, no date: "If something has to happen every time, make it a hook, a deny rule, or a managed setting."
 
 ### Q7: Can the AI take every action its steps call for with the tools it is allowed?
 
@@ -146,10 +101,6 @@ When an AI agent gets the prompt for a request that the prompt is made for, it d
 2. Check each tool against those the prompt allows. Where the prompt does not allow a tool, add the tool or change the step.
 3. Run the prompt, and read the record of the run for a tool call the host refused.
 
-**Grounds**
-
-- [How we built our multi-agent research system](https://www.anthropic.com/engineering/multi-agent-research-system), Hadfield et al., anthropic.com/engineering, 2025: "Each subagent needs an objective, an output format, guidance on the tools and sources to use, and clear task boundaries."
-
 ### Q8: When the AI, during a run, reaches for an action that lies outside its task, does the host refuse it?
 
 **Thinking**: A rule in words holds only while the AI follows it. So the writer makes the host refuse each action that must never happen.
@@ -160,13 +111,6 @@ When an AI agent gets the prompt for a request that the prompt is made for, it d
 2. Allow only the tools Q7's list needs.
 3. Where a tool it needs also allows an action it must never take, add a rule the host enforces, such as a deny rule or a hook.
 4. Run the prompt on a request that tempts such an action, and check in the record that the host refused it.
-
-**Grounds**
-
-- [Create custom subagents](https://code.claude.com/docs/en/sub-agents), Anthropic, Claude Code Docs, no date: "Limit tool access: grant only necessary permissions for security and focus"
-- [Create custom subagents](https://code.claude.com/docs/en/sub-agents), Anthropic, Claude Code Docs, no date: "Enforce constraints by limiting which tools a subagent can use"
-- [Best practices for Claude Code](https://code.claude.com/docs/en/best-practices), Anthropic, Claude Code Docs, no date: "But no matter how strongly you word it, whether Claude follows that line on a given turn is still Claude's call."
-- [Best practices for Claude Code](https://code.claude.com/docs/en/best-practices), Anthropic, Claude Code Docs, no date: "If something has to happen every time, make it a hook, a deny rule, or a managed setting."
 
 ### Q9: When the caller, the person or the AI that started the prompt, takes what the AI hands back, can it act on it without asking the AI anything further?
 
@@ -180,12 +124,6 @@ When an AI agent gets the prompt for a request that the prompt is made for, it d
 4. Check that a step makes each thing the output names.
 5. Hand the output alone to someone in the caller's place, and see whether they can act without asking.
 
-**Grounds**
-
-- [Prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices), Anthropic, Claude Platform Docs, no date: "Be specific about the output format and constraints you want."
-- [Create custom subagents](https://code.claude.com/docs/en/sub-agents), Anthropic, Claude Code Docs, no date: "the verbose output stays in the subagent's context while only the relevant summary returns to your main conversation."
-- [Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents), Rajasekaran et al., anthropic.com/engineering, 2025: "returns only a condensed, distilled summary of its work (often 1,000-2,000 tokens)."
-
 ### Q10: When a request the prompt is made for comes, and a request near it that it is not made for, does the host, such as Claude Code, choose the prompt for the first and pass it over for the second, from the name and the description alone?
 
 **Thinking**: To pick a prompt for a request, the host reads only the name and the description of each of many prompts. So the name and the description say what the prompt does and when to use it, in the words users ask in. They also tell the prompt apart from the others.
@@ -196,15 +134,6 @@ When an AI agent gets the prompt for a request that the prompt is made for, it d
 2. Write the description: what the prompt does, then the requests and situations it is used for, the main use first.
 3. Give each request written down to a fresh session with the prompt installed, and see which prompt the host chooses. Where it chooses wrongly, mend the description.
 
-**Grounds**
-
-- [Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices), Anthropic, Claude Platform Docs, no date: "The description is critical for skill selection: Claude uses it to choose the right Skill from potentially 100+ available Skills."
-- [Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices), Anthropic, Claude Platform Docs, no date: "Include both what the Skill does and specific triggers/contexts for when to use it."
-- [Extend Claude with skills](https://code.claude.com/docs/en/skills), Anthropic, Claude Code Docs, no date: "Put the key use case first"
-- [Create custom subagents](https://code.claude.com/docs/en/sub-agents), Anthropic, Claude Code Docs, no date: "Claude uses each subagent's description to decide when to delegate tasks."
-- [Create custom subagents](https://code.claude.com/docs/en/sub-agents), Anthropic, Claude Code Docs, no date: "Make each description specific enough to route to the right subagent"
-- [Equipping agents for the real world with Agent Skills](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills), Zhang, Lazuka and Murag, anthropic.com/engineering, 2025: "Pay special attention to the name and description of your skill. Claude will use these when deciding whether to trigger the skill in response to its current task."
-
 ### Q11: Once the host has chosen the prompt by its description, does the AI do the task the description says, all of it and nothing more?
 
 **Thinking**: The description and the body say the same one task. The AI then does the task that the host chose the prompt for.
@@ -212,10 +141,6 @@ When an AI agent gets the prompt for a request that the prompt is made for, it d
 **Steps**
 
 1. Set what the description says the prompt does against what the goal and the steps have the AI do. For each thing in one and not the other, add it to the body or take it out of the description.
-
-**Grounds**
-
-- [Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices), Anthropic, Claude Platform Docs, no date: "Your description must provide enough detail for Claude to determine when to select this Skill, whereas the rest of `SKILL.md` provides the implementation details."
 
 ### Q12: When the prompt is run several times on each kind of request it is made for, does the AI reach the result the prompt names on every run?
 
@@ -228,17 +153,6 @@ When an AI agent gets the prompt for a request that the prompt is made for, it d
 3. Mend the prompt only for a cause seen in a record.
 4. Run the requests held back last. They show whether the prompt holds beyond the requests that the writer mended it on.
 
-**Grounds**
-
-- [Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices), Anthropic, Claude Platform Docs, no date: "Create evaluations BEFORE writing extensive documentation. This ensures your Skill solves real problems rather than documenting imagined ones."
-- [Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices), Anthropic, Claude Platform Docs, no date: "Claude A helps you design and refine instructions, whereas Claude B tests them in real tasks."
-- [Equipping agents for the real world with Agent Skills](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills), Zhang, Lazuka and Murag, anthropic.com/engineering, 2025: "Identify specific gaps in your agents’ capabilities by running them on representative tasks and observing where they struggle or require additional context."
-- [Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents), Rajasekaran et al., anthropic.com/engineering, 2025: "It’s best to start by testing a minimal prompt with the best model available to see how it performs on your task, and then add clear instructions and examples to improve performance based on failure modes found during initial testing."
-- [Writing effective tools for agents — with agents](https://www.anthropic.com/engineering/writing-tools-for-agents), Aizawa, anthropic.com/engineering, 2025: "what agents omit in their feedback and responses can often be more important than what they include. LLMs don’t always say what they mean."
-- [Writing effective tools for agents — with agents](https://www.anthropic.com/engineering/writing-tools-for-agents), Aizawa, anthropic.com/engineering, 2025: "We relied on held-out test sets to ensure we did not overfit to our “training” evaluations."
-- [Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices), Anthropic, Claude Platform Docs, no date: "What works perfectly for Opus might need more detail for Haiku."
-- [Quantifying Language Models' Sensitivity to Spurious Features in Prompt Design or: How I learned to start worrying about prompt formatting](https://arxiv.org/abs/2310.11324), Sclar, Choi, Tsvetkov and Suhr, arXiv:2310.11324, 2023: "with performance differences of up to 76 accuracy points when evaluated using LLaMA-2-13B"
-
 ### Q13: Does every line of the prompt change what the AI does toward the task, so that none draws its attention from the lines that do?
 
 **Thinking**: Every line takes some of the AI's attention. So the prompt keeps only the lines that change what the AI does. It keeps detail that the AI needs only sometimes in a place that the AI reads only then.
@@ -247,17 +161,6 @@ When an AI agent gets the prompt for a request that the prompt is made for, it d
 
 1. Move detail that only some runs need out of the prompt, to a place the AI reads only when it needs the detail, such as a file the prompt links directly. Say in the prompt when to read it.
 2. Run Q12's trials again after cutting, and put back what a run then lacked.
-
-**Grounds**
-
-- [Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents), Rajasekaran et al., anthropic.com/engineering, 2025: "good context engineering means finding the smallest possible set of high-signal tokens that maximize the likelihood of some desired outcome."
-- [Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents), Rajasekaran et al., anthropic.com/engineering, 2025: "Note that minimal does not necessarily mean short; you still need to give the agent sufficient information up front to ensure it adheres to the desired behavior."
-- [Large Language Models Can Be Easily Distracted by Irrelevant Context](https://arxiv.org/abs/2302.00093), Shi et al., arXiv:2302.00093, 2023: "find that the model performance is dramatically decreased when irrelevant information is included."
-- [How Many Instructions Can LLMs Follow at Once?](https://arxiv.org/abs/2507.11538), Jaroslawicz et al., arXiv:2507.11538, 2025: "even the best frontier models only achieve 68% accuracy at the max density of 500 instructions."
-- [Same Task, More Tokens: the Impact of Input Length on the Reasoning Performance of Large Language Models](https://arxiv.org/abs/2402.14848), Levy, Jacoby and Goldberg, arXiv:2402.14848, 2024: "Our findings show a notable degradation in LLMs' reasoning performance at much shorter input lengths than their technical maximum."
-- [Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices), Anthropic, Claude Platform Docs, no date: "Only add context Claude doesn’t already have."
-- [Extend Claude with skills](https://code.claude.com/docs/en/skills), Anthropic, Claude Code Docs, no date: "so every line is a recurring token cost."
-- [Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices), Anthropic, Claude Platform Docs, no date: "Keep references one level deep from `SKILL.md`. All reference files should link directly from `SKILL.md` to ensure Claude reads complete files when needed."
 
 ### Q14: For each rule of the steps that must hold on every run, does a hook hold it, and does a test try the hook both where the AI keeps the rule and where it breaks it?
 
@@ -268,13 +171,6 @@ When an AI agent gets the prompt for a request that the prompt is made for, it d
 1. List each rule of the steps that must hold on every run, and for each, a case where the AI keeps it and a case where it breaks it.
 2. Hold each such rule with a hook or a deny rule, not with the prompt's words alone.
 3. Test the hook on each case, one case at a time.
-
-**Grounds**
-
-- [Canon TDD](https://newsletter.kentbeck.com/p/canon-tdd), Beck, newsletter.kentbeck.com, 2023: "Write a list of the test scenarios you want to cover"
-- [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), Grace, Hadfield, Olivares and De Jonghe, Anthropic Engineering, 2026: "Test both the cases where a behavior should occur and where it shouldn't."
-- [Best practices for Claude Code](https://code.claude.com/docs/en/best-practices), Anthropic, Claude Code Docs, no date: "If something has to happen every time, make it a hook, a deny rule, or a managed setting."
-- [Canon TDD](https://newsletter.kentbeck.com/p/canon-tdd), Beck, newsletter.kentbeck.com, 2023: "Turn exactly one item on the list into an actual, concrete, runnable test"
 
 ### Q15: When a trial fails, can the maintainer tell from its record that the prompt went wrong and not the trial: its set-up, a stand-in, a judge or a check?
 
@@ -288,15 +184,6 @@ When an AI agent gets the prompt for a request that the prompt is made for, it d
 4. Build each part alone and run it small on a kept record before any whole run.
 5. Between two runs, change one thing, the prompt or a part of the trial, never both. Where a trial fails, look in its record first at the trial's own parts. Mend the prompt only for a cause in the prompt.
 
-**Grounds**
-
-- [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), Grace, Hadfield, Olivares and De Jonghe, Anthropic Engineering, 2026: "We recommend choosing deterministic graders where possible, LLM graders where necessary or for additional flexibility"
-- [AI Evals: Everything You Need to Know](https://hamel.dev/blog/posts/evals-faq/), Husain and Shankar, hamel.dev, 2026: "First check whether you can test the condition with code assertions"
-- [AI Evals: Everything You Need to Know](https://hamel.dev/blog/posts/evals-faq/), Husain and Shankar, hamel.dev, 2026: "Binary evaluations force clearer thinking and more consistent labeling"
-- [AI Evals: Everything You Need to Know](https://hamel.dev/blog/posts/evals-faq/), Husain and Shankar, hamel.dev, 2026: "For an evaluator that makes judgments, test it against human-labeled examples of the failure you want to detect."
-- [𝜏^2-Bench: Evaluating Conversational Agents in a Dual-Control Environment](https://arxiv.org/html/2506.07982), Barres, Dong, Ray, Si and Narasimhan, arXiv:2506.07982, 2025: "Never make up or hallucinate information not provided in the scenario instructions."
-- [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), Grace, Hadfield, Olivares and De Jonghe, Anthropic Engineering, 2026: "When scores don't climb, we need confidence that it's due to agent performance and not the eval."
-
 ### Q16: When the AI puts a decision, a proposal or a report to the person, can the person approve or decide from its first lines alone, and reach the details only where they ask?
 
 **Thinking**: The person approves from the conclusion and its grounds. They read further only where these leave them unsure. So a message opens with what it asks or reports and why, in plain sentences. It keeps the rest until the person asks for it.
@@ -307,16 +194,6 @@ When an AI agent gets the prompt for a request that the prompt is made for, it d
 2. Put what the person is to decide alone on the last line, with one recommendation. Ask for one decision in each message.
 3. Where the person asks for more, add what it is now, with the place it rests on, and the gap between that and what it should be.
 4. Use the words the person uses, and say a term of your own in everyday words or leave it out.
-
-**Grounds**
-
-- [AR 25-50, Preparing and Managing Correspondence](https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN42124-AR_25-50-007-WEB-13.pdf), US Army, armypubs.army.mil, 2020, change 007 of 2024: "Two essential requirements include putting the main point at the beginning of the correspondence (bottom line up front) and using the active voice"
-- [Clear and short](https://digital.gov/guides/plain-language/writing/clear-short), GSA, digital.gov, no date: "Limit each paragraph or section to one topic."
-- [Headings](https://digital.gov/guides/plain-language/design/headings), GSA, digital.gov, no date: "With rare exceptions, headings should be shorter than the content that follows them."
-- [Preparing Decision Memorandums, Policy 670.1](https://dbh.dc.gov/sites/default/files/dc/sites/dmh/publication/attachments/TL62.pdf), DC Department of Mental Health, dbh.dc.gov, 2005: "After reviewing this section, the DMH Director can decide which detailed sections must be reviewed in order to make a decision."
-- [Preparing Decision Memorandums, Policy 670.1](https://dbh.dc.gov/sites/default/files/dc/sites/dmh/publication/attachments/TL62.pdf), DC Department of Mental Health, dbh.dc.gov, 2005: "The author should clearly recommend one of the options presented in the previous section"
-- [Progressive Disclosure](https://www.nngroup.com/articles/progressive-disclosure/), Nielsen, Nielsen Norman Group, 2006: "Initially, show users only a few of the most important options. Offer a larger set of specialized options upon request."
-- [Structuring forms](https://www.gov.uk/service-manual/design/form-structure), Government Digital Service, GOV.UK Service Manual, 2018: "one decision they have to make"
 
 ### Q17: When the caller acts on what the AI reports it did or found, does each claim hold as far as the report says it was checked?
 
@@ -329,11 +206,3 @@ When an AI agent gets the prompt for a request that the prompt is made for, it d
 3. Judge another agent's work from the records and files it names, set against the task's purpose, not from its summary.
 4. Check every item the claim names, not a sample.
 5. Say what was checked and what was not, and why, so the report never reads as covering more than it did.
-
-**Grounds**
-
-- [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents), Schluntz and Zhang, anthropic.com/engineering, 2024: "During execution, it's crucial for the agents to gain “ground truth” from the environment at each step"
-- [Prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices), Anthropic, Claude Platform Docs, no date: "Never speculate about code you have not opened."
-- [Best practices for Claude Code](https://code.claude.com/docs/en/best-practices), Anthropic, Claude Code Docs, no date: "Give Claude something it can run that comes back pass or fail."
-- [How we built our multi-agent research system](https://www.anthropic.com/engineering/multi-agent-research-system), Anthropic, anthropic.com/engineering, 2025: "Subagents call tools to store their work in external systems, then pass lightweight references back to the coordinator."
-- [Prompting Claude Sonnet 5.5](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-sonnet-5-5), Anthropic, Claude Platform Docs, no date: "Only if no real check can run here, say which one you did not run and why instead of reporting the change as done."

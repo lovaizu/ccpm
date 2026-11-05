@@ -44,66 +44,18 @@
    "user_benefit": "Q1",
    "thinking": "Cut the roles by the want each brings to the product, not by what kind of thing takes them, and give each role the objective of its want, as a want with no objective is never built.",
    "steps": [
-    "Where two roles want the same, merge them."
-   ],
-   "grounds": [
-    {
-     "title": "Writing Effective Use Cases",
-     "url": "https://web.archive.org/web/20210301131704id_/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
-     "by": "Cockburn, draft for Addison-Wesley, 1999",
-     "quote": "Brainstorm all the actors, human and non, who have an operational goal against the system."
-    },
-    {
-     "title": "Define Your Market",
-     "url": "https://strategyn.com/jobs-to-be-done/jobs-to-be-done-playbook/define-your-market/",
-     "by": "Ulwick, strategyn.com, 2021",
-     "quote": "Products don’t have jobs-to-be-done—people do."
-    },
-    {
-     "title": "Barbara Minto: “MECE: I invented it, so I get to say how to pronounce it”",
-     "url": "https://karriere.mckinsey.de/alumni/news-and-events/global-news/alumni-news/barbara-minto-mece-i-invented-it-so-i-get-to-say-how-to-pronounce-it",
-     "by": "McKinsey & Company, karriere.mckinsey.de, 2018",
-     "quote": "The concept required the groups of ideas to be MECE—divided pieces that were mutually exclusive of each other and collectively exhaustive in terms of the whole."
-    }
+    "Walk through who uses the product, who runs it, who receives what it makes, who is affected by it, and each AI or system that calls it, over the product's whole life.",
+    "Where two roles want the same, merge them.",
+    "Ask the user who else comes to the product, and confirm with them each role the request does not show."
    ]
   },
   {
    "user_benefit": "Q2",
    "thinking": "Write each objective as the progress its role is trying to make, in one sentence on one line: the role as its subject, then a verb, its object and the context it is done in, and no feature of the product, as an objective said from the product's side can be met while the role gains nothing.",
    "steps": [
+    "Where a want is said as a feature, ask why it is needed until the answer is that without it the role's problem stays unsolved, and write that.",
+    "Take an objective from what the role has been seen to do, such as records of real use or complaints. Confirm with the user one that rests on what is only said or guessed.",
     "Where the product could do all the sentence says while the role is no better off, rewrite it around what the role gains."
-   ],
-   "grounds": [
-    {
-     "title": "Jobs to Be Done Theory",
-     "url": "https://www.christenseninstitute.org/theory/jobs-to-be-done/",
-     "by": "Clayton Christensen Institute, christenseninstitute.org, 2024",
-     "quote": "Everyone has Jobs to Be Done in their lives—the progress they’re trying to make as they strive toward a goal or aspiration within particular circumstances."
-    },
-    {
-     "title": "Jobs to Be Done (JTBD): The Original Framework by Tony Ulwick",
-     "url": "https://strategyn.com/jobs-to-be-done/",
-     "by": "Anderson, strategyn.com, 2024",
-     "quote": "Identify who is executing the job and define the core functional job in a single, solution-free statement."
-    },
-    {
-     "title": "Define Your Market",
-     "url": "https://strategyn.com/jobs-to-be-done/jobs-to-be-done-playbook/define-your-market/",
-     "by": "Ulwick, strategyn.com, 2021",
-     "quote": "The product will help the group of people: [verb] + [object] + [contextual clarifier]"
-    },
-    {
-     "title": "Google's OKR Playbook",
-     "url": "https://www.whatmatters.com/resources/google-okr-playbook",
-     "by": "Google, whatmatters.com, no date",
-     "quote": "Could the OKR get a 1.0 under reasonable circumstances — without providing direct enduser or economic benefit? If so, then reword the OKR to focus on the tangible benefit."
-    },
-    {
-     "title": "Google's OKR Playbook",
-     "url": "https://www.whatmatters.com/resources/google-okr-playbook",
-     "by": "Google, whatmatters.com, no date",
-     "quote": "If your Objective doesn’t fit on one line, it probably isn’t crisp enough."
-    }
    ]
   },
   {
@@ -113,20 +65,6 @@
     "Where one piece of work would bring two objectives closer, merge them.",
     "Where an objective holds gains that pieces of work bring closer apart, split it.",
     "Name, for each change planned or recently made that alters what a role gets, the one objective it brings closer."
-   ],
-   "grounds": [
-    {
-     "title": "Set goals with OKRs",
-     "url": "https://rework.withgoogle.com/en/guides/set-goals-with-okrs",
-     "by": "Google re:Work, rework.withgoogle.com, 2016",
-     "quote": "Once the organization knows what it’s focused on and how it will measure success, it can become easier for individuals to connect their projects with the organizational objectives."
-    },
-    {
-     "title": "Set goals with OKRs",
-     "url": "https://rework.withgoogle.com/en/guides/set-goals-with-okrs",
-     "by": "Google re:Work, rework.withgoogle.com, 2016",
-     "quote": "Do the team priorities connect to any of the organizational key results?"
-    }
    ]
   },
   {
@@ -136,62 +74,6 @@
     "List how success or failure would show in what the role does or feels, such as giving up, undoing a result or working around the product.",
     "Make each key result a share, an average per user, a count or a time, and name what it is counted out of.",
     "Where both key results could get better while the role still does not get what the objective says, rework them."
-   ],
-   "grounds": [
-    {
-     "title": "Measuring the User Experience on a Large Scale: User-Centered Metrics for Web Applications",
-     "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/36299.pdf",
-     "by": "Rodden, Hutchinson and Fu, CHI, 2010",
-     "quote": "Next, think about how success or failure in the goals might manifest itself in user behavior or attitudes. What actions would indicate the goal had been met?"
-    },
-    {
-     "title": "Measuring the User Experience on a Large Scale: User-Centered Metrics for Web Applications",
-     "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/36299.pdf",
-     "by": "Rodden, Hutchinson and Fu, CHI, 2010",
-     "quote": "Sometimes failure is easier to identify than success"
-    },
-    {
-     "title": "Measuring the User Experience on a Large Scale: User-Centered Metrics for Web Applications",
-     "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/36299.pdf",
-     "by": "Rodden, Hutchinson and Fu, CHI, 2010",
-     "quote": "Choose signals that are sensitive and specific to the goal – they should move only when the user experience is better or worse, not for other, unrelated reasons."
-    },
-    {
-     "title": "Measuring the User Experience on a Large Scale: User-Centered Metrics for Web Applications",
-     "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/36299.pdf",
-     "by": "Rodden, Hutchinson and Fu, CHI, 2010",
-     "quote": "Raw counts will go up as your user base grows, and need to be normalized; ratios, percentages, or averages per user are often more useful."
-    },
-    {
-     "title": "Google's OKR Playbook",
-     "url": "https://www.whatmatters.com/resources/google-okr-playbook",
-     "by": "Google, whatmatters.com, no date",
-     "quote": "Make sure the metrics are unambiguous. If you say “1 million users,” is that all-time users or seven-day actives?"
-    },
-    {
-     "title": "'Improving ratings': audit in the British University system",
-     "url": "https://gwern.net/doc/statistics/decision/1997-strathern.pdf",
-     "by": "Strathern, European Review, 1997",
-     "quote": "When a measure becomes a target, it ceases to be a good measure."
-    },
-    {
-     "title": "Google's OKR Playbook",
-     "url": "https://www.whatmatters.com/resources/google-okr-playbook",
-     "by": "Google, whatmatters.com, no date",
-     "quote": "Is it reasonably possible to score 1.0 on all the Key Results, but still not achieve the intent of the Objective? If so, add or rework the Key Results until their successful completion guarantees that the Objective is also successfully completed."
-    },
-    {
-     "title": "Pairing Quantity and Quality Key Results: What are Some Examples?",
-     "url": "https://www.whatmatters.com/faqs/quantity-quality-key-results-pairing-examples",
-     "by": "Gil, whatmatters.com, no date",
-     "quote": "In High Output Management, Andy Grove describes pairing Key Results as measuring “both effect and counter-effect.”"
-    },
-    {
-     "title": "Pairing Quantity and Quality Key Results: What are Some Examples?",
-     "url": "https://www.whatmatters.com/faqs/quantity-quality-key-results-pairing-examples",
-     "by": "Gil, whatmatters.com, no date",
-     "quote": "This OKR anticipates that reducing pit stop time can lead to cutting corners or at the very least unintentional mistakes as the team speeds up their work."
-    }
    ]
   },
   {
@@ -202,77 +84,15 @@
     "Write each exchange as one message, from the one who takes it to the one it acts on, saying what it passes, checks or changes.",
     "Where a part repeats, mark it as a loop with its condition.",
     "Read the scenario from start to end: the first message is the role's request, the last gives the role the end, and each moves toward it."
-   ],
-   "grounds": [
-    {
-     "title": "Basic Use Case Template",
-     "url": "https://web.archive.org/web/20160810073041/http://alistair.cockburn.us/Basic+use+case+template",
-     "by": "Cockburn, Humans and Technology, 1998",
-     "quote": "Use Case: <number> <the name should be the goal as a short active verb phrase>"
-    },
-    {
-     "title": "Basic Use Case Template",
-     "url": "https://web.archive.org/web/20160810073041/http://alistair.cockburn.us/Basic+use+case+template",
-     "by": "Cockburn, Humans and Technology, 1998",
-     "quote": "<put here the steps of the scenario from trigger to goal delivery, and any cleanup after>"
-    },
-    {
-     "title": "Basic Use Case Template",
-     "url": "https://web.archive.org/web/20160810073041/http://alistair.cockburn.us/Basic+use+case+template",
-     "by": "Cockburn, Humans and Technology, 1998",
-     "quote": "Trigger: <the action upon the system that starts the use case, may be time event>"
-    },
-    {
-     "title": "Writing Effective Use Cases",
-     "url": "https://web.archive.org/web/20210301131704id_/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
-     "by": "Cockburn, draft for Addison-Wesley, 1999",
-     "quote": "The main success scenario is the most common, or perhaps easiest to understand, scenario."
-    },
-    {
-     "title": "Writing Effective Use Cases",
-     "url": "https://web.archive.org/web/20210301131704id_/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
-     "by": "Cockburn, draft for Addison-Wesley, 1999",
-     "quote": "Write each sentence as a goal succeeding, distinctly moving the process forward. Write: \"At some time, ActorA kicks ActorB with some information\", or \"System verifies validation conditions are met\", or \"System updates its state\", or \"ActorA has ActorB kick ActorC\"."
-    },
-    {
-     "title": "Sequence diagrams",
-     "url": "https://mermaid.js.org/syntax/sequenceDiagram.html",
-     "by": "Mermaid, mermaid.js.org, no date",
-     "quote": "It is possible to express loops in a sequence diagram."
-    },
-    {
-     "title": "Writing Effective Use Cases",
-     "url": "https://web.archive.org/web/20210301131704id_/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
-     "by": "Cockburn, draft for Addison-Wesley, 1999",
-     "quote": "Does it run from trigger to delivery of the success end condition?"
-    },
-    {
-     "title": "Unified Modeling Language 2.5.1",
-     "url": "https://www.omg.org/spec/UML/2.5.1/PDF",
-     "by": "OMG, UML 2.5.1, 2017",
-     "quote": "An Actor models a type of role played by an entity that interacts with the subjects of its associated UseCases (e.g., by exchanging signals and data). Actors may represent roles played by human users, external hardware, or other systems."
-    }
    ]
   },
   {
    "user_benefit": "Q6",
    "thinking": "Write under each scenario each point where the role leaves the main path, such as a run that stops or a fault of the product, with what the role does there and what it then has, as the developer otherwise builds the main path alone and leaves the role with nothing off it.",
    "steps": [
-    "Where the role gives up partway, say what it is left with."
-   ],
-   "grounds": [
-    {
-     "title": "Basic Use Case Template",
-     "url": "https://web.archive.org/web/20160810073041/http://alistair.cockburn.us/Basic+use+case+template",
-     "by": "Cockburn, Humans and Technology, 1998",
-     "quote": "<put here there extensions, one at a time, each refering to the step of the main scenario>"
-    },
-    {
-     "title": "Basic Use Case Template",
-     "url": "https://web.archive.org/web/20160810073041/http://alistair.cockburn.us/Basic+use+case+template",
-     "by": "Cockburn, Humans and Technology, 1998",
-     "quote": "Failed End Condition: <the state of the world if goal abandoned>"
-    }
+    "Go through each message of the main path, and list all that could go wrong there before deciding how any is met: what the role sends does not serve, the product fails, or one outside it fails to deliver.",
+    "Where the role gives up partway, say what it is left with.",
+    "Confirm with the user each point whose answer the request does not settle."
    ]
   },
   {
@@ -281,26 +101,6 @@
    "steps": [
     "Pick one change the design could make while the roles see the same, and flag each line that would have to change.",
     "Rewrite each flagged line by what the role does, sees or receives, or leave it to the document that describes the inside, such as the architecture."
-   ],
-   "grounds": [
-    {
-     "title": "Writing Effective Use Cases",
-     "url": "https://web.archive.org/web/20210301131704id_/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
-     "by": "Cockburn, draft for Addison-Wesley, 1999",
-     "quote": "For computer systems, it is rare that we open up the black box."
-    },
-    {
-     "title": "Writing Effective Use Cases",
-     "url": "https://web.archive.org/web/20210301131704id_/https://www.infor.uva.es/~mlaguna/is1/materiales/BookDraft1.pdf",
-     "by": "Cockburn, draft for Addison-Wesley, 1999",
-     "quote": "Show the intent of the actor, what it/they want and get accomplished in that step."
-    },
-    {
-     "title": "Deriving Specifications from Requirements: An Example",
-     "url": "https://www.pamelazave.com/turnstile.pdf",
-     "by": "Jackson and Zave, ICSE, 1995",
-     "quote": "The requirement is concerned entirely with the environment, where the effects and benefits of the machine will be felt and assessed: the machine is purely a means to the end of achieving the required effect in the environment."
-    }
    ]
   }
  ]

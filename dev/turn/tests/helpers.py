@@ -41,10 +41,7 @@ PRACTICE: dict[str, Any] = {
         {"id": "Q2", "about": "steps", "what": "Can the reader take each step?"},
         {"id": "Q3", "about": "the whole", "what": "Does each answer come when needed?"},
     ],
-    "practices": [
-        {"user_benefit": f"Q{n}", "thinking": "Think.", "steps": [], "grounds": []}
-        for n in (1, 2, 3)
-    ],
+    "practices": [{"user_benefit": f"Q{n}", "thinking": "Think.", "steps": []} for n in (1, 2, 3)],
 }
 # Where a run's folder lies, and the repository's best practice of `note`.
 RUN = os.path.join(".turn", "20261103-tidy-note")

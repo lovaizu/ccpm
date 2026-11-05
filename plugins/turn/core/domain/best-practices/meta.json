@@ -55,20 +55,6 @@
    "thinking": "Write what the deliverable's role is trying to get done as one sentence with the role as its subject, and nothing of what the deliverable holds or how it is made, as each section serves that.",
    "steps": [
     "Where two readers would name two achievements from it, keep the one the other serves."
-   ],
-   "grounds": [
-    {
-     "title": "The Goal Question Metric Approach",
-     "url": "https://www.cs.umd.edu/~mvz/handouts/gqm.pdf",
-     "by": "Basili, Caldiera and Rombach, Encyclopedia of Software Engineering, 1994",
-     "quote": "A goal is defined for an object, for a variety of reasons, with respect to various models of quality, from various points of view, relative to a particular environment."
-    },
-    {
-     "title": "Jobs to Be Done (JTBD): The Original Framework by Tony Ulwick",
-     "url": "https://strategyn.com/jobs-to-be-done/",
-     "by": "Strategyn, strategyn.com, 2024",
-     "quote": "Identify who is executing the job and define the core functional job in a single, solution-free statement."
-    }
    ]
   },
   {
@@ -80,40 +66,9 @@
     "After each section, write one comment saying only what each slot holds and whether it is optional.",
     "Open the template with the comment \"Delete every comment once the document is written.\"",
     "Where the deliverable is JSON, write each comment as a `$comment` key.",
-    "Draw a sequence in Mermaid and any other figure in SVG, and write a table in Markdown.",
+    "Give the content found by digging a slot for its intent and why alone, in the fewest words, and a figure in place of prose wherever a figure can say it.",
+    "Draw a sequence in Mermaid, and any other figure in SVG, a table among them, as a table stands in for prose.",
     "Name the template's file in `template`."
-   ],
-   "grounds": [
-    {
-     "title": "Using Rubrics to Promote Thinking and Learning",
-     "url": "https://ascd.org/el/articles/using-rubrics-to-promote-thinking-and-learning",
-     "by": "Andrade, Educational Leadership, 2000",
-     "quote": "Look at models. Review examples of good and poor work on a project like the one your students are about to undertake."
-    },
-    {
-     "title": "The Good Docs Project templates",
-     "url": "https://gitlab.com/tgdp/templates/-/raw/main/README.md",
-     "by": "The Good Docs Project, gitlab.com, no date",
-     "quote": "The template file is the raw template for the content type. It provides a rough outline of the suggested content and a few embedded writing tips for how to fill in the different sections of the template."
-    },
-    {
-     "title": "The Good Docs Project templates",
-     "url": "https://gitlab.com/tgdp/templates/-/raw/main/README.md",
-     "by": "The Good Docs Project, gitlab.com, no date",
-     "quote": "This guide provides a deeper explanation of how to fill in the template."
-    },
-    {
-     "title": "Download arc42",
-     "url": "https://arc42.org/download",
-     "by": "arc42, arc42.org, no date",
-     "quote": "Plain gives you the bare structure."
-    },
-    {
-     "title": "Prompting Claude Opus 5",
-     "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5",
-     "by": "Anthropic, platform.claude.com, no date",
-     "quote": "files that Claude Opus 5 writes to disk (reports, Markdown documents, summaries) are often longer than on prior models."
-    }
    ]
   },
   {
@@ -121,26 +76,6 @@
    "thinking": "Cut each section the role could do without toward the goal, and add what a deliverable with every section would still lack when it fails its role, as each section is there because the goal needs it.",
    "steps": [
     "Repeat until no such deliverable can be imagined."
-   ],
-   "grounds": [
-    {
-     "title": "The Goal Question Metric Approach",
-     "url": "https://www.cs.umd.edu/~mvz/handouts/gqm.pdf",
-     "by": "Basili, Caldiera and Rombach, Encyclopedia of Software Engineering, 1994",
-     "quote": "This means that measurement must be defined in a top-down fashion."
-    },
-    {
-     "title": "The Logic and Methodology of Checklists",
-     "url": "https://wmich.edu/sites/default/files/attachments/u350/2014/logic%26methodology_dec07.pdf",
-     "by": "Scriven, Western Michigan University, 2007",
-     "quote": "Then one tries to construct hypothetical cases in which an entity has all the properties in the proposed comlist but still lacks something that would be required or important in order to justify an assignment of merit."
-    },
-    {
-     "title": "The Logic and Methodology of Checklists",
-     "url": "https://wmich.edu/sites/default/files/attachments/u350/2014/logic%26methodology_dec07.pdf",
-     "by": "Scriven, Western Michigan University, 2007",
-     "quote": "The list should be concise (to assist its mnemonic function); i.e., it should contain no superfluous criteria."
-    }
    ]
   },
   {
@@ -148,38 +83,6 @@
    "thinking": "Ask whether the role, at the moment it uses the sections, gets what it needs from them toward the goal, as a question that asks for a sign of good work can be met in its words while the role goes without.",
    "steps": [
     "Have two evaluators judge one real deliverable by the question, and rewrite it where they differ."
-   ],
-   "grounds": [
-    {
-     "title": "The Logic and Methodology of Checklists",
-     "url": "https://wmich.edu/sites/default/files/attachments/u350/2014/logic%26methodology_dec07.pdf",
-     "by": "Scriven, Western Michigan University, 2007",
-     "quote": "The checkpoints should refer to criteria and not mere indicators"
-    },
-    {
-     "title": "The Logic and Methodology of Checklists",
-     "url": "https://wmich.edu/sites/default/files/attachments/u350/2014/logic%26methodology_dec07.pdf",
-     "by": "Scriven, Western Michigan University, 2007",
-     "quote": "indicators are easily corrupted, and once it becomes known that they are being used as an indicator for something important in an evaluation, people are very ingenious about faking the score on them"
-    },
-    {
-     "title": "What's Wrong—and What's Right—with Rubrics",
-     "url": "https://ascd.org/el/articles/whats-wrong-and-whats-right-with-rubrics",
-     "by": "Popham, Educational Leadership, 1997",
-     "quote": "In essence, these overly general criteria allow both teachers and students to conclude that really good student responses to the task are, well, really good."
-    },
-    {
-     "title": "Using LLM-as-a-Judge For Evaluation: A Complete Guide",
-     "url": "https://hamel.dev/blog/posts/llm-judge/",
-     "by": "Husain, hamel.dev, 2024",
-     "quote": "You need to be able to say “this interaction passed because…” and “this interaction failed because…”."
-    },
-    {
-     "title": "Demystifying evals for AI agents",
-     "url": "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents",
-     "by": "Anthropic, anthropic.com, 2026",
-     "quote": "A good task is one where two domain experts would independently reach the same pass/fail verdict."
-    }
    ]
   },
   {
@@ -187,39 +90,8 @@
    "thinking": "Give each section, each dependency among sections and the whole a question, and add one that fails each deliverable that would pass them all and still fail its role, as the questions are complete only when none such is left.",
    "steps": [
     "Where two questions would fail the same deliverables for the same reason, merge them, but keep a key one on its own.",
+    "Dig each question until it shows the idea the role must grasp, and ask whether the role grasps it, so that the template gives it a figure.",
     "Judge real deliverables that their role found short, and where one passes, add or mend the question that should have failed it."
-   ],
-   "grounds": [
-    {
-     "title": "The Logic and Methodology of Checklists",
-     "url": "https://wmich.edu/sites/default/files/attachments/u350/2014/logic%26methodology_dec07.pdf",
-     "by": "Scriven, Western Michigan University, 2007",
-     "quote": "The list should be complete (no significant omissions)."
-    },
-    {
-     "title": "The Logic and Methodology of Checklists",
-     "url": "https://wmich.edu/sites/default/files/attachments/u350/2014/logic%26methodology_dec07.pdf",
-     "by": "Scriven, Western Michigan University, 2007",
-     "quote": "The items should be contiguous, i.e., nonoverlapping"
-    },
-    {
-     "title": "Using Rubrics to Promote Thinking and Learning",
-     "url": "https://ascd.org/el/articles/using-rubrics-to-promote-thinking-and-learning",
-     "by": "Andrade, Educational Leadership, 2000",
-     "quote": "After class, take time to combine criteria. Avoid creating categories that are too big, and don't bury criteria that you want to emphasize."
-    },
-    {
-     "title": "Key Evaluation Checklist",
-     "url": "https://wmich.edu/sites/default/files/attachments/u350/2014/key%20evaluation%20checklist.pdf",
-     "by": "Scriven, Western Michigan University, 2007",
-     "quote": "We can describe this as a case where they failed to clear a holistic (or overall) bar that was implicit in this example, but can often be made explicit through dialog."
-    },
-    {
-     "title": "Demystifying evals for AI agents",
-     "url": "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents",
-     "by": "Anthropic, anthropic.com, 2026",
-     "quote": "Converting user-reported failures into test cases ensures your suite reflects actual usage"
-    }
    ]
   },
   {
@@ -227,37 +99,20 @@
    "thinking": "Take the way from where good deliverables have met the question before, and write it as one action of the generator, as a way that has worked is likelier to work again than one made up.",
    "steps": [
     "Write a step only for what the thinking alone does not lead the generator to, one action each, in order.",
+    "Where the content must be found before it is written, such as the roles of a UX, say what to look at, how to find all of it, and when to ask the user.",
     "Where a step or a source names one way of doing it, such as a place, a file or a tool, write what that way achieves instead.",
-    "Quote as grounds the sources' words from the pages opened.",
     "Make one real deliverable by the practice, judge it by the question, and mend the practice where the answer stays no."
-   ],
-   "grounds": [
-    {
-     "title": "Key Evaluation Checklist",
-     "url": "https://wmich.edu/sites/default/files/attachments/u350/2014/key%20evaluation%20checklist.pdf",
-     "by": "Scriven, Western Michigan University, 2007",
-     "quote": "This is an iterative checklist, not a one-shot checklist."
-    }
    ]
   },
   {
    "user_benefit": "Q7",
    "thinking": "Order the questions so that each comes before those that build on it, and give each one practice in that order, as the generator then meets no question with nothing to go by.",
-   "steps": [],
-   "grounds": []
+   "steps": []
   },
   {
    "user_benefit": "Q8",
    "thinking": "Make the product's own deliverable of the kind from its design tree by the template and the practices, pass it by the questions, and name its file in `example`, as one finished deliverable shows what the comments alone do not.",
-   "steps": [],
-   "grounds": [
-    {
-     "title": "The Good Docs Project templates",
-     "url": "https://gitlab.com/tgdp/templates/-/raw/main/README.md",
-     "by": "The Good Docs Project, gitlab.com, no date",
-     "quote": "See an example of the template in action in our model documentation project: The Chronologue."
-    }
-   ]
+   "steps": []
   },
   {
    "user_benefit": "Q9",
@@ -265,26 +120,6 @@
    "steps": [
     "Trace each difference to the goal, the template, a question or a practice, and mend it there.",
     "Go through again with the next real deliverable."
-   ],
-   "grounds": [
-    {
-     "title": "Demystifying evals for AI agents",
-     "url": "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents",
-     "by": "Anthropic, anthropic.com, 2026",
-     "quote": "LLM-as-judge graders should be closely calibrated with human experts"
-    },
-    {
-     "title": "Who Validates the Validators?",
-     "url": "https://arxiv.org/abs/2404.12272",
-     "by": "Shankar et al., arXiv, 2024",
-     "quote": "users need criteria to grade outputs, but grading outputs helps users define criteria."
-    },
-    {
-     "title": "Using LLM-as-a-Judge For Evaluation: A Complete Guide",
-     "url": "https://hamel.dev/blog/posts/llm-judge/",
-     "by": "Husain, hamel.dev, 2024",
-     "quote": "You cannot write a good judge prompt until you’ve seen the data."
-    }
    ]
   }
  ]

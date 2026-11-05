@@ -4,6 +4,8 @@
 
 <Product> is <kind> that <what it does>.
 
+<status>.
+
 <Product> is for you when <your situation>. With it, you <gain>.
 
 <The usual way>. <Product> instead <idea>.
@@ -17,6 +19,8 @@
 <!--
 - <kind>: the kind of thing the product is, such as a command-line tool.
 - <what it does>: what the product does, in words the reader already uses.
+- <status>: where the product is not yet fit for use, such as a release still in development;
+  optional.
 - <your situation>: the work the reader wants done.
 - <gain>: what the reader can then do.
 - <The usual way>: how the same work goes without the product, and where it falls short.
@@ -87,8 +91,9 @@ At the end, you have <result>.
 - [<title>](<path>): <what it gives>.
 
 <!--
-- <title>, <path>: each document a reader goes to next, by a path relative to the README; optional.
-- <what it gives>: for whom the document is and what it gives them.
+- <title>, <path>: each document a reader goes to next, by a path relative to the README, and
+  the place they get help, such as an issue tracker, by its URL; optional.
+- <what it gives>: for whom the document or the place is and what it gives them.
 -->
 
 ## License

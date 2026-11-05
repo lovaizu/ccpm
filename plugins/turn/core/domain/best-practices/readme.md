@@ -2,7 +2,7 @@
 
 ## Goal
 
-From the README alone, someone who meets the product for the first time starts using it only when it serves their work.
+Someone who meets the product for the first time starts using it, from the README alone, only when it serves their work.
 
 ## Template
 
@@ -14,173 +14,109 @@ From the README alone, someone who meets the product for the first time starts u
 
 ## User benefits
 
-- **Q1** (the opening): When a colleague asks what the product is, can the reader answer in one sentence that tells them what it does?
-- **Q2** (the opening): Reading the gain, can the reader tell what the product would let them do, and so whether it is for them?
-- **Q3** (the opening): When a colleague asks why this product and not another way of doing the same work, can the reader name what it does differently that brings the gain?
-- **Q4** (the opening): Before installing, can the reader tell what the product does not do that they might have expected of it?
-- **Q5** (the opening, Walkthrough): After the walkthrough, can the reader tell that the product would give them, on work of their own, the gain the opening promised?
-- **Q6** (Requirements, Installation): Starting with nothing set up, can the reader install the product by the README's steps alone, and tell that it works?
-- **Q7** (the opening, How it works): For each gain and the idea, can the reader see in the figure of how the product works how the product keeps it?
-- **Q8** (Documentation): When the reader needs more than the README gives, such as fuller use, can they tell from it where to read next?
-- **Q9** (License): Can the reader tell from the README the terms on which they and their team may use the product?
-- **Q10** (the whole): Reading from the top, does the reader find each answer just when they come to need it, so they can stop as soon as they have what they came for?
+- **Q1** (the opening): Asked by a colleague what the product is, does the reader answer in one sentence that tells what it does?
+- **Q2** (the opening): Reading the gain, does the reader tell what the product would let them do, and so whether it is for them?
+- **Q3** (the opening): Asked by a colleague why this product and not another way of doing the same work, does the reader name what it does differently that brings the gain?
+- **Q4** (the opening): Before installing, does the reader see what the product does not do that they might expect of it?
+- **Q5** (the opening): Before installing, does the reader see where the product is not yet fit for use?
+- **Q6** (the opening, Walkthrough): After the walkthrough, does the reader see that the product would give them, on work of their own, the gain the opening promised?
+- **Q7** (Requirements, Installation): Starting with nothing set up, does the reader install the product by the README's steps alone, and see that it works?
+- **Q8** (the opening, How it works): Looking at the figure of how the product works, does the reader see how it keeps each gain and the idea?
+- **Q9** (Documentation): Needing more than the README gives, such as fuller use or help, does the reader find where to go next?
+- **Q10** (License): Weighing whether they may use the product, does the reader find the terms for them and their team?
+- **Q11** (the whole): Reading from the top, does the reader find each answer just when they come to need it, so they can stop once they have what they came for?
 
 ## Practices
 
-### Q1: When a colleague asks what the product is, can the reader answer in one sentence that tells them what it does?
+### Q1: Asked by a colleague what the product is, does the reader answer in one sentence that tells what it does?
 
-**Thinking**: The sentence names the kind of thing the product is and what it does, in words the reader already uses, so they can say it again to a colleague.
-
-**Steps**
-
-1. Write one sentence on its own line under the title, such as "<Name> is a <kind> that <does what>.", saying what the product does with no feature names or mechanisms.
-2. Ask whether a colleague who hears only the sentence could say what the product does. If not, replace each vague or praising word with what the product does.
-
-**Grounds**
-
-- [Art of README](https://web.archive.org/web/20231231175007/https://github.com/hackergrrl/art-of-readme), hackergrrl, github.com/hackergrrl/art-of-readme, Internet Archive copy of 2023-12-31: "One-liner -- having a one-liner that describes the module is useful for getting an idea of what the module does in slightly greater detail."
-- [About the repository README file](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes), GitHub, GitHub Docs, no date: "What the project does"
-- [Standard Readme](https://github.com/RichardLitt/standard-readme/blob/main/spec.md), Litt, github.com/RichardLitt/standard-readme, spec.md, no date: "Must be on its own line."
-- [Make a README](https://www.makeareadme.com/), Guo, makeareadme.com, no date: "Let people know what your project can do specifically."
-
-### Q2: Reading the gain, can the reader tell what the product would let them do, and so whether it is for them?
-
-**Thinking**: The gain is what the reader can do with the product, taken from what the product's users want, such as the objectives in its UX, so the reader tells from it whether the product meets their need.
+**Thinking**: Write one sentence on its own line under the title that names the kind of thing the product is and what it does, in words the reader already uses and with no feature name or mechanism, as the reader then can say it again to a colleague.
 
 **Steps**
 
-1. Name whom the product is for by the work they want done.
-2. Ask whether a reader outside that group can tell from it that the product is not for them. If not, name the group and the work more closely.
+1. Where a colleague who hears only the sentence could not say what the product does, replace each vague or praising word with what it does.
 
-**Grounds**
+### Q2: Reading the gain, does the reader tell what the product would let them do, and so whether it is for them?
 
-- [Art of README](https://web.archive.org/web/20231231175007/https://github.com/hackergrrl/art-of-readme), hackergrrl, github.com/hackergrrl/art-of-readme, Internet Archive copy of 2023-12-31: "The consumer wants a module to fulfill their need, so you must explain exactly what need your module fills, and how effectively it does so."
-- [Starting an Open Source Project](https://opensource.guide/starting-a-project/), GitHub, Open Source Guides, opensource.guide, no date: "They also explain why your project matters, and what your users can do with it."
-- [About the repository README file](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes), GitHub, GitHub Docs, no date: "Why the project is useful"
-- [How to write software documentation](https://www.writethedocs.org/guide/writing/beginners-guide-to-docs/), Write the Docs, writethedocs.org, no date: "They don’t know why your project exists or how it meets their needs."
-
-### Q3: When a colleague asks why this product and not another way of doing the same work, can the reader name what it does differently that brings the gain?
-
-**Thinking**: The idea is the one thing the product does that other ways of doing the same work do not, and it is what brings the gain.
+**Thinking**: Name whom the product is for by the work they want done, and the gain as what they can then do, taken from the objectives of the product's UX, as the reader tells from it whether the product meets their need.
 
 **Steps**
 
-1. Write it as one paragraph that names the other way and says what the product does instead.
-2. Ask whether the reader could say the difference to a colleague in their own words. If not, replace each word that only praises with what the product does.
+1. Where a reader outside that group could not tell from it that the product is not for them, name the group and the work more closely.
 
-**Grounds**
+### Q3: Asked by a colleague why this product and not another way of doing the same work, does the reader name what it does differently that brings the gain?
 
-- [Make a README](https://www.makeareadme.com/), Guo, makeareadme.com, no date: "If there are alternatives to your project, this is a good place to list differentiating factors."
-- [Make a README](https://www.makeareadme.com/), Guo, makeareadme.com, no date: "Let people know what your project can do specifically."
-
-### Q4: Before installing, can the reader tell what the product does not do that they might have expected of it?
-
-**Thinking**: A non-goal is something the reader could reasonably expect of the product that it does not do, so a reader who needs it learns that before they install.
+**Thinking**: Name the other way of doing the same work, and say in one paragraph what the product does instead that brings the gain, as the reader weighs the product against what they would do without it.
 
 **Steps**
 
-1. Keep only what the product does not do and a reader could reasonably expect of it.
+1. Find the other way in what the reader would do if the product did not exist, doing nothing among it.
+2. Where the reader could not say the difference to a colleague in their own words, replace each word that only praises with what the product does.
 
-**Grounds**
+### Q4: Before installing, does the reader see what the product does not do that they might expect of it?
 
-- [Design Docs at Google](https://www.industrialempathy.com/posts/design-docs-at-google/), Ubl, industrialempathy.com, 2020: "Note, that non-goals aren’t negated goals like “The system shouldn’t crash”, but rather things that could reasonably be goals, but are explicitly chosen not to be goals."
-
-### Q5: After the walkthrough, can the reader tell that the product would give them, on work of their own, the gain the opening promised?
-
-**Thinking**: The walkthrough shows one real run of the use most readers come for, on work like the reader's, with the product's real output, so the reader sees that the product works and what they would get; it shows a run, not steps for the reader to follow.
+**Thinking**: List only what a reader could reasonably expect of the product and it does not do, as a reader who needs it then learns that before they install.
 
 **Steps**
 
-1. Say at the start what the reader will have at the end.
-2. Take what the user gives and what the product shows from the record of a real run, cutting only what the reader does not need to see the result.
-3. End with the result, and ask whether it shows the gain the opening promised. If not, pick another piece of work or another scenario.
+1. Gather what readers might expect from similar products and from what readers ask, and ask the user whether each is in or out.
 
-**Grounds**
+### Q5: Before installing, does the reader see where the product is not yet fit for use?
 
-- [Tutorials](https://diataxis.fr/tutorials/), Procida, Diátaxis, diataxis.fr, no date: "It’s important to allow the learner to form an idea of what they will achieve right from the start."
-- [How to write software documentation](https://www.writethedocs.org/guide/writing/beginners-guide-to-docs/), Write the Docs, writethedocs.org, no date: "Show a common example use case for your project."
-- [Make a README](https://www.makeareadme.com/), Guo, makeareadme.com, no date: "Use examples liberally, and show the expected output if you can."
-- [Tutorials](https://diataxis.fr/tutorials/), Procida, Diátaxis, diataxis.fr, no date: "Show the user actual example output, or even the exact expected output."
-- [Art of README](https://web.archive.org/web/20231231175007/https://github.com/hackergrrl/art-of-readme), hackergrrl, github.com/hackergrrl/art-of-readme, Internet Archive copy of 2023-12-31: "I can quickly determine whether the example JS fits the desired style and problem."
-- [Tutorials](https://diataxis.fr/tutorials/), Procida, Diátaxis, diataxis.fr, no date: "Your guidance needs to remain focused on what’s required to reach the conclusion, and everything else can be left for another time."
+**Thinking**: Where the product is not yet fit for use, such as a release still in development or one no longer kept up, say so at the top, as a reader who starts on it otherwise finds out only once their work rests on it.
 
-### Q6: Starting with nothing set up, can the reader install the product by the README's steps alone, and tell that it works?
+### Q6: After the walkthrough, does the reader see that the product would give them, on work of their own, the gain the opening promised?
 
-**Thinking**: The author writes the steps for a reader who has nothing set up, and tries them that way, because the author's own setup hides the gaps.
+**Thinking**: Show one real run of the use most readers come for, on work like theirs, with the product's real output, as the reader then sees that the product works and what they would get.
 
 **Steps**
 
-1. List each thing that must be in place, by what it is and how the reader tells they have it.
-2. Write each install step so the reader can do it without working out what to type, such as a command to copy, even a common one. After each step, write what the reader sees when it worked.
-3. From a machine or sandbox where nothing the product needs is in place, follow the requirements and the install steps as written, and do nothing they do not say. Where a step fails, or needs something the README does not say, write it in and start again.
+1. Pick the use from what readers ask for most, such as help requests, and from the main scenario of the product's UX.
+2. Say at the start what the reader will have at the end.
+3. Take what the user gives and what the product shows from the record of a real run, cutting only what the reader does not need to see the result.
+4. Where the result does not show the gain the opening promised, pick another piece of work or another scenario.
 
-**Grounds**
+### Q7: Starting with nothing set up, does the reader install the product by the README's steps alone, and see that it works?
 
-- [Starting an Open Source Project](https://opensource.guide/starting-a-project/), GitHub, Open Source Guides, opensource.guide, no date: "Remember that your readers aren’t you."
-- [Make a README](https://www.makeareadme.com/), Guo, makeareadme.com, no date: "If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection."
-- [Make a README](https://www.makeareadme.com/), Guo, makeareadme.com, no date: "Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible."
-- [Standard Readme](https://github.com/RichardLitt/standard-readme/blob/main/spec.md), Litt, github.com/RichardLitt/standard-readme, spec.md, no date: "Code block illustrating how to install."
-- [Art of README](https://web.archive.org/web/20231231175007/https://github.com/hackergrrl/art-of-readme), hackergrrl, github.com/hackergrrl/art-of-readme, Internet Archive copy of 2023-12-31: "even if it's just a regular npm install, I'd like to see that mentioned, too."
-- [Tutorials](https://diataxis.fr/tutorials/), Procida, Diátaxis, diataxis.fr, no date: "Every step the learner follows should produce a comprehensible result, however small."
-- [Tutorials](https://diataxis.fr/tutorials/), Procida, Diátaxis, diataxis.fr, no date: "A learner who follows your directions and doesn’t get the expected results will quickly lose confidence, in the tutorial, the tutor and themselves."
+**Thinking**: Write the requirements and the install steps for a reader who has nothing set up, and try them that way, as the author's own setup hides the gaps.
 
-### Q7: For each gain and the idea, can the reader see in the figure of how the product works how the product keeps it?
+**Steps**
 
-**Thinking**: How it works shows at a glance who does what to whom so that each gain and the idea hold, in as much detail as a reader new to the product can follow; the opening alone says each non-goal, as a non-goal is what the product does not do.
+1. Give even a common install step as a command to copy.
+2. From a machine or sandbox where nothing the product needs is in place, follow the steps as written and do nothing they do not say.
+3. Where a step fails, or needs what the README does not say, write it in and start again.
+
+### Q8: Looking at the figure of how the product works, does the reader see how it keeps each gain and the idea?
+
+**Thinking**: Draw who does what to whom so that each gain and the idea hold, in as much detail as a reader new to the product can follow, as a reader trusts a promise they see kept.
 
 **Steps**
 
 1. Point to each gain and the idea, and find the lines of the figure that keep it. Where none does, mend the figure or the promise.
+2. Leave each non-goal to the opening, as a figure shows what the product does.
 
-**Grounds**
+### Q9: Needing more than the README gives, such as fuller use or help, does the reader find where to go next?
 
-- [System context diagram](https://c4model.com/diagrams/system-context), C4 model, c4model.com, no date: "Draw a diagram showing your system as a box in the centre, surrounded by its users and the other systems that it interacts with."
-- [System context diagram](https://c4model.com/diagrams/system-context), C4 model, c4model.com, no date: "Detail isn’t important here as this is your zoomed out view showing a big picture of the system landscape."
-- [System context diagram](https://c4model.com/diagrams/system-context), C4 model, c4model.com, no date: "The focus should be on people (actors, roles, personas, etc) and software systems rather than technologies, protocols and other low-level details."
-- [System context diagram](https://c4model.com/diagrams/system-context), C4 model, c4model.com, no date: "It’s the sort of diagram that you could show to non-technical people."
-
-### Q8: When the reader needs more than the README gives, such as fuller use, can they tell from it where to read next?
-
-**Thinking**: The README holds what the reader needs to decide and to start, and points to one place for each need that comes after.
+**Thinking**: Keep in the README what the reader needs to decide and to start, and link one place for each need that comes after, such as fuller use or help, as a README that holds everything is not read.
 
 **Steps**
 
-1. Write each link so it reaches its document wherever the README is read, such as by a path relative to the README. Open each link.
+1. Open each link.
 
-**Grounds**
+### Q10: Weighing whether they may use the product, does the reader find the terms for them and their team?
 
-- [Art of README](https://web.archive.org/web/20231231175007/https://github.com/hackergrrl/art-of-readme), hackergrrl, github.com/hackergrrl/art-of-readme, Internet Archive copy of 2023-12-31: "Detailed documentation is good -- make separate pages for it! -- but keep your README succinct."
-- [About the repository README file](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes), GitHub, GitHub Docs, no date: "A README should only contain information necessary for developers to get started using and contributing to your project. Longer documentation is best suited for wikis."
-- [READMEs](https://github.com/google/styleguide/blob/gh-pages/docguide/READMEs.md), Google, Google documentation guide, github.com/google/styleguide, no date: "At a minimum, your `README.md` file should contain a link to your user- and/or team-facing documentation."
-- [Starting an Open Source Project](https://opensource.guide/starting-a-project/), GitHub, Open Source Guides, opensource.guide, no date: "Link to your CONTRIBUTING file from your README, so more people see it."
-- [About the repository README file](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes), GitHub, GitHub Docs, no date: "Relative links are easier for users who clone your repository."
-- [Standard Readme](https://github.com/RichardLitt/standard-readme/blob/main/spec.md), Litt, github.com/RichardLitt/standard-readme, spec.md, no date: "Must not contain broken links."
-
-### Q9: Can the reader tell from the README the terms on which they and their team may use the product?
-
-**Thinking**: A reader may rule the product out by its license alone, so the README names the license and links its full text.
+**Thinking**: Name the license and link its full text, as a reader may rule the product out by its license alone.
 
 **Steps**
 
-1. Open the link, and check that the text it reaches is the license the name says.
+1. Open the link, and check that it reaches the license the name says.
 
-**Grounds**
+### Q11: Reading from the top, does the reader find each answer just when they come to need it, so they can stop once they have what they came for?
 
-- [Art of README](https://web.archive.org/web/20231231175007/https://github.com/hackergrrl/art-of-readme), hackergrrl, github.com/hackergrrl/art-of-readme, Internet Archive copy of 2023-12-31: "you're likely to exclude a module VERY quickly if it has a license incompatible with your work."
-- [Make a README](https://www.makeareadme.com/), Guo, makeareadme.com, no date: "For open source projects, say how it is licensed."
-
-### Q10: Reading from the top, does the reader find each answer just when they come to need it, so they can stop as soon as they have what they came for?
-
-**Thinking**: The README goes in the order the reader decides in, from what every reader needs to what only a reader who has chosen the product needs.
+**Thinking**: Order the README as the reader decides, from what every reader needs to what only a reader who has chosen the product needs, as each reader then stops once they have what they came for.
 
 **Steps**
 
 1. Read the README from the top as someone who meets the product for the first time, and after each section, write the question the reader now has.
 2. Check that the next part answers that question. Move a section that answers a later one.
 3. Cut what no reader needs at the point where it stands, or move it to the document a link leads to.
-
-**Grounds**
-
-- [Art of README](https://web.archive.org/web/20231231175007/https://github.com/hackergrrl/art-of-readme), hackergrrl, github.com/hackergrrl/art-of-readme, Internet Archive copy of 2023-12-31: "can be imagined as a funnel held upright, where the widest end contains the broadest more pertinent details"
-- [perlmodstyle](https://github.com/RichardLitt/standard-readme/blob/main/spec.md), Robert, quoted in Litt, "Standard Readme", github.com/RichardLitt/standard-readme, spec.md, no date: "Ideally, someone who's slightly familiar with your module should be able to refresh their memory without hitting "page down"."
-- [Art of README](https://web.archive.org/web/20231231175007/https://github.com/hackergrrl/art-of-readme), hackergrrl, github.com/hackergrrl/art-of-readme, Internet Archive copy of 2023-12-31: "The ideal README is as short as it can be without being any shorter."

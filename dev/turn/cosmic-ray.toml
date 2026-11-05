@@ -10,10 +10,8 @@ timeout = 30.0
 # A line marked `# pragma: no mutate` compares a value with one of the few the code ever gives it,
 # where no input tells a mutant of it apart: the place Turn's code goes on sys.path, no module
 # before it there having the name of one of Turn's; `__name__`, which is "__main__" or, imported by
-# the tests, the script's name; a count at values the code there never meets, such as one counting up by one to its limit, or of
-# an item in the list it is taken from; flags joined that are bits apart, the same by `|`, `+` or
-# `^`; and a line Cosmic Ray 8.7.0 fails to mutate, its ExceptionReplacer failing on a dotted name
-# among the exceptions, so no mutant of it can be tested.
+# the tests, the script's name; and a count at values the code there never meets, such as the count
+# of an item in the list it is taken from.
 # The unit tests alone run on each mutant, as Unit: code is the level whose tests catch every mutant;
 # the architecture tests run the guards of two plugins on each path, longer than the timeout.
 test-command = "sh -c 'ruff check --select F632 plugins/turn && sh dev/scripts/typecheck.sh turn && python -m unittest discover -f -s dev/turn/tests/unit -t dev/turn/tests'"

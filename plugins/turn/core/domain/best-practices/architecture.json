@@ -139,26 +139,6 @@
    "steps": [
     "Write each story naming the user, the way and the scenarios or steps it carries, such as \"As <the user>, I want <the way>. Carries <the scenarios or steps>.\"",
     "Walk each scenario of the UX step by step. Check that one story carries each step where the user, a person or an AI, meets the product. Add a story for a step that none carries."
-   ],
-   "grounds": [
-    {
-     "title": "3. Context and Scope",
-     "url": "https://docs.arc42.org/section-3/",
-     "by": "Hruschka and Starke, arc42 documentation, docs.arc42.org, no date",
-     "quote": "System scope and context - as the name suggests - delimits your system (i.e. your scope) from all its communication partners (neighboring systems and users, i.e. the context of your system)."
-    },
-    {
-     "title": "User Stories: What They Are, How to Write Them, and Examples",
-     "url": "https://www.mountaingoatsoftware.com/agile/user-stories",
-     "by": "Mountain Goat Software, mountaingoatsoftware.com, 2026",
-     "quote": "A common template is: As a [type of user], I [need/want/am required] to [do something], so that [reason or benefit]."
-    },
-    {
-     "title": "Architectural Blueprints—The “4+1” View Model of Software Architecture",
-     "url": "https://www.cs.ubc.ca/~gregor/teaching/papers/4+1view-architecture.pdf",
-     "by": "Kruchten, IEEE Software, 1995",
-     "quote": "as a driver to discover the architectural elements during the architecture design as we will describe later"
-    }
    ]
   },
   {
@@ -167,38 +147,6 @@
    "steps": [
     "Link the UX instead of repeating it.",
     "After writing the rest, check that each part carries out a piece of the idea. Where one does not, change the idea or the part."
-   ],
-   "grounds": [
-    {
-     "title": "ARCHITECTURE.md",
-     "url": "https://matklad.github.io/2021/02/06/ARCHITECTURE.md.html",
-     "by": "matklad, matklad.github.io, 2021",
-     "quote": "Start with a bird’s eye overview of the problem being solved."
-    },
-    {
-     "title": "Architecture",
-     "url": "https://github.com/rust-lang/rust-analyzer/blob/master/docs/book/src/contributing/architecture.md",
-     "by": "rust-analyzer team, rust-analyzer repository, no date",
-     "quote": "On the highest level, rust-analyzer is a thing which accepts input source code from the client and produces a structured semantic model of the code."
-    },
-    {
-     "title": "Architecture Decision Record",
-     "url": "https://martinfowler.com/bliki/ArchitectureDecisionRecord.html",
-     "by": "Fowler, martinfowler.com, 2026",
-     "quote": "The key is to put the most important material at the start, and push details to later in the record."
-    },
-    {
-     "title": "1. Introduction and Goals",
-     "url": "https://docs.arc42.org/section-1/",
-     "by": "Hruschka and Starke, arc42 documentation, docs.arc42.org, no date",
-     "quote": "If requirements documents exist this overview should refer to these documents."
-    },
-    {
-     "title": "4. Solution Strategy",
-     "url": "https://docs.arc42.org/section-4/",
-     "by": "Hruschka and Starke, arc42 documentation, docs.arc42.org, no date",
-     "quote": "These decisions form the cornerstones for your architecture. They are the basis for many other detailed decisions or implementation rules."
-    }
    ]
   },
   {
@@ -208,32 +156,6 @@
     "Draw an arrow for each thing one role asks of another, labelled with what it does and the data it hands on, not with a word such as \"uses\".",
     "With the figure, write what each role alone decides that no arrow shows.",
     "Ask of each decision which role makes it. Where two roles or none answer, move the decision or split the role."
-   ],
-   "grounds": [
-    {
-     "title": "On the Criteria to be Used in Decomposing Systems into Modules",
-     "url": "https://prl.khoury.northeastern.edu/img/p-tr-1971.pdf",
-     "by": "Parnas, Carnegie-Mellon University technical report, 1971",
-     "quote": "We propose instead that one begins with a list of difficult design decisions or design decisions which are likely to change. Each module is then designed to hide such a decision from the others."
-    },
-    {
-     "title": "Component",
-     "url": "https://c4model.com/abstractions/component",
-     "by": "Brown, C4 model, c4model.com, no date",
-     "quote": "in the C4 model, a component is a grouping of related functionality encapsulated behind a well-defined interface."
-    },
-    {
-     "title": "Notation",
-     "url": "https://c4model.com/diagrams/notation",
-     "by": "Brown, C4 model, c4model.com, no date",
-     "quote": "Every line should be labelled, the label being consistent with the direction and intent of the relationship (e.g. dependency or data flow). Try to be as specific as possible with the label, ideally avoiding single words like, “Uses”."
-    },
-    {
-     "title": "Software architecture diagram review checklist",
-     "url": "https://c4model.com/diagrams/checklist",
-     "by": "Brown, C4 model, c4model.com, no date",
-     "quote": "Do you understand what every element does?"
-    }
    ]
   },
   {
@@ -242,32 +164,6 @@
    "steps": [
     "Add a legend that explains every shape, tag and other symbol the figure uses.",
     "Read the figure without the text around it, and add to the legend or the boxes whatever the reader would still have to ask."
-   ],
-   "grounds": [
-    {
-     "title": "Notation",
-     "url": "https://c4model.com/diagrams/notation",
-     "by": "Brown, C4 model, c4model.com, no date",
-     "quote": "The type of every element should be explicitly specified (e.g. Person, Software System, Container or Component)."
-    },
-    {
-     "title": "Notation",
-     "url": "https://c4model.com/diagrams/notation",
-     "by": "Brown, C4 model, c4model.com, no date",
-     "quote": "Every container and component should have a technology explicitly specified."
-    },
-    {
-     "title": "Notation",
-     "url": "https://c4model.com/diagrams/notation",
-     "by": "Brown, C4 model, c4model.com, no date",
-     "quote": "Any notation used should be as self-describing as possible, but all diagrams should have a key/legend to make the notation explicit."
-    },
-    {
-     "title": "Notation",
-     "url": "https://c4model.com/diagrams/notation",
-     "by": "Brown, C4 model, c4model.com, no date",
-     "quote": "A good way to think about this is to ask yourself whether each diagram can stand alone, and be (mostly) understood without a narrative."
-    }
    ]
   },
   {
@@ -275,26 +171,6 @@
    "thinking": "The data model draws each data that the roles pass or keep once, by its name alone. It leaves the data's fields to where the data is built. It names each relation to another data, with how many of each the relation joins.",
    "steps": [
     "For each relation, ask whether the role that writes it and the role that reads it would keep it the same way. Where they would not, name the relation more exactly."
-   ],
-   "grounds": [
-    {
-     "title": "Entity Relationship Diagrams",
-     "url": "https://mermaid.js.org/syntax/entityRelationshipDiagram.html",
-     "by": "Mermaid, mermaid.js.org, no date",
-     "quote": "Relationships between entities are represented by lines with end markers representing cardinality."
-    },
-    {
-     "title": "Entity Relationship Diagrams",
-     "url": "https://mermaid.js.org/syntax/entityRelationshipDiagram.html",
-     "by": "Mermaid, mermaid.js.org, no date",
-     "quote": "Cardinality is a property that describes how many elements of another entity can be related to the entity in question."
-    },
-    {
-     "title": "Design Docs at Google",
-     "url": "https://www.industrialempathy.com/posts/design-docs-at-google/",
-     "by": "Ubl, industrialempathy.com, 2020",
-     "quote": "Similar to the advice on APIs, and for the same reasons, copy-pasting complete schema definitions should be avoided."
-    }
    ]
   },
   {
@@ -302,38 +178,6 @@
    "thinking": "The sequences draw each story as its steps in order, such as in a sequence diagram, from the user's first request to what the story gives them. In the drawing, every step has a role that takes it and data that it hands on.",
    "steps": [
     "Check that each step runs along an arrow of Components. Where none does, add the arrow or give the step to another role."
-   ],
-   "grounds": [
-    {
-     "title": "6. Runtime View",
-     "url": "https://docs.arc42.org/section-6/",
-     "by": "Hruschka and Starke, arc42 documentation, docs.arc42.org, no date",
-     "quote": "The runtime view describes concrete behavior and interactions of the system’s building blocks in form of scenarios"
-    },
-    {
-     "title": "6. Runtime View",
-     "url": "https://docs.arc42.org/section-6/",
-     "by": "Hruschka and Starke, arc42 documentation, docs.arc42.org, no date",
-     "quote": "Always map existing building blocks to the activities within runtime scenarios!"
-    },
-    {
-     "title": "Dynamic diagram",
-     "url": "https://c4model.com/diagrams/dynamic",
-     "by": "Brown, C4 model, c4model.com, no date",
-     "quote": "A dynamic diagram can be useful when you want to show how elements in the static model collaborate at runtime to implement a user story, use case, feature, etc."
-    },
-    {
-     "title": "Sequence diagrams",
-     "url": "https://mermaid.js.org/syntax/sequenceDiagram.html",
-     "by": "Mermaid, mermaid.js.org, no date",
-     "quote": "A Sequence diagram is an interaction diagram that shows how processes operate with one another and in what order."
-    },
-    {
-     "title": "Architectural Blueprints—The “4+1” View Model of Software Architecture",
-     "url": "https://www.cs.ubc.ca/~gregor/teaching/papers/4+1view-architecture.pdf",
-     "by": "Kruchten, IEEE Software, 1995",
-     "quote": "as a validation and illustration role after this architecture design is complete, both on paper and as the starting point for the tests of an architectural prototype."
-    }
    ]
   },
   {
@@ -341,14 +185,6 @@
    "thinking": "Every story, role and data is there because an objective of the UX needs it, on the main path that a scenario shows or off it. So each can go once no objective needs it.",
    "steps": [
     "Trace each role and each data to the stories whose sequences reach it. Trace each story to the step of the UX it carries or, off the main path, to the key result it serves. Remove what reaches none."
-   ],
-   "grounds": [
-    {
-     "title": "Yagni",
-     "url": "https://martinfowler.com/bliki/Yagni.html",
-     "by": "Fowler, martinfowler.com, 2015",
-     "quote": "The code for the presumptive feature adds some complexity to the software, this complexity makes it harder to modify and debug that software, thus increasing the cost of other features."
-    }
    ]
   },
   {
@@ -358,62 +194,6 @@
     "Write as a rule also what must be absent, such as a dependency no role may have.",
     "Link the principles of the architecture this one is built on, and write only what this product adds or changes.",
     "Take a case no rule names, and have two developers of different parts decide it from the reasons alone. Where they differ, sharpen the reason."
-   ],
-   "grounds": [
-    {
-     "title": "8. Crosscutting Concepts",
-     "url": "https://docs.arc42.org/section-8/",
-     "by": "Hruschka and Starke, arc42 documentation, docs.arc42.org, no date",
-     "quote": "Such concepts are often related to multiple building blocks."
-    },
-    {
-     "title": "8. Crosscutting Concepts",
-     "url": "https://docs.arc42.org/section-8/",
-     "by": "Hruschka and Starke, arc42 documentation, docs.arc42.org, no date",
-     "quote": "It might be easier to communicate or document such cross-cutting topics at a central location, instead of repeating them in the description of the concerned building blocks, hardware elements or development processes."
-    },
-    {
-     "title": "ARCHITECTURE.md",
-     "url": "https://matklad.github.io/2021/02/06/ARCHITECTURE.md.html",
-     "by": "matklad, matklad.github.io, 2021",
-     "quote": "Explicitly call-out architectural invariants."
-    },
-    {
-     "title": "ARCHITECTURE.md",
-     "url": "https://matklad.github.io/2021/02/06/ARCHITECTURE.md.html",
-     "by": "matklad, matklad.github.io, 2021",
-     "quote": "Often, important invariants are expressed as an absence of something, and it’s pretty hard to divine that from reading the code."
-    },
-    {
-     "title": "Documenting Software Architectures: Views and Beyond",
-     "url": "https://www.informit.com/articles/article.aspx?p=1641654&seqNum=5",
-     "by": "Clements et al., 2nd edition, section P.5, informit.com, 2010",
-     "quote": "For the most important decisions, you should record why you made them the way you did. You should also record the important or most likely alternatives you rejected and state why."
-    },
-    {
-     "title": "Prompting best practices",
-     "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
-     "by": "Anthropic, Claude Platform Docs, no date",
-     "quote": "Providing context or motivation behind your instructions, such as explaining to Claude why such behavior is important, can give Claude more information about your goals and help it deliver more targeted responses."
-    },
-    {
-     "title": "Prompting best practices",
-     "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
-     "by": "Anthropic, Claude Platform Docs, no date",
-     "quote": "Claude can generalize from the explanation."
-    },
-    {
-     "title": "Documenting Software Architectures: Views and Beyond",
-     "url": "https://www.informit.com/articles/article.aspx?p=1641654&seqNum=5",
-     "by": "Clements et al., 2nd edition, section P.5, informit.com, 2010",
-     "quote": "The most dangerous kind of ambiguity is undetected ambiguity. Here, each reader will think he or she understands the document, but unwittingly each reader will come to different conclusions about what it is saying."
-    },
-    {
-     "title": "Documenting Software Architectures: Views and Beyond",
-     "url": "https://www.informit.com/articles/article.aspx?p=1641654&seqNum=5",
-     "by": "Clements et al., 2nd edition, section P.5, informit.com, 2010",
-     "quote": "Each kind of information should be recorded in exactly one place."
-    }
    ]
   },
   {
@@ -423,32 +203,6 @@
     "Draw each thing outside the product that the roles depend on, with an arrow saying what is used.",
     "Leave out any infrastructure the parts do not need.",
     "Check that each role and each data of Components sits in one unit."
-   ],
-   "grounds": [
-    {
-     "title": "Deployment diagram",
-     "url": "https://c4model.com/diagrams/deployment",
-     "by": "Brown, C4 model, c4model.com, no date",
-     "quote": "A deployment diagram allows you to illustrate how instances of software systems and/or containers in the static model are deployed on to the infrastructure within a given deployment environment (e.g. production, staging, development, etc)."
-    },
-    {
-     "title": "Deployment diagram",
-     "url": "https://c4model.com/diagrams/deployment",
-     "by": "Brown, C4 model, c4model.com, no date",
-     "quote": "A deployment node represents where an instance of a software system/container is running"
-    },
-    {
-     "title": "7. Deployment View",
-     "url": "https://docs.arc42.org/section-7/",
-     "by": "Hruschka and Starke, arc42 documentation, docs.arc42.org, no date",
-     "quote": "Software does not run without hardware."
-    },
-    {
-     "title": "7. Deployment View",
-     "url": "https://docs.arc42.org/section-7/",
-     "by": "Hruschka and Starke, arc42 documentation, docs.arc42.org, no date",
-     "quote": "From a software perspective it is sufficient to capture those elements of the infrastructure that are needed to show the deployment of your building blocks."
-    }
    ]
   },
   {
@@ -457,32 +211,6 @@
    "steps": [
     "Keep the folders and files that hold a role or a data, and leave out what lies inside each.",
     "Check that each role and each data stands on one line. Where it stands on none or on two, move the files or the line."
-   ],
-   "grounds": [
-    {
-     "title": "ARCHITECTURE.md",
-     "url": "https://matklad.github.io/2021/02/06/ARCHITECTURE.md.html",
-     "by": "matklad, matklad.github.io, 2021",
-     "quote": "The codemap should answer “where’s the thing that does X?”."
-    },
-    {
-     "title": "ARCHITECTURE.md",
-     "url": "https://matklad.github.io/2021/02/06/ARCHITECTURE.md.html",
-     "by": "matklad, matklad.github.io, 2021",
-     "quote": "Do name important files, modules, and types."
-    },
-    {
-     "title": "ARCHITECTURE.md",
-     "url": "https://matklad.github.io/2021/02/06/ARCHITECTURE.md.html",
-     "by": "matklad, matklad.github.io, 2021",
-     "quote": "A codemap is a map of a country, not an atlas of maps of its states."
-    },
-    {
-     "title": "ARCHITECTURE.md",
-     "url": "https://matklad.github.io/2021/02/06/ARCHITECTURE.md.html",
-     "by": "matklad, matklad.github.io, 2021",
-     "quote": "Are the things you want to put near each other in the codemap adjacent when you run tree .?"
-    }
    ]
   },
   {
@@ -492,56 +220,6 @@
     "Leave out a unit whose every cell would be empty, and say why under the table.",
     "Check that unit and architecture carry most of the checking and run on every change, and that ux tests are few.",
     "Check that each user story's sequence runs from start to end at the architecture level in some row."
-   ],
-   "grounds": [
-    {
-     "title": "Certified Tester Foundation Level Syllabus",
-     "url": "https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf",
-     "by": "ISTQB, version 4.0.1, istqb.org, 2024",
-     "quote": "Test levels are distinguished by the following non-exhaustive list of attributes, to avoid overlapping of test activities"
-    },
-    {
-     "title": "Certified Tester Foundation Level Syllabus",
-     "url": "https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf",
-     "by": "ISTQB, version 4.0.1, istqb.org, 2024",
-     "quote": "Test analysis includes analyzing the test basis to identify testable features."
-    },
-    {
-     "title": "Certified Tester Foundation Level Syllabus",
-     "url": "https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf",
-     "by": "ISTQB, version 4.0.1, istqb.org, 2024",
-     "quote": "Test types are groups of test activities related to specific quality characteristics and most of those test activities can be performed at every test level."
-    },
-    {
-     "title": "Certified Tester Foundation Level Syllabus",
-     "url": "https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf",
-     "by": "ISTQB, version 4.0.1, istqb.org, 2024",
-     "quote": "While testing involves verification, i.e., checking whether the system meets specified requirements, it also involves validation, which means checking whether the system meets users’ and other stakeholders’ needs in its operational environment."
-    },
-    {
-     "title": "The Practical Test Pyramid",
-     "url": "https://martinfowler.com/articles/practical-test-pyramid.html",
-     "by": "Vocke, martinfowler.com, 2018",
-     "quote": "Write tests with different granularity"
-    },
-    {
-     "title": "The Practical Test Pyramid",
-     "url": "https://martinfowler.com/articles/practical-test-pyramid.html",
-     "by": "Vocke, martinfowler.com, 2018",
-     "quote": "Push your tests as far down the test pyramid as you can"
-    },
-    {
-     "title": "The Practical Test Pyramid",
-     "url": "https://martinfowler.com/articles/practical-test-pyramid.html",
-     "by": "Vocke, martinfowler.com, 2018",
-     "quote": "The more high-level you get the fewer tests you should have"
-    },
-    {
-     "title": "Documenting Software Architectures: Views and Beyond",
-     "url": "https://www.informit.com/articles/article.aspx?p=1641654&seqNum=5",
-     "by": "Clements et al., 2nd edition, section P.5, informit.com, 2010",
-     "quote": "If the section is blank, the reader will wonder whether the information is coming later or whether it is indeed supposed to be blank."
-    }
    ]
   },
   {
@@ -560,182 +238,6 @@
     "For each key result, say what the test measures, such as the lead time from the request to the result. The UX gives a key result no target value, so set each measure against the last one by the direction the UX gives it.",
     "For a test whose result varies from run to run, write how many runs of how many must meet the expectation.",
     "Use each level's name the same way throughout the document."
-   ],
-   "grounds": [
-    {
-     "title": "Certified Tester Foundation Level Syllabus",
-     "url": "https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf",
-     "by": "ISTQB, version 4.0.1, istqb.org, 2024",
-     "quote": "Black-box test techniques (also known as specification-based techniques) are based on an analysis of the specified behavior of the test object without reference to its internal structure."
-    },
-    {
-     "title": "Certified Tester Foundation Level Syllabus",
-     "url": "https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf",
-     "by": "ISTQB, version 4.0.1, istqb.org, 2024",
-     "quote": "Test techniques help to develop a relatively small, but sufficient, set of test cases in a systematic way."
-    },
-    {
-     "title": "Unit Testing",
-     "url": "https://abseil.io/resources/swe-book/html/ch12.html",
-     "by": "Kuefler, Software Engineering at Google, chapter 12, abseil.io, 2020",
-     "quote": "A behavior is any guarantee that a system makes about how it will respond to a series of inputs while in a particular state."
-    },
-    {
-     "title": "The Practical Test Pyramid",
-     "url": "https://martinfowler.com/articles/practical-test-pyramid.html",
-     "by": "Vocke, martinfowler.com, 2018",
-     "quote": "A unit test typically replaces external collaborators with test doubles"
-    },
-    {
-     "title": "Testing Overview",
-     "url": "https://abseil.io/resources/swe-book/html/ch11.html",
-     "by": "Bender, Software Engineering at Google, chapter 11, abseil.io, 2020",
-     "quote": "the most important qualities we want from our test suite are speed and determinism, regardless of the scope of the test."
-    },
-    {
-     "title": "Larger Testing",
-     "url": "https://abseil.io/resources/swe-book/html/ch14.html",
-     "by": "Graves, Software Engineering at Google, chapter 14, abseil.io, 2020",
-     "quote": "The primary reason larger tests exist is to address fidelity."
-    },
-    {
-     "title": "Larger Testing",
-     "url": "https://abseil.io/resources/swe-book/html/ch14.html",
-     "by": "Graves, Software Engineering at Google, chapter 14, abseil.io, 2020",
-     "quote": "Tests can also be measured in terms of how faithful the test content is to reality."
-    },
-    {
-     "title": "The Practical Test Pyramid",
-     "url": "https://martinfowler.com/articles/practical-test-pyramid.html",
-     "by": "Vocke, martinfowler.com, 2018",
-     "quote": "Make sure that the higher-level test focuses on the part that the lower-level tests couldn't cover."
-    },
-    {
-     "title": "Certified Tester Foundation Level Syllabus",
-     "url": "https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf",
-     "by": "ISTQB, version 4.0.1, istqb.org, 2024",
-     "quote": "Therefore, one test for each partition is sufficient."
-    },
-    {
-     "title": "Certified Tester Foundation Level Syllabus",
-     "url": "https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf",
-     "by": "ISTQB, version 4.0.1, istqb.org, 2024",
-     "quote": "To achieve 100% coverage with this test technique, test cases must exercise all identified partitions (including invalid partitions) by covering each partition at least once."
-    },
-    {
-     "title": "Certified Tester Foundation Level Syllabus",
-     "url": "https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf",
-     "by": "ISTQB, version 4.0.1, istqb.org, 2024",
-     "quote": "BVA focuses on the boundary values of the partitions because developers are more likely to make errors with these boundary values."
-    },
-    {
-     "title": "Certified Tester Foundation Level Syllabus",
-     "url": "https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf",
-     "by": "ISTQB, version 4.0.1, istqb.org, 2024",
-     "quote": "In 2-value BVA (Craig 2002, Myers 2011), for each boundary value there are two coverage items: this boundary value and its closest neighbor belonging to the adjacent partition."
-    },
-    {
-     "title": "Certified Tester Foundation Level Syllabus",
-     "url": "https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf",
-     "by": "ISTQB, version 4.0.1, istqb.org, 2024",
-     "quote": "Decision tables are used for testing the implementation of requirements that specify how different combinations of conditions result in different outcomes."
-    },
-    {
-     "title": "Certified Tester Foundation Level Syllabus",
-     "url": "https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf",
-     "by": "ISTQB, version 4.0.1, istqb.org, 2024",
-     "quote": "In decision table testing, the coverage items are the columns containing feasible combinations of conditions."
-    },
-    {
-     "title": "Demystifying evals for AI agents",
-     "url": "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents",
-     "by": "Anthropic, anthropic.com/engineering, 2026",
-     "quote": "Test both the cases where a behavior should occur and where it shouldn't."
-    },
-    {
-     "title": "Certified Tester Foundation Level Syllabus",
-     "url": "https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf",
-     "by": "ISTQB, version 4.0.1, istqb.org, 2024",
-     "quote": "A test case based on a state diagram or state table is usually represented as a sequence of events, which results in a sequence of state changes (and actions, if needed)."
-    },
-    {
-     "title": "Certified Tester Foundation Level Syllabus",
-     "url": "https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf",
-     "by": "ISTQB, version 4.0.1, istqb.org, 2024",
-     "quote": "Valid transitions coverage is the most widely used coverage criterion."
-    },
-    {
-     "title": "Certified Tester Foundation Level Syllabus",
-     "url": "https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf",
-     "by": "ISTQB, version 4.0.1, istqb.org, 2024",
-     "quote": "Typically, the first test cases are positive, confirming the correct behavior without exceptions or error conditions, and comprising the sequence of activities executed if everything goes as expected."
-    },
-    {
-     "title": "Certified Tester Foundation Level Syllabus",
-     "url": "https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf",
-     "by": "ISTQB, version 4.0.1, istqb.org, 2024",
-     "quote": "After the positive test cases are done, the team should perform negative testing."
-    },
-    {
-     "title": "Certified Tester Foundation Level Syllabus",
-     "url": "https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf",
-     "by": "ISTQB, version 4.0.1, istqb.org, 2024",
-     "quote": "In sequential SDLC models, the test levels are often defined such that the exit criteria of one level are part of the entry criteria for the next level."
-    },
-    {
-     "title": "Certified Tester Foundation Level Syllabus",
-     "url": "https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf",
-     "by": "ISTQB, version 4.0.1, istqb.org, 2024",
-     "quote": "Acceptance testing focuses on validation and on demonstrating readiness for deployment, which means that the system fulfills the user’s business needs."
-    },
-    {
-     "title": "Certified Tester Foundation Level Syllabus",
-     "url": "https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf",
-     "by": "ISTQB, version 4.0.1, istqb.org, 2024",
-     "quote": "For some non-functional quality characteristics, it is preferable to test them on a complete system in a representative test environment (e.g., usability)."
-    },
-    {
-     "title": "Demystifying evals for AI agents",
-     "url": "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents",
-     "by": "Anthropic, anthropic.com/engineering, 2026",
-     "quote": "Unlike most other evals, they often require a second LLM to simulate the user."
-    },
-    {
-     "title": "𝜏-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains",
-     "url": "https://arxiv.org/html/2406.12045v1",
-     "by": "Yao et al., arXiv:2406.12045, 2024",
-     "quote": "Task annotation is not visible to the agent and is used only for user simulation and evaluation."
-    },
-    {
-     "title": "𝜏-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains",
-     "url": "https://arxiv.org/html/2406.12045v1",
-     "by": "Yao et al., arXiv:2406.12045, 2024",
-     "quote": "The instruction sets up user identity, intent, and preferences in a way that guarantees only one possible outcome under the domain policy."
-    },
-    {
-     "title": "The Scrum Guide",
-     "url": "https://scrumguides.org/scrum-guide.html",
-     "by": "Schwaber and Sutherland, scrumguides.org, 2020",
-     "quote": "The Definition of Done is a formal description of the state of the Increment when it meets the quality measures required for the product."
-    },
-    {
-     "title": "Demystifying evals for AI agents",
-     "url": "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents",
-     "by": "Anthropic, anthropic.com/engineering, 2026",
-     "quote": "pass^k measures the probability that all k trials succeed."
-    },
-    {
-     "title": "The Practical Test Pyramid",
-     "url": "https://martinfowler.com/articles/practical-test-pyramid.html",
-     "by": "Vocke, martinfowler.com, 2018",
-     "quote": "Given the shortcomings of the original names it's totally okay to come up with other names for your test layers, as long as you keep it consistent within your codebase and your team's discussions."
-    },
-    {
-     "title": "Documenting Software Architectures: Views and Beyond",
-     "url": "https://www.informit.com/articles/article.aspx?p=1641654&seqNum=5",
-     "by": "Clements et al., 2nd edition, section P.5, informit.com, 2010",
-     "quote": "Each kind of information should be recorded in exactly one place."
-    }
    ]
   },
   {
@@ -745,62 +247,6 @@
     "Build each double from the form that the part's contract gives its results. Set it only to results that this form allows, the refusals among them.",
     "Check each double's results by the same check the part's unit tests make of the part's results, so a change to the contract fails the double as it fails the part.",
     "For a fault a higher level finds, name the case or the path the lower level missed, add its test at the level that must catch it, see it fail, then fix the fault there."
-   ],
-   "grounds": [
-    {
-     "title": "Test Doubles",
-     "url": "https://abseil.io/resources/swe-book/html/ch13.html",
-     "by": "Trenk and Bly, Software Engineering at Google, chapter 13, abseil.io, 2020",
-     "quote": "Fidelity refers to how closely the behavior of a test double resembles the behavior of the real implementation that it’s replacing."
-    },
-    {
-     "title": "Test Doubles",
-     "url": "https://abseil.io/resources/swe-book/html/ch13.html",
-     "by": "Trenk and Bly, Software Engineering at Google, chapter 13, abseil.io, 2020",
-     "quote": "These test doubles are very likely to exhibit behavior that violates the API contract of the type being mocked—for instance, returning null for a method that can never return null."
-    },
-    {
-     "title": "Contract Test",
-     "url": "https://martinfowler.com/bliki/ContractTest.html",
-     "by": "Fowler, martinfowler.com, 2011",
-     "quote": "Contract tests check the contract of external service calls, but not necessarily the exact data."
-    },
-    {
-     "title": "Contract Test",
-     "url": "https://martinfowler.com/bliki/ContractTest.html",
-     "by": "Fowler, martinfowler.com, 2011",
-     "quote": "These check that all the calls against your test doubles return the same results as a call to the external service would."
-    },
-    {
-     "title": "The Practical Test Pyramid",
-     "url": "https://martinfowler.com/articles/practical-test-pyramid.html",
-     "by": "Vocke, martinfowler.com, 2018",
-     "quote": "Running contract tests against the fake and the real server ensures that the fake we use in our integration tests is a faithful test double."
-    },
-    {
-     "title": "Larger Testing",
-     "url": "https://abseil.io/resources/swe-book/html/ch14.html",
-     "by": "Graves, Software Engineering at Google, chapter 14, abseil.io, 2020",
-     "quote": "Moreover, mocks become stale."
-    },
-    {
-     "title": "Larger Testing",
-     "url": "https://abseil.io/resources/swe-book/html/ch14.html",
-     "by": "Graves, Software Engineering at Google, chapter 14, abseil.io, 2020",
-     "quote": "Then, the real service uses this input/output pair in a real test to ensure that it produces that output given those inputs."
-    },
-    {
-     "title": "The Practical Test Pyramid",
-     "url": "https://martinfowler.com/articles/practical-test-pyramid.html",
-     "by": "Vocke, martinfowler.com, 2018",
-     "quote": "If a higher-level test spots an error and there's no lower-level test failing, you need to write a lower-level test"
-    },
-    {
-     "title": "The Practical Test Pyramid",
-     "url": "https://martinfowler.com/articles/practical-test-pyramid.html",
-     "by": "Vocke, martinfowler.com, 2018",
-     "quote": "The first rule is important because lower-level tests allow you to better narrow down errors and replicate them in an isolated way."
-    }
    ]
   },
   {
@@ -808,26 +254,6 @@
    "thinking": "The writer reads each principle against every part it rules. A developer then never meets a figure, a list or a table that breaks a principle.",
    "steps": [
     "Read each part against each principle that rules it. Where a line breaks the principle, change the part, or the principle and its reason, until the two say the same."
-   ],
-   "grounds": [
-    {
-     "title": "8. Crosscutting Concepts",
-     "url": "https://docs.arc42.org/section-8/",
-     "by": "Hruschka and Starke, arc42 documentation, docs.arc42.org, no date",
-     "quote": "Concepts form the basis for conceptual integrity (consistency, homogeneity) of the architecture."
-    },
-    {
-     "title": "Architectural Blueprints—The “4+1” View Model of Software Architecture",
-     "url": "https://www.cs.ubc.ca/~gregor/teaching/papers/4+1view-architecture.pdf",
-     "by": "Kruchten, IEEE Software, 1995",
-     "quote": "A Software Design Guidelines, which captures (among other things) the most important design decisions that must be respected to maintain the architectural integrity of the system."
-    },
-    {
-     "title": "Documenting Software Architectures: Views and Beyond",
-     "url": "https://www.informit.com/articles/article.aspx?p=1641654&seqNum=5",
-     "by": "Clements et al., 2nd edition, section P.5, informit.com, 2010",
-     "quote": "Documentation that is incomplete or out of date does not reflect truth, does not obey its own rules for form and internal consistency, and is not used."
-    }
    ]
   },
   {
@@ -835,50 +261,6 @@
    "thinking": "A choice that a developer would question, such as a technology, a tool or a unit's weight, carries why it beat the other way and what it costs. These stand beside the figure or table that shows the choice. The developer then keeps the choice or changes it, knowing what it was for.",
    "steps": [
     "Read each figure and the table as a developer new to the product, and check that each choice they would question has its reason and its cost beside it."
-   ],
-   "grounds": [
-    {
-     "title": "Documenting Architecture Decisions",
-     "url": "https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions",
-     "by": "Nygard, Cognitect blog, 2011",
-     "quote": "Without understanding the rationale or consequences, this person has only two choices:"
-    },
-    {
-     "title": "Documenting Architecture Decisions",
-     "url": "https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions",
-     "by": "Nygard, Cognitect blog, 2011",
-     "quote": "Blindly accept the decision."
-    },
-    {
-     "title": "Documenting Architecture Decisions",
-     "url": "https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions",
-     "by": "Nygard, Cognitect blog, 2011",
-     "quote": "Blindly change it."
-    },
-    {
-     "title": "Design Docs at Google",
-     "url": "https://www.industrialempathy.com/posts/design-docs-at-google/",
-     "by": "Ubl, industrialempathy.com, 2020",
-     "quote": "The design doc is the place to write down the trade-offs you made in designing your software."
-    },
-    {
-     "title": "Design Docs at Google",
-     "url": "https://www.industrialempathy.com/posts/design-docs-at-google/",
-     "by": "Ubl, industrialempathy.com, 2020",
-     "quote": "shows very explicitly why the selected solution is the best given the project goals and how other solutions, that the reader may be wondering about, introduce trade-offs that are less desirable given the goals."
-    },
-    {
-     "title": "Documenting Architecture Decisions",
-     "url": "https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions",
-     "by": "Nygard, Cognitect blog, 2011",
-     "quote": "All consequences should be listed here, not just the \"positive\" ones."
-    },
-    {
-     "title": "9. Architecture Decisions",
-     "url": "https://docs.arc42.org/section-9/",
-     "by": "Hruschka and Starke, arc42 documentation, docs.arc42.org, no date",
-     "quote": "Please use your judgement to decide whether an architectural decision should be documented here in this central section or whether you better document it locally (e.g. within the white box template of one building block). Avoid redundant texts."
-    }
    ]
   },
   {
@@ -887,32 +269,6 @@
    "steps": [
     "Imagine a change to how a role works inside, such as its steps, a value it uses or a data's fields, that leaves the UX and the principles as they are. Mark each line the change would make untrue.",
     "Repeat with a change of another kind, until no line is marked."
-   ],
-   "grounds": [
-    {
-     "title": "ARCHITECTURE.md",
-     "url": "https://matklad.github.io/2021/02/06/ARCHITECTURE.md.html",
-     "by": "matklad, matklad.github.io, 2021",
-     "quote": "This is the main rule of thumb for ARCHITECTURE — only specify things that are unlikely to frequently change."
-    },
-    {
-     "title": "ARCHITECTURE.md",
-     "url": "https://matklad.github.io/2021/02/06/ARCHITECTURE.md.html",
-     "by": "matklad, matklad.github.io, 2021",
-     "quote": "Avoid going into details of how each module works, pull this into separate documents or (better) inline documentation."
-    },
-    {
-     "title": "Design Docs at Google",
-     "url": "https://www.industrialempathy.com/posts/design-docs-at-google/",
-     "by": "Ubl, industrialempathy.com, 2020",
-     "quote": "A clear indicator that a doc might not be necessary are design docs that are really implementation manuals."
-    },
-    {
-     "title": "Software Architecture Guide",
-     "url": "https://martinfowler.com/architecture/",
-     "by": "Fowler, martinfowler.com, 2019",
-     "quote": "It means that the heart of thinking architecturally about software is to decide what is important, (i.e. what is architectural), and then expend energy on keeping those architectural elements in good condition."
-    }
    ]
   }
  ]
