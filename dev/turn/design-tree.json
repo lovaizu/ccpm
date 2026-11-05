@@ -36,43 +36,47 @@
   },
   {
    "id": "readme/Q1",
-   "what": "When a colleague asks what the product is, can the reader answer in one sentence that tells them what it does?"
+   "what": "Asked by a colleague what the product is, does the reader answer in one sentence that tells what it does?"
   },
   {
    "id": "readme/Q2",
-   "what": "Reading the gain, can the reader tell what the product would let them do, and so whether it is for them?"
+   "what": "Reading the gain, does the reader tell what the product would let them do, and so whether it is for them?"
   },
   {
    "id": "readme/Q3",
-   "what": "When a colleague asks why this product and not another way of doing the same work, can the reader name what it does differently that brings the gain?"
+   "what": "Asked by a colleague why this product and not another way of doing the same work, does the reader name what it does differently that brings the gain?"
   },
   {
    "id": "readme/Q4",
-   "what": "Before installing, can the reader tell what the product does not do that they might have expected of it?"
+   "what": "Before installing, does the reader see what the product does not do that they might expect of it?"
   },
   {
    "id": "readme/Q5",
-   "what": "After the walkthrough, can the reader tell that the product would give them, on work of their own, the gain the opening promised?"
+   "what": "Before installing, does the reader see where the product is not yet fit for use?"
   },
   {
    "id": "readme/Q6",
-   "what": "Starting with nothing set up, can the reader install the product by the README's steps alone, and tell that it works?"
+   "what": "After the walkthrough, does the reader see that the product would give them, on work of their own, the gain the opening promised?"
   },
   {
    "id": "readme/Q7",
-   "what": "For each gain and the idea, can the reader see in the figure of how the product works how the product keeps it?"
+   "what": "Starting with nothing set up, does the reader install the product by the README's steps alone, and see that it works?"
   },
   {
    "id": "readme/Q8",
-   "what": "When the reader needs more than the README gives, such as fuller use, can they tell from it where to read next?"
+   "what": "Looking at the figure of how the product works, does the reader see how it keeps each gain and the idea?"
   },
   {
    "id": "readme/Q9",
-   "what": "Can the reader tell from the README the terms on which they and their team may use the product?"
+   "what": "Needing more than the README gives, such as fuller use or help, does the reader find where to go next?"
   },
   {
    "id": "readme/Q10",
-   "what": "Reading from the top, does the reader find each answer just when they come to need it, so they can stop as soon as they have what they came for?"
+   "what": "Weighing whether they may use the product, does the reader find the terms for them and their team?"
+  },
+  {
+   "id": "readme/Q11",
+   "what": "Reading from the top, does the reader find each answer just when they come to need it, so they can stop once they have what they came for?"
   }
  ],
  "decisions": [
@@ -244,7 +248,7 @@
    "what": "The usual way, and what Turn does differently",
    "contributes_to": [
     "readme/Q3",
-    "readme/Q7"
+    "readme/Q8"
    ],
    "builds_on": [
     "D9"
@@ -272,10 +276,24 @@
    ]
   },
   {
+   "id": "D17",
+   "what": "Where Turn is not yet fit for use",
+   "contributes_to": [
+    "readme/Q5"
+   ],
+   "builds_on": [],
+   "decided": "Turn 0.1.0 is still in development and not yet released: a run may stop on a fault of Turn's own, and its forms may change before the release.",
+   "settled_by": "research",
+   "grounds": [
+    "plugins/turn/CHANGELOG.md has no released version yet",
+    "readme.json Q5 thinking: \"Where the product is not yet fit for use, such as a release still in development or one no longer kept up, say so at the top\""
+   ]
+  },
+  {
    "id": "D12",
    "what": "Requirements and installation",
    "contributes_to": [
-    "readme/Q6"
+    "readme/Q7"
    ],
    "builds_on": [],
    "decided": "Claude Code 2.1.317 or later and Python 3.9 or later as python3; installed from the ccpm marketplace, Pin coming with it as a dependency.",
@@ -289,7 +307,7 @@
    "id": "D13",
    "what": "The walkthrough's run",
    "contributes_to": [
-    "readme/Q5"
+    "readme/Q6"
    ],
    "builds_on": [
     "D6",
@@ -305,7 +323,7 @@
    "id": "D14",
    "what": "What the figure of how Turn works shows, and what stands under it",
    "contributes_to": [
-    "readme/Q7"
+    "readme/Q8"
    ],
    "builds_on": [
     "D10"
@@ -318,17 +336,41 @@
   },
   {
    "id": "D15",
-   "what": "Where a reader goes next, and the license",
+   "what": "Where a reader goes next, where they get help, and the license",
    "contributes_to": [
-    "readme/Q8",
-    "readme/Q9"
+    "readme/Q9",
+    "readme/Q10"
    ],
    "builds_on": [],
-   "decided": "Calling Turn, for an AI that asks Turn on a person's behalf; the changelog; the MIT License of the repository.",
+   "decided": "Calling Turn, for an AI that asks Turn on a person's behalf; the changelog; help in the repository's GitHub issues, https://github.com/lovaizu/ccpm/issues; the MIT License of the repository.",
    "settled_by": "research",
    "grounds": [
     "plugins/turn/docs/calling.md",
-    "LICENSE"
+    "LICENSE",
+    "git remote origin: github.com/lovaizu/ccpm"
+   ]
+  },
+  {
+   "id": "D18",
+   "what": "The order of the README",
+   "contributes_to": [
+    "readme/Q11"
+   ],
+   "builds_on": [
+    "D8",
+    "D9",
+    "D10",
+    "D11",
+    "D17",
+    "D12",
+    "D13",
+    "D14",
+    "D15"
+   ],
+   "decided": "The template's order: what Turn is, the status, whom it is for and the gain, the idea, the non-goals; then Requirements, Installation, Walkthrough, How it works, Documentation, License. A reader who learns Turn is not for them stops after the opening; the Walkthrough comes after Installation, as it runs Turn installed.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "readme.json Q11 thinking: \"Order the README as the reader decides, from what every reader needs to what only a reader who has chosen the product needs\""
    ]
   }
  ]
