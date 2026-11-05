@@ -32,7 +32,8 @@ The developer builds what the product's users want.
 
 1. Walk through who uses the product, who runs it, who receives what it makes, who is affected by it, and each AI or system that calls it, over the product's whole life.
 2. Where two roles want the same, merge them.
-3. Ask the user who else comes to the product, and confirm with them each role the request does not show.
+3. Where one role is left, name it the user, as a name made up for the only role tells the reader nothing more.
+4. Ask the user who else comes to the product, and confirm with them each role the request does not show.
 
 ### Q2: Reading an objective, does the developer see which role it is for and what that role gets from the product?
 

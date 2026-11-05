@@ -7,7 +7,7 @@
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - `<role>`: each role that comes to the product with a want of its own, such as a guest, a member
->   or an admin.
+>   or an admin; "user" where it is the only one.
 > - `<who they are>`: in one clause.
 
 ## OKRs

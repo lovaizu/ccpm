@@ -46,6 +46,7 @@
    "steps": [
     "Walk through who uses the product, who runs it, who receives what it makes, who is affected by it, and each AI or system that calls it, over the product's whole life.",
     "Where two roles want the same, merge them.",
+    "Where one role is left, name it the user, as a name made up for the only role tells the reader nothing more.",
     "Ask the user who else comes to the product, and confirm with them each role the request does not show."
    ]
   },
