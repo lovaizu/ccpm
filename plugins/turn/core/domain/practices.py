@@ -27,7 +27,9 @@ QUESTION = re.compile(r"\bQ\d+\b")
 # A link or a figure in Markdown, a fenced code block, whose text links nothing, and a link's target
 # that a copy elsewhere still reaches as it is: another site, or a place in the same page.
 LINK = re.compile(r"(!?)(\[[^\]]*\]\()([^)\s]+)(\))")
-FENCE = re.compile(r"(^```.*?^```)", re.MULTILINE | re.DOTALL)
+# FENCE's flags stand in the pattern, as `re.M | re.S` is the same number as `re.M + re.S` or
+# `re.M ^ re.S`, mutants no test can tell apart.
+FENCE = re.compile(r"(?ms)(^```.*?^```)")
 KEPT = re.compile(r"^(?:[a-z][a-z0-9+.-]*:|#)")
 
 
@@ -153,14 +155,14 @@ def kept(path: str, data: dict[str, Any]) -> set[str]:
     would now be where it names one, else with the figures it shows. Refuses, by FileNotFoundError,
     a source or a figure of it that is not there."""
     files = {path, os.path.splitext(path)[0] + ".md"}
+    copied = copies(path, data) if "example" in data else {}
+    files.update(copied)
     for key in ("template", "example"):
         if key not in data:
             continue
-        named = beside(path, data[key])
+        named = os.path.normpath(beside(path, data[key]))
         files.add(named)
-        if key == "example" and "source" in data:
-            files.update(copies(path, data))
-        elif os.path.isfile(named):
+        if named not in copied and os.path.isfile(named):
             with open(named, encoding="utf-8") as f:
                 files.update(beside(named, figure) for figure in shown(f.read()))
     return {os.path.normpath(f) for f in files}
@@ -245,8 +247,9 @@ def markdown(kind: str, data: dict[str, Any]) -> str:
     for key in ("template", "example"):
         if key in data:
             out += ["", f"## {key.capitalize()}", "", f"[{data[key]}]({data[key]})"]
-            if key == "example" and "source" in data:
-                out[-1] += f", a copy of [{data['source']}]({data['source']})"
+    if "example" in data and "source" in data:
+        # The example comes last, so its link is the last line.
+        out[-1] += f", a copy of [{data['source']}]({data['source']})"
     if data.get("parts"):
         out += ["", "## Parts", "", *parts(data["parts"])]
     out += ["", "## User benefits", ""]

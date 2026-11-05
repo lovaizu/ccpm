@@ -386,10 +386,12 @@ class Practices(helpers.testing.FolderTest):
         example = self.sourced()
         ran("example", self.path)
         figure = os.path.join(self.folder, "images", "a.svg")
-        for changed in (example, figure):
-            with self.subTest(changed=changed):
+        cuts = [(f, lambda text: "changed") for f in (example, figure)]
+        cuts += [(f, lambda text: text[:-1]) for f in (example, figure)]
+        for changed, cut in cuts:
+            with self.subTest(changed=changed, cut=cut("ab")):
                 ran("example", self.path)
-                self.write(changed, "changed")
+                self.write(changed, cut(self.read(changed)))
                 code, _, err = ran("form", self.path)
                 self.assertEqual(code, 1)
                 self.assertIn(f"{changed} is not a copy of its source; run plan.py example", err)

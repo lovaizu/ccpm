@@ -249,6 +249,20 @@ class Beside(helpers.testing.FolderTest):
         self.assertEqual(practices.kind_of(self.path), "kind")
 
 
+class Shown(unittest.TestCase):
+    def test_each_figure_under_its_folder_by_its_path_without_the_place_in_it(self):
+        text = "![A](a.svg) and ![B](images/b.svg#part)\n"
+        self.assertEqual(practices.shown(text), ["a.svg", "images/b.svg"])
+
+    def test_a_figure_after_a_code_block_and_none_in_it(self):
+        text = "![A](a.svg)\n```text\n![Q](q.svg)\n```\n![B](b.svg)\n```\n![R](r.svg)\n```\n"
+        self.assertEqual(practices.shown(text), ["a.svg", "b.svg"])
+
+    def test_no_link_figure_on_another_site_or_figure_above_its_folder(self):
+        text = "[c](c.md) ![W](https://example.com/w.svg) ![U](../u.svg)\n"
+        self.assertEqual(practices.shown(text), [])
+
+
 class Leftovers(helpers.testing.FolderTest):
     """leftovers, each file in a best practice's folder that neither it, its template nor its
     example holds."""
