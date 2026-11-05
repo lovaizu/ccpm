@@ -215,7 +215,11 @@
    ],
    "decided": null,
    "settled_by": null,
-   "grounds": []
+   "grounds": [
+    "The user, 2026-11-05, on what Turn does today without Turn: an AI is asked in one prompt and its draft is read and mended; what it hands over is not put to use as it comes.",
+    "The user, 2026-11-05, ideas thought up (not yet settled): \"ベストプラクティスがある / ベストプラクティスを作れる / 作れたかでなく目的や意図を確認する / 設計ツリーでユーザーベネフィットを全部問い詰めてユーザーから引き出す / 利用時としてユーザーベネフィットをチェックする / goodのみ探してgoodにするにはを考える\"",
+    "Candidate put back to the user, 2026-11-05, unconfirmed: (1) a best practice for each kind, made where missing; (2) checks the purpose and intent, not that the work was made by the best practice; (3) draws out every user benefit from the user in the design tree; (4) checks the user benefits at the moment of use; (5) seeks the good and how to make the work good. The why under each was the assistant's, to be confirmed."
+   ]
   },
   {
    "id": "D5",
