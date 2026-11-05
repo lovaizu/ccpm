@@ -7,7 +7,7 @@
   {
    "id": "Q1",
    "about": "the opening",
-   "what": "Asked by a colleague after reading the opening once, does the reader retell it from memory?"
+   "what": "Telling a colleague about the product, does the reader retell the opening from memory?"
   },
   {
    "id": "Q2",
@@ -37,12 +37,12 @@
   {
    "id": "Q7",
    "about": "How it works",
-   "what": "Weighing the product against what they would do without it, does the reader see why the product removes the problem that way leaves them with?"
+   "what": "At each point where they would ask whether the product can really do that, does the reader picture how it does it?"
   },
   {
    "id": "Q8",
    "about": "How it works",
-   "what": "Doubting that the product does what How it works says, does the reader see that it really does?"
+   "what": "For each problem they feel in the work, does the reader picture how the product makes it go away?"
   },
   {
    "id": "Q9",
@@ -108,18 +108,20 @@
   },
   {
    "user_benefit": "Q7",
-   "thinking": "Show in How it works the problem that what the reader would do without the product leaves them with, and draw for each place where it stays unsolved who does what to whom in the product to remove it, with a sentence or two under each figure, as the reader trusts a claim only once they see why it holds, and a figure alone can be read otherwise.",
+   "thinking": "Find each point a newcomer would doubt, and for each, draw who does what to whom in the product to do it, with a sentence or two under the figure, as a reader believes the product can do a thing once they can picture how.",
    "steps": [
-    "Take the reader's problem from the objectives of the product's UX, and the usual way from what the reader would do if the product did not exist, doing nothing among it.",
-    "Find each place where the usual way leaves the problem unsolved, such as what the objective's key results count against it, and for each, what the product does that removes it, from the design. Ask the user each one the design does not settle.",
-    "Let one figure serve places one picture shows together, and move to a linked page what needs a long sequence of figures."
+    "Read the opening as a newcomer, and mark each thing it says that the way the reader would do the work without the product cannot do, such as Turn asking only the decisions that are yours, which makes the reader ask how it tells them apart.",
+    "Add what readers ask or doubt about similar products.",
+    "For each point, take how the product does it from the design. Ask the user each one the design does not settle."
    ]
   },
   {
    "user_benefit": "Q8",
-   "thinking": "Under each place How it works shows, give what the reader can see happen, chosen by where the product's edge lies: a measure, such as a benchmark, where the edge is measured, or the same work done both ways from real runs where one example shows it, as a reader believes what they see happen over what they are told.",
+   "thinking": "Find the problems the reader feels in their own words, and for each, show how it goes away with the product, as the reader chooses the product once they can picture their own problem gone.",
    "steps": [
-    "Where neither shows the edge, such as one that lies only in how the work is done, let the walkthrough stand for it, and say so under the figure."
+    "Take the problems from the objectives of the product's UX and their key results, and from what readers complain of in the way they would do the work without the product.",
+    "Say each problem in the reader's words.",
+    "For each problem, find from the design the lines of the figure that make it go away. Ask the user each one the design does not settle."
    ]
   },
   {

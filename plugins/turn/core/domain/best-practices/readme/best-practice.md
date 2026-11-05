@@ -14,21 +14,21 @@ Someone who meets the product for the first time starts using it, from the READM
 
 ## User benefits
 
-- **Q1** (the opening): Asked by a colleague after reading the opening once, does the reader retell it from memory?
+- **Q1** (the opening): Telling a colleague about the product, does the reader retell the opening from memory?
 - **Q2** (the opening): Reading the gain, does the reader tell what the product would let them do, and so whether it is for them?
 - **Q3** (the opening): Before installing, does the reader see what the product does not do that they might expect of it?
 - **Q4** (the opening): Before installing, does the reader see where the product is not yet fit for use?
 - **Q5** (Requirements, Installation): Starting with nothing set up, does the reader install the product by the README's steps alone, and see that it works?
 - **Q6** (the opening, Walkthrough): After the walkthrough, does the reader see that the product would give them, on work of their own, the gain the opening promised?
-- **Q7** (How it works): Weighing the product against what they would do without it, does the reader see why the product removes the problem that way leaves them with?
-- **Q8** (How it works): Doubting that the product does what How it works says, does the reader see that it really does?
+- **Q7** (How it works): At each point where they would ask whether the product can really do that, does the reader picture how it does it?
+- **Q8** (How it works): For each problem they feel in the work, does the reader picture how the product makes it go away?
 - **Q9** (Documentation): Needing more than the README gives, such as fuller use or help, does the reader find where to go next?
 - **Q10** (License): Weighing whether they may use the product, does the reader find the terms for them and their team?
 - **Q11** (the whole): Reading from the top, does the reader find each answer just when they come to need it, so they can stop once they have what they came for?
 
 ## Practices
 
-### Q1: Asked by a colleague after reading the opening once, does the reader retell it from memory?
+### Q1: Telling a colleague about the product, does the reader retell the opening from memory?
 
 **Thinking**: Write the opening as a few short sentences the reader can say again from memory: under the title, one sentence that names the kind of thing the product is and what it does, in words the reader already uses and with no feature name or mechanism, then whom it is for, where it is not yet fit for use and what it does not do, as a reader who meets the product passes it on by what they remember of the opening.
 
@@ -77,23 +77,25 @@ Someone who meets the product for the first time starts using it, from the READM
 3. Take each exchange, what the user gives and what the product shows, from the record of a real run in the form the reader sees it: text in a code block of its language, and a screen as an image taken from the run, cutting only what the reader does not need to see the result.
 4. Where the result does not show the gain the opening promised, pick another piece of work or another scenario.
 
-### Q7: Weighing the product against what they would do without it, does the reader see why the product removes the problem that way leaves them with?
+### Q7: At each point where they would ask whether the product can really do that, does the reader picture how it does it?
 
-**Thinking**: Show in How it works the problem that what the reader would do without the product leaves them with, and draw for each place where it stays unsolved who does what to whom in the product to remove it, with a sentence or two under each figure, as the reader trusts a claim only once they see why it holds, and a figure alone can be read otherwise.
-
-**Steps**
-
-1. Take the reader's problem from the objectives of the product's UX, and the usual way from what the reader would do if the product did not exist, doing nothing among it.
-2. Find each place where the usual way leaves the problem unsolved, such as what the objective's key results count against it, and for each, what the product does that removes it, from the design. Ask the user each one the design does not settle.
-3. Let one figure serve places one picture shows together, and move to a linked page what needs a long sequence of figures.
-
-### Q8: Doubting that the product does what How it works says, does the reader see that it really does?
-
-**Thinking**: Under each place How it works shows, give what the reader can see happen, chosen by where the product's edge lies: a measure, such as a benchmark, where the edge is measured, or the same work done both ways from real runs where one example shows it, as a reader believes what they see happen over what they are told.
+**Thinking**: Find each point a newcomer would doubt, and for each, draw who does what to whom in the product to do it, with a sentence or two under the figure, as a reader believes the product can do a thing once they can picture how.
 
 **Steps**
 
-1. Where neither shows the edge, such as one that lies only in how the work is done, let the walkthrough stand for it, and say so under the figure.
+1. Read the opening as a newcomer, and mark each thing it says that the way the reader would do the work without the product cannot do, such as Turn asking only the decisions that are yours, which makes the reader ask how it tells them apart.
+2. Add what readers ask or doubt about similar products.
+3. For each point, take how the product does it from the design. Ask the user each one the design does not settle.
+
+### Q8: For each problem they feel in the work, does the reader picture how the product makes it go away?
+
+**Thinking**: Find the problems the reader feels in their own words, and for each, show how it goes away with the product, as the reader chooses the product once they can picture their own problem gone.
+
+**Steps**
+
+1. Take the problems from the objectives of the product's UX and their key results, and from what readers complain of in the way they would do the work without the product.
+2. Say each problem in the reader's words.
+3. For each problem, find from the design the lines of the figure that make it go away. Ask the user each one the design does not settle.
 
 ### Q9: Needing more than the README gives, such as fuller use or help, does the reader find where to go next?
 
