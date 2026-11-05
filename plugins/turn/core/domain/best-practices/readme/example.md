@@ -1,7 +1,7 @@
 # Turn
 
-Turn is a Claude Code plugin that makes a work you ask for, such as a README, and asks you only the
-decisions that are yours.
+Turn is a Claude Code plugin that makes a work you ask for, such as a README, to what its reader
+needs, and asks you only the decisions that are yours.
 
 Turn 0.1.0 is still in development and not yet released: a run may stop on a fault of Turn's own,
 and the walkthrough below shows the run Turn is built for, not yet a recorded one.
@@ -94,7 +94,7 @@ Done: README.md is written, not committed. It meets every question of a README.
 - 5, each fix is added on, and the work gets noisier: a question not met goes back to its
   decision, and the work is made again from the design, so no fix sits beside it.
 
-![How Turn works, with the lines that answer each doubt marked A and B](images/how-it-works.svg)
+![How Turn works, with the lines that answer each doubt marked A, B and C](images/how-it-works.svg)
 
 - A, how Turn tells which decisions are yours: Pin finds what your repository holds and shows it to
   you to confirm. It settles a decision that the goal, the facts and your answers favor, and asks
@@ -102,6 +102,9 @@ Done: README.md is written, not committed. It meets every question of a README.
   design-tree.json with who settled it.
 - B, how an AI can judge an AI's work: the evaluator gets only the work and the questions of its
   kind, never the design, so it judges by what the work's user gets, not by what its maker meant.
+- C, what if Turn has no best practice for your kind of work: Turn first makes one as a work of
+  its own, by the same course, and you approve it as you approve any design. It is kept in
+  .turn/best-practices/, so later runs in your repository use it.
 
 ## Documentation
 
