@@ -8,27 +8,31 @@
  "questions": [
   {
    "id": "ux/Q1",
-   "what": "Does the developer find each one who comes to the product with a want of their own, and an objective for that want, so they leave out nothing the product's users want?"
+   "what": "Listing whom to build for, does the developer find every role that comes to the product with a want of its own, each with an objective for it?"
   },
   {
    "id": "ux/Q2",
-   "what": "Reading an objective, does the developer know which role it is for and what that role gets from the product?"
+   "what": "Reading an objective, does the developer see which role it is for and what that role gets from the product?"
   },
   {
    "id": "ux/Q3",
-   "what": "Weighing a piece of work, can the developer tell which one objective it brings closer, or that it brings none closer?"
+   "what": "Weighing a piece of work, does the developer see which one objective it brings closer, or that it brings none closer?"
   },
   {
    "id": "ux/Q4",
-   "what": "After a change, can the developer tell from the key results whether to keep it?"
+   "what": "After a change, does the developer see from the key results whether to keep it?"
   },
   {
    "id": "ux/Q5",
-   "what": "For each objective, can the developer follow, exchange by exchange, how its role goes from asking the product to having what the objective says?"
+   "what": "Following a scenario, does the developer see, exchange by exchange, how its role goes from asking the product to having what its objective says?"
   },
   {
    "id": "ux/Q6",
-   "what": "Can the developer change how the product works inside, while its roles see the same, and leave the UX as it is?"
+   "what": "Meeting a point off the main path, does the developer see what the role does there and what it then has?"
+  },
+  {
+   "id": "ux/Q7",
+   "what": "Changing how the product works inside while its roles see the same, does the developer find the UX still true?"
   },
   {
    "id": "readme/Q1",
@@ -138,7 +142,7 @@
    "what": "What does the UX show, and what does it leave to the README and the architecture?",
    "contributes_to": [
     "ux/Q5",
-    "ux/Q6"
+    "ux/Q7"
    ],
    "builds_on": [
     "D1"
@@ -146,7 +150,7 @@
    "decided": "Only what the requester does, sees and receives: the request, the purpose to confirm, each fact to confirm and each decision of theirs, the design to approve, a decision that comes up while the work is made, and the work handed over. Turn is one participant; its parts, and the plugins it runs on, such as Pin and Lane, are not named.",
    "settled_by": "reasoning",
    "grounds": [
-    "ux.json Q6 thinking: \"the UX says only what its roles mean to do, see and receive\""
+    "ux.json Q7 thinking: \"the UX says only what its roles mean to do, see and receive\""
    ]
   },
   {
@@ -174,10 +178,29 @@
     "D5",
     "D6"
    ],
-   "decided": "The requester asks for the work. Turn puts its purpose to confirm. Until no decision is open, Turn puts each fact it found to confirm and each decision of the requester's with a recommendation, one at a time. Turn shows the design to approve. Until the work meets every question, Turn makes it, or makes it again, and puts a decision of the requester's that comes up. Turn hands the work over, not committed. Headed \"O1: The requester has a README made for tidy\".",
+   "decided": "The requester asks for the work. Turn puts its purpose to confirm. Until no decision is open, Turn puts each fact it found to confirm and each decision of the requester's with a recommendation, one at a time. Turn shows the design to approve. While the work is made, Turn puts each decision of the requester's that comes up; how often Turn makes it again is inside Turn, so not said, by ux.json Q7. Turn hands the work over, not committed. Headed \"O1: The requester has a README made for tidy\".",
    "settled_by": "reasoning",
    "grounds": [
     "ux.json Q5 step 3: \"the first message is the role's request, the last gives the role the end, and each moves toward it.\""
+   ]
+  },
+  {
+   "id": "D16",
+   "what": "Where the requester leaves O1's main path",
+   "contributes_to": [
+    "ux/Q6"
+   ],
+   "builds_on": [
+    "D5",
+    "D7"
+   ],
+   "decided": "Three points, each one line under the scenario: if the run stops before the work is handed over, the requester types `/turn:up` with the run's folder, and Turn goes on from where it stopped, asking nothing again; if the requester wants the work changed, they type `/turn:up` with the run's folder and the change, and get the work made again with the change; if Turn stops on a fault of its own, the requester gets the fault, to send to Turn's makers.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "dev/turn/architecture.md:148-149 S5: \"As the person, I want to type `/turn:up` with a run's folder, alone or with a change, and have the run go on from its folder, or the work made again with the change in its design.\"",
+    "dev/turn/architecture.md:100-101: \"A run that stopped goes on from its folder in a new session, and asks nothing again (KR1.2).\"",
+    "plugins/turn/skills/up/SKILL.md:18-19: \"`For the maker of Turn:`: tell the person that Turn stopped on a fault of its own, with the message as it is, and stop.\"",
+    "ux.json Q6 thinking: \"each point where the role leaves the main path, such as a run that stops or a fault of the product\""
    ]
   },
   {

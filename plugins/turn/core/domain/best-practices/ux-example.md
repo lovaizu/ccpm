@@ -34,12 +34,15 @@ sequenceDiagram
   end
   T->>R: the design, to approve
   R->>T: yes
-  loop until the README meets every question
-    T->>T: makes the README, or makes it again
-    opt a decision of the requester's comes up
-      T->>R: the decision, with a recommendation
-      R->>T: the answer
-    end
+  opt a decision of the requester's comes up while the README is made
+    T->>R: the decision, with a recommendation
+    R->>T: the answer
   end
   T->>R: README.md, not committed
 ```
+
+- If the run stops before the README is handed over: the requester types `/turn:up` with the
+  run's folder, and Turn goes on from where it stopped, asking nothing again.
+- If the requester wants the README changed: they type `/turn:up` with the run's folder and the
+  change, and get the README made again with the change.
+- If Turn stops on a fault of its own: the requester gets the fault, to send to Turn's makers.
