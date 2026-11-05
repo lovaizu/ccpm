@@ -64,7 +64,7 @@
     "builds_on": [],
     "completion_criteria": [
      {
-      "what": "Pin's skill, pin:down, made from Matt Pocock's grilling skill (MIT, credited) and turn-rebuild.md's Design tree, and its script checking a design-tree.json: every question served, every decision reaching the root, the order following builds_on",
+      "what": "Pin's skill, pin:down, made from Matt Pocock's grilling skill (MIT, credited) and the design tree agreed on 2026-10-31, and its script checking a design-tree.json: every question served, every decision reaching the root, the order following builds_on",
       "contributes_to": [
        "AC1"
       ]
@@ -86,14 +86,14 @@
    },
    {
     "id": "T41",
-    "what": "turn rebuilt on the concept and roles agreed in turn-rebuild.md",
+    "what": "turn rebuilt on the concept and roles agreed on 2026-10-31, now held in dev/turn/design-tree.json and dev/turn/architecture.md",
     "builds_on": [
      "T49",
      "T50"
     ],
     "completion_criteria": [
      {
-      "what": "turn's UX, README and architecture are rewritten from turn-rebuild.md and agreed by the user, each written after its kind's template, the Format and the Checklist, is remade by planner's steps and the user has approved the kind's purpose and conditions.",
+      "what": "turn's UX, README and architecture are rewritten from dev/turn/design-tree.json and agreed by the user, each written after its kind's template, the Format and the Checklist, is remade by planner's steps and the user has approved the kind's purpose and conditions.",
       "contributes_to": [
        "AC1",
        "AC2"

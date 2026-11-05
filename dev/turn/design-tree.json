@@ -2,7 +2,8 @@
  "goal": {
   "what": "The user gets a work they put to use as handed over, having decided only what is theirs.",
   "grounds": [
-   "Agreed with the user, 2026-11-05, when the UX example was shown: O1 of plugins/turn/core/domain/best-practices/ux/example.md."
+   "Agreed with the user, 2026-11-05, when the UX example was shown: O1 of plugins/turn/core/domain/best-practices/ux/example.md.",
+   "Agreed with the user, 2026-10-31, as Turn's concept: \"Given the user's purpose, the work's format and intended state, and the best practice of making it, an AI draws the concept out of the user and builds quality up to a work that meets the purpose well.\" Quality is the degree a work meets its user's purpose (ISO 9000:2015; Juran, fitness for use); a work is never passed by the one who made it."
   ]
  },
  "questions": [

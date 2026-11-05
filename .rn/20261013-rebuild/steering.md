@@ -22,13 +22,13 @@
 
 - T50: Pin, a plugin of its own in ccpm, pins a plan down from its purpose: a design tree from the goal down, the user asked only what is theirs, one point at a time, nothing left assumed; Turn and rn take it in by dependencies. Builds on none.
 
-  - Pin's skill, pin:down, made from Matt Pocock's grilling skill (MIT, credited) and turn-rebuild.md's Design tree, and its script checking a design-tree.json: every question served, every decision reaching the root, the order following builds_on. Serves AC1.
+  - Pin's skill, pin:down, made from Matt Pocock's grilling skill (MIT, credited) and the design tree agreed on 2026-10-31, and its script checking a design-tree.json: every question served, every decision reaching the root, the order following builds_on. Serves AC1.
   - tried first: a role of Turn runs the script of Pin, its dependency, and Lane checks that call; if it cannot, where the script lies is decided again. Serves AC1.
   - Pin is built by .claude/rules/dev.md: check.sh Pin 100%, mutate.sh Pin 0 survivors, and its trials passing. Serves AC1 and AC2.
 
-- T41: turn rebuilt on the concept and roles agreed in turn-rebuild.md. Builds on T49 and T50.
+- T41: turn rebuilt on the concept and roles agreed on 2026-10-31, now held in dev/turn/design-tree.json and dev/turn/architecture.md. Builds on T49 and T50.
 
-  - turn's UX, README and architecture are rewritten from turn-rebuild.md and agreed by the user, each written after its kind's template, the Format and the Checklist, is remade by planner's steps and the user has approved the kind's purpose and conditions. Serves AC1 and AC2.
+  - turn's UX, README and architecture are rewritten from dev/turn/design-tree.json and agreed by the user, each written after its kind's template, the Format and the Checklist, is remade by planner's steps and the user has approved the kind's purpose and conditions. Serves AC1 and AC2.
   - turn's code, with its comments and docstrings, is written after the code template is remade the same way, and passes its questions. Serves AC1.
   - turn is built by .claude/rules/dev.md: check.sh turn 100%, mutate.sh turn 0 survivors, and its acceptance trials passing. Serves AC1.
 
