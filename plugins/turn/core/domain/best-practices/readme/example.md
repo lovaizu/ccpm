@@ -1,19 +1,19 @@
 # Turn
 
-Turn is a Claude Code plugin that makes a work you ask for, such as a README, to what its reader
-needs, and asks you only the decisions that are yours.
+Turn is a Claude Code plugin that makes the document or code you ask for, ready to use without
+fixing.
 
 Turn 0.1.0 is still in development and not yet released: a run may stop on a fault of Turn's own,
 and the walkthrough below shows the run Turn is built for, not yet a recorded one.
 
-Turn is for you when you want an AI to make a work you will put to use as it comes, not a draft
-you read and mend. With it, you get that work, having decided only what is yours.
+Turn is for you when you want an AI to make a document or code you use as it is, not a draft you
+fix yourself. With it, you get that, and you decide only what is yours to decide.
 
 **Non-goals**
 
 - Turn does not commit, push or publish the work.
 - Turn does not settle a decision that is yours. One you leave unanswered holds the run.
-- Turn is not for a quick draft you will mend yourself: it takes longer than asking Claude Code.
+- Turn is not for a quick draft you will fix yourself: it takes longer than asking Claude Code.
 
 ## Requirements
 
@@ -73,7 +73,7 @@ Approve?
 You answer `yes`. Turn shows:
 
 ```text
-Done: README.md is written, not committed. It meets every question of a README.
+Done: README.md is written, not committed. Its reader gets all a README's reader needs.
 ```
 
 ## How it works
@@ -88,11 +88,12 @@ Done: README.md is written, not committed. It meets every question of a README.
 - 3, it fills what you did not say with guesses: Turn finds each fact in your repository and asks
   you to confirm it, and asks you each decision that is yours, one at a time, so nothing in the
   work is a guess you never saw.
-- 4, you find what falls short only as you use the work: the evaluator runs the work's commands as
-  its reader would, in a throwaway home, and asks each question at the moment of use, so the work
-  reaches you only once it works in use.
+- 4, you find what falls short only as you use the work: the evaluator tries the work as its reader
+  would, running its commands in a throwaway copy of your repository, so the work reaches you only
+  once it works in use.
 - 5, each fix is added on, and the work gets noisier: a question not met goes back to its
-  decision, and the work is made again from the design, so no fix sits beside it.
+  decision, and the work is made again from the design, the record of every fact and decision, so
+  no fix sits beside it.
 
 ![A: Turn finds facts in your repository, settles what they favor, and asks you the rest](images/how-decisions.svg)
 
@@ -115,7 +116,7 @@ Done: README.md is written, not committed. It meets every question of a README.
 
 ## Documentation
 
-- [Calling Turn](../../../../docs/calling.md): for an AI that asks Turn for a work on a person's behalf.
+- [Calling Turn](../../../../docs/calling.md): for an AI that asks Turn for a document or code on a person's behalf.
 - [Changelog](../../../../CHANGELOG.md): the changes in each version.
 - [Issues](https://github.com/lovaizu/ccpm/issues): where you ask for help or report a fault.
 

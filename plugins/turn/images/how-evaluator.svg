@@ -67,5 +67,5 @@
   <path class="line" d="M820,143 L900,143 L900,210" marker-end="url(#a)"/>
   <text class="label small mid" x="900" y="230">does the reader get</text>
   <text class="label small mid" x="900" y="246">what they need?</text>
-  <text class="label small mid" x="720" y="270">It runs the work's commands as the reader would, in a throwaway home.</text>
+  <text class="label small mid" x="720" y="270">It tries the work as its reader would, in a throwaway copy of your repository.</text>
 </svg>

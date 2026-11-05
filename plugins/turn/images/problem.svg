@@ -46,7 +46,7 @@
   </defs>
   <rect class="bg" width="1000" height="500"/>
   <rect class="frame" x="10" y="10" width="980" height="190" rx="8"/>
-  <text class="frame-name" x="24" y="32">The usual way: an AI asked in one prompt, its draft read and mended</text>
+  <text class="frame-name" x="24" y="32">The usual way: an AI asked in one prompt, its draft read and fixed</text>
   <rect class="box" x="40" y="60" width="120" height="60" rx="6"/>
   <text class="name" x="100.0" y="95.0">You</text>
   <rect class="box" x="300" y="60" width="170" height="60" rx="6"/>
@@ -57,7 +57,7 @@
   <text class="kind" x="640.0" y="106.0">and its review</text>
   <rect class="box" x="810" y="60" width="160" height="60" rx="6"/>
   <text class="name" x="890.0" y="88.0">You</text>
-  <text class="kind" x="890.0" y="106.0">read and mend</text>
+  <text class="kind" x="890.0" y="106.0">read and fix</text>
   <path class="line" d="M160,90 L296,90" marker-end="url(#a)"/>
   <text class="label small mid halo" x="228" y="80">a request</text>
   <text class="label small mid halo" x="228" y="105">with gaps</text>

@@ -276,7 +276,7 @@
   },
   {
    "id": "D8",
-   "what": "What Turn is and what it does, in one sentence",
+   "what": "What Turn is and the one thing it gives, in one sentence",
    "contributes_to": [
     "readme/Q1"
    ],
@@ -284,12 +284,12 @@
     "D2",
     "D30"
    ],
-   "decided": "A Claude Code plugin that makes a work you ask for, such as a README, to what its reader needs, and asks you only the decisions that are yours.",
+   "decided": "A Claude Code plugin that makes the document or code you ask for, ready to use without fixing.",
    "settled_by": "reasoning",
    "grounds": [
-    "O1 of the product vision board: \"having decided only what is theirs\"",
-    "plugins/turn/core/domain/best-practices/readme/best-practice.json Q1 thinking: \"one sentence that names the kind of thing the product is and what it does, in words the reader already uses\"",
-    "D30 (1) and (2): Turn makes and checks the work by what its reader needs, which sets it apart from the present way; said in the reader's words, with no mechanism."
+    "O1 of the product vision board: \"a work they put to use as handed over\"",
+    "readme/best-practice.json Q1 thinking: \"one sentence that names the kind of thing the product is and the one thing it gives the reader, in words the reader already uses\"; \"a work\" and \"decisions that are yours\" are not the reader's words, and two things joined by \"and\" do not say in short what Turn is.",
+    "Retold from memory as to a colleague: \"a Claude Code plugin that makes docs or code you can use without fixing\"."
    ]
   },
   {
@@ -301,7 +301,7 @@
    "builds_on": [
     "D2"
    ],
-   "decided": "For one who wants an AI to make a work they will put to use as it comes, not a draft they read and mend; they get that work, having decided only what is theirs.",
+   "decided": "For one who wants an AI to make a document or code they use as it is, not a draft they fix themselves; they get that, and decide only what is theirs to decide.",
    "settled_by": "reasoning",
    "grounds": [
     "plugins/turn/core/domain/best-practices/readme/best-practice.json Q2 thinking: \"taken from what the product's users want, such as the objectives in its product vision board\""
@@ -318,7 +318,7 @@
     "D9",
     "D30"
    ],
-   "decided": "The usual way is to ask an AI, such as Claude Code, in one prompt, and read and mend its draft. Five problems, one for each idea of D30: (1) it starts from scratch and writes what similar texts say, not what the work's reader needs; with Turn, the work is made by the best practice of its kind: the goal its reader reaches, a template of what it holds and the questions its reader asks of it. (2) its review gives many findings, few that matter; with Turn, an evaluator asks only those questions, whether the work's reader gets what they need. (3) it fills what you did not say with guesses; with Turn, Pin finds each fact in your repository and asks you to confirm it, and asks you each decision that is yours, one at a time. (4) you find what falls short only as you use the work; with Turn, the evaluator runs the work's commands as its reader would, in a throwaway home, and asks each question at the moment of use. (5) each fix is added on, and the work gets noisier; with Turn, a question not met goes back to its decision, and the work is made again from the design, with no fix beside it.",
+   "decided": "The usual way is to ask an AI, such as Claude Code, in one prompt, and read and mend its draft. Five problems, one for each idea of D30: (1) it starts from scratch and writes what similar texts say, not what the work's reader needs; with Turn, the work is made by the best practice of its kind: the goal its reader reaches, a template of what it holds and the questions its reader asks of it. (2) its review gives many findings, few that matter; with Turn, an evaluator asks only those questions, whether the work's reader gets what they need. (3) it fills what you did not say with guesses; with Turn, Pin finds each fact in your repository and asks you to confirm it, and asks you each decision that is yours, one at a time. (4) you find what falls short only as you use the work; with Turn, the evaluator tries the work as its reader would, running its commands in a throwaway copy of your repository. (5) each fix is added on, and the work gets noisier; with Turn, a question not met goes back to its decision, and the work is made again from the design, the record of every fact and decision, with no fix beside it.",
    "settled_by": "reasoning",
    "grounds": [
     "product-vision-board Product, from D30: the present way and the five ideas.",

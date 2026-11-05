@@ -30,7 +30,7 @@ Someone who meets the product for the first time starts using it, from the READM
 
 ### Q1: Telling a colleague about the product, does the reader retell the opening from memory?
 
-**Thinking**: Write the opening as a few short sentences the reader can say again from memory: under the title, one sentence that names the kind of thing the product is and what it does, in words the reader already uses and with no feature name or mechanism, then whom it is for, where it is not yet fit for use and what it does not do, as a reader who meets the product passes it on by what they remember of the opening.
+**Thinking**: Write the opening as a few short sentences the reader can say again from memory: under the title, one sentence that names the kind of thing the product is and the one thing it gives the reader, in words the reader already uses and with no feature name or mechanism, so that it answers in short what the product is, then whom it is for, where it is not yet fit for use and what it does not do, as a reader who meets the product passes it on by what they remember of the opening.
 
 **Steps**
 
