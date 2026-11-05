@@ -7,7 +7,7 @@
   {
    "id": "Q1",
    "about": "the opening",
-   "what": "Asked by a colleague after reading the opening once, does the reader tell from memory what the product does, for whom, and what it does not do?"
+   "what": "Asked by a colleague after reading the opening once, does the reader retell it from memory?"
   },
   {
    "id": "Q2",
@@ -37,20 +37,25 @@
   {
    "id": "Q7",
    "about": "How it works",
-   "what": "Weighing the product against what they would do without it, does the reader see why the product removes the problem that way leaves them with, and that it really does?"
+   "what": "Weighing the product against what they would do without it, does the reader see why the product removes the problem that way leaves them with?"
   },
   {
    "id": "Q8",
+   "about": "How it works",
+   "what": "Doubting that the product does what How it works says, does the reader see that it really does?"
+  },
+  {
+   "id": "Q9",
    "about": "Documentation",
    "what": "Needing more than the README gives, such as fuller use or help, does the reader find where to go next?"
   },
   {
-   "id": "Q9",
+   "id": "Q10",
    "about": "License",
    "what": "Weighing whether they may use the product, does the reader find the terms for them and their team?"
   },
   {
-   "id": "Q10",
+   "id": "Q11",
    "about": "the whole",
    "what": "Reading from the top, does the reader find each answer just when they come to need it, so they can stop once they have what they came for?"
   }
@@ -103,30 +108,36 @@
   },
   {
    "user_benefit": "Q7",
-   "thinking": "Show in How it works, figure by figure, the problem that what the reader would do without the product leaves them with and how the product removes it, each figure with a sentence or two under it, choosing each figure by where the product's edge lies, as the reader trusts the product only once they see why it works and that it does, and a figure alone can be read otherwise.",
+   "thinking": "Show in How it works the problem that what the reader would do without the product leaves them with, and draw for each place where it stays unsolved who does what to whom in the product to remove it, with a sentence or two under each figure, as the reader trusts a claim only once they see why it holds, and a figure alone can be read otherwise.",
    "steps": [
     "Take the reader's problem from the objectives of the product's UX, and the usual way from what the reader would do if the product did not exist, doing nothing among it.",
     "Find each place where the usual way leaves the problem unsolved, such as what the objective's key results count against it, and for each, what the product does that removes it, from the design. Ask the user each one the design does not settle.",
-    "For each place, draw what shows the product removing it: a measure where the edge is measured, such as a benchmark; the same work done both ways where one example shows it; who does what to whom where the edge lies in the design. Let one figure serve places one picture shows together.",
-    "Move to a linked page what needs a long sequence of figures, and keep in the README the figure for each place."
+    "Let one figure serve places one picture shows together, and move to a linked page what needs a long sequence of figures."
    ]
   },
   {
    "user_benefit": "Q8",
+   "thinking": "Under each place How it works shows, give what the reader can see happen, chosen by where the product's edge lies: a measure, such as a benchmark, where the edge is measured, or the same work done both ways from real runs where one example shows it, as a reader believes what they see happen over what they are told.",
+   "steps": [
+    "Where neither shows the edge, such as one that lies only in how the work is done, let the walkthrough stand for it, and say so under the figure."
+   ]
+  },
+  {
+   "user_benefit": "Q9",
    "thinking": "Keep in the README what the reader needs to decide and to start, and link one place for each need that comes after, such as fuller use or help, as a README that holds everything is not read.",
    "steps": [
     "Open each link."
    ]
   },
   {
-   "user_benefit": "Q9",
+   "user_benefit": "Q10",
    "thinking": "Name the license and link its full text, as a reader may rule the product out by its license alone.",
    "steps": [
     "Open the link, and check that it reaches the license the name says."
    ]
   },
   {
-   "user_benefit": "Q10",
+   "user_benefit": "Q11",
    "thinking": "Order the README so that each reader stops once they have what they came for: the opening for every reader, the installation for one who has chosen the product, the walkthrough and How it works for one still weighing it, and what comes after through links, as a reader who must pass what they do not need leaves before what they do.",
    "steps": [
     "Read the README from the top as someone who meets the product for the first time, and after each section, write the question the reader now has.",
