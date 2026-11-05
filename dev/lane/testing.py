@@ -146,11 +146,11 @@ class GitTest(FolderTest):
 
 
 def load_hypothesis_profile() -> None:
-    """Loads Hypothesis's settings, once a property test has imported it: new inputs on every run,
-    CI included, a failure printing how to reproduce it, nothing kept after the run, its folder in
-    the run's folder of the plugin whose module of property tests loads them, and no deadline, as an
-    example's time varies from machine to machine; few inputs while a change is made and many in
-    CI, the dev and ci profiles of Hypothesis's settings guide."""
+    """Loads Hypothesis's settings, once a property-based test has imported it: new inputs on every
+    run, CI included, a failure printing how to reproduce it, nothing kept after the run, its folder
+    in the run's folder of the plugin whose module of property-based tests loads them, and no
+    deadline, as an example's time varies from machine to machine; few inputs while a change is made
+    and many in CI, the dev and ci profiles of Hypothesis's settings guide."""
     import hypothesis  # pyrefly: ignore[missing-import]
     import hypothesis.configuration  # pyrefly: ignore[missing-import]
 

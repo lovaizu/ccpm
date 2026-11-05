@@ -15,8 +15,8 @@ concurrency:
 
 jobs:
   # Every unit and architecture test of every plugin runs on each push, with the lines and branches
-  # counted, and the property tests and the mutation testing, which check that the unit tests are
-  # enough, on what changed since the last commit of the branch whose run passed, else since the
+  # counted, and the property-based tests and the mutation testing, which check that the unit tests
+  # are enough, on what changed since the last commit of the branch whose run passed, else since the
   # branch left main, for each plugin `sh dev/scripts/changed.sh` names, each in a job of its own,
   # all at once; whole on main after a commit not passed, and for a plugin whose version the push
   # changes, as before a release. A push that changes only what no check reads, such as the session

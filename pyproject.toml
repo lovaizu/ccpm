@@ -16,8 +16,8 @@ dev = [
   "pytest-xdist>=3.8.0",
   "ruff>=0.17.2",
 ]
-# The check for copied code, the property tests and the mutation testing, which need a newer Python
-# only to check, not to run.
+# The check for copied code, the property-based tests and the mutation testing, which need a newer
+# Python only to check, not to run.
 test-quality = [
   "cosmic-ray>=8.7.0",
   "hypothesis>=6.170.9",

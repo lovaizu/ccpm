@@ -1,9 +1,9 @@
 #!/bin/sh
-# The checks CI runs on every push, beside the property tests and the mutation testing, run from the
-# top of the repository with the tools of pyproject.toml's dev group. Given plugin names, such as
-# `sh dev/scripts/check.sh rn`, the type check, the tests and the manifests are those plugins' alone;
-# CI gives none and checks every plugin. Given `--reached` first, as before a push, the tests are only
-# those the change reaches, and their lines and branches are not counted.
+# The checks CI runs on every push, beside the property-based tests and the mutation testing, run
+# from the top of the repository with the tools of pyproject.toml's dev group. Given plugin names,
+# such as `sh dev/scripts/check.sh rn`, the type check, the tests and the manifests are those
+# plugins' alone; CI gives none and checks every plugin. Given `--reached` first, as before a push,
+# the tests are only those the change reaches, and their lines and branches are not counted.
 set -e
 
 reached=""
@@ -51,10 +51,10 @@ else
     "\`npm ci --ignore-scripts\` in dev/scripts"
 fi
 
-# The unit and architecture tests, `test*.py`, unittest's own pattern, run by pytest as pyproject.toml
-# sets it, at once on each processor (pytest-xdist); the property tests, whose inputs change from run
-# to run, are run apart by dev/scripts/properties.sh. Each plugin's run is a process of its own, as
-# each puts its own `helpers` and code on sys.path.
+# The unit and architecture tests, `test*.py`, unittest's own pattern, run by pytest as
+# pyproject.toml sets it, at once on each processor (pytest-xdist); the property-based tests, whose
+# inputs change from run to run, are run apart by dev/scripts/properties.sh. Each plugin's run is a
+# process of its own, as each puts its own `helpers` and code on sys.path.
 if [ -n "$reached" ]; then
   # Only the tests whose code the change reaches, which pytest-testmon chooses by the code each test
   # ran when it last ran, kept in the file TESTMON_DATAFILE names, else in .testmondata. A selection

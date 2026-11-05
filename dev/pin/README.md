@@ -10,7 +10,7 @@ checked, is in [architecture.md](architecture.md).
   `plugins/pin/hooks/lanes.json`, through the double of Claude Code in `dev/lane/testing.py`, and
   `check.py` by the command the pinner's rule names.
 
-  `sh dev/scripts/properties.sh pin` runs the property tests, `properties_*.py`, and
+  `sh dev/scripts/properties.sh pin` runs the property-based tests, `properties_*.py`, and
   `sh dev/scripts/mutate.sh pin` runs the mutation testing set in `cosmic-ray.toml`, as
   [dev/README.md](../README.md) says.
 - Pin's guard: `plugins/pin/hooks/` is laid by `python3 plugins/lane/scripts/lay.py write` from a

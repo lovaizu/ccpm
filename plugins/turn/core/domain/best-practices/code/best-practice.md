@@ -106,7 +106,7 @@ The maintainer is a person or an AI who takes the code over. The maintainer chan
 
 1. Find each line or branch no test runs, such as by counting them while the tests run, and add a test for each.
 2. Change the code in small ways, such as with a mutation testing tool. For each change under which the tests still pass, add or mend the test of the behavior that the change breaks.
-3. Run the code over many inputs that the specification allows, such as with property tests. Keep each input that the code fails on as a fixed test.
+3. Run the code over many inputs that the specification allows, such as with property-based tests. Keep each input that the code fails on as a fixed test.
 
 ### Q9: With only the code and its specification, can the maintainer make a change the specification asks for, and know from the tests that every other behavior still holds?
 

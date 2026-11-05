@@ -141,7 +141,7 @@
    "steps": [
     "Find each line or branch no test runs, such as by counting them while the tests run, and add a test for each.",
     "Change the code in small ways, such as with a mutation testing tool. For each change under which the tests still pass, add or mend the test of the behavior that the change breaks.",
-    "Run the code over many inputs that the specification allows, such as with property tests. Keep each input that the code fails on as a fixed test."
+    "Run the code over many inputs that the specification allows, such as with property-based tests. Keep each input that the code fails on as a fixed test."
    ]
   },
   {

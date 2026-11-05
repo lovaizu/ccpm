@@ -38,13 +38,14 @@ replaced on PyPI or npm after it was locked does not install. The Python tools c
 each Python.
 Claude Code and Mermaid's parser come from `dev/scripts/package-lock.json`.
 
-## The property tests and the mutation testing
+## The property-based tests and the mutation testing
 
 On the newest Python, CI also installs the `test-quality` group, by
 `uv sync --locked --group test-quality`. With it, `sh dev/scripts/check.sh` also checks for copied code. CI
 then runs two more checks, as [Unit: code](./plugin-best-practice.md#unit-code) says:
 
-- `sh dev/scripts/properties.sh` runs the property tests, on many inputs each in CI and on few elsewhere.
+- `sh dev/scripts/properties.sh` runs the property-based tests, on many inputs each in CI and on few
+  elsewhere.
 - `sh dev/scripts/mutate.sh` runs the mutation testing of each plugin that has a
   `dev/<plugin>/cosmic-ray.toml`.
 
@@ -54,13 +55,14 @@ lines changed since that commit.
 
 ## Before each push
 
-`dev/scripts/githooks/pre-push` runs `sh dev/scripts/check.sh` on the commits pushed, and stops the push on a
-failure. It checks each plugin that `sh dev/scripts/changed.sh` names: those the push changes, those that
-link a file it changes, or every plugin where it changes what they all stand on. It runs them as
-`sh dev/scripts/check.sh --reached`: of the tests, only those the change reaches, chosen by
-pytest-testmon, without the lines counted. testmon keeps what each test ran in `.testmondata` at
-the top of the clone. It comes with `pyproject.toml`'s `push` group, on Python 3.11 or later; on an
-older Python every test runs. Every test, the property tests and the mutation testing run in CI.
+`dev/scripts/githooks/pre-push` runs `sh dev/scripts/check.sh` on the commits pushed, and stops the
+push on a failure. It checks each plugin that `sh dev/scripts/changed.sh` names: those the push
+changes, those that link a file it changes, or every plugin where it changes what they all stand on.
+It runs them as `sh dev/scripts/check.sh --reached`: of the tests, only those the change reaches,
+chosen by pytest-testmon, without the lines counted. testmon keeps what each test ran in
+`.testmondata` at the top of the clone. It comes with `pyproject.toml`'s `push` group, on Python
+3.11 or later; on an older Python every test runs. Every test, the property-based tests and the
+mutation testing run in CI.
 
 Turn the hook on once in a clone with `git config core.hooksPath dev/scripts/githooks`. It needs uv on the
 PATH.

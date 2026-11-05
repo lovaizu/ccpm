@@ -6,8 +6,8 @@ none. Given `--since <commit>` first, it tests only the mutants on lines changed
 files not yet added to git among them, by Cosmic Ray's own git filter, as before a push.
 
 Each mutant is to be caught by the unit tests, which dev/scripts/check.sh runs, as the mutation
-testing checks that they are enough; the property tests are left out of it. cr-rate is not used to
-fail the run: it takes a limit of 0 as no limit.
+testing checks that they are enough; the property-based tests are left out of it. cr-rate is not
+used to fail the run: it takes a limit of 0 as no limit.
 
 Cosmic Ray changes the files it tests, so each worker runs on a copy of its own; one worker for each
 processor, as each mutant is tested on its own, each on a port free when the run starts, so two runs

@@ -250,8 +250,8 @@ Rn is tested as [Test](../plugin-best-practice.md#test) says.
 [^2]: ux tests run on the whole, in the last row.
 [^3]: Its units are tested in their own rows.
 
-- Rn's scripts get unit tests, property tests and mutation testing in full: a failure loses the
-  record of days of work, or takes an approval never given.
+- Rn's scripts get unit tests, property-based tests and mutation testing in full: a failure loses
+  the record of days of work, or takes an approval never given.
 - Each move of the orchestrator is tried alone, from a session state made beforehand, with Turn, gh
   and the person stood in for, in a Docker Sandbox with `bypassPermissions`.
 - Rn's acceptance test runs Rn whole with the real Turn on `lovaizu/playground`, on a request of

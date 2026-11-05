@@ -11,7 +11,7 @@ checked, is in [architecture.md](architecture.md).
   of Claude Code does beyond the hooks reference is in `TRIES` in `testing.py`, each with the
   version and the day of the try that showed it.
 
-  `sh dev/scripts/properties.sh lane` runs the property tests, `properties_*.py`, and
+  `sh dev/scripts/properties.sh lane` runs the property-based tests, `properties_*.py`, and
   `sh dev/scripts/mutate.sh lane` runs the mutation testing set in `cosmic-ray.toml`, as
   [dev/README.md](../README.md) says.
 - What every plugin's tests stand on is in `testing.py`, and what every plugin's trials stand on

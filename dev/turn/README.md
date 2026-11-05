@@ -11,7 +11,7 @@ checked, is in [architecture.md](architecture.md).
   of Claude Code in `dev/lane/testing.py`, and `plan.py`, `rounds.py`, `throwaway.py` and Pin's
   `check.py` by the commands the rules name, on the subject `tests/ux/tidy/`.
 
-  `sh dev/scripts/properties.sh turn` runs the property tests, `properties_*.py`, and
+  `sh dev/scripts/properties.sh turn` runs the property-based tests, `properties_*.py`, and
   `sh dev/scripts/mutate.sh turn` runs the mutation testing set in `cosmic-ray.toml` on the unit
   tests, as [dev/README.md](../README.md) says.
 - Turn's guard: `plugins/turn/hooks/` is laid by `python3 plugins/lane/scripts/lay.py write` from a

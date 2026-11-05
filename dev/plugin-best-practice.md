@@ -340,9 +340,9 @@ The tests come from the classes, edges and decision-table rules of the part's co
 when every test passes, every line and branch runs, and every mutant is caught. Before each push,
 only the tests that the change reaches run. CI runs every test.
 
-Coverage of each line and branch, mutation testing and property tests confirm that the unit tests
-hold the contract. Each gap they find becomes a unit test. Mutation and property tests run in CI on
-what changed.
+Coverage of each line and branch, mutation testing and property-based tests confirm that the unit
+tests hold the contract. Each gap they find becomes a unit test. Mutation and property-based tests
+run in CI on what changed.
 
 *Why*: the tests designed first hold the behavior, and these tools only confirm the design. Run
 before every push, they would make every change wait. So would every test, and CI catches what the

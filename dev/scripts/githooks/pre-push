@@ -1,9 +1,9 @@
 #!/bin/sh
 # Before a push, the checks of what the push changes, on the commits pushed:
 # `sh dev/scripts/check.sh --reached`, for each plugin `sh dev/scripts/changed.sh` names, which runs
-# only the tests the change reaches; every test, the property tests and the mutation testing are
-# CI's. Turned on in a clone by `git config core.hooksPath dev/scripts/githooks`, with uv on PATH,
-# which sets up the check tools in the commits pushed from their uv.lock.
+# only the tests the change reaches; every test, the property-based tests and the mutation testing
+# are CI's. Turned on in a clone by `git config core.hooksPath dev/scripts/githooks`, with uv on
+# PATH, which sets up the check tools in the commits pushed from their uv.lock.
 set -e
 
 # What each test ran when it last ran, from which pytest-testmon chooses the tests a change reaches,
