@@ -27,6 +27,20 @@ law). They show whether a change brought its objective closer.
 > - `<key result>`: what is measured, in one sentence.
 > - `<direction>`: which way is better, such as "Lower is better".
 
+## Product
+
+`<Product>` instead of `<present way>`:
+
+- **`<idea>`**: `<why it meets the objective>` (`O<n>`).
+
+> [!NOTE]
+> DELETE_TEMPLATE_COMMENT:
+> - `<present way>`: what the roles do today without the product, such as doing the work by hand.
+> - `<idea>`: each idea that sets the product apart from the present way, at most five, each in a
+>   few words.
+> - `<why it meets the objective>`: why the idea meets the objective where the present way falls
+>   short, in one sentence, from what the role does, sees or receives.
+
 ## Scenarios
 
 ### `O<n>`: `<path>`

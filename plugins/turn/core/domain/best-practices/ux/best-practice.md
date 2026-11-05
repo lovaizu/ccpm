@@ -18,8 +18,9 @@ The developer builds what the product's users want.
 - **Q2** (Roles, OKRs): Reading an objective, does the developer see what its role gets from the product?
 - **Q3** (OKRs): Weighing a piece of work, does the developer see which one objective it brings closer, or that it brings none closer?
 - **Q4** (OKRs): After a change, does the developer see from the key results whether to keep it?
-- **Q5** (Roles, OKRs, Scenarios): Following a scenario, does the developer see, exchange by exchange, how its role goes from asking the product to having what its objective says?
-- **Q6** (the whole): Changing how the product works inside while its roles see the same, does the developer find the UX still true?
+- **Q5** (Roles, OKRs, Product): Weighing the product against what its roles do today, does the developer see why it meets each objective where that way does not?
+- **Q6** (Roles, OKRs, Product, Scenarios): Following a scenario, does the developer see, exchange by exchange, how its role goes from asking the product to having what its objective says?
+- **Q7** (the whole): Changing how the product works inside while its roles see the same, does the developer find the UX still true?
 
 ## Practices
 
@@ -64,7 +65,21 @@ The developer builds what the product's users want.
 2. Make each key result a share, an average per user, a count or a time, and name what it is counted out of.
 3. Where both key results could get better while the role still does not get what the objective says, rework them.
 
-### Q5: Following a scenario, does the developer see, exchange by exchange, how its role goes from asking the product to having what its objective says?
+### Q5: Weighing the product against what its roles do today, does the developer see why it meets each objective where that way does not?
+
+**Thinking**: Find with the user, by trying ideas together, the few that set the product apart from what its roles do today and make it meet each objective, drawing the user's own words out before offering any idea, as a concept cannot be read off facts: its maker finds it by trying ideas against the problem, and ideas an AI offers first crowd out the maker's own and come out alike.
+
+**Steps**
+
+1. Ask the user what the roles do today without the product and where that falls short of each objective. Say their words back to them and ask what else, before offering any idea.
+2. Turn each shortfall into a question of how the product might meet the objective there, and let the user pick the ones to work on.
+3. Ask the user for their ideas first. Then add ideas that differ from theirs and from one another, judging none yet.
+4. Rate each idea against the roles' present way, better, the same or worse, for each objective. Combine and improve them, and let the user choose.
+5. Argue against the ideas chosen, and write the riskiest assumption under them with how it would be checked.
+6. Stop once at most five ideas stand out, each meets an objective, the present way they beat is named, and the riskiest assumption has its check. Otherwise go back to the first or the third step.
+7. Keep, where the design is kept, each idea tried, whose it was, how it rated, and why it was kept, dropped or merged, in the user's words.
+
+### Q6: Following a scenario, does the developer see, exchange by exchange, how its role goes from asking the product to having what its objective says?
 
 **Thinking**: Write for each objective one run of the main path, the one most of its role take, from the role's request to the gain that ends it, as the exchanges among the roles, the product and those outside it, as the main path is what most of the role meet.
 
@@ -75,7 +90,7 @@ The developer builds what the product's users want.
 3. Where a part repeats, mark it as a loop with its condition.
 4. Read the scenario from start to end: the first message is the role's request, the last gives the role the end, and each moves toward it.
 
-### Q6: Changing how the product works inside while its roles see the same, does the developer find the UX still true?
+### Q7: Changing how the product works inside while its roles see the same, does the developer find the UX still true?
 
 **Thinking**: Say only what the roles mean to do, see and receive, and nothing of how the product works inside, as any design that gives them the same then leaves the UX true.
 

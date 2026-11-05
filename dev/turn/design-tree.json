@@ -25,10 +25,14 @@
   },
   {
    "id": "ux/Q5",
-   "what": "Following a scenario, does the developer see, exchange by exchange, how its role goes from asking the product to having what its objective says?"
+   "what": "Weighing the product against what its roles do today, does the developer see why it meets each objective where that way does not?"
   },
   {
    "id": "ux/Q6",
+   "what": "Following a scenario, does the developer see, exchange by exchange, how its role goes from asking the product to having what its objective says?"
+  },
+  {
+   "id": "ux/Q7",
    "what": "Changing how the product works inside while its roles see the same, does the developer find the UX still true?"
   },
   {
@@ -203,11 +207,26 @@
    ]
   },
   {
+   "id": "D30",
+   "what": "What sets Turn apart from what its user does today, and makes it meet O1: at most five ideas, each with the present way it beats",
+   "contributes_to": [
+    "ux/Q5"
+   ],
+   "builds_on": [
+    "D1",
+    "D2",
+    "D4"
+   ],
+   "decided": null,
+   "settled_by": null,
+   "grounds": []
+  },
+  {
    "id": "D5",
    "what": "What does the UX show, and what does it leave to the README and the architecture?",
    "contributes_to": [
-    "ux/Q5",
-    "ux/Q6"
+    "ux/Q6",
+    "ux/Q7"
    ],
    "builds_on": [
     "D1"
@@ -215,14 +234,14 @@
    "decided": "Only what the user does, sees and receives: the request, the purpose to confirm, each fact to confirm and each decision of theirs, the design to approve, a decision that comes up while the work is made, and the work handed over. Turn is one participant; its parts, and the plugins it runs on, such as Pin and Lane, are not named.",
    "settled_by": "reasoning",
    "grounds": [
-    "ux/best-practice.json Q6 thinking: \"the UX says only what its roles mean to do, see and receive\""
+    "ux/best-practice.json Q7 thinking: \"the UX says only what its roles mean to do, see and receive\""
    ]
   },
   {
    "id": "D6",
    "what": "What work does the scenario make?",
    "contributes_to": [
-    "ux/Q5"
+    "ux/Q6"
    ],
    "builds_on": [
     "D5"
@@ -230,23 +249,23 @@
    "decided": "A README for `tidy`, a command-line tool that sorts a Downloads folder: a kind Turn knows, as most requests will be, and the work of the README's walkthrough, so the developer meets one example across both documents.",
    "settled_by": "reasoning",
    "grounds": [
-    "ux/best-practice.json Q5 thinking: \"one run of the main path to the objective, the one most of its role take\""
+    "ux/best-practice.json Q6 thinking: \"one run of the main path to the objective, the one most of its role take\""
    ]
   },
   {
    "id": "D7",
    "what": "O1's main path",
    "contributes_to": [
-    "ux/Q5"
+    "ux/Q6"
    ],
    "builds_on": [
     "D5",
     "D6"
    ],
-   "decided": "The user asks for the work. Turn puts its purpose to confirm. Until no decision is open, Turn puts each fact it found to confirm and each decision of the user's with a recommendation, one at a time. Turn shows the design to approve. While the work is made, Turn puts each decision of the user's that comes up; how often Turn makes it again is inside Turn, so not said, by ux/best-practice.json Q6. Turn hands the work over, not committed. Headed \"O1: The user has a README made for tidy\".",
+   "decided": "The user asks for the work. Turn puts its purpose to confirm. Until no decision is open, Turn puts each fact it found to confirm and each decision of the user's with a recommendation, one at a time. Turn shows the design to approve. While the work is made, Turn puts each decision of the user's that comes up; how often Turn makes it again is inside Turn, so not said, by ux/best-practice.json Q7. Turn hands the work over, not committed. Headed \"O1: The user has a README made for tidy\".",
    "settled_by": "reasoning",
    "grounds": [
-    "ux/best-practice.json Q5 step 3: \"the first message is the role's request, the last gives the role the end, and each moves toward it.\""
+    "ux/best-practice.json Q6 step 3: \"the first message is the role's request, the last gives the role the end, and each moves toward it.\""
    ]
   },
   {
