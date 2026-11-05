@@ -1,4 +1,4 @@
-# ux
+# product-vision-board
 
 ## Goal
 
@@ -10,7 +10,7 @@ The developer builds what the product's users want.
 
 ## Example
 
-[example.md](example.md), a copy of [../../../../../../dev/turn/ux.md](../../../../../../dev/turn/ux.md)
+[example.md](example.md), a copy of [../../../../../../dev/turn/product-vision-board.md](../../../../../../dev/turn/product-vision-board.md)
 
 ## User benefits
 
@@ -20,7 +20,7 @@ The developer builds what the product's users want.
 - **Q4** (OKRs): After a change, does the developer see from the key results whether to keep it?
 - **Q5** (Roles, OKRs, Product): Weighing the product against what its roles do today, does the developer see why it meets each objective where that way does not?
 - **Q6** (Roles, OKRs, Product, Scenarios): Following a scenario, does the developer see, exchange by exchange, how its role goes from asking the product to having what its objective says?
-- **Q7** (the whole): Changing how the product works inside while its roles see the same, does the developer find the UX still true?
+- **Q7** (the whole): Changing how the product works inside while its roles see the same, does the developer find the product vision board still true?
 
 ## Practices
 
@@ -90,9 +90,9 @@ The developer builds what the product's users want.
 3. Where a part repeats, mark it as a loop with its condition.
 4. Read the scenario from start to end: the first message is the role's request, the last gives the role the end, and each moves toward it.
 
-### Q7: Changing how the product works inside while its roles see the same, does the developer find the UX still true?
+### Q7: Changing how the product works inside while its roles see the same, does the developer find the product vision board still true?
 
-**Thinking**: Say only what the roles mean to do, see and receive, and nothing of how the product works inside, as any design that gives them the same then leaves the UX true.
+**Thinking**: Say only what the roles mean to do, see and receive, and nothing of how the product works inside, as any design that gives them the same then leaves the product vision board true.
 
 **Steps**
 

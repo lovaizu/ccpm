@@ -182,7 +182,8 @@ that the figure cannot show:
 
 ## Development
 
-[Pin's development folder](../../dev/pin/README.md) holds its UX, its architecture and its tests.
+[Pin's development folder](../../dev/pin/README.md) holds its product vision board, its architecture
+and its tests.
 
 ## License
 

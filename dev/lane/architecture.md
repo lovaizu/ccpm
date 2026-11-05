@@ -1,7 +1,7 @@
 # Lane architecture
 
-This document says how Lane is built to give [Lane's UX](ux.md). It is for a developer, a person
-or an AI, who builds or changes Lane.
+This document says how Lane is built to give [Lane's product vision board](product-vision-board.md).
+It is for a developer, a person or an AI, who builds or changes Lane.
 
 The developer AI writes the rules of its plugin's steps and its routes in a proposal, a JSON file.
 A rule is a sentence in a step that a subagent must keep. A route names the subagent that the
@@ -47,8 +47,9 @@ The principles below are what Lane adds. Each gives its rule, then why.
 When the check script stops a tool call or an end of work, it tells the subagent the sentence of
 the step that the call breaks, headed by the plugin's name.
 
-*Why*: a subagent whose call is only refused looks for another way, and the UX counts that call
-as gone wrong (KR1.1). A subagent that meets the sentence of its own step goes back to the step.
+*Why*: a subagent whose call is only refused looks for another way, and the product vision board
+counts that call as gone wrong (KR1.1). A subagent that meets the sentence of its own step goes back
+to the step.
 
 ### One wording for the step and the check
 
@@ -82,8 +83,8 @@ AI's script that turns its plugin's own text format into Lane's. No line of Lane
 plugin.
 
 *Why*: the developer AI then writes no check and no code for the order (O1, O2). Where Lane cannot
-hold a rule or an order, the developer AI writes its own, and the UX counts that as gone wrong
-(KR1.1, KR2.1). A new text format needs an adapter, not a new type of rule.
+hold a rule or an order, the developer AI writes its own, and the product vision board counts that
+as gone wrong (KR1.1, KR2.1). A new text format needs an adapter, not a new type of rule.
 
 ### The check judges only what Claude Code documents
 
@@ -124,9 +125,9 @@ checks wherever Lane is missing.
 
 ## User stories
 
-Each story names its user, the way that user meets Lane, and the steps of
-[the UX's scenarios](ux.md#scenarios) that it carries. S3 to S6 have a subagent of `changelog`,
-the UX's example plugin, as their user.
+Each story names its user, the way that user meets Lane, and the steps of [the product vision
+board's scenarios](product-vision-board.md#scenarios) that it carries. S3 to S6 have a subagent of
+`changelog`, the product vision board's example plugin, as their user.
 
 - **S1**: As the developer AI, I want to run `lay.py print` on my proposal, and see each step as it
   will read, or what is wrong. Carries the first two steps of O1 and of O2: the rules or the
@@ -319,8 +320,8 @@ sequenceDiagram
 
 ### S3: a subagent with rules on a run
 
-`writer` of the UX's O1 runs here. The operator is the developer AI in the UX, and a person where
-one runs the plugin.
+`writer` of the product vision board's O1 runs here. The operator is the developer AI in the product
+vision board, and a person where one runs the plugin.
 
 ```mermaid
 sequenceDiagram
@@ -389,7 +390,8 @@ sequenceDiagram
 
 ### S4: a subagent gives its result
 
-`reviewer` of the UX's O2 gives its result here. `writer` gives `written` the same way.
+`reviewer` of the product vision board's O2 gives its result here. `writer` gives `written` the same
+way.
 
 ```mermaid
 sequenceDiagram
@@ -442,7 +444,7 @@ How a subagent writes its result command, and what it is told, is in
 
 ### S5: the orchestrator is told each start
 
-`lead` of the UX's O2 runs here, with the routes that
+`lead` of the product vision board's O2 runs here, with the routes that
 [the routes](../../plugins/lane/docs/routes.md#the-routes) give for `changelog`.
 
 ```mermaid
@@ -530,10 +532,10 @@ sequenceDiagram
 - **A start counts once its subagent has ended.** The orchestrator may then end to wait, and Claude
   Code starts it again to tell it that the subagent ended. The cost: Claude Code starts the
   orchestrator again only in an interactive session, so a plugin with routes runs in one.
-- **The orchestrator is kept going once while a start is due, then let end with the operator
-  told.** Holding it until it makes the start would keep a run going round until a person broke it,
-  which is no check. The cost: a run can end with a start due, which the UX counts as gone wrong
-  (KR2.1). The operator then learns whose step to fix.
+- **The orchestrator is kept going once while a start is due, then let end with the operator told.**
+  Holding it until it makes the start would keep a run going round until a person broke it, which is
+  no check. The cost: a run can end with a start due, which the product vision board counts as gone
+  wrong (KR2.1). The operator then learns whose step to fix.
 
 ### S6: runs at once
 
@@ -619,8 +621,8 @@ sequenceDiagram
 ## Deployment
 
 The developer AI lays its rules on its own computer, and the plugin runs on the computer of its
-operator. In the UX's scenarios the two are one computer, as the developer AI runs `changelog` to
-try it.
+operator. In the product vision board's scenarios the two are one computer, as the developer AI runs
+`changelog` to try it.
 
 ![Lane's deployment](images/deployment.svg)
 
@@ -668,7 +670,7 @@ plugins/lane/
 └── README.md, docs/, CHANGELOG.md, images/   for Lane's users <Markdown, SVG>
 
 dev/lane/
-├── ux.md, architecture.md, images/, README.md   for Lane's developers <Markdown, SVG>
+├── product-vision-board.md, architecture.md, images/, README.md   for Lane's developers <Markdown, SVG>
 ├── cosmic-ray.toml                 the mutation testing <TOML>
 ├── testing.py                      the tests' shared code and the double of Claude Code <Python 3>
 └── tests/
@@ -774,9 +776,9 @@ that holds a release's commits as a project has them.
   each break, and each run is kept in records of its own.
 - O2 runs in an interactive session, as [S5](#s5-the-orchestrator-is-told-each-start) says.
 - Every run counts. A run passes where the stand-in gets what the objective says, and no run of the
-  plugin goes wrong in any of the UX's ways. The stand-in writes no check of its own and no code
-  for the order. The prose of a subagent's steps is neither, as the plugin's own step says when to
-  give which result.
+  plugin goes wrong in any of the product vision board's ways. The stand-in writes no check of its
+  own and no code for the order. The prose of a subagent's steps is neither, as the plugin's own
+  step says when to give which result.
 - For each run of the plugin, the trial reports each invited break: stopped with its sentence, or
   not tried. That is information, not a condition of the run.
   - Rationale: a break left untried is often Lane giving the objective, as the sentence it laid
@@ -794,13 +796,13 @@ from the files that the stand-in added to its plugin:
 
 | Key result | What the trial measures |
 |---|---|
-| KR1.1 | of the subagents' tool calls and ends of work that a rule is about, the share that went wrong in any of the UX's four ways |
+| KR1.1 | of the subagents' tool calls and ends of work that a rule is about, the share that went wrong in any of the product vision board's four ways |
 | KR1.2 | the time from the stand-in's first write of a proposal with a rule, by any tool, to the end of the first run whose subagents keep the rules |
-| KR2.1 | of the plugin's runs, the share that went wrong in any of the UX's four ways |
+| KR2.1 | of the plugin's runs, the share that went wrong in any of the product vision board's four ways |
 | KR2.2 | the time from the stand-in's first write of a proposal with a route, by any tool, to the end of the first run that keeps the order |
 
-The UX gives no key result a target. So each measure is set against the last trial's, in the
-direction that the UX gives it.
+The product vision board gives no key result a target. So each measure is set against the last
+trial's, in the direction that the product vision board gives it.
 
 ### A fault found at a higher level
 

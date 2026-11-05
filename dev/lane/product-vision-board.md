@@ -1,4 +1,4 @@
-# Lane UX
+# Lane Product Vision Board
 
 Lane's user is the developer AI, an AI that builds a Claude Code plugin whose subagents work in
 numbered steps.

@@ -42,10 +42,11 @@ best practices / skill authoring best practices) and the official plugins.
 
 ## Steps
 
-### 1. Write the UX
+### 1. Write the product vision board
 
-**Settle the UX's decisions in `dev/<plugin>/design-tree.json`, the plugin's one design tree, with
-`ux/best-practice.json` open. Write `dev/<plugin>/ux.md` from the tree by `ux/template.md`. Have the
+**Settle the product vision board's decisions in `dev/<plugin>/design-tree.json`, the plugin's one
+design tree, with `product-vision-board/best-practice.json` open. Write
+`dev/<plugin>/product-vision-board.md` from the tree by `product-vision-board/template.md`. Have the
 user agree to it before you make anything else.** Do the same for each document after it: its
 questions and decisions go into the same tree, and the document is written from them by its kind's
 template.
@@ -53,14 +54,15 @@ template.
 - Rationale: each sentence of a document then rests on a decision of the tree, and two documents
   that rest on one decision say the same thing. The template holds each document to what its
   reader needs, as an AI told only to be brief still writes past it.
-- Rationale: the README takes two things from the UX: what the user gains, and the scenario that
-  its walkthrough runs. The architecture says how the plugin gives the UX. If you make them before
-  the UX, they rest on a goal that the user has not agreed to.
+- Rationale: the README takes two things from the product vision board: what the user gains, and the
+  scenario that its walkthrough runs. The architecture says how the plugin gives the product vision
+  board. If you make them before the product vision board, they rest on a goal that the user has not
+  agreed to.
 
 ### 2. Write the README
 
-**Write `plugins/<plugin>/README.md` from the UX with `readme/best-practice.json` open, as step 1
-says. Have the user agree to it before you make the architecture.**
+**Write `plugins/<plugin>/README.md` from the product vision board with `readme/best-practice.json`
+open, as step 1 says. Have the user agree to it before you make the architecture.**
 
 - Rationale: everything after the README is built to what it promises the user. Built before it,
   that work would stand on a measure that no one has settled.
@@ -87,8 +89,8 @@ their readers would. Settle each finding by fixing the decision or principle it 
 ### 5. List the slices
 
 **List the slices to build. A slice is the smallest part of the plugin through which the user meets
-one or more of the key results in the UX, from start to end. The first slice moves one key result
-by the thinnest path.**
+one or more of the key results in the product vision board, from start to end. The first slice moves
+one key result by the thinnest path.**
 
 - Rationale: a slice built from start to end shows early that its parts join as the architecture
   says. The first slice lays, soonest, the parts that every later slice stands on. The word "unit"
@@ -150,7 +152,7 @@ kept for the trials that
 ### 7. Confirm the whole in real use
 
 **Once every slice is built and every unit and architecture test passes, try the plugin as its
-user to confirm the UX, as
+user to confirm the product vision board, as
 [ux: the plugin in real use](../../dev/plugin-best-practice.md#ux-the-plugin-in-real-use) says.**
 Try it on each objective's scenario, at the size of a real request. Use a stand-in that holds an
 intent the plugin never sees.

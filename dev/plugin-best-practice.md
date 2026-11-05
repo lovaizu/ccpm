@@ -69,7 +69,7 @@ sequenceDiagram
 └── dev/                                what only the developers need, never installed
     ├── plugin-best-practice.md         this document
     └── <plugin>/                       one for each folder in plugins/
-        ├── ux.md                       the plugin's UX <Markdown>
+        ├── product-vision-board.md     the plugin's product vision board <Markdown>
         ├── architecture.md             the plugin's architecture <Markdown>
         └── tests/                      unit/, architecture/ and ux/, as Test says
 ```

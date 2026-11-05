@@ -10,7 +10,7 @@ The generator can make deliverables with which their role achieves its purpose.
 
 ## Example
 
-[../ux/best-practice.json](../ux/best-practice.json)
+[../product-vision-board/best-practice.json](../product-vision-board/best-practice.json)
 
 ## User benefits
 
@@ -82,7 +82,7 @@ The generator can make deliverables with which their role achieves its purpose.
 **Steps**
 
 1. Write a step only for what the thinking alone does not lead the generator to, one action each, in order.
-2. Where the content must be found before it is written, such as the roles of a UX, say what to look at, how to find all of it, and when to ask the user.
+2. Where the content must be found before it is written, such as the roles of a product vision board, say what to look at, how to find all of it, and when to ask the user.
 3. Where a step or a source names one way of doing it, such as a place, a file or a tool, write what that way achieves instead.
 4. Make one real deliverable by the practice, judge it by the question, and mend the practice where the answer stays no.
 
@@ -96,7 +96,7 @@ The generator can make deliverables with which their role achieves its purpose.
 
 **Steps**
 
-1. Where the deliverable lies elsewhere for its own reader, such as a UX in the developers' folder, name its path in `source` and copy it with its figures beside the best practice by `plan.py example`, as a copy made by hand drifts from the deliverable, and a symbolic link shows as a line of text on GitHub and on Windows.
+1. Where the deliverable lies elsewhere for its own reader, such as a product vision board in the developers' folder, name its path in `source` and copy it with its figures beside the best practice by `plan.py example`, as a copy made by hand drifts from the deliverable, and a symbolic link shows as a line of text on GitHub and on Windows.
 
 ### Q9: Using a deliverable made by the best practice and passed, does its role achieve its purpose?
 

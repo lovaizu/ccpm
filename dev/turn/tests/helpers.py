@@ -193,8 +193,8 @@ class RoundsTest(RepositoryTest):
 
 
 # What the architecture tests stand on: Pin installed beside Turn, the guards' modules as Turn takes
-# them through its link to Lane's code, and the subject `tidy` of the UX's scenarios, kept in
-# ux/tidy/ for the trials too, each file by its path in it.
+# them through its link to Lane's code, and the subject `tidy` the ux trials work on, kept in
+# ux/tidy/ for them too, each file by its path in it.
 PIN = os.path.join(os.path.dirname(TURN), "pin")
 hook, schema, guard, result = testing.lane_code(TURN, "hook", "schema", "guard", "result")
 SUBJECT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ux", "tidy")

@@ -2,7 +2,7 @@
  "goal": "The developer builds what the product's users want.",
  "template": "template.md",
  "example": "example.md",
- "source": "../../../../../../dev/turn/ux.md",
+ "source": "../../../../../../dev/turn/product-vision-board.md",
  "user_benefits": [
   {
    "id": "Q1",
@@ -37,7 +37,7 @@
   {
    "id": "Q7",
    "about": "the whole",
-   "what": "Changing how the product works inside while its roles see the same, does the developer find the UX still true?"
+   "what": "Changing how the product works inside while its roles see the same, does the developer find the product vision board still true?"
   }
  ],
  "practices": [
@@ -103,7 +103,7 @@
   },
   {
    "user_benefit": "Q7",
-   "thinking": "Say only what the roles mean to do, see and receive, and nothing of how the product works inside, as any design that gives them the same then leaves the UX true.",
+   "thinking": "Say only what the roles mean to do, see and receive, and nothing of how the product works inside, as any design that gives them the same then leaves the product vision board true.",
    "steps": [
     "Pick one change the design could make while the roles see the same, and flag each line that would have to change.",
     "Rewrite each flagged line by what the role does, sees or receives, or leave it to the document that describes the inside, such as the architecture."

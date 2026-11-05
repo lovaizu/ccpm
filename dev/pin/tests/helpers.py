@@ -77,7 +77,7 @@ def made(*decisions: dict[str, Any], questions: tuple[str, ...] = ("Q1",)) -> di
     }
 
 
-# The notes app of the UX's scenarios, kept in ux/notes/ for the trials too: notes.py prints each
+# The notes app the ux trials work on, kept in ux/notes/ for them too: notes.py prints each
 # note as a line of tab-separated fields, and the scripts read that text; sync.py reads `updated`
 # as ISO 8601, a fact the pinner finds. Each file by its path in the app.
 SUBJECT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ux", "notes")

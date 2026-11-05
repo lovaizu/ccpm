@@ -1,5 +1,5 @@
 {
- "goal": "The developer builds and changes each part of the product so that the parts together give its UX.",
+ "goal": "The developer builds and changes each part of the product so that the parts together give its product vision board.",
  "template": "template.md",
  "example": "example.md",
  "source": "../../../../../../dev/turn/architecture.md",
@@ -7,12 +7,12 @@
   {
    "id": "Q1",
    "about": "the opening",
-   "what": "Starting on any part, does the developer see the one idea by which the product gives its UX, and the piece of it the part carries out?"
+   "what": "Starting on any part, does the developer see the one idea by which the product gives its product vision board, and the piece of it the part carries out?"
   },
   {
    "id": "Q2",
    "about": "User stories",
-   "what": "Following a step of the UX's scenarios, does the developer find the one user story that carries it?"
+   "what": "Following a step of the product vision board's scenarios, does the developer find the one user story that carries it?"
   },
   {
    "id": "Q3",
@@ -42,7 +42,7 @@
   {
    "id": "Q8",
    "about": "User stories, Components, Data model, Sequences",
-   "what": "Of any story, component or data, does the developer see which objective of the UX needs it, so that what none needs can go?"
+   "what": "Of any story, component or data, does the developer see which objective of the product vision board needs it, so that what none needs can go?"
   },
   {
    "id": "Q9",
@@ -67,7 +67,7 @@
   {
    "id": "Q13",
    "about": "Tests",
-   "what": "When the unit and architecture tests pass, does the developer know the product does what this document says, leaving to the ux level only the UX to confirm?"
+   "what": "When the unit and architecture tests pass, does the developer know the product does what this document says, leaving to the ux level only the product vision board to confirm?"
   },
   {
    "id": "Q14",
@@ -82,24 +82,24 @@
   {
    "id": "Q16",
    "about": "the whole",
-   "what": "Changing how a component works inside while the UX and the principles stay, does the developer find every line of the document still true?"
+   "what": "Changing how a component works inside while the product vision board and the principles stay, does the developer find every line of the document still true?"
   }
  ],
  "practices": [
   {
    "user_benefit": "Q1",
-   "thinking": "Write how the product turns what its roles bring into what the UX promises as one idea seen from above, pointing to the UX and not repeating it, as every part then reads as a piece of that idea.",
+   "thinking": "Write how the product turns what its roles bring into what the product vision board promises as one idea seen from above, pointing to the product vision board and not repeating it, as every part then reads as a piece of that idea.",
    "steps": [
     "Once the rest is written, check that each component carries out a piece of the idea, and change the idea or the component where one does not."
    ]
   },
   {
    "user_benefit": "Q2",
-   "thinking": "Write one story for each way a role of the UX meets the product at its edge, drawn from the UX's scenarios and their intent, and name what it carries, such as a step of a scenario or resuming a run that stopped, as each part is then traced to what the role does, and a convenience added is then a story added, leaving the UX and the README as they are.",
+   "thinking": "Write one story for each way a role of the product vision board meets the product at its edge, drawn from the product vision board's scenarios and their intent, and name what it carries, such as a step of a scenario or resuming a run that stopped, as each part is then traced to what the role does, and a convenience added is then a story added, leaving the product vision board and the README as they are.",
    "steps": [
-    "Go through each message of each scenario of the UX, and name the one way at the product's edge that carries it.",
+    "Go through each message of each scenario of the product vision board, and name the one way at the product's edge that carries it.",
     "Where a step meets the product in a way no story names, add the story.",
-    "For each convenience the UX's intent asks for around its scenarios, such as resuming a run that stopped, name the story that carries it, or add one."
+    "For each convenience the product vision board's intent asks for around its scenarios, such as resuming a run that stopped, name the story that carries it, or add one."
    ]
   },
   {
@@ -144,7 +144,7 @@
   },
   {
    "user_benefit": "Q8",
-   "thinking": "Keep only the stories, components and data that an objective of the UX needs, as each can then go once no objective needs it.",
+   "thinking": "Keep only the stories, components and data that an objective of the product vision board needs, as each can then go once no objective needs it.",
    "steps": [
     "Trace each component and each data to the stories whose sequences reach it, and each story to the objective whose scenario or intent it carries, and remove what reaches none."
    ]
@@ -166,7 +166,7 @@
   },
   {
    "user_benefit": "Q11",
-   "thinking": "Fill the cell of each deployment unit at each level whose ground, a part's contract, this document or the UX, says what the unit must do, and say why a cell is empty, as a level is named by what it checks against and not by its means.",
+   "thinking": "Fill the cell of each deployment unit at each level whose ground, a part's contract, this document or the product vision board, says what the unit must do, and say why a cell is empty, as a level is named by what it checks against and not by its means.",
    "steps": [
     "Leave out a unit whose every cell would be empty, and say why under the table.",
     "Check that unit and architecture carry most of the checking and run on every change, and that ux tests are few.",
@@ -185,7 +185,7 @@
     "At architecture, run real what joins the components, such as hooks and scripts, and stand a double in for each component an AI runs and each thing outside the product, so the level calls no model and gives the same result each run.",
     "At architecture, write one test for each path through each story's sequence, the main flow, each branch, each step that sends work back and each question put to the role, until every move from one step to the next lies on some path.",
     "At ux, once unit and architecture pass, run the real product on each objective's scenario at the size of a real request, with an AI standing in for the role that holds an intent the product never sees.",
-    "At ux, measure each key result as the UX words it, and set each measure against the last one by the direction the UX gives it, as the UX gives no target.",
+    "At ux, measure each key result as the product vision board words it, and set each measure against the last one by the direction the product vision board gives it, as the product vision board gives no target.",
     "For a test whose result varies from run to run, write how many runs of how many must meet the expectation."
    ]
   },
@@ -211,7 +211,7 @@
   },
   {
    "user_benefit": "Q16",
-   "thinking": "Keep in the document only what stays while the UX and the principles stay, leaving how a component works inside to where it is built, as a line about the inside goes untrue at the next change.",
+   "thinking": "Keep in the document only what stays while the product vision board and the principles stay, leaving how a component works inside to where it is built, as a line about the inside goes untrue at the next change.",
    "steps": [
     "Imagine a change to how a component works inside, such as its steps, a value it uses or a data's fields, mark each line it would make untrue, and repeat with a change of another kind until no line is marked."
    ]

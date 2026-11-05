@@ -1,4 +1,4 @@
-# Pin UX
+# Pin Product Vision Board
 
 Pin has two users:
 

@@ -2,38 +2,38 @@
  "goal": {
   "what": "The user gets a work they put to use as handed over, having decided only what is theirs.",
   "grounds": [
-   "Agreed with the user, 2026-11-05, when the UX example was shown: O1 of plugins/turn/core/domain/best-practices/ux/example.md.",
+   "Agreed with the user, 2026-11-05, when the product vision board example was shown: O1 of plugins/turn/core/domain/best-practices/product-vision-board/example.md.",
    "Agreed with the user, 2026-10-31, as Turn's concept: \"Given the user's purpose, the work's format and intended state, and the best practice of making it, an AI draws the concept out of the user and builds quality up to a work that meets the purpose well.\" Quality is the degree a work meets its user's purpose (ISO 9000:2015; Juran, fitness for use); a work is never passed by the one who made it."
   ]
  },
  "questions": [
   {
-   "id": "ux/Q1",
+   "id": "product-vision-board/Q1",
    "what": "Listing whom to build for, does the developer find every role that comes to the product with a want of its own?"
   },
   {
-   "id": "ux/Q2",
+   "id": "product-vision-board/Q2",
    "what": "Reading an objective, does the developer see what its role gets from the product?"
   },
   {
-   "id": "ux/Q3",
+   "id": "product-vision-board/Q3",
    "what": "Weighing a piece of work, does the developer see which one objective it brings closer, or that it brings none closer?"
   },
   {
-   "id": "ux/Q4",
+   "id": "product-vision-board/Q4",
    "what": "After a change, does the developer see from the key results whether to keep it?"
   },
   {
-   "id": "ux/Q5",
+   "id": "product-vision-board/Q5",
    "what": "Weighing the product against what its roles do today, does the developer see why it meets each objective where that way does not?"
   },
   {
-   "id": "ux/Q6",
+   "id": "product-vision-board/Q6",
    "what": "Following a scenario, does the developer see, exchange by exchange, how its role goes from asking the product to having what its objective says?"
   },
   {
-   "id": "ux/Q7",
-   "what": "Changing how the product works inside while its roles see the same, does the developer find the UX still true?"
+   "id": "product-vision-board/Q7",
+   "what": "Changing how the product works inside while its roles see the same, does the developer find the product vision board still true?"
   },
   {
    "id": "readme/Q1",
@@ -81,11 +81,11 @@
   },
   {
    "id": "architecture/Q1",
-   "what": "Starting on any part, does the developer see the one idea by which the product gives its UX, and the piece of it the part carries out?"
+   "what": "Starting on any part, does the developer see the one idea by which the product gives its product vision board, and the piece of it the part carries out?"
   },
   {
    "id": "architecture/Q2",
-   "what": "Following a step of the UX's scenarios, does the developer find the one user story that carries it?"
+   "what": "Following a step of the product vision board's scenarios, does the developer find the one user story that carries it?"
   },
   {
    "id": "architecture/Q3",
@@ -109,7 +109,7 @@
   },
   {
    "id": "architecture/Q8",
-   "what": "Of any story, component or data, does the developer see which objective of the UX needs it, so that what none needs can go?"
+   "what": "Of any story, component or data, does the developer see which objective of the product vision board needs it, so that what none needs can go?"
   },
   {
    "id": "architecture/Q9",
@@ -129,7 +129,7 @@
   },
   {
    "id": "architecture/Q13",
-   "what": "When the unit and architecture tests pass, does the developer know the product does what this document says, leaving to the ux level only the UX to confirm?"
+   "what": "When the unit and architecture tests pass, does the developer know the product does what this document says, leaving to the ux level only the product vision board to confirm?"
   },
   {
    "id": "architecture/Q14",
@@ -141,7 +141,7 @@
   },
   {
    "id": "architecture/Q16",
-   "what": "Changing how a component works inside while the UX and the principles stay, does the developer find every line of the document still true?"
+   "what": "Changing how a component works inside while the product vision board and the principles stay, does the developer find every line of the document still true?"
   }
  ],
  "decisions": [
@@ -149,23 +149,23 @@
    "id": "D1",
    "what": "Who comes to Turn with a want of their own?",
    "contributes_to": [
-    "ux/Q1",
-    "ux/Q2"
+    "product-vision-board/Q1",
+    "product-vision-board/Q2"
    ],
    "builds_on": [],
    "decided": "One role, the user: one who asks Turn for a work, such as a README, and decides what is theirs. A person and an AI that asks for a person want the same, so they are one role. Turn's own parts and the plugins it runs on want nothing of their own, so none is a role.",
    "settled_by": "user",
    "grounds": [
-    "Agreed with the user, 2026-11-05, when the UX example was shown: \"Users are roles, not person vs AI: Turn has one role, the user.\"",
-    "ux/best-practice.json Q1 thinking: \"Roles are cut by the want each brings to the product, not by what kind of thing takes them\""
+    "Agreed with the user, 2026-11-05, when the product vision board example was shown: \"Users are roles, not person vs AI: Turn has one role, the user.\"",
+    "product-vision-board/best-practice.json Q1 thinking: \"Roles are cut by the want each brings to the product, not by what kind of thing takes them\""
    ]
   },
   {
    "id": "D2",
    "what": "The user's objective, as one line with the role as its subject and no mechanism",
    "contributes_to": [
-    "ux/Q2",
-    "ux/Q3"
+    "product-vision-board/Q2",
+    "product-vision-board/Q3"
    ],
    "builds_on": [
     "D1"
@@ -173,14 +173,14 @@
    "decided": "O1: The user gets a work they put to use as handed over, having decided only what is theirs.",
    "settled_by": "user",
    "grounds": [
-    "Agreed with the user, 2026-11-05, when the UX example was shown."
+    "Agreed with the user, 2026-11-05, when the product vision board example was shown."
    ]
   },
   {
    "id": "D3",
    "what": "How do success and failure of O1 show in what the user does?",
    "contributes_to": [
-    "ux/Q4"
+    "product-vision-board/Q4"
    ],
    "builds_on": [
     "D2"
@@ -188,14 +188,14 @@
    "decided": "O1 fails where the user changes the work before they first put it to use, themselves or by asking; where they never put it to use; and where they are asked a point that is not theirs, such as a fact Turn could find. It succeeds where they put it to use as handed over.",
    "settled_by": "research",
    "grounds": [
-    "ux/best-practice.json Q4 step 1: \"List how success or failure would show in what the role does or feels, such as giving up, undoing a result or working around the product.\""
+    "product-vision-board/best-practice.json Q4 step 1: \"List how success or failure would show in what the role does or feels, such as giving up, undoing a result or working around the product.\""
    ]
   },
   {
    "id": "D4",
    "what": "O1's key results",
    "contributes_to": [
-    "ux/Q4"
+    "product-vision-board/Q4"
    ],
    "builds_on": [
     "D3"
@@ -203,14 +203,14 @@
    "decided": "KR1.1: of the works the user asks for, the share that goes wrong in a way of D3; lower is better. KR1.2: the time from the request to a work they put to use; shorter is better. A share counts a work once, however many ways it goes wrong. KR1.1 cannot get better by asking the user everything, as a point not theirs counts against it, nor by handing over works never used, as those count too.",
    "settled_by": "reasoning",
    "grounds": [
-    "ux/best-practice.json Q4 step 3: \"Ask whether both key results could get better while the role still does not get what the objective says.\""
+    "product-vision-board/best-practice.json Q4 step 3: \"Ask whether both key results could get better while the role still does not get what the objective says.\""
    ]
   },
   {
    "id": "D30",
    "what": "What sets Turn apart from what its user does today, and makes it meet O1: at most five ideas, each with the present way it beats",
    "contributes_to": [
-    "ux/Q5"
+    "product-vision-board/Q5"
    ],
    "builds_on": [
     "D1",
@@ -223,10 +223,10 @@
   },
   {
    "id": "D5",
-   "what": "What does the UX show, and what does it leave to the README and the architecture?",
+   "what": "What does the product vision board show, and what does it leave to the README and the architecture?",
    "contributes_to": [
-    "ux/Q6",
-    "ux/Q7"
+    "product-vision-board/Q6",
+    "product-vision-board/Q7"
    ],
    "builds_on": [
     "D1"
@@ -234,14 +234,14 @@
    "decided": "Only what the user does, sees and receives: the request, the purpose to confirm, each fact to confirm and each decision of theirs, the design to approve, a decision that comes up while the work is made, and the work handed over. Turn is one participant; its parts, and the plugins it runs on, such as Pin and Lane, are not named.",
    "settled_by": "reasoning",
    "grounds": [
-    "ux/best-practice.json Q7 thinking: \"the UX says only what its roles mean to do, see and receive\""
+    "product-vision-board/best-practice.json Q7 thinking: \"the product vision board says only what its roles mean to do, see and receive\""
    ]
   },
   {
    "id": "D6",
    "what": "What work does the scenario make?",
    "contributes_to": [
-    "ux/Q6"
+    "product-vision-board/Q6"
    ],
    "builds_on": [
     "D5"
@@ -249,23 +249,23 @@
    "decided": "A README for `tidy`, a command-line tool that sorts a Downloads folder: a kind Turn knows, as most requests will be, and the work of the README's walkthrough, so the developer meets one example across both documents.",
    "settled_by": "reasoning",
    "grounds": [
-    "ux/best-practice.json Q6 thinking: \"one run of the main path to the objective, the one most of its role take\""
+    "product-vision-board/best-practice.json Q6 thinking: \"one run of the main path to the objective, the one most of its role take\""
    ]
   },
   {
    "id": "D7",
    "what": "O1's main path",
    "contributes_to": [
-    "ux/Q6"
+    "product-vision-board/Q6"
    ],
    "builds_on": [
     "D5",
     "D6"
    ],
-   "decided": "The user asks for the work. Turn puts its purpose to confirm. Until no decision is open, Turn puts each fact it found to confirm and each decision of the user's with a recommendation, one at a time. Turn shows the design to approve. While the work is made, Turn puts each decision of the user's that comes up; how often Turn makes it again is inside Turn, so not said, by ux/best-practice.json Q7. Turn hands the work over, not committed. Headed \"O1: The user has a README made for tidy\".",
+   "decided": "The user asks for the work. Turn puts its purpose to confirm. Until no decision is open, Turn puts each fact it found to confirm and each decision of the user's with a recommendation, one at a time. Turn shows the design to approve. While the work is made, Turn puts each decision of the user's that comes up; how often Turn makes it again is inside Turn, so not said, by product-vision-board/best-practice.json Q7. Turn hands the work over, not committed. Headed \"O1: The user has a README made for tidy\".",
    "settled_by": "reasoning",
    "grounds": [
-    "ux/best-practice.json Q6 step 3: \"the first message is the role's request, the last gives the role the end, and each moves toward it.\""
+    "product-vision-board/best-practice.json Q6 step 3: \"the first message is the role's request, the last gives the role the end, and each moves toward it.\""
    ]
   },
   {
@@ -280,7 +280,7 @@
    "decided": "A Claude Code plugin that makes a work you ask for, such as a README, and asks you only the decisions that are yours.",
    "settled_by": "reasoning",
    "grounds": [
-    "O1 of the UX: \"having decided only what is theirs\"",
+    "O1 of the product vision board: \"having decided only what is theirs\"",
     "plugins/turn/core/domain/best-practices/readme/best-practice.json Q1 thinking: \"one sentence that names the kind of thing the product is and what it does, in words the reader already uses\""
    ]
   },
@@ -296,7 +296,7 @@
    "decided": "For one who wants an AI to make a work they will put to use as it comes, not a draft they read and mend; they get that work, having decided only what is theirs.",
    "settled_by": "reasoning",
    "grounds": [
-    "plugins/turn/core/domain/best-practices/readme/best-practice.json Q2 thinking: \"taken from what the product's users want, such as the objectives in its UX\""
+    "plugins/turn/core/domain/best-practices/readme/best-practice.json Q2 thinking: \"taken from what the product's users want, such as the objectives in its product vision board\""
    ]
   },
   {
@@ -312,7 +312,7 @@
    "decided": "The usual way is to ask an AI, such as Claude Code, in one prompt. Two problems: (1) it fills what you did not say with guesses, and you meet them only as you use the work; with Turn, Pin finds each fact in your repository and asks you to confirm it, and asks you each decision that is yours, one at a time, so nothing in the work is a guess you never saw. (2) it tells you the work is done, and you find what falls short only as you use it, and mend it yourself; with Turn, an evaluator that never saw the design reads the work as its user would, by the questions of its kind, and a question not met goes back to its decision, so the work reaches you only once each is met.",
    "settled_by": "reasoning",
    "grounds": [
-    "O1 of the UX: \"a work they put to use as handed over, having decided only what is theirs\"; KR1.1 counts a work not put to use as handed over",
+    "O1 of the product vision board: \"a work they put to use as handed over, having decided only what is theirs\"; KR1.1 counts a work not put to use as handed over",
     "plugins/pin/core/roles/pinner.md:11-13: \"A point you settle for the person where their view decides it is a guess they never saw. So you find each fact yourself and show it to them, and you ask them only what is theirs to decide.\"",
     "dev/turn/architecture.md:7-10: \"A fresh evaluator then answers each question as the work's user would, never given the design. ... A question not met goes back through Pin to its decision.\"",
     "plugins/turn/core/domain/best-practices/readme/best-practice.json Q7 thinking: \"Find the problems the reader feels in their own words, and for each, work out and draw the figure in which the reader best pictures it gone with the product\""
@@ -330,8 +330,8 @@
    "decided": "It does not commit, push or publish the work; it does not settle a decision of the user's, and one left unanswered holds the run; it is not for a quick draft, as it takes longer than asking Claude Code.",
    "settled_by": "reasoning",
    "grounds": [
-    "The UX scenario ends \"README.md, not committed\".",
-    "KR1.2 of the UX counts the time to a work put to use, so a draft mended by hand is the comparison."
+    "The product vision board scenario ends \"README.md, not committed\".",
+    "KR1.2 of the product vision board counts the time to a work put to use, so a draft mended by hand is the comparison."
    ]
   },
   {
@@ -372,7 +372,7 @@
     "D6",
     "D7"
    ],
-   "decided": "The UX scenario's run: a README for tidy; the purpose confirmed, one fact confirmed, one decision taken, the design approved, the README handed over not committed. Not yet a real run, as Turn is being rebuilt; a real run's output replaces it once Turn is built.",
+   "decided": "The product vision board scenario's run: a README for tidy; the purpose confirmed, one fact confirmed, one decision taken, the design approved, the README handed over not committed. Not yet a real run, as Turn is being rebuilt; a real run's output replaces it once Turn is built.",
    "settled_by": "reasoning",
    "grounds": [
     "plugins/turn/core/domain/best-practices/readme/best-practice.json Q6 steps: \"Take each exchange, what the user gives and what the product shows, from the record of a real run\""
@@ -465,11 +465,11 @@
     "D1",
     "D7"
    ],
-   "decided": "The user alone, in three ways, each a user story. S1: start Turn with a request, by typing `/turn:up` or, as an AI that asks for a person, by starting `turn:up` as Calling Turn says; it carries the request and the purpose put. S2: answer the point Turn puts; it carries each fact and decision, the design approved, a decision while the work is made, and the work handed over. S3: start Turn with a run's folder, alone or with a change. From O1's intent, a work put to use having decided only what is theirs, the stories also carry these conveniences, which the UX does not list: in S1, where the request does not say the kind, Turn first asks it, and where Turn has no best practice for the kind, it first makes one, putting its points and design to the user, then the work by it; in S2, where a purpose, a fact or the design is wrong, the user says what it should be, and Turn goes on with each point built on it changed; in S3, a run that stopped before the hand-over, as a point was left unanswered or Claude Code ended, goes on from its folder, with every point settled so far and the work as far as made, not committed, asking nothing again, and a change given with the folder makes the work again with it. A fault of Turn's own can end any of them, and the user gets the fault, to send to Turn's makers. A question the rounds cannot meet is no convenience of its own: it goes back to Pin and reaches the user as a decision of S2. The calling AI is no role and no story of its own, as D1 makes it the user; the ways an AI starts and resumes Turn stay, as Calling Turn gives them.",
+   "decided": "The user alone, in three ways, each a user story. S1: start Turn with a request, by typing `/turn:up` or, as an AI that asks for a person, by starting `turn:up` as Calling Turn says; it carries the request and the purpose put. S2: answer the point Turn puts; it carries each fact and decision, the design approved, a decision while the work is made, and the work handed over. S3: start Turn with a run's folder, alone or with a change. From O1's intent, a work put to use having decided only what is theirs, the stories also carry these conveniences, which the product vision board does not list: in S1, where the request does not say the kind, Turn first asks it, and where Turn has no best practice for the kind, it first makes one, putting its points and design to the user, then the work by it; in S2, where a purpose, a fact or the design is wrong, the user says what it should be, and Turn goes on with each point built on it changed; in S3, a run that stopped before the hand-over, as a point was left unanswered or Claude Code ended, goes on from its folder, with every point settled so far and the work as far as made, not committed, asking nothing again, and a change given with the folder makes the work again with it. A fault of Turn's own can end any of them, and the user gets the fault, to send to Turn's makers. A question the rounds cannot meet is no convenience of its own: it goes back to Pin and reaches the user as a decision of S2. The calling AI is no role and no story of its own, as D1 makes it the user; the ways an AI starts and resumes Turn stay, as Calling Turn gives them.",
    "settled_by": "reasoning",
    "grounds": [
-    "Agreed with the user, 2026-11-05: the UX, the README and the architecture each show the main flow to their goal, and the conveniences around it are user stories drawn from the UX and its intent, so a convenience added changes the stories alone.",
-    "architecture/best-practice.json Q2 thinking: \"Write one story for each way a role of the UX meets the product at its edge, drawn from the UX's scenarios and their intent\"",
+    "Agreed with the user, 2026-11-05: the product vision board, the README and the architecture each show the main flow to their goal, and the conveniences around it are user stories drawn from the product vision board and its intent, so a convenience added changes the stories alone.",
+    "architecture/best-practice.json Q2 thinking: \"Write one story for each way a role of the product vision board meets the product at its edge, drawn from the product vision board's scenarios and their intent\"",
     "D1: \"A person and an AI that asks for a person want the same, so they are one role.\"",
     "dev/turn/architecture.md at 8e07a7ce:131-149 the stories S1-S5 before, S3 and S4 for the calling AI",
     "dev/turn/architecture.md at 8e07a7ce:54-55: \"The planner asks the person one point only, the kind, and only before there is a design.\"",
@@ -484,7 +484,7 @@
   },
   {
    "id": "D20",
-   "what": "How Turn gives its UX, as one idea",
+   "what": "How Turn gives its product vision board, as one idea",
    "contributes_to": [
     "architecture/Q1"
    ],
@@ -594,7 +594,7 @@
     "D22",
     "D23"
    ],
-   "decided": "The tree as before. Turn's README, UX and architecture lie where the plugin best practice keeps them, `plugins/turn/README.md`, `dev/turn/ux.md` and `dev/turn/architecture.md`, each with its figures in `images/` beside it. Each is copied, with its figures, as the example of its best practice in its kind's folder in `core/domain/best-practices/` by `plan.py example`, from the path its best practice names in `source`, and `plan.py form` fails on a copy that differs from it, as the example must ship with Turn, a symbolic link shows on GitHub and on Windows as a line of text, and a copy made and checked from one document cannot drift from it. `tests/ux/` holds the trials of O1.",
+   "decided": "The tree as before. Turn's README, product vision board and architecture lie where the plugin best practice keeps them, `plugins/turn/README.md`, `dev/turn/product-vision-board.md` and `dev/turn/architecture.md`, each with its figures in `images/` beside it. Each is copied, with its figures, as the example of its best practice in its kind's folder in `core/domain/best-practices/` by `plan.py example`, from the path its best practice names in `source`, and `plan.py form` fails on a copy that differs from it, as the example must ship with Turn, a symbolic link shows on GitHub and on Windows as a line of text, and a copy made and checked from one document cannot drift from it. `tests/ux/` holds the trials of O1.",
    "settled_by": "reasoning",
    "grounds": [
     "dev/turn/architecture.md at 8e07a7ce:503-547 Directory structure before",

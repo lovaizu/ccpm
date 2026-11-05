@@ -38,7 +38,7 @@ Someone who meets the product for the first time starts using it, from the READM
 
 ### Q2: Reading the gain, does the reader tell what the product would let them do, and so whether it is for them?
 
-**Thinking**: Name whom the product is for by the work they want done, and the gain as what they can then do, taken from the objectives of the product's UX, as the reader tells from it whether the product meets their need.
+**Thinking**: Name whom the product is for by the work they want done, and the gain as what they can then do, taken from the objectives of the product's product vision board, as the reader tells from it whether the product meets their need.
 
 **Steps**
 
@@ -72,7 +72,7 @@ Someone who meets the product for the first time starts using it, from the READM
 
 **Steps**
 
-1. Pick the use from what readers ask for most, such as help requests, and from the main scenario of the product's UX.
+1. Pick the use from what readers ask for most, such as help requests, and from the main scenario of the product's product vision board.
 2. Say at the start what the reader will have at the end.
 3. Take each exchange, what the user gives and what the product shows, from the record of a real run in the form the reader sees it: text in a code block of its language, and a screen as an image taken from the run, cutting only what the reader does not need to see the result.
 4. Where the result does not show the gain the opening promised, pick another piece of work or another scenario.
@@ -83,7 +83,7 @@ Someone who meets the product for the first time starts using it, from the READM
 
 **Steps**
 
-1. Take the problems from the objectives of the product's UX and their key results, and from what readers complain of in the way they would do the work without the product.
+1. Take the problems from the objectives of the product's product vision board and their key results, and from what readers complain of in the way they would do the work without the product.
 2. Say each problem in the reader's words.
 3. For each problem, find from the design what the product does that makes it go away. Ask the user each one the design does not settle.
 4. Look at each figure as a newcomer, and where they could not picture from it what its line under it says, work the figure out again from its form.

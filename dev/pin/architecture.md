@@ -1,7 +1,7 @@
 # Pin architecture
 
-This document says how Pin is built to give [Pin's UX](ux.md). It is for a developer, a person or
-an AI, who builds or changes Pin.
+This document says how Pin is built to give [Pin's product vision board](product-vision-board.md).
+It is for a developer, a person or an AI, who builds or changes Pin.
 
 Pin settles a plan in its design file one point at a time. The pinner, a subagent of Pin, writes
 the design file from the plan's goal down. Each run of the pinner ends with one point for the
@@ -22,10 +22,9 @@ and on its Development section, with these differences:
   [Where the orchestrator runs](../plugin-best-practice.md#where-the-orchestrator-runs): the pinner
   runs as a subagent for the person too, as
   [Choices in the components](#choices-in-the-components-and-their-costs) says.
-- Pin does not take
-  [Learning from each run](../plugin-best-practice.md#learning-from-each-run). Pin ends once the
-  person confirms the design, and the UX has no step after that. A design's faults show only in the
-  work made from it, which Pin never sees.
+- Pin does not take [Learning from each run](../plugin-best-practice.md#learning-from-each-run). Pin
+  ends once the person confirms the design, and the product vision board has no step after that. A
+  design's faults show only in the work made from it, which Pin never sees.
 - Under [Read by those who did not make it](../plugin-best-practice.md#read-by-those-who-did-not-make-it),
   no evaluator reads the design: the person reads all of it to confirm it.
 
@@ -39,7 +38,7 @@ finds every fact itself and shows it to the person to confirm.
 
 *Why*: a fact that Pin could find, or a decision that follows from the goal, spends the person's
 answer on Pin's job. A decision taken for the person where their view decides it holds a point
-otherwise than they mean it. The UX counts both as a point gone wrong (KR1.1).
+otherwise than they mean it. The product vision board counts both as a point gone wrong (KR1.1).
 [Asking until nothing is left to decide](../plugin-best-practice.md#asking-until-nothing-is-left-to-decide)
 says this in general. This principle gives the test.
 
@@ -71,8 +70,8 @@ nothing into the design file.
 
 *Why*: a point reworded is a question that the pinner did not ask, and an answer summed up loses
 what the person meant (KR1.1, KR2.1). A point that the go-between answers itself is settled apart
-from Pin, which the UX counts as gone wrong (KR1.1), even where the person asked the go-between and
-not Pin.
+from Pin, which the product vision board counts as gone wrong (KR1.1), even where the person asked
+the go-between and not Pin.
 
 ### What the maker AI settled stays
 
@@ -81,9 +80,9 @@ Only a new request of the maker AI opens such a point again. The maker AI change
 design itself: it starts Pin again with the point. The design file marks each decision that the
 maker AI settled as settled by `maker`, so the pinner tells it from the file alone.
 
-*Why*: the UX counts as gone wrong a point settled otherwise than the maker AI settled it, a point
-asked again, and the maker AI changing the design (KR2.1). A point changed outside Pin also leaves
-each point built on it as it was.
+*Why*: the product vision board counts as gone wrong a point settled otherwise than the maker AI
+settled it, a point asked again, and the maker AI changing the design (KR2.1). A point changed
+outside Pin also leaves each point built on it as it was.
 
 ### Pin knows no maker AI
 
@@ -97,7 +96,7 @@ unseen, and could settle their points otherwise than they settled them (KR2.1).
 ## User stories
 
 Each story names its user, the way that user meets Pin, and the steps of
-[the UX's scenarios](ux.md#scenarios) that it carries.
+[the product vision board's scenarios](product-vision-board.md#scenarios) that it carries.
 
 - **S1**: As the person, I want to type `/pin:down` with my plan in my own words, and get the goal
   as Pin reads it, to confirm. Carries the first two steps of O1: the request, and the goal put to
@@ -353,7 +352,7 @@ plugins/pin/
 └── README.md, CHANGELOG.md, images/   for Pin's users <Markdown, SVG>
 
 dev/pin/
-├── ux.md, architecture.md, images/, README.md   for Pin's developers <Markdown, SVG>
+├── product-vision-board.md, architecture.md, images/, README.md   for Pin's developers <Markdown, SVG>
 ├── cosmic-ray.toml                 the mutation testing <TOML>
 └── tests/
     ├── unit/                       unit tests, at the path of what each tests <Python 3>
@@ -440,10 +439,10 @@ The paths, one test each:
 A trial runs the scenario of O1 or of O2, as
 [ux: the plugin in real use](../plugin-best-practice.md#ux-the-plugin-in-real-use) says.
 
-- The subject is the UX's notes app at the size of a real request: a repository with several
-  scripts that read `notes list`, and a plan of about ten points. The subject brings out the
-  frequent cases: a fact found and confirmed, a fact corrected, a decision of the person's, a
-  decision left to Pin, a point that an answer raises, and a change at the design.
+- The subject is the product vision board's notes app at the size of a real request: a repository
+  with several scripts that read `notes list`, and a plan of about ten points. The subject brings
+  out the frequent cases: a fact found and confirmed, a fact corrected, a decision of the person's,
+  a decision left to Pin, a point that an answer raises, and a change at the design.
 - An AI on Opus stands in for the person. It is given an intent written before the run and never
   shown to Pin, and answers each point from it.
 - For O2, a plugin made for the test stands in for a maker AI's plugin. Its maker AI hands over
@@ -458,13 +457,13 @@ The trial measures each key result from the session's records and the design fil
 
 | Key result | What the trial measures |
 |---|---|
-| KR1.1 | of the intent's points and the points put to the person, the share that went wrong in any of the UX's four ways |
+| KR1.1 | of the intent's points and the points put to the person, the share that went wrong in any of the product vision board's four ways |
 | KR1.2 | the time from `/pin:down` to the design that the stand-in confirms |
-| KR2.1 | of the designs that the maker AI got back, the share that went wrong in any of the UX's four ways |
+| KR2.1 | of the designs that the maker AI got back, the share that went wrong in any of the product vision board's four ways |
 | KR2.2 | the time from the maker AI's take of `pin:down` to the design it gets back |
 
-The UX gives no key result a target. So each measure is set against the last trial's, in the
-direction that the UX gives it.
+The product vision board gives no key result a target. So each measure is set against the last
+trial's, in the direction that the product vision board gives it.
 
 ### A fault found at a higher level
 

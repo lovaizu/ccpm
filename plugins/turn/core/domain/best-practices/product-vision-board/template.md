@@ -1,4 +1,4 @@
-# `<Product>` UX
+# `<Product>` Product Vision Board
 
 ## Roles
 
