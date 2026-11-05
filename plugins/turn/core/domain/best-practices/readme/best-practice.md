@@ -10,7 +10,7 @@ Someone who meets the product for the first time starts using it, from the READM
 
 ## Example
 
-[example.md](example.md)
+[example.md](example.md), a copy of [../../../../README.md](../../../../README.md)
 
 ## User benefits
 

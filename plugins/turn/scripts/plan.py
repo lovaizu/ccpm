@@ -4,8 +4,9 @@ the shortfalls of the last round; `ready` puts the work into its rounds; `next` 
 rounds met every question and begins the next; each prints what the planner gives and ends with,
 giving 0, or why it cannot, giving 1. `check` says whether the Run holds and where the run is,
 giving 0, each fault, giving 1, or why it could not check, giving 2. And what a person or CI runs
-on a best practice, as `... plan.py form|markdown <best practice json>...`: its faults and its
-Markdown left behind, and its Markdown written beside it, each failing where it names any. It
+on a best practice, as `... plan.py form|markdown|example <best practice json>...`: its faults
+and its Markdown and the copy of its example left behind; its Markdown written beside it; and the
+copy of its example written from the work its source names; each failing where it names any. It
 hands each to runs.py, phases.py and practices.py in core/domain/."""
 
 from __future__ import annotations
@@ -27,7 +28,8 @@ import runs
 
 USAGE = (
     "usage: python3 ${CLAUDE_PLUGIN_ROOT}/scripts/plan.py start|hand|ready|next|check <run>\n"
-    "       python3 ${CLAUDE_PLUGIN_ROOT}/scripts/plan.py form|markdown <best practice json>..."
+    "       python3 ${CLAUDE_PLUGIN_ROOT}/scripts/plan.py form|markdown|example"
+    " <best practice json>..."
 )
 HANDED = "Give `handed`, and end with this Request as it is"
 
@@ -159,15 +161,45 @@ def check(run: str) -> int:
     return 0
 
 
+def copied(path: str, data: dict) -> tuple[dict[str, bytes], list[str]]:
+    """The files of the best practice's example copied from its source, or else why they cannot be
+    made."""
+    if "example" not in data:
+        return {}, [f"its source {data['source']} has no example to be copied to"]
+    try:
+        return practices.copies(path, data), []
+    except FileNotFoundError as why:
+        return {}, [f"{why.filename}, which its example copies, is not there"]
+
+
+def behind(path: str, data: dict) -> list[str]:
+    """Each file of the best practice's example that is not as its source makes it, or why it
+    cannot be made; none where it names no source."""
+    if "source" not in data:
+        return []
+    made, found = copied(path, data)
+    for copy, content in made.items():
+        try:
+            with open(copy, "rb") as f:
+                same = f.read() == content
+        except FileNotFoundError:
+            same = False
+        if not same:
+            found.append(f"{copy} is not a copy of its source; run plan.py example")
+    return found
+
+
 def form(path: str) -> list[str]:
-    """Each fault of the best practice's form, and its Markdown left behind it."""
+    """Each fault of the best practice's form, and its Markdown and the copy of its example left
+    behind it."""
     try:
         data = files.load(path, "best-practice")
     except files.Unreadable as why:
         return [str(why)]
+    late = behind(path, data)
     found = practices.missing(path, data)
     if found:
-        return found
+        return found + late
     found = practices.faults(data, practices.template(path, data))
     target = os.path.splitext(path)[0] + ".md"
     try:
@@ -176,7 +208,7 @@ def form(path: str) -> list[str]:
                 found.append(f"{target} is not as its JSON makes it; run plan.py markdown")
     except FileNotFoundError:
         found.append(f"{target} is missing; run plan.py markdown")
-    return found
+    return found + late
 
 
 def markdown(path: str) -> list[str]:
@@ -190,9 +222,26 @@ def markdown(path: str) -> list[str]:
     return []
 
 
+def example(path: str) -> list[str]:
+    """Writes the best practice's example, and each figure it shows, as a copy of its source."""
+    try:
+        data = files.load(path, "best-practice")
+    except files.Unreadable as why:
+        return [str(why)]
+    if "source" not in data:
+        return ["it names no source to copy its example from"]
+    made, found = copied(path, data)
+    for copy, content in made.items():
+        os.makedirs(os.path.dirname(copy), exist_ok=True)
+        with open(copy, "wb") as f:
+            f.write(content)
+    return found
+
+
 PRACTICES: dict[str, Callable[[str], list[str]]] = {
     "form": form,
     "markdown": markdown,
+    "example": example,
 }
 
 

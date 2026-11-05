@@ -1,8 +1,9 @@
 {
- "DELETE_TEMPLATE_COMMENT": "<role>: the role the goal names, such as \"the developer\". <achieves what>: what the role achieves with the deliverable. <kind>: the kind of deliverable, such as \"ux\". <ext>: the deliverable's own format, such as \"md\". The example is optional, until one deliverable of the kind is made.",
+ "DELETE_TEMPLATE_COMMENT": "<role>: the role the goal names, such as \"the developer\". <achieves what>: what the role achieves with the deliverable. <kind>: the kind of deliverable, such as \"ux\". <ext>: the deliverable's own format, such as \"md\". The example is optional, until one deliverable of the kind is made. <source>: the path, from the best practice's folder, of the deliverable the example is a copy of; optional, where the example is not a copy.",
  "goal": "<The role> <achieves what>.",
  "template": "<kind>-template.<ext>",
  "example": "<kind>-example.<ext>",
+ "source": "<source>",
  "user_benefits": [
   {
    "DELETE_TEMPLATE_COMMENT": "One for each section of the template, each dependency among sections and the whole, in the order the generator thinks them. <section>: a heading of the template as written there, or \"the whole\". <When>: the moment a role uses the section, such as \"Reading the goal\". <role>: the role that uses it, the one the goal names or one that serves it, such as \"the evaluator\". <get what>: what that role needs from it there toward the goal.",

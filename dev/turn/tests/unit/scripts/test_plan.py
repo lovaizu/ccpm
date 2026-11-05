@@ -1,8 +1,9 @@
 """scripts/plan.py, what the planner runs on a run's folder: start, hand, ready and next move the
 work the run is at, each printing what the planner gives and ends with, 0, or why it cannot, 1;
 check says whether the Run holds and where the run is, 0, each fault, 1, or why it could not
-check, 2. And what a person or CI runs on a best practice: form, its faults and its Markdown left
-behind; and markdown, written beside it."""
+check, 2. And what a person or CI runs on a best practice: form, its faults and its Markdown and
+the copy of its example left behind; markdown, its Markdown written beside it; and example, the copy
+of its example written from its source."""
 
 import contextlib
 import copy
@@ -22,7 +23,8 @@ RUN = helpers.RUN
 DESIGN = os.path.join(RUN, runs.DESIGN)
 USAGE = (
     "usage: python3 ${CLAUDE_PLUGIN_ROOT}/scripts/plan.py start|hand|ready|next|check <run>\n"
-    "       python3 ${CLAUDE_PLUGIN_ROOT}/scripts/plan.py form|markdown <best practice json>...\n"
+    "       python3 ${CLAUDE_PLUGIN_ROOT}/scripts/plan.py form|markdown|example"
+    " <best practice json>...\n"
 )
 
 
@@ -361,9 +363,63 @@ class Practices(helpers.testing.FolderTest):
                     "best-practice.md is not as its JSON makes it; run plan.py markdown", err
                 )
 
+    def sourced(self) -> str:
+        """Names a source for the example, and writes it with a figure; gives the example's path."""
+        self.write_json(self.path, dict(DATA, example="example.md", source="../doc/source.md"))
+        self.write(os.path.join(self.base, "doc", "source.md"), "![A](images/a.svg) [b](b.md)\n")
+        self.write(os.path.join(self.base, "doc", "images", "a.svg"), "<svg/>")
+        ran("markdown", self.path)
+        return os.path.join(self.folder, "example.md")
+
+    def test_form_fails_until_example_copies_the_source_and_its_figures(self):
+        example = self.sourced()
+        code, _, err = ran("form", self.path)
+        self.assertEqual(code, 1)
+        self.assertIn(f"plan.py: {self.path}: {example} is not a copy of its source", err)
+        self.assertIn("; run plan.py example", err)
+        self.assertEqual(ran("example", self.path), (0, "", ""))
+        self.assertEqual(self.read(example), "![A](images/a.svg) [b](../doc/b.md)\n")
+        self.assertEqual(self.read(os.path.join(self.folder, "images", "a.svg")), "<svg/>")
+        self.assertEqual(ran("form", self.path), (0, "", ""))
+
+    def test_form_fails_on_a_copy_or_figure_changed_by_hand(self):
+        example = self.sourced()
+        ran("example", self.path)
+        figure = os.path.join(self.folder, "images", "a.svg")
+        for changed in (example, figure):
+            with self.subTest(changed=changed):
+                ran("example", self.path)
+                self.write(changed, "changed")
+                code, _, err = ran("form", self.path)
+                self.assertEqual(code, 1)
+                self.assertIn(f"{changed} is not a copy of its source; run plan.py example", err)
+
+    def test_a_source_or_figure_not_there_is_named(self):
+        self.sourced()
+        os.remove(os.path.join(self.base, "doc", "images", "a.svg"))
+        for command in ("form", "example"):
+            with self.subTest(command=command):
+                code, _, err = ran(command, self.path)
+                self.assertEqual(code, 1)
+                self.assertIn("a.svg, which its example copies, is not there", err)
+
+    def test_a_source_with_no_example_to_copy_to_is_named(self):
+        self.write_json(self.path, dict(DATA, source="../doc/source.md"))
+        ran("markdown", self.path)
+        for command in ("form", "example"):
+            with self.subTest(command=command):
+                code, _, err = ran(command, self.path)
+                self.assertEqual(code, 1)
+                self.assertIn("its source ../doc/source.md has no example to be copied to", err)
+
+    def test_example_names_a_best_practice_with_no_source(self):
+        code, _, err = ran("example", self.path)
+        self.assertEqual(code, 1)
+        self.assertIn(f"plan.py: {self.path}: it names no source to copy its example from", err)
+
     def test_each_command_names_a_json_it_cannot_read(self):
         self.write(self.path, "{")
-        for command in ("form", "markdown"):
+        for command in ("form", "markdown", "example"):
             with self.subTest(command=command):
                 code, _, err = ran(command, self.path)
                 self.assertEqual(code, 1)

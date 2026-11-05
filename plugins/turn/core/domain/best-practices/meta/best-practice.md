@@ -21,7 +21,7 @@ The generator can make deliverables with which their role achieves its purpose.
 - **Q5** (template, user_benefits): Going through the template, does the generator find a question for each section, each dependency among sections and the whole?
 - **Q6** (practices): Following a practice, does the generator make what its question asks for?
 - **Q7** (user_benefits, practices): Going through the questions in order, does the generator find a practice for each?
-- **Q8** (example): Reading the example, does the generator see what the template's slots become in one deliverable?
+- **Q8** (example, source): Reading the example, does the generator see what the template's slots become in one deliverable?
 - **Q9** (the whole): Using a deliverable made by the best practice and passed, does its role achieve its purpose?
 
 ## Practices
@@ -92,6 +92,10 @@ The generator can make deliverables with which their role achieves its purpose.
 ### Q8: Reading the example, does the generator see what the template's slots become in one deliverable?
 
 **Thinking**: Make the product's own deliverable of the kind from its design tree by the template and the practices, pass it by the questions, and name its file in `example`, as one finished deliverable shows what the comments alone do not.
+
+**Steps**
+
+1. Where the deliverable lies elsewhere for its own reader, such as a UX in the developers' folder, name its path in `source` and copy it with its figures beside the best practice by `plan.py example`, as a copy made by hand drifts from the deliverable, and a symbolic link shows as a line of text on GitHub and on Windows.
 
 ### Q9: Using a deliverable made by the best practice and passed, does its role achieve its purpose?
 

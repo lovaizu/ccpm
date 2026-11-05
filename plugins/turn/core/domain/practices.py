@@ -1,8 +1,9 @@
 """A kind's best practice, a JSON that Turn's roles read: the faults its form shows, checked before
 anything reads it; the Markdown a person reads of it, written beside it, the JSON staying the one
 source so the two cannot say different things; the Standard the evaluator is given, the best
-practice without its ways of meeting the questions; and the groups of its questions, each answered
-by a run of the evaluator of its own."""
+practice without its ways of meeting the questions; the groups of its questions, each answered
+by a run of the evaluator of its own; and the files of an example that is a copy of a work kept
+where its developer reads it, made from that work so the two cannot say different things."""
 
 from __future__ import annotations
 
@@ -23,6 +24,11 @@ MARKER = "DELETE_TEMPLATE_COMMENT"
 NOTE = re.compile(r"^> \[!NOTE\]\n> " + MARKER + r":.*(?:\n>.*)*", re.MULTILINE)
 MARK = re.compile(r"^(?:> " + MARKER + r":|\s*\"" + MARKER + r"\"\s*:)", re.MULTILINE)
 QUESTION = re.compile(r"\bQ\d+\b")
+# A link or a figure in Markdown, a fenced code block, whose text links nothing, and a link's target
+# that a copy elsewhere still reaches as it is: another site, or a place in the same page.
+LINK = re.compile(r"(!?)(\[[^\]]*\]\()([^)\s]+)(\))")
+FENCE = re.compile(r"(^```.*?^```)", re.MULTILINE | re.DOTALL)
+KEPT = re.compile(r"^(?:[a-z][a-z0-9+.-]*:|#)")
 
 
 def part_ids(items: list[dict[str, Any]]) -> list[str]:
@@ -93,6 +99,39 @@ def missing(path: str, data: dict[str, Any]) -> list[str]:
     ]
 
 
+def copies(path: str, data: dict[str, Any]) -> dict[str, bytes]:
+    """The files of the example of the best practice at the path, where it names the work it is a
+    copy of in `source`, each path with what it holds: the work, each relative link in it set to
+    reach from the example what it reached from the work, and each figure it shows from under the
+    work's folder, at the same relative path beside the example; none where it names no source.
+    Refuses, by FileNotFoundError, a work or a figure that is not there."""
+    if "source" not in data:
+        return {}
+    source = os.path.normpath(beside(path, data["source"]))
+    example = os.path.normpath(beside(path, data["example"]))
+    made: dict[str, bytes] = {}
+
+    def moved(link: re.Match[str]) -> str:
+        figure, opening, target, closing = link.groups()
+        if KEPT.match(target):
+            return link.group(0)
+        place = target.split("#")[0]
+        at = os.path.normpath(os.path.join(os.path.dirname(source), place))
+        if figure and not os.path.normpath(place).startswith(".."):
+            with open(at, "rb") as f:
+                made[os.path.normpath(os.path.join(os.path.dirname(example), place))] = f.read()
+            return link.group(0)
+        reach = os.path.relpath(at, os.path.dirname(example)).replace(os.sep, "/")
+        return figure + opening + reach + target[len(place) :] + closing
+
+    with open(source, encoding="utf-8") as f:
+        pieces = FENCE.split(f.read())
+    # The pieces between the code blocks, at the even places, are those that link.
+    text = "".join(p if n % 2 else LINK.sub(moved, p) for n, p in enumerate(pieces))
+    made[example] = text.encode("utf-8")
+    return made
+
+
 def texts(value: Any) -> list[str]:
     """Each string in the value at any depth."""
     if isinstance(value, str):
@@ -152,14 +191,16 @@ def parts(items: list[dict[str, Any]], depth: int = 0) -> list[str]:
 
 
 def markdown(kind: str, data: dict[str, Any]) -> str:
-    """The best practice of the kind as Markdown: its goal, a link to its template and its example
-    or else its parts, and its user benefits, then the practice for each user benefit, under the
-    question it meets."""
+    """The best practice of the kind as Markdown: its goal, a link to its template and its example,
+    with the work the example is a copy of, or else its parts, and its user benefits, then the
+    practice for each user benefit, under the question it meets."""
     questions = {q["id"]: q for q in data["user_benefits"]}
     out = [f"# {kind}", "", "## Goal", "", data["goal"]]
     for key in ("template", "example"):
         if key in data:
             out += ["", f"## {key.capitalize()}", "", f"[{data[key]}]({data[key]})"]
+            if key == "example" and "source" in data:
+                out[-1] += f", a copy of [{data['source']}]({data['source']})"
     if data.get("parts"):
         out += ["", "## Parts", "", *parts(data["parts"])]
     out += ["", "## User benefits", ""]

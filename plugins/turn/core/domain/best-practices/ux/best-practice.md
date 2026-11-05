@@ -10,7 +10,7 @@ The developer builds what the product's users want.
 
 ## Example
 
-[example.md](example.md)
+[example.md](example.md), a copy of [../../../../../../dev/turn/ux.md](../../../../../../dev/turn/ux.md)
 
 ## User benefits
 

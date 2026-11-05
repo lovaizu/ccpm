@@ -2,6 +2,7 @@
  "goal": "The developer builds what the product's users want.",
  "template": "template.md",
  "example": "example.md",
+ "source": "../../../../../../dev/turn/ux.md",
  "user_benefits": [
   {
    "id": "Q1",

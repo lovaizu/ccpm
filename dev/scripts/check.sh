@@ -33,9 +33,10 @@ done
 # The checks' own Python, beside the plugins'.
 pyrefly check --search-path dev/lane dev/scripts/*.py
 
-# A best practice is checked for the faults its form shows, and its Markdown, made from its JSON for
-# a person to read, for being left behind it, as either says what Turn does not hold. Each kind's lies
-# in its own folder as best-practice.json, beside its template and its example.
+# A best practice is checked for the faults its form shows, its Markdown, made from its JSON for a
+# person to read, for being left behind it, and its example, where it is a copy of a document of the
+# repository, for being left behind that document, as each says what Turn does not hold. Each kind's
+# lies in its own folder as best-practice.json, beside its template and its example.
 python3 plugins/turn/scripts/plan.py form plugins/turn/core/domain/best-practices/*/best-practice.json
 
 # Every figure carries the one style of dev/images/figures.css, so the figures look alike and a

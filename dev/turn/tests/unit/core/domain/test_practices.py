@@ -249,6 +249,56 @@ class Beside(helpers.testing.FolderTest):
         self.assertEqual(practices.kind_of(self.path), "kind")
 
 
+class Copies(helpers.testing.FolderTest):
+    """copies, the files of an example that is a copy of the document its source names."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.path = os.path.join("practices", "kind", "best-practice.json")
+        self.data = dict(DATA, example="example.md", source="../../doc/source.md")
+        self.copy = os.path.join("practices", "kind", "example.md")
+
+    def made(self, text: str) -> dict[str, bytes]:
+        self.write(os.path.join("doc", "source.md"), text)
+        return practices.copies(self.path, self.data)
+
+    def test_none_where_it_names_no_source(self):
+        self.assertEqual(practices.copies(self.path, DATA), {})
+
+    def test_the_source_as_it_is_where_it_links_nothing(self):
+        self.assertEqual(self.made("# Doc\n\nText.\n"), {self.copy: b"# Doc\n\nText.\n"})
+
+    def test_a_link_reaches_from_the_copy_what_it_reached_from_the_source(self):
+        made = self.made("[a](other.md#part) and [b](../LICENSE)\n")
+        self.assertEqual(made[self.copy], b"[a](../../doc/other.md#part) and [b](../../LICENSE)\n")
+
+    def test_a_link_to_a_page_a_place_in_it_or_another_site_is_kept(self):
+        text = "[a](https://example.com/x) [b](#part) [c](mailto:a@b.c)\n"
+        self.assertEqual(self.made(text)[self.copy], text.encode())
+
+    def test_a_figure_under_the_source_is_copied_beside_the_copy(self):
+        self.write(os.path.join("doc", "images", "idea.svg"), "<svg/>")
+        made = self.made("![Idea](images/idea.svg)\n")
+        self.assertEqual(made[self.copy], b"![Idea](images/idea.svg)\n")
+        self.assertEqual(made[os.path.join("practices", "kind", "images", "idea.svg")], b"<svg/>")
+
+    def test_a_figure_above_the_source_is_linked_where_it_is(self):
+        made = self.made("![Idea](../idea.svg)\n")
+        self.assertEqual(made, {self.copy: b"![Idea](../../idea.svg)\n"})
+
+    def test_a_link_in_a_code_block_is_text_and_kept(self):
+        text = "```text\n[a](other.md)\n```\n[b](other.md)\n"
+        self.assertEqual(
+            self.made(text)[self.copy], b"```text\n[a](other.md)\n```\n[b](../../doc/other.md)\n"
+        )
+
+    def test_a_source_or_figure_not_there_is_refused(self):
+        with self.assertRaises(FileNotFoundError):
+            practices.copies(self.path, self.data)
+        with self.assertRaises(FileNotFoundError):
+            self.made("![Idea](images/idea.svg)\n")
+
+
 class FaultsByTemplate(unittest.TestCase):
     def by(self, change=lambda d: None):
         data = copy.deepcopy(BY_TEMPLATE)
@@ -280,6 +330,15 @@ class FaultsByTemplate(unittest.TestCase):
 
 
 class Markdown(unittest.TestCase):
+    def test_names_the_source_its_example_is_copied_from(self):
+        named = dict(DATA, example="example.md", source="../../README.md")
+        text = practices.markdown("kind", named)
+        self.assertIn(
+            "## Example\n\n[example.md](example.md),"
+            " a copy of [../../README.md](../../README.md)\n",
+            text,
+        )
+
     def test_links_the_template_and_the_example_it_names(self):
         named = dict(BY_TEMPLATE, template="template.md", example="example.md")
         text = practices.markdown("kind", named)

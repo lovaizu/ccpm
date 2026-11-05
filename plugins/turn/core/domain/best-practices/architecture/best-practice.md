@@ -10,7 +10,7 @@ The developer builds and changes each part of the product so that the parts toge
 
 ## Example
 
-[example.md](example.md)
+[example.md](example.md), a copy of [../../../../../../dev/turn/architecture.md](../../../../../../dev/turn/architecture.md)
 
 ## User benefits
 

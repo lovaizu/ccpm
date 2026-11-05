@@ -2,6 +2,7 @@
  "goal": "Someone who meets the product for the first time starts using it, from the README alone, only when it serves their work.",
  "template": "template.md",
  "example": "example.md",
+ "source": "../../../../README.md",
  "user_benefits": [
   {
    "id": "Q1",

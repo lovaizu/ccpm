@@ -2,6 +2,7 @@
  "goal": "The developer builds and changes each part of the product so that the parts together give its UX.",
  "template": "template.md",
  "example": "example.md",
+ "source": "../../../../../../dev/turn/architecture.md",
  "user_benefits": [
   {
    "id": "Q1",

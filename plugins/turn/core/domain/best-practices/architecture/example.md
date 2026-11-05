@@ -1,6 +1,6 @@
 # Turn architecture
 
-This document says how Turn is built to give [its UX](../ux/example.md). Every kind of work goes
+This document says how Turn is built to give [its UX](../../../../../../dev/turn/ux.md). Every kind of work goes
 through one course of subagents, moved by the routes of Lane, the plugin that holds a subagent to
 the rules of its steps. The planner settles the kind of work. It hands Pin, the plugin that settles
 a design with the user, the work's goal and the questions of the kind's best practice. Pin
@@ -400,7 +400,8 @@ plugins/turn/
 ├── core/roles/<role>.md             the steps of up, the planner, the generator and the evaluator
 ├── core/domain/best-practices/      a folder for each kind: Best practice and its Questions, its
 │                                    template, and its example with the example's figures in images/;
-│                                    Turn's UX and architecture are examples there
+│                                    the examples of the README, the UX and the architecture are
+│                                    copies of Turn's own
 ├── core/domain/forms/               the forms of Call, Run, Standard, Round, Answers, Best practice
 ├── core/domain/                     the code of plan.py, rounds.py and throwaway.py
 ├── scripts/                         plan.py, rounds.py, throwaway.py
@@ -411,7 +412,7 @@ plugins/turn/
 └── README.md, CHANGELOG.md, images/   for Turn's users
 
 dev/turn/
-├── ux.md, architecture.md           links to Turn's UX and architecture in core/domain/best-practices/
+├── ux.md, architecture.md, images/  Turn's UX and architecture, with the architecture's figures
 ├── README.md, design-tree.json      for Turn's developers
 ├── cosmic-ray.toml                  the mutation testing
 └── tests/
@@ -427,12 +428,14 @@ dev/turn/
 <temporary folder>/lane/               Result, as the guard keeps it
 ```
 
-- **Turn's UX and architecture as the examples of their best practices, in
-  `core/domain/best-practices/`,** over `dev/turn/`, where the plugin best practice keeps what only
-  developers need: the generator reads a kind's example as one
-  work made by its template, so the example ships with Turn, and `dev/turn/` only links to it, so
-  each fact lies in one place (KR1.1). It costs Turn's installed folder carrying its own design
-  documents and their figures.
+- **Each example of a document Turn has, its README, UX and architecture, as a copy of it with its
+  figures, made by `plan.py example` from the document its best practice names in `source`,** over
+  the document kept as the example with a symbolic link to it: the developer reads the document
+  where the plugin best practice keeps it, the copy ships with Turn for the generator to read as
+  one work made by the template, and a copy shows on GitHub and on Windows, where a symbolic link
+  shows as a line of text; `plan.py form` fails on a copy that differs from its document, so the
+  two cannot drift (KR1.1). It costs a second copy of each document and its figures in the
+  repository, and a run of `plan.py example` after each change to them.
 - **The Request, the Design file and its Decisions in Pin's form**, which
   [the pinner](../../../../../pin/core/roles/pinner.md) gives, over a copy of it in Turn: a form kept
   twice drifts, and Pin would refuse what Turn hands it (KR1.1). It costs a change to Pin's form

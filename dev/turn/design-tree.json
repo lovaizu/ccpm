@@ -550,11 +550,11 @@
     "D22",
     "D23"
    ],
-   "decided": "The tree as before. Turn's UX and architecture lie as the examples of their best practices, each in its kind's folder in `core/domain/best-practices/` with its figures in `images/` there, and `dev/turn/ux.md` and `dev/turn/architecture.md` link to them, as the example must ship with Turn and each fact lies in one place. `tests/ux/` holds the trials of O1.",
+   "decided": "The tree as before. Turn's README, UX and architecture lie where the plugin best practice keeps them, `plugins/turn/README.md`, `dev/turn/ux.md` and `dev/turn/architecture.md`, each with its figures in `images/` beside it. Each is copied, with its figures, as the example of its best practice in its kind's folder in `core/domain/best-practices/` by `plan.py example`, from the path its best practice names in `source`, and `plan.py form` fails on a copy that differs from it, as the example must ship with Turn, a symbolic link shows on GitHub and on Windows as a line of text, and a copy made and checked from one document cannot drift from it. `tests/ux/` holds the trials of O1.",
    "settled_by": "reasoning",
    "grounds": [
     "dev/turn/architecture.md at 8e07a7ce:503-547 Directory structure before",
-    "dev/turn/ux.md links to ux/example.md"
+    "Agreed with the user, 2026-11-05: each example is a copy of the real document, made and checked automatically, not a symbolic link"
    ]
   },
   {

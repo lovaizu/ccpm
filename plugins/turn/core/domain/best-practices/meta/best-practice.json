@@ -40,7 +40,7 @@
   },
   {
    "id": "Q8",
-   "about": "example",
+   "about": "example, source",
    "what": "Reading the example, does the generator see what the template's slots become in one deliverable?"
   },
   {
@@ -111,7 +111,9 @@
   {
    "user_benefit": "Q8",
    "thinking": "Make the product's own deliverable of the kind from its design tree by the template and the practices, pass it by the questions, and name its file in `example`, as one finished deliverable shows what the comments alone do not.",
-   "steps": []
+   "steps": [
+    "Where the deliverable lies elsewhere for its own reader, such as a UX in the developers' folder, name its path in `source` and copy it with its figures beside the best practice by `plan.py example`, as a copy made by hand drifts from the deliverable, and a symbolic link shows as a line of text on GitHub and on Windows."
+   ]
   },
   {
    "user_benefit": "Q9",
