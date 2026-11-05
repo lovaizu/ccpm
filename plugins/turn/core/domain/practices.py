@@ -58,6 +58,11 @@ def beside(path: str, name: str) -> str:
     return os.path.join(os.path.dirname(path), name)
 
 
+def kind_of(path: str) -> str:
+    """The kind of the best practice at the path: the name of the folder it lies in."""
+    return os.path.basename(os.path.dirname(os.path.abspath(path)))
+
+
 def template(path: str, data: dict[str, Any]) -> list[str] | None:
     """The sections of the template the best practice at the path names, read as its format is,
     or None where it names none; refuses, by FileNotFoundError, one that is not there."""

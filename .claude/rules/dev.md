@@ -14,12 +14,13 @@ This file holds the order the work goes in. Each step names the best practice in
 `plugins/turn/core/domain/best-practices/` to open while doing it. A best practice's goal says what
 the deliverable's user achieves. Its template, or else its parts, says what the deliverable holds.
 Its user benefits ask whether the user gets what they need from the deliverable. Its practices hold a way to make each question pass.
-Open `refactor-doc.json` as well when the work is a document, and `refactor-code.json` when it is
-code: that one finishes it.
+Open `refactor-doc/best-practice.json` as well when the work is a document, and
+`refactor-code/best-practice.json` when it is code: that one finishes it.
 
 When a step's work needs something that its best practice does not ask, mend that best practice as
-Q8 of [meta.json](../../plugins/turn/core/domain/best-practices/meta.md) says. Do so whichever
-plugin you are building. Then make the work again against the mended best practice.
+Q8 of [meta/best-practice.json](../../plugins/turn/core/domain/best-practices/meta/best-practice.md)
+says. Do so whichever plugin you are building. Then make the work again against the mended best
+practice.
 
 - Rationale: every plugin here uses the same best practices, so a gap left in one comes back in
   every plugin that uses it.
@@ -44,9 +45,10 @@ best practices / skill authoring best practices) and the official plugins.
 ### 1. Write the UX
 
 **Settle the UX's decisions in `dev/<plugin>/design-tree.json`, the plugin's one design tree, with
-`ux.json` open. Write `dev/<plugin>/ux.md` from the tree by `ux-template.md`. Have the user agree to
-it before you make anything else.** Do the same for each document after it: its questions and
-decisions go into the same tree, and the document is written from them by its kind's template.
+`ux/best-practice.json` open. Write `dev/<plugin>/ux.md` from the tree by `ux/template.md`. Have the
+user agree to it before you make anything else.** Do the same for each document after it: its
+questions and decisions go into the same tree, and the document is written from them by its kind's
+template.
 
 - Rationale: each sentence of a document then rests on a decision of the tree, and two documents
   that rest on one decision say the same thing. The template holds each document to what its
@@ -57,8 +59,8 @@ decisions go into the same tree, and the document is written from them by its ki
 
 ### 2. Write the README
 
-**Write `plugins/<plugin>/README.md` from the UX with `readme.json` open, as step 1 says. Have the
-user agree to it before you make the architecture.**
+**Write `plugins/<plugin>/README.md` from the UX with `readme/best-practice.json` open, as step 1
+says. Have the user agree to it before you make the architecture.**
 
 - Rationale: everything after the README is built to what it promises the user. Built before it,
   that work would stand on a measure that no one has settled.
@@ -66,7 +68,7 @@ user agree to it before you make the architecture.**
 ### 3. Write the architecture
 
 **Write `dev/<plugin>/architecture.md` on [the plugin best practice](../../dev/plugin-best-practice.md),
-with `architecture.json` open. Have the user agree to it.** Place its files as
+with `architecture/best-practice.json` open. Have the user agree to it.** Place its files as
 [Directory structure](../../dev/plugin-best-practice.md#directory-structure) says. Design the
 plugin to take in what is general, as
 [Learning from each run](../../dev/plugin-best-practice.md#learning-from-each-run) says.
@@ -95,29 +97,30 @@ by the thinnest path.**
 ### 6. Build each slice
 
 **For each slice, in order, do a to e. Write each part's unit tests first, and see them fail. Only
-then write its code, as Q6 of [code.json](../../plugins/turn/core/domain/best-practices/code.md)
+then write its code, as Q6 of
+[code/best-practice.json](../../plugins/turn/core/domain/best-practices/code/best-practice.md)
 says.**
 
-a. **Write the unit tests of its code with `code.json` open, as
+a. **Write the unit tests of its code with `code/best-practice.json` open, as
    [Unit: code](../../dev/plugin-best-practice.md#unit-code) says: one for each class, each edge
    and each rule of the part's contract. Run them and see them fail.**
 
-b. **Write the code with `code.json` open until the tests pass**, as
+b. **Write the code with `code/best-practice.json` open until the tests pass**, as
    [Development](../../dev/plugin-best-practice.md#development) says.
 
 c. **Write each prompt, a skill or an agent, with
-   [prompt.json](../../plugins/turn/core/domain/best-practices/prompt.md) open. Run no trial of it
-   alone, as
+   [prompt/best-practice.json](../../plugins/turn/core/domain/best-practices/prompt/best-practice.md)
+   open. Run no trial of it alone, as
    [No trial of a prompt alone](../../dev/plugin-best-practice.md#no-trial-of-a-prompt-alone)
    says.** Each rule of its steps that must hold on every run goes to a lane in d, as Q14 of
-   `prompt.json` says, and e tests it.
+   `prompt/best-practice.json` says, and e tests it.
 
 d. **Lay the lanes the prompts' steps call for with `plugins/lane/scripts/lay.py`, with
-   `prompt.json` open.** Write them in a proposal in the form
+   `prompt/best-practice.json` open.** Write them in a proposal in the form
    [the lanes](../../plugins/lane/docs/lanes.md#the-proposal) gives. Read what `lay.py print`
    prints of it, and lay it with `lay.py write`. Add a check that no lane holds to Lane with
-   `code.json` open, as a lane of its own in a file of its own. Each check is then written and
-   tested once.
+   `code/best-practice.json` open, as a lane of its own in a file of its own. Each check is then
+   written and tested once.
    - Rationale: the architecture tests run the lanes and routes as laid, so lay them before those
      tests.
 
@@ -128,8 +131,8 @@ e. **Write the slice's architecture tests, as
    lies.**
 
 **After a trial, change a prompt or a document only for a cause that the records confirm, as Q15 of
-`prompt.json` says. Trace that cause to what the README and the architecture say the prompt or
-document should be.**
+`prompt/best-practice.json` says. Trace that cause to what the README and the architecture say the
+prompt or document should be.**
 
 - Rationale: what an AI does varies from run to run. A line added for one run's slip meets a
   different slip in the next run, so the additions never settle.

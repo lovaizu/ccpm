@@ -1,6 +1,6 @@
 # Turn architecture
 
-This document says how Turn is built to give [its UX](ux-example.md). Every kind of work goes
+This document says how Turn is built to give [its UX](../ux/example.md). Every kind of work goes
 through one course of subagents, moved by the routes of Lane, the plugin that holds a subagent to
 the rules of its steps. The planner settles the kind of work. It hands Pin, the plugin that settles
 a design with the requester, the work's goal and the questions of the kind's best practice. Pin
@@ -13,13 +13,13 @@ and each answer back, as given.
 
 ## Principles
 
-Turn builds on [the principles of the plugin best practice](../../../../../dev/plugin-best-practice.md#principles),
+Turn builds on [the principles of the plugin best practice](../../../../../../dev/plugin-best-practice.md#principles),
 and adds these.
 
 ### up is always a subagent
 
 up runs as a subagent for every requester, departing from
-[Where the orchestrator runs](../../../../../dev/plugin-best-practice.md#where-the-orchestrator-runs).
+[Where the orchestrator runs](../../../../../../dev/plugin-best-practice.md#where-the-orchestrator-runs).
 
 *Why*: Lane checks only subagents, so only a subagent's course is held to its routes. A course
 held by nothing could skip the evaluator on the way to the requester (KR1.1).
@@ -28,8 +28,8 @@ held by nothing could skip the evaluator on the way to the requester (KR1.1).
 
 up decides no move. The guard, Lane's hook script laid into Turn, names each next start from
 Lane's routes, departing from
-[The orchestrator holds the whole and decides](../../../../../dev/plugin-best-practice.md#the-orchestrator-holds-the-whole-and-decides),
-as [Where the router keeps the course](../../../../../dev/plugin-best-practice.md#where-the-router-keeps-the-course)
+[The orchestrator holds the whole and decides](../../../../../../dev/plugin-best-practice.md#the-orchestrator-holds-the-whole-and-decides),
+as [Where the router keeps the course](../../../../../../dev/plugin-best-practice.md#where-the-router-keeps-the-course)
 allows.
 
 *Why*: a move that up chose would rest on its reading of a reply, which nothing holds. Such a move
@@ -38,7 +38,7 @@ could skip Pin or the evaluator, while a route holds on every run (KR1.1).
 ### No learning from each run
 
 Turn does not take
-[Learning from each run](../../../../../dev/plugin-best-practice.md#learning-from-each-run). No role
+[Learning from each run](../../../../../../dev/plugin-best-practice.md#learning-from-each-run). No role
 follows the work once it is handed over.
 
 *Why*: no step of the UX follows the work handed over, and a step there would ask the requester
@@ -115,7 +115,7 @@ the requester meant, and a settled point reworded is asked again or held otherwi
 ### Every requester meets the same Turn
 
 No line of Turn names a plugin that starts it. An AI reaches Turn only through `turn:up`, in the
-forms that [Calling Turn](../../../docs/calling.md) gives.
+forms that [Calling Turn](../../../../docs/calling.md) gives.
 
 *Why*: a change made for one plugin's AI would reach every other requester unseen, and could settle
 their points otherwise than they meant (KR1.1).
@@ -129,12 +129,12 @@ pushes or publishes.
 *Why*: a command run as the work's user runs it, such as `tidy` on a Downloads folder, would
 otherwise change the requester's own files, which cannot be undone. The requester would then stop
 the run (KR1.1). What becomes of the work is the requester's to decide, as
-[Turn's README](../../../README.md) says.
+[Turn's README](../../../../README.md) says.
 
 ## User stories
 
 - **S1**: As the requester, I want to start Turn with my request, by typing `/turn:up` or, as an AI
-  that asks for a person, by starting `turn:up` as [Calling Turn](../../../docs/calling.md) says.
+  that asks for a person, by starting `turn:up` as [Calling Turn](../../../../docs/calling.md) says.
   Carries the request, the kind asked where the request does not say it, a new kind's best practice
   made first, the purpose put to confirm, and a fault of Turn's own that stops the run.
 - **S2**: As the requester, I want to answer the point that Turn puts to me. Carries each fact to
@@ -153,7 +153,7 @@ the run (KR1.1). What becomes of the work is the requester's to decide, as
   while Lane holds a subagent to its routes (KR1.1). It costs a resume of up for each point, which
   passes up and the starter (KR1.2), and Turn runs only in an interactive session, where Claude Code
   starts the orchestrator again as a subagent it started ends
-  ([the routes](../../../../lane/docs/routes.md#what-the-orchestrator-is-told)).
+  ([the routes](../../../../../lane/docs/routes.md#what-the-orchestrator-is-told)).
 - **Pin used as built, with Turn as Pin's maker AI and up as its go-between,** over a role of Turn
   that follows the pinner's steps itself: Turn copies none of Pin's rules, so the two cannot drift
   apart, and Pin runs as it was tested (KR1.1). It costs a route of Lane that names a subagent of a
@@ -244,7 +244,7 @@ sequenceDiagram
   point waits: the guard keeps going a role that ends with no result, and keeps up going while a
   start is due, so without `asks` the point would never reach the requester (KR1.1). Once resumed,
   the role gives a later result, and the guard takes it over `asks`
-  ([How a subagent gives its result](../../../../lane/docs/routes.md#how-a-subagent-gives-its-result)).
+  ([How a subagent gives its result](../../../../../lane/docs/routes.md#how-a-subagent-gives-its-result)).
   It costs each role that asks one result more.
 
 ### S2: an answer
@@ -358,19 +358,19 @@ sequenceDiagram
 
 ![Turn's deployment](images/deployment.svg)
 
-The requester installs Turn as [the README](../../../README.md#installation) says, which installs
+The requester installs Turn as [the README](../../../../README.md#installation) says, which installs
 Pin with it, and types `/turn:up`, or their AI's plugin lists `turn` in its `dependencies` and
-starts `turn:up` as [Calling Turn](../../../docs/calling.md) says.
+starts `turn:up` as [Calling Turn](../../../../docs/calling.md) says.
 
 - **Python 3.9 and its standard library only, for Turn's scripts and the guard,** over a later
   Python or packages: the requester installs nothing else for Turn, as
-  [Python 3.9 and the standard library](../../../../../dev/plugin-best-practice.md#python-39-and-the-standard-library)
+  [Python 3.9 and the standard library](../../../../../../dev/plugin-best-practice.md#python-39-and-the-standard-library)
   says, and starts sooner (KR1.2). It costs the code going without what later versions and packages
   give.
 - **A run's folder in `.turn/<yyyymmdd>-<name>/` at the root of the repository, or where the
   requester's AI says,** over a folder outside the repository: the requester reads each check of the
   work there, and a run that stopped goes on from it in any session (KR1.2), as
-  [Where a plugin writes its files](../../../../../dev/plugin-best-practice.md#where-a-plugin-writes-its-files)
+  [Where a plugin writes its files](../../../../../../dev/plugin-best-practice.md#where-a-plugin-writes-its-files)
   says for what may be kept. It costs a folder in the requester's repository that they keep out of
   their commits.
 - **A new kind's best practice in `.turn/best-practices/`** over the run's folder: every later run
@@ -396,8 +396,9 @@ plugins/turn/
 ├── skills/up/SKILL.md               the starter's steps for /turn:up
 ├── agents/<role>.md                 the entries of up, the planner, the generator and the evaluator
 ├── core/roles/<role>.md             the steps of up, the planner, the generator and the evaluator
-├── core/domain/best-practices/      Best practice and its Questions, Turn's own, with Turn's UX
-│                                    and architecture as examples, and their figures in images/
+├── core/domain/best-practices/      a folder for each kind: Best practice and its Questions, its
+│                                    template, and its example with the example's figures in images/;
+│                                    Turn's UX and architecture are examples there
 ├── core/domain/forms/               the forms of Call, Run, Standard, Round, Answers, Best practice
 ├── core/domain/                     the code of plan.py, rounds.py and throwaway.py
 ├── scripts/                         plan.py, rounds.py, throwaway.py
@@ -431,17 +432,17 @@ dev/turn/
   each fact lies in one place (KR1.1). It costs Turn's installed folder carrying its own design
   documents and their figures.
 - **The Request, the Design file and its Decisions in Pin's form**, which
-  [the pinner](../../../../pin/core/roles/pinner.md) gives, over a copy of it in Turn: a form kept
+  [the pinner](../../../../../pin/core/roles/pinner.md) gives, over a copy of it in Turn: a form kept
   twice drifts, and Pin would refuse what Turn hands it (KR1.1). It costs a change to Pin's form
   changing what Turn hands Pin, with no line of Turn changed.
 - **`hooks/lane/` as a link to Lane's code in this marketplace** over a copy, as
-  [Code kept once](../../../../../dev/plugin-best-practice.md#code-kept-once) says: a fix to the
+  [Code kept once](../../../../../../dev/plugin-best-practice.md#code-kept-once) says: a fix to the
   guard reaches every plugin it holds (KR1.1). It costs a fix in Lane reaching Turn's guard only once
   a developer lays Turn's rules again with Lane's `lay.py`.
 
 ## Tests
 
-Turn tests by [Test in the plugin best practice](../../../../../dev/plugin-best-practice.md#test),
+Turn tests by [Test in the plugin best practice](../../../../../../dev/plugin-best-practice.md#test),
 and differs from them where this section says.
 
 ![Turn's tests](images/tests.svg)

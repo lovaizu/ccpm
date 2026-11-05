@@ -1,1 +1,1 @@
-../../plugins/turn/core/domain/best-practices/architecture-example.md
+../../plugins/turn/core/domain/best-practices/architecture/example.md

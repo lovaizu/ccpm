@@ -6,11 +6,11 @@ Someone who meets the product for the first time starts using it, from the READM
 
 ## Template
 
-[readme-template.md](readme-template.md)
+[template.md](template.md)
 
 ## Example
 
-[readme-example.md](readme-example.md)
+[example.md](example.md)
 
 ## User benefits
 

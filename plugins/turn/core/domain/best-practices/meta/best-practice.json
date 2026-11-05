@@ -1,7 +1,7 @@
 {
  "goal": "The generator can make deliverables with which their role achieves its purpose.",
- "template": "meta-template.json",
- "example": "ux.json",
+ "template": "template.json",
+ "example": "../ux/best-practice.json",
  "user_benefits": [
   {
    "id": "Q1",

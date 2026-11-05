@@ -349,9 +349,9 @@ double in each role's place. The ux trials find the faults of a prompt's design,
 its results vary by the key results.
 
 *Why*: a prompt written by
-[the best practice for prompts](../plugins/turn/core/domain/best-practices/prompt.md) leaves only
-the model's variance and the faults of its design. A hook holds a rule on every run, which a
-prompt's words cannot
+[the best practice for prompts](../plugins/turn/core/domain/best-practices/prompt/best-practice.md)
+leaves only the model's variance and the faults of its design. A hook holds a rule on every run,
+which a prompt's words cannot
 ([best practices](https://code.claude.com/docs/en/best-practices)). A trial of one role alone meets
 only the cases that its developer set up, so it finds no fault that a real request brings out. The
 cost: a fault in a prompt shows only in a ux trial, which runs once every lower level passes.

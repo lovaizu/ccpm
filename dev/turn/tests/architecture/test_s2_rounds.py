@@ -136,7 +136,7 @@ class TestRounds(helpers.InRoundsTest):
         # Answers
         for path in (
             os.path.join(self.folder, runs.DESIGN),
-            os.path.join(runs.REPOSITORY, "readme.json"),
+            runs.practice_in(runs.REPOSITORY, "readme"),
             os.path.join(self.folder, "verification", "generator.json"),
         ):
             read = self.does(run, "Read", file_path=path)
@@ -162,10 +162,10 @@ class TestRounds(helpers.InRoundsTest):
 class TestNewKind(helpers.InRoundsTest):
     """The rounds of a new kind's best practice, made first."""
 
-    made_at = os.path.join(runs.REPOSITORY, "man-page.json")
+    made_at = runs.practice_in(runs.REPOSITORY, "man-page")
 
     def lays_rounds(self):
-        meta = runs.read_practice(os.path.join(runs.OWN, "meta.json"))
+        meta = runs.read_practice(runs.practice_in(runs.OWN, "meta"))
         tree = {
             "goal": {"what": "Someone who types man tidy learns each option.", "grounds": ["yes"]},
             "questions": runs.questions("meta", meta),
@@ -209,7 +209,7 @@ class TestNewKind(helpers.InRoundsTest):
         design = os.path.join(self.folder, runs.DESIGN)
         self.assertEqual(request.split("\n")[0], json.dumps({"design": design}))
         self.assertEqual(self.read_json(self.at(design))["questions"][0]["id"], "man-page/Q1")
-        self.assertTrue(os.path.exists(self.at(runs.REPOSITORY, "man-page.md")))
+        self.assertTrue(os.path.exists(self.at(runs.REPOSITORY, "man-page", "best-practice.md")))
         self.assertTrue(self.claude.start(UP, helpers.PINNER, request).made)
 
 

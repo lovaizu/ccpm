@@ -1,7 +1,7 @@
 {
  "goal": "Someone who meets the product for the first time starts using it, from the README alone, only when it serves their work.",
- "template": "readme-template.md",
- "example": "readme-example.md",
+ "template": "template.md",
+ "example": "example.md",
  "user_benefits": [
   {
    "id": "Q1",

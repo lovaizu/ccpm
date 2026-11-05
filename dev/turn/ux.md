@@ -1,1 +1,1 @@
-../../plugins/turn/core/domain/best-practices/ux-example.md
+../../plugins/turn/core/domain/best-practices/ux/example.md

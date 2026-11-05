@@ -28,9 +28,9 @@ done
 pyrefly check --search-path dev/lane dev/scripts/*.py
 
 # A best practice is checked for the faults its form shows, and its Markdown, made from its JSON for
-# a person to read, for being left behind it, as either says what Turn does not hold. A template in
-# JSON, `*-template.json`, shows the form with slots, so is no best practice.
-python3 plugins/turn/scripts/plan.py form $(ls plugins/turn/core/domain/best-practices/*.json | grep -v -- '-template\.json$')
+# a person to read, for being left behind it, as either says what Turn does not hold. Each kind's lies
+# in its own folder as best-practice.json, beside its template and its example.
+python3 plugins/turn/scripts/plan.py form plugins/turn/core/domain/best-practices/*/best-practice.json
 
 # Every figure carries the one style of dev/images/figures.css, so the figures look alike and a
 # colour is changed in one place (dev/plugin-best-practice.md, Directory structure).

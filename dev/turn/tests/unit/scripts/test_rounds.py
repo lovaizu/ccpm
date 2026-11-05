@@ -97,7 +97,7 @@ class Round(helpers.RoundsTest):
         self.assertEqual(
             out,
             "rounds.py: round 3 of note is of how the work reads.\n"
-            f"Best practice: {os.path.join(runs.OWN, 'refactor-doc.json')}\n"
+            f"Best practice: {runs.practice_in(runs.OWN, 'refactor-doc')}\n"
             f"Answers: {os.path.join(VERIFICATION, 'generator.json')}, in the form of"
             f" {os.path.join(helpers.files.FORMS, 'answers.json')}\n"
             "Questions:\n"

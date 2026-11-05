@@ -344,7 +344,7 @@ class Check(helpers.RoundsTest):
         )
 
     def test_a_best_practice_made_is_held_to_its_form(self):
-        made = os.path.join(runs.REPOSITORY, "man-page.json")
+        made = runs.practice_in(runs.REPOSITORY, "man-page")
         self.lay_run([helpers.work(kind="meta", paths=[made])])
         phases.settle(RUN)
         self.write(made, "{}")
@@ -354,7 +354,7 @@ class Check(helpers.RoundsTest):
         self.assertTrue(faults[0].startswith(f"{made} is out of its form"), faults)
 
     def test_a_best_practice_made_in_form_passes(self):
-        made = os.path.join(runs.REPOSITORY, "man-page.json")
+        made = runs.practice_in(runs.REPOSITORY, "man-page")
         self.lay_run([helpers.work(kind="meta", paths=[made])])
         phases.settle(RUN)
         self.write(made, json.dumps(helpers.PRACTICE, indent=1))

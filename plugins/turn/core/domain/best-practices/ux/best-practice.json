@@ -1,7 +1,7 @@
 {
  "goal": "The developer builds what the product's users want.",
- "template": "ux-template.md",
- "example": "ux-example.md",
+ "template": "template.md",
+ "example": "example.md",
  "user_benefits": [
   {
    "id": "Q1",

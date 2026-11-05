@@ -2,7 +2,7 @@
  "goal": {
   "what": "The requester gets a work they put to use as handed over, having decided only what is theirs.",
   "grounds": [
-   "Agreed with the user, 2026-11-05, when the UX example was shown: O1 of plugins/turn/core/domain/best-practices/ux-example.md."
+   "Agreed with the user, 2026-11-05, when the UX example was shown: O1 of plugins/turn/core/domain/best-practices/ux/example.md."
   ]
  },
  "questions": [
@@ -156,7 +156,7 @@
    "settled_by": "user",
    "grounds": [
     "Agreed with the user, 2026-11-05, when the UX example was shown: \"Users are roles, not person vs AI: Turn has one role, the requester.\"",
-    "ux.json Q1 thinking: \"Roles are cut by the want each brings to the product, not by what kind of thing takes them\""
+    "ux/best-practice.json Q1 thinking: \"Roles are cut by the want each brings to the product, not by what kind of thing takes them\""
    ]
   },
   {
@@ -187,7 +187,7 @@
    "decided": "O1 fails where the requester changes the work before they first put it to use, themselves or by asking; where they never put it to use; and where they are asked a point that is not theirs, such as a fact Turn could find. It succeeds where they put it to use as handed over.",
    "settled_by": "research",
    "grounds": [
-    "ux.json Q4 step 1: \"List how success or failure would show in what the role does or feels, such as giving up, undoing a result or working around the product.\""
+    "ux/best-practice.json Q4 step 1: \"List how success or failure would show in what the role does or feels, such as giving up, undoing a result or working around the product.\""
    ]
   },
   {
@@ -202,7 +202,7 @@
    "decided": "KR1.1: of the works the requester asks for, the share that goes wrong in a way of D3; lower is better. KR1.2: the time from the request to a work they put to use; shorter is better. A share counts a work once, however many ways it goes wrong. KR1.1 cannot get better by asking the requester everything, as a point not theirs counts against it, nor by handing over works never used, as those count too.",
    "settled_by": "reasoning",
    "grounds": [
-    "ux.json Q4 step 3: \"Ask whether both key results could get better while the role still does not get what the objective says.\""
+    "ux/best-practice.json Q4 step 3: \"Ask whether both key results could get better while the role still does not get what the objective says.\""
    ]
   },
   {
@@ -218,7 +218,7 @@
    "decided": "Only what the requester does, sees and receives: the request, the purpose to confirm, each fact to confirm and each decision of theirs, the design to approve, a decision that comes up while the work is made, and the work handed over. Turn is one participant; its parts, and the plugins it runs on, such as Pin and Lane, are not named.",
    "settled_by": "reasoning",
    "grounds": [
-    "ux.json Q7 thinking: \"the UX says only what its roles mean to do, see and receive\""
+    "ux/best-practice.json Q7 thinking: \"the UX says only what its roles mean to do, see and receive\""
    ]
   },
   {
@@ -233,7 +233,7 @@
    "decided": "A README for `tidy`, a command-line tool that sorts a Downloads folder: a kind Turn knows, as most requests will be, and the work of the README's walkthrough, so the developer meets one example across both documents.",
    "settled_by": "reasoning",
    "grounds": [
-    "ux.json Q5 thinking: \"one run of the main path to the objective, the one most of its role take\""
+    "ux/best-practice.json Q5 thinking: \"one run of the main path to the objective, the one most of its role take\""
    ]
   },
   {
@@ -246,10 +246,10 @@
     "D5",
     "D6"
    ],
-   "decided": "The requester asks for the work. Turn puts its purpose to confirm. Until no decision is open, Turn puts each fact it found to confirm and each decision of the requester's with a recommendation, one at a time. Turn shows the design to approve. While the work is made, Turn puts each decision of the requester's that comes up; how often Turn makes it again is inside Turn, so not said, by ux.json Q7. Turn hands the work over, not committed. Headed \"O1: The requester has a README made for tidy\".",
+   "decided": "The requester asks for the work. Turn puts its purpose to confirm. Until no decision is open, Turn puts each fact it found to confirm and each decision of the requester's with a recommendation, one at a time. Turn shows the design to approve. While the work is made, Turn puts each decision of the requester's that comes up; how often Turn makes it again is inside Turn, so not said, by ux/best-practice.json Q7. Turn hands the work over, not committed. Headed \"O1: The requester has a README made for tidy\".",
    "settled_by": "reasoning",
    "grounds": [
-    "ux.json Q5 step 3: \"the first message is the role's request, the last gives the role the end, and each moves toward it.\""
+    "ux/best-practice.json Q5 step 3: \"the first message is the role's request, the last gives the role the end, and each moves toward it.\""
    ]
   },
   {
@@ -273,7 +273,7 @@
     "dev/turn/architecture.md at 8e07a7ce:148-149 S5: \"As the person, I want to type `/turn:up` with a run's folder, alone or with a change, and have the run go on from its folder, or the work made again with the change in its design.\"",
     "plugins/turn/skills/up/SKILL.md:18-19: \"`For the maker of Turn:`: tell the person that Turn stopped on a fault of its own, with the message as it is, and stop.\"",
     "dev/turn/architecture.md at 8e07a7ce:87-88: \"A question not met in the content phase goes back to the decisions that serve it, through Pin.\"",
-    "ux.json Q6 steps: \"Go through each message of the main path, and list all that could go wrong there\" / \"Where the role gives up partway, say what it is left with.\""
+    "ux/best-practice.json Q6 steps: \"Go through each message of the main path, and list all that could go wrong there\" / \"Where the role gives up partway, say what it is left with.\""
    ]
   },
   {
@@ -289,7 +289,7 @@
    "settled_by": "reasoning",
    "grounds": [
     "O1 of the UX: \"having decided only what is theirs\"",
-    "plugins/turn/core/domain/best-practices/readme.json Q1 thinking: \"in words the reader already uses\""
+    "plugins/turn/core/domain/best-practices/readme/best-practice.json Q1 thinking: \"in words the reader already uses\""
    ]
   },
   {
@@ -304,7 +304,7 @@
    "decided": "For one who wants an AI to make a work they will put to use as it comes, not a draft they read and mend; they get that work, having decided only what is theirs.",
    "settled_by": "reasoning",
    "grounds": [
-    "plugins/turn/core/domain/best-practices/readme.json Q2 thinking: \"taken from what the product's users want, such as the objectives in its UX\""
+    "plugins/turn/core/domain/best-practices/readme/best-practice.json Q2 thinking: \"taken from what the product's users want, such as the objectives in its UX\""
    ]
   },
   {
@@ -350,7 +350,7 @@
    "settled_by": "research",
    "grounds": [
     "plugins/turn/CHANGELOG.md has no released version yet",
-    "readme.json Q5 thinking: \"Where the product is not yet fit for use, such as a release still in development or one no longer kept up, say so at the top\""
+    "readme/best-practice.json Q5 thinking: \"Where the product is not yet fit for use, such as a release still in development or one no longer kept up, say so at the top\""
    ]
   },
   {
@@ -380,7 +380,7 @@
    "decided": "The UX scenario's run: a README for tidy; the purpose confirmed, one fact confirmed, one decision taken, the design approved, the README handed over not committed. Not yet a real run, as Turn is being rebuilt; a real run's output replaces it once Turn is built.",
    "settled_by": "reasoning",
    "grounds": [
-    "plugins/turn/core/domain/best-practices/readme.json Q5 steps: \"Take what the user gives and what the product shows from the record of a real run\""
+    "plugins/turn/core/domain/best-practices/readme/best-practice.json Q5 steps: \"Take what the user gives and what the product shows from the record of a real run\""
    ]
   },
   {
@@ -434,7 +434,7 @@
    "decided": "The template's order: what Turn is, the status, whom it is for and the gain, the idea, the non-goals; then Requirements, Installation, Walkthrough, How it works, Documentation, License. A reader who learns Turn is not for them stops after the opening; the Walkthrough comes after Installation, as it runs Turn installed.",
    "settled_by": "reasoning",
    "grounds": [
-    "readme.json Q11 thinking: \"Order the README as the reader decides, from what every reader needs to what only a reader who has chosen the product needs\""
+    "readme/best-practice.json Q11 thinking: \"Order the README as the reader decides, from what every reader needs to what only a reader who has chosen the product needs\""
    ]
   },
   {
@@ -506,7 +506,7 @@
    "grounds": [
     "dev/turn/architecture.md at 8e07a7ce:153-197 Components and what each role alone decides",
     "dev/turn/architecture.md at 8e07a7ce:199-238 the choices",
-    "architecture.json Q16 thinking: \"leaving how a component works inside to where it is built\""
+    "architecture/best-practice.json Q16 thinking: \"leaving how a component works inside to where it is built\""
    ]
   },
   {
@@ -522,7 +522,7 @@
    "settled_by": "reasoning",
    "grounds": [
     "dev/turn/architecture.md at 8e07a7ce:240-273 the data model before",
-    "architecture-template.md Data model: \"each data the roles pass or keep, by its name alone\""
+    "architecture/template.md Data model: \"each data the roles pass or keep, by its name alone\""
    ]
   },
   {
@@ -568,11 +568,11 @@
     "D22",
     "D23"
    ],
-   "decided": "The tree as before. Turn's UX and architecture lie as the examples of their best practices in `core/domain/best-practices/`, with their figures in `images/` there, and `dev/turn/ux.md` and `dev/turn/architecture.md` link to them, as the example must ship with Turn and each fact lies in one place. `tests/ux/` holds the trials of O1.",
+   "decided": "The tree as before. Turn's UX and architecture lie as the examples of their best practices, each in its kind's folder in `core/domain/best-practices/` with its figures in `images/` there, and `dev/turn/ux.md` and `dev/turn/architecture.md` link to them, as the example must ship with Turn and each fact lies in one place. `tests/ux/` holds the trials of O1.",
    "settled_by": "reasoning",
    "grounds": [
     "dev/turn/architecture.md at 8e07a7ce:503-547 Directory structure before",
-    "dev/turn/ux.md links to ux-example.md"
+    "dev/turn/ux.md links to ux/example.md"
    ]
   },
   {
@@ -614,7 +614,7 @@
    "decided": "Each role's steps, each data's fields, each guard rule and each route's wording: they lie where each is built, as a line about them goes untrue at the next change inside.",
    "settled_by": "reasoning",
    "grounds": [
-    "architecture.json Q16 thinking"
+    "architecture/best-practice.json Q16 thinking"
    ]
   }
  ]

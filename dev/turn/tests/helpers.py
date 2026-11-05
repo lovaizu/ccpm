@@ -45,7 +45,7 @@ PRACTICE: dict[str, Any] = {
 }
 # Where a run's folder lies, and the repository's best practice of `note`.
 RUN = os.path.join(".turn", "20261103-tidy-note")
-NOTE = os.path.join(".turn", "best-practices", "note.json")
+NOTE = os.path.join(".turn", "best-practices", "note", "best-practice.json")
 VERIFICATION = os.path.join(RUN, "verification")
 # A Call of the kind `note`, as the planner writes it.
 CALL: dict[str, Any] = {
@@ -213,7 +213,7 @@ PINNER = testing.Run("pin:pinner", "n1")
 CALLER = testing.Run("caller:caller", "c1")
 # The run's folder up picks for "a README for tidy" on the day of the tests.
 TIDY_RUN = os.path.join(".turn", "20261104-tidy-readme")
-README_PRACTICE = runs.read_practice(os.path.join(runs.OWN, "readme.json"))
+README_PRACTICE = runs.read_practice(runs.practice_in(runs.OWN, "readme"))
 
 
 def entry_of(root: str, *path: str) -> str:
@@ -530,7 +530,7 @@ class InRoundsTest(TurnTest):
         """The run stopped in its rounds: tidy's README, its design confirmed and read out, by the
         repository's own best practice of a README, PRACTICE, which Turn takes over its own, so
         each round has a run of the evaluator for each of three questions."""
-        self.write_json(self.at(runs.REPOSITORY, "readme.json"), PRACTICE)
+        self.write_json(self.at(runs.practice_in(runs.REPOSITORY, "readme")), PRACTICE)
         self.lays("rounds", tidy_tree(PRACTICE), **READ_OUT)
 
     def questions(self) -> list[str]:

@@ -16,9 +16,11 @@ from typing import Any
 import files
 import practices
 
-# Turn's own best practices, and the repository's, which a run takes over Turn's of the same kind.
+# Turn's own best practices, and the repository's, which a run takes over Turn's of the same kind;
+# each kind's lies in a folder of the kind's name, with its template and its example beside it.
 OWN = os.path.join(os.path.dirname(os.path.abspath(__file__)), "best-practices")
 REPOSITORY = os.path.join(".turn", "best-practices")
+PRACTICE = "best-practice.json"
 # The kind of the work that makes a best practice, by the best practice of a best practice.
 META = "meta"
 # The files of a work's folder.
@@ -38,10 +40,15 @@ def practice_of(kind: str) -> str | None:
     """The path of the kind's best practice: the repository's, else Turn's own; None where neither
     has one."""
     for folder in (REPOSITORY, OWN):
-        path = os.path.join(folder, f"{kind}.json")
+        path = practice_in(folder, kind)
         if os.path.isfile(path):
             return path
     return None
+
+
+def practice_in(folder: str, kind: str) -> str:
+    """The path of the kind's best practice in the folder of best practices."""
+    return os.path.join(folder, kind, PRACTICE)
 
 
 def read_practice(path: str) -> dict[str, Any]:
@@ -98,7 +105,7 @@ def works_of(run: str, call: dict[str, Any]) -> list[dict[str, Any]]:
     kind = call["kind"]
     work = {
         "kind": kind,
-        "practice": practice_of(kind) or os.path.join(REPOSITORY, f"{kind}.json"),
+        "practice": practice_of(kind) or practice_in(REPOSITORY, kind),
         "reading": call["reading"],
         "folder": run,
         "paths": list(call.get("given", {}).get("work", [])),
@@ -111,7 +118,7 @@ def works_of(run: str, call: dict[str, Any]) -> list[dict[str, Any]]:
     made = {
         **work,
         "kind": META,
-        "practice": os.path.join(OWN, f"{META}.json"),
+        "practice": practice_in(OWN, META),
         "reading": "refactor-doc",
         "folder": os.path.join(run, "best-practice"),
         "paths": [work["practice"]],
@@ -126,7 +133,7 @@ def begin(run: str, data: dict[str, Any], work: dict[str, Any]) -> str:
     cannot be read or is out of its form."""
     call = files.load(os.path.join(run, CALL), "call")
     practice = read_practice(work["practice"])
-    reading = read_practice(os.path.join(OWN, f"{work['reading']}.json"))
+    reading = read_practice(practice_in(OWN, work["reading"]))
     given = call.get("given", {})
     # Where the Call's kind has no best practice yet, the work makes it.
     if practice_of(call["kind"]) is None:

@@ -6,11 +6,11 @@ The generator can make deliverables with which their role achieves its purpose.
 
 ## Template
 
-[meta-template.json](meta-template.json)
+[template.json](template.json)
 
 ## Example
 
-[ux.json](ux.json)
+[../ux/best-practice.json](../ux/best-practice.json)
 
 ## User benefits
 

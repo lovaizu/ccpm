@@ -16,11 +16,14 @@ DESIGN = os.path.join(RUN, runs.DESIGN)
 
 class PracticeOf(helpers.RepositoryTest):
     def test_the_repositorys_best_practice_is_taken_over_turns_own(self):
-        self.write_json(os.path.join(runs.REPOSITORY, "readme.json"), helpers.PRACTICE)
-        self.assertEqual(runs.practice_of("readme"), os.path.join(runs.REPOSITORY, "readme.json"))
+        path = os.path.join(".turn", "best-practices", "readme", "best-practice.json")
+        self.write_json(path, helpers.PRACTICE)
+        self.assertEqual(runs.practice_of("readme"), path)
 
     def test_turns_own_is_taken_where_the_repository_has_none(self):
-        self.assertEqual(runs.practice_of("readme"), os.path.join(runs.OWN, "readme.json"))
+        self.assertEqual(
+            runs.practice_of("readme"), os.path.join(runs.OWN, "readme", "best-practice.json")
+        )
 
     def test_a_kind_neither_has_has_none(self):
         self.assertIsNone(runs.practice_of("man-page"))
@@ -116,7 +119,7 @@ class Start(helpers.RepositoryTest):
             self.read_json(os.path.join(RUN, runs.STANDARD)),
             practices.standard(helpers.PRACTICE),
         )
-        reading = runs.read_practice(os.path.join(runs.OWN, "refactor-doc.json"))
+        reading = runs.read_practice(runs.practice_in(runs.OWN, "refactor-doc"))
         self.assertEqual(
             self.read_json(os.path.join(RUN, runs.READING)), practices.standard(reading)
         )
@@ -141,9 +144,9 @@ class Start(helpers.RepositoryTest):
         request = self.started(data)
         # Then: the Run holds the best practice's work with Pin, by meta, then the man page's,
         # waiting; the hand-over asks meta's questions of the kind's purpose
-        made = os.path.join(runs.REPOSITORY, "man-page.json")
+        made = runs.practice_in(runs.REPOSITORY, "man-page")
         folder = os.path.join(RUN, "best-practice")
-        meta = os.path.join(runs.OWN, "meta.json")
+        meta = runs.practice_in(runs.OWN, "meta")
         self.assertEqual(
             self.run_data()["works"],
             [
@@ -171,7 +174,7 @@ class Start(helpers.RepositoryTest):
         # Given: a Call of meta, whose best practice Turn has, with no kind_goal
         request = self.started(helpers.call(kind="meta"))
         # Then: the one work, by meta, is handed to Pin under the Call's goal and request
-        meta = os.path.join(runs.OWN, "meta.json")
+        meta = runs.practice_in(runs.OWN, "meta")
         works = self.run_data()["works"]
         self.assertEqual(works, [helpers.work(kind="meta", practice=meta, paths=[], at="pin")])
         self.assertEqual(
@@ -300,7 +303,7 @@ class Advance(helpers.RepositoryTest):
 
     def test_a_best_practice_made_begins_the_work_by_it(self):
         # Given: the best practice of man-page made, in its rounds, the man page waiting
-        made = os.path.join(runs.REPOSITORY, "man-page.json")
+        made = runs.practice_in(runs.REPOSITORY, "man-page")
         self.write_json(made, helpers.PRACTICE)
         folder = os.path.join(RUN, "best-practice")
         self.lay_run(
@@ -315,7 +318,7 @@ class Advance(helpers.RepositoryTest):
         # handed to Pin with its questions under the Call's goal
         self.assertEqual([w["at"] for w in self.run_data()["works"]], ["done", "pin"])
         self.assertEqual(
-            self.read(os.path.join(runs.REPOSITORY, "man-page.md")),
+            self.read(os.path.join(runs.REPOSITORY, "man-page", "best-practice.md")),
             practices.markdown("man-page", helpers.PRACTICE),
         )
         tree = self.read_json(DESIGN)
@@ -324,7 +327,7 @@ class Advance(helpers.RepositoryTest):
         self.assertEqual(request, json.dumps({"design": DESIGN}) + "\na note on tidy")
 
     def test_a_best_practice_made_out_of_its_form_keeps_the_work_in_its_rounds(self):
-        made = os.path.join(runs.REPOSITORY, "man-page.json")
+        made = runs.practice_in(runs.REPOSITORY, "man-page")
         self.write_json(made, {"goal": "g"})
         self.lay_run(
             [

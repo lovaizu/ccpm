@@ -6,11 +6,11 @@ The developer builds what the product's users want.
 
 ## Template
 
-[ux-template.md](ux-template.md)
+[template.md](template.md)
 
 ## Example
 
-[ux-example.md](ux-example.md)
+[example.md](example.md)
 
 ## User benefits
 

@@ -165,7 +165,7 @@ class Next(helpers.RoundsTest):
         self.assertEqual(self.run_data()["works"][0]["at"], "done")
 
     def test_a_best_practice_finished_hands_over_the_work_by_it(self):
-        made = os.path.join(runs.REPOSITORY, "man-page.json")
+        made = runs.practice_in(runs.REPOSITORY, "man-page")
         self.write_json(made, helpers.PRACTICE)
         self.lay_run(
             [
@@ -300,14 +300,16 @@ class Practices(helpers.testing.FolderTest):
 
     def setUp(self) -> None:
         super().setUp()
-        self.path = os.path.join(self.base, "kind.json")
+        self.folder = os.path.join(self.base, "kind")
+        self.path = os.path.join(self.folder, "best-practice.json")
         self.write_json(self.path, DATA)
 
     def test_form_fails_until_markdown_writes_it(self):
         self.assertEqual(ran("form", self.path)[0], 1)
         self.assertEqual(ran("markdown", self.path), (0, "", ""))
         self.assertEqual(
-            self.read(os.path.join(self.base, "kind.md")), practices.markdown("kind", DATA)
+            self.read(os.path.join(self.folder, "best-practice.md")),
+            practices.markdown("kind", DATA),
         )
         self.assertEqual(ran("form", self.path), (0, "", ""))
 
@@ -325,22 +327,22 @@ class Practices(helpers.testing.FolderTest):
         del data["parts"]
         for question in data["user_benefits"]:
             question["about"] = "the whole"
-        data["template"] = "kind-template.md"
+        data["template"] = "template.md"
         self.write_json(self.path, data)
-        self.write(os.path.join(self.base, "kind-template.md"), "# <P>\n\n## Use\n")
+        self.write(os.path.join(self.folder, "template.md"), "# <P>\n\n## Use\n")
         ran("markdown", self.path)
         code, _, err = ran("form", self.path)
         self.assertEqual(code, 1)
         self.assertIn(f"plan.py: {self.path}: section Use has no question about it", err)
         self.assertIn(
-            "[kind-template.md](kind-template.md)", self.read(os.path.join(self.base, "kind.md"))
+            "[template.md](template.md)", self.read(os.path.join(self.folder, "best-practice.md"))
         )
 
     def test_form_fails_on_a_file_it_names_that_is_not_beside_it(self):
-        self.write_json(self.path, dict(DATA, example="kind-example.md"))
+        self.write_json(self.path, dict(DATA, example="example.md"))
         code, _, err = ran("form", self.path)
         self.assertEqual(code, 1)
-        self.assertIn(f"plan.py: {self.path}: its example kind-example.md is not beside it", err)
+        self.assertIn(f"plan.py: {self.path}: its example example.md is not beside it", err)
 
     def test_form_fails_on_a_json_out_of_its_schema(self):
         self.write_json(self.path, {"goal": "g"})
@@ -352,10 +354,12 @@ class Practices(helpers.testing.FolderTest):
         made = practices.markdown("kind", DATA)
         for changed in (made + "More.\n", made[:-1]):
             with self.subTest(changed=changed[-6:]):
-                self.write(os.path.join(self.base, "kind.md"), changed)
+                self.write(os.path.join(self.folder, "best-practice.md"), changed)
                 code, _, err = ran("form", self.path)
                 self.assertEqual(code, 1)
-                self.assertIn("kind.md is not as its JSON makes it; run plan.py markdown", err)
+                self.assertIn(
+                    "best-practice.md is not as its JSON makes it; run plan.py markdown", err
+                )
 
     def test_each_command_names_a_json_it_cannot_read(self):
         self.write(self.path, "{")
@@ -364,7 +368,7 @@ class Practices(helpers.testing.FolderTest):
                 code, _, err = ran(command, self.path)
                 self.assertEqual(code, 1)
                 self.assertIn(f"plan.py: {self.path}: {self.path} is not JSON", err)
-        self.assertFalse(os.path.exists(os.path.join(self.base, "kind.md")))
+        self.assertFalse(os.path.exists(os.path.join(self.folder, "best-practice.md")))
 
 
 if __name__ == "__main__":

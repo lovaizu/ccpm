@@ -50,7 +50,7 @@ def settled(run: str) -> int:
     standard = files.load(os.path.join(work["folder"], name), "standard")
     kind = work["reading"] if reads else work["kind"]
     asks = {f"{kind}/{q['id']}": q["what"] for q in standard["user_benefits"]}
-    practice = os.path.join(runs.OWN, f"{work['reading']}.json") if reads else work["practice"]
+    practice = runs.practice_in(runs.OWN, work["reading"]) if reads else work["practice"]
     lines = [
         f"rounds.py: round {made['round']} of {work['kind']} is of {OF[made['phase']]}.",
         f"Best practice: {practice}",

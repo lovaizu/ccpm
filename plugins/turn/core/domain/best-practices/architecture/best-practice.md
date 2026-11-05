@@ -6,11 +6,11 @@ The developer builds and changes each part of the product so that the parts toge
 
 ## Template
 
-[architecture-template.md](architecture-template.md)
+[template.md](template.md)
 
 ## Example
 
-[architecture-example.md](architecture-example.md)
+[example.md](example.md)
 
 ## User benefits
 

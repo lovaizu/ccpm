@@ -180,28 +180,38 @@ class Beside(helpers.testing.FolderTest):
 
     def setUp(self) -> None:
         super().setUp()
-        self.path = os.path.join(self.base, "kind.json")
+        self.folder = os.path.join(self.base, "kind")
+        self.path = os.path.join(self.folder, "best-practice.json")
 
     def test_none_where_it_names_no_template(self):
         self.assertIsNone(practices.template(self.path, DATA))
         self.assertEqual(practices.missing(self.path, DATA), [])
 
     def test_the_sections_of_a_template_in_markdown(self):
-        self.write(os.path.join(self.base, "kind-template.md"), TEMPLATE)
-        named = dict(BY_TEMPLATE, template="kind-template.md")
+        self.write(os.path.join(self.folder, "template.md"), TEMPLATE)
+        named = dict(BY_TEMPLATE, template="template.md")
         self.assertEqual(practices.template(self.path, named), SECTIONS)
 
     def test_the_keys_of_a_template_in_json(self):
-        self.write(os.path.join(self.base, "kind-template.json"), '{"$comment": "x", "goal": "g"}')
-        named = dict(BY_TEMPLATE, template="kind-template.json")
+        self.write(os.path.join(self.folder, "template.json"), '{"$comment": "x", "goal": "g"}')
+        named = dict(BY_TEMPLATE, template="template.json")
         self.assertEqual(practices.template(self.path, named), ["goal"])
 
     def test_each_file_named_that_is_not_there(self):
-        self.write(os.path.join(self.base, "kind-template.md"), TEMPLATE)
-        named = dict(BY_TEMPLATE, template="kind-template.md", example="kind-example.md")
+        self.write(os.path.join(self.folder, "template.md"), TEMPLATE)
+        named = dict(BY_TEMPLATE, template="template.md", example="example.md")
         self.assertEqual(
-            practices.missing(self.path, named), ["its example kind-example.md is not beside it"]
+            practices.missing(self.path, named), ["its example example.md is not beside it"]
         )
+
+    def test_an_example_in_the_folder_of_another_kind(self):
+        named = dict(DATA, example="../other/best-practice.json")
+        self.write_json(self.path, named)
+        self.write(os.path.join(self.base, "other", "best-practice.json"), "{}")
+        self.assertEqual(practices.missing(self.path, named), [])
+
+    def test_the_kind_is_the_name_of_its_folder(self):
+        self.assertEqual(practices.kind_of(self.path), "kind")
 
 
 class FaultsByTemplate(unittest.TestCase):
@@ -236,10 +246,10 @@ class FaultsByTemplate(unittest.TestCase):
 
 class Markdown(unittest.TestCase):
     def test_links_the_template_and_the_example_it_names(self):
-        named = dict(BY_TEMPLATE, template="kind-template.md", example="kind-example.md")
+        named = dict(BY_TEMPLATE, template="template.md", example="example.md")
         text = practices.markdown("kind", named)
-        self.assertIn("## Template\n\n[kind-template.md](kind-template.md)\n", text)
-        self.assertIn("## Example\n\n[kind-example.md](kind-example.md)\n", text)
+        self.assertIn("## Template\n\n[template.md](template.md)\n", text)
+        self.assertIn("## Example\n\n[example.md](example.md)\n", text)
         self.assertNotIn("## Template", practices.markdown("kind", DATA))
         self.assertNotIn("## Example", practices.markdown("kind", DATA))
 
