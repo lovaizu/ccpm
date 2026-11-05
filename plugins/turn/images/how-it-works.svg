@@ -74,7 +74,8 @@
   <text class="label small halo start" x="40" y="110">your request,</text>
   <text class="label small halo start" x="40" y="126">each answer</text>
   <path class="line" d="M270,120 L160,185" marker-end="url(#arrow)"/>
-  <text class="label small halo mid" x="222" y="168">each point</text>
+  <text class="label small halo mid" x="214" y="196">facts found,</text>
+  <text class="label small halo mid" x="214" y="211">your decisions</text>
   <path class="line" d="M460,103 L560,103" marker-end="url(#arrow)"/>
   <text class="label small halo mid" x="510" y="94">writes</text>
   <path class="line" d="M600,136 L440,310" marker-end="url(#arrow)"/>

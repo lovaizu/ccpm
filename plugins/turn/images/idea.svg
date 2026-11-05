@@ -64,7 +64,7 @@
   <text class="label small mid halo" x="558" y="80">each gap filled</text>
   <text class="label small mid halo" x="558" y="95">with a guess</text>
   <path class="line" d="M770,90 L846,90" marker-end="url(#a)"/>
-  <text class="label small" x="640" y="145">You meet each guess as you use it, and mend the work.</text>
+  <text class="label small" x="520" y="145">You find what falls short as you use the work, and mend it.</text>
   <rect class="frame" x="10" y="180" width="980" height="230" rx="8"/>
   <text class="frame-name" x="24" y="202">Turn</text>
   <rect class="box" x="40" y="240" width="130" height="60" rx="6"/>
@@ -78,21 +78,22 @@
   <text class="name" x="910.0" y="268.0">You</text>
   <text class="kind" x="910.0" y="286.0">use the work</text>
   <path class="line" d="M170,262 L326,262" marker-end="url(#a)"/>
-  <text class="label small mid halo" x="248" y="240">your decisions,</text>
-  <text class="label small mid halo" x="248" y="255">one at a time</text>
+  <text class="label small mid halo" x="248" y="240">each decision</text>
+  <text class="label small mid halo" x="248" y="255">of yours</text>
   <path class="line" d="M326,288 L170,288" marker-end="url(#a)"/>
-  <text class="label small mid halo" x="248" y="305">facts to confirm</text>
+  <text class="label small mid halo" x="248" y="305">facts it found,</text>
+  <text class="label small mid halo" x="248" y="320">to confirm</text>
   <path class="line" d="M480,270 L636,270" marker-end="url(#a)"/>
-  <text class="label small mid halo" x="558" y="250">made by the kind’s</text>
-  <text class="label small mid halo" x="558" y="265">best practice</text>
+  <text class="label small mid halo" x="558" y="250">made by the best practice</text>
+  <text class="label small mid halo" x="558" y="265">for its kind of work</text>
   <path class="line" d="M770,270 L846,270" marker-end="url(#a)"/>
   <text class="label small mid halo" x="808" y="258">as it comes</text>
   <rect class="lane" x="625" y="340" width="160" height="56" rx="6"/>
   <text class="name" x="705.0" y="366.0">A fresh AI</text>
-  <text class="kind" x="705.0" y="384.0">reads only the work</text>
+  <text class="kind" x="705.0" y="384.0">never saw your answers</text>
   <path class="line" d="M705,340 L705,314" marker-end="url(#a)"/>
   <text class="label small start" x="714" y="331">reads as its user would</text>
   <path class="line dashed" d="M640,368 L410,312" marker-end="url(#a)"/>
-  <text class="label small mid halo" x="500" y="370">a question not met</text>
-  <text class="label small mid halo" x="500" y="385">goes back to the design</text>
+  <text class="label small mid halo" x="500" y="370">what falls short goes back,</text>
+  <text class="label small mid halo" x="500" y="385">to be decided and made again</text>
 </svg>

@@ -409,13 +409,14 @@
     "D32",
     "D33"
    ],
-   "decided": "Asked in one prompt, an AI fills each gap in your request with a guess, writes by its own idea of what such a work holds, and judges the work by what it meant. So you find what falls short only as you use the work, and mend it yourself. Turn asks you each decision that is yours, and finds the facts itself, before it makes anything. It makes the work by a best practice for its kind, and has a fresh AI, which never saw your answers, read it as its user would. What falls short is made again before the work reaches you.",
+   "decided": "Asked for a work in one prompt, an AI fills each gap in your request with a guess. It writes by its own idea of what such a work holds, and judges the work by what it meant. So you find what falls short only as you use the work, and mend it yourself. Turn asks you each decision that is yours, and finds the facts itself, before it makes anything. It makes the work by a best practice for that kind of work, such as one for READMEs, and has a fresh AI, which never saw your answers, read it as its user would. What falls short is made again before the work reaches you.",
    "settled_by": "reasoning",
    "grounds": [
     "plugins/turn/core/domain/best-practices/readme/best-practice.json:88 \"From the conditions, decide the one message the reader must grasp\" / \"the README does not go through them one by one\"",
     "plugins/turn/core/domain/best-practices/readme/best-practice.json:89 \"Put the message into a few plain sentences in the reader's words before drawing anything.\"",
     "D10, settled by the user: the usual way and what Turn does differently",
-    "D29, D30, D31 and D32: the conditions it gathers; D33: no claim on time"
+    "D29, D30, D31 and D32: the conditions it gathers; D33: no claim on time",
+    "plugins/turn/core/domain/best-practices/readme/best-practice.json:91 \"Read the opening as a newcomer deciding whether the product is for them. Cut or reword what they would stumble on\": the first sentence, three clauses long, is split; \"a best practice for its kind\" names the kind, which a newcomer does not yet know, by an example"
    ]
   },
   {

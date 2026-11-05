@@ -9,9 +9,14 @@ and the walkthrough below shows the run Turn is built for, not yet a recorded on
 Turn is for you when you want an AI to make a work you will put to use as it comes, not a draft
 you read and mend. With it, you get that work, having decided only what is yours.
 
-An AI asked in one prompt fills each gap in your request with a guess, and judges the work by what
-it meant, so you meet the guesses when you use the work. Turn instead settles the work's design
-with you before it makes anything, and has a fresh AI judge the work as its user would.
+Asked for a work in one prompt, an AI fills each gap in your request with a guess. It writes by its
+own idea of what such a work holds, and judges the work by what it meant. So you find what falls
+short only as you use the work, and mend it yourself.
+
+Turn asks you each decision that is yours, and finds the facts itself, before it makes anything. It
+makes the work by a best practice for that kind of work, such as one for READMEs, and has a fresh
+AI, which never saw your answers, read it as its user would. What falls short is made again before
+the work reaches you.
 
 ![The usual way and Turn](images/idea.svg)
 
