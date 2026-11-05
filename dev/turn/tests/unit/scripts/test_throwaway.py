@@ -123,7 +123,8 @@ class TestMain(helpers.RepositoryTest):
         with subprocess.Popen(
             [sys.executable, throwaway.__file__, helpers.RUN], stdout=subprocess.PIPE, text=True
         ) as running:
-            threading.Thread(target=put_each, args=(running.stdout, lines), daemon=True).start()
+            reader = threading.Thread(target=put_each, args=(running.stdout, lines), daemon=True)
+            reader.start()
             try:
                 # Then: the first is shown with its exit code before the second ends
                 seen = [lines.get(timeout=4) for _ in range(3)]
@@ -132,6 +133,8 @@ class TestMain(helpers.RepositoryTest):
             finally:
                 with open(go, "w", encoding="utf-8"):
                     pass
+                # The reader reads to the end before the output closes, as it fails on one closed.
+                reader.join(timeout=10)
         self.assertEqual(seen, ["$ echo first\n", "first\n", "(exit 0)\n"])
 
     def test_a_file_whose_name_begins_with_dots_lies_under_the_home(self):
