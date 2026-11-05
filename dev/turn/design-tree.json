@@ -29,10 +29,6 @@
   },
   {
    "id": "product-vision-board/Q6",
-   "what": "Following a scenario, does the developer see, exchange by exchange, how its role goes from asking the product to having what its objective says?"
-  },
-  {
-   "id": "product-vision-board/Q7",
    "what": "Changing how the product works inside while its roles see the same, does the developer find the product vision board still true?"
   },
   {
@@ -85,7 +81,7 @@
   },
   {
    "id": "architecture/Q2",
-   "what": "Following a step of the product vision board's scenarios, does the developer find the one user story that carries it?"
+   "what": "Following a step of an objective's main use, as the README's walkthrough shows it, does the developer find the one user story that carries it?"
   },
   {
    "id": "architecture/Q3",
@@ -225,47 +221,46 @@
    "id": "D5",
    "what": "What does the product vision board show, and what does it leave to the README and the architecture?",
    "contributes_to": [
-    "product-vision-board/Q6",
-    "product-vision-board/Q7"
+    "product-vision-board/Q6"
    ],
    "builds_on": [
     "D1"
    ],
-   "decided": "Only what the user does, sees and receives: the request, the purpose to confirm, each fact to confirm and each decision of theirs, the design to approve, a decision that comes up while the work is made, and the work handed over. Turn is one participant; its parts, and the plugins it runs on, such as Pin and Lane, are not named.",
+   "decided": "Only what the user does, sees and receives. Turn's parts, and the plugins it runs on, such as Pin and Lane, are not named.",
    "settled_by": "reasoning",
    "grounds": [
-    "product-vision-board/best-practice.json Q7 thinking: \"the product vision board says only what its roles mean to do, see and receive\""
+    "product-vision-board/best-practice.json Q6 thinking: \"Say only what the roles mean to do, see and receive, and nothing of how the product works inside\""
    ]
   },
   {
    "id": "D6",
-   "what": "What work does the scenario make?",
+   "what": "What work does the walkthrough make?",
    "contributes_to": [
-    "product-vision-board/Q6"
+    "readme/Q6"
    ],
    "builds_on": [
-    "D5"
+    "D2"
    ],
-   "decided": "A README for `tidy`, a command-line tool that sorts a Downloads folder: a kind Turn knows, as most requests will be, and the work of the README's walkthrough, so the developer meets one example across both documents.",
+   "decided": "A README for `tidy`, a command-line tool that sorts a Downloads folder: a kind Turn knows, as most requests will be, so the reader meets work like theirs.",
    "settled_by": "reasoning",
    "grounds": [
-    "product-vision-board/best-practice.json Q6 thinking: \"one run of the main path to the objective, the one most of its role take\""
+    "readme/best-practice.json Q6 thinking: \"Show one real run of the use most readers come for, on work like theirs\""
    ]
   },
   {
    "id": "D7",
-   "what": "O1's main path",
+   "what": "O1's main use, as the walkthrough runs it",
    "contributes_to": [
-    "product-vision-board/Q6"
+    "readme/Q6"
    ],
    "builds_on": [
-    "D5",
+    "D2",
     "D6"
    ],
-   "decided": "The user asks for the work. Turn puts its purpose to confirm. Until no decision is open, Turn puts each fact it found to confirm and each decision of the user's with a recommendation, one at a time. Turn shows the design to approve. While the work is made, Turn puts each decision of the user's that comes up; how often Turn makes it again is inside Turn, so not said, by product-vision-board/best-practice.json Q7. Turn hands the work over, not committed. Headed \"O1: The user has a README made for tidy\".",
+   "decided": "The user asks for the work. Turn puts its purpose to confirm. Until no decision is open, Turn puts each fact it found to confirm and each decision of the user's with a recommendation, one at a time. Turn shows the design to approve. While the work is made, Turn puts each decision of the user's that comes up; how often Turn makes it again is inside Turn, so not said. Turn hands the work over, not committed.",
    "settled_by": "reasoning",
    "grounds": [
-    "product-vision-board/best-practice.json Q6 step 3: \"the first message is the role's request, the last gives the role the end, and each moves toward it.\""
+    "readme/best-practice.json Q6 steps: \"Pick the use from what readers ask for most, such as help requests, and from the objectives of the product's product vision board.\""
    ]
   },
   {
@@ -330,7 +325,7 @@
    "decided": "It does not commit, push or publish the work; it does not settle a decision of the user's, and one left unanswered holds the run; it is not for a quick draft, as it takes longer than asking Claude Code.",
    "settled_by": "reasoning",
    "grounds": [
-    "The product vision board scenario ends \"README.md, not committed\".",
+    "The walkthrough's run, D7, ends with the README handed over, not committed.",
     "KR1.2 of the product vision board counts the time to a work put to use, so a draft mended by hand is the comparison."
    ]
   },
@@ -372,7 +367,7 @@
     "D6",
     "D7"
    ],
-   "decided": "The product vision board scenario's run: a README for tidy; the purpose confirmed, one fact confirmed, one decision taken, the design approved, the README handed over not committed. Not yet a real run, as Turn is being rebuilt; a real run's output replaces it once Turn is built.",
+   "decided": "The run of D7: a README for tidy; the purpose confirmed, one fact confirmed, one decision taken, the design approved, the README handed over not committed. Not yet a real run, as Turn is being rebuilt; a real run's output replaces it once Turn is built.",
    "settled_by": "reasoning",
    "grounds": [
     "plugins/turn/core/domain/best-practices/readme/best-practice.json Q6 steps: \"Take each exchange, what the user gives and what the product shows, from the record of a real run\""
@@ -469,7 +464,7 @@
    "settled_by": "reasoning",
    "grounds": [
     "Agreed with the user, 2026-11-05: the product vision board, the README and the architecture each show the main flow to their goal, and the conveniences around it are user stories drawn from the product vision board and its intent, so a convenience added changes the stories alone.",
-    "architecture/best-practice.json Q2 thinking: \"Write one story for each way a role of the product vision board meets the product at its edge, drawn from the product vision board's scenarios and their intent\"",
+    "architecture/best-practice.json Q2 thinking: \"Write one story for each way a role of the product vision board meets the product at its edge, drawn from the objectives of the product vision board and the README's walkthrough\"",
     "D1: \"A person and an AI that asks for a person want the same, so they are one role.\"",
     "dev/turn/architecture.md at 8e07a7ce:131-149 the stories S1-S5 before, S3 and S4 for the calling AI",
     "dev/turn/architecture.md at 8e07a7ce:54-55: \"The planner asks the person one point only, the kind, and only before there is a design.\"",

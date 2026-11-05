@@ -55,7 +55,7 @@ template.
   that rest on one decision say the same thing. The template holds each document to what its
   reader needs, as an AI told only to be brief still writes past it.
 - Rationale: the README takes two things from the product vision board: what the user gains, and the
-  scenario that its walkthrough runs. The architecture says how the plugin gives the product vision
+  objectives whose main use its walkthrough runs. The architecture says how the plugin gives the product vision
   board. If you make them before the product vision board, they rest on a goal that the user has not
   agreed to.
 
@@ -154,7 +154,7 @@ kept for the trials that
 **Once every slice is built and every unit and architecture test passes, try the plugin as its
 user to confirm the product vision board, as
 [ux: the plugin in real use](../../dev/plugin-best-practice.md#ux-the-plugin-in-real-use) says.**
-Try it on each objective's scenario, at the size of a real request. Use a stand-in that holds an
+Try it on each objective's main use, as the README's walkthrough shows it, at the size of a real request. Use a stand-in that holds an
 intent the plugin never sees.
 
 **When the trial finds a fault, first test it at the level that missed it, as

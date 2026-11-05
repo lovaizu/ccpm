@@ -15,7 +15,7 @@ The developer builds and changes each part of the product so that the parts toge
 ## User benefits
 
 - **Q1** (the opening): Starting on any part, does the developer see the one idea by which the product gives its product vision board, and the piece of it the part carries out?
-- **Q2** (User stories): Following a step of the product vision board's scenarios, does the developer find the one user story that carries it?
+- **Q2** (User stories): Following a step of an objective's main use, as the README's walkthrough shows it, does the developer find the one user story that carries it?
 - **Q3** (Principles): Meeting a case no line of the document names, do two developers of different parts reach the same decision from a principle's why?
 - **Q4** (User stories, Components): Facing a decision the stories need, does the developer find the one component that alone decides it?
 - **Q5** (Components): Starting on a component, does the developer know what kind of thing it is and what it is made with, choosing nothing themselves?
@@ -41,15 +41,15 @@ The developer builds and changes each part of the product so that the parts toge
 
 1. Once the rest is written, check that each component carries out a piece of the idea, and change the idea or the component where one does not.
 
-### Q2: Following a step of the product vision board's scenarios, does the developer find the one user story that carries it?
+### Q2: Following a step of an objective's main use, as the README's walkthrough shows it, does the developer find the one user story that carries it?
 
-**Thinking**: Write one story for each way a role of the product vision board meets the product at its edge, drawn from the product vision board's scenarios and their intent, and name what it carries, such as a step of a scenario or resuming a run that stopped, as each part is then traced to what the role does, and a convenience added is then a story added, leaving the product vision board and the README as they are.
+**Thinking**: Write one story for each way a role of the product vision board meets the product at its edge, drawn from the objectives of the product vision board and the README's walkthrough, and name what it carries, such as a step of the walkthrough or resuming a run that stopped, as each part is then traced to what the role does, and a convenience added is then a story added, leaving the product vision board and the README as they are.
 
 **Steps**
 
-1. Go through each message of each scenario of the product vision board, and name the one way at the product's edge that carries it.
+1. Go through each exchange of the README's walkthrough, and the main use of each objective it does not run, and name the one way at the product's edge that carries each step.
 2. Where a step meets the product in a way no story names, add the story.
-3. For each convenience the product vision board's intent asks for around its scenarios, such as resuming a run that stopped, name the story that carries it, or add one.
+3. For each convenience the product vision board's intent asks for around that use, such as resuming a run that stopped, name the story that carries it, or add one.
 
 ### Q3: Meeting a case no line of the document names, do two developers of different parts reach the same decision from a principle's why?
 
@@ -102,7 +102,7 @@ The developer builds and changes each part of the product so that the parts toge
 
 **Steps**
 
-1. Trace each component and each data to the stories whose sequences reach it, and each story to the objective whose scenario or intent it carries, and remove what reaches none.
+1. Trace each component and each data to the stories whose sequences reach it, and each story to the objective whose use or intent it carries, and remove what reaches none.
 
 ### Q9: Setting the product up from nothing, does the developer put each component where it runs and each data where it is kept, and start the product, asking no one?
 
@@ -133,7 +133,7 @@ The developer builds and changes each part of the product so that the parts toge
 
 ### Q12: Writing a test at one level, does the developer know what to run real, what doubles stand in for, what to cover and when it passes, deciding none of it?
 
-**Thinking**: Draw each test from the one thing its level checks against, the ways a part's contract divides, the paths the sequences draw or an objective's scenario at real size, run only that real and stand doubles in for the rest, as a failing test then names the rule, path or scenario it breaks.
+**Thinking**: Draw each test from the one thing its level checks against, the ways a part's contract divides, the paths the sequences draw or an objective's main use at real size, run only that real and stand doubles in for the rest, as a failing test then names the rule, path or use it breaks.
 
 **Steps**
 
@@ -144,7 +144,7 @@ The developer builds and changes each part of the product so that the parts toge
 5. At unit, run a part an AI does on the real model, with one input for each class, both where the contract says the part acts and where it says it does not, and doubles for the parts it works with.
 6. At architecture, run real what joins the components, such as hooks and scripts, and stand a double in for each component an AI runs and each thing outside the product, so the level calls no model and gives the same result each run.
 7. At architecture, write one test for each path through each story's sequence, the main flow, each branch, each step that sends work back and each question put to the role, until every move from one step to the next lies on some path.
-8. At ux, once unit and architecture pass, run the real product on each objective's scenario at the size of a real request, with an AI standing in for the role that holds an intent the product never sees.
+8. At ux, once unit and architecture pass, run the real product on each objective's main use, as the README's walkthrough shows it, at the size of a real request, with an AI standing in for the role that holds an intent the product never sees.
 9. At ux, measure each key result as the product vision board words it, and set each measure against the last one by the direction the product vision board gives it, as the product vision board gives no target.
 10. For a test whose result varies from run to run, write how many runs of how many must meet the expectation.
 

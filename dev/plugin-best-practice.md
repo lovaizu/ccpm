@@ -320,10 +320,10 @@ So the developer writes, tests and fixes the code in one place.
 ## Test
 
 A plugin is tested at three levels, each named by what its tests check against. The developer
-draws each test from one rule, path or scenario of that one thing, and never chooses a test by
+draws each test from one rule, path or use of that one thing, and never chooses a test by
 taste. The developer designs each test before the code, and sees it fail first.
 
-*Why*: a failing test then names the rule, path or scenario it breaks.
+*Why*: a failing test then names the rule, path or use it breaks.
 
 The figure uses these words:
 
@@ -393,7 +393,7 @@ and a path would wait on hundreds of them.
 
 ### ux: the plugin in real use
 
-The trials come from each objective's scenario, on a subject as big as a real request, big enough
+The trials come from each objective's main use, as the README's walkthrough shows it, on a subject as big as a real request, big enough
 to bring out the cases that such requests bring most often. They pass when the stand-in gets what
 the objective says. They run once every lower level passes.
 

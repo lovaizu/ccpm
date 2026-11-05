@@ -14,29 +14,3 @@
 KR1.1 comes first: a change that improves KR1.2 is kept only if KR1.1 does not get worse. Key
 results have no targets, as a measure made a target stops being a good measure (Goodhart's
 law). They show whether a change brought its objective closer.
-
-## Scenarios
-
-### O1: The user has a README made for tidy
-
-```mermaid
-sequenceDiagram
-  participant U as user
-  participant T as Turn
-  U->>T: a README for tidy, which sorts a Downloads folder
-  T->>U: purpose: a newcomer installs tidy and sorts their folder, yes?
-  U->>T: yes
-  loop until no decision is open
-    T->>U: found: tidy --dry-run shows what it would move, right?
-    U->>T: right
-    T->>U: the walkthrough runs --dry-run, then tidy, yes?
-    U->>T: yes
-  end
-  T->>U: the design, to approve
-  U->>T: yes
-  opt a decision of the user's comes up while the README is made
-    T->>U: the decision, with a recommendation
-    U->>T: the answer
-  end
-  T->>U: README.md, not committed
-```

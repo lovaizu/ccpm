@@ -31,11 +31,6 @@
   },
   {
    "id": "Q6",
-   "about": "Roles, OKRs, Product, Scenarios",
-   "what": "Following a scenario, does the developer see, exchange by exchange, how its role goes from asking the product to having what its objective says?"
-  },
-  {
-   "id": "Q7",
    "about": "the whole",
    "what": "Changing how the product works inside while its roles see the same, does the developer find the product vision board still true?"
   }
@@ -93,16 +88,6 @@
   },
   {
    "user_benefit": "Q6",
-   "thinking": "Write for each objective one run of the main path, the one most of its role take, from the role's request to the gain that ends it, as the exchanges among the roles, the product and those outside it, as the main path is what most of the role meet.",
-   "steps": [
-    "Name each scenario by its objective's ID and a short active verb phrase saying how the role reaches it.",
-    "Write each exchange as one message, from the one who takes it to the one it acts on, saying what it passes, checks or changes.",
-    "Where a part repeats, mark it as a loop with its condition.",
-    "Read the scenario from start to end: the first message is the role's request, the last gives the role the end, and each moves toward it."
-   ]
-  },
-  {
-   "user_benefit": "Q7",
    "thinking": "Say only what the roles mean to do, see and receive, and nothing of how the product works inside, as any design that gives them the same then leaves the product vision board true.",
    "steps": [
     "Pick one change the design could make while the roles see the same, and flag each line that would have to change.",

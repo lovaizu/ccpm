@@ -35,9 +35,9 @@ This document says how `<Product>` is built to give [its product vision board](<
 > DELETE_TEMPLATE_COMMENT:
 > - `<role>`: a role of the product vision board, as the product vision board names it.
 > - `<way>`: one way the role meets the product at its edge, such as a command they type.
-> - `<steps>`: the steps of the product vision board's scenarios that rest on it, and each
->   convenience the product vision board's intent asks for that it carries, such as resuming a run
->   that stopped.
+> - `<steps>`: the steps of the README's walkthrough, or of an objective's main use it does not
+>   run, that rest on it, and each convenience the product vision board's intent asks for that it
+>   carries, such as resuming a run that stopped.
 
 ## Components
 

@@ -19,8 +19,7 @@ The developer builds what the product's users want.
 - **Q3** (OKRs): Weighing a piece of work, does the developer see which one objective it brings closer, or that it brings none closer?
 - **Q4** (OKRs): After a change, does the developer see from the key results whether to keep it?
 - **Q5** (Roles, OKRs, Product): Weighing the product against what its roles do today, does the developer see why it meets each objective where that way does not?
-- **Q6** (Roles, OKRs, Product, Scenarios): Following a scenario, does the developer see, exchange by exchange, how its role goes from asking the product to having what its objective says?
-- **Q7** (the whole): Changing how the product works inside while its roles see the same, does the developer find the product vision board still true?
+- **Q6** (the whole): Changing how the product works inside while its roles see the same, does the developer find the product vision board still true?
 
 ## Practices
 
@@ -79,18 +78,7 @@ The developer builds what the product's users want.
 6. Stop once at most five ideas stand out, each meets an objective, the present way they beat is named, and the riskiest assumption has its check. Otherwise go back to the first or the third step.
 7. Keep, where the design is kept, each idea tried, whose it was, how it rated, and why it was kept, dropped or merged, in the user's words.
 
-### Q6: Following a scenario, does the developer see, exchange by exchange, how its role goes from asking the product to having what its objective says?
-
-**Thinking**: Write for each objective one run of the main path, the one most of its role take, from the role's request to the gain that ends it, as the exchanges among the roles, the product and those outside it, as the main path is what most of the role meet.
-
-**Steps**
-
-1. Name each scenario by its objective's ID and a short active verb phrase saying how the role reaches it.
-2. Write each exchange as one message, from the one who takes it to the one it acts on, saying what it passes, checks or changes.
-3. Where a part repeats, mark it as a loop with its condition.
-4. Read the scenario from start to end: the first message is the role's request, the last gives the role the end, and each moves toward it.
-
-### Q7: Changing how the product works inside while its roles see the same, does the developer find the product vision board still true?
+### Q6: Changing how the product works inside while its roles see the same, does the developer find the product vision board still true?
 
 **Thinking**: Say only what the roles mean to do, see and receive, and nothing of how the product works inside, as any design that gives them the same then leaves the product vision board true.
 
