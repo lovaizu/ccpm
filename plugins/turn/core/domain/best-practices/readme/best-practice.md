@@ -79,23 +79,25 @@ Someone who meets the product for the first time starts using it, from the READM
 
 ### Q7: For each problem they feel in the work, does the reader picture how the product makes it go away?
 
-**Thinking**: Find the problems the reader feels in their own words, and for each, draw the way they would do the work without the product above the product, the problem left in the one and gone in the other, with a sentence or two under the figure, as the reader chooses the product once they can picture their own problem gone.
+**Thinking**: Find the problems the reader feels in their own words, and for each, work out and draw the figure in which the reader best pictures it gone with the product, such as the way they would do the work without the product above the product, or the same work done both ways, with a sentence or two under it, as each problem shows best in its own figure, and the reader chooses the product once they can picture their own problem gone.
 
 **Steps**
 
 1. Take the problems from the objectives of the product's UX and their key results, and from what readers complain of in the way they would do the work without the product.
 2. Say each problem in the reader's words.
 3. For each problem, find from the design what the product does that makes it go away. Ask the user each one the design does not settle.
+4. Look at each figure as a newcomer, and where they could not picture from it what its line under it says, work the figure out again from its form.
 
 ### Q8: At each point where they would ask whether the product can really do that, does the reader picture how it does it?
 
-**Thinking**: Find each point a newcomer would doubt, and for each, draw who does what to whom in the product, marking the lines that do the doubted thing, with a sentence or two under the figure, as a reader believes the product can do a thing once they can picture how.
+**Thinking**: Find each point a newcomer would doubt, and for each, work out and draw the figure in which the reader best pictures how the product does it, such as its parts with the lines that do it marked, or the exchanges in their order, with a sentence or two under it, as each point shows best in its own figure, and a reader believes the product can do a thing once they can picture how.
 
 **Steps**
 
 1. Read the opening as a newcomer, and mark each thing it says that the way the reader would do the work without the product cannot do, such as Turn asking only the decisions that are yours, which makes the reader ask how it tells them apart.
 2. Add what readers ask or doubt about similar products.
 3. For each point, take how the product does it from the design. Ask the user each one the design does not settle.
+4. Look at each figure as a newcomer, and where they could not picture from it what its line under it says, work the figure out again from its form.
 
 ### Q9: Needing more than the README gives, such as fuller use or help, does the reader find where to go next?
 

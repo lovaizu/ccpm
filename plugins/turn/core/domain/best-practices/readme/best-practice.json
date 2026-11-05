@@ -108,20 +108,22 @@
   },
   {
    "user_benefit": "Q7",
-   "thinking": "Find the problems the reader feels in their own words, and for each, draw the way they would do the work without the product above the product, the problem left in the one and gone in the other, with a sentence or two under the figure, as the reader chooses the product once they can picture their own problem gone.",
+   "thinking": "Find the problems the reader feels in their own words, and for each, work out and draw the figure in which the reader best pictures it gone with the product, such as the way they would do the work without the product above the product, or the same work done both ways, with a sentence or two under it, as each problem shows best in its own figure, and the reader chooses the product once they can picture their own problem gone.",
    "steps": [
     "Take the problems from the objectives of the product's UX and their key results, and from what readers complain of in the way they would do the work without the product.",
     "Say each problem in the reader's words.",
-    "For each problem, find from the design what the product does that makes it go away. Ask the user each one the design does not settle."
+    "For each problem, find from the design what the product does that makes it go away. Ask the user each one the design does not settle.",
+    "Look at each figure as a newcomer, and where they could not picture from it what its line under it says, work the figure out again from its form."
    ]
   },
   {
    "user_benefit": "Q8",
-   "thinking": "Find each point a newcomer would doubt, and for each, draw who does what to whom in the product, marking the lines that do the doubted thing, with a sentence or two under the figure, as a reader believes the product can do a thing once they can picture how.",
+   "thinking": "Find each point a newcomer would doubt, and for each, work out and draw the figure in which the reader best pictures how the product does it, such as its parts with the lines that do it marked, or the exchanges in their order, with a sentence or two under it, as each point shows best in its own figure, and a reader believes the product can do a thing once they can picture how.",
    "steps": [
     "Read the opening as a newcomer, and mark each thing it says that the way the reader would do the work without the product cannot do, such as Turn asking only the decisions that are yours, which makes the reader ask how it tells them apart.",
     "Add what readers ask or doubt about similar products.",
-    "For each point, take how the product does it from the design. Ask the user each one the design does not settle."
+    "For each point, take how the product does it from the design. Ask the user each one the design does not settle.",
+    "Look at each figure as a newcomer, and where they could not picture from it what its line under it says, work the figure out again from its form."
    ]
   },
   {

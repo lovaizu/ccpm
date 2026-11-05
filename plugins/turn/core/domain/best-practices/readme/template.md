@@ -82,13 +82,15 @@ At the end, you have `<result>`.
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - The first figure: the deliverable's own at images/problem.svg, the product named in its alt
->   text: the way the reader would do the work without the product above the product, the problem
->   left in the one and gone in the other, each part by its name.
+>   text, in the form that best shows the problem gone, such as the skeleton here: the way the
+>   reader would do the work without the product above the product, the problem left in the one and
+>   gone in the other.
 > - `<problem>`, `<how it goes away>`: each problem the reader feels in the work, in their words,
 >   and what the product does that makes it go away, in a sentence or two.
 > - The second figure: the deliverable's own at images/how-it-works.svg, the product named in its
->   alt text: the user, the product's parts and what they pass, each by its name, with the lines
->   that do each doubted thing marked.
+>   alt text, in the form that best shows how the product does the doubted thing, such as the
+>   skeleton here: the user, the product's parts and what they pass, with the lines that do it
+>   marked.
 > - `<doubt>`, `<how it does it>`: each point where a newcomer would ask whether the product can
 >   really do that, and how the marked lines do it, in a sentence or two.
 > - Where a figure would hold more than a newcomer can follow, draw one for each problem or doubt,
