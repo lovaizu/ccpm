@@ -6,11 +6,11 @@
 
 `<Product>` is for you when `<your situation>`. With it, you `<gain>`.
 
-`<The usual way>`. `<Product>` instead `<idea>`.
+`<message>`
 
-| What must hold | The usual way | `<Product>` |
-| --- | --- | --- |
-| `<condition>` | `<where it fails>` | `<how it meets it>` |
+![The usual way and the product](images/template-idea.svg)
+
+`<excerpt>`
 
 **Non-goals**
 
@@ -24,11 +24,13 @@
 >   optional.
 > - `<your situation>`: the work the reader wants done.
 > - `<gain>`: what the reader can then do.
-> - `<The usual way>`: what the reader would do without the product, in one sentence.
-> - `<idea>`: what the product does differently that brings the gain, in one sentence.
-> - `<condition>`: each thing that must hold for the reader's problem to be solved, one row each.
-> - `<where it fails>`: where the usual way falls short of it.
-> - `<how it meets it>`: what the product does that makes it hold.
+> - `<message>`: why the product solves the reader's problem where what they would do without it
+>   does not, in a few plain sentences.
+> - The figure: the deliverable's own at images/idea.svg, the product named in its alt text: the
+>   usual way above the product, each as who does what to whom, for what the message says that a
+>   picture shows better; optional.
+> - `<excerpt>`: where the message names a difference in the work itself, a short excerpt of what
+>   each way makes, from real runs; optional.
 > - `<expectation>`: each thing a reader might expect of the product that it does not do; optional.
 
 ## Requirements

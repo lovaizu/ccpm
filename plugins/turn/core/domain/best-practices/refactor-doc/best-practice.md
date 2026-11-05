@@ -41,7 +41,7 @@ The reader is a person or an AI who reads the document for a purpose, at any tim
 
 **Steps**
 
-1. Choose a form whose shape shows that order or relation, such as a numbered list for steps in order, a bulleted list for items whose order does not matter, a table for things compared on the same points, or a diagram for who passes what to whom.
+1. Choose a form whose shape shows that order or relation, such as a numbered list for steps in order, a bulleted list for items whose order does not matter, a table for things the reader looks up or compares on the same points, or a diagram for who passes what to whom, such as why one way works where another does not.
 2. Draw a sequence diagram in Mermaid inside the document: its steps go from top to bottom, so it has no layout to choose, and the page draws it. Draw a diagram of structure, such as parts and what passes between them, as an SVG file beside the document, and show it as an image: its layout carries its meaning. Draw a table the reader takes in whole at a glance, such as which tests cover which part, as an SVG in the same way, so its marks and groups line up. Keep a table the reader looks a row up in as Markdown, so they can search and copy it. Set the SVG's colours under prefers-color-scheme, so that it follows the page's light or dark scheme.
 3. Show the form alone to a reader who has not read the text, and have them say back what it tells. Where they say it otherwise, mend the form.
 
