@@ -34,62 +34,62 @@
   {
    "id": "Q1",
    "about": "goal",
-   "what": "When the AI believes it has finished, can it tell from the prompt whether it has reached what the task is for?"
+   "what": "When the AI believes it has finished, can it tell from the prompt whether it has reached what the task is for, so that it stops at that purpose and not at the last step?"
   },
   {
    "id": "Q2",
    "about": "goal",
-   "what": "When the AI meets a choice that is the user's, such as one between options that serve equally or an action hard to undo, does it hand the choice to the user rather than make it?"
+   "what": "When the AI meets a choice that is the user's, such as one between options that serve equally or an action hard to undo, does it hand the choice to the user rather than make it, so that the user's purpose and intent stay the user's?"
   },
   {
    "id": "Q3",
    "about": "context",
-   "what": "Given the prompt and only what its run gives it, can the AI do each step without guessing a fact, such as where its inputs are or a rule of the place it works in?"
+   "what": "Given the prompt and only what its run gives it, can the AI do each step without guessing a fact, such as where its inputs are or a rule of the place it works in, so that its result rests on facts, not on guesses?"
   },
   {
    "id": "Q4",
    "about": "goal, steps",
-   "what": "Taking the steps in order, does the AI arrive at what the goal says the task is for, with no step that leads it elsewhere?"
+   "what": "Taking the steps in order, does the AI arrive at what the goal says the task is for, with no step that leads it elsewhere, so that following the prompt is the way to its purpose?"
   },
   {
    "id": "Q5",
    "about": "steps",
-   "what": "When the AI meets a case a step's rule does not name, can it decide the case as the writer would, from the reason the rule gives?"
+   "what": "When the AI meets a case a step's rule does not name, can it decide the case as the writer would, from the reason the rule gives, so that the rules hold where their words do not reach?"
   },
   {
    "id": "Q6",
    "about": "steps",
-   "what": "When the AI is run twice on the same input, does each step whose result must not vary, such as a check or a file's form, give the same result both times?"
+   "what": "When the AI is run twice on the same input, does each step whose result must not vary, such as a check or a file's form, give the same result both times, so that what must hold does not hang on chance?"
   },
   {
    "id": "Q7",
    "about": "tools, steps",
-   "what": "Can the AI take every action its steps call for with the tools it is allowed?"
+   "what": "Can the AI take every action its steps call for with the tools it is allowed, so that the run never stalls on a missing tool?"
   },
   {
    "id": "Q8",
    "about": "tools",
-   "what": "When the AI, during a run, reaches for an action that lies outside its task, does the host refuse it?"
+   "what": "When the AI, during a run, reaches for an action that lies outside its task, does the host refuse it, so that a slip of the AI cannot harm what lies outside the task?"
   },
   {
    "id": "Q9",
    "about": "steps, output",
-   "what": "When the caller, the person or the AI that started the prompt, takes what the AI hands back, can it act on it without asking the AI anything further?"
+   "what": "When the caller, the person or the AI that started the prompt, takes what the AI hands back, can it act on it without asking the AI anything further, so that the work goes on without a round trip?"
   },
   {
    "id": "Q10",
    "about": "description",
-   "what": "When a request the prompt is made for comes, and a request near it that it is not made for, does the host, such as Claude Code, choose the prompt for the first and pass it over for the second, from the name and the description alone?"
+   "what": "When a request the prompt is made for comes, and a request near it that it is not made for, does the host, such as Claude Code, choose the prompt for the first and pass it over for the second, from the name and the description alone, so that the prompt runs where it is meant and nowhere else?"
   },
   {
    "id": "Q11",
    "about": "description, goal",
-   "what": "Once the host has chosen the prompt by its description, does the AI do the task the description says, all of it and nothing more?"
+   "what": "Once the host has chosen the prompt by its description, does the AI do the task the description says, all of it and nothing more, so that the caller gets what the description promised?"
   },
   {
    "id": "Q12",
    "about": "the whole",
-   "what": "When the prompt is run several times on each kind of request it is made for, does the AI reach the result the prompt names on every run?"
+   "what": "When the prompt is run several times on each kind of request it is made for, does the AI reach the result the prompt names on every run, so that the user can count on it?"
   },
   {
    "id": "Q13",
@@ -99,22 +99,22 @@
   {
    "id": "Q14",
    "about": "steps",
-   "what": "For each rule of the steps that must hold on every run, does a hook hold it, and does a test try the hook both where the AI keeps the rule and where it breaks it?"
+   "what": "For each rule of the steps that must hold on every run, does a hook hold it, and does a test try the hook both where the AI keeps the rule and where it breaks it, so that a rule that must hold does not rest on the AI's attention?"
   },
   {
    "id": "Q15",
    "about": "trials",
-   "what": "When a trial fails, can the maintainer tell from its record that the prompt went wrong and not the trial: its set-up, a stand-in, a judge or a check?"
+   "what": "When a trial fails, can the maintainer tell from its record that the prompt went wrong and not the trial: its set-up, a stand-in, a judge or a check, so that they mend the prompt only for a cause the record shows?"
   },
   {
    "id": "Q16",
    "about": "output",
-   "what": "When the AI puts a decision, a proposal or a report to the person, can the person approve or decide from its first lines alone, and reach the details only where they ask?"
+   "what": "When the AI puts a decision, a proposal or a report to the person, can the person approve or decide from its first lines alone, and reach the details only where they ask, so that the person spends their attention only on what is theirs?"
   },
   {
    "id": "Q17",
    "about": "output",
-   "what": "When the caller acts on what the AI reports it did or found, does each claim hold as far as the report says it was checked?"
+   "what": "When the caller acts on what the AI reports it did or found, does each claim hold as far as the report says it was checked, so that the caller acts only on what holds?"
   }
  ],
  "practices": [

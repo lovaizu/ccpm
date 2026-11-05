@@ -14,19 +14,19 @@ The maintainer is a person or an AI who takes the code over. The maintainer chan
 
 ## Intents
 
-- **Q1** (manifest, tests): When the maintainer sets the code up on a fresh machine from only what the code gives for its setup, and runs the tests again and in any order, do they see the tests pass each time?
-- **Q2** (module-opening): With one behavior to change, can the maintainer tell which module to open from what each module says it alone decides, without reading the modules' bodies?
-- **Q3** (interface): When the maintainer calls a name that another module offers, can they write a call that works from the name's interface alone, without reading its body?
-- **Q4** (interface, body): For each behavior the code has, can the maintainer name the case of the specification that needs it?
-- **Q5** (body): When something the code takes from outside is wrong, can whoever ran the code put it right from only what the code tells them, with nothing left half done?
-- **Q6** (tests): For each case the specification names, its edges and refusals included, can the maintainer point to the one test that checks it, and tell the case from that test's name?
-- **Q7** (interface, tests): When the maintainer changes a body and its callers still get what its interface says, do the tests still pass?
-- **Q8** (body, tests): When the maintainer breaks the behavior a test checks, does that test fail?
+- **Q1** (manifest, tests): When the maintainer sets the code up on a fresh machine from only what the code gives for its setup, and runs the tests again and in any order, do they see the tests pass each time, so that a failing test points at the code and never at the machine or the order?
+- **Q2** (module-opening): With one behavior to change, can the maintainer tell which module to open from what each module says it alone decides, without reading the modules' bodies, so that they change the behavior in one place?
+- **Q3** (interface): When the maintainer calls a name that another module offers, can they write a call that works from the name's interface alone, without reading its body, so that the body can change behind the interface without breaking its callers?
+- **Q4** (interface, body): For each behavior the code has, can the maintainer name the case of the specification that needs it, so that the code holds no behavior that no one asked for?
+- **Q5** (body): When something the code takes from outside is wrong, can whoever ran the code put it right from only what the code tells them, with nothing left half done, so that a fault from outside never leaves them stuck or their data half changed?
+- **Q6** (tests): For each case the specification names, its edges and refusals included, can the maintainer point to the one test that checks it, and tell the case from that test's name, so that they know which case a failing test breaks?
+- **Q7** (interface, tests): When the maintainer changes a body and its callers still get what its interface says, do the tests still pass, so that they can improve a body without fear?
+- **Q8** (body, tests): When the maintainer breaks the behavior a test checks, does that test fail, so that a broken behavior never goes unnoticed?
 - **Q9** (the whole): With only the code and its specification, can the maintainer make a change the specification asks for, and know from the tests that every other behavior still holds?
 
 ## Practices
 
-### Q1: When the maintainer sets the code up on a fresh machine from only what the code gives for its setup, and runs the tests again and in any order, do they see the tests pass each time?
+### Q1: When the maintainer sets the code up on a fresh machine from only what the code gives for its setup, and runs the tests again and in any order, do they see the tests pass each time, so that a failing test points at the code and never at the machine or the order?
 
 **Thinking**: What the code gives for its setup names everything the code needs. Each test sets up and clears everything it uses. A test's result then rests on the code alone.
 
@@ -36,7 +36,7 @@ The maintainer is a person or an AI who takes the code over. The maintainer chan
 2. Add to what the setup reads each thing the setup or the tests found missing, such as a runtime or a library, with the versions the code runs on.
 3. Run the tests several times, and in a shuffled order.
 
-### Q2: With one behavior to change, can the maintainer tell which module to open from what each module says it alone decides, without reading the modules' bodies?
+### Q2: With one behavior to change, can the maintainer tell which module to open from what each module says it alone decides, without reading the modules' bodies, so that they change the behavior in one place?
 
 **Thinking**: Each module alone decides one thing that the specification leaves to the code. The module says that thing briefly where the maintainer meets it first, such as at its top.
 
@@ -45,7 +45,7 @@ The maintainer is a person or an AI who takes the code over. The maintainer chan
 1. Where the module cannot say that thing briefly, split the module.
 2. Take a behavior that the specification might change, and read only what the modules say they decide. Check that what they say points to one module. Where it does not, rewrite what the modules say, or move the decision.
 
-### Q3: When the maintainer calls a name that another module offers, can they write a call that works from the name's interface alone, without reading its body?
+### Q3: When the maintainer calls a name that another module offers, can they write a call that works from the name's interface alone, without reading its body, so that the body can change behind the interface without breaking its callers?
 
 **Thinking**: The interface tells a caller everything they need to make the call. The caller then need not read the body, and the body can change behind the interface.
 
@@ -57,7 +57,7 @@ The maintainer is a person or an AI who takes the code over. The maintainer chan
 4. Leave out of that what the types already say.
 5. Have someone who has not read the body write a call from the interface alone, and run the call. Where the call fails or they had to guess, add what was missing.
 
-### Q4: For each behavior the code has, can the maintainer name the case of the specification that needs it?
+### Q4: For each behavior the code has, can the maintainer name the case of the specification that needs it, so that the code holds no behavior that no one asked for?
 
 **Thinking**: The code gives only the behaviors the specification asks for, in the form its cases ask for now. The maintainer then carries nothing that no one needs.
 
@@ -65,7 +65,7 @@ The maintainer is a person or an AI who takes the code over. The maintainer chan
 
 1. For each option, mode and case the code handles, name the case of the specification that asks for it.
 
-### Q5: When something the code takes from outside is wrong, can whoever ran the code put it right from only what the code tells them, with nothing left half done?
+### Q5: When something the code takes from outside is wrong, can whoever ran the code put it right from only what the code tells them, with nothing left half done, so that a fault from outside never leaves them stuck or their data half changed?
 
 **Thinking**: The code checks what comes from outside, such as arguments, files, settings and the replies of other programs, where it comes in and before the code does anything. When the code refuses an input, its message tells whoever ran the code which program refused, what was wrong, where, and what the code accepts.
 
@@ -76,7 +76,7 @@ The maintainer is a person or an AI who takes the code over. The maintainer chan
 3. Write each check so that it runs however the code is run. Do not write it as a check that can be turned off, such as an assert.
 4. Give the code each wrong input that the specification names. Read each message as the one who ran the code, and check that they can put the input right from the message alone.
 
-### Q6: For each case the specification names, its edges and refusals included, can the maintainer point to the one test that checks it, and tell the case from that test's name?
+### Q6: For each case the specification names, its edges and refusals included, can the maintainer point to the one test that checks it, and tell the case from that test's name, so that they know which case a failing test breaks?
 
 **Thinking**: The tests come from the specification's cases, and they come before the code. Each test checks one behavior, so it says which case it checks.
 
@@ -89,7 +89,7 @@ The maintainer is a person or an AI who takes the code over. The maintainer chan
 5. Run each test before you write its code, and see it fail.
 6. Compare the list of cases with the tests, and check that each case points to one test.
 
-### Q7: When the maintainer changes a body and its callers still get what its interface says, do the tests still pass?
+### Q7: When the maintainer changes a body and its callers still get what its interface says, do the tests still pass, so that they can improve a body without fear?
 
 **Thinking**: The tests call the code as its callers do, so they fail only where a caller would break.
 
@@ -98,7 +98,7 @@ The maintainer is a person or an AI who takes the code over. The maintainer chan
 1. Use the real parts where they run fast and wholly inside the test, and a stand-in only for what is slow or outside it.
 2. Change a body without changing what its interface says, and run the tests. Rewrite each test that fails so that it calls the code through the interface.
 
-### Q8: When the maintainer breaks the behavior a test checks, does that test fail?
+### Q8: When the maintainer breaks the behavior a test checks, does that test fail, so that a broken behavior never goes unnoticed?
 
 **Thinking**: A test is worth the faults it catches. So each test checks the result that its case asks for, and a broken behavior makes the test fail.
 

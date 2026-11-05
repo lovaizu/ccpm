@@ -4,32 +4,32 @@
   {
    "id": "Q1",
    "about": "the whole",
-   "what": "After the code's structure changes, does each caller get every behavior it got before, whether the caller is a person, a script or other code?"
+   "what": "After the code's structure changes, does each caller get every behavior it got before, whether the caller is a person, a script or other code, so that a change of structure is safe for every caller?"
   },
   {
    "id": "Q2",
    "about": "the whole",
-   "what": "Whatever line the maintainer reads, code or comment, would they lose something they need if it were gone?"
+   "what": "Whatever line the maintainer reads, code or comment, would they lose something they need if it were gone, so that every line they read earns its place?"
   },
   {
    "id": "Q3",
    "about": "the whole",
-   "what": "When the maintainer reads any name in the code, can they say what it holds or does without going to where it is defined?"
+   "what": "When the maintainer reads any name in the code, can they say what it holds or does without going to where it is defined, so that they read the code without hunting for definitions?"
   },
   {
    "id": "Q4",
    "about": "the whole",
-   "what": "Each time the maintainer meets a name, can they tell rightly whether it names a thing they have already met, and which one?"
+   "what": "Each time the maintainer meets a name, can they tell rightly whether it names a thing they have already met, and which one, so that they never take two things for one or one thing for two?"
   },
   {
    "id": "Q5",
    "about": "the whole",
-   "what": "With one rule or one design decision to change, can the maintainer find the one place that holds it and make the whole change there?"
+   "what": "With one rule or one design decision to change, can the maintainer find the one place that holds it and make the whole change there, so that a change is made once and whole?"
   },
   {
    "id": "Q6",
    "about": "the whole",
-   "what": "When the maintainer reads any function once from the top, with nothing from outside it but the names it uses, can they say in one sentence what it does?"
+   "what": "When the maintainer reads any function once from the top, with nothing from outside it but the names it uses, can they say in one sentence what it does, so that they grasp it at one reading?"
   },
   {
    "id": "Q7",
@@ -39,7 +39,7 @@
   {
    "id": "Q8",
    "about": "the whole",
-   "what": "Where code looks wrong or roundabout, can the maintainer learn right there why it is so, before they change it?"
+   "what": "Where code looks wrong or roundabout, can the maintainer learn right there why it is so, before they change it, so that they do not undo what it is there for?"
   }
  ],
  "practices": [

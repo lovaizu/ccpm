@@ -26,42 +26,42 @@
   {
    "id": "Q1",
    "about": "manifest, tests",
-   "what": "When the maintainer sets the code up on a fresh machine from only what the code gives for its setup, and runs the tests again and in any order, do they see the tests pass each time?"
+   "what": "When the maintainer sets the code up on a fresh machine from only what the code gives for its setup, and runs the tests again and in any order, do they see the tests pass each time, so that a failing test points at the code and never at the machine or the order?"
   },
   {
    "id": "Q2",
    "about": "module-opening",
-   "what": "With one behavior to change, can the maintainer tell which module to open from what each module says it alone decides, without reading the modules' bodies?"
+   "what": "With one behavior to change, can the maintainer tell which module to open from what each module says it alone decides, without reading the modules' bodies, so that they change the behavior in one place?"
   },
   {
    "id": "Q3",
    "about": "interface",
-   "what": "When the maintainer calls a name that another module offers, can they write a call that works from the name's interface alone, without reading its body?"
+   "what": "When the maintainer calls a name that another module offers, can they write a call that works from the name's interface alone, without reading its body, so that the body can change behind the interface without breaking its callers?"
   },
   {
    "id": "Q4",
    "about": "interface, body",
-   "what": "For each behavior the code has, can the maintainer name the case of the specification that needs it?"
+   "what": "For each behavior the code has, can the maintainer name the case of the specification that needs it, so that the code holds no behavior that no one asked for?"
   },
   {
    "id": "Q5",
    "about": "body",
-   "what": "When something the code takes from outside is wrong, can whoever ran the code put it right from only what the code tells them, with nothing left half done?"
+   "what": "When something the code takes from outside is wrong, can whoever ran the code put it right from only what the code tells them, with nothing left half done, so that a fault from outside never leaves them stuck or their data half changed?"
   },
   {
    "id": "Q6",
    "about": "tests",
-   "what": "For each case the specification names, its edges and refusals included, can the maintainer point to the one test that checks it, and tell the case from that test's name?"
+   "what": "For each case the specification names, its edges and refusals included, can the maintainer point to the one test that checks it, and tell the case from that test's name, so that they know which case a failing test breaks?"
   },
   {
    "id": "Q7",
    "about": "interface, tests",
-   "what": "When the maintainer changes a body and its callers still get what its interface says, do the tests still pass?"
+   "what": "When the maintainer changes a body and its callers still get what its interface says, do the tests still pass, so that they can improve a body without fear?"
   },
   {
    "id": "Q8",
    "about": "body, tests",
-   "what": "When the maintainer breaks the behavior a test checks, does that test fail?"
+   "what": "When the maintainer breaks the behavior a test checks, does that test fail, so that a broken behavior never goes unnoticed?"
   },
   {
    "id": "Q9",
