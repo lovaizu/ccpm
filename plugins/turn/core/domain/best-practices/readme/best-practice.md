@@ -80,7 +80,7 @@ Someone who meets the product for the first time starts using it, from the READM
 
 **Steps**
 
-1. Take the problems from the Product section of the product vision board, one where the present way falls short for each idea, and from what readers complain of in that way.
+1. Take the problems from the Concept section of the product vision board, one where the present way falls short for each idea, and from what readers complain of in that way.
 2. For each, take from the design what the product does that makes it go away. Ask the user each one the design does not settle.
 3. Look at each figure as a newcomer, and where they could not picture from it what its line says, draw it again.
 

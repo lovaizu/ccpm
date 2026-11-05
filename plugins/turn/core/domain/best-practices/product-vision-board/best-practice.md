@@ -18,7 +18,7 @@ The developer builds a product with which its users achieve what they are after.
 - **Q2** (Roles, OKRs): Reading an objective, does the developer see the end its role is after, so that they build toward that end, not toward a means or a measure of it?
 - **Q3** (OKRs): Weighing a piece of work, does the developer see which one objective it brings closer, or that it brings none closer, so that they know what the work is for or drop it?
 - **Q4** (OKRs): After a change, does the developer see from the key results whether to keep it, so that they keep only what brings the role's end closer?
-- **Q5** (Roles, OKRs, Product): Weighing the product against what its roles do today, does the developer see why it meets each objective where that way does not, so that they build what sets it apart and not a copy of that way?
+- **Q5** (Roles, OKRs, Concept): Weighing the product against what its roles do today, does the developer see why it meets each objective where that way does not, so that they build what sets it apart and not a copy of that way?
 - **Q6** (the whole): Changing how the product works inside while its roles see the same, does the developer find the product vision board still true, so that it holds as long as the roles' ends do?
 
 ## Practices
@@ -39,7 +39,7 @@ The developer builds a product with which its users achieve what they are after.
 
 **Steps**
 
-1. Ask why of each part of the objective until no further end shows, and write that end. Move a part that says how to Product, and one that says how it would show to the key results.
+1. Ask why of each part of the objective until no further end shows, and write that end. Move a part that says how to Concept, and one that says how it would show to the key results.
 2. Confirm with the user an objective that rests on what is only said or guessed, not on what the role has been seen to do.
 
 ### Q3: Weighing a piece of work, does the developer see which one objective it brings closer, or that it brings none closer, so that they know what the work is for or drop it?
@@ -62,7 +62,7 @@ The developer builds a product with which its users achieve what they are after.
 
 ### Q5: Weighing the product against what its roles do today, does the developer see why it meets each objective where that way does not, so that they build what sets it apart and not a copy of that way?
 
-**Thinking**: Product holds the few ideas that set the product apart from what its roles do today and make it meet each objective. A concept cannot be read off facts: its maker finds it by reacting to tries against the problem. So draw the ideas out of the user one point at a time, by proposals built on their own words. A bare question or a list to pick from gives them nothing to push against, and ideas offered before their own crowd them out.
+**Thinking**: Concept holds the few ideas that set the product apart from what its roles do today and make it meet each objective. A concept cannot be read off facts: its maker finds it by reacting to tries against the problem. So draw the ideas out of the user one point at a time, by proposals built on their own words. A bare question or a list to pick from gives them nothing to push against, and ideas offered before their own crowd them out.
 
 **Steps**
 

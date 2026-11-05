@@ -16,7 +16,7 @@ KR1.1 comes first: a change that improves KR1.2 is kept only if KR1.1 does not g
 results have no targets, as a measure made a target stops being a good measure (Goodhart's
 law). They show whether a change brought its objective closer.
 
-## Product
+## Concept
 
 Turn instead of asking an AI in one prompt, reading its draft and fixing it:
 

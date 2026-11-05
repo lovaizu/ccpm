@@ -29,7 +29,7 @@ law). They show whether a change brought its objective closer.
 >   reads it after a change to decide whether to keep the change.
 > - `<direction>`: which way is better, such as "Lower is better".
 
-## Product
+## Concept
 
 `<Product>` instead of `<present way>`:
 

@@ -32,7 +32,8 @@ claude plugin install turn@ccpm
 
 ## Walkthrough
 
-At the end, you have a README for your tool `tidy` that you commit as it is.
+At the end, you have a README for your tool `tidy`, as Turn hands it over, with which someone
+with a cluttered Downloads folder installs tidy and sorts their folder.
 
 `tidy` sorts a Downloads folder into folders by type, and its repository has no README. At its
 root, in Claude Code, you type:

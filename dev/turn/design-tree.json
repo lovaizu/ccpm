@@ -153,7 +153,7 @@
    "settled_by": "user",
    "grounds": [
     "Agreed with the user, 2026-11-05, when the product vision board example was shown: \"Users are roles, not person vs AI: Turn has one role, the user.\"",
-    "product-vision-board/best-practice.json Q1 thinking: \"Roles are cut by the want each brings to the product, not by what kind of thing takes them\"",
+    "product-vision-board/best-practice.json Q1 thinking: \"Cut the roles by that end, not by who or what takes them: a person and an AI that want the same are one role.\"",
     "The user, 2026-11-05: deciding what is theirs is a means, not what they come to Turn for."
    ]
   },
@@ -201,7 +201,7 @@
    "decided": "KR1.1: of the works the user asks for, the share that fails in a way of D3; lower is better. KR1.2: the time from the user's request to that work, the user's own time answering Turn included; shorter is better. A share counts a work once, however many ways it fails. Asking the user what Turn could find or settle itself adds to KR1.2 and gains KR1.1 nothing.",
    "settled_by": "reasoning",
    "grounds": [
-    "product-vision-board/best-practice.json Q4 step 3: \"Ask whether both key results could get better while the role still does not get what the objective says.\""
+    "product-vision-board/best-practice.json Q4 thinking: \"a count of the product's own output can rise while the role's end is missed.\""
    ]
   },
   {
@@ -243,7 +243,7 @@
    "decided": "Only what the user does, sees and receives. Turn's parts, and the plugins it runs on, such as Pin and Lane, are not named.",
    "settled_by": "reasoning",
    "grounds": [
-    "product-vision-board/best-practice.json Q6 thinking: \"Say only what the roles mean to do, see and receive, and nothing of how the product works inside\""
+    "product-vision-board/best-practice.json Q6 thinking: \"The board says only what the roles are after, do, see and receive, and nothing of how the product works inside.\""
    ]
   },
   {
@@ -274,7 +274,7 @@
    "decided": "The user asks for the work. Turn puts its purpose to confirm. Until no decision is open, Turn puts each fact it found to confirm and each point of the user's intent with a recommendation, one at a time. Turn shows the design to approve. While the work is made, Turn puts each point of the user's intent that comes up; how often Turn makes it again is inside Turn, so not said. Turn hands the work over, not committed.",
    "settled_by": "reasoning",
    "grounds": [
-    "readme/best-practice.json Q6 steps: \"Pick the use from what readers ask for most, such as help requests, and from the objectives of the product's product vision board.\""
+    "readme/best-practice.json Q6 steps: \"Pick the use from what readers ask for most and from the objectives of the product vision board.\""
    ]
   },
   {
@@ -307,7 +307,7 @@
    "decided": "For one who wants an AI to make a document or code that serves the people it is for, not a draft they fix themselves; with it, they hand those people work they can use for what they are after, as it is.",
    "settled_by": "reasoning",
    "grounds": [
-    "plugins/turn/core/domain/best-practices/readme/best-practice.json Q2 thinking: \"taken from what the product's users want, such as the objectives in its product vision board\""
+    "readme/best-practice.json Q2 thinking: \"the gain as the end they reach with the product, from the objectives of the product vision board.\""
    ]
   },
   {
@@ -324,7 +324,7 @@
    "decided": "The usual way is to ask an AI, such as Claude Code, in one prompt, and read and fix its draft. Five problems, one for each idea of D30: (1) it starts from scratch and writes what similar texts say, not what the work's reader needs; with Turn, the work is made by the best practice of its kind: the goal its reader reaches, a template of what it holds and the questions its reader asks of it. (2) its review gives many findings, few that matter; with Turn, an evaluator asks only those questions, whether the work's reader gets what they need. (3) it fills what you did not say with guesses; with Turn, Pin finds each fact in your repository and asks you to confirm it, and asks you each decision that is yours, one at a time. (4) you find what falls short only as you use the work; with Turn, the evaluator tries the work as its reader would, running its commands in a throwaway copy of your repository. (5) each fix is added on, and the work gets noisier; with Turn, a question not met goes back to its decision, and the work is made again from the design, the record of every fact and decision, with no fix beside it.",
    "settled_by": "reasoning",
    "grounds": [
-    "product-vision-board Product, from D30: the present way and the five ideas.",
+    "product-vision-board Concept, from D30: the present way and the five ideas.",
     "dev/turn/architecture.md, \"A shortfall goes back to its decision\": \"No role puts a fix onto the work beside the design.\"",
     "dev/turn/architecture.md S2: the evaluator \"reads the work whole and the Standard, and runs its commands in a throwaway home\"."
    ]
@@ -388,7 +388,7 @@
    "decided": "The run of D7: a README for tidy; the purpose confirmed, one fact confirmed, one intent taken, the design approved, the README handed over not committed. Not yet a real run, as Turn is being rebuilt; a real run's output replaces it once Turn is built.",
    "settled_by": "reasoning",
    "grounds": [
-    "plugins/turn/core/domain/best-practices/readme/best-practice.json Q6 steps: \"Take each exchange, what the user gives and what the product shows, from the record of a real run\""
+    "readme/best-practice.json Q6 steps: \"Take each exchange from the record of a real run, in the form the reader sees it\""
    ]
   },
   {
@@ -407,7 +407,7 @@
     "plugins/pin/core/roles/pinner.md:54-64: \"A fact is yours to find, never the person's to tell you\" / \"Where they favor one way, the decision is yours\" / \"or where the decision would be hard to undo, it is the person's\"",
     "plugins/turn/agents/evaluator.md:3: \"with only the work and the questions of its kind, never its design\"",
     "dev/turn/architecture.md:7-8: \"The generator makes the work from the design, against the kind's best practice\"",
-    "plugins/turn/core/domain/best-practices/readme/best-practice.json Q8 steps: \"Read the opening as a newcomer, and mark each thing it says that the way the reader would do the work without the product cannot do\"",
+    "readme/best-practice.json Q8 steps: \"Read the README as a newcomer, and mark each thing it says that the present way cannot do. Ask of each answer what the newcomer would doubt next, until no doubt is left.\"",
     "dev/turn/architecture.md, \"One course for every kind\": \"A kind new to Turn first gets its best practice as a work of its own, made by the same course with `meta` as its best practice.\""
    ]
   },
@@ -425,7 +425,7 @@
    "decided": "Four figures, one names the same thing in each: you, Pin, the design, the evaluator. images/problem.svg: the usual way above Turn, as who does what to whom, with each problem of D10 marked by its number where it is left and where it goes away, as the five show in one comparison of the same steps. Then one figure for each doubt of D29, each followed by its line, as one figure of the whole held seven parts and crossing lines, and showed none of the doubts at a glance: images/how-decisions.svg (A: your repository, Pin, you and the design, with what Pin settles and what it asks you), images/how-evaluator.svg (B: what the evaluator reads, and what it never reads), images/how-new-kind.svg (C: the best practice made first, approved by you, kept for later runs).",
    "settled_by": "reasoning",
    "grounds": [
-    "plugins/turn/core/domain/best-practices/readme/best-practice.json Q8 thinking: \"draw the figure in which the reader best pictures how the product does it, such as its parts with the lines that do it marked\""
+    "readme/best-practice.json Q8 thinking: \"Each point a newcomer would doubt gets a figure of its own that draws what its line says\""
    ]
   },
   {
@@ -483,7 +483,7 @@
    "settled_by": "reasoning",
    "grounds": [
     "Agreed with the user, 2026-11-05: the product vision board, the README and the architecture each show the main flow to their goal, and the conveniences around it are user stories drawn from the product vision board and its intent, so a convenience added changes the stories alone.",
-    "architecture/best-practice.json Q2 thinking: \"Write one story for each way a role of the product vision board meets the product at its edge, drawn from the objectives of the product vision board and the README's walkthrough\"",
+    "architecture/best-practice.json Q2 thinking: \"There is one story for each way a role meets the product at its edge, drawn from the objectives and the README's walkthrough\"",
     "D1: \"A person and an AI that asks for a person want the same, so they are one role.\"",
     "dev/turn/architecture.md at 8e07a7ce:131-149 the stories S1-S5 before, S3 and S4 for the calling AI",
     "dev/turn/architecture.md at 8e07a7ce:54-55: \"The planner asks the person one point only, the kind, and only before there is a design.\"",
@@ -546,7 +546,7 @@
    "grounds": [
     "dev/turn/architecture.md at 8e07a7ce:153-197 Components and what each role alone decides",
     "dev/turn/architecture.md at 8e07a7ce:199-238 the choices",
-    "architecture/best-practice.json Q16 thinking: \"leaving how a component works inside to where it is built\""
+    "architecture/best-practice.json Q16 thinking: \"How a component works inside is left to where it is built\""
    ]
   },
   {
