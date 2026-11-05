@@ -249,6 +249,58 @@ class Beside(helpers.testing.FolderTest):
         self.assertEqual(practices.kind_of(self.path), "kind")
 
 
+class Leftovers(helpers.testing.FolderTest):
+    """leftovers, each file in a best practice's folder that neither it, its template nor its
+    example holds."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.folder = os.path.join("practices", "kind")
+        self.path = os.path.join(self.folder, "best-practice.json")
+        self.data = dict(DATA, template="template.md", example="example.md")
+        self.write(self.at("best-practice.json"), "{}")
+        self.write(self.at("best-practice.md"), "# kind\n")
+        self.write(self.at("template.md"), "![The product](images/template-a.svg)\n")
+        self.write(self.at("images", "template-a.svg"), "<svg/>")
+        self.write(self.at("example.md"), "![P](images/a.svg)\n```text\n![Q](images/q.svg)\n```\n")
+        self.write(self.at("images", "a.svg"), "<svg/>")
+
+    def at(self, *path: str) -> str:
+        return os.path.join(self.folder, *path)
+
+    def test_none_where_each_file_is_its_own_or_a_figure_its_template_or_example_shows(self):
+        self.assertEqual(practices.leftovers(self.path, self.data), [])
+
+    def test_a_file_none_of_them_holds(self):
+        self.write(self.at("images", "old.svg"), "<svg/>")
+        self.write(self.at("notes.md"), "n")
+        self.assertEqual(
+            practices.leftovers(self.path, self.data),
+            [self.at("images", "old.svg"), self.at("notes.md")],
+        )
+
+    def test_a_hidden_file_is_no_leftover(self):
+        self.write(self.at("images", ".DS_Store"), "")
+        self.assertEqual(practices.leftovers(self.path, self.data), [])
+
+    def test_a_figure_the_old_copy_shows_is_a_leftover_once_its_source_dropped_it(self):
+        data = dict(self.data, source="../../doc/source.md")
+        self.write(os.path.join("doc", "source.md"), "No figure.\n")
+        self.assertEqual(practices.leftovers(self.path, data), [self.at("images", "a.svg")])
+
+    def test_a_source_with_no_example_keeps_only_its_own_files(self):
+        data = dict(DATA, source="../../doc/source.md")
+        self.assertEqual(
+            practices.leftovers(self.path, data),
+            [
+                self.at("example.md"),
+                self.at("images", "a.svg"),
+                self.at("images", "template-a.svg"),
+                self.at("template.md"),
+            ],
+        )
+
+
 class Copies(helpers.testing.FolderTest):
     """copies, the files of an example that is a copy of the document its source names."""
 

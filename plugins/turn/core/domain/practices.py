@@ -132,6 +132,52 @@ def copies(path: str, data: dict[str, Any]) -> dict[str, bytes]:
     return made
 
 
+def shown(text: str) -> list[str]:
+    """Each figure the Markdown shows from under its own folder, by its path from there; none in a
+    code block, whose text shows nothing."""
+    pieces = FENCE.split(text)
+    return [
+        link.group(3).split("#")[0]
+        for n, piece in enumerate(pieces)
+        if not n % 2
+        for link in LINK.finditer(piece)
+        if link.group(1)
+        and not KEPT.match(link.group(3))
+        and not os.path.normpath(link.group(3)).startswith("..")
+    ]
+
+
+def kept(path: str, data: dict[str, Any]) -> set[str]:
+    """The files the folder of the best practice at the path holds by right: the best practice and
+    its Markdown, its template and the figures it shows, and its example, as the copy of its source
+    would now be where it names one, else with the figures it shows. Refuses, by FileNotFoundError,
+    a source or a figure of it that is not there."""
+    files = {path, os.path.splitext(path)[0] + ".md"}
+    for key in ("template", "example"):
+        if key not in data:
+            continue
+        named = beside(path, data[key])
+        files.add(named)
+        if key == "example" and "source" in data:
+            files.update(copies(path, data))
+        elif os.path.isfile(named):
+            with open(named, encoding="utf-8") as f:
+                files.update(beside(named, figure) for figure in shown(f.read()))
+    return {os.path.normpath(f) for f in files}
+
+
+def leftovers(path: str, data: dict[str, Any]) -> list[str]:
+    """Each file in the folder of the best practice at the path, at any depth, that it does not hold
+    by right, in order; a hidden file, such as one the system keeps, is none."""
+    held = kept(path, data)
+    return sorted(
+        os.path.join(root, name)
+        for root, _, names in os.walk(os.path.dirname(path))
+        for name in names
+        if not name.startswith(".") and os.path.normpath(os.path.join(root, name)) not in held
+    )
+
+
 def texts(value: Any) -> list[str]:
     """Each string in the value at any depth."""
     if isinstance(value, str):

@@ -5,8 +5,9 @@ rounds met every question and begins the next; each prints what the planner give
 giving 0, or why it cannot, giving 1. `check` says whether the Run holds and where the run is,
 giving 0, each fault, giving 1, or why it could not check, giving 2. And what a person or CI runs
 on a best practice, as `... plan.py form|markdown|example <best practice json>...`: its faults
-and its Markdown and the copy of its example left behind; its Markdown written beside it; and the
-copy of its example written from the work its source names; each failing where it names any. It
+and its Markdown and the copy of its example left behind, and each file in its folder that none of
+them holds; its Markdown written beside it; and the copy of its example written from the work its
+source names, with each file that none of them holds removed; each failing where it names any. It
 hands each to runs.py, phases.py and practices.py in core/domain/."""
 
 from __future__ import annotations
@@ -189,14 +190,25 @@ def behind(path: str, data: dict) -> list[str]:
     return found
 
 
+def strays(path: str, data: dict) -> list[str]:
+    """Each file in the best practice's folder that neither it, its template nor its example holds,
+    in words; none where its source cannot be copied, which behind names."""
+    try:
+        found = practices.leftovers(path, data)
+    except FileNotFoundError:
+        return []
+    fix = "run plan.py example" if "source" in data else "remove it"
+    return [f"{file} is neither the template's nor the example's; {fix}" for file in found]
+
+
 def form(path: str) -> list[str]:
-    """Each fault of the best practice's form, and its Markdown and the copy of its example left
-    behind it."""
+    """Each fault of the best practice's form, its Markdown and the copy of its example left
+    behind it, and each file in its folder that none of them holds."""
     try:
         data = files.load(path, "best-practice")
     except files.Unreadable as why:
         return [str(why)]
-    late = behind(path, data)
+    late = behind(path, data) + strays(path, data)
     found = practices.missing(path, data)
     if found:
         return found + late
@@ -223,7 +235,8 @@ def markdown(path: str) -> list[str]:
 
 
 def example(path: str) -> list[str]:
-    """Writes the best practice's example, and each figure it shows, as a copy of its source."""
+    """Writes the best practice's example, and each figure it shows, as a copy of its source, and
+    removes each file in its folder that neither it, its template nor its example holds."""
     try:
         data = files.load(path, "best-practice")
     except files.Unreadable as why:
@@ -235,6 +248,9 @@ def example(path: str) -> list[str]:
         os.makedirs(os.path.dirname(copy), exist_ok=True)
         with open(copy, "wb") as f:
             f.write(content)
+    # Only once the copy is made, as which files it holds is known only then.
+    for file in practices.leftovers(path, data) if made else []:
+        os.remove(file)
     return found
 
 

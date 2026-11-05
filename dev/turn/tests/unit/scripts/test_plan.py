@@ -412,6 +412,38 @@ class Practices(helpers.testing.FolderTest):
                 self.assertEqual(code, 1)
                 self.assertIn("its source ../doc/source.md has no example to be copied to", err)
 
+    def test_form_fails_on_a_figure_left_from_an_old_source_until_example_removes_it(self):
+        self.sourced()
+        ran("example", self.path)
+        old = os.path.join(self.folder, "images", "old.svg")
+        self.write(old, "<svg/>")
+        code, _, err = ran("form", self.path)
+        self.assertEqual(code, 1)
+        self.assertIn(
+            f"plan.py: {self.path}: {old} is neither the template's nor the example's;"
+            " run plan.py example",
+            err,
+        )
+        self.assertEqual(ran("example", self.path), (0, "", ""))
+        self.assertFalse(os.path.exists(old))
+        self.assertEqual(ran("form", self.path), (0, "", ""))
+
+    def test_form_says_to_remove_a_leftover_where_no_source_makes_the_example(self):
+        ran("markdown", self.path)
+        stray = os.path.join(self.folder, "notes.md")
+        self.write(stray, "n")
+        code, _, err = ran("form", self.path)
+        self.assertEqual(code, 1)
+        self.assertIn(f"{stray} is neither the template's nor the example's; remove it", err)
+
+    def test_example_leaves_every_file_where_the_source_cannot_be_copied(self):
+        self.sourced()
+        stray = os.path.join(self.folder, "notes.md")
+        self.write(stray, "n")
+        os.remove(os.path.join(self.base, "doc", "source.md"))
+        self.assertEqual(ran("example", self.path)[0], 1)
+        self.assertTrue(os.path.exists(stray))
+
     def test_example_names_a_best_practice_with_no_source(self):
         code, _, err = ran("example", self.path)
         self.assertEqual(code, 1)
