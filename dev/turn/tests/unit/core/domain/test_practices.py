@@ -364,6 +364,9 @@ class Sections(unittest.TestCase):
     def test_the_opening_and_each_second_level_heading(self):
         self.assertEqual(practices.sections(TEMPLATE), SECTIONS)
 
+    def test_an_opening_on_the_line_right_under_the_title(self):
+        self.assertEqual(practices.sections("# <P>\n<P> is.\n## Roles\n"), ["the opening", "Roles"])
+
     def test_no_opening_where_only_the_title_and_comments_stand_before_the_first_section(self):
         bare = "# <Product> UX\n\n<!-- Delete. -->\n\n## Roles\n"
         self.assertEqual(practices.sections(bare), ["Roles"])
@@ -373,6 +376,9 @@ class Keys(unittest.TestCase):
     def test_each_key_in_order_but_the_comments(self):
         text = '{"$comment": "Delete.", "goal": "<g>", "user_benefits": [], "practices": []}'
         self.assertEqual(practices.keys(text), ["goal", "user_benefits", "practices"])
+
+    def test_keeps_a_key_that_sorts_before_the_comments(self):
+        self.assertEqual(practices.keys('{"$anchor": "a", "$comment": "x"}'), ["$anchor"])
 
 
 class Beside(helpers.testing.FolderTest):
