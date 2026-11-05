@@ -15,23 +15,26 @@ Every plugin is built by [the plugin best practice](./plugin-best-practice.md).
 ## The checks on every push
 
 CI runs these checks on every push: the linter, the formatter, the type checker, each plugin's unit
-tests with the lines and branches they run counted, and Claude Code's check of every manifest. Run
-them from the top of the repository:
+tests with the lines and branches they run counted, Claude Code's check of every manifest, and
+Mermaid's parse of every diagram in the Markdown files. Run them from the top of the repository:
 
 ```console
 uv sync --locked
+(cd dev/scripts && npm ci --ignore-scripts)
 uv run sh dev/scripts/check.sh
 ```
 
 `uv sync --locked` sets up the tools of `pyproject.toml`'s `dev` group in `.venv`, with
 [uv](https://docs.astral.sh/uv/). Run the checks there. A `coverage` installed outside a virtual
-environment does not count the scripts the tests start as separate processes.
+environment does not count the scripts the tests start as separate processes. `npm ci` sets up
+Mermaid's parser in `dev/scripts/node_modules`. Without it, the checks skip the diagrams and say so,
+and CI parses them.
 
 Each tool the checks install must match the hashes of the files it was locked with, so a version
 replaced on PyPI or npm after it was locked does not install. The Python tools come from `uv.lock`.
 `uv lock` makes that file from `pyproject.toml`, with each tool at the newest version that runs on
 each Python.
-Claude Code comes from `dev/scripts/package-lock.json`.
+Claude Code and Mermaid's parser come from `dev/scripts/package-lock.json`.
 
 ## The property tests and the mutation testing
 

@@ -19,8 +19,8 @@ jobs:
   # the branch whose run passed, else since the branch left main, for each plugin `sh dev/scripts/changed.sh`
   # names, each in a job of its own, all at once; whole on main after a commit not passed, and for a
   # plugin whose version the push changes, as before a release. A push that changes only what no
-  # check reads, such as the session records and the documents of dev/, is not checked, and `tests`
-  # still passes, as main takes a pull request only when `tests` has passed.
+  # check reads, such as the session records and the documents of dev/ without a diagram, is not
+  # checked, and `tests` still passes, as main takes a pull request only when `tests` has passed.
   changed:
     runs-on: ubuntu-latest
     outputs:
@@ -94,7 +94,8 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: "24"
-      # Claude Code is installed from its lock, scripts off but its own, which only links its binary.
+      # Claude Code and Mermaid, for dev/scripts/check.sh, are installed from their lock, scripts off
+      # but Claude Code's own, which only links its binary.
       - working-directory: dev/scripts
         run: |
           npm ci --ignore-scripts

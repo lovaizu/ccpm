@@ -4,11 +4,17 @@
 # plugin with a link to a file it changes, or every plugin where it changes what they all stand on,
 # a file of no plugin or dev/lane/testing.py, what their tests stand on. Nothing where it changes
 # only what no check reads: the session records, the rules for the assistant, the documents of dev/
-# and of each dev/<plugin>/, and the root's README and licence.
+# and of each dev/<plugin>/ and the root's README, each while it holds no Mermaid diagram, and the
+# licence.
 set -e
 
 all=$(sh dev/scripts/plugins.sh)
 changed=$(git diff --name-only "$1" "$2" | grep -vE '^(\.rn/|\.claude/rules/|dev/([^/]+/)?[^/]+\.md$|README\.md$|LICENSE$)' || true)
+# A document with a Mermaid diagram is read by dev/scripts/mermaid.mjs, which check.sh runs.
+diagrams=$(git diff --name-only "$1" "$2" -- '*.md' ':!.rn/' | while read -r file; do
+  if git show "$2:$file" 2>/dev/null | grep -q '^ *```mermaid'; then echo "$file"; fi
+done)
+changed=$(printf '%s\n%s\n' "$changed" "$diagrams" | sort -u | grep . || true)
 [ -n "$changed" ] || exit 0
 if printf '%s\n' "$changed" | grep -qvE "^(plugins|dev)/($(echo $all | tr ' ' '|'))/" \
   || printf '%s\n' "$changed" | grep -qxF 'dev/lane/testing.py'; then

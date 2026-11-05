@@ -36,6 +36,15 @@ python3 plugins/turn/scripts/plan.py form $(ls plugins/turn/core/domain/best-pra
 # colour is changed in one place (dev/plugin-best-practice.md, Directory structure).
 python3 dev/scripts/figures.py check
 
+# A Mermaid diagram GitHub cannot parse shows as an error in its place, unseen until someone opens
+# the page, so each is parsed by Mermaid's own parser, which comes with dev/scripts/package-lock.json.
+if command -v node >/dev/null 2>&1 && [ -d dev/scripts/node_modules/mermaid ]; then
+  node dev/scripts/mermaid.mjs
+else
+  echo "check.sh: Mermaid diagrams not checked, as node or dev/scripts/node_modules is missing; run"\
+    "\`npm ci --ignore-scripts\` in dev/scripts"
+fi
+
 # The unit tests, `test*.py`, unittest's own pattern, count the lines and branches; the property
 # tests, whose inputs change from run to run, are run apart by dev/scripts/properties.sh.
 for plugin in $plugins; do
