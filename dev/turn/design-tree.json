@@ -1,8 +1,8 @@
 {
  "goal": {
-  "what": "The user gets a work they put to use as handed over, having decided only what is theirs.",
+  "what": "The user gets work with which the people it is for achieve what they are after.",
   "grounds": [
-   "Agreed with the user, 2026-11-05, when the product vision board example was shown: O1 of plugins/turn/core/domain/best-practices/product-vision-board/example.md.",
+   "The user, 2026-11-05, on what Turn is for: \"利用者の目的を満たす成果物を生み出すこと\", deciding themselves and needing no fix being means; confirmed as \"the people a document or code is for achieve what they are after with it\".",
    "Agreed with the user, 2026-10-31, as Turn's concept: \"Given the user's purpose, the work's format and intended state, and the best practice of making it, an AI draws the concept out of the user and builds quality up to a work that meets the purpose well.\" Quality is the degree a work meets its user's purpose (ISO 9000:2015; Juran, fitness for use); a work is never passed by the one who made it."
   ]
  },
@@ -143,22 +143,23 @@
  "decisions": [
   {
    "id": "D1",
-   "what": "Who comes to Turn with a want of their own?",
+   "what": "Who comes to Turn with an end of their own?",
    "contributes_to": [
     "product-vision-board/Q1",
     "product-vision-board/Q2"
    ],
    "builds_on": [],
-   "decided": "One role, the user: one who asks Turn for a work, such as a README, and decides what is theirs. A person and an AI that asks for a person want the same, so they are one role. Turn's own parts and the plugins it runs on want nothing of their own, so none is a role.",
+   "decided": "One role, the user: one who asks Turn for a document or code, such as a README, for the people it is for. A person and an AI that asks for a person are after the same, so they are one role. Turn's own parts and the plugins it runs on are after nothing of their own, so none is a role.",
    "settled_by": "user",
    "grounds": [
     "Agreed with the user, 2026-11-05, when the product vision board example was shown: \"Users are roles, not person vs AI: Turn has one role, the user.\"",
-    "product-vision-board/best-practice.json Q1 thinking: \"Roles are cut by the want each brings to the product, not by what kind of thing takes them\""
+    "product-vision-board/best-practice.json Q1 thinking: \"Roles are cut by the want each brings to the product, not by what kind of thing takes them\"",
+    "The user, 2026-11-05: deciding what is theirs is a means, not what they come to Turn for."
    ]
   },
   {
    "id": "D2",
-   "what": "The user's objective, as one line with the role as its subject and no mechanism",
+   "what": "The user's objective: the end they are after, with the role as its subject",
    "contributes_to": [
     "product-vision-board/Q2",
     "product-vision-board/Q3"
@@ -166,23 +167,24 @@
    "builds_on": [
     "D1"
    ],
-   "decided": "O1: The user gets a work they put to use as handed over, having decided only what is theirs.",
+   "decided": "O1: The user gets work with which the people it is for achieve what they are after.",
    "settled_by": "user",
    "grounds": [
-    "Agreed with the user, 2026-11-05, when the product vision board example was shown."
+    "The user, 2026-11-05: \"利用者の目的を満たす成果物を生み出すこと\"; \"ユーザが決める、直さなくて良い\" are means. Asked why until no further end showed: the work handed over as it is shows the end met (D3, D4); deciding only what is theirs is how it is reached (D30 (3)).",
+    "Agreed with the user, 2026-10-31, as Turn's concept: quality is the degree a work meets its user's purpose (ISO 9000:2015; Juran, fitness for use)."
    ]
   },
   {
    "id": "D3",
-   "what": "How do success and failure of O1 show in what the user does?",
+   "what": "How do success and failure of O1 show in what the user and the people the work is for do?",
    "contributes_to": [
     "product-vision-board/Q4"
    ],
    "builds_on": [
     "D2"
    ],
-   "decided": "O1 fails where the user changes the work before they first put it to use, themselves or by asking; where they never put it to use; and where they are asked a point that is not theirs, such as a fact Turn could find. It succeeds where they put it to use as handed over.",
-   "settled_by": "research",
+   "decided": "O1 fails where the people the work is for cannot use it for what they are after as it was handed over: the user changes it before its first use, themselves or by asking; it is never put to use; or the people it is for fall short with it, as the ux trials see through a stand-in that holds their intent. It succeeds where they achieve what they are after with the work as handed over.",
+   "settled_by": "reasoning",
    "grounds": [
     "product-vision-board/best-practice.json Q4 step 1: \"List how success or failure would show in what the role does or feels, such as giving up, undoing a result or working around the product.\""
    ]
@@ -196,7 +198,7 @@
    "builds_on": [
     "D3"
    ],
-   "decided": "KR1.1: of the works the user asks for, the share that goes wrong in a way of D3; lower is better. KR1.2: the time from the request to a work they put to use; shorter is better. A share counts a work once, however many ways it goes wrong. KR1.1 cannot get better by asking the user everything, as a point not theirs counts against it, nor by handing over works never used, as those count too.",
+   "decided": "KR1.1: of the works the user asks for, the share that fails in a way of D3; lower is better. KR1.2: the time from the user's request to that work, the user's own time answering Turn included; shorter is better. A share counts a work once, however many ways it fails. Asking the user what Turn could find or settle itself adds to KR1.2 and gains KR1.1 nothing.",
    "settled_by": "reasoning",
    "grounds": [
     "product-vision-board/best-practice.json Q4 step 3: \"Ask whether both key results could get better while the role still does not get what the objective says.\""
@@ -213,7 +215,7 @@
     "D2",
     "D4"
    ],
-   "decided": "Turn instead of asking an AI in one prompt, reading its draft and mending it: (1) Made from a best practice: Turn thinks and makes each kind of work from that kind's best practice, made first where none exists, so the user receives a work built toward its reader's purpose, not one an AI starting from scratch has mapped from similar text. (2) Checked by purpose and intent: Turn checks the work by questions on the intent, whether its reader gets what they need and the user's intent holds, not whether it follows the best practice, so the user is handed no findings off the essence to sort. (3) Every intent drawn out: Turn draws each intent out of the user in the design tree until it is settled, so the work rests on the user's intent, not on guesses the user must find in the draft. (4) Checked in use: Turn tries the work as its reader would use it and checks the intents there, so what the user receives already works in use, not only on reading. (5) Seeks the good: Turn looks for what is good in the work and how to make it good, not for faults to patch, so the work improves from its root without the noise that added fixes bring. Each meets O1.",
+   "decided": "Turn instead of asking an AI in one prompt, reading its draft and fixing it: (1) Made from a best practice: Turn makes each kind of work by the best practice of its kind, made first where none exists, so the work is built toward what the people it is for are after, not mapped from similar text by an AI starting from scratch. (2) Checked by purpose and intent: Turn checks whether the people the work is for get what they are after, not whether the work follows the best practice, so the user is handed no findings off the purpose to sort. (3) Every intent drawn out: Turn draws the user's purpose and intent for the work out of them point by point before it is made, so the work rests on what they mean, not on guesses. (4) Checked in use: Turn tries the work as the people it is for would use it, so it serves them in use, not only on reading. (5) Seeks the good: Turn makes the work good from its root, not patched fault by fault, so it carries none of the noise that added fixes bring. Each meets O1.",
    "settled_by": "user",
    "grounds": [
     "The user, 2026-11-05, on what Turn does today without Turn: an AI is asked in one prompt and its draft is read and mended; what it hands over is not put to use as it comes.",
@@ -225,7 +227,8 @@
     "The user, 2026-11-05, on idea (2): kept apart from (1), as (1) is how Turn makes and (2) how it checks, and (2) answers the present way's findings off the essence; the user then left the rest to the assistant (\"あとは任せる\").",
     "Rated against the present way for O1 by the assistant: all five better on KR1.1. On KR1.2, (1) where a best practice must first be made and (3) by the user's answers cost time up front, against the rounds of reading and mending they save.",
     "Argued against by the assistant: (3) asks the user many points and may lose them or ask points not theirs (KR1.1); product-vision-board Q5 now has each point put as a proposal built on the user's words, one at a time.",
-    "Riskiest assumption: a work Turn makes and checks this way is put to use as handed over more often than a one-prompt draft, and soon enough. Checked by the ux trials: the same requests through Turn and through one prompt, counting KR1.1 and KR1.2 for each."
+    "Riskiest assumption: the people a work is for achieve what they are after with it as Turn hands it over more often than with a one-prompt draft, and soon enough. Checked by the ux trials: the same requests through Turn and through one prompt, counting KR1.1 and KR1.2 for each.",
+    "The why of each idea rewritten for O1 as the user reworded it, 2026-11-05, by the assistant."
    ]
   },
   {
@@ -268,7 +271,7 @@
     "D2",
     "D6"
    ],
-   "decided": "The user asks for the work. Turn puts its purpose to confirm. Until no decision is open, Turn puts each fact it found to confirm and each decision of the user's with a recommendation, one at a time. Turn shows the design to approve. While the work is made, Turn puts each decision of the user's that comes up; how often Turn makes it again is inside Turn, so not said. Turn hands the work over, not committed.",
+   "decided": "The user asks for the work. Turn puts its purpose to confirm. Until no decision is open, Turn puts each fact it found to confirm and each point of the user's intent with a recommendation, one at a time. Turn shows the design to approve. While the work is made, Turn puts each point of the user's intent that comes up; how often Turn makes it again is inside Turn, so not said. Turn hands the work over, not committed.",
    "settled_by": "reasoning",
    "grounds": [
     "readme/best-practice.json Q6 steps: \"Pick the use from what readers ask for most, such as help requests, and from the objectives of the product's product vision board.\""
@@ -284,12 +287,12 @@
     "D2",
     "D30"
    ],
-   "decided": "A Claude Code plugin that makes the document or code you ask for, ready to use without fixing.",
+   "decided": "A Claude Code plugin that makes the document or code you ask for, so that the people it is for get what they are after from it.",
    "settled_by": "reasoning",
    "grounds": [
-    "O1 of the product vision board: \"a work they put to use as handed over\"",
+    "O1 of the product vision board: \"work with which the people it is for achieve what they are after\"",
     "readme/best-practice.json Q1 thinking: \"one sentence that names the kind of thing the product is and the one thing it gives the reader, in words the reader already uses\"; \"a work\" and \"decisions that are yours\" are not the reader's words, and two things joined by \"and\" do not say in short what Turn is.",
-    "Retold from memory as to a colleague: \"a Claude Code plugin that makes docs or code you can use without fixing\"."
+    "Retold from memory as to a colleague: \"a plugin that makes docs or code that do the job for the people they are for\"."
    ]
   },
   {
@@ -301,7 +304,7 @@
    "builds_on": [
     "D2"
    ],
-   "decided": "For one who wants an AI to make a document or code they use as it is, not a draft they fix themselves; they get that, and decide only what is theirs to decide.",
+   "decided": "For one who wants an AI to make a document or code that serves the people it is for, not a draft they fix themselves; with it, they hand those people work they can use for what they are after, as it is.",
    "settled_by": "reasoning",
    "grounds": [
     "plugins/turn/core/domain/best-practices/readme/best-practice.json Q2 thinking: \"taken from what the product's users want, such as the objectives in its product vision board\""
@@ -318,7 +321,7 @@
     "D9",
     "D30"
    ],
-   "decided": "The usual way is to ask an AI, such as Claude Code, in one prompt, and read and mend its draft. Five problems, one for each idea of D30: (1) it starts from scratch and writes what similar texts say, not what the work's reader needs; with Turn, the work is made by the best practice of its kind: the goal its reader reaches, a template of what it holds and the questions its reader asks of it. (2) its review gives many findings, few that matter; with Turn, an evaluator asks only those questions, whether the work's reader gets what they need. (3) it fills what you did not say with guesses; with Turn, Pin finds each fact in your repository and asks you to confirm it, and asks you each decision that is yours, one at a time. (4) you find what falls short only as you use the work; with Turn, the evaluator tries the work as its reader would, running its commands in a throwaway copy of your repository. (5) each fix is added on, and the work gets noisier; with Turn, a question not met goes back to its decision, and the work is made again from the design, the record of every fact and decision, with no fix beside it.",
+   "decided": "The usual way is to ask an AI, such as Claude Code, in one prompt, and read and fix its draft. Five problems, one for each idea of D30: (1) it starts from scratch and writes what similar texts say, not what the work's reader needs; with Turn, the work is made by the best practice of its kind: the goal its reader reaches, a template of what it holds and the questions its reader asks of it. (2) its review gives many findings, few that matter; with Turn, an evaluator asks only those questions, whether the work's reader gets what they need. (3) it fills what you did not say with guesses; with Turn, Pin finds each fact in your repository and asks you to confirm it, and asks you each decision that is yours, one at a time. (4) you find what falls short only as you use the work; with Turn, the evaluator tries the work as its reader would, running its commands in a throwaway copy of your repository. (5) each fix is added on, and the work gets noisier; with Turn, a question not met goes back to its decision, and the work is made again from the design, the record of every fact and decision, with no fix beside it.",
    "settled_by": "reasoning",
    "grounds": [
     "product-vision-board Product, from D30: the present way and the five ideas.",
@@ -335,7 +338,7 @@
    "builds_on": [
     "D2"
    ],
-   "decided": "It does not commit, push or publish the work; it does not settle a decision of the user's, and one left unanswered holds the run; it is not for a quick draft, as it takes longer than asking Claude Code.",
+   "decided": "It does not commit, push or publish the work; it does not settle the user's purpose or intent, and a point left unanswered holds the run; it is not for a quick draft, as it takes longer than asking Claude Code.",
    "settled_by": "reasoning",
    "grounds": [
     "The walkthrough's run, D7, ends with the README handed over, not committed.",
@@ -382,7 +385,7 @@
     "D6",
     "D7"
    ],
-   "decided": "The run of D7: a README for tidy; the purpose confirmed, one fact confirmed, one decision taken, the design approved, the README handed over not committed. Not yet a real run, as Turn is being rebuilt; a real run's output replaces it once Turn is built.",
+   "decided": "The run of D7: a README for tidy; the purpose confirmed, one fact confirmed, one intent taken, the design approved, the README handed over not committed. Not yet a real run, as Turn is being rebuilt; a real run's output replaces it once Turn is built.",
    "settled_by": "reasoning",
    "grounds": [
     "plugins/turn/core/domain/best-practices/readme/best-practice.json Q6 steps: \"Take each exchange, what the user gives and what the product shows, from the record of a real run\""
@@ -398,7 +401,7 @@
     "D8",
     "D10"
    ],
-   "decided": "(A) How does it tell which decisions are mine? Pin finds what the repository holds itself and shows it to you to confirm; it weighs each open decision by the goal, the facts and your answers, settles one they favor, and asks you only one where another way would serve as well or that would be hard to undo; each is written to design-tree.json with who settled it. (B) How can an AI judge an AI's work? The evaluator is a fresh AI given only the work and the questions of its kind, never the design or the talk, so it judges by what the work's user gets, not by what its maker meant. (C) What if Turn has no best practice for my kind of work? Turn first makes one as a work of its own, by the same course, and you approve it as you approve any design; it is kept in .turn/best-practices/, so later runs in your repository use it. How Turn knows what a work should hold is said under problem (1) of D10, so it is no doubt of its own.",
+   "decided": "(A) How does it tell what to ask me? Pin finds what the repository holds itself and shows it to you to confirm; it weighs each open decision by the purpose, the facts and your answers, settles one they favor, and asks you only your intent, where another way would serve as well or one would be hard to undo; each is written to design-tree.json with who settled it. (B) How can an AI judge an AI's work? The evaluator is a fresh AI given only the work and the questions of its kind, never the design or the talk, so it judges by what the work's user gets, not by what its maker meant. (C) What if Turn has no best practice for my kind of work? Turn first makes one as a work of its own, by the same course, and you approve it as you approve any design; it is kept in .turn/best-practices/, so later runs in your repository use it. How Turn knows what a work should hold is said under problem (1) of D10, so it is no doubt of its own.",
    "settled_by": "reasoning",
    "grounds": [
     "plugins/pin/core/roles/pinner.md:54-64: \"A fact is yours to find, never the person's to tell you\" / \"Where they favor one way, the decision is yours\" / \"or where the decision would be hard to undo, it is the person's\"",
@@ -476,7 +479,7 @@
     "D1",
     "D7"
    ],
-   "decided": "The user alone, in three ways, each a user story. S1: start Turn with a request, by typing `/turn:up` or, as an AI that asks for a person, by starting `turn:up` as Calling Turn says; it carries the request and the purpose put. S2: answer the point Turn puts; it carries each fact and decision, the design approved, a decision while the work is made, and the work handed over. S3: start Turn with a run's folder, alone or with a change. From O1's intent, a work put to use having decided only what is theirs, the stories also carry these conveniences, which the product vision board does not list: in S1, where the request does not say the kind, Turn first asks it, and where Turn has no best practice for the kind, it first makes one, putting its points and design to the user, then the work by it; in S2, where a purpose, a fact or the design is wrong, the user says what it should be, and Turn goes on with each point built on it changed; in S3, a run that stopped before the hand-over, as a point was left unanswered or Claude Code ended, goes on from its folder, with every point settled so far and the work as far as made, not committed, asking nothing again, and a change given with the folder makes the work again with it. A fault of Turn's own can end any of them, and the user gets the fault, to send to Turn's makers. A question the rounds cannot meet is no convenience of its own: it goes back to Pin and reaches the user as a decision of S2. The calling AI is no role and no story of its own, as D1 makes it the user; the ways an AI starts and resumes Turn stay, as Calling Turn gives them.",
+   "decided": "The user alone, in three ways, each a user story. S1: start Turn with a request, by typing `/turn:up` or, as an AI that asks for a person, by starting `turn:up` as Calling Turn says; it carries the request and the purpose put. S2: answer the point Turn puts; it carries each fact and point of intent, the design approved, a point of intent while the work is made, and the work handed over. S3: start Turn with a run's folder, alone or with a change. From O1's intent, work with which the people it is for achieve what they are after, the stories also carry these conveniences, which the product vision board does not list: in S1, where the request does not say the kind, Turn first asks it, and where Turn has no best practice for the kind, it first makes one, putting its points and design to the user, then the work by it; in S2, where a purpose, a fact or the design is wrong, the user says what it should be, and Turn goes on with each point built on it changed; in S3, a run that stopped before the hand-over, as a point was left unanswered or Claude Code ended, goes on from its folder, with every point settled so far and the work as far as made, not committed, asking nothing again, and a change given with the folder makes the work again with it. A fault of Turn's own can end any of them, and the user gets the fault, to send to Turn's makers. A question the rounds cannot meet is no convenience of its own: it goes back to Pin and reaches the user as a point of intent of S2. The calling AI is no role and no story of its own, as D1 makes it the user; the ways an AI starts and resumes Turn stay, as Calling Turn gives them.",
    "settled_by": "reasoning",
    "grounds": [
     "Agreed with the user, 2026-11-05: the product vision board, the README and the architecture each show the main flow to their goal, and the conveniences around it are user stories drawn from the product vision board and its intent, so a convenience added changes the stories alone.",

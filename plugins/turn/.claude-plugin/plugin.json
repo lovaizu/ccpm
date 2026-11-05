@@ -1,6 +1,6 @@
 {
   "name": "turn",
-  "description": "Turn makes a work you ask for, such as a README or a module of code, ready to use as it comes. It asks you only the decisions that are yours, and an AI that did not make the work judges it in its user's place.",
+  "description": "Turn makes the document or code you ask for, such as a README or a module, so that the people it is for get what they are after from it. It asks you only your purpose and intent, and an AI that did not make the work tries it as those people would.",
   "version": "0.1.0",
   "author": { "name": "lovaizu" },
   "dependencies": ["pin"]

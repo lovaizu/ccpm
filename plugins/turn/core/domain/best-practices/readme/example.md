@@ -1,18 +1,19 @@
 # Turn
 
-Turn is a Claude Code plugin that makes the document or code you ask for, ready to use without
-fixing.
+Turn is a Claude Code plugin that makes the document or code you ask for, so that the people it is
+for get what they are after from it.
 
 Turn 0.1.0 is still in development and not yet released: a run may stop on a fault of Turn's own,
 and the walkthrough below shows the run Turn is built for, not yet a recorded one.
 
-Turn is for you when you want an AI to make a document or code you use as it is, not a draft you
-fix yourself. With it, you get that, and you decide only what is yours to decide.
+Turn is for you when you want an AI to make a document or code that serves the people it is for,
+not a draft you fix yourself. With it, you hand them work they can use for what they are after, as
+it is.
 
 **Non-goals**
 
 - Turn does not commit, push or publish the work.
-- Turn does not settle a decision that is yours. One you leave unanswered holds the run.
+- Turn does not settle your purpose or your intent. A point you leave unanswered holds the run.
 - Turn is not for a quick draft you will fix yourself: it takes longer than asking Claude Code.
 
 ## Requirements
@@ -57,8 +58,8 @@ Right?
 You answer `right`. Turn shows:
 
 ```text
-Decision: the walkthrough runs tidy --dry-run on five files, then tidy, so the reader sees
-what moves before anything moves. Yes?
+Intent: the reader should see what tidy would move before it moves anything, so the walkthrough
+runs tidy --dry-run first. Yes?
 ```
 
 You answer `yes`. Turn shows:
@@ -86,7 +87,7 @@ Done: README.md is written, not committed. Its reader gets all a README's reader
 - 2, its review gives many findings, few that matter: a fresh AI, the evaluator, asks only those
   questions, whether the work's reader gets what they need, so each shortfall it finds matters.
 - 3, it fills what you did not say with guesses: Turn finds each fact in your repository and asks
-  you to confirm it, and asks you each decision that is yours, one at a time, so nothing in the
+  you to confirm it, and asks you your purpose and intent, one point at a time, so nothing in the
   work is a guess you never saw.
 - 4, you find what falls short only as you use the work: the evaluator tries the work as its reader
   would, running its commands in a throwaway copy of your repository, so the work reaches you only
@@ -95,11 +96,11 @@ Done: README.md is written, not committed. Its reader gets all a README's reader
   decision, and the work is made again from the design, the record of every fact and decision, so
   no fix sits beside it.
 
-![A: Turn finds facts in your repository, settles what they favor, and asks you the rest](images/how-decisions.svg)
+![A: Turn finds facts in your repository, settles what they favor, and asks you your intent](images/how-decisions.svg)
 
-- A, how Turn tells which decisions are yours: Pin finds what your repository holds and shows it to
-  you to confirm. It settles a decision that the goal, the facts and your answers favor, and asks
-  you one where another way would serve as well, or that would be hard to undo. It writes each into
+- A, how Turn tells what to ask you: Pin finds what your repository holds and shows it to you to
+  confirm. It settles a decision that the purpose, the facts and your answers favor, and asks you
+  only your intent: where another way would serve as well, or would be hard to undo. It writes each into
   the design with who settled it.
 
 ![B: the evaluator reads only the work and the questions, never the design](images/how-evaluator.svg)

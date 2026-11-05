@@ -110,7 +110,7 @@ up passes on each point, each Request and each answer as it got them, and answer
 work itself. The planner hands Pin each point that the user's AI settled, as it was given.
 
 *Why*: a point reworded on the way is a question that no role asked. An answer summed up loses what
-the user meant, and a settled point reworded is asked again or held otherwise (KR1.1).
+the user meant (KR1.1), and a settled point reworded is asked again (KR1.2).
 
 ### Every user meets the same Turn
 
@@ -139,8 +139,8 @@ the run (KR1.1). What becomes of the work is the user's to decide, as
   it also carries the kind asked where the request does not say it, a new kind's best practice made
   first, and a fault of Turn's own that stops the run.
 - **S2**: As the user, I want to answer the point that Turn puts to me. Carries each fact to confirm
-  and each decision, the design approved, a decision that comes up while the work is made, and the
-  work handed over. From the product vision board's intent, it also carries a wrong purpose, fact or
+  and each point of intent, the design approved, a point of intent that comes up while the work is
+  made, and the work handed over. From the product vision board's intent, it also carries a wrong purpose, fact or
   design corrected, and a fault of Turn's own that stops the run.
 - **S3**: As the user, I want to start Turn with a run's folder, alone or with a change. Carries,
   from the product vision board's intent, a stopped run resumed, the work changed, and a fault of
