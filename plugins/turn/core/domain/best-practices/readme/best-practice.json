@@ -17,7 +17,7 @@
   {
    "id": "Q3",
    "about": "the opening",
-   "what": "Asked by a colleague why this product and not another way of doing the same work, does the reader name what it does differently that brings the gain?"
+   "what": "Weighing the product against what they would do without it, does the reader see each thing that must hold to solve their problem, where that way falls short of it, and how the product makes it hold?"
   },
   {
    "id": "Q4",
@@ -42,7 +42,7 @@
   {
    "id": "Q8",
    "about": "the opening, How it works",
-   "what": "Looking at the figure of how the product works, does the reader see how it keeps each gain and the idea?"
+   "what": "Looking at the figure of how the product works, does the reader see how it keeps each gain and makes each condition of the opening hold?"
   },
   {
    "id": "Q9",
@@ -77,10 +77,16 @@
   },
   {
    "user_benefit": "Q3",
-   "thinking": "Name the other way of doing the same work, and say in one paragraph what the product does instead that brings the gain, as the reader weighs the product against what they would do without it.",
+   "thinking": "Name what the reader would do without the product, and give in a table each condition that must hold to solve the reader's problem, where that way falls short of it and how the product makes it hold, as the reader then weighs the product by reasons they can check, not by a claim.",
    "steps": [
-    "Find the other way in what the reader would do if the product did not exist, doing nothing among it.",
-    "Where the reader could not say the difference to a colleague in their own words, replace each word that only praises with what the product does."
+    "Take the reader's problem from the objectives of the product's UX: what keeps the role from what its objective says.",
+    "List every condition that must hold for the problem to be solved, by whatever way, from each way the objective fails, such as what its key results count against it; keep one only if a way that misses it leaves the problem unsolved.",
+    "Find the usual way in what the reader would do if the product did not exist, doing nothing among it.",
+    "For each condition, say where the usual way falls short of it, and leave out a condition it meets, as that gives the reader no reason to choose.",
+    "For each condition, say what the product does that makes it hold, from the design.",
+    "Ask the user each condition, and each shortfall of the usual way, that the design does not settle.",
+    "Say in one sentence, as the idea, what the product does instead across the rows.",
+    "Where the reader could not say a row to a colleague in their own words, replace each word that only praises with what the product does."
    ]
   },
   {
@@ -116,9 +122,9 @@
   },
   {
    "user_benefit": "Q8",
-   "thinking": "Draw who does what to whom so that each gain and the idea hold, in as much detail as a reader new to the product can follow, as a reader trusts a promise they see kept.",
+   "thinking": "Draw who does what to whom so that each gain holds and each condition of the opening's table is met, in as much detail as a reader new to the product can follow, as a reader trusts a promise they see kept.",
    "steps": [
-    "Point to each gain and the idea, and find the lines of the figure that keep it. Where none does, mend the figure or the promise.",
+    "Point to each gain and each condition of the opening's table, and find the lines of the figure that make it hold. Where none does, mend the figure or the opening.",
     "Leave each non-goal to the opening, as a figure shows what the product does."
    ]
   },

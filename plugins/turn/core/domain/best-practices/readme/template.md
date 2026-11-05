@@ -8,7 +8,9 @@
 
 `<The usual way>`. `<Product>` instead `<idea>`.
 
-![The usual way and the product](images/template-idea.svg)
+| What must hold | The usual way | `<Product>` |
+| --- | --- | --- |
+| `<condition>` | `<where it fails>` | `<how it meets it>` |
 
 **Non-goals**
 
@@ -22,11 +24,11 @@
 >   optional.
 > - `<your situation>`: the work the reader wants done.
 > - `<gain>`: what the reader can then do.
-> - `<The usual way>`: how the same work goes without the product, and where it falls short.
+> - `<The usual way>`: what the reader would do without the product, in one sentence.
 > - `<idea>`: what the product does differently that brings the gain, in one sentence.
-> - The figure: the deliverable's own at images/idea.svg, the product named in its alt text: the
->   usual way above the product, each as who does what to whom, so the reader sees where the usual
->   way falls short and what the product does there instead.
+> - `<condition>`: each thing that must hold for the reader's problem to be solved, one row each.
+> - `<where it fails>`: where the usual way falls short of it.
+> - `<how it meets it>`: what the product does that makes it hold.
 > - `<expectation>`: each thing a reader might expect of the product that it does not do; optional.
 
 ## Requirements
@@ -87,7 +89,7 @@ At the end, you have `<result>`.
 > - The figure: the deliverable's own at images/how-it-works.svg, the product named in its alt text:
 >   the user, the product's parts and what they pass, each by its name, with what each does to
 >   another.
-> - `<point>`: each point a gain or the idea needs that the figure cannot show, in one sentence;
+> - `<point>`: each point a gain or a condition needs that the figure cannot show, in one sentence;
 >   optional. A convenience, such as going on with a run that stopped, is no point here.
 
 ## Documentation

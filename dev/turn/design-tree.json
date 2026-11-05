@@ -40,7 +40,7 @@
   },
   {
    "id": "readme/Q3",
-   "what": "Asked by a colleague why this product and not another way of doing the same work, does the reader name what it does differently that brings the gain?"
+   "what": "Weighing the product against what they would do without it, does the reader see each thing that must hold to solve their problem, where that way falls short of it, and how the product makes it hold?"
   },
   {
    "id": "readme/Q4",
@@ -60,7 +60,7 @@
   },
   {
    "id": "readme/Q8",
-   "what": "Looking at the figure of how the product works, does the reader see how it keeps each gain and the idea?"
+   "what": "Looking at the figure of how the product works, does the reader see how it keeps each gain and makes each condition of the opening hold?"
   },
   {
    "id": "readme/Q9",
@@ -364,10 +364,10 @@
    "builds_on": [
     "D10"
    ],
-   "decided": "You, Pin, the generator, the evaluator, the best practices, the design tree and the work, with what each does to another. Nothing stands under it, as a convenience such as a run that stopped going on from its folder keeps no gain and no idea, and the architecture's S3 carries it.",
+   "decided": "You, Pin, the generator, the evaluator, the best practices, the design tree and the work, with what each does to another. Nothing stands under it, as a convenience such as a run that stopped going on from its folder keeps no gain and makes no condition hold, and the architecture's S3 carries it.",
    "settled_by": "reasoning",
    "grounds": [
-    "plugins/turn/core/domain/best-practices/readme/best-practice.json Q8: \"Draw who does what to whom so that each gain and the idea hold\"",
+    "plugins/turn/core/domain/best-practices/readme/best-practice.json Q8: \"Draw who does what to whom so that each gain holds and each condition of the opening's table is met\"",
     "the user, 2026-11-05: a convenience around the UX's core objective is the scope of the architecture's user stories, and must not change most of the UX, the README and the architecture each time"
    ]
   },
@@ -404,7 +404,7 @@
     "D14",
     "D15"
    ],
-   "decided": "The template's order: what Turn is, the status, whom it is for and the gain, the idea, the non-goals; then Requirements, Installation, Walkthrough, How it works, Documentation, License. A reader who learns Turn is not for them stops after the opening; the Walkthrough comes after Installation, as it runs Turn installed.",
+   "decided": "The template's order: what Turn is, the status, whom it is for and the gain, the usual way and the idea, the table of conditions, the non-goals; then Requirements, Installation, Walkthrough, How it works, Documentation, License. A reader who learns Turn is not for them stops after the opening; the Walkthrough comes after Installation, as it runs Turn installed.",
    "settled_by": "reasoning",
    "grounds": [
     "readme/best-practice.json Q11 thinking: \"Order the README as the reader decides, from what every reader needs to what only a reader who has chosen the product needs\""
