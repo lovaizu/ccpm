@@ -41,8 +41,16 @@ sequenceDiagram
   T->>R: README.md, not committed
 ```
 
-- If the run stops before the README is handed over: the requester types `/turn:up` with the
-  run's folder, and Turn goes on from where it stopped, asking nothing again.
+- If the request does not say what kind of work it is: Turn first asks the kind, and goes on once
+  the requester names it.
+- If Turn has no best practice for the kind: Turn first makes one, putting its points and its
+  design to the requester as it does for the README, and then makes the README by it.
+- If a purpose, a fact or the design that Turn puts is wrong: the requester says what it should
+  be, and Turn goes on from there, with each point built on it changed to match.
+- If the run stops before the README is handed over, as the requester leaves a point unanswered
+  or Claude Code ends: the requester has the run's folder, with every point settled so far, and
+  the README as far as it was made, not committed. They type `/turn:up` with the folder, and Turn
+  goes on from where it stopped, asking nothing again.
 - If the requester wants the README changed: they type `/turn:up` with the run's folder and the
   change, and get the README made again with the change.
 - If Turn stops on a fault of its own: the requester gets the fault, to send to Turn's makers.

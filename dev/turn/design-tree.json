@@ -194,13 +194,18 @@
     "D5",
     "D7"
    ],
-   "decided": "Three points, each one line under the scenario: if the run stops before the work is handed over, the requester types `/turn:up` with the run's folder, and Turn goes on from where it stopped, asking nothing again; if the requester wants the work changed, they type `/turn:up` with the run's folder and the change, and get the work made again with the change; if Turn stops on a fault of its own, the requester gets the fault, to send to Turn's makers.",
+   "decided": "Six points, each one line under the scenario, found by going through each message for what the requester sends that does not serve, a fault of Turn, and one outside it that fails: if the request does not say the kind, Turn first asks it; if Turn has no best practice for the kind, it first makes one, putting its points and design to the requester, then the work by it; if a purpose, a fact or the design is wrong, the requester says what it should be, and Turn goes on with each point built on it changed; if the run stops before the hand-over, as a point is left unanswered or Claude Code ends, the requester has the run's folder with every point settled so far and the work as far as made, not committed, and `/turn:up` with the folder goes on asking nothing again; if the requester wants the work changed, `/turn:up` with the folder and the change makes it again; if Turn stops on a fault of its own, the requester gets the fault, to send to Turn's makers. A question the rounds cannot meet is not a point of its own: it goes back to Pin and reaches the requester as a decision on the main path.",
    "settled_by": "reasoning",
    "grounds": [
-    "dev/turn/architecture.md:148-149 S5: \"As the person, I want to type `/turn:up` with a run's folder, alone or with a change, and have the run go on from its folder, or the work made again with the change in its design.\"",
+    "dev/turn/architecture.md:54-55: \"The planner asks the person one point only, the kind, and only before there is a design.\"",
+    "dev/turn/architecture.md:42-43: \"A kind new to Turn gets its best practice as a work of its own, made by the same course with `meta` as its best practice.\"",
+    "dev/pin/architecture.md:68-69: the go-between passes \"whatever the person says while a point waits, as their answer.\"",
     "dev/turn/architecture.md:100-101: \"A run that stopped goes on from its folder in a new session, and asks nothing again (KR1.2).\"",
+    "dev/turn/architecture.md:122: \"The generator writes only the work and the run's folder.\"",
+    "dev/turn/architecture.md:148-149 S5: \"As the person, I want to type `/turn:up` with a run's folder, alone or with a change, and have the run go on from its folder, or the work made again with the change in its design.\"",
     "plugins/turn/skills/up/SKILL.md:18-19: \"`For the maker of Turn:`: tell the person that Turn stopped on a fault of its own, with the message as it is, and stop.\"",
-    "ux.json Q6 thinking: \"each point where the role leaves the main path, such as a run that stops or a fault of the product\""
+    "dev/turn/architecture.md:87-88: \"A question not met in the content phase goes back to the decisions that serve it, through Pin.\"",
+    "ux.json Q6 steps: \"Go through each message of the main path, and list all that could go wrong there\" / \"Where the role gives up partway, say what it is left with.\""
    ]
   },
   {
