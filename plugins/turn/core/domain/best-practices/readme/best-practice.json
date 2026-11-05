@@ -17,7 +17,7 @@
   {
    "id": "Q3",
    "about": "the opening",
-   "what": "Weighing the product against what they would do without it, does the reader see the problem that way leaves them with, and what the product does instead?"
+   "what": "Asked by a colleague why this product and not another way of doing the same work, does the reader name what it does differently that brings the gain?"
   },
   {
    "id": "Q4",
@@ -42,7 +42,7 @@
   {
    "id": "Q8",
    "about": "the opening, How it works",
-   "what": "Looking at how the product works, does the reader see how it keeps each gain and makes each condition behind the opening's problem hold?"
+   "what": "Looking at the figure of how the product works, does the reader see how it keeps each gain and the idea?"
   },
   {
    "id": "Q9",
@@ -77,16 +77,10 @@
   },
   {
    "user_benefit": "Q3",
-   "thinking": "Say in a few plain sentences the problem that what the reader would do without the product leaves them with, and in one sentence the product's idea, as the reader decides by a problem they know as their own, while how the product removes it is left to How it works.",
+   "thinking": "Name the other way of doing the same work, and say in one paragraph what the product does instead that brings the gain, as the reader weighs the product against what they would do without it.",
    "steps": [
-    "Take the reader's problem from the objectives of the product's UX: what keeps the role from what its objective says.",
-    "Find the usual way in what the reader would do if the product did not exist, doing nothing among it.",
-    "List every condition that must hold for the problem to be solved, by whatever way, from each way the objective fails, such as what its key results count against it; keep one only if a way that misses it leaves the problem unsolved.",
-    "For each condition, find where the usual way falls short of it, and leave out a condition it meets, as that gives the reader no reason to choose. For each, find what the product does that makes it hold, from the design. The conditions feed the problem here and How it works, and the opening does not go through them.",
-    "Ask the user each condition, and each shortfall of the usual way, that the design does not settle.",
-    "From the shortfalls, say the problem as what happens to the reader the usual way, in a few plain sentences in their words, not as how the product works.",
-    "Say the idea in one sentence: what the product does differently that removes the problem.",
-    "Read the opening as a newcomer deciding whether the product is for them. Cut or reword what they would stumble on, replace each word that only praises with what the product does, and leave how it works to How it works."
+    "Find the other way in what the reader would do if the product did not exist, doing nothing among it.",
+    "Where the reader could not say the difference to a colleague in their own words, replace each word that only praises with what the product does."
    ]
   },
   {
@@ -122,11 +116,9 @@
   },
   {
    "user_benefit": "Q8",
-   "thinking": "Draw who does what to whom so that each gain holds and each condition behind the opening's problem is met, and say under it how each condition is met, in as much detail as a reader new to the product can follow, as a reader trusts a promise they see kept.",
+   "thinking": "Draw who does what to whom so that each gain and the idea hold, in as much detail as a reader new to the product can follow, as a reader trusts a promise they see kept.",
    "steps": [
-    "Take each condition, where the usual way falls short of it and what the product does, from the design, as Q3 digs them.",
-    "Point to each gain and each condition, and find the lines of the figure that make it hold. Where none does, mend the figure or the promise.",
-    "Under the figure, say for each condition in a sentence or two, in the reader's words, how the parts of the figure make it hold. Never sort the conditions in a table, as a table is how the developer sorts them, while the reader needs to see what happens.",
+    "Point to each gain and the idea, and find the lines of the figure that keep it. Where none does, mend the figure or the promise.",
     "Leave each non-goal to the opening, as a figure shows what the product does."
    ]
   },

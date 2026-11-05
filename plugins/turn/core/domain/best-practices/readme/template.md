@@ -6,7 +6,9 @@
 
 `<Product>` is for you when `<your situation>`. With it, you `<gain>`.
 
-`<problem>` `<Product>` instead `<idea>`.
+`<The usual way>`. `<Product>` instead `<idea>`.
+
+![The usual way and the product](images/template-idea.svg)
 
 **Non-goals**
 
@@ -20,9 +22,11 @@
 >   optional.
 > - `<your situation>`: the work the reader wants done.
 > - `<gain>`: what the reader can then do.
-> - `<problem>`: what goes wrong for the reader the way they would do the work without the
->   product, in a few plain sentences.
-> - `<idea>`: what the product does differently that removes the problem, in one sentence.
+> - `<The usual way>`: how the same work goes without the product, and where it falls short.
+> - `<idea>`: what the product does differently that brings the gain, in one sentence.
+> - The figure: the deliverable's own at images/idea.svg, the product named in its alt text: the
+>   usual way above the product, each as who does what to whom, so the reader sees where the usual
+>   way falls short and what the product does there instead.
 > - `<expectation>`: each thing a reader might expect of the product that it does not do; optional.
 
 ## Requirements
@@ -76,17 +80,15 @@ At the end, you have `<result>`.
 
 ![How the product works](images/template-how-it-works.svg)
 
-- `<condition>`: `<how it is met>`.
+- `<point>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - The figure: the deliverable's own at images/how-it-works.svg, the product named in its alt text:
 >   the user, the product's parts and what they pass, each by its name, with what each does to
 >   another.
-> - `<condition>`: each thing that must hold to solve the problem the opening names, in the reader's
->   words.
-> - `<how it is met>`: how the parts in the figure make it hold, in a sentence or two. A
->   convenience, such as going on with a run that stopped, is no point here.
+> - `<point>`: each point a gain or the idea needs that the figure cannot show, in one sentence;
+>   optional. A convenience, such as going on with a run that stopped, is no point here.
 
 ## Documentation
 

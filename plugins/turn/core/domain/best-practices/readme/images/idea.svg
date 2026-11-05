@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 420" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+  <title>The usual way and Turn</title>
+  <style>
+    .bg { fill: #ffffff; }
+    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .lane { fill: #ddf4ff; stroke: #54aeff; }
+    .store { fill: #fff8c5; stroke: #9a6700; stroke-width: 1.5; }
+    .ext { fill: #eaeef2; stroke: #d0d7de; stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .unit { fill: #ddf4ff; fill-opacity: 0.35; stroke: #0969da; stroke-width: 1.2; }
+    .frame { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    .frame-name { fill: #0969da; font-size: 13px; font-weight: 600; }
+    .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
+    .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
+    .label { fill: #1f2328; font-size: 13px; }
+    .small { font-size: 12px; }
+    .data { fill: #8250df; font-size: 12px; font-style: italic; }
+    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .dashed { stroke-dasharray: 5 4; }
+    .head { fill: #59636e; }
+    .hole { fill: #ffffff; stroke: #59636e; stroke-width: 1.5; }
+    .halo { stroke: #ffffff; stroke-width: 7; stroke-linejoin: round; paint-order: stroke; }
+    .mid { text-anchor: middle; }
+    .start { text-anchor: start; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; }
+      .box { fill: #161b22; stroke: #3d444d; }
+      .lane { fill: #0c2d6b; stroke: #4493f8; }
+      .store { fill: #2e2a1a; stroke: #d29922; }
+      .ext { fill: #21262d; stroke: #3d444d; }
+      .unit { fill: #0c2d6b; stroke: #4493f8; }
+      .frame { stroke: #4493f8; }
+      .frame-name { fill: #4493f8; }
+      .name, .label { fill: #f0f6fc; }
+      .kind { fill: #9198a1; }
+      .data { fill: #c297ff; }
+      .line { stroke: #9198a1; }
+      .head { fill: #9198a1; }
+      .hole { fill: #0d1117; stroke: #9198a1; }
+      .halo { stroke: #0d1117; }
+    }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path class="head" d="M0,0 L10,5 L0,10 z"/>
+    </marker>
+  </defs>
+  <rect class="bg" width="1000" height="420"/>
+  <rect class="frame" x="10" y="10" width="980" height="150" rx="8"/>
+  <text class="frame-name" x="24" y="32">The usual way: an AI asked in one prompt</text>
+  <rect class="box" x="40" y="60" width="130" height="60" rx="6"/>
+  <text class="name" x="105.0" y="95.0">You</text>
+  <rect class="box" x="330" y="60" width="150" height="60" rx="6"/>
+  <text class="name" x="405.0" y="88.0">AI</text>
+  <text class="kind" x="405.0" y="106.0">judges by what it meant</text>
+  <rect class="store" x="640" y="60" width="130" height="60" rx="6"/>
+  <text class="name" x="705.0" y="95.0">Work</text>
+  <rect class="box" x="850" y="60" width="120" height="60" rx="6"/>
+  <text class="name" x="910.0" y="88.0">You</text>
+  <text class="kind" x="910.0" y="106.0">use the work</text>
+  <path class="line" d="M170,90 L326,90" marker-end="url(#a)"/>
+  <text class="label small mid halo" x="248" y="80">a request</text>
+  <text class="label small mid halo" x="248" y="95">with gaps</text>
+  <path class="line" d="M480,90 L636,90" marker-end="url(#a)"/>
+  <text class="label small mid halo" x="558" y="80">each gap filled</text>
+  <text class="label small mid halo" x="558" y="95">with a guess</text>
+  <path class="line" d="M770,90 L846,90" marker-end="url(#a)"/>
+  <text class="label small" x="640" y="145">You meet each guess as you use it, and mend the work.</text>
+  <rect class="frame" x="10" y="180" width="980" height="230" rx="8"/>
+  <text class="frame-name" x="24" y="202">Turn</text>
+  <rect class="box" x="40" y="240" width="130" height="60" rx="6"/>
+  <text class="name" x="105.0" y="275.0">You</text>
+  <rect class="store" x="330" y="230" width="150" height="80" rx="6"/>
+  <text class="name" x="405.0" y="268.0">Design</text>
+  <text class="kind" x="405.0" y="286.0">each point settled</text>
+  <rect class="store" x="640" y="230" width="130" height="80" rx="6"/>
+  <text class="name" x="705.0" y="275.0">Work</text>
+  <rect class="box" x="850" y="240" width="120" height="60" rx="6"/>
+  <text class="name" x="910.0" y="268.0">You</text>
+  <text class="kind" x="910.0" y="286.0">use the work</text>
+  <path class="line" d="M170,262 L326,262" marker-end="url(#a)"/>
+  <text class="label small mid halo" x="248" y="240">your decisions,</text>
+  <text class="label small mid halo" x="248" y="255">one at a time</text>
+  <path class="line" d="M326,288 L170,288" marker-end="url(#a)"/>
+  <text class="label small mid halo" x="248" y="305">facts to confirm</text>
+  <path class="line" d="M480,270 L636,270" marker-end="url(#a)"/>
+  <text class="label small mid halo" x="558" y="250">made by the kind’s</text>
+  <text class="label small mid halo" x="558" y="265">best practice</text>
+  <path class="line" d="M770,270 L846,270" marker-end="url(#a)"/>
+  <text class="label small mid halo" x="808" y="258">as it comes</text>
+  <rect class="lane" x="625" y="340" width="160" height="56" rx="6"/>
+  <text class="name" x="705.0" y="366.0">A fresh AI</text>
+  <text class="kind" x="705.0" y="384.0">reads only the work</text>
+  <path class="line" d="M705,340 L705,314" marker-end="url(#a)"/>
+  <text class="label small start" x="714" y="331">reads as its user would</text>
+  <path class="line dashed" d="M640,368 L410,312" marker-end="url(#a)"/>
+  <text class="label small mid halo" x="500" y="370">a question not met</text>
+  <text class="label small mid halo" x="500" y="385">goes back to the design</text>
+</svg>

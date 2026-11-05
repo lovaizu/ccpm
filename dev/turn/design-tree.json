@@ -40,7 +40,7 @@
   },
   {
    "id": "readme/Q3",
-   "what": "Weighing the product against what they would do without it, does the reader see the problem that way leaves them with, and what the product does instead?"
+   "what": "Asked by a colleague why this product and not another way of doing the same work, does the reader name what it does differently that brings the gain?"
   },
   {
    "id": "readme/Q4",
@@ -60,7 +60,7 @@
   },
   {
    "id": "readme/Q8",
-   "what": "Looking at how the product works, does the reader see how it keeps each gain and makes each condition behind the opening's problem hold?"
+   "what": "Looking at the figure of how the product works, does the reader see how it keeps each gain and the idea?"
   },
   {
    "id": "readme/Q9",
@@ -276,7 +276,7 @@
    "decided": "For one who wants an AI to make a work they will put to use as it comes, not a draft they read and mend; they get that work, having decided only what is theirs.",
    "settled_by": "reasoning",
    "grounds": [
-    "plugins/turn/core/domain/best-practices/readme/best-practice.json Q2 thinking: \"taken from the objectives of the product's UX\""
+    "plugins/turn/core/domain/best-practices/readme/best-practice.json Q2 thinking: \"taken from what the product's users want, such as the objectives in its UX\""
    ]
   },
   {
@@ -293,134 +293,6 @@
    "settled_by": "user",
    "grounds": [
     ".rn/20261013-rebuild/turn-rebuild.md:84-86 \"settles the design with the person, one point at a time\" / \"makes the work from the design against the kind's best practice\" / \"uses the work as its user would and answers the questions, never given the design\""
-   ]
-  },
-  {
-   "id": "D29",
-   "what": "A condition behind the opening's problem: each gap in the request",
-   "contributes_to": [
-    "readme/Q3",
-    "readme/Q8"
-   ],
-   "builds_on": [
-    "D9",
-    "D10"
-   ],
-   "decided": "What must hold: each gap in your request is filled by a fact or by your decision. The usual way: each gap is filled with a guess. Turn: finds each fact for you to confirm, and asks you each decision with a recommendation, one at a time.",
-   "settled_by": "reasoning",
-   "grounds": [
-    "the user, 2026-11-05: a README digs into the problem the product solves: the conditions any solution must meet to solve it, where the usual way fails each, and how the product meets each",
-    "plugins/turn/core/domain/best-practices/readme/best-practice.json:83 \"List every condition that must hold for the problem to be solved, by whatever way, from each way the objective fails\" / \"keep one only if a way that misses it leaves the problem unsolved\"",
-    "plugins/turn/README.md:12 \"An AI asked in one prompt fills each gap in your request with a guess\"",
-    "dev/turn/ux.md:30 \"found: tidy --dry-run shows what it would move, right?\"",
-    "dev/turn/ux.md:38 \"the decision, with a recommendation\"",
-    "plugins/pin/core/roles/pinner.md:54 \"A fact is yours to find, never the person's to tell you\"",
-    "D3: O1 fails \"where they are asked a point that is not theirs, such as a fact Turn could find\""
-   ]
-  },
-  {
-   "id": "D30",
-   "what": "A condition behind the opening's problem: what a work of its kind needs",
-   "contributes_to": [
-    "readme/Q3",
-    "readme/Q8"
-   ],
-   "builds_on": [
-    "D9",
-    "D10"
-   ],
-   "decided": "What must hold: the work holds what a work of its kind needs, and no more. The usual way: the AI writes by its own sense of the kind, past what the work needs. Turn: makes the work by the kind's best practice.",
-   "settled_by": "reasoning",
-   "grounds": [
-    "the user, 2026-11-05: a README digs into the problem the product solves: the conditions any solution must meet to solve it, where the usual way fails each, and how the product meets each",
-    "plugins/turn/core/domain/best-practices/readme/best-practice.json:83 \"List every condition that must hold for the problem to be solved, by whatever way, from each way the objective fails\" / \"keep one only if a way that misses it leaves the problem unsolved\"",
-    "D10: Turn \"makes the work by its kind's best practice\"",
-    "plugins/turn/core/domain/best-practices/meta/best-practice.json:62 \"as an AI writes past what a deliverable needs when only told not to\"",
-    ".claude/rules/dev.md:54-55 \"The template holds each document to what its reader needs, as an AI told only to be brief still writes past it.\""
-   ]
-  },
-  {
-   "id": "D31",
-   "what": "A condition behind the opening's problem: whose judgment the work passes",
-   "contributes_to": [
-    "readme/Q3",
-    "readme/Q8"
-   ],
-   "builds_on": [
-    "D9",
-    "D10"
-   ],
-   "decided": "What must hold: the work is judged by what its user gets. The usual way: the AI judges the work by what it meant. Turn: an AI that never saw the design reads the work as its user would, by the kind's questions.",
-   "settled_by": "reasoning",
-   "grounds": [
-    "the user, 2026-11-05: a README digs into the problem the product solves: the conditions any solution must meet to solve it, where the usual way fails each, and how the product meets each",
-    "plugins/turn/core/domain/best-practices/readme/best-practice.json:83 \"List every condition that must hold for the problem to be solved, by whatever way, from each way the objective fails\" / \"keep one only if a way that misses it leaves the problem unsolved\"",
-    "plugins/turn/README.md:12-13 \"judges the work by what it meant\"",
-    "dev/turn/architecture.md:71-72 \"The evaluator reads the work and the Standard: the best practice's goal and questions\" / \"It never reads the design\""
-   ]
-  },
-  {
-   "id": "D32",
-   "what": "A condition behind the opening's problem: who meets a shortfall",
-   "contributes_to": [
-    "readme/Q3",
-    "readme/Q8"
-   ],
-   "builds_on": [
-    "D9",
-    "D10"
-   ],
-   "decided": "What must hold: a shortfall is mended before the work reaches you. The usual way: you meet it as you use the work, and mend it. Turn: a question not met goes back to the design, and the work is made again from it.",
-   "settled_by": "reasoning",
-   "grounds": [
-    "the user, 2026-11-05: a README digs into the problem the product solves: the conditions any solution must meet to solve it, where the usual way fails each, and how the product meets each",
-    "plugins/turn/core/domain/best-practices/readme/best-practice.json:83 \"List every condition that must hold for the problem to be solved, by whatever way, from each way the objective fails\" / \"keep one only if a way that misses it leaves the problem unsolved\"",
-    "plugins/turn/README.md:13 \"so you meet the guesses when you use the work\"",
-    "dev/turn/architecture.md:91-92 \"A question not met in the content phase goes back to the decisions that serve it, through Pin. The generator then makes the work again from the design.\""
-   ]
-  },
-  {
-   "id": "D33",
-   "what": "Whether the time to a work you put to use is a condition behind the opening's problem",
-   "contributes_to": [
-    "readme/Q3"
-   ],
-   "builds_on": [
-    "D9",
-    "D10"
-   ],
-   "decided": "Not a condition: a way that takes longer still gives the user a work they put to use, having decided only what is theirs, so the problem is solved; the opening makes no claim on time.",
-   "settled_by": "reasoning",
-   "grounds": [
-    "plugins/turn/core/domain/best-practices/readme/best-practice.json:83 \"List every condition that must hold for the problem to be solved, by whatever way, from each way the objective fails\" / \"keep one only if a way that misses it leaves the problem unsolved\"",
-    "dev/turn/ux.md:9 \"O1: The user gets a work they put to use as handed over, having decided only what is theirs.\"",
-    "dev/turn/ux.md:12 \"KR1.2: The time from the user's request to a work they put to use. Shorter is better.\"",
-    "dev/turn/ux.md:14 \"KR1.1 comes first: a change that improves KR1.2 is kept only if KR1.1 does not get worse\"",
-    "plugins/turn/README.md:22 \"it takes longer than asking Claude Code\""
-   ]
-  },
-  {
-   "id": "D34",
-   "what": "The opening's problem and idea: what the usual way leaves the reader with, and what Turn does instead",
-   "contributes_to": [
-    "readme/Q3"
-   ],
-   "builds_on": [
-    "D10",
-    "D29",
-    "D30",
-    "D31",
-    "D32",
-    "D33"
-   ],
-   "decided": "Problem: Asked for a work in one prompt, an AI fills each gap in your request with a guess. It writes by its own idea of what such a work holds, and judges the work by what it meant. So you find what falls short only as you use the work, and mend it yourself. Idea: Turn instead settles each decision of yours with you first, makes the work by a best practice for that kind of work, and has a fresh AI read it as its user would before you get it.",
-   "settled_by": "reasoning",
-   "grounds": [
-    "plugins/turn/core/domain/best-practices/readme/best-practice.json:87 \"From the shortfalls, say the problem as what happens to the reader the usual way, in a few plain sentences in their words, not as how the product works.\"",
-    "plugins/turn/core/domain/best-practices/readme/best-practice.json:88 \"Say the idea in one sentence: what the product does differently that removes the problem.\"",
-    "D29, D30, D31 and D32: the usual way's shortfalls the problem tells; D33: no claim on time",
-    "D10, settled by the user: Turn \"settles the design with the user first, makes the work by its kind's best practice, and has an AI that did not make it judge it\"",
-    "the user, 2026-11-05: the opening says only what the reader needs to decide whether the product is for them; how the product meets each condition belongs to How it works"
    ]
   },
   {
@@ -480,7 +352,7 @@
    "decided": "The UX scenario's run: a README for tidy; the purpose confirmed, one fact confirmed, one decision taken, the design approved, the README handed over not committed. Not yet a real run, as Turn is being rebuilt; a real run's output replaces it once Turn is built.",
    "settled_by": "reasoning",
    "grounds": [
-    "plugins/turn/core/domain/best-practices/readme/best-practice.json Q6 steps: \"Take each exchange, what the user gives and what the product shows, from the record of a real run\""
+    "plugins/turn/core/domain/best-practices/readme/best-practice.json Q5 steps: \"Take what the user gives and what the product shows from the record of a real run\""
    ]
   },
   {
@@ -490,45 +362,13 @@
     "readme/Q8"
    ],
    "builds_on": [
-    "D10",
-    "D29",
-    "D30",
-    "D31",
-    "D32"
+    "D10"
    ],
-   "decided": "You, Pin, the generator, the evaluator, the best practices, the design tree and the work, with what each does to another; Pin's line to you carries the facts it found and your decisions, so each condition behind the opening's problem has lines that make it hold. Nothing stands under the figure but D35's explanation, as a convenience such as a run that stopped going on from its folder makes no condition hold, and the architecture's S3 carries it.",
+   "decided": "You, Pin, the generator, the evaluator, the best practices, the design tree and the work, with what each does to another. Nothing stands under it, as a convenience such as a run that stopped going on from its folder keeps no gain and no idea, and the architecture's S3 carries it.",
    "settled_by": "reasoning",
    "grounds": [
-    "plugins/turn/core/domain/best-practices/readme/best-practice.json:128 \"Point to each gain and each condition, and find the lines of the figure that make it hold. Where none does, mend the figure or the promise.\"",
-    "plugins/turn/core/domain/best-practices/readme/best-practice.json:127 \"Take each condition, where the usual way falls short of it and what the product does, from the design, as Q3 digs them.\"",
-    "plugins/pin/core/roles/pinner.md:54-55 \"A fact is yours to find, never the person's to tell you\" / \"Find it with Read and Grep, then show it to them.\"",
+    "plugins/turn/core/domain/best-practices/readme/best-practice.json Q8: \"Draw who does what to whom so that each gain and the idea hold\"",
     "the user, 2026-11-05: a convenience around the UX's core objective is the scope of the architecture's user stories, and must not change most of the UX, the README and the architecture each time"
-   ]
-  },
-  {
-   "id": "D35",
-   "what": "How it works' explanation: how the parts in the figure make each condition hold",
-   "contributes_to": [
-    "readme/Q8"
-   ],
-   "builds_on": [
-    "D14",
-    "D29",
-    "D30",
-    "D31",
-    "D32"
-   ],
-   "decided": "Each gap filled by a fact or your decision: Pin finds each fact it can, such as what your repository holds, and asks you to confirm it; it puts each decision that is yours to you, one at a time, and writes each into design-tree.json with who settled it. The work holds what its kind needs: the generator makes the work from the design by the best practice for its kind, whose template says what such a work holds. The work judged by what its user gets: the evaluator reads only the work and the kind's questions, never the design, and answers each as the work's user would. A shortfall mended before it reaches you: a question not met goes back to its decision through Pin, and the generator makes the work again; the work reaches you, not committed, only once every question is met.",
-   "settled_by": "reasoning",
-   "grounds": [
-    "plugins/turn/core/domain/best-practices/readme/best-practice.json:129 \"Under the figure, say for each condition in a sentence or two, in the reader's words, how the parts of the figure make it hold.\"",
-    "plugins/pin/core/roles/pinner.md:54-55 \"A fact is yours to find, never the person's to tell you: what the repository holds, what a file says, what a tool does. Find it with Read and Grep, then show it to them.\"",
-    "plugins/pin/core/roles/pinner.md:45 \"`settled_by` is who settled it\"",
-    "dev/turn/ux.md:38 \"the decision, with a recommendation\"",
-    "dev/turn/architecture.md:7-8 \"The generator makes the work from the design, against the kind's best practice.\"",
-    "dev/turn/architecture.md:71-72 \"The evaluator reads the work and the Standard: the best practice's goal and questions\" / \"It never reads the design\"",
-    "dev/turn/architecture.md:10 \"A question not met goes back through Pin to its decision. Once every question is met, the rounds go on with how the work reads.\"",
-    "D14: the figure's parts and lines"
    ]
   },
   {
@@ -556,8 +396,7 @@
    "builds_on": [
     "D8",
     "D9",
-    "D34",
-    "D35",
+    "D10",
     "D11",
     "D17",
     "D12",
@@ -565,10 +404,10 @@
     "D14",
     "D15"
    ],
-   "decided": "The template's order: what Turn is, the status, whom it is for and the gain, the problem the usual way leaves the reader with and Turn's idea, the non-goals; then Requirements, Installation, Walkthrough, How it works with its figure and how each condition is met, Documentation, License. A reader who learns Turn is not for them stops after the opening; the Walkthrough comes after Installation, as it runs Turn installed.",
+   "decided": "The template's order: what Turn is, the status, whom it is for and the gain, the idea, the non-goals; then Requirements, Installation, Walkthrough, How it works, Documentation, License. A reader who learns Turn is not for them stops after the opening; the Walkthrough comes after Installation, as it runs Turn installed.",
    "settled_by": "reasoning",
    "grounds": [
-    "plugins/turn/core/domain/best-practices/readme/template.md:1-13: the opening's slots in that order; readme/best-practice.json Q11 thinking: \"Order the README as the reader decides, from what every reader needs to what only a reader who has chosen the product needs\""
+    "readme/best-practice.json Q11 thinking: \"Order the README as the reader decides, from what every reader needs to what only a reader who has chosen the product needs\""
    ]
   },
   {

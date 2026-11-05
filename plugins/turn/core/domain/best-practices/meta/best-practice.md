@@ -44,8 +44,8 @@ The generator can make deliverables with which their role achieves its purpose.
 2. Write as fixed text what is the same in every deliverable of the kind, and a slot `` `<name>` `` for the rest, marked as code, as a bare `<name>` is dropped as an HTML tag where the template is shown.
 3. After each section, write one GitHub note whose first line is `DELETE_TEMPLATE_COMMENT:`, saying only what each slot holds and whether it is optional, as the reader of the template then sees it, and the generator finds and deletes each note by its marker.
 4. Where the deliverable is JSON, write each note as a key `DELETE_TEMPLATE_COMMENT`, as JSON holds no comment.
-5. Give the content found by digging a slot for its intent and why alone, in the fewest words, and then a figure for what the words carry that a picture shows better, such as who does what to whom.
-6. Draw a sequence in Mermaid, and any other figure in SVG, a table among them, as a table stands in for prose where the reader looks things up or compares them at a glance; where the reader must see what happens, such as why the product works where another way does not, draw who does what to whom, as a table only sorts it.
+5. Give the content found by digging a slot for its intent and why alone, in the fewest words, and a figure in place of prose wherever a figure can say it.
+6. Draw a sequence in Mermaid, and any other figure in SVG, a table among them, as a table stands in for prose.
 7. Give each SVG figure of the template a skeleton of its own beside it, `images/template-<name>.svg`, that shows the figure's layout by the slots' names, give it an alt text with no slot, and say in the section's note where the deliverable puts its own figure, as a figure the template names but does not hold shows broken, and the example's figure shows one product's content in place of the layout.
 8. Name the template's file in `template`.
 
@@ -72,7 +72,7 @@ The generator can make deliverables with which their role achieves its purpose.
 **Steps**
 
 1. Where two questions would fail the same deliverables for the same reason, merge them, but keep a key one on its own.
-2. Dig each question until it shows the idea the role must grasp, and ask whether the role grasps it, so that the template gives that idea a slot in words, and a figure where a picture shows it better.
+2. Dig each question until it shows the idea the role must grasp, and ask whether the role grasps it, so that the template gives it a figure.
 3. Judge real deliverables that their role found short, and where one passes, add or mend the question that should have failed it.
 
 ### Q6: Following a practice, does the generator make what its question asks for?

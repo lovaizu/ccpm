@@ -16,12 +16,12 @@ Someone who meets the product for the first time starts using it, from the READM
 
 - **Q1** (the opening): Asked by a colleague what the product is, does the reader answer in one sentence that tells what it does?
 - **Q2** (the opening): Reading the gain, does the reader tell what the product would let them do, and so whether it is for them?
-- **Q3** (the opening): Weighing the product against what they would do without it, does the reader see the problem that way leaves them with, and what the product does instead?
+- **Q3** (the opening): Asked by a colleague why this product and not another way of doing the same work, does the reader name what it does differently that brings the gain?
 - **Q4** (the opening): Before installing, does the reader see what the product does not do that they might expect of it?
 - **Q5** (the opening): Before installing, does the reader see where the product is not yet fit for use?
 - **Q6** (the opening, Walkthrough): After the walkthrough, does the reader see that the product would give them, on work of their own, the gain the opening promised?
 - **Q7** (Requirements, Installation): Starting with nothing set up, does the reader install the product by the README's steps alone, and see that it works?
-- **Q8** (the opening, How it works): Looking at how the product works, does the reader see how it keeps each gain and makes each condition behind the opening's problem hold?
+- **Q8** (the opening, How it works): Looking at the figure of how the product works, does the reader see how it keeps each gain and the idea?
 - **Q9** (Documentation): Needing more than the README gives, such as fuller use or help, does the reader find where to go next?
 - **Q10** (License): Weighing whether they may use the product, does the reader find the terms for them and their team?
 - **Q11** (the whole): Reading from the top, does the reader find each answer just when they come to need it, so they can stop once they have what they came for?
@@ -44,20 +44,14 @@ Someone who meets the product for the first time starts using it, from the READM
 
 1. Where a reader outside that group could not tell from it that the product is not for them, name the group and the work more closely.
 
-### Q3: Weighing the product against what they would do without it, does the reader see the problem that way leaves them with, and what the product does instead?
+### Q3: Asked by a colleague why this product and not another way of doing the same work, does the reader name what it does differently that brings the gain?
 
-**Thinking**: Say in a few plain sentences the problem that what the reader would do without the product leaves them with, and in one sentence the product's idea, as the reader decides by a problem they know as their own, while how the product removes it is left to How it works.
+**Thinking**: Name the other way of doing the same work, and say in one paragraph what the product does instead that brings the gain, as the reader weighs the product against what they would do without it.
 
 **Steps**
 
-1. Take the reader's problem from the objectives of the product's UX: what keeps the role from what its objective says.
-2. Find the usual way in what the reader would do if the product did not exist, doing nothing among it.
-3. List every condition that must hold for the problem to be solved, by whatever way, from each way the objective fails, such as what its key results count against it; keep one only if a way that misses it leaves the problem unsolved.
-4. For each condition, find where the usual way falls short of it, and leave out a condition it meets, as that gives the reader no reason to choose. For each, find what the product does that makes it hold, from the design. The conditions feed the problem here and How it works, and the opening does not go through them.
-5. Ask the user each condition, and each shortfall of the usual way, that the design does not settle.
-6. From the shortfalls, say the problem as what happens to the reader the usual way, in a few plain sentences in their words, not as how the product works.
-7. Say the idea in one sentence: what the product does differently that removes the problem.
-8. Read the opening as a newcomer deciding whether the product is for them. Cut or reword what they would stumble on, replace each word that only praises with what the product does, and leave how it works to How it works.
+1. Find the other way in what the reader would do if the product did not exist, doing nothing among it.
+2. Where the reader could not say the difference to a colleague in their own words, replace each word that only praises with what the product does.
 
 ### Q4: Before installing, does the reader see what the product does not do that they might expect of it?
 
@@ -92,16 +86,14 @@ Someone who meets the product for the first time starts using it, from the READM
 2. From a machine or sandbox where nothing the product needs is in place, follow the steps as written and do nothing they do not say.
 3. Where a step fails, or needs what the README does not say, write it in and start again.
 
-### Q8: Looking at how the product works, does the reader see how it keeps each gain and makes each condition behind the opening's problem hold?
+### Q8: Looking at the figure of how the product works, does the reader see how it keeps each gain and the idea?
 
-**Thinking**: Draw who does what to whom so that each gain holds and each condition behind the opening's problem is met, and say under it how each condition is met, in as much detail as a reader new to the product can follow, as a reader trusts a promise they see kept.
+**Thinking**: Draw who does what to whom so that each gain and the idea hold, in as much detail as a reader new to the product can follow, as a reader trusts a promise they see kept.
 
 **Steps**
 
-1. Take each condition, where the usual way falls short of it and what the product does, from the design, as Q3 digs them.
-2. Point to each gain and each condition, and find the lines of the figure that make it hold. Where none does, mend the figure or the promise.
-3. Under the figure, say for each condition in a sentence or two, in the reader's words, how the parts of the figure make it hold. Never sort the conditions in a table, as a table is how the developer sorts them, while the reader needs to see what happens.
-4. Leave each non-goal to the opening, as a figure shows what the product does.
+1. Point to each gain and the idea, and find the lines of the figure that keep it. Where none does, mend the figure or the promise.
+2. Leave each non-goal to the opening, as a figure shows what the product does.
 
 ### Q9: Needing more than the README gives, such as fuller use or help, does the reader find where to go next?
 
