@@ -8,11 +8,11 @@
  "questions": [
   {
    "id": "ux/Q1",
-   "what": "Listing whom to build for, does the developer find every role that comes to the product with a want of its own, each with an objective for it?"
+   "what": "Listing whom to build for, does the developer find every role that comes to the product with a want of its own?"
   },
   {
    "id": "ux/Q2",
-   "what": "Reading an objective, does the developer see which role it is for and what that role gets from the product?"
+   "what": "Reading an objective, does the developer see what its role gets from the product?"
   },
   {
    "id": "ux/Q3",

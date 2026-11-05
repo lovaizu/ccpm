@@ -6,13 +6,13 @@
  "user_benefits": [
   {
    "id": "Q1",
-   "about": "Roles, OKRs",
-   "what": "Listing whom to build for, does the developer find every role that comes to the product with a want of its own, each with an objective for it?"
+   "about": "Roles",
+   "what": "Listing whom to build for, does the developer find every role that comes to the product with a want of its own?"
   },
   {
    "id": "Q2",
    "about": "Roles, OKRs",
-   "what": "Reading an objective, does the developer see which role it is for and what that role gets from the product?"
+   "what": "Reading an objective, does the developer see what its role gets from the product?"
   },
   {
    "id": "Q3",
@@ -38,7 +38,7 @@
  "practices": [
   {
    "user_benefit": "Q1",
-   "thinking": "Cut the roles by the want each brings to the product, not by what kind of thing takes them, and give each role the objective of its want, as a want with no objective is never built.",
+   "thinking": "Cut the roles by the want each brings to the product, not by what kind of thing takes them, as a role cut otherwise hides a want or splits one.",
    "steps": [
     "Walk through who uses the product, who runs it, who receives what it makes, who is affected by it, and each AI or system that calls it, over the product's whole life.",
     "Where two roles want the same, merge them.",
@@ -48,7 +48,7 @@
   },
   {
    "user_benefit": "Q2",
-   "thinking": "Write each objective as the progress its role is trying to make, in one sentence on one line: the role as its subject, then a verb, its object and the context it is done in, and no feature of the product, as an objective said from the product's side can be met while the role gains nothing.",
+   "thinking": "Give each role the objective of its want, written as the progress the role is trying to make, in one sentence on one line: the role as its subject, then a verb, its object and the context it is done in, and no feature of the product, as a want with no objective is never built, and an objective said from the product's side can be met while the role gains nothing.",
    "steps": [
     "Where a want is said as a feature, ask why it is needed until the answer is that without it the role's problem stays unsolved, and write that.",
     "Take an objective from what the role has been seen to do, such as records of real use or complaints. Confirm with the user one that rests on what is only said or guessed.",

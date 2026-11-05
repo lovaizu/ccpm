@@ -14,8 +14,8 @@ The developer builds what the product's users want.
 
 ## User benefits
 
-- **Q1** (Roles, OKRs): Listing whom to build for, does the developer find every role that comes to the product with a want of its own, each with an objective for it?
-- **Q2** (Roles, OKRs): Reading an objective, does the developer see which role it is for and what that role gets from the product?
+- **Q1** (Roles): Listing whom to build for, does the developer find every role that comes to the product with a want of its own?
+- **Q2** (Roles, OKRs): Reading an objective, does the developer see what its role gets from the product?
 - **Q3** (OKRs): Weighing a piece of work, does the developer see which one objective it brings closer, or that it brings none closer?
 - **Q4** (OKRs): After a change, does the developer see from the key results whether to keep it?
 - **Q5** (Roles, OKRs, Scenarios): Following a scenario, does the developer see, exchange by exchange, how its role goes from asking the product to having what its objective says?
@@ -23,9 +23,9 @@ The developer builds what the product's users want.
 
 ## Practices
 
-### Q1: Listing whom to build for, does the developer find every role that comes to the product with a want of its own, each with an objective for it?
+### Q1: Listing whom to build for, does the developer find every role that comes to the product with a want of its own?
 
-**Thinking**: Cut the roles by the want each brings to the product, not by what kind of thing takes them, and give each role the objective of its want, as a want with no objective is never built.
+**Thinking**: Cut the roles by the want each brings to the product, not by what kind of thing takes them, as a role cut otherwise hides a want or splits one.
 
 **Steps**
 
@@ -34,9 +34,9 @@ The developer builds what the product's users want.
 3. Where one role is left, name it the user, as a name made up for the only role tells the reader nothing more.
 4. Ask the user who else comes to the product, and confirm with them each role the request does not show.
 
-### Q2: Reading an objective, does the developer see which role it is for and what that role gets from the product?
+### Q2: Reading an objective, does the developer see what its role gets from the product?
 
-**Thinking**: Write each objective as the progress its role is trying to make, in one sentence on one line: the role as its subject, then a verb, its object and the context it is done in, and no feature of the product, as an objective said from the product's side can be met while the role gains nothing.
+**Thinking**: Give each role the objective of its want, written as the progress the role is trying to make, in one sentence on one line: the role as its subject, then a verb, its object and the context it is done in, and no feature of the product, as a want with no objective is never built, and an objective said from the product's side can be met while the role gains nothing.
 
 **Steps**
 
