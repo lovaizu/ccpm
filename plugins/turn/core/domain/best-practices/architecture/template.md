@@ -68,8 +68,9 @@ This document says how `<Product>` is built to give [its UX](<ux>). `<idea>`.
 
 ```mermaid
 sequenceDiagram
-  participant <id> as <name>
-  <id>->><id>: <step>
+  participant A as #lt;name#gt;
+  participant B as #lt;name#gt;
+  A->>B: #lt;step#gt;
 ```
 
 - **`<choice>`** over `<other way>`: `<why>`. It costs `<cost>`.
@@ -78,6 +79,7 @@ sequenceDiagram
 > DELETE_TEMPLATE_COMMENT:
 > - One section for each user story; stories that share their steps share a section.
 > - `<path>`: what the story does, in a few words.
+> - `A`, `B`: a short id for each one that takes part, used in the messages.
 > - `<name>`: the role of the story, each component it reaches, as Components names it, and each
 >   thing outside the product it reaches.
 > - `<step>`: what one does to another and the data it hands on, as the data model names it, in a

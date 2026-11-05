@@ -16,11 +16,12 @@ WHOLE = "the whole"
 # The section of a template before its first heading under the title.
 OPENING = "the opening"
 SECTION = re.compile(r"^## (.+)$", re.MULTILINE)
-# A note of a template: a GitHub note whose first line opens with the marker, and the quote lines
-# under it. A note of the work's own opens otherwise, so the two are told apart.
-MARKER = "DELETE_TEMPLATE_COMMENT:"
-NOTE = re.compile(r"^> \[!NOTE\]\n> " + MARKER + r".*(?:\n>.*)*", re.MULTILINE)
-MARK = re.compile(r"^> " + MARKER, re.MULTILINE)
+# A note of a template: in Markdown, a GitHub note whose first line opens with the marker, and
+# the quote lines under it; in JSON, a key named by the marker. A note of the work's own, or the
+# marker named in a sentence, opens otherwise, so they are told apart.
+MARKER = "DELETE_TEMPLATE_COMMENT"
+NOTE = re.compile(r"^> \[!NOTE\]\n> " + MARKER + r":.*(?:\n>.*)*", re.MULTILINE)
+MARK = re.compile(r"^(?:> " + MARKER + r":|\s*\"" + MARKER + r"\"\s*:)", re.MULTILINE)
 QUESTION = re.compile(r"\bQ\d+\b")
 
 
@@ -58,8 +59,8 @@ def notes_left(text: str) -> list[int]:
 
 def keys(template: str) -> list[str]:
     """The sections of a template in JSON a question may be about: its keys, in order, but the
-    comments, `$comment`."""
-    return [key for key in json.loads(template) if key != "$comment"]
+    notes, MARKER."""
+    return [key for key in json.loads(template) if key != MARKER]
 
 
 def beside(path: str, name: str) -> str:

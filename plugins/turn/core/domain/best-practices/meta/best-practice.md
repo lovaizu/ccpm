@@ -43,7 +43,7 @@ The generator can make deliverables with which their role achieves its purpose.
 1. Where what the good deliverables hold is one way of doing it, such as a place, a file or a name, keep what the role gets from it instead.
 2. Write as fixed text what is the same in every deliverable of the kind, and a slot `` `<name>` `` for the rest, marked as code, as a bare `<name>` is dropped as an HTML tag where the template is shown.
 3. After each section, write one GitHub note whose first line is `DELETE_TEMPLATE_COMMENT:`, saying only what each slot holds and whether it is optional, as the reader of the template then sees it, and the generator finds and deletes each note by its marker.
-4. Where the deliverable is JSON, write each comment as a `$comment` key.
+4. Where the deliverable is JSON, write each note as a key `DELETE_TEMPLATE_COMMENT`, as JSON holds no comment.
 5. Give the content found by digging a slot for its intent and why alone, in the fewest words, and a figure in place of prose wherever a figure can say it.
 6. Draw a sequence in Mermaid, and any other figure in SVG, a table among them, as a table stands in for prose.
 7. Name the template's file in `template`.

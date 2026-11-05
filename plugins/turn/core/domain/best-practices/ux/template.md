@@ -33,8 +33,9 @@ law). They show whether a change brought its objective closer.
 
 ```mermaid
 sequenceDiagram
-  participant <id> as <name>
-  <id>->><id>: <message>
+  participant A as #lt;name#gt;
+  participant B as #lt;name#gt;
+  A->>B: #lt;message#gt;
 ```
 
 - If `<condition>`: `<what the role does and gets>`.
@@ -43,6 +44,7 @@ sequenceDiagram
 > DELETE_TEMPLATE_COMMENT:
 > - One section for each objective.
 > - `<path>`: how the role reaches `O<n>`, in a few words.
+> - `A`, `B`: a short id for each one that takes part, used in the messages.
 > - `<name>`: each one that takes part: a role as Roles names it, the product, or one outside it,
 >   such as a payment service.
 > - `<message>`: what one asks or hands another, in a few words.

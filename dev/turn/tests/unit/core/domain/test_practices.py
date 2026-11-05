@@ -175,13 +175,32 @@ class Sections(unittest.TestCase):
         self.assertEqual(practices.sections(text), ["the opening", "Roles"])
 
 
+class NotesLeft(unittest.TestCase):
+    def test_a_note_of_a_markdown_template_by_its_line(self):
+        text = "# t\n\n> [!NOTE]\n> DELETE_TEMPLATE_COMMENT:\n> - <slot>: what.\n"
+        self.assertEqual(practices.notes_left(text), [4])
+
+    def test_a_note_of_a_json_template_by_its_key(self):
+        text = '{\n "goal": "g",\n "x": {\n  "DELETE_TEMPLATE_COMMENT": "y"\n }\n}'
+        self.assertEqual(practices.notes_left(text), [4])
+
+    def test_the_marker_named_in_a_sentence_is_no_note(self):
+        steps = '{"steps": ["Open each note with `DELETE_TEMPLATE_COMMENT:`."]}'
+        text = steps + "\nSay > DELETE_TEMPLATE_COMMENT:"
+        self.assertEqual(practices.notes_left(text), [])
+
+
 class Keys(unittest.TestCase):
     def test_each_key_in_order_but_the_comments(self):
-        text = '{"$comment": "Delete.", "goal": "<g>", "user_benefits": [], "practices": []}'
+        text = (
+            '{"DELETE_TEMPLATE_COMMENT": "x", "goal": "<g>", "user_benefits": [], "practices": []}'
+        )
         self.assertEqual(practices.keys(text), ["goal", "user_benefits", "practices"])
 
     def test_keeps_a_key_that_sorts_before_the_comments(self):
-        self.assertEqual(practices.keys('{"$anchor": "a", "$comment": "x"}'), ["$anchor"])
+        self.assertEqual(
+            practices.keys('{"$anchor": "a", "DELETE_TEMPLATE_COMMENT": "x"}'), ["$anchor"]
+        )
 
 
 class Beside(helpers.testing.FolderTest):
@@ -202,7 +221,10 @@ class Beside(helpers.testing.FolderTest):
         self.assertEqual(practices.template(self.path, named), SECTIONS)
 
     def test_the_keys_of_a_template_in_json(self):
-        self.write(os.path.join(self.folder, "template.json"), '{"$comment": "x", "goal": "g"}')
+        self.write(
+            os.path.join(self.folder, "template.json"),
+            '{"DELETE_TEMPLATE_COMMENT": "x", "goal": "g"}',
+        )
         named = dict(BY_TEMPLATE, template="template.json")
         self.assertEqual(practices.template(self.path, named), ["goal"])
 
