@@ -364,10 +364,11 @@
    "builds_on": [
     "D10"
    ],
-   "decided": "You, Pin, the generator, the evaluator, the best practices, the design tree and the work, with what each does to another. Under it: a run that stopped goes on from its folder.",
+   "decided": "You, Pin, the generator, the evaluator, the best practices, the design tree and the work, with what each does to another. Nothing stands under it, as a convenience such as a run that stopped going on from its folder keeps no gain and no idea, and the architecture's S3 carries it.",
    "settled_by": "reasoning",
    "grounds": [
-    "plugins/turn/core/roles/up.md:24 \"a run made before goes on from it\""
+    "plugins/turn/core/domain/best-practices/readme/best-practice.json Q8: \"Draw who does what to whom so that each gain and the idea hold\"",
+    "the user, 2026-11-05: a convenience around the UX's core objective is the scope of the architecture's user stories, and must not change most of the UX, the README and the architecture each time"
    ]
   },
   {

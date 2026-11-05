@@ -86,8 +86,6 @@ Done: README.md is written, not committed. It meets every question of a README.
 
 ![How Turn works](images/how-it-works.svg)
 
-- A run that stopped goes on from its folder, such as `/turn:up .turn/20261105-tidy-readme`.
-
 ## Documentation
 
 - [Calling Turn](docs/calling.md): for an AI that asks Turn for a work on a person's behalf.

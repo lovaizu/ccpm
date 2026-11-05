@@ -83,7 +83,8 @@ At the end, you have `<result>`.
 > DELETE_TEMPLATE_COMMENT:
 > - images/how-it-works.svg: the user, the product's parts and what they pass, each by its name,
 >   with what each does to another.
-> - `<point>`: each point the figure cannot show, in one sentence; optional.
+> - `<point>`: each point a gain or the idea needs that the figure cannot show, in one sentence;
+>   optional. A convenience, such as going on with a run that stopped, is no point here.
 
 ## Documentation
 
