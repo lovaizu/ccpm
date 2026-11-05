@@ -66,15 +66,15 @@ The developer builds what the product's users want.
 
 ### Q5: Weighing the product against what its roles do today, does the developer see why it meets each objective where that way does not?
 
-**Thinking**: Find with the user, by trying ideas together, the few that set the product apart from what its roles do today and make it meet each objective, drawing the user's own words out before offering any idea, as a concept cannot be read off facts: its maker finds it by trying ideas against the problem, and ideas an AI offers first crowd out the maker's own and come out alike.
+**Thinking**: Draw out with the user, by putting to them proposals built on their own words, the few ideas that set the product apart from what its roles do today and make it meet each objective, one point at a time, as a concept cannot be read off facts: its maker finds it by reacting to tries against the problem, a bare question or a list to pick from gives them nothing to push against and they drift away, and ideas an AI offers before the maker's own crowd them out.
 
 **Steps**
 
-1. Ask the user what the roles do today without the product and where that falls short of each objective. Say their words back to them and ask what else, before offering any idea.
-2. Turn each shortfall into a question of how the product might meet the objective there, and let the user pick the ones to work on.
-3. Ask the user for their ideas first. Then add ideas that differ from theirs and from one another, judging none yet.
-4. Rate each idea against the roles' present way, better, the same or worse, for each objective. Combine and improve them, and let the user choose.
-5. Argue against the ideas chosen, and write the riskiest assumption under them with how it would be checked.
+1. Ask the user what the roles do today without the product and where that falls short of each objective. Say their words back as a reading they can correct.
+2. For one shortfall at a time, propose how the product might meet the objective there, built on the user's words, and ask whether it hits.
+3. Ask the user for their ideas. Grow each with a proposal, such as a sharper form, a variant or one that differs, and ask which holds.
+4. Propose how each idea rates against the roles' present way, better, the same or worse, for each objective, and why. Combine and improve them by the user's answers.
+5. Argue against the ideas kept, and propose the riskiest assumption under them with how it would be checked.
 6. Stop once at most five ideas stand out, each meets an objective, the present way they beat is named, and the riskiest assumption has its check. Otherwise go back to the first or the third step.
 7. Keep, where the design is kept, each idea tried, whose it was, how it rated, and why it was kept, dropped or merged, in the user's words.
 

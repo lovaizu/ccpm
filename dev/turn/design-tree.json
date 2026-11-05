@@ -218,7 +218,9 @@
    "grounds": [
     "The user, 2026-11-05, on what Turn does today without Turn: an AI is asked in one prompt and its draft is read and mended; what it hands over is not put to use as it comes.",
     "The user, 2026-11-05, ideas thought up (not yet settled): \"ベストプラクティスがある / ベストプラクティスを作れる / 作れたかでなく目的や意図を確認する / 設計ツリーでユーザーベネフィットを全部問い詰めてユーザーから引き出す / 利用時としてユーザーベネフィットをチェックする / goodのみ探してgoodにするにはを考える\"",
-    "Candidate put back to the user, 2026-11-05, unconfirmed: (1) a best practice for each kind, made where missing; (2) checks the purpose and intent, not that the work was made by the best practice; (3) draws out every user benefit from the user in the design tree; (4) checks the user benefits at the moment of use; (5) seeks the good and how to make the work good. The why under each was the assistant's, to be confirmed."
+    "The user, 2026-11-05, agreed that their six ideas merge into five, the first two into (1): (1) a best practice for each kind, made where missing; (2) checks the purpose and intent, not that the work was made by the best practice; (3) draws out every user benefit from the user in the design tree; (4) checks the user benefits at the moment of use; (5) seeks the good and how to make the work good. Why each beats the present way is not yet settled.",
+    "The user, 2026-11-05, on why the ideas beat the present way: \"何もないaiだと全部一からだよね\" (an AI with nothing starts everything from scratch).",
+    "The user, 2026-11-05, on the present way, for all five ideas: \"提案はしてくれる / レビューもしてくれる / でも目的ベースでない、表面的 / 本質でない / 指摘もたくさん出る、でも本質でない / 継ぎ足し、ノイズが増える / 目的から考えられない / 似た？言語？知識？のマッピングしかできないから\" (an AI proposes and reviews, but from the surface, not the purpose; its many findings miss the essence; fixes are added on and noise grows; it cannot think from the purpose, as it only maps similar language or knowledge)."
    ]
   },
   {
