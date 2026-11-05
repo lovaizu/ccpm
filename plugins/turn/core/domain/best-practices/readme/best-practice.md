@@ -20,8 +20,8 @@ Someone who meets the product for the first time starts using it, from the READM
 - **Q4** (the opening): Before installing, does the reader see where the product is not yet fit for use?
 - **Q5** (Requirements, Installation): Starting with nothing set up, does the reader install the product by the README's steps alone, and see that it works?
 - **Q6** (the opening, Walkthrough): After the walkthrough, does the reader see that the product would give them, on work of their own, the gain the opening promised?
-- **Q7** (How it works): At each point where they would ask whether the product can really do that, does the reader picture how it does it?
-- **Q8** (How it works): For each problem they feel in the work, does the reader picture how the product makes it go away?
+- **Q7** (How it works): For each problem they feel in the work, does the reader picture how the product makes it go away?
+- **Q8** (How it works): At each point where they would ask whether the product can really do that, does the reader picture how it does it?
 - **Q9** (Documentation): Needing more than the README gives, such as fuller use or help, does the reader find where to go next?
 - **Q10** (License): Weighing whether they may use the product, does the reader find the terms for them and their team?
 - **Q11** (the whole): Reading from the top, does the reader find each answer just when they come to need it, so they can stop once they have what they came for?
@@ -77,25 +77,25 @@ Someone who meets the product for the first time starts using it, from the READM
 3. Take each exchange, what the user gives and what the product shows, from the record of a real run in the form the reader sees it: text in a code block of its language, and a screen as an image taken from the run, cutting only what the reader does not need to see the result.
 4. Where the result does not show the gain the opening promised, pick another piece of work or another scenario.
 
-### Q7: At each point where they would ask whether the product can really do that, does the reader picture how it does it?
+### Q7: For each problem they feel in the work, does the reader picture how the product makes it go away?
 
-**Thinking**: Find each point a newcomer would doubt, and for each, draw who does what to whom in the product to do it, with a sentence or two under the figure, as a reader believes the product can do a thing once they can picture how.
+**Thinking**: Find the problems the reader feels in their own words, and for each, draw the way they would do the work without the product above the product, the problem left in the one and gone in the other, with a sentence or two under the figure, as the reader chooses the product once they can picture their own problem gone.
+
+**Steps**
+
+1. Take the problems from the objectives of the product's UX and their key results, and from what readers complain of in the way they would do the work without the product.
+2. Say each problem in the reader's words.
+3. For each problem, find from the design what the product does that makes it go away. Ask the user each one the design does not settle.
+
+### Q8: At each point where they would ask whether the product can really do that, does the reader picture how it does it?
+
+**Thinking**: Find each point a newcomer would doubt, and for each, draw who does what to whom in the product, marking the lines that do the doubted thing, with a sentence or two under the figure, as a reader believes the product can do a thing once they can picture how.
 
 **Steps**
 
 1. Read the opening as a newcomer, and mark each thing it says that the way the reader would do the work without the product cannot do, such as Turn asking only the decisions that are yours, which makes the reader ask how it tells them apart.
 2. Add what readers ask or doubt about similar products.
 3. For each point, take how the product does it from the design. Ask the user each one the design does not settle.
-
-### Q8: For each problem they feel in the work, does the reader picture how the product makes it go away?
-
-**Thinking**: Find the problems the reader feels in their own words, and for each, show how it goes away with the product, as the reader chooses the product once they can picture their own problem gone.
-
-**Steps**
-
-1. Take the problems from the objectives of the product's UX and their key results, and from what readers complain of in the way they would do the work without the product.
-2. Say each problem in the reader's words.
-3. For each problem, find from the design the lines of the figure that make it go away. Ask the user each one the design does not settle.
 
 ### Q9: Needing more than the README gives, such as fuller use or help, does the reader find where to go next?
 

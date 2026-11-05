@@ -69,23 +69,30 @@ At the end, you have `<result>`.
 
 ## How it works
 
-![How the product works](images/template-how-it-works.svg)
+![The usual way and the product](images/template-problem.svg)
 
 - `<problem>`: `<how it goes away>`.
+
+![How the product works](images/template-how-it-works.svg)
+
 - `<doubt>`: `<how it does it>`.
 
 [`<title>`](<path>)
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - The figure: the deliverable's own at images/how-it-works.svg, the product named in its alt text:
->   the user, the product's parts and what they pass, each by its name, with what each does to
->   another. Where one figure would hold more than a newcomer can follow, one figure for each group
->   of the lines below, each followed by its lines.
+> - The first figure: the deliverable's own at images/problem.svg, the product named in its alt
+>   text: the way the reader would do the work without the product above the product, the problem
+>   left in the one and gone in the other, each part by its name.
 > - `<problem>`, `<how it goes away>`: each problem the reader feels in the work, in their words,
->   and what in the figure makes it go away, in a sentence or two.
+>   and what the product does that makes it go away, in a sentence or two.
+> - The second figure: the deliverable's own at images/how-it-works.svg, the product named in its
+>   alt text: the user, the product's parts and what they pass, each by its name, with the lines
+>   that do each doubted thing marked.
 > - `<doubt>`, `<how it does it>`: each point where a newcomer would ask whether the product can
->   really do that, and how the figure does it, in a sentence or two.
+>   really do that, and how the marked lines do it, in a sentence or two.
+> - Where a figure would hold more than a newcomer can follow, draw one for each problem or doubt,
+>   each followed by its line.
 > - `<title>`, `<path>`: the page that explains it further, where it needs a long sequence of
 >   figures; optional.
 
