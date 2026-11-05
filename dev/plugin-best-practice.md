@@ -302,6 +302,12 @@ What runs on users' machines needs only Python 3.9 or later and its standard lib
 
 *Why*: python3 is wherever git is. A plugin installs no packages.
 
+CI runs the checks on Python 3.9 and on the newest Python.
+
+*Why*: only a run on 3.9 shows that the code still runs there, and 3.9 runs some lines otherwise,
+such as which lines coverage counts. Only a run on the newest shows what a new Python breaks, and
+the tools that check the tests need it.
+
 ### Code kept once
 
 A plugin keeps code that more than one plugin needs once, in the plugin whose job it is. The other
@@ -331,15 +337,16 @@ The figure uses these words:
 ### Unit: code
 
 The tests come from the classes, edges and decision-table rules of the part's contract. They pass
-when every test passes, every line and branch runs, and every mutant is caught. They run before
-each push and in CI.
+when every test passes, every line and branch runs, and every mutant is caught. Before each push,
+only the tests that the change reaches run. CI runs every test.
 
 Coverage of each line and branch, mutation testing and property tests confirm that the unit tests
 hold the contract. Each gap they find becomes a unit test. Mutation and property tests run in CI on
 what changed.
 
 *Why*: the tests designed first hold the behavior, and these tools only confirm the design. Run
-before every push, they would make every change wait.
+before every push, they would make every change wait. So would every test, and CI catches what the
+tests run before the push miss, such as a test that reads a file the change edits.
 
 ### No trial of a prompt alone
 
@@ -360,10 +367,19 @@ cost: a fault in a prompt shows only in a ux trial, which runs once every lower 
 
 The tests come from every path through each sequence: the main flow, each branch, each return to an
 earlier step, and each question. They pass when every test passes, with the role and the data
-checked at each step. They run before each push and in CI.
+checked at each step. They run as the unit tests do: before each push those the change reaches, and
+in CI every test.
+
+The parts are joined in the test's own process: the double of Claude Code runs each hook's entry
+and each script there, as a new process of Python would run it, with nothing of one call reaching
+the next. A configuration file written by hand, such as `hooks.json`, is read once when it is
+written, and `claude plugin validate` checks its form. No test runs its commands. A command that a
+plugin's code writes, such as those `lay.py write` writes into `hooks.json`, is that code's output,
+and its unit tests run it as Claude Code would.
 
 *Why*: a fault of a sequence lies between parts whose unit tests pass. With no model called, every
-push checks every path in seconds.
+push checks every path in seconds. A process started for each call checks nothing a call does not,
+and a path would wait on hundreds of them.
 
 ### ux: the plugin in real use
 
