@@ -1,8 +1,8 @@
 """S2 of dev/turn/architecture.md, an answer, one test for each of its paths, each run once with
-the main conversation as the starter, and once with the requester's AI: Turn's guard and
+the main conversation as the starter, and once with the user's AI: Turn's guard and
 Pin's run real, by each plugin's hook entries on its Rules laid, through a double of Claude Code;
 plan.py, rounds.py and Pin's check.py run real, by the commands the rules name; doubles stand in
-for the starter, up, the planner, the pinner, the generator and the requester."""
+for the starter, up, the planner, the pinner, the generator and the user."""
 
 import json
 import os

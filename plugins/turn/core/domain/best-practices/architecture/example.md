@@ -3,12 +3,12 @@
 This document says how Turn is built to give [its UX](../ux/example.md). Every kind of work goes
 through one course of subagents, moved by the routes of Lane, the plugin that holds a subagent to
 the rules of its steps. The planner settles the kind of work. It hands Pin, the plugin that settles
-a design with the requester, the work's goal and the questions of the kind's best practice. Pin
-settles the design with the requester, one point at a time. The generator makes the work from the
+a design with the user, the work's goal and the questions of the kind's best practice. Pin
+settles the design with the user, one point at a time. The generator makes the work from the
 design, against the kind's best practice. A fresh evaluator then answers each question as the
 work's user would, never given the design. A round is one such making and its check. A question
 not met goes back through Pin to its decision. Once every question is met, the rounds go on with
-how the work reads. up, the subagent that starts each role, carries each point to the requester,
+how the work reads. up, the subagent that starts each role, carries each point to the user,
 and each answer back, as given.
 
 ## Principles
@@ -18,11 +18,11 @@ and adds these.
 
 ### up is always a subagent
 
-up runs as a subagent for every requester, departing from
+up runs as a subagent for every user, departing from
 [Where the orchestrator runs](../../../../../../dev/plugin-best-practice.md#where-the-orchestrator-runs).
 
 *Why*: Lane checks only subagents, so only a subagent's course is held to its routes. A course
-held by nothing could skip the evaluator on the way to the requester (KR1.1).
+held by nothing could skip the evaluator on the way to the user (KR1.1).
 
 ### Lane's routes decide each move
 
@@ -41,7 +41,7 @@ Turn does not take
 [Learning from each run](../../../../../../dev/plugin-best-practice.md#learning-from-each-run). No role
 follows the work once it is handed over.
 
-*Why*: no step of the UX follows the work handed over, and a step there would ask the requester
+*Why*: no step of the UX follows the work handed over, and a step there would ask the user
 more (KR1.2).
 
 ### One course for every kind
@@ -51,19 +51,19 @@ practice. A kind new to Turn first gets its best practice as a work of its own, 
 course with `meta` as its best practice. No role names a kind of work, but the planner, which names
 `meta`, `refactor-doc` and `refactor-code`.
 
-*Why*: a new kind then needs only a best practice, which the requester approves as they approve any
+*Why*: a new kind then needs only a best practice, which the user approves as they approve any
 design (KR1.1). A fix to the course reaches every kind at once.
 
 ### Pin alone settles the design
 
 After the planner's hand-over, only the pinner writes the design file and puts a point of the
-design to the requester. Each point that the work raises goes back to Pin in a Request: a question
+design to the user. Each point that the work raises goes back to Pin in a Request: a question
 not met, or a point that the design leaves open. No role of Turn changes a decision itself. The
-planner asks the requester one point only, the kind, and only before there is a design.
+planner asks the user one point only, the kind, and only before there is a design.
 
 *Why*: the design file is then the one record of each point and who settled it, and Pin keeps what
-the requester's AI settled. A point that a role of Turn settles beside Pin could come out otherwise
-than the requester means it, or be asked again. A decision changed outside Pin leaves each decision
+the user's AI settled. A point that a role of Turn settles beside Pin could come out otherwise
+than the user means it, or be asked again. A decision changed outside Pin leaves each decision
 built on it as it was (KR1.1).
 
 ### The evaluator has only what the work's user has
@@ -73,7 +73,7 @@ without the ways of meeting them. It never reads the design, the best practice's
 generator's answers to the questions.
 
 *Why*: the work's user never sees any of these. An evaluator that has the design judges whether the
-work follows it, not what its user gets. One that has the ways checks how the work was made, not
+work follows it, not what the work's user gets. One that has the ways checks how the work was made, not
 what it gives (KR1.1).
 
 ### What the work says before how it says it
@@ -98,7 +98,7 @@ from the design, and loses the fix or keeps it with no one having settled it (KR
 ### Each role starts fresh from the run's folder
 
 The planner, the generator and the evaluator start fresh each time up starts them, and carry on
-from the files in the run's folder. A role resumed with the requester's answer keeps its context.
+from the files in the run's folder. A role resumed with the user's answer keeps its context.
 up keeps no file.
 
 *Why*: the evaluator then reads each round with fresh eyes (KR1.1). A run that stopped goes on from
@@ -107,17 +107,17 @@ its folder in a new session, and asks nothing again (KR1.2).
 ### Passed on as given
 
 up passes on each point, each Request and each answer as it got them, and answers nothing of the
-work itself. The planner hands Pin each point that the requester's AI settled, as it was given.
+work itself. The planner hands Pin each point that the user's AI settled, as it was given.
 
 *Why*: a point reworded on the way is a question that no role asked. An answer summed up loses what
-the requester meant, and a settled point reworded is asked again or held otherwise (KR1.1).
+the user meant, and a settled point reworded is asked again or held otherwise (KR1.1).
 
-### Every requester meets the same Turn
+### Every user meets the same Turn
 
 No line of Turn names a plugin that starts it. An AI reaches Turn only through `turn:up`, in the
 forms that [Calling Turn](../../../../docs/calling.md) gives.
 
-*Why*: a change made for one plugin's AI would reach every other requester unseen, and could settle
+*Why*: a change made for one plugin's AI would reach every other user unseen, and could settle
 their points otherwise than they meant (KR1.1).
 
 ### Turn changes only the work
@@ -127,28 +127,28 @@ work's commands only in a throwaway copy of the repository, with a throwaway hom
 pushes or publishes.
 
 *Why*: a command run as the work's user runs it, such as `tidy` on a Downloads folder, would
-otherwise change the requester's own files, which cannot be undone. The requester would then stop
-the run (KR1.1). What becomes of the work is the requester's to decide, as
+otherwise change the user's own files, which cannot be undone. The user would then stop
+the run (KR1.1). What becomes of the work is the user's to decide, as
 [Turn's README](../../../../README.md) says.
 
 ## User stories
 
-- **S1**: As the requester, I want to start Turn with my request, by typing `/turn:up` or, as an AI
+- **S1**: As the user, I want to start Turn with my request, by typing `/turn:up` or, as an AI
   that asks for a person, by starting `turn:up` as [Calling Turn](../../../../docs/calling.md) says.
   Carries the request, the kind asked where the request does not say it, a new kind's best practice
   made first, the purpose put to confirm, and a fault of Turn's own that stops the run.
-- **S2**: As the requester, I want to answer the point that Turn puts to me. Carries each fact to
+- **S2**: As the user, I want to answer the point that Turn puts to me. Carries each fact to
   confirm and each decision, the design approved, a wrong purpose, fact or design corrected, a
   decision that comes up while the work is made, the work handed over, and a fault of Turn's own
   that stops the run.
-- **S3**: As the requester, I want to start Turn with a run's folder, alone or with a change.
+- **S3**: As the user, I want to start Turn with a run's folder, alone or with a change.
   Carries the run that stopped, the work changed, and a fault of Turn's own that stops the run.
 
 ## Components
 
 ![Turn's components](images/components.svg)
 
-- **up as a subagent, for the requester who types `/turn:up` too,** over up in the main
+- **up as a subagent, for the user who types `/turn:up` too,** over up in the main
   conversation: the main conversation passes each point by its steps alone, which no hook sees,
   while Lane holds a subagent to its routes (KR1.1). It costs a resume of up for each point, which
   passes up and the starter (KR1.2), and Turn runs only in an interactive session, where Claude Code
@@ -164,7 +164,7 @@ the run (KR1.1). What becomes of the work is the requester's to decide, as
   a carrier (KR1.1). It costs a run of the planner each time the design goes to Pin or comes back
   (KR1.2).
 - **A new kind's best practice made as a work of its own** over a step of its own that makes it
-  faster: the requester approves the kind's purpose and questions as they approve any design, and
+  faster: the user approves the kind's purpose and questions as they approve any design, and
   the course stays one for every kind (KR1.1). It costs a whole course more for the first work of a
   new kind (KR1.2).
 - **One run of the generator for the whole work in each round** over runs side by side, one for
@@ -177,7 +177,7 @@ the run (KR1.1). What becomes of the work is the requester's to decide, as
   run's folder: Lane then lets up make no call but the start due, so every step up takes is held
   (KR1.1). It costs the planner's and the generator's replies carrying what up starts with.
 - **No role of Turn starting a subagent** over a researcher in the background: Claude Code lets
-  subagents start subagents only three layers below the main conversation, the requester's AI may
+  subagents start subagents only three layers below the main conversation, the user's AI may
   stand one layer down, and a child's end would start its role again while a point waits, so a run
   would break before the hand-over (KR1.1). It costs the pinner and the generator finding facts
   themselves, one after another, in their own context (KR1.2).
@@ -192,7 +192,7 @@ the run (KR1.1). What becomes of the work is the requester's to decide, as
 
 ```mermaid
 sequenceDiagram
-  participant R as requester
+  participant R as user
   participant ST as starter
   participant U as up
   participant G as guard
@@ -201,7 +201,7 @@ sequenceDiagram
   participant PN as pinner
   participant F as run's folder
   R->>ST: starts Turn with the request, or with a run's folder, alone or with a change (Call)
-  Note over R,ST: The requester types /turn:up, or is an AI that follows Calling Turn as its own starter.
+  Note over R,ST: The user types /turn:up, or is an AI that follows Calling Turn as its own starter.
   ST->>U: starts it in the background (Call)
   G-->>U: Start planner
   U->>PL: starts it, with the run's folder (Run values)
@@ -234,15 +234,15 @@ sequenceDiagram
   U->>PN: starts it, with the Request as given (Request)
   PN->>F: settles each point it can, as Pin's architecture draws (Design file)
   PN->>G: gives asks (Result)
-  PN-->>U: ends with one point for the requester (Message)
+  PN-->>U: ends with one point for the user (Message)
   U-->>ST: ends with it as given (Message)
   ST->>R: puts it as given
-  Note over R,U: In any story, on a fault of Turn's own, up ends with it under For the maker of Turn, and the starter tells the requester.
+  Note over R,U: In any story, on a fault of Turn's own, up ends with it under For the maker of Turn, and the starter tells the user.
 ```
 
 - **`asks`, a result whose route starts no one,** over a role that ends with no result while its
   point waits: the guard keeps going a role that ends with no result, and keeps up going while a
-  start is due, so without `asks` the point would never reach the requester (KR1.1). Once resumed,
+  start is due, so without `asks` the point would never reach the user (KR1.1). Once resumed,
   the role gives a later result, and the guard takes it over `asks`
   ([How a subagent gives its result](../../../../../lane/docs/routes.md#how-a-subagent-gives-its-result)).
   It costs each role that asks one result more.
@@ -251,7 +251,7 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
-  participant R as requester
+  participant R as user
   participant ST as starter
   participant U as up
   participant G as guard
@@ -271,12 +271,12 @@ sequenceDiagram
       PN-->>U: ends with the next point, or the whole design (Message)
       U-->>ST: ends with it as given (Message)
       ST->>R: puts it as given
-    else the requester confirmed the design
+    else the user confirmed the design
       PN->>G: gives done (Result)
       PN-->>U: ends with the design file's path
       G-->>U: Start planner
       U->>PL: starts it (Run values)
-      PL->>F: reads where the work lies and what its user runs (Design file)
+      PL->>F: reads where the work lies and what the work's user runs (Design file)
       PL->>F: writes them into Run (Run)
       PL->>G: gives ready (Result)
       PL-->>U: ends with the generator's run values (Run values)
@@ -289,7 +289,7 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
-  participant R as requester
+  participant R as user
   participant ST as starter
   participant U as up
   participant G as guard
@@ -358,29 +358,29 @@ sequenceDiagram
 
 ![Turn's deployment](images/deployment.svg)
 
-The requester installs Turn as [the README](../../../../README.md#installation) says, which installs
+The user installs Turn as [the README](../../../../README.md#installation) says, which installs
 Pin with it, and types `/turn:up`, or their AI's plugin lists `turn` in its `dependencies` and
 starts `turn:up` as [Calling Turn](../../../../docs/calling.md) says.
 
 - **Python 3.9 and its standard library only, for Turn's scripts and the guard,** over a later
-  Python or packages: the requester installs nothing else for Turn, as
+  Python or packages: the user installs nothing else for Turn, as
   [Python 3.9 and the standard library](../../../../../../dev/plugin-best-practice.md#python-39-and-the-standard-library)
   says, and starts sooner (KR1.2). It costs the code going without what later versions and packages
   give.
 - **A run's folder in `.turn/<yyyymmdd>-<name>/` at the root of the repository, or where the
-  requester's AI says,** over a folder outside the repository: the requester reads each check of the
+  user's AI says,** over a folder outside the repository: the user reads each check of the
   work there, and a run that stopped goes on from it in any session (KR1.2), as
   [Where a plugin writes its files](../../../../../../dev/plugin-best-practice.md#where-a-plugin-writes-its-files)
-  says for what may be kept. It costs a folder in the requester's repository that they keep out of
+  says for what may be kept. It costs a folder in the user's repository that they keep out of
   their commits.
 - **A new kind's best practice in `.turn/best-practices/`** over the run's folder: every later run
   in the repository finds it, and the planner takes it over Turn's own best practice of the same
-  kind, as the requester approved it for their work (KR1.1). It costs a later run of that kind
+  kind, as the user approved it for their work (KR1.1). It costs a later run of that kind
   missing what Turn's own best practice gains after it.
 - **A work's command run in a throwaway copy of the repository, with a throwaway home in the
-  temporary folder,** over the repository itself: the command cannot change the requester's own
+  temporary folder,** over the repository itself: the command cannot change the user's own
   files, as [Turn changes only the work](#turn-changes-only-the-work) says (KR1.1). It costs a
-  command that needs a file outside the repository, such as one in the requester's Downloads
+  command that needs a file outside the repository, such as one in the user's Downloads
   folder, a made-up one that `throwaway.py` puts in the throwaway home.
 - **`throwaway.py` running every command of the work, in order, in one copy,** over a run for each
   command: the guard then names one command whole, with the run's folder as its value, while a rule
@@ -448,7 +448,7 @@ and differs from them where this section says.
 ![Turn's tests](images/tests.svg)
 
 - **The script process at ●●● at unit and at architecture** over a lighter weight: a check that
-  passes wrongly sends a gap into the work unseen, or hands the evaluator what its user never sees
+  passes wrongly sends a gap into the work unseen, or hands the evaluator what the work's user never sees
   (KR1.1). It costs the most tests to keep up as the scripts change.
 - **The hook process at ●●● at architecture** over a lighter weight: only the guard holds each role
   to its rules and the course to its routes, and a rule let through lets the evaluator read the
@@ -456,7 +456,7 @@ and differs from them where this section says.
   plugins' guards on every call, the slowest of the tests that run on every push.
 - **The Claude Code process at ●●○ at architecture** over ●●●: a test there only finds sooner an
   entry that Claude Code would not load as Turn needs, which every ux trial also meets before a
-  requester does (KR1.1). It costs such a fault showing only once a trial runs, where a heavier
+  user does (KR1.1). It costs such a fault showing only once a trial runs, where a heavier
   test would show it on the push.
 - **The Claude Code process at ●●○ at ux, and the other rows at ●○○,** over trials weighed alike:
   only these trials run the prompts, while the other rows only confirm what lower levels have

@@ -111,7 +111,7 @@
   <rect class="frame" x="20" y="522" width="1420" height="368" rx="8"/>
   <text class="frame-name" x="36" y="544" text-anchor="start">Where Turn's tests differ from the plugin best practice's Test</text>
   <text class="name start" x="42" y="572" text-anchor="start">unit</text>
-  <text class="label start" x="42" y="594" text-anchor="start">No stand-in, as no requester takes part.</text>
+  <text class="label start" x="42" y="594" text-anchor="start">No stand-in, as no user takes part.</text>
   <text class="name start" x="512" y="572" text-anchor="start">architecture</text>
   <text class="label start" x="512" y="594" text-anchor="start">Real: Turn's scripts by the commands the rules name,</text>
   <text class="label start" x="512" y="612" text-anchor="start">the guard by Turn's hook entries on Rules laid, Pin's</text>
@@ -122,7 +122,7 @@
   <text class="label start" x="512" y="702" text-anchor="start">only what its part's contract allows: design files that</text>
   <text class="label start" x="512" y="720" text-anchor="start">pass check.py, Answers that pass rounds.py, a hand-over</text>
   <text class="label start" x="512" y="738" text-anchor="start">only through plan.py, each Message and Answer unchanged.</text>
-  <text class="label start" x="512" y="756" text-anchor="start">Stand-in: a set answer for the requester.</text>
+  <text class="label start" x="512" y="756" text-anchor="start">Stand-in: a set answer for the user.</text>
   <text class="label start" x="512" y="774" text-anchor="start">Subject: tidy, with the repository's own README best</text>
   <text class="label start" x="512" y="792" text-anchor="start">practice of three questions, so each round runs the</text>
   <text class="label start" x="512" y="810" text-anchor="start">evaluator three times.</text>

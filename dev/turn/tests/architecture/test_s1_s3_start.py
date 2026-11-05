@@ -1,7 +1,7 @@
 """S1 and S3 of dev/turn/architecture.md, the start, one test for each of its paths: Turn's
 guard and Pin's run real, by each plugin's hook entries on its Rules laid, through a double of
 Claude Code; plan.py and Pin's check.py run real, by the commands the rules name; doubles stand in
-for the starter, up, the planner, the pinner and the requester."""
+for the starter, up, the planner, the pinner and the user."""
 
 import json
 import os

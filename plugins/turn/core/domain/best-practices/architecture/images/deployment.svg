@@ -46,12 +46,12 @@
   </defs>
   <rect class="bg" x="0" y="0" width="1680" height="800"/>
   <rect class="frame" x="20" y="80" width="1310" height="640" rx="8"/>
-  <text class="frame-name" x="36" y="104" text-anchor="start">the requester's computer</text>
+  <text class="frame-name" x="36" y="104" text-anchor="start">the user's computer</text>
   <text class="kind start" x="560" y="104" text-anchor="start">[Claude Code 2.1.317 or later and python3 3.9 or later, installed]</text>
   <rect class="unit" x="40" y="120" width="500" height="140" rx="6"/>
   <text class="name start" x="54" y="146" text-anchor="start">Claude Code process</text>
   <text class="kind start" x="54" y="164" text-anchor="start">[Claude Code 2.1.317 or later, run as a conversation, not claude -p]</text>
-  <text class="label start" x="54" y="188" text-anchor="start">starter: the main conversation, or the requester's AI</text>
+  <text class="label start" x="54" y="188" text-anchor="start">starter: the main conversation, or the user's AI</text>
   <text class="label start" x="54" y="206" text-anchor="start">up, planner, generator and evaluator: Turn's subagents</text>
   <text class="label start" x="54" y="224" text-anchor="start">pinner: Pin's subagent</text>
   <rect class="unit" x="40" y="340" width="280" height="130" rx="6"/>

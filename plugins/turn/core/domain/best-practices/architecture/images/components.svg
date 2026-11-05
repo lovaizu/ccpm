@@ -47,7 +47,7 @@
   <rect class="bg" x="0" y="0" width="1920" height="1340"/>
   <circle class="ext" cx="190" cy="50" r="11"/>
   <rect class="ext" x="40" y="60" width="300" height="100" rx="22"/>
-  <text class="name" x="190.0" y="86" text-anchor="middle">requester</text>
+  <text class="name" x="190.0" y="86" text-anchor="middle">user</text>
   <text class="kind" x="190.0" y="104" text-anchor="middle">[a person, or an AI that asks for one]</text>
   <text class="label small" x="190.0" y="124" text-anchor="middle">decides what is theirs: the purpose,</text>
   <text class="label small" x="190.0" y="139" text-anchor="middle">each fact and decision, the design</text>
@@ -55,7 +55,7 @@
   <text class="name" x="190.0" y="266" text-anchor="middle">starter</text>
   <text class="kind" x="190.0" y="284" text-anchor="middle">[steps · Markdown, followed by the main</text>
   <text class="kind" x="190.0" y="299" text-anchor="middle">conversation for /turn:up, or by the</text>
-  <text class="kind" x="190.0" y="314" text-anchor="middle">requester's AI as Calling Turn says]</text>
+  <text class="kind" x="190.0" y="314" text-anchor="middle">user's AI as Calling Turn says]</text>
   <text class="label small" x="190.0" y="334" text-anchor="middle">decides nothing of the work: puts each</text>
   <text class="label small" x="190.0" y="349" text-anchor="middle">point, and passes each answer back,</text>
   <text class="label small" x="190.0" y="364" text-anchor="middle">as given</text>

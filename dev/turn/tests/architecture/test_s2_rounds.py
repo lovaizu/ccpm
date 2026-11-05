@@ -2,7 +2,7 @@
 and Pin's run real, by each plugin's hook entries on its Rules laid, through a double of Claude
 Code; plan.py, rounds.py, throwaway.py and Pin's check.py run real, by the commands the rules name;
 doubles stand in for the starter, up, the planner, the pinner, the generator, the evaluator and the
-requester. Each path starts where a run stopped in its rounds goes on, as the start's paths have the
+user. Each path starts where a run stopped in its rounds goes on, as the start's paths have the
 rounds begin."""
 
 import json
