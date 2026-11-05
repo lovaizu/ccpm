@@ -6,11 +6,7 @@
 
 `<Product>` is for you when `<your situation>`. With it, you `<gain>`.
 
-`<message>`
-
-![The usual way and the product](images/template-idea.svg)
-
-`<excerpt>`
+`<problem>` `<Product>` instead `<idea>`.
 
 **Non-goals**
 
@@ -24,13 +20,9 @@
 >   optional.
 > - `<your situation>`: the work the reader wants done.
 > - `<gain>`: what the reader can then do.
-> - `<message>`: why the product solves the reader's problem where what they would do without it
->   does not, in a few plain sentences.
-> - The figure: the deliverable's own at images/idea.svg, the product named in its alt text: the
->   usual way above the product, each as who does what to whom, for what the message says that a
->   picture shows better; optional.
-> - `<excerpt>`: where the message names a difference in the work itself, a short excerpt of what
->   each way makes, from real runs; optional.
+> - `<problem>`: what goes wrong for the reader the way they would do the work without the
+>   product, in a few plain sentences.
+> - `<idea>`: what the product does differently that removes the problem, in one sentence.
 > - `<expectation>`: each thing a reader might expect of the product that it does not do; optional.
 
 ## Requirements
@@ -84,15 +76,17 @@ At the end, you have `<result>`.
 
 ![How the product works](images/template-how-it-works.svg)
 
-- `<point>`.
+- `<condition>`: `<how it is met>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - The figure: the deliverable's own at images/how-it-works.svg, the product named in its alt text:
 >   the user, the product's parts and what they pass, each by its name, with what each does to
 >   another.
-> - `<point>`: each point a gain or a condition needs that the figure cannot show, in one sentence;
->   optional. A convenience, such as going on with a run that stopped, is no point here.
+> - `<condition>`: each thing that must hold to solve the problem the opening names, in the reader's
+>   words.
+> - `<how it is met>`: how the parts in the figure make it hold, in a sentence or two. A
+>   convenience, such as going on with a run that stopped, is no point here.
 
 ## Documentation
 
