@@ -57,13 +57,13 @@ At the end, you have `<result>`.
 
 `<situation>`. You type:
 
-```text
+```<language>
 <input>
 ```
 
 `<Product>` shows:
 
-```text
+```<language>
 <output>
 ```
 
@@ -72,7 +72,9 @@ At the end, you have `<result>`.
 > - `<result>`: what the reader has once the run ends.
 > - `<situation>`: what the run starts from, in one sentence.
 > - `<input>`, `<output>`: what the user gave and what the product showed in a real run, as they
->   were; one pair for each exchange up to the result.
+>   were, in the form the reader meets them; one pair for each exchange up to the result.
+> - `<language>`: the language of the text, such as console, python or json. A screen goes in place
+>   of its code block, as an image taken from the run and kept in images/.
 
 ## How it works
 

@@ -73,7 +73,7 @@ Someone who meets the product for the first time starts using it, from the READM
 
 1. Pick the use from what readers ask for most, such as help requests, and from the main scenario of the product's UX.
 2. Say at the start what the reader will have at the end.
-3. Take what the user gives and what the product shows from the record of a real run, cutting only what the reader does not need to see the result.
+3. Take each exchange, what the user gives and what the product shows, from the record of a real run in the form the reader sees it: text in a code block of its language, and a screen as an image taken from the run, cutting only what the reader does not need to see the result.
 4. Where the result does not show the gain the opening promised, pick another piece of work or another scenario.
 
 ### Q7: Starting with nothing set up, does the reader install the product by the README's steps alone, and see that it works?
