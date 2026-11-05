@@ -7,142 +7,137 @@
   {
    "id": "Q1",
    "about": "the opening",
-   "what": "Telling a colleague about the product, does the reader retell the opening from memory?"
+   "what": "Telling a colleague about the product, does the reader retell the opening from memory, so that they can weigh the product and pass it on without reading it again?"
   },
   {
    "id": "Q2",
    "about": "the opening",
-   "what": "Reading the gain, does the reader tell what the product would let them do, and so whether it is for them?"
+   "what": "Reading the gain, does the reader tell what the product would let them do, so that they know whether it is for them?"
   },
   {
    "id": "Q3",
    "about": "the opening",
-   "what": "Before installing, does the reader see what the product does not do that they might expect of it?"
+   "what": "Before installing, does the reader see what the product does not do that they might expect of it, so that a reader who needs that turns away before they install?"
   },
   {
    "id": "Q4",
    "about": "the opening",
-   "what": "Before installing, does the reader see where the product is not yet fit for use?"
+   "what": "Before installing, does the reader see where the product is not yet fit for use, so that they do not rest their work on it unaware?"
   },
   {
    "id": "Q5",
    "about": "Requirements, Installation",
-   "what": "Starting with nothing set up, does the reader install the product by the README's steps alone, and see that it works?"
+   "what": "Starting with nothing set up, does the reader install the product by the README's steps alone and see that it works, so that they can start without help?"
   },
   {
    "id": "Q6",
    "about": "the opening, Walkthrough",
-   "what": "After the walkthrough, does the reader see that the product would give them, on work of their own, the gain the opening promised?"
+   "what": "After the walkthrough, does the reader see that the product would give them, on work of their own, the gain the opening promised, so that they choose it on what it does and not on what it claims?"
   },
   {
    "id": "Q7",
    "about": "How it works",
-   "what": "For each problem they feel in the work, does the reader picture how the product makes it go away?"
+   "what": "For each problem they feel in the work, does the reader picture how the product makes it go away, so that they see it solves their own problem?"
   },
   {
    "id": "Q8",
    "about": "How it works",
-   "what": "At each point where they would ask whether the product can really do that, does the reader picture how it does it?"
+   "what": "At each point where they would ask whether the product can really do that, does the reader picture how it does it, so that they believe it before they try it?"
   },
   {
    "id": "Q9",
    "about": "Documentation",
-   "what": "Needing more than the README gives, such as fuller use or help, does the reader find where to go next?"
+   "what": "Needing more than the README gives, such as fuller use or help, does the reader find where to go next, so that the README need hold only what they need to decide and to start?"
   },
   {
    "id": "Q10",
    "about": "License",
-   "what": "Weighing whether they may use the product, does the reader find the terms for them and their team?"
+   "what": "Weighing whether they may use the product, does the reader find the terms for them and their team, so that they can rule it in or out on its license?"
   },
   {
    "id": "Q11",
    "about": "the whole",
-   "what": "Reading from the top, does the reader find each answer just when they come to need it, so they can stop once they have what they came for?"
+   "what": "Reading from the top, does the reader find each answer just when they come to need it, so that they can stop once they have what they came for?"
   }
  ],
  "practices": [
   {
    "user_benefit": "Q1",
-   "thinking": "Write the opening as a few short sentences the reader can say again from memory: under the title, one sentence that names the kind of thing the product is and the one thing it gives the reader, in words the reader already uses and with no feature name or mechanism, so that it answers in short what the product is, then whom it is for, where it is not yet fit for use and what it does not do, as a reader who meets the product passes it on by what they remember of the opening.",
+   "thinking": "The opening says in a few short sentences what the product is, whom it is for, where it is not yet fit for use and what it does not do. Its first sentence names the kind of thing the product is and the one thing it gives the reader, in words the reader already uses and with no feature name or mechanism, so that it says in short what the product is. A reader weighs the product and passes it on by what they remember of the opening.",
    "steps": [
-    "Read only the opening, put it away, and say it as to a colleague. Where a part is lost or comes out otherwise, shorten it, or replace each vague or praising word with what the product does."
+    "Read only the opening, put it away, and say it as to a colleague. Where a part is lost or comes out otherwise, shorten it, or put what the product does in place of each vague or praising word."
    ]
   },
   {
    "user_benefit": "Q2",
-   "thinking": "Name whom the product is for by the work they want done, and the gain as what they can then do, taken from the objectives of the product's product vision board, as the reader tells from it whether the product meets their need.",
+   "thinking": "Name whom the product is for by the work they want done, and the gain as the end they reach with the product, from the objectives of the product vision board. A reader tells from that whether the product serves their own end.",
    "steps": [
-    "Where a reader outside that group could not tell from it that the product is not for them, name the group and the work more closely."
+    "Where a reader outside that group could not tell that the product is not for them, name the group and the work more closely."
    ]
   },
   {
    "user_benefit": "Q3",
-   "thinking": "List only what a reader could reasonably expect of the product and it does not do, as a reader who needs it then learns that before they install.",
+   "thinking": "List only what a reader could reasonably expect of the product and it does not do. A reader who needs it then learns that before they install.",
    "steps": [
     "Gather what readers might expect from similar products and from what readers ask, and ask the user whether each is in or out."
    ]
   },
   {
    "user_benefit": "Q4",
-   "thinking": "Where the product is not yet fit for use, such as a release still in development or one no longer kept up, say so at the top, as a reader who starts on it otherwise finds out only once their work rests on it.",
+   "thinking": "Where the product is not yet fit for use, such as a release still in development or one no longer kept up, say so at the top. A reader who starts on it otherwise finds out only once their work rests on it.",
    "steps": []
   },
   {
    "user_benefit": "Q5",
-   "thinking": "Write the requirements and the install steps for a reader who has nothing set up, and try them that way, as the author's own setup hides the gaps.",
+   "thinking": "The requirements and the install steps serve a reader who has nothing set up, each as a command to copy, and end with a sign that the product works. The author's own setup hides the gaps.",
    "steps": [
-    "Give even a common install step as a command to copy.",
-    "From a machine or sandbox where nothing the product needs is in place, follow the steps as written and do nothing they do not say.",
-    "Where a step fails, or needs what the README does not say, write it in and start again."
+    "From a machine or sandbox where nothing the product needs is in place, follow the steps as written and do nothing they do not say. Where a step fails, or needs what the README does not say, write it in and start again."
    ]
   },
   {
    "user_benefit": "Q6",
-   "thinking": "Show one real run of the use most readers come for, on work like theirs, with the product's real output, as the reader then sees that the product works and what they would get.",
+   "thinking": "Show one real run of the use most readers come for, on work like theirs, from what the reader gives to the result they keep, with the product's real output. The reader then sees the gain happen, not only promised.",
    "steps": [
-    "Pick the use from what readers ask for most, such as help requests, and from the objectives of the product's product vision board.",
-    "Say at the start what the reader will have at the end.",
-    "Take each exchange, what the user gives and what the product shows, from the record of a real run in the form the reader sees it: text in a code block of its language, and a screen as an image taken from the run, cutting only what the reader does not need to see the result.",
+    "Pick the use from what readers ask for most and from the objectives of the product vision board.",
+    "Take each exchange from the record of a real run, in the form the reader sees it, cutting only what the reader does not need to see the result.",
     "Where the result does not show the gain the opening promised, pick another piece of work or another use."
    ]
   },
   {
    "user_benefit": "Q7",
-   "thinking": "Find the problems the reader feels in their own words, and for each, work out and draw the figure in which the reader best pictures it gone with the product, such as the way they would do the work without the product above the product, or the same work done both ways, with a sentence or two under it, as each problem shows best in its own figure, and the reader chooses the product once they can picture their own problem gone.",
+   "thinking": "Each problem the reader feels in the present way, in their own words, gets a figure in which they see it left in that way and gone with the product, and a sentence or two on what the product does that makes it go away. A reader chooses the product once they can picture their own problem gone.",
    "steps": [
-    "Take the problems from the Product section of the product's product vision board, one where the present way falls short for each idea, and from what readers complain of in that way.",
-    "Say each problem in the reader's words.",
-    "For each problem, find from the design what the product does that makes it go away. Ask the user each one the design does not settle.",
-    "Look at each figure as a newcomer, and where they could not picture from it what its line under it says, work the figure out again from its form."
+    "Take the problems from the Product section of the product vision board, one where the present way falls short for each idea, and from what readers complain of in that way.",
+    "For each, take from the design what the product does that makes it go away. Ask the user each one the design does not settle.",
+    "Look at each figure as a newcomer, and where they could not picture from it what its line says, draw it again."
    ]
   },
   {
    "user_benefit": "Q8",
-   "thinking": "Find each point a newcomer would doubt, and for each, work out and draw the figure in which the reader best pictures how the product does it, such as its parts with the lines that do it marked, or the exchanges in their order, with a sentence or two under it, as each point shows best in its own figure, and a reader believes the product can do a thing once they can picture how.",
+   "thinking": "Each point a newcomer would doubt gets a figure of its own that draws what its line says, and a sentence or two on how the product does it. A reader believes a product can do a thing once they can picture how. A figure of the whole that answers several doubts at once shows none of them at a glance.",
    "steps": [
-    "Read the opening as a newcomer, and mark each thing it says that the way the reader would do the work without the product cannot do, such as Turn asking only the decisions that are yours, which makes the reader ask how it tells them apart.",
-    "Add what readers ask or doubt about similar products.",
+    "Read the README as a newcomer, and mark each thing it says that the present way cannot do. Ask of each answer what the newcomer would doubt next, until no doubt is left.",
     "For each point, take how the product does it from the design. Ask the user each one the design does not settle.",
-    "Look at each figure as a newcomer, and where they could not picture from it what its line under it says, work the figure out again from its form."
+    "Look at each figure as a newcomer, and where they could not picture from it what its line says, draw it again."
    ]
   },
   {
    "user_benefit": "Q9",
-   "thinking": "Keep in the README what the reader needs to decide and to start, and link one place for each need that comes after, such as fuller use or help, as a README that holds everything is not read.",
+   "thinking": "The README holds what the reader needs to decide and to start, and links one place for each need that comes after, such as fuller use or help. A README that holds everything is not read.",
    "steps": [
     "Open each link."
    ]
   },
   {
    "user_benefit": "Q10",
-   "thinking": "Name the license and link its full text, as a reader may rule the product out by its license alone.",
+   "thinking": "Name the license and link its full text. A reader may rule the product out by its license alone.",
    "steps": [
     "Open the link, and check that it reaches the license the name says."
    ]
   },
   {
    "user_benefit": "Q11",
-   "thinking": "Order the README so that each reader stops once they have what they came for: the opening for every reader, the installation for one who has chosen the product, the walkthrough and How it works for one still weighing it, and what comes after through links, as a reader who must pass what they do not need leaves before what they do.",
+   "thinking": "Order the README so that each reader stops once they have what they came for: the opening for every reader, the installation for one who has chosen the product, the walkthrough and How it works for one still weighing it, and what comes after through links. A reader who must pass what they do not need leaves before what they do.",
    "steps": [
     "Read the README from the top as someone who meets the product for the first time, and after each section, write the question the reader now has.",
     "Check that the next part answers that question. Move a section that answers a later one.",

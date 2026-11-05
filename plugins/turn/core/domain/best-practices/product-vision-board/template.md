@@ -6,9 +6,9 @@
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<role>`: each role that comes to the product with a want of its own, such as a guest, a member
->   or an admin; "user" where it is the only one.
-> - `<who they are>`: in one clause.
+> - `<role>`: each role, an end of its own that someone brings to the product, such as a guest, a
+>   member or an admin; "user" where it is the only one. The developer builds for each.
+> - `<who they are>`: in one clause, so that the developer knows who comes with that end.
 
 ## OKRs
 
@@ -23,8 +23,10 @@ law). They show whether a change brought its objective closer.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<objective>`: what one role of Roles wants, in one sentence.
-> - `<key result>`: what is measured, in one sentence.
+> - `<objective>`: the end one role of Roles is after in its own work, in one sentence. The
+>   developer builds toward it.
+> - `<key result>`: what is counted of what the role does or feels, in one sentence. The developer
+>   reads it after a change to decide whether to keep the change.
 > - `<direction>`: which way is better, such as "Lower is better".
 
 ## Product
@@ -36,7 +38,8 @@ law). They show whether a change brought its objective closer.
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - `<present way>`: what the roles do today without the product, such as doing the work by hand.
+>   The developer sets the product against it.
 > - `<idea>`: each idea that sets the product apart from the present way, at most five, each in a
->   few words.
+>   few words. The developer builds these, and not a copy of the present way.
 > - `<why it meets the objective>`: why the idea meets the objective where the present way falls
 >   short, in one sentence, from what the role does, sees or receives.

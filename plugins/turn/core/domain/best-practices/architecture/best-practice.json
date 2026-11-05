@@ -7,37 +7,37 @@
   {
    "id": "Q1",
    "about": "the opening",
-   "what": "Starting on any part, does the developer see the one idea by which the product gives its product vision board, and the piece of it the part carries out?"
+   "what": "Starting on any part, does the developer see the one idea by which the product gives its product vision board, and the piece of it the part carries out, so that every part they build serves that idea?"
   },
   {
    "id": "Q2",
    "about": "User stories",
-   "what": "Following a step of an objective's main use, as the README's walkthrough shows it, does the developer find the one user story that carries it?"
+   "what": "Following a step of an objective's main use, as the README's walkthrough shows it, does the developer find the one user story that carries it, so that each part traces back to what a role does?"
   },
   {
    "id": "Q3",
    "about": "Principles",
-   "what": "Meeting a case no line of the document names, do two developers of different parts reach the same decision from a principle's why?"
+   "what": "Meeting a case no line of the document names, do two developers of different parts reach the same decision from a principle's why, so that the parts still fit where the document is silent?"
   },
   {
    "id": "Q4",
    "about": "User stories, Components",
-   "what": "Facing a decision the stories need, does the developer find the one component that alone decides it?"
+   "what": "Facing a decision the stories need, does the developer find the one component that alone decides it, so that no decision is made twice and drifts?"
   },
   {
    "id": "Q5",
    "about": "Components",
-   "what": "Starting on a component, does the developer know what kind of thing it is and what it is made with, choosing nothing themselves?"
+   "what": "Starting on a component, does the developer know what kind of thing it is and what it is made with, so that the components fit without anyone choosing alone?"
   },
   {
    "id": "Q6",
    "about": "Data model",
-   "what": "Making one component that writes a data and another that reads it, do two developers join it to the other data the same way?"
+   "what": "Making one component that writes a data and another that reads it, do two developers join it to the other data the same way, so that the data fits while its fields change freely?"
   },
   {
    "id": "Q7",
    "about": "User stories, Components, Data model, Sequences",
-   "what": "Following a user story from its role's first request to its end, does the developer see at each step which component acts, along which arrow, and what data it hands on?"
+   "what": "Following a user story from its role's first request to its end, does the developer see at each step which component acts, along which arrow, and what data it hands on, so that they build each step knowing who acts and on what?"
   },
   {
    "id": "Q8",
@@ -47,135 +47,122 @@
   {
    "id": "Q9",
    "about": "Components, Data model, Deployment",
-   "what": "Setting the product up from nothing, does the developer put each component where it runs and each data where it is kept, and start the product, asking no one?"
+   "what": "Setting the product up from nothing, does the developer put each component where it runs and each data where it is kept, and start the product, so that they need ask no one?"
   },
   {
    "id": "Q10",
    "about": "Components, Data model, Directory structure",
-   "what": "Making or changing a component or a data, does the developer find the one place its files belong?"
+   "what": "Making or changing a component or a data, does the developer find the one place its files belong, so that each change lands in one place?"
   },
   {
    "id": "Q11",
    "about": "Deployment, Tests",
-   "what": "Asked whether anything in the product goes untested, does the developer see for each deployment unit which levels cover it, how heavily, and why a level is missing?"
+   "what": "Asked whether anything in the product goes untested, does the developer see for each deployment unit which levels cover it, how heavily, and why a level is missing, so that no gap is left unseen?"
   },
   {
    "id": "Q12",
    "about": "Tests",
-   "what": "Writing a test at one level, does the developer know what to run real, what doubles stand in for, what to cover and when it passes, deciding none of it?"
+   "what": "Writing a test at one level, does the developer know what to run real, what doubles stand in for, what to cover and when it passes, so that a failing test names the rule, path or use it breaks?"
   },
   {
    "id": "Q13",
    "about": "Tests",
-   "what": "When the unit and architecture tests pass, does the developer know the product does what this document says, leaving to the ux level only the product vision board to confirm?"
+   "what": "When the unit and architecture tests pass, does the developer know the product does what this document says, so that the ux level is left only the product vision board to confirm?"
   },
   {
    "id": "Q14",
    "about": "Components, Sequences, Deployment, Directory structure, Tests",
-   "what": "Doubting a choice the document makes, such as a tool or a test's weight, does the developer see what would be lost by the other way?"
+   "what": "Doubting a choice the document makes, such as a tool or a test's weight, does the developer see what would be lost by the other way, so that they keep or change it knowing what it was for?"
   },
   {
    "id": "Q15",
    "about": "the whole",
-   "what": "Following a principle while building a part, does the developer find every figure and list asking the same of that part?"
+   "what": "Following a principle while building a part, does the developer find every figure and list asking the same of that part, so that they never choose between the document and itself?"
   },
   {
    "id": "Q16",
    "about": "the whole",
-   "what": "Changing how a component works inside while the product vision board and the principles stay, does the developer find every line of the document still true?"
+   "what": "Changing how a component works inside while the product vision board and the principles stay, does the developer find every line of the document still true, so that the document needs no change for it?"
   }
  ],
  "practices": [
   {
    "user_benefit": "Q1",
-   "thinking": "Write how the product turns what its roles bring into what the product vision board promises as one idea seen from above, pointing to the product vision board and not repeating it, as every part then reads as a piece of that idea.",
+   "thinking": "The opening says, as one idea seen from above, how the product turns what its roles bring into what the product vision board promises. It points to the board and does not repeat it. Every part then reads as a piece of that idea.",
    "steps": [
     "Once the rest is written, check that each component carries out a piece of the idea, and change the idea or the component where one does not."
    ]
   },
   {
    "user_benefit": "Q2",
-   "thinking": "Write one story for each way a role of the product vision board meets the product at its edge, drawn from the objectives of the product vision board and the README's walkthrough, and name what it carries, such as a step of the walkthrough or resuming a run that stopped, as each part is then traced to what the role does, and a convenience added is then a story added, leaving the product vision board and the README as they are.",
+   "thinking": "There is one story for each way a role meets the product at its edge, drawn from the objectives and the README's walkthrough, each naming what it carries, such as a step of the walkthrough or resuming a run that stopped. Each part then traces to what the role does, and a convenience added is a story added, while the board and the README stay as they are.",
    "steps": [
-    "Go through each exchange of the README's walkthrough, and the main use of each objective it does not run, and name the one way at the product's edge that carries each step.",
-    "Where a step meets the product in a way no story names, add the story.",
-    "For each convenience the product vision board's intent asks for around that use, such as resuming a run that stopped, name the story that carries it, or add one."
+    "Go through each exchange of the README's walkthrough, and the main use of each objective it does not run, and name the one way at the product's edge that carries each step; add a story where none does."
    ]
   },
   {
    "user_benefit": "Q3",
-   "thinking": "Write each principle as one rule every part meeting the same decision follows, and its why as what goes wrong without it, as a developer then carries the why to a case the rule does not name.",
+   "thinking": "Each principle is one rule that every part meeting the same decision follows, with its why: what goes wrong without it. A developer carries the why to a case the rule does not name.",
    "steps": [
-    "Write as a rule also what must be absent, such as a dependency no component may have.",
     "Point to the principles of the architecture this one builds on, and write only what this product adds or changes.",
     "Take a case no rule names, decide it from each why as two developers of different parts would, and sharpen the why where they differ."
    ]
   },
   {
    "user_benefit": "Q4",
-   "thinking": "Cut the components so that one alone makes each decision the stories need, above all one hard to make or likely to change, and write it in its box, as a decision two components share is made twice and drifts.",
+   "thinking": "One component alone makes each decision the stories need, above all one hard to make or likely to change, and its box says so. A decision two components share is made twice and drifts.",
    "steps": [
-    "List each decision the stories need by going through each step of each sequence and asking what must be decided there.",
-    "Ask of each decision which component makes it, and move the decision or split the component where two or none answer.",
+    "List each decision the stories need by asking at each step of each sequence what must be decided there, and move the decision or split the component where two components or none make it.",
     "Label each arrow with what one does to another and the data it hands on, never a word such as \"uses\"."
    ]
   },
   {
    "user_benefit": "Q5",
-   "thinking": "Give each box its type and technology, and a legend for every symbol, as a developer otherwise chooses them alone and the components stop fitting.",
+   "thinking": "Each box has its type and technology, and the figure a legend for every symbol. A developer otherwise chooses them alone, and the components stop fitting.",
    "steps": [
     "Read the figure without the text around it, and add to the boxes or the legend whatever a reader would still have to ask."
    ]
   },
   {
    "user_benefit": "Q6",
-   "thinking": "Draw each data once by its name and what it is in a few words, with each relation named and how many of each it joins, leaving the fields to where the data is built, as two developers then join a data the same way while its fields change freely.",
-   "steps": [
-    "For each relation, ask whether the component that writes it and the one that reads it would keep it the same way, and name the relation more exactly where they would not."
-   ]
+   "thinking": "Each data is drawn once, by its name and what it is in a few words, with each relation named and how many of each it joins. The fields are left to where the data is built. Two developers then join a data the same way while its fields change freely.",
+   "steps": []
   },
   {
    "user_benefit": "Q7",
-   "thinking": "Draw each story as its steps in order, from the role's first request to what the story gives them, each step taken by a component along an arrow of Components and handing on a named data, as the developer then builds each step knowing who acts and on what.",
+   "thinking": "Each story is drawn as its steps in order, from the role's first request to what the story gives them, each step taken by a component along an arrow of Components and handing on a named data. Each branch, each step that sends work back and each question put to the role is drawn, as each path of the story, and its test, rests on them.",
    "steps": [
-    "Check that each step runs along an arrow of Components, and add the arrow or give the step to another component where none does.",
-    "Draw each branch, each step that sends work back and each question put to the role, as each path of the story, and the test of each path, rests on them."
+    "Check that each step runs along an arrow of Components, and add the arrow or give the step to another component where none does."
    ]
   },
   {
    "user_benefit": "Q8",
-   "thinking": "Keep only the stories, components and data that an objective of the product vision board needs, as each can then go once no objective needs it.",
+   "thinking": "The document keeps only the stories, components and data that an objective needs. Each can then go once no objective needs it.",
    "steps": [
     "Trace each component and each data to the stories whose sequences reach it, and each story to the objective whose use or intent it carries, and remove what reaches none."
    ]
   },
   {
    "user_benefit": "Q9",
-   "thinking": "Place each component and each data in one deployment unit, within the environment where it runs or is kept, with each thing outside the product it depends on, as the developer then knows what each can reach and how the product starts.",
-   "steps": [
-    "Leave out any infrastructure the components do not need.",
-    "Check that each component and each data of Components sits in one unit."
-   ]
+   "thinking": "Each component and each data sits in one deployment unit, within the environment where it runs or is kept, with each thing outside the product it depends on, and no infrastructure the components do not need. The developer then knows what each can reach and how the product starts.",
+   "steps": []
   },
   {
    "user_benefit": "Q10",
-   "thinking": "Draw the folders and files that hold each component and each data as they lie on disk, one line each, leaving out what lies inside a component, as the developer then finds the one place to change it.",
-   "steps": [
-    "Check that each component and each data stands on one line, and move the files or the line where it stands on none or on two."
-   ]
+   "thinking": "The folders and files that hold each component and each data are drawn as they lie on disk, one line each, leaving out what lies inside a component. The developer then finds the one place to change it.",
+   "steps": []
   },
   {
    "user_benefit": "Q11",
-   "thinking": "Fill the cell of each deployment unit at each level whose ground, a part's contract, this document or the product vision board, says what the unit must do, and say why a cell is empty, as a level is named by what it checks against and not by its means.",
+   "thinking": "Each deployment unit has a cell at each level whose ground, a part's contract, this document or the product vision board, says what the unit must do, and an empty cell says why. A level is named by what it checks against, not by its means. Unit and architecture carry most of the checking and run on every change; ux tests are few.",
    "steps": [
     "Leave out a unit whose every cell would be empty, and say why under the table.",
-    "Check that unit and architecture carry most of the checking and run on every change, and that ux tests are few.",
     "Check that each story's sequence runs from start to end at the architecture level in some row."
    ]
   },
   {
    "user_benefit": "Q12",
-   "thinking": "Draw each test from the one thing its level checks against, the ways a part's contract divides, the paths the sequences draw or an objective's main use at real size, run only that real and stand doubles in for the rest, as a failing test then names the rule, path or use it breaks.",
+   "thinking": "Each test is drawn from the one thing its level checks against: the ways a part's contract divides at unit, the paths the sequences draw at architecture, and an objective's main use at real size at ux. It runs only that real and stands doubles in for the rest. A failing test then names the rule, path or use it breaks.",
    "steps": [
     "Point to the project's shared test rules, and write only where this product differs from them.",
     "At unit, divide each input and each result the contract names into classes the part treats alike, the refused ones among them, and write one test for each class.",
@@ -191,27 +178,26 @@
   },
   {
    "user_benefit": "Q13",
-   "thinking": "Build each double from the form the part's contract gives its results, and check its results as the part's unit tests check the part's, as unit and architecture together then show every path holds for the real parts.",
+   "thinking": "Each double gives only results in the form the part's contract gives them, the refusals among them, and is checked as the part's unit tests check the part. Unit and architecture together then show that every path holds for the real parts.",
    "steps": [
-    "Set each double only to results that form allows, the refusals among them.",
     "For a fault a higher level finds, name the case or path the lower level missed, add its test at the level that must catch it, see it fail, then fix it there."
    ]
   },
   {
    "user_benefit": "Q14",
-   "thinking": "Write beside each choice a developer would question, such as a technology, a tool or a unit's weight, why it beat the other way and what it costs, as the developer then keeps or changes it knowing what it was for.",
+   "thinking": "Beside each choice a developer would question, such as a technology, a tool or a unit's weight, stands why it beat the other way and what it costs. The developer then keeps or changes it knowing what it was for.",
    "steps": [
     "Read each figure as a developer new to the product, and give a why and a cost to each choice they would question."
    ]
   },
   {
    "user_benefit": "Q15",
-   "thinking": "Read each principle against every part it rules, and change the part or the principle until the two say the same, as a developer who meets a figure breaking a principle must choose which to follow.",
+   "thinking": "Each principle and every part it rules say the same. A developer who meets a figure breaking a principle must choose which to follow.",
    "steps": []
   },
   {
    "user_benefit": "Q16",
-   "thinking": "Keep in the document only what stays while the product vision board and the principles stay, leaving how a component works inside to where it is built, as a line about the inside goes untrue at the next change.",
+   "thinking": "The document holds only what stays while the product vision board and the principles stay. How a component works inside is left to where it is built, as a line about the inside goes untrue at the next change.",
    "steps": [
     "Imagine a change to how a component works inside, such as its steps, a value it uses or a data's fields, mark each line it would make untrue, and repeat with a change of another kind until no line is marked."
    ]

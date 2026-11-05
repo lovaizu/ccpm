@@ -1,6 +1,6 @@
 # `<Product>`
 
-`<Product>` is `<kind>` that `<what it does>`.
+`<Product>` is `<kind>` that `<what it gives>`.
 
 `<status>`.
 
@@ -13,12 +13,14 @@
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - `<kind>`: the kind of thing the product is, such as a command-line tool.
-> - `<what it does>`: what the product does, in words the reader already uses.
-> - `<status>`: where the product is not yet fit for use, such as a release still in development;
->   optional.
-> - `<your situation>`: the work the reader wants done.
-> - `<gain>`: what the reader can then do.
-> - `<expectation>`: each thing a reader might expect of the product that it does not do; optional.
+> - `<what it gives>`: the one thing the product gives the reader, in words the reader already uses,
+>   so that the sentence says in short what the product is.
+> - `<status>`: where the product is not yet fit for use, such as a release still in development, so
+>   that the reader does not rest their work on it unaware; optional.
+> - `<your situation>`: the work the reader wants done, so that a reader tells whether they are in it.
+> - `<gain>`: the end the reader reaches with the product.
+> - `<expectation>`: each thing a reader might expect of the product that it does not do, so that a
+>   reader who needs it turns away before installing; optional.
 
 ## Requirements
 
@@ -86,15 +88,16 @@ At the end, you have `<result>`.
 >   reader would do the work without the product above the product, the problem left in the one and
 >   gone in the other.
 > - `<problem>`, `<how it goes away>`: each problem the reader feels in the work, in their words,
->   and what the product does that makes it go away, in a sentence or two.
-> - The second figure: the deliverable's own at images/how-it-works.svg, the product named in its
->   alt text, in the form that best shows how the product does the doubted thing, such as the
->   skeleton here: the user, the product's parts and what they pass, with the lines that do it
->   marked.
+>   and what the product does that makes it go away, in a sentence or two, so that the reader sees
+>   their own problem gone.
+> - The second figure: one for each doubt, each followed by its line, the deliverable's own at
+>   images/how-<name>.svg, the product named in its alt text, in the form that best shows how the
+>   product does the doubted thing, such as the skeleton here: the user, the product's parts and
+>   what they pass, with the lines that do it marked. One figure for several doubts shows none of
+>   them at a glance.
 > - `<doubt>`, `<how it does it>`: each point where a newcomer would ask whether the product can
->   really do that, and how the marked lines do it, in a sentence or two.
-> - Where a figure would hold more than a newcomer can follow, draw one for each problem or doubt,
->   each followed by its line.
+>   really do that, and how the product does it, in a sentence or two, so that the reader believes
+>   it before they try it.
 > - `<title>`, `<path>`: the page that explains it further, where it needs a long sequence of
 >   figures; optional.
 
