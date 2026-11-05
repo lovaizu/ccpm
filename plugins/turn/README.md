@@ -78,16 +78,23 @@ Done: README.md is written, not committed. It meets every question of a README.
 
 ## How it works
 
-![The usual way and Turn, with the two problems marked](images/problem.svg)
+![The usual way and Turn, with the five problems marked](images/problem.svg)
 
-- 1, you meet what the AI guessed only as you use the work: Turn finds each fact in your repository
-  and asks you to confirm it, and asks you each decision that is yours, one at a time, so nothing in
-  the work is a guess you never saw.
-- 2, you find what falls short only as you use the work, and mend it yourself: in Turn, a fresh AI
-  that never saw the design reads the work as its user would, and a question not met goes back to
-  its decision, so the work reaches you only once each is met.
+- 1, the AI starts from scratch and writes what similar texts say, not what your reader needs:
+  Turn makes each kind of work by its best practice, which holds the goal the work's reader
+  reaches, a template of what the work holds and the questions its reader asks of it.
+- 2, its review gives many findings, few that matter: a fresh AI, the evaluator, asks only those
+  questions, whether the work's reader gets what they need, so each shortfall it finds matters.
+- 3, it fills what you did not say with guesses: Turn finds each fact in your repository and asks
+  you to confirm it, and asks you each decision that is yours, one at a time, so nothing in the
+  work is a guess you never saw.
+- 4, you find what falls short only as you use the work: the evaluator runs the work's commands as
+  its reader would, in a throwaway home, and asks each question at the moment of use, so the work
+  reaches you only once it works in use.
+- 5, each fix is added on, and the work gets noisier: a question not met goes back to its
+  decision, and the work is made again from the design, so no fix sits beside it.
 
-![How Turn works, with the lines that answer each doubt marked A, B and C](images/how-it-works.svg)
+![How Turn works, with the lines that answer each doubt marked A and B](images/how-it-works.svg)
 
 - A, how Turn tells which decisions are yours: Pin finds what your repository holds and shows it to
   you to confirm. It settles a decision that the goal, the facts and your answers favor, and asks
@@ -95,9 +102,6 @@ Done: README.md is written, not committed. It meets every question of a README.
   design-tree.json with who settled it.
 - B, how an AI can judge an AI's work: the evaluator gets only the work and the questions of its
   kind, never the design, so it judges by what the work's user gets, not by what its maker meant.
-- C, how Turn knows what such a work should hold: each kind of work has a best practice, a template
-  of what it holds and the questions its user asks of it. The generator writes by the template, and
-  the evaluator asks the questions.
 
 ## Documentation
 

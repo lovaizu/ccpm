@@ -83,7 +83,7 @@ Someone who meets the product for the first time starts using it, from the READM
 
 **Steps**
 
-1. Take the problems from the objectives of the product's product vision board and their key results, and from what readers complain of in the way they would do the work without the product.
+1. Take the problems from the Product section of the product's product vision board, one where the present way falls short for each idea, and from what readers complain of in that way.
 2. Say each problem in the reader's words.
 3. For each problem, find from the design what the product does that makes it go away. Ask the user each one the design does not settle.
 4. Look at each figure as a newcomer, and where they could not picture from it what its line under it says, work the figure out again from its form.

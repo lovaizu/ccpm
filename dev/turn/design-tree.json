@@ -313,15 +313,15 @@
    ],
    "builds_on": [
     "D2",
-    "D9"
+    "D9",
+    "D30"
    ],
-   "decided": "The usual way is to ask an AI, such as Claude Code, in one prompt. Two problems: (1) it fills what you did not say with guesses, and you meet them only as you use the work; with Turn, Pin finds each fact in your repository and asks you to confirm it, and asks you each decision that is yours, one at a time, so nothing in the work is a guess you never saw. (2) it tells you the work is done, and you find what falls short only as you use it, and mend it yourself; with Turn, an evaluator that never saw the design reads the work as its user would, by the questions of its kind, and a question not met goes back to its decision, so the work reaches you only once each is met.",
+   "decided": "The usual way is to ask an AI, such as Claude Code, in one prompt, and read and mend its draft. Five problems, one for each idea of D30: (1) it starts from scratch and writes what similar texts say, not what the work's reader needs; with Turn, the work is made by the best practice of its kind: the goal its reader reaches, a template of what it holds and the questions its reader asks of it. (2) its review gives many findings, few that matter; with Turn, an evaluator asks only those questions, whether the work's reader gets what they need. (3) it fills what you did not say with guesses; with Turn, Pin finds each fact in your repository and asks you to confirm it, and asks you each decision that is yours, one at a time. (4) you find what falls short only as you use the work; with Turn, the evaluator runs the work's commands as its reader would, in a throwaway home, and asks each question at the moment of use. (5) each fix is added on, and the work gets noisier; with Turn, a question not met goes back to its decision, and the work is made again from the design, with no fix beside it.",
    "settled_by": "reasoning",
    "grounds": [
-    "O1 of the product vision board: \"a work they put to use as handed over, having decided only what is theirs\"; KR1.1 counts a work not put to use as handed over",
-    "plugins/pin/core/roles/pinner.md:11-13: \"A point you settle for the person where their view decides it is a guess they never saw. So you find each fact yourself and show it to them, and you ask them only what is theirs to decide.\"",
-    "dev/turn/architecture.md:7-10: \"A fresh evaluator then answers each question as the work's user would, never given the design. ... A question not met goes back through Pin to its decision.\"",
-    "plugins/turn/core/domain/best-practices/readme/best-practice.json Q7 thinking: \"Find the problems the reader feels in their own words, and for each, work out and draw the figure in which the reader best pictures it gone with the product\""
+    "product-vision-board Product, from D30: the present way and the five ideas.",
+    "dev/turn/architecture.md, \"A shortfall goes back to its decision\": \"No role puts a fix onto the work beside the design.\"",
+    "dev/turn/architecture.md S2: the evaluator \"reads the work whole and the Standard, and runs its commands in a throwaway home\"."
    ]
   },
   {
@@ -394,7 +394,7 @@
     "D8",
     "D10"
    ],
-   "decided": "(A) How does it tell which decisions are mine? Pin finds what the repository holds itself and shows it to you to confirm; it weighs each open decision by the goal, the facts and your answers, settles one they favor, and asks you only one where another way would serve as well or that would be hard to undo; each is written to design-tree.json with who settled it. (B) How can an AI judge an AI's work? The evaluator is a fresh AI given only the work and the questions of its kind, never the design or the talk, so it judges by what the work's user gets, not by what its maker meant. (C) How does it know what such a work should hold? Each kind of work has a best practice: a template of what it holds and the questions its user asks of it; the generator writes by the template, and the evaluator asks the questions.",
+   "decided": "(A) How does it tell which decisions are mine? Pin finds what the repository holds itself and shows it to you to confirm; it weighs each open decision by the goal, the facts and your answers, settles one they favor, and asks you only one where another way would serve as well or that would be hard to undo; each is written to design-tree.json with who settled it. (B) How can an AI judge an AI's work? The evaluator is a fresh AI given only the work and the questions of its kind, never the design or the talk, so it judges by what the work's user gets, not by what its maker meant. How Turn knows what a work should hold is said under problem (1) of D10, so it is no doubt of its own.",
    "settled_by": "reasoning",
    "grounds": [
     "plugins/pin/core/roles/pinner.md:54-64: \"A fact is yours to find, never the person's to tell you\" / \"Where they favor one way, the decision is yours\" / \"or where the decision would be hard to undo, it is the person's\"",
@@ -414,7 +414,7 @@
     "D10",
     "D29"
    ],
-   "decided": "Two figures. images/problem.svg: the usual way above Turn, as who does what to whom, with each problem of D10 marked where it is left and where it goes away, as both problems show in one comparison. images/how-it-works.svg: you, Pin, the design tree, the best practices, the generator, the work and the evaluator, with what each does to another, and the lines that answer each doubt of D29 marked by its letter, as the three doubts are answered by lines of one figure.",
+   "decided": "Two figures. images/problem.svg: the usual way above Turn, as who does what to whom, with each problem of D10 marked by its number where it is left and where it goes away, as the five show in one comparison of the same steps. images/how-it-works.svg: you, Pin, the design tree, the best practices, the generator, the work and the evaluator, with what each does to another, and the lines that answer each doubt of D29 marked by its letter, as the two doubts are answered by lines of one figure.",
    "settled_by": "reasoning",
    "grounds": [
     "plugins/turn/core/domain/best-practices/readme/best-practice.json Q8 thinking: \"draw the figure in which the reader best pictures how the product does it, such as its parts with the lines that do it marked\""

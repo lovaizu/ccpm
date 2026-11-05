@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 480" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
-  <title>How Turn works, with the lines that answer each doubt marked A, B and C</title>
+  <title>How Turn works, with the lines that answer each doubt marked A and B</title>
   <style>
     .bg { fill: #ffffff; }
     .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
@@ -94,6 +94,4 @@
   <text class="name" x="258" y="71">A</text>
   <circle class="lane" cx="958" cy="312" r="11"/>
   <text class="name" x="958" y="317">B</text>
-  <circle class="lane" cx="258" cy="188" r="11"/>
-  <text class="name" x="258" y="193">C</text>
 </svg>
