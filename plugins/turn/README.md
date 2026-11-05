@@ -3,19 +3,17 @@
 Turn is a Claude Code plugin that makes a work you ask for, such as a README, and asks you only the
 decisions that are yours.
 
+Turn 0.1.0 is still in development and not yet released: a run may stop on a fault of Turn's own,
+and the walkthrough below shows the run Turn is built for, not yet a recorded one.
+
 Turn is for you when you want an AI to make a work you will put to use as it comes, not a draft
 you read and mend. With it, you get that work, having decided only what is yours.
 
 An AI asked in one prompt fills each gap in your request with a guess, and judges the work by what
 it meant, so you meet the guesses when you use the work. Turn instead settles the work's design
-with you before it makes anything, and has another AI judge the work as its user would.
+with you before it makes anything, and has a fresh AI judge the work as its user would.
 
-- **The design first.** Turn finds each fact itself and asks you only the decisions that are yours,
-  one at a time, each with a recommendation.
-- **A best practice for each kind.** Turn makes the work by its kind's template and practices, such
-  as those of a README.
-- **Judged by a fresh AI.** An AI that did not make the work reads it with only the questions of
-  its kind, as the work's user would.
+![The usual way and Turn](images/idea.svg)
 
 **Non-goals**
 
@@ -94,6 +92,7 @@ Done: README.md is written, not committed. It meets every question of a README.
 
 - [Calling Turn](docs/calling.md): for an AI that asks Turn for a work on a person's behalf.
 - [Changelog](CHANGELOG.md): the changes in each version.
+- [Issues](https://github.com/lovaizu/ccpm/issues): where you ask for help or report a fault.
 
 ## License
 

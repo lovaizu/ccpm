@@ -10,7 +10,7 @@
 
 <The usual way>. <Product> instead <idea>.
 
-- **<part>.** <what it is>.
+![<The usual way> and <Product>](images/idea.svg)
 
 **Non-goals**
 
@@ -25,7 +25,8 @@
 - <gain>: what the reader can then do.
 - <The usual way>: how the same work goes without the product, and where it falls short.
 - <idea>: what the product does differently that brings the gain, in one sentence.
-- <part>, <what it is>: each part of the idea; optional.
+- images/idea.svg: the usual way above the product, each as who does what to whom, so the reader
+  sees where the usual way falls short and what the product does there instead.
 - <expectation>: each thing a reader might expect of the product that it does not do; optional.
 -->
 
