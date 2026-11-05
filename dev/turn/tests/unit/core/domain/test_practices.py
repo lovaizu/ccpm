@@ -302,6 +302,13 @@ class Leftovers(helpers.testing.FolderTest):
         self.write(os.path.join("doc", "source.md"), "No figure.\n")
         self.assertEqual(practices.leftovers(self.path, data), [self.at("images", "a.svg")])
 
+    def test_an_example_with_no_template_keeps_the_figures_it_shows(self):
+        data = dict(DATA, example="example.md")
+        self.assertEqual(
+            practices.leftovers(self.path, data),
+            [self.at("images", "template-a.svg"), self.at("template.md")],
+        )
+
     def test_a_source_with_no_example_keeps_only_its_own_files(self):
         data = dict(DATA, source="../../doc/source.md")
         self.assertEqual(
