@@ -38,8 +38,6 @@ sequenceDiagram
   A->>B: #lt;message#gt;
 ```
 
-- If `<condition>`: `<what the role does and gets>`.
-
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - One section for each objective.
@@ -48,6 +46,3 @@ sequenceDiagram
 > - `<name>`: each one that takes part: a role as Roles names it, the product, or one outside it,
 >   such as a payment service.
 > - `<message>`: what one asks or hands another, in a few words.
-> - `<condition>`: one point where the role leaves the main path, such as a run that stops or a
->   fault of the product, one line each; optional.
-> - `<what the role does and gets>`: what the role does there, and what it then has.

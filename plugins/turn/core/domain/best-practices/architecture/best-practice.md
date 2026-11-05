@@ -15,7 +15,7 @@ The developer builds and changes each part of the product so that the parts toge
 ## User benefits
 
 - **Q1** (the opening): Starting on any part, does the developer see the one idea by which the product gives its UX, and the piece of it the part carries out?
-- **Q2** (User stories): Following a step of the UX's scenarios, on the main path or off it, does the developer find the one user story that carries it?
+- **Q2** (User stories): Following a step of the UX's scenarios, does the developer find the one user story that carries it?
 - **Q3** (Principles): Meeting a case no line of the document names, do two developers of different parts reach the same decision from a principle's why?
 - **Q4** (User stories, Components): Facing a decision the stories need, does the developer find the one component that alone decides it?
 - **Q5** (Components): Starting on a component, does the developer know what kind of thing it is and what it is made with, choosing nothing themselves?
@@ -41,14 +41,15 @@ The developer builds and changes each part of the product so that the parts toge
 
 1. Once the rest is written, check that each component carries out a piece of the idea, and change the idea or the component where one does not.
 
-### Q2: Following a step of the UX's scenarios, on the main path or off it, does the developer find the one user story that carries it?
+### Q2: Following a step of the UX's scenarios, does the developer find the one user story that carries it?
 
-**Thinking**: Write one story for each way a role of the UX meets the product at its edge, naming the steps of the scenarios and the points off their main path that rest on it, as each part is then traced to what the role does.
+**Thinking**: Write one story for each way a role of the UX meets the product at its edge, drawn from the UX's scenarios and their intent, and name what it carries, such as a step of a scenario or resuming a run that stopped, as each part is then traced to what the role does, and a convenience added is then a story added, leaving the UX and the README as they are.
 
 **Steps**
 
-1. Go through each message of each scenario of the UX, and each line off its main path, and name the one way at the product's edge that carries it.
+1. Go through each message of each scenario of the UX, and name the one way at the product's edge that carries it.
 2. Where a step meets the product in a way no story names, add the story.
+3. For each convenience the UX's intent asks for around its scenarios, such as resuming a run that stopped, name the story that carries it, or add one.
 
 ### Q3: Meeting a case no line of the document names, do two developers of different parts reach the same decision from a principle's why?
 
@@ -93,15 +94,15 @@ The developer builds and changes each part of the product so that the parts toge
 **Steps**
 
 1. Check that each step runs along an arrow of Components, and add the arrow or give the step to another component where none does.
-2. Draw each branch, each step that sends work back and each question put to the role, as the points off the UX's main path rest on them.
+2. Draw each branch, each step that sends work back and each question put to the role, as each path of the story, and the test of each path, rests on them.
 
 ### Q8: Of any story, component or data, does the developer see which objective of the UX needs it, so that what none needs can go?
 
-**Thinking**: Keep only the stories, components and data that an objective of the UX needs, on its main path or off it, as each can then go once no objective needs it.
+**Thinking**: Keep only the stories, components and data that an objective of the UX needs, as each can then go once no objective needs it.
 
 **Steps**
 
-1. Trace each component and each data to the stories whose sequences reach it, and each story to the step of the UX it carries, and remove what reaches none.
+1. Trace each component and each data to the stories whose sequences reach it, and each story to the objective whose scenario or intent it carries, and remove what reaches none.
 
 ### Q9: Setting the product up from nothing, does the developer put each component where it runs and each data where it is kept, and start the product, asking no one?
 

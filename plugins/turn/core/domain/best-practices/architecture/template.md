@@ -35,7 +35,8 @@ This document says how `<Product>` is built to give [its UX](<ux>). `<idea>`.
 > DELETE_TEMPLATE_COMMENT:
 > - `<role>`: a role of the UX, as the UX names it.
 > - `<way>`: one way the role meets the product at its edge, such as a command they type.
-> - `<steps>`: the steps of the UX's scenarios, and the points off their main path, that rest on it.
+> - `<steps>`: the steps of the UX's scenarios that rest on it, and each convenience the UX's intent
+>   asks for that it carries, such as resuming a run that stopped.
 
 ## Components
 

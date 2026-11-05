@@ -30,11 +30,6 @@
   },
   {
    "id": "Q6",
-   "about": "Scenarios",
-   "what": "Meeting a point off the main path, does the developer see what the role does there and what it then has?"
-  },
-  {
-   "id": "Q7",
    "about": "the whole",
    "what": "Changing how the product works inside while its roles see the same, does the developer find the UX still true?"
   }
@@ -89,15 +84,6 @@
   },
   {
    "user_benefit": "Q6",
-   "thinking": "Write under each scenario each point where the role leaves the main path, such as a run that stops or a fault of the product, with what the role does there and what it then has, as the developer otherwise builds the main path alone and leaves the role with nothing off it.",
-   "steps": [
-    "Go through each message of the main path, and list all that could go wrong there before deciding how any is met: what the role sends does not serve, the product fails, or one outside it fails to deliver.",
-    "Where the role gives up partway, say what it is left with.",
-    "Confirm with the user each point whose answer the request does not settle."
-   ]
-  },
-  {
-   "user_benefit": "Q7",
    "thinking": "Say only what the roles mean to do, see and receive, and nothing of how the product works inside, as any design that gives them the same then leaves the UX true.",
    "steps": [
     "Pick one change the design could make while the roles see the same, and flag each line that would have to change.",

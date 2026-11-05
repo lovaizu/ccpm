@@ -19,8 +19,7 @@ The developer builds what the product's users want.
 - **Q3** (OKRs): Weighing a piece of work, does the developer see which one objective it brings closer, or that it brings none closer?
 - **Q4** (OKRs): After a change, does the developer see from the key results whether to keep it?
 - **Q5** (Roles, OKRs, Scenarios): Following a scenario, does the developer see, exchange by exchange, how its role goes from asking the product to having what its objective says?
-- **Q6** (Scenarios): Meeting a point off the main path, does the developer see what the role does there and what it then has?
-- **Q7** (the whole): Changing how the product works inside while its roles see the same, does the developer find the UX still true?
+- **Q6** (the whole): Changing how the product works inside while its roles see the same, does the developer find the UX still true?
 
 ## Practices
 
@@ -76,17 +75,7 @@ The developer builds what the product's users want.
 3. Where a part repeats, mark it as a loop with its condition.
 4. Read the scenario from start to end: the first message is the role's request, the last gives the role the end, and each moves toward it.
 
-### Q6: Meeting a point off the main path, does the developer see what the role does there and what it then has?
-
-**Thinking**: Write under each scenario each point where the role leaves the main path, such as a run that stops or a fault of the product, with what the role does there and what it then has, as the developer otherwise builds the main path alone and leaves the role with nothing off it.
-
-**Steps**
-
-1. Go through each message of the main path, and list all that could go wrong there before deciding how any is met: what the role sends does not serve, the product fails, or one outside it fails to deliver.
-2. Where the role gives up partway, say what it is left with.
-3. Confirm with the user each point whose answer the request does not settle.
-
-### Q7: Changing how the product works inside while its roles see the same, does the developer find the UX still true?
+### Q6: Changing how the product works inside while its roles see the same, does the developer find the UX still true?
 
 **Thinking**: Say only what the roles mean to do, see and receive, and nothing of how the product works inside, as any design that gives them the same then leaves the UX true.
 

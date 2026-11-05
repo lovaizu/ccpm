@@ -135,14 +135,16 @@ the run (KR1.1). What becomes of the work is the user's to decide, as
 
 - **S1**: As the user, I want to start Turn with my request, by typing `/turn:up` or, as an AI
   that asks for a person, by starting `turn:up` as [Calling Turn](../../../../docs/calling.md) says.
-  Carries the request, the kind asked where the request does not say it, a new kind's best practice
-  made first, the purpose put to confirm, and a fault of Turn's own that stops the run.
+  Carries the request and the purpose put to confirm. From the UX's intent, it also carries the
+  kind asked where the request does not say it, a new kind's best practice made first, and a fault
+  of Turn's own that stops the run.
 - **S2**: As the user, I want to answer the point that Turn puts to me. Carries each fact to
-  confirm and each decision, the design approved, a wrong purpose, fact or design corrected, a
-  decision that comes up while the work is made, the work handed over, and a fault of Turn's own
+  confirm and each decision, the design approved, a decision that comes up while the work is made,
+  and the work handed over. From the UX's intent, it also carries a wrong purpose, fact or design
+  corrected, and a fault of Turn's own that stops the run.
+- **S3**: As the user, I want to start Turn with a run's folder, alone or with a change. Carries,
+  from the UX's intent, a stopped run resumed, the work changed, and a fault of Turn's own
   that stops the run.
-- **S3**: As the user, I want to start Turn with a run's folder, alone or with a change.
-  Carries the run that stopped, the work changed, and a fault of Turn's own that stops the run.
 
 ## Components
 

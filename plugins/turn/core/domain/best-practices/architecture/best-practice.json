@@ -11,7 +11,7 @@
   {
    "id": "Q2",
    "about": "User stories",
-   "what": "Following a step of the UX's scenarios, on the main path or off it, does the developer find the one user story that carries it?"
+   "what": "Following a step of the UX's scenarios, does the developer find the one user story that carries it?"
   },
   {
    "id": "Q3",
@@ -94,10 +94,11 @@
   },
   {
    "user_benefit": "Q2",
-   "thinking": "Write one story for each way a role of the UX meets the product at its edge, naming the steps of the scenarios and the points off their main path that rest on it, as each part is then traced to what the role does.",
+   "thinking": "Write one story for each way a role of the UX meets the product at its edge, drawn from the UX's scenarios and their intent, and name what it carries, such as a step of a scenario or resuming a run that stopped, as each part is then traced to what the role does, and a convenience added is then a story added, leaving the UX and the README as they are.",
    "steps": [
-    "Go through each message of each scenario of the UX, and each line off its main path, and name the one way at the product's edge that carries it.",
-    "Where a step meets the product in a way no story names, add the story."
+    "Go through each message of each scenario of the UX, and name the one way at the product's edge that carries it.",
+    "Where a step meets the product in a way no story names, add the story.",
+    "For each convenience the UX's intent asks for around its scenarios, such as resuming a run that stopped, name the story that carries it, or add one."
    ]
   },
   {
@@ -137,14 +138,14 @@
    "thinking": "Draw each story as its steps in order, from the role's first request to what the story gives them, each step taken by a component along an arrow of Components and handing on a named data, as the developer then builds each step knowing who acts and on what.",
    "steps": [
     "Check that each step runs along an arrow of Components, and add the arrow or give the step to another component where none does.",
-    "Draw each branch, each step that sends work back and each question put to the role, as the points off the UX's main path rest on them."
+    "Draw each branch, each step that sends work back and each question put to the role, as each path of the story, and the test of each path, rests on them."
    ]
   },
   {
    "user_benefit": "Q8",
-   "thinking": "Keep only the stories, components and data that an objective of the UX needs, on its main path or off it, as each can then go once no objective needs it.",
+   "thinking": "Keep only the stories, components and data that an objective of the UX needs, as each can then go once no objective needs it.",
    "steps": [
-    "Trace each component and each data to the stories whose sequences reach it, and each story to the step of the UX it carries, and remove what reaches none."
+    "Trace each component and each data to the stories whose sequences reach it, and each story to the objective whose scenario or intent it carries, and remove what reaches none."
    ]
   },
   {
