@@ -296,6 +296,103 @@
    ]
   },
   {
+   "id": "D29",
+   "what": "A condition of the opening's table: each gap in the request",
+   "contributes_to": [
+    "readme/Q3"
+   ],
+   "builds_on": [
+    "D9",
+    "D10"
+   ],
+   "decided": "What must hold: each gap in your request is filled by a fact or by your decision. The usual way: each gap is filled with a guess. Turn: finds each fact for you to confirm, and asks you each decision with a recommendation, one at a time.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "the user, 2026-11-05: a README digs into the problem the product solves: the conditions any solution must meet to solve it, where the usual way fails each, and how the product meets each",
+    "plugins/turn/core/domain/best-practices/readme/best-practice.json Q3 thinking: \"give in a table each condition that must hold to solve the reader's problem, where that way falls short of it and how the product makes it hold\"",
+    "plugins/turn/README.md:12 \"An AI asked in one prompt fills each gap in your request with a guess\"",
+    "dev/turn/ux.md:30 \"found: tidy --dry-run shows what it would move, right?\"",
+    "dev/turn/ux.md:38 \"the decision, with a recommendation\"",
+    "plugins/pin/core/roles/pinner.md:54 \"A fact is yours to find, never the person's to tell you\"",
+    "D3: O1 fails \"where they are asked a point that is not theirs, such as a fact Turn could find\""
+   ]
+  },
+  {
+   "id": "D30",
+   "what": "A condition of the opening's table: what a work of its kind needs",
+   "contributes_to": [
+    "readme/Q3"
+   ],
+   "builds_on": [
+    "D9",
+    "D10"
+   ],
+   "decided": "What must hold: the work holds what a work of its kind needs, and no more. The usual way: the AI writes by its own sense of the kind, past what the work needs. Turn: makes the work by the kind's best practice.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "the user, 2026-11-05: a README digs into the problem the product solves: the conditions any solution must meet to solve it, where the usual way fails each, and how the product meets each",
+    "plugins/turn/core/domain/best-practices/readme/best-practice.json Q3 thinking: \"give in a table each condition that must hold to solve the reader's problem, where that way falls short of it and how the product makes it hold\"",
+    "D10: Turn \"makes the work by its kind's best practice\"",
+    "plugins/turn/core/domain/best-practices/meta/best-practice.json:62 \"as an AI writes past what a deliverable needs when only told not to\""
+   ]
+  },
+  {
+   "id": "D31",
+   "what": "A condition of the opening's table: whose judgment the work passes",
+   "contributes_to": [
+    "readme/Q3"
+   ],
+   "builds_on": [
+    "D9",
+    "D10"
+   ],
+   "decided": "What must hold: the work is judged by what its user gets. The usual way: the AI judges the work by what it meant. Turn: an AI that never saw the design reads the work as its user would, by the kind's questions.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "the user, 2026-11-05: a README digs into the problem the product solves: the conditions any solution must meet to solve it, where the usual way fails each, and how the product meets each",
+    "plugins/turn/core/domain/best-practices/readme/best-practice.json Q3 thinking: \"give in a table each condition that must hold to solve the reader's problem, where that way falls short of it and how the product makes it hold\"",
+    "plugins/turn/README.md:12-13 \"judges the work by what it meant\"",
+    "dev/turn/architecture.md:71-72 \"The evaluator reads the work and the Standard: the best practice's goal and questions\" / \"It never reads the design\""
+   ]
+  },
+  {
+   "id": "D32",
+   "what": "A condition of the opening's table: who meets a shortfall",
+   "contributes_to": [
+    "readme/Q3"
+   ],
+   "builds_on": [
+    "D9",
+    "D10"
+   ],
+   "decided": "What must hold: a shortfall is mended before the work reaches you. The usual way: you meet it as you use the work, and mend it. Turn: a question not met goes back to the design, and the work is made again from it.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "the user, 2026-11-05: a README digs into the problem the product solves: the conditions any solution must meet to solve it, where the usual way fails each, and how the product meets each",
+    "plugins/turn/core/domain/best-practices/readme/best-practice.json Q3 thinking: \"give in a table each condition that must hold to solve the reader's problem, where that way falls short of it and how the product makes it hold\"",
+    "plugins/turn/README.md:13 \"so you meet the guesses when you use the work\"",
+    "dev/turn/architecture.md:91-92 \"A question not met in the content phase goes back to the decisions that serve it, through Pin. The generator then makes the work again from the design.\""
+   ]
+  },
+  {
+   "id": "D33",
+   "what": "Whether the time to a work you put to use is a condition of the opening's table",
+   "contributes_to": [
+    "readme/Q3"
+   ],
+   "builds_on": [
+    "D9",
+    "D10"
+   ],
+   "decided": null,
+   "settled_by": null,
+   "grounds": [
+    "the user, 2026-11-05: a README digs into the problem the product solves: the conditions any solution must meet to solve it, where the usual way fails each, and how the product meets each",
+    "dev/turn/ux.md:12 \"KR1.2: The time from the user's request to a work they put to use. Shorter is better.\"",
+    "plugins/turn/README.md:22 \"it takes longer than asking Claude Code\""
+   ]
+  },
+  {
    "id": "D11",
    "what": "What a reader might expect of Turn that it does not do",
    "contributes_to": [
@@ -362,7 +459,11 @@
     "readme/Q8"
    ],
    "builds_on": [
-    "D10"
+    "D10",
+    "D29",
+    "D30",
+    "D31",
+    "D32"
    ],
    "decided": "You, Pin, the generator, the evaluator, the best practices, the design tree and the work, with what each does to another. Nothing stands under it, as a convenience such as a run that stopped going on from its folder keeps no gain and makes no condition hold, and the architecture's S3 carries it.",
    "settled_by": "reasoning",
@@ -397,6 +498,10 @@
     "D8",
     "D9",
     "D10",
+    "D29",
+    "D30",
+    "D31",
+    "D32",
     "D11",
     "D17",
     "D12",
