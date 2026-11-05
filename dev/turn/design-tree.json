@@ -276,7 +276,7 @@
    "decided": "For one who wants an AI to make a work they will put to use as it comes, not a draft they read and mend; they get that work, having decided only what is theirs.",
    "settled_by": "reasoning",
    "grounds": [
-    "plugins/turn/core/domain/best-practices/readme/best-practice.json Q2 thinking: \"taken from what the product's users want, such as the objectives in its UX\""
+    "plugins/turn/core/domain/best-practices/readme/best-practice.json Q2 thinking: \"taken from the objectives of the product's UX\""
    ]
   },
   {
@@ -449,7 +449,7 @@
    "decided": "The UX scenario's run: a README for tidy; the purpose confirmed, one fact confirmed, one decision taken, the design approved, the README handed over not committed. Not yet a real run, as Turn is being rebuilt; a real run's output replaces it once Turn is built.",
    "settled_by": "reasoning",
    "grounds": [
-    "plugins/turn/core/domain/best-practices/readme/best-practice.json Q5 steps: \"Take what the user gives and what the product shows from the record of a real run\""
+    "plugins/turn/core/domain/best-practices/readme/best-practice.json Q6 steps: \"Take each exchange, what the user gives and what the product shows, from the record of a real run\""
    ]
   },
   {
