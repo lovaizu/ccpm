@@ -3,7 +3,7 @@
  "template": "template.md",
  "example": "example.md",
  "source": "../../../../README.md",
- "user_benefits": [
+ "intents": [
   {
    "id": "Q1",
    "about": "the opening",
@@ -62,40 +62,40 @@
  ],
  "practices": [
   {
-   "user_benefit": "Q1",
+   "intent": "Q1",
    "thinking": "The opening says in a few short sentences what the product is, whom it is for, where it is not yet fit for use and what it does not do. Its first sentence names the kind of thing the product is and the one thing it gives the reader, in words the reader already uses and with no feature name or mechanism, so that it says in short what the product is. A reader weighs the product and passes it on by what they remember of the opening.",
    "steps": [
     "Read only the opening, put it away, and say it as to a colleague. Where a part is lost or comes out otherwise, shorten it, or put what the product does in place of each vague or praising word."
    ]
   },
   {
-   "user_benefit": "Q2",
+   "intent": "Q2",
    "thinking": "Name whom the product is for by the work they want done, and the gain as the end they reach with the product, from the objectives of the product vision board. A reader tells from that whether the product serves their own end.",
    "steps": [
     "Where a reader outside that group could not tell that the product is not for them, name the group and the work more closely."
    ]
   },
   {
-   "user_benefit": "Q3",
+   "intent": "Q3",
    "thinking": "List only what a reader could reasonably expect of the product and it does not do. A reader who needs it then learns that before they install.",
    "steps": [
     "Gather what readers might expect from similar products and from what readers ask, and ask the user whether each is in or out."
    ]
   },
   {
-   "user_benefit": "Q4",
+   "intent": "Q4",
    "thinking": "Where the product is not yet fit for use, such as a release still in development or one no longer kept up, say so at the top. A reader who starts on it otherwise finds out only once their work rests on it.",
    "steps": []
   },
   {
-   "user_benefit": "Q5",
+   "intent": "Q5",
    "thinking": "The requirements and the install steps serve a reader who has nothing set up, each as a command to copy, and end with a sign that the product works. The author's own setup hides the gaps.",
    "steps": [
     "From a machine or sandbox where nothing the product needs is in place, follow the steps as written and do nothing they do not say. Where a step fails, or needs what the README does not say, write it in and start again."
    ]
   },
   {
-   "user_benefit": "Q6",
+   "intent": "Q6",
    "thinking": "Show one real run of the use most readers come for, on work like theirs, from what the reader gives to the result they keep, with the product's real output. The reader then sees the gain happen, not only promised.",
    "steps": [
     "Pick the use from what readers ask for most and from the objectives of the product vision board.",
@@ -104,7 +104,7 @@
    ]
   },
   {
-   "user_benefit": "Q7",
+   "intent": "Q7",
    "thinking": "Each problem the reader feels in the present way, in their own words, gets a figure in which they see it left in that way and gone with the product, and a sentence or two on what the product does that makes it go away. A reader chooses the product once they can picture their own problem gone.",
    "steps": [
     "Take the problems from the Product section of the product vision board, one where the present way falls short for each idea, and from what readers complain of in that way.",
@@ -113,7 +113,7 @@
    ]
   },
   {
-   "user_benefit": "Q8",
+   "intent": "Q8",
    "thinking": "Each point a newcomer would doubt gets a figure of its own that draws what its line says, and a sentence or two on how the product does it. A reader believes a product can do a thing once they can picture how. A figure of the whole that answers several doubts at once shows none of them at a glance.",
    "steps": [
     "Read the README as a newcomer, and mark each thing it says that the present way cannot do. Ask of each answer what the newcomer would doubt next, until no doubt is left.",
@@ -122,21 +122,21 @@
    ]
   },
   {
-   "user_benefit": "Q9",
+   "intent": "Q9",
    "thinking": "The README holds what the reader needs to decide and to start, and links one place for each need that comes after, such as fuller use or help. A README that holds everything is not read.",
    "steps": [
     "Open each link."
    ]
   },
   {
-   "user_benefit": "Q10",
+   "intent": "Q10",
    "thinking": "Name the license and link its full text. A reader may rule the product out by its license alone.",
    "steps": [
     "Open the link, and check that it reaches the license the name says."
    ]
   },
   {
-   "user_benefit": "Q11",
+   "intent": "Q11",
    "thinking": "Order the README so that each reader stops once they have what they came for: the opening for every reader, the installation for one who has chosen the product, the walkthrough and How it works for one still weighing it, and what comes after through links. A reader who must pass what they do not need leaves before what they do.",
    "steps": [
     "Read the README from the top as someone who meets the product for the first time, and after each section, write the question the reader now has.",

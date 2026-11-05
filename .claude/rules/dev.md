@@ -13,7 +13,8 @@ its requirements call for.
 This file holds the order the work goes in. Each step names the best practice in
 `plugins/turn/core/domain/best-practices/` to open while doing it. A best practice's goal says what
 the deliverable's user achieves. Its template, or else its parts, says what the deliverable holds.
-Its user benefits ask whether the user gets what they need from the deliverable. Its practices hold a way to make each question pass.
+Its intents ask, each as a question, whether the user gets what they are after from the
+deliverable. Its practices hold a way to make each question pass.
 Open `refactor-doc/best-practice.json` as well when the work is a document, and
 `refactor-code/best-practice.json` when it is code: that one finishes it.
 

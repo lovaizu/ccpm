@@ -12,7 +12,7 @@ Someone who meets the product for the first time starts using it, from the READM
 
 [example.md](example.md), a copy of [../../../../README.md](../../../../README.md)
 
-## User benefits
+## Intents
 
 - **Q1** (the opening): Telling a colleague about the product, does the reader retell the opening from memory, so that they can weigh the product and pass it on without reading it again?
 - **Q2** (the opening): Reading the gain, does the reader tell what the product would let them do, so that they know whether it is for them?

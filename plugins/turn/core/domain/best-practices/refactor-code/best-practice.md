@@ -4,7 +4,7 @@
 
 The maintainer is a person or an AI who comes to change the code at any time after it is written. The maintainer changes the code quickly without breaking another behavior. They understand each part on one reading, and they find the one place where the change belongs.
 
-## User benefits
+## Intents
 
 - **Q1** (the whole): After the code's structure changes, does each caller get every behavior it got before, whether the caller is a person, a script or other code?
 - **Q2** (the whole): Whatever line the maintainer reads, code or comment, would they lose something they need if it were gone?

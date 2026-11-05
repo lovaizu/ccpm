@@ -35,12 +35,11 @@ def sound(draw) -> dict:
     return {
         "goal": "g",
         "parts": parts,
-        "user_benefits": [
+        "intents": [
             {"id": f"Q{n}", "about": ", ".join(a), "what": "w"} for n, a in enumerate(abouts, 1)
         ],
         "practices": [
-            {"user_benefit": f"Q{n}", "thinking": "t", "steps": []}
-            for n in range(1, len(abouts) + 1)
+            {"intent": f"Q{n}", "thinking": "t", "steps": []} for n in range(1, len(abouts) + 1)
         ],
     }
 
@@ -58,9 +57,7 @@ def asked(draw) -> dict:
             max_size=8,
         )
     )
-    return {
-        "user_benefits": [{"id": f"Q{n}", "about": ", ".join(a)} for n, a in enumerate(abouts, 1)]
-    }
+    return {"intents": [{"id": f"Q{n}", "about": ", ".join(a)} for n, a in enumerate(abouts, 1)]}
 
 
 def shared(a: set, b: set) -> bool:
@@ -87,13 +84,12 @@ class TestGroups(unittest.TestCase):
     def test_the_groups_join_exactly_the_questions_that_ask_of_the_same(self, data):
         found = practices.groups(data, "k")
         where = {q: n for n, g in enumerate(found) for q in g["questions"]}
-        names = [f"k/{q['id']}" for q in data["user_benefits"]]
+        names = [f"k/{q['id']}" for q in data["intents"]]
         # Each question lies in one group, and the groups are G1 on.
         self.assertEqual(sorted(q for g in found for q in g["questions"]), sorted(names))
         self.assertEqual([g["id"] for g in found], [f"G{n}" for n in range(1, len(found) + 1)])
         abouts = {
-            f"k/{q['id']}": {a.strip() for a in q["about"].split(",")}
-            for q in data["user_benefits"]
+            f"k/{q['id']}": {a.strip() for a in q["about"].split(",")} for q in data["intents"]
         }
         for q in names:
             for r in names:

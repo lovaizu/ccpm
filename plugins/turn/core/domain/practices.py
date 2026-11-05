@@ -206,22 +206,22 @@ def faults(data: dict[str, Any], template: list[str] | None = None) -> list[str]
     # Each id counts once or more in ids, which it is taken from.
     for part in sorted({i for i in ids if ids.count(i) > 1}):  # pragma: no mutate
         found.append(f"{what} {part} is named more than once")
-    named_parts = {a.strip() for q in data["user_benefits"] for a in q["about"].split(",")}
+    named_parts = {a.strip() for q in data["intents"] for a in q["about"].split(",")}
     for part in leaves:
         if part not in named_parts:
             found.append(f"{what} {part} has no question about it")
     if WHOLE not in named_parts:
         found.append(f"no question is about {WHOLE}")
-    questions = [q["id"] for q in data["user_benefits"]]
+    questions = [q["id"] for q in data["intents"]]
     expected = [f"Q{n}" for n in range(1, len(questions) + 1)]
     if questions != expected:
         found.append(f"questions are {', '.join(questions)}, not numbered in order from Q1")
-    for q in data["user_benefits"]:
+    for q in data["intents"]:
         for about in (a.strip() for a in q["about"].split(",")):
             if about != WHOLE and about not in ids:
                 where = "part" if template is None else "section of the template"
                 found.append(f"{q['id']} is about {about}, which is no {where}")
-    answered = [p["user_benefit"] for p in data["practices"]]
+    answered = [p["intent"] for p in data["practices"]]
     if answered != questions:
         found.append(f"practices meet {', '.join(answered)}, not each question once in its order")
     for named in sorted({n for t in texts(data) for n in QUESTION.findall(t)} - set(questions)):
@@ -240,9 +240,9 @@ def parts(items: list[dict[str, Any]], depth: int = 0) -> list[str]:
 
 def markdown(kind: str, data: dict[str, Any]) -> str:
     """The best practice of the kind as Markdown: its goal, a link to its template and its example,
-    with the work the example is a copy of, or else its parts, and its user benefits, then the
-    practice for each user benefit, under the question it meets."""
-    questions = {q["id"]: q for q in data["user_benefits"]}
+    with the work the example is a copy of, or else its parts, and its intents, then the
+    practice for each intent, under the question it meets."""
+    questions = {q["id"]: q for q in data["intents"]}
     out = [f"# {kind}", "", "## Goal", "", data["goal"]]
     for key in ("template", "example"):
         if key in data:
@@ -252,11 +252,11 @@ def markdown(kind: str, data: dict[str, Any]) -> str:
         out[-1] += f", a copy of [{data['source']}]({data['source']})"
     if data.get("parts"):
         out += ["", "## Parts", "", *parts(data["parts"])]
-    out += ["", "## User benefits", ""]
-    out += [f"- **{q['id']}** ({q['about']}): {q['what']}" for q in data["user_benefits"]]
+    out += ["", "## Intents", ""]
+    out += [f"- **{q['id']}** ({q['about']}): {q['what']}" for q in data["intents"]]
     out += ["", "## Practices"]
     for practice in data["practices"]:
-        question = questions[practice["user_benefit"]]
+        question = questions[practice["intent"]]
         out += ["", f"### {question['id']}: {question['what']}", ""]
         out.append(f"**Thinking**: {practice['thinking']}")
         if practice["steps"]:
@@ -270,7 +270,7 @@ def standard(data: dict[str, Any]) -> dict[str, Any]:
     kept = {"goal": data["goal"]}
     if "parts" in data:
         kept["parts"] = data["parts"]
-    kept["user_benefits"] = data["user_benefits"]
+    kept["intents"] = data["intents"]
     return kept
 
 
@@ -279,7 +279,7 @@ def groups(data: dict[str, Any], kind: str) -> list[dict[str, Any]]:
     questions about the whole in one group, and the others joined where they ask of a part in
     common; the groups in the order of their first question, numbered G1 on."""
     found: list[tuple[set[str], list[str]]] = []
-    for q in data["user_benefits"]:
+    for q in data["intents"]:
         abouts = {a.strip() for a in q["about"].split(",")}
         if WHOLE in abouts:
             abouts = {WHOLE}

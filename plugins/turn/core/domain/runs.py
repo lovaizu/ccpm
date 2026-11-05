@@ -79,7 +79,7 @@ def current(data: dict[str, Any]) -> dict[str, Any]:
 def questions(kind: str, data: dict[str, Any]) -> list[dict[str, str]]:
     """The best practice's questions as a design tree asks them, each named with the kind, as
     `readme/Q1`."""
-    return [{"id": f"{kind}/{q['id']}", "what": q["what"]} for q in data["user_benefits"]]
+    return [{"id": f"{kind}/{q['id']}", "what": q["what"]} for q in data["intents"]]
 
 
 def given_faults(call: dict[str, Any]) -> list[str]:

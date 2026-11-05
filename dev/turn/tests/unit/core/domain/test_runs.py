@@ -110,7 +110,7 @@ class Start(helpers.RepositoryTest):
                 "goal": {"what": helpers.CALL["goal"], "grounds": []},
                 "questions": [
                     {"id": f"note/Q{n}", "what": q["what"]}
-                    for n, q in enumerate(helpers.PRACTICE["user_benefits"], 1)
+                    for n, q in enumerate(helpers.PRACTICE["intents"], 1)
                 ],
                 "decisions": [],
             },
@@ -204,7 +204,7 @@ class Start(helpers.RepositoryTest):
 
     def test_a_best_practice_out_of_its_form_is_refused_with_nothing_written(self):
         data = helpers.practice()
-        data["user_benefits"][0]["id"] = "Q9"
+        data["intents"][0]["id"] = "Q9"
         self.write_json(helpers.NOTE, data)
         with self.assertRaises(files.Unreadable):
             self.started()

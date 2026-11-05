@@ -25,7 +25,7 @@ Turn instead of asking an AI in one prompt, reading its draft and mending it:
 - **Checked by purpose and intent**: the user is handed no findings off the essence to sort, as
   Turn checks whether the work's reader gets what they need and the user's intent holds, not
   whether the work follows the best practice (O1).
-- **Every user benefit drawn out**: the user's intent is drawn out point by point before the work
+- **Every intent drawn out**: the user's intent is drawn out point by point before the work
   is made, so they do not find guesses in the draft to mend (O1).
 - **Checked in use**: the user receives a work that has been tried as its reader would use it, so
   it works in use, not only on reading (O1).

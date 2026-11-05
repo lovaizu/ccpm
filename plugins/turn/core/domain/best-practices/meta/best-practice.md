@@ -12,15 +12,15 @@ The generator can make deliverables with which their role achieves its purpose.
 
 [../product-vision-board/best-practice.json](../product-vision-board/best-practice.json)
 
-## User benefits
+## Intents
 
 - **Q1** (goal): Reading the goal, does the generator see the one end the deliverable's role is after, so that every part of the deliverable serves that end?
 - **Q2** (template): Filling in the template, does the generator know what each section holds and in what order, so that the deliverable holds what its role uses and nothing more?
 - **Q3** (goal, template): Setting the template against the goal, does the generator find each section the goal needs and none it does not, so that the role finds all it needs and reads nothing it does not?
-- **Q4** (user_benefits): Judging a deliverable by a question, does the evaluator see what the role is after at that moment, so that it judges whether the role gets that, not whether the words are there?
-- **Q5** (template, user_benefits): Going through the template, does the generator find a question for each section, each dependency among sections and the whole, so that no way the deliverable fails its role goes unasked?
+- **Q4** (intents): Judging a deliverable by a question, does the evaluator see what the role is after at that moment, so that it judges whether the role gets that, not whether the words are there?
+- **Q5** (template, intents): Going through the template, does the generator find a question for each section, each dependency among sections and the whole, so that no way the deliverable fails its role goes unasked?
 - **Q6** (practices): Following a practice, does the generator grasp what the question's role is after and why, so that it makes what serves the role even where no step says how?
-- **Q7** (user_benefits, practices): Going through the questions in order, does the generator find a practice for each, so that it meets no question with nothing to go by?
+- **Q7** (intents, practices): Going through the questions in order, does the generator find a practice for each, so that it meets no question with nothing to go by?
 - **Q8** (example, source): Reading the example, does the generator see what the template's slots become in one deliverable, so that it fills its own to the same intent?
 - **Q9** (the whole): Using a deliverable made by the best practice and passed, does its role achieve its purpose?
 

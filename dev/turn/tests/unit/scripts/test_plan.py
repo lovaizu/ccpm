@@ -327,7 +327,7 @@ class Practices(helpers.testing.FolderTest):
     def test_form_holds_the_questions_to_the_template_beside_it(self):
         data = copy.deepcopy(DATA)
         del data["parts"]
-        for question in data["user_benefits"]:
+        for question in data["intents"]:
             question["about"] = "the whole"
         data["template"] = "template.md"
         self.write_json(self.path, data)

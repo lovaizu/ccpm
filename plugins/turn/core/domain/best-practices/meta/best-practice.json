@@ -2,7 +2,7 @@
  "goal": "The generator can make deliverables with which their role achieves its purpose.",
  "template": "template.json",
  "example": "../product-vision-board/best-practice.json",
- "user_benefits": [
+ "intents": [
   {
    "id": "Q1",
    "about": "goal",
@@ -20,12 +20,12 @@
   },
   {
    "id": "Q4",
-   "about": "user_benefits",
+   "about": "intents",
    "what": "Judging a deliverable by a question, does the evaluator see what the role is after at that moment, so that it judges whether the role gets that, not whether the words are there?"
   },
   {
    "id": "Q5",
-   "about": "template, user_benefits",
+   "about": "template, intents",
    "what": "Going through the template, does the generator find a question for each section, each dependency among sections and the whole, so that no way the deliverable fails its role goes unasked?"
   },
   {
@@ -35,7 +35,7 @@
   },
   {
    "id": "Q7",
-   "about": "user_benefits, practices",
+   "about": "intents, practices",
    "what": "Going through the questions in order, does the generator find a practice for each, so that it meets no question with nothing to go by?"
   },
   {
@@ -51,14 +51,14 @@
  ],
  "practices": [
   {
-   "user_benefit": "Q1",
+   "intent": "Q1",
    "thinking": "Write the end the deliverable's role is after as one sentence, with the role as its subject. Leave out what the deliverable holds, how the end is reached and how it would show. Each of these can be met while the end is missed.",
    "steps": [
     "Ask why of each part of the sentence until no further end shows, and keep that end."
    ]
   },
   {
-   "user_benefit": "Q2",
+   "intent": "Q2",
    "thinking": "Write the template anew from the goal: a section for each thing the role uses toward the goal, fixed text for what every deliverable of the kind shares, and a slot for the rest. An AI writes past what a deliverable needs when it is only told not to, so the template leaves no room for more.",
    "steps": [
     "Where what the good deliverables hold is one way of doing it, such as a place, a file or a name, keep what the role gets from it instead.",
@@ -72,14 +72,14 @@
    ]
   },
   {
-   "user_benefit": "Q3",
+   "intent": "Q3",
    "thinking": "Keep a section only where the role would fall short of the goal without it. Add one where a deliverable with every section would still fail the role.",
    "steps": [
     "Repeat until no such deliverable can be imagined."
    ]
   },
   {
-   "user_benefit": "Q4",
+   "intent": "Q4",
    "thinking": "Write each question as the moment the role uses the sections, what it needs from them, and what it is after in that, in a clause that begins with \"so that\". The evaluator then judges by the role's intent. A question that asks only for a sign of good work can be met in words while the role goes without.",
    "steps": [
     "Leave out the \"so that\" clause only where what the role needs is the goal itself.",
@@ -87,7 +87,7 @@
    ]
   },
   {
-   "user_benefit": "Q5",
+   "intent": "Q5",
    "thinking": "Give each section, each dependency among sections and the whole a question, and add one that fails each deliverable that would pass them all and still fail its role, as the questions are complete only when none such is left.",
    "steps": [
     "Where two questions would fail the same deliverables for the same reason, merge them, but keep a key one on its own.",
@@ -96,7 +96,7 @@
    ]
   },
   {
-   "user_benefit": "Q6",
+   "intent": "Q6",
    "thinking": "Write first what the deliverable must be for the question's role, and why the role needs it so, in short sentences. A generator that grasps the intent finds its own way where the case differs. One that holds only steps follows them off the mark.",
    "steps": [
     "Add a step only where a generator that holds the intent would still not know how, such as a format to keep or a place to look, and say what the step achieves.",
@@ -105,19 +105,19 @@
    ]
   },
   {
-   "user_benefit": "Q7",
+   "intent": "Q7",
    "thinking": "Order the questions so that each comes before those that build on it, and give each one practice in that order, as the generator then meets no question with nothing to go by.",
    "steps": []
   },
   {
-   "user_benefit": "Q8",
+   "intent": "Q8",
    "thinking": "Make the product's own deliverable of the kind from its design tree by the template and the practices, pass it by the questions, and name its file in `example`, as one finished deliverable shows what the comments alone do not.",
    "steps": [
     "Where the deliverable lies elsewhere for its own reader, such as a product vision board in the developers' folder, name its path in `source` and copy it with its figures beside the best practice by `plan.py example`, as a copy made by hand drifts from the deliverable, and a symbolic link shows as a line of text on GitHub and on Windows."
    ]
   },
   {
-   "user_benefit": "Q9",
+   "intent": "Q9",
    "thinking": "Have the role, or an AI holding what it wants, use the example for the goal, and set its verdict against the evaluator's, as only a deliverable made and used shows whether the whole works.",
    "steps": [
     "Trace each difference to the goal, the template, a question or a practice, and mend it there.",

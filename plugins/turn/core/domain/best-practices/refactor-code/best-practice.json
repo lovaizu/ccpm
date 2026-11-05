@@ -1,6 +1,6 @@
 {
  "goal": "The maintainer is a person or an AI who comes to change the code at any time after it is written. The maintainer changes the code quickly without breaking another behavior. They understand each part on one reading, and they find the one place where the change belongs.",
- "user_benefits": [
+ "intents": [
   {
    "id": "Q1",
    "about": "the whole",
@@ -44,7 +44,7 @@
  ],
  "practices": [
   {
-   "user_benefit": "Q1",
+   "intent": "Q1",
    "thinking": "The structure changes in small steps, and each step keeps every behavior. The tests from before the change check each step. No step changes a behavior.",
    "steps": [
     "Run the tests before any change, and begin only when every one passes.",
@@ -55,7 +55,7 @@
    ]
   },
   {
-   "user_benefit": "Q2",
+   "intent": "Q2",
    "thinking": "Each line earns its place by what the maintainer would lose without it. What gives the maintainer nothing comes out, and version control keeps it.",
    "steps": [
     "Fold into its caller each function or layer that only passes a call on. Drop each parameter to which every caller gives the same value, and use that value inside.",
@@ -63,7 +63,7 @@
    ]
   },
   {
-   "user_benefit": "Q3",
+   "intent": "Q3",
    "thinking": "A name says in whole words what it holds or does, so the maintainer reads each line without going to a definition.",
    "steps": [
     "For each name, write in a few words what it holds or does, without looking at its definition. Then look at the definition, and flag the name where the two differ.",
@@ -71,14 +71,14 @@
    ]
   },
   {
-   "user_benefit": "Q4",
+   "intent": "Q4",
    "thinking": "Each thing has one name, the word its users and documents already use for it, and each name names one thing.",
    "steps": [
     "List the things the code handles, and for each the names the code gives it."
    ]
   },
   {
-   "user_benefit": "Q5",
+   "intent": "Q5",
    "thinking": "The code writes each rule or design decision once, in the module whose job it is. The code does not tie together things unrelated in meaning, however alike they look.",
    "steps": [
     "For each rule or decision the code holds, such as a limit, a format or a path, list every place that writes it.",
@@ -89,7 +89,7 @@
    ]
   },
   {
-   "user_benefit": "Q6",
+   "intent": "Q6",
    "thinking": "A function does one thing at one level, and takes what it uses as its inputs. Its reader then holds in mind only what the function says. A long function reads as calls to steps, each named for what it does.",
    "steps": [
     "Read each function, test functions included, once from the top, and write in one sentence what it does.",
@@ -99,7 +99,7 @@
    ]
   },
   {
-   "user_benefit": "Q7",
+   "intent": "Q7",
    "thinking": "The code does each kind of thing one way throughout. That way is the one the code already has, the nearest code first, unless a better way replaces it everywhere. A difference then means a real difference.",
    "steps": [
     "List the kinds of thing the code does in many places, such as reporting an error, checking an input, reading a file, or laying out a module or a test.",
@@ -108,7 +108,7 @@
    ]
   },
   {
-   "user_benefit": "Q8",
+   "intent": "Q8",
    "thinking": "Where the code cannot say why it is so, the reason stands where the maintainer meets the code, such as a limit outside the code or a way tried and dropped.",
    "steps": [
     "Read each line as a maintainer who knows the language but not the purpose, and flag code that looks wrong, roundabout or more than it needs.",

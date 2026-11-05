@@ -12,7 +12,7 @@ The developer builds and changes each part of the product so that the parts toge
 
 [example.md](example.md), a copy of [../../../../../../dev/turn/architecture.md](../../../../../../dev/turn/architecture.md)
 
-## User benefits
+## Intents
 
 - **Q1** (the opening): Starting on any part, does the developer see the one idea by which the product gives its product vision board, and the piece of it the part carries out, so that every part they build serves that idea?
 - **Q2** (User stories): Following a step of an objective's main use, as the README's walkthrough shows it, does the developer find the one user story that carries it, so that each part traces back to what a role does?

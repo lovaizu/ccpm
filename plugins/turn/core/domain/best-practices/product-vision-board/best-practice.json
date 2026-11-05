@@ -3,7 +3,7 @@
  "template": "template.md",
  "example": "example.md",
  "source": "../../../../../../dev/turn/product-vision-board.md",
- "user_benefits": [
+ "intents": [
   {
    "id": "Q1",
    "about": "Roles",
@@ -37,7 +37,7 @@
  ],
  "practices": [
   {
-   "user_benefit": "Q1",
+   "intent": "Q1",
    "thinking": "Each role is one end that someone brings to the product. Cut the roles by that end, not by who or what takes them: a person and an AI that want the same are one role. A cut by kind hides an end or splits one.",
    "steps": [
     "Walk through who uses the product, who runs it, who receives what it makes, who is affected by it, and each AI or system that calls it, over the product's whole life.",
@@ -46,7 +46,7 @@
    ]
   },
   {
-   "user_benefit": "Q2",
+   "intent": "Q2",
    "thinking": "An objective is the end the role is after in its own work, with the role as its subject. It says nothing of the product, of how the end is reached or of how it would show. A product built to a means or a measure can deliver it while the role's end is missed.",
    "steps": [
     "Ask why of each part of the objective until no further end shows, and write that end. Move a part that says how to Product, and one that says how it would show to the key results.",
@@ -54,7 +54,7 @@
    ]
   },
   {
-   "user_benefit": "Q3",
+   "intent": "Q3",
    "thinking": "Each piece of work brings exactly one objective closer. A gain under two objectives leaves the developer unable to tell which one the work serves.",
    "steps": [
     "Merge two objectives that one piece of work brings closer together, and split one whose gains pieces of work bring closer apart.",
@@ -62,7 +62,7 @@
    ]
   },
   {
-   "user_benefit": "Q4",
+   "intent": "Q4",
    "thinking": "Key results count what the role does or feels that shows its end is met: KR.1 how well, and KR.2 how soon. KR.2 is bettered only while KR.1 does not get worse. A result had fast but not well is no gain, and a count of the product's own output can rise while the role's end is missed.",
    "steps": [
     "List how success or failure would show in what the role does or feels, such as giving up, undoing a result or working around the product.",
@@ -70,7 +70,7 @@
    ]
   },
   {
-   "user_benefit": "Q5",
+   "intent": "Q5",
    "thinking": "Product holds the few ideas that set the product apart from what its roles do today and make it meet each objective. A concept cannot be read off facts: its maker finds it by reacting to tries against the problem. So draw the ideas out of the user one point at a time, by proposals built on their own words. A bare question or a list to pick from gives them nothing to push against, and ideas offered before their own crowd them out.",
    "steps": [
     "Ask what the roles do today and where it falls short of each objective, and say the user's words back as a reading they can correct.",
@@ -81,7 +81,7 @@
    ]
   },
   {
-   "user_benefit": "Q6",
+   "intent": "Q6",
    "thinking": "The board says only what the roles are after, do, see and receive, and nothing of how the product works inside. Any design that gives the roles the same then leaves it true.",
    "steps": [
     "Pick one change the design could make while the roles see the same, and rewrite each line that would have to change."

@@ -4,7 +4,7 @@
 
 The reader is a person or an AI who reads the document for a purpose, at any time after it is written. They read it in its own language or through a machine translation into theirs. The reader reads once from the top and only the parts their purpose needs, and takes in what the document says as its writer meant.
 
-## User benefits
+## Intents
 
 - **Q1** (the whole): Does the reader find each fact said in one place only, in the document or in what they read beside it, with every other place pointing there, so that two places never tell them different things?
 - **Q2** (the whole): Coming to the document for a purpose, can the reader tell from each heading and the sentence under it what the section gives them, so they read the sections their purpose needs and skip the rest?

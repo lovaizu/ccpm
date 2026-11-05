@@ -13,13 +13,13 @@ from helpers import practices
 DATA = {
     "goal": "The reader gets it.",
     "parts": [{"id": "a", "what": "A.", "parts": [{"id": "b", "what": "B."}]}],
-    "user_benefits": [
+    "intents": [
         {"id": "Q1", "about": "a", "what": "Does it?"},
         {"id": "Q2", "about": "b, the whole", "what": "After Q1, does all?"},
     ],
     "practices": [
-        {"user_benefit": "Q1", "thinking": "Think.", "steps": ["Do."]},
-        {"user_benefit": "Q2", "thinking": "Then.", "steps": []},
+        {"intent": "Q1", "thinking": "Think.", "steps": ["Do."]},
+        {"intent": "Q2", "thinking": "Then.", "steps": []},
     ],
 }
 
@@ -36,7 +36,7 @@ class Faults(unittest.TestCase):
 
     def test_questions_out_of_number_order(self):
         def swap(d):
-            d["user_benefits"].reverse()
+            d["intents"].reverse()
             d["practices"].reverse()
 
         self.assertIn("questions are Q2, Q1, not numbered in order from Q1", changed(swap))
@@ -56,7 +56,7 @@ class Faults(unittest.TestCase):
 
     def test_about_a_part_that_is_not_there(self):
         def wrong(d):
-            d["user_benefits"][0]["about"] = "c"
+            d["intents"][0]["about"] = "c"
 
         self.assertEqual(changed(wrong), ["Q1 is about c, which is no part"])
 
@@ -80,29 +80,29 @@ class Faults(unittest.TestCase):
 
     def test_no_question_about_the_whole(self):
         def narrow(d):
-            d["user_benefits"][1]["about"] = "b"
+            d["intents"][1]["about"] = "b"
 
         self.assertEqual(changed(narrow), ["no question is about the whole"])
 
     def test_a_best_practice_of_one_question_about_the_whole(self):
         data = {
             "goal": "G.",
-            "user_benefits": [{"id": "Q1", "about": "the whole", "what": "Does it?"}],
-            "practices": [{"user_benefit": "Q1", "thinking": "T.", "steps": []}],
+            "intents": [{"id": "Q1", "about": "the whole", "what": "Does it?"}],
+            "practices": [{"intent": "Q1", "thinking": "T.", "steps": []}],
         }
         self.assertEqual(practices.faults(data), [])
 
     def test_two_questions_of_one_number(self):
         def same(d):
-            d["user_benefits"][1]["id"] = "Q1"
-            d["practices"][1]["user_benefit"] = "Q1"
+            d["intents"][1]["id"] = "Q1"
+            d["practices"][1]["intent"] = "Q1"
 
         self.assertIn("questions are Q1, Q1, not numbered in order from Q1", changed(same))
 
     def test_a_question_numbered_otherwise_is_not_named_as_missing(self):
         def letter(d):
-            d["user_benefits"][0]["id"] = "A"
-            d["practices"][0]["user_benefit"] = "A"
+            d["intents"][0]["id"] = "A"
+            d["practices"][0]["intent"] = "A"
 
         self.assertEqual(
             changed(letter),
@@ -114,13 +114,13 @@ class Faults(unittest.TestCase):
 
     def test_about_a_part_named_after_the_whole_that_is_not_there(self):
         def wrong(d):
-            d["user_benefits"][0]["about"] = "z"
+            d["intents"][0]["about"] = "z"
 
         self.assertEqual(changed(wrong), ["Q1 is about z, which is no part"])
 
-    def test_a_question_named_in_a_user_benefit_that_is_not_there(self):
+    def test_a_question_named_in_a_intent_that_is_not_there(self):
         def name(d):
-            d["user_benefits"][0]["what"] = "Before Q3, does it?"
+            d["intents"][0]["what"] = "Before Q3, does it?"
 
         self.assertEqual(changed(name), ["Q3 is named, but there is no such question"])
 
@@ -147,7 +147,7 @@ TEMPLATE = """# <Product>
 SECTIONS = ["the opening", "Roles", "OKRs"]
 BY_TEMPLATE = {
     "goal": "The reader gets it.",
-    "user_benefits": [
+    "intents": [
         {"id": "Q1", "about": "the opening, Roles", "what": "Does it?"},
         {"id": "Q2", "about": "OKRs, the whole", "what": "Does all?"},
     ],
@@ -196,10 +196,8 @@ class NotesLeft(unittest.TestCase):
 
 class Keys(unittest.TestCase):
     def test_each_key_in_order_but_the_comments(self):
-        text = (
-            '{"DELETE_TEMPLATE_COMMENT": "x", "goal": "<g>", "user_benefits": [], "practices": []}'
-        )
-        self.assertEqual(practices.keys(text), ["goal", "user_benefits", "practices"])
+        text = '{"DELETE_TEMPLATE_COMMENT": "x", "goal": "<g>", "intents": [], "practices": []}'
+        self.assertEqual(practices.keys(text), ["goal", "intents", "practices"])
 
     def test_keeps_a_key_that_sorts_before_the_comments(self):
         self.assertEqual(
@@ -383,7 +381,7 @@ class FaultsByTemplate(unittest.TestCase):
 
     def test_about_what_is_no_section(self):
         def wrong(d):
-            d["user_benefits"][0]["about"] = "the opening, Scenarios, Roles"
+            d["intents"][0]["about"] = "the opening, Scenarios, Roles"
 
         self.assertEqual(
             self.by(wrong), ["Q1 is about Scenarios, which is no section of the template"]
@@ -391,7 +389,7 @@ class FaultsByTemplate(unittest.TestCase):
 
     def test_a_section_no_question_is_about(self):
         def narrow(d):
-            d["user_benefits"][0]["about"] = "Roles"
+            d["intents"][0]["about"] = "Roles"
 
         self.assertEqual(self.by(narrow), ["section the opening has no question about it"])
 
@@ -427,7 +425,7 @@ class Markdown(unittest.TestCase):
         expected.append("1. Do.")
         for line in expected:
             self.assertIn(line, text)
-        self.assertLess(text.index("## User benefits"), text.index("## Practices"))
+        self.assertLess(text.index("## Intents"), text.index("## Practices"))
 
     def test_sets_each_part_under_the_one_it_is_in(self):
         c: dict[str, Any] = {"id": "c", "what": "C."}
@@ -454,7 +452,7 @@ class Standard(unittest.TestCase):
         # Then: the practices are left out, the rest as written
         self.assertEqual(
             practices.standard(DATA),
-            {"goal": DATA["goal"], "parts": DATA["parts"], "user_benefits": DATA["user_benefits"]},
+            {"goal": DATA["goal"], "parts": DATA["parts"], "intents": DATA["intents"]},
         )
 
     def test_a_best_practice_of_no_parts_gives_none(self):
@@ -466,7 +464,7 @@ class Standard(unittest.TestCase):
 class Groups(unittest.TestCase):
     def questions(self, *abouts):
         """A best practice whose questions are about the parts given, one each, in order."""
-        return {"user_benefits": [{"id": f"Q{n}", "about": a} for n, a in enumerate(abouts, 1)]}
+        return {"intents": [{"id": f"Q{n}", "about": a} for n, a in enumerate(abouts, 1)]}
 
     def test_questions_about_the_same_parts_go_together(self):
         # Given: Q1 and Q3 about part a, Q2 about b

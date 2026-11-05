@@ -12,7 +12,7 @@ The developer builds a product with which its users achieve what they are after.
 
 [example.md](example.md), a copy of [../../../../../../dev/turn/product-vision-board.md](../../../../../../dev/turn/product-vision-board.md)
 
-## User benefits
+## Intents
 
 - **Q1** (Roles): Listing whom to build for, does the developer find every role that comes to the product with an end of its own, so that no one the product must serve is left out or split in two?
 - **Q2** (Roles, OKRs): Reading an objective, does the developer see the end its role is after, so that they build toward that end, not toward a means or a measure of it?

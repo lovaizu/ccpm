@@ -3,7 +3,7 @@
  "template": "template.md",
  "example": "example.md",
  "source": "../../../../../../dev/turn/architecture.md",
- "user_benefits": [
+ "intents": [
   {
    "id": "Q1",
    "about": "the opening",
@@ -87,21 +87,21 @@
  ],
  "practices": [
   {
-   "user_benefit": "Q1",
+   "intent": "Q1",
    "thinking": "The opening says, as one idea seen from above, how the product turns what its roles bring into what the product vision board promises. It points to the board and does not repeat it. Every part then reads as a piece of that idea.",
    "steps": [
     "Once the rest is written, check that each component carries out a piece of the idea, and change the idea or the component where one does not."
    ]
   },
   {
-   "user_benefit": "Q2",
+   "intent": "Q2",
    "thinking": "There is one story for each way a role meets the product at its edge, drawn from the objectives and the README's walkthrough, each naming what it carries, such as a step of the walkthrough or resuming a run that stopped. Each part then traces to what the role does, and a convenience added is a story added, while the board and the README stay as they are.",
    "steps": [
     "Go through each exchange of the README's walkthrough, and the main use of each objective it does not run, and name the one way at the product's edge that carries each step; add a story where none does."
    ]
   },
   {
-   "user_benefit": "Q3",
+   "intent": "Q3",
    "thinking": "Each principle is one rule that every part meeting the same decision follows, with its why: what goes wrong without it. A developer carries the why to a case the rule does not name.",
    "steps": [
     "Point to the principles of the architecture this one builds on, and write only what this product adds or changes.",
@@ -109,7 +109,7 @@
    ]
   },
   {
-   "user_benefit": "Q4",
+   "intent": "Q4",
    "thinking": "One component alone makes each decision the stories need, above all one hard to make or likely to change, and its box says so. A decision two components share is made twice and drifts.",
    "steps": [
     "List each decision the stories need by asking at each step of each sequence what must be decided there, and move the decision or split the component where two components or none make it.",
@@ -117,43 +117,43 @@
    ]
   },
   {
-   "user_benefit": "Q5",
+   "intent": "Q5",
    "thinking": "Each box has its type and technology, and the figure a legend for every symbol. A developer otherwise chooses them alone, and the components stop fitting.",
    "steps": [
     "Read the figure without the text around it, and add to the boxes or the legend whatever a reader would still have to ask."
    ]
   },
   {
-   "user_benefit": "Q6",
+   "intent": "Q6",
    "thinking": "Each data is drawn once, by its name and what it is in a few words, with each relation named and how many of each it joins. The fields are left to where the data is built. Two developers then join a data the same way while its fields change freely.",
    "steps": []
   },
   {
-   "user_benefit": "Q7",
+   "intent": "Q7",
    "thinking": "Each story is drawn as its steps in order, from the role's first request to what the story gives them, each step taken by a component along an arrow of Components and handing on a named data. Each branch, each step that sends work back and each question put to the role is drawn, as each path of the story, and its test, rests on them.",
    "steps": [
     "Check that each step runs along an arrow of Components, and add the arrow or give the step to another component where none does."
    ]
   },
   {
-   "user_benefit": "Q8",
+   "intent": "Q8",
    "thinking": "The document keeps only the stories, components and data that an objective needs. Each can then go once no objective needs it.",
    "steps": [
     "Trace each component and each data to the stories whose sequences reach it, and each story to the objective whose use or intent it carries, and remove what reaches none."
    ]
   },
   {
-   "user_benefit": "Q9",
+   "intent": "Q9",
    "thinking": "Each component and each data sits in one deployment unit, within the environment where it runs or is kept, with each thing outside the product it depends on, and no infrastructure the components do not need. The developer then knows what each can reach and how the product starts.",
    "steps": []
   },
   {
-   "user_benefit": "Q10",
+   "intent": "Q10",
    "thinking": "The folders and files that hold each component and each data are drawn as they lie on disk, one line each, leaving out what lies inside a component. The developer then finds the one place to change it.",
    "steps": []
   },
   {
-   "user_benefit": "Q11",
+   "intent": "Q11",
    "thinking": "Each deployment unit has a cell at each level whose ground, a part's contract, this document or the product vision board, says what the unit must do, and an empty cell says why. A level is named by what it checks against, not by its means. Unit and architecture carry most of the checking and run on every change; ux tests are few.",
    "steps": [
     "Leave out a unit whose every cell would be empty, and say why under the table.",
@@ -161,7 +161,7 @@
    ]
   },
   {
-   "user_benefit": "Q12",
+   "intent": "Q12",
    "thinking": "Each test is drawn from the one thing its level checks against: the ways a part's contract divides at unit, the paths the sequences draw at architecture, and an objective's main use at real size at ux. It runs only that real and stands doubles in for the rest. A failing test then names the rule, path or use it breaks.",
    "steps": [
     "Point to the project's shared test rules, and write only where this product differs from them.",
@@ -177,26 +177,26 @@
    ]
   },
   {
-   "user_benefit": "Q13",
+   "intent": "Q13",
    "thinking": "Each double gives only results in the form the part's contract gives them, the refusals among them, and is checked as the part's unit tests check the part. Unit and architecture together then show that every path holds for the real parts.",
    "steps": [
     "For a fault a higher level finds, name the case or path the lower level missed, add its test at the level that must catch it, see it fail, then fix it there."
    ]
   },
   {
-   "user_benefit": "Q14",
+   "intent": "Q14",
    "thinking": "Beside each choice a developer would question, such as a technology, a tool or a unit's weight, stands why it beat the other way and what it costs. The developer then keeps or changes it knowing what it was for.",
    "steps": [
     "Read each figure as a developer new to the product, and give a why and a cost to each choice they would question."
    ]
   },
   {
-   "user_benefit": "Q15",
+   "intent": "Q15",
    "thinking": "Each principle and every part it rules say the same. A developer who meets a figure breaking a principle must choose which to follow.",
    "steps": []
   },
   {
-   "user_benefit": "Q16",
+   "intent": "Q16",
    "thinking": "The document holds only what stays while the product vision board and the principles stay. How a component works inside is left to where it is built, as a line about the inside goes untrue at the next change.",
    "steps": [
     "Imagine a change to how a component works inside, such as its steps, a value it uses or a data's fields, mark each line it would make untrue, and repeat with a change of another kind until no line is marked."

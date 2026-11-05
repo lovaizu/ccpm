@@ -230,7 +230,7 @@ scenario style.
   the user approves at each task boundary, without claiming the coordinator never does any work itself
 - the wording follows README's existing scenario / plain-language style
 
-### #5: Update CHANGELOG.md to the corrected user benefit
+### #5: Update CHANGELOG.md to the corrected intent
 
 **Purpose**: Replace the superseded `[Unreleased]` lines with an entry stating the corrected model's
 benefit (a lighter conversation because real iteration stays out of sight, you still approve at every
