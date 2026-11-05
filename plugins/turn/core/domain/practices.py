@@ -16,7 +16,11 @@ WHOLE = "the whole"
 # The section of a template before its first heading under the title.
 OPENING = "the opening"
 SECTION = re.compile(r"^## (.+)$", re.MULTILINE)
-COMMENT = re.compile(r"<!--.*?-->", re.DOTALL)
+# A note of a template: a GitHub note whose first line opens with the marker, and the quote lines
+# under it. A note of the work's own opens otherwise, so the two are told apart.
+MARKER = "DELETE_TEMPLATE_COMMENT:"
+NOTE = re.compile(r"^> \[!NOTE\]\n> " + MARKER + r".*(?:\n>.*)*", re.MULTILINE)
+MARK = re.compile(r"^> " + MARKER, re.MULTILINE)
 QUESTION = re.compile(r"\bQ\d+\b")
 
 
@@ -42,9 +46,14 @@ def sections(template: str) -> list[str]:
     """The sections of a template a question may be about: the opening, where text stands between
     the title and the first heading under it, then each heading under the title, in order."""
     first = SECTION.search(template)
-    before = COMMENT.sub("", template[: first.start() if first else len(template)])
+    before = NOTE.sub("", template[: first.start() if first else len(template)])
     said = [line for line in before.splitlines()[1:] if line.strip()]
     return ([OPENING] if said else []) + SECTION.findall(template)
+
+
+def notes_left(text: str) -> list[int]:
+    """The number of each line of the text that opens a note of a template, left unwritten."""
+    return [text.count("\n", 0, m.start()) + 1 for m in MARK.finditer(text)]
 
 
 def keys(template: str) -> list[str]:

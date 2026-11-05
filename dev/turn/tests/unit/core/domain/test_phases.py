@@ -361,6 +361,19 @@ class Check(helpers.RoundsTest):
         data = met("meta/Q1", "meta/Q2", "meta/Q3", line=f"{made}:1")
         self.assertEqual(self.checked("generator.json", data)[:2], ([], "made"))
 
+    def test_a_note_of_the_template_left_in_the_work_is_a_fault(self):
+        self.write("NOTES.md", "# tidy\n\n> [!NOTE]\n> DELETE_TEMPLATE_COMMENT: <what it does>.\n")
+        faults, _, _ = self.checked("generator.json", met("note/Q1", "note/Q2", "note/Q3"))
+        self.assertEqual(faults, ["NOTES.md:4 holds a note of the template: delete it"])
+
+    def test_a_note_of_the_work_s_own_passes(self):
+        self.write("NOTES.md", "# tidy\n\n> [!NOTE]\n> tidy is not yet released.\n")
+        faults, result, _ = self.checked("generator.json", met("note/Q1", "note/Q2", "note/Q3"))
+        self.assertEqual((faults, result), ([], "made"))
+
+    def test_a_work_not_yet_written_has_no_note_to_find(self):
+        self.assertEqual(phases.made_faults(helpers.work(paths=["GONE.md"])), [])
+
     def test_a_work_of_another_kind_is_not_held_to_the_form_of_a_best_practice(self):
         for kind in ("man-page", "readme"):
             with self.subTest(kind=kind):

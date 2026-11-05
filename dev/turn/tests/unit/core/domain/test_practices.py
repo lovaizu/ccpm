@@ -133,7 +133,8 @@ class Faults(unittest.TestCase):
 
 TEMPLATE = """# <Product>
 
-<!-- Delete every comment once the document is written. -->
+> [!NOTE]
+> DELETE_TEMPLATE_COMMENT: <Product>: the product's name.
 
 <Product> is <kind>.
 
@@ -161,9 +162,17 @@ class Sections(unittest.TestCase):
     def test_an_opening_on_the_line_right_under_the_title(self):
         self.assertEqual(practices.sections("# <P>\n<P> is.\n## Roles\n"), ["the opening", "Roles"])
 
-    def test_no_opening_where_only_the_title_and_comments_stand_before_the_first_section(self):
-        bare = "# <Product> UX\n\n<!-- Delete. -->\n\n## Roles\n"
+    def test_no_opening_where_only_the_title_and_notes_stand_before_the_first_section(self):
+        bare = "# <P> UX\n\n> [!NOTE]\n> DELETE_TEMPLATE_COMMENT:\n> - <slot>: what.\n\n## Roles\n"
         self.assertEqual(practices.sections(bare), ["Roles"])
+
+    def test_an_opening_right_under_a_note(self):
+        text = "# <P>\n\n> [!NOTE]\n> DELETE_TEMPLATE_COMMENT: Delete.\n<P> is.\n## Roles\n"
+        self.assertEqual(practices.sections(text), ["the opening", "Roles"])
+
+    def test_a_quote_of_the_work_s_own_is_an_opening(self):
+        text = "# <P>\n\n> [!NOTE]\n> <P> is not yet released.\n\n## Roles\n"
+        self.assertEqual(practices.sections(text), ["the opening", "Roles"])
 
 
 class Keys(unittest.TestCase):

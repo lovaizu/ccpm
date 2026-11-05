@@ -228,10 +228,16 @@ def faults(answers: dict[str, Any], given: list[str], paths: list[str], opens: b
 
 
 def made_faults(work: dict[str, Any]) -> list[str]:
-    """Where the work is a best practice, each way a file of it is out of the form of one."""
-    if work["kind"] != runs.META:
-        return []
+    """Each line of the work that holds a note of the template; and where the work is a best
+    practice, each way a file of it is out of the form of one."""
     found = []
+    for path in work["paths"]:
+        if os.path.isfile(path):
+            with open(path, encoding="utf-8") as f:
+                left = practices.notes_left(f.read())
+            found += [f"{path}:{n} holds a note of the template: delete it" for n in left]
+    if work["kind"] != runs.META:
+        return found
     for path in work["paths"]:
         try:
             runs.read_practice(path)
