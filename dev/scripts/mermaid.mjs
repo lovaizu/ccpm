@@ -4,16 +4,15 @@
 // file git holds is parsed by Mermaid's own parser, and each block that does not parse fails with
 // its file, its line and the parser's message.
 //
-// Left out are the files that show a form with slots such as `<id>`, which no parser takes: the
-// templates, `best-practices/*/template.md`, and rn's, in plugins/rn/checklists/; and the session
-// records, in .rn/, which hold what was said, not what is shown. A link is the file it points to, so
-// is left out.
+// Left out are rn's checklists, in plugins/rn/checklists/, which show a form with slots such as
+// `<id>` that no parser takes; and the session records, in .rn/, which hold what was said, not what
+// is shown. A link is the file it points to, so is left out.
 
 import { execFileSync } from "node:child_process";
 import { lstatSync, readFileSync } from "node:fs";
 import { JSDOM } from "jsdom";
 
-const LEFT_OUT = /(^\.rn\/|^plugins\/rn\/checklists\/|\/template\.md$)/;
+const LEFT_OUT = /(^\.rn\/|^plugins\/rn\/checklists\/)/;
 
 // Mermaid cleans what it draws with DOMPurify, which needs a window to load.
 const { window } = new JSDOM("");
