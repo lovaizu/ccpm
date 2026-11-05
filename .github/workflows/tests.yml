@@ -74,14 +74,19 @@ jobs:
             echo "check=false" >> "$GITHUB_OUTPUT"
           fi
 
-  # The oldest Python users run and the newest (dev/plugin-best-practice.md, Unit: code).
+  # The oldest Python users run and the newest (dev/plugin-best-practice.md, Unit: code). 3.9 runs on
+  # Ubuntu 24.04, as setup-python has no 3.9 for Ubuntu 26.04, which ubuntu-latest now is.
   check:
     needs: changed
     if: needs.changed.outputs.check == 'true'
     strategy:
       matrix:
-        python: ["3.9", "3.x"]
-    runs-on: ubuntu-latest
+        include:
+          - python: "3.9"
+            os: ubuntu-24.04
+          - python: "3.x"
+            os: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - id: python
