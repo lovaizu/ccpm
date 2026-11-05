@@ -32,7 +32,7 @@
   },
   {
    "id": "readme/Q1",
-   "what": "Asked by a colleague what the product is, does the reader answer in one sentence that tells what it does?"
+   "what": "Telling a colleague about the product, does the reader retell the opening from memory?"
   },
   {
    "id": "readme/Q2",
@@ -40,15 +40,15 @@
   },
   {
    "id": "readme/Q3",
-   "what": "Asked by a colleague why this product and not another way of doing the same work, does the reader name what it does differently that brings the gain?"
-  },
-  {
-   "id": "readme/Q4",
    "what": "Before installing, does the reader see what the product does not do that they might expect of it?"
   },
   {
-   "id": "readme/Q5",
+   "id": "readme/Q4",
    "what": "Before installing, does the reader see where the product is not yet fit for use?"
+  },
+  {
+   "id": "readme/Q5",
+   "what": "Starting with nothing set up, does the reader install the product by the README's steps alone, and see that it works?"
   },
   {
    "id": "readme/Q6",
@@ -56,11 +56,11 @@
   },
   {
    "id": "readme/Q7",
-   "what": "Starting with nothing set up, does the reader install the product by the README's steps alone, and see that it works?"
+   "what": "For each problem they feel in the work, does the reader picture how the product makes it go away?"
   },
   {
    "id": "readme/Q8",
-   "what": "Looking at the figure of how the product works, does the reader see how it keeps each gain and the idea?"
+   "what": "At each point where they would ask whether the product can really do that, does the reader picture how it does it?"
   },
   {
    "id": "readme/Q9",
@@ -261,7 +261,7 @@
    "settled_by": "reasoning",
    "grounds": [
     "O1 of the UX: \"having decided only what is theirs\"",
-    "plugins/turn/core/domain/best-practices/readme/best-practice.json Q1 thinking: \"in words the reader already uses\""
+    "plugins/turn/core/domain/best-practices/readme/best-practice.json Q1 thinking: \"one sentence that names the kind of thing the product is and what it does, in words the reader already uses\""
    ]
   },
   {
@@ -281,25 +281,28 @@
   },
   {
    "id": "D10",
-   "what": "The usual way, and what Turn does differently",
+   "what": "The problems a reader feels with the usual way, and how each goes away with Turn",
    "contributes_to": [
-    "readme/Q3",
-    "readme/Q8"
+    "readme/Q7"
    ],
    "builds_on": [
+    "D2",
     "D9"
    ],
-   "decided": "An AI asked in one prompt fills each gap with a guess and judges the work by what it meant. Turn settles the design with the user first, makes the work by its kind's best practice, and has an AI that did not make it judge it with only the questions of its kind.",
-   "settled_by": "user",
+   "decided": "The usual way is to ask an AI, such as Claude Code, in one prompt. Two problems: (1) it fills what you did not say with guesses, and you meet them only as you use the work; with Turn, Pin finds each fact in your repository and asks you to confirm it, and asks you each decision that is yours, one at a time, so nothing in the work is a guess you never saw. (2) it tells you the work is done, and you find what falls short only as you use it, and mend it yourself; with Turn, an evaluator that never saw the design reads the work as its user would, by the questions of its kind, and a question not met goes back to its decision, so the work reaches you only once each is met.",
+   "settled_by": "reasoning",
    "grounds": [
-    ".rn/20261013-rebuild/turn-rebuild.md:84-86 \"settles the design with the person, one point at a time\" / \"makes the work from the design against the kind's best practice\" / \"uses the work as its user would and answers the questions, never given the design\""
+    "O1 of the UX: \"a work they put to use as handed over, having decided only what is theirs\"; KR1.1 counts a work not put to use as handed over",
+    "plugins/pin/core/roles/pinner.md:11-13: \"A point you settle for the person where their view decides it is a guess they never saw. So you find each fact yourself and show it to them, and you ask them only what is theirs to decide.\"",
+    "dev/turn/architecture.md:7-10: \"A fresh evaluator then answers each question as the work's user would, never given the design. ... A question not met goes back through Pin to its decision.\"",
+    "plugins/turn/core/domain/best-practices/readme/best-practice.json Q7 thinking: \"Find the problems the reader feels in their own words, and for each, work out and draw the figure in which the reader best pictures it gone with the product\""
    ]
   },
   {
    "id": "D11",
    "what": "What a reader might expect of Turn that it does not do",
    "contributes_to": [
-    "readme/Q4"
+    "readme/Q3"
    ],
    "builds_on": [
     "D2"
@@ -315,21 +318,21 @@
    "id": "D17",
    "what": "Where Turn is not yet fit for use",
    "contributes_to": [
-    "readme/Q5"
+    "readme/Q4"
    ],
    "builds_on": [],
    "decided": "Turn 0.1.0 is still in development and not yet released: a run may stop on a fault of Turn's own, and its forms may change before the release.",
    "settled_by": "research",
    "grounds": [
     "plugins/turn/CHANGELOG.md has no released version yet",
-    "readme/best-practice.json Q5 thinking: \"Where the product is not yet fit for use, such as a release still in development or one no longer kept up, say so at the top\""
+    "readme/best-practice.json Q4 thinking: \"Where the product is not yet fit for use, such as a release still in development or one no longer kept up, say so at the top\""
    ]
   },
   {
    "id": "D12",
    "what": "Requirements and installation",
    "contributes_to": [
-    "readme/Q7"
+    "readme/Q5"
    ],
    "builds_on": [],
    "decided": "Claude Code 2.1.317 or later and Python 3.9 or later as python3; installed from the ccpm marketplace, Pin coming with it as a dependency.",
@@ -352,23 +355,43 @@
    "decided": "The UX scenario's run: a README for tidy; the purpose confirmed, one fact confirmed, one decision taken, the design approved, the README handed over not committed. Not yet a real run, as Turn is being rebuilt; a real run's output replaces it once Turn is built.",
    "settled_by": "reasoning",
    "grounds": [
-    "plugins/turn/core/domain/best-practices/readme/best-practice.json Q5 steps: \"Take what the user gives and what the product shows from the record of a real run\""
+    "plugins/turn/core/domain/best-practices/readme/best-practice.json Q6 steps: \"Take each exchange, what the user gives and what the product shows, from the record of a real run\""
    ]
   },
   {
-   "id": "D14",
-   "what": "What the figure of how Turn works shows, and what stands under it",
+   "id": "D29",
+   "what": "The points a newcomer would doubt, and how Turn does each",
    "contributes_to": [
     "readme/Q8"
    ],
    "builds_on": [
+    "D8",
     "D10"
    ],
-   "decided": "You, Pin, the generator, the evaluator, the best practices, the design tree and the work, with what each does to another. Nothing stands under it, as a convenience such as a run that stopped going on from its folder keeps no gain and no idea, and the architecture's S3 carries it.",
+   "decided": "(A) How does it tell which decisions are mine? Pin finds what the repository holds itself and shows it to you to confirm; it weighs each open decision by the goal, the facts and your answers, settles one they favor, and asks you only one where another way would serve as well or that would be hard to undo; each is written to design-tree.json with who settled it. (B) How can an AI judge an AI's work? The evaluator is a fresh AI given only the work and the questions of its kind, never the design or the talk, so it judges by what the work's user gets, not by what its maker meant. (C) How does it know what such a work should hold? Each kind of work has a best practice: a template of what it holds and the questions its user asks of it; the generator writes by the template, and the evaluator asks the questions.",
    "settled_by": "reasoning",
    "grounds": [
-    "plugins/turn/core/domain/best-practices/readme/best-practice.json Q8: \"Draw who does what to whom so that each gain and the idea hold\"",
-    "the user, 2026-11-05: a convenience around the UX's core objective is the scope of the architecture's user stories, and must not change most of the UX, the README and the architecture each time"
+    "plugins/pin/core/roles/pinner.md:54-64: \"A fact is yours to find, never the person's to tell you\" / \"Where they favor one way, the decision is yours\" / \"or where the decision would be hard to undo, it is the person's\"",
+    "plugins/turn/agents/evaluator.md:3: \"with only the work and the questions of its kind, never its design\"",
+    "dev/turn/architecture.md:7-8: \"The generator makes the work from the design, against the kind's best practice\"",
+    "plugins/turn/core/domain/best-practices/readme/best-practice.json Q8 steps: \"Read the opening as a newcomer, and mark each thing it says that the way the reader would do the work without the product cannot do\""
+   ]
+  },
+  {
+   "id": "D14",
+   "what": "The figures of How it works",
+   "contributes_to": [
+    "readme/Q7",
+    "readme/Q8"
+   ],
+   "builds_on": [
+    "D10",
+    "D29"
+   ],
+   "decided": "Two figures. images/problem.svg: the usual way above Turn, as who does what to whom, with each problem of D10 marked where it is left and where it goes away, as both problems show in one comparison. images/how-it-works.svg: you, Pin, the design tree, the best practices, the generator, the work and the evaluator, with what each does to another, and the lines that answer each doubt of D29 marked by its letter, as the three doubts are answered by lines of one figure.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "plugins/turn/core/domain/best-practices/readme/best-practice.json Q8 thinking: \"draw the figure in which the reader best pictures how the product does it, such as its parts with the lines that do it marked\""
    ]
   },
   {
@@ -396,18 +419,19 @@
    "builds_on": [
     "D8",
     "D9",
-    "D10",
     "D11",
     "D17",
     "D12",
     "D13",
+    "D10",
     "D14",
+    "D29",
     "D15"
    ],
-   "decided": "The template's order: what Turn is, the status, whom it is for and the gain, the idea, the non-goals; then Requirements, Installation, Walkthrough, How it works, Documentation, License. A reader who learns Turn is not for them stops after the opening; the Walkthrough comes after Installation, as it runs Turn installed.",
+   "decided": "The template's order: what Turn is, the status, whom it is for and the gain, the non-goals; then Requirements, Installation, Walkthrough, How it works, Documentation, License. The opening serves every reader; one who has chosen Turn goes to the installation; one still weighing it reads the walkthrough and How it works.",
    "settled_by": "reasoning",
    "grounds": [
-    "readme/best-practice.json Q11 thinking: \"Order the README as the reader decides, from what every reader needs to what only a reader who has chosen the product needs\""
+    "readme/best-practice.json Q11 thinking: \"the opening for every reader, the installation for one who has chosen the product, the walkthrough and How it works for one still weighing it\""
    ]
   },
   {

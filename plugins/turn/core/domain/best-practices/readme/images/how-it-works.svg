@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 480" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
-  <title>How Turn works</title>
+  <title>How Turn works, with the lines that answer each doubt marked A, B and C</title>
   <style>
     .bg { fill: #ffffff; }
     .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
@@ -90,4 +90,10 @@
   <text class="label small halo mid" x="650" y="64">a question not met, back to its decision</text>
   <path class="line" d="M655,376 L655,450 L90,450 L90,206" marker-end="url(#arrow)"/>
   <text class="label small halo mid" x="380" y="442">the work, not committed</text>
+  <circle class="lane" cx="258" cy="66" r="11"/>
+  <text class="name" x="258" y="71">A</text>
+  <circle class="lane" cx="958" cy="312" r="11"/>
+  <text class="name" x="958" y="317">B</text>
+  <circle class="lane" cx="258" cy="188" r="11"/>
+  <text class="name" x="258" y="193">C</text>
 </svg>

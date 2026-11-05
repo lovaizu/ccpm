@@ -9,12 +9,6 @@ and the walkthrough below shows the run Turn is built for, not yet a recorded on
 Turn is for you when you want an AI to make a work you will put to use as it comes, not a draft
 you read and mend. With it, you get that work, having decided only what is yours.
 
-An AI asked in one prompt fills each gap in your request with a guess, and judges the work by what
-it meant, so you meet the guesses when you use the work. Turn instead settles the work's design
-with you before it makes anything, and has a fresh AI judge the work as its user would.
-
-![The usual way and Turn](images/idea.svg)
-
 **Non-goals**
 
 - Turn does not commit, push or publish the work.
@@ -84,7 +78,26 @@ Done: README.md is written, not committed. It meets every question of a README.
 
 ## How it works
 
-![How Turn works](images/how-it-works.svg)
+![The usual way and Turn, with the two problems marked](images/problem.svg)
+
+- 1, you meet what the AI guessed only as you use the work: Turn finds each fact in your repository
+  and asks you to confirm it, and asks you each decision that is yours, one at a time, so nothing in
+  the work is a guess you never saw.
+- 2, you find what falls short only as you use the work, and mend it yourself: in Turn, a fresh AI
+  that never saw the design reads the work as its user would, and a question not met goes back to
+  its decision, so the work reaches you only once each is met.
+
+![How Turn works, with the lines that answer each doubt marked A, B and C](images/how-it-works.svg)
+
+- A, how Turn tells which decisions are yours: Pin finds what your repository holds and shows it to
+  you to confirm. It settles a decision that the goal, the facts and your answers favor, and asks
+  you one where another way would serve as well, or that would be hard to undo. It writes each into
+  design-tree.json with who settled it.
+- B, how an AI can judge an AI's work: the evaluator gets only the work and the questions of its
+  kind, never the design, so it judges by what the work's user gets, not by what its maker meant.
+- C, how Turn knows what such a work should hold: each kind of work has a best practice, a template
+  of what it holds and the questions its user asks of it. The generator writes by the template, and
+  the evaluator asks the questions.
 
 ## Documentation
 
