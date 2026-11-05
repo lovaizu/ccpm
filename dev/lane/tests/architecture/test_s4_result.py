@@ -1,8 +1,8 @@
 """S4 of dev/lane/architecture.md, a subagent gives its result, one test for each of its paths:
-docs/routes.md's routes laid by `lay.py write` on a copy of `changelog`; the hooks' commands as
-laid run in sh by a double of Claude Code; doubles of lead, writer and reviewer making set calls
-and giving set results, each one the result script's own check takes or, on the path that tries
-it, one it refuses; and the result script run real, as the step writes it."""
+docs/routes.md's routes laid by `lay.py write` on a copy of `changelog`; the hooks' entries as
+laid called by a double of Claude Code in the test's process; doubles of lead, writer and
+reviewer making set calls and giving set results, each one the result script's own check takes or,
+on the path that tries it, one it refuses; and the result script run real, as the step writes it."""
 
 import unittest
 

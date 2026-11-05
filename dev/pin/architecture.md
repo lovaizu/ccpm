@@ -413,8 +413,10 @@ Each test runs one path of [Sequences](#sequences).
 - What joins Pin's parts runs real: `check.py` by the command that the pinner's rule names, the
   guard by Pin's hook entries on Pin's Rules laid, and the entries' files as Claude Code takes them.
 - Doubles stand in for the go-between, the pinner, Claude Code and the person. A double of Claude
-  Code sends the pinner's hook events in order and runs the hooks' commands. A set answer stands in
-  for the person.
+  Code sends the pinner's hook events in order. It calls the hook entries and `check.py` in the
+  test's own process, as
+  [Architecture: the parts joined](../plugin-best-practice.md#architecture-the-parts-joined) says.
+  A set answer stands in for the person.
 - Each double gives only what the contract of its part allows. A double of the pinner writes only
   design files that `check.py`'s unit tests hold to the form, and Replies in the form that
   [the pinner](../../plugins/pin/core/roles/pinner.md) gives. A double of the go-between passes each

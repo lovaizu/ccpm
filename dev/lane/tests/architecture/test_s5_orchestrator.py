@@ -1,10 +1,10 @@
 """S5 of dev/lane/architecture.md, the orchestrator is told each start, one test for each of its
 paths: the routes laid by `lay.py write` on a copy of `changelog`, and on a copy of its dependency
-`checker` the results of its subagent `examiner`; the hooks' commands of both plugins as laid run
-in sh by a double of Claude Code, which starts lead from the main conversation, each subagent lead
-starts, and lead again once a subagent it started has ended; doubles of lead, writer, reviewer and
-examiner making set calls and giving set results by the result scripts, each one the script's own
-check takes."""
+`checker` the results of its subagent `examiner`; the hooks' entries of both plugins as laid
+called by a double of Claude Code in the test's process, which starts lead from the main
+conversation, each subagent lead starts, and lead again once a subagent it started has ended;
+doubles of lead, writer, reviewer and examiner making set calls and giving set results by the
+result scripts, each one the script's own check takes."""
 
 import glob
 import os

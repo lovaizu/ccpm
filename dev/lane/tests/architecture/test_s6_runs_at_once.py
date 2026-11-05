@@ -1,9 +1,9 @@
 """S6 of dev/lane/architecture.md, runs at once, one test for each of its paths: fan_out.json's
 routes, lead starting runs of auditor at once, its results taken in the order `more`, `good`, laid
-by `lay.py write` on a copy of `changelog`; the hooks' commands as laid run in sh by a double of
-Claude Code; doubles of lead and the auditors making set calls and giving set results by the
-result script, each one its own check takes; and a run started again in place of one with no
-result, as docs/routes.md's Runs at once joins it."""
+by `lay.py write` on a copy of `changelog`; the hooks' entries as laid called by a double of
+Claude Code in the test's process; doubles of lead and the auditors making set calls and giving
+set results by the result script, each one its own check takes; and a run started again in place
+of one with no result, as docs/routes.md's Runs at once joins it."""
 
 import os
 import unittest

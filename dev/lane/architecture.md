@@ -730,10 +730,13 @@ lower levels have checked, and each step of a trial costs a run of the model.
 The tests lay a proposal with `lay.py write` on a copy of `changelog`, and then run one path of
 [Sequences](#sequences) each.
 
-- What joins Lane's parts runs real: `lay.py`, the check script by the hooks' commands in `sh`,
-  `result.py`, and the files that `lay.py` lays.
+- What joins Lane's parts runs real: `lay.py`, the check script by the hooks' entries, `result.py`,
+  and the files that `lay.py` lays.
 - Doubles stand in for Claude Code and for the roles an AI runs. A double of Claude Code sends the
-  events of the path in order and runs the hooks' commands. Doubles of the developer AI and of the
+  events of the path in order. It calls the hooks' entries and the plugin's scripts in the test's
+  own process, as
+  [Architecture: the parts joined](../plugin-best-practice.md#architecture-the-parts-joined) says.
+  Doubles of the developer AI and of the
   subagents make set calls and give set results. A set answer of the double stands in for the
   person of a held command.
 - Each double gives only what the contract of its part allows. A double of Claude Code sends what

@@ -1,8 +1,9 @@
 """S3 of dev/lane/architecture.md, a subagent with rules on a run, one test for each of its paths:
-the proposal laid by `lay.py write` on a copy of `changelog`; the hooks' commands as laid run in sh
-by a double of Claude Code, which starts each run from the main conversation, makes each call a
-double of the subagent makes, and puts a held command to a double of the person, a set answer, as
-its permission prompt does; and the adapters and the scripts the steps name run real."""
+the proposal laid by `lay.py write` on a copy of `changelog`; the hooks' entries as laid called by
+a double of Claude Code in the test's process, which starts each run from the main conversation,
+makes each call a double of the subagent makes, and puts a held command to a double of the
+person, a set answer, as its permission prompt does; and the adapters and the scripts the steps
+name run real."""
 
 import json
 import os
