@@ -479,6 +479,19 @@ class TestBroughtUp(LayerTest):
         self.assertEqual(self.read(self.agent_file), helpers.WRITER_LAID)
         self.assertNotIn("current wording", said)
 
+    def test_a_subagent_whose_part_is_gone_is_passed_over(self):
+        # Given: the routes laid, then reviewer's entry naming a part the plugin does not have
+        self.route()
+        reviewer = os.path.join(self.plugin, "agents", "reviewer.md")
+        self.write(reviewer, helpers.PART_ENTRY.format(name="reviewer"))
+        # When: the plugin is brought up
+        said = layer.brought_up(self.plugin)
+        # Then: no file is written, the part not made, and no step is said to be written
+        self.assertEqual(self.read(self.agent_file), helpers.WRITER_LAID)
+        self.assertEqual(self.read(reviewer), helpers.PART_ENTRY.format(name="reviewer"))
+        self.assertFalse(os.path.exists(os.path.join(self.plugin, "prompts", "writer.md")))
+        self.assertNotIn("current wording", said)
+
     def test_a_plugin_up_to_date_is_said_so(self):
         # Given: the README's lanes laid just now
         # When: the plugin is brought up
