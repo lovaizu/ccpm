@@ -348,6 +348,16 @@ what changed.
 before every push, they would make every change wait. So would every test, and CI catches what the
 tests run before the push miss, such as a test that reads a file the change edits.
 
+pytest runs the tests, the unittest tests as they are written. pytest-xdist runs them on every
+processor at once. Before each push, pytest-testmon chooses the tests that the change reaches, by
+the code that each test ran when it last ran.
+
+*Why*: the other two tools need pytest, and the tests need no change for it. Every test at once
+takes a part of the time that one after another takes. testmon sees only the code that a test runs
+in its own process, and the architecture tests now join the parts there. It misses a test that
+reads a file the change edits, such as JSON or Markdown, or that runs the changed code in a new
+process. CI runs every test, so it catches those.
+
 ### No trial of a prompt alone
 
 No level runs a prompt, a skill or an agent, alone on a model. The guard holds each rule of a

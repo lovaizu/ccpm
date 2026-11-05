@@ -1,10 +1,16 @@
 #!/bin/sh
 # The checks CI runs on every push, beside the property tests and the mutation testing, run from the
 # top of the repository with the tools of pyproject.toml's dev group. Given plugin names, such as
-# `sh dev/scripts/check.sh rn`, the type check, the tests and the manifests are those plugins' alone, as
-# before a push that changes them; CI gives none and checks every plugin.
+# `sh dev/scripts/check.sh rn`, the type check, the tests and the manifests are those plugins' alone;
+# CI gives none and checks every plugin. Given `--reached` first, as before a push, the tests are only
+# those the change reaches, and their lines and branches are not counted.
 set -e
 
+reached=""
+if [ "$1" = --reached ]; then
+  reached=true
+  shift
+fi
 plugins=${*:-$(sh dev/scripts/plugins.sh)}
 
 ruff check .
@@ -45,13 +51,33 @@ else
     "\`npm ci --ignore-scripts\` in dev/scripts"
 fi
 
-# The unit tests, `test*.py`, unittest's own pattern, count the lines and branches; the property
-# tests, whose inputs change from run to run, are run apart by dev/scripts/properties.sh.
-for plugin in $plugins; do
-  coverage run --source="plugins/$plugin" -m unittest discover -s "dev/$plugin/tests"
-done
-coverage combine
-coverage report
+# The unit and architecture tests, `test*.py`, unittest's own pattern, run by pytest as pyproject.toml
+# sets it, at once on each processor (pytest-xdist); the property tests, whose inputs change from run
+# to run, are run apart by dev/scripts/properties.sh. Each plugin's run is a process of its own, as
+# each puts its own `helpers` and code on sys.path.
+if [ -n "$reached" ]; then
+  # Only the tests whose code the change reaches, which pytest-testmon chooses by the code each test
+  # ran when it last ran, kept in the file TESTMON_DATAFILE names, else in .testmondata. A selection
+  # runs only some lines, so none are counted; CI counts them.
+  if python -c 'import testmon' 2>/dev/null; then
+    choose=--testmon
+  else
+    choose=""
+    echo "check.sh: every test run, as pytest-testmon is not installed; it comes with"\
+      "pyproject.toml's push group, on Python 3.11 or later"
+  fi
+  for plugin in $plugins; do
+    pytest -q -n auto $choose "dev/$plugin/tests"
+  done
+else
+  # Every test, with the lines and branches each plugin's tests run counted, those of the processes
+  # they start among them, as .coveragerc sets.
+  for plugin in $plugins; do
+    coverage run --source="plugins/$plugin" -m pytest -q -n auto "dev/$plugin/tests"
+  done
+  coverage combine
+  coverage report
+fi
 
 # A malformed manifest fails for every user at install, so each plugin and the marketplace pass
 # Claude Code's own check of them.

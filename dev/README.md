@@ -15,8 +15,10 @@ Every plugin is built by [the plugin best practice](./plugin-best-practice.md).
 ## The checks on every push
 
 CI runs these checks on every push: the linter, the formatter, the type checker, each plugin's unit
-tests with the lines and branches they run counted, Claude Code's check of every manifest, and
-Mermaid's parse of every diagram in the Markdown files. Run them from the top of the repository:
+and architecture tests with the lines and branches they run counted, Claude Code's check of every
+manifest, and Mermaid's parse of every diagram in the Markdown files. pytest runs the tests on
+every processor at once, as [Unit: code](./plugin-best-practice.md#unit-code) says. Run the checks
+from the top of the repository:
 
 ```console
 uv sync --locked
@@ -54,8 +56,11 @@ lines changed since that commit.
 
 `dev/scripts/githooks/pre-push` runs `sh dev/scripts/check.sh` on the commits pushed, and stops the push on a
 failure. It checks each plugin that `sh dev/scripts/changed.sh` names: those the push changes, those that
-link a file it changes, or every plugin where it changes what they all stand on. The property tests
-and the mutation testing run in CI only.
+link a file it changes, or every plugin where it changes what they all stand on. It runs them as
+`sh dev/scripts/check.sh --reached`: of the tests, only those the change reaches, chosen by
+pytest-testmon, without the lines counted. testmon keeps what each test ran in `.testmondata` at
+the top of the clone. It comes with `pyproject.toml`'s `push` group, on Python 3.11 or later; on an
+older Python every test runs. Every test, the property tests and the mutation testing run in CI.
 
 Turn the hook on once in a clone with `git config core.hooksPath dev/scripts/githooks`. It needs uv on the
 PATH.

@@ -2,6 +2,9 @@
 branch = true
 patch = subprocess
 parallel = true
+# pytest's own process hands each test to its workers and runs no code of the plugins, so it has
+# nothing to count; the workers count it all.
+disable_warnings = no-data-collected
 
 [report]
 show_missing = true
