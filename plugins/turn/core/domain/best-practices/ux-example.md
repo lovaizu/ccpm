@@ -24,12 +24,12 @@ sequenceDiagram
   participant R as requester
   participant T as Turn
   R->>T: a README for tidy, which sorts a Downloads folder
-  T->>R: purpose: a newcomer installs tidy and sorts their folder; yes?
+  T->>R: purpose: a newcomer installs tidy and sorts their folder, yes?
   R->>T: yes
   loop until no decision is open
-    T->>R: found: tidy --dry-run shows what it would move; right?
+    T->>R: found: tidy --dry-run shows what it would move, right?
     R->>T: right
-    T->>R: the walkthrough runs --dry-run, then tidy; yes?
+    T->>R: the walkthrough runs --dry-run, then tidy, yes?
     R->>T: yes
   end
   T->>R: the design, to approve
