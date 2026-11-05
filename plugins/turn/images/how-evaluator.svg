@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 300" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+  <title>B: how an AI can judge an AI's work</title>
+  <style>
+    .bg { fill: #ffffff; }
+    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .lane { fill: #ddf4ff; stroke: #54aeff; }
+    .store { fill: #fff8c5; stroke: #9a6700; stroke-width: 1.5; }
+    .ext { fill: #eaeef2; stroke: #d0d7de; stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .unit { fill: #ddf4ff; fill-opacity: 0.35; stroke: #0969da; stroke-width: 1.2; }
+    .frame { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    .frame-name { fill: #0969da; font-size: 13px; font-weight: 600; }
+    .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
+    .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
+    .label { fill: #1f2328; font-size: 13px; }
+    .small { font-size: 12px; }
+    .data { fill: #8250df; font-size: 12px; font-style: italic; }
+    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .dashed { stroke-dasharray: 5 4; }
+    .head { fill: #59636e; }
+    .hole { fill: #ffffff; stroke: #59636e; stroke-width: 1.5; }
+    .halo { stroke: #ffffff; stroke-width: 7; stroke-linejoin: round; paint-order: stroke; }
+    .mid { text-anchor: middle; }
+    .start { text-anchor: start; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; }
+      .box { fill: #161b22; stroke: #3d444d; }
+      .lane { fill: #0c2d6b; stroke: #4493f8; }
+      .store { fill: #2e2a1a; stroke: #d29922; }
+      .ext { fill: #21262d; stroke: #3d444d; }
+      .unit { fill: #0c2d6b; stroke: #4493f8; }
+      .frame { stroke: #4493f8; }
+      .frame-name { fill: #4493f8; }
+      .name, .label { fill: #f0f6fc; }
+      .kind { fill: #9198a1; }
+      .data { fill: #c297ff; }
+      .line { stroke: #9198a1; }
+      .head { fill: #9198a1; }
+      .hole { fill: #0d1117; stroke: #9198a1; }
+      .halo { stroke: #0d1117; }
+    }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path class="head" d="M0,0 L10,5 L0,10 z"/>
+    </marker>
+  </defs>
+  <rect class="bg" width="1000" height="300"/>
+  <rect class="ext" x="30" y="40" width="260" height="200" rx="8"/>
+  <text class="frame-name" x="44" y="62">Never read by the evaluator</text>
+  <rect class="store" x="50" y="80" width="220" height="40" rx="6"/>
+  <text class="name" x="160" y="105">Design</text>
+  <rect class="store" x="50" y="130" width="220" height="40" rx="6"/>
+  <text class="name" x="160" y="155">How the work was made</text>
+  <rect class="store" x="50" y="180" width="220" height="40" rx="6"/>
+  <text class="name" x="160" y="205">What its maker meant</text>
+  <rect class="store" x="340" y="60" width="200" height="56" rx="6"/>
+  <text class="name" x="440" y="84">The work</text>
+  <text class="kind" x="440" y="102">such as README.md</text>
+  <rect class="store" x="340" y="170" width="200" height="56" rx="6"/>
+  <text class="name" x="440" y="194">The questions</text>
+  <text class="kind" x="440" y="212">its reader asks of it</text>
+  <rect class="lane" x="620" y="110" width="200" height="66" rx="6"/>
+  <text class="name" x="720" y="136">Evaluator</text>
+  <text class="kind" x="720" y="154">a fresh AI</text>
+  <path class="line" d="M540,88 L616,128" marker-end="url(#a)"/>
+  <path class="line" d="M540,198 L616,160" marker-end="url(#a)"/>
+  <path class="line" d="M820,143 L900,143 L900,210" marker-end="url(#a)"/>
+  <text class="label small mid" x="900" y="230">does the reader get</text>
+  <text class="label small mid" x="900" y="246">what they need?</text>
+  <text class="label small mid" x="720" y="270">It runs the work's commands as the reader would, in a throwaway home.</text>
+</svg>

@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 300" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+  <title>A: how Turn tells which decisions are yours</title>
+  <style>
+    .bg { fill: #ffffff; }
+    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .lane { fill: #ddf4ff; stroke: #54aeff; }
+    .store { fill: #fff8c5; stroke: #9a6700; stroke-width: 1.5; }
+    .ext { fill: #eaeef2; stroke: #d0d7de; stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .unit { fill: #ddf4ff; fill-opacity: 0.35; stroke: #0969da; stroke-width: 1.2; }
+    .frame { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    .frame-name { fill: #0969da; font-size: 13px; font-weight: 600; }
+    .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
+    .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
+    .label { fill: #1f2328; font-size: 13px; }
+    .small { font-size: 12px; }
+    .data { fill: #8250df; font-size: 12px; font-style: italic; }
+    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .dashed { stroke-dasharray: 5 4; }
+    .head { fill: #59636e; }
+    .hole { fill: #ffffff; stroke: #59636e; stroke-width: 1.5; }
+    .halo { stroke: #ffffff; stroke-width: 7; stroke-linejoin: round; paint-order: stroke; }
+    .mid { text-anchor: middle; }
+    .start { text-anchor: start; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; }
+      .box { fill: #161b22; stroke: #3d444d; }
+      .lane { fill: #0c2d6b; stroke: #4493f8; }
+      .store { fill: #2e2a1a; stroke: #d29922; }
+      .ext { fill: #21262d; stroke: #3d444d; }
+      .unit { fill: #0c2d6b; stroke: #4493f8; }
+      .frame { stroke: #4493f8; }
+      .frame-name { fill: #4493f8; }
+      .name, .label { fill: #f0f6fc; }
+      .kind { fill: #9198a1; }
+      .data { fill: #c297ff; }
+      .line { stroke: #9198a1; }
+      .head { fill: #9198a1; }
+      .hole { fill: #0d1117; stroke: #9198a1; }
+      .halo { stroke: #0d1117; }
+    }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path class="head" d="M0,0 L10,5 L0,10 z"/>
+    </marker>
+  </defs>
+  <rect class="bg" width="1000" height="300"/>
+  <rect class="store" x="30" y="30" width="170" height="60" rx="6"/>
+  <text class="name" x="115" y="58">Your repository</text>
+  <text class="kind" x="115" y="76">what it holds</text>
+  <rect class="lane" x="340" y="110" width="250" height="80" rx="6"/>
+  <text class="name" x="465" y="140">Pin</text>
+  <text class="kind" x="465" y="158">weighs each decision by the goal,</text>
+  <text class="kind" x="465" y="174">the facts and your answers</text>
+  <rect class="box" x="30" y="220" width="170" height="60" rx="6"/>
+  <text class="name" x="115" y="255">You</text>
+  <rect class="store" x="760" y="110" width="210" height="80" rx="6"/>
+  <text class="name" x="865" y="140">Design</text>
+  <text class="kind" x="865" y="158">each point, and who</text>
+  <text class="kind" x="865" y="174">settled it</text>
+  <path class="line" d="M200,62 L336,124" marker-end="url(#a)"/>
+  <text class="label small start halo" x="250" y="76">facts found</text>
+  <path class="line" d="M340,180 L204,232" marker-end="url(#a)"/>
+  <text class="label small start" x="30" y="140">each fact, to confirm;</text>
+  <text class="label small start" x="30" y="156">a decision where two ways serve</text>
+  <text class="label small start" x="30" y="172">as well, or hard to undo</text>
+  <path class="line" d="M200,266 L420,194" marker-end="url(#a)"/>
+  <text class="label small start halo" x="330" y="250">your answer</text>
+  <path class="line" d="M590,150 L756,150" marker-end="url(#a)"/>
+  <text class="label small mid halo" x="673" y="128">one way favored:</text>
+  <text class="label small mid halo" x="673" y="142">Pin settles it</text>
+  <text class="label small mid halo" x="673" y="172">yours: as you answered</text>
+</svg>

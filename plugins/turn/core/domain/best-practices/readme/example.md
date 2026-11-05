@@ -94,17 +94,24 @@ Done: README.md is written, not committed. It meets every question of a README.
 - 5, each fix is added on, and the work gets noisier: a question not met goes back to its
   decision, and the work is made again from the design, so no fix sits beside it.
 
-![How Turn works, with the lines that answer each doubt marked A, B and C](images/how-it-works.svg)
+![A: Turn finds facts in your repository, settles what they favor, and asks you the rest](images/how-decisions.svg)
 
 - A, how Turn tells which decisions are yours: Pin finds what your repository holds and shows it to
   you to confirm. It settles a decision that the goal, the facts and your answers favor, and asks
   you one where another way would serve as well, or that would be hard to undo. It writes each into
-  design-tree.json with who settled it.
-- B, how an AI can judge an AI's work: the evaluator gets only the work and the questions of its
-  kind, never the design, so it judges by what the work's user gets, not by what its maker meant.
-- C, what if Turn has no best practice for your kind of work: Turn first makes one as a work of
-  its own, by the same course, and you approve it as you approve any design. It is kept in
-  .turn/best-practices/, so later runs in your repository use it.
+  the design with who settled it.
+
+![B: the evaluator reads only the work and the questions, never the design](images/how-evaluator.svg)
+
+- B, how an AI can judge an AI's work: the evaluator is a fresh AI that gets only the work and the
+  questions of its kind, never the design, so it judges by what the work's reader gets, not by what
+  its maker meant.
+
+![C: for a new kind, its best practice is made first, approved by you and kept](images/how-new-kind.svg)
+
+- C, what if Turn has no best practice for your kind of work: Turn first makes one, the same way it
+  makes any work, and you approve it. It is kept in .turn/best-practices/, so later runs in your
+  repository use it.
 
 ## Documentation
 

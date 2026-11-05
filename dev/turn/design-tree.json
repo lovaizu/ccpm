@@ -419,7 +419,7 @@
     "D10",
     "D29"
    ],
-   "decided": "Two figures. images/problem.svg: the usual way above Turn, as who does what to whom, with each problem of D10 marked by its number where it is left and where it goes away, as the five show in one comparison of the same steps. images/how-it-works.svg: you, Pin, the design tree, the best practices, the generator, the work and the evaluator, with what each does to another, and the lines that answer each doubt of D29 marked by its letter, as the three doubts are answered by lines of one figure.",
+   "decided": "Four figures, one names the same thing in each: you, Pin, the design, the evaluator. images/problem.svg: the usual way above Turn, as who does what to whom, with each problem of D10 marked by its number where it is left and where it goes away, as the five show in one comparison of the same steps. Then one figure for each doubt of D29, each followed by its line, as one figure of the whole held seven parts and crossing lines, and showed none of the doubts at a glance: images/how-decisions.svg (A: your repository, Pin, you and the design, with what Pin settles and what it asks you), images/how-evaluator.svg (B: what the evaluator reads, and what it never reads), images/how-new-kind.svg (C: the best practice made first, approved by you, kept for later runs).",
    "settled_by": "reasoning",
    "grounds": [
     "plugins/turn/core/domain/best-practices/readme/best-practice.json Q8 thinking: \"draw the figure in which the reader best pictures how the product does it, such as its parts with the lines that do it marked\""

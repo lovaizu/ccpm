@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 230" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+  <title>C: what Turn does for a kind it has no best practice for</title>
+  <style>
+    .bg { fill: #ffffff; }
+    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .lane { fill: #ddf4ff; stroke: #54aeff; }
+    .store { fill: #fff8c5; stroke: #9a6700; stroke-width: 1.5; }
+    .ext { fill: #eaeef2; stroke: #d0d7de; stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .unit { fill: #ddf4ff; fill-opacity: 0.35; stroke: #0969da; stroke-width: 1.2; }
+    .frame { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    .frame-name { fill: #0969da; font-size: 13px; font-weight: 600; }
+    .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
+    .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
+    .label { fill: #1f2328; font-size: 13px; }
+    .small { font-size: 12px; }
+    .data { fill: #8250df; font-size: 12px; font-style: italic; }
+    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .dashed { stroke-dasharray: 5 4; }
+    .head { fill: #59636e; }
+    .hole { fill: #ffffff; stroke: #59636e; stroke-width: 1.5; }
+    .halo { stroke: #ffffff; stroke-width: 7; stroke-linejoin: round; paint-order: stroke; }
+    .mid { text-anchor: middle; }
+    .start { text-anchor: start; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; }
+      .box { fill: #161b22; stroke: #3d444d; }
+      .lane { fill: #0c2d6b; stroke: #4493f8; }
+      .store { fill: #2e2a1a; stroke: #d29922; }
+      .ext { fill: #21262d; stroke: #3d444d; }
+      .unit { fill: #0c2d6b; stroke: #4493f8; }
+      .frame { stroke: #4493f8; }
+      .frame-name { fill: #4493f8; }
+      .name, .label { fill: #f0f6fc; }
+      .kind { fill: #9198a1; }
+      .data { fill: #c297ff; }
+      .line { stroke: #9198a1; }
+      .head { fill: #9198a1; }
+      .hole { fill: #0d1117; stroke: #9198a1; }
+      .halo { stroke: #0d1117; }
+    }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path class="head" d="M0,0 L10,5 L0,10 z"/>
+    </marker>
+  </defs>
+  <rect class="bg" width="1000" height="230"/>
+  <rect class="box" x="20" y="60" width="150" height="66" rx="6"/>
+  <text class="name" x="95" y="86">Your request</text>
+  <text class="kind" x="95" y="104">a kind new to Turn</text>
+  <rect class="lane" x="240" y="60" width="190" height="66" rx="6"/>
+  <text class="name" x="335" y="86">Its best practice</text>
+  <text class="kind" x="335" y="104">made first, the same way</text>
+  <rect class="box" x="500" y="60" width="130" height="66" rx="6"/>
+  <text class="name" x="565" y="95">You approve it</text>
+  <rect class="store" x="700" y="60" width="130" height="66" rx="6"/>
+  <text class="name" x="765" y="95">Your work</text>
+  <rect class="store" x="500" y="160" width="210" height="50" rx="6"/>
+  <text class="name" x="605" y="190">.turn/best-practices/</text>
+  <path class="line" d="M170,93 L236,93" marker-end="url(#a)"/>
+  <path class="line" d="M430,93 L496,93" marker-end="url(#a)"/>
+  <path class="line" d="M630,93 L696,93" marker-end="url(#a)"/>
+  <text class="label small mid halo" x="663" y="83">made by it</text>
+  <path class="line" d="M565,126 L565,156" marker-end="url(#a)"/>
+  <text class="label small start" x="575" y="146">kept</text>
+  <rect class="box" x="790" y="160" width="190" height="50" rx="6"/>
+  <text class="name" x="885" y="190">Later runs</text>
+  <path class="line dashed" d="M710,185 L786,185" marker-end="url(#a)"/>
+  <text class="label small mid halo" x="748" y="175">use it</text>
+</svg>
