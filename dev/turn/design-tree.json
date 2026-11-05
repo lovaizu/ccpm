@@ -40,7 +40,7 @@
   },
   {
    "id": "readme/Q3",
-   "what": "Weighing the product against what they would do without it, does the reader grasp why the product solves their problem where that way does not?"
+   "what": "Weighing the product against what they would do without it, does the reader see the problem that way leaves them with, and what the product does instead?"
   },
   {
    "id": "readme/Q4",
@@ -60,7 +60,7 @@
   },
   {
    "id": "readme/Q8",
-   "what": "Looking at the figure of how the product works, does the reader see how it keeps each gain and what the opening's message says?"
+   "what": "Looking at how the product works, does the reader see how it keeps each gain and makes each condition behind the opening's problem hold?"
   },
   {
    "id": "readme/Q9",
@@ -297,9 +297,10 @@
   },
   {
    "id": "D29",
-   "what": "A condition behind the opening's message: each gap in the request",
+   "what": "A condition behind the opening's problem: each gap in the request",
    "contributes_to": [
-    "readme/Q3"
+    "readme/Q3",
+    "readme/Q8"
    ],
    "builds_on": [
     "D9",
@@ -319,9 +320,10 @@
   },
   {
    "id": "D30",
-   "what": "A condition behind the opening's message: what a work of its kind needs",
+   "what": "A condition behind the opening's problem: what a work of its kind needs",
    "contributes_to": [
-    "readme/Q3"
+    "readme/Q3",
+    "readme/Q8"
    ],
    "builds_on": [
     "D9",
@@ -339,9 +341,10 @@
   },
   {
    "id": "D31",
-   "what": "A condition behind the opening's message: whose judgment the work passes",
+   "what": "A condition behind the opening's problem: whose judgment the work passes",
    "contributes_to": [
-    "readme/Q3"
+    "readme/Q3",
+    "readme/Q8"
    ],
    "builds_on": [
     "D9",
@@ -358,9 +361,10 @@
   },
   {
    "id": "D32",
-   "what": "A condition behind the opening's message: who meets a shortfall",
+   "what": "A condition behind the opening's problem: who meets a shortfall",
    "contributes_to": [
-    "readme/Q3"
+    "readme/Q3",
+    "readme/Q8"
    ],
    "builds_on": [
     "D9",
@@ -377,7 +381,7 @@
   },
   {
    "id": "D33",
-   "what": "Whether the time to a work you put to use is a condition behind the opening's message",
+   "what": "Whether the time to a work you put to use is a condition behind the opening's problem",
    "contributes_to": [
     "readme/Q3"
    ],
@@ -397,7 +401,7 @@
   },
   {
    "id": "D34",
-   "what": "The opening's message: why Turn solves the problem where the usual way does not, in the reader's words",
+   "what": "The opening's problem and idea: what the usual way leaves the reader with, and what Turn does instead",
    "contributes_to": [
     "readme/Q3"
    ],
@@ -409,31 +413,14 @@
     "D32",
     "D33"
    ],
-   "decided": "Asked for a work in one prompt, an AI fills each gap in your request with a guess. It writes by its own idea of what such a work holds, and judges the work by what it meant. So you find what falls short only as you use the work, and mend it yourself. Turn asks you each decision that is yours, and finds the facts itself, before it makes anything. It makes the work by a best practice for that kind of work, such as one for READMEs, and has a fresh AI, which never saw your answers, read it as its user would. What falls short is made again before the work reaches you.",
+   "decided": "Problem: Asked for a work in one prompt, an AI fills each gap in your request with a guess. It writes by its own idea of what such a work holds, and judges the work by what it meant. So you find what falls short only as you use the work, and mend it yourself. Idea: Turn instead settles each decision of yours with you first, makes the work by a best practice for that kind of work, and has a fresh AI read it as its user would before you get it.",
    "settled_by": "reasoning",
    "grounds": [
-    "plugins/turn/core/domain/best-practices/readme/best-practice.json:88 \"From the conditions, decide the one message the reader must grasp\" / \"the README does not go through them one by one\"",
-    "plugins/turn/core/domain/best-practices/readme/best-practice.json:89 \"Put the message into a few plain sentences in the reader's words before drawing anything.\"",
-    "D10, settled by the user: the usual way and what Turn does differently",
-    "D29, D30, D31 and D32: the conditions it gathers; D33: no claim on time",
-    "plugins/turn/core/domain/best-practices/readme/best-practice.json:91 \"Read the opening as a newcomer deciding whether the product is for them. Cut or reword what they would stumble on\": the first sentence, three clauses long, is split; \"a best practice for its kind\" names the kind, which a newcomer does not yet know, by an example"
-   ]
-  },
-  {
-   "id": "D35",
-   "what": "What the opening shows beside the message's words, point by point",
-   "contributes_to": [
-    "readme/Q3"
-   ],
-   "builds_on": [
-    "D34"
-   ],
-   "decided": "One figure, the usual way above Turn, each as who does what to whom. The usual way: you pass a request with gaps to an AI; it hands you the work with each gap guessed, judged by what it meant; you find what falls short as you use it, and mend it. Turn: you give each decision of yours and confirm each fact it found; the work is made from them by the kind's best practice; a fresh AI reads it as its user would; what falls short goes back to be decided and made again; then the work reaches you. The best practice is a label on the figure and a sentence, with no excerpt, as no real run of either way gives one yet.",
-   "settled_by": "reasoning",
-   "grounds": [
-    "plugins/turn/core/domain/best-practices/readme/best-practice.json:90 \"who does what to whom as one figure of the usual way above the product, a difference in the work as a short excerpt of what each way makes from real runs, or else the sentence alone. Never use a table\"",
-    "D29, D31 and D32 are steps of one flow: who fills a gap, who judges the work, who meets a shortfall",
-    "D13: \"Not yet a real run, as Turn is being rebuilt\""
+    "plugins/turn/core/domain/best-practices/readme/best-practice.json:87 \"From the shortfalls, say the problem as what happens to the reader the usual way, in a few plain sentences in their words, not as how the product works.\"",
+    "plugins/turn/core/domain/best-practices/readme/best-practice.json:88 \"Say the idea in one sentence: what the product does differently that removes the problem.\"",
+    "D29, D30, D31 and D32: the usual way's shortfalls the problem tells; D33: no claim on time",
+    "D10, settled by the user: Turn \"settles the design with the user first, makes the work by its kind's best practice, and has an AI that did not make it judge it\"",
+    "the user, 2026-11-05: the opening says only what the reader needs to decide whether the product is for them; how the product meets each condition belongs to How it works"
    ]
   },
   {
@@ -504,16 +491,44 @@
    ],
    "builds_on": [
     "D10",
-    "D34",
-    "D35"
+    "D29",
+    "D30",
+    "D31",
+    "D32"
    ],
-   "decided": "You, Pin, the generator, the evaluator, the best practices, the design tree and the work, with what each does to another; Pin's line to you carries each fact it found to confirm and each decision of yours, so the figure shows where each point of the opening's message is kept. Nothing stands under it, as a convenience such as a run that stopped going on from its folder keeps no gain and nothing of the message, and the architecture's S3 carries it.",
+   "decided": "You, Pin, the generator, the evaluator, the best practices, the design tree and the work, with what each does to another; Pin's line to you carries the facts it found and your decisions, so each condition behind the opening's problem has lines that make it hold. Nothing stands under the figure but D35's explanation, as a convenience such as a run that stopped going on from its folder makes no condition hold, and the architecture's S3 carries it.",
    "settled_by": "reasoning",
    "grounds": [
-    "plugins/turn/core/domain/best-practices/readme/best-practice.json:127 \"Draw who does what to whom so that each gain and the opening's message hold\"",
-    "plugins/turn/core/domain/best-practices/readme/best-practice.json:129 \"Point to each gain and each condition behind the opening's message, and find the lines of the figure that make it hold. Where none does, mend the figure or the opening.\"",
-    "plugins/turn/images/how-it-works.svg names Pin's line to you only \"each point\", which does not show that Turn finds the facts itself (D29)",
+    "plugins/turn/core/domain/best-practices/readme/best-practice.json:128 \"Point to each gain and each condition, and find the lines of the figure that make it hold. Where none does, mend the figure or the promise.\"",
+    "plugins/turn/core/domain/best-practices/readme/best-practice.json:127 \"Take each condition, where the usual way falls short of it and what the product does, from the design, as Q3 digs them.\"",
+    "plugins/pin/core/roles/pinner.md:54-55 \"A fact is yours to find, never the person's to tell you\" / \"Find it with Read and Grep, then show it to them.\"",
     "the user, 2026-11-05: a convenience around the UX's core objective is the scope of the architecture's user stories, and must not change most of the UX, the README and the architecture each time"
+   ]
+  },
+  {
+   "id": "D35",
+   "what": "How it works' explanation: how the parts in the figure make each condition hold",
+   "contributes_to": [
+    "readme/Q8"
+   ],
+   "builds_on": [
+    "D14",
+    "D29",
+    "D30",
+    "D31",
+    "D32"
+   ],
+   "decided": "Each gap filled by a fact or your decision: Pin finds each fact it can, such as what your repository holds, and asks you to confirm it; it puts each decision that is yours to you, one at a time, and writes each into design-tree.json with who settled it. The work holds what its kind needs: the generator makes the work from the design by the best practice for its kind, whose template says what such a work holds. The work judged by what its user gets: the evaluator reads only the work and the kind's questions, never the design, and answers each as the work's user would. A shortfall mended before it reaches you: a question not met goes back to its decision through Pin, and the generator makes the work again; the work reaches you, not committed, only once every question is met.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "plugins/turn/core/domain/best-practices/readme/best-practice.json:129 \"Under the figure, say for each condition in a sentence or two, in the reader's words, how the parts of the figure make it hold.\"",
+    "plugins/pin/core/roles/pinner.md:54-55 \"A fact is yours to find, never the person's to tell you: what the repository holds, what a file says, what a tool does. Find it with Read and Grep, then show it to them.\"",
+    "plugins/pin/core/roles/pinner.md:45 \"`settled_by` is who settled it\"",
+    "dev/turn/ux.md:38 \"the decision, with a recommendation\"",
+    "dev/turn/architecture.md:7-8 \"The generator makes the work from the design, against the kind's best practice.\"",
+    "dev/turn/architecture.md:71-72 \"The evaluator reads the work and the Standard: the best practice's goal and questions\" / \"It never reads the design\"",
+    "dev/turn/architecture.md:10 \"A question not met goes back through Pin to its decision. Once every question is met, the rounds go on with how the work reads.\"",
+    "D14: the figure's parts and lines"
    ]
   },
   {
@@ -550,10 +565,10 @@
     "D14",
     "D15"
    ],
-   "decided": "The template's order: what Turn is, the status, whom it is for and the gain, the message of why Turn solves the problem where the usual way does not, with its figure, the non-goals; then Requirements, Installation, Walkthrough, How it works, Documentation, License. A reader who learns Turn is not for them stops after the opening; the Walkthrough comes after Installation, as it runs Turn installed.",
+   "decided": "The template's order: what Turn is, the status, whom it is for and the gain, the problem the usual way leaves the reader with and Turn's idea, the non-goals; then Requirements, Installation, Walkthrough, How it works with its figure and how each condition is met, Documentation, License. A reader who learns Turn is not for them stops after the opening; the Walkthrough comes after Installation, as it runs Turn installed.",
    "settled_by": "reasoning",
    "grounds": [
-    "plugins/turn/core/domain/best-practices/readme/template.md:1-17: the opening's slots in that order; readme/best-practice.json Q11 thinking: \"Order the README as the reader decides, from what every reader needs to what only a reader who has chosen the product needs\""
+    "plugins/turn/core/domain/best-practices/readme/template.md:1-13: the opening's slots in that order; readme/best-practice.json Q11 thinking: \"Order the README as the reader decides, from what every reader needs to what only a reader who has chosen the product needs\""
    ]
   },
   {
