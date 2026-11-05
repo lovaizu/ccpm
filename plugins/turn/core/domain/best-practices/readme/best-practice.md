@@ -14,27 +14,26 @@ Someone who meets the product for the first time starts using it, from the READM
 
 ## User benefits
 
-- **Q1** (the opening): Asked by a colleague what the product is, does the reader answer in one sentence that tells what it does?
+- **Q1** (the opening): Asked by a colleague after reading the opening once, does the reader tell from memory what the product does, for whom, and what it does not do?
 - **Q2** (the opening): Reading the gain, does the reader tell what the product would let them do, and so whether it is for them?
-- **Q3** (the opening): Asked by a colleague why this product and not another way of doing the same work, does the reader name what it does differently that brings the gain?
-- **Q4** (the opening): Before installing, does the reader see what the product does not do that they might expect of it?
-- **Q5** (the opening): Before installing, does the reader see where the product is not yet fit for use?
+- **Q3** (the opening): Before installing, does the reader see what the product does not do that they might expect of it?
+- **Q4** (the opening): Before installing, does the reader see where the product is not yet fit for use?
+- **Q5** (Requirements, Installation): Starting with nothing set up, does the reader install the product by the README's steps alone, and see that it works?
 - **Q6** (the opening, Walkthrough): After the walkthrough, does the reader see that the product would give them, on work of their own, the gain the opening promised?
-- **Q7** (Requirements, Installation): Starting with nothing set up, does the reader install the product by the README's steps alone, and see that it works?
-- **Q8** (the opening, How it works): Looking at the figure of how the product works, does the reader see how it keeps each gain and the idea?
-- **Q9** (Documentation): Needing more than the README gives, such as fuller use or help, does the reader find where to go next?
-- **Q10** (License): Weighing whether they may use the product, does the reader find the terms for them and their team?
-- **Q11** (the whole): Reading from the top, does the reader find each answer just when they come to need it, so they can stop once they have what they came for?
+- **Q7** (How it works): Weighing the product against what they would do without it, does the reader see why the product removes the problem that way leaves them with, and that it really does?
+- **Q8** (Documentation): Needing more than the README gives, such as fuller use or help, does the reader find where to go next?
+- **Q9** (License): Weighing whether they may use the product, does the reader find the terms for them and their team?
+- **Q10** (the whole): Reading from the top, does the reader find each answer just when they come to need it, so they can stop once they have what they came for?
 
 ## Practices
 
-### Q1: Asked by a colleague what the product is, does the reader answer in one sentence that tells what it does?
+### Q1: Asked by a colleague after reading the opening once, does the reader tell from memory what the product does, for whom, and what it does not do?
 
-**Thinking**: Write one sentence on its own line under the title that names the kind of thing the product is and what it does, in words the reader already uses and with no feature name or mechanism, as the reader then can say it again to a colleague.
+**Thinking**: Write the opening as a few short sentences the reader can say again from memory: under the title, one sentence that names the kind of thing the product is and what it does, in words the reader already uses and with no feature name or mechanism, then whom it is for, where it is not yet fit for use and what it does not do, as a reader who meets the product passes it on by what they remember of the opening.
 
 **Steps**
 
-1. Where a colleague who hears only the sentence could not say what the product does, replace each vague or praising word with what it does.
+1. Read only the opening, put it away, and say it as to a colleague. Where a part is lost or comes out otherwise, shorten it, or replace each vague or praising word with what the product does.
 
 ### Q2: Reading the gain, does the reader tell what the product would let them do, and so whether it is for them?
 
@@ -44,16 +43,7 @@ Someone who meets the product for the first time starts using it, from the READM
 
 1. Where a reader outside that group could not tell from it that the product is not for them, name the group and the work more closely.
 
-### Q3: Asked by a colleague why this product and not another way of doing the same work, does the reader name what it does differently that brings the gain?
-
-**Thinking**: Name the other way of doing the same work, and say in one paragraph what the product does instead that brings the gain, as the reader weighs the product against what they would do without it.
-
-**Steps**
-
-1. Find the other way in what the reader would do if the product did not exist, doing nothing among it.
-2. Where the reader could not say the difference to a colleague in their own words, replace each word that only praises with what the product does.
-
-### Q4: Before installing, does the reader see what the product does not do that they might expect of it?
+### Q3: Before installing, does the reader see what the product does not do that they might expect of it?
 
 **Thinking**: List only what a reader could reasonably expect of the product and it does not do, as a reader who needs it then learns that before they install.
 
@@ -61,9 +51,19 @@ Someone who meets the product for the first time starts using it, from the READM
 
 1. Gather what readers might expect from similar products and from what readers ask, and ask the user whether each is in or out.
 
-### Q5: Before installing, does the reader see where the product is not yet fit for use?
+### Q4: Before installing, does the reader see where the product is not yet fit for use?
 
 **Thinking**: Where the product is not yet fit for use, such as a release still in development or one no longer kept up, say so at the top, as a reader who starts on it otherwise finds out only once their work rests on it.
+
+### Q5: Starting with nothing set up, does the reader install the product by the README's steps alone, and see that it works?
+
+**Thinking**: Write the requirements and the install steps for a reader who has nothing set up, and try them that way, as the author's own setup hides the gaps.
+
+**Steps**
+
+1. Give even a common install step as a command to copy.
+2. From a machine or sandbox where nothing the product needs is in place, follow the steps as written and do nothing they do not say.
+3. Where a step fails, or needs what the README does not say, write it in and start again.
 
 ### Q6: After the walkthrough, does the reader see that the product would give them, on work of their own, the gain the opening promised?
 
@@ -76,26 +76,18 @@ Someone who meets the product for the first time starts using it, from the READM
 3. Take each exchange, what the user gives and what the product shows, from the record of a real run in the form the reader sees it: text in a code block of its language, and a screen as an image taken from the run, cutting only what the reader does not need to see the result.
 4. Where the result does not show the gain the opening promised, pick another piece of work or another scenario.
 
-### Q7: Starting with nothing set up, does the reader install the product by the README's steps alone, and see that it works?
+### Q7: Weighing the product against what they would do without it, does the reader see why the product removes the problem that way leaves them with, and that it really does?
 
-**Thinking**: Write the requirements and the install steps for a reader who has nothing set up, and try them that way, as the author's own setup hides the gaps.
-
-**Steps**
-
-1. Give even a common install step as a command to copy.
-2. From a machine or sandbox where nothing the product needs is in place, follow the steps as written and do nothing they do not say.
-3. Where a step fails, or needs what the README does not say, write it in and start again.
-
-### Q8: Looking at the figure of how the product works, does the reader see how it keeps each gain and the idea?
-
-**Thinking**: Draw who does what to whom so that each gain and the idea hold, in as much detail as a reader new to the product can follow, as a reader trusts a promise they see kept.
+**Thinking**: Show in How it works, figure by figure, the problem that what the reader would do without the product leaves them with and how the product removes it, each figure with a sentence or two under it, choosing each figure by where the product's edge lies, as the reader trusts the product only once they see why it works and that it does, and a figure alone can be read otherwise.
 
 **Steps**
 
-1. Point to each gain and the idea, and find the lines of the figure that keep it. Where none does, mend the figure or the promise.
-2. Leave each non-goal to the opening, as a figure shows what the product does.
+1. Take the reader's problem from the objectives of the product's UX, and the usual way from what the reader would do if the product did not exist, doing nothing among it.
+2. Find each place where the usual way leaves the problem unsolved, such as what the objective's key results count against it, and for each, what the product does that removes it, from the design. Ask the user each one the design does not settle.
+3. For each place, draw what shows the product removing it: a measure where the edge is measured, such as a benchmark; the same work done both ways where one example shows it; who does what to whom where the edge lies in the design. Let one figure serve places one picture shows together.
+4. Move to a linked page what needs a long sequence of figures, and keep in the README the figure for each place.
 
-### Q9: Needing more than the README gives, such as fuller use or help, does the reader find where to go next?
+### Q8: Needing more than the README gives, such as fuller use or help, does the reader find where to go next?
 
 **Thinking**: Keep in the README what the reader needs to decide and to start, and link one place for each need that comes after, such as fuller use or help, as a README that holds everything is not read.
 
@@ -103,7 +95,7 @@ Someone who meets the product for the first time starts using it, from the READM
 
 1. Open each link.
 
-### Q10: Weighing whether they may use the product, does the reader find the terms for them and their team?
+### Q9: Weighing whether they may use the product, does the reader find the terms for them and their team?
 
 **Thinking**: Name the license and link its full text, as a reader may rule the product out by its license alone.
 
@@ -111,9 +103,9 @@ Someone who meets the product for the first time starts using it, from the READM
 
 1. Open the link, and check that it reaches the license the name says.
 
-### Q11: Reading from the top, does the reader find each answer just when they come to need it, so they can stop once they have what they came for?
+### Q10: Reading from the top, does the reader find each answer just when they come to need it, so they can stop once they have what they came for?
 
-**Thinking**: Order the README as the reader decides, from what every reader needs to what only a reader who has chosen the product needs, as each reader then stops once they have what they came for.
+**Thinking**: Order the README so that each reader stops once they have what they came for: the opening for every reader, the installation for one who has chosen the product, the walkthrough and How it works for one still weighing it, and what comes after through links, as a reader who must pass what they do not need leaves before what they do.
 
 **Steps**
 

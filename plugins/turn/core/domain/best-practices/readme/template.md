@@ -6,10 +6,6 @@
 
 `<Product>` is for you when `<your situation>`. With it, you `<gain>`.
 
-`<The usual way>`. `<Product>` instead `<idea>`.
-
-![The usual way and the product](images/template-idea.svg)
-
 **Non-goals**
 
 - `<Product>` does not `<expectation>`.
@@ -22,11 +18,6 @@
 >   optional.
 > - `<your situation>`: the work the reader wants done.
 > - `<gain>`: what the reader can then do.
-> - `<The usual way>`: how the same work goes without the product, and where it falls short.
-> - `<idea>`: what the product does differently that brings the gain, in one sentence.
-> - The figure: the deliverable's own at images/idea.svg, the product named in its alt text: the
->   usual way above the product, each as who does what to whom, so the reader sees where the usual
->   way falls short and what the product does there instead.
 > - `<expectation>`: each thing a reader might expect of the product that it does not do; optional.
 
 ## Requirements
@@ -78,17 +69,27 @@ At the end, you have `<result>`.
 
 ## How it works
 
+`<problem>`
+
 ![How the product works](images/template-how-it-works.svg)
 
-- `<point>`.
+`<how it removes it>`
+
+[`<title>`](<path>)
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - The figure: the deliverable's own at images/how-it-works.svg, the product named in its alt text:
->   the user, the product's parts and what they pass, each by its name, with what each does to
->   another.
-> - `<point>`: each point a gain or the idea needs that the figure cannot show, in one sentence;
->   optional. A convenience, such as going on with a run that stopped, is no point here.
+> - `<problem>`: what the reader is left with the way they would do the work without the product,
+>   in one or two sentences.
+> - The figure: one for each place where that way leaves the problem unsolved, or for several that
+>   one picture shows together, at images/`<name>`.svg, the product named in its alt text: a
+>   measure, such as a benchmark, where the edge is measured; the same work done both ways where one
+>   example shows it; or, as the skeleton here, the user, the product's parts and what they pass,
+>   each by its name, where the edge lies in the design.
+> - `<how it removes it>`: under each figure, how what it shows removes that part of the problem, in
+>   one or two sentences.
+> - `<title>`, `<path>`: the page that explains it further, where it needs a long sequence of
+>   figures; optional.
 
 ## Documentation
 
