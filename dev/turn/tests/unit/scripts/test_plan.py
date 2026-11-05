@@ -322,6 +322,21 @@ class Practices(helpers.testing.FolderTest):
         self.assertEqual(code, 1)
         self.assertIn(f"plan.py: {self.path}: {practices.faults(data)[0]}", err)
 
+    def test_form_holds_the_questions_to_the_template_beside_it(self):
+        data = copy.deepcopy(DATA)
+        del data["parts"]
+        for question in data["benefits"]:
+            question["about"] = "the whole"
+        self.write_json(self.path, data)
+        self.write(os.path.join(self.base, "kind-template.md"), "# <P>\n\n## Use\n")
+        ran("markdown", self.path)
+        code, _, err = ran("form", self.path)
+        self.assertEqual(code, 1)
+        self.assertIn(f"plan.py: {self.path}: section Use has no question about it", err)
+        self.assertIn(
+            "[kind-template.md](kind-template.md)", self.read(os.path.join(self.base, "kind.md"))
+        )
+
     def test_form_fails_on_a_json_out_of_its_schema(self):
         self.write_json(self.path, {"goal": "g"})
         code, _, err = ran("form", self.path)

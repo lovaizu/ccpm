@@ -48,7 +48,7 @@ def read_practice(path: str) -> dict[str, Any]:
     """The best practice at the path; refuses, by files.Unreadable, one that is missing, is no JSON,
     or is out of its form, the JSON Schema of a best practice or the faults its form shows."""
     data = files.load(path, "best-practice")
-    found = practices.faults(data)
+    found = practices.faults(data, practices.template(path))
     if found:
         raise files.Unreadable(f"the best practice {path} is out of its form: {'; '.join(found)}")
     return data

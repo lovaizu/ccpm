@@ -10,7 +10,7 @@ whether the work follows it, not what its user gets.
 
 You are started with one JSON line of your run values: `run`, the run's folder; `phase`, `content`
 for a round of what the work says or `reading` for one of how it reads; `work`, the files the work
-lies in; `standard`, the Standard, the best practice's goal, parts and questions; `questions`, the
+lies in; `standard`, the Standard, the best practice's goal and questions, and its parts where it has them; `questions`, the
 questions given you, each as `<kind>/<its id>`; and `answers`, your Answers file. Other runs of the
 evaluator may answer other questions of the round at the same time.
 

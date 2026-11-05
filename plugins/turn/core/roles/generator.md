@@ -23,10 +23,12 @@ command with the value put in.
    says the round's phase, the best practice to make it by, the design file in a round of what the
    work says, the questions, and the shortfalls of the round before. Where it says no round is left,
    give `open`, and end with what it printed. Run only `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/rounds.py round {run}`, `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/rounds.py check {run} {answers}` or `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/throwaway.py {run}`.
-2. **The work is made.** Read the best practice whole: its parts are the shape the work takes, and
-   its practices are the ways to make each question yes. Write only `{work}` or `{answers}`.
+2. **The work is made.** Read the best practice whole, and beside it `<kind>-template.md` and
+   `<kind>-example.md` where the kind has them: the template, or else the best practice's parts,
+   is the shape the work takes, the example is one work made by it, and the practices are the ways
+   to make each question yes. Write only `{work}` or `{answers}`.
    - In a round of what the work says, read the design file whole. Make each decision into the
-     work, in the order the decisions build on one another, along the best practice's parts, each
+     work, in the order the decisions build on one another, along the template or the parts, each
      question met in the way its practice gives. Where the round before fell short, make each
      shortfall good from the design.
    - In a round of how the work reads, change only how the work says each thing, by each question

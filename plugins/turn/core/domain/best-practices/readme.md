@@ -4,30 +4,21 @@
 
 From the README alone, someone who meets the product for the first time starts using it only when it serves their work.
 
-## Parts
+## Template
 
-- **summary**: The product's name first, and under it one sentence that says what kind of thing the product is and what it does.
-- **gain**: The paragraph after the summary: whom the product is for and what they gain with it.
-- **idea**: After the gain: the idea that makes the gain possible, in a paragraph. Where the idea has parts: how they fit together, and each part with what it is and what it ensures for the reader.
-- **non-goals**: At the end of the opening, before anything about installing: each thing the product does not do that a reader might expect of it, set apart so the reader sees it as what the product does not do.
-- **requirements**: Each thing that must be in place before installing.
-- **installation**: The steps that install the product.
-- **walkthrough**: One real run of the use most readers come for, shown as the product ran it: what the user gave and what the product showed, up to the result.
-- **how-it-works**: One figure of the user, the product's parts and the things they pass, each shown by its name only, and the action or intent of each toward another, so a reader sees at a glance how the opening's promises are kept. Under it stand only the points and what the figure cannot show.
-- **links**: Where to read next: for users, the documents for fuller use; apart from them, for those who change the product, the development documents.
-- **license**: The license's name, linked to its full text.
+[readme-template.md](readme-template.md)
 
 ## Benefits
 
-- **Q1** (summary): When a colleague asks what the product is, can the reader answer in one sentence that tells them what it does?
-- **Q2** (gain): Reading the gain, can the reader tell what the product would let them do, and so whether it is for them?
-- **Q3** (gain, idea): When a colleague asks why this product and not another way of doing the same work, can the reader name what it does differently that brings the gain?
-- **Q4** (non-goals): Before installing, can the reader tell what the product does not do that they might have expected of it?
-- **Q5** (gain, walkthrough): After the walkthrough, can the reader tell that the product would give them, on work of their own, the gain the opening promised?
-- **Q6** (requirements, installation): Starting with nothing set up, can the reader install the product by the README's steps alone, and tell that it works?
-- **Q7** (gain, idea, how-it-works): For each gain and the idea, can the reader see in the figure of how the product works how the product keeps it?
-- **Q8** (links): When the reader needs more than the README gives, such as fuller use or a change to the product, can they tell from it where to read next?
-- **Q9** (license): Can the reader tell from the README the terms on which they and their team may use the product?
+- **Q1** (the opening): When a colleague asks what the product is, can the reader answer in one sentence that tells them what it does?
+- **Q2** (the opening): Reading the gain, can the reader tell what the product would let them do, and so whether it is for them?
+- **Q3** (the opening): When a colleague asks why this product and not another way of doing the same work, can the reader name what it does differently that brings the gain?
+- **Q4** (the opening): Before installing, can the reader tell what the product does not do that they might have expected of it?
+- **Q5** (the opening, Walkthrough): After the walkthrough, can the reader tell that the product would give them, on work of their own, the gain the opening promised?
+- **Q6** (Requirements, Installation): Starting with nothing set up, can the reader install the product by the README's steps alone, and tell that it works?
+- **Q7** (the opening, How it works): For each gain and the idea, can the reader see in the figure of how the product works how the product keeps it?
+- **Q8** (Documentation): When the reader needs more than the README gives, such as fuller use, can they tell from it where to read next?
+- **Q9** (License): Can the reader tell from the README the terms on which they and their team may use the product?
 - **Q10** (the whole): Reading from the top, does the reader find each answer just when they come to need it, so they can stop as soon as they have what they came for?
 
 ## Practices
@@ -144,7 +135,7 @@ From the README alone, someone who meets the product for the first time starts u
 - [System context diagram](https://c4model.com/diagrams/system-context), C4 model, c4model.com, no date: "The focus should be on people (actors, roles, personas, etc) and software systems rather than technologies, protocols and other low-level details."
 - [System context diagram](https://c4model.com/diagrams/system-context), C4 model, c4model.com, no date: "It’s the sort of diagram that you could show to non-technical people."
 
-### Q8: When the reader needs more than the README gives, such as fuller use or a change to the product, can they tell from it where to read next?
+### Q8: When the reader needs more than the README gives, such as fuller use, can they tell from it where to read next?
 
 **Thinking**: The README holds what the reader needs to decide and to start, and points to one place for each need that comes after.
 
@@ -180,8 +171,8 @@ From the README alone, someone who meets the product for the first time starts u
 
 **Steps**
 
-1. Read the README from the top as someone who meets the product for the first time, and after each part, write the question the reader now has.
-2. Check that the next part answers that question. Move a part that answers a later one.
+1. Read the README from the top as someone who meets the product for the first time, and after each section, write the question the reader now has.
+2. Check that the next part answers that question. Move a section that answers a later one.
 3. Cut what no reader needs at the point where it stands, or move it to the document a link leads to.
 
 **Grounds**

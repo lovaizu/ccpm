@@ -335,7 +335,74 @@ class Sources(unittest.TestCase):
             practices.sources(DATA, failing(TypeError("a bug")))
 
 
+TEMPLATE = """# <Product>
+
+<!-- Delete every comment once the document is written. -->
+
+<Product> is <kind>.
+
+## Roles
+
+### <role>
+
+## OKRs
+"""
+SECTIONS = ["the opening", "Roles", "OKRs"]
+BY_TEMPLATE = {
+    "goal": "The reader gets it.",
+    "benefits": [
+        {"id": "Q1", "about": "the opening, Roles", "what": "Does it?"},
+        {"id": "Q2", "about": "OKRs, the whole", "what": "Does all?"},
+    ],
+    "practices": DATA["practices"],
+}
+
+
+class Sections(unittest.TestCase):
+    def test_the_opening_and_each_second_level_heading(self):
+        self.assertEqual(practices.sections(TEMPLATE), SECTIONS)
+
+    def test_no_opening_where_only_the_title_and_comments_stand_before_the_first_section(self):
+        bare = "# <Product> UX\n\n<!-- Delete. -->\n\n## Roles\n"
+        self.assertEqual(practices.sections(bare), ["Roles"])
+
+
+class FaultsByTemplate(unittest.TestCase):
+    def by(self, change=lambda d: None):
+        data = copy.deepcopy(BY_TEMPLATE)
+        change(data)
+        return practices.faults(data, SECTIONS)
+
+    def test_questions_about_its_sections_have_none(self):
+        self.assertEqual(self.by(), [])
+
+    def test_about_what_is_no_section(self):
+        def wrong(d):
+            d["benefits"][0]["about"] = "the opening, Scenarios, Roles"
+
+        self.assertEqual(
+            self.by(wrong), ["Q1 is about Scenarios, which is no section of the template"]
+        )
+
+    def test_a_section_no_question_is_about(self):
+        def narrow(d):
+            d["benefits"][0]["about"] = "Roles"
+
+        self.assertEqual(self.by(narrow), ["section the opening has no question about it"])
+
+    def test_parts_beside_the_template(self):
+        def add(d):
+            d["parts"] = [{"id": "Roles", "what": "R."}]
+
+        self.assertEqual(self.by(add), ["parts are kept, though the template holds the form"])
+
+
 class Markdown(unittest.TestCase):
+    def test_links_the_template_the_form_is_in(self):
+        text = practices.markdown("kind", BY_TEMPLATE, template=True)
+        self.assertIn("## Template\n\n[kind-template.md](kind-template.md)\n", text)
+        self.assertNotIn("## Template", practices.markdown("kind", DATA))
+
     def test_holds_each_part_question_and_method_under_its_question(self):
         text = practices.markdown("kind", DATA)
         expected = ["# kind", "The reader gets it.", "## Parts", "- **a**: A.", "  - **b**: B."]

@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "best practice",
-  "description": "A kind's best practice: its goal, the parts a good work of the kind has, the questions such a work answers yes to, and a way to make each question yes. The Standard is its goal, parts and questions alone.",
+  "description": "A kind's best practice: its goal, the parts a good work of the kind has where no template beside it, <kind>-template.md, holds them, the questions such a work answers yes to, and a way to make each question yes. The Standard is its goal, parts and questions alone.",
   "type": "object",
   "required": [
     "goal",

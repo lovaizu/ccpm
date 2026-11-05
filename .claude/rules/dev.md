@@ -43,17 +43,22 @@ best practices / skill authoring best practices) and the official plugins.
 
 ### 1. Write the UX
 
-**Write `dev/<plugin>/ux.md` with `ux.json` open. Have the user agree to it before you make
-anything else.**
+**Settle the UX's decisions in `dev/<plugin>/design-tree.json`, the plugin's one design tree, with
+`ux.json` open. Write `dev/<plugin>/ux.md` from the tree by `ux-template.md`. Have the user agree to
+it before you make anything else.** Do the same for each document after it: its questions and
+decisions go into the same tree, and the document is written from them by its kind's template.
 
+- Rationale: each sentence of a document then rests on a decision of the tree, and two documents
+  that rest on one decision say the same thing. The template holds each document to what its
+  reader needs, as an AI told only to be brief still writes past it.
 - Rationale: the README takes two things from the UX: what the user gains, and the scenario that
   its walkthrough runs. The architecture says how the plugin gives the UX. If you make them before
   the UX, they rest on a goal that the user has not agreed to.
 
 ### 2. Write the README
 
-**Write `plugins/<plugin>/README.md` from the UX with `readme.json` open. Have the user agree to it
-before you make the architecture.**
+**Write `plugins/<plugin>/README.md` from the UX with `readme.json` open, as step 1 says. Have the
+user agree to it before you make the architecture.**
 
 - Rationale: everything after the README is built to what it promises the user. Built before it,
   that work would stand on a measure that no one has settled.

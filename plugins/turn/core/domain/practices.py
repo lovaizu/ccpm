@@ -16,8 +16,12 @@ import urllib.request
 from collections.abc import Callable
 from typing import Any
 
-# What the about of a question may name beside the parts: the whole deliverable.
+# What the about of a question may name beside the parts or sections: the whole deliverable.
 WHOLE = "the whole"
+# The section of a template before its first heading under the title.
+OPENING = "the opening"
+SECTION = re.compile(r"^## (.+)$", re.MULTILINE)
+COMMENT = re.compile(r"<!--.*?-->", re.DOTALL)
 GROUND = ("title", "url", "by", "quote")
 # The marks a page may write for one another: curly and plain quotes, and every dash.
 SAME = (("\u2018\u2019\u2032", "'"), ("\u201c\u201d\u2033", '"'), ("\u2013\u2014\u2212", "-"))
@@ -52,6 +56,25 @@ def leaf_ids(items: list[dict[str, Any]]) -> list[str]:
     return found
 
 
+def sections(template: str) -> list[str]:
+    """The sections of a template a question may be about: the opening, where text stands between
+    the title and the first heading under it, then each heading under the title, in order."""
+    first = SECTION.search(template)
+    before = COMMENT.sub("", template[: first.start() if first else len(template)])
+    said = [line for line in before.splitlines()[1:] if line.strip()]
+    return ([OPENING] if said else []) + SECTION.findall(template)
+
+
+def template(path: str) -> list[str] | None:
+    """The sections of the template beside the best practice at the path, `<kind>-template.md`, or
+    None where the kind has none."""
+    try:
+        with open(path.removesuffix(".json") + "-template.md", encoding="utf-8") as f:
+            return sections(f.read())
+    except FileNotFoundError:
+        return None
+
+
 def texts(value: Any) -> list[str]:
     """Each string in the value at any depth, but a ground's, whose words are its source's."""
     if isinstance(value, str):
@@ -63,20 +86,25 @@ def texts(value: Any) -> list[str]:
     return []
 
 
-def faults(data: dict[str, Any]) -> list[str]:
+def faults(data: dict[str, Any], template: list[str] | None = None) -> list[str]:
     """Each fault of the best practice's form, in words: questions numbered in their order, each
-    about a part it has or the whole, every part and the whole asked of, each question with one
-    practice in the same order, each ground whole, and each question named in the text one that is
-    there."""
+    about a part it has, a section of its template where it has one, or the whole, every part or
+    section and the whole asked of, each question with one practice in the same order, each ground
+    whole, and each question named in the text one that is there."""
     found = []
-    ids = part_ids(data.get("parts", []))
+    if template is None:
+        ids, leaves, what = part_ids(data.get("parts", [])), leaf_ids(data.get("parts", [])), "part"
+    else:
+        ids, leaves, what = template, template, "section"
+        if "parts" in data:
+            found.append("parts are kept, though the template holds the form")
     # Each id counts once or more in ids, which it is taken from.
     for part in sorted({i for i in ids if ids.count(i) > 1}):  # pragma: no mutate
-        found.append(f"part {part} is named more than once")
+        found.append(f"{what} {part} is named more than once")
     named_parts = {a.strip() for q in data["benefits"] for a in q["about"].split(",")}
-    for part in leaf_ids(data.get("parts", [])):
+    for part in leaves:
         if part not in named_parts:
-            found.append(f"part {part} has no question about it")
+            found.append(f"{what} {part} has no question about it")
     if WHOLE not in named_parts:
         found.append(f"no question is about {WHOLE}")
     questions = [q["id"] for q in data["benefits"]]
@@ -86,7 +114,8 @@ def faults(data: dict[str, Any]) -> list[str]:
     for q in data["benefits"]:
         for about in (a.strip() for a in q["about"].split(",")):
             if about != WHOLE and about not in ids:
-                found.append(f"{q['id']} is about {about}, which is no part")
+                where = "part" if template is None else "section of the template"
+                found.append(f"{q['id']} is about {about}, which is no {where}")
     answered = [p["benefit"] for p in data["practices"]]
     if answered != questions:
         found.append(f"practices meet {', '.join(answered)}, not each question once in its order")
@@ -188,11 +217,13 @@ def ground(item: dict[str, str]) -> str:
     return f'- [{item["title"]}]({item["url"]}), {item["by"]}: "{item["quote"]}"'
 
 
-def markdown(kind: str, data: dict[str, Any]) -> str:
-    """The best practice of the kind as Markdown: its goal, parts and benefits, then the practice
-    for each benefit, under the question it meets."""
+def markdown(kind: str, data: dict[str, Any], template: bool = False) -> str:
+    """The best practice of the kind as Markdown: its goal, its template or its parts, and its
+    benefits, then the practice for each benefit, under the question it meets."""
     questions = {q["id"]: q for q in data["benefits"]}
     out = [f"# {kind}", "", "## Goal", "", data["goal"]]
+    if template:
+        out += ["", "## Template", "", f"[{kind}-template.md]({kind}-template.md)"]
     if data.get("parts"):
         out += ["", "## Parts", "", *parts(data["parts"])]
     out += ["", "## Benefits", ""]

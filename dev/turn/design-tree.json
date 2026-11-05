@@ -1,0 +1,307 @@
+{
+ "goal": {
+  "what": "The requester gets a work they put to use as handed over, having decided only what is theirs.",
+  "grounds": [
+   "Agreed with the user, 2026-11-05, when the UX example was shown: O1 of plugins/turn/core/domain/best-practices/ux-example.md."
+  ]
+ },
+ "questions": [
+  {
+   "id": "ux/Q1",
+   "what": "Does the developer find each one who comes to the product with a want of their own, and an objective for that want, so they leave out nothing the product's users want?"
+  },
+  {
+   "id": "ux/Q2",
+   "what": "Reading an objective, does the developer know which role it is for and what that role gets from the product?"
+  },
+  {
+   "id": "ux/Q3",
+   "what": "Weighing a piece of work, can the developer tell which one objective it brings closer, or that it brings none closer?"
+  },
+  {
+   "id": "ux/Q4",
+   "what": "After a change, can the developer tell from the key results whether to keep it?"
+  },
+  {
+   "id": "ux/Q5",
+   "what": "For each objective, can the developer follow, exchange by exchange, how its role goes from asking the product to having what the objective says?"
+  },
+  {
+   "id": "ux/Q6",
+   "what": "Can the developer change how the product works inside, while its roles see the same, and leave the UX as it is?"
+  },
+  {
+   "id": "readme/Q1",
+   "what": "When a colleague asks what the product is, can the reader answer in one sentence that tells them what it does?"
+  },
+  {
+   "id": "readme/Q2",
+   "what": "Reading the gain, can the reader tell what the product would let them do, and so whether it is for them?"
+  },
+  {
+   "id": "readme/Q3",
+   "what": "When a colleague asks why this product and not another way of doing the same work, can the reader name what it does differently that brings the gain?"
+  },
+  {
+   "id": "readme/Q4",
+   "what": "Before installing, can the reader tell what the product does not do that they might have expected of it?"
+  },
+  {
+   "id": "readme/Q5",
+   "what": "After the walkthrough, can the reader tell that the product would give them, on work of their own, the gain the opening promised?"
+  },
+  {
+   "id": "readme/Q6",
+   "what": "Starting with nothing set up, can the reader install the product by the README's steps alone, and tell that it works?"
+  },
+  {
+   "id": "readme/Q7",
+   "what": "For each gain and the idea, can the reader see in the figure of how the product works how the product keeps it?"
+  },
+  {
+   "id": "readme/Q8",
+   "what": "When the reader needs more than the README gives, such as fuller use, can they tell from it where to read next?"
+  },
+  {
+   "id": "readme/Q9",
+   "what": "Can the reader tell from the README the terms on which they and their team may use the product?"
+  },
+  {
+   "id": "readme/Q10",
+   "what": "Reading from the top, does the reader find each answer just when they come to need it, so they can stop as soon as they have what they came for?"
+  }
+ ],
+ "decisions": [
+  {
+   "id": "D1",
+   "what": "Who comes to Turn with a want of their own?",
+   "contributes_to": [
+    "ux/Q1",
+    "ux/Q2"
+   ],
+   "builds_on": [],
+   "decided": "One role, the requester: one who asks Turn for a work, such as a README, and decides what is theirs. A person and an AI that asks for a person want the same, so they are one role. Turn's own parts and the plugins it runs on want nothing of their own, so none is a role.",
+   "settled_by": "user",
+   "grounds": [
+    "Agreed with the user, 2026-11-05, when the UX example was shown: \"Users are roles, not person vs AI: Turn has one role, the requester.\"",
+    "ux.json Q1 thinking: \"Roles are cut by the want each brings to the product, not by what kind of thing takes them\""
+   ]
+  },
+  {
+   "id": "D2",
+   "what": "The requester's objective, as one line with the role as its subject and no mechanism",
+   "contributes_to": [
+    "ux/Q2",
+    "ux/Q3"
+   ],
+   "builds_on": [
+    "D1"
+   ],
+   "decided": "O1: The requester gets a work they put to use as handed over, having decided only what is theirs.",
+   "settled_by": "user",
+   "grounds": [
+    "Agreed with the user, 2026-11-05, when the UX example was shown."
+   ]
+  },
+  {
+   "id": "D3",
+   "what": "How do success and failure of O1 show in what the requester does?",
+   "contributes_to": [
+    "ux/Q4"
+   ],
+   "builds_on": [
+    "D2"
+   ],
+   "decided": "O1 fails where the requester changes the work before they first put it to use, themselves or by asking; where they never put it to use; and where they are asked a point that is not theirs, such as a fact Turn could find. It succeeds where they put it to use as handed over.",
+   "settled_by": "research",
+   "grounds": [
+    "ux.json Q4 step 1: \"List how success or failure would show in what the role does or feels, such as giving up, undoing a result or working around the product.\""
+   ]
+  },
+  {
+   "id": "D4",
+   "what": "O1's key results",
+   "contributes_to": [
+    "ux/Q4"
+   ],
+   "builds_on": [
+    "D3"
+   ],
+   "decided": "KR1.1: of the works the requester asks for, the share that goes wrong in a way of D3; lower is better. KR1.2: the time from the request to a work they put to use; shorter is better. A share counts a work once, however many ways it goes wrong. KR1.1 cannot get better by asking the requester everything, as a point not theirs counts against it, nor by handing over works never used, as those count too.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "ux.json Q4 step 3: \"Ask whether both key results could get better while the role still does not get what the objective says.\""
+   ]
+  },
+  {
+   "id": "D5",
+   "what": "What does the UX show, and what does it leave to the README and the architecture?",
+   "contributes_to": [
+    "ux/Q5",
+    "ux/Q6"
+   ],
+   "builds_on": [
+    "D1"
+   ],
+   "decided": "Only what the requester does, sees and receives: the request, the purpose to confirm, each fact to confirm and each decision of theirs, the design to approve, a decision that comes up while the work is made, and the work handed over. Turn is one participant; its parts, and the plugins it runs on, such as Pin and Lane, are not named.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "ux.json Q6 thinking: \"the UX says only what its roles mean to do, see and receive\""
+   ]
+  },
+  {
+   "id": "D6",
+   "what": "What work does the scenario make?",
+   "contributes_to": [
+    "ux/Q5"
+   ],
+   "builds_on": [
+    "D5"
+   ],
+   "decided": "A README for `tidy`, a command-line tool that sorts a Downloads folder: a kind Turn knows, as most requests will be, and the work of the README's walkthrough, so the developer meets one example across both documents.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "ux.json Q5 thinking: \"one run of the main path to the objective, the one most of its role take\""
+   ]
+  },
+  {
+   "id": "D7",
+   "what": "O1's main path",
+   "contributes_to": [
+    "ux/Q5"
+   ],
+   "builds_on": [
+    "D5",
+    "D6"
+   ],
+   "decided": "The requester asks for the work. Turn puts its purpose to confirm. Until no decision is open, Turn puts each fact it found to confirm and each decision of the requester's with a recommendation, one at a time. Turn shows the design to approve. Until the work meets every question, Turn makes it, or makes it again, and puts a decision of the requester's that comes up. Turn hands the work over, not committed. Headed \"O1: The requester has a README made for tidy\".",
+   "settled_by": "reasoning",
+   "grounds": [
+    "ux.json Q5 step 3: \"the first message is the role's request, the last gives the role the end, and each moves toward it.\""
+   ]
+  },
+  {
+   "id": "D8",
+   "what": "What Turn is and what it does, in one sentence",
+   "contributes_to": [
+    "readme/Q1"
+   ],
+   "builds_on": [
+    "D2"
+   ],
+   "decided": "A Claude Code plugin that makes a work you ask for, such as a README, and asks you only the decisions that are yours.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "O1 of the UX: \"having decided only what is theirs\"",
+    "plugins/turn/core/domain/best-practices/readme.json Q1 thinking: \"in words the reader already uses\""
+   ]
+  },
+  {
+   "id": "D9",
+   "what": "Whom Turn is for, and what they gain",
+   "contributes_to": [
+    "readme/Q2"
+   ],
+   "builds_on": [
+    "D2"
+   ],
+   "decided": "For one who wants an AI to make a work they will put to use as it comes, not a draft they read and mend; they get that work, having decided only what is theirs.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "plugins/turn/core/domain/best-practices/readme.json Q2 thinking: \"taken from what the product's users want, such as the objectives in its UX\""
+   ]
+  },
+  {
+   "id": "D10",
+   "what": "The usual way, and what Turn does differently",
+   "contributes_to": [
+    "readme/Q3",
+    "readme/Q7"
+   ],
+   "builds_on": [
+    "D9"
+   ],
+   "decided": "An AI asked in one prompt fills each gap with a guess and judges the work by what it meant. Turn settles the design with the requester first, makes the work by its kind's best practice, and has an AI that did not make it judge it with only the questions of its kind.",
+   "settled_by": "user",
+   "grounds": [
+    ".rn/20261013-rebuild/turn-rebuild.md:84-86 \"settles the design with the person, one point at a time\" / \"makes the work from the design against the kind's best practice\" / \"uses the work as its user would and answers the questions, never given the design\""
+   ]
+  },
+  {
+   "id": "D11",
+   "what": "What a reader might expect of Turn that it does not do",
+   "contributes_to": [
+    "readme/Q4"
+   ],
+   "builds_on": [
+    "D2"
+   ],
+   "decided": "It does not commit, push or publish the work; it does not settle a decision of the requester's, and one left unanswered holds the run; it is not for a quick draft, as it takes longer than asking Claude Code.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "The UX scenario ends \"README.md, not committed\".",
+    "KR1.2 of the UX counts the time to a work put to use, so a draft mended by hand is the comparison."
+   ]
+  },
+  {
+   "id": "D12",
+   "what": "Requirements and installation",
+   "contributes_to": [
+    "readme/Q6"
+   ],
+   "builds_on": [],
+   "decided": "Claude Code 2.1.317 or later and Python 3.9 or later as python3; installed from the ccpm marketplace, Pin coming with it as a dependency.",
+   "settled_by": "research",
+   "grounds": [
+    "plugins/turn/.claude-plugin/plugin.json: \"dependencies\": [\"pin\"]",
+    "pyproject.toml:8 requires-python = \">=3.9\""
+   ]
+  },
+  {
+   "id": "D13",
+   "what": "The walkthrough's run",
+   "contributes_to": [
+    "readme/Q5"
+   ],
+   "builds_on": [
+    "D6",
+    "D7"
+   ],
+   "decided": "The UX scenario's run: a README for tidy; the purpose confirmed, one fact confirmed, one decision taken, the design approved, the README handed over not committed. Not yet a real run, as Turn is being rebuilt; a real run's output replaces it once Turn is built.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "plugins/turn/core/domain/best-practices/readme.json Q5 steps: \"Take what the user gives and what the product shows from the record of a real run\""
+   ]
+  },
+  {
+   "id": "D14",
+   "what": "What the figure of how Turn works shows, and what stands under it",
+   "contributes_to": [
+    "readme/Q7"
+   ],
+   "builds_on": [
+    "D10"
+   ],
+   "decided": "You, Pin, the generator, the evaluator, the best practices, the design tree and the work, with what each does to another. Under it: a run that stopped goes on from its folder.",
+   "settled_by": "reasoning",
+   "grounds": [
+    "plugins/turn/core/roles/up.md:24 \"a run made before goes on from it\""
+   ]
+  },
+  {
+   "id": "D15",
+   "what": "Where a reader goes next, and the license",
+   "contributes_to": [
+    "readme/Q8",
+    "readme/Q9"
+   ],
+   "builds_on": [],
+   "decided": "Calling Turn, for an AI that asks Turn on a person's behalf; the changelog; the MIT License of the repository.",
+   "settled_by": "research",
+   "grounds": [
+    "plugins/turn/docs/calling.md",
+    "LICENSE"
+   ]
+  }
+ ]
+}

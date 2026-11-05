@@ -233,13 +233,16 @@ point goes up the line of starters to the person. A point reworded on the way is
 the role did not ask, and an answer summed up loses what the person meant. A resumed role does not
 start again from nothing.
 
-### JSON between agents
+### The form of a file
 
-Agents pass data to each other as JSON, in files.
+A file that a plugin reads is JSON with a schema, and a script checks its form. A file that shows
+the form of a deliverable, such as a template or an example, is in the deliverable's own format.
 
-*When*: a plugin with an orchestrator and roles.
+*When*: every plugin.
 
-*Why*: an agent changes only the part it needs, and leaves the rest. A script checks the form.
+*Why*: an agent changes only the part it needs, and leaves the rest. A script finds a file out of
+form before anyone reads it. A template in another format would show a form that the deliverable
+cannot take.
 
 ### Asking until nothing is left to decide
 

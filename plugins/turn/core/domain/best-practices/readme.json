@@ -1,91 +1,49 @@
 {
  "goal": "From the README alone, someone who meets the product for the first time starts using it only when it serves their work.",
- "parts": [
-  {
-   "id": "summary",
-   "what": "The product's name first, and under it one sentence that says what kind of thing the product is and what it does."
-  },
-  {
-   "id": "gain",
-   "what": "The paragraph after the summary: whom the product is for and what they gain with it."
-  },
-  {
-   "id": "idea",
-   "what": "After the gain: the idea that makes the gain possible, in a paragraph. Where the idea has parts: how they fit together, and each part with what it is and what it ensures for the reader."
-  },
-  {
-   "id": "non-goals",
-   "what": "At the end of the opening, before anything about installing: each thing the product does not do that a reader might expect of it, set apart so the reader sees it as what the product does not do."
-  },
-  {
-   "id": "requirements",
-   "what": "Each thing that must be in place before installing."
-  },
-  {
-   "id": "installation",
-   "what": "The steps that install the product."
-  },
-  {
-   "id": "walkthrough",
-   "what": "One real run of the use most readers come for, shown as the product ran it: what the user gave and what the product showed, up to the result."
-  },
-  {
-   "id": "how-it-works",
-   "what": "One figure of the user, the product's parts and the things they pass, each shown by its name only, and the action or intent of each toward another, so a reader sees at a glance how the opening's promises are kept. Under it stand only the points and what the figure cannot show."
-  },
-  {
-   "id": "links",
-   "what": "Where to read next: for users, the documents for fuller use; apart from them, for those who change the product, the development documents."
-  },
-  {
-   "id": "license",
-   "what": "The license's name, linked to its full text."
-  }
- ],
  "benefits": [
   {
    "id": "Q1",
-   "about": "summary",
+   "about": "the opening",
    "what": "When a colleague asks what the product is, can the reader answer in one sentence that tells them what it does?"
   },
   {
    "id": "Q2",
-   "about": "gain",
+   "about": "the opening",
    "what": "Reading the gain, can the reader tell what the product would let them do, and so whether it is for them?"
   },
   {
    "id": "Q3",
-   "about": "gain, idea",
+   "about": "the opening",
    "what": "When a colleague asks why this product and not another way of doing the same work, can the reader name what it does differently that brings the gain?"
   },
   {
    "id": "Q4",
-   "about": "non-goals",
+   "about": "the opening",
    "what": "Before installing, can the reader tell what the product does not do that they might have expected of it?"
   },
   {
    "id": "Q5",
-   "about": "gain, walkthrough",
+   "about": "the opening, Walkthrough",
    "what": "After the walkthrough, can the reader tell that the product would give them, on work of their own, the gain the opening promised?"
   },
   {
    "id": "Q6",
-   "about": "requirements, installation",
+   "about": "Requirements, Installation",
    "what": "Starting with nothing set up, can the reader install the product by the README's steps alone, and tell that it works?"
   },
   {
    "id": "Q7",
-   "about": "gain, idea, how-it-works",
+   "about": "the opening, How it works",
    "what": "For each gain and the idea, can the reader see in the figure of how the product works how the product keeps it?"
   },
   {
    "id": "Q8",
-   "about": "links",
-   "what": "When the reader needs more than the README gives, such as fuller use or a change to the product, can they tell from it where to read next?"
+   "about": "Documentation",
+   "what": "When the reader needs more than the README gives, such as fuller use, can they tell from it where to read next?"
   },
   {
    "id": "Q9",
-   "about": "license",
+   "about": "License",
    "what": "Can the reader tell from the README the terms on which they and their team may use the product?"
   },
   {
@@ -403,8 +361,8 @@
    "benefit": "Q10",
    "thinking": "The README goes in the order the reader decides in, from what every reader needs to what only a reader who has chosen the product needs.",
    "steps": [
-    "Read the README from the top as someone who meets the product for the first time, and after each part, write the question the reader now has.",
-    "Check that the next part answers that question. Move a part that answers a later one.",
+    "Read the README from the top as someone who meets the product for the first time, and after each section, write the question the reader now has.",
+    "Check that the next part answers that question. Move a section that answers a later one.",
     "Cut what no reader needs at the point where it stands, or move it to the document a link leads to."
    ],
    "grounds": [

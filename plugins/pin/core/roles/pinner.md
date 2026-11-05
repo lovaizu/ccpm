@@ -34,13 +34,8 @@ decided. Run it as a command of its own, word for word, joined to no other comma
 The design file holds one JSON object, the design tree. It holds the plan's goal; under the goal,
 the questions that must hold for it; and under each question, the decisions that make it hold.
 
-```json
-{"goal": {"what": "<the goal, one sentence>", "grounds": ["<the person's words, with the date>"]},
- "questions": [{"id": "Q1", "what": "<a question about the result that must be yes for the goal>"}],
- "decisions": [
-  {"id": "D1", "what": "<what is to be decided>", "contributes_to": ["Q1"], "builds_on": [],
-   "decided": null, "settled_by": null, "grounds": []}]}
-```
+Its form is `${CLAUDE_PLUGIN_ROOT}/core/domain/design-tree-template.json`. Read it before you
+write the tree.
 
 - The goal's `grounds` are empty until the goal is settled: the person's confirmation, or the
   maker AI's own grounds where it handed the goal over.

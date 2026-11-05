@@ -154,7 +154,7 @@ arrows are named as in [Data model](#data-model).
   pinner finds facts one after another, in its own context (KR1.2).
 - **The maker AI hands over in the design file, not in the text it starts Pin with.** The pinner
   then keeps the maker AI's points as written, never typed again (KR2.1), as
-  [JSON between agents](../plugin-best-practice.md#json-between-agents) says. The pinner goes on
+  [The form of a file](../plugin-best-practice.md#the-form-of-a-file) says. The pinner goes on
   from a file at the path in the same way for a stopped run. The cost: the maker AI writes the
   design file's form, which [the design tree](../../plugins/pin/core/roles/pinner.md#the-design-tree)
   gives.
