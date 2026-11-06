@@ -26,6 +26,7 @@ import files
 import phases
 import practices
 import runs
+import tree
 
 USAGE = (
     "usage: python3 ${CLAUDE_PLUGIN_ROOT}/scripts/plan.py start|hand|ready|next|check <run>\n"
@@ -47,7 +48,11 @@ def hand(run: str) -> str:
     shortfall of the last round with the decisions that serve its question."""
     work = runs.current(runs.load(run))
     design = os.path.join(work["folder"], runs.DESIGN)
-    tree = files.read(design)
+    try:
+        handed = tree.load(design)
+    except tree.Unreadable as why:
+        said = "; ".join(str(why).splitlines())
+        raise files.Unreadable(f"the design file {design} cannot be read: {said}") from None
     short = phases.shortfalls(run, phases.last(work))
     runs.hand(run)
     request = runs.request(design, "").rstrip("\n")
@@ -57,7 +62,8 @@ def hand(run: str) -> str:
             " serve its question:"
         )
         request += "".join(
-            f"\n- {said} ({', '.join(phases.serving(tree, question))})" for question, said in short
+            f"\n- {said} ({', '.join(phases.serving(handed, question))})"
+            for question, said in short
         )
     return (
         f"the design of {work['kind']} is handed to Pin again. {HANDED}, with on its last lines"

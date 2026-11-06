@@ -62,7 +62,7 @@
   <text class="name" x="930" y="233">your repository</text>
 
   <rect class="store" x="470" y="390" width="220" height="64" rx="8"/>
-  <text class="name" x="580" y="416">design-tree.json</text>
+  <text class="name" x="580" y="416">design-tree.md</text>
   <text class="kind" x="580" y="438">the goal, every point under it</text>
 
   <rect class="box" x="840" y="390" width="180" height="64" rx="8"/>

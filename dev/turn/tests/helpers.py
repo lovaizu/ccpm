@@ -26,8 +26,9 @@ import rounds
 import runs
 import testing
 import throwaway
+import tree
 
-__all__ = ["files", "phases", "plan", "practices", "rounds", "runs", "testing", "throwaway"]
+__all__ = ["files", "phases", "plan", "practices", "rounds", "runs", "testing", "throwaway", "tree"]
 
 # A best practice of the kind `note`: two parts, three questions, the last of the whole.
 PRACTICE: dict[str, Any] = {
@@ -134,9 +135,20 @@ TREE = {
     "goal": {"what": "A newcomer sorts their folder.", "grounds": ["the person"]},
     "questions": [{"id": f"note/Q{n}", "what": f"Q{n}?"} for n in (1, 2, 3)],
     "decisions": [
-        {"id": "D1", "contributes_to": ["note/Q1", "note/Q3"], "builds_on": []},
-        {"id": "D2", "contributes_to": ["note/Q2"], "builds_on": []},
-        {"id": "D3", "contributes_to": ["D2"], "builds_on": ["D2"]},
+        {
+            "id": f"D{n}",
+            "what": f"D{n}",
+            "contributes_to": serves,
+            "builds_on": on,
+            "decided": None,
+            "settled_by": None,
+            "grounds": [],
+        }
+        for n, serves, on in (
+            (1, ["note/Q1", "note/Q3"], []),
+            (2, ["note/Q2"], []),
+            (3, ["D2"], ["D2"]),
+        )
     ],
 }
 NOTES = "# tidy\n\ntidy sorts a folder.\n\n## Steps\n\nRun tidy --dry-run.\n"
@@ -164,7 +176,7 @@ class RoundsTest(RepositoryTest):
         property-based test does again for each of its examples."""
         self.write_json(NOTE, PRACTICE)
         self.lay_run([work()])
-        self.write_json(os.path.join(RUN, "design-tree.json"), TREE)
+        tree.save(os.path.join(RUN, runs.DESIGN), TREE)
         self.write_json(os.path.join(RUN, "standard.json"), practices.standard(PRACTICE))
         self.write_json(os.path.join(RUN, "reading-standard.json"), READING)
         self.write("NOTES.md", NOTES)
@@ -428,7 +440,7 @@ class TurnTest(testing.FolderTest):
         }
         self.writes(planner, os.path.join(self.folder, runs.CALL), json.dumps(data))
 
-    def lays(self, at: str, tree: dict[str, Any], call: dict[str, Any] | None = None, **out: Any):
+    def lays(self, at: str, design: dict[str, Any], call: dict[str, Any] | None = None, **out: Any):
         """A run stopped with its work at the place given, its design file the tree and its paths,
         commands and files as given, as plan.py left it, begun from the Call given or tidy's
         README's."""
@@ -444,7 +456,7 @@ class TurnTest(testing.FolderTest):
         runs.current(data).update(at=at, **out)
         self.write_json(self.at(self.folder, runs.RUN), data)
         folder = runs.current(data)["folder"]
-        self.write_json(self.at(folder, runs.DESIGN), tree)
+        tree.save(self.at(folder, runs.DESIGN), design)
 
     def run_file(self) -> dict[str, Any]:
         """The Run on disk."""
@@ -468,6 +480,18 @@ class TurnTest(testing.FolderTest):
         self.assertEqual(self.ends(planner, request), [told("planner", "handed", "pin:pinner")])
         return request
 
+    def changes(self, run: testing.Run, path: str, data: dict[str, Any]) -> None:
+        """The run changes the design tree at the path to the data, as Pin's pinner may: it reads
+        the file with Read and changes it with Edit, its whole text the old string, both of which
+        go through."""
+        self.assertTrue(self.does(run, "Read", file_path=path).made)
+        with open(self.at(path), encoding="utf-8") as f:
+            now = f.read()
+        told = self.does(
+            run, "Edit", file_path=path, old_string=now, new_string=tree.markdown(data)
+        )
+        self.assertTrue(told.made, told.said)
+
     def pin_checks(self, design: str) -> str:
         """The pinner runs Pin's check on the design file, which holds: what it printed."""
         printed = self.runs(PINNER, f"python3 {PIN}/scripts/check.py {design}")
@@ -477,7 +501,7 @@ class TurnTest(testing.FolderTest):
     def pinner_asks(self, design: str, tree: dict[str, Any], point: str) -> str:
         """The pinner writes the tree, which Pin's check passes, gives `asks` and ends with the
         point; up passes it on: what the person heard."""
-        self.writes(PINNER, design, json.dumps(tree))
+        self.changes(PINNER, design, tree)
         self.pin_checks(design)
         self.gives(PINNER, "asks")
         reply = f"{FOR_THE_PERSON}\n{point}"
@@ -487,7 +511,7 @@ class TurnTest(testing.FolderTest):
     def pinner_done(self, design: str, tree: dict[str, Any]) -> list[str]:
         """The pinner writes the confirmed tree, which Pin's check passes, gives `done` and ends
         with the design file's path: what up is told."""
-        self.writes(PINNER, design, json.dumps(tree))
+        self.changes(PINNER, design, tree)
         printed = self.pin_checks(design)
         self.gives(PINNER, "done")
         return self.ends(PINNER, f"{FOR_THE_PERSON}\nThe design is in {design}.\n{printed}")

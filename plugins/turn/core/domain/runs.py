@@ -4,8 +4,8 @@ its design file, its Standards and its rounds, the paths it lies at, what its us
 files that needs, and where it is: waiting, with Pin, in its rounds, or done. A run makes one work,
 or first the best practice of a kind new to Turn, made by `meta`, and then the work. The planner
 writes the Call, call.json, and this module begins each work from it: the work's Standards and its
-hand-over to Pin, a design file in the form of Pin's design tree, which keeps word for word what a
-calling AI settled."""
+hand-over to Pin, a design file in the form of Pin's design tree, written by Pin's own tree.py,
+which keeps word for word what a calling AI settled."""
 
 from __future__ import annotations
 
@@ -15,6 +15,7 @@ from typing import Any
 
 import files
 import practices
+import tree
 
 # Turn's own best practices, and the repository's, which a run takes over Turn's of the same kind;
 # each kind's lies in a folder of the kind's name, with its template and its example beside it.
@@ -26,7 +27,7 @@ META = "meta"
 # The files of a work's folder.
 CALL = "call.json"
 RUN = "run.json"
-DESIGN = "design-tree.json"
+DESIGN = "design-tree.md"
 STANDARD = "standard.json"
 READING = "reading-standard.json"
 VERIFICATION = "verification"
@@ -130,7 +131,7 @@ def begin(run: str, data: dict[str, Any], work: dict[str, Any]) -> str:
     """Begins the work: writes its Standards and its hand-over to Pin into its folder, and puts it
     with Pin; gives the Request that hands it over, the design file's path as one JSON object on its
     first line and then what Pin is to pin down. Refuses, by files.Unreadable, a best practice that
-    cannot be read or is out of its form."""
+    cannot be read or is out of its form, and a hand-over out of the form of Pin's design tree."""
     call = files.load(os.path.join(run, CALL), "call")
     practice = read_practice(work["practice"])
     reading = read_practice(practice_in(OWN, work["reading"]))
@@ -148,8 +149,11 @@ def begin(run: str, data: dict[str, Any], work: dict[str, Any]) -> str:
         decisions = given.get("decisions", [])
         words = call["request"]
     design = os.path.join(work["folder"], DESIGN)
-    tree = {"goal": goal, "questions": questions(work["kind"], practice), "decisions": decisions}
-    files.save(design, tree)
+    handed = {"goal": goal, "questions": questions(work["kind"], practice), "decisions": decisions}
+    found = tree.form_faults(handed)
+    if found:
+        raise files.Unreadable(f"the design cannot be handed to Pin: {'; '.join(found)}")
+    tree.save(design, handed)
     files.save(os.path.join(work["folder"], STANDARD), practices.standard(practice))
     files.save(os.path.join(work["folder"], READING), practices.standard(reading))
     work["at"] = PIN

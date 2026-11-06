@@ -14,10 +14,10 @@ into a design file, in the form of the design tree that `pinner.md`, beside this
 ## Steps
 
 1. **The design file's path is picked.** Where a maker AI gives a path, it is that path. Else,
-   where a file `.pin/*/design-tree.json` at the top of the repository has a goal that is this
+   where a file `.pin/*/design-tree.md` at the top of the repository has a goal that is this
    plan's, it is that file: a stopped run left it, and the pinner goes on from it. Else it is
-   `.pin/<yyyymmdd>-<name>/design-tree.json` there, `<yyyymmdd>` today and `<name>` a few words of
-   the plan joined by `-`, such as `.pin/20261103-notes-json/design-tree.json`.
+   `.pin/<yyyymmdd>-<name>/design-tree.md` there, `<yyyymmdd>` today and `<name>` a few words of
+   the plan joined by `-`, such as `.pin/20261103-notes-json/design-tree.md`.
 2. **The pinner is started.** Start the agent `pin:pinner` with the Agent tool, its prompt the
    Request: on its first line `{"design": "<the path>"}`, as one JSON object, and after it the plan
    in the person's words, or the maker AI's request with any point that its work found, as given.

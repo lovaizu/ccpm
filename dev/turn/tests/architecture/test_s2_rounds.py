@@ -208,7 +208,7 @@ class TestNewKind(helpers.InRoundsTest):
         self.assertEqual(self.ends(planner, request), [told("planner", "handed", "pin:pinner")])
         design = os.path.join(self.folder, runs.DESIGN)
         self.assertEqual(request.split("\n")[0], json.dumps({"design": design}))
-        self.assertEqual(self.read_json(self.at(design))["questions"][0]["id"], "man-page/Q1")
+        self.assertEqual(helpers.tree.load(self.at(design))["questions"][0]["id"], "man-page/Q1")
         self.assertTrue(os.path.exists(self.at(runs.REPOSITORY, "man-page", "best-practice.md")))
         self.assertTrue(self.claude.start(UP, helpers.PINNER, request).made)
 

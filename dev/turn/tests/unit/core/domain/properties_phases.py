@@ -17,7 +17,7 @@ from helpers import RUN, VERIFICATION, met, phases, short
 hypothesis = helpers.testing.hypothesis()
 given, st = hypothesis.given, hypothesis.strategies
 
-DESIGN = os.path.join(RUN, "design-tree.json")
+DESIGN = os.path.join(RUN, helpers.runs.DESIGN)
 CONTENT_GROUPS = [["note/Q1"], ["note/Q2"], ["note/Q3"]]
 
 
@@ -44,7 +44,7 @@ class TestSettle(helpers.RoundsTest):
             # When: the design may change, then the next round is settled and answered
             if changes:
                 design += 1
-                self.write_json(
+                helpers.tree.save(
                     DESIGN, {**helpers.TREE, "goal": {"what": str(design), "grounds": []}}
                 )
             settled = phases.settle(RUN)

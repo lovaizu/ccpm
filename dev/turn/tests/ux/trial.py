@@ -353,7 +353,10 @@ def kr2(
     wrong = [] if handed else ["the calling AI got no work back"]
     if any(t.get("asks_settled") for t in turns):
         wrong.append("Turn asked the person a point the calling AI settled")
-    tree = loaded(os.path.join(folder, "design-tree.json")) or {}
+    try:
+        tree = helpers.tree.load(os.path.join(folder, helpers.runs.DESIGN))
+    except helpers.tree.Unreadable:
+        tree = {}
     by_id = {d.get("id"): d for d in tree.get("decisions", [])}
     for point in SETTLED:
         if by_id.get(point, {}).get("settled_by") != "maker":

@@ -74,7 +74,7 @@ class Round(helpers.RoundsTest):
                 (
                     "rounds.py: round 1 of note is of what the work says.\n"
                     f"Best practice: {helpers.NOTE}\n"
-                    f"Design: {os.path.join(RUN, 'design-tree.json')}\n"
+                    f"Design: {os.path.join(RUN, 'design-tree.md')}\n"
                     f"Answers: {os.path.join(VERIFICATION, 'generator.json')}, in the form of"
                     f" {os.path.join(helpers.files.FORMS, 'answers.json')}\n"
                     "Questions:\n"

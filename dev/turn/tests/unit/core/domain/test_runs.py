@@ -105,7 +105,7 @@ class Start(helpers.RepositoryTest):
         # Request names the design file, then the request
         self.assertEqual(self.run_data(), {"works": [helpers.work(paths=[], at="pin")]})
         self.assertEqual(
-            self.read_json(DESIGN),
+            helpers.tree.load(DESIGN),
             {
                 "goal": {"what": helpers.CALL["goal"], "grounds": []},
                 "questions": [
@@ -132,7 +132,7 @@ class Start(helpers.RepositoryTest):
         # When: the run begins
         self.started(helpers.call(given=given))
         # Then: the hand-over holds its goal and decision as given, and the work its path
-        tree = self.read_json(DESIGN)
+        tree = helpers.tree.load(DESIGN)
         self.assertEqual((tree["goal"], tree["decisions"]), (goal, [helpers.SETTLED]))
         self.assertEqual(self.run_data()["works"][0]["paths"], ["N.md"])
 
@@ -160,7 +160,7 @@ class Start(helpers.RepositoryTest):
                 helpers.work(kind="man-page", practice=made, paths=[], at="waits"),
             ],
         )
-        tree = self.read_json(os.path.join(folder, runs.DESIGN))
+        tree = helpers.tree.load(os.path.join(folder, runs.DESIGN))
         self.assertEqual(tree["goal"], {"what": purpose, "grounds": []})
         self.assertEqual(tree["questions"], runs.questions("meta", runs.read_practice(meta)))
         self.assertEqual(
@@ -178,9 +178,36 @@ class Start(helpers.RepositoryTest):
         works = self.run_data()["works"]
         self.assertEqual(works, [helpers.work(kind="meta", practice=meta, paths=[], at="pin")])
         self.assertEqual(
-            self.read_json(DESIGN)["goal"], {"what": helpers.CALL["goal"], "grounds": []}
+            helpers.tree.load(DESIGN)["goal"], {"what": helpers.CALL["goal"], "grounds": []}
         )
         self.assertEqual(request, json.dumps({"design": DESIGN}) + "\na note on tidy")
+
+    def test_the_hand_over_is_written_as_pins_markdown(self):
+        # Given: a Call whose calling AI gave a decision
+        given = {"kind": "note", "decisions": [helpers.SETTLED]}
+        # When: the run begins
+        self.started(helpers.call(given=given))
+        # Then: the design file is the hand-over as Pin's tree.py writes it
+        self.assertEqual(self.read(DESIGN), helpers.tree.markdown(helpers.tree.load(DESIGN)))
+        self.assertIn(
+            "- **D1 Which run the steps show**: tidy --dry-run, then tidy (maker)\n",
+            self.read(DESIGN),
+        )
+
+    def test_points_out_of_the_design_trees_form_are_refused_with_nothing_written(self):
+        # Given: a Call whose calling AI gave a decision Pin's design tree cannot hold
+        given = {"decisions": [{**helpers.SETTLED, "what": "two\nlines"}]}
+        # When: the run begins
+        with self.assertRaises(files.Unreadable) as raised:
+            self.started(helpers.call(given=given))
+        # Then: it is refused, naming the fault, and nothing is written
+        self.assertEqual(
+            str(raised.exception),
+            "the design cannot be handed to Pin: decisions[0].what must be one line of text, not"
+            " empty, with no `**`",
+        )
+        self.assertFalse(os.path.exists(DESIGN))
+        self.assertFalse(os.path.exists(os.path.join(RUN, runs.RUN)))
 
     def test_a_kind_new_to_turn_with_no_purpose_is_refused(self):
         with self.assertRaises(files.Unreadable) as raised:
@@ -215,8 +242,8 @@ class Start(helpers.RepositoryTest):
 class Request(unittest.TestCase):
     def test_a_path_out_of_ascii_is_written_as_it_is(self):
         self.assertEqual(
-            runs.request("ノート/design-tree.json", "メモ"),
-            '{"design": "ノート/design-tree.json"}\nメモ',
+            runs.request("ノート/design-tree.md", "メモ"),
+            '{"design": "ノート/design-tree.md"}\nメモ',
         )
 
 
@@ -321,7 +348,7 @@ class Advance(helpers.RepositoryTest):
             self.read(os.path.join(runs.REPOSITORY, "man-page", "best-practice.md")),
             practices.markdown("man-page", helpers.PRACTICE),
         )
-        tree = self.read_json(DESIGN)
+        tree = helpers.tree.load(DESIGN)
         self.assertEqual(tree["goal"]["what"], helpers.CALL["goal"])
         self.assertEqual(tree["questions"][0]["id"], "man-page/Q1")
         self.assertEqual(request, json.dumps({"design": DESIGN}) + "\na note on tidy")

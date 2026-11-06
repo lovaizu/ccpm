@@ -1,5 +1,0 @@
-{"goal": {"what": "<the goal, one sentence>", "grounds": ["<the person's words, with the date>"]},
- "questions": [{"id": "Q1", "what": "<a question about the result that must be yes for the goal>"}],
- "decisions": [
-  {"id": "D1", "what": "<what is to be decided>", "contributes_to": ["Q1"], "builds_on": [],
-   "decided": null, "settled_by": null, "grounds": []}]}

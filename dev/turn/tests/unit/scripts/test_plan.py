@@ -148,7 +148,20 @@ class Hand(helpers.RoundsTest):
         os.remove(DESIGN)
         code, _, err = ran("hand", RUN)
         self.assertEqual(code, 1)
-        self.assertIn(f"plan.py: {RUN} cannot hand: there is no file {DESIGN}", err)
+        self.assertIn(
+            f"plan.py: {RUN} cannot hand: the design file {DESIGN} cannot be read: there is no"
+            f" file {DESIGN}",
+            err,
+        )
+
+    def test_a_design_out_of_its_form_gives_1_with_each_fault(self):
+        self.write(DESIGN, "Design tree\n\nGoal: g\n\n- Q1\n")
+        code, _, err = ran("hand", RUN)
+        self.assertEqual(code, 1)
+        self.assertIn(
+            "cannot be read: line 1 must be `# Design tree`; line 5 is none of the tree's lines",
+            err,
+        )
 
 
 class Next(helpers.RoundsTest):

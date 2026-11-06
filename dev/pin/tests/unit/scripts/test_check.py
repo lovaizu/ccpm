@@ -6,7 +6,7 @@ import io
 import unittest
 
 import helpers
-from helpers import check, decision, made
+from helpers import check, decision, made, tree
 
 
 class TestMain(helpers.testing.FolderTest):
@@ -20,18 +20,20 @@ class TestMain(helpers.testing.FolderTest):
 
     def test_a_tree_that_holds_gives_0_and_the_decisions_ready(self):
         # Given: a tree that holds, D1 decided and D2 open on it
-        self.write_json(
-            "t.json",
-            made(helpers.settled("D1"), decision("D2", builds_on=["D1"]), decision("D3")),
+        self.write(
+            "t.md",
+            tree.markdown(
+                made(helpers.settled("D1"), decision("D2", builds_on=["D1"]), decision("D3"))
+            ),
         )
         # When: check.py is run on it
         # Then: it says the tree holds and which decisions can be decided now, and gives 0
         self.assertEqual(
-            self.ran("t.json"),
+            self.ran("t.md"),
             (
                 0,
                 (
-                    "check.py: t.json holds: every question is served, every decision reaches the"
+                    "check.py: t.md holds: every question is served, every decision reaches the"
                     " goal, and each decision comes after the ones it builds on.\n"
                     "Open to decide now: D2, D3.\n"
                 ),
@@ -41,21 +43,21 @@ class TestMain(helpers.testing.FolderTest):
 
     def test_a_tree_with_every_decision_decided_says_none_is_open(self):
         # Given: the walkthrough's tree
-        self.write_json("t.json", helpers.walkthrough())
+        self.write("t.md", tree.markdown(helpers.walkthrough()))
         # When: check.py is run on it
-        code, out, _ = self.ran("t.json")
+        code, out, _ = self.ran("t.md")
         # Then: it gives 0, and says no decision is open
         self.assertEqual(code, 0)
         self.assertTrue(out.endswith("\nNo decision is open.\n"))
 
     def test_a_tree_that_does_not_hold_gives_1_and_each_problem(self):
         # Given: a tree with a question no decision serves
-        self.write_json("t.json", made(decision("D1"), questions=("Q1", "Q2")))
+        self.write("t.md", tree.markdown(made(decision("D1"), questions=("Q1", "Q2"))))
         # When: check.py is run on it
         # Then: it names each problem, and gives 1
         self.assertEqual(
-            self.ran("t.json"),
-            (1, "check.py: t.json does not hold:\n- Q2 is served by no decision.\n", ""),
+            self.ran("t.md"),
+            (1, "check.py: t.md does not hold:\n- Q2 is served by no decision.\n", ""),
         )
 
     def test_a_tree_that_cannot_be_read_gives_2_and_why(self):
@@ -63,12 +65,37 @@ class TestMain(helpers.testing.FolderTest):
         # When: check.py is run on it
         # Then: it says it could not check it and why, on its error output, and gives 2
         self.assertEqual(
-            self.ran("gone.json"),
-            (2, "", "check.py: could not check gone.json:\n- there is no file gone.json\n"),
+            self.ran("gone.md"),
+            (2, "", "check.py: could not check gone.md:\n- there is no file gone.md\n"),
         )
 
+    def test_a_tree_out_of_form_gives_2_and_each_fault_a_line(self):
+        # Given: a tree whose first line and a question's line are out of form
+        self.write("t.md", "Design tree\n\nGoal: g\n\n- Q1 q?\n")
+        # When: check.py is run on it
+        code, out, err = self.ran("t.md")
+        # Then: it names each fault on a line of its own, and gives 2
+        self.assertEqual((code, out), (2, ""))
+        self.assertEqual(
+            [line[:30] for line in err.splitlines()],
+            [
+                "check.py: could not check t.md",
+                "- line 1 must be `# Design tre",
+                "- line 5 is none of the tree's",
+            ],
+        )
+
+    def test_the_check_leaves_the_tree_as_it_was(self):
+        # Given: the walkthrough's tree in a file
+        written = tree.markdown(helpers.walkthrough())
+        self.write("t.md", written)
+        # When: check.py is run on it
+        self.ran("t.md")
+        # Then: the file is as it was, as the pinner changes it only with Edit
+        self.assertEqual(self.read("t.md"), written)
+
     def test_words_other_than_one_path_print_the_usage_and_give_2(self):
-        for argv in ((), ("a.json", "b.json")):
+        for argv in ((), ("a.md", "b.md")):
             with self.subTest(argv=argv):
                 # Given: no path, or two
                 # When: check.py is run with them

@@ -76,7 +76,7 @@ REQUESTS = {
 THEIRS = {"o1": {1, 2, 3, 7, 8}, "o2": {2, 3, 7, 9}}
 MAKERS = {"o1": set(), "o2": {1, 8}}
 # The maker AI's hand-over: where it lies, and the IDs of the points and questions it gives.
-HANDED = os.path.join(".maker", "notes-json", "design-tree.json")
+HANDED = os.path.join(".maker", "notes-json", "design-tree.md")
 HANDED_POINTS = ("M1", "M2")
 HANDED_QUESTIONS = ("Q1", "Q2", "Q3")
 # The most messages put to the person before a run is stopped as one that does not end.
@@ -251,16 +251,15 @@ def design_file(repo: str, objective: str) -> str:
     file in `.pin/`, or "" where there is not one alone."""
     if objective == "o2":
         return os.path.join(repo, HANDED)
-    found = glob.glob(os.path.join(repo, ".pin", "*", "design-tree.json"))
+    found = glob.glob(os.path.join(repo, ".pin", "*", "design-tree.md"))
     return found[0] if len(found) == 1 else ""
 
 
 def tree_of(path: str) -> dict[str, Any]:
-    """The design tree at the path; none where it cannot be read."""
+    """The design tree at the path, as Pin's tree.py reads it; none where it cannot be read."""
     try:
-        with open(path, encoding="utf-8") as f:
-            return json.load(f)
-    except (OSError, ValueError):
+        return helpers.tree.load(path)
+    except helpers.tree.Unreadable:
         return {}
 
 

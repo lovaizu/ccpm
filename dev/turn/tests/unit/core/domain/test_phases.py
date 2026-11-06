@@ -133,8 +133,8 @@ class Settle(helpers.RoundsTest):
 
     def test_a_design_changed_after_its_content_was_met_is_made_again(self):
         self.content_round(met("note/Q1"), met("note/Q2"), met("note/Q3"))
-        self.write_json(
-            os.path.join(RUN, "design-tree.json"), {**TREE, "goal": {"what": "x", "grounds": []}}
+        helpers.tree.save(
+            os.path.join(RUN, runs.DESIGN), {**TREE, "goal": {"what": "x", "grounds": []}}
         )
         self.assertEqual(settled_round()["phase"], "content")
 
@@ -175,7 +175,7 @@ class Settle(helpers.RoundsTest):
                 )
 
     def test_a_design_file_missing_cannot_be_settled_on(self):
-        os.remove(os.path.join(RUN, "design-tree.json"))
+        os.remove(os.path.join(RUN, runs.DESIGN))
         with self.assertRaises(files.Unreadable):
             phases.settle(RUN)
 

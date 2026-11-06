@@ -42,7 +42,7 @@ class Start(helpers.TurnTest):
         # as the planner reads it, not yet confirmed, and the Request names the design file
         design = os.path.join(self.folder, runs.DESIGN)
         self.assertEqual(runs.current(self.run_file())["at"], "pin")
-        handed = self.read_json(self.at(design))
+        handed = helpers.tree.load(self.at(design))
         self.assertEqual(handed["questions"], runs.questions("readme", helpers.README_PRACTICE))
         self.assertEqual((handed["goal"]["grounds"], handed["decisions"]), ([], []))
         self.assertEqual(request, runs.request(design, "a README for tidy"))
@@ -104,7 +104,7 @@ class Start(helpers.TurnTest):
             [(w["kind"], w["at"]) for w in works], [("meta", "pin"), ("man-page", "waits")]
         )
         design = os.path.join(self.folder, "best-practice", runs.DESIGN)
-        handed = self.read_json(self.at(design))
+        handed = helpers.tree.load(self.at(design))
         self.assertEqual(handed["goal"], {"what": purpose, "grounds": []})
         self.assertEqual(handed["questions"][0]["id"], "meta/Q1")
         self.assertEqual(request.split("\n")[0], json.dumps({"design": design}))
@@ -128,7 +128,7 @@ class Start(helpers.TurnTest):
         self.assertEqual(request, json.dumps({"design": design}))
         self.starts(helpers.PINNER, request)
         self.assertTrue(self.does(helpers.PINNER, "Read", file_path=design).made)
-        self.assertEqual(self.read_json(self.at(design)), opened(helpers.tidy_tree(), "D2"))
+        self.assertEqual(helpers.tree.load(self.at(design)), opened(helpers.tidy_tree(), "D2"))
 
     def test_a_stopped_run_whose_design_is_confirmed_goes_on_at_the_rounds(self):
         # Given: a run stopped in its rounds, its design read out
@@ -201,7 +201,7 @@ class TestCallingAI(helpers.TurnTest):
         request = self.begun(words, planner, request="the README of this repository", given=given)
         # Then: the hand-over holds the goal and the decision word for word, the goal confirmed,
         # so Pin puts it to no one
-        handed = self.read_json(self.at(self.folder, runs.DESIGN))
+        handed = helpers.tree.load(self.at(self.folder, runs.DESIGN))
         self.assertEqual((handed["goal"], handed["decisions"]), (goal, [settled]))
         # When: the pinner joins the decision to its question and asks a fact first
         self.starts(helpers.PINNER, request)

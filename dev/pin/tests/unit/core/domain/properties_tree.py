@@ -1,7 +1,8 @@
 """Properties of tree.py over many design trees: a tree built from the goal down, each decision
 serving a question or one made before it and building only on decisions before it, holds, and
-gives as ready exactly the open decisions on decided ones; cutting every contribution of one
-decision makes it reach no question; and a decision decided on an open one is out of order."""
+gives as ready exactly the open decisions on decided ones, and is read back from its Markdown as it
+was, each decision with what it serves and builds on; cutting every contribution of one decision
+makes it reach no question; and a decision decided on an open one is out of order."""
 
 import unittest
 
@@ -42,6 +43,22 @@ class TestProperties(unittest.TestCase):
     def test_a_tree_grown_from_the_goal_down_holds(self, data):
         self.assertEqual(tree.form_faults(data), [])
         self.assertEqual(tree.problems(data), [])
+
+    @given(grown())
+    def test_a_tree_is_read_back_from_its_markdown(self, data):
+        def links(tree_: dict) -> dict:
+            return {
+                d["id"]: {
+                    **d,
+                    "contributes_to": sorted(d["contributes_to"]),
+                    "builds_on": sorted(d["builds_on"]),
+                }
+                for d in tree_["decisions"]
+            }
+
+        back = tree.read(tree.markdown(data))
+        self.assertEqual((back["goal"], back["questions"]), (data["goal"], data["questions"]))
+        self.assertEqual(links(back), links(data))
 
     @given(grown())
     def test_ready_is_each_open_decision_on_decided_ones(self, data):

@@ -235,14 +235,19 @@ start again from nothing.
 
 ### The form of a file
 
-A file that a plugin reads is JSON with a schema, and a script checks its form. A file that shows
-the form of a deliverable, such as a template or an example, is in the deliverable's own format.
+A file that a plugin reads is JSON with a schema, and a script checks its form. A file that an AI
+must read as a whole each time it changes a part, such as a tree whose nesting holds what each part
+serves, is instead a Markdown nested list in one strict form, which a script reads and checks; the
+AI changes it only with Read and Edit, never by a command or a script, and a hook holds it to this.
+A file that shows the form of a deliverable, such as a template or an example, is in the
+deliverable's own format.
 
 *When*: every plugin.
 
 *Why*: an agent changes only the part it needs, and leaves the rest. A script finds a file out of
-form before anyone reads it. A template in another format would show a form that the deliverable
-cannot take.
+form before anyone reads it. A tree kept as a JSON list joined by IDs is changed by finding an ID
+or a word, so the AI never sees the branch a part stands in, and the parts around it drift. A
+template in another format would show a form that the deliverable cannot take.
 
 ### Asking until nothing is left to decide
 

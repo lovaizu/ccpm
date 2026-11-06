@@ -41,7 +41,7 @@ class Answer(helpers.PinnerTest):
         a name given changed so; the second the maker AI's where it is the go-between."""
         data = helpers.walkthrough()
         if self.starter is not None:
-            data["decisions"][1].update(MAKER_SETTLED)
+            data["decisions"][2].update(MAKER_SETTLED)
         for d in data["decisions"]:
             d.update(given.get(d["id"], {}))
         return data
@@ -106,7 +106,7 @@ class Answer(helpers.PinnerTest):
         # Then: the file holds with no decision open, the correction kept, and the whole design
         # goes out
         self.assertEqual(self.settles(corrected), self.holds())
-        self.assertEqual(self.on_disk()["decisions"][2], corrected["decisions"][2])
+        self.assertEqual(self.on_disk()["decisions"][1], corrected["decisions"][1])
         self.asks_next(self.design())
 
     def test_a_decision_made_is_settled_by_the_person_and_each_on_it_follows(self):
@@ -119,7 +119,7 @@ class Answer(helpers.PinnerTest):
         # Then: the file holds, the decision built on it open now
         self.assertEqual(self.settles(made), self.holds("D3"))
         # When: the pinner settles that one by the fact confirmed
-        made["decisions"][2].update(helpers.WALKTHROUGH["decisions"][2])
+        made["decisions"][1].update(helpers.WALKTHROUGH["decisions"][1])
         # Then: the file holds with no decision open, and the whole design goes out
         self.assertEqual(self.settles(made), self.holds())
         self.assertEqual(self.on_disk()["decisions"][0]["settled_by"], "user")
@@ -140,7 +140,7 @@ class Answer(helpers.PinnerTest):
         )
         # Then: the file holds, the decision built on it open now
         self.assertEqual(self.settles(left), self.holds("D3"))
-        left["decisions"][2].update(helpers.WALKTHROUGH["decisions"][2])
+        left["decisions"][1].update(helpers.WALKTHROUGH["decisions"][1])
         self.assertEqual(self.settles(left), self.holds())
         self.asks_next(self.design())
 
@@ -164,7 +164,7 @@ class Answer(helpers.PinnerTest):
         # Then: the file holds, the new point open now beside the one built on the decision made
         self.assertEqual(self.settles(raised), self.holds("D3", "D4"))
         # When: the pinner settles both, the new one by the person's words
-        raised["decisions"][2].update(helpers.WALKTHROUGH["decisions"][2])
+        raised["decisions"][1].update(helpers.WALKTHROUGH["decisions"][1])
         raised["decisions"][3].update(decided="a list of texts", settled_by="user")
         # Then: the file holds with no decision open
         self.assertEqual(self.settles(raised), self.holds())
@@ -181,7 +181,7 @@ class Answer(helpers.PinnerTest):
         # Then: the file holds, the changed decision open now and the other waiting for it
         self.assertEqual(self.settles(opened), self.holds("D1"))
         self.assertEqual(
-            self.on_disk()["decisions"][2]["grounds"], settled["decisions"][2]["grounds"]
+            self.on_disk()["decisions"][1]["grounds"], settled["decisions"][1]["grounds"]
         )
         self.asks_next(helpers.FORM)
         # When: the person decides it again, and the pinner settles the one built on it again
@@ -189,7 +189,7 @@ class Answer(helpers.PinnerTest):
         again = self.state(D3=OPEN)
         again["decisions"][0].update(decided="one JSON object a line, one for each note")
         self.assertEqual(self.settles(again), self.holds("D3"))
-        again["decisions"][2].update(helpers.WALKTHROUGH["decisions"][2])
+        again["decisions"][1].update(helpers.WALKTHROUGH["decisions"][1])
         # Then: the file holds with no decision open, and the design goes out again
         self.assertEqual(self.settles(again), self.holds())
         self.asks_next(self.design())
@@ -233,7 +233,7 @@ class Answer(helpers.PinnerTest):
             )
             self.assertEqual((read.made, read.said), (True, {}))
             self.assertEqual(self.on_disk(), confirmed)
-            self.assertEqual(self.on_disk()["decisions"][1]["settled_by"], "maker")
+            self.assertEqual(self.on_disk()["decisions"][2]["settled_by"], "maker")
 
 
 class TestPersonAnswers(Answer):

@@ -37,7 +37,7 @@ plan's goal, with every point settled under it, each with who settled it.
 - **The whole design confirmed.** At the end, Pin shows you every point in one short line, with who
   settled it. You see each point that Pin settled before the work starts, and you confirm that you
   and Pin mean the same.
-- **Kept in a file.** Pin writes each answer into the design file, `design-tree.json`, before its
+- **Kept in a file.** Pin writes each answer into the design file, `design-tree.md`, before its
   next message. After each answer, it checks that every point in the file serves the goal. A stopped
   run goes on from the file in a new conversation. The AI that makes the work reads the design from
   it.
@@ -129,30 +129,30 @@ Goal: scripts that read `notes list` get its notes as JSON.                 (you
 Do we understand the plan the same way?
 ```
 
-You answer `yes`, and Pin ends. The design file is `.pin/20261103-notes-json/design-tree.json`:
+You answer `yes`, and Pin ends. The design file is `.pin/20261103-notes-json/design-tree.md`:
 
-```json
-{"goal": {
-  "what": "Scripts that read `notes list` get its notes as JSON, so they stop parsing text.",
-  "grounds": ["the person, 2026-11-03"]},
- "questions": [
-  {"id": "Q1", "what": "Can each script that reads notes list read the JSON as it is?"},
-  {"id": "Q2", "what": "Do people who read notes list by eye see the same as before?"}],
- "decisions": [
-  {"id": "D1", "what": "The form of the JSON", "contributes_to": ["Q1"], "builds_on": [],
-   "decided": "one JSON array, one object for each note", "settled_by": "user",
-   "grounds": ["the person, 2026-11-03"]},
-  {"id": "D2", "what": "Whether text stays the default", "contributes_to": ["Q2"],
-   "builds_on": [], "decided": "it stays; JSON only with --json", "settled_by": "reasoning",
-   "grounds": ["the goal, and Q2"]},
-  {"id": "D3", "what": "The form of updated", "contributes_to": ["D1"], "builds_on": ["D1"],
-   "decided": "ISO 8601, as the text gives it", "settled_by": "research",
-   "grounds": ["scripts/sync.py:14 \"datetime.fromisoformat(fields[3])\"",
-               "the person confirmed, 2026-11-03"]}]}
+```markdown
+# Design tree
+
+Goal: Scripts that read `notes list` get its notes as JSON, so they stop parsing text.
+- Grounds: the person, 2026-11-03
+
+- **Q1** Can each script that reads notes list read the JSON as it is?
+  - **D1 The form of the JSON**: one JSON array, one object for each note (user)
+    - Grounds: the person, 2026-11-03
+    - **D3 The form of updated**: ISO 8601, as the text gives it (research)
+      - Grounds: scripts/sync.py:14 "datetime.fromisoformat(fields[3])"
+      - Grounds: the person confirmed, 2026-11-03
+      - Also serves: D1
+- **Q2** Do people who read notes list by eye see the same as before?
+  - **D2 Whether text stays the default**: it stays; JSON only with --json (reasoning)
+    - Grounds: the goal, and Q2
 ```
 
-`settled_by` says who settled each decision: you (`user`), a fact found and confirmed (`research`),
-or what follows from the goal and the decisions before it (`reasoning`). You hand the file to the AI
+Each question stands under the goal, and each decision under the question it serves, or under the
+decision it builds on. The end of a decision's line says who settled it: you (`user`), a fact found
+and confirmed (`research`), or what follows from the goal and the decisions before it
+(`reasoning`). You hand the file to the AI
 that makes the work. Every point that the work needs is in it, with who settled it and on what
 grounds, so the AI has nothing to guess.
 
@@ -165,9 +165,9 @@ that the figure cannot show:
 
 - A maker AI writes the goal of the work, its questions and what it has settled into the design
   file, in the form [the design tree](core/roles/pinner.md#the-design-tree) gives. It marks each
-  decision it settled with `"settled_by": "maker"`, so Pin keeps it as given. It then starts
+  decision it settled with `(maker)` at the end of its line, so Pin keeps it as given. It then starts
   `pin:down` with the file's path. Without a path, the file lies in
-  `.pin/<yyyymmdd>-<name>/design-tree.json` at the top of the repository.
+  `.pin/<yyyymmdd>-<name>/design-tree.md` at the top of the repository.
 - Pin runs as a subagent, so it cannot ask the person itself. It ends each run with its
   message headed `For the person:`. The maker AI puts that message to the person as given, and
   resumes Pin with the person's answer under the line `The person's answer, word for word:`.
@@ -177,7 +177,7 @@ that the figure cannot show:
 
 ## Documentation
 
-- [The design tree](core/roles/pinner.md#the-design-tree): each key of the design file, for an AI
+- [The design tree](core/roles/pinner.md#the-design-tree): each line of the design file, for an AI
   that reads it or builds on it.
 
 ## Development

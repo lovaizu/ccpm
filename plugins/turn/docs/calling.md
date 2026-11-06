@@ -30,11 +30,14 @@ Each key of `given` is optional.
 
 - `kind`: the kind of work, such as `readme`, or one Turn has no best practice for yet, such as
   `man-page`. Turn takes it without asking.
-- `goal`: this work's purpose, in the form of Pin's design tree. Turn takes it without asking.
-- `decisions`: each other point settled, in the form of Pin's design tree, each with its `decided`
-  and with `settled_by` `maker`, so Pin keeps it as given and never asks it again. Turn hands each
-  to Pin word for word, and Pin builds the rest of the design on it. Leave `contributes_to` empty
-  where you do not know the questions of the kind's best practice: Pin's pinner joins it.
+- `goal`: this work's purpose, its `what` and its `grounds`. Turn takes it without asking.
+- `decisions`: each other point settled, each with its `decided` and with `settled_by` `maker`, so
+  Pin keeps it as given and never asks it again. `contributes_to` names the questions or decisions
+  it serves, and `builds_on` the decisions it builds on. Turn writes each into Pin's design tree
+  word for word, and Pin builds the rest of the design on it. Leave `contributes_to` empty where
+  you do not know the questions of the kind's best practice: Pin's pinner joins it. Each text is
+  one line; a `what` holds no `**`, and a `decided` is not `open`, as the design tree's lines
+  cannot hold them, so Turn refuses the call.
 - `work`: the paths the work is to lie at.
 - `run`: the folder Turn keeps the run in, under `.turn/` or where your plugin keeps its own.
 
@@ -56,7 +59,7 @@ it is: if you change it on the way, the person answers something Turn did not as
 ## What comes back
 
 The work's files lie at the paths `Done:` names, and Turn does not commit them. The run's folder
-holds the design tree, `design-tree.json`, with each decision and who settled it. It also holds
+holds the design tree, `design-tree.md`, with each decision and who settled it. It also holds
 each check, as `verification/`. So your plugin can show the person what was decided.
 
 ## Depth

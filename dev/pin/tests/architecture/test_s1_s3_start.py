@@ -3,12 +3,11 @@ real, by Pin's hook entries on Pin's Rules laid, through a double of Claude Code
 real, by the command the pinner's rule names; doubles stand in for the go-between, the main
 conversation in S1 and the maker AI in S3, for the pinner, and for the person."""
 
-import json
 import os
 import unittest
 
 import helpers
-from helpers import new
+from helpers import new, tree
 
 PLAN = "notes list should give JSON as well"
 GOAL = (
@@ -23,7 +22,7 @@ CONFIRMED = "the person, 2026-11-03"
 # What the pinner is told where it gives its result with the design file changed since its check.
 UNCHECKED = (
     "pin: After changing `{design}`, pass `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/check.py"
-    " {design}`.\n`.pin/20261103-notes-json/design-tree.json` changed with no test passed after"
+    " {design}`.\n`.pin/20261103-notes-json/design-tree.md` changed with no test passed after"
 )
 
 
@@ -71,7 +70,7 @@ class TestPersonStarts(helpers.PinnerTest):
         # Given: a design file a stopped run left in .pin/, the goal confirmed and the pinner's own
         # decision settled
         left = walkthrough_with(D1=new(helpers.WALKTHROUGH)["decisions"][0])
-        left["decisions"][2].update(
+        left["decisions"][1].update(
             decided=None, settled_by=None, grounds=[helpers.FOUND, CONFIRMED]
         )
         self.lies(left)
@@ -97,7 +96,7 @@ class TestPersonStarts(helpers.PinnerTest):
         self.starts(PLAN)
         # When: it writes a first tree whose second question nothing serves, and runs the check
         faulty = new(helpers.WALKTHROUGH)
-        faulty["decisions"][1]["contributes_to"] = ["Q1"]
+        faulty["decisions"][2]["contributes_to"] = ["Q1"]
         self.writes(faulty)
         checked = self.checks()
         # Then: the check names the question
@@ -143,6 +142,37 @@ class TestPinnerHeld(helpers.PinnerTest):
                 self.assertEqual(told.decision(), "deny")
                 self.assertIn(f"`{self.check}`", told.reason())
 
+    def test_the_pinner_writing_the_design_file_whole_once_it_is_made_is_stopped(self):
+        # When: the pinner writes the design file, made already, whole with Write
+        before = self.read(os.path.join(self.repo, self.path))
+        told = self.rewrites(walkthrough_with(D2={"decided": "x", "settled_by": "reasoning"}))
+        # Then: it is stopped with the sentence of its rule, and the file is as it was
+        self.assertEqual(told.decision(), "deny")
+        self.assertEqual(told.reason(), "pin: Once `{design}` is made, change it only with Edit.")
+        self.assertEqual(self.read(os.path.join(self.repo, self.path)), before)
+
+    def test_the_pinner_changing_the_design_file_with_edit_goes_through(self):
+        # When: the pinner reads the design file and changes it with Edit
+        told = self.writes(walkthrough_with(D2={"decided": "x", "settled_by": "reasoning"}))
+        # Then: the change goes through, and the file holds it
+        self.assertEqual((told.made, told.said), (True, {}))
+        self.assertEqual(self.on_disk()["decisions"][2]["decided"], "x")
+
+    def test_the_pinner_writing_the_design_file_by_a_command_or_a_script_is_stopped(self):
+        before = self.read(os.path.join(self.repo, self.path))
+        for command in (
+            f"sed -i s/open/x/ {self.path}",
+            f"python3 -c \"open('{self.path}', 'w').write('')\"",
+            f"python3 {helpers.PIN}/scripts/check.py {self.path} > {self.path}",
+        ):
+            with self.subTest(command=command):
+                # When: the pinner runs a command or a script that writes the design file
+                told = self.runs(command)
+                # Then: it is stopped, told the check it may run, and the file is as it was
+                self.assertEqual(told.decision(), "deny")
+                self.assertIn(f"`{self.check}`", told.reason())
+                self.assertEqual(self.read(os.path.join(self.repo, self.path)), before)
+
     def test_the_pinner_ending_with_the_file_changed_since_its_last_check_is_stopped(self):
         # When: the pinner changes the file after its check, and gives its result
         self.writes(walkthrough_with(D2={"decided": "x", "settled_by": "reasoning"}))
@@ -169,12 +199,11 @@ MAKER_SETTLED = {
 
 
 def handed_over() -> dict:
-    """The maker AI's hand-over: the goal with its grounds, the questions, its settled decision and
-    a key of its own, every other decision open."""
+    """The maker AI's hand-over: the goal with its grounds, the questions and its settled decision,
+    every other decision open."""
     data = new(helpers.WALKTHROUGH)
     data["goal"]["grounds"] = ["the maker AI's request, 2026-11-02"]
-    data["decisions"][1] = dict(MAKER_SETTLED)
-    data["maker"] = {"change": "notes-json"}
+    data["decisions"][2] = dict(MAKER_SETTLED)
     return data
 
 
@@ -189,14 +218,17 @@ class TestMakerStarts(helpers.PinnerTest):
         written = self.claude.call(
             helpers.MAKER,
             "Write",
-            {"file_path": os.path.join(self.repo, self.path), "content": json.dumps(handed_over())},
+            {
+                "file_path": os.path.join(self.repo, self.path),
+                "content": tree.markdown(handed_over()),
+            },
         )
         self.assertEqual((written.made, written.said), (True, {}))
         # When: it starts the pinner with the path; the pinner reads the file and runs the check
         self.starts("Settle the design of a --json option on notes list with the person.")
         self.reads(self.path)
         checked = self.checks()
-        # Then: the file holds, the maker AI's decision not open, its key kept
+        # Then: the file holds, the maker AI's decision not open
         self.assertEqual(checked, self.holds("D1"))
         self.assertEqual(self.on_disk(), handed_over())
         # When: the pinner reads the fact the form of updated rests on, gives asks and ends with
@@ -211,7 +243,7 @@ class TestMakerStarts(helpers.PinnerTest):
     def test_a_point_the_makers_work_found_opens_it_and_each_decision_built_on_it(self):
         # Given: a settled design, the maker AI's decision among it
         settled = helpers.walkthrough()
-        settled["decisions"][1] = dict(MAKER_SETTLED)
+        settled["decisions"][2] = dict(MAKER_SETTLED)
         self.lies(settled)
         # When: the maker AI starts the pinner again with the point its work found, the form of the
         # JSON; the pinner opens it and the decision built on it, and runs the check
@@ -220,16 +252,16 @@ class TestMakerStarts(helpers.PinnerTest):
             D1={"decided": None, "settled_by": None},
             D3={"decided": None, "settled_by": None},
         )
-        reopened["decisions"][1] = dict(MAKER_SETTLED)
+        reopened["decisions"][2] = dict(MAKER_SETTLED)
         self.writes(reopened)
         checked = self.checks()
         # Then: the file holds, the opened decision open now and the one built on it waiting for
         # it, their grounds kept, the maker AI's decision as it was
         self.assertEqual(checked, self.holds("D1"))
         self.assertEqual(
-            self.on_disk()["decisions"][2]["grounds"], settled["decisions"][2]["grounds"]
+            self.on_disk()["decisions"][1]["grounds"], settled["decisions"][1]["grounds"]
         )
-        self.assertEqual(self.on_disk()["decisions"][1], MAKER_SETTLED)
+        self.assertEqual(self.on_disk()["decisions"][2], MAKER_SETTLED)
         self.assertTrue(self.gives("asks").made)
         self.ends(helpers.FORM)
 

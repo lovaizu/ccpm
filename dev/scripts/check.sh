@@ -40,6 +40,16 @@ pyrefly check --search-path dev/lane dev/scripts/*.py
 # Each kind's lies in its own folder as best-practice.json, beside its template and its example.
 python3 plugins/turn/scripts/plan.py form plugins/turn/core/domain/best-practices/*/best-practice.json
 
+# Each plugin's design tree, where every document of the plugin takes its decisions from
+# (.claude/rules/dev.md, step 1), holds, by Pin's own check of it: a question nothing serves, a
+# decision that serves nothing or one decided before what it builds on fails here, not in a
+# document written from the tree.
+for design in dev/*/design-tree.md; do
+  if [ -f "$design" ]; then
+    python3 plugins/pin/scripts/check.py "$design"
+  fi
+done
+
 # Every figure carries the one style of dev/images/figures.css, so the figures look alike and a
 # colour is changed in one place (dev/plugin-best-practice.md, Directory structure).
 python3 dev/scripts/figures.py check

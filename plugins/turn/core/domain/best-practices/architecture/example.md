@@ -404,6 +404,7 @@ plugins/turn/
 │                                    copies of Turn's own
 ├── core/domain/forms/               the forms of Call, Run, Standard, Round, Answers, Best practice
 ├── core/domain/                     the code of plan.py, rounds.py and throwaway.py
+├── core/domain/tree.py              a link to Pin's tree.py: the form of the Design file
 ├── scripts/                         plan.py, rounds.py, throwaway.py
 ├── hooks/hooks.json                 the guard's hook entries
 ├── hooks/lanes.json                 Rules laid, with the routes on each Result
@@ -413,7 +414,7 @@ plugins/turn/
 
 dev/turn/
 ├── product-vision.md, architecture.md, images/  Turn's product vision and architecture, with the architecture's figures
-├── README.md, design-tree.json      for Turn's developers
+├── README.md, design-tree.md        for Turn's developers
 ├── cosmic-ray.toml                  the mutation testing
 └── tests/
     ├── unit/                        unit tests, at the path of what each tests
@@ -437,9 +438,11 @@ dev/turn/
   its document, so the two cannot drift (KR1.1). It costs a second copy of each document and its
   figures in the repository, and a run of `plan.py example` after each change to them.
 - **The Request, the Design file and its Decisions in Pin's form**, which
-  [the pinner](../../../../../pin/core/roles/pinner.md) gives, over a copy of it in Turn: a form kept
-  twice drifts, and Pin would refuse what Turn hands it (KR1.1). It costs a change to Pin's form
-  changing what Turn hands Pin, with no line of Turn changed.
+  [the pinner](../../../../../pin/core/roles/pinner.md) gives, written and read by Pin's `tree.py`
+  through a link, as [Code kept once](../../../../../../dev/plugin-best-practice.md#code-kept-once) says, over a copy
+  of it in Turn: a form kept twice drifts, and Pin would refuse what Turn hands it (KR1.1). It costs
+  a change to Pin's form changing what Turn hands Pin, with no line of Turn changed, and Turn's
+  tests running Pin's code.
 - **`hooks/lane/` as a link to Lane's code in this marketplace** over a copy, as
   [Code kept once](../../../../../../dev/plugin-best-practice.md#code-kept-once) says: a fix to the
   guard reaches every plugin it holds (KR1.1). It costs a fix in Lane reaching Turn's guard only once

@@ -17,6 +17,12 @@
               ]
             },
             {
+              "lane": "edit_only",
+              "takes": [
+                "{design}"
+              ]
+            },
+            {
               "lane": "run_only",
               "takes": [
                 "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/check.py {design}"

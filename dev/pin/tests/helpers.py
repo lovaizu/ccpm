@@ -31,8 +31,8 @@ __all__ = ["check", "testing", "tree"]
 with open(os.path.join(PIN, "README.md"), encoding="utf-8") as f:
     README = f.read()
 # The design tree the README's walkthrough keeps, which holds.
-WALKTHROUGH: dict[str, Any] = json.loads(
-    re.search(r"```json\n(.*?)```", README, re.DOTALL).group(1)  # type: ignore[union-attr]
+WALKTHROUGH: dict[str, Any] = tree.read(
+    re.search(r"```markdown\n(.*?)```", README, re.DOTALL).group(1)  # type: ignore[union-attr]
 )
 # What the walkthrough decides each decision as.
 WALKTHROUGH_DECIDED = {d["id"]: d["decided"] for d in WALKTHROUGH["decisions"]}
@@ -113,8 +113,8 @@ LAID: dict[str, Any] = json.loads(entry("hooks", "lanes.json"))
 ]
 # Where the person's design file lies, as the go-between picks it for a new plan, and where the
 # maker AI of the tests keeps its own.
-PERSONS = os.path.join(".pin", "20261103-notes-json", "design-tree.json")
-MAKERS = os.path.join(".maker", "notes-json", "design-tree.json")
+PERSONS = os.path.join(".pin", "20261103-notes-json", "design-tree.md")
+MAKERS = os.path.join(".maker", "notes-json", "design-tree.md")
 PINNER = testing.Run("pin:pinner", "p1")
 # A decision put to the person, the form of the JSON, as the pinner's part gives a Reply; and the
 # fact found that the form of updated rests on, as the pinner quotes it.
@@ -177,18 +177,18 @@ class PinnerTest(testing.FolderTest):
         self.heard: list[str] = []
 
     def on_disk(self) -> dict[str, Any]:
-        """The design file on disk."""
-        return self.read_json(os.path.join(self.repo, self.path))
+        """The design file on disk, as tree.py reads it."""
+        return tree.load(os.path.join(self.repo, self.path))
 
     def lies(self, data: dict[str, Any]) -> None:
         """Lays the design file on disk before the run, as a stopped run or a maker AI left it."""
-        self.write_json(os.path.join(self.repo, self.path), data)
+        self.write(os.path.join(self.repo, self.path), tree.markdown(data))
 
     def picks(self, words: str) -> str:
         """The design file's path, as the go-between picks it for a plan of the person's: the file
         in `.pin/` whose goal holds the words, else a new path there, PERSONS."""
-        for path in sorted(glob.glob(os.path.join(self.repo, ".pin", "*", "design-tree.json"))):
-            if words in self.read_json(path)["goal"]["what"]:
+        for path in sorted(glob.glob(os.path.join(self.repo, ".pin", "*", "design-tree.md"))):
+            if words in tree.load(path)["goal"]["what"]:
                 return os.path.relpath(path, self.repo)
         return PERSONS
 
@@ -204,14 +204,29 @@ class PinnerTest(testing.FolderTest):
         return told
 
     def writes(self, data: dict[str, Any], path: str = "") -> testing.Told:
-        """The pinner writes the data with Write, at the design file's path or the path given: only
-        a tree in the form check.py's unit tests hold it to, as the pinner's contract allows."""
+        """The pinner writes the data, at the design file's path or the path given: only a tree in
+        the form check.py's unit tests hold it to, as the pinner's contract allows. It makes a file
+        not yet there with Write, and changes one there with Edit after reading it, its whole text
+        the old string, as the pinner's part allows; the Edit's Told."""
         self.assertEqual(tree.form_faults(data), [])
-        given = {
-            "file_path": os.path.join(self.repo, path or self.path),
-            "content": json.dumps(data),
-        }
-        return self.claude.call(PINNER, "Write", given)
+        file = os.path.join(self.repo, path or self.path)
+        if not os.path.exists(file):
+            return self.claude.call(
+                PINNER, "Write", {"file_path": file, "content": tree.markdown(data)}
+            )
+        self.assertTrue(self.claude.call(PINNER, "Read", {"file_path": file}).made)
+        with open(file, encoding="utf-8") as f:
+            now = f.read()
+        given = {"file_path": file, "old_string": now, "new_string": tree.markdown(data)}
+        return self.claude.call(PINNER, "Edit", given)
+
+    def rewrites(self, data: dict[str, Any]) -> testing.Told:
+        """The pinner writes the design file, there already, whole with Write, which its part does
+        not allow."""
+        file = os.path.join(self.repo, self.path)
+        return self.claude.call(
+            PINNER, "Write", {"file_path": file, "content": tree.markdown(data)}
+        )
 
     def reads(self, path: str) -> testing.Told:
         """The pinner reads a file of the repository with Read."""

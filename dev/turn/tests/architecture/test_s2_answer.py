@@ -83,7 +83,7 @@ class Answer(helpers.TurnTest):
         confirmed = opened("D2")
         heard = self.pinner_asks(self.design(), confirmed, RUN_POINT)
         self.assertEqual(self.heard, [FACT, RUN_POINT])
-        self.assertEqual((heard, self.read_json(self.at(self.design()))), (RUN_POINT, confirmed))
+        self.assertEqual((heard, helpers.tree.load(self.at(self.design()))), (RUN_POINT, confirmed))
 
     def test_any_words_while_a_point_waits_reach_the_pinner_word_for_word(self):
         # Given: the walkthrough's run put to the person

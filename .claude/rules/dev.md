@@ -45,12 +45,19 @@ best practices / skill authoring best practices) and the official plugins.
 
 ### 1. Write the product vision
 
-**Settle the product vision's decisions in `dev/<plugin>/design-tree.json`, the plugin's one
-design tree, with `product-vision/best-practice.json` open. Write
-`dev/<plugin>/product-vision.md` from the tree by `product-vision/template.md`. Have the
-user agree to it before you make anything else.** Do the same for each document after it: its
-questions and decisions go into the same tree, and the document is written from them by its kind's
-template.
+**Settle the product vision's decisions in `dev/<plugin>/design-tree.md`, the plugin's one
+design tree, in the form of
+[Pin's design tree](../../plugins/pin/core/roles/pinner.md#the-design-tree), with
+`product-vision/best-practice.json` open. Change the tree only with Read and Edit, never by a
+command or a script, and after each change read the path from the node changed up to the goal and
+every branch under it. Write `dev/<plugin>/product-vision.md` from the tree by
+`product-vision/template.md`. Have the user agree to it before you make anything else.** Do the
+same for each document after it: its questions and decisions go into the same tree, and the
+document is written from them by its kind's template. `dev/scripts/check.sh` checks each tree by
+Pin's check.
+
+- Rationale: a change made by finding an ID or a word never shows the branch the node stands in,
+  so the nodes above and below it go on saying what held before, and the tree drifts from its goal.
 
 - Rationale: each sentence of a document then rests on a decision of the tree, and two documents
   that rest on one decision say the same thing. The template holds each document to what its
