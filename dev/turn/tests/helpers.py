@@ -219,7 +219,6 @@ for _folder, _, _names in os.walk(SUBJECT):
 # and the pinner's give them.
 FOR_THE_PERSON = "For the person:"
 ANSWERED = "The person's answer, word for word:"
-UP = testing.Run("turn:up", "u1")
 PINNER = testing.Run("pin:pinner", "n1")
 # The calling AI of S3 and S4, a subagent of a plugin that has Turn make a work.
 CALLER = testing.Run("caller:caller", "c1")
@@ -357,18 +356,21 @@ class TurnTest(testing.FolderTest):
         return testing.Run(f"turn:{role}", f"{role[0]}{self.made}")
 
     def begins(self, request: str) -> list[str]:
-        """The starter starts up in the background with the request: what up is told as it
-        starts."""
-        told = self.claude.start(self.starter, UP, request)
-        self.assertTrue(told.made, told.said)
-        return told.context
+        """The starter begins a run of the skill up with the request: the person by typing
+        `/turn:up`, or the calling AI, the main conversation, by its Skill call: what the main
+        conversation, the orchestrator, is told as the run begins."""
+        if self.starter is None:
+            return self.claude.typed("turn:up")
+        called = self.claude.skill("turn:up")
+        self.assertTrue(called.made, called.said)
+        return called.context
 
     def starts(self, run: testing.Run, prompt: str) -> testing.Told:
-        """up starts the run with the prompt, and ends to wait for it; fails the test where the
-        start or the end is not let through."""
-        told = self.claude.start(UP, run, prompt)
+        """The orchestrator starts the run with the prompt, and ends its turn to wait for it; fails
+        the test where the start or the end is not let through."""
+        told = self.claude.start(None, run, prompt)
         self.assertTrue(told.made, told.said)
-        self.assertTrue(self.claude.stop(UP).made)
+        self.assertTrue(self.claude.end_turn().made)
         return told
 
     def does(self, run: testing.Run | None, tool: str, **given: Any) -> testing.Told:
@@ -396,33 +398,33 @@ class TurnTest(testing.FolderTest):
         self.runs(run, f"python3 {root}/hooks/lane/result.py {name} {on}")
 
     def ends(self, run: testing.Run, message: str) -> list[str]:
-        """The run ends with the message, let end, and up is started again: what up is told."""
+        """The run ends with the message, let end, and its end reaches the orchestrator: what the
+        orchestrator is told."""
         ended = self.claude.stop(run)
         self.assertTrue(ended.made, ended.said)
         self.last[run.agent_id] = message
-        return lines_of(self.claude.started(UP))
+        return lines_of(self.claude.notify(run))
 
     def passes(self, run: testing.Run) -> str:
-        """up ends with the run's last message as given, and the starter puts it to the person: what
-        the person heard."""
-        self.assertTrue(self.claude.stop(UP).made)
+        """The orchestrator puts the run's last message to the person as given, and ends its turn to
+        wait: what the person heard."""
+        self.assertTrue(self.claude.end_turn().made)
         message = self.last[run.agent_id]
         heard = message.split("\n", 1)[1] if message.startswith(FOR_THE_PERSON) else message
         self.heard.append(heard)
         return heard
 
     def answers(self, words: str, run: testing.Run) -> None:
-        """The person answers; the starter resumes up with their words under the Answer's line, and
-        up resumes the run with the message whole, which Claude Code starts again; up ends to
-        wait."""
+        """The person answers, typing their words where the person started Turn, or the calling AI
+        has them; the orchestrator resumes the run with them under the Answer's line, which Claude
+        Code starts again, and ends its turn to wait."""
         message = f"{ANSWERED}\n{words}"
-        sent = self.does(self.starter, "SendMessage", to=UP.agent_id, message=message)
-        self.assertTrue(sent.made, sent.said)
-        self.claude.started(UP)
-        passed = self.does(UP, "SendMessage", to=run.agent_id, message=message)
+        if self.starter is None:
+            self.claude.prompted(words)
+        passed = self.does(None, "SendMessage", to=run.agent_id, message=message)
         self.assertTrue(passed.made, passed.said)
         self.claude.started(run)
-        self.assertTrue(self.claude.stop(UP).made)
+        self.assertTrue(self.claude.end_turn().made)
 
     def plans(self, planner: testing.Run, command: str) -> str:
         """The planner runs plan.py's command on the run's folder: what it printed."""
@@ -612,16 +614,18 @@ class InRoundsTest(TurnTest):
         return f"python3 {TURN}/scripts/rounds.py check {self.folder} {answers}"
 
     def evaluates(self, lines: list[str], short: Any = (), opens: Any = (), none: int = 0):
-        """up starts a run of the evaluator for each line, all at once, and ends; each run reads
+        """The orchestrator starts a run of the evaluator for each line, all at once, and ends its
+        turn; each run reads
         the Standard, use-and-answer.md and the work whole, runs its commands in a throwaway copy,
         answers its questions and passes rounds.py check, gives the result it names and ends with
         the line it printed, but the run numbered `none`, which ends with no result, kept going
-        once; up, started again after each, ends to wait: what up was told after the last."""
+        once; the orchestrator, told of each end, ends its turn to wait: what it was told after the
+        last."""
         started = [self.new("evaluator") for _ in lines]
         for run, line in zip(started, lines):
-            told_ = self.claude.start(UP, run, line)
+            told_ = self.claude.start(None, run, line)
             self.assertTrue(told_.made, told_.said)
-        self.assertTrue(self.claude.stop(UP).made)
+        self.assertTrue(self.claude.end_turn().made)
         after: list[str] = []
         for n, (run, line) in enumerate(zip(started, lines), 1):
             values = json.loads(line)
@@ -637,7 +641,7 @@ class InRoundsTest(TurnTest):
                 kept = self.claude.stop(run)
                 self.assertEqual((kept.made, kept.decision()), (False, "block"))
                 self.assertTrue(self.claude.stop(run).made)
-                after = lines_of(self.claude.started(UP))
+                after = lines_of(self.claude.notify(run))
             else:
                 answers = self.answered(values["questions"], short, opens)
                 self.writes(run, values["answers"], answers)
@@ -646,7 +650,7 @@ class InRoundsTest(TurnTest):
                 self.gives(run, on)
                 after = self.ends(run, out.rstrip("\n").split("\n")[-1])
             if n < len(lines):
-                self.assertTrue(self.claude.stop(UP).made)
+                self.assertTrue(self.claude.end_turn().made)
         return after
 
 

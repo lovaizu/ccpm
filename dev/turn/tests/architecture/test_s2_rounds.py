@@ -10,7 +10,7 @@ import os
 import unittest
 
 import helpers
-from helpers import UP, runs, told
+from helpers import runs, told
 
 READ_BETTER = "# tidy\n\ntidy sorts your Downloads folder into a folder for each kind of file.\n"
 
@@ -131,7 +131,7 @@ class TestRounds(helpers.InRoundsTest):
         # Given: the runs of the evaluator started on a round of what the README says
         _, lines, _ = self.generates(self.line)
         run = self.new("evaluator")
-        self.assertTrue(self.claude.start(UP, run, lines[0]).made)
+        self.assertTrue(self.claude.start(None, run, lines[0]).made)
         # When: it reads the design tree, the best practice with its ways, and the generator's
         # Answers
         for path in (
@@ -210,7 +210,7 @@ class TestNewKind(helpers.InRoundsTest):
         self.assertEqual(request.split("\n")[0], json.dumps({"design": design}))
         self.assertEqual(helpers.tree.load(self.at(design))["questions"][0]["id"], "man-page/Q1")
         self.assertTrue(os.path.exists(self.at(runs.REPOSITORY, "man-page", "best-practice.md")))
-        self.assertTrue(self.claude.start(UP, helpers.PINNER, request).made)
+        self.assertTrue(self.claude.start(None, helpers.PINNER, request).made)
 
 
 if __name__ == "__main__":

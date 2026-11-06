@@ -657,11 +657,16 @@ class ClaudeCode:
         """The command, `<plugin>:<skill>`, typed in the main conversation: UserPromptSubmit of the
         words typed, then UserPromptExpansion of the command, as TRIES showed; the context the hooks
         added at either."""
-        prompt = {**self.common("UserPromptSubmit", None), "prompt": f"/{command}"}
-        found = self.context(self.send(self.held(prompt)))
+        found = self.prompted(f"/{command}")
         given = {"expansion_type": "slash_command", "command_name": command, "command_args": ""}
         expansion = {**self.common("UserPromptExpansion", None), **given, "prompt": f"/{command}"}
         return found + self.context(self.send(self.held(expansion)))
+
+    def prompted(self, text: str) -> list[str]:
+        """The text typed in the main conversation, UserPromptSubmit of it: the context the hooks
+        added."""
+        prompt = {**self.common("UserPromptSubmit", None), "prompt": text}
+        return self.context(self.send(self.held(prompt)))
 
     def skill(self, name: str) -> Told:
         """The main conversation's Skill call of the skill of the name, `<plugin>:<skill>`:

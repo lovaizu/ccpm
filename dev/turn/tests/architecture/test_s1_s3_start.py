@@ -8,7 +8,7 @@ import os
 import unittest
 
 import helpers
-from helpers import UP, runs, told
+from helpers import runs, told
 
 # The README's purpose as the pinner puts it, while the goal's grounds are empty.
 GOAL = (
@@ -72,7 +72,7 @@ class Start(helpers.TurnTest):
         self.answers("right", planner)
         # Then: up is told to start the pinner, on the Request that names the hand-over
         request = self.hands_over(planner, request="something that explains tidy")
-        self.assertTrue(self.claude.start(UP, helpers.PINNER, request).made)
+        self.assertTrue(self.claude.start(None, helpers.PINNER, request).made)
 
     def test_a_kind_new_to_turn_has_its_best_practice_handed_over_first(self):
         # Given: a request for a man page, which Turn has no best practice of
@@ -108,7 +108,7 @@ class Start(helpers.TurnTest):
         self.assertEqual(handed["goal"], {"what": purpose, "grounds": []})
         self.assertEqual(handed["questions"][0]["id"], "meta/Q1")
         self.assertEqual(request.split("\n")[0], json.dumps({"design": design}))
-        self.assertTrue(self.claude.start(UP, helpers.PINNER, request).made)
+        self.assertTrue(self.claude.start(None, helpers.PINNER, request).made)
 
     def test_a_stopped_run_whose_design_is_open_goes_on_through_pin(self):
         # Given: a run stopped while Pin settled its design, the walkthrough's run still open
@@ -174,7 +174,7 @@ class Start(helpers.TurnTest):
         # Then: the work is with Pin again, and up is told to start the pinner with the change
         self.assertEqual(self.ends(planner, request), [told("planner", "handed", "pin:pinner")])
         self.assertEqual(runs.current(self.run_file())["at"], "pin")
-        self.assertTrue(self.claude.start(UP, helpers.PINNER, request).made)
+        self.assertTrue(self.claude.start(None, helpers.PINNER, request).made)
 
 
 class TestCallingAI(helpers.TurnTest):

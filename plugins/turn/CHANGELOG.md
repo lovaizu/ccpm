@@ -4,6 +4,7 @@
 
 ### Added
 
+- `/turn:up` has your main conversation carry the run itself, following Turn's orchestrator steps, with Lane holding it to Turn's routes from the call to the route that starts no more — each point reaches you from the conversation you typed in, with no subagent in between.
 - As soon as the AI that makes the work meets a point your CCS and its files leave open that only the user can decide, or something outside the work it needs, such as a tool or a permission, it sends the main conversation that one question, with the items waiting on it and the answer it recommends, makes the rest of the work meanwhile, settles every other point itself and names it with why in the result, and makes what waited once the answer, kept in your CCS, is sent back to it — the user is asked only what is theirs, at once, wherever your step's AI runs, instead of a work made on a guess.
 - Your call can ask items of each part of the work, by the kind `each` of your CCS, and such an item gets its Good only where every section or file gives it — a part that falls short is not passed because another part gives the item.
 - The AI reading in the receiver's place has what the CCS says the receiver has, such as the whole repository, and does what they do with the work, such as running its tests — a Good that holds only on paper, or one the receiver gets from what lies beside the work, is told apart.
