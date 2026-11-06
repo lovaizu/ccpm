@@ -178,8 +178,8 @@ the run (KR1.1). What becomes of the work is the user's to decide, as
 - **The role before a step handing up the next role's run values** over up reading them from the
   run's folder: Lane then lets up make no call but the start due, so every step up takes is held
   (KR1.1). It costs the planner's and the generator's replies carrying what up starts with.
-- **No role of Turn starting a subagent** over a researcher in the background: Claude Code lets
-  subagents start subagents only three layers below the main conversation, the user's AI may
+- **No role of Turn but up starting a subagent** over a researcher in the background: Claude Code
+  lets subagents start subagents only three layers below the main conversation, the user's AI may
   stand one layer down, and a child's end would start its role again while a point waits, so a run
   would break before the hand-over (KR1.1). It costs the pinner and the generator finding facts
   themselves, one after another, in their own context (KR1.2).

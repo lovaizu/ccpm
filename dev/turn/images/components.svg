@@ -126,7 +126,7 @@
   <path class="store" d="M300,1185 A750.0,9 0 0 1 1800,1185 V1245 A750.0,9 0 0 1 300,1245 Z"/>
   <path class="store" d="M300,1185 A750.0,9 0 0 0 1800,1185"/>
   <text class="name" x="1050.0" y="1219.0" text-anchor="middle">the run's folder</text>
-  <text class="kind" x="1050.0" y="1237.0" text-anchor="middle">[folder · JSON files: Call, Run, Design file, Standard, Round, Answers]</text>
+  <text class="kind" x="1050.0" y="1237.0" text-anchor="middle">[folder · JSON files: Call, Run, Standard, Round, Answers; Markdown: Design file]</text>
   <path class="line" d="M80,160 L80,240" marker-end="url(#arrow)"/>
   <text class="label small halo" x="88" y="182" text-anchor="start">starts Turn, then</text>
   <text class="label small halo" x="88" y="196" text-anchor="start">answers each point</text>
@@ -222,7 +222,7 @@
   <path class="store" d="M250,1295 A18.0,9 0 0 0 286,1295"/>
   <text class="label small" x="294" y="1305" text-anchor="start">store of Turn's data</text>
   <rect class="ext" x="440" y="1290" width="36" height="22" rx="6"/>
-  <text class="label small" x="484" y="1305" text-anchor="start">outside Turn; with a head: the UX's role</text>
+  <text class="label small" x="484" y="1305" text-anchor="start">outside Turn; with a head: the product vision's role</text>
   <rect class="frame" x="830" y="1290" width="36" height="22" rx="4"/>
   <text class="label small" x="874" y="1305" text-anchor="start">the roles Turn's guard holds</text>
   <text class="label small" x="1080" y="1297" text-anchor="start">a box: name, [type · technology], and what it alone decides; [tool] on an arrow</text>
