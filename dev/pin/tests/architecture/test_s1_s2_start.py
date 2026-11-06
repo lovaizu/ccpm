@@ -280,6 +280,31 @@ class TestAICalls(helpers.PinnerTest):
         self.assertEqual(heard, helpers.FORM.split("\n", 1)[1])
         self.assertEqual(self.on_disk(), written_by_the_ai())
 
+    def test_a_decision_open_now_that_is_the_pinners_is_settled_before_the_persons_is_put(self):
+        # Given: the user's AI's tree, its goal settled, with the default of the text left open
+        left = written_by_the_ai()
+        left["decisions"][2].update(decided=None, settled_by=None, grounds=[])
+        self.lies(left)
+        # When: the AI calls the skill; the pinner reads the file and runs the check
+        self.starts("Settle the design of a JSON output of notes list with the person.")
+        self.reads(self.path)
+        # Then: that decision and the person's are open to decide now
+        self.assertEqual(self.checks(), self.holds("D1", "D2"))
+        # When: the pinner reads the fact it rests on, settles it by reasoning, and runs the check
+        self.assertTrue(self.reads("notes.py").made)
+        mine = written_by_the_ai()
+        mine["decisions"][2].update(
+            decided="it stays; JSON only with --json",
+            settled_by="reasoning",
+            grounds=['notes.py:17 "for number, title, tags, updated, _ in NOTES:"', "Q2"],
+        )
+        self.writes(mine)
+        # Then: the file holds, only the person's decision open now, and that one is put
+        self.assertEqual(self.checks(), self.holds("D1"))
+        self.assertEqual(self.on_disk()["decisions"][2]["settled_by"], "reasoning")
+        self.assertTrue(self.gives("asks").made)
+        self.assertEqual(self.ends(helpers.FORM), helpers.FORM.split("\n", 1)[1])
+
     def test_a_point_the_ais_work_found_opens_it_and_each_decision_built_on_it(self):
         # Given: a settled design, the AI's decision among it
         settled = helpers.walkthrough()
