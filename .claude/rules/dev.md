@@ -58,7 +58,6 @@ Pin's check.
 
 - Rationale: a change made by finding an ID or a word never shows the branch the node stands in,
   so the nodes above and below it go on saying what held before, and the tree drifts from its goal.
-
 - Rationale: each sentence of a document then rests on a decision of the tree, and two documents
   that rest on one decision say the same thing. The template holds each document to what its
   reader needs, as an AI told only to be brief still writes past it.
