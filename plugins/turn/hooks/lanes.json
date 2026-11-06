@@ -184,7 +184,8 @@
       },
       {
         "from": "planner",
-        "on": "asks"
+        "on": "asks",
+        "waits": true
       },
       {
         "from": "planner",
@@ -202,7 +203,8 @@
       },
       {
         "from": "pin:pinner",
-        "on": "asks"
+        "on": "asks",
+        "waits": true
       },
       {
         "from": "pin:pinner",

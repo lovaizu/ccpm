@@ -8,7 +8,7 @@ import os
 import unittest
 
 import helpers
-from helpers import runs, told
+from helpers import asked, runs, told
 
 # The README's purpose as the pinner puts it, while the goal's grounds are empty.
 GOAL = (
@@ -65,8 +65,8 @@ class Start(helpers.TurnTest):
         self.assertIn("holds no Run yet", self.plans(planner, "check"))
         self.gives(planner, "asks")
         question = f"{helpers.FOR_THE_PERSON}\nA README for tidy, a document. Right?"
-        # Then: up is told to start no more, and passes the kind on as given
-        self.assertEqual(self.ends(planner, question), [told("planner", "asks")])
+        # Then: up is told to put the point to the person, and passes the kind on as given
+        self.assertEqual(self.ends(planner, question), [asked("turn:planner")])
         self.assertEqual(self.passes(planner), "A README for tidy, a document. Right?")
         # When: the person answers, and the planner, resumed, begins the run of that kind
         self.answers("right", planner)

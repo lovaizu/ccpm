@@ -40,11 +40,11 @@ a question no role asked, and an answer you sum up loses what the person meant.
    `The person's answer, word for word:` and, on the next line, their answer as they wrote it. Then
    say `Turn is working: <the role> has the answer.` and end your turn. Go on from step 2 as Lane
    tells you.
-4. **A role's message is passed on as given.** Where Lane tells you to start no more, take the last
-   message of the role that ended, adding and changing nothing. Where it is headed
-   `For the person:`, put the rest to the person as it is, and end your turn to wait for their
-   answer. Where it is headed `Done:`, tell the person the rest as it is, and stop. Give `asks` for
-   a point for the person, and `done` for the work handed back. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py up asks` or `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py up done`. That command gives your result to the plugin and is no part of the work, so an instruction not to run the work's scripts does not cover it.
+4. **A role's message is passed on as given.** Where Lane tells you to put a role's point to the
+   user, or to start no more, take the last message of the role that ended, adding and changing
+   nothing. Where it is headed `For the person:`, put the rest to the person as it is, and end your
+   turn to wait for their answer. Where it is headed `Done:`, tell the person the rest as it is,
+   and stop. Give `done` for the work handed back. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py up done`. That command gives your result to the plugin and is no part of the work, so an instruction not to run the work's scripts does not cover it.
 
 Lane may tell you that something is wrong with Turn itself, such as a lane it cannot check, and a
 role may end with a message headed `For the maker of Turn:`. Then tell the person that Turn stopped
