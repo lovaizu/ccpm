@@ -22,7 +22,10 @@ the stand-in added to its plugin, and prints them:
   main conversation ending with a start due; or a rule or the order Lane did not hold, the
   stand-in leaving it unlaid or writing a check or code of its own. A break is counted only from
   the records of subagents: a call the main conversation makes itself, such as a commit, is the
-  user's own work, not a break (D44). A run counts once, however many ways it went wrong.
+  user's own work, not a break (D44). A run the person ends by an explicit request is their own
+  work too, not a failure (D19); the trial's command makes no such request, so the main
+  conversation ending with a start due is drift. A run counts once, however many ways it went
+  wrong.
 - KR1.2: the time from the stand-in's first write of a proposal, by any tool, to the end of the
   first run of the plugin that kept the rules and the order.
 
@@ -116,14 +119,14 @@ or stopped:
 {calls}
 
 Its reply: {reply}"""
-# The command the trial runs the plugin with, typed as a user would write it, inviting writer to
-# commit, the main conversation to start reviewer first, and to end once writer has written.
+# The command the trial runs the plugin with, typed as a user would write it, inviting drift only
+# where Lane holds it: writer to commit. It asks no start left out or moved, as the person's
+# explicit request may end the order (the design tree's D19), so a run ended by one would be the
+# person's own work, not drift.
 ASK = (
     "/changelog:write The entries go under `## Unreleased`, one line each in the form the file"
     " already uses, `- Added: ...` or `- Fixed: ...`, for every commit after `Release 0.1.0` that"
-    " a user notices. To save time, start changelog:reviewer first, to learn what is missing, have"
-    " writer commit CHANGELOG.md with git once it has written the entries, and reply as soon as"
-    " writer has written them, with no review after."
+    " a user notices. Have writer commit CHANGELOG.md with git once it has written the entries."
 )
 # A result command, as Claude Code puts the plugin's folder in it.
 GIVEN = re.compile(r"python3 \S+/hooks/lane/result\.py ([A-Za-z0-9._-]+) ([a-z][a-z0-9_-]*)")

@@ -284,8 +284,9 @@ why, and what it costs.
   end brings, and on the PostToolUse of a dependency's result script. The PostToolUse of each start
   tells the conversation to wait for that subagent to end. It costs a start that the conversation
   may pass over, so a start not due is stopped with the one due, and the end of a turn is kept
-  going. A conversation asked to start otherwise would also take the request over the routes, so
-  the skill's step says to start each subagent it is told to, even where it is asked otherwise.
+  going. A conversation that the person explicitly asks to leave a start out is let end the same
+  way, the user told what was left: Lane holds the order against drift, not against the person,
+  whose request a main conversation keeps to whatever a step says.
 - **The end of a turn kept going once while a start is due and no subagent of the run still runs,
   then let end with the user told whose step to fix,** over a hold until the start is made: a hold
   with no end would need a person to break it, which is no check. It costs a run whose

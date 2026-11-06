@@ -164,23 +164,20 @@ class TestSentence(unittest.TestCase):
         # Then: it is the one wording before the current, which said no more than the commands
         self.assertEqual(lanes.earlier("result", ["give"]), ["End by running `give`."])
 
-    def test_the_routes_sentence_says_the_order_holds_where_asked_otherwise(self):
-        # Given: the skill's step the routes are laid on, as a main conversation asked by its user
-        # to start the subagents in another order reads it
+    def test_the_routes_sentence_says_nothing_against_the_persons_request(self):
+        # Given: the skill's step the routes are laid on, as a main conversation its person asks
+        # to end the order reads it
         # When: the sentence laid there is made
-        # Then: it says to start each subagent told even where asked otherwise, as the order is
-        # the plugin's
-        self.assertEqual(
-            lanes.sentence("follow_routes", []),
-            "Start each subagent you are told to start, until you are told to start no more, even"
-            " where you are asked otherwise: the plugin sets this order, and a request does not"
-            " change it.",
-        )
+        # Then: it says only to start each subagent told, and nothing of a request, as lane holds
+        # the order against drift, not against the person
+        said = lanes.sentence("follow_routes", [])
+        self.assertEqual(said, helpers.FOLLOW)
+        self.assertNotIn("asked", said)
 
     def test_the_routes_sentence_is_given_in_each_wording_lane_laid_before(self):
         # Given: the skill's step the routes are laid on
         # When: the sentence laid there is made in the wordings lane laid before
-        # Then: it is the one wording before the current, which said nothing of a request
+        # Then: it is the one wording before the current, which set the order against a request
         self.assertEqual(lanes.earlier("follow_routes", []), [helpers.FOLLOW_EARLIER])
 
     def test_a_sentence_whose_wording_never_changed_has_none_laid_before(self):

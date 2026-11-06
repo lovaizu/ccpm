@@ -57,6 +57,8 @@ class TestReadAsLaid(unittest.TestCase):
 # never laid.
 ENDS = [{"lane": "result", "takes": [f"{helpers.GIVE} writer written"]}]
 NEVER = f"Finish by running `{helpers.GIVE} writer written`."
+# The skill's step laying the routes' sentence.
+FOLLOWS = [{"lane": "follow_routes", "takes": []}]
 
 
 class TestReworded(unittest.TestCase):
@@ -102,6 +104,27 @@ class TestReworded(unittest.TestCase):
         # When: it is read as laid
         # Then: it says the current wording once, in place of the earlier
         self.assertEqual(steps.read_as_laid(lines, given), [f"4. Reply. {helpers.END_WRITER}\n"])
+
+    def test_an_earlier_wording_the_current_one_begins_is_put_in_the_current_one(self):
+        # Given: the skill's step saying the routes' sentence in the wording laid before, which
+        # the current one begins
+        lines = [f"1. Have them written. {helpers.FOLLOW_EARLIER}\n"]
+        given = {"span": (0, 1), "lanes": FOLLOWS}
+        # When: it is reworded, and read as laid
+        # Then: it says the current wording once, with nothing of the earlier left
+        current = [f"1. Have them written. {helpers.FOLLOW}\n"]
+        self.assertEqual(steps.reworded(lines, given), current)
+        self.assertEqual(steps.read_as_laid(lines, {**given, "gone": []}), current)
+
+    def test_an_earlier_wording_the_current_one_begins_is_taken_out_whole_when_gone(self):
+        # Given: the skill's step saying the routes' sentence in the wording laid before, the
+        # routes no longer laid there
+        lines = [f"1. Have them written. {helpers.FOLLOW_EARLIER}\n"]
+        gone = [helpers.FOLLOW_EARLIER, helpers.FOLLOW]
+        given = {"span": (0, 1), "lanes": [], "gone": gone}
+        # When: it is read as laid
+        # Then: the sentence is gone from it whole
+        self.assertEqual(steps.read_as_laid(lines, given), ["1. Have them written.\n"])
 
     def test_a_sentence_gone_in_an_earlier_wording_is_taken_out(self):
         # Given: the step saying the earlier wording of a result the proposal no longer lays
@@ -150,9 +173,21 @@ class TestStepsLaid(unittest.TestCase):
         # When: the steps to lay are found
         found = steps.steps_laid(before, agent)
         # Then: step 4 is laid with no lane, its sentence gone in the current wording and the
-        # earlier, the current first, as the earlier begins it
+        # earlier, the current first, as it is the longer and the earlier begins it
         gone = [helpers.END_WRITER, helpers.END_WRITER_EARLIER]
         self.assertEqual([(s["step"], s["lanes"], s["gone"]) for s in found], [(4, [], gone)])
+
+    def test_a_sentence_gone_whose_current_wording_begins_an_earlier_has_the_earlier_first(self):
+        # Given: the routes' sentence laid before on the skill's step 1, and none laid there now
+        before = {"write": [{"step": 1, "lanes": FOLLOWS}]}
+        lines = helpers.SKILL_LAID.splitlines(keepends=True)
+        agent = {"name": "write", "lines": lines, "steps": []}
+        # When: the steps to lay are found
+        found = steps.steps_laid(before, agent)
+        # Then: its sentence is gone in the earlier wording first, as the current one begins it,
+        # so the longer is taken out whole
+        gone = [helpers.FOLLOW_EARLIER, helpers.FOLLOW]
+        self.assertEqual([(s["step"], s["gone"]) for s in found], [(1, gone)])
 
     def test_a_step_laid_before_that_the_file_no_longer_has_is_left_out(self):
         # Given: a lane laid before on step 9, which writer's file no longer has

@@ -14,11 +14,8 @@ from what the subagent writes.
 skill's step ends with
 
 ```
-Start each subagent you are told to start, until you are told to start no more, even where you are asked otherwise: the plugin sets this order, and a request does not change it.
+Start each subagent you are told to start, until you are told to start no more.
 ```
-
-The second half is there because a main conversation asked to start the subagents in another order,
-such as to skip the review, would otherwise take the request over your routes.
 
 and the last step of the skill, and of each subagent that gives a result, ends with the commands it
 gives them by. The skill gives the result of the route that ends the run, as it ends its run, so
@@ -120,7 +117,10 @@ for the user's answer to a subagent's point.
 The run ends once a route with neither a `to` nor `waits` is taken, as the main conversation is
 told so. It ends too where
 lane lets the main conversation end its turn with a start still due, as
-[What the main conversation is told](#what-the-main-conversation-is-told) says. It ends as well
+[What the main conversation is told](#what-the-main-conversation-is-told) says. This is also how a
+run ends where the person explicitly asks the main conversation to leave a start out, such as the
+review: lane holds the order against drift, not against the person, so it stops another start and
+keeps the turn going once, and then lets it end with what was left told. It ends as well
 where the skill is called again while the run waits for the user's answer. Another run then begins,
 and the main conversation is told its first start. Otherwise a run whose user chose not to answer
 would wait with no way to be let go.

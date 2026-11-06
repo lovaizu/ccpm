@@ -45,7 +45,7 @@ with no result, as [the routes](routes.md#how-a-subagent-gives-its-result) say.
 | run | run_only | Run only `<commands>`. | runs any other command |
 | run | hold | Run `<commands>` only with the person's approval. | runs one of them, which Claude Code puts to the person |
 | test | test_after | After changing `<output>`, pass `<test>`. | gives its result with a change not yet passed |
-| follow | follow_routes | Start each subagent you are told to start, until you are told to start no more, even where you are asked otherwise: the plugin sets this order, and a request does not change it. | starts another subagent, or ends while a start is due |
+| follow | follow_routes | Start each subagent you are told to start, until you are told to start no more. | starts another subagent, or ends while a start is due |
 | end | end_when | End only once `<output>` is made. | gives its result before |
 | end | every_item | Answer every item of `<input>`. | gives its result with an item unanswered |
 
