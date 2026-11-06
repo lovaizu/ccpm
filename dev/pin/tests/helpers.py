@@ -111,25 +111,32 @@ LAID: dict[str, Any] = json.loads(entry("hooks", "lanes.json"))
     for lane in step["lanes"]
     if (step["step"], lane["lane"]) == (1, "run_only")
 ]
-# Where the person's design tree lies, as the go-between picks it for a new plan, and where the
-# maker AI of the tests keeps its own.
+# Where the person's design tree lies, as the orchestrator picks it for a new plan, and where the
+# user's AI of the tests writes its own.
 PERSONS = os.path.join(".pin", "20261103-notes-json", "design-tree.md")
-MAKERS = os.path.join(".maker", "notes-json", "design-tree.md")
+AIS = os.path.join(".maker", "notes-json", "design-tree.md")
 PINNER = testing.Run("pin:pinner", "p1")
 # A decision put to the person, the form of the JSON, as the pinner's part gives a Reply; and the
 # fact found that the form of updated rests on, as the pinner quotes it.
 FORM = (
     "For the person:\n"
-    "**Purpose**: each script reads the JSON in the form it expects.\n"
-    "**To-be**: the JSON comes in the one form that suits how you read it.\n"
-    "**As-is**: notes list gives text only.\n"
-    "**Gap**: one JSON array and one object a line serve equally well.\n"
-    "**Proposal**: one JSON array of all notes; yes?"
+    "Each script is to read the JSON in the form it expects. notes list gives text only, so no"
+    " JSON form is set yet (notes.py:18). One JSON array and one object a line serve equally well,"
+    " and nothing found favors either.\n"
+    "Shall the JSON be one array of all notes, which jq and json.load read whole?"
 )
 FOUND = 'scripts/sync.py:14 "datetime.fromisoformat(fields[3])"'
-
-# The maker AI that is the go-between in S3 and S4, a subagent of a plugin that uses Pin.
-MAKER = testing.Run("maker:maker", "m1")
+# What Pin's guard tells the main conversation, as the routes laid have it: the first start, the
+# wait for the pinner, its point to put to the person, and the end of the run; and the sentence a
+# start not due is stopped with.
+FIRST = "pin: Start `pin:pinner`."
+WAIT = "pin: Wait for `pin:pinner` to end: you are told the next start once it has."
+ASKED = (
+    "pin: pinner gave `asks`. Put its point to the user, and resume `pin:pinner` with their answer"
+    " by SendMessage."
+)
+END = "pin: pinner gave `done`. Start no more subagents."
+FOLLOWED = "pin: Start each subagent you are told to start, until you are told to start no more."
 
 
 def handed(event: dict[str, Any]) -> str:
@@ -159,10 +166,12 @@ class PinnerTest(testing.FolderTest):
     """A test of a path of Pin's Sequences, in the notes app's repository `repo` in `base`: Pin's
     guard runs real, by Pin's hook entries on Pin's Rules laid, through a double of Claude Code
     working in `repo`, whose hooks keep their records in `base` as the system's temporary folder;
-    check.py runs real, by the command the pinner's rule names. Doubles stand in for the pinner, the
-    go-between, `starter`, the main conversation where None, and the person, set answers."""
+    check.py runs real, by the command the pinner's rule names. Doubles stand in for the
+    orchestrator, the main conversation that follows pin:down; for the pinner; and for the user: the
+    person, whose answers are set, and, where `called`, the user's AI, which calls the skill with a
+    design tree it wrote at `path`."""
 
-    starter: testing.Run | None = None
+    called = False
     path = PERSONS
 
     def setUp(self) -> None:
@@ -173,19 +182,31 @@ class PinnerTest(testing.FolderTest):
         self.env = {**os.environ, "TMPDIR": self.base}
         self.claude = testing.ClaudeCode(PIN, self.repo, self.env, check=handed)
         self.check = CHECK.replace("${CLAUDE_PLUGIN_ROOT}", PIN).replace("{design}", self.path)
-        # What reached the person from the go-between, in order.
+        # What reached the person from the orchestrator, in order.
         self.heard: list[str] = []
+
+    def begins(self) -> list[str]:
+        """The run begins: the person types `/pin:down`, or, where `called`, the user's AI calls the
+        skill pin:down; what the main conversation is told, which must name the first start."""
+        if self.called:
+            begun = self.claude.skill("pin:down")
+            self.assertTrue(begun.made, begun.said)
+            told = begun.context
+        else:
+            told = self.claude.typed("pin:down")
+        self.assertEqual(told[-1:], [FIRST])
+        return told
 
     def on_disk(self) -> dict[str, Any]:
         """The design tree on disk, as tree.py reads it."""
         return tree.load(os.path.join(self.repo, self.path))
 
     def lies(self, data: dict[str, Any]) -> None:
-        """Lays the design tree on disk before the run, as a stopped run or a maker AI left it."""
+        """Lays the design tree on disk before the run, as a stopped run or the user's AI left it."""
         self.write(os.path.join(self.repo, self.path), tree.markdown(data))
 
     def picks(self, words: str) -> str:
-        """The design tree's path, as the go-between picks it for a plan of the person's: the file
+        """The design tree's path, as the orchestrator picks it for a plan of the person's: the file
         in `.pin/` whose goal holds the words, else a new path there, PERSONS."""
         for path in sorted(glob.glob(os.path.join(self.repo, ".pin", "*", "design-tree.md"))):
             if words in tree.load(path)["goal"]["what"]:
@@ -193,14 +214,19 @@ class PinnerTest(testing.FolderTest):
         return PERSONS
 
     def starts(self, request: str) -> testing.Told:
-        """The go-between starts the pinner with the Request: the design tree's path as one JSON
-        object on its first line, then the request; fails the test where the start is not made or
-        the pinner is not given its part whole as it starts."""
+        """The run begins, as `begins` says, and the orchestrator starts the pinner, the start due,
+        with the Request: the design tree's path as one JSON object on its first line, then the
+        request; fails the test where the start is not made, the pinner is not given its part whole
+        as it starts, or the main conversation is not told to wait for it. The orchestrator then
+        ends its turn, which goes."""
+        self.begins()
         prompt = json.dumps({"design": self.path}) + "\n" + request
-        told = self.claude.start(self.starter, PINNER, prompt)
+        told = self.claude.start(None, PINNER, prompt)
         self.assertTrue(told.made, told.said)
         part = PINNER_PART.replace("${CLAUDE_PLUGIN_ROOT}", PIN)
         self.assertTrue(any(part in said for said in told.context), told.context)
+        self.assertEqual(told.context[-1], WAIT)
+        self.assertTrue(self.claude.end_turn().made)
         return told
 
     def writes(self, data: dict[str, Any], path: str = "") -> testing.Told:
@@ -252,25 +278,38 @@ class PinnerTest(testing.FolderTest):
         self.assertEqual(result.said(["pinner", on], PIN), "")
         return self.runs(f"python3 {PIN}/hooks/lane/result.py pinner {on}")
 
-    def ends(self, reply: str) -> str:
+    def ends(self, reply: str, told: str = ASKED) -> str:
         """The pinner ends with the Reply, which must be in the form the pinner's part gives, and is
-        let end; the go-between passes it to the person as given: what the person heard."""
+        let end; its end reaches the main conversation, which must be told the line given; the
+        orchestrator puts the Reply to the person as given, and ends its turn, which goes: what the
+        person heard."""
         self.assertTrue(reply.startswith(FOR_THE_PERSON + "\n"), reply)
         ended = self.claude.stop(PINNER)
         self.assertTrue(ended.made, ended.said)
+        self.assertEqual(self.claude.notify(PINNER), [told])
         heard = reply[len(FOR_THE_PERSON) + 1 :]
         self.heard.append(heard)
+        turn = self.claude.end_turn()
+        self.assertEqual((turn.made, turn.said), (True, {}))
         return heard
 
     def answers(self, words: str) -> None:
-        """The person answers; the go-between resumes the pinner by SendMessage with their words,
-        word for word, under the Answer's line, and Claude Code starts the pinner again."""
+        """The person answers, which the main conversation is told to put back to the pinner; the
+        orchestrator resumes the pinner by SendMessage with their words, word for word, under the
+        Answer's line, which goes through, and Claude Code starts the pinner again."""
+        self.assertEqual(self.claude.prompted(words), [ASKED])
         message = {"to": PINNER.agent_id, "message": f"{ANSWERED}\n{words}"}
-        sent = self.claude.call(self.starter, "SendMessage", message)
-        self.assertTrue(sent.made, sent.said)
+        sent = self.claude.call(None, "SendMessage", message)
+        self.assertEqual((sent.made, sent.said), (True, {}))
         self.claude.started(PINNER)
 
     def holds(self, *open_now: str) -> tuple[int, str]:
         """The Check result where the design tree holds, with the decisions open now."""
         said = f"Open to decide now: {', '.join(open_now)}." if open_now else "No decision is open."
         return 0, f"check.py: {self.path} holds: {check.HOLDS}\n{said}\n"
+
+    def hands_back(self) -> testing.Told:
+        """The orchestrator gives `done` for the design handed back, by the command its last step
+        names, run in the main conversation."""
+        command = f"python3 {PIN}/hooks/lane/result.py down done"
+        return self.claude.call(None, "Bash", {"command": command, "description": "d"})

@@ -2,10 +2,6 @@
   "subagents": [
     {
       "name": "pinner",
-      "results": [
-        "asks",
-        "done"
-      ],
       "steps": [
         {
           "step": 1,
@@ -44,5 +40,24 @@
         }
       ]
     }
-  ]
+  ],
+  "routes": {
+    "orchestrator": "down",
+    "step": 2,
+    "routes": [
+      {
+        "from": "down",
+        "to": "pinner"
+      },
+      {
+        "from": "pinner",
+        "on": "asks",
+        "waits": true
+      },
+      {
+        "from": "pinner",
+        "on": "done"
+      }
+    ]
+  }
 }

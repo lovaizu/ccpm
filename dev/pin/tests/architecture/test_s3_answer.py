@@ -1,15 +1,16 @@
-"""S2 and S4 of dev/pin/architecture.md, an answer, one test for each of its paths, each run once
-with the main conversation as the go-between, S2, and once with the maker AI, S4: Pin's guard runs
-real, by Pin's hook entries on Pin's Rules laid, through a double of Claude Code; check.py runs
-real, by the command the pinner's rule names; doubles stand in for the go-between, the pinner and
-the person, a set answer."""
+"""S3 of dev/pin/architecture.md, an answer, one test for each of its paths, each run once on a run
+the person began by typing `/pin:down`, and once on one the user's AI began by calling the skill
+with its own design tree: Pin's guard runs real, by Pin's hook entries on Pin's Rules laid, through
+a double of Claude Code; check.py runs real, by the command the pinner's rule names; doubles stand
+in for the orchestrator, the main conversation, for the pinner and for the person, a set
+answer."""
 
 import os
 import unittest
 from typing import Any
 
 import helpers
-from helpers import check
+from helpers import check, testing
 
 CONFIRMED = "the person confirmed, 2026-11-03"
 FACT = (
@@ -25,30 +26,30 @@ DESIGN = (
     "Do we understand the plan the same way?"
 )
 OPEN = {"decided": None, "settled_by": None}
-MAKER_SETTLED = {
+AI_SETTLED = {
     "decided": "it stays; JSON only with --json",
     "settled_by": "maker",
-    "grounds": ["the person told the maker AI, 2026-11-02"],
+    "grounds": ["the person told their AI, 2026-11-02"],
 }
 
 
 class Answer(helpers.PinnerTest):
-    """A path of an answer: the design tree as the run before left it, the pinner started on it and
-    ended with a point, which the go-between put to the person as given."""
+    """A path of an answer: the design tree as the start before left it, the pinner started on it
+    and ended with a point, which the orchestrator put to the person as given."""
 
     def state(self, **given: dict[str, Any]) -> dict[str, Any]:
         """The walkthrough's design, the goal confirmed and every decision settled, each decision of
-        a name given changed so; the second the maker AI's where it is the go-between."""
+        a name given changed so; the second the user's AI's where it called the skill."""
         data = helpers.walkthrough()
-        if self.starter is not None:
-            data["decisions"][2].update(MAKER_SETTLED)
+        if self.called:
+            data["decisions"][2].update(AI_SETTLED)
         for d in data["decisions"]:
             d.update(given.get(d["id"], {}))
         return data
 
     def waits(self, data: dict[str, Any], reply: str) -> None:
-        """The run before: the design tree lies as data, the pinner is started on it, checks it,
-        gives asks and ends with the reply, which the person hears as given."""
+        """The start before: the design tree lies as data, the run begins and the pinner is started
+        on it, checks it, gives asks and ends with the reply, which the person hears as given."""
         self.lies(data)
         self.starts("notes list should give JSON as well")
         self.assertEqual(self.checks()[0], 0)
@@ -62,11 +63,11 @@ class Answer(helpers.PinnerTest):
         return self.checks()
 
     def design(self) -> str:
-        """The whole design as the pinner shows it, the maker AI's point marked its own where it is
-        the go-between."""
-        if self.starter is None:
+        """The whole design as the pinner shows it, the user's AI's point marked its own where it
+        called the skill."""
+        if not self.called:
             return DESIGN
-        return DESIGN.replace("(follows from the goal)", "(the maker AI)")
+        return DESIGN.replace("(follows from the goal)", "(your AI)")
 
     def asks_next(self, reply: str) -> None:
         """The pinner gives asks, which goes through, and ends with the reply, which the person
@@ -221,31 +222,47 @@ class Answer(helpers.PinnerTest):
         # When: it gives done and ends with the path and what the check printed
         gave = self.gives("done")
         handed = f"For the person:\nThe design is in {self.path}.\n{checked[1]}"
-        heard = self.ends(handed)
-        # Then: done goes through, and the go-between hands on the path as given
+        heard = self.ends(handed, told=helpers.END)
+        # Then: done goes through, the main conversation is told to start no more, and the
+        # orchestrator hands on the path as given and gives done, which goes through
         self.assertEqual((gave.made, gave.said), (True, {}))
         self.assertIn(self.path, heard)
         self.assertIn(check.HOLDS, heard)
-        if self.starter is not None:
-            # And: the maker AI reads the design to build on it, which Pin's guard does not hold
+        back = self.hands_back()
+        self.assertEqual((back.made, back.said), (True, {}))
+        # And: the run has ended, so a start of the pinner after it is held to nothing
+        after = self.claude.start(None, testing.Run("pin:pinner", "p2"), "{}")
+        self.assertTrue(after.made)
+        self.assertNotIn(helpers.WAIT, after.context)
+        if self.called:
+            # And: the user's AI reads the design to build on it, which Pin's guard does not hold
             read = self.claude.call(
-                self.starter, "Read", {"file_path": os.path.join(self.repo, self.path)}
+                None, "Read", {"file_path": os.path.join(self.repo, self.path)}
             )
             self.assertEqual((read.made, read.said), (True, {}))
             self.assertEqual(self.on_disk(), confirmed)
             self.assertEqual(self.on_disk()["decisions"][2]["settled_by"], "maker")
 
+    def test_a_start_made_while_a_point_waits_is_stopped_told_to_put_it(self):
+        # Given: the form of the JSON put to the person
+        self.waits(self.state(D1=OPEN, D3=OPEN), helpers.FORM)
+        # When: the orchestrator starts the pinner again in place of putting the answer back
+        again = self.claude.start(None, testing.Run("pin:pinner", "p2"), "{}")
+        # Then: it is stopped, told to put the point and resume the pinner with the answer
+        self.assertFalse(again.made)
+        self.assertEqual(again.reason(), f"{helpers.FOLLOWED}\n{helpers.ASKED}")
 
-class TestPersonAnswers(Answer):
-    """S2: the main conversation is the go-between."""
+
+class TestPersonTyped(Answer):
+    """S3 on a run the person began by typing /pin:down."""
 
 
-class TestMakerPassesTheAnswer(Answer):
-    """S4: the maker AI is the go-between, its design tree at its own path, its decision settled
-    by maker."""
+class TestAICalled(Answer):
+    """S3 on a run the user's AI began by calling the skill, its design tree at its own path, its
+    decision settled by maker."""
 
-    starter = helpers.MAKER
-    path = helpers.MAKERS
+    called = True
+    path = helpers.AIS
 
 
 del Answer
