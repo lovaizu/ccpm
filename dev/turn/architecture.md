@@ -1,15 +1,15 @@
 # Turn architecture
 
-This document says how Turn is built to give [its product vision](product-vision.md).
-Every kind of work goes through one course of subagents, moved by the routes of Lane, the plugin
-that holds a subagent to the rules of its steps. The planner settles the kind of work. It hands the
-designer the work's goal and the questions of the kind's best practice. The designer settles the
-design with the user, one point at a time. The generator makes the work
-from the design, against the kind's best practice. A fresh evaluator then answers each question as
-the work's user would, never given the design. A round is one such making and its check. A question
-not met goes back through the designer to its decision. Once every question is met, the rounds go on with how
-the work reads. The orchestrator, the main conversation following Turn's skill, starts each role,
-puts each point to the user and passes each answer back, as given.
+This document says how Turn is built to give [its product vision](product-vision.md). Every kind of
+work goes through one course of subagents, moved by the routes of Lane, the plugin that holds each
+role to the rules of its steps and the orchestrator to its routes. The planner settles the kind of
+work. It hands the designer the work's goal and the questions of the kind's best practice. The
+designer settles the design with the user, one point at a time. The generator makes the work from
+the design, against the kind's best practice. A fresh evaluator then answers each question as the
+work's user would, never given the design. A round is one such making and its check. A question not
+met goes back through the designer to its decision. Once every question is met, the rounds go on
+with how the work reads. The orchestrator, the main conversation following Turn's skill, starts each
+role, puts each point to the user and passes each answer back, as given.
 
 ## Principles
 
@@ -54,33 +54,34 @@ without the ways of meeting them. It never reads the design, the best practice's
 generator's answers to the questions.
 
 *Why*: the work's user never sees any of these. An evaluator that has the design judges whether the
-work follows it, not what the work's user gets. One that has the ways checks how the work was made, not
-what it gives (KR1.1).
+work follows it, not what the work's user gets. One that has the ways checks how the work was made,
+not what it gives (KR1.1).
 
 ### What the work says before how it says it
 
 A phase is the set of questions that a round asks. The rounds of the content phase make what the
 work says and does, by the kind's questions. The rounds of the reading phase then improve how the
 work says it, by `refactor-doc` for a document or `refactor-code` for code, and change nothing that
-the work says. A change to what the work says goes back to the designer, and the content phase follows again.
+the work says. A change to what the work says goes back to the designer, and the content phase
+follows again.
 
 *Why*: no role improves a sentence before its content is settled, only to improve it again once the
 content changes (KR1.2).
 
 ### A shortfall goes back to its decision
 
-The generator makes the work only from the design. A question not met in the content phase goes
-back to the decisions that serve it, through the designer. The generator then makes the work again from the
-design. No role puts a fix onto the work beside the design.
+The generator makes the work only from the design. A question not met in the content phase goes back
+to the decisions that serve it, through the designer. The generator then makes the work again from
+the design. No role puts a fix onto the work beside the design.
 
 *Why*: a fix beside the design is a part that no decision holds. The next round makes the work again
 from the design, and loses the fix or keeps it with no one having settled it (KR1.1).
 
 ### Each role starts fresh from the run's folder
 
-The planner, the generator and the evaluator start fresh each time the orchestrator starts them,
-and carry on from the files in the run's folder. A role resumed with the user's answer keeps its
-context. The orchestrator keeps no file.
+The planner, the designer, the generator and the evaluator start fresh each time the orchestrator
+starts them, and carry on from the files in the run's folder. A role resumed with the user's answer
+keeps its context. The orchestrator keeps no file.
 
 *Why*: the evaluator then reads each round with fresh eyes (KR1.1). A run that stopped goes on from
 its folder in a new session, and asks nothing again (KR1.2).
@@ -88,7 +89,8 @@ its folder in a new session, and asks nothing again (KR1.2).
 ### Passed on as given
 
 The orchestrator passes on each point, each Request and each answer as it got them, and answers
-nothing of the work itself. The planner hands the designer each point that the user's AI settled, as it was given.
+nothing of the work itself. The planner hands the designer each point that the user's AI settled, as
+it was given.
 
 *Why*: a point reworded on the way is a question that no role asked. An answer summed up loses what
 the user meant (KR1.1), and a settled point reworded is asked again (KR1.2).
@@ -115,14 +117,14 @@ the run (KR1.1). What becomes of the work is the user's to decide, as
 ## User stories
 
 - **S1**: As the user, I want to start Turn with my request, by typing `/turn:up` or, as an AI that
-  asks for a person, by calling the same skill as
-  [Calling Turn](../../plugins/turn/docs/calling.md) says. Carries the request and the purpose put to confirm. From the product vision's intent,
-  it also carries the kind asked where the request does not say it, a new kind's best practice made
+  asks for a person, by calling the same skill as [Calling Turn](../../plugins/turn/docs/calling.md)
+  says. Carries the request and the purpose put to confirm. From the product vision's intent, it
+  also carries the kind asked where the request does not say it, a new kind's best practice made
   first, and a fault of Turn's own that stops the run.
 - **S2**: As the user, I want to answer the point that Turn puts to me. Carries each fact to confirm
   and each point of intent, the design approved, a point of intent that comes up while the work is
-  made, and the work handed over. From the product vision's intent, it also carries a wrong purpose, fact or
-  design corrected, and a fault of Turn's own that stops the run.
+  made, and the work handed over. From the product vision's intent, it also carries a wrong purpose,
+  fact or design corrected, and a fault of Turn's own that stops the run.
 - **S3**: As the user, I want to start Turn with a run's folder, alone or with a change. Carries,
   from the product vision's intent, a stopped run resumed, the work changed, and a fault of
   Turn's own that stops the run.
@@ -134,8 +136,8 @@ the run (KR1.1). What becomes of the work is the user's to decide, as
 What each decides alone:
 
 - **user**: what is theirs: the purpose, each fact and decision, the design.
-- **orchestrator**: the run's folder, the one given, else the one the request names, else a new one in
-  `.turn/`; and which role an answer resumes, the one that asked.
+- **orchestrator**: the run's folder, the one given, else the one the request names, else a new one
+  in `.turn/`; and which role an answer resumes, the one that asked.
 - **guard**: whether a call or an end of a role keeps its rules, which start is due next, and
   whether the orchestrator's start is that one.
 - **designer**: what is the user's to decide and what it settles itself, each point of the design
@@ -155,8 +157,8 @@ What each decides alone:
   costs keeping the designer's steps on whose a decision is in step with the pinner's by hand.
 - **The planner on both sides of the designer** over the orchestrator handing the designer each
   point and the generator reading the design itself: one role decides what goes to the designer and
-  what is taken from the design, and the orchestrator stays a carrier (KR1.1). It costs a run of the planner each time the
-  design goes to the designer or comes back (KR1.2).
+  what is taken from the design, and the orchestrator stays a carrier (KR1.1). It costs a run of the
+  planner each time the design goes to the designer or comes back (KR1.2).
 - **A new kind's best practice made as a work of its own** over a step of its own that makes it
   faster: the user approves the kind's purpose and questions as they approve any design, and
   the course stays one for every kind (KR1.1). It costs a whole course more for the first work of a
@@ -244,9 +246,9 @@ sequenceDiagram
 - **`asks`, a result whose route starts no one,** over a role that ends with no result while its
   point waits: the guard keeps going a role that ends with no result, and keeps the orchestrator
   going while a start is due, so without `asks` the point would never reach the user (KR1.1). Once
-  resumed, the role gives a later result, and the guard takes it over `asks`
-  ([How a subagent gives its result](../../plugins/lane/docs/routes.md#how-a-subagent-gives-its-result)).
-  It costs each role that asks one result more.
+  resumed, the role gives a later result, and the guard takes it over `asks` ([How a subagent gives
+  its result](../../plugins/lane/docs/routes.md#how-a-subagent-gives-its-result)). It costs each
+  role that asks one result more.
 
 ### S2: an answer
 
@@ -346,9 +348,9 @@ sequenceDiagram
 ```
 
 - **`rounds.py` settling the phase from the run's folder** over the orchestrator passing the phase
-  as a run value, from the result it was told: the orchestrator would then decide a point of the work, and a run that stopped
-  would lose its phase and repeat its rounds (KR1.2). It costs a run of `rounds.py` at each start of
-  the generator.
+  as a run value, from the result it was told: the orchestrator would then decide a point of the
+  work, and a run that stopped would lose its phase and repeat its rounds (KR1.2). It costs a run of
+  `rounds.py` at each start of the generator.
 
 ## Deployment
 
@@ -359,10 +361,9 @@ The user installs Turn as [the README](../../plugins/turn/README.md#installation
 in its main conversation as [Calling Turn](../../plugins/turn/docs/calling.md) says.
 
 - **Python 3.9 and its standard library only, for Turn's scripts and the guard,** over a later
-  Python or packages: the user installs nothing else for Turn, as
-  [Python 3.9 and the standard library](../plugin-best-practice.md#python-39-and-the-standard-library)
-  says, and starts sooner (KR1.2). It costs the code going without what later versions and packages
-  give.
+  Python or packages: the user installs nothing else for Turn, as [Python 3.9 and the standard
+  library](../plugin-best-practice.md#python-39-and-the-standard-library) says, and starts sooner
+  (KR1.2). It costs the code going without what later versions and packages give.
 - **A run's folder in `.turn/<yyyymmdd>-<name>/` at the root of the repository, or where the
   user's AI says,** over a folder outside the repository: the user reads each check of the
   work there, and a run that stopped goes on from it in any session (KR1.2), as
@@ -414,7 +415,7 @@ dev/turn/
 └── tests/
     ├── unit/                        unit tests, at the path of what each tests
     ├── architecture/                a test for each path of each sequence
-    └── ux/                          the trials of O1, and the test plugin that starts turn:up
+    └── ux/                          the trials of O1, and the test plugin that calls turn:up
 
 .turn/<yyyymmdd>-<name>/               Call, Run, Design tree, Standard
 .turn/<yyyymmdd>-<name>/verification/  Round, Answers; each round before in a folder of its number
@@ -438,10 +439,10 @@ dev/turn/
   Turn's own: a form kept twice drifts, and a design tree made by Turn reads as one made by Pin
   (KR1.1). It costs a change to Pin's form changing Turn's Design tree, with no line of Turn
   changed, and Turn's tests running Pin's code.
-- **`hooks/lane/` as a link to Lane's code in this marketplace** over a copy, as
-  [Code kept once](../plugin-best-practice.md#code-kept-once) says: a fix to the
-  guard reaches every plugin it holds (KR1.1). It costs a fix in Lane reaching Turn's guard only once
-  a developer lays Turn's rules again with Lane's `lay.py`.
+- **`hooks/lane/` as a link to Lane's code in this marketplace** over a copy, as [Code kept
+  once](../plugin-best-practice.md#code-kept-once) says: a fix to the guard reaches every plugin it
+  holds (KR1.1). It costs a fix in Lane reaching Turn's guard only once a developer lays Turn's
+  rules again with Lane's `lay.py`.
 
 ## Tests
 
@@ -450,17 +451,17 @@ and differs from them where this section says.
 
 ![Turn's tests](images/tests.svg)
 
-- **The script process tried FULL at unit and at architecture** over HAPPY: a check that
-  passes wrongly sends a gap into the work unseen, or hands the evaluator what the work's user never sees
+- **The script process tried FULL at unit and at architecture** over HAPPY: a check that passes
+  wrongly sends a gap into the work unseen, or hands the evaluator what the work's user never sees
   (KR1.1). It costs the most tests to keep up as the scripts change.
 - **The hook process tried FULL at architecture** over HAPPY: only the guard holds each role
   to its rules and the course to its routes, and a rule let through lets the evaluator read the
   design or the generator write beside the work (KR1.1). It costs architecture tests that run the
   guard on every call, the slowest of the tests that run on every push.
-- **The Claude Code process tried HAPPY at architecture** over FULL: a test there only finds sooner an
-  entry that Claude Code would not load as Turn needs, which every ux trial also meets before a
-  user does (KR1.1). It costs such a fault showing only once a trial runs, where a heavier
-  test would show it on the push.
+- **The Claude Code process tried HAPPY at architecture** over FULL: a test there only finds sooner
+  an entry that Claude Code would not load as Turn needs, which every ux trial also meets before a
+  user does (KR1.1). It costs such a fault showing only once a trial runs, where a FULL test would
+  show it on the push.
 - **The Claude Code process tried HAPPY at ux, and the other rows SMOKE,** over every row alike:
   only these trials run the prompts, while the other rows only confirm what lower levels have
   checked (KR1.1). It costs a prompt's fault showing only once every lower level passes.
