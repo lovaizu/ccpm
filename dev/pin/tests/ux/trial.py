@@ -77,8 +77,8 @@ REQUESTS = {
 # settled by them; and, where called, those the user's AI settled, which it must hold as settled
 # by maker.
 THEIRS = {"typed": {1, 2, 3, 8}, "called": {2, 3, 9}}
-# The points a right pinner settles by a fact the person confirmed: the offset, which notes.py:9
-# shows.
+# The points a right pinner settles by a fact found, or by the person's words where they decide it
+# as they correct a fact shown: the offset, which notes.py:9 shows and its docstring denies.
 FOUND = {"typed": {7}, "called": {7}}
 MAKERS = {"typed": set(), "called": {1, 8}}
 # The user's AI's design tree: where it lies, and the IDs of the points and questions it gives.
@@ -312,7 +312,7 @@ def kr1_1(
             wrong.append(f"the design does not hold point {n} as the person means it")
         elif n in THEIRS[objective] and by != "user":
             wrong.append(f"point {n} is the person's, but settled by {by}")
-        elif n in FOUND[objective] and by != "research":
+        elif n in FOUND[objective] and by not in ("research", "user"):
             wrong.append(f"point {n} rests on a fact found, but is settled by {by}")
         elif n in MAKERS[objective] and by != "maker":
             wrong.append(f"point {n} was settled by the maker AI, but is held as settled by {by}")
