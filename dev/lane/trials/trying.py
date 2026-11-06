@@ -261,7 +261,8 @@ def interactive(
     """Runs a fresh interactive session of Claude Code on the copies of plugins, in cwd, given the
     one message prompt as its user types it, and gives its session_id once the main conversation
     has stopped with no agent in the background left, as a Stop hook given in the settings tells
-    it in `<place>/stops.jsonl`; what the terminal shows is kept in `<place>/terminal.txt`. An
+    it in `<place>/stops.jsonl`, and no plugin's Stop hook kept it going there, as went_on reads
+    the session's record; what the terminal shows is kept in `<place>/terminal.txt`. An
     interactive session is what starts an agent again once an agent it started in the background
     has ended, which `claude -p` does not. Given answer, the session goes on as its user does:
     at each such stop, answer is given the main conversation's last message, and the text it gives
@@ -333,8 +334,13 @@ def interactive(
                     os.write(terminal, permit(text_of(seen)).strip()[:1].encode())
                     seen = b""
                 for stop in kept(stops)[handled:]:
+                    idle_ = "background_tasks" in stop and not stop["background_tasks"]
+                    going = went_on(stop, handled + 1) if idle_ else False
+                    # Its Stop hooks have not all ended yet; the stop is read again.
+                    if going is None:
+                        break
                     handled += 1
-                    if not ("background_tasks" in stop and not stop["background_tasks"]):
+                    if not idle_ or going:
                         continue
                     said = answer(str(stop.get("last_assistant_message") or "")) if answer else None
                     if said is None:
@@ -402,6 +408,20 @@ def login() -> dict[str, str]:
                 " `claude setup-token` gives, or ANTHROPIC_API_KEY"
             ) from None
     return {"CLAUDE_CODE_OAUTH_TOKEN": token}
+
+
+def went_on(stop: dict[str, Any], number: int) -> bool | None:
+    """Whether a Stop hook kept the main conversation going at the stop, the number-th of the
+    session: Claude Code records each stop's hooks once they have all ended, as an entry of subtype
+    `stop_hook_summary` in the session's record, with the reason of each hook that blocked the stop
+    in `hookErrors`. A plugin's Stop hook, such as Lane's for a start due, runs beside the one that
+    keeps the stop, so the stop alone does not say the session stopped. None where the record holds
+    no such entry for the stop yet."""
+    entries = record.read(str(stop.get("transcript_path", ""))) or []
+    summaries = [e for e in entries if e.get("subtype") == "stop_hook_summary"]
+    if len(summaries) < number:
+        return None
+    return bool(summaries[number - 1].get("hookErrors"))
 
 
 def kept(stops: str) -> list[dict[str, Any]]:
