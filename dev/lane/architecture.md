@@ -259,7 +259,9 @@ why, and what it costs.
   ends the run, for a result such as `asks` with which a subagent ends to put a point to the
   person. The main conversation is told to put the point to the user and resume the subagent with
   their answer. The run goes on with no start due, and the end of a turn is let go, as the user is
-  to answer. Only a route with neither a `to` nor `waits` ends the run, and only its `on` is a
+  to answer. A new call of the skill meanwhile ends the run and begins another, as the user may
+  choose not to answer, and a run that waits would otherwise have no way to be let go. Only such a
+  call, or a route with neither a `to` nor `waits`, ends the run, and only that route's `on` is a
   result the skill gives. Otherwise a plugin whose role needs the person, as
   [Messages](../plugin-best-practice.md#messages) has every such role, would end its run at the
   first point put to the person, and its later starts would go unheld (KR1.1). It costs one more
@@ -282,7 +284,8 @@ why, and what it costs.
   end brings, and on the PostToolUse of a dependency's result script. The PostToolUse of each start
   tells the conversation to wait for that subagent to end. It costs a start that the conversation
   may pass over, so a start not due is stopped with the one due, and the end of a turn is kept
-  going.
+  going. A conversation asked to start otherwise would also take the request over the routes, so
+  the skill's step says to start each subagent it is told to, even where it is asked otherwise.
 - **The end of a turn kept going once while a start is due and no subagent of the run still runs,
   then let end with the user told whose step to fix,** over a hold until the start is made: a hold
   with no end would need a person to break it, which is no check. It costs a run whose
@@ -404,11 +407,11 @@ sequenceDiagram
   CC->>H: UserPromptExpansion of the command, or PostToolUse of the Skill call (Event)
   H->>G: the main conversation's event (Event)
   G->>RT: is it the skill the routes name (Route)
-  alt it is, and no run is on
-    G->>C: keeps a new run (Run)
+  alt it is, and no run is on, or the run waits for the user
+    G->>C: keeps a new run, in place of the one that waits (Run)
     G->>RT: the first start (Route)
     H-->>CC: context, start writer (Answer)
-  else it is not, or a run is on
+  else it is not, or a run is on that does not wait
     H-->>CC: nothing to tell (Answer)
   end
   CC->>M: runs the skill's steps, with the context beside them (Step)

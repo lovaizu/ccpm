@@ -72,29 +72,36 @@ class TestUp(helpers.RunTest):
         self.assertEqual(self.read(self.hooks), self.laid)
 
     def test_older_code_and_a_step_in_an_earlier_wording_are_brought_up(self):
-        # Given: the routes laid, the plugin's copy of lane's code at 0.0.1, and writer's last
-        # step saying its result sentence in the wording lane laid before
+        # Given: the routes laid, the plugin's copy of lane's code at 0.0.1, writer's last step
+        # saying its result sentence and the skill's step the routes' sentence, each in the
+        # wording lane laid before
         self.lay(self.ux_proposal("routes.json"))
         agent = os.path.join(self.plugin, "agents", "writer.md")
         laid = self.read(agent)
         self.assertIn(helpers.END_WRITER, laid)
         self.write(agent, laid.replace(helpers.END_WRITER, helpers.END_WRITER_EARLIER))
+        skill = os.path.join(self.plugin, "skills", "write", "SKILL.md")
+        routed = self.read(skill)
+        self.assertIn(helpers.FOLLOW, routed)
+        self.write(skill, routed.replace(helpers.FOLLOW, helpers.FOLLOW_EARLIER))
         self.write(self.version, "0.0.1\n")
         # When: lay.py up is run on the plugin
         done = self.up("changelog")
-        # Then: it brings the code up, and writer's step to the current wording as lay.py write
-        # laid it, saying so, with every lane laid before still said by its step
+        # Then: it brings the code up, and each step to the current wording as lay.py write laid
+        # it, saying so, with every lane laid before still said by its step
         version = self.read_json(os.path.join(helpers.LANE, ".claude-plugin", "plugin.json"))
         version = version["version"]
-        said = (
-            f"Brought lane's code in hooks/lane/ up from 0.0.1 to {version}.\n"
-            "Wrote step 4 of writer into agents/writer.md, its sentences in lane's current"
-            " wording.\n"
-        )
+        said = f"Brought lane's code in hooks/lane/ up from 0.0.1 to {version}.\n"
         self.assertEqual(done.returncode, 0)
         self.assertTrue(done.stdout.startswith(said), done.stdout)
+        wording = ", its sentences in lane's current wording.\n"
+        for wrote in (
+            f"Wrote step 4 of writer into agents/writer.md{wording}",
+            f"Wrote step 1 of write into skills/write/SKILL.md{wording}",
+        ):
+            self.assertIn(wrote, done.stdout)
         self.assertNotIn("no longer says", done.stdout)
-        self.assertEqual(self.read(agent), laid)
+        self.assertEqual((self.read(agent), self.read(skill)), (laid, routed))
 
     def test_a_plugin_laid_at_lanes_version_has_nothing_brought_up(self):
         # Given: the plugin just laid, its code at lane's version and its hooks in lane's form

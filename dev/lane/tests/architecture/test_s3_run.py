@@ -260,6 +260,23 @@ class TestWaits(helpers.RoutesTest):
         self.assertEqual(after, ["changelog: reviewer gave `more`. Start `changelog:writer`."])
         self.assertTrue(self.claude.start(None, writer(2), "Write again.").made)
 
+    def test_the_skill_typed_again_while_the_user_is_to_answer_begins_another_run(self):
+        # Given: writer gave `written`, reviewer `asks`, and the main conversation ended its turn
+        # to put the point
+        self.through(writer(1), "written")
+        self.through(reviewer(1), "asks")
+        self.assertTrue(self.claude.end_turn().made)
+        # When: the user types `/changelog:write` again in place of an answer
+        told = self.claude.typed("changelog:write")
+        # Then: the waiting run ends and another begins: its expansion tells the first start,
+        # after the line the prompt typed is told, a start of reviewer is stopped with it, and the
+        # start of writer goes through
+        self.assertEqual(told, [self.ASKED, "changelog: Start `changelog:writer`."])
+        meanwhile = self.claude.start(None, reviewer(2), "Review.")
+        reason = f"{FOLLOWED}\nchangelog: Start `changelog:writer`."
+        self.assertEqual((meanwhile.made, meanwhile.reason()), (False, reason))
+        self.assertTrue(self.claude.start(None, writer(2), "Write the entries.").made)
+
 
 CHECK = "checker:check"
 

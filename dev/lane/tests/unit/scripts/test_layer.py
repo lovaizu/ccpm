@@ -482,6 +482,25 @@ class TestBroughtUp(LayerTest):
         self.assertEqual(said.count(wrote), 1)
         self.assertNotIn("no longer says", said)
 
+    def test_the_skills_routes_sentence_in_an_earlier_wording_is_put_in_the_current_one(self):
+        # Given: the routes laid, the skill's step saying the routes' sentence in the wording lane
+        # laid before, which said nothing of a request to start otherwise
+        self.route()
+        earlier = helpers.SKILL_LAID.replace(helpers.FOLLOW, helpers.FOLLOW_EARLIER)
+        self.write(self.skill_file, earlier)
+        # When: the plugin is brought up
+        said = layer.brought_up(self.plugin)
+        # Then: the skill's step says it in the current wording, the rest of its file and every
+        # other file as it was, and that is said once
+        self.assertEqual(self.read(self.skill_file), helpers.SKILL_LAID)
+        self.assertEqual(self.read(self.agent_file), helpers.WRITER_LAID)
+        wrote = (
+            "Wrote step 1 of write into skills/write/SKILL.md, its sentences in lane's current"
+            " wording.\n"
+        )
+        self.assertEqual(said.count(wrote), 1)
+        self.assertNotIn("no longer says", said)
+
     def test_steps_in_the_current_wording_are_left_as_they_are(self):
         # Given: the routes laid in the current wording
         self.route()

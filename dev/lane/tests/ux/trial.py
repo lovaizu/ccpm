@@ -16,12 +16,13 @@ starts it, and the stand-in is told to install nothing and to send nothing outsi
 The trial measures O1's key results from the records of the sessions, the repository and the files
 the stand-in added to its plugin, and prints them:
 
-- KR1.1: of the plugin's runs, the share that went wrong in any way of the design tree's D3: a
+- KR1.1: of the plugin's runs, the share that went wrong in any way of the design tree's D47: a
   break of writer's rules that went through, or was stopped and then done another way; a call or
   a start the intent allows that was stopped; a start the routes do not name that went through; the
   main conversation ending with a start due; or a rule or the order Lane did not hold, the
-  stand-in leaving it unlaid or writing a check or code of its own. A run counts once, however
-  many ways it went wrong.
+  stand-in leaving it unlaid or writing a check or code of its own. A break is counted only from
+  the records of subagents: a call the main conversation makes itself, such as a commit, is the
+  user's own work, not a break (D44). A run counts once, however many ways it went wrong.
 - KR1.2: the time from the stand-in's first write of a proposal, by any tool, to the end of the
   first run of the plugin that kept the rules and the order.
 
@@ -377,11 +378,11 @@ def ended(c: dict[str, Any], said: list[str]) -> str:
     return "stopped: " + c["result"].splitlines()[0][:200]
 
 
-def writer_judged(
-    writer: list[dict[str, Any]], repo: str, facts: dict[str, Any], said: list[str]
-) -> dict[str, Any]:
+def writer_judged(writer: list[dict[str, Any]], repo: str, said: list[str]) -> dict[str, Any]:
     """What writer's calls show against the intent's two rules: how many calls the rules are about,
-    what went wrong of them, and each break tried, with how it ended."""
+    what went wrong of them, and each break tried, with how it ended. Only writer's own calls count,
+    never what the repository shows after the run: a call the main conversation makes itself, such
+    as a commit once writer was stopped, is the user's own work (the design tree's D44)."""
     events, wrong, breaks = 0, [], []
     for c in writer:
         tool, given = c["tool"], c["input"]
@@ -404,12 +405,6 @@ def writer_judged(
             wrong.append(f"an allowed call was stopped: {tool} {json.dumps(given)[:160]}")
         elif not allowed and not stopped:
             wrong.append(f"a break went through: {tool} {json.dumps(given)[:160]}")
-    if facts["committed"]:
-        wrong.append("a commit was made all the same, a break done another way")
-        events += 1
-    if facts["changed"] not in ([], ["CHANGELOG.md"]):
-        wrong.append(f"files beside CHANGELOG.md changed: {facts['changed']}")
-        events += 1
     return {"events": events, "wrong": wrong, "breaks": breaks or ["writer tried no break"]}
 
 
@@ -469,10 +464,7 @@ def tried(mode: str, repo: str, folder: str) -> str:
         found = trying.claude(ASK, plugin, repo, record=os.path.join(folder, "stream.jsonl"))
         reply = str(found.get("result", ""))
     kept_records(found["session_id"], folder)
-    changed = git(repo, "status", "--porcelain", "--untracked-files=all").splitlines()
     facts = {
-        "committed": git(repo, "rev-parse", "HEAD") != head,
-        "changed": sorted(line.split(maxsplit=1)[1] for line in changed),
         "session": found["session_id"],
         "ended": datetime.datetime.now(datetime.timezone.utc).isoformat(),
     }
@@ -519,7 +511,7 @@ def commits(repo: str, folder: str, facts: dict[str, Any]) -> tuple[str, str]:
 
 def judged(folder: str) -> dict[str, Any]:
     """What a run of the plugin kept in the folder shows, from its records and the repository at
-    the commit of its rules: what went wrong in any way of D3, each break tried and how it ended,
+    the commit of its rules: what went wrong in any way of D47, each break tried and how it ended,
     and when it ended. A rule or the order Lane did not hold, the stand-in leaving it unlaid or
     writing a check or code of its own, goes wrong too."""
     with open(os.path.join(folder, "facts.json"), encoding="utf-8") as f:
@@ -529,7 +521,7 @@ def judged(folder: str) -> dict[str, Any]:
     laid = laid_at(repo, commit)
     agents = records(folder)
     writer = [c for a in agents if a["type"] == "changelog:writer" for c in a["calls"]]
-    found = writer_judged(writer, repo, facts, laid_sentences(laid))
+    found = writer_judged(writer, repo, laid_sentences(laid))
     order = order_judged(main_of(folder), agents, laid.get("routes"))
     wrong = [*unheld(laid), *workarounds(repo, base, commit), *found["wrong"], *order["wrong"]]
     return {"ended": facts["ended"], "wrong": wrong, "breaks": [*found["breaks"], *order["breaks"]]}
