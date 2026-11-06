@@ -14,6 +14,7 @@ TABLE = (
     ("read_whole", "read", "Read `<input>` to its end.", True),
     ("write_only", "write", "Write only `<output>`.", False),
     ("in_form", "write", "Write `<output>` in the form of `<form>`.", False),
+    ("edit_only", "write", "Once `<output>` is made, change it only with Edit.", False),
     ("run_only", "run", "Run only `<commands>`.", False),
     ("hold", "run", "Run `<commands>` only with the person's approval.", False),
     ("test_after", "test", "After changing `<output>`, pass `<test>`.", True),

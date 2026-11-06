@@ -40,6 +40,7 @@ another resumes it does not count, as [the routes](routes.md#how-a-subagent-give
 | read | read_whole | Read `<input>` to its end. | gives its result with a part of it unread |
 | write | write_only | Write only `<output>`. | writes anything else |
 | write | in_form | Write `<output>` in the form of `<form>`. | writes it out of that form |
+| write | edit_only | Once `<output>` is made, change it only with Edit. | writes it whole with Write once it is there, or with NotebookEdit |
 | run | run_only | Run only `<commands>`. | runs any other command |
 | run | hold | Run `<commands>` only with the person's approval. | runs one of them, which Claude Code puts to the person |
 | test | test_after | After changing `<output>`, pass `<test>`. | gives its result with a change not yet passed |
@@ -115,6 +116,14 @@ Write or Edit is given, a Grep given none reading the folder it runs in. A comma
 names reads and writes what it does unchecked, so name only commands whose reads and writes you
 accept.
 
+edit_only lets a Write make its output while the output is not there, and lets only Edit change it
+once it is. Claude Code lets an Edit go only after a Read of the file, so the subagent sees what it
+changes, while a Write puts a whole new text in place of one it need not have read. Take it for a
+file whose shape the subagent must see each time it changes a part, such as a tree whose nesting
+holds what each part serves. A command that writes the output is stopped already, as the subagent
+runs only the commands its lanes name. An output may be a folder, under which edit_only holds each
+file alike.
+
 read_whole counts a file read to its end where the Read calls of the subagent, by their `offset`
 and `limit`, have covered every line of it, a Read with no `limit` covering the 2000 lines the Read
 tool reads by default. test_after counts a test passed where the test's command came back without
@@ -155,8 +164,8 @@ is held to this JSON Schema:
       "lanes": {"type": "array", "minItems": 1, "items": {
        "type": "object", "required": ["lane", "takes"], "additionalProperties": false,
        "properties": {
-        "lane": {"enum": ["read_only", "read_whole", "write_only", "in_form", "run_only",
-                          "hold", "test_after", "end_when", "every_item"]},
+        "lane": {"enum": ["read_only", "read_whole", "write_only", "in_form", "edit_only",
+                          "run_only", "hold", "test_after", "end_when", "every_item"]},
         "takes": {"type": "array", "items": {"type": "string"}},
         "adapter": {"type": "string", "description": "hooks/adapters/<port>-<name>.py"}}}}}}}}}}}}
 ```
@@ -305,6 +314,7 @@ only where the lane rests on the calls kept:
 | read_whole | `input` | yes |
 | write_only | `output` | no |
 | in_form | `output`, `form` | no |
+| edit_only | `output` | no |
 | run_only | `commands` | no |
 | hold | `commands` | no |
 | test_after | `output`, `test` | yes |

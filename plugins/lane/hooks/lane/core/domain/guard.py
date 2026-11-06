@@ -7,7 +7,8 @@ put to the person with its sentence. A subagent with lanes runs a command only w
 hold or test_after lane names it, whole, or its result command does: a call of Bash is judged by
 those lanes of the subagent together, as lane does not know which step the subagent is on. A read
 is judged by its read_only lanes together, and a write by its write_only lanes together, each going
-through where there is none; a write of an in_form lane's output is held to its form. Any other
+through where there is none; a write of an edit_only lane's output, once it is there, goes through
+only by Edit; a write of an in_form lane's output is held to its form. Any other
 tool goes through. A result command is let through only once the lanes checked at the end hold.
 The orchestrator makes no call but the start due while one is due, and starts none while a
 subagent it started runs in the background, but more runs of it where the routes fan it out. It
@@ -43,7 +44,7 @@ import routes
 import rules
 import schema
 import step
-from lanes import follow_routes, in_form, read_only, run_only, write_only
+from lanes import edit_only, follow_routes, in_form, read_only, run_only, write_only
 from lanes.done import Done
 
 # Each tool a lane judges, with the action its call is and the field of its input the lane judges.
@@ -487,14 +488,21 @@ def read_checked(s: Subagent, event: dict[str, Any], path: str) -> list[Said]:
 
 def write_checked(s: Subagent, event: dict[str, Any], path: str) -> list[Said]:
     """What a write of the path is told: write_only's sentences where it has such lanes and the
-    path is none of their outputs nor under one, a lane's value null letting it through; and each
-    in_form lane's sentence, with the point, where the call writes its output out of its form."""
+    path is none of their outputs nor under one, a lane's value null letting it through; each
+    edit_only lane's sentence where the call changes its output, once it is there, by other than
+    Edit; and each in_form lane's sentence, with the point, where the call writes its output out of
+    its form."""
     cwd, judging = event["cwd"], s.of("write_only")
     if judging:
         allowed = [places_of(g, s) for g in judging]
         if not any(p is None or write_only.allows(path, p["output"], s.root, cwd) for p in allowed):
             return [sentences(judging)]
     told = []
+    for lane in s.of("edit_only"):
+        places = places_of(lane, s)
+        tool = event["tool_name"]
+        if places and not edit_only.allows(tool, path, places["output"], s.root, cwd):
+            told.append(sentences([lane]))
     for lane in s.of("in_form"):
         places = places_of(lane, s)
         if places is None:

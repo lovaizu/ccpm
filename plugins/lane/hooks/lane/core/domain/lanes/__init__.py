@@ -21,6 +21,7 @@ from typing import Any, NamedTuple
 import schema
 
 from lanes import (
+    edit_only,
     end_when,
     every_item,
     follow_routes,
@@ -38,6 +39,7 @@ LANES = {
     "read_whole": read_whole,
     "write_only": write_only,
     "in_form": in_form,
+    "edit_only": edit_only,
     "run_only": run_only,
     "hold": hold,
     "test_after": test_after,

@@ -47,6 +47,7 @@ import template  # noqa: F401
 import testing
 from lanes import (  # noqa: F401
     done,
+    edit_only,
     end_when,
     every_item,
     follow_routes,

@@ -1127,6 +1127,41 @@ class TestInForm(LanesTest):
         self.assertEqual([t.text.split("\n")[0] for t in told], [self.sentence])
 
 
+class TestEditOnly(LanesTest):
+    def setUp(self) -> None:
+        super().setUp()
+        self.lay_lanes([lane("edit_only", "design-tree.md")])
+        self.sentence = "Once `design-tree.md` is made, change it only with Edit."
+
+    def test_a_write_of_the_output_once_it_is_there_is_told_the_sentence(self):
+        for there, tool, through in (
+            (False, "Write", True),
+            (True, "Edit", True),
+            (True, "Write", False),
+            (True, "NotebookEdit", False),
+        ):
+            with self.subTest(there=there, tool=tool):
+                # Given: writer, whose step 3 changes design-tree.md only with Edit once it is
+                # made, the file there or not
+                path = os.path.join(self.base, "design-tree.md")
+                if there:
+                    self.write(path, "# Design tree\n")
+                elif os.path.exists(path):
+                    os.remove(path)
+                # When: it writes it with the tool
+                told = self.check(self.written("design-tree.md", tool))
+                # Then: a Write making it and an Edit go through, and the rest is told the sentence
+                self.assertEqual(told, [] if through else [guard.Said(self.sentence)])
+
+    def test_a_command_writing_the_output_is_stopped_as_no_lane_names_it(self):
+        # Given: writer with edit_only alone, design-tree.md there
+        self.write("design-tree.md", "# Design tree\n")
+        # When: it runs a command that writes design-tree.md
+        told = self.check(self.bash("sed -i s/a/b/ design-tree.md"))
+        # Then: it is stopped, as a subagent with lanes runs only the commands they name
+        self.assertEqual(told, [guard.Said("You may run no command.")])
+
+
 class TestHold(LanesTest):
     def setUp(self) -> None:
         super().setUp()
