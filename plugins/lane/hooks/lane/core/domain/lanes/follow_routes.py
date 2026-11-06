@@ -2,9 +2,10 @@
 it is told to make, by the routes, and no other start while that one is due; while a subagent it
 started runs in the background, it makes no other start, but more starts of that one where the
 routes fan it out; it resumes no start that ended with no result, as a start made again stands in
-its place; once no start is left, the run is over. A start is an Agent call of a subagent, or a
-Skill call of a dependency's skill. Laid from the routes on the skill's step, with the result
-command on the last step of each subagent that gives a result."""
+its place; while the user is to answer a subagent's point, it makes no start; once no start is
+left, the run is over. A start is an Agent call of a subagent, or a Skill call of a dependency's
+skill. Laid from the routes on the skill's step, with the result command on the last step of each
+subagent that gives a result."""
 
 from __future__ import annotations
 
@@ -50,8 +51,9 @@ def started(tool: str, given: dict[str, Any], named: list[str], plugin: str) -> 
 def allows(tool: str, given: dict[str, Any], due: Next, plugin: str) -> bool:
     """Whether the main conversation's start goes through, the next start being `due`: while a
     start is due, only that start; while a subagent runs in the background, none, but a further
-    start of it where more may start; once no start is left, any."""
-    # A next start is `end`, `start` or `wait`, `end` the first of them in order.
+    start of it where more may start; while the user is to answer a subagent's point, none; once
+    no start is left, any."""
+    # A next start is `end`, `reply`, `start` or `wait`, `end` the first of them in order.
     if due.kind == "end":  # pragma: no mutate
         return True
     if started(tool, given, [due.name], plugin) is None:

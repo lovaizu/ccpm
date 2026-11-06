@@ -272,7 +272,15 @@ class TestRoutes(RoutesTest):
             ),
             (
                 self.routed([first, written, more, {**good, "to": "writer"}]),
-                "no route without a `to`",
+                "no route with neither a `to` nor `waits`",
+            ),
+            (
+                self.routed([*routes, {"from": "reviewer", "on": "asks", "waits": False}]),
+                "is out of its shape at $.routes.routes[4].waits",
+            ),
+            (
+                self.routed([first, written, {**more, "waits": True}, good]),
+                "a route from reviewer on `more` with both a `to` and `waits`",
             ),
             (self.routed([*routes, {"from": "a b", "on": "x"}]), "gives a subagent no name"),
             (
@@ -283,8 +291,9 @@ class TestRoutes(RoutesTest):
             with self.subTest(said=said):
                 # Given: routes of one route, a first route on a result or none, two first
                 # routes, one from write on a result, one with no `on`, two on one result, one to
-                # write, one to a subagent nothing is routed from, none to the end, a name no
-                # hook can carry, or one no file gives
+                # write, one to a subagent nothing is routed from, none to the end, one whose
+                # `waits` is not true, one with both a `to` and `waits`, a name no hook can carry,
+                # or one no file gives
                 # When: the proposal is read
                 # Then: it is refused, saying which
                 self.assertIn(said, self.refused(given))

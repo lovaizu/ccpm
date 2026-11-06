@@ -507,7 +507,7 @@ class TurnTest(testing.FolderTest):
         self.pin_checks(design)
         self.gives(PINNER, "asks")
         reply = f"{FOR_THE_PERSON}\n{point}"
-        self.assertEqual(self.ends(PINNER, reply), [told("pin:pinner", "asks")])
+        self.assertEqual(self.ends(PINNER, reply), [asked("pin:pinner")])
         return self.passes(PINNER)
 
     def pinner_done(self, design: str, tree: dict[str, Any]) -> list[str]:
@@ -664,3 +664,13 @@ def told(name: str, on: str, to: str = "") -> str:
     none."""
     start = f"Start `{to}`." if to else "Start no more subagents."
     return f"turn: {name} gave `{on}`. {start}"
+
+
+def asked(kind: str) -> str:
+    """What up is told once the subagent of the type, as Claude Code names it, gave `asks`, whose
+    route waits for the person: to put its point to them and resume it with their answer."""
+    name = kind.removeprefix("turn:")
+    return (
+        f"turn: {name} gave `asks`. Put its point to the user, and resume `{kind}` with their"
+        " answer by SendMessage."
+    )

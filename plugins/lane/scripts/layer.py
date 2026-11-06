@@ -159,15 +159,18 @@ def shared(root: str, found: list[dict[str, Any]], before: dict[str, Any]) -> No
 
 def routes_printed(given: dict[str, Any]) -> str:
     """The routes as the user reads them: the step they are laid on, each route from the
-    first start or a subagent's result to the start next, each subagent run several at once, and
-    each order of results."""
+    first start or a subagent's result to the start next, or to the user's answer where it waits,
+    each subagent run several at once, and each order of results."""
     rows = [
-        ("first" if "on" not in r else f"{r['from']} `{r['on']}`", r.get("to") or "no more")
+        (
+            "first" if "on" not in r else f"{r['from']} `{r['on']}`",
+            "wait for the user" if "waits" in r else f"start {r.get('to') or 'no more'}",
+        )
         for r in given["routes"]
     ]
     wide = max(len(left) for left, _ in rows)
     out = [f"Routes of {given['orchestrator']}, laid on its step {given['step']}:\n"]
-    out += [f"  {left:<{wide}}  start {to}\n" for left, to in rows]
+    out += [f"  {left:<{wide}}  {to}\n" for left, to in rows]
     out += [f"  runs at once of {name}\n" for name in given.get("fan_out", [])]
     precedence = given.get("precedence")
     orders = precedence.items() if isinstance(precedence, dict) else [("", precedence or [])]

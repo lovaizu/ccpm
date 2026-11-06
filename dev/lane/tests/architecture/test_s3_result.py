@@ -193,15 +193,17 @@ class TestDependency(helpers.RoutesTest):
         asks = self.examined("asks")
         ended = self.claude.stop(EXAMINER)
         # Then: each goes through, checker's guard and changelog's each keeping the result in a
-        # record of its own, and its end tells no more starts
+        # record of its own, and its end tells to put its point to the user, as its route waits
         for plugin in ("checker", "changelog"):
             (record,) = glob.glob(os.path.join(self.base, "lane", f"*-s1-{plugin}", "e1.jsonl"))
             self.assertIn('"on": "asks"', self.read(record))
         self.assertEqual([t.made for t in (started, read, asks, ended)], [True] * 4)
         after = self.claude.notify(EXAMINER)
-        self.assertEqual(
-            after, ["changelog: checker:examiner gave `asks`. Start no more subagents."]
+        asked = (
+            "changelog: checker:examiner gave `asks`. Put its point to the user, and resume"
+            " `checker:examiner` with their answer by SendMessage."
         )
+        self.assertEqual(after, [asked])
         # And: once the main conversation resumes examiner with the answer, and it gives `done`,
         # its end tells the start of reviewer, as the routes on `done` say
         self.claude.call(None, "SendMessage", {"to": "e1", "message": "It is 0.2.0."})

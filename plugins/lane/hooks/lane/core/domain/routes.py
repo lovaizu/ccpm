@@ -1,7 +1,9 @@
 """The routes, as docs/routes.md gives them: the results each subagent may give, and the result
 command it gives each by; and the next start of a run of the skill the routes start from, decided
 from the routes and the run's starts as they came back, with the result each started subagent
-gave, and told in its line of docs/routes.md's table.
+gave, and told in its line of docs/routes.md's table. A route that waits has the user answer the
+subagent's point, with no start due, until the subagent, resumed with the answer, gives a later
+result.
 
 A start counts once its subagent has ended: as its call comes back `completed`, or, come back
 `async_launched`, once the subagent of the ID it gave has ended. Starts joined to the one before
@@ -40,7 +42,8 @@ class Start(NamedTuple):
 
 class Next(NamedTuple):
     """The next start: `start` with the subagent due, `wait` with the subagent run in the
-    background, or `end` with none; the subagent and result it follows, where it follows one;
+    background, `reply` with the subagent whose point the user is to answer, as its route waits,
+    or `end` with none; the subagent and result it follows, where it follows one;
     whether it is the start of a subagent again, as a run of it ended with no result; how many runs
     gave the result it follows; and, waiting, whether more runs of the subagent may start, as the
     routes fan it out."""
@@ -79,14 +82,19 @@ def gives(
     routes: dict[str, Any] | None, name: str, ends: bool, own: list[str] | None = None
 ) -> list[str]:
     """The results the subagent or skill of the name may give, `ends` saying whether a lane of it is
-    checked at its end: for the skill the routes start from, those of each route that starts no
-    more, as it ends its run by one of them; for a subagent, those the routes from it are on; where
+    checked at its end: for the skill the routes start from, those of each route that ends the run,
+    as it ends its run by one of them; for a subagent, those the routes from it are on; where
     none is, its own results, or DONE where it names none and a lane of it is checked at its
     end."""
     if routes and name == routes["orchestrator"]:
-        return list(dict.fromkeys(r["on"] for r in routes["routes"] if "to" not in r))
+        return list(dict.fromkeys(r["on"] for r in routes["routes"] if ends_run(r)))
     found = ons(routes, name) if routes else []
     return found or own or ([DONE] if ends else [])
+
+
+def ends_run(route: dict[str, Any]) -> bool:
+    """Whether the route ends the run: it has neither a `to` nor `waits`."""
+    return "to" not in route and "waits" not in route
 
 
 def kind(name: str, plugin: str) -> str:
@@ -151,10 +159,11 @@ def unordered(routes: dict[str, Any]) -> str | None:
 def refused(routes: dict[str, Any]) -> str:
     """Why the routes, in their JSON Schema, cannot be followed, as `lay.py print` refuses them and
     the guard holds the routes laid to it, said as the proposal's error goes on; "" where they can:
-    no one first route, from the skill, with a `to` and no `on`; another route with no
-    `on`, or two from one subagent on one result; a route to the skill, which gives no
-    result, or to a subagent no route is from; no route that ends; an order of results, or a
-    subagent fanned out, as `ordered` checks them."""
+    no one first route, from the skill, with a `to` and no `on`; a route with both a `to` and
+    `waits`, or one that waits from a subagent fanned out, whose run to resume could not be told;
+    another route with no `on`, or two from one subagent on one result; a route to the skill,
+    which gives no result, or to a subagent no route is from; no route that ends; an order of
+    results, or a subagent fanned out, as `ordered` checks them."""
     lead, each = routes["orchestrator"], routes["routes"]
     if ":" in lead:
         return (
@@ -173,6 +182,14 @@ def refused(routes: dict[str, Any]) -> str:
         )
     seen: list[tuple[str, str]] = []
     for r in each:
+        on = f" on `{r['on']}`" if "on" in r else ""
+        if "to" in r and "waits" in r:
+            return f"gives a route from {r['from']}{on} with both a `to` and `waits`"
+        if "waits" in r and fans_out(routes, r["from"]):
+            return (
+                f"gives a route from {r['from']}{on} that waits, though {r['from']} is in"
+                " `fan_out`, so lane could not tell which of its runs to resume"
+            )
         if r["from"] == lead:
             continue
         if "on" not in r:
@@ -191,8 +208,8 @@ def refused(routes: dict[str, Any]) -> str:
             return (
                 f"gives a route to {to}, which no route is from, so it would have no result to give"
             )
-    if all("to" in r for r in each):
-        return "gives no route without a `to`, so the run cannot end"
+    if not any(ends_run(r) for r in each):
+        return "gives no route with neither a `to` nor `waits`, so the run cannot end"
     return ordered(routes, froms)
 
 
@@ -247,15 +264,16 @@ def next_start(
     """The next start after the starts, as `result` gives the result of a subagent's run by its ID,
     `ended` whether it has ended, and `left` whether a run of it ended with no result once: the
     skill's route at first; after each start, with those joined to it, the route of their
-    subagent on their result once every run has ended, or the same subagent again where a run is
-    left with no result; a wait while any runs in the background. Stops with Unordered where their
+    subagent on their result once every run has ended, the user to answer where it waits, or the
+    same subagent again where a run is left with no result; a wait while any runs in the
+    background, a subagent resumed with an answer among them. Stops with Unordered where their
     results cannot be told one."""
     first = next(r["to"] for r in routes["routes"] if r["from"] == routes["orchestrator"])
     found = Next("start", first, None)
     name, runs = "", list[Start]()
     for s in starts:
         joins = bool(s.joined) and s.name == name
-        # A next start is `end`, `start` or `wait`, `end` the first of them in order.
+        # A next start is `end`, `reply`, `start` or `wait`, `end` the first of them in order.
         over = found.kind == "end"  # pragma: no mutate
         # Once the runs have led to the end, a start joined to them may still come back.
         if over and not joins:
@@ -292,6 +310,8 @@ def taken(
     route = next((r for r in routes["routes"] if (r["from"], r.get("on")) == (name, on)), None)
     if route is None:
         return Next("start", name, None, True)
+    if "waits" in route:
+        return Next("reply", name, (name, on), runs=len(given))
     kind = "start" if "to" in route else "end"
     return Next(kind, route.get("to", ""), (name, on), runs=len(given))
 
@@ -307,10 +327,15 @@ def in_place(
     return [s for s in runs if s not in out]
 
 
+# What the main conversation is told where a subagent's route waits: the user, not a subagent,
+# gives the next move, and the subagent resumed with their answer gives the next result.
+REPLY = "Put its point to the user, and resume `{named}` with their answer by SendMessage."
+
+
 def line(found: Next, plugin: str) -> str:
     """What the main conversation is told of the next start, as docs/routes.md's table has it, the
     plugin's name heading it left to whoever tells it."""
-    # A next start is `end`, `start` or `wait`, `wait` the last of them in order.
+    # A next start is `end`, `reply`, `start` or `wait`, `wait` the last of them in order.
     waiting = found.kind == "wait"  # pragma: no mutate
     named = kind(found.name, plugin)
     if waiting and found.more:
@@ -322,9 +347,11 @@ def line(found: Next, plugin: str) -> str:
     several = found.runs > 1  # pragma: no mutate
     if found.gave and several:
         gave = f"The {found.runs} runs of {found.gave[0]} gave `{found.gave[1]}`. "
-    # A next start is `end`, `start` or `wait`, `end` the first of them in order.
+    # A next start is `end`, `reply`, `start` or `wait`, `end` the first of them in order.
     if found.kind == "end":  # pragma: no mutate
         return gave + "Start no more subagents."
+    if found.kind == "reply":
+        return gave + REPLY.format(named=named)
     if found.again:
         return f"{found.name} ended with no result. Start `{named}` again."
     return gave + f"Start `{named}`."

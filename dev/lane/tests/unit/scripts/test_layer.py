@@ -221,11 +221,16 @@ class TestDependencyRoutes(LayerTest):
         # Given: the README's proposal with routes from writer to checker's examiner
         # When: it is printed
         said = layer.printed(helpers.PROPOSED)
-        # Then: the routes name examiner by its type, and only write's and writer's steps are laid
+        # Then: the routes name examiner by its type, its `asks` waiting for the user, and only
+        # write's and writer's steps are laid, write ending by `done` alone, the result of the
+        # route that ends the run
         self.assertIn("  writer `written`         start checker:examiner\n", said)
-        self.assertIn("  checker:examiner `asks`  start no more\n", said)
+        self.assertIn("  checker:examiner `asks`  wait for the user\n", said)
+        self.assertIn("  checker:examiner `done`  start no more\n", said)
         self.assertNotIn("Lanes of checker:examiner", said)
         self.assertIn(f"4. Reply with the entries you wrote. {helpers.END_WRITER}\n", said)
+        ends = f"End by running `{helpers.GIVE} write done`.{helpers.NOT_WORK}"
+        self.assertIn(f"1. Have the entries written and reviewed. {helpers.FOLLOW} {ends}\n", said)
 
     def test_the_hooks_are_written_for_the_plugins_own_subagents(self):
         # Given: the same proposal

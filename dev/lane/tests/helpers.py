@@ -216,15 +216,16 @@ def kind(name: str) -> str:
     return name if ":" in name else f"changelog:{name}"
 
 
-# Routes from writer to a subagent of the dependency checker, examiner, which gives `asks` or
-# `done`, each ending the run, as docs/routes.md's A subagent of a dependency gives them.
+# Routes from writer to a subagent of the dependency checker, examiner, which gives `asks`, waiting
+# for the user, or `done`, ending the run, as docs/routes.md's A subagent of a dependency gives
+# them.
 DEPENDENCY_ROUTES: dict[str, Any] = {
     "orchestrator": "write",
     "step": 1,
     "routes": [
         {"from": "write", "to": "writer"},
         {"from": "writer", "on": "written", "to": "checker:examiner"},
-        {"from": "checker:examiner", "on": "asks"},
+        {"from": "checker:examiner", "on": "asks", "waits": True},
         {"from": "checker:examiner", "on": "done"},
     ],
 }

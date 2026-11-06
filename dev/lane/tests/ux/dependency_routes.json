@@ -5,7 +5,7 @@
  "routes": {"orchestrator": "write", "step": 1, "routes": [
   {"from": "write", "to": "writer"},
   {"from": "writer", "on": "written", "to": "checker:examiner"},
-  {"from": "checker:examiner", "on": "asks"},
+  {"from": "checker:examiner", "on": "asks", "waits": true},
   {"from": "checker:examiner", "on": "done", "to": "reviewer"},
   {"from": "reviewer", "on": "more", "to": "writer"},
   {"from": "reviewer", "on": "good"}]}}

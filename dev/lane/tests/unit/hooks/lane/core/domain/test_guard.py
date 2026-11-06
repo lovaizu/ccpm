@@ -556,6 +556,67 @@ class TestResumed(RoutedTest):
         self.assertEqual(told, [guard.Said(helpers.FOLLOW), guard.Said(wait)])
 
 
+class TestWaits(RoutedTest):
+    """A route from reviewer on `asks` that waits for the user, as docs/routes.md's routes give
+    `waits`: the run goes on with no start due while the user answers."""
+
+    ASKED = (
+        "reviewer gave `asks`. Put its point to the user, and resume `changelog:reviewer` with"
+        " their answer by SendMessage."
+    )
+
+    def setUp(self) -> None:
+        super().setUp()
+        routed = {**helpers.ROUTES, "routes": [*helpers.ROUTES["routes"], ASKS]}
+        self.write_json(
+            os.path.join(self.plugin, "hooks", "lanes.json"), {**helpers.RULES, "routes": routed}
+        )
+        # Given: the run begun, writer gave `written`, and reviewer gave `asks`
+        self.begun()
+        self.through("writer", "w1", "written")
+        self.told_asks = self.through("reviewer", "r1", "asks")
+        self.message = self.event("SendMessage", {"to": "r1", "message": "It is 0.2.0."}, None)
+
+    def test_the_main_conversation_is_told_to_put_the_point_and_resume_with_the_answer(self):
+        # When: reviewer's end reaches the main conversation, and then the user's answer
+        answer = self.main(self.prompt())
+        # Then: each is told to put reviewer's point to the user and resume it with the answer
+        self.assertEqual(self.told_asks, [guard.Said(self.ASKED)])
+        self.assertEqual(answer, [guard.Said(self.ASKED)])
+
+    def test_the_turn_ends_and_the_run_goes_on_while_the_user_answers(self):
+        # When: the main conversation ends its turn to wait for the user's answer
+        ended = self.main(self.turn())
+        # Then: it ends, and the run goes on: a start meanwhile is stopped with the point to put
+        self.assertEqual(ended, [])
+        stopped = [guard.Said(helpers.FOLLOW), guard.Said(self.ASKED)]
+        self.assertEqual(self.main(self.start("writer")), stopped)
+        self.assertEqual(self.main(self.start("reviewer")), stopped)
+
+    def test_the_resumed_subagents_later_result_moves_the_routes_on(self):
+        # When: the main conversation resumes reviewer with the answer, which Claude Code starts
+        # again, and reviewer gives `more` and ends
+        sent = self.main(self.message)
+        guard.handed("changelog", self.message, "PreToolUse")
+        self.told(guard.started, self.subagent("SubagentStart", "reviewer", "r1"), "reviewer")
+        meanwhile = self.main(self.start("writer"))
+        command = f"python3 {self.plugin}/hooks/lane/result.py reviewer more"
+        self.told(guard.came_back, self.came_back(command, "changelog:reviewer", "r1"), "reviewer")
+        self.told(guard.stopping, self.subagent("SubagentStop", "reviewer", "r1"), "reviewer")
+        told = self.main(self.notified("r1"))
+        # Then: the message goes through, a start while reviewer runs is told to wait, and its
+        # end tells the start of writer, which goes through
+        self.assertEqual(sent, [])
+        wait = "Wait for `changelog:reviewer` to end: you are told the next start once it has."
+        self.assertEqual(meanwhile, [guard.Said(helpers.FOLLOW), guard.Said(wait)])
+        self.assertEqual(told, [guard.Said("reviewer gave `more`. Start `changelog:writer`.")])
+        self.assertEqual(self.main(self.start("writer")), [])
+
+
+# A route from reviewer that waits for the user, on `asks`, beside docs/routes.md's.
+ASKS = {"from": "reviewer", "on": "asks", "waits": True}
+
+
 class TestRoutedDependency(RoutedTest):
     """A subagent of a dependency the routes name, checker's examiner: changelog's guard checks
     none of its calls, which its own plugin's guard holds, and keeps its results and its end as it
@@ -584,15 +645,17 @@ class TestRoutedDependency(RoutedTest):
             self.told(guard.stopping, self.subagent("SubagentStop", name, "e1"), name), []
         )
         # Then: examiner is told by its type, its start goes through, its result is kept in
-        # changelog's record, and its end tells no more starts
+        # changelog's record, and its end tells to put its point to the user, as the route on
+        # `asks` waits
         self.assertEqual(told, [guard.Said("writer gave `written`. Start `checker:examiner`.")])
         wait = "Wait for `checker:examiner` to end: you are told the next start once it has."
         self.assertEqual(start, [guard.Said(wait)])
         self.assertEqual(called.result(helpers.KEPT, "e1"), "asks")
-        self.assertEqual(
-            self.main(self.notified("e1")),
-            [guard.Said("checker:examiner gave `asks`. Start no more subagents.")],
+        asked = (
+            "checker:examiner gave `asks`. Put its point to the user, and resume"
+            " `checker:examiner` with their answer by SendMessage."
         )
+        self.assertEqual(self.main(self.notified("e1")), [guard.Said(asked)])
 
     def test_examiners_calls_are_left_to_its_own_plugins_guard(self):
         # Given: examiner, whose calls changelog lays no lane on

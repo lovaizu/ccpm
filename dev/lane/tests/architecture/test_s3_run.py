@@ -220,6 +220,47 @@ class TestRun(helpers.RoutesTest):
         self.assertEqual((ended.made, ended.said), (True, {}))
 
 
+class TestWaits(helpers.RoutesTest):
+    """routes.json with reviewer's `asks`, whose route waits for the user, as the sequence's branch
+    of a result whose route waits draws."""
+
+    ASKED = (
+        "changelog: reviewer gave `asks`. Put its point to the user, and resume"
+        " `changelog:reviewer` with their answer by SendMessage."
+    )
+
+    def proposed(self) -> dict:
+        """The proposal laid: routes.json, with a route from reviewer on `asks` that waits."""
+        routed = self.ux_proposal("routes.json")
+        routed["routes"]["routes"].append({"from": "reviewer", "on": "asks", "waits": True})
+        return routed
+
+    def test_a_result_whose_route_waits_has_the_point_put_and_the_answer_resume_it(self):
+        # Given: writer gave `written`
+        self.through(writer(1), "written")
+        # When: reviewer gives `asks`, the main conversation ends its turn to put the point, and
+        # tries a start meanwhile
+        told = self.through(reviewer(1), "asks")
+        ended = self.claude.end_turn()
+        meanwhile = self.claude.start(None, writer(2), "Write again.")
+        # Then: it is told to put reviewer's point and resume it with the answer, its turn ends,
+        # and the start is denied with that line, as the run goes on
+        self.assertEqual(told[-1], self.ASKED)
+        self.assertEqual((ended.made, ended.said), (True, {}))
+        self.assertEqual((meanwhile.made, meanwhile.reason()), (False, f"{FOLLOWED}\n{self.ASKED}"))
+        # And: the user's answer is told the same line; resumed with it by SendMessage, which
+        # Claude Code starts again, reviewer gives `more`, and its end tells the start of writer
+        self.assertEqual(self.claude.prompted("It is 0.2.0."), [self.ASKED])
+        sent = self.claude.call(None, "SendMessage", {"to": "r1", "message": "It is 0.2.0."})
+        self.claude.started(reviewer(1))
+        self.assertTrue(self.result(reviewer(1), "more").made)
+        self.claude.stop(reviewer(1))
+        after = self.claude.notify(reviewer(1))
+        self.assertTrue(sent.made)
+        self.assertEqual(after, ["changelog: reviewer gave `more`. Start `changelog:writer`."])
+        self.assertTrue(self.claude.start(None, writer(2), "Write again.").made)
+
+
 CHECK = "checker:check"
 
 
