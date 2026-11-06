@@ -64,13 +64,14 @@ When an AI agent gets the prompt for a request that the prompt is made for, it d
 
 ### Q4: Taking the steps in order, does the AI arrive at what the goal says the task is for, with no step that leads it elsewhere, so that following the prompt is the way to its purpose?
 
-**Thinking**: Each step is a result on the way to the goal. The AI then chooses how to reach it, and knows when to go on.
+**Thinking**: The prompt says first what the task is for, for whom and why. Each step then follows as a result on the way there, with what that result is for. The AI chooses how to reach each result and knows when to go on. Where a step does not fit the case, the AI follows what the step is for. Steps given without their intent are followed off the mark.
 
 **Steps**
 
-1. Write the steps in the order their results must hold, so the AI sees that order, such as in a numbered list.
-2. Check that a later step or the goal uses each step's result, and cut a step whose result nothing uses.
-3. Check that the last step leaves what the goal says the task is for.
+1. Write a step only where an AI that holds the task's intent would still not know what to do, such as a check to run or a form to keep.
+2. Write the steps in the order their results must hold, so the AI sees that order, such as in a numbered list.
+3. Check that a later step or the goal uses each step's result, and cut a step whose result nothing uses.
+4. Check that the last step leaves what the goal says the task is for.
 
 ### Q5: When the AI meets a case a step's rule does not name, can it decide the case as the writer would, from the reason the rule gives, so that the rules hold where their words do not reach?
 

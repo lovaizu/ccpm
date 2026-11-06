@@ -143,8 +143,9 @@
   },
   {
    "intent": "Q4",
-   "thinking": "Each step is a result on the way to the goal. The AI then chooses how to reach it, and knows when to go on.",
+   "thinking": "The prompt says first what the task is for, for whom and why. Each step then follows as a result on the way there, with what that result is for. The AI chooses how to reach each result and knows when to go on. Where a step does not fit the case, the AI follows what the step is for. Steps given without their intent are followed off the mark.",
    "steps": [
+    "Write a step only where an AI that holds the task's intent would still not know what to do, such as a check to run or a form to keep.",
     "Write the steps in the order their results must hold, so the AI sees that order, such as in a numbered list.",
     "Check that a later step or the goal uses each step's result, and cut a step whose result nothing uses.",
     "Check that the last step leaves what the goal says the task is for."
