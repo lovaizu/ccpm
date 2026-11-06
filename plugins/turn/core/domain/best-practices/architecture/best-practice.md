@@ -69,7 +69,7 @@ The developer builds and changes each part of the product so that the parts toge
 
 ### Q5: Starting on a component, does the developer know what kind of thing it is and what it is made with, so that the components fit without anyone choosing alone?
 
-**Thinking**: Each box has its type and technology, and the figure a legend for every symbol. A developer otherwise chooses them alone, and the components stop fitting.
+**Thinking**: Each box has its type and technology, and the figure a legend for every symbol. A store of data is a box like a component's, as its type, such as a folder of JSON files, tells it apart. A developer otherwise chooses them alone, and the components stop fitting.
 
 **Steps**
 

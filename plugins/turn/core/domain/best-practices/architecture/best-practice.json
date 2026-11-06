@@ -118,7 +118,7 @@
   },
   {
    "intent": "Q5",
-   "thinking": "Each box has its type and technology, and the figure a legend for every symbol. A developer otherwise chooses them alone, and the components stop fitting.",
+   "thinking": "Each box has its type and technology, and the figure a legend for every symbol. A store of data is a box like a component's, as its type, such as a folder of JSON files, tells it apart. A developer otherwise chooses them alone, and the components stop fitting.",
    "steps": [
     "Read the figure without the text around it, and add to the legend whatever symbol a reader would still have to ask about; what a part does goes to the list under the figure, not into its box."
    ]
