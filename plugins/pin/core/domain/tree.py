@@ -6,13 +6,15 @@ problems; and the open decisions that can be decided now, each it builds on bein
 The file, design-tree.md, is in one form. Its first line is `# Design tree`, then an empty line,
 then `Goal: <one sentence>` and a line `- Grounds: <text>` for each of the goal's grounds; then an
 empty line and the list. A question stands at the top of the list, `- **<ID>** <intent>`. A
-decision stands under the first question it serves, else under the first decision it builds on,
-else at the top of the list: `- **<ID> <what is decided>**: <what was decided, or open>
+decision stands under what it serves, the first decision it serves, else the first question, else
+at the top of the list: `- **<ID> <what is decided>**: <what was decided, or open>
 (<who settled it>)`, who settled it left out where no one has. Under a decision stand, in this
 order, a line `- Grounds: <text>` for each ground, `- Also serves: <IDs>` naming what else it
-serves, `- Also builds on: <IDs>` naming what else it builds on, and the decisions under it. Each
-item stands two spaces deeper than the one it is under. So the nesting is the tree, and an AI that
-changes a node with Read and Edit sees the path from it to the goal and every branch under it."""
+serves, `- Also builds on: <IDs>` naming each decision it builds on, and the decisions under it.
+Each item stands two spaces deeper than the one it is under. So the nesting is the tree, each node
+under the one it is a means to, and so reaching the goal through the nodes above it; it builds on
+only what its Also builds on line names. An AI that changes a node with Read and Edit sees the
+path from it to the goal and every branch under it."""
 
 from __future__ import annotations
 
@@ -158,15 +160,16 @@ def taken(
 ) -> str:
     """Takes the item of the line numbered n, under the parent, into the tree found and, a question
     or a decision, onto the items above; gives its fault, "" where it has none, and then takes
-    nothing."""
+    nothing. A decision serves the item it stands under and builds on none; its Also lines add the
+    rest, each ID once."""
     kind = next((k for k in FIRST if item.startswith(k)), "")
     question, decision = QUESTION.fullmatch(item), DECISION.fullmatch(item)
     if decision:
         d = {
             "id": decision["id"],
             "what": decision["what"],
-            "contributes_to": [parent.node["id"]] if parent and parent.question else [],
-            "builds_on": [parent.node["id"]] if parent and not parent.question else [],
+            "contributes_to": [parent.node["id"]] if parent else [],
+            "builds_on": [],
             "decided": None if decision["decided"] == OPEN else decision["decided"],
             "settled_by": decision["by"],
             "grounds": [],
@@ -201,27 +204,27 @@ def taken(
     ids = item[len(kind) :].split(", ")
     if not all(ID.fullmatch(i) for i in ids):
         return f"line {n}: an {name} line takes IDs joined by `, `"
-    d[ALSO[kind]] += ids
+    d[ALSO[kind]] += [i for i in dict.fromkeys(ids) if i not in d[ALSO[kind]]]
     return ""
 
 
 def markdown(tree: dict[str, Any]) -> str:
-    """The tree, in form, as its Markdown: each decision under the first question it serves, else
-    under the first decision it builds on where that leads to no loop, else at the top of the list
+    """The tree, in form, as its Markdown: each decision under the first decision it serves where
+    that leads to no loop, else under the first question it serves, else at the top of the list
     after the questions; each in the tree's order among those beside it."""
     questions = {q["id"] for q in tree["questions"]}
     decisions = {d["id"]: d for d in tree["decisions"]}
 
     def first(d: dict[str, Any]) -> str | None:
+        on = [i for i in d["contributes_to"] if i in decisions]
         serves = [i for i in d["contributes_to"] if i in questions]
-        on = [i for i in d["builds_on"] if i in decisions]
-        return (serves or on or [None])[0]
+        return (on or serves or [None])[0]
 
     def place(d: dict[str, Any]) -> str | None:
         at, seen = first(d), set()
-        while at in decisions and at not in questions and at not in seen:
+        while at in decisions and at not in seen:
             if at == d["id"]:
-                return None
+                return next((i for i in d["contributes_to"] if i in questions), None)
             seen.add(at)
             at = first(decisions[at])
         return first(d)
@@ -233,10 +236,8 @@ def markdown(tree: dict[str, Any]) -> str:
     def under(parent: str | None, depth: int) -> None:
         for d in tree["decisions"]:
             if placed[d["id"]] == parent:
-                serves, builds = list(d["contributes_to"]), list(d["builds_on"])
-                if parent is not None:
-                    (serves if parent in questions else builds).remove(parent)
-                lines.extend(decision_lines(d, depth, serves, builds))
+                serves = [i for i in d["contributes_to"] if i != parent]
+                lines.extend(decision_lines(d, depth, serves, d["builds_on"]))
                 under(d["id"], depth + 1)
 
     for q in tree["questions"]:

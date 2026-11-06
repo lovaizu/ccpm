@@ -143,14 +143,14 @@ Goal: Scripts that read `notes list` get its notes as JSON, so they stop parsing
     - **D3 The form of updated**: ISO 8601, as the text gives it (research)
       - Grounds: scripts/sync.py:14 "datetime.fromisoformat(fields[3])"
       - Grounds: the person confirmed, 2026-11-03
-      - Also serves: D1
+      - Also builds on: D1
 - **Q2** Do people who read notes list by eye see the same as before?
   - **D2 Whether text stays the default**: it stays; JSON only with --json (reasoning)
     - Grounds: the goal, and Q2
 ```
 
-Each question stands under the goal, and each decision under the question it serves, or under the
-decision it builds on. The end of a decision's line says who settled it: you (`user`), a fact found
+Each question stands under the goal, and each decision under the question or the decision it
+serves. The end of a decision's line says who settled it: you (`user`), a fact found
 and confirmed (`research`), or what follows from the goal and the decisions before it
 (`reasoning`). You hand the file to the AI
 that makes the work. Every point that the work needs is in it, with who settled it and on what

@@ -9,8 +9,8 @@ import unittest
 import helpers
 from helpers import decision, made, settled, testing, tree
 
-# The README walkthrough's tree as its Markdown nests it: D3 serves no question, so it stands under
-# D1, the decision it first builds on, and names D1, which it serves, on its Also line.
+# The README walkthrough's tree as its Markdown nests it: D3 serves D1, so it stands under D1, and
+# names D1, which it builds on, on its Also line.
 WALKTHROUGH = """\
 # Design tree
 
@@ -23,7 +23,7 @@ Goal: Scripts that read `notes list` get its notes as JSON, so they stop parsing
     - **D3 The form of updated**: ISO 8601, as the text gives it (research)
       - Grounds: scripts/sync.py:14 "datetime.fromisoformat(fields[3])"
       - Grounds: the person confirmed, 2026-11-03
-      - Also serves: D1
+      - Also builds on: D1
 - **Q2** Do people who read notes list by eye see the same as before?
   - **D2 Whether text stays the default**: it stays; JSON only with --json (reasoning)
     - Grounds: the goal, and Q2
@@ -46,7 +46,7 @@ class TestRead(unittest.TestCase):
         # Given: the README walkthrough's Markdown
         # When: it is read
         # Then: each question serves the goal, each decision serves the question it stands under,
-        # D3 builds on D1, which it stands under, and serves D1 by its Also line
+        # D3 serves D1, which it stands under, and builds on D1 by its Also line
         self.assertEqual(
             tree.read(WALKTHROUGH),
             {
@@ -147,6 +147,25 @@ class TestRead(unittest.TestCase):
         d2 = tree.read(text)["decisions"][1]
         # Then: it serves Q1 and then Q2, and builds on D1
         self.assertEqual((d2["contributes_to"], d2["builds_on"]), (["Q1", "Q2"], ["D1"]))
+
+    def test_a_decision_under_a_decision_serves_it_and_builds_on_nothing_more(self):
+        # Given: D2 under D1, with no Also line
+        text = f"{HEAD}- **Q1** q?\n  - **D1 a**: open\n    - **D2 b**: open\n"
+        # When: it is read
+        d2 = tree.read(text)["decisions"][1]
+        # Then: it serves D1, and builds on nothing
+        self.assertEqual((d2["contributes_to"], d2["builds_on"]), (["D1"], []))
+
+    def test_an_also_serves_line_naming_the_decision_above_adds_it_once(self):
+        # Given: D2 under D1, its Also serves line naming D1 again beside Q2
+        text = (
+            f"{HEAD}- **Q1** q?\n  - **D1 a**: open\n    - **D2 b**: open\n"
+            "      - Also serves: D1, Q2\n      - Also builds on: D1\n- **Q2** r?\n"
+        )
+        # When: it is read
+        d2 = tree.read(text)["decisions"][1]
+        # Then: it serves D1 and Q2, each once, and builds on D1
+        self.assertEqual((d2["contributes_to"], d2["builds_on"]), (["D1", "Q2"], ["D1"]))
 
     def test_a_tree_with_no_question_is_read(self):
         # Given: the goal and its grounds alone
@@ -381,41 +400,67 @@ class TestMarkdown(unittest.TestCase):
         # Then: it is the text the README keeps
         self.assertEqual(tree.markdown(tree.read(WALKTHROUGH)), WALKTHROUGH)
 
-    def test_a_decision_stands_under_the_first_question_it_serves(self):
-        # Given: D1 serves D2 and then Q2, and builds on D2
+    def test_a_decision_stands_under_a_decision_it_serves_before_a_question(self):
+        # Given: D1 serves Q2 and then D2, and builds on D2
         data = made(
             decision("D2"),
-            decision("D1", contributes_to=["D2", "Q2"], builds_on=["D2"]),
+            decision("D1", contributes_to=["Q2", "D2"], builds_on=["D2"]),
             questions=("Q1", "Q2"),
         )
         # When: the tree is written
-        # Then: D1 stands under Q2, and names D2 on each Also line
+        # Then: D1 stands under D2, and names Q2 and D2 on its Also lines
         self.assertEqual(
             tree.markdown(data),
             "# Design tree\n\nGoal: the goal\n- Grounds: the person\n\n"
             "- **Q1** does Q1 hold?\n  - **D2 what D2 decides**: open\n"
-            "- **Q2** does Q2 hold?\n  - **D1 what D1 decides**: open\n"
-            "    - Also serves: D2\n    - Also builds on: D2\n",
+            "    - **D1 what D1 decides**: open\n      - Also serves: Q2\n"
+            "      - Also builds on: D2\n"
+            "- **Q2** does Q2 hold?\n",
         )
 
-    def test_a_decision_serving_no_question_stands_under_the_one_it_first_builds_on(self):
-        # Given: D2 serves D1 alone, and builds on D1 and D3
+    def test_a_decision_serving_no_decision_stands_under_the_first_question_it_serves(self):
+        # Given: D2 serves Q2 and then Q1, and builds on D1, which it does not serve
+        data = made(
+            decision("D1"),
+            decision("D2", contributes_to=["Q2", "Q1"], builds_on=["D1"]),
+            questions=("Q1", "Q2"),
+        )
+        # When: the tree is written
+        # Then: D2 stands under Q2, and names Q1 and D1 on its Also lines
+        self.assertTrue(
+            tree.markdown(data).endswith(
+                "- **Q2** does Q2 hold?\n  - **D2 what D2 decides**: open\n"
+                "    - Also serves: Q1\n    - Also builds on: D1\n"
+            )
+        )
+
+    def test_a_decision_stands_under_the_first_decision_it_serves(self):
+        # Given: D2 serves D3 and then D1, and builds on D1 and D3
         data = made(
             decision("D1"),
             decision("D3"),
-            decision("D2", contributes_to=["D1"], builds_on=["D1", "D3"]),
+            decision("D2", contributes_to=["D3", "D1"], builds_on=["D1", "D3"]),
         )
         # When: the tree is written
-        # Then: D2 stands under D1, naming what else it serves and builds on
+        # Then: D2 stands under D3, naming what else it serves and what it builds on
         self.assertIn(
-            "  - **D1 what D1 decides**: open\n    - **D2 what D2 decides**: open\n"
-            "      - Also serves: D1\n      - Also builds on: D3\n",
+            "  - **D3 what D3 decides**: open\n    - **D2 what D2 decides**: open\n"
+            "      - Also serves: D1\n      - Also builds on: D1, D3\n",
             tree.markdown(data),
         )
 
-    def test_a_decision_stands_under_one_it_builds_on_listed_after_it(self):
-        # Given: D1 serves no question and builds on D2, which serves Q1
-        data = made(decision("D1", contributes_to=[], builds_on=["D2"]), decision("D2"))
+    def test_a_decision_serving_nothing_stands_at_the_top_whatever_it_builds_on(self):
+        # Given: D2 builds on D1, serving nothing
+        data = made(decision("D1"), decision("D2", contributes_to=[], builds_on=["D1"]))
+        # When: the tree is written
+        # Then: D2 stands at the top, naming D1 on its Also line
+        self.assertTrue(
+            tree.markdown(data).endswith("- **D2 what D2 decides**: open\n  - Also builds on: D1\n")
+        )
+
+    def test_a_decision_stands_under_one_it_serves_listed_after_it(self):
+        # Given: D1 serves D2, which serves Q1
+        data = made(decision("D1", contributes_to=["D2"]), decision("D2"))
         # When: the tree is written
         # Then: D1 stands under D2
         self.assertIn(
@@ -424,15 +469,17 @@ class TestMarkdown(unittest.TestCase):
         )
 
     def test_a_loop_read_from_a_file_is_written_as_it_was_read(self):
-        # Given: D2 and D3 build on each other at the top of the list, read from Markdown, so each
-        # ID is a text of its own
-        text = (
-            f"{HEAD}- **Q1** q?\n  - **D1 a**: open\n"
-            "- **D2 b**: open\n  - Also builds on: D3\n- **D3 c**: open\n  - Also builds on: D2\n"
-        )
-        # When: the tree read is written
-        # Then: each stands at the top as it stood
-        self.assertEqual(tree.markdown(tree.read(text)), text)
+        for also in ("Also serves", "Also builds on"):
+            with self.subTest(also=also):
+                # Given: D2 and D3 at the top of the list, each naming the other on the Also line,
+                # read from Markdown, so each ID is a text of its own
+                text = (
+                    f"{HEAD}- **Q1** q?\n  - **D1 a**: open\n"
+                    f"- **D2 b**: open\n  - {also}: D3\n- **D3 c**: open\n  - {also}: D2\n"
+                )
+                # When: the tree read is written
+                # Then: each stands at the top as it stood
+                self.assertEqual(tree.markdown(tree.read(text)), text)
 
     def test_a_decision_with_no_place_stands_at_the_top_after_the_questions(self):
         # Given: D2 serves nothing and builds on nothing; D3 and D4 serve no question and build on
@@ -454,22 +501,40 @@ class TestMarkdown(unittest.TestCase):
         )
 
     def test_a_decision_under_a_loop_stands_under_it(self):
-        # Given: D2 and D3 build on each other, serving no question, and D4 builds on D2
+        # Given: D2 and D3 serve each other, serving no question, and D4 serves D2
         data = made(
             decision("D1"),
-            decision("D2", contributes_to=[], builds_on=["D3"]),
-            decision("D3", contributes_to=[], builds_on=["D2"]),
-            decision("D4", contributes_to=[], builds_on=["D2"]),
+            decision("D2", contributes_to=["D3"]),
+            decision("D3", contributes_to=["D2"]),
+            decision("D4", contributes_to=["D2"]),
         )
         # When: the tree is written
         written = tree.markdown(data)
         # Then: the loop stands at the top, and D4 under D2
         self.assertIn(
-            "- **D2 what D2 decides**: open\n  - Also builds on: D3\n"
+            "- **D2 what D2 decides**: open\n  - Also serves: D3\n"
             "  - **D4 what D4 decides**: open\n",
             written,
         )
-        self.assertEqual(tree.read(written)["decisions"][2]["builds_on"], ["D2"])
+        d4 = next(d for d in tree.read(written)["decisions"] if d["id"] == "D4")
+        self.assertEqual((d4["contributes_to"], d4["builds_on"]), (["D2"], []))
+
+    def test_a_decision_in_a_loop_that_serves_a_question_stands_under_it(self):
+        # Given: D2 serves D3 and then Q1, and D3 serves D2
+        data = made(
+            decision("D2", contributes_to=["D3", "Q1"]),
+            decision("D3", contributes_to=["D2"]),
+        )
+        # When: the tree is written
+        # Then: D2 stands under Q1, naming D3 on its Also line; D3, which serves no question, at
+        # the top, naming D2
+        self.assertTrue(
+            tree.markdown(data).endswith(
+                "- **Q1** does Q1 hold?\n  - **D2 what D2 decides**: open\n"
+                "    - Also serves: D3\n"
+                "- **D3 what D3 decides**: open\n  - Also serves: D2\n"
+            )
+        )
 
     def test_who_settled_a_decision_ends_its_line(self):
         # Given: D1 decided by the person, and D2 open with a settled_by
@@ -620,6 +685,23 @@ class TestProblems(unittest.TestCase):
             tree.problems(made(d1, d2, questions=("Q1", "Q2"))),
             ["Q2 is served by no decision."],
         )
+
+    def test_a_decision_under_a_decision_reaches_the_question_through_it(self):
+        # Given: D2 under D1, under Q1, with no Also line
+        text = f"{HEAD}- **Q1** q?\n  - **D1 a**: open\n    - **D2 b**: open\n"
+        # When: the problems are found
+        # Then: there are none: D2 reaches Q1 through D1
+        self.assertEqual(tree.problems(tree.read(text)), [])
+
+    def test_a_decision_settled_under_an_open_one_it_does_not_build_on_is_in_order(self):
+        # Given: D2 decided under D1, which is open, and no Also builds on line
+        text = (
+            f"{HEAD}- **Q1** q?\n  - **D1 a**: open\n    - **D2 b**: kept (user)\n"
+            "      - Grounds: the person\n"
+        )
+        # When: the problems are found
+        # Then: there are none, as serving D1 is not building on it
+        self.assertEqual(tree.problems(tree.read(text)), [])
 
     def test_a_decision_that_contributes_to_nothing_reaches_no_question(self):
         # Given: a decision that contributes to nothing
@@ -791,6 +873,16 @@ class TestReady(unittest.TestCase):
         # When: the decisions ready are found
         # Then: D3 and D2, as the tree lists them
         self.assertEqual(tree.ready(data), ["D3", "D2"])
+
+    def test_a_decision_under_an_open_one_waits_only_where_it_builds_on_it(self):
+        # Given: D1 open under Q1; under it D2, which builds on D1, and D3, which does not
+        text = (
+            f"{HEAD}- **Q1** q?\n  - **D1 a**: open\n"
+            "    - **D2 b**: open\n      - Also builds on: D1\n    - **D3 c**: open\n"
+        )
+        # When: the decisions ready are found
+        # Then: D1 and D3, as D2 waits for D1
+        self.assertEqual(tree.ready(tree.read(text)), ["D1", "D3"])
 
     def test_no_decision_is_ready_where_all_are_decided(self):
         # Given: the walkthrough's tree, every decision decided

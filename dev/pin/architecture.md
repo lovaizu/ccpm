@@ -92,7 +92,7 @@ outside Pin also leaves each point built on it as it was.
 ### The design tree is a nested list
 
 The design tree is a Markdown nested list whose nesting is the tree: each question under the
-goal, each decision under what it serves or builds on first. The pinner changes it only with Read
+goal, each decision under what it serves first. The pinner changes it only with Read
 and Edit, and after each change reads the path from the node changed up to the goal, and every
 branch under it.
 
