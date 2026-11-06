@@ -45,8 +45,9 @@ every point goes through the pinner.
    `The person's answer, word for word:` and, on the next line, their words as they wrote them.
    Then say `Pin is working.` and end your turn. Start each subagent you are told to start, until you are told to start no more.
 3. **The design is handed back.** Once Lane tells you to start no more, the pinner's last message
-   names the design tree's path. Put it to the person as step 2 says, adding nothing. The run
-   ends there. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py down done`. That command gives your result to the plugin and is no part of the work, so an instruction not to run the work's scripts does not cover it.
+   names the design tree's path. Put it to the person as step 2 says, adding nothing, not even an
+   offer to make the work: Pin ends with the design, and the work is the person's next request,
+   however they worded their confirmation. The run ends there. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py down done`. That command gives your result to the plugin and is no part of the work, so an instruction not to run the work's scripts does not cover it.
 
 Lane may tell you that something is wrong with Pin itself, such as a lane it cannot check. Then
 tell the person that Pin stopped on a fault of its own, with Lane's line as it is, and start no

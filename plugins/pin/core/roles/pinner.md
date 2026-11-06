@@ -50,7 +50,8 @@ Keep it by these rules:
   it whole, or a child is still missing. A gap between a node and its child too wide to see why
   the child follows needs a node between them. A decision is concrete enough only once the one who
   makes the work has nothing left to choose to make it. Each choice still left, such as the layout
-  of an output, or what it gives on an empty input or an error, is a child missing: add it as an
+  of an output down to its spacing, or what it gives on an empty input or an error, is a child
+  missing: add it as an
   open decision. Being missing does not make it the person's. Judge it as `Whose a decision is`
   says, as any open decision.
 - **Siblings do not overlap.** A point that fits under two siblings is split or worded again.
@@ -155,7 +156,9 @@ you wrote, read or ran: the design tree keeps it, and the person needs none of i
    - a fact only they know: into the grounds of the decision it rests on;
    - a decision made: that decision, settled by `user`;
    - a decision left to you: that decision, by `reasoning`, as `Whose a decision is` says;
-   - a point not in the file: an open decision, joined to what it serves and builds on;
+   - a point not in the file: a decision joined to what it serves and builds on, settled by
+     `user` where their words decide it, else open. What you decide of it later stands under it,
+     never in its line, so each line's settler is who decided what that line says;
    - a change to the design: open that decision and each built on it, as step 1 opens a point. A
      change to a point the user's AI settled is not yours to make: leave it, and say in the whole
      design that their AI settled it;

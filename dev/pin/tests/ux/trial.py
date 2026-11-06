@@ -31,10 +31,11 @@ each message and the design tree, and prints them:
   under it, or a write of the main conversation to the design tree once it called the skill.
 - KR1.2: the seconds from the request to the stop at which the stand-in confirmed the design.
 
-A run counts only where each frequent case of its way came up. The called way needs only those its
-intent brings about in a right run, as a fact corrected or a decision left to Pin comes there only
-of a pinner gone wrong; it tests keeping the AI's points. A run passes where nothing went wrong in
-KR1.1 and the design tree holds with no decision open. A trial passes where every run passes,
+A run counts only where each frequent case of its way came up. Neither way needs a fact
+corrected, as the repository holds each fact the intents correct, so a right pinner finds it. The
+called way needs no decision left to Pin either, as there it comes only of a pinner gone wrong; it
+tests keeping the AI's points. A run passes where nothing went wrong in KR1.1 and the design tree
+holds with no decision open. A trial passes where every run passes,
 three of three by default, as dev/plugin-best-practice.md's Results that vary from run to run says.
 The product vision gives no key result a target, so each measure is set against the last trial's.
 
@@ -125,10 +126,10 @@ CASES = {
     "raises_point": "no answer raised a point",
     "changes_design": "the design was not changed",
 }
-# The cases each way must bring about for a run to count: called leaves out those that only a wrong
+# The cases each way must bring about for a run to count, leaving out those that only a wrong
 # pinner would bring out there.
 CASES_OF = {
-    "typed": list(CASES),
+    "typed": ["shows_fact", "puts_decision", "leaves_to_ai", "raises_point", "changes_design"],
     "called": ["shows_fact", "puts_decision", "raises_point", "changes_design"],
 }
 JUDGES = """An AI has written a design tree for a plan. The person whose plan it is wanted the

@@ -429,7 +429,8 @@ real request: several scripts that read `notes list`, and a plan of about ten po
 out a fact confirmed, a fact corrected, a decision of the person's, a decision left to Pin, a point
 an answer raises, and a change at the design. Where called, a plugin made for the trial stands in
 for the user's AI. The trial measures KR1.1 and KR1.2 from the session's records and the design
-tree, as [its driver](tests/ux/trial.py) says. A run counts where each of these came up; a called
-run needs only a fact confirmed, a decision of the person's, a point raised and a change, as the
-rest come there only of a pinner gone wrong, and it tests keeping the AI's points. A run passes
+tree, as [its driver](tests/ux/trial.py) says. A run counts where each of these came up but those
+that only a pinner gone wrong brings out: no run needs a fact corrected, as the repository holds
+the facts the intents correct, and a called run needs no decision left to Pin, as it tests keeping
+the AI's points. A run passes
 where nothing went wrong in KR1.1, and the trial passes where 3 of 3 runs of each way pass.
