@@ -2,6 +2,8 @@
 take, or refused with why; a tree written as that Markdown; each way the tree fails to hold; and
 the decisions open to be decided now."""
 
+import json
+import os
 import unittest
 
 import helpers
@@ -157,12 +159,22 @@ class TestRead(unittest.TestCase):
 
     def test_each_line_out_of_form_is_named(self):
         cases = [
+            ("", "line 1 must be `# Design tree`"),
             ("Design tree\n\nGoal: g\n", "line 1 must be `# Design tree`"),
             ("# Design tree\nGoal: g\n", "line 2 must be empty"),
             ("# Design tree\n\nThe goal: g\n", "line 3 must be `Goal: <one sentence>`"),
             ("# Design tree\n", "line 3 must be `Goal: <one sentence>`"),
+            ("# Design tree\n\nGoal: \n", "line 3 must be `Goal: <one sentence>`"),
             (
                 "# Design tree\n\nGoal: g\n- **Q1** q?\n",
+                "line 4 must be empty, between the goal and its questions",
+            ),
+            (
+                "# Design tree\n\nGoal: g\n- **Q1** q?\n\n",
+                "line 4 must be empty, between the goal and its questions",
+            ),
+            (
+                "# Design tree\n\nGoal: g\n- Grounds: \n",
                 "line 4 must be empty, between the goal and its questions",
             ),
             (f"{HEAD}- **Q1** q?\n\n- **Q2** r?\n", "line 6 is empty, inside the list"),
@@ -196,6 +208,10 @@ class TestRead(unittest.TestCase):
             (f"{HEAD}- **Q1**\n", "line 5 is none of the tree's lines"),
             (f"{HEAD}- **Q1 1** q?\n", "line 5 is none of the tree's lines"),
             (f"{HEAD}- **Q1** q?\n  - Grounds:\n", "line 6 is none of the tree's lines"),
+            (
+                f"{HEAD}- **Q1** q?\n  - **D1 a**: open\n    - Grounds: \n",
+                "line 7 is none of the tree's lines",
+            ),
             (f"{HEAD}* **Q1** q?\n", "line 5 is none of the tree's lines"),
         ]
         for text, why in cases:
@@ -247,6 +263,21 @@ class TestRead(unittest.TestCase):
             [
                 "line 6: a Grounds line stands under a decision",
                 "line 7: a question stands at the top of the list, under the goal alone",
+            ],
+        )
+
+    def test_the_lines_after_an_empty_or_misindented_line_are_read(self):
+        # Given: an empty line in the list, then a line indented by three spaces, then a Grounds
+        # line under a question
+        text = f"{HEAD}- **Q1** q?\n\n   - **D1 a**: open\n  - Grounds: g\n"
+        # When: it is read
+        # Then: each of the three is named, a line each
+        self.assertEqual(
+            read_or_why(text).splitlines(),
+            [
+                "line 6 is empty, inside the list",
+                "line 7 must be indented by two spaces for each item it stands under",
+                "line 8: a Grounds line stands under a decision",
             ],
         )
 
@@ -327,6 +358,14 @@ class TestLoad(testing.FolderTest):
         # Then: the file holds its Markdown
         self.assertEqual(self.read("new/design-tree.md"), WALKTHROUGH)
 
+    def test_a_tree_saved_into_a_folder_there_is_its_markdown(self):
+        # Given: the walkthrough's tree, and a folder already there
+        os.mkdir("kept")
+        # When: it is saved into the folder
+        tree.save("kept/design-tree.md", tree.read(WALKTHROUGH))
+        # Then: the file holds its Markdown
+        self.assertEqual(self.read("kept/design-tree.md"), WALKTHROUGH)
+
     def test_a_tree_saved_by_a_bare_name_lies_in_the_folder_it_is_saved_from(self):
         # Given: the walkthrough's tree
         # When: it is saved by a name with no folder
@@ -373,6 +412,27 @@ class TestMarkdown(unittest.TestCase):
             "      - Also serves: D1\n      - Also builds on: D3\n",
             tree.markdown(data),
         )
+
+    def test_a_decision_stands_under_one_it_builds_on_listed_after_it(self):
+        # Given: D1 serves no question and builds on D2, which serves Q1
+        data = made(decision("D1", contributes_to=[], builds_on=["D2"]), decision("D2"))
+        # When: the tree is written
+        # Then: D1 stands under D2
+        self.assertIn(
+            "  - **D2 what D2 decides**: open\n    - **D1 what D1 decides**: open\n",
+            tree.markdown(data),
+        )
+
+    def test_a_loop_read_from_a_file_is_written_as_it_was_read(self):
+        # Given: D2 and D3 build on each other at the top of the list, read from Markdown, so each
+        # ID is a text of its own
+        text = (
+            f"{HEAD}- **Q1** q?\n  - **D1 a**: open\n"
+            "- **D2 b**: open\n  - Also builds on: D3\n- **D3 c**: open\n  - Also builds on: D2\n"
+        )
+        # When: the tree read is written
+        # Then: each stands at the top as it stood
+        self.assertEqual(tree.markdown(tree.read(text)), text)
 
     def test_a_decision_with_no_place_stands_at_the_top_after_the_questions(self):
         # Given: D2 serves nothing and builds on nothing; D3 and D4 serve no question and build on
@@ -448,6 +508,17 @@ class TestFormFaults(unittest.TestCase):
                 # When: its form is checked
                 # Then: the part is named with what it must be
                 self.assertIn(why, "\n".join(tree.form_faults(data)))
+
+    def test_a_decision_read_from_json_as_decided_open_is_named(self):
+        # Given: a tree read from JSON whose decision is decided as `open`, the word an open
+        # decision's line says
+        data = made(decision("D1", decided=json.loads('"open"')))
+        # When: its form is checked
+        # Then: the field is named with what it must be
+        self.assertIn(
+            "decisions[0].decided must be one line of text, not empty and not `open`, or null",
+            tree.form_faults(data),
+        )
 
     def test_a_tree_not_an_object_is_out_of_form(self):
         # Given: a list

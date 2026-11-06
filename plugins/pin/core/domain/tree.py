@@ -16,9 +16,10 @@ changes a node with Read and Edit sees the path from it to the goal and every br
 
 from __future__ import annotations
 
+import itertools
 import os
 import re
-from typing import Any
+from typing import Any, NamedTuple
 
 # Who settles a decision: the person, a fact found and confirmed, what follows from the goal and the
 # decisions before it, or the maker AI that handed the tree over, whose points the pinner keeps.
@@ -46,12 +47,10 @@ DECISION = re.compile(
 )
 # Each Also line, by the key of the decision it adds to.
 ALSO = {SERVES: "contributes_to", BUILDS: "builds_on"}
-# The lines under a decision, in the order they stand, by the rank of each.
-RANK = {GROUNDS: 0, SERVES: 1, BUILDS: 2}
-UNDER = 3
-# An item a line stands under: whether it is a question or a decision, the item, and the rank of the
-# last line under it.
-Item = tuple[str, dict[str, Any], list[int]]
+# The lines under a decision but the decisions, in the order they stand: those that may stand first
+# under it, and those that may follow each, as Grounds may repeat and each Also line stands once.
+FIRST = (GROUNDS, SERVES, BUILDS)
+AFTER = {GROUNDS: FIRST, SERVES: (BUILDS,), BUILDS: ()}
 FORMS = (
     "a question `- **<ID>** <intent>`, a decision `- **<ID> <what is decided>**: <what was decided,"
     " or open> (<user, research, reasoning or maker>)`, `- Grounds: <text>`, `- Also serves: <IDs>`"
@@ -62,6 +61,15 @@ FORMS = (
 class Unreadable(Exception):
     """The tree cannot be checked: its file is missing, is not text or is out of form. The message
     says why, a line for each fault."""
+
+
+class Above(NamedTuple):
+    """An item a line stands under: the question or the decision, whether it is a question, and the
+    lines but the decisions that may still stand under it, none once a decision stands there."""
+
+    node: dict[str, Any]
+    question: bool
+    may: list[str]
 
 
 def load(path: str) -> dict[str, Any]:
@@ -90,30 +98,33 @@ def save(path: str, tree: dict[str, Any]) -> None:
 def read(text: str) -> dict[str, Any]:
     """The design tree the Markdown text holds; refuses, by Unreadable, a text out of the tree's
     form, or whose IDs do not hold, with a line for each fault."""
-    lines = text.split("\n")
-    if lines[-1] == "":
-        lines.pop()
-    lines += [""] * (3 - len(lines))
+    lines = text.removesuffix("\n").split("\n")
+    heading, gap, goal_line = (lines + ["", ""])[:3]
     faults = []
-    if lines[0] != HEADING:
+    if heading != HEADING:
         faults.append(f"line 1 must be `{HEADING}`")
-    if lines[1] != "":
+    if gap:
         faults.append("line 2 must be empty")
-    if not lines[2].startswith(GOAL) or lines[2] == GOAL:
+    what = said(goal_line, GOAL)
+    if not what:
         faults.append("line 3 must be `Goal: <one sentence>`")
-    goal = {"what": lines[2][len(GOAL) :], "grounds": []}
-    at = 3
-    while at < len(lines) and lines[at].startswith(GROUNDS) and lines[at] != GROUNDS:
-        goal["grounds"].append(lines[at][len(GROUNDS) :])
-        at += 1
-    if at < len(lines) and lines[at] != "":
+    grounds = list(itertools.takewhile(lambda line: said(line, GROUNDS), lines[3:]))
+    goal = {"what": what, "grounds": [said(line, GROUNDS) for line in grounds]}
+    at = 3 + len(grounds)
+    rest = lines[at:]
+    if rest and rest[0]:
         faults.append(f"line {at + 1} must be empty, between the goal and its questions")
     found = {"goal": goal, "questions": [], "decisions": []}
-    faults += list_faults(lines[at + 1 :], at + 2, found)
+    faults += list_faults(rest[1:], at + 2, found)
     faults = faults or id_faults(found["questions"], found["decisions"])
     if faults:
         raise Unreadable("\n".join(faults))
     return found
+
+
+def said(line: str, start: str) -> str:
+    """What the line says after start, or "" where it does not begin with start."""
+    return line[len(start) :] if line.startswith(start) else ""
 
 
 def list_faults(lines: list[str], first: int, found: dict[str, Any]) -> list[str]:
@@ -123,7 +134,7 @@ def list_faults(lines: list[str], first: int, found: dict[str, Any]) -> list[str
     faults = []
     # The items each line stands under, the top first, each with the rank of its last line under;
     # an item out of form stands for the one it is under, or None at the top.
-    above: list[Item | None] = []
+    above: list[Above | None] = []
     for n, line in enumerate(lines, first):
         item = line.lstrip(" ")
         depth, rest = divmod(len(line) - len(item), 2)
@@ -143,52 +154,51 @@ def list_faults(lines: list[str], first: int, found: dict[str, Any]) -> list[str
 
 
 def taken(
-    n: int, item: str, parent: Item | None, above: list[Item | None], found: dict[str, Any]
+    n: int, item: str, parent: Above | None, above: list[Above | None], found: dict[str, Any]
 ) -> str:
     """Takes the item of the line numbered n, under the parent, into the tree found and, a question
     or a decision, onto the items above; gives its fault, "" where it has none, and then takes
     nothing."""
-    kind = next((k for k in RANK if item.startswith(k)), None)
+    kind = next((k for k in FIRST if item.startswith(k)), "")
     question, decision = QUESTION.fullmatch(item), DECISION.fullmatch(item)
     if decision:
         d = {
             "id": decision["id"],
             "what": decision["what"],
-            "contributes_to": [parent[1]["id"]] if parent and parent[0] == "question" else [],
-            "builds_on": [parent[1]["id"]] if parent and parent[0] == "decision" else [],
+            "contributes_to": [parent.node["id"]] if parent and parent.question else [],
+            "builds_on": [parent.node["id"]] if parent and not parent.question else [],
             "decided": None if decision["decided"] == OPEN else decision["decided"],
             "settled_by": decision["by"],
             "grounds": [],
         }
         found["decisions"].append(d)
-        if parent and parent[0] == "decision":
-            parent[2][0] = UNDER
-        above.append(("decision", d, [0]))
+        if parent:
+            parent.may.clear()
+        above.append(Above(d, False, list(FIRST)))
         return ""
     if question:
         if parent:
             return f"line {n}: a question stands at the top of the list, under the goal alone"
         q = {"id": question["id"], "what": question["what"]}
         found["questions"].append(q)
-        above.append(("question", q, [UNDER]))
+        above.append(Above(q, True, []))
         return ""
-    if kind is None or item == GROUNDS:
+    if kind not in ALSO and not said(item, GROUNDS):
         return f"line {n} is none of the tree's lines: {FORMS}"
     name = kind[2:-2]
-    if not parent or parent[0] != "decision":
+    if not parent or parent.question:
         return f"line {n}: a{'n' if kind in ALSO else ''} {name} line stands under a decision"
-    d, rank = parent[1], parent[2]
-    if rank[0] > RANK[kind] or (kind in ALSO and rank[0] == RANK[kind]):
+    d = parent.node
+    if kind not in parent.may:
         return (
             f"line {n}: the lines under {d['id']} go in the order Grounds, Also serves, Also builds"
             " on, then the decisions under it, each Also line once"
         )
-    rank[0] = RANK[kind]
-    said = item[len(kind) :]
-    if kind == GROUNDS:
-        d["grounds"].append(said)
+    parent.may[:] = AFTER[kind]
+    if kind not in ALSO:
+        d["grounds"].append(said(item, GROUNDS))
         return ""
-    ids = said.split(", ")
+    ids = item[len(kind) :].split(", ")
     if not all(ID.fullmatch(i) for i in ids):
         return f"line {n}: an {name} line takes IDs joined by `, `"
     d[ALSO[kind]] += ids
@@ -223,8 +233,10 @@ def markdown(tree: dict[str, Any]) -> str:
     def under(parent: str | None, depth: int) -> None:
         for d in tree["decisions"]:
             if placed[d["id"]] == parent:
-                key = "contributes_to" if parent in questions else "builds_on"
-                lines.extend(decision_lines(d, (key, parent), depth))
+                serves, builds = list(d["contributes_to"]), list(d["builds_on"])
+                if parent is not None:
+                    (serves if parent in questions else builds).remove(parent)
+                lines.extend(decision_lines(d, depth, serves, builds))
                 under(d["id"], depth + 1)
 
     for q in tree["questions"]:
@@ -234,18 +246,16 @@ def markdown(tree: dict[str, Any]) -> str:
     return "\n".join(lines) + "\n"
 
 
-def decision_lines(d: dict[str, Any], parent: tuple[str, str | None], depth: int) -> list[str]:
-    """The decision's line at the depth, under the parent, which it serves or builds on by the key
-    given, and its lines under it but the decisions: its grounds, then what else it serves and
-    builds on."""
+def decision_lines(
+    d: dict[str, Any], depth: int, serves: list[str], builds: list[str]
+) -> list[str]:
+    """The decision's line at the depth, and its lines under it but the decisions: its grounds, then
+    the IDs given that it serves and builds on beside the item it stands under."""
     indent = "  " * depth
     by = f" ({d['settled_by']})" if d["settled_by"] else ""
     lines = [f"{indent}- **{d['id']} {d['what']}**: {d['decided'] or OPEN}{by}"]
     lines += [f"{indent}  {GROUNDS}{g}" for g in d["grounds"]]
-    for kind, key in ALSO.items():
-        also = list(d[key])
-        if key == parent[0] and parent[1] in also:
-            also.remove(parent[1])
+    for kind, also in ((SERVES, serves), (BUILDS, builds)):
         if also:
             lines.append(f"{indent}  {kind}{', '.join(also)}")
     return lines
