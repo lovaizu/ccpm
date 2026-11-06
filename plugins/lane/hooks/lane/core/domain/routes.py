@@ -70,6 +70,20 @@ def command(name: str, on: str) -> str:
     return COMMAND.format(folder=folder, name=own, on=on)
 
 
+# The result a subagent with a lane checked at its end gives where no route is from it.
+DONE = "done"
+
+
+def gives(
+    routes: dict[str, Any] | None, name: str, ends: bool, own: list[str] | None = None
+) -> list[str]:
+    """The results the subagent of the name may give, `ends` saying whether a lane of it is checked
+    at its end: those the routes from it are on; where none is, its own results, or DONE where it
+    names none and a lane of it is checked at its end."""
+    found = ons(routes, name) if routes else []
+    return found or own or ([DONE] if ends else [])
+
+
 def kind(name: str, plugin: str) -> str:
     """The type Claude Code gives the subagent of the name, as the routes of the plugin name it:
     `<plugin>:<name>` for one of its own, or the name itself for a dependency's, which names its

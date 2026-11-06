@@ -11,7 +11,6 @@ import os
 from typing import Any, NamedTuple
 
 import lanes
-import routes
 import schema
 
 # A plugin's or a subagent's name, as a hook's command carries it unquoted.
@@ -117,8 +116,6 @@ SHAPE = shape(
     ["subagents"],
     {"subagents": subagents(list(lanes.LANES), TAKEN, NONE_LEFT, True), "routes": ROUTES},
 )
-# The result a subagent with a lane checked at its end gives where no route is from it.
-DONE = "done"
 # A thing given for each run, as lanes/ reads it.
 GIVEN = lanes.GIVEN
 # What a subagent is told to do where lane cannot check a lane, given who must fix it: a role asks
@@ -181,16 +178,6 @@ def adapter_of(laid: dict[str, Any], name: str) -> str | None:
     names none."""
     found = next((a for a in laid["subagents"] if a["name"] == name), {})
     return found.get("adapter")
-
-
-def gives(
-    routed: dict[str, Any] | None, name: str, kinds: list[str], own: list[str] | None = None
-) -> list[str]:
-    """The results the subagent of the name gives, its lanes being of the kinds: those the routes
-    from it are on; where none is, its own results, or DONE where it names none and one of its
-    lanes is checked at its end."""
-    ons = routes.ons(routed, name) if routed else []
-    return ons or own or ([DONE] if any(map(lanes.ends, kinds)) else [])
 
 
 def results_of(laid: dict[str, Any], name: str) -> list[str]:

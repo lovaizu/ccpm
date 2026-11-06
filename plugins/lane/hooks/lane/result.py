@@ -59,7 +59,8 @@ def said(argv: list[str], root: str) -> str:
         fix = rules.LAY_AGAIN.format(plugin=plugin_name(root))
         return rules.cannot(f"the lanes of {name}", str(why), fix)
     kinds = [g.lane for g in rules.of(laid, name) or []]
-    ons = rules.gives(rules.routes_of(laid), name, kinds, rules.results_of(laid, name))
+    ends = any(map(lanes.ends, kinds))
+    ons = routes.gives(rules.routes_of(laid), name, ends, rules.results_of(laid, name))
     if not ons:
         return f"no route is from {name} on a result."
     if on in ons:

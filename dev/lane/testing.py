@@ -203,13 +203,6 @@ TRIES = [
         "day": "2026-11-03",
     },
     {
-        "showed": "once a subagent started in the background ends, Claude Code starts the subagent"
-        " that started it again, sending SubagentStart of the same agent_id, in an interactive"
-        " session alone; `claude -p` hands the end to the main conversation instead",
-        "version": "2.1.317",
-        "day": "2026-11-03",
-    },
-    {
         "showed": "a Bash command that exits with an error comes back as PostToolUseFailure",
         "version": "not recorded",
         "day": "2026-11-03",
@@ -229,6 +222,29 @@ TRIES = [
         " gets both reasons in one message",
         "version": "2.1.318",
         "day": "2026-11-05",
+    },
+    {
+        "showed": "a command typed, `/<plugin>:<skill>`, gives UserPromptSubmit of the words typed,"
+        " then UserPromptExpansion with `command_name` `<plugin>:<skill>`; an AI's Skill call"
+        " gives PreToolUse and PostToolUse of Skill, `tool_input.skill` and"
+        " `tool_response.commandName` naming the skill; the main conversation's events carry no"
+        " agent_id and no agent_type",
+        "version": "2.1.319",
+        "day": "2026-11-06",
+    },
+    {
+        "showed": "a subagent started in the background ends with SubagentStop, then the main"
+        " conversation is handed UserPromptSubmit whose prompt is a `<task-notification>` naming"
+        " the subagent's agentId as its task-id, in `claude -p` and in an interactive session, and"
+        " the hook's additionalContext reaches the main conversation",
+        "version": "2.1.319",
+        "day": "2026-11-06",
+    },
+    {
+        "showed": "a Stop block keeps the main conversation going with the reason, and its next"
+        " Stop carries `stop_hook_active` true",
+        "version": "2.1.319",
+        "day": "2026-11-06",
     },
 ]
 
@@ -441,8 +457,10 @@ class ClaudeCode:
         self.answers = list(answers or [])
         self.check = check
         self.uses = 0
-        # The runs a stop hook kept going, so their next SubagentStop says so.
+        # The runs a stop hook kept going, so their next SubagentStop says so, and whether one kept
+        # the main conversation's turn going, so its next Stop says so.
         self.kept_going: set[str] = set()
+        self.turn_kept = False
 
     def common(self, held: str, run: Run | None) -> dict[str, Any]:
         """The fields every event of the name has, of the run, or of the main conversation where
@@ -614,9 +632,8 @@ class ClaudeCode:
 
     def started(self, run: Run) -> list[str]:
         """SubagentStart of the run, as Claude Code sends it as the run starts, and again, of the
-        same ID, as the hooks reference documents for a run resumed and as TRIES showed for an
-        orchestrator started again once a run it started in the background has ended: the context
-        the hooks added."""
+        same ID, as the hooks reference documents for a run resumed: the context the hooks
+        added."""
         return self.context(self.send(self.held(self.common("SubagentStart", run))))
 
     def stop(self, run: Run) -> Told:
@@ -635,6 +652,52 @@ class ClaudeCode:
             return Told(False, said, [])
         self.kept_going.discard(run.agent_id)
         return Told(True, said, [])
+
+    def typed(self, command: str) -> list[str]:
+        """The command, `<plugin>:<skill>`, typed in the main conversation: UserPromptSubmit of the
+        words typed, then UserPromptExpansion of the command, as TRIES showed; the context the hooks
+        added at either."""
+        prompt = {**self.common("UserPromptSubmit", None), "prompt": f"/{command}"}
+        found = self.context(self.send(self.held(prompt)))
+        given = {"expansion_type": "slash_command", "command_name": command, "command_args": ""}
+        expansion = {**self.common("UserPromptExpansion", None), **given, "prompt": f"/{command}"}
+        return found + self.context(self.send(self.held(expansion)))
+
+    def skill(self, name: str) -> Told:
+        """The main conversation's Skill call of the skill of the name, `<plugin>:<skill>`:
+        PreToolUse, then, where the hooks let it go on, PostToolUse with what TRIES showed it
+        gives back."""
+        self.uses += 1
+        use = {"tool_name": "Skill", "tool_input": {"skill": name}}
+        use = {**use, "tool_use_id": f"toolu_{self.uses}"}
+        said = self.send(self.held({**self.common("PreToolUse", None), **use}))
+        if said.get("hookSpecificOutput", {}).get("permissionDecision") == "deny":
+            return Told(False, said, [])
+        back = {"success": True, "commandName": name}
+        after = {**self.common("PostToolUse", None), **use, "tool_response": back}
+        return Told(True, said, self.context(self.send(self.held(after))))
+
+    def notify(self, run: Run) -> list[str]:
+        """The end of the run, started in the background, reaching the main conversation as a
+        task-notification, as TRIES showed: the context the hooks added."""
+        prompt = (
+            f"<task-notification>\n<task-id>{run.agent_id}</task-id>\n<status>completed</status>"
+            "\n<summary>Agent finished</summary>\n</task-notification>"
+        )
+        event = {**self.common("UserPromptSubmit", None), "prompt": prompt}
+        return self.context(self.send(self.held(event)))
+
+    def end_turn(self) -> Told:
+        """Stop of the main conversation, as it ends its turn, `stop_hook_active` where a stop hook
+        kept it going before, as TRIES showed: blocked, the turn goes on; let end otherwise."""
+        event = {
+            **self.common("Stop", None),
+            "stop_hook_active": self.turn_kept,
+            "last_assistant_message": "done",
+        }
+        said = self.send(self.held(event))
+        self.turn_kept = said.get("decision") == "block"
+        return Told(not self.turn_kept, said, [])
 
     @staticmethod
     def context(said: dict[str, Any]) -> list[str]:

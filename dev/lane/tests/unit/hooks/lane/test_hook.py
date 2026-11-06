@@ -1,7 +1,7 @@
 """What each hook's command runs: the event Claude Code hands on stdin read, the guard asked where
-the event is of a subagent of the plugin, and its answer given in Claude Code's JSON output of the
-event: a break denied with its sentence, the next start added as context, an end kept going, an
-error told the user too."""
+the event is of a subagent of the plugin or of the main conversation, and its answer given in
+Claude Code's JSON output of the event: a break or a start not due denied with its sentence, the
+next start added as context, an end kept going, an error told the user too."""
 
 import io
 import json
@@ -159,20 +159,21 @@ class TestRoutes(HookTest):
         super().setUp()
         self.route()
 
-    def test_the_next_start_is_added_as_context_as_lead_starts_and_its_starts_come_back(self):
-        start = self.subagent("SubagentStart", "lead", "lead1")
-        failed = {**self.start("writer", "PostToolUseFailure"), "error": "e", "is_interrupt": False}
+    def begin(self) -> dict:
+        """The run begun by `/changelog:write` typed: what the hook answers."""
+        return self.answered(self.expansion(), held="UserPromptExpansion")
+
+    def test_the_next_start_is_added_as_context_as_the_run_begins_and_goes_on(self):
+        started = self.start("writer", "PostToolUse", helpers.back("w1", "async_launched"))
         for event, held in (
-            (start, "SubagentStart"),
-            (failed, "PostToolUseFailure"),
-            (
-                self.start("writer", "PostToolUse", helpers.back("w1", "async_launched")),
-                "PostToolUse",
-            ),
+            (self.expansion(), "UserPromptExpansion"),
+            (started, "PostToolUse"),
+            (self.notified("w1"), "UserPromptSubmit"),
         ):
             with self.subTest(held=held):
                 # Given: the routes laid
-                # When: lead starts, its start of writer fails, or comes back launched
+                # When: the skill's command is typed, its start of writer comes back launched,
+                # or a task-notification reaches the main conversation
                 found = self.answered(event, held=held)
                 # Then: the line is added as context of the event, headed changelog:
                 self.assertEqual(found["hookSpecificOutput"]["hookEventName"], held)
@@ -181,13 +182,22 @@ class TestRoutes(HookTest):
                 )
                 self.assertNotIn("systemMessage", found)
 
+    def test_the_skill_called_by_an_ai_begins_the_run(self):
+        # Given: the routes laid
+        # When: the Skill call of changelog:write comes back
+        found = self.answered(self.skill_call("changelog:write", "PostToolUse"), held="PostToolUse")
+        # Then: the first start is added as context
+        context = found["hookSpecificOutput"]["additionalContext"]
+        self.assertEqual(context, "changelog: Start `changelog:writer`.")
+
     def test_a_start_while_one_runs_in_the_background_is_denied(self):
-        # Given: lead's start of writer launched in the background
+        # Given: the run begun, its start of writer launched in the background
+        self.begin()
         back = self.start("writer", "PostToolUse", helpers.back("w1", "async_launched"))
         self.answered(back, held="PostToolUse")
-        # When: lead's start of reviewer reaches the hook, read from its JSON
+        # When: the main conversation's start of reviewer reaches the hook
         found = self.answered(self.start("reviewer"))
-        # Then: it is denied, telling lead to wait
+        # Then: it is denied, telling it to wait
         reason = found["hookSpecificOutput"]["permissionDecisionReason"]
         self.assertIn("Wait for `changelog:writer` to end", reason)
 
@@ -206,34 +216,70 @@ class TestRoutes(HookTest):
         )
 
     def test_an_unnamed_start_is_denied_with_the_sentence_and_the_start_each_line_headed(self):
-        # Given: writer due
-        # When: lead starts reviewer
+        # Given: the run begun, writer due
+        self.begin()
+        # When: the main conversation starts reviewer
         # Then: it is denied, told the sentence and on the next line the start, each headed
         self.assertEqual(
             self.answered(self.start("reviewer")),
             denied(f"changelog: {helpers.FOLLOW}\nchangelog: Start `changelog:writer`."),
         )
 
+    def test_a_turn_ending_with_a_start_due_is_blocked_once_then_the_user_told(self):
+        # Given: the run begun, writer due
+        self.begin()
+        # When: the main conversation ends its turn, and, kept going, ends it again
+        kept = self.answered(self.turn(), held="Stop")
+        ended = self.answered(self.turn(True), held="Stop")
+        # Then: it is blocked with the sentence and the start, then let end, the user told what
+        # is left, headed by the plugin's name
+        reason = f"changelog: {helpers.FOLLOW}\nchangelog: Start `changelog:writer`."
+        self.assertEqual(kept, {"decision": "block", "reason": reason})
+        self.assertEqual(
+            ended,
+            {
+                "systemMessage": "changelog: lane let the run of write end with"
+                " `changelog:writer` still due: the maker of changelog must fix step 1 of write in"
+                " skills/write/SKILL.md, which starts it."
+            },
+        )
+
+    def test_an_event_whose_agent_type_is_empty_is_dropped(self):
+        # Given: the run begun
+        self.begin()
+        # When: the end of Claude Code's prompt-suggestion fork, of an empty agent_type, comes
+        event = {**self.subagent("SubagentStop", "writer", "f1"), "agent_type": ""}
+        found = self.answered(event, held="SubagentStop")
+        # Then: nothing is told, and nothing is kept
+        self.assertEqual(found, {})
+        self.assertEqual(helpers.called.kept(helpers.KEPT, "f1"), [])
+
     def test_an_error_at_another_event_is_told_the_user_too(self):
         # Given: hooks/lanes.json removed
         os.remove(os.path.join(self.plugin, "hooks", "lanes.json"))
-        # When: lead starts
-        found = self.answered(self.subagent("SubagentStart", "lead", "lead1"), held="SubagentStart")
+        # When: writer starts
+        found = self.answered(self.subagent("SubagentStart", "writer", "a1"), held="SubagentStart")
         # Then: the error is the context and the user's message alike
         told = found["hookSpecificOutput"]["additionalContext"]
-        self.assertTrue(told.startswith("changelog: lane cannot check the lanes of lead:"))
+        self.assertTrue(told.startswith("changelog: lane cannot check the lanes of writer:"))
         self.assertEqual(found["systemMessage"], told)
 
-    def test_an_error_of_the_guard_at_subagentstop_is_told_once(self):
-        # Given: hooks/lanes.json removed
-        os.remove(os.path.join(self.plugin, "hooks", "lanes.json"))
-        for active, blocked in ((False, True), (True, False)):
-            with self.subTest(active=active):
-                # When: writer is about to end, kept going by a stop hook before or not
-                stop = self.subagent("SubagentStop", "writer", "a1", active)
-                found = self.answered(stop, held="SubagentStop")
-                # Then: it is blocked with the error the first time, and ends the second
-                self.assertEqual("decision" in found, blocked)
+    def test_an_error_of_the_guard_at_an_end_is_told_once(self):
+        for held, event in (
+            ("SubagentStop", lambda active: self.subagent("SubagentStop", "writer", "a1", active)),
+            ("Stop", self.turn),
+        ):
+            for active, blocked in ((False, True), (True, False)):
+                with self.subTest(held=held, active=active):
+                    # Given: the run begun, then hooks/lanes.json removed
+                    self.setUp()
+                    self.begin()
+                    os.remove(os.path.join(self.plugin, "hooks", "lanes.json"))
+                    # When: writer or the main conversation is about to end, kept going by a
+                    # stop hook before or not
+                    found = self.answered(event(active), held=held)
+                    # Then: it is blocked with the error the first time, and ends the second
+                    self.assertEqual("decision" in found, blocked)
 
     def test_an_error_before_the_guard_at_subagentstop_is_told_once(self):
         stop = self.subagent("SubagentStop", "writer", "a1")
@@ -257,9 +303,13 @@ class TestRoutes(HookTest):
             ({**stop, "stop_hook_active": 1}, "SubagentStop", "$.stop_hook_active"),
             ({**stop, "agent_id": "../x"}, "SubagentStop", "$.agent_id"),
             (self.start("writer", "PostToolUse"), "PostToolUse", '"tool_response"'),
+            ({**self.turn(), "stop_hook_active": "no"}, "Stop", "$.stop_hook_active"),
+            ({**self.prompt(), "prompt": 1}, "UserPromptSubmit", "$.prompt"),
         ):
             with self.subTest(wrong=wrong):
-                # Given: an event of a wrong field, an ID naming another folder, or no response
+                # Given: the run begun, and an event of a wrong field, an ID naming another
+                # folder, or no response
+                self.begin()
                 # When: the hook is handed it
                 found = self.answered(event, held=held)
                 # Then: it tells what is wrong
@@ -291,13 +341,11 @@ class TestEntries(HookTest):
         self.route()
         for script, held, event in (
             ("posttooluse", "PostToolUse", self.came_back("ls")),
-            (
-                "posttoolusefailure",
-                "PostToolUseFailure",
-                self.bash("ls", held="PostToolUseFailure"),
-            ),
-            ("subagentstart", "SubagentStart", self.subagent("SubagentStart", "lead", "lead1")),
-            ("subagentstop", "SubagentStop", self.subagent("SubagentStop", "lead", "lead1")),
+            ("subagentstart", "SubagentStart", self.subagent("SubagentStart", "writer", "a1")),
+            ("subagentstop", "SubagentStop", self.subagent("SubagentStop", "writer", "a1")),
+            ("userpromptexpansion", "UserPromptExpansion", self.expansion("changelog:other")),
+            ("userpromptsubmit", "UserPromptSubmit", self.prompt()),
+            ("stop", "Stop", self.turn()),
         ):
             with self.subTest(script=script):
                 # Given: the event, and the plugin's folder in CLAUDE_PLUGIN_ROOT
@@ -346,7 +394,7 @@ class TestU3(HookTest):
         context = found["hookSpecificOutput"]["additionalContext"]
         self.assertEqual(context, self.read(part))
 
-    def test_an_agent_call_of_the_main_conversation_gives_its_prompt_to_the_run_it_started(self):
+    def test_an_agent_call_of_the_main_conversation_gives_its_prompt_to_the_start_it_made(self):
         # Given: writer laid, and the main conversation's Agent call starting it
         given = {"prompt": "p", "subagent_type": AGENT_TYPE}
         call = {**self.event("Agent", given, None), "tool_use_id": "t1"}
@@ -361,55 +409,47 @@ class TestU3(HookTest):
             "tool_response": helpers.back("a1", "async_launched"),
         }
         self.assertEqual(self.answered(back, held="PostToolUse"), {})
-        # Then: writer's run of the ID it gave is given the call's prompt
+        # Then: writer's start of the ID it gave is given the call's prompt
         self.assertEqual(helpers.called.texts(helpers.KEPT, "a1"), ["p"])
 
-    def test_a_start_of_leads_coming_back_gives_its_prompt_to_the_run_it_started(self):
-        # Given: the routes laid
+    def test_a_start_of_the_run_coming_back_gives_its_prompt_to_the_start_it_made(self):
+        # Given: the routes laid, and the run begun
         self.route()
-        # When: lead's start of writer comes back launched in the background, lead told to wait
+        self.answered(self.expansion(), held="UserPromptExpansion")
+        # When: its start of writer comes back launched in the background, told to wait
         back = self.start("writer", "PostToolUse", helpers.back("w1", "async_launched"))
         found = self.answered(back, held="PostToolUse")
         self.assertIn("Wait for", found["hookSpecificOutput"]["additionalContext"])
-        # Then: writer's run of the ID it gave is given the call's prompt
+        # Then: writer's start of the ID it gave is given the call's prompt
         self.assertEqual(helpers.called.texts(helpers.KEPT, "w1"), ["p"])
 
     def test_a_message_is_kept_where_its_call_goes_on_alone(self):
-        # Given: the routes laid, writer due, and a run of writer given its prompt
+        # Given: the run begun, its start w1 of writer ended with no result, and a start w2
         self.route()
-        helpers.called.keep(helpers.KEPT, "w1", helpers.called.given("p"))
-        sent = {"to": "w1", "message": "m"}
-        # When: lead sends it a message, which is stopped as writer's start is due, and the main
-        # conversation sends it one, which goes on
-        lead = {**self.event("SendMessage", sent, "changelog:lead", agent_id="lead1")}
-        self.assertIn("hookSpecificOutput", self.answered(lead))
-        main = {**self.event("SendMessage", {**sent, "message": "n"}, None)}
-        self.assertEqual(self.answered(main), {})
-        # Then: the main conversation's alone is kept
-        self.assertEqual(helpers.called.texts(helpers.KEPT, "w1"), ["p", "n"])
-
-    def test_an_orchestrator_let_end_with_a_start_due_tells_the_operator_alone(self):
-        # Given: the routes laid, writer due
-        self.route()
-        # When: lead, kept going once, is about to end again
-        stop = self.subagent("SubagentStop", "lead", "lead1", active=True)
-        found = self.answered(stop, held="SubagentStop")
-        # Then: it ends, and the operator is told what is left, headed by the plugin's name
-        self.assertEqual(
-            found,
-            {
-                "systemMessage": "changelog: lane let lead end with `changelog:writer` still"
-                " due: the maker of changelog must fix step 1 of lead in agents/lead.md, which"
-                " starts it."
-            },
-        )
+        self.answered(self.expansion(), held="UserPromptExpansion")
+        back = self.start("writer", "PostToolUse", helpers.back("w1", "async_launched"))
+        self.answered(back, held="PostToolUse")
+        for active in (False, True):
+            stop = self.subagent("SubagentStop", "writer", "w1", active)
+            self.answered(stop, held="SubagentStop")
+        helpers.called.keep(helpers.KEPT, "w2", helpers.called.given("p"))
+        # When: the main conversation sends w1 a message, which is stopped, and w2 one, which
+        # goes on
+        to_w1 = self.event("SendMessage", {"to": "w1", "message": "m"}, None)
+        self.assertIn("hookSpecificOutput", self.answered(to_w1))
+        to_w2 = self.event("SendMessage", {"to": "w2", "message": "n"}, None)
+        self.assertEqual(self.answered(to_w2), {})
+        # Then: the message that went on alone is kept
+        self.assertEqual(helpers.called.texts(helpers.KEPT, "w1"), ["p"])
+        self.assertEqual(helpers.called.texts(helpers.KEPT, "w2"), ["p", "n"])
 
     def test_an_agent_call_stopped_keeps_nothing(self):
-        # Given: the routes laid, writer due
+        # Given: the run begun, writer due
         self.route()
-        # When: lead's start of reviewer is stopped
+        self.answered(self.expansion(), held="UserPromptExpansion")
+        # When: the main conversation's start of reviewer is stopped
         self.answered({**self.start("reviewer"), "tool_use_id": "t1"})
-        # Then: nothing is kept for any run of reviewer
+        # Then: nothing is kept for any start of reviewer
         self.answered(self.subagent("SubagentStart", "reviewer", "r1"), held="SubagentStart")
         self.assertIsNone(helpers.called.texts(helpers.KEPT, "r1"))
 

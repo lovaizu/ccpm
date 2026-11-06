@@ -155,5 +155,40 @@ class TestPart(helpers.PluginTest):
         self.assertIsNone(step.steps_file(self.plugin, "lead"))
 
 
+class TestSkill(helpers.PluginTest):
+    """A skill of the plugin, `skills/<name>/SKILL.md`, whose step the routes are laid on."""
+
+    def test_a_skills_steps_are_in_its_skill_md_or_the_part_it_names(self):
+        # Given: the README's skill write
+        self.write(self.skill_file, helpers.SKILL)
+        # When: its file and its steps are looked for
+        # Then: they are in its SKILL.md, which says its step 1
+        self.assertEqual(step.skill_file(self.plugin, "write"), self.skill_file)
+        self.assertEqual(step.steps_file(self.plugin, "write", skill=True), self.skill_file)
+        said = "1. Have the entries written and reviewed."
+        self.assertTrue(step.holds(self.plugin, "write", 1, said, skill=True))
+        # And: where its body names its part under core/roles/, they are in that part
+        part = os.path.join(self.plugin, "core", "roles", "orchestrator.md")
+        self.write(
+            self.skill_file,
+            "---\nname: write\n---\n\nRead"
+            " `${CLAUDE_PLUGIN_ROOT}/core/roles/orchestrator.md` whole first.\n",
+        )
+        self.write(part, "## Steps\n\n1. Go.\n")
+        self.assertEqual(step.steps_file(self.plugin, "write", skill=True), part)
+        self.assertEqual(
+            step.lines_of(self.plugin, "write", skill=True), ["## Steps", "", "1. Go."]
+        )
+
+    def test_a_skill_not_there_has_no_file(self):
+        # Given: no skills/write/SKILL.md, and an agent named write
+        self.write(os.path.join(self.plugin, "agents", "w.md"), "---\nname: write\n---\n")
+        # When: the skill write is looked for
+        # Then: it has no file, and no steps
+        self.assertIsNone(step.skill_file(self.plugin, "write"))
+        self.assertIsNone(step.steps_file(self.plugin, "write", skill=True))
+        self.assertEqual(step.lines_of(self.plugin, "write", skill=True), [])
+
+
 if __name__ == "__main__":
     unittest.main()

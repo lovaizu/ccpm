@@ -62,7 +62,7 @@ class TestUp(helpers.RunTest):
         version = version["version"]
         said = (
             f"Brought lane's code in hooks/lane/ up from 0.0.1 to {version}.\n"
-            "Wrote the hooks of writer into hooks/hooks.json.\n"
+            "Wrote the checks of writer into hooks/hooks.json.\n"
             'Laid before on step 2 of writer, whose step no longer says "Run only `git log'
             ' --oneline`.": {"lane": "run_only", "takes": ["git log --oneline"]}\n'
             'Laid before on step 3 of writer: {"lane": "write_only", "takes": ["CHANGELOG.md"]}\n'

@@ -1,9 +1,9 @@
-"""A subagent's step, read from the file its steps are in: its entry, the file in the plugin's
-agents/ Claude Code takes the subagent from by the name in its frontmatter, or its part, the one
-file under the plugin's prompts/ or core/roles/ the entry's body names in backticks, where it names
-one; and the
-step's text, its numbered line under `## Steps` and the lines its text goes on in, the list under
-it, such as its In and Out, left out."""
+"""A step of a subagent or of a skill, read from the file its steps are in: its entry, the file in
+the plugin's agents/ Claude Code takes the subagent from by the name in its frontmatter, or the
+skill's `skills/<name>/SKILL.md`; or its part, the one file under the plugin's prompts/ or
+core/roles/ the entry's body names in backticks, where it names one; and the step's text, its
+numbered line under `## Steps` and the lines its text goes on in, the list under it, such as its
+In and Out, left out."""
 
 from __future__ import annotations
 
@@ -41,6 +41,19 @@ def agent_file(root: str, name: str) -> str | None:
         if template.value(lines, "name") == name:
             return file
     return None
+
+
+def skill_file(root: str, name: str) -> str | None:
+    """The plugin's `skills/<name>/SKILL.md`, which Claude Code takes the skill of the name from;
+    None where it is not there."""
+    file = os.path.join(root, "skills", name, "SKILL.md")
+    return file if os.path.isfile(file) else None
+
+
+def entry_file(root: str, name: str, skill: bool = False) -> str | None:
+    """The entry of the subagent of the name, or of the skill where `skill`; None where none is
+    there."""
+    return skill_file(root, name) if skill else agent_file(root, name)
 
 
 def background(entry: str) -> bool:
@@ -88,12 +101,12 @@ def says(lines: list[str], where: tuple[int, int]) -> str:
     return BREAK.sub(" ", "\n".join(lines[where[0] : where[1]]))
 
 
-def part(root: str, name: str) -> str | None:
-    """The part the subagent's entry names in its body, the one file under the plugin's prompts/ or
-    core/roles/ it names in backticks, lying under the folder it is named by, whether it is there
-    or not; None where its body names no such file, or more than one, or no entry names the
-    subagent."""
-    entry = agent_file(root, name)
+def part(root: str, name: str, skill: bool = False) -> str | None:
+    """The part the entry of the subagent, or of the skill where `skill`, names in its body, the one
+    file under the plugin's prompts/ or core/roles/ it names in backticks, lying under the folder it
+    is named by, whether it is there or not; None where its body names no such file, or more than
+    one, or there is no entry."""
+    entry = entry_file(root, name, skill)
     if entry is None:
         return None
     with open(entry, encoding="utf-8") as f:
@@ -107,24 +120,25 @@ def part(root: str, name: str) -> str | None:
     return file or None
 
 
-def steps_file(root: str, name: str) -> str | None:
-    """The file the subagent's steps are in: its part, as `part` finds it, or its entry where it
-    names none; None where no entry names the subagent."""
-    return part(root, name) or agent_file(root, name)
+def steps_file(root: str, name: str, skill: bool = False) -> str | None:
+    """The file the steps of the subagent, or of the skill where `skill`, are in: its part, as
+    `part` finds it, or its entry where it names none; None where there is no entry."""
+    return part(root, name, skill) or entry_file(root, name, skill)
 
 
-def lines_of(root: str, name: str) -> list[str]:
-    """The lines of the file the subagent's steps are in; none where no file gives it, or its part
-    is not there."""
-    file = steps_file(root, name)
+def lines_of(root: str, name: str, skill: bool = False) -> list[str]:
+    """The lines of the file the steps of the subagent, or of the skill where `skill`, are in; none
+    where no file gives it, or its part is not there."""
+    file = steps_file(root, name, skill)
     if file is None or not os.path.isfile(file):
         return []
     with open(file, encoding="utf-8") as f:
         return f.read().splitlines()
 
 
-def holds(root: str, name: str, number: int, sentence: str) -> bool:
-    """Whether the subagent's step of the number still says the sentence, word for word."""
-    lines = lines_of(root, name)
+def holds(root: str, name: str, number: int, sentence: str, skill: bool = False) -> bool:
+    """Whether the step of the number of the subagent, or of the skill where `skill`, still says
+    the sentence, word for word."""
+    lines = lines_of(root, name, skill)
     where = span(lines, number)
     return where is not None and sentence in says(lines, where)

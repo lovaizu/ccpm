@@ -2,8 +2,8 @@
  "subagents": [{"name": "writer", "steps": [
   {"step": 2, "lanes": [{"lane": "run_only", "takes": ["git log --oneline"]}]},
   {"step": 3, "lanes": [{"lane": "write_only", "takes": ["CHANGELOG.md"]}]}]}],
- "routes": {"orchestrator": "lead", "step": 1, "routes": [
-  {"from": "lead", "to": "writer"},
+ "routes": {"orchestrator": "write", "step": 1, "routes": [
+  {"from": "write", "to": "writer"},
   {"from": "writer", "on": "written", "to": "checker:examiner"},
   {"from": "checker:examiner", "on": "asks"},
   {"from": "checker:examiner", "on": "done", "to": "reviewer"},

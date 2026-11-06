@@ -20,7 +20,6 @@ import routes
 import rules
 import schema
 import step
-import template
 from lanes import run_only
 
 # What the proposal is told to be, when it is not: in the shape docs/lanes.md gives, named by its
@@ -136,10 +135,25 @@ def agent_lines(root: str, name: str, again: str = AGAIN) -> tuple[str, list[str
         return file, f.read().splitlines(keepends=True)
 
 
-def entry_lines(root: str, name: str) -> list[str]:
-    """The lines of the entry of the subagent of the name, which `agent_lines` has found."""
-    with open(str(step.agent_file(root, name)), encoding="utf-8") as f:
-        return f.read().splitlines()
+def skill_lines(root: str, name: str) -> tuple[str, list[str]]:
+    """The file the steps of the skill of the name are in, its SKILL.md or its part, and its lines;
+    stops where the name is none a command can carry, the plugin has no `skills/<name>/SKILL.md`,
+    or the part it names is not there."""
+    if not re.fullmatch(rules.NAME, name):
+        raise wrong("gives a skill no name", ROUTES_AGAIN)
+    file = step.steps_file(root, name, skill=True)
+    if file is None:
+        raise wrong(
+            f"gives {name} to start the routes, which no skills/{name}/SKILL.md of the plugin is",
+            ROUTES_AGAIN,
+        )
+    if not os.path.isfile(file):
+        shown = os.path.relpath(file, root)
+        raise wrong(
+            f"gives {name}, whose skill names its part {shown}, which is not there", ROUTES_AGAIN
+        )
+    with open(file, encoding="utf-8") as f:
+        return file, f.read().splitlines(keepends=True)
 
 
 def routes_checked(root: str, given: dict[str, Any]) -> dict[str, Any]:
@@ -156,28 +170,18 @@ def routes_checked(root: str, given: dict[str, Any]) -> dict[str, Any]:
     if why:
         raise wrong(why, ROUTES_AGAIN)
     lead = given["orchestrator"]
+    _, lines = skill_lines(root, lead)
+    if step.span([line.rstrip("\n") for line in lines], given["step"]) is None:
+        raise wrong(
+            f"gives step {given['step']}, which the Steps of {lead} do not have", ROUTES_AGAIN
+        )
     froms = routes.giving(given)
-    for name in routes.named(given):
+    for name in routes.named(given)[1:]:
         if ":" in name:
             dependency_checked(root, name)
             continue
         _, lines = agent_lines(root, name, ROUTES_AGAIN)
         bare = [line.rstrip("\n") for line in lines]
-        # routes.named gives the orchestrator as the routes give it, so `is` finds it as `==`.
-        orchestrating = name == lead  # pragma: no mutate
-        if orchestrating and step.span(bare, given["step"]) is None:
-            raise wrong(
-                f"gives step {given['step']}, which the Steps of {lead} do not have", ROUTES_AGAIN
-            )
-        entry = entry_lines(root, name)
-        tools = template.value(entry, "tools")
-        named = [t.strip() for t in tools.split(",")] if tools is not None else ["Agent"]
-        if orchestrating and not ("Agent" in named or any(t.startswith("Agent(") for t in named)):
-            raise wrong(
-                f"gives {lead} as the orchestrator, whose file names its tools without Agent,"
-                " which it starts each subagent with",
-                ROUTES_AGAIN,
-            )
         if name in froms and step.last(bare) is None:
             raise wrong(f"gives {name}, whose file has no step to end by its result", ROUTES_AGAIN)
         in_background(root, name, ROUTES_MD)

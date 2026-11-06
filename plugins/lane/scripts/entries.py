@@ -21,7 +21,18 @@ from proposal import Stop
 
 EVENT = "PreToolUse"
 # Each event lane acts on, the first a tool call's that is stopped where lane cannot check it.
-EVENTS = [EVENT, "PostToolUse", "PostToolUseFailure", "SubagentStart", "SubagentStop"]
+EVENTS = [
+    EVENT,
+    "PostToolUse",
+    "SubagentStart",
+    "SubagentStop",
+    "UserPromptExpansion",
+    "UserPromptSubmit",
+    "Stop",
+]
+# The events of a tool call or a subagent, whose entries match each one; the others, of the main
+# conversation's prompt and turn, take no matcher.
+MATCHED_EVENTS = EVENTS[:4]
 # What lane's entries run, by which lay.py tells them from the plugin's own, of this shape and of
 # the old, one for each subagent and event.
 CODE = "/hooks/lane/"
@@ -63,7 +74,8 @@ def entry(plugin: str, names: list[str], event: str) -> dict[str, Any]:
     stopped rather than let through."""
     run = {"type": "command", "timeout": rules.TIMEOUT, "command": command(plugin, names, event)}
     blocked = {"onFailure": "block"} if event == EVENT else {}
-    return {"matcher": "*", "hooks": [{**run, **blocked}]}
+    matched = {"matcher": "*"} if event in MATCHED_EVENTS else {}
+    return {**matched, "hooks": [{**run, **blocked}]}
 
 
 def ours(given: dict[str, Any]) -> bool:

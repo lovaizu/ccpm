@@ -73,7 +73,6 @@ sys.path[:0] = [
 import entries
 import lanes
 import routes
-import rules
 import trying
 from lanes import follow_routes, run_only
 
@@ -296,7 +295,8 @@ def laid_sentences(laid: dict[str, Any]) -> list[str]:
         agent = names.get(name, {})
         each = [g for s in agent.get("steps", []) for g in s["lanes"]]
         found += [lanes.sentence(g["lane"], g["takes"]) for g in each]
-        ons = rules.gives(routed, name, [g["lane"] for g in each], agent.get("results"))
+        ends = any(lanes.ends(g["lane"]) for g in each)
+        ons = routes.gives(routed, name, ends, agent.get("results"))
         commands = [routes.command(name, on) for on in ons]
         found += [lanes.sentence("result", commands)] if ons else []
     return found

@@ -88,15 +88,16 @@ UNJOINED = (
     "the Agent call starting it gave back no ID of its run within {wait:g} seconds, so what it was"
     " given is not known"
 )
-# What the operator is told as the orchestrator, kept going once with a start due, is let end: the
-# start left, and the step that must be fixed, the orchestrator's own or that of the subagent that
-# ended with no result.
+# What the user is told as the main conversation, kept going once with a start due, is let end its
+# turn: the start left, and the step that must be fixed, the skill's own or that of the subagent
+# that ended with no result.
 LEFT = (
-    "lane let {lead} end with `{plugin}:{name}` still due{why}: the maker of {plugin} must fix {at}"
+    "lane let the run of {lead} end with `{plugin}:{name}` still due{why}: the maker of {plugin}"
+    " must fix {at}"
 )
 LEFT_DEPENDENCY = (
-    "lane let {lead} end with `{name}` still due, as {name} ended with no result the routes take:"
-    " the maker of {dependency} must have {own} give {results}"
+    "lane let the run of {lead} end with `{name}` still due, as {name} ended with no result the"
+    " routes take: the maker of {dependency} must have {own} give {results}"
 )
 STARTS_IT = "step {step} of {lead} in {file}, which starts it."
 GIVES_IT = "step {step} of {name} in {file}, which gives its result."
@@ -174,49 +175,9 @@ class Subagent(NamedTuple):
                 return on
         return None
 
-    def orchestrator(self) -> bool:
-        """Whether the subagent is the routes' orchestrator."""
-        return self.routes is not None and self.routes["orchestrator"] == self.name
-
-    def giving(self) -> list[str]:
-        """The subagents the orchestrator's routes start, each giving a result."""
-        return routes.giving(self.routes) if self.routes else []
-
-    def due(self) -> routes.Next:
-        """The orchestrator's next start, from its starts kept and the results of their runs."""
-        assert self.routes is not None
-        try:
-            started = called.starts(self.session, self.agent, self.giving(), self.plugin)
-            return routes.next_start(
-                self.routes,
-                started,
-                lambda a: called.result(self.session, a),
-                lambda a: called.ended(self.session, a),
-                lambda a: called.left_without_result(self.session, a),
-            )
-        except routes.Unordered as why:
-            fix = ORDER.format(plugin=self.plugin, name=why.name)
-            raise Cannot(cannot(f"the lanes of {self.name}", str(why), fix)) from None
-        except ValueError as why:
-            raise Cannot(cannot(f"the lanes of {self.name}", str(why), LANES_FAULT)) from None
-
-    def ended_with_none(self) -> list[str]:
-        """The IDs of the orchestrator's runs that ended with no result, after each was kept going
-        once, each of a subagent that gives one."""
-        started = called.starts(self.session, self.agent, self.giving(), self.plugin)
-        return [
-            r.agent
-            for r in started
-            if called.ended(self.session, r.agent) and called.result(self.session, r.agent) is None
-        ]
-
     def keep(self, entry: dict[str, Any]) -> None:
         """Keeps the entry under the subagent's run."""
         called.keep(self.session, self.agent, entry)
-
-    def told(self, due: routes.Next) -> Said:
-        """The next start, as the orchestrator is told it."""
-        return Said(routes.line(due, self.plugin))
 
     def of(self, *kinds: str) -> list[rules.Laid]:
         """The subagent's lanes of the kinds, each checked to be said by its step still."""
@@ -316,9 +277,8 @@ def subagent(
         fix = BACKGROUND.format(plugin=plugin, file=file)
         raise Cannot(cannot(f"the lanes of {name}", said, fix))
     found = list(laid or [])
-    if routed is not None and routed["orchestrator"] == name:
-        found.append(rules.Laid(routed["step"], "follow_routes", []))
-    ons = rules.gives(routed, name, [g.lane for g in found], rules.results_of(given, name))
+    ends = any(lanes.ends(g.lane) for g in found)
+    ons = routes.gives(routed, name, ends, rules.results_of(given, name))
     if ons:
         # The last step's number, or none that a step has, where its file has no step.
         last = step.last(step.lines_of(root, name)) or 0
@@ -448,11 +408,6 @@ def tool_checked(s: Subagent, event: dict[str, Any]) -> list[Said]:
     tool, given = event["tool_name"], event["tool_input"]
     if s.foreign():
         return []
-    for lane in s.of("follow_routes"):
-        due = s.due()
-        allowed = follow_routes.allows(tool, given, due, s.plugin)
-        if not allowed or follow_routes.resumes(tool, given, s.ended_with_none()):
-            return [Said(follow_routes.WORDING), s.told(due)]
     if tool not in WATCHED:
         return []
     action, field = WATCHED[tool]
@@ -588,24 +543,9 @@ def items_of(lane: rules.Laid, s: Subagent) -> Callable[[str, str], list[str]]:
 
 
 def call_kept(s: Subagent, event: dict[str, Any]) -> list[Said]:
-    """What the subagent's PostToolUse event is told: the call is kept, and the result where it is
-    a result command of the subagent's; the orchestrator is told the next start as its start comes
-    back, or, where it did not come back as Claude Code gives it, the error and the start still
-    due."""
-    tool, given, back = event["tool_name"], event["tool_input"], event["tool_response"]
-    name = follow_routes.started(tool, given, s.giving(), s.plugin) if s.orchestrator() else None
-    if name:
-        before = s.due()
-        # A next start is `end`, `start` or `wait`, `end` the first of them in order.
-        if before.kind == "end":  # pragma: no mutate
-            s.keep(called.call(tool, given))
-            return []
-        out = schema.held(BACK, back)
-        if out is not None:
-            s.keep(called.call(tool, given))
-            return [unshaped(s.name, f"$.tool_response{out.told()[1:]}"), s.told(before)]
-        s.keep(called.call(tool, given, back, joined(before, name)))
-        return [s.told(s.due())]
+    """What the subagent's PostToolUse event is told: nothing; the call is kept, and the result
+    where it is a result command of the subagent's."""
+    tool, given = event["tool_name"], event["tool_input"]
     if not s.foreign():
         s.keep(called.call(tool, given))
     command = str(given.get("command", "")).strip() if tool == "Bash" else ""
@@ -626,25 +566,10 @@ def joined(before: routes.Next, name: str) -> str:
     return routes.AGAIN if before.again else ""
 
 
-def failure_told(s: Subagent, event: dict[str, Any]) -> list[Said]:
-    """What the subagent's PostToolUseFailure event is told: the orchestrator, the start still due
-    where its start failed; nothing else, and nothing kept, as a call that failed gives no
-    result."""
-    if s.orchestrator() and follow_routes.started(
-        event["tool_name"], event["tool_input"], s.giving(), s.plugin
-    ):
-        due = s.due()
-        # A next start is `end`, `start` or `wait`, `end` the first of them in order.
-        if due.kind == "end":  # pragma: no mutate
-            return []
-        return [s.told(due)]
-    return []
-
-
 def start_kept(s: Subagent, event: dict[str, Any]) -> list[Said]:
-    """What the subagent's SubagentStart event is told: its run's start is kept; it is given its
-    part whole, the plugin's folder put in, where its entry names one, or an error where the part
-    is not there; and the orchestrator is told the next start."""
+    """What the subagent's SubagentStart event is told: its start is kept; it is given its part
+    whole, the plugin's folder put in, where its entry names one, or an error where the part is not
+    there."""
     s.keep(called.START)
     told = []
     part = step.part(s.root, s.name)
@@ -657,22 +582,13 @@ def start_kept(s: Subagent, event: dict[str, Any]) -> list[Said]:
             fix = PART.format(plugin=s.plugin, part=shown)
             raise Cannot(cannot(f"the lanes of {s.name}", f"its part {shown} is not there", fix))
         told.append(Said(text.replace(step.ROOT, s.root), plain=True))
-    return told + ([s.told(s.due())] if s.orchestrator() else [])
+    return told
 
 
 def end_kept(s: Subagent, event: dict[str, Any]) -> list[Said]:
-    """What the subagent's SubagentStop event is told: the orchestrator is kept going once with the
-    sentence and the start while one is due, and let end after, the operator told what is left and
-    the step to fix, as only the plugin's maker can mend a run that stops so; a subagent giving a
-    result, kept going once with the sentence of its last step, as it reads it, where it gave none;
-    any other end is kept."""
-    told = []
-    if s.orchestrator():
-        due = s.due()
-        if not follow_routes.ends(due):
-            if not event["stop_hook_active"]:
-                return [Said(follow_routes.WORDING), s.told(due)]
-            told.append(left(s, due))
+    """What the subagent's SubagentStop event is told: a subagent giving a result, kept going once
+    with the sentence of its last step, as it reads it, where it gave none; any other end is
+    kept."""
     ending = [g for g in s.laid if g.lane == "result"]
     if ending and not event["stop_hook_active"] and called.result(s.session, s.agent) is None:
         # A subagent has one result lane, on its last step.
@@ -682,36 +598,313 @@ def end_kept(s: Subagent, event: dict[str, Any]) -> list[Said]:
             told_.append(DEPENDENCY_FOLDER)
         return [Said("\n".join(told_))]
     s.keep(called.END)
-    return told
+    return []
 
 
-def left(s: Subagent, due: routes.Next) -> Said:
-    """The note telling the operator that the orchestrator was let end with the start due left,
-    and which step of the plugin must be fixed: the last of the subagent due, where it ended with
-    no result, or the orchestrator's step the routes lie on otherwise; for a dependency's subagent
-    due again, that its maker must have it give a result the routes take, or the plugin's maker
-    must route the one it gives."""
-    assert s.routes is not None
+def left(m: Main, due: routes.Next) -> Said:
+    """The note telling the user that the run was let end with the start due left, and which step
+    of the plugin must be fixed: the last of the subagent due, where it ended with no result, or
+    the skill's step the routes lie on otherwise; for a dependency's subagent due again, that its
+    maker must have it give a result the routes take, or the plugin's maker must route the one it
+    gives."""
+    lead = m.skill()
     if due.again and ":" in due.name:
         dependency, own = due.name.split(":")
-        results = lanes.listed(routes.ons(s.routes, due.name))
+        results = lanes.listed(routes.ons(m.routes, due.name))
         text = LEFT_DEPENDENCY.format(
-            lead=s.name, name=due.name, dependency=dependency, own=own, results=results
+            lead=lead, name=due.name, dependency=dependency, own=own, results=results
         )
         return Said(
-            text + f", or the maker of {s.plugin} must route the result it gives.", note=True
+            text + f", or the maker of {m.plugin} must route the result it gives.", note=True
         )
     if due.again:
-        lines = step.lines_of(s.root, due.name)
-        file = os.path.relpath(str(step.steps_file(s.root, due.name)), s.root)
+        lines = step.lines_of(m.root, due.name)
+        file = os.path.relpath(str(step.steps_file(m.root, due.name)), m.root)
         at = GIVES_IT.format(step=step.last(lines), name=due.name, file=file)
         why = f", as {due.name} ended with no result"
     else:
-        file = os.path.relpath(str(step.steps_file(s.root, s.name)), s.root)
-        at = STARTS_IT.format(step=s.routes["step"], lead=s.name, file=file)
+        file = os.path.relpath(str(step.steps_file(m.root, lead, skill=True)), m.root)
+        at = STARTS_IT.format(step=m.routes["step"], lead=lead, file=file)
         why = ""
-    text = LEFT.format(lead=s.name, plugin=s.plugin, name=due.name, why=why, at=at)
+    text = LEFT.format(lead=lead, plugin=m.plugin, name=due.name, why=why, at=at)
     return Said(text, note=True)
+
+
+class Main(NamedTuple):
+    """The main conversation as the guard holds it to the routes: the plugin's folder and name, the
+    session as the plugin's guard keeps its record, and the routes laid."""
+
+    root: str
+    plugin: str
+    session: str
+    routes: dict[str, Any]
+
+    def skill(self) -> str:
+        """The skill the routes start from."""
+        return str(self.routes["orchestrator"])
+
+    def giving(self) -> list[str]:
+        """The subagents and dependencies' skills the routes start, each giving a result."""
+        return routes.giving(self.routes)
+
+    def starts(self) -> list[routes.Start]:
+        """The starts of the run, as they came back."""
+        return called.starts(self.session, called.RUN, self.giving(), self.plugin)
+
+    def due(self) -> routes.Next:
+        """The run's next start, from its starts kept and the result each gave."""
+        try:
+            return routes.next_start(
+                self.routes,
+                self.starts(),
+                lambda a: called.result(self.session, a),
+                lambda a: called.ended(self.session, a),
+                lambda a: called.left_without_result(self.session, a),
+            )
+        except routes.Unordered as why:
+            fix = ORDER.format(plugin=self.plugin, name=why.name)
+            raise Cannot(cannot(f"the routes of {self.skill()}", str(why), fix)) from None
+        except ValueError as why:
+            raise Cannot(cannot(f"the routes of {self.skill()}", str(why), LANES_FAULT)) from None
+
+    def begun(self) -> bool:
+        """Whether a run of the skill has begun and was not let end; stops with Cannot where its
+        record cannot be read."""
+        try:
+            return called.begun(self.session)
+        except ValueError as why:
+            raise Cannot(cannot(f"the routes of {self.skill()}", str(why), LANES_FAULT)) from None
+
+    def on(self) -> bool:
+        """Whether a run of the skill is on: begun, and a start still due or waited for."""
+        return self.begun() and self.due().kind != "end"
+
+    def moving(self) -> routes.Start | None:
+        """The move of a dependency's skill begun in the run and not ended with a result, during
+        which the dependency's guard holds the main conversation; None where none is."""
+        last = self.starts()[-1:]
+        if last and last[0].status == SKILL and not called.ended(self.session, last[0].agent):
+            return last[0]
+        return None
+
+    def told(self) -> list[Said]:
+        """The next start, as the main conversation is told it: the line of the start due, the
+        wait or the end, the end told once for the results that led to it."""
+        due = self.due()
+        line = routes.line(due, self.plugin)
+        # A next start is `end`, `start` or `wait`, `end` the first of them in order.
+        if due.kind == "end":  # pragma: no mutate
+            seen = sum(len(called.kept(self.session, s.agent)) for s in self.starts())
+            if called.told(self.session, line, seen):
+                return []
+            called.keep(self.session, called.RUN, called.said(line, seen))
+        return [Said(line)]
+
+    def ended_with_none(self) -> list[str]:
+        """The IDs of the run's starts that ended with no result, after each was kept going once."""
+        return [
+            r.agent
+            for r in self.starts()
+            if called.ended(self.session, r.agent) and called.result(self.session, r.agent) is None
+        ]
+
+
+# How a dependency's skill begun in the run is kept, in place of the status of a subagent's start.
+SKILL = "skill"
+
+
+def main(root: str, plugin: str, event: dict[str, Any], wrong: str) -> Main | None:
+    """The main conversation of the plugin at root of the name given, as the guard holds it; None
+    where no routes are laid, so the main conversation is never held, or where the event holds no
+    session, as no run can be told. Stops with Cannot where hooks/lanes.json cannot be read, its
+    routes cannot be followed, or the event is not as Claude Code hands it, as `wrong` says, each
+    only while a run is on, as outside a run nothing of the main conversation is touched."""
+    given = event.get("session_id")
+    if not isinstance(given, str) or not called.ID.fullmatch(given):
+        return None
+    session = called.record(plugin, given)
+    try:
+        laid = rules.read(root)
+    except ValueError as why:
+        if not Main(root, plugin, session, {"orchestrator": ""}).begun():
+            return None
+        fix = LAY_AGAIN.format(plugin=plugin)
+        raise Cannot(cannot("the routes of the run", str(why), fix)) from None
+    routed = rules.routes_of(laid)
+    if routed is None:
+        return None
+    m = Main(root, plugin, session, routed)
+    why = routes.refused(routed)
+    if why and m.begun():
+        fix = LAY_AGAIN.format(plugin=plugin)
+        raise Cannot(cannot(f"the routes of {m.skill()}", f"{rules.FILE} {why}", fix))
+    if why:
+        return None
+    if wrong and m.on():
+        said = f"the hook was handed no event as Claude Code hands it, {wrong}"
+        raise Cannot(cannot(f"the routes of {m.skill()}", said, CLAUDE_CODE))
+    return None if wrong else m
+
+
+MainCheck = Callable[[Main, dict[str, Any]], "list[Said]"]
+
+
+def held_main(check: MainCheck) -> Callable[[str, str, dict[str, Any], str], list[Said]]:
+    """The check run on the event of the main conversation of the plugin at root of the name
+    given, `wrong` saying where the event is not as Claude Code hands it: nothing said where no
+    routes are laid, and the error where lane cannot check it."""
+
+    def run(root: str, plugin: str, event: dict[str, Any], wrong: str) -> list[Said]:
+        try:
+            found = main(root, plugin, event, wrong)
+            return [] if found is None else check(found, event)
+        except Cannot as stop:
+            return [stop.said]
+
+    run.__doc__ = check.__doc__
+    return run
+
+
+def begin(m: Main) -> list[Said]:
+    """What the main conversation is told as the skill the routes name is called: nothing where a
+    run is on already; the first start, the run begun, where the skill's step still says the
+    routes' sentence; an error otherwise, no run begun, as its step was not laid by `lay.py
+    write`."""
+    if m.on():
+        return []
+    said = lanes.sentence("follow_routes", [])
+    if not step.holds(m.root, m.skill(), m.routes["step"], said, skill=True):
+        gone = f"step {m.routes['step']} no longer says: {said}".rstrip(".")
+        fix = LAY_AGAIN.format(plugin=m.plugin)
+        raise Cannot(cannot(f"follow_routes on step {m.routes['step']} of {m.skill()}", gone, fix))
+    called.keep(m.session, called.RUN, called.START)
+    return m.told()
+
+
+def expanded(m: Main, event: dict[str, Any]) -> list[Said]:
+    """What the main conversation's UserPromptExpansion is told: the first start, where the
+    command typed is the skill's, as `begin` says; nothing otherwise."""
+    if event["command_name"] != f"{m.plugin}:{m.skill()}":
+        return []
+    return begin(m)
+
+
+def prompted(m: Main, event: dict[str, Any]) -> list[Said]:
+    """What the main conversation's UserPromptSubmit is told, a task-notification of a subagent's
+    end among them: the next start while a run is on and no dependency's skill moves; nothing
+    otherwise."""
+    if not m.begun() or m.moving() is not None:
+        return []
+    return m.told()
+
+
+def starting(m: Main, tool: str, given: dict[str, Any]) -> bool:
+    """Whether the main conversation's call is a start of the run: an Agent call of a subagent of
+    the plugin or of one the routes name, or a Skill call of a dependency's skill they name."""
+    if follow_routes.started(tool, given, m.giving(), m.plugin):
+        return True
+    kind = given.get("subagent_type")
+    # No tool Claude Code names sorts before Agent.
+    agent = tool == follow_routes.AGENT  # pragma: no mutate
+    return agent and isinstance(kind, str) and kind.startswith(f"{m.plugin}:")
+
+
+def start_checked(m: Main, event: dict[str, Any]) -> list[Said]:
+    """What the main conversation's PreToolUse event is told while a run is on and no dependency's
+    skill moves: a start not due, or a message resuming a start that ended with no result, stopped
+    with the sentence and the start due; any other call goes through."""
+    tool, given = event["tool_name"], event["tool_input"]
+    if not m.on() or m.moving() is not None:
+        return []
+    due = m.due()
+    if starting(m, tool, given):
+        if follow_routes.allows(tool, given, due, m.plugin):
+            return []
+    elif not follow_routes.resumes(tool, given, m.ended_with_none()):
+        return []
+    return [Said(follow_routes.WORDING), Said(routes.line(due, m.plugin))]
+
+
+def main_kept(m: Main, event: dict[str, Any]) -> list[Said]:
+    """What the main conversation's PostToolUse event is told: the first start, as the Skill call of
+    the skill the routes name comes back; while a run is on, the wait, as a start comes back kept
+    under the ID it gives, or the error and the start still due where it did not come back as
+    Claude Code gives it; a dependency's skill begun, kept with nothing told, and the next start as
+    the run of its result script comes back; nothing otherwise."""
+    tool, given, back = event["tool_name"], event["tool_input"], event["tool_response"]
+    named = back.get("commandName") if isinstance(back, dict) else None
+    if tool == follow_routes.SKILL and named == f"{m.plugin}:{m.skill()}":
+        return begin(m)
+    if not m.on():
+        return []
+    move = m.moving()
+    if move is not None:
+        return moved(m, move, event)
+    name = follow_routes.started(tool, given, m.giving(), m.plugin)
+    if name is None:
+        return []
+    before = m.due()
+    if tool == "Skill":
+        use = event.get("tool_use_id")
+        if not isinstance(use, str) or not called.ID.fullmatch(use):
+            said = "the hook was handed no event as Claude Code hands it, $.tool_use_id: no ID"
+            return [cannot(f"the routes of {m.skill()}", said, CLAUDE_CODE)]
+        made = {"status": SKILL, "agentId": use}
+        called.keep(m.session, called.RUN, called.call(tool, given, made))
+        return []
+    out = schema.held(BACK, back)
+    if out is not None:
+        said = (
+            f"the hook was handed no event as Claude Code hands it, $.tool_response{out.told()[1:]}"
+        )
+        error = cannot(f"the routes of {m.skill()}", said, CLAUDE_CODE)
+        return [error, Said(routes.line(before, m.plugin))]
+    called.keep(m.session, called.RUN, called.call(tool, given, back, joined(before, name)))
+    return m.told()
+
+
+def moved(m: Main, move: routes.Start, event: dict[str, Any]) -> list[Said]:
+    """What the main conversation's PostToolUse is told while a dependency's skill moves: the next
+    start, as a run of the dependency's result script with a result a route from the skill is on
+    comes back, the result kept; nothing otherwise, as the dependency's guard holds the
+    conversation meanwhile."""
+    if event["tool_name"] != "Bash":
+        return []
+    command = str(event["tool_input"].get("command", "")).strip()
+    for on in routes.ons(m.routes, move.name):
+        gives = routes.command(move.name, on)
+        if run_only.allows(command, [gives], m.root, event["cwd"], {}):
+            called.keep(m.session, move.agent, called.gave(on))
+            called.keep(m.session, move.agent, called.END)
+            return m.told()
+    return []
+
+
+def turn_ended(m: Main, event: dict[str, Any]) -> list[Said]:
+    """What the main conversation's Stop event is told while a run is on and no dependency's skill
+    moves: where a start is due and no start of the run still runs, kept going once with the
+    sentence and the start due, and let end after, the run ended and the user told what is left
+    and the step to fix, as a hold with no end would need a person to break it; nothing
+    otherwise."""
+    if not m.on() or m.moving() is not None:
+        return []
+    due = m.due()
+    if due.kind != "start":
+        return []
+    if not event["stop_hook_active"]:
+        return [Said(follow_routes.WORDING), Said(routes.line(due, m.plugin))]
+    called.keep(m.session, called.RUN, called.END)
+    return [left(m, due)]
+
+
+# The guard's check of each event of the main conversation.
+MAIN = {
+    "UserPromptExpansion": held_main(expanded),
+    "UserPromptSubmit": held_main(prompted),
+    "PreToolUse": held_main(start_checked),
+    "PostToolUse": held_main(main_kept),
+    "Stop": held_main(turn_ended),
+}
 
 
 def handed(plugin: str, event: dict[str, Any], held_: str) -> None:
@@ -751,6 +944,5 @@ def handed(plugin: str, event: dict[str, Any], held_: str) -> None:
 
 check = guarded(tool_checked)
 came_back = guarded(call_kept)
-failed = guarded(failure_told)
 started = guarded(start_kept)
 stopping = guarded(end_kept)

@@ -1,6 +1,7 @@
-"""follow_routes: the orchestrator starts only the subagent it is told to start while a start is
-due, and makes no other call then; starts none while one runs in the background, its other calls
-going on; and is free once no start is left."""
+"""follow_routes: within a run, the main conversation makes only the start it is told to make while
+a start is due; makes none while a subagent runs in the background, but more starts of one fanned
+out; and makes any once no start is left. A start is an Agent call of a subagent, or a Skill call
+of a dependency's skill."""
 
 import unittest
 
@@ -41,25 +42,24 @@ class TestAllows(unittest.TestCase):
             ("Agent", start("changelog:writer"), False),
             ("Agent", start("reviewer"), False),
             ("Agent", {"description": "d", "prompt": "p"}, False),
-            ("Read", {"file_path": "CHANGELOG.md"}, False),
+            ("Skill", {"skill": "changelog:reviewer"}, False),
         ):
             with self.subTest(given=given):
                 # Given: reviewer due
-                # When: lead starts reviewer, writer, reviewer by its bare name, a subagent of
-                # no type, or reads a file
+                # When: the main conversation starts reviewer, writer, reviewer by its bare name,
+                # a subagent of no type, or calls a skill of reviewer's name
                 # Then: only the start of changelog:reviewer goes through
                 self.assertEqual(follow_routes.allows(tool, given, DUE, "changelog"), through)
 
-    def test_while_a_subagent_runs_in_the_background_only_a_start_is_stopped(self):
+    def test_while_a_subagent_runs_in_the_background_every_start_is_stopped(self):
         for tool, given, through in (
             ("Agent", start("changelog:reviewer"), False),
-            ("Agent", start("Explore"), False),
-            ("Read", {"file_path": "CHANGELOG.md"}, True),
+            ("Agent", start("changelog:writer"), False),
         ):
             with self.subTest(given=given):
                 # Given: writer running in the background
-                # When: lead starts a subagent of the plugin or another, or reads a file
-                # Then: each start is stopped, and the read goes through
+                # When: the main conversation starts reviewer, or writer again
+                # Then: each start is stopped
                 self.assertEqual(follow_routes.allows(tool, given, WAIT, "changelog"), through)
 
     def test_while_runs_of_a_fanned_out_subagent_go_only_more_of_them_may_start(self):
@@ -67,29 +67,18 @@ class TestAllows(unittest.TestCase):
         for tool, given, through in (
             ("Agent", start("changelog:reviewer"), True),
             ("Agent", start("changelog:writer"), False),
-            ("Read", {"file_path": "CHANGELOG.md"}, True),
         ):
             with self.subTest(given=given):
-                # Given: runs of reviewer, fanned out, running in the background
-                # When: lead starts reviewer again, starts writer, or reads a file
-                # Then: the further run of reviewer and the read go through, and writer is stopped
+                # Given: starts of reviewer, fanned out, running in the background
+                # When: the main conversation starts reviewer again, or starts writer
+                # Then: the further start of reviewer goes through, and writer is stopped
                 self.assertEqual(follow_routes.allows(tool, given, more, "changelog"), through)
 
     def test_once_no_start_is_left_every_call_goes_through(self):
         # Given: reviewer's `good`
-        # When: lead starts writer
-        # Then: it goes through, lead being free
+        # When: the main conversation starts writer
+        # Then: it goes through, the run being over
         self.assertTrue(follow_routes.allows("Agent", start("changelog:writer"), END, "changelog"))
-
-
-class TestEnds(unittest.TestCase):
-    def test_the_orchestrator_ends_only_while_no_start_is_due(self):
-        for found, ends in ((DUE, False), (WAIT, True), (END, True)):
-            with self.subTest(found=found):
-                # Given: a start due, a subagent running in the background, or no start left
-                # When: lead is about to end
-                # Then: it is kept going only while the start is due
-                self.assertEqual(follow_routes.ends(found), ends)
 
 
 class TestStarted(unittest.TestCase):
@@ -102,7 +91,7 @@ class TestStarted(unittest.TestCase):
             ("Read", start("changelog:writer"), None),
         ):
             with self.subTest(given=given, tool=tool):
-                # Given: the routes of lead, writer and reviewer
+                # Given: the routes of write, writer and reviewer
                 # When: a call starts writer, a subagent of the plugin no route names, one of
                 # another plugin, one of no type, or is no Agent call
                 # Then: only the first is a start of the routes, of writer
@@ -112,12 +101,27 @@ class TestStarted(unittest.TestCase):
 
 class TestDependency(unittest.TestCase):
     def test_a_start_of_a_dependencys_subagent_is_found_by_its_type(self):
-        # Given: lead's Agent call starting checker's examiner
+        # Given: the main conversation's Agent call starting checker's examiner
         given = {"subagent_type": "checker:examiner", "prompt": "p"}
         # When: the subagent it starts is asked for, among writer and examiner
         found = follow_routes.started("Agent", given, ["writer", "checker:examiner"], "changelog")
         # Then: it is examiner, by the name the routes give it
         self.assertEqual(found, "checker:examiner")
+
+    def test_a_skill_call_starts_only_a_dependencys_skill_the_routes_name(self):
+        named = ["writer", "checker:check"]
+        for given, name in (
+            ({"skill": "checker:check"}, "checker:check"),
+            ({"skill": "changelog:writer"}, None),
+            ({"skill": "checker:other"}, None),
+            ({}, None),
+        ):
+            with self.subTest(given=given):
+                # Given: the routes naming writer and checker's skill check
+                # When: a Skill call calls check, a skill of writer's name, another of checker's,
+                # or none
+                # Then: only the first is a start of the routes, of check
+                self.assertEqual(follow_routes.started("Skill", given, named, "changelog"), name)
 
 
 if __name__ == "__main__":

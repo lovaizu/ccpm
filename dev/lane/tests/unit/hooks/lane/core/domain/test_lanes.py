@@ -179,9 +179,9 @@ class TestSentence(unittest.TestCase):
                 # Given: a sentence laid from the routes
                 # When: its action and hook are read
                 # Then: they are its own action, and follow_routes, which lays and checks it
-                self.assertEqual((lanes.action(lane), lanes.hook(lane)), (action, "follow_routes"))
+                self.assertEqual((lanes.action(lane), lanes.kind(lane)), (action, "follow_routes"))
         # And: a lane's own are its module's and its name
-        self.assertEqual((lanes.action("run_only"), lanes.hook("run_only")), ("run", "run_only"))
+        self.assertEqual((lanes.action("run_only"), lanes.kind("run_only")), ("run", "run_only"))
 
     def test_each_place_takes_its_own_things(self):
         for lane, takes, said in (

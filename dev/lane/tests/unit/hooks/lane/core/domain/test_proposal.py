@@ -48,7 +48,7 @@ class TestRead(ProposalTest):
 class TestResults(ProposalTest):
     def test_results_and_routes_from_one_subagent_are_refused(self):
         # Given: routes from writer, and writer giving results of its own too
-        self.write(os.path.join(self.plugin, "agents", "lead.md"), helpers.LEAD)
+        self.write(self.skill_file, helpers.SKILL)
         self.write(os.path.join(self.plugin, "agents", "reviewer.md"), helpers.REVIEWER)
         given = {**self.proposal(results=["asks"]), "routes": helpers.ROUTES}
         # When: it is read
@@ -75,7 +75,7 @@ class TestDependency(ProposalTest):
 
     def setUp(self) -> None:
         super().setUp()
-        self.write(os.path.join(self.plugin, "agents", "lead.md"), helpers.LEAD)
+        self.write(self.skill_file, helpers.SKILL)
 
     def declare(self, *names: str) -> None:
         """changelog's manifest declaring the dependencies of the names."""
@@ -212,8 +212,7 @@ class TestLanes(ProposalTest):
 class RoutesTest(ProposalTest):
     def setUp(self) -> None:
         super().setUp()
-        self.lead = os.path.join(self.plugin, "agents", "lead.md")
-        self.write(self.lead, helpers.LEAD)
+        self.write(self.skill_file, helpers.SKILL)
         self.write(os.path.join(self.plugin, "agents", "reviewer.md"), helpers.REVIEWER)
 
     def routed(self, routes: list) -> dict:
@@ -246,13 +245,13 @@ class TestRoutes(RoutesTest):
             ),
             (
                 self.routed([{**first, "on": "go"}, *routes[1:]]),
-                "no one route from lead with a `to`",
+                "no one route from write with a `to`",
             ),
-            (self.routed(routes[1:]), "no one route from lead with a `to`"),
-            (self.routed([first, *routes]), "no one route from lead with a `to`"),
+            (self.routed(routes[1:]), "no one route from write with a `to`"),
+            (self.routed([first, *routes]), "no one route from write with a `to`"),
             (
-                self.routed([first, {"from": "lead", "on": "x"}, *routes[1:]]),
-                "no one route from lead",
+                self.routed([first, {"from": "write", "on": "x"}, *routes[1:]]),
+                "no one route from write",
             ),
             (
                 self.routed([first, {"from": "writer", "to": "reviewer"}, more, good]),
@@ -262,10 +261,10 @@ class TestRoutes(RoutesTest):
                 self.routed([first, written, {"from": "editor", "to": "writer"}, more, good]),
                 "a route from editor with no `on`",
             ),
-            (self.routed([*routes, {**more, "to": "lead"}]), "two routes from reviewer on `more`"),
+            (self.routed([*routes, {**more, "to": "write"}]), "two routes from reviewer on `more`"),
             (
-                self.routed([first, {**written, "to": "lead"}, more, good]),
-                "a route to lead, the orchestrator",
+                self.routed([first, {**written, "to": "write"}, more, good]),
+                "a route to write, the orchestrator",
             ),
             (
                 self.routed([first, written, {**more, "to": "planner"}, good]),
@@ -283,8 +282,8 @@ class TestRoutes(RoutesTest):
         ):
             with self.subTest(said=said):
                 # Given: routes of one route, a first route on a result or none, two first
-                # routes, one from lead on a result, one with no `on`, two on one result, one to
-                # lead, one to a subagent nothing is routed from, none to the end, a name no
+                # routes, one from write on a result, one with no `on`, two on one result, one to
+                # write, one to a subagent nothing is routed from, none to the end, a name no
                 # hook can carry, or one no file gives
                 # When: the proposal is read
                 # Then: it is refused, saying which
@@ -316,7 +315,7 @@ class TestRoutes(RoutesTest):
                 {"writer": ["written"]},
                 "gives reviewer in `fan_out`, whose results `more` and `good`",
             ),
-            (["lead"], ["more", "good"], "gives lead in `fan_out`, which no route starts"),
+            (["write"], ["more", "good"], "gives write in `fan_out`, which no route starts"),
             (["editor"], ["more", "good"], "gives editor in `fan_out`, which no route starts"),
             (None, ["more", "good", "more"], "gives `more` twice in an order of results"),
             (None, ["more", "done"], "gives `done` in an order of results, which no route is on"),
@@ -334,7 +333,7 @@ class TestRoutes(RoutesTest):
         ):
             with self.subTest(fan_out=fan_out, precedence=precedence):
                 # Given: reviewer fanned out with no order of its results, one not holding
-                # each, an order of another's alone; lead or a subagent no route starts fanned
+                # each, an order of another's alone; write or a subagent no route starts fanned
                 # out; an order naming a result twice, one no route is on, one no route from
                 # its subagent is on, or a subagent no route is from; or an order in no list
                 given = dict(helpers.ROUTES)
@@ -345,44 +344,86 @@ class TestRoutes(RoutesTest):
                 self.assertIn(said, self.refused({"plugin": "changelog", "routes": given}))
 
     def test_routes_on_files_that_cannot_hold_them_are_refused(self):
+        skill = os.path.join("skills", "write", "SKILL.md")
         for file, text, step, said in (
-            ("lead.md", helpers.LEAD, 3, "gives step 3, which the Steps of lead do not have"),
+            (skill, helpers.SKILL, 3, "gives step 3, which the Steps of write do not have"),
+            (skill, None, 1, "gives write to start the routes, which no skills/write/SKILL.md"),
             (
-                "lead.md",
-                helpers.LEAD.replace("tools: Agent", "tools: Read, Grep"),
-                1,
-                "whose file names its tools without Agent",
-            ),
-            (
-                "reviewer.md",
+                os.path.join("agents", "reviewer.md"),
                 helpers.REVIEWER.replace("background: true\n", ""),
                 1,
                 "reviewer, whose file agents/reviewer.md does not set `background: true`",
             ),
             (
-                "reviewer.md",
+                os.path.join("agents", "reviewer.md"),
                 helpers.REVIEWER.replace("background: true", "background: false"),
                 1,
                 "reviewer, whose file agents/reviewer.md does not set `background: true`",
             ),
             (
-                "reviewer.md",
+                os.path.join("agents", "reviewer.md"),
                 "---\nname: reviewer\n---\n",
                 1,
                 "reviewer, whose file has no step to end by its result",
             ),
         ):
             with self.subTest(said=said):
-                # Given: the routes laid on a step lead does not have, lead naming its tools
-                # without Agent, reviewer not set to run in the background, or with no steps
+                # Given: the routes laid on a step the skill write does not have, or on no
+                # skill's file; reviewer not set to run in the background, or with no steps
                 self.setUp()
-                self.write(os.path.join(self.plugin, "agents", file), text)
+                if text is None:
+                    os.remove(self.skill_file)
+                else:
+                    self.write(os.path.join(self.plugin, file), text)
                 given = {"plugin": "changelog", "routes": {**helpers.ROUTES, "step": step}}
                 # When: the proposal is read
                 # Then: it is refused, saying why
                 told = self.refused(given)
                 self.assertIn(said, told)
                 self.assertIn(os.path.join(helpers.LANE, "docs", "routes.md"), told)
+
+    def test_a_skill_named_by_no_name_is_refused(self):
+        # Given: routes from a skill named with a blank
+        given = {
+            **helpers.ROUTES,
+            "orchestrator": "a b",
+            "routes": [{"from": "a b", "to": "writer"}, *helpers.ROUTES["routes"][1:]],
+        }
+        # When: the proposal is read
+        # Then: it is refused, as no command can name the skill
+        self.assertIn(
+            "gives a skill no name", self.refused({"plugin": "changelog", "routes": given})
+        )
+
+    def test_a_skill_whose_part_is_not_there_is_refused(self):
+        # Given: the skill write naming its part, which is not there
+        self.write(
+            self.skill_file,
+            "---\nname: write\n---\n\nRead `${CLAUDE_PLUGIN_ROOT}/core/roles/orchestrator.md`.\n",
+        )
+        # When: the routes are proposed
+        # Then: they are refused, naming the part
+        self.assertIn(
+            "gives write, whose skill names its part core/roles/orchestrator.md, which is not"
+            " there",
+            self.refused({"plugin": "changelog", "routes": helpers.ROUTES}),
+        )
+
+    def test_a_skills_steps_are_read_from_its_part_under_core_roles(self):
+        # Given: the skill write naming its part, whose step 1 the routes are laid on
+        self.write(
+            self.skill_file,
+            "---\nname: write\n---\n\nRead"
+            " `${CLAUDE_PLUGIN_ROOT}/core/roles/orchestrator.md` whole first.\n",
+        )
+        self.write(
+            os.path.join(self.plugin, "core", "roles", "orchestrator.md"),
+            "## Steps\n\n1. Have the entries written.\n",
+        )
+        self.propose({"plugin": "changelog", "routes": helpers.ROUTES})
+        # When: the proposal is read
+        # Then: its routes are read
+        self.assertEqual(proposal.proposal(helpers.PROPOSED)["routes"], helpers.ROUTES)
 
     def test_a_routed_subagent_not_set_to_run_in_the_background_is_told_how_to_set_it(self):
         # Given: reviewer's file not setting `background: true`
@@ -401,16 +442,16 @@ class TestRoutes(RoutesTest):
             told,
         )
 
-    def test_only_the_orchestrator_needs_its_step_and_agent(self):
-        # Given: routes from lead to editor, a name before lead's, and reviewer, a name after,
-        # neither having lead's step 1 nor naming Agent among its tools
+    def test_only_the_skill_needs_its_step(self):
+        # Given: routes from write to editor, a name before write's, and reviewer, a name after,
+        # neither having write's step 1
         other = "---\nname: {name}\ntools: Read\nbackground: true\n---\n\n## Steps\n\n2. Check.\n"
         for name in ("editor", "reviewer"):
             self.write(os.path.join(self.plugin, "agents", f"{name}.md"), other.format(name=name))
         given = {
             **helpers.ROUTES,
             "routes": [
-                {"from": "lead", "to": "editor"},
+                {"from": "write", "to": "editor"},
                 {"from": "editor", "on": "edited", "to": "reviewer"},
                 {"from": "reviewer", "on": "good"},
             ],
@@ -419,17 +460,6 @@ class TestRoutes(RoutesTest):
         # When: the proposal is read
         # Then: its routes are read
         self.assertEqual(proposal.proposal(helpers.PROPOSED)["routes"], given)
-
-    def test_an_orchestrator_naming_agent_among_its_tools_or_none_is_read(self):
-        for tools in ("tools: Read, Agent(writer, reviewer)", "tools: Agent, Read", None):
-            with self.subTest(tools=tools):
-                # Given: lead naming Agent, limited or among others, or naming no tools
-                text = helpers.LEAD.replace("tools: Agent\n", f"{tools}\n" if tools else "")
-                self.write(self.lead, text)
-                self.propose({"plugin": "changelog", "routes": helpers.ROUTES})
-                # When: the proposal is read
-                # Then: its routes are read
-                self.assertEqual(proposal.proposal(helpers.PROPOSED)["routes"], helpers.ROUTES)
 
 
 class TestRefused(ProposalTest):

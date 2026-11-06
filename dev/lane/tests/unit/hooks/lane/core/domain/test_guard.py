@@ -1,8 +1,9 @@
 """The guard: of a tool call of a subagent with lanes laid, whether it goes through or which
 sentences stop it, judged from the call's documented input alone; of a subagent the routes name,
-each start of the orchestrator's and each result given, the next start told as it starts and as
-each start comes back, and an end kept going while it is due or no result is given; and, where it
-cannot judge, the error that says why and who must fix it."""
+each result given, and its end kept going while no result is given; of the main conversation, a
+run of the skill the routes name begun, each start of it checked and told the wait, each end told
+the next start, and the end of a turn kept going once while a start is due; and, where it cannot
+judge, the error that says why and who must fix it."""
 
 import json
 import os
@@ -233,38 +234,278 @@ class RoutedTest(GuardTest):
         return check(self.plugin, "changelog", name, event, "")
 
     def ran(self, name: str, agent_id: str, on: str) -> None:
-        """The subagent of the name and ID started, gave the result and ended, as lead's start of it
-        comes back."""
+        """The subagent of the name and ID started, gave the result and ended."""
         self.told(guard.started, self.subagent("SubagentStart", name, agent_id), name)
         command = f"python3 {self.plugin}/hooks/lane/result.py {name} {on}"
         self.told(guard.came_back, self.came_back(command, f"changelog:{name}", agent_id), name)
         self.told(guard.stopping, self.subagent("SubagentStop", name, agent_id), name)
 
-    def started_by_lead(self, name: str, back: object) -> list:
-        """What lead is told as its start of the subagent of the name comes back with what it gave
-        back."""
-        return self.told(guard.came_back, self.start(name, "PostToolUse", back), "lead")
+    def main(self, event: dict, wrong: str = "") -> list:
+        """What the main conversation is told of the event, by the guard's check of its kind."""
+        return guard.MAIN[event["hook_event_name"]](self.plugin, "changelog", event, wrong)
+
+    def begun(self) -> list:
+        """The run begun by `/changelog:write` typed: what the main conversation is told."""
+        return self.main(self.expansion())
+
+    def launched(self, name: str, agent_id: str) -> list:
+        """The main conversation's start of the subagent of the name: what its PreToolUse is told,
+        then, launched in the background with the ID, what its PostToolUse is told."""
+        before = self.main(self.start(name))
+        return before + self.main(self.start(name, "PostToolUse", helpers.back(agent_id, LAUNCHED)))
+
+    def through(self, name: str, agent_id: str, on: str) -> list:
+        """The subagent of the name started by the main conversation, giving the result and ending,
+        and its task-notification reaching the main conversation: what that is told."""
+        self.launched(name, agent_id)
+        self.ran(name, agent_id, on)
+        return self.main(self.notified(agent_id))
+
+
+# What an Agent call of a subagent run in the background gives back as its status.
+LAUNCHED = "async_launched"
+WAIT_WRITER = "Wait for `changelog:writer` to end: you are told the next start once it has."
+
+
+class TestRunBegun(RoutedTest):
+    def test_the_skills_command_typed_begins_the_run_telling_the_first_start(self):
+        # Given: the routes laid from write
+        # When: `/changelog:write` is typed, and again while the run is on
+        first, again = self.begun(), self.begun()
+        # Then: the first start is told, and the second begins no run
+        self.assertEqual(first, [guard.Said("Start `changelog:writer`.")])
+        self.assertEqual(again, [])
+
+    def test_the_skill_called_by_an_ai_begins_the_run_telling_the_first_start(self):
+        # Given: the routes laid from write
+        # When: the Skill call of changelog:write comes back
+        told = self.main(self.skill_call("changelog:write", "PostToolUse"))
+        # Then: the first start is told
+        self.assertEqual(told, [guard.Said("Start `changelog:writer`.")])
+
+    def test_another_command_or_skill_begins_no_run(self):
+        for event in (
+            self.expansion("changelog:other"),
+            self.expansion("other:write"),
+            self.skill_call("other:write", "PostToolUse"),
+            {**self.skill_call("changelog:write", "PostToolUse"), "tool_response": "done"},
+        ):
+            with self.subTest(event=event):
+                # Given: the routes laid from write
+                # When: another command is typed, another skill called, or a Skill call comes
+                # back with no commandName
+                # Then: nothing is told, and no run begins
+                self.assertEqual(self.main(event), [])
+                self.assertFalse(called.begun(helpers.KEPT))
+
+    def test_outside_a_run_nothing_of_the_main_conversation_is_touched(self):
+        # Given: the routes laid, and no run begun
+        # When: the main conversation starts reviewer, its start comes back, it is prompted, and
+        # it ends its turn
+        told = [
+            self.main(self.start("reviewer")),
+            self.main(self.start("reviewer", "PostToolUse", helpers.back("r1", LAUNCHED))),
+            self.main(self.prompt()),
+            self.main(self.turn()),
+        ]
+        # Then: nothing is told, and nothing is kept
+        self.assertEqual(told, [[], [], [], []])
+        self.assertEqual(called.kept(helpers.KEPT, called.RUN), [])
+
+    def test_with_no_routes_laid_the_main_conversation_is_never_held(self):
+        # Given: the README's lanes alone laid
+        self.lay()
+        # When: `/changelog:write` is typed
+        # Then: nothing is told
+        self.assertEqual(self.begun(), [])
+
+    def test_an_event_with_no_session_is_left_alone(self):
+        # Given: the routes laid
+        # When: the command's expansion comes with no session, or one no ID names
+        for session in (None, "../x"):
+            event = {**self.expansion(), "session_id": session}
+            # Then: nothing is told
+            self.assertEqual(self.main(event), [])
+
+
+class TestStarts(RoutedTest):
+    def setUp(self) -> None:
+        super().setUp()
+        self.begun()
+
+    def test_the_start_due_goes_through_and_any_other_start_is_stopped_with_it(self):
+        for event, told in (
+            (self.start("writer"), []),
+            (self.start("reviewer"), [guard.Said(helpers.FOLLOW), guard.Said(START_WRITER)]),
+            (self.start("planner"), [guard.Said(helpers.FOLLOW), guard.Said(START_WRITER)]),
+            (self.start("checker:examiner"), []),
+            (self.event("Agent", {"prompt": "p", "subagent_type": "Explore"}, None), []),
+            (self.bash("git commit", None), []),
+            (self.skill_call("other:check"), []),
+        ):
+            with self.subTest(event=event["tool_input"]):
+                # Given: the run begun, writer due
+                # When: the main conversation starts writer, reviewer, a subagent of changelog
+                # the routes do not name, another plugin's subagent, makes another call, or calls
+                # a skill the routes do not name
+                # Then: only a start of changelog's other than writer is stopped, told the
+                # sentence and the start due; the user's own calls go on
+                self.assertEqual(self.main(event), told)
+
+    def test_each_start_coming_back_tells_the_wait_and_each_end_the_next_start(self):
+        # Given: the run begun, writer due
+        # When: writer is started, gives `written` and ends, and its end reaches the main
+        # conversation
+        started = self.launched("writer", "w1")
+        meanwhile = self.main(self.start("reviewer"))
+        self.ran("writer", "w1", "written")
+        told = self.main(self.notified("w1"))
+        # Then: the start is told to wait, a start meanwhile is stopped with the wait, and the
+        # end tells the next start by the result given
+        self.assertEqual(started, [guard.Said(WAIT_WRITER)])
+        self.assertEqual(meanwhile, [guard.Said(helpers.FOLLOW), guard.Said(WAIT_WRITER)])
+        self.assertEqual(told, [guard.Said("writer gave `written`. Start `changelog:reviewer`.")])
+
+    def test_a_route_that_starts_no_more_ends_the_run_once_told(self):
+        # Given: writer gave `written`
+        self.through("writer", "w1", "written")
+        # When: reviewer gives `good`, and its end reaches the main conversation, then another
+        # prompt
+        told = self.through("reviewer", "r1", "good")
+        again = self.main(self.prompt())
+        # Then: no more starts are told, once, and the run is over: a start goes on, and an end
+        # of a turn is let end
+        self.assertEqual(told, [guard.Said("reviewer gave `good`. Start no more subagents.")])
+        self.assertEqual(again, [])
+        self.assertEqual(self.main(self.start("reviewer")), [])
+        self.assertEqual(self.main(self.turn()), [])
+        # And: the skill typed again begins a new run
+        self.assertEqual(self.begun(), [guard.Said("Start `changelog:writer`.")])
+
+    def test_a_start_not_given_back_as_claude_code_gives_it_is_an_error_and_stays_due(self):
+        for back in ({"status": "running", "agentId": "w1"}, {"status": LAUNCHED}, "done"):
+            with self.subTest(back=back):
+                # Given: the run begun, writer due
+                # When: writer's start comes back with a status Claude Code gives no start, with
+                # no ID, or with no object
+                told = self.main(self.start("writer", "PostToolUse", back))
+                # Then: it is an error for Claude Code, and writer's start stays due
+                self.assertTrue(told[0].error)
+                self.assertIn("$.tool_response", told[0].text)
+                self.assertEqual(told[1:], [guard.Said(START_WRITER)])
+
+    def test_a_call_of_the_main_conversation_coming_back_in_the_run_tells_nothing(self):
+        # Given: the run begun, writer due
+        # When: a Bash call of the main conversation comes back
+        back = {**self.bash("ls", None, "PostToolUse"), "tool_response": {"stdout": ""}}
+        # Then: nothing is told, and nothing is kept
+        self.assertEqual(self.main(back), [])
+        self.assertEqual(called.calls(helpers.KEPT, called.RUN), [])
+
+    def test_a_start_coming_back_once_the_run_is_over_is_kept_out_of_it(self):
+        # Given: the run over, reviewer having given `good`
+        self.through("writer", "w1", "written")
+        self.through("reviewer", "r1", "good")
+        # When: a start of writer comes back
+        told = self.main(self.start("writer", "PostToolUse", helpers.back("w2", LAUNCHED)))
+        # Then: nothing is told, and it is not kept as a start of the run
+        self.assertEqual(told, [])
+        self.assertEqual(len(called.starts(helpers.KEPT, called.RUN, ["writer"], "changelog")), 1)
+
+
+START_WRITER = "Start `changelog:writer`."
+AGAIN_WRITER = "writer ended with no result. Start `changelog:writer` again."
+
+
+class TestTurn(RoutedTest):
+    def setUp(self) -> None:
+        super().setUp()
+        self.begun()
+
+    def test_a_turn_ending_with_a_start_due_is_kept_going_once_then_let_end(self):
+        # Given: the run begun, writer due
+        # When: the main conversation ends its turn, and, kept going, ends it again
+        kept, ended = self.main(self.turn()), self.main(self.turn(True))
+        # Then: it is kept going once with the sentence and the start due, then let end, the user
+        # told the start left and the step to fix
+        self.assertEqual(kept, [guard.Said(helpers.FOLLOW), guard.Said(START_WRITER)])
+        left = (
+            "lane let the run of write end with `changelog:writer` still due: the maker of"
+            " changelog must fix step 1 of write in skills/write/SKILL.md, which starts it."
+        )
+        self.assertEqual(ended, [guard.Said(left, note=True)])
+        # And: the run is over, so a start goes on
+        self.assertEqual(self.main(self.start("reviewer")), [])
+
+    def test_a_turn_ending_while_a_start_of_the_run_still_runs_ends(self):
+        # Given: writer started, still running
+        self.launched("writer", "w1")
+        # When: the main conversation ends its turn
+        # Then: it ends
+        self.assertEqual(self.main(self.turn()), [])
+
+    def test_a_subagent_ended_with_no_result_is_started_again_and_not_resumed(self):
+        # Given: writer started, ending with no result once kept going
+        self.launched("writer", "w1")
+        self.told(guard.started, self.subagent("SubagentStart", "writer", "w1"), "writer")
+        for active in (False, True):
+            stop = self.subagent("SubagentStop", "writer", "w1", active)
+            self.told(guard.stopping, stop, "writer")
+        # When: its end reaches the main conversation, which sends it a message, and then
+        # starts writer again
+        told = self.main(self.notified("w1"))
+        message = self.event("SendMessage", {"to": "w1", "message": "Go on."}, None)
+        resumed = self.main(message)
+        again = self.launched("writer", "w2")
+        # Then: it is told to start writer again, the message is stopped with that start, and
+        # the start goes through, joined to the first in its place
+        self.assertEqual(told, [guard.Said(AGAIN_WRITER)])
+        self.assertEqual(resumed, [guard.Said(helpers.FOLLOW), guard.Said(AGAIN_WRITER)])
+        self.assertEqual(again, [guard.Said(WAIT_WRITER)])
+        joined = [c.get("joined") for c in called.calls(helpers.KEPT, called.RUN)]
+        self.assertEqual(joined, [None, "again"])
+        # And: a message to it after is stopped with the wait, and one to writer's second start
+        # goes through
+        stopped = [guard.Said(helpers.FOLLOW), guard.Said(WAIT_WRITER)]
+        self.assertEqual(self.main(message), stopped)
+        other = self.event("SendMessage", {"to": "w2", "message": "Go on."}, None)
+        self.assertEqual(self.main(other), [])
+
+    def test_the_run_let_end_with_a_subagent_due_again_names_its_last_step(self):
+        # Given: writer ended with no result, so it is due again
+        self.launched("writer", "w1")
+        self.told(guard.started, self.subagent("SubagentStart", "writer", "w1"), "writer")
+        for active in (False, True):
+            self.told(
+                guard.stopping, self.subagent("SubagentStop", "writer", "w1", active), "writer"
+            )
+        # When: the main conversation, kept going once, ends its turn again
+        self.main(self.turn())
+        ended = self.main(self.turn(True))
+        # Then: the user is told to fix writer's last step, which gives its result
+        left = (
+            "lane let the run of write end with `changelog:writer` still due, as writer ended"
+            " with no result: the maker of changelog must fix step 4 of writer in"
+            " agents/writer.md, which gives its result."
+        )
+        self.assertEqual(ended, [guard.Said(left, note=True)])
 
 
 class TestResumed(RoutedTest):
-    """A run resumed with SendMessage after it gave a result, which gives another: the later result
-    moves the routes on, as docs/routes.md's How a subagent gives its result says."""
+    """A start resumed with SendMessage after it gave a result, which gives another: the later
+    result moves the routes on, as docs/routes.md's How a subagent gives its result says."""
 
     def setUp(self) -> None:
         super().setUp()
-        self.started_by_lead("writer", helpers.back("w1", "async_launched"))
-        self.ran("writer", "w1", "written")
-        self.started_by_lead("reviewer", helpers.back("r1", "async_launched"))
-        self.ran("reviewer", "r1", "good")
+        self.begun()
+        self.through("writer", "w1", "written")
+        self.told_end = self.through("reviewer", "r1", "good")
         self.message = self.event("SendMessage", {"to": "r1", "message": "Look again."}, None)
 
-    def lead_told(self) -> list:
-        """What lead is told as it starts again."""
-        return self.told(guard.started, self.subagent("SubagentStart", "lead", "lead1"), "lead")
-
-    def resumed(self, again: bool) -> None:
+    def resumed(self, again: bool) -> list:
         """reviewer, which gave `good`, resumed by the main conversation, started again where
-        `again`, as Claude Code may start a resumed run, giving `more` and ending."""
+        `again`, giving `more` and ending: what its end tells the main conversation."""
+        self.assertEqual(self.main(self.message), [])
         guard.handed("changelog", self.message, "PreToolUse")
         if again:
             start = self.subagent("SubagentStart", "reviewer", "r1")
@@ -273,45 +514,33 @@ class TestResumed(RoutedTest):
         back = self.came_back(command, "changelog:reviewer", "r1")
         self.told(guard.came_back, back, "reviewer")
         self.told(guard.stopping, self.subagent("SubagentStop", "reviewer", "r1"), "reviewer")
+        return self.main(self.notified("r1"))
 
-    def test_before_the_resume_lead_is_told_to_start_no_more(self):
-        # Given: reviewer gave `good`
-        # When: lead starts again
-        # Then: it is told to start no more
-        said = guard.Said("reviewer gave `good`. Start no more subagents.")
-        self.assertEqual(self.lead_told()[-1], said)
+    def test_a_later_result_of_the_resumed_start_moves_the_routes_on(self):
+        for again in (True, False):
+            with self.subTest(again=again):
+                # Given: reviewer gave `good`, so no more starts were told
+                self.setUp()
+                self.assertEqual(
+                    self.told_end, [guard.Said("reviewer gave `good`. Start no more subagents.")]
+                )
+                # When: reviewer is resumed, started again or not, and gives `more`
+                told = self.resumed(again)
+                # Then: the main conversation is told to start writer, and its start goes
+                # through
+                said = guard.Said("reviewer gave `more`. Start `changelog:writer`.")
+                self.assertEqual(told, [said])
+                self.assertEqual(self.main(self.start("writer")), [])
 
-    def test_a_later_result_of_the_resumed_run_moves_the_routes_on(self):
-        # Given: reviewer gave `good`, so lead was told to start no more
-        # When: reviewer is resumed, started again, and gives `more`
-        self.resumed(True)
-        # Then: lead is told to start writer, as reviewer's route on `more` says, and its start of
-        # writer goes through
-        said = guard.Said("reviewer gave `more`. Start `changelog:writer`.")
-        self.assertEqual(self.lead_told()[-1], said)
-        self.assertEqual(self.told(guard.check, self.start("writer"), "lead"), [])
-
-    def test_a_later_result_moves_the_routes_on_with_no_start_of_the_resumed_run(self):
-        # Given: reviewer gave `good`
-        # When: reviewer is resumed with no SubagentStart, and gives `more`
-        self.resumed(False)
-        # Then: lead is told to start writer all the same
-        said = guard.Said("reviewer gave `more`. Start `changelog:writer`.")
-        self.assertEqual(self.lead_told()[-1], said)
-
-    def test_while_the_resumed_run_goes_on_lead_waits_for_it(self):
+    def test_while_the_resumed_start_goes_on_the_main_conversation_waits_for_it(self):
         # Given: reviewer, which gave `good`, resumed and started again
         guard.handed("changelog", self.message, "PreToolUse")
         self.told(guard.started, self.subagent("SubagentStart", "reviewer", "r1"), "reviewer")
-        # When: lead starts writer meanwhile
-        told = self.told(guard.check, self.start("writer"), "lead")
+        # When: the main conversation starts writer meanwhile
+        told = self.main(self.start("writer"))
         # Then: it is told to wait for reviewer
-        self.assertIn(
-            guard.Said(
-                "Wait for `changelog:reviewer` to end: you are told the next start once it has."
-            ),
-            told,
-        )
+        wait = "Wait for `changelog:reviewer` to end: you are told the next start once it has."
+        self.assertEqual(told, [guard.Said(helpers.FOLLOW), guard.Said(wait)])
 
 
 class TestRoutedDependency(RoutedTest):
@@ -328,16 +557,29 @@ class TestRoutedDependency(RoutedTest):
         """examiner's result command on the result, checker's folder put in."""
         return f"python3 {self.folder}/hooks/lane/result.py examiner {on}"
 
-    def test_lead_is_told_to_start_examiner_after_written_and_its_start_goes_through(self):
-        # Given: writer, started by lead, gave `written`
-        self.started_by_lead("writer", helpers.back("w1", "async_launched"))
-        self.ran("writer", "w1", "written")
-        # When: lead starts again, and starts examiner
-        told = self.told(guard.started, self.subagent("SubagentStart", "lead", "lead1"), "lead")
-        start = self.told(guard.check, self.start("checker:examiner"), "lead")
-        # Then: it is told to start examiner by its type, and the start goes through
-        self.assertEqual(told[-1], guard.Said("writer gave `written`. Start `checker:examiner`."))
-        self.assertEqual(start, [])
+    def test_examiner_is_started_after_written_and_its_result_leads_on(self):
+        # Given: the run begun, and writer gave `written`
+        self.begun()
+        told = self.through("writer", "w1", "written")
+        # When: examiner is started, gives `asks` by checker's script, and ends
+        start = self.launched("checker:examiner", "e1")
+        name = "checker:examiner"
+        self.told(guard.started, self.subagent("SubagentStart", name, "e1"), name)
+        back = self.came_back(self.examined("asks"), name, "e1")
+        self.assertEqual(self.told(guard.came_back, back, name), [])
+        self.assertEqual(
+            self.told(guard.stopping, self.subagent("SubagentStop", name, "e1"), name), []
+        )
+        # Then: examiner is told by its type, its start goes through, its result is kept in
+        # changelog's record, and its end tells no more starts
+        self.assertEqual(told, [guard.Said("writer gave `written`. Start `checker:examiner`.")])
+        wait = "Wait for `checker:examiner` to end: you are told the next start once it has."
+        self.assertEqual(start, [guard.Said(wait)])
+        self.assertEqual(called.result(helpers.KEPT, "e1"), "asks")
+        self.assertEqual(
+            self.main(self.notified("e1")),
+            [guard.Said("checker:examiner gave `asks`. Start no more subagents.")],
+        )
 
     def test_examiners_calls_are_left_to_its_own_plugins_guard(self):
         # Given: examiner, whose calls changelog lays no lane on
@@ -345,26 +587,6 @@ class TestRoutedDependency(RoutedTest):
         # When: it runs a command
         # Then: changelog's guard tells it nothing
         self.assertEqual(self.told(guard.check, event, "checker:examiner"), [])
-
-    def test_examiners_result_by_its_plugins_script_is_kept_and_leads_lead_on(self):
-        # Given: lead started writer, which gave `written`, then examiner
-        self.started_by_lead("writer", helpers.back("w1", "async_launched"))
-        self.ran("writer", "w1", "written")
-        self.started_by_lead("checker:examiner", helpers.back("e1", "async_launched"))
-        name = "checker:examiner"
-        # When: examiner starts, gives `asks` by checker's script, and ends
-        self.told(guard.started, self.subagent("SubagentStart", name, "e1"), name)
-        back = self.came_back(self.examined("asks"), name, "e1")
-        self.assertEqual(self.told(guard.came_back, back, name), [])
-        self.assertEqual(
-            self.told(guard.stopping, self.subagent("SubagentStop", name, "e1"), name), []
-        )
-        # Then: its result is kept in changelog's record, and lead is told to start no more
-        self.assertEqual(called.result(helpers.KEPT, "e1"), "asks")
-        told = self.told(guard.started, self.subagent("SubagentStart", "lead", "lead1"), "lead")
-        self.assertEqual(
-            told[-1], guard.Said("checker:examiner gave `asks`. Start no more subagents.")
-        )
 
     def test_a_command_no_route_from_examiner_is_on_keeps_no_result(self):
         for command in (
@@ -399,30 +621,33 @@ class TestRoutedDependency(RoutedTest):
         self.assertEqual(again, [])
         self.assertTrue(called.ended(helpers.KEPT, "e1"))
 
-    def test_lead_let_end_with_examiner_due_again_tells_whose_fix_it_is(self):
-        # Given: examiner started by lead, ending with no result, kept going once
+    def test_the_run_let_end_with_examiner_due_again_tells_whose_fix_it_is(self):
+        # Given: examiner started in the run, ending with no result, kept going once
+        self.begun()
+        self.through("writer", "w1", "written")
         name = "checker:examiner"
+        self.launched(name, "e1")
         self.told(guard.started, self.subagent("SubagentStart", name, "e1"), name)
         for active in (False, True):
             self.told(guard.stopping, self.subagent("SubagentStop", name, "e1", active), name)
-        self.started_by_lead(name, helpers.back("e1"))
-        # When: lead, kept going once with examiner due again, is about to end again
-        stop = self.subagent("SubagentStop", "lead", "lead1", active=True)
-        # Then: the operator is told the maker of checker or of changelog must fix it
+        # When: the main conversation, kept going once with examiner due again, ends its turn
+        # again
+        self.main(self.turn())
+        ended = self.main(self.turn(True))
+        # Then: the user is told the maker of checker or of changelog must fix it
         said = (
-            "lane let lead end with `checker:examiner` still due, as checker:examiner ended with"
-            " no result the routes take: the maker of checker must have examiner give `asks` or"
-            " `done`, or the maker of changelog must route the result it gives."
+            "lane let the run of write end with `checker:examiner` still due, as checker:examiner"
+            " ended with no result the routes take: the maker of checker must have examiner give"
+            " `asks` or `done`, or the maker of changelog must route the result it gives."
         )
-        self.assertEqual(self.told(guard.stopping, stop, "lead"), [guard.Said(said, note=True)])
+        self.assertEqual(ended, [guard.Said(said, note=True)])
 
     def test_another_plugins_subagent_is_left_alone_where_lanes_json_cannot_be_read(self):
         # Given: hooks/lanes.json removed
         os.remove(os.path.join(self.plugin, "hooks", "lanes.json"))
         # When: examiner is about to end
         event = self.subagent("SubagentStop", "checker:examiner", "e1")
-        # Then: changelog's guard tells it nothing, as whether the routes name it cannot be read,
-        # and changelog's own subagents are told the error
+        # Then: changelog's guard tells it nothing, as whether the routes name it cannot be read
         self.assertEqual(self.told(guard.stopping, event, "checker:examiner"), [])
 
     def test_a_dependencys_subagent_the_routes_do_not_name_is_left_alone(self):
@@ -434,226 +659,97 @@ class TestRoutedDependency(RoutedTest):
         self.assertEqual(called.kept(helpers.KEPT, "x1"), [])
 
 
-class TestFollow(RoutedTest):
-    def test_lead_is_told_the_first_start_as_it_starts(self):
-        # Given: the routes laid
-        # When: lead starts
-        # Then: it is told to start writer
-        told = self.told(guard.started, self.subagent("SubagentStart", "lead", "lead1"), "lead")
-        self.assertEqual(told, [guard.Said("Start `changelog:writer`.")])
+# Routes from writer to checker's skill check, which gives `done` by checker's result script in the
+# main conversation, ending the run.
+SKILL_ROUTES = {
+    "orchestrator": "write",
+    "step": 1,
+    "routes": [
+        {"from": "write", "to": "writer"},
+        {"from": "writer", "on": "written", "to": "checker:check"},
+        {"from": "checker:check", "on": "done", "to": "reviewer"},
+        {"from": "reviewer", "on": "good"},
+    ],
+}
 
-    def test_the_start_due_goes_through_and_any_other_call_is_stopped_telling_it(self):
-        for event, through in (
-            (self.start("writer"), True),
-            (self.start("reviewer"), False),
-            (
-                self.event(
-                    "Read", {"file_path": "CHANGELOG.md"}, "changelog:lead", agent_id="lead1"
-                ),
-                False,
+
+class TestDependencysSkill(RoutedTest):
+    """A dependency's skill the routes name, checker's check: one move, begun by its Skill call and
+    ended by the run of checker's result script in the main conversation, changelog's guard
+    checking nothing meanwhile."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.depend()
+        laid = self.read_json(os.path.join(self.plugin, "hooks", "lanes.json"))
+        self.write_json(
+            os.path.join(self.plugin, "hooks", "lanes.json"), {**laid, "routes": SKILL_ROUTES}
+        )
+        self.folder = os.path.join(self.base, "checker")
+        self.begun()
+        self.told_due = self.through("writer", "w1", "written")
+
+    def checked(self, on: str) -> dict:
+        """The main conversation's run of checker's result script giving the result for check,
+        come back."""
+        command = f"python3 {self.folder}/hooks/lane/result.py check {on}"
+        return {**self.bash(command, None, "PostToolUse"), "tool_response": {"stdout": ""}}
+
+    def test_the_skill_due_is_called_and_its_result_leads_on(self):
+        # Given: writer gave `written`, so check is due
+        # When: the main conversation calls check, which starts a subagent of checker's, ends its
+        # turn and is prompted meanwhile, then runs checker's result script giving `done`
+        call = self.main(self.skill_call("checker:check"))
+        begun = self.main(self.skill_call("checker:check", "PostToolUse"))
+        meanwhile = [
+            self.main(self.start("checker:examiner")),
+            self.main(self.start("reviewer")),
+            self.main(self.turn()),
+            self.main(self.prompt()),
+            self.main({**self.bash("ls", None, "PostToolUse"), "tool_response": {}}),
+            self.main(
+                {**self.event("Read", {"file_path": "a"}, None, "PostToolUse"), "tool_response": {}}
             ),
-        ):
-            with self.subTest(event=event):
-                # Given: no start yet, so writer due
-                # When: lead starts writer, starts reviewer, or reads a file
-                told = self.told(guard.check, event, "lead")
-                # Then: writer's start goes through, and the others are stopped with the
-                # sentence and the start due
-                due = [guard.Said(helpers.FOLLOW), guard.Said("Start `changelog:writer`.")]
-                self.assertEqual(told, [] if through else due)
-
-    def test_each_start_coming_back_tells_the_next_by_the_result_given(self):
-        # Given: writer run, giving `written`
-        self.ran("writer", "w1", "written")
-        # When: lead's start of it comes back
-        # Then: lead is told to start reviewer
-        told = self.started_by_lead("writer", helpers.back("w1"))
-        self.assertEqual(told, [guard.Said("writer gave `written`. Start `changelog:reviewer`.")])
-        # And: reviewer run, giving `good`, lead is told to start no more
-        self.ran("reviewer", "r1", "good")
-        told = self.started_by_lead("reviewer", helpers.back("r1"))
-        self.assertEqual(told, [guard.Said("reviewer gave `good`. Start no more subagents.")])
-        # And: lead is free after
-        self.assertEqual(self.told(guard.check, self.start("reviewer"), "lead"), [])
-        later = self.started_by_lead("writer", helpers.back("w2"))
-        self.assertEqual(later, [])
-
-    def test_a_start_in_the_background_is_waited_for_and_other_starts_stopped(self):
-        # Given: lead's start of writer launched in the background
-        told = self.started_by_lead("writer", helpers.back("w1", "async_launched"))
-        wait = "Wait for `changelog:writer` to end: you are told the next start once it has."
-        # Then: lead is told to wait
-        self.assertEqual(told, [guard.Said(wait)])
-        # When: lead starts reviewer, reads a file, or is about to end
-        # Then: the start is stopped telling it to wait, and the read and the end go on
-        stopped = self.told(guard.check, self.start("reviewer"), "lead")
-        self.assertEqual(stopped, [guard.Said(helpers.FOLLOW), guard.Said(wait)])
-        read = self.event("Read", {"file_path": "CHANGELOG.md"}, "changelog:lead", agent_id="lead1")
-        self.assertEqual(self.told(guard.check, read, "lead"), [])
-        stop = self.subagent("SubagentStop", "lead", "lead1")
-        self.assertEqual(self.told(guard.stopping, stop, "lead"), [])
-        # And: once writer has ended with `written`, lead started again is told reviewer
-        self.ran("writer", "w1", "written")
-        again = self.told(guard.started, self.subagent("SubagentStart", "lead", "lead1"), "lead")
-        self.assertEqual(again, [guard.Said("writer gave `written`. Start `changelog:reviewer`.")])
-
-    def test_a_start_that_failed_tells_the_start_still_due(self):
-        # Given: lead's start of writer failed
-        event = {**self.start("writer", "PostToolUseFailure"), "error": "e", "is_interrupt": False}
-        # When: it comes back
-        # Then: lead is told writer is still due
-        told = self.told(guard.failed, event, "lead")
-        self.assertEqual(told, [guard.Said("Start `changelog:writer`.")])
-
-    def test_a_start_not_given_back_as_claude_code_gives_it_is_an_error_and_stays_due(self):
-        for back, wrong in (
-            ({"status": "teammate_spawned", "agentId": "w1"}, "$.tool_response.status: expected"),
-            ({"agentId": "w1"}, 'expected the key "status"'),
-            ({"status": "completed"}, 'expected the key "agentId"'),
-            ("done", "$.tool_response: expected an object"),
-        ):
-            with self.subTest(back=back):
-                # Given: lead's start of writer coming back with another status, none, or no ID
-                # When: it comes back
-                told = self.started_by_lead("writer", back)
-                # Then: it is an error for Claude Code, and writer is still due
-                self.assertTrue(told[0].error)
-                self.assertIn(
-                    "lane cannot check the lanes of lead: the hook was handed no event as Claude"
-                    " Code hands it, ",
-                    told[0].text,
-                )
-                self.assertIn(wrong, told[0].text)
-                self.assertEqual(told[1:], [guard.Said("Start `changelog:writer`.")])
-                self.assertEqual(called.starts(helpers.KEPT, "lead1", ["writer"], "changelog"), [])
-
-    def test_lead_about_to_end_while_a_start_is_due_is_kept_going_once(self):
-        # Given: writer due, never started
-        # When: lead is about to end
-        # Then: it is told the sentence and the start due
-        told = self.told(guard.stopping, self.subagent("SubagentStop", "lead", "lead1"), "lead")
+        ]
+        done = self.main(self.checked("done"))
+        # Then: check is told as due, its call goes through, nothing is told meanwhile, and its
+        # result tells the next start
         self.assertEqual(
-            told, [guard.Said(helpers.FOLLOW), guard.Said("Start `changelog:writer`.")]
+            self.told_due, [guard.Said("writer gave `written`. Start `checker:check`.")]
         )
-        # And: about to end again, kept going once, it ends, the operator told what is left and
-        # who must fix it, lead's step that starts it
-        again = self.subagent("SubagentStop", "lead", "lead1", active=True)
-        said = (
-            "lane let lead end with `changelog:writer` still due: the maker of changelog must fix"
-            " step 1 of lead in agents/lead.md, which starts it."
-        )
-        self.assertEqual(self.told(guard.stopping, again, "lead"), [guard.Said(said, note=True)])
-        self.assertTrue(called.ended(helpers.KEPT, "lead1"))
-
-    def test_a_subagent_ended_with_no_result_is_started_again_once_then_lead_may_end(self):
-        # Given: writer started by lead, ending with no result, kept going once
-        self.told(guard.started, self.subagent("SubagentStart", "writer", "w1"), "writer")
-        for active in (False, True):
-            stop = self.subagent("SubagentStop", "writer", "w1", active=active)
-            self.told(guard.stopping, stop, "writer")
-        # When: lead's start of it comes back
-        told = self.started_by_lead("writer", helpers.back("w1"))
-        # Then: lead is told to start it again
-        again = "writer ended with no result. Start `changelog:writer` again."
-        self.assertEqual(told, [guard.Said(again)])
-        # And: about to end, lead is kept going once with it
-        stop = self.subagent("SubagentStop", "lead", "lead1")
+        self.assertEqual((call, begun), ([], []))
+        self.assertEqual(meanwhile, [[], [], [], [], [], []])
         self.assertEqual(
-            self.told(guard.stopping, stop, "lead"), [guard.Said(helpers.FOLLOW), guard.Said(again)]
+            done, [guard.Said("checker:check gave `done`. Start `changelog:reviewer`.")]
         )
-        # And: about to end again, it ends, the operator told that writer's step giving its
-        # result must be fixed
-        stop = self.subagent("SubagentStop", "lead", "lead1", active=True)
-        said = (
-            "lane let lead end with `changelog:writer` still due, as writer ended with no result:"
-            " the maker of changelog must fix step 4 of writer in agents/writer.md, which gives its"
-            " result."
-        )
-        self.assertEqual(self.told(guard.stopping, stop, "lead"), [guard.Said(said, note=True)])
+        # And: the start of reviewer goes through
+        self.assertEqual(self.main(self.start("reviewer")), [])
 
-    def ended_with_none(self) -> None:
-        """writer started by lead, ending with no result after it was kept going once, and lead's
-        start of it come back."""
-        self.told(guard.started, self.subagent("SubagentStart", "writer", "w1"), "writer")
-        for active in (False, True):
-            stop = self.subagent("SubagentStop", "writer", "w1", active=active)
-            self.told(guard.stopping, stop, "writer")
-        self.started_by_lead("writer", helpers.back("w1"))
+    def test_the_skill_not_due_is_stopped_with_the_start_due(self):
+        # Given: check due
+        # When: the main conversation starts reviewer, or, with check given, calls check again
+        stopped = self.main(self.start("reviewer"))
+        # Then: it is stopped with the start due
+        due = "writer gave `written`. Start `checker:check`."
+        self.assertEqual(stopped, [guard.Said(helpers.FOLLOW), guard.Said(due)])
 
-    def sent(self, to: str) -> dict:
-        """lead's SendMessage call to the run of the ID."""
-        given = {"to": to, "message": "Go on."}
-        return self.event("SendMessage", given, "changelog:lead", agent_id="lead1")
+    def test_a_result_no_route_from_the_skill_is_on_ends_no_move(self):
+        # Given: check called
+        self.main(self.skill_call("checker:check", "PostToolUse"))
+        # When: checker's result script comes back giving `asks`
+        # Then: nothing is told, and the move goes on
+        self.assertEqual(self.main(self.checked("asks")), [])
+        self.assertEqual(self.main(self.start("reviewer")), [])
 
-    def test_a_message_to_a_run_ended_with_no_result_before_its_start_again_is_stopped(self):
-        # Given: writer ended with no result after it was kept going once
-        self.ended_with_none()
-        # When: lead sends a message to that run before it starts writer again
-        told = self.told(guard.check, self.sent("w1"), "lead")
-        # Then: it is denied with follow_routes' sentence and the start due
-        again = "writer ended with no result. Start `changelog:writer` again."
-        self.assertEqual(told, [guard.Said(helpers.FOLLOW), guard.Said(again)])
-
-    def test_a_message_to_a_run_ended_with_no_result_after_its_start_again_is_stopped(self):
-        # Given: writer ended with no result after it was kept going once, and lead started it
-        # again, which runs
-        self.ended_with_none()
-        self.started_by_lead("writer", helpers.back("w2", "async_launched"))
-        # When: lead sends a message to the run that ended with no result
-        told = self.told(guard.check, self.sent("w1"), "lead")
-        # Then: it is denied with follow_routes' sentence and the start due, the wait for the run
-        # started again
-        waits = "Wait for `changelog:writer` to end: you are told the next start once it has."
-        self.assertEqual(told, [guard.Said(helpers.FOLLOW), guard.Said(waits)])
-
-    def test_a_message_to_a_run_that_gave_a_result_goes_through(self):
-        # Given: writer gave `written`, and lead started reviewer, which runs
-        self.ran("writer", "w1", "written")
-        self.started_by_lead("writer", helpers.back("w1"))
-        self.started_by_lead("reviewer", helpers.back("r1", "async_launched"))
-        # When: lead sends a message to writer's run
-        # Then: it goes through, telling nothing
-        self.assertEqual(self.told(guard.check, self.sent("w1"), "lead"), [])
-
-    def test_lead_ends_once_no_start_is_left(self):
-        # Given: writer's `written` and reviewer's `good`
-        self.ran("writer", "w1", "written")
-        self.started_by_lead("writer", helpers.back("w1"))
-        self.ran("reviewer", "r1", "good")
-        self.started_by_lead("reviewer", helpers.back("r1"))
-        # When: lead is about to end
-        # Then: it ends
-        stop = self.subagent("SubagentStop", "lead", "lead1")
-        self.assertEqual(self.told(guard.stopping, stop, "lead"), [])
-
-    def test_a_subagent_the_routes_start_is_told_no_start_as_it_starts(self):
-        # Given: the routes laid, lead their orchestrator
-        # When: writer starts
-        # Then: it is told nothing, as only lead is told the starts
-        told = self.told(guard.started, self.subagent("SubagentStart", "writer", "w1"), "writer")
-        self.assertEqual(told, [])
-
-    def test_leads_other_calls_come_back_kept_telling_nothing(self):
-        # Given: writer due
-        read = self.event("Read", {"file_path": "CHANGELOG.md"}, "changelog:lead", agent_id="lead1")
-        back = {**read, "hook_event_name": "PostToolUse", "tool_response": {"file": "x"}}
-        failed = {**read, "hook_event_name": "PostToolUseFailure", "error": "e"}
-        # When: lead's read comes back, and fails
-        # Then: nothing is told, and the read is kept as a call of lead's
-        self.assertEqual(self.told(guard.came_back, back, "lead"), [])
-        self.assertEqual(self.told(guard.failed, failed, "lead"), [])
-        self.assertEqual([c["tool"] for c in called.calls(helpers.KEPT, "lead1")], ["Read"])
-
-    def test_a_start_failing_once_no_start_is_left_tells_nothing(self):
-        # Given: writer's `written` and reviewer's `good`
-        self.ran("writer", "w1", "written")
-        self.started_by_lead("writer", helpers.back("w1"))
-        self.ran("reviewer", "r1", "good")
-        self.started_by_lead("reviewer", helpers.back("r1"))
-        # When: lead's start of writer fails
-        event = {**self.start("writer", "PostToolUseFailure"), "error": "e", "is_interrupt": False}
-        # Then: nothing is told, as lead is free
-        self.assertEqual(self.told(guard.failed, event, "lead"), [])
+    def test_a_skill_call_with_no_id_is_an_error(self):
+        # Given: check due
+        # When: its call comes back with no tool_use_id
+        event = self.skill_call("checker:check", "PostToolUse")
+        del event["tool_use_id"]
+        told = self.main(event)
+        # Then: it is an error for Claude Code
+        self.assertTrue(told[0].error)
+        self.assertIn("$.tool_use_id", told[0].text)
 
 
 class TestFanOut(RoutedTest):
@@ -667,9 +763,9 @@ class TestFanOut(RoutedTest):
     def setUp(self) -> None:
         super().setUp()
         self.fan_out(["more", "good"])
-        # Given: writer run, giving `written`, so reviewer is due
-        self.ran("writer", "w1", "written")
-        self.started_by_lead("writer", helpers.back("w1"))
+        # Given: the run begun, and writer gave `written`, so reviewer is due
+        self.begun()
+        self.through("writer", "w1", "written")
 
     def fan_out(self, precedence: object) -> None:
         """Lays the routes with reviewer fanned out, its results in the order given, or none."""
@@ -678,87 +774,66 @@ class TestFanOut(RoutedTest):
         laid = {**helpers.RULES, "routes": routed}
         self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), laid)
 
-    def launched(self, *agents: str) -> list:
-        """What lead is told as each of its starts of reviewer, of the IDs, goes through and comes
-        back launched in the background, the last of them."""
-        told: list = []
-        for agent in agents:
-            self.assertEqual(self.told(guard.check, self.start("reviewer"), "lead"), [])
-            told = self.started_by_lead("reviewer", helpers.back(agent, "async_launched"))
-        return told
-
-    def lead_started(self) -> list:
-        """What lead is told as Claude Code starts it again."""
-        return self.told(guard.started, self.subagent("SubagentStart", "lead", "lead1"), "lead")
-
-    def test_lead_may_start_several_runs_and_is_told_the_next_once_every_one_has_ended(self):
-        # When: lead starts reviewer twice
-        # Then: both go through, lead told to wait for every run as each comes back
-        self.assertEqual(self.launched("r1", "r2"), [guard.Said(self.WAIT)])
+    def test_several_starts_go_through_and_the_next_is_told_once_every_one_has_ended(self):
+        # When: the main conversation starts reviewer twice
+        # Then: both go through, each told to wait for every start
+        self.assertEqual(self.launched("reviewer", "r1"), [guard.Said(self.WAIT)])
+        self.assertEqual(self.launched("reviewer", "r2"), [guard.Said(self.WAIT)])
         # And: the second is kept joined to the first
-        joined = [
-            c.get("joined") for c in called.calls(helpers.KEPT, "lead1") if c["tool"] == "Agent"
-        ]
+        joined = [c.get("joined") for c in called.calls(helpers.KEPT, called.RUN)]
         self.assertEqual(joined, [None, None, "more"])
         # And: writer's start is stopped while either runs, and once the first gives `more`
         stopped = [guard.Said(helpers.FOLLOW), guard.Said(self.WAIT)]
-        self.assertEqual(self.told(guard.check, self.start("writer"), "lead"), stopped)
+        self.assertEqual(self.main(self.start("writer")), stopped)
         self.ran("reviewer", "r1", "more")
-        self.assertEqual(self.lead_started(), [guard.Said(self.WAIT)])
-        self.assertEqual(self.told(guard.check, self.start("writer"), "lead"), stopped)
-        # And: once the second ends with `good`, lead is told writer, by the order of the results
+        self.assertEqual(self.main(self.notified("r1")), [guard.Said(self.WAIT)])
+        self.assertEqual(self.main(self.start("writer")), stopped)
+        # And: once the second ends with `good`, writer is told, by the order of the results
         self.ran("reviewer", "r2", "good")
         told = [guard.Said("The 2 runs of reviewer gave `more`. Start `changelog:writer`.")]
-        self.assertEqual(self.lead_started(), told)
-        self.assertEqual(self.told(guard.check, self.start("writer"), "lead"), [])
+        self.assertEqual(self.main(self.notified("r2")), told)
+        self.assertEqual(self.main(self.start("writer")), [])
 
-    def test_a_start_of_another_subagent_than_the_one_due_is_kept_joined_to_none(self):
-        # Given: reviewer due
-        # When: lead's start of writer comes back, though the hook stops such a start
-        self.started_by_lead("writer", helpers.back("w2", "async_launched"))
-        # Then: it is kept joined to no start before it
-        last = [c for c in called.calls(helpers.KEPT, "lead1") if c["tool"] == "Agent"][-1]
-        self.assertNotIn("joined", last)
-
-    def test_a_run_ending_with_no_result_has_reviewer_started_again_into_the_runs(self):
-        # Given: two runs of reviewer, the first giving `good`, the second ending with no result
-        # after it was kept going once
-        self.launched("r1", "r2")
+    def test_a_start_ending_with_no_result_has_reviewer_started_again_into_the_starts(self):
+        # Given: two starts of reviewer, the first giving `good`, the second ending with no
+        # result after it was kept going once
+        self.launched("reviewer", "r1")
+        self.launched("reviewer", "r2")
         self.ran("reviewer", "r1", "good")
         self.told(guard.started, self.subagent("SubagentStart", "reviewer", "r2"), "reviewer")
         for active in (False, True):
             stop = self.subagent("SubagentStop", "reviewer", "r2", active=active)
             self.told(guard.stopping, stop, "reviewer")
-        # When: Claude Code starts lead again
+        # When: its end reaches the main conversation
         # Then: it is told to start reviewer again
         again = "reviewer ended with no result. Start `changelog:reviewer` again."
-        self.assertEqual(self.lead_started(), [guard.Said(again)])
-        # And: the run started again gives `more`, which is taken with the first run's `good`
-        self.launched("r3")
+        self.assertEqual(self.main(self.notified("r2")), [guard.Said(again)])
+        # And: the start made again gives `more`, which is taken with the first's `good`
+        self.launched("reviewer", "r3")
         self.ran("reviewer", "r3", "more")
         told = [guard.Said("The 2 runs of reviewer gave `more`. Start `changelog:writer`.")]
-        self.assertEqual(self.lead_started(), told)
+        self.assertEqual(self.main(self.notified("r3")), told)
 
-    def test_runs_giving_differing_results_the_routes_laid_again_do_not_order_are_an_error(self):
-        # Given: two runs of reviewer at once, giving `more` and `good`
-        self.launched("r1", "r2")
+    def test_results_that_differ_the_routes_laid_again_do_not_order_are_an_error(self):
+        # Given: two starts of reviewer at once, giving `more` and `good`
+        self.launched("reviewer", "r1")
+        self.launched("reviewer", "r2")
         self.ran("reviewer", "r1", "more")
         self.ran("reviewer", "r2", "good")
         # When: the routes are laid again with reviewer no longer fanned out nor its results
-        # ordered, before lead is told the next start
+        # ordered, before the end reaches the main conversation
         laid = {**helpers.RULES, "routes": helpers.ROUTES}
         self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), laid)
-        # Then: lead is told the error, with who must fix it
-        told = self.lead_started()
+        # Then: the main conversation is told the error, with who must fix it
         self.assertEqual(
-            told,
+            self.main(self.notified("r2")),
             [
                 guard.Said(
-                    "lane cannot check the lanes of lead: the runs of reviewer at once gave `more`"
-                    " and `good`, and the routes order not each of them in `precedence`. Ask the"
-                    " main conversation for the fix: the maker of changelog must order the results"
-                    " of reviewer in the `precedence` of its routes, and lay them again with"
-                    " `lay.py write`. Go on with the rest of your work meanwhile.",
+                    "lane cannot check the routes of write: the runs of reviewer at once gave"
+                    " `more` and `good`, and the routes order not each of them in `precedence`."
+                    " Ask the main conversation for the fix: the maker of changelog must order the"
+                    " results of reviewer in the `precedence` of its routes, and lay them again"
+                    " with `lay.py write`. Go on with the rest of your work meanwhile.",
                     True,
                 )
             ],
@@ -782,10 +857,9 @@ class TestJoinedStart(unittest.TestCase):
             (again, "writer", ""),
         ):
             with self.subTest(before=before, name=name):
-                # Given: runs of reviewer that more may join, reviewer due again, or due anew
-                # When: lead's start of reviewer, or of a subagent named before or after it,
-                # comes back
-                # Then: only reviewer's joins, as a further run or one started again
+                # Given: starts of reviewer that more may join, reviewer due again, or due anew
+                # When: a start of reviewer, or of a subagent named before or after it, comes back
+                # Then: only reviewer's joins, as a further start or one made again
                 self.assertEqual(guard.joined(before, name), found)
 
 
@@ -826,14 +900,6 @@ class TestResult(RoutedTest):
         self.assertEqual(first, [guard.Said(said)])
         self.assertEqual(self.told(guard.stopping, again, "writer"), [])
         self.assertTrue(called.ended(helpers.KEPT, "a1"))
-
-    def test_a_result_that_failed_is_not_kept(self):
-        # Given: writer's result command failing, its work not in form
-        event = {**self.bash(self.writer_gives, held="PostToolUseFailure"), "error": "e"}
-        # When: it comes back
-        # Then: nothing is told, and no result is kept, so writer is kept going as it ends
-        self.assertEqual(self.told(guard.failed, event, "writer"), [])
-        self.assertIsNone(called.result(helpers.KEPT, "a1"))
 
     def test_a_result_given_ends_the_subagent_with_nothing_told(self):
         # Given: writer gave `written`
@@ -883,76 +949,125 @@ class TestResult(RoutedTest):
 
 class TestRoutedCannot(RoutedTest):
     def test_a_step_no_longer_saying_its_routes_sentence_is_an_error(self):
-        for file, text, name, event, gone in (
-            ("lead.md", helpers.LEAD, "lead", self.start("writer"), "follow_routes on step 1"),
-            (
-                "writer.md",
-                helpers.LAID,
-                "writer",
-                self.bash("git log --oneline"),
-                "result on step 4",
-            ),
-        ):
-            with self.subTest(name=name):
-                # Given: lead's step 1 or writer's last step no longer saying its sentence
-                self.route()
-                self.write(os.path.join(self.plugin, "agents", file), text)
-                # When: it makes a call its lanes judge
-                told = self.told(guard.check, event, name)
-                # Then: it is an error of the sentence's lane
-                self.assertEqual(len(told), 1)
-                self.assertTrue(told[0].error)
-                self.assertIn(f"lane cannot check {gone} of {name}: step", told[0].text)
+        # Given: writer's last step no longer saying its result sentence
+        self.write(self.agent_file, helpers.LAID)
+        # When: it makes a call its lanes judge
+        told = self.told(guard.check, self.bash("git log --oneline"), "writer")
+        # Then: it is an error of the result on its step
+        self.assertEqual(len(told), 1)
+        self.assertTrue(told[0].error)
+        self.assertIn("lane cannot check result on step 4 of writer: step", told[0].text)
+
+    def test_the_skills_step_no_longer_saying_the_routes_sentence_begins_no_run(self):
+        # Given: write's step 1 no longer saying the routes' sentence
+        self.write(self.skill_file, helpers.SKILL)
+        # When: `/changelog:write` is typed
+        told = self.begun()
+        # Then: it is an error of follow_routes on its step, and no run begins
+        self.assertEqual(len(told), 1)
+        self.assertTrue(told[0].error)
+        self.assertIn("lane cannot check follow_routes on step 1 of write: step 1", told[0].text)
+        self.assertFalse(called.begun(helpers.KEPT))
 
     def test_routes_laid_that_lay_py_print_would_refuse_are_an_error_at_each_event(self):
-        # Given: the laid routes fanning out reviewer with no order of its results, as no
-        # `lay.py print` lets through
+        # Given: the run begun, then the laid routes fanning out reviewer with no order of its
+        # results, as no `lay.py print` lets through
+        self.begun()
         laid = self.read_json(os.path.join(self.plugin, "hooks", "lanes.json"))
         laid["routes"] = {**laid["routes"], "fan_out": ["reviewer"]}
         self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), laid)
-        for check, event, name in (
-            (guard.check, self.start("writer"), "lead"),
-            (guard.started, self.subagent("SubagentStart", "reviewer", "r1"), "reviewer"),
+        why = (
+            "hooks/lanes.json gives reviewer in `fan_out`, whose results `more` and `good` the"
+            " routes do not order in `precedence`, so the result of its runs at once could not be"
+            " told. "
+        )
+        for told, on in (
+            (self.main(self.start("writer")), "the routes of write"),
+            (
+                self.told(
+                    guard.started, self.subagent("SubagentStart", "reviewer", "r1"), "reviewer"
+                ),
+                "the lanes of reviewer",
+            ),
         ):
-            with self.subTest(name=name):
-                # When: lead starts writer, or reviewer starts
-                told = self.told(check, event, name)
+            with self.subTest(on=on):
+                # When: the main conversation starts writer, or reviewer starts
                 # Then: it is an error of the laid file, the maker told to lay the routes again
-                self.assertEqual(len(told), 1)
-                self.assertTrue(told[0].error)
                 self.assertEqual(
-                    told[0].text,
-                    f"lane cannot check the lanes of {name}: hooks/lanes.json gives reviewer in"
-                    " `fan_out`, whose results `more` and `good` the routes do not order in"
-                    " `precedence`, so the result of its runs at once could not be told. "
-                    + LAY_AGAIN,
+                    told, [guard.Said(f"lane cannot check {on}: {why}{LAY_AGAIN}", True)]
                 )
 
-    def test_kept_calls_that_cannot_be_read_are_an_error(self):
-        # Given: lead's calls kept holding a line that is no entry
-        called.keep(helpers.KEPT, "lead1", called.START)
+    def test_routes_refused_outside_a_run_leave_the_main_conversation_alone(self):
+        # Given: the laid routes fanning out reviewer with no order of its results, and no run
+        laid = self.read_json(os.path.join(self.plugin, "hooks", "lanes.json"))
+        laid["routes"] = {**laid["routes"], "fan_out": ["reviewer"]}
+        self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), laid)
+        # When: the main conversation starts writer
+        # Then: nothing is told
+        self.assertEqual(self.main(self.start("writer")), [])
+
+    def test_lanes_json_that_cannot_be_read_is_an_error_only_within_a_run(self):
+        # Given: hooks/lanes.json removed, before a run and then within one
+        os.remove(os.path.join(self.plugin, "hooks", "lanes.json"))
+        before = self.main(self.start("writer"))
+        called.keep(helpers.KEPT, called.RUN, called.START)
+        within = self.main(self.start("writer"))
+        # Then: nothing is told before, and an error within
+        self.assertEqual(before, [])
+        said = (
+            "lane cannot check the routes of the run: hooks/lanes.json is not there. " + LAY_AGAIN
+        )
+        self.assertEqual(within, [guard.Said(said, True)])
+
+    def test_a_starts_kept_calls_that_cannot_be_read_are_an_error(self):
+        # Given: the run begun, its start w1 of writer then holding a line that is no entry
+        self.begun()
+        self.launched("writer", "w1")
         (folder,) = os.listdir(os.path.join(self.base, "lane"))
-        with open(os.path.join(self.base, "lane", folder, "lead1.jsonl"), "a") as f:
+        with open(os.path.join(self.base, "lane", folder, "w1.jsonl"), "a") as f:
             f.write("x\n")
-        # When: lead starts writer
-        told = self.told(guard.check, self.start("writer"), "lead")
+        # When: the main conversation ends its turn
+        told = self.main(self.turn())
         # Then: it is an error, telling it be reported
         self.assertTrue(told[0].error)
-        self.assertIn("lane cannot check the lanes of lead: ", told[0].text)
+        self.assertIn("lane cannot check the routes of write: ", told[0].text)
         self.assertIn("https://github.com/lovaizu/ccpm/issues", told[0].text)
 
-    def test_an_event_not_as_claude_code_hands_it_is_an_error_at_every_event(self):
-        for check in (guard.came_back, guard.failed, guard.started, guard.stopping):
+    def test_kept_calls_that_cannot_be_read_are_an_error(self):
+        # Given: the run begun, its record then holding a line that is no entry
+        self.begun()
+        (folder,) = os.listdir(os.path.join(self.base, "lane"))
+        with open(os.path.join(self.base, "lane", folder, "run.jsonl"), "a") as f:
+            f.write("x\n")
+        # When: the main conversation starts writer
+        told = self.main(self.start("writer"))
+        # Then: it is an error, telling it be reported
+        self.assertTrue(told[0].error)
+        self.assertIn("lane cannot check the routes of write: ", told[0].text)
+        self.assertIn("https://github.com/lovaizu/ccpm/issues", told[0].text)
+
+    def test_an_event_not_as_claude_code_hands_it_is_an_error_only_within_a_run(self):
+        # Given: an event the hook found wrong, before a run and within one
+        before = self.main(self.start("writer"), "$.cwd: x")
+        self.begun()
+        within = self.main(self.start("writer"), "$.cwd: x")
+        # Then: nothing is told before, and an error for Claude Code within
+        self.assertEqual(before, [])
+        self.assertTrue(within[0].error)
+        self.assertIn("`claude update`", within[0].text)
+
+    def test_a_subagents_event_not_as_claude_code_hands_it_is_an_error_at_every_event(self):
+        for check in (guard.came_back, guard.started, guard.stopping):
             with self.subTest(check=check):
-                # Given: an event the hook found wrong
+                # Given: an event of writer the hook found wrong
                 # When: the guard is given it
-                said = check(self.plugin, "changelog", "lead", self.start("writer"), "$.cwd: x")
+                said = check(self.plugin, "changelog", "writer", self.bash("ls"), "$.cwd: x")
                 # Then: it is an error for Claude Code
                 self.assertTrue(said[0].error)
                 self.assertIn("`claude update`", said[0].text)
 
     def test_a_subagent_neither_laid_nor_routed_is_not_checked_at_any_event(self):
-        for check in (guard.came_back, guard.failed, guard.started, guard.stopping):
+        for check in (guard.came_back, guard.started, guard.stopping):
             with self.subTest(check=check):
                 # Given: the routes laid, naming no planner
                 # When: planner's event reaches the guard
@@ -985,24 +1100,6 @@ SCHEMA = {"type": "object", "required": ["version"], "properties": {"version": {
 def lane(kind: str, *takes: str, number: int = 3, **more: str) -> dict:
     """A step of the number laying the lane of the kind, taking the things."""
     return {"step": number, "lanes": [{"lane": kind, "takes": list(takes), **more}]}
-
-
-class TestOrchestratorByName(GuardTest):
-    def test_a_routed_subagent_named_before_the_orchestrator_is_none(self):
-        # Given: routes from lead to editor, a name before lead's
-        given = {
-            "orchestrator": "lead",
-            "step": 1,
-            "routes": [{"from": "lead", "to": "editor"}, {"from": "editor", "on": "edited"}],
-        }
-        laid = self.read_json(os.path.join(self.plugin, "hooks", "lanes.json"))
-        self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), {**laid, "routes": given})
-        # When: editor starts, and reads a file
-        start = self.subagent("SubagentStart", "editor", "e1")
-        read = self.event("Read", {"file_path": "a.md"}, "changelog:editor", agent_id="e1")
-        # Then: it is told nothing, as only lead follows the routes
-        self.assertEqual(guard.started(self.plugin, "changelog", "editor", start, ""), [])
-        self.assertEqual(guard.check(self.plugin, "changelog", "editor", read, ""), [])
 
 
 class LanesTest(GuardTest):

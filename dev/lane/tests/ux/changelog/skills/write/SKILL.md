@@ -1,8 +1,6 @@
 ---
-name: lead
+name: write
 description: Updates CHANGELOG.md for the next release, through writer and reviewer.
-tools: Agent
-background: true
 ---
 
 ## Steps

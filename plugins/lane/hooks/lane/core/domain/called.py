@@ -25,6 +25,10 @@ from routes import Start
 ID = re.compile(r"[A-Za-z0-9_-][A-Za-z0-9._-]*")
 START = {"kind": "start"}
 END = {"kind": "end"}
+# The record of the run of the skill the routes name, beside each start's, by its agent_id: its
+# begin, a START, each start of the run as it came back, each end told, and its end, an END, where
+# the run was let end with a start due. Claude Code gives no subagent this ID.
+RUN = "run"
 # What an Agent call gives back that is kept: its status and the ID of the subagent's run.
 KEPT_BACK = ("status", "agentId")
 
@@ -142,15 +146,34 @@ def ended(session: str, agent: str) -> bool:
 
 
 def starts(session: str, agent: str, named: list[str], plugin: str) -> list[Start]:
-    """The orchestrator's starts of the subagents of the names, as its Agent calls came back, in
-    order, each with how it is joined to those before it."""
+    """The starts of the subagents and dependencies' skills of the names kept under the agent, of
+    the run it is in, as their calls came back, in order, each with how it is joined to those
+    before it."""
     found = []
-    for e in kept(session, agent):
+    for e in this_run(session, agent):
         back = e.get("back")
         name = follow_routes.started(e.get("tool", ""), e.get("input", {}), named, plugin)
         if e.get("kind") == "call" and back and name:
             found.append(Start(name, back["status"], back["agentId"], e.get("joined", "")))
     return found
+
+
+def begun(session: str) -> bool:
+    """Whether a run of the skill the routes name has begun in the session and not been let end."""
+    entries = this_run(session, RUN)
+    return START in entries and END not in entries
+
+
+def said(line: str, seen: int) -> dict[str, Any]:
+    """The entry of a line told the main conversation, with how many entries the starts of the run
+    had kept as it was told."""
+    return {"kind": "told", "line": line, "seen": seen}
+
+
+def told(session: str, line: str, seen: int) -> bool:
+    """Whether the line was told in the run with the starts holding as many entries as `seen`, so it
+    tells of what was told already."""
+    return said(line, seen) in this_run(session, RUN)
 
 
 def calls(session: str, agent: str, run: bool = False) -> list[dict[str, Any]]:

@@ -74,8 +74,8 @@ def action(lane: str) -> str:
     return ROUTED[lane][0] if lane in ROUTED else LANES[lane].ACTION
 
 
-def hook(lane: str) -> str:
-    """The hook that checks the lane: its own, or follow_routes for a sentence laid from the
+def kind(lane: str) -> str:
+    """The type of check that holds the lane: its own, or follow_routes for a sentence laid from the
     routes."""
     return "follow_routes" if lane in ROUTED else lane
 

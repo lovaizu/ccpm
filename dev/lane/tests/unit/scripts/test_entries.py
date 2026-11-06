@@ -67,7 +67,7 @@ class TestPut(unittest.TestCase):
         # were
         found = entries.put(hooks, "changelog", ["writer"])["hooks"]
         self.assertEqual(found["PreToolUse"], [helpers.ENTRY, OWN])
-        self.assertEqual(found["Stop"], [OWN])
+        self.assertEqual(found["Stop"], [OWN, *helpers.HOOKS["hooks"]["Stop"]])
         self.assertEqual(found["SubagentStop"], helpers.HOOKS["hooks"]["SubagentStop"])
         self.assertEqual(
             list(found),
@@ -76,8 +76,9 @@ class TestPut(unittest.TestCase):
                 "SubagentStop",
                 "Stop",
                 "PostToolUse",
-                "PostToolUseFailure",
                 "SubagentStart",
+                "UserPromptExpansion",
+                "UserPromptSubmit",
             ],
         )
 

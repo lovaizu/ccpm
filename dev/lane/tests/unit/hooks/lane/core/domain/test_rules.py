@@ -155,36 +155,7 @@ class TestWrite(helpers.PluginTest):
         self.assertIn("echo café", self.read(os.path.join(self.plugin, "hooks", "lanes.json")))
 
 
-class TestGives(unittest.TestCase):
-    def test_the_results_are_the_routes_ons_or_done_with_a_lane_of_the_end(self):
-        for routes, name, kinds, ons in (
-            (helpers.ROUTES, "reviewer", [], ["more", "good"]),
-            (helpers.ROUTES, "writer", ["end_when"], ["written"]),
-            (helpers.ROUTES, "lead", ["every_item"], ["done"]),
-            (None, "writer", ["run_only", "read_whole"], ["done"]),
-            (None, "writer", ["run_only"], []),
-        ):
-            with self.subTest(name=name, kinds=kinds):
-                # Given: the routes or none, and the subagent's lanes of the kinds
-                # When: the results it gives are read
-                # Then: they are the routes' from it, or done where none is and a lane is checked
-                # at the end, or none
-                self.assertEqual(rules.gives(routes, name, kinds), ons)
-
-
 class TestResults(helpers.PluginTest):
-    def test_the_results_a_subagent_gives_with_no_route_are_its_own_before_done(self):
-        for routes, kinds, own, ons in (
-            (None, [], ["asks", "done"], ["asks", "done"]),
-            (None, ["end_when"], ["asks"], ["asks"]),
-            (helpers.ROUTES, [], ["asks"], ["written"]),
-        ):
-            with self.subTest(own=own, kinds=kinds):
-                # Given: writer giving its own results, with no route or routes from it
-                # When: the results it gives are read
-                # Then: they are the routes' from it, or its own where none is, before done
-                self.assertEqual(rules.gives(routes, "writer", kinds, own), ons)
-
     def test_the_results_laid_in_a_subagent_are_read_by_its_name(self):
         # Given: writer laid giving `asks` and `done`
         self.lay_lanes([{"step": 2, "lanes": helpers.STEPS[0]["lanes"]}], results=["asks", "done"])

@@ -14,7 +14,7 @@ from helpers import layer, proposal
 
 # What `lay.py write` says of the README's proposal.
 WROTE = """Wrote steps 2 and 3 of writer into agents/writer.md.
-Wrote the hooks of writer into hooks/hooks.json.
+Wrote the checks of writer into hooks/hooks.json.
 Wrote the lanes laid into hooks/lanes.json.
 Put lane's code in hooks/lane/.
 claude plugin validate passed.
@@ -22,39 +22,36 @@ Removed the proposal {proposal}.
 Removed its folder {folder}.
 """
 REVIEWER = "---\nname: reviewer\nbackground: true\n---\n\n## Steps\n\n1. Compare the entries.\n"
-# A subagent the routes may start, whose name sorts before lead's.
+# A subagent the routes may start, whose name sorts before write's.
 EDITOR = "---\nname: editor\nbackground: true\n---\n\n## Steps\n\n1. Edit the entries.\n"
 # What `lay.py print` prints of the README's proposal with docs/routes.md's routes.
-ROUTES_PRINTED = f"""Routes of lead, laid on its step 1:
+ROUTES_PRINTED = f"""Routes of write, laid on its step 1:
   first             start writer
   writer `written`  start reviewer
   reviewer `more`   start writer
   reviewer `good`   start no more
 
-Lanes of writer, each hook acting in writer alone:
-  step 2  run:   {helpers.RUN:<{len(helpers.END_WRITER)}}  hook run_only
-  step 3  write: {helpers.WRITE:<{len(helpers.END_WRITER)}}  hook write_only
-  step 4  end:   {helpers.END_WRITER}  hook follow_routes
+1. Have the entries written and reviewed. {helpers.FOLLOW}
+
+Lanes of writer, each checked only in writer:
+  step 2  run:   {helpers.RUN}  type run_only
+  step 3  write: {helpers.WRITE:<{len(helpers.RUN)}}  type write_only
+  step 4  end:   {helpers.END_WRITER}  type follow_routes
 
 2. Read the commits since then with `git log --oneline`. Run only `git log --oneline`.
 3. Write the new entries into `CHANGELOG.md`. Write only `CHANGELOG.md`.
 4. Reply with the entries you wrote. {helpers.END_WRITER}
 
-Lanes of lead, each hook acting in lead alone:
-  step 1  follow: {helpers.FOLLOW}  hook follow_routes
-
-1. Have writer write the entries for the next release and reviewer review them. {helpers.FOLLOW}
-
-Lanes of reviewer, each hook acting in reviewer alone:
-  step 2  end: {helpers.END_REVIEWER}  hook follow_routes
+Lanes of reviewer, each checked only in reviewer:
+  step 2  end: {helpers.END_REVIEWER}  type follow_routes
 
 2. Compare them with the commits, and reply with what you found. {helpers.END_REVIEWER}
 """
 # What `lay.py write` says of it.
 ROUTES_WROTE = """Wrote steps 2, 3 and 4 of writer into agents/writer.md.
-Wrote step 1 of lead into agents/lead.md.
+Wrote step 1 of write into skills/write/SKILL.md.
 Wrote step 2 of reviewer into agents/reviewer.md.
-Wrote the hooks of writer, lead and reviewer into hooks/hooks.json.
+Wrote the checks of writer, write and reviewer into hooks/hooks.json.
 Wrote the lanes laid and the routes into hooks/lanes.json.
 Put lane's code in hooks/lane/.
 claude plugin validate passed.
@@ -101,8 +98,8 @@ class TestPrinted(LayerTest):
         # Then: step 2 is shown with its lane taken out, and as it will read
         self.assertEqual(
             layer.printed(helpers.PROPOSED),
-            "Lanes of writer, each hook acting in writer alone:\n"
-            "  step 3  write: Write only `CHANGELOG.md`.  hook write_only\n"
+            "Lanes of writer, each checked only in writer:\n"
+            "  step 3  write: Write only `CHANGELOG.md`.  type write_only\n"
             "  step 2  no lane: the sentences laid before taken out\n"
             "\n"
             "3. Write the new entries into `CHANGELOG.md`. Write only `CHANGELOG.md`.\n"
@@ -174,7 +171,7 @@ class TestWritten(LayerTest):
                 names = [a["name"] for a in self.lanes_json()["subagents"]]
                 self.assertEqual(names, ["reviewer", "writer"] if kept else ["writer"])
                 hooked = "reviewer and writer" if kept else "writer"
-                self.assertIn(f"Wrote the hooks of {hooked} into hooks/hooks.json.\n", said)
+                self.assertIn(f"Wrote the checks of {hooked} into hooks/hooks.json.\n", said)
 
     def test_claude_codes_check_failing_stops_with_what_it_found(self):
         # Given: Claude Code's check finding the plugin malformed
@@ -203,7 +200,7 @@ class TestWritten(LayerTest):
 class RoutesTest(LayerTest):
     def setUp(self) -> None:
         super().setUp()
-        self.write(os.path.join(self.plugin, "agents", "lead.md"), helpers.LEAD)
+        self.write(self.skill_file, helpers.SKILL)
         self.write(os.path.join(self.plugin, "agents", "reviewer.md"), helpers.REVIEWER)
         self.propose({**helpers.PROPOSAL, "routes": helpers.ROUTES})
 
@@ -215,7 +212,7 @@ class RoutesTest(LayerTest):
 class TestDependencyRoutes(LayerTest):
     def setUp(self) -> None:
         super().setUp()
-        self.write(os.path.join(self.plugin, "agents", "lead.md"), helpers.LEAD)
+        self.write(self.skill_file, helpers.SKILL)
         manifest = {"name": "changelog", "version": "0.1.0", "dependencies": ["checker"]}
         self.write_json(self.manifest(), manifest)
         self.propose({**helpers.PROPOSAL, "routes": helpers.DEPENDENCY_ROUTES})
@@ -224,7 +221,7 @@ class TestDependencyRoutes(LayerTest):
         # Given: the README's proposal with routes from writer to checker's examiner
         # When: it is printed
         said = layer.printed(helpers.PROPOSED)
-        # Then: the routes name examiner by its type, and only lead's and writer's steps are laid
+        # Then: the routes name examiner by its type, and only write's and writer's steps are laid
         self.assertIn("  writer `written`         start checker:examiner\n", said)
         self.assertIn("  checker:examiner `asks`  start no more\n", said)
         self.assertNotIn("Lanes of checker:examiner", said)
@@ -234,8 +231,8 @@ class TestDependencyRoutes(LayerTest):
         # Given: the same proposal
         # When: it is written
         said = self.wrote()
-        # Then: the hooks are written for writer and lead, and the routes laid as given
-        self.assertIn("Wrote the hooks of writer and lead into hooks/hooks.json.\n", said)
+        # Then: the checks are written for writer and write, and the routes laid as given
+        self.assertIn("Wrote the checks of writer and write into hooks/hooks.json.\n", said)
         self.assertEqual(self.lanes_json()["routes"], helpers.DEPENDENCY_ROUTES)
 
 
@@ -243,8 +240,8 @@ class TestRoutes(RoutesTest):
     def test_the_routes_are_printed_and_each_routed_steps_sentence(self):
         # Given: the README's proposal with docs/routes.md's routes
         # When: it is printed
-        # Then: the routes are shown, then writer's lanes with its result command, then lead's
-        # and reviewer's steps as they will read
+        # Then: the routes are shown, with write's step as it will read, then writer's lanes
+        # with its result command, then reviewer's
         self.assertEqual(layer.printed(helpers.PROPOSED), ROUTES_PRINTED)
 
     def test_the_subagents_fanned_out_and_the_orders_of_results_are_printed(self):
@@ -275,12 +272,14 @@ class TestRoutes(RoutesTest):
         # routes are in hooks/lanes.json beside the lanes
         self.assertTrue(said.startswith(ROUTES_WROTE), said)
         self.assertEqual(
-            [self.agent(n) for n in ("lead", "writer", "reviewer")],
-            [helpers.LEAD_LAID, helpers.WRITER_LAID, helpers.REVIEWER_LAID],
+            [self.read(self.skill_file), self.agent("writer"), self.agent("reviewer")],
+            [helpers.SKILL_LAID, helpers.WRITER_LAID, helpers.REVIEWER_LAID],
         )
         self.assertEqual(self.lanes_json(), {**helpers.RULES, "routes": helpers.ROUTES})
         hooks = self.read_json(os.path.join(self.plugin, "hooks", "hooks.json"))
-        self.assertIn("changelog:reviewer", hooks["hooks"]["PreToolUse"][0]["hooks"][0]["command"])
+        command = hooks["hooks"]["PreToolUse"][0]["hooks"][0]["command"]
+        self.assertIn("changelog:reviewer", command)
+        self.assertNotIn("changelog:write'", command)
 
     def test_routes_laid_before_are_kept_where_the_proposal_gives_none(self):
         # Given: the routes laid, then the README's proposal alone
@@ -323,7 +322,7 @@ class TestRoutes(RoutesTest):
         self.wrote()
         earlier = self.agent("reviewer").replace(helpers.NOT_WORK, "")
         self.write(os.path.join(self.plugin, "agents", "reviewer.md"), earlier)
-        alone = [{"from": "lead", "to": "writer"}, {"from": "writer", "on": "written"}]
+        alone = [{"from": "write", "to": "writer"}, {"from": "writer", "on": "written"}]
         self.propose({"plugin": "changelog", "routes": {**helpers.ROUTES, "routes": alone}})
         # When: they are written
         self.wrote()
@@ -333,43 +332,71 @@ class TestRoutes(RoutesTest):
     def test_routes_given_anew_take_the_sentences_of_those_before_out(self):
         # Given: the routes laid, then routes of writer alone, ending once it has written
         self.wrote()
-        alone = [{"from": "lead", "to": "writer"}, {"from": "writer", "on": "written"}]
+        alone = [{"from": "write", "to": "writer"}, {"from": "writer", "on": "written"}]
         self.propose({"plugin": "changelog", "routes": {**helpers.ROUTES, "routes": alone}})
         # When: they are printed and written
         printed = layer.printed(helpers.PROPOSED)
         said = self.wrote()
         # Then: reviewer's sentence is shown taken out and is gone, its hooks with it
         self.assertIn(
-            "Lanes of reviewer, each hook acting in reviewer alone:\n"
+            "Lanes of reviewer, each checked only in reviewer:\n"
             "  step 2  no lane: the sentences laid before taken out\n",
             printed,
         )
         self.assertEqual(self.agent("reviewer"), helpers.REVIEWER)
-        self.assertIn("Wrote the hooks of writer and lead into hooks/hooks.json.\n", said)
+        self.assertIn("Wrote the checks of writer and write into hooks/hooks.json.\n", said)
         self.assertEqual(self.lanes_json()["routes"]["routes"], alone)
         self.assertEqual(self.agent("writer"), helpers.WRITER_LAID)
 
-    def test_the_orchestrator_given_lanes_is_laid_the_routes_and_no_other_is(self):
-        # Given: routes from lead to editor, a name before lead's, lead given a lane of its own
+    def test_routes_from_another_skill_take_the_sentence_out_of_the_skill_before(self):
+        for gone in (False, True):
+            with self.subTest(gone=gone):
+                # Given: the routes laid from write, then routes from the skill draft, write's
+                # file kept or gone
+                self.setUp()
+                self.wrote()
+                draft = os.path.join(self.plugin, "skills", "draft", "SKILL.md")
+                self.write(draft, helpers.SKILL.replace("name: write", "name: draft"))
+                if gone:
+                    os.remove(self.skill_file)
+                routed = {**helpers.ROUTES, "orchestrator": "draft"}
+                routed["routes"] = [{"from": "draft", "to": "writer"}, *routed["routes"][1:]]
+                self.propose({"plugin": "changelog", "routes": routed})
+                # When: they are printed and written
+                printed = layer.printed(helpers.PROPOSED)
+                said = self.wrote()
+                # Then: write, where its file is there, is shown with its sentence taken out
+                # and reads as before, and draft follows the routes
+                taken = (
+                    "Routes no longer laid on write:\n\n1. Have the entries written and reviewed.\n"
+                )
+                self.assertEqual(taken in printed, not gone)
+                if not gone:
+                    self.assertEqual(self.read(self.skill_file), helpers.SKILL)
+                self.assertIn("Wrote step 1 of draft into skills/draft/SKILL.md.\n", said)
+                self.assertIn(f"reviewed. {helpers.FOLLOW}\n", self.read(draft))
+
+    def test_the_skill_is_laid_the_routes_sentence_and_no_subagent_is(self):
+        # Given: routes from write to editor, a name before write's
         self.write(os.path.join(self.plugin, "agents", "editor.md"), EDITOR)
         given = {
             **helpers.ROUTES,
-            "routes": [{"from": "lead", "to": "editor"}, {"from": "editor", "on": "edited"}],
+            "routes": [{"from": "write", "to": "editor"}, {"from": "editor", "on": "edited"}],
         }
-        lead = {"name": "lead", "steps": [{"step": 2, "lanes": helpers.STEPS[0]["lanes"]}]}
-        self.propose({"plugin": "changelog", "subagents": [lead], "routes": given})
+        self.propose({"plugin": "changelog", "routes": given})
         # When: it is printed
         printed = layer.printed(helpers.PROPOSED)
-        # Then: lead follows the routes beside its lane, and editor gives its result alone
-        self.assertIn(f"  step 1  follow: {helpers.FOLLOW}", printed)
-        self.assertNotIn("follow:", printed.split("Lanes of editor")[1])
+        # Then: write's step follows the routes, shown with them, and editor gives its result alone
+        self.assertIn(f"\n\n1. Have the entries written and reviewed. {helpers.FOLLOW}\n", printed)
+        self.assertNotIn("Lanes of write", printed)
+        self.assertNotIn(helpers.FOLLOW, printed.split("Lanes of editor")[1])
 
     def test_each_subagent_of_the_routes_before_whose_file_is_there_is_written(self):
-        # Given: the routes laid, writer's file then removed, and routes of lead and editor
+        # Given: the routes laid, writer's file then removed, and routes of write and editor
         self.wrote()
         os.remove(os.path.join(self.plugin, "agents", "writer.md"))
         self.write(os.path.join(self.plugin, "agents", "editor.md"), EDITOR)
-        given = [{"from": "lead", "to": "editor"}, {"from": "editor", "on": "edited"}]
+        given = [{"from": "write", "to": "editor"}, {"from": "editor", "on": "edited"}]
         self.propose({"plugin": "changelog", "routes": {**helpers.ROUTES, "routes": given}})
         # When: they are written
         said = self.wrote()
@@ -381,7 +408,7 @@ class TestRoutes(RoutesTest):
         # Given: the routes laid, reviewer's file then removed, and routes of writer alone
         self.wrote()
         os.remove(os.path.join(self.plugin, "agents", "reviewer.md"))
-        alone = [{"from": "lead", "to": "writer"}, {"from": "writer", "on": "written"}]
+        alone = [{"from": "write", "to": "writer"}, {"from": "writer", "on": "written"}]
         self.propose({"plugin": "changelog", "routes": {**helpers.ROUTES, "routes": alone}})
         # When: they are written
         said = self.wrote()
@@ -421,7 +448,7 @@ class TestBroughtUp(LayerTest):
         said = layer.brought_up(self.plugin)
         # Then: the hook is written anew, and the lane whose step changed is said so
         self.assertEqual(self.read_json(entries_file), helpers.HOOKS)
-        self.assertIn("Wrote the hooks of writer into hooks/hooks.json.\n", said)
+        self.assertIn("Wrote the checks of writer into hooks/hooks.json.\n", said)
         self.assertIn(
             f'Laid before on step 2 of writer, whose step no longer says "{helpers.RUN}": ', said
         )
@@ -539,7 +566,7 @@ class TestAdapted(AdaptedTest):
         self.assertIn(f"  adapter {VALUES}: its 2 cases given as they say\n", said)
         self.assertIn(f"  adapter {ITEMS}: its 2 cases given as they say\n", said)
         self.assertIn(f"4. Reply with the entries you wrote. {DONE}\n", said)
-        self.assertIn(f"  step 4  end:   {DONE}  hook follow_routes\n", said)
+        self.assertIn(f"  step 4  end:   {DONE}  type follow_routes\n", said)
 
     def test_the_adapters_are_written_into_the_plugin_and_removed_from_beside_the_proposal(self):
         # Given: the proposal with two adapters, kept beside it

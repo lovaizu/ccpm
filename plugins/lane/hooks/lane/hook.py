@@ -1,12 +1,14 @@
 """What each of lane's hook entries runs: reads the event Claude Code hands on stdin, holds it to
-the fields Claude Code documents, has the guard judge it where it is of a subagent of the plugin,
-and answers in Claude Code's JSON output of the event: at PreToolUse a break denied with its
-sentence, and a held command asked of the person with its; at PostToolUse, PostToolUseFailure and
-SubagentStart what the guard says added as context; at SubagentStop the end blocked with it, so the
-subagent goes on; and an error told the user too, as a break is the subagent's to put right and an
-error the plugin's or Claude Code's, which letting the event go on unchecked would hide. Of a call
-made by anyone in the session, it keeps what a run of a subagent of the plugin is given, an Agent
-call's prompt or a SendMessage call's message, where the call goes on."""
+the fields Claude Code documents, and has the guard judge it where it is of a subagent of the
+plugin, or of a dependency's subagent, by its agent_type, or of the main conversation, whose events
+carry no agent_type; an event whose agent_type is empty, as Claude Code's prompt-suggestion fork
+gives, is dropped. It answers in Claude Code's JSON output of the event: at PreToolUse a break
+denied with its sentence, and a held command asked of the person with its; at SubagentStop and Stop
+the end blocked with it, so the subagent or the main conversation goes on; at any other event what
+the guard says added as context; and an error told the user too, as a break is the role's to put
+right and an error the plugin's or Claude Code's, which letting the event go on unchecked would
+hide. Of a call made by anyone in the session, it keeps what a start of a subagent of the plugin is
+given, an Agent call's prompt or a SendMessage call's message, where the call goes on."""
 
 from __future__ import annotations
 
@@ -33,39 +35,45 @@ LAY_AGAIN = (
 )
 
 
-# The fields of each event lane reads, beside those every event of a subagent has, as the hooks
-# reference documents them.
+# The fields of each event lane reads, beside those every event has, as the hooks reference
+# documents them.
 TOOL = {"tool_name": {"type": "string"}, "tool_input": {"type": "object"}}
+STOP = {"stop_hook_active": {"type": "boolean"}}
 FIELDS: dict[str, dict[str, Any]] = {
     "PreToolUse": TOOL,
     "PostToolUse": {**TOOL, "tool_response": {}},
-    "PostToolUseFailure": TOOL,
     "SubagentStart": {},
-    "SubagentStop": {"stop_hook_active": {"type": "boolean"}},
+    "SubagentStop": STOP,
+    "UserPromptExpansion": {"command_name": {"type": "string"}},
+    "UserPromptSubmit": {"prompt": {"type": "string"}},
+    "Stop": STOP,
 }
+# The events of the main conversation the guard holds it by within a run.
+MAIN = ("UserPromptExpansion", "UserPromptSubmit", "PreToolUse", "PostToolUse", "Stop")
 # An ID Claude Code gives a session or a subagent's run, as it names the file of its calls kept.
 ID = {"type": "string", "pattern": f"^{called.ID.pattern}$"}
 
 
-def event_in(held: str) -> dict[str, Any]:
+def event_in(held: str, main: bool = False) -> dict[str, Any]:
     """The JSON Schema of the fields of the event of the name that lane reads, as the hooks
     reference documents them: the event's name, the folder it comes from, the session, the
-    subagent's run and type, and the event's own, such as the tool and its input."""
+    subagent's ID and type, but where the event is the main conversation's, and the event's own,
+    such as the tool and its input."""
+    agent = {} if main else {"agent_id": ID, "agent_type": {"type": "string"}}
     fields = {
         "hook_event_name": {"const": held},
         "cwd": {"type": "string"},
         "session_id": ID,
-        "agent_id": ID,
-        "agent_type": {"type": "string"},
+        **agent,
         **FIELDS[held],
     }
     return {"type": "object", "required": list(fields), "properties": fields}
 
 
-def event_wrong(event: dict[str, Any], held: str) -> str:
-    """Where the event is out of the fields of the event held, as the hooks reference documents
-    them; "" where it is not."""
-    out = schema.held(event_in(held), event)
+def event_wrong(event: dict[str, Any], held: str, main: bool = False) -> str:
+    """Where the event is out of the fields of the event held, of the main conversation where
+    `main`, as the hooks reference documents them; "" where it is not."""
+    out = schema.held(event_in(held, main), event)
     if out is not None:
         return out.told()
     if not os.path.isdir(event["cwd"]):
@@ -78,10 +86,11 @@ def answer(said: list[guard.Said], plugin: str, held: str) -> dict[str, Any]:
     plugin's name, a part given as it is: at PreToolUse the call denied with it as the reason,
     which Claude Code shows the subagent, or, where all said is a held command's, asked of the
     person with it, which Claude Code's permission prompt shows them; at SubagentStop the end
-    blocked with it as the reason, which the subagent is given to go on with; at any other event it
-    added as context for the subagent; and each error as the systemMessage too, which Claude Code
-    shows the user. A note is told the user alone, and where all said is notes, the event goes on.
-    Nothing where nothing was said, which lets the event go on."""
+    blocked with it as the reason, which the subagent is given to go on with, and at Stop the same
+    for the main conversation; at any other event it added as context; and each error as the
+    systemMessage too, which Claude Code shows the user. A note is told the user alone, and where
+    all said is notes, the event goes on. Nothing where nothing was said, which lets the event go
+    on."""
     if not said:
         return {}
     told = "\n".join(s.text if s.plain else f"{plugin}: {s.text}" for s in said)
@@ -93,17 +102,17 @@ def answer(said: list[guard.Said], plugin: str, held: str) -> dict[str, Any]:
         decision = "ask" if all(s.ask for s in said) else "deny"
         denied = {"hookEventName": held, "permissionDecision": decision}
         return {**found, "hookSpecificOutput": {**denied, "permissionDecisionReason": told}}
-    # Of the five events, SubagentStop is the last in order.
-    if held == "SubagentStop":  # pragma: no mutate
+    if held in ENDS:
         return {**found, "decision": "block", "reason": told}
     return {**found, "hookSpecificOutput": {"hookEventName": held, "additionalContext": told}}
 
 
-# The guard's check of each event.
+# The events of an end, which a block keeps going.
+ENDS = ("SubagentStop", "Stop")
+# The guard's check of each event of a subagent.
 CHECKS = {
     "PreToolUse": guard.check,
     "PostToolUse": guard.came_back,
-    "PostToolUseFailure": guard.failed,
     "SubagentStart": guard.started,
     "SubagentStop": guard.stopping,
 }
@@ -114,7 +123,7 @@ def main(held: str, argv: list[str], stdin: IO[str], stdout: IO[str], root: str)
     root, the folder Claude Code gives as CLAUDE_PLUGIN_ROOT, whose name the hook's command gives
     as its one word. A command not in that form stops each subagent's call, and an event that is
     no JSON object every call, as no subagent can be told from them; the main conversation's calls
-    go on, as lane checks subagents alone."""
+    go on, as no run of the plugin can be told."""
     plugin = " ".join(argv)
     text = stdin.read()
     try:
@@ -133,7 +142,9 @@ def main(held: str, argv: list[str], stdin: IO[str], stdout: IO[str], root: str)
     else:
         agent = event.get("agent_type")
         said = []
-        if isinstance(agent, str) and ":" in agent:
+        if "agent_type" not in event and held in MAIN:
+            said = guard.MAIN[held](root, plugin, event, event_wrong(event, held, True))
+        elif isinstance(agent, str) and ":" in agent:
             # A subagent of the plugin by its own name, or of a dependency by its type, as the
             # routes name it.
             ours = agent.startswith(f"{plugin}:")
@@ -145,9 +156,8 @@ def main(held: str, argv: list[str], stdin: IO[str], stdout: IO[str], root: str)
         if all(s.ask for s in said) or later:
             guard.handed(plugin, event, held)
     # An end that a stop hook kept going already is told no error again, so an error no one fixes
-    # ends no run in a loop. Of the five events, SubagentStop is the last in order.
-    stopping = held == "SubagentStop"  # pragma: no mutate
-    if stopping and isinstance(event, dict) and event.get("stop_hook_active") is True:
+    # ends no turn in a loop.
+    if held in ENDS and isinstance(event, dict) and event.get("stop_hook_active") is True:
         said = [s for s in said if not s.error]
     write(stdout, answer(said, head, held))
 

@@ -1,6 +1,6 @@
 """S1 of dev/lane/architecture.md, `lay.py print`, one test for each of its paths: lay.py run as the
-developer AI runs it on the README's walkthrough, a double of the developer AI writing a set
-proposal, and lay.py, proposal.py, lanes/, routes.py, ports.py and the adapter run real."""
+user runs it on the README's walkthrough, the proposal set as the user would write it, and lay.py,
+proposal.py, lanes/, routes.py, ports.py and the adapter run real."""
 
 import json
 import os
@@ -14,8 +14,12 @@ class TestLaid(helpers.WalkthroughTest):
         # Given: the walkthrough's plugin and proposal
         # When: lay.py print is run on the proposal
         done = self.lay_py("print")
-        # Then: it prints the steps as they will read, as the walkthrough shows, and exits 0
-        self.assertEqual((done.returncode, done.stdout), (0, helpers.shown(helpers.README_PRINTED)))
+        # Then: it prints the routes and the steps as they will read, as the walkthrough shows,
+        # and exits 0
+        self.assertEqual(done.returncode, 0, done.stdout)
+        self.assertTrue(
+            helpers.as_shown(done.stdout, helpers.shown(helpers.README_PRINTED)), done.stdout
+        )
 
     def test_the_proposal_with_an_adapter_is_printed_with_the_adapter_run_on_its_cases(self):
         # Given: the walkthrough's proposal with writer's values read by an adapter beside it
@@ -29,24 +33,13 @@ class TestLaid(helpers.WalkthroughTest):
             "  adapter hooks/adapters/values-w.py: its 2 cases given as they say\n", done.stdout
         )
 
-    def test_the_proposal_with_routes_is_printed_with_the_routes_first(self):
-        # Given: the walkthrough's plugin with lead and reviewer, and docs/routes.md's routes
-        self.write(os.path.join("changelog", "agents", "lead.md"), helpers.LEAD)
-        self.write(os.path.join("changelog", "agents", "reviewer.md"), helpers.REVIEWER)
-        self.propose(lambda p: p.update(routes=helpers.ROUTES))
+    def test_the_proposal_with_no_routes_is_printed_with_its_rules_alone(self):
+        # Given: the walkthrough's proposal with its routes left out
+        self.propose(lambda p: p.pop("routes"))
         # When: lay.py print is run on it
         done = self.lay_py("print")
-        # Then: it shows the routes, then each step as it will read, the routes' sentences laid
-        self.assertEqual(done.returncode, 0, done.stdout)
-        self.assertTrue(
-            done.stdout.startswith("Routes of lead, laid on its step 1:\n"), done.stdout
-        )
-        self.assertIn(
-            "1. Have writer write the entries for the next release and reviewer review them."
-            f" {helpers.FOLLOW}\n",
-            done.stdout,
-        )
-        self.assertIn(f"{helpers.END_REVIEWER}\n", done.stdout)
+        # Then: it shows writer's rules and its steps as they will read, and no routes
+        self.assertEqual((done.returncode, done.stdout), (0, helpers.PRINTED))
 
 
 class TestRefused(helpers.WalkthroughTest):
@@ -84,8 +77,6 @@ class TestRefused(helpers.WalkthroughTest):
 
     def test_a_proposal_with_routes_that_cannot_be_followed_is_refused_saying_why(self):
         # Given: routes whose every route has a `to`, so the run cannot end
-        self.write(os.path.join("changelog", "agents", "lead.md"), helpers.LEAD)
-        self.write(os.path.join("changelog", "agents", "reviewer.md"), helpers.REVIEWER)
         endless = {
             **helpers.ROUTES,
             "routes": [

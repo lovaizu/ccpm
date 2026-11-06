@@ -1,6 +1,6 @@
 """The routes: the result command each subagent gives its result by, and the next start, decided
-from the routes and the starts of the orchestrator as they came back, with the result each started
-subagent gave, and the line the orchestrator is told of it."""
+from the routes and the starts of the skill's run as they came back, with the result each started
+subagent gave, and the line the main conversation is told of it."""
 
 import json
 import unittest
@@ -8,7 +8,7 @@ import unittest
 import helpers
 from helpers import routes
 
-# Each start of docs/routes.md's run, as lead's calls came back: writer, then reviewer, ended.
+# Each start of docs/routes.md's run, as the skill's calls came back: writer, then reviewer, ended.
 WRITER = routes.Start("writer", "completed", "w1")
 REVIEWER = routes.Start("reviewer", "completed", "r1")
 
@@ -27,18 +27,18 @@ class TestCommands(unittest.TestCase):
         self.assertEqual(routes.command("reviewer", "more"), f"{helpers.GIVE} reviewer more")
 
     def test_each_subagent_gives_the_results_its_routes_are_on_in_their_order(self):
-        for name, ons in (("writer", ["written"]), ("reviewer", ["more", "good"]), ("lead", [])):
+        for name, ons in (("writer", ["written"]), ("reviewer", ["more", "good"]), ("write", [])):
             with self.subTest(name=name):
                 # Given: docs/routes.md's routes
                 # When: the results of the subagent are asked for
-                # Then: they are the `on` of each route from it, in order; none for lead
+                # Then: they are the `on` of each route from it, in order; none for write
                 self.assertEqual(routes.ons(helpers.ROUTES, name), ons)
 
     def test_the_subagents_named_are_the_orchestrator_then_each_in_the_routes(self):
         # Given: docs/routes.md's routes
         # When: the subagents they name are asked for
-        # Then: they are lead, writer and reviewer, each once
-        self.assertEqual(routes.named(helpers.ROUTES), ["lead", "writer", "reviewer"])
+        # Then: they are write, writer and reviewer, each once
+        self.assertEqual(routes.named(helpers.ROUTES), ["write", "writer", "reviewer"])
 
     def test_the_subagents_giving_results_are_those_routed_from_but_the_orchestrator(self):
         # Given: docs/routes.md's routes
@@ -47,9 +47,39 @@ class TestCommands(unittest.TestCase):
         self.assertEqual(routes.giving(helpers.ROUTES), ["writer", "reviewer"])
 
 
+class TestGives(unittest.TestCase):
+    def test_the_results_are_the_routes_ons_or_done_with_a_lane_of_the_end(self):
+        for routed, name, ends, ons in (
+            (helpers.ROUTES, "reviewer", False, ["more", "good"]),
+            (helpers.ROUTES, "writer", True, ["written"]),
+            (helpers.ROUTES, "write", True, ["done"]),
+            (None, "writer", True, ["done"]),
+            (None, "writer", False, []),
+        ):
+            with self.subTest(name=name, ends=ends):
+                # Given: the routes or none, and the subagent with a lane checked at its end or
+                # none
+                # When: the results it may give are read
+                # Then: they are the routes' from it, or done where none is and a lane is checked
+                # at the end, or none
+                self.assertEqual(routes.gives(routed, name, ends), ons)
+
+    def test_the_results_a_subagent_gives_with_no_route_are_its_own_before_done(self):
+        for routed, ends, own, ons in (
+            (None, False, ["asks", "done"], ["asks", "done"]),
+            (None, True, ["asks"], ["asks"]),
+            (helpers.ROUTES, False, ["asks"], ["written"]),
+        ):
+            with self.subTest(own=own, ends=ends):
+                # Given: writer giving its own results, with no route or routes from it
+                # When: the results it may give are read
+                # Then: they are the routes' from it, or its own where none is, before done
+                self.assertEqual(routes.gives(routed, "writer", ends, own), ons)
+
+
 class TestNextStart(unittest.TestCase):
     def test_with_no_start_yet_the_orchestrators_route_is_due(self):
-        # Given: no start of lead's yet
+        # Given: no start of the skill's yet
         # When: the next start is decided
         # Then: writer is due, after no result
         self.assertEqual(decided([], {}), routes.Next("start", "writer", None))
@@ -75,17 +105,17 @@ class TestNextStart(unittest.TestCase):
                 self.assertEqual(decided(starts, results), found)
 
     def test_the_orchestrators_route_is_due_wherever_it_lies_in_the_routes(self):
-        # Given: lead's route listed after routes from author and writer
+        # Given: the skill's route listed after routes from author and writer
         given = {
             **helpers.ROUTES,
             "routes": [
                 {"from": "writer", "on": "written", "to": "reviewer"},
                 {"from": "author", "on": "drafted", "to": "writer"},
-                {"from": "lead", "to": "author"},
+                {"from": "write", "to": "author"},
             ],
         }
         # When: the next start is decided with no start yet
-        # Then: lead's route is due, and no other
+        # Then: the skill's route is due, and no other
         found = routes.next_start(given, [], {}.get, lambda a: False)
         self.assertEqual(found, routes.Next("start", "author", None))
 
@@ -120,7 +150,7 @@ class TestNextStart(unittest.TestCase):
             with self.subTest(ended=ended):
                 # Given: writer launched in the background, running or ended with `written`
                 # When: the next start is decided
-                # Then: lead waits for it, or, once it has ended, reviewer is due
+                # Then: write waits for it, or, once it has ended, reviewer is due
                 self.assertEqual(decided(started, {"w1": "written"}, ended), found)
 
     def test_starts_after_the_end_are_left_out(self):
@@ -156,7 +186,7 @@ class TestFanOut(unittest.TestCase):
             with self.subTest(ended=ended):
                 # Given: two runs of reviewer at once, none or one of them ended with `good`
                 # When: the next start is decided
-                # Then: lead waits for every run, and may start more of them
+                # Then: write waits for every run, and may start more of them
                 found = fanned(starts, {"w1": "written", "r1": "good", "r2": "good"}, ended)
                 self.assertEqual(found, routes.Next("wait", "reviewer", None, more=True))
 
@@ -318,7 +348,7 @@ class TestFanOut(unittest.TestCase):
         # Given: writer, not fanned out, running in the background
         starts = [routes.Start("writer", "async_launched", "w1")]
         # When: the next start is decided
-        # Then: lead waits for it, starting no more of it
+        # Then: write waits for it, starting no more of it
         found = fanned(starts, {})
         self.assertEqual(found, routes.Next("wait", "writer", None))
 
@@ -413,13 +443,16 @@ class TestRefused(unittest.TestCase):
     def test_routes_that_cannot_be_followed_are_refused_saying_why(self):
         each = helpers.ROUTES["routes"]
         for changed, said in (
-            ({"routes": each[1:]}, "gives the routes no one route from lead with a `to`"),
-            ({"routes": [{"from": "lead"}, *each[1:]]}, "gives the routes no one route from lead"),
+            ({"routes": each[1:]}, "gives the routes no one route from write with a `to`"),
+            (
+                {"routes": [{"from": "write"}, *each[1:]]},
+                "gives the routes no one route from write",
+            ),
             ({"routes": [*each, {"from": "writer"}]}, "gives a route from writer with no `on`"),
             ({"routes": [*each, each[1]]}, "gives two routes from writer on `written`"),
             (
-                {"routes": [*each, {"from": "reviewer", "on": "x", "to": "lead"}]},
-                "gives a route to lead, the orchestrator",
+                {"routes": [*each, {"from": "reviewer", "on": "x", "to": "write"}]},
+                "gives a route to write, the orchestrator",
             ),
             (
                 {"routes": [*each, {"from": "reviewer", "on": "x", "to": "linter"}]},
@@ -430,8 +463,8 @@ class TestRefused(unittest.TestCase):
                 "gives no route without a `to`",
             ),
             (
-                {"precedence": {"lead": ["more"]}},
-                "gives an order of the results of lead, which no route is from",
+                {"precedence": {"write": ["more"]}},
+                "gives an order of the results of write, which no route is from",
             ),
             ({"precedence": ["more", "more"]}, "gives `more` twice in an order of results"),
             ({"precedence": ["late"]}, "gives `late` in an order of results, which no route is on"),
@@ -439,7 +472,7 @@ class TestRefused(unittest.TestCase):
                 {"precedence": {"writer": ["more"]}},
                 "gives `more` in an order of results, which no route from writer is on",
             ),
-            ({"fan_out": ["lead"]}, "gives lead in `fan_out`, which no route starts"),
+            ({"fan_out": ["write"]}, "gives write in `fan_out`, which no route starts"),
             ({"fan_out": ["reviewer"]}, "gives reviewer in `fan_out`, whose results"),
         ):
             with self.subTest(changed=changed):
@@ -474,7 +507,7 @@ class TestDependency(unittest.TestCase):
     def test_the_orchestrator_is_told_to_start_a_dependencys_subagent_by_its_type(self):
         # Given: writer's `written`, which leads to checker's examiner
         due = decided_by(helpers.DEPENDENCY_ROUTES, [WRITER], {"w1": "written"})
-        # When: lead is told the start
+        # When: write is told the start
         # Then: it names examiner by its type, checker's
         self.assertEqual(
             routes.line(due, "changelog"), "writer gave `written`. Start `checker:examiner`."
