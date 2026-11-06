@@ -1,49 +1,46 @@
-"""The ux trials of Pin's UX, as dev/pin/architecture.md's ux says: an AI on Opus stands in for the
-person, given an intent written before the run, intent_o1.md or intent_o2.md beside this file,
-which no part of Pin is shown. The subject is the notes app in notes/ beside this file, a repository
-with several scripts that read `notes list`, and a plan of about ten points. The intent brings out
-the frequent cases: a fact found and confirmed, a fact corrected, a decision of the person's, a
-decision left to Pin, a point that an answer raises, and a change at the design.
+"""The ux trial of Pin's O1, as dev/pin/architecture.md's ux says, in its two ways: an AI on Opus
+stands in for the person, given an intent written before the run, intent_typed.md or
+intent_called.md beside this file, which no part of Pin is shown. The subject is the notes app in
+notes/ beside this file, a repository with several scripts that read `notes list`, and a plan of
+about ten points. The intent brings out the frequent cases: a fact found and confirmed, a fact
+corrected, a decision of the person's, a decision left to Pin, a point that an answer raises, and a
+change at the design.
 
-- O1: the person types `/pin:down notes list should give JSON as well` in an interactive session,
-  and the main conversation is the go-between.
-- O2: the person types `/maker:json notes list should give JSON as well`; the plugin maker beside
-  this file stands in for a maker AI's plugin. Its subagent maker:maker hands over the goal, three
-  questions and two points it settled, takes pin:down as the go-between, and builds the JSON output
-  on the design it gets back.
+- typed: the person types `/pin:down notes list should give JSON as well`, and the main
+  conversation follows the orchestrator.
+- called: the person types `/maker:json notes list should give JSON as well`; the plugin maker
+  beside this file stands in for the user's AI. Its skill writes a design tree with the goal, three
+  questions and two points it settled with the person, and calls the skill pin:down with its path,
+  so the main conversation, the user's AI itself, follows the orchestrator.
 
-Each run copies Pin, and maker for O2, and makes the notes app a git repository of its own, outside
-any ccpm clone. Every Claude Code it starts runs on Opus with `--permission-mode
+Each run copies Pin, and maker where called, and makes the notes app a git repository of its own,
+outside any ccpm clone. Every Claude Code it starts runs on Opus with `--permission-mode
 bypassPermissions` and a configuration folder of its own, as trials/trying.py starts it. The
-session runs in an interactive terminal, as Pin runs where Claude Code starts the one who started
-a subagent again once it ends.
+session runs in an interactive terminal, where Claude Code brings the end of the pinner, run in the
+background, back to the main conversation.
 
-The trial measures each key result of the UX from the records of the session, the stand-in's view
-of each message and the design tree, and prints them:
+The trial measures each key result of O1 from the records of the session, the stand-in's view of
+each message and the design tree, and prints them:
 
 - KR1.1: of the intent's points and the points put to the person that are not among them, the share
   that went wrong: a point the confirmed design does not hold, holds open or holds otherwise than
-  the intent, a point of the person's settled without them, a point put to them that was not
-  theirs or was asked again, and an answer that did not reach the pinner word for word, so it was
-  settled apart from Pin.
+  the intent; a point of the person's settled without them; a point put to them that was not
+  theirs or was asked again; a Reply of the pinner's that did not reach the person as given, or an
+  answer that did not reach the pinner word for word, so it was settled apart from Pin; and, where
+  called, a point the user's AI settled changed or asked again, a question it gave with no decision
+  under it, or a write of the main conversation to the design tree once it called the skill.
 - KR1.2: the seconds from the request to the stop at which the stand-in confirmed the design.
-- KR2.1 (O2): of the designs the maker AI got back, the share that went wrong: a point it settled
-  changed or asked again, a question it gave with no decision under it, a Reply of the pinner's
-  that did not reach the person as given or an answer that did not reach the pinner word for word,
-  and a write of the maker AI to the design tree once it had handed it over.
-- KR2.2 (O2): the seconds from the maker AI's start of the pinner to the pinner's `done`.
 
-A run counts only where each frequent case came up. It passes where nothing went wrong in KR1.1,
-and, for O2, nothing in KR2.1 and `notes.py list --json` gives one array whose objects hold a
-path. A trial passes where every run passes, three of three by default, as
-dev/plugin-best-practice.md's Results that vary from run to run says. The UX gives no key result a
-target, so each measure is set against the last trial's.
+A run counts only where each frequent case came up. It passes where nothing went wrong in KR1.1 and
+the design tree holds with no decision open. A trial passes where every run passes, three of three
+by default, as dev/plugin-best-practice.md's Results that vary from run to run says. The product
+vision gives no key result a target, so each measure is set against the last trial's.
 
-Run as `python3 dev/pin/tests/ux/trial.py [o1|o2|both] [runs]`, both and three by default. It
-prints the folder of each run, where the session's records, the stand-in's view of each message,
+Run as `python3 dev/pin/tests/ux/trial.py [typed|called|both] [runs]`, both and three by default.
+It prints the folder of each run, where the session's records, the stand-in's view of each message,
 `turns.json`, and the measures, `measures.json`, are kept. `python3 dev/pin/tests/ux/trial.py
---judge <folder of a run> o1|o2` judges a kept run again from its records, to check the judge on a
-kept record before trusting it."""
+--judge <folder of a run> typed|called` judges a kept run again from its records, to check the judge
+on a kept record before trusting it."""
 
 from __future__ import annotations
 
@@ -68,17 +65,20 @@ import trying
 record = trying.record
 MAKER = os.path.join(HERE, "maker")
 REQUESTS = {
-    "o1": "/pin:down notes list should give JSON as well",
-    "o2": "/maker:json notes list should give JSON as well",
+    "typed": "/pin:down notes list should give JSON as well",
+    "called": "/maker:json notes list should give JSON as well",
 }
 # The intent's points that are the person's to decide, by number, which the design must hold as
-# settled by them; and, for O2, those the maker AI settled, which it must hold as settled by maker.
-THEIRS = {"o1": {1, 2, 3, 7, 8}, "o2": {2, 3, 7, 9}}
-MAKERS = {"o1": set(), "o2": {1, 8}}
-# The maker AI's hand-over: where it lies, and the IDs of the points and questions it gives.
+# settled by them; and, where called, those the user's AI settled, which it must hold as settled
+# by maker.
+THEIRS = {"typed": {1, 2, 3, 7, 8}, "called": {2, 3, 7, 9}}
+MAKERS = {"typed": set(), "called": {1, 8}}
+# The user's AI's design tree: where it lies, and the IDs of the points and questions it gives.
 HANDED = os.path.join(".maker", "notes-json", "design-tree.md")
 HANDED_POINTS = ("M1", "M2")
 HANDED_QUESTIONS = ("Q1", "Q2", "Q3")
+# The line a Reply of the pinner's begins with, as its part gives it.
+FOR_THE_PERSON = "For the person:"
 # The most messages put to the person before a run is stopped as one that does not end.
 TURNS = 30
 # What the stand-in gives of each message, beside its answer.
@@ -150,14 +150,14 @@ def wants(objective: str) -> list[str]:
 
 
 def run(objective: str, number: int) -> bool:
-    """One run of the trial of the objective; prints what it found and measured, and gives whether
-    it counted and passed."""
+    """One run of the trial of O1 in the way given; prints what it found and measured, and gives
+    whether it counted and passed."""
     place = trying.folder("pin", f"trial-{objective}-{number}")
     repo = os.path.join(place, "notes")
     trying.committed(repo, helpers.NOTES)
     plugins = [os.path.join(place, "plugins", "pin")]
     shutil.copytree(helpers.PIN, plugins[0])
-    if objective == "o2":
+    if objective == "called":
         plugins.append(os.path.join(place, "plugins", "maker"))
         shutil.copytree(MAKER, plugins[1])
     told = intent(objective)
@@ -176,10 +176,10 @@ def run(objective: str, number: int) -> bool:
         heard.update(message=message, at=time.monotonic() - started)
         turns.append(heard)
         print(f"  AI: {message[:300]!r}\n  person: {str(heard.get('answer'))[:200]!r}", flush=True)
-        # O1 ends at the reply to the design confirmed; O2 goes on until the maker AI is done.
+        # The run ends at the reply to the design confirmed, or once the work is said done.
         confirmed = [t for t in turns[:-1] if t.get("confirms_design")]
         settled = bool(confirmed) and not confirmed[-1].get("changes_design")
-        if heard.get("finished") or (objective == "o1" and settled):
+        if heard.get("finished") or settled:
             return None
         said.extend([f"AI: {message}", f"You: {heard['answer']}"])
         heard["sent"] = True
@@ -210,24 +210,18 @@ def judged(place: str, objective: str) -> bool:
     path = design_tree(repo, objective)
     untried = [why for key, why in CASES.items() if not any(t.get(key) for t in turns)]
     wrong = kr1_1(objective, turns, path, files, place)
+    if objective == "called":
+        wrong += ais_points(path, files)
     points = len(wants(objective)) + sum(
         1 for t in turns if int(t.get("points") or 0) and not t.get("about")
     )
     confirmed = [t["at"] for t in turns if t.get("confirms_design") and not t.get("changes_design")]
     measures: dict[str, Any] = {
         "KR1.1": f"{len(wrong)} of {points}",
-        "KR1.1 wrong": wrong,
+        "KR1.1 wrong": list(wrong),
         "KR1.2": round(confirmed[-1]) if confirmed else None,
     }
-    if objective == "o2":
-        designs, wrong_designs, lead = kr2(turns, path, files, repo)
-        measures.update(
-            {"KR2.1": f"{len(wrong_designs)} of {designs}", "KR2.1 wrong": wrong_designs}
-        )
-        measures["KR2.2"] = lead
-        wrong += wrong_designs + built(repo)
-    else:
-        wrong += held(path)
+    wrong += held(path)
     with open(os.path.join(place, "measures.json"), "w", encoding="utf-8") as f:
         json.dump(measures, f, indent=1)
     print("  measures:", json.dumps(measures, ensure_ascii=False))
@@ -247,9 +241,9 @@ def records(session: str) -> dict[str, list[dict[str, Any]]]:
 
 
 def design_tree(repo: str, objective: str) -> str:
-    """The path of the design tree the run settled: the maker AI's hand-over for O2, else the one
+    """The path of the design tree the run settled: the user's AI's where called, else the one
     file in `.pin/`, or "" where there is not one alone."""
-    if objective == "o2":
+    if objective == "called":
         return os.path.join(repo, HANDED)
     found = glob.glob(os.path.join(repo, ".pin", "*", "design-tree.md"))
     return found[0] if len(found) == 1 else ""
@@ -270,7 +264,7 @@ def kr1_1(
     files: dict[str, list[dict[str, Any]]],
     place: str,
 ) -> list[str]:
-    """Each point that went wrong in any of the UX's four ways of KR1.1."""
+    """Each point that went wrong in any of KR1.1's ways that every run can show."""
     wrong = []
     tree = tree_of(path)
     asked = trying.stand_in(
@@ -297,6 +291,14 @@ def kr1_1(
     for n, t in enumerate(turns, 1):
         if t.get("sent") and str(t.get("answer")) not in heard:
             wrong.append(f"answer {n} did not reach the pinner word for word")
+    # Each Reply's point is set against what the main conversation said, blanks taken as one.
+    passed = " ".join(" ".join(replies(files.get("main", []))).split())
+    for reply in replies(files.get("pin:pinner", [])):
+        point = " ".join(reply.split(FOR_THE_PERSON, 1)[-1].split())
+        if point and point not in passed:
+            wrong.append(
+                f"a Reply of the pinner's did not reach the person as given: {point[:80]!r}"
+            )
     return wrong
 
 
@@ -314,57 +316,26 @@ def at(entries: list[dict[str, Any]], tool: str, words: str) -> list[datetime.da
     ]
 
 
-def kr2(
-    turns: list[dict[str, Any]], path: str, files: dict[str, list[dict[str, Any]]], repo: str
-) -> tuple[int, list[str], int | None]:
-    """For O2: the designs the maker AI got back, each way they went wrong of KR2.1, and the seconds
-    from its first start of the pinner to the pinner's first `done`, KR2.2."""
-    maker, pinner = files.get("maker:maker", []), files.get("pin:pinner", [])
-    done = at(pinner, "Bash", "result.py pinner done")
-    starts = at(maker, "Agent", "pin:pinner")
+def ais_points(path: str, files: dict[str, list[dict[str, Any]]]) -> list[str]:
+    """Where called, each way the run went wrong with what the user's AI settled: a point it settled
+    changed, a question it gave with no decision under it, and a write of the main conversation to
+    the design tree once it called the skill pin:down."""
     wrong = []
     tree = tree_of(path)
     handed = {d["id"]: d for d in tree.get("decisions", []) if d.get("id") in HANDED_POINTS}
     for point in HANDED_POINTS:
         if handed.get(point, {}).get("settled_by") != "maker":
-            wrong.append(f"the maker AI's point {point} was changed")
+            wrong.append(f"the user's AI's point {point} was changed")
     served = {q for d in tree.get("decisions", []) for q in d.get("contributes_to", [])}
     for question in HANDED_QUESTIONS:
         if question not in served:
-            wrong.append(f"the maker AI's question {question} has no decision under it")
-    if any(t.get("asks_settled") for t in turns):
-        wrong.append("the person was asked again a point that was settled")
-    passed = "\n".join(replies(maker))
-    for reply in replies(pinner):
-        if reply.strip() and reply.strip() not in passed:
-            wrong.append(
-                f"a Reply of the pinner's did not reach the person as given: {reply[:80]!r}"
-            )
-    first = starts[0] if starts else None
-    for d_at in at(maker, "Write", HANDED) + at(maker, "Edit", HANDED):
-        if first and d_at > first:
-            wrong.append("the maker AI wrote the design tree after it handed it over")
-    lead = round((done[0] - first).total_seconds()) if done and first else None
-    return len(done), wrong, lead
-
-
-def built(repo: str) -> list[str]:
-    """What is wrong with the work the maker AI built: `notes.py list --json` gives one array of
-    objects, each holding a path; nothing where it does."""
-    done = subprocess.run(
-        [sys.executable, "notes.py", "list", "--json"],
-        capture_output=True,
-        text=True,
-        cwd=repo,
-        check=False,
-    )
-    try:
-        given = json.loads(done.stdout)
-    except ValueError:
-        return [f"notes.py list --json gave no JSON: {done.stdout[:200]!r} {done.stderr[:200]!r}"]
-    if not isinstance(given, list) or not all(isinstance(o, dict) and "path" in o for o in given):
-        return [f"notes.py list --json is not an array of objects with a path: {given!r:.200}"]
-    return []
+            wrong.append(f"the user's AI's question {question} has no decision under it")
+    main = files.get("main", [])
+    called = at(main, "Skill", "pin:down")
+    for d_at in at(main, "Write", HANDED) + at(main, "Edit", HANDED):
+        if called and d_at > called[0]:
+            wrong.append("the main conversation wrote the design tree after it called pin:down")
+    return wrong
 
 
 def held(path: str) -> list[str]:
@@ -387,7 +358,7 @@ def main(argv: list[str]) -> None:
         sys.exit(0 if judged(argv[1], argv[2]) else 1)
     chosen = argv[0] if argv else "both"
     runs = int(argv[1]) if len(argv) > 1 else 3
-    objectives = ["o1", "o2"] if chosen == "both" else [chosen]
+    objectives = ["typed", "called"] if chosen == "both" else [chosen]
     passed = [run(o, n) for o in objectives for n in range(1, runs + 1)]
     print(f"{sum(passed)} of {len(passed)} runs passed")
     sys.exit(0 if all(passed) else 1)

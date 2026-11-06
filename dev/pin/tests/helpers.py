@@ -1,6 +1,6 @@
 """What pin's tests stand on beside what every plugin's tests do: pin's code on sys.path, its
-modules taken by each test from here, so they are found whichever test runs first; a design
-tree that holds, the README walkthrough's, for each test to change one thing of; and, for an
+modules taken by each test from here, so they are found whichever test runs first; a small
+design tree of the notes app's plan that holds, for each test to change one thing of; and, for an
 architecture test, a double of the pinner that writes the tree of each step and runs check.py by
 the command pin:down names."""
 
@@ -30,16 +30,34 @@ __all__ = ["check", "testing", "tree"]
 
 with open(os.path.join(PIN, "README.md"), encoding="utf-8") as f:
     README = f.read()
-# The design tree the README's walkthrough keeps, which holds.
-WALKTHROUGH: dict[str, Any] = tree.read(
-    re.search(r"```markdown\n(.*?)```", README, re.DOTALL).group(1)  # type: ignore[union-attr]
-)
-# What the walkthrough decides each decision as.
+# The design tree the README's walkthrough shows, as its Markdown.
+README_TREE: str = re.search(r"```markdown\n(.*?)```", README, re.DOTALL).group(1)  # type: ignore[union-attr]
+# A small design tree of the notes app's plan that holds, for each test to change one thing of: D3
+# serves D1, so it stands under D1, and names D1, which it builds on, on its Also line.
+WALKTHROUGH_MARKDOWN = """\
+# Design tree
+
+Goal: Scripts that read `notes list` get its notes as JSON, so they stop parsing text.
+- Grounds: the person, 2026-11-03
+
+- **Q1** Can each script that reads notes list read the JSON as it is?
+  - **D1 The form of the JSON**: one JSON array, one object for each note (user)
+    - Grounds: the person, 2026-11-03
+    - **D3 The form of updated**: ISO 8601, as the text gives it (research)
+      - Grounds: scripts/sync.py:14 "datetime.fromisoformat(fields[3])"
+      - Grounds: the person confirmed, 2026-11-03
+      - Also builds on: D1
+- **Q2** Do people who read notes list by eye see the same as before?
+  - **D2 Whether text stays the default**: it stays; JSON only with --json (reasoning)
+    - Grounds: the goal, and Q2
+"""
+WALKTHROUGH: dict[str, Any] = tree.read(WALKTHROUGH_MARKDOWN)
+# What the tree decides each decision as.
 WALKTHROUGH_DECIDED = {d["id"]: d["decided"] for d in WALKTHROUGH["decisions"]}
 
 
 def walkthrough() -> dict[str, Any]:
-    """A copy of the walkthrough's design tree, for a test to change."""
+    """A copy of the small design tree, for a test to change."""
     return copy.deepcopy(WALKTHROUGH)
 
 
@@ -202,7 +220,8 @@ class PinnerTest(testing.FolderTest):
         return tree.load(os.path.join(self.repo, self.path))
 
     def lies(self, data: dict[str, Any]) -> None:
-        """Lays the design tree on disk before the run, as a stopped run or the user's AI left it."""
+        """Lays the design tree on disk before the run, as a stopped run or the user's AI left
+        it."""
         self.write(os.path.join(self.repo, self.path), tree.markdown(data))
 
     def picks(self, words: str) -> str:

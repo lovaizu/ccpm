@@ -236,9 +236,7 @@ class Answer(helpers.PinnerTest):
         self.assertNotIn(helpers.WAIT, after.context)
         if self.called:
             # And: the user's AI reads the design to build on it, which Pin's guard does not hold
-            read = self.claude.call(
-                None, "Read", {"file_path": os.path.join(self.repo, self.path)}
-            )
+            read = self.claude.call(None, "Read", {"file_path": os.path.join(self.repo, self.path)})
             self.assertEqual((read.made, read.said), (True, {}))
             self.assertEqual(self.on_disk(), confirmed)
             self.assertEqual(self.on_disk()["decisions"][2]["settled_by"], "maker")

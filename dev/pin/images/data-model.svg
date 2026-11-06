@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1300 720" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
-  <title>Pin&#x27;s data model</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 710" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+  <title>Pin&#x27;s data</title>
   <style>
     .bg { fill: #ffffff; }
     .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
@@ -43,170 +43,82 @@
     <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
       <path class="head" d="M0,0 L10,5 L0,10 z"/>
     </marker>
+    <marker id="diamond" viewBox="0 0 16 10" refX="0" refY="5" markerWidth="14" markerHeight="9" orient="auto">
+      <path class="head" d="M0,5 L8,0 L16,5 L8,10 z"/>
+    </marker>
   </defs>
-  <rect class="bg" x="0" y="0" width="1300" height="720"/>
-  <rect class="box" x="560" y="60" width="170" height="48" rx="0"/>
-  <text class="name" x="645.0" y="89" text-anchor="middle">Check result</text>
-  <rect class="box" x="10" y="220" width="170" height="48" rx="0"/>
-  <text class="name" x="95.0" y="249" text-anchor="middle">Rules laid</text>
-  <rect class="box" x="300" y="220" width="170" height="48" rx="0"/>
-  <text class="name" x="385.0" y="249" text-anchor="middle">Request</text>
-  <rect class="box" x="560" y="220" width="170" height="48" rx="0"/>
-  <text class="name" x="645.0" y="249" text-anchor="middle">Design tree</text>
-  <rect class="box" x="860" y="220" width="170" height="48" rx="0"/>
-  <text class="name" x="945.0" y="249" text-anchor="middle">Goal</text>
-  <rect class="box" x="10" y="420" width="170" height="48" rx="0"/>
-  <text class="name" x="95.0" y="449" text-anchor="middle">Answer</text>
-  <rect class="box" x="300" y="420" width="170" height="48" rx="0"/>
-  <text class="name" x="385.0" y="449" text-anchor="middle">Reply</text>
-  <rect class="box" x="560" y="420" width="170" height="48" rx="0"/>
-  <text class="name" x="645.0" y="449" text-anchor="middle">Decision</text>
-  <rect class="box" x="860" y="420" width="170" height="48" rx="0"/>
-  <text class="name" x="945.0" y="449" text-anchor="middle">Question</text>
-  <rect class="box" x="1100" y="420" width="170" height="48" rx="0"/>
-  <text class="name" x="1185.0" y="449" text-anchor="middle">Ground</text>
-  <path class="line" d="M180,244 L300,244"/>
-  <path class="line" d="M188.0,237.0 L188.0,251.0"/>
-  <path class="line" d="M198.0,237.0 L198.0,251.0"/>
-  <path class="line" d="M286.0,244.0 L300.0,252.0"/>
-  <path class="line" d="M286.0,244.0 L300.0,244.0"/>
-  <path class="line" d="M286.0,244.0 L300.0,236.0"/>
-  <circle class="hole" cx="276.0" cy="244.0" r="5"/>
-  <text class="label small halo" x="240" y="230" text-anchor="middle">takes the path from</text>
-  <path class="line" d="M470,244 L560,244"/>
-  <path class="line" d="M484.0,244.0 L470.0,236.0"/>
-  <path class="line" d="M484.0,244.0 L470.0,244.0"/>
-  <path class="line" d="M484.0,244.0 L470.0,252.0"/>
-  <path class="line" d="M490.0,237.0 L490.0,251.0"/>
-  <path class="line" d="M552.0,251.0 L552.0,237.0"/>
-  <path class="line" d="M542.0,251.0 L542.0,237.0"/>
-  <text class="label small halo" x="515" y="236" text-anchor="middle">names</text>
-  <path class="line" d="M645,108 L645,220"/>
-  <path class="line" d="M645.0,122.0 L653.0,108.0"/>
-  <path class="line" d="M645.0,122.0 L645.0,108.0"/>
-  <path class="line" d="M645.0,122.0 L637.0,108.0"/>
-  <circle class="hole" cx="645.0" cy="132.0" r="5"/>
-  <path class="line" d="M638.0,212.0 L652.0,212.0"/>
-  <path class="line" d="M638.0,202.0 L652.0,202.0"/>
-  <text class="label small halo" x="653" y="168" text-anchor="start">is of</text>
-  <path class="line" d="M730,244 L860,244"/>
-  <path class="line" d="M738.0,237.0 L738.0,251.0"/>
-  <path class="line" d="M748.0,237.0 L748.0,251.0"/>
-  <path class="line" d="M852.0,251.0 L852.0,237.0"/>
-  <path class="line" d="M842.0,251.0 L842.0,237.0"/>
-  <text class="label small halo" x="795" y="236" text-anchor="middle">has at its root</text>
-  <path class="line" d="M700,268 L880,420"/>
-  <path class="line" d="M710.6,267.8 L701.6,278.5"/>
-  <path class="line" d="M718.3,274.3 L709.2,285.0"/>
-  <path class="line" d="M869.3,411.0 L874.8,426.1"/>
-  <path class="line" d="M869.3,411.0 L880.0,420.0"/>
-  <path class="line" d="M869.3,411.0 L885.2,413.9"/>
-  <path class="line" d="M860.2,412.4 L869.2,401.7"/>
-  <text class="label small halo" x="800" y="330" text-anchor="start">holds</text>
-  <path class="line" d="M645,268 L645,420"/>
-  <path class="line" d="M652.0,276.0 L638.0,276.0"/>
-  <path class="line" d="M652.0,286.0 L638.0,286.0"/>
-  <path class="line" d="M645.0,406.0 L637.0,420.0"/>
-  <path class="line" d="M645.0,406.0 L645.0,420.0"/>
-  <path class="line" d="M645.0,406.0 L653.0,420.0"/>
-  <circle class="hole" cx="645.0" cy="396.0" r="5"/>
-  <text class="label small halo" x="653" y="350" text-anchor="start">holds</text>
-  <path class="line" d="M945,420 L945,268"/>
-  <path class="line" d="M945.0,406.0 L937.0,420.0"/>
-  <path class="line" d="M945.0,406.0 L945.0,420.0"/>
-  <path class="line" d="M945.0,406.0 L953.0,420.0"/>
-  <path class="line" d="M938.0,400.0 L952.0,400.0"/>
-  <path class="line" d="M952.0,276.0 L938.0,276.0"/>
-  <path class="line" d="M952.0,286.0 L938.0,286.0"/>
-  <text class="label small halo" x="953" y="350" text-anchor="start">must hold for</text>
-  <path class="line" d="M730,444 L860,444"/>
-  <path class="line" d="M744.0,444.0 L730.0,436.0"/>
-  <path class="line" d="M744.0,444.0 L730.0,444.0"/>
-  <path class="line" d="M744.0,444.0 L730.0,452.0"/>
-  <path class="line" d="M750.0,437.0 L750.0,451.0"/>
-  <path class="line" d="M846.0,444.0 L860.0,452.0"/>
-  <path class="line" d="M846.0,444.0 L860.0,444.0"/>
-  <path class="line" d="M846.0,444.0 L860.0,436.0"/>
-  <circle class="hole" cx="836.0" cy="444.0" r="5"/>
-  <text class="label small halo" x="795" y="436" text-anchor="middle">serves</text>
-  <path class="line" d="M575,468 L575,540 L615,540 L615,468"/>
-  <path class="line" d="M575.0,482.0 L583.0,468.0"/>
-  <path class="line" d="M575.0,482.0 L575.0,468.0"/>
-  <path class="line" d="M575.0,482.0 L567.0,468.0"/>
-  <circle class="hole" cx="575.0" cy="492.0" r="5"/>
-  <path class="line" d="M615.0,482.0 L623.0,468.0"/>
-  <path class="line" d="M615.0,482.0 L615.0,468.0"/>
-  <path class="line" d="M615.0,482.0 L607.0,468.0"/>
-  <circle class="hole" cx="615.0" cy="492.0" r="5"/>
-  <text class="label small halo" x="567" y="556" text-anchor="end">serves</text>
-  <path class="line" d="M675,468 L675,540 L715,540 L715,468"/>
-  <path class="line" d="M675.0,482.0 L683.0,468.0"/>
-  <path class="line" d="M675.0,482.0 L675.0,468.0"/>
-  <path class="line" d="M675.0,482.0 L667.0,468.0"/>
-  <circle class="hole" cx="675.0" cy="492.0" r="5"/>
-  <path class="line" d="M715.0,482.0 L723.0,468.0"/>
-  <path class="line" d="M715.0,482.0 L715.0,468.0"/>
-  <path class="line" d="M715.0,482.0 L707.0,468.0"/>
-  <circle class="hole" cx="715.0" cy="492.0" r="5"/>
-  <text class="label small halo" x="723" y="556" text-anchor="start">builds on</text>
-  <path class="line" d="M990,244 L1185,244 L1185,420"/>
-  <path class="line" d="M998.0,237.0 L998.0,251.0"/>
-  <circle class="hole" cx="1012.0" cy="244.0" r="5"/>
-  <path class="line" d="M1185.0,406.0 L1177.0,420.0"/>
-  <path class="line" d="M1185.0,406.0 L1185.0,420.0"/>
-  <path class="line" d="M1185.0,406.0 L1193.0,420.0"/>
-  <circle class="hole" cx="1185.0" cy="396.0" r="5"/>
-  <text class="label small halo" x="1193" y="340" text-anchor="start">rests on</text>
-  <path class="line" d="M645,468 L645,580 L1160,580 L1160,468"/>
-  <path class="line" d="M652.0,476.0 L638.0,476.0"/>
-  <circle class="hole" cx="645.0" cy="490.0" r="5"/>
-  <path class="line" d="M1160.0,482.0 L1168.0,468.0"/>
-  <path class="line" d="M1160.0,482.0 L1160.0,468.0"/>
-  <path class="line" d="M1160.0,482.0 L1152.0,468.0"/>
-  <circle class="hole" cx="1160.0" cy="492.0" r="5"/>
-  <text class="label small halo" x="900" y="572" text-anchor="middle">rests on</text>
-  <path class="line" d="M420,420 L610,268"/>
-  <path class="line" d="M430.9,411.3 L415.0,413.8"/>
-  <path class="line" d="M430.9,411.3 L420.0,420.0"/>
-  <path class="line" d="M430.9,411.3 L425.0,426.2"/>
-  <circle class="hole" cx="438.7" cy="405.0" r="5"/>
-  <path class="line" d="M608.1,278.5 L599.4,267.5"/>
-  <path class="line" d="M600.3,284.7 L591.6,273.8"/>
-  <text class="label small halo" x="480" y="360" text-anchor="start">puts a point of it, or all of it</text>
-  <path class="line" d="M180,444 L300,444"/>
-  <path class="line" d="M188.0,437.0 L188.0,451.0"/>
-  <circle class="hole" cx="202.0" cy="444.0" r="5"/>
-  <path class="line" d="M292.0,451.0 L292.0,437.0"/>
-  <path class="line" d="M282.0,451.0 L282.0,437.0"/>
-  <text class="label small halo" x="240" y="430" text-anchor="middle">answers</text>
-  <path class="line" d="M95,468 L95,640 L1240,640 L1240,468"/>
-  <path class="line" d="M102.0,476.0 L88.0,476.0"/>
-  <circle class="hole" cx="95.0" cy="490.0" r="5"/>
-  <path class="line" d="M1240.0,482.0 L1248.0,468.0"/>
-  <path class="line" d="M1240.0,482.0 L1240.0,468.0"/>
-  <path class="line" d="M1240.0,482.0 L1232.0,468.0"/>
-  <circle class="hole" cx="1240.0" cy="492.0" r="5"/>
-  <text class="label small halo" x="680" y="632" text-anchor="middle">is kept as</text>
-  <text class="frame-name" x="40" y="694" text-anchor="start">Legend</text>
-  <path class="line" d="M110,690 L160,690"/>
-  <path class="line" d="M152.0,697.0 L152.0,683.0"/>
-  <path class="line" d="M142.0,697.0 L142.0,683.0"/>
-  <text class="label small" x="170" y="694" text-anchor="start">exactly one</text>
-  <path class="line" d="M280,690 L330,690"/>
-  <path class="line" d="M322.0,697.0 L322.0,683.0"/>
-  <circle class="hole" cx="308.0" cy="690.0" r="5"/>
-  <text class="label small" x="340" y="694" text-anchor="start">zero or one</text>
-  <path class="line" d="M450,690 L500,690"/>
-  <path class="line" d="M486.0,690.0 L500.0,698.0"/>
-  <path class="line" d="M486.0,690.0 L500.0,690.0"/>
-  <path class="line" d="M486.0,690.0 L500.0,682.0"/>
-  <path class="line" d="M480.0,697.0 L480.0,683.0"/>
-  <text class="label small" x="510" y="694" text-anchor="start">one or many</text>
-  <path class="line" d="M620,690 L670,690"/>
-  <path class="line" d="M656.0,690.0 L670.0,698.0"/>
-  <path class="line" d="M656.0,690.0 L670.0,690.0"/>
-  <path class="line" d="M656.0,690.0 L670.0,682.0"/>
-  <circle class="hole" cx="646.0" cy="690.0" r="5"/>
-  <text class="label small" x="680" y="694" text-anchor="start">zero or many</text>
-  <text class="label small" x="800" y="694" text-anchor="start">at the end of the data it counts; a box holds a data&#x27;s name</text>
+  <rect class="bg" x="0" y="0" width="1240" height="710"/>
+  <rect class="frame" x="20" y="20" width="300" height="420" rx="8"/>
+  <text class="frame-name" x="34" y="42" text-anchor="start">orchestrator</text>
+  <rect class="frame" x="360" y="20" width="860" height="560" rx="8"/>
+  <text class="frame-name" x="374" y="42" text-anchor="start">Design tree, kept by the pinner</text>
+  <rect class="frame" x="20" y="470" width="300" height="110" rx="8"/>
+  <text class="frame-name" x="34" y="492" text-anchor="start">check.py</text>
+  <rect class="box" x="80" y="70" width="170" height="44" rx="0"/>
+  <text class="name" x="165.0" y="97.0" text-anchor="middle">Request</text>
+  <rect class="box" x="80" y="330" width="170" height="44" rx="0"/>
+  <text class="name" x="165.0" y="357.0" text-anchor="middle">Answer</text>
+  <rect class="box" x="80" y="200" width="170" height="44" rx="0"/>
+  <text class="name" x="165.0" y="227.0" text-anchor="middle">Point</text>
+  <rect class="box" x="80" y="510" width="170" height="44" rx="0"/>
+  <text class="name" x="165.0" y="537.0" text-anchor="middle">Check result</text>
+  <rect class="box" x="560" y="70" width="170" height="44" rx="0"/>
+  <text class="name" x="645.0" y="97.0" text-anchor="middle">Design tree</text>
+  <rect class="box" x="900" y="70" width="170" height="44" rx="0"/>
+  <text class="name" x="985.0" y="97.0" text-anchor="middle">Goal</text>
+  <rect class="box" x="560" y="250" width="170" height="44" rx="0"/>
+  <text class="name" x="645.0" y="277.0" text-anchor="middle">Question</text>
+  <rect class="box" x="900" y="250" width="170" height="44" rx="0"/>
+  <text class="name" x="985.0" y="277.0" text-anchor="middle">Decision</text>
+  <rect class="box" x="900" y="470" width="170" height="44" rx="0"/>
+  <text class="name" x="985.0" y="497.0" text-anchor="middle">Ground</text>
+  <path class="line" d="M250,80 L560,80" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="405" y="72" text-anchor="middle">names the path of</text>
+  <text class="label small" x="262" y="96" text-anchor="start">0..*</text>
+  <text class="label small" x="552" y="76" text-anchor="end">1</text>
+  <path class="line" d="M250,222 L480,222 L480,94 L560,94" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="370" y="214" text-anchor="middle">puts a point of, or all of</text>
+  <text class="label small" x="262" y="238" text-anchor="start">0..*</text>
+  <text class="label small" x="552" y="90" text-anchor="end">1</text>
+  <path class="line" d="M165,330 L165,244" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="175" y="292" text-anchor="start">answers</text>
+  <text class="label small" x="175" y="322" text-anchor="start">0..*</text>
+  <text class="label small" x="175" y="258" text-anchor="start">1</text>
+  <path class="line" d="M250,352 L340,352 L340,640 L985,640 L985,514" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="600" y="632" text-anchor="middle">is kept as</text>
+  <text class="label small" x="262" y="368" text-anchor="start">1</text>
+  <text class="label small" x="995" y="530" text-anchor="start">0..1</text>
+  <path class="line" d="M250,532 L440,532 L440,108 L560,108" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="446" y="470" text-anchor="start">is of</text>
+  <text class="label small" x="262" y="548" text-anchor="start">0..*</text>
+  <text class="label small" x="552" y="104" text-anchor="end">1</text>
+  <path class="line" d="M730,92 L900,92" marker-start="url(#diamond)"/>
+  <text class="label small halo" x="815" y="84" text-anchor="middle">holds</text>
+  <text class="label small" x="880" y="108" text-anchor="start">1</text>
+  <path class="line" d="M620,114 L620,250" marker-start="url(#diamond)"/>
+  <text class="label small halo" x="628" y="180" text-anchor="start">holds</text>
+  <text class="label small" x="628" y="242" text-anchor="start">1..*</text>
+  <path class="line" d="M700,114 L700,170 L960,170 L960,250" marker-start="url(#diamond)"/>
+  <text class="label small halo" x="830" y="162" text-anchor="middle">holds</text>
+  <text class="label small" x="968" y="242" text-anchor="start">0..*</text>
+  <path class="line" d="M645,250 L645,200 L985,200 L985,114" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="820" y="194" text-anchor="middle">must hold for</text>
+  <text class="label small" x="993" y="130" text-anchor="start">1</text>
+  <path class="line" d="M900,272 L730,272" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="815" y="264" text-anchor="middle">serves</text>
+  <text class="label small" x="894" y="292" text-anchor="end">0..*</text>
+  <text class="label small" x="736" y="292" text-anchor="start">0..1</text>
+  <path class="line" d="M1070,260 L1150,260 L1150,284 L1070,284" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="1160" y="268" text-anchor="start">serves,</text>
+  <text class="label small halo" x="1160" y="282" text-anchor="start">builds on</text>
+  <text class="label small" x="1090" y="304" text-anchor="start">0..*</text>
+  <path class="line" d="M985,294 L985,470" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="993" y="390" text-anchor="start">rests on</text>
+  <text class="label small" x="993" y="460" text-anchor="start">0..*</text>
+  <path class="line" d="M1050,114 L1200,114 L1200,492 L1070,492" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="1192" y="400" text-anchor="end">rests on</text>
+  <text class="label small" x="1080" y="484" text-anchor="start">0..*</text>
+  <text class="frame-name" x="30" y="670" text-anchor="start">Legend</text>
+  <text class="label small" x="100" y="670" text-anchor="start">1 exactly one · 0..1 zero or one · 1..* one or many · 0..* zero or many, each at the end of the data it counts;</text>
+  <text class="label small" x="100" y="688" text-anchor="start">a filled diamond at the whole that holds the other&#x27;s parts; a box holds a data&#x27;s name</text>
 </svg>
