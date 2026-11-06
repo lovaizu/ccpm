@@ -26,7 +26,8 @@ At SubagentStop, a subagent giving a result is kept going once where it gave non
 kept, so a start in the background counts once its subagent has ended.
 
 The main conversation is held only while a run of the skill lasts, from the command's expansion or
-the Skill call that begins it until a route ends it, with neither a `to` nor `waits`. Within it, a
+the Skill call that begins it until a route ends it, with neither a `to` nor `waits`, or a new call
+of the skill, while the run waits for the user, ends it and begins another. Within it, a
 start not due, or a message resuming a start that ended with no result, is stopped with the start
 due; each start coming back is kept and told to wait; each prompt handed to the main conversation,
 a subagent's task-notification among them, is told the next start, or, where a route waits, to
@@ -791,10 +792,11 @@ def held_main(check: MainCheck) -> Callable[[str, str, dict[str, Any], str], lis
 
 def begin(m: Main) -> list[Said]:
     """What the main conversation is told as the skill the routes name is called: nothing where a
-    run is on already; the first start, the run begun, where the skill's step still says the
-    routes' sentence; an error otherwise, no run begun, as its step was not laid by `lay.py
-    write`."""
-    if m.on():
+    run is on already and does not wait for the user; the first start, a run begun, where the
+    skill's step still says the routes' sentence, a run that waits for the user ended first, as a
+    new call of the skill is the user's, and the run would otherwise wait with no way to be let go;
+    an error otherwise, no run begun, as its step was not laid by `lay.py write`."""
+    if m.on() and m.due().kind != "reply":
         return []
     said = lanes.sentence("follow_routes", [])
     if not step.holds(m.root, m.skill(), m.routes["step"], said, skill=True):

@@ -62,7 +62,10 @@ ROUTED = {
 # Each wording lane laid before the current one, the newest first, by the name of the lane or of
 # the sentence laid from the routes, each with the places of the current; one not here has had only
 # its current wording.
-EARLIER = {"result": follow_routes.RESULT_EARLIER}
+EARLIER = {
+    "follow_routes": follow_routes.WORDING_EARLIER,
+    "result": follow_routes.RESULT_EARLIER,
+}
 # Where a wording shows what the lane takes, in quotes, by the name of its place.
 TAKEN = re.compile(r"`<([a-z]+)>`")
 # A thing given for each run: a name in braces, the braces wrapping the whole take.

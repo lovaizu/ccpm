@@ -57,7 +57,7 @@ def steps_laid(
     in each subagent, by its name, as hooks/lanes.json holds them: the proposal's steps, then each
     other step that a sentence laid before is gone from, with no lanes, where the subagent's file
     still has it; each with where it is and the sentences gone from it, each in its current wording
-    and then in each lane laid before."""
+    and in each lane laid before, the longest first."""
     now = {s["step"]: sentences(s) for s in agent["steps"]}
     gone: dict[int, list[str]] = {}
     for s in before.get(agent["name"], []):
@@ -65,9 +65,10 @@ def steps_laid(
         out = gone.setdefault(s["step"], [])
         for lane in s["lanes"]:
             said = lanes.sentence(lane["lane"], lane["takes"])
-            # The current wording first, as an earlier one may begin it.
+            # The longest wording first, as a shorter one, current or earlier, may begin it.
             if said not in kept:
-                out += [said, *lanes.earlier(lane["lane"], lane["takes"])]
+                each = [said, *lanes.earlier(lane["lane"], lane["takes"])]
+                out += sorted(each, key=len, reverse=True)
     lines = [line.rstrip("\n") for line in agent["lines"]]
     spans = {n: step.span(lines, n) for n in sorted(gone) if n not in now}
     rest: list[dict[str, Any]] = [

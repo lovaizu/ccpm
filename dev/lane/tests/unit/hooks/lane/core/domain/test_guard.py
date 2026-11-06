@@ -593,6 +593,28 @@ class TestWaits(RoutedTest):
         self.assertEqual(self.main(self.start("writer")), stopped)
         self.assertEqual(self.main(self.start("reviewer")), stopped)
 
+    def test_a_new_call_of_the_skill_while_the_user_is_to_answer_begins_another_run(self):
+        for n, event in enumerate(
+            (self.expansion(), self.skill_call("changelog:write", "PostToolUse")), 2
+        ):
+            with self.subTest(event=event["hook_event_name"]):
+                # Given: the run waiting for the user's answer to reviewer's point, the second
+                # time a run of its own
+                if n > 2:
+                    self.through("writer", f"w{n}", "written")
+                    self.through("reviewer", f"r{n}", "asks")
+                # When: `/changelog:write` is typed, or an AI calls the skill, again
+                told = self.main(event)
+                # Then: the waiting run ends and another begins: the first start is told, a start
+                # of reviewer is stopped with it, and the start of writer goes through
+                start = guard.Said("Start `changelog:writer`.")
+                self.assertEqual(told, [start])
+                stopped = [guard.Said(helpers.FOLLOW), start]
+                self.assertEqual(self.main(self.start("reviewer")), stopped)
+                self.assertEqual(self.main(self.start("writer")), [])
+                # And: a call again before the new run waits begins no other
+                self.assertEqual(self.main(event), [])
+
     def test_the_resumed_subagents_later_result_moves_the_routes_on(self):
         # When: the main conversation resumes reviewer with the answer, which Claude Code starts
         # again, and reviewer gives `more` and ends

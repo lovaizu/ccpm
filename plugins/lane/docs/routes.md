@@ -111,12 +111,19 @@ A run of your skill begins as its command is typed, `/<plugin>:<skill>`, such as
 `/changelog:write`, or as an AI calls the skill with the Skill tool. lane sees the first as the
 command's UserPromptExpansion and the second as the Skill call's PostToolUse, the two ways Claude
 Code documents a skill begun. A prompt that only quotes the command, or the skill's text pasted,
-begins no run. The skill called again while its run goes on begins no other.
+begins no run. The skill called again while its run goes on begins no other, unless the run waits
+for the user's answer to a subagent's point.
 
 The run ends once a route with neither a `to` nor `waits` is taken, as the main conversation is
 told so. It ends too where
 lane lets the main conversation end its turn with a start still due, as
-[What the main conversation is told](#what-the-main-conversation-is-told) says.
+[What the main conversation is told](#what-the-main-conversation-is-told) says. This is also how a
+run ends where the person explicitly asks the main conversation to leave a start out, such as the
+review: lane holds the order against drift, not against the person, so it stops another start and
+keeps the turn going once, and then lets it end with what was left told. It ends as well
+where the skill is called again while the run waits for the user's answer. Another run then begins,
+and the main conversation is told its first start. Otherwise a run whose user chose not to answer
+would wait with no way to be let go.
 
 Outside a run, lane checks nothing in the main conversation. Within it, lane checks only three
 things there:
