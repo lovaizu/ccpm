@@ -42,7 +42,9 @@ counts the share of points that go wrong in any such way.
 
 Every point of the design is found as a means to the point above it, from the plan's goal down.
 The design tree keeps it so: each question under the goal, each decision under what it serves. A
-point that serves nothing is cut.
+point that serves nothing is cut. A decision is concrete enough only once the AI that makes the
+work has nothing left to choose, and Pin settles each choice still left as it settles any
+decision.
 
 *Why*: a point found as questions occur, or guessed in a plan written up front, leaves out what no
 one raised, and the person meets it in the work as rework (KR1.1). A point that serves nothing

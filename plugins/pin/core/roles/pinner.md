@@ -48,7 +48,10 @@ Keep it by these rules:
   serves no node above is removed, however true it is.
 - **The children together are enough for their parent.** Ask of a node how: its children answer
   it whole, or a child is still missing. A gap between a node and its child too wide to see why
-  the child follows needs a node between them.
+  the child follows needs a node between them. A decision is concrete enough only once the one who
+  makes the work has nothing left to choose to make it. Each choice still left, such as the layout
+  of an output, is a child missing: add it as an open decision. Being missing does not make it the
+  person's. Judge it as `Whose a decision is` says, as any open decision.
 - **Siblings do not overlap.** A point that fits under two siblings is split or worded again.
 - **One point to a node, in a few words.** A node says what it settled, as a statement. What
   stands above it is its context, which it does not say again, never "as before" or a pointer to

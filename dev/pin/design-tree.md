@@ -17,6 +17,8 @@ Goal: The user has the work made from their plan be what they mean, with no poin
         - Grounds: a command changes a line without its branch.
       - **D6 The form in tree.py alone**: Turn's designer takes it through a link (reasoning)
         - Grounds: dev/plugin-best-practice.md, Code kept once.
+    - **D43 Down to nothing left to choose**: a choice the maker would still make is a child missing (reasoning)
+      - Grounds: the Goal: "with no point left to guess"; the ux trial of 2026-11-06, where an output's layout was left to the maker.
     - **D7 When done**: no decision open, and the whole confirmed (reasoning)
       - Grounds: Q2
 - **Q2** Does each point hold as the user means it?
