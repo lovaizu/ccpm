@@ -47,46 +47,39 @@
   <rect class="bg" x="0" y="0" width="1680" height="800"/>
   <rect class="frame" x="20" y="80" width="1310" height="640" rx="8"/>
   <text class="frame-name" x="36" y="104" text-anchor="start">the user's computer</text>
-  <text class="kind start" x="560" y="104" text-anchor="start">[Claude Code 2.1.317 or later and python3 3.9 or later, installed]</text>
+  <text class="kind start" x="560" y="104" text-anchor="start">[Claude Code 2.1.317 or later, python3 3.9 or later]</text>
   <rect class="unit" x="40" y="120" width="500" height="140" rx="6"/>
   <text class="name start" x="54" y="146" text-anchor="start">Claude Code process</text>
-  <text class="kind start" x="54" y="164" text-anchor="start">[Claude Code 2.1.317 or later, run as a conversation, not claude -p]</text>
-  <text class="label start" x="54" y="188" text-anchor="start">starter: the main conversation, or the user's AI</text>
-  <text class="label start" x="54" y="206" text-anchor="start">up, planner, generator and evaluator: Turn's subagents</text>
-  <text class="label start" x="54" y="224" text-anchor="start">pinner: Pin's subagent</text>
+  <text class="kind start" x="54" y="164" text-anchor="start">[Claude Code 2.1.317 or later]</text>
+  <text class="label start" x="54" y="188" text-anchor="start">starter, up, planner, generator, evaluator, pinner</text>
   <rect class="unit" x="40" y="340" width="280" height="130" rx="6"/>
   <text class="name start" x="54" y="366" text-anchor="start">hook process</text>
   <text class="kind start" x="54" y="384" text-anchor="start">[python3 3.9 or later]</text>
-  <text class="label start" x="54" y="408" text-anchor="start">Turn's guard, which reads Rules laid</text>
-  <text class="label start" x="54" y="426" text-anchor="start">in installed Turn; Pin's guard</text>
+  <text class="label start" x="54" y="408" text-anchor="start">Turn's guard, Pin's guard</text>
   <rect class="unit" x="360" y="340" width="280" height="150" rx="6"/>
   <text class="name start" x="374" y="366" text-anchor="start">script process</text>
   <text class="kind start" x="374" y="384" text-anchor="start">[python3 3.9 or later]</text>
   <text class="label start" x="374" y="408" text-anchor="start">plan.py, rounds.py, throwaway.py,</text>
-  <text class="label start" x="374" y="426" text-anchor="start">Pin's check.py; a work's command,</text>
-  <text class="label start" x="374" y="444" text-anchor="start">in a throwaway home</text>
+  <text class="label start" x="374" y="426" text-anchor="start">Pin's check.py, a work's command</text>
   <rect class="unit" x="40" y="580" width="600" height="110" rx="6"/>
   <text class="name start" x="54" y="606" text-anchor="start">the temporary folder</text>
-  <text class="kind start" x="54" y="624" text-anchor="start">[the system's, as tempfile.gettempdir() gives it]</text>
-  <text class="label start" x="54" y="648" text-anchor="start">the throwaway homes and copies</text>
-  <text class="data start" x="54" y="666" text-anchor="start">Lane's kept calls: Result</text>
+  <text class="kind start" x="54" y="624" text-anchor="start">[the system's]</text>
+  <text class="label start" x="54" y="648" text-anchor="start">throwaway homes, throwaway copies</text>
+  <text class="data start" x="54" y="666" text-anchor="start">Result</text>
   <rect class="unit" x="780" y="120" width="530" height="130" rx="6"/>
   <text class="name start" x="794" y="146" text-anchor="start">installed Turn</text>
   <text class="kind start" x="794" y="164" text-anchor="start">[plugin folder, installed by Claude Code]</text>
-  <text class="label start" x="794" y="188" text-anchor="start">the entries and the steps of each role</text>
-  <text class="label start" x="794" y="206" text-anchor="start">the scripts' and the guard's code</text>
-  <text class="data start" x="794" y="224" text-anchor="start">Best practice, Turn's own; Rules laid</text>
+  <text class="label start" x="794" y="188" text-anchor="start">Turn's roles, scripts and guard</text>
+  <text class="data start" x="794" y="206" text-anchor="start">Best practice, Rules laid</text>
   <rect class="unit" x="780" y="280" width="530" height="90" rx="6"/>
   <text class="name start" x="794" y="306" text-anchor="start">installed Pin</text>
   <text class="kind start" x="794" y="324" text-anchor="start">[plugin folder, installed with Turn]</text>
-  <text class="label start" x="794" y="348" text-anchor="start">the pinner's steps, check.py and Pin's guard</text>
+  <text class="label start" x="794" y="348" text-anchor="start">pinner, check.py, Pin's guard</text>
   <rect class="unit" x="780" y="420" width="530" height="150" rx="6"/>
   <text class="name start" x="794" y="446" text-anchor="start">the repository</text>
   <text class="kind start" x="794" y="464" text-anchor="start">[git working tree]</text>
-  <text class="data start" x="794" y="488" text-anchor="start">Work, at the paths its design gives</text>
-  <text class="data start" x="794" y="506" text-anchor="start">.turn/&lt;yyyymmdd&gt;-&lt;name&gt;/: Call, Run, Design file, Standard,</text>
-  <text class="data start" x="794" y="524" text-anchor="start">Round, Answers</text>
-  <text class="data start" x="794" y="542" text-anchor="start">.turn/best-practices/: Best practice, the repository's own</text>
+  <text class="data start" x="794" y="488" text-anchor="start">Work, Call, Run, Design file, Standard,</text>
+  <text class="data start" x="794" y="506" text-anchor="start">Round, Answers, Best practice</text>
   <rect class="ext" x="1420" y="120" width="240" height="64" rx="4"/>
   <text class="name" x="1540.0" y="148" text-anchor="start">Anthropic's API</text>
   <text class="kind" x="1540.0" y="166" text-anchor="start">[HTTPS]</text>

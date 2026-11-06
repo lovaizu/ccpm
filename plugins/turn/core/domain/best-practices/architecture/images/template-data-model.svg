@@ -46,14 +46,11 @@
   </defs>
   <rect class="bg" x="0" y="0" width="1000" height="420"/>
   <rect class="box" x="40" y="60" width="220" height="72" rx="0"/>
-  <text class="name mid" x="150.0" y="92" text-anchor="middle">&lt;Data&gt;</text>
-  <text class="kind mid" x="150.0" y="112" text-anchor="middle">&lt;what it is&gt;</text>
+  <text class="name mid" x="150.0" y="101" text-anchor="middle">&lt;Data&gt;</text>
   <rect class="box" x="640" y="60" width="220" height="72" rx="0"/>
-  <text class="name mid" x="750.0" y="92" text-anchor="middle">&lt;Data&gt;</text>
-  <text class="kind mid" x="750.0" y="112" text-anchor="middle">&lt;what it is&gt;</text>
+  <text class="name mid" x="750.0" y="101" text-anchor="middle">&lt;Data&gt;</text>
   <rect class="box" x="340" y="250" width="220" height="72" rx="0"/>
-  <text class="name mid" x="450.0" y="282" text-anchor="middle">&lt;Data&gt;</text>
-  <text class="kind mid" x="450.0" y="302" text-anchor="middle">&lt;what it is&gt;</text>
+  <text class="name mid" x="450.0" y="291" text-anchor="middle">&lt;Data&gt;</text>
   <path class="line" d="M260,96 L640,96"/>
   <path class="line" d="M270.0,89.0 L270.0,103.0"/>
   <path class="line" d="M280.0,89.0 L280.0,103.0"/>
@@ -99,5 +96,5 @@
   <path class="line" d="M676.0,380.0 L690.0,372.0"/>
   <circle class="hole" cx="664.0" cy="380.0" r="5"/>
   <text class="label small start" x="702" y="385" text-anchor="start">zero or many</text>
-  <text class="label small start" x="40" y="407" text-anchor="start">at the end of the data it counts; a box holds a data's name and what it is</text>
+  <text class="label small start" x="40" y="407" text-anchor="start">at the end of the data it counts; a box holds a data's name</text>
 </svg>

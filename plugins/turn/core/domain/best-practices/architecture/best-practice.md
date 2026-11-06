@@ -60,7 +60,7 @@ The developer builds and changes each part of the product so that the parts toge
 
 ### Q4: Facing a decision the stories need, does the developer find the one component that alone decides it, so that no decision is made twice and drifts?
 
-**Thinking**: One component alone makes each decision the stories need, above all one hard to make or likely to change, and its box says so. A decision two components share is made twice and drifts.
+**Thinking**: One component alone makes each decision the stories need, above all one hard to make or likely to change, and a list under the figure says so by the component's name. A decision two components share is made twice and drifts. A box holds only the component's name and type, as a box that holds sentences no longer shows the parts and their joins at a glance.
 
 **Steps**
 
@@ -73,11 +73,11 @@ The developer builds and changes each part of the product so that the parts toge
 
 **Steps**
 
-1. Read the figure without the text around it, and add to the boxes or the legend whatever a reader would still have to ask.
+1. Read the figure without the text around it, and add to the legend whatever symbol a reader would still have to ask about; what a part does goes to the list under the figure, not into its box.
 
 ### Q6: Making one component that writes a data and another that reads it, do two developers join it to the other data the same way, so that the data fits while its fields change freely?
 
-**Thinking**: Each data is drawn once, by its name and what it is in a few words, with each relation named and how many of each it joins. The fields are left to where the data is built. Two developers then join a data the same way while its fields change freely.
+**Thinking**: Each data is drawn once, by its name alone, with each relation named and how many of each it joins, and a list under the figure says what each is in a few words. The fields are left to where the data is built. Two developers then join a data the same way while its fields change freely.
 
 ### Q7: Following a user story from its role's first request to its end, does the developer see at each step which component acts, along which arrow, and what data it hands on, so that they build each step knowing who acts and on what?
 

@@ -47,17 +47,14 @@
   <rect class="bg" x="0" y="0" width="1200" height="620"/>
   <circle class="ext" cx="190.0" cy="40" r="11"/>
   <rect class="ext" x="40" y="50" width="300" height="90" rx="22"/>
-  <text class="name mid" x="190.0" y="83" text-anchor="middle">&lt;role&gt;</text>
-  <text class="kind mid" x="190.0" y="103" text-anchor="middle">[&lt;who they are&gt;]</text>
-  <text class="label small mid" x="190.0" y="119" text-anchor="middle">decides &lt;what is theirs&gt;</text>
+  <text class="name mid" x="190.0" y="90" text-anchor="middle">&lt;role&gt;</text>
+  <text class="kind mid" x="190.0" y="110" text-anchor="middle">[&lt;who they are&gt;]</text>
   <rect class="box" x="40" y="260" width="300" height="100" rx="0"/>
-  <text class="name mid" x="190.0" y="298" text-anchor="middle">&lt;component&gt;</text>
-  <text class="kind mid" x="190.0" y="318" text-anchor="middle">[&lt;type&gt; · &lt;technology&gt;]</text>
-  <text class="label small mid" x="190.0" y="334" text-anchor="middle">decides &lt;what it alone decides&gt;</text>
+  <text class="name mid" x="190.0" y="306" text-anchor="middle">&lt;component&gt;</text>
+  <text class="kind mid" x="190.0" y="326" text-anchor="middle">[&lt;type&gt; · &lt;technology&gt;]</text>
   <rect class="box" x="480" y="260" width="300" height="100" rx="0"/>
-  <text class="name mid" x="630.0" y="298" text-anchor="middle">&lt;component&gt;</text>
-  <text class="kind mid" x="630.0" y="318" text-anchor="middle">[&lt;type&gt; · &lt;technology&gt;]</text>
-  <text class="label small mid" x="630.0" y="334" text-anchor="middle">decides &lt;what it alone decides&gt;</text>
+  <text class="name mid" x="630.0" y="306" text-anchor="middle">&lt;component&gt;</text>
+  <text class="kind mid" x="630.0" y="326" text-anchor="middle">[&lt;type&gt; · &lt;technology&gt;]</text>
   <path class="store" d="M480,450 A150.0,9 0 0 1 780,450 V520 A150.0,9 0 0 1 480,520 Z"/>
   <path class="store" d="M480,450 A150.0,9 0 0 0 780,450"/>
   <text class="name mid" x="630.0" y="487" text-anchor="middle">&lt;store&gt;</text>
@@ -84,7 +81,7 @@
   <path class="store" d="M260,575 A18,9 0 0 0 296,575"/>
   <text class="label small start" x="304" y="585" text-anchor="start">store of data</text>
   <rect class="ext" x="410" y="570" width="36" height="22" rx="6"/>
-  <text class="label small start" x="454" y="585" text-anchor="start">outside the product; with a head: a role of the UX</text>
-  <text class="label small start" x="790" y="577" text-anchor="start">a box: name, [type · technology], what it alone decides</text>
-  <text class="data start" x="790" y="593" text-anchor="start">data handed on, named as in the data model</text>
+  <text class="label small start" x="454" y="585" text-anchor="start">outside the product; with a head: a role of the product vision</text>
+  <text class="label small start" x="840" y="577" text-anchor="start">a box: name and [type · technology]</text>
+  <text class="data start" x="840" y="593" text-anchor="start">data handed on, named as in the data model</text>
 </svg>

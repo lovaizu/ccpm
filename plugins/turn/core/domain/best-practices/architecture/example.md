@@ -150,6 +150,22 @@ the run (KR1.1). What becomes of the work is the user's to decide, as
 
 ![Turn's components](images/components.svg)
 
+What each decides alone:
+
+- **user**: what is theirs: the purpose, each fact and decision, the design.
+- **starter**: nothing of the work; it puts each point, and passes each answer back, as given.
+- **up**: the run's folder, the one given, else the one the request names, else a new one in
+  `.turn/`; and which role an answer resumes, the one that asked.
+- **guard**: whether a call or an end of a role keeps its rules, and which start is due next.
+- **pinner**: everything in the design, as Pin's architecture says.
+- **planner**: the kind and its best practice, whether a new kind's comes first, what each Request
+  carries, where the work lies, and when the run is done.
+- **generator**: the work, and each small point of making it, such as a phrase.
+- **evaluator**: whether each question of its group is met.
+- **plan.py**: whether a best practice holds its form.
+- **rounds.py**: each round's phase and questions, their groups, and whether a role's Answers hold.
+- **throwaway.py**: where a work's command runs.
+
 - **up as a subagent, for the user who types `/turn:up` too,** over up in the main
   conversation: the main conversation passes each point by its steps alone, which no hook sees,
   while Lane holds a subagent to its routes (KR1.1). It costs a resume of up for each point, which
@@ -187,6 +203,23 @@ the run (KR1.1). What becomes of the work is the user's to decide, as
 ## Data model
 
 ![Turn's data](images/data-model.svg)
+
+- **Call**: the request, and what the user's AI settled.
+- **Run**: the kind, and the works to make, in order.
+- **Run values**: the one line a role is started with.
+- **Work**: what the user wants made.
+- **Best practice**: a kind's goal, template, questions and ways.
+- **Standard**: a best practice without its ways.
+- **Question**: one question of a best practice.
+- **Design file**: Pin's design tree: the goal, questions and decisions.
+- **Decision**: one point of the design, with who settled it.
+- **Request**: what up starts the pinner with: each point to settle.
+- **Round**: one round's phase and questions.
+- **Answers**: met or not met, for each question of a round.
+- **Result**: the word a role gives as it ends.
+- **Rules laid**: Turn's rules and routes, as Lane laid them.
+- **Message**: what up ends with, under a heading for the starter.
+- **Answer**: the user's words, passed back as given.
 
 ## Sequences
 

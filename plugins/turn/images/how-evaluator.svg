@@ -54,14 +54,11 @@
   <rect class="store" x="50" y="180" width="220" height="40" rx="6"/>
   <text class="name" x="160" y="205">What its maker meant</text>
   <rect class="store" x="340" y="60" width="200" height="56" rx="6"/>
-  <text class="name" x="440" y="84">The work</text>
-  <text class="kind" x="440" y="102">such as README.md</text>
+  <text class="name" x="440" y="93">The work</text>
   <rect class="store" x="340" y="170" width="200" height="56" rx="6"/>
-  <text class="name" x="440" y="194">The questions</text>
-  <text class="kind" x="440" y="212">its reader asks of it</text>
+  <text class="name" x="440" y="203">Its reader's questions</text>
   <rect class="lane" x="620" y="110" width="200" height="66" rx="6"/>
-  <text class="name" x="720" y="136">Evaluator</text>
-  <text class="kind" x="720" y="154">a fresh AI</text>
+  <text class="name" x="720" y="145">Evaluator</text>
   <path class="line" d="M540,88 L616,128" marker-end="url(#a)"/>
   <path class="line" d="M540,198 L616,160" marker-end="url(#a)"/>
   <path class="line" d="M820,143 L900,143 L900,210" marker-end="url(#a)"/>

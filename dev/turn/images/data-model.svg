@@ -46,69 +46,37 @@
   </defs>
   <rect class="bg" x="0" y="0" width="1490" height="900"/>
   <rect class="box" x="40" y="60" width="210" height="72" rx="0"/>
-  <text class="name" x="145.0" y="84" text-anchor="middle">Answer</text>
-  <text class="kind" x="145.0" y="104" text-anchor="middle">the user's words,</text>
-  <text class="kind" x="145.0" y="119" text-anchor="middle">passed back as given</text>
+  <text class="name" x="145.0" y="101" text-anchor="middle">Answer</text>
   <rect class="box" x="340" y="60" width="210" height="72" rx="0"/>
-  <text class="name" x="445.0" y="84" text-anchor="middle">Message</text>
-  <text class="kind" x="445.0" y="104" text-anchor="middle">what up ends with, under a</text>
-  <text class="kind" x="445.0" y="119" text-anchor="middle">heading for the starter</text>
+  <text class="name" x="445.0" y="101" text-anchor="middle">Message</text>
   <rect class="box" x="640" y="60" width="210" height="72" rx="0"/>
-  <text class="name" x="745.0" y="84" text-anchor="middle">Call</text>
-  <text class="kind" x="745.0" y="104" text-anchor="middle">the request, and what the</text>
-  <text class="kind" x="745.0" y="119" text-anchor="middle">user's AI settled</text>
+  <text class="name" x="745.0" y="101" text-anchor="middle">Call</text>
   <rect class="box" x="940" y="60" width="210" height="72" rx="0"/>
-  <text class="name" x="1045.0" y="84" text-anchor="middle">Result</text>
-  <text class="kind" x="1045.0" y="104" text-anchor="middle">the word a role</text>
-  <text class="kind" x="1045.0" y="119" text-anchor="middle">gives as it ends</text>
+  <text class="name" x="1045.0" y="101" text-anchor="middle">Result</text>
   <rect class="box" x="1240" y="60" width="210" height="72" rx="0"/>
-  <text class="name" x="1345.0" y="84" text-anchor="middle">Rules laid</text>
-  <text class="kind" x="1345.0" y="104" text-anchor="middle">Turn's rules and routes,</text>
-  <text class="kind" x="1345.0" y="119" text-anchor="middle">as Lane laid them</text>
+  <text class="name" x="1345.0" y="101" text-anchor="middle">Rules laid</text>
   <rect class="box" x="40" y="260" width="210" height="72" rx="0"/>
-  <text class="name" x="145.0" y="284" text-anchor="middle">Request</text>
-  <text class="kind" x="145.0" y="304" text-anchor="middle">what up starts the pinner</text>
-  <text class="kind" x="145.0" y="319" text-anchor="middle">with: each point to settle</text>
+  <text class="name" x="145.0" y="301" text-anchor="middle">Request</text>
   <rect class="box" x="340" y="260" width="210" height="72" rx="0"/>
-  <text class="name" x="445.0" y="284" text-anchor="middle">Design file</text>
-  <text class="kind" x="445.0" y="304" text-anchor="middle">Pin's design tree: the goal,</text>
-  <text class="kind" x="445.0" y="319" text-anchor="middle">questions and decisions</text>
+  <text class="name" x="445.0" y="301" text-anchor="middle">Design file</text>
   <rect class="box" x="640" y="260" width="210" height="72" rx="0"/>
-  <text class="name" x="745.0" y="284" text-anchor="middle">Run</text>
-  <text class="kind" x="745.0" y="304" text-anchor="middle">the kind, and the works</text>
-  <text class="kind" x="745.0" y="319" text-anchor="middle">to make, in order</text>
+  <text class="name" x="745.0" y="301" text-anchor="middle">Run</text>
   <rect class="box" x="940" y="260" width="210" height="72" rx="0"/>
-  <text class="name" x="1045.0" y="284" text-anchor="middle">Run values</text>
-  <text class="kind" x="1045.0" y="304" text-anchor="middle">the one line a role</text>
-  <text class="kind" x="1045.0" y="319" text-anchor="middle">is started with</text>
+  <text class="name" x="1045.0" y="301" text-anchor="middle">Run values</text>
   <rect class="box" x="40" y="460" width="210" height="72" rx="0"/>
-  <text class="name" x="145.0" y="484" text-anchor="middle">Decision</text>
-  <text class="kind" x="145.0" y="504" text-anchor="middle">one point of the design,</text>
-  <text class="kind" x="145.0" y="519" text-anchor="middle">with who settled it</text>
+  <text class="name" x="145.0" y="501" text-anchor="middle">Decision</text>
   <rect class="box" x="340" y="460" width="210" height="72" rx="0"/>
-  <text class="name" x="445.0" y="484" text-anchor="middle">Question</text>
-  <text class="kind" x="445.0" y="504" text-anchor="middle">one question of a</text>
-  <text class="kind" x="445.0" y="519" text-anchor="middle">best practice</text>
+  <text class="name" x="445.0" y="501" text-anchor="middle">Question</text>
   <rect class="box" x="640" y="460" width="210" height="72" rx="0"/>
-  <text class="name" x="745.0" y="484" text-anchor="middle">Work</text>
-  <text class="kind" x="745.0" y="504" text-anchor="middle">what the user</text>
-  <text class="kind" x="745.0" y="519" text-anchor="middle">wants made</text>
+  <text class="name" x="745.0" y="501" text-anchor="middle">Work</text>
   <rect class="box" x="940" y="460" width="210" height="72" rx="0"/>
-  <text class="name" x="1045.0" y="484" text-anchor="middle">Round</text>
-  <text class="kind" x="1045.0" y="504" text-anchor="middle">one round's phase</text>
-  <text class="kind" x="1045.0" y="519" text-anchor="middle">and questions</text>
+  <text class="name" x="1045.0" y="501" text-anchor="middle">Round</text>
   <rect class="box" x="1240" y="460" width="210" height="72" rx="0"/>
-  <text class="name" x="1345.0" y="484" text-anchor="middle">Answers</text>
-  <text class="kind" x="1345.0" y="504" text-anchor="middle">met or not met, for each</text>
-  <text class="kind" x="1345.0" y="519" text-anchor="middle">question of a round</text>
+  <text class="name" x="1345.0" y="501" text-anchor="middle">Answers</text>
   <rect class="box" x="640" y="660" width="210" height="72" rx="0"/>
-  <text class="name" x="745.0" y="684" text-anchor="middle">Best practice</text>
-  <text class="kind" x="745.0" y="704" text-anchor="middle">a kind's goal, template,</text>
-  <text class="kind" x="745.0" y="719" text-anchor="middle">questions and ways</text>
+  <text class="name" x="745.0" y="701" text-anchor="middle">Best practice</text>
   <rect class="box" x="940" y="660" width="210" height="72" rx="0"/>
-  <text class="name" x="1045.0" y="684" text-anchor="middle">Standard</text>
-  <text class="kind" x="1045.0" y="704" text-anchor="middle">a best practice without</text>
-  <text class="kind" x="1045.0" y="719" text-anchor="middle">its ways</text>
+  <text class="name" x="1045.0" y="701" text-anchor="middle">Standard</text>
   <path class="line" d="M340,96 L250,96"/>
   <path class="line" d="M332.0,103.0 L332.0,89.0"/>
   <path class="line" d="M322.0,103.0 L322.0,89.0"/>
@@ -308,5 +276,5 @@
   <path class="line" d="M706.0,870.0 L720.0,862.0"/>
   <circle class="hole" cx="696.0" cy="870.0" r="5"/>
   <text class="label small" x="732" y="875" text-anchor="start">zero or many</text>
-  <text class="label small" x="865" y="875" text-anchor="start">at the end of the data it counts; a box holds a data's name and what it is</text>
+  <text class="label small" x="865" y="875" text-anchor="start">at the end of the data it counts; a box holds a data's name</text>
 </svg>

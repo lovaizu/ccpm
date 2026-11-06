@@ -50,14 +50,11 @@
   <rect class="box" x="40" y="60" width="120" height="60" rx="6"/>
   <text class="name" x="100.0" y="95.0">You</text>
   <rect class="box" x="300" y="60" width="170" height="60" rx="6"/>
-  <text class="name" x="385.0" y="88.0">AI</text>
-  <text class="kind" x="385.0" y="106.0">starts from scratch</text>
+  <text class="name" x="385.0" y="95.0">AI</text>
   <rect class="store" x="580" y="60" width="120" height="60" rx="6"/>
-  <text class="name" x="640.0" y="88.0">Draft</text>
-  <text class="kind" x="640.0" y="106.0">and its review</text>
+  <text class="name" x="640.0" y="95.0">Draft</text>
   <rect class="box" x="810" y="60" width="160" height="60" rx="6"/>
-  <text class="name" x="890.0" y="88.0">You</text>
-  <text class="kind" x="890.0" y="106.0">read and fix</text>
+  <text class="name" x="890.0" y="95.0">You</text>
   <path class="line" d="M160,90 L296,90" marker-end="url(#a)"/>
   <text class="label small mid halo" x="228" y="80">a request</text>
   <text class="label small mid halo" x="228" y="105">with gaps</text>
@@ -68,7 +65,7 @@
   <text class="label small mid halo" x="753" y="80">many findings,</text>
   <text class="label small mid halo" x="753" y="105">few that matter</text>
   <path class="line dashed" d="M890,120 L890,148 L640,148 L640,124" marker-end="url(#a)"/>
-  <text class="label small mid halo" x="765" y="166">each fix added on</text>
+  <text class="label small mid halo" x="765" y="166">you fix it, each fix added on</text>
   <text class="label small" x="60" y="182">You find what falls short only as you use the work.</text>
   <circle class="lane" cx="300" cy="60" r="11"/>
   <text class="name" x="300" y="65">1</text>
@@ -85,13 +82,11 @@
   <rect class="box" x="40" y="280" width="120" height="60" rx="6"/>
   <text class="name" x="100.0" y="315.0">You</text>
   <rect class="store" x="300" y="270" width="170" height="80" rx="6"/>
-  <text class="name" x="385.0" y="308.0">Design</text>
-  <text class="kind" x="385.0" y="326.0">each point settled</text>
+  <text class="name" x="385.0" y="315.0">Design</text>
   <rect class="store" x="580" y="270" width="120" height="80" rx="6"/>
   <text class="name" x="640.0" y="315.0">Work</text>
   <rect class="box" x="810" y="280" width="160" height="60" rx="6"/>
-  <text class="name" x="890.0" y="308.0">You</text>
-  <text class="kind" x="890.0" y="326.0">use the work</text>
+  <text class="name" x="890.0" y="315.0">You</text>
   <path class="line" d="M160,300 L296,300" marker-end="url(#a)"/>
   <text class="label small mid halo" x="228" y="278">your decisions,</text>
   <text class="label small mid halo" x="228" y="292">one at a time</text>
@@ -103,8 +98,7 @@
   <path class="line" d="M700,310 L806,310" marker-end="url(#a)"/>
   <text class="label small mid halo" x="753" y="300">as it comes</text>
   <rect class="lane" x="560" y="400" width="160" height="56" rx="6"/>
-  <text class="name" x="640.0" y="424.0">Evaluator</text>
-  <text class="kind" x="640.0" y="442.0">a fresh AI, questions only</text>
+  <text class="name" x="640.0" y="431.0">Evaluator</text>
   <path class="line" d="M640,400 L640,354" marker-end="url(#a)"/>
   <text class="label small start" x="650" y="374">tries it as its reader would</text>
   <path class="line dashed" d="M560,428 L385,428 L385,354" marker-end="url(#a)"/>

@@ -49,11 +49,9 @@
   <rect class="box" x="20" y="70" width="150" height="60" rx="6"/>
   <text class="name mid" x="95.0" y="106" text-anchor="middle">&lt;user&gt;</text>
   <rect class="box" x="330" y="70" width="260" height="60" rx="6"/>
-  <text class="name mid" x="460.0" y="96" text-anchor="middle">&lt;what they do&gt;</text>
-  <text class="kind mid" x="460.0" y="116" text-anchor="middle">without the product</text>
+  <text class="name mid" x="460.0" y="106" text-anchor="middle">&lt;what they do&gt;</text>
   <rect class="ext" x="760" y="70" width="220" height="60" rx="6"/>
-  <text class="name mid" x="870.0" y="96" text-anchor="middle">&lt;problem&gt;</text>
-  <text class="kind mid" x="870.0" y="116" text-anchor="middle">left</text>
+  <text class="name mid" x="870.0" y="106" text-anchor="middle">&lt;problem&gt; left</text>
   <path class="line" d="M170,100 L326,100" marker-end="url(#arrow)"/>
   <path class="line" d="M590,100 L756,100" marker-end="url(#arrow)"/>
   <rect class="frame" x="230" y="200" width="510" height="180" rx="8"/>
@@ -61,14 +59,11 @@
   <rect class="box" x="20" y="270" width="150" height="60" rx="6"/>
   <text class="name mid" x="95.0" y="306" text-anchor="middle">&lt;user&gt;</text>
   <rect class="box" x="260" y="270" width="170" height="60" rx="6"/>
-  <text class="name mid" x="345.0" y="296" text-anchor="middle">&lt;part&gt;</text>
-  <text class="kind mid" x="345.0" y="316" text-anchor="middle">&lt;what it does&gt;</text>
+  <text class="name mid" x="345.0" y="306" text-anchor="middle">&lt;part&gt;</text>
   <rect class="box" x="540" y="270" width="170" height="60" rx="6"/>
-  <text class="name mid" x="625.0" y="296" text-anchor="middle">&lt;part&gt;</text>
-  <text class="kind mid" x="625.0" y="316" text-anchor="middle">&lt;what it does&gt;</text>
+  <text class="name mid" x="625.0" y="306" text-anchor="middle">&lt;part&gt;</text>
   <rect class="lane" x="780" y="270" width="200" height="60" rx="6"/>
-  <text class="name mid" x="880.0" y="296" text-anchor="middle">&lt;problem&gt;</text>
-  <text class="kind mid" x="880.0" y="316" text-anchor="middle">gone</text>
+  <text class="name mid" x="880.0" y="306" text-anchor="middle">&lt;problem&gt; gone</text>
   <path class="line" d="M170,300 L256,300" marker-end="url(#arrow)"/>
   <path class="line" d="M430,300 L536,300" marker-end="url(#arrow)"/>
   <text class="label small halo mid" x="483" y="290" text-anchor="middle">&lt;instead&gt;</text>

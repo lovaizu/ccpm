@@ -46,18 +46,13 @@
   </defs>
   <rect class="bg" width="1000" height="300"/>
   <rect class="store" x="30" y="30" width="170" height="60" rx="6"/>
-  <text class="name" x="115" y="58">Your repository</text>
-  <text class="kind" x="115" y="76">what it holds</text>
+  <text class="name" x="115" y="65">Your repository</text>
   <rect class="lane" x="340" y="110" width="250" height="80" rx="6"/>
-  <text class="name" x="465" y="140">Pin</text>
-  <text class="kind" x="465" y="158">weighs each decision by the purpose,</text>
-  <text class="kind" x="465" y="174">the facts and your answers</text>
+  <text class="name" x="465" y="155">Pin</text>
   <rect class="box" x="30" y="220" width="170" height="60" rx="6"/>
   <text class="name" x="115" y="255">You</text>
   <rect class="store" x="760" y="110" width="210" height="80" rx="6"/>
-  <text class="name" x="865" y="140">Design</text>
-  <text class="kind" x="865" y="158">each point, and who</text>
-  <text class="kind" x="865" y="174">settled it</text>
+  <text class="name" x="865" y="155">Design</text>
   <path class="line" d="M200,62 L336,124" marker-end="url(#a)"/>
   <text class="label small start halo" x="250" y="76">facts found</text>
   <path class="line" d="M340,180 L204,232" marker-end="url(#a)"/>

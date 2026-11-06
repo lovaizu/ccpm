@@ -46,69 +46,44 @@
   </defs>
   <rect class="bg" x="0" y="0" width="1920" height="1340"/>
   <circle class="ext" cx="190" cy="50" r="11"/>
-  <rect class="ext" x="40" y="60" width="300" height="100" rx="22"/>
+  <rect class="ext" x="40" y="60" width="300" height="64" rx="22"/>
   <text class="name" x="190.0" y="86" text-anchor="middle">user</text>
   <text class="kind" x="190.0" y="104" text-anchor="middle">[a person, or an AI that asks for one]</text>
-  <text class="label small" x="190.0" y="124" text-anchor="middle">decides what is theirs: the purpose,</text>
-  <text class="label small" x="190.0" y="139" text-anchor="middle">each fact and decision, the design</text>
-  <rect class="box" x="40" y="240" width="300" height="180" rx="0"/>
-  <text class="name" x="190.0" y="266" text-anchor="middle">starter</text>
-  <text class="kind" x="190.0" y="284" text-anchor="middle">[steps · Markdown, followed by the main</text>
-  <text class="kind" x="190.0" y="299" text-anchor="middle">conversation for /turn:up, or by the</text>
-  <text class="kind" x="190.0" y="314" text-anchor="middle">user's AI as Calling Turn says]</text>
-  <text class="label small" x="190.0" y="334" text-anchor="middle">decides nothing of the work: puts each</text>
-  <text class="label small" x="190.0" y="349" text-anchor="middle">point, and passes each answer back,</text>
-  <text class="label small" x="190.0" y="364" text-anchor="middle">as given</text>
-  <rect class="box" x="500" y="240" width="320" height="180" rx="0"/>
-  <text class="name" x="660.0" y="266" text-anchor="middle">up</text>
-  <text class="kind" x="660.0" y="284" text-anchor="middle">[subagent · Claude Code,</text>
-  <text class="kind" x="660.0" y="299" text-anchor="middle">steps in Markdown]</text>
-  <text class="label small" x="660.0" y="319" text-anchor="middle">decides the run's folder: the one given,</text>
-  <text class="label small" x="660.0" y="334" text-anchor="middle">else the one the request names, else a</text>
-  <text class="label small" x="660.0" y="349" text-anchor="middle">new one in .turn/; and which role an</text>
-  <text class="label small" x="660.0" y="364" text-anchor="middle">answer resumes: the one that asked</text>
-  <rect class="box" x="1180" y="40" width="380" height="110" rx="0"/>
+  <rect class="box" x="40" y="240" width="300" height="130" rx="0"/>
+  <text class="name" x="190.0" y="299" text-anchor="middle">starter</text>
+  <text class="kind" x="190.0" y="317" text-anchor="middle">[steps · Markdown]</text>
+  <rect class="box" x="500" y="240" width="320" height="130" rx="0"/>
+  <text class="name" x="660.0" y="291" text-anchor="middle">up</text>
+  <text class="kind" x="660.0" y="309" text-anchor="middle">[subagent · Claude Code,</text>
+  <text class="kind" x="660.0" y="324" text-anchor="middle">steps in Markdown]</text>
+  <rect class="box" x="1180" y="40" width="380" height="64" rx="0"/>
   <text class="name" x="1370.0" y="66" text-anchor="middle">guard</text>
   <text class="kind" x="1370.0" y="84" text-anchor="middle">[hook script · Lane's code, Python 3.9]</text>
-  <text class="label small" x="1370.0" y="104" text-anchor="middle">decides whether a call or an end of a role</text>
-  <text class="label small" x="1370.0" y="119" text-anchor="middle">keeps its rules, and which start is due next</text>
   <path class="store" d="M1640,55 A110.0,9 0 0 1 1860,55 V125 A110.0,9 0 0 1 1640,125 Z"/>
   <path class="store" d="M1640,55 A110.0,9 0 0 0 1860,55"/>
   <text class="name" x="1750.0" y="94.0" text-anchor="middle">Rules laid</text>
   <text class="kind" x="1750.0" y="112.0" text-anchor="middle">[file · JSON]</text>
-  <rect class="frame" x="600" y="550" width="1200" height="200" rx="8"/>
+  <rect class="frame" x="600" y="550" width="1200" height="120" rx="8"/>
   <text class="frame-name" x="1316" y="572" text-anchor="start">held by Turn's guard</text>
-  <rect class="ext" x="300" y="580" width="260" height="150" rx="12"/>
+  <rect class="ext" x="300" y="580" width="260" height="70" rx="12"/>
   <text class="name" x="430.0" y="606" text-anchor="middle">pinner</text>
   <text class="kind" x="430.0" y="624" text-anchor="middle">[Pin's subagent · Claude Code,</text>
   <text class="kind" x="430.0" y="639" text-anchor="middle">held by Pin's guard]</text>
-  <text class="label small" x="430.0" y="659" text-anchor="middle">decides everything in the design,</text>
-  <text class="label small" x="430.0" y="674" text-anchor="middle">as Pin's architecture says</text>
-  <rect class="box" x="620" y="580" width="300" height="150" rx="0"/>
+  <rect class="box" x="620" y="580" width="300" height="70" rx="0"/>
   <text class="name" x="770.0" y="606" text-anchor="middle">planner</text>
   <text class="kind" x="770.0" y="624" text-anchor="middle">[subagent · Claude Code,</text>
   <text class="kind" x="770.0" y="639" text-anchor="middle">steps in Markdown]</text>
-  <text class="label small" x="770.0" y="659" text-anchor="middle">decides the kind and its best practice,</text>
-  <text class="label small" x="770.0" y="674" text-anchor="middle">whether a new kind's comes first, what</text>
-  <text class="label small" x="770.0" y="689" text-anchor="middle">each Request carries, where the work</text>
-  <text class="label small" x="770.0" y="704" text-anchor="middle">lies, and when the run is done</text>
-  <rect class="box" x="1000" y="580" width="300" height="150" rx="0"/>
+  <rect class="box" x="1000" y="580" width="300" height="70" rx="0"/>
   <text class="name" x="1150.0" y="606" text-anchor="middle">generator</text>
   <text class="kind" x="1150.0" y="624" text-anchor="middle">[subagent · Claude Code,</text>
   <text class="kind" x="1150.0" y="639" text-anchor="middle">steps in Markdown]</text>
-  <text class="label small" x="1150.0" y="659" text-anchor="middle">decides the work, and each small point</text>
-  <text class="label small" x="1150.0" y="674" text-anchor="middle">of making it, such as a phrase</text>
-  <rect class="box" x="1480" y="580" width="300" height="150" rx="0"/>
+  <rect class="box" x="1480" y="580" width="300" height="70" rx="0"/>
   <text class="name" x="1630.0" y="606" text-anchor="middle">evaluator</text>
   <text class="kind" x="1630.0" y="624" text-anchor="middle">[subagent · Claude Code,</text>
   <text class="kind" x="1630.0" y="639" text-anchor="middle">steps in Markdown]</text>
-  <text class="label small" x="1630.0" y="659" text-anchor="middle">decides whether each question</text>
-  <text class="label small" x="1630.0" y="674" text-anchor="middle">of its group is met</text>
-  <rect class="box" x="660" y="850" width="200" height="96" rx="0"/>
+  <rect class="box" x="660" y="850" width="200" height="64" rx="0"/>
   <text class="name" x="760.0" y="876" text-anchor="middle">plan.py</text>
   <text class="kind" x="760.0" y="894" text-anchor="middle">[command line · Python 3.9]</text>
-  <text class="label small" x="760.0" y="914" text-anchor="middle">decides whether a best practice</text>
-  <text class="label small" x="760.0" y="929" text-anchor="middle">holds its form</text>
   <path class="store" d="M940,855 A70.0,9 0 0 1 1080,855 V925 A70.0,9 0 0 1 940,925 Z"/>
   <path class="store" d="M940,855 A70.0,9 0 0 0 1080,855"/>
   <text class="name" x="1010.0" y="894.0" text-anchor="middle">best practices</text>
@@ -117,45 +92,42 @@
   <path class="store" d="M1220,855 A120.0,9 0 0 0 1460,855"/>
   <text class="name" x="1340.0" y="894.0" text-anchor="middle">the work</text>
   <text class="kind" x="1340.0" y="912.0" text-anchor="middle">[the repository's files]</text>
-  <rect class="box" x="1100" y="990" width="460" height="110" rx="0"/>
+  <rect class="box" x="1100" y="990" width="460" height="64" rx="0"/>
   <text class="name" x="1330.0" y="1016" text-anchor="middle">rounds.py, throwaway.py</text>
   <text class="kind" x="1330.0" y="1034" text-anchor="middle">[command line · Python 3.9]</text>
-  <text class="label small" x="1330.0" y="1054" text-anchor="middle">rounds.py decides each round's phase and questions, their</text>
-  <text class="label small" x="1330.0" y="1069" text-anchor="middle">groups, and whether a role's Answers hold; throwaway.py</text>
-  <text class="label small" x="1330.0" y="1084" text-anchor="middle">decides where a work's command runs</text>
   <path class="store" d="M300,1185 A750.0,9 0 0 1 1800,1185 V1245 A750.0,9 0 0 1 300,1245 Z"/>
   <path class="store" d="M300,1185 A750.0,9 0 0 0 1800,1185"/>
   <text class="name" x="1050.0" y="1219.0" text-anchor="middle">the run's folder</text>
-  <text class="kind" x="1050.0" y="1237.0" text-anchor="middle">[folder · JSON files: Call, Run, Standard, Round, Answers; Markdown: Design file]</text>
-  <path class="line" d="M80,160 L80,240" marker-end="url(#arrow)"/>
+  <text class="kind" x="1050.0" y="1237.0" text-anchor="middle">[folder · JSON and Markdown files]</text>
+  <path class="line" d="M80,124 L80,240" marker-end="url(#arrow)"/>
   <text class="label small halo" x="88" y="182" text-anchor="start">starts Turn, then</text>
   <text class="label small halo" x="88" y="196" text-anchor="start">answers each point</text>
   <text class="data halo" x="88" y="210" text-anchor="start">Call, Answer</text>
-  <path class="line" d="M300,240 L300,160" marker-end="url(#arrow)"/>
+  <path class="line" d="M300,240 L300,124" marker-end="url(#arrow)"/>
   <text class="label small halo" x="308" y="182" text-anchor="start">puts each point</text>
   <text class="label small halo" x="308" y="196" text-anchor="start">as given</text>
   <text class="data halo" x="308" y="210" text-anchor="start">Message</text>
-  <path class="line" d="M340,280 L500,280" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="350" y="302" text-anchor="start">starts it, resumes it</text>
-  <text class="label small halo" x="350" y="316" text-anchor="start">[Agent, SendMessage]</text>
-  <text class="data halo" x="350" y="330" text-anchor="start">Call, Answer</text>
-  <path class="line" d="M500,395 L340,395" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="350" y="356" text-anchor="start">ends with</text>
-  <text class="label small halo" x="350" y="370" text-anchor="start">each Message</text>
-  <text class="data halo" x="350" y="384" text-anchor="start">Message</text>
-  <path class="line" d="M1180,95 L740,95 L740,240" marker-end="url(#arrow)"/>
+  <path class="line" d="M340,258 L500,258" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="350" y="272" text-anchor="start">starts it, resumes it</text>
+  <text class="label small halo" x="350" y="286" text-anchor="start">[Agent, SendMessage]</text>
+  <text class="data halo" x="350" y="300" text-anchor="start">Call, Answer</text>
+  <path class="line" d="M500,355 L340,355" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="350" y="316" text-anchor="start">ends with</text>
+  <text class="label small halo" x="350" y="330" text-anchor="start">each Message</text>
+  <text class="data halo" x="350" y="344" text-anchor="start">Message</text>
+  <path class="line" d="M1180,72 L740,72 L740,240" marker-end="url(#arrow)"/>
   <text class="label small halo" x="748" y="130" text-anchor="start">tells up each</text>
   <text class="label small halo" x="748" y="144" text-anchor="start">next start [hooks]</text>
   <text class="data halo" x="748" y="158" text-anchor="start">Result</text>
-  <path class="line" d="M1560,90 L1640,90" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="1600" y="82" text-anchor="middle">reads</text>
-  <path class="line" d="M1500,150 L1500,180 L1880,180 L1880,650 L1800,650" marker-end="url(#arrow)"/>
+  <path class="line" d="M1560,72 L1640,72" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="1600" y="64" text-anchor="middle">reads</text>
+  <path class="line" d="M1500,104 L1500,180 L1880,180 L1880,615 L1800,615" marker-end="url(#arrow)"/>
   <text class="label small halo" x="1872" y="250" text-anchor="end">lets each call and end of the</text>
   <text class="label small halo" x="1872" y="264" text-anchor="end">roles in the frame through, or</text>
   <text class="label small halo" x="1872" y="278" text-anchor="end">stops it, and keeps each Result,</text>
   <text class="label small halo" x="1872" y="292" text-anchor="end">the pinner's too [Claude Code hooks]</text>
   <text class="data halo" x="1872" y="306" text-anchor="end">Result</text>
-  <path class="line" d="M660,420 L660,490"/>
+  <path class="line" d="M660,370 L660,490"/>
   <path class="line" d="M430,490 L1630,490"/>
   <path class="line" d="M430,490 L430,580" marker-end="url(#arrow)"/>
   <path class="line" d="M770,490 L770,580" marker-end="url(#arrow)"/>
@@ -164,54 +136,54 @@
   <text class="label small halo" x="668" y="440" text-anchor="start">starts each in the background, and resumes one that asked</text>
   <text class="label small halo" x="668" y="454" text-anchor="start">[Agent, SendMessage]; each ends with its reply</text>
   <text class="data halo" x="668" y="468" text-anchor="start">Run values, Request, Answer</text>
-  <path class="line" d="M430,730 L430,1180" marker-end="url(#arrow)"/>
+  <path class="line" d="M430,650 L430,1180" marker-end="url(#arrow)"/>
   <text class="label small halo" x="438" y="776" text-anchor="start">writes each</text>
   <text class="label small halo" x="438" y="790" text-anchor="start">point</text>
   <text class="label small halo" x="438" y="804" text-anchor="start">[Write, Edit]</text>
   <text class="data halo" x="438" y="818" text-anchor="start">Design file</text>
-  <path class="line" d="M640,730 L640,1180" marker-end="url(#arrow)"/>
+  <path class="line" d="M640,650 L640,1180" marker-end="url(#arrow)"/>
   <text class="label small halo" x="632" y="980" text-anchor="end">reads the design,</text>
   <text class="label small halo" x="632" y="994" text-anchor="end">writes where the</text>
   <text class="label small halo" x="632" y="1008" text-anchor="end">work lies and what</text>
   <text class="label small halo" x="632" y="1022" text-anchor="end">its user runs</text>
   <text class="label small halo" x="632" y="1036" text-anchor="end">[Read, Write]</text>
   <text class="data halo" x="632" y="1050" text-anchor="end">Design file, Run</text>
-  <path class="line" d="M760,730 L760,850" marker-end="url(#arrow)"/>
+  <path class="line" d="M760,650 L760,850" marker-end="url(#arrow)"/>
   <text class="label small halo" x="768" y="794" text-anchor="start">runs it [Bash]</text>
   <path class="line" d="M860,890 L940,890" marker-end="url(#arrow)"/>
   <text class="label small halo" x="900" y="882" text-anchor="middle">reads</text>
   <text class="data halo" x="900" y="910" text-anchor="middle">Best practice</text>
-  <path class="line" d="M720,946 L720,1180" marker-end="url(#arrow)"/>
+  <path class="line" d="M720,914 L720,1180" marker-end="url(#arrow)"/>
   <text class="label small halo" x="728" y="975" text-anchor="start">writes the hand-over,</text>
   <text class="label small halo" x="728" y="989" text-anchor="start">the Standard and Run</text>
   <text class="data halo" x="728" y="1003" text-anchor="start">Design file, Standard, Run</text>
-  <path class="line" d="M1020,730 L1020,850" marker-end="url(#arrow)"/>
+  <path class="line" d="M1020,650 L1020,850" marker-end="url(#arrow)"/>
   <text class="label small halo" x="1012" y="794" text-anchor="end">reads</text>
   <text class="data halo" x="1012" y="808" text-anchor="end">Best practice</text>
-  <path class="line" d="M1090,730 L1090,1180" marker-end="url(#arrow)"/>
+  <path class="line" d="M1090,650 L1090,1180" marker-end="url(#arrow)"/>
   <text class="label small halo" x="1098" y="1130" text-anchor="start">reads the design, writes</text>
   <text class="label small halo" x="1098" y="1144" text-anchor="start">its Answers</text>
   <text class="data halo" x="1098" y="1158" text-anchor="start">Design file, Answers</text>
-  <path class="line" d="M1160,730 L1160,990" marker-end="url(#arrow)"/>
+  <path class="line" d="M1160,650 L1160,990" marker-end="url(#arrow)"/>
   <text class="label small halo" x="1168" y="972" text-anchor="start">runs [Bash]</text>
-  <path class="line" d="M1260,730 L1260,850" marker-end="url(#arrow)"/>
+  <path class="line" d="M1260,650 L1260,850" marker-end="url(#arrow)"/>
   <text class="label small halo" x="1268" y="776" text-anchor="start">writes it, reads</text>
   <text class="label small halo" x="1268" y="790" text-anchor="start">facts [Write, Edit,</text>
   <text class="label small halo" x="1268" y="804" text-anchor="start">Read, Grep]</text>
   <text class="data halo" x="1268" y="818" text-anchor="start">Work</text>
-  <path class="line" d="M1500,730 L1500,806 L1440,806 L1440,850" marker-end="url(#arrow)"/>
+  <path class="line" d="M1500,650 L1500,806 L1440,806 L1440,850" marker-end="url(#arrow)"/>
   <text class="label small halo" x="1492" y="776" text-anchor="end">reads it</text>
   <text class="label small halo" x="1492" y="790" text-anchor="end">whole [Read]</text>
-  <path class="line" d="M1545,730 L1545,990" marker-end="url(#arrow)"/>
+  <path class="line" d="M1545,650 L1545,990" marker-end="url(#arrow)"/>
   <text class="label small halo" x="1553" y="830" text-anchor="start">runs [Bash]</text>
-  <path class="line" d="M1700,730 L1700,1180" marker-end="url(#arrow)"/>
+  <path class="line" d="M1700,650 L1700,1180" marker-end="url(#arrow)"/>
   <text class="label small halo" x="1708" y="850" text-anchor="start">reads the Standard,</text>
   <text class="label small halo" x="1708" y="864" text-anchor="start">writes its Answers</text>
   <text class="data halo" x="1708" y="878" text-anchor="start">Standard, Answers</text>
   <path class="line" d="M1340,990 L1340,930" marker-end="url(#arrow)"/>
   <text class="label small halo" x="1348" y="952" text-anchor="start">throwaway.py runs</text>
   <text class="label small halo" x="1348" y="966" text-anchor="start">a command on a copy</text>
-  <path class="line" d="M1330,1100 L1330,1180" marker-end="url(#arrow)"/>
+  <path class="line" d="M1330,1054 L1330,1180" marker-end="url(#arrow)"/>
   <text class="label small halo" x="1338" y="1124" text-anchor="start">rounds.py writes each Round,</text>
   <text class="label small halo" x="1338" y="1138" text-anchor="start">checks Answers</text>
   <text class="data halo" x="1338" y="1152" text-anchor="start">Round, Answers</text>
@@ -225,6 +197,6 @@
   <text class="label small" x="484" y="1305" text-anchor="start">outside Turn; with a head: the product vision's role</text>
   <rect class="frame" x="830" y="1290" width="36" height="22" rx="4"/>
   <text class="label small" x="874" y="1305" text-anchor="start">the roles Turn's guard holds</text>
-  <text class="label small" x="1080" y="1297" text-anchor="start">a box: name, [type · technology], and what it alone decides; [tool] on an arrow</text>
+  <text class="label small" x="1080" y="1297" text-anchor="start">a box: name and [type · technology]; [tool] on an arrow</text>
   <text class="data" x="1080" y="1313" text-anchor="start">data handed on, named as in the data model</text>
 </svg>

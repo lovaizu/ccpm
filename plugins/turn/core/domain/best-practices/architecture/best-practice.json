@@ -110,7 +110,7 @@
   },
   {
    "intent": "Q4",
-   "thinking": "One component alone makes each decision the stories need, above all one hard to make or likely to change, and its box says so. A decision two components share is made twice and drifts.",
+   "thinking": "One component alone makes each decision the stories need, above all one hard to make or likely to change, and a list under the figure says so by the component's name. A decision two components share is made twice and drifts. A box holds only the component's name and type, as a box that holds sentences no longer shows the parts and their joins at a glance.",
    "steps": [
     "List each decision the stories need by asking at each step of each sequence what must be decided there, and move the decision or split the component where two components or none make it.",
     "Label each arrow with what one does to another and the data it hands on, never a word such as \"uses\"."
@@ -120,12 +120,12 @@
    "intent": "Q5",
    "thinking": "Each box has its type and technology, and the figure a legend for every symbol. A developer otherwise chooses them alone, and the components stop fitting.",
    "steps": [
-    "Read the figure without the text around it, and add to the boxes or the legend whatever a reader would still have to ask."
+    "Read the figure without the text around it, and add to the legend whatever symbol a reader would still have to ask about; what a part does goes to the list under the figure, not into its box."
    ]
   },
   {
    "intent": "Q6",
-   "thinking": "Each data is drawn once, by its name and what it is in a few words, with each relation named and how many of each it joins. The fields are left to where the data is built. Two developers then join a data the same way while its fields change freely.",
+   "thinking": "Each data is drawn once, by its name alone, with each relation named and how many of each it joins, and a list under the figure says what each is in a few words. The fields are left to where the data is built. Two developers then join a data the same way while its fields change freely.",
    "steps": []
   },
   {

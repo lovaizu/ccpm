@@ -43,14 +43,21 @@ This document says how `<Product>` is built to give [its product vision](<board>
 
 ![The product's components](images/template-components.svg)
 
+What each decides alone:
+
+- **`<component>`**: `<what it alone decides>`.
+
 - **`<choice>`** over `<other way>`: `<why>`. It costs `<cost>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - The figure: the deliverable's own at images/components.svg, the product named in its alt text:
->   each role the stories need and each store of data, each box holding its name, its type and
->   technology, and what it alone decides; each arrow what one does to another, with the data it
->   hands on, named as in the data model; a legend for every symbol.
+>   each role the stories need and each store of data, each box holding its name and its type and
+>   technology alone, so the figure shows the parts and their joins at a glance; each arrow what one
+>   does to another, with the data it hands on, named as in the data model; a legend for every
+>   symbol.
+> - `<component>`, `<what it alone decides>`: each role of the figure and each component, by its
+>   name in the figure, and the decisions the stories need that it alone makes.
 > - `<choice>`, `<other way>`: each choice a developer would question, such as a technology or a
 >   tool, and the way it beat; optional.
 > - `<why>`, `<cost>`: what the choice gives, and what it costs.
@@ -59,12 +66,15 @@ This document says how `<Product>` is built to give [its product vision](<board>
 
 ![The product's data](images/template-data-model.svg)
 
+- **`<Data>`**: `<what it is>`.
+
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - The figure: the deliverable's own at images/data-model.svg, the product named in its alt text:
->   each data the components pass or keep, by its name and what it is in a few words, without its
->   fields, and each relation between two data, with its name and how many of each it joins at both
->   ends.
+>   each data the components pass or keep, by its name alone, and each relation between two data,
+>   with its name and how many of each it joins at both ends.
+> - `<Data>`, `<what it is>`: each data of the figure, by its name, and what it is in a few words,
+>   without its fields.
 
 ## Sequences
 
@@ -103,8 +113,8 @@ sequenceDiagram
 > DELETE_TEMPLATE_COMMENT:
 > - The figure: the deliverable's own at images/deployment.svg, the product named in its alt text:
 >   each environment the product runs in, such as the user's computer or CI, with its technology; in
->   each, its deployment units, each with its technology and the components and data it holds, by
->   their names in Components; each thing outside the product the components depend on, with what
+>   each, its deployment units, each with its technology and the names of the components and data it
+>   holds, as Components and the data model name them; each thing outside the product the components depend on, with what
 >   they use of it.
 > - `<start>`: how the product starts, in one sentence.
 > - `<choice>`, `<other way>`, `<why>`, `<cost>`: as in Components; optional.
