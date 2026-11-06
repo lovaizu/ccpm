@@ -31,19 +31,20 @@ each message and the design tree, and prints them:
   under it, or a write of the main conversation to the design tree once it called the skill.
 - KR1.2: the seconds from the request to the stop at which the stand-in confirmed the design.
 
-A run counts only where each frequent case of its way came up. Neither way needs a fact
-corrected, as the repository holds each fact the intents correct, so a right pinner finds it. The
-called way needs no decision left to Pin either, as there it comes only of a pinner gone wrong; it
-tests keeping the AI's points. A run passes where nothing went wrong in KR1.1 and the design tree
-holds with no decision open. A trial passes where every run passes,
-three of three by default, as dev/plugin-best-practice.md's Results that vary from run to run says.
-The product vision gives no key result a target, so each measure is set against the last trial's.
+A run counts only where each frequent case came up. Neither way needs a fact corrected, as the
+repository holds each fact the intents correct, so a right pinner finds it, nor a decision left to
+Pin, as a right pinner settles a point the person does not mind where a ground favors one way, and
+puts it only where none does. A run passes where nothing went wrong in KR1.1 and the design tree
+holds with no decision open. A trial passes where every run passes, three of three by default, as
+dev/plugin-best-practice.md's Results that vary from run to run says. The product vision gives no
+key result a target, so each measure is set against the last trial's.
 
 Run as `python3 dev/pin/tests/ux/trial.py [typed|called|both] [runs]`, both and three by default.
 It prints the folder of each run, where the session's records, the stand-in's view of each message,
 `turns.json`, and the measures, `measures.json`, are kept. `python3 dev/pin/tests/ux/trial.py
---judge <folder of a run> typed|called` judges a kept run again from its records, to check the judge
-on a kept record before trusting it. It reads the records in the folder CLAUDE_CONFIG_DIR names, so
+--judge <folder of a run> typed|called` judges a kept run again from its records, each message
+asked of the stand-in again with the answer it gave kept, to check the judge on a kept record before
+trusting it. It reads the records in the folder CLAUDE_CONFIG_DIR names, so
 set it to a folder holding the run's `projects/` and a login, such as `.credentials.json`."""
 
 from __future__ import annotations
@@ -75,7 +76,10 @@ REQUESTS = {
 # The intent's points that are the person's to decide, by number, which the design must hold as
 # settled by them; and, where called, those the user's AI settled, which it must hold as settled
 # by maker.
-THEIRS = {"typed": {1, 2, 3, 7, 8}, "called": {2, 3, 7, 9}}
+THEIRS = {"typed": {1, 2, 3, 8}, "called": {2, 3, 9}}
+# The points a right pinner settles by a fact the person confirmed: the offset, which notes.py:9
+# shows.
+FOUND = {"typed": {7}, "called": {7}}
 MAKERS = {"typed": set(), "called": {1, 8}}
 # The user's AI's design tree: where it lies, and the IDs of the points and questions it gives.
 HANDED = os.path.join(".maker", "notes-json", "design-tree.md")
@@ -98,7 +102,9 @@ KEYS = (
 - "asks_settled": true where it asks you again something you are said above to have settled
   already, or that you already answered in this conversation; otherwise false;
 - "asks_not_theirs": true where it asks you to decide something that follows from what you want,
-  the facts and what you said, so the AI could have settled it itself; otherwise false;
+  the facts and what you said, so the AI could have settled it itself; otherwise false. A decision
+  it puts with a recommendation, saying its ways serve equally well, is yours to answer even where
+  you do not mind which, so it is false there;
 - "shows_fact": true where it shows you a fact it found, for you to confirm; otherwise false;
 - "corrects_fact": true where your answer corrects a fact it showed you; otherwise false;
 - "puts_decision": true where it asks you to make one decision or to approve one proposal, the
@@ -126,12 +132,8 @@ CASES = {
     "raises_point": "no answer raised a point",
     "changes_design": "the design was not changed",
 }
-# The cases each way must bring about for a run to count, leaving out those that only a wrong
-# pinner would bring out there.
-CASES_OF = {
-    "typed": ["shows_fact", "puts_decision", "leaves_to_ai", "raises_point", "changes_design"],
-    "called": ["shows_fact", "puts_decision", "raises_point", "changes_design"],
-}
+# The cases a run must bring about to count, leaving out those a right pinner need not bring out.
+REQUIRED = ["shows_fact", "puts_decision", "raises_point", "changes_design"]
 JUDGES = """An AI has written a design tree for a plan. The person whose plan it is wanted the
 points below. For each point, judge whether a decision of the tree, or the goal, holds it as the
 person wants it, and give the settled_by of the decision that holds it.
@@ -209,16 +211,19 @@ def run(objective: str, number: int) -> bool:
     return judged(place, objective)
 
 
-def judged(place: str, objective: str) -> bool:
-    """Judges the run kept in its folder from its records, the stand-in's view of each message and
-    its design tree; prints and keeps the measures, and gives whether it counted and passed."""
+def judged(
+    place: str, objective: str, files: dict[str, list[dict[str, Any]]] | None = None
+) -> bool:
+    """Judges the run kept in its folder from its records, or those given, the stand-in's view of
+    each message and its design tree; prints and keeps the measures, and gives whether it counted
+    and passed."""
     with open(os.path.join(place, "turns.json"), encoding="utf-8") as f:
         kept = json.load(f)
     turns: list[dict[str, Any]] = kept["turns"]
     repo = os.path.join(place, "notes")
-    files = records(kept["session"])
+    files = files if files is not None else records(kept["session"])
     path = design_tree(repo, objective)
-    untried = [CASES[k] for k in CASES_OF[objective] if not any(t.get(k) for t in turns)]
+    untried = [CASES[k] for k in REQUIRED if not any(t.get(k) for t in turns)]
     wrong = kr1_1(objective, turns, path, files, place)
     if objective == "called":
         wrong += ais_points(path, files)
@@ -236,6 +241,23 @@ def judged(place: str, objective: str) -> bool:
         json.dump(measures, f, indent=1)
     print("  measures:", json.dumps(measures, ensure_ascii=False))
     return trying.verdict(untried, wrong)
+
+
+def heard_again(place: str, objective: str) -> None:
+    """Has the stand-in judge each kept message again by the questions as they are now, keeping the
+    answer it gave in the run, so a fix to the questions reaches a kept run."""
+    kept_at = os.path.join(place, "turns.json")
+    with open(kept_at, encoding="utf-8") as f:
+        kept = json.load(f)
+    said: list[str] = []
+    for t in kept["turns"]:
+        alone = os.path.join(place, "person")
+        again = trying.heard(FINDS, intent(objective), said, t["message"], alone)
+        t.update({k: v for k, v in again.items() if k != "answer"})
+        if t.get("sent"):
+            said.extend([f"AI: {t['message']}", f"You: {t['answer']}"])
+    with open(kept_at, "w", encoding="utf-8") as f:
+        json.dump(kept, f, indent=1)
 
 
 def records(session: str) -> dict[str, list[dict[str, Any]]]:
@@ -290,6 +312,8 @@ def kr1_1(
             wrong.append(f"the design does not hold point {n} as the person means it")
         elif n in THEIRS[objective] and by != "user":
             wrong.append(f"point {n} is the person's, but settled by {by}")
+        elif n in FOUND[objective] and by != "research":
+            wrong.append(f"point {n} rests on a fact found, but is settled by {by}")
         elif n in MAKERS[objective] and by != "maker":
             wrong.append(f"point {n} was settled by the maker AI, but is held as settled by {by}")
     for n, t in enumerate(turns, 1):
@@ -298,8 +322,10 @@ def kr1_1(
         if t.get("asks_settled"):
             wrong.append(f"message {n} asked the person again what was settled")
     heard = "\n".join(said for e in files.get("pin:pinner", []) for said in record.message(e))
+    # Blanks taken as one, as the terminal the trial types into gives an answer on one line.
+    flat = " ".join(heard.split())
     for n, t in enumerate(turns, 1):
-        if t.get("sent") and str(t.get("answer")) not in heard:
+        if t.get("sent") and " ".join(str(t.get("answer")).split()) not in flat:
             wrong.append(f"answer {n} did not reach the pinner word for word")
     # Each Reply's point is set against every text the main conversation showed the person, a turn's
     # last or not, blanks taken as one.
@@ -372,7 +398,12 @@ def main(argv: list[str]) -> None:
     """Runs the trials the command line names, or judges a kept run again; exits 0 where every run
     counted and passed."""
     if argv[:1] == ["--judge"]:
-        sys.exit(0 if judged(argv[1], argv[2]) else 1)
+        # The records are read first, as the first stand-in started sets a configuration folder of
+        # its own, where record.py would then look.
+        with open(os.path.join(argv[1], "turns.json"), encoding="utf-8") as f:
+            files = records(json.load(f)["session"])
+        heard_again(argv[1], argv[2])
+        sys.exit(0 if judged(argv[1], argv[2], files) else 1)
     chosen = argv[0] if argv else "both"
     runs = int(argv[1]) if len(argv) > 1 else 3
     objectives = ["typed", "called"] if chosen == "both" else [chosen]

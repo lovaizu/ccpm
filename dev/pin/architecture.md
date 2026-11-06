@@ -430,7 +430,7 @@ out a fact confirmed, a fact corrected, a decision of the person's, a decision l
 an answer raises, and a change at the design. Where called, a plugin made for the trial stands in
 for the user's AI. The trial measures KR1.1 and KR1.2 from the session's records and the design
 tree, as [its driver](tests/ux/trial.py) says. A run counts where each of these came up but those
-that only a pinner gone wrong brings out: no run needs a fact corrected, as the repository holds
-the facts the intents correct, and a called run needs no decision left to Pin, as it tests keeping
-the AI's points. A run passes
+that a right pinner need not bring out: no run needs a fact corrected, as the repository holds the
+facts the intents correct, nor a decision left to Pin, as a right pinner puts a point the person
+does not mind only where no ground favors one way. A run passes
 where nothing went wrong in KR1.1, and the trial passes where 3 of 3 runs of each way pass.
