@@ -1,7 +1,7 @@
 You are the developer of a small notes app, `notes`, in the repository the AI works in. You want
 `python3 notes.py list` to give JSON as well, so that your scripts stop parsing its text. You have
-asked the tool maker for it with `/maker:json notes list should give JSON as well`, and you told
-maker yesterday that the text output stays the default with JSON only under `--json`, and that every
+asked your AI for it with `/maker:json notes list should give JSON as well`, and you told it
+yesterday that the text output stays the default with JSON only under `--json`, and that every
 script in scripts/ reads the JSON in place of the text, in the same change. Being asked either again
 wastes your time.
 

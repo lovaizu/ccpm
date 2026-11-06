@@ -1,62 +1,32 @@
 # Pin
 
-Pin is a Claude Code plugin that settles every point of your plan before an AI starts to make it,
-finding each fact itself and asking you only the decisions that are yours, one at a time.
+Pin is a Claude Code plugin that settles every point of your plan before an AI makes it, asking
+you only what is yours.
+
+Pin 0.1.0 is still in development and not yet released.
 
 Pin is for you when you are about to have an AI in Claude Code make something larger than a quick
-change, such as a feature or a document, and you want it to make what you mean. A point is one
-thing the plan must settle: a fact, such as what reads a file today, or a decision, such as the
-form an output takes. Before the work starts, Pin settles every point of the plan as you mean it.
-You decide only the points that are yours, and you confirm each fact that Pin finds. The AI that
-makes the work then has nothing left to guess, and you do not explain a point again while it
-works. For a quick change that you would simply ask for and check, Pin adds a step you do not need.
+change, such as a feature or a document, and you want it to make what you mean. It is also for you
+when you are that AI, settling a plan for a person before you build. With Pin, the work made from
+your plan is what you mean, with no point of it left for the AI to guess.
 
-Pin is also for you if you are an AI that is to make something for a person, such as a skill or a
-subagent of a plugin, and you want its design settled with that person before you build. This README
-calls such an AI a maker AI. You hand Pin the goal of the work, the questions that the work must
-answer, and what you have settled. Pin keeps what you settled, the goal among it, and does not ask
-the person about it again. You pass each point that Pin gives you to the person as given, and you
-pass the answer back word for word. You get back a design settled with the person, and you build the
-work on it as given. Pin needs a person to answer: a point that is theirs waits for them.
-
-Without Pin, an AI starts to make the work from your request and asks as questions occur to it, or
-it writes a plan up front and fills each gap with an assumption. Either way, the AI guesses each
-point that no one raised, and you meet the guess in the finished work as rework. Pin instead
-settles the whole plan from its goal down before any work starts. Its result is the design: the
-plan's goal, with every point settled under it, each with who settled it.
-
-- **From the goal down.** Pin works out what must hold for the goal, and for each of those, the
-  decisions that make it hold. So the design holds each point that the work needs, and no point that
-  serves nothing.
-- **Facts found, decisions asked.** Pin finds each fact itself and shows it to you to confirm. It
-  settles itself each decision that follows from the goal and the facts. It asks you a decision only
-  where two ways serve the goal equally well, or where the decision is hard to undo, and it gives a
-  recommendation with it.
-- **One point at a time, in order.** Each message from Pin holds one point. Pin asks a decision only
-  once the decisions it builds on are settled, so your answer to one can still change the next.
-- **The whole design confirmed.** At the end, Pin shows you every point in one short line, with who
-  settled it. You see each point that Pin settled before the work starts, and you confirm that you
-  and Pin mean the same.
-- **Kept in a file.** Pin writes each answer into the design tree, `design-tree.md`, before its
-  next message. After each answer, it checks that every point in the file serves the goal. A stopped
-  run goes on from the file in a new conversation. The AI that makes the work reads the design from
-  it.
+A point is one thing the plan must settle: a fact, such as what reads a file today, or a decision,
+such as the form an output takes.
 
 **Non-goals**
 
 - Pin does not make the work. It ends once you confirm the design.
-- Pin does not judge whether a decision is good. Its check sees only that the design holds
-  together. You judge each decision as you answer it.
-- Pin does not decide what is yours. A point that you leave unanswered stays open, and Pin does not
-  go on as if you had answered.
-- Pin does not put several questions in one message, and it sets no limit on the number of
-  questions. To end sooner, tell it to wrap up. The points still open then stay marked as open.
+- Pin does not judge whether a decision is good. It checks the design with a script, `check.py`,
+  which sees only that the design holds together: each question serves the goal, and each decision
+  serves a question. You judge each decision as you answer it.
+- Pin does not take a decision of yours for you. A point you leave unanswered stays open, and Pin
+  does not go on as if you had answered.
 
 ## Requirements
 
-- Claude Code 2.1.317 or later: `claude --version` shows its version.
-- Python 3.9 or later, run as `python3`, which Pin checks the design tree with:
-  `python3 --version` shows its version.
+- Claude Code 2.1.319 or later: `claude --version` shows it.
+- Python 3.9 or later, run as `python3`, which Pin checks the design with: `python3 --version`
+  shows it.
 
 ## Installation
 
@@ -68,20 +38,14 @@ claude plugin install pin@ccpm
 `claude plugin list` then lists `pin@ccpm`. In a new Claude Code session, `/pin:down` is then one
 of its commands.
 
-A plugin whose skill or subagent is a maker AI lists Pin in the `dependencies` of its
-`.claude-plugin/plugin.json`, as `"dependencies": ["pin"]`. Installing that plugin installs Pin
-with it.
-
 ## Walkthrough
 
-At the end, you have the design of your plan in a file. Every point in it is settled, each decision
-that is yours is decided by you, and Pin asked you nothing that was not yours.
+At the end, you have the design of your plan in a file. Every point in it is settled, each
+decision that is yours is decided by you, and Pin asked you nothing that was not yours.
 
-This walkthrough is not yet from a real run: it shows what Pin is being rebuilt to show, and its
-output is replaced by a real run's once Pin is built.
-
-Your notes app `notes` prints your notes as text with `notes list`. You want it to give JSON as
-well. In Claude Code, at the root of the app's repository, you type:
+Your notes app `notes` prints your notes as text with `notes list`, and four scripts read that
+text. You want it to give JSON as well. In Claude Code, at the root of the app's repository, you
+type:
 
 ```text
 /pin:down notes list should give JSON as well
@@ -90,100 +54,170 @@ well. In Claude Code, at the root of the app's repository, you type:
 Pin first puts to you the goal as it reads your words:
 
 ```text
-Purpose: the goal is what every decision of the plan is weighed by.
-To-be: one sentence that says who gains from the change, and how.
-As-is: your words are "notes list should give JSON as well".
-Gap: they do not say who reads the JSON, or what it spares them.
-Proposal: scripts that read `notes list` get its notes as JSON, so they stop parsing text; yes?
+This is how I read the goal: `python3 notes.py list` can print the notes as JSON, and it still prints its current tab-separated lines too.
+
+Is that the goal?
 ```
 
-You answer `yes`. Meanwhile Pin has looked in the repository for what reads `notes list` today,
-and it shows you one fact it found, in a message of its own:
+You answer `Yes. The text stays the default, since I read it by eye. JSON only when asked for.`
+Pin has looked in the repository meanwhile. It shows you each fact it found, one to a message,
+such as this one:
 
 ```text
-Found: scripts/sync.py:14 reads `updated` with `datetime.fromisoformat(fields[3])`, so it
-expects ISO 8601. Is that right?
+Found: the top of `notes.py` says "updated is the time in UTC", but one note's time is not in UTC. The Dentist note is stored as `2026-11-03T08:15:00+09:00` (`notes.py` line 9), and `list` prints that as it is.
+
+Is that right?
 ```
 
-You answer `right`. Pin shows you each other fact it found the same way. It then asks you the one
-decision that the goal and the facts do not settle:
+You answer that the docstring is out of date: since last month, the notes from your phone come in
+its local time with its offset, so `updated` keeps each note's own offset. Pin then asks you each
+decision that the goal and the facts leave open, one to a message:
 
 ```text
-Purpose: each script reads the JSON in the form it expects.
-To-be: the JSON comes in the one form that suits how you read it.
-As-is: notes list gives text only, so no JSON form is set yet.
-Gap: one JSON array and one object a line serve equally well, and nothing found favors either.
-Proposal: one JSON array of all notes, which `jq` and `json.load` read whole; yes?
+You need a way to ask `notes.py list` for JSON, and it should be easy to type and leave the plain `list` alone. Today the only command is `list`: `notes.py` line 14 checks for that word and nothing else. A `--json` flag (`notes.py list --json`) and a `--format json` option would both work. `--json` is shorter. `--format` leaves room for more formats later, which nothing in the plan needs yet.
+
+Shall it be `notes.py list --json`?
 ```
 
-You answer `yes, jq reads it whole`. Pin settles the other points itself, such as keeping the text
-output the default, and does not ask you them. When no point is left open, it shows you the
-design:
+You answer `Yes, notes.py list --json is fine.` Pin asks the form of the JSON the same way, and
+you take one array, adding that every script in `scripts/` should move to the JSON in the same
+change. Pin settles the other points itself, such as tags as a list, and does not ask you them.
+When no point is left open, it shows you the whole design:
 
 ```text
-Goal: scripts that read `notes list` get its notes as JSON.                 (you)
-- The output is one JSON array, one object for each note.                   (you)
-- The text output stays the default; JSON comes only with --json.           (follows from the goal)
-- `updated` stays in ISO 8601, as the text gives it.                        (found, you confirmed)
+Goal: `python3 notes.py list` can print the notes as JSON as well as its tab-separated lines, and the scripts in `scripts/` read that JSON.
+
+- You ask for JSON with a flag: `notes.py list --json` (you)
+- The JSON is one array, with an object for each note (you)
+- Each note has the four fields the text prints: id, title, tags, updated (found, you confirmed)
+- Tags are a JSON list of strings, not one string joined by commas (follows from the goal)
+- Updated is printed as stored, with each note's own offset, not converted to UTC (you)
+- Plain `notes.py list` keeps printing the tab-separated lines exactly as now (you)
+- All four scripts move to the JSON: `export.py`, `report.py`, `stale.py`, `sync.py` (you)
+- Each script runs `notes.py list --json`, loads the array, and reads each field by name (follows from the goal)
+- What each script prints or writes stays the same; only how it reads the list changes (follows from the goal)
 
 Do we understand the plan the same way?
 ```
 
-You answer `yes`, and Pin ends. The design tree is `.pin/20261103-notes-json/design-tree.md`:
+Seeing it whole, you ask for two changes: `--format json` in place of `--json`, as you want to add
+CSV next, and the path of each note's file in each object. Pin confirms with you where the path
+comes from, settles again each point that the changes reach, and shows you the design again. You
+answer `Yes, that's the plan`, adding that with no notes the JSON is `[]`, and that whether it is
+indented is its call. Pin ends:
+
+```text
+The design is pinned: `…/notes/.pin/20261106-notes-list-json/design-tree.md`
+
+The check's last output: "holds: every question is served, every decision reaches the goal, and each decision comes after the ones it builds on. No decision is open."
+```
+
+The design tree holds every point, each with who settled it and on what grounds:
 
 ```markdown
 # Design tree
 
-Goal: Scripts that read `notes list` get its notes as JSON, so they stop parsing text.
-- Grounds: the person, 2026-11-03
+Goal: `python3 notes.py list` can print the notes as JSON, besides its tab-separated lines, and the scripts in `scripts/` read that JSON.
+- Grounds: the person, 2026-11-06: "Yes."
+- Grounds: the person, 2026-11-06: "And in the same change, move every script in scripts/ to read the JSON instead of splitting the text."
+- Grounds: the person, 2026-11-06, confirming the whole design: "Yes, that's the plan."
 
-- **Q1** Can each script that reads notes list read the JSON as it is?
-  - **D1 The form of the JSON**: one JSON array, one object for each note (user)
-    - Grounds: the person, 2026-11-03
-    - **D3 The form of updated**: ISO 8601, as the text gives it (research)
-      - Grounds: scripts/sync.py:14 "datetime.fromisoformat(fields[3])"
-      - Grounds: the person confirmed, 2026-11-03
-      - Also builds on: D1
-- **Q2** Do people who read notes list by eye see the same as before?
-  - **D2 Whether text stays the default**: it stays; JSON only with --json (reasoning)
-    - Grounds: the goal, and Q2
+- **Q1** Can a caller ask `notes.py list` for JSON?
+  - **D1 How JSON is asked for**: a `--format` option: `notes.py list --format json` (user)
+    - Grounds: the person, 2026-11-06: "Yes, `notes.py list --json` is fine."
+    - Grounds: the person, 2026-11-06: "make it `--format json` instead of `--json`, since I want to add CSV next."
+    - **D12 What `--format` takes with any value but `json`**: refuses it with the usage message and a non-zero exit, never falls back to the text (reasoning)
+      - Grounds: D1; a later format such as CSV must not silently print the text
+- **Q2** Does the JSON hold each note's fields in a form a program reads directly?
+  - **D2 The JSON's shape**: one JSON array, an object for each note (user)
+    - Grounds: the person, 2026-11-06: "Yes, one array with an object per note, so jq and json.load read it whole."
+    - **D13 What it prints with no notes**: an empty array, `[]` (user)
+      - Grounds: the person, 2026-11-06: "with no notes, `--format json` prints an empty array, `[]`."
+    - **D14 How the array is laid out**: indented by two spaces, an object's fields one to a line (reasoning)
+      - Grounds: left to Pin by the person, 2026-11-06: "Indented or on one line is your call."; jq and json.load read either, and indented reads by eye
+  - **D3 Which fields each note holds**: id, title, tags, updated and path (user)
+    - Grounds: notes.py:18 "print("\t".join([number, title, ",".join(tags), updated]))"
+    - Grounds: the person, 2026-11-06: "Yes, that's right: id, title, tags joined by commas, updated."
+    - Grounds: the person, 2026-11-06: "add the path of the note's file to each object, so each has id, title, tags, updated and path."
+    - **D10 How the id is written**: a JSON string (user)
+      - Grounds: the person, 2026-11-06: "id stays a string"
+    - **D4 How tags are written**: a JSON array of strings, not one comma-joined string (reasoning)
+      - Grounds: Q2
+    - **D5 How the updated time is written**: as stored, an ISO 8601 string keeping each note's own offset, not converted to UTC (user)
+      - Grounds: notes.py:9 "2026-11-03T08:15:00+09:00"
+      - Grounds: the person, 2026-11-06: "Yes, that's right, but the docstring is what's wrong, not the note. It's out of date: since last month notes from my phone come in its local time with its offset, like +09:00. So updated keeps each note's own offset; don't convert it to UTC."
+      - Grounds: the person, 2026-11-06: "updated keeps its own offset as ISO 8601 so sync.py's fromisoformat still works."
+    - **D11 How the path is written**: as stored, relative to the repository, such as `notes/groceries.md` (user)
+      - Grounds: notes.py:7 "notes/groceries.md"
+      - Grounds: the person, 2026-11-06: "Yes, that's right. Put it in the JSON as it's stored, relative to the repo."
+- **Q3** Does `notes.py list` with no flag still print what the person reads by eye?
+  - **D6 What `notes.py list` prints with no JSON asked**: the tab-separated lines, unchanged; JSON only when asked for (user)
+    - Grounds: the person, 2026-11-06: "The text stays the default, since I read it by eye. JSON only when asked for."
+- **Q4** Do the scripts in `scripts/` read the JSON instead of splitting the text?
+  - **D7 Which scripts move**: all four: export.py, report.py, stale.py, sync.py (user)
+    - Grounds: scripts/export.py:12 "_, title, tags, _ = line.split("\t")", scripts/report.py:13, scripts/stale.py:12, scripts/sync.py:15 "fields = line.split("\t")"
+    - Grounds: the person, 2026-11-06: "Yes, that's right: those four, and they all split on tabs. Move all four to the JSON."
+  - **D8 How each script reads the list**: runs `notes.py list --format json`, loads the array, and takes each field by name (reasoning)
+    - Grounds: D1, D2, D3
+    - Also builds on: D1, D2, D3
+  - **D9 What each script prints or writes**: the same as now; only how it reads the list changes (reasoning)
+    - Grounds: the person, 2026-11-06: "move every script in scripts/ to read the JSON instead of splitting the text."
 ```
 
-Each question stands under the goal, and each decision under the question or the decision it
-serves. The end of a decision's line says who settled it: you (`user`), a fact found
-and confirmed (`research`), or what follows from the goal and the decisions before it
-(`reasoning`). You hand the file to the AI
-that makes the work. Every point that the work needs is in it, with who settled it and on what
-grounds, so the AI has nothing to guess.
+Each question stands under the goal, and each decision under what it serves. An `Also builds on`
+line names a decision it rests on beside the one it stands under. The end of a decision's line says
+who settled it: you (`user`), a fact found in the repository (`research`), what follows from the
+goal and the decisions before it (`reasoning`), or your AI before it called Pin (`maker`). The
+whole design Pin showed you says the same as `(you)`, `(found, you confirmed)` and `(follows from
+the goal)`. You hand the file to the AI that makes the work, and it has nothing to guess.
 
 ## How it works
 
-![How Pin works](images/how-it-works.svg)
+![The usual way and Pin, with the five problems marked](images/problem.svg)
 
-The figure shows how you and a maker AI use Pin. A maker AI also needs to know three things
-that the figure cannot show:
+1. **A point no one raised is guessed, and you meet the guess in the work as rework.** Pin works
+   out what must hold for your goal, and under each, what makes it hold. So every point the work
+   needs is found before the work starts.
+2. **You are asked what the AI could find itself.** Pin finds each fact with the repository's
+   files and shows it to you to confirm. It asks you only the decisions that are yours, each with
+   a recommendation, so a yes takes it.
+3. **Several questions come at once, and one answer changes another unseen.** Each message from
+   Pin holds one point, and a decision comes only once those it builds on are settled.
+4. **You and the AI mean different things, and it shows only in the work.** At the end, Pin shows
+   you every point in one short line with who settled it, and asks whether you mean the same.
+5. **A stopped conversation loses your answers, and you are asked again.** Pin writes each answer
+   into the design tree before its next message.
 
-- A maker AI writes the goal of the work, its questions and what it has settled into the design
-  file, in the form [the design tree](core/roles/pinner.md#the-design-tree) gives. It marks each
-  decision it settled with `(maker)` at the end of its line, so Pin keeps it as given. It then starts
-  `pin:down` with the file's path. Without a path, the file lies in
-  `.pin/<yyyymmdd>-<name>/design-tree.md` at the top of the repository.
-- Pin runs as a subagent, so it cannot ask the person itself. It ends each run with its
-  message headed `For the person:`. The maker AI puts that message to the person as given, and
-  resumes Pin with the person's answer under the line `The person's answer, word for word:`.
-- Where the work finds a point that the design does not settle, or that must change, the maker AI
-  starts Pin again with that point and does not change the design itself. Pin opens the point and
-  each point built on it, and settles them again with the person.
+![How Pin tells a point that is yours from one it settles](images/how-asks.svg)
+
+**What does Pin ask me, and what does it settle itself?** Pin finds each fact itself, and shows it
+to you to confirm. It settles each decision that the goal and the facts favor. It asks you a
+decision only where two ways serve your goal equally well, or where the decision is hard to undo.
+
+![How a stopped run goes on from the design tree](images/how-stopped.svg)
+
+**What if the conversation stops before the design is done?** Every answer is in the design tree,
+`.pin/<yyyymmdd>-<name>/design-tree.md`, before the next point goes out. Type `/pin:down` on the
+same plan in a new conversation, and Pin finds the file by its goal and goes on from it, asking
+nothing again.
+
+![How Pin keeps the points your AI settled](images/how-ai.svg)
+
+**My AI has already settled some points with me. Will Pin ask them again?** No. Your AI writes the
+goal, the questions and what it settled into a design tree, each settled point marked `(maker)`,
+and calls the skill `pin:down` with the file's path. Pin keeps those points as given, and asks you
+only the rest. Where your AI's work later finds a point the design missed, it calls the skill again
+with the path and names the point. Pin opens that point and each point built on it, and asks you
+only those.
 
 ## Documentation
 
-- [The design tree](core/roles/pinner.md#the-design-tree): each line of the design tree, for an AI
-  that reads it or builds on it.
-
-## Development
-
-[Pin's development folder](../../dev/pin/README.md) holds its product vision, its architecture
-and its tests.
+- [The design tree](core/roles/pinner.md#the-design-tree): each line of the design tree, for you
+  or your AI to read it, or to write one before calling Pin. It is written to the pinner, the part of
+  Pin that writes the tree, and [the template](core/domain/design-tree-template.md) shows the
+  lines in place.
+- [Changelog](CHANGELOG.md): the changes in each version.
+- [Issues](https://github.com/lovaizu/ccpm/issues): where you ask for help or report a fault.
 
 ## License
 
@@ -192,4 +226,4 @@ and its tests.
 `pin:down` is made from Matt Pocock's skill
 [grilling](https://github.com/mattpocock/skills/blob/4ae2317ddb22b046e26455e4f9c9b3aaaf62212d/skills/productivity/grilling/SKILL.md),
 under the MIT License, Copyright (c) 2026 Matt Pocock, as [LICENSE-grilling](LICENSE-grilling)
-gives in full. Pin asks one question at a time, where grilling asks a round of questions.
+gives in full.

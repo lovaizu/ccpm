@@ -9,25 +9,9 @@ import unittest
 import helpers
 from helpers import decision, made, settled, testing, tree
 
-# The README walkthrough's tree as its Markdown nests it: D3 serves D1, so it stands under D1, and
-# names D1, which it builds on, on its Also line.
-WALKTHROUGH = """\
-# Design tree
-
-Goal: Scripts that read `notes list` get its notes as JSON, so they stop parsing text.
-- Grounds: the person, 2026-11-03
-
-- **Q1** Can each script that reads notes list read the JSON as it is?
-  - **D1 The form of the JSON**: one JSON array, one object for each note (user)
-    - Grounds: the person, 2026-11-03
-    - **D3 The form of updated**: ISO 8601, as the text gives it (research)
-      - Grounds: scripts/sync.py:14 "datetime.fromisoformat(fields[3])"
-      - Grounds: the person confirmed, 2026-11-03
-      - Also builds on: D1
-- **Q2** Do people who read notes list by eye see the same as before?
-  - **D2 Whether text stays the default**: it stays; JSON only with --json (reasoning)
-    - Grounds: the goal, and Q2
-"""
+# The small tree the tests change, as its Markdown nests it: D3 serves D1, so it stands under D1,
+# and names D1, which it builds on, on its Also line.
+WALKTHROUGH = helpers.WALKTHROUGH_MARKDOWN
 # A tree's first lines, the goal with no grounds, for a test to add its list to.
 HEAD = "# Design tree\n\nGoal: the goal\n\n"
 
@@ -43,7 +27,7 @@ def read_or_why(text: str) -> str:
 
 class TestRead(unittest.TestCase):
     def test_the_walkthrough_is_read_as_its_nesting_says(self):
-        # Given: the README walkthrough's Markdown
+        # Given: the small tree's Markdown
         # When: it is read
         # Then: each question serves the goal, each decision serves the question it stands under,
         # D3 serves D1, which it stands under, and builds on D1 by its Also line
@@ -101,11 +85,15 @@ class TestRead(unittest.TestCase):
             },
         )
 
-    def test_the_readme_walkthrough_is_this_tree(self):
-        # Given: the tree the README's walkthrough keeps
+    def test_the_readme_walkthroughs_tree_holds_with_no_decision_open(self):
+        # Given: the tree the README's walkthrough shows, a real run's
         # When: it is read
-        # Then: it is the tree these tests read
-        self.assertEqual(helpers.walkthrough(), tree.read(WALKTHROUGH))
+        found = tree.read(helpers.README_TREE)
+        # Then: it is in form, holds, and has no decision open
+        self.assertEqual(
+            (tree.form_faults(found), tree.problems(found), tree.ready(found)), ([], [], [])
+        )
+        self.assertTrue(all(d["decided"] for d in found["decisions"]))
 
     def test_open_and_who_settled_are_read_from_the_end_of_the_line(self):
         cases = [
@@ -394,10 +382,10 @@ class TestLoad(testing.FolderTest):
 
 
 class TestMarkdown(unittest.TestCase):
-    def test_the_walkthrough_is_written_as_its_readme_shows_it(self):
+    def test_the_walkthrough_is_written_as_the_text_it_was_read_from(self):
         # Given: the walkthrough's tree
         # When: it is written as Markdown
-        # Then: it is the text the README keeps
+        # Then: it is the text it was read from
         self.assertEqual(tree.markdown(tree.read(WALKTHROUGH)), WALKTHROUGH)
 
     def test_a_decision_stands_under_a_decision_it_serves_before_a_question(self):

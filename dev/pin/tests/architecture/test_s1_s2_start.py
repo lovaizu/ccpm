@@ -1,22 +1,23 @@
-"""S1 and S3 of dev/pin/architecture.md, the start, one test for each of its paths: Pin's guard runs
+"""S1 and S2 of dev/pin/architecture.md, the start, one test for each of its paths: Pin's guard runs
 real, by Pin's hook entries on Pin's Rules laid, through a double of Claude Code; check.py runs
-real, by the command the pinner's rule names; doubles stand in for the go-between, the main
-conversation in S1 and the maker AI in S3, for the pinner, and for the person."""
+real, by the command the pinner's rule names; doubles stand in for the orchestrator, the main
+conversation that follows pin:down, for the pinner, and for the user: the person who types
+`/pin:down` in S1, and the user's AI that calls the skill in S2."""
 
+import json
 import os
 import unittest
 
 import helpers
-from helpers import new, tree
+from helpers import new, testing, tree
 
 PLAN = "notes list should give JSON as well"
 GOAL = (
     "For the person:\n"
-    "**Purpose**: the goal is what every decision of the plan is weighed by.\n"
-    "**To-be**: one sentence that says who gains from the change, and how.\n"
-    '**As-is**: your words are "notes list should give JSON as well".\n'
-    "**Gap**: they do not say who reads the JSON, or what it spares them.\n"
-    "**Proposal**: scripts that read `notes list` get its notes as JSON; yes?"
+    "The goal is what every decision of the plan is weighed by. Your words say what notes list"
+    " should give, but not who reads the JSON or what it spares them.\n"
+    "Shall the goal be that scripts that read `notes list` get its notes as JSON, so they stop"
+    " parsing text?"
 )
 CONFIRMED = "the person, 2026-11-03"
 # What the pinner is told where it gives its result with the design tree changed since its check.
@@ -35,21 +36,23 @@ def walkthrough_with(**given: dict) -> dict:
 
 
 class TestPersonStarts(helpers.PinnerTest):
-    """S1: the person types /pin:down; the main conversation is the go-between."""
+    """S1: the person types /pin:down, and the main conversation follows the orchestrator."""
 
-    def test_the_go_between_takes_its_steps_from_its_part_named_by_pin_down(self):
-        # Given: pin:down, the go-between's entry, and the pinner's entry
+    def test_the_orchestrator_takes_its_steps_from_its_part_named_by_pin_down(self):
+        # Given: pin:down, the orchestrator's entry, and the pinner's entry
         skill = helpers.entry("skills", "down", "SKILL.md")
         agent = helpers.entry("agents", "pinner.md")
-        # Then: pin:down names the go-between's part, there in Pin; the pinner runs in the
+        # Then: pin:down names the orchestrator's part, there in Pin; the pinner runs in the
         # background and names its own part
-        self.assertIn("`${CLAUDE_PLUGIN_ROOT}/core/roles/go-between.md`", skill)
-        self.assertTrue(os.path.isfile(os.path.join(helpers.PIN, "core", "roles", "go-between.md")))
+        self.assertIn("`${CLAUDE_PLUGIN_ROOT}/core/roles/orchestrator.md`", skill)
+        part = os.path.join(helpers.PIN, "core", "roles", "orchestrator.md")
+        self.assertTrue(os.path.isfile(part))
         self.assertIn("\nbackground: true\n", agent)
         self.assertIn("`${CLAUDE_PLUGIN_ROOT}/core/roles/pinner.md`", agent)
 
     def test_a_new_plan_gets_a_new_design_tree_and_the_goal_is_put(self):
-        # Given: no design tree in .pin/, and the go-between starting the pinner with the plan
+        # Given: no design tree in .pin/; the person types /pin:down, and the orchestrator starts
+        # the pinner with the plan, as the main conversation is told
         self.starts(PLAN)
         # When: the pinner writes the goal to confirm, the questions and each decision open, and
         # runs the check
@@ -74,7 +77,7 @@ class TestPersonStarts(helpers.PinnerTest):
             decided=None, settled_by=None, grounds=[helpers.FOUND, CONFIRMED]
         )
         self.lies(left)
-        # When: the go-between finds the file whose goal is this plan's, and starts the pinner on
+        # When: the orchestrator finds the file whose goal is this plan's, and starts the pinner on
         # it; the pinner reads it and runs the check
         self.assertEqual(self.picks("get its notes as JSON"), helpers.PERSONS)
         self.starts(PLAN)
@@ -187,81 +190,143 @@ class TestPinnerHeld(helpers.PinnerTest):
         self.assertIn("result.py pinner asks", ended.reason())
 
 
-MAKER_SETTLED = {
+class TestRunHeld(helpers.PinnerTest):
+    """S1 and S2: the guard holds the main conversation to the routes while the run lasts."""
+
+    def test_a_second_start_of_the_pinner_while_it_runs_is_stopped_told_to_wait(self):
+        # Given: the pinner started, and running
+        self.starts(PLAN)
+        # When: the orchestrator starts the pinner again
+        again = self.claude.start(None, testing.Run("pin:pinner", "p2"), "{}")
+        # Then: it is stopped, told the sentence of its step and to wait for the pinner
+        self.assertFalse(again.made)
+        self.assertEqual(again.reason(), f"{helpers.FOLLOWED}\n{helpers.WAIT}")
+
+    def test_a_turn_ended_with_the_pinners_start_due_is_kept_going_once_then_let_end(self):
+        # Given: the run begun, the pinner's start told
+        self.begins()
+        # When: the orchestrator ends its turn without starting it
+        kept = self.claude.end_turn()
+        # Then: it is kept going, told the start due
+        self.assertFalse(kept.made)
+        self.assertEqual(kept.reason(), f"{helpers.FOLLOWED}\n{helpers.FIRST}")
+        # When: it ends its turn again
+        ended = self.claude.end_turn()
+        # Then: it is let end, and the user is told whose step to fix
+        self.assertTrue(ended.made)
+        self.assertIn("step 2 of down in core/roles/orchestrator.md", ended.operator())
+
+    def test_outside_a_run_the_main_conversation_is_held_to_nothing(self):
+        # When: the main conversation starts the pinner with no run of pin:down begun
+        told = self.claude.start(None, helpers.PINNER, json.dumps({"design": self.path}))
+        # Then: the start goes through, and nothing is told of the routes
+        self.assertTrue(told.made)
+        self.assertNotIn(helpers.WAIT, told.context)
+
+
+AI_SETTLED = {
     "id": "D2",
     "what": "Whether text stays the default",
     "contributes_to": ["Q2"],
     "builds_on": [],
     "decided": "it stays; JSON only with --json",
     "settled_by": "maker",
-    "grounds": ["the person told the maker AI, 2026-11-02"],
+    "grounds": ["the person told their AI, 2026-11-02"],
 }
 
 
-def handed_over() -> dict:
-    """The maker AI's hand-over: the goal with its grounds, the questions and its settled decision,
-    every other decision open."""
+def written_by_the_ai() -> dict:
+    """The tree the user's AI writes: the goal with its grounds, the questions and its settled
+    decision, every other decision open."""
     data = new(helpers.WALKTHROUGH)
-    data["goal"]["grounds"] = ["the maker AI's request, 2026-11-02"]
-    data["decisions"][2] = dict(MAKER_SETTLED)
+    data["goal"]["grounds"] = ["the AI's request, 2026-11-02"]
+    data["decisions"][2] = dict(AI_SETTLED)
     return data
 
 
-class TestMakerStarts(helpers.PinnerTest):
-    """S3: the maker AI is the go-between, and hands over in the design tree at its own path."""
+class TestAICalls(helpers.PinnerTest):
+    """S2: the user's AI writes a design tree at its own path and calls the skill with it; the main
+    conversation, the AI itself, then follows the orchestrator."""
 
-    starter = helpers.MAKER
-    path = helpers.MAKERS
+    called = True
+    path = helpers.AIS
 
-    def test_the_hand_over_keeps_the_makers_points_and_its_goal_is_not_put(self):
-        # Given: the maker AI writes its hand-over at its path, which Pin's guard does not hold
+    def test_the_ais_tree_keeps_its_points_and_its_goal_is_not_put(self):
+        # Given: the user's AI writes its tree at its path, before the run, which the guard does
+        # not hold
         written = self.claude.call(
-            helpers.MAKER,
+            None,
             "Write",
             {
                 "file_path": os.path.join(self.repo, self.path),
-                "content": tree.markdown(handed_over()),
+                "content": tree.markdown(written_by_the_ai()),
             },
         )
         self.assertEqual((written.made, written.said), (True, {}))
-        # When: it starts the pinner with the path; the pinner reads the file and runs the check
-        self.starts("Settle the design of a --json option on notes list with the person.")
+        # When: it calls the skill, and the orchestrator starts the pinner with the path; the
+        # pinner reads the file and runs the check
+        self.starts("Settle the design of a JSON output of notes list with the person.")
         self.reads(self.path)
         checked = self.checks()
-        # Then: the file holds, the maker AI's decision not open
+        # Then: the file holds, the AI's decision not open
         self.assertEqual(checked, self.holds("D1"))
-        self.assertEqual(self.on_disk(), handed_over())
+        self.assertEqual(self.on_disk(), written_by_the_ai())
         # When: the pinner reads the fact the form of updated rests on, gives asks and ends with
         # the person's decision
         self.assertTrue(self.reads("scripts/sync.py").made)
         self.assertTrue(self.gives("asks").made)
         heard = self.ends(helpers.FORM)
-        # Then: the maker AI gets that decision, not the goal, and the file is as handed over
+        # Then: the person gets that decision, not the goal, and the file is as the AI wrote it
         self.assertEqual(heard, helpers.FORM.split("\n", 1)[1])
-        self.assertEqual(self.on_disk(), handed_over())
+        self.assertEqual(self.on_disk(), written_by_the_ai())
 
-    def test_a_point_the_makers_work_found_opens_it_and_each_decision_built_on_it(self):
-        # Given: a settled design, the maker AI's decision among it
+    def test_a_decision_open_now_that_is_the_pinners_is_settled_before_the_persons_is_put(self):
+        # Given: the user's AI's tree, its goal settled, with the default of the text left open
+        left = written_by_the_ai()
+        left["decisions"][2].update(decided=None, settled_by=None, grounds=[])
+        self.lies(left)
+        # When: the AI calls the skill; the pinner reads the file and runs the check
+        self.starts("Settle the design of a JSON output of notes list with the person.")
+        self.reads(self.path)
+        # Then: that decision and the person's are open to decide now
+        self.assertEqual(self.checks(), self.holds("D1", "D2"))
+        # When: the pinner reads the fact it rests on, settles it by reasoning, and runs the check
+        self.assertTrue(self.reads("notes.py").made)
+        mine = written_by_the_ai()
+        mine["decisions"][2].update(
+            decided="it stays; JSON only with --json",
+            settled_by="reasoning",
+            grounds=['notes.py:17 "for number, title, tags, updated, _ in NOTES:"', "Q2"],
+        )
+        self.writes(mine)
+        # Then: the file holds, only the person's decision open now, and that one is put
+        self.assertEqual(self.checks(), self.holds("D1"))
+        self.assertEqual(self.on_disk()["decisions"][2]["settled_by"], "reasoning")
+        self.assertTrue(self.gives("asks").made)
+        self.assertEqual(self.ends(helpers.FORM), helpers.FORM.split("\n", 1)[1])
+
+    def test_a_point_the_ais_work_found_opens_it_and_each_decision_built_on_it(self):
+        # Given: a settled design, the AI's decision among it
         settled = helpers.walkthrough()
-        settled["decisions"][2] = dict(MAKER_SETTLED)
+        settled["decisions"][2] = dict(AI_SETTLED)
         self.lies(settled)
-        # When: the maker AI starts the pinner again with the point its work found, the form of the
-        # JSON; the pinner opens it and the decision built on it, and runs the check
+        # When: the AI calls the skill again with the point its work found, the form of the JSON;
+        # the pinner opens it and the decision built on it, and runs the check
         self.starts("The work found that a phone app reads the list: the form of the JSON again.")
         reopened = walkthrough_with(
             D1={"decided": None, "settled_by": None},
             D3={"decided": None, "settled_by": None},
         )
-        reopened["decisions"][2] = dict(MAKER_SETTLED)
+        reopened["decisions"][2] = dict(AI_SETTLED)
         self.writes(reopened)
         checked = self.checks()
         # Then: the file holds, the opened decision open now and the one built on it waiting for
-        # it, their grounds kept, the maker AI's decision as it was
+        # it, their grounds kept, the AI's decision as it was
         self.assertEqual(checked, self.holds("D1"))
         self.assertEqual(
             self.on_disk()["decisions"][1]["grounds"], settled["decisions"][1]["grounds"]
         )
-        self.assertEqual(self.on_disk()["decisions"][2], MAKER_SETTLED)
+        self.assertEqual(self.on_disk()["decisions"][2], AI_SETTLED)
         self.assertTrue(self.gives("asks").made)
         self.ends(helpers.FORM)
 

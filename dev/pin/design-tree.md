@@ -17,6 +17,8 @@ Goal: The user has the work made from their plan be what they mean, with no poin
         - Grounds: a command changes a line without its branch.
       - **D6 The form in tree.py alone**: Turn's designer takes it through a link (reasoning)
         - Grounds: dev/plugin-best-practice.md, Code kept once.
+    - **D43 Down to nothing left to choose**: a choice the maker would still make is a child missing (reasoning)
+      - Grounds: the Goal: "with no point left to guess"; the ux trial of 2026-11-06, where an output's layout was left to the maker.
     - **D7 When done**: no decision open, and the whole confirmed (reasoning)
       - Grounds: Q2
 - **Q2** Does each point hold as the user means it?
@@ -66,7 +68,7 @@ Goal: The user has the work made from their plan be what they mean, with no poin
   - **D26 One sentence**: Pin settles every point of your plan before an AI makes it, asking you only what is yours (reasoning)
     - Grounds: readme/best-practice.json Q1.
     - Also serves: readme/Q1, readme/Q2
-  - **D27 What it does not do**: make the work, judge a decision, or decide what is yours (reasoning)
+  - **D27 What it does not do**: make the work, judge a decision, or take a decision of yours for you (reasoning)
     - Grounds: readme/best-practice.json Q3.
     - Also serves: readme/Q3
   - **D28 Requirements**: Claude Code 2.1.319 and Python 3.9 as `python3` (research)
