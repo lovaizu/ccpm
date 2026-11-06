@@ -46,7 +46,7 @@
   </defs>
         <rect class="bg" x="0" y="0" width="1520" height="850"/>
   <rect class="frame" x="24" y="36" width="532" height="114" rx="8"/>
-  <text class="frame-name" x="36" y="56" text-anchor="start">talking with the user: starter, up</text>
+  <text class="frame-name" x="36" y="56" text-anchor="start">talking with the user: orchestrator</text>
   <rect class="frame" x="624" y="36" width="232" height="274" rx="8"/>
   <text class="frame-name" x="636" y="56" text-anchor="start">the run: planner</text>
   <rect class="frame" x="924" y="36" width="532" height="274" rx="8"/>

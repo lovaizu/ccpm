@@ -1,14 +1,14 @@
 # Calling Turn
 
-What a plugin gives Turn, how it hands on Turn's questions to the person, and what it gets back, so
-you can write the step of your plugin that calls it.
+What a plugin gives Turn and what it gets back, so you can write the step of your plugin that
+calls it.
 
 ## The call
 
 List Turn in the `dependencies` of your plugin's `.claude-plugin/plugin.json`, as
 `"dependencies": ["turn"]`, so installing your plugin installs Turn.
 
-Start the agent `turn:up` in the background, with the request in plain words, such as "the README
+Call the skill `turn:up` with the Skill tool, with the request in plain words, such as "the README
 of this repository". Turn needs nothing more: it asks the person this work's purpose, and the kind of
 work where the request does not name it.
 
@@ -42,20 +42,19 @@ Each key of `given` is optional.
 - `work`: the paths the work is to lie at.
 - `run`: the folder Turn keeps the run in, under `.turn/` or where your plugin keeps its own.
 
-## Each message of Turn
+## While Turn runs
 
-Turn's roles run in the background, so `turn:up` ends each time it needs something, and Claude
-Code tells you. The heading of its last message says what to do:
+Turn runs in the same conversation as your step. It puts each of its points to the person itself,
+one at a time, and passes their answers to its roles, so your step passes nothing on. Turn's guard
+holds the conversation to Turn's course until Turn hands the work back, so count the call as one
+move of your own course, and let your guard hold nothing meanwhile.
+
+Turn ends with a message whose heading says what to do:
 
 | Headed | Do |
 |---|---|
-| `For the person:` | Put the rest to the person as it is, and resume `turn:up` by SendMessage with `The person's answer, word for word:` and, on the next line, their answer as they wrote it. |
-| `Turn is working:` | Nothing: you are told when `turn:up` ends again. |
 | `Done:` | Take the work: the message names its paths, and the run's folder. |
 | `For the maker of Turn:` | Turn stopped on a fault of its own. Tell the person, with the message as it is. |
-
-A question is one point, worded so that "yes" takes Turn's recommendation. Put it to the person as
-it is: if you change it on the way, the person answers something Turn did not ask.
 
 ## What comes back
 
@@ -63,8 +62,7 @@ The work's files lie at the paths `Done:` names, and Turn does not commit them. 
 holds the design tree, `design-tree.md`, with each decision and who settled it. It also holds
 each check, as `verification/`. So your plugin can show the person what was decided.
 
-## Depth
+## Where to call it
 
-Claude Code lets subagents start subagents down to three layers below the main conversation.
-Turn's roles stand one layer below `turn:up`, and start none of their
-own. So start `turn:up` from the main conversation, or from a subagent one layer below it at most.
+Call Turn from the main conversation, the conversation the person talks in. Only it can put Turn's
+points to the person, and Turn's roles then stand one layer below it.

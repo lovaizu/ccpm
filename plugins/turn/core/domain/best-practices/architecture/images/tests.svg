@@ -116,8 +116,8 @@
   <text class="label start" x="512" y="594" text-anchor="start">Real: Turn's scripts by the commands the rules name,</text>
   <text class="label start" x="512" y="612" text-anchor="start">the guard by Turn's hook entries on Rules laid, and</text>
   <text class="label start" x="512" y="630" text-anchor="start">the entries' files as Claude Code takes them.</text>
-  <text class="label start" x="512" y="648" text-anchor="start">Doubles: up, the planner, the designer, the generator,</text>
-  <text class="label start" x="512" y="666" text-anchor="start">the evaluator, the starter and Claude Code, each giving</text>
+  <text class="label start" x="512" y="648" text-anchor="start">Doubles: the orchestrator, the planner, the designer,</text>
+  <text class="label start" x="512" y="666" text-anchor="start">the generator, the evaluator and Claude Code, each giving</text>
   <text class="label start" x="512" y="684" text-anchor="start">only what its part's contract allows: design trees that</text>
   <text class="label start" x="512" y="702" text-anchor="start">pass the design's check, Answers that pass rounds.py,</text>
   <text class="label start" x="512" y="720" text-anchor="start">a hand-over only through plan.py, each Message and</text>
@@ -133,8 +133,8 @@
   <text class="label start" x="982" y="648" text-anchor="start">Stand-in: an AI on Opus, given an intent written</text>
   <text class="label start" x="982" y="666" text-anchor="start">before the run and never shown to Turn.</text>
   <text class="label start" x="982" y="684" text-anchor="start">Each trial runs twice: the stand-in types /turn:up,</text>
-  <text class="label start" x="982" y="702" text-anchor="start">and a plugin made for the test has its AI start</text>
-  <text class="label start" x="982" y="720" text-anchor="start">turn:up for the stand-in and pass each point on.</text>
+  <text class="label start" x="982" y="702" text-anchor="start">and a plugin made for the test has its AI call the</text>
+  <text class="label start" x="982" y="720" text-anchor="start">skill turn:up for the stand-in.</text>
   <text class="label start" x="982" y="738" text-anchor="start">Measures KR1.1, the share of works gone wrong in a</text>
   <text class="label start" x="982" y="756" text-anchor="start">way the product vision names, judged by the stand-in</text>
   <text class="label start" x="982" y="774" text-anchor="start">from its intent, and KR1.2, the time from the start</text>
