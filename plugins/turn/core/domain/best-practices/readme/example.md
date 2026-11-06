@@ -100,7 +100,7 @@ Done: README.md is written, not committed. Its reader gets all a README's reader
 
 ![Turn finds facts in your repository, settles what they favor, and asks you your intent](images/how-decisions.svg)
 
-**How does Turn tell what to ask you?** Pin finds what your repository holds and shows it to you
+**How does Turn tell what to ask you?** Its designer finds what your repository holds and shows it to you
 to confirm. It settles a decision that the purpose, the facts and your answers favor, and asks you
 only your intent: where another way would serve as well, or would be hard to undo. It writes each
 into the design with who settled it.

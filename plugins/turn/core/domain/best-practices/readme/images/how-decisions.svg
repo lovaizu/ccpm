@@ -48,7 +48,7 @@
   <rect class="store" x="30" y="30" width="170" height="60" rx="6"/>
   <text class="name" x="115" y="65">Your repository</text>
   <rect class="lane" x="340" y="110" width="250" height="80" rx="6"/>
-  <text class="name" x="465" y="155">Pin</text>
+  <text class="name" x="465" y="155">Designer</text>
   <rect class="box" x="30" y="220" width="170" height="60" rx="6"/>
   <text class="name" x="115" y="255">You</text>
   <rect class="store" x="760" y="110" width="210" height="80" rx="6"/>
@@ -63,6 +63,6 @@
   <text class="label small start halo" x="330" y="250">your answer</text>
   <path class="line" d="M590,150 L756,150" marker-end="url(#a)"/>
   <text class="label small mid halo" x="673" y="128">one way favored:</text>
-  <text class="label small mid halo" x="673" y="142">Pin settles it</text>
+  <text class="label small mid halo" x="673" y="142">the designer settles it</text>
   <text class="label small mid halo" x="673" y="172">yours: as you answered</text>
 </svg>

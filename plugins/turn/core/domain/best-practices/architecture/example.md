@@ -2,12 +2,12 @@
 
 This document says how Turn is built to give [its product vision](../../../../../../dev/turn/product-vision.md).
 Every kind of work goes through one course of subagents, moved by the routes of Lane, the plugin
-that holds a subagent to the rules of its steps. The planner settles the kind of work. It hands Pin,
-the plugin that settles a design with the user, the work's goal and the questions of the kind's best
-practice. Pin settles the design with the user, one point at a time. The generator makes the work
+that holds a subagent to the rules of its steps. The planner settles the kind of work. It hands the
+designer the work's goal and the questions of the kind's best practice. The designer settles the
+design with the user, one point at a time. The generator makes the work
 from the design, against the kind's best practice. A fresh evaluator then answers each question as
 the work's user would, never given the design. A round is one such making and its check. A question
-not met goes back through Pin to its decision. Once every question is met, the rounds go on with how
+not met goes back through the designer to its decision. Once every question is met, the rounds go on with how
 the work reads. up, the subagent that starts each role, carries each point to the user, and each
 answer back, as given.
 
@@ -33,7 +33,7 @@ as [Where the router keeps the course](../../../../../../dev/plugin-best-practic
 allows.
 
 *Why*: a move that up chose would rest on its reading of a reply, which nothing holds. Such a move
-could skip Pin or the evaluator, while a route holds on every run (KR1.1).
+could skip the designer or the evaluator, while a route holds on every run (KR1.1).
 
 ### No learning from each run
 
@@ -54,17 +54,17 @@ course with `meta` as its best practice. No role names a kind of work, but the p
 *Why*: a new kind then needs only a best practice, which the user approves as they approve any
 design (KR1.1). A fix to the course reaches every kind at once.
 
-### Pin alone settles the design
+### The designer alone settles the design
 
-After the planner's hand-over, only the pinner writes the design file and puts a point of the
-design to the user. Each point that the work raises goes back to Pin in a Request: a question
-not met, or a point that the design leaves open. No role of Turn changes a decision itself. The
+After the planner's hand-over, only the designer writes the design file and puts a point of the
+design to the user. Each point that the work raises goes back to the designer in a Request: a
+question not met, or a point that the design leaves open. No other role changes a decision. The
 planner asks the user one point only, the kind, and only before there is a design.
 
-*Why*: the design file is then the one record of each point and who settled it, and Pin keeps what
-the user's AI settled. A point that a role of Turn settles beside Pin could come out otherwise
-than the user means it, or be asked again. A decision changed outside Pin leaves each decision
-built on it as it was (KR1.1).
+*Why*: the design file is then the one record of each point and who settled it, and the designer
+keeps what the user's AI settled. A point that another role settles beside the designer could come
+out otherwise than the user means it, or be asked again. A decision changed outside the designer
+leaves each decision built on it as it was (KR1.1).
 
 ### The evaluator has only what the work's user has
 
@@ -81,7 +81,7 @@ what it gives (KR1.1).
 A phase is the set of questions that a round asks. The rounds of the content phase make what the
 work says and does, by the kind's questions. The rounds of the reading phase then improve how the
 work says it, by `refactor-doc` for a document or `refactor-code` for code, and change nothing that
-the work says. A change to what the work says goes back to Pin, and the content phase follows again.
+the work says. A change to what the work says goes back to the designer, and the content phase follows again.
 
 *Why*: no role improves a sentence before its content is settled, only to improve it again once the
 content changes (KR1.2).
@@ -89,7 +89,7 @@ content changes (KR1.2).
 ### A shortfall goes back to its decision
 
 The generator makes the work only from the design. A question not met in the content phase goes
-back to the decisions that serve it, through Pin. The generator then makes the work again from the
+back to the decisions that serve it, through the designer. The generator then makes the work again from the
 design. No role puts a fix onto the work beside the design.
 
 *Why*: a fix beside the design is a part that no decision holds. The next round makes the work again
@@ -107,7 +107,7 @@ its folder in a new session, and asks nothing again (KR1.2).
 ### Passed on as given
 
 up passes on each point, each Request and each answer as it got them, and answers nothing of the
-work itself. The planner hands Pin each point that the user's AI settled, as it was given.
+work itself. The planner hands the designer each point that the user's AI settled, as it was given.
 
 *Why*: a point reworded on the way is a question that no role asked. An answer summed up loses what
 the user meant (KR1.1), and a settled point reworded is asked again (KR1.2).
@@ -160,7 +160,8 @@ What each decides alone:
 - **up**: the run's folder, the one given, else the one the request names, else a new one in
   `.turn/`; and which role an answer resumes, the one that asked.
 - **guard**: whether a call or an end of a role keeps its rules, and which start is due next.
-- **pinner**: everything in the design, as Pin's architecture says.
+- **designer**: what is the user's to decide and what it settles itself, each point of the design
+  and who settled it.
 - **planner**: the kind and its best practice, whether a new kind's comes first, what each Request
   carries, where the work lies, and when the run is done.
 - **generator**: the work, and each small point of making it, such as a phrase.
@@ -175,15 +176,15 @@ What each decides alone:
   passes up and the starter (KR1.2), and Turn runs only in an interactive session, where Claude Code
   starts the orchestrator again as a subagent it started ends
   ([the routes](../../../../../lane/docs/routes.md#what-the-orchestrator-is-told)).
-- **Pin used as built, with Turn as Pin's maker AI and up as its go-between,** over a role of Turn
-  that follows the pinner's steps itself: Turn copies none of Pin's rules, so the two cannot drift
-  apart, and Pin runs as it was tested (KR1.1). It costs a route of Lane that names a subagent of a
-  dependency and keeps its results, and a pinner that gives one result while a point waits and
-  another once the design is confirmed.
-- **The planner on both sides of Pin** over up handing Pin each point and the generator reading the
-  design itself: one role decides what Turn hands Pin and what it takes from the design, and up stays
-  a carrier (KR1.1). It costs a run of the planner each time the design goes to Pin or comes back
-  (KR1.2).
+- **A designer of Turn's own, which asks by the kind's questions and writes and checks the design
+  in Pin's form through Pin's `tree.py`,** over Pin's pinner used as built: the role that settles
+  the design stands among Turn's roles and asks by the questions of the kind's best practice, and
+  the design keeps the form and checks Pin keeps, with no second copy of their code (KR1.1). It
+  costs keeping the designer's steps on whose a decision is in step with the pinner's by hand.
+- **The planner on both sides of the designer** over up handing the designer each point and the
+  generator reading the design itself: one role decides what goes to the designer and what is taken
+  from the design, and up stays a carrier (KR1.1). It costs a run of the planner each time the
+  design goes to the designer or comes back (KR1.2).
 - **A new kind's best practice made as a work of its own** over a step of its own that makes it
   faster: the user approves the kind's purpose and questions as they approve any design, and
   the course stays one for every kind (KR1.1). It costs a whole course more for the first work of a
@@ -200,29 +201,29 @@ What each decides alone:
 - **No role of Turn but up starting a subagent** over a researcher in the background: Claude Code
   lets subagents start subagents only three layers below the main conversation, the user's AI may
   stand one layer down, and a child's end would start its role again while a point waits, so a run
-  would break before the hand-over (KR1.1). It costs the pinner and the generator finding facts
+  would break before the hand-over (KR1.1). It costs the designer and the generator finding facts
   themselves, one after another, in their own context (KR1.2).
 
 ## Data model
 
 ![Turn's data](images/data-model.svg)
 
-- **Call**: the request, and what the user's AI settled.
-- **Run**: the kind, and the works to make, in order.
-- **Run values**: the one line a role is started with.
-- **Work**: what the user wants made.
-- **Best practice**: a kind's goal, template, questions and ways.
-- **Standard**: a best practice without its ways.
-- **Question**: one question of a best practice.
-- **Design file**: Pin's design tree: the goal, questions and decisions.
-- **Decision**: one point of the design, with who settled it.
-- **Request**: what up starts the pinner with: each point to settle.
-- **Round**: one round's phase and questions.
-- **Answers**: met or not met, for each question of a round.
-- **Result**: the word a role gives as it ends.
-- **Rules laid**: Turn's rules and routes, as Lane laid them.
 - **Message**: what up ends with, under a heading for the starter.
 - **Answer**: the user's words, passed back as given.
+- **Call**: the request, and what the user's AI settled.
+- **Run**: the kind, and the works to make, in order.
+- **Request**: what up starts the designer with: each point to settle.
+- **Design file**: the design tree, in Pin's form: the goal, questions and decisions.
+- **Decision**: one point of the design, with who settled it.
+- **Work**: what the user wants made.
+- **Round**: one round's phase and questions.
+- **Answers**: met or not met, for each question of a round.
+- **Best practice**: a kind's goal, template, questions and ways.
+- **Question**: one question of a best practice.
+- **Standard**: a best practice without its ways.
+- **Run values**: the one line a role is started with.
+- **Result**: the word a role gives as it ends.
+- **Rules laid**: Turn's rules and routes, as Lane laid them.
 
 ## Sequences
 
@@ -236,7 +237,7 @@ sequenceDiagram
   participant G as guard
   participant PL as planner
   participant PS as plan.py
-  participant PN as pinner
+  participant PN as designer
   participant F as run's folder
   R->>ST: starts Turn with the request, or with a run's folder, alone or with a change (Call)
   Note over R,ST: The user types /turn:up, or is an AI that follows Calling Turn as its own starter.
@@ -268,9 +269,9 @@ sequenceDiagram
     PL->>G: gives handed (Result)
     PL-->>U: ends with a Request for the hand-over (Request)
   end
-  G-->>U: Start the pinner
+  G-->>U: Start designer
   U->>PN: starts it, with the Request as given (Request)
-  PN->>F: settles each point it can, as Pin's architecture draws (Design file)
+  PN->>F: settles each point it can (Design file)
   PN->>G: gives asks (Result)
   PN-->>U: ends with one point for the user (Message)
   U-->>ST: ends with it as given (Message)
@@ -294,14 +295,14 @@ sequenceDiagram
   participant U as up
   participant G as guard
   participant PL as planner
-  participant PN as pinner
+  participant PN as designer
   participant F as run's folder
   R->>ST: answers, or says anything while the point waits (Answer)
   ST->>U: resumes it, word for word (Answer)
   alt the point is the kind, from the planner
     U->>PL: resumes it, word for word (Answer)
     Note over U,PL: The start goes on from the kind, as S1 draws.
-  else the point is from the pinner
+  else the point is from the designer
     U->>PN: resumes it, word for word (Answer)
     PN->>F: writes the answer, and settles what follows (Design file)
     alt a point is open, or the design waits to be confirmed
@@ -335,7 +336,7 @@ sequenceDiagram
   participant RS as rounds.py
   participant E as evaluator
   participant PL as planner
-  participant PN as pinner
+  participant PN as designer
   participant F as run's folder and the work
   G-->>U: Start generator
   U->>GE: starts it, with the planner's run values (Run values)
@@ -365,9 +366,9 @@ sequenceDiagram
     PL->>F: reads the shortfalls in the Answers (Answers)
     PL->>G: gives handed (Result)
     PL-->>U: ends with a Request that carries each shortfall (Request)
-    G-->>U: Start the pinner
+    G-->>U: Start designer
     U->>PN: starts it, with the Request as given (Request)
-    Note over U,PN: Pin settles each point again, as S2 an answer draws. Its done starts a round.
+    Note over U,PN: The designer settles each point again, as S2 an answer draws. Its done starts a round.
   else the runs gave met, or a run gave reword
     G-->>U: Start generator
     Note over U,GE: The next round, in the reading phase.
@@ -377,7 +378,7 @@ sequenceDiagram
     alt the work was a new kind's best practice
       PL->>F: has plan.py write the work's own hand-over (Design file)
       PL->>G: gives handed (Result)
-      Note over U,PN: The pinner starts on the work itself, as S1 draws.
+      Note over U,PN: The designer starts on the work itself, as S1 draws.
     else the work is done
       PL->>G: gives done (Result)
       PL-->>U: ends with Done, the work's paths and the run's folder (Message)
@@ -396,8 +397,8 @@ sequenceDiagram
 
 ![Turn's deployment](images/deployment.svg)
 
-The user installs Turn as [the README](../../../../README.md#installation) says, which installs
-Pin with it, and types `/turn:up`, or their AI's plugin lists `turn` in its `dependencies` and
+The user installs Turn as [the README](../../../../README.md#installation) says and types
+`/turn:up`, or their AI's plugin lists `turn` in its `dependencies` and
 starts `turn:up` as [Calling Turn](../../../../docs/calling.md) says.
 
 - **Python 3.9 and its standard library only, for Turn's scripts and the guard,** over a later
@@ -430,7 +431,7 @@ starts `turn:up` as [Calling Turn](../../../../docs/calling.md) says.
 
 ```text
 plugins/turn/
-├── .claude-plugin/plugin.json       Turn's manifest, with its dependency on Pin
+├── .claude-plugin/plugin.json       Turn's manifest
 ├── skills/up/SKILL.md               the starter's steps for /turn:up
 ├── agents/<role>.md                 the entries of up, the planner, the generator and the evaluator
 ├── core/roles/<role>.md             the steps of up, the planner, the generator and the evaluator
@@ -440,7 +441,7 @@ plugins/turn/
 │                                    copies of Turn's own
 ├── core/domain/forms/               the forms of Call, Run, Standard, Round, Answers, Best practice
 ├── core/domain/                     the code of plan.py, rounds.py and throwaway.py
-├── core/domain/tree.py              a link to Pin's tree.py: the form of the Design file
+├── core/domain/tree.py              a link to Pin's tree.py: the form and checks of the Design file
 ├── scripts/                         plan.py, rounds.py, throwaway.py
 ├── hooks/hooks.json                 the guard's hook entries
 ├── hooks/lanes.json                 Rules laid, with the routes on each Result
@@ -473,12 +474,12 @@ dev/turn/
   where a symbolic link shows as a line of text; `plan.py form` fails on a copy that differs from
   its document, so the two cannot drift (KR1.1). It costs a second copy of each document and its
   figures in the repository, and a run of `plan.py example` after each change to them.
-- **The Request, the Design file and its Decisions in Pin's form**, which
-  [the pinner](../../../../../pin/core/roles/pinner.md) gives, written and read by Pin's `tree.py`
-  through a link, as [Code kept once](../../../../../../dev/plugin-best-practice.md#code-kept-once) says, over a copy
-  of it in Turn: a form kept twice drifts, and Pin would refuse what Turn hands it (KR1.1). It costs
-  a change to Pin's form changing what Turn hands Pin, with no line of Turn changed, and Turn's
-  tests running Pin's code.
+- **The Design file in the form of [Pin's design tree](../../../../../pin/core/roles/pinner.md#the-design-tree),
+  written, read and checked by Pin's `tree.py` through a link,** as
+  [Code kept once](../../../../../../dev/plugin-best-practice.md#code-kept-once) says, over a form and checks of
+  Turn's own: a form kept twice drifts, and a design tree made by Turn reads as one made by Pin
+  (KR1.1). It costs a change to Pin's form changing Turn's Design file, with no line of Turn
+  changed, and Turn's tests running Pin's code.
 - **`hooks/lane/` as a link to Lane's code in this marketplace** over a copy, as
   [Code kept once](../../../../../../dev/plugin-best-practice.md#code-kept-once) says: a fix to the
   guard reaches every plugin it holds (KR1.1). It costs a fix in Lane reaching Turn's guard only once
@@ -496,8 +497,8 @@ and differs from them where this section says.
   (KR1.1). It costs the most tests to keep up as the scripts change.
 - **The hook process at ●●● at architecture** over a lighter weight: only the guard holds each role
   to its rules and the course to its routes, and a rule let through lets the evaluator read the
-  design or the generator write beside the work (KR1.1). It costs architecture tests that run two
-  plugins' guards on every call, the slowest of the tests that run on every push.
+  design or the generator write beside the work (KR1.1). It costs architecture tests that run the
+  guard on every call, the slowest of the tests that run on every push.
 - **The Claude Code process at ●●○ at architecture** over ●●●: a test there only finds sooner an
   entry that Claude Code would not load as Turn needs, which every ux trial also meets before a
   user does (KR1.1). It costs such a fault showing only once a trial runs, where a heavier
@@ -506,6 +507,6 @@ and differs from them where this section says.
   only these trials run the prompts, while the other rows only confirm what lower levels have
   checked (KR1.1). It costs a prompt's fault showing only once every lower level passes.
 - **Mutation testing on the unit tests alone** over all the tests: the unit tests are the ones that
-  must catch every mutant, while the architecture tests run two plugins' guards on every call and
+  must catch every mutant, while the architecture tests run the guard on every call and
   outlast a mutant's time (KR1.1). It costs a mutant that only an architecture test catches counting
   as missed.

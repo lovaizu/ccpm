@@ -45,6 +45,8 @@
     </marker>
   </defs>
   <rect class="bg" x="0" y="0" width="1000" height="420"/>
+  <rect class="frame" x="24" y="26" width="252" height="122" rx="8"/>
+  <text class="frame-name start" x="36" y="46" text-anchor="start">&lt;component that keeps it&gt;</text>
   <rect class="box" x="40" y="60" width="220" height="72" rx="0"/>
   <text class="name mid" x="150.0" y="101" text-anchor="middle">&lt;Data&gt;</text>
   <rect class="box" x="640" y="60" width="220" height="72" rx="0"/>
@@ -52,11 +54,11 @@
   <rect class="box" x="340" y="250" width="220" height="72" rx="0"/>
   <text class="name mid" x="450.0" y="291" text-anchor="middle">&lt;Data&gt;</text>
   <path class="line" d="M260,96 L640,96"/>
-  <text class="label small halo mid" x="278" y="113" text-anchor="middle">1</text>
+  <text class="label small halo mid" x="292" y="113" text-anchor="middle">1</text>
   <text class="label small halo mid" x="618" y="113" text-anchor="middle">0..*</text>
   <text class="label small halo mid" x="450" y="86" text-anchor="middle">&lt;relation&gt;</text>
   <path class="line" d="M180,132 L400,250"/>
-  <text class="label small halo mid" x="214" y="150" text-anchor="middle">0..1</text>
+  <text class="label small halo mid" x="226" y="168" text-anchor="middle">0..1</text>
   <text class="label small halo mid" x="398" y="226" text-anchor="middle">1..*</text>
   <text class="label small halo" x="270" y="200" text-anchor="end">&lt;relation&gt;</text>
   <path class="line" d="M760,132 L500,250"/>
@@ -68,4 +70,5 @@
   <path class="head" d="M590,380 L599,374 L608,380 L599,386 Z"/>
   <path class="line" d="M608,380 L640,380"/>
   <text class="label small start" x="650" y="385" text-anchor="start">at the whole, which holds its parts</text>
+  <text class="label small start" x="115" y="405" text-anchor="start">a frame: the data one component keeps</text>
 </svg>

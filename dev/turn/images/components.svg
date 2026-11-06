@@ -62,12 +62,12 @@
   <rect class="box" x="1640" y="46" width="220" height="88" rx="0"/>
   <text class="name" x="1750.0" y="94.0" text-anchor="middle">Rules laid</text>
   <text class="kind" x="1750.0" y="112.0" text-anchor="middle">[file · JSON]</text>
-  <rect class="frame" x="600" y="550" width="1200" height="120" rx="8"/>
+  <rect class="frame" x="284" y="550" width="1516" height="120" rx="8"/>
   <text class="frame-name" x="1316" y="572" text-anchor="start">held by Turn's guard</text>
-  <rect class="ext" x="300" y="580" width="260" height="70" rx="12"/>
-  <text class="name" x="430.0" y="606" text-anchor="middle">pinner</text>
-  <text class="kind" x="430.0" y="624" text-anchor="middle">[Pin's subagent · Claude Code,</text>
-  <text class="kind" x="430.0" y="639" text-anchor="middle">held by Pin's guard]</text>
+  <rect class="box" x="300" y="580" width="260" height="70" rx="0"/>
+  <text class="name" x="430.0" y="606" text-anchor="middle">designer</text>
+  <text class="kind" x="430.0" y="624" text-anchor="middle">[subagent · Claude Code,</text>
+  <text class="kind" x="430.0" y="639" text-anchor="middle">steps in Markdown]</text>
   <rect class="box" x="620" y="580" width="300" height="70" rx="0"/>
   <text class="name" x="770.0" y="606" text-anchor="middle">planner</text>
   <text class="kind" x="770.0" y="624" text-anchor="middle">[subagent · Claude Code,</text>
@@ -120,9 +120,8 @@
   <path class="line" d="M1500,104 L1500,180 L1880,180 L1880,615 L1800,615" marker-end="url(#arrow)"/>
   <text class="label small halo" x="1872" y="250" text-anchor="end">lets each call and end of the</text>
   <text class="label small halo" x="1872" y="264" text-anchor="end">roles in the frame through, or</text>
-  <text class="label small halo" x="1872" y="278" text-anchor="end">stops it, and keeps each Result,</text>
-  <text class="label small halo" x="1872" y="292" text-anchor="end">the pinner's too [Claude Code hooks]</text>
-  <text class="data halo" x="1872" y="306" text-anchor="end">Result</text>
+  <text class="label small halo" x="1872" y="278" text-anchor="end">stops it, and keeps each Result [Claude Code hooks]</text>
+  <text class="data halo" x="1872" y="292" text-anchor="end">Result</text>
   <path class="line" d="M660,370 L660,490"/>
   <path class="line" d="M430,490 L1630,490"/>
   <path class="line" d="M430,490 L430,580" marker-end="url(#arrow)"/>

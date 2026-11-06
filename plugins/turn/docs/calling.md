@@ -6,7 +6,7 @@ you can write the step of your plugin that calls it.
 ## The call
 
 List Turn in the `dependencies` of your plugin's `.claude-plugin/plugin.json`, as
-`"dependencies": ["turn"]`, so installing your plugin installs Turn, and Pin with it.
+`"dependencies": ["turn"]`, so installing your plugin installs Turn.
 
 Start the agent `turn:up` in the background, with the request in plain words, such as "the README
 of this repository". Turn needs nothing more: it asks the person this work's purpose, and the kind of
@@ -32,10 +32,11 @@ Each key of `given` is optional.
   `man-page`. Turn takes it without asking.
 - `goal`: this work's purpose, its `what` and its `grounds`. Turn takes it without asking.
 - `decisions`: each other point settled, each with its `decided` and with `settled_by` `maker`, so
-  Pin keeps it as given and never asks it again. `contributes_to` names the questions or decisions
-  it serves, and `builds_on` the decisions it builds on. Turn writes each into Pin's design tree
-  word for word, and Pin builds the rest of the design on it. Leave `contributes_to` empty where
-  you do not know the questions of the kind's best practice: Pin's pinner joins it. Each text is
+  Turn's designer keeps it as given and never asks it again. `contributes_to` names the questions
+  or decisions it serves, and `builds_on` the decisions it builds on. Turn writes each into the
+  design tree word for word, and the designer builds the rest of the design on it. Leave
+  `contributes_to` empty where you do not know the questions of the kind's best practice: the
+  designer joins it. Each text is
   one line; a `what` holds no `**`, and a `decided` is not `open`, as the design tree's lines
   cannot hold them, so Turn refuses the call.
 - `work`: the paths the work is to lie at.
@@ -65,5 +66,5 @@ each check, as `verification/`. So your plugin can show the person what was deci
 ## Depth
 
 Claude Code lets subagents start subagents down to three layers below the main conversation.
-Turn's roles, and Pin's pinner among them, stand one layer below `turn:up`, and start none of their
+Turn's roles stand one layer below `turn:up`, and start none of their
 own. So start `turn:up` from the main conversation, or from a subagent one layer below it at most.

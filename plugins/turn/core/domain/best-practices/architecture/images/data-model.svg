@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1490 900" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1520 850" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
   <title>Turn's data</title>
   <style>
     .bg { fill: #ffffff; }
@@ -40,134 +40,146 @@
     }
   </style>
   <defs>
-    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+    <marker id="arrow" viewBox="0 0 1520 850" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
       <path class="head" d="M0,0 L10,5 L0,10 z"/>
     </marker>
   </defs>
-  <rect class="bg" x="0" y="0" width="1490" height="900"/>
-  <rect class="box" x="40" y="60" width="210" height="72" rx="0"/>
-  <text class="name" x="145.0" y="101" text-anchor="middle">Answer</text>
-  <rect class="box" x="340" y="60" width="210" height="72" rx="0"/>
-  <text class="name" x="445.0" y="101" text-anchor="middle">Message</text>
-  <rect class="box" x="640" y="60" width="210" height="72" rx="0"/>
-  <text class="name" x="745.0" y="101" text-anchor="middle">Call</text>
-  <rect class="box" x="940" y="60" width="210" height="72" rx="0"/>
-  <text class="name" x="1045.0" y="101" text-anchor="middle">Result</text>
-  <rect class="box" x="1240" y="60" width="210" height="72" rx="0"/>
-  <text class="name" x="1345.0" y="101" text-anchor="middle">Rules laid</text>
-  <rect class="box" x="40" y="260" width="210" height="72" rx="0"/>
-  <text class="name" x="145.0" y="301" text-anchor="middle">Request</text>
-  <rect class="box" x="340" y="260" width="210" height="72" rx="0"/>
-  <text class="name" x="445.0" y="301" text-anchor="middle">Design file</text>
-  <rect class="box" x="640" y="260" width="210" height="72" rx="0"/>
-  <text class="name" x="745.0" y="301" text-anchor="middle">Run</text>
-  <rect class="box" x="940" y="260" width="210" height="72" rx="0"/>
-  <text class="name" x="1045.0" y="301" text-anchor="middle">Run values</text>
-  <rect class="box" x="40" y="460" width="210" height="72" rx="0"/>
-  <text class="name" x="145.0" y="501" text-anchor="middle">Decision</text>
-  <rect class="box" x="340" y="460" width="210" height="72" rx="0"/>
-  <text class="name" x="445.0" y="501" text-anchor="middle">Question</text>
-  <rect class="box" x="640" y="460" width="210" height="72" rx="0"/>
-  <text class="name" x="745.0" y="501" text-anchor="middle">Work</text>
-  <rect class="box" x="940" y="460" width="210" height="72" rx="0"/>
-  <text class="name" x="1045.0" y="501" text-anchor="middle">Round</text>
-  <rect class="box" x="1240" y="460" width="210" height="72" rx="0"/>
-  <text class="name" x="1345.0" y="501" text-anchor="middle">Answers</text>
-  <rect class="box" x="640" y="660" width="210" height="72" rx="0"/>
-  <text class="name" x="745.0" y="701" text-anchor="middle">Best practice</text>
-  <rect class="box" x="940" y="660" width="210" height="72" rx="0"/>
-  <text class="name" x="1045.0" y="701" text-anchor="middle">Standard</text>
-  <path class="line" d="M340,96 L250,96"/>
-  <text class="label small halo" x="295" y="82" text-anchor="middle">answers</text>
-  <text class="label small halo mid" x="322" y="113">1</text>
-  <text class="label small halo mid" x="268" y="113">0..1</text>
-  <path class="line" d="M445,132 L445,260"/>
-  <text class="label small halo" x="453" y="200" text-anchor="start">puts a point of</text>
-  <text class="label small halo" x="439" y="154" text-anchor="end">0..*</text>
-  <text class="label small halo" x="439" y="246" text-anchor="end">0..1</text>
-  <path class="line" d="M550,90 L600,90 L600,370 L715,370 L715,460"/>
-  <text class="label small halo" x="608" y="200" text-anchor="start">names, once done</text>
-  <text class="label small halo mid" x="568" y="107">0..*</text>
-  <text class="label small halo" x="709" y="446" text-anchor="end">0..1</text>
-  <path class="line" d="M745,132 L745,260"/>
-  <text class="label small halo" x="753" y="200" text-anchor="start">names</text>
-  <text class="label small halo" x="739" y="154" text-anchor="end">1..*</text>
-  <text class="label small halo" x="739" y="246" text-anchor="end">1</text>
-  <path class="line" d="M1150,96 L1240,96"/>
-  <text class="label small halo" x="1195" y="82" text-anchor="middle">is routed by</text>
-  <text class="label small halo mid" x="1168" y="113">0..*</text>
-  <text class="label small halo mid" x="1222" y="113">1</text>
-  <path class="line" d="M250,296 L340,296"/>
-  <text class="label small halo" x="295" y="282" text-anchor="middle">names</text>
-  <text class="label small halo mid" x="268" y="313">0..*</text>
-  <text class="label small halo mid" x="322" y="313">1</text>
-  <path class="line" d="M40,310 L20,310 L20,820 L1415,820 L1415,532"/>
-  <text class="label small halo" x="780" y="812" text-anchor="middle">carries the shortfalls of</text>
-  <text class="label small halo mid" x="22" y="327">0..1</text>
-  <text class="label small halo" x="1409" y="554" text-anchor="end">0..*</text>
-  <path class="line" d="M1275,532 L1275,770 L390,770 L390,532"/>
-  <text class="label small halo" x="830" y="762" text-anchor="middle">answers each</text>
-  <text class="label small halo" x="1269" y="554" text-anchor="end">0..*</text>
-  <text class="label small halo" x="384" y="554" text-anchor="end">1..*</text>
-  <path class="line" d="M370,332 L215,460"/>
-  <text class="label small halo" x="285" y="405" text-anchor="end">holds</text>
-  <path class="head" d="M370.0,332.0 L359.2,333.1 L356.1,343.5 L366.9,342.4 Z"/>
-  <text class="label small halo mid" x="235" y="463">0..*</text>
-  <path class="line" d="M465,332 L465,460"/>
-  <text class="label small halo" x="473" y="380" text-anchor="start">asks each</text>
-  <text class="label small halo" x="459" y="354" text-anchor="end">0..*</text>
-  <text class="label small halo" x="459" y="446" text-anchor="end">1..*</text>
-  <path class="line" d="M340,496 L250,496"/>
-  <text class="label small halo" x="295" y="482" text-anchor="middle">serves</text>
-  <text class="label small halo mid" x="322" y="513">0..*</text>
-  <text class="label small halo mid" x="268" y="513">1..*</text>
-  <path class="line" d="M680,460 L515,332"/>
-  <text class="label small halo" x="600" y="430" text-anchor="end">is designed in</text>
-  <text class="label small halo mid" x="675" y="445">1</text>
-  <text class="label small halo mid" x="520" y="355">1</text>
-  <path class="line" d="M745,332 L745,460"/>
-  <text class="label small halo" x="753" y="400" text-anchor="start">makes, in order</text>
-  <text class="label small halo" x="739" y="354" text-anchor="end">1</text>
-  <text class="label small halo" x="739" y="446" text-anchor="end">1..*</text>
-  <path class="line" d="M940,296 L850,296"/>
-  <text class="label small halo" x="895" y="282" text-anchor="middle">starts a role on</text>
-  <text class="label small halo mid" x="922" y="313">0..*</text>
-  <text class="label small halo mid" x="868" y="313">1</text>
-  <path class="line" d="M1045,332 L1045,460"/>
-  <text class="label small halo" x="1053" y="400" text-anchor="start">names a group of</text>
-  <text class="label small halo" x="1039" y="354" text-anchor="end">0..*</text>
-  <text class="label small halo" x="1039" y="446" text-anchor="end">0..1</text>
-  <path class="line" d="M705,532 L705,660"/>
-  <text class="label small halo" x="697" y="600" text-anchor="end">is made by</text>
-  <text class="label small halo" x="699" y="554" text-anchor="end">0..*</text>
-  <text class="label small halo" x="699" y="646" text-anchor="end">1</text>
-  <path class="line" d="M785,532 L785,660"/>
-  <text class="label small halo" x="793" y="600" text-anchor="start">is read by</text>
-  <text class="label small halo" x="779" y="554" text-anchor="end">0..*</text>
-  <text class="label small halo" x="779" y="646" text-anchor="end">1</text>
-  <path class="line" d="M670,660 L500,532"/>
-  <text class="label small halo" x="575" y="625" text-anchor="end">asks</text>
-  <path class="head" d="M670.0,660.0 L666.4,649.8 L655.6,649.2 L659.2,659.4 Z"/>
-  <text class="label small halo mid" x="506" y="555">1..*</text>
-  <path class="line" d="M940,696 L850,696"/>
-  <text class="label small halo" x="895" y="682" text-anchor="middle">is taken from</text>
-  <text class="label small halo mid" x="922" y="713">0..*</text>
-  <text class="label small halo mid" x="868" y="713">1</text>
-  <path class="line" d="M940,496 L850,496"/>
-  <text class="label small halo" x="895" y="482" text-anchor="middle">checks</text>
-  <text class="label small halo mid" x="922" y="513">0..*</text>
-  <text class="label small halo mid" x="868" y="513">1</text>
-  <path class="line" d="M1150,496 L1240,496"/>
-  <text class="label small halo" x="1195" y="482" text-anchor="middle">is answered in</text>
-  <text class="label small halo mid" x="1168" y="513">1</text>
-  <text class="label small halo mid" x="1222" y="513">1..*</text>
-  <path class="line" d="M990,532 L830,660"/>
-  <text class="label small halo" x="925" y="600" text-anchor="start">asks the Questions of</text>
-  <text class="label small halo mid" x="970" y="537">0..*</text>
-  <text class="label small halo mid" x="850" y="663">1</text>
-  <text class="frame-name" x="40" y="875" text-anchor="start">Legend</text>
-  <text class="label small" x="115" y="875" text-anchor="start">a number at a line's end: how many of the data at that end the other joins: 1 one, 0..1 none or one, 1..* one or more, 0..* any number</text>
-  <path class="head" d="M1010,870 L1019,864 L1028,870 L1019,876 Z"/>
-  <path class="line" d="M1028,870 L1060,870"/>
-  <text class="label small" x="1070" y="875" text-anchor="start">at the whole, which holds its parts; a box: a data's name</text>
+        <rect class="bg" x="0" y="0" width="1520" height="850"/>
+  <rect class="frame" x="24" y="36" width="532" height="114" rx="8"/>
+  <text class="frame-name" x="36" y="56" text-anchor="start">talking with the user: starter, up</text>
+  <rect class="frame" x="624" y="36" width="232" height="274" rx="8"/>
+  <text class="frame-name" x="636" y="56" text-anchor="start">the run: planner</text>
+  <rect class="frame" x="924" y="36" width="532" height="274" rx="8"/>
+  <text class="frame-name" x="936" y="56" text-anchor="start">moving the roles: guard</text>
+  <rect class="frame" x="24" y="196" width="232" height="504" rx="8"/>
+  <text class="frame-name" x="36" y="216" text-anchor="start">the design: designer</text>
+  <rect class="frame" x="924" y="386" width="532" height="114" rx="8"/>
+  <text class="frame-name" x="1444" y="406" text-anchor="end">the rounds: rounds.py, evaluator</text>
+  <rect class="frame" x="324" y="586" width="832" height="114" rx="8"/>
+  <text class="frame-name" x="336" y="606" text-anchor="start">the best practices</text>
+  <rect class="box" x="40" y="70" width="200" height="64" rx="0"/>
+  <text class="name" x="140" y="107" text-anchor="middle">Answer</text>
+  <rect class="box" x="340" y="70" width="200" height="64" rx="0"/>
+  <text class="name" x="440" y="107" text-anchor="middle">Message</text>
+  <rect class="box" x="640" y="70" width="200" height="64" rx="0"/>
+  <text class="name" x="740" y="107" text-anchor="middle">Call</text>
+  <rect class="box" x="1240" y="70" width="200" height="64" rx="0"/>
+  <text class="name" x="1340" y="107" text-anchor="middle">Rules laid</text>
+  <rect class="box" x="640" y="230" width="200" height="64" rx="0"/>
+  <text class="name" x="740" y="267" text-anchor="middle">Run</text>
+  <rect class="box" x="940" y="230" width="200" height="64" rx="0"/>
+  <text class="name" x="1040" y="267" text-anchor="middle">Run values</text>
+  <rect class="box" x="1240" y="230" width="200" height="64" rx="0"/>
+  <text class="name" x="1340" y="267" text-anchor="middle">Result</text>
+  <rect class="box" x="40" y="230" width="200" height="64" rx="0"/>
+  <text class="name" x="140" y="267" text-anchor="middle">Request</text>
+  <rect class="box" x="40" y="420" width="200" height="64" rx="0"/>
+  <text class="name" x="140" y="457" text-anchor="middle">Design file</text>
+  <rect class="box" x="40" y="620" width="200" height="64" rx="0"/>
+  <text class="name" x="140" y="657" text-anchor="middle">Decision</text>
+  <rect class="box" x="640" y="420" width="200" height="64" rx="0"/>
+  <text class="name" x="740" y="457" text-anchor="middle">Work</text>
+  <rect class="box" x="940" y="420" width="200" height="64" rx="0"/>
+  <text class="name" x="1040" y="457" text-anchor="middle">Round</text>
+  <rect class="box" x="1240" y="420" width="200" height="64" rx="0"/>
+  <text class="name" x="1340" y="457" text-anchor="middle">Answers</text>
+  <rect class="box" x="340" y="620" width="200" height="64" rx="0"/>
+  <text class="name" x="440" y="657" text-anchor="middle">Question</text>
+  <rect class="box" x="640" y="620" width="200" height="64" rx="0"/>
+  <text class="name" x="740" y="657" text-anchor="middle">Best practice</text>
+  <rect class="box" x="940" y="620" width="200" height="64" rx="0"/>
+  <text class="name" x="1040" y="657" text-anchor="middle">Standard</text>
+  <path class="line" d="M340,102 L240,102"/>
+  <text class="label small halo mid" x="290" y="95">answers</text>
+  <text class="label small halo mid" x="322" y="119">1</text>
+  <text class="label small halo mid" x="258" y="119">0..1</text>
+  <path class="line" d="M740,134 L740,230"/>
+  <text class="label small halo" x="748" y="186" text-anchor="start">names</text>
+  <text class="label small halo" x="734" y="156" text-anchor="end">1..*</text>
+  <text class="label small halo" x="734" y="216" text-anchor="end">1</text>
+  <path class="line" d="M1340,230 L1340,134"/>
+  <text class="label small halo" x="1348" y="186" text-anchor="start">is routed by</text>
+  <text class="label small halo" x="1334" y="216" text-anchor="end">0..*</text>
+  <text class="label small halo" x="1334" y="156" text-anchor="end">1</text>
+  <path class="line" d="M940,262 L840,262"/>
+  <text class="label small halo mid" x="890" y="255">starts a role on</text>
+  <text class="label small halo mid" x="922" y="279">0..*</text>
+  <text class="label small halo mid" x="858" y="279">1</text>
+  <path class="line" d="M740,294 L740,420"/>
+  <text class="label small halo" x="748" y="361" text-anchor="start">makes, in order</text>
+  <text class="label small halo" x="734" y="316" text-anchor="end">1</text>
+  <text class="label small halo" x="734" y="406" text-anchor="end">1..*</text>
+  <path class="line" d="M1040,294 L1040,420"/>
+  <text class="label small halo" x="1048" y="361" text-anchor="start">names a group of</text>
+  <text class="label small halo" x="1034" y="316" text-anchor="end">0..*</text>
+  <text class="label small halo" x="1034" y="406" text-anchor="end">0..1</text>
+  <path class="line" d="M400,134 L400,438 L240,438"/>
+  <text class="label small halo" x="392" y="290" text-anchor="end">puts a point of</text>
+  <text class="label small halo" x="394" y="156" text-anchor="end">0..*</text>
+  <text class="label small halo mid" x="258" y="455">0..1</text>
+  <path class="line" d="M540,114 L590,114 L590,438 L640,438"/>
+  <text class="label small halo" x="582" y="280" text-anchor="end">names, once done</text>
+  <text class="label small halo mid" x="558" y="131">0..*</text>
+  <text class="label small halo mid" x="622" y="455">0..1</text>
+  <path class="line" d="M140,294 L140,420"/>
+  <text class="label small halo" x="148" y="361" text-anchor="start">names</text>
+  <text class="label small halo" x="134" y="316" text-anchor="end">0..*</text>
+  <text class="label small halo" x="134" y="406" text-anchor="end">1</text>
+  <path class="line" d="M240,466 L640,466"/>
+  <text class="label small halo mid" x="440" y="483">is designed in</text>
+  <text class="label small halo mid" x="258" y="483">1</text>
+  <text class="label small halo mid" x="622" y="483">1</text>
+  <path class="line" d="M140,484 L140,620"/>
+  <text class="label small halo" x="148" y="556" text-anchor="start">holds</text>
+  <path class="head" d="M140.0,484.0 L134.0,493.0 L140.0,502.0 L146.0,493.0 Z"/>
+  <text class="label small halo" x="134" y="606" text-anchor="end">0..*</text>
+  <path class="line" d="M200,484 L200,560 L490,560 L490,620"/>
+  <text class="label small halo mid" x="345" y="553">asks each</text>
+  <text class="label small halo" x="194" y="506" text-anchor="end">0..*</text>
+  <text class="label small halo" x="484" y="606" text-anchor="end">1..*</text>
+  <path class="line" d="M240,652 L340,652"/>
+  <text class="label small halo mid" x="290" y="645">serves</text>
+  <text class="label small halo mid" x="258" y="669">1..*</text>
+  <text class="label small halo mid" x="322" y="669">0..*</text>
+  <path class="line" d="M940,452 L840,452"/>
+  <text class="label small halo mid" x="890" y="445">checks</text>
+  <text class="label small halo mid" x="922" y="469">0..*</text>
+  <text class="label small halo mid" x="858" y="469">1</text>
+  <path class="line" d="M1140,452 L1240,452"/>
+  <text class="label small halo mid" x="1190" y="445">is answered in</text>
+  <text class="label small halo mid" x="1158" y="469">1</text>
+  <text class="label small halo mid" x="1222" y="469">1..*</text>
+  <path class="line" d="M700,484 L700,620"/>
+  <text class="label small halo" x="692" y="556" text-anchor="end">is made by</text>
+  <text class="label small halo" x="694" y="506" text-anchor="end">0..*</text>
+  <text class="label small halo" x="694" y="606" text-anchor="end">1</text>
+  <path class="line" d="M780,484 L780,620"/>
+  <text class="label small halo" x="788" y="556" text-anchor="start">is read by</text>
+  <text class="label small halo" x="774" y="506" text-anchor="end">0..*</text>
+  <text class="label small halo" x="774" y="606" text-anchor="end">1</text>
+  <path class="line" d="M640,652 L540,652"/>
+  <text class="label small halo mid" x="590" y="645">asks</text>
+  <path class="head" d="M640.0,652.0 L631.0,646.0 L622.0,652.0 L631.0,658.0 Z"/>
+  <text class="label small halo mid" x="558" y="669">1..*</text>
+  <path class="line" d="M940,652 L840,652"/>
+  <text class="label small halo mid" x="890" y="645">is taken from</text>
+  <text class="label small halo mid" x="922" y="669">0..*</text>
+  <text class="label small halo mid" x="858" y="669">1</text>
+  <path class="line" d="M1040,484 L1040,562 L800,562 L800,620"/>
+  <text class="label small halo mid" x="920" y="555">asks the Questions of</text>
+  <text class="label small halo" x="1034" y="506" text-anchor="end">0..*</text>
+  <text class="label small halo" x="794" y="606" text-anchor="end">1</text>
+  <path class="line" d="M1300,484 L1300,744 L440,744 L440,684"/>
+  <text class="label small halo mid" x="870" y="737">answers each</text>
+  <text class="label small halo" x="1294" y="506" text-anchor="end">0..*</text>
+  <text class="label small halo" x="434" y="706" text-anchor="end">1..*</text>
+  <path class="line" d="M1380,484 L1380,794 L20,794 L20,262 L40,262"/>
+  <text class="label small halo mid" x="700" y="787">carries the shortfalls of</text>
+  <text class="label small halo" x="1374" y="506" text-anchor="end">0..*</text>
+  <text class="label small halo mid" x="22" y="279">0..1</text>
+  <text class="frame-name" x="40" y="820" text-anchor="start">Legend</text>
+  <text class="label small" x="115" y="820" text-anchor="start">a number at a line's end: how many of the data at that end the other joins: 1 one, 0..1 none or one, 1..* one or more, 0..* any number</text>
+  <path class="head" d="M1010,815 L1019,809 L1028,815 L1019,821 Z"/>
+  <path class="line" d="M1028,815 L1060,815"/>
+  <text class="label small" x="1070" y="820" text-anchor="start">at the whole, which holds its parts; a frame: the data one component keeps</text>
 </svg>
