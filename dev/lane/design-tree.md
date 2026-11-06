@@ -1,0 +1,42 @@
+# Design tree
+
+Goal: The user has the plugin they build run as they designed it, on every run.
+- Grounds: dev/lane/product-vision.md:9-10 before this tree, O1: "has its plugin's subagents keep the rules of their steps on every run"; :26-27, O2: "has its plugin's subagents started in the order it set, on every run"; both ends of one want, asked why until no further end showed (D2).
+
+- **product-vision/Q1** Listing whom to build for, does the developer find every role that comes to the product with an end of its own?
+  - **D1 Who comes to Lane with an end of their own?**: One role, the user: one who builds a Claude Code plugin whose roles work in steps, a person or an AI alike. One who later runs the user's plugin is after that plugin's work, which the user is after for them, so they are no role of Lane's; Lane's own parts and Claude Code are after nothing of their own. (reasoning)
+    - Grounds: product-vision/best-practice.json Q1 thinking: "Cut the roles by that end, not by who or what takes them: a person and an AI that want the same are one role."
+    - Grounds: product-vision/best-practice.json Q1 steps: "Name the only role the user, as a name made up for it tells the reader nothing more."
+    - Grounds: The user, 2026-11-06, asked whether this need be put to them: "それ聞く必要ある？"; the purpose and the best practice settle it.
+    - Also serves: product-vision/Q2
+- **product-vision/Q2** Reading an objective, does the developer see what its role gets from the product?
+  - **D2 The user's objective: the end they are after, with the role as its subject**: O1: The user has the plugin they build run as they designed it, on every run: each role keeping the steps they wrote and the roles started in the order they set. One objective, not two, as the same piece of work, holding the main conversation and each role by hooks, brings both closer, and the user is after both for one end. Writing no checks and no code for the order is how Lane reaches it, so it goes to the concept. (reasoning)
+    - Grounds: dev/lane/product-vision.md:9-10 and :26-27 before this tree: O1 the rules kept, O2 the order kept, each "on every run".
+    - Grounds: product-vision/best-practice.json Q2 steps: "Ask why of each part of the objective until no further end shows, and write that end. Move a part that says how to Concept"
+    - Grounds: product-vision/best-practice.json Q3 steps: "Merge two objectives that one piece of work brings closer together"
+    - Grounds: dev/plugin-best-practice.md, The guard tells each role its steps again: "The guard holds the orchestrator in the main conversation to the router's course the same way"
+    - Also serves: product-vision/Q3
+    - Also builds on: D1
+- **product-vision/Q3** Weighing a piece of work, does the developer see which one objective it brings closer, or that it brings none closer?
+- **product-vision/Q4** After a change, does the developer see from the key results whether to keep it?
+  - **D3 How do success and failure of O1 show in what the user does?**: O1 fails on a run where a role breaks a step and goes on, or is stopped and does it another way; where a move the steps allow is stopped, the user's own work in the main conversation outside the run among them; where a role starts that the order does not name, or one the order names is stopped; where the main conversation stops while the order names a move; and where Lane cannot hold a step or the order, so the user writes a check or code of their own, or leaves it unheld. It succeeds where the run keeps every step and the order and the user wrote no check. (reasoning)
+    - Grounds: product-vision/best-practice.json Q4 steps: "List how success or failure would show in what the role does or feels, such as giving up, undoing a result or working around the product."
+    - Grounds: dev/lane/product-vision.md:14-21 and :29-35 before this tree: the four ways a call and a run went wrong.
+    - Grounds: The orchestrator now runs in the main conversation (dev/plugin-best-practice.md, Where the orchestrator runs), where the user also does work of their own outside a run, so a stop there is a failure too.
+    - Also builds on: D2
+  - **D4 O1's key results**: KR1.1: of the runs of the user's plugin, the share that fails in a way of D3; lower is better. A run counts once, however many ways it fails. KR1.2: the time from the user's first step or order for a plugin to its first run that keeps them; shorter is better. (reasoning)
+    - Grounds: product-vision/best-practice.json Q4 thinking: "KR.1 how well, and KR.2 how soon. KR.2 is bettered only while KR.1 does not get worse."
+    - Grounds: A run is what the user designed; a share of tool calls would hide a run broken by one call among many.
+    - Also builds on: D3
+- **product-vision/Q5** Weighing the product against what its roles do today, does the developer see why it meets each objective where that way does not?
+  - **D5 What sets Lane apart from what its user does today, and makes it meet O1: at most five ideas, each with the present way it beats**: Lane instead of writing the steps and the order in prompts and a hook of one's own for what must hold: (1) The step says it again: a stopped call is shown the sentence of its own step, so the role goes back to the step, where a hook that only refuses leaves it to seek another way. (2) The result from a run, not from a reply: a role gives its result by running Lane's result script, so a reply such as "No more entries" is never read as `more`. (3) The order as routes: the user names which role comes next after which result, and Lane tells the main conversation each next move and holds it to it, so no code keeps the order and a compacted conversation goes on. (4) Checks laid, not written: the user writes their steps and routes, Lane shows them as they will read and lays the checks into the plugin, so no check is written or tested by the user. (reasoning)
+    - Grounds: plugins/lane/README.md:13-21 before this tree: "When a subagent breaks the rule, the check stops the tool call and shows the subagent the same sentence"; "Lane takes the result from the run, never from what the subagent wrote, so a reply such as \"No more entries\" is never read as `more`."
+    - Grounds: dev/lane/product-vision.md:58-62 before this tree: "L-->>A: the steps as they will read"; "A->>L: approves them"; "L-->>A: the steps written".
+    - Grounds: dev/plugin-best-practice.md, The guard tells each role its steps again: "a hook runs every time, while an instruction is only advice."
+    - Grounds: Riskiest assumption: hooks hold the main conversation to the routes as they hold a subagent, and stay out of the user's own work there. Trials on Claude Code 2.1.318 showed a PreToolUse deny, a UserPromptSubmit on a role's report and a Stop block hold the main conversation; the architecture tests and the ux trials check the rest.
+    - Grounds: product-vision/best-practice.json Q5 steps: "Stop once at most five ideas stand out, each meeting an objective where the present way does not."
+    - Also builds on: D2, D4
+- **product-vision/Q6** Changing how the product works inside while its roles see the same, does the developer find the product vision still true?
+  - **D6 What does the product vision show, and what does it leave to the README and the architecture?**: Only what the user does, sees and receives: their steps and routes, the steps as they will read, the sentence a stopped role sees, and each next move. Hooks, scripts and Claude Code's events are not named. (reasoning)
+    - Grounds: product-vision/best-practice.json Q6 thinking: "The product vision says only what the roles are after, do, see and receive, and nothing of how the product works inside."
+    - Also builds on: D1
