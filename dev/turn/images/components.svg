@@ -51,7 +51,7 @@
   <text class="kind" x="190.0" y="104" text-anchor="middle">[a person, or an AI that asks for one]</text>
   <rect class="box" x="40" y="240" width="300" height="130" rx="0"/>
   <text class="name" x="190.0" y="299" text-anchor="middle">starter</text>
-  <text class="kind" x="190.0" y="317" text-anchor="middle">[steps · Markdown]</text>
+  <text class="kind" x="190.0" y="317" text-anchor="middle">[skill steps · Markdown]</text>
   <rect class="box" x="500" y="240" width="320" height="130" rx="0"/>
   <text class="name" x="660.0" y="291" text-anchor="middle">up</text>
   <text class="kind" x="660.0" y="309" text-anchor="middle">[subagent · Claude Code,</text>

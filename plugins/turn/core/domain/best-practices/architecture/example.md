@@ -153,7 +153,10 @@ the run (KR1.1). What becomes of the work is the user's to decide, as
 What each decides alone:
 
 - **user**: what is theirs: the purpose, each fact and decision, the design.
-- **starter**: nothing of the work; it puts each point, and passes each answer back, as given.
+- **starter**: what starts Turn for the user: the main conversation, which follows the steps of
+  the `up` skill when the user types `/turn:up`, or the user's AI, which follows
+  [Calling Turn](../../../../docs/calling.md). It decides nothing of the work; it puts each
+  point, and passes each answer back, as given.
 - **up**: the run's folder, the one given, else the one the request names, else a new one in
   `.turn/`; and which role an answer resumes, the one that asked.
 - **guard**: whether a call or an end of a role keeps its rules, and which start is due next.
