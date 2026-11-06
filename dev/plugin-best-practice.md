@@ -256,11 +256,10 @@ start again from nothing.
 
 ### The form of a file
 
-A file that a plugin reads is JSON with a schema, and a script checks its form. A tree whose
-nesting holds how its parts depend on one another, such as a design tree, is instead a Markdown
-nested list in one strict form, which a script reads and checks; the AI changes a part only with
-Read and Edit, reading the branch it stands in, the parts above it and under it, never by a command
-or a script, and a hook holds it to this.
+A file that a plugin reads is JSON with a schema, and a script checks its form. A file that an AI
+must read as a whole each time it changes a part, such as a tree whose nesting holds what each part
+serves, is instead a Markdown nested list in one strict form, which a script reads and checks; the
+AI changes it only with Read and Edit, never by a command or a script, and a hook holds it to this.
 A file that shows the form of a deliverable, such as a template or an example, is in the
 deliverable's own format.
 
