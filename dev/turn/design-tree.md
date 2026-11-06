@@ -43,7 +43,7 @@ Goal: The user gets work with which the people it is for achieve what they are a
     - Grounds: product-vision/best-practice.json Q6 thinking: "The product vision says only what the roles are after, do, see and receive, and nothing of how the product works inside."
     - Also builds on: D1
 - **readme/Q1** Telling a colleague about the product, does the reader retell the opening from memory?
-  - **D8 What Turn is and the one thing it gives, in one sentence**: A Claude Code plugin that makes the document or code you ask for, so that the people it is for get what they are after from it. (reasoning)
+  - **D8 What Turn is and the one thing it gives, in one sentence**: A Claude Code plugin that makes the document or code you ask for, such as a README, so that the people it is for get what they are after from it. (reasoning)
     - Grounds: O1 of the product vision: "work with which the people it is for achieve what they are after"
     - Grounds: readme/best-practice.json Q1 thinking: "one sentence that names the kind of thing the product is and the one thing it gives the reader, in words the reader already uses"; "a work" and "decisions that are yours" are not the reader's words, and two things joined by "and" do not say in short what Turn is.
     - Grounds: Retold from memory as to a colleague: "a plugin that makes docs or code that do the job for the people they are for".

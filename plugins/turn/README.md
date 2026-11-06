@@ -1,7 +1,7 @@
 # Turn
 
-Turn is a Claude Code plugin that makes the document or code you ask for, so that the people it is
-for get what they are after from it.
+Turn is a Claude Code plugin that makes the document or code you ask for, such as a README, so
+that the people it is for get what they are after from it.
 
 Turn 0.1.0 is still in development and not yet released: a run may stop on a fault of Turn's own,
 and the walkthrough below shows the run Turn is built for, not yet a recorded one.
