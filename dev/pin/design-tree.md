@@ -35,3 +35,104 @@ Goal: The user has the work made from their plan be what they mean, with no poin
   - **D6 What does the product vision show, and what does it leave to the README and the architecture?**: Only what the user does, sees and receives: their request, each point put to them, the design shown, and the design tree. Pin's roles, its check and Lane are not named. (reasoning)
     - Grounds: product-vision/best-practice.json Q6 thinking: "The product vision says only what the roles are after, do, see and receive, and nothing of how the product works inside."
     - Also builds on: D1
+- **readme/Q1** Telling a colleague about the product, does the reader retell the opening from memory?
+  - **D7 What Pin is and the one thing it gives, in one sentence**: A Claude Code plugin that settles every point of your plan before an AI starts to make it, finding each fact itself and asking you only the decisions that are yours, one at a time. (reasoning)
+    - Grounds: plugins/pin/README.md:3-4 before this tree, kept, as it names the kind, the gain and the one way in the reader's words.
+    - Grounds: O1 of the product vision.
+    - Also builds on: D2, D5
+- **readme/Q2** Reading the gain, does the reader tell what the product would let them do, and so whether it is for them?
+  - **D8 Whom Pin is for, and what they gain**: For you when you are about to have an AI in Claude Code make something larger than a quick change, such as a feature or a document, and want it made as you mean it; with it, the AI that makes it has nothing left to guess, and you explain no point again while it works. Also for an AI that settles a plan for a person, such as a skill of another plugin: it writes the goal, the questions and what it settled into a design tree and calls `pin:down` in its own conversation, which puts each point to the person. For a quick change you would simply ask for and check, Pin adds a step you do not need. (reasoning)
+    - Grounds: plugins/pin/README.md:6-21 before this tree.
+    - Grounds: D1: one role; an AI calls Pin's skill in its own main conversation, so it passes nothing on.
+    - Also builds on: D1, D2
+- **readme/Q3** Before installing, does the reader see what the product does not do that they might expect of it?
+  - **D9 What a reader might expect of Pin that it does not do**: As before: it does not make the work, ending once you confirm the design; it does not judge whether a decision is good, its check seeing only that the design holds together; it does not decide what is yours, a point left unanswered staying open; it puts no two questions in one message and sets no limit on their number, and "wrap up" ends it with the open points marked. (reasoning)
+    - Grounds: plugins/pin/README.md:47-56 before this tree.
+    - Also builds on: D5
+- **readme/Q4** Before installing, does the reader see where the product is not yet fit for use?
+  - **D10 Where Pin is not yet fit for use**: Pin 0.1.0 is still in development and not yet released, and the walkthrough shows what Pin is built to show until a recorded run's output replaces it. (research)
+    - Grounds: plugins/pin/.claude-plugin/plugin.json "version": "0.1.0"; Pin has no CHANGELOG and no release tag yet.
+    - Also builds on: D12
+- **readme/Q5** Starting with nothing set up, does the reader install the product by the README's steps alone, and see that it works?
+  - **D11 Requirements and installation**: Claude Code 2.1.319 or later, as Lane's guard within Pin needs it; Python 3.9 or later as `python3`; installed from the ccpm marketplace, `/pin:down` then among the commands of a new session; a plugin whose skill settles plans with Pin lists `pin` in its dependencies. (research)
+    - Grounds: plugins/pin/README.md:58-77 before this tree; dev/lane/design-tree.md D11: Claude Code 2.1.319 for holding the main conversation.
+    - Also builds on: D9
+- **readme/Q6** After the walkthrough, does the reader see that the product would give them, on work of their own, the gain the opening promised?
+  - **D12 The walkthrough's run**: As before: `notes list` should give JSON as well; Pin puts the goal, one fact found, one decision of the user's with a recommendation, settles the rest, shows the whole design, and the design tree it leaves. (reasoning)
+    - Grounds: plugins/pin/README.md:79-163 before this tree: one run of O1's main use on work like the reader's.
+    - Also builds on: D2, D5
+- **readme/Q7** For each problem they feel in the work, does the reader picture how the product makes it go away?
+  - **D13 The problems a reader feels with the usual way, and how each goes away with Pin**: The usual way is to have the AI start from the request and ask as questions occur, or write a plan up front that fills gaps with guesses. One problem for each idea of D5: (1) a point no one raised is guessed, and met in the work as rework; with Pin, every point is found from the goal down. (2) you are asked what the AI could find, or a guess is made where your view decides; with Pin, facts are found and confirmed and only your decisions asked. (3) several questions at once, one answer changing another unseen; with Pin, one point at a time, in order. (4) you learn what the AI understood only from the work; with Pin, you confirm the whole design first. (5) a stopped conversation loses what was settled; with Pin, it is in a file. One figure, images/problem.svg, the usual way above Pin, each problem marked by its number. (reasoning)
+    - Grounds: readme/best-practice.json Q7 steps: "Take the problems from the Concept section of the product vision, one where the present way falls short for each idea"
+    - Also builds on: D5
+- **readme/Q8** At each point where they would ask whether the product can really do that, does the reader picture how it does it?
+  - **D14 The points a newcomer would doubt, and how Pin does each**: (A) How does Pin tell what to ask me from what to find itself? A fact is Pin's to find in your repository and show you to confirm; a decision is yours only where two ways serve the goal equally and nothing found favors either, or where it is hard to undo, and Pin asks it with a recommendation. (B) What if the conversation stops halfway? Each answer is written to the design tree before the next point, so `/pin:down` on the same plan goes on from the file and asks nothing again. (C) Can my AI hand Pin points it has settled? It writes them into the design tree marked as its own, and Pin keeps them, asking you none of them again. One figure for each, images/how-ask.svg, how-file.svg and how-handed.svg, each followed by its line. (reasoning)
+    - Grounds: dev/pin/architecture.md:38-90 before this tree: Whose a decision is; The design tree is the only record; What the maker AI settled stays.
+    - Grounds: readme/best-practice.json Q8 steps: "Ask of each answer what the newcomer would doubt next, until no doubt is left."
+    - Also builds on: D7, D13
+- **readme/Q9** Needing more than the README gives, such as fuller use or help, does the reader find where to go next?
+  - **D15 Where a reader goes next, where they get help, and the license**: The design tree's form, for an AI that writes or reads one; the changelog; help in https://github.com/lovaizu/ccpm/issues; the MIT License, and the credit to Matt Pocock's grilling under its MIT License. (research)
+    - Grounds: plugins/pin/README.md:165-195 before this tree; plugins/pin/LICENSE-grilling.
+    - Also serves: readme/Q10
+- **readme/Q10** Weighing whether they may use the product, does the reader find the terms for them and their team?
+- **readme/Q11** Reading from the top, does the reader find each answer just when they come to need it, so they can stop once they have what they came for?
+  - **D16 The order of the README**: The template's order, the opening defining a point and the design where first met; How it works gives the problem figure and the three doubts in place of one figure with notes for a maker AI, as the relay those notes described goes; Development goes. (reasoning)
+    - Grounds: readme/best-practice.json Q11 thinking.
+    - Grounds: plugins/pin/README.md:171-188 before this tree: "Pin runs as a subagent, so it cannot ask the person itself ... The maker AI puts that message to the person as given", no longer so, as Pin's skill runs in the main conversation of whoever calls it.
+    - Also builds on: D7, D8, D9, D10, D11, D12, D13, D14, D15
+- **architecture/Q1** Starting on any part, does the developer see the one idea by which the product gives its product vision, and the piece of it the part carries out?
+  - **D18 How Pin gives its product vision, as one idea**: The skill `down` has the main conversation, typed `/pin:down` or called by the user's AI, follow Pin's orchestrator: it finds the design tree's path and starts the pinner, Pin's subagent, with it. The pinner settles the tree from the goal down, finding facts itself and checking the file with `check.py` after each change, and ends each start with one point for the person, giving `asks`, or with the design confirmed, giving `done`. The main conversation puts each point to the person as given and resumes the pinner with the answer word for word. Lane's guard, laid into Pin, holds the pinner to its rules and the main conversation to Pin's routes: down starts pinner, pinner's `asks` waits for the user, pinner's `done` ends the run. (reasoning)
+    - Grounds: dev/plugin-best-practice.md, Where the orchestrator runs: "The orchestrator runs in the main conversation, started by the plugin's skill"
+    - Grounds: dev/lane/design-tree.md D21: a route that waits for the user.
+    - Also builds on: D5, D17
+- **architecture/Q2** Following a step of an objective's main use, as the README's walkthrough shows it, does the developer find the one user story that carries it?
+  - **D17 Who meets Pin at its edge, and in which ways**: The user alone, in two stories. S1: start Pin on a plan, by typing `/pin:down` with it or by an AI calling the skill with a design tree it wrote, and get the goal, or the first open point, to confirm; a tree a stopped run left, and a point the work found that opens a settled one again, are its branches. S2: answer the point put, and get the next point, the whole design to confirm, or once confirmed the design tree's path. (reasoning)
+    - Grounds: D1: one role; dev/pin/architecture.md:113-133 before this tree had S3 and S4 for the maker AI, which now meets Pin the same way, through the skill in its own conversation.
+    - Also serves: architecture/Q8
+    - Also builds on: D1, D12
+- **architecture/Q3** Meeting a case no line of the document names, do two developers of different parts reach the same decision from a principle's why?
+  - **D19 Pin's principles**: Pin builds on the plugin best practice's principles and Development, now with no departure from Where the orchestrator runs; it takes no Learning from each run, as a design's faults show only in the work Pin never sees; no evaluator reads the design, as the user reads all of it to confirm; the design tree is the case The form of a file names. It adds, as before: Whose a decision is; One point for each start; The design tree is the only record; Passed on as given, now of the main conversation; What the user's AI settled stays, marked `maker` in the tree; The design tree is a nested list; Pin knows no plugin that uses it. Each why says the way of D3 that goes wrong without it. (reasoning)
+    - Grounds: dev/pin/architecture.md:17-112 before this tree.
+    - Also serves: architecture/Q15
+    - Also builds on: D18
+- **architecture/Q4** Facing a decision the stories need, does the developer find the one component that alone decides it?
+  - **D20 Pin's components and what each alone decides**: The orchestrator (the main conversation following `core/roles/orchestrator.md` by the skill `down`) decides where the design tree lies and decides nothing of the plan; the pinner (a Claude Code subagent) decides what the tree holds, the next point, whose each decision is, the recommendation, each point's words and when the design is confirmed; `check.py` with `tree.py` (Python 3.9) decides whether the tree holds and which decisions are open now, writing nothing; the guard (Lane's hooks) decides whether a call or end of the pinner keeps its rules and whether a start or end of the main conversation keeps Pin's routes. The go-between goes, as the orchestrator in the main conversation asks the person itself. (reasoning)
+    - Grounds: dev/pin/architecture.md:142-155 before this tree.
+    - Also serves: architecture/Q5, architecture/Q14
+    - Also builds on: D17, D18
+  - **D21 The choices in the components that a developer would question, and their costs**: The pinner runs as a subagent, so the guard holds its writes to the design tree and its check after each change, which a hook cannot hold of the main conversation's own work; the cost: each point costs a resume of the pinner (KR1.2). The pinner finds each fact itself with Read and Grep, as a background search's end would restart it while a point waits; the cost: facts found one after another. The user's AI hands over in the design tree, not in the text it starts Pin with, so its points are kept as written; the cost: it writes the tree's form. `check.py` alone holds the tree's form, the guard holding the pinner to pass it after each change; the cost: a write out of form is found at the next check. The form lies in `tree.py` alone, and Turn's designer takes it through a link; the cost: a change of form reaches Turn's tests. The design tree's path is a value given for each start; the cost: the orchestrator writes it in the form Lane's values port reads. (reasoning)
+    - Grounds: dev/pin/architecture.md:156-189 before this tree, with Turn now using tree.py for its own designer (dev/turn/design-tree.md D22).
+    - Also serves: architecture/Q14
+    - Also builds on: D20
+- **architecture/Q5** Starting on a component, does the developer know what kind of thing it is and what it is made with, choosing nothing themselves?
+- **architecture/Q6** Making one component that writes a data and another that reads it, do two developers join it to the other data the same way?
+  - **D22 Pin's data**: Request, Design tree holding Goal, Questions and Decisions, Ground, Point (what the pinner ends a start with: one point, the design to confirm, or the path), Answer, Check result, and Rules laid with Pin's routes; a UML class diagram, in frames for what the orchestrator passes (Request, Point, Answer), the design tree (Design tree, Goal, Question, Decision, Ground), and the checks (Check result, Rules laid), with a list under it only for Point and Request, whose names tell little alone. (reasoning)
+    - Grounds: dev/pin/architecture.md:190-211 before this tree; Reply renamed Point, as it holds one point for the person.
+    - Also builds on: D20
+- **architecture/Q7** Following a user story from its role's first request to its end, does the developer see at each step which component acts, along which arrow, and what data it hands on?
+  - **D23 Pin's sequences**: Two: S1, the start, typed or called, a new tree, a stopped tree or a reopened point; S2, an answer, the pinner resumed, to the next point, the design confirmed or the run's end; each from the user to what the story gives them, each branch and each point put drawn. (reasoning)
+    - Grounds: architecture/best-practice.json Q7 thinking: "Each story is drawn as its steps in order, from the role's first request to what the story gives them"
+    - Grounds: dev/pin/architecture.md:212-341 before this tree: S1 and S3, the start; S2 and S4, an answer.
+    - Also builds on: D17, D20, D22
+- **architecture/Q8** Of any story, component or data, does the developer see which objective of the product vision needs it, so that what none needs can go?
+- **architecture/Q9** Setting the product up from nothing, does the developer put each component where it runs and each data where it is kept, and start the product, asking no one?
+  - **D24 Where Pin runs and how it starts**: As before: on the user's computer in Claude Code with Pin installed and Python 3.9; the design tree at the path the user's AI gives, else `.pin/<yyyymmdd>-<name>/design-tree.md` at the top of the repository. (reasoning)
+    - Grounds: dev/pin/architecture.md:342-361 before this tree.
+    - Also builds on: D20
+- **architecture/Q10** Making or changing a component or a data, does the developer find the one place its files belong?
+  - **D25 Where each component and data lies**: As before, with `core/roles/orchestrator.md` in place of `go-between.md`, and `dev/pin/design-tree.md` beside the product vision and the architecture. (reasoning)
+    - Grounds: dev/pin/architecture.md:362-400 before this tree.
+    - Also builds on: D20, D22
+- **architecture/Q11** Asked whether anything in the product goes untested, does the developer see for each deployment unit which levels cover it, how far each tries it, and why a level is missing?
+  - **D26 How Pin is tested**: As before, with the ux trial running O1 alone: a stand-in for the user on Opus, holding an intent Pin never sees, types `/pin:down` with a plan of real size, and in a second form its AI calls the skill with a tree it wrote; KR1.1 and KR1.2 measured; 3 runs of 3 pass. The architecture tests start the pinner from the main conversation and learn each end from its task-notification, as Lane's tests of the main conversation do. (reasoning)
+    - Grounds: dev/pin/architecture.md:401-504 before this tree.
+    - Also serves: architecture/Q12, architecture/Q13, architecture/Q14
+    - Also builds on: D20, D23, D24
+- **architecture/Q12** Writing a test at one level, does the developer know what to run real, what doubles stand in for, what to cover and when it passes, deciding none of it?
+- **architecture/Q13** When the unit and architecture tests pass, does the developer know the product does what this document says, leaving to the ux level only the product vision to confirm?
+- **architecture/Q14** Doubting a choice the document makes, such as a tool or how far a level tries a unit, does the developer see what would be lost by the other way?
+- **architecture/Q15** Following a principle while building a part, does the developer find every figure and list asking the same of that part?
+- **architecture/Q16** Changing how a component works inside while the product vision and the principles stay, does the developer find every line of the document still true?
+  - **D27 What the architecture leaves out**: The pinner's steps, each line of the design tree's form, the rules' sentences and the routes' wording: they lie in `core/roles/`, `tree.py` and the proposal. (reasoning)
+    - Grounds: architecture/best-practice.json Q16 thinking.
+    - Also builds on: D19, D20, D22, D23, D24, D25, D26
