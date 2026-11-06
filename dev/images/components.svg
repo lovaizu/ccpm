@@ -54,13 +54,9 @@
   <text class="name" x="480" y="53">caller</text>
   <text class="kind" x="480" y="73">&lt;person or AI&gt;</text>
 
-  <rect class="box" x="20" y="190" width="200" height="76" rx="30"/>
-  <text class="name" x="120" y="223">main conversation</text>
-  <text class="kind" x="120" y="243">&lt;AI&gt;</text>
-
   <rect class="box" x="370" y="190" width="220" height="76" rx="30"/>
   <text class="name" x="480" y="223">orchestrator</text>
-  <text class="kind" x="480" y="243">&lt;main conversation or subagent&gt;</text>
+  <text class="kind" x="480" y="243">&lt;main conversation&gt;</text>
 
   <rect class="box" x="700" y="190" width="220" height="76" rx="0"/>
   <text class="name" x="810" y="223">router</text>
@@ -85,12 +81,6 @@
   <path class="line" d="M495,190 V96" marker-end="url(#arrow)"/>
   <text class="label" x="505" y="128">question, work</text>
 
-  <!-- main conversation and caller -->
-  <path class="line" d="M120,190 L380,50" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="end" x="230" y="110">question</text>
-  <path class="line" d="M380,80 L170,190" marker-end="url(#arrow)"/>
-  <text class="label" x="290" y="150">answer</text>
-
   <!-- orchestrator and router -->
   <path class="line" d="M590,214 H700" marker-end="url(#arrow)"/>
   <text class="label" text-anchor="middle" x="645" y="206">state</text>
@@ -113,6 +103,8 @@
   <path class="line dashed" d="M600,550 L670,466" marker-end="url(#arrow)"/>
   <text class="label" x="400" y="520">step</text>
   <text class="label" x="650" y="520">step</text>
+  <path class="line dashed" d="M540,550 L490,266" marker-end="url(#arrow)"/>
+  <text class="label" x="522" y="370">course</text>
 
   <!-- legend -->
   <rect class="box" x="20" y="520" width="40" height="22" rx="11"/>

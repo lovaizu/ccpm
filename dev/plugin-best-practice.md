@@ -9,25 +9,25 @@ as a document or code. A plugin takes from it what its requirements call for.
 
 ![A plugin's components](images/components.svg)
 
-- **caller**: the person or the AI that calls the plugin. The caller decides what is theirs.
-- **main conversation**: the Claude Code conversation the person talks in. Only it can ask the
-  person.
-- **orchestrator**: the AI that runs the work from the call to the result. It is the main
-  conversation, or a subagent where an AI calls the plugin.
+- **caller**: the person, or the orchestrator of another plugin, that calls the plugin. The caller
+  decides what is theirs.
+- **orchestrator**: the AI that runs the work from the call to the result: the main conversation,
+  the Claude Code conversation the person talks in, following the plugin's skill. Only it can ask
+  the person.
 - **generator**: a subagent that makes the work. A subagent started for one job, such as the
   generator or the evaluator, is a role.
 - **evaluator**: a subagent that checks the work in its user's place. It did not make the work.
 - **router**: a script that gives the orchestrator each next move, where the run goes in fixed
   steps.
-- **guard**: the plugin's hooks. They tell a subagent its step again when it drifts.
+- **guard**: the plugin's hooks. They hold the orchestrator to the router's course, and tell a
+  role its step again when it drifts.
 
 ### Sequence
 
 ```mermaid
 sequenceDiagram
   participant C as caller<br/>#lt;person or AI#gt;
-  participant M as main conversation<br/>#lt;AI#gt;
-  participant O as orchestrator<br/>#lt;main conversation or subagent#gt;
+  participant O as orchestrator<br/>#lt;main conversation#gt;
   participant G as generator<br/>#lt;subagent#gt;
   participant R as evaluator<br/>#lt;subagent#gt;
   C->>O: request
@@ -77,7 +77,7 @@ sequenceDiagram
 An entry is a file whose form Claude Code fixes: a skill, an agent, a hook or a command line. Its
 part is the file in `core/` that does the entry's job. An entry is named as its caller calls it,
 such as the command a person types. A part is named by the role it holds, so a role's agent
-`agents/<role>.md` points to `core/roles/<role>.md`, and the orchestrator's entries point to
+`agents/<role>.md` points to `core/roles/<role>.md`, and the orchestrator's skill points to
 `core/roles/orchestrator.md`.
 
 Installing a plugin copies only its folder, so what only developers need stays in `dev/`. A
@@ -130,10 +130,16 @@ call. A skipped test, a job that did not run or a command that failed counts as 
 
 Where an instruction alone does not hold a step, a hook tells the role the step again when it
 drifts. A hook also stops what would break a rule. Branch protection or permission rules hold what
-is hard to undo.
+is hard to undo. The guard holds the orchestrator in the main conversation to the router's course
+the same way: it stops a start the course does not name, tells the next move as a role's end
+reaches the main conversation, and keeps the orchestrator going while a move is due and no role
+runs.
 
-*Why*: a hook runs every time, while an instruction is only advice. A plugin's agent ignores
-`hooks`, `mcpServers` and `permissionMode` in its own frontmatter, so the plugin keeps its hooks in
+*Why*: a hook runs every time, while an instruction is only advice. Hooks fire on the main
+conversation's calls and its end too, with no `agent_type`, while a role's start and end carry the
+role's ([hooks](https://code.claude.com/docs/en/hooks)). A plugin's agent ignores
+`hooks`, `mcpServers` and `permissionMode` in its own frontmatter, and a `SubagentStop` hook in a
+skill's frontmatter did not fire in a trial on Claude Code 2.1.318, so the plugin keeps its hooks in
 `hooks/hooks.json`
 ([plugin agents](https://code.claude.com/docs/en/plugins/components#frontmatter-fields-in-plugin-agents)).
 
@@ -192,29 +198,36 @@ It starts each role, so it carries each point that a role has for the caller, as
 
 ### Where the orchestrator runs
 
-A plugin that a person calls runs its orchestrator in the main conversation, started by a skill. A
-plugin that an AI calls runs its orchestrator as an agent. A plugin that both call has both, a
-skill `skills/<command>/SKILL.md` and an agent `agents/<command>.md` of the same name, each
-pointing to the one part `core/roles/orchestrator.md`. A role that needs the person ends with its
-point, and the one who started the role carries the point on, as [Messages](#messages) says.
+The orchestrator runs in the main conversation, started by the plugin's skill
+`skills/<command>/SKILL.md`, whose part is `core/roles/orchestrator.md`. A person calls it by typing
+the command. An AI calls it by the same skill, as the orchestrator of its own plugin runs in the
+main conversation too. A role that needs the person ends with its point, and the orchestrator puts
+the point to the person, as [Messages](#messages) says.
 
 *When*: a plugin with an orchestrator and roles.
 
 *Why*: only the main conversation can ask the person
 ([subagents](https://code.claude.com/docs/en/sub-agents#available-tools)). An orchestrator run as
-an agent for the person too leaves the main conversation only carrying its points, a layer that
-decides nothing. The calling plugin starts the agent as one of its roles, so the called plugin's
-run fills its own context, not the caller's. One part keeps the two entries from drifting apart.
+an agent would leave the main conversation a layer that only carries its points, and each answer
+would resume the orchestrator before the role. The guard holds the main conversation to the course
+as it holds a role, as [The guard tells each role its steps again](#the-guard-tells-each-role-its-steps-again)
+says, and the state in a file lets a compacted conversation go on, as
+[Where the router keeps the course](#where-the-router-keeps-the-course) says.
 
 ### A plugin that uses another
 
-A plugin that has another plugin do a job starts the role of that plugin that does the job as one
-of its own roles. It then carries that role's points as [Messages](#messages) says, as any starter
-does.
+A plugin that has another plugin do a job takes the part of it that does the job. Where one role
+of the other plugin does the job, the orchestrator starts that role as one of its own, and puts its
+points to the person as [Messages](#messages) says. Where the job is the other plugin's whole run,
+the orchestrator calls the other plugin's skill, follows its steps in the same main conversation,
+and goes back to its own steps once the other hands its work back. Its own course counts that call
+as one move, so its guard stays out while the other's run lasts, and the other's guard holds it
+meanwhile.
 
 *When*: a job another plugin already does.
 
-*Why*: the other plugin runs as it was built and tested. Nobody writes any of it again.
+*Why*: the other plugin runs as it was built and tested. Nobody writes any of it again. Two guards
+holding one conversation at once would each stop the other's moves.
 
 ### One agent for each job
 
@@ -227,8 +240,8 @@ Each job has its own role, and the role gets only what the job needs.
 
 ### Messages
 
-The one who starts a role carries each point that the role has for the person to the person, as
-given. It carries the person's answer back to the role word for word. Roles run in the background.
+The orchestrator puts each point that a role has for the person to the person, as given. It
+carries the person's answer back to the role word for word. Roles run in the background.
 The orchestrator sends further work to a role that has ended with SendMessage, which resumes the
 role with its whole conversation
 ([resume subagents](https://code.claude.com/docs/en/sub-agents#resume-subagents)).
@@ -236,8 +249,8 @@ role with its whole conversation
 *When*: a plugin with an orchestrator and roles.
 
 *Why*: a subagent's last message reaches only the one who started it, and only the main
-conversation can ask the person ([subagents](https://code.claude.com/docs/en/sub-agents)). So each
-point goes up the line of starters to the person. A point reworded on the way is a question that
+conversation can ask the person ([subagents](https://code.claude.com/docs/en/sub-agents)). So the
+orchestrator, which starts every role, puts each point to the person. A point reworded on the way is a question that
 the role did not ask, and an answer summed up loses what the person meant. A resumed role does not
 start again from nothing.
 
