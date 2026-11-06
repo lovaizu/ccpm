@@ -31,10 +31,34 @@ decided. Run it as a command of its own, word for word, joined to no other comma
 
 ## The design tree
 
-The design tree is a Markdown nested list. Its nesting is the tree: the
-plan's goal on top; under the goal, the questions that must hold for it; under each question, the
-decisions that make it hold. So whoever reads a node sees, above it, what it serves, and under it,
-what rests on it.
+The design tree keeps every point of the plan aligned with its goal. Each node is there only as a
+means to the node above it: asked why, a node names its parent; asked how, a node is answered by
+its children. So a node means something only where it stands in the tree, and the tree shows what
+no single node does: whether every point serves the goal, and whether the goal has every point it
+needs. A goal-decomposition tree is kept so in logic trees, goal refinement (KAOS), assurance cases
+(GSN) and impact maps.
+
+The design tree is a Markdown nested list, and its nesting is that service: the plan's goal on
+top; under the goal, the questions that must hold for it; under each question, the decisions that
+make it hold; under a decision, the decisions that make it concrete.
+
+Keep it by these rules:
+
+- **Each node serves the node above it.** Ask of it why: the answer is its parent. A node that
+  serves no node above is removed, however true it is.
+- **The children together are enough for their parent.** Ask of a node how: its children answer
+  it whole, or a child is still missing. A gap between a node and its child too wide to see why
+  the child follows needs a node between them.
+- **Siblings do not overlap.** A point that fits under two siblings is split or worded again.
+- **One point to a node, in a few words.** A node says what it settled, as a statement. What
+  stands above it is its context, which it does not say again, never "as before" or a pointer to
+  another document. A node that carries its context and reasons in its own line stands alone, and
+  the tree then shows nothing.
+- **A branch ends where its last node is settled directly**: a fact found and confirmed, or a
+  decision made. A node not yet settled says `open`.
+- **A change reaches up and down.** After changing a node, ask whether it still serves its parent,
+  whether its children still serve it, and whether each node under it still holds in its new
+  context. Then read the branch from the goal down.
 
 Its form is `${CLAUDE_PLUGIN_ROOT}/core/domain/design-tree-template.md`. Read it before you
 write the tree. Its lines:
@@ -43,24 +67,20 @@ write the tree. Its lines:
   grounds until it is settled: the person's confirmation, or the maker AI's own grounds where it
   handed the goal over.
 - A question stands at the top of the list: `- **Q1** <the question>`.
-- A decision stands under the first question it serves, else under the first decision it builds
-  on, else at the top of the list until you join it to what it serves:
+- A decision stands under the decision it serves, else under the question it serves, else at the
+  top of the list until you join it to what it serves:
   `- **D1 <what is to be decided>**: <what was decided> (<who settled it>)`. While it is open, it
   says `open` in place of what was decided, and names no one. Who settled it is `user` for the
   person, `research` for a fact found, `reasoning` for what follows from the goal and the decisions
   before it, or `maker` for the maker AI that handed the tree over.
-- A decision settles one point, in one short sentence. Where an answer holds several points, each
-  is a decision of its own, nested under the one it builds on. A decision says what it settled,
-  never "as before" or a pointer to another document, and a ground holds what it rests on, not
-  the reasoning written out again. The nesting then shows what each point serves and rests on,
-  where points packed into one line hide it, and a change to one is not seen to reach the others.
 - Under a decision stand, in this order: a line `- Grounds: <text>` for each thing it rests on,
   such as the person's words with the date, a source quoted as `path:line "words"` or a URL with
   the words, or the IDs it follows from; `- Also serves: <IDs>`, each other question or decision
   it serves; `- Also builds on: <IDs>`, each other decision that must be decided before it; and
-  then the decisions under it. Join IDs with `, `.
-- Through what it serves, every decision reaches a question, and every question has a decision
-  that serves it.
+  then the decisions under it. Join IDs with `, `. A ground is short: a source or the IDs it
+  follows from, not the reasoning written out again.
+- A decision under another serves it. Through what it serves, every decision reaches a question,
+  and every question has a decision that serves it.
 
 Write the file with the Write tool only to make it. Change it with Edit after reading it with Read,
 never with a command or a script. A command changes a line it finds by an ID or by words, so it
