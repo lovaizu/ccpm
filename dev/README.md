@@ -1,6 +1,6 @@
 # Building the plugins
 
-Each plugin's product vision board, architecture, tests and trials live here. Installing a plugin
+Each plugin's product vision, architecture, tests and trials live here. Installing a plugin
 copies only its own folder, so nothing here reaches its users' machines.
 
 Every plugin is built by [the plugin best practice](./plugin-best-practice.md).

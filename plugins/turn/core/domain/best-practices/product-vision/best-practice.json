@@ -2,7 +2,7 @@
  "goal": "The developer builds a product with which its users achieve what they are after.",
  "template": "template.md",
  "example": "example.md",
- "source": "../../../../../../dev/turn/product-vision-board.md",
+ "source": "../../../../../../dev/turn/product-vision.md",
  "intents": [
   {
    "id": "Q1",
@@ -32,7 +32,7 @@
   {
    "id": "Q6",
    "about": "the whole",
-   "what": "Changing how the product works inside while its roles see the same, does the developer find the product vision board still true, so that it holds as long as the roles' ends do?"
+   "what": "Changing how the product works inside while its roles see the same, does the developer find the product vision still true, so that it holds as long as the roles' ends do?"
   }
  ],
  "practices": [
@@ -82,7 +82,7 @@
   },
   {
    "intent": "Q6",
-   "thinking": "The board says only what the roles are after, do, see and receive, and nothing of how the product works inside. Any design that gives the roles the same then leaves it true.",
+   "thinking": "The product vision says only what the roles are after, do, see and receive, and nothing of how the product works inside. Any design that gives the roles the same then leaves it true.",
    "steps": [
     "Pick one change the design could make while the roles see the same, and rewrite each line that would have to change."
    ]

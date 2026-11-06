@@ -1,4 +1,4 @@
-# `<Product>` Product Vision Board
+# `<Product>` Product Vision
 
 ## Roles
 

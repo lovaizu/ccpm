@@ -1,6 +1,6 @@
 # lane
 
-What lane must give its users is in [its product vision board](product-vision-board.md). How lane is
+What lane must give its users is in [its product vision](product-vision.md). How lane is
 built to give it, and how it is checked, is in [architecture.md](architecture.md).
 
 - Tests: run `python3 -m unittest discover -s dev/lane/tests` from the repository root. They lie
@@ -16,7 +16,7 @@ built to give it, and how it is checked, is in [architecture.md](architecture.md
   [dev/README.md](../README.md) says.
 - What every plugin's tests stand on is in `testing.py`, and what every plugin's trials stand on
   is in `trials/trying.py`.
-- ux trials: `python3 dev/lane/tests/ux/trial.py` tries O1 and O2 of the product vision board three
+- ux trials: `python3 dev/lane/tests/ux/trial.py` tries O1 and O2 of the product vision three
   times each, as the architecture's ux says: a developer AI on Opus, given the intent of
   `tests/ux/intent_o1.md` or `tests/ux/intent_o2.md`, writes and lays its own proposal on a copy of
   `tests/ux/changelog/`, and the trial runs the plugin with an ask that invites a break. Give `o1`

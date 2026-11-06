@@ -1,11 +1,11 @@
 # `<Product>` architecture
 
-This document says how `<Product>` is built to give [its product vision board](<board>). `<idea>`.
+This document says how `<Product>` is built to give [its product vision](<board>). `<idea>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<board>`: the path to the product's product vision board.
-> - `<idea>`: how the product turns what its roles bring into what the product vision board
+> - `<board>`: the path to the product's product vision.
+> - `<idea>`: how the product turns what its roles bring into what the product vision
 >   promises, as one idea seen from above that every part carries out, in a few sentences.
 
 ## Principles
@@ -24,7 +24,7 @@ This document says how `<Product>` is built to give [its product vision board](<
 >   sentence that names it.
 > - `<name>`: what the principle is found by, in a few words.
 > - `<rule>`: one rule every part meeting the same decision follows, what must be absent among them.
-> - `<why>`: what the rule is there for, and what goes wrong for a role of the product vision board
+> - `<why>`: what the rule is there for, and what goes wrong for a role of the product vision
 >   or the developer without it.
 
 ## User stories
@@ -33,10 +33,10 @@ This document says how `<Product>` is built to give [its product vision board](<
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<role>`: a role of the product vision board, as the product vision board names it.
+> - `<role>`: a role of the product vision, as the product vision names it.
 > - `<way>`: one way the role meets the product at its edge, such as a command they type.
 > - `<steps>`: the steps of the README's walkthrough, or of an objective's main use it does not
->   run, that rest on it, and each convenience the product vision board's intent asks for that it
+>   run, that rest on it, and each convenience the product vision's intent asks for that it
 >   carries, such as resuming a run that stopped.
 
 ## Components
@@ -138,7 +138,7 @@ sequenceDiagram
 > - The figure: the deliverable's own at images/tests.svg, the product named in its alt text: a
 >   table with a row for each deployment unit, by its name in Deployment, and a column for each test
 >   level from narrow to wide, each named by what it checks against: unit, a part's contract;
->   architecture, this document; ux, the product vision board. Each cell holds the tool, a weight,
+>   architecture, this document; ux, the product vision. Each cell holds the tool, a weight,
 >   such as ●●○, and what it checks in a few words; an empty cell says why. Under it, for each
 >   level: what runs real, what doubles stand in for and where their results come from, who stands
 >   in for the role, and when it passes, with how many runs of how many where a result varies; only

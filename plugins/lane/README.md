@@ -179,7 +179,7 @@ result script beside it. Both run from there, so whoever runs your plugin does n
 
 ## Development
 
-[Lane's development folder](../../dev/lane/README.md) holds its product vision board, its
+[Lane's development folder](../../dev/lane/README.md) holds its product vision, its
 architecture and its tests.
 
 ## License

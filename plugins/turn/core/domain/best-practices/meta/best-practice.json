@@ -1,7 +1,7 @@
 {
  "goal": "The generator can make deliverables with which their role achieves its purpose.",
  "template": "template.json",
- "example": "../product-vision-board/best-practice.json",
+ "example": "../product-vision/best-practice.json",
  "intents": [
   {
    "id": "Q1",
@@ -100,7 +100,7 @@
    "thinking": "Write first what the deliverable must be for the question's role, and why the role needs it so, in short sentences. A generator that grasps the intent finds its own way where the case differs. One that holds only steps follows them off the mark.",
    "steps": [
     "Add a step only where a generator that holds the intent would still not know how, such as a format to keep or a place to look, and say what the step achieves.",
-    "Where the content must be found before it is written, such as the roles of a product vision board, say what to look at, how to find all of it, and when to ask the user.",
+    "Where the content must be found before it is written, such as the roles of a product vision, say what to look at, how to find all of it, and when to ask the user.",
     "Make one real deliverable by the practice, judge it by the question, and mend the intent where the answer stays no."
    ]
   },
@@ -113,7 +113,7 @@
    "intent": "Q8",
    "thinking": "Make the product's own deliverable of the kind from its design tree by the template and the practices, pass it by the questions, and name its file in `example`, as one finished deliverable shows what the comments alone do not.",
    "steps": [
-    "Where the deliverable lies elsewhere for its own reader, such as a product vision board in the developers' folder, name its path in `source` and copy it with its figures beside the best practice by `plan.py example`, as a copy made by hand drifts from the deliverable, and a symbolic link shows as a line of text on GitHub and on Windows."
+    "Where the deliverable lies elsewhere for its own reader, such as a product vision in the developers' folder, name its path in `source` and copy it with its figures beside the best practice by `plan.py example`, as a copy made by hand drifts from the deliverable, and a symbolic link shows as a line of text on GitHub and on Windows."
    ]
   },
   {

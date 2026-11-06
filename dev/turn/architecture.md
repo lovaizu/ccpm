@@ -1,6 +1,6 @@
 # Turn architecture
 
-This document says how Turn is built to give [its product vision board](product-vision-board.md).
+This document says how Turn is built to give [its product vision](product-vision.md).
 Every kind of work goes through one course of subagents, moved by the routes of Lane, the plugin
 that holds a subagent to the rules of its steps. The planner settles the kind of work. It hands Pin,
 the plugin that settles a design with the user, the work's goal and the questions of the kind's best
@@ -41,7 +41,7 @@ Turn does not take
 [Learning from each run](../plugin-best-practice.md#learning-from-each-run). No role
 follows the work once it is handed over.
 
-*Why*: no step of the product vision board follows the work handed over, and a step there would ask
+*Why*: no step of the product vision follows the work handed over, and a step there would ask
 the user more (KR1.2).
 
 ### One course for every kind
@@ -135,15 +135,15 @@ the run (KR1.1). What becomes of the work is the user's to decide, as
 
 - **S1**: As the user, I want to start Turn with my request, by typing `/turn:up` or, as an AI that
   asks for a person, by starting `turn:up` as [Calling Turn](../../plugins/turn/docs/calling.md)
-  says. Carries the request and the purpose put to confirm. From the product vision board's intent,
+  says. Carries the request and the purpose put to confirm. From the product vision's intent,
   it also carries the kind asked where the request does not say it, a new kind's best practice made
   first, and a fault of Turn's own that stops the run.
 - **S2**: As the user, I want to answer the point that Turn puts to me. Carries each fact to confirm
   and each point of intent, the design approved, a point of intent that comes up while the work is
-  made, and the work handed over. From the product vision board's intent, it also carries a wrong purpose, fact or
+  made, and the work handed over. From the product vision's intent, it also carries a wrong purpose, fact or
   design corrected, and a fault of Turn's own that stops the run.
 - **S3**: As the user, I want to start Turn with a run's folder, alone or with a change. Carries,
-  from the product vision board's intent, a stopped run resumed, the work changed, and a fault of
+  from the product vision's intent, a stopped run resumed, the work changed, and a fault of
   Turn's own that stops the run.
 
 ## Components
@@ -400,7 +400,7 @@ plugins/turn/
 ├── core/roles/<role>.md             the steps of up, the planner, the generator and the evaluator
 ├── core/domain/best-practices/      a folder for each kind: Best practice and its Questions, its
 │                                    template, and its example with the example's figures in images/;
-│                                    the examples of the README, the product vision board and the architecture are
+│                                    the examples of the README, the product vision and the architecture are
 │                                    copies of Turn's own
 ├── core/domain/forms/               the forms of Call, Run, Standard, Round, Answers, Best practice
 ├── core/domain/                     the code of plan.py, rounds.py and throwaway.py
@@ -412,7 +412,7 @@ plugins/turn/
 └── README.md, CHANGELOG.md, images/   for Turn's users
 
 dev/turn/
-├── product-vision-board.md, architecture.md, images/  Turn's product vision board and architecture, with the architecture's figures
+├── product-vision.md, architecture.md, images/  Turn's product vision and architecture, with the architecture's figures
 ├── README.md, design-tree.json      for Turn's developers
 ├── cosmic-ray.toml                  the mutation testing
 └── tests/
@@ -428,7 +428,7 @@ dev/turn/
 <temporary folder>/lane/               Result, as the guard keeps it
 ```
 
-- **Each example of a document Turn has, its README, product vision board and architecture, as a
+- **Each example of a document Turn has, its README, product vision and architecture, as a
   copy of it with its figures, made by `plan.py example` from the document its best practice names
   in `source`,** over the document kept as the example with a symbolic link to it: the developer
   reads the document where the plugin best practice keeps it, the copy ships with Turn for the

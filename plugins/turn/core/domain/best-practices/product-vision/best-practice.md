@@ -1,4 +1,4 @@
-# product-vision-board
+# product-vision
 
 ## Goal
 
@@ -10,7 +10,7 @@ The developer builds a product with which its users achieve what they are after.
 
 ## Example
 
-[example.md](example.md), a copy of [../../../../../../dev/turn/product-vision-board.md](../../../../../../dev/turn/product-vision-board.md)
+[example.md](example.md), a copy of [../../../../../../dev/turn/product-vision.md](../../../../../../dev/turn/product-vision.md)
 
 ## Intents
 
@@ -19,7 +19,7 @@ The developer builds a product with which its users achieve what they are after.
 - **Q3** (OKRs): Weighing a piece of work, does the developer see which one objective it brings closer, or that it brings none closer, so that they know what the work is for or drop it?
 - **Q4** (OKRs): After a change, does the developer see from the key results whether to keep it, so that they keep only what brings the role's end closer?
 - **Q5** (Roles, OKRs, Concept): Weighing the product against what its roles do today, does the developer see why it meets each objective where that way does not, so that they build what sets it apart and not a copy of that way?
-- **Q6** (the whole): Changing how the product works inside while its roles see the same, does the developer find the product vision board still true, so that it holds as long as the roles' ends do?
+- **Q6** (the whole): Changing how the product works inside while its roles see the same, does the developer find the product vision still true, so that it holds as long as the roles' ends do?
 
 ## Practices
 
@@ -72,9 +72,9 @@ The developer builds a product with which its users achieve what they are after.
 4. Stop once at most five ideas stand out, each meeting an objective where the present way does not.
 5. Keep, where the design is kept, each idea tried, whose it was and why it was kept, dropped or merged, in the user's words.
 
-### Q6: Changing how the product works inside while its roles see the same, does the developer find the product vision board still true, so that it holds as long as the roles' ends do?
+### Q6: Changing how the product works inside while its roles see the same, does the developer find the product vision still true, so that it holds as long as the roles' ends do?
 
-**Thinking**: The board says only what the roles are after, do, see and receive, and nothing of how the product works inside. Any design that gives the roles the same then leaves it true.
+**Thinking**: The product vision says only what the roles are after, do, see and receive, and nothing of how the product works inside. Any design that gives the roles the same then leaves it true.
 
 **Steps**
 

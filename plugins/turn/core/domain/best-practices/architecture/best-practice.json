@@ -1,5 +1,5 @@
 {
- "goal": "The developer builds and changes each part of the product so that the parts together give its product vision board.",
+ "goal": "The developer builds and changes each part of the product so that the parts together give its product vision.",
  "template": "template.md",
  "example": "example.md",
  "source": "../../../../../../dev/turn/architecture.md",
@@ -7,7 +7,7 @@
   {
    "id": "Q1",
    "about": "the opening",
-   "what": "Starting on any part, does the developer see the one idea by which the product gives its product vision board, and the piece of it the part carries out, so that every part they build serves that idea?"
+   "what": "Starting on any part, does the developer see the one idea by which the product gives its product vision, and the piece of it the part carries out, so that every part they build serves that idea?"
   },
   {
    "id": "Q2",
@@ -42,7 +42,7 @@
   {
    "id": "Q8",
    "about": "User stories, Components, Data model, Sequences",
-   "what": "Of any story, component or data, does the developer see which objective of the product vision board needs it, so that what none needs can go?"
+   "what": "Of any story, component or data, does the developer see which objective of the product vision needs it, so that what none needs can go?"
   },
   {
    "id": "Q9",
@@ -67,7 +67,7 @@
   {
    "id": "Q13",
    "about": "Tests",
-   "what": "When the unit and architecture tests pass, does the developer know the product does what this document says, so that the ux level is left only the product vision board to confirm?"
+   "what": "When the unit and architecture tests pass, does the developer know the product does what this document says, so that the ux level is left only the product vision to confirm?"
   },
   {
    "id": "Q14",
@@ -82,20 +82,20 @@
   {
    "id": "Q16",
    "about": "the whole",
-   "what": "Changing how a component works inside while the product vision board and the principles stay, does the developer find every line of the document still true, so that the document needs no change for it?"
+   "what": "Changing how a component works inside while the product vision and the principles stay, does the developer find every line of the document still true, so that the document needs no change for it?"
   }
  ],
  "practices": [
   {
    "intent": "Q1",
-   "thinking": "The opening says, as one idea seen from above, how the product turns what its roles bring into what the product vision board promises. It points to the board and does not repeat it. Every part then reads as a piece of that idea.",
+   "thinking": "The opening says, as one idea seen from above, how the product turns what its roles bring into what the product vision promises. It points to the product vision and does not repeat it. Every part then reads as a piece of that idea.",
    "steps": [
     "Once the rest is written, check that each component carries out a piece of the idea, and change the idea or the component where one does not."
    ]
   },
   {
    "intent": "Q2",
-   "thinking": "There is one story for each way a role meets the product at its edge, drawn from the objectives and the README's walkthrough, each naming what it carries, such as a step of the walkthrough or resuming a run that stopped. Each part then traces to what the role does, and a convenience added is a story added, while the board and the README stay as they are.",
+   "thinking": "There is one story for each way a role meets the product at its edge, drawn from the objectives and the README's walkthrough, each naming what it carries, such as a step of the walkthrough or resuming a run that stopped. Each part then traces to what the role does, and a convenience added is a story added, while the product vision and the README stay as they are.",
    "steps": [
     "Go through each exchange of the README's walkthrough, and the main use of each objective it does not run, and name the one way at the product's edge that carries each step; add a story where none does."
    ]
@@ -154,7 +154,7 @@
   },
   {
    "intent": "Q11",
-   "thinking": "Each deployment unit has a cell at each level whose ground, a part's contract, this document or the product vision board, says what the unit must do, and an empty cell says why. A level is named by what it checks against, not by its means. Unit and architecture carry most of the checking and run on every change; ux tests are few.",
+   "thinking": "Each deployment unit has a cell at each level whose ground, a part's contract, this document or the product vision, says what the unit must do, and an empty cell says why. A level is named by what it checks against, not by its means. Unit and architecture carry most of the checking and run on every change; ux tests are few.",
    "steps": [
     "Leave out a unit whose every cell would be empty, and say why under the table.",
     "Check that each story's sequence runs from start to end at the architecture level in some row."
@@ -172,7 +172,7 @@
     "At architecture, run real what joins the components, such as hooks and scripts, and stand a double in for each component an AI runs and each thing outside the product, so the level calls no model and gives the same result each run.",
     "At architecture, write one test for each path through each story's sequence, the main flow, each branch, each step that sends work back and each question put to the role, until every move from one step to the next lies on some path.",
     "At ux, once unit and architecture pass, run the real product on each objective's main use, as the README's walkthrough shows it, at the size of a real request, with an AI standing in for the role that holds an intent the product never sees.",
-    "At ux, measure each key result as the product vision board words it, and set each measure against the last one by the direction the product vision board gives it, as the product vision board gives no target.",
+    "At ux, measure each key result as the product vision words it, and set each measure against the last one by the direction the product vision gives it, as the product vision gives no target.",
     "For a test whose result varies from run to run, write how many runs of how many must meet the expectation."
    ]
   },
@@ -197,7 +197,7 @@
   },
   {
    "intent": "Q16",
-   "thinking": "The document holds only what stays while the product vision board and the principles stay. How a component works inside is left to where it is built, as a line about the inside goes untrue at the next change.",
+   "thinking": "The document holds only what stays while the product vision and the principles stay. How a component works inside is left to where it is built, as a line about the inside goes untrue at the next change.",
    "steps": [
     "Imagine a change to how a component works inside, such as its steps, a value it uses or a data's fields, mark each line it would make untrue, and repeat with a change of another kind until no line is marked."
    ]

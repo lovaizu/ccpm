@@ -182,7 +182,7 @@ that the figure cannot show:
 
 ## Development
 
-[Pin's development folder](../../dev/pin/README.md) holds its product vision board, its architecture
+[Pin's development folder](../../dev/pin/README.md) holds its product vision, its architecture
 and its tests.
 
 ## License

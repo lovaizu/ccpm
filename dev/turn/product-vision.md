@@ -1,4 +1,4 @@
-# Turn Product Vision Board
+# Turn Product Vision
 
 ## Roles
 

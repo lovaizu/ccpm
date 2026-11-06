@@ -38,7 +38,7 @@ Someone who meets the product for the first time starts using it, from the READM
 
 ### Q2: Reading the gain, does the reader tell what the product would let them do, so that they know whether it is for them?
 
-**Thinking**: Name whom the product is for by the work they want done, and the gain as the end they reach with the product, from the objectives of the product vision board. A reader tells from that whether the product serves their own end.
+**Thinking**: Name whom the product is for by the work they want done, and the gain as the end they reach with the product, from the objectives of the product vision. A reader tells from that whether the product serves their own end.
 
 **Steps**
 
@@ -70,7 +70,7 @@ Someone who meets the product for the first time starts using it, from the READM
 
 **Steps**
 
-1. Pick the use from what readers ask for most and from the objectives of the product vision board.
+1. Pick the use from what readers ask for most and from the objectives of the product vision.
 2. Take each exchange from the record of a real run, in the form the reader sees it, cutting only what the reader does not need to see the result.
 3. Where the result does not show the gain the opening promised, pick another piece of work or another use.
 
@@ -80,7 +80,7 @@ Someone who meets the product for the first time starts using it, from the READM
 
 **Steps**
 
-1. Take the problems from the Concept section of the product vision board, one where the present way falls short for each idea, and from what readers complain of in that way.
+1. Take the problems from the Concept section of the product vision, one where the present way falls short for each idea, and from what readers complain of in that way.
 2. For each, take from the design what the product does that makes it go away. Ask the user each one the design does not settle.
 3. Look at each figure as a newcomer, and where they could not picture from it what its line says, draw it again.
 

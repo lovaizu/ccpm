@@ -1,6 +1,6 @@
 # Pin
 
-What Pin must give its users is in [its product vision board](product-vision-board.md). How Pin is
+What Pin must give its users is in [its product vision](product-vision.md). How Pin is
 built to give it, and how it is checked, is in [architecture.md](architecture.md).
 
 - Tests: run `python3 -m unittest discover -s dev/pin/tests` from the repository root. They lie in
@@ -19,7 +19,7 @@ built to give it, and how it is checked, is in [architecture.md](architecture.md
   check on it, passes the check after each change, and gives `asks` or `done` as each run ends, its
   `results`. `python3 plugins/lane/scripts/lay.py up plugins/pin` prints each lane laid, for a
   proposal that lays them again.
-- ux trials: `python3 dev/pin/tests/ux/trial.py` tries O1 and O2 of the product vision board three
+- ux trials: `python3 dev/pin/tests/ux/trial.py` tries O1 and O2 of the product vision three
   times each, as the architecture's ux says: an AI on Opus stands in for the person, given the
   intent of `tests/ux/intent_o1.md` or `tests/ux/intent_o2.md`, on a copy of the notes app in
   `tests/ux/notes/`, which the architecture tests read too; for O2, the plugin `tests/ux/maker/`

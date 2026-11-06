@@ -10,7 +10,7 @@ The generator can make deliverables with which their role achieves its purpose.
 
 ## Example
 
-[../product-vision-board/best-practice.json](../product-vision-board/best-practice.json)
+[../product-vision/best-practice.json](../product-vision/best-practice.json)
 
 ## Intents
 
@@ -83,7 +83,7 @@ The generator can make deliverables with which their role achieves its purpose.
 **Steps**
 
 1. Add a step only where a generator that holds the intent would still not know how, such as a format to keep or a place to look, and say what the step achieves.
-2. Where the content must be found before it is written, such as the roles of a product vision board, say what to look at, how to find all of it, and when to ask the user.
+2. Where the content must be found before it is written, such as the roles of a product vision, say what to look at, how to find all of it, and when to ask the user.
 3. Make one real deliverable by the practice, judge it by the question, and mend the intent where the answer stays no.
 
 ### Q7: Going through the questions in order, does the generator find a practice for each, so that it meets no question with nothing to go by?
@@ -96,7 +96,7 @@ The generator can make deliverables with which their role achieves its purpose.
 
 **Steps**
 
-1. Where the deliverable lies elsewhere for its own reader, such as a product vision board in the developers' folder, name its path in `source` and copy it with its figures beside the best practice by `plan.py example`, as a copy made by hand drifts from the deliverable, and a symbolic link shows as a line of text on GitHub and on Windows.
+1. Where the deliverable lies elsewhere for its own reader, such as a product vision in the developers' folder, name its path in `source` and copy it with its figures beside the best practice by `plan.py example`, as a copy made by hand drifts from the deliverable, and a symbolic link shows as a line of text on GitHub and on Windows.
 
 ### Q9: Using a deliverable made by the best practice and passed, does its role achieve its purpose?
 
