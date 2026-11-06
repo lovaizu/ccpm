@@ -31,10 +31,12 @@ each message and the design tree, and prints them:
   under it, or a write of the main conversation to the design tree once it called the skill.
 - KR1.2: the seconds from the request to the stop at which the stand-in confirmed the design.
 
-A run counts only where each frequent case came up. It passes where nothing went wrong in KR1.1 and
-the design tree holds with no decision open. A trial passes where every run passes, three of three
-by default, as dev/plugin-best-practice.md's Results that vary from run to run says. The product
-vision gives no key result a target, so each measure is set against the last trial's.
+A run counts only where each frequent case of its way came up. The called way needs only those its
+intent brings about in a right run, as a fact corrected or a decision left to Pin comes there only
+of a pinner gone wrong; it tests keeping the AI's points. A run passes where nothing went wrong in
+KR1.1 and the design tree holds with no decision open. A trial passes where every run passes,
+three of three by default, as dev/plugin-best-practice.md's Results that vary from run to run says.
+The product vision gives no key result a target, so each measure is set against the last trial's.
 
 Run as `python3 dev/pin/tests/ux/trial.py [typed|called|both] [runs]`, both and three by default.
 It prints the folder of each run, where the session's records, the stand-in's view of each message,
@@ -123,6 +125,12 @@ CASES = {
     "raises_point": "no answer raised a point",
     "changes_design": "the design was not changed",
 }
+# The cases each way must bring about for a run to count: called leaves out those that only a wrong
+# pinner would bring out there.
+CASES_OF = {
+    "typed": list(CASES),
+    "called": ["shows_fact", "puts_decision", "raises_point", "changes_design"],
+}
 JUDGES = """An AI has written a design tree for a plan. The person whose plan it is wanted the
 points below. For each point, judge whether a decision of the tree, or the goal, holds it as the
 person wants it, and give the settled_by of the decision that holds it.
@@ -209,7 +217,7 @@ def judged(place: str, objective: str) -> bool:
     repo = os.path.join(place, "notes")
     files = records(kept["session"])
     path = design_tree(repo, objective)
-    untried = [why for key, why in CASES.items() if not any(t.get(key) for t in turns)]
+    untried = [CASES[k] for k in CASES_OF[objective] if not any(t.get(k) for t in turns)]
     wrong = kr1_1(objective, turns, path, files, place)
     if objective == "called":
         wrong += ais_points(path, files)
