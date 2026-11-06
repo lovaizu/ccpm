@@ -40,7 +40,8 @@ Run as `python3 dev/pin/tests/ux/trial.py [typed|called|both] [runs]`, both and 
 It prints the folder of each run, where the session's records, the stand-in's view of each message,
 `turns.json`, and the measures, `measures.json`, are kept. `python3 dev/pin/tests/ux/trial.py
 --judge <folder of a run> typed|called` judges a kept run again from its records, to check the judge
-on a kept record before trusting it."""
+on a kept record before trusting it. It reads the records in the folder CLAUDE_CONFIG_DIR names, so
+set it to a folder holding the run's `projects/` and a login, such as `.credentials.json`."""
 
 from __future__ import annotations
 
@@ -291,8 +292,15 @@ def kr1_1(
     for n, t in enumerate(turns, 1):
         if t.get("sent") and str(t.get("answer")) not in heard:
             wrong.append(f"answer {n} did not reach the pinner word for word")
-    # Each Reply's point is set against what the main conversation said, blanks taken as one.
-    passed = " ".join(" ".join(replies(files.get("main", []))).split())
+    # Each Reply's point is set against every text the main conversation showed the person, a turn's
+    # last or not, blanks taken as one.
+    shown = [
+        b.get("text")
+        for e in files.get("main", [])
+        for b in record.of(e, "assistant", "text")
+        if isinstance(b.get("text"), str)
+    ]
+    passed = " ".join(" ".join(shown).split())
     for reply in replies(files.get("pin:pinner", [])):
         point = " ".join(reply.split(FOR_THE_PERSON, 1)[-1].split())
         if point and point not in passed:
