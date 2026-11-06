@@ -59,8 +59,7 @@
   <rect class="box" x="1180" y="40" width="380" height="64" rx="0"/>
   <text class="name" x="1370.0" y="66" text-anchor="middle">guard</text>
   <text class="kind" x="1370.0" y="84" text-anchor="middle">[hook script · Lane's code, Python 3.9]</text>
-  <path class="store" d="M1640,55 A110.0,9 0 0 1 1860,55 V125 A110.0,9 0 0 1 1640,125 Z"/>
-  <path class="store" d="M1640,55 A110.0,9 0 0 0 1860,55"/>
+  <rect class="box" x="1640" y="46" width="220" height="88" rx="0"/>
   <text class="name" x="1750.0" y="94.0" text-anchor="middle">Rules laid</text>
   <text class="kind" x="1750.0" y="112.0" text-anchor="middle">[file · JSON]</text>
   <rect class="frame" x="600" y="550" width="1200" height="120" rx="8"/>
@@ -84,19 +83,16 @@
   <rect class="box" x="660" y="850" width="200" height="64" rx="0"/>
   <text class="name" x="760.0" y="876" text-anchor="middle">plan.py</text>
   <text class="kind" x="760.0" y="894" text-anchor="middle">[command line · Python 3.9]</text>
-  <path class="store" d="M940,855 A70.0,9 0 0 1 1080,855 V925 A70.0,9 0 0 1 940,925 Z"/>
-  <path class="store" d="M940,855 A70.0,9 0 0 0 1080,855"/>
+  <rect class="box" x="940" y="846" width="140" height="88" rx="0"/>
   <text class="name" x="1010.0" y="894.0" text-anchor="middle">best practices</text>
   <text class="kind" x="1010.0" y="912.0" text-anchor="middle">[files · JSON]</text>
-  <path class="store" d="M1220,855 A120.0,9 0 0 1 1460,855 V925 A120.0,9 0 0 1 1220,925 Z"/>
-  <path class="store" d="M1220,855 A120.0,9 0 0 0 1460,855"/>
+  <rect class="box" x="1220" y="846" width="240" height="88" rx="0"/>
   <text class="name" x="1340.0" y="894.0" text-anchor="middle">the work</text>
   <text class="kind" x="1340.0" y="912.0" text-anchor="middle">[the repository's files]</text>
   <rect class="box" x="1100" y="990" width="460" height="64" rx="0"/>
   <text class="name" x="1330.0" y="1016" text-anchor="middle">rounds.py, throwaway.py</text>
   <text class="kind" x="1330.0" y="1034" text-anchor="middle">[command line · Python 3.9]</text>
-  <path class="store" d="M300,1185 A750.0,9 0 0 1 1800,1185 V1245 A750.0,9 0 0 1 300,1245 Z"/>
-  <path class="store" d="M300,1185 A750.0,9 0 0 0 1800,1185"/>
+  <rect class="box" x="300" y="1176" width="1500" height="78" rx="0"/>
   <text class="name" x="1050.0" y="1219.0" text-anchor="middle">the run's folder</text>
   <text class="kind" x="1050.0" y="1237.0" text-anchor="middle">[folder · JSON and Markdown files]</text>
   <path class="line" d="M80,124 L80,240" marker-end="url(#arrow)"/>
@@ -189,10 +185,7 @@
   <text class="data halo" x="1338" y="1152" text-anchor="start">Round, Answers</text>
   <text class="frame-name" x="40" y="1305" text-anchor="start">Legend</text>
   <rect class="box" x="110" y="1290" width="36" height="22" rx="0"/>
-  <text class="label small" x="154" y="1305" text-anchor="start">role of Turn</text>
-  <path class="store" d="M250,1295 A18.0,9 0 0 1 286,1295 V1309 A18.0,9 0 0 1 250,1309 Z"/>
-  <path class="store" d="M250,1295 A18.0,9 0 0 0 286,1295"/>
-  <text class="label small" x="294" y="1305" text-anchor="start">store of Turn's data</text>
+  <text class="label small" x="154" y="1305" text-anchor="start">a role of Turn, or a store of its data</text>
   <rect class="ext" x="440" y="1290" width="36" height="22" rx="6"/>
   <text class="label small" x="484" y="1305" text-anchor="start">outside Turn; with a head: the product vision's role</text>
   <rect class="frame" x="830" y="1290" width="36" height="22" rx="4"/>

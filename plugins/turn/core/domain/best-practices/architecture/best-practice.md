@@ -77,7 +77,7 @@ The developer builds and changes each part of the product so that the parts toge
 
 ### Q6: Making one component that writes a data and another that reads it, do two developers join it to the other data the same way, so that the data fits while its fields change freely?
 
-**Thinking**: Each data is drawn once, by its name alone, with each relation named and how many of each it joins, and a list under the figure says what each is in a few words. The fields are left to where the data is built. Two developers then join a data the same way while its fields change freely.
+**Thinking**: The data are drawn as a concept model in a UML class diagram, which most developers read: each data once, as a class by its name alone, each relation named with how many of each it joins at both ends, and a filled diamond at the whole where one data holds the other's parts, never a hollow one, which readers take in different ways. A list under the figure says what each data is in a few words. The fields are left to where the data is built. Two developers then join a data the same way while its fields change freely.
 
 ### Q7: Following a user story from its role's first request to its end, does the developer see at each step which component acts, along which arrow, and what data it hands on, so that they build each step knowing who acts and on what?
 

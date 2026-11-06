@@ -55,8 +55,7 @@
   <rect class="box" x="480" y="260" width="300" height="100" rx="0"/>
   <text class="name mid" x="630.0" y="306" text-anchor="middle">&lt;component&gt;</text>
   <text class="kind mid" x="630.0" y="326" text-anchor="middle">[&lt;type&gt; · &lt;technology&gt;]</text>
-  <path class="store" d="M480,450 A150.0,9 0 0 1 780,450 V520 A150.0,9 0 0 1 480,520 Z"/>
-  <path class="store" d="M480,450 A150.0,9 0 0 0 780,450"/>
+  <rect class="box" x="480" y="441" width="300" height="88" rx="0"/>
   <text class="name mid" x="630.0" y="487" text-anchor="middle">&lt;store&gt;</text>
   <text class="kind mid" x="630.0" y="507" text-anchor="middle">[&lt;type&gt; · &lt;technology&gt;]</text>
   <rect class="ext" x="880" y="260" width="280" height="100" rx="6"/>
@@ -76,10 +75,7 @@
   <text class="label small halo mid" x="828" y="330" text-anchor="middle">[&lt;tool&gt;]</text>
   <text class="frame-name start" x="40" y="585" text-anchor="start">Legend</text>
   <rect class="box" x="110" y="570" width="36" height="22" rx="0"/>
-  <text class="label small start" x="154" y="585" text-anchor="start">component</text>
-  <path class="store" d="M260,575 A18,9 0 0 1 296,575 V589 A18,9 0 0 1 260,589 Z"/>
-  <path class="store" d="M260,575 A18,9 0 0 0 296,575"/>
-  <text class="label small start" x="304" y="585" text-anchor="start">store of data</text>
+  <text class="label small start" x="154" y="585" text-anchor="start">component or store of data</text>
   <rect class="ext" x="410" y="570" width="36" height="22" rx="6"/>
   <text class="label small start" x="454" y="585" text-anchor="start">outside the product; with a head: a role of the product vision</text>
   <text class="label small start" x="840" y="577" text-anchor="start">a box: name and [type · technology]</text>

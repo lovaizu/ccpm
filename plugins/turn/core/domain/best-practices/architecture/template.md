@@ -52,7 +52,8 @@ What each decides alone:
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - The figure: the deliverable's own at images/components.svg, the product named in its alt text:
->   each role the stories need and each store of data, each box holding its name and its type and
+>   each role the stories need and each store of data, a store a plain box like a component's, as
+>   its type tells it apart and it needs no more weight, each box holding its name and its type and
 >   technology alone, so the figure shows the parts and their joins at a glance; each arrow what one
 >   does to another, with the data it hands on, named as in the data model; a legend for every
 >   symbol.
@@ -71,8 +72,9 @@ What each decides alone:
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - The figure: the deliverable's own at images/data-model.svg, the product named in its alt text:
->   each data the components pass or keep, by its name alone, and each relation between two data,
->   with its name and how many of each it joins at both ends.
+>   the data as a concept model in a UML class diagram: each data the components pass or keep, as a
+>   class by its name alone, and each relation between two data, with its name and how many of each
+>   it joins at both ends, a filled diamond at the whole where one holds the other's parts.
 > - `<Data>`, `<what it is>`: each data of the figure, by its name, and what it is in a few words,
 >   without its fields.
 
