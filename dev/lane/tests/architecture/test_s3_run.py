@@ -42,11 +42,15 @@ class TestWalkthrough(helpers.WalkthroughTest):
         command = f"python3 {self.plugin}/hooks/lane/result.py {name} {on}"
         return self.claude.call(run, "Bash", {"command": command, "description": "d"})
 
-    def through(self, run: testing.Run, on: str) -> list[str]:
-        """The start of the subagent, its result and its end: what the main conversation is told
-        as its end reaches it."""
+    def through(self, run: testing.Run, on: str, command: str = "") -> list[str]:
+        """The start of the subagent, its run of the command where one is given, which goes
+        through, its result and its end: what the main conversation is told as its end reaches
+        it."""
         self.assertTrue(self.claude.start(None, run, "Do your steps.").made)
         self.assertTrue(self.claude.end_turn().made)
+        if command:
+            ran = self.claude.call(run, "Bash", {"command": command, "description": "d"})
+            self.assertTrue(ran.made, ran.said)
         self.assertTrue(self.gives(run, on).made)
         self.assertTrue(self.claude.stop(run).made)
         return self.claude.notify(run)
@@ -66,10 +70,14 @@ class TestWalkthrough(helpers.WalkthroughTest):
         self.assertTrue(self.gives(run, "written").made)
         self.assertTrue(self.claude.stop(run).made)
         written = self.claude.notify(run)
-        # And: reviewer gives `more`, writer `written` again, and reviewer `good`
-        more = self.through(reviewer(1), "more")
+        # And: reviewer, which has no run_only lane, reads the commits with git log --oneline and
+        # gives `more`, writer `written` again, and reviewer `good`; then the skill ends its run by
+        # its result script with `good`, the result of the route that starts no more
+        more = self.through(reviewer(1), "more", "git log --oneline")
         self.through(writer(2), "written")
         good = self.through(reviewer(2), "good")
+        command = f"python3 {self.plugin}/hooks/lane/result.py write good"
+        ended = self.claude.call(None, "Bash", {"command": command, "description": "d"})
         # Then: the main conversation is told each start as the walkthrough shows, writer is
         # stopped at git commit with its sentence as shown, and its other calls go through
         folder = "<changelog's folder>"
@@ -80,6 +88,7 @@ class TestWalkthrough(helpers.WalkthroughTest):
         self.assertEqual(written, [helpers.README_WRITTEN.strip()])
         self.assertEqual(more, [helpers.README_MORE.strip()])
         self.assertEqual(good, [helpers.README_GOOD.strip()])
+        self.assertEqual((ended.made, ended.context), (True, []))
         # And: the run is over, so what is asked next in the conversation is not held
         self.assertTrue(self.claude.end_turn().made)
         self.assertTrue(self.claude.start(None, reviewer(3), "Look again.").made)
@@ -216,8 +225,8 @@ CHECK = "checker:check"
 
 class TestDependencysSkill(helpers.RoutesTest):
     """Routes from writer to checker's skill check, checker installed in a folder of its own and
-    laid by its own proposal; check's result `done`, which no source yet says how checker lays, put
-    in checker's hooks/lanes.json beside examiner's lanes, so its result script takes it."""
+    laid by its own proposal, check.json, whose routes start examiner from check and end on its
+    `asks` or `done`, the results check ends its run by."""
 
     def setUp(self) -> None:
         self.installed = ""
@@ -226,12 +235,7 @@ class TestDependencysSkill(helpers.RoutesTest):
     def proposed(self) -> dict:
         """The proposal laid: routes.json with writer's `written` leading to check, and check's
         `done` to reviewer, changelog declaring checker, laid first."""
-        self.installed = self.checker()
-        laid_path = os.path.join(self.installed, "hooks", "lanes.json")
-        laid = self.read_json(laid_path)
-        examiner = laid["subagents"][0]
-        laid["subagents"].append({**examiner, "name": "check", "results": ["done"]})
-        self.write_json(laid_path, laid)
+        self.installed = self.checker("check.json")
         routed = self.ux_proposal("routes.json")
         routed["routes"]["routes"][1:2] = [
             {"from": "writer", "on": "written", "to": CHECK},
@@ -242,18 +246,28 @@ class TestDependencysSkill(helpers.RoutesTest):
     def test_the_skill_due_is_one_move_its_result_telling_the_next_start(self):
         # Given: writer gave `written`, so check is due
         told = self.through(writer(1), "written")
-        # When: the main conversation calls check, which starts its own subagent examiner and ends
-        # its turn meanwhile, then runs checker's result script giving `done`
+        # When: the main conversation calls check, which starts its subagent examiner as checker's
+        # routes tell, ends its turn meanwhile, and, once examiner gives `done`, ends check's run
+        # by checker's result script with that result, as check's step says
         call = self.claude.skill(CHECK)
-        meanwhile = self.claude.start(None, testing.Run("checker:examiner", "e1"), "Check.")
+        examiner = testing.Run("checker:examiner", "e1")
+        meanwhile = self.claude.start(None, examiner, "Check.")
         ended = self.claude.end_turn()
+        gave = f"python3 {self.installed}/hooks/lane/result.py examiner done"
+        self.assertTrue(
+            self.claude.call(examiner, "Bash", {"command": gave, "description": "d"}).made
+        )
+        self.assertTrue(self.claude.stop(examiner).made)
+        over = self.claude.notify(examiner)
         command = f"python3 {self.installed}/hooks/lane/result.py check done"
         done = self.claude.call(None, "Bash", {"command": command, "description": "d"})
-        # Then: check was told as due, its call goes through, changelog's guard checks nothing
-        # meanwhile, and the result tells the next start
+        # Then: check was told as due, and checker's guard alone holds its run: it tells the start
+        # of examiner and the end, and changelog's guard checks nothing meanwhile; check's result
+        # then tells changelog's next start
         self.assertEqual(told[-1], f"changelog: writer gave `written`. Start `{CHECK}`.")
-        self.assertEqual((call.made, call.context), (True, []))
+        self.assertEqual((call.made, call.context), (True, ["checker: Start `checker:examiner`."]))
         self.assertEqual((meanwhile.made, ended.made), (True, True))
+        self.assertEqual(over, ["checker: examiner gave `done`. Start no more subagents."])
         self.assertEqual(
             (done.made, done.context),
             (True, [f"changelog: {CHECK} gave `done`. Start `changelog:reviewer`."]),

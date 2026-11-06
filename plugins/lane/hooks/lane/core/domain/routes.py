@@ -78,9 +78,13 @@ DONE = "done"
 def gives(
     routes: dict[str, Any] | None, name: str, ends: bool, own: list[str] | None = None
 ) -> list[str]:
-    """The results the subagent of the name may give, `ends` saying whether a lane of it is checked
-    at its end: those the routes from it are on; where none is, its own results, or DONE where it
-    names none and a lane of it is checked at its end."""
+    """The results the subagent or skill of the name may give, `ends` saying whether a lane of it is
+    checked at its end: for the skill the routes start from, those of each route that starts no
+    more, as it ends its run by one of them; for a subagent, those the routes from it are on; where
+    none is, its own results, or DONE where it names none and a lane of it is checked at its
+    end."""
+    if routes and name == routes["orchestrator"]:
+        return list(dict.fromkeys(r["on"] for r in routes["routes"] if "to" not in r))
     found = ons(routes, name) if routes else []
     return found or own or ([DONE] if ends else [])
 

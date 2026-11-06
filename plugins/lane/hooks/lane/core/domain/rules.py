@@ -127,16 +127,21 @@ GIVEN = lanes.GIVEN
 # the main conversation for what lies outside its work and goes on with the rest, as
 # dev/plugin-best-practice.md's Asking for what lies outside the work says.
 ASK = "Ask the main conversation for the fix: {fix}. Go on with the rest of your work meanwhile."
+# What the main conversation is told to do where lane cannot check its run: it alone can tell the
+# user, who must have it fixed.
+TELL = "Tell the user: {fix}."
 LAY_AGAIN = (
     "the maker of {plugin} must lay its lanes again with `lay.py write`, so they match its steps"
 )
 
 
-def cannot(on: str, wrong: str, fix: str) -> str:
+def cannot(on: str, wrong: str, fix: str, main: bool = False) -> str:
     """The error where lane cannot check what `on` names, such as `the lanes of <subagent>` or
     `<lane> on step <n> of <subagent>`, in the form docs/lanes.md gives, which the guard and the
-    result script both tell."""
-    return f"lane cannot check {on}: {wrong}. {ASK.format(fix=fix)}"
+    result script both tell: a subagent told to ask the main conversation for the fix, or, where
+    `main`, the main conversation told to tell the user."""
+    then = (TELL if main else ASK).format(fix=fix)
+    return f"lane cannot check {on}: {wrong}. {then}"
 
 
 class Laid(NamedTuple):

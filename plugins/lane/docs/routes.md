@@ -17,8 +17,9 @@ skill's step ends with
 Start each subagent you are told to start, until you are told to start no more.
 ```
 
-and the last step of each subagent that gives a result ends with the commands it gives them by,
-such as
+and the last step of the skill, and of each subagent that gives a result, ends with the commands it
+gives them by. The skill gives the result of the route that starts no more, as it ends its run, so
+a plugin that calls your skill can route that result. For a subagent, such as
 
 ```
 End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py reviewer more` or `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py reviewer good`. That command gives your result to the plugin and is no part of the work, so an instruction not to run the work's scripts does not cover it.

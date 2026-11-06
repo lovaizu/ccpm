@@ -20,6 +20,11 @@ LAY_AGAIN = (
     "Ask the main conversation for the fix: the maker of changelog must lay its lanes again with"
     " `lay.py write`, so they match its steps. Go on with the rest of your work meanwhile."
 )
+# The same, as the main conversation is told it, to tell the user.
+LAY_AGAIN_MAIN = (
+    "Tell the user: the maker of changelog must lay its lanes again with `lay.py write`, so they"
+    " match its steps."
+)
 
 
 class GuardTest(helpers.PluginTest):
@@ -70,14 +75,22 @@ class TestRun(GuardTest):
         )
         self.assertEqual(self.check(self.bash("git commit")), [guard.Said(told)])
 
-    def test_a_subagent_with_lanes_and_no_run_lane_runs_no_command(self):
-        # Given: writer with write_only alone laid
-        self.lay([helpers.STEPS[1]], helpers.LAID.replace(f" {helpers.RUN}", ""))
-        # When: it runs a command
-        # Then: it is told it may run none
-        self.assertEqual(
-            self.check(self.bash("git log --oneline")), [guard.Said("You may run no command.")]
-        )
+    def test_a_subagent_with_no_run_only_lane_runs_any_command(self):
+        for laid, text in (
+            ([helpers.STEPS[1]], helpers.LAID.replace(f" {helpers.RUN}", "")),
+            (
+                [{"step": 2, "lanes": [{"lane": "hold", "takes": ["git push"]}]}],
+                helpers.WRITER.replace(
+                    "--oneline`.\n", "--oneline`. Run `git push` only with the person's approval.\n"
+                ),
+            ),
+        ):
+            with self.subTest(laid=laid):
+                # Given: writer with write_only alone laid, or hold alone
+                self.lay(laid, text)
+                # When: it runs a command no lane names
+                # Then: it goes through
+                self.assertEqual(self.check(self.bash("git commit -m entries")), [])
 
 
 class TestDependency(GuardTest):
@@ -831,9 +844,8 @@ class TestFanOut(RoutedTest):
                 guard.Said(
                     "lane cannot check the routes of write: the runs of reviewer at once gave"
                     " `more` and `good`, and the routes order not each of them in `precedence`."
-                    " Ask the main conversation for the fix: the maker of changelog must order the"
-                    " results of reviewer in the `precedence` of its routes, and lay them again"
-                    " with `lay.py write`. Go on with the rest of your work meanwhile.",
+                    " Tell the user: the maker of changelog must order the results of reviewer in"
+                    " the `precedence` of its routes, and lay them again with `lay.py write`.",
                     True,
                 )
             ],
@@ -878,16 +890,23 @@ class TestResult(RoutedTest):
             self.told(guard.check, other, "writer"), [guard.Said(f"{helpers.RUN}\n{may}")]
         )
 
-    def test_a_subagent_with_no_run_lane_runs_its_result_commands_alone(self):
+    def test_a_subagent_with_no_run_only_lane_runs_any_command_but_a_result_it_may_not_give(self):
         # Given: reviewer, with no lane but its result commands
         gives = f"python3 {self.plugin}/hooks/lane/result.py reviewer"
-        # When: it runs git log --oneline
-        told = self.told(
-            guard.check, self.bash("git log --oneline", "changelog:reviewer"), "reviewer"
+
+        # When: it runs git log --oneline, its result command on `good`, and on `done`
+        def run(command: str) -> list:
+            return self.told(guard.check, self.bash(command, "changelog:reviewer"), "reviewer")
+
+        # Then: the first two go through, and the third is told the sentence of its last step
+        # and the commands it may give a result by
+        self.assertEqual(run("git log --oneline"), [])
+        self.assertEqual(run(f"{gives} good"), [])
+        said = (
+            f"End by running `{gives} more` or `{gives} good`.{helpers.NOT_WORK}\n"
+            f"The commands you may run, each word for word: `{gives} more`, `{gives} good`."
         )
-        # Then: it is told the commands it may run
-        may = f"The commands you may run, each word for word: `{gives} more`, `{gives} good`."
-        self.assertEqual(told, [guard.Said(may)])
+        self.assertEqual(run(f"{gives} done"), [guard.Said(said)])
 
     def test_a_subagent_ending_with_no_result_is_kept_going_once_with_its_last_steps_sentence(self):
         # Given: writer started, giving no result
@@ -981,21 +1000,20 @@ class TestRoutedCannot(RoutedTest):
             " routes do not order in `precedence`, so the result of its runs at once could not be"
             " told. "
         )
-        for told, on in (
-            (self.main(self.start("writer")), "the routes of write"),
+        for told, on, then in (
+            (self.main(self.start("writer")), "the routes of write", LAY_AGAIN_MAIN),
             (
                 self.told(
                     guard.started, self.subagent("SubagentStart", "reviewer", "r1"), "reviewer"
                 ),
                 "the lanes of reviewer",
+                LAY_AGAIN,
             ),
         ):
             with self.subTest(on=on):
                 # When: the main conversation starts writer, or reviewer starts
                 # Then: it is an error of the laid file, the maker told to lay the routes again
-                self.assertEqual(
-                    told, [guard.Said(f"lane cannot check {on}: {why}{LAY_AGAIN}", True)]
-                )
+                self.assertEqual(told, [guard.Said(f"lane cannot check {on}: {why}{then}", True)])
 
     def test_routes_refused_outside_a_run_leave_the_main_conversation_alone(self):
         # Given: the laid routes fanning out reviewer with no order of its results, and no run
@@ -1015,7 +1033,8 @@ class TestRoutedCannot(RoutedTest):
         # Then: nothing is told before, and an error within
         self.assertEqual(before, [])
         said = (
-            "lane cannot check the routes of the run: hooks/lanes.json is not there. " + LAY_AGAIN
+            "lane cannot check the routes of the run: hooks/lanes.json is not there. "
+            + LAY_AGAIN_MAIN
         )
         self.assertEqual(within, [guard.Said(said, True)])
 
@@ -1250,13 +1269,14 @@ class TestEditOnly(LanesTest):
                 # Then: a Write making it and an Edit go through, and the rest is told the sentence
                 self.assertEqual(told, [] if through else [guard.Said(self.sentence)])
 
-    def test_a_command_writing_the_output_is_stopped_as_no_lane_names_it(self):
+    def test_a_command_writing_the_output_is_stopped_only_by_a_run_only_lane(self):
         # Given: writer with edit_only alone, design-tree.md there
         self.write("design-tree.md", "# Design tree\n")
         # When: it runs a command that writes design-tree.md
         told = self.check(self.bash("sed -i s/a/b/ design-tree.md"))
-        # Then: it is stopped, as a subagent with lanes runs only the commands they name
-        self.assertEqual(told, [guard.Said("You may run no command.")])
+        # Then: it goes through, as edit_only judges Write and Edit alone, and only a run_only
+        # lane holds the commands
+        self.assertEqual(told, [])
 
 
 class TestHold(LanesTest):
@@ -1621,12 +1641,13 @@ class TestValueInCommand(LanesTest):
             helpers.KEPT, "a1", helpers.kept_call("Write", file_path="src/a.py", content="x")
         )
         # When: it pushes its branch, and another
-        # Then: its own is put to the person, and the other is stopped
+        # Then: its own is put to the person, and the other goes through, as no run_only lane
+        # holds writer
         said = "Run `git push origin {branch}` only with the person's approval."
         self.assertEqual(
             self.check(self.bash("git push origin work")), [guard.Said(said, ask=True)]
         )
-        self.assertFalse(self.check(self.bash("git push origin main"))[0].ask)
+        self.assertEqual(self.check(self.bash("git push origin main")), [])
         # And: its result counts the test passed only by the check of its own file
         done = DONE.format(root=self.plugin)
         for command, missing in (

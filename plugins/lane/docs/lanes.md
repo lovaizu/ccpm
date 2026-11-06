@@ -49,11 +49,13 @@ with no result, as [the routes](routes.md#how-a-subagent-gives-its-result) say.
 | end | end_when | End only once `<output>` is made. | gives its result before |
 | end | every_item | Answer every item of `<input>`. | gives its result with an item unanswered |
 
-A subagent with lanes reads files with Read and Grep, writes them with Write and Edit, and runs a
-command with Bash only where a run_only, hold or test_after lane names it, or its result command
-does. lane matches a command whole, as the step writes it, and reads no part of it. lane stops a
-command in any other words, and tells the subagent the sentence and, on the next line, the commands
-it may run.
+A subagent with lanes reads files with Read and Grep, and writes them with Write and Edit. A
+subagent with a run_only lane runs a command with Bash only where a run_only, hold or test_after
+lane names it, or its result command does. lane matches a command whole, as the step writes it, and
+reads no part of it. lane stops a command in any other words, and tells the subagent the sentence
+and, on the next line, the commands it may run. A subagent with no run_only lane runs any command,
+but a held one goes to the person, and a run of its result script on a result it may not give is
+stopped with the sentence of its last step and the commands it gives its results by.
 
 A command may be one that a skill of a dependency names. A dependency is a plugin that your plugin
 declares in the `dependencies` of its own `.claude-plugin/plugin.json`
@@ -121,8 +123,9 @@ edit_only lets a Write make its output while the output is not there, and lets o
 once it is. Claude Code lets an Edit go only after a Read of the file, so the subagent sees what it
 changes, while a Write puts a whole new text in place of one it need not have read. Take it for a
 file whose shape the subagent must see each time it changes a part, such as a tree whose nesting
-holds what each part serves. A command that writes the output is stopped already, as the subagent
-runs only the commands its lanes name. An output may be a folder, under which edit_only holds each
+holds what each part serves. A command that writes the output is stopped only where a run_only
+lane holds the subagent, which then runs only the commands its lanes name, so lay one beside
+edit_only. An output may be a folder, under which edit_only holds each
 file alike.
 
 read_whole counts a file read to its end where the Read calls of the subagent, by their `offset`
@@ -287,6 +290,17 @@ subagent can be checked,
 
 and, where the hook's command does not name your plugin as `lay.py write` writes it, so your plugin
 is not known, the same headed `lane:` and naming `the lanes of this hook`.
+
+Within a run of your skill, where lane cannot check the run, such as the routes laid or a start's
+record, it tells the main conversation, and you beside it,
+
+```
+<plugin>: lane cannot check the routes of <skill>: <what is wrong>. Tell the user: <who must fix it>.
+```
+
+as the main conversation is the one that tells you. Where the skill's step no longer says the
+routes' sentence, it names `follow_routes on step <n> of <skill>` in place of the routes, and no run
+begins.
 
 Here is the IN of a lane. `<place>` stands for each of its places below, and `calls` is required
 only where the lane rests on the calls kept:

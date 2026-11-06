@@ -196,13 +196,15 @@ NOT_WORK = (
 )
 END_WRITER = f"End by running `{GIVE} writer written`.{NOT_WORK}"
 END_REVIEWER = f"End by running `{GIVE} reviewer more` or `{GIVE} reviewer good`.{NOT_WORK}"
+# The skill write's sentence of its end, the result of the route that starts no more.
+END_WRITE = f"End by running `{GIVE} write good`.{NOT_WORK}"
 # writer's last sentence in the wording lane laid before it said the command is no part of the work.
 END_WRITER_EARLIER = f"End by running `{GIVE} writer written`."
 # The skill and the two subagents as `lay.py write` writes them with the routes, writer's lanes
 # beside.
 SKILL_LAID = SKILL.replace(
     "1. Have the entries written and reviewed.\n",
-    f"1. Have the entries written and reviewed. {FOLLOW}\n",
+    f"1. Have the entries written and reviewed. {FOLLOW} {END_WRITE}\n",
 )
 WRITER_LAID = LAID.replace("you wrote.\n", f"you wrote. {END_WRITER}\n")
 REVIEWER_LAID = REVIEWER.replace("you found.\n", f"you found. {END_REVIEWER}\n")
@@ -572,13 +574,13 @@ class RunTest(testing.GitTest):
         assert done.returncode == 0, done.stdout
         return done.stdout
 
-    def checker(self) -> str:
+    def checker(self, laid: str = "examiner.json") -> str:
         """Installs the stand-in dependency checker in a folder of its own, lays it by its own
-        proposal, examiner.json, has changelog declare it and the double of Claude Code run its
-        hooks too; gives the folder it is installed in."""
+        proposal of the name kept in ux/, has changelog declare it and the double of Claude Code
+        run its hooks too; gives the folder it is installed in."""
         installed = os.path.join(self.base, "cache", "checker", "0.1.0")
         shutil.copytree(os.path.join(UX, "checker"), installed)
-        given = self.ux_proposal("examiner.json")
+        given = self.ux_proposal(laid)
         given["plugin"] = installed
         self.lay(given, path=os.path.join(".lane", "20261104-checker", "checker.json"))
         manifest = os.path.join(self.plugin, ".claude-plugin", "plugin.json")

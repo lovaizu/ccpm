@@ -63,7 +63,6 @@ WATCHED = {
 RUNS = {"run_only": "commands", "hold": "commands", "test_after": "test", "result": "commands"}
 # What a subagent is told, after its run lanes' sentences, of the commands it may run.
 MAY_RUN = "The commands you may run, each word for word: {listed}."
-RUN_NONE = "You may run no command."
 DEPENDENCY_FOLDER = (
     "Each `${dependency:<name>}` is the folder the plugin of the name is installed in, as its skill"
     " gives the command."
@@ -234,6 +233,12 @@ def cannot(on: str, wrong: str, fix: str) -> Said:
     """The error where lane cannot check what `on` names, such as `the lanes of <subagent>` or
     `<lane> on step <n> of <subagent>`, in the form docs/lanes.md gives."""
     return Said(rules.cannot(on, wrong, fix), True)
+
+
+def cannot_main(on: str, wrong: str, fix: str) -> Said:
+    """The error where lane cannot check what `on` names of a run, such as `the routes of
+    <skill>`, in the form docs/lanes.md gives the main conversation."""
+    return Said(rules.cannot(on, wrong, fix, main=True), True)
 
 
 def unshaped(name: str, wrong: str) -> Said:
@@ -474,9 +479,12 @@ def write_checked(s: Subagent, event: dict[str, Any], path: str) -> list[Said]:
 
 def run_checked(s: Subagent, event: dict[str, Any], command: str) -> list[Said]:
     """What a run of the command is told: a held command put to the person with its hold lane's
-    sentence; nothing where the command is one its lanes name, or a lane's value is null, but a
-    result command with what is missing of the lanes checked at the end; the sentences of its
-    run_only and hold lanes, and the commands it may run, each value put in, otherwise."""
+    sentence; a result command, what is missing of the lanes checked at the end; where the
+    subagent has no run_only lane, nothing, but for a run of its result script on a result it may
+    not give, told the sentence of its last step and the commands it gives its results by;
+    otherwise nothing where the command is one its lanes name, or a lane's value is null, and the
+    sentences of its run_only and hold lanes, and the commands it may run, each value put in, where
+    it is not."""
     judging = s.of(*RUNS)
     named: list[tuple[rules.Laid, list[str]]] = []
     values: dict[str, list[str]] = {}
@@ -492,14 +500,21 @@ def run_checked(s: Subagent, event: dict[str, Any], command: str) -> list[Said]:
         holding = lane.lane == "hold"  # pragma: no mutate
         if holding and run_only.allows(command, takes, s.root, cwd, values):
             return [sentences([lane])._replace(ask=True)]
-    if command.strip() in s.commands("result"):
+    results = s.commands("result")
+    if command.strip() in results:
         return ended(s, cwd)
+    if not any(g.lane == "run_only" for g in judging):
+        # A result command ends in its result, so one of another result has the same words first.
+        if command.strip().rsplit(" ", 1)[0] not in {c.rsplit(" ", 1)[0] for c in results}:
+            return []
+        listed = ", ".join(f"`{c}`" for c in results)
+        return [Said(f"{lanes.sentence('result', results)}\n{MAY_RUN.format(listed=listed)}")]
     takes = list(dict.fromkeys(c for _, each in named for c in each))
     if run_only.allows(command, takes, s.root, cwd, values):
         return []
     told = [lanes.sentence(g.lane, g.takes) for g in judging if g.lane in ("run_only", "hold")]
     listed = ", ".join(f"`{c}`" for c in run_only.put(takes, s.root, values))
-    told.append(MAY_RUN.format(listed=listed) if takes else RUN_NONE)
+    told.append(MAY_RUN.format(listed=listed))
     if any(run_only.DEPENDENCY.search(t) for t in takes):
         told.append(DEPENDENCY_FOLDER)
     return [Said("\n".join(told))]
@@ -666,9 +681,11 @@ class Main(NamedTuple):
             )
         except routes.Unordered as why:
             fix = ORDER.format(plugin=self.plugin, name=why.name)
-            raise Cannot(cannot(f"the routes of {self.skill()}", str(why), fix)) from None
+            raise Cannot(cannot_main(f"the routes of {self.skill()}", str(why), fix)) from None
         except ValueError as why:
-            raise Cannot(cannot(f"the routes of {self.skill()}", str(why), LANES_FAULT)) from None
+            raise Cannot(
+                cannot_main(f"the routes of {self.skill()}", str(why), LANES_FAULT)
+            ) from None
 
     def begun(self) -> bool:
         """Whether a run of the skill has begun and was not let end; stops with Cannot where its
@@ -676,7 +693,9 @@ class Main(NamedTuple):
         try:
             return called.begun(self.session)
         except ValueError as why:
-            raise Cannot(cannot(f"the routes of {self.skill()}", str(why), LANES_FAULT)) from None
+            raise Cannot(
+                cannot_main(f"the routes of {self.skill()}", str(why), LANES_FAULT)
+            ) from None
 
     def on(self) -> bool:
         """Whether a run of the skill is on: begun, and a start still due or waited for."""
@@ -732,7 +751,7 @@ def main(root: str, plugin: str, event: dict[str, Any], wrong: str) -> Main | No
         if not Main(root, plugin, session, {"orchestrator": ""}).begun():
             return None
         fix = LAY_AGAIN.format(plugin=plugin)
-        raise Cannot(cannot("the routes of the run", str(why), fix)) from None
+        raise Cannot(cannot_main("the routes of the run", str(why), fix)) from None
     routed = rules.routes_of(laid)
     if routed is None:
         return None
@@ -740,12 +759,12 @@ def main(root: str, plugin: str, event: dict[str, Any], wrong: str) -> Main | No
     why = routes.refused(routed)
     if why and m.begun():
         fix = LAY_AGAIN.format(plugin=plugin)
-        raise Cannot(cannot(f"the routes of {m.skill()}", f"{rules.FILE} {why}", fix))
+        raise Cannot(cannot_main(f"the routes of {m.skill()}", f"{rules.FILE} {why}", fix))
     if why:
         return None
     if wrong and m.on():
         said = f"the hook was handed no event as Claude Code hands it, {wrong}"
-        raise Cannot(cannot(f"the routes of {m.skill()}", said, CLAUDE_CODE))
+        raise Cannot(cannot_main(f"the routes of {m.skill()}", said, CLAUDE_CODE))
     return None if wrong else m
 
 
@@ -779,7 +798,9 @@ def begin(m: Main) -> list[Said]:
     if not step.holds(m.root, m.skill(), m.routes["step"], said, skill=True):
         gone = f"step {m.routes['step']} no longer says: {said}".rstrip(".")
         fix = LAY_AGAIN.format(plugin=m.plugin)
-        raise Cannot(cannot(f"follow_routes on step {m.routes['step']} of {m.skill()}", gone, fix))
+        raise Cannot(
+            cannot_main(f"follow_routes on step {m.routes['step']} of {m.skill()}", gone, fix)
+        )
     called.keep(m.session, called.RUN, called.START)
     return m.told()
 
@@ -851,7 +872,7 @@ def main_kept(m: Main, event: dict[str, Any]) -> list[Said]:
         use = event.get("tool_use_id")
         if not isinstance(use, str) or not called.ID.fullmatch(use):
             said = "the hook was handed no event as Claude Code hands it, $.tool_use_id: no ID"
-            return [cannot(f"the routes of {m.skill()}", said, CLAUDE_CODE)]
+            return [cannot_main(f"the routes of {m.skill()}", said, CLAUDE_CODE)]
         made = {"status": SKILL, "agentId": use}
         called.keep(m.session, called.RUN, called.call(tool, given, made))
         return []
@@ -860,7 +881,7 @@ def main_kept(m: Main, event: dict[str, Any]) -> list[Said]:
         said = (
             f"the hook was handed no event as Claude Code hands it, $.tool_response{out.told()[1:]}"
         )
-        error = cannot(f"the routes of {m.skill()}", said, CLAUDE_CODE)
+        error = cannot_main(f"the routes of {m.skill()}", said, CLAUDE_CODE)
         return [error, Said(routes.line(before, m.plugin))]
     called.keep(m.session, called.RUN, called.call(tool, given, back, joined(before, name)))
     return m.told()

@@ -31,7 +31,7 @@ ROUTES_PRINTED = f"""Routes of write, laid on its step 1:
   reviewer `more`   start writer
   reviewer `good`   start no more
 
-1. Have the entries written and reviewed. {helpers.FOLLOW}
+1. Have the entries written and reviewed. {helpers.FOLLOW} {helpers.END_WRITE}
 
 Lanes of writer, each checked only in writer:
   step 2  run:   {helpers.RUN}  type run_only
@@ -374,7 +374,8 @@ class TestRoutes(RoutesTest):
                 if not gone:
                     self.assertEqual(self.read(self.skill_file), helpers.SKILL)
                 self.assertIn("Wrote step 1 of draft into skills/draft/SKILL.md.\n", said)
-                self.assertIn(f"reviewed. {helpers.FOLLOW}\n", self.read(draft))
+                said = f"reviewed. {helpers.FOLLOW} {helpers.END_WRITE.replace('write', 'draft')}\n"
+                self.assertIn(said, self.read(draft))
 
     def test_the_skill_is_laid_the_routes_sentence_and_no_subagent_is(self):
         # Given: routes from write to editor, a name before write's
@@ -387,7 +388,10 @@ class TestRoutes(RoutesTest):
         # When: it is printed
         printed = layer.printed(helpers.PROPOSED)
         # Then: write's step follows the routes, shown with them, and editor gives its result alone
-        self.assertIn(f"\n\n1. Have the entries written and reviewed. {helpers.FOLLOW}\n", printed)
+        ended = f"End by running `{helpers.GIVE} write edited`.{helpers.NOT_WORK}"
+        self.assertIn(
+            f"\n\n1. Have the entries written and reviewed. {helpers.FOLLOW} {ended}\n", printed
+        )
         self.assertNotIn("Lanes of write", printed)
         self.assertNotIn(helpers.FOLLOW, printed.split("Lanes of editor")[1])
 

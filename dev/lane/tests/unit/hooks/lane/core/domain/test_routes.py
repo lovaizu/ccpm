@@ -52,7 +52,8 @@ class TestGives(unittest.TestCase):
         for routed, name, ends, ons in (
             (helpers.ROUTES, "reviewer", False, ["more", "good"]),
             (helpers.ROUTES, "writer", True, ["written"]),
-            (helpers.ROUTES, "write", True, ["done"]),
+            (helpers.ROUTES, "write", False, ["good"]),
+            (helpers.DEPENDENCY_ROUTES, "write", False, ["asks", "done"]),
             (None, "writer", True, ["done"]),
             (None, "writer", False, []),
         ):

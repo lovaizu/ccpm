@@ -429,6 +429,7 @@ sequenceDiagram
         else reviewer gave good, whose route starts no more
           H-->>CC: context, the result, and start no more subagents (Answer)
           G->>C: ends the run (Run)
+          M->>CC: runs the result script with good, as the skill's last step says, so a caller's route can take it
         else the subagent ended with no result
           H-->>CC: context, start it again (Answer)
         end
@@ -591,10 +592,8 @@ sequenceDiagram
       H-->>CC: deny, with the sentence and the start due (Answer)
       CC-->>M: the plugin's name, the sentence and the start due
     else it gave a result
+      G->>C: keeps the message as values of the start, as the resumed subagent may call before the message comes back (Start value)
       H-->>CC: nothing to tell, so the message goes on (Answer)
-      CC->>H: PostToolUse of the message (Event)
-      H->>G: a message to the subagent (Event)
-      G->>C: keeps the message as values of the start (Start value)
       Note over SA,G: The subagent gives a result again, as above, in place of the earlier one.
     end
   end

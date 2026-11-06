@@ -4,9 +4,7 @@ Lane is a Claude Code plugin that has the skill and subagents of the plugin you 
 steps you wrote and go in the order you set, on every run.
 
 Lane 0.1.0 is still in development and not yet released. The walkthrough below shows what Lane is
-built to show, not yet a recorded run, as Lane is being rebuilt to hold the main conversation. A
-real run's output takes its place once Lane is built. Lane installed now holds your subagents to
-their rules, but not yet the main conversation to your routes.
+built to show, not yet a recorded run, until a recorded run's output takes its place.
 
 Lane is for you when you build a Claude Code plugin whose skill and subagents work in numbered
 steps, and some step must hold on every run. With it, your plugin runs as you designed it, and you
@@ -23,8 +21,8 @@ after another one ends with a given result, a word such as `more`.
 - Lane is not a security boundary. Hold what must never happen, such as a merge, with GitHub's
   branch protection or Claude Code's permission rules.
 - Lane sees tool calls and the end of work, not thoughts. "Compare each option" cannot be a rule.
-- Lane does not read a shell command. A subagent with rules runs only the commands you name, each
-  matched whole.
+- Lane does not read a shell command. A subagent with a run_only rule runs only the commands you
+  name, each matched whole.
 - Lane does not judge the work. The next start comes from the result a subagent gives.
 - Lane approves no command for anyone. A command you hold for approval goes to the person through
   Claude Code's own permission prompt.
@@ -135,7 +133,7 @@ Routes of write, laid on its step 1:
   reviewer `more`   start writer
   reviewer `good`   start no more
 
-1. Have the entries written and reviewed. Start each subagent you are told to start, until you are told to start no more.
+1. Have the entries written and reviewed. Start each subagent you are told to start, until you are told to start no more. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py write good`. ...
 
 Lanes of writer, each checked only in writer:
   step 2  run:   Run only `git log --oneline`.  type run_only
