@@ -242,9 +242,9 @@ Rn is tested as [Test](../plugin-best-practice.md#test) says.
 
 | Deployment unit | unit | architecture | ux |
 |---|---|---|---|
-| Rn's scripts [Python 3.9] | unittest, Cosmic Ray, Hypothesis · ●●● · the steering, each CCS, each proposal and answer | ▨[^1] | ▨[^2] |
-| the orchestrator and the compressor [Claude Code · Markdown] | a trial of each move · ●●○ · the move from a state made beforehand | ▨[^1] | ▨[^2] |
-| Rn with Turn [Claude Code] | ▨[^3] | ▨[^3] | the acceptance test · ●●○ · KR1.1 and KR1.2 |
+| Rn's scripts [Python 3.9] | unittest, Cosmic Ray, Hypothesis · FULL · the steering, each CCS, each proposal and answer | ▨[^1] | ▨[^2] |
+| the orchestrator and the compressor [Claude Code · Markdown] | a trial of each move · HAPPY · the move from a state made beforehand | ▨[^1] | ▨[^2] |
+| Rn with Turn [Claude Code] | ▨[^3] | ▨[^3] | the acceptance test · HAPPY · KR1.1 and KR1.2 |
 
 [^1]: Empty: no test yet runs rn's sequences with its scripts real and the orchestrator and the compressor as doubles. The trial of each move checks, with the model, how the moves follow one another.
 [^2]: ux tests run on the whole, in the last row.

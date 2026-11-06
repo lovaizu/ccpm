@@ -152,8 +152,9 @@ sequenceDiagram
 > - The figure: the deliverable's own at images/tests.svg, the product named in its alt text: a
 >   table with a row for each deployment unit, by its name in Deployment, and a column for each test
 >   level from narrow to wide, each named by what it checks against: unit, a part's contract;
->   architecture, this document; ux, the product vision. Each cell holds the tool, a weight,
->   such as ●●○, and what it checks in a few words; an empty cell says why. Under it, for each
+>   architecture, this document; ux, the product vision. Each cell holds the tool, how far it
+>   tries the unit, and what it checks in a few words: FULL, each case and edge; HAPPY, the main
+>   paths; SMOKE, a run that confirms what lower levels checked; an empty cell says why. Under it, for each
 >   level: what runs real, what doubles stand in for and where their results come from, who stands
 >   in for the role, and when it passes, with how many runs of how many where a result varies; only
 >   where the product differs from the shared rules.

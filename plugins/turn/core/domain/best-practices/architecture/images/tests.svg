@@ -56,16 +56,16 @@
   <text class="name start" x="42" y="110" text-anchor="start">script process</text>
   <text class="kind start" x="42" y="128" text-anchor="start">[python3 3.9 or later]</text>
   <rect class="unit" x="272" y="80" width="380" height="110" rx="6"/>
-  <text class="name start" x="284" y="108" text-anchor="start">unittest, Cosmic Ray, Hypothesis · ●●●</text>
+  <text class="name start" x="284" y="108" text-anchor="start">unittest, Cosmic Ray, Hypothesis · FULL</text>
   <text class="label start" x="284" y="130" text-anchor="start">each class of a best practice, a Call, a round</text>
   <text class="label start" x="284" y="149" text-anchor="start">and its Answers, each rule of the phase's</text>
   <text class="label start" x="284" y="168" text-anchor="start">table, and each script's three results</text>
   <rect class="unit" x="662" y="80" width="380" height="110" rx="6"/>
-  <text class="name start" x="674" y="108" text-anchor="start">unittest · ●●●</text>
+  <text class="name start" x="674" y="108" text-anchor="start">unittest · FULL</text>
   <text class="label start" x="674" y="130" text-anchor="start">each script run real at each step of each</text>
   <text class="label start" x="674" y="149" text-anchor="start">path, on the files the doubles write</text>
   <rect class="box" x="1052" y="80" width="380" height="110" rx="6"/>
-  <text class="name start" x="1064" y="108" text-anchor="start">a trial on Opus · ●○○</text>
+  <text class="name start" x="1064" y="108" text-anchor="start">a trial on Opus · SMOKE</text>
   <text class="label start" x="1064" y="130" text-anchor="start">each script run by the real roles</text>
   <rect class="box" x="30" y="200" width="232" height="110" rx="6"/>
   <text class="name start" x="42" y="230" text-anchor="start">hook process</text>
@@ -75,12 +75,12 @@
   <text class="label start" x="284" y="250" text-anchor="start">Lane's unit tests test the guard,</text>
   <text class="label start" x="284" y="269" text-anchor="start">and Turn writes none of its code</text>
   <rect class="unit" x="662" y="200" width="380" height="110" rx="6"/>
-  <text class="name start" x="674" y="228" text-anchor="start">unittest · ●●●</text>
+  <text class="name start" x="674" y="228" text-anchor="start">unittest · FULL</text>
   <text class="label start" x="674" y="250" text-anchor="start">Turn's guard on Turn's Rules laid, a double</text>
   <text class="label start" x="674" y="269" text-anchor="start">of Claude Code: each start, result, call and</text>
   <text class="label start" x="674" y="288" text-anchor="start">read on every path</text>
   <rect class="box" x="1052" y="200" width="380" height="110" rx="6"/>
-  <text class="name start" x="1064" y="228" text-anchor="start">a trial on Opus · ●○○</text>
+  <text class="name start" x="1064" y="228" text-anchor="start">a trial on Opus · SMOKE</text>
   <text class="label start" x="1064" y="250" text-anchor="start">the guard on the real roles</text>
   <rect class="box" x="30" y="320" width="232" height="110" rx="6"/>
   <text class="name start" x="42" y="350" text-anchor="start">Claude Code process</text>
@@ -90,11 +90,11 @@
   <text class="label start" x="284" y="370" text-anchor="start">no level tries a prompt alone: the guards</text>
   <text class="label start" x="284" y="389" text-anchor="start">hold the rules that must hold</text>
   <rect class="unit" x="662" y="320" width="380" height="110" rx="6"/>
-  <text class="name start" x="674" y="348" text-anchor="start">unittest · ●●○</text>
+  <text class="name start" x="674" y="348" text-anchor="start">unittest · HAPPY</text>
   <text class="label start" x="674" y="370" text-anchor="start">the entries as Claude Code takes them, every</text>
   <text class="label start" x="674" y="389" text-anchor="start">role a double: each path of each sequence</text>
   <rect class="box" x="1052" y="320" width="380" height="110" rx="6"/>
-  <text class="name start" x="1064" y="348" text-anchor="start">trials on Opus · ●●○</text>
+  <text class="name start" x="1064" y="348" text-anchor="start">trials on Opus · HAPPY</text>
   <text class="label start" x="1064" y="370" text-anchor="start">O1 on tidy's README and on a man page, by</text>
   <text class="label start" x="1064" y="389" text-anchor="start">/turn:up and through a plugin made for the</text>
   <text class="label start" x="1064" y="408" text-anchor="start">test: KR1.1 and KR1.2 measured</text>
@@ -105,7 +105,7 @@
   <text class="label small" x="424" y="455" text-anchor="start">runs once every lower level passes</text>
   <rect class="ext" x="690" y="440" width="36" height="22" rx="4"/>
   <text class="label small" x="734" y="455" text-anchor="start">empty, with why</text>
-  <text class="label small" x="880" y="455" text-anchor="start">tool · weight (●●● heaviest), then what the tests check</text>
+  <text class="label small" x="880" y="455" text-anchor="start">tool · FULL, HAPPY or SMOKE, then what the tests check</text>
   <text class="label start" x="30" y="490" text-anchor="start">No row: installed Turn, the repository and the temporary folder hold files and run nothing, and the tests reach them through the processes that read them.</text>
   <text class="label start" x="30" y="509" text-anchor="start">Pin's tree.py and Lane's code, linked into Turn, are tested by their own plugins.</text>
   <rect class="frame" x="20" y="522" width="1420" height="368" rx="8"/>

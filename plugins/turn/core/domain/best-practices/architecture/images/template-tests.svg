@@ -56,13 +56,13 @@
   <text class="name start" x="42" y="106" text-anchor="start">&lt;deployment unit&gt;</text>
   <text class="kind start" x="42" y="124" text-anchor="start">[&lt;technology&gt;]</text>
   <rect class="unit" x="270" y="80" width="300" height="100" rx="4"/>
-  <text class="name start" x="282" y="106" text-anchor="start">&lt;tool&gt; · &lt;weight&gt;</text>
+  <text class="name start" x="282" y="106" text-anchor="start">&lt;tool&gt; · &lt;how far&gt;</text>
   <text class="label small start" x="282" y="126" text-anchor="start">&lt;what it checks&gt;</text>
   <rect class="unit" x="590" y="80" width="300" height="100" rx="4"/>
-  <text class="name start" x="602" y="106" text-anchor="start">&lt;tool&gt; · &lt;weight&gt;</text>
+  <text class="name start" x="602" y="106" text-anchor="start">&lt;tool&gt; · &lt;how far&gt;</text>
   <text class="label small start" x="602" y="126" text-anchor="start">&lt;what it checks&gt;</text>
   <rect class="unit" x="910" y="80" width="270" height="100" rx="4"/>
-  <text class="name start" x="922" y="106" text-anchor="start">&lt;tool&gt; · &lt;weight&gt;</text>
+  <text class="name start" x="922" y="106" text-anchor="start">&lt;tool&gt; · &lt;how far&gt;</text>
   <text class="label small start" x="922" y="126" text-anchor="start">&lt;what it checks&gt;</text>
   <rect class="box" x="30" y="200" width="220" height="100" rx="4"/>
   <text class="name start" x="42" y="226" text-anchor="start">&lt;deployment unit&gt;</text>
@@ -71,17 +71,17 @@
   <text class="name start" x="282" y="226" text-anchor="start">empty</text>
   <text class="label small start" x="282" y="246" text-anchor="start">&lt;why&gt;</text>
   <rect class="unit" x="590" y="200" width="300" height="100" rx="4"/>
-  <text class="name start" x="602" y="226" text-anchor="start">&lt;tool&gt; · &lt;weight&gt;</text>
+  <text class="name start" x="602" y="226" text-anchor="start">&lt;tool&gt; · &lt;how far&gt;</text>
   <text class="label small start" x="602" y="246" text-anchor="start">&lt;what it checks&gt;</text>
   <rect class="unit" x="910" y="200" width="270" height="100" rx="4"/>
-  <text class="name start" x="922" y="226" text-anchor="start">&lt;tool&gt; · &lt;weight&gt;</text>
+  <text class="name start" x="922" y="226" text-anchor="start">&lt;tool&gt; · &lt;how far&gt;</text>
   <text class="label small start" x="922" y="246" text-anchor="start">&lt;what it checks&gt;</text>
   <text class="frame-name start" x="30" y="330" text-anchor="start">Legend</text>
   <rect class="unit" x="100" y="315" width="36" height="22" rx="4"/>
   <text class="label small start" x="144" y="330" text-anchor="start">a level's tests on the unit</text>
   <rect class="ext" x="340" y="315" width="36" height="22" rx="4"/>
   <text class="label small start" x="384" y="330" text-anchor="start">empty, with why</text>
-  <text class="label small start" x="540" y="330" text-anchor="start">tool · weight, such as ●●○ (●●● heaviest), then what the tests check</text>
+  <text class="label small start" x="540" y="330" text-anchor="start">tool · FULL, HAPPY or SMOKE, then what the tests check</text>
   <rect class="frame" x="20" y="360" width="1160" height="260" rx="8"/>
   <text class="frame-name start" x="34" y="382" text-anchor="start">Where &lt;Product&gt;'s tests differ from &lt;shared rules&gt;</text>
   <text class="name start" x="40" y="410" text-anchor="start">unit</text>

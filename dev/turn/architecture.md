@@ -492,18 +492,18 @@ and differs from them where this section says.
 
 ![Turn's tests](images/tests.svg)
 
-- **The script process at ●●● at unit and at architecture** over a lighter weight: a check that
+- **The script process tried FULL at unit and at architecture** over HAPPY: a check that
   passes wrongly sends a gap into the work unseen, or hands the evaluator what the work's user never sees
   (KR1.1). It costs the most tests to keep up as the scripts change.
-- **The hook process at ●●● at architecture** over a lighter weight: only the guard holds each role
+- **The hook process tried FULL at architecture** over HAPPY: only the guard holds each role
   to its rules and the course to its routes, and a rule let through lets the evaluator read the
   design or the generator write beside the work (KR1.1). It costs architecture tests that run the
   guard on every call, the slowest of the tests that run on every push.
-- **The Claude Code process at ●●○ at architecture** over ●●●: a test there only finds sooner an
+- **The Claude Code process tried HAPPY at architecture** over FULL: a test there only finds sooner an
   entry that Claude Code would not load as Turn needs, which every ux trial also meets before a
   user does (KR1.1). It costs such a fault showing only once a trial runs, where a heavier
   test would show it on the push.
-- **The Claude Code process at ●●○ at ux, and the other rows at ●○○,** over trials weighed alike:
+- **The Claude Code process tried HAPPY at ux, and the other rows SMOKE,** over every row alike:
   only these trials run the prompts, while the other rows only confirm what lower levels have
   checked (KR1.1). It costs a prompt's fault showing only once every lower level passes.
 - **Mutation testing on the unit tests alone** over all the tests: the unit tests are the ones that

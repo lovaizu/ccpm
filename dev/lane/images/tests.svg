@@ -56,17 +56,17 @@
   <text class="name start" x="42" y="110" text-anchor="start">lay.py process</text>
   <text class="kind start" x="42" y="128" text-anchor="start">[python3 3.9 or later]</text>
   <rect class="unit" x="272" y="80" width="320" height="120" rx="6"/>
-  <text class="name start" x="284" y="108" text-anchor="start">unittest, Cosmic Ray, Hypothesis · ●●●</text>
+  <text class="name start" x="284" y="108" text-anchor="start">unittest, Cosmic Ray, Hypothesis · FULL</text>
   <text class="label" x="284" y="128" text-anchor="start">a proposal laid or refused;</text>
   <text class="label" x="284" y="148" text-anchor="start">steps, hook entries and</text>
   <text class="label" x="284" y="168" text-anchor="start">Lane&#x27;s code written</text>
   <rect class="unit" x="602" y="80" width="320" height="120" rx="6"/>
-  <text class="name start" x="614" y="108" text-anchor="start">unittest · ●●●</text>
+  <text class="name start" x="614" y="108" text-anchor="start">unittest · FULL</text>
   <text class="label" x="614" y="128" text-anchor="start">lay.py and the files it lays real,</text>
   <text class="label" x="614" y="148" text-anchor="start">a double of claude:</text>
   <text class="label" x="614" y="168" text-anchor="start">each path of S1, S2 and S7</text>
   <rect class="box" x="932" y="80" width="320" height="120" rx="6"/>
-  <text class="name start" x="944" y="108" text-anchor="start">a trial on Opus · ●○○</text>
+  <text class="name start" x="944" y="108" text-anchor="start">a trial on Opus · SMOKE</text>
   <text class="label" x="944" y="128" text-anchor="start">the developer AI lays the rules</text>
   <text class="label" x="944" y="148" text-anchor="start">of O1 and the routes of O2</text>
   <text class="label" x="944" y="168" text-anchor="start">on changelog</text>
@@ -74,37 +74,37 @@
   <text class="name start" x="42" y="240" text-anchor="start">hook process</text>
   <text class="kind start" x="42" y="258" text-anchor="start">[python3 3.9 or later]</text>
   <rect class="unit" x="272" y="210" width="320" height="120" rx="6"/>
-  <text class="name start" x="284" y="238" text-anchor="start">unittest, Cosmic Ray, Hypothesis · ●●●</text>
+  <text class="name start" x="284" y="238" text-anchor="start">unittest, Cosmic Ray, Hypothesis · FULL</text>
   <text class="label" x="284" y="258" text-anchor="start">each type of rule; a call kept;</text>
   <text class="label" x="284" y="278" text-anchor="start">the next start; a text read</text>
   <text class="label" x="284" y="298" text-anchor="start">into Port JSON</text>
   <rect class="unit" x="602" y="210" width="320" height="120" rx="6"/>
-  <text class="name start" x="614" y="238" text-anchor="start">unittest · ●●●</text>
+  <text class="name start" x="614" y="238" text-anchor="start">unittest · FULL</text>
   <text class="label" x="614" y="258" text-anchor="start">the check script run by the hooks&#x27;</text>
   <text class="label" x="614" y="278" text-anchor="start">commands in sh, doubles of Claude</text>
   <text class="label" x="614" y="298" text-anchor="start">Code and the AIs: each path of S3 to S6</text>
   <rect class="box" x="932" y="210" width="320" height="120" rx="6"/>
-  <text class="name start" x="944" y="238" text-anchor="start">a trial on Opus · ●○○</text>
+  <text class="name start" x="944" y="238" text-anchor="start">a trial on Opus · SMOKE</text>
   <text class="label" x="944" y="258" text-anchor="start">writer held to its rules (O1),</text>
   <text class="label" x="944" y="278" text-anchor="start">lead to its routes (O2)</text>
   <rect class="box" x="30" y="340" width="232" height="120" rx="6"/>
   <text class="name start" x="42" y="370" text-anchor="start">result process</text>
   <text class="kind start" x="42" y="388" text-anchor="start">[python3 3.9 or later]</text>
   <rect class="unit" x="272" y="340" width="320" height="120" rx="6"/>
-  <text class="name start" x="284" y="368" text-anchor="start">unittest, Cosmic Ray, Hypothesis · ●●●</text>
+  <text class="name start" x="284" y="368" text-anchor="start">unittest, Cosmic Ray, Hypothesis · FULL</text>
   <text class="label" x="284" y="388" text-anchor="start">each result a subagent</text>
   <text class="label" x="284" y="408" text-anchor="start">may give, and one it may not</text>
   <rect class="unit" x="602" y="340" width="320" height="120" rx="6"/>
-  <text class="name start" x="614" y="368" text-anchor="start">unittest · ●●●</text>
+  <text class="name start" x="614" y="368" text-anchor="start">unittest · FULL</text>
   <text class="label" x="614" y="388" text-anchor="start">result.py run as a step writes it:</text>
   <text class="label" x="614" y="408" text-anchor="start">each path of S4</text>
   <rect class="box" x="932" y="340" width="320" height="120" rx="6"/>
-  <text class="name start" x="944" y="368" text-anchor="start">a trial on Opus · ●○○</text>
+  <text class="name start" x="944" y="368" text-anchor="start">a trial on Opus · SMOKE</text>
   <text class="label" x="944" y="388" text-anchor="start">the results of O2</text>
   <text class="frame-name" x="30" y="496" text-anchor="start">Legend</text>
   <rect class="unit" x="100" y="482" width="36" height="22" rx="4"/>
   <text class="label small" x="144" y="497" text-anchor="start">runs on every push and in CI</text>
   <rect class="box" x="370" y="482" width="36" height="22" rx="4"/>
   <text class="label small" x="414" y="497" text-anchor="start">runs once every lower level passes</text>
-  <text class="label small" x="700" y="497" text-anchor="start">tool · weight (●●● heaviest), then what the tests check</text>
+  <text class="label small" x="700" y="497" text-anchor="start">tool · FULL, HAPPY or SMOKE, then what the tests check</text>
 </svg>

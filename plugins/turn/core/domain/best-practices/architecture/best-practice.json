@@ -57,7 +57,7 @@
   {
    "id": "Q11",
    "about": "Deployment, Tests",
-   "what": "Asked whether anything in the product goes untested, does the developer see for each deployment unit which levels cover it, how heavily, and why a level is missing, so that no gap is left unseen?"
+   "what": "Asked whether anything in the product goes untested, does the developer see for each deployment unit which levels cover it, how far each tries it, and why a level is missing, so that no gap is left unseen?"
   },
   {
    "id": "Q12",
@@ -72,7 +72,7 @@
   {
    "id": "Q14",
    "about": "Components, Sequences, Deployment, Directory structure, Tests",
-   "what": "Doubting a choice the document makes, such as a tool or a test's weight, does the developer see what would be lost by the other way, so that they keep or change it knowing what it was for?"
+   "what": "Doubting a choice the document makes, such as a tool or how far a level tries a unit, does the developer see what would be lost by the other way, so that they keep or change it knowing what it was for?"
   },
   {
    "id": "Q15",
@@ -185,7 +185,7 @@
   },
   {
    "intent": "Q14",
-   "thinking": "Beside each choice a developer would question, such as a technology, a tool or a unit's weight, stands why it beat the other way and what it costs. The developer then keeps or changes it knowing what it was for.",
+   "thinking": "Beside each choice a developer would question, such as a technology, a tool or how far a level tries a unit, stands why it beat the other way and what it costs. The developer then keeps or changes it knowing what it was for.",
    "steps": [
     "Read each figure as a developer new to the product, and give a why and a cost to each choice they would question."
    ]

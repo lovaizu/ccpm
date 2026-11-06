@@ -56,16 +56,16 @@
   <text class="name start" x="42" y="110" text-anchor="start">check.py process</text>
   <text class="kind start" x="42" y="128" text-anchor="start">[python3 3.9 or later]</text>
   <rect class="unit" x="272" y="80" width="320" height="120" rx="6"/>
-  <text class="name start" x="284" y="108" text-anchor="start">unittest, Cosmic Ray, Hypothesis · ●●●</text>
+  <text class="name start" x="284" y="108" text-anchor="start">unittest, Cosmic Ray, Hypothesis · FULL</text>
   <text class="label" x="284" y="128" text-anchor="start">each class of the design tree,</text>
   <text class="label" x="284" y="148" text-anchor="start">and each of its three results</text>
   <rect class="unit" x="602" y="80" width="320" height="120" rx="6"/>
-  <text class="name start" x="614" y="108" text-anchor="start">unittest · ●●●</text>
+  <text class="name start" x="614" y="108" text-anchor="start">unittest · FULL</text>
   <text class="label" x="614" y="128" text-anchor="start">check.py run by the command of</text>
   <text class="label" x="614" y="148" text-anchor="start">the pinner&#x27;s rule, on the design</text>
   <text class="label" x="614" y="168" text-anchor="start">file of each path</text>
   <rect class="box" x="932" y="80" width="320" height="120" rx="6"/>
-  <text class="name start" x="944" y="108" text-anchor="start">a trial on Opus · ●○○</text>
+  <text class="name start" x="944" y="108" text-anchor="start">a trial on Opus · SMOKE</text>
   <text class="label" x="944" y="128" text-anchor="start">check.py run by the real pinner</text>
   <rect class="box" x="30" y="210" width="232" height="120" rx="6"/>
   <text class="name start" x="42" y="240" text-anchor="start">hook process</text>
@@ -75,12 +75,12 @@
   <text class="label" x="284" y="258" text-anchor="start">Lane&#x27;s unit tests test the guard,</text>
   <text class="label" x="284" y="278" text-anchor="start">and Pin writes none of its code</text>
   <rect class="unit" x="602" y="210" width="320" height="120" rx="6"/>
-  <text class="name start" x="614" y="238" text-anchor="start">unittest · ●●●</text>
+  <text class="name start" x="614" y="238" text-anchor="start">unittest · FULL</text>
   <text class="label" x="614" y="258" text-anchor="start">the guard on Pin&#x27;s Rules laid,</text>
   <text class="label" x="614" y="278" text-anchor="start">a double of Claude Code: each call</text>
   <text class="label" x="614" y="298" text-anchor="start">of the pinner let through or stopped</text>
   <rect class="box" x="932" y="210" width="320" height="120" rx="6"/>
-  <text class="name start" x="944" y="238" text-anchor="start">a trial on Opus · ●○○</text>
+  <text class="name start" x="944" y="238" text-anchor="start">a trial on Opus · SMOKE</text>
   <text class="label" x="944" y="258" text-anchor="start">the guard on the real pinner</text>
   <rect class="box" x="30" y="340" width="232" height="120" rx="6"/>
   <text class="name start" x="42" y="370" text-anchor="start">Claude Code process</text>
@@ -91,12 +91,12 @@
   <text class="label" x="284" y="408" text-anchor="start">the guard holds the rules that</text>
   <text class="label" x="284" y="428" text-anchor="start">must hold</text>
   <rect class="unit" x="602" y="340" width="320" height="120" rx="6"/>
-  <text class="name start" x="614" y="368" text-anchor="start">unittest · ●●○</text>
+  <text class="name start" x="614" y="368" text-anchor="start">unittest · HAPPY</text>
   <text class="label" x="614" y="388" text-anchor="start">the entries as Claude Code takes</text>
   <text class="label" x="614" y="408" text-anchor="start">them, doubles of the go-between</text>
   <text class="label" x="614" y="428" text-anchor="start">and the pinner: each path of S1 to S4</text>
   <rect class="box" x="932" y="340" width="320" height="120" rx="6"/>
-  <text class="name start" x="944" y="368" text-anchor="start">trials on Opus · ●●○</text>
+  <text class="name start" x="944" y="368" text-anchor="start">trials on Opus · HAPPY</text>
   <text class="label" x="944" y="388" text-anchor="start">O1 by /pin:down, and O2 through</text>
   <text class="label" x="944" y="408" text-anchor="start">a plugin made for the test:</text>
   <text class="label" x="944" y="428" text-anchor="start">each key result measured</text>
@@ -107,5 +107,5 @@
   <text class="label small" x="394" y="515" text-anchor="start">runs once every lower level passes</text>
   <rect class="ext" x="640" y="500" width="36" height="22" rx="4"/>
   <text class="label small" x="684" y="515" text-anchor="start">empty, with why</text>
-  <text class="label small" x="820" y="515" text-anchor="start">tool · weight (●●● heaviest), then what the tests check</text>
+  <text class="label small" x="820" y="515" text-anchor="start">tool · FULL, HAPPY or SMOKE, then what the tests check</text>
 </svg>

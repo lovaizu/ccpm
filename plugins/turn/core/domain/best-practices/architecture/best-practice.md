@@ -24,10 +24,10 @@ The developer builds and changes each part of the product so that the parts toge
 - **Q8** (User stories, Components, Data model, Sequences): Of any story, component or data, does the developer see which objective of the product vision needs it, so that what none needs can go?
 - **Q9** (Components, Data model, Deployment): Setting the product up from nothing, does the developer put each component where it runs and each data where it is kept, and start the product, so that they need ask no one?
 - **Q10** (Components, Data model, Directory structure): Making or changing a component or a data, does the developer find the one place its files belong, so that each change lands in one place?
-- **Q11** (Deployment, Tests): Asked whether anything in the product goes untested, does the developer see for each deployment unit which levels cover it, how heavily, and why a level is missing, so that no gap is left unseen?
+- **Q11** (Deployment, Tests): Asked whether anything in the product goes untested, does the developer see for each deployment unit which levels cover it, how far each tries it, and why a level is missing, so that no gap is left unseen?
 - **Q12** (Tests): Writing a test at one level, does the developer know what to run real, what doubles stand in for, what to cover and when it passes, so that a failing test names the rule, path or use it breaks?
 - **Q13** (Tests): When the unit and architecture tests pass, does the developer know the product does what this document says, so that the ux level is left only the product vision to confirm?
-- **Q14** (Components, Sequences, Deployment, Directory structure, Tests): Doubting a choice the document makes, such as a tool or a test's weight, does the developer see what would be lost by the other way, so that they keep or change it knowing what it was for?
+- **Q14** (Components, Sequences, Deployment, Directory structure, Tests): Doubting a choice the document makes, such as a tool or how far a level tries a unit, does the developer see what would be lost by the other way, so that they keep or change it knowing what it was for?
 - **Q15** (the whole): Following a principle while building a part, does the developer find every figure and list asking the same of that part, so that they never choose between the document and itself?
 - **Q16** (the whole): Changing how a component works inside while the product vision and the principles stay, does the developer find every line of the document still true, so that the document needs no change for it?
 
@@ -103,7 +103,7 @@ The developer builds and changes each part of the product so that the parts toge
 
 **Thinking**: The folders and files that hold each component and each data are drawn as they lie on disk, one line each, leaving out what lies inside a component. The developer then finds the one place to change it.
 
-### Q11: Asked whether anything in the product goes untested, does the developer see for each deployment unit which levels cover it, how heavily, and why a level is missing, so that no gap is left unseen?
+### Q11: Asked whether anything in the product goes untested, does the developer see for each deployment unit which levels cover it, how far each tries it, and why a level is missing, so that no gap is left unseen?
 
 **Thinking**: Each deployment unit has a cell at each level whose ground, a part's contract, this document or the product vision, says what the unit must do, and an empty cell says why. A level is named by what it checks against, not by its means. Unit and architecture carry most of the checking and run on every change; ux tests are few.
 
@@ -137,9 +137,9 @@ The developer builds and changes each part of the product so that the parts toge
 
 1. For a fault a higher level finds, name the case or path the lower level missed, add its test at the level that must catch it, see it fail, then fix it there.
 
-### Q14: Doubting a choice the document makes, such as a tool or a test's weight, does the developer see what would be lost by the other way, so that they keep or change it knowing what it was for?
+### Q14: Doubting a choice the document makes, such as a tool or how far a level tries a unit, does the developer see what would be lost by the other way, so that they keep or change it knowing what it was for?
 
-**Thinking**: Beside each choice a developer would question, such as a technology, a tool or a unit's weight, stands why it beat the other way and what it costs. The developer then keeps or changes it knowing what it was for.
+**Thinking**: Beside each choice a developer would question, such as a technology, a tool or how far a level tries a unit, stands why it beat the other way and what it costs. The developer then keeps or changes it knowing what it was for.
 
 **Steps**
 

@@ -407,17 +407,17 @@ table and the rules below give only what Pin adds.
 
 Every deployment unit has a row, as each has a level that tests it.
 
-### The weights
+### How far each level tries
 
-- `check.py` weighs ●●● at unit and at architecture. A design tree that it passes wrongly sends a
+- `check.py` is tried FULL at unit and at architecture. A design tree that it passes wrongly sends a
   gap into the work unseen (KR1.1, KR2.1).
-- The guard weighs ●●● at architecture. It alone holds the pinner's rules on every run. A rule let
+- The guard is tried FULL at architecture. It alone holds the pinner's rules on every run. A rule let
   through lets the pinner write what is not the design, or hand on a design tree left unchecked
   (KR1.1, KR2.1). Lane's own unit tests test its code.
-- The entries weigh ●●○ at architecture. A test there only finds sooner an entry that Claude Code
+- The entries are tried HAPPY at architecture. A test there only finds sooner an entry that Claude Code
   would not load as Pin needs, which every ux trial would also meet.
-- The Claude Code process weighs ●●○ at ux, as only these trials run the prompts. The other rows
-  weigh ●○○ at ux: the trials only confirm what lower levels have checked.
+- The Claude Code process is tried HAPPY at ux, as only these trials run the prompts. The other
+  rows are SMOKE at ux: the trials only confirm what lower levels have checked.
 
 ### Unit
 

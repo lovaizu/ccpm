@@ -710,11 +710,11 @@ table and the rules below give only what Lane adds.
 The adapter process has no row. An adapter is the developer AI's code, and the rows of the lay.py
 process and the hook process test how Lane runs it.
 
-### The weights
+### How far each level tries
 
-Each process weighs ●●● at unit and at architecture. A failure there writes into a plugin what no
+Each process is tried FULL at unit and at architecture. A failure there writes into a plugin what no
 one approved, or lets a break through in a plugin whose operator never sees Lane. Only these levels
-check every case on every push. The trials weigh ●○○: they only confirm, in real use, what the
+check every case on every push. The trials are SMOKE: they only confirm, in real use, what the
 lower levels have checked, and each step of a trial costs a run of the model.
 
 ### Unit
