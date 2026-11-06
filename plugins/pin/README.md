@@ -16,10 +16,11 @@ such as the form an output takes.
 **Non-goals**
 
 - Pin does not make the work. It ends once you confirm the design.
-- Pin does not judge whether a decision is good. Its check sees only that the design holds
-  together, and you judge each decision as you answer it.
-- Pin does not decide what is yours. A point you leave unanswered stays open, and Pin does not go
-  on as if you had answered.
+- Pin does not judge whether a decision is good. It checks the design with a script, `check.py`,
+  which sees only that the design holds together: each question serves the goal, and each decision
+  serves a question. You judge each decision as you answer it.
+- Pin does not take a decision of yours for you. A point you leave unanswered stays open, and Pin
+  does not go on as if you had answered.
 
 ## Requirements
 
@@ -163,10 +164,12 @@ Goal: `python3 notes.py list` can print the notes as JSON, besides its tab-separ
     - Grounds: the person, 2026-11-06: "move every script in scripts/ to read the JSON instead of splitting the text."
 ```
 
-Each question stands under the goal, and each decision under what it serves. The end of a
-decision's line says who settled it: you (`user`), a fact found (`research`), or what follows from
-the goal and the decisions before it (`reasoning`). You hand the file to the AI that makes the
-work, and it has nothing to guess.
+Each question stands under the goal, and each decision under what it serves. An `Also builds on`
+line names a decision it rests on beside the one it stands under. The end of a decision's line says
+who settled it: you (`user`), a fact found in the repository (`research`), what follows from the
+goal and the decisions before it (`reasoning`), or your AI before it called Pin (`maker`). The
+whole design Pin showed you says the same as `(you)`, `(found, you confirmed)` and `(follows from
+the goal)`. You hand the file to the AI that makes the work, and it has nothing to guess.
 
 ## How it works
 
@@ -203,12 +206,16 @@ nothing again.
 **My AI has already settled some points with me. Will Pin ask them again?** No. Your AI writes the
 goal, the questions and what it settled into a design tree, each settled point marked `(maker)`,
 and calls the skill `pin:down` with the file's path. Pin keeps those points as given, and asks you
-only the rest.
+only the rest. Where your AI's work later finds a point the design missed, it calls the skill again
+with the path and names the point. Pin opens that point and each point built on it, and asks you
+only those.
 
 ## Documentation
 
 - [The design tree](core/roles/pinner.md#the-design-tree): each line of the design tree, for you
-  or your AI to read it, or to write one before calling Pin.
+  or your AI to read it, or to write one before calling Pin. It is written to the pinner, the part of
+  Pin that writes the tree, and [the template](core/domain/design-tree-template.md) shows the
+  lines in place.
 - [Changelog](CHANGELOG.md): the changes in each version.
 - [Issues](https://github.com/lovaizu/ccpm/issues): where you ask for help or report a fault.
 

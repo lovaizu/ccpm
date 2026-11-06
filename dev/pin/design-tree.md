@@ -66,7 +66,7 @@ Goal: The user has the work made from their plan be what they mean, with no poin
   - **D26 One sentence**: Pin settles every point of your plan before an AI makes it, asking you only what is yours (reasoning)
     - Grounds: readme/best-practice.json Q1.
     - Also serves: readme/Q1, readme/Q2
-  - **D27 What it does not do**: make the work, judge a decision, or decide what is yours (reasoning)
+  - **D27 What it does not do**: make the work, judge a decision, or take a decision of yours for you (reasoning)
     - Grounds: readme/best-practice.json Q3.
     - Also serves: readme/Q3
   - **D28 Requirements**: Claude Code 2.1.319 and Python 3.9 as `python3` (research)

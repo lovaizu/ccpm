@@ -88,8 +88,10 @@ the person meant. A point the main conversation answers itself is settled apart 
 ### A point the user's AI settled stays
 
 Where the user's AI wrote the design tree before it called the skill, each decision it settled is
-marked settled by `maker`. Pin neither asks the person about it nor changes it, the goal among
-them. The AI hands these points over in the design tree, not in the text it calls the skill with.
+marked settled by `maker`, and the goal it wrote stands with its grounds. Pin neither asks the
+person about these nor changes them. The AI hands them over in the design tree, not in the text it
+calls the skill with. That text names only a point that its work found after the design was
+confirmed.
 
 *Why*: a point asked again, or settled otherwise than the AI settled it with the person, fails O1
 (KR1.1). A point typed again in a request drifts from the one the AI wrote.
@@ -98,7 +100,8 @@ them. The AI hands these points over in the design tree, not in the text it call
 
 The design tree is a Markdown nested list whose nesting is what each node serves. The pinner
 changes it only with Read and Edit, reading the branch the node stands in. `check.py` checks it
-after each change: every question served, and every decision reaching the goal. Its form lies in
+after each change: the tree in form, every question served, every decision reaching the goal, and
+each decision after those it builds on. Its form lies in
 `tree.py` alone.
 
 *Why*: a tree kept as a flat list of IDs is changed by finding an ID or a word, so the one who
@@ -139,7 +142,9 @@ What each decides alone:
   decides which decisions are open to decide now. It writes nothing. Its form and its checks lie in
   `tree.py`.
 - **guard**: whether a call or an end of the pinner keeps the pinner's rules, and which start the
-  main conversation makes next. Pin writes none of its code. Lane lays it from Pin's proposal, as
+  main conversation makes next. Pin writes none of its code. Lane lays it from Pin's proposal,
+  which is not kept as a file: `lay.py up plugins/pin` prints it again, as
+  [Pin's developer README](README.md) says, and as
   [Lane's lanes](../../plugins/lane/docs/lanes.md) and
   [routes](../../plugins/lane/docs/routes.md) say.
 
@@ -181,18 +186,27 @@ why, and what it costs.
 - **Request**: what the orchestrator starts the pinner with: the design tree's path, and the plan
   in the user's words, with any point that the user's AI's work found.
 - **Point**: what the pinner ends a start with, for the person: the goal, one fact, one decision,
-  the whole design to confirm, or, once confirmed, the design tree's path.
+  the whole design to confirm, or, once confirmed, the design tree's path. The pinner's part calls
+  it the Reply.
 - **Answer**: the person's words, which the orchestrator passes back to the pinner as they are.
+- **Design tree**: the plan, as its Goal, the Questions that must hold for it, the Decisions that
+  serve each, and the Grounds each rests on.
+- **Check result**: what `check.py` prints: that the design tree holds, with each Decision open to
+  decide now, or each problem it found.
 
-The lines of the design tree lie in
-[the design tree](../../plugins/pin/core/roles/pinner.md#the-design-tree), and the forms of the
-Request, the Point and the Answer in [the pinner](../../plugins/pin/core/roles/pinner.md).
+The forms of the Request and the Answer lie in
+[the orchestrator](../../plugins/pin/core/roles/orchestrator.md), the form of the Point in
+[the pinner's Reply](../../plugins/pin/core/roles/pinner.md#the-reply), the lines of the Design
+tree in [the design tree](../../plugins/pin/core/roles/pinner.md#the-design-tree), and the form of
+the Check result in `tree.py`.
 
 ## Sequences
 
 Each story's steps follow in order. The participants are named as in [Components](#components),
 and the data in brackets as in [Data model](#data-model). S1 and S2 differ only up to the call of
-the skill, so they share one sequence.
+the skill, so they share one sequence. The pinner ends each start by giving Lane a result: `asks`,
+where a Point waits for the person, or `done`, where the run ends, as
+[Lane's routes](../../plugins/lane/docs/routes.md) say.
 
 ### S1 and S2: the start
 
@@ -213,7 +227,7 @@ sequenceDiagram
   end
   GD-->>O: the run begun, start the pinner
   opt O ends its turn with the start due
-    GD-->>O: kept going once, with the start due; let end the second time, the user told whose step to fix
+    GD-->>O: kept going once, told to start the pinner; if O ends again, its turn ends, and the user is told which role's step failed
   end
   O->>DT: looks for the plan's design tree, and picks the path
   O->>PN: starts it in the background [Agent] (Request)
@@ -248,7 +262,7 @@ sequenceDiagram
   else it writes another file, writes the design tree whole once made, runs another command, or ends with the file unchecked
     GD-->>PN: stops it with its step's sentence
   end
-  PN-->>O: gives asks, and ends with one Point: the Goal, where the user's AI did not settle it
+  PN-->>O: gives asks, and ends with one Point: the Goal, or, where the user's AI wrote it, the first point that is the person's
   GD-->>O: pinner gave asks: put its point to the user, and resume it with their answer
   O->>U: puts the Point as given, and ends its turn
 ```
@@ -273,7 +287,9 @@ sequenceDiagram
     GD-->>O: stopped, told to put the point and resume the pinner
   end
   O->>PN: resumes it with the words, word for word [SendMessage] (Answer)
-  alt a fact confirmed or corrected
+  alt the goal confirmed
+    PN->>DT: writes the words into the Goal's Grounds
+  else a fact confirmed or corrected, or one only the person knows
     PN->>DT: writes it into the Grounds of the Decision it rests on
   else a decision made
     PN->>DT: writes the Decision, settled by the person
@@ -355,9 +371,12 @@ dev/pin/
 ├── README.md, design-tree.md           for Pin's developers
 ├── cosmic-ray.toml                     the mutation testing
 └── tests/
+    ├── helpers.py                      what Pin's tests share: its code on the path, a small tree
     ├── unit/                           unit tests, at the path of what each tests
     ├── architecture/                   a test for each path of each sequence
-    └── ux/                             the trial of O1, its notes app, and maker, the user's AI
+    └── ux/                             trial.py, the trial of O1; intent_typed.md and
+                                        intent_called.md, the person's intents; notes/, its app;
+                                        maker/, the user's AI
 
 .pin/<yyyymmdd>-<name>/design-tree.md   Design tree
 ```
@@ -374,7 +393,8 @@ dev/pin/
 ## Tests
 
 Pin tests by [Test in the plugin best practice](../plugin-best-practice.md#test), and differs from
-it where this section says.
+it where this section says. Each cell of the figure says how far its level tries the unit: FULL,
+each case and edge; HAPPY, the main paths; SMOKE, a run that confirms what lower levels checked.
 
 ![Pin's tests](images/tests.svg)
 

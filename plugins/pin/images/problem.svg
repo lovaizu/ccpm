@@ -65,7 +65,7 @@
   <text class="label small halo" x="688" y="90" text-anchor="middle">made on a guess</text>
   <text class="label small halo" x="688" y="120" text-anchor="middle">where no one asked</text>
   <path class="line dashed" d="M880,130 L880,210 L120,210 L120,134" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="500" y="202" text-anchor="middle">you meet each guess in the work, as rework</text>
+  <text class="label small halo" x="318" y="202" text-anchor="start">what you meant otherwise shows only in the work, as rework</text>
   <text class="label small halo" x="500" y="234" text-anchor="middle">a stopped conversation asks you again</text>
   <circle class="lane" cx="610" cy="100" r="11"/>
   <text class="name" x="610" y="105" text-anchor="middle">1</text>
@@ -73,8 +73,8 @@
   <text class="name" x="222" y="155" text-anchor="middle">2</text>
   <circle class="lane" cx="222" cy="176" r="11"/>
   <text class="name" x="222" y="181" text-anchor="middle">3</text>
-  <circle class="lane" cx="330" cy="198" r="11"/>
-  <text class="name" x="330" y="203" text-anchor="middle">4</text>
+  <circle class="lane" cx="300" cy="198" r="11"/>
+  <text class="name" x="300" y="203" text-anchor="middle">4</text>
   <circle class="lane" cx="340" cy="230" r="11"/>
   <text class="name" x="340" y="235" text-anchor="middle">5</text>
   <rect class="frame" x="10" y="280" width="980" height="270" rx="8"/>
