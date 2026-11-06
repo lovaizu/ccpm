@@ -181,23 +181,27 @@
   <text class="label small halo" x="930" y="664" text-anchor="middle">gets the answer</text>
   <text class="data halo" x="930" y="678" text-anchor="middle">Event, Answer</text>
   <path class="line" d="M720,690 L720,574" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="728" y="596" text-anchor="start">asks the next start</text>
-  <text class="data halo" x="728" y="610" text-anchor="start">Route, Order of</text>
-  <text class="data halo" x="728" y="624" text-anchor="start">results, Result</text>
+  <text class="label small halo" x="728" y="590" text-anchor="start">asks the start due and</text>
+  <text class="label small halo" x="728" y="604" text-anchor="start">the results allowed</text>
+  <text class="data halo" x="728" y="618" text-anchor="start">Route, Order of results, Result</text>
   <path class="line" d="M660,690 L660,650 L480,650 L480,574" marker-end="url(#arrow)"/>
   <text class="label small halo" x="570" y="620" text-anchor="middle">runs each check</text>
-  <text class="data halo" x="570" y="634" text-anchor="middle">Rule, Run value, Kept call</text>
+  <text class="data halo" x="570" y="634" text-anchor="middle">Rule, Start value, Kept call</text>
   <path class="line" d="M640,722 L560,722" marker-end="url(#arrow)"/>
   <text class="label small halo" x="600" y="714" text-anchor="middle">reads a text</text>
   <text class="data halo" x="600" y="740" text-anchor="middle">Port JSON</text>
   <path class="line" d="M840,722 L960,722" marker-end="url(#arrow)"/>
   <text class="label small halo" x="900" y="714" text-anchor="middle">keeps, reads</text>
-  <text class="data halo" x="900" y="742" text-anchor="middle">Run, Kept call,</text>
-  <text class="data halo" x="900" y="756" text-anchor="middle">Run value, Result</text>
+  <text class="data halo" x="900" y="742" text-anchor="middle">Run, Start, Kept call,</text>
+  <text class="data halo" x="900" y="756" text-anchor="middle">Start value, Result</text>
   <path class="line" d="M1160,722 L1330,722" marker-end="url(#arrow)"/>
   <text class="label small halo" x="1245" y="714" text-anchor="middle">writes, reads</text>
-  <text class="data halo" x="1245" y="742" text-anchor="middle">Run, Kept call,</text>
-  <text class="data halo" x="1245" y="756" text-anchor="middle">Run value, Result</text>
+  <text class="data halo" x="1245" y="742" text-anchor="middle">Run, Start, Kept call,</text>
+  <text class="data halo" x="1245" y="756" text-anchor="middle">Start value, Result</text>
+  <path class="line" d="M1480,574 L1480,615 L925,615 L925,560 L840,560" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="1250" y="634" text-anchor="middle">asks whether it</text>
+  <text class="label small halo" x="1250" y="648" text-anchor="middle">may give the result</text>
+  <text class="data halo" x="1250" y="662" text-anchor="middle">Route, Result</text>
   <path class="line" d="M740,754 L740,880" marker-end="url(#arrow)"/>
   <text class="label small halo" x="748" y="812" text-anchor="start">reads</text>
   <text class="data halo" x="748" y="826" text-anchor="start">Steps&#x27; file, Step, Rules laid</text>

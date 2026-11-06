@@ -71,14 +71,16 @@
   <text class="name" x="700" y="313" text-anchor="middle">Rules laid</text>
   <rect class="box" x="870" y="280" width="180" height="56" rx="0"/>
   <text class="name" x="960" y="313" text-anchor="middle">Hook entry</text>
+  <rect class="box" x="1190" y="110" width="180" height="56" rx="0"/>
+  <text class="name" x="1280" y="143" text-anchor="middle">Run</text>
   <rect class="box" x="1190" y="280" width="180" height="56" rx="0"/>
-  <text class="name" x="1280" y="313" text-anchor="middle">Run</text>
+  <text class="name" x="1280" y="313" text-anchor="middle">Start</text>
   <rect class="box" x="1450" y="280" width="180" height="56" rx="0"/>
   <text class="name" x="1540" y="313" text-anchor="middle">Kept call</text>
   <rect class="box" x="1190" y="450" width="180" height="56" rx="0"/>
   <text class="name" x="1280" y="483" text-anchor="middle">Result</text>
   <rect class="box" x="1450" y="450" width="180" height="56" rx="0"/>
-  <text class="name" x="1540" y="483" text-anchor="middle">Run value</text>
+  <text class="name" x="1540" y="483" text-anchor="middle">Start value</text>
   <path class="line" d="M390,280 L390,166"/>
   <path class="head" d="M390,280 L384,289 L390,298 L396,289 Z"/>
   <text class="label small halo" x="398" y="230" text-anchor="start">holds</text>
@@ -127,30 +129,38 @@
   <text class="label small halo" x="760" y="484" text-anchor="middle">names, from and to</text>
   <text class="label small halo" x="484" y="484" text-anchor="start">0..*</text>
   <text class="label small halo" x="1054" y="172" text-anchor="end">1..2</text>
-  <path class="line" d="M1280,280 L1280,124 L1050,124"/>
-  <text class="label small halo" x="1165" y="118" text-anchor="middle">is a run of</text>
+  <path class="line" d="M1190,124 L1050,124"/>
+  <text class="label small halo" x="1120" y="118" text-anchor="middle">is a run of</text>
+  <text class="label small halo" x="1186" y="142" text-anchor="end">0..*</text>
+  <text class="label small halo" x="1054" y="142" text-anchor="start">1</text>
+  <path class="line" d="M1190,296 L1110,296 L1110,200 L1020,200 L1020,166"/>
+  <text class="label small halo" x="1118" y="250" text-anchor="start">is a start of</text>
+  <text class="label small halo" x="1186" y="318" text-anchor="end">0..*</text>
+  <text class="label small halo" x="1014" y="184" text-anchor="end">1</text>
+  <path class="line" d="M1280,166 L1280,280"/>
+  <path class="head" d="M1280,166 L1274,175 L1280,184 L1286,175 Z"/>
+  <text class="label small halo" x="1288" y="230" text-anchor="start">holds</text>
   <text class="label small halo" x="1274" y="272" text-anchor="end">0..*</text>
-  <text class="label small halo" x="1054" y="140" text-anchor="start">1</text>
-  <path class="line" d="M1540,280 L1540,80 L960,80 L960,110"/>
-  <text class="label small halo" x="1250" y="74" text-anchor="middle">is a call of</text>
-  <text class="label small halo" x="1534" y="272" text-anchor="end">0..*</text>
-  <text class="label small halo" x="954" y="104" text-anchor="end">1</text>
   <path class="line" d="M1370,308 L1450,308"/>
   <path class="head" d="M1370,308 L1361,302 L1352,308 L1361,314 Z"/>
   <text class="label small halo" x="1410" y="302" text-anchor="middle">holds</text>
   <text class="label small halo" x="1446" y="326" text-anchor="end">0..*</text>
   <path class="line" d="M1280,336 L1280,450"/>
   <path class="head" d="M1280,336 L1274,327 L1280,318 L1286,327 Z"/>
-  <text class="label small halo" x="1288" y="400" text-anchor="start">holds</text>
-  <text class="label small halo" x="1274" y="442" text-anchor="end">0..*</text>
+  <text class="label small halo" x="1288" y="420" text-anchor="start">holds</text>
+  <text class="label small halo" x="1274" y="442" text-anchor="end">0..1</text>
   <path class="line" d="M1540,336 L1540,450"/>
   <text class="label small halo" x="1548" y="400" text-anchor="start">carries</text>
   <text class="label small halo" x="1534" y="354" text-anchor="end">1</text>
   <text class="label small halo" x="1534" y="442" text-anchor="end">0..*</text>
   <path class="line" d="M1470,336 L1470,380 L1340,380 L1340,450"/>
-  <text class="label small halo" x="1405" y="374" text-anchor="middle">its run gives</text>
+  <text class="label small halo" x="1375" y="374" text-anchor="middle">gives</text>
   <text class="label small halo" x="1464" y="354" text-anchor="end">1</text>
-  <text class="label small halo" x="1334" y="442" text-anchor="end">0..*</text>
+  <text class="label small halo" x="1346" y="442" text-anchor="start">0..1</text>
+  <path class="line" d="M1370,326 L1420,326 L1420,490 L1450,490"/>
+  <path class="head" d="M1370,326 L1379,320 L1388,326 L1379,332 Z"/>
+  <text class="label small halo" x="1428" y="430" text-anchor="start">holds</text>
+  <text class="label small halo" x="1446" y="522" text-anchor="end">0..*</text>
   <path class="line" d="M1280,506 L1280,540 L390,540 L390,506"/>
   <text class="label small halo" x="835" y="534" text-anchor="middle">moves the routes on by</text>
   <text class="label small halo" x="1274" y="524" text-anchor="end">0..*</text>

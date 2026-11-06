@@ -5,18 +5,21 @@ steps you wrote and go in the order you set, on every run.
 
 Lane 0.1.0 is still in development and not yet released. The walkthrough below shows what Lane is
 built to show, not yet a recorded run, as Lane is being rebuilt to hold the main conversation. A
-real run's output takes its place once Lane is built.
+real run's output takes its place once Lane is built. Lane installed now holds your subagents to
+their rules, but not yet the main conversation to your routes.
 
 Lane is for you when you build a Claude Code plugin whose skill and subagents work in numbered
 steps, and some step must hold on every run. With it, your plugin runs as you designed it, and you
 write no check and no code for the order.
 
+You tell Lane what must hold as rules and routes. A rule is a sentence of a step that Lane checks,
+such as "Run only `git log --oneline`." A route names the subagent that your skill starts next
+after another one ends with a given result, a word such as `more`.
+
 **Non-goals**
 
 - Lane checks only the skill that your routes name, while its run lasts, and the subagents that
-  have rules. A route names the subagent the skill starts next after another one ends with a given
-  result, a word such as `more`. A rule is a sentence of a step that Lane checks. So Lane never
-  checks the work you do yourself in the same conversation.
+  have rules. So Lane never checks the work you do yourself in the same conversation.
 - Lane is not a security boundary. Hold what must never happen, such as a merge, with GitHub's
   branch protection or Claude Code's permission rules.
 - Lane sees tool calls and the end of work, not thoughts. "Compare each option" cannot be a rule.
@@ -25,18 +28,22 @@ write no check and no code for the order.
 - Lane does not judge the work. The next start comes from the result a subagent gives.
 - Lane approves no command for anyone. A command you hold for approval goes to the person through
   Claude Code's own permission prompt.
-- Lane reads the texts your plugin writes, such as a list of items to answer, in one format. For
-  another format, you write an adapter, as [The lanes](docs/lanes.md#the-ports) says.
+- Lane reads a file that your subagents write and a rule checks, such as a list of items each to be
+  answered, only in Lane's format. A file in another format needs an adapter, a script of yours
+  that turns it into Lane's format, as [The lanes](docs/lanes.md#the-ports) says.
 
 ## Requirements
 
 - Claude Code 2.1.319 or later, where you build your plugin and where it runs: `claude --version`
   shows it.
 - Python 3.9 or later, run as `python3`, on the same computers: `python3 --version` shows it.
-- A plugin whose skill and subagents have their steps as a numbered list under `## Steps`:
-  `claude plugin validate <your plugin's folder>` passes.
+- A plugin that Claude Code takes as valid: `claude plugin validate <your plugin's folder>` passes.
+- A skill and subagents with their steps as a numbered list under `## Steps`: `lay.py print`
+  refuses your rules where a step they name is not in that list.
 - Each subagent with rules, and each that your routes name, sets `background: true` in its
-  frontmatter: `lay.py print` refuses your rules where one does not.
+  frontmatter: `lay.py print` refuses your rules where one does not. Lane tells one start of a
+  subagent from another by the ID that Claude Code gives back at once for a start in the
+  background. The main conversation also stays free while the subagent works.
 
 ## Installation
 
@@ -55,6 +62,9 @@ usage: lay.py print <proposal>
        lay.py write <proposal>
        lay.py up <plugin>
 ```
+
+After each update of Lane, run `python3 <installPath>/scripts/lay.py up <your plugin's folder>`.
+It brings the checks in your plugin to the new version of Lane, and nothing else does.
 
 ## Walkthrough
 
@@ -98,7 +108,8 @@ right.``
 
 `writer` must run no command but `git log --oneline`, so it cannot commit, and must write no file
 but `CHANGELOG.md`. You write these two rules and the routes in a proposal, the JSON file
-`.lane/20261106-changelog/changelog.json` at the root of the repository:
+`.lane/20261106-changelog/changelog.json` at the root of the repository. Lane's files and output
+call a rule a lane:
 
 ```json
 {"plugin": "changelog",
@@ -113,9 +124,8 @@ but `CHANGELOG.md`. You write these two rules and the routes in a proposal, the 
 ```
 
 `lane` names the type of each rule, and `takes` its values. `orchestrator` names the skill that
-starts the subagents, and `step` the step of it the routes are laid on. Lane's output and documents
-call a rule a lane, and its check a hook. At the root of the repository, `lay.py print` shows the
-routes and the steps as they will read:
+starts the subagents, and `step` the step of it the routes are laid on. At the root of the
+repository, `lay.py print` shows the routes and the rules, and the steps as they will read:
 
 ```console
 $ python3 <installPath>/scripts/lay.py print .lane/20261106-changelog/changelog.json
@@ -125,19 +135,16 @@ Routes of write, laid on its step 1:
   reviewer `more`   start writer
   reviewer `good`   start no more
 
-Lanes of writer, each hook acting in writer alone:
-  step 2  run:   Run only `git log --oneline`.  hook run_only
-  step 3  write: Write only `CHANGELOG.md`.     hook write_only
+1. Have the entries written and reviewed. Start each subagent you are told to start, until you are told to start no more.
+
+Lanes of writer, each checked only in writer:
+  step 2  run:   Run only `git log --oneline`.  type run_only
+  step 3  write: Write only `CHANGELOG.md`.     type write_only
   step 4  end:   End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py writer written`. ...
 
 2. Read the commits since then with `git log --oneline`. Run only `git log --oneline`.
 3. Write the new entries into `CHANGELOG.md`. Write only `CHANGELOG.md`.
 4. Reply with the entries you wrote. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py writer written`. ...
-
-Lanes of write, each hook acting in the main conversation while write runs:
-  step 1  follow: Start each subagent you are told to start, until you are told to start no more.  hook follow_routes
-
-1. Have the entries written and reviewed. Start each subagent you are told to start, until you are told to start no more.
 ...
 ```
 
@@ -148,7 +155,7 @@ $ python3 <installPath>/scripts/lay.py write .lane/20261106-changelog/changelog.
 Wrote steps 2, 3 and 4 of writer into agents/writer.md.
 Wrote step 1 of write into skills/write/SKILL.md.
 Wrote step 2 of reviewer into agents/reviewer.md.
-Wrote the hooks of writer, write and reviewer into hooks/hooks.json.
+Wrote the checks of writer, write and reviewer into hooks/hooks.json.
 Wrote the lanes laid and the routes into hooks/lanes.json.
 Put lane's code in hooks/lane/.
 claude plugin validate passed.
@@ -223,8 +230,9 @@ conversation is your own work, and Lane checks none of it.
 
 **How does Lane tell my plugin's run from my own work in the same conversation?** A run starts when
 your skill is called, as you type `/changelog:write` or as an AI calls it. It ends once a route
-starts no more. Outside a run, Lane checks nothing. Within it, Lane checks only two things in the
-main conversation: each start of a subagent, and the end of a turn.
+starts no more. Outside a run, Lane checks nothing. Within it, Lane checks only three things in the
+main conversation: each start of a subagent, each message that resumes a subagent, and the end of
+a turn.
 
 ![Lane makes a rule's sentence and its check from one type and its values](images/how-rule.svg)
 
@@ -232,12 +240,17 @@ main conversation: each start of a subagent, and the end of a turn.
 run_only, which lets a subagent run only the commands it names. Lane makes the sentence in your
 step and the check from the same type and the values you give it.
 
-![Lane tells the main conversation the start due, stops any other and keeps it going](images/how-next.svg)
+![Lane tells the main conversation the start due, stops any other, keeps it going, and has a subagent that gave no result started again](images/how-next.svg)
 
 **How does the main conversation learn the next start?** As a subagent's end reaches the main
 conversation, Lane adds the next start beside it. Lane stops any other start, and tells the one
 due. Where the main conversation would end its turn while a start is due and no subagent runs,
-Lane keeps it going once with the start due.
+Lane keeps it going once with the start due. Where it still ends, Lane lets it end and tells you
+whose step to fix, as a hold with no end would need you to break it.
+
+**What if a subagent ends without giving its result?** Lane keeps the subagent going once with the
+sentence of its last step. Where it still ends with no result, Lane tells the main conversation to
+start it again.
 
 ![lay.py write puts the checks into your plugin, so whoever runs it needs no Lane](images/how-laid.svg)
 

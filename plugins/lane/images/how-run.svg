@@ -61,5 +61,6 @@
   <path class="line" d="M700,108 L700,120"/>
   <text class="label small mid halo" x="130" y="210">Lane checks nothing</text>
   <text class="label small mid halo" x="870" y="210">Lane checks nothing</text>
-  <text class="label small mid halo" x="500" y="210">Lane checks each start of a subagent and the end of a turn</text>
+  <text class="label small mid halo" x="500" y="204">Lane checks each start of a subagent,</text>
+  <text class="label small mid halo" x="500" y="222">each message that resumes one, and the end of a turn</text>
 </svg>

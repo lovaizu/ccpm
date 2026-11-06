@@ -90,12 +90,12 @@
   <rect class="unit" x="820" y="370" width="220" height="90" rx="6"/>
   <text class="name start" x="834" y="396" text-anchor="start">result process</text>
   <text class="kind start" x="834" y="414" text-anchor="start">[python3 3.9 or later]</text>
-  <text class="label start" x="834" y="438" text-anchor="start">result.py</text>
+  <text class="label start" x="834" y="438" text-anchor="start">result.py, routes.py</text>
   <rect class="unit" x="820" y="540" width="220" height="110" rx="6"/>
   <text class="name start" x="834" y="566" text-anchor="start">temporary folder</text>
   <text class="kind start" x="834" y="584" text-anchor="start">[the system&#x27;s]</text>
-  <text class="data start" x="834" y="608" text-anchor="start">Run, Kept call,</text>
-  <text class="data start" x="834" y="626" text-anchor="start">Run value, Result</text>
+  <text class="data start" x="834" y="608" text-anchor="start">Run, Start, Kept call,</text>
+  <text class="data start" x="834" y="626" text-anchor="start">Start value, Result</text>
   <rect class="unit" x="1160" y="500" width="360" height="160" rx="6"/>
   <text class="name start" x="1174" y="526" text-anchor="start">the installed plugin</text>
   <text class="kind start" x="1174" y="544" text-anchor="start">[Claude Code plugin folder]</text>
