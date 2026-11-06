@@ -4,189 +4,419 @@ Goal: The user gets work with which the people it is for achieve what they are a
 - Grounds: The user, 2026-11-05, on what Turn is for: "利用者の目的を満たす成果物を生み出すこと", deciding themselves and needing no fix being means; confirmed as "the people a document or code is for achieve what they are after with it".
 - Grounds: Agreed with the user, 2026-10-31, as Turn's concept: "Given the user's purpose, the work's format and intended state, and the best practice of making it, an AI draws the concept out of the user and builds quality up to a work that meets the purpose well." Quality is the degree a work meets its user's purpose (ISO 9000:2015; Juran, fitness for use); a work is never passed by the one who made it.
 
-- **product-vision/Q1** Listing whom to build for, does the developer find every role that comes to the product with a want of its own?
-  - **D1 Who comes to Turn with an end of their own?**: One role, the user: one who asks Turn for a document or code, such as a README, for the people it is for. A person and an AI that asks for a person are after the same, so they are one role. Turn's own parts and the plugins it runs on are after nothing of their own, so none is a role. (user)
-    - Grounds: Agreed with the user, 2026-11-05, when the product vision example was shown: "Users are roles, not person vs AI: Turn has one role, the user."
-    - Grounds: product-vision/best-practice.json Q1 thinking: "Cut the roles by that end, not by who or what takes them: a person and an AI that want the same are one role."
-    - Grounds: The user, 2026-11-05: deciding what is theirs is a means, not what they come to Turn for.
-    - Also serves: product-vision/Q2
-- **product-vision/Q2** Reading an objective, does the developer see what its role gets from the product?
-  - **D2 The user's objective: the end they are after, with the role as its subject**: O1: The user gets work with which the people it is for achieve what they are after. (user)
-    - Grounds: The user, 2026-11-05: "利用者の目的を満たす成果物を生み出すこと"; "ユーザが決める、直さなくて良い" are means. Asked why until no further end showed: the work handed over as it is shows the end met (D3, D4); deciding only what is theirs is how it is reached (D30 (3)).
-    - Grounds: Agreed with the user, 2026-10-31, as Turn's concept: quality is the degree a work meets its user's purpose (ISO 9000:2015; Juran, fitness for use).
-    - Also serves: product-vision/Q3
-    - Also builds on: D1
-- **product-vision/Q3** Weighing a piece of work, does the developer see which one objective it brings closer, or that it brings none closer?
-- **product-vision/Q4** After a change, does the developer see from the key results whether to keep it?
-  - **D3 How do success and failure of O1 show in what the user and the people the work is for do?**: O1 fails where the people the work is for cannot use it for what they are after as it was handed over: the user changes it before its first use, themselves or by asking; it is never put to use; or the people it is for fall short with it, as the ux trials see through a stand-in that holds their intent. It succeeds where they achieve what they are after with the work as handed over. (reasoning)
-    - Grounds: product-vision/best-practice.json Q4 step 1: "List how success or failure would show in what the role does or feels, such as giving up, undoing a result or working around the product."
-    - Also builds on: D2
-  - **D4 O1's key results**: KR1.1: of the works the user asks for, the share that fails in a way of D3; lower is better. KR1.2: the time from the user's request to that work, the user's own time answering Turn included; shorter is better. A share counts a work once, however many ways it fails. Asking the user what Turn could find or settle itself adds to KR1.2 and gains KR1.1 nothing. (reasoning)
-    - Grounds: product-vision/best-practice.json Q4 thinking: "a count of the product's own output can rise while the role's end is missed."
-    - Also builds on: D3
-- **product-vision/Q5** Weighing the product against what its roles do today, does the developer see why it meets each objective where that way does not?
-  - **D30 What sets Turn apart from what its user does today, and makes it meet O1: at most five ideas, each with the present way it beats**: Turn instead of asking an AI in one prompt, reading its draft and fixing it: (1) Made from a best practice: Turn makes each kind of work by the best practice of its kind, made first where none exists, so the work is built toward what the people it is for are after, not mapped from similar text by an AI starting from scratch. (2) Checked by purpose and intent: Turn checks whether the people the work is for get what they are after, not whether the work follows the best practice, so the user is handed no findings off the purpose to sort. (3) Every intent drawn out: Turn draws the user's purpose and intent for the work out of them point by point before it is made, so the work rests on what they mean, not on guesses. (4) Checked in use: Turn tries the work as the people it is for would use it, so it serves them in use, not only on reading. (5) Seeks the good: Turn makes the work good from its root, not patched fault by fault, so it carries none of the noise that added fixes bring. Each meets O1. (user)
-    - Grounds: The user, 2026-11-05, on what Turn does today without Turn: an AI is asked in one prompt and its draft is read and mended; what it hands over is not put to use as it comes.
-    - Grounds: The user, 2026-11-05, ideas thought up: "ベストプラクティスがある / ベストプラクティスを作れる / 作れたかでなく目的や意図を確認する / 設計ツリーでユーザーベネフィットを全部問い詰めてユーザーから引き出す / 利用時としてユーザーベネフィットをチェックする / goodのみ探してgoodにするにはを考える"
-    - Grounds: The user, 2026-11-05, agreed that their six ideas merge into five, the first two into (1): (1) a best practice for each kind, made where missing; (2) checks the purpose and intent, not that the work was made by the best practice; (3) draws out every intent from the user in the design tree; (4) checks the intents at the moment of use; (5) seeks the good and how to make the work good.    - Grounds: The user, 2026-11-05, on why the ideas beat the present way: "何もないaiだと全部一からだよね" (an AI with nothing starts everything from scratch).
-    - Grounds: The user, 2026-11-05, on the present way, for all five ideas: "提案はしてくれる / レビューもしてくれる / でも目的ベースでない、表面的 / 本質でない / 指摘もたくさん出る、でも本質でない / 継ぎ足し、ノイズが増える / 目的から考えられない / 似た？言語？知識？のマッピングしかできないから" (an AI proposes and reviews, but from the surface, not the purpose; its many findings miss the essence; fixes are added on and noise grows; it cannot think from the purpose, as it only maps similar language or knowledge).
+- **Q1** Is the work built toward what the people it is for are after?
+  - **D1 Made from a best practice**: each kind of work by the best practice of its kind, not mapped from similar text by an AI starting from scratch (user)
+    - Grounds: The user, 2026-11-05, ideas thought up: "ベストプラクティスがある / ベストプラクティスを作れる"
+    - Grounds: The user, 2026-11-05, agreed that their six ideas merge into five, the first two into (1): (1) a best practice for each kind, made where missing.
+    - Grounds: The user, 2026-11-05, on why the ideas beat the present way: "何もないaiだと全部一からだよね" (an AI with nothing starts everything from scratch).
     - Grounds: The user, 2026-11-05, on idea (1), after the assistant set each part of a best practice against a shortfall of the present way (practices hold how to make and why: not from scratch; the goal: not surface-based; questions on the intent: no findings off the essence; the template: no room for additions; the template made anew from the goal: no mapping of similar text): "ユーザーベネフィットを問う質問 / ベストプラクティスをベースにした考え方作り方" (idea (1) is thinking and making based on the best practice, whose questions ask about the intent).
-    - Grounds: The user, 2026-11-05, on idea (2): kept apart from (1), as (1) is how Turn makes and (2) how it checks, and (2) answers the present way's findings off the essence; the user then left the rest to the assistant ("あとは任せる").
-    - Grounds: Rated against the present way for O1 by the assistant: all five better on KR1.1. On KR1.2, (1) where a best practice must first be made and (3) by the user's answers cost time up front, against the rounds of reading and mending they save.
+    - Also serves: product-vision/Q5
+    - **D2 One course for every kind**: kinds differ only in their best practice (reasoning)
+      - Grounds: D1
+      - Also serves: architecture/Q3
+      - **D3 A new kind's best practice first**: made as a work of its own, by the same course with `meta` (reasoning)
+        - Grounds: dev/turn/architecture.md:31 "A kind new to Turn first gets its best practice as a work of its own, made by the same course with `meta` as its best practice."
+        - **D4 Over a step of its own**: the user approves it as any design, at a whole course more (reasoning)
+          - Grounds: D2
+        - **D5 Kept for later runs**: in `.turn/best-practices/` (reasoning)
+          - Grounds: the user approved it for their work.
+    - **D6 The planner settles the kind**: and hands the designer the work's goal and the kind's questions (reasoning)
+      - Grounds: D1
+      - **D7 The kind asked only where unnamed**: the planner's one point, before there is a design (reasoning)
+        - Grounds: dev/turn/architecture.md:43 "The planner asks the user one point only, the kind, and only before there is a design."
+    - **D8 The generator works against the best practice**: the kind's, for the whole work (reasoning)
+      - Grounds: D1
+      - **D9 One run for the whole work each round**: over runs side by side, as parts made apart drift (reasoning)
+        - Grounds: D8
+    - **D10 Each example a copy of Turn's own document**: made by `plan.py example`, checked by `plan.py form` (reasoning)
+      - Grounds: Agreed with the user, 2026-11-05: each example is a copy of the real document, made and checked automatically, not a symbolic link
+      - Also serves: architecture/Q10
+      - **D11 Not a link**: a symbolic link shows on GitHub and on Windows as a line of text (reasoning)
+        - Grounds: D10
+- **Q2** Does the work rest on what the user means, asked only what is theirs?
+  - **D12 Every intent drawn out**: the user's purpose and intent drawn out point by point before the work is made, not guessed (user)
+    - Grounds: The user, 2026-11-05, ideas thought up: "設計ツリーでユーザーベネフィットを全部問い詰めてユーザーから引き出す"
+    - Grounds: The user, 2026-11-05, agreed that their six ideas merge into five: (3) draws out every intent from the user in the design tree.
     - Grounds: Argued against by the assistant: (3) asks the user many points and may lose them or ask points not theirs (KR1.1); product-vision Q5 now has each point put as a proposal built on the user's words, one at a time.
-    - Grounds: Riskiest assumption: the people a work is for achieve what they are after with it as Turn hands it over more often than with a one-prompt draft, and soon enough. Checked by the ux trials: the same requests through Turn and through one prompt, counting KR1.1 and KR1.2 for each.
-    - Grounds: The why of each idea rewritten for O1 as the user reworded it, 2026-11-05, by the assistant.
-    - Also builds on: D1, D2, D4
-- **product-vision/Q6** Changing how the product works inside while its roles see the same, does the developer find the product vision still true?
-  - **D5 What does the product vision show, and what does it leave to the README and the architecture?**: Only what the user does, sees and receives. Turn's parts, and the plugins it runs on, such as Pin and Lane, are not named. (reasoning)
-    - Grounds: product-vision/best-practice.json Q6 thinking: "The product vision says only what the roles are after, do, see and receive, and nothing of how the product works inside."
-    - Also builds on: D1
-- **readme/Q1** Telling a colleague about the product, does the reader retell the opening from memory?
-  - **D8 What Turn is and the one thing it gives, in one sentence**: A Claude Code plugin that makes the document or code you ask for, such as a README, so that the people it is for get what they are after from it. (reasoning)
+    - Also serves: product-vision/Q5
+    - **D13 The designer alone settles the design**: with the user, one point at a time (reasoning)
+      - Grounds: D12
+      - Also serves: architecture/Q3
+      - **D14 A designer of Turn's own**: asking by the kind's questions, over Pin's pinner used as built (user)
+        - Grounds: The user, 2026-11-06, on Turn's roles ("planner,designer,generator,evaluatorとorchestratorだけかと"), chose to put Turn's designer back, using Pin's design tree and check, over keeping Pin's pinner.
+        - Grounds: the pinner hid the design role outside Turn's roles.
+        - **D15 The design in Pin's form**: written and checked through Pin's tree.py, linked, not copied (reasoning)
+          - Grounds: dev/plugin-best-practice.md Code kept once: Pin's tree.py and Lane's guard are linked, so a form or a fix kept once cannot drift.
+      - **D16 Facts found by the designer**: shown to the user to confirm (reasoning)
+        - Grounds: plugins/pin/core/roles/pinner.md:91 "A fact is yours to find, never the person's to tell you"
+      - **D17 The rest weighed by the purpose, the facts and the answers**: one they favor settled by the designer (reasoning)
+        - Grounds: plugins/pin/core/roles/pinner.md:97 "Where they favor one way, the decision is yours"
+        - **D18 The user's intent asked, with a recommendation**: where another way would serve as well, or one would be hard to undo (reasoning)
+          - Grounds: plugins/pin/core/roles/pinner.md:100 "or where the decision would be hard to undo, it is the person's"
+      - **D19 Each point written with who settled it**: in the design (reasoning)
+        - Grounds: D13
+      - **D20 The purpose confirmed first**: put to the user as the run starts (reasoning)
+        - Grounds: readme/best-practice.json Q6 steps: "Pick the use from what readers ask for most and from the objectives of the product vision."
+      - **D21 The design approved by the user**: before the work is made (reasoning)
+        - Grounds: D13
+      - **D22 A point coming up while the work is made**: put to the user as well (reasoning)
+        - Grounds: D13
+      - **D23 A wrong purpose, fact or design**: the user says what it should be, and each point built on it changes (reasoning)
+        - Grounds: Agreed with the user, 2026-11-05: the conveniences around the main flow are user stories drawn from the product vision and its intent.
+    - **D24 Passed on as given**: the orchestrator puts each point and passes each answer as it got them (reasoning)
+      - Grounds: D12
+      - Also serves: architecture/Q3
+      - **D25 The planner on both sides of the designer**: so the orchestrator stays a carrier (reasoning)
+        - Grounds: D24
+    - **D26 Every user meets the same Turn**: no line naming a plugin that starts it (reasoning)
+      - Grounds: D12
+      - Also serves: architecture/Q3
+      - **D27 An AI calls `turn:up`**: in the way Calling Turn gives (reasoning)
+        - Grounds: D133: "A person and an AI that asks for a person want the same, so they are one role."
+- **Q3** Is the work judged only by what the people it is for get?
+  - **D28 Checked by purpose and intent**: whether they get what they are after, not whether the work follows the best practice (user)
+    - Grounds: The user, 2026-11-05, ideas thought up: "作れたかでなく目的や意図を確認する"
+    - Grounds: The user, 2026-11-05, agreed that their six ideas merge into five: (2) checks the purpose and intent, not that the work was made by the best practice.
+    - Grounds: The user, 2026-11-05, on idea (2): kept apart from (1), as (1) is how Turn makes and (2) how it checks, and (2) answers the present way's findings off the essence; the user then left the rest to the assistant ("あとは任せる").
+    - Also serves: product-vision/Q5
+    - **D29 A fresh evaluator**: answers each question as the work's user would (reasoning)
+      - Grounds: D28
+      - **D30 Never given the design**: only what the work's user has, the work and the questions of its kind (reasoning)
+        - Grounds: plugins/turn/agents/evaluator.md:3: "with only the work and the questions of its kind, never its design"
+        - Also serves: architecture/Q3
+      - **D31 One run for each group of the round's questions**: all at once (reasoning)
+        - Grounds: D29
+      - **D32 Each answer names its ground**: the lines that meet a question, or what the work's user still lacks (reasoning)
+        - Grounds: plugins/turn/core/domain/forms/answers.json: a met question carries "lines", and a question not met "lacks": "what the work's user still lacks, in their terms"
+- **Q4** Is the work tried as the people it is for would use it?
+  - **D33 Checked in use**: tried as they would use it, so it serves them in use, not only on reading (user)
+    - Grounds: The user, 2026-11-05, ideas thought up: "利用時としてユーザーベネフィットをチェックする"
+    - Grounds: The user, 2026-11-05, agreed that their six ideas merge into five: (4) checks the intents at the moment of use.
+    - Also serves: product-vision/Q5
+    - **D34 The work's commands run by the evaluator**: in a throwaway copy of the repository, with a throwaway home (reasoning)
+      - Grounds: dev/turn/architecture.md S2: the evaluator "reads the work whole and the Standard, and runs its commands in a throwaway home".
+      - Also serves: Q8
+      - **D35 throwaway.py runs every command**: in order, in one copy (reasoning)
+        - Grounds: D34
+- **Q5** Is the work made good from its root, with no fix beside it?
+  - **D36 Seeks the good**: made good from its root, not patched fault by fault, so it carries none of the noise added fixes bring (user)
+    - Grounds: The user, 2026-11-05, ideas thought up: "goodのみ探してgoodにするにはを考える"
+    - Grounds: The user, 2026-11-05, agreed that their six ideas merge into five: (5) seeks the good and how to make the work good.
+    - Also serves: product-vision/Q5
+    - **D37 The generator makes the work from the design**: only from it (reasoning)
+      - Grounds: dev/turn/architecture.md:7 "The generator makes the work from the design, against the kind's best practice"
+    - **D38 A shortfall goes back to its decision**: through the designer, and the work is made again (reasoning)
+      - Grounds: dev/turn/architecture.md:75 "No role puts a fix onto the work beside the design."
+      - Also serves: architecture/Q3
+    - **D39 What the work says before how it says it**: once every question is met, the rounds go on with how the work reads (reasoning)
+      - Grounds: D36
+      - Also serves: architecture/Q3
+      - **D40 rounds.py settles the phase**: from the run's folder, so the orchestrator decides no point of the work (reasoning)
+        - Grounds: D39
+        - Also serves: Q7
+- **Q6** Does the run follow its course on every run?
+  - **D41 The orchestrator is the main conversation**: following Turn's skill `up`, typed or called by the user's AI (user)
+    - Grounds: The user, 2026-11-06, once trials showed hooks hold the main conversation to a course: "オーケストレータはメインにしよう" (the orchestrator runs in the main conversation), as dev/plugin-best-practice.md Where the orchestrator runs now says for every plugin.
+    - Grounds: dev/plugin-best-practice.md Where the orchestrator runs: "The orchestrator runs in the main conversation, started by the plugin's skill"
+    - **D42 It starts each role**: and puts each point to the user (reasoning)
+      - Grounds: D41
+    - **D43 Moved by Lane's routes**: one course of subagents (reasoning)
+      - Grounds: D41
+      - **D44 Held by the guard**: Lane's hooks, holding the orchestrator to the routes and each role to its rules (reasoning)
+        - Grounds: dev/plugin-best-practice.md The guard tells each role its steps again: "The guard holds the orchestrator in the main conversation to the router's course the same way".
+        - **D45 Linked, not copied**: Lane's guard reached through a link (reasoning)
+          - Grounds: dev/plugin-best-practice.md Code kept once: Pin's tree.py and Lane's guard are linked, so a form or a fix kept once cannot drift.
+      - **D46 `asks`**: a result whose route starts no one, so a waiting point reaches the user (reasoning)
+        - Grounds: D44
+      - **D47 The next role's run values**: handed to the orchestrator by the role before the step, so the guard holds every start (reasoning)
+        - Grounds: D44
+    - **D48 Only the orchestrator starts a subagent**: a child's end would start its role again while a point waits (reasoning)
+      - Grounds: D41
+    - **D49 A fault of Turn's own ends the run**: the user given the fault, to send to Turn's makers (reasoning)
+      - Grounds: plugins/turn/core/roles/orchestrator.md:50: "role may end with a message headed `For the maker of Turn:`. Then tell the person that Turn stopped"
+- **Q7** Does a stopped run go on, asking nothing again?
+  - **D50 Each role starts fresh from the run's folder**: carrying on from its files (reasoning)
+    - Grounds: dev/turn/architecture.md:86 "A run that stopped goes on from its folder in a new session, and asks nothing again (KR1.2)."
+    - Also serves: architecture/Q3
+    - **D51 The run's folder**: `.turn/<yyyymmdd>-<name>/`, or where the user's AI says (reasoning)
+      - Grounds: D50
+    - **D52 Turn started with a run's folder**: goes on with every point settled so far and the work as far as made (reasoning)
+      - Grounds: D50
+      - **D53 With a change**: the work made again with it (reasoning)
+        - Grounds: D52
+- **Q8** Is the user's own work left alone?
+  - **D54 Turn changes only the work**: the generator writes only the work and the run's folder (reasoning)
+    - Grounds: dev/turn/architecture.md:108 "The generator writes only the work and the run's folder."
+    - Also serves: architecture/Q3
+    - **D55 Handed over, not committed**: what becomes of the work is the user's (reasoning)
+      - Grounds: D54
+      - **D56 No role follows the work once handed over**: so Turn takes no learning from each run (reasoning)
+        - Grounds: D55
+- **Q9** Does the user choose Turn and start it from its README alone?
+  - **D57 One sentence**: A Claude Code plugin that makes the document or code you ask for, such as a README, so that the people it is for get what they are after from it (reasoning)
     - Grounds: O1 of the product vision: "work with which the people it is for achieve what they are after"
     - Grounds: readme/best-practice.json Q1 thinking: "one sentence that names the kind of thing the product is and the one thing it gives the reader, in words the reader already uses"; "a work" and "decisions that are yours" are not the reader's words, and two things joined by "and" do not say in short what Turn is.
     - Grounds: Retold from memory as to a colleague: "a plugin that makes docs or code that do the job for the people they are for".
-    - Also builds on: D2, D30
-- **readme/Q2** Reading the gain, does the reader tell what the product would let them do, and so whether it is for them?
-  - **D9 Whom Turn is for, and what they gain**: For one who wants an AI to make a document or code that serves the people it is for, not a draft they fix themselves; with it, they hand those people work they can use for what they are after, as it is. (reasoning)
+    - Also serves: readme/Q1
+  - **D58 Whom it is for**: one who wants an AI to make a document or code that serves the people it is for, not a draft they fix themselves (reasoning)
     - Grounds: readme/best-practice.json Q2 thinking: "the gain as the end they reach with the product, from the objectives of the product vision."
-    - Also builds on: D2
-- **readme/Q3** Before installing, does the reader see what the product does not do that they might expect of it?
-  - **D11 What a reader might expect of Turn that it does not do**: It does not commit, push or publish the work; it does not settle the user's purpose or intent, and a point left unanswered holds the run; it is not for a quick draft, as it takes longer than asking Claude Code. (reasoning)
-    - Grounds: The walkthrough's run, D7, ends with the README handed over, not committed.
-    - Grounds: KR1.2 of the product vision counts the time to a work put to use, so a draft mended by hand is the comparison.
-    - Also builds on: D2
-- **readme/Q4** Before installing, does the reader see where the product is not yet fit for use?
-  - **D17 Where Turn is not yet fit for use**: Turn 0.1.0 is still in development and not yet released: a run may stop on a fault of Turn's own, and the walkthrough shows the run Turn is built for, not yet a recorded one. (research)
+    - Also serves: readme/Q2
+    - **D59 The gain**: they hand those people work they can use for what they are after, as it is (reasoning)
+      - Grounds: D135
+  - **D60 What it does not do**: three things a reader might expect (reasoning)
+    - Grounds: D135
+    - Also serves: readme/Q3
+    - **D61 Commit, push or publish the work**: the work is handed over, not committed (reasoning)
+      - Grounds: D55
+    - **D62 Settle the user's purpose or intent**: a point left unanswered holds the run (reasoning)
+      - Grounds: D12
+    - **D63 A quick draft**: it takes longer than asking Claude Code (reasoning)
+      - Grounds: KR1.2 of the product vision counts the time to a work put to use, so a draft mended by hand is the comparison.
+  - **D64 Not yet fit for use**: Turn 0.1.0 is still in development and not yet released (research)
     - Grounds: plugins/turn/CHANGELOG.md has no released version yet
     - Grounds: readme/best-practice.json Q4 thinking: "Where the product is not yet fit for use, such as a release still in development or one no longer kept up, say so at the top"
-    - Also builds on: D13
-- **readme/Q5** Starting with nothing set up, does the reader install the product by the README's steps alone, and see that it works?
-  - **D12 Requirements and installation**: Claude Code 2.1.317 or later and Python 3.9 or later as python3; installed from the ccpm marketplace, with no other plugin, as Turn's designer and guard come within it. (reasoning)
-    - Grounds: D22: the designer is Turn's own, and Pin's tree.py and Lane's guard are linked into Turn, not installed beside it.
+    - Also serves: readme/Q4
+    - **D65 A run may stop**: on a fault of Turn's own (research)
+      - Grounds: D64
+    - **D66 The walkthrough not yet recorded**: it shows the run Turn is built for (research)
+      - Grounds: D72
+  - **D67 Requirements**: Claude Code 2.1.319 or later, as Lane's guard within Turn needs it, and Python 3.9 or later as python3 (reasoning)
     - Grounds: pyproject.toml:8 requires-python = ">=3.9"
-    - Also builds on: D22
-- **readme/Q6** After the walkthrough, does the reader see that the product would give them, on work of their own, the gain the opening promised?
-  - **D6 What work does the walkthrough make?**: A README for `tidy`, a command-line tool that sorts a Downloads folder: a kind Turn knows, as most requests will be, so the reader meets work like theirs. (reasoning)
+    - Also serves: readme/Q5
+    - **D68 Installed from the ccpm marketplace**: with no other plugin, as the designer and guard come within Turn (reasoning)
+      - Grounds: D15, D45: Pin's tree.py and Lane's guard are linked into Turn, not installed beside it.
+  - **D69 The walkthrough**: a README for `tidy`, a command-line tool that sorts a Downloads folder (reasoning)
     - Grounds: readme/best-practice.json Q6 thinking: "Show one real run of the use most readers come for, on work like theirs"
-    - Also builds on: D2
-  - **D7 O1's main use, as the walkthrough runs it**: The user asks for the work. Turn puts its purpose to confirm. Until no decision is open, Turn puts each fact it found to confirm and each point of the user's intent with a recommendation, one at a time. Turn shows the design to approve. While the work is made, Turn puts each point of the user's intent that comes up; how often Turn makes it again is inside Turn, so not said. Turn hands the work over, not committed. (reasoning)
-    - Grounds: readme/best-practice.json Q6 steps: "Pick the use from what readers ask for most and from the objectives of the product vision."
-    - Also builds on: D2, D6
-  - **D13 The walkthrough's run**: The run of D7: a README for tidy; the purpose confirmed, one fact confirmed, one intent taken, the design approved, the README handed over not committed. Not yet a real run, as Turn is being rebuilt; a real run's output replaces it once Turn is built. (reasoning)
-    - Grounds: readme/best-practice.json Q6 steps: "Take each exchange from the record of a real run, in the form the reader sees it"
-    - Also builds on: D6, D7
-- **readme/Q7** For each problem they feel in the work, does the reader picture how the product makes it go away?
-  - **D10 The problems a reader feels with the usual way, and how each goes away with Turn**: The usual way is to ask an AI, such as Claude Code, in one prompt, and read and fix its draft. Five problems, one for each idea of D30: (1) it starts from scratch and writes what similar texts say, not what the work's reader needs; with Turn, the work is made by the best practice of its kind: the goal its reader reaches, a template of what it holds and the questions its reader asks of it. (2) its review gives many findings, few that matter; with Turn, an evaluator asks only those questions, whether the work's reader gets what they need. (3) it fills what you did not say with guesses; with Turn, its designer finds each fact in your repository and asks you to confirm it, and asks you each decision that is yours, one at a time. (4) you find what falls short only as you use the work; with Turn, the evaluator tries the work as its reader would, running its commands in a throwaway copy of your repository. (5) each fix is added on, and the work gets noisier; with Turn, a question not met goes back to its decision, and the work is made again from the design, the record of every fact and decision, with no fix beside it. (reasoning)
-    - Grounds: product-vision Concept, from D30: the present way and the five ideas.
-    - Grounds: dev/turn/architecture.md, "A shortfall goes back to its decision": "No role puts a fix onto the work beside the design."
-    - Grounds: dev/turn/architecture.md S2: the evaluator "reads the work whole and the Standard, and runs its commands in a throwaway home".
-    - Also builds on: D2, D9, D30
-  - **D14 The figures of How it works**: Five figures, one names the same thing in each: you, the designer, the design, the evaluator. images/problem.svg: the usual way above Turn, as who does what to whom, with each problem of D10 marked by its number where it is left and where it goes away, as the five show in one comparison of the same steps. Then one figure for each doubt of D29, each followed by its line, as one figure of the whole held seven parts and crossing lines, and showed none of the doubts at a glance: images/how-decisions.svg (A: your repository, the designer, you and the design, with what the designer settles and what it asks you), images/how-evaluator.svg (B: what the evaluator reads, and what it never reads), images/how-wrong.svg (C: the evaluator's answer with its ground, a question not met going back through the designer to you, and every answer kept in the run's folder), images/how-new-kind.svg (D: the best practice made first, approved by you, kept for later runs). (reasoning)
+    - Also serves: readme/Q6
+    - **D70 A kind Turn knows**: as most requests will be, so the reader meets work like theirs (reasoning)
+      - Grounds: D69
+    - **D71 O1's main use**: from the request through each point of Q2 to the work handed over, not committed (reasoning)
+      - Grounds: readme/best-practice.json Q6 steps: "Pick the use from what readers ask for most and from the objectives of the product vision."
+      - **D72 Its run**: the purpose confirmed, one fact confirmed, one intent taken, the design approved, the README handed over (reasoning)
+        - Grounds: readme/best-practice.json Q6 steps: "Take each exchange from the record of a real run, in the form the reader sees it"
+        - **D73 Not yet a real run**: a real run's output replaces it once Turn is built (reasoning)
+          - Grounds: Turn is being rebuilt.
+      - **D74 How often Turn makes it again**: not said, as it is inside Turn (reasoning)
+        - Grounds: D71
+  - **D75 Problems answered**: one for each idea, against asking an AI in one prompt and fixing its draft (reasoning)
+    - Grounds: product-vision Concept, from D145, D1, D28, D12, D33 and D36: the present way and the five ideas.
+    - Also serves: readme/Q7
+    - **D76 (1) It starts from scratch**: with Turn, the work is made by its kind's best practice: its reader's goal, a template, its reader's questions (reasoning)
+      - Grounds: D1
+    - **D77 (2) Many findings, few that matter**: with Turn, an evaluator asks only those questions (reasoning)
+      - Grounds: D28
+    - **D78 (3) Guesses fill what you did not say**: with Turn, the designer confirms each fact and asks each decision yours, one at a time (reasoning)
+      - Grounds: D12
+    - **D79 (4) Shortfalls found only in use**: with Turn, the evaluator tries the work as its reader would, in a throwaway copy (reasoning)
+      - Grounds: dev/turn/architecture.md S2: the evaluator "reads the work whole and the Standard, and runs its commands in a throwaway home".
+    - **D80 (5) Each fix added on**: with Turn, a question not met goes back to its decision, and the work is made again from the design (reasoning)
+      - Grounds: dev/turn/architecture.md, "A shortfall goes back to its decision": "No role puts a fix onto the work beside the design."
+    - **D81 images/problem.svg**: the usual way above Turn, each problem marked by its number where it is left and where it goes away (reasoning)
+      - Grounds: the five then show in one comparison of the same steps.
+  - **D82 Doubts answered**: each by a figure of its own, followed by its line (reasoning)
     - Grounds: readme/best-practice.json Q8 thinking: "Each point a newcomer would doubt gets a figure of its own that draws what its line says"
-    - Also serves: readme/Q8
-    - Also builds on: D10, D29
-- **readme/Q8** At each point where they would ask whether the product can really do that, does the reader picture how it does it?
-  - **D29 The points a newcomer would doubt, and how Turn does each**: (A) How does it tell what to ask me? The designer finds what the repository holds itself and shows it to you to confirm; it weighs each open decision by the purpose, the facts and your answers, settles one they favor, and asks you only your intent, where another way would serve as well or one would be hard to undo; each is written to the design with who settled it. (B) How can an AI judge an AI's work? The evaluator is a fresh AI given only the work and the questions of its kind, never the design or the talk, so it judges by what the work's user gets, not by what its maker meant. (C) What if the evaluator is wrong? Each answer it gives names its ground: the lines of the work that meet a question, or what the work's user still lacks; a question not met goes back to the designer, and where it touches your intent it comes to you as a point, so you can keep the work as it is; every answer is kept in the run's folder. What Turn cannot yet show, such as how often the evaluator misses, is measured by the ux trials as KR1.1, not told the reader. (D) What if Turn has no best practice for my kind of work? Turn first makes one as a work of its own, by the same course, and you approve it as you approve any design; it is kept in .turn/best-practices/, so later runs in your repository use it. How Turn knows what a work should hold is said under problem (1) of D10, so it is no doubt of its own. (reasoning)
-    - Grounds: plugins/turn/core/domain/forms/answers.json: a met question carries "lines", and a question not met "lacks": "what the work's user still lacks, in their terms"
-    - Grounds: The user, 2026-11-06, on the doubt what if the evaluator is wrong: chose to answer by the design as it is, and "後ろ向きな話は全て書かなくても良いのでは" (the reader need not be told every shortcoming).
-    - Grounds: plugins/pin/core/roles/pinner.md:66-76, whose rules on whose a decision is the designer takes: "A fact is yours to find, never the person's to tell you" / "Where they favor one way, the decision is yours" / "or where the decision would be hard to undo, it is the person's"
-    - Grounds: plugins/turn/agents/evaluator.md:3: "with only the work and the questions of its kind, never its design"
-    - Grounds: dev/turn/architecture.md:7-8: "The generator makes the work from the design, against the kind's best practice"
     - Grounds: readme/best-practice.json Q8 steps: "Read the README as a newcomer, and mark each thing it says that the present way cannot do. Ask of each answer what the newcomer would doubt next, until no doubt is left."
-    - Grounds: dev/turn/architecture.md, "One course for every kind": "A kind new to Turn first gets its best practice as a work of its own, made by the same course with `meta` as its best practice."
-    - Also builds on: D8, D10
-- **readme/Q9** Needing more than the README gives, such as fuller use or help, does the reader find where to go next?
-  - **D15 Where a reader goes next, where they get help, and the license**: Calling Turn, for an AI that asks Turn on a person's behalf; the changelog; help in the repository's GitHub issues, https://github.com/lovaizu/ccpm/issues; the MIT License of the repository. (research)
+    - Grounds: one figure of the whole held seven parts and crossing lines, and showed none of the doubts at a glance.
+    - Also serves: readme/Q8
+    - **D83 One name for each thing**: you, the designer, the design, the evaluator, in every figure (reasoning)
+      - Grounds: D82
+    - **D84 (A) How does it tell what to ask me?**: it confirms facts and asks only your intent, in images/how-decisions.svg (reasoning)
+      - Grounds: D16, D17, D18, D19
+    - **D85 (B) How can an AI judge an AI's work?**: a fresh AI with only the work and its questions, in images/how-evaluator.svg (reasoning)
+      - Grounds: D30
+    - **D86 (C) What if the evaluator is wrong?**: each answer names its ground, a shortfall touching your intent comes to you, every answer kept in the run's folder, in images/how-wrong.svg (reasoning)
+      - Grounds: The user, 2026-11-06, on the doubt what if the evaluator is wrong: chose to answer by the design as it is, and "後ろ向きな話は全て書かなくても良いのでは" (the reader need not be told every shortcoming).
+      - Grounds: D32, D38
+      - **D87 How often it misses**: measured by the ux trials as KR1.1, not told the reader (reasoning)
+        - Grounds: D86
+    - **D88 (D) What if Turn has no best practice for my kind?**: made first, approved by you, kept for later runs, in images/how-new-kind.svg (reasoning)
+      - Grounds: dev/turn/architecture.md, "One course for every kind": "A kind new to Turn first gets its best practice as a work of its own, made by the same course with `meta` as its best practice."
+    - **D89 How Turn knows what a work should hold**: no doubt of its own, said under problem (1) (reasoning)
+      - Grounds: D76
+  - **D90 Where next**: Calling Turn, the changelog, the GitHub issues at https://github.com/lovaizu/ccpm/issues, the MIT License (research)
     - Grounds: plugins/turn/docs/calling.md
     - Grounds: LICENSE
     - Grounds: git remote origin: github.com/lovaizu/ccpm
-    - Also serves: readme/Q10
+    - Also serves: readme/Q9, readme/Q10
+  - **D91 The order**: the template's: what Turn is, the status, whom and the gain, the non-goals; Requirements, Installation, Walkthrough, How it works, Documentation, License (reasoning)
+    - Grounds: readme/best-practice.json Q11 thinking: "the opening for every reader, the installation for one who has chosen the product, the walkthrough and How it works for one still weighing it"
+    - Also serves: readme/Q11
+- **Q10** Does a developer build and change Turn as these decisions say?
+  - **D92 The one idea**: one course of subagents moved by Lane's routes, told from above in the opening (reasoning)
+    - Grounds: architecture/best-practice.json Q1 thinking: "The opening says, as one idea seen from above, how the product turns what its roles bring into what the product vision promises."
+    - Grounds: D76, D77, D78, D79, D80: each problem of the usual way goes away by a part of this course: the best practice, the evaluator asking only its questions, the designer, the evaluator trying the work, and a shortfall going back to its decision.
+    - Also serves: architecture/Q1
+  - **D93 Three user stories**: S1 start Turn with a request; S2 answer the point Turn puts; S3 start Turn with a run's folder (reasoning)
+    - Grounds: architecture/best-practice.json Q2 thinking: "There is one story for each way a role meets the product at its edge, drawn from the objectives and the README's walkthrough"
+    - Also serves: architecture/Q2, architecture/Q8
+    - **D94 Conveniences in the stories**: drawn from O1's intent, not listed in the product vision (reasoning)
+      - Grounds: Agreed with the user, 2026-11-05: the product vision, the README and the architecture each show the main flow to their goal, and the conveniences around it are user stories drawn from the product vision and its intent, so a convenience added changes the stories alone.
+    - **D95 A question the rounds cannot meet**: no convenience of its own, reaching the user as a point of intent of S2 (reasoning)
+      - Grounds: D38
+    - **D96 No story for the calling AI**: it is the user (reasoning)
+      - Grounds: D133
+  - **D97 Principles**: the plugin best practice's but Learning from each run, and nine of Turn's own (reasoning)
+    - Grounds: architecture/best-practice.json Q3 thinking: "Each principle is one rule that every part meeting the same decision follows, with its why: what goes wrong without it."
+    - Grounds: D2, D13, D24, D26, D30, D38, D39, D50, D54, D56
+    - Also serves: architecture/Q3, architecture/Q15
+    - **D98 Each why names its key result**: KR1.1 or KR1.2 (reasoning)
+      - Grounds: D141, D143: KR1.1 and KR1.2 are the key results a why can name.
+  - **D99 Components**: the orchestrator, the planner, the designer, the generator, the evaluator, plan.py, rounds.py, throwaway.py, the guard, the run's folder and the best practices (reasoning)
+    - Grounds: architecture/best-practice.json Q4 thinking: "One component alone makes each decision the stories need, above all one hard to make or likely to change, and a list under the figure says so by the component's name."
+    - Also serves: architecture/Q4, architecture/Q5
+    - **D100 The roles Claude Code subagents**: the scripts Python 3.9 (reasoning)
+      - Grounds: D99
+    - **D101 A box holds its name and its type**: a store a plain box like a component's (user)
+      - Grounds: The user, 2026-11-06, on the structure figures: "箱の中、種類ぐらいは入れてもいいけど、名前以外を入れると、箱の意味ない" (a box may hold its type, but anything more than its name defeats the box); on the stores: "storeの箱、DBみたいなので、四角でよくない、目立たせる必要ない" (a store need not look like a database or stand out).
+    - **D102 A list under the figure**: what each alone decides (reasoning)
+      - Grounds: D99
+    - **D103 What the guard holds each role to**: left to the lanes proposal, as it is how the roles work inside (reasoning)
+      - Grounds: architecture/best-practice.json Q16 thinking: "How a component works inside is left to where it is built"
+    - **D104 Each choice a developer would question**: beside the figure, with what it beat and what it costs (reasoning)
+      - Grounds: architecture/best-practice.json Q14 thinking: "Beside each choice a developer would question, such as a technology, a tool or how far a level tries a unit, stands why it beat the other way and what it costs."
+      - Grounds: D4, D9, D14, D25, D31, D47, D48
+      - Also serves: architecture/Q14
+  - **D105 Data**: Call, Run, Work, Best practice, Question, Standard, Design tree, Decision, Request, Run values, Round, Answers, Result, Rules laid, Message and Answer (reasoning)
+    - Grounds: architecture/template.md Data model: "each data the components pass or keep, by its name alone"
+    - Also serves: architecture/Q6
+    - **D106 A concept model in a UML class diagram**: each data by its name, each relation with how many it joins at both ends (user)
+      - Grounds: architecture/best-practice.json Q6 thinking: "The data are drawn as a concept model in a UML class diagram, which most developers read"
+      - Grounds: The user, 2026-11-06: "データモデル、概念モデルにしない？クラス図で多重度や集約を表現した方が誰でも読めるかと" (a concept model in a class diagram, with multiplicities and aggregation, which anyone reads).
+      - **D107 Filled diamonds**: the Design tree holding its Decisions, a Best practice its Questions (reasoning)
+        - Grounds: D106
+      - **D108 Frames along a run's course**: one for each component keeping data, read from the top left, Work alone in the middle (user)
+        - Grounds: architecture/best-practice.json Q6 thinking: "The data are grouped in frames, one for each component or part of the product that keeps them, set in the order the stories meet them, with the data most others join in the middle"
+        - Grounds: The user, 2026-11-06: "概念モデルの並びと配置は読者が理解しやすいように意識してる？箱が並んでるだけで何も伝わらない" (boxes set side by side tell nothing).
+        - Grounds: The frames follow the components that keep the data, as D99 names them.
+        - **D109 The frames**: talking with the user (the orchestrator: Message, Answer); the run (the planner: Call, Run); moving the roles (the guard: Run values, Result, Rules laid), top right; the design (the designer: Request, Design tree, Decision), left; the rounds (rounds.py and the evaluator: Round, Answers), right; the best practices (Best practice, Question, Standard), bottom (reasoning)
+          - Grounds: D108
+    - **D110 A list only where a name could be taken for another's**: Call, Request and Run values; Run; Standard; Round and Answers; Result; Rules laid; Message (user)
+      - Grounds: architecture/best-practice.json Q6 thinking: "A list under the figure says what a data is in a few words only where its name could be taken for another's"
+      - Grounds: The user, 2026-11-06, on the list under the data model: "分かりにくいものだけ説明すればよくない？" (explain only what is hard to tell).
+    - **D111 The fields**: lie where each data is built (reasoning)
+      - Grounds: D105
+  - **D112 Sequences**: three: S1 and S3, the start; S2, an answer; S2, the rounds (reasoning)
+    - Grounds: architecture/best-practice.json Q7 thinking: "Each story is drawn as its steps in order, from the role's first request to what the story gives them, each step taken by a component along an arrow of Components and handing on a named data."
+    - Grounds: D93
+    - Also serves: architecture/Q7
+    - **D113 Each from the user through the orchestrator**: alike for `/turn:up` and the user's AI, to what the story gives (reasoning)
+      - Grounds: D41
+    - **D114 Each branch drawn**: each point put to the user, each shortfall sent back, each result on the arrow that gives it (reasoning)
+      - Grounds: D112
+    - **D115 Their choices beside them**: `asks`, and rounds.py settling the phase (reasoning)
+      - Grounds: D46, D40
+  - **D116 Deployment**: on the user's computer, in Claude Code, Turn installed as a plugin with its guard within it, and Python 3.9 (reasoning)
+    - Grounds: architecture/best-practice.json Q9 thinking: "Each component and each data sits in one deployment unit, within the environment where it runs or is kept, with each thing outside the product it depends on, and no infrastructure the components do not need."
+    - Also serves: architecture/Q9, architecture/Q14
+    - **D117 How it starts**: the user types `/turn:up`; an AI's plugin lists `turn` in its dependencies and calls `turn:up` in its main conversation (reasoning)
+      - Grounds: D41
+    - **D118 Python 3.9 and its standard library only**: for Turn's scripts and the guard (reasoning)
+      - Grounds: D116
+    - **D119 Its choices beside it**: the run's folder, a new kind's best practice, the throwaway copy and throwaway.py (reasoning)
+      - Grounds: D51, D5, D34, D35
+  - **D120 Files**: one tree, one line each: `plugins/turn/` for what ships, `dev/turn/` for Turn's developers, `.turn/` for each run and the repository's own best practices, the work at the paths the design gives (reasoning)
+    - Grounds: architecture/best-practice.json Q10 thinking: "The folders and files that hold each component and each data are drawn as they lie on disk, one line each, leaving out what lies inside a component."
+    - Also serves: architecture/Q10
+    - **D121 Turn's documents where the plugin best practice keeps them**: `plugins/turn/README.md`, `dev/turn/product-vision.md` and `dev/turn/architecture.md`, each with its figures in `images/` beside it (reasoning)
+      - Grounds: D120
+    - **D122 `tests/ux/`**: the trials of O1 (reasoning)
+      - Grounds: D120
+  - **D123 Tests**: by the plugin best practice's Test, said only where Turn differs (reasoning)
+    - Grounds: architecture/best-practice.json Q11 thinking: "Each deployment unit has a cell at each level whose ground, a part's contract, this document or the product vision, says what the unit must do, and an empty cell says why."
+    - Grounds: D93
+    - Also serves: architecture/Q11, architecture/Q12, architecture/Q13, architecture/Q14
+    - **D124 The script process**: FULL at unit and at architecture (reasoning)
+      - Grounds: D123
+    - **D125 The hook process**: FULL at architecture (reasoning)
+      - Grounds: D123
+    - **D126 The Claude Code process**: HAPPY at architecture and at ux, the other rows SMOKE (reasoning)
+      - Grounds: D123
+    - **D127 FULL, HAPPY and SMOKE**: each case and edge, the main paths, a run that confirms what lower levels checked, as marks in capitals (user)
+      - Grounds: The user, 2026-11-06, on the marks ●●●, ●●○ and ●○○: "full,happy,smokeにしたら", "大文字にしない？マークだよね？" (FULL, HAPPY and SMOKE, in capitals as marks).
+      - Grounds: developers already know these words.
+    - **D128 Mutation testing**: on the unit tests alone (reasoning)
+      - Grounds: D123
+    - **D129 The ux trials run O1 twice**: the stand-in typing `/turn:up`, and the test plugin's AI calling the skill for it (reasoning)
+      - Grounds: D117
+    - **D130 The classes each script's unit tests divide**: lie with those tests, as they change with the scripts' contracts (reasoning)
+      - Grounds: D123
+  - **D131 What the architecture leaves out**: each role's steps, each data's fields, each guard rule and each route's wording (reasoning)
+    - Grounds: architecture/best-practice.json Q16 thinking
+    - Grounds: a line about them goes untrue at the next change inside.
+    - Also serves: architecture/Q16
+- **readme/Q1** Telling a colleague about the product, does the reader retell the opening from memory?
+- **readme/Q2** Reading the gain, does the reader tell what the product would let them do, and so whether it is for them?
+- **readme/Q3** Before installing, does the reader see what the product does not do that they might expect of it?
+- **readme/Q4** Before installing, does the reader see where the product is not yet fit for use?
+- **readme/Q5** Starting with nothing set up, does the reader install the product by the README's steps alone, and see that it works?
+- **readme/Q6** After the walkthrough, does the reader see that the product would give them, on work of their own, the gain the opening promised?
+- **readme/Q7** For each problem they feel in the work, does the reader picture how the product makes it go away?
+- **readme/Q8** At each point where they would ask whether the product can really do that, does the reader picture how it does it?
+- **readme/Q9** Needing more than the README gives, such as fuller use or help, does the reader find where to go next?
 - **readme/Q10** Weighing whether they may use the product, does the reader find the terms for them and their team?
 - **readme/Q11** Reading from the top, does the reader find each answer just when they come to need it, so they can stop once they have what they came for?
-  - **D18 The order of the README**: The template's order: what Turn is, the status, whom it is for and the gain, the non-goals; then Requirements, Installation, Walkthrough, How it works, Documentation, License. The opening serves every reader; one who has chosen Turn goes to the installation; one still weighing it reads the walkthrough and How it works. (reasoning)
-    - Grounds: readme/best-practice.json Q11 thinking: "the opening for every reader, the installation for one who has chosen the product, the walkthrough and How it works for one still weighing it"
-    - Also builds on: D8, D9, D11, D17, D12, D13, D10, D14, D29, D15
 - **architecture/Q1** Starting on any part, does the developer see the one idea by which the product gives its product vision, and the piece of it the part carries out?
-  - **D20 How Turn gives its product vision, as one idea**: Every kind of work goes through one course of subagents, which Lane's routes move. The planner settles the kind and hands the designer the work's goal and the kind's questions. The designer settles the design with the user, one point at a time. The generator makes the work from the design, against the kind's best practice. A fresh evaluator answers each question as the work's user would, never given the design. A question not met goes back through the designer to its decision. Once every question is met, the rounds go on with how the work reads. The orchestrator, the main conversation following Turn's skill, starts each role, puts each point to the user and passes each answer back, as given. (reasoning)
-    - Grounds: architecture/best-practice.json Q1 thinking: "The opening says, as one idea seen from above, how the product turns what its roles bring into what the product vision promises."
-    - Grounds: D10: each problem of the usual way goes away by a part of this course: the best practice, the evaluator asking only its questions, the designer, the evaluator trying the work, and a shortfall going back to its decision.
-    - Also builds on: D10, D19
 - **architecture/Q2** Following a step of an objective's main use, as the README's walkthrough shows it, does the developer find the one user story that carries it?
-  - **D19 Who meets Turn at its edge, and in which ways**: The user alone, in three ways, each a user story. S1: start Turn with a request, by typing `/turn:up` or, as an AI that asks for a person, by calling the same skill as Calling Turn says; it carries the request and the purpose put. S2: answer the point Turn puts; it carries each fact and point of intent, the design approved, a point of intent while the work is made, and the work handed over. S3: start Turn with a run's folder, alone or with a change. From O1's intent, work with which the people it is for achieve what they are after, the stories also carry these conveniences, which the product vision does not list: in S1, where the request does not say the kind, Turn first asks it, and where Turn has no best practice for the kind, it first makes one, putting its points and design to the user, then the work by it; in S2, where a purpose, a fact or the design is wrong, the user says what it should be, and Turn goes on with each point built on it changed; in S3, a run that stopped before the hand-over, as a point was left unanswered or Claude Code ended, goes on from its folder, with every point settled so far and the work as far as made, not committed, asking nothing again, and a change given with the folder makes the work again with it. A fault of Turn's own can end any of them, and the user gets the fault, to send to Turn's makers. A question the rounds cannot meet is no convenience of its own: it goes back to the designer and reaches the user as a point of intent of S2. The calling AI is no role and no story of its own, as D1 makes it the user; an AI calls Turn in the way Calling Turn gives. (reasoning)
-    - Grounds: Agreed with the user, 2026-11-05: the product vision, the README and the architecture each show the main flow to their goal, and the conveniences around it are user stories drawn from the product vision and its intent, so a convenience added changes the stories alone.
-    - Grounds: architecture/best-practice.json Q2 thinking: "There is one story for each way a role meets the product at its edge, drawn from the objectives and the README's walkthrough"
-    - Grounds: D1: "A person and an AI that asks for a person want the same, so they are one role."
-    - Grounds: dev/turn/architecture.md:62: "The planner asks the user one point only, the kind, and only before there is a design."
-    - Grounds: dev/turn/architecture.md:50-51: "A kind new to Turn first gets its best practice as a work of its own, made by the same course with `meta` as its best practice."
-    - Grounds: dev/turn/architecture.md:104-105: "A run that stopped goes on from its folder in a new session, and asks nothing again (KR1.2)."
-    - Grounds: dev/turn/architecture.md:125: "The generator writes only the work and the run's folder."
-    - Grounds: plugins/turn/skills/up/SKILL.md:18-19: "`For the maker of Turn:`: tell the person that Turn stopped on a fault of its own, with the message as it is, and stop."
-    - Grounds: D20: "A question not met goes back through the designer to its decision."
-    - Also serves: architecture/Q8
-    - Also builds on: D1, D7
 - **architecture/Q3** Meeting a case no line of the document names, do two developers of different parts reach the same decision from a principle's why?
-  - **D21 Turn's principles**: Turn builds on the principles of the plugin best practice and departs from one of them: no role follows the work once it is handed over, so Turn takes no learning from each run, while a new kind's best practice the user approved is kept for later runs as a work of its own (D29 (D)). It adds nine: One course for every kind; The designer alone settles the design; The evaluator has only what the work's user has; What the work says before how it says it; A shortfall goes back to its decision; Each role starts fresh from the run's folder; Passed on as given; Every user meets the same Turn, no line naming a plugin that starts it; Turn changes only the work. Each why names the key result it serves, KR1.1 or KR1.2. (reasoning)
-    - Grounds: architecture/best-practice.json Q3 thinking: "Each principle is one rule that every part meeting the same decision follows, with its why: what goes wrong without it."
-    - Grounds: D20: each principle holds one piece of the course: the course moved by routes, the designer settling the design, a fresh evaluator never given the design, a shortfall sent back through the designer, the points carried as given.
-    - Grounds: D4: KR1.1 and KR1.2 are the key results a why can name.
-    - Grounds: The user, 2026-11-06, once trials showed hooks hold the main conversation to a course: "オーケストレータはメインにしよう" (the orchestrator runs in the main conversation), as dev/plugin-best-practice.md Where the orchestrator runs now says for every plugin.
-    - Also serves: architecture/Q15
-    - Also builds on: D20
 - **architecture/Q4** Facing a decision the stories need, does the developer find the one component that alone decides it?
-  - **D22 Turn's components and what each alone decides**: The orchestrator (the main conversation following the skill `up`, by `/turn:up` or the user's AI calling it), the planner, the designer, the generator and the evaluator (Claude Code subagents), plan.py, rounds.py and throwaway.py (Python 3.9 scripts), the guard (Lane's hooks, which hold the orchestrator to Turn's routes and each role to its rules), the run's folder and the best practices; each box holds only its name and its type and technology, a store a plain box like a component's, and a list under the figure says what each alone decides. What the guard holds each role to is left to the lanes proposal, as it is how the roles work inside. Each choice a developer would question stands beside the figure with what it beat and what it costs: a designer of Turn's own, which asks by the kind's questions and writes and checks the design in Pin's form through Pin's tree.py, over Pin's pinner used as built, which hid the design role outside Turn's roles; the planner on both sides of the designer; a new kind's best practice made as a work of its own; one run of the generator for the whole work in each round; one run of the evaluator for each group of the round's questions, all at once; the role before a step handing the orchestrator the next role's run values; no role of Turn but the orchestrator starting a subagent, as a child's end would start its role again while a point waits. (reasoning)
-    - Grounds: architecture/best-practice.json Q4 thinking: "One component alone makes each decision the stories need, above all one hard to make or likely to change, and a list under the figure says so by the component's name."
-    - Grounds: The user, 2026-11-06, on the structure figures: "箱の中、種類ぐらいは入れてもいいけど、名前以外を入れると、箱の意味ない" (a box may hold its type, but anything more than its name defeats the box); on the stores: "storeの箱、DBみたいなので、四角でよくない、目立たせる必要ない" (a store need not look like a database or stand out).
-    - Grounds: The user, 2026-11-06, on Turn's roles ("planner,designer,generator,evaluatorとorchestratorだけかと"), chose to put Turn's designer back, using Pin's design tree and check, over keeping Pin's pinner.
-    - Grounds: architecture/best-practice.json Q14 thinking: "Beside each choice a developer would question, such as a technology, a tool or how far a level tries a unit, stands why it beat the other way and what it costs."
-    - Grounds: dev/plugin-best-practice.md Where the orchestrator runs: "The orchestrator runs in the main conversation, started by the plugin's skill"; The guard tells each role its steps again: "The guard holds the orchestrator in the main conversation to the router's course the same way".
-    - Grounds: architecture/best-practice.json Q16 thinking: "How a component works inside is left to where it is built"
-    - Also serves: architecture/Q5, architecture/Q14
-    - Also builds on: D19, D20
 - **architecture/Q5** Starting on a component, does the developer know what kind of thing it is and what it is made with, choosing nothing themselves?
 - **architecture/Q6** Making one component that writes a data and another that reads it, do two developers join it to the other data the same way?
-  - **D23 Turn's data**: Call, Run, Work, Best practice, Question, Standard, Design tree, Decision, Request, Run values, Round, Answers, Result, Rules laid, Message and Answer, drawn as a concept model in a UML class diagram, each by its name alone, with each relation and how many it joins at both ends, a filled diamond where the Design tree holds its Decisions and a Best practice its Questions, and a list under the figure saying what a data is in a few words only where its name could be taken for another's: Call, Request and Run values, which each start a role; Run; Standard, beside Best practice; Round and Answers, beside Answer; Result; Rules laid; and Message. The fields lie where each is built. (reasoning)
-    - Grounds: architecture/best-practice.json Q6 thinking: "The data are drawn as a concept model in a UML class diagram, which most developers read"
-    - Grounds: architecture/best-practice.json Q6 thinking: "A list under the figure says what a data is in a few words only where its name could be taken for another's"
-    - Grounds: The user, 2026-11-06, on the list under the data model: "分かりにくいものだけ説明すればよくない？" (explain only what is hard to tell).
-    - Grounds: The user, 2026-11-06: "データモデル、概念モデルにしない？クラス図で多重度や集約を表現した方が誰でも読めるかと" (a concept model in a class diagram, with multiplicities and aggregation, which anyone reads).
-    - Grounds: architecture/template.md Data model: "each data the components pass or keep, by its name alone"
-    - Also builds on: D22
-    - **D31 How the data model is laid out, so the reader sees how Turn's data hang together before reading a relation**: A frame for each component that keeps its data, read from the top left along a run's course: talking with the user (the orchestrator: Message, Answer); the run (the planner: Call, Run); moving the roles (the guard: Run values, Result, Rules laid), top right; the design (the designer: Request, Design tree, Decision), left; the rounds (rounds.py and the evaluator: Round, Answers), right; the best practices (Best practice, Question, Standard), bottom; and Work, which the generator makes and most data join, alone in the middle. (reasoning)
-      - Grounds: architecture/best-practice.json Q6 thinking: "The data are grouped in frames, one for each component or part of the product that keeps them, set in the order the stories meet them, with the data most others join in the middle"
-      - Grounds: The user, 2026-11-06: "概念モデルの並びと配置は読者が理解しやすいように意識してる？箱が並んでるだけで何も伝わらない" (boxes set side by side tell nothing).
-      - Grounds: The frames follow the components that keep the data, as D22 names them.
-      - Also serves: architecture/Q6
-      - Also builds on: D22
 - **architecture/Q7** Following a user story from its role's first request to its end, does the developer see at each step which component acts, along which arrow, and what data it hands on?
-  - **D24 Turn's sequences**: Three: S1 and S3, the start; S2, an answer; S2, the rounds. Each runs from the user, through the orchestrator, which follows Turn's skill alike for `/turn:up` and for the user's AI, to what the story gives them, with each branch, each point put to the user and each shortfall sent back drawn, and each result on the arrow that gives it. Beside them stand two choices: `asks`, a result whose route starts no one, so a waiting point reaches the user; and rounds.py settling the phase from the run's folder, so the orchestrator decides no point of the work and a stopped run keeps its phase. (reasoning)
-    - Grounds: architecture/best-practice.json Q7 thinking: "Each story is drawn as its steps in order, from the role's first request to what the story gives them, each step taken by a component along an arrow of Components and handing on a named data."
-    - Grounds: D19: one role, the user, in three stories.
-    - Also builds on: D19, D22, D23
 - **architecture/Q8** Of any story, component or data, does the developer see which objective of the product vision needs it, so that what none needs can go?
 - **architecture/Q9** Setting the product up from nothing, does the developer put each component where it runs and each data where it is kept, and start the product, asking no one?
-  - **D25 Where Turn runs and how it starts**: On the user's computer, in Claude Code, with Turn installed as a plugin, its guard within it, and Python 3.9. The user installs Turn as the README says and types `/turn:up`; an AI's plugin lists `turn` in its dependencies and calls the skill `turn:up` in its main conversation. Beside it stand the choices: Python 3.9 and its standard library only; the run's folder in `.turn/<yyyymmdd>-<name>/`, or where the user's AI says; a new kind's best practice in `.turn/best-practices/`; a work's commands in a throwaway copy with a throwaway home; throwaway.py running every command in one copy. (reasoning)
-    - Grounds: architecture/best-practice.json Q9 thinking: "Each component and each data sits in one deployment unit, within the environment where it runs or is kept, with each thing outside the product it depends on, and no infrastructure the components do not need."
-    - Also serves: architecture/Q14
-    - Also builds on: D22
 - **architecture/Q10** Making or changing a component or a data, does the developer find the one place its files belong?
-  - **D26 Where each component and data lies**: One tree of folders and files, one line each: `plugins/turn/` for what ships, `dev/turn/` for Turn's developers, `.turn/` for each run and the repository's own best practices, and the work at the paths the design gives. Pin's tree.py and Lane's guard are reached through links, not copied. Turn's README, product vision and architecture lie where the plugin best practice keeps them, `plugins/turn/README.md`, `dev/turn/product-vision.md` and `dev/turn/architecture.md`, each with its figures in `images/` beside it. Each is copied, with its figures, as the example of its best practice in its kind's folder in `core/domain/best-practices/` by `plan.py example`, from the path its best practice names in `source`, and `plan.py form` fails on a copy that differs from it, as the example must ship with Turn, a symbolic link shows on GitHub and on Windows as a line of text, and a copy made and checked from one document cannot drift from it. `tests/ux/` holds the trials of O1. (reasoning)
-    - Grounds: architecture/best-practice.json Q10 thinking: "The folders and files that hold each component and each data are drawn as they lie on disk, one line each, leaving out what lies inside a component."
-    - Grounds: dev/plugin-best-practice.md Code kept once: Pin's tree.py and Lane's guard are linked, so a form or a fix kept once cannot drift.
-    - Grounds: Agreed with the user, 2026-11-05: each example is a copy of the real document, made and checked automatically, not a symbolic link
-    - Also builds on: D22, D23
 - **architecture/Q11** Asked whether anything in the product goes untested, does the developer see for each deployment unit which levels cover it, how far each tries it, and why a level is missing?
-  - **D27 How Turn is tested**: As the plugin best practice's Test says, and the section says only where Turn differs: the script process tried FULL at unit and at architecture; the hook process FULL at architecture; the Claude Code process HAPPY at architecture and at ux, the other rows SMOKE; each cell marked FULL, each case and edge, HAPPY, the main paths, or SMOKE, a run that confirms what lower levels checked, as developers already know these words; mutation testing on the unit tests alone; each with what it beat and what it costs. The ux trials run O1 twice over: the stand-in typing `/turn:up`, and the test plugin's AI calling the skill for it. The classes each script's unit tests divide lie with those tests, as they change with the scripts' contracts. (reasoning)
-    - Grounds: architecture/best-practice.json Q11 thinking: "Each deployment unit has a cell at each level whose ground, a part's contract, this document or the product vision, says what the unit must do, and an empty cell says why."
-    - Grounds: D19
-    - Grounds: The user, 2026-11-06, on the marks ●●●, ●●○ and ●○○: "full,happy,smokeにしたら", "大文字にしない？マークだよね？" (FULL, HAPPY and SMOKE, in capitals as marks).
-    - Also serves: architecture/Q12, architecture/Q13, architecture/Q14
-    - Also builds on: D22, D24, D25
 - **architecture/Q12** Writing a test at one level, does the developer know what to run real, what doubles stand in for, what to cover and when it passes, deciding none of it?
 - **architecture/Q13** When the unit and architecture tests pass, does the developer know the product does what this document says, leaving to the ux level only the product vision to confirm?
 - **architecture/Q14** Doubting a choice the document makes, such as a tool or how far a level tries a unit, does the developer see what would be lost by the other way?
 - **architecture/Q15** Following a principle while building a part, does the developer find every figure and list asking the same of that part?
 - **architecture/Q16** Changing how a component works inside while the product vision and the principles stay, does the developer find every line of the document still true?
-  - **D28 What the architecture leaves out**: Each role's steps, each data's fields, each guard rule and each route's wording: they lie where each is built, as a line about them goes untrue at the next change inside. (reasoning)
-    - Grounds: architecture/best-practice.json Q16 thinking
-    - Also builds on: D21, D22, D23, D24, D25, D26, D27
+- **product-vision/Q1** Listing whom to build for, does the developer find every role that comes to the product with a want of its own?
+  - **D132 One role**: the user, one who asks Turn for a document or code, such as a README, for the people it is for (user)
+    - Grounds: Agreed with the user, 2026-11-05, when the product vision example was shown: "Users are roles, not person vs AI: Turn has one role, the user."
+    - Grounds: product-vision/best-practice.json Q1 thinking: "Cut the roles by that end, not by who or what takes them: a person and an AI that want the same are one role."
+    - Grounds: The user, 2026-11-05: deciding what is theirs is a means, not what they come to Turn for.
+    - Also serves: product-vision/Q2
+    - **D133 A person and an AI that asks for a person**: one role, as they are after the same (user)
+      - Grounds: D132
+    - **D134 No part of Turn a role**: Turn's own parts and the plugins it runs on are after nothing of their own (user)
+      - Grounds: D132
+- **product-vision/Q2** Reading an objective, does the developer see what its role gets from the product?
+  - **D135 One objective**: O1: The user gets work with which the people it is for achieve what they are after. (user)
+    - Grounds: The user, 2026-11-05: "利用者の目的を満たす成果物を生み出すこと"; "ユーザが決める、直さなくて良い" are means. Asked why until no further end showed: the work handed over as it is shows the end met (D136, D140, D141, D143); deciding only what is theirs is how it is reached (D12).
+    - Grounds: Agreed with the user, 2026-10-31, as Turn's concept: quality is the degree a work meets its user's purpose (ISO 9000:2015; Juran, fitness for use).
+    - Also serves: product-vision/Q3
+- **product-vision/Q3** Weighing a piece of work, does the developer see which one objective it brings closer, or that it brings none closer?
+- **product-vision/Q4** After a change, does the developer see from the key results whether to keep it?
+  - **D136 O1 fails**: where the people the work is for cannot use it for what they are after as it was handed over (reasoning)
+    - Grounds: product-vision/best-practice.json Q4 step 1: "List how success or failure would show in what the role does or feels, such as giving up, undoing a result or working around the product."
+    - **D137 The user changes it before its first use**: themselves or by asking (reasoning)
+      - Grounds: D136
+    - **D138 Not put to use**: never, as handed over (reasoning)
+      - Grounds: D136
+    - **D139 The people it is for fall short with it**: as the ux trials see through a stand-in that holds their intent (reasoning)
+      - Grounds: D136
+  - **D140 O1 succeeds**: where they achieve what they are after with the work as handed over (reasoning)
+    - Grounds: D136
+  - **D141 KR1.1**: of the works the user asks for, the share that fails in a way of D136; lower is better (reasoning)
+    - Grounds: product-vision/best-practice.json Q4 thinking: "a count of the product's own output can rise while the role's end is missed."
+    - **D142 A work counted once**: however many ways it fails (reasoning)
+      - Grounds: D141
+  - **D143 KR1.2**: the time from the user's request to that work, the user's own time answering Turn included; shorter is better (reasoning)
+    - Grounds: product-vision/best-practice.json Q4 thinking: "a count of the product's own output can rise while the role's end is missed."
+    - **D144 Asking what Turn could find or settle itself**: adds to KR1.2 and gains KR1.1 nothing (reasoning)
+      - Grounds: D143
+- **product-vision/Q5** Weighing the product against what its roles do today, does the developer see why it meets each objective where that way does not?
+  - **D145 The present way**: an AI asked in one prompt, its draft read and fixed; five ideas beat it, each meeting O1 (user)
+    - Grounds: The user, 2026-11-05, on what Turn does today without Turn: an AI is asked in one prompt and its draft is read and mended; what it hands over is not put to use as it comes.
+    - Grounds: The user, 2026-11-05, ideas thought up: "ベストプラクティスがある / ベストプラクティスを作れる / 作れたかでなく目的や意図を確認する / 設計ツリーでユーザーベネフィットを全部問い詰めてユーザーから引き出す / 利用時としてユーザーベネフィットをチェックする / goodのみ探してgoodにするにはを考える"
+    - Grounds: The user, 2026-11-05, agreed that their six ideas merge into five, the first two into (1): (1) a best practice for each kind, made where missing; (2) checks the purpose and intent, not that the work was made by the best practice; (3) draws out every intent from the user in the design tree; (4) checks the intents at the moment of use; (5) seeks the good and how to make the work good.
+    - Grounds: The user, 2026-11-05, on the present way, for all five ideas: "提案はしてくれる / レビューもしてくれる / でも目的ベースでない、表面的 / 本質でない / 指摘もたくさん出る、でも本質でない / 継ぎ足し、ノイズが増える / 目的から考えられない / 似た？言語？知識？のマッピングしかできないから" (an AI proposes and reviews, but from the surface, not the purpose; its many findings miss the essence; fixes are added on and noise grows; it cannot think from the purpose, as it only maps similar language or knowledge).
+    - Grounds: Rated against the present way for O1 by the assistant: all five better on KR1.1. On KR1.2, (1) where a best practice must first be made and (3) by the user's answers cost time up front, against the rounds of reading and mending they save.
+    - Grounds: Riskiest assumption: the people a work is for achieve what they are after with it as Turn hands it over more often than with a one-prompt draft, and soon enough. Checked by the ux trials: the same requests through Turn and through one prompt, counting KR1.1 and KR1.2 for each.
+    - Grounds: The why of each idea rewritten for O1 as the user reworded it, 2026-11-05, by the assistant.
+- **product-vision/Q6** Changing how the product works inside while its roles see the same, does the developer find the product vision still true?
+  - **D146 What it shows**: only what the user does, sees and receives (reasoning)
+    - Grounds: product-vision/best-practice.json Q6 thinking: "The product vision says only what the roles are after, do, see and receive, and nothing of how the product works inside."
+    - **D147 No part named**: Turn's parts and the plugins it runs on, such as Pin and Lane (reasoning)
+      - Grounds: D146

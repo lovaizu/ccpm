@@ -45,8 +45,9 @@ Goal: The user has the plugin they build run as they designed it, on every run.
         - Grounds: Trial on Claude Code 2.1.319, 2026-11-06: a Stop block keeps the main conversation going.
         - **D18 Then let end**: the user told whose step to fix (reasoning)
           - Grounds: a hold with no end needs a person to break it.
-      - **D19 The order holds when asked otherwise**: the skill's sentence says so (reasoning)
-        - Grounds: the ux trial of 2026-11-06: "Your instruction wins over the plugin's."
+      - **D19 A person's explicit request may end the order**: Lane holds the order against drift, not against the person (reasoning)
+        - Grounds: the ux trial of 2026-11-06, where Opus kept to "no review" after the skill's sentence said otherwise: "your instruction takes precedence over the plugin's set order."
+        - Also serves: Q4
       - **D20 Background starts**: each routed role runs in the background (research)
         - Grounds: Trial on Claude Code 2.1.319, 2026-11-06: a background start gives its agentId at once.
         - **D21 Each start told apart**: by the agentId its start gives (reasoning)
