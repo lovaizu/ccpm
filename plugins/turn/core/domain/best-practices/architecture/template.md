@@ -74,7 +74,9 @@ What each decides alone:
 > - The figure: the deliverable's own at images/data-model.svg, the product named in its alt text:
 >   the data as a concept model in a UML class diagram: each data the components pass or keep, as a
 >   class by its name alone, and each relation between two data, with its name and how many of each
->   it joins at both ends, a filled diamond at the whole where one holds the other's parts.
+>   it joins at both ends, a filled diamond at the whole where one holds the other's parts; the data
+>   grouped in a named frame for each component that keeps them, the frames in the order the
+>   stories meet them, the data most others join in the middle.
 > - `<Data>`, `<what it is>`: each data of the figure, by its name, and what it is in a few words,
 >   without its fields.
 

@@ -145,6 +145,12 @@ Goal: The user gets work with which the people it is for achieve what they are a
     - Grounds: The user, 2026-11-06: "データモデル、概念モデルにしない？クラス図で多重度や集約を表現した方が誰でも読めるかと" (a concept model in a class diagram, with multiplicities and aggregation, which anyone reads).
     - Grounds: architecture/template.md Data model: "each data the components pass or keep, by its name alone"
     - Also builds on: D22
+    - **D31 How the data model is laid out, so the reader sees how Turn's data hang together before reading a relation**: open
+      - Grounds: architecture/best-practice.json Q6 thinking: "The data are grouped in frames, one for each component or part of the product that keeps them, set in the order the stories meet them, with the data most others join in the middle"
+      - Grounds: The user, 2026-11-06: "概念モデルの並びと配置は読者が理解しやすいように意識してる？箱が並んでるだけで何も伝わらない" (boxes set side by side tell nothing).
+      - Grounds: The frames follow the components that keep the data, so this waits on D22, where whether Turn has a designer of its own is put to the user.
+      - Also serves: architecture/Q6
+      - Also builds on: D22
 - **architecture/Q7** Following a user story from its role's first request to its end, does the developer see at each step which component acts, along which arrow, and what data it hands on?
   - **D24 Turn's sequences**: Three: S1 and S3, the start; S2, an answer; S2, the rounds. Each runs from the user, through the starter, which stands for `/turn:up` or the user's AI alike, to what the story gives them, with each branch, each point put to the user and each shortfall sent back drawn, and each result on the arrow that gives it. Beside them stand two choices: `asks`, a result whose route starts no one, so a waiting point reaches the user; and rounds.py settling the phase from the run's folder, so up decides no point of the work and a stopped run keeps its phase. (reasoning)
     - Grounds: architecture/best-practice.json Q7 thinking: "Each story is drawn as its steps in order, from the role's first request to what the story gives them, each step taken by a component along an arrow of Components and handing on a named data."

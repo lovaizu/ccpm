@@ -125,7 +125,7 @@
   },
   {
    "intent": "Q6",
-   "thinking": "The data are drawn as a concept model in a UML class diagram, which most developers read: each data once, as a class by its name alone, each relation named with how many of each it joins at both ends, and a filled diamond at the whole where one data holds the other's parts, never a hollow one, which readers take in different ways. A list under the figure says what each data is in a few words. The fields are left to where the data is built. Two developers then join a data the same way while its fields change freely.",
+   "thinking": "The data are drawn as a concept model in a UML class diagram, which most developers read: each data once, as a class by its name alone, each relation named with how many of each it joins at both ends, and a filled diamond at the whole where one data holds the other's parts, never a hollow one, which readers take in different ways. The data are grouped in frames, one for each component or part of the product that keeps them, set in the order the stories meet them, with the data most others join in the middle, so the reader sees how the data hang together before reading a relation. A list under the figure says what each data is in a few words. The fields are left to where the data is built. Two developers then join a data the same way while its fields change freely.",
    "steps": []
   },
   {
