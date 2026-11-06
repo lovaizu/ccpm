@@ -73,11 +73,11 @@ At the end, you have `<result>`.
 
 ![The usual way and the product](images/template-problem.svg)
 
-- `<problem>`: `<how it goes away>`.
+1. **`<problem>`.** `<how it goes away>`.
 
 ![How the product works](images/template-how-it-works.svg)
 
-- `<doubt>`: `<how it does it>`.
+**`<doubt>`** `<how it does it>`.
 
 [`<title>`](<path>)
 
@@ -89,7 +89,8 @@ At the end, you have `<result>`.
 >   gone in the other.
 > - `<problem>`, `<how it goes away>`: each problem the reader feels in the work, in their words,
 >   and what the product does that makes it go away, in a sentence or two, so that the reader sees
->   their own problem gone.
+>   their own problem gone. A numbered list, each item's number the one the figure marks it with,
+>   so the reader finds it on the figure.
 > - The second figure: one for each doubt, each followed by its line, the deliverable's own at
 >   images/how-<name>.svg, the product named in its alt text, in the form that best shows how the
 >   product does the doubted thing, such as the skeleton here: the user, the product's parts and
@@ -97,7 +98,8 @@ At the end, you have `<result>`.
 >   them at a glance.
 > - `<doubt>`, `<how it does it>`: each point where a newcomer would ask whether the product can
 >   really do that, and how the product does it, in a sentence or two, so that the reader believes
->   it before they try it.
+>   it before they try it. The doubt as the reader would ask it, in bold, opens the paragraph under
+>   its figure, which sits just above it, so it needs no letter or number.
 > - `<title>`, `<path>`: the page that explains it further, where it needs a long sequence of
 >   figures; optional.
 

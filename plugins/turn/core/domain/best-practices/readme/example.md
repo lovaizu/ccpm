@@ -82,39 +82,40 @@ Done: README.md is written, not committed. Its reader gets all a README's reader
 
 ![The usual way and Turn, with the five problems marked](images/problem.svg)
 
-- 1, the AI starts from scratch and writes what similar texts say, not what your reader needs:
-  Turn makes each kind of work by its best practice, which holds the goal the work's reader
-  reaches, a template of what the work holds and the questions its reader asks of it.
-- 2, its review gives many findings, few that matter: a fresh AI, the evaluator, asks only those
-  questions, whether the work's reader gets what they need, so each shortfall it finds matters.
-- 3, it fills what you did not say with guesses: Turn finds each fact in your repository and asks
-  you to confirm it, and asks you your purpose and intent, one point at a time, so nothing in the
-  work is a guess you never saw.
-- 4, you find what falls short only as you use the work: the evaluator tries the work as its reader
-  would, running its commands in a throwaway copy of your repository, so the work reaches you only
-  once it works in use.
-- 5, each fix is added on, and the work gets noisier: a question not met goes back to its
-  decision, and the work is made again from the design, the record of every fact and decision, so
-  no fix sits beside it.
+1. **The AI starts from scratch and writes what similar texts say, not what your reader needs.**
+   Turn makes each kind of work by its best practice, which holds the goal the work's reader
+   reaches, a template of what the work holds and the questions its reader asks of it.
+2. **Its review gives many findings, few that matter.** A fresh AI, the evaluator, asks only
+   those questions, whether the work's reader gets what they need, so each shortfall it finds
+   matters.
+3. **It fills what you did not say with guesses.** Turn finds each fact in your repository and
+   asks you to confirm it, and asks you your purpose and intent, one point at a time, so nothing in
+   the work is a guess you never saw.
+4. **You find what falls short only as you use the work.** The evaluator tries the work as its
+   reader would, running its commands in a throwaway copy of your repository, so the work reaches
+   you only once it works in use.
+5. **Each fix is added on, and the work gets noisier.** A question not met goes back to its
+   decision, and the work is made again from the design, the record of every fact and decision, so
+   no fix sits beside it.
 
-![A: Turn finds facts in your repository, settles what they favor, and asks you your intent](images/how-decisions.svg)
+![Turn finds facts in your repository, settles what they favor, and asks you your intent](images/how-decisions.svg)
 
-- A, how Turn tells what to ask you: Pin finds what your repository holds and shows it to you to
-  confirm. It settles a decision that the purpose, the facts and your answers favor, and asks you
-  only your intent: where another way would serve as well, or would be hard to undo. It writes each into
-  the design with who settled it.
+**How does Turn tell what to ask you?** Pin finds what your repository holds and shows it to you
+to confirm. It settles a decision that the purpose, the facts and your answers favor, and asks you
+only your intent: where another way would serve as well, or would be hard to undo. It writes each
+into the design with who settled it.
 
-![B: the evaluator reads only the work and the questions, never the design](images/how-evaluator.svg)
+![The evaluator reads only the work and the questions, never the design](images/how-evaluator.svg)
 
-- B, how an AI can judge an AI's work: the evaluator is a fresh AI that gets only the work and the
-  questions of its kind, never the design, so it judges by what the work's reader gets, not by what
-  its maker meant.
+**How can an AI judge an AI's work?** The evaluator is a fresh AI that gets only the work and the
+questions of its kind, never the design, so it judges by what the work's reader gets, not by what
+its maker meant.
 
-![C: for a new kind, its best practice is made first, approved by you and kept](images/how-new-kind.svg)
+![For a new kind, its best practice is made first, approved by you and kept](images/how-new-kind.svg)
 
-- C, what if Turn has no best practice for your kind of work: Turn first makes one, the same way it
-  makes any work, and you approve it. It is kept in .turn/best-practices/, so later runs in your
-  repository use it.
+**What if Turn has no best practice for your kind of work?** Turn first makes one, the same way it
+makes any work, and you approve it. It is kept in `.turn/best-practices/`, so later runs in your
+repository use it.
 
 ## Documentation
 
