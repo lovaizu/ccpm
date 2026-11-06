@@ -75,7 +75,10 @@ sequenceDiagram
 ```
 
 An entry is a file whose form Claude Code fixes: a skill, an agent, a hook or a command line. Its
-part is the file in `core/` that does the entry's job.
+part is the file in `core/` that does the entry's job. An entry is named as its caller calls it,
+such as the command a person types. A part is named by the role it holds, so a role's agent
+`agents/<role>.md` points to `core/roles/<role>.md`, and the orchestrator's entries point to
+`core/roles/orchestrator.md`.
 
 Installing a plugin copies only its folder, so what only developers need stays in `dev/`. A
 repository of one plugin keeps the same tree with one folder in `plugins/`.
@@ -190,13 +193,18 @@ It starts each role, so it carries each point that a role has for the caller, as
 ### Where the orchestrator runs
 
 A plugin that a person calls runs its orchestrator in the main conversation, started by a skill. A
-plugin that an AI calls runs its orchestrator as an agent. A role that needs the person ends with
-its point, and the one who started the role carries the point on, as [Messages](#messages) says.
+plugin that an AI calls runs its orchestrator as an agent. A plugin that both call has both, a
+skill `skills/<command>/SKILL.md` and an agent `agents/<command>.md` of the same name, each
+pointing to the one part `core/roles/orchestrator.md`. A role that needs the person ends with its
+point, and the one who started the role carries the point on, as [Messages](#messages) says.
 
 *When*: a plugin with an orchestrator and roles.
 
 *Why*: only the main conversation can ask the person
-([subagents](https://code.claude.com/docs/en/sub-agents#available-tools)).
+([subagents](https://code.claude.com/docs/en/sub-agents#available-tools)). An orchestrator run as
+an agent for the person too leaves the main conversation only carrying its points, a layer that
+decides nothing. The calling plugin starts the agent as one of its roles, so the called plugin's
+run fills its own context, not the caller's. One part keeps the two entries from drifting apart.
 
 ### A plugin that uses another
 
