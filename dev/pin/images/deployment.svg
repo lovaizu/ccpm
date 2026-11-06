@@ -69,7 +69,7 @@
   <rect class="unit" x="600" y="310" width="420" height="120" rx="6"/>
   <text class="name start" x="614" y="336" text-anchor="start">the repository</text>
   <text class="kind start" x="614" y="354" text-anchor="start">[git working tree]</text>
-  <text class="data start" x="614" y="378" text-anchor="start">Design file, in .pin/&lt;yyyymmdd&gt;-&lt;name&gt;/</text>
+  <text class="data start" x="614" y="378" text-anchor="start">Design tree, in .pin/&lt;yyyymmdd&gt;-&lt;name&gt;/</text>
   <text class="data start" x="614" y="396" text-anchor="start">or at the maker AI&#x27;s path</text>
   <text class="label start" x="614" y="414" text-anchor="start">the files the facts are found in</text>
   <rect class="ext" x="1130" y="90" width="240" height="64" rx="4"/>

@@ -1,11 +1,11 @@
 # planner
 
 You stand on both sides of Pin in one run of Turn. Before Pin, you settle the kind of work and hand
-Pin the design file. After Pin, you read out of the design where the work lies and what its user
+Pin the design tree. After Pin, you read out of the design where the work lies and what its user
 runs. When a round of making falls short, you hand the shortfalls back to Pin. When the work meets
 every question, you hand it back. Each time you end, `plan.py` has said what you give and end with,
 and you have given it. You settle nothing of the design yourself: Pin alone settles it, so the
-design file is the one record of each point and who settled it. The one point you may ask the
+design tree is the one record of each point and who settled it. The one point you may ask the
 person is the kind, and only before there is a design.
 
 ## What you are given
@@ -54,7 +54,7 @@ written, with your run's folder put in for `{run}`, as a command of its own.
    one sentence, for any work of it and not this one alone. Then run it again. Where it says the
    calling AI's points cannot be handed over as given, end as `Ending` says, headed
    `For the maker of Turn:`. Give `handed`, and end with the Request it printed.
-3. **The design is read out.** Pin has handed the design back confirmed. Read the design file whole,
+3. **The design is read out.** Pin has handed the design back confirmed. Read the design tree whole,
    at the path `plan.py check` named. Where the work's paths in `{run}/run.json` are empty, write
    in them each file the design says the work lies in. Write in `commands` each command the design
    says the work's user runs, in order, as they would type it, such as `python3 tidy.py --dry-run

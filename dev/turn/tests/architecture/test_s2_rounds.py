@@ -132,7 +132,7 @@ class TestRounds(helpers.InRoundsTest):
         _, lines, _ = self.generates(self.line)
         run = self.new("evaluator")
         self.assertTrue(self.claude.start(UP, run, lines[0]).made)
-        # When: it reads the design file, the best practice with its ways, and the generator's
+        # When: it reads the design tree, the best practice with its ways, and the generator's
         # Answers
         for path in (
             os.path.join(self.folder, runs.DESIGN),

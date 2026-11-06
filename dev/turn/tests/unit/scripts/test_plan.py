@@ -149,7 +149,7 @@ class Hand(helpers.RoundsTest):
         code, _, err = ran("hand", RUN)
         self.assertEqual(code, 1)
         self.assertIn(
-            f"plan.py: {RUN} cannot hand: the design file {DESIGN} cannot be read: there is no"
+            f"plan.py: {RUN} cannot hand: the design tree {DESIGN} cannot be read: there is no"
             f" file {DESIGN}",
             err,
         )

@@ -56,12 +56,12 @@ design (KR1.1). A fix to the course reaches every kind at once.
 
 ### The designer alone settles the design
 
-After the planner's hand-over, only the designer writes the design file and puts a point of the
+After the planner's hand-over, only the designer writes the design tree and puts a point of the
 design to the user. Each point that the work raises goes back to the designer in a Request: a
 question not met, or a point that the design leaves open. No other role changes a decision. The
 planner asks the user one point only, the kind, and only before there is a design.
 
-*Why*: the design file is then the one record of each point and who settled it, and the designer
+*Why*: the design tree is then the one record of each point and who settled it, and the designer
 keeps what the user's AI settled. A point that another role settles beside the designer could come
 out otherwise than the user means it, or be asked again. A decision changed outside the designer
 leaves each decision built on it as it was (KR1.1).
@@ -213,7 +213,7 @@ What each decides alone:
 - **Call**: the request, and what the user's AI settled.
 - **Run**: the kind, and the works to make, in order.
 - **Request**: what up starts the designer with: each point to settle.
-- **Design file**: the design tree, in Pin's form: the goal, questions and decisions.
+- **Design tree**: the goal, questions and decisions, in Pin's form.
 - **Decision**: one point of the design, with who settled it.
 - **Work**: what the user wants made.
 - **Round**: one round's phase and questions.
@@ -245,7 +245,7 @@ sequenceDiagram
   G-->>U: Start planner
   U->>PL: starts it, with the run's folder (Run values)
   alt S3, the folder holds a Run
-    PL->>F: reads Run and the Design file
+    PL->>F: reads Run and the Design tree
     alt the design is confirmed, and no change is named
       PL->>G: gives ready (Result)
       Note over U,PL: The rounds go on, as S2 the rounds draws.
@@ -264,14 +264,14 @@ sequenceDiagram
       U->>PL: resumes it, word for word (Answer)
     end
     PL->>PS: runs it with the kind and the Call
-    PS->>F: writes Run, the Standard and the hand-over (Design file)
+    PS->>F: writes Run, the Standard and the hand-over (Design tree)
     Note over PL,PS: For a new kind, the hand-over is its best practice's, by meta.
     PL->>G: gives handed (Result)
     PL-->>U: ends with a Request for the hand-over (Request)
   end
   G-->>U: Start designer
   U->>PN: starts it, with the Request as given (Request)
-  PN->>F: settles each point it can (Design file)
+  PN->>F: settles each point it can (Design tree)
   PN->>G: gives asks (Result)
   PN-->>U: ends with one point for the user (Message)
   U-->>ST: ends with it as given (Message)
@@ -304,7 +304,7 @@ sequenceDiagram
     Note over U,PL: The start goes on from the kind, as S1 draws.
   else the point is from the designer
     U->>PN: resumes it, word for word (Answer)
-    PN->>F: writes the answer, and settles what follows (Design file)
+    PN->>F: writes the answer, and settles what follows (Design tree)
     alt a point is open, or the design waits to be confirmed
       PN->>G: gives asks (Result)
       PN-->>U: ends with the next point, or the whole design (Message)
@@ -312,10 +312,10 @@ sequenceDiagram
       ST->>R: puts it as given
     else the user confirmed the design
       PN->>G: gives done (Result)
-      PN-->>U: ends with the design file's path
+      PN-->>U: ends with the design tree's path
       G-->>U: Start planner
       U->>PL: starts it (Run values)
-      PL->>F: reads where the work lies and what the work's user runs (Design file)
+      PL->>F: reads where the work lies and what the work's user runs (Design tree)
       PL->>F: writes them into Run (Run)
       PL->>G: gives ready (Result)
       PL-->>U: ends with the generator's run values (Run values)
@@ -342,7 +342,7 @@ sequenceDiagram
   U->>GE: starts it, with the planner's run values (Run values)
   GE->>RS: has it settle the round
   RS->>F: reads the Answers before, and writes the Round with its phase (Round)
-  GE->>F: reads the Design file, the Best practice and the shortfalls of the last round
+  GE->>F: reads the Design tree, the Best practice and the shortfalls of the last round
   GE->>F: writes the work, and its own Answers (Work, Answers)
   alt the design leaves a point open, or a change would change what the work says
     GE->>G: gives open (Result)
@@ -376,7 +376,7 @@ sequenceDiagram
     G-->>U: Start planner
     U->>PL: starts it (Run values)
     alt the work was a new kind's best practice
-      PL->>F: has plan.py write the work's own hand-over (Design file)
+      PL->>F: has plan.py write the work's own hand-over (Design tree)
       PL->>G: gives handed (Result)
       Note over U,PN: The designer starts on the work itself, as S1 draws.
     else the work is done
@@ -441,7 +441,7 @@ plugins/turn/
 │                                    copies of Turn's own
 ├── core/domain/forms/               the forms of Call, Run, Standard, Round, Answers, Best practice
 ├── core/domain/                     the code of plan.py, rounds.py and throwaway.py
-├── core/domain/tree.py              a link to Pin's tree.py: the form and checks of the Design file
+├── core/domain/tree.py              a link to Pin's tree.py: the form and checks of the Design tree
 ├── scripts/                         plan.py, rounds.py, throwaway.py
 ├── hooks/hooks.json                 the guard's hook entries
 ├── hooks/lanes.json                 Rules laid, with the routes on each Result
@@ -458,7 +458,7 @@ dev/turn/
     ├── architecture/                a test for each path of each sequence
     └── ux/                          the trials of O1, and the test plugin that starts turn:up
 
-.turn/<yyyymmdd>-<name>/               Call, Run, Design file, Standard
+.turn/<yyyymmdd>-<name>/               Call, Run, Design tree, Standard
 .turn/<yyyymmdd>-<name>/verification/  Round, Answers; each round before in a folder of its number
 .turn/<yyyymmdd>-<name>/best-practice/ the same, of a new kind's best practice made first
 .turn/best-practices/                  Best practice, the repository's own
@@ -474,11 +474,11 @@ dev/turn/
   where a symbolic link shows as a line of text; `plan.py form` fails on a copy that differs from
   its document, so the two cannot drift (KR1.1). It costs a second copy of each document and its
   figures in the repository, and a run of `plan.py example` after each change to them.
-- **The Design file in the form of [Pin's design tree](../../plugins/pin/core/roles/pinner.md#the-design-tree),
+- **The Design tree in [Pin's form](../../plugins/pin/core/roles/pinner.md#the-design-tree),
   written, read and checked by Pin's `tree.py` through a link,** as
   [Code kept once](../plugin-best-practice.md#code-kept-once) says, over a form and checks of
   Turn's own: a form kept twice drifts, and a design tree made by Turn reads as one made by Pin
-  (KR1.1). It costs a change to Pin's form changing Turn's Design file, with no line of Turn
+  (KR1.1). It costs a change to Pin's form changing Turn's Design tree, with no line of Turn
   changed, and Turn's tests running Pin's code.
 - **`hooks/lane/` as a link to Lane's code in this marketplace** over a copy, as
   [Code kept once](../plugin-best-practice.md#code-kept-once) says: a fix to the

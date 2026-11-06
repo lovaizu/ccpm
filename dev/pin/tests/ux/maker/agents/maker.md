@@ -28,7 +28,7 @@ you carries your last message to them, and resumes you with their answer.
 2. Settle the design with Pin, by the skill pin:down, which you were given, with that path. You are
    its go-between: end with each message of Pin's for the person as given, its `For the person:`
    line and all, and when you are resumed with the person's answer, pass it to Pin word for word.
-   Answer nothing of the design yourself, and change nothing in the design file.
+   Answer nothing of the design yourself, and change nothing in the design tree.
 3. Once Pin hands the design back, build the JSON output and the scripts' change on it as given:
    change only what the design says, and where your work finds a point the design does not settle,
    take step 2 again with that point.

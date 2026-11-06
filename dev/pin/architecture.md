@@ -3,13 +3,13 @@
 This document says how Pin is built to give [Pin's product vision](product-vision.md).
 It is for a developer, a person or an AI, who builds or changes Pin.
 
-Pin settles a plan in its design file one point at a time. The pinner, a subagent of Pin, writes
-the design file from the plan's goal down. Each run of the pinner ends with one point for the
+Pin settles a plan in its design tree one point at a time. The pinner, a subagent of Pin, writes
+the design tree from the plan's goal down. Each run of the pinner ends with one point for the
 person, and the next run starts from the person's answer. Whoever starts the pinner carries each
 point to the person and each answer back: the main conversation when the person types `/pin:down`,
 or the maker AI itself. This document calls that part the go-between. It follows the steps of the
 skill `pin:down`. As the pinner is a subagent, hooks hold it to its rules on every call: it writes
-only the design file, changes it only with Edit once it is made, and has `check.py` check the file
+only the design tree, changes it only with Edit once it is made, and has `check.py` check the file
 after each change. Lane, the plugin that
 holds a subagent to the rules of its steps, lays those hooks into Pin. This document calls them the
 guard, as the plugin best practice names a plugin's hooks.
@@ -28,10 +28,10 @@ and on its Development section, with these differences:
   design's faults show only in the work made from it, which Pin never sees.
 - Under [Read by those who did not make it](../plugin-best-practice.md#read-by-those-who-did-not-make-it),
   no evaluator reads the design: the person reads all of it to confirm it.
-- Under [The form of a file](../plugin-best-practice.md#the-form-of-a-file), the design file is the
+- Under [The form of a file](../plugin-best-practice.md#the-form-of-a-file), the design tree is the
   case it names of a file an AI changes by reading it as a whole: a Markdown nested list that
   `check.py` reads in one strict form, as
-  [The design file shows the tree](#the-design-file-shows-the-tree) says.
+  [The design tree is a nested list](#the-design-tree-is-a-nested-list) says.
 
 The principles below are what Pin adds. Each gives its rule, then why.
 
@@ -57,9 +57,9 @@ settled.
 the decisions under it rests on a guess of how they go. Either way a point comes out otherwise than
 the person means it (KR1.1).
 
-### The design file is the only record
+### The design tree is the only record
 
-Every answer is in the design file before the next point goes out. The pinner learns which
+Every answer is in the design tree before the next point goes out. The pinner learns which
 decisions are open to decide now from `check.py`, not from its conversation. Every other reader
 reads the plan only from the file.
 
@@ -71,7 +71,7 @@ conversation. With the plan in the file, a stopped run goes on from it and asks 
 
 The go-between puts each point to the person whole. It passes back word for word whatever the
 person says while a point waits, as their answer. It answers nothing of the plan itself and writes
-nothing into the design file.
+nothing into the design tree.
 
 *Why*: a point reworded is a question that the pinner did not ask, and an answer summed up loses
 what the person meant (KR1.1, KR2.1). A point that the go-between answers itself is settled apart
@@ -82,16 +82,16 @@ the go-between and not Pin.
 
 Pin neither asks the person nor changes a point that the maker AI settled, the goal among them.
 Only a new request of the maker AI opens such a point again. The maker AI changes no point of the
-design itself: it starts Pin again with the point. The design file marks each decision that the
+design itself: it starts Pin again with the point. The design tree marks each decision that the
 maker AI settled as settled by `maker`, so the pinner tells it from the file alone.
 
 *Why*: the product vision counts as gone wrong a point settled otherwise than the maker AI
 settled it, a point asked again, and the maker AI changing the design (KR2.1). A point changed
 outside Pin also leaves each point built on it as it was.
 
-### The design file shows the tree
+### The design tree is a nested list
 
-The design file is a Markdown nested list whose nesting is the design tree: each question under the
+The design tree is a Markdown nested list whose nesting is the tree: each question under the
 goal, each decision under what it serves or builds on first. The pinner changes it only with Read
 and Edit, and after each change reads the path from the node changed up to the goal, and every
 branch under it.
@@ -105,7 +105,7 @@ language.
 ### Pin knows no maker AI
 
 No line of Pin names a plugin that uses it. A maker AI reaches Pin only through `pin:down` and the
-form of the design file.
+form of the design tree.
 
 *Why*: every maker AI takes the same Pin. A change made for one maker AI would reach the others
 unseen, and could settle their points otherwise than they settled them (KR2.1).
@@ -117,15 +117,15 @@ Each story names its user, the way that user meets Pin, and the steps of
 
 - **S1**: As the person, I want to type `/pin:down` with my plan in my own words, and get the goal
   as Pin reads it, to confirm. Carries the first two steps of O1: the request, and the goal put to
-  the person. A design file that a stopped run of the same plan left is a branch: Pin goes on from
+  the person. A design tree that a stopped run of the same plan left is a branch: Pin goes on from
   it.
 - **S2**: As the person, I want to answer the point that Pin puts to me, and get the next point,
-  or the whole design to confirm, or once I confirm it, the design file's path. Carries the rest of
+  or the whole design to confirm, or once I confirm it, the design tree's path. Carries the rest of
   O1: the yes to the goal, each round of the loop, the design confirmed and the design handed over.
 - **S3**: As the maker AI, I want to write the work's goal, its questions and what I settled into a
-  design file, take `pin:down` with the file's path, and get the first point for the person.
+  design tree, take `pin:down` with the file's path, and get the first point for the person.
   Carries the first two steps of O2: the request, and the step where Pin keeps what the maker AI
-  settled. A design file that holds a point which the maker AI's work found is a branch: Pin opens
+  settled. A design tree that holds a point which the maker AI's work found is a branch: Pin opens
   that point again (KR2.1).
 - **S4**: As the maker AI, I want to resume Pin with the person's answer word for word, and get the
   next point for the person, or the design to confirm, or once the person confirms it, the design
@@ -141,12 +141,12 @@ arrows are named as in [Data model](#data-model).
 
 ### What each role alone decides
 
-- The go-between decides where the design file lies: the path the maker AI gives, else the file in
+- The go-between decides where the design tree lies: the path the maker AI gives, else the file in
   `.pin/` whose goal is this plan's, else a new path in `.pin/`. It decides nothing of the plan.
-- The pinner decides what the design file holds, which point comes next, whose each decision is,
+- The pinner decides what the design tree holds, which point comes next, whose each decision is,
   what it recommends, the words of each point, and when the person has confirmed the design. After
-  the maker AI's hand-over, no other role writes the design file.
-- `check.py` decides whether the design file holds: whether it is in form, every question is
+  the maker AI's hand-over, no other role writes the design tree.
+- `check.py` decides whether the design tree holds: whether it is in form, every question is
   served, every decision reaches the goal, and each decision comes after those it builds on. It
   also decides which decisions are open to decide now. It writes nothing.
 - The guard decides whether a call or an end of the pinner keeps the pinner's rules. Pin writes
@@ -168,22 +168,22 @@ arrows are named as in [Data model](#data-model).
   the person, and the end of a subagent it started would start it again while that point waits.
   A second point could then reach the person before the first is answered (KR1.1). The cost: the
   pinner finds facts one after another, in its own context (KR1.2).
-- **The maker AI hands over in the design file, not in the text it starts Pin with.** The pinner
+- **The maker AI hands over in the design tree, not in the text it starts Pin with.** The pinner
   then keeps the maker AI's points as written, never typed again (KR2.1), as
   [The form of a file](../plugin-best-practice.md#the-form-of-a-file) says. The pinner goes on
   from a file at the path in the same way for a stopped run. The cost: the maker AI writes the
-  design file's form, which [the design tree](../../plugins/pin/core/roles/pinner.md#the-design-tree)
+  design tree in the form [the design tree](../../plugins/pin/core/roles/pinner.md#the-design-tree)
   gives.
-- **`check.py` holds the design file's form, and the guard has no rule of form.** A rule of form
+- **`check.py` holds the design tree's form, and the guard has no rule of form.** A rule of form
   would stop a bad write at once. But `check.py` must read the form anyway to check the joins,
   and two roles would then each decide the form. The guard still holds the pinner to pass
   `check.py` after each change, and to change the file only with Edit once it is made. The cost: a
   write out of form is found at the next check, not at the write.
-- **The form of the design file lies in `tree.py` alone, and Turn takes it through a link.** Turn
-  writes the design file it hands to Pin, and reads it again to hand it back. A second reader
+- **The form of the design tree lies in `tree.py` alone, and Turn takes it through a link.** Turn
+  writes the design tree it hands to Pin, and reads it again to hand it back. A second reader
   would drift from Pin's. The cost: a change of the form reaches Turn's tests too, which must pass.
-- **The design file's path is a value given for each run.** A fixed path would need no value. But
-  each run of the pinner then writes only its own design file, and a maker AI keeps its design
+- **The design tree's path is a value given for each run.** A fixed path would need no value. But
+  each run of the pinner then writes only its own design tree, and a maker AI keeps its design
   where it said. The cost: the go-between puts the path in the request in the form that
   [Lane's values port](../../plugins/lane/docs/lanes.md#the-ports) reads.
 
@@ -194,17 +194,17 @@ The figure shows each data that Pin's roles pass or keep, and how each joins ano
 ![Pin's data model](images/data-model.svg)
 
 - **Request**: what the go-between starts the pinner with. It holds the plan in the person's words,
-  or the maker AI's request with any point that its work found, and the design file's path.
-- **Design file**: the design, `design-tree.md`. It holds the Goal, the Questions that must hold
+  or the maker AI's request with any point that its work found, and the design tree's path.
+- **Design tree**: the design, `design-tree.md`. It holds the Goal, the Questions that must hold
   for it, and the Decisions that make each Question hold. A Ground is what a Goal or a Decision
   rests on, such as the person's words or a source quoted.
 - **Reply**: what the pinner ends a run with: one point for the person, the whole design to
-  confirm, or once confirmed, the design file's path.
+  confirm, or once confirmed, the design tree's path.
 - **Answer**: the person's words, which the go-between passes back to the pinner.
 - **Check result**: what `check.py` prints and the code it exits with.
 - **Rules laid**: the pinner's rules, as Lane laid them from Pin's proposal.
 
-The lines of the design file lie in
+The lines of the design tree lie in
 [the design tree](../../plugins/pin/core/roles/pinner.md#the-design-tree). The README's
 [How it works](../../plugins/pin/README.md#how-it-works) gives the headings that a Reply and an
 Answer carry.
@@ -227,7 +227,7 @@ sequenceDiagram
   participant PN as pinner
   participant GD as guard
   participant CK as check.py
-  participant DF as Design file
+  participant DF as Design tree
   participant RP as repository
   alt S1
     P->>GB: types /pin:down with the plan (Request)
@@ -235,19 +235,19 @@ sequenceDiagram
     M->>DF: writes its hand-over (Goal, Question, Decision)
     M->>GB: takes pin:down with the path
   end
-  GB->>DF: looks for the plan's design file, and picks the path
+  GB->>DF: looks for the plan's design tree, and picks the path
   GB->>PN: starts it in the background (Request)
-  alt no design file lies at the path
+  alt no design tree lies at the path
     PN->>DF: writes the Goal to confirm, the Questions, each Decision open
   else a stopped run or the maker AI left one there
-    PN->>DF: reads it (Design file)
+    PN->>DF: reads it (Design tree)
     opt the Request names a point that the maker AI's work found
       PN->>DF: opens that Decision again, and each Decision built on it
     end
   end
   loop until the Check result says the file holds
     PN->>CK: runs it on the path
-    CK->>DF: reads it (Design file)
+    CK->>DF: reads it (Design tree)
     CK-->>PN: Check result
     opt it names a problem
       PN->>DF: mends it, the maker AI's points kept
@@ -266,7 +266,7 @@ sequenceDiagram
   GD->>PN: checks each call and the end against Rules laid
   alt the call or the end keeps the rules
     GD-->>PN: lets it through
-  else it writes another file, writes the design file whole once it is made, runs another command, or ends with the file unchecked
+  else it writes another file, writes the design tree whole once it is made, runs another command, or ends with the file unchecked
     GD-->>PN: stops it with its step's sentence
   end
   PN-->>GB: ends with one point, the Goal where it is not settled (Reply)
@@ -287,7 +287,7 @@ sequenceDiagram
   participant PN as pinner
   participant GD as guard
   participant CK as check.py
-  participant DF as Design file
+  participant DF as Design tree
   participant RP as repository
   participant M as maker AI
   P->>GB: answers, or says anything while the point waits
@@ -309,7 +309,7 @@ sequenceDiagram
   end
   loop until no Decision is open to decide now, or the person asked to wrap up
     PN->>CK: runs it on the path
-    CK->>DF: reads it (Design file)
+    CK->>DF: reads it (Design tree)
     CK-->>PN: Check result, with each Decision open to decide now
     opt a Decision open now is the pinner's own
       PN->>RP: reads each fact it rests on
@@ -326,7 +326,7 @@ sequenceDiagram
   else no point is open or the person asked to wrap up, and the design is not confirmed
     PN-->>GB: ends with the whole design, each point with who settled it (Reply)
   else the person confirmed the design
-    PN-->>GB: ends with the design file's path and the Check result (Reply)
+    PN-->>GB: ends with the design tree's path and the Check result (Reply)
   end
   GB->>P: puts it as given
   opt S4, the design confirmed
@@ -336,7 +336,7 @@ sequenceDiagram
 
 - **Each run of the pinner ends with one Reply.** A pinner that waited for the answer inside one
   run would need no resume. But a subagent cannot ask the person, so it can only end. Its end is
-  also where the guard holds the last check of the design file. The cost: each point costs a
+  also where the guard holds the last check of the design tree. The cost: each point costs a
   resume of the pinner (KR1.2).
 
 ## Deployment
@@ -354,7 +354,7 @@ entries, and the pinner runs `check.py` through the Bash tool.
 - **`check.py` uses Python 3.9 and its standard library only**, as
   [Python 3.9 and the standard library](../plugin-best-practice.md#python-39-and-the-standard-library)
   says. The guard is Lane's code, which needs the same. The person installs nothing else for Pin.
-- **The design file lies in `.pin/<yyyymmdd>-<name>/` at the root of the repository**, or where the
+- **The design tree lies in `.pin/<yyyymmdd>-<name>/` at the root of the repository**, or where the
   maker AI says, as
   [Where a plugin writes its files](../plugin-best-practice.md#where-a-plugin-writes-its-files) says
   for what may be kept. The AI that makes the work reads it there.
@@ -372,8 +372,8 @@ plugins/pin/
 ├── core/roles/go-between.md        the go-between; the form of Request, Answer <Markdown>
 ├── core/roles/pinner.md            the pinner; the form of Reply <Markdown>
 ├── scripts/check.py                check.py's entry <command line · Python 3.9>
-├── core/domain/tree.py             check.py; the form of Design file and Check result <module · Python 3.9>
-├── core/domain/design-tree-template.md   the form of Design file, for the pinner <Markdown>
+├── core/domain/tree.py             check.py; the form of Design tree and Check result <module · Python 3.9>
+├── core/domain/design-tree-template.md   the form of Design tree, for the pinner <Markdown>
 ├── hooks/hooks.json                the guard's hook entries <JSON>
 ├── hooks/lanes.json                Rules laid <JSON>
 ├── hooks/lane/                     the guard, Lane's code <Python 3.9>
@@ -388,7 +388,7 @@ dev/pin/
     ├── architecture/               a test for each path of each sequence <Python 3>
     └── ux/                         the trials of O1 and O2, and O2's maker AI <Python 3>
 
-.pin/<yyyymmdd>-<name>/design-tree.md   Design file
+.pin/<yyyymmdd>-<name>/design-tree.md   Design tree
 ```
 
 - **`hooks/lane/` is a link to Lane's code in this marketplace**, as
@@ -409,10 +409,10 @@ Every deployment unit has a row, as each has a level that tests it.
 
 ### The weights
 
-- `check.py` weighs ●●● at unit and at architecture. A design file that it passes wrongly sends a
+- `check.py` weighs ●●● at unit and at architecture. A design tree that it passes wrongly sends a
   gap into the work unseen (KR1.1, KR2.1).
 - The guard weighs ●●● at architecture. It alone holds the pinner's rules on every run. A rule let
-  through lets the pinner write what is not the design, or hand on a design file left unchecked
+  through lets the pinner write what is not the design, or hand on a design tree left unchecked
   (KR1.1, KR2.1). Lane's own unit tests test its code.
 - The entries weigh ●●○ at architecture. A test there only finds sooner an entry that Claude Code
   would not load as Pin needs, which every ux trial would also meet.
@@ -421,7 +421,7 @@ Every deployment unit has a row, as each has a level that tests it.
 
 ### Unit
 
-- The tests of `check.py` come from the classes of the design file: in form and out of form; no
+- The tests of `check.py` come from the classes of the design tree: in form and out of form; no
   question, and one question; every question served, and a question that no decision serves; every
   decision reaching the goal, and one that reaches none; a decision decided before one it builds on;
   and each line out of the file's form. A tree written as the Markdown is read back as it was.
@@ -446,12 +446,12 @@ Each test runs one path of [Sequences](#sequences).
   [Architecture: the parts joined](../plugin-best-practice.md#architecture-the-parts-joined) says.
   A set answer stands in for the person.
 - Each double gives only what the contract of its part allows. A double of the pinner writes only
-  design files that `check.py`'s unit tests hold to the form, and Replies in the form that
+  design trees that `check.py`'s unit tests hold to the form, and Replies in the form that
   [the pinner](../../plugins/pin/core/roles/pinner.md) gives. A double of the go-between passes each
   Reply and Answer unchanged. A double of Claude Code sends what Claude Code's hooks reference
   documents. Where that says nothing, it sends what a try of the real Claude Code showed, recorded
   beside the double with the Claude Code version and the date.
-- At each step, the test checks the role that acts and the data it hands on: the design file on
+- At each step, the test checks the role that acts and the data it hands on: the design tree on
   disk, the Check result, and what the guard lets through or stops.
 - The tests pass as
   [Architecture: the parts joined](../plugin-best-practice.md#architecture-the-parts-joined) says.
@@ -460,7 +460,7 @@ The paths, one test each:
 
 | Sequence | Paths |
 |---|---|
-| S1 and S3, the start | a new plan, with a new design file; a stopped run's design file found in `.pin/` and gone on from, nothing asked again; the maker AI's hand-over, its points kept and its goal not put; a settled design with a point that the maker AI's work found, that point and each built on it opened; a design file that the check finds at fault, mended; the pinner changing the design file with Edit, let through; the pinner writing another file, writing the design file whole once it is made, running another command, a command or a script that writes the design file among them, and ending with the file changed since its last check, each stopped |
+| S1 and S3, the start | a new plan, with a new design tree; a stopped run's design tree found in `.pin/` and gone on from, nothing asked again; the maker AI's hand-over, its points kept and its goal not put; a settled design with a point that the maker AI's work found, that point and each built on it opened; a design tree that the check finds at fault, mended; the pinner changing the design tree with Edit, let through; the pinner writing another file, writing the design tree whole once it is made, running another command, a command or a script that writes the design tree among them, and ending with the file changed since its last check, each stopped |
 | S2 and S4, an answer | a fact confirmed; a fact corrected; a decision made; a decision left to Pin; a point that an answer raises; a change to the design, its decision and each built on it settled again; a wrap-up, with decisions left open; the design confirmed, its path handed back; S4 with each of these through the maker AI |
 
 ### ux
@@ -482,7 +482,7 @@ A trial runs the scenario of O1 or of O2, as
   [Results that vary from run to run](../plugin-best-practice.md#results-that-vary-from-run-to-run)
   says.
 
-The trial measures each key result from the session's records and the design file:
+The trial measures each key result from the session's records and the design tree:
 
 | Key result | What the trial measures |
 |---|---|

@@ -31,7 +31,7 @@ def opened(tree, *names):
 
 
 class Start(helpers.TurnTest):
-    def test_the_kind_named_begins_a_new_run_and_hands_pin_the_design_file(self):
+    def test_the_kind_named_begins_a_new_run_and_hands_pin_the_design_tree(self):
         # Given: the person types /turn:up a README for tidy, and up is told to start the planner
         context = self.begins("a README for tidy")
         self.assertIn("turn: Start `turn:planner`.", "\n".join(context))
@@ -39,7 +39,7 @@ class Start(helpers.TurnTest):
         planner = self.new("planner")
         request = self.begun("a README for tidy", planner)
         # Then: the run is with Pin, its hand-over asking each question of a README under the goal
-        # as the planner reads it, not yet confirmed, and the Request names the design file
+        # as the planner reads it, not yet confirmed, and the Request names the design tree
         design = os.path.join(self.folder, runs.DESIGN)
         self.assertEqual(runs.current(self.run_file())["at"], "pin")
         handed = helpers.tree.load(self.at(design))
@@ -122,7 +122,7 @@ class Start(helpers.TurnTest):
         request = self.plans(planner, "hand").split("\n", 1)[1].rstrip("\n")
         self.plans(planner, "check")
         self.gives(planner, "handed")
-        # Then: up is told to start the pinner with a Request naming the design file as it lies
+        # Then: up is told to start the pinner with a Request naming the design tree as it lies
         design = os.path.join(self.folder, runs.DESIGN)
         self.assertEqual(self.ends(planner, request), [told("planner", "handed", "pin:pinner")])
         self.assertEqual(request, json.dumps({"design": design}))

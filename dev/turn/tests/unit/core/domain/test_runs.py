@@ -102,7 +102,7 @@ class Start(helpers.RepositoryTest):
         request = self.started()
         # Then: the Run holds the one work with Pin; the hand-over asks each question of note under
         # the planner's reading of the goal, not yet confirmed; the Standards are written; and the
-        # Request names the design file, then the request
+        # Request names the design tree, then the request
         self.assertEqual(self.run_data(), {"works": [helpers.work(paths=[], at="pin")]})
         self.assertEqual(
             helpers.tree.load(DESIGN),
@@ -187,7 +187,7 @@ class Start(helpers.RepositoryTest):
         given = {"kind": "note", "decisions": [helpers.SETTLED]}
         # When: the run begins
         self.started(helpers.call(given=given))
-        # Then: the design file is the hand-over as Pin's tree.py writes it
+        # Then: the design tree is the hand-over as Pin's tree.py writes it
         self.assertEqual(self.read(DESIGN), helpers.tree.markdown(helpers.tree.load(DESIGN)))
         self.assertIn(
             "- **D1 Which run the steps show**: tidy --dry-run, then tidy (maker)\n",

@@ -20,14 +20,14 @@ command with the value put in.
 ## Steps
 
 1. **The round is settled.** Run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/rounds.py round {run}`. It
-   says the round's phase, the best practice to make it by, the design file in a round of what the
+   says the round's phase, the best practice to make it by, the design tree in a round of what the
    work says, the questions, and the shortfalls of the round before. Where it says no round is left,
    give `open`, and end with what it printed. Run only `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/rounds.py round {run}`, `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/rounds.py check {run} {answers}` or `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/throwaway.py {run}`.
 2. **The work is made.** Read the best practice whole, and beside it the files its `template` and
    `example` name, where it names them: the template, or else the best practice's parts,
    is the shape the work takes, the example is one work made by it, and the practices are the ways
    to make each question yes. Write only `{work}` or `{answers}`.
-   - In a round of what the work says, read the design file whole. Make each decision into the
+   - In a round of what the work says, read the design tree whole. Make each decision into the
      work, in the order the decisions build on one another, along the template or the parts, each
      question met in the way its practice gives. Where the round before fell short, make each
      shortfall good from the design.

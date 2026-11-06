@@ -57,7 +57,7 @@
   <text class="kind start" x="42" y="128" text-anchor="start">[python3 3.9 or later]</text>
   <rect class="unit" x="272" y="80" width="320" height="120" rx="6"/>
   <text class="name start" x="284" y="108" text-anchor="start">unittest, Cosmic Ray, Hypothesis · ●●●</text>
-  <text class="label" x="284" y="128" text-anchor="start">each class of the design file,</text>
+  <text class="label" x="284" y="128" text-anchor="start">each class of the design tree,</text>
   <text class="label" x="284" y="148" text-anchor="start">and each of its three results</text>
   <rect class="unit" x="602" y="80" width="320" height="120" rx="6"/>
   <text class="name start" x="614" y="108" text-anchor="start">unittest · ●●●</text>

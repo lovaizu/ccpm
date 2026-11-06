@@ -17,7 +17,7 @@
           "kind": {"type": "string", "description": "the kind whose best practice makes the work, meta for a best practice"},
           "practice": {"type": "string", "description": "the path of that best practice"},
           "reading": {"enum": ["refactor-doc", "refactor-code"], "description": "the best practice of how the work reads"},
-          "folder": {"type": "string", "description": "the folder of its design file, its Standards and its rounds"},
+          "folder": {"type": "string", "description": "the folder of its design tree, its Standards and its rounds"},
           "paths": {"type": "array", "items": {"type": "string"}, "description": "each file the work lies in"},
           "commands": {"type": "array", "items": {"type": "string"}, "description": "what its user runs, in order, each as they type it"},
           "files": {"type": "array", "items": {"type": "string"}, "description": "each file outside the repository the commands need, by its path under the home"},

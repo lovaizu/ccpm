@@ -135,14 +135,14 @@
   <text class="label small halo" x="438" y="776" text-anchor="start">writes each</text>
   <text class="label small halo" x="438" y="790" text-anchor="start">point</text>
   <text class="label small halo" x="438" y="804" text-anchor="start">[Write, Edit]</text>
-  <text class="data halo" x="438" y="818" text-anchor="start">Design file</text>
+  <text class="data halo" x="438" y="818" text-anchor="start">Design tree</text>
   <path class="line" d="M640,650 L640,1180" marker-end="url(#arrow)"/>
   <text class="label small halo" x="632" y="980" text-anchor="end">reads the design,</text>
   <text class="label small halo" x="632" y="994" text-anchor="end">writes where the</text>
   <text class="label small halo" x="632" y="1008" text-anchor="end">work lies and what</text>
   <text class="label small halo" x="632" y="1022" text-anchor="end">its user runs</text>
   <text class="label small halo" x="632" y="1036" text-anchor="end">[Read, Write]</text>
-  <text class="data halo" x="632" y="1050" text-anchor="end">Design file, Run</text>
+  <text class="data halo" x="632" y="1050" text-anchor="end">Design tree, Run</text>
   <path class="line" d="M760,650 L760,850" marker-end="url(#arrow)"/>
   <text class="label small halo" x="768" y="794" text-anchor="start">runs it [Bash]</text>
   <path class="line" d="M860,890 L940,890" marker-end="url(#arrow)"/>
@@ -151,14 +151,14 @@
   <path class="line" d="M720,914 L720,1180" marker-end="url(#arrow)"/>
   <text class="label small halo" x="728" y="975" text-anchor="start">writes the hand-over,</text>
   <text class="label small halo" x="728" y="989" text-anchor="start">the Standard and Run</text>
-  <text class="data halo" x="728" y="1003" text-anchor="start">Design file, Standard, Run</text>
+  <text class="data halo" x="728" y="1003" text-anchor="start">Design tree, Standard, Run</text>
   <path class="line" d="M1020,650 L1020,850" marker-end="url(#arrow)"/>
   <text class="label small halo" x="1012" y="794" text-anchor="end">reads</text>
   <text class="data halo" x="1012" y="808" text-anchor="end">Best practice</text>
   <path class="line" d="M1090,650 L1090,1180" marker-end="url(#arrow)"/>
   <text class="label small halo" x="1098" y="1130" text-anchor="start">reads the design, writes</text>
   <text class="label small halo" x="1098" y="1144" text-anchor="start">its Answers</text>
-  <text class="data halo" x="1098" y="1158" text-anchor="start">Design file, Answers</text>
+  <text class="data halo" x="1098" y="1158" text-anchor="start">Design tree, Answers</text>
   <path class="line" d="M1160,650 L1160,990" marker-end="url(#arrow)"/>
   <text class="label small halo" x="1168" y="972" text-anchor="start">runs [Bash]</text>
   <path class="line" d="M1260,650 L1260,850" marker-end="url(#arrow)"/>

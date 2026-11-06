@@ -19,7 +19,7 @@ GOAL = (
     "**Proposal**: scripts that read `notes list` get its notes as JSON; yes?"
 )
 CONFIRMED = "the person, 2026-11-03"
-# What the pinner is told where it gives its result with the design file changed since its check.
+# What the pinner is told where it gives its result with the design tree changed since its check.
 UNCHECKED = (
     "pin: After changing `{design}`, pass `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/check.py"
     " {design}`.\n`.pin/20261103-notes-json/design-tree.md` changed with no test passed after"
@@ -48,8 +48,8 @@ class TestPersonStarts(helpers.PinnerTest):
         self.assertIn("\nbackground: true\n", agent)
         self.assertIn("`${CLAUDE_PLUGIN_ROOT}/core/roles/pinner.md`", agent)
 
-    def test_a_new_plan_gets_a_new_design_file_and_the_goal_is_put(self):
-        # Given: no design file in .pin/, and the go-between starting the pinner with the plan
+    def test_a_new_plan_gets_a_new_design_tree_and_the_goal_is_put(self):
+        # Given: no design tree in .pin/, and the go-between starting the pinner with the plan
         self.starts(PLAN)
         # When: the pinner writes the goal to confirm, the questions and each decision open, and
         # runs the check
@@ -66,8 +66,8 @@ class TestPersonStarts(helpers.PinnerTest):
         self.assertEqual((gave.made, gave.said), (True, {}))
         self.assertEqual(heard, GOAL.split("\n", 1)[1])
 
-    def test_a_stopped_runs_design_file_is_gone_on_from_and_nothing_is_asked_again(self):
-        # Given: a design file a stopped run left in .pin/, the goal confirmed and the pinner's own
+    def test_a_stopped_runs_design_tree_is_gone_on_from_and_nothing_is_asked_again(self):
+        # Given: a design tree a stopped run left in .pin/, the goal confirmed and the pinner's own
         # decision settled
         left = walkthrough_with(D1=new(helpers.WALKTHROUGH)["decisions"][0])
         left["decisions"][1].update(
@@ -91,7 +91,7 @@ class TestPersonStarts(helpers.PinnerTest):
         self.assertEqual(heard, helpers.FORM.split("\n", 1)[1])
         self.assertNotIn("Found:", heard)
 
-    def test_a_design_file_the_check_finds_at_fault_is_mended(self):
+    def test_a_design_tree_the_check_finds_at_fault_is_mended(self):
         # Given: the pinner started on a new plan
         self.starts(PLAN)
         # When: it writes a first tree whose second question nothing serves, and runs the check
@@ -126,7 +126,7 @@ class TestPinnerHeld(helpers.PinnerTest):
         self.checks()
 
     def test_the_pinner_writing_another_file_is_stopped(self):
-        # When: the pinner writes a file other than the design file
+        # When: the pinner writes a file other than the design tree
         told = self.writes(new(helpers.WALKTHROUGH), path="notes.py")
         # Then: it is stopped with the sentence of its rule, and the file is not written
         self.assertEqual(told.decision(), "deny")
@@ -142,8 +142,8 @@ class TestPinnerHeld(helpers.PinnerTest):
                 self.assertEqual(told.decision(), "deny")
                 self.assertIn(f"`{self.check}`", told.reason())
 
-    def test_the_pinner_writing_the_design_file_whole_once_it_is_made_is_stopped(self):
-        # When: the pinner writes the design file, made already, whole with Write
+    def test_the_pinner_writing_the_design_tree_whole_once_it_is_made_is_stopped(self):
+        # When: the pinner writes the design tree, made already, whole with Write
         before = self.read(os.path.join(self.repo, self.path))
         told = self.rewrites(walkthrough_with(D2={"decided": "x", "settled_by": "reasoning"}))
         # Then: it is stopped with the sentence of its rule, and the file is as it was
@@ -151,14 +151,14 @@ class TestPinnerHeld(helpers.PinnerTest):
         self.assertEqual(told.reason(), "pin: Once `{design}` is made, change it only with Edit.")
         self.assertEqual(self.read(os.path.join(self.repo, self.path)), before)
 
-    def test_the_pinner_changing_the_design_file_with_edit_goes_through(self):
-        # When: the pinner reads the design file and changes it with Edit
+    def test_the_pinner_changing_the_design_tree_with_edit_goes_through(self):
+        # When: the pinner reads the design tree and changes it with Edit
         told = self.writes(walkthrough_with(D2={"decided": "x", "settled_by": "reasoning"}))
         # Then: the change goes through, and the file holds it
         self.assertEqual((told.made, told.said), (True, {}))
         self.assertEqual(self.on_disk()["decisions"][2]["decided"], "x")
 
-    def test_the_pinner_writing_the_design_file_by_a_command_or_a_script_is_stopped(self):
+    def test_the_pinner_writing_the_design_tree_by_a_command_or_a_script_is_stopped(self):
         before = self.read(os.path.join(self.repo, self.path))
         for command in (
             f"sed -i s/open/x/ {self.path}",
@@ -166,7 +166,7 @@ class TestPinnerHeld(helpers.PinnerTest):
             f"python3 {helpers.PIN}/scripts/check.py {self.path} > {self.path}",
         ):
             with self.subTest(command=command):
-                # When: the pinner runs a command or a script that writes the design file
+                # When: the pinner runs a command or a script that writes the design tree
                 told = self.runs(command)
                 # Then: it is stopped, told the check it may run, and the file is as it was
                 self.assertEqual(told.decision(), "deny")
@@ -208,7 +208,7 @@ def handed_over() -> dict:
 
 
 class TestMakerStarts(helpers.PinnerTest):
-    """S3: the maker AI is the go-between, and hands over in the design file at its own path."""
+    """S3: the maker AI is the go-between, and hands over in the design tree at its own path."""
 
     starter = helpers.MAKER
     path = helpers.MAKERS

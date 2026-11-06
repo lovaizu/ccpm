@@ -50,11 +50,11 @@ def phase(content: dict[str, Any] | None, reading_met: bool | None, design: str)
 
 
 def design_hash(folder: str) -> str:
-    """What the work's design file is now, as its SHA-256; refuses, by files.Unreadable, a design
+    """What the work's design tree is now, as its SHA-256; refuses, by files.Unreadable, a design
     file that is not there."""
     path = os.path.join(folder, runs.DESIGN)
     if not os.path.isfile(path):
-        raise files.Unreadable(f"there is no design file {path}")
+        raise files.Unreadable(f"there is no design tree {path}")
     with open(path, "rb") as f:
         return hashlib.sha256(f.read()).hexdigest()
 

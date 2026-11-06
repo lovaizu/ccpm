@@ -74,7 +74,7 @@
   <rect class="box" x="40" y="230" width="200" height="64" rx="0"/>
   <text class="name" x="140" y="267" text-anchor="middle">Request</text>
   <rect class="box" x="40" y="420" width="200" height="64" rx="0"/>
-  <text class="name" x="140" y="457" text-anchor="middle">Design file</text>
+  <text class="name" x="140" y="457" text-anchor="middle">Design tree</text>
   <rect class="box" x="40" y="620" width="200" height="64" rx="0"/>
   <text class="name" x="140" y="657" text-anchor="middle">Decision</text>
   <rect class="box" x="640" y="420" width="200" height="64" rx="0"/>

@@ -174,7 +174,7 @@ class Settle(helpers.RoundsTest):
                     str(raised.exception), f"no round of note is due: the work is at {at}"
                 )
 
-    def test_a_design_file_missing_cannot_be_settled_on(self):
+    def test_a_design_tree_missing_cannot_be_settled_on(self):
         os.remove(os.path.join(RUN, runs.DESIGN))
         with self.assertRaises(files.Unreadable):
             phases.settle(RUN)

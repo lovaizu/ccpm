@@ -8,7 +8,7 @@
   "properties": {
     "round": {"type": "integer"},
     "phase": {"enum": ["content", "reading"]},
-    "design": {"type": "string", "description": "the SHA-256 of the design file the round was made on"},
+    "design": {"type": "string", "description": "the SHA-256 of the design tree the round was made on"},
     "groups": {
       "type": "array",
       "minItems": 1,

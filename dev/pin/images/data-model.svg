@@ -52,7 +52,7 @@
   <rect class="box" x="300" y="220" width="170" height="48" rx="0"/>
   <text class="name" x="385.0" y="249" text-anchor="middle">Request</text>
   <rect class="box" x="560" y="220" width="170" height="48" rx="0"/>
-  <text class="name" x="645.0" y="249" text-anchor="middle">Design file</text>
+  <text class="name" x="645.0" y="249" text-anchor="middle">Design tree</text>
   <rect class="box" x="860" y="220" width="170" height="48" rx="0"/>
   <text class="name" x="945.0" y="249" text-anchor="middle">Goal</text>
   <rect class="box" x="10" y="420" width="170" height="48" rx="0"/>

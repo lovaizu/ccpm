@@ -74,7 +74,7 @@
   <rect class="unit" x="780" y="420" width="530" height="150" rx="6"/>
   <text class="name start" x="794" y="446" text-anchor="start">the repository</text>
   <text class="kind start" x="794" y="464" text-anchor="start">[git working tree]</text>
-  <text class="data start" x="794" y="488" text-anchor="start">Work, Call, Run, Design file, Standard,</text>
+  <text class="data start" x="794" y="488" text-anchor="start">Work, Call, Run, Design tree, Standard,</text>
   <text class="data start" x="794" y="506" text-anchor="start">Round, Answers, Best practice</text>
   <rect class="ext" x="1420" y="120" width="240" height="64" rx="4"/>
   <text class="name" x="1540.0" y="148" text-anchor="start">Anthropic's API</text>

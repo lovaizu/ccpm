@@ -87,7 +87,7 @@
   <path class="line" d="M470,244 H200" marker-end="url(#arrow)"/>
   <text class="label mid" x="335" y="262">each point for you, then the design</text>
 
-  <!-- Pin, the facts and the design file -->
+  <!-- Pin, the facts and the design tree -->
   <path class="line" d="M690,228 H840" marker-end="url(#arrow)"/>
   <text class="label mid" x="765" y="220">finds each fact</text>
   <path class="line" d="M580,266 V390" marker-end="url(#arrow)"/>

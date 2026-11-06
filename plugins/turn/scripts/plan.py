@@ -52,7 +52,7 @@ def hand(run: str) -> str:
         handed = tree.load(design)
     except tree.Unreadable as why:
         said = "; ".join(str(why).splitlines())
-        raise files.Unreadable(f"the design file {design} cannot be read: {said}") from None
+        raise files.Unreadable(f"the design tree {design} cannot be read: {said}") from None
     short = phases.shortfalls(run, phases.last(work))
     runs.hand(run)
     request = runs.request(design, "").rstrip("\n")

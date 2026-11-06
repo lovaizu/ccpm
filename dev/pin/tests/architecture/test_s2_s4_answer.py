@@ -33,7 +33,7 @@ MAKER_SETTLED = {
 
 
 class Answer(helpers.PinnerTest):
-    """A path of an answer: the design file as the run before left it, the pinner started on it and
+    """A path of an answer: the design tree as the run before left it, the pinner started on it and
     ended with a point, which the go-between put to the person as given."""
 
     def state(self, **given: dict[str, Any]) -> dict[str, Any]:
@@ -47,7 +47,7 @@ class Answer(helpers.PinnerTest):
         return data
 
     def waits(self, data: dict[str, Any], reply: str) -> None:
-        """The run before: the design file lies as data, the pinner is started on it, checks it,
+        """The run before: the design tree lies as data, the pinner is started on it, checks it,
         gives asks and ends with the reply, which the person hears as given."""
         self.lies(data)
         self.starts("notes list should give JSON as well")
@@ -241,7 +241,7 @@ class TestPersonAnswers(Answer):
 
 
 class TestMakerPassesTheAnswer(Answer):
-    """S4: the maker AI is the go-between, its design file at its own path, its decision settled
+    """S4: the maker AI is the go-between, its design tree at its own path, its decision settled
     by maker."""
 
     starter = helpers.MAKER

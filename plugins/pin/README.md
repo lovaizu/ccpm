@@ -37,7 +37,7 @@ plan's goal, with every point settled under it, each with who settled it.
 - **The whole design confirmed.** At the end, Pin shows you every point in one short line, with who
   settled it. You see each point that Pin settled before the work starts, and you confirm that you
   and Pin mean the same.
-- **Kept in a file.** Pin writes each answer into the design file, `design-tree.md`, before its
+- **Kept in a file.** Pin writes each answer into the design tree, `design-tree.md`, before its
   next message. After each answer, it checks that every point in the file serves the goal. A stopped
   run goes on from the file in a new conversation. The AI that makes the work reads the design from
   it.
@@ -55,7 +55,7 @@ plan's goal, with every point settled under it, each with who settled it.
 ## Requirements
 
 - Claude Code 2.1.317 or later: `claude --version` shows its version.
-- Python 3.9 or later, run as `python3`, which Pin checks the design file with:
+- Python 3.9 or later, run as `python3`, which Pin checks the design tree with:
   `python3 --version` shows its version.
 
 ## Installation
@@ -129,7 +129,7 @@ Goal: scripts that read `notes list` get its notes as JSON.                 (you
 Do we understand the plan the same way?
 ```
 
-You answer `yes`, and Pin ends. The design file is `.pin/20261103-notes-json/design-tree.md`:
+You answer `yes`, and Pin ends. The design tree is `.pin/20261103-notes-json/design-tree.md`:
 
 ```markdown
 # Design tree
@@ -177,7 +177,7 @@ that the figure cannot show:
 
 ## Documentation
 
-- [The design tree](core/roles/pinner.md#the-design-tree): each line of the design file, for an AI
+- [The design tree](core/roles/pinner.md#the-design-tree): each line of the design tree, for an AI
   that reads it or builds on it.
 
 ## Development

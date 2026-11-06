@@ -441,7 +441,7 @@ class TurnTest(testing.FolderTest):
         self.writes(planner, os.path.join(self.folder, runs.CALL), json.dumps(data))
 
     def lays(self, at: str, design: dict[str, Any], call: dict[str, Any] | None = None, **out: Any):
-        """A run stopped with its work at the place given, its design file the tree and its paths,
+        """A run stopped with its work at the place given, its design tree the tree and its paths,
         commands and files as given, as plan.py left it, begun from the Call given or tidy's
         README's."""
         given = {"request": "a README for tidy", "kind": "readme", "reading": "refactor-doc"}
@@ -493,7 +493,7 @@ class TurnTest(testing.FolderTest):
         self.assertTrue(told.made, told.said)
 
     def pin_checks(self, design: str) -> str:
-        """The pinner runs Pin's check on the design file, which holds: what it printed."""
+        """The pinner runs Pin's check on the design tree, which holds: what it printed."""
         printed = self.runs(PINNER, f"python3 {PIN}/scripts/check.py {design}")
         self.assertIn("holds", printed)
         return printed
@@ -510,7 +510,7 @@ class TurnTest(testing.FolderTest):
 
     def pinner_done(self, design: str, tree: dict[str, Any]) -> list[str]:
         """The pinner writes the confirmed tree, which Pin's check passes, gives `done` and ends
-        with the design file's path: what up is told."""
+        with the design tree's path: what up is told."""
         self.changes(PINNER, design, tree)
         printed = self.pin_checks(design)
         self.gives(PINNER, "done")

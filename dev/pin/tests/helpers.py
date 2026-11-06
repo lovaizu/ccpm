@@ -104,14 +104,14 @@ assert f"begins with the line `{FOR_THE_PERSON}`" in PINNER_PART
 assert f"first line is `{ANSWERED}`" in PINNER_PART
 # Pin's Rules laid, as lay.py wrote them.
 LAID: dict[str, Any] = json.loads(entry("hooks", "lanes.json"))
-# The check command, as the pinner's rule on step 1 names it, of the design file's path.
+# The check command, as the pinner's rule on step 1 names it, of the design tree's path.
 (CHECK,) = [
     lane["takes"][0]
     for step in LAID["subagents"][0]["steps"]
     for lane in step["lanes"]
     if (step["step"], lane["lane"]) == (1, "run_only")
 ]
-# Where the person's design file lies, as the go-between picks it for a new plan, and where the
+# Where the person's design tree lies, as the go-between picks it for a new plan, and where the
 # maker AI of the tests keeps its own.
 PERSONS = os.path.join(".pin", "20261103-notes-json", "design-tree.md")
 MAKERS = os.path.join(".maker", "notes-json", "design-tree.md")
@@ -177,15 +177,15 @@ class PinnerTest(testing.FolderTest):
         self.heard: list[str] = []
 
     def on_disk(self) -> dict[str, Any]:
-        """The design file on disk, as tree.py reads it."""
+        """The design tree on disk, as tree.py reads it."""
         return tree.load(os.path.join(self.repo, self.path))
 
     def lies(self, data: dict[str, Any]) -> None:
-        """Lays the design file on disk before the run, as a stopped run or a maker AI left it."""
+        """Lays the design tree on disk before the run, as a stopped run or a maker AI left it."""
         self.write(os.path.join(self.repo, self.path), tree.markdown(data))
 
     def picks(self, words: str) -> str:
-        """The design file's path, as the go-between picks it for a plan of the person's: the file
+        """The design tree's path, as the go-between picks it for a plan of the person's: the file
         in `.pin/` whose goal holds the words, else a new path there, PERSONS."""
         for path in sorted(glob.glob(os.path.join(self.repo, ".pin", "*", "design-tree.md"))):
             if words in tree.load(path)["goal"]["what"]:
@@ -193,7 +193,7 @@ class PinnerTest(testing.FolderTest):
         return PERSONS
 
     def starts(self, request: str) -> testing.Told:
-        """The go-between starts the pinner with the Request: the design file's path as one JSON
+        """The go-between starts the pinner with the Request: the design tree's path as one JSON
         object on its first line, then the request; fails the test where the start is not made or
         the pinner is not given its part whole as it starts."""
         prompt = json.dumps({"design": self.path}) + "\n" + request
@@ -204,7 +204,7 @@ class PinnerTest(testing.FolderTest):
         return told
 
     def writes(self, data: dict[str, Any], path: str = "") -> testing.Told:
-        """The pinner writes the data, at the design file's path or the path given: only a tree in
+        """The pinner writes the data, at the design tree's path or the path given: only a tree in
         the form check.py's unit tests hold it to, as the pinner's contract allows. It makes a file
         not yet there with Write, and changes one there with Edit after reading it, its whole text
         the old string, as the pinner's part allows; the Edit's Told."""
@@ -221,7 +221,7 @@ class PinnerTest(testing.FolderTest):
         return self.claude.call(PINNER, "Edit", given)
 
     def rewrites(self, data: dict[str, Any]) -> testing.Told:
-        """The pinner writes the design file, there already, whole with Write, which its part does
+        """The pinner writes the design tree, there already, whole with Write, which its part does
         not allow."""
         file = os.path.join(self.repo, self.path)
         return self.claude.call(
@@ -271,6 +271,6 @@ class PinnerTest(testing.FolderTest):
         self.claude.started(PINNER)
 
     def holds(self, *open_now: str) -> tuple[int, str]:
-        """The Check result where the design file holds, with the decisions open now."""
+        """The Check result where the design tree holds, with the decisions open now."""
         said = f"Open to decide now: {', '.join(open_now)}." if open_now else "No decision is open."
         return 0, f"check.py: {self.path} holds: {check.HOLDS}\n{said}\n"

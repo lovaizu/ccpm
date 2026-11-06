@@ -75,7 +75,7 @@
   <text class="kind" x="1370.0" y="625.5" text-anchor="middle">[command line · Python 3.9]</text>
   <path class="store" d="M400,749 A380.0,9 0 0 1 1160,749 V803 A380.0,9 0 0 1 400,803 Z"/>
   <path class="store" d="M400,749 A380.0,9 0 0 0 1160,749"/>
-  <text class="name" x="780.0" y="782.0" text-anchor="middle">Design file</text>
+  <text class="name" x="780.0" y="782.0" text-anchor="middle">Design tree</text>
   <text class="kind" x="780.0" y="798.0" text-anchor="middle">[file · JSON]</text>
   <path class="line" d="M110,144 L110,320 L400,320" marker-end="url(#arrow)"/>
   <text class="label small halo" x="118" y="206" text-anchor="start">1 types /pin:down,</text>
@@ -92,7 +92,7 @@
   <path class="line" d="M500,380 L500,740" marker-end="url(#arrow)"/>
   <text class="label small halo" x="508" y="540" text-anchor="start">4 looks for the plan&#x27;s file,</text>
   <text class="label small halo" x="508" y="554" text-anchor="start">and picks its path</text>
-  <text class="data halo" x="508" y="568" text-anchor="start">Design file</text>
+  <text class="data halo" x="508" y="568" text-anchor="start">Design tree</text>
   <path class="line" d="M680,318 L880,318" marker-end="url(#arrow)"/>
   <text class="label small halo" x="688" y="280" text-anchor="start">5 starts it, then resumes it</text>
   <text class="label small halo" x="688" y="294" text-anchor="start">[Agent, SendMessage]</text>
@@ -125,7 +125,7 @@
   <text class="data halo" x="1118" y="502" text-anchor="start">Check result</text>
   <path class="line" d="M1370,644 L1370,776 L1160,776" marker-end="url(#arrow)"/>
   <text class="label small halo" x="1378" y="700" text-anchor="start">11 reads</text>
-  <text class="data halo" x="1378" y="714" text-anchor="start">Design file</text>
+  <text class="data halo" x="1378" y="714" text-anchor="start">Design tree</text>
   <text class="frame-name" x="40" y="866" text-anchor="start">Legend</text>
   <rect class="box" x="110" y="851" width="36" height="22" rx="0"/>
   <text class="label small" x="154" y="866" text-anchor="start">role of Pin</text>

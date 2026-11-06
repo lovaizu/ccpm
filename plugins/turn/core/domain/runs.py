@@ -1,10 +1,10 @@
 """A run of Turn as its Run, run.json in the run's folder, holds it: the works it makes in order,
 each with the kind whose best practice makes it, the best practice of how it reads, the folder of
-its design file, its Standards and its rounds, the paths it lies at, what its user runs and the
+its design tree, its Standards and its rounds, the paths it lies at, what its user runs and the
 files that needs, and where it is: waiting, with Pin, in its rounds, or done. A run makes one work,
 or first the best practice of a kind new to Turn, made by `meta`, and then the work. The planner
 writes the Call, call.json, and this module begins each work from it: the work's Standards and its
-hand-over to Pin, a design file in the form of Pin's design tree, written by Pin's own tree.py,
+hand-over to Pin, a design tree in Pin's form, written by Pin's own tree.py,
 which keeps word for word what a calling AI settled."""
 
 from __future__ import annotations
@@ -129,7 +129,7 @@ def works_of(run: str, call: dict[str, Any]) -> list[dict[str, Any]]:
 
 def begin(run: str, data: dict[str, Any], work: dict[str, Any]) -> str:
     """Begins the work: writes its Standards and its hand-over to Pin into its folder, and puts it
-    with Pin; gives the Request that hands it over, the design file's path as one JSON object on its
+    with Pin; gives the Request that hands it over, the design tree's path as one JSON object on its
     first line and then what Pin is to pin down. Refuses, by files.Unreadable, a best practice that
     cannot be read or is out of its form, and a hand-over out of the form of Pin's design tree."""
     call = files.load(os.path.join(run, CALL), "call")
@@ -162,7 +162,7 @@ def begin(run: str, data: dict[str, Any], work: dict[str, Any]) -> str:
 
 
 def request(design: str, words: str) -> str:
-    """The Request to Pin: the design file's path as one JSON object on the first line, then the
+    """The Request to Pin: the design tree's path as one JSON object on the first line, then the
     words."""
     return f"{json.dumps({'design': design}, ensure_ascii=False)}\n{words}"
 

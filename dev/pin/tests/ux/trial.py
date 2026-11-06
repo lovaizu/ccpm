@@ -19,7 +19,7 @@ session runs in an interactive terminal, as Pin runs where Claude Code starts th
 a subagent again once it ends.
 
 The trial measures each key result of the UX from the records of the session, the stand-in's view
-of each message and the design file, and prints them:
+of each message and the design tree, and prints them:
 
 - KR1.1: of the intent's points and the points put to the person that are not among them, the share
   that went wrong: a point the confirmed design does not hold, holds open or holds otherwise than
@@ -30,7 +30,7 @@ of each message and the design file, and prints them:
 - KR2.1 (O2): of the designs the maker AI got back, the share that went wrong: a point it settled
   changed or asked again, a question it gave with no decision under it, a Reply of the pinner's
   that did not reach the person as given or an answer that did not reach the pinner word for word,
-  and a write of the maker AI to the design file once it had handed it over.
+  and a write of the maker AI to the design tree once it had handed it over.
 - KR2.2 (O2): the seconds from the maker AI's start of the pinner to the pinner's `done`.
 
 A run counts only where each frequent case came up. It passes where nothing went wrong in KR1.1,
@@ -201,13 +201,13 @@ def run(objective: str, number: int) -> bool:
 
 def judged(place: str, objective: str) -> bool:
     """Judges the run kept in its folder from its records, the stand-in's view of each message and
-    its design file; prints and keeps the measures, and gives whether it counted and passed."""
+    its design tree; prints and keeps the measures, and gives whether it counted and passed."""
     with open(os.path.join(place, "turns.json"), encoding="utf-8") as f:
         kept = json.load(f)
     turns: list[dict[str, Any]] = kept["turns"]
     repo = os.path.join(place, "notes")
     files = records(kept["session"])
-    path = design_file(repo, objective)
+    path = design_tree(repo, objective)
     untried = [why for key, why in CASES.items() if not any(t.get(key) for t in turns)]
     wrong = kr1_1(objective, turns, path, files, place)
     points = len(wants(objective)) + sum(
@@ -246,8 +246,8 @@ def records(session: str) -> dict[str, list[dict[str, Any]]]:
     return found
 
 
-def design_file(repo: str, objective: str) -> str:
-    """The path of the design file the run settled: the maker AI's hand-over for O2, else the one
+def design_tree(repo: str, objective: str) -> str:
+    """The path of the design tree the run settled: the maker AI's hand-over for O2, else the one
     file in `.pin/`, or "" where there is not one alone."""
     if objective == "o2":
         return os.path.join(repo, HANDED)
@@ -343,7 +343,7 @@ def kr2(
     first = starts[0] if starts else None
     for d_at in at(maker, "Write", HANDED) + at(maker, "Edit", HANDED):
         if first and d_at > first:
-            wrong.append("the maker AI wrote the design file after it handed it over")
+            wrong.append("the maker AI wrote the design tree after it handed it over")
     lead = round((done[0] - first).total_seconds()) if done and first else None
     return len(done), wrong, lead
 
@@ -368,15 +368,15 @@ def built(repo: str) -> list[str]:
 
 
 def held(path: str) -> list[str]:
-    """That the design file does not hold with no decision open, by check.py, where it does not."""
+    """That the design tree does not hold with no decision open, by check.py, where it does not."""
     if not path:
-        return ["not one design file in .pin/"]
+        return ["not one design tree in .pin/"]
     check = os.path.join(helpers.PIN, "scripts", "check.py")
     done = subprocess.run(
         [sys.executable, check, path], capture_output=True, text=True, check=False
     )
     if done.returncode != 0 or "No decision is open." not in done.stdout:
-        return [f"the design file does not hold with no decision open: {done.stdout[-200:]!r}"]
+        return [f"the design tree does not hold with no decision open: {done.stdout[-200:]!r}"]
     return []
 
 
