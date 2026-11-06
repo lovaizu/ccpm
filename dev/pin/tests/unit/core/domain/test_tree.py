@@ -456,6 +456,19 @@ class TestMarkdown(unittest.TestCase):
             tree.markdown(data),
         )
 
+    def test_a_decision_read_from_json_names_no_also_line_for_the_one_it_stands_under(self):
+        # Given: a tree read from JSON, where D1 serves D2 and D2 serves Q1, each ID a text of
+        # its own, not the one its parent holds
+        data = json.loads(json.dumps(made(decision("D1", contributes_to=["D2"]), decision("D2"))))
+        # When: the tree is written
+        # Then: D1 stands under D2, and D2 under Q1, with no Also serves line naming either
+        self.assertEqual(
+            tree.markdown(data),
+            "# Design tree\n\nGoal: the goal\n- Grounds: the person\n\n"
+            "- **Q1** does Q1 hold?\n  - **D2 what D2 decides**: open\n"
+            "    - **D1 what D1 decides**: open\n",
+        )
+
     def test_a_loop_read_from_a_file_is_written_as_it_was_read(self):
         for also in ("Also serves", "Also builds on"):
             with self.subTest(also=also):

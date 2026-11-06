@@ -229,7 +229,7 @@ sequenceDiagram
   end
   GD-->>O: the run begun, start the pinner
   opt O ends its turn with the start due
-    GD-->>O: kept going once, told to start the pinner; if O ends again, its turn ends, and the user is told which role's step failed
+    GD-->>O: kept going once, told to start the pinner. If O ends again, its turn ends, and the user is told which role's step failed
   end
   O->>DT: looks for the plan's design tree, and picks the path
   O->>PN: starts it in the background [Agent] (Request)
@@ -326,7 +326,7 @@ sequenceDiagram
     O->>U: puts the Point as given
   else the person confirmed the design
     PN-->>O: gives done, and ends with the design tree's path and the Check result
-    GD-->>O: start no more; the run ends
+    GD-->>O: start no more. The run ends
     O->>U: puts the path as given, and gives done
   end
 ```
