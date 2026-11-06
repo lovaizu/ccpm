@@ -209,17 +209,11 @@ What each decides alone:
 ![Turn's data](images/data-model.svg)
 
 - **Message**: what up ends with, under a heading for the starter.
-- **Answer**: the user's words, passed back as given.
 - **Call**: the request, and what the user's AI settled.
 - **Run**: the kind, and the works to make, in order.
 - **Request**: what up starts the designer with: each point to settle.
-- **Design tree**: the goal, questions and decisions, in Pin's form.
-- **Decision**: one point of the design, with who settled it.
-- **Work**: what the user wants made.
 - **Round**: one round's phase and questions.
 - **Answers**: met or not met, for each question of a round.
-- **Best practice**: a kind's goal, template, questions and ways.
-- **Question**: one question of a best practice.
 - **Standard**: a best practice without its ways.
 - **Run values**: the one line a role is started with.
 - **Result**: the word a role gives as it ends.

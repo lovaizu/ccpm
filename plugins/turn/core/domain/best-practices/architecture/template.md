@@ -77,8 +77,8 @@ What each decides alone:
 >   it joins at both ends, a filled diamond at the whole where one holds the other's parts; the data
 >   grouped in a named frame for each component that keeps them, the frames in the order the
 >   stories meet them, the data most others join in the middle.
-> - `<Data>`, `<what it is>`: each data of the figure, by its name, and what it is in a few words,
->   without its fields.
+> - `<Data>`, `<what it is>`: each data whose name could be taken for another's, by its name, and
+>   what it is in a few words, without its fields.
 
 ## Sequences
 
