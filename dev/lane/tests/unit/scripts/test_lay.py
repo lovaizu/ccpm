@@ -1,4 +1,4 @@
-"""lay.py, the command line the developer AI runs: the action and its path read, the layer's
+"""lay.py, the command line the user runs: the action and its path read, the layer's
 answer printed, or what stopped it, with the exit code a script reads."""
 
 import contextlib

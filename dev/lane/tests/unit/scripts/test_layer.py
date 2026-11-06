@@ -1,4 +1,4 @@
-"""lay.py's course: the proposal printed as each step will read, for the developer AI's approval;
+"""lay.py's course: the proposal printed as each step will read, for the user's approval;
 once approved, written word for word into its plugin from the same file, Claude Code's check run on
 it, and the proposal removed; and a plugin laid before brought up to lane's code."""
 
@@ -145,7 +145,7 @@ class TestWritten(LayerTest):
         self.assertTrue(self.wrote().startswith("Wrote step 3 of writer into agents/writer.md.\n"))
 
     def test_the_proposals_folder_holding_more_is_kept(self):
-        # Given: a note of the developer AI's beside the proposal
+        # Given: a note of the user's beside the proposal
         self.write(os.path.join(".lane", "20261102-changelog", "note.md"), "")
         # When: the proposal is written
         said = self.wrote()

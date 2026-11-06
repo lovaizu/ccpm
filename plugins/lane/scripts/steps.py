@@ -19,7 +19,7 @@ def sentences(given: dict[str, Any]) -> list[str]:
 def reworded(lines: list[str], given: dict[str, Any]) -> list[str]:
     """The step's lines with each sentence of its lanes that it says in a wording lane laid before,
     and not in the current one, put in the current one where it is, the rest as it was; a wording
-    lane never laid is the developer AI's own, and is left as it is."""
+    lane never laid is the user's own, and is left as it is."""
     start, end = given["span"]
     kept = list(lines[start:end])
     for lane in given["lanes"]:

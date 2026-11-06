@@ -149,14 +149,50 @@ class TestLeftWithoutResult(CalledTest):
 
 class TestStarts(CalledTest):
     def test_the_starts_are_the_agent_calls_of_routed_subagents_as_they_came_back(self):
-        # Given: lead's start of writer as it came back, a read, and a start of Explore
+        # Given: the run's start of writer as it came back, a read, and a start of Explore
         writer = called.call("Agent", {"subagent_type": "changelog:writer"}, helpers.back("w1"))
         explore = called.call("Agent", {"subagent_type": "Explore"}, helpers.back("x1"))
         self.keep("lead1", called.START, writer, called.call("Read", {}), explore)
-        # When: lead's starts of the routes are read
+        # When: the run's starts of the routes are read
         found = called.starts("s1", "lead1", ["writer", "reviewer"], "changelog")
         # Then: they are writer's alone, with its status and ID
         self.assertEqual(found, [routes.Start("writer", "completed", "w1")])
+
+
+class TestRun(CalledTest):
+    def test_the_starts_are_those_of_the_last_run_alone(self):
+        # Given: a run with a start of writer, then a run begun again with a start of reviewer
+        writer = called.call("Agent", {"subagent_type": "changelog:writer"}, helpers.back("w1"))
+        again = called.call("Agent", {"subagent_type": "changelog:reviewer"}, helpers.back("r1"))
+        self.keep(called.RUN, called.START, writer, called.START, again)
+        # When: the run's starts are read
+        found = called.starts("s1", called.RUN, ["writer", "reviewer"], "changelog")
+        # Then: they are the last run's alone
+        self.assertEqual(found, [routes.Start("reviewer", "completed", "r1")])
+
+    def test_a_run_is_begun_from_its_start_until_it_is_let_end(self):
+        for entries, begun in (
+            ((), False),
+            ((called.START,), True),
+            ((called.START, called.END), False),
+            ((called.START, called.END, called.START), True),
+        ):
+            with self.subTest(entries=entries):
+                # Given: no run, a run begun, one let end, or one begun again after
+                shutil.rmtree(os.path.join(self.base, "lane"), ignore_errors=True)
+                self.keep(called.RUN, *entries)
+                # When: whether a run is begun is asked
+                # Then: it is from its start until it is let end
+                self.assertEqual(called.begun("s1"), begun)
+
+    def test_a_line_told_is_known_by_the_entries_the_starts_held(self):
+        # Given: a run, told a line as its starts held 3 entries
+        self.keep(called.RUN, called.START, called.said("reviewer gave `good`.", 3))
+        # When: whether it was told is asked, with as many entries, with more, or another line
+        # Then: it was told only with as many entries, of that line
+        self.assertTrue(called.told("s1", "reviewer gave `good`.", 3))
+        self.assertFalse(called.told("s1", "reviewer gave `good`.", 4))
+        self.assertFalse(called.told("s1", "writer gave `written`.", 3))
 
 
 class TestGiven(CalledTest):

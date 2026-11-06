@@ -34,13 +34,13 @@ class TestCommands(unittest.TestCase):
                 # Then: they are the `on` of each route from it, in order; none for write
                 self.assertEqual(routes.ons(helpers.ROUTES, name), ons)
 
-    def test_the_subagents_named_are_the_orchestrator_then_each_in_the_routes(self):
+    def test_the_names_are_the_skill_then_each_in_the_routes(self):
         # Given: docs/routes.md's routes
         # When: the subagents they name are asked for
         # Then: they are write, writer and reviewer, each once
         self.assertEqual(routes.named(helpers.ROUTES), ["write", "writer", "reviewer"])
 
-    def test_the_subagents_giving_results_are_those_routed_from_but_the_orchestrator(self):
+    def test_the_subagents_giving_results_are_those_routed_from_but_the_skill(self):
         # Given: docs/routes.md's routes
         # When: the subagents that give results are asked for
         # Then: they are writer and reviewer
@@ -78,7 +78,7 @@ class TestGives(unittest.TestCase):
 
 
 class TestNextStart(unittest.TestCase):
-    def test_with_no_start_yet_the_orchestrators_route_is_due(self):
+    def test_with_no_start_yet_the_skills_route_is_due(self):
         # Given: no start of the skill's yet
         # When: the next start is decided
         # Then: writer is due, after no result
@@ -104,7 +104,7 @@ class TestNextStart(unittest.TestCase):
                 # Then: it is the `to` of the route of the last result, or the end
                 self.assertEqual(decided(starts, results), found)
 
-    def test_the_orchestrators_route_is_due_wherever_it_lies_in_the_routes(self):
+    def test_the_skills_route_is_due_wherever_it_lies_in_the_routes(self):
         # Given: the skill's route listed after routes from author and writer
         given = {
             **helpers.ROUTES,
@@ -154,7 +154,7 @@ class TestNextStart(unittest.TestCase):
                 self.assertEqual(decided(started, {"w1": "written"}, ended), found)
 
     def test_starts_after_the_end_are_left_out(self):
-        # Given: reviewer's `good`, then writer started again, its orchestrator being free
+        # Given: reviewer's `good`, then writer started again, the run being over
         starts = [WRITER, REVIEWER, routes.Start("writer", "completed", "w2")]
         # When: the next start is decided
         # Then: it is still the end
@@ -452,7 +452,7 @@ class TestRefused(unittest.TestCase):
             ({"routes": [*each, each[1]]}, "gives two routes from writer on `written`"),
             (
                 {"routes": [*each, {"from": "reviewer", "on": "x", "to": "write"}]},
-                "gives a route to write, the orchestrator",
+                "gives a route to write, the skill the routes start from",
             ),
             (
                 {"routes": [*each, {"from": "reviewer", "on": "x", "to": "linter"}]},
@@ -504,7 +504,7 @@ class TestDependency(unittest.TestCase):
         # Then: it runs the result script in checker's folder, as lane names a dependency's
         self.assertEqual(routes.command("checker:examiner", "done"), f"{helpers.EXAMINED} done")
 
-    def test_the_orchestrator_is_told_to_start_a_dependencys_subagent_by_its_type(self):
+    def test_the_main_conversation_is_told_to_start_a_dependencys_subagent_by_its_type(self):
         # Given: writer's `written`, which leads to checker's examiner
         due = decided_by(helpers.DEPENDENCY_ROUTES, [WRITER], {"w1": "written"})
         # When: write is told the start
@@ -523,8 +523,8 @@ class TestDependency(unittest.TestCase):
         # Then: the run ends, as the route on `asks` starts no one
         self.assertEqual(due, routes.Next("end", "", ("checker:examiner", "asks")))
 
-    def test_an_orchestrator_of_another_plugin_is_refused(self):
-        # Given: routes whose orchestrator is checker's examiner
+    def test_a_skill_of_another_plugin_to_start_from_is_refused(self):
+        # Given: routes that start from checker's examiner
         given = {**helpers.DEPENDENCY_ROUTES, "orchestrator": "checker:examiner"}
         given["routes"] = [
             {"from": "checker:examiner", "to": "writer"},
@@ -534,7 +534,8 @@ class TestDependency(unittest.TestCase):
         # Then: they are refused, as its steps lie in another plugin
         self.assertTrue(
             routes.refused(given).startswith(
-                "gives checker:examiner as the orchestrator, a subagent of another plugin"
+                "gives checker:examiner as the skill the routes start from, a skill of another"
+                " plugin"
             )
         )
 

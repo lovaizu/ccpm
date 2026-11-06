@@ -1,13 +1,14 @@
-"""The routes, as docs/routes.md gives them: the result command each subagent gives its result by;
-and the next start, decided from the routes and the orchestrator's starts as they came back, with
-the result each started subagent gave in its run, and told in its line of docs/routes.md's table.
+"""The routes, as docs/routes.md gives them: the results each subagent may give, and the result
+command it gives each by; and the next start of a run of the skill the routes start from, decided
+from the routes and the run's starts as they came back, with the result each started subagent
+gave, and told in its line of docs/routes.md's table.
 
 A start counts once its subagent has ended: as its call comes back `completed`, or, come back
 `async_launched`, once the subagent of the ID it gave has ended. Starts joined to the one before
-them, as further runs of a subagent the routes fan out, or as a run started again for one that
+them, as further starts of a subagent the routes fan out, or as a start made again for one that
 ended with no result, count together, once every one has ended: their results give the one they
 share, or the first of them in the order the routes give. The starts after the end are left out,
-as the orchestrator is free once no start is left."""
+as the run is over once no start is left."""
 
 from __future__ import annotations
 
@@ -27,7 +28,7 @@ AGAIN = "again"
 
 
 class Start(NamedTuple):
-    """A start of the orchestrator's as its call came back: the subagent started, by its name, the
+    """A start of the run as its call came back: the subagent started, by its name, the
     status the call gave, the ID of the subagent's run, and how it is joined to the starts before
     it, MORE or AGAIN, or "" where it is not."""
 
@@ -97,7 +98,7 @@ def ons(routes: dict[str, Any], name: str) -> list[str]:
 
 
 def named(routes: dict[str, Any]) -> list[str]:
-    """Each subagent the routes name, the orchestrator first, then each as a route names it,
+    """Each name the routes give, the skill they start from first, then each as a route names it,
     once."""
     names = [routes["orchestrator"]]
     for r in routes["routes"]:
@@ -106,7 +107,7 @@ def named(routes: dict[str, Any]) -> list[str]:
 
 
 def giving(routes: dict[str, Any]) -> list[str]:
-    """Each subagent that gives a result: those the routes are from, the orchestrator left out."""
+    """Each subagent that gives a result: those the routes are from, the skill left out."""
     return [n for n in named(routes) if ons(routes, n)]
 
 
@@ -116,7 +117,7 @@ def listed(things: list[str]) -> str:
 
 
 def fans_out(routes: dict[str, Any], name: str) -> bool:
-    """Whether the orchestrator may start several runs of the subagent of the name at once."""
+    """Whether the skill may start the subagent of the name several times at once."""
     return name in routes.get("fan_out", [])
 
 
@@ -146,15 +147,15 @@ def unordered(routes: dict[str, Any]) -> str | None:
 def refused(routes: dict[str, Any]) -> str:
     """Why the routes, in their JSON Schema, cannot be followed, as `lay.py print` refuses them and
     the guard holds the routes laid to it, said as the proposal's error goes on; "" where they can:
-    no one first route, from the orchestrator, with a `to` and no `on`; another route with no
-    `on`, or two from one subagent on one result; a route to the orchestrator, which gives no
+    no one first route, from the skill, with a `to` and no `on`; another route with no
+    `on`, or two from one subagent on one result; a route to the skill, which gives no
     result, or to a subagent no route is from; no route that ends; an order of results, or a
     subagent fanned out, as `ordered` checks them."""
     lead, each = routes["orchestrator"], routes["routes"]
     if ":" in lead:
         return (
-            f"gives {lead} as the orchestrator, a subagent of another plugin, whose steps the"
-            " routes cannot be laid on"
+            f"gives {lead} as the skill the routes start from, a skill of another plugin, whose"
+            " steps the routes cannot be laid on"
         )
     first = [r for r in each if r["from"] == lead]
     # A first route alone is the start; with none or two, there is none, which has no `to`.
@@ -179,7 +180,9 @@ def refused(routes: dict[str, Any]) -> str:
     for r in each:
         to = r.get("to")
         if to == lead:
-            return f"gives a route to {lead}, the orchestrator, which gives no result"
+            return (
+                f"gives a route to {lead}, the skill the routes start from, which gives no result"
+            )
         if to is not None and to not in froms:
             return (
                 f"gives a route to {to}, which no route is from, so it would have no result to give"
@@ -239,7 +242,7 @@ def next_start(
 ) -> Next:
     """The next start after the starts, as `result` gives the result of a subagent's run by its ID,
     `ended` whether it has ended, and `left` whether a run of it ended with no result once: the
-    orchestrator's route at first; after each start, with those joined to it, the route of their
+    skill's route at first; after each start, with those joined to it, the route of their
     subagent on their result once every run has ended, or the same subagent again where a run is
     left with no result; a wait while any runs in the background. Stops with Unordered where their
     results cannot be told one."""
@@ -301,7 +304,7 @@ def in_place(
 
 
 def line(found: Next, plugin: str) -> str:
-    """What the orchestrator is told of the next start, as docs/routes.md's table has it, the
+    """What the main conversation is told of the next start, as docs/routes.md's table has it, the
     plugin's name heading it left to whoever tells it."""
     # A next start is `end`, `start` or `wait`, `wait` the last of them in order.
     waiting = found.kind == "wait"  # pragma: no mutate

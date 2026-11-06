@@ -67,42 +67,47 @@ def shape(required: list[str], properties: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-# The routes' JSON Schema, as docs/routes.md gives it: the orchestrator, its step they are laid
-# on, each route from a subagent, on its result, to the subagent started next, the subagents run
-# several at once, and the order their results are taken in.
+# The routes' JSON Schema, as docs/routes.md gives it: the skill they start from, its step they
+# are laid on, each route from a subagent, on its result, to the subagent started next, the
+# subagents started several times at once, and the order their results are taken in.
 ROUTE = {
     "from": {
         "type": "string",
-        "description": "the subagent that ends, or the orchestrator for the first start",
+        "description": "the subagent that ends, or the skill for the first start",
     },
     "on": {**ON, "description": "the result it ends with"},
-    "to": {"type": "string", "description": "the subagent to start next; none where the run ends"},
+    "to": {
+        "type": "string",
+        "description": "the subagent to start next, or a dependency's skill to call; none where"
+        " the run ends",
+    },
 }
 ROUTES = shape(
     ["orchestrator", "step", "routes"],
     {
         "orchestrator": {
             "type": "string",
-            "description": "the subagent that starts the others, as its file's name: field",
+            "description": "the skill that starts the subagents, as its folder under skills/ names"
+            " it",
         },
         "step": {
             "type": "integer",
             "minimum": 1,
-            "description": "the orchestrator's step the routes are laid on",
+            "description": "the skill's step the routes are laid on",
         },
         "routes": {"type": "array", "minItems": 2, "items": shape(["from"], ROUTE)},
         "fan_out": {
             "type": "array",
             "items": {"type": "string"},
-            "description": "the subagents the orchestrator may start several runs of at once",
+            "description": "the subagents the skill may start several times at once",
         },
         "precedence": {
             "anyOf": [
                 {"type": "array", "items": ON},
                 {"type": "object", "additionalProperties": {"type": "array", "items": ON}},
             ],
-            "description": "the results, first to last, the result of runs at once is taken by:"
-            " one order for every subagent, or one for each, by its name",
+            "description": "the results, first to last, the result of starts at once is taken"
+            " by: one order for every subagent, or one for each, by its name",
         },
     },
 )

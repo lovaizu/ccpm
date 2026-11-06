@@ -1,4 +1,4 @@
-"""The proposal the developer AI writes for lay.py, a JSON file at a path it gives: read and held to
+"""The proposal the user writes for lay.py, a JSON file at a path it gives: read and held to
 its JSON Schema, PROPOSAL, which docs/lanes.md shows, then checked for what no schema can say: the
 plugin and each subagent's file found, each name one a hook's command can carry, each subagent and
 step given once, each step in its file, and each lane taking at least one thing, none empty; and
@@ -23,7 +23,7 @@ import step
 from lanes import run_only
 
 # What the proposal is told to be, when it is not: in the shape docs/lanes.md gives, named by its
-# whole path, as the developer AI may run lay.py from any folder.
+# whole path, as the user may run lay.py from any folder.
 # Lane's folder, as lay.py runs this module from Lane: four above its own, core/domain/ in
 # hooks/lane/.
 LANE = os.path.realpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), *[".."] * 4))
@@ -80,13 +80,13 @@ def proposal(path: str) -> dict[str, Any]:
         raise wrong(f"is out of its shape at {out.told()}")
     root = given["plugin"]
     name = plugin_name(root)
-    # Where the developer AI keeps the proposal's adapters, beside it.
+    # Where the user keeps the proposal's adapters, beside it.
     beside = os.path.join(os.path.dirname(path), name, "adapters")
     checked: list[dict[str, Any]] = []
     for each in given.get("subagents", []):
         agent = subagent(root, each, beside)
         # A subagent given twice would be written twice, the second time from the second's lanes
-        # alone, and the first's lost though the developer AI approved them.
+        # alone, and the first's lost though the user approved them.
         if agent["name"] in [a["name"] for a in checked]:
             raise wrong(f"gives {agent['name']} twice, where each subagent comes once")
         checked.append(agent)
@@ -158,9 +158,9 @@ def skill_lines(root: str, name: str) -> tuple[str, list[str]]:
 
 def routes_checked(root: str, given: dict[str, Any]) -> dict[str, Any]:
     """The routes, held to their schema, checked as `routes.refused` says, and then against the
-    files of the subagents they name: the orchestrator's step in its file, its tools, where named,
-    with Agent; no subagent they name set to run in the foreground; and each subagent giving a
-    result with a last step; a dependency's subagent as `dependency_checked` says."""
+    files they name: the skill's step in its file; no subagent they name set to run in the
+    foreground; and each subagent giving a result with a last step; a dependency's subagent or
+    skill as `dependency_checked` says."""
     out = schema.held(rules.ROUTES, given)
     if out is not None:
         raise wrong(f"is out of its shape at $.routes{out.told()[1:]}", ROUTES_AGAIN)

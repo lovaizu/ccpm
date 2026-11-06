@@ -142,7 +142,7 @@ class TestSentence(unittest.TestCase):
             ),
         ):
             with self.subTest(lane=lane, takes=takes):
-                # Given: the orchestrator's step, or a subagent's last step with its commands
+                # Given: the skill's step, or a subagent's last step with its commands
                 # When: the sentence laid there is made
                 # Then: it reads as docs/routes.md writes it
                 self.assertEqual(lanes.sentence(lane, takes), said)

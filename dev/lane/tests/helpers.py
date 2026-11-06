@@ -406,7 +406,7 @@ PART_ENTRY = (
     "---\nname: {name}\ndescription: d\nbackground: true\n---\n\n"
     "Your steps are in `${{CLAUDE_PLUGIN_ROOT}}/prompts/writer.md`.\n"
 )
-# An adapter of the values port reading `<name>=<value>` lines, with its cases, as the developer AI
+# An adapter of the values port reading `<name>=<value>` lines, with its cases, as the user
 # keeps them beside its proposal.
 VALUES_ADAPTER = """import json, sys
 

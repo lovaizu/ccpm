@@ -28,10 +28,10 @@ class TestResumes(unittest.TestCase):
             ("Write", {"to": "w1"}, False),
         ):
             with self.subTest(tool=tool, given=given):
-                # Given: the run w1 among the runs
-                # When: lead sends a message to w1, to another run, to none, or calls another
-                # tool given w1
-                # Then: only the message to w1 resumes one of the runs
+                # Given: the start w1 among the starts
+                # When: the main conversation sends a message to w1, to another start, to none, or
+                # calls another tool given w1
+                # Then: only the message to w1 resumes one of the starts
                 self.assertEqual(follow_routes.resumes(tool, given, ["w1"]), resumes)
 
 

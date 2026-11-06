@@ -1,5 +1,6 @@
-"""The guard: decides, of each event of a subagent with lanes laid or named by the routes, what it
-is told, from the event's input alone, as Claude Code documents it, and from the calls kept; and,
+"""The guard: decides, of each event of a subagent with lanes laid or named by the routes, and of
+each event of the main conversation within a run of the skill the routes start from, what it is
+told, from the event's input alone, as Claude Code documents it, and from the calls kept; and,
 where it cannot decide, the error that says what is wrong and who must fix it.
 
 At PreToolUse, a call goes through, is stopped with the sentences it breaks, or, a held command, is
@@ -10,26 +11,28 @@ is judged by its read_only lanes together, and a write by its write_only lanes t
 through where there is none; a write of an edit_only lane's output, once it is there, goes through
 only by Edit; a write of an in_form lane's output is held to its form. Any other
 tool goes through. A result command is let through only once the lanes checked at the end hold.
-The orchestrator makes no call but the start due while one is due, and starts none while a
-subagent it started runs in the background, but more runs of it where the routes fan it out. It
-sends no message to a run that ended with no result, as the run started again takes its place.
 
-A take `{<name>}` is the run's value of the name, read at the values port from the texts the run
-was given: the prompt of the Agent call that started it, kept under the ID of the run as the call
-comes back, and each message sent to it after. A call the run makes before its start has come back
-waits for it a short time, within the hook's; a value given as null lets the lane's call or end
-through on that run. A subagent whose file no longer sets `background: true` is an error at each of
-its events, as only a start in the background comes back with the run's ID before the run's
-calls.
+A take `{<name>}` is the start's value of the name, read at the values port from the texts the
+subagent was given: the prompt of the Agent call that started it, kept under the ID of the start as
+the call comes back, and each message sent to it after. A call the subagent makes before its start
+has come back waits for it a short time, within the hook's; a value given as null lets the lane's
+call or end through on that start. A subagent whose file no longer sets `background: true` is an
+error at each of its events, as only a start in the background comes back with its ID before the
+subagent's calls.
 
-At PostToolUse, the call is kept, with the result where it is a result command; the orchestrator is
-told the next start as each of its starts comes back, kept with how it is joined to the starts
-before it, as a further run of a subagent the routes fan out or a run started again, or, at
-PostToolUseFailure, the start still due. At SubagentStart, the run's start is kept, the subagent
-given its part whole where its entry names one, and the orchestrator told the next start. At
-SubagentStop, the orchestrator is kept going while a start is due, and a subagent giving a result
-is kept going once where it gave none; any other end is kept, so a start in the background counts
-once its subagent has ended."""
+At PostToolUse, a subagent's call is kept, with the result where it is a result command. At
+SubagentStart, the start is kept and the subagent given its part whole where its entry names one.
+At SubagentStop, a subagent giving a result is kept going once where it gave none; any other end is
+kept, so a start in the background counts once its subagent has ended.
+
+The main conversation is held only while a run of the skill lasts, from the command's expansion or
+the Skill call that begins it until a route starts no more. Within it, a start not due, or a
+message resuming a start that ended with no result, is stopped with the start due; each start
+coming back is kept and told to wait; each prompt handed to the main conversation, a subagent's
+task-notification among them, is told the next start; and the end of a turn is kept going once
+while a start is due and no start of the run still runs. A dependency's skill the routes name is
+one move, from its Skill call to the run of the dependency's result script, during which nothing
+of the main conversation is checked."""
 
 from __future__ import annotations
 
@@ -556,7 +559,7 @@ def call_kept(s: Subagent, event: dict[str, Any]) -> list[Said]:
 
 
 def joined(before: routes.Next, name: str) -> str:
-    """How the orchestrator's start of the subagent of the name, made with the next start `before`,
+    """How the run's start of the subagent of the name, made with the next start `before`,
     is joined to the starts before it: as a further run, where runs of it go and more may start; as
     a run started again, where it is due again; or not."""
     if before.name != name:

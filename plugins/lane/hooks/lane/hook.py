@@ -65,7 +65,7 @@ def event_in(held: str, main: bool = False) -> dict[str, Any]:
         "cwd": {"type": "string"},
         "session_id": ID,
         **agent,
-        **FIELDS[held],
+        **FIELDS.get(held, {}),
     }
     return {"type": "object", "required": list(fields), "properties": fields}
 

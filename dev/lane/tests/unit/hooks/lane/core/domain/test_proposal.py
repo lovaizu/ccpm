@@ -1,4 +1,4 @@
-"""The proposal the developer AI writes for lay.py: read and held to the JSON Schema docs/lanes.md
+"""The proposal the user writes for lay.py: read and held to the JSON Schema docs/lanes.md
 gives, then checked against the plugin's files; what this version does not lay yet, and anything
 that cannot be laid, refused with what is wrong and what to do."""
 
@@ -264,7 +264,7 @@ class TestRoutes(RoutesTest):
             (self.routed([*routes, {**more, "to": "write"}]), "two routes from reviewer on `more`"),
             (
                 self.routed([first, {**written, "to": "write"}, more, good]),
-                "a route to write, the orchestrator",
+                "a route to write, the skill the routes start from",
             ),
             (
                 self.routed([first, written, {**more, "to": "planner"}, good]),

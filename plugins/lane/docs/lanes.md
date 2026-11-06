@@ -2,37 +2,38 @@
 
 This page gives each lane that lane can lay, under the action it watches, and the proposal your AI
 writes them in. With it, your AI can tell which lanes to propose for your plugin's steps, and you
-can tell what each hook tells your subagent.
+can tell what lane's check tells your subagent.
 
-The sentence is what the step says. The hook tells the subagent the sentence on a drift, that is,
+The sentence is what the step says. The check tells the subagent the sentence on a drift, that is,
 when the subagent does what the last column says. What the lane takes goes where the sentence shows
 `<...>`.
 
 A newer lane may word a sentence it lays in other words. `lay.py up` and `lay.py write` then put
 the new words in place of the old ones that lane laid in your steps, and leave every other word as
-it was. The hook tells the sentence in the new words, so it stops each call of a subagent whose
+it was. The check tells the sentence in the new words, so it stops each call of a subagent whose
 step still says the old ones. Words that lane never laid are yours, and lane leaves them.
 
-What a lane takes is either fixed in the step, such as `CHANGELOG.md`, or given for each run,
-written `{<name>}`. A thing given for each run may be a whole take, or, in a command, a part of it,
-as below. It is the value under that name that the values port reads in what the subagent is
-given: the prompt of the Agent call that started it, and each message a SendMessage call sent to it
-after, the later over the earlier. So the hook holds a file added to the run while the subagent
-works, as by an answer, from then on. The sentence `Write only {work}.`
-holds a subagent to the files and folders its run's `work` names, whichever they are. A value given
-as `null` is the caller saying there is none: each lane taking that name lets the call or the end
-through on that run, with nothing told. A thing taken holds any text, a comma among the rest.
+What a lane takes is either fixed in the step, such as `CHANGELOG.md`, or given for each start of
+the subagent, written `{<name>}`. A thing given for each start may be a whole take, or, in a
+command, a part of it, as below. It is the value under that name that the values port reads in
+what the subagent is given: the prompt of the Agent call that started it, and each message a
+SendMessage call sent to it after, the later over the earlier. So the check holds a file added to
+the start while the subagent works, as by an answer, from then on. The sentence `Write only {work}.`
+holds a subagent to the files and folders its start's `work` names, whichever they are. A value
+given as `null` is the caller saying there is none: each lane taking that name lets the call or the
+end through on that start, with nothing told. A thing taken holds any text, a comma among the
+rest.
 
 Each subagent with lanes, or that routes name, sets `background: true` in its frontmatter.
 `lay.py print` refuses a proposal where one does not. Claude Code then runs it in the background
 however it is started ([background](https://code.claude.com/docs/en/sub-agents)), and the Agent
-call that starts it comes back at once with the `agentId` of its run. lane keeps the call's prompt
-under that ID as the call comes back. So lane holds each of many runs of one subagent at once to
-its own values. A run starts a moment before its call comes back. So a call the run makes that
-needs a value waits up to 3 seconds for the Agent call to come back, and is an error where it has
-not come back by then. A SendMessage call counts where its `to` is the run's `agentId`. lane stops
-one that an orchestrator sends to a run that ended with no result. A result such a run gives once
-another resumes it does not count, as [the routes](routes.md#how-a-subagent-gives-its-result) say.
+call that starts it comes back at once with the `agentId` of that start. lane keeps the call's
+prompt under that ID as the call comes back. So lane holds each of many starts of one subagent at
+once to its own values. A subagent starts a moment before its call comes back. So a call it makes
+that needs a value waits up to 3 seconds for the Agent call to come back, and is an error where it
+has not come back by then. A SendMessage call counts where its `to` is the start's `agentId`.
+Within a run of your skill, lane stops one that the main conversation sends to a start that ended
+with no result, as [the routes](routes.md#how-a-subagent-gives-its-result) say.
 
 | Action | Lane | Sentence | Told when the subagent |
 |---|---|---|---|
@@ -58,7 +59,7 @@ A command may be one that a skill of a dependency names. A dependency is a plugi
 declares in the `dependencies` of its own `.claude-plugin/plugin.json`
 ([dependencies](https://code.claude.com/docs/en/plugins/dependencies)). The skill names its script
 by its own `${CLAUDE_PLUGIN_ROOT}`, which Claude Code fills with the folder it installed the
-dependency in. No hook is told that folder. So a run_only, hold or test_after lane writes the
+dependency in. No hook of Claude Code's is told that folder. So a run_only, hold or test_after lane writes the
 folder as `${dependency:<name>}`, the dependency's name as your manifest declares it, such as
 `python3 ${dependency:checker}/scripts/check.py CHANGELOG.md`. lane takes that part as any folder,
 from the root, that holds `.claude-plugin/plugin.json` whose `name` is that dependency, and matches
@@ -67,12 +68,12 @@ from a marketplace's entry. `lay.py print` refuses a lane that names a dependenc
 does not declare, or that names one in a place other than a command. lane tells a stopped subagent,
 on the line after the commands it may run, what `${dependency:<name>}` stands for.
 
-A command of a run_only, hold or test_after lane may hold a value given for the run as one part,
+A command of a run_only, hold or test_after lane may hold a value given for the start as one part,
 written `{<name>}` with no `$` before it, its name of letters, digits, `_` and `-`, such as `python3
 ${CLAUDE_PLUGIN_ROOT}/scripts/check.py {file}`. lane matches the rest whole. It matches that part to
-each text of the run's own value of the name, put in as one word of the shell: as it is, where it
+each text of the start's own value of the name, put in as one word of the shell: as it is, where it
 holds no other character than a letter, a digit or one of `@%+=:,./-_`, and in single quotes
-otherwise, as Python's `shlex.quote` gives it. So the run given `{"file": "my notes.json"}` runs
+otherwise, as Python's `shlex.quote` gives it. So the start given `{"file": "my notes.json"}` runs
 `python3 <your plugin's folder>/scripts/check.py 'my notes.json'`. No value adds a word to the
 command, such as by a blank or a `;`, or stands for anything but itself. lane tells a stopped
 subagent, on the line after the sentence, each command it may run with its value put in. Braces that
@@ -90,7 +91,7 @@ step, with the result `done` where no route names it. The guard, the check scrip
 run, checks them as the subagent runs that command, from the calls it kept. It stops the command
 with each lane's sentence and, on the next line, what is missing. It holds each in_form output there
 to its form again too, as a command its lanes name may have written it. The result script is given
-no run's ID, so it checks only the result, as [the
+no start's ID, so it checks only the result, as [the
 routes](routes.md#how-a-subagent-gives-its-result) say.
 
 in_form takes the form by the path the subagent reads it by, as
@@ -130,11 +131,12 @@ tool reads by default. test_after counts a test passed where the test's command 
 an error. It counts the output changed after the test where a Write or Edit of a file under it came
 later.
 
-follow_routes takes nothing. `lay.py write` lays it from your proposal's routes on the
-orchestrator's step, and lane tells the orchestrator each start, as [the routes](routes.md) say.
+follow_routes takes nothing. `lay.py write` lays it from your proposal's routes on the step of
+the skill they start from, and lane tells the main conversation each start, as
+[the routes](routes.md) say.
 
 every_item reads its input's items at the items port, as the ports below say. It counts an item
-answered where its ID stands as a word of its own in a file the subagent wrote in this run other
+answered where its ID stands as a word of its own in a file the subagent wrote in this start other
 than the input, so `B-1` is answered by neither `B-12`, `B-1.2` nor `AB-1`. every_item does not
 count an item with no ID, as no text tells an answer to it from any other.
 
@@ -187,7 +189,7 @@ is held to this JSON Schema:
   routes are from, as the routes give its results.
 - Your AI writes routes under `routes`, held to the JSON Schema
   [the routes](routes.md#the-routes) give. `lay.py write` lays them as a follow_routes lane on the
-  orchestrator's step and a result command on the last step of each subagent they name. A
+  skill's step and a result command on the last step of each subagent they name. A
   proposal may hold routes alone, with no `subagents`.
 - Once written, a subagent the proposal gives has the proposal's lanes alone. So put in each lane
   that `lay.py up` says was laid in it before and that you keep, as `lay.py up` says the lane.
@@ -256,16 +258,16 @@ form `lay.py write` writes it in, its routes to the order of results `lay.py pri
 as [the routes](routes.md#runs-at-once) say. Then, before any lane's check, it holds what each lane
 is given to the lane's IN, a JSON Schema. A lane is given two things:
 
-- the texts put in each place of its sentence, with each `{<name>}` given for the run put in and
+- the texts put in each place of its sentence, with each `{<name>}` given for the start put in and
   its empty texts left out, one or more in each place;
 - where its check rests on what the subagent did before, the calls the guard kept of it, where a
-  call counts once it has come back, and a call a hook stopped is left out.
+  call counts once it has come back, and a call the check stopped is left out.
 
 `lay.py` holds a proposal's takes to the same IN, so a wrong take shows when the lanes are laid,
 not on a run.
 
 Anything not as these say is an error, not a drift. Errors include a value not given or given
-empty, or of a run whose start has not come back with its `agentId` within 3 seconds; an adapter
+empty, or of a start that has not come back with its `agentId` within 3 seconds; an adapter
 failing, giving no answer in time or answering out of its port; the event or `hooks/lanes.json` not
 as Claude Code and `lay.py write` write them; a subagent's file no longer setting
 `background: true`; a step no longer saying its lane's sentence; and a thing a lane takes that

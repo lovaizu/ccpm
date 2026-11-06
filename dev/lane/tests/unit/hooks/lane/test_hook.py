@@ -82,6 +82,15 @@ class TestAnswer(HookTest):
 
 
 class TestEvent(HookTest):
+    def test_an_event_lane_acts_on_none_of_is_held_to_the_fields_every_event_has(self):
+        # Given: a PostToolUseFailure, an event lane lays no entry for, and one with no session
+        failed = {**self.bash("ls", held="PostToolUseFailure"), "error": "e"}
+        # When: its fields are held to what the hooks reference documents
+        # Then: it holds, as it has those every event has, and the one with no session does not
+        self.assertEqual(hook.event_wrong(failed, "PostToolUseFailure"), "")
+        unsessioned = {k: v for k, v in failed.items() if k != "session_id"}
+        self.assertIn("session_id", hook.event_wrong(unsessioned, "PostToolUseFailure"))
+
     def test_an_event_out_of_its_documented_fields_is_an_error_for_claude_code(self):
         good = self.bash("ls")
         for event, wrong in (

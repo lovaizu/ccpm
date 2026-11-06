@@ -1,11 +1,11 @@
-"""lay.py's course: the lanes and routes the developer AI proposes printed for its approval as each
-step will read; once approved, written word for word into its plugin from the same file, so no AI
+"""lay.py's course: the lanes and routes the user proposes printed for their approval as each step
+will read; once approved, written word for word into their plugin from the same file, so no AI
 copies what was approved, with Claude Code's check of the plugin run and the proposal removed; and
 a plugin laid before brought up to lane's code, its hooks written in the current form, the
 sentences its steps say in a wording lane laid before put in the current one, and its lanes said.
 
-The routes are laid as sentences in the steps beside the lanes: follow_routes' on the
-orchestrator's step, and the result command on the last step of each subagent giving a result, or
+The routes are laid as sentences in the steps beside the lanes: follow_routes' on the step of the
+skill they start from, and the result command on the last step of each subagent giving a result, or
 with a lane checked at its end, `done` where no route is from it. A proposal giving routes replaces
 those laid before, and the sentences of those before come out; one giving none keeps them, with
 their sentences. A subagent's adapters are written with their cases into the plugin's
@@ -158,7 +158,7 @@ def shared(root: str, found: list[dict[str, Any]], before: dict[str, Any]) -> No
 
 
 def routes_printed(given: dict[str, Any]) -> str:
-    """The routes as the developer AI reads them: the step they are laid on, each route from the
+    """The routes as the user reads them: the step they are laid on, each route from the
     first start or a subagent's result to the start next, each subagent run several at once, and
     each order of results."""
     rows = [
@@ -370,7 +370,7 @@ def brought_up(root: str) -> str:
     """Brings up the plugin's copy of lane's code where it is older than lane, lane's hook entry to
     the current form wherever it is in another, every other entry as it was, and each sentence a
     step says in a wording lane laid before to the current one, the rest of each step as it was;
-    gives what was done, and each lane laid before, for the developer AI to keep in its proposal or
+    gives what was done, and each lane laid before, for the user to keep in their proposal or
     leave out. Stops, bringing nothing up, where the folder holds no plugin's manifest."""
     if not os.path.isfile(os.path.join(root, ".claude-plugin", "plugin.json")):
         raise Stop(

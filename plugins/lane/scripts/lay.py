@@ -1,4 +1,4 @@
-"""What the developer AI runs to print the lanes it proposes, write them into its plugin once
+"""What the user runs to print the lanes and routes they propose, write them into their plugin once
 approved, or bring up a plugin laid before: reads the action and its path, hands them to the
 layer, its parts beside it, and prints what it gives, or what stopped it."""
 

@@ -1,5 +1,5 @@
-"""S7 of dev/lane/architecture.md, `lay.py up`, one test for each of its paths: lay.py run as the
-developer AI runs it after Lane is updated, on a copy of `changelog` laid by `lay.py write` with the
+"""S4 of dev/lane/architecture.md, `lay.py up`, one test for each of its paths: lay.py run as the
+user runs it after Lane is updated, on a copy of `changelog` laid by `lay.py write` with the
 README's proposal, and lay.py and the files it lays real."""
 
 import os
@@ -11,7 +11,7 @@ import helpers
 
 
 class TestUp(helpers.RunTest):
-    """lay.py up run as the developer AI runs it after lane is updated, on a copy of `changelog`
+    """lay.py up run as the user runs it after lane is updated, on a copy of `changelog`
     laid by `lay.py write` with the README's proposal."""
 
     def setUp(self) -> None:

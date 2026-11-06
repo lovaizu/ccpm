@@ -1,6 +1,6 @@
 """The lanes lane lays, one module each holding its action and its wording, as docs/lanes.md writes
 them, whether its check rests on the calls kept, and its check; the sentences lane lays from the
-routes, follow_routes' on the orchestrator's step and the result command on a subagent's last step,
+routes, follow_routes' on the skill's step and the result command on a subagent's last step,
 as docs/routes.md writes them; and the sentence of each, made from its wording with what it takes,
 which the step says and the guard tells, so the two never differ.
 
@@ -150,7 +150,7 @@ def made(said: str, lane: str, takes: list[str]) -> str:
 
 def earlier(lane: str, takes: list[str]) -> list[str]:
     """The lane's sentence in each wording lane laid before the current one, the newest first, so
-    a step laid before is told from one whose words are the developer AI's own; none where lane
+    a step laid before is told from one whose words are the user's own; none where lane
     has laid only the current one."""
     return [made(said, lane, takes) for said in EARLIER.get(lane, ())]
 
