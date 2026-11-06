@@ -26,11 +26,13 @@ At SubagentStop, a subagent giving a result is kept going once where it gave non
 kept, so a start in the background counts once its subagent has ended.
 
 The main conversation is held only while a run of the skill lasts, from the command's expansion or
-the Skill call that begins it until a route starts no more. Within it, a start not due, or a
-message resuming a start that ended with no result, is stopped with the start due; each start
-coming back is kept and told to wait; each prompt handed to the main conversation, a subagent's
-task-notification among them, is told the next start; and the end of a turn is kept going once
-while a start is due and no start of the run still runs. A dependency's skill the routes name is
+the Skill call that begins it until a route ends it, with neither a `to` nor `waits`. Within it, a
+start not due, or a message resuming a start that ended with no result, is stopped with the start
+due; each start coming back is kept and told to wait; each prompt handed to the main conversation,
+a subagent's task-notification among them, is told the next start, or, where a route waits, to
+put the subagent's point to the user and resume it with their answer; and the end of a turn is
+kept going once while a start is due and no start of the run still runs, and let end while the
+user is to answer. A dependency's skill the routes name is
 one move, from its Skill call to the run of the dependency's result script, during which nothing
 of the main conversation is checked."""
 
@@ -714,7 +716,7 @@ class Main(NamedTuple):
         wait or the end, the end told once for the results that led to it."""
         due = self.due()
         line = routes.line(due, self.plugin)
-        # A next start is `end`, `start` or `wait`, `end` the first of them in order.
+        # A next start is `end`, `reply`, `start` or `wait`, `end` the first of them in order.
         if due.kind == "end":  # pragma: no mutate
             seen = sum(len(called.kept(self.session, s.agent)) for s in self.starts())
             if called.told(self.session, line, seen):
@@ -815,8 +817,8 @@ def expanded(m: Main, event: dict[str, Any]) -> list[Said]:
 
 def prompted(m: Main, event: dict[str, Any]) -> list[Said]:
     """What the main conversation's UserPromptSubmit is told, a task-notification of a subagent's
-    end among them: the next start while a run is on and no dependency's skill moves; nothing
-    otherwise."""
+    end among them, and the user's answer to a subagent's point: the next start, or the point to
+    put to the user, while a run is on and no dependency's skill moves; nothing otherwise."""
     if not m.begun() or m.moving() is not None:
         return []
     return m.told()
@@ -909,7 +911,7 @@ def turn_ended(m: Main, event: dict[str, Any]) -> list[Said]:
     moves: where a start is due and no start of the run still runs, kept going once with the
     sentence and the start due, and let end after, the run ended and the user told what is left
     and the step to fix, as a hold with no end would need a person to break it; nothing
-    otherwise."""
+    otherwise, as while the user is to answer a subagent's point, whose route waits."""
     if not m.on() or m.moving() is not None:
         return []
     due = m.due()

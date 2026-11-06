@@ -251,10 +251,19 @@ why, and what it costs.
   rule that has it read its own steps: a subagent could still skip the read (KR1.1). It costs the
   guard reading the steps on each start of a subagent with rules.
 - **A later result of a start taking the place of its earlier one** over a start held to its first
-  result: a subagent that ends to wait for an answer, with a result whose route starts no one, then
-  moves the routes on once resumed. Otherwise the user would write code for that order (KR1.1). It
+  result: a subagent that ends to wait for an answer, with a result whose route waits, then moves
+  the routes on once resumed. Otherwise the user would write code for that order (KR1.1). It
   costs the guard keeping each subagent's ID and result for the whole run, not only until its
   start counts.
+- **A route that waits for the user, `"waits": true` in place of a `to`,** over a route that
+  ends the run, for a result such as `asks` with which a subagent ends to put a point to the
+  person. The main conversation is told to put the point to the user and resume the subagent with
+  their answer. The run goes on with no start due, and the end of a turn is let go, as the user is
+  to answer. Only a route with neither a `to` nor `waits` ends the run, and only its `on` is a
+  result the skill gives. Otherwise a plugin whose role needs the person, as
+  [Messages](../plugin-best-practice.md#messages) has every such role, would end its run at the
+  first point put to the person, and its later starts would go unheld (KR1.1). It costs one more
+  key in the routes.
 - **Only the subagents that the routes name in `fan_out` running several at once** over any
   subagent beside itself: a subagent whose steps were not made for it, such as one that writes a
   file that each of its starts writes, would then run so with no one having approved it, as
@@ -426,6 +435,11 @@ sequenceDiagram
         G->>RT: the start due (Route, Result)
         alt writer gave written, or reviewer gave more
           H-->>CC: context, the result and the start its route names (Answer)
+        else the subagent gave a result whose route waits, such as asks
+          H-->>CC: context, the result, put its point to the user and resume it with their answer (Answer)
+          M->>U: puts the subagent's point
+          U->>M: answers
+          M->>CC: resumes the subagent with the answer, as S3 a result draws [SendMessage]
         else reviewer gave good, whose route starts no more
           H-->>CC: context, the result, and start no more subagents (Answer)
           G->>C: ends the run (Run)
@@ -456,7 +470,7 @@ sequenceDiagram
   H->>G: the end of a turn (Event)
   G->>C: reads the results kept in the run (Result)
   G->>RT: is a start due (Route, Result)
-  alt no run is on, none is due, or a subagent of the run still runs
+  alt no run is on, none is due, the user is to answer, or a subagent of the run still runs
     H-->>CC: nothing to tell, so the turn ends (Answer)
   else one is due, and the turn has not been kept going yet
     H-->>CC: keep it going, with the sentence and the start due (Answer)

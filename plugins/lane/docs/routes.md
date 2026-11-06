@@ -18,7 +18,7 @@ Start each subagent you are told to start, until you are told to start no more.
 ```
 
 and the last step of the skill, and of each subagent that gives a result, ends with the commands it
-gives them by. The skill gives the result of the route that starts no more, as it ends its run, so
+gives them by. The skill gives the result of the route that ends the run, as it ends its run, so
 a plugin that calls your skill can route that result. For a subagent, such as
 
 ```
@@ -46,7 +46,8 @@ Your AI writes the routes under the `routes` key of the proposal, held to this J
    "properties": {
     "from": {"type": "string", "description": "the subagent that ends, or the skill for the first start"},
     "on": {"type": "string", "pattern": "^[a-z][a-z0-9_-]*$", "description": "the result it ends with"},
-    "to": {"type": "string", "description": "the subagent to start next, or a dependency's skill to call; none where the run ends"}}}},
+    "to": {"type": "string", "description": "the subagent to start next, or a dependency's skill to call; none where the run waits or ends"},
+    "waits": {"const": true, "description": "in place of a `to`, where the subagent ends to put a point to the user: the run waits for their answer, and the subagent resumed with it gives the next result"}}}},
   "fan_out": {"type": "array", "items": {"type": "string"}, "description": "the subagents the skill may start several times at once"},
   "precedence": {"anyOf": [
     {"type": "array", "items": {"type": "string", "pattern": "^[a-z][a-z0-9_-]*$"}},
@@ -72,9 +73,18 @@ For `changelog`, whose skill `write` starts `writer` and then `reviewer`, and `w
 - One route is from the skill, with a `to` and no `on`: the first start.
 - Every other route is from a subagent, and has an `on`. That subagent is your plugin's, or a
   dependency's, as [A subagent of a dependency](#a-subagent-of-a-dependency) says. Two routes from
-  one subagent have different `on`s, so each result leads to one start or to the end.
+  one subagent have different `on`s, so each result leads to one start, to the user or to the end.
+- A route from a subagent may have `"waits": true` in place of a `to`, for a result such as `asks`
+  with which the subagent ends to put a point to the person. The main conversation is then told to
+  put that point to the user and resume the subagent with their answer. The run goes on with no
+  start due, and lane lets the main conversation end its turn, as the user is to answer. The
+  resumed subagent's later result moves the routes on, as
+  [How a subagent gives its result](#how-a-subagent-gives-its-result) says. `lay.py print` refuses
+  a route with both a `to` and `waits`, and one that waits from a subagent in `fan_out`, as lane
+  could not tell which of its starts to resume.
 - Each subagent a `to` names is the `from` of a route, so no started subagent is left without a
-  result to give. At least one route has no `to`, so the run can end.
+  result to give. At least one route has neither a `to` nor `waits`, so the run can end. Only such
+  a route ends the run, and only its `on` is a result the skill gives.
 - Each subagent of your plugin that the routes name sets `background: true` in its file, as
   [the lanes](lanes.md) say. `lay.py print` refuses routes where one does not.
 - `fan_out` names each subagent the skill may start several times at once, each a `to` of a route.
@@ -103,7 +113,8 @@ command's UserPromptExpansion and the second as the Skill call's PostToolUse, th
 Code documents a skill begun. A prompt that only quotes the command, or the skill's text pasted,
 begins no run. The skill called again while its run goes on begins no other.
 
-The run ends once a route starts no more, as the main conversation is told so. It ends too where
+The run ends once a route with neither a `to` nor `waits` is taken, as the main conversation is
+told so. It ends too where
 lane lets the main conversation end its turn with a start still due, as
 [What the main conversation is told](#what-the-main-conversation-is-told) says.
 
@@ -123,13 +134,14 @@ subagent's end, only to tell it the next start.
 
 A route may name a subagent of a dependency, a plugin your plugin declares in the `dependencies` of
 its `.claude-plugin/plugin.json`, as `<dependency>:<name>`, the type Claude Code gives it. For a
-plugin that depends on `checker`, whose subagent `examiner` gives `asks` or `done`:
+plugin that depends on `checker`, whose subagent `examiner` gives `asks` to put a point to the
+person, or `done`:
 
 ```json
 {"orchestrator": "write", "step": 1, "routes": [
  {"from": "write", "to": "writer"},
  {"from": "writer", "on": "written", "to": "checker:examiner"},
- {"from": "checker:examiner", "on": "asks"},
+ {"from": "checker:examiner", "on": "asks", "waits": true},
  {"from": "checker:examiner", "on": "done"}]}
 ```
 
@@ -201,9 +213,9 @@ none.
 - A subagent resumed with SendMessage keeps its ID, and gives a result again for the resumed start.
   The later result takes the place of the earlier one, and lane tells the main conversation the
   start that the later result's route names. So a subagent that ends to wait for an answer, with a
-  result whose route starts no one, such as `asks`, moves the routes on once it is resumed with the
-  answer and gives another. While the resumed subagent runs, lane tells the main conversation to
-  wait for it to end.
+  result whose route waits, such as `asks`, moves the routes on once it is resumed with the answer
+  and gives another. While the resumed subagent runs, lane tells the main conversation to wait for
+  it to end.
 - A start that ended with no result, after it was kept going once, is not resumed. The start made
   again in its place gives the result. lane stops the main conversation's SendMessage to it,
   before or after that start, and tells it the start due, as
@@ -218,8 +230,8 @@ beside an event the conversation reads in any case
 - the first start, beside the command's expansion or the Skill call that begins the run;
 - the wait, beside each start of a subagent as it comes back;
 - the next start, beside each prompt the main conversation is handed, the task-notification of a
-  subagent's end among them, and beside the run of a dependency's result script that ends the move
-  of its skill.
+  subagent's end and the user's answer among them, and beside the run of a dependency's result
+  script that ends the move of its skill.
 
 Each line is headed by your plugin's name:
 
@@ -229,7 +241,8 @@ Each line is headed by your plugin's name:
 | the subagent started in the background has not ended | ``Wait for `<plugin>:<name>` to end: you are told the next start once it has.`` |
 | starts of a subagent in `fan_out` have not all ended | ``Wait for every run of `<plugin>:<name>` to end: you are told the next start once each has.`` |
 | the subagent ended with a result whose route has a `to` | ``<name> gave `<on>`. Start `<plugin>:<to>`.`` |
-| the subagent ended with a result whose route has no `to` | ``<name> gave `<on>`. Start no more subagents.``, once, and the run ends |
+| the subagent ended with a result whose route waits | ``<name> gave `<on>`. Put its point to the user, and resume `<plugin>:<name>` with their answer by SendMessage.``, and the run goes on with no start due |
+| the subagent ended with a result whose route has neither a `to` nor `waits` | ``<name> gave `<on>`. Start no more subagents.``, once, and the run ends |
 | several starts of the subagent ended, giving a result as [Starts at once](#starts-at-once) takes it | ``The <n> runs of <name> gave `<on>`.``, then the start as above |
 | the subagent ended with no result, after it was kept going once | ``<name> ended with no result. Start `<plugin>:<name>` again.``, as its start led to no route |
 
@@ -249,9 +262,12 @@ and the start stays due.
 While a start is due, lane stops any other start, and tells the sentence and, on the next line,
 the start due. While a started subagent runs in the background, lane stops a start of another
 subagent and tells the wait. It does the same to a further start of the same subagent where
-`fan_out` does not name it.
+`fan_out` does not name it. While the user is to answer a subagent whose route waits, lane stops
+any start, and tells the sentence and the point to put. The SendMessage that resumes that subagent
+goes on.
 
-Where the main conversation would end its turn while a start is due and no start of the run still
+Where the main conversation would end its turn while the user is to answer, lane lets it end, and
+the run goes on. Where it would end its turn while a start is due and no start of the run still
 runs, lane keeps it going once with the sentence and the start due. Where it ends again, lane lets
 it end, and the run ends. A hold with no end would need you to break it, which is no check. lane
 then tells you what is left and whose step must be fixed, as a message Claude Code shows you:

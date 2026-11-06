@@ -68,8 +68,9 @@ def shape(required: list[str], properties: dict[str, Any]) -> dict[str, Any]:
 
 
 # The routes' JSON Schema, as docs/routes.md gives it: the skill they start from, its step they
-# are laid on, each route from a subagent, on its result, to the subagent started next, the
-# subagents started several times at once, and the order their results are taken in.
+# are laid on, each route from a subagent, on its result, to the subagent started next or waiting
+# for the user, the subagents started several times at once, and the order their results are taken
+# in.
 ROUTE = {
     "from": {
         "type": "string",
@@ -79,7 +80,12 @@ ROUTE = {
     "to": {
         "type": "string",
         "description": "the subagent to start next, or a dependency's skill to call; none where"
-        " the run ends",
+        " the run waits or ends",
+    },
+    "waits": {
+        "const": True,
+        "description": "in place of a `to`, where the subagent ends to put a point to the user:"
+        " the run waits for their answer, and the subagent resumed with it gives the next result",
     },
 }
 ROUTES = shape(

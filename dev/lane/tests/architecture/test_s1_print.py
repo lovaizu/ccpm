@@ -89,7 +89,8 @@ class TestRefused(helpers.WalkthroughTest):
         # Then: it says the run cannot end, and exits 1
         self.assertTrue(
             self.refused().startswith(
-                "lay.py: the proposal gives no route without a `to`, so the run cannot end;"
+                "lay.py: the proposal gives no route with neither a `to` nor `waits`, so the run"
+                " cannot end;"
             )
         )
 

@@ -11,6 +11,8 @@ from helpers import routes
 # Each start of docs/routes.md's run, as the skill's calls came back: writer, then reviewer, ended.
 WRITER = routes.Start("writer", "completed", "w1")
 REVIEWER = routes.Start("reviewer", "completed", "r1")
+# A route from reviewer that waits for the user, on `asks`, beside docs/routes.md's.
+ASKS = {"from": "reviewer", "on": "asks", "waits": True}
 
 
 def decided(starts: list, results: dict, ended: tuple = ()) -> routes.Next:
@@ -53,7 +55,7 @@ class TestGives(unittest.TestCase):
             (helpers.ROUTES, "reviewer", False, ["more", "good"]),
             (helpers.ROUTES, "writer", True, ["written"]),
             (helpers.ROUTES, "write", False, ["good"]),
-            (helpers.DEPENDENCY_ROUTES, "write", False, ["asks", "done"]),
+            (helpers.DEPENDENCY_ROUTES, "write", False, ["done"]),
             (None, "writer", True, ["done"]),
             (None, "writer", False, []),
         ):
@@ -62,7 +64,8 @@ class TestGives(unittest.TestCase):
                 # none
                 # When: the results it may give are read
                 # Then: they are the routes' from it, or done where none is and a lane is checked
-                # at the end, or none
+                # at the end, or none; the skill's are those of the routes with neither a `to`
+                # nor `waits`
                 self.assertEqual(routes.gives(routed, name, ends), ons)
 
     def test_the_results_a_subagent_gives_with_no_route_are_its_own_before_done(self):
@@ -104,6 +107,28 @@ class TestNextStart(unittest.TestCase):
                 # When: the next start is decided
                 # Then: it is the `to` of the route of the last result, or the end
                 self.assertEqual(decided(starts, results), found)
+
+    def test_a_result_whose_route_waits_has_the_user_answer_its_subagent(self):
+        # Given: reviewer may give `asks`, whose route waits, and gave it
+        given = {**helpers.ROUTES, "routes": [*helpers.ROUTES["routes"], ASKS]}
+        # When: the next start is decided
+        found = decided_by(given, [WRITER, REVIEWER], {"w1": "written", "r1": "asks"})
+        # Then: the user is to answer reviewer, the run going on with no start due
+        self.assertEqual(found, routes.Next("reply", "reviewer", ("reviewer", "asks")))
+
+    def test_a_subagent_resumed_after_its_route_waits_is_waited_for_then_moves_on(self):
+        # Given: reviewer gave `asks`, whose route waits, and was resumed with the answer, so its
+        # start in the background runs again with no result yet
+        given = {**helpers.ROUTES, "routes": [*helpers.ROUTES["routes"], ASKS]}
+        starts = [WRITER, routes.Start("reviewer", "async_launched", "r1")]
+        # When: the next start is decided while it runs, and once it has ended with `more`
+        running = routes.next_start(given, starts, {"w1": "written"}.get, lambda a: False)
+        after = routes.next_start(
+            given, starts, {"w1": "written", "r1": "more"}.get, lambda a: True
+        )
+        # Then: it is waited for, and then its later result's route is due
+        self.assertEqual(running, routes.Next("wait", "reviewer", None))
+        self.assertEqual(after, routes.Next("start", "writer", ("reviewer", "more")))
 
     def test_the_skills_route_is_due_wherever_it_lies_in_the_routes(self):
         # Given: the skill's route listed after routes from author and writer
@@ -418,6 +443,13 @@ class TestLine(unittest.TestCase):
                 routes.Next("end", "", ("reviewer", "good"), runs=3),
                 "The 3 runs of reviewer gave `good`. Start no more subagents.",
             ),
+            (
+                routes.Next("reply", "reviewer", ("reviewer", "asks")),
+                (
+                    "reviewer gave `asks`. Put its point to the user, and resume"
+                    " `changelog:reviewer` with their answer by SendMessage."
+                ),
+            ),
         ):
             with self.subTest(found=found):
                 # Given: a next start of each kind
@@ -461,7 +493,23 @@ class TestRefused(unittest.TestCase):
             ),
             (
                 {"routes": [*each[:3], {"from": "reviewer", "on": "good", "to": "writer"}]},
-                "gives no route without a `to`",
+                "gives no route with neither a `to` nor `waits`, so the run cannot end",
+            ),
+            (
+                {"routes": [*each[:3], {"from": "reviewer", "on": "good", "waits": True}]},
+                "gives no route with neither a `to` nor `waits`, so the run cannot end",
+            ),
+            (
+                {"routes": [*each, {**ASKS, "to": "writer"}]},
+                "gives a route from reviewer on `asks` with both a `to` and `waits`",
+            ),
+            (
+                {"routes": [{**each[0], "waits": True}, *each[1:]]},
+                "gives a route from write with both a `to` and `waits`",
+            ),
+            (
+                {"routes": [*each, ASKS], "fan_out": ["reviewer"], "precedence": ["more", "good"]},
+                "gives a route from reviewer on `asks` that waits, though reviewer is in `fan_out`",
             ),
             (
                 {"precedence": {"write": ["more"]}},
@@ -515,14 +563,20 @@ class TestDependency(unittest.TestCase):
         )
 
     def test_a_result_of_the_dependencys_subagent_leads_to_its_route(self):
-        # Given: writer's `written`, and examiner's `asks`
-        examiner = routes.Start("checker:examiner", "completed", "e1")
-        # When: the next start is decided
-        due = decided_by(
-            helpers.DEPENDENCY_ROUTES, [WRITER, examiner], {"w1": "written", "e1": "asks"}
-        )
-        # Then: the run ends, as the route on `asks` starts no one
-        self.assertEqual(due, routes.Next("end", "", ("checker:examiner", "asks")))
+        for on, found in (
+            ("asks", routes.Next("reply", "checker:examiner", ("checker:examiner", "asks"))),
+            ("done", routes.Next("end", "", ("checker:examiner", "done"))),
+        ):
+            with self.subTest(on=on):
+                # Given: writer's `written`, and examiner's `asks` or `done`
+                examiner = routes.Start("checker:examiner", "completed", "e1")
+                # When: the next start is decided
+                due = decided_by(
+                    helpers.DEPENDENCY_ROUTES, [WRITER, examiner], {"w1": "written", "e1": on}
+                )
+                # Then: the user is to answer examiner, as the route on `asks` waits, or the run
+                # ends, as the route on `done` starts no one
+                self.assertEqual(due, found)
 
     def test_a_skill_of_another_plugin_to_start_from_is_refused(self):
         # Given: routes that start from checker's examiner
