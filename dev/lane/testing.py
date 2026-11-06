@@ -104,7 +104,9 @@ class FolderTest(unittest.TestCase):
 
 
 class GitTest(FolderTest):
-    """A test whose git reads no setting of the machine and finds no repository above `base`."""
+    """A test whose git reads no setting of the machine, finds no repository above `base`, and
+    starts no maintenance in the background, which a commit otherwise starts and which makes and
+    removes a lock file under `.git` while `copied` copies the repository."""
 
     def setUp(self) -> None:
         super().setUp()
@@ -117,6 +119,11 @@ class GitTest(FolderTest):
             "GIT_AUTHOR_EMAIL": "t@example.com",
             "GIT_COMMITTER_NAME": "t",
             "GIT_COMMITTER_EMAIL": "t@example.com",
+            "GIT_CONFIG_COUNT": "2",
+            "GIT_CONFIG_KEY_0": "maintenance.auto",
+            "GIT_CONFIG_VALUE_0": "false",
+            "GIT_CONFIG_KEY_1": "gc.auto",
+            "GIT_CONFIG_VALUE_1": "0",
         }
         patcher = mock.patch.dict(os.environ, env)
         patcher.start()
