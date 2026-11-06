@@ -111,6 +111,13 @@ into the design with who settled it.
 questions of its kind, never the design, so it judges by what the work's reader gets, not by what
 its maker meant.
 
+![The evaluator's answer names its ground, and a question not met comes back to you](images/how-wrong.svg)
+
+**What if the evaluator is wrong?** Each answer the evaluator gives names its ground: the lines of
+the work that meet a question, or what the work's reader still lacks. A question not met goes back
+to the designer, and where it touches your intent, it comes to you, so you can keep the work as it
+is. Every answer is kept in the run's folder.
+
 ![For a new kind, its best practice is made first, approved by you and kept](images/how-new-kind.svg)
 
 **What if Turn has no best practice for your kind of work?** Turn first makes one, the same way it

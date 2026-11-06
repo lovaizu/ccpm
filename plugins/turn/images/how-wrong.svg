@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 300" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+  <title>C: what happens when the evaluator is wrong</title>
+  <style>
+    .bg { fill: #ffffff; }
+    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .lane { fill: #ddf4ff; stroke: #54aeff; }
+    .store { fill: #fff8c5; stroke: #9a6700; stroke-width: 1.5; }
+    .ext { fill: #eaeef2; stroke: #d0d7de; stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .unit { fill: #ddf4ff; fill-opacity: 0.35; stroke: #0969da; stroke-width: 1.2; }
+    .frame { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    .frame-name { fill: #0969da; font-size: 13px; font-weight: 600; }
+    .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
+    .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
+    .label { fill: #1f2328; font-size: 13px; }
+    .small { font-size: 12px; }
+    .data { fill: #8250df; font-size: 12px; font-style: italic; }
+    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .dashed { stroke-dasharray: 5 4; }
+    .head { fill: #59636e; }
+    .hole { fill: #ffffff; stroke: #59636e; stroke-width: 1.5; }
+    .halo { stroke: #ffffff; stroke-width: 7; stroke-linejoin: round; paint-order: stroke; }
+    .mid { text-anchor: middle; }
+    .start { text-anchor: start; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; }
+      .box { fill: #161b22; stroke: #3d444d; }
+      .lane { fill: #0c2d6b; stroke: #4493f8; }
+      .store { fill: #2e2a1a; stroke: #d29922; }
+      .ext { fill: #21262d; stroke: #3d444d; }
+      .unit { fill: #0c2d6b; stroke: #4493f8; }
+      .frame { stroke: #4493f8; }
+      .frame-name { fill: #4493f8; }
+      .name, .label { fill: #f0f6fc; }
+      .kind { fill: #9198a1; }
+      .data { fill: #c297ff; }
+      .line { stroke: #9198a1; }
+      .head { fill: #9198a1; }
+      .hole { fill: #0d1117; stroke: #9198a1; }
+      .halo { stroke: #0d1117; }
+    }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path class="head" d="M0,0 L10,5 L0,10 z"/>
+    </marker>
+  </defs>
+  <rect class="bg" width="1000" height="300"/>
+  <rect class="lane" x="30" y="117" width="170" height="66" rx="6"/>
+  <text class="name" x="115" y="155">Evaluator</text>
+  <rect class="store" x="260" y="100" width="260" height="100" rx="6"/>
+  <text class="name" x="390" y="132">Its answer, with its ground</text>
+  <text class="label small mid" x="390" y="158">met: the lines that meet it</text>
+  <text class="label small mid" x="390" y="178">not met: what the reader lacks</text>
+  <rect class="store" x="600" y="30" width="200" height="56" rx="6"/>
+  <text class="name" x="700" y="63">The run's folder</text>
+  <rect class="lane" x="600" y="200" width="160" height="56" rx="6"/>
+  <text class="name" x="680" y="233">Designer</text>
+  <rect class="ext" x="830" y="200" width="140" height="56" rx="8"/>
+  <text class="name" x="900" y="233">You</text>
+  <path class="line" d="M200,150 L256,150" marker-end="url(#a)"/>
+  <path class="line" d="M520,120 L560,120 L560,58 L596,58" marker-end="url(#a)"/>
+  <text class="label small mid" x="700" y="106">every answer kept</text>
+  <path class="line" d="M520,180 L560,180 L560,228 L596,228" marker-end="url(#a)"/>
+  <text class="label small" x="568" y="196">not met</text>
+  <path class="line" d="M760,228 L826,228" marker-end="url(#a)"/>
+  <text class="label small mid" x="793" y="216">your intent</text>
+  <text class="label small mid" x="900" y="280">you can keep the work as it is</text>
+</svg>
