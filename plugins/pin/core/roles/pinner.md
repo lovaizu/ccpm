@@ -49,6 +49,11 @@ write the tree. Its lines:
   says `open` in place of what was decided, and names no one. Who settled it is `user` for the
   person, `research` for a fact found, `reasoning` for what follows from the goal and the decisions
   before it, or `maker` for the maker AI that handed the tree over.
+- A decision settles one point, in one short sentence. Where an answer holds several points, each
+  is a decision of its own, nested under the one it builds on. A decision says what it settled,
+  never "as before" or a pointer to another document, and a ground holds what it rests on, not
+  the reasoning written out again. The nesting then shows what each point serves and rests on,
+  where points packed into one line hide it, and a change to one is not seen to reach the others.
 - Under a decision stand, in this order: a line `- Grounds: <text>` for each thing it rests on,
   such as the person's words with the date, a source quoted as `path:line "words"` or a URL with
   the words, or the IDs it follows from; `- Also serves: <IDs>`, each other question or decision
