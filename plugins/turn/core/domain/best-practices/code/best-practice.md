@@ -28,13 +28,14 @@ The maintainer is a person or an AI who takes the code over. The maintainer chan
 
 ### Q1: When the maintainer sets the code up on a fresh machine from only what the code gives for its setup, and runs the tests again and in any order, do they see the tests pass each time, so that a failing test points at the code and never at the machine or the order?
 
-**Thinking**: What the code gives for its setup names everything the code needs. Each test sets up and clears everything it uses. A test's result then rests on the code alone.
+**Thinking**: What the code gives for its setup names everything the code needs. Each test sets up and clears everything it uses, and a real tool it runs does only what the test asks of it. A test's result then rests on the code alone, not on the machine or on when a tool's own work runs.
 
 **Steps**
 
-1. Set the code up on a clean machine or container, from what the code gives for its setup alone.
-2. Add to what the setup reads each thing the setup or the tests found missing, such as a runtime or a library, with the versions the code runs on.
-3. Run the tests several times, and in a shuffled order.
+1. For each real tool the tests run, such as git, find each thing it does on its own beyond the call, such as reading the machine's settings or starting maintenance in the background, and turn it off in the test's own settings.
+2. Set the code up on a clean machine or container, from what the code gives for its setup alone.
+3. Add to what the setup reads each thing the setup or the tests found missing, such as a runtime or a library, with the versions the code runs on.
+4. Run the tests several times, and in a shuffled order.
 
 ### Q2: With one behavior to change, can the maintainer tell which module to open from what each module says it alone decides, without reading the modules' bodies, so that they change the behavior in one place?
 
