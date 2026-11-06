@@ -1,170 +1,173 @@
 # Design tree
 
 Goal: The user has the plugin they build run as they designed it, on every run.
-- Grounds: dev/lane/product-vision.md:9-10 before this tree, O1: "has its plugin's subagents keep the rules of their steps on every run"; :26-27, O2: "has its plugin's subagents started in the order it set, on every run"; both ends of one want, asked why until no further end showed (D2).
+- Grounds: dev/lane/product-vision.md before 38ac70ed: O1 "keep the rules of their steps on every run"; O2 "started in the order it set, on every run".
 
-- **product-vision/Q1** Listing whom to build for, does the developer find every role that comes to the product with an end of its own?
-  - **D1 Who comes to Lane with an end of their own?**: One role, the user: one who builds a Claude Code plugin whose roles work in steps, a person or an AI alike. One who later runs the user's plugin is after that plugin's work, which the user is after for them, so they are no role of Lane's; Lane's own parts and Claude Code are after nothing of their own. (reasoning)
-    - Grounds: product-vision/best-practice.json Q1 thinking: "Cut the roles by that end, not by who or what takes them: a person and an AI that want the same are one role."
-    - Grounds: product-vision/best-practice.json Q1 steps: "Name the only role the user, as a name made up for it tells the reader nothing more."
-    - Grounds: The user, 2026-11-06, asked whether this need be put to them: "それ聞く必要ある？"; the purpose and the best practice settle it.
-    - Also serves: product-vision/Q2
-- **product-vision/Q2** Reading an objective, does the developer see what its role gets from the product?
-  - **D2 The user's objective: the end they are after, with the role as its subject**: O1: The user has the plugin they build run as they designed it, on every run: each role keeping the steps they wrote and the roles started in the order they set. One objective, not two, as the same piece of work, holding the main conversation and each role by hooks, brings both closer, and the user is after both for one end. Writing no checks and no code for the order is how Lane reaches it, so it goes to the concept. (reasoning)
-    - Grounds: dev/lane/product-vision.md:9-10 and :26-27 before this tree: O1 the rules kept, O2 the order kept, each "on every run".
-    - Grounds: product-vision/best-practice.json Q2 steps: "Ask why of each part of the objective until no further end shows, and write that end. Move a part that says how to Concept"
-    - Grounds: product-vision/best-practice.json Q3 steps: "Merge two objectives that one piece of work brings closer together"
-    - Grounds: dev/plugin-best-practice.md, The guard tells each role its steps again: "The guard holds the orchestrator in the main conversation to the router's course the same way"
-    - Also serves: product-vision/Q3
-    - Also builds on: D1
-- **product-vision/Q3** Weighing a piece of work, does the developer see which one objective it brings closer, or that it brings none closer?
-- **product-vision/Q4** After a change, does the developer see from the key results whether to keep it?
-  - **D3 How do success and failure of O1 show in what the user does?**: O1 fails on a run where a role breaks a step and goes on, or is stopped and does it another way; where a move the steps allow is stopped, the user's own work in the main conversation outside the run among them; where a role starts that the order does not name, or one the order names is stopped; where the main conversation stops while the order names a move; and where Lane cannot hold a step or the order, so the user writes a check or code of their own, or leaves it unheld. It succeeds where the run keeps every step and the order and the user wrote no check. (reasoning)
-    - Grounds: product-vision/best-practice.json Q4 steps: "List how success or failure would show in what the role does or feels, such as giving up, undoing a result or working around the product."
-    - Grounds: dev/lane/product-vision.md:14-21 and :29-35 before this tree: the four ways a call and a run went wrong.
-    - Grounds: The orchestrator now runs in the main conversation (dev/plugin-best-practice.md, Where the orchestrator runs), where the user also does work of their own outside a run, so a stop there is a failure too.
-    - Also builds on: D2
-  - **D4 O1's key results**: KR1.1: of the runs of the user's plugin, the share that fails in a way of D3; lower is better. A run counts once, however many ways it fails. KR1.2: the time from the user's first step or order for a plugin to its first run that keeps them; shorter is better. (reasoning)
-    - Grounds: product-vision/best-practice.json Q4 thinking: "KR.1 how well, and KR.2 how soon. KR.2 is bettered only while KR.1 does not get worse."
-    - Grounds: A run is what the user designed; a share of tool calls would hide a run broken by one call among many.
-    - Also builds on: D3
-- **product-vision/Q5** Weighing the product against what its roles do today, does the developer see why it meets each objective where that way does not?
-  - **D5 What sets Lane apart from what its user does today, and makes it meet O1: at most five ideas, each with the present way it beats**: Lane instead of writing the steps and the order in prompts and a hook of one's own for what must hold: (1) The step says it again: a stopped call is shown the sentence of its own step, so the role goes back to the step, where a hook that only refuses leaves it to seek another way. (2) The result from a run, not from a reply: a role gives its result by running Lane's result script, so a reply such as "No more entries" is never read as `more`. (3) The order as routes: the user names which role comes next after which result, and Lane tells the main conversation each next move and holds it to it, so no code keeps the order and a compacted conversation goes on. (4) Checks laid, not written: the user writes their steps and routes, Lane shows them as they will read and lays the checks into the plugin, so no check is written or tested by the user. (reasoning)
-    - Grounds: plugins/lane/README.md:13-21 before this tree: "When a subagent breaks the rule, the check stops the tool call and shows the subagent the same sentence"; "Lane takes the result from the run, never from what the subagent wrote, so a reply such as \"No more entries\" is never read as `more`."
-    - Grounds: dev/lane/product-vision.md:58-62 before this tree: "L-->>A: the steps as they will read"; "A->>L: approves them"; "L-->>A: the steps written".
+- **Q1** Does each role keep its steps on every call?
+  - **D1 Held by a hook**: a hook checks each call, as a prompt alone is advice (reasoning)
     - Grounds: dev/plugin-best-practice.md, The guard tells each role its steps again: "a hook runs every time, while an instruction is only advice."
-    - Grounds: Riskiest assumption: hooks hold the main conversation to the routes as they hold a subagent, and stay out of the user's own work there. Trials on Claude Code 2.1.318 showed a PreToolUse deny, a UserPromptSubmit on a role's report and a Stop block hold the main conversation; the architecture tests and the ux trials check the rest.
-    - Grounds: product-vision/best-practice.json Q5 steps: "Stop once at most five ideas stand out, each meeting an objective where the present way does not."
-    - Also builds on: D2, D4
-- **product-vision/Q6** Changing how the product works inside while its roles see the same, does the developer find the product vision still true?
-  - **D6 What does the product vision show, and what does it leave to the README and the architecture?**: Only what the user does, sees and receives: their steps and routes, the steps as they will read, the sentence a stopped role sees, and each next move. Hooks, scripts and Claude Code's events are not named. (reasoning)
-    - Grounds: product-vision/best-practice.json Q6 thinking: "The product vision says only what the roles are after, do, see and receive, and nothing of how the product works inside."
-    - Also builds on: D1
+    - Also serves: product-vision/Q5
+    - **D2 Only a role with rules**: told by the event's agent_type (research)
+      - Grounds: Trial on Claude Code 2.1.319, 2026-11-06: a subagent's events carry its agent_type.
+      - Also serves: Q4
+    - **D3 A stop shows the step's sentence**: so the role goes back to the step (reasoning)
+      - Grounds: a role only refused looks for another way.
+      - **D4 And what the rule allows**: such as the commands it may run, on the next line (reasoning)
+        - Grounds: D3
+    - **D5 A rule is a type with values**: its sentence and its check both made from them (reasoning)
+      - Grounds: D3: the step and the stop then say the same words.
+      - **D6 Called a lane**: in Lane's code, output and docs (research)
+        - Grounds: plugins/lane/docs/lanes.md
+      - **D7 A command matched whole**: never parsed (reasoning)
+        - Grounds: a parse misses forms no one foresaw.
+      - **D8 run_only binds only where laid**: a role with none runs any command (reasoning)
+        - Grounds: the ux try of 2026-11-06 stopped reviewer's `git log`.
+        - Also serves: Q4
+      - **D9 A wording kept per version**: an older sentence in a step is put in the current words (reasoning)
+        - Grounds: a step in old words would be stopped on every call.
+- **Q2** Do the roles start in the order the user set?
+  - **D10 The order as routes**: which role starts after which result (reasoning)
+    - Grounds: the order then needs no code.
+    - Also serves: Q3, product-vision/Q5
+    - **D11 The orchestrator is the skill**: run in the main conversation (reasoning)
+      - Grounds: dev/plugin-best-practice.md, Where the orchestrator runs.
+      - **D12 Each next start told**: beside what the conversation reads anyway, as additionalContext (reasoning)
+        - Grounds: Claude Code's own means first.
+        - **D13 The first start**: on the event that begins the run (research)
+          - Grounds: Trial on Claude Code 2.1.319, 2026-11-06: additionalContext of UserPromptExpansion and of Skill PostToolUse reached the main conversation.
+        - **D14 The next start**: on the task-notification of a role's end (research)
+          - Grounds: Trial on Claude Code 2.1.319, 2026-11-06: a background end gives UserPromptSubmit in the main conversation, in claude -p too.
+        - **D15 Wait**: on the PostToolUse of each start (reasoning)
+          - Grounds: D14
+      - **D16 A start not due is stopped**: with the start that is due (research)
+        - Grounds: Trial on Claude Code 2.1.319, 2026-11-06: a PreToolUse deny stops the start and shows the reason.
+      - **D17 A turn's end kept going once**: while a start is due and no role runs (research)
+        - Grounds: Trial on Claude Code 2.1.319, 2026-11-06: a Stop block keeps the main conversation going.
+        - **D18 Then let end**: the user told whose step to fix (reasoning)
+          - Grounds: a hold with no end needs a person to break it.
+      - **D19 The order holds when asked otherwise**: the skill's sentence says so (reasoning)
+        - Grounds: the ux trial of 2026-11-06: "Your instruction wins over the plugin's."
+      - **D20 Background starts**: each routed role runs in the background (research)
+        - Grounds: Trial on Claude Code 2.1.319, 2026-11-06: a background start gives its agentId at once.
+        - **D21 Each start told apart**: by the agentId its start gives (reasoning)
+          - Grounds: D20
+    - **D22 A result from a script run**: never from a reply (reasoning)
+      - Grounds: a reply such as "No more entries" read as `more` leaves the order.
+      - **D23 routes.py decides the results allowed**: the guard and the result script both ask it (reasoning)
+        - Grounds: one component for each decision.
+      - **D24 No result**: kept going once with its last step, then started again (reasoning)
+        - Grounds: Q2
+      - **D25 A later result replaces the earlier**: a role resumed gives the next (reasoning)
+        - Grounds: D26
+      - **D26 A route may wait for the user**: `"waits": true`, for a result such as `asks` (reasoning)
+        - Grounds: dev/plugin-best-practice.md, Messages: a role that needs the person ends with its point.
+        - **D27 The run goes on**: the point put to the user, the role resumed with the answer (reasoning)
+          - Grounds: Q2
+        - **D28 A new call of the skill ends a waiting run**: and begins another (reasoning)
+          - Grounds: lane-waits report, 2026-11-06: a waiting run had no way to be let go.
+          - Also serves: Q4
+      - **D29 The skill gives a result**: the `on` of the route that ends the run (reasoning)
+        - Grounds: D30
+    - **D30 Another plugin's skill is one move**: its own guard holds it, the caller checks nothing meanwhile (reasoning)
+      - Grounds: dev/plugin-best-practice.md, A plugin that uses another: "Two guards holding one conversation at once would each stop the other's moves."
+    - **D31 Several starts at once**: only of a role in `fan_out`, their result by `precedence` (reasoning)
+      - Grounds: a role not made to run beside itself would run so unapproved.
+- **Q3** Does the user write no check and no code of their own?
+  - **D32 Checks laid from a proposal**: the user writes rules and routes, Lane writes the checks (reasoning)
+    - Grounds: Q3
+    - Also serves: product-vision/Q5
+    - **D33 lay.py print first**: each step shown as it will read (reasoning)
+      - Grounds: dev/plugin-best-practice.md, The caller approves what is theirs.
+    - **D34 lay.py write**: lays only what print showed (reasoning)
+      - Grounds: D33
+    - **D35 Lane's code put into the plugin**: whoever runs it needs no Lane (reasoning)
+      - Grounds: they did not choose Lane.
+      - **D36 lay.py up after each update**: a fix in Lane reaches the plugin no other way (reasoning)
+        - Grounds: D35
+    - **D37 Another file format by an adapter**: a script of the user's, run by Lane (reasoning)
+      - Grounds: a new format needs no new type of rule.
+- **Q4** Is the user's own work left alone?
+  - **D38 The main conversation held only in a run**: from the skill's call to the route that ends it (reasoning)
+    - Grounds: the same conversation holds the user's own work.
+    - **D39 Begun by the command's expansion**: UserPromptExpansion of `/<plugin>:<skill>` (research)
+      - Grounds: Trial on Claude Code 2.1.319, 2026-11-06: "command_name":"probe:up".
+    - **D40 Or by the Skill call**: PostToolUse of Skill naming it (research)
+      - Grounds: Trial on Claude Code 2.1.319, 2026-11-06: "commandName":"probe:up".
+    - **D41 Told apart by no agent_type**: the main conversation's events carry none (research)
+      - Grounds: Trial on Claude Code 2.1.319, 2026-11-06.
+    - **D42 Within a run, only moves held**: starts, resumes and the end of a turn (reasoning)
+      - Grounds: Q4
+      - **D43 Other subagents are the user's**: one neither the plugin's nor routed goes on (reasoning)
+        - Grounds: Q4
+      - **D44 Its own calls go on**: a commit it makes itself is the user's work (reasoning)
+        - Grounds: the ux trial of 2026-11-06, where the main conversation committed after writer was stopped.
+- **Q5** Does the user choose Lane and set it up from its README alone?
+  - **D51 One sentence**: Lane has your plugin's skill and subagents keep your steps and order (reasoning)
+    - Grounds: readme/best-practice.json Q1: "in words the reader already uses"
+    - Also serves: readme/Q1, readme/Q2
+  - **D52 What it does not do**: no security boundary, no judging the work, no reading thoughts (reasoning)
+    - Grounds: readme/best-practice.json Q3.
+    - Also serves: readme/Q3
+  - **D53 Requirements**: Claude Code 2.1.319 and Python 3.9 as `python3` (research)
+    - Grounds: D13, D14; pyproject.toml requires-python ">=3.9".
+    - Also serves: readme/Q5
+  - **D54 The walkthrough**: `changelog`, whose skill `write` starts writer and reviewer (reasoning)
+    - Grounds: readme/best-practice.json Q6: "on work like theirs"
+    - Also serves: readme/Q6
+    - **D55 It shows a stop and the order**: writer stopped at `git commit`, then the routes to `good` (reasoning)
+      - Grounds: Q1, Q2
+  - **D56 Problems answered**: one for each of D3, D22, D12 and D32, in images/problem.svg (reasoning)
+    - Grounds: readme/best-practice.json Q7: "one where the present way falls short for each idea"
+    - Also serves: readme/Q7
+  - **D57 Doubts answered**: my own work, a rule from plain words, the next start, no result, Lane needed to run (reasoning)
+    - Grounds: readme/best-practice.json Q8.
+    - Also serves: readme/Q8
+  - **D58 Where next**: docs/lanes.md, docs/routes.md, the CHANGELOG, the issues, the MIT License (research)
+    - Grounds: plugins/lane/docs/; LICENSE.
+    - Also serves: readme/Q9, readme/Q10
+- **Q6** Does a developer build and change Lane as these decisions say?
+  - **D59 Components**: lay.py, proposal.py, lanes/, hook.py, guard.py, called.py, routes.py, ports.py, result.py (research)
+    - Grounds: plugins/lane/
+    - Also serves: architecture/Q4, architecture/Q5
+  - **D60 Data**: Run, Start, Start value, Kept call, Result, beside the proposal's Rule and Route (reasoning)
+    - Grounds: D21, D38
+    - Also serves: architecture/Q6
+  - **D61 Language**: Python 3.9 and its standard library only (reasoning)
+    - Grounds: D35
+    - Also serves: architecture/Q9
+  - **D62 Tested at unit and architecture fully**: the ux trial confirms O1 in claude -p and interactively (reasoning)
+    - Grounds: dev/plugin-best-practice.md, Test.
+    - Also serves: architecture/Q11
 - **readme/Q1** Telling a colleague about the product, does the reader retell the opening from memory?
-  - **D7 What Lane is and the one thing it gives, in one sentence**: A Claude Code plugin that has the skill and subagents of the plugin you build keep the steps you wrote and go in the order you set, on every run. (reasoning)
-    - Grounds: O1 of the product vision: "each role keeping the steps they wrote, and the roles started in the order they set"
-    - Grounds: readme/best-practice.json Q1 thinking: "in words the reader already uses and with no feature name or mechanism"; one who builds a plugin calls its parts a skill and subagents, not roles, and a lane or a guard is Lane's own word.
-    - Grounds: Retold from memory as to a colleague: "a plugin that makes your plugin's skill and subagents follow their steps and their order every time".
-    - Also builds on: D2
 - **readme/Q2** Reading the gain, does the reader tell what the product would let them do, and so whether it is for them?
-  - **D8 Whom Lane is for, and what they gain**: For you when you build a Claude Code plugin whose skill and subagents work in numbered steps, and some step must hold on every run; with it, your plugin runs as you designed it, and you write no check and no code for the order. (reasoning)
-    - Grounds: readme/best-practice.json Q2 thinking: "the gain as the end they reach with the product, from the objectives of the product vision."
-    - Grounds: A plugin whose steps may drift without harm gains nothing from Lane, so "some step must hold" lets that reader see Lane is not for them.
-    - Also builds on: D2, D5
 - **readme/Q3** Before installing, does the reader see what the product does not do that they might expect of it?
-  - **D9 What a reader might expect of Lane that it does not do**: It holds only the skill that your routes name, while its run lasts, and the subagents that have rules, so the work you do yourself in the same conversation is never checked; it is not a security boundary, so what must never happen, such as a merge, is held by GitHub's branch protection or Claude Code's permission rules; it sees tool calls and ends, not thoughts, so "compare each option" cannot be a rule; it does not read a shell command, so a subagent with a run_only rule runs only the commands you name, each matched whole; it does not judge the work, as the next start comes from the result a subagent gives; it approves no command for anyone, and Claude Code's own prompt asks the person; it reads a file that your subagents write and a rule checks, such as a list of items each to be answered, only in Lane's format, and a file in another format needs an adapter, a script of yours that turns it into Lane's. (reasoning)
-    - Grounds: plugins/lane/README.md:23-44 before this tree, Non-goals, each still true but the first: "It does not check the main conversation, so the orchestrator must be a subagent."
-    - Grounds: dev/plugin-best-practice.md, Where the orchestrator runs: "The orchestrator runs in the main conversation, started by the plugin's skill"; D3: a stop of the user's own work is a failure of O1.
-    - Grounds: readme/best-practice.json Q3 thinking: "List only what a reader could reasonably expect of the product and it does not do."
-    - Also builds on: D3
-- **readme/Q4** Before installing, does the reader see where the product is not yet fit for use?
-  - **D10 Where Lane is not yet fit for use**: Lane 0.1.0 is still in development and not yet released, and the walkthrough, `lay.py`'s output and the run, shows what Lane is built to show, not yet a recorded one, until a recorded run's output replaces it. (research)
-    - Grounds: plugins/lane/CHANGELOG.md:3 "## [Unreleased]"; plugins/lane/.claude-plugin/plugin.json:4 "version": "0.1.0"
-    - Grounds: readme/best-practice.json Q4 thinking: "Where the product is not yet fit for use, such as a release still in development or one no longer kept up, say so at the top"
-    - Also builds on: D12
 - **readme/Q5** Starting with nothing set up, does the reader install the product by the README's steps alone, and see that it works?
-  - **D11 Requirements and installation**: Claude Code at the version the trials of holding the main conversation ran on or later; Python 3.9 or later as `python3`, on the computers where the plugin is built and run; a plugin that passes `claude plugin validate`; a skill and subagents with their steps as a numbered list under `## Steps`, which `lay.py print` refuses otherwise; each subagent with rules or named by the routes sets `background: true`, as Lane tells each run of a subagent from the others by the ID a background start gives back at once, and the main conversation stays free while it runs. Installed from the ccpm marketplace; ready when `lay.py` shows its usage; after each update of Lane, `lay.py up` on the plugin brings its checks to the new version, as nothing else does. (research)
-    - Grounds: plugins/lane/README.md:46-67 before this tree, Requirements and Installation.
-    - Grounds: Trials on Claude Code 2.1.318 showed the hooks that hold the main conversation; the version the trials of the rebuild run on is the one named.
-    - Grounds: pyproject.toml requires-python ">=3.9"
-    - Also builds on: D9
 - **readme/Q6** After the walkthrough, does the reader see that the product would give them, on work of their own, the gain the opening promised?
-  - **D12 The walkthrough's run**: `changelog`, a plugin that writes a project's `CHANGELOG.md`: its skill `write` starts `writer`, which writes the entries, and then `reviewer`, which gives `more` or `good`. You propose two rules for writer, run only `git log --oneline` and write only `CHANGELOG.md`, and the routes; `lay.py print` shows the steps as they will read; `lay.py write` lays them. You type `/changelog:write`: writer is stopped as it tries `git commit` and shown its step's sentence, goes back and writes the entries; reviewer gives `more`, writer runs again, reviewer gives `good`, and the run ends. The order and the stop both show, on work like the reader's. (reasoning)
-    - Grounds: readme/best-practice.json Q6 thinking: "Show one real run of the use most readers come for, on work like theirs, from what the reader gives to the result they keep, with the product's real output."
-    - Grounds: O1 holds the steps and the order in one end, so its main use shows both in one run.
-    - Grounds: plugins/lane/README.md:69-170 before this tree: the changelog plugin, its proposal and lay.py's real output.
-    - Also builds on: D2, D5
 - **readme/Q7** For each problem they feel in the work, does the reader picture how the product makes it go away?
-  - **D13 The problems a reader feels with the usual way, and how each goes away with Lane**: The usual way is to write the steps and the order in the skill and the subagents' prompts, with a hook of one's own for what must hold. Four problems, one for each idea of D5: (1) a hook that only refuses leaves the subagent to find another way, such as writing with `cat >` what it may not Edit; with Lane, it is shown the sentence of its own step and goes back to it. (2) the next move is read from what a subagent wrote, so "No more entries" can be taken as `more`; with Lane, a result counts only from a run of the result script. (3) the skill forgets a start, or starts the wrong subagent, most after its conversation is compacted; with Lane, each next start is told to the main conversation and any other start is stopped. (4) each check is code to write and test; with Lane, you see the steps as they will read, approve them, and the checks are laid. One figure, images/problem.svg, the usual way above Lane, each problem marked by its number where it is left and where it goes away. (reasoning)
-    - Grounds: readme/best-practice.json Q7 steps: "Take the problems from the Concept section of the product vision, one where the present way falls short for each idea"
-    - Grounds: readme/template.md How it works: "The first figure: the deliverable's own at images/problem.svg"
-    - Also builds on: D5
 - **readme/Q8** At each point where they would ask whether the product can really do that, does the reader picture how it does it?
-  - **D14 The points a newcomer would doubt, and how Lane does each**: (A) How does it tell my plugin's run from my own work in the same conversation? A run starts when your skill is called, typed as `/<plugin>:<skill>` or called by an AI, and ends once a route starts no more; outside a run Lane checks nothing, and within it, in the main conversation, only the starts of subagents, a message that resumes one among them, and the end of a turn. (B) How can a sentence in plain words get a check? Each rule is one of Lane's types, such as run only these commands, and its sentence and its check are both made from the type and the values you give it. (C) How does the main conversation learn the next start? As a subagent's end reaches it, Lane adds the next start beside it; any other start is stopped and told the one due; and where the conversation would end its turn while a start is due and no subagent runs, Lane keeps it going once with the start due; where it still ends, Lane lets it end and tells you whose step to fix, as a hold with no end would need you to break it. (D) What if a subagent ends without giving its result? Lane keeps it going once with the sentence of its last step; where it still ends with none, the main conversation is told to start it again. (E) Does whoever runs my plugin need Lane? No: `lay.py write` puts the checks into your plugin. One figure for each of (A) to (C) and (E), images/how-run.svg, how-rule.svg, how-next.svg and how-laid.svg, each followed by its line; (D) is drawn in how-next.svg beside the start it leads to. (reasoning)
-    - Grounds: readme/best-practice.json Q8 steps: "Read the README as a newcomer, and mark each thing it says that the present way cannot do. Ask of each answer what the newcomer would doubt next, until no doubt is left."
-    - Grounds: Trial on Claude Code 2.1.319, 2026-11-06: a typed `/probe:up` gives UserPromptExpansion with "command_name":"probe:up"; an AI's call gives PostToolUse of Skill with "commandName":"probe:up"; the main conversation's events carry no agent_type key, a subagent's carry its type; a background subagent's end gives SubagentStop, then UserPromptSubmit in the main conversation whose prompt is a task-notification, and its additionalContext reaches the main conversation; a PreToolUse deny on Agent stops the start and shows the reason; a Stop block keeps the main conversation going with the reason, the next Stop carrying "stop_hook_active":true.
-    - Grounds: plugins/lane/README.md:184-185 before this tree: "Lane puts its checks into your plugin as one script ... so whoever runs your plugin does not need Lane."
-    - Also builds on: D7, D13
 - **readme/Q9** Needing more than the README gives, such as fuller use or help, does the reader find where to go next?
-  - **D15 Where a reader goes next, where they get help, and the license**: The lanes, each type of rule and the proposal; the routes, how to write them and what the skill is told; the changelog; help in the repository's GitHub issues, https://github.com/lovaizu/ccpm/issues; the MIT License of the repository. (research)
-    - Grounds: plugins/lane/docs/lanes.md, plugins/lane/docs/routes.md, plugins/lane/CHANGELOG.md
-    - Grounds: LICENSE; git remote origin: github.com/lovaizu/ccpm
-    - Also serves: readme/Q10
 - **readme/Q10** Weighing whether they may use the product, does the reader find the terms for them and their team?
-- **readme/Q11** Reading from the top, does the reader find each answer just when they come to need it, so they can stop once they have what they came for?
-  - **D16 The order of the README**: The template's order: what Lane is, the status, whom it is for and the gain, the non-goals; then Requirements, Installation, Walkthrough, How it works, Documentation, License. Development, a link to dev/lane/, goes, as its reader is Lane's developer, not the README's. A rule and a route are defined in the opening, where the reader first meets them, not in the non-goals; Lane's word for a rule, a lane, is said before the proposal first shows it; and Lane's check is called the check, never a hook, as the reader knows a hook as Claude Code's, so `lay.py print` names a rule's type without the word hook. Routes are no lane: `lay.py print` shows them as the routes of the skill, with the sentence they lay on its step. (reasoning)
-    - Grounds: readme/best-practice.json Q11 thinking: "the opening for every reader, the installation for one who has chosen the product, the walkthrough and How it works for one still weighing it"
-    - Grounds: readme/best-practice.json Q11 steps: "Cut what no reader needs at the point where it stands"
-    - Also builds on: D7, D8, D9, D10, D11, D12, D13, D14, D15
-- **architecture/Q1** Starting on any part, does the developer see the one idea by which the product gives its product vision, and the piece of it the part carries out?
-  - **D18 How Lane gives its product vision, as one idea**: The user writes the rules of their steps and their routes in a proposal. `lay.py` shows each step as it will read, and once the user approves, lays into their plugin each rule's sentence in its step and one check script, the guard, with the result script beside it. On a run, Claude Code runs the guard on each hook event of the plugin. The guard stops each call of a subagent that breaks a rule, with the sentence of its step. From the call of the skill the routes name to the route that starts no more, it also holds the main conversation to the routes: it tells each next start as a subagent's end reaches the conversation, from the result the subagent gave by running the result script, stops any other start, and keeps the conversation going while a start is due. (reasoning)
-    - Grounds: architecture/best-practice.json Q1 thinking: "The opening says, as one idea seen from above, how the product turns what its roles bring into what the product vision promises."
-    - Grounds: D5: each idea of the concept is a piece of this idea: the step's sentence shown again, the result from a run, the routes told and held, the checks laid.
-    - Grounds: D14 (C), from the trial on Claude Code 2.1.319.
-    - Also builds on: D5, D17
-- **architecture/Q2** Following a step of an objective's main use, as the README's walkthrough shows it, does the developer find the one user story that carries it?
-  - **D17 Who meets Lane at its edge, and in which ways**: The user alone, in four ways, each a user story. S1: run `lay.py print` on their proposal and see each step as it will read, or what is wrong. S2: run `lay.py write` on the proposal they approved, and find the sentences in their steps and the guard and the result script in their plugin. S3: run their plugin, by typing its skill's command or by an AI calling the skill, and have its subagents keep their rules and the main conversation start them in the order of the routes; it carries the walkthrough's run, a held command, a value given for each start, a result, several starts at once, a subagent or skill of a dependency, and a subagent resumed to give a later result, as branches. S4: run `lay.py up` on their plugin after Lane is updated. The subagents and the main conversation are not users: each is the user's plugin, held for the user. (reasoning)
-    - Grounds: D1: one role, the user.
-    - Grounds: architecture/best-practice.json Q2 thinking: "There is one story for each way a role meets the product at its edge, drawn from the objectives and the README's walkthrough"
-    - Grounds: dev/lane/architecture.md:126-165 before this tree: S3 to S6 had the subagents and the orchestrator as their users, a cut by who acts, not by the role's end.
-    - Grounds: dev/plugin-best-practice.md, A plugin that uses another: "Where the job is the other plugin's whole run, the orchestrator calls the other plugin's skill ... Its own course counts that call as one move, so its guard stays out while the other's run lasts".
-    - Also serves: architecture/Q8
-    - Also builds on: D1, D12
-- **architecture/Q3** Meeting a case no line of the document names, do two developers of different parts reach the same decision from a principle's why?
-  - **D19 Lane's principles**: Lane takes from the plugin best practice What a machine can see of the work; No check passes what it did not check; The guard tells each role its steps again; Where a plugin writes its files; Asking for what lies outside the work; The caller approves what is theirs; Python 3.9 and the standard library; Code kept once. It takes none for a plugin with an orchestrator and roles, as Lane has no role, skill or agent of its own and talks with no person, and departs from The core apart from Claude Code in where its core lies. It adds nine: The check shows the step again; One wording for the step and the check; What was approved is what runs; Lane knows no plugin; The check judges only what Claude Code documents; A call that cannot be checked is stopped; Claude Code's own means first; The plugin needs nothing from Lane; and, new, The main conversation is held only while its run lasts: the guard holds the main conversation from the call of the skill the routes name until a route starts no more, and there it stops or keeps going only its starts of subagents, a message that resumes one among them, and the end of its turn, reading its other events, such as a task-notification, only to tell it the next start, as the same conversation holds the user's own work, whose stop is a failure of O1 (KR1.1). Each why says in words the way of D3 that goes wrong without it, such as a role that does a stopped call another way, and names the key result that counts it, so the reader need not open the product vision to weigh it. (reasoning)
-    - Grounds: dev/lane/architecture.md:20-125 before this tree: the principles taken and the eight added, each still true.
-    - Grounds: D3: "a move the steps allow is stopped, the user's own work in the main conversation outside the run among them".
-    - Grounds: D2: O1 alone; the whys that named O2 and KR2.1 name O1 and KR1.1.
-    - Also serves: architecture/Q15
-    - Also builds on: D18
 - **architecture/Q4** Facing a decision the stories need, does the developer find the one component that alone decides it?
-  - **D20 Lane's components and what each alone decides**: As before, lay.py, proposal.py, lanes/, hook.py, guard.py, called.py, routes.py, ports.py and result.py, each box its name and type only. Changed: routes.py alone decides which results a subagent may give, and the guard, before the result script runs, and result.py, where the guard let a run through unchecked, both ask it. hook.py hands on, beside the events of a subagent with rules or named by the routes, the main conversation's events, told apart by carrying no agent_type key: the expansion of a typed command and the Skill call that start a run, the starts and messages of subagents, a user prompt, a task-notification among them, and the end of a turn; which events of Claude Code's own it drops is its inside, left to its code. guard.py decides whether a run of the routes is on and what the main conversation is told. called.py keeps the run of the skill beside the runs of subagents. routes.py names the skill as the orchestrator, by its name, in place of a subagent. (reasoning)
-    - Grounds: dev/lane/architecture.md:174-201 before this tree, What each role alone decides.
-    - Grounds: Trial on Claude Code 2.1.319, 2026-11-06: the main conversation's events carry no agent_type key; in an interactive session a SubagentStop with "agent_type":"" fires with no SubagentStart, its last_assistant_message the suggested next prompt.
-    - Grounds: architecture/best-practice.json Q4 thinking: "One component alone makes each decision the stories need"
-    - Also serves: architecture/Q5, architecture/Q14
-    - Also builds on: D17, D18
-  - **D21 The choices in the components that a developer would question, and their costs**: As before: the checks are entries of the plugin's hooks.json acting by the event's agent_type; Lane's code is put into the plugin; a command is matched whole; each plugin's guard keeps its own record; called.py keeps each run's calls; a result counts only from a run of the result script; an adapter is a script Lane runs; each subagent the routes name runs in the background; a subagent is given its steps whole as it starts; a later result of a resumed subagent takes the place of the earlier, so a subagent can end to wait for an answer and go on, at the cost that the guard keeps each subagent's ID and result for the whole run, not only until its start counts; only a subagent in `fan_out` runs several times at once; the calls kept as JSON Lines, one file for each start, as a hook appends one line without reading the file, at the cost that each event reads its start's file whole; Cosmic Ray and Hypothesis, which dev/README.md and pyproject.toml name for the mutation and property-based testing the plugin best practice asks, are pointed to, not chosen again; a Skill call of a dependency's skill is a start, stopped like any start not due. Added: a run starts at the expansion of the typed command or at the Skill call's PostToolUse, the two ways Claude Code documents a skill begun, not at a user prompt read for the command's words, which a quoted command would match; the cost: a skill followed without being called, such as its text pasted, is no run and is not held. The first start is told as additionalContext of the event that begins the run, the expansion or the Skill call's PostToolUse, and each next start as additionalContext of the UserPromptSubmit that a subagent's end brings and of the PostToolUse of a dependency's result script, while the PostToolUse of each start tells the conversation to wait for that subagent to end, never by a message of Lane's own, as Claude Code puts it beside the event the conversation reads in any case; the cost: the conversation may pass over it, so a start not due is stopped with the one due and the end of a turn is kept going. The end of a turn is kept going once while a start is due and no subagent the run started still runs, and then let end with the user told whose step to fix, as a hold with no end would need a person to break it; the cost: a run whose conversation passes the start over twice stops with the start due. A dependency's skill named by a route is one move, begun by its Skill call and ended by the PostToolUse of a run of the dependency's result script in the main conversation, the caller's guard checking nothing meanwhile, as two guards on one conversation would stop each other's moves; the cost: a dependency's skill that ends with no result leaves its move open, and the caller's guard, checking nothing meanwhile, keeps no end of a turn going for it. Every skill the routes name ends its run by running its result script with the result of the route that starts no more, as a subagent gives its result, so a caller's route can take that result; the cost is one command at each run's end. Within a run, an Agent call of a subagent neither the plugin's nor named by the routes, such as Explore, is the user's own work and goes on; every prompt the user types within a run is told the start due, as the run is theirs too. A subagent with no run_only lane runs any command, its result command checked only for its result. A route may wait for the user, `"waits": true` in place of a `to`, for a result such as `asks` with which a subagent ends to put a point to the person: the main conversation is told to put the subagent's point to the user and resume it with their answer, the run goes on with no start due, the end of a turn is let go as the user is to answer, and the resumed subagent's later result moves the routes on; only a route with neither `to` nor `waits` ends the run, and only its `on` is a result the skill gives. Without it, a plugin whose role needs the person, as the plugin best practice's Messages has every such role, would end its run at the first point put to the person, and its later starts would go unheld (KR1.1); the cost is one more key in the routes. (reasoning)
-    - Grounds: dev/lane/architecture.md:202-236 before this tree, Choices in the components, and their costs.
-    - Grounds: D14's trial facts.
-    - Grounds: Trial on Claude Code 2.1.319, 2026-11-06, in `claude -p` and interactively: additionalContext of UserPromptExpansion on a typed `/probe:up`, and of PostToolUse on the Skill call, reached the main conversation; https://code.claude.com/docs/en/hooks: UserPromptExpansion's additionalContext is "String added to Claude's context alongside the expanded prompt".
-    - Grounds: dev/plugin-best-practice.md, A plugin that uses another: "Two guards holding one conversation at once would each stop the other's moves."
-    - Grounds: architecture/best-practice.json Q14 thinking: "Beside each choice a developer would question ... stands why it beat the other way and what it costs."
-    - Also serves: architecture/Q14
-    - Also builds on: D20
 - **architecture/Q5** Starting on a component, does the developer know what kind of thing it is and what it is made with, choosing nothing themselves?
 - **architecture/Q6** Making one component that writes a data and another that reads it, do two developers join it to the other data the same way?
-  - **D22 Lane's data**: Proposal, Rule, Route, Order of results, Adapter, Test cases, Rules laid, Hook entry, Steps' file (a skill or a subagent, each with its Steps), Step, Kept call, Start value, Result, Run, a run of the skill from its call to the route that starts no more, and Start, one start of a subagent within a Run, known by the agentId it gives back, which holds that subagent's Start values, Kept calls and Result; "run" alone names only a Run, and one start of a subagent is a Start, never a run; and the data passed on a run: Event, the hook input Claude Code gives; Answer, what the guard gives back to it; and Port JSON, a text of the plugin read into Lane's form; drawn as a concept model in a UML class diagram, in frames for the component that keeps each: what the user writes (Proposal, Rule, Route, Order of results, Adapter, Test cases), what lay.py lays (Rules laid, Hook entry, Steps' file, Step), what the guard keeps on a run (Run, Start, Kept call, Start value, Result), and what passes on a run (Event, Answer, Port JSON), with a list under it only for Run, Start, Kept call, Start value and Port JSON, whose names could be taken for one another or tell the reader nothing. (reasoning)
-    - Grounds: dev/lane/architecture.md:237-246 and dev/lane/images/data-model.svg before this tree.
-    - Grounds: architecture/best-practice.json Q6 thinking: "The data are grouped in frames, one for each component or part of the product that keeps them, set in the order the stories meet them"
-    - Also builds on: D20
-- **architecture/Q7** Following a user story from its role's first request to its end, does the developer see at each step which component acts, along which arrow, and what data it hands on?
-  - **D23 Lane's sequences**: Seven: S1 `lay.py print`; S2 `lay.py write`; S3, a run begun, typed or called, and each start told until a route starts no more, with a start not named stopped and the end of a turn kept going once; S3, a subagent's call held to its rules, a held command and a value for the run among the branches; S3, a result given; S3, several starts at once; S4 `lay.py up`. Each from the user to what the story gives them, each branch and each stop drawn, and each result on the arrow that gives it. (reasoning)
-    - Grounds: dev/lane/architecture.md:247-619 before this tree: S1 to S7, of which S3 to S6 now draw the branches of the user's S3.
-    - Grounds: architecture/best-practice.json Q7 thinking: "Each branch, each step that sends work back and each question put to the role is drawn"
-    - Also builds on: D17, D20, D22
-- **architecture/Q8** Of any story, component or data, does the developer see which objective of the product vision needs it, so that what none needs can go?
 - **architecture/Q9** Setting the product up from nothing, does the developer put each component where it runs and each data where it is kept, and start the product, asking no one?
-  - **D24 Where Lane runs and how it starts**: As before: the user lays on their computer and the plugin runs on the computer of whoever runs it; Python 3.9 and its standard library only, each hook's command checking for python3 first; the kept calls in the system's temporary folder; in this marketplace a plugin's hooks/lane/ a link to Lane's code, elsewhere a copy carrying Lane's version. (reasoning)
-    - Grounds: dev/lane/architecture.md:620-648 before this tree.
-    - Also serves: architecture/Q14
-    - Also builds on: D20
-- **architecture/Q10** Making or changing a component or a data, does the developer find the one place its files belong?
-  - **D25 Where each component and data lies**: As before, with `<the plugin>/skills/` holding the skill the routes name, beside `<the plugin>/agents/`, and the Run among the calls kept in the temporary folder, in `lane/<yyyymmdd>-<session>-<plugin>/`, one folder for each plugin's guard in each session; `dev/lane/trials/`, the driver that runs a plugin in Claude Code for a trial, beside `dev/lane/tests/ux/`, the trials that use it; the shared modules of core/domain/ on one line, not each by name. The design tree, `dev/lane/design-tree.md`, beside the product vision and the architecture. (reasoning)
-    - Grounds: dev/lane/architecture.md:649-702 before this tree.
-    - Also builds on: D20, D22
 - **architecture/Q11** Asked whether anything in the product goes untested, does the developer see for each deployment unit which levels cover it, how far each tries it, and why a level is missing?
-  - **D26 How Lane is tested**: As the plugin best practice's Test says, and the section says only where Lane differs: the lay.py, hook and result script processes FULL at unit and at architecture, as a fault in any writes what no one approved or lets a break through, the trials SMOKE. The dependency's skill is drawn in the sequence of a run begun, and a dependency's subagent and a resumed subagent in that of a result. The architecture tests run each path of D23, the double of Claude Code sending the main conversation's events as the trial on 2.1.319 recorded them, beside the double with the version and the date. The ux trial runs O1's main use: a stand-in for the user, on Opus, given an intent Lane never sees, lays its rules and routes on a copy of changelog and runs it by typing its command, in `claude -p` as well as in an interactive session, since the trial showed a background end reaching the main conversation in both; it measures KR1.1 over the plugin's runs and KR1.2 from the first proposal written to the first run that keeps it; 3 runs of 3 pass. (reasoning)
-    - Grounds: dev/lane/architecture.md:703-811 before this tree.
-    - Grounds: Trial on Claude Code 2.1.319, 2026-11-06: in `claude -p` the worker's end gave a task-notification turn in the main conversation, where 2.1.317 had ended the run.
-    - Grounds: D4: KR1.1 per run, KR1.2.
-    - Also serves: architecture/Q12, architecture/Q13, architecture/Q14
-    - Also builds on: D20, D23, D24
-- **architecture/Q12** Writing a test at one level, does the developer know what to run real, what doubles stand in for, what to cover and when it passes, deciding none of it?
-- **architecture/Q13** When the unit and architecture tests pass, does the developer know the product does what this document says, leaving to the ux level only the product vision to confirm?
-- **architecture/Q14** Doubting a choice the document makes, such as a tool or how far a level tries a unit, does the developer see what would be lost by the other way?
-- **architecture/Q15** Following a principle while building a part, does the developer find every figure and list asking the same of that part?
-- **architecture/Q16** Changing how a component works inside while the product vision and the principles stay, does the developer find every line of the document still true?
-  - **D27 What the architecture leaves out**: Each lane's sentence and fields, each event's fields, each line the guard tells and the proposal's schema: they lie in docs/lanes.md, docs/routes.md and the code, as a line about them goes untrue at the next change inside. (reasoning)
-    - Grounds: architecture/best-practice.json Q16 thinking: "How a component works inside is left to where it is built"
-    - Also builds on: D19, D20, D22, D23, D24, D25, D26
+- **product-vision/Q1** Listing whom to build for, does the developer find every role that comes to the product with an end of its own?
+  - **D45 One role**: the user, who builds a plugin whose roles work in steps (reasoning)
+    - Grounds: product-vision/best-practice.json Q1: "a person and an AI that want the same are one role."
+- **product-vision/Q2** Reading an objective, does the developer see what its role gets from the product?
+  - **D46 One objective**: O1, the Goal (reasoning)
+    - Grounds: product-vision/best-practice.json Q3: "Merge two objectives that one piece of work brings closer together"
+    - Also serves: product-vision/Q3
+- **product-vision/Q3** Weighing a piece of work, does the developer see which one objective it brings closer, or that it brings none closer?
+- **product-vision/Q4** After a change, does the developer see from the key results whether to keep it?
+  - **D47 KR1.1**: the share of runs where Q1, Q2, Q3 or Q4 fails (reasoning)
+    - Grounds: product-vision/best-practice.json Q4: "KR.1 how well"
+  - **D48 KR1.2**: the time from the user's first rule or route to the first run that keeps it (reasoning)
+    - Grounds: product-vision/best-practice.json Q4: "KR.2 how soon"
+- **product-vision/Q5** Weighing the product against what its roles do today, does the developer see why it meets each objective where that way does not?
+  - **D49 The present way**: steps and order in prompts, with hooks of one's own (reasoning)
+    - Grounds: product-vision/best-practice.json Q5.
+- **product-vision/Q6** Changing how the product works inside while its roles see the same, does the developer find the product vision still true?
+  - **D50 What it shows**: only what the user does and sees (reasoning)
+    - Grounds: product-vision/best-practice.json Q6.
