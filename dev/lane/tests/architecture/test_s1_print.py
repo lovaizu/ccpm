@@ -59,7 +59,8 @@ class TestLaid(helpers.WalkthroughTest):
         self.assertEqual(done.returncode, 0, done.stdout)
         writer_shown, reviewer_shown = done.stdout.split("Lanes of reviewer")
         self.assertIn(
-            f"  commands: writer may run only `git log --oneline` or `{helpers.GIVE} writer written`\n",
+            f"  commands: writer may run only `git log --oneline` or"
+            f" `{helpers.GIVE} writer written`\n",
             writer_shown,
         )
         self.assertIn("  step 3  names `git status`, which writer may not run\n", writer_shown)
