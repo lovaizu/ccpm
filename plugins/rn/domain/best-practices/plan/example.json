@@ -146,6 +146,11 @@
               "about": "What the best practice covers",
               "decided": "the code's design, design patterns, test design, test-driven development, and the test code, each held to the same design principles as the code it tests; made anew from the goal, not by adding to what stands",
               "by": "user"
+            },
+            {
+              "about": "How the best practice shows it works",
+              "decided": "code made by it leaves few findings to mutation testing, property-based testing, and CI: surviving mutants, with those marked as not to be mutated counted beside them, counterexamples a property finds, and CI failures after the local checks pass, each lower than the last; the evaluator's questions judge the design these tools can't see",
+              "by": "user"
             }
           ]
         },
