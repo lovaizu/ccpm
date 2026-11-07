@@ -11,6 +11,7 @@ from helpers import lanes, schema
 # kept.
 TABLE = (
     ("read_only", "read", "Read only `<input>`.", False),
+    ("read_never", "read", "Never read `<input>`.", False),
     ("read_whole", "read", "Read `<input>` to its end.", True),
     ("write_only", "write", "Write only `<output>`.", False),
     ("write_step", "write", "Make `<output>`.", True),

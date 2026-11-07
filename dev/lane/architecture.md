@@ -67,11 +67,13 @@ in its order: the numbered list of its part, or one list for each intent whose p
 carries out. Within a list, the guard stops a call that's a later step's trace while an earlier
 step's trace hasn't come back, and stops the role's end while any step's trace hasn't come back.
 It gives the role the sentence of the first step not done. A step whose trace not every run makes
-carries no trace lane, and steps of two lists have no order between them. The guard never reads
-what a file says to judge whether a step went well.
+carries no trace lane, and steps of two lists have no order between them. A command that a trace
+names is one the role may run, beside its run_only lanes, a step list's that an adapter gives among
+them. The guard never reads what a file says to judge whether a step went well.
 
 *Why*: a role that skips a step, or does it after the step that rests on it, gives work that the
-step was there to make sound, and goes on. A check of the content would judge what only
+step was there to make sound, and goes on. The guard would otherwise stop a role held to run_only
+as it runs the command its own step asks for. A check of the content would judge what only
 the work's own reader can judge, and stop a move that the steps allow. A trace that some runs
 rightly don't make would stop each of those runs, and the practices of two intents answer two
 questions, which no order joins.
@@ -115,7 +117,9 @@ path that a call names from the folder that the call runs in.
 [Q16](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q16) says. A lane copied or
 edited by hand would be one that no one approved, and could stop a move that the user's steps
 allow. The guard stops every command that a role's run_only lanes don't name, so that stop
-is part of what the user approves. Unshown, they'd first meet the stop on a run. The user approves
+is part of what the user approves. Unshown, they'd first meet the stop on a run. A command that a
+lane takes, holding a start's value given as null, names no command, as a start given nothing to
+run may run nothing, where a lane let through would let the role run any command. The user approves
 an adapter by its test cases, as what it gives on a run comes from the plugin's own files. A lane
 names a file of the project as the user approved it. Read from the folder the session works in,
 which moves with each `cd`, the same lane would name another file, and let through a write that no
@@ -306,6 +310,11 @@ why, and what it costs.
   from the input's text alone: a deliverable's intents and the nodes that a change to a tree
   touches lie in a design tree that a plugin's own script reads, such as rn's `tree.py`, for the
   deliverable or the change that the start names. It costs an adapter for each such plugin.
+- **A lane that names the files a role must not read, read_never, beside read_only,** over
+  read_only alone: a role kept from one file, such as a design tree that another role keeps,
+  would otherwise have to name each file it may read, and the guard would stop a read of a file
+  added to the project later. It costs a type of lane more, and a read by a command its run_only lanes name going
+  unchecked, as with read_only.
 - **A command matched whole** over a command taken apart: a reading of the shell's grammar would let
   a lane name a part of a command, but
   [The check judges only what Claude Code documents](#the-check-judges-only-what-claude-code-documents)

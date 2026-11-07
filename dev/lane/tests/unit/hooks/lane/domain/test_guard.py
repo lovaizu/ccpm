@@ -1560,6 +1560,41 @@ class LanesTest(GuardTest):
         return self.event(tool, given)
 
 
+class TestReadNever(LanesTest):
+    def setUp(self) -> None:
+        super().setUp()
+        self.lay_lanes([lane("read_never", "tree.json", "notes/", number=1)])
+
+    def test_a_read_of_a_file_it_names_or_under_a_folder_it_names_is_told_the_sentence(self):
+        for event in (
+            self.reading("tree.json"),
+            self.reading(os.path.join(self.base, "tree.json")),
+            self.reading("notes/a.md"),
+            self.reading("notes", "Grep"),
+        ):
+            with self.subTest(event=event["tool_input"]):
+                # Given: writer, whose step 1 never reads tree.json or notes/
+                # When: it reads one of them, or a file under notes/
+                # Then: it is told the sentence
+                said = "Never read `tree.json` or `notes/`."
+                self.assertEqual(self.check(event), [guard.Said(said)])
+
+    def test_a_read_of_another_file_goes_through(self):
+        # Given: writer, whose step 1 never reads tree.json or notes/
+        # When: it reads CHANGELOG.md, and greps the project with no path
+        # Then: each goes through
+        self.assertEqual(self.check(self.reading("CHANGELOG.md")), [])
+        self.assertEqual(self.check(self.event("Grep", {"pattern": "x"})), [])
+
+    def test_a_value_given_as_null_names_no_file(self):
+        # Given: writer, whose step 1 never reads {tree}, given null as its tree
+        self.lay_lanes([lane("read_never", "{tree}", number=1)])
+        self.given('{"tree": null}')
+        # When: it reads tree.json
+        # Then: it goes through, as the lane names no file
+        self.assertEqual(self.check(self.reading("tree.json")), [])
+
+
 class TestReadOnly(LanesTest):
     def setUp(self) -> None:
         super().setUp()
@@ -1926,15 +1961,26 @@ class TestValues(LanesTest):
         self.assertEqual(self.check(self.written("b.md")), [])
         self.assertEqual(self.check(self.written("notes.md")), [guard.Said("Write only `{work}`.")])
 
-    def test_a_value_given_as_null_lets_the_lane_through(self):
-        for kind, event in (("write_only", self.written("any.md")), ("run_only", self.bash("ls"))):
+    def test_a_value_given_as_null_lets_a_write_through_and_no_command(self):
+        for kind, event, told in (
+            ("write_only", self.written("any.md"), []),
+            (
+                "run_only",
+                self.bash("ls"),
+                [
+                    guard.Said(
+                        "Run only `{work}`.\nThe commands you may run, each word for word: none."
+                    )
+                ],
+            ),
+        ):
             with self.subTest(kind=kind):
                 # Given: the lane taking {work}, the run given none
                 self.lay_lanes([lane(kind, "{work}")])
                 self.given('{"work": null}')
                 # When: writer makes a call the lane judges
-                # Then: it goes through
-                self.assertEqual(self.check(event), [])
+                # Then: the write goes through, and the command is stopped, as it names none
+                self.assertEqual(self.check(event), told)
 
     def test_a_value_not_given_or_given_empty_is_an_error(self):
         for agent, given, said in (
@@ -2064,7 +2110,7 @@ class TestValueInCommand(LanesTest):
             with self.subTest(command=command):
                 self.assertEqual(self.check(self.bash(command)), told)
 
-    def test_a_value_given_as_null_lets_the_lane_through_and_none_given_is_an_error(self):
+    def test_a_value_given_as_null_lets_no_command_through_and_none_given_is_an_error(self):
         for agent, text, through in (("v1", '{"file": null}', True), ("v2", "{}", False)):
             with self.subTest(text=text):
                 # Given: a run of writer given null as its file, or no file
@@ -2072,15 +2118,43 @@ class TestValueInCommand(LanesTest):
                 called.keep(helpers.KEPT, agent, called.given(text))
                 # When: it runs any command
                 told = self.check(self.event("Bash", {"command": "ls"}, agent_id=agent))
-                # Then: it goes through, or is an error naming the value
+                # Then: it is stopped with the sentence, as its command takes no file, or is an
+                # error naming the value
                 if through:
-                    self.assertEqual(told, [])
+                    said = f"Run only `{self.TAKE}`.\nThe commands you may run, each word for word:"
+                    self.assertEqual(told, [guard.Said(f"{said} none.")])
                 else:
                     self.assertIn(
                         "lane cannot check run_only on step 2 of writer: `{file}` was given no"
                         " value",
                         told[0].text,
                     )
+
+    def test_a_value_given_as_null_leaves_the_lanes_other_commands(self):
+        # Given: writer's run_only lane naming the check of its file and `git log --oneline`, its
+        # file given as null
+        self.lay_lanes([lane("run_only", self.TAKE, "git log --oneline", number=2)])
+        self.given('{"file": null}')
+        # When: it runs `git log --oneline`, and the check on a file
+        # Then: the first goes through, and the check is stopped
+        self.assertEqual(self.check(self.bash("git log --oneline")), [])
+        told = self.check(self.bash(f"{self.check_of} x.json"))
+        self.assertTrue(told[0].text.endswith("each word for word: `git log --oneline`."))
+
+    def test_a_held_command_given_null_names_no_command_and_run_only_still_judges(self):
+        # Given: writer holding a push of its branch, given null, and run only `git log --oneline`
+        self.lay_lanes(
+            [
+                lane("run_only", "git log --oneline", number=2),
+                lane("hold", "git push origin {branch}", number=2),
+            ]
+        )
+        self.given('{"branch": null}')
+        # When: it pushes a branch, and runs `git log --oneline`
+        told = self.check(self.bash("git push origin work"))
+        # Then: the push is stopped, as no lane names it, and the log goes through
+        self.assertTrue(told[0].text.startswith("Run only `git log --oneline`."))
+        self.assertEqual(self.check(self.bash("git log --oneline")), [])
 
     def test_a_held_command_and_a_test_hold_their_value_too(self):
         # Given: writer holding a push of its branch, and testing src/ by the check of its file
@@ -2216,6 +2290,19 @@ class TestPortSteps(LanesTest):
         # Then: `b` is stopped with Q1's first, and `c` goes through
         self.assertEqual(self.check(self.bash("b")), [guard.Said("Run a. Run `a`.\n`a` not run")])
         self.assertEqual(self.check(self.bash("c")), [])
+
+    def test_a_command_the_adapter_gives_is_one_a_run_only_lane_lets_run(self):
+        # Given: writer with a run_only lane naming `git log --oneline` beside its adapter's steps
+        self.lay_lanes([lane("run_only", "git log --oneline", number=2)])
+        laid = self.read_json(os.path.join(self.plugin, "hooks", "lanes.json"))
+        laid["subagents"][0]["steps_adapter"] = "hooks/adapters/steps-w.py"
+        self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), laid)
+        # When: it runs `a`, the first step of Q1 that the adapter gives, and `ls`
+        # Then: `a` goes through, as the run_only lane lets it run, and `ls` is stopped with the
+        # commands it may run, `a` among them
+        self.assertEqual(self.check(self.bash("a")), [])
+        told = self.check(self.bash("ls"))
+        self.assertIn("`git log --oneline`, `a`, `b`, `c`, `d`", told[0].text)
 
     def test_the_steps_are_told_as_the_subagent_starts(self):
         # Given: writer's start, its prompt kept

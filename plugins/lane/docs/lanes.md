@@ -21,7 +21,10 @@ SendMessage call sent to it after, the later over the earlier. So the check hold
 the start while the subagent works, as by an answer, from then on. The sentence `Write only {work}.`
 holds a subagent to the files and folders its start's `work` names, whichever they are. A value
 given as `null` is the caller saying there is none: each lane taking that name lets the call or the
-end through on that start, with nothing told. A thing taken holds any text, a comma among the
+end through on that start, with nothing told, but a lane of commands. A command that a run_only,
+hold, test_after or run_step lane takes, holding a value given as `null`, names no command, so the
+subagent runs only the other commands its lanes name: a start given no file to check is let run no
+check. A thing taken holds any text, a comma among the
 rest.
 
 Each subagent with lanes, or that routes name, sets `background: true` in its frontmatter.
@@ -38,6 +41,7 @@ with no result, as [the routes](routes.md#how-a-subagent-gives-its-result) say.
 | Action | Lane | Sentence | Told when the subagent |
 |---|---|---|---|
 | read | read_only | Read only `<input>`. | reads anything else |
+| read | read_never | Never read `<input>`. | reads one of them, or a file under one |
 | read | read_whole | Read `<input>` to its end. | makes the trace of a later step first, or gives its result with a part of it unread, as its trace kind holds it |
 | write | write_only | Write only `<output>`. | writes anything else |
 | write | write_step | Make `<output>`. | makes the trace of a later step first, or gives its result before, as its trace kind holds it |
@@ -120,7 +124,8 @@ steps in their order by these traces, and never by what a file says:
 - Lay a trace only on a step that every run takes. A step that some runs rightly leave out, such as
   one for a case that doesn't always come up, carries no trace, or those runs would be stopped.
 
-run_step's commands are commands the subagent may run, beside those of its run_only lanes.
+run_step's commands are commands the subagent may run, beside those of its run_only lanes, those of
+a step list your steps adapter gives among them.
 
 lane checks the lanes of the end, test_after, end_when and every_item, and each trace, as the
 subagent gives its result. So `lay.py write` gives a subagent with one of them a result command on
@@ -144,8 +149,10 @@ step tells it to write in that form, and the form, a file of your plugin, holds 
 project's work. It lets the subagent read its own part too, the file its steps lie in, which lane
 gives it whole as it starts: reading what it was given breaks no rule.
 
+read_never takes the files a subagent must not read, such as a file that another subagent keeps.
 read_only and write_only each take a file or a folder, and a folder lets the subagent read or write
-anything under it. A path of read_only, write_only or read_whole may begin with
+anything under it, as read_never's lets it read nothing under it. A path of read_only, read_never,
+write_only or read_whole may begin with
 `${CLAUDE_PLUGIN_ROOT}`, such as `${CLAUDE_PLUGIN_ROOT}/core/domain/how.md`, and lane puts your
 plugin's folder in for it, as it does in a command, so a step can name a file of your plugin by
 the path the subagent reads it by. test_after's output may be a folder too, and a change of any
@@ -213,7 +220,7 @@ is held to this JSON Schema:
       "lanes": {"type": "array", "minItems": 1, "items": {
        "type": "object", "required": ["lane", "takes"], "additionalProperties": false,
        "properties": {
-        "lane": {"enum": ["read_only", "read_whole", "write_only", "write_step", "in_form", "edit_only",
+        "lane": {"enum": ["read_only", "read_never", "read_whole", "write_only", "write_step", "in_form", "edit_only",
                           "run_only", "run_step", "hold", "test_after", "end_when", "every_item"]},
         "takes": {"type": "array", "items": {"type": "string"}},
         "adapter": {"type": "string", "description": "hooks/adapters/<port>-<name>.py"}}}}}}}}}}}}
@@ -393,6 +400,7 @@ only where the lane rests on the calls kept:
 | Lane | Places | Rests on the calls kept |
 |---|---|---|
 | read_only | `input` | no |
+| read_never | `input` | no |
 | read_whole | `input` | yes |
 | write_only | `output` | no |
 | write_step | `output` | yes |

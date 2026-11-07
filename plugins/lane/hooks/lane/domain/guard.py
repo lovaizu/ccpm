@@ -56,7 +56,7 @@ import routes
 import rules
 import schema
 import step
-from lanes import edit_only, follow_routes, in_form, read_only, run_only, write_only
+from lanes import edit_only, follow_routes, in_form, read_never, read_only, run_only, write_only
 from lanes.done import Done
 
 # Each tool a lane judges, with the action its call is and the field of its input the lane judges.
@@ -615,9 +615,14 @@ def starts_of(tool: str, given: dict[str, Any], named: list[str], plugin: str) -
 
 
 def read_checked(s: Subagent, event: dict[str, Any], path: str) -> list[Said]:
-    """What a read of the path is told: nothing where the subagent has no read_only lane, a lane's
-    value is null, or the path is one of the inputs, the forms of its in_form lanes or its own
-    part, or lies under one; the read_only lanes' sentences otherwise."""
+    """What a read of the path is told: the sentence of each read_never lane naming the path or a
+    folder it lies under, a value given as null naming nothing; and nothing where the subagent has
+    no read_only lane, a lane's value is null, or the path is one of the inputs, the forms of its
+    in_form lanes or its own part, or lies under one; the read_only lanes' sentences otherwise."""
+    for lane in s.of("read_never"):
+        places = places_of(lane, s)
+        if places and not read_never.allows(path, places["input"], s.root, event["cwd"]):
+            return [sentences([lane])]
     judging = s.of("read_only")
     if not judging:
         return []
@@ -668,18 +673,26 @@ def run_checked(s: Subagent, event: dict[str, Any], command: str) -> list[Said]:
     sentence; a result command, what is missing of the lanes checked at the end; where the
     subagent has no run_only lane, nothing, but for a run of its result script on a result it may
     not give, told the sentence of its last step and the commands it gives its results by;
-    otherwise nothing where the command is one its lanes name, or a lane's value is null, and the
-    sentences of its run_only and hold lanes, and the commands it may run, each value put in, where
-    it is not."""
+    otherwise nothing where the command is one its lanes name, a run_step of a step list its
+    adapter gives among them, and the sentences of its run_only and hold lanes, and the commands it
+    may run, each value put in, where it is not. A take holding a value given as null names no
+    command."""
     judging = s.of(*lanes.RUNS)
     named: list[tuple[rules.Laid, list[str]]] = []
     values: dict[str, list[str]] = {}
-    for lane in judging:
-        places = places_of(lane, s)
-        if places is None:
-            return []
-        named.append((lane, places[lanes.RUNS[lane.lane]]))
-        values.update(parts_of(lane, s) or {})
+    # A command a step list the adapter gives names is one its run_step trace lets the subagent run.
+    adapted = [
+        g for each in port_lists(s) for st in each for g in st.traces if g.lane == "run_step"
+    ]
+    for lane in [*judging, *adapted]:
+        for take in lane.takes if lane.lane == "run_only" else [None]:
+            one = lane if take is None else lane._replace(takes=[take])
+            places = places_of(one, s)
+            # A take whose value is null names no command, of run_only one take at a time, of any
+            # other lane of commands the lane whole.
+            if places is not None:
+                named.append((lane, places[lanes.RUNS[lane.lane]]))
+                values.update(parts_of(one, s) or {})
     cwd = event["cwd"]
     for lane, takes in named:
         # Of the lanes judging a command, hold is the first in order.
@@ -699,7 +712,7 @@ def run_checked(s: Subagent, event: dict[str, Any], command: str) -> list[Said]:
     if run_only.allows(command, takes, s.root, cwd, values):
         return []
     told = [lanes.sentence(g.lane, g.takes) for g in judging if g.lane in ("run_only", "hold")]
-    listed = ", ".join(f"`{c}`" for c in run_only.put(takes, s.root, values))
+    listed = ", ".join(f"`{c}`" for c in run_only.put(takes, s.root, values)) or "none"
     told.append(MAY_RUN.format(listed=listed))
     if any(run_only.DEPENDENCY.search(t) for t in takes):
         told.append(DEPENDENCY_FOLDER)

@@ -27,6 +27,7 @@ from lanes import (
     follow_routes,
     hold,
     in_form,
+    read_never,
     read_only,
     read_whole,
     run_only,
@@ -38,6 +39,7 @@ from lanes import (
 
 LANES = {
     "read_only": read_only,
+    "read_never": read_never,
     "read_whole": read_whole,
     "write_only": write_only,
     "write_step": write_step,
