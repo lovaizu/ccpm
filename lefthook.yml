@@ -260,7 +260,6 @@ pre-commit:
     - "plugins/turn/agents/planner.md"
     - "plugins/turn/core/domain/best-practices/architecture/best-practice.md"
     - "plugins/turn/core/domain/best-practices/architecture/example.md"
-    - "plugins/turn/core/domain/best-practices/architecture/template.md"
     - "plugins/turn/core/domain/best-practices/code/best-practice.md"
     - "plugins/turn/core/domain/best-practices/meta/best-practice.md"
     - "plugins/turn/core/domain/best-practices/prompt/best-practice.md"
