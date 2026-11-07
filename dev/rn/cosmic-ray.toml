@@ -3,7 +3,7 @@
 [cosmic-ray]
 module-path = ["plugins/rn/scripts"]
 timeout = 60.0
-# The copies of the old Turn rn keeps until its rebuild (T46, .rn/20261013-rebuild/steering.md)
+# The copies of the old Turn rn keeps until its rebuild (plugins/rn in .rn/20261107-rn/design-tree.json)
 # are left out: their tests went with turn.py, which they ran, and rn is held at 0.8.0 for its
 # users meanwhile, so no one runs these copies; the rebuild removes them.
 excluded-modules = [
