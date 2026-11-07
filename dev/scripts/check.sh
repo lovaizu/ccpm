@@ -31,7 +31,7 @@ for plugin in $plugins; do
   sh dev/scripts/typecheck.sh "$plugin"
 done
 # The checks' own Python, beside the plugins'.
-pyrefly check --search-path dev/lane dev/scripts/*.py
+pyrefly check --search-path dev/lane --search-path dev/scripts/tests dev/scripts/*.py dev/scripts/tests/*.py
 
 # A best practice is checked for the faults its form shows, its Markdown, made from its JSON for a
 # person to read, for being left behind it, and its example, where it is a copy of a document of the
@@ -55,14 +55,8 @@ done
 python3 dev/scripts/figures.py check
 
 # A Mermaid diagram GitHub cannot parse shows as an error in its place, unseen until someone opens
-# the page, so each is parsed by Mermaid's own parser, which comes with dev/scripts/package-lock.json.
-# Without it, the check fails, as a skipped step would pass a diagram nobody parsed.
-if ! command -v node >/dev/null 2>&1 || [ ! -d dev/scripts/node_modules/mermaid ]; then
-  echo "check.sh: can't parse the Mermaid diagrams, as node or dev/scripts/node_modules is missing."\
-    "Fix: install Node.js, then run \`npm ci --ignore-scripts\` in dev/scripts" >&2
-  exit 1
-fi
-node dev/scripts/mermaid.mjs
+# the page, so each is parsed by Mermaid's own parser.
+sh dev/scripts/mermaid.sh
 
 # The unit and architecture tests, `test*.py`, unittest's own pattern, run by pytest as
 # pyproject.toml sets it, at once on each processor (pytest-xdist); the property-based tests, whose
@@ -91,6 +85,11 @@ else
   coverage combine
   coverage report
 fi
+
+# The tests of the checks themselves, such as pre-push.sh's and mermaid.sh's, on every run, as they
+# are few and quick, whichever plugins are given. What they test is shell, which coverage does not
+# count.
+pytest -q -n auto dev/scripts/tests
 
 # A malformed manifest fails for every user at install, so each plugin and the marketplace pass
 # Claude Code's own check of them.

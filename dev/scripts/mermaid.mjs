@@ -1,5 +1,5 @@
-// Every Mermaid diagram drawn as GitHub draws it, run as `node dev/scripts/mermaid.mjs` from the top
-// of the repository by dev/scripts/check.sh. GitHub shows a diagram it cannot parse as an error in
+// Every Mermaid diagram drawn as GitHub draws it, run from the top of the repository by
+// dev/scripts/mermaid.sh. GitHub shows a diagram it cannot parse as an error in
 // its place, which no one sees until they open the page, so each ```mermaid block of each Markdown
 // file git holds is parsed by Mermaid's own parser, and each block that does not parse fails with
 // its file, its line and the parser's message.

@@ -8,7 +8,7 @@
       "name": "Every prose ccpm keeps is checked by lovaizu/checks",
       "path": "lefthook.yml",
       "kind": "code",
-      "status": "doing",
+      "status": "done",
       "intents": [
         {
           "id": "Q1",
@@ -58,28 +58,28 @@
         },
         {
           "id": "Q6",
-          "good": false,
+          "good": true,
           "decisions": [
             {
-              "about": "Tests of the hooks and of check.sh",
-              "decided": null,
-              "by": "user"
+              "about": "Tests of the checks themselves",
+              "decided": "dev/scripts/tests/ tests pre-push.sh with stand-ins for what it runs, mermaid.sh on repositories of its own, and lefthook.yml's version, excludes and pre-push job; check.sh runs them on every run, and plugins.sh names only the folders with a plugin",
+              "by": "reasoning"
             }
           ]
         },
         {
           "id": "Q7",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "Q8",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "Q9",
-          "good": false,
+          "good": true,
           "decisions": []
         }
       ]
