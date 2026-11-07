@@ -324,7 +324,7 @@ class Practices(helpers.testing.FolderTest):
         self.assertEqual(ran("markdown", self.path), (0, "", ""))
         self.assertEqual(
             self.read(os.path.join(self.folder, "best-practice.md")),
-            practices.markdown("kind", DATA),
+            practices.markdown(self.path, DATA),
         )
         self.assertEqual(ran("form", self.path), (0, "", ""))
 
@@ -353,6 +353,20 @@ class Practices(helpers.testing.FolderTest):
             "[template.md](template.md)", self.read(os.path.join(self.folder, "best-practice.md"))
         )
 
+    def test_form_holds_the_questions_to_a_template_that_is_a_folder_and_keeps_its_files(self):
+        data = copy.deepcopy(DATA)
+        del data["parts"]
+        for question in data["intents"]:
+            question["about"] = "the whole"
+        data["template"] = "template"
+        self.write_json(self.path, data)
+        self.write(os.path.join(self.folder, "template", "skills", "up", "SKILL.md"), "# up\n")
+        ran("markdown", self.path)
+        self.assertEqual(
+            ran("form", self.path),
+            (1, "", f"plan.py: {self.path}: section skills has no question about it\n"),
+        )
+
     def test_form_fails_on_a_file_it_names_that_is_not_beside_it(self):
         self.write_json(self.path, dict(DATA, example="example.md"))
         code, _, err = ran("form", self.path)
@@ -379,7 +393,11 @@ class Practices(helpers.testing.FolderTest):
         self.write_json(self.path, dict(DATA, inputs=["gone"]))
         code, _, err = ran("form", self.path)
         self.assertEqual(code, 1)
-        self.assertIn(f"plan.py: {self.path}: its input gone has no best practice beside it", err)
+        self.assertIn(
+            f"plan.py: {self.path}: its input gone has no best practice beside it"
+            " or among Turn's own",
+            err,
+        )
 
     def test_form_fails_on_an_example_out_of_the_schema_that_is_its_template(self):
         data = copy.deepcopy(DATA)
@@ -403,7 +421,7 @@ class Practices(helpers.testing.FolderTest):
         )
 
     def test_form_fails_on_a_markdown_changed_by_hand(self):
-        made = practices.markdown("kind", DATA)
+        made = practices.markdown(self.path, DATA)
         for changed in (made + "More.\n", made[:-1]):
             with self.subTest(changed=changed[-6:]):
                 self.write(os.path.join(self.folder, "best-practice.md"), changed)

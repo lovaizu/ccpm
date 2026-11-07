@@ -346,7 +346,9 @@ class Advance(helpers.RepositoryTest):
         self.assertEqual([w["at"] for w in self.run_data()["works"]], ["done", "pin"])
         self.assertEqual(
             self.read(os.path.join(runs.REPOSITORY, "man-page", "best-practice.md")),
-            practices.markdown("man-page", helpers.PRACTICE),
+            practices.markdown(
+                os.path.join(runs.REPOSITORY, "man-page", "best-practice.json"), helpers.PRACTICE
+            ),
         )
         tree = helpers.tree.load(DESIGN)
         self.assertEqual(tree["goal"]["what"], helpers.CALL["goal"])

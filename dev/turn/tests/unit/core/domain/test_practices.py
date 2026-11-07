@@ -27,6 +27,10 @@ DATA = {
 }
 
 
+# A best practice of the kind `kind`, beside no other kind's.
+PATH = os.path.join("kind", "best-practice.json")
+
+
 def changed(change):
     data = copy.deepcopy(DATA)
     change(data)
@@ -322,16 +326,63 @@ class Beside(helpers.testing.FolderTest):
         self.write(os.path.join(self.base, "other", "best-practice.json"), "{}")
         self.assertEqual(practices.missing(self.path, named), [])
 
-    def test_each_kind_it_takes_with_no_best_practice_beside(self):
-        named = dict(DATA, inputs=["readme", "gone"], preconditions=["late", "readme"])
-        self.write(os.path.join(self.base, "readme", "best-practice.json"), "{}")
+    def test_each_kind_it_takes_with_no_best_practice_beside_or_among_turn_s_own(self):
+        named = dict(DATA, inputs=["note", "gone"], preconditions=["late", "note"])
+        self.write(os.path.join(self.base, "note", "best-practice.json"), "{}")
         self.write(os.path.join(self.base, "late", "template.md"), "# <P>\n")
         self.assertEqual(
             practices.missing(self.path, named),
             [
-                "its input gone has no best practice beside it",
-                "its precondition late has no best practice beside it",
+                "its input gone has no best practice beside it or among Turn's own",
+                "its precondition late has no best practice beside it or among Turn's own",
             ],
+        )
+
+    def test_a_kind_it_takes_among_turn_s_own_where_none_lies_beside(self):
+        named = dict(DATA, inputs=["readme"])
+        self.assertEqual(practices.missing(self.path, named), [])
+        self.assertEqual(
+            practices.practice_of(self.path, "readme"),
+            os.path.join(practices.OWN, "readme", "best-practice.json"),
+        )
+
+    def test_a_kind_beside_it_before_turn_s_own(self):
+        self.write(os.path.join(self.base, "readme", "best-practice.json"), "{}")
+        self.assertEqual(
+            practices.practice_of(self.path, "readme"),
+            os.path.join(self.base, "readme", "best-practice.json"),
+        )
+
+    def test_a_kind_neither_beside_nor_among_turn_s_own_is_sought_beside(self):
+        self.assertEqual(
+            practices.practice_of(self.path, "gone"),
+            os.path.join(self.base, "gone", "best-practice.json"),
+        )
+
+    def test_the_markdown_links_each_kind_it_takes_where_its_best_practice_lies(self):
+        self.write(os.path.join(self.base, "late", "best-practice.json"), "{}")
+        named = dict(DATA, inputs=["late", "readme", "gone"])
+        own = os.path.relpath(os.path.join(practices.OWN, "readme"), self.folder)
+        own = own.replace(os.sep, "/")
+        self.assertIn(
+            "## Inputs\n\n- [late](../late/best-practice.md)\n"
+            f"- [readme]({own}/best-practice.md)\n- [gone](../gone/best-practice.md)\n",
+            practices.markdown(self.path, named),
+        )
+
+    def test_the_entries_at_the_top_of_a_template_that_is_a_folder(self):
+        for entry in (".claude-plugin/plugin.json", "skills/up/SKILL.md", "README.md", ".DS_Store"):
+            self.write(os.path.join(self.folder, "template", entry), "x")
+        named = dict(BY_TEMPLATE, template="template")
+        self.assertEqual(
+            practices.template(self.path, named), [".claude-plugin", "README.md", "skills"]
+        )
+        self.assertEqual(practices.missing(self.path, named), [])
+
+    def test_a_template_folder_that_is_not_there(self):
+        named = dict(BY_TEMPLATE, template="template")
+        self.assertEqual(
+            practices.missing(self.path, named), ["its template template is not beside it"]
         )
 
     def test_the_kind_is_the_name_of_its_folder(self):
@@ -396,6 +447,20 @@ class Leftovers(helpers.testing.FolderTest):
         self.assertEqual(
             practices.leftovers(self.path, data),
             [self.at("images", "template-a.svg"), self.at("template.md")],
+        )
+
+    def test_each_file_of_a_template_that_is_a_folder_is_held(self):
+        data = dict(DATA, template="template")
+        self.write(self.at("template", "skills", "up", "SKILL.md"), "s")
+        self.write(self.at("template", ".claude-plugin", "plugin.json"), "{}")
+        self.assertEqual(
+            practices.leftovers(self.path, data),
+            [
+                self.at("example.md"),
+                self.at("images", "a.svg"),
+                self.at("images", "template-a.svg"),
+                self.at("template.md"),
+            ],
         )
 
     def test_a_source_with_no_example_keeps_only_its_own_files(self):
@@ -494,7 +559,7 @@ class FaultsByTemplate(unittest.TestCase):
 class Markdown(unittest.TestCase):
     def test_names_the_source_its_example_is_copied_from(self):
         named = dict(DATA, example="example.md", source="../../README.md")
-        text = practices.markdown("kind", named)
+        text = practices.markdown(PATH, named)
         self.assertIn(
             "## Example\n\n[example.md](example.md),"
             " a copy of [../../README.md](../../README.md)\n",
@@ -503,15 +568,15 @@ class Markdown(unittest.TestCase):
 
     def test_links_the_template_and_the_example_it_names(self):
         named = dict(BY_TEMPLATE, template="template.md", example="example.md")
-        text = practices.markdown("kind", named)
+        text = practices.markdown(PATH, named)
         self.assertIn("## Template\n\n[template.md](template.md)\n", text)
         self.assertIn("## Example\n\n[example.md](example.md)\n", text)
-        self.assertNotIn("## Template", practices.markdown("kind", DATA))
-        self.assertNotIn("## Example", practices.markdown("kind", DATA))
+        self.assertNotIn("## Template", practices.markdown(PATH, DATA))
+        self.assertNotIn("## Example", practices.markdown(PATH, DATA))
 
     def test_links_each_kind_it_takes_after_the_example(self):
         named = dict(DATA, example="example.md", inputs=["a"], preconditions=["b", "c"])
-        text = practices.markdown("kind", named)
+        text = practices.markdown(PATH, named)
         self.assertIn(
             "[example.md](example.md)\n\n## Inputs\n\n- [a](../a/best-practice.md)\n\n"
             "## Preconditions\n\n- [b](../b/best-practice.md)\n- [c](../c/best-practice.md)\n\n"
@@ -520,13 +585,13 @@ class Markdown(unittest.TestCase):
         )
 
     def test_leaves_out_a_list_of_kinds_that_is_empty(self):
-        text = practices.markdown("kind", dict(DATA, preconditions=["b"]))
+        text = practices.markdown(PATH, dict(DATA, preconditions=["b"]))
         self.assertNotIn("## Inputs", text)
         self.assertIn("## Preconditions", text)
-        self.assertNotIn("## Preconditions", practices.markdown("kind", DATA))
+        self.assertNotIn("## Preconditions", practices.markdown(PATH, DATA))
 
     def test_holds_each_part_question_and_method_under_its_question(self):
-        text = practices.markdown("kind", DATA)
+        text = practices.markdown(PATH, DATA)
         expected = ["# `kind`\n", "The reader gets it.", "## Parts", "- **a**: A.", "  - **b**: B."]
         expected += [
             (
@@ -543,7 +608,7 @@ class Markdown(unittest.TestCase):
         c: dict[str, Any] = {"id": "c", "what": "C."}
         b: dict[str, Any] = {"id": "b", "what": "B.", "parts": [c]}
         data = {**DATA, "parts": [{"id": "a", "what": "A.", "parts": [b]}]}
-        lines = practices.markdown("kind", data).splitlines()
+        lines = practices.markdown(PATH, data).splitlines()
         start = lines.index("## Parts") + 2
         self.assertEqual(
             lines[start : start + 3], ["- **a**: A.", "  - **b**: B.", "    - **c**: C."]
@@ -552,7 +617,7 @@ class Markdown(unittest.TestCase):
     def test_leaves_out_what_a_best_practice_has_none_of(self):
         data = copy.deepcopy(DATA)
         del data["parts"]
-        text = practices.markdown("kind", data)
+        text = practices.markdown(PATH, data)
         self.assertNotIn("## Parts", text)
         self.assertEqual(text.count("**Steps**"), 1)
 

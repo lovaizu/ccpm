@@ -222,7 +222,7 @@ def form(path: str) -> list[str]:
     target = os.path.splitext(path)[0] + ".md"
     try:
         with open(target, encoding="utf-8") as f:
-            if f.read() != practices.markdown(practices.kind_of(path), data):
+            if f.read() != practices.markdown(path, data):
                 found.append(f"{target} is not as its JSON makes it; run plan.py markdown")
     except FileNotFoundError:
         found.append(f"{target} is missing; run plan.py markdown")
@@ -236,7 +236,7 @@ def markdown(path: str) -> list[str]:
     except files.Unreadable as why:
         return [str(why)]
     with open(os.path.splitext(path)[0] + ".md", "w", encoding="utf-8") as f:
-        f.write(practices.markdown(practices.kind_of(path), data))
+        f.write(practices.markdown(path, data))
     return []
 
 

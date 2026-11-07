@@ -19,9 +19,9 @@ import tree
 
 # Turn's own best practices, and the repository's, which a run takes over Turn's of the same kind;
 # each kind's lies in a folder of the kind's name, with its template and its example beside it.
-OWN = os.path.join(os.path.dirname(os.path.abspath(__file__)), "best-practices")
+OWN = practices.OWN
 REPOSITORY = os.path.join(".turn", "best-practices")
-PRACTICE = "best-practice.json"
+PRACTICE = practices.PRACTICE
 # The kind of the work that makes a best practice, by the best practice of a best practice.
 META = "meta"
 # The files of a work's folder.
@@ -251,7 +251,7 @@ def advance(run: str) -> str:
         path = following["practice"]
         made = read_practice(path)
         with open(os.path.splitext(path)[0] + ".md", "w", encoding="utf-8") as f:
-            f.write(practices.markdown(following["kind"], made))
+            f.write(practices.markdown(path, made))
     work["at"] = DONE
     save(run, data)
     return "" if following is None else begin(run, data, following)

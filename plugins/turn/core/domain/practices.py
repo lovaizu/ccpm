@@ -37,6 +37,9 @@ LINK = re.compile(r"(!?)(\[[^\]]*\]\()([^)\s]+)(\))")
 # `re.M ^ re.S`, mutants no test can tell apart.
 FENCE = re.compile(r"(?ms)(^```.*?^```)")
 KEPT = re.compile(r"^(?:[a-z][a-z0-9+.-]*:|#)")
+# Turn's own best practices, where a kind that lies beside no best practice's folder is sought.
+OWN = os.path.join(os.path.dirname(os.path.abspath(__file__)), "best-practices")
+PRACTICE = "best-practice.json"
 
 
 def part_ids(items: list[dict[str, Any]]) -> list[str]:
@@ -91,11 +94,23 @@ def kind_of(path: str) -> str:
     return os.path.basename(os.path.dirname(os.path.abspath(path)))
 
 
+def entries(folder: str) -> list[str]:
+    """The sections of a template that is a folder, such as the skeleton of a plugin: each folder
+    and file at its top, by name in order, but a hidden file, such as one the system keeps."""
+    return sorted(
+        name
+        for name in os.listdir(folder)
+        if not name.startswith(".") or os.path.isdir(os.path.join(folder, name))
+    )
+
+
 def template(path: str, data: dict[str, Any]) -> list[str] | None:
     """The sections of the template the best practice at the path names, read as its format is,
     or None where it names none; refuses, by FileNotFoundError, one that is not there."""
     if "template" not in data:
         return None
+    if os.path.isdir(beside(path, data["template"])):
+        return entries(beside(path, data["template"]))
     with open(beside(path, data["template"]), encoding="utf-8") as f:
         text = f.read()
     return keys(text) if data["template"].endswith(".json") else sections(text)
@@ -106,8 +121,11 @@ TAKEN = {"inputs": "input", "preconditions": "precondition"}
 
 
 def practice_of(path: str, kind: str) -> str:
-    """The path of the best practice of the kind beside the folder of the one at the path."""
-    return os.path.normpath(beside(path, os.path.join("..", kind, "best-practice.json")))
+    """The path of the best practice of the kind beside the folder of the one at the path, else
+    among Turn's own, else beside, where it is sought and not found."""
+    near = os.path.normpath(beside(path, os.path.join("..", kind, PRACTICE)))
+    own = os.path.join(OWN, kind, PRACTICE)
+    return own if not os.path.isfile(near) and os.path.isfile(own) else near
 
 
 def missing(path: str, data: dict[str, Any]) -> list[str]:
@@ -116,11 +134,11 @@ def missing(path: str, data: dict[str, Any]) -> list[str]:
     found = [
         f"its {key} {data[key]} is not beside it"
         for key in ("template", "example")
-        if key in data and not os.path.isfile(beside(path, data[key]))
+        if key in data and not os.path.exists(beside(path, data[key]))
     ]
     for key, called in TAKEN.items():
         found += [
-            f"its {called} {kind} has no best practice beside it"
+            f"its {called} {kind} has no best practice beside it or among Turn's own"
             for kind in data[key]
             if not os.path.isfile(practice_of(path, kind))
         ]
@@ -207,6 +225,7 @@ def kept(path: str, data: dict[str, Any]) -> set[str]:
             continue
         named = os.path.normpath(beside(path, data[key]))
         files.add(named)
+        files.update(os.path.join(r, n) for r, _, names in os.walk(named) for n in names)
         if named not in copied and os.path.isfile(named):
             with open(named, encoding="utf-8") as f:
                 files.update(beside(named, figure) for figure in shown(f.read()))
@@ -283,11 +302,18 @@ def parts(items: list[dict[str, Any]], depth: int = 0) -> list[str]:
     return lines
 
 
-def markdown(kind: str, data: dict[str, Any]) -> str:
-    """The best practice of the kind as Markdown: its goal, a link to its template and its example,
-    with the work the example is a copy of, a link to each kind it takes where it takes any, or
-    else its parts, and its intents, then the
-    practice for each intent, under the question it meets."""
+def link_of(path: str, kind: str) -> str:
+    """The link from the Markdown of the best practice at the path to that of the kind it takes."""
+    found = os.path.splitext(practice_of(path, kind))[0] + ".md"
+    return os.path.relpath(found, os.path.dirname(os.path.abspath(path))).replace(os.sep, "/")
+
+
+def markdown(path: str, data: dict[str, Any]) -> str:
+    """The best practice at the path as Markdown: its goal, a link to its template and its example,
+    with the work the example is a copy of, a link to each kind it takes where it takes any, to
+    where its best practice lies, or else its parts, and its intents, then the practice for each
+    intent, under the question it meets."""
+    kind = kind_of(path)
     questions = {q["id"]: q for q in data["intents"]}
     out = [f"# `{kind}`", "", "## Goal", "", data["goal"]]
     for key in ("template", "example"):
@@ -299,7 +325,7 @@ def markdown(kind: str, data: dict[str, Any]) -> str:
     for key in TAKEN:
         if data[key]:
             out += ["", f"## {key.capitalize()}", ""]
-            out += [f"- [{kind}](../{kind}/best-practice.md)" for kind in data[key]]
+            out += [f"- [{taken}]({link_of(path, taken)})" for taken in data[key]]
     if data.get("parts"):
         out += ["", "## Parts", "", *parts(data["parts"])]
     # A table and headings of their own, as the prose check reads a capital after a colon as a
