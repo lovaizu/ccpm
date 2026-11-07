@@ -5,7 +5,7 @@
   },
   "deliverables": [
     {
-      "name": "Check English prose with Vale and the Google style",
+      "name": "Every English document is checked against the Google style",
       "path": "dev/scripts/check.sh",
       "kind": "code",
       "status": "open",
@@ -79,7 +79,7 @@
       ]
     },
     {
-      "name": "Planning best practice",
+      "name": "rn can plan from a best practice for planning",
       "path": "plugins/rn/domain/best-practices/plan",
       "kind": "meta",
       "status": "open",
@@ -168,6 +168,11 @@
               "about": "A check before its results are trusted",
               "decided": "a test seen to fail first; a judge right on examples whose answer is known",
               "by": "research"
+            },
+            {
+              "about": "The intent of a deliverable's name",
+              "decided": "Reading a deliverable's name in the plan, does the user see what it brings toward the goal, so that they know where the work stands and what comes next without opening it?",
+              "by": "user"
             }
           ]
         },
@@ -179,6 +184,11 @@
               "about": "The skeleton and the decisions",
               "decided": "which deliverables and in what order up front, backward from the goal; each decision once its inputs are there, and the plan revised forward from each turn's result",
               "by": "research"
+            },
+            {
+              "about": "The practice of a deliverable's name",
+              "decided": "Write the one thing that holds toward the goal once the deliverable is made; leave out its path and kind, which have fields of their own",
+              "by": "user"
             }
           ]
         },
@@ -200,7 +210,7 @@
       ]
     },
     {
-      "name": "Shared plugin best practice reworked",
+      "name": "The shared plugin best practice says what rn and Lane share",
       "path": "dev/plugin-best-practice.md",
       "kind": "meta",
       "status": "open",
@@ -298,7 +308,7 @@
       ]
     },
     {
-      "name": "Lane's architecture fitted to rn",
+      "name": "Lane's design checks each practice step and each change",
       "path": "dev/lane/architecture.md",
       "kind": "architecture",
       "status": "open",
@@ -410,7 +420,7 @@
       ]
     },
     {
-      "name": "Lane's code fitted to rn",
+      "name": "Lane's code does what its design says",
       "path": "plugins/lane",
       "kind": "code",
       "status": "open",
@@ -463,7 +473,7 @@
       ]
     },
     {
-      "name": "Tests best practice",
+      "name": "rn can make tests from a best practice for tests",
       "path": "plugins/rn/domain/best-practices/tests",
       "kind": "meta",
       "status": "open",
@@ -516,7 +526,7 @@
       ]
     },
     {
-      "name": "rn's product vision",
+      "name": "rn's product vision says what rn and Lane are for",
       "path": "dev/rn/product-vision.md",
       "kind": "product-vision",
       "status": "open",
@@ -571,7 +581,7 @@
       ]
     },
     {
-      "name": "rn's README",
+      "name": "A newcomer learns from the README what rn does",
       "path": "plugins/rn/README.md",
       "kind": "readme",
       "status": "open",
@@ -634,7 +644,7 @@
       ]
     },
     {
-      "name": "rn's architecture",
+      "name": "rn's design says how a turn carries out a best practice",
       "path": "dev/rn/architecture.md",
       "kind": "architecture",
       "status": "open",
@@ -782,7 +792,7 @@
       ]
     },
     {
-      "name": "rn's code, with Pin and Turn removed",
+      "name": "rn works as designed, with Pin and Turn removed",
       "path": "plugins/rn",
       "kind": "code",
       "status": "open",
