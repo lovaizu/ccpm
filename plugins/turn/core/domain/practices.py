@@ -321,8 +321,8 @@ def trace_faults(data: dict[str, Any]) -> list[str]:
 
 def listed(takes: list[str]) -> str:
     """The texts in code, joined by commas, with or before the last."""
-    quoted = [f"`{t}`" for t in takes]
-    return " or ".join([", ".join(quoted[:-1]), quoted[-1]]) if len(quoted) > 1 else quoted[0]
+    *rest, last = [f"`{t}`" for t in takes]
+    return f"{', '.join(rest)} or {last}" if rest else last
 
 
 def step_line(n: int, step: dict[str, Any]) -> str:

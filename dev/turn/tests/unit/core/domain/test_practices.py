@@ -162,6 +162,21 @@ class Faults(unittest.TestCase):
             with self.subTest(opening=opening):
                 self.assertEqual(changed(traced), [expected])
 
+    def test_a_step_with_a_fault_after_one_with_no_trace(self):
+        # Given: a step with no trace, then one of a case with a trace
+        def traced(d):
+            d["practices"][1]["steps"] = [
+                {"text": "Do."},
+                {"text": "If it fails, mend it.", "trace": {"action": "run", "takes": ["make"]}},
+            ]
+
+        # Then: the later step's trace is still named
+        expected = (
+            "step 2 of Q2 holds only in its case, so it carries no trace, as a run outside the case"
+            " never makes it"
+        )
+        self.assertEqual(changed(traced), [expected])
+
     def test_a_step_that_opens_with_a_word_holding_where_or_if_is_no_case(self):
         def traced(d):
             d["practices"][0]["steps"][0]["text"] = "Wherever it runs, Iffy, do it."
