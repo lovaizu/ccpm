@@ -516,11 +516,13 @@
             },
             {
               "about": "The command name",
-              "decided": null
+              "decided": "one skill, /rn:up: with the user's words it starts the work, alone it picks the work up where it stopped; the user answers each point in plain words, so /rn:ty and /rn:gm go",
+              "by": "reasoning"
             },
             {
               "about": "Windows",
-              "decided": null
+              "decided": "rn runs on macOS and Linux, where python3 and the symbolic links work; the README names Windows as not yet tried",
+              "by": "reasoning"
             }
           ]
         },
