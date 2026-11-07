@@ -61,7 +61,7 @@ ROOT = os.path.normpath(os.path.join(HERE, "..", "..", "..", ".."))
 LANE = os.path.join(ROOT, "plugins", "lane")
 sys.path[:0] = [
     os.path.join(ROOT, "dev", "lane", "trials"),
-    os.path.join(LANE, "hooks", "lane", "core", "domain"),
+    os.path.join(LANE, "hooks", "lane", "domain"),
     os.path.join(LANE, "scripts"),
 ]
 

@@ -31,7 +31,7 @@ class TestCodePut(PlacedTest):
         # When: lane's code is put in it
         placed.code_put(self.plugin)
         # Then: hooks/lane/ is a copy of lane's code, the old gone, with lane's version
-        self.assertTrue(os.path.isfile(os.path.join(self.code(), "core", "domain", "guard.py")))
+        self.assertTrue(os.path.isfile(os.path.join(self.code(), "domain", "guard.py")))
         self.assertFalse(os.path.exists(os.path.join(self.code(), "old.py")))
         self.assertFalse(os.path.islink(self.code()))
         self.assertEqual(self.read(os.path.join(self.code(), "VERSION")), self.version() + "\n")
@@ -94,7 +94,7 @@ class TestCodePut(PlacedTest):
             # When: lane's code is put in it
             placed.code_put(lane)
         # Then: its hooks/lane/ is its code still, with no VERSION
-        self.assertTrue(os.path.isfile(os.path.join(code, "core", "domain", "guard.py")))
+        self.assertTrue(os.path.isfile(os.path.join(code, "domain", "guard.py")))
         self.assertFalse(os.path.exists(os.path.join(code, "VERSION")))
 
 

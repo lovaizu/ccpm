@@ -24,9 +24,8 @@ from lanes import run_only
 
 # What the proposal is told to be, when it is not: in the shape docs/lanes.md gives, named by its
 # whole path, as the user may run lay.py from any folder.
-# Lane's folder, as lay.py runs this module from Lane: four above its own, core/domain/ in
-# hooks/lane/.
-LANE = os.path.realpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), *[".."] * 4))
+# Lane's folder, as lay.py runs this module from Lane: three above its own, domain/ in hooks/lane/.
+LANE = os.path.realpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), *[".."] * 3))
 LANES_MD = os.path.join(LANE, "docs", "lanes.md")
 AGAIN = f"write the proposal again in the shape {LANES_MD} gives"
 ROUTES_MD = os.path.join(LANE, "docs", "routes.md")

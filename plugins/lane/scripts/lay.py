@@ -14,7 +14,6 @@ sys.path.insert(
         os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
         "hooks",
         "lane",
-        "core",
         "domain",
     ),
 )

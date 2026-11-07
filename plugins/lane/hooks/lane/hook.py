@@ -21,7 +21,7 @@ from typing import IO, Any
 # No module before it on the path has the name of one of lane's.
 sys.path.insert(
     0,  # pragma: no mutate
-    os.path.join(os.path.dirname(os.path.abspath(__file__)), "core", "domain"),
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "domain"),
 )
 
 import called

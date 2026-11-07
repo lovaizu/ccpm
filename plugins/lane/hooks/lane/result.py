@@ -20,7 +20,7 @@ from typing import IO
 sys.dont_write_bytecode = True
 HERE = os.path.dirname(os.path.abspath(__file__))
 # No module before it on the path has the name of one of lane's.
-sys.path.insert(0, os.path.join(HERE, "core", "domain"))  # pragma: no mutate
+sys.path.insert(0, os.path.join(HERE, "domain"))  # pragma: no mutate
 
 import lanes
 import routes

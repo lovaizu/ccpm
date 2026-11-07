@@ -23,7 +23,7 @@ LANE = os.path.normpath(
     os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "plugins", "lane")
 )
 CODE = os.path.join(LANE, "hooks", "lane")
-DOMAIN = os.path.join(CODE, "core", "domain")
+DOMAIN = os.path.join(CODE, "domain")
 SCRIPTS = os.path.join(LANE, "scripts")
 sys.path[:0] = [CODE, DOMAIN, SCRIPTS, os.path.join(LANE, "..", "..", "dev", "lane")]
 
