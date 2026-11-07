@@ -27,6 +27,7 @@ import subprocess
 import time
 from typing import Any, Callable
 
+import lanes
 import rules
 import schema
 
@@ -56,6 +57,30 @@ VALUES = {"type": "object", "additionalProperties": VALUE}
 PORTS: dict[str, dict[str, dict[str, Any]]] = {
     "values": {"in": shape(texts=TEXTS), "out": shape(values=VALUES)},
     "items": {"in": shape(input=TEXT, text=TEXT, values=VALUES), "out": shape(items=TEXTS)},
+    "steps": {
+        "in": shape(values=VALUES),
+        "out": shape(
+            lists={
+                "type": "array",
+                "items": shape(
+                    list=TEXT,
+                    steps={
+                        "type": "array",
+                        "items": shape(
+                            says=TEXT,
+                            lanes={
+                                "type": "array",
+                                "items": shape(
+                                    lane={"enum": sorted(lanes.TRACE)},
+                                    takes={**TEXTS, "minItems": 1},
+                                ),
+                            },
+                        ),
+                    },
+                ),
+            }
+        ),
+    },
 }
 # A top-level list item, its marker at the line's start, and the ID it begins with: capitals, a
 # hyphen or not, a number, and numbers after a point, set in Markdown's bold, code or brackets or

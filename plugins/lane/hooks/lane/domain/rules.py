@@ -45,6 +45,11 @@ def subagents(
     agent = {
         "name": {"type": "string", "description": "the subagent, as its file's name: field"},
         **(adapter("values") if adapters else {}),
+        **(
+            {"steps_adapter": {"type": "string", "description": "hooks/adapters/steps-<name>.py"}}
+            if adapters
+            else {}
+        ),
         "results": {
             "type": "array",
             "minItems": 1,
@@ -52,7 +57,7 @@ def subagents(
             "description": "the results it gives where no route is from it, as a plugin that uses"
             " yours routes them",
         },
-        "steps": {"type": "array", "minItems": 1, "items": shape(["step", "lanes"], step)},
+        "steps": {"type": "array", "items": shape(["step", "lanes"], step)},
     }
     return {"type": "array", "minItems": least, "items": shape(["name", "steps"], agent)}
 
@@ -201,6 +206,13 @@ def adapter_of(laid: dict[str, Any], name: str) -> str | None:
     names none."""
     found = next((a for a in laid["subagents"] if a["name"] == name), {})
     return found.get("adapter")
+
+
+def steps_adapter_of(laid: dict[str, Any], name: str) -> str | None:
+    """The steps adapter of the subagent of the name, of the rules `read` gives; None where it
+    names none."""
+    found = next((a for a in laid["subagents"] if a["name"] == name), {})
+    return found.get("steps_adapter")
 
 
 def results_of(laid: dict[str, Any], name: str) -> list[str]:

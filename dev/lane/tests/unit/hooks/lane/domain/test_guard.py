@@ -948,6 +948,14 @@ class TestRoutedDependency(RoutedTest):
         )
         self.assertEqual(self.main(self.notified("e1")), [guard.Said(asked)])
 
+    def test_examiner_is_told_nothing_as_it_starts(self):
+        # Given: examiner, whose own plugin's guard tells it its sentences
+        name = "checker:examiner"
+        # When: it starts
+        told = self.told(guard.started, self.subagent("SubagentStart", name, "e1"), name)
+        # Then: changelog's guard tells it nothing
+        self.assertEqual(told, [])
+
     def test_writer_is_stopped_starting_examiner(self):
         # Given: writer, and routes that name examiner, a dependency's subagent
         given = {"prompt": "p", "subagent_type": "checker:examiner"}
@@ -1464,19 +1472,20 @@ class TestRoutedCannot(RoutedTest):
                     self.told(check, self.subagent("SubagentStart", "planner", "p1"), "planner"), []
                 )
 
-    def test_a_routed_subagent_whose_file_has_no_step_is_told_its_result_has_none(self):
+    def test_a_routed_subagent_whose_file_has_no_step_is_told_its_result_as_it_starts(self):
         # Given: reviewer, with no lane but its result commands, its file holding no step
         reviewer = os.path.join(self.plugin, "agents", "reviewer.md")
         self.write(
             reviewer, "---\nname: reviewer\ndescription: d\nbackground: true\n---\n\nReview.\n"
         )
-        # When: it runs a command
+        # When: it starts, and runs a command
+        start = self.subagent("SubagentStart", "reviewer", "a1")
+        started = self.told(guard.started, start, "reviewer")
         told = self.told(guard.check, self.bash("ls", "changelog:reviewer"), "reviewer")
-        # Then: it is an error of its result, on step 0, a number no step has
-        self.assertTrue(told[0].error)
-        self.assertIn(
-            "lane cannot check result on step 0 of reviewer: step 0 no longer", told[0].text
-        )
+        # Then: it is told the sentence of its result as it starts, as no step says it, and its
+        # command goes through
+        said = helpers.END_REVIEWER.replace("${CLAUDE_PLUGIN_ROOT}", self.plugin)
+        self.assertEqual((started, told), ([guard.Said(said)], []))
 
 
 # writer's result command `done`, as it reads it, given the plugin's folder.
@@ -1754,15 +1763,23 @@ class TestEnd(LanesTest):
                 lane("every_item", "review.md", number=4),
             ]
         )
-        # When: it gives its result having read nothing, changed src/ untested and answered
-        # nothing
+        # When: it gives its result having read nothing, then once it read CHANGELOG.md, having
+        # changed src/ untested and answered nothing
         self.ran(helpers.kept_call("Write", file_path="src/a.py", content="x"))
+        first = self.check(self.bash(self.done))
+        self.write("CHANGELOG.md", "# Changelog\n")
+        self.ran(helpers.kept_call("Read", file_path="CHANGELOG.md"))
         told = self.check(self.bash(self.done))
-        # Then: each lane is told, with what is missing on the next line
+        # Then: step 1 is told first, its trace not come back, and then each lane of the end, with
+        # what is missing on the next line
+        step_1 = (
+            "Read `CHANGELOG.md` to learn its last version and its form. Read `CHANGELOG.md` to its"
+            " end.\n`CHANGELOG.md` unread from line 1"
+        )
+        self.assertEqual([t.text for t in first], [step_1])
         self.assertEqual(
             [t.text for t in told],
             [
-                "Read `CHANGELOG.md` to its end.\n`CHANGELOG.md` unread from line 1",
                 (
                     "After changing `src/`, pass `make test`.\n"
                     "`src/` changed with no test passed after"
@@ -2050,6 +2067,176 @@ class TestValueInCommand(LanesTest):
 
 # What a values adapter answers, giving writer a.md as its work.
 VALUES = '{"values": {"work": ["a.md"]}}'
+
+
+# writer's step 1 and step 2 as they read with read_whole and run_step laid on them.
+STEP_1 = (
+    "Read `CHANGELOG.md` to learn its last version and its form. Read `CHANGELOG.md` to its end."
+)
+STEP_2 = "Read the commits since then with `git log --oneline`. Run `git log --oneline`."
+
+
+class TestOrder(LanesTest):
+    """Steps of the trace kind, read_whole on step 1, run_step on step 2 and write_step on step 3:
+    a later step's trace is stopped while an earlier one's hasn't come back, and so is the end
+    while any hasn't."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.write("CHANGELOG.md", "# Changelog\n\n## 0.1.0\n")
+        self.lay_lanes(
+            [
+                lane("read_whole", "CHANGELOG.md", number=1),
+                lane("run_step", "git log --oneline", number=2),
+                lane("write_step", "CHANGELOG.md", number=3),
+            ]
+        )
+        self.done = DONE.format(root=self.plugin)
+
+    def came(self, tool: str, **given: str) -> None:
+        """writer's call of the tool with the input, come back."""
+        called.keep(helpers.KEPT, "a1", called.call(tool, given))
+
+    def test_a_later_steps_trace_before_an_earlier_ones_is_stopped_with_the_step_due(self):
+        for event in (self.bash("git log --oneline"), self.written("CHANGELOG.md")):
+            with self.subTest(event=event["tool_name"]):
+                # Given: writer, which has read nothing
+                # When: it runs step 2's command, or writes step 3's output
+                told = self.check(event)
+                # Then: it is stopped with step 1, due, and what of it is missing
+                said = f"{STEP_1}\n`CHANGELOG.md` unread from line 1"
+                self.assertEqual(told, [guard.Said(said)])
+
+    def test_the_due_steps_own_trace_and_a_call_of_no_step_go_through(self):
+        for event in (self.reading("CHANGELOG.md"), self.bash("ls"), self.reading("x.md")):
+            with self.subTest(event=event["tool_input"]):
+                # Given: writer, which has read nothing
+                # When: it reads CHANGELOG.md, step 1's trace, or makes a call no step names
+                # Then: the call goes through
+                self.assertEqual(self.check(event), [])
+
+    def test_once_a_trace_came_back_the_next_step_is_due(self):
+        # Given: writer read CHANGELOG.md whole
+        self.came("Read", file_path="CHANGELOG.md")
+        # When: it runs step 2's command, then writes step 3's output before it
+        ran, wrote = (
+            self.check(self.bash("git log --oneline")),
+            self.check(self.written("CHANGELOG.md")),
+        )
+        # Then: the command goes through, and the write is stopped with step 2
+        self.assertEqual(ran, [])
+        self.assertEqual(wrote, [guard.Said(f"{STEP_2}\n`git log --oneline` not run")])
+
+    def test_the_end_with_a_step_not_done_is_stopped_with_the_first(self):
+        # Given: writer read CHANGELOG.md whole and wrote it, but never ran step 2's command
+        self.came("Read", file_path="CHANGELOG.md")
+        self.came("Write", file_path="CHANGELOG.md", content="x")
+        # When: it gives its result
+        told = self.check(self.bash(self.done))
+        # Then: it is stopped with step 2, the first not done
+        self.assertEqual(told, [guard.Said(f"{STEP_2}\n`git log --oneline` not run")])
+
+    def test_the_end_with_every_step_done_goes_through(self):
+        # Given: writer took each step in order
+        self.came("Read", file_path="CHANGELOG.md")
+        self.came("Bash", command="git log --oneline")
+        self.came("Write", file_path="CHANGELOG.md", content="x")
+        # When: it gives its result
+        # Then: it goes through
+        self.assertEqual(self.check(self.bash(self.done)), [])
+
+
+class TestPortSteps(LanesTest):
+    """Step lists read through a steps adapter, given the start's values: each list held in its
+    order, two lists in none between them."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        adapter = os.path.join(self.plugin, "hooks", "adapters", "steps-w.py")
+        self.write(adapter, helpers.STEPS_ADAPTER)
+        self.lay_lanes([])
+        laid = self.read_json(os.path.join(self.plugin, "hooks", "lanes.json"))
+        laid["subagents"][0]["steps_adapter"] = "hooks/adapters/steps-w.py"
+        self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), laid)
+        self.given('{"intents": ["Q1", "Q2"]}')
+
+    def test_a_later_step_of_a_list_is_stopped_and_another_lists_first_goes_through(self):
+        # Given: writer, which has run nothing
+        # When: it runs `b`, Q1's second, and `c`, Q2's first
+        # Then: `b` is stopped with Q1's first, and `c` goes through
+        self.assertEqual(self.check(self.bash("b")), [guard.Said("Run a. Run `a`.\n`a` not run")])
+        self.assertEqual(self.check(self.bash("c")), [])
+
+    def test_the_steps_are_told_as_the_subagent_starts(self):
+        # Given: writer's start, its prompt kept
+        # When: it starts
+        told = guard.started(
+            self.plugin, "changelog", "writer", self.subagent("SubagentStart", "writer", "a1"), ""
+        )
+        # Then: it is told each list, in order
+        said = (
+            f"{guard.STEPS_TOLD}\n\n1. Run a. Run `a`.\n2. Run b. Run `b`."
+            "\n\n1. Run c. Run `c`.\n2. Run d. Run `d`."
+        )
+        self.assertEqual(told, [guard.Said(said)])
+
+    def test_an_adapter_that_fails_or_gives_a_lane_lay_py_refuses_is_an_error(self):
+        dependency = helpers.STEPS_ADAPTER.replace(
+            '["Run a.", "a"]', '["Run a.", "${dependency:x}/a"]'
+        )
+        for text, said in (
+            ("import sys\nsys.exit(2)\n", "the adapter hooks/adapters/steps-w.py exited 2"),
+            (dependency, "the adapter hooks/adapters/steps-w.py gives run_step `${dependency:x}`"),
+        ):
+            with self.subTest(said=said):
+                # Given: the adapter failing, or giving a command of a dependency not declared
+                self.write(os.path.join(self.plugin, "hooks", "adapters", "steps-w.py"), text)
+                # When: writer runs a command
+                told = self.check(self.bash("b"))
+                # Then: it is an error naming the adapter, which its maker must fix
+                self.assertTrue(told[0].error)
+                self.assertIn(f"lane cannot check the steps of writer: {said}", told[0].text)
+                self.assertIn("must fix its adapter hooks/adapters/steps-w.py", told[0].text)
+
+    def test_steps_whose_values_cannot_be_read_are_an_error(self):
+        for values, said in ((None, "gave back no ID"), ("hooks/adapters/values-w.py", "exited 3")):
+            with self.subTest(said=said):
+                # Given: writer's start not come back with its prompt, or its values adapter failing
+                self.setUp()
+                if values is None:
+                    os.remove(called.file(helpers.KEPT, "a1", False))
+                else:
+                    self.write(os.path.join(self.plugin, values), "import sys\nsys.exit(3)\n")
+                    laid = self.read_json(os.path.join(self.plugin, "hooks", "lanes.json"))
+                    laid["subagents"][0]["adapter"] = values
+                    self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), laid)
+                # When: writer runs a command
+                with mock.patch.object(guard, "WAIT", 0.0):
+                    told = self.check(self.bash("b"))
+                # Then: it is an error of its steps
+                self.assertTrue(told[0].error)
+                self.assertIn("lane cannot check the steps of writer:", told[0].text)
+                self.assertIn(said, told[0].text)
+
+    def test_the_steps_are_not_told_as_it_starts_before_its_prompt_is_kept(self):
+        # Given: writer's start, its prompt not kept yet
+        os.remove(called.file(helpers.KEPT, "a1", False))
+        # When: it starts
+        start = self.subagent("SubagentStart", "writer", "a1")
+        # Then: it is told nothing, as its steps are read given the start's values
+        self.assertEqual(guard.started(self.plugin, "changelog", "writer", start, ""), [])
+
+    def test_an_adapter_giving_a_lane_out_of_its_port_is_an_error(self):
+        # Given: the adapter giving a lane not of the trace kind
+        bad = helpers.STEPS_ADAPTER.replace('"lane": "run_step"', '"lane": "run_only"')
+        self.write(os.path.join(self.plugin, "hooks", "adapters", "steps-w.py"), bad)
+        # When: writer runs a command
+        told = self.check(self.bash("b"))
+        # Then: it is an error naming the adapter
+        self.assertTrue(told[0].error)
+        self.assertIn(
+            "the adapter hooks/adapters/steps-w.py answered out of the steps port", told[0].text
+        )
 
 
 class TestAdapterTime(LanesTest):

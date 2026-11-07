@@ -33,6 +33,20 @@ class TestLaid(helpers.WalkthroughTest):
             "  adapter hooks/adapters/values-w.py: its 2 cases given as they say\n", done.stdout
         )
 
+    def test_the_proposal_with_a_steps_adapter_is_printed_with_the_adapter_run_on_its_cases(self):
+        # Given: the walkthrough's proposal with writer's steps read by a steps adapter beside it
+        beside = os.path.join(os.path.dirname(helpers.README_PROPOSED), "changelog", "adapters")
+        self.write(os.path.join(beside, "steps-w.py"), helpers.STEPS_ADAPTER)
+        self.write(os.path.join(beside, "steps-w.json"), json.dumps(helpers.STEPS_CASES))
+        self.propose(lambda p: p["subagents"][0].update(steps_adapter="hooks/adapters/steps-w.py"))
+        # When: lay.py print is run on it
+        done = self.lay_py("print")
+        # Then: it shows the adapter given its cases as they say, and exits 0
+        self.assertEqual(done.returncode, 0, done.stdout)
+        self.assertIn(
+            "  adapter hooks/adapters/steps-w.py: its 2 cases given as they say\n", done.stdout
+        )
+
     def test_the_proposal_with_no_routes_is_printed_with_its_rules_alone(self):
         # Given: the walkthrough's proposal with its routes left out
         self.propose(lambda p: p.pop("routes"))

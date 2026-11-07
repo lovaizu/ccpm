@@ -40,7 +40,12 @@ PART = re.compile(
     + VALUE.pattern.replace("?P<name>", "?P<value>")
 )
 # The places of the lanes that hold commands, by the lane and the place.
-COMMANDS = [("run_only", "commands"), ("hold", "commands"), ("test_after", "test")]
+COMMANDS = [
+    ("run_only", "commands"),
+    ("hold", "commands"),
+    ("test_after", "test"),
+    ("run_step", "commands"),
+]
 
 
 def named(takes: list[str], root: str) -> list[str]:

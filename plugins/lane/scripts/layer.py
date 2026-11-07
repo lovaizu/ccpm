@@ -268,7 +268,7 @@ def written(path: str) -> str:
     laid_now = {a["name"]: a for a in read_before(root)["subagents"]}
     for agent in given["subagents"]:
         lanes_of = [{"step": s["step"], "lanes": s["lanes"]} for s in agent["steps"]]
-        named = {k: agent[k] for k in ("adapter", "results") if k in agent}
+        named = {k: agent[k] for k in ("adapter", "steps_adapter", "results") if k in agent}
         laid_now[agent["name"]] = {"name": agent["name"], **named, "steps": lanes_of}
     kept = {n: a for n, a in laid_now.items() if step.agent_file(root, n) is not None}
     hooked = checked(root, list(kept), now)

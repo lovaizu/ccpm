@@ -30,25 +30,32 @@ from lanes import (
     read_only,
     read_whole,
     run_only,
+    run_step,
     test_after,
     write_only,
+    write_step,
 )
 
 LANES = {
     "read_only": read_only,
     "read_whole": read_whole,
     "write_only": write_only,
+    "write_step": write_step,
     "in_form": in_form,
     "edit_only": edit_only,
     "run_only": run_only,
+    "run_step": run_step,
     "hold": hold,
     "test_after": test_after,
     "end_when": end_when,
     "every_item": every_item,
 }
-# The check of each lane checked as the subagent gives its result.
+# The lanes of the trace kind, each naming the call that shows its step done, which the guard holds
+# in the order of the steps, and at the end: each gives `traces(tool, value, given, done)`, whether
+# a call is its trace, and `missing(given, done)`, what of its trace hasn't come back.
+TRACE = {"read_whole": read_whole, "run_step": run_step, "write_step": write_step}
+# The check of each lane checked as the subagent gives its result, beside the traces.
 END = {
-    "read_whole": read_whole.missing,
     "test_after": test_after.missing,
     "end_when": end_when.missing,
     "every_item": every_item.missing,
@@ -111,8 +118,9 @@ def runs(lane: str, takes: list[str]) -> list[str]:
 
 
 def ends(lane: str) -> bool:
-    """Whether the lane is checked as the subagent gives its result."""
-    return lane in END
+    """Whether the lane is checked as the subagent gives its result: a lane of the end, or one of
+    the trace kind, whose step must be done by then."""
+    return lane in END or lane in TRACE
 
 
 def calls(lane: str) -> bool:

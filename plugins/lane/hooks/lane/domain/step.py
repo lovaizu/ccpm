@@ -10,6 +10,7 @@ from __future__ import annotations
 import itertools
 import os
 import re
+from typing import Any, Callable, NamedTuple
 
 import template
 
@@ -143,3 +144,38 @@ def holds(root: str, name: str, number: int, sentence: str, skill: bool = False)
     lines = lines_of(root, name, skill)
     where = span(lines, number)
     return where is not None and sentence in says(lines, where)
+
+
+class Step(NamedTuple):
+    """A step of a step list: what it says, as the role reads it, and its lanes of the trace kind,
+    each naming the call that shows the step done."""
+
+    says: str
+    traces: list[Any]
+
+
+def numbered(root: str, name: str, laid: list[Any], trace: Any) -> list[Step]:
+    """The step list of the numbered list of the subagent's steps: each step a lane is laid on, by
+    the lanes `laid`, each with its step's number, in the order of the numbers, saying its text as
+    it reads with its number left out, with its lanes of the kinds of `trace`; a step the file no
+    longer has left out, as the guard holds each lane to its step apart."""
+    lines = lines_of(root, name)
+    found = []
+    for number in sorted({g.step for g in laid if g.step}):
+        where = span(lines, number)
+        if where is None:
+            continue
+        said = says(lines, where)[len(f"{number}. ") :]
+        found.append(Step(said, [g for g in laid if g.step == number and g.lane in trace]))
+    return found
+
+
+def due(steps: list[Step], missing: Callable[[Step], str]) -> tuple[int, str] | None:
+    """The step due of the list, by its place, with what of its traces is missing, as `missing`
+    reads it: the first whose traces haven't all come back, a step with no trace passed over, as no
+    call shows it done; None where none is."""
+    for at, each in enumerate(steps):
+        left = missing(each) if each.traces else ""
+        if left:
+            return at, left
+    return None

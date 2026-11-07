@@ -155,6 +155,60 @@ class TestPart(helpers.PluginTest):
         self.assertIsNone(step.steps_file(self.plugin, "lead"))
 
 
+class TestNumbered(helpers.PluginTest):
+    def test_the_list_holds_each_step_laid_in_its_order_with_its_traces(self):
+        # Given: writer's steps, with lanes laid on step 3 and step 2, a trace on each, and one on
+        # step 0, which no step says
+        laid = [
+            helpers.rules.Laid(3, "write_step", ["CHANGELOG.md"]),
+            helpers.rules.Laid(2, "run_only", ["git log --oneline"]),
+            helpers.rules.Laid(2, "run_step", ["git log --oneline"]),
+            helpers.rules.Laid(0, "result", ["give"]),
+        ]
+        self.write(self.agent_file, helpers.WRITER)
+        # When: its step list is read, run_step and write_step being of the trace kind
+        found = step.numbered(self.plugin, "writer", laid, {"run_step", "write_step"})
+        # Then: it holds steps 2 and 3, in order, each saying its text with no number, with its
+        # traces alone
+        self.assertEqual(
+            found,
+            [
+                step.Step("Read the commits since then with `git log --oneline`.", [laid[2]]),
+                step.Step("Write the new entries into `CHANGELOG.md`.", [laid[0]]),
+            ],
+        )
+
+    def test_a_step_the_file_no_longer_has_is_left_out(self):
+        # Given: a lane laid on step 9, which writer's steps don't have
+        self.write(self.agent_file, helpers.WRITER)
+        laid = [helpers.rules.Laid(9, "run_step", ["make"])]
+        # When: its step list is read
+        # Then: it is empty
+        self.assertEqual(step.numbered(self.plugin, "writer", laid, {"run_step"}), [])
+
+
+class TestDue(unittest.TestCase):
+    def test_the_step_due_is_the_first_with_a_trace_not_come_back(self):
+        # Given: a step with no trace, one whose trace came back, and two whose traces did not
+        steps = [
+            step.Step("a", []),
+            step.Step("b", ["done"]),
+            step.Step("c", ["left"]),
+            step.Step("d", ["left"]),
+        ]
+        # When: the step due is read, what each trace leaves missing given
+        found = step.due(steps, lambda s: "" if s.traces == ["done"] else f"{s.says} missing")
+        # Then: it is c, the third, with what it misses
+        self.assertEqual(found, (2, "c missing"))
+
+    def test_no_step_is_due_where_every_trace_came_back(self):
+        # Given: steps whose traces each came back, or have none
+        steps = [step.Step("a", []), step.Step("b", ["done"])]
+        # When: the step due is read
+        # Then: none is
+        self.assertIsNone(step.due(steps, lambda s: ""))
+
+
 class TestSkill(helpers.PluginTest):
     """A skill of the plugin, `skills/<name>/SKILL.md`, whose step the routes are laid on."""
 

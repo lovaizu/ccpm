@@ -106,9 +106,13 @@ class TestWorkNotInForm(helpers.RoutesTest):
         self.claude.call(run, "Read", {"file_path": "CHANGELOG.md"})
         gave = self.result(run, "written")
         ended = self.claude.stop(run)
-        # Then: the first is denied with read_whole's sentence and what is missing, the second
+        # Then: the first is denied with step 1, which read_whole holds, and what is missing, the
+        # second
         # goes through, and its end tells the main conversation to start reviewer
-        said = "changelog: Read `CHANGELOG.md` to its end.\n`CHANGELOG.md` unread from line 1"
+        said = (
+            "changelog: Read `CHANGELOG.md` to learn its last version and its form. Read"
+            " `CHANGELOG.md` to its end.\n`CHANGELOG.md` unread from line 1"
+        )
         self.assertEqual((stopped.made, stopped.reason()), (False, said))
         self.assertEqual((gave.made, gave.said, ended.made), (True, {}, True))
         told = self.claude.notify(run)

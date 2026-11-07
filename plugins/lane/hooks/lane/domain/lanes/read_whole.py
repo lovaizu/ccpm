@@ -1,6 +1,7 @@
-"""read_whole: the subagent gives its result only once it has read each input its step names to its
-end: its Read calls, by their offset and limit, have covered every line of it, a Read naming no
-limit covering as many lines as the Read tool gives by default."""
+"""read_whole: a lane of the trace kind, whose step is done once the subagent has read each input
+its step names to its end: its Read calls, by their offset and limit, have covered every line of
+it, a Read naming no limit covering as many lines as the Read tool gives by default; a Read of an
+input is its trace."""
 
 from __future__ import annotations
 
@@ -10,6 +11,15 @@ from lanes.write_only import in_plugin
 ACTION = "read"
 WORDING = "Read `<input>` to its end."
 CALLS = True
+TRACE = True
+
+
+def traces(tool: str, value: str, given: dict[str, list[str]], done: Done) -> bool:
+    """Whether a call of the tool on the value, the field of its input a lane judges, is the trace
+    of the lane taking the things given: a Read of one of its inputs."""
+    file = done.full(value)
+    inputs = [done.full(in_plugin(named, done.root)) for named in given["input"]]
+    return tool == "Read" and file in inputs
 
 
 def missing(given: dict[str, list[str]], done: Done) -> str:

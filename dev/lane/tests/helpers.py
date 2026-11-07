@@ -447,6 +447,37 @@ ITEMS_CASES = [
     {"given": {"input": "r.md", "text": "none", "values": {}}, "gives": {"items": []}},
 ]
 
+# An adapter of the steps port giving the steps of each intent the start's `intents` names, each
+# step's trace a run of a command of its own, with its cases.
+STEPS_ADAPTER = """import json, sys
+
+PRACTICES = {"Q1": [["Run a.", "a"], ["Run b.", "b"]], "Q2": [["Run c.", "c"], ["Run d.", "d"]]}
+values = json.load(sys.stdin)["values"]
+lists = [
+    {"list": q, "steps": [
+        {"says": s, "lanes": [{"lane": "run_step", "takes": [c]}]} for s, c in PRACTICES[q]]}
+    for q in values.get("intents") or [] if q in PRACTICES
+]
+print(json.dumps({"lists": lists}))
+"""
+STEPS_CASES = [
+    {
+        "given": {"values": {"intents": ["Q2"]}},
+        "gives": {
+            "lists": [
+                {
+                    "list": "Q2",
+                    "steps": [
+                        {"says": "Run c.", "lanes": [{"lane": "run_step", "takes": ["c"]}]},
+                        {"says": "Run d.", "lanes": [{"lane": "run_step", "takes": ["d"]}]},
+                    ],
+                }
+            ]
+        },
+    },
+    {"given": {"values": {}}, "gives": {"lists": []}},
+]
+
 
 class LayTest(PluginTest):
     """A test of `lay.py` at the root of the repository `base`, the README's proposal kept where

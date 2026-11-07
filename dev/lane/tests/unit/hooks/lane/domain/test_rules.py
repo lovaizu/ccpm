@@ -72,14 +72,15 @@ class TestRead(helpers.PluginTest):
             (None, "hooks/lanes.json is not there"),
             ("{", "hooks/lanes.json holds no JSON"),
             ("[]", "hooks/lanes.json is out of its shape at $: expected an object"),
-            ('{"subagents": [{"name": "writer", "steps": []}]}', "$.subagents[0].steps"),
+            ('{"subagents": [{"name": "writer", "steps": {}}]}', "$.subagents[0].steps"),
             (laid("hands_off", ["git commit"]), "$.subagents[0].steps[0].lanes[0].lane"),
             (laid("run_only", [""]), "$.subagents[0].steps[0].lanes[0].takes[0]"),
             (laid("run_only", []), "$.subagents[0].steps[0].lanes[0].takes"),
         ):
             with self.subTest(text=text):
-                # Given: hooks/lanes.json not there, not JSON, not an object, a subagent of no
-                # step, a lane lane does not lay, a take empty, or a lane taking nothing
+                # Given: hooks/lanes.json not there, not JSON, not an object, a subagent whose
+                # steps are no list, a lane lane does not lay, a take empty, or a lane taking
+                # nothing
                 if text is not None:
                     self.write(path, text)
                 # When: it is read

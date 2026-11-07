@@ -13,9 +13,11 @@ TABLE = (
     ("read_only", "read", "Read only `<input>`.", False),
     ("read_whole", "read", "Read `<input>` to its end.", True),
     ("write_only", "write", "Write only `<output>`.", False),
+    ("write_step", "write", "Make `<output>`.", True),
     ("in_form", "write", "Write `<output>` in the form of `<form>`.", False),
     ("edit_only", "write", "Once `<output>` is made, change it only with Edit.", False),
     ("run_only", "run", "Run only `<commands>`.", False),
+    ("run_step", "run", "Run `<commands>`.", True),
     ("hold", "run", "Run `<commands>` only with the person's approval.", False),
     ("test_after", "test", "After changing `<output>`, pass `<test>`.", True),
     ("end_when", "end", "End only once `<output>` is made.", False),
@@ -44,9 +46,12 @@ class TestLanes(unittest.TestCase):
     def test_the_lanes_checked_at_the_end_are_those_docs_lanes_md_names(self):
         # Given: the lanes
         # When: those checked as the subagent gives its result are read
-        # Then: they are read_whole, test_after, end_when and every_item
+        # Then: they are the lanes of the trace kind, read_whole, write_step and run_step, and
+        # test_after, end_when and every_item
         ending = [lane for lane, *_ in TABLE if lanes.ends(lane)]
-        self.assertEqual(ending, ["read_whole", "test_after", "end_when", "every_item"])
+        traces = ["read_whole", "write_step", "run_step"]
+        self.assertEqual(ending, [*traces[:2], *traces[2:], "test_after", "end_when", "every_item"])
+        self.assertEqual([lane for lane, *_ in TABLE if lane in lanes.TRACE], traces)
         self.assertFalse(lanes.ends("result"))
 
 

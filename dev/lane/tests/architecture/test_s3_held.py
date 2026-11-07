@@ -308,6 +308,54 @@ ADD = "git add CHANGELOG.md"
 SAID = f"changelog: Run `{ADD}` only with the person's approval."
 
 
+class TestSteps(helpers.RunTest):
+    """steps.json: writer's step 2 held by run_step and step 3 by write_step, and the steps of its
+    intents read at the steps port by the tests' own adapter, from changelog's
+    domain/practices.json, as the sequence's branches of a trace before an earlier one's and of
+    steps read through an adapter draw."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.lay(self.trial_proposal("steps.json"), ("steps-practices",))
+
+    def write_entries(self) -> testing.Told:
+        """writer's write of CHANGELOG.md."""
+        return self.claude.call(WRITER, "Write", {"file_path": "CHANGELOG.md", "content": "x\n"})
+
+    def test_a_trace_before_an_earlier_steps_is_stopped_with_the_step_due(self):
+        # Given: writer started with no intent
+        self.claude.start(None, WRITER, "{}")
+        # When: it writes CHANGELOG.md before it runs git log --oneline, then runs it and writes
+        # again
+        early = self.write_entries()
+        ran = self.claude.call(WRITER, *bash("git log --oneline"))
+        later = self.write_entries()
+        # Then: the first write is denied with step 2 and what of it is missing, and the run and
+        # the second write go through
+        said = (
+            "changelog: Read the commits since then with `git log --oneline`. Run `git log"
+            " --oneline`.\n`git log --oneline` not run"
+        )
+        self.assertEqual((early.made, early.reason()), (False, said))
+        self.assertTrue(ran.made and later.made)
+
+    def test_the_steps_of_an_intent_read_through_the_adapter_are_held_in_their_order(self):
+        # Given: writer started on Q2, whose steps read CHANGELOG.md whole, then run git status
+        self.claude.start(None, WRITER, '{"intents": ["Q2"]}')
+        # When: it runs git status first, then reads CHANGELOG.md and runs git status again
+        early = self.claude.call(WRITER, *bash("git status"))
+        read = self.claude.call(WRITER, "Read", {"file_path": "CHANGELOG.md"})
+        later = self.claude.call(WRITER, *bash("git status"))
+        # Then: the first run is denied with Q2's first step, which no step of writer's own
+        # says, and its trace's sentence, and the read and the second run go through
+        said = (
+            "changelog: Read the file whole. Read `CHANGELOG.md` to its end.\n`CHANGELOG.md`"
+            " unread from line 1"
+        )
+        self.assertEqual((early.made, early.reason()), (False, said))
+        self.assertTrue(read.made and later.made)
+
+
 class TestHeldCommand(helpers.RunTest):
     def setUp(self) -> None:
         super().setUp()

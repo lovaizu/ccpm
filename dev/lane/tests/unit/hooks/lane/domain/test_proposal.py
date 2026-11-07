@@ -190,6 +190,43 @@ class TestLanes(ProposalTest):
             ],
         )
 
+    def test_a_steps_adapter_beside_the_proposal_is_run_on_its_cases_and_read(self):
+        # Given: a steps adapter for writer, kept beside the proposal with its cases, and no step
+        # of writer's own
+        steps = self.adapter("steps-w", helpers.STEPS_ADAPTER, helpers.STEPS_CASES)
+        self.propose(self.proposal(steps_adapter=steps, steps=[]))
+        # When: the proposal is read
+        (writer,) = proposal.proposal(helpers.PROPOSED)["subagents"]
+        # Then: the adapter is given with its source, its cases and how many it gave
+        beside = os.path.join(os.path.dirname(helpers.PROPOSED), "changelog", "adapters")
+        self.assertEqual(writer["steps_adapter"], steps)
+        self.assertEqual(
+            writer["adapters"],
+            [
+                {
+                    "path": steps,
+                    "source": os.path.join(beside, "steps-w.py"),
+                    "cases": os.path.join(beside, "steps-w.json"),
+                    "count": 2,
+                }
+            ],
+        )
+
+    def test_a_steps_adapter_giving_a_lane_lay_py_refuses_is_refused(self):
+        # Given: a steps adapter whose case gives run_step a command of a dependency not declared
+        text = helpers.STEPS_ADAPTER.replace('["Run c.", "c"]', '["Run c.", "${dependency:x}/c"]')
+        cases = json.loads(
+            json.dumps(helpers.STEPS_CASES).replace('["c"]', '["${dependency:x}/c"]')
+        )
+        steps = self.adapter("steps-w", text, cases)
+        # When: the proposal is read
+        # Then: it is refused, naming the adapter, its case and the lane
+        self.assertIn(
+            "names the adapter hooks/adapters/steps-w.py, which on its case 1 gives run_step"
+            " `${dependency:x}`",
+            self.refused(self.proposal(steps_adapter=steps, steps=[])),
+        )
+
     def test_a_subagents_steps_are_read_from_its_part(self):
         # Given: writer's entry naming its part, which holds its steps
         self.write(self.agent_file, helpers.PART_ENTRY.format(name="writer"))

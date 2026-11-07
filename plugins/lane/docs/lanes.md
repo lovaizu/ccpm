@@ -38,11 +38,13 @@ with no result, as [the routes](routes.md#how-a-subagent-gives-its-result) say.
 | Action | Lane | Sentence | Told when the subagent |
 |---|---|---|---|
 | read | read_only | Read only `<input>`. | reads anything else |
-| read | read_whole | Read `<input>` to its end. | gives its result with a part of it unread |
+| read | read_whole | Read `<input>` to its end. | makes the trace of a later step first, or gives its result with a part of it unread, as its trace kind holds it |
 | write | write_only | Write only `<output>`. | writes anything else |
+| write | write_step | Make `<output>`. | makes the trace of a later step first, or gives its result before, as its trace kind holds it |
 | write | in_form | Write `<output>` in the form of `<form>`. | writes it out of that form |
 | write | edit_only | Once `<output>` is made, change it only with Edit. | writes it whole with Write once it is there, or with NotebookEdit |
 | run | run_only | Run only `<commands>`. | runs any other command |
+| run | run_step | Run `<commands>`. | makes the trace of a later step first, or gives its result before, as its trace kind holds it |
 | run | hold | Run `<commands>` only with the person's approval. | runs one of them, which Claude Code puts to the person |
 | test | test_after | After changing `<output>`, pass `<test>`. | gives its result with a change not yet passed |
 | follow | follow_routes | Start each subagent you are told to start, until you are told to start no more. | starts another subagent, or ends while a start is due |
@@ -103,9 +105,26 @@ hold does not stop the command: lane answers Claude Code to ask the person, and 
 its permission prompt with the sentence, even under `bypassPermissions`. In `claude -p` no one can
 be asked, so Claude Code refuses the command.
 
-lane checks the lanes of the end, read_whole, test_after, end_when and every_item, as the subagent
-gives its result. So `lay.py write` gives a subagent with one of them a result command on its last
-step, with the result `done` where no route names it. The guard, the check script that lane's hooks
+read_whole, write_step and run_step are of the trace kind: each names the call that shows its step
+done, a file read to its end, a file made, or a command run, in this start. lane holds a subagent's
+steps in their order by these traces, and never by what a file says:
+
+- A step list is the numbered list of the subagent's steps, or a list your steps adapter gives, as
+  [the ports](#the-ports) say. The step due in a list is the first whose traces haven't all come
+  back. A step with no lane of the trace kind is passed over, as no call shows it done.
+- lane stops a call that is the trace of a later step of a list while its step due isn't done, and
+  tells the subagent what the step due says and, on the next line, what of its trace is missing.
+  Steps of two lists have no order between them.
+- lane stops the subagent's result command while any step's trace hasn't come back, and tells the
+  first such step the same way.
+- Lay a trace only on a step that every run takes. A step that some runs rightly leave out, such as
+  one for a case that doesn't always come up, carries no trace, or those runs would be stopped.
+
+run_step's commands are commands the subagent may run, beside those of its run_only lanes.
+
+lane checks the lanes of the end, test_after, end_when and every_item, and each trace, as the
+subagent gives its result. So `lay.py write` gives a subagent with one of them a result command on
+its last step, with the result `done` where no route names it. The guard, the check script that lane's hooks
 run, checks them as the subagent runs that command, from the calls it kept. It stops the command
 with each lane's sentence and, on the next line, what is missing. It holds each in_form output there
 to its form again too, as a command its lanes name may have written it. The result script is given
@@ -180,17 +199,18 @@ is held to this JSON Schema:
    "properties": {
     "name": {"type": "string", "description": "the subagent, as its file's name: field"},
     "adapter": {"type": "string", "description": "hooks/adapters/values-<name>.py"},
+    "steps_adapter": {"type": "string", "description": "hooks/adapters/steps-<name>.py"},
     "results": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^[a-z][a-z0-9_-]*$"},
                 "description": "the results it gives where no route is from it, as a plugin that uses yours routes them"},
-    "steps": {"type": "array", "minItems": 1, "items": {
+    "steps": {"type": "array", "items": {
      "type": "object", "required": ["step", "lanes"], "additionalProperties": false,
      "properties": {
       "step": {"type": "integer", "description": "its number in the subagent's Steps"},
       "lanes": {"type": "array", "minItems": 1, "items": {
        "type": "object", "required": ["lane", "takes"], "additionalProperties": false,
        "properties": {
-        "lane": {"enum": ["read_only", "read_whole", "write_only", "in_form", "edit_only",
-                          "run_only", "hold", "test_after", "end_when", "every_item"]},
+        "lane": {"enum": ["read_only", "read_whole", "write_only", "write_step", "in_form", "edit_only",
+                          "run_only", "run_step", "hold", "test_after", "end_when", "every_item"]},
         "takes": {"type": "array", "items": {"type": "string"}},
         "adapter": {"type": "string", "description": "hooks/adapters/<port>-<name>.py"}}}}}}}}}}}}
 ```
@@ -204,6 +224,11 @@ is held to this JSON Schema:
   rest. Write each as the step writes it, a script or a command word for word. So in_form
   takes its output and then its forms, and test_after its output and then its tests.
 - An adapter is named only where your text is in another form than lane's, as the ports below say.
+- `steps_adapter` names the adapter of the steps port, where a subagent's steps aren't a numbered
+  list of its own, such as the practices of the intents it carries out, read from your best
+  practices given the start's values. Each step list it gives is held in its order, as the lanes of
+  the trace kind say, beside the numbered list of the subagent's file. A subagent with a steps
+  adapter may give `steps` as an empty list.
 - `results` names the results a subagent gives where no route of your plugin is from it, such as
   `["asks", "done"]` for a subagent that ends to wait for an answer or with its work done. A plugin
   that depends on yours can then route it by those results, as
@@ -252,6 +277,7 @@ form, your plugin has an adapter for it:
 | Port | Given | Gives | lane's form |
 |---|---|---|---|
 | values | `{"texts": ["<the prompt>", "<each message sent after>", ...]}`, in the order they were sent | `{"values": {"<name>": ["<text>", ...]}}` or `{"values": {"<name>": null}}` | the JSON objects the texts hold, the whole text or each line that is one, the later over the earlier; a list for each of its texts, a text for itself, `null` for itself |
+| steps | `{"values": {<the start's values>}}` | `{"lists": [{"list": "<name>", "steps": [{"says": "<what the step says>", "lanes": [{"lane": "<a lane of the trace kind>", "takes": ["<text>", ...]}]}, ...]}, ...]}` | none: only an adapter reads it |
 | items | `{"input": "<path>", "text": "<its text>", "values": {<the start's values>}}` | `{"items": ["<ID>", ...]}` | each top-level item of a Markdown list beginning with an ID, such as `B-1`, `R33` or `KR1.1`, in bold, code or brackets or not, the values unread |
 
 The ports' JSON Schemas:
@@ -272,6 +298,20 @@ The ports' JSON Schemas:
                                      "additionalProperties": {"type": ["array", "null"], "items": {"type": "string"}}}}},
     "out": {"type": "object", "required": ["items"], "additionalProperties": false,
             "properties": {"items": {"type": "array", "items": {"type": "string"}}}}
+  },
+  "steps": {
+    "in": {"type": "object", "required": ["values"], "additionalProperties": false,
+           "properties": {"values": {"type": "object",
+                                     "additionalProperties": {"type": ["array", "null"], "items": {"type": "string"}}}}},
+    "out": {"type": "object", "required": ["lists"], "additionalProperties": false,
+            "properties": {"lists": {"type": "array", "items": {
+             "type": "object", "required": ["list", "steps"], "additionalProperties": false,
+             "properties": {"list": {"type": "string"}, "steps": {"type": "array", "items": {
+              "type": "object", "required": ["says", "lanes"], "additionalProperties": false,
+              "properties": {"says": {"type": "string"}, "lanes": {"type": "array", "items": {
+               "type": "object", "required": ["lane", "takes"], "additionalProperties": false,
+               "properties": {"lane": {"enum": ["read_whole", "run_step", "write_step"]},
+                              "takes": {"type": "array", "items": {"type": "string"}, "minItems": 1}}}}}}}}}}}}
   }
 }
 ```
@@ -351,9 +391,11 @@ only where the lane rests on the calls kept:
 | read_only | `input` | no |
 | read_whole | `input` | yes |
 | write_only | `output` | no |
+| write_step | `output` | yes |
 | in_form | `output`, `form` | no |
 | edit_only | `output` | no |
 | run_only | `commands` | no |
+| run_step | `commands` | yes |
 | hold | `commands` | no |
 | test_after | `output`, `test` | yes |
 | follow_routes | none | yes |
@@ -381,7 +423,12 @@ step of it, those it gives and those laid before alike, and names them and the s
 
 Once lanes are laid in the subagent, the guard gives it the part whole as it starts, through the
 SubagentStart hook's `additionalContext`, with your plugin's folder put in place of
-`${CLAUDE_PLUGIN_ROOT}`, as Claude Code does in the entry's body. So the subagent has its steps
+`${CLAUDE_PLUGIN_ROOT}`, as Claude Code does in the entry's body. Beside the part, it gives each
+sentence that no step says, as where the part holds no numbered list, such as the result command
+of its last step, and the step lists that its steps adapter gives. Claude Code 2.1.317 sends
+SubagentStart before the Agent call that started the subagent comes back with its prompt. So the
+guard gives those step lists only where the prompt is kept already. It holds the steps in their
+order either way. So the subagent has its steps
 before its first call, and no lane is needed for reading them. Where the part is missing, that is
 an error, and the guard tells it in the form
 `<plugin>: lane cannot check the lanes of <subagent>: <what is wrong>.` above.

@@ -225,6 +225,8 @@ def subagent(root: str, given: dict[str, Any], beside: str = "") -> dict[str, An
     adapters = []
     if "adapter" in given:
         adapters.append(adapter(given["adapter"], "values", root, beside, f"{name}"))
+    if "steps_adapter" in given:
+        adapters.append(adapter(given["steps_adapter"], "steps", root, beside, f"{name}"))
     file, lines = agent_lines(root, name)
     in_background(root, name)
     numbers: list[int] = []
@@ -247,7 +249,7 @@ def subagent(root: str, given: dict[str, Any], beside: str = "") -> dict[str, An
                 adapters.append(adapter(lane["adapter"], PORTS[lane["lane"]], root, beside, on))
         s["span"] = where
     found = {"name": name, "file": file, "lines": lines, "steps": given["steps"]}
-    named = {k: given[k] for k in ("adapter", "results") if k in given}
+    named = {k: given[k] for k in ("adapter", "steps_adapter", "results") if k in given}
     return {**found, **named, "adapters": adapters}
 
 
@@ -306,6 +308,13 @@ def adapter(named: str, port: str, root: str, beside: str, on: str) -> dict[str,
             gave = ports.run(source, port, case["given"], root, ports.TIME)
         except ports.Failed as why:
             raise wrong(f"names the adapter {named}, which on its case {number} {why}") from None
+        for lane in [
+            g for each in gave.get("lists", []) for s in each["steps"] for g in s["lanes"]
+        ]:
+            why = lanes.refused(lane["lane"], lane["takes"], root).said
+            if why:
+                said = f"gives {lane['lane']} {why}".replace(" ,", ",")
+                raise wrong(f"names the adapter {named}, which on its case {number} {said}")
         if gave != case["gives"]:
             raise wrong(
                 f"names the adapter {named}, which on its case {number} gave"

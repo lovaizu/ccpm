@@ -187,6 +187,7 @@ class Subagent(NamedTuple):
     adapter: str | None
     memo: dict[str, Any]
     start: float
+    steps: str | None = None
 
     def foreign(self) -> bool:
         """Whether the subagent is a dependency's, `<dependency>:<name>`, which the routes name and
@@ -320,7 +321,10 @@ def subagent(
         found.append(rules.Laid(last, "result", [routes.command(name, on) for on in ons]))
     session, agent = called.record(plugin, event["session_id"]), event["agent_id"]
     adapter = rules.adapter_of(given, name)
-    return Subagent(root, plugin, name, session, agent, found, routed, ons, adapter, {}, start)
+    steps_ = rules.steps_adapter_of(given, name)
+    return Subagent(
+        root, plugin, name, session, agent, found, routed, ons, adapter, {}, start, steps_
+    )
 
 
 def on(lane: rules.Laid, s: Subagent) -> str:
@@ -337,7 +341,9 @@ def held(lane: rules.Laid, s: Subagent) -> None:
         wrong = f"`lay.py write` would now refuse it: {lane.lane} {why.said}".replace(" ,", ",")
         raise Cannot(cannot(on(lane, s), wrong, LAY_AGAIN.format(plugin=s.plugin)))
     said = lanes.sentence(lane.lane, lane.takes)
-    if not step.holds(s.root, s.name, lane.step, said):
+    # A lane on step 0 is said by no step, as its file holds no numbered list: the subagent is told
+    # it as it starts.
+    if lane.step and not step.holds(s.root, s.name, lane.step, said):
         gone = f"step {lane.step} no longer says: {said}".rstrip(".")
         raise Cannot(cannot(on(lane, s), gone, LAY_AGAIN.format(plugin=s.plugin)))
 
@@ -459,8 +465,105 @@ def tool_checked(s: Subagent, event: dict[str, Any]) -> list[Said]:
     out = schema.held({"type": "string"}, value)
     if out is not None:
         raise Cannot(unshaped(s.name, f"$.tool_input.{field}{out.told()[1:]}"))
+    early = order_checked(s, tool, value, event["cwd"])
+    if early:
+        return early
     checks = {"read": read_checked, "write": write_checked, "run": run_checked}
     return checks[action](s, event, value)
+
+
+def lists(s: Subagent) -> list[list[step.Step]]:
+    """The subagent's step lists: the numbered list of its steps, and each list its steps adapter
+    gives, once for the event."""
+    if "lists" not in s.memo:
+        found = [step.numbered(s.root, s.name, s.laid, lanes.TRACE), *port_lists(s)]
+        s.memo["lists"] = [each for each in found if each]
+    return s.memo["lists"]
+
+
+def port_lists(s: Subagent) -> list[list[step.Step]]:
+    """The step lists the subagent's steps adapter gives, given the start's values, each step's
+    lanes on step 0, as no step of its file says them; none where it names no adapter. Stops with
+    Cannot where the adapter fails, the values can't be read, or a lane it gives is one
+    `lay.py print` refuses."""
+    if s.steps is None:
+        return []
+    on = f"the steps of {s.name}"
+    fix = ADAPTER.format(plugin=s.plugin, adapter=s.steps)
+    try:
+        given = {"values": s.values()}
+    except ports.Failed as why:
+        fixed = ADAPTER.format(plugin=s.plugin, adapter=s.adapter)
+        raise Cannot(cannot(on, f"the adapter {s.adapter} {why}", fixed)) from None
+    except ValueError as why:
+        raise Cannot(cannot(on, str(why), START.format(name=s.name))) from None
+    try:
+        adapter = os.path.join(s.root, s.steps)
+        found = ports.run(adapter, "steps", given, s.root, ports.left(s.start))
+    except ports.Failed as why:
+        raise Cannot(cannot(on, f"the adapter {s.steps} {why}", fix)) from None
+    made = []
+    for each in found["lists"]:
+        steps_ = []
+        for given_step in each["steps"]:
+            laid = [rules.Laid(0, g["lane"], g["takes"]) for g in given_step["lanes"]]
+            for lane in laid:
+                why = lanes.refused(lane.lane, lane.takes, s.root).said
+                if why:
+                    said = f"the adapter {s.steps} gives {lane.lane} {why}".replace(" ,", ",")
+                    raise Cannot(cannot(on, said, fix))
+            steps_.append(step.Step(given_step["says"], laid))
+        made.append(steps_)
+    return made
+
+
+def done_of(lane: rules.Laid, s: Subagent, cwd: str) -> Done:
+    """What the subagent did, as the lane holds it: its calls kept, all and of this start, and the
+    start's values its commands hold."""
+    calls, run = called.calls(s.session, s.agent), called.calls(s.session, s.agent, True)
+    return Done(s.root, cwd, calls, run, items_of(lane, s), parts_of(lane, s) or {})
+
+
+def trace_missing(s: Subagent, each: step.Step, cwd: str) -> str:
+    """What of the step's traces hasn't come back, each trace's said, "" where all have; a trace
+    whose value is given as null counts as come back."""
+    found = []
+    for lane in each.traces:
+        held(lane, s)
+        places = places_of(lane, s)
+        left = lanes.TRACE[lane.lane].missing(places, done_of(lane, s, cwd)) if places else ""
+        found += [left] if left else []
+    return "; ".join(found)
+
+
+def is_trace(s: Subagent, each: step.Step, tool: str, value: str, cwd: str) -> bool:
+    """Whether a call of the tool on the value is a trace of the step."""
+    for lane in each.traces:
+        places = places_of(lane, s)
+        if places and lanes.TRACE[lane.lane].traces(tool, value, places, done_of(lane, s, cwd)):
+            return True
+    return False
+
+
+def told_step(each: step.Step, left: str) -> Said:
+    """What the subagent is told of the step due: what it says, its traces' sentences after where
+    it doesn't say them, and what of them is missing on the next line."""
+    unsaid = [lanes.sentence(g.lane, g.takes) for g in each.traces]
+    said = " ".join([each.says, *[u for u in unsaid if u not in each.says]])
+    return Said(f"{said}\n{left}")
+
+
+def order_checked(s: Subagent, tool: str, value: str, cwd: str) -> list[Said]:
+    """What a call is told that is the trace of a later step of a list while an earlier step's
+    trace hasn't come back: the step due, as `told_step` says; nothing otherwise, a call that is
+    the due step's own trace among it, as steps of two lists have no order between them."""
+    for each in lists(s):
+        due = step.due(each, lambda st: trace_missing(s, st, cwd))
+        if due is None or is_trace(s, each[due[0]], tool, value, cwd):
+            continue
+        if any(is_trace(s, later, tool, value, cwd) for later in each[due[0] + 1 :]):
+            return [told_step(each[due[0]], due[1])]
+    return []
 
 
 def starts_ours(s: Subagent, tool: str, given: dict[str, Any]) -> bool:
@@ -577,6 +680,10 @@ def ended(s: Subagent, cwd: str) -> list[Said]:
     """What the subagent's result command is told: each lane checked at the end, and each in_form
     lane, whose work is missing, by its sentence, with what is missing on the next line; nothing
     where none is."""
+    for each in lists(s):
+        due = step.due(each, lambda st: trace_missing(s, st, cwd))
+        if due is not None:
+            return [told_step(each[due[0]], due[1])]
     told = []
     run = called.calls(s.session, s.agent, True)
     checks = {**lanes.END, "in_form": in_form.missing}
@@ -654,7 +761,27 @@ def start_kept(s: Subagent, event: dict[str, Any]) -> list[Said]:
             fix = PART.format(plugin=s.plugin, part=shown)
             raise Cannot(cannot(f"the lanes of {s.name}", f"its part {shown} is not there", fix))
         told.append(Said(text.replace(step.ROOT, s.root), plain=True))
+    # A dependency's subagent is told its own sentences by its own plugin's guard.
+    unsaid = [] if s.foreign() else [g for g in s.laid if not g.step]
+    told += [Said(lanes.sentence(g.lane, run_only.named(g.takes, s.root))) for g in unsaid]
+    # The adapter reads the steps given the start's values, which its Agent call may not have
+    # brought back yet, so they're told here only where it has; the guard holds them either way.
+    if s.steps is not None and called.texts(s.session, s.agent) is not None:
+        told.append(Said(STEPS_TOLD + "".join(map(listed_steps, port_lists(s)))))
     return told
+
+
+# What a subagent is told of the steps its steps adapter gives, as it starts.
+STEPS_TOLD = "Take these steps, each list in its order, its steps' traces held by lane:"
+
+
+def listed_steps(each: list[step.Step]) -> str:
+    """The step list as the subagent is told it: each step numbered, with its traces' sentences."""
+    lines = []
+    for n, s in enumerate(each, 1):
+        said = " ".join([s.says, *[lanes.sentence(g.lane, g.takes) for g in s.traces]])
+        lines.append(f"{n}. {said}")
+    return "\n\n" + "\n".join(lines)
 
 
 def end_kept(s: Subagent, event: dict[str, Any]) -> list[Said]:
