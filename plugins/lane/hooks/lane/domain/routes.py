@@ -329,7 +329,10 @@ def in_place(
 
 # What the main conversation is told where a subagent's route waits: the user, not a subagent,
 # gives the next move, and the subagent resumed with their answer gives the next result.
-REPLY = "Put its point to the user, and resume `{named}` with their answer by SendMessage."
+REPLY = (
+    "Put its point to the user as it wrote it, in your reply, and resume `{named}` with their"
+    " answer by SendMessage."
+)
 
 
 def line(found: Next, plugin: str) -> str:

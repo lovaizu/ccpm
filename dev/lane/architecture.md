@@ -175,18 +175,22 @@ The main conversation alone starts each role of the plugin, and the guard stops 
 within a role. Where the routes name the command that gives each start its text, the guard lets a
 start through only with the text that the command's last run gave for that role. It lets a resume
 through only with the line `The person's answer, word for word:` and the person's messages since
-the role's point, as they wrote them. Nothing else goes into either.
+the role's point, as they wrote them. While a role's point waits, it stops a dialog that would put
+the point to the person, such as `AskUserQuestion`, and has the conversation put the point as the
+role wrote it, in its reply. Nothing else goes into either.
 
 *Why*: a role started by another role carries what that role chose to pass on, not what the plugin
 gives it, as [Q5](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q5) says. A text
 reworded on the way is a start that no one approved, and an answer summed up loses what the person
-meant, so the role works from other words than the plugin and the person gave.
+meant, so the role works from other words than the plugin and the person gave. A dialog's options
+are the conversation's rewording of the point, and the person's choice among them reaches no
+prompt, so the guard would hold no words of the person's to resume the role with.
 
 ### The guard holds the main conversation only while its run lasts
 
 The guard holds the main conversation from the call of the skill that the routes name until a route
 starts no more. There it stops or keeps going only the starts of roles, the messages that resume
-one, and the end of a turn. It reads the conversation's other events, such as a task notification
+one, a dialog asking the person while a role's point waits, and the end of a turn. It reads the conversation's other events, such as a task notification
 or the person's prompt, only to tell it the next start or to keep the person's words. Without a
 run's record, as after the system clears its temporary folder, no run is on. Lane holds the order
 against drift, not against the person: a turn that ends with a start due goes on once with the
@@ -550,8 +554,13 @@ sequenceDiagram
         alt writer gave written, or reviewer gave more
           H-->>CC: context, the result and the start its route names (Answer)
         else the role gave a result whose route waits, such as asks
-          H-->>CC: context, the result, put its point to the user, and resume it with their answer (Answer)
-          M->>CC: puts the role's point as given
+          H-->>CC: context, the result, put its point to the user in your reply, and resume it with their answer (Answer)
+          opt the main conversation puts the point in a dialog [AskUserQuestion]
+            CC->>H: PreToolUse of the dialog (Event)
+            H->>G: checks it (Event)
+            H-->>CC: deny, with the sentence and the point to put in its reply (Answer)
+          end
+          M->>CC: puts the role's point as given, in its reply
           CC->>U: shows it
           U->>CC: answers (Person's words)
           CC->>H: UserPromptSubmit of the answer (Event)

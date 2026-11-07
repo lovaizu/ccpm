@@ -459,6 +459,34 @@ class TestResume(Run):
         self.resume(agent, f"{trial.trying.ANSWERED}\n")
         self.assertIn("not the person's words alone", self.judged()[0])
 
+    def test_dialog_while_waiting_stopped(self) -> None:
+        agent = self.asked_dialog(stop=True)
+        self.resume(agent, f"{trial.trying.ANSWERED}\n{ANSWER}")
+        self.assertEqual(self.judged(), [])
+
+    def test_dialog_while_waiting_went_through(self) -> None:
+        agent = self.asked_dialog(stop=False)
+        self.resume(agent, f"{trial.trying.ANSWERED}\n{ANSWER}")
+        wrong = self.judged()
+        self.assertEqual(len(wrong), 1)
+        self.assertIn("put reviewer's point in a dialog", wrong[0])
+
+    def asked_dialog(self, stop: bool) -> str:
+        """Adds writer, and reviewer giving asks, then good once resumed, the main conversation's
+        dialog putting its point, stopped where stop, and the person's answer; reviewer's ID."""
+        self.ran("writer")
+        self.start("writer", ["written"])
+        self.ran("reviewer")
+        agent = self.start("reviewer", ["asks", "good"])
+        self.main.ended(agent)
+        given = {"questions": [{"question": "Which?", "options": [{"label": "None"}]}]}
+        if stop:
+            self.main.stopped("AskUserQuestion", given)
+        else:
+            self.main.call("AskUserQuestion", given, "User chose None")
+        self.main.prompt(ANSWER)
+        return agent
+
     def test_not_passed_on(self) -> None:
         self.asked()
         self.assertEqual(

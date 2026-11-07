@@ -236,9 +236,11 @@ conversation is your own work, and Lane checks none of it.
 
 **How does Lane tell my plugin's run from my own work in the same conversation?** A run starts when
 your skill is called, as you type `/changelog:write` or as an AI calls it. It ends once a route
-starts no more. Outside a run, Lane checks nothing. Within it, Lane checks only three things in the
-main conversation: each start of a subagent, each message that resumes a subagent, and the end of
-a turn.
+starts no more. Outside a run, Lane checks nothing. Within it, Lane checks only four things in the
+main conversation: each start of a subagent, each message that resumes a subagent, a dialog that
+asks the person while a subagent's point waits, and the end of a turn. Lane stops such a dialog,
+as its options would reword the point, and has the point put in the reply, so the person answers
+in their own words.
 
 ![Lane makes a rule's sentence and its check from one type and its values](images/how-rule.svg)
 

@@ -574,8 +574,8 @@ class TestWaits(RoutedTest):
     `waits`: the run goes on with no start due while the user answers."""
 
     ASKED = (
-        "reviewer gave `asks`. Put its point to the user, and resume `changelog:reviewer` with"
-        " their answer by SendMessage."
+        "reviewer gave `asks`. Put its point to the user as it wrote it, in your reply, and resume"
+        " `changelog:reviewer` with their answer by SendMessage."
     )
 
     def setUp(self) -> None:
@@ -840,6 +840,25 @@ class TestAnswer(RoutedTest):
         )
         self.assertEqual(second, [guard.Said(head), guard.Said(both, plain=True)])
 
+    def test_a_dialog_putting_the_point_is_stopped_with_how_to_put_it(self):
+        # Given: reviewer's point to be put to the user
+        # When: the main conversation puts it in a dialog of options
+        given = {"questions": [{"question": "Which?", "options": [{"label": "None"}]}]}
+        told = self.main(self.event("AskUserQuestion", given, None))
+        # Then: it is stopped, told to put the point as reviewer wrote it in its reply
+        said = guard.ASK_IN_REPLY.format(named="changelog:reviewer")
+        self.assertEqual(told, [guard.Said(helpers.FOLLOW), guard.Said(said)])
+
+    def test_a_dialog_while_no_point_waits_goes_through(self):
+        # Given: the user answered, and reviewer was resumed with the answer, so it runs again
+        self.main(self.prompt("It is 0.2.0."))
+        self.resume(f"{guard.ANSWER}\nIt is 0.2.0.")
+        self.told(guard.started, self.subagent("SubagentStart", "reviewer", "r1"), "reviewer")
+        # When: the main conversation opens a dialog meanwhile
+        given = {"questions": [{"question": "Which?", "options": [{"label": "None"}]}]}
+        # Then: it goes through, as only a point waiting is put in the reply
+        self.assertEqual(self.main(self.event("AskUserQuestion", given, None)), [])
+
     def test_a_resume_with_the_persons_words_alone_goes_through(self):
         # Given: the user answered
         self.main(self.prompt("It is 0.2.0."))
@@ -943,8 +962,8 @@ class TestRoutedDependency(RoutedTest):
         self.assertEqual(start, [guard.Said(wait)])
         self.assertEqual(called.result(helpers.KEPT, "e1"), "asks")
         asked = (
-            "checker:examiner gave `asks`. Put its point to the user, and resume"
-            " `checker:examiner` with their answer by SendMessage."
+            "checker:examiner gave `asks`. Put its point to the user as it wrote it, in your reply,"
+            " and resume `checker:examiner` with their answer by SendMessage."
         )
         self.assertEqual(self.main(self.notified("e1")), [guard.Said(asked)])
 

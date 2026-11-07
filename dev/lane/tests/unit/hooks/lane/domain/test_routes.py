@@ -446,8 +446,8 @@ class TestLine(unittest.TestCase):
             (
                 routes.Next("reply", "reviewer", ("reviewer", "asks")),
                 (
-                    "reviewer gave `asks`. Put its point to the user, and resume"
-                    " `changelog:reviewer` with their answer by SendMessage."
+                    "reviewer gave `asks`. Put its point to the user as it wrote it, in your"
+                    " reply, and resume `changelog:reviewer` with their answer by SendMessage."
                 ),
             ),
         ):

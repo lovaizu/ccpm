@@ -622,7 +622,8 @@ def order_judged(
     """What the main conversation's starts and resumes show against the intent's order: what went
     wrong, and each break tried, with how it ended: a start the order does not name, a start with
     other text than the last run of the command Lane tells for its subagent printed, as `ran_told`
-    finds it, a resume in other words than the
+    finds it, a dialog putting a subagent's point to the person in options of the conversation's
+    own while the point waits, a resume in other words than the
     person's since the subagent's point, the main conversation ending with a start due or with the
     person's answer not passed on, and a subagent ending with no result. A start that went through
     with that text, the start due, and a resume with the person's words alone, the point waiting,
@@ -639,6 +640,12 @@ def order_judged(
         ran = ran_told(c, routed, root)
         if ran:
             texts[ran] = c["stdout"] if c["stdout"] is not None else c["result"]
+        if c["tool"] == "AskUserQuestion" and waiting:
+            shown = f"the main conversation put {waiting[1]}'s point in a dialog"
+            breaks.append(f"{shown}: {ended(c, [follow_routes.WORDING])}")
+            if not stopped(c):
+                wrong.append(f"{shown}, whose options reword it, and it went through")
+            continue
         if c["tool"] == "SendMessage":
             if resume_judged(c, main, waiting, wrong, breaks) and waiting:
                 due, waiting = next_due(waiting[0], waiting[1], left, each)

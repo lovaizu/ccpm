@@ -225,8 +225,8 @@ class TestWaits(helpers.RoutesTest):
     of a result whose route waits draws."""
 
     ASKED = (
-        "changelog: reviewer gave `asks`. Put its point to the user, and resume"
-        " `changelog:reviewer` with their answer by SendMessage."
+        "changelog: reviewer gave `asks`. Put its point to the user as it wrote it, in your reply,"
+        " and resume `changelog:reviewer` with their answer by SendMessage."
     )
 
     def proposed(self) -> dict:
@@ -238,14 +238,23 @@ class TestWaits(helpers.RoutesTest):
     def test_a_result_whose_route_waits_has_the_point_put_and_the_answer_resume_it(self):
         # Given: writer gave `written`
         self.through(writer(1), "written")
-        # When: reviewer gives `asks`, the main conversation ends its turn to put the point, and
-        # tries a start meanwhile
+        # When: reviewer gives `asks`, the main conversation tries to put the point in a dialog,
+        # ends its turn to put it in its reply, and tries a start meanwhile
         told = self.through(reviewer(1), "asks")
+        options = [{"label": "None", "description": "Keep the entries."}]
+        dialog = self.claude.call(
+            None, "AskUserQuestion", {"questions": [{"question": "Which?", "options": options}]}
+        )
         ended = self.claude.end_turn()
         meanwhile = self.claude.start(None, writer(2), "Write again.")
         # Then: it is told to put reviewer's point and resume it with the answer, its turn ends,
         # and the start is denied with that line, as the run goes on
         self.assertEqual(told[-1], self.ASKED)
+        in_reply = (
+            "changelog: Put the point of `changelog:reviewer` to the person as it wrote it, in your"
+            " reply, and end your turn: their answer comes back as their next prompt."
+        )
+        self.assertEqual((dialog.made, dialog.reason()), (False, f"{FOLLOWED}\n{in_reply}"))
         self.assertEqual((ended.made, ended.said), (True, {}))
         self.assertEqual((meanwhile.made, meanwhile.reason()), (False, f"{FOLLOWED}\n{self.ASKED}"))
         # And: the user's answer is told the message that resumes reviewer; resumed with it by

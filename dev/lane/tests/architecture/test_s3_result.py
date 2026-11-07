@@ -204,8 +204,8 @@ class TestDependency(helpers.RoutesTest):
         self.assertEqual([t.made for t in (started, read, asks, ended)], [True] * 4)
         after = self.claude.notify(EXAMINER)
         asked = (
-            "changelog: checker:examiner gave `asks`. Put its point to the user, and resume"
-            " `checker:examiner` with their answer by SendMessage."
+            "changelog: checker:examiner gave `asks`. Put its point to the user as it wrote it, in"
+            " your reply, and resume `checker:examiner` with their answer by SendMessage."
         )
         self.assertEqual(after, [asked])
         # And: once the main conversation resumes examiner with the answer, and it gives `done`,

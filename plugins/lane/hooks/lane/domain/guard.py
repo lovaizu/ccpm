@@ -131,6 +131,14 @@ RESUME_ONLY = (
     "Resume `{named}` only with the person's answer, word for word, as this message holds it:"
 )
 NO_ANSWER = "The person hasn't answered the point of `{named}` yet."
+# What the main conversation is told of a dialog that would put a subagent's point to the person in
+# its own options, whose answer would reach no prompt.
+ASK_IN_REPLY = (
+    "Put the point of `{named}` to the person as it wrote it, in your reply, and end your turn:"
+    " their answer comes back as their next prompt."
+)
+# The tool by which the main conversation asks the person in a dialog of its own options.
+DIALOG = "AskUserQuestion"
 RESUME_NONE = "Resume `{named}` only when you are told to, with the person's answer to its point."
 # How a prompt that brings a subagent's end to the main conversation begins, as Claude Code 2.1.319
 # gave it, which is no word of the person's.
@@ -1096,11 +1104,17 @@ def start_checked(m: Main, event: dict[str, Any]) -> list[Said]:
     skill moves: a start not due, or a message resuming a start that ended with no result, stopped
     with the sentence and the start due; a start due with a text other than what the routes'
     command printed for it, stopped with the text to start it with; a message resuming a start of
-    the run, as `resume_checked` says; any other call goes through."""
+    the run, as `resume_checked` says; a dialog asking the person while a subagent's point waits for
+    them, stopped with how to put the point; any other call goes through."""
     tool, given = event["tool_name"], event["tool_input"]
     if not m.on() or m.moving() is not None:
         return []
     due = m.due()
+    if tool == DIALOG:
+        if due.kind != "reply":
+            return []
+        named = routes.kind(due.name, m.plugin)
+        return [Said(follow_routes.WORDING), Said(ASK_IN_REPLY.format(named=named))]
     if starting(m, tool, given):
         if follow_routes.allows(tool, given, due, m.plugin):
             return text_checked(m, tool, given)

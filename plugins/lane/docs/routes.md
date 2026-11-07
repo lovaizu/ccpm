@@ -131,12 +131,14 @@ where the skill is called again while the run waits for the user's answer. Anoth
 and the main conversation is told its first start. Otherwise a run whose user chose not to answer
 would wait with no way to be let go.
 
-Outside a run, lane checks nothing in the main conversation. Within it, lane checks only three
+Outside a run, lane checks nothing in the main conversation. Within it, lane checks only four
 things there:
 
 - each start of a subagent: an Agent call of a subagent of your plugin, or of one the routes name,
   and a Skill call of a dependency's skill they name;
 - each SendMessage call that resumes a subagent the run started;
+- each AskUserQuestion call while a subagent's point waits for the person, as
+  [The person's answer](#the-persons-answer) says;
 - the end of the main conversation's turn.
 
 Every other call of the main conversation goes on, as the same conversation holds the work you do
@@ -185,6 +187,11 @@ The person's answer, word for word:
   collects its own.
 - lane stops a SendMessage to any other start of the run, one that's running or whose point
   doesn't wait, and tells the start due. Only the person's answer to a point resumes a start.
+- While the point waits, lane stops an AskUserQuestion call, a dialog of the main conversation's
+  own options, and tells it
+  ``Put the point of `<plugin>:<name>` to the person as it wrote it, in your reply, and end your turn: their answer comes back as their next prompt.``
+  The options would reword the point, and the person's choice among them reaches lane as no
+  prompt, so no words of theirs would resume the subagent.
 
 ## A subagent of a dependency
 
@@ -297,7 +304,7 @@ Each line is headed by your plugin's name:
 | the subagent started in the background has not ended | ``Wait for `<plugin>:<name>` to end: you are told the next start once it has.`` |
 | starts of a subagent in `fan_out` have not all ended | ``Wait for every run of `<plugin>:<name>` to end: you are told the next start once each has.`` |
 | the subagent ended with a result whose route has a `to` | ``<name> gave `<on>`. Start `<plugin>:<to>`.`` |
-| the subagent ended with a result whose route waits | ``<name> gave `<on>`. Put its point to the user, and resume `<plugin>:<name>` with their answer by SendMessage.``, and the run goes on with no start due |
+| the subagent ended with a result whose route waits | ``<name> gave `<on>`. Put its point to the user as it wrote it, in your reply, and resume `<plugin>:<name>` with their answer by SendMessage.``, and the run goes on with no start due |
 | the subagent ended with a result whose route has neither a `to` nor `waits` | ``<name> gave `<on>`. Start no more subagents.``, once, and the run ends |
 | several starts of the subagent ended, giving a result as [Starts at once](#starts-at-once) takes it | ``The <n> runs of <name> gave `<on>`.``, then the start as above |
 | the subagent ended with no result, after it was kept going once | ``<name> ended with no result. Start `<plugin>:<name>` again.``, as its start led to no route |
