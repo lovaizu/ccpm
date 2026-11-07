@@ -455,3 +455,42 @@ class Points(Base):
         self.assertIn("has no design tree", str(stop.exception))
         with self.assertRaises(starts.Stop):
             starts.practice_of(RUN, "man-page")
+
+
+class OnBranches(Base):
+    """Runs that lie on rn's work branches, `rn/<name>`, with another branch checked out."""
+
+    def away(self):
+        """The walkthrough's run committed on its branch, main checked out after it."""
+        self.commits(helpers.decided(helpers.walkthrough(), 1, "Q6", "the list", None))
+        self.git("switch", "-q", "main")
+        self.assertFalse(os.path.exists(runs.tree_path(RUN)))
+
+    def test_the_one_run_waiting_on_its_branch_is_picked_up_there(self):
+        self.away()
+        cut = starts.start("planner")
+        self.assertIn(f"# Picking up\n\n{RUN} stopped at D1 README.md", cut)
+        self.assertEqual(
+            helpers.repository.ran("git", "branch", "--show-current"), "rn/20261108-tidy-dry-run"
+        )
+        self.assertTrue(os.path.exists(runs.tree_path(RUN)))
+
+    def test_more_than_one_waiting_on_any_branch_asks_which(self):
+        self.away()
+        self.lays(helpers.walkthrough(), ".rn/20261107-tidy-readme")
+        cut = starts.start("planner")
+        self.assertIn(f"- .rn/20261107-tidy-readme: {GOAL}\n- {RUN}: {GOAL}", cut)
+        self.assertEqual(helpers.repository.ran("git", "branch", "--show-current"), "main")
+
+    def test_a_run_named_on_its_branch_is_handed_and_picked_up_there(self):
+        self.away()
+        self.lays(helpers.walkthrough(), ".rn/20261107-tidy-readme")
+        self.handed({"run": RUN})
+        self.assertIn("# Picking up", starts.start("planner"))
+        self.assertEqual(
+            helpers.repository.ran("git", "branch", "--show-current"), "rn/20261108-tidy-dry-run"
+        )
+
+    def test_a_branch_of_rn_with_no_run_on_it_is_none(self):
+        self.git("branch", "rn/20261101-gone")
+        self.assertIn("rn has no work left to pick up", starts.start("planner"))

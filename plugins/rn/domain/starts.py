@@ -77,9 +77,28 @@ def questions(run: str) -> Callable[[str], dict[str, str]]:
 
 
 def tree_of(run: str) -> dict[str, Any] | None:
-    """The run's design tree; None where it has none yet."""
+    """The run's design tree, as the repository holds it, or else as the run's branch last
+    committed it, where the repository has another branch out; None where it has none yet."""
     path = runs.tree_path(run)
-    return trees.load(path) if os.path.exists(path) else None
+    if os.path.exists(path):
+        return trees.load(path)
+    text = repository.committed(run, path)
+    if text is None:
+        return None
+    return files.held(path, json.loads(text), files.read(trees.FORM))
+
+
+def waiting() -> list[str]:
+    """Each run of the repository, those it holds and those that only their branches hold, in
+    order."""
+    return sorted(set(runs.listed()) | set(repository.branch_runs()))
+
+
+def bring(run: str) -> None:
+    """Checks out the run's branch where the repository doesn't hold the run's tree, so its files
+    are there to go on with."""
+    if not os.path.exists(runs.tree_path(run)):
+        repository.on_branch(run)
 
 
 def the_tree(run: str) -> dict[str, Any]:
@@ -112,11 +131,11 @@ def at_hand() -> str:
     cut = [r for r in runs.listed() if runs.kept(r, AT) is not None]
     if cut:
         return max(cut, key=lambda r: os.path.getmtime(os.path.join(runs.temporary(r), AT)))
-    going = [r for r in runs.listed() if left(r)]
+    going = [r for r in waiting() if left(r)]
     if len(going) == 1:
         return going[0]
-    if not going and len(runs.listed()) == 1:
-        return runs.listed()[0]
+    if not going and len(waiting()) == 1:
+        return waiting()[0]
     raise Stop("no run is at hand: type /rn:up alone to pick one up")
 
 
@@ -224,7 +243,7 @@ def planner_cut() -> str:
     run = runs.handed()
     if run is not None:
         return handed_cut(run, runs.pending(run) or {})
-    going = [r for r in runs.listed() if left(r)]
+    going = [r for r in waiting() if left(r)]
     for each in going:
         good = turn_good(each)
         if good is not None:
@@ -237,6 +256,7 @@ def planner_cut() -> str:
         listed = "\n".join(f"- {r}: {the_tree(r)['goal']['decided']}" for r in going)
         said = GIVE.format(result="asks")
         return f"{line(values)}\n{said}, each run with work left by its goal:\n{listed}"
+    bring(going[0])
     return pickup_cut(going[0])
 
 
@@ -255,6 +275,7 @@ def handed_cut(run: str, kept: dict[str, Any]) -> str:
             f" best practice says. Write it with {writing(run)}, then"
             f" commit with {command('commit', run)}, and give the result it names."
         )
+    bring(run)
     tree = the_tree(run)
     if not kept.get("decisions"):
         mark(run, {"kind": "pickup"})

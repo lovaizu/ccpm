@@ -81,6 +81,9 @@ pre-commit:
     - "dev/lane/tests/unit/trials/test_record.py"
     - "dev/lane/trials/record.py"
     - "dev/lane/trials/trying.py"
+    - "dev/rn/tests/product-vision/tidy/tidy/cli.py"
+    - "dev/rn/tests/product-vision/tidy/tidy/kinds.py"
+    - "dev/rn/tests/product-vision/tidy/tidy/mover.py"
     - "dev/scripts/changed.sh"
     - "dev/scripts/check.sh"
     - "dev/scripts/figures.py"
@@ -137,6 +140,9 @@ pre-commit:
     - "plugins/rn/domain/best-practices/prompt/best-practice.md"
     - "plugins/rn/domain/best-practices/refactor-code/best-practice.md"
     - "plugins/rn/domain/best-practices/refactor-doc/best-practice.md"
+    # Vale lints the front matter of Markdown, the scope text.frontmatter, which lovaizu/checks
+    # doesn't ignore yet, so the skill's allowed-tools fail on their parentheses.
+    - "plugins/rn/skills/up/SKILL.md"
     - "pyproject.toml"
 
 # The checks of what a push changes, on the commits pushed, which git gives

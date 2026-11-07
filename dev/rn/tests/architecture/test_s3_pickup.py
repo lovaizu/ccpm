@@ -59,3 +59,15 @@ class Pickup(helpers.FlowTest):
         self.assertTrue(
             self.ends(planner)[0].startswith("rn: planner gave `ready`. Start `rn:generator`.")
         )
+
+    def test_the_one_run_waiting_on_its_branch_picks_up_there(self):
+        # Given: the run committed on its branch, and the user back on main in a new conversation
+        self.commits(helpers.decided(helpers.walkthrough(), 1, "Q6", "the list", None))
+        self.git("switch", "-q", "main")
+        # When: the user types /rn:up alone, and the planner starts with its cut
+        planner, values, cut = self.picks_up()
+        # Then: rn checks out the run's branch and picks up the run at its point
+        self.assertEqual(values["run"], RUN)
+        self.assertIn("# Picking up", cut)
+        self.assertEqual(self.main_runs("status"), f'Picking up "{GOAL}" at 1. README.md.\n')
+        self.assertEqual(self.gave(self.runs(planner, self.tree_command("commit", RUN))), "asks")

@@ -12,8 +12,10 @@
 set -e
 
 plugin=$1
-paths=$({ find "plugins/$plugin" "dev/$plugin" -name '*.py' -exec dirname {} \; &&
-  echo dev/lane && echo dev/lane/trials; } | sort -u)
+# The repository a product vision trial works in, such as dev/rn/tests/product-vision/tidy/, is
+# the trial's subject, a project of its own, and not the plugin's code, so it's left out.
+paths=$({ find "plugins/$plugin" "dev/$plugin" -name '*.py' -not -path '*/product-vision/tidy/*' \
+  -exec dirname {} \; && echo dev/lane && echo dev/lane/trials; } | sort -u)
 files=$(git ls-files --cached --others --exclude-standard "plugins/$plugin" "dev/$plugin" \
-  | grep '\.py$')
+  | grep '\.py$' | grep -v '/product-vision/tidy/')
 pyrefly check $(printf -- '--search-path %s ' $paths) $files

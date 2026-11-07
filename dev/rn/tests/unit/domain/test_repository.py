@@ -86,3 +86,8 @@ class Push(helpers.RunTest):
         with self.assertRaises(repository.Failed):
             repository.push(RUN, "g", "b")
         self.assertEqual(len(repository.messages(RUN)), 1)
+
+
+class NoRepository(helpers.testing.GitTest):
+    def test_outside_a_repository_no_branch_holds_a_run(self):
+        self.assertEqual(repository.branch_runs(), [])

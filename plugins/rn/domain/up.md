@@ -78,8 +78,8 @@ call of the skill begins a new run, which hands the planner the change.
 
 Where the request is nothing or a run's folder, and Lane's line says the planner gave `ready` or
 `asks`, first run `tree.py status` and tell the user what it printed, such as
-`Picking up "<the goal>" at 2. tidy/cli.py, README.md done.` Where the planner names more than one
-run, ask the user which to pick up, by each one's goal, and call `rn:up` with their choice's
+`Picking up "<the goal>" at 2. tidy/cli.py, README.md done.` rn finds a run on its own branch, `rn/<the run's name>`, and checks that branch out to pick it up.
+Where the planner names more than one run, ask the user which to pick up, by each one's goal, and call `rn:up` with their choice's
 folder.
 
 ## What you're given back, and what you give

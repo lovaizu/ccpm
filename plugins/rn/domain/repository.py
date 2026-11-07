@@ -52,6 +52,20 @@ def on_branch(run: str) -> None:
     ran("git", "switch", *([] if exists.returncode == 0 else ["-c"]), name)
 
 
+def branch_runs() -> list[str]:
+    """Each run that a branch of rn's, `rn/<name>`, holds the design tree of, by its folder."""
+    try:
+        said = ran("git", "for-each-ref", "--format=%(refname:short)", "refs/heads/rn/")
+    except Failed:
+        return []
+    found = []
+    for name in said.splitlines():
+        run = os.path.join(".rn", name[len("rn/") :])
+        if committed(run, os.path.join(run, "design-tree.json")) is not None:
+            found.append(run)
+    return found
+
+
 def committed(run: str, path: str) -> str | None:
     """The file at the path as the run's branch last committed it; None where the branch or the
     file isn't there."""

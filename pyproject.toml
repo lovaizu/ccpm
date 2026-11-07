@@ -53,7 +53,8 @@ extend-select = ["E501"]
 python-version = "3.9"
 
 [tool.pytest.ini_options]
-# unittest's own pattern, which the tests are named by; the ux trials, run by hand, are left out.
+# unittest's own pattern, which the tests are named by; the repository a product vision trial
+# works in, with tests of its own, is left out.
 python_files = ["test*.py"]
-norecursedirs = [".*", "__pycache__", "node_modules", "ux"]
+norecursedirs = [".*", "__pycache__", "node_modules", "tidy"]
 addopts = ["-p", "no:cacheprovider"]
