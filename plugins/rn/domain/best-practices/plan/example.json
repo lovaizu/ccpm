@@ -92,7 +92,12 @@
             },
             {
               "about": "Languages and tools",
-              "decided": "a practice holds for any language and tool the kind is made with, and names one only as an example, as a practice tied to one language fails a deliverable made in another; the project picks its own tools",
+              "decided": "a practice holds for any language and tool the kind is made with, and names one only as an example, as a practice tied to one language fails a deliverable made in another",
+              "by": "user"
+            },
+            {
+              "about": "Intent, not method",
+              "decided": "a practice gives the intent, its established ways, and when each fits, and the design tree picks the way and the tool for each deliverable's case, settled with the user where it's theirs",
               "by": "user"
             }
           ]
@@ -172,12 +177,12 @@
           "decisions": [
             {
               "about": "What a machine measures",
-              "decided": "the project's own linter measures each function's cyclomatic complexity against McCabe's limit of 10, and its returns, branches, arguments, and statements, on the code and its tests alike, and the existing check finds copied code, so the evaluator reads only what no machine measures, such as cohesion and coupling, which have no established limit",
+              "decided": "each function stays simple enough to grasp and to test, its cyclomatic complexity measured by a machine against McCabe's established limit of 10, with its size and copied code, on the code and its tests alike, so the evaluator reads only what no machine measures, such as cohesion and coupling, which have no established limit; the plan picks the tool and any other limit for its case",
               "by": "research"
             },
             {
               "about": "Dependency direction",
-              "decided": "the project's own tools check each rule of which module may depend on which, where the language has such a tool, and the evaluator reads it where none does",
+              "decided": "which module may depend on which is a rule the design states, checked by a machine where the language has a tool for it and read by the evaluator where it has none; the plan picks the tool",
               "by": "reasoning"
             }
           ]
@@ -206,7 +211,21 @@
       "preconditions": [],
       "status": "open",
       "intents": [
-        {"id": "Q1", "good": false, "decisions": []},
+        {
+          "id": "Q1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The complexity check",
+              "decided": "ruff's C901 at McCabe's limit of 10 and its PLR09 size rules, on the code and the tests, in dev/scripts/check.sh, as ruff already checks the repository",
+              "by": "reasoning"
+            },
+            {
+              "about": "The dependency check",
+              "decided": null
+            }
+          ]
+        },
         {"id": "Q2", "good": false, "decisions": []},
         {"id": "Q3", "good": false, "decisions": []},
         {"id": "Q4", "good": false, "decisions": []},
