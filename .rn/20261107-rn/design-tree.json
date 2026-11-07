@@ -133,7 +133,7 @@
       "kind": "plugin",
       "inputs": ["dev/rn/architecture.md"],
       "preconditions": ["plugins/lane"],
-      "status": "open",
+      "status": "doing",
       "intents": [
         {"id": "Q1", "good": false, "decisions": []},
         {"id": "Q2", "good": false, "decisions": []},
@@ -201,6 +201,31 @@
             {
               "about": "Lane's old part folders",
               "decided": "Lane's guard stops reading prompts/ and core/roles/ in the change that removes Pin and Turn, as their parts lie there until then",
+              "by": "reasoning"
+            },
+            {
+              "about": "A start value that is null",
+              "decided": "a run lane whose value is null lets no command through, and a run_step command the adapter gives counts as allowed, so the generator gets run_only",
+              "by": "reasoning"
+            },
+            {
+              "about": "A file a role must not read",
+              "decided": "Lane gains a lane that stops a read of the files it names, and the planner and generator get it for the design tree, as no role reads the tree",
+              "by": "reasoning"
+            },
+            {
+              "about": "Permission for tree.py",
+              "decided": "the skill names tree.py in allowed-tools, and the prose check reads no front matter, as a prompt per call costs the user time",
+              "by": "reasoning"
+            },
+            {
+              "about": "Picking up a run on another branch",
+              "decided": "/rn:up alone finds the runs on rn's work branches and picks up the one the user means, asking only where more than one waits",
+              "by": "reasoning"
+            },
+            {
+              "about": "Tests written after the code",
+              "decided": "rn's unit tests are judged by CI's mutation run: each surviving mutant gets a test seen to fail first, then the fix",
               "by": "reasoning"
             }
           ]
