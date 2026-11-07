@@ -37,10 +37,11 @@ A newer lane may word these sentences anew. `lay.py up` then puts the new words 
 Your AI writes the routes under the `routes` key of the proposal, held to this JSON Schema:
 
 ```json
-{"type": "object", "required": ["orchestrator", "step", "routes"], "additionalProperties": false,
+{"type": "object", "required": ["orchestrator", "routes"], "additionalProperties": false,
  "properties": {
   "orchestrator": {"type": "string", "description": "the skill that starts the subagents, as its folder under skills/ names it"},
-  "step": {"type": "integer", "minimum": 1, "description": "the skill's step the routes are laid on"},
+  "step": {"type": "integer", "minimum": 1, "description": "the skill's step the routes are laid on; none where its part holds no numbered list, and the run is told them as it begins"},
+  "command": {"type": "string", "minLength": 1, "description": "the command whose run, the name of the subagent due its last word, prints the text to start it with"},
   "routes": {"type": "array", "minItems": 2, "items": {
    "type": "object", "required": ["from"], "additionalProperties": false,
    "properties": {
@@ -70,6 +71,11 @@ For `changelog`, whose skill `write` starts `writer` and then `reviewer`, and `w
   file, or in the one part under `core/roles/` or `prompts/` that its body names, as
   [the lanes](lanes.md#a-subagents-part) say of a subagent's part. `lay.py print` refuses routes
   whose skill is not there, or whose steps do not have `step`.
+- Leave out `step` where the skill's part holds no numbered list. `lay.py write` then lays nothing
+  in the skill, and lane tells the main conversation the routes' sentence and the skill's result
+  command as the run begins, before the first start.
+- `command`, where you give it, names your plugin's command that gives each start its text, as
+  [The text of each start](#the-text-of-each-start) says.
 - One route is from the skill, with a `to` and no `on`: the first start.
 - Every other route is from a subagent, and has an `on`. That subagent is your plugin's, or a
   dependency's, as [A subagent of a dependency](#a-subagent-of-a-dependency) says. Two routes from
@@ -135,7 +141,50 @@ things there:
 
 Every other call of the main conversation goes on, as the same conversation holds the work you do
 yourself. lane reads the main conversation's other events, such as the task-notification of a
-subagent's end, only to tell it the next start.
+subagent's end, only to tell it the next start, and the person's prompts only to keep their
+words while a subagent's point waits for them.
+
+## The text of each start
+
+Where the routes give a `command`, the main conversation starts each subagent of your plugin only
+with the text that the command prints for it. The main conversation runs the command with the
+subagent's name as its last word, such as
+`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/start.py writer`, and starts the subagent with what it
+printed as the prompt, word for word. Your command decides what the start gets, such as the values
+your plugin's lanes take, so no AI between your plugin and the subagent rewords it.
+
+- lane tells the main conversation the command beside each start due, as
+  ``Start `<plugin>:<name>`. Run `<command> <name>` first, and start it with what it prints as its prompt, word for word.``
+- lane keeps what the command printed, its `stdout`, as the run of the command comes back. A start
+  goes through only where its prompt is what the last run of the command printed for that
+  subagent, blanks at its ends aside. lane stops any other start with the sentence and
+  ``Start `<plugin>:<name>` with what `<command> <name>` printed as its prompt, word for word: run it first where you haven't.``
+- A subagent of a dependency, and a dependency's skill, is started as its own plugin gives it, so
+  lane holds no such start to the command.
+
+## The person's answer
+
+A subagent whose route waits ends to put a point to the person. lane resumes it only with the
+person's own words. While the run waits for the answer, lane keeps each prompt the person writes
+to the main conversation, word for word, and tells the main conversation the one message to resume
+the subagent with:
+
+```
+<plugin>: Resume `<plugin>:<name>` by SendMessage with this message, word for word:
+The person's answer, word for word:
+<each prompt since the subagent's point, as the person wrote it, a blank line between two>
+```
+
+- lane lets the SendMessage through only where its message is that one, blanks at its ends aside.
+  It stops any other message with the one it must send. It stops a resume before the person has
+  answered.
+- Each prompt counts, a question back to the main conversation among them, as lane can't tell an
+  answer from any other prompt. A prompt that types your skill's command begins another run, and
+  is no answer.
+- Once the message goes through, the prompts before it are spent. The subagent's next point
+  collects its own.
+- lane stops a SendMessage to any other start of the run, one that's running or whose point
+  doesn't wait, and tells the start due. Only the person's answer to a point resumes a start.
 
 ## A subagent of a dependency
 

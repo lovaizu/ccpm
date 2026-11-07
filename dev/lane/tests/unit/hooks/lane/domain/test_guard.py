@@ -489,12 +489,13 @@ class TestTurn(RoutedTest):
         self.assertEqual(again, [guard.Said(WAIT_WRITER)])
         joined = [c.get("joined") for c in called.calls(helpers.KEPT, called.RUN)]
         self.assertEqual(joined, [None, "again"])
-        # And: a message to it after is stopped with the wait, and one to writer's second start
-        # goes through
+        # And: a message to it after is stopped with the wait, and so is one to writer's second
+        # start, as only the person's answer to a point resumes a start
         stopped = [guard.Said(helpers.FOLLOW), guard.Said(WAIT_WRITER)]
         self.assertEqual(self.main(message), stopped)
         other = self.event("SendMessage", {"to": "w2", "message": "Go on."}, None)
-        self.assertEqual(self.main(other), [])
+        none = guard.RESUME_NONE.format(named="changelog:writer")
+        self.assertEqual(self.main(other), [guard.Said(none), guard.Said(WAIT_WRITER)])
 
     def test_the_run_let_end_with_a_subagent_due_again_names_its_last_step(self):
         # Given: writer ended with no result, so it is due again
@@ -587,14 +588,13 @@ class TestWaits(RoutedTest):
         self.begun()
         self.through("writer", "w1", "written")
         self.told_asks = self.through("reviewer", "r1", "asks")
-        self.message = self.event("SendMessage", {"to": "r1", "message": "It is 0.2.0."}, None)
+        answer = {"to": "r1", "message": f"{guard.ANSWER}\nIt is 0.2.0."}
+        self.message = self.event("SendMessage", answer, None)
 
     def test_the_main_conversation_is_told_to_put_the_point_and_resume_with_the_answer(self):
-        # When: reviewer's end reaches the main conversation, and then the user's answer
-        answer = self.main(self.prompt())
-        # Then: each is told to put reviewer's point to the user and resume it with the answer
+        # When: reviewer's end reaches the main conversation
+        # Then: it is told to put reviewer's point to the user and resume it with the answer
         self.assertEqual(self.told_asks, [guard.Said(self.ASKED)])
-        self.assertEqual(answer, [guard.Said(self.ASKED)])
 
     def test_the_turn_ends_and_the_run_goes_on_while_the_user_answers(self):
         # When: the main conversation ends its turn to wait for the user's answer
@@ -628,8 +628,9 @@ class TestWaits(RoutedTest):
                 self.assertEqual(self.main(event), [])
 
     def test_the_resumed_subagents_later_result_moves_the_routes_on(self):
-        # When: the main conversation resumes reviewer with the answer, which Claude Code starts
-        # again, and reviewer gives `more` and ends
+        # When: the user answers, the main conversation resumes reviewer with the answer, which
+        # Claude Code starts again, and reviewer gives `more` and ends
+        self.main(self.prompt("It is 0.2.0."))
         sent = self.main(self.message)
         guard.handed("changelog", self.message, "PreToolUse")
         self.told(guard.started, self.subagent("SubagentStart", "reviewer", "r1"), "reviewer")
@@ -649,6 +650,262 @@ class TestWaits(RoutedTest):
 
 # A route from reviewer that waits for the user, on `asks`, beside docs/routes.md's.
 ASKS = {"from": "reviewer", "on": "asks", "waits": True}
+
+
+class TestUnstepped(RoutedTest):
+    """Routes that name no step of the skill, whose part holds no numbered list: the routes'
+    sentences are told as the run begins, as no step says them."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        routed = {k: v for k, v in helpers.ROUTES.items() if k != "step"}
+        self.write(self.skill_file, helpers.SKILL)
+        laid = {**helpers.RULES, "routes": routed}
+        self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), laid)
+
+    def test_the_run_begins_telling_the_routes_sentences_and_the_first_start(self):
+        # Given: the routes laid from write with no step, its file saying neither sentence
+        # When: `/changelog:write` is typed
+        told = self.begun()
+        # Then: the routes' sentence, the skill's result command and the first start are told
+        ends = helpers.END_WRITE.replace("${CLAUDE_PLUGIN_ROOT}", self.plugin)
+        start = "Start `changelog:writer`."
+        self.assertEqual(told, [guard.Said(helpers.FOLLOW), guard.Said(ends), guard.Said(start)])
+
+    def test_a_run_let_end_with_a_start_due_names_the_skills_file(self):
+        # Given: the run begun, and the main conversation kept going once with writer due
+        self.begun()
+        self.main(self.turn())
+        # When: it ends its turn again
+        told = self.main(self.turn(active=True))
+        # Then: the user is told to fix the skill's file, which starts it
+        said = (
+            "lane let the run of write end with `changelog:writer` still due: the maker of"
+            " changelog must fix skills/write/SKILL.md, which starts it."
+        )
+        self.assertEqual(told, [guard.Said(said, note=True)])
+
+
+# The command the routes name that gives each start its text, and what it prints for writer.
+TEXT_COMMAND = "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/start.py"
+WRITER_TEXT = '{"work": "CHANGELOG.md"}'
+
+
+class TestStartText(RoutedTest):
+    """Routes naming the command that gives each start its text: a start goes through only with the
+    text that the command's last run printed for its subagent."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        routed = {**helpers.ROUTES, "command": TEXT_COMMAND}
+        laid = {**helpers.RULES, "routes": routed}
+        self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), laid)
+        self.command = f"python3 {self.plugin}/scripts/start.py"
+
+    def ran_command(self, name: str, printed: str) -> list:
+        """The main conversation's run of the command for the subagent of the name come back,
+        having printed the text: what it is told."""
+        given = {"command": f"{self.command} {name}", "description": "d"}
+        back = {"stdout": printed + "\n", "stderr": "", "interrupted": False, "isImage": False}
+        event = {**self.event("Bash", given, None, "PostToolUse"), "tool_response": back}
+        return self.main(event)
+
+    def started_with(self, name: str, prompt: str) -> list:
+        """The main conversation's start of the subagent of the name with the prompt: what its
+        PreToolUse is told."""
+        event = self.start(name)
+        event["tool_input"]["prompt"] = prompt
+        return self.main(event)
+
+    def test_the_first_start_is_told_with_the_command_to_run(self):
+        # Given: the routes laid with the command
+        # When: `/changelog:write` is typed
+        told = self.begun()
+        # Then: the start is told with the command that gives its text
+        said = (
+            f"Start `changelog:writer`. Run `{self.command} writer` first, and start it with what"
+            " it prints as its prompt, word for word."
+        )
+        self.assertEqual(told, [guard.Said(said)])
+
+    def test_a_start_with_the_text_the_command_printed_goes_through(self):
+        # Given: the run begun, and the command run for writer
+        self.begun()
+        kept = self.ran_command("writer", WRITER_TEXT)
+        # When: writer is started with what it printed
+        told = self.started_with("writer", WRITER_TEXT)
+        # Then: the run of the command is told nothing, and the start goes through
+        self.assertEqual((kept, told), ([], []))
+
+    def test_a_start_with_another_text_or_before_the_command_ran_is_stopped(self):
+        for ran in (True, False):
+            with self.subTest(ran=ran):
+                # Given: the run begun, and the command run for writer or not
+                self.setUp()
+                self.begun()
+                if ran:
+                    self.ran_command("writer", WRITER_TEXT)
+                # When: writer is started with a prompt of the main conversation's own, or with
+                # other values
+                told = self.started_with("writer", 'Write the entries. {"work": "CHANGELOG.md"}')
+                other = self.started_with("writer", '{"work": "x.md"}')
+                # Then: it is stopped with the sentence and the text to start it with
+                said = (
+                    f"Start `changelog:writer` with what `{self.command} writer` printed as its"
+                    " prompt, word for word: run it first where you haven't."
+                )
+                self.assertEqual(told, [guard.Said(helpers.FOLLOW), guard.Said(said)])
+                self.assertEqual(other, told)
+
+    def test_a_point_to_put_or_the_end_is_told_with_no_command_to_run(self):
+        # Given: the routes laid with the command, and reviewer's `asks` waiting for the user
+        routed = {**helpers.ROUTES, "command": TEXT_COMMAND}
+        routed["routes"] = [*routed["routes"], ASKS]
+        laid = {**helpers.RULES, "routes": routed}
+        self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), laid)
+        for n, on in ((1, "asks"), (2, "good")):
+            self.begun()
+            self.ran_command("writer", "p")
+            self.launched_with("writer", f"w{n}")
+            self.ran("writer", f"w{n}", "written")
+            self.main(self.notified(f"w{n}"))
+            self.ran_command("reviewer", "p")
+            self.launched_with("reviewer", f"r{n}")
+            self.ran("reviewer", f"r{n}", on)
+            told = self.main(self.notified(f"r{n}"))
+            # Then: neither the point to put nor the end names the command, as neither is a start
+            self.assertEqual(len(told), 1)
+            self.assertNotIn("Run `", told[0].text)
+
+    def launched_with(self, name: str, agent_id: str) -> None:
+        """The main conversation's start of the subagent with the text "p", launched with the
+        ID."""
+        self.assertEqual(self.started_with(name, "p"), [])
+        back = helpers.back(agent_id, LAUNCHED)
+        event = self.start(name, "PostToolUse", back)
+        event["tool_input"]["prompt"] = "p"
+        self.main(event)
+
+    def test_the_last_run_of_the_command_for_the_subagent_counts(self):
+        # Given: the run begun, the command run for writer twice, and once for reviewer
+        self.begun()
+        self.ran_command("writer", "first")
+        self.ran_command("writer", WRITER_TEXT)
+        self.ran_command("reviewer", "for reviewer")
+        # When: writer is started with the first text, then with the last
+        # Then: the first is stopped, and the last goes through
+        self.assertNotEqual(self.started_with("writer", "first"), [])
+        self.assertEqual(self.started_with("writer", WRITER_TEXT), [])
+
+    def test_a_run_of_the_command_that_gives_no_stdout_is_an_error(self):
+        # Given: the run begun
+        self.begun()
+        given = {"command": f"{self.command} writer", "description": "d"}
+        event = {**self.event("Bash", given, None, "PostToolUse"), "tool_response": "x"}
+        # When: the command comes back with no stdout
+        told = self.main(event)
+        # Then: it is an error that Claude Code must fix
+        self.assertTrue(told[0].error)
+        self.assertIn("$.tool_response: expected an object", told[0].text)
+
+
+class TestAnswer(RoutedTest):
+    """A subagent whose route waits, resumed only with the line of the person's answer and the
+    person's own words since its point."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        routed = {**helpers.ROUTES, "routes": [*helpers.ROUTES["routes"], ASKS]}
+        laid = {**helpers.RULES, "routes": routed}
+        self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), laid)
+        self.begun()
+        self.through("writer", "w1", "written")
+        self.through("reviewer", "r1", "asks")
+
+    def resume(self, text: str, to: str = "r1") -> list:
+        """The main conversation's SendMessage to the start of the ID with the text: what its
+        PreToolUse is told."""
+        return self.main(self.event("SendMessage", {"to": to, "message": text}, None))
+
+    def test_the_persons_prompt_is_told_back_as_the_message_to_send(self):
+        # Given: reviewer's point put to the user
+        # When: the user answers in two prompts
+        first = self.main(self.prompt("It is 0.2.0."))
+        second = self.main(self.prompt("And keep the date."))
+        # Then: each is told the message to resume reviewer with, the person's words so far
+        head = "Resume `changelog:reviewer` by SendMessage with this message, word for word:"
+        both = f"{guard.ANSWER}\nIt is 0.2.0.\n\nAnd keep the date."
+        self.assertEqual(
+            first, [guard.Said(head), guard.Said(f"{guard.ANSWER}\nIt is 0.2.0.", plain=True)]
+        )
+        self.assertEqual(second, [guard.Said(head), guard.Said(both, plain=True)])
+
+    def test_a_resume_with_the_persons_words_alone_goes_through(self):
+        # Given: the user answered
+        self.main(self.prompt("It is 0.2.0."))
+        # When: reviewer is resumed with the line and the answer
+        # Then: the message goes through
+        self.assertEqual(self.resume(f"{guard.ANSWER}\nIt is 0.2.0."), [])
+
+    def test_a_resume_in_other_words_is_stopped_with_the_message_to_send(self):
+        for text in ("The user says 0.2.0.", f"{guard.ANSWER}\nIt is 0.2.0, the user says."):
+            with self.subTest(text=text):
+                # Given: the user answered
+                self.setUp()
+                self.main(self.prompt("It is 0.2.0."))
+                # When: reviewer is resumed with words of the main conversation's own
+                told = self.resume(text)
+                # Then: it is stopped with the message it must send
+                said = guard.RESUME_ONLY.format(named="changelog:reviewer")
+                message = f"{guard.ANSWER}\nIt is 0.2.0."
+                self.assertEqual(told, [guard.Said(said), guard.Said(message, plain=True)])
+
+    def test_a_resume_before_the_person_answered_is_stopped(self):
+        # Given: reviewer's point put to the user, who has not answered
+        # When: reviewer is resumed
+        told = self.resume(f"{guard.ANSWER}\nIt is 0.2.0.")
+        # Then: it is stopped, the point still to be put
+        said = guard.NO_ANSWER.format(named="changelog:reviewer")
+        self.assertEqual(told, [guard.Said(said), guard.Said(TestWaits.ASKED)])
+
+    def test_the_words_before_a_resume_are_not_sent_again(self):
+        # Given: reviewer resumed with the answer, giving `asks` again
+        self.main(self.prompt("It is 0.2.0."))
+        self.resume(f"{guard.ANSWER}\nIt is 0.2.0.")
+        self.ran("reviewer", "r1", "asks")
+        self.main(self.notified("r1"))
+        # When: the user answers again
+        told = self.main(self.prompt("Yes."))
+        # Then: only the new answer is told as the message
+        self.assertEqual(told[1], guard.Said(f"{guard.ANSWER}\nYes.", plain=True))
+
+    def test_a_resume_of_a_start_whose_point_is_not_put_is_stopped(self):
+        # Given: the user answered reviewer's point
+        self.main(self.prompt("It is 0.2.0."))
+        # When: writer, whose start gave `written`, is resumed
+        told = self.resume("Write again.", "w1")
+        # Then: it is stopped, as only a point's answer resumes a start
+        said = guard.RESUME_NONE.format(named="changelog:writer")
+        self.assertEqual(told, [guard.Said(said), guard.Said(TestWaits.ASKED)])
+
+    def test_the_skills_command_typed_or_a_notification_is_no_answer(self):
+        for text in ("/changelog:write again", " <task-notification>x</task-notification>"):
+            with self.subTest(text=text):
+                # Given: reviewer's point put to the user
+                self.setUp()
+                # When: the user types the skill's command, or a notification is handed in
+                told = self.main(self.prompt(text))
+                # Then: the point is told still, and no answer is kept
+                self.assertEqual(told, [guard.Said(TestWaits.ASKED)])
+                said = guard.NO_ANSWER.format(named="changelog:reviewer")
+                answer = self.resume(f"{guard.ANSWER}\n{text}")
+                self.assertEqual(answer, [guard.Said(said), guard.Said(TestWaits.ASKED)])
+
+    def test_a_message_to_no_start_of_the_run_goes_through(self):
+        # Given: reviewer's point put to the user
+        # When: the main conversation sends a message to a run that is no start of the run
+        # Then: it goes through
+        self.assertEqual(self.resume("Hello.", "x9"), [])
 
 
 class TestRoutedDependency(RoutedTest):

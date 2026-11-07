@@ -248,10 +248,13 @@ class TestWaits(helpers.RoutesTest):
         self.assertEqual(told[-1], self.ASKED)
         self.assertEqual((ended.made, ended.said), (True, {}))
         self.assertEqual((meanwhile.made, meanwhile.reason()), (False, f"{FOLLOWED}\n{self.ASKED}"))
-        # And: the user's answer is told the same line; resumed with it by SendMessage, which
-        # Claude Code starts again, reviewer gives `more`, and its end tells the start of writer
-        self.assertEqual(self.claude.prompted("It is 0.2.0."), [self.ASKED])
-        sent = self.claude.call(None, "SendMessage", {"to": "r1", "message": "It is 0.2.0."})
+        # And: the user's answer is told the message that resumes reviewer; resumed with it by
+        # SendMessage, which Claude Code starts again, reviewer gives `more`, and its end tells
+        # the start of writer
+        message = f"{helpers.guard.ANSWER}\nIt is 0.2.0."
+        resume = "changelog: Resume `changelog:reviewer` by SendMessage with this message, word"
+        self.assertEqual(self.claude.prompted("It is 0.2.0."), [f"{resume} for word:\n{message}"])
+        sent = self.claude.call(None, "SendMessage", {"to": "r1", "message": message})
         self.claude.started(reviewer(1))
         self.assertTrue(self.result(reviewer(1), "more").made)
         self.claude.stop(reviewer(1))
@@ -276,6 +279,48 @@ class TestWaits(helpers.RoutesTest):
         reason = f"{FOLLOWED}\nchangelog: Start `changelog:writer`."
         self.assertEqual((meanwhile.made, meanwhile.reason()), (False, reason))
         self.assertTrue(self.claude.start(None, writer(2), "Write the entries.").made)
+
+
+class TestStartText(helpers.RoutesTest):
+    """routes.json naming no step of write, whose part holds no numbered list, and the command that
+    gives each start its text, as the sequence's branch of a start held to the text that the
+    plugin's command gave draws."""
+
+    def proposed(self) -> dict:
+        """The proposal laid: routes.json with no step and the command `scripts/start.py`, which
+        prints each subagent's values, and write's file holding no numbered list."""
+        script = "import json, sys\nprint(json.dumps({'work': sys.argv[1] + '.md'}))\n"
+        self.write(os.path.join(self.plugin, "scripts", "start.py"), script)
+        self.write(
+            os.path.join(self.plugin, "skills", "write", "SKILL.md"),
+            "---\nname: write\ndescription: d\n---\n\nHave the entries written and reviewed.\n",
+        )
+        routed = self.trial_proposal("routes.json")
+        del routed["routes"]["step"]
+        routed["routes"]["command"] = "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/start.py"
+        return routed
+
+    def test_the_run_begins_with_the_routes_sentences_and_each_start_takes_the_text_given(self):
+        # Given: the routes laid with no step and the command, and `/changelog:write` typed
+        command = f"python3 {self.plugin}/scripts/start.py writer"
+        # When: the main conversation starts writer with a text of its own, then runs the command
+        # and starts writer with what it printed
+        own = self.claude.start(None, writer(1), "Write the entries for 0.2.0.")
+        ran = self.claude.call(None, "Bash", {"command": command, "description": "d"})
+        given = self.claude.start(None, writer(1), '{"work": "writer.md"}')
+        # Then: the run's begin tells the routes' sentence, write's result command and the start
+        # with the command to run first; the start with its own text is denied with the text to
+        # start it with, the command goes through, and the start with its output goes on
+        told = self.told[-1]
+        self.assertIn(FOLLOWED, told)
+        self.assertIn(
+            f"changelog: End by running `python3 {self.plugin}/hooks/lane/result.py", told
+        )
+        self.assertIn(f"Start `changelog:writer`. Run `{command}` first", told)
+        self.assertEqual(own.made, False)
+        self.assertIn(f"with what `{command}` printed as its prompt", own.reason())
+        self.assertTrue(ran.made)
+        self.assertTrue(given.made, given.said)
 
 
 CHECK = "checker:check"

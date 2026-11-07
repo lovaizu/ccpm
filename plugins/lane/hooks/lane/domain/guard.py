@@ -109,6 +109,26 @@ LEFT_DEPENDENCY = (
     " routes take: the maker of {dependency} must have {own} give {results}"
 )
 STARTS_IT = "step {step} of {lead} in {file}, which starts it."
+STARTS_FILE = "{file}, which starts it."
+# What the main conversation is told of a start due where the routes name the command that gives
+# each start its text, and of a start with another text.
+RUN_FIRST = "Run `{command}` first, and start it with what it prints as its prompt, word for word."
+START_TEXT = (
+    "Start `{named}` with what `{command}` printed as its prompt, word for word: run it first where"
+    " you haven't."
+)
+# The first line of the one message that resumes a subagent whose route waits, the person's words
+# after it as they wrote them; and what the main conversation is told of a resume.
+ANSWER = "The person's answer, word for word:"
+RESUME = "Resume `{named}` by SendMessage with this message, word for word:"
+RESUME_ONLY = (
+    "Resume `{named}` only with the person's answer, word for word, as this message holds it:"
+)
+NO_ANSWER = "The person hasn't answered the point of `{named}` yet."
+RESUME_NONE = "Resume `{named}` only when you are told to, with the person's answer to its point."
+# How a prompt that brings a subagent's end to the main conversation begins, as Claude Code 2.1.319
+# gave it, which is no word of the person's.
+NOTIFICATION = "<task-notification>"
 GIVES_IT = "step {step} of {name} in {file}, which gives its result."
 ORDER = (
     "the maker of {plugin} must order the results of {name} in the `precedence` of its routes, and"
@@ -676,7 +696,12 @@ def left(m: Main, due: routes.Next) -> Said:
         why = f", as {due.name} ended with no result"
     else:
         file = os.path.relpath(str(step.steps_file(m.root, lead, skill=True)), m.root)
-        at = STARTS_IT.format(step=m.routes["step"], lead=lead, file=file)
+        number = m.routes.get("step")
+        at = (
+            STARTS_IT.format(step=number, lead=lead, file=file)
+            if number
+            else STARTS_FILE.format(file=file)
+        )
         why = ""
     text = LEFT.format(lead=lead, plugin=m.plugin, name=due.name, why=why, at=at)
     return Said(text, note=True)
@@ -743,11 +768,63 @@ class Main(NamedTuple):
             return last[0]
         return None
 
+    def line(self, due: routes.Next) -> str:
+        """The line of the next start, as docs/routes.md's table has it, with the command to run
+        first where the routes name the command that gives each start its text and a subagent's
+        start is due."""
+        line = routes.line(due, self.plugin)
+        # A next start is `end`, `reply`, `start` or `wait`.
+        if self.command(due.name) and due.kind == "start":
+            line += " " + RUN_FIRST.format(command=self.command(due.name))
+        return line
+
+    def command(self, name: str) -> str:
+        """The command the main conversation runs for the start of the plugin's subagent of the
+        name, its name its last word, the plugin's folder put in, where the routes name the command
+        that gives each start its text; "" where they name none, or the name is a dependency's,
+        whose start its own plugin gives."""
+        given = self.routes.get("command")
+        if not given or ":" in name:
+            return ""
+        return f"{given.replace(step.ROOT, self.root)} {name}"
+
+    def given_text(self, name: str) -> str | None:
+        """What the last run of the routes' command in the run printed for the subagent of the
+        name; None where none ran."""
+        found = [
+            e["text"]
+            for e in called.this_run(self.session, called.RUN)
+            if e.get("kind") == "text" and e.get("name") == name
+        ]
+        return found[-1] if found else None
+
+    def replying(self) -> routes.Start | None:
+        """The start whose point the user is to answer, as its route waits, the last of the run, as
+        no start follows one whose point waits and a subagent fanned out has no route that waits;
+        None where none is."""
+        return self.starts()[-1] if self.due().kind == "reply" else None
+
+    def words(self, agent: str) -> list[str]:
+        """The person's prompts kept while the start of the ID waits for their answer, since it was
+        last resumed, in order."""
+        found: list[str] = []
+        for e in called.this_run(self.session, called.RUN):
+            if e.get("agent") != agent:
+                continue
+            found = [] if e.get("kind") == "resumed" else [*found, str(e.get("text", ""))]
+        return found
+
+    def answer(self, agent: str) -> str | None:
+        """The one message that resumes the start of the ID: ANSWER, and the person's words since
+        its point, as they wrote them; None where the person hasn't answered."""
+        words = self.words(agent)
+        return "\n".join([ANSWER, "\n\n".join(words)]) if words else None
+
     def told(self) -> list[Said]:
         """The next start, as the main conversation is told it: the line of the start due, the
         wait or the end, the end told once for the results that led to it."""
         due = self.due()
-        line = routes.line(due, self.plugin)
+        line = self.line(due)
         # A next start is `end`, `reply`, `start` or `wait`, `end` the first of them in order.
         if due.kind == "end":  # pragma: no mutate
             seen = sum(len(called.kept(self.session, s.agent)) for s in self.starts())
@@ -830,14 +907,22 @@ def begin(m: Main) -> list[Said]:
     if m.on() and m.due().kind != "reply":
         return []
     said = lanes.sentence("follow_routes", [])
-    if not step.holds(m.root, m.skill(), m.routes["step"], said, skill=True):
-        gone = f"step {m.routes['step']} no longer says: {said}".rstrip(".")
+    number = m.routes.get("step")
+    if number and not step.holds(m.root, m.skill(), number, said, skill=True):
+        gone = f"step {number} no longer says: {said}".rstrip(".")
         fix = LAY_AGAIN.format(plugin=m.plugin)
-        raise Cannot(
-            cannot_main(f"follow_routes on step {m.routes['step']} of {m.skill()}", gone, fix)
-        )
+        raise Cannot(cannot_main(f"follow_routes on step {number} of {m.skill()}", gone, fix))
     called.keep(m.session, called.RUN, called.START)
-    return m.told()
+    return ([] if number else unlaid(m)) + m.told()
+
+
+def unlaid(m: Main) -> list[Said]:
+    """The routes' sentences that no step of the skill says, as the routes name none: the routes'
+    own, and the skill's result command where it gives a result, the plugin's folder put in."""
+    told = [Said(lanes.sentence("follow_routes", []))]
+    ons = routes.gives(m.routes, m.skill(), False)
+    commands = run_only.named([routes.command(m.skill(), on) for on in ons], m.root)
+    return told + ([Said(lanes.sentence("result", commands))] if commands else [])
 
 
 def expanded(m: Main, event: dict[str, Any]) -> list[Said]:
@@ -851,10 +936,20 @@ def expanded(m: Main, event: dict[str, Any]) -> list[Said]:
 def prompted(m: Main, event: dict[str, Any]) -> list[Said]:
     """What the main conversation's UserPromptSubmit is told, a task-notification of a subagent's
     end among them, and the user's answer to a subagent's point: the next start, or the point to
-    put to the user, while a run is on and no dependency's skill moves; nothing otherwise."""
+    put to the user, while a run is on and no dependency's skill moves; the person's prompt kept
+    word for word while a subagent's point waits for them, and the message that resumes it told;
+    nothing otherwise."""
     if not m.begun() or m.moving() is not None:
         return []
-    return m.told()
+    waiting = m.replying()
+    prompt = event["prompt"]
+    # The skill's command typed begins another run at its expansion, so it is no answer.
+    typed = prompt.lstrip().startswith(f"/{m.plugin}:{m.skill()}")
+    if waiting is None or typed or prompt.lstrip().startswith(NOTIFICATION):
+        return m.told()
+    called.keep(m.session, called.RUN, {"kind": "person", "agent": waiting.agent, "text": prompt})
+    named = routes.kind(waiting.name, m.plugin)
+    return [Said(RESUME.format(named=named)), Said(str(m.answer(waiting.agent)), plain=True)]
 
 
 def starting(m: Main, tool: str, given: dict[str, Any]) -> bool:
@@ -866,17 +961,57 @@ def starting(m: Main, tool: str, given: dict[str, Any]) -> bool:
 def start_checked(m: Main, event: dict[str, Any]) -> list[Said]:
     """What the main conversation's PreToolUse event is told while a run is on and no dependency's
     skill moves: a start not due, or a message resuming a start that ended with no result, stopped
-    with the sentence and the start due; any other call goes through."""
+    with the sentence and the start due; a start due with a text other than what the routes'
+    command printed for it, stopped with the text to start it with; a message resuming a start of
+    the run, as `resume_checked` says; any other call goes through."""
     tool, given = event["tool_name"], event["tool_input"]
     if not m.on() or m.moving() is not None:
         return []
     due = m.due()
     if starting(m, tool, given):
         if follow_routes.allows(tool, given, due, m.plugin):
-            return []
-    elif not follow_routes.resumes(tool, given, m.ended_with_none()):
+            return text_checked(m, tool, given)
+    elif follow_routes.resumes(tool, given, [s.agent for s in m.starts()]):
+        if not follow_routes.resumes(tool, given, m.ended_with_none()):
+            return resume_checked(m, given, due)
+    else:
         return []
-    return [Said(follow_routes.WORDING), Said(routes.line(due, m.plugin))]
+    return [Said(follow_routes.WORDING), Said(m.line(due))]
+
+
+def text_checked(m: Main, tool: str, given: dict[str, Any]) -> list[Said]:
+    """What a start due is told where the routes name the command that gives each start its text:
+    nothing where its prompt is what the command's last run printed for its subagent; the sentence
+    and the text to start it with otherwise, as no other text is what the plugin gives it."""
+    name = follow_routes.started(tool, given, m.giving(), m.plugin)
+    command = m.command(str(name))
+    if not command:
+        return []
+    text, prompt = m.given_text(str(name)), given.get("prompt")
+    if text is not None and isinstance(prompt, str) and prompt.strip() == text.strip():
+        return []
+    said = START_TEXT.format(named=routes.kind(str(name), m.plugin), command=command)
+    return [Said(follow_routes.WORDING), Said(said)]
+
+
+def resume_checked(m: Main, given: dict[str, Any], due: routes.Next) -> list[Said]:
+    """What a message resuming a start of the run is told: nothing where the start's point waits
+    for the person and the message is ANSWER and the person's words since, as they wrote them,
+    the resume kept so those words aren't sent again; that the person hasn't answered, or the
+    message to send, otherwise; for a start whose point doesn't wait, that only its point's answer
+    resumes it, with the start due."""
+    waiting = m.replying()
+    named = routes.kind(next(s.name for s in m.starts() if s.agent == given["to"]), m.plugin)
+    if waiting is None or waiting.agent != given.get("to"):
+        return [Said(RESUME_NONE.format(named=named)), Said(m.line(due))]
+    answer = m.answer(waiting.agent)
+    if answer is None:
+        return [Said(NO_ANSWER.format(named=named)), Said(m.line(due))]
+    message = given.get("message")
+    if isinstance(message, str) and message.strip() == answer.strip():
+        called.keep(m.session, called.RUN, {"kind": "resumed", "agent": waiting.agent})
+        return []
+    return [Said(RESUME_ONLY.format(named=named)), Said(answer, plain=True)]
 
 
 def main_kept(m: Main, event: dict[str, Any]) -> list[Said]:
@@ -894,6 +1029,9 @@ def main_kept(m: Main, event: dict[str, Any]) -> list[Said]:
     move = m.moving()
     if move is not None:
         return moved(m, move, event)
+    kept = text_kept(m, event)
+    if kept is not None:
+        return kept
     name = follow_routes.started(tool, given, m.giving(), m.plugin)
     if name is None:
         return []
@@ -912,9 +1050,35 @@ def main_kept(m: Main, event: dict[str, Any]) -> list[Said]:
             f"the hook was handed no event as Claude Code hands it, $.tool_response{out.told()[1:]}"
         )
         error = cannot_main(f"the routes of {m.skill()}", said, CLAUDE_CODE)
-        return [error, Said(routes.line(before, m.plugin))]
+        return [error, Said(m.line(before))]
     called.keep(m.session, called.RUN, called.call(tool, given, back, joined(before, name)))
     return m.told()
+
+
+# What a run of Bash gives back, as the hooks reference documents it: its output among the rest.
+RAN = {"type": "object", "required": ["stdout"], "properties": {"stdout": {"type": "string"}}}
+
+
+def text_kept(m: Main, event: dict[str, Any]) -> list[Said] | None:
+    """What the main conversation's run of a command is told, where it is the routes' command for
+    a subagent: nothing, what it printed kept as the subagent's text; the error where it came back
+    with no output as Claude Code gives it. None for any other call. A call's input holds a
+    command only where its tool runs one, such as Bash."""
+    command = str(event["tool_input"].get("command", "")).strip()
+    for name in (n for n in m.giving() if m.command(n)):
+        if run_only.allows(command, [m.routes["command"] + " " + name], m.root, event["cwd"], {}):
+            back = event["tool_response"]
+            out = schema.held(RAN, back)
+            if out is not None:
+                said = "the hook was handed no event as Claude Code hands it, $.tool_response"
+                return [
+                    cannot_main(f"the routes of {m.skill()}", said + out.told()[1:], CLAUDE_CODE)
+                ]
+            called.keep(
+                m.session, called.RUN, {"kind": "text", "name": name, "text": back["stdout"]}
+            )
+            return []
+    return None
 
 
 def moved(m: Main, move: routes.Start, event: dict[str, Any]) -> list[Said]:
@@ -946,7 +1110,7 @@ def turn_ended(m: Main, event: dict[str, Any]) -> list[Said]:
     if due.kind != "start":
         return []
     if not event["stop_hook_active"]:
-        return [Said(follow_routes.WORDING), Said(routes.line(due, m.plugin))]
+        return [Said(follow_routes.WORDING), Said(m.line(due))]
     called.keep(m.session, called.RUN, called.END)
     return [left(m, due)]
 

@@ -313,6 +313,30 @@ class TestRoutes(RoutesTest):
         self.assertIn("changelog:reviewer", command)
         self.assertNotIn("changelog:write'", command)
 
+    def test_routes_with_no_step_and_a_command_are_printed_and_lay_nothing_in_the_skill(self):
+        # Given: the README's proposal with docs/routes.md's routes, giving no step and the
+        # command that gives each start its text
+        command = "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/start.py"
+        routed = {k: v for k, v in helpers.ROUTES.items() if k != "step"}
+        self.propose({**helpers.PROPOSAL, "routes": {**routed, "command": command}})
+        # When: it is printed, and written
+        printed = layer.printed(helpers.PROPOSED)
+        said = self.wrote()
+        # Then: the routes are shown told as the run begins, with the command, and no step of
+        # write; the skill is left as it was, and the routes are kept as given
+        self.assertTrue(
+            printed.startswith(
+                "Routes of write, told as the run begins, no step saying them:\n"
+                "  first             start writer\n"
+            ),
+            printed,
+        )
+        self.assertIn(f"  each start's text: what `{command} <subagent>` prints\n", printed)
+        self.assertNotIn("1. Have the entries", printed)
+        self.assertNotIn("of write into", said)
+        self.assertEqual(self.read(self.skill_file), helpers.SKILL)
+        self.assertEqual(self.lanes_json()["routes"], {**routed, "command": command})
+
     def test_routes_laid_before_are_kept_where_the_proposal_gives_none(self):
         # Given: the routes laid, then the README's proposal alone
         self.wrote()

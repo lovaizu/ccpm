@@ -451,6 +451,15 @@ class TestRoutes(RoutesTest):
             told,
         )
 
+    def test_routes_with_no_step_need_no_numbered_list_in_the_skill(self):
+        # Given: the skill write holding no numbered list, and routes giving no step
+        self.write(self.skill_file, "---\nname: write\n---\n\nHave the entries written.\n")
+        routed = {k: v for k, v in helpers.ROUTES.items() if k != "step"}
+        self.propose({"plugin": "changelog", "routes": routed})
+        # When: the proposal is read
+        # Then: its routes are read
+        self.assertEqual(proposal.proposal(helpers.PROPOSED)["routes"], routed)
+
     def test_only_the_skill_needs_its_step(self):
         # Given: routes from write to editor, a name before write's, and reviewer, a name after,
         # neither having write's step 1

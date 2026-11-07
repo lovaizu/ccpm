@@ -89,7 +89,7 @@ ROUTE = {
     },
 }
 ROUTES = shape(
-    ["orchestrator", "step", "routes"],
+    ["orchestrator", "routes"],
     {
         "orchestrator": {
             "type": "string",
@@ -99,7 +99,14 @@ ROUTES = shape(
         "step": {
             "type": "integer",
             "minimum": 1,
-            "description": "the skill's step the routes are laid on",
+            "description": "the skill's step the routes are laid on; none where its part holds no"
+            " numbered list, and the run is told them as it begins",
+        },
+        "command": {
+            "type": "string",
+            "minLength": 1,
+            "description": "the command whose run, the name of the subagent due its last word,"
+            " prints the text to start it with",
         },
         "routes": {"type": "array", "minItems": 2, "items": shape(["from"], ROUTE)},
         "fan_out": {

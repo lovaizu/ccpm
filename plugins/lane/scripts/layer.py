@@ -63,6 +63,9 @@ def routed(
     own given, or `done` with a lane checked at its end."""
     found = []
     if given is not None and given["orchestrator"] == name:
+        # Routes that name no step lay nothing in the skill: the run is told them as it begins.
+        if "step" not in given:
+            return []
         found.append({"step": given["step"], "lanes": [{"lane": "follow_routes", "takes": []}]})
     ends = any(lanes.ends(g["lane"]) for s in laid for g in s["lanes"])
     ons = routes.gives(given, name, ends, results)
@@ -157,6 +160,10 @@ def shared(root: str, found: list[dict[str, Any]], before: dict[str, Any]) -> No
                     )
 
 
+# Where routes that name no step of the skill are said.
+NOT_LAID = "told as the run begins, no step saying them"
+
+
 def routes_printed(given: dict[str, Any]) -> str:
     """The routes as the user reads them: the step they are laid on, each route from the
     first start or a subagent's result to the start next, or to the user's answer where it waits,
@@ -169,8 +176,11 @@ def routes_printed(given: dict[str, Any]) -> str:
         for r in given["routes"]
     ]
     wide = max(len(left) for left, _ in rows)
-    out = [f"Routes of {given['orchestrator']}, laid on its step {given['step']}:\n"]
+    where = f"laid on its step {given['step']}" if "step" in given else NOT_LAID
+    out = [f"Routes of {given['orchestrator']}, {where}:\n"]
     out += [f"  {left:<{wide}}  {to}\n" for left, to in rows]
+    if "command" in given:
+        out.append(f"  each start's text: what `{given['command']} <subagent>` prints\n")
     out += [f"  runs at once of {name}\n" for name in given.get("fan_out", [])]
     precedence = given.get("precedence")
     orders = precedence.items() if isinstance(precedence, dict) else [("", precedence or [])]
@@ -310,9 +320,12 @@ def checked(root: str, laid: list[str], now: dict[str, Any] | None) -> list[str]
 
 def steps_written(root: str, agent: dict[str, Any], before: dict[str, Any]) -> str:
     """Writes each step lay.py writes in the subagent into its file, as `steps.steps_laid` gives
-    them; gives what was written, said."""
+    them; gives what was written, said, "" where it writes none."""
     lines = agent["lines"]
     laid = steps.steps_laid(before, agent)
+    # A skill whose routes name no step, and that none were laid on before, is left as it is.
+    if not laid:
+        return ""
     # Each step is put back where it is, from the last, so a step of more lines than before leaves
     # where the earlier ones are as it was.
     # read_as_laid gives as many lines as it is given, so the order changes nothing yet.

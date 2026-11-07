@@ -170,7 +170,7 @@ def routes_checked(root: str, given: dict[str, Any]) -> dict[str, Any]:
         raise wrong(why, ROUTES_AGAIN)
     lead = given["orchestrator"]
     _, lines = skill_lines(root, lead)
-    if step.span([line.rstrip("\n") for line in lines], given["step"]) is None:
+    if "step" in given and step.span([line.rstrip("\n") for line in lines], given["step"]) is None:
         raise wrong(
             f"gives step {given['step']}, which the Steps of {lead} do not have", ROUTES_AGAIN
         )
