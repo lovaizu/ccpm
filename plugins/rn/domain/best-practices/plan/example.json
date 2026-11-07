@@ -11,18 +11,6 @@
       "status": "done"
     },
     {
-      "name": "rn can plan from a best practice for planning",
-      "path": "plugins/rn/domain/best-practices/plan",
-      "kind": "meta",
-      "status": "done"
-    },
-    {
-      "name": "The shared plugin best practice says what rn and Lane share",
-      "path": "plugins/rn/domain/best-practices/plugin",
-      "kind": "meta",
-      "status": "done"
-    },
-    {
       "name": "Lane's design checks each practice step and each change",
       "path": "dev/lane/architecture.md",
       "kind": "architecture",
@@ -204,6 +192,183 @@
       ]
     },
     {
+      "name": "A maker changes the structure of existing code without changing what it does",
+      "path": "plugins/rn/domain/best-practices/refactor-code",
+      "kind": "meta",
+      "status": "done"
+    },
+    {
+      "name": "A maker of a Claude Code plugin finds the field's established way for each of its parts",
+      "path": "plugins/rn/domain/best-practices/plugin",
+      "kind": "meta",
+      "inputs": [],
+      "preconditions": ["plugins/rn/domain/best-practices/meta"],
+      "status": "open",
+      "intents": [
+        {"id": "Q1", "good": false, "decisions": []},
+        {"id": "Q2", "good": false, "decisions": []},
+        {"id": "Q3", "good": false, "decisions": []},
+        {"id": "Q4", "good": false, "decisions": []},
+        {"id": "Q5", "good": false, "decisions": []},
+        {
+          "id": "Q6",
+          "good": false,
+          "decisions": [
+            {
+              "about": "What is the field's and what is this repository's",
+              "decided": "Claude Code's documented behavior stays as the field's facts, and this repository's own choices, such as Lane as the guard, lay.py, tree.py, Python 3.9 with its standard library, and the folders rn writes, go to the plugin deliverables of the design tree",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {"id": "Q7", "good": false, "decisions": []},
+        {"id": "Q8", "good": false, "decisions": []},
+        {"id": "Q9", "good": false, "decisions": []},
+        {"id": "Q10", "good": false, "decisions": []}
+      ]
+    },
+    {
+      "name": "A maker of a design finds the field's established way to lay out a product's parts and its test levels",
+      "path": "plugins/rn/domain/best-practices/architecture",
+      "kind": "meta",
+      "inputs": [],
+      "preconditions": ["plugins/rn/domain/best-practices/meta"],
+      "status": "open",
+      "intents": [
+        {"id": "Q1", "good": false, "decisions": []},
+        {"id": "Q2", "good": false, "decisions": []},
+        {"id": "Q3", "good": false, "decisions": []},
+        {"id": "Q4", "good": false, "decisions": []},
+        {"id": "Q5", "good": false, "decisions": []},
+        {"id": "Q6", "good": false, "decisions": []},
+        {"id": "Q7", "good": false, "decisions": []},
+        {"id": "Q8", "good": false, "decisions": []},
+        {"id": "Q9", "good": false, "decisions": []},
+        {"id": "Q10", "good": false, "decisions": []}
+      ]
+    },
+    {
+      "name": "A writer of a prompt finds the field's established way to have an AI do the task as meant",
+      "path": "plugins/rn/domain/best-practices/prompt",
+      "kind": "meta",
+      "inputs": [],
+      "preconditions": ["plugins/rn/domain/best-practices/meta"],
+      "status": "open",
+      "intents": [
+        {"id": "Q1", "good": false, "decisions": []},
+        {"id": "Q2", "good": false, "decisions": []},
+        {"id": "Q3", "good": false, "decisions": []},
+        {"id": "Q4", "good": false, "decisions": []},
+        {"id": "Q5", "good": false, "decisions": []},
+        {"id": "Q6", "good": false, "decisions": []},
+        {"id": "Q7", "good": false, "decisions": []},
+        {"id": "Q8", "good": false, "decisions": []},
+        {"id": "Q9", "good": false, "decisions": []},
+        {"id": "Q10", "good": false, "decisions": []}
+      ]
+    },
+    {
+      "name": "A planner finds the field's established way to plan work back from its goal",
+      "path": "plugins/rn/domain/best-practices/plan",
+      "kind": "meta",
+      "inputs": [],
+      "preconditions": ["plugins/rn/domain/best-practices/meta"],
+      "status": "open",
+      "intents": [
+        {"id": "Q1", "good": false, "decisions": []},
+        {"id": "Q2", "good": false, "decisions": []},
+        {"id": "Q3", "good": false, "decisions": []},
+        {"id": "Q4", "good": false, "decisions": []},
+        {"id": "Q5", "good": false, "decisions": []},
+        {"id": "Q6", "good": false, "decisions": []},
+        {"id": "Q7", "good": false, "decisions": []},
+        {"id": "Q8", "good": false, "decisions": []},
+        {"id": "Q9", "good": false, "decisions": []},
+        {"id": "Q10", "good": false, "decisions": []}
+      ]
+    },
+    {
+      "name": "This plan holds every deliverable the goal needs, each after what it stands on",
+      "path": ".rn/20261107-rn/design-tree.json",
+      "kind": "plan",
+      "inputs": [],
+      "preconditions": ["plugins/rn/domain/best-practices/plan"],
+      "status": "doing",
+      "intents": [
+        {"id": "Q1", "good": false, "decisions": []},
+        {"id": "Q2", "good": false, "decisions": []},
+        {"id": "Q3", "good": false, "decisions": []},
+        {"id": "Q4", "good": false, "decisions": []},
+        {"id": "Q5", "good": false, "decisions": []},
+        {"id": "Q6", "good": false, "decisions": []},
+        {"id": "Q7", "good": false, "decisions": []},
+        {"id": "Q8", "good": false, "decisions": []},
+        {"id": "Q9", "good": false, "decisions": []},
+        {"id": "Q10", "good": false, "decisions": []},
+        {"id": "Q11", "good": false, "decisions": []}
+      ]
+    },
+    {
+      "name": "A writer of a README finds the field's established way to have a newcomer choose and start",
+      "path": "plugins/rn/domain/best-practices/readme",
+      "kind": "meta",
+      "inputs": [],
+      "preconditions": ["plugins/rn/domain/best-practices/meta"],
+      "status": "open",
+      "intents": [
+        {"id": "Q1", "good": false, "decisions": []},
+        {"id": "Q2", "good": false, "decisions": []},
+        {"id": "Q3", "good": false, "decisions": []},
+        {"id": "Q4", "good": false, "decisions": []},
+        {"id": "Q5", "good": false, "decisions": []},
+        {"id": "Q6", "good": false, "decisions": []},
+        {"id": "Q7", "good": false, "decisions": []},
+        {"id": "Q8", "good": false, "decisions": []},
+        {"id": "Q9", "good": false, "decisions": []},
+        {"id": "Q10", "good": false, "decisions": []}
+      ]
+    },
+    {
+      "name": "A writer of a product vision finds the field's established way to say what a product is for",
+      "path": "plugins/rn/domain/best-practices/product-vision",
+      "kind": "meta",
+      "inputs": [],
+      "preconditions": ["plugins/rn/domain/best-practices/meta"],
+      "status": "open",
+      "intents": [
+        {"id": "Q1", "good": false, "decisions": []},
+        {"id": "Q2", "good": false, "decisions": []},
+        {"id": "Q3", "good": false, "decisions": []},
+        {"id": "Q4", "good": false, "decisions": []},
+        {"id": "Q5", "good": false, "decisions": []},
+        {"id": "Q6", "good": false, "decisions": []},
+        {"id": "Q7", "good": false, "decisions": []},
+        {"id": "Q8", "good": false, "decisions": []},
+        {"id": "Q9", "good": false, "decisions": []},
+        {"id": "Q10", "good": false, "decisions": []}
+      ]
+    },
+    {
+      "name": "An editor of a document finds the field's established way to have it read as its writer meant",
+      "path": "plugins/rn/domain/best-practices/refactor-doc",
+      "kind": "meta",
+      "inputs": [],
+      "preconditions": ["plugins/rn/domain/best-practices/meta"],
+      "status": "open",
+      "intents": [
+        {"id": "Q1", "good": false, "decisions": []},
+        {"id": "Q2", "good": false, "decisions": []},
+        {"id": "Q3", "good": false, "decisions": []},
+        {"id": "Q4", "good": false, "decisions": []},
+        {"id": "Q5", "good": false, "decisions": []},
+        {"id": "Q6", "good": false, "decisions": []},
+        {"id": "Q7", "good": false, "decisions": []},
+        {"id": "Q8", "good": false, "decisions": []},
+        {"id": "Q9", "good": false, "decisions": []},
+        {"id": "Q10", "good": false, "decisions": []}
+      ]
+    },
+    {
       "name": "Lane's code is designed, tested first, and written as the code best practice says",
       "path": "plugins/lane/domain",
       "kind": "code",
@@ -372,6 +537,51 @@
         {"id": "Q12", "good": false, "decisions": []},
         {"id": "Q13", "good": false, "decisions": []},
         {"id": "Q14", "good": false, "decisions": []}
+      ]
+    },
+    {
+      "name": "Each of rn's roles does its part as its prompt means, on every run",
+      "path": "plugins/rn/agents",
+      "kind": "prompt",
+      "inputs": ["dev/rn/architecture.md"],
+      "preconditions": ["plugins/rn/domain"],
+      "status": "open",
+      "intents": [
+        {"id": "Q1", "good": false, "decisions": []},
+        {"id": "Q2", "good": false, "decisions": []},
+        {"id": "Q3", "good": false, "decisions": []},
+        {"id": "Q4", "good": false, "decisions": []},
+        {"id": "Q5", "good": false, "decisions": []},
+        {"id": "Q6", "good": false, "decisions": []},
+        {"id": "Q7", "good": false, "decisions": []},
+        {"id": "Q8", "good": false, "decisions": []},
+        {"id": "Q9", "good": false, "decisions": []},
+        {"id": "Q10", "good": false, "decisions": []},
+        {"id": "Q11", "good": false, "decisions": []},
+        {"id": "Q12", "good": false, "decisions": []},
+        {"id": "Q13", "good": false, "decisions": []},
+        {"id": "Q14", "good": false, "decisions": []},
+        {"id": "Q15", "good": false, "decisions": []},
+        {"id": "Q16", "good": false, "decisions": []},
+        {"id": "Q17", "good": false, "decisions": []}
+      ]
+    },
+    {
+      "name": "Lane's README reads as its writer meant, to a newcomer reading it once",
+      "path": "plugins/lane/README.md",
+      "kind": "refactor-doc",
+      "inputs": [],
+      "preconditions": ["plugins/lane"],
+      "status": "open",
+      "intents": [
+        {"id": "Q1", "good": false, "decisions": []},
+        {"id": "Q2", "good": false, "decisions": []},
+        {"id": "Q3", "good": false, "decisions": []},
+        {"id": "Q4", "good": false, "decisions": []},
+        {"id": "Q5", "good": false, "decisions": []},
+        {"id": "Q6", "good": false, "decisions": []},
+        {"id": "Q7", "good": false, "decisions": []},
+        {"id": "Q8", "good": false, "decisions": []}
       ]
     },
     {
