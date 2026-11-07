@@ -185,66 +185,6 @@
       ]
     },
     {
-      "name": "rn can make tests from a best practice for tests",
-      "path": "plugins/rn/domain/best-practices/tests",
-      "kind": "meta",
-      "inputs": [],
-      "preconditions": [],
-      "status": "open",
-      "intents": [
-        {
-          "id": "Q1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q8",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q9",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q10",
-          "good": false,
-          "decisions": []
-        }
-      ]
-    },
-    {
       "name": "rn's product vision says what rn is for",
       "path": "dev/rn/product-vision.md",
       "kind": "product-vision",
