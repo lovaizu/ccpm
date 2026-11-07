@@ -243,8 +243,8 @@
             },
             {
               "about": "Nobody relays, rewritten in 8602092c",
-              "decided": "holds as rewritten: the one who starts a role carries its points to the person as given and the answer back word for word, as a subagent's last message reaches only its starter and only the main conversation asks the person",
-              "by": "research"
+              "decided": "nobody relays: the main conversation starts each role, so the role's points reach it and it puts them to the person as given, and takes the answer back word for word; no agent stands between, as a subagent's last message reaches only its starter and only the main conversation asks the person",
+              "by": "user"
             }
           ]
         },
@@ -320,11 +320,13 @@
             },
             {
               "about": "What the main conversation adds to a message",
-              "decided": null
+              "decided": "Lane checks each start and resume of a role from the main conversation: the message holds the part tree.py gave and the person's answers word for word, and nothing else",
+              "by": "reasoning"
             },
             {
               "about": "The commits kept on the branch lane-held",
-              "decided": null
+              "decided": "lane-held keeps 281dae86, 1e690d7d, 6c8bfa5e and f16c1cda; when Lane's code is made, each is taken where Lane's design keeps what it fixes, and the branch goes",
+              "by": "reasoning"
             }
           ]
         },
