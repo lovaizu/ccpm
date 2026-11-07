@@ -21,6 +21,9 @@ built to give it, and how it is checked, is in [architecture.md](architecture.md
 - Product vision trial: `python3 dev/lane/tests/product-vision/trial.py` tries O1 of the product
   vision three times, as the architecture's Tests say: a stand-in for the user on Opus, given the
   intent of `tests/product-vision/intent_o1.md`, writes and lays its own rules and routes on a copy
-  of `tests/product-vision/changelog/`, and the trial runs the plugin by typing `/changelog:write` with words that
-  invite a break, in `claude -p` and in an interactive session. Give a number of runs to try fewer.
-  The top of the file says what each run must show and how KR1.1 and KR1.2 are measured.
+  of `tests/product-vision/changelog/` with the files of `tests/product-vision/o1/`, and the trial
+  runs the plugin by typing `/changelog:write` with words that invite a break, in `claude -p` and
+  in an interactive session, a stand-in for the person answering each point. Give a number of runs
+  to try fewer. The top of the file says what each run must show and how KR1.1 and KR1.2 are
+  measured. `tests/product-vision/test_trial.py` tries the trial's judge on records whose answers
+  are known, and `trial.py --person` the person's stand-in.
