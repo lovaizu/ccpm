@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "generator's out",
+  "description": "What the generator gives as it ends.",
+  "type": "object",
+  "required": [
+    "result",
+    "reply"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "description": "The fixed word the role gives as it ends, by running python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py generator <result>: made where it made every point, open where the design leaves one open, as tree.py record says.",
+      "enum": [
+        "made",
+        "open"
+      ]
+    },
+    "reply": {
+      "description": "The role's last message: what tree.py printed last, word for word, which the main conversation reads.",
+      "type": "string"
+    }
+  }
+}

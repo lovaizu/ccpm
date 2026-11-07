@@ -1,0 +1,235 @@
+{
+  "subagents": [
+    {
+      "name": "planner",
+      "steps_adapter": "hooks/adapters/steps-practices.py",
+      "steps": [
+        {
+          "step": 1,
+          "lanes": [
+            {
+              "lane": "write_only",
+              "takes": [
+                "{edit}"
+              ]
+            },
+            {
+              "lane": "in_form",
+              "takes": [
+                "{edit}",
+                "${CLAUDE_PLUGIN_ROOT}/domain/forms/tree-edit.schema.json"
+              ]
+            },
+            {
+              "lane": "run_only",
+              "takes": [
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py write {run} {edit}",
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py commit {run}",
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py deliver {run}"
+              ]
+            },
+            {
+              "lane": "test_after",
+              "takes": [
+                "{edit}",
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py write {run} {edit}"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 2,
+          "lanes": [
+            {
+              "lane": "every_item",
+              "takes": [
+                "{tree}"
+              ],
+              "adapter": "hooks/adapters/items-tree.py"
+            }
+          ]
+        },
+        {
+          "step": 3,
+          "lanes": [
+            {
+              "lane": "run_step",
+              "takes": [
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py commit {run}",
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py deliver {run}"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "generator",
+      "steps_adapter": "hooks/adapters/steps-practices.py",
+      "steps": [
+        {
+          "step": 1,
+          "lanes": [
+            {
+              "lane": "in_form",
+              "takes": [
+                "{record}",
+                "${CLAUDE_PLUGIN_ROOT}/domain/forms/making-record.schema.json"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 2,
+          "lanes": [
+            {
+              "lane": "run_step",
+              "takes": [
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/throwaway.py {run}"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 3,
+          "lanes": [
+            {
+              "lane": "run_step",
+              "takes": [
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py record {record}"
+              ]
+            },
+            {
+              "lane": "test_after",
+              "takes": [
+                "{record}",
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py record {record}"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "evaluator",
+      "steps": [
+        {
+          "step": 1,
+          "lanes": [
+            {
+              "lane": "read_only",
+              "takes": [
+                "{reads}"
+              ]
+            },
+            {
+              "lane": "read_whole",
+              "takes": [
+                "{files}",
+                "{try}"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 2,
+          "lanes": [
+            {
+              "lane": "write_only",
+              "takes": [
+                "{answers}"
+              ]
+            },
+            {
+              "lane": "in_form",
+              "takes": [
+                "{answers}",
+                "${CLAUDE_PLUGIN_ROOT}/domain/forms/answers.schema.json"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 3,
+          "lanes": [
+            {
+              "lane": "run_only",
+              "takes": [
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py record {answers}"
+              ]
+            },
+            {
+              "lane": "run_step",
+              "takes": [
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py record {answers}"
+              ]
+            },
+            {
+              "lane": "test_after",
+              "takes": [
+                "{answers}",
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py record {answers}"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "routes": {
+    "orchestrator": "up",
+    "command": "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py start",
+    "fan_out": [
+      "evaluator"
+    ],
+    "precedence": {
+      "evaluator": [
+        "open",
+        "more",
+        "good"
+      ]
+    },
+    "routes": [
+      {
+        "from": "up",
+        "to": "planner"
+      },
+      {
+        "from": "planner",
+        "on": "asks"
+      },
+      {
+        "from": "planner",
+        "on": "ready",
+        "to": "generator"
+      },
+      {
+        "from": "planner",
+        "on": "done"
+      },
+      {
+        "from": "generator",
+        "on": "made",
+        "to": "evaluator"
+      },
+      {
+        "from": "generator",
+        "on": "open"
+      },
+      {
+        "from": "evaluator",
+        "on": "open"
+      },
+      {
+        "from": "evaluator",
+        "on": "more",
+        "to": "generator"
+      },
+      {
+        "from": "evaluator",
+        "on": "good",
+        "to": "planner"
+      }
+    ]
+  }
+}

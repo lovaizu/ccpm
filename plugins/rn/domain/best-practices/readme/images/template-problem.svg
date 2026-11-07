@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 400" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+  <title>The usual way and the product</title>
+  <style>
+    .bg { fill: #ffffff; }
+    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .lane { fill: #ddf4ff; stroke: #54aeff; }
+    .store { fill: #fff8c5; stroke: #9a6700; stroke-width: 1.5; }
+    .ext { fill: #eaeef2; stroke: #d0d7de; stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .unit { fill: #ddf4ff; fill-opacity: 0.35; stroke: #0969da; stroke-width: 1.2; }
+    .frame { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    .frame-name { fill: #0969da; font-size: 13px; font-weight: 600; }
+    .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
+    .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
+    .label { fill: #1f2328; font-size: 13px; }
+    .small { font-size: 12px; }
+    .data { fill: #8250df; font-size: 12px; font-style: italic; }
+    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .dashed { stroke-dasharray: 5 4; }
+    .head { fill: #59636e; }
+    .hole { fill: #ffffff; stroke: #59636e; stroke-width: 1.5; }
+    .halo { stroke: #ffffff; stroke-width: 7; stroke-linejoin: round; paint-order: stroke; }
+    .mid { text-anchor: middle; }
+    .start { text-anchor: start; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; }
+      .box { fill: #161b22; stroke: #3d444d; }
+      .lane { fill: #0c2d6b; stroke: #4493f8; }
+      .store { fill: #2e2a1a; stroke: #d29922; }
+      .ext { fill: #21262d; stroke: #3d444d; }
+      .unit { fill: #0c2d6b; stroke: #4493f8; }
+      .frame { stroke: #4493f8; }
+      .frame-name { fill: #4493f8; }
+      .name, .label { fill: #f0f6fc; }
+      .kind { fill: #9198a1; }
+      .data { fill: #c297ff; }
+      .line { stroke: #9198a1; }
+      .head { fill: #9198a1; }
+      .hole { fill: #0d1117; stroke: #9198a1; }
+      .halo { stroke: #0d1117; }
+    }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path class="head" d="M0,0 L10,5 L0,10 z"/>
+    </marker>
+  </defs>
+    <rect class="bg" x="0" y="0" width="1000" height="400"/>
+  <text class="frame-name start" x="20" y="40" text-anchor="start">The usual way</text>
+  <rect class="box" x="20" y="70" width="150" height="60" rx="6"/>
+  <text class="name mid" x="95.0" y="106" text-anchor="middle">&lt;user&gt;</text>
+  <rect class="box" x="330" y="70" width="260" height="60" rx="6"/>
+  <text class="name mid" x="460.0" y="106" text-anchor="middle">&lt;what they do&gt;</text>
+  <rect class="ext" x="760" y="70" width="220" height="60" rx="6"/>
+  <text class="name mid" x="870.0" y="106" text-anchor="middle">&lt;problem&gt; left</text>
+  <path class="line" d="M170,100 L326,100" marker-end="url(#arrow)"/>
+  <path class="line" d="M590,100 L756,100" marker-end="url(#arrow)"/>
+  <rect class="frame" x="230" y="200" width="510" height="180" rx="8"/>
+  <text class="frame-name start" x="244" y="222" text-anchor="start">&lt;Product&gt;</text>
+  <rect class="box" x="20" y="270" width="150" height="60" rx="6"/>
+  <text class="name mid" x="95.0" y="306" text-anchor="middle">&lt;user&gt;</text>
+  <rect class="box" x="260" y="270" width="170" height="60" rx="6"/>
+  <text class="name mid" x="345.0" y="306" text-anchor="middle">&lt;part&gt;</text>
+  <rect class="box" x="540" y="270" width="170" height="60" rx="6"/>
+  <text class="name mid" x="625.0" y="306" text-anchor="middle">&lt;part&gt;</text>
+  <rect class="lane" x="780" y="270" width="200" height="60" rx="6"/>
+  <text class="name mid" x="880.0" y="306" text-anchor="middle">&lt;problem&gt; gone</text>
+  <path class="line" d="M170,300 L256,300" marker-end="url(#arrow)"/>
+  <path class="line" d="M430,300 L536,300" marker-end="url(#arrow)"/>
+  <text class="label small halo mid" x="483" y="290" text-anchor="middle">&lt;instead&gt;</text>
+  <path class="line" d="M710,300 L776,300" marker-end="url(#arrow)"/>
+</svg>

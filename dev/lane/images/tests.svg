@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1460 900" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+  <title>Lane&#x27;s tests</title>
+  <style>
+    .bg { fill: #ffffff; }
+    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .lane { fill: #ddf4ff; stroke: #54aeff; }
+    .store { fill: #fff8c5; stroke: #9a6700; stroke-width: 1.5; }
+    .ext { fill: #eaeef2; stroke: #d0d7de; stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .unit { fill: #ddf4ff; fill-opacity: 0.35; stroke: #0969da; stroke-width: 1.2; }
+    .frame { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    .frame-name { fill: #0969da; font-size: 13px; font-weight: 600; }
+    .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
+    .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
+    .label { fill: #1f2328; font-size: 13px; }
+    .small { font-size: 12px; }
+    .data { fill: #8250df; font-size: 12px; font-style: italic; }
+    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .dashed { stroke-dasharray: 5 4; }
+    .head { fill: #59636e; }
+    .hole { fill: #ffffff; stroke: #59636e; stroke-width: 1.5; }
+    .halo { stroke: #ffffff; stroke-width: 7; stroke-linejoin: round; paint-order: stroke; }
+    .mid { text-anchor: middle; }
+    .start { text-anchor: start; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; }
+      .box { fill: #161b22; stroke: #3d444d; }
+      .lane { fill: #0c2d6b; stroke: #4493f8; }
+      .store { fill: #2e2a1a; stroke: #d29922; }
+      .ext { fill: #21262d; stroke: #3d444d; }
+      .unit { fill: #0c2d6b; stroke: #4493f8; }
+      .frame { stroke: #4493f8; }
+      .frame-name { fill: #4493f8; }
+      .name, .label { fill: #f0f6fc; }
+      .kind { fill: #9198a1; }
+      .data { fill: #c297ff; }
+      .line { stroke: #9198a1; }
+      .head { fill: #9198a1; }
+      .hole { fill: #0d1117; stroke: #9198a1; }
+      .halo { stroke: #0d1117; }
+    }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path class="head" d="M0,0 L10,5 L0,10 z"/>
+    </marker>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1460" height="900"/>
+  <text class="name start" x="42" y="46" text-anchor="start">Deployment unit</text>
+  <text class="name start" x="284" y="40" text-anchor="start">unit</text>
+  <text class="kind start" x="284" y="58" text-anchor="start">one part against its contract</text>
+  <text class="name start" x="674" y="40" text-anchor="start">architecture</text>
+  <text class="kind start" x="674" y="58" text-anchor="start">the parts joined, against this document</text>
+  <text class="name start" x="1064" y="40" text-anchor="start">product vision</text>
+  <text class="kind start" x="1064" y="58" text-anchor="start">Lane in real use, against the product vision</text>
+  <rect class="box" x="30" y="80" width="232" height="110" rx="6"/>
+  <text class="name start" x="42" y="110" text-anchor="start">lay.py process</text>
+  <text class="kind start" x="42" y="128" text-anchor="start">[python3 3.9 or later]</text>
+  <rect class="unit" x="272" y="80" width="380" height="110" rx="6"/>
+  <text class="name start" x="284" y="108" text-anchor="start">unittest, Cosmic Ray, Hypothesis · FULL</text>
+  <text class="label start" x="284" y="130" text-anchor="start">a proposal laid or refused; the steps,</text>
+  <text class="label start" x="284" y="149" text-anchor="start">hook entries and Lane&#x27;s code written</text>
+  <rect class="unit" x="662" y="80" width="380" height="110" rx="6"/>
+  <text class="name start" x="674" y="108" text-anchor="start">unittest · FULL</text>
+  <text class="label start" x="674" y="130" text-anchor="start">lay.py and the files it lays real, a double</text>
+  <text class="label start" x="674" y="149" text-anchor="start">of claude: each path of S1, S2 and S4</text>
+  <rect class="box" x="1052" y="80" width="380" height="110" rx="6"/>
+  <text class="name start" x="1064" y="108" text-anchor="start">a trial on Opus · SMOKE</text>
+  <text class="label start" x="1064" y="130" text-anchor="start">the stand-in lays its lanes and routes</text>
+  <text class="label start" x="1064" y="149" text-anchor="start">on changelog</text>
+  <rect class="box" x="30" y="200" width="232" height="110" rx="6"/>
+  <text class="name start" x="42" y="230" text-anchor="start">hook process</text>
+  <text class="kind start" x="42" y="248" text-anchor="start">[python3 3.9 or later]</text>
+  <rect class="unit" x="272" y="200" width="380" height="110" rx="6"/>
+  <text class="name start" x="284" y="228" text-anchor="start">unittest, Cosmic Ray, Hypothesis · FULL</text>
+  <text class="label start" x="284" y="250" text-anchor="start">each type of lane; a step due by its trace;</text>
+  <text class="label start" x="284" y="269" text-anchor="start">a call kept; a run begun and ended; the next</text>
+  <text class="label start" x="284" y="288" text-anchor="start">start; a text as given; a text at each port</text>
+  <rect class="unit" x="662" y="200" width="380" height="110" rx="6"/>
+  <text class="name start" x="674" y="228" text-anchor="start">unittest · FULL</text>
+  <text class="label start" x="674" y="250" text-anchor="start">the guard by the hook entries, doubles of</text>
+  <text class="label start" x="674" y="269" text-anchor="start">Claude Code, the skill, the roles, and adapters:</text>
+  <text class="label start" x="674" y="288" text-anchor="start">each path of the four S3 sequences</text>
+  <rect class="box" x="1052" y="200" width="380" height="110" rx="6"/>
+  <text class="name start" x="1064" y="228" text-anchor="start">a trial on Opus · SMOKE</text>
+  <text class="label start" x="1064" y="250" text-anchor="start">the main conversation, writer, and</text>
+  <text class="label start" x="1064" y="269" text-anchor="start">reviewer held on a run of changelog</text>
+  <rect class="box" x="30" y="320" width="232" height="110" rx="6"/>
+  <text class="name start" x="42" y="350" text-anchor="start">result process</text>
+  <text class="kind start" x="42" y="368" text-anchor="start">[python3 3.9 or later]</text>
+  <rect class="unit" x="272" y="320" width="380" height="110" rx="6"/>
+  <text class="name start" x="284" y="348" text-anchor="start">unittest, Cosmic Ray, Hypothesis · FULL</text>
+  <text class="label start" x="284" y="370" text-anchor="start">each result a role may give, and</text>
+  <text class="label start" x="284" y="389" text-anchor="start">one it may not</text>
+  <rect class="unit" x="662" y="320" width="380" height="110" rx="6"/>
+  <text class="name start" x="674" y="348" text-anchor="start">unittest · FULL</text>
+  <text class="label start" x="674" y="370" text-anchor="start">result.py run as a step writes it: each</text>
+  <text class="label start" x="674" y="389" text-anchor="start">path of S3 a result given</text>
+  <rect class="box" x="1052" y="320" width="380" height="110" rx="6"/>
+  <text class="name start" x="1064" y="348" text-anchor="start">a trial on Opus · SMOKE</text>
+  <text class="label start" x="1064" y="370" text-anchor="start">the results of writer and reviewer</text>
+  <text class="frame-name" x="30" y="455" text-anchor="start">Legend</text>
+  <rect class="unit" x="105" y="440" width="36" height="22" rx="4"/>
+  <text class="label small" x="149" y="455" text-anchor="start">runs on every push and in CI</text>
+  <rect class="box" x="380" y="440" width="36" height="22" rx="4"/>
+  <text class="label small" x="424" y="455" text-anchor="start">runs once every lower level passes</text>
+  <text class="label small" x="700" y="455" text-anchor="start">tool · FULL, HAPPY or SMOKE, then what the tests check</text>
+  <text class="label start" x="30" y="490" text-anchor="start">No row: the adapter process, as an adapter is the user&#x27;s code, which the rows of the lay.py and hook processes run; the folders hold files and run nothing.</text>
+  <rect class="frame" x="20" y="512" width="1420" height="360" rx="8"/>
+  <text class="frame-name" x="32" y="534" text-anchor="start">Where Lane&#x27;s tests differ from the best practices</text>
+  <text class="name start" x="42" y="562" text-anchor="start">unit</text>
+  <text class="label start" x="42" y="584" text-anchor="start">Doubles: each event of Claude Code as JSON, in the</text>
+  <text class="label start" x="42" y="602" text-anchor="start">fields its hooks reference documents; claude as a</text>
+  <text class="label start" x="42" y="620" text-anchor="start">script on PATH, printing what a recorded run of it printed.</text>
+  <text class="label start" x="42" y="638" text-anchor="start">No stand-in, as no user takes part.</text>
+  <text class="name start" x="512" y="562" text-anchor="start">architecture</text>
+  <text class="label start" x="512" y="584" text-anchor="start">Real: lay.py, the guard by the hook entries, result.py</text>
+  <text class="label start" x="512" y="602" text-anchor="start">and the files lay.py lays, on a copy of changelog.</text>
+  <text class="label start" x="512" y="620" text-anchor="start">Doubles: Claude Code, sending each path&#x27;s events in</text>
+  <text class="label start" x="512" y="638" text-anchor="start">order, the main conversation&#x27;s as a trial on Claude</text>
+  <text class="label start" x="512" y="656" text-anchor="start">Code 2.1.319 recorded them, kept beside the double</text>
+  <text class="label start" x="512" y="674" text-anchor="start">with the version and the date; the skill and the</text>
+  <text class="label start" x="512" y="692" text-anchor="start">roles, making set calls and giving results that</text>
+  <text class="label start" x="512" y="710" text-anchor="start">result.py takes, or one it refuses on the path that</text>
+  <text class="label start" x="512" y="728" text-anchor="start">tries it.</text>
+  <text class="label start" x="512" y="746" text-anchor="start">Stand-in: a set answer for the person of a held</text>
+  <text class="label start" x="512" y="764" text-anchor="start">command.</text>
+  <text class="label start" x="512" y="782" text-anchor="start">Each type of lane laid on some path; an adapter of</text>
+  <text class="label start" x="512" y="800" text-anchor="start">the tests&#x27; own at the steps and items ports, on a</text>
+  <text class="label start" x="512" y="818" text-anchor="start">best practice and a design tree of their own.</text>
+  <text class="name start" x="982" y="562" text-anchor="start">product vision</text>
+  <text class="label start" x="982" y="584" text-anchor="start">Subject: changelog, as the README&#x27;s walkthrough runs</text>
+  <text class="label start" x="982" y="602" text-anchor="start">it.</text>
+  <text class="label start" x="982" y="620" text-anchor="start">Stand-in: an AI on Opus, given an intent written</text>
+  <text class="label start" x="982" y="638" text-anchor="start">before the run and never shown to Lane. It lays its</text>
+  <text class="label start" x="982" y="656" text-anchor="start">lanes and routes, and runs changelog by typing its</text>
+  <text class="label start" x="982" y="674" text-anchor="start">command, in claude -p and in an interactive session.</text>
+  <text class="label start" x="982" y="692" text-anchor="start">Measures KR1.1 over the plugin&#x27;s runs, and KR1.2</text>
+  <text class="label start" x="982" y="710" text-anchor="start">from the first proposal written to the first run that</text>
+  <text class="label start" x="982" y="728" text-anchor="start">keeps it, each against the last trial&#x27;s.</text>
+  <text class="label start" x="982" y="746" text-anchor="start">Judges the calls of every role of the plugin.</text>
+  <text class="label start" x="982" y="764" text-anchor="start">Passes where 3 runs of 3 pass.</text>
+  <text class="label start" x="42" y="845" text-anchor="start">A fault found higher in how Claude Code acts, such as the order of two events, is recorded beside the double of Claude Code; an architecture test then fails before Lane&#x27;s code is fixed.</text>
+</svg>

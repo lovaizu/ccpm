@@ -1,0 +1,236 @@
+{
+  "goal": {
+    "decided": "The user has each deliverable they mean made by rn, every deliverable meeting each intent of its best practice, and is asked only what is theirs.",
+    "by": "user"
+  },
+  "deliverables": [
+    {
+      "name": "Every prose ccpm keeps is checked by lovaizu/checks",
+      "path": "lefthook.yml",
+      "kind": "code",
+      "status": "done"
+    },
+    {
+      "name": "rn can plan from a best practice for planning",
+      "path": "plugins/rn/domain/best-practices/plan",
+      "kind": "meta",
+      "status": "done"
+    },
+    {
+      "name": "The shared plugin best practice says what rn and Lane share",
+      "path": "plugins/rn/domain/best-practices/plugin",
+      "kind": "meta",
+      "status": "done"
+    },
+    {
+      "name": "Lane's design checks each practice step and each change",
+      "path": "dev/lane/architecture.md",
+      "kind": "architecture",
+      "status": "done"
+    },
+    {
+      "name": "Lane's code does what its design says",
+      "path": "plugins/lane",
+      "kind": "plugin",
+      "inputs": ["dev/lane/architecture.md"],
+      "preconditions": [],
+      "status": "doing",
+      "intents": [
+        {"id": "Q1", "good": false, "decisions": []},
+        {"id": "Q2", "good": false, "decisions": []},
+        {"id": "Q3", "good": false, "decisions": []},
+        {"id": "Q4", "good": false, "decisions": []},
+        {"id": "Q5", "good": false, "decisions": []},
+        {"id": "Q6", "good": false, "decisions": []},
+        {"id": "Q7", "good": false, "decisions": []},
+        {"id": "Q8", "good": false, "decisions": []},
+        {"id": "Q9", "good": false, "decisions": []},
+        {"id": "Q10", "good": false, "decisions": []},
+        {"id": "Q11", "good": false, "decisions": []},
+        {"id": "Q12", "good": false, "decisions": []},
+        {"id": "Q13", "good": false, "decisions": []},
+        {"id": "Q14", "good": false, "decisions": []},
+        {"id": "Q15", "good": false, "decisions": []},
+        {"id": "Q16", "good": false, "decisions": []},
+        {"id": "Q17", "good": false, "decisions": []},
+        {"id": "Q18", "good": false, "decisions": []},
+        {"id": "Q19", "good": false, "decisions": []},
+        {"id": "Q20", "good": false, "decisions": []},
+        {"id": "Q21", "good": false, "decisions": []},
+        {"id": "Q22", "good": false, "decisions": []},
+        {"id": "Q23", "good": false, "decisions": []},
+        {"id": "Q24", "good": false, "decisions": []},
+        {"id": "Q25", "good": false, "decisions": []},
+        {
+          "id": "Q26",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The product vision trial",
+              "decided": "on Opus by dev/lane/tests/product-vision/trial.py, its plugin given a part with no numbered list, a steps adapter, a start-text command and a route that waits for the person, and its judge counting steps out of order, starts unlike the command's text and resumes not in the person's words; its judge first right on kept records whose answer is known",
+              "by": "reasoning"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "rn's product vision says what rn is for",
+      "path": "dev/rn/product-vision.md",
+      "kind": "product-vision",
+      "status": "done"
+    },
+    {
+      "name": "A newcomer learns from the README what rn does",
+      "path": "plugins/rn/README.md",
+      "kind": "readme",
+      "inputs": ["dev/rn/product-vision.md"],
+      "preconditions": [],
+      "status": "doing",
+      "intents": [
+        {"id": "Q1", "good": true, "decisions": []},
+        {"id": "Q2", "good": true, "decisions": []},
+        {"id": "Q3", "good": true, "decisions": []},
+        {"id": "Q4", "good": true, "decisions": []},
+        {
+          "id": "Q5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Installation tried",
+              "decided": "once the rebuilt rn is built, its install steps are followed from nothing as a newcomer would, and the README is mended where they fall short",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "Q6",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The walkthrough recorded",
+              "decided": "the walkthrough takes its output from a recorded run of the rebuilt rn, the product vision test's own",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {"id": "Q7", "good": true, "decisions": []},
+        {"id": "Q8", "good": true, "decisions": []},
+        {"id": "Q9", "good": true, "decisions": []},
+        {"id": "Q10", "good": true, "decisions": []},
+        {"id": "Q11", "good": true, "decisions": []}
+      ]
+    },
+    {
+      "name": "rn's design says how a turn carries out a best practice",
+      "path": "dev/rn/architecture.md",
+      "kind": "architecture",
+      "status": "done"
+    },
+    {
+      "name": "rn works as designed, with Pin and Turn removed",
+      "path": "plugins/rn",
+      "kind": "plugin",
+      "inputs": ["dev/rn/architecture.md"],
+      "preconditions": ["plugins/lane"],
+      "status": "doing",
+      "intents": [
+        {"id": "Q1", "good": false, "decisions": []},
+        {"id": "Q2", "good": false, "decisions": []},
+        {"id": "Q3", "good": false, "decisions": []},
+        {"id": "Q4", "good": false, "decisions": []},
+        {"id": "Q5", "good": false, "decisions": []},
+        {"id": "Q6", "good": false, "decisions": []},
+        {"id": "Q7", "good": false, "decisions": []},
+        {"id": "Q8", "good": false, "decisions": []},
+        {
+          "id": "Q9",
+          "good": false,
+          "decisions": [
+            {
+              "about": "A step's trace",
+              "decided": "meta's form gives each practice step a trace a machine can check, and each kind's steps get one, so rn's steps adapter hands Lane what to hold",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {"id": "Q10", "good": false, "decisions": []},
+        {"id": "Q11", "good": false, "decisions": []},
+        {"id": "Q12", "good": false, "decisions": []},
+        {"id": "Q13", "good": false, "decisions": []},
+        {"id": "Q14", "good": false, "decisions": []},
+        {"id": "Q15", "good": false, "decisions": []},
+        {"id": "Q16", "good": false, "decisions": []},
+        {"id": "Q17", "good": false, "decisions": []},
+        {"id": "Q18", "good": false, "decisions": []},
+        {"id": "Q19", "good": false, "decisions": []},
+        {"id": "Q20", "good": false, "decisions": []},
+        {"id": "Q21", "good": false, "decisions": []},
+        {
+          "id": "Q22",
+          "good": false,
+          "decisions": [
+            {
+              "about": "claude plugin eval",
+              "decided": "not used: a case is one prompt in an empty workspace that never stops for an answer, while rn's walkthrough answers points and resumes; the product vision trials run on Lane's trial driver in lovaizu/playground",
+              "by": "research"
+            }
+          ]
+        },
+        {
+          "id": "Q23",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The plugin's icon",
+              "decided": null
+            }
+          ]
+        },
+        {"id": "Q24", "good": false, "decisions": []},
+        {"id": "Q25", "good": false, "decisions": []},
+        {
+          "id": "Q26",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Pin and Turn",
+              "decided": "plugins/pin and plugins/turn go once rn holds their parts; the branch turn-held keeps the eight Turn commits no branch held, and each is taken where rn's design keeps what it fixes, then the branch goes",
+              "by": "reasoning"
+            },
+            {
+              "about": "Lane's old part folders",
+              "decided": "Lane's guard stops reading prompts/ and core/roles/ in the change that removes Pin and Turn, as their parts lie there until then",
+              "by": "reasoning"
+            },
+            {
+              "about": "A start value that is null",
+              "decided": "a run lane whose value is null lets no command through, and a run_step command the adapter gives counts as allowed, so the generator gets run_only",
+              "by": "reasoning"
+            },
+            {
+              "about": "A file a role must not read",
+              "decided": "Lane gains a lane that stops a read of the files it names, and the planner and generator get it for the design tree, as no role reads the tree",
+              "by": "reasoning"
+            },
+            {
+              "about": "Permission for tree.py",
+              "decided": "the skill names tree.py in allowed-tools, and the prose check reads no front matter, as a prompt per call costs the user time",
+              "by": "reasoning"
+            },
+            {
+              "about": "Picking up a run on another branch",
+              "decided": "/rn:up alone finds the runs on rn's work branches and picks up the one the user means, asking only where more than one waits",
+              "by": "reasoning"
+            },
+            {
+              "about": "Tests written after the code",
+              "decided": "rn's unit tests are judged by CI's mutation run: each surviving mutant gets a test seen to fail first, then the fix",
+              "by": "reasoning"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

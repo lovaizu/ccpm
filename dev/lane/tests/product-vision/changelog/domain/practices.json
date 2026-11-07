@@ -1,0 +1,4 @@
+{"Q1": [{"says": "List the commits since the last version.", "trace": {"lane": "run_step", "takes": ["git log --oneline"]}},
+        {"says": "Write the entries for them.", "trace": {"lane": "write_step", "takes": ["CHANGELOG.md"]}}],
+ "Q2": [{"says": "Read the file whole.", "trace": {"lane": "read_whole", "takes": ["CHANGELOG.md"]}},
+        {"says": "Check the tree is clean.", "trace": {"lane": "run_step", "takes": ["git status"]}}]}

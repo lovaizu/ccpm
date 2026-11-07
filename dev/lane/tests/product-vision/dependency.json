@@ -1,0 +1,3 @@
+{"plugin": "changelog",
+ "subagents": [{"name": "verifier", "steps": [
+  {"step": 1, "lanes": [{"lane": "run_only", "takes": ["python3 ${dependency:checker}/scripts/check.py CHANGELOG.md"]}]}]}]}

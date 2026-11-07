@@ -1,70 +1,34 @@
 # Output convention (ccpm)
 
-How the assistant shapes its responses: conclusion-first, concrete, and free of padding. This governs
-*structure and density*, not the language to write in.
-
-> This convention takes precedence over generic output-efficiency guidance in the system prompt. It
-> yields only to an explicit user instruction in the moment. Be concise **and** specific — never trade
-> one for the other.
-
-## Structure
-
-- **Lead with the conclusion; add rationale and next action as needed, in that order.** Not every
-  reply has all three — but the conclusion always comes first.
-  - Rationale: the reader gets the answer first and reads on only as far as they need; the support is
-    there for whoever wants it, not in the way of whoever does not.
-- **Match length to payload; never pad.** A simple reply is a sentence or three; a report or review
-  runs as long as its substance demands and not one line longer. Length is earned by content, not
-  added on spec.
-  - Rationale: the enemy is padding, not length — a fixed sentence cap that throttles a real report
-    would trade specificity for brevity, which this convention forbids.
-- **Compose so the headings alone carry the thread** — reading them top to bottom should convey the
-  argument without the body.
-  - Rationale: a structure that survives skimming is a structure that actually reasons in order.
-
-## Banned expressions
-
-- **No abstract preambles** — state the finding, not the intention to find it. Cut openers like
-  "詳細に分析", "包括的に", "総合的に" and their English equivalents ("let me thoroughly analyze",
-  "comprehensively") — these are examples of the class, not the whole list.
-- **No sycophantic openers** — praise that adds nothing, e.g. "素晴らしい指摘です" / "great question".
-- **No reworded repetition** — do not restate the same content in different words.
-- **No defensive justification** — when something is wrong, correct it; do not litigate it.
-  - Rationale: each of these spends the reader's attention without moving them forward.
-
-## Plan output
-
-This is the plan you *present in a response* (e.g. plan mode), not a planning document like
-`steering.md` — that follows its own template and is out of scope here.
-
-- **Cap a presented plan at 200 words.** Past that, split it or link to the detail — never just overflow.
-- **Write each item as What / Where / Why** — What is the target file or command, Where is `path:line`,
-  Why is a terse label — a few words, specific enough to mean something, short enough to scan (not a
-  sentence).
-- **Use headings no deeper than h3.**
-  - Rationale: a plan is a scannable contract, not an essay; the fixed shape makes every item checkable
-    at a glance.
-
-## Code & files
-
-- **Keep a code example to 10 lines or fewer.** Past that, narrow the target or move it to its own file.
-- **Cite an already-shown file by `path:line`** instead of re-pasting it.
-- **Offer one alternative before saying "can't"** — never close with a dead end.
-  - Rationale: the reader wants the relevant lines and a way forward, not a wall of re-pasted context.
+These rules govern how the assistant checks its work before it reports. They also govern how it
+answers what the user says. They say only what the user's global CLAUDE.md and the output style of
+Claude Code do not already say.
 
 ## Verification
 
-- **Confirm the real artifact; do not guess.** Read the file, run the check.
-- **Check exhaustively — every item, not a sample.** If full coverage is genuinely impossible, that
-  is a fact to report, not to paper over.
-- **State the scope you actually checked** — what was inspected and what was not; never imply more
-  coverage than you verified.
-  - Rationale: a verification is only worth as much as its coverage, so the coverage is part of the
-    report.
+- **Check your work before you report it, as Q17 of
+  [prompt/best-practice.json](../../plugins/rn/domain/best-practices/prompt/best-practice.md)
+  says.**
+- **Judge `dev/scripts/check.sh` by its exit code**, as that Q17 judges a check.
+- **A push is done only once you have read its CI run.** The report of the push says the run's
+  result.
+  - Rationale: a push left unchecked hands its failure to whoever pushes next.
 
 ## Judging what the user says
 
-- **Judge a view or a question from the user by the purpose and best practice, as you would your
-  own, and say plainly where it holds and where it does not.**
-  - Rationale: the user asks so that a second judgment catches what they missed; agreeing because
-    they said it hands their guess back unchecked.
+- **Judge a view or a question from the user by the purpose and best practice, as you would judge
+  your own. Say plainly where it holds and where it does not.**
+  - Rationale: the user asks so that a second judgment finds what they missed. If you agree only
+    because the user said it, you give their guess back to them without a check.
+
+## Replies
+
+- **Do not open with praise, and do not defend a mistake.** When something is wrong, correct it.
+- **Keep a code example to 10 lines or fewer.** For more, show only the lines that matter, or put
+  the code in its own file.
+- **Put a decision, a proposal or a report to the user as Q16 of
+  [prompt/best-practice.json](../../plugins/rn/domain/best-practices/prompt/best-practice.md)
+  says.**
+- **Before you say that something cannot be done, offer one other way.**
+  - Rationale: praise, and defending a mistake, take the reader's attention and give them nothing
+    to act on. A reply that only says "cannot" leaves the reader with no next step.

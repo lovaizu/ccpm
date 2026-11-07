@@ -1,0 +1,42 @@
+{
+ "DELETE_TEMPLATE_COMMENT": "<role>: the role the goal names, such as \"the developer\". <achieves what>: what the role achieves with the deliverable. <kind>: the kind of deliverable, such as \"readme\". <ext>: the deliverable's own format, such as \"md\". The example is optional, until one deliverable of the kind is made. <source>: the path, from the best practice's folder, of the deliverable the example is a copy of; optional, where the example is not a copy. inputs: each kind whose deliverables a deliverable of this kind is made from, and preconditions: each kind whose deliverables must pass before it is made, each <kind> by the name of its best practice's folder, so that the plan orders each deliverable after what it takes; each list empty where it takes none.",
+ "goal": "<The role> <achieves what>.",
+ "template": "<kind>-template.<ext>",
+ "example": "<kind>-example.<ext>",
+ "source": "<source>",
+ "inputs": [
+  "<kind>"
+ ],
+ "preconditions": [
+  "<kind>"
+ ],
+ "intents": [
+  {
+   "DELETE_TEMPLATE_COMMENT": "One for each section of the template, each dependency among sections and the whole, in the order the generator thinks them. <section>: a heading of the template as written there, or \"the whole\". <When>: the moment a role uses the section, such as \"Reading the goal\". <role>: the role that uses it, the one the goal names or one that serves it, such as \"the evaluator\". <get what>: what that role needs from it there. <so that>: what the role is after in getting it, toward the goal, so that the generator and the evaluator judge by that intent; left out where <get what> is the goal itself.",
+   "id": "Q<n>",
+   "about": "<section>, <section>",
+   "what": "<When>, does <role> <get what>, so that <so that>?"
+  }
+ ],
+ "practices": [
+  {
+   "DELETE_TEMPLATE_COMMENT": "One for each question, in the questions' order. <must be>: what the deliverable must be for the question's role, in short sentences. <why>: why the role needs it so, what goes wrong for the role otherwise. <step>: one action a generator that holds the intent would still not know, such as a format to keep or a place to look, saying what it achieves; optional. <case>: when the step applies, optional. trace: the call that shows the step done, as Lane holds a step by it in the steps' order and holds the role's end until it comes back. <action>: run for a command run, matched whole, read for a file read to its end, or write for a file made. <take>: the command or the file's path, written as the step writes it, a value the role's start gives as `{<name>}`, such as `{deliverable}`; for run and write, more than one where any of them shows the step done, and for read, each file the step reads whole. Left out of a step of a case, as a run outside the case never makes it, and of a step whose action no call shows, such as a judgment.",
+   "intent": "Q<n>",
+   "thinking": "<Must be>. <Why>.",
+   "steps": [
+    {
+     "text": "<step>.",
+     "trace": {
+      "action": "<action>",
+      "takes": [
+       "<take>"
+      ]
+     }
+    },
+    {
+     "text": "Where <case>, <step>."
+    }
+   ]
+  }
+ ]
+}

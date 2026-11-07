@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 250" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+  <title>A run of the skill, from its call to its last start, between your own work</title>
+  <style>
+    .bg { fill: #ffffff; }
+    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .lane { fill: #ddf4ff; stroke: #54aeff; }
+    .store { fill: #fff8c5; stroke: #9a6700; stroke-width: 1.5; }
+    .ext { fill: #eaeef2; stroke: #d0d7de; stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .unit { fill: #ddf4ff; fill-opacity: 0.35; stroke: #0969da; stroke-width: 1.2; }
+    .frame { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    .frame-name { fill: #0969da; font-size: 13px; font-weight: 600; }
+    .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
+    .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
+    .label { fill: #1f2328; font-size: 13px; }
+    .small { font-size: 12px; }
+    .data { fill: #8250df; font-size: 12px; font-style: italic; }
+    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .dashed { stroke-dasharray: 5 4; }
+    .head { fill: #59636e; }
+    .hole { fill: #ffffff; stroke: #59636e; stroke-width: 1.5; }
+    .halo { stroke: #ffffff; stroke-width: 7; stroke-linejoin: round; paint-order: stroke; }
+    .mid { text-anchor: middle; }
+    .start { text-anchor: start; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; }
+      .box { fill: #161b22; stroke: #3d444d; }
+      .lane { fill: #0c2d6b; stroke: #4493f8; }
+      .store { fill: #2e2a1a; stroke: #d29922; }
+      .ext { fill: #21262d; stroke: #3d444d; }
+      .unit { fill: #0c2d6b; stroke: #4493f8; }
+      .frame { stroke: #4493f8; }
+      .frame-name { fill: #4493f8; }
+      .name, .label { fill: #f0f6fc; }
+      .kind { fill: #9198a1; }
+      .data { fill: #c297ff; }
+      .line { stroke: #9198a1; }
+      .head { fill: #9198a1; }
+      .hole { fill: #0d1117; stroke: #9198a1; }
+      .halo { stroke: #0d1117; }
+    }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path class="head" d="M0,0 L10,5 L0,10 z"/>
+    </marker>
+  </defs>
+  <rect class="bg" width="1000" height="250"/>
+  <rect class="frame" x="10" y="10" width="980" height="230" rx="8"/>
+  <text class="frame-name" x="24" y="32">Main conversation</text>
+  <rect class="box" x="40" y="120" width="180" height="60" rx="6"/>
+  <text class="name" x="130" y="155">Your work</text>
+  <rect class="unit" x="300" y="120" width="400" height="60" rx="6"/>
+  <text class="name" x="500" y="155">Run of write</text>
+  <rect class="box" x="780" y="120" width="180" height="60" rx="6"/>
+  <text class="name" x="870" y="155">Your work</text>
+  <path class="line" d="M220,150 L296,150" marker-end="url(#a)"/>
+  <path class="line" d="M700,150 L776,150" marker-end="url(#a)"/>
+  <text class="label small start halo" x="300" y="70">starts: /changelog:write typed, or an AI calls the skill</text>
+  <text class="label small halo" x="700" y="104" text-anchor="end">ends: a route starts no more</text>
+  <path class="line" d="M300,76 L300,120"/>
+  <path class="line" d="M700,108 L700,120"/>
+  <text class="label small mid halo" x="130" y="210">Lane checks nothing</text>
+  <text class="label small mid halo" x="870" y="210">Lane checks nothing</text>
+  <text class="label small mid halo" x="500" y="204">Lane checks each start of a subagent,</text>
+  <text class="label small mid halo" x="500" y="222">each message that resumes one, and the end of a turn</text>
+</svg>

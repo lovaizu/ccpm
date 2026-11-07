@@ -1,0 +1,94 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Making record",
+  "description": "The generator's record of a round, generator.json in the round's folder: what it made, the commands that try it, each small point it decided, and each point it found open.",
+  "type": "object",
+  "required": [
+    "made",
+    "decided",
+    "open"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "made": {
+      "description": "Each file the generator made or changed, from the top of the repository, the deliverable's files and their tests among them.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "commands": {
+      "description": "Each command the deliverable's people run to use it, in order, as they would type it, such as its install steps and its walkthrough, which throwaway.py runs in a throwaway copy.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "home": {
+      "description": "Each file outside the repository those commands need, by its path under the home, such as Downloads/a.jpg, made empty in the throwaway home.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "decided": {
+      "description": "Each small point of making it that the generator decided, such as a phrase, with what settles it.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "intent",
+          "about",
+          "decided",
+          "grounds"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "intent": {
+            "description": "The intent the point bears on, by its ID in the best practice.",
+            "type": "string"
+          },
+          "about": {
+            "description": "What the point is about, in a few words.",
+            "type": "string"
+          },
+          "decided": {
+            "description": "What the generator decided.",
+            "type": "string"
+          },
+          "grounds": {
+            "description": "What settles it, such as a best practice, or a deliverable it takes from.",
+            "type": "string"
+          }
+        }
+      }
+    },
+    "open": {
+      "description": "Each point the design leaves open, which the generator doesn't decide.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "intent",
+          "about",
+          "what"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "intent": {
+            "description": "The intent the point bears on, by its ID.",
+            "type": "string"
+          },
+          "about": {
+            "description": "What the point is about, in a few words.",
+            "type": "string"
+          },
+          "what": {
+            "description": "The point, as the main conversation would settle it.",
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
