@@ -122,7 +122,7 @@
       "path": "plugins/rn",
       "kind": "plugin",
       "inputs": ["dev/rn/architecture.md"],
-      "preconditions": [],
+      "preconditions": ["plugins/lane"],
       "status": "open",
       "intents": [
         {"id": "Q1", "good": false, "decisions": []},
