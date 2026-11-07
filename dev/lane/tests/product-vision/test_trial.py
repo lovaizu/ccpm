@@ -18,6 +18,7 @@ import sys
 import tempfile
 import unittest
 from typing import Any
+from unittest import mock
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -666,6 +667,27 @@ class TestClaudeCode(Run):
                 "start.py's stdout as Lane kept it: 1 of 2 runs (2 kept)",
             ],
         )
+
+
+class TestPersonHeard(unittest.TestCase):
+    """The person's stand-in asked again once where it gives no JSON, as Opus slipped so in a run
+    of the trial."""
+
+    def test_asked_again_after_no_json(self) -> None:
+        right = {"asks": True, "answer": "Leave the refactor out.", "leaves_out": []}
+        with mock.patch.object(
+            trial.trying, "stand_in", side_effect=[SystemExit("no JSON"), right]
+        ):
+            self.assertEqual(trial.person_heard("Which?", [], "."), right)
+
+    def test_no_json_twice_ends_the_trial(self) -> None:
+        with (
+            mock.patch.object(
+                trial.trying, "stand_in", side_effect=[SystemExit("a"), SystemExit("b")]
+            ),
+            self.assertRaises(SystemExit),
+        ):
+            trial.person_heard("Which?", [], ".")
 
 
 class TestPersonRight(unittest.TestCase):

@@ -856,7 +856,7 @@ def tried(mode: str, repo: str, folder: str) -> str:
     def answer(message: str) -> str | None:
         if len(said) >= ANSWERS:
             return None
-        heard = trying.heard(trying.finds(PERSON_WHO, PERSON_KEYS), PERSON, said, message, folder)
+        heard = person_heard(message, said, folder)
         if not heard.get("asks") or not str(heard.get("answer", "")).strip():
             return None
         said.append(" ".join(str(heard["answer"]).split()))
@@ -1071,6 +1071,17 @@ def rejudged(place: str) -> dict[str, Any]:
     return {**{n: outcome(r) for n, r in zip(names, runs)}, "measures": measures}
 
 
+def person_heard(message: str, said: list[str], folder: str) -> dict[str, Any]:
+    """What the person's stand-in says of the main conversation's message, given what the person
+    typed so far, as trying.heard gives it; asked once again where it gives no JSON, as Opus once
+    answered in prose alone. Stops where it gives none again."""
+    finds = trying.finds(PERSON_WHO, PERSON_KEYS)
+    try:
+        return trying.heard(finds, PERSON, said, message, folder)
+    except SystemExit:
+        return trying.heard(finds, PERSON, said, message, folder)
+
+
 def person_right(heard: dict[str, Any], asked: list[str]) -> list[str]:
     """What is wrong in the person's stand-in's answer to a point that asks of the commits `asked`,
     as PERSON knows them: that it says it is asked nothing, gives no answer, or leaves out other of
@@ -1095,9 +1106,7 @@ def person_tried() -> bool:
     right = True
     with tempfile.TemporaryDirectory() as place:
         for point in points:
-            heard = trying.heard(
-                trying.finds(PERSON_WHO, PERSON_KEYS), PERSON, [], point["message"], place
-            )
+            heard = person_heard(point["message"], [], place)
             if point["asked"]:
                 wrong = person_right(heard, point["asked"])
             else:
