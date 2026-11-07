@@ -95,37 +95,51 @@
    "intent": "Q1",
    "thinking": "The opening says, as one idea seen from above, how the product turns what its roles bring into what the product vision promises. It points to the product vision and does not repeat it. Every part then reads as a piece of that idea.",
    "steps": [
-    "Once the rest is written, check that each component carries out a piece of the idea, and change the idea or the component where one does not."
+    {
+     "text": "Once the rest is written, check that each component carries out a piece of the idea, and change the idea or the component where one does not."
+    }
    ]
   },
   {
    "intent": "Q2",
    "thinking": "There is one story for each way a role meets the product at its edge, drawn from the objectives and the README's walkthrough, each naming what it carries, such as a step of the walkthrough or resuming a run that stopped. Each part then traces to what the role does, and a convenience added is a story added, while the product vision and the README stay as they are.",
    "steps": [
-    "Go through each exchange of the README's walkthrough, and the main use of each objective it does not run, and name the one way at the product's edge that carries each step; add a story where none does."
+    {
+     "text": "Go through each exchange of the README's walkthrough, and the main use of each objective it does not run, and name the one way at the product's edge that carries each step; add a story where none does."
+    }
    ]
   },
   {
    "intent": "Q3",
    "thinking": "Each principle is one rule that every part meeting the same decision follows, with its why: what goes wrong without it. A developer carries the why to a case the rule does not name.",
    "steps": [
-    "Point to the principles of the architecture this one builds on, and write only what this product adds or changes.",
-    "Take a case no rule names, decide it from each why as two developers of different parts would, and sharpen the why where they differ."
+    {
+     "text": "Point to the principles of the architecture this one builds on, and write only what this product adds or changes."
+    },
+    {
+     "text": "Take a case no rule names, decide it from each why as two developers of different parts would, and sharpen the why where they differ."
+    }
    ]
   },
   {
    "intent": "Q4",
    "thinking": "One component alone makes each decision the stories need, above all one hard to make or likely to change, and a list under the figure says so by the component's name. A decision two components share is made twice and drifts. A box holds only the component's name and type, as a box that holds sentences no longer shows the parts and their joins at a glance.",
    "steps": [
-    "List each decision the stories need by asking at each step of each sequence what must be decided there, and move the decision or split the component where two components or none make it.",
-    "Label each arrow with what one does to another and the data it hands on, never a word such as \"uses\"."
+    {
+     "text": "List each decision the stories need by asking at each step of each sequence what must be decided there, and move the decision or split the component where two components or none make it."
+    },
+    {
+     "text": "Label each arrow with what one does to another and the data it hands on, never a word such as \"uses\"."
+    }
    ]
   },
   {
    "intent": "Q5",
    "thinking": "Each box has its type and technology, and the figure a legend for every symbol. A store of data is a box like a component's, as its type, such as a folder of JSON files, tells it apart. A developer otherwise chooses them alone, and the components stop fitting.",
    "steps": [
-    "Read the figure without the text around it, and add to the legend whatever symbol a reader would still have to ask about; what a part does goes to the list under the figure, not into its box."
+    {
+     "text": "Read the figure without the text around it, and add to the legend whatever symbol a reader would still have to ask about; what a part does goes to the list under the figure, not into its box."
+    }
    ]
   },
   {
@@ -137,14 +151,18 @@
    "intent": "Q7",
    "thinking": "Each story is drawn as its steps in order, from the role's first request to what the story gives them, each step taken by a component along an arrow of Components and handing on a named data. Each branch, each step that sends work back and each question put to the role is drawn, as each path of the story, and its test, rests on them.",
    "steps": [
-    "Check that each step runs along an arrow of Components, and add the arrow or give the step to another component where none does."
+    {
+     "text": "Check that each step runs along an arrow of Components, and add the arrow or give the step to another component where none does."
+    }
    ]
   },
   {
    "intent": "Q8",
    "thinking": "The document keeps only the stories, components and data that an objective needs. Each can then go once no objective needs it.",
    "steps": [
-    "Trace each component and each data to the stories whose sequences reach it, and each story to the objective whose use or intent it carries, and remove what reaches none."
+    {
+     "text": "Trace each component and each data to the stories whose sequences reach it, and each story to the objective whose use or intent it carries, and remove what reaches none."
+    }
    ]
   },
   {
@@ -161,43 +179,81 @@
    "intent": "Q11",
    "thinking": "Each deployment unit has a cell at each level whose ground, a part's contract, this document or the product vision, says what the unit must do, and an empty cell says why. A level is named by what it checks against, not by its means. Unit and architecture carry most of the checking and run on every change; product vision tests are few.",
    "steps": [
-    "Leave out a unit whose every cell would be empty, and say why under the table.",
-    "Check that each story's sequence runs from start to end at the architecture level in some row."
+    {
+     "text": "Leave out a unit whose every cell would be empty, and say why under the table."
+    },
+    {
+     "text": "Check that each story's sequence runs from start to end at the architecture level in some row."
+    }
    ]
   },
   {
    "intent": "Q12",
    "thinking": "Each test is drawn from the one thing its level checks against: the ways a part's contract divides at unit, the paths the sequences draw at architecture, and an objective's main use at real size at product vision. It runs only that real and stands doubles in for the rest. A failing test then names the rule, path or use it breaks.",
    "steps": [
-    "Point to the project's shared test rules, and write only where this product differs from them.",
-    "At unit, divide each input and each result the contract names into classes the part treats alike, the refused ones among them, and write one test for each class.",
-    "Where a class ends on an ordered scale, such as a length or a count, write one test at each end and one at the nearest value of the next class.",
-    "Where the contract's result turns on a combination of conditions, write one test for each combination that can occur, with the result it gives.",
-    "At unit, pass when every test passes, every line and branch runs and every mutant is caught, and add a unit test for each gap that coverage, mutation testing or a property-based test finds, as these tools confirm the tests drawn from the contract and draw none themselves.",
-    "At unit, run a part an AI does on the real model, with one input for each class, both where the contract says the part acts and where it says it does not, and doubles for the parts it works with.",
-    "At architecture, run real what joins the components, such as hooks and scripts, and stand a double in for each component an AI runs and each thing outside the product, so the level calls no model and gives the same result each run.",
-    "At architecture, write one test for each path through each story's sequence, the main flow, each branch, each step that sends work back and each question put to the role, until every move from one step to the next lies on some path.",
-    "Run the unit and architecture tests that a change reaches before each push, and every test in CI, as running every test before each push makes each change wait, and a selection misses a test that reads a file the change edits.",
-    "At product vision, once unit and architecture pass, run the real product on each objective's main use, as the README's walkthrough shows it, at the size of a real request, with an AI standing in for the role that holds an intent the product never sees.",
-    "At product vision, measure each key result as the product vision words it, and set each measure against the last one by the direction the product vision gives it, as the product vision gives no target.",
-    "At product vision, run each role on the model its users run and judge each run from its records, and try no case a lower level can test, as another model makes other slips than the users meet, and each run is slow and costly.",
-    "For a test whose result varies from run to run, write how many runs of how many must meet the expectation."
+    {
+     "text": "Point to the project's shared test rules, and write only where this product differs from them."
+    },
+    {
+     "text": "At unit, divide each input and each result the contract names into classes the part treats alike, the refused ones among them, and write one test for each class."
+    },
+    {
+     "text": "Where a class ends on an ordered scale, such as a length or a count, write one test at each end and one at the nearest value of the next class."
+    },
+    {
+     "text": "Where the contract's result turns on a combination of conditions, write one test for each combination that can occur, with the result it gives."
+    },
+    {
+     "text": "At unit, pass when every test passes, every line and branch runs and every mutant is caught, and add a unit test for each gap that coverage, mutation testing or a property-based test finds, as these tools confirm the tests drawn from the contract and draw none themselves."
+    },
+    {
+     "text": "At unit, run a part an AI does on the real model, with one input for each class, both where the contract says the part acts and where it says it does not, and doubles for the parts it works with."
+    },
+    {
+     "text": "At architecture, run real what joins the components, such as hooks and scripts, and stand a double in for each component an AI runs and each thing outside the product, so the level calls no model and gives the same result each run."
+    },
+    {
+     "text": "At architecture, write one test for each path through each story's sequence, the main flow, each branch, each step that sends work back and each question put to the role, until every move from one step to the next lies on some path."
+    },
+    {
+     "text": "Run the unit and architecture tests that a change reaches before each push, and every test in CI, as running every test before each push makes each change wait, and a selection misses a test that reads a file the change edits."
+    },
+    {
+     "text": "At product vision, once unit and architecture pass, run the real product on each objective's main use, as the README's walkthrough shows it, at the size of a real request, with an AI standing in for the role that holds an intent the product never sees."
+    },
+    {
+     "text": "At product vision, measure each key result as the product vision words it, and set each measure against the last one by the direction the product vision gives it, as the product vision gives no target."
+    },
+    {
+     "text": "At product vision, run each role on the model its users run and judge each run from its records, and try no case a lower level can test, as another model makes other slips than the users meet, and each run is slow and costly."
+    },
+    {
+     "text": "For a test whose result varies from run to run, write how many runs of how many must meet the expectation."
+    }
    ]
   },
   {
    "intent": "Q13",
    "thinking": "Each double gives only results in the form the part's contract gives them, the refusals among them, and is checked as the part's unit tests check the part. Unit and architecture together then show that every path holds for the real parts.",
    "steps": [
-    "Draw a double of something outside the product from its documentation or from a recorded run of the real thing, as a double that gives what the real thing never would passes a test that the real one fails.",
-    "For a fault a higher level finds, name the case or path the lower level missed, add its test at the level that must catch it, see it fail, then fix it there.",
-    "Trust a check, such as a test, a hook or the judge of a trial, only once you have seen it fail on a case that breaks what it checks, or, for a judge, once it is right on kept records whose answer you know, as a check that can't fail lets everything through unseen."
+    {
+     "text": "Draw a double of something outside the product from its documentation or from a recorded run of the real thing, as a double that gives what the real thing never would passes a test that the real one fails."
+    },
+    {
+     "text": "For a fault a higher level finds, name the case or path the lower level missed, add its test at the level that must catch it, see it fail, then fix it there."
+    },
+    {
+     "text": "Trust a check, such as a test, a hook or the judge of a trial, only once you have seen it fail on a case that breaks what it checks, or, for a judge, once it is right on kept records whose answer you know, as a check that can't fail lets everything through unseen."
+    }
    ]
   },
   {
    "intent": "Q14",
    "thinking": "Beside each choice a developer would question, such as a technology, a tool or how far a level tries a unit, stands why it beat the other way and what it costs. The developer then keeps or changes it knowing what it was for.",
    "steps": [
-    "Read each figure as a developer new to the product, and give a why and a cost to each choice they would question."
+    {
+     "text": "Read each figure as a developer new to the product, and give a why and a cost to each choice they would question."
+    }
    ]
   },
   {
@@ -209,7 +265,9 @@
    "intent": "Q16",
    "thinking": "The document holds only what stays while the product vision and the principles stay. How a component works inside is left to where it is built, as a line about the inside goes untrue at the next change.",
    "steps": [
-    "Imagine a change to how a component works inside, such as its steps, a value it uses or a data's fields, mark each line it would make untrue, and repeat with a change of another kind until no line is marked."
+    {
+     "text": "Imagine a change to how a component works inside, such as its steps, a value it uses or a data's fields, mark each line it would make untrue, and repeat with a change of another kind until no line is marked."
+    }
    ]
   }
  ]

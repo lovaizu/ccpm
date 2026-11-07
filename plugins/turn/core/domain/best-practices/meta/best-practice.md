@@ -119,8 +119,9 @@ Write first what the deliverable must be for the question's role, and why the ro
 **Steps**
 
 1. Add a step only where a generator that holds the intent would still not know how, such as a format to keep or a place to look, and say what the step achieves.
-2. Where the content must be found before it is written, such as the roles of a product vision, say what to look at, how to find all of it, and when to ask the user.
-3. Make one real deliverable by the practice, judge it by the question, and mend the intent where the answer stays no.
+2. Give each step its trace, the call that shows it done: a command it runs, a file it reads to its end, or a file it makes. Order the steps as their calls come, as Lane holds the role to each step by its trace alone, in the steps' order, and holds its end until each trace comes back. Leave the trace out where some runs rightly skip the call, such as on a step of a case, as Lane would stop the end of each such run, and where no call shows the action, such as a judgment, which the evaluator then checks.
+3. Where the content must be found before it is written, such as the roles of a product vision, say what to look at, how to find all of it, and when to ask the user.
+4. Make one real deliverable by the practice, judge it by the question, and mend the intent where the answer stays no.
 
 ### Q8
 

@@ -49,73 +49,123 @@
    "intent": "Q1",
    "thinking": "The structure changes in small steps, and each step keeps every behavior. The tests from before the change check each step. No step changes a behavior.",
    "steps": [
-    "Run the tests before any change, and begin only when every one passes.",
-    "Where a behavior the change will touch has no test, write a test of what the code does now, and see it pass.",
-    "After each small change of structure, such as a rename or a moved function, run the tests. Where a test fails, undo the change and make a smaller one.",
-    "Leave each test's expected result as it was, and change a test's call only where a name it uses was renamed.",
-    "Where a behavior looks wrong, keep the behavior and its test. Return it as a point about what the code does, rather than change it here."
+    {
+     "text": "Run the tests before any change, and begin only when every one passes."
+    },
+    {
+     "text": "Where a behavior the change will touch has no test, write a test of what the code does now, and see it pass."
+    },
+    {
+     "text": "After each small change of structure, such as a rename or a moved function, run the tests. Where a test fails, undo the change and make a smaller one."
+    },
+    {
+     "text": "Leave each test's expected result as it was, and change a test's call only where a name it uses was renamed."
+    },
+    {
+     "text": "Where a behavior looks wrong, keep the behavior and its test. Return it as a point about what the code does, rather than change it here."
+    }
    ]
   },
   {
    "intent": "Q2",
    "thinking": "Each line earns its place by what the maintainer would lose without it. What gives the maintainer nothing comes out, and version control keeps it.",
    "steps": [
-    "Fold into its caller each function or layer that only passes a call on. Drop each parameter to which every caller gives the same value, and use that value inside.",
-    "Keep a comment that says what the code cannot say plainly, such as what a regular expression matches."
+    {
+     "text": "Fold into its caller each function or layer that only passes a call on. Drop each parameter to which every caller gives the same value, and use that value inside."
+    },
+    {
+     "text": "Keep a comment that says what the code cannot say plainly, such as what a regular expression matches."
+    }
    ]
   },
   {
    "intent": "Q3",
    "thinking": "A name says in whole words what it holds or does, so the maintainer reads each line without going to a definition.",
    "steps": [
-    "For each name, write in a few words what it holds or does, without looking at its definition. Then look at the definition, and flag the name where the two differ.",
-    "Make a name say more the farther from its definition it is read."
+    {
+     "text": "For each name, write in a few words what it holds or does, without looking at its definition. Then look at the definition, and flag the name where the two differ."
+    },
+    {
+     "text": "Make a name say more the farther from its definition it is read."
+    }
    ]
   },
   {
    "intent": "Q4",
    "thinking": "Each thing has one name, the word its users and documents already use for it, and each name names one thing.",
    "steps": [
-    "List the things the code handles, and for each the names the code gives it."
+    {
+     "text": "List the things the code handles, and for each the names the code gives it."
+    }
    ]
   },
   {
    "intent": "Q5",
    "thinking": "The code writes each rule or design decision once, in the module whose job it is. The code does not tie together things unrelated in meaning, however alike they look.",
    "steps": [
-    "For each rule or decision the code holds, such as a limit, a format or a path, list every place that writes it.",
-    "Where a shared function takes flags so that each caller gets its own path, split it into one function for each rule.",
-    "Where code reaches into another module's insides, have it use what that module offers its callers.",
-    "Where the code truly cannot keep a rule in one place, say at each place where the other places are, such as in a comment beside it.",
-    "Pick one rule, imagine that it changed, and count the places that would change. Mend the code until that count is one."
+    {
+     "text": "For each rule or decision the code holds, such as a limit, a format or a path, list every place that writes it."
+    },
+    {
+     "text": "Where a shared function takes flags so that each caller gets its own path, split it into one function for each rule."
+    },
+    {
+     "text": "Where code reaches into another module's insides, have it use what that module offers its callers."
+    },
+    {
+     "text": "Where the code truly cannot keep a rule in one place, say at each place where the other places are, such as in a comment beside it."
+    },
+    {
+     "text": "Pick one rule, imagine that it changed, and count the places that would change. Mend the code until that count is one."
+    }
    ]
   },
   {
    "intent": "Q6",
    "thinking": "A function does one thing at one level, and takes what it uses as its inputs. Its reader then holds in mind only what the function says. A long function reads as calls to steps, each named for what it does.",
    "steps": [
-    "Read each function, test functions included, once from the top, and write in one sentence what it does.",
-    "Flag a function whose sentence needs an \"and\", or for which the reader had to read another body.",
-    "Join back two functions that cannot be understood apart.",
-    "Write a clever construct in its plain form."
+    {
+     "text": "Read each function, test functions included, once from the top, and write in one sentence what it does."
+    },
+    {
+     "text": "Flag a function whose sentence needs an \"and\", or for which the reader had to read another body."
+    },
+    {
+     "text": "Join back two functions that cannot be understood apart."
+    },
+    {
+     "text": "Write a clever construct in its plain form."
+    }
    ]
   },
   {
    "intent": "Q7",
    "thinking": "The code does each kind of thing one way throughout. That way is the one the code already has, the nearest code first, unless a better way replaces it everywhere. A difference then means a real difference.",
    "steps": [
-    "List the kinds of thing the code does in many places, such as reporting an error, checking an input, reading a file, or laying out a module or a test.",
-    "For each kind, gather each way the code does it.",
-    "Where a place needs another way, say why beside it, such as in a comment."
+    {
+     "text": "List the kinds of thing the code does in many places, such as reporting an error, checking an input, reading a file, or laying out a module or a test."
+    },
+    {
+     "text": "For each kind, gather each way the code does it."
+    },
+    {
+     "text": "Where a place needs another way, say why beside it, such as in a comment."
+    }
    ]
   },
   {
    "intent": "Q8",
    "thinking": "Where the code cannot say why it is so, the reason stands where the maintainer meets the code, such as a limit outside the code or a way tried and dropped.",
    "steps": [
-    "Read each line as a maintainer who knows the language but not the purpose, and flag code that looks wrong, roundabout or more than it needs.",
-    "For each, first make the code say it plainly, where it can.",
-    "Check each comment against the code beside it, and correct or remove one that no longer holds."
+    {
+     "text": "Read each line as a maintainer who knows the language but not the purpose, and flag code that looks wrong, roundabout or more than it needs."
+    },
+    {
+     "text": "For each, first make the code say it plainly, where it can."
+    },
+    {
+     "text": "Check each comment against the code beside it, and correct or remove one that no longer holds."
+    }
    ]
   }
  ]

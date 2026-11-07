@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "best practice",
-  "description": "A kind's best practice: its goal; the template beside it that holds the form a good work of the kind takes, and the example beside it, one work made by it, each by its file's name, with the work the example is a copy of where it is one, by its path from the best practice's folder, or else the parts such a work has; the kinds such a work is made from, in inputs, and those whose works must pass before it is made, in preconditions, each by the name of its best practice's folder; the questions such a work answers yes to; and a way to make each question yes, its thinking what to do and why, and its steps where it needs them. The Standard is its goal, parts and questions alone.",
+  "description": "A kind's best practice: its goal; the template beside it that holds the form a good work of the kind takes, and the example beside it, one work made by it, each by its file's name, with the work the example is a copy of where it is one, by its path from the best practice's folder, or else the parts such a work has; the kinds such a work is made from, in inputs, and those whose works must pass before it is made, in preconditions, each by the name of its best practice's folder; the questions such a work answers yes to; and a way to make each question yes, its thinking what to do and why, and its steps where it needs them, each with the call that shows it done where every run makes one. The Standard is its goal, parts and questions alone.",
   "type": "object",
   "required": [
     "goal",
@@ -86,7 +86,41 @@
           "steps": {
             "type": "array",
             "items": {
-              "type": "string"
+              "type": "object",
+              "required": [
+                "text"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "text": {
+                  "type": "string"
+                },
+                "trace": {
+                  "description": "the call that shows the step done, which Lane holds the step by as a lane of the trace kind: a command run, matched whole, a file read to its end, or a file made, each take one such call. Lane counts the step done once one command taken comes back, once the role makes one file taken, or once it reads each file taken to its end. A step whose trace not every run makes carries none",
+                  "type": "object",
+                  "required": [
+                    "action",
+                    "takes"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "action": {
+                      "enum": [
+                        "run",
+                        "read",
+                        "write"
+                      ]
+                    },
+                    "takes": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
         }

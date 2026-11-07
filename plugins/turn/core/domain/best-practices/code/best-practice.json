@@ -78,85 +78,147 @@
    "intent": "Q1",
    "thinking": "What the code gives for its setup names everything the code needs. Each test sets up and clears everything it uses, and a real tool it runs does only what the test asks of it. A test's result then rests on the code alone, not on the machine or on when a tool's own work runs.",
    "steps": [
-    "For each real tool the tests run, such as git, find each thing it does on its own beyond the call, such as reading the machine's settings or starting maintenance in the background, and turn it off in the test's own settings.",
-    "Set the code up on a clean machine or container, from what the code gives for its setup alone.",
-    "Add to what the setup reads each thing the setup or the tests found missing, such as a runtime or a library, with the versions the code runs on.",
-    "Run the tests several times, and in a shuffled order."
+    {
+     "text": "For each real tool the tests run, such as git, find each thing it does on its own beyond the call, such as reading the machine's settings or starting maintenance in the background, and turn it off in the test's own settings."
+    },
+    {
+     "text": "Set the code up on a clean machine or container, from what the code gives for its setup alone."
+    },
+    {
+     "text": "Add to what the setup reads each thing the setup or the tests found missing, such as a runtime or a library, with the versions the code runs on."
+    },
+    {
+     "text": "Run the tests several times, and in a shuffled order."
+    }
    ]
   },
   {
    "intent": "Q2",
    "thinking": "Each module alone decides one thing that the specification leaves to the code. The module says that thing briefly where the maintainer meets it first, such as at its top.",
    "steps": [
-    "Where the module cannot say that thing briefly, split the module.",
-    "Take a behavior that the specification might change, and read only what the modules say they decide. Check that what they say points to one module. Where it does not, rewrite what the modules say, or move the decision."
+    {
+     "text": "Where the module cannot say that thing briefly, split the module."
+    },
+    {
+     "text": "Take a behavior that the specification might change, and read only what the modules say they decide. Check that what they say points to one module. Where it does not, rewrite what the modules say, or move the decision."
+    }
    ]
   },
   {
    "intent": "Q3",
    "thinking": "The interface tells a caller everything they need to make the call. The caller then need not read the body, and the body can change behind the interface.",
    "steps": [
-    "Choose the names other modules may use, and mark every other name as internal.",
-    "Say for each name the types it takes and gives, such as in its signature where the language allows.",
-    "Write beside it, such as in a doc comment, what it gives, what comes back when there is nothing to give, what it expects of what it takes, what else it changes, and each way it refuses a right call.",
-    "Leave out of that what the types already say.",
-    "Have someone who has not read the body write a call from the interface alone, and run the call. Where the call fails or they had to guess, add what was missing."
+    {
+     "text": "Choose the names other modules may use, and mark every other name as internal."
+    },
+    {
+     "text": "Say for each name the types it takes and gives, such as in its signature where the language allows."
+    },
+    {
+     "text": "Write beside it, such as in a doc comment, what it gives, what comes back when there is nothing to give, what it expects of what it takes, what else it changes, and each way it refuses a right call."
+    },
+    {
+     "text": "Leave out of that what the types already say."
+    },
+    {
+     "text": "Have someone who has not read the body write a call from the interface alone, and run the call. Where the call fails or they had to guess, add what was missing."
+    }
    ]
   },
   {
    "intent": "Q4",
    "thinking": "The code gives only the behaviors the specification asks for, in the form its cases ask for now. The maintainer then carries nothing that no one needs.",
    "steps": [
-    "For each option, mode and case the code handles, name the case of the specification that asks for it."
+    {
+     "text": "For each option, mode and case the code handles, name the case of the specification that asks for it."
+    }
    ]
   },
   {
    "intent": "Q5",
    "thinking": "The code checks what comes from outside, such as arguments, files, settings and the replies of other programs, where it comes in and before the code does anything. When the code refuses an input, its message tells whoever ran the code which program refused, what was wrong, where, and what the code accepts.",
    "steps": [
-    "At that place, read the input into the form the inside of the code uses. Check its type and format, and whether its value makes sense for what the code is to do.",
-    "Refuse a value that the code cannot read, rather than guess it. Catch only the error you mean to handle.",
-    "Write each check so that it runs however the code is run. Do not write it as a check that can be turned off, such as an assert.",
-    "Give the code each wrong input that the specification names. Read each message as the one who ran the code, and check that they can put the input right from the message alone."
+    {
+     "text": "At that place, read the input into the form the inside of the code uses. Check its type and format, and whether its value makes sense for what the code is to do."
+    },
+    {
+     "text": "Refuse a value that the code cannot read, rather than guess it. Catch only the error you mean to handle."
+    },
+    {
+     "text": "Write each check so that it runs however the code is run. Do not write it as a check that can be turned off, such as an assert."
+    },
+    {
+     "text": "Give the code each wrong input that the specification names. Read each message as the one who ran the code, and check that they can put the input right from the message alone."
+    }
    ]
   },
   {
    "intent": "Q6",
    "thinking": "The tests come from the specification's cases, and they come before the code. Each test checks one behavior, so it says which case it checks.",
    "steps": [
-    "List every case the specification names: the usual one, each edge and each refusal.",
-    "Name each test for the behavior it checks. Where the name needs \"and\", split the test.",
-    "Write each test so its reader sees the situation, what is done and what must be so, such as in three parts: Given, When and Then.",
-    "Write each expected value from the specification, not from what the code gives.",
-    "Run each test before you write its code, and see it fail.",
-    "Compare the list of cases with the tests, and check that each case points to one test."
+    {
+     "text": "List every case the specification names: the usual one, each edge and each refusal."
+    },
+    {
+     "text": "Name each test for the behavior it checks. Where the name needs \"and\", split the test."
+    },
+    {
+     "text": "Write each test so its reader sees the situation, what is done and what must be so, such as in three parts: Given, When and Then."
+    },
+    {
+     "text": "Write each expected value from the specification, not from what the code gives."
+    },
+    {
+     "text": "Run each test before you write its code, and see it fail."
+    },
+    {
+     "text": "Compare the list of cases with the tests, and check that each case points to one test."
+    }
    ]
   },
   {
    "intent": "Q7",
    "thinking": "The tests call the code as its callers do, so they fail only where a caller would break.",
    "steps": [
-    "Use the real parts where they run fast and wholly inside the test, and a stand-in only for what is slow or outside it.",
-    "Change a body without changing what its interface says, and run the tests. Rewrite each test that fails so that it calls the code through the interface."
+    {
+     "text": "Use the real parts where they run fast and wholly inside the test, and a stand-in only for what is slow or outside it."
+    },
+    {
+     "text": "Change a body without changing what its interface says, and run the tests. Rewrite each test that fails so that it calls the code through the interface."
+    }
    ]
   },
   {
    "intent": "Q8",
    "thinking": "A test is worth the faults it catches. So each test checks the result that its case asks for, and a broken behavior makes the test fail.",
    "steps": [
-    "Find each line or branch no test runs, such as by counting them while the tests run, and add a test for each.",
-    "Change the code in small ways, such as with a mutation testing tool. For each change under which the tests still pass, add or mend the test of the behavior that the change breaks.",
-    "Run the code over many inputs that the specification allows, such as with property-based tests. Keep each input that the code fails on as a fixed test."
+    {
+     "text": "Find each line or branch no test runs, such as by counting them while the tests run, and add a test for each."
+    },
+    {
+     "text": "Change the code in small ways, such as with a mutation testing tool. For each change under which the tests still pass, add or mend the test of the behavior that the change breaks."
+    },
+    {
+     "text": "Run the code over many inputs that the specification allows, such as with property-based tests. Keep each input that the code fails on as a fixed test."
+    }
    ]
   },
   {
    "intent": "Q9",
    "thinking": "Only a change that someone new to the code makes shows whether the code lets them change it and trust the result.",
    "steps": [
-    "Have someone who has not seen the code, a person or an AI, set it up and make one change the specification asks for, with only the code and its specification.",
-    "Note each body they read to find the place or to write a call, and each time they could not tell whether another behavior broke.",
-    "Have them run the changed code with a wrong input, and note where its message did not tell them how to put it right.",
-    "Trace each note to the part whose question it fails, and mend that part."
+    {
+     "text": "Have someone who has not seen the code, a person or an AI, set it up and make one change the specification asks for, with only the code and its specification."
+    },
+    {
+     "text": "Note each body they read to find the place or to write a call, and each time they could not tell whether another behavior broke."
+    },
+    {
+     "text": "Have them run the changed code with a wrong input, and note where its message did not tell them how to put it right."
+    },
+    {
+     "text": "Trace each note to the part whose question it fails, and mend that part."
+    }
    ]
   }
  ]

@@ -61,29 +61,51 @@
    "intent": "Q1",
    "thinking": "Write the end the deliverable's role is after as one sentence, with the role as its subject. Leave out what the deliverable holds, how the end is reached and how it would show. Each of these can be met while the end is missed.",
    "steps": [
-    "Ask why of each part of the sentence until no further end shows, and keep that end."
+    {
+     "text": "Ask why of each part of the sentence until no further end shows, and keep that end."
+    }
    ]
   },
   {
    "intent": "Q2",
    "thinking": "Write the template anew from the goal: a section for each thing the role uses toward the goal, fixed text for what every deliverable of the kind shares, and a slot for the rest. An AI writes past what a deliverable needs when it is only told not to, so the template leaves no room for more.",
    "steps": [
-    "Where what the good deliverables hold is one way of doing it, such as a place, a file or a name, keep what the role gets from it instead.",
-    "Mark each slot as code, `` `<name>` ``, as a bare `<name>` is dropped as an HTML tag where the template is shown.",
-    "After each section, write one GitHub note whose first line is `DELETE_TEMPLATE_COMMENT:`, saying for each slot what it holds, what its reader uses it for and whether it is optional, as the generator fills a slot to its intent only when the note says it, and finds and deletes each note by its marker.",
-    "Where the deliverable is JSON, write each note as a key `DELETE_TEMPLATE_COMMENT`, as JSON holds no comment.",
-    "Where the deliverable has a JSON Schema of its own, such as the design tree, make the schema the template, its top fields the sections, and write each slot's note in the description of its field, as a second note beside the schema drifts from it.",
-    "Give the content found by digging a slot for its intent and why alone, in the fewest words, and a figure in place of prose wherever a figure can say it.",
-    "Draw a sequence in Mermaid, and any other figure in SVG, a table among them, as a table stands in for prose.",
-    "Give each SVG figure of the template a skeleton of its own beside it, `images/template-<name>.svg`, that shows the figure's layout by the slots' names, give it an alt text with no slot, and say in the section's note where the deliverable puts its own figure, as a figure the template names but does not hold shows broken, and the example's figure shows one product's content in place of the layout.",
-    "Name the template's file in `template`."
+    {
+     "text": "Where what the good deliverables hold is one way of doing it, such as a place, a file or a name, keep what the role gets from it instead."
+    },
+    {
+     "text": "Mark each slot as code, `` `<name>` ``, as a bare `<name>` is dropped as an HTML tag where the template is shown."
+    },
+    {
+     "text": "After each section, write one GitHub note whose first line is `DELETE_TEMPLATE_COMMENT:`, saying for each slot what it holds, what its reader uses it for and whether it is optional, as the generator fills a slot to its intent only when the note says it, and finds and deletes each note by its marker."
+    },
+    {
+     "text": "Where the deliverable is JSON, write each note as a key `DELETE_TEMPLATE_COMMENT`, as JSON holds no comment."
+    },
+    {
+     "text": "Where the deliverable has a JSON Schema of its own, such as the design tree, make the schema the template, its top fields the sections, and write each slot's note in the description of its field, as a second note beside the schema drifts from it."
+    },
+    {
+     "text": "Give the content found by digging a slot for its intent and why alone, in the fewest words, and a figure in place of prose wherever a figure can say it."
+    },
+    {
+     "text": "Draw a sequence in Mermaid, and any other figure in SVG, a table among them, as a table stands in for prose."
+    },
+    {
+     "text": "Give each SVG figure of the template a skeleton of its own beside it, `images/template-<name>.svg`, that shows the figure's layout by the slots' names, give it an alt text with no slot, and say in the section's note where the deliverable puts its own figure, as a figure the template names but does not hold shows broken, and the example's figure shows one product's content in place of the layout."
+    },
+    {
+     "text": "Name the template's file in `template`."
+    }
    ]
   },
   {
    "intent": "Q3",
    "thinking": "Keep a section only where the role would fall short of the goal without it. Add one where a deliverable with every section would still fail the role.",
    "steps": [
-    "Repeat until no such deliverable can be imagined."
+    {
+     "text": "Repeat until no such deliverable can be imagined."
+    }
    ]
   },
   {
@@ -95,26 +117,45 @@
    "intent": "Q5",
    "thinking": "Write each question as the moment the role uses the sections, what it needs from them, and what it is after in that, in a clause that begins with \"so that\". The evaluator then judges by the role's intent. A question that asks only for a sign of good work can be met in words while the role goes without.",
    "steps": [
-    "Leave out the \"so that\" clause only where what the role needs is the goal itself.",
-    "Have two evaluators judge one real deliverable by the question, and rewrite it where they differ."
+    {
+     "text": "Leave out the \"so that\" clause only where what the role needs is the goal itself."
+    },
+    {
+     "text": "Have two evaluators judge one real deliverable by the question, and rewrite it where they differ."
+    }
    ]
   },
   {
    "intent": "Q6",
    "thinking": "Give each section, each dependency among sections and the whole a question, and add one that fails each deliverable that would pass them all and still fail its role, as the questions are complete only when none such is left.",
    "steps": [
-    "Where two questions would fail the same deliverables for the same reason, merge them, but keep a key one on its own.",
-    "Dig each question until it shows the idea the role must grasp, and ask whether the role grasps it, so that the template gives it a figure.",
-    "Judge real deliverables that their role found short, and where one passes, add or mend the question that should have failed it."
+    {
+     "text": "Where two questions would fail the same deliverables for the same reason, merge them, but keep a key one on its own."
+    },
+    {
+     "text": "Dig each question until it shows the idea the role must grasp, and ask whether the role grasps it, so that the template gives it a figure."
+    },
+    {
+     "text": "Judge real deliverables that their role found short, and where one passes, add or mend the question that should have failed it."
+    }
    ]
   },
   {
    "intent": "Q7",
    "thinking": "Write first what the deliverable must be for the question's role, and why the role needs it so, in short sentences. A generator that grasps the intent finds its own way where the case differs. One that holds only steps follows them off the mark.",
    "steps": [
-    "Add a step only where a generator that holds the intent would still not know how, such as a format to keep or a place to look, and say what the step achieves.",
-    "Where the content must be found before it is written, such as the roles of a product vision, say what to look at, how to find all of it, and when to ask the user.",
-    "Make one real deliverable by the practice, judge it by the question, and mend the intent where the answer stays no."
+    {
+     "text": "Add a step only where a generator that holds the intent would still not know how, such as a format to keep or a place to look, and say what the step achieves."
+    },
+    {
+     "text": "Give each step its trace, the call that shows it done: a command it runs, a file it reads to its end, or a file it makes. Order the steps as their calls come, as Lane holds the role to each step by its trace alone, in the steps' order, and holds its end until each trace comes back. Leave the trace out where some runs rightly skip the call, such as on a step of a case, as Lane would stop the end of each such run, and where no call shows the action, such as a judgment, which the evaluator then checks."
+    },
+    {
+     "text": "Where the content must be found before it is written, such as the roles of a product vision, say what to look at, how to find all of it, and when to ask the user."
+    },
+    {
+     "text": "Make one real deliverable by the practice, judge it by the question, and mend the intent where the answer stays no."
+    }
    ]
   },
   {
@@ -126,15 +167,21 @@
    "intent": "Q9",
    "thinking": "Make the product's own deliverable of the kind from its design tree by the template and the practices, pass it by the questions, and name its file in `example`, as one finished deliverable shows what the comments alone do not.",
    "steps": [
-    "Where the deliverable lies elsewhere for its own reader, such as a product vision in the developers' folder, name its path in `source` and copy it with its figures beside the best practice by `plan.py example`, as a copy made by hand drifts from the deliverable, and a symbolic link shows as a line of text on GitHub and on Windows."
+    {
+     "text": "Where the deliverable lies elsewhere for its own reader, such as a product vision in the developers' folder, name its path in `source` and copy it with its figures beside the best practice by `plan.py example`, as a copy made by hand drifts from the deliverable, and a symbolic link shows as a line of text on GitHub and on Windows."
+    }
    ]
   },
   {
    "intent": "Q10",
    "thinking": "Have the role, or an AI holding what it wants, use the example for the goal, and set its verdict against the evaluator's, as only a deliverable made and used shows whether the whole works.",
    "steps": [
-    "Trace each difference to the goal, the template, a question or a practice, and mend it there.",
-    "Go through again with the next real deliverable."
+    {
+     "text": "Trace each difference to the goal, the template, a question or a practice, and mend it there."
+    },
+    {
+     "text": "Go through again with the next real deliverable."
+    }
    ]
   }
  ]

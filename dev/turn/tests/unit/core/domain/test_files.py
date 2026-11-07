@@ -3,6 +3,7 @@
 import json
 import os
 import unittest
+from typing import Any
 
 import helpers
 from helpers import files
@@ -61,6 +62,41 @@ class TestLoad(helpers.testing.FolderTest):
                 open(os.path.join(files.FORMS, name), encoding="utf-8") as f,
             ):
                 files.schema.checked(json.load(f))
+
+    def test_a_step_s_trace_is_held_to_lane_s_actions_and_its_calls(self):
+        # Given: a best practice whose step has a trace
+        def practice(trace) -> dict[str, Any]:
+            step = {"text": "Do.", **({"trace": trace} if trace is not None else {})}
+            return {
+                "goal": "G.",
+                "inputs": [],
+                "preconditions": [],
+                "intents": [{"id": "Q1", "about": "the whole", "what": "Q?"}],
+                "practices": [{"intent": "Q1", "thinking": "T.", "steps": [step]}],
+            }
+
+        # Then: one of a command run, a file read or a file made, with a call or more, holds,
+        # as does a step with none
+        for trace in (None, *({"action": a, "takes": ["x"]} for a in ("run", "read", "write"))):
+            with self.subTest(trace=trace):
+                self.write_json("best-practice.json", practice(trace))
+                self.assertEqual(files.load("best-practice.json", "best-practice"), practice(trace))
+        # Then: any other action, no call, or another key is refused
+        for trace in (
+            {"action": "open", "takes": ["x"]},
+            {"action": "run", "takes": []},
+            {"action": "run"},
+            {"action": "run", "takes": ["x"], "lane": "run_step"},
+        ):
+            with self.subTest(trace=trace), self.assertRaises(files.Unreadable):
+                self.write_json("best-practice.json", practice(trace))
+                files.load("best-practice.json", "best-practice")
+        # Then: a step that is a bare text is refused
+        bare = practice(None)
+        bare["practices"][0]["steps"] = ["Do."]
+        self.write_json("best-practice.json", bare)
+        with self.assertRaises(files.Unreadable):
+            files.load("best-practice.json", "best-practice")
 
     def test_save_writes_json_a_person_reads_in_a_folder_made_for_it(self):
         files.save("a/b/run.json", {"kind": "é"})

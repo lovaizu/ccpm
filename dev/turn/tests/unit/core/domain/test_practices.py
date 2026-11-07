@@ -11,7 +11,7 @@ from typing import Any
 import helpers
 from helpers import practices
 
-DATA = {
+DATA: dict[str, Any] = {
     "goal": "The reader gets it.",
     "inputs": [],
     "preconditions": [],
@@ -21,7 +21,14 @@ DATA = {
         {"id": "Q2", "about": "b, the whole", "what": "After Q1, does all?"},
     ],
     "practices": [
-        {"intent": "Q1", "thinking": "Think.", "steps": ["Do."]},
+        {
+            "intent": "Q1",
+            "thinking": "Think.",
+            "steps": [
+                {"text": "Do.", "trace": {"action": "run", "takes": ["make", "make all"]}},
+                {"text": "Where it fails, mend it."},
+            ],
+        },
         {"intent": "Q2", "thinking": "Then.", "steps": []},
     ],
 }
@@ -136,6 +143,44 @@ class Faults(unittest.TestCase):
             d["parts"][0]["level"] = 3
 
         self.assertEqual(changed(number), [])
+
+    def test_a_step_of_a_case_that_carries_a_trace(self):
+        # Given: a step that holds only where its case does, opening with Where or If, with a trace
+        expected = (
+            "step 2 of Q1 holds only in its case, so it carries no trace, as a run outside the case"
+            " never makes it"
+        )
+        for opening in ("Where it fails", "If it fails"):
+
+            def traced(d, opening=opening):
+                d["practices"][0]["steps"][1] = {
+                    "text": f"{opening}, mend it.",
+                    "trace": {"action": "write", "takes": ["a.md"]},
+                }
+
+            # Then: the trace is a fault, as not every run makes it
+            with self.subTest(opening=opening):
+                self.assertEqual(changed(traced), [expected])
+
+    def test_a_step_that_opens_with_a_word_holding_where_or_if_is_no_case(self):
+        def traced(d):
+            d["practices"][0]["steps"][0]["text"] = "Wherever it runs, Iffy, do it."
+
+        self.assertEqual(changed(traced), [])
+
+    def test_a_trace_that_takes_an_empty_text(self):
+        for empty in ("", " "):
+
+            def traced(d, empty=empty):
+                d["practices"][1]["steps"] = [
+                    {"text": "Do.", "trace": {"action": "read", "takes": ["a.md", empty]}}
+                ]
+
+            with self.subTest(empty=empty):
+                self.assertEqual(
+                    changed(traced),
+                    ["step 1 of Q2 takes an empty text in its trace, which no call matches"],
+                )
 
 
 TEMPLATE = """# <Product>
@@ -599,10 +644,31 @@ class Markdown(unittest.TestCase):
                 "| Q1 | a | Does it? |\n| Q2 | b, the whole | After Q1, does all? |\n\n"
                 "## Practices\n"
             ),
-            "### Q1\n\nDoes it?\n\n**Thinking**\n\nThink.\n\n**Steps**\n\n1. Do.\n\n### Q2\n",
+            (
+                "### Q1\n\nDoes it?\n\n**Thinking**\n\nThink.\n\n**Steps**\n\n"
+                "1. Do. The trace: `make` or `make all` run.\n2. Where it fails, mend it.\n\n"
+                "### Q2\n"
+            ),
         ]
         for line in expected:
             self.assertIn(line, text)
+
+    def test_names_each_trace_by_its_call(self):
+        # Given: a step of each action, one taking three calls
+        steps = [
+            {"text": "Run.", "trace": {"action": "run", "takes": ["make"]}},
+            {"text": "Read.", "trace": {"action": "read", "takes": ["a.md", "b.md", "c.md"]}},
+            {"text": "Make.", "trace": {"action": "write", "takes": ["{deliverable}"]}},
+        ]
+        data = copy.deepcopy(DATA)
+        data["practices"][1]["steps"] = steps
+        # Then: each names its calls, the last after or, and what the call does
+        self.assertIn(
+            "1. Run. The trace: `make` run.\n"
+            "2. Read. The trace: `a.md`, `b.md` or `c.md` read to its end.\n"
+            "3. Make. The trace: `{deliverable}` made.\n",
+            practices.markdown(PATH, data),
+        )
 
     def test_sets_each_part_under_the_one_it_is_in(self):
         c: dict[str, Any] = {"id": "c", "what": "C."}

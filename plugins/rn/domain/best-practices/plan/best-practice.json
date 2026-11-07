@@ -72,7 +72,9 @@
    "intent": "Q2",
    "thinking": "Lay out the deliverables up front, back from the goal: the deliverables that make the goal, then for each the deliverables it takes, until one takes nothing. A deliverable left out shows only when the work reaches it, and the work stops there.",
    "steps": [
-    "Put in a research deliverable before the decisions it serves, where a decision needs what no one has found yet, at the top level in the order of the work."
+    {
+     "text": "Put in a research deliverable before the decisions it serves, where a decision needs what no one has found yet, at the top level in the order of the work."
+    }
    ]
   },
   {
@@ -89,9 +91,15 @@
    "intent": "Q5",
    "thinking": "Have a script order the deliverables from each one's inputs and preconditions, never by thinking the order out case by case. Give each deliverable in inputs the path of each deliverable it takes its content from, and in preconditions the path of each that must pass before it starts, each of a kind its best practice names there. One kind's deliverables serve different products, so the paths, not the kinds, say which deliverable comes first.",
    "steps": [
-    "After each change, have tree.py check that the tree holds every deliverable needed, that each comes after its inputs and preconditions, that each research deliverable serves a later decision, and that a later deliverable uses each meta deliverable's kind.",
-    "Order the tests by level, unit, then architecture, then the product vision, each after the level below passes, as a higher level finds a fault later and at a higher cost.",
-    "Put a check before the deliverables that trust its results, and trust it only once someone has seen a test of it fail, or, for a judge, once it's right on examples whose answer someone knows."
+    {
+     "text": "After each change, have tree.py check that the tree holds every deliverable needed, that each comes after its inputs and preconditions, that each research deliverable serves a later decision, and that a later deliverable uses each meta deliverable's kind."
+    },
+    {
+     "text": "Order the tests by level, unit, then architecture, then the product vision, each after the level below passes, as a higher level finds a fault later and at a higher cost."
+    },
+    {
+     "text": "Put a check before the deliverables that trust its results, and trust it only once someone has seen a test of it fail, or, for a judge, once it's right on examples whose answer someone knows."
+    }
    ]
   },
   {
