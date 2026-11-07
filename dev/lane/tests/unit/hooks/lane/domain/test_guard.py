@@ -167,6 +167,18 @@ class TestOther(GuardTest):
                 # Then: the call goes on
                 self.assertEqual(self.check(self.event(tool, given)), [])
 
+    def test_a_start_of_a_subagent_of_the_plugin_is_stopped(self):
+        for given in (
+            {"prompt": "p", "subagent_type": "changelog:reviewer"},
+            {"prompt": "p", "subagent_type": "changelog:writer"},
+        ):
+            with self.subTest(given=given):
+                # Given: writer with its lanes laid
+                # When: it starts a subagent of changelog, another or itself
+                told = self.check(self.event("Agent", given))
+                # Then: the start is stopped, as the main conversation alone starts one
+                self.assertEqual([t.text for t in told], [guard.MAIN_STARTS])
+
     def test_a_subagent_with_no_lanes_laid_is_not_checked(self):
         # Given: the README's lanes laid in writer alone
         # When: reviewer runs git commit
@@ -679,6 +691,14 @@ class TestRoutedDependency(RoutedTest):
         )
         self.assertEqual(self.main(self.notified("e1")), [guard.Said(asked)])
 
+    def test_writer_is_stopped_starting_examiner(self):
+        # Given: writer, and routes that name examiner, a dependency's subagent
+        given = {"prompt": "p", "subagent_type": "checker:examiner"}
+        # When: writer starts it
+        told = self.told(guard.check, self.event("Agent", given), "writer")
+        # Then: it is stopped, as the main conversation alone starts one
+        self.assertEqual(told, [guard.Said(guard.MAIN_STARTS)])
+
     def test_examiners_calls_are_left_to_its_own_plugins_guard(self):
         # Given: examiner, whose calls changelog lays no lane on
         event = self.event("Bash", {"command": "rm -r ."}, "checker:examiner", agent_id="e1")
@@ -792,6 +812,13 @@ class TestDependencysSkill(RoutedTest):
         come back."""
         command = f"python3 {self.folder}/hooks/lane/result.py check {on}"
         return {**self.bash(command, None, "PostToolUse"), "tool_response": {"stdout": ""}}
+
+    def test_writer_is_stopped_calling_check(self):
+        # Given: writer, and routes that name check, a dependency's skill
+        # When: writer calls it
+        told = self.told(guard.check, self.event("Skill", {"skill": "checker:check"}), "writer")
+        # Then: it is stopped, as the main conversation alone starts one
+        self.assertEqual(told, [guard.Said(guard.MAIN_STARTS)])
 
     def test_the_skill_due_is_called_and_its_result_leads_on(self):
         # Given: writer gave `written`, so check is due

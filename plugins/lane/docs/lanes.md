@@ -57,6 +57,16 @@ and, on the next line, the commands it may run. A subagent with no run_only lane
 but a held one goes to the person, and a run of its result script on a result it may not give is
 stopped with the sentence of its last step and the commands it gives its results by.
 
+Only the main conversation starts a subagent of your plugin. lane stops a subagent with lanes, or
+that your routes name, as it starts one with the Agent tool, or a subagent or a dependency's skill
+that your routes name, and tells it
+
+```
+<plugin>: Start no subagent of this plugin: only the main conversation starts one, with what the plugin gives it. Reply with what you would pass on, and end.
+```
+
+A subagent that starts another passes on what it chooses, not what your plugin gives that start.
+
 For each subagent with a run_only lane, `lay.py print` lists the commands it may run, on the line
 `commands`. Where a step of such a subagent names in backticks a command that it may not run,
 `lay.py print` says so beside that step's number, such as

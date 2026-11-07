@@ -80,6 +80,20 @@ class TestWriterRun(helpers.RunTest):
         self.assertEqual((told.made, told.decision(), told.reason()), (False, "deny", said))
         self.assertEqual(self.commits(), before)
 
+    def test_a_start_of_a_subagent_of_the_plugin_from_writer_is_stopped(self):
+        # Given: the README's lanes laid in writer, started by the main conversation
+        self.claude.start(None, WRITER, "Write the entries, and have them reviewed.")
+        # When: writer starts reviewer itself
+        reviewer = testing.Run("changelog:reviewer", "r1")
+        told = self.claude.start(WRITER, reviewer, "Review the entries.")
+        # Then: the start is denied with the main conversation alone starting one, and reviewer
+        # never starts
+        said = told.said["hookSpecificOutput"]
+        self.assertFalse(told.made)
+        self.assertEqual(said["permissionDecision"], "deny")
+        reason = f"changelog: {helpers.guard.MAIN_STARTS}"
+        self.assertEqual(said["permissionDecisionReason"], reason)
+
     def test_an_event_that_cannot_be_read_is_stopped_and_the_operator_told(self):
         # Given: the README's lanes laid in writer, started by the main conversation
         self.claude.start(None, WRITER, "Write the entries.")

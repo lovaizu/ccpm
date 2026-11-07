@@ -62,6 +62,12 @@ WATCHED = {
     "Read": ("read", "file_path"),
     "Grep": ("read", "path"),
 }
+# What a subagent is told as it starts a subagent of the plugin, or one the routes name: what a
+# subagent passes on is its own choice, not what the plugin gives the start.
+MAIN_STARTS = (
+    "Start no subagent of this plugin: only the main conversation starts one, with what the plugin"
+    " gives it. Reply with what you would pass on, and end."
+)
 # What a subagent is told, after its run lanes' sentences, of the commands it may run.
 MAY_RUN = "The commands you may run, each word for word: {listed}."
 DEPENDENCY_FOLDER = (
@@ -423,6 +429,8 @@ def tool_checked(s: Subagent, event: dict[str, Any]) -> list[Said]:
     tool, given = event["tool_name"], event["tool_input"]
     if s.foreign():
         return []
+    if starts_ours(s, tool, given):
+        return [Said(MAIN_STARTS)]
     if tool not in WATCHED:
         return []
     action, field = WATCHED[tool]
@@ -433,6 +441,24 @@ def tool_checked(s: Subagent, event: dict[str, Any]) -> list[Said]:
         raise Cannot(unshaped(s.name, f"$.tool_input.{field}{out.told()[1:]}"))
     checks = {"read": read_checked, "write": write_checked, "run": run_checked}
     return checks[action](s, event, value)
+
+
+def starts_ours(s: Subagent, tool: str, given: dict[str, Any]) -> bool:
+    """Whether the subagent's call starts a subagent of its plugin, or one or a dependency's skill
+    that the routes name."""
+    return starts_of(tool, given, routes.named(s.routes) if s.routes else [], s.plugin)
+
+
+def starts_of(tool: str, given: dict[str, Any], named: list[str], plugin: str) -> bool:
+    """Whether the call starts a subagent of the plugin, or one or a dependency's skill of the
+    names: an Agent call of the plugin's subagent or of one of them, or a Skill call of a
+    dependency's skill of them."""
+    if follow_routes.started(tool, given, named, plugin):
+        return True
+    kind = given.get("subagent_type")
+    # No tool Claude Code names sorts before Agent.
+    agent = tool == follow_routes.AGENT  # pragma: no mutate
+    return agent and isinstance(kind, str) and kind.startswith(f"{plugin}:")
 
 
 def read_checked(s: Subagent, event: dict[str, Any], path: str) -> list[Said]:
@@ -834,12 +860,7 @@ def prompted(m: Main, event: dict[str, Any]) -> list[Said]:
 def starting(m: Main, tool: str, given: dict[str, Any]) -> bool:
     """Whether the main conversation's call is a start of the run: an Agent call of a subagent of
     the plugin or of one the routes name, or a Skill call of a dependency's skill they name."""
-    if follow_routes.started(tool, given, m.giving(), m.plugin):
-        return True
-    kind = given.get("subagent_type")
-    # No tool Claude Code names sorts before Agent.
-    agent = tool == follow_routes.AGENT  # pragma: no mutate
-    return agent and isinstance(kind, str) and kind.startswith(f"{m.plugin}:")
+    return starts_of(tool, given, m.giving(), m.plugin)
 
 
 def start_checked(m: Main, event: dict[str, Any]) -> list[Said]:
