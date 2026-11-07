@@ -164,6 +164,22 @@ class TestSentence(unittest.TestCase):
         # Then: it is the one wording before the current, which said no more than the commands
         self.assertEqual(lanes.earlier("result", ["give"]), ["End by running `give`."])
 
+    def test_the_commands_a_lane_lets_its_subagent_run_are_those_in_its_command_place(self):
+        for lane, takes, runs in (
+            ("run_only", ["git log", "git status"], ["git log", "git status"]),
+            ("hold", ["git push"], ["git push"]),
+            ("test_after", ["CHANGELOG.md", "make test"], ["make test"]),
+            ("result", ["give more", "give good"], ["give more", "give good"]),
+            ("write_only", ["CHANGELOG.md"], []),
+            ("follow_routes", [], []),
+        ):
+            with self.subTest(lane=lane):
+                # Given: a lane or a sentence laid from the routes, and what it takes
+                # When: the commands it lets its subagent run are read
+                # Then: they are its takes in the place of its commands, as the guard judges a
+                # command by them; none for a lane that names no command
+                self.assertEqual(lanes.runs(lane, takes), runs)
+
     def test_the_routes_sentence_says_nothing_against_the_persons_request(self):
         # Given: the skill's step the routes are laid on, as a main conversation its person asks
         # to end the order reads it

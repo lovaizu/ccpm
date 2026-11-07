@@ -37,6 +37,7 @@ Lanes of writer, each checked only in writer:
   step 2  run:   {helpers.RUN}  type run_only
   step 3  write: {helpers.WRITE:<{len(helpers.RUN)}}  type write_only
   step 4  end:   {helpers.END_WRITER}  type follow_routes
+  commands: writer may run only `git log --oneline` or `{helpers.GIVE} writer written`
 
 2. Read the commits since then with `git log --oneline`. Run only `git log --oneline`.
 3. Write the new entries into `CHANGELOG.md`. Write only `CHANGELOG.md`.
@@ -248,6 +249,32 @@ class TestRoutes(RoutesTest):
         # Then: the routes are shown, with write's step as it will read, then writer's lanes
         # with its result command, then reviewer's
         self.assertEqual(layer.printed(helpers.PROPOSED), ROUTES_PRINTED)
+
+    def test_a_step_naming_a_command_its_subagent_may_not_run_is_shown_so(self):
+        # Given: the README's proposal with the routes, writer's step 3 naming `git status`, which
+        # no lane of writer lets it run, and reviewer, with no run_only lane, naming `git log
+        # --oneline` and `more`, a result, not a command
+        writer = self.agent("writer").replace(
+            "into `CHANGELOG.md`.", "into `CHANGELOG.md` by `git status`."
+        )
+        self.write(os.path.join(self.plugin, "agents", "writer.md"), writer)
+        steps = "1. Read the commits with `git log --oneline`.\n2. Give `more` or `good`.\n"
+        reviewer = helpers.REVIEWER.split("1. ")[0] + steps
+        self.write(os.path.join(self.plugin, "agents", "reviewer.md"), reviewer)
+        # When: it is printed
+        printed = layer.printed(helpers.PROPOSED)
+        # Then: writer's step 3 is shown naming a command it may not run, and no step of reviewer,
+        # which may run any command, is
+        writer_part, reviewer_part = printed.split("Lanes of reviewer")
+        self.assertIn("  step 3  names `git status`, which writer may not run\n", writer_part)
+        self.assertNotIn("names `", reviewer_part)
+        self.assertNotIn("commands:", reviewer_part)
+
+    def test_a_step_naming_only_commands_its_subagent_may_run_is_not_shown(self):
+        # Given: the README's proposal, whose writer runs `git log --oneline` by its run_only lane
+        # When: it is printed
+        # Then: no step is shown naming a command writer may not run
+        self.assertNotIn("names `", layer.printed(helpers.PROPOSED))
 
     def test_the_subagents_fanned_out_and_the_orders_of_results_are_printed(self):
         for precedence, said in (

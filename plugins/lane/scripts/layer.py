@@ -184,11 +184,17 @@ def routes_printed(given: dict[str, Any]) -> str:
 def printed(path: str) -> str:
     """The proposal as the user reads it for their approval: the routes it gives, each from a
     subagent on its result to the start next, with the skill's step as it will read; then, for each
-    subagent, each lane under its action with its type, and each step as it will read; a step whose
-    lanes are all taken out is shown so, and a skill the routes no longer start, with its step."""
+    subagent, each lane under its action with its type, and where it has a run_only lane the
+    commands it may run and each step that names in backticks one it may not, and each step as it
+    will read; a step whose lanes are all taken out is shown so, and a skill the routes no longer
+    start, with its step. The guard stops any other command of a subagent with a run_only lane, so
+    the user sees each such stop before they approve."""
     given = proposal(path)
     before, routes_before = laid_before(given["plugin"])
     found, was = agents(given, before, routes_before)
+    now = given["routes"] or routes_before
+    results = {str(r["on"]) for r in (now or {}).get("routes", []) if "on" in r}
+    results |= {on for a in found for on in a.get("results") or []}
     blocks = []
     if given["routes"]:
         blocks.append(routes_printed(given["routes"]))
@@ -216,6 +222,13 @@ def printed(path: str) -> str:
         for s in laid:
             if not s["lanes"]:
                 out.append(f"  step {s['step']}  no lane: the sentences laid before taken out\n")
+        if any(g["lane"] == "run_only" for s in laid for g in s["lanes"]):
+            runs = steps.may_run(laid)
+            out.append(f"  commands: {agent['name']} may run only {lanes.listed(runs)}\n")
+            for number, command in steps.not_run(agent["lines"], laid, runs, results):
+                out.append(
+                    f"  step {number}  names `{command}`, which {agent['name']} may not run\n"
+                )
         for a in agent.get("adapters", []):
             out.append(f"  adapter {a['path']}: its {a['count']} cases given as they say\n")
         out.append("\n")

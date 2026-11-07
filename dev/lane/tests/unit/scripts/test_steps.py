@@ -198,5 +198,50 @@ class TestStepsLaid(unittest.TestCase):
         self.assertEqual([s["step"] for s in found], [2, 3])
 
 
+class TestCommands(unittest.TestCase):
+    def test_the_commands_a_subagent_may_run_are_each_lanes_once(self):
+        # Given: run_only on step 2 and the result command on step 4, both naming one command
+        laid = [
+            {"step": 2, "lanes": [{"lane": "run_only", "takes": ["git log", "give"]}]},
+            {"step": 3, "lanes": [{"lane": "write_only", "takes": ["CHANGELOG.md"]}]},
+            {"step": 4, "lanes": [{"lane": "result", "takes": ["give"]}]},
+        ]
+        # When: the commands it may run are read
+        # Then: they are each command a lane names, once, in the order the steps give them
+        self.assertEqual(steps.may_run(laid), ["git log", "give"])
+
+    def test_a_thing_is_taken_for_a_command_by_a_program_on_path_as_its_first_word(self):
+        for text, named in (
+            ("Read the commits with `git log --oneline`.", ["git log --oneline"]),
+            ("Read `CHANGELOG.md` and `## Unreleased`.", []),
+            ("Give `more` where any is.", []),
+            ("Use the `Read` tool, then `git status`, then `git status`.", ["git status"]),
+            ("Run ` `.", []),
+        ):
+            with self.subTest(text=text):
+                # Given: a step's text naming things in backticks
+                # When: the commands it names are read, `more` a result
+                # Then: each whose first word is a program on PATH, written lower case, is one,
+                # once, and a result alone is none
+                self.assertEqual(steps.commands_named(text, {"more"}), named)
+
+    def test_each_step_naming_a_command_its_subagent_may_not_run_is_found(self):
+        # Given: a step naming a command its subagent may run, a step naming one it may not, and
+        # a numbered line no step's number reads as
+        lines = [
+            "## Steps\n",
+            "\n",
+            "1. Read with `git log`.\n",
+            "2. Read with `git status`,\n",
+            "   then reply.\n",
+            "03. Run `git diff`.\n",
+        ]
+        laid = [{"step": 1, "lanes": [{"lane": "run_only", "takes": ["git log"]}], "span": (2, 3)}]
+        # When: the commands it may not run are found
+        found = steps.not_run(lines, [{**laid[0], "gone": []}], ["git log"], set())
+        # Then: step 2 is found naming `git status`, and no other
+        self.assertEqual(found, [(2, "git status")])
+
+
 if __name__ == "__main__":
     unittest.main()

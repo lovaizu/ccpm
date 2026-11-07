@@ -1,14 +1,23 @@
 """Each step of a subagent as lay.py writes it: the sentence of each lane laid there before that
 the proposal no longer lays there taken out, in whichever wording lane laid it, a sentence said in
 a wording lane laid before put in the current one where it is, each lane's sentence it does not say
-put at the end of the step, the rest of the step as it was; and which steps lay.py writes."""
+put at the end of the step, the rest of the step as it was; which steps lay.py writes; and the
+commands a subagent may run, with each a step names that it may not."""
 
 from __future__ import annotations
 
+import re
+import shutil
 from typing import Any
 
 import lanes
 import step
+
+# A thing a step names in backticks.
+QUOTED = re.compile(r"`([^`]+)`")
+# The first word of a command: the name of a program, as a shell finds it on PATH. A name begins
+# lower case, so a word such as `Read`, which a file system blind to case finds as `read`, is none.
+PROGRAM = re.compile(r"[a-z0-9][A-Za-z0-9._+-]*")
 
 
 def sentences(given: dict[str, Any]) -> list[str]:
@@ -48,6 +57,47 @@ def read_as_laid(lines: list[str], given: dict[str, Any]) -> list[str]:
     added = [s for s in sentences(given) if s not in text]
     last = kept[-1].rstrip("\n")
     return [*kept[:-1], " ".join([last, *added]) + "\n"]
+
+
+def may_run(laid: list[dict[str, Any]]) -> list[str]:
+    """The commands a subagent with the steps laid may run, as the guard lets them through: those
+    each of its lanes names, and its result commands, each once, in the order the steps give
+    them."""
+    each = (c for s in laid for g in s["lanes"] for c in lanes.runs(g["lane"], g["takes"]))
+    return list(dict.fromkeys(each))
+
+
+def commands_named(text: str, results: set[str]) -> list[str]:
+    """Each command the step's text names in backticks: a thing whose first word is a program on
+    PATH, and that is not a result alone, such as `more`; each once, in order."""
+    found = []
+    for named in QUOTED.findall(text):
+        first = named.split()[0] if named.split() else ""
+        if PROGRAM.fullmatch(first) and shutil.which(first) and named not in results:
+            found.append(named)
+    return list(dict.fromkeys(found))
+
+
+def not_run(
+    lines: list[str], laid: list[dict[str, Any]], runs: list[str], results: set[str]
+) -> list[tuple[int, str]]:
+    """Each step of the file, with each command it names in backticks, as it will read, that its
+    subagent may not run, by the step's number; the steps laid read as `read_as_laid` gives them,
+    the others as they are."""
+    bare = [line.rstrip("\n") for line in lines]
+    by_number = {s["step"]: s for s in laid}
+    found = []
+    numbered = (step.NUMBERED.match(bare[at]) for at in step.steps(bare))
+    for number in (int(m[1]) for m in numbered if m):
+        where = step.span(bare, number)
+        # A number written with a 0 before it, such as `01.`, is no step's.
+        if where is None:
+            continue
+        given = by_number.get(number)
+        read = read_as_laid(lines, given) if given else lines[where[0] : where[1]]
+        text = step.says([line.rstrip("\n") for line in read], (0, len(read)))
+        found += [(number, c) for c in commands_named(text, results) if c not in runs]
+    return found
 
 
 def steps_laid(

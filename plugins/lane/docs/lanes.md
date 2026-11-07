@@ -57,6 +57,12 @@ and, on the next line, the commands it may run. A subagent with no run_only lane
 but a held one goes to the person, and a run of its result script on a result it may not give is
 stopped with the sentence of its last step and the commands it gives its results by.
 
+For each subagent with a run_only lane, `lay.py print` lists the commands it may run, on the line
+`commands`. Where a step of such a subagent names in backticks a command that it may not run,
+`lay.py print` says so beside that step's number, such as
+``step 3  names `git status`, which writer may not run``. Add the command to a run_only lane before
+you approve, or the check stops it on every run.
+
 A command may be one that a skill of a dependency names. A dependency is a plugin that your plugin
 declares in the `dependencies` of its own `.claude-plugin/plugin.json`
 ([dependencies](https://code.claude.com/docs/en/plugins/dependencies)). The skill names its script

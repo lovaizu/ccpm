@@ -99,6 +99,7 @@ PROPOSED = os.path.join(".lane", "20261102-changelog", "changelog.json")
 PRINTED = """Lanes of writer, each checked only in writer:
   step 2  run:   Run only `git log --oneline`.  type run_only
   step 3  write: Write only `CHANGELOG.md`.     type write_only
+  commands: writer may run only `git log --oneline`
 
 2. Read the commits since then with `git log --oneline`. Run only `git log --oneline`.
 3. Write the new entries into `CHANGELOG.md`. Write only `CHANGELOG.md`.

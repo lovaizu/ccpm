@@ -41,6 +41,31 @@ class TestLaid(helpers.WalkthroughTest):
         # Then: it shows writer's rules and its steps as they will read, and no routes
         self.assertEqual((done.returncode, done.stdout), (0, helpers.PRINTED))
 
+    def test_a_step_naming_a_command_its_subagent_may_not_run_is_printed_so(self):
+        # Given: the walkthrough's plugin, writer's step 3 naming `git status`, which no lane of
+        # writer names, and reviewer, with no run_only lane, reading the commits with `git log
+        # --oneline`
+        writer = helpers.README_WRITER.replace(
+            "into `CHANGELOG.md`.", "into `CHANGELOG.md` by `git status`."
+        )
+        self.write(os.path.join("changelog", "agents", "writer.md"), writer)
+        reviewer = helpers.README_REVIEWER.replace("with the commits", "with `git log --oneline`")
+        self.write(os.path.join("changelog", "agents", "reviewer.md"), reviewer)
+        # When: lay.py print is run on it
+        done = self.lay_py("print")
+        # Then: it shows the commands writer may run and its step 3 naming one it may not, so the
+        # user sees the stop before they approve, and nothing of the kind for reviewer, which may
+        # run any command
+        self.assertEqual(done.returncode, 0, done.stdout)
+        writer_shown, reviewer_shown = done.stdout.split("Lanes of reviewer")
+        self.assertIn(
+            f"  commands: writer may run only `git log --oneline` or `{helpers.GIVE} writer written`\n",
+            writer_shown,
+        )
+        self.assertIn("  step 3  names `git status`, which writer may not run\n", writer_shown)
+        self.assertNotIn("commands:", reviewer_shown)
+        self.assertNotIn("names `", reviewer_shown)
+
 
 class TestRefused(helpers.WalkthroughTest):
     def refused(self) -> str:

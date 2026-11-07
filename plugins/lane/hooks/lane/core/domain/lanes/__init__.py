@@ -66,6 +66,9 @@ EARLIER = {
     "follow_routes": follow_routes.WORDING_EARLIER,
     "result": follow_routes.RESULT_EARLIER,
 }
+# The lanes, and the sentence laid from the routes, that name the commands a subagent may run,
+# each with the place they lie in; a subagent with lanes may run no other command.
+RUNS = {**dict(run_only.COMMANDS), "result": "commands"}
 # Where a wording shows what the lane takes, in quotes, by the name of its place.
 TAKEN = re.compile(r"`<([a-z]+)>`")
 # A thing given for each run: a name in braces, the braces wrapping the whole take.
@@ -99,6 +102,12 @@ def placed(lane: str, takes: list[str]) -> dict[str, list[str]]:
     names = places(lane)
     found = {n: takes[at : at + 1] for at, n in enumerate(names[:-1])}
     return {**found, **({names[-1]: takes[len(names) - 1 :]} if names else {})}
+
+
+def runs(lane: str, takes: list[str]) -> list[str]:
+    """The commands the lane, taking the things, lets its subagent run: its takes in the place
+    of its commands; none where it names no command."""
+    return placed(lane, takes)[RUNS[lane]] if lane in RUNS else []
 
 
 def ends(lane: str) -> bool:

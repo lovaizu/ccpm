@@ -139,12 +139,17 @@ Lanes of writer, each checked only in writer:
   step 2  run:   Run only `git log --oneline`.  type run_only
   step 3  write: Write only `CHANGELOG.md`.     type write_only
   step 4  end:   End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py writer written`. ...
+  commands: writer may run only `git log --oneline` or `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py writer written`
 
 2. Read the commits since then with `git log --oneline`. Run only `git log --oneline`.
 3. Write the new entries into `CHANGELOG.md`. Write only `CHANGELOG.md`.
 4. Reply with the entries you wrote. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py writer written`. ...
 ...
 ```
+
+The `commands` line lists each command that `writer` may run, as it has a run_only rule. The check
+stops any other. Where a step names in backticks a command that its subagent may not run,
+`lay.py print` says so beside that step's number.
 
 Once you approve it, `lay.py write` writes it into the plugin:
 

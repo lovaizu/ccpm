@@ -62,8 +62,6 @@ WATCHED = {
     "Read": ("read", "file_path"),
     "Grep": ("read", "path"),
 }
-# The lanes that name the commands a subagent may run, each with the place they lie in.
-RUNS = {"run_only": "commands", "hold": "commands", "test_after": "test", "result": "commands"}
 # What a subagent is told, after its run lanes' sentences, of the commands it may run.
 MAY_RUN = "The commands you may run, each word for word: {listed}."
 DEPENDENCY_FOLDER = (
@@ -488,14 +486,14 @@ def run_checked(s: Subagent, event: dict[str, Any], command: str) -> list[Said]:
     otherwise nothing where the command is one its lanes name, or a lane's value is null, and the
     sentences of its run_only and hold lanes, and the commands it may run, each value put in, where
     it is not."""
-    judging = s.of(*RUNS)
+    judging = s.of(*lanes.RUNS)
     named: list[tuple[rules.Laid, list[str]]] = []
     values: dict[str, list[str]] = {}
     for lane in judging:
         places = places_of(lane, s)
         if places is None:
             return []
-        named.append((lane, places[RUNS[lane.lane]]))
+        named.append((lane, places[lanes.RUNS[lane.lane]]))
         values.update(parts_of(lane, s) or {})
     cwd = event["cwd"]
     for lane, takes in named:
