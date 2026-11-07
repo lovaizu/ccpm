@@ -73,7 +73,6 @@ BEFORE = (
     "product-vision",
     "prompt",
     "readme",
-    "refactor-code",
     "refactor-doc",
 )
 # What the Markdown says after a source of which only a summary was read.

@@ -1,53 +1,68 @@
 {
- "goal": "The maintainer is a person or an AI who comes to change the code at any time after it is written. The maintainer changes the code quickly without breaking another behavior. They understand each part on one reading, and they find the one place where the change belongs.",
- "inputs": [],
+ "goal": "The maintainer changes the structure of existing code toward what the code best practice asks, and every caller, whether a person, a script, or other code, still gets each behavior it got before.",
+ "inputs": [
+  "code"
+ ],
  "preconditions": [],
+ "parts": [
+  {
+   "id": "tests",
+   "what": "The tests of each behavior the change touches, passing before the first step and after each one, with a test of what the code does now where none was."
+  },
+  {
+   "id": "steps",
+   "what": "Each change of structure, small enough that every behavior holds after it, and kept apart from any change of behavior, such as in a commit of its own."
+  }
+ ],
  "intents": [
   {
    "id": "Q1",
-   "about": "the whole",
-   "what": "After the code's structure changes, does each caller get every behavior it got before, whether the caller is a person, a script or other code, so that a change of structure is safe for every caller?"
+   "about": "tests",
+   "what": "Before the structure changes, does the maintainer have a passing test of each behavior the change will touch, one written from what the code does now where none was, so that a step that breaks a behavior shows at once?"
   },
   {
    "id": "Q2",
-   "about": "the whole",
-   "what": "Whatever line the maintainer reads, code or comment, would they lose something they need if it were gone, so that every line they read earns its place?"
+   "about": "steps, tests",
+   "what": "Changing the structure, does the maintainer take steps so small that every test passes after each, and change no behavior in any of them, so that a failing test points at the one step that broke it and undoing that step costs nothing?"
   },
   {
    "id": "Q3",
-   "about": "the whole",
-   "what": "When the maintainer reads any name in the code, can they say what it holds or does without going to where it is defined, so that they read the code without hunting for definitions?"
+   "about": "steps",
+   "what": "Choosing what to change, does the maintainer move the code toward a shortfall that a question of the code best practice names, and stop where the code answers it, so that each change makes the code easier for its maintainer to change, and not only different?"
   },
   {
    "id": "Q4",
    "about": "the whole",
-   "what": "Each time the maintainer meets a name, can they tell rightly whether it names a thing they have already met, and which one, so that they never take two things for one or one thing for two?"
-  },
-  {
-   "id": "Q5",
-   "about": "the whole",
-   "what": "With one rule or one design decision to change, can the maintainer find the one place that holds it and make the whole change there, so that a change is made once and whole?"
-  },
-  {
-   "id": "Q6",
-   "about": "the whole",
-   "what": "When the maintainer reads any function once from the top, with nothing from outside it but the names it uses, can they say in one sentence what it does, so that they grasp it at one reading?"
-  },
-  {
-   "id": "Q7",
-   "about": "the whole",
-   "what": "When the maintainer moves from one module to another, do they find each kind of thing done the same way, so that each difference they meet is one the code needs?"
-  },
-  {
-   "id": "Q8",
-   "about": "the whole",
-   "what": "Where code looks wrong or roundabout, can the maintainer learn right there why it is so, before they change it, so that they do not undo what it is there for?"
+   "what": "After the structure changes, does each caller, whether a person, a script, or other code, get every behavior it got before, and does the code answer the question it moved toward?"
   }
  ],
  "practices": [
   {
    "intent": "Q1",
-   "thinking": "The structure changes in small steps, and each step keeps every behavior. The tests from before the change check each step. No step changes a behavior.",
+   "name": "Characterization test",
+   "aliases": [
+    "golden master testing",
+    "self-testing code"
+   ],
+   "thinking": "Begin only from tests that all pass, as a test already failing hides the one a step breaks. Where a behavior the change will touch has no test, write one of what the code does now, and see it pass, as a refactoring is only as safe as the tests that check it. Where a behavior looks wrong, keep the behavior and its test, and report it as a point about what the code does, rather than change it here, as a change of behavior made inside a refactoring passes unseen by the tests that should have caught it.",
+   "applies": "Every change of structure of code that has callers.",
+   "excludes": "Code no one calls yet, such as a draft with no tests, is still being made. Make it test first, by the code best practice's test-driven development.",
+   "cost": "Tests of what the code does now take time before any change, and they pin a behavior that may be wrong until someone decides it.",
+   "sources": [
+    {
+     "title": "Feathers, characterization test, as Wikipedia's Characterization test sums it up",
+     "url": "https://en.wikipedia.org/wiki/Characterization_test",
+     "secondary": true
+    },
+    {
+     "title": "Fowler, Self Testing Code",
+     "url": "https://martinfowler.com/bliki/SelfTestingCode.html"
+    },
+    {
+     "title": "Fowler, Definition Of Refactoring",
+     "url": "https://martinfowler.com/bliki/DefinitionOfRefactoring.html"
+    }
+   ],
    "steps": [
     {
      "text": "Run the tests before any change, and begin only when every one passes.",
@@ -57,122 +72,98 @@
        "{tests}"
       ]
      }
-    },
-    {
-     "text": "Where a behavior the change will touch has no test, write a test of what the code does now, and see it pass."
-    },
-    {
-     "text": "After each small change of structure, such as a rename or a moved function, run the tests. Where a test fails, undo the change and make a smaller one."
-    },
-    {
-     "text": "Leave each test's expected result as it was, and change a test's call only where a name it uses was renamed."
-    },
-    {
-     "text": "Where a behavior looks wrong, keep the behavior and its test. Return it as a point about what the code does, rather than change it here."
     }
    ]
   },
   {
    "intent": "Q2",
-   "thinking": "Each line earns its place by what the maintainer would lose without it. What gives the maintainer nothing comes out, and version control keeps it.",
-   "steps": [
+   "name": "Refactoring",
+   "aliases": [
+    "behavior-preserving transformation",
+    "the two hats"
+   ],
+   "thinking": "Change the structure in steps that each keep every behavior, such as a rename, an extracted or inlined function, or a moved one, and run the tests after each. Where a test fails, undo the step and take a smaller one, rather than mend forward, as a mend on a broken step mixes two changes the tests can't tell apart. Leave each test's expected result as it was, and change a test's call only where a name it uses changed. Change no behavior in a step of structure: a change of behavior gets a step of its own, test first, by the code best practice's test-driven development. A rearrangement that leaves the code broken for days is a restructuring, not a refactoring, and loses the safety each small step gives.",
+   "applies": "Each change of structure.",
+   "excludes": "A change the specification asks for is a change of behavior, made test first by the code best practice, with a refactoring before it where the structure makes it hard.",
+   "cost": "Small steps take more runs of the tests than one large change, and a slow suite makes each step costly. Keep the tests fast and alone in what they touch, as the code best practice asks of its tests.",
+   "sources": [
     {
-     "text": "Fold into its caller each function or layer that only passes a call on. Drop each parameter to which every caller gives the same value, and use that value inside."
+     "title": "Fowler, Definition Of Refactoring",
+     "url": "https://martinfowler.com/bliki/DefinitionOfRefactoring.html"
     },
     {
-     "text": "Keep a comment that says what the code cannot say plainly, such as what a regular expression matches."
+     "title": "Fowler, Refactoring Malapropism",
+     "url": "https://martinfowler.com/bliki/RefactoringMalapropism.html"
+    },
+    {
+     "title": "Beck, Canon TDD, 2023",
+     "url": "https://newsletter.kentbeck.com/p/canon-tdd"
+    },
+    {
+     "title": "Fowler, Refactoring, as its book page sums it up",
+     "url": "https://martinfowler.com/books/refactoring.html",
+     "secondary": true
     }
-   ]
+   ],
+   "steps": []
   },
   {
    "intent": "Q3",
-   "thinking": "A name says in whole words what it holds or does, so the maintainer reads each line without going to a definition.",
-   "steps": [
+   "name": "Preparatory refactoring",
+   "aliases": [
+    "opportunistic refactoring",
+    "refactoring toward patterns",
+    "the campsite rule"
+   ],
+   "thinking": "A refactoring needs a direction. Name the question of the code best practice that the code falls short of, such as a module that hides two decisions, a rule written in two places, or a name that says nothing, and change the code toward its answer. Refactor right before a change of behavior that the structure makes hard: make the change easy, then make the easy change. Refactor as you go, and leave the code better than you found it, rather than in a phase planned apart, as a long planned restructuring is the exception in code that's refactored well. Stop where the code answers the question, as refactoring past the need, and abstracting before the need shows, are mistakes of their own.",
+   "applies": "Each refactoring, before a change of behavior or while reading code to change it.",
+   "excludes": "Code that answers every question of the code best practice needs no refactoring, and one made anyway changes it for nothing.",
+   "cost": "Naming the shortfall takes reading the code against the code best practice before any change.",
+   "sources": [
     {
-     "text": "For each name, write in a few words what it holds or does, without looking at its definition. Then look at the definition, and flag the name where the two differ."
+     "title": "Fowler, An example of preparatory refactoring",
+     "url": "https://martinfowler.com/articles/preparatory-refactoring-example.html"
     },
     {
-     "text": "Make a name say more the farther from its definition it is read."
+     "title": "Fowler, Opportunistic Refactoring",
+     "url": "https://martinfowler.com/bliki/OpportunisticRefactoring.html"
+    },
+    {
+     "title": "Fowler, Workflows of Refactoring",
+     "url": "https://martinfowler.com/articles/workflowsOfRefactoring/"
+    },
+    {
+     "title": "Kerievsky, Refactoring to Patterns",
+     "url": "https://www.industriallogic.com/refactoring-to-patterns/"
+    },
+    {
+     "title": "Beck, Canon TDD, 2023",
+     "url": "https://newsletter.kentbeck.com/p/canon-tdd"
     }
-   ]
+   ],
+   "steps": []
   },
   {
    "intent": "Q4",
-   "thinking": "Each thing has one name, the word its users and documents already use for it, and each name names one thing.",
-   "steps": [
+   "name": "Behavior preservation",
+   "aliases": [
+    "regression testing"
+   ],
+   "thinking": "A caller sees more than the tests may check, such as a command's options, the form of its output, its exit codes, and the files it writes. List each caller of the code that changed, and check that each still gets what it got before, by running the tests whole and the code as each caller runs it. Then read the code against the question of the code best practice it moved toward, and check that the shortfall is gone.",
+   "applies": "Every refactoring, once its last step is made.",
+   "excludes": "A caller the change can't reach, such as code behind an interface that didn't change, needs no check of its own beyond the tests.",
+   "cost": "Running the code as each caller runs it takes a setup for each kind of caller.",
+   "sources": [
     {
-     "text": "List the things the code handles, and for each the names the code gives it."
+     "title": "Fowler, Definition Of Refactoring",
+     "url": "https://martinfowler.com/bliki/DefinitionOfRefactoring.html"
+    },
+    {
+     "title": "Software Engineering at Google, chapter 11, Testing Overview",
+     "url": "https://abseil.io/resources/swe-book/html/ch11.html"
     }
-   ]
-  },
-  {
-   "intent": "Q5",
-   "thinking": "The code writes each rule or design decision once, in the module whose job it is. The code does not tie together things unrelated in meaning, however alike they look.",
-   "steps": [
-    {
-     "text": "For each rule or decision the code holds, such as a limit, a format or a path, list every place that writes it."
-    },
-    {
-     "text": "Where a shared function takes flags so that each caller gets its own path, split it into one function for each rule."
-    },
-    {
-     "text": "Where code reaches into another module's insides, have it use what that module offers its callers."
-    },
-    {
-     "text": "Where the code truly cannot keep a rule in one place, say at each place where the other places are, such as in a comment beside it."
-    },
-    {
-     "text": "Pick one rule, imagine that it changed, and count the places that would change. Mend the code until that count is one."
-    }
-   ]
-  },
-  {
-   "intent": "Q6",
-   "thinking": "A function does one thing at one level, and takes what it uses as its inputs. Its reader then holds in mind only what the function says. A long function reads as calls to steps, each named for what it does.",
-   "steps": [
-    {
-     "text": "Read each function, test functions included, once from the top, and write in one sentence what it does."
-    },
-    {
-     "text": "Flag a function whose sentence needs an \"and\", or for which the reader had to read another body."
-    },
-    {
-     "text": "Join back two functions that cannot be understood apart."
-    },
-    {
-     "text": "Write a clever construct in its plain form."
-    }
-   ]
-  },
-  {
-   "intent": "Q7",
-   "thinking": "The code does each kind of thing one way throughout. That way is the one the code already has, the nearest code first, unless a better way replaces it everywhere. A difference then means a real difference.",
-   "steps": [
-    {
-     "text": "List the kinds of thing the code does in many places, such as reporting an error, checking an input, reading a file, or laying out a module or a test."
-    },
-    {
-     "text": "For each kind, gather each way the code does it."
-    },
-    {
-     "text": "Where a place needs another way, say why beside it, such as in a comment."
-    }
-   ]
-  },
-  {
-   "intent": "Q8",
-   "thinking": "Where the code cannot say why it is so, the reason stands where the maintainer meets the code, such as a limit outside the code or a way tried and dropped.",
-   "steps": [
-    {
-     "text": "Read each line as a maintainer who knows the language but not the purpose, and flag code that looks wrong, roundabout or more than it needs."
-    },
-    {
-     "text": "For each, first make the code say it plainly, where it can."
-    },
-    {
-     "text": "Check each comment against the code beside it, and correct or remove one that no longer holds."
-    }
-   ]
+   ],
+   "steps": []
   }
  ]
 }
