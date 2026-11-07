@@ -146,6 +146,37 @@ class TestWrite(GuardTest):
                     self.check(self.written("notes.ipynb", tool)), [guard.Said(helpers.WRITE)]
                 )
 
+    def moved(self, path: str, tool: str = "Write") -> dict:
+        """writer's write of the path, made after the session's folder moved into the plugin's
+        folder, the project's folder still `base`, as Claude Code gives it CLAUDE_PROJECT_DIR."""
+        return {**self.written(path, tool), "cwd": self.plugin}
+
+    def test_a_take_is_read_from_the_projects_folder_where_the_session_moved(self):
+        with mock.patch.dict(os.environ, {"CLAUDE_PROJECT_DIR": self.base}):
+            # Given: writer, whose step 3 writes only CHANGELOG.md, started in the plugin's folder
+            # When: it writes the project's CHANGELOG.md, and the plugin's own
+            ours = self.check(self.moved(os.path.join(self.base, "CHANGELOG.md")))
+            plugins = self.check(self.moved(os.path.join(self.plugin, "CHANGELOG.md")))
+        # Then: the project's goes on, and the plugin's is told the sentence
+        self.assertEqual(ours, [])
+        self.assertEqual(plugins, [guard.Said(helpers.WRITE)])
+
+    def test_a_calls_own_path_is_read_from_the_folder_it_is_made_in(self):
+        with mock.patch.dict(os.environ, {"CLAUDE_PROJECT_DIR": self.base}):
+            # Given: writer started in the plugin's folder
+            # When: it writes `../CHANGELOG.md` from there, the project's CHANGELOG.md
+            # Then: the call goes on
+            self.assertEqual(self.check(self.moved("../CHANGELOG.md")), [])
+
+    def test_with_no_project_folder_a_take_is_read_from_the_calls_folder(self):
+        with mock.patch.dict(os.environ, {}, clear=False):
+            os.environ.pop("CLAUDE_PROJECT_DIR", None)
+            # Given: no CLAUDE_PROJECT_DIR, as no Claude Code that documents it ran the hook
+            # When: writer writes CHANGELOG.md of the folder it is in
+            # Then: the call goes on
+            path = os.path.join(self.plugin, "CHANGELOG.md")
+            self.assertEqual(self.check(self.moved(path)), [])
+
     def test_a_subagent_with_no_write_lane_writes_freely(self):
         # Given: writer with run_only alone laid
         self.lay([helpers.STEPS[0]], helpers.LAID.replace(f" {helpers.WRITE}", ""))

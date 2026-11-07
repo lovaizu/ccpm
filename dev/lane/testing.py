@@ -453,7 +453,12 @@ class ClaudeCode:
     ) -> None:
         self.root = root
         self.roots = [root, *others]
+        # The folder the session works in, which a `cd` moves, as a test sets it; the project's
+        # folder stays where the session began, as Claude Code gives every hook CLAUDE_PROJECT_DIR.
+        # The environment is the test's own, kept as given, so a change the test makes to it later,
+        # such as of PATH, reaches every call.
         self.cwd = cwd
+        env["CLAUDE_PROJECT_DIR"] = cwd
         self.env = env
         self.answers = list(answers or [])
         self.check = check

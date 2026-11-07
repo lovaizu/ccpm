@@ -150,7 +150,11 @@ anything under it. A path of read_only, write_only or read_whole may begin with
 plugin's folder in for it, as it does in a command, so a step can name a file of your plugin by
 the path the subagent reads it by. test_after's output may be a folder too, and a change of any
 file under it is a change of the output. read_only and write_only check the path that Read, Grep,
-Write or Edit is given, a Grep given none reading the folder it runs in. A command a run_only lane
+Write or Edit is given, a Grep given none reading the folder it runs in. lane reads that path from
+the folder the call is made in, as the tool does, and a path that a lane takes from the project's
+folder, which Claude Code gives every hook as `CLAUDE_PROJECT_DIR`. So `CHANGELOG.md` names the
+project's `CHANGELOG.md` however a `cd` has moved the session, and the subagent with it, such as
+into your plugin's folder. A command a run_only lane
 names reads and writes what it does unchecked, so name only commands whose reads and writes you
 accept.
 

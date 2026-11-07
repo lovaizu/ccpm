@@ -449,12 +449,28 @@ def guarded(check: Check) -> Callable[[str, str, str, dict[str, Any], str], list
     def run(root: str, plugin: str, name: str, event: dict[str, Any], wrong: str) -> list[Said]:
         try:
             found = subagent(root, plugin, name, event, wrong)
-            return [] if found is None else check(found, event)
+            return [] if found is None else check(found, anchored(event))
         except Cannot as stop:
             return [stop.said]
 
     run.__doc__ = check.__doc__
     return run
+
+
+def anchored(event: dict[str, Any]) -> dict[str, Any]:
+    """The subagent's event as the lanes judge it: the path its call names, of a tool that reads or
+    writes a file, read from the folder the call is made in, as the tool reads it; and `cwd` the
+    project's folder, CLAUDE_PROJECT_DIR as Claude Code gives every hook, which a take's path is
+    read from, as the user approved it as a file of the project, where the folder the session works
+    in moves with each `cd`. With no CLAUDE_PROJECT_DIR, the folder the call is made in."""
+    cwd, given, tool = event["cwd"], event.get("tool_input"), event.get("tool_name")
+    if isinstance(given, dict) and tool in WATCHED and WATCHED[tool][0] != "run":
+        field = WATCHED[tool][1]
+        # Grep given no path searches the folder the call is made in.
+        value = given.get(field, "." if tool == "Grep" else None)
+        if isinstance(value, str):
+            given = {**given, field: os.path.join(cwd, value)}
+    return {**event, "tool_input": given, "cwd": os.environ.get("CLAUDE_PROJECT_DIR") or cwd}
 
 
 def sentences(found: list[rules.Laid]) -> Said:

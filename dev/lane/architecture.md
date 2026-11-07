@@ -108,13 +108,18 @@ and shows what it gives. The guard takes its lanes and routes only from what `la
 and holds them, and what an adapter gives on a run, to the checks of `lanes/` and `routes.py` that
 `lay.py print` makes too. Where
 they no longer pass those checks, it stops each call they're about, as a call it can't check.
+The guard reads a path that a lane takes from the project's folder, `CLAUDE_PROJECT_DIR`, and the
+path that a call names from the folder that the call runs in.
 
 *Why*: the user approves their lanes and routes, as
 [Q16](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q16) says. A lane copied or
 edited by hand would be one that no one approved, and could stop a move that the user's steps
 allow. The guard stops every command that a role's run_only lanes don't name, so that stop
 is part of what the user approves. Unshown, they'd first meet the stop on a run. The user approves
-an adapter by its test cases, as what it gives on a run comes from the plugin's own files.
+an adapter by its test cases, as what it gives on a run comes from the plugin's own files. A lane
+names a file of the project as the user approved it. Read from the folder the session works in,
+which moves with each `cd`, the same lane would name another file, and let through a write that no
+one approved.
 
 ### Lane knows no plugin
 

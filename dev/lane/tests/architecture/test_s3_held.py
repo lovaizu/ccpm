@@ -65,6 +65,21 @@ class TestWriterRun(helpers.RunTest):
         given = ("given", "Write the entries.")
         self.assertEqual(kinds, [("start", None), given, *calls, ("end", None)])
 
+    def test_a_take_names_the_projects_file_after_the_session_moved(self):
+        # Given: the README's lanes laid in writer, and the session moved into the plugin's folder
+        # by a `cd`, so writer starts there
+        self.claude.cwd = self.plugin
+        self.claude.start(None, WRITER, "Write the entries.")
+        # When: writer writes the plugin's own CHANGELOG.md, then the project's
+        plugins = self.claude.call(WRITER, "Write", {"file_path": "CHANGELOG.md", "content": "x\n"})
+        project = os.path.join(self.repo, "CHANGELOG.md")
+        ours = self.claude.call(WRITER, "Write", {"file_path": project, "content": "x\n"})
+        # Then: the plugin's is denied with write_only's sentence, as `CHANGELOG.md` names the
+        # project's file, which goes through
+        said = "changelog: Write only `CHANGELOG.md`."
+        self.assertEqual((plugins.made, plugins.reason()), (False, said))
+        self.assertEqual((ours.made, ours.said), (True, {}))
+
     def test_git_commit_is_stopped_with_its_sentence(self):
         # Given: the README's lanes laid in writer, started by the main conversation
         self.claude.start(None, WRITER, "Write the entries and commit them.")
