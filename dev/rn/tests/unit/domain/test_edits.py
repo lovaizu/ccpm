@@ -365,3 +365,39 @@ class TurnGood(Base):
         self.writes([{"id": f"D1Q{n}", "good": True} for n in range(1, 12)])
         self.writes(answers=[{"id": n, "holds": True} for n in ("goal", "D1", "D2")])
         self.assertIn("Give `ready`", edits.commit(RUN))
+
+
+class Edges(Base):
+    """The cases on either side of each comparison, so a mutant of it fails a test."""
+
+    def test_two_deliverables_set_done_at_once_stop_the_delivery(self):
+        tree = good(good(helpers.walkthrough()), 2)
+        self.commits(tree)
+        self.writes([{"id": "D1", "status": "done"}, {"id": "D2", "status": "done"}])
+        self.writes(answers=[{"id": "goal", "holds": True}])
+        self.assertEqual(
+            self.stopped(edits.deliver, RUN),
+            "set the one deliverable whose turn of how it reads came back good done",
+        )
+
+    def test_the_files_of_a_turn_of_how_it_reads_where_the_first_turn_kept_no_record(self):
+        os.makedirs(CONTENT)
+        self.write_json(os.path.join(READING, runs.MADE), made(made=["README.md", "notes.txt"]))
+        self.assertEqual(edits.made_by(RUN, "README.md")[0], ["README.md", "notes.txt"])
+
+    def test_the_report_of_three_deliverables_and_of_one(self):
+        done = [helpers.done(p, p) for p in ("a.md", "b.md", "c.md")]
+        self.lays({"goal": {"decided": GOAL, "by": "user"}, "deliverables": done})
+        self.assertTrue(edits.report(RUN).startswith("Done: a.md, b.md and c.md are changed."))
+        self.lays({"goal": {"decided": GOAL, "by": "user"}, "deliverables": done[:1]})
+        self.assertTrue(edits.report(RUN).startswith("Done: a.md is changed. Each was tried"))
+
+    def test_a_delivery_that_leaves_a_point_open_gives_asks_with_no_report(self):
+        tree = good(helpers.decided(helpers.walkthrough(), 2, "Q1", "the option", None))
+        self.commits(tree)
+        self.write_json(os.path.join(READING, runs.MADE), made())
+        self.writes([{"id": "D1", "status": "done"}])
+        self.writes(answers=[{"id": "goal", "holds": True}, {"id": "D2", "holds": True}])
+        said = edits.deliver(RUN)
+        self.assertIn("Give `asks`", said)
+        self.assertNotIn("Done:", said)

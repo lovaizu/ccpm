@@ -49,3 +49,6 @@ class Throwaway(helpers.RunTest):
         with mock.patch.object(sys, "argv", argv), self.assertRaises(SystemExit) as stop:
             runpy.run_path(argv[0], run_name="__main__")
         self.assertEqual(stop.exception.code, 2)
+
+    def test_two_runs_given_are_its_usage(self):
+        self.assertEqual(ran(throwaway, RUN, RUN)[0], 2)

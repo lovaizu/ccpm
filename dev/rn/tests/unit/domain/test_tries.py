@@ -65,3 +65,26 @@ class Tried(helpers.RunTest):
         self.lays({"goal": helpers.walkthrough()["goal"], "deliverables": []})
         with self.assertRaises(starts.Stop):
             tries.tried(RUN)
+
+
+class Edges(helpers.RunTest):
+    def setUp(self) -> None:
+        super().setUp()
+        self.lays(helpers.walkthrough())
+        os.makedirs(CONTENT)
+
+    def test_two_files_out_of_the_home_name_the_first(self):
+        self.write_json(
+            os.path.join(CONTENT, runs.MADE), {**made(commands=["true"]), "home": ["/a", "/b"]}
+        )
+        with self.assertRaises(starts.Stop) as stop:
+            tries.tried(RUN)
+        self.assertEqual(str(stop.exception), "the file /a lies out of the home")
+
+    def test_two_files_in_one_folder_and_a_link_to_nothing(self):
+        os.symlink("gone", "dangling")
+        self.write_json(
+            os.path.join(CONTENT, runs.MADE),
+            {**made(commands=["ls ~/Downloads"]), "home": ["Downloads/a", "Downloads/b"]},
+        )
+        self.assertIn("a\nb\n(exit 0)", self.read(tries.tried(RUN)))

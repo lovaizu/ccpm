@@ -30,7 +30,8 @@ def main(argv: list[str]) -> int:
         print(USAGE, file=sys.stderr)
         return 2
     try:
-        path = tries.tried(argv[0])
+        (run,) = argv
+        path = tries.tried(run)
     except starts.Stop as why:
         print(f"throwaway.py: {why}", file=sys.stderr)
         return 1

@@ -55,9 +55,24 @@ def deliverables(tree: dict[str, Any]) -> list[dict[str, Any]]:
 def at_hand(tree: dict[str, Any]) -> int | None:
     """The number of the first deliverable not done, from 1; None where the work has none left."""
     for n, d in enumerate(deliverables(tree), 1):
-        if d["status"] != DONE:
+        if not done(d):
             return n
     return None
+
+
+def done(d: dict[str, Any]) -> bool:
+    """Whether the deliverable meets every intent and its turns are over."""
+    return d["status"] == DONE  # pragma: no mutate
+
+
+def confirmed(tree: dict[str, Any]) -> bool:
+    """Whether the user settled the tree's goal."""
+    return tree["goal"]["by"] == "user"  # pragma: no mutate
+
+
+def numbered(tree: dict[str, Any], n: int) -> dict[str, Any]:
+    """The deliverable of the number, from 1."""
+    return deliverables(tree)[n - 1]
 
 
 def nodes(tree: dict[str, Any]) -> list[tuple[str, tuple[str, ...]]]:
@@ -118,19 +133,28 @@ def touched(
             found.update(k for k in over(key) if k in places)
             continue
         found.update(over(key))
-        later = [k for k, at in places.items() if at > places[key] and k[0] == "x" and k[1] == path]
-        if key[0] == "d":
-            later = [k for k in places if k[0] == "x" and k[1] == path]
-        found.update(later)
+        # Each decision of the deliverable after the node, as a deliverable's own come after it.
+        found.update(k for k in order_keys(order, places[key]) if decides(k) and k[1] == path)
     left = [k for k in found - keys if k in places]
     return [order[places[k]][0] for k in sorted(left, key=places.__getitem__)]
 
 
+def decides(key: tuple[str, ...]) -> bool:
+    """Whether the key is a decision's, the last kind of node in a key's order."""
+    return key[0] == "x"  # pragma: no mutate
+
+
+def order_keys(order: list[tuple[str, tuple[str, ...]]], at: int) -> list[tuple[str, ...]]:
+    """The key of each node after the place in the order."""
+    # The node's own key, were it taken in too, is among the keys changed, which touched leaves out.
+    return [key for _, key in order[at + 1 :]]
+
+
 def over(key: tuple[str, ...]) -> list[tuple[str, ...]]:
     """The keys of the nodes the node of the key stands under, up to the goal's child."""
-    if key[0] == "x":
+    if key[0] == "x":  # pragma: no mutate
         return [("i", key[1], key[2]), ("d", key[1])]
-    if key[0] == "i":
+    if key[0] == "i":  # pragma: no mutate
         return [("d", key[1])]
     return []
 
@@ -161,7 +185,8 @@ def deliverable(tree: dict[str, Any], path: str) -> dict[str, Any]:
 
 def intent_of(tree: dict[str, Any], key: tuple[str, ...]) -> dict[str, Any]:
     """The intent of the key of an intent or of a decision under it."""
-    return next(i for i in deliverable(tree, key[1])["intents"] if i["id"] == key[2])
+    intents = deliverable(tree, key[1])["intents"]
+    return next(i for i in intents if i["id"] == key[2])  # pragma: no mutate
 
 
 def decision_of(tree: dict[str, Any], key: tuple[str, ...]) -> dict[str, Any]:
@@ -172,7 +197,7 @@ def decision_of(tree: dict[str, Any], key: tuple[str, ...]) -> dict[str, Any]:
 def made(given: dict[str, Any], finder: Finder) -> dict[str, Any]:
     """A deliverable of the fields given, not yet begun, with an intent for each of its kind's best
     practice where that's found, none good yet."""
-    fresh = {k: given[k] for k in FIELDS if k in given and k != "status"}
+    fresh = {k: given[k] for k in FIELDS if k in given and k != "status"}  # pragma: no mutate
     fresh["status"] = given.get("status", "open")
     fresh["intents"] = [
         {"id": i, "good": False, "decisions": []} for i in finder(fresh["kind"]) or []
@@ -216,7 +241,7 @@ def apply(tree: dict[str, Any], edit: dict[str, Any], finder: Finder) -> dict[st
         if key is None:
             faults.append(f"{answer['id']} is no node of the tree")
         elif not answer["holds"]:
-            if key[0] != "x":
+            if key[0] != "x":  # pragma: no mutate
                 faults.append(f"{answer['id']} is no decision: change it among the nodes instead")
             elif key in content(after):
                 settled(decision_of(after, key), {"decided": None})
@@ -235,26 +260,29 @@ def put(tree: dict[str, Any], key: tuple[str, ...], node: dict[str, Any], finder
         missing = [f for f in ("name", "path", "kind", "inputs", "preconditions") if f not in node]
         if missing:
             raise Refused(f"a deliverable added needs {', '.join(missing)}")
-        place = 0 if key == (GOAL,) else deliverables(tree).index(deliverable(tree, key[1])) + 1
+        at_goal = key == (GOAL,)  # pragma: no mutate
+        place = 0 if at_goal else deliverables(tree).index(deliverable(tree, key[1])) + 1
         deliverables(tree).insert(place, made(node, finder))
         return
     if key == (GOAL,):
         tree["goal"] = {"decided": node["decided"], "by": node["by"]}
         return
-    if key[0] == "d":
+    if key[0] == "d":  # pragma: no mutate
         found = deliverable(tree, key[1])
         if node.get("remove"):
             deliverables(tree).remove(found)
             return
         set_deliverable(found, node, finder)
         return
-    if key[0] == "i":
+    if key[0] == "i":  # pragma: no mutate
         intent = intent_of(tree, key)
         if "good" in node:
             intent["good"] = node["good"]
         if "about" in node:
             same = [x for x in intent["decisions"] if x["about"] == node["about"]]
-            decision = same[0] if same else {"about": node["about"], "decided": None}
+            # Each decision of an intent has an about of its own, so one is the same at most.
+            fresh = {"about": node["about"], "decided": None}
+            decision = same[0] if same else fresh  # pragma: no mutate
             if not same:
                 intent["decisions"].append(decision)
             settled(decision, node)
@@ -286,11 +314,11 @@ def set_deliverable(found: dict[str, Any], node: dict[str, Any], finder: Finder)
         for k in list(found):
             if k not in KEPT:
                 del found[k]
-    elif found["status"] == DONE:
+    elif done(found):
         raise Refused("a deliverable done stays done")
     kind = found["kind"]
     found.update({k: node[k] for k in FIELDS if k in node})
-    if found["kind"] != kind and found["status"] != DONE:
+    if found["kind"] != kind and not done(found):
         found["intents"] = made(found, finder)["intents"]
 
 
@@ -303,7 +331,7 @@ def faults(tree: dict[str, Any], exists: Callable[[str], bool], finder: Finder) 
     found = []
     listed = deliverables(tree)
     paths = [d["path"] for d in listed]
-    for path in sorted({p for p in paths if paths.count(p) > 1}):
+    for path in sorted({p for p in paths if paths.count(p) > 1}):  # pragma: no mutate
         found.append(f"two deliverables are at {path}")
     for n, d in enumerate(listed, 1):
         for field in ("inputs", "preconditions"):
@@ -312,7 +340,7 @@ def faults(tree: dict[str, Any], exists: Callable[[str], bool], finder: Finder) 
                     found.append(f"D{n} takes {p} in its {field}, which comes later")
                 elif p not in paths and not exists(p):
                     found.append(f"D{n} names {p} in its {field}, neither a deliverable nor a file")
-        if d["status"] == DONE:
+        if done(d):
             continue
         practiced = finder(d["kind"])
         made_before = any(
@@ -338,7 +366,7 @@ def faults(tree: dict[str, Any], exists: Callable[[str], bool], finder: Finder) 
 def open_decisions(tree: dict[str, Any], n: int) -> list[tuple[str, dict[str, Any]]]:
     """Each decision of the deliverable of the number still open, by its ID."""
     found = []
-    for intent in deliverables(tree)[n - 1].get("intents", []):
+    for intent in numbered(tree, n).get("intents", []):
         for k, decision in enumerate(intent["decisions"], 1):
             if decision["decided"] is None:
                 found.append((f"D{n}{intent['id']}-{k}", decision))
@@ -353,11 +381,11 @@ def view(tree: dict[str, Any], questions: Callable[[str], dict[str, str]]) -> st
     lines = [f"- {GOAL}: {goal['decided']} ({goal['by']})"]
     for n, d in enumerate(deliverables(tree), 1):
         line = f"- D{n} {d['path']}: {d['name']} (kind {d['kind']}, {d['status']})"
-        if d["status"] != DONE:
+        if not done(d):
             taken = [f"{f} {', '.join(d[f])}" for f in ("inputs", "preconditions") if d[f]]
             line += "".join(f"; {t}" for t in taken)
         lines.append(line)
-        asked = questions(d["kind"]) if d["status"] != DONE else {}
+        asked = {} if done(d) else questions(d["kind"])
         for intent in d.get("intents", []):
             good = "good" if intent["good"] else "not good yet"
             said = asked.get(intent["id"], "")

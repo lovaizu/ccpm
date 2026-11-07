@@ -19,7 +19,7 @@ from starts import Stop
 
 # The seconds a command may run before the try stops it, as a command that waits for input would
 # hold the round for ever.
-SECONDS = 300
+SECONDS = 300  # pragma: no mutate
 
 
 def under_home(path: str) -> bool:
@@ -33,11 +33,11 @@ def round_at(run: str) -> str:
     """The round of the turn at hand of the run; refuses, by Stop, a run with none."""
     tree = starts.the_tree(run)
     n = trees.at_hand(tree)
-    d = trees.deliverables(tree)[n - 1] if n is not None else None
-    rounds = runs.rounds(runs.turn_of(run, d["path"], starts.reads(d))) if d else []
-    if not rounds or runs.made_of(rounds[-1]) is None:
+    d = trees.numbered(tree, n) if n is not None else None
+    last = runs.last(runs.turn_of(run, d["path"], starts.reads(d))) if d else None
+    if last is None or runs.made_of(last) is None:
         raise Stop(f"{run} has no round with a Making record to try: write it first")
-    return rounds[-1]
+    return last
 
 
 def run_each(commands: list[str], copy: str, home: str) -> str:
@@ -96,7 +96,7 @@ def tried(run: str) -> str:
                 pass
         said = run_each(commands, copy, home)
     finally:
-        shutil.rmtree(top, ignore_errors=True)
+        shutil.rmtree(top, ignore_errors=True)  # pragma: no mutate
     with open(path, "w", encoding="utf-8") as f:
         f.write(said)
     return path

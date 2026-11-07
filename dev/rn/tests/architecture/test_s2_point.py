@@ -6,6 +6,8 @@ rn's guard runs real, by its hook entries, through Lane's double of Claude Code.
 
 from __future__ import annotations
 
+import os
+
 import helpers
 from helpers import GOAL, RUN, repository, runs
 
@@ -127,3 +129,10 @@ class Point(helpers.FlowTest):
         said = self.runs(planner, self.tree_command("write", RUN, values["edit"]))
         self.assertIn("D1 takes tidy/cli.py in its inputs, which comes later", said)
         self.assertEqual(self.tree_now()["deliverables"][0]["inputs"], ["dev/product-vision.md"])
+
+    def test_the_planner_never_reads_the_design_tree(self):
+        self.commits(helpers.walkthrough())
+        planner, _ = self.settles({"run": RUN})
+        told = self.does(planner, "Read", file_path=os.path.join(self.repo, runs.tree_path(RUN)))
+        self.assertFalse(told.made)
+        self.assertIn("Never read", told.reason())

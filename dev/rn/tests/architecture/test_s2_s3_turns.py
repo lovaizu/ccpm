@@ -187,3 +187,22 @@ class Turns(helpers.FlowTest):
         told = self.does(run, "Read", file_path=os.path.join(self.repo, runs.tree_path(RUN)))
         self.assertFalse(told.made)
         self.assertIn("Read only", told.reason())
+
+    def test_the_generator_runs_none_of_the_peoples_commands_itself(self):
+        # Given: the generator started on the note
+        generator, values = self.cut_and_start("generator")
+        # When: it runs a command the note's people run, in the user's repository
+        told = self.does(generator, "Bash", command="cat NOTES.md", description="d")
+        # Then: Lane stops it, naming what it may run
+        self.assertFalse(told.made)
+        self.assertIn("Run only", told.reason())
+        # And: it runs the throwaway copy's command, which Lane lets through
+        self.writes(generator, values["record"], {"made": [], "decided": [], "open": []})
+        self.runs(generator, f"python3 {helpers.RN}/scripts/throwaway.py {RUN}")
+
+    def test_neither_the_generator_nor_the_planner_reads_the_design_tree(self):
+        generator, values = self.cut_and_start("generator")
+        self.assertEqual(values["tree"], runs.tree_path(RUN))
+        told = self.does(generator, "Read", file_path=os.path.join(self.repo, runs.tree_path(RUN)))
+        self.assertFalse(told.made)
+        self.assertIn("Never read", told.reason())

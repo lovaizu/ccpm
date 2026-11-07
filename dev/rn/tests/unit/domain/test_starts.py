@@ -494,3 +494,117 @@ class OnBranches(Base):
     def test_a_branch_of_rn_with_no_run_on_it_is_none(self):
         self.git("branch", "rn/20261101-gone")
         self.assertIn("rn has no work left to pick up", starts.start("planner"))
+
+
+class Edges(Base):
+    """The cases on either side of each comparison, so a mutant of it fails a test."""
+
+    def test_two_runs_done_leave_none_at_hand(self):
+        done = {
+            "goal": {"decided": GOAL, "by": "user"},
+            "deliverables": [helpers.done("README.md", "r")],
+        }
+        self.lays(done, ".rn/a")
+        self.lays(done, ".rn/b")
+        with self.assertRaises(starts.Stop):
+            starts.at_hand()
+
+    def test_a_cut_keeps_each_letter_as_it_is(self):
+        self.assertEqual(starts.line({"run": "é"}), '{"run": "é"}')
+
+    def test_a_run_outside_rns_folder_is_refused_however_its_name_sorts(self):
+        self.lays(helpers.walkthrough(), ".a/x")
+        with self.assertRaises(starts.Stop):
+            starts.change(json.dumps({"run": ".a/x"}))
+
+    def test_a_role_rn_has_no_on_either_side_of_its_roles(self):
+        for role in ("aaa", "zzz", "generators"):
+            with self.subTest(role=role), self.assertRaises(starts.Stop):
+                starts.start(role)
+
+    def test_a_new_runs_cut_given_twice(self):
+        with helpers.mock.patch.object(runs, "today", return_value="20261108"):
+            self.handed({"request": "tidy dry run"})
+        starts.start("planner")
+        self.assertIn("# A new run", starts.start("planner"))
+
+    def test_a_decision_not_the_goals_lays_out_no_plan_and_each_stands_on_a_line(self):
+        self.lays(
+            helpers.decided(
+                helpers.decided(helpers.walkthrough(), 1, "Q6", "a", None), 1, "Q7", "b", None
+            )
+        )
+        self.handed(
+            {
+                "run": RUN,
+                "decisions": [
+                    {"at": "D1Q6-1", "decided": "x", "by": "user"},
+                    {"at": "D1Q7-1", "decided": "y", "by": "reasoning"},
+                ],
+            }
+        )
+        cut = starts.start("planner")
+        self.assertNotIn("newly the user's", cut)
+        self.assertIn("- at D1Q6-1: x (by user)\n- at D1Q7-1: y (by reasoning)", cut)
+
+    def test_the_second_deliverable_at_hand(self):
+        tree = helpers.walkthrough()
+        tree["deliverables"][0] = helpers.done("README.md", "r")
+        tree["deliverables"][1]["status"] = "doing"
+        tree = helpers.decided(tree, 2, "Q6", "tests command", "python3 -m unittest")
+        self.lays(tree)
+        self.assertIn("at D2 tidy/cli.py, which is ready to make", starts.start("planner"))
+        cut = starts.start("generator")
+        values = json.loads(cut.splitlines()[0])
+        self.assertEqual(
+            (values["deliverable"], values["tests"], values["proposal"]),
+            ("tidy/cli.py", "python3 -m unittest", None),
+        )
+        self.assertIn("# D2 tidy/cli.py", cut)
+        self.assertIn("D2 tidy/cli.py, of the kind code", starts.points())
+        self.assertEqual(starts.status(), f'Picking up "{GOAL}" at 2. tidy/cli.py, README.md done.')
+
+    def test_a_reading_round_with_a_record_and_no_answers_isnt_good(self):
+        self.lays(good(helpers.walkthrough()))
+        self.round_of(READING.replace("02-", "01-"), made())
+        self.assertIsNone(starts.turn_good(RUN))
+
+    def test_the_points_of_the_last_round_alone(self):
+        self.lays(helpers.walkthrough())
+        self.round_of(CONTENT, made(open_=[{"intent": "Q6", "about": "old", "what": "o?"}]))
+        second = os.path.join(os.path.dirname(CONTENT), "02")
+        self.round_of(second, made(open_=[{"intent": "Q6", "about": "new", "what": "n?"}]))
+        said = starts.points()
+        self.assertIn("- D1Q6 new: n?.", said)
+        self.assertNotIn("old", said)
+
+    def test_the_generator_after_two_rounds(self):
+        self.lays(helpers.walkthrough())
+        self.round_of(CONTENT, made(), self.readme_groups(lacks=["Q1"]))
+        second = os.path.join(os.path.dirname(CONTENT), "02")
+        self.round_of(second, made(), self.readme_groups(lacks=["Q2"]))
+        cut = starts.start("generator")
+        self.assertIn("- Q2: they can't tell", cut)
+        self.assertNotIn("- Q1: they can't tell", cut)
+        self.assertIn(os.path.join(os.path.dirname(CONTENT), "03"), cut)
+
+    def test_the_evaluator_cuts_a_new_round_from_its_first_group(self):
+        self.lays(helpers.walkthrough())
+        self.round_of(CONTENT, made(), self.readme_groups(lacks=["Q1"]))
+        second = os.path.join(os.path.dirname(CONTENT), "02")
+        self.round_of(second, made())
+        runs.keep(RUN, starts.CUT, {"kind": "evaluator", "round": CONTENT, "cut": ["G1", "G2"]})
+        cut = starts.start("evaluator")
+        self.assertIn("# The intents of G1, 1 of 6", cut)
+        self.assertIn(second, cut)
+
+    def test_a_lack_accepted_by_the_user_alone(self):
+        tree = helpers.decided(helpers.walkthrough(), 1, "Q1", "accepted shortfall", "long", "user")
+        tree = helpers.decided(tree, 1, "Q1", "a choice", "short", "user")
+        tree = helpers.decided(tree, 1, "Q2", "accepted shortfall", "mine", "reasoning")
+        self.lays(tree)
+        self.round_of(CONTENT, made())
+        cut = starts.start("evaluator")
+        self.assertIn("- Q1: long", cut)
+        self.assertNotIn("short", cut.split("## Lacks the user accepted")[1])
+        self.assertNotIn("mine", cut)

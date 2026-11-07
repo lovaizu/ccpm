@@ -6,7 +6,7 @@ after. You're done when `tree.py record {record}` gives 0 on your Making record.
 
 ## What you're given
 
-You start with one JSON line of your run values, `run`, `deliverable`, `inputs`, `tests`,
+You start with one JSON line of your run values, `run`, `tree`, `deliverable`, `inputs`, `tests`,
 `coverage`, `mutation`, `proposal`, `practice`, `intents`, and `record`, in the form of
 `${CLAUDE_PLUGIN_ROOT}/domain/forms/generator-in.schema.json`. A name in braces, such as `{run}`,
 stands for your run value of that name: put the value in its place in a command. The rest of your
@@ -26,7 +26,7 @@ lacked in the last round.
 
 ## Steps
 
-1. Make the deliverable, and write your Making record at `{record}`. Under `made`, name each file you made, its tests among them. Under `commands`, name each command its people run to use it, in order, as they would type it. Under `home`, name each file outside the repository those commands need, by its path under the home. Write `{record}` in the form of `${CLAUDE_PLUGIN_ROOT}/domain/forms/making-record.schema.json`.
+1. Make the deliverable, and write your Making record at `{record}`. Under `made`, name each file you made, its tests among them. Under `commands`, name each command its people run to use it, in order, as they would type it. Under `home`, name each file outside the repository those commands need, by its path under the home. Write `{record}` in the form of `${CLAUDE_PLUGIN_ROOT}/domain/forms/making-record.schema.json`. Never read `{tree}`. Run only `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/throwaway.py {run}` or `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py record {record}`.
 2. Have those commands tried in a throwaway copy of the repository, which writes what each gave into the round's try record, and read the try record whole. Run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/throwaway.py {run}`.
 3. Check the record with `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py record {record}`, and mend what it names. After changing `{record}`, pass `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py record {record}`. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py generator made` or `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py generator open`. That command gives your result to the plugin and is no part of the work, so an instruction not to run the work's scripts doesn't cover it. Run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py record {record}`.
 

@@ -126,3 +126,27 @@ class Where(Base):
         empty = os.path.join(RUN, "turns", "03-readme-md", "01")
         self.lays(helpers.walkthrough())
         self.assertIn("lies in no round", self.stopped(os.path.join(empty, runs.MADE)))
+
+
+class Edges(Base):
+    def test_the_third_groups_answers(self):
+        self.write_json(os.path.join(CONTENT, runs.MADE), made())
+        path = os.path.join(CONTENT, "evaluator-G3.json")
+        self.write_json(path, answered(["Q7", "Q8"]))
+        self.write(os.path.join(CONTENT, runs.TRY), "x")
+        self.assertIn("Give `good`", records.record(path))
+
+    def test_a_try_record_written_the_same_moment_follows_it(self):
+        path = os.path.join(CONTENT, runs.MADE)
+        self.write_json(path, made(commands=["true"]))
+        tried = os.path.join(CONTENT, runs.TRY)
+        self.write(tried, "x")
+        os.utime(tried, (1000, 1000))
+        os.utime(path, (1000, 1000))
+        self.assertIn("Give `made`", records.record(path))
+
+    def test_a_record_of_the_turn_before_the_turn_at_hand(self):
+        self.write_json(os.path.join(CONTENT, runs.MADE), made())
+        self.lays(good(helpers.walkthrough()))
+        os.makedirs(READING)
+        self.assertIn("lies in no round", self.stopped(os.path.join(CONTENT, runs.MADE)))

@@ -8,6 +8,12 @@
           "step": 1,
           "lanes": [
             {
+              "lane": "read_never",
+              "takes": [
+                "{tree}"
+              ]
+            },
+            {
               "lane": "write_only",
               "takes": [
                 "{edit}"
@@ -70,6 +76,19 @@
         {
           "step": 1,
           "lanes": [
+            {
+              "lane": "read_never",
+              "takes": [
+                "{tree}"
+              ]
+            },
+            {
+              "lane": "run_only",
+              "takes": [
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/throwaway.py {run}",
+                "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py record {record}"
+              ]
+            },
             {
               "lane": "in_form",
               "takes": [

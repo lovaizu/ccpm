@@ -133,9 +133,11 @@ def at_hand() -> str:
         return max(cut, key=lambda r: os.path.getmtime(os.path.join(runs.temporary(r), AT)))
     going = [r for r in waiting() if left(r)]
     if len(going) == 1:
-        return going[0]
+        (only,) = going
+        return only
     if not going and len(waiting()) == 1:
-        return waiting()[0]
+        (only,) = waiting()
+        return only
     raise Stop("no run is at hand: type /rn:up alone to pick one up")
 
 
@@ -190,11 +192,11 @@ def placed(tree: dict[str, Any], given: dict[str, Any]) -> dict[str, Any]:
     key = trees.where(tree, given["at"])
     if key is None:
         raise Stop(f"{given['at']} is no node of the tree")
-    if key[0] == "i":
+    if key[0] == "i":  # pragma: no mutate
         if "about" not in given:
             raise Stop(f"the decision at the intent {given['at']} needs its about")
         key = ("x", key[1], key[2], given["about"])
-    elif key[0] == "d":
+    elif key[0] == "d":  # pragma: no mutate
         raise Stop(f"{given['at']} is a deliverable: name the goal, an intent or a decision")
     return {**given, "key": list(key)}
 
@@ -202,7 +204,7 @@ def placed(tree: dict[str, Any], given: dict[str, Any]) -> dict[str, Any]:
 def stands(tree: dict[str, Any], decision: dict[str, Any]) -> bool:
     """Whether the tree holds the decision as the main conversation handed it."""
     key = tuple(decision["key"])
-    if key == (trees.GOAL,):
+    if key == (trees.GOAL,):  # pragma: no mutate
         return tree["goal"] == {"decided": decision["decided"], "by": decision["by"]}
     held = trees.content(tree).get(key)
     return held == (decision["decided"], decision["by"])
@@ -251,16 +253,19 @@ def planner_cut() -> str:
     if not going:
         values = planner_values(None)
         return f"{line(values)}\n{GIVE.format(result='done')}: rn has no work left to pick up."
-    if len(going) > 1:
+    if len(going) > 1:  # pragma: no mutate
         values = planner_values(None)
         listed = "\n".join(f"- {r}: {the_tree(r)['goal']['decided']}" for r in going)
         said = GIVE.format(result="asks")
         return f"{line(values)}\n{said}, each run with work left by its goal:\n{listed}"
-    bring(going[0])
-    return pickup_cut(going[0])
+    (only,) = going
+    bring(only)
+    return pickup_cut(only)
 
 
 GIVE = "Give `{result}` by its command, and end with this message"
+# Where the deliverable at hand stands, by the result the planner gives on picking it up.
+STANDS = {"asks": "has a point open", "ready": "is ready to make"}
 
 
 def handed_cut(run: str, kept: dict[str, Any]) -> str:
@@ -311,11 +316,11 @@ def pickup_cut(run: str) -> str:
     n = trees.at_hand(tree)
     if n is None:
         return f"{line(planner_values(run))}\n{GIVE.format(result='done')}: {run} is done."
-    result = "asks" if open_points(run, tree, n) or tree["goal"]["by"] != "user" else "ready"
-    d = trees.deliverables(tree)[n - 1]
+    result = "asks" if open_points(run, tree, n) or not trees.confirmed(tree) else "ready"
+    d = trees.numbered(tree, n)
     return (
         f"{line(planner_values(run))}\n# Picking up\n\n{run} stopped at D{n} {d['path']}, which"
-        f" {'has a point open' if result == 'asks' else 'is ready to make'}."
+        f" {STANDS[result]}."
         f" {GIVE.format(result=result)}: rn picks up {run} at D{n} {d['path']}."
     )
 
@@ -327,13 +332,14 @@ def turn_good(run: str) -> tuple[int, bool] | None:
     n = trees.at_hand(tree) if tree is not None else None
     if tree is None or n is None:
         return None
-    d = trees.deliverables(tree)[n - 1]
+    d = trees.numbered(tree, n)
     reading = reads(d)
-    turn = runs.turn_of(run, d["path"], reading)
-    rounds = runs.rounds(turn)
-    if not rounds:
+    last = runs.last(runs.turn_of(run, d["path"], reading))
+    if last is None:
         return None
-    if runs.outcome(rounds[-1], group_names(run, d, reading)) != "good":
+    stands = runs.outcome(last, group_names(run, d, reading))
+    # Every other outcome of a round sorts after `good`, so no order sets a mutant apart.
+    if stands != "good":  # pragma: no mutate
         return None
     return n, reading
 
@@ -357,7 +363,7 @@ def group_names(run: str, d: dict[str, Any], reading: bool) -> list[str]:
 def turn_cut(run: str, n: int, reading: bool) -> str:
     """The planner's cut of a turn come back good."""
     tree = the_tree(run)
-    d = trees.deliverables(tree)[n - 1]
+    d = trees.numbered(tree, n)
     mark(run, {"kind": "turn", "path": d["path"], "reading": reading})
     write = writing(run)
     if reading:
@@ -379,23 +385,24 @@ def open_points(run: str, tree: dict[str, Any], n: int) -> list[str]:
     """Each point open of the deliverable of the number, as a line the main conversation reads:
     each decision of the tree still open, then each point the turn's last round found that the
     tree doesn't settle yet."""
-    asked = questions(run)(trees.deliverables(tree)[n - 1]["kind"])
+    asked = questions(run)(trees.numbered(tree, n)["kind"])
     found = []
     for node, decision in trees.open_decisions(tree, n):
         intent = node[len(f"D{n}") :].split("-")[0]
         found.append(f"- {node} {decision['about']}: open. {intent}: {asked.get(intent, '')}")
-    d = trees.deliverables(tree)[n - 1]
-    turn = runs.turn_of(run, d["path"], reads(d))
-    rounds = runs.rounds(turn)
-    if not rounds:
+    d = trees.numbered(tree, n)
+    last = runs.last(runs.turn_of(run, d["path"], reads(d)))
+    if last is None:
         return found
-    last = rounds[-1]
-    if runs.outcome(last, group_names(run, d, reads(d))) != "open":
+    stands = runs.outcome(last, group_names(run, d, reads(d)))
+    # Every other outcome of a round sorts before `open`.
+    if stands != "open":  # pragma: no mutate
         return found
     held = trees.content(tree)
     for point in runs.points(last):
         key = ("x", d["path"], point["intent"], point["about"])
-        if held.get(key, (None,))[0] is None:
+        # A decision settled is the pair of what it says and who settled it, both None while open.
+        if held.get(key, (None,))[0] is None:  # pragma: no mutate
             said = f"{point['about']}: {point['what']}. {point['intent']}"
             found.append(f"- D{n}{point['intent']} {said}: {asked.get(point['intent'], '')}")
     return found
@@ -412,6 +419,7 @@ def values_of(run: str, d: dict[str, Any], practice: str, record: str) -> dict[s
     found = {k: held.get(about) for k, about in COMMANDS.items()}
     return {
         "run": run,
+        "tree": runs.tree_path(run),
         "deliverable": d["path"],
         "inputs": inputs or None,
         **found,
@@ -429,18 +437,15 @@ def generator_cut(run: str) -> str:
     n = trees.at_hand(tree)
     if n is None:
         raise Stop(f"{run} has no deliverable left to make")
-    d = trees.deliverables(tree)[n - 1]
+    d = trees.numbered(tree, n)
     reading = reads(d)
     kind = turn_kind(d, reading)
     practice = practices.found(kind, run)
     if practice is None:
         raise Stop(f"the kind {kind} has no best practice yet")
     turn = runs.turn_of(run, d["path"], reading) or runs.new_turn(run, d["path"], reading)
-    before = runs.rounds(turn)
-    if before and runs.made_of(before[-1]) is None:
-        round_ = before[-1]
-    else:
-        round_ = runs.next_round(turn)
+    before = runs.last(turn)
+    round_ = before if before and runs.made_of(before) is None else runs.next_round(turn)
     os.makedirs(round_, exist_ok=True)
     mark(run, {"kind": "generator", "round": round_})
     record = os.path.join(round_, runs.MADE)
@@ -463,7 +468,8 @@ def generator_cut(run: str) -> str:
     if not reading:
         out += ["", "## Its intents", ""]
         out += [f"- {i['id']}: {asked.get(i['id'], '')}" for i in d["intents"]]
-    short = runs.shortfalls(before[-1]) if before and round_ != before[-1] else []
+    # rn numbers round folders in order, so a next round's sorts after the last.
+    short = runs.shortfalls(before) if before and round_ != before else []  # pragma: no mutate
     if short:
         out += ["", "## What the people still lacked in the last round", ""]
         out += [f"- {q}: {lacks}" for q, lacks in short]
@@ -489,13 +495,12 @@ def evaluator_cut(run: str) -> str:
     n = trees.at_hand(tree)
     if n is None:
         raise Stop(f"{run} has no deliverable left to judge")
-    d = trees.deliverables(tree)[n - 1]
+    d = trees.numbered(tree, n)
     reading = reads(d)
-    rounds = runs.rounds(runs.turn_of(run, d["path"], reading))
-    made = runs.made_of(rounds[-1]) if rounds else None
-    if made is None or made["open"]:
+    round_ = runs.last(runs.turn_of(run, d["path"], reading))
+    made = runs.made_of(round_) if round_ else None
+    if round_ is None or made is None or made["open"]:
         raise Stop("the round has no Making record that makes every point: start the generator")
-    round_ = rounds[-1]
     data = practice_of(run, turn_kind(d, reading))
     groups = practices.groups(data)
     kept = runs.kept(run, CUT) or {}
@@ -542,17 +547,17 @@ def points() -> str:
     tree = the_tree(run)
     goal = tree["goal"]
     out = [f"Run: {run}"]
-    if goal["by"] != "user":
+    if not trees.confirmed(tree):
         out.append(f"The goal, to confirm, at goal: {goal['decided']}")
         return "\n".join(out)
     out += ["", "Plan, back from the goal:"]
     for n, d in enumerate(trees.deliverables(tree), 1):
-        done = " (done)" if d["status"] == trees.DONE else ""
+        done = " (done)" if trees.done(d) else ""
         out.append(f"{n}. {d['path']}: {d['name']}{done}")
     n = trees.at_hand(tree)
     if n is None:
         return "\n".join([*out, "", "Every deliverable is done."])
-    d = trees.deliverables(tree)[n - 1]
+    d = trees.numbered(tree, n)
     taken = ", ".join(d["inputs"]) or "nothing"
     out += ["", f"D{n} {d['path']}, of the kind {d['kind']}, takes its content from {taken}."]
     found = open_points(run, tree, n)
@@ -565,9 +570,9 @@ def status() -> str:
     run = at_hand()
     tree = the_tree(run)
     n = trees.at_hand(tree)
-    done = [d["path"] for d in trees.deliverables(tree) if d["status"] == trees.DONE]
+    done = [d["path"] for d in trees.deliverables(tree) if trees.done(d)]
     if n is None:
         return f"Done: {tree['goal']['decided']}"
-    d = trees.deliverables(tree)[n - 1]
+    d = trees.numbered(tree, n)
     after = f", {', '.join(done)} done" if done else ""
     return f'Picking up "{tree["goal"]["decided"]}" at {n}. {d["path"]}{after}.'

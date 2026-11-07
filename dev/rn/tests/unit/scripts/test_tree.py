@@ -78,3 +78,16 @@ class Script(helpers.RunTest):
         with mock.patch.object(sys, "argv", argv), self.assertRaises(SystemExit) as stop:
             runpy.run_path(argv[0], run_name="__main__")
         self.assertEqual(stop.exception.code, 1)
+
+
+class Edges(helpers.RunTest):
+    def test_a_command_like_check_or_check_with_more_words_is_no_check(self):
+        for argv in (["change", "x"], ["check", "a", "b"]):
+            with self.subTest(argv=argv):
+                self.assertEqual(ran(tree, *argv)[0], 2)
+
+    def test_what_it_cant_read_names_the_command(self):
+        self.write(runs.tree_path(RUN), "{")
+        code, _, err = ran(tree, "start", "generator")
+        self.assertEqual(code, 2)
+        self.assertIn("tree.py: can't start: ", err)

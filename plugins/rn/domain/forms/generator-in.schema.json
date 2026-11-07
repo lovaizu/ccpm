@@ -13,6 +13,7 @@
       "type": "object",
       "required": [
         "run",
+        "tree",
         "deliverable",
         "inputs",
         "tests",
@@ -27,6 +28,10 @@
       "properties": {
         "run": {
           "description": "The run's folder.",
+          "type": "string"
+        },
+        "tree": {
+          "description": "The design tree's path, which the generator never reads, as its cut holds what it needs of it.",
           "type": "string"
         },
         "deliverable": {

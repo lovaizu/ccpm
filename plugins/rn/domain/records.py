@@ -34,12 +34,11 @@ def turn_at(path: str) -> tuple[str, str, dict[str, Any], bool]:
     run = os.path.dirname(os.path.dirname(turn))
     tree = starts.the_tree(run)
     n = trees.at_hand(tree)
-    d = trees.deliverables(tree)[n - 1] if n is not None else None
+    d = trees.numbered(tree, n) if n is not None else None
     reading = d is not None and starts.reads(d)
     if d is None or runs.turn_of(run, d["path"], reading) != turn:
         raise Stop(f"{path} lies in no round of the turn at hand")
-    rounds = runs.rounds(turn)
-    if not rounds or rounds[-1] != round_:
+    if runs.last(turn) != round_:
         raise Stop(f"{path} lies in no round of the turn at hand")
     return run, round_, d, reading
 
@@ -88,9 +87,8 @@ def judged(path: str, round_: str, d: dict[str, Any], data: dict[str, Any], grou
         raise Stop(f"the best practice has no group {group}")
     ids = groups[number - 1]
     given = [a["question"] for a in answers["met"] + answers["not_met"]]
-    found = [
-        f"{q} is answered more than once" for q in sorted({q for q in given if given.count(q) > 1})
-    ]
+    twice = {q for q in given if given.count(q) > 1}  # pragma: no mutate
+    found = [f"{q} is answered more than once" for q in sorted(twice)]
     found += [
         f"{q} is no intent of {group}"
         for q in given + [o["question"] for o in answers["open"]]

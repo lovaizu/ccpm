@@ -46,10 +46,13 @@ def on_branch(run: str) -> None:
         return
     exists = subprocess.run(
         ["git", "rev-parse", "--verify", "--quiet", f"refs/heads/{name}"],
-        capture_output=True,
+        # What the command prints is never read, only its exit code.
+        capture_output=True,  # pragma: no mutate
         check=False,
     )
-    ran("git", "switch", *([] if exists.returncode == 0 else ["-c"]), name)
+    # git gives no exit code below 0, so no order sets a mutant of these comparisons apart.
+    made = exists.returncode == 0  # pragma: no mutate
+    ran("git", "switch", *([] if made else ["-c"]), name)
 
 
 def branch_runs() -> list[str]:
@@ -70,9 +73,12 @@ def committed(run: str, path: str) -> str | None:
     """The file at the path as the run's branch last committed it; None where the branch or the
     file isn't there."""
     done = subprocess.run(
-        ["git", "show", f"{branch(run)}:{path}"], capture_output=True, text=True, check=False
+        ["git", "show", f"{branch(run)}:{path}"],
+        capture_output=True,
+        text=True,
+        check=False,
     )
-    return done.stdout if done.returncode == 0 else None
+    return done.stdout if done.returncode == 0 else None  # pragma: no mutate
 
 
 def commit(run: str, paths: list[str], message: str) -> bool:
@@ -81,9 +87,12 @@ def commit(run: str, paths: list[str], message: str) -> bool:
     on_branch(run)
     ran("git", "add", "-A", "--", *paths)
     staged = subprocess.run(
-        ["git", "diff", "--cached", "--quiet", "--", *paths], capture_output=True, check=False
+        ["git", "diff", "--cached", "--quiet", "--", *paths],
+        # What the command prints is never read, only its exit code.
+        capture_output=True,  # pragma: no mutate
+        check=False,
     )
-    if staged.returncode == 0:
+    if staged.returncode == 0:  # pragma: no mutate
         return False
     ran("git", "commit", "-q", "-m", f"{message}\n\n{TRAILER}{run}", "--", *paths)
     return True

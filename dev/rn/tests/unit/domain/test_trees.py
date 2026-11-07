@@ -14,40 +14,42 @@ FINDER = {"readme": ["Q1", "Q2"], "code": ["Q1"], "meta": [], "research": [], "p
 
 def small() -> dict:
     """A tree of two deliverables, the second taking from the first, each with its intents, the
-    first's Q2 holding two decisions."""
-    return {
-        "goal": {"decided": "g", "by": "user"},
-        "deliverables": [
-            {
-                "name": "r",
-                "path": "README.md",
-                "kind": "readme",
-                "inputs": [],
-                "preconditions": [],
-                "status": "doing",
-                "intents": [
-                    {"id": "Q1", "good": False, "decisions": []},
-                    {
-                        "id": "Q2",
-                        "good": False,
-                        "decisions": [
-                            {"about": "a", "decided": "x", "by": "user"},
-                            {"about": "b", "decided": None},
-                        ],
-                    },
-                ],
-            },
-            {
-                "name": "c",
-                "path": "c.py",
-                "kind": "code",
-                "inputs": ["README.md"],
-                "preconditions": [],
-                "status": "open",
-                "intents": [{"id": "Q1", "good": False, "decisions": []}],
-            },
-        ],
-    }
+    first's Q2 holding two decisions, read back from JSON as rn reads a tree."""
+    return helpers.loaded(
+        {
+            "goal": {"decided": "g", "by": "user"},
+            "deliverables": [
+                {
+                    "name": "r",
+                    "path": "README.md",
+                    "kind": "readme",
+                    "inputs": [],
+                    "preconditions": [],
+                    "status": "doing",
+                    "intents": [
+                        {"id": "Q1", "good": False, "decisions": []},
+                        {
+                            "id": "Q2",
+                            "good": False,
+                            "decisions": [
+                                {"about": "a", "decided": "x", "by": "user"},
+                                {"about": "b", "decided": None},
+                            ],
+                        },
+                    ],
+                },
+                {
+                    "name": "c",
+                    "path": "c.py",
+                    "kind": "code",
+                    "inputs": ["README.md"],
+                    "preconditions": [],
+                    "status": "open",
+                    "intents": [{"id": "Q1", "good": False, "decisions": []}],
+                },
+            ],
+        }
+    )
 
 
 class Load(helpers.testing.FolderTest):
@@ -463,3 +465,180 @@ class Shown(unittest.TestCase):
             "  - D2Q1, good:\n"
             "- D3 d.md: d (kind readme, done)",
         )
+
+
+def kind_of(n, kind, path=None, **given):
+    """A deliverable not done of the kind, at a path of its own."""
+    d = {
+        "name": "n",
+        "path": path or f"d{n}.md",
+        "kind": kind,
+        "inputs": [],
+        "preconditions": [],
+        "status": "open",
+        "intents": [{"id": i, "good": False, "decisions": []} for i in FINDER(kind) or []],
+    }
+    d.update(given)
+    return d
+
+
+def tree_of(*listed):
+    """A tree of the deliverables, read back from JSON."""
+    return helpers.loaded({"goal": {"decided": "g", "by": "user"}, "deliverables": list(listed)})
+
+
+class Edges(unittest.TestCase):
+    """The cases on either side of each comparison, so a mutant of it fails a test."""
+
+    def test_the_deliverable_of_a_number_after_the_first(self):
+        tree = small()
+        self.assertEqual(trees.numbered(tree, 2)["path"], "c.py")
+        self.assertEqual(trees.numbered(tree, 1)["path"], "README.md")
+
+    def test_two_nodes_changed_at_once_each_touch(self):
+        # Given: the goal changed, and D2's intent made good, in one change
+        before = small()
+        after = copy.deepcopy(before)
+        after["goal"]["decided"] = "h"
+        after["deliverables"][1]["intents"][0]["good"] = True
+        # Then: the goal reaches every deliverable, and D2's intent what stands over it
+        self.assertEqual(trees.touched(before, after, trees.changed(before, after)), ["D1", "D2"])
+        # And: a node removed beside another changed
+        after = copy.deepcopy(before)
+        del after["deliverables"][0]["intents"][1]["decisions"][1]
+        after["deliverables"][1]["intents"][0]["good"] = True
+        self.assertEqual(
+            trees.touched(before, after, trees.changed(before, after)), ["goal", "D1", "D1Q2", "D2"]
+        )
+
+    def test_the_later_decisions_are_those_of_the_deliverable_alone(self):
+        # Given: D2, whose path sorts after D1's, holding a decision, and a decision of D1 added
+        before = small()
+        before["deliverables"][1]["intents"][0]["decisions"] = [
+            {"about": "z", "decided": "y", "by": "user"}
+        ]
+        after = copy.deepcopy(before)
+        after["deliverables"][0]["intents"][0]["decisions"] = [{"about": "c", "decided": None}]
+        # Then: D1's later decisions, not D2's
+        self.assertEqual(
+            trees.touched(before, after, trees.changed(before, after)),
+            ["goal", "D1", "D1Q1", "D1Q2-1", "D1Q2-2", "D2"],
+        )
+
+    def test_a_neighbour_by_path_alone(self):
+        tree = tree_of(
+            kind_of(1, "readme", "b.md"),
+            kind_of(2, "readme", "a.md"),
+            kind_of(3, "code", "c.py", inputs=["b.md"]),
+        )
+        self.assertEqual(trees.neighbours(tree, "b.md"), [("d", "c.py")])
+        self.assertEqual(trees.neighbours(tree, "a.md"), [])
+
+    def test_a_decision_found_by_its_about_among_others(self):
+        tree = small()
+        self.assertEqual(trees.decision_of(tree, ("x", "README.md", "Q2", "b"))["about"], "b")
+        edit = helpers.loaded(
+            {
+                "grounds": "g",
+                "nodes": [
+                    {"id": "D1Q2", "about": "a", "decided": "w", "by": "user"},
+                    {"id": "D1Q2", "about": "aa", "decided": None},
+                ],
+            }
+        )
+        after = trees.apply(tree, edit, FINDER)
+        self.assertEqual(
+            [x["about"] for x in after["deliverables"][0]["intents"][1]["decisions"]],
+            ["a", "b", "aa"],
+        )
+        self.assertEqual(after["deliverables"][0]["intents"][1]["decisions"][0]["decided"], "w")
+
+    def test_an_id_that_names_a_path_adds_nothing(self):
+        with self.assertRaises(trees.Refused) as stop:
+            trees.apply(small(), {"grounds": "g", "nodes": [{"id": "c.py", "name": "x"}]}, FINDER)
+        self.assertEqual(str(stop.exception), "c.py is no node of the tree")
+
+    def test_each_node_refused_is_named(self):
+        edit = {
+            "grounds": "g",
+            "nodes": [{"id": "D9"}, {"id": "D1Q2-2", "decided": "y"}, {"id": "D8"}],
+        }
+        with self.assertRaises(trees.Refused) as stop:
+            trees.apply(small(), edit, FINDER)
+        self.assertEqual(
+            str(stop.exception),
+            "D9 is no node of the tree\nD1Q2-2: the decision b is settled by no one: name its by\n"
+            "D8 is no node of the tree",
+        )
+
+    def test_a_doing_deliverable_is_set_and_its_kind_changed_takes_the_new_kinds_intents(self):
+        edit = helpers.loaded(
+            {"grounds": "g", "nodes": [{"id": "D1", "name": "m", "kind": "code"}]}
+        )
+        after = trees.apply(small(), edit, FINDER)
+        self.assertEqual(after["deliverables"][0]["name"], "m")
+        self.assertEqual([i["id"] for i in after["deliverables"][0]["intents"]], ["Q1"])
+        edit = helpers.loaded({"grounds": "g", "nodes": [{"id": "D2", "kind": "code"}]})
+        after = trees.apply(small(), edit, FINDER)
+        self.assertEqual(after["deliverables"][1]["intents"], small()["deliverables"][1]["intents"])
+
+    def test_a_deliverable_before_one_later_that_it_takes_from(self):
+        tree = tree_of(
+            kind_of(1, "readme"), kind_of(2, "readme", inputs=["d3.md"]), kind_of(3, "readme")
+        )
+        self.assertEqual(
+            trees.faults(tree, lambda p: False, FINDER),
+            ["D2 takes d3.md in its inputs, which comes later"],
+        )
+
+    def test_a_deliverable_done_is_passed_over_and_the_next_still_held(self):
+        tree = tree_of(helpers.done("a.md", "a"), kind_of(2, "man-page"))
+        self.assertEqual(
+            trees.faults(tree, lambda p: False, FINDER),
+            ["D2's kind man-page has no best practice, nor a meta one before it"],
+        )
+
+    def test_only_a_meta_deliverable_of_the_kind_before_it_makes_its_kind(self):
+        meta = lambda n, name: kind_of(n, "meta", f".rn/r/best-practices/{name}")
+        after = tree_of(kind_of(1, "man-page"), meta(2, "man-page"))
+        self.assertEqual(
+            trees.faults(after, lambda p: False, FINDER),
+            [
+                "D1's kind man-page has no best practice, nor a meta one before it",
+                "D2 makes the kind man-page, which no later deliverable takes",
+            ],
+        )
+        other = tree_of(
+            meta(1, "alpha"),
+            kind_of(2, "code", "x/man-page"),
+            kind_of(3, "man-page"),
+            kind_of(4, "alpha"),
+        )
+        self.assertEqual(
+            trees.faults(other, lambda p: False, FINDER),
+            ["D3's kind man-page has no best practice, nor a meta one before it"],
+        )
+        later = tree_of(meta(1, "man-page"), kind_of(2, "readme"), kind_of(3, "code"))
+        self.assertIn(
+            "D1 makes the kind man-page, which no later deliverable takes",
+            trees.faults(later, lambda p: False, FINDER),
+        )
+
+    def test_intents_fewer_than_the_kinds(self):
+        d = kind_of(1, "readme")
+        d["intents"] = d["intents"][:1]
+        self.assertEqual(
+            trees.faults(tree_of(d), lambda p: False, FINDER),
+            ["D1's intents aren't those of its kind readme, in their order"],
+        )
+
+    def test_a_kind_that_sorts_after_research_is_no_research(self):
+        tree = tree_of(kind_of(1, "spec"), kind_of(2, "readme"))
+        found = trees.faults(tree, lambda p: False, {"spec": [], "readme": ["Q1", "Q2"]}.get)
+        self.assertEqual(found, [])
+
+    def test_an_open_deliverable_shows_its_questions(self):
+        tree = small()
+        tree["deliverables"][1]["kind"] = "readme"
+        said = trees.view(tree, lambda kind: {"readme": {"Q1": "Does it?"}}.get(kind, {}))
+        self.assertIn("  - D2Q1, not good yet: Does it?", said)

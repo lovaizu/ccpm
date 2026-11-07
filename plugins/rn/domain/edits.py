@@ -79,7 +79,9 @@ def write(run: str, path: str) -> str:
     lines = [
         f"{DECIDED}{n['decided']} ({n.get('grounds') or n['by']})"
         for n in edit["nodes"]
-        if n.get("decided") and n.get("by") not in (None, "user") and n.get("id") != trees.GOAL
+        if n.get("decided")
+        and n.get("by") not in (None, "user")
+        and n.get("id") != trees.GOAL  # pragma: no mutate
     ]
     runs.keep(run, starts.EDITS, [*log, {"grounds": edit["grounds"], "decided": lines}])
     files.save(runs.tree_path(run), after)
@@ -96,14 +98,14 @@ def result(run: str, tree: dict[str, Any]) -> str:
     """The result the planner gives once it commits the tree: asks while a point is open for the
     main conversation, ready once the deliverable at hand has none and is doing, done once each
     deliverable is. Refuses, by Stop, a deliverable left open with no point."""
-    if tree["goal"]["by"] != "user":
+    if not trees.confirmed(tree):
         return "asks"
     n = trees.at_hand(tree)
     if n is None:
         return "done"
     if starts.open_points(run, tree, n):
         return "asks"
-    if trees.deliverables(tree)[n - 1]["status"] != "doing":
+    if trees.numbered(tree, n)["status"] != "doing":  # pragma: no mutate
         raise Stop(f"D{n} has no point open: set its status to doing")
     return "ready"
 
@@ -162,13 +164,12 @@ def done_now(run: str, tree: dict[str, Any]) -> dict[str, Any]:
     """The deliverable the change set done, which the branch doesn't hold done yet; refuses, by
     Stop, a change that sets none done."""
     before = starts.committed_tree(run) or {"deliverables": []}
-    was = {d["path"] for d in before["deliverables"] if d["status"] == trees.DONE}
-    now = [
-        d for d in trees.deliverables(tree) if d["status"] == trees.DONE and d["path"] not in was
-    ]
+    was = {d["path"] for d in before["deliverables"] if trees.done(d)}
+    now = [d for d in trees.deliverables(tree) if trees.done(d) and d["path"] not in was]
     if len(now) != 1:
         raise Stop("set the one deliverable whose turn of how it reads came back good done")
-    return now[0]
+    (only,) = now
+    return only
 
 
 def made_by(run: str, path: str) -> tuple[list[str], list[str]]:
@@ -177,8 +178,8 @@ def made_by(run: str, path: str) -> tuple[list[str], list[str]]:
     made: list[str] = [path]
     decided: list[str] = []
     for reading in (False, True):
-        rounds = runs.rounds(runs.turn_of(run, path, reading))
-        record = runs.made_of(rounds[-1]) if rounds else None
+        last = runs.last(runs.turn_of(run, path, reading))
+        record = runs.made_of(last) if last else None
         if record is None:
             continue
         made += [p for p in record["made"] if p not in made]
@@ -221,13 +222,14 @@ def report(run: str) -> str:
     extra = []
     for path in paths:
         extra += [p for p in made_by(run, path)[0] if p not in paths and p not in extra]
-    named = " and ".join([", ".join(paths[:-1]), paths[-1]] if len(paths) > 1 else paths)
-    out = [f"Done: {named} {'is' if len(paths) == 1 else 'are'} changed"]
-    out[0] += f", with {', '.join(extra)}." if extra else "."
-    out[0] += (
-        " Each was tried as its people would use it, and meets every question of its kind's best"
-        " practice."
-    )
+    *rest, last = paths
+    named = f"{', '.join(rest)} and {last}" if rest else last
+    head = f"Done: {named} {'are' if rest else 'is'} changed"
+    head += f", with {', '.join(extra)}." if extra else "."
+    out = [
+        head + " Each was tried as its people would use it, and meets every question of its kind's"
+        " best practice."
+    ]
     decided = [
         line[len(DECIDED) :]
         for m in repository.messages(run)

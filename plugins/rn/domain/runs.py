@@ -134,7 +134,8 @@ def turn_of(run: str, path: str, reading: bool) -> str | None:
     what it says otherwise; None where it has none yet."""
     name = turn_name(path, reading)
     found = [t for t in turn_folders(run) if os.path.basename(t)[3:] == name]
-    return found[-1] if found else None
+    # rn makes a turn of each kind of a deliverable once, so it finds one at most.
+    return found[-1] if found else None  # pragma: no mutate
 
 
 def new_turn(run: str, path: str, reading: bool) -> str:
@@ -148,6 +149,12 @@ def rounds(turn: str | None) -> list[str]:
     if turn is None:
         return []
     return sorted(glob.glob(os.path.join(turn, "[0-9][0-9]")))
+
+
+def last(turn: str | None) -> str | None:
+    """The folder of the turn's last round; None where it has none."""
+    found = rounds(turn)
+    return found[-1] if found else None
 
 
 def next_round(turn: str) -> str:

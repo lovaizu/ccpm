@@ -91,3 +91,48 @@ class Push(helpers.RunTest):
 class NoRepository(helpers.testing.GitTest):
     def test_outside_a_repository_no_branch_holds_a_run(self):
         self.assertEqual(repository.branch_runs(), [])
+
+
+class Edges(helpers.RunTest):
+    def test_a_command_not_there_is_named_by_its_first_word(self):
+        with self.assertRaises(repository.Failed) as stop:
+            repository.ran("no-such-command-of-rn", "push")
+        self.assertEqual(str(stop.exception), "`no-such-command-of-rn` isn't installed")
+
+    def test_what_a_command_gave_its_first_fault_else_its_last_line(self):
+        with self.assertRaises(repository.Failed) as stop:
+            repository.ran("sh", "-c", "echo one; echo two; echo three >&2; exit 1")
+        self.assertEqual(
+            str(stop.exception), "`sh -c echo one; echo two; echo three >&2; exit 1` gave: three"
+        )
+        with self.assertRaises(repository.Failed) as stop:
+            repository.ran("sh", "-c", "echo 'fatal: a'; echo 'error: b'; echo c; exit 1")
+        self.assertIn("gave: fatal: a", str(stop.exception))
+
+    def test_a_branch_checked_out_that_sorts_after_the_runs_switches_to_it(self):
+        self.git("switch", "-q", "-c", "zzz")
+        self.write(os.path.join(RUN, "a"), "1")
+        repository.commit(RUN, [RUN], "rn: one")
+        self.assertEqual(
+            repository.ran("git", "branch", "--show-current"), "rn/20261108-tidy-dry-run"
+        )
+
+    def test_a_pull_request_made_is_its_last_line(self):
+        folder = os.path.join(self.base, "bin3")
+        os.makedirs(folder)
+        with open(os.path.join(folder, "gh"), "w", encoding="utf-8") as f:
+            f.write(
+                '#!/bin/sh\ncase "$2" in view) exit 1;;\n'
+                "create) echo a; echo b; echo https://x/pull/9;; esac\n"
+            )
+        os.chmod(os.path.join(folder, "gh"), 0o755)
+        subprocess.run(
+            ["git", "init", "-q", "--bare", os.path.join(self.base, "o.git")], check=True
+        )
+        self.git("remote", "add", "origin", os.path.join(self.base, "o.git"))
+        self.write(os.path.join(RUN, "a"), "1")
+        repository.commit(RUN, [RUN], "rn: one")
+        path = os.environ["PATH"]
+        os.environ["PATH"] = f"{folder}:{path}"
+        self.addCleanup(os.environ.__setitem__, "PATH", path)
+        self.assertEqual(repository.push(RUN, "g", "b"), "https://x/pull/9")

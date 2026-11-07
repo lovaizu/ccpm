@@ -121,3 +121,19 @@ class Turns(helpers.RunTest):
             made(open_=[{"intent": "Q2", "about": "b", "what": "v"}]),
         )
         self.assertEqual(runs.points(round_), [{"intent": "Q2", "about": "b", "what": "v"}])
+
+
+class Edges(helpers.RunTest):
+    def test_a_turns_name_takes_eight_words_of_the_path(self):
+        self.assertEqual(runs.turn_name("a/b/c/d/e/f/g/h/i.md", False), "a-b-c-d-e-f-g-h")
+
+    def test_a_turn_of_another_deliverable_whose_name_sorts_before_is_none(self):
+        os.makedirs(os.path.join(RUN, "turns", "01-a-md"))
+        self.assertIsNone(runs.turn_of(RUN, "README.md", False))
+
+    def test_the_last_round_of_two(self):
+        turn = os.path.join(RUN, "turns", "01-readme-md")
+        for name in ("01", "02"):
+            os.makedirs(os.path.join(turn, name))
+        self.assertEqual(runs.last(turn), os.path.join(turn, "02"))
+        self.assertIsNone(runs.last(None))

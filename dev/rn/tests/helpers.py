@@ -82,6 +82,11 @@ def deliverable(path: str, kind: str, **given: Any) -> dict[str, Any]:
     return made
 
 
+def loaded(data: Any) -> Any:
+    """The data written as JSON and read back, as rn reads its files."""
+    return json.loads(json.dumps(data))
+
+
 def done(path: str, name: str, kind: str = "readme") -> dict[str, Any]:
     """A deliverable done, in the one line the tree keeps of it."""
     return {"name": name, "path": path, "kind": kind, "status": "done"}
@@ -89,14 +94,17 @@ def done(path: str, name: str, kind: str = "readme") -> dict[str, Any]:
 
 def walkthrough(by: str = "user") -> dict[str, Any]:
     """The walkthrough's tree once the planner lays the plan: the goal settled by whom, the README,
-    which takes from the product vision, and tidy/cli.py, which takes from the README."""
-    return {
-        "goal": {"decided": GOAL, "by": by},
-        "deliverables": [
-            deliverable("README.md", "readme", inputs=["dev/product-vision.md"]),
-            deliverable("tidy/cli.py", "code", inputs=["README.md"]),
-        ],
-    }
+    which takes from the product vision, and tidy/cli.py, which takes from the README; read back
+    from JSON, as rn reads a tree, so no text of it's one of the code's own."""
+    return loaded(
+        {
+            "goal": {"decided": GOAL, "by": by},
+            "deliverables": [
+                deliverable("README.md", "readme", inputs=["dev/product-vision.md"]),
+                deliverable("tidy/cli.py", "code", inputs=["README.md"]),
+            ],
+        }
+    )
 
 
 def decided(tree: dict[str, Any], n: int, intent: str, about: str, what: Any, by: str = "user"):

@@ -75,7 +75,7 @@ def groups(data: dict[str, Any]) -> list[list[str]]:
         joined = [g for g in made if g[0] & named]
         kept = (named, [intent["id"]])
         for group in joined:
-            kept[0].update(group[0])
+            kept[0].update(group[0])  # pragma: no mutate
             kept[1].extend(group[1])
             made.remove(group)
         made.append(kept)

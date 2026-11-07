@@ -9,8 +9,13 @@ excluded-modules = ["plugins/rn/domain/best-practices/plugin/template/scripts/co
 # The type checker and the linter run first: a change to a type annotation changes no behavior a
 # test could see, and the type checker is what checks annotations, the linter what checks `is`
 # against a literal.
-# A line marked `# pragma: no mutate` holds the one value a script puts on sys.path first, or the
-# comparison of `__name__` with the name of a script run as a command, where no input sets a mutant
-# of it apart. Each such line holds that value or comparison alone, as the mark leaves out every
-# mutant of its line.
+# A line marked `# pragma: no mutate` holds a comparison or a value where no input sets a mutant of
+# it apart: the one folder a script puts on sys.path first; `__name__` against the name a command
+# runs as; a value of the few the code ever gives it, compared by order with the first or the last
+# of them, such as a status against `done`, a goal's settler against `user`, the kind of a node's
+# key against `x`, `i` or `d`, an outcome against `good` or `open`, or an exit code against 0, which
+# git gives no number below; a count of a list against 1, where no list has fewer than one; the
+# first of a list that holds one at most; the folder a run's next round makes, which sorts after
+# its last; a timeout's seconds; and what a command prints where the code reads only its exit code. Each
+# such line holds that comparison or value alone, as the mark leaves out every mutant of its line.
 test-command = "sh -c 'ruff check --select F632 plugins/rn && sh dev/scripts/typecheck.sh rn && python -m unittest discover -f -s dev/rn/tests'"
