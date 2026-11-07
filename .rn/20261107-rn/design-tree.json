@@ -26,127 +26,7 @@
       "name": "Lane's design checks each practice step and each change",
       "path": "dev/lane/architecture.md",
       "kind": "architecture",
-      "inputs": ["dev/lane/product-vision.md", "plugins/lane/README.md"],
-      "preconditions": [],
-      "status": "open",
-      "intents": [
-        {
-          "id": "Q1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "What Lane checks of a practice",
-              "decided": "that each step of every intent was done, from its trace and in its order, not its content",
-              "by": "user"
-            },
-            {
-              "about": "The items every_item reads",
-              "decided": "a deliverable's intents and a change's nodes to look at, given by rn's tree.py through an adapter",
-              "by": "reasoning"
-            },
-            {
-              "about": "Lane's old design tree",
-              "decided": "dev/lane/design-tree.md goes once the architecture holds each of its decisions that still stands; a lasting decision lives in the document it shapes, and its reason in git",
-              "by": "reasoning"
-            },
-            {
-              "about": "Where Lane finds a role's part",
-              "decided": "domain/<role>.md, where the plugin best practice's skeleton puts it",
-              "by": "reasoning"
-            },
-            {
-              "about": "Lane's own folders",
-              "decided": "hooks/lane/domain/ in place of hooks/lane/core/domain/",
-              "by": "user"
-            },
-            {
-              "about": "What the main conversation adds to a message",
-              "decided": "Lane checks each start and resume of a role from the main conversation: the message holds the part tree.py gave and the person's answers word for word, and nothing else",
-              "by": "reasoning"
-            },
-            {
-              "about": "The commits kept on the branch lane-held",
-              "decided": "lane-held keeps 281dae86, 1e690d7d, 6c8bfa5e and f16c1cda; when Lane's code is made, each is taken where Lane's design keeps what it fixes, and the branch goes",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "Q2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q8",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q9",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q10",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q11",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q12",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q13",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q14",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q15",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q16",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Lane's code does what its design says",
@@ -252,6 +132,11 @@
               "about": "Where the design is settled",
               "decided": "in the main conversation, one point at a time, talked through with the user",
               "by": "user"
+            },
+            {
+              "about": "Who changes the tree",
+              "decided": "a role, the planner, started by the main conversation with each point the user settles; it writes the change and answers each node tree.py lists, so Lane holds every change, as Lane holds a role's calls and never the main conversation's own",
+              "by": "reasoning"
             },
             {
               "about": "A point a turn finds open",
