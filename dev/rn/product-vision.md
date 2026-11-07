@@ -36,6 +36,5 @@ rn instead of asking an AI in one prompt, reading its draft and fixing it:
 - **Asked only what's theirs, for O1**: rn asks the user one point at a time, and only what the
   purpose and the best practices leave to them. It decides the rest and explains it at the end.
 - **Every step on every run, picked up where it stopped, for O1**: rn keeps each step of the
-  best practice on every run, with [Lane](../lane/product-vision.md), and goes on where the work
-  stopped, so no deliverable misses a step an AI skipped once, and the user never answers a point
-  twice.
+  best practice on every run, and goes on where the work stopped, so no deliverable misses a step
+  an AI skipped once, and the user never answers a point twice.

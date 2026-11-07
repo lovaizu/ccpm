@@ -2,7 +2,7 @@
  "goal": "The developer builds a product with which its users achieve what they're after.",
  "template": "template.md",
  "example": "example.md",
- "source": "../../../../../../dev/turn/product-vision.md",
+ "source": "../../../../../../dev/rn/product-vision.md",
  "inputs": [],
  "preconditions": [],
  "intents": [

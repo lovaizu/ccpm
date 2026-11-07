@@ -10,7 +10,7 @@ The developer builds a product with which its users achieve what they're after.
 
 ## Example
 
-[example.md](example.md), a copy of [../../../../../../dev/turn/product-vision.md](../../../../../../dev/turn/product-vision.md)
+[example.md](example.md), a copy of [../../../../../../dev/rn/product-vision.md](../../../../../../dev/rn/product-vision.md)
 
 ## Intents
 
