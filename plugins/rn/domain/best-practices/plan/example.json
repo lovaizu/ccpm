@@ -20,119 +20,7 @@
       "name": "The shared plugin best practice says what rn and Lane share",
       "path": "plugins/rn/domain/best-practices/plugin",
       "kind": "meta",
-      "inputs": [],
-      "preconditions": [],
-      "status": "open",
-      "intents": [
-        {
-          "id": "Q1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Goal",
-              "decided": "the developer builds a Claude Code plugin whose roles work together to make something, with which its users achieve what they are after",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "Q2",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Its form",
-              "decided": "a best practice of kind plugin in meta's form, in place of dev/plugin-best-practice.md: each principle a practice with its When and Why; its template the skeleton of a plugin, its directories and the roles' in and out JSON Schemas to copy; its deliverable a plugin, made from the plugin's architecture, each file in it by the code or prompt best practice",
-              "by": "reasoning"
-            },
-            {
-              "about": "Entries and the domain",
-              "decided": "skills, agents, hooks and scripts follow Claude Code's form; domain/ holds the knowledge of the work, with no roles/ and domain/ split inside, in place of core/",
-              "by": "user"
-            },
-            {
-              "about": "A role's part",
-              "decided": "only what the role is expected to do and which parts of the best practice it uses; the steps of the work are the practices",
-              "by": "user"
-            },
-            {
-              "about": "A file's form",
-              "decided": "JSON with a schema, a tree nested in it; the Markdown tree rule goes, as Lane checks the nodes around a change",
-              "by": "user"
-            },
-            {
-              "about": "JSON or JSON Lines",
-              "decided": "JSON for a document that is rewritten, such as the design tree or a round's answers; JSON Lines for a record that is only appended to, such as Lane's calls",
-              "by": "reasoning"
-            },
-            {
-              "about": "Where shared practices stand",
-              "decided": "the test levels and checking a check once, in the architecture best practice; this document keeps only what is a plugin's own",
-              "by": "user"
-            },
-            {
-              "about": "The name of the third test level",
-              "decided": "product vision, the plugin in real use, as each level is named by what its tests check against and these check the product vision",
-              "by": "reasoning"
-            },
-            {
-              "about": "The contradictions the survey of 2026-11-07 found",
-              "decided": "each made to say what Lane, Pin and Turn do: the router, the orchestrator deciding, a role reading its part, ${CLAUDE_PLUGIN_ROOT} in a part, the answers' form, the hooks' layout, a plugin that uses another",
-              "by": "reasoning"
-            },
-            {
-              "about": "Nobody relays, rewritten in 8602092c",
-              "decided": "nobody relays: the main conversation starts each role, so the role's points reach it and it puts them to the person as given, and takes the answer back word for word; no agent stands between, as a subagent's last message reaches only its starter and only the main conversation asks the person",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "Q3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q7",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Each practice step",
-              "decided": "names a trace that a machine can check, such as a command run, a file read or a test made",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "Q8",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q9",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q10",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Lane's design checks each practice step and each change",
@@ -154,6 +42,11 @@
             {
               "about": "The items every_item reads",
               "decided": "a deliverable's intents and a change's nodes to look at, given by rn's tree.py through an adapter",
+              "by": "reasoning"
+            },
+            {
+              "about": "Where Lane finds a role's part",
+              "decided": "domain/<role>.md, where the plugin best practice's skeleton puts it",
               "by": "reasoning"
             },
             {
@@ -258,51 +151,32 @@
       "preconditions": [],
       "status": "open",
       "intents": [
-        {
-          "id": "Q1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q8",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q9",
-          "good": false,
-          "decisions": []
-        }
+        {"id": "Q1", "good": false, "decisions": []},
+        {"id": "Q2", "good": false, "decisions": []},
+        {"id": "Q3", "good": false, "decisions": []},
+        {"id": "Q4", "good": false, "decisions": []},
+        {"id": "Q5", "good": false, "decisions": []},
+        {"id": "Q6", "good": false, "decisions": []},
+        {"id": "Q7", "good": false, "decisions": []},
+        {"id": "Q8", "good": false, "decisions": []},
+        {"id": "Q9", "good": false, "decisions": []},
+        {"id": "Q10", "good": false, "decisions": []},
+        {"id": "Q11", "good": false, "decisions": []},
+        {"id": "Q12", "good": false, "decisions": []},
+        {"id": "Q13", "good": false, "decisions": []},
+        {"id": "Q14", "good": false, "decisions": []},
+        {"id": "Q15", "good": false, "decisions": []},
+        {"id": "Q16", "good": false, "decisions": []},
+        {"id": "Q17", "good": false, "decisions": []},
+        {"id": "Q18", "good": false, "decisions": []},
+        {"id": "Q19", "good": false, "decisions": []},
+        {"id": "Q20", "good": false, "decisions": []},
+        {"id": "Q21", "good": false, "decisions": []},
+        {"id": "Q22", "good": false, "decisions": []},
+        {"id": "Q23", "good": false, "decisions": []},
+        {"id": "Q24", "good": false, "decisions": []},
+        {"id": "Q25", "good": false, "decisions": []},
+        {"id": "Q26", "good": false, "decisions": []}
       ]
     },
     {
@@ -592,60 +466,50 @@
       "preconditions": [],
       "status": "open",
       "intents": [
+        {"id": "Q1", "good": false, "decisions": []},
+        {"id": "Q2", "good": false, "decisions": []},
+        {"id": "Q3", "good": false, "decisions": []},
+        {"id": "Q4", "good": false, "decisions": []},
+        {"id": "Q5", "good": false, "decisions": []},
+        {"id": "Q6", "good": false, "decisions": []},
+        {"id": "Q7", "good": false, "decisions": []},
+        {"id": "Q8", "good": false, "decisions": []},
+        {"id": "Q9", "good": false, "decisions": []},
+        {"id": "Q10", "good": false, "decisions": []},
+        {"id": "Q11", "good": false, "decisions": []},
+        {"id": "Q12", "good": false, "decisions": []},
+        {"id": "Q13", "good": false, "decisions": []},
+        {"id": "Q14", "good": false, "decisions": []},
+        {"id": "Q15", "good": false, "decisions": []},
+        {"id": "Q16", "good": false, "decisions": []},
+        {"id": "Q17", "good": false, "decisions": []},
+        {"id": "Q18", "good": false, "decisions": []},
+        {"id": "Q19", "good": false, "decisions": []},
+        {"id": "Q20", "good": false, "decisions": []},
+        {"id": "Q21", "good": false, "decisions": []},
+        {"id": "Q22", "good": false, "decisions": []},
         {
-          "id": "Q1",
+          "id": "Q23",
           "good": false,
           "decisions": [
-            {
-              "about": "Pin and Turn",
-              "decided": "plugins/pin and plugins/turn are removed once rn holds their parts; the branch turn-main stays unmerged until then",
-              "by": "reasoning"
-            },
             {
               "about": "The plugin's icon",
               "decided": null
             }
           ]
         },
+        {"id": "Q24", "good": false, "decisions": []},
+        {"id": "Q25", "good": false, "decisions": []},
         {
-          "id": "Q2",
+          "id": "Q26",
           "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q8",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q9",
-          "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "Pin and Turn",
+              "decided": "plugins/pin and plugins/turn go once rn holds their parts; the branch turn-held keeps the eight Turn commits no branch held, and each is taken where rn's design keeps what it fixes, then the branch goes",
+              "by": "reasoning"
+            }
+          ]
         }
       ]
     }
