@@ -414,7 +414,7 @@ class PluginTest(testing.FolderTest):
 # subagent's part gives it.
 PART_ENTRY = (
     "---\nname: {name}\ndescription: d\nbackground: true\n---\n\n"
-    "Your steps are in `${{CLAUDE_PLUGIN_ROOT}}/prompts/writer.md`.\n"
+    "Your steps are in `${{CLAUDE_PLUGIN_ROOT}}/domain/writer.md`.\n"
 )
 # An adapter of the values port reading `<name>=<value>` lines, with its cases, as the user
 # keeps them beside its proposal.

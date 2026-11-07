@@ -6,11 +6,9 @@ copies only its own folder, so nothing here reaches its users' machines.
 Every plugin is built by [the plugin best practice](../plugins/rn/domain/best-practices/plugin/best-practice.md).
 [.claude/rules/dev.md](../.claude/rules/dev.md) gives the order the work on a plugin goes in.
 
-- [Turn](./turn/)
 - [Rn](./rn/)
 - [Lane](./lane/): also `testing.py` and `trials/trying.py`, what every plugin's tests and trials
   stand on
-- [Pin](./pin/)
 
 ## The checks on every push
 
@@ -41,7 +39,7 @@ Claude Code and Mermaid's parser come from `dev/scripts/package-lock.json`.
 
 On the newest Python, CI also installs the `test-quality` group, by
 `uv sync --locked --group test-quality`. With it, `sh dev/scripts/check.sh` also checks for copied code. CI
-then runs two more checks, as [the architecture best practice](../plugins/turn/core/domain/best-practices/architecture/best-practice.md#q12) says:
+then runs two more checks, as [the architecture best practice](../plugins/rn/domain/best-practices/architecture/best-practice.md#q12) says:
 
 - `sh dev/scripts/properties.sh` runs the property-based tests, on many inputs each in CI and on few
   elsewhere.

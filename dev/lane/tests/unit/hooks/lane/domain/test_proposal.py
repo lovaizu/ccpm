@@ -230,19 +230,19 @@ class TestLanes(ProposalTest):
     def test_a_subagents_steps_are_read_from_its_part(self):
         # Given: writer's entry naming its part, which holds its steps
         self.write(self.agent_file, helpers.PART_ENTRY.format(name="writer"))
-        part = os.path.join(self.plugin, "prompts", "writer.md")
+        part = os.path.join(self.plugin, "domain", "writer.md")
         self.write(part, helpers.WRITER.split("---\n\n", 1)[1])
         # When: the proposal is read
         (writer,) = proposal.proposal(helpers.PROPOSED)["subagents"]
         # Then: its file is the part, with each step found there
-        self.assertEqual(writer["file"], os.path.join("changelog", "prompts", "writer.md"))
+        self.assertEqual(writer["file"], os.path.join("changelog", "domain", "writer.md"))
         self.assertEqual([s["span"] for s in writer["steps"]], [(3, 4), (4, 5)])
         # And: a part not there is refused
         os.remove(part)
         with self.assertRaises(proposal.Stop) as stop:
             proposal.proposal(helpers.PROPOSED)
         self.assertIn(
-            "whose entry names its part prompts/writer.md, which is not there", str(stop.exception)
+            "whose entry names its part domain/writer.md, which is not there", str(stop.exception)
         )
 
 
@@ -445,25 +445,24 @@ class TestRoutes(RoutesTest):
         # Given: the skill write naming its part, which is not there
         self.write(
             self.skill_file,
-            "---\nname: write\n---\n\nRead `${CLAUDE_PLUGIN_ROOT}/core/roles/orchestrator.md`.\n",
+            "---\nname: write\n---\n\nRead `${CLAUDE_PLUGIN_ROOT}/domain/orchestrator.md`.\n",
         )
         # When: the routes are proposed
         # Then: they are refused, naming the part
         self.assertIn(
-            "gives write, whose skill names its part core/roles/orchestrator.md, which is not"
-            " there",
+            "gives write, whose skill names its part domain/orchestrator.md, which is not there",
             self.refused({"plugin": "changelog", "routes": helpers.ROUTES}),
         )
 
-    def test_a_skills_steps_are_read_from_its_part_under_core_roles(self):
+    def test_a_skills_steps_are_read_from_its_part_under_domain(self):
         # Given: the skill write naming its part, whose step 1 the routes are laid on
         self.write(
             self.skill_file,
             "---\nname: write\n---\n\nRead"
-            " `${CLAUDE_PLUGIN_ROOT}/core/roles/orchestrator.md` whole first.\n",
+            " `${CLAUDE_PLUGIN_ROOT}/domain/orchestrator.md` whole first.\n",
         )
         self.write(
-            os.path.join(self.plugin, "core", "roles", "orchestrator.md"),
+            os.path.join(self.plugin, "domain", "orchestrator.md"),
             "## Steps\n\n1. Have the entries written.\n",
         )
         self.propose({"plugin": "changelog", "routes": helpers.ROUTES})

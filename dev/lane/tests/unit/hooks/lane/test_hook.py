@@ -393,7 +393,7 @@ class TestU3(HookTest):
 
     def test_a_part_is_given_as_it_is_as_the_subagent_starts(self):
         # Given: writer's entry naming its part
-        part = os.path.join(self.plugin, "prompts", "writer.md")
+        part = os.path.join(self.plugin, "domain", "writer.md")
         self.write(part, helpers.LAID.split("---\n\n", 1)[1])
         self.write(self.agent_file, helpers.PART_ENTRY.format(name="writer"))
         # When: writer starts

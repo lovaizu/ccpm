@@ -9,13 +9,7 @@ disable_warnings = no-data-collected
 [report]
 show_missing = true
 fail_under = 100
-# rn's copies of the old Turn's call.py, forms.py and parts.py, which rn 0.8.0 takes in: the old
-# Turn's tests ran them in full through its turn.py, gone as Turn is rebuilt (T41), and rn's own
-# tests run only what rn calls of them; rn's rebuild (plugins/rn in .rn/20261107-rn/design-tree.json)
-# replaces them, and these go then. And the script of the plugin best practice's template, the
-# skeleton a developer copies, which no one runs as it stands.
+# The script of the plugin best practice's template, the skeleton a developer copies, which no one
+# runs as it stands.
 omit =
-    plugins/rn/scripts/call.py
-    plugins/rn/scripts/forms.py
-    plugins/rn/scripts/parts.py
     plugins/rn/domain/best-practices/plugin/template/scripts/command.py

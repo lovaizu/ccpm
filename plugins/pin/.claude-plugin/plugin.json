@@ -1,6 +1,0 @@
-{
-  "name": "pin",
-  "description": "Pin settles every fact and decision your plan needs before an AI starts to make it. It finds each fact itself and asks you only the decisions that are yours, one at a time.",
-  "version": "0.1.0",
-  "author": { "name": "lovaizu" }
-}

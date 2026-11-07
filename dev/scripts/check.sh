@@ -31,26 +31,16 @@ for plugin in $plugins; do
   sh dev/scripts/typecheck.sh "$plugin"
 done
 # The checks' own Python, beside the plugins'.
-pyrefly check --search-path dev/lane --search-path dev/scripts/tests dev/scripts/*.py dev/scripts/tests/*.py
+pyrefly check --search-path dev/lane --search-path dev/scripts --search-path dev/scripts/tests \
+  --search-path plugins/rn/domain dev/scripts/*.py dev/scripts/tests/*.py
 
 # A best practice is checked for the faults its form shows, its Markdown, made from its JSON for a
 # person to read, for being left behind it, and its example, where it is a copy of a document of the
-# repository, for being left behind that document, as each says what Turn does not hold; and a file
-# in its folder that none of them holds, such as a figure the document dropped, for being left over.
-# Each kind's lies in its own folder as best-practice.json, beside its template and its example,
-# Turn's and rn's alike. An example in JSON holds to its template where that is a JSON Schema.
-python3 plugins/turn/scripts/plan.py form plugins/turn/core/domain/best-practices/*/best-practice.json \
-  plugins/rn/domain/best-practices/*/best-practice.json
-
-# Each plugin's design tree, where every document of the plugin takes its decisions from
-# (.claude/rules/dev.md, step 1), holds, by Pin's own check of it: a question nothing serves, a
-# decision that serves nothing or one decided before what it builds on fails here, not in a
-# document written from the tree.
-for design in dev/*/design-tree.md; do
-  if [ -f "$design" ]; then
-    python3 plugins/pin/scripts/check.py "$design"
-  fi
-done
+# repository, for being left behind that document, as each says what rn does not hold; and a file in
+# its folder that none of them holds, such as a figure the document dropped, for being left over.
+# Each kind's lies in its own folder of rn's as best-practice.json, beside its template and its
+# example. An example in JSON holds to its template where that is a JSON Schema.
+python3 dev/scripts/practices.py form plugins/rn/domain/best-practices/*/best-practice.json
 
 # Every figure carries the one style of dev/images/figures.css, so the figures look alike and a
 # colour is changed in one place (.claude/rules/dev.md, step 3).

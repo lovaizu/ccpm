@@ -1543,15 +1543,15 @@ class TestReadOnly(LanesTest):
 
     def test_the_subagents_own_part_is_read_beside_the_inputs(self):
         # Given: writer reading only CHANGELOG.md and docs/, its steps in its part
-        part = os.path.join(self.plugin, "prompts", "writer.md")
+        part = os.path.join(self.plugin, "domain", "writer.md")
         self.write(part, self.read(self.agent_file).split("---\n\n", 1)[1])
         self.write(self.agent_file, helpers.PART_ENTRY.format(name="writer"))
         # When: it reads its part, which it was given whole as it started, or another part
-        self.write(os.path.join(self.plugin, "prompts", "other.md"), "x\n")
+        self.write(os.path.join(self.plugin, "domain", "other.md"), "x\n")
         # Then: its own goes through, and the other is told the sentence
         self.assertEqual(self.check(self.reading(part)), [])
         said = [guard.Said("Read only `CHANGELOG.md` or `docs/`.")]
-        other = os.path.join(self.plugin, "prompts", "other.md")
+        other = os.path.join(self.plugin, "domain", "other.md")
         self.assertEqual(self.check(self.reading(other)), said)
 
     def test_a_subagent_with_no_read_lane_reads_freely(self):
@@ -2270,7 +2270,7 @@ class TestAdapterTime(LanesTest):
 class TestPart(LanesTest):
     def setUp(self) -> None:
         super().setUp()
-        self.part = os.path.join(self.plugin, "prompts", "writer.md")
+        self.part = os.path.join(self.plugin, "domain", "writer.md")
         entry = helpers.PART_ENTRY.format(name="writer")
         self.write(
             self.part, helpers.LAID.split("---\n\n", 1)[1] + "Run `${CLAUDE_PLUGIN_ROOT}/x`.\n"
@@ -2299,7 +2299,7 @@ class TestPart(LanesTest):
         # Then: it is an error of its lanes, naming the part
         self.assertTrue(told[0].error)
         self.assertIn(
-            "lane cannot check the lanes of writer: its part prompts/writer.md is not there",
+            "lane cannot check the lanes of writer: its part domain/writer.md is not there",
             told[0].text,
         )
 

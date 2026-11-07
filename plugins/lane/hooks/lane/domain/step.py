@@ -1,7 +1,7 @@
 """A step of a subagent or of a skill, read from the file its steps are in: its entry, the file in
 the plugin's agents/ Claude Code takes the subagent from by the name in its frontmatter, or the
-skill's `skills/<name>/SKILL.md`; or its part, the one Markdown file under the plugin's domain/, or
-the one file under prompts/ or core/roles/, the entry's body names in backticks, where it names one;
+skill's `skills/<name>/SKILL.md`; or its part, the one Markdown file under the plugin's domain/ the
+entry's body names in backticks, where it names one;
 and the step's text, its numbered line under `## Steps` and the lines its text goes on in, the list
 under it, such as its In and Out, left out."""
 
@@ -23,13 +23,8 @@ BREAK = re.compile(r"[ \t]*\n[ \t]*")
 ROOT = "${CLAUDE_PLUGIN_ROOT}"
 # Where an entry's body names a part, by the plugin's folder, in backticks: a Markdown file under
 # domain/, where the template of plugins/rn/domain/best-practices/plugin/ puts each part, as the
-# knowledge there holds other files, such as a JSON Schema of the role's values; or a file under
-# prompts/ or core/roles/, where the plugins laid before it keep theirs until they move them.
-PART = re.compile(
-    r"`"
-    + re.escape(ROOT)
-    + r"/(?:(?P<domain>domain)/(?P<md>[^`]+\.md)|(?P<folder>prompts|core/roles)/(?P<path>[^`]+))`"
-)
+# knowledge there holds other files, such as a JSON Schema of the role's values.
+PART = re.compile(r"`" + re.escape(ROOT) + r"/domain/(?P<md>[^`]+\.md)`")
 
 
 def agent_file(root: str, name: str) -> str | None:
@@ -105,9 +100,9 @@ def says(lines: list[str], where: tuple[int, int]) -> str:
 
 def part(root: str, name: str, skill: bool = False) -> str | None:
     """The part the entry of the subagent, or of the skill where `skill`, names in its body, the one
-    Markdown file under the plugin's domain/, or file under prompts/ or core/roles/, it names in
-    backticks, lying under the folder it is named by, whether it is there or not; None where its
-    body names no such file, or more than one, or there is no entry."""
+    Markdown file under the plugin's domain/ it names in backticks, lying under domain/, whether it
+    is there or not; None where its body names no such file, or more than one, or there is no
+    entry."""
     entry = entry_file(root, name, skill)
     if entry is None:
         return None
@@ -115,8 +110,8 @@ def part(root: str, name: str, skill: bool = False) -> str | None:
         lines = f.read().splitlines()
     files = set()
     for m in PART.finditer("\n".join(lines[template.body(lines) :])):
-        folder = os.path.join(root, *(m["domain"] or m["folder"]).split("/"))
-        file = os.path.normpath(os.path.join(folder, m["md"] or m["path"]))
+        folder = os.path.join(root, "domain")
+        file = os.path.normpath(os.path.join(folder, m["md"]))
         files.add(file if file.startswith(folder + os.sep) else "")
     file = files.pop() if len(files) == 1 else ""
     return file or None

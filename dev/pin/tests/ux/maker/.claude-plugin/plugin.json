@@ -1,7 +1,0 @@
-{
-  "name": "maker",
-  "description": "Stands in for a plugin whose skill writes a design tree and calls pin:down with it, in Pin's ux trial of O1 called by an AI.",
-  "version": "0.1.0",
-  "author": { "name": "lovaizu" },
-  "dependencies": ["pin"]
-}

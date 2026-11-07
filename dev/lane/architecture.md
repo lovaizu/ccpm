@@ -915,14 +915,14 @@ dev/lane/
 
 ## Tests
 
-Lane tests by [the architecture best practice](../../plugins/turn/core/domain/best-practices/architecture/best-practice.md#q12)
+Lane tests by [the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#q12)
 and [the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q22),
 and differs from them where this section says.
 
 ![Lane's tests](images/tests.svg)
 
 Cosmic Ray and Hypothesis in the figure run the mutation testing and the property-based tests that
-[the architecture best practice](../../plugins/turn/core/domain/best-practices/architecture/best-practice.md#q12)
+[the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#q12)
 asks for. They're the tools that
 [the repository's development setup](../README.md#the-property-based-tests-and-the-mutation-testing)
 gives every plugin, not a choice of Lane's.

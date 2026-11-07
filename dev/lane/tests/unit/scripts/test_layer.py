@@ -595,7 +595,7 @@ class TestBroughtUp(LayerTest):
         # Then: no file is written, the part not made, and no step is said to be written
         self.assertEqual(self.read(self.agent_file), helpers.WRITER_LAID)
         self.assertEqual(self.read(reviewer), helpers.PART_ENTRY.format(name="reviewer"))
-        self.assertFalse(os.path.exists(os.path.join(self.plugin, "prompts", "writer.md")))
+        self.assertFalse(os.path.exists(os.path.join(self.plugin, "domain", "writer.md")))
         self.assertNotIn("current wording", said)
 
     def test_a_plugin_up_to_date_is_said_so(self):
@@ -720,7 +720,7 @@ class TestResults(LayerTest):
 class TestPart(LayerTest):
     def setUp(self) -> None:
         super().setUp()
-        self.part = os.path.join(self.plugin, "prompts", "writer.md")
+        self.part = os.path.join(self.plugin, "domain", "writer.md")
         self.write(self.part, helpers.WRITER.split("---\n\n", 1)[1])
         self.entry = helpers.PART_ENTRY
         self.write(self.agent_file, self.entry.format(name="writer"))
@@ -732,7 +732,7 @@ class TestPart(LayerTest):
         # Then: the part's steps say the sentences, and its entry is as it was
         self.assertIn(f"`git log --oneline`. {helpers.RUN}\n", self.read(self.part))
         self.assertEqual(self.read(self.agent_file), self.entry.format(name="writer"))
-        self.assertTrue(said.startswith("Wrote steps 2 and 3 of writer into prompts/writer.md.\n"))
+        self.assertTrue(said.startswith("Wrote steps 2 and 3 of writer into domain/writer.md.\n"))
 
     def test_subagents_sharing_a_part_laying_one_set_of_lanes_are_written(self):
         # Given: drafter, whose entry names writer's part, given the same lanes
@@ -776,7 +776,7 @@ class TestPart(LayerTest):
                     layer.printed(helpers.PROPOSED)
                 # Then: it is refused, naming both and the step
                 self.assertIn(
-                    "share their part prompts/writer.md, and would lay different lanes on its"
+                    "share their part domain/writer.md, and would lay different lanes on its"
                     " step 2",
                     str(stop.exception),
                 )
@@ -805,7 +805,7 @@ class TestPart(LayerTest):
         # When: the proposal is printed
         # Then: it is refused, naming both and step 2
         self.assertIn(
-            "drafter and writer share their part prompts/writer.md, and would lay different lanes"
+            "drafter and writer share their part domain/writer.md, and would lay different lanes"
             " on its step 2",
             self.refused(agents),
         )

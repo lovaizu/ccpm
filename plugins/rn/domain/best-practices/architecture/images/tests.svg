@@ -1,0 +1,161 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1480 1030" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+  <title>rn&#x27;s tests</title>
+  <style>
+    .bg { fill: #ffffff; }
+    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .lane { fill: #ddf4ff; stroke: #54aeff; }
+    .store { fill: #fff8c5; stroke: #9a6700; stroke-width: 1.5; }
+    .ext { fill: #eaeef2; stroke: #d0d7de; stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .unit { fill: #ddf4ff; fill-opacity: 0.35; stroke: #0969da; stroke-width: 1.2; }
+    .frame { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    .frame-name { fill: #0969da; font-size: 13px; font-weight: 600; }
+    .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
+    .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
+    .label { fill: #1f2328; font-size: 13px; }
+    .small { font-size: 12px; }
+    .data { fill: #8250df; font-size: 12px; font-style: italic; }
+    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .dashed { stroke-dasharray: 5 4; }
+    .head { fill: #59636e; }
+    .hole { fill: #ffffff; stroke: #59636e; stroke-width: 1.5; }
+    .halo { stroke: #ffffff; stroke-width: 7; stroke-linejoin: round; paint-order: stroke; }
+    .mid { text-anchor: middle; }
+    .start { text-anchor: start; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; }
+      .box { fill: #161b22; stroke: #3d444d; }
+      .lane { fill: #0c2d6b; stroke: #4493f8; }
+      .store { fill: #2e2a1a; stroke: #d29922; }
+      .ext { fill: #21262d; stroke: #3d444d; }
+      .unit { fill: #0c2d6b; stroke: #4493f8; }
+      .frame { stroke: #4493f8; }
+      .frame-name { fill: #4493f8; }
+      .name, .label { fill: #f0f6fc; }
+      .kind { fill: #9198a1; }
+      .data { fill: #c297ff; }
+      .line { stroke: #9198a1; }
+      .head { fill: #9198a1; }
+      .hole { fill: #0d1117; stroke: #9198a1; }
+      .halo { stroke: #0d1117; }
+    }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path class="head" d="M0,0 L10,5 L0,10 z"/>
+    </marker>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1480" height="1030"/>
+  <text class="name start" x="42" y="46" text-anchor="start">Deployment unit</text>
+  <text class="name start" x="284" y="40" text-anchor="start">unit</text>
+  <text class="kind start" x="284" y="58" text-anchor="start">one part against its contract</text>
+  <text class="name start" x="674" y="40" text-anchor="start">architecture</text>
+  <text class="kind start" x="674" y="58" text-anchor="start">the parts joined, against this document</text>
+  <text class="name start" x="1064" y="40" text-anchor="start">product vision</text>
+  <text class="kind start" x="1064" y="58" text-anchor="start">rn in real use, against the product vision</text>
+  <rect class="box" x="30" y="80" width="232" height="110" rx="6"/>
+  <text class="name start" x="42" y="110" text-anchor="start">tree.py process</text>
+  <text class="kind start" x="42" y="128" text-anchor="start">[python3 3.9 or later]</text>
+  <rect class="unit" x="272" y="80" width="380" height="110" rx="6"/>
+  <text class="name start" x="284" y="108" text-anchor="start">unittest, Cosmic Ray, Hypothesis · FULL</text>
+  <text class="label start" x="284" y="130" text-anchor="start">each command on trees and changes in and out</text>
+  <text class="label start" x="284" y="149" text-anchor="start">of form; each cut; the nodes a change touches;</text>
+  <text class="label start" x="284" y="168" text-anchor="start">commits, on a repository of the test&#x27;s own</text>
+  <rect class="unit" x="662" y="80" width="380" height="110" rx="6"/>
+  <text class="name start" x="674" y="108" text-anchor="start">unittest · FULL</text>
+  <text class="label start" x="674" y="130" text-anchor="start">tree.py run real at each step that names it:</text>
+  <text class="label start" x="674" y="149" text-anchor="start">each path of S1 to S4</text>
+  <rect class="box" x="1052" y="80" width="380" height="110" rx="6"/>
+  <text class="name start" x="1064" y="108" text-anchor="start">a trial on Opus · SMOKE</text>
+  <text class="label start" x="1064" y="130" text-anchor="start">the tree, its cuts, and the commits of</text>
+  <text class="label start" x="1064" y="149" text-anchor="start">the walkthrough&#x27;s run</text>
+  <rect class="box" x="30" y="200" width="232" height="110" rx="6"/>
+  <text class="name start" x="42" y="230" text-anchor="start">throwaway.py process</text>
+  <text class="kind start" x="42" y="248" text-anchor="start">[python3 3.9 or later]</text>
+  <rect class="unit" x="272" y="200" width="380" height="110" rx="6"/>
+  <text class="name start" x="284" y="228" text-anchor="start">unittest, Cosmic Ray, Hypothesis · FULL</text>
+  <text class="label start" x="284" y="250" text-anchor="start">a copy made and removed; each command and</text>
+  <text class="label start" x="284" y="269" text-anchor="start">what it gave kept; a write outside the copy</text>
+  <text class="label start" x="284" y="288" text-anchor="start">reaching only the throwaway home</text>
+  <rect class="unit" x="662" y="200" width="380" height="110" rx="6"/>
+  <text class="name start" x="674" y="228" text-anchor="start">unittest · HAPPY</text>
+  <text class="label start" x="674" y="250" text-anchor="start">run by the generator&#x27;s double in each path</text>
+  <text class="label start" x="674" y="269" text-anchor="start">of the turns</text>
+  <rect class="box" x="1052" y="200" width="380" height="110" rx="6"/>
+  <text class="name start" x="1064" y="228" text-anchor="start">a trial on Opus · SMOKE</text>
+  <text class="label start" x="1064" y="250" text-anchor="start">the README&#x27;s commands tried on tidy</text>
+  <rect class="box" x="30" y="320" width="232" height="110" rx="6"/>
+  <text class="name start" x="42" y="350" text-anchor="start">adapter process</text>
+  <text class="kind start" x="42" y="368" text-anchor="start">[python3 3.9 or later]</text>
+  <rect class="unit" x="272" y="320" width="380" height="110" rx="6"/>
+  <text class="name start" x="284" y="348" text-anchor="start">unittest · FULL</text>
+  <text class="label start" x="284" y="370" text-anchor="start">each case beside each adapter, and a best</text>
+  <text class="label start" x="284" y="389" text-anchor="start">practice or a tree out of form</text>
+  <rect class="unit" x="662" y="320" width="380" height="110" rx="6"/>
+  <text class="name start" x="674" y="348" text-anchor="start">unittest · FULL</text>
+  <text class="label start" x="674" y="370" text-anchor="start">run by the guard on each start of a role:</text>
+  <text class="label start" x="674" y="389" text-anchor="start">each path of S1 to S4</text>
+  <rect class="box" x="1052" y="320" width="380" height="110" rx="6"/>
+  <text class="name start" x="1064" y="348" text-anchor="start">a trial on Opus · SMOKE</text>
+  <text class="label start" x="1064" y="370" text-anchor="start">the steps and items of the walkthrough&#x27;s run</text>
+  <rect class="box" x="30" y="440" width="232" height="110" rx="6"/>
+  <text class="name start" x="42" y="470" text-anchor="start">hook process</text>
+  <text class="kind start" x="42" y="488" text-anchor="start">[python3 3.9 or later · Lane&#x27;s code]</text>
+  <rect class="bg" x="272" y="440" width="380" height="110" rx="6"/>
+  <text class="label start" x="284" y="470" text-anchor="start">Empty: Lane&#x27;s own tests try its code.</text>
+  <rect class="unit" x="662" y="440" width="380" height="110" rx="6"/>
+  <text class="name start" x="674" y="468" text-anchor="start">unittest · FULL</text>
+  <text class="label start" x="674" y="490" text-anchor="start">rn&#x27;s lanes and routes as laid, by the hook</text>
+  <text class="label start" x="674" y="509" text-anchor="start">entries: each path of S1 to S4</text>
+  <rect class="box" x="1052" y="440" width="380" height="110" rx="6"/>
+  <text class="name start" x="1064" y="468" text-anchor="start">a trial on Opus · SMOKE</text>
+  <text class="label start" x="1064" y="490" text-anchor="start">each role held on the walkthrough&#x27;s run</text>
+  <rect class="box" x="30" y="560" width="232" height="110" rx="6"/>
+  <text class="name start" x="42" y="590" text-anchor="start">Claude Code process</text>
+  <text class="kind start" x="42" y="608" text-anchor="start">[the skill, the agents]</text>
+  <rect class="bg" x="272" y="560" width="380" height="110" rx="6"/>
+  <text class="label start" x="284" y="590" text-anchor="start">Empty: no prompt is tried alone, as Q22 of</text>
+  <text class="label start" x="284" y="609" text-anchor="start">the plugin best practice says.</text>
+  <rect class="unit" x="662" y="560" width="380" height="110" rx="6"/>
+  <text class="name start" x="674" y="588" text-anchor="start">lay.py print, claude plugin validate · HAPPY</text>
+  <text class="label start" x="674" y="610" text-anchor="start">each entry names its part, its tools, and</text>
+  <text class="label start" x="674" y="629" text-anchor="start">background, and the manifest holds</text>
+  <rect class="box" x="1052" y="560" width="380" height="110" rx="6"/>
+  <text class="name start" x="1064" y="588" text-anchor="start">a trial on Opus · HAPPY</text>
+  <text class="label start" x="1064" y="610" text-anchor="start">the walkthrough on tidy, at the size of</text>
+  <text class="label start" x="1064" y="629" text-anchor="start">a real request</text>
+  <text class="frame-name" x="30" y="705" text-anchor="start">Legend</text>
+  <rect class="unit" x="105" y="690" width="36" height="22" rx="4"/>
+  <text class="label small" x="149" y="705" text-anchor="start">runs on every push and in CI</text>
+  <rect class="box" x="380" y="690" width="36" height="22" rx="4"/>
+  <text class="label small" x="424" y="705" text-anchor="start">runs once every lower level passes</text>
+  <text class="label small" x="700" y="705" text-anchor="start">tool · FULL, HAPPY or SMOKE, then what the tests check</text>
+  <text class="label start" x="30" y="735" text-anchor="start">No row: rn&#x27;s folder, the repository and the temporary folder, as they hold files and run nothing.</text>
+  <rect class="frame" x="20" y="760" width="1440" height="340" rx="8"/>
+  <text class="frame-name" x="32" y="784" text-anchor="start">Where rn&#x27;s tests differ from the best practices</text>
+  <text class="name start" x="42" y="810" text-anchor="start">unit</text>
+  <text class="label start" x="42" y="832" text-anchor="start">Doubles: git in a repository of the test&#x27;s own,</text>
+  <text class="label start" x="42" y="850" text-anchor="start">made in the temporary folder; gh as a script on</text>
+  <text class="label start" x="42" y="868" text-anchor="start">PATH, printing what a recorded run of it printed.</text>
+  <text class="label start" x="42" y="886" text-anchor="start">No stand-in, as no user takes part.</text>
+  <text class="name start" x="512" y="810" text-anchor="start">architecture</text>
+  <text class="label start" x="512" y="832" text-anchor="start">Real: tree.py, throwaway.py, the adapters, and the</text>
+  <text class="label start" x="512" y="850" text-anchor="start">guard by rn&#x27;s hook entries, on a copy of tidy.</text>
+  <text class="label start" x="512" y="868" text-anchor="start">Doubles: Lane&#x27;s double of Claude Code; the main</text>
+  <text class="label start" x="512" y="886" text-anchor="start">conversation and the roles, making set calls and</text>
+  <text class="label start" x="512" y="904" text-anchor="start">giving set results; gh as at unit.</text>
+  <text class="label start" x="512" y="922" text-anchor="start">Stand-in: a set answer for each point put to the user.</text>
+  <text class="label start" x="512" y="940" text-anchor="start">Each route of rn on some path.</text>
+  <text class="name start" x="982" y="810" text-anchor="start">product vision</text>
+  <text class="label start" x="982" y="832" text-anchor="start">Subject: tidy, as the README&#x27;s walkthrough runs it,</text>
+  <text class="label start" x="982" y="850" text-anchor="start">on lovaizu/playground for the push and the pull</text>
+  <text class="label start" x="982" y="868" text-anchor="start">request, by Lane&#x27;s trial driver.</text>
+  <text class="label start" x="982" y="886" text-anchor="start">Stand-ins: an AI on Opus with the user&#x27;s intent,</text>
+  <text class="label start" x="982" y="904" text-anchor="start">written before the run and never shown to rn, who</text>
+  <text class="label start" x="982" y="922" text-anchor="start">types /rn:up twice; one for the people of each</text>
+  <text class="label start" x="982" y="940" text-anchor="start">deliverable, who judges KR1.1 by using it.</text>
+  <text class="label start" x="982" y="958" text-anchor="start">Measures KR1.2 from the records, and KR1.3 from</text>
+  <text class="label start" x="982" y="976" text-anchor="start">the request to Done, each against the last trial&#x27;s.</text>
+  <text class="label start" x="982" y="994" text-anchor="start">Passes where 3 runs of 3 come through every step.</text>
+  <text class="label start" x="42" y="1050" text-anchor="start">A judge of the records, such as the one of KR1.2, counts only once it is right on kept records whose answer is known.</text>
+  <text class="label start" x="42" y="1072" text-anchor="start">A fault found higher gets a test at the level that missed it, seen to fail, before the fix.</text>
+</svg>

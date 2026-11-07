@@ -32,10 +32,10 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.dirname(HERE))
 import testing
 
-# How Claude Code keeps its records is read by rn's record.py, whose job it is, loaded from its
+# How Claude Code keeps its records is read by record.py beside this module, loaded from its
 # file, so a plugin's trials standing on this module meet none of their own modules of that
 # name.
-RECORD = os.path.join(HERE, "../../../plugins/rn/scripts/record.py")
+RECORD = os.path.join(HERE, "record.py")
 FOUND = importlib.util.spec_from_file_location("record", os.path.normpath(RECORD))
 assert FOUND and FOUND.loader
 record = importlib.util.module_from_spec(FOUND)
@@ -468,7 +468,7 @@ def stand_in(prompt: str, cwd: str) -> dict[str, Any]:
 
 
 # The line a caller heads the person's answer with as it resumes the role that asked, the one
-# form pin's pinner and Turn's roles take as the person's words.
+# form the plugin best practice's roles take as the person's words.
 ANSWERED = "The person's answer, word for word:"
 # The key of the stand-in's answer that counts the points of a message, the same for every plugin
 # that asks a person, as a point is the person's to count, not the plugin's.

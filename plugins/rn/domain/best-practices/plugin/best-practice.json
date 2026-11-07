@@ -343,7 +343,7 @@
   },
   {
    "intent": "Q22",
-   "thinking": "The test levels are the [architecture best practice](../../../../turn/core/domain/best-practices/architecture/best-practice.md)'s. No level runs a prompt, a skill, or an agent alone on a model: the guard holds each rule of a role's steps that must hold on every run, and the architecture tests run the guard on each path, with a double in each role's place. A trial of one role alone meets only the cases that its developer set up, so it finds no fault that a real request brings out. A double of Claude Code runs each hook's entry and script in the test's own process, as a new process of Python would run it, and sends what its documentation says or what a recorded try of the real Claude Code showed. `claude plugin validate` checks a configuration written by hand, such as `hooks.json`, and no test runs its commands. Each Claude Code that a product vision trial starts runs on a configuration folder of its own, holding only the plugins under test, with the developer's login as `CLAUDE_CODE_OAUTH_TOKEN`, as [multiple accounts](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts) says, and the stand-in answers each ask to allow a call from what the screen shows, as a person would. The developer's own settings would change what the trial tries. The cost: a fault in a prompt shows only in a product vision trial.",
+   "thinking": "The test levels are the [architecture best practice](../architecture/best-practice.md)'s. No level runs a prompt, a skill, or an agent alone on a model: the guard holds each rule of a role's steps that must hold on every run, and the architecture tests run the guard on each path, with a double in each role's place. A trial of one role alone meets only the cases that its developer set up, so it finds no fault that a real request brings out. A double of Claude Code runs each hook's entry and script in the test's own process, as a new process of Python would run it, and sends what its documentation says or what a recorded try of the real Claude Code showed. `claude plugin validate` checks a configuration written by hand, such as `hooks.json`, and no test runs its commands. Each Claude Code that a product vision trial starts runs on a configuration folder of its own, holding only the plugins under test, with the developer's login as `CLAUDE_CODE_OAUTH_TOKEN`, as [multiple accounts](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts) says, and the stand-in answers each ask to allow a call from what the screen shows, as a person would. The developer's own settings would change what the trial tries. The cost: a fault in a prompt shows only in a product vision trial.",
    "steps": [
     {
      "text": "Write the architecture tests with a double of Claude Code that runs each hook's entry in the test's own process, and run them with the unit tests before each push."
@@ -376,7 +376,7 @@
   },
   {
    "intent": "Q25",
-   "thinking": "`README.md` is a deliverable of its own, of the kind [readme](../../../../turn/core/domain/best-practices/readme/best-practice.md), made from the plugin's product vision before the plugin's architecture. The plugin keeps it in its folder, so the README reaches each user with the plugin.",
+   "thinking": "`README.md` is a deliverable of its own, of the kind [readme](../readme/best-practice.md), made from the plugin's product vision before the plugin's architecture. The plugin keeps it in its folder, so the README reaches each user with the plugin.",
    "steps": []
   },
   {

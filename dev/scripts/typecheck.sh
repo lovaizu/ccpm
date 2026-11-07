@@ -6,7 +6,7 @@
 # type-checked on its own with its folders as search paths, and dev/lane/ and dev/lane/trials/,
 # where testing.py and trying.py, what every plugin's tests and trials share, are kept. What the
 # plugins' hooks share is lane's, reached through a link in each plugin's own folder; a folder of
-# lane's code linked whole, as turn's hooks/lane/, is checked in lane alone, as git lists the link
+# lane's code linked whole, as rn's hooks/lane/, is checked in lane alone, as git lists the link
 # and not the files in it: read through that link, lane's modules meet the plugin's of the same
 # names, such as call, and the check fails.
 set -e

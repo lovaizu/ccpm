@@ -1,11 +1,11 @@
 {
   "name": "rn",
-  "description": "Say what you want, roughly: Rn hears what you really want one point at a time, has Turn make every piece of work and read it in its receiver's place before you see it, calls you only at the goal sign-off, the ux and the architecture sign-off where your work needs such a document, and the deliverable sign-off, and for what is yours to decide, and resumes from git in any conversation.",
+  "description": "rn makes what you ask for, such as a document, code, or a plugin, so that the people it's for can use it for what they're after, and asks you only the points that are yours.",
   "version": "0.9.0",
   "author": {
     "name": "lovaizu"
   },
   "dependencies": [
-    "turn"
+    "lane"
   ]
 }

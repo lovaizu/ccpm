@@ -8,26 +8,14 @@
   "plugins": [
     {
       "name": "rn",
-      "description": "Carries work that takes days from your rough words to a pull request ready to merge: Rn hears what you really want one point at a time, Turn makes every piece of work and reads it as the person it is for would, and you decide only at the plan, design and deliverable sign-offs and what is yours; the session lives in git, so it resumes across conversations.",
+      "description": "rn makes what you ask for, such as a document, code, or a plugin, so that the people it's for can use it for what they're after. It asks you one point at a time, only what's yours, and leaves one draft pull request for you to merge.",
       "source": "./plugins/rn",
-      "category": "development"
-    },
-    {
-      "name": "turn",
-      "description": "Turn makes the document or code you ask for, such as a README or a module, so that the people it is for get what they are after from it. It asks you only your purpose and intent, and an AI that did not make the work tries it as those people would.",
-      "source": "./plugins/turn",
       "category": "development"
     },
     {
       "name": "lane",
       "description": "Lane lets an AI notice when it drifts from the steps your plugin gives it, and tells it the right way, so it finds its way back at full speed with no one watching each move.",
       "source": "./plugins/lane",
-      "category": "development"
-    },
-    {
-      "name": "pin",
-      "description": "Pin settles every fact and decision your plan needs before an AI starts to make it. It finds each fact itself and asks you only the decisions that are yours, one at a time.",
-      "source": "./plugins/pin",
       "category": "development"
     }
   ]

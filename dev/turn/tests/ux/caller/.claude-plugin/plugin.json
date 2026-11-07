@@ -1,7 +1,0 @@
-{
-  "name": "caller",
-  "description": "Stands in for a plugin whose subagent is a calling AI, in Turn's ux trial of O2.",
-  "version": "0.1.0",
-  "author": { "name": "lovaizu" },
-  "dependencies": ["turn"]
-}

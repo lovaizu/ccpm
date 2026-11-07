@@ -100,15 +100,15 @@ class TestPart(helpers.PluginTest):
         """writer's entry with the body."""
         self.write(self.agent_file, f"---\nname: writer\n---\n\n{body}\n")
 
-    def test_the_one_file_under_prompts_the_body_names_is_the_part(self):
+    def test_the_one_file_under_domain_the_body_names_twice_is_the_part(self):
         # Given: writer's body naming its part twice
         self.entry(
-            "Read `${CLAUDE_PLUGIN_ROOT}/prompts/w.md`, and"
-            " `${CLAUDE_PLUGIN_ROOT}/prompts/w.md` again."
+            "Read `${CLAUDE_PLUGIN_ROOT}/domain/w.md`, and"
+            " `${CLAUDE_PLUGIN_ROOT}/domain/w.md` again."
         )
         # When: its part is looked for
         # Then: it is that file, whether it is there or not, and its steps are read from it
-        part = os.path.join(self.plugin, "prompts", "w.md")
+        part = os.path.join(self.plugin, "domain", "w.md")
         self.assertEqual(
             (step.part(self.plugin, "writer"), step.steps_file(self.plugin, "writer")), (part, part)
         )
@@ -128,36 +128,33 @@ class TestPart(helpers.PluginTest):
         part = os.path.join(self.plugin, "domain", "writer.md")
         self.assertEqual(step.part(self.plugin, "writer"), part)
 
-    def test_a_file_under_core_roles_the_body_names_is_the_part_too(self):
-        # Given: writer's body naming its role's flow under core/roles/, beside a form elsewhere
+    def test_a_part_is_named_by_the_role_not_by_the_subagent(self):
+        # Given: writer's body naming its role's flow under domain/, beside a form elsewhere
         self.entry(
             "`claim.json` below is `${CLAUDE_PLUGIN_ROOT}/forms/claim.json`.\n"
-            "Read `${CLAUDE_PLUGIN_ROOT}/core/roles/writing.md` whole first."
+            "Read `${CLAUDE_PLUGIN_ROOT}/domain/writing.md` whole first."
         )
         # When: its part is looked for
         # Then: it is that file, by the name of the role, not of the subagent
-        part = os.path.join(self.plugin, "core", "roles", "writing.md")
+        part = os.path.join(self.plugin, "domain", "writing.md")
         self.assertEqual(step.part(self.plugin, "writer"), part)
         self.assertEqual(step.steps_file(self.plugin, "writer"), part)
 
     def test_a_body_naming_no_part_or_more_than_one_has_its_steps_in_the_entry(self):
         for body in (
             "Work on.",
-            "Read `${CLAUDE_PLUGIN_ROOT}/prompts/a.md` and `${CLAUDE_PLUGIN_ROOT}/prompts/b.md`.",
-            "Read `${CLAUDE_PLUGIN_ROOT}/prompts/../x.md`.",
+            "Read `${CLAUDE_PLUGIN_ROOT}/domain/a.md` and `${CLAUDE_PLUGIN_ROOT}/domain/b.md`.",
+            "Read `${CLAUDE_PLUGIN_ROOT}/domain/../x.md`.",
             "Read `${CLAUDE_PLUGIN_ROOT}/domain/w.json`.",
             "Read `${CLAUDE_PLUGIN_ROOT}/scripts/a.md`.",
-            (
-                "Read `${CLAUDE_PLUGIN_ROOT}/prompts/a.md` and"
-                " `${CLAUDE_PLUGIN_ROOT}/core/roles/a.md`."
-            ),
-            "Read `${CLAUDE_PLUGIN_ROOT}/core/roles/../../prompts/a.md`.",
+            "Read `${CLAUDE_PLUGIN_ROOT}/prompts/a.md`.",
+            "Read `${CLAUDE_PLUGIN_ROOT}/core/roles/a.md`.",
             "Read `${CLAUDE_PLUGIN_ROOT}/core/domain/a.md`.",
         ):
             with self.subTest(body=body):
-                # Given: writer's body naming no part, two, one out of prompts/, a file
-                # elsewhere, one under prompts/ and one under core/roles/, one out of
-                # core/roles/, or one under core/domain/
+                # Given: writer's body naming no part, two, one out of domain/, a file that is
+                # no Markdown, or one in another folder, such as prompts/ or core/roles/, where
+                # plugins laid before kept theirs
                 self.entry(body)
                 # When: its part is looked for
                 # Then: there is none, and its steps are in its entry
@@ -234,12 +231,12 @@ class TestSkill(helpers.PluginTest):
         self.assertEqual(step.steps_file(self.plugin, "write", skill=True), self.skill_file)
         said = "1. Have the entries written and reviewed."
         self.assertTrue(step.holds(self.plugin, "write", 1, said, skill=True))
-        # And: where its body names its part under core/roles/, they are in that part
-        part = os.path.join(self.plugin, "core", "roles", "orchestrator.md")
+        # And: where its body names its part under domain/, they are in that part
+        part = os.path.join(self.plugin, "domain", "orchestrator.md")
         self.write(
             self.skill_file,
             "---\nname: write\n---\n\nRead"
-            " `${CLAUDE_PLUGIN_ROOT}/core/roles/orchestrator.md` whole first.\n",
+            " `${CLAUDE_PLUGIN_ROOT}/domain/orchestrator.md` whole first.\n",
         )
         self.write(part, "## Steps\n\n1. Go.\n")
         self.assertEqual(step.steps_file(self.plugin, "write", skill=True), part)

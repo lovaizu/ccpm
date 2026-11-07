@@ -4,10 +4,8 @@ Claude Code plugin marketplace for lovaizu projects.
 
 ## Plugins
 
-- **[Rn](./plugins/rn/README.md)** — Rn carries work that takes days from your rough words to a pull request ready to merge. You decide what you really want, how it is built and whether the result is it, and nothing else.
+- **[Rn](./plugins/rn/README.md)** — rn makes what you ask for, such as a document, code, or a plugin, so that the people it's for can use it for what they're after. It asks you one point at a time, only what's yours, and leaves one draft pull request for you to merge.
 - **[Lane](./plugins/lane/README.md)** — Lane lets an AI notice when it drifts from the steps your plugin gives it. Lane tells it the right way, so it finds its way back at full speed with no one watching each move.
-- **[Pin](./plugins/pin/README.md)** — Pin settles every fact and decision your plan needs before an AI starts to make it. It finds each fact itself and asks you only the decisions that are yours, one at a time.
-- **[Turn](./plugins/turn/README.md)** — Turn makes a work you ask for, such as a README or a module of code, ready to use as it comes. It asks you only the decisions that are yours, and an AI that did not make the work judges it in its user's place.
 
 ## Install
 

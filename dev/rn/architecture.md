@@ -529,7 +529,7 @@ dev/rn/
 
 ## Tests
 
-rn tests by [the architecture best practice](../../plugins/turn/core/domain/best-practices/architecture/best-practice.md#q12)
+rn tests by [the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#q12)
 and [the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q22),
 and differs from them where this section says.
 
