@@ -34,7 +34,7 @@
       "kind": "plugin",
       "inputs": ["dev/lane/architecture.md"],
       "preconditions": [],
-      "status": "open",
+      "status": "doing",
       "intents": [
         {"id": "Q1", "good": false, "decisions": []},
         {"id": "Q2", "good": false, "decisions": []},
@@ -61,7 +61,17 @@
         {"id": "Q23", "good": false, "decisions": []},
         {"id": "Q24", "good": false, "decisions": []},
         {"id": "Q25", "good": false, "decisions": []},
-        {"id": "Q26", "good": false, "decisions": []}
+        {
+          "id": "Q26",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The product vision trial",
+              "decided": "on Opus by dev/lane/tests/product-vision/trial.py, its plugin given a part with no numbered list, a steps adapter, a start-text command and a route that waits for the person, and its judge counting steps out of order, starts unlike the command's text and resumes not in the person's words; its judge first right on kept records whose answer is known",
+              "by": "reasoning"
+            }
+          ]
+        }
       ]
     },
     {
@@ -186,6 +196,11 @@
             {
               "about": "Pin and Turn",
               "decided": "plugins/pin and plugins/turn go once rn holds their parts; the branch turn-held keeps the eight Turn commits no branch held, and each is taken where rn's design keeps what it fixes, then the branch goes",
+              "by": "reasoning"
+            },
+            {
+              "about": "Lane's old part folders",
+              "decided": "Lane's guard stops reading prompts/ and core/roles/ in the change that removes Pin and Turn, as their parts lie there until then",
               "by": "reasoning"
             }
           ]
