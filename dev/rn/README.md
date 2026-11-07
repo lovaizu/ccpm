@@ -1,6 +1,6 @@
 # rn
 
-The experience rn must give is in [ux.md](ux.md), and how it is built to give it, and checked, is
+What rn is for is in [product-vision.md](product-vision.md), and how it is built to give it, and checked, is
 in [architecture.md](architecture.md).
 
 - Tests: `python3 -m unittest discover -s dev/rn/tests` from the repository root.

@@ -3,7 +3,7 @@
 The orchestrator, Rn's one AI that talks with the person, decides every move from the steering, a
 short record of the plan kept by Rn's scripts, and has Turn make every work but the plan and the
 learnings. Rn is built against two drifts: the work drifting from the purpose, and the AI drifting as
-the work goes on. The experience this delivers is in [Rn's UX](ux.md).
+the work goes on. What this is for is in [the product vision](product-vision.md).
 
 ## Principles
 

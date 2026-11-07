@@ -122,7 +122,6 @@ pre-commit:
     - "dev/rn/trials/moves/place.py"
     - "dev/rn/trials/moves/stand.py"
     - "dev/rn/trials/moves/up.md"
-    - "dev/rn/ux.md"
     - "dev/scripts/changed.sh"
     - "dev/scripts/check.sh"
     - "dev/scripts/figures.py"
