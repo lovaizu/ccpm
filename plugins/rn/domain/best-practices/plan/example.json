@@ -18,7 +18,7 @@
     },
     {
       "name": "The shared plugin best practice says what rn and Lane share",
-      "path": "dev/plugin-best-practice.md",
+      "path": "plugins/rn/domain/best-practices/plugin",
       "kind": "meta",
       "inputs": [],
       "preconditions": [],
@@ -27,12 +27,23 @@
         {
           "id": "Q1",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "Goal",
+              "decided": "the developer builds a Claude Code plugin whose roles work together to make something, with which its users achieve what they are after",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "Q2",
           "good": false,
           "decisions": [
+            {
+              "about": "Its form",
+              "decided": "a best practice of kind plugin in meta's form, in place of dev/plugin-best-practice.md: each principle a practice with its When and Why; its template the skeleton of a plugin, its directories and the roles' in and out JSON Schemas to copy; its deliverable a plugin, made from the plugin's architecture, each file in it by the code or prompt best practice",
+              "by": "reasoning"
+            },
             {
               "about": "Entries and the domain",
               "decided": "skills, agents, hooks and scripts follow Claude Code's form; domain/ holds the knowledge of the work, with no roles/ and domain/ split inside, in place of core/",
@@ -242,7 +253,7 @@
     {
       "name": "Lane's code does what its design says",
       "path": "plugins/lane",
-      "kind": "code",
+      "kind": "plugin",
       "inputs": ["dev/lane/architecture.md"],
       "preconditions": [],
       "status": "open",
@@ -629,7 +640,7 @@
     {
       "name": "rn works as designed, with Pin and Turn removed",
       "path": "plugins/rn",
-      "kind": "code",
+      "kind": "plugin",
       "inputs": ["dev/rn/architecture.md"],
       "preconditions": [],
       "status": "open",
