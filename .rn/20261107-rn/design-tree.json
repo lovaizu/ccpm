@@ -233,7 +233,8 @@
             },
             {
               "about": "The name of the third test level",
-              "decided": null
+              "decided": "product vision, the plugin in real use, as each level is named by what its tests check against and these check the product vision",
+              "by": "reasoning"
             },
             {
               "about": "The contradictions the survey of 2026-11-07 found",
@@ -242,7 +243,8 @@
             },
             {
               "about": "Nobody relays, rewritten in 8602092c",
-              "decided": null
+              "decided": "holds as rewritten: the one who starts a role carries its points to the person as given and the answer back word for word, as a subagent's last message reaches only its starter and only the main conversation asks the person",
+              "by": "research"
             }
           ]
         },
