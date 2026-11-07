@@ -1,5 +1,7 @@
 {
  "goal": "The maintainer is a person or an AI who comes to change the code at any time after it is written. The maintainer changes the code quickly without breaking another behavior. They understand each part on one reading, and they find the one place where the change belongs.",
+ "inputs": [],
+ "preconditions": [],
  "intents": [
   {
    "id": "Q1",

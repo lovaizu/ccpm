@@ -1,5 +1,9 @@
 {
  "goal": "When an AI agent gets the prompt for a request that the prompt is made for, it does the task as the prompt's writer means. It does so with only what its run gives it, on every run, and in cases that the writer did not foresee.",
+ "inputs": [
+  "architecture"
+ ],
+ "preconditions": [],
  "parts": [
   {
    "id": "description",

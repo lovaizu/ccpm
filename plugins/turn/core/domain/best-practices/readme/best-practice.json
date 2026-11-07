@@ -3,6 +3,10 @@
  "template": "template.md",
  "example": "example.md",
  "source": "../../../../README.md",
+ "inputs": [
+  "product-vision"
+ ],
+ "preconditions": [],
  "intents": [
   {
    "id": "Q1",

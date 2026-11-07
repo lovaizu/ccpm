@@ -91,14 +91,30 @@ def template(path: str, data: dict[str, Any]) -> list[str] | None:
     return keys(text) if data["template"].endswith(".json") else sections(text)
 
 
+# The lists of the kinds a best practice takes, each with what one of them is called in words.
+TAKEN = {"inputs": "input", "preconditions": "precondition"}
+
+
+def practice_of(path: str, kind: str) -> str:
+    """The path of the best practice of the kind beside the folder of the one at the path."""
+    return os.path.normpath(beside(path, os.path.join("..", kind, "best-practice.json")))
+
+
 def missing(path: str, data: dict[str, Any]) -> list[str]:
     """Each file the best practice at the path names, its template and its example, that is not
-    beside it, in words."""
-    return [
+    beside it, and each kind it takes that has no best practice beside its folder, in words."""
+    found = [
         f"its {key} {data[key]} is not beside it"
         for key in ("template", "example")
         if key in data and not os.path.isfile(beside(path, data[key]))
     ]
+    for key, called in TAKEN.items():
+        found += [
+            f"its {called} {kind} has no best practice beside it"
+            for kind in data[key]
+            if not os.path.isfile(practice_of(path, kind))
+        ]
+    return found
 
 
 def copies(path: str, data: dict[str, Any]) -> dict[str, bytes]:
@@ -240,7 +256,8 @@ def parts(items: list[dict[str, Any]], depth: int = 0) -> list[str]:
 
 def markdown(kind: str, data: dict[str, Any]) -> str:
     """The best practice of the kind as Markdown: its goal, a link to its template and its example,
-    with the work the example is a copy of, or else its parts, and its intents, then the
+    with the work the example is a copy of, a link to each kind it takes where it takes any, or
+    else its parts, and its intents, then the
     practice for each intent, under the question it meets."""
     questions = {q["id"]: q for q in data["intents"]}
     out = [f"# {kind}", "", "## Goal", "", data["goal"]]
@@ -250,6 +267,10 @@ def markdown(kind: str, data: dict[str, Any]) -> str:
     if "example" in data and "source" in data:
         # The example comes last, so its link is the last line.
         out[-1] += f", a copy of [{data['source']}]({data['source']})"
+    for key in TAKEN:
+        if data[key]:
+            out += ["", f"## {key.capitalize()}", ""]
+            out += [f"- [{kind}](../{kind}/best-practice.md)" for kind in data[key]]
     if data.get("parts"):
         out += ["", "## Parts", "", *parts(data["parts"])]
     out += ["", "## Intents", ""]

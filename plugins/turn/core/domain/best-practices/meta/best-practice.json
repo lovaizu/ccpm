@@ -2,6 +2,8 @@
  "goal": "The generator can make deliverables with which their role achieves its purpose.",
  "template": "template.json",
  "example": "../product-vision/best-practice.json",
+ "inputs": [],
+ "preconditions": [],
  "intents": [
   {
    "id": "Q1",

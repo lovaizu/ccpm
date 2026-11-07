@@ -34,6 +34,8 @@ def sound(draw) -> dict:
     draw(st.randoms()).shuffle(abouts)
     return {
         "goal": "g",
+        "inputs": [],
+        "preconditions": [],
         "parts": parts,
         "intents": [
             {"id": f"Q{n}", "about": ", ".join(a), "what": "w"} for n, a in enumerate(abouts, 1)

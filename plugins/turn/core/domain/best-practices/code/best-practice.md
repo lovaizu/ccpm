@@ -4,6 +4,10 @@
 
 The maintainer is a person or an AI who takes the code over. The maintainer changes what the code does. They know that whoever runs the code still gets each behavior its specification asks for. They also know that whoever runs it learns how to put right anything wrong that comes from outside.
 
+## Inputs
+
+- [architecture](../architecture/best-practice.md)
+
 ## Parts
 
 - **manifest**: What the maintainer needs to set the code up on a fresh machine and run its tests: everything the code needs to run, with the versions it runs on, and how to run the tests.

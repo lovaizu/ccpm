@@ -3,6 +3,8 @@
  "template": "template.md",
  "example": "example.md",
  "source": "../../../../../../dev/turn/product-vision.md",
+ "inputs": [],
+ "preconditions": [],
  "intents": [
   {
    "id": "Q1",

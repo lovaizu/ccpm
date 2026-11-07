@@ -365,6 +365,22 @@ class Practices(helpers.testing.FolderTest):
         self.assertEqual(code, 1)
         self.assertIn("is out of its form", err)
 
+    def test_form_fails_on_a_best_practice_that_names_no_kinds_it_takes(self):
+        for key in ("inputs", "preconditions"):
+            with self.subTest(key=key):
+                data = copy.deepcopy(DATA)
+                del data[key]
+                self.write_json(self.path, data)
+                code, _, err = ran("form", self.path)
+                self.assertEqual(code, 1)
+                self.assertIn(f'is out of its form: $: expected the key "{key}"', err)
+
+    def test_form_fails_on_a_kind_it_takes_that_has_no_best_practice(self):
+        self.write_json(self.path, dict(DATA, inputs=["gone"]))
+        code, _, err = ran("form", self.path)
+        self.assertEqual(code, 1)
+        self.assertIn(f"plan.py: {self.path}: its input gone has no best practice beside it", err)
+
     def test_form_fails_on_a_markdown_changed_by_hand(self):
         made = practices.markdown("kind", DATA)
         for changed in (made + "More.\n", made[:-1]):

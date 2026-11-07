@@ -12,6 +12,10 @@ Someone who meets the product for the first time starts using it, from the READM
 
 [example.md](example.md), a copy of [../../../../README.md](../../../../README.md)
 
+## Inputs
+
+- [product-vision](../product-vision/best-practice.md)
+
 ## Intents
 
 - **Q1** (the opening): Telling a colleague about the product, does the reader retell the opening from memory, so that they can weigh the product and pass it on without reading it again?

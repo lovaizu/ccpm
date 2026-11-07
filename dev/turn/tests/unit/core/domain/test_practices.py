@@ -12,6 +12,8 @@ from helpers import practices
 
 DATA = {
     "goal": "The reader gets it.",
+    "inputs": [],
+    "preconditions": [],
     "parts": [{"id": "a", "what": "A.", "parts": [{"id": "b", "what": "B."}]}],
     "intents": [
         {"id": "Q1", "about": "a", "what": "Does it?"},
@@ -147,6 +149,8 @@ TEMPLATE = """# <Product>
 SECTIONS = ["the opening", "Roles", "OKRs"]
 BY_TEMPLATE = {
     "goal": "The reader gets it.",
+    "inputs": [],
+    "preconditions": [],
     "intents": [
         {"id": "Q1", "about": "the opening, Roles", "what": "Does it?"},
         {"id": "Q2", "about": "OKRs, the whole", "what": "Does all?"},
@@ -242,6 +246,18 @@ class Beside(helpers.testing.FolderTest):
         self.write_json(self.path, named)
         self.write(os.path.join(self.base, "other", "best-practice.json"), "{}")
         self.assertEqual(practices.missing(self.path, named), [])
+
+    def test_each_kind_it_takes_with_no_best_practice_beside(self):
+        named = dict(DATA, inputs=["readme", "gone"], preconditions=["late", "readme"])
+        self.write(os.path.join(self.base, "readme", "best-practice.json"), "{}")
+        self.write(os.path.join(self.base, "late", "template.md"), "# <P>\n")
+        self.assertEqual(
+            practices.missing(self.path, named),
+            [
+                "its input gone has no best practice beside it",
+                "its precondition late has no best practice beside it",
+            ],
+        )
 
     def test_the_kind_is_the_name_of_its_folder(self):
         self.assertEqual(practices.kind_of(self.path), "kind")
@@ -417,6 +433,22 @@ class Markdown(unittest.TestCase):
         self.assertIn("## Example\n\n[example.md](example.md)\n", text)
         self.assertNotIn("## Template", practices.markdown("kind", DATA))
         self.assertNotIn("## Example", practices.markdown("kind", DATA))
+
+    def test_links_each_kind_it_takes_after_the_example(self):
+        named = dict(DATA, example="example.md", inputs=["a"], preconditions=["b", "c"])
+        text = practices.markdown("kind", named)
+        self.assertIn(
+            "[example.md](example.md)\n\n## Inputs\n\n- [a](../a/best-practice.md)\n\n"
+            "## Preconditions\n\n- [b](../b/best-practice.md)\n- [c](../c/best-practice.md)\n\n"
+            "## Parts\n",
+            text,
+        )
+
+    def test_leaves_out_a_list_of_kinds_that_is_empty(self):
+        text = practices.markdown("kind", dict(DATA, preconditions=["b"]))
+        self.assertNotIn("## Inputs", text)
+        self.assertIn("## Preconditions", text)
+        self.assertNotIn("## Preconditions", practices.markdown("kind", DATA))
 
     def test_holds_each_part_question_and_method_under_its_question(self):
         text = practices.markdown("kind", DATA)

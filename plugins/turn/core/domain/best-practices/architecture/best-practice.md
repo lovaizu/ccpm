@@ -12,6 +12,11 @@ The developer builds and changes each part of the product so that the parts toge
 
 [example.md](example.md), a copy of [../../../../../../dev/turn/architecture.md](../../../../../../dev/turn/architecture.md)
 
+## Inputs
+
+- [product-vision](../product-vision/best-practice.md)
+- [readme](../readme/best-practice.md)
+
 ## Intents
 
 - **Q1** (the opening): Starting on any part, does the developer see the one idea by which the product gives its product vision, and the piece of it the part carries out, so that every part they build serves that idea?

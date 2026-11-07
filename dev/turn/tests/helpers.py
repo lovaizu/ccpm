@@ -33,6 +33,8 @@ __all__ = ["files", "phases", "plan", "practices", "rounds", "runs", "testing", 
 # A best practice of the kind `note`: two parts, three questions, the last of the whole.
 PRACTICE: dict[str, Any] = {
     "goal": "The reader acts on the note.",
+    "inputs": [],
+    "preconditions": [],
     "parts": [
         {"id": "summary", "what": "One sentence."},
         {"id": "steps", "what": "The steps."},

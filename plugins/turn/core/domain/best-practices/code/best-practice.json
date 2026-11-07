@@ -1,5 +1,9 @@
 {
  "goal": "The maintainer is a person or an AI who takes the code over. The maintainer changes what the code does. They know that whoever runs the code still gets each behavior its specification asks for. They also know that whoever runs it learns how to put right anything wrong that comes from outside.",
+ "inputs": [
+  "architecture"
+ ],
+ "preconditions": [],
  "parts": [
   {
    "id": "manifest",

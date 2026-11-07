@@ -3,6 +3,11 @@
  "template": "template.md",
  "example": "example.md",
  "source": "../../../../../../dev/turn/architecture.md",
+ "inputs": [
+  "product-vision",
+  "readme"
+ ],
+ "preconditions": [],
  "intents": [
   {
    "id": "Q1",

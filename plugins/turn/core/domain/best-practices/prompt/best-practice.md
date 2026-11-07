@@ -4,6 +4,10 @@
 
 When an AI agent gets the prompt for a request that the prompt is made for, it does the task as the prompt's writer means. It does so with only what its run gives it, on every run, and in cases that the writer did not foresee.
 
+## Inputs
+
+- [architecture](../architecture/best-practice.md)
+
 ## Parts
 
 - **description**: What the host reads to choose the prompt for a request: a name that says what the prompt does, and a description of what it does and the requests it is used for.
