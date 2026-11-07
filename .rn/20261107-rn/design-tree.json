@@ -89,6 +89,11 @@
               "about": "How the research runs",
               "decided": "the maker searches the field's primary sources and its established guides, weighs each by its authority, writes where sources disagree which way it takes and why, and stops once new sources add nothing",
               "by": "research"
+            },
+            {
+              "about": "Languages and tools",
+              "decided": "a practice holds for any language and tool the kind is made with, and names one only as an example, as a practice tied to one language fails a deliverable made in another; the project picks its own tools",
+              "by": "user"
             }
           ]
         },
@@ -172,7 +177,8 @@
             },
             {
               "about": "Dependency direction",
-              "decided": null
+              "decided": "the project's own tools check each rule of which module may depend on which, where the language has such a tool, and the evaluator reads it where none does",
+              "by": "reasoning"
             }
           ]
         },
