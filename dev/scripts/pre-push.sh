@@ -2,8 +2,8 @@
 # Before a push, the checks of what the push changes, on the commits pushed:
 # `sh dev/scripts/check.sh --reached`, for each plugin `sh dev/scripts/changed.sh` names, which runs
 # only the tests the change reaches; every test, the property-based tests and the mutation testing
-# are CI's. Turned on in a clone by `git config core.hooksPath dev/scripts/githooks`, with uv on
-# PATH, which sets up the check tools in the commits pushed from their uv.lock.
+# are CI's. Run by the pre-push job of lefthook.yml, with uv on PATH, which sets up the check tools
+# in the commits pushed from their uv.lock.
 set -e
 
 # What each test ran when it last ran, from which pytest-testmon chooses the tests a change reaches,
@@ -15,6 +15,11 @@ if ! command -v uv >/dev/null 2>&1; then
   echo "pre-push: uv is not on PATH; install it" \
     "(https://docs.astral.sh/uv/getting-started/installation/), with which pre-push sets up the" \
     "check tools by \`uv sync --locked\`" >&2
+  exit 1
+fi
+if ! command -v npm >/dev/null 2>&1; then
+  echo "pre-push: npm is not on PATH; install Node.js (https://nodejs.org/en/download), with which" \
+    "pre-push sets up Mermaid's parser by \`npm ci\`" >&2
   exit 1
 fi
 zero=0000000000000000000000000000000000000000
@@ -38,6 +43,7 @@ while read -r _ local _ remote; do
   # tests make would take as theirs.
   (cd "$copy" && unset $(git rev-parse --local-env-vars) \
     && uv sync --locked --group test-quality --group push --quiet \
+    && (cd dev/scripts && npm ci --ignore-scripts --no-audit --no-fund --silent) \
     && uv run --no-sync sh dev/scripts/check.sh --reached $plugins)
   git worktree remove --force "$copy"
   # Removed, so the cleanup on exit, which stops the push where it fails, has nothing left to do.

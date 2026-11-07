@@ -53,9 +53,13 @@ Each of `sh dev/scripts/check.sh <plugin>`, `sh dev/scripts/properties.sh <plugi
 checks that plugin alone. `sh dev/scripts/mutate.sh --since <commit> <plugin>` runs only the mutants on the
 lines changed since that commit.
 
-## Before each push
+## Before each commit and each push
 
-`dev/scripts/githooks/pre-push` runs `sh dev/scripts/check.sh` on the commits pushed, and stops the
+Before each commit, lefthook checks the prose of the files staged and of the commit message by
+[lovaizu/checks](https://github.com/lovaizu/checks), at the version that `lefthook.yml` names. The
+files that `lefthook.yml` excludes were written before the check. CI checks every file the same way.
+
+`dev/scripts/pre-push.sh` runs `sh dev/scripts/check.sh` on the commits pushed, and stops the
 push on a failure. It checks each plugin that `sh dev/scripts/changed.sh` names: those the push
 changes, those that link a file it changes, or every plugin where it changes what they all stand on.
 It runs them as `sh dev/scripts/check.sh --reached`: of the tests, only those the change reaches,
@@ -64,5 +68,5 @@ chosen by pytest-testmon, without the lines counted. testmon keeps what each tes
 3.11 or later; on an older Python every test runs. Every test, the property-based tests and the
 mutation testing run in CI.
 
-Turn the hook on once in a clone with `git config core.hooksPath dev/scripts/githooks`. It needs uv on the
-PATH.
+Turn the hooks on once in a clone with `lefthook install`. They need on the PATH what
+[lovaizu/checks](https://github.com/lovaizu/checks#readme) says it needs, and uv.

@@ -56,12 +56,13 @@ python3 dev/scripts/figures.py check
 
 # A Mermaid diagram GitHub cannot parse shows as an error in its place, unseen until someone opens
 # the page, so each is parsed by Mermaid's own parser, which comes with dev/scripts/package-lock.json.
-if command -v node >/dev/null 2>&1 && [ -d dev/scripts/node_modules/mermaid ]; then
-  node dev/scripts/mermaid.mjs
-else
-  echo "check.sh: Mermaid diagrams not checked, as node or dev/scripts/node_modules is missing; run"\
-    "\`npm ci --ignore-scripts\` in dev/scripts"
+# Without it, the check fails, as a skipped step would pass a diagram nobody parsed.
+if ! command -v node >/dev/null 2>&1 || [ ! -d dev/scripts/node_modules/mermaid ]; then
+  echo "check.sh: can't parse the Mermaid diagrams, as node or dev/scripts/node_modules is missing."\
+    "Fix: install Node.js, then run \`npm ci --ignore-scripts\` in dev/scripts" >&2
+  exit 1
 fi
+node dev/scripts/mermaid.mjs
 
 # The unit and architecture tests, `test*.py`, unittest's own pattern, run by pytest as
 # pyproject.toml sets it, at once on each processor (pytest-xdist); the property-based tests, whose

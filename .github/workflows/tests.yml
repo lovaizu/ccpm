@@ -19,9 +19,9 @@ jobs:
   # are enough, on what changed since the last commit of the branch whose run passed, else since the
   # branch left main, for each plugin `sh dev/scripts/changed.sh` names, each in a job of its own,
   # all at once; whole on main after a commit not passed, and for a plugin whose version the push
-  # changes, as before a release. A push that changes only what no check reads, such as the session
-  # records and the documents of dev/ without a diagram, is not checked, and `tests` still passes,
-  # as main takes a pull request only when `tests` has passed.
+  # changes, as before a release. A push that changes only what no test reads, such as the design
+  # tree and the documents of dev/ without a diagram, runs no test, and `tests` still passes once its
+  # prose passes, as main takes a pull request only when `tests` has passed.
   changed:
     runs-on: ubuntu-latest
     outputs:
@@ -136,8 +136,16 @@ jobs:
         run: uv run --no-sync sh dev/scripts/mutate.sh ${SINCE:+--since "$SINCE"} ${{ matrix.plugin }}
 
   # What main requires: every job passed, or the checks skipped as above.
+  # The prose checks of lefthook.yml on every file it does not exclude, as they run before each
+  # commit, from lovaizu/checks at the commit of the tag lefthook.yml names.
+  prose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: lovaizu/checks@e504a551eba974c6b0455288c63e831ea3db92c5 # v0.1.3
+
   tests:
-    needs: [changed, check, test-quality]
+    needs: [changed, check, test-quality, prose]
     if: always()
     runs-on: ubuntu-latest
     steps:
@@ -146,6 +154,7 @@ jobs:
           CHECK: ${{ needs.changed.outputs.check }}
           CHECKED: ${{ needs.check.result }}
           TESTED: ${{ needs.test-quality.result }}
+          PROSE: ${{ needs.prose.result }}
         run: |
-          [ "$CHANGED" = success ] || exit 1
+          [ "$CHANGED" = success ] && [ "$PROSE" = success ] || exit 1
           [ "$CHECK" = false ] || { [ "$CHECKED" = success ] && [ "$TESTED" = success ]; }

@@ -5,8 +5,8 @@
   },
   "deliverables": [
     {
-      "name": "Every English document is checked against the Google style",
-      "path": "dev/scripts/check.sh",
+      "name": "Every prose ccpm keeps is checked by lovaizu/checks",
+      "path": "lefthook.yml",
       "kind": "code",
       "status": "open",
       "intents": [
@@ -15,18 +15,18 @@
           "good": false,
           "decisions": [
             {
-              "about": "English check",
-              "decided": "check.sh, the pre-push hook and CI run Vale with the Google developer documentation style on every Markdown file, and fail on a violation; built again on this branch from PR #64",
-              "by": "user"
+              "about": "Prose check",
+              "decided": "lefthook.yml names lovaizu/checks v0.1.3 in remotes, so each commit and its message are checked; CI runs the action of lovaizu/checks at that tag's commit; PR #64 closes, saying its check is here",
+              "by": "reasoning"
             },
             {
-              "about": "Rules turned off",
-              "decided": "only those whose finding would change quoted code or quoted words, each with its reason in .vale.ini; none kept for the user's own former rules",
+              "about": "Pre-push hook",
+              "decided": "dev/scripts/githooks/pre-push becomes a pre-push job of lefthook.yml, as lefthook install refuses a clone with core.hooksPath set; a clone turns the hooks on by lefthook install",
               "by": "reasoning"
             },
             {
               "about": "Files written before the check",
-              "decided": "listed in .vale.ini, and each comes off the list when its deliverable is made again",
+              "decided": "excluded in lefthook.yml, and each comes off the list when its deliverable is made again",
               "by": "reasoning"
             },
             {
