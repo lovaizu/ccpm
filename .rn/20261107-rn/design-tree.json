@@ -8,81 +8,7 @@
       "name": "Every prose ccpm keeps is checked by lovaizu/checks",
       "path": "lefthook.yml",
       "kind": "code",
-      "status": "done",
-      "intents": [
-        {
-          "id": "Q1",
-          "good": true,
-          "decisions": [
-            {
-              "about": "Prose check",
-              "decided": "lefthook.yml names lovaizu/checks v0.1.3 in remotes, so each commit and its message are checked; CI runs the action of lovaizu/checks at that tag's commit; PR #64 closes, saying its check is here",
-              "by": "reasoning"
-            },
-            {
-              "about": "Pre-push hook",
-              "decided": "dev/scripts/githooks/pre-push becomes a pre-push job of lefthook.yml, as lefthook install refuses a clone with core.hooksPath set; a clone turns the hooks on by lefthook install",
-              "by": "reasoning"
-            },
-            {
-              "about": "Files written before the check",
-              "decided": "excluded in lefthook.yml, and each comes off the list when its deliverable is made again",
-              "by": "reasoning"
-            },
-            {
-              "about": "Mermaid step",
-              "decided": "check.sh fails, and says why, where dev/scripts/node_modules is missing, in place of skipping the step; pre-push.sh sets it up by npm ci in the commits pushed",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "Q2",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "Q3",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "Q4",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "Q5",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "Q6",
-          "good": true,
-          "decisions": [
-            {
-              "about": "Tests of the checks themselves",
-              "decided": "dev/scripts/tests/ tests pre-push.sh with stand-ins for what it runs, mermaid.sh on repositories of its own, and lefthook.yml's version, excludes and pre-push job; check.sh runs them on every run, and plugins.sh names only the folders with a plugin",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "Q7",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "Q8",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "Q9",
-          "good": true,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "rn can plan from a best practice for planning",
@@ -127,19 +53,42 @@
             },
             {
               "about": "Whether the design tree and the plan are one kind of best practice",
-              "decided": null
+              "decided": "one kind, plan, whose deliverable is the design tree; the plan best practice says the tree's goal, deliverables, order and form, and each deliverable's decisions answer the intents of that deliverable's own best practice",
+              "by": "reasoning"
             }
           ]
         },
         {
           "id": "Q3",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The tree's sections",
+              "decided": "the goal, and for each deliverable its name, path, kind, inputs, preconditions, status and intents, each intent with whether it is met and its decisions; nothing else",
+              "by": "reasoning"
+            },
+            {
+              "about": "Inputs and preconditions",
+              "decided": "each best practice names in inputs the kinds a deliverable of it is made from, and in preconditions the kinds that must pass before it is made; each deliverable names in its own the paths of those deliverables, as one kind's deliverables serve different products; the script orders the tree by the deliverables' paths and checks them against the kinds; meta's template gains both",
+              "by": "reasoning"
+            },
+            {
+              "about": "Each kind's inputs and preconditions now",
+              "decided": "readme from product-vision; architecture from product-vision and readme; code and prompt from architecture; product-vision, meta, plan, refactor-doc and refactor-code from none; no preconditions until the tests best practice gives them",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "Q4",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The plan's questions, in the order the maker thinks them",
+              "decided": "goal; the deliverables back from the goal; each kind's best practice, or a meta deliverable first; the name; the order from inputs and preconditions; each intent with its decisions and what is open; who settled each decision; where the work stands on picking it up; the nodes a change touches; only what holds now; the whole",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "Q5",
@@ -201,17 +150,40 @@
         {
           "id": "Q7",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "One practice for each question",
+              "decided": "in the questions' order, each giving its own question's way",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "Q8",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "Example",
+              "decided": "a copy of .rn/20261107-rn/design-tree.json by plan.py example, its source named in source",
+              "by": "reasoning"
+            },
+            {
+              "about": "Template",
+              "decided": "the JSON Schema of the design tree, its descriptions the notes, as a second note beside the schema drifts from it; meta's Q2 gains this case",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "Q9",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The whole tried",
+              "decided": "the rest of this rebuild is planned and resumed by the plan best practice, and each place it falls short is mended where it lies",
+              "by": "reasoning"
+            }
+          ]
         }
       ]
     },
