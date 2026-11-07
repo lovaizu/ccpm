@@ -313,10 +313,11 @@ class PinnerTest(testing.FolderTest):
         return heard
 
     def answers(self, words: str) -> None:
-        """The person answers, which the main conversation is told to put back to the pinner; the
-        orchestrator resumes the pinner by SendMessage with their words, word for word, under the
-        Answer's line, which goes through, and Claude Code starts the pinner again."""
-        self.assertEqual(self.claude.prompted(words), [ASKED])
+        """The person answers, and the main conversation is told the one message that resumes the
+        pinner, their words, word for word, under the Answer's line; the orchestrator sends it by
+        SendMessage, which goes through, and Claude Code starts the pinner again."""
+        resume = "pin: Resume `pin:pinner` by SendMessage with this message, word for word:"
+        self.assertEqual(self.claude.prompted(words), [f"{resume}\n{ANSWERED}\n{words}"])
         message = {"to": PINNER.agent_id, "message": f"{ANSWERED}\n{words}"}
         sent = self.claude.call(None, "SendMessage", message)
         self.assertEqual((sent.made, sent.said), (True, {}))

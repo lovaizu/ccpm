@@ -132,17 +132,11 @@ class Answer(helpers.TurnTest):
 
 
 class TestPersonAnswers(Answer):
-    """S2: the person answers through the main conversation."""
+    """S2: the person answers through the main conversation. S4, the calling AI passing the answer
+    back, has no test, as Lane resumes a role only with the person's own words."""
 
 
-class TestCallingAIPassesTheAnswer(Answer):
-    """S4: the calling AI passes each point on and the answer back, its run in its own folder."""
-
-    starter = helpers.CALLER
-    folder = os.path.join(".caller", "readme")
-
-
-# The paths run in the two classes above alone.
+# The paths run in the class above alone.
 del Answer
 
 if __name__ == "__main__":
