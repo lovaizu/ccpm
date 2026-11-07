@@ -37,8 +37,10 @@ pyrefly check --search-path dev/lane --search-path dev/scripts/tests dev/scripts
 # person to read, for being left behind it, and its example, where it is a copy of a document of the
 # repository, for being left behind that document, as each says what Turn does not hold; and a file
 # in its folder that none of them holds, such as a figure the document dropped, for being left over.
-# Each kind's lies in its own folder as best-practice.json, beside its template and its example.
-python3 plugins/turn/scripts/plan.py form plugins/turn/core/domain/best-practices/*/best-practice.json
+# Each kind's lies in its own folder as best-practice.json, beside its template and its example,
+# Turn's and rn's alike. An example in JSON holds to its template where that is a JSON Schema.
+python3 plugins/turn/scripts/plan.py form plugins/turn/core/domain/best-practices/*/best-practice.json \
+  plugins/rn/domain/best-practices/*/best-practice.json
 
 # Each plugin's design tree, where every document of the plugin takes its decisions from
 # (.claude/rules/dev.md, step 1), holds, by Pin's own check of it: a question nothing serves, a

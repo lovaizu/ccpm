@@ -3,6 +3,7 @@ fault of its form, markdown makes the Markdown a person reads, standard leaves o
 groups shares its questions among the evaluator's runs."""
 
 import copy
+import json
 import os
 import unittest
 from typing import Any
@@ -207,6 +208,80 @@ class Keys(unittest.TestCase):
         self.assertEqual(
             practices.keys('{"$anchor": "a", "DELETE_TEMPLATE_COMMENT": "x"}'), ["$anchor"]
         )
+
+    def test_the_fields_at_the_top_of_a_template_that_is_a_json_schema(self):
+        text = json.dumps(
+            {
+                "$schema": "http://json-schema.org/draft-07/schema#",
+                "description": "d",
+                "type": "object",
+                "properties": {"goal": {"type": "string"}, "steps": {"type": "array"}},
+            }
+        )
+        self.assertEqual(practices.keys(text), ["goal", "steps"])
+
+
+SCHEMA = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "description": "A plan.",
+    "type": "object",
+    "required": ["goal"],
+    "properties": {"goal": {"type": "string", "description": "The end."}},
+}
+
+
+class Unheld(helpers.testing.FolderTest):
+    """unheld, the point an example in JSON is out of the template beside it by, where the template
+    is a JSON Schema."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.path = os.path.join("kind", "best-practice.json")
+        self.data = dict(DATA, template="plan.schema.json", example="example.json")
+        self.write_json(os.path.join("kind", "plan.schema.json"), SCHEMA)
+
+    def example(self, value: Any) -> list[str]:
+        self.write_json(os.path.join("kind", "example.json"), value)
+        return practices.unheld(self.path, self.data)
+
+    def test_none_where_the_example_holds_to_the_schema(self):
+        self.assertEqual(self.example({"goal": "g"}), [])
+
+    def test_the_point_the_example_is_out_by(self):
+        self.assertEqual(
+            self.example({"goal": 1}),
+            ["its example example.json is out of its template: $.goal: expected a string, found 1"],
+        )
+
+    def test_none_where_the_template_is_no_schema(self):
+        self.write_json(os.path.join("kind", "plan.schema.json"), {"goal": "<goal>"})
+        self.assertEqual(self.example({"goal": 1}), [])
+
+    def test_none_where_the_template_or_the_example_is_no_json(self):
+        self.write(os.path.join("kind", "example.md"), "# Plan\n")
+        self.write(os.path.join("kind", "template.md"), "# <Plan>\n")
+        for named in (
+            dict(self.data, example="example.md"),
+            dict(self.data, template="template.md"),
+            DATA,
+        ):
+            with self.subTest(named=named.get("template"), example=named.get("example")):
+                self.assertEqual(practices.unheld(self.path, named), [])
+
+    def test_a_schema_it_does_not_read_whole_is_named(self):
+        self.write_json(os.path.join("kind", "plan.schema.json"), dict(SCHEMA, oneOf=[]))
+        found = self.example({"goal": "g"})
+        self.assertEqual(len(found), 1)
+        self.assertTrue(
+            found[0].startswith("its template plan.schema.json is no schema it reads whole: $"),
+            found,
+        )
+
+    def test_an_example_that_is_no_json_is_named(self):
+        self.write(os.path.join("kind", "example.json"), "{")
+        found = practices.unheld(self.path, self.data)
+        self.assertEqual(len(found), 1)
+        self.assertIn("example.json is not JSON", found[0])
 
 
 class Beside(helpers.testing.FolderTest):
@@ -452,12 +527,17 @@ class Markdown(unittest.TestCase):
 
     def test_holds_each_part_question_and_method_under_its_question(self):
         text = practices.markdown("kind", DATA)
-        expected = ["# kind", "The reader gets it.", "## Parts", "- **a**: A.", "  - **b**: B."]
-        expected += ["- **Q1** (a): Does it?", "### Q1: Does it?", "**Thinking**: Think."]
-        expected.append("1. Do.")
+        expected = ["# `kind`\n", "The reader gets it.", "## Parts", "- **a**: A.", "  - **b**: B."]
+        expected += [
+            (
+                "## Intents\n\n| ID | About | Question |\n| --- | --- | --- |\n"
+                "| Q1 | a | Does it? |\n| Q2 | b, the whole | After Q1, does all? |\n\n"
+                "## Practices\n"
+            ),
+            "### Q1\n\nDoes it?\n\n**Thinking**\n\nThink.\n\n**Steps**\n\n1. Do.\n\n### Q2\n",
+        ]
         for line in expected:
             self.assertIn(line, text)
-        self.assertLess(text.index("## Intents"), text.index("## Practices"))
 
     def test_sets_each_part_under_the_one_it_is_in(self):
         c: dict[str, Any] = {"id": "c", "what": "C."}

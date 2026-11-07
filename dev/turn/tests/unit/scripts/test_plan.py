@@ -381,6 +381,27 @@ class Practices(helpers.testing.FolderTest):
         self.assertEqual(code, 1)
         self.assertIn(f"plan.py: {self.path}: its input gone has no best practice beside it", err)
 
+    def test_form_fails_on_an_example_out_of_the_schema_that_is_its_template(self):
+        data = copy.deepcopy(DATA)
+        del data["parts"]
+        for question in data["intents"]:
+            question["about"] = "goal, the whole"
+        data.update(template="plan.schema.json", example="example.json")
+        self.write_json(self.path, data)
+        self.write_json(
+            os.path.join(self.folder, "plan.schema.json"),
+            {"$schema": "x", "type": "object", "properties": {"goal": {"type": "string"}}},
+        )
+        self.write_json(os.path.join(self.folder, "example.json"), {"goal": 1})
+        ran("markdown", self.path)
+        code, _, err = ran("form", self.path)
+        self.assertEqual(code, 1)
+        self.assertEqual(
+            err,
+            f"plan.py: {self.path}: its example example.json is out of its template:"
+            " $.goal: expected a string, found 1\n",
+        )
+
     def test_form_fails_on_a_markdown_changed_by_hand(self):
         made = practices.markdown("kind", DATA)
         for changed in (made + "More.\n", made[:-1]):

@@ -218,7 +218,7 @@ def form(path: str) -> list[str]:
     found = practices.missing(path, data)
     if found:
         return found + late
-    found = practices.faults(data, practices.template(path, data))
+    found = practices.faults(data, practices.template(path, data)) + practices.unheld(path, data)
     target = os.path.splitext(path)[0] + ".md"
     try:
         with open(target, encoding="utf-8") as f:

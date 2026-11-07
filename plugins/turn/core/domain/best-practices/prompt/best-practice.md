@@ -1,4 +1,4 @@
-# prompt
+# `prompt`
 
 ## Goal
 
@@ -20,55 +20,73 @@ When an AI agent gets the prompt for a request that the prompt is made for, it d
 
 ## Intents
 
-- **Q1** (goal): When the AI believes it has finished, can it tell from the prompt whether it has reached what the task is for, so that it stops at that purpose and not at the last step?
-- **Q2** (goal): When the AI meets a choice that is the user's, such as one between options that serve equally or an action hard to undo, does it hand the choice to the user rather than make it, so that the user's purpose and intent stay the user's?
-- **Q3** (context): Given the prompt and only what its run gives it, can the AI do each step without guessing a fact, such as where its inputs are or a rule of the place it works in, so that its result rests on facts, not on guesses?
-- **Q4** (goal, steps): Taking the steps in order, does the AI arrive at what the goal says the task is for, with no step that leads it elsewhere, so that following the prompt is the way to its purpose?
-- **Q5** (steps): When the AI meets a case a step's rule does not name, can it decide the case as the writer would, from the reason the rule gives, so that the rules hold where their words do not reach?
-- **Q6** (steps): When the AI is run twice on the same input, does each step whose result must not vary, such as a check or a file's form, give the same result both times, so that what must hold does not hang on chance?
-- **Q7** (tools, steps): Can the AI take every action its steps call for with the tools it is allowed, so that the run never stalls on a missing tool?
-- **Q8** (tools): When the AI, during a run, reaches for an action that lies outside its task, does the host refuse it, so that a slip of the AI cannot harm what lies outside the task?
-- **Q9** (steps, output): When the caller, the person or the AI that started the prompt, takes what the AI hands back, can it act on it without asking the AI anything further, so that the work goes on without a round trip?
-- **Q10** (description): When a request the prompt is made for comes, and a request near it that it is not made for, does the host, such as Claude Code, choose the prompt for the first and pass it over for the second, from the name and the description alone, so that the prompt runs where it is meant and nowhere else?
-- **Q11** (description, goal): Once the host has chosen the prompt by its description, does the AI do the task the description says, all of it and nothing more, so that the caller gets what the description promised?
-- **Q12** (the whole): When the prompt is run several times on each kind of request it is made for, does the AI reach the result the prompt names on every run, so that the user can count on it?
-- **Q13** (the whole): Does every line of the prompt change what the AI does toward the task, so that none draws its attention from the lines that do?
-- **Q14** (steps): For each rule of the steps that must hold on every run, does a hook hold it, and does a test try the hook both where the AI keeps the rule and where it breaks it, so that a rule that must hold does not rest on the AI's attention?
-- **Q15** (trials): When a trial fails, can the maintainer tell from its record that the prompt went wrong and not the trial: its set-up, a stand-in, a judge or a check, so that they mend the prompt only for a cause the record shows?
-- **Q16** (output): When the AI puts a decision, a proposal or a report to the person, can the person approve or decide from its first lines alone, and reach the details only where they ask, so that the person spends their attention only on what is theirs?
-- **Q17** (output): When the caller acts on what the AI reports it did or found, does each claim hold as far as the report says it was checked, so that the caller acts only on what holds?
+| ID | About | Question |
+| --- | --- | --- |
+| Q1 | goal | When the AI believes it has finished, can it tell from the prompt whether it has reached what the task is for, so that it stops at that purpose and not at the last step? |
+| Q2 | goal | When the AI meets a choice that is the user's, such as one between options that serve equally or an action hard to undo, does it hand the choice to the user rather than make it, so that the user's purpose and intent stay the user's? |
+| Q3 | context | Given the prompt and only what its run gives it, can the AI do each step without guessing a fact, such as where its inputs are or a rule of the place it works in, so that its result rests on facts, not on guesses? |
+| Q4 | goal, steps | Taking the steps in order, does the AI arrive at what the goal says the task is for, with no step that leads it elsewhere, so that following the prompt is the way to its purpose? |
+| Q5 | steps | When the AI meets a case a step's rule does not name, can it decide the case as the writer would, from the reason the rule gives, so that the rules hold where their words do not reach? |
+| Q6 | steps | When the AI is run twice on the same input, does each step whose result must not vary, such as a check or a file's form, give the same result both times, so that what must hold does not hang on chance? |
+| Q7 | tools, steps | Can the AI take every action its steps call for with the tools it is allowed, so that the run never stalls on a missing tool? |
+| Q8 | tools | When the AI, during a run, reaches for an action that lies outside its task, does the host refuse it, so that a slip of the AI cannot harm what lies outside the task? |
+| Q9 | steps, output | When the caller, the person or the AI that started the prompt, takes what the AI hands back, can it act on it without asking the AI anything further, so that the work goes on without a round trip? |
+| Q10 | description | When a request the prompt is made for comes, and a request near it that it is not made for, does the host, such as Claude Code, choose the prompt for the first and pass it over for the second, from the name and the description alone, so that the prompt runs where it is meant and nowhere else? |
+| Q11 | description, goal | Once the host has chosen the prompt by its description, does the AI do the task the description says, all of it and nothing more, so that the caller gets what the description promised? |
+| Q12 | the whole | When the prompt is run several times on each kind of request it is made for, does the AI reach the result the prompt names on every run, so that the user can count on it? |
+| Q13 | the whole | Does every line of the prompt change what the AI does toward the task, so that none draws its attention from the lines that do? |
+| Q14 | steps | For each rule of the steps that must hold on every run, does a hook hold it, and does a test try the hook both where the AI keeps the rule and where it breaks it, so that a rule that must hold does not rest on the AI's attention? |
+| Q15 | trials | When a trial fails, can the maintainer tell from its record that the prompt went wrong and not the trial: its set-up, a stand-in, a judge or a check, so that they mend the prompt only for a cause the record shows? |
+| Q16 | output | When the AI puts a decision, a proposal or a report to the person, can the person approve or decide from its first lines alone, and reach the details only where they ask, so that the person spends their attention only on what is theirs? |
+| Q17 | output | When the caller acts on what the AI reports it did or found, does each claim hold as far as the report says it was checked, so that the caller acts only on what holds? |
 
 ## Practices
 
-### Q1: When the AI believes it has finished, can it tell from the prompt whether it has reached what the task is for, so that it stops at that purpose and not at the last step?
+### Q1
 
-**Thinking**: The AI stops when its work looks done. So the prompt says what the result is for, and gives a check that tells done from looking done.
+When the AI believes it has finished, can it tell from the prompt whether it has reached what the task is for, so that it stops at that purpose and not at the last step?
+
+**Thinking**
+
+The AI stops when its work looks done. So the prompt says what the result is for, and gives a check that tells done from looking done.
 
 **Steps**
 
 1. For each thing that holds once the task is met, give the check that shows it: a command to run where one exists, or else what to look up and where.
 2. Write when the AI stops: once every check passes, or at a blocker it cannot pass. At a blocker, the AI hands it back with what it found.
 
-### Q2: When the AI meets a choice that is the user's, such as one between options that serve equally or an action hard to undo, does it hand the choice to the user rather than make it, so that the user's purpose and intent stay the user's?
+### Q2
 
-**Thinking**: A choice is the user's where the AI has no ground to pick one option over another, or where the choice is hard to undo. The prompt names those choices and how the AI asks about them. It leaves every other choice to the AI.
+When the AI meets a choice that is the user's, such as one between options that serve equally or an action hard to undo, does it hand the choice to the user rather than make it, so that the user's purpose and intent stay the user's?
+
+**Thinking**
+
+A choice is the user's where the AI has no ground to pick one option over another, or where the choice is hard to undo. The prompt names those choices and how the AI asks about them. It leaves every other choice to the AI.
 
 **Steps**
 
 1. Among the choices the task meets, mark each action that is hard to undo, touches what others share, or destroys something.
 
-### Q3: Given the prompt and only what its run gives it, can the AI do each step without guessing a fact, such as where its inputs are or a rule of the place it works in, so that its result rests on facts, not on guesses?
+### Q3
 
-**Thinking**: The AI is able but new to this place. It sees nothing of the conversation that started it. So the prompt gives what the AI cannot find or know, and says where the rest lies.
+Given the prompt and only what its run gives it, can the AI do each step without guessing a fact, such as where its inputs are or a rule of the place it works in, so that its result rests on facts, not on guesses?
+
+**Thinking**
+
+The AI is able but new to this place. It sees nothing of the conversation that started it. So the prompt gives what the AI cannot find or know, and says where the rest lies.
 
 **Steps**
 
 1. For each step, list the facts it needs: its inputs and where they lie, the terms it uses, the rules of the place, and what the writer knows without saying.
 2. Give the prompt to a fresh AI with only what a run gives it, see where it guesses, and add the fact it lacked.
 
-### Q4: Taking the steps in order, does the AI arrive at what the goal says the task is for, with no step that leads it elsewhere, so that following the prompt is the way to its purpose?
+### Q4
 
-**Thinking**: The prompt says first what the task is for, for whom and why. Each step then follows as a result on the way there, with what that result is for. The AI chooses how to reach each result and knows when to go on. Where a step does not fit the case, the AI follows what the step is for. Steps given without their intent are followed off the mark.
+Taking the steps in order, does the AI arrive at what the goal says the task is for, with no step that leads it elsewhere, so that following the prompt is the way to its purpose?
+
+**Thinking**
+
+The prompt says first what the task is for, for whom and why. Each step then follows as a result on the way there, with what that result is for. The AI chooses how to reach each result and knows when to go on. Where a step does not fit the case, the AI follows what the step is for. Steps given without their intent are followed off the mark.
 
 **Steps**
 
@@ -77,9 +95,13 @@ When an AI agent gets the prompt for a request that the prompt is made for, it d
 3. Check that a later step or the goal uses each step's result, and cut a step whose result nothing uses.
 4. Check that the last step leaves what the goal says the task is for.
 
-### Q5: When the AI meets a case a step's rule does not name, can it decide the case as the writer would, from the reason the rule gives, so that the rules hold where their words do not reach?
+### Q5
 
-**Thinking**: A rule that says what it is for lets the AI apply it where the writer meant it. It also lets the AI judge a case that no rule names. So each rule carries its reason.
+When the AI meets a case a step's rule does not name, can it decide the case as the writer would, from the reason the rule gives, so that the rules hold where their words do not reach?
+
+**Thinking**
+
+A rule that says what it is for lets the AI apply it where the writer meant it. It also lets the AI judge a case that no rule names. So each rule carries its reason.
 
 **Steps**
 
@@ -88,17 +110,25 @@ When an AI agent gets the prompt for a request that the prompt is made for, it d
 3. In place of a list of edge cases, give the way of judging and a few typical examples that differ from one another.
 4. Think of a case the rule does not name, read only the rule and its reason, and check that they lead where the writer would go. Where they do not, mend the reason.
 
-### Q6: When the AI is run twice on the same input, does each step whose result must not vary, such as a check or a file's form, give the same result both times, so that what must hold does not hang on chance?
+### Q6
 
-**Thinking**: The AI's judgment varies from run to run. That suits a step that has many good ways. So a program does a step that has one right result. The program gives that result on every run and handles its own errors. The AI runs the program.
+When the AI is run twice on the same input, does each step whose result must not vary, such as a check or a file's form, give the same result both times, so that what must hold does not hang on chance?
+
+**Thinking**
+
+The AI's judgment varies from run to run. That suits a step that has many good ways. So a program does a step that has one right result. The program gives that result on every run and handles its own errors. The AI runs the program.
 
 **Steps**
 
 1. Run the prompt twice on one input, and compare what those steps gave.
 
-### Q7: Can the AI take every action its steps call for with the tools it is allowed, so that the run never stalls on a missing tool?
+### Q7
 
-**Thinking**: Each action that a step calls for needs a tool that the AI is allowed. Without that tool, the AI cannot take the step, however well the writer writes it.
+Can the AI take every action its steps call for with the tools it is allowed, so that the run never stalls on a missing tool?
+
+**Thinking**
+
+Each action that a step calls for needs a tool that the AI is allowed. Without that tool, the AI cannot take the step, however well the writer writes it.
 
 **Steps**
 
@@ -106,9 +136,13 @@ When an AI agent gets the prompt for a request that the prompt is made for, it d
 2. Check each tool against those the prompt allows. Where the prompt does not allow a tool, add the tool or change the step.
 3. Run the prompt, and read the record of the run for a tool call the host refused.
 
-### Q8: When the AI, during a run, reaches for an action that lies outside its task, does the host refuse it, so that a slip of the AI cannot harm what lies outside the task?
+### Q8
 
-**Thinking**: A rule in words holds only while the AI follows it. So the writer makes the host refuse each action that must never happen.
+When the AI, during a run, reaches for an action that lies outside its task, does the host refuse it, so that a slip of the AI cannot harm what lies outside the task?
+
+**Thinking**
+
+A rule in words holds only while the AI follows it. So the writer makes the host refuse each action that must never happen.
 
 **Steps**
 
@@ -117,9 +151,13 @@ When an AI agent gets the prompt for a request that the prompt is made for, it d
 3. Where a tool it needs also allows an action it must never take, add a rule the host enforces, such as a deny rule or a hook.
 4. Run the prompt on a request that tempts such an action, and check in the record that the host refused it.
 
-### Q9: When the caller, the person or the AI that started the prompt, takes what the AI hands back, can it act on it without asking the AI anything further, so that the work goes on without a round trip?
+### Q9
 
-**Thinking**: The caller sees only what comes back. So the prompt says what that is, in what form, and to whom. A step makes each thing in it.
+When the caller, the person or the AI that started the prompt, takes what the AI hands back, can it act on it without asking the AI anything further, so that the work goes on without a round trip?
+
+**Thinking**
+
+The caller sees only what comes back. So the prompt says what that is, in what form, and to whom. A step makes each thing in it.
 
 **Steps**
 
@@ -129,9 +167,13 @@ When an AI agent gets the prompt for a request that the prompt is made for, it d
 4. Check that a step makes each thing the output names.
 5. Hand the output alone to someone in the caller's place, and see whether they can act without asking.
 
-### Q10: When a request the prompt is made for comes, and a request near it that it is not made for, does the host, such as Claude Code, choose the prompt for the first and pass it over for the second, from the name and the description alone, so that the prompt runs where it is meant and nowhere else?
+### Q10
 
-**Thinking**: To pick a prompt for a request, the host reads only the name and the description of each of many prompts. So the name and the description say what the prompt does and when to use it, in the words users ask in. They also tell the prompt apart from the others.
+When a request the prompt is made for comes, and a request near it that it is not made for, does the host, such as Claude Code, choose the prompt for the first and pass it over for the second, from the name and the description alone, so that the prompt runs where it is meant and nowhere else?
+
+**Thinking**
+
+To pick a prompt for a request, the host reads only the name and the description of each of many prompts. So the name and the description say what the prompt does and when to use it, in the words users ask in. They also tell the prompt apart from the others.
 
 **Steps**
 
@@ -139,17 +181,25 @@ When an AI agent gets the prompt for a request that the prompt is made for, it d
 2. Write the description: what the prompt does, then the requests and situations it is used for, the main use first.
 3. Give each request written down to a fresh session with the prompt installed, and see which prompt the host chooses. Where it chooses wrongly, mend the description.
 
-### Q11: Once the host has chosen the prompt by its description, does the AI do the task the description says, all of it and nothing more, so that the caller gets what the description promised?
+### Q11
 
-**Thinking**: The description and the body say the same one task. The AI then does the task that the host chose the prompt for.
+Once the host has chosen the prompt by its description, does the AI do the task the description says, all of it and nothing more, so that the caller gets what the description promised?
+
+**Thinking**
+
+The description and the body say the same one task. The AI then does the task that the host chose the prompt for.
 
 **Steps**
 
 1. Set what the description says the prompt does against what the goal and the steps have the AI do. For each thing in one and not the other, add it to the body or take it out of the description.
 
-### Q12: When the prompt is run several times on each kind of request it is made for, does the AI reach the result the prompt names on every run, so that the user can count on it?
+### Q12
 
-**Thinking**: The writer knows a prompt by what a fresh AI does with it. So the writer runs it on real requests of each kind, several times, and judges it from the record of what the AI did.
+When the prompt is run several times on each kind of request it is made for, does the AI reach the result the prompt names on every run, so that the user can count on it?
+
+**Thinking**
+
+The writer knows a prompt by what a fresh AI does with it. So the writer runs it on real requests of each kind, several times, and judges it from the record of what the AI did.
 
 **Steps**
 
@@ -158,18 +208,26 @@ When an AI agent gets the prompt for a request that the prompt is made for, it d
 3. Mend the prompt only for a cause seen in a record.
 4. Run the requests held back last. They show whether the prompt holds beyond the requests that the writer mended it on.
 
-### Q13: Does every line of the prompt change what the AI does toward the task, so that none draws its attention from the lines that do?
+### Q13
 
-**Thinking**: Every line takes some of the AI's attention. So the prompt keeps only the lines that change what the AI does. It keeps detail that the AI needs only sometimes in a place that the AI reads only then.
+Does every line of the prompt change what the AI does toward the task, so that none draws its attention from the lines that do?
+
+**Thinking**
+
+Every line takes some of the AI's attention. So the prompt keeps only the lines that change what the AI does. It keeps detail that the AI needs only sometimes in a place that the AI reads only then.
 
 **Steps**
 
 1. Move detail that only some runs need out of the prompt, to a place the AI reads only when it needs the detail, such as a file the prompt links directly. Say in the prompt when to read it.
 2. Run Q12's trials again after cutting, and put back what a run then lacked.
 
-### Q14: For each rule of the steps that must hold on every run, does a hook hold it, and does a test try the hook both where the AI keeps the rule and where it breaks it, so that a rule that must hold does not rest on the AI's attention?
+### Q14
 
-**Thinking**: The AI keeps a rule on most runs, not on every run. A hook runs on every call, so it holds a rule that must hold, such as a file the AI must not write. A test that puts code in the AI's place tries the hook in seconds, without the model. So no trial runs the prompt alone. What the prompt's words leave is the AI's variance and the faults of the design, and only the trials in real use bring those out.
+For each rule of the steps that must hold on every run, does a hook hold it, and does a test try the hook both where the AI keeps the rule and where it breaks it, so that a rule that must hold does not rest on the AI's attention?
+
+**Thinking**
+
+The AI keeps a rule on most runs, not on every run. A hook runs on every call, so it holds a rule that must hold, such as a file the AI must not write. A test that puts code in the AI's place tries the hook in seconds, without the model. So no trial runs the prompt alone. What the prompt's words leave is the AI's variance and the faults of the design, and only the trials in real use bring those out.
 
 **Steps**
 
@@ -177,9 +235,13 @@ When an AI agent gets the prompt for a request that the prompt is made for, it d
 2. Hold each such rule with a hook or a deny rule, not with the prompt's words alone.
 3. Test the hook on each case, one case at a time.
 
-### Q15: When a trial fails, can the maintainer tell from its record that the prompt went wrong and not the trial: its set-up, a stand-in, a judge or a check, so that they mend the prompt only for a cause the record shows?
+### Q15
 
-**Thinking**: A trial's own parts are the set-up, the stand-ins, the judges and the checks. These parts are code and prompts of their own. So the maintainer builds each part test first. Before a whole run trusts a part, the maintainer sees the part work right on a record kept from an earlier run. A whole run then only confirms, and a failure in it points to the prompt.
+When a trial fails, can the maintainer tell from its record that the prompt went wrong and not the trial: its set-up, a stand-in, a judge or a check, so that they mend the prompt only for a cause the record shows?
+
+**Thinking**
+
+A trial's own parts are the set-up, the stand-ins, the judges and the checks. These parts are code and prompts of their own. So the maintainer builds each part test first. Before a whole run trusts a part, the maintainer sees the part work right on a record kept from an earlier run. A whole run then only confirms, and a failure in it points to the prompt.
 
 **Steps**
 
@@ -189,9 +251,13 @@ When an AI agent gets the prompt for a request that the prompt is made for, it d
 4. Build each part alone and run it small on a kept record before any whole run.
 5. Between two runs, change one thing, the prompt or a part of the trial, never both. Where a trial fails, look in its record first at the trial's own parts. Mend the prompt only for a cause in the prompt.
 
-### Q16: When the AI puts a decision, a proposal or a report to the person, can the person approve or decide from its first lines alone, and reach the details only where they ask, so that the person spends their attention only on what is theirs?
+### Q16
 
-**Thinking**: The person approves from the conclusion and its grounds. They read further only where these leave them unsure. So a message opens with what it asks or reports and why, in plain sentences. It keeps the rest until the person asks for it.
+When the AI puts a decision, a proposal or a report to the person, can the person approve or decide from its first lines alone, and reach the details only where they ask, so that the person spends their attention only on what is theirs?
+
+**Thinking**
+
+The person approves from the conclusion and its grounds. They read further only where these leave them unsure. So a message opens with what it asks or reports and why, in plain sentences. It keeps the rest until the person asks for it.
 
 **Steps**
 
@@ -200,9 +266,13 @@ When an AI agent gets the prompt for a request that the prompt is made for, it d
 3. Where the person asks for more, add what it is now, with the place it rests on, and the gap between that and what it should be.
 4. Use the words the person uses, and say a term of your own in everyday words or leave it out.
 
-### Q17: When the caller acts on what the AI reports it did or found, does each claim hold as far as the report says it was checked, so that the caller acts only on what holds?
+### Q17
 
-**Thinking**: The caller cannot tell a claim the AI checked from one it guessed. So each claim rests on a check that the AI ran on the real thing, on every item the claim names. The report says what the AI left unchecked.
+When the caller acts on what the AI reports it did or found, does each claim hold as far as the report says it was checked, so that the caller acts only on what holds?
+
+**Thinking**
+
+The caller cannot tell a claim the AI checked from one it guessed. So each claim rests on a check that the AI ran on the real thing, on every item the claim names. The report says what the AI left unchecked.
 
 **Steps**
 

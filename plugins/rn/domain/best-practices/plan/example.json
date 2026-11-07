@@ -1,0 +1,858 @@
+{
+  "goal": {
+    "decided": "The user has each deliverable they mean made by rn, every deliverable meeting each intent of its best practice, and is asked only what is theirs.",
+    "by": "user"
+  },
+  "deliverables": [
+    {
+      "name": "Every prose ccpm keeps is checked by lovaizu/checks",
+      "path": "lefthook.yml",
+      "kind": "code",
+      "status": "done"
+    },
+    {
+      "name": "rn can plan from a best practice for planning",
+      "path": "plugins/rn/domain/best-practices/plan",
+      "kind": "meta",
+      "inputs": [],
+      "preconditions": [],
+      "status": "open",
+      "intents": [
+        {
+          "id": "Q1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Goal",
+              "decided": "the deliverables reach the goal: none missing, none started before what it needs, the plan revised after each turn",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "Q2",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Template",
+              "decided": "the design tree, .rn/<yyyymmdd>-<goal>/design-tree.json: the goal, the deliverables in the order of the work, each with its intents in its best practice's order, each intent with its decisions",
+              "by": "user"
+            },
+            {
+              "about": "A decision",
+              "decided": "about, decided (null while open) and by: user, maker, reasoning or research; no grounds, as the reason of a decision goes in the commit message that makes it",
+              "by": "user"
+            },
+            {
+              "about": "What leaves the tree",
+              "decided": "a deliverable done keeps one line, its path, kind and status; a research deliverable goes once its decisions hold what it found; how a point was reached stays in git",
+              "by": "user"
+            },
+            {
+              "about": "Its form",
+              "decided": "JSON with a JSON Schema, the values of each field and its meaning in the schema",
+              "by": "user"
+            },
+            {
+              "about": "Whether the design tree and the plan are one kind of best practice",
+              "decided": "one kind, plan, whose deliverable is the design tree; the plan best practice says the tree's goal, deliverables, order and form, and each deliverable's decisions answer the intents of that deliverable's own best practice",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "Q3",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The tree's sections",
+              "decided": "the goal, and for each deliverable its name, path, kind, inputs, preconditions, status and intents, each intent with whether it is met and its decisions; nothing else",
+              "by": "reasoning"
+            },
+            {
+              "about": "Inputs and preconditions",
+              "decided": "each best practice names in inputs the kinds a deliverable of it is made from, and in preconditions the kinds that must pass before it is made; each deliverable names in its own the paths of those deliverables, as one kind's deliverables serve different products; the script orders the tree by the deliverables' paths and checks them against the kinds; meta's template gains both",
+              "by": "reasoning"
+            },
+            {
+              "about": "Each kind's inputs and preconditions now",
+              "decided": "readme from product-vision; architecture from product-vision and readme; code and prompt from architecture; product-vision, meta, plan, refactor-doc and refactor-code from none; no preconditions until the tests best practice gives them",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "Q4",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The plan's questions, in the order the maker thinks them",
+              "decided": "goal; the deliverables back from the goal; each kind's best practice, or a meta deliverable first; the name; the order from inputs and preconditions; each intent with its decisions and what is open; who settled each decision; where the work stands on picking it up; the nodes a change touches; only what holds now; the whole",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "Q5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Order",
+              "decided": "made by a script from each best practice's inputs and preconditions, never thought out case by case",
+              "by": "user"
+            },
+            {
+              "about": "Deliverables put in as they are found",
+              "decided": "a research deliverable before the decisions it serves, and a meta deliverable where a kind has no best practice, each at the top level in the order of the work",
+              "by": "user"
+            },
+            {
+              "about": "The rules tree.py checks after each change",
+              "decided": "every deliverable needed is in the tree; each comes after its inputs and preconditions; each research deliverable serves a later decision; each meta deliverable's kind is used later",
+              "by": "user"
+            },
+            {
+              "about": "A change to a node",
+              "decided": "tree.py lists the nodes to look at: up to the goal, then the later decisions of the deliverable, then the deliverables before and after it that it takes from or gives to; Lane's every_item has each answered as holding or as changed; each change starts the list again",
+              "by": "user"
+            },
+            {
+              "about": "Test levels",
+              "decided": "unit, then architecture, then the product vision, each after the one below passes",
+              "by": "research"
+            },
+            {
+              "about": "A check before its results are trusted",
+              "decided": "a test seen to fail first; a judge right on examples whose answer is known",
+              "by": "research"
+            },
+            {
+              "about": "The intent of a deliverable's name",
+              "decided": "Reading a deliverable's name in the plan, does the user see what it brings toward the goal, so that they know where the work stands and what comes next without opening it?",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "Q6",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The skeleton and the decisions",
+              "decided": "which deliverables and in what order up front, backward from the goal; each decision once its inputs are there, and the plan revised forward from each turn's result",
+              "by": "research"
+            },
+            {
+              "about": "The practice of a deliverable's name",
+              "decided": "Write the one thing that holds toward the goal once the deliverable is made; leave out its path and kind, which have fields of their own",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "Q7",
+          "good": false,
+          "decisions": [
+            {
+              "about": "One practice for each question",
+              "decided": "in the questions' order, each giving its own question's way",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "Q8",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Example",
+              "decided": "a copy of .rn/20261107-rn/design-tree.json by plan.py example, its source named in source",
+              "by": "reasoning"
+            },
+            {
+              "about": "Template",
+              "decided": "the JSON Schema of the design tree, its descriptions the notes, as a second note beside the schema drifts from it; meta's Q2 gains this case",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "Q9",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The whole tried",
+              "decided": "the rest of this rebuild is planned and resumed by the plan best practice, and each place it falls short is mended where it lies",
+              "by": "reasoning"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "The shared plugin best practice says what rn and Lane share",
+      "path": "dev/plugin-best-practice.md",
+      "kind": "meta",
+      "inputs": [],
+      "preconditions": [],
+      "status": "open",
+      "intents": [
+        {
+          "id": "Q1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q2",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Entries and the domain",
+              "decided": "skills, agents, hooks and scripts follow Claude Code's form; domain/ holds the knowledge of the work, with no roles/ and domain/ split inside, in place of core/",
+              "by": "user"
+            },
+            {
+              "about": "A role's part",
+              "decided": "only what the role is expected to do and which parts of the best practice it uses; the steps of the work are the practices",
+              "by": "user"
+            },
+            {
+              "about": "A file's form",
+              "decided": "JSON with a schema, a tree nested in it; the Markdown tree rule goes, as Lane checks the nodes around a change",
+              "by": "user"
+            },
+            {
+              "about": "JSON or JSON Lines",
+              "decided": "JSON for a document that is rewritten, such as the design tree or a round's answers; JSON Lines for a record that is only appended to, such as Lane's calls",
+              "by": "reasoning"
+            },
+            {
+              "about": "Where shared practices stand",
+              "decided": "the test levels and checking a check once, in the architecture best practice; this document keeps only what is a plugin's own",
+              "by": "user"
+            },
+            {
+              "about": "The name of the third test level",
+              "decided": "product vision, the plugin in real use, as each level is named by what its tests check against and these check the product vision",
+              "by": "reasoning"
+            },
+            {
+              "about": "The contradictions the survey of 2026-11-07 found",
+              "decided": "each made to say what Lane, Pin and Turn do: the router, the orchestrator deciding, a role reading its part, ${CLAUDE_PLUGIN_ROOT} in a part, the answers' form, the hooks' layout, a plugin that uses another",
+              "by": "reasoning"
+            },
+            {
+              "about": "Nobody relays, rewritten in 8602092c",
+              "decided": "nobody relays: the main conversation starts each role, so the role's points reach it and it puts them to the person as given, and takes the answer back word for word; no agent stands between, as a subagent's last message reaches only its starter and only the main conversation asks the person",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "Q3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q7",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Each practice step",
+              "decided": "names a trace that a machine can check, such as a command run, a file read or a test made",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "Q8",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q9",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "Lane's design checks each practice step and each change",
+      "path": "dev/lane/architecture.md",
+      "kind": "architecture",
+      "inputs": ["dev/lane/product-vision.md", "plugins/lane/README.md"],
+      "preconditions": [],
+      "status": "open",
+      "intents": [
+        {
+          "id": "Q1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "What Lane checks of a practice",
+              "decided": "that each step of every intent was done, from its trace and in its order, not its content",
+              "by": "user"
+            },
+            {
+              "about": "The items every_item reads",
+              "decided": "a deliverable's intents and a change's nodes to look at, given by rn's tree.py through an adapter",
+              "by": "reasoning"
+            },
+            {
+              "about": "Lane's own folders",
+              "decided": "hooks/lane/domain/ in place of hooks/lane/core/domain/",
+              "by": "user"
+            },
+            {
+              "about": "What the main conversation adds to a message",
+              "decided": "Lane checks each start and resume of a role from the main conversation: the message holds the part tree.py gave and the person's answers word for word, and nothing else",
+              "by": "reasoning"
+            },
+            {
+              "about": "The commits kept on the branch lane-held",
+              "decided": "lane-held keeps 281dae86, 1e690d7d, 6c8bfa5e and f16c1cda; when Lane's code is made, each is taken where Lane's design keeps what it fixes, and the branch goes",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "Q2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q8",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q9",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q10",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q11",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q12",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q13",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q14",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q15",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q16",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "Lane's code does what its design says",
+      "path": "plugins/lane",
+      "kind": "code",
+      "inputs": ["dev/lane/architecture.md"],
+      "preconditions": [],
+      "status": "open",
+      "intents": [
+        {
+          "id": "Q1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q8",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q9",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "rn can make tests from a best practice for tests",
+      "path": "plugins/rn/domain/best-practices/tests",
+      "kind": "meta",
+      "inputs": [],
+      "preconditions": [],
+      "status": "open",
+      "intents": [
+        {
+          "id": "Q1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q8",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q9",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "rn's product vision says what rn and Lane are for",
+      "path": "dev/rn/product-vision.md",
+      "kind": "product-vision",
+      "inputs": [],
+      "preconditions": [],
+      "status": "open",
+      "intents": [
+        {
+          "id": "Q1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The plugins",
+              "decided": "rn and Lane; Turn is a part of rn; Pin is no plugin of its own; Lane stays apart, as other plugins use it",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "Q2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Where the design is settled",
+              "decided": "in the main conversation, one point at a time, talked through with the user",
+              "by": "user"
+            },
+            {
+              "about": "A point a turn finds open",
+              "decided": "goes back to the main conversation, is settled there, and the turn starts again",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "Q6",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "A newcomer learns from the README what rn does",
+      "path": "plugins/rn/README.md",
+      "kind": "readme",
+      "inputs": ["dev/rn/product-vision.md"],
+      "preconditions": [],
+      "status": "open",
+      "intents": [
+        {
+          "id": "Q1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q8",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q9",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q10",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q11",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "rn's design says how a turn carries out a best practice",
+      "path": "dev/rn/architecture.md",
+      "kind": "architecture",
+      "inputs": ["dev/rn/product-vision.md", "plugins/rn/README.md"],
+      "preconditions": [],
+      "status": "open",
+      "intents": [
+        {
+          "id": "Q1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "A turn",
+              "decided": "the generator makes the deliverable by the best practice's practices until the evaluator judges every intent good; the evaluator is given the intents and the deliverable, never the design",
+              "by": "user"
+            },
+            {
+              "about": "How a deliverable reads",
+              "decided": "a turn of its own by refactor-doc, after the turn of what it says",
+              "by": "reasoning"
+            },
+            {
+              "about": "What each role is given",
+              "decided": "tree.py cuts out each role's part and gives it as the role starts; no role reads the tree",
+              "by": "user"
+            },
+            {
+              "about": "The answers' form",
+              "decided": "met with its lines, or not met with what the user lacks; Lane's result words follow from it",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "Q2",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The plugin's files",
+              "decided": "skills/, agents/generator.md and evaluator.md, hooks/ with lanes.json and the link to Lane, scripts/tree.py and throwaway.py, domain/ with the role parts, best-practices/, forms/ and tree.py",
+              "by": "user"
+            },
+            {
+              "about": "What goes",
+              "decided": "rounds.py, run.json and round.json, as Lane's every_item and the tree hold what they held",
+              "by": "reasoning"
+            },
+            {
+              "about": "A run's files",
+              "decided": ".rn/<yyyymmdd>-<goal>/ holds design-tree.json, best-practices/<kind>/ made by meta, and turns/<nn>-<deliverable>/<round>/ with generator.json, evaluator-<group>.json and throwaway.txt side by side; no progress file",
+              "by": "user"
+            },
+            {
+              "about": "Where a deliverable lies",
+              "decided": "where it belongs in the repository; .rn/ holds only what makes it",
+              "by": "reasoning"
+            },
+            {
+              "about": "How a deliverable is tried",
+              "decided": "the commands to try it, its install steps among them, are decisions of its design",
+              "by": "reasoning"
+            },
+            {
+              "about": "The command name",
+              "decided": null
+            },
+            {
+              "about": "Windows",
+              "decided": null
+            }
+          ]
+        },
+        {
+          "id": "Q3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q8",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q9",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q10",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q11",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q12",
+          "good": false,
+          "decisions": [
+            {
+              "about": "claude plugin eval for the product vision tests",
+              "decided": null
+            }
+          ]
+        },
+        {
+          "id": "Q13",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q14",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q15",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q16",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "rn works as designed, with Pin and Turn removed",
+      "path": "plugins/rn",
+      "kind": "code",
+      "inputs": ["dev/rn/architecture.md"],
+      "preconditions": [],
+      "status": "open",
+      "intents": [
+        {
+          "id": "Q1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Pin and Turn",
+              "decided": "plugins/pin and plugins/turn are removed once rn holds their parts; the branch turn-main stays unmerged until then",
+              "by": "reasoning"
+            },
+            {
+              "about": "The plugin's icon",
+              "decided": null
+            }
+          ]
+        },
+        {
+          "id": "Q2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q8",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q9",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    }
+  ]
+}

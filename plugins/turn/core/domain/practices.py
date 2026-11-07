@@ -1,9 +1,10 @@
 """A kind's best practice, a JSON that Turn's roles read: the faults its form shows, checked before
-anything reads it; the Markdown a person reads of it, written beside it, the JSON staying the one
-source so the two cannot say different things; the Standard the evaluator is given, the best
-practice without its ways of meeting the questions; the groups of its questions, each answered
-by a run of the evaluator of its own; and the files of an example that is a copy of a work kept
-where its developer reads it, made from that work so the two cannot say different things."""
+anything reads it, with the point its example in JSON is out of a template that is a JSON Schema;
+the Markdown a person reads of it, written beside it, the JSON staying the one source so the two
+cannot say different things; the Standard the evaluator is given, the best practice without its
+ways of meeting the questions; the groups of its questions, each answered by a run of the
+evaluator of its own; and the files of an example that is a copy of a work kept where its developer
+reads it, made from that work so the two cannot say different things."""
 
 from __future__ import annotations
 
@@ -11,6 +12,9 @@ import json
 import os
 import re
 from typing import Any
+
+import files
+import schema
 
 # What the about of a question may name beside the parts or sections: the whole deliverable.
 WHOLE = "the whole"
@@ -21,6 +25,8 @@ SECTION = re.compile(r"^## (.+)$", re.MULTILINE)
 # the quote lines under it; in JSON, a key named by the marker. A note of the work's own, or the
 # marker named in a sentence, opens otherwise, so they are told apart.
 MARKER = "DELETE_TEMPLATE_COMMENT"
+# The key by which a template in JSON is a JSON Schema of the deliverable.
+SCHEMA = "$schema"
 NOTE = re.compile(r"^> \[!NOTE\]\n> " + MARKER + r":.*(?:\n>.*)*", re.MULTILINE)
 MARK = re.compile(r"^(?:> " + MARKER + r":|\s*\"" + MARKER + r"\"\s*:)", re.MULTILINE)
 QUESTION = re.compile(r"\bQ\d+\b")
@@ -66,9 +72,13 @@ def notes_left(text: str) -> list[int]:
 
 
 def keys(template: str) -> list[str]:
-    """The sections of a template in JSON a question may be about: its keys, in order, but the
-    notes, MARKER."""
-    return [key for key in json.loads(template) if key != MARKER]
+    """The sections of a template in JSON a question may be about: the fields at its top where it
+    is a JSON Schema, whose descriptions are its notes, else its keys, in order, but the notes,
+    MARKER."""
+    read = json.loads(template)
+    if SCHEMA in read:
+        return list(read["properties"])
+    return [key for key in read if key != MARKER]
 
 
 def beside(path: str, name: str) -> str:
@@ -115,6 +125,25 @@ def missing(path: str, data: dict[str, Any]) -> list[str]:
             if not os.path.isfile(practice_of(path, kind))
         ]
     return found
+
+
+def unheld(path: str, data: dict[str, Any]) -> list[str]:
+    """The point the example of the best practice at the path is out of its template by, in words,
+    where both are JSON and the template is a JSON Schema; or why it cannot be held to it."""
+    if not all(data.get(key, "").endswith(".json") for key in ("template", "example")):
+        return []
+    try:
+        form = files.read(beside(path, data["template"]))
+        if SCHEMA not in form:
+            return []
+        schema.checked(form)
+        value = files.read(beside(path, data["example"]))
+    except schema.Unread as why:
+        return [f"its template {data['template']} is no schema it reads whole: {why}"]
+    except files.Unreadable as why:
+        return [str(why)]
+    out = schema.held(form, value)
+    return [f"its example {data['example']} is out of its template: {out.told()}"] if out else []
 
 
 def copies(path: str, data: dict[str, Any]) -> dict[str, bytes]:
@@ -260,7 +289,7 @@ def markdown(kind: str, data: dict[str, Any]) -> str:
     else its parts, and its intents, then the
     practice for each intent, under the question it meets."""
     questions = {q["id"]: q for q in data["intents"]}
-    out = [f"# {kind}", "", "## Goal", "", data["goal"]]
+    out = [f"# `{kind}`", "", "## Goal", "", data["goal"]]
     for key in ("template", "example"):
         if key in data:
             out += ["", f"## {key.capitalize()}", "", f"[{data[key]}]({data[key]})"]
@@ -273,13 +302,15 @@ def markdown(kind: str, data: dict[str, Any]) -> str:
             out += [f"- [{kind}](../{kind}/best-practice.md)" for kind in data[key]]
     if data.get("parts"):
         out += ["", "## Parts", "", *parts(data["parts"])]
-    out += ["", "## Intents", ""]
-    out += [f"- **{q['id']}** ({q['about']}): {q['what']}" for q in data["intents"]]
+    # A table and headings of their own, as the prose check reads a capital after a colon as a
+    # fault.
+    out += ["", "## Intents", "", "| ID | About | Question |", "| --- | --- | --- |"]
+    out += [f"| {q['id']} | {q['about']} | {q['what']} |" for q in data["intents"]]
     out += ["", "## Practices"]
     for practice in data["practices"]:
         question = questions[practice["intent"]]
-        out += ["", f"### {question['id']}: {question['what']}", ""]
-        out.append(f"**Thinking**: {practice['thinking']}")
+        out += ["", f"### {question['id']}", "", question["what"], ""]
+        out += ["**Thinking**", "", practice["thinking"]]
         if practice["steps"]:
             out += ["", "**Steps**", "", *(f"{n}. {s}" for n, s in enumerate(practice["steps"], 1))]
     return "\n".join(out) + "\n"

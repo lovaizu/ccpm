@@ -1,4 +1,4 @@
-# refactor-code
+# `refactor-code`
 
 ## Goal
 
@@ -6,20 +6,26 @@ The maintainer is a person or an AI who comes to change the code at any time aft
 
 ## Intents
 
-- **Q1** (the whole): After the code's structure changes, does each caller get every behavior it got before, whether the caller is a person, a script or other code, so that a change of structure is safe for every caller?
-- **Q2** (the whole): Whatever line the maintainer reads, code or comment, would they lose something they need if it were gone, so that every line they read earns its place?
-- **Q3** (the whole): When the maintainer reads any name in the code, can they say what it holds or does without going to where it is defined, so that they read the code without hunting for definitions?
-- **Q4** (the whole): Each time the maintainer meets a name, can they tell rightly whether it names a thing they have already met, and which one, so that they never take two things for one or one thing for two?
-- **Q5** (the whole): With one rule or one design decision to change, can the maintainer find the one place that holds it and make the whole change there, so that a change is made once and whole?
-- **Q6** (the whole): When the maintainer reads any function once from the top, with nothing from outside it but the names it uses, can they say in one sentence what it does, so that they grasp it at one reading?
-- **Q7** (the whole): When the maintainer moves from one module to another, do they find each kind of thing done the same way, so that each difference they meet is one the code needs?
-- **Q8** (the whole): Where code looks wrong or roundabout, can the maintainer learn right there why it is so, before they change it, so that they do not undo what it is there for?
+| ID | About | Question |
+| --- | --- | --- |
+| Q1 | the whole | After the code's structure changes, does each caller get every behavior it got before, whether the caller is a person, a script or other code, so that a change of structure is safe for every caller? |
+| Q2 | the whole | Whatever line the maintainer reads, code or comment, would they lose something they need if it were gone, so that every line they read earns its place? |
+| Q3 | the whole | When the maintainer reads any name in the code, can they say what it holds or does without going to where it is defined, so that they read the code without hunting for definitions? |
+| Q4 | the whole | Each time the maintainer meets a name, can they tell rightly whether it names a thing they have already met, and which one, so that they never take two things for one or one thing for two? |
+| Q5 | the whole | With one rule or one design decision to change, can the maintainer find the one place that holds it and make the whole change there, so that a change is made once and whole? |
+| Q6 | the whole | When the maintainer reads any function once from the top, with nothing from outside it but the names it uses, can they say in one sentence what it does, so that they grasp it at one reading? |
+| Q7 | the whole | When the maintainer moves from one module to another, do they find each kind of thing done the same way, so that each difference they meet is one the code needs? |
+| Q8 | the whole | Where code looks wrong or roundabout, can the maintainer learn right there why it is so, before they change it, so that they do not undo what it is there for? |
 
 ## Practices
 
-### Q1: After the code's structure changes, does each caller get every behavior it got before, whether the caller is a person, a script or other code, so that a change of structure is safe for every caller?
+### Q1
 
-**Thinking**: The structure changes in small steps, and each step keeps every behavior. The tests from before the change check each step. No step changes a behavior.
+After the code's structure changes, does each caller get every behavior it got before, whether the caller is a person, a script or other code, so that a change of structure is safe for every caller?
+
+**Thinking**
+
+The structure changes in small steps, and each step keeps every behavior. The tests from before the change check each step. No step changes a behavior.
 
 **Steps**
 
@@ -29,35 +35,51 @@ The maintainer is a person or an AI who comes to change the code at any time aft
 4. Leave each test's expected result as it was, and change a test's call only where a name it uses was renamed.
 5. Where a behavior looks wrong, keep the behavior and its test. Return it as a point about what the code does, rather than change it here.
 
-### Q2: Whatever line the maintainer reads, code or comment, would they lose something they need if it were gone, so that every line they read earns its place?
+### Q2
 
-**Thinking**: Each line earns its place by what the maintainer would lose without it. What gives the maintainer nothing comes out, and version control keeps it.
+Whatever line the maintainer reads, code or comment, would they lose something they need if it were gone, so that every line they read earns its place?
+
+**Thinking**
+
+Each line earns its place by what the maintainer would lose without it. What gives the maintainer nothing comes out, and version control keeps it.
 
 **Steps**
 
 1. Fold into its caller each function or layer that only passes a call on. Drop each parameter to which every caller gives the same value, and use that value inside.
 2. Keep a comment that says what the code cannot say plainly, such as what a regular expression matches.
 
-### Q3: When the maintainer reads any name in the code, can they say what it holds or does without going to where it is defined, so that they read the code without hunting for definitions?
+### Q3
 
-**Thinking**: A name says in whole words what it holds or does, so the maintainer reads each line without going to a definition.
+When the maintainer reads any name in the code, can they say what it holds or does without going to where it is defined, so that they read the code without hunting for definitions?
+
+**Thinking**
+
+A name says in whole words what it holds or does, so the maintainer reads each line without going to a definition.
 
 **Steps**
 
 1. For each name, write in a few words what it holds or does, without looking at its definition. Then look at the definition, and flag the name where the two differ.
 2. Make a name say more the farther from its definition it is read.
 
-### Q4: Each time the maintainer meets a name, can they tell rightly whether it names a thing they have already met, and which one, so that they never take two things for one or one thing for two?
+### Q4
 
-**Thinking**: Each thing has one name, the word its users and documents already use for it, and each name names one thing.
+Each time the maintainer meets a name, can they tell rightly whether it names a thing they have already met, and which one, so that they never take two things for one or one thing for two?
+
+**Thinking**
+
+Each thing has one name, the word its users and documents already use for it, and each name names one thing.
 
 **Steps**
 
 1. List the things the code handles, and for each the names the code gives it.
 
-### Q5: With one rule or one design decision to change, can the maintainer find the one place that holds it and make the whole change there, so that a change is made once and whole?
+### Q5
 
-**Thinking**: The code writes each rule or design decision once, in the module whose job it is. The code does not tie together things unrelated in meaning, however alike they look.
+With one rule or one design decision to change, can the maintainer find the one place that holds it and make the whole change there, so that a change is made once and whole?
+
+**Thinking**
+
+The code writes each rule or design decision once, in the module whose job it is. The code does not tie together things unrelated in meaning, however alike they look.
 
 **Steps**
 
@@ -67,9 +89,13 @@ The maintainer is a person or an AI who comes to change the code at any time aft
 4. Where the code truly cannot keep a rule in one place, say at each place where the other places are, such as in a comment beside it.
 5. Pick one rule, imagine that it changed, and count the places that would change. Mend the code until that count is one.
 
-### Q6: When the maintainer reads any function once from the top, with nothing from outside it but the names it uses, can they say in one sentence what it does, so that they grasp it at one reading?
+### Q6
 
-**Thinking**: A function does one thing at one level, and takes what it uses as its inputs. Its reader then holds in mind only what the function says. A long function reads as calls to steps, each named for what it does.
+When the maintainer reads any function once from the top, with nothing from outside it but the names it uses, can they say in one sentence what it does, so that they grasp it at one reading?
+
+**Thinking**
+
+A function does one thing at one level, and takes what it uses as its inputs. Its reader then holds in mind only what the function says. A long function reads as calls to steps, each named for what it does.
 
 **Steps**
 
@@ -78,9 +104,13 @@ The maintainer is a person or an AI who comes to change the code at any time aft
 3. Join back two functions that cannot be understood apart.
 4. Write a clever construct in its plain form.
 
-### Q7: When the maintainer moves from one module to another, do they find each kind of thing done the same way, so that each difference they meet is one the code needs?
+### Q7
 
-**Thinking**: The code does each kind of thing one way throughout. That way is the one the code already has, the nearest code first, unless a better way replaces it everywhere. A difference then means a real difference.
+When the maintainer moves from one module to another, do they find each kind of thing done the same way, so that each difference they meet is one the code needs?
+
+**Thinking**
+
+The code does each kind of thing one way throughout. That way is the one the code already has, the nearest code first, unless a better way replaces it everywhere. A difference then means a real difference.
 
 **Steps**
 
@@ -88,9 +118,13 @@ The maintainer is a person or an AI who comes to change the code at any time aft
 2. For each kind, gather each way the code does it.
 3. Where a place needs another way, say why beside it, such as in a comment.
 
-### Q8: Where code looks wrong or roundabout, can the maintainer learn right there why it is so, before they change it, so that they do not undo what it is there for?
+### Q8
 
-**Thinking**: Where the code cannot say why it is so, the reason stands where the maintainer meets the code, such as a limit outside the code or a way tried and dropped.
+Where code looks wrong or roundabout, can the maintainer learn right there why it is so, before they change it, so that they do not undo what it is there for?
+
+**Thinking**
+
+Where the code cannot say why it is so, the reason stands where the maintainer meets the code, such as a limit outside the code or a way tried and dropped.
 
 **Steps**
 
