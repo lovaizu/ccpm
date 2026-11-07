@@ -115,178 +115,7 @@
       "name": "rn's design says how a turn carries out a best practice",
       "path": "dev/rn/architecture.md",
       "kind": "architecture",
-      "inputs": ["dev/rn/product-vision.md", "plugins/rn/README.md"],
-      "preconditions": [],
-      "status": "open",
-      "intents": [
-        {
-          "id": "Q1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The plugins",
-              "decided": "rn and Lane; Turn is a part of rn; Pin is no plugin of its own; Lane stays apart with its own product vision, as other plugins use it",
-              "by": "user"
-            },
-            {
-              "about": "Where the design is settled",
-              "decided": "in the main conversation, one point at a time, talked through with the user",
-              "by": "user"
-            },
-            {
-              "about": "Who changes the tree",
-              "decided": "a role, the planner, started by the main conversation with each point the user settles; it writes the change and answers each node tree.py lists, so Lane holds every change, as Lane holds a role's calls and never the main conversation's own",
-              "by": "reasoning"
-            },
-            {
-              "about": "A point a turn finds open",
-              "decided": "goes back to the main conversation, is settled there, and the turn starts again",
-              "by": "reasoning"
-            },
-            {
-              "about": "Where the work goes",
-              "decided": "rn commits each deliverable on a branch of its own and keeps one draft pull request for the work; the user merges it, rn never does",
-              "by": "reasoning"
-            },
-            {
-              "about": "A turn",
-              "decided": "the generator makes the deliverable by the best practice's practices until the evaluator judges every intent good; the evaluator is given the intents and the deliverable, never the design",
-              "by": "user"
-            },
-            {
-              "about": "How a deliverable reads",
-              "decided": "a turn of its own by refactor-doc, after the turn of what it says",
-              "by": "reasoning"
-            },
-            {
-              "about": "What each role is given",
-              "decided": "tree.py cuts out each role's part and gives it as the role starts; no role reads the tree",
-              "by": "user"
-            },
-            {
-              "about": "The answers' form",
-              "decided": "met with its lines, or not met with what the user lacks; Lane's result words follow from it",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "Q2",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The plugin's files",
-              "decided": "skills/, agents/generator.md and evaluator.md, hooks/ with lanes.json and the link to Lane, scripts/tree.py and throwaway.py, domain/ with the role parts, best-practices/, forms/ and tree.py",
-              "by": "user"
-            },
-            {
-              "about": "What goes",
-              "decided": "rounds.py, run.json and round.json, as Lane's every_item and the tree hold what they held",
-              "by": "reasoning"
-            },
-            {
-              "about": "A run's files",
-              "decided": ".rn/<yyyymmdd>-<goal>/ holds design-tree.json, best-practices/<kind>/ made by meta, and turns/<nn>-<deliverable>/<round>/ with generator.json, evaluator-<group>.json and throwaway.txt side by side; no progress file",
-              "by": "user"
-            },
-            {
-              "about": "Where a deliverable lies",
-              "decided": "where it belongs in the repository; .rn/ holds only what makes it",
-              "by": "reasoning"
-            },
-            {
-              "about": "How a deliverable is tried",
-              "decided": "the commands to try it, its install steps among them, are decisions of its design",
-              "by": "reasoning"
-            },
-            {
-              "about": "The command name",
-              "decided": "one skill, /rn:up: with the user's words it starts the work, alone it picks the work up where it stopped; the user answers each point in plain words, so /rn:ty and /rn:gm go",
-              "by": "reasoning"
-            },
-            {
-              "about": "Windows",
-              "decided": "rn runs on macOS and Linux, where python3 and the symbolic links work; the README names Windows as not yet tried",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "Q3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q8",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q9",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q10",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q11",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q12",
-          "good": false,
-          "decisions": [
-            {
-              "about": "claude plugin eval for the product vision tests",
-              "decided": null
-            }
-          ]
-        },
-        {
-          "id": "Q13",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q14",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q15",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q16",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "rn works as designed, with Pin and Turn removed",
@@ -304,7 +133,17 @@
         {"id": "Q6", "good": false, "decisions": []},
         {"id": "Q7", "good": false, "decisions": []},
         {"id": "Q8", "good": false, "decisions": []},
-        {"id": "Q9", "good": false, "decisions": []},
+        {
+          "id": "Q9",
+          "good": false,
+          "decisions": [
+            {
+              "about": "A step's trace",
+              "decided": "meta's form gives each practice step a trace a machine can check, and each kind's steps get one, so rn's steps adapter hands Lane what to hold",
+              "by": "reasoning"
+            }
+          ]
+        },
         {"id": "Q10", "good": false, "decisions": []},
         {"id": "Q11", "good": false, "decisions": []},
         {"id": "Q12", "good": false, "decisions": []},
@@ -317,7 +156,17 @@
         {"id": "Q19", "good": false, "decisions": []},
         {"id": "Q20", "good": false, "decisions": []},
         {"id": "Q21", "good": false, "decisions": []},
-        {"id": "Q22", "good": false, "decisions": []},
+        {
+          "id": "Q22",
+          "good": false,
+          "decisions": [
+            {
+              "about": "claude plugin eval",
+              "decided": "not used: a case is one prompt in an empty workspace that never stops for an answer, while rn's walkthrough answers points and resumes; the product vision trials run on Lane's trial driver in lovaizu/playground",
+              "by": "research"
+            }
+          ]
+        },
         {
           "id": "Q23",
           "good": false,

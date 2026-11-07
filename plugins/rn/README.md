@@ -26,6 +26,8 @@ that are yours.
 - macOS or Linux: `uname` shows it. No one has tried rn on Windows yet.
 - Claude Code 2.1.319 or later: `claude --version` shows it.
 - Python 3.9 or later, run as `python3`: `python3 --version` shows it.
+- git, and the GitHub command-line tool `gh` signed in to the repository's host: `gh auth status` shows it. rn keeps
+  your work in a draft pull request.
 
 ## Installation
 
