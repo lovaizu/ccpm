@@ -104,13 +104,14 @@ one key result by the thinnest path.**
 ### 6. Build each slice
 
 **For each slice, in order, do a to e. Write each part's unit tests first, and see them fail. Only
-then write its code, as Q6 of
-[code/best-practice.json](../../plugins/rn/domain/best-practices/code/best-practice.md)
+then write its code, as Q8 of
+[code/best-practice.json](../../plugins/rn/domain/best-practices/code/best-practice.md#q8)
 says.**
 
-a. **Write the unit tests of its code with `code/best-practice.json` open, as
-   [Q12 of the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#q12) says: one for each class, each edge
-   and each rule of the part's contract. Run them and see them fail.**
+a. **List the unit tests of its code with `code/best-practice.json` open, as
+   [Q7 of the code best practice](../../plugins/rn/domain/best-practices/code/best-practice.md#q7) says: one for each class, each boundary,
+   each combination of conditions and each state change of the part's contract. Write each, run it
+   and see it fail.**
 
 b. **Write the code with `code/best-practice.json` open until the tests pass**, as
    [Q13 and Q14 of the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q13) say.

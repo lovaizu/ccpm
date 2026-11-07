@@ -211,29 +211,39 @@
       "preconditions": [],
       "status": "open",
       "intents": [
+        {"id": "Q1", "good": false, "decisions": []},
         {
-          "id": "Q1",
+          "id": "Q2",
           "good": false,
           "decisions": [
-            {
-              "about": "The complexity check",
-              "decided": "ruff's C901 at McCabe's limit of 10 and its PLR09 size rules, on the code and the tests, in dev/scripts/check.sh, as ruff already checks the repository",
-              "by": "reasoning"
-            },
             {
               "about": "The dependency check",
               "decided": null
             }
           ]
         },
-        {"id": "Q2", "good": false, "decisions": []},
         {"id": "Q3", "good": false, "decisions": []},
         {"id": "Q4", "good": false, "decisions": []},
         {"id": "Q5", "good": false, "decisions": []},
         {"id": "Q6", "good": false, "decisions": []},
         {"id": "Q7", "good": false, "decisions": []},
         {"id": "Q8", "good": false, "decisions": []},
-        {"id": "Q9", "good": false, "decisions": []}
+        {"id": "Q9", "good": false, "decisions": []},
+        {"id": "Q10", "good": false, "decisions": []},
+        {"id": "Q11", "good": false, "decisions": []},
+        {
+          "id": "Q12",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The complexity check",
+              "decided": "ruff's C901 at McCabe's limit of 10 and its PLR09 size rules, on the code and the tests, in dev/scripts/check.sh, as ruff already checks the repository",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {"id": "Q13", "good": false, "decisions": []},
+        {"id": "Q14", "good": false, "decisions": []}
       ]
     },
     {
@@ -356,7 +366,12 @@
         {"id": "Q6", "good": false, "decisions": []},
         {"id": "Q7", "good": false, "decisions": []},
         {"id": "Q8", "good": false, "decisions": []},
-        {"id": "Q9", "good": false, "decisions": []}
+        {"id": "Q9", "good": false, "decisions": []},
+        {"id": "Q10", "good": false, "decisions": []},
+        {"id": "Q11", "good": false, "decisions": []},
+        {"id": "Q12", "good": false, "decisions": []},
+        {"id": "Q13", "good": false, "decisions": []},
+        {"id": "Q14", "good": false, "decisions": []}
       ]
     },
     {

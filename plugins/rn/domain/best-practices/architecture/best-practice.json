@@ -201,16 +201,10 @@
      "text": "Point to the project's shared test rules, and write only where this product differs from them."
     },
     {
-     "text": "At unit, divide each input and each result the contract names into classes the part treats alike, the refused ones among them, and write one test for each class."
+     "text": "At unit, draw the tests from the part's contract, and write them one at a time, seen failing first, as the code best practice's specification-based test design and test-driven development say."
     },
     {
-     "text": "Where a class ends on an ordered scale, such as a length or a count, write one test at each end and one at the nearest value of the next class."
-    },
-    {
-     "text": "Where the contract's result turns on a combination of conditions, write one test for each combination that can occur, with the result it gives."
-    },
-    {
-     "text": "At unit, pass when every test passes, every line and branch runs and every mutant is caught, and add a unit test for each gap that coverage, mutation testing or a property-based test finds, as these tools confirm the tests drawn from the contract and draw none themselves."
+     "text": "At unit, pass when every test passes, every line and branch runs and every mutant is caught, and trace each gap that coverage, mutation testing or a property-based test finds to the case the tests missed, as the code best practice's test adequacy criteria say."
     },
     {
      "text": "At unit, run a part an AI does on the real model, with one input for each class, both where the contract says the part acts and where it says it does not, and doubles for the parts it works with."

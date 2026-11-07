@@ -192,8 +192,8 @@ def mutated(plugin: str, since: str) -> bool:
         written(plugin, ports, since, config)
         subprocess.run(["cosmic-ray", "init", config, db], check=True)
         # A line marked `# pragma: no mutate` has no mutant a test can tell apart, for the reason
-        # the plugin's cosmic-ray.toml gives
-        # (plugins/rn/domain/best-practices/architecture/best-practice.md, Q12).
+        # the plugin's cosmic-ray.toml gives, and the marks count beside the survivors
+        # (plugins/rn/domain/best-practices/code/best-practice.md, Q13).
         subprocess.run(["cr-filter-pragma", db], check=True)
         if since:
             filtered_by_git(copy, config, db)

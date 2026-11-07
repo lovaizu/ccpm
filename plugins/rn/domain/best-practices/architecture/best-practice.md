@@ -174,18 +174,16 @@ Each test is drawn from the one thing its level checks against: the ways a part'
 **Steps**
 
 1. Point to the project's shared test rules, and write only where this product differs from them.
-2. At unit, divide each input and each result the contract names into classes the part treats alike, the refused ones among them, and write one test for each class.
-3. Where a class ends on an ordered scale, such as a length or a count, write one test at each end and one at the nearest value of the next class.
-4. Where the contract's result turns on a combination of conditions, write one test for each combination that can occur, with the result it gives.
-5. At unit, pass when every test passes, every line and branch runs and every mutant is caught, and add a unit test for each gap that coverage, mutation testing or a property-based test finds, as these tools confirm the tests drawn from the contract and draw none themselves.
-6. At unit, run a part an AI does on the real model, with one input for each class, both where the contract says the part acts and where it says it does not, and doubles for the parts it works with.
-7. At architecture, run real what joins the components, such as hooks and scripts, and stand a double in for each component an AI runs and each thing outside the product, so the level calls no model and gives the same result each run.
-8. At architecture, write one test for each path through each story's sequence, the main flow, each branch, each step that sends work back and each question put to the role, until every move from one step to the next lies on some path.
-9. Run the unit and architecture tests that a change reaches before each push, and every test in CI, as running every test before each push makes each change wait, and a selection misses a test that reads a file the change edits.
-10. At product vision, once unit and architecture pass, run the real product on each objective's main use, as the README's walkthrough shows it, at the size of a real request, with an AI standing in for the role that holds an intent the product never sees.
-11. At product vision, measure each key result as the product vision words it, and set each measure against the last one by the direction the product vision gives it, as the product vision gives no target.
-12. At product vision, run each role on the model its users run and judge each run from its records, and try no case a lower level can test, as another model makes other slips than the users meet, and each run is slow and costly.
-13. For a test whose result varies from run to run, write how many runs of how many must meet the expectation.
+2. At unit, draw the tests from the part's contract, and write them one at a time, seen failing first, as the code best practice's specification-based test design and test-driven development say.
+3. At unit, pass when every test passes, every line and branch runs and every mutant is caught, and trace each gap that coverage, mutation testing or a property-based test finds to the case the tests missed, as the code best practice's test adequacy criteria say.
+4. At unit, run a part an AI does on the real model, with one input for each class, both where the contract says the part acts and where it says it does not, and doubles for the parts it works with.
+5. At architecture, run real what joins the components, such as hooks and scripts, and stand a double in for each component an AI runs and each thing outside the product, so the level calls no model and gives the same result each run.
+6. At architecture, write one test for each path through each story's sequence, the main flow, each branch, each step that sends work back and each question put to the role, until every move from one step to the next lies on some path.
+7. Run the unit and architecture tests that a change reaches before each push, and every test in CI, as running every test before each push makes each change wait, and a selection misses a test that reads a file the change edits.
+8. At product vision, once unit and architecture pass, run the real product on each objective's main use, as the README's walkthrough shows it, at the size of a real request, with an AI standing in for the role that holds an intent the product never sees.
+9. At product vision, measure each key result as the product vision words it, and set each measure against the last one by the direction the product vision gives it, as the product vision gives no target.
+10. At product vision, run each role on the model its users run and judge each run from its records, and try no case a lower level can test, as another model makes other slips than the users meet, and each run is slow and costly.
+11. For a test whose result varies from run to run, write how many runs of how many must meet the expectation.
 
 ### Q13
 

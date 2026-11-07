@@ -68,7 +68,6 @@ CASES = "cases"
 # Each kind leaves the list once the remade meta makes its best practice again.
 BEFORE = (
     "architecture",
-    "code",
     "plan",
     "plugin",
     "product-vision",
