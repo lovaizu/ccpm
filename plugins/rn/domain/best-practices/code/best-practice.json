@@ -105,7 +105,7 @@
   {
    "id": "Q14",
    "about": "the whole",
-   "what": "With only the code and its specification, can a maintainer new to the code make a change the specification asks for, and know from the tests that every other behavior still holds?"
+   "what": "Making a change the specification asks for, with only the code and its specification, does a maintainer new to the code know from the tests alone that every other behavior still holds, so that a passing run is enough to trust the change, whatever the design cost them to make it?"
   }
  ],
  "practices": [
@@ -609,7 +609,7 @@
    ],
    "thinking": "Only a change made by someone new to the code shows whether the code lets them change it and trust the result. Have someone who hasn't seen the code, a person or an AI, set it up and make one change the specification asks for, with the code and its specification alone. Note each body they read to find the place or to write a call, each time they couldn't tell whether another behavior broke, and each message of a wrong input that didn't tell them how to put it right. Trace each note to the question whose practice falls short, and mend the code there.",
    "applies": "Code handed over to its maintainer, and again after a change to its design.",
-   "excludes": "The trial shows whether the whole serves the maintainer. It doesn't show which question falls short, which each note traced to its question shows.",
+   "excludes": "The trial shows whether the whole serves the maintainer. It doesn't show which question falls short, which each note traced to its question shows. How much the design makes the maintainer read or touch for the change is for Q1 to Q5, and this question asks only whether the tests let them trust it.",
    "cost": "Each trial needs a maintainer who hasn't seen the code, and a change the specification could ask for.",
    "sources": [
     {

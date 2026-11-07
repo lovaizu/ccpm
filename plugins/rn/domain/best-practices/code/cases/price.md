@@ -131,6 +131,9 @@ class Order(unittest.TestCase):
     def test_a_total_and_the_member_flag_make_a_member_s_order(self):
         self.assertEqual(order(["10000", "--member"]), (10_000, True))
 
+    def test_the_smallest_total_is_taken(self):
+        self.assertEqual(order(["0"]), (0, False))
+
     def test_the_largest_total_is_taken(self):
         self.assertEqual(order(["1000000"]), (1_000_000, False))
 
@@ -173,8 +176,8 @@ class Main(unittest.TestCase):
 ## How the maker worked
 
 1. The maker listed the cases from the specification before any code. The classes of a total: taken,
-   past the largest, negative, and no whole number. The boundaries: 9,999 and 10,000 for a large
-   order, and 1,000,001 past the largest. The decision table of large order and member:
+   past the largest, negative, and no whole number. The boundaries: -1 and 0 for the smallest, 9,999
+   and 10,000 for a large order, and 1,000,001 past the largest. The decision table of large order and member:
    0%, 5%, 10%, and 15% off. The rounding, and the arguments other than `--member`.
 2. For each case in turn, the maker wrote its test, ran the tests and saw it fail, then wrote the
    code that made it pass. The history holds a commit for each, with the failing run before it.

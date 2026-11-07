@@ -127,4 +127,4 @@ class TestGuard(unittest.TestCase):
 | Q11 | no | `check` reads the real `~/.guard.json`, so a protected folder in the user's settings changes what the tests see. |
 | Q12 | no | The names `d`, `x`, `p`, and `f` say nothing, and `check` nests four levels of conditions. |
 | Q13 | no | The asserts added for the mutants check the mutated lines and name no case, and `test_main` asserts nothing. |
-| Q14 | no | A newcomer adding a protected folder must find both lists, and no test names the rule it would break. |
+| Q14 | no | No test covers a folder from the settings, the `.lock` rule of an `Edit`, or a reason's text, so a newcomer's change can break any of them with every test passing. |

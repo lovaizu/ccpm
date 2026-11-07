@@ -32,7 +32,7 @@ import abc
 import time
 
 CAP = 60
-LONGEST = 10
+MOST_ATTEMPTS = 10
 
 
 class ClockPort(abc.ABC):
@@ -54,13 +54,13 @@ class DelayPolicyPort(abc.ABC):
     def delays(self, attempts: int, base: int) -> list[int]: ...
 
 
-class ExponentialDelayPolicyAdapter(DelayPolicyPort):
+class ExponentialDelayPolicy(DelayPolicyPort):
     def __init__(self, clock: ClockPort) -> None:
         # Kept for a later policy that waits by the time of day, which none does yet.
         self.clock = clock
 
     def delays(self, attempts: int, base: int) -> list[int]:
-        _bounded(attempts, 1, LONGEST, "attempts")
+        _bounded(attempts, 1, MOST_ATTEMPTS, "attempts")
         _bounded(base, 1, CAP, "base")
         return [min(base * 2**n, CAP) for n in range(attempts)]
 
@@ -71,7 +71,7 @@ class DelayPolicyFactory:
     def make(self, kind: str = "exponential", clock: ClockPort | None = None) -> DelayPolicyPort:
         if kind != "exponential":
             raise ValueError(f"no delay policy named {kind!r}; the one there is: exponential")
-        return ExponentialDelayPolicyAdapter(clock or SystemClockAdapter())
+        return ExponentialDelayPolicy(clock or SystemClockAdapter())
 
 
 def _bounded(value: int, low: int, high: int, kind: str) -> None:
@@ -153,6 +153,17 @@ class DelayPolicyTest(unittest.TestCase):
         self.policy.delays(3, BASE)
         self.clock.now.assert_not_called()
 
+    def test_each_wait_lies_from_one_to_sixty_seconds_or_the_base_is_refused(self):
+        # A property over every base from -5 to 70: the call refuses it, or each wait it gives lies
+        # from 1 second to the cap.
+        for base in range(-5, 71):
+            with self.subTest(base=base):
+                try:
+                    waits = self.policy.delays(3, base)
+                except ValueError:
+                    continue
+                self.assertTrue(all(1 <= wait <= CAP for wait in waits), waits)
+
     def test_an_unknown_policy_is_refused(self):
         with self.assertRaisesRegex(ValueError, "no delay policy named 'linear'"):
             DelayPolicyFactory().make("linear")
@@ -162,11 +173,15 @@ class DelayPolicyTest(unittest.TestCase):
 
 1. The maker listed the cases from the specification before any code: one attempt, the doubling, a
    wait that reaches the cap exactly, a wait the doubling would carry past it, the attempts 0, 1, 10,
-   and 11, attempts given as text, and the base 1 and 60.
+   and 11, attempts given as text, and the base 1 and 60. For the layers it planned, it listed a
+   policy that never reads the clock and a policy of an unknown kind.
 2. For each case in turn, the maker wrote its test, saw it fail, then wrote the code, and changed
    the structure only with every test passing.
-3. Branch coverage showed the unit in a base's message unrun. The maker traced it to the refused
-   bases the list had missed, and added the base 0 and 61 and a base of 1.5.
+3. A property-based test, that each wait lies from 1 to 60 seconds for every base from -5 to 70
+   that the call takes, then failed on each base from -5 to 0, as the code checked only the
+   attempts. The maker traced it to the refused bases the list had missed, and added the base 0 and
+   61 and a base of 1.5. For each, the maker wrote its test and saw it fail, then wrote the check of
+   the base.
 
 ## Verdicts
 
@@ -178,11 +193,11 @@ class DelayPolicyTest(unittest.TestCase):
 | Q4 | no | `_bounded` joins two pieces of knowledge, the attempts' range and the base's, through the `kind` flag that picks the unit. |
 | Q5 | no | The factory's `kind`, the clock, and its adapter answer no line of the specification. |
 | Q6 | yes | `delays` checks each value before it makes any wait, and each message names the value and its range. |
-| Q7 | yes | The list, with the cases coverage showed it missed, holds each class and each boundary of both arguments, and the cap reached exactly and passed. |
-| Q8 | yes | The history shows each test fail before its code, and the structure changes in steps of their own. |
+| Q7 | yes | The list, with the cases the property-based test showed it missed, holds each class and each boundary of both arguments, and the cap reached exactly and passed. |
+| Q8 | yes | Each behavior, the base's check among them, came after its listed test failed, and the structure changes in steps of their own. |
 | Q9 | no | `check` computes the expected waits by the code's own formula, so a wrong formula passes, and the shared `BASE` and `setUp` hide what each test rests on. |
 | Q10 | no | `test_the_policy_never_reads_the_clock` checks the calls made on a mock of a port inside the code. |
 | Q11 | yes | The tests read nothing of the machine and pass in any order. |
-| Q12 | yes | Each name says what it holds, each function is short and plain, and the one odd line, the clock kept unused, says why. |
-| Q13 | yes | The gap coverage found went back to the list as the refused bases it missed. |
-| Q14 | no | A newcomer changing the cap passes through four classes and the flag, and the tests that compute their expectations move with the code. |
+| Q12 | yes | Each name says what it holds, such as `MOST_ATTEMPTS` and `ExponentialDelayPolicy`, each function is short and plain, and the one odd line, the clock kept unused, says why. |
+| Q13 | yes | The gap the property-based test found went back to the list as the refused bases it missed. |
+| Q14 | yes | Each behavior of the specification has a test, so a newcomer who changes the cap learns from the tests whether every other behavior still holds. The layers that make the change slow fail Q2, Q3, and Q5. |

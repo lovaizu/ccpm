@@ -35,7 +35,7 @@ The maintainer, a person or an AI who takes the code over, changes what the code
 | Q11 | manifest, tests | Setting the code up on a fresh machine from only what it gives for its setup, and running the tests again and in any order, does the maintainer see the same result each time, so that a failing test points at the code and never at the machine, the clock, or the order? |
 | Q12 | body, tests | Reading any function once from the top, with only the names it uses, can the maintainer say in one sentence what it does, and do its names say what they hold, its kind of work look done as elsewhere, and its odd lines say why, so that they read the code once and change it without undoing what it's there for? |
 | Q13 | tests | When coverage, mutation testing, or a property-based test finds a gap in the tests, does the maintainer trace it to the case the test list missed and add that case, so that the tools confirm the tests drawn from the specification and never become a target that tests are written for? |
-| Q14 | the whole | With only the code and its specification, can a maintainer new to the code make a change the specification asks for, and know from the tests that every other behavior still holds? |
+| Q14 | the whole | Making a change the specification asks for, with only the code and its specification, does a maintainer new to the code know from the tests alone that every other behavior still holds, so that a passing run is enough to trust the change, whatever the design cost them to make it? |
 
 ## Practices
 
@@ -464,7 +464,7 @@ Mutation testing runs the tests once for each change it makes, which takes long 
 
 ### Q14
 
-With only the code and its specification, can a maintainer new to the code make a change the specification asks for, and know from the tests that every other behavior still holds?
+Making a change the specification asks for, with only the code and its specification, does a maintainer new to the code know from the tests alone that every other behavior still holds, so that a passing run is enough to trust the change, whatever the design cost them to make it?
 
 **Name**
 
@@ -480,7 +480,7 @@ Code handed over to its maintainer, and again after a change to its design.
 
 **Excludes**
 
-The trial shows whether the whole serves the maintainer. It doesn't show which question falls short, which each note traced to its question shows.
+The trial shows whether the whole serves the maintainer. It doesn't show which question falls short, which each note traced to its question shows. How much the design makes the maintainer read or touch for the change is for Q1 to Q5, and this question asks only whether the tests let them trust it.
 
 **Cost**
 
