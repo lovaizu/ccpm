@@ -101,6 +101,14 @@ class Record:
         entry: dict[str, Any] = {"type": "user", "message": {"content": text}}
         self.entries.append(entry if printed else {**entry, "origin": {"kind": "human"}})
 
+    def sent(self, text: str) -> None:
+        """Adds a message the main conversation sent the subagent, which resumes it, as Claude Code
+        keeps it in the subagent's record."""
+        said = f"The coordinator sent a message while you were working:\n{text}"
+        self.entries.append(
+            {"type": "user", "message": {"content": said}, "origin": {"kind": "coordinator"}}
+        )
+
     def meta(self, text: str) -> None:
         """Adds a text Claude Code puts in the conversation itself, such as a system reminder."""
         self.entries.append({"type": "user", "message": {"content": text}, "isMeta": True})
@@ -153,7 +161,7 @@ class Kept(unittest.TestCase):
         starts = []
         for number, record in enumerate(records):
             file = record.saved(os.path.join(self.folder, f"agent-w{number}.jsonl"), "w")
-            starts.append(trial.record_of(file)["calls"])
+            starts += trial.starts_of(trial.record_of(file))
         return trial.writer_judged(starts, self.folder, [], ["written"])["wrong"]
 
 
@@ -236,6 +244,18 @@ class TestWriterPractices(Kept):
         wrong = self.judged_writer(first, second)
         self.assertEqual(len(wrong), 1)
         self.assertIn("before `git log --oneline` came back", wrong[0])
+
+    def test_a_resumed_start_keeps_its_steps_again(self) -> None:
+        record = Record()
+        listed(record)
+        edited(record)
+        gave(record)
+        record.sent("Commit CHANGELOG.md now.")
+        gave(record, stop=True)
+        listed(record)
+        edited(record)
+        gave(record)
+        self.assertEqual(self.judged_writer(record), [])
 
     def test_other_file_stopped_after_the_commits(self) -> None:
         record = Record()
@@ -365,6 +385,12 @@ class TestStartText(Run):
         self.ran("reviewer")
         self.start("reviewer", ["good"])
         self.assertEqual(len(self.judged()), 1)
+
+    def test_after_the_run_ended_nothing_is_judged(self) -> None:
+        self.through()
+        self.resume("a0", "Commit CHANGELOG.md now.")
+        self.start("writer", ["written"], "Commit it.")
+        self.assertEqual(self.judged(), [])
 
     def test_the_last_run_counts(self) -> None:
         self.ran("writer", "an earlier text")
@@ -542,6 +568,7 @@ class TestUnheld(unittest.TestCase):
     def setUp(self) -> None:
         self.repo = tempfile.mkdtemp()
         self.addCleanup(shutil.rmtree, self.repo)
+        self.write_to = "CHANGELOG.md"
         self.git("init", "-q", "-b", "main")
 
     def git(self, *args: str) -> str:
@@ -557,7 +584,7 @@ class TestUnheld(unittest.TestCase):
         given, and the routes."""
         steps = [
             {"step": 2, "lanes": [{"lane": "run_only", "takes": ["git log --oneline"]}]},
-            {"step": 3, "lanes": [{"lane": "write_only", "takes": ["CHANGELOG.md"]}]},
+            {"step": 3, "lanes": [{"lane": "write_only", "takes": [self.write_to]}]},
         ]
         writer: dict[str, Any] = {"name": "writer", "steps": steps}
         files = {"changelog/agents/writer.md": "writer\n"}
@@ -586,6 +613,16 @@ class TestUnheld(unittest.TestCase):
         wrong = self.laid(ADAPTER.replace("PRACTICES", "PRACTICES[::-1]"), ROUTES)
         self.assertEqual(len(wrong), 1)
         self.assertIn("writer's steps adapter gives", wrong[0])
+
+    def test_the_root_changelog_by_the_plugins_folder(self) -> None:
+        named = "${CLAUDE_PLUGIN_ROOT}/../CHANGELOG.md"
+        self.write_to = named
+        adapter = ADAPTER.replace('"takes": ["CHANGELOG.md"]', f'"takes": ["{named}"]')
+        self.assertEqual(self.laid(adapter, ROUTES), [])
+
+    def test_the_plugins_own_changelog(self) -> None:
+        self.write_to = "${CLAUDE_PLUGIN_ROOT}/CHANGELOG.md"
+        self.assertEqual(len(self.laid(ADAPTER, ROUTES)), 1)
 
     def test_no_command(self) -> None:
         routed = {k: v for k, v in ROUTES.items() if k != "command"}

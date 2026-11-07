@@ -286,10 +286,11 @@ def record_of(file: str) -> dict[str, Any]:
     """What an agent's record, or the main conversation's, shows: its type, each tool call, as
     `calls` reads it, each note a hook told the user, each end a SubagentStop or Stop hook kept
     going, each prompt the person typed and each end of a background subagent handed to it, with
-    where among the record's entries each came, and when its first entry was written, as a
-    subagent's is once it has started."""
+    where among the record's entries each came, each message that resumed it, and when its first
+    entry was written, as a subagent's is once it has started."""
     found: dict[str, Any] = {"type": trying.record.agent_type(file), "calls": calls(file)}
     found["notes"], found["kept"], found["prompts"], found["ended"] = [], 0, [], []
+    found["resumed"] = []
     found["started_at"] = None
     for at, e in enumerate(trying.record.read(file) or []):
         found["started_at"] = found["started_at"] or e.get("timestamp")
@@ -301,6 +302,8 @@ def record_of(file: str) -> dict[str, Any]:
         human = human or (isinstance(origin, dict) and origin.get("kind") == "human")
         if said is not None and human:
             found["prompts"].append((at, said))
+        if said is not None and isinstance(origin, dict) and origin.get("kind") == "coordinator":
+            found["resumed"].append(at)
         notified = NOTIFIED.match(said or "")
         if notified:
             found["ended"].append((at, notified[1]))
@@ -342,6 +345,20 @@ def records(folder: str) -> list[dict[str, Any]]:
             meta = json.load(f)
         agent = name[len("agent-") : -len(".jsonl")]
         found.append({**record_of(file), "started_by": meta.get("toolUseId"), "agent": agent})
+    return found
+
+
+def starts_of(agent: dict[str, Any]) -> list[list[dict[str, Any]]]:
+    """The calls of each start of the agent's record, in order: its first start, and each start a
+    message resumed it with, as a resumed subagent keeps its ID and keeps its steps again."""
+    found: list[list[dict[str, Any]]] = [[]]
+    resumes = iter(agent.get("resumed", []))
+    at = next(resumes, None)
+    for c in agent["calls"]:
+        while at is not None and c["at"] > at:
+            found.append([])
+            at = next(resumes, None)
+        found[-1].append(c)
     return found
 
 
@@ -432,11 +449,11 @@ def unheld(laid: dict[str, Any], repo: str, commit: str) -> list[str]:
         if (g["lane"], place) in run_only.COMMANDS
         for c in takes
     ]
-    writes = [o for g in each if g["lane"] == "write_only" for o in g["takes"]]
+    writes = [named(o, repo) for g in each if g["lane"] == "write_only" for o in g["takes"]]
     found = []
     if set(runs) != {"git log --oneline"}:
         found.append(f"writer's commands laid are {runs}, not `git log --oneline` alone")
-    if set(writes) != {"CHANGELOG.md"}:
+    if set(writes) != {"CHANGELOG.md"} or not writes:
         found.append(f"writer's writes laid are {writes}, not `CHANGELOG.md` alone")
     practices = practices_given(writer.get("steps_adapter"), repo, commit)
     if practices != [PRACTICES]:
@@ -471,9 +488,26 @@ def practices_given(adapter: str | None, repo: str, commit: str) -> list[Any] | 
         )
     try:
         lists = json.loads(done.stdout)["lists"]
-        return [[(g["lane"], g["takes"]) for s in e["steps"] for g in s["lanes"]] for e in lists]
+        return [
+            [(g["lane"], taken(g, repo)) for s in e["steps"] for g in s["lanes"]] for e in lists
+        ]
     except (ValueError, KeyError, TypeError):
         return f"no step lists ({done.stderr.strip()[-200:] or done.stdout.strip()[-200:]})"
+
+
+def named(take: str, repo: str) -> str:
+    """The file the take of a lane names, from the repository's root or by the plugin's folder, as
+    a path from the root."""
+    full = take.replace("${CLAUDE_PLUGIN_ROOT}", os.path.join(repo, "changelog"))
+    return os.path.relpath(os.path.realpath(os.path.join(repo, full)), os.path.realpath(repo))
+
+
+def taken(lane: dict[str, Any], repo: str) -> list[str]:
+    """What a lane an adapter gives takes: each file a path lane names, as `named` gives it, and a
+    command as it is."""
+    if lane["lane"] in ("write_step", "read_whole"):
+        return [named(t, repo) for t in lane["takes"]]
+    return list(lane["takes"])
 
 
 def order_held(routed: dict[str, Any] | None) -> bool:
@@ -637,6 +671,9 @@ def order_judged(
     # The results each start still has to give, as a start resumed after its point gives the next.
     left: dict[str, list[str]] = {}
     for c in main["calls"]:
+        # Once a route starts no more, the run is over, and what follows is the user's own work.
+        if not due and not waiting and left:
+            break
         ran = ran_told(c, routed, root)
         if ran:
             texts[ran] = c["stdout"] if c["stdout"] is not None else c["result"]
@@ -909,7 +946,7 @@ def judged(folder: str) -> dict[str, Any]:
     base, commit = commits(repo, folder, facts)
     laid = laid_at(repo, commit)
     agents = records(folder)
-    starts = [a["calls"] for a in agents if a["type"] == "changelog:writer"]
+    starts = [s for a in agents if a["type"] == "changelog:writer" for s in starts_of(a)]
     said = laid_sentences(laid)
     ons = [r["on"] for r in (laid.get("routes") or {}).get("routes", []) if r["from"] == "writer"]
     found = writer_judged(starts, repo, said, ons)
