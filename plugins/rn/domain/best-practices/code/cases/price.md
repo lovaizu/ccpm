@@ -174,7 +174,7 @@ class Main(unittest.TestCase):
 
 1. The maker listed the cases from the specification before any code. The classes of a total: taken,
    past the largest, negative, and no whole number. The boundaries: 9,999 and 10,000 for a large
-   order, and 1,000,000 and 1,000,001 for the largest. The decision table of large order and member:
+   order, and 1,000,001 past the largest. The decision table of large order and member:
    0%, 5%, 10%, and 15% off. The rounding, and the arguments other than `--member`.
 2. For each case in turn, the maker wrote its test, ran the tests and saw it fail, then wrote the
    code that made it pass. The history holds a commit for each, with the failing run before it.
@@ -192,7 +192,7 @@ class Main(unittest.TestCase):
 | Q4 | yes | Each discount, the large order's line, and the largest total each live in one named constant. |
 | Q5 | yes | Each branch and argument answers a line of the specification. |
 | Q6 | yes | `order` checks every argument before `price` runs, and each refusal names the value and what the command takes. |
-| Q7 | yes | The list holds each class, each boundary, and each column of the decision table, with expected values worked from the specification. |
+| Q7 | yes | The list, with the boundary mutation testing showed it missed, holds each class, each boundary, and each column of the decision table, with expected values worked from the specification. |
 | Q8 | yes | The history shows each test fail before its code, and the structure changes in commits of their own. |
 | Q9 | yes | Each test names one behavior and shows its inputs and its expected result in its body. |
 | Q10 | yes | The tests call `price` and `order` and `main` as their callers do, with no doubles, as nothing lies outside the process. |

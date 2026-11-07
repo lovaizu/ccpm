@@ -24,14 +24,14 @@ The maintainer, a person or an AI who takes the code over, changes what the code
 | --- | --- | --- |
 | Q1 | module, interface | With one behavior to change, does the maintainer find the one module that holds it from what each module says it hides, without reading any body, and does the change stay inside that module, so that a change for one reason never reaches code that changes for another? |
 | Q2 | dependency-rule | Testing or changing the core, does the maintainer need nothing outside it, with a port only where a real outside dependency or axis of change is, so that the core runs whole in a test and a change of technology never reaches its rules? |
-| Q3 | module, body | Where the code solves a problem that a design pattern names, does the maintainer meet that pattern by its name and in the language's lightest form, and meet none where no problem calls for one, so that they grasp a piece's intent from its name without tracing its body? |
+| Q3 | module, body | Where the code solves a problem that a design pattern names, such as rules of one kind that are each checked alone and named in the result, does the maintainer meet that pattern by its name and in the language's lightest form, and where no such problem is, plain code with no pattern, so that they grasp a piece's intent from its name without tracing its body? |
 | Q4 | body | With one rule or decision of the specification to change, does the maintainer find it written in one place, and code that looks alike but means different things kept apart, so that a change is made once and whole and never reaches a rule it didn't mean to touch? |
 | Q5 | interface, body | For each behavior, option, and layer the code has, can the maintainer name the case of the specification that needs it now, so that they carry and test nothing that no one asked for? |
 | Q6 | edge | When something from outside is wrong, does whoever runs the code learn from its message what was wrong, where, and what the code accepts, before the code has changed anything, so that they put it right themselves and the core never acts on a value it can't trust? |
-| Q7 | tests | Listing the tests before the code, does the maintainer take a case for each class of input the specification treats alike, each boundary between classes, each combination of conditions with its result, and each state and move between states, so that the list shows when it's enough and doesn't follow the code already written? |
+| Q7 | tests | Drawing the test list from the specification before the code, and adding each case the work shows it missed, does the maintainer's list, as it stands at the end, take a case for each class of input the specification treats alike, each boundary between classes, each combination of conditions with its result, and each state and move between states, so that the list shows when it's enough and doesn't follow the code already written? |
 | Q8 | tests, body | Writing the code, does the maintainer find each behavior made by one test from the list, seen failing, then passing, and the structure improved in a step of its own, so that each test has shown that it catches the behavior's absence and each step is small enough to undo? |
 | Q9 | tests | Reading a failing test, does the maintainer see from its name which one behavior broke, and in its body the state before, the act, and the expected result with every value the result rests on, so that they find the fault without reading the test's helpers or the code's body? |
-| Q10 | tests, interface | When the maintainer changes a body and its callers still get what its interface says, do the tests still pass, and when the behavior breaks, does a test fail, so that the tests break only where a caller would? |
+| Q10 | tests, interface | When the maintainer changes a body and its callers still get what its interface says, do the tests still pass, as they call the code through its public interface and check what it gives back or leaves, not the calls it makes inside, so that a refactoring that keeps every caller's result never breaks a test? |
 | Q11 | manifest, tests | Setting the code up on a fresh machine from only what it gives for its setup, and running the tests again and in any order, does the maintainer see the same result each time, so that a failing test points at the code and never at the machine, the clock, or the order? |
 | Q12 | body, tests | Reading any function once from the top, with only the names it uses, can the maintainer say in one sentence what it does, and do its names say what they hold, its kind of work look done as elsewhere, and its odd lines say why, so that they read the code once and change it without undoing what it's there for? |
 | Q13 | tests | When coverage, mutation testing, or a property-based test finds a gap in the tests, does the maintainer trace it to the case the test list missed and add that case, so that the tools confirm the tests drawn from the specification and never become a target that tests are written for? |
@@ -57,7 +57,7 @@ Every module, and each change that adds a decision to the code.
 
 **Excludes**
 
-A script of a few lines that makes one decision needs no split. The boundaries between the product's components, such as its processes or plugins, come from its architecture. This practice divides the code inside each.
+A script of a few lines that makes one decision needs no split. The boundaries between the product's components, such as its processes or plugins, come from its architecture. This practice divides the code inside each. Pieces inside one module that no case needs, such as a port with one adapter, are Q2's and Q5's.
 
 **Cost**
 
@@ -107,7 +107,7 @@ Each port adds an interface, an adapter, and a fake that must stay true to the r
 
 ### Q3
 
-Where the code solves a problem that a design pattern names, does the maintainer meet that pattern by its name and in the language's lightest form, and meet none where no problem calls for one, so that they grasp a piece's intent from its name without tracing its body?
+Where the code solves a problem that a design pattern names, such as rules of one kind that are each checked alone and named in the result, does the maintainer meet that pattern by its name and in the language's lightest form, and where no such problem is, plain code with no pattern, so that they grasp a piece's intent from its name without tracing its body?
 
 **Name**
 
@@ -232,7 +232,7 @@ Each edge holds a reader and a message for each way it refuses, and a test of ea
 
 ### Q7
 
-Listing the tests before the code, does the maintainer take a case for each class of input the specification treats alike, each boundary between classes, each combination of conditions with its result, and each state and move between states, so that the list shows when it's enough and doesn't follow the code already written?
+Drawing the test list from the specification before the code, and adding each case the work shows it missed, does the maintainer's list, as it stands at the end, take a case for each class of input the specification treats alike, each boundary between classes, each combination of conditions with its result, and each state and move between states, so that the list shows when it's enough and doesn't follow the code already written?
 
 **Name**
 
@@ -334,7 +334,7 @@ Tests come out longer than a shared, compact form, and a change to a shared setu
 
 ### Q10
 
-When the maintainer changes a body and its callers still get what its interface says, do the tests still pass, and when the behavior breaks, does a test fail, so that the tests break only where a caller would?
+When the maintainer changes a body and its callers still get what its interface says, do the tests still pass, as they call the code through its public interface and check what it gives back or leaves, not the calls it makes inside, so that a refactoring that keeps every caller's result never breaks a test?
 
 **Name**
 
@@ -350,7 +350,7 @@ Every test that has collaborators.
 
 **Excludes**
 
-A level whose job is to run the outside world real, such as a trial of the whole product, uses no double for it.
+A level whose job is to run the outside world real, such as a trial of the whole product, uses no double for it. Whether each behavior has a test is Q7's, and a test that asserts nothing is Q13's.
 
 **Cost**
 

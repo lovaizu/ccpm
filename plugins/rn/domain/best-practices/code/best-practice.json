@@ -50,7 +50,7 @@
   {
    "id": "Q3",
    "about": "module, body",
-   "what": "Where the code solves a problem that a design pattern names, does the maintainer meet that pattern by its name and in the language's lightest form, and meet none where no problem calls for one, so that they grasp a piece's intent from its name without tracing its body?"
+   "what": "Where the code solves a problem that a design pattern names, such as rules of one kind that are each checked alone and named in the result, does the maintainer meet that pattern by its name and in the language's lightest form, and where no such problem is, plain code with no pattern, so that they grasp a piece's intent from its name without tracing its body?"
   },
   {
    "id": "Q4",
@@ -70,7 +70,7 @@
   {
    "id": "Q7",
    "about": "tests",
-   "what": "Listing the tests before the code, does the maintainer take a case for each class of input the specification treats alike, each boundary between classes, each combination of conditions with its result, and each state and move between states, so that the list shows when it's enough and doesn't follow the code already written?"
+   "what": "Drawing the test list from the specification before the code, and adding each case the work shows it missed, does the maintainer's list, as it stands at the end, take a case for each class of input the specification treats alike, each boundary between classes, each combination of conditions with its result, and each state and move between states, so that the list shows when it's enough and doesn't follow the code already written?"
   },
   {
    "id": "Q8",
@@ -85,7 +85,7 @@
   {
    "id": "Q10",
    "about": "tests, interface",
-   "what": "When the maintainer changes a body and its callers still get what its interface says, do the tests still pass, and when the behavior breaks, does a test fail, so that the tests break only where a caller would?"
+   "what": "When the maintainer changes a body and its callers still get what its interface says, do the tests still pass, as they call the code through its public interface and check what it gives back or leaves, not the calls it makes inside, so that a refactoring that keeps every caller's result never breaks a test?"
   },
   {
    "id": "Q11",
@@ -119,7 +119,7 @@
    ],
    "thinking": "Design the module boundaries before the code. List the decisions the specification leaves to the code that are hard or likely to change, such as a data format, a rule, or how the code talks to another program, and give each module one of them to hide behind its interface. A module then has one reason to change, and a change of its decision stays inside it. Decompose by these decisions, not by the steps of the processing, as modules cut by steps all know the shared data, and one change of it reaches them all. Make each module deep: an interface much simpler than its body. Split a module by concern, not by length, as a module that holds several decisions changes for several reasons, and its maintainer reads all of them for any one change. Join pieces that can't be understood apart, as a module whose interface costs as much to learn as its body saves adds a place to look and hides nothing. Say at the top of each module, in a sentence, which decision it hides. Treat size as a sign to look into, such as a module past 1,000 lines, and not as a rule: the test is whether the module hides one decision behind a simple interface.",
    "applies": "Every module, and each change that adds a decision to the code.",
-   "excludes": "A script of a few lines that makes one decision needs no split. The boundaries between the product's components, such as its processes or plugins, come from its architecture. This practice divides the code inside each.",
+   "excludes": "A script of a few lines that makes one decision needs no split. The boundaries between the product's components, such as its processes or plugins, come from its architecture. This practice divides the code inside each. Pieces inside one module that no case needs, such as a port with one adapter, are Q2's and Q5's.",
    "cost": "Finding the decisions likely to change takes thought before any code, and a boundary drawn wrong costs a move later, which the refactor-code best practice makes safe.",
    "sources": [
     {
@@ -457,7 +457,7 @@
    ],
    "thinking": "Call the code through its public interface, as its callers do, and check the result or the state it leaves, not the calls it makes inside, as a test of a private part or of inner calls fails on each refactoring and passes when a caller breaks. Use the real collaborator where it runs fast and wholly inside the test. Next prefer a fake, a small working stand-in true to the real thing's contract, with tests of its own. Use a stub or a mock only where neither serves. Keep mocks, which check the calls made, for dependencies outside the process that the code doesn't own and whose calls others see, such as a message sent or a mail, and use a dependency the code owns, such as its own files, for real. Never mock a collaborator inside the code, as that ties the test to how the code is built. Draw a double of something outside from its documentation or from a recorded run of the real thing, so that it gives only what the real one would.",
    "applies": "Every test that has collaborators.",
-   "excludes": "A level whose job is to run the outside world real, such as a trial of the whole product, uses no double for it.",
+   "excludes": "A level whose job is to run the outside world real, such as a trial of the whole product, uses no double for it. Whether each behavior has a test is Q7's, and a test that asserts nothing is Q13's.",
    "cost": "Tests that use real collaborators run more code and can fail for a fault in one, which the collaborator's own tests then name.",
    "sources": [
     {

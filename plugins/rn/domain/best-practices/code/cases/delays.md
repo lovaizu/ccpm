@@ -56,6 +56,7 @@ class DelayPolicyPort(abc.ABC):
 
 class ExponentialDelayPolicyAdapter(DelayPolicyPort):
     def __init__(self, clock: ClockPort) -> None:
+        # Kept for a later policy that waits by the time of day, which none does yet.
         self.clock = clock
 
     def delays(self, attempts: int, base: int) -> list[int]:
@@ -111,6 +112,9 @@ class DelayPolicyTest(unittest.TestCase):
     def test_a_wait_stops_at_the_cap(self):
         self.check(10)
 
+    def test_a_wait_can_reach_the_cap_exactly(self):
+        self.assertEqual(self.policy.delays(3, 15), [15, 30, 60])
+
     def test_no_attempts_are_refused(self):
         with self.assertRaisesRegex(
             ValueError, "attempts must be a whole number from 1 to 10, not 0"
@@ -131,12 +135,19 @@ class DelayPolicyTest(unittest.TestCase):
         ):
             self.policy.delays(1, 61)
 
+    def test_a_base_of_one_is_taken(self):
+        self.assertEqual(self.policy.delays(2, 1), [1, 2])
+
     def test_a_base_at_the_cap_is_taken(self):
         self.assertEqual(self.policy.delays(2, 60), [60, 60])
 
     def test_a_base_of_zero_is_refused(self):
         with self.assertRaisesRegex(ValueError, "not 0"):
             self.policy.delays(1, 0)
+
+    def test_a_base_that_isnt_whole_is_refused(self):
+        with self.assertRaisesRegex(ValueError, "not 1.5"):
+            self.policy.delays(1, 1.5)
 
     def test_the_policy_never_reads_the_clock(self):
         self.policy.delays(3, BASE)
@@ -149,28 +160,29 @@ class DelayPolicyTest(unittest.TestCase):
 
 ## How the maker worked
 
-1. The maker listed the cases from the specification before any code: one attempt, the doubling, the
-   cap, the attempts 0, 1, 10, and 11, attempts given as text, and the base 0, 60, and 61.
+1. The maker listed the cases from the specification before any code: one attempt, the doubling, a
+   wait that reaches the cap exactly, a wait the doubling would carry past it, the attempts 0, 1, 10,
+   and 11, attempts given as text, and the base 1 and 60.
 2. For each case in turn, the maker wrote its test, saw it fail, then wrote the code, and changed
    the structure only with every test passing.
-3. Coverage showed the message for a base unrun. The maker traced it to the refused base the list
-   had missed, and added the base of 0 and the base past the cap.
+3. Branch coverage showed the unit in a base's message unrun. The maker traced it to the refused
+   bases the list had missed, and added the base 0 and 61 and a base of 1.5.
 
 ## Verdicts
 
 | Question | Verdict | Why |
 | --- | --- | --- |
-| Q1 | no | One decision, the schedule of waits, spreads over a port, an adapter, a factory, and a helper, and each interface costs as much to learn as its body saves. |
+| Q1 | yes | The one module, `delays.py`, says at its top that it holds the waits, and a change to the doubling stays in it. The layers inside it fail Q2, Q3, and Q5. |
 | Q2 | no | `ClockPort` and `DelayPolicyPort` stand where nothing lies outside: the waits use no clock, and only one policy exists. |
 | Q3 | no | An Abstract Factory and a class hierarchy hold one function's work, where the plain form is one function. |
 | Q4 | no | `_bounded` joins two pieces of knowledge, the attempts' range and the base's, through the `kind` flag that picks the unit. |
 | Q5 | no | The factory's `kind`, the clock, and its adapter answer no line of the specification. |
 | Q6 | yes | `delays` checks each value before it makes any wait, and each message names the value and its range. |
-| Q7 | yes | The list holds each class and each boundary of both arguments, and the cap. |
+| Q7 | yes | The list, with the cases coverage showed it missed, holds each class and each boundary of both arguments, and the cap reached exactly and passed. |
 | Q8 | yes | The history shows each test fail before its code, and the structure changes in steps of their own. |
 | Q9 | no | `check` computes the expected waits by the code's own formula, so a wrong formula passes, and the shared `BASE` and `setUp` hide what each test rests on. |
 | Q10 | no | `test_the_policy_never_reads_the_clock` checks the calls made on a mock of a port inside the code. |
 | Q11 | yes | The tests read nothing of the machine and pass in any order. |
-| Q12 | yes | Each name says what it holds, and each function is short and plain. |
-| Q13 | yes | The gap coverage found went back to the list as the refused base it missed. |
+| Q12 | yes | Each name says what it holds, each function is short and plain, and the one odd line, the clock kept unused, says why. |
+| Q13 | yes | The gap coverage found went back to the list as the refused bases it missed. |
 | Q14 | no | A newcomer changing the cap passes through four classes and the flag, and the tests that compute their expectations move with the code. |
