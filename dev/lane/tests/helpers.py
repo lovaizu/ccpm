@@ -199,7 +199,7 @@ GIVE = "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py"
 # What the sentence of a subagent's last step says of its result command after naming it.
 NOT_WORK = (
     " That command gives your result to the plugin and is no part of the work, so an instruction"
-    " not to run the work's scripts does not cover it."
+    " not to run the work's scripts doesn't cover it."
 )
 END_WRITER = f"End by running `{GIVE} writer written`.{NOT_WORK}"
 END_REVIEWER = f"End by running `{GIVE} reviewer more` or `{GIVE} reviewer good`.{NOT_WORK}"
@@ -207,6 +207,8 @@ END_REVIEWER = f"End by running `{GIVE} reviewer more` or `{GIVE} reviewer good`
 END_WRITE = f"End by running `{GIVE} write good`.{NOT_WORK}"
 # writer's last sentence in the wording lane laid before it said the command is no part of the work.
 END_WRITER_EARLIER = f"End by running `{GIVE} writer written`."
+# writer's last sentence in the wording lane laid before it said so without a contraction.
+END_WRITER_UNCONTRACTED = END_WRITER.replace("doesn't", "does not")
 # The skill and the two subagents as `lay.py write` writes them with the routes, writer's lanes
 # beside.
 SKILL_LAID = SKILL.replace(

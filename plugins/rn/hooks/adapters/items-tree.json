@@ -1,0 +1,42 @@
+[
+ {
+  "given": {
+   "input": ".rn/20261108-tidy/design-tree.json",
+   "text": "{\"goal\": {\"decided\": \"g\", \"by\": \"user\"}, \"deliverables\": []}",
+   "values": {
+    "run": [
+     ".rn/20261108-tidy"
+    ]
+   }
+  },
+  "gives": {
+   "items": []
+  }
+ },
+ {
+  "given": {
+   "input": ".rn/20261108-tidy/design-tree.json",
+   "text": "not a tree",
+   "values": {
+    "run": [
+     ".rn/20261108-tidy"
+    ]
+   }
+  },
+  "gives": {
+   "items": []
+  }
+ },
+ {
+  "given": {
+   "input": ".rn/20261108-tidy/design-tree.json",
+   "text": "{\"goal\": {\"decided\": \"g\", \"by\": \"user\"}, \"deliverables\": []}",
+   "values": {
+    "run": null
+   }
+  },
+  "gives": {
+   "items": []
+  }
+ }
+]

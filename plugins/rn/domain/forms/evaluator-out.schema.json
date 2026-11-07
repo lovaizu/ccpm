@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "evaluator's out",
+  "description": "What the evaluator gives as it ends.",
+  "type": "object",
+  "required": [
+    "result",
+    "reply"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "description": "The fixed word the role gives as it ends, by running python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py evaluator <result>: open where a point only the user can settle stands, more where an intent isn't met, good where each is, as tree.py record says.",
+      "enum": [
+        "open",
+        "more",
+        "good"
+      ]
+    },
+    "reply": {
+      "description": "The role's last message: what tree.py printed last, word for word, which the main conversation reads.",
+      "type": "string"
+    }
+  }
+}

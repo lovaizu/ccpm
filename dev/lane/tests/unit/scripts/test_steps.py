@@ -172,9 +172,9 @@ class TestStepsLaid(unittest.TestCase):
         agent = {"name": "writer", "lines": lines, "steps": []}
         # When: the steps to lay are found
         found = steps.steps_laid(before, agent)
-        # Then: step 4 is laid with no lane, its sentence gone in the current wording and the
-        # earlier, the current first, as it is the longer and the earlier begins it
-        gone = [helpers.END_WRITER, helpers.END_WRITER_EARLIER]
+        # Then: step 4 is laid with no lane, its sentence gone in the current wording and each
+        # earlier, the longest first, as an earlier begins the current
+        gone = [helpers.END_WRITER_UNCONTRACTED, helpers.END_WRITER, helpers.END_WRITER_EARLIER]
         self.assertEqual([(s["step"], s["lanes"], s["gone"]) for s in found], [(4, [], gone)])
 
     def test_a_sentence_gone_whose_current_wording_begins_an_earlier_has_the_earlier_first(self):

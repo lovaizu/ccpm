@@ -1,0 +1,86 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "timeout": 10,
+            "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || { e=; while IFS= read -r l || [ -n \"$l\" ]; do e=\"$e$l\"; l=; done; case \"$e\" in *'\"agent_type\":\"rn:planner\"'*|*'\"agent_type\": \"rn:planner\"'*|*'\"agent_type\":\"rn:generator\"'*|*'\"agent_type\": \"rn:generator\"'*|*'\"agent_type\":\"rn:evaluator\"'*|*'\"agent_type\": \"rn:evaluator\"'*) echo '{\"systemMessage\": \"rn: install Python 3.9 or later, run as python3, for its hooks to run\", \"hookSpecificOutput\": {\"hookEventName\": \"PreToolUse\", \"permissionDecision\": \"deny\", \"permissionDecisionReason\": \"rn: install Python 3.9 or later, run as python3, for its hooks to run\"}}';; esac; exit 0; }; exec python3 -B \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/pretooluse.py\" rn",
+            "onFailure": "block"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "timeout": 10,
+            "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || exit 0; exec python3 -B \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/posttooluse.py\" rn"
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "timeout": 10,
+            "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || exit 0; exec python3 -B \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/subagentstart.py\" rn"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "timeout": 10,
+            "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || exit 0; exec python3 -B \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/subagentstop.py\" rn"
+          }
+        ]
+      }
+    ],
+    "UserPromptExpansion": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "timeout": 10,
+            "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || exit 0; exec python3 -B \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/userpromptexpansion.py\" rn"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "timeout": 10,
+            "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || exit 0; exec python3 -B \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/userpromptsubmit.py\" rn"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "timeout": 10,
+            "command": "python3 -c \"import sys; sys.exit(sys.version_info < (3, 9))\" 2>/dev/null || exit 0; exec python3 -B \"${CLAUDE_PLUGIN_ROOT}/hooks/lane/stop.py\" rn"
+          }
+        ]
+      }
+    ]
+  }
+}

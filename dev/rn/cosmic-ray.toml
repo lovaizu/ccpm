@@ -1,0 +1,16 @@
+# Mutation testing of rn's code, tree.py and throwaway.py and the domain they run, from the top of
+# the repository, on a copy the run may change.
+[cosmic-ray]
+module-path = ["plugins/rn/domain", "plugins/rn/scripts"]
+timeout = 60.0
+# The script of the plugin best practice's template is the skeleton a developer copies, which no
+# one runs as it stands.
+excluded-modules = ["plugins/rn/domain/best-practices/plugin/template/scripts/command.py"]
+# The type checker and the linter run first: a change to a type annotation changes no behavior a
+# test could see, and the type checker is what checks annotations, the linter what checks `is`
+# against a literal.
+# A line marked `# pragma: no mutate` holds the one value a script puts on sys.path first, or the
+# comparison of `__name__` with the name of a script run as a command, where no input sets a mutant
+# of it apart. Each such line holds that value or comparison alone, as the mark leaves out every
+# mutant of its line.
+test-command = "sh -c 'ruff check --select F632 plugins/rn && sh dev/scripts/typecheck.sh rn && python -m unittest discover -f -s dev/rn/tests'"

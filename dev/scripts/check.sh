@@ -42,6 +42,16 @@ pyrefly check --search-path dev/lane --search-path dev/scripts --search-path dev
 # example. An example in JSON holds to its template where that is a JSON Schema.
 python3 dev/scripts/practices.py form plugins/rn/domain/best-practices/*/best-practice.json
 
+# Each run's design tree, where the work's documents take their decisions from (.claude/rules/dev.md,
+# step 1), holds its form and the plan best practice's order, by rn's own check of it: a deliverable
+# before what it takes from, or a kind with no best practice, fails here, not in a document made
+# from the tree.
+for design in .rn/*/design-tree.json; do
+  if [ -f "$design" ]; then
+    python3 plugins/rn/scripts/tree.py check "$design"
+  fi
+done
+
 # Every figure carries the one style of dev/images/figures.css, so the figures look alike and a
 # colour is changed in one place (.claude/rules/dev.md, step 3).
 python3 dev/scripts/figures.py check

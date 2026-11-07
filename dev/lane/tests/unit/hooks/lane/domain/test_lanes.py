@@ -160,14 +160,21 @@ class TestSentence(unittest.TestCase):
         self.assertEqual(
             lanes.sentence("result", ["give"]),
             "End by running `give`. That command gives your result to the plugin and is no part of"
-            " the work, so an instruction not to run the work's scripts does not cover it.",
+            " the work, so an instruction not to run the work's scripts doesn't cover it.",
         )
 
     def test_the_result_sentence_is_given_in_each_wording_lane_laid_before(self):
         # Given: a subagent's last step with its result command
         # When: the sentence laid there is made in the wordings lane laid before
-        # Then: it is the one wording before the current, which said no more than the commands
-        self.assertEqual(lanes.earlier("result", ["give"]), ["End by running `give`."])
+        # Then: they're the wording with no contraction, then the one that said no more than the
+        # commands
+        uncontracted = (
+            "End by running `give`. That command gives your result to the plugin and is no part of"
+            " the work, so an instruction not to run the work's scripts does not cover it."
+        )
+        self.assertEqual(
+            lanes.earlier("result", ["give"]), [uncontracted, "End by running `give`."]
+        )
 
     def test_the_commands_a_lane_lets_its_subagent_run_are_those_in_its_command_place(self):
         for lane, takes, runs in (

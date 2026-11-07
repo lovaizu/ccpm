@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "evaluator's in",
+  "description": "What the main conversation starts each evaluator with: the cut tree.py start evaluator printed, word for word, for one group of the intents.",
+  "type": "object",
+  "required": [
+    "start"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "start": {
+      "description": "The run values, the JSON object on the first line of the cut tree.py start printed, each a value the guard holds the role's calls to. The rest of the cut follows it.",
+      "type": "object",
+      "required": [
+        "run",
+        "files",
+        "reads",
+        "try",
+        "answers"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "run": {
+          "description": "The run's folder.",
+          "type": "string"
+        },
+        "files": {
+          "description": "Each file of the deliverable, as the Making record gives them, which the evaluator reads to its end.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "reads": {
+          "description": "Each file the evaluator may read: the deliverable's files, the files it takes its content from, the try record, and its answers.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "try": {
+          "description": "The try record, throwaway.txt in the round's folder.",
+          "type": "string"
+        },
+        "answers": {
+          "description": "The path of its Answers, evaluator-<group>.json in the round's folder.",
+          "type": "string"
+        }
+      }
+    }
+  }
+}

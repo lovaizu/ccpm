@@ -154,3 +154,7 @@ by it.
 ## License
 
 [The `MIT` License](../../../../../LICENSE)
+
+rn's way of asking one point at a time with a recommendation comes from
+[grilling](https://github.com/mattpocock/skills/blob/4ae2317ddb22b046e26455e4f9c9b3aaaf62212d/skills/productivity/grilling/SKILL.md),
+by Matt Pocock, under the `MIT` License that [LICENSE-grilling](../../../LICENSE-grilling) gives.

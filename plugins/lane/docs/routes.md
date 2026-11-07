@@ -22,7 +22,7 @@ gives them by. The skill gives the result of the route that ends the run, as it 
 a plugin that calls your skill can route that result. For a subagent, such as
 
 ```
-End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py reviewer more` or `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py reviewer good`. That command gives your result to the plugin and is no part of the work, so an instruction not to run the work's scripts does not cover it.
+End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py reviewer more` or `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py reviewer good`. That command gives your result to the plugin and is no part of the work, so an instruction not to run the work's scripts doesn't cover it.
 ```
 
 Claude Code puts your plugin's folder in place of `${CLAUDE_PLUGIN_ROOT}` before the subagent reads

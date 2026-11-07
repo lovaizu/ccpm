@@ -2,41 +2,19 @@
 
 ## [Unreleased]
 
-### Added
-
-- Each document, each task's result and the finished work is made by turn and used in your place by an AI that did not make it, and made again until it finds nothing lacking, while the goal and the acceptance criteria, which you read as they stand at the goal sign-off, rn writes and checks against its checklist itself — what reaches you at a sign-off has already been used as you would use it, and the goal comes to you without a reading in your place before yours.
-- A document made before anything is built is used in your place as you, approving it, and whoever builds to it use it, with the plan and the documents before it, leaving out what only the built product shows, such as whether a README's install steps work; once the work is built, it is used as its users use it, with the work built, and each such document is made again and used the same way — a document is not sent back for a product that does not exist yet, and what it promises is still checked against the product.
-- Before the deliverable sign-off, an AI that did not make the finished work uses it as you would for each acceptance criterion — a criterion that is not done when used is found before you are asked, not after.
-- The ux, the architecture and the deliverable sign-off show the links to each document and to the finished work and each choice made in them without asking you, by rn or by the AI that made it, with why, and after `/rn:gm` what changed — you judge only what was decided in your place, as what you answered is in the work and has been checked there.
-- Once you approve the finished work, rn looks back once over the whole piece of work for each change you sent back, each work made again and each point asked again, checking each cause it doubts in its own conversations, and puts each learning to you, one per message, for your `.rn/checklists/<kind>.md`, for rn's makers as an issue opened only on your yes, both or neither — what a piece of work taught makes your later work, and rn, better.
-- While the tasks are carried out, rn says before each step what it will do, how far and how, and after it what is done and what comes next — you can stop a step going a way you do not want, without watching.
-- Where turn needs what lies outside the work, such as a tool missing, a permission not given or a network blocked, rn puts its question to you with what it tried, what it confirmed and what not, and turn goes on with that work once your answer is sent back to it, making the rest meanwhile — nothing is worked round in a way you cannot see.
-- How heavily the finished work is checked, property tests and mutation testing among them, is decided in its architecture, part by part, from what a failure would cost you, and shown to you at the architecture sign-off — a small tool is not given the checks of a large one, and you weigh the checks against your purpose.
-- For each task, a second AI of rn's with no conversation of its own reads from your repository and your decisions where the result goes, what checks it and who uses it, and hands back to rn any point that neither settles, which rn asks you — what each work is made from rests on what was kept, not on a long conversation, and no place or rule is chosen in your place where you do not see it.
-
 ### Changed
 
-- `/rn:up`, `/rn:ty` and `/rn:gm` each read rn's steps whole from one file under `prompts/` before anything else, the skill saying where each script and file the steps name lies — every command takes the same steps, wherever Claude Code installs rn.
-- `/rn:on` and `/rn:dn` are folded into `/rn:up`: `/rn:up <what you want>` starts a session, and `/rn:up` alone, in this conversation or a fresh one, goes on from wherever you stopped — every decision is written to the session before the work after it, and pushed as its step ends, so there is nothing to pause.
-- `/rn:ty` goes straight on to what comes after the sign-off, and `/rn:gm` keeps your feedback and stops — after an approval nothing more is typed, and after feedback you can clear the conversation and lose nothing.
-- rn asks you only what changes the work: how it or turn goes on after a stop of their own, and what turn's reader is given, it settles itself, and what it would tell rn's makers waits for the learnings — your time goes to your work, not to rn's.
-- Each point to decide is confirmed with you one per message, even one rn could look up, with what it looked up and the answer it recommends — a point decided in your place is made again when it is wrong.
-- Before a work is made, rn reads the checklists it will be made with and asks you each choice an item needs that you have not made — the questions come before the work, not while it is being made.
-- The stages are named by what each settles: the goal, why you want the work and what shows it done; the ux, what you get and how you use it, such as a UX and a README; and the architecture, how it is built and checked, with the research it rests on; the plan and design stages are gone, and the plan is made again stage by stage as each is reached — what you get is settled and approved before how it is built is drawn on it, so a README you change does not remake an architecture already made.
-- At the start of the ux and the architecture stage, rn asks you of each document the work needs whether it is kept in your repository, the one already there changed, kept in the session's `.rn/` folder alone, or not made, instead of a fixed README, design and verification document — you get only the documents your work needs, where you want them.
-- The ux and the architecture each have a sign-off of their own, only where the work needs a document of theirs — a small change that needs no document goes on without a stop that gives you nothing to decide.
-- An issue to rn's makers is written by rn with its issue checklist open and shown to you whole before you are asked to send it — what leaves your project holds the need alone, in the form rn's makers read, and you read it once.
-- Each kind of work, such as a README or code, is made with rn's one checklist for it and your addition at `.rn/checklists/<kind>.md` — what your project needs beyond rn's goes into every later work of that kind.
-- Each document, such as a README or a UX, is also made with rn's one checklist for every document, and the questions that hold in every part of it, such as each term known where it is met, are met in every part — what any reader needs is asked once for every kind of document, and a part that falls short is not passed because another part meets it.
-- rn needs turn, which installing rn installs, and no longer writ — the making and the reading in your place are done one way for every piece of work.
-- rn has no hooks of its own and asks you to protect the default branch on GitHub — the protection keeps any command from changing it before you merge, whatever form the command takes.
-- Where Claude Code's record of the conversation is not found, rn says it could not check whether you typed `/rn:ty` or `/rn:gm`, or search the session's conversations for a learning's cause, and where it looked — a check it could not make is never taken for one that found nothing.
-- The steering is kept as JSON, held to its form at every keep and read by rn's AI with `jq`, and `steering.md` beside it is written from it for you to read on the pull request — a slip in the record stops where it is made, and what you read always says what rn goes on from.
-- Each task makes one result by one call to turn and says only what that result must do; rn takes it out of the plan only once turn has returned it, and stops at a sign-off only with no task left — a task is never counted done before its result is made, and no way of making it is fixed before its maker chooses.
+- `/rn:up` with what you want lays out every piece the goal needs, and the order it needs them in, before it makes any, so no piece goes missing or comes before what it takes.
+- rn makes each piece by the best practice of its kind, and a second AI that gets only the piece, what it takes from, and a record of its commands tried in a throwaway copy judges it as its people would, until it meets every question of its kind, so what you get is usable as it comes.
+- rn asks you one point at a time, only what the purpose and the best practices leave to you, with its recommendation, and says at the end what it decided without asking, so your answers go only to what's yours.
+- `/rn:up` alone, in a new conversation, picks the work up where it stopped from `.rn/<date>-<goal>/` in your repository, so you never answer a point twice.
+- rn commits each piece on its own branch `rn/<date>-<goal>` and keeps one draft pull request for you to merge, so the work stays in your repository and the merge stays yours.
+- rn now installs Lane with it, which holds each of its steps on every run.
 
 ### Removed
 
-- The reviewers' reports and the reach of each finding in the proposal — the AI that used the work in your place has settled them before the sign-off, and what is left for you is a point to decide.
+- `/rn:ty` and `/rn:gm`: you answer each point in your own words, and merge the draft pull request yourself.
+- rn no longer needs Turn, which it now holds.
 
 ## [0.9.0] - 2026-10-06
 

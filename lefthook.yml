@@ -81,7 +81,6 @@ pre-commit:
     - "dev/lane/tests/unit/trials/test_record.py"
     - "dev/lane/trials/record.py"
     - "dev/lane/trials/trying.py"
-    - "dev/rn/README.md"
     - "dev/scripts/changed.sh"
     - "dev/scripts/check.sh"
     - "dev/scripts/figures.py"

@@ -45,8 +45,13 @@ def read(path: str) -> Any:
 def load(path: str, name: str) -> Any:
     """The JSON at the path, held to the form of the name. Refuses, by Unreadable, a file that's
     missing, holds no JSON, or is out of the form."""
-    data = read(path)
-    out = schema.held(form(name), data)
+    return held(path, read(path), form(name))
+
+
+def held(path: str, data: Any, shape: dict[str, Any]) -> Any:
+    """The data read from the path, held to the form given. Refuses, by Unreadable, data out of
+    the form, saying where."""
+    out = schema.held(shape, data)
     if out:
         raise Unreadable(f"{path} is out of its form: {out.told()}")
     return data

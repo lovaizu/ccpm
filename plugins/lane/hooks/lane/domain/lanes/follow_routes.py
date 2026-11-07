@@ -30,11 +30,11 @@ WORDING_EARLIER = (
 # would otherwise end with no result.
 RESULT = (
     "End by running `<commands>`. That command gives your result to the plugin and is no part of"
-    " the work, so an instruction not to run the work's scripts does not cover it."
+    " the work, so an instruction not to run the work's scripts doesn't cover it."
 )
 # Each wording of that sentence lane laid before, the newest first, so lay.py puts the current one
 # in its place.
-RESULT_EARLIER = ("End by running `<commands>`.",)
+RESULT_EARLIER = (RESULT.replace("doesn't", "does not"), "End by running `<commands>`.")
 # The tool the main conversation starts a subagent with, the one it calls a dependency's skill
 # with, and the one it resumes a subagent with.
 AGENT = "Agent"
