@@ -1,12 +1,12 @@
-"""The ux trial of Lane's O1, as dev/lane/architecture.md's Tests say: a stand-in for Lane's user,
-on Opus, is given the intent of intent_o1.md beside this file, written before the run, which no
-part of Lane is shown. It reads Lane's README, writes its own proposal of rules and routes for a
-copy of `changelog`, and lays it with `lay.py`. The trial then runs the plugin as its user would to
-try it: it types the skill's command, `/changelog:write`, with words a user would write that invite
-a break, once in `claude -p` and once in an interactive session, as Claude Code 2.1.319 brings a
-background subagent's end back to the main conversation in both. It tells the stand-in what each
-run did. The stand-in may lay its rules and routes again, for up to ROUNDS rounds, until it says
-the plugin does what it wants.
+"""The product vision trial of Lane's O1, as dev/lane/architecture.md's Tests say: a stand-in for
+Lane's user, on Opus, is given the intent of intent_o1.md beside this file, written before the run,
+which no part of Lane is shown. It reads Lane's README, writes its own proposal of rules and routes
+for a copy of `changelog`, and lays it with `lay.py`. The trial then runs the plugin as its user
+would to try it: it types the skill's command, `/changelog:write`, with words a user would write
+that invite a break, once in `claude -p` and once in an interactive session, as Claude Code 2.1.319
+brings a background subagent's end back to the main conversation in both. It tells the stand-in what
+each run did. The stand-in may lay its rules and routes again, for up to ROUNDS rounds, until it
+says the plugin does what it wants.
 
 Each run copies Lane and makes a git repository of its own, outside any ccpm clone, holding a
 release's commits as a project has them. Every Claude Code it starts runs on Opus with
@@ -30,19 +30,18 @@ the stand-in added to its plugin, and prints them:
 - KR1.2: the time from the stand-in's first write of a proposal, by any tool, to the end of the
   first run of the plugin that kept the rules and the order.
 
-For each run of the plugin the trial also prints each break tried and how it ended, stopped with
-its sentence or gone through, or that none was tried. That is information only: a role that keeps
-its step tries no break, and the architecture tests hold the stop of each break. A run of the trial
+For each run of the plugin the trial also prints each break tried and how it ended, stopped with its
+sentence or gone through, or that none was tried. That is information only: a role that keeps its
+step tries no break, and the architecture tests hold the stop of each break. A run of the trial
 passes where no run of the plugin went wrong; a trial passes where every run passes, three of three
 by default, as Q12 of plugins/turn/core/domain/best-practices/architecture/best-practice.md says.
-O1's key
-results have no target, so each measure is set against the last trial's.
+O1's key results have no target, so each measure is set against the last trial's.
 
-Run as `python3 dev/lane/tests/ux/trial.py [runs]`, three by default. It prints the folder of each
-run, where the records of each session, each round's facts and the measures are kept. `python3
-dev/lane/tests/ux/trial.py --judge <folder of a run>` judges a kept run again from its records and
-its repository, every round and the measures, to check the judge on a kept record before trusting
-it."""
+Run as `python3 dev/lane/tests/product-vision/trial.py [runs]`, three by default. It prints the
+folder of each run, where the records of each session, each round's facts and the measures are kept.
+`python3 dev/lane/tests/product-vision/trial.py --judge <folder of a run>` judges a kept run again
+from its records and its repository, every round and the measures, to check the judge on a kept
+record before trusting it."""
 
 from __future__ import annotations
 

@@ -1,10 +1,10 @@
 """S3 of dev/lane/architecture.md, a run, each start told, one test for each of its paths: the
-README's walkthrough laid by `lay.py write` and run, and the routes of tests/ux/ laid on a copy of
-`changelog`, and on a copy of its dependency `checker`; the hooks' entries of both plugins as laid
-called by a double of Claude Code in the test's process, which sends the main conversation's events
-as a trial on Claude Code 2.1.319 recorded them; doubles of the main conversation, writer,
-reviewer and checker's skill making set calls and giving set results by the result scripts, each
-one the script's own check takes."""
+README's walkthrough laid by `lay.py write` and run, and the routes of tests/product-vision/ laid on
+a copy of `changelog`, and on a copy of its dependency `checker`; the hooks' entries of both plugins
+as laid called by a double of Claude Code in the test's process, which sends the main conversation's
+events as a trial on Claude Code 2.1.319 recorded them; doubles of the main conversation, writer,
+reviewer and checker's skill making set calls and giving set results by the result scripts, each one
+the script's own check takes."""
 
 import os
 import unittest
@@ -99,7 +99,7 @@ class TestBegun(helpers.RunTest):
 
     def setUp(self) -> None:
         super().setUp()
-        self.lay(self.ux_proposal("routes.json"))
+        self.lay(self.trial_proposal("routes.json"))
 
     def test_the_skill_called_by_an_ai_begins_the_run_telling_the_first_start(self):
         # Given: the routes laid
@@ -231,7 +231,7 @@ class TestWaits(helpers.RoutesTest):
 
     def proposed(self) -> dict:
         """The proposal laid: routes.json, with a route from reviewer on `asks` that waits."""
-        routed = self.ux_proposal("routes.json")
+        routed = self.trial_proposal("routes.json")
         routed["routes"]["routes"].append({"from": "reviewer", "on": "asks", "waits": True})
         return routed
 
@@ -294,7 +294,7 @@ class TestDependencysSkill(helpers.RoutesTest):
         """The proposal laid: routes.json with writer's `written` leading to check, and check's
         `done` to reviewer, changelog declaring checker, laid first."""
         self.installed = self.checker("check.json")
-        routed = self.ux_proposal("routes.json")
+        routed = self.trial_proposal("routes.json")
         routed["routes"]["routes"][1:2] = [
             {"from": "writer", "on": "written", "to": CHECK},
             {"from": CHECK, "on": "done", "to": "reviewer"},

@@ -35,7 +35,7 @@ def bash(command: str) -> tuple[str, dict]:
 class TestWriterRun(helpers.RunTest):
     def setUp(self) -> None:
         super().setUp()
-        self.lay(self.ux_proposal("changelog.json"))
+        self.lay(self.trial_proposal("changelog.json"))
 
     def commits(self) -> int:
         """The commits in the project."""
@@ -99,7 +99,7 @@ class TestWriterRun(helpers.RunTest):
 class TestValueCommand(helpers.RunTest):
     def setUp(self) -> None:
         super().setUp()
-        self.lay(self.ux_proposal("value_command.json"))
+        self.lay(self.trial_proposal("value_command.json"))
         self.write("notes v2.json", json.dumps(NOTES))
         self.check = f"python3 {self.plugin}/scripts/check.py"
         self.may = (
@@ -164,7 +164,7 @@ class TestTwoRunsAtOnce(helpers.RunTest):
     def test_two_runs_at_once_are_each_held_to_their_own_value(self):
         # Given: drafter writing only {work}, two runs of it started at once by the main
         # conversation, the second before the first makes a call, given a.md and b.md
-        self.lay(self.ux_proposal("at_once.json"))
+        self.lay(self.trial_proposal("at_once.json"))
         runs = {
             "a.md": testing.Run("changelog:drafter", "d1"),
             "b.md": testing.Run("changelog:drafter", "d2"),
@@ -192,10 +192,10 @@ class TestDependencyCommand(helpers.RunTest):
         manifest = os.path.join(self.plugin, ".claude-plugin", "plugin.json")
         declared = {**self.read_json(manifest), "dependencies": ["checker"]}
         self.write_json(manifest, declared)
-        self.lay(self.ux_proposal("dependency.json"))
+        self.lay(self.trial_proposal("dependency.json"))
         # checker installed in a folder of its own, as Claude Code's cache holds a plugin.
         self.installed = os.path.join(self.base, "cache", "checker", "0.1.0")
-        shutil.copytree(os.path.join(helpers.UX, "checker"), self.installed)
+        shutil.copytree(os.path.join(helpers.TRIALS, "checker"), self.installed)
         self.claude.start(None, VERIFIER, "Check CHANGELOG.md by checker's skill.")
         self.said = (
             "changelog: Run only `python3 ${dependency:checker}/scripts/check.py CHANGELOG.md`."
@@ -230,7 +230,7 @@ class TestDependencyCommand(helpers.RunTest):
 class TestAdapterRun(helpers.RunTest):
     def setUp(self) -> None:
         super().setUp()
-        self.lay(self.ux_proposal("lanes.json"), ("items-findings",))
+        self.lay(self.trial_proposal("lanes.json"), ("items-findings",))
         self.write("review.md", REVIEW)
         self.gives = f"python3 {self.plugin}/hooks/lane/result.py noter done"
         self.check = f"python3 {self.plugin}/scripts/check.py notes.json"
@@ -297,7 +297,7 @@ SAID = f"changelog: Run `{ADD}` only with the person's approval."
 class TestHeldCommand(helpers.RunTest):
     def setUp(self) -> None:
         super().setUp()
-        given = self.ux_proposal("changelog.json")
+        given = self.trial_proposal("changelog.json")
         held = {"lane": "hold", "takes": [ADD]}
         given["subagents"][0]["steps"][1]["lanes"].append(held)
         self.lay(given)

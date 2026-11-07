@@ -502,7 +502,7 @@ def back(agent_id: str, status: str = "completed") -> dict:
 
 # The plugin the architecture tests and the trials lay their proposals on, its adapters, and the
 # stand-in dependency `checker`, kept with the trials.
-UX = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ux")
+TRIALS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "product-vision")
 # The project changelog works on: CHANGELOG.md at 0.1.0, and a commit after it.
 CHANGELOG = (
     "# Changelog\n\n## Unreleased\n\n## 0.1.0\n\n- Added: notes are kept as Markdown files.\n"
@@ -543,7 +543,7 @@ class RunTest(testing.GitTest):
         super().setUp()
         self.repo = self.copied("project", self.project)
         self.plugin = os.path.join(self.repo, "changelog")
-        shutil.copytree(os.path.join(UX, "changelog"), self.plugin)
+        shutil.copytree(os.path.join(TRIALS, "changelog"), self.plugin)
         claude = os.path.join(self.base, "bin", "claude")
         self.write(claude, VALIDATES)
         os.chmod(claude, 0o755)
@@ -563,13 +563,13 @@ class RunTest(testing.GitTest):
         self, proposed: dict[str, Any], adapters: tuple[str, ...] = (), path: str = PROPOSED
     ) -> str:
         """Lays the proposal kept at the path with `lay.py write`, with the adapters of the names
-        kept in ux/adapters/ beside it, as docs/lanes.md keeps them; fails the test where it does
-        not exit 0, and gives what it printed."""
+        kept in product-vision/adapters/ beside it, as docs/lanes.md keeps them; fails the test
+        where it does not exit 0, and gives what it printed."""
         beside = os.path.join(os.path.dirname(path), "changelog", "adapters")
         for name in adapters:
             for kind in (".py", ".json"):
                 os.makedirs(beside, exist_ok=True)
-                kept = os.path.join(UX, "adapters", name + kind)
+                kept = os.path.join(TRIALS, "adapters", name + kind)
                 shutil.copyfile(kept, os.path.join(beside, name + kind))
         self.write_json(path, proposed)
         done = subprocess.run(
@@ -584,11 +584,11 @@ class RunTest(testing.GitTest):
 
     def checker(self, laid: str = "examiner.json") -> str:
         """Installs the stand-in dependency checker in a folder of its own, lays it by its own
-        proposal of the name kept in ux/, has changelog declare it and the double of Claude Code
-        run its hooks too; gives the folder it is installed in."""
+        proposal of the name kept in product-vision/, has changelog declare it and the double of
+        Claude Code run its hooks too; gives the folder it is installed in."""
         installed = os.path.join(self.base, "cache", "checker", "0.1.0")
-        shutil.copytree(os.path.join(UX, "checker"), installed)
-        given = self.ux_proposal(laid)
+        shutil.copytree(os.path.join(TRIALS, "checker"), installed)
+        given = self.trial_proposal(laid)
         given["plugin"] = installed
         self.lay(given, path=os.path.join(".lane", "20261104-checker", "checker.json"))
         manifest = os.path.join(self.plugin, ".claude-plugin", "plugin.json")
@@ -596,9 +596,9 @@ class RunTest(testing.GitTest):
         self.claude.roots.append(installed)
         return installed
 
-    def ux_proposal(self, name: str) -> dict[str, Any]:
-        """The proposal of the name kept with the trials in ux/."""
-        with open(os.path.join(UX, name), encoding="utf-8") as f:
+    def trial_proposal(self, name: str) -> dict[str, Any]:
+        """The proposal of the name kept with the trials in product-vision/."""
+        with open(os.path.join(TRIALS, name), encoding="utf-8") as f:
             return json.load(f)
 
     def kept(self, run: testing.Run) -> list[dict[str, Any]]:
@@ -628,7 +628,7 @@ class RoutesTest(RunTest):
     def proposed(self) -> dict:
         """The proposal laid: routes.json, docs/routes.md's routes with writer's and reviewer's
         lanes."""
-        return self.ux_proposal("routes.json")
+        return self.trial_proposal("routes.json")
 
     def gives(self, run: testing.Run, on: str) -> str:
         """The result command of the run's subagent on the result, as its step writes it, the

@@ -16,7 +16,7 @@ class TestUp(helpers.RunTest):
 
     def setUp(self) -> None:
         super().setUp()
-        self.lay(self.ux_proposal("changelog.json"))
+        self.lay(self.trial_proposal("changelog.json"))
         self.hooks = os.path.join(self.plugin, "hooks", "hooks.json")
         self.laid = self.read(self.hooks)
         self.version = os.path.join(self.plugin, "hooks", "lane", "VERSION")
@@ -75,7 +75,7 @@ class TestUp(helpers.RunTest):
         # Given: the routes laid, the plugin's copy of lane's code at 0.0.1, writer's last step
         # saying its result sentence and the skill's step the routes' sentence, each in the
         # wording lane laid before
-        self.lay(self.ux_proposal("routes.json"))
+        self.lay(self.trial_proposal("routes.json"))
         agent = os.path.join(self.plugin, "agents", "writer.md")
         laid = self.read(agent)
         self.assertIn(helpers.END_WRITER, laid)

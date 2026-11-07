@@ -90,7 +90,7 @@ class TestWorkNotInForm(helpers.RoutesTest):
     def proposed(self) -> dict:
         """routes.json with writer also reading CHANGELOG.md to its end on its step 1, a lane
         checked as it gives its result."""
-        given = self.ux_proposal("routes.json")
+        given = self.trial_proposal("routes.json")
         whole = {"step": 1, "lanes": [{"lane": "read_whole", "takes": ["CHANGELOG.md"]}]}
         given["subagents"][0]["steps"].insert(0, whole)
         return given
@@ -173,7 +173,7 @@ class TestDependency(helpers.RoutesTest):
         """The proposal laid: dependency_routes.json, changelog declaring checker, and checker laid
         first with examiner's results."""
         self.installed = self.checker()
-        return self.ux_proposal("dependency_routes.json")
+        return self.trial_proposal("dependency_routes.json")
 
     def examined(self, on: str) -> testing.Told:
         """examiner's run of checker's result command on the result, checker's folder put in, a

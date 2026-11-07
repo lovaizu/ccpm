@@ -27,7 +27,7 @@ WAIT = (
 class TestRunsAtOnce(helpers.RoutesTest):
     def proposed(self) -> dict:
         """The proposal laid: fan_out.json."""
-        return self.ux_proposal("fan_out.json")
+        return self.trial_proposal("fan_out.json")
 
     def two_runs(self) -> list[str]:
         """The main conversation, told to start auditor, starts it twice at once, each start told to
@@ -121,7 +121,7 @@ class TestRunsAtOnce(helpers.RoutesTest):
         self.claude.stop(auditor(2))
         # When: the user lays the routes again with `lay.py write`, auditor no longer
         # fanned out nor its results ordered, before the end reaches the main conversation
-        again = self.ux_proposal("fan_out.json")
+        again = self.trial_proposal("fan_out.json")
         del again["routes"]["fan_out"], again["routes"]["precedence"]
         self.lay(again)
         event = {**self.claude.common("UserPromptSubmit", None), "prompt": "x"}
