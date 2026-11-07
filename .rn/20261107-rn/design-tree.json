@@ -14,180 +14,7 @@
       "name": "rn can plan from a best practice for planning",
       "path": "plugins/rn/domain/best-practices/plan",
       "kind": "meta",
-      "inputs": [],
-      "preconditions": [],
-      "status": "open",
-      "intents": [
-        {
-          "id": "Q1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Goal",
-              "decided": "the deliverables reach the goal: none missing, none started before what it needs, the plan revised after each turn",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "Q2",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Template",
-              "decided": "the design tree, .rn/<yyyymmdd>-<goal>/design-tree.json: the goal, the deliverables in the order of the work, each with its intents in its best practice's order, each intent with its decisions",
-              "by": "user"
-            },
-            {
-              "about": "A decision",
-              "decided": "about, decided (null while open) and by: user, maker, reasoning or research; no grounds, as the reason of a decision goes in the commit message that makes it",
-              "by": "user"
-            },
-            {
-              "about": "What leaves the tree",
-              "decided": "a deliverable done keeps one line, its path, kind and status; a research deliverable goes once its decisions hold what it found; how a point was reached stays in git",
-              "by": "user"
-            },
-            {
-              "about": "Its form",
-              "decided": "JSON with a JSON Schema, the values of each field and its meaning in the schema",
-              "by": "user"
-            },
-            {
-              "about": "Whether the design tree and the plan are one kind of best practice",
-              "decided": "one kind, plan, whose deliverable is the design tree; the plan best practice says the tree's goal, deliverables, order and form, and each deliverable's decisions answer the intents of that deliverable's own best practice",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "Q3",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The tree's sections",
-              "decided": "the goal, and for each deliverable its name, path, kind, inputs, preconditions, status and intents, each intent with whether it is met and its decisions; nothing else",
-              "by": "reasoning"
-            },
-            {
-              "about": "Inputs and preconditions",
-              "decided": "each best practice names in inputs the kinds a deliverable of it is made from, and in preconditions the kinds that must pass before it is made; each deliverable names in its own the paths of those deliverables, as one kind's deliverables serve different products; the script orders the tree by the deliverables' paths and checks them against the kinds; meta's template gains both",
-              "by": "reasoning"
-            },
-            {
-              "about": "Each kind's inputs and preconditions now",
-              "decided": "readme from product-vision; architecture from product-vision and readme; code and prompt from architecture; product-vision, meta, plan, refactor-doc and refactor-code from none; no preconditions until the tests best practice gives them",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "Q4",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The plan's questions, in the order the maker thinks them",
-              "decided": "goal; the deliverables back from the goal; each kind's best practice, or a meta deliverable first; the name; the order from inputs and preconditions; each intent with its decisions and what is open; who settled each decision; where the work stands on picking it up; the nodes a change touches; only what holds now; the whole",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "Q5",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Order",
-              "decided": "made by a script from each best practice's inputs and preconditions, never thought out case by case",
-              "by": "user"
-            },
-            {
-              "about": "Deliverables put in as they are found",
-              "decided": "a research deliverable before the decisions it serves, and a meta deliverable where a kind has no best practice, each at the top level in the order of the work",
-              "by": "user"
-            },
-            {
-              "about": "The rules tree.py checks after each change",
-              "decided": "every deliverable needed is in the tree; each comes after its inputs and preconditions; each research deliverable serves a later decision; each meta deliverable's kind is used later",
-              "by": "user"
-            },
-            {
-              "about": "A change to a node",
-              "decided": "tree.py lists the nodes to look at: up to the goal, then the later decisions of the deliverable, then the deliverables before and after it that it takes from or gives to; Lane's every_item has each answered as holding or as changed; each change starts the list again",
-              "by": "user"
-            },
-            {
-              "about": "Test levels",
-              "decided": "unit, then architecture, then the product vision, each after the one below passes",
-              "by": "research"
-            },
-            {
-              "about": "A check before its results are trusted",
-              "decided": "a test seen to fail first; a judge right on examples whose answer is known",
-              "by": "research"
-            },
-            {
-              "about": "The intent of a deliverable's name",
-              "decided": "Reading a deliverable's name in the plan, does the user see what it brings toward the goal, so that they know where the work stands and what comes next without opening it?",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "Q6",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The skeleton and the decisions",
-              "decided": "which deliverables and in what order up front, backward from the goal; each decision once its inputs are there, and the plan revised forward from each turn's result",
-              "by": "research"
-            },
-            {
-              "about": "The practice of a deliverable's name",
-              "decided": "Write the one thing that holds toward the goal once the deliverable is made; leave out its path and kind, which have fields of their own",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "Q7",
-          "good": false,
-          "decisions": [
-            {
-              "about": "One practice for each question",
-              "decided": "in the questions' order, each giving its own question's way",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "Q8",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Example",
-              "decided": "a copy of .rn/20261107-rn/design-tree.json by plan.py example, its source named in source",
-              "by": "reasoning"
-            },
-            {
-              "about": "Template",
-              "decided": "the JSON Schema of the design tree, its descriptions the notes, as a second note beside the schema drifts from it; meta's Q2 gains this case",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "Q9",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The whole tried",
-              "decided": "the rest of this rebuild is planned and resumed by the plan best practice, and each place it falls short is mended where it lies",
-              "by": "reasoning"
-            }
-          ]
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "The shared plugin best practice says what rn and Lane share",
@@ -286,6 +113,11 @@
         },
         {
           "id": "Q9",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q10",
           "good": false,
           "decisions": []
         }
@@ -512,6 +344,11 @@
         },
         {
           "id": "Q9",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q10",
           "good": false,
           "decisions": []
         }
