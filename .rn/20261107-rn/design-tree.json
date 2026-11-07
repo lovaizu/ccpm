@@ -14,6 +14,8 @@
       "name": "rn can plan from a best practice for planning",
       "path": "plugins/rn/domain/best-practices/plan",
       "kind": "meta",
+      "inputs": [],
+      "preconditions": [],
       "status": "open",
       "intents": [
         {
@@ -191,6 +193,8 @@
       "name": "The shared plugin best practice says what rn and Lane share",
       "path": "dev/plugin-best-practice.md",
       "kind": "meta",
+      "inputs": [],
+      "preconditions": [],
       "status": "open",
       "intents": [
         {
@@ -289,6 +293,8 @@
       "name": "Lane's design checks each practice step and each change",
       "path": "dev/lane/architecture.md",
       "kind": "architecture",
+      "inputs": ["dev/lane/product-vision.md", "plugins/lane/README.md"],
+      "preconditions": [],
       "status": "open",
       "intents": [
         {
@@ -401,6 +407,8 @@
       "name": "Lane's code does what its design says",
       "path": "plugins/lane",
       "kind": "code",
+      "inputs": ["dev/lane/architecture.md"],
+      "preconditions": [],
       "status": "open",
       "intents": [
         {
@@ -454,6 +462,8 @@
       "name": "rn can make tests from a best practice for tests",
       "path": "plugins/rn/domain/best-practices/tests",
       "kind": "meta",
+      "inputs": [],
+      "preconditions": [],
       "status": "open",
       "intents": [
         {
@@ -507,6 +517,8 @@
       "name": "rn's product vision says what rn and Lane are for",
       "path": "dev/rn/product-vision.md",
       "kind": "product-vision",
+      "inputs": [],
+      "preconditions": [],
       "status": "open",
       "intents": [
         {
@@ -562,6 +574,8 @@
       "name": "A newcomer learns from the README what rn does",
       "path": "plugins/rn/README.md",
       "kind": "readme",
+      "inputs": ["dev/rn/product-vision.md"],
+      "preconditions": [],
       "status": "open",
       "intents": [
         {
@@ -625,6 +639,8 @@
       "name": "rn's design says how a turn carries out a best practice",
       "path": "dev/rn/architecture.md",
       "kind": "architecture",
+      "inputs": ["dev/rn/product-vision.md", "plugins/rn/README.md"],
+      "preconditions": [],
       "status": "open",
       "intents": [
         {
@@ -773,6 +789,8 @@
       "name": "rn works as designed, with Pin and Turn removed",
       "path": "plugins/rn",
       "kind": "code",
+      "inputs": ["dev/rn/architecture.md"],
+      "preconditions": [],
       "status": "open",
       "intents": [
         {
