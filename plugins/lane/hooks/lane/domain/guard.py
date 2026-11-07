@@ -1,16 +1,20 @@
 """The guard: decides, of each event of a subagent with lanes laid or named by the routes, and of
 each event of the main conversation within a run of the skill the routes start from, what it is
-told, from the event's input alone, as Claude Code documents it, and from the calls kept; and,
-where it cannot decide, the error that says what is wrong and who must fix it.
+told, from the event's input alone, as Claude Code documents it, and from the calls kept; and, where
+it cannot decide, the error that says what is wrong and who must fix it.
 
 At PreToolUse, a call goes through, is stopped with the sentences it breaks, or, a held command, is
-put to the person with its sentence. A subagent with lanes runs a command only where a run_only,
-hold or test_after lane names it, whole, or its result command does: a call of Bash is judged by
-those lanes of the subagent together, as lane does not know which step the subagent is on. A read
-is judged by its read_only lanes together, and a write by its write_only lanes together, each going
-through where there is none; a write of an edit_only lane's output, once it is there, goes through
-only by Edit; a write of an in_form lane's output is held to its form. Any other
-tool goes through. A result command is let through only once the lanes checked at the end hold.
+put to the person with its sentence. A subagent with a run_only lane runs a command only where a
+run_only, run_step, hold or test_after lane names it, whole, or its result command does: a call of
+Bash is judged by those lanes of the subagent together, as lane does not know which step the
+subagent is on. A read is judged by its read_only lanes together, and a write by its write_only
+lanes together, each going through where there is none; a write of an edit_only lane's output, once
+it is there, goes through only by Edit; a write of an in_form lane's output is held to its form. Any
+other tool goes through. A call that is the trace of a later step of a step list, while the list's
+step due hasn't come back, is stopped with that step; a list is the numbered list of the subagent's
+steps, or one its steps adapter gives. A start of a subagent of the plugin is stopped, as only the
+main conversation starts one. A result command is let through only once every step's trace has come
+back and the lanes checked at the end hold.
 
 A take `{<name>}` is the start's value of the name, read at the values port from the texts the
 subagent was given: the prompt of the Agent call that started it, kept under the ID of the start as
@@ -21,21 +25,23 @@ error at each of its events, as only a start in the background comes back with i
 subagent's calls.
 
 At PostToolUse, a subagent's call is kept, with the result where it is a result command. At
-SubagentStart, the start is kept and the subagent given its part whole where its entry names one.
-At SubagentStop, a subagent giving a result is kept going once where it gave none; any other end is
+SubagentStart, the start is kept and the subagent given its part whole where its entry names one,
+each sentence no step says, and the steps its adapter gives where its prompt is kept. At
+SubagentStop, a subagent giving a result is kept going once where it gave none; any other end is
 kept, so a start in the background counts once its subagent has ended.
 
 The main conversation is held only while a run of the skill lasts, from the command's expansion or
 the Skill call that begins it until a route ends it, with neither a `to` nor `waits`, or a new call
-of the skill, while the run waits for the user, ends it and begins another. Within it, a
-start not due, or a message resuming a start that ended with no result, is stopped with the start
-due; each start coming back is kept and told to wait; each prompt handed to the main conversation,
-a subagent's task-notification among them, is told the next start, or, where a route waits, to
-put the subagent's point to the user and resume it with their answer; and the end of a turn is
-kept going once while a start is due and no start of the run still runs, and let end while the
-user is to answer. A dependency's skill the routes name is
-one move, from its Skill call to the run of the dependency's result script, during which nothing
-of the main conversation is checked."""
+of the skill, while the run waits for the user, ends it and begins another. Within it, a start not
+due, or a message resuming a start that ended with no result, is stopped with the start due; a start
+with another text than what the routes' command printed for it is stopped; a message resuming a
+start is let through only where its point waits and the message holds the person's own words since;
+each start coming back is kept and told to wait; each prompt handed to the main conversation, a
+subagent's task-notification among them, is told the next start, or, where a route waits, to put the
+subagent's point to the user and resume it with their answer; and the end of a turn is kept going
+once while a start is due and no start of the run still runs, and let end while the user is to
+answer. A dependency's skill the routes name is one move, from its Skill call to the run of the
+dependency's result script, during which nothing of the main conversation is checked."""
 
 from __future__ import annotations
 
