@@ -17,9 +17,9 @@ The generator can make deliverables with which their role achieves its purpose.
 | Q3 | intents | Judging a deliverable by a question, does the evaluator reach the verdict that someone who knows the role's work would reach, so that a pass means the role gets what it's after and not that the words are there? |
 | Q4 | template, parts | Filling in the template, or making each part, does the generator know what each holds and what its reader uses it for, so that the deliverable holds what its role uses and nothing more? |
 | Q5 | inputs, preconditions | Ordering the work, does the planner find the kinds a deliverable of the kind is made from and those whose deliverables must pass before it's made, so that no deliverable is made before what it stands on? |
-| Q6 | practices | Reading a practice, does the generator meet the way the field has established for the case, under the name the field knows it by and with the sources it rests on, so that it brings the field's knowledge to the deliverable and not one maker's reasoning? |
+| Q6 | practices | Reading a practice, does the generator meet the ways the field has established for the case and when each fits, under the names the field knows them by and with the sources they rest on, so that it brings the field's knowledge to any deliverable of the kind, whatever its language and tools, and not one maker's reasoning? |
 | Q7 | practices | Following a practice, does the generator see what the deliverable must be and why, where the practice applies and where it doesn't, and what it costs, so that it follows the practice where it holds and sets it aside where it doesn't? |
-| Q8 | practices | Following a practice's steps, does the generator meet a step only where skipping it or doing it out of order breaks the deliverable, each with the call that shows it done, so that Lane holds what must hold and the generator's judgment shapes the rest? |
+| Q8 | practices | Following a practice's steps, does the generator meet a step only where skipping it or doing it out of order breaks the deliverable, each with the call that shows it done, so that a guard holds what must hold and the generator's judgment shapes the rest? |
 | Q9 | example | Reading the examples, does the generator see what the template's slots or the parts become in deliverables that differ from one another, so that it takes the intent and not one product's particulars? |
 | Q10 | the whole | Using deliverables made by the best practice for cases held back from its making, does the role achieve its purpose? |
 
@@ -64,7 +64,7 @@ Killer items
 
 **Thinking**
 
-Before you write a question, make real deliverables of the kind without the best practice, and keep each way they fail their role. Add the failures that the field's sources name for the kind. Write a question for each failure that matters, and none for a section where makers don't fail, as a checklist works when it holds the items most often missed and most dangerous to skip, and a long list imposed for completeness showed no effect. Merge two questions that fail the same deliverables for the same reason. Revise the questions once you've read many real deliverables, as reading them shows criteria that no one could name before.
+Before you write a question, make real deliverables of the kind without the best practice, and keep each way they fail their role. Add the failures that the field's sources name for the kind. Write a question for each failure that matters, and none for a section where makers don't fail, as a checklist works when it holds the items most often missed and most dangerous to skip, and a long list imposed for completeness showed no effect. The WHO's checklist of 19 such items, said aloud at three points of an operation, went with a fall in deaths from 1.5% to 0.8% across eight hospitals. Merge two questions that fail the same deliverables for the same reason. Revise the questions once you've read many real deliverables, as reading them shows criteria that no one could name before.
 
 **Applies**
 
@@ -82,6 +82,7 @@ The runs without the best practice take time before any writing starts. A failur
 
 - [Gawande's Read-Do and Do-Confirm checklists, as Sketchplanations sums them up](https://sketchplanations.com/read-do-do-confirm-checklists), secondary, as the maker read only a summary of it
 - [Gawande, The Checklist Manifesto, as Steve Grossi sums it up](https://www.stevegrossi.com/on/the-checklist-manifesto), secondary, as the maker read only a summary of it
+- [Haynes et al., A Surgical Safety Checklist to Reduce Morbidity and Mortality in a Global Population, NEJM 2009](https://dash.harvard.edu/server/api/core/bitstreams/c5287a52-75bc-4131-9262-4c598fcde8cc/content)
 - [Urbach et al. 2014 in the New England Journal of Medicine, as HospiMedica reports it](https://www.hospimedica.com/surgical-techniques/articles/294752136/surgical-checklists-less-effective-than-previously-assumed.html), secondary, as the maker read only a summary of it
 - [Bosk et al. 2009 in The Lancet, as ScienceDaily reports it](https://www.sciencedaily.com/releases/2009/09/090916092657.htm), secondary, as the maker read only a summary of it
 - [Anthropic, Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)
@@ -98,7 +99,7 @@ LLM-as-a-judge calibration, also known as inter-rater agreement
 
 **Thinking**
 
-Write each question as the moment the role uses the deliverable, what it needs there, and what it's after in that, in a clause that opens with "so that" and names that end. Leave the clause out only where what the role needs is the goal itself. Ask it for yes or no, as a vague or scaled question gives verdicts that differ from run to run and that no one can act on. Use a question once an evaluator judges it right on several kept deliverables whose answer someone who knows the role's work has given, with both passes and fails among them. Count how many of the passes and how many of the fails it got right, as agreement on one deliverable, or on a set of passes alone, shows nothing. Keep those deliverables and their answers, so that you judge each change to a question on them again. Judge with a model other than the one that made the deliverable, and let it answer that it can't tell.
+Write each question as the moment the role uses the deliverable, what it needs there, and what it's after in that, in a clause that opens with "so that" and names that end. Leave the clause out only where what the role needs is the goal itself. Ask it for yes or no, as a vague or scaled question gives verdicts that differ from run to run and that no one can act on. Use a question once an evaluator judges it right on several kept deliverables whose answer someone who knows the role's work has given, with both passes and fails among them. Count how many of the passes and how many of the fails it got right, as agreement on one deliverable, or on a set of passes alone, shows nothing. Keep those deliverables and their answers beside the best practice, such as in a folder of cases, so that you judge each change to a question on them again. Judge with a model other than the one that made the deliverable, and let it answer that it can't tell.
 
 **Applies**
 
@@ -130,7 +131,7 @@ Template, also known as Mandatory Elements Present
 
 **Thinking**
 
-Give a template where the kind's deliverable is one document, and name its parts where it's a set of files of a known form, such as code or a prompt, as those files' own form already lays them out and a template would only copy it. A template holds a section for each thing the role uses toward the goal, fixed text for what every deliverable of the kind shares, and a slot for the rest. Keep a section only where the role would fall short of the goal without it, as an AI writes past what a deliverable needs when it's only told not to, and the template leaves it no room. After each section, write a GitHub note whose first line opens with `DELETE_TEMPLATE_COMMENT:`, saying of each slot what it holds, what its reader uses it for, and whether it's optional. In JSON, write the note as a key `DELETE_TEMPLATE_COMMENT`. Where the deliverable has a JSON Schema of its own, make the schema the template and write each note in its field's description, as a second note beside the schema drifts from it. In Markdown, mark each slot as code, `` `<name>` ``, as Markdown drops a bare `<name>` as an HTML tag. Draw a figure in place of prose wherever one can say it: a sequence in Mermaid, and any other figure in SVG, with a skeleton beside the template, `images/template-<name>.svg`, that shows the layout by the slots' names. Give each part an id and what the role needs of it.
+Give a template where the kind's deliverable is one document, and name its parts where it's a set of files of a known form, such as code or a prompt, as those files' own form already lays them out and a template would only copy it. A template holds a section for each thing the role uses toward the goal, fixed text for what every deliverable of the kind shares, and a slot for the rest. Keep a section only where the role would fall short of the goal without it, as an AI writes past what a deliverable needs when it's only told not to, and the template leaves it no room. After each section, write a note saying of each slot what it holds, what its reader uses it for, and whether it's optional, marked so that a tool finds any note the generator leaves in a deliverable. rn's tools find a note by `DELETE_TEMPLATE_COMMENT`, so the marker is part of the template's form: a GitHub note whose first line opens with `DELETE_TEMPLATE_COMMENT:` in Markdown, and a key of that name in JSON. Where the deliverable has a schema of its own, such as a JSON Schema, make the schema the template and write each note in its field's description, as a second note beside the schema drifts from it. Write each slot so that its format shows it, such as `` `<name>` `` in Markdown, which drops a bare `<name>` as an HTML tag. Draw a figure in place of prose wherever one can say it, in a format the deliverable's readers see drawn, such as Mermaid for a sequence or SVG for any other, with a skeleton beside the template that shows the layout by the slots' names, such as `images/template-<name>.svg`. Give each part an id and what the role needs of it.
 
 **Applies**
 
@@ -183,7 +184,7 @@ A deliverable of the kind can't start before the kinds it names, so a wrong entr
 
 ### Q6
 
-Reading a practice, does the generator meet the way the field has established for the case, under the name the field knows it by and with the sources it rests on, so that it brings the field's knowledge to the deliverable and not one maker's reasoning?
+Reading a practice, does the generator meet the ways the field has established for the case and when each fits, under the names the field knows them by and with the sources they rest on, so that it brings the field's knowledge to any deliverable of the kind, whatever its language and tools, and not one maker's reasoning?
 
 **Name**
 
@@ -191,7 +192,7 @@ Evidence-based software engineering, also known as multivocal literature review
 
 **Thinking**
 
-Turn each failure a question asks of into a question that the field can answer. Search the field's primary sources and its established guides for the way it handles that case: standards, the guides of a tool's makers, books, and papers, ahead of blogs. Weigh each source by its authority, its method, and whether its claims rest on data. Where sources disagree, look first for a difference of context that explains it, and state the practice with that context. Otherwise take the side of the stronger evidence, and write which side you took and why. Stop once new sources add no new finding. Call the practice by the name the field knows it by, such as information hiding or Given-When-Then, and list the other names it goes by, as a name brings the field's knowledge to a reader who knows it. Put the name beside what the role needs of it, as no study shows that a name alone serves a model better than the idea said plainly. Name each source read, and mark one where only a summary of it was read. A practice reasoned out alone misses what the field already knows.
+Turn each failure a question asks of into a question that the field can answer. Search the field's primary sources and its established guides for the way it handles that case: standards, the guides of a tool's makers, books, and papers, ahead of blogs. Weigh each source by its authority, its method, and whether its claims rest on data. Where sources disagree, look first for a difference of context that explains it, and state the practice with that context. Otherwise take the side of the stronger evidence, and write which side you took and why. Stop once new sources add no new finding. State the practice for any language and tool the kind is made with, and name one only as an example, as a practice tied to one language fails a deliverable made in another. Give the intent, the ways the field has established for it, when each fits, and what each costs, such as McCabe's limit of 10 for a function's complexity, and leave to the plan the way, the tool, the file, and the threshold for each deliverable's case, as only the case shows which fits, and a practice that fixes one binds every case to it. Name a repository's own machinery, such as its scripts, only as an example. Keep the facts of what the kind is about, such as the documented behavior of the platform a plugin runs on, as those are the field's and no choice. Call the practice by the name the field knows it by, such as information hiding or Given-When-Then, and list the other names it goes by, as a name brings the field's knowledge to a reader who knows it. Put the name beside what the role needs of it, as no study shows that a name alone serves a model better than the idea said plainly. Name each source read, and mark one where only a summary of it was read. A practice reasoned out alone misses what the field already knows.
 
 **Applies**
 
@@ -199,11 +200,11 @@ Every practice.
 
 **Excludes**
 
-A convention of the tools that run or check the best practice, such as the marker of a template's note, has those tools as its source, as no field holds it.
+A convention of the tools that run or check the best practice, such as the marker of a template's note, has those tools as its source, as no field holds it. A choice for one deliverable's case, such as a tool or a limit a project sets, goes in the plan as that deliverable's decision, not in the practice.
 
 **Cost**
 
-Research takes longer than reasoning a practice out, and the maker weighs each source's authority before using it.
+Research takes longer than reasoning a practice out, and the maker weighs each source's authority before using it. The plan then decides for each deliverable what the practice leaves open.
 
 **Sources**
 
@@ -251,7 +252,7 @@ A practice takes longer to write and to read than a bare rule. Lead with what th
 
 ### Q8
 
-Following a practice's steps, does the generator meet a step only where skipping it or doing it out of order breaks the deliverable, each with the call that shows it done, so that Lane holds what must hold and the generator's judgment shapes the rest?
+Following a practice's steps, does the generator meet a step only where skipping it or doing it out of order breaks the deliverable, each with the call that shows it done, so that a guard holds what must hold and the generator's judgment shapes the rest?
 
 **Name**
 
@@ -259,7 +260,7 @@ Degrees of freedom
 
 **Thinking**
 
-Give a step only where skipping it or doing it out of order breaks the deliverable, such as running the tests before the code changes. Say everything else in the thinking, and leave the way to the generator, as a model that holds the intent often reasons past a hand-written plan, and the evaluator judges what was made, not the path. Give each step its trace, the call that shows it done: `run` for a command run, matched whole, `read` for a file read to its end, or `write` for a file made. Write each take as the step writes it, with a value the role's start gives as `{<name>}`, such as `{deliverable}`, a whole take for a file or one word of a command. For `run` and `write`, give more than one take where any of them shows the step done, and for `read`, each file the step reads whole. Order the steps as their calls come, as Lane holds the role to each step by its trace, in the steps' order, and holds its end until each trace comes back.
+Give a step only where skipping it or doing it out of order breaks the deliverable, such as running the tests before the code changes. Say everything else in the thinking, and leave the way to the generator, as a model that holds the intent often reasons past a hand-written plan, and the evaluator judges what was made, not the path. Give each step its trace, the call that shows it done, in the form the guard reads, as a guard holds a step only by a call it can match. In rn's form, the trace takes `run` for a command run, matched whole, `read` for a file read to its end, or `write` for a file made. Write each take as the step writes it, with a value the role's start gives as `{<name>}`, such as `{deliverable}`, a whole take for a file or one word of a command. For `run` and `write`, give more than one take where any of them shows the step done, and for `read`, each file the step reads whole. Order the steps as their calls come, as a guard, such as Lane, holds the role to each step by its trace, in the steps' order, and holds its end until each trace comes back.
 
 **Applies**
 
@@ -271,7 +272,7 @@ An action of a case, which only some runs take, and a judgment, which no call sh
 
 **Cost**
 
-Lane holds the role's end until each trace comes back, so a step given without need holds every run to it.
+A guard holds the role's end until each trace comes back, so a step given without need holds every run to it.
 
 **Sources**
 
@@ -290,7 +291,7 @@ Diverse, canonical examples
 
 **Thinking**
 
-Make deliverables of the kind by the template and the practices, pass each by the questions, and name them in `example`: one file, or a folder of several. Choose them to differ where the kind allows, in product, size, and shape, so that the generator sees what stays the same across them, which is the intent, and doesn't copy one product's content. Where a deliverable lies elsewhere for its own reader, such as a product vision in the developers' folder, name its path in `source` and have a script copy it with its figures beside the best practice, as a copy made by hand drifts from the deliverable, and a symbolic link shows as a line of text on GitHub and on Windows. Give no example until a deliverable of the kind passes, as one made to another form teaches that form.
+Make deliverables of the kind by the template and the practices, pass each by the questions, and name them in `example`: one file, or a folder of several. Choose them to differ where the kind allows, in product, size, and shape, so that the generator sees what stays the same across them, which is the intent, and doesn't copy one product's content. Where a deliverable lies elsewhere for its own reader, such as a product vision in the developers' folder, name its path in `source`, and have a tool copy it with its figures beside the best practice, such as rn's `practices.py example`, as a copy made by hand drifts from the deliverable, and a symbolic link shows as a line of text where a host doesn't follow it, such as GitHub. Give no example until a deliverable of the kind passes, as one made to another form teaches that form.
 
 **Applies**
 
