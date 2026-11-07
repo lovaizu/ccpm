@@ -1,12 +1,13 @@
 """What a person or CI runs on rn's best practices, as `python3 dev/scripts/practices.py
 form|markdown|example <best practice json>...`: `form` names each fault of a best practice's form,
 its Markdown, made from its JSON for a person to read, left behind it, the copy of its example left
-behind the work it copies, and each file in its folder that none of them holds; `markdown` writes
-its Markdown beside it; `example` writes the copy of its example from the work its source names,
-and removes each file that none of them holds. Each gives 0, or 1 where it names any fault, and 2
-with its usage where it is given no command it takes. It is ccpm's own tooling, kept out of rn's
-folder, as no run of rn checks a best practice's Markdown or the copy of its example; it holds
-each best practice to rn's form of it, `plugins/rn/domain/forms/best-practice.schema.json`."""
+behind the work it copies, and each file in its folder that none of them, nor its cases, holds;
+`markdown` writes its Markdown beside it; `example` writes the copy of its example from the work
+its source names, and removes each file that none of them holds. Each gives 0, or 1 where it
+names any fault, and 2 with its usage where it is given no command it takes. It is ccpm's own
+tooling, kept out of rn's folder, as no run of rn checks a best practice's Markdown or the copy of
+its example; it holds each best practice to rn's form of it,
+`plugins/rn/domain/forms/best-practice.schema.json`."""
 
 from __future__ import annotations
 
@@ -59,6 +60,9 @@ KEPT = re.compile(r"^(?:[a-z][a-z0-9+.-]*:|#)")
 # rn's own best practices, where a kind that lies beside no best practice's folder is sought.
 OWN = os.path.join(RN, "best-practices")
 PRACTICE = "best-practice.json"
+# The folder beside a best practice that holds its kept cases: deliverables of its kind whose
+# verdict on each question is known, which an evaluator is judged on before its verdicts are used.
+CASES = "cases"
 # The best practices made by the meta before its remake, each by its kind, held to the form they
 # were made in: each section asked of, and no practice holding more than its thinking and steps.
 # Each kind leaves the list once the remade meta makes its best practice again.
@@ -259,10 +263,12 @@ def shown(text: str) -> list[str]:
 
 def kept(path: str, data: dict[str, Any]) -> set[str]:
     """The files the folder of the best practice at the path holds by right: the best practice and
-    its Markdown, its template and the figures it shows, and its example, as the copy of its source
-    would now be where it names one, else with the figures it shows. Refuses, by FileNotFoundError,
-    a source or a figure of it that is not there."""
+    its Markdown, its template and the figures it shows, its example, as the copy of its source
+    would now be where it names one, else with the figures it shows, and each file of its cases.
+    Refuses, by FileNotFoundError, a source or a figure of it that is not there."""
     files = {path, os.path.splitext(path)[0] + ".md"}
+    cases = beside(path, CASES)
+    files.update(os.path.join(r, n) for r, _, names in os.walk(cases) for n in names)
     copied = copies(path, data) if "example" in data else {}
     files.update(copied)
     for key in ("template", "example"):

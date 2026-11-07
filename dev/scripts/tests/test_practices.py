@@ -616,6 +616,25 @@ class Leftovers(testing.FolderTest):
             [self.at("images", "old.svg"), self.at("notes.md")],
         )
 
+    def test_each_file_of_its_cases_is_held(self):
+        # Given: kept cases with known verdicts in the folder's cases/, at any depth
+        self.write(self.at("cases", "a-pass.md"), "a")
+        self.write(self.at("cases", "b", "test_b.py"), "b")
+        # When: the files it does not hold are sought
+        # Then: none of the cases is one, as each is a deliverable the evaluator is judged on
+        self.assertEqual(practices.leftovers(self.path, self.data), [])
+
+    def test_a_file_named_cases_is_no_folder_of_cases(self):
+        # Given: a file whose name is that of the folder of cases, and a file under a folder whose
+        # name only opens with it
+        self.write(self.at("cases.md"), "c")
+        self.write(self.at("cases-old", "a.md"), "a")
+        # Then: each is a leftover, as only what lies under cases/ is a case
+        self.assertEqual(
+            practices.leftovers(self.path, self.data),
+            [self.at("cases-old", "a.md"), self.at("cases.md")],
+        )
+
     def test_a_hidden_file_is_no_leftover(self):
         self.write(self.at("images", ".DS_Store"), "")
         self.assertEqual(practices.leftovers(self.path, self.data), [])
