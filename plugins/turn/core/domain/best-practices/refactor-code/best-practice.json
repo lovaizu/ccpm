@@ -50,7 +50,13 @@
    "thinking": "The structure changes in small steps, and each step keeps every behavior. The tests from before the change check each step. No step changes a behavior.",
    "steps": [
     {
-     "text": "Run the tests before any change, and begin only when every one passes."
+     "text": "Run the tests before any change, and begin only when every one passes.",
+     "trace": {
+      "action": "run",
+      "takes": [
+       "{tests}"
+      ]
+     }
     },
     {
      "text": "Where a behavior the change will touch has no test, write a test of what the code does now, and see it pass."

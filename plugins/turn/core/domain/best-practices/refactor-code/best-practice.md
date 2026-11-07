@@ -29,7 +29,7 @@ The structure changes in small steps, and each step keeps every behavior. The te
 
 **Steps**
 
-1. Run the tests before any change, and begin only when every one passes.
+1. Run the tests before any change, and begin only when every one passes. The trace: `{tests}` run.
 2. Where a behavior the change will touch has no test, write a test of what the code does now, and see it pass.
 3. After each small change of structure, such as a rename or a moved function, run the tests. Where a test fails, undo the change and make a smaller one.
 4. Leave each test's expected result as it was, and change a test's call only where a name it uses was renamed.

@@ -100,7 +100,7 @@ Show one real run of the use most readers come for, on work like theirs, from wh
 
 **Steps**
 
-1. Pick the use from what readers ask for most and from the objectives of the product vision.
+1. Pick the use from what readers ask for most and from the objectives of the product vision. The trace: `{inputs}` read to its end.
 2. Take each exchange from the record of a real run, in the form the reader meets it, cutting only what the reader doesn't need to see the result.
 3. If the result doesn't show the gain the opening promised, pick another piece of work or another use.
 
@@ -114,7 +114,7 @@ Each problem the reader feels in the present way, in their own words, gets a fig
 
 **Steps**
 
-1. Take the problems from the Concept section of the product vision, one where the present way falls short for each idea, and from what readers complain of in that way.
+1. Take the problems from the Concept section of the product vision, one where the present way falls short for each idea, and from what readers complain of in that way. The trace: `{inputs}` read to its end.
 2. For each, take from the design what the product does that makes it go away. Ask the user each one the design doesn't settle.
 3. Look at each figure as a newcomer, and where they couldn't picture from it what its line says, draw it again.
 
@@ -128,7 +128,7 @@ Each point a newcomer would doubt gets a figure of its own that draws what its l
 
 **Steps**
 
-1. Read the README as a newcomer, and mark each thing it says that the present way can't do. Ask of each answer what the newcomer would doubt next, until no doubt remains.
+1. Read the README as a newcomer, and mark each thing it says that the present way can't do. Ask of each answer what the newcomer would doubt next, until no doubt remains. The trace: `{deliverable}` read to its end.
 2. For each point, take how the product does it from the design. Ask the user each one the design doesn't settle.
 3. Look at each figure as a newcomer, and where they couldn't picture from it what its line says, draw it again.
 
@@ -166,6 +166,6 @@ Order the README so that each reader stops once they have what they came for: th
 
 **Steps**
 
-1. Read the README from the top as someone who meets the product for the first time, and after each section, write the question the reader now has.
+1. Read the README from the top as someone who meets the product for the first time, and after each section, write the question the reader now has. The trace: `{deliverable}` read to its end.
 2. Check that the next part answers that question. Move a section that answers a later one.
 3. Cut what no reader needs at the point where it stands, or move it to the document a link leads to.

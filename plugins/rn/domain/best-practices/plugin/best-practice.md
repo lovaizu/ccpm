@@ -67,7 +67,7 @@ An entry's body says that the plugin's folder is `${CLAUDE_PLUGIN_ROOT}` and nam
 
 **Steps**
 
-1. Run `lay.py print` on the plugin's proposal, and read in what it prints that it found each role's part.
+1. Run `lay.py print` on the plugin's proposal, and read in what it prints that it found each role's part. The trace: `python3 ${dependency:lane}/scripts/lay.py print {proposal}` run.
 
 ### Q3
 
@@ -139,7 +139,7 @@ Where a run goes in fixed moves, its routes keep the course. Lane lays them in `
 
 **Steps**
 
-1. Write the routes in the plugin's proposal, run `lay.py print` on it and read what it prints, and then run `lay.py write`.
+1. Write the routes in the plugin's proposal, run `lay.py print` on it and read what it prints, and then run `lay.py write`. The trace: `python3 ${dependency:lane}/scripts/lay.py write {proposal}` run.
 
 ### Q9
 
@@ -151,7 +151,7 @@ The plugin's hooks are its guard, laid by [Lane](../../../../lane/README.md) fro
 
 **Steps**
 
-1. Name in each step of the best practices that the roles use a trace that a machine can check, such as a command run, a file read, or a test made, and lay a lane on it in the proposal.
+1. Name in each step of the best practices that the roles use a trace that a machine can check, such as a command run, a file read, or a test made, and lay a lane on it in the proposal. The trace: `{proposal}` made.
 
 ### Q10
 
@@ -315,7 +315,7 @@ Each plugin and the marketplace pass Claude Code's own check of their manifests,
 
 **Steps**
 
-1. Run `claude plugin validate --strict` on the plugin and on the marketplace.
+1. Run `claude plugin validate --strict` on the plugin and on the marketplace. The trace: `claude plugin validate {deliverable} --strict` run.
 
 ### Q24
 

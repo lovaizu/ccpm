@@ -105,7 +105,13 @@
    "thinking": "There is one story for each way a role meets the product at its edge, drawn from the objectives and the README's walkthrough, each naming what it carries, such as a step of the walkthrough or resuming a run that stopped. Each part then traces to what the role does, and a convenience added is a story added, while the product vision and the README stay as they are.",
    "steps": [
     {
-     "text": "Go through each exchange of the README's walkthrough, and the main use of each objective it does not run, and name the one way at the product's edge that carries each step; add a story where none does."
+     "text": "Go through each exchange of the README's walkthrough, and the main use of each objective it doesn't run, and name the one way at the product's edge that carries each step. Add a story where none does.",
+     "trace": {
+      "action": "read",
+      "takes": [
+       "{inputs}"
+      ]
+     }
     }
    ]
   },

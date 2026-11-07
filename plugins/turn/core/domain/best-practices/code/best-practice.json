@@ -157,7 +157,13 @@
    "thinking": "The tests come from the specification's cases, and they come before the code. Each test checks one behavior, so it says which case it checks.",
    "steps": [
     {
-     "text": "List every case the specification names: the usual one, each edge and each refusal."
+     "text": "List every case the specification names: the usual one, each edge, and each refusal.",
+     "trace": {
+      "action": "read",
+      "takes": [
+       "{inputs}"
+      ]
+     }
     },
     {
      "text": "Name each test for the behavior it checks. Where the name needs \"and\", split the test."
@@ -169,7 +175,13 @@
      "text": "Write each expected value from the specification, not from what the code gives."
     },
     {
-     "text": "Run each test before you write its code, and see it fail."
+     "text": "Run each test before you write its code, and see it fail.",
+     "trace": {
+      "action": "run",
+      "takes": [
+       "{tests}"
+      ]
+     }
     },
     {
      "text": "Compare the list of cases with the tests, and check that each case points to one test."
@@ -193,10 +205,22 @@
    "thinking": "A test is worth the faults it catches. So each test checks the result that its case asks for, and a broken behavior makes the test fail.",
    "steps": [
     {
-     "text": "Find each line or branch no test runs, such as by counting them while the tests run, and add a test for each."
+     "text": "Find each line or branch no test runs, such as by counting them while the tests run, and add a test for each.",
+     "trace": {
+      "action": "run",
+      "takes": [
+       "{coverage}"
+      ]
+     }
     },
     {
-     "text": "Change the code in small ways, such as with a mutation testing tool. For each change under which the tests still pass, add or mend the test of the behavior that the change breaks."
+     "text": "Change the code in small ways, such as with a mutation testing tool. For each change under which the tests still pass, add or mend the test of the behavior that the change breaks.",
+     "trace": {
+      "action": "run",
+      "takes": [
+       "{mutation}"
+      ]
+     }
     },
     {
      "text": "Run the code over many inputs that the specification allows, such as with property-based tests. Keep each input that the code fails on as a fixed test."

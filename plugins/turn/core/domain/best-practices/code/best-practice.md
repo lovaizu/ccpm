@@ -113,11 +113,11 @@ The tests come from the specification's cases, and they come before the code. Ea
 
 **Steps**
 
-1. List every case the specification names: the usual one, each edge and each refusal.
+1. List every case the specification names: the usual one, each edge, and each refusal. The trace: `{inputs}` read to its end.
 2. Name each test for the behavior it checks. Where the name needs "and", split the test.
 3. Write each test so its reader sees the situation, what is done and what must be so, such as in three parts: Given, When and Then.
 4. Write each expected value from the specification, not from what the code gives.
-5. Run each test before you write its code, and see it fail.
+5. Run each test before you write its code, and see it fail. The trace: `{tests}` run.
 6. Compare the list of cases with the tests, and check that each case points to one test.
 
 ### Q7
@@ -143,8 +143,8 @@ A test is worth the faults it catches. So each test checks the result that its c
 
 **Steps**
 
-1. Find each line or branch no test runs, such as by counting them while the tests run, and add a test for each.
-2. Change the code in small ways, such as with a mutation testing tool. For each change under which the tests still pass, add or mend the test of the behavior that the change breaks.
+1. Find each line or branch no test runs, such as by counting them while the tests run, and add a test for each. The trace: `{coverage}` run.
+2. Change the code in small ways, such as with a mutation testing tool. For each change under which the tests still pass, add or mend the test of the behavior that the change breaks. The trace: `{mutation}` run.
 3. Run the code over many inputs that the specification allows, such as with property-based tests. Keep each input that the code fails on as a fixed test.
 
 ### Q9

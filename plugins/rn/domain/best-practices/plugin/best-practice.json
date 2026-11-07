@@ -152,7 +152,13 @@
    "thinking": "An entry's body says that the plugin's folder is `${CLAUDE_PLUGIN_ROOT}` and names the role's part in `domain/`. The guard gives a role its part whole as the role starts, through the `SubagentStart` hook's `additionalContext`, with the folder put in, and the skill's body has the main conversation read its part whole first. The part names each file as `${CLAUDE_PLUGIN_ROOT}/<path>`. Claude Code makes an agent's body its system prompt and reads no other file into it. It puts the folder in place of `${CLAUDE_PLUGIN_ROOT}` only in an entry's own body, not in what the Bash tool runs nor in a file that Read reads, as [environment variables](https://code.claude.com/docs/en/plugins/manifest-reference#environment-variables) says. After `/compact`, a part that a skill names comes back whole, while the skill's own body survives only as the summary retells it.",
    "steps": [
     {
-     "text": "Run `lay.py print` on the plugin's proposal, and read in what it prints that it found each role's part."
+     "text": "Run `lay.py print` on the plugin's proposal, and read in what it prints that it found each role's part.",
+     "trace": {
+      "action": "run",
+      "takes": [
+       "python3 ${dependency:lane}/scripts/lay.py print {proposal}"
+      ]
+     }
     }
    ]
   },
@@ -206,7 +212,13 @@
    "thinking": "Where a run goes in fixed moves, its routes keep the course. Lane lays them in `hooks/lanes.json` from the plugin's proposal, and gives the main conversation each next start from the role that ended and the result it gave. Code follows a course the same way every time, where a conversation told the course drifts from it. Lane keeps each run's state in a file, so a compacted or stopped conversation goes on from its last move. Where a run's course changes with what it finds, the skill's part keeps the course instead.",
    "steps": [
     {
-     "text": "Write the routes in the plugin's proposal, run `lay.py print` on it and read what it prints, and then run `lay.py write`."
+     "text": "Write the routes in the plugin's proposal, run `lay.py print` on it and read what it prints, and then run `lay.py write`.",
+     "trace": {
+      "action": "run",
+      "takes": [
+       "python3 ${dependency:lane}/scripts/lay.py write {proposal}"
+      ]
+     }
     }
    ]
   },
@@ -215,7 +227,13 @@
    "thinking": "The plugin's hooks are its guard, laid by [Lane](../../../../lane/README.md) from the plugin's proposal as lanes and routes. A lane holds each practice step whose drift shows in a tool call or in how a role ends: its hook stops what would break the step and gives the role the step again. Branch protection or permission rules hold what's hard to undo. A hook runs every time, while an instruction is only advice. Hooks fire on the main conversation's calls with no `agent_type`, and on a role's with the role's, as [hooks](https://code.claude.com/docs/en/hooks) says, so one `hooks/hooks.json` holds both. A plugin's agent ignores `hooks`, `mcpServers`, and `permissionMode` in its own frontmatter, as [plugin agents](https://code.claude.com/docs/en/plugins/components#frontmatter-fields-in-plugin-agents) says, and a `SubagentStop` hook in a skill's frontmatter didn't fire in a trial on Claude Code 2.1.318, so the plugin keeps its hooks in `hooks/hooks.json`.",
    "steps": [
     {
-     "text": "Name in each step of the best practices that the roles use a trace that a machine can check, such as a command run, a file read, or a test made, and lay a lane on it in the proposal."
+     "text": "Name in each step of the best practices that the roles use a trace that a machine can check, such as a command run, a file read, or a test made, and lay a lane on it in the proposal.",
+     "trace": {
+      "action": "write",
+      "takes": [
+       "{proposal}"
+      ]
+     }
     }
    ]
   },
@@ -337,7 +355,13 @@
    "thinking": "Each plugin and the marketplace pass Claude Code's own check of their manifests, as a malformed manifest fails every user at install.",
    "steps": [
     {
-     "text": "Run `claude plugin validate --strict` on the plugin and on the marketplace."
+     "text": "Run `claude plugin validate --strict` on the plugin and on the marketplace.",
+     "trace": {
+      "action": "run",
+      "takes": [
+       "claude plugin validate {deliverable} --strict"
+      ]
+     }
     }
    ]
   },

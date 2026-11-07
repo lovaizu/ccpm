@@ -62,7 +62,7 @@ There is one story for each way a role meets the product at its edge, drawn from
 
 **Steps**
 
-1. Go through each exchange of the README's walkthrough, and the main use of each objective it does not run, and name the one way at the product's edge that carries each step; add a story where none does.
+1. Go through each exchange of the README's walkthrough, and the main use of each objective it doesn't run, and name the one way at the product's edge that carries each step. Add a story where none does. The trace: `{inputs}` read to its end.
 
 ### Q3
 

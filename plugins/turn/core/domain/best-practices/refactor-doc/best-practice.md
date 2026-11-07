@@ -87,7 +87,7 @@ A sentence that makes one point, names who acts and keeps plain order has one re
 2. Follow the subject at once with an active verb that carries the action. Keep the object close after the verb. Turn a noun made from a verb back into the verb.
 3. Keep the small words that show how a sentence is built, such as articles, "that", "who", "then" and "of".
 4. Where a pronoun, or a "which", could point to two nouns, replace it with the noun it means. Break a string of nouns apart with prepositions.
-5. Read each sentence once as a machine translator would, word by word in its order and with nothing from outside it, and say who does what. Where the sentence reads two ways, reword it.
+5. Read each sentence once as a machine translator would, word by word in its order and with nothing from outside it, and say who does what. Where the sentence reads two ways, reword it. The trace: `{deliverable}` read to its end.
 6. Have a reader who did not write the document say a section back in their own words. Where they say it otherwise, reword the sentence, and do not correct the reader.
 
 ### Q6
@@ -121,4 +121,4 @@ A word or a sentence that carries nothing of what the document says still costs 
 
 **Steps**
 
-1. Read each changed section again from the top, and check that it still says all it said before.
+1. Read each changed section again from the top, and check that it still says all it said before. The trace: `{deliverable}` read to its end.

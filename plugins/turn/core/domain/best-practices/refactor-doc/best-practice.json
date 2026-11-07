@@ -116,7 +116,13 @@
      "text": "Where a pronoun, or a \"which\", could point to two nouns, replace it with the noun it means. Break a string of nouns apart with prepositions."
     },
     {
-     "text": "Read each sentence once as a machine translator would, word by word in its order and with nothing from outside it, and say who does what. Where the sentence reads two ways, reword it."
+     "text": "Read each sentence once as a machine translator would, word by word in its order and with nothing from outside it, and say who does what. Where the sentence reads two ways, reword it.",
+     "trace": {
+      "action": "read",
+      "takes": [
+       "{deliverable}"
+      ]
+     }
     },
     {
      "text": "Have a reader who did not write the document say a section back in their own words. Where they say it otherwise, reword the sentence, and do not correct the reader."
@@ -145,7 +151,13 @@
    "thinking": "A word or a sentence that carries nothing of what the document says still costs the reader time, so it goes. A word that shows how a sentence is built stays.",
    "steps": [
     {
-     "text": "Read each changed section again from the top, and check that it still says all it said before."
+     "text": "Read each changed section again from the top, and check that it still says all it said before.",
+     "trace": {
+      "action": "read",
+      "takes": [
+       "{deliverable}"
+      ]
+     }
     }
    ]
   }

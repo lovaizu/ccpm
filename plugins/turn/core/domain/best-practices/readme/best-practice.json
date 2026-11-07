@@ -111,7 +111,13 @@
    "thinking": "Show one real run of the use most readers come for, on work like theirs, from what the reader gives to the result they keep, with the product's real output. The reader then watches the gain happen, not only promised.",
    "steps": [
     {
-     "text": "Pick the use from what readers ask for most and from the objectives of the product vision."
+     "text": "Pick the use from what readers ask for most and from the objectives of the product vision.",
+     "trace": {
+      "action": "read",
+      "takes": [
+       "{inputs}"
+      ]
+     }
     },
     {
      "text": "Take each exchange from the record of a real run, in the form the reader meets it, cutting only what the reader doesn't need to see the result."
@@ -126,7 +132,13 @@
    "thinking": "Each problem the reader feels in the present way, in their own words, gets a figure in which they see it left in that way and gone with the product, and a sentence or two on what the product does that makes it go away. A reader chooses the product once they can picture their own problem gone.",
    "steps": [
     {
-     "text": "Take the problems from the Concept section of the product vision, one where the present way falls short for each idea, and from what readers complain of in that way."
+     "text": "Take the problems from the Concept section of the product vision, one where the present way falls short for each idea, and from what readers complain of in that way.",
+     "trace": {
+      "action": "read",
+      "takes": [
+       "{inputs}"
+      ]
+     }
     },
     {
      "text": "For each, take from the design what the product does that makes it go away. Ask the user each one the design doesn't settle."
@@ -141,7 +153,13 @@
    "thinking": "Each point a newcomer would doubt gets a figure of its own that draws what its line says, and a sentence or two on how the product does it. A reader believes a product can do a thing once they can picture how. A figure of the whole that answers several doubts at once shows none of them at a glance.",
    "steps": [
     {
-     "text": "Read the README as a newcomer, and mark each thing it says that the present way can't do. Ask of each answer what the newcomer would doubt next, until no doubt remains."
+     "text": "Read the README as a newcomer, and mark each thing it says that the present way can't do. Ask of each answer what the newcomer would doubt next, until no doubt remains.",
+     "trace": {
+      "action": "read",
+      "takes": [
+       "{deliverable}"
+      ]
+     }
     },
     {
      "text": "For each point, take how the product does it from the design. Ask the user each one the design doesn't settle."
@@ -174,7 +192,13 @@
    "thinking": "Order the README so that each reader stops once they have what they came for: the opening for every reader, the installation for one who has chosen the product, the walkthrough and How it works for one still weighing it, and what comes after through links. A reader who must pass what they don't need leaves before what they do.",
    "steps": [
     {
-     "text": "Read the README from the top as someone who meets the product for the first time, and after each section, write the question the reader now has."
+     "text": "Read the README from the top as someone who meets the product for the first time, and after each section, write the question the reader now has.",
+     "trace": {
+      "action": "read",
+      "takes": [
+       "{deliverable}"
+      ]
+     }
     },
     {
      "text": "Check that the next part answers that question. Move a section that answers a later one."
