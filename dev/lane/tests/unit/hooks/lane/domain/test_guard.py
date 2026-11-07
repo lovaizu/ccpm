@@ -1501,6 +1501,7 @@ class TestEnd(LanesTest):
                 self.lay_lanes(
                     [lane("every_item", "review.md", number=4, adapter="hooks/adapters/items-f.py")]
                 )
+                self.given("{}")
                 # When: writer gives its result having answered nothing
                 told = self.check(self.bash(self.done))
                 # Then: F1 is unanswered, or the adapter's failure is an error naming it
@@ -1510,6 +1511,24 @@ class TestEnd(LanesTest):
                     self.assertIn("must fix its adapter hooks/adapters/items-f.py", told[0].text)
                 else:
                     self.assertIn("F1 of `review.md` unanswered", told[0].text)
+
+    def test_the_items_adapter_is_given_the_starts_values(self):
+        # Given: every_item reading review.md by an adapter that prints what it was given, and
+        # writer started with `{"tree": "t.json"}`
+        self.write("review.md", "## Finding 1\n")
+        adapter = (
+            "import json, sys\nprint(json.dumps({'items': [json.dumps(json.load(sys.stdin))]}))\n"
+        )
+        self.write(os.path.join(self.plugin, "hooks", "adapters", "items-f.py"), adapter)
+        self.lay_lanes(
+            [lane("every_item", "review.md", number=4, adapter="hooks/adapters/items-f.py")]
+        )
+        self.given('{"tree": "t.json"}')
+        # When: writer gives its result having answered nothing
+        told = self.check(self.bash(self.done))
+        # Then: the adapter was given the input, its text and the start's values
+        given = {"input": "review.md", "text": "## Finding 1\n", "values": {"tree": ["t.json"]}}
+        self.assertIn(json.dumps(given), told[0].text)
 
     def test_a_lane_of_the_end_after_one_given_null_is_checked(self):
         # Given: writer ending once {work} is made, given null, and once report.md is made

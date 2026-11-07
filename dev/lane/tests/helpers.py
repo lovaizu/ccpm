@@ -440,8 +440,11 @@ found = re.findall(r"^## Finding ([0-9]+)", text, re.MULTILINE)
 print(json.dumps({"items": ["F" + n for n in found]}))
 """
 ITEMS_CASES = [
-    {"given": {"input": "r.md", "text": "## Finding 1\n"}, "gives": {"items": ["F1"]}},
-    {"given": {"input": "r.md", "text": "none"}, "gives": {"items": []}},
+    {
+        "given": {"input": "r.md", "text": "## Finding 1\n", "values": {}},
+        "gives": {"items": ["F1"]},
+    },
+    {"given": {"input": "r.md", "text": "none", "values": {}}, "gives": {"items": []}},
 ]
 
 
@@ -480,7 +483,10 @@ def did(
     of its run, the run's those of all where none are given, its items read by lane's reading or
     as given."""
     each = calls or []
-    read = items or (lambda path, text: ports.read("items", {"input": path, "text": text})["items"])
+    given = {"values": {}}
+    read = items or (
+        lambda path, text: ports.read("items", {"input": path, "text": text, **given})["items"]
+    )
     return done.Done(plugin, base, each, each if run is None else run, read)
 
 

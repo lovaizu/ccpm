@@ -353,17 +353,23 @@ def parts_of(lane: rules.Laid, s: Subagent) -> dict[str, list[str]] | None:
     return found
 
 
-def value_of(take: str, lane: rules.Laid, s: Subagent) -> list[str] | None:
-    """The run's value of the take `{<name>}`, its empty texts left out; None where it is given as
-    null. Stops with Cannot where the values cannot be read, or the value is not given or is given
-    empty."""
+def start_values(lane: rules.Laid, s: Subagent) -> dict[str, Any]:
+    """The start's values, as the values port gives them. Stops with Cannot where they can't be
+    read."""
     try:
-        values = s.values()
+        return s.values()
     except ports.Failed as why:
         fix = ADAPTER.format(plugin=s.plugin, adapter=s.adapter)
         raise Cannot(cannot(on(lane, s), f"the adapter {s.adapter} {why}", fix)) from None
     except ValueError as why:
         raise Cannot(cannot(on(lane, s), str(why), START.format(name=s.name))) from None
+
+
+def value_of(take: str, lane: rules.Laid, s: Subagent) -> list[str] | None:
+    """The run's value of the take `{<name>}`, its empty texts left out; None where it is given as
+    null. Stops with Cannot where the values cannot be read, or the value is not given or is given
+    empty."""
+    values = start_values(lane, s)
     name = take[1:-1]
     fix = GIVE.format(name=s.name, value=name)
     if name not in values:
@@ -549,12 +555,13 @@ def ended(s: Subagent, cwd: str) -> list[Said]:
 
 def items_of(lane: rules.Laid, s: Subagent) -> Callable[[str, str], list[str]]:
     """How the lane reads the items of an input, given its path and text: by its adapter where it
-    names one, by lane's reading otherwise."""
+    names one, given the start's values too, by lane's reading of the text otherwise, which reads
+    no value."""
 
     def read(path: str, text: str) -> list[str]:
-        given = {"input": path, "text": text}
         if lane.adapter is None:
-            return ports.read("items", given)["items"]
+            return ports.read("items", {"input": path, "text": text, "values": {}})["items"]
+        given = {"input": path, "text": text, "values": start_values(lane, s)}
         adapter = os.path.join(s.root, lane.adapter)
         return ports.run(adapter, "items", given, s.root, ports.left(s.start))["items"]
 

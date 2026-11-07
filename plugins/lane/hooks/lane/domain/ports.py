@@ -9,8 +9,10 @@ of it; so each lane checks only what lanes.md defines it to take, and knows no p
   objects the texts hold, the later over the earlier, a list standing for each of its texts, a
   text for itself, null for null, the caller saying there is none; a value of another kind gives
   nothing.
-- `items`: given `{"input": "<path>", "text": "<its text>"}`, gives `{"items": ["<ID>", ...]}`: the
-  ID each top-level item of a Markdown list in the text begins with.
+- `items`: given `{"input": "<path>", "text": "<its text>", "values": {<the start's values>}}`,
+  gives `{"items": ["<ID>", ...]}`: the ID each top-level item of a Markdown list in the text
+  begins with. An adapter may read the items from elsewhere by the start's values, such as the
+  nodes a change to a design tree touches; lane's reading reads the text alone.
 
 A plugin whose text is in another form has an adapter of the port, a Python 3 script given the
 port's JSON on stdin and giving its JSON on stdout, which `run` runs in place of lane's reading,
@@ -48,13 +50,12 @@ def shape(**fields: dict[str, Any]) -> dict[str, Any]:
 # A run's value, its texts or null, the caller saying there is none, as OpenAPI 3.1 writes a value
 # that may be null.
 VALUE = {**TEXTS, "type": ["array", "null"]}
+# A start's values, by their names, as the values port gives them.
+VALUES = {"type": "object", "additionalProperties": VALUE}
 # Each port, by its name: the JSON it is given, "in", and the JSON it gives back, "out".
 PORTS: dict[str, dict[str, dict[str, Any]]] = {
-    "values": {
-        "in": shape(texts=TEXTS),
-        "out": shape(values={"type": "object", "additionalProperties": VALUE}),
-    },
-    "items": {"in": shape(input=TEXT, text=TEXT), "out": shape(items=TEXTS)},
+    "values": {"in": shape(texts=TEXTS), "out": shape(values=VALUES)},
+    "items": {"in": shape(input=TEXT, text=TEXT, values=VALUES), "out": shape(items=TEXTS)},
 }
 # A top-level list item, its marker at the line's start, and the ID it begins with: capitals, a
 # hyphen or not, a number, and numbers after a point, set in Markdown's bold, code or brackets or

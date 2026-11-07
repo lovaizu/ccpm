@@ -92,7 +92,7 @@ class TestSchemas(unittest.TestCase):
     def test_lanes_reading_of_each_port_gives_what_its_out_holds(self):
         for port, given in (
             ("values", {"texts": [json.dumps(RUN), "x"]}),
-            ("items", {"input": "r.md", "text": "- B-1: fix\n- plain\n"}),
+            ("items", {"input": "r.md", "text": "- B-1: fix\n- plain\n", "values": {}}),
         ):
             with self.subTest(port=port, given=given):
                 # Given: the port's JSON in, held to its schema

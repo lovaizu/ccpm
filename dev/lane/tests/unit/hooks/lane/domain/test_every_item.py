@@ -45,6 +45,33 @@ class TestMissing(helpers.PluginTest):
                 # Then: B-2 is named as unanswered
                 self.assertEqual(self.missing(written), "B-2 of `review.md` unanswered")
 
+    def test_a_change_to_the_input_restarts_the_count(self):
+        # Given: B-1 and B-2 answered, then review.md changed, then B-1 answered again in a file
+        # of its own
+        self.write("answers.md", "B-1 B-2")
+        self.write("x.md", "B-1")
+        calls = [
+            helpers.kept_call("Write", file_path="answers.md", content="B-1 B-2"),
+            helpers.kept_call("Edit", file_path="review.md", old_string="a", new_string="c"),
+            helpers.kept_call("Write", file_path="x.md", content="B-1"),
+        ]
+        found = helpers.did(self.base, self.plugin, calls)
+        # When: the subagent gives its result
+        # Then: B-2, answered only before the change, is unanswered
+        said = every_item.missing({"input": ["review.md"]}, found)
+        self.assertEqual(said, "B-2 of `review.md` unanswered")
+
+    def test_another_input_written_answers_nothing(self):
+        # Given: other.md, a second input, written with B-1, B-2 and its own C-1 in it
+        text = "- C-1: c\nB-1 B-2\n"
+        self.write("other.md", text)
+        calls = [helpers.kept_call("Write", file_path="other.md", content=text)]
+        found = helpers.did(self.base, self.plugin, calls)
+        # When: the subagent gives its result
+        # Then: no item of either input is answered by the other
+        said = every_item.missing({"input": ["review.md", "other.md"]}, found)
+        self.assertEqual(said, "B-1, B-2 of `review.md` unanswered; C-1 of `other.md` unanswered")
+
     def test_a_file_written_in_an_earlier_run_answers_nothing(self):
         # Given: the answers written in an earlier run alone
         # When: the subagent gives its result

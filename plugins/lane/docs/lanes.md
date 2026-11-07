@@ -144,9 +144,13 @@ follow_routes takes nothing. `lay.py write` lays it from your proposal's routes 
 the skill they start from, and lane tells the main conversation each start, as
 [the routes](routes.md) say.
 
-every_item reads its input's items at the items port, as the ports below say. It counts an item
-answered where its ID stands as a word of its own in a file the subagent wrote in this start other
-than the input, so `B-1` is answered by neither `B-12`, `B-1.2` nor `AB-1`. every_item does not
+every_item reads its input's items at the items port, as the ports below say. Its adapter is given
+the start's values too, so it can read the items from where your plugin keeps them, such as the
+nodes that the change a start names touches in a design tree. every_item counts an item answered
+where its ID stands as a word of its own in a file that the subagent wrote in this start, other than
+the input, so `B-1` is answered by neither `B-12`, `B-1.2` nor `AB-1`. A change to the input restarts
+the count: only a file written after the subagent's last change of the input answers, as the change
+may have changed the items. every_item does not
 count an item with no ID, as no text tells an answer to it from any other.
 
 ## The proposal
@@ -238,7 +242,7 @@ form, your plugin has an adapter for it:
 | Port | Given | Gives | lane's form |
 |---|---|---|---|
 | values | `{"texts": ["<the prompt>", "<each message sent after>", ...]}`, in the order they were sent | `{"values": {"<name>": ["<text>", ...]}}` or `{"values": {"<name>": null}}` | the JSON objects the texts hold, the whole text or each line that is one, the later over the earlier; a list for each of its texts, a text for itself, `null` for itself |
-| items | `{"input": "<path>", "text": "<its text>"}` | `{"items": ["<ID>", ...]}` | each top-level item of a Markdown list beginning with an ID, such as `B-1`, `R33` or `KR1.1`, in bold, code or brackets or not |
+| items | `{"input": "<path>", "text": "<its text>", "values": {<the start's values>}}` | `{"items": ["<ID>", ...]}` | each top-level item of a Markdown list beginning with an ID, such as `B-1`, `R33` or `KR1.1`, in bold, code or brackets or not, the values unread |
 
 The ports' JSON Schemas:
 
@@ -252,8 +256,10 @@ The ports' JSON Schemas:
                                       "additionalProperties": {"type": ["array", "null"], "items": {"type": "string"}}}}}
   },
   "items": {
-    "in": {"type": "object", "required": ["input", "text"], "additionalProperties": false,
-           "properties": {"input": {"type": "string"}, "text": {"type": "string"}}},
+    "in": {"type": "object", "required": ["input", "text", "values"], "additionalProperties": false,
+           "properties": {"input": {"type": "string"}, "text": {"type": "string"},
+                          "values": {"type": "object",
+                                     "additionalProperties": {"type": ["array", "null"], "items": {"type": "string"}}}}},
     "out": {"type": "object", "required": ["items"], "additionalProperties": false,
             "properties": {"items": {"type": "array", "items": {"type": "string"}}}}
   }
