@@ -8,11 +8,11 @@
       "name": "Every prose ccpm keeps is checked by lovaizu/checks",
       "path": "lefthook.yml",
       "kind": "code",
-      "status": "open",
+      "status": "doing",
       "intents": [
         {
           "id": "Q1",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "Prose check",
@@ -31,35 +31,41 @@
             },
             {
               "about": "Mermaid step",
-              "decided": "check.sh fails, and says why, where dev/scripts/node_modules is missing, in place of skipping the step",
+              "decided": "check.sh fails, and says why, where dev/scripts/node_modules is missing, in place of skipping the step; pre-push.sh sets it up by npm ci in the commits pushed",
               "by": "reasoning"
             }
           ]
         },
         {
           "id": "Q2",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "Q3",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "Q4",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "Q5",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "Q6",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "Tests of the hooks and of check.sh",
+              "decided": null,
+              "by": "user"
+            }
+          ]
         },
         {
           "id": "Q7",
