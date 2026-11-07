@@ -45,6 +45,11 @@
               "by": "reasoning"
             },
             {
+              "about": "Lane's old design tree",
+              "decided": "dev/lane/design-tree.md goes once the architecture holds each of its decisions that still stands; a lasting decision lives in the document it shapes, and its reason in git",
+              "by": "reasoning"
+            },
+            {
               "about": "Where Lane finds a role's part",
               "decided": "domain/<role>.md, where the plugin best practice's skeleton puts it",
               "by": "reasoning"
