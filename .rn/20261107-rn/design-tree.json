@@ -227,6 +227,11 @@
               "by": "user"
             },
             {
+              "about": "JSON or JSON Lines",
+              "decided": "JSON for a document that is rewritten, such as the design tree or a round's answers; JSON Lines for a record that is only appended to, such as Lane's calls",
+              "by": "reasoning"
+            },
+            {
               "about": "Where shared practices stand",
               "decided": "the test levels and checking a check once, in the architecture best practice; this document keeps only what is a plugin's own",
               "by": "user"
