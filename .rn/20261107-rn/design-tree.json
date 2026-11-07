@@ -147,30 +147,49 @@
       "status": "doing",
       "intents": [
         {"id": "Q1", "good": false, "decisions": []},
-        {"id": "Q2", "good": false, "decisions": []},
         {
-          "id": "Q3",
+          "id": "Q2",
           "good": false,
           "decisions": [
             {
               "about": "What the best practice covers",
               "decided": "the code's design, design patterns, test design, test-driven development, and the test code, each held to the same design principles as the code it tests; made anew from the goal, not by adding to what stands",
               "by": "user"
+            }
+          ]
+        },
+        {"id": "Q3", "good": false, "decisions": []},
+        {"id": "Q4", "good": false, "decisions": []},
+        {"id": "Q5", "good": false, "decisions": []},
+        {
+          "id": "Q6",
+          "good": false,
+          "decisions": [
+            {
+              "about": "What a machine measures",
+              "decided": "the project's own linter measures each function's cyclomatic complexity against McCabe's limit of 10, and its returns, branches, arguments, and statements, on the code and its tests alike, and the existing check finds copied code, so the evaluator reads only what no machine measures, such as cohesion and coupling, which have no established limit",
+              "by": "research"
             },
+            {
+              "about": "Dependency direction",
+              "decided": null
+            }
+          ]
+        },
+        {"id": "Q7", "good": false, "decisions": []},
+        {"id": "Q8", "good": false, "decisions": []},
+        {"id": "Q9", "good": false, "decisions": []},
+        {
+          "id": "Q10",
+          "good": false,
+          "decisions": [
             {
               "about": "How the best practice shows it works",
               "decided": "code made by it leaves few findings to mutation testing, property-based testing, and CI: surviving mutants, with those marked as not to be mutated counted beside them, counterexamples a property finds, and CI failures after the local checks pass, each lower than the last; the evaluator's questions judge the design these tools can't see",
               "by": "user"
             }
           ]
-        },
-        {"id": "Q4", "good": false, "decisions": []},
-        {"id": "Q5", "good": false, "decisions": []},
-        {"id": "Q6", "good": false, "decisions": []},
-        {"id": "Q7", "good": false, "decisions": []},
-        {"id": "Q8", "good": false, "decisions": []},
-        {"id": "Q9", "good": false, "decisions": []},
-        {"id": "Q10", "good": false, "decisions": []}
+        }
       ]
     },
     {
