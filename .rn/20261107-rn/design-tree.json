@@ -29,11 +29,95 @@
       "status": "done"
     },
     {
+      "name": "Each best practice holds the field's established way, named so its maker grasps the intent",
+      "path": "plugins/rn/domain/best-practices/meta",
+      "kind": "meta",
+      "inputs": [],
+      "preconditions": [],
+      "status": "doing",
+      "intents": [
+        {"id": "Q1", "good": false, "decisions": []},
+        {"id": "Q2", "good": false, "decisions": []},
+        {"id": "Q3", "good": false, "decisions": []},
+        {"id": "Q4", "good": false, "decisions": []},
+        {"id": "Q5", "good": false, "decisions": []},
+        {"id": "Q6", "good": false, "decisions": []},
+        {
+          "id": "Q7",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Where a practice comes from",
+              "decided": "each practice is the way the field has established for its case, found by research and named with its source, not reasoned out alone",
+              "by": "user"
+            },
+            {
+              "about": "How a practice names an idea",
+              "decided": "a practice calls an established idea by its established name, such as single responsibility or Given-When-Then, with why it serves the role, as the name carries the field's whole knowledge to a maker who knows it",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {"id": "Q8", "good": false, "decisions": []},
+        {"id": "Q9", "good": false, "decisions": []},
+        {"id": "Q10", "good": false, "decisions": []}
+      ]
+    },
+    {
+      "name": "A maker of code designs it, tests it first, and writes it as the field's established practice says",
+      "path": "plugins/rn/domain/best-practices/code",
+      "kind": "meta",
+      "inputs": [],
+      "preconditions": ["plugins/rn/domain/best-practices/meta"],
+      "status": "doing",
+      "intents": [
+        {"id": "Q1", "good": false, "decisions": []},
+        {"id": "Q2", "good": false, "decisions": []},
+        {
+          "id": "Q3",
+          "good": false,
+          "decisions": [
+            {
+              "about": "What the best practice covers",
+              "decided": "the code's design, design patterns, test design, test-driven development, and the test code, each held to the same design principles as the code it tests; made anew from the goal, not by adding to what stands",
+              "by": "user"
+            }
+          ]
+        },
+        {"id": "Q4", "good": false, "decisions": []},
+        {"id": "Q5", "good": false, "decisions": []},
+        {"id": "Q6", "good": false, "decisions": []},
+        {"id": "Q7", "good": false, "decisions": []},
+        {"id": "Q8", "good": false, "decisions": []},
+        {"id": "Q9", "good": false, "decisions": []},
+        {"id": "Q10", "good": false, "decisions": []}
+      ]
+    },
+    {
+      "name": "Lane's code is designed, tested first, and written as the code best practice says",
+      "path": "plugins/lane/domain",
+      "kind": "code",
+      "inputs": ["dev/lane/architecture.md"],
+      "preconditions": [],
+      "status": "open",
+      "intents": [
+        {"id": "Q1", "good": false, "decisions": []},
+        {"id": "Q2", "good": false, "decisions": []},
+        {"id": "Q3", "good": false, "decisions": []},
+        {"id": "Q4", "good": false, "decisions": []},
+        {"id": "Q5", "good": false, "decisions": []},
+        {"id": "Q6", "good": false, "decisions": []},
+        {"id": "Q7", "good": false, "decisions": []},
+        {"id": "Q8", "good": false, "decisions": []},
+        {"id": "Q9", "good": false, "decisions": []}
+      ]
+    },
+    {
       "name": "Lane's code does what its design says",
       "path": "plugins/lane",
       "kind": "plugin",
       "inputs": ["dev/lane/architecture.md"],
-      "preconditions": [],
+      "preconditions": ["plugins/lane/domain"],
       "status": "doing",
       "intents": [
         {"id": "Q1", "good": false, "decisions": []},
@@ -65,6 +149,11 @@
           "id": "Q26",
           "good": false,
           "decisions": [
+            {
+              "about": "The code made before",
+              "decided": "Lane's code and tests made before go whole, and Lane is made anew by the remade code best practice, as no one can tell where code made without it falls short",
+              "by": "user"
+            },
             {
               "about": "The product vision trial",
               "decided": "on Opus by dev/lane/tests/product-vision/trial.py, its plugin given a part with no numbered list, a steps adapter, a start-text command and a route that waits for the person, and its judge counting steps out of order, starts unlike the command's text and resumes not in the person's words; its judge first right on kept records whose answer is known",
@@ -128,11 +217,30 @@
       "status": "done"
     },
     {
+      "name": "rn's code is designed, tested first, and written as the code best practice says",
+      "path": "plugins/rn/domain",
+      "kind": "code",
+      "inputs": ["dev/rn/architecture.md"],
+      "preconditions": ["plugins/lane"],
+      "status": "open",
+      "intents": [
+        {"id": "Q1", "good": false, "decisions": []},
+        {"id": "Q2", "good": false, "decisions": []},
+        {"id": "Q3", "good": false, "decisions": []},
+        {"id": "Q4", "good": false, "decisions": []},
+        {"id": "Q5", "good": false, "decisions": []},
+        {"id": "Q6", "good": false, "decisions": []},
+        {"id": "Q7", "good": false, "decisions": []},
+        {"id": "Q8", "good": false, "decisions": []},
+        {"id": "Q9", "good": false, "decisions": []}
+      ]
+    },
+    {
       "name": "rn works as designed, with Pin and Turn removed",
       "path": "plugins/rn",
       "kind": "plugin",
       "inputs": ["dev/rn/architecture.md"],
-      "preconditions": ["plugins/lane"],
+      "preconditions": ["plugins/rn/domain"],
       "status": "doing",
       "intents": [
         {"id": "Q1", "good": false, "decisions": []},
@@ -224,9 +332,9 @@
               "by": "reasoning"
             },
             {
-              "about": "Tests written after the code",
-              "decided": "rn's unit tests are judged by CI's mutation run: each surviving mutant gets a test seen to fail first, then the fix",
-              "by": "reasoning"
+              "about": "The code made before",
+              "decided": "rn's code and tests made before go whole, and rn is made anew by the remade code best practice, as no one can tell where code made without it falls short",
+              "by": "user"
             }
           ]
         }
