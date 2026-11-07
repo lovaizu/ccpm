@@ -1,259 +1,556 @@
-# Rn architecture
+# `rn` architecture
 
-The orchestrator, Rn's one AI that talks with the person, decides every move from the steering, a
-short record of the plan kept by Rn's scripts, and has Turn make every work but the plan and the
-learnings. Rn is built against two drifts: the work drifting from the purpose, and the AI drifting as
-the work goes on. What this is for is in [the product vision](product-vision.md).
+This document says how the parts of rn give [its product vision](product-vision.md). rn keeps the
+work as a design tree in the user's repository, which only the code of `tree.py` reads and writes.
+The main conversation settles each point of the design with the user, one at a time, and starts the
+planner with it. The planner has `tree.py` write the point into the tree, and lays out the plan back
+from the goal. Once the main conversation has settled a deliverable's points, a turn makes it: the
+generator makes it by its kind's best practice, and fresh evaluators judge each intent as the
+deliverable's people would. An evaluator gets the deliverable and its intents alone. A point that a
+turn finds open goes back to the main conversation. Lane, the plugin that holds a plugin's roles to
+their steps, holds each role to the steps of the practices it carries out and the main conversation
+to the routes, and lets a role start only with the text that `tree.py` cut for it. `tree.py` commits
+each change on the work's branch and keeps one draft pull request for the user to merge.
 
 ## Principles
 
-Rn follows [the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md), and adds these.
+rn builds on [the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md).
+It takes as they stand the practices from
+[Q1](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q1) to
+[Q4](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q4),
+[Q6](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q6) to
+[Q16](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q16),
+[Q18](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q18) to
+[Q20](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q20), and
+[Q22](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q22) to
+[Q25](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q25). Lane is its guard, as
+[Q9](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q9) says, and rn names Lane in
+its dependencies, as
+[Q15](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q15) says, since the
+generator runs Lane's `lay.py` when a deliverable is a plugin.
 
-### Every task traces back to the purpose
+rn differs from three of them:
 
-Each task names the goal or the acceptance criteria it serves, and its result is checked against
-them.
+- **[Q5](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q5) and
+  [Q17](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q17)**: the main conversation
+  settles the points of the design, which the practice leaves to a role, and puts each point to the
+  user itself, which [Q17](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q17) leaves
+  to a role. *Why*: the design is the user's intent, so rn settles it where the user talks. No role
+  stands between a point and the user, and nothing carries a point back and forth. The main
+  conversation still makes and judges nothing of a deliverable, and the planner writes each point,
+  so Lane holds every change to the tree.
+- **[Q21](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q21)**: rn takes in no lesson
+  once a run ends. *Why*: no step of the product vision follows the work once the user has the
+  draft pull request, and a step there would ask the user more, which KR1.2 counts. It costs a
+  lesson that one run meets coming back in a later run.
 
-A task that serves no criterion is work the purpose did not ask for.
+rn adds these. Each why says how a run goes wrong for the user without the rule.
 
-### The points are asked down a design tree
+### Planned back from the goal
 
-The orchestrator splits the request from the purpose down, each point joined to what it serves and
-to what it rests on, and asks the person, one per message, only the points that no fact or the
-purpose settles, in the order they rest on one another.
+The planner lays out every deliverable the goal needs, with the order they need one another in,
+before any turn makes one, by [the plan best practice](../../plugins/rn/domain/best-practices/plan/best-practice.md).
+`tree.py` orders the deliverables from each one's inputs and preconditions. A kind with no best
+practice gets a meta deliverable before its first deliverable, made by the meta best practice.
 
-A point asked as it comes to mind leaves a gap that shows only at a sign-off, and one asked before
-what it rests on is asked again.
+*Why*: a deliverable left out shows only when the work reaches it, and one made before what it
+takes needs making again. The people it's for then can't use it as handed over, as KR1.1 counts,
+and the user waits longer, which KR1.3 measures.
 
-### The plan is made again from the facts
+### The main conversation settles, the planner writes
 
-After each task the orchestrator sets where the work stands from the checked facts alone, and writes
-the plan again where they change it.
+The main conversation settles each point of the design, in the user's conversation, one at a time.
+It settles a point itself where the purpose or a best practice settles it, and puts the rest to
+the user with a recommendation. A point the user answers by leaving it to rn counts as theirs.
+Only the planner changes the tree, by handing `tree.py` a tree edit. After each edit it answers
+each node that `tree.py` lists as touched, and where a node no longer holds, it leaves that point open for the main conversation. A
+role never settles a point of the design.
 
-A plan kept from what was expected drifts from the purpose while every move looks done.
+*Why*: a point settled outside the user's conversation comes back as rework, or asks the user what
+the purpose settles, which KR1.2 counts. Lane holds a role's calls and never the main
+conversation's own, so a change written by the main conversation would go unheld, and the nodes around it would go on
+saying what held before. A deliverable built on them then fails its people, as KR1.1 counts.
 
-### Only the steering is carried from move to move
+### Each role gets only its cut
 
-The orchestrator carries the steering alone, and what each work is made from is taken from the
-record, not chosen by the orchestrator's conversation.
+`tree.py` cuts each role's part of the tree, and the main conversation starts the role with that
+text alone. No role, and not the main conversation, reads the design tree itself.
 
-A conversation that carries days of work swells and drifts, and a fresh one starts from nothing.
+*Why*: a role that reads the whole tree takes up decisions that aren't its own, and an evaluator
+that reads it judges whether the deliverable follows the design, not what its people get. A deliverable its people can't use then
+passes, as KR1.1 counts.
 
-### An approval is what the person typed
+### The evaluator has only what the deliverable's people have
 
-An approval is the person's `/rn:ty` and feedback their `/rn:gm`, skills the AI cannot call, and
-Rn's scripts take either only where Claude Code's record shows the person typed it after the
-proposal
-([The caller approves what is theirs](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q16)).
+An evaluator gets the intents of its group, the deliverable, the deliverables it takes its
+content from, and the record of the deliverable tried. It never gets the design, the practices,
+or the generator's record. Where the user kept a decision knowing what it costs an intent, the
+evaluator gets that lack too, in the people's terms, as an accepted shortfall.
 
-The orchestrator runs Rn's scripts itself, so a script that took its word would take an approval
-never given.
+*Why*: the people a deliverable is for never see what its maker meant. An evaluator that has the
+design or the practices checks how its maker made the deliverable, not what it gives them, as
+KR1.1 counts. An evaluator that isn't told of an accepted shortfall sends it back every round,
+and the turn never ends, which KR1.3 measures.
 
-### The orchestrator fixes no work Turn returns
+### A turn makes until every intent is good
 
-A point where Turn's work falls short is settled as a decision, and Turn makes the work again.
+A turn's generator makes the deliverable, and its evaluators judge it, round after round, until
+every intent of the kind is good. A deliverable then gets a turn of its own for how it reads, by
+`refactor-doc` for a document or `refactor-code` for code, which changes nothing it says.
 
-A fix of the orchestrator's own is work that no AI other than its maker has read.
+*Why*: a deliverable handed over with an intent not met fails its people, as KR1.1 counts. A
+sentence that a turn polishes before what it says holds needs polishing again, which KR1.3
+measures.
+
+### A point found open goes back to the main conversation
+
+Where the generator finds a point the design leaves open, or an evaluator a point only the user can
+settle, the run stops there. The main conversation settles the point, and the turn starts again
+from the design. A shortfall that no other way meets than changing a decision the user settled goes
+to the user only with a fact their answer didn't weigh, and otherwise stays an accepted shortfall.
+
+*Why*: a fix made beside the design is a part no decision holds, which the next round loses or
+keeps with no one having settled it, as KR1.1 counts. Asking the user again what they settled
+spends their time and gives them nothing to weigh, as KR1.2 counts.
+
+### Tried in a throwaway copy
+
+The commands that try a deliverable, its install steps among them, run only in a throwaway copy of
+the repository, with a throwaway home.
+
+*Why*: a command run as the people run it, such as `tidy` on a Downloads folder, would otherwise
+change the user's own files, which can't be undone.
+
+### Every step on every run
+
+Lane holds each role to the steps of the practices it carries out, read from the best practice
+itself at the steps port, a best practice made on the run among them. It holds the main
+conversation to the routes, and each start to the text that `tree.py` gave.
+
+*Why*: an AI that skipped a step once skips it again on another run, and the deliverable misses
+what the step was there to make sound, as KR1.1 counts.
+
+### The repository holds the work
+
+`tree.py` commits every change to the tree on the work's own branch as the planner writes it, with
+its grounds in the commit message. It commits a deliverable once its last turn is good, and keeps
+one draft pull request for the work. The user merges it, and rn never does. A run's files lie in
+`.rn/<yyyymmdd>-<goal>/`, and `/rn:up` alone goes on from them.
+
+*Why*: a conversation can end at any point, and work kept only in it goes with it, so the
+user answers again, as KR1.2 counts. The merge is the user's, as
+[Q16](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q16) says.
 
 ## User stories
 
-- As the person, I want to ask for a piece of work in rough words with `/rn:up`. Carries O1's
-  request.
-- As the person, I want to answer each point to decide, one per message, with a letter or my own
-  words. Carries O1's points.
-- As the person, I want to approve each proposal with `/rn:ty`, or ask for a change with `/rn:gm`.
-  Carries O1's sign-offs.
-- As the person, I want each document and the finished work made to the goal while I do not watch.
-  Carries O1's documents and finished work.
-- As the person, I want to type `/rn:up` alone in a new conversation another day, and go on where
-  the work stands, asked nothing again. Carries O1's going on another day.
-- As the person, I want to decide where each learning goes, and get the pull request marked ready.
-  Carries O1's learnings and the merge.
+- **S1**: the user wants to type `/rn:up` with what they want, in their own words, and confirm the
+  goal rn reads in it. It carries the walkthrough's first `/rn:up` and the goal put to the user.
+- **S2**: the user wants to answer each point rn puts to them, one at a time, in their own words.
+  It carries the plan shown with its first point, the answer `each file`, and each point that comes
+  up while rn makes a deliverable.
+- **S3**: the user wants to type `/rn:up` alone in a new conversation, and have rn go on where it
+  stopped, asked nothing again. It carries the walkthrough's second `/rn:up` and `Picking up`.
+- **S4**: the user wants each deliverable committed on a branch, one draft pull request to merge,
+  and the decisions rn took without asking them. It carries the walkthrough's `Done`, and the
+  user's merge.
 
-## Logical view
+## Components
 
-### Components
+![rn's components](images/components.svg)
 
-![Rn's components](images/components.svg)
+What each decides alone:
 
-- The orchestrator alone talks with the person and decides each move. It writes the plan and the
-  learnings itself, with Turn's plan template open.
-- The compressor alone gives the part of a work's CCS that needs judgment, from the steering, the
-  works made and the work's latest call. It decides no place or rule itself: a point no file or
-  decision settles goes back to the orchestrator, which asks the person.
-- Rn's scripts alone write the steering and each CCS, make each proposal, and take an answer only
-  where it was typed.
-- Turn makes every other work from its CCS, and has it used in place of the work's user before it
-  returns it.
+- **user**: what's theirs: the goal, each point the purpose and the best practices leave open, and
+  whether to merge.
+- **main conversation**: whether a point is the user's or settled by the purpose or a best
+  practice, how it's settled, the words it's put in, and when a deliverable has no point left.
+- **planner**: the goal as drafted from the request, the plan, each deliverable's kind, inputs and
+  preconditions, whether each node a change touches still holds, and each status and intent made
+  good from a turn's answers.
+- **generator**: the deliverable, each small point of making it, such as a phrase, and the points
+  the design leaves open.
+- **evaluator**: whether the deliverable meets each intent of its group, and the points only the
+  user can settle.
+- **tree.py**: the form of the design tree and of a change, the order of the deliverables, each
+  role's cut, the nodes an edit touches, each turn's round and groups, the points open for the
+  main conversation, each commit, the branch, and the draft pull request, and the report of each
+  decision taken without asking, read from the run's commits.
+- **throwaway.py**: where a deliverable's commands run, and what of them the try record keeps.
+- **steps adapter**, **items adapter**: how rn's best practices and design tree read in the forms
+  of Lane's steps and items ports.
+- **guard**: whether a role's call keeps its lanes, which start is due, and whether a start's text
+  is the one `tree.py` gave, as [Lane's architecture](../lane/architecture.md) says.
 
-### Data model
+These choices in the components are ones a developer would question:
 
-![Rn's data model](images/data-model.svg)
+- **The main conversation calling `/rn:up` again once it settles a point** over resuming the role
+  that stopped: the point comes from the main conversation, not from the user's words alone, and
+  Lane lets a resume carry the user's words and nothing else. A new call of the skill begins a run,
+  whose first start is the planner with the text `tree.py` cut from the change. It costs reading
+  the skill's part again on each call.
+- **One point a user settles in each change** over the points of a deliverable written at once: each
+  answer is in the tree before the next point goes out, so a conversation that ends loses none,
+  as KR1.2 counts. It costs a run of the planner for each such point.
+- **The planner started fresh for each change** over one planner kept for the run: each start
+  keeps to its own cut, and a fresh planner carries no decision of an earlier change into this
+  one, as KR1.1 counts. It costs the planner reading its cut again on each start.
+- **The generator running `throwaway.py` once it has made the deliverable** over each evaluator
+  running it: the evaluators of a round run at once, and one try record for the round lets them
+  judge the same run of the commands. It costs an evaluator that can't try a command the try
+  record doesn't hold, which it then names as a lack.
+- **`tree.py` committing and keeping the draft pull request** over a script of its own: each commit
+  holds a tree edit, and the edit's grounds make its message, which only `tree.py` reads in the
+  form the planner writes. It costs `tree.py` needing git, and `gh` for the
+  pull request.
 
-- The steering holds only what is left and where the session stands: what the work is, the plan, and
-  the stage, whether a sign-off waits, the next step and what is open. Rn's scripts write it as JSON
-  held to its form, with its Markdown for the person, in one write. What is done stays in the calls,
-  the repository and the history.
-- The orchestrator lays the tasks backward from the acceptance criteria, a few at a time for the
-  stage at hand, each one result made by one call to Turn. A task's completion criteria say only
-  what the result must do, never the means.
-- A CCS holds what one call's work is made from, in the shape
-  [ACC](https://arxiv.org/abs/2601.11653) gives an AI's state: what it serves, the results it builds
-  on, its decisions, the templates, the stage and the languages. Each point the person decides is
-  kept as a decision in the CCS of the next call it settles.
-- A task's CCS names the work's user and what they have at that stage: before the build, the person
-  approving the document and whoever builds to it; after, the product's users. A document made
-  before the build is made again once the product is built, where its template asks what the built
-  product does.
+## Data model
 
-### Sequences
+![rn's data](images/data-model.svg)
 
-Asking, and the points to decide:
+- **Request**: the user's words after `/rn:up`, as they typed them.
+- **Change**: what one start of the planner writes: the request, the decisions the main
+  conversation settled, or a turn's answers.
+- **Tree edit**: what the planner hands `tree.py` to write: each node it changes, the grounds, and
+  its answer to each node touched: it holds, or the planner leaves it open.
+- **Cut**: the text `tree.py` gives a role to start with: its run values and its part of the tree.
+- **Point**: a decision the main conversation settles, whether the tree holds it open or a turn
+  found it.
+- **Making record**: the generator's record of a round, `generator.json`: what it made, each small
+  point it decided, and each point it found open.
+- **Answers**: an evaluator's record of a round, `evaluator-<group>.json`: each intent met with the
+  lines that meet it, or not met with what the people still lack.
+- **Try record**: the commands that try a deliverable and what each gave, `throwaway.txt`.
+- **Accepted shortfall**: a decision of the user's, under the intent it costs, that says what the
+  people lack by it.
+- **Port JSON**: a best practice's steps or a tree's items in the forms of Lane's ports.
+
+## Sequences
+
+Each story's steps follow in order. The participants carry their names in
+[Components](#components), and the data in brackets those in [Data model](#data-model). Each start
+of a role goes through the guard, which lets it through only with the cut `tree.py` last gave for
+that role, as [Lane's architecture](../lane/architecture.md) draws.
+
+### S1: a request
 
 ```mermaid
 sequenceDiagram
-  actor U as Person
-  participant O as Orchestrator
-  participant S as Rn's scripts
-  U->>O: /rn:up (request)
-  O->>S: starts the work (request)
-  S-->>O: the steering
-  Note over O: splits the request from the purpose down a design tree
-  loop each point no fact or the purpose settles, in the order they rest on one another
-    O->>U: the point, with the answer recommended (point to decide)
-    U->>O: an answer
-    O->>S: keeps it (decision)
+  actor U as user
+  participant M as main conversation
+  participant T as tree.py
+  participant P as planner
+  participant R as run's folder
+  U->>M: /rn:up with what they want (Request)
+  M->>T: start, for the planner (Request)
+  T->>R: makes .rn/yyyymmdd-goal/
+  T-->>M: the planner's cut (Cut)
+  M->>P: starts it (Cut)
+  P->>T: write, with the goal drafted (Tree edit)
+  T->>R: writes it (Design tree)
+  P->>T: commit (Tree edit)
+  T->>R: commits on the work's branch, made here
+  P-->>M: gives asks
+  M->>T: points (Design tree)
+  T-->>M: the goal, to confirm (Point)
+  M->>U: the goal, is that what you're after? (Point)
+  U->>M: answers
+  Note over U,M: The goal is the user's, so the main conversation settles it with them, as S2 draws.
+```
+
+- **The planner drafting the goal** over the main conversation asking for it outright: the user
+  confirms a goal written to the plan best practice faster than they write one, which shortens
+  what KR1.3 measures. It costs a run of the planner before the user's first point.
+
+### S2: a point settled
+
+```mermaid
+sequenceDiagram
+  actor U as user
+  participant M as main conversation
+  participant T as tree.py
+  participant P as planner
+  participant R as run's folder
+  M->>T: points (Design tree)
+  T-->>M: the points open of the deliverable at hand, with its intents and inputs (Point)
+  loop each point open
+    alt the purpose or a best practice settles it
+      M->>M: settles it, by reasoning or research
+    else it's the user's
+      M->>U: one point, with a recommendation (Point)
+      U->>M: answers, in their own words
+    end
   end
-  O->>S: puts the plan (plan)
-  S-->>O: the steering, its Markdown
-```
-
-A sign-off:
-
-```mermaid
-sequenceDiagram
-  actor U as Person
-  participant O as Orchestrator
-  participant S as Rn's scripts
-  participant G as GitHub
-  O->>S: makes the proposal (steering)
-  S->>G: pushes the branch, updates the pull request
-  S-->>O: the proposal
-  O->>U: the proposal
-  alt /rn:ty
-    U->>O: /rn:ty
-    O->>S: takes the approval where the record shows it typed (approval)
-  else /rn:gm
-    U->>O: /rn:gm <feedback>
-    O->>S: keeps the feedback (feedback)
-    Note over O: stops, and /rn:up asks the point behind it
+  Note over M,T: Once a point is settled by the user, or none is left, the main conversation calls /rn:up.
+  M->>M: calls /rn:up
+  M->>T: start, for the planner, with the decisions settled (Change)
+  alt the change is out of form
+    T-->>M: what's wrong
+  else it's in form
+    T-->>M: the planner's cut (Cut)
+    M->>P: starts it (Cut)
+    opt the goal is newly the user's
+      Note over P: lays out the deliverables back from the goal, a meta deliverable before the first of a kind with no best practice
+    end
+    loop until the tree holds and each node touched is answered
+      P->>T: write, with each decision (Tree edit)
+      alt the edit breaks the tree, such as an order out of place
+        T-->>P: what's wrong
+      else it holds
+        T->>R: writes it (Design tree)
+        T-->>P: each node the edit touches
+        P->>P: answers each, as holding or left open (Tree edit)
+      end
+    end
+    P->>T: commit (Tree edit)
+    T->>R: commits on the work's branch, the grounds as its message
+    alt a point is open
+      P-->>M: gives asks
+      Note over M,T: The main conversation shows the plan where it's new, and goes on with the points.
+    else the deliverable at hand has none left, which the change says
+      P-->>M: gives ready
+      Note over M,P: A turn starts, as the next section draws.
+    end
   end
 ```
 
-A work made by Turn:
+- **The run ending at `asks`, a route with neither a next start nor a wait,** over a route that
+  waits for the user: such a route has the main conversation resume the planner with the user's
+  words alone, while the main conversation settles points by reasoning too. It costs a role
+  started by mistake between two runs going unheld at its start, though Lane still holds its calls.
+
+### S2 and S3: a deliverable made in turns
 
 ```mermaid
 sequenceDiagram
-  participant O as Orchestrator
-  participant S as Rn's scripts
-  participant C as Compressor
-  participant T as Turn
-  O->>S: writes what the record settles (CCS)
-  O->>C: starts (CCS)
-  C-->>O: its choices, or a point to ask (compressor's reply)
-  O->>S: puts the choices into the CCS
-  O->>T: starts turn:up in the background (CCS)
-  T-->>O: the work, and each choice made without asking (result)
-  O->>S: takes the task out of the plan once the result holds (steering)
-```
-
-Going on another day:
-
-```mermaid
-sequenceDiagram
-  actor U as Person
-  participant O as Orchestrator
-  participant S as Rn's scripts
-  U->>O: /rn:up, in a new conversation
-  O->>S: where the session stands
-  S-->>O: the stage and the sign-off waiting (steering)
-  alt a sign-off waits
-    O->>U: the proposal again
-  else none waits
-    O->>U: the next point to decide, or the next move taken (point to decide)
+  participant M as main conversation
+  participant T as tree.py
+  participant G as generator
+  participant W as throwaway.py
+  participant E as evaluator
+  participant P as planner
+  participant R as run's folder and the deliverable
+  M->>T: start, for the generator
+  T->>R: makes the next round's folder (Round)
+  T-->>M: the generator's cut: the deliverable's decisions, its kind, and last round's shortfalls (Cut)
+  M->>G: starts it (Cut)
+  G->>R: makes the deliverable by its kind's practices, and writes its record (Making record)
+  alt the design leaves a point open
+    G-->>M: gives open
+    Note over M,G: The run ends, and the main conversation settles the point, as S2 draws.
+  else every point is made
+    G->>W: runs it
+    W->>R: copies the repository, runs the deliverable's commands there, and writes what they gave (Try record)
+    G-->>M: gives made
+    M->>T: start, for each evaluator
+    T-->>M: a cut for each group of the kind's intents (Cut)
+    par one for each group, at once
+      M->>E: starts it (Cut)
+      E->>R: reads the deliverable, its inputs, and the try record
+      E->>R: writes its answers (Answers)
+      E-->>M: gives open, more, or good
+    end
+    Note over M,E: Of the evaluators' results, the guard takes open, then more, then good.
+    alt an evaluator gave open
+      Note over M,E: The run ends, and the main conversation settles the point, as S2 draws.
+    else one gave more
+      Note over M,G: The next round, from the shortfalls.
+    else every one gave good
+      M->>T: start, for the planner, with the turn's answers (Change)
+      T-->>M: the planner's cut (Cut)
+      M->>P: starts it (Cut)
+      P->>T: write, with each intent good (Tree edit)
+      T->>R: writes it (Design tree)
+      alt the turn was of what the deliverable says
+        P->>T: commit (Tree edit)
+        P-->>M: gives ready
+        Note over M,G: The turn of how it reads, by refactor-doc or refactor-code.
+      else the turn was of how it reads
+        P->>T: write, with the deliverable done (Tree edit)
+        P->>T: commit, with the deliverable, and push (Tree edit)
+        Note over P,T: S4 draws the commit and the pull request.
+        alt the next deliverable has a point open
+          P-->>M: gives asks
+        else its points are settled
+          P-->>M: gives ready
+        else every deliverable is done
+          P-->>M: gives done, with the report (Message)
+        end
+      end
+    end
   end
 ```
 
-The learnings and the merge:
+- **The rounds without a limit** over a turn that stops after a set number: a shortfall the design
+  can't meet goes back as a point open, so a turn goes on only while the generator can meet what
+  the evaluators find. It costs a turn whose evaluators keep finding new shortfalls running long.
+- **One evaluator for each group of intents, all at once,** over one for every intent: each is fresh
+  on fewer intents, as KR1.1 asks, and they run side by side, as KR1.3 asks. It costs each reading
+  the whole deliverable.
+
+### S3: picking up
 
 ```mermaid
 sequenceDiagram
-  actor U as Person
-  participant O as Orchestrator
-  participant S as Rn's scripts
-  participant G as GitHub
-  O->>S: finds each send-back, remake and point asked again (history)
-  loop each learning
-    O->>U: the learning, and where it would help (learning)
-    U->>O: a question for that kind's template, an issue, both, or neither
+  actor U as user
+  participant M as main conversation
+  participant T as tree.py
+  participant P as planner
+  participant R as run's folder
+  U->>M: /rn:up, alone, in a new conversation
+  M->>T: start, for the planner
+  T->>R: reads each run under .rn/
+  T-->>M: the planner's cut, with the work left (Cut)
+  M->>P: starts it (Cut)
+  alt no work is left
+    P-->>M: gives done, with none to pick up
+    M->>U: says so
+  else more than one is left
+    P-->>M: gives asks, with each by its goal
+    M->>U: which one? (Point)
+    U->>M: answers
+    Note over U,M: The main conversation calls /rn:up with the run's folder, and the run picks up from it.
+  else one is left
+    M->>T: status
+    T-->>M: where the work stands
+    M->>U: Picking up, at the deliverable not yet done
+    alt the deliverable at hand has a point open
+      P-->>M: gives asks
+      Note over M,P: The main conversation goes on with the points, as S2 draws.
+    else it's doing
+      P-->>M: gives ready
+      Note over M,P: The turn goes on from its last round, as the last section draws.
+    end
   end
-  O->>G: opens each issue, on the person's yes (issue)
-  O->>S: marks the pull request ready
-  S->>G: ready (pull request)
-  U->>G: merges
 ```
 
-## Physical view
+### S4: the work handed over
 
-### Deployment
+```mermaid
+sequenceDiagram
+  actor U as user
+  participant M as main conversation
+  participant P as planner
+  participant T as tree.py
+  participant GH as GitHub
+  P->>T: commit, with the deliverable, and push (Tree edit)
+  T->>T: commits the deliverable and the tree on the work's branch
+  alt git or gh can't push, such as with no login
+    T-->>P: what's missing, the commit kept on the branch
+    P-->>M: names it in its message, and gives its result as the rest of the work goes on
+    M->>U: asks for what's missing
+  else the work has no pull request yet
+    T->>GH: pushes the branch, opens a draft pull request [gh]
+  else it has one
+    T->>GH: pushes the branch [git]
+  end
+  opt every deliverable is done
+    P->>T: report
+    T-->>P: each decision taken without asking, with its grounds, from the run's commits
+    P-->>M: gives done, with the report
+    M->>U: Done, the deliverables, and the decisions taken without asking
+    U->>GH: reads the draft pull request, and merges it
+  end
+```
 
-![Rn's deployment](images/deployment.svg)
+## Deployment
 
-- Rn runs on Claude Code, python3 3.9 or later, git, `jq` and `gh`; Claude Code installs Turn with
-  Rn.
-- The person starts the orchestrator with `/rn:up`, `/rn:ty` or `/rn:gm`; each skill hands to
-  `prompts/orchestrator.md`, which runs in the person's main conversation.
-- The orchestrator starts the compressor in the foreground, as its work is short, and `turn:up` in
-  the background, as [Turn](../../plugins/turn/README.md) is called.
-- Rn's scripts commit and push each step to the work's branch. A fresh conversation goes on from
-  those files, and the commit messages keep the options weighed and each feedback with its answer.
+![rn's deployment](images/deployment.svg)
 
-### Directory structure
+The user installs rn as [the README](../../plugins/rn/README.md#installation) says, which installs
+Lane with it, and types `/rn:up` in Claude Code at the root of their repository.
+
+- **macOS and Linux** over Windows as well: `python3` and the symbolic link of `hooks/lane/` work
+  there as rn needs them, and the README names Windows as not yet tried. It costs a user on
+  Windows having no tried way.
+- **Python 3.9 and its standard library only, for `tree.py`, `throwaway.py`, and the adapters,**
+  over a later Python or packages, as
+  [Q13](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q13) says: the user installs
+  nothing for rn. It costs the code going without what later versions give.
+- **A run's files in `.rn/<yyyymmdd>-<goal>/` of the repository, committed on the work's branch,**
+  over the system's temporary folder, as
+  [Q12](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q12) says for what the user
+  may keep: a run picks up from them in any conversation, and each round's records stay for the
+  user to read. A user who keeps `.rn/` out by `.gitignore` still gets each commit, with its
+  grounds in the message. It costs a folder in the user's repository, which the draft pull request
+  shows.
+- **A best practice made on a run in the run's `best-practices/`** over rn's own folder: rn's folder
+  changes with each update, and a later run of the repository finds it there. `tree.py` looks for a
+  kind in the run's folder, then in rn's own, then in the repository's earlier runs. It costs a
+  later run taking a best practice made for an earlier run's work.
+- **The throwaway copy and home in the system's temporary folder** over a folder in the repository:
+  the copy means nothing once the round ends, and a command run there can't reach the user's own
+  files. It costs a command that needs a file outside the repository, such as one in the user's
+  Downloads folder, a made-up one in the throwaway home.
+
+## Directory structure
 
 ```text
 plugins/rn/
-├── skills/up, ty, gm/SKILL.md       /rn:up, /rn:ty, /rn:gm <skill>
-├── agents/compressor.md             the compressor, allowed only the tools that read <agent>
-├── prompts/                         the orchestrator's and the compressor's steps <Markdown>
-├── scripts/rn.py, <part>.py         Rn's scripts <Python 3.9>
-└── forms/steering.json, compressor.json   the forms of the steering and the compressor's reply <JSON Schema>
+├── .claude-plugin/plugin.json       rn's manifest, naming Lane in its dependencies
+├── skills/up/SKILL.md               the main conversation's entry, /rn:up
+├── agents/<role>.md                 the entries of the planner, the generator, and the evaluator
+├── domain/up.md                     the main conversation's part
+├── domain/<role>.md                 the parts of the planner, the generator, and the evaluator
+├── domain/forms/                    the JSON Schemas of each role's in and out, Change, Tree
+│                                    edit, Making record, and Answers
+├── domain/best-practices/<kind>/    every kind's best practice: plan, plugin, and those of each
+│                                    deliverable, meta among them
+├── domain/                          the code of tree.py and throwaway.py
+├── scripts/tree.py, throwaway.py    tree.py and throwaway.py
+├── hooks/hooks.json, lanes.json     the guard's hook entries, and rn's lanes and routes as laid
+├── hooks/lane/                      the guard, a link to Lane's code
+├── hooks/adapters/                  the steps adapter and the items adapter, with their cases
+└── README.md, CHANGELOG.md, images/   for rn's users
 
-<the person's repository>, on the work's own branch
-├── .turn/templates/<kind>.json      the person's addition for a kind, kept by Turn <JSON>
-└── .rn/
-    └── <yyyymmdd>-<slug>/           one work's record: steering.json, steering.md, learnings.md,
-                                     the documents kept here alone, and calls/ with each call's CCS
-                                     and result <JSON, Markdown>
+dev/rn/
+├── product-vision.md, architecture.md, images/   rn's product vision and architecture
+├── README.md                        for rn's developers
+├── cosmic-ray.toml                  the mutation testing
+└── tests/
+    ├── unit/                        unit tests, at the path of what each tests
+    ├── architecture/                a test for each path of each sequence
+    └── product-vision/              the trials of O1, and the repository tidy that they work in
+
+.rn/<yyyymmdd>-<goal>/               Design tree, as design-tree.json
+.rn/<yyyymmdd>-<goal>/best-practices/<kind>/   a best practice made on the run
+.rn/<yyyymmdd>-<goal>/turns/<nn>-<deliverable>/<round>/   Making record, Answers, and Try record
+<the paths the plan gives>           each deliverable
+<temporary folder>/rn/<yyyymmdd>-<goal>/   the throwaway copy and home, and each Tree edit until
+                                     tree.py commits it
 ```
 
-## Test
+- **The parts in `domain/`, with the best practices and the code beside them,** as
+  [Q1](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q1) says, over Turn's
+  `core/roles/` and `core/domain/`: rn now holds Turn, so it keeps one folder of its own
+  knowledge, where Lane finds each part. It costs moving every file of Turn's.
+- **No progress file** over a file that says where the run stands: the design tree's statuses and
+  the rounds' records already hold it, and a second record of it drifts from them. It costs
+  `tree.py` reading the rounds' folders to tell the round due.
 
-Rn is tested as [the architecture best practice](../../plugins/turn/core/domain/best-practices/architecture/best-practice.md#q12) and [the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q22) say.
+## Tests
 
-| Deployment unit | unit | architecture | ux |
-|---|---|---|---|
-| Rn's scripts [Python 3.9] | unittest, Cosmic Ray, Hypothesis · FULL · the steering, each CCS, each proposal and answer | ▨[^1] | ▨[^2] |
-| the orchestrator and the compressor [Claude Code · Markdown] | a trial of each move · HAPPY · the move from a state made beforehand | ▨[^1] | ▨[^2] |
-| Rn with Turn [Claude Code] | ▨[^3] | ▨[^3] | the acceptance test · HAPPY · KR1.1 and KR1.2 |
+rn tests by [the architecture best practice](../../plugins/turn/core/domain/best-practices/architecture/best-practice.md#q12)
+and [the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q22),
+and differs from them where this section says.
 
-[^1]: Empty: no test yet runs rn's sequences with its scripts real and the orchestrator and the compressor as doubles. The trial of each move checks, with the model, how the moves follow one another.
-[^2]: ux tests run on the whole, in the last row.
-[^3]: Its units are tested in their own rows.
+![rn's tests](images/tests.svg)
 
-- Rn's scripts get unit tests, property-based tests and mutation testing in full: a failure loses
-  the record of days of work, or takes an approval never given.
-- Each move of the orchestrator is tried alone, from a session state made beforehand, with Turn, gh
-  and the person stood in for, in a Docker Sandbox with `bypassPermissions`.
-- Rn's acceptance test runs Rn whole with the real Turn on `lovaizu/playground`, on a request of
-  about an hour with documents and code. An AI stands in for the person, holding what they truly
-  want, written beforehand and never shown to Rn; its send-backs and its time are Rn's key results.
+- **The `tree.py` process tried `FULL` at unit and at architecture** over `HAPPY`: a fault there
+  writes the tree wrong, hands a role another's cut, or hands the evaluator the design, and no
+  higher level checks every case. It costs the most tests to keep up as the tree's form changes.
+- **Lane's double of Claude Code and its trial driver, taken from `dev/lane/`,** over a double of
+  rn's own, as [Q14](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q14) says: one
+  double sends the events that a recorded Claude Code sent, for both plugins. It costs a change to
+  Lane's double reaching rn's tests.
+- **`claude plugin eval` left out of the trials** over a suite of eval cases: an eval case runs one
+  prompt in an empty workspace and never stops for an answer, while the walkthrough types `/rn:up`
+  twice, answers two points, and goes on in a new conversation. An eval run leaves `gh` real, so it
+  would open a real pull request, and a case run on one prompt tries a skill alone, which
+  [Q22](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q22) rules out. It costs the
+  trials their own driver, which Lane's already is.
+- **The trials `HAPPY` for the Claude Code process, and `SMOKE` for the rest,** over every row
+  alike: only the trials run the prompts, while the other rows only confirm what lower levels
+  checked. It costs a fault in a prompt showing only once every lower level passes.
+- **The trial's `tidy` holding each fact a deliverable needs, such as where it's hosted,** over a
+  placeholder: no way of making a README can give a real clone command from a placeholder, so a
+  trial would fail on the fixture and not on rn. It costs keeping the fixture's facts true.

@@ -98,7 +98,6 @@ pre-commit:
     - "dev/pin/tests/ux/notes/scripts/stale.py"
     - "dev/pin/tests/ux/trial.py"
     - "dev/rn/README.md"
-    - "dev/rn/architecture.md"
     - "dev/rn/cosmic-ray.toml"
     - "dev/rn/tests/helpers.py"
     - "dev/rn/tests/properties.py"

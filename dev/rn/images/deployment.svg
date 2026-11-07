@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1210 690" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
-  <title>Rn's deployment</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1760 880" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+  <title>rn&#x27;s deployment</title>
   <style>
     .bg { fill: #ffffff; }
     .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
@@ -44,76 +44,80 @@
       <path class="head" d="M0,0 L10,5 L0,10 z"/>
     </marker>
   </defs>
-
-  <!-- where each role runs and each data is kept -->
-  <rect class="frame" x="20" y="10" width="1170" height="510" rx="10"/>
-  <text class="frame-name" x="32" y="510">the user's computer</text>
-
-  <rect class="frame" x="40" y="58" width="420" height="292" rx="10"/>
-  <text class="frame-name" x="52" y="77">Claude Code</text>
-
-  <rect class="box" x="60" y="88" width="380" height="60" rx="8"/>
-  <text class="name" x="250" y="112">main conversation</text>
-  <text class="kind" x="250" y="132">orchestrator</text>
-
-  <rect class="box" x="60" y="178" width="380" height="60" rx="8"/>
-  <text class="name" x="250" y="202">subagents</text>
-  <text class="kind" x="250" y="222">compressor, and Turn's agents</text>
-
-  <rect class="box" x="60" y="268" width="380" height="60" rx="8"/>
-  <text class="name" x="250" y="292">Claude Code's records</text>
-  <text class="kind" x="250" y="312">conversation records, outside the repository</text>
-
-  <rect class="box" x="560" y="88" width="320" height="60" rx="8"/>
-  <text class="name" x="720" y="112">Rn's plugin folder</text>
-  <text class="kind" x="720" y="132">Rn's skills, prompts and forms, read-only</text>
-
-  <rect class="box dashed" x="560" y="178" width="320" height="60" rx="8"/>
-  <text class="name" x="720" y="202">Turn</text>
-  <text class="kind" x="720" y="222">installed with Rn</text>
-
-  <rect class="box dashed" x="560" y="268" width="320" height="60" rx="8"/>
-  <text class="name" x="720" y="292">python3 3.9 or later</text>
-  <text class="kind" x="720" y="312">Rn's scripts</text>
-
-  <rect class="frame" x="40" y="380" width="840" height="110" rx="10"/>
-  <text class="frame-name" x="52" y="399">the user's repository, on the piece of work's branch</text>
-  <text class="label" x="60" y="430">steering, steering Markdown, each CCS with its decisions and choices, template copy, result,</text>
-  <text class="label" x="60" y="450">learning, issue, replaced record, user's addition, and the work itself</text>
-
-  <rect class="box dashed" x="990" y="268" width="170" height="60" rx="8"/>
-  <text class="name" x="1075" y="292">git, gh, jq</text>
-  <text class="kind" x="1075" y="312">command-line tools</text>
-
-  <rect class="box dashed" x="940" y="580" width="250" height="84" rx="8"/>
-  <text class="name" x="1065" y="604">GitHub</text>
-  <text class="kind" x="1065" y="624">the branch, the pull request, each issue,</text>
-  <text class="kind" x="1065" y="640">and the default branch, protected</text>
-
-  <!-- what each depends on outside rn -->
-  <path class="line" d="M300,88 V36 H1075 V268" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="middle" x="690" y="30">jq reads the steering's JSON, gh opens a learning's issue</text>
-
-  <path class="line" d="M440,208 H560" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="middle" x="510" y="200">Turn's agents</text>
-
-  <path class="line" d="M880,298 H990" marker-end="url(#arrow)"/>
-  <text class="label" x="890" y="350">git keeps the record,</text>
-  <text class="label" x="890" y="367">gh opens the pull</text>
-  <text class="label" x="890" y="384">request, marks it ready</text>
-
-  <path class="line" d="M720,328 V380" marker-end="url(#arrow)"/>
-  <text class="label" x="730" y="360">writes the record</text>
-
-  <path class="line" d="M1075,328 V580" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="end" x="1065" y="550">the branch, the pull</text>
-  <text class="label" text-anchor="end" x="1065" y="567">request, each issue</text>
-
-  <!-- legend -->
-  <rect class="box" x="40" y="620" width="40" height="22" rx="5"/>
-  <text class="label" x="88" y="636">Rn's</text>
-  <rect class="box dashed" x="140" y="620" width="40" height="22" rx="5"/>
-  <text class="label" x="188" y="636">outside Rn</text>
-  <rect class="frame" x="280" y="620" width="40" height="22" rx="5"/>
-  <text class="label" x="328" y="636">where it runs or is kept</text>
+  <rect class="bg" x="0" y="0" width="1760" height="880"/>
+  <rect class="ext" x="1460" y="210" width="270" height="64" rx="4"/>
+  <text class="name" x="1595.0" y="240.0" text-anchor="middle">ccpm marketplace</text>
+  <text class="kind" x="1595.0" y="257.0" text-anchor="middle">[git repository on GitHub]</text>
+  <rect class="ext" x="1460" y="350" width="270" height="64" rx="4"/>
+  <text class="name" x="1595.0" y="380.0" text-anchor="middle">GitHub</text>
+  <text class="kind" x="1595.0" y="397.0" text-anchor="middle">[the repository&#x27;s remote]</text>
+  <rect class="ext" x="1460" y="90" width="270" height="64" rx="4"/>
+  <text class="name" x="1595.0" y="120.0" text-anchor="middle">Claude</text>
+  <text class="kind" x="1595.0" y="137.0" text-anchor="middle">[the model, by Anthropic&#x27;s API]</text>
+  <rect class="frame" x="20" y="20" width="1280" height="790" rx="8"/>
+  <text class="frame-name" x="32" y="44" text-anchor="start">the user&#x27;s computer</text>
+  <text class="kind start" x="197.79999999999998" y="44" text-anchor="start">[macOS or Linux · Claude Code 2.1.319 or later · python3 3.9 or later · git · gh]</text>
+  <rect class="unit" x="900" y="60" width="380" height="130" rx="6"/>
+  <text class="name start" x="914" y="86" text-anchor="start">Claude Code process</text>
+  <text class="kind start" x="914" y="104" text-anchor="start">[Claude Code CLI]</text>
+  <text class="label start" x="914" y="128" text-anchor="start">main conversation, planner, generator,</text>
+  <text class="label start" x="914" y="146" text-anchor="start">evaluator</text>
+  <rect class="unit" x="900" y="220" width="380" height="100" rx="6"/>
+  <text class="name start" x="914" y="246" text-anchor="start">Lane&#x27;s folder</text>
+  <text class="kind start" x="914" y="264" text-anchor="start">[Claude Code plugin, a dependency]</text>
+  <text class="label start" x="914" y="288" text-anchor="start">lay.py</text>
+  <rect class="unit" x="900" y="480" width="380" height="100" rx="6"/>
+  <text class="name start" x="914" y="506" text-anchor="start">lay.py process</text>
+  <text class="kind start" x="914" y="524" text-anchor="start">[python3]</text>
+  <text class="label start" x="914" y="548" text-anchor="start">lay.py, for a deliverable that&#x27;s a plugin</text>
+  <rect class="unit" x="470" y="60" width="400" height="230" rx="6"/>
+  <text class="name start" x="484" y="86" text-anchor="start">rn&#x27;s folder</text>
+  <text class="kind start" x="484" y="104" text-anchor="start">[Claude Code plugin, installed]</text>
+  <text class="label start" x="484" y="128" text-anchor="start">the skill, the agents, the parts,</text>
+  <text class="label start" x="484" y="146" text-anchor="start">the best practices, the forms, tree.py,</text>
+  <text class="label start" x="484" y="164" text-anchor="start">throwaway.py, the adapters, and Lane&#x27;s</text>
+  <text class="label start" x="484" y="182" text-anchor="start">code, copied in from the link</text>
+  <text class="data start" x="484" y="200" text-anchor="start">Rules laid</text>
+  <rect class="unit" x="40" y="60" width="400" height="110" rx="6"/>
+  <text class="name start" x="54" y="86" text-anchor="start">hook process</text>
+  <text class="kind start" x="54" y="104" text-anchor="start">[python3 · one for each event]</text>
+  <text class="label start" x="54" y="128" text-anchor="start">guard</text>
+  <rect class="unit" x="40" y="200" width="400" height="110" rx="6"/>
+  <text class="name start" x="54" y="226" text-anchor="start">adapter process</text>
+  <text class="kind start" x="54" y="244" text-anchor="start">[python3]</text>
+  <text class="label start" x="54" y="268" text-anchor="start">steps adapter, items adapter</text>
+  <rect class="unit" x="470" y="330" width="400" height="110" rx="6"/>
+  <text class="name start" x="484" y="356" text-anchor="start">tree.py process</text>
+  <text class="kind start" x="484" y="374" text-anchor="start">[python3 · git, gh]</text>
+  <text class="label start" x="484" y="398" text-anchor="start">tree.py</text>
+  <rect class="unit" x="470" y="470" width="400" height="110" rx="6"/>
+  <text class="name start" x="484" y="496" text-anchor="start">throwaway.py process</text>
+  <text class="kind start" x="484" y="514" text-anchor="start">[python3]</text>
+  <text class="label start" x="484" y="538" text-anchor="start">throwaway.py, and the deliverable&#x27;s commands</text>
+  <rect class="unit" x="40" y="340" width="400" height="240" rx="6"/>
+  <text class="name start" x="54" y="366" text-anchor="start">the user&#x27;s repository</text>
+  <text class="kind start" x="54" y="384" text-anchor="start">[git working tree · the work&#x27;s branch]</text>
+  <text class="label start" x="54" y="408" text-anchor="start">each deliverable, at the path the plan gives</text>
+  <text class="data start" x="54" y="426" text-anchor="start">Design tree, Best practice made on the run,</text>
+  <text class="data start" x="54" y="444" text-anchor="start">Making record, Answers, Try record,</text>
+  <text class="data start" x="54" y="462" text-anchor="start">Deliverable, Commit</text>
+  <rect class="unit" x="470" y="610" width="400" height="170" rx="6"/>
+  <text class="name start" x="484" y="636" text-anchor="start">temporary folder</text>
+  <text class="kind start" x="484" y="654" text-anchor="start">[the system&#x27;s]</text>
+  <text class="label start" x="484" y="678" text-anchor="start">the throwaway copy and home, each tree</text>
+  <text class="label start" x="484" y="696" text-anchor="start">edit until committed, and Lane&#x27;s record</text>
+  <text class="label start" x="484" y="714" text-anchor="start">of each run</text>
+  <path class="line" d="M1280,120 L1460,120" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="1370" y="112" text-anchor="middle">sends each turn</text>
+  <path class="line" d="M1280,170 L1400,170 L1400,240 L1460,240" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="1290" y="160" text-anchor="start">installs rn and Lane</text>
+  <path class="line" d="M870,380 L1460,380" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="1090" y="372" text-anchor="middle">pushes, keeps the draft pull request [git, gh]</text>
+  <text class="frame-name" x="30" y="850" text-anchor="start">Legend</text>
+  <rect class="frame" x="100" y="835" width="36" height="22" rx="4"/>
+  <text class="label small" x="144" y="850" text-anchor="start">an environment, with its technology</text>
+  <rect class="unit" x="420" y="835" width="36" height="22" rx="4"/>
+  <text class="label small" x="464" y="850" text-anchor="start">a deployment unit, with the components and the data it holds</text>
+  <rect class="ext" x="900" y="835" width="36" height="22" rx="4"/>
+  <text class="label small" x="944" y="850" text-anchor="start">outside rn, with what rn uses of it</text>
 </svg>
