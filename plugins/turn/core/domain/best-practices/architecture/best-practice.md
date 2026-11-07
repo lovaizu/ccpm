@@ -33,7 +33,7 @@ The developer builds and changes each part of the product so that the parts toge
 | Q10 | Components, Data model, Directory structure | Making or changing a component or a data, does the developer find the one place its files belong, so that each change lands in one place? |
 | Q11 | Deployment, Tests | Asked whether anything in the product goes untested, does the developer see for each deployment unit which levels cover it, how far each tries it, and why a level is missing, so that no gap is left unseen? |
 | Q12 | Tests | Writing a test at one level, does the developer know what to run real, what doubles stand in for, what to cover and when it passes, so that a failing test names the rule, path or use it breaks? |
-| Q13 | Tests | When the unit and architecture tests pass, does the developer know the product does what this document says, so that the ux level is left only the product vision to confirm? |
+| Q13 | Tests | When the unit and architecture tests pass, does the developer know the product does what this document says, so that the product vision level is left only to confirm the product in real use? |
 | Q14 | Components, Sequences, Deployment, Directory structure, Tests | Doubting a choice the document makes, such as a tool or how far a level tries a unit, does the developer see what would be lost by the other way, so that they keep or change it knowing what it was for? |
 | Q15 | the whole | Following a principle while building a part, does the developer find every figure and list asking the same of that part, so that they never choose between the document and itself? |
 | Q16 | the whole | Changing how a component works inside while the product vision and the principles stay, does the developer find every line of the document still true, so that the document needs no change for it? |
@@ -156,7 +156,7 @@ Asked whether anything in the product goes untested, does the developer see for 
 
 **Thinking**
 
-Each deployment unit has a cell at each level whose ground, a part's contract, this document or the product vision, says what the unit must do, and an empty cell says why. A level is named by what it checks against, not by its means. Unit and architecture carry most of the checking and run on every change; ux tests are few.
+Each deployment unit has a cell at each level whose ground, a part's contract, this document or the product vision, says what the unit must do, and an empty cell says why. A level is named by what it checks against, not by its means. Unit and architecture carry most of the checking and run on every change; product vision tests are few.
 
 **Steps**
 
@@ -169,7 +169,7 @@ Writing a test at one level, does the developer know what to run real, what doub
 
 **Thinking**
 
-Each test is drawn from the one thing its level checks against: the ways a part's contract divides at unit, the paths the sequences draw at architecture, and an objective's main use at real size at ux. It runs only that real and stands doubles in for the rest. A failing test then names the rule, path or use it breaks.
+Each test is drawn from the one thing its level checks against: the ways a part's contract divides at unit, the paths the sequences draw at architecture, and an objective's main use at real size at product vision. It runs only that real and stands doubles in for the rest. A failing test then names the rule, path or use it breaks.
 
 **Steps**
 
@@ -177,16 +177,19 @@ Each test is drawn from the one thing its level checks against: the ways a part'
 2. At unit, divide each input and each result the contract names into classes the part treats alike, the refused ones among them, and write one test for each class.
 3. Where a class ends on an ordered scale, such as a length or a count, write one test at each end and one at the nearest value of the next class.
 4. Where the contract's result turns on a combination of conditions, write one test for each combination that can occur, with the result it gives.
-5. At unit, run a part an AI does on the real model, with one input for each class, both where the contract says the part acts and where it says it does not, and doubles for the parts it works with.
-6. At architecture, run real what joins the components, such as hooks and scripts, and stand a double in for each component an AI runs and each thing outside the product, so the level calls no model and gives the same result each run.
-7. At architecture, write one test for each path through each story's sequence, the main flow, each branch, each step that sends work back and each question put to the role, until every move from one step to the next lies on some path.
-8. At ux, once unit and architecture pass, run the real product on each objective's main use, as the README's walkthrough shows it, at the size of a real request, with an AI standing in for the role that holds an intent the product never sees.
-9. At ux, measure each key result as the product vision words it, and set each measure against the last one by the direction the product vision gives it, as the product vision gives no target.
-10. For a test whose result varies from run to run, write how many runs of how many must meet the expectation.
+5. At unit, pass when every test passes, every line and branch runs and every mutant is caught, and add a unit test for each gap that coverage, mutation testing or a property-based test finds, as these tools confirm the tests drawn from the contract and draw none themselves.
+6. At unit, run a part an AI does on the real model, with one input for each class, both where the contract says the part acts and where it says it does not, and doubles for the parts it works with.
+7. At architecture, run real what joins the components, such as hooks and scripts, and stand a double in for each component an AI runs and each thing outside the product, so the level calls no model and gives the same result each run.
+8. At architecture, write one test for each path through each story's sequence, the main flow, each branch, each step that sends work back and each question put to the role, until every move from one step to the next lies on some path.
+9. Run the unit and architecture tests that a change reaches before each push, and every test in CI, as running every test before each push makes each change wait, and a selection misses a test that reads a file the change edits.
+10. At product vision, once unit and architecture pass, run the real product on each objective's main use, as the README's walkthrough shows it, at the size of a real request, with an AI standing in for the role that holds an intent the product never sees.
+11. At product vision, measure each key result as the product vision words it, and set each measure against the last one by the direction the product vision gives it, as the product vision gives no target.
+12. At product vision, run each role on the model its users run and judge each run from its records, and try no case a lower level can test, as another model makes other slips than the users meet, and each run is slow and costly.
+13. For a test whose result varies from run to run, write how many runs of how many must meet the expectation.
 
 ### Q13
 
-When the unit and architecture tests pass, does the developer know the product does what this document says, so that the ux level is left only the product vision to confirm?
+When the unit and architecture tests pass, does the developer know the product does what this document says, so that the product vision level is left only to confirm the product in real use?
 
 **Thinking**
 
@@ -194,7 +197,9 @@ Each double gives only results in the form the part's contract gives them, the r
 
 **Steps**
 
-1. For a fault a higher level finds, name the case or path the lower level missed, add its test at the level that must catch it, see it fail, then fix it there.
+1. Draw a double of something outside the product from its documentation or from a recorded run of the real thing, as a double that gives what the real thing never would passes a test that the real one fails.
+2. For a fault a higher level finds, name the case or path the lower level missed, add its test at the level that must catch it, see it fail, then fix it there.
+3. Trust a check, such as a test, a hook or the judge of a trial, only once you have seen it fail on a case that breaks what it checks, or, for a judge, once it is right on kept records whose answer you know, as a check that can't fail lets everything through unseen.
 
 ### Q14
 
