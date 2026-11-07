@@ -1,188 +1,390 @@
 {
  "goal": "The generator can make deliverables with which their role achieves its purpose.",
  "template": "template.json",
- "example": "../product-vision/best-practice.json",
  "inputs": [],
  "preconditions": [],
  "intents": [
   {
    "id": "Q1",
    "about": "goal",
-   "what": "Reading the goal, does the generator see the one end the deliverable's role is after, so that every part of the deliverable serves that end?"
+   "what": "Reading the goal, does the generator see the one end the deliverable's role is after, so that it can tell for each part, and in each case no practice foresaw, whether what it makes serves that end?"
   },
   {
    "id": "Q2",
-   "about": "template",
-   "what": "Filling in the template, does the generator know what each section holds and in what order, so that the deliverable holds what its role uses and nothing more?"
+   "about": "intents",
+   "what": "Choosing the questions, does the generator ask where makers of the kind fail the role, as deliverables made without the best practice show and the field's sources name, so that the evaluator checks the failures that matter and not a list kept for completeness?"
   },
   {
    "id": "Q3",
-   "about": "goal, template",
-   "what": "Setting the template against the goal, does the generator find each section the goal needs and none it does not, so that the role finds all it needs and reads nothing it does not?"
+   "about": "intents",
+   "what": "Judging a deliverable by a question, does the evaluator reach the verdict that someone who knows the role's work would reach, so that a pass means the role gets what it's after and not that the words are there?"
   },
   {
    "id": "Q4",
-   "about": "inputs, preconditions",
-   "what": "Setting each section against what fills it, does the generator find the kinds a deliverable is made from and those that must pass before it is made, so that no deliverable of the kind is made before what it takes?"
+   "about": "template, parts",
+   "what": "Filling in the template, or making each part, does the generator know what each holds and what its reader uses it for, so that the deliverable holds what its role uses and nothing more?"
   },
   {
    "id": "Q5",
-   "about": "intents",
-   "what": "Judging a deliverable by a question, does the evaluator see what the role is after at that moment, so that it judges whether the role gets that, not whether the words are there?"
+   "about": "inputs, preconditions",
+   "what": "Ordering the work, does the planner find the kinds a deliverable of the kind is made from and those whose deliverables must pass before it's made, so that no deliverable is made before what it stands on?"
   },
   {
    "id": "Q6",
-   "about": "template, intents",
-   "what": "Going through the template, does the generator find a question for each section, each dependency among sections and the whole, so that no way the deliverable fails its role goes unasked?"
+   "about": "practices",
+   "what": "Reading a practice, does the generator meet the way the field has established for the case, under the name the field knows it by and with the sources it rests on, so that it brings the field's knowledge to the deliverable and not one maker's reasoning?"
   },
   {
    "id": "Q7",
    "about": "practices",
-   "what": "Following a practice, does the generator grasp what the question's role is after and why, so that it makes what serves the role even where no step says how?"
+   "what": "Following a practice, does the generator see what the deliverable must be and why, where the practice applies and where it doesn't, and what it costs, so that it follows the practice where it holds and sets it aside where it doesn't?"
   },
   {
    "id": "Q8",
-   "about": "intents, practices",
-   "what": "Going through the questions in order, does the generator find a practice for each, so that it meets no question with nothing to go by?"
+   "about": "practices",
+   "what": "Following a practice's steps, does the generator meet a step only where skipping it or doing it out of order breaks the deliverable, each with the call that shows it done, so that Lane holds what must hold and the generator's judgment shapes the rest?"
   },
   {
    "id": "Q9",
-   "about": "example, source",
-   "what": "Reading the example, does the generator see what the template's slots become in one deliverable, so that it fills its own to the same intent?"
+   "about": "example",
+   "what": "Reading the examples, does the generator see what the template's slots or the parts become in deliverables that differ from one another, so that it takes the intent and not one product's particulars?"
   },
   {
    "id": "Q10",
    "about": "the whole",
-   "what": "Using a deliverable made by the best practice and passed, does its role achieve its purpose?"
+   "what": "Using deliverables made by the best practice for cases held back from its making, does the role achieve its purpose?"
   }
  ],
  "practices": [
   {
    "intent": "Q1",
-   "thinking": "Write the end the deliverable's role is after as one sentence, with the role as its subject. Leave out what the deliverable holds, how the end is reached and how it would show. Each of these can be met while the end is missed.",
-   "steps": [
+   "name": "Intent",
+   "thinking": "Write the end the deliverable's role is after as one sentence, with the role as its subject. Leave out what the deliverable holds, how the role reaches the end, and how the end would show, as a deliverable can hold each of these and still miss the end. Ask why of each draft until no further end shows. The generator and the evaluator weigh every other part against this sentence. A generator that knows the end the rules serve can tell where a practice holds in a case its maker didn't foresee, and where it no longer serves.",
+   "applies": "Every best practice, as each kind serves one end of one role.",
+   "excludes": "The goal doesn't say how to reach the end or how to check it. The practices say how, and the questions check it.",
+   "cost": "A sentence that holds only the end is harder to write than a list of contents, and it takes several drafts.",
+   "sources": [
     {
-     "text": "Ask why of each part of the sentence until no further end shows, and keep that end."
+     "title": "Google C++ Style Guide",
+     "url": "https://google.github.io/styleguide/cppguide.html"
+    },
+    {
+     "title": "Gamma et al. 1994, as Wikipedia's Software design pattern sums it up",
+     "url": "https://en.wikipedia.org/wiki/Software_design_pattern",
+     "secondary": true
     }
-   ]
+   ],
+   "steps": []
   },
   {
    "intent": "Q2",
-   "thinking": "Write the template anew from the goal: a section for each thing the role uses toward the goal, fixed text for what every deliverable of the kind shares, and a slot for the rest. An AI writes past what a deliverable needs when it is only told not to, so the template leaves no room for more.",
-   "steps": [
+   "name": "Killer items",
+   "thinking": "Before you write a question, make real deliverables of the kind without the best practice, and keep each way they fail their role. Add the failures that the field's sources name for the kind. Write a question for each failure that matters, and none for a section where makers don't fail, as a checklist works when it holds the items most often missed and most dangerous to skip, and a long list imposed for completeness showed no effect. Merge two questions that fail the same deliverables for the same reason. Revise the questions once you've read many real deliverables, as reading them shows criteria that no one could name before.",
+   "applies": "Choosing a kind's questions, and revising them after a trial.",
+   "excludes": "A fault a script finds, such as a file out of its schema, needs no question. Leave it to the script.",
+   "cost": "The runs without the best practice take time before any writing starts. A failure that no run showed and no source named goes unasked until a trial finds it, and Q10 then adds its question.",
+   "sources": [
     {
-     "text": "Where what the good deliverables hold is one way of doing it, such as a place, a file or a name, keep what the role gets from it instead."
+     "title": "Gawande's Read-Do and Do-Confirm checklists, as Sketchplanations sums them up",
+     "url": "https://sketchplanations.com/read-do-do-confirm-checklists",
+     "secondary": true
     },
     {
-     "text": "Mark each slot as code, `` `<name>` ``, as a bare `<name>` is dropped as an HTML tag where the template is shown."
+     "title": "Gawande, The Checklist Manifesto, as Steve Grossi sums it up",
+     "url": "https://www.stevegrossi.com/on/the-checklist-manifesto",
+     "secondary": true
     },
     {
-     "text": "After each section, write one GitHub note whose first line is `DELETE_TEMPLATE_COMMENT:`, saying for each slot what it holds, what its reader uses it for and whether it is optional, as the generator fills a slot to its intent only when the note says it, and finds and deletes each note by its marker."
+     "title": "Urbach et al. 2014 in the New England Journal of Medicine, as HospiMedica reports it",
+     "url": "https://www.hospimedica.com/surgical-techniques/articles/294752136/surgical-checklists-less-effective-than-previously-assumed.html",
+     "secondary": true
     },
     {
-     "text": "Where the deliverable is JSON, write each note as a key `DELETE_TEMPLATE_COMMENT`, as JSON holds no comment."
+     "title": "Bosk et al. 2009 in The Lancet, as ScienceDaily reports it",
+     "url": "https://www.sciencedaily.com/releases/2009/09/090916092657.htm",
+     "secondary": true
     },
     {
-     "text": "Where the deliverable has a JSON Schema of its own, such as the design tree, make the schema the template, its top fields the sections, and write each slot's note in the description of its field, as a second note beside the schema drifts from it."
+     "title": "Anthropic, Skill authoring best practices",
+     "url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices"
     },
     {
-     "text": "Give the content found by digging a slot for its intent and why alone, in the fewest words, and a figure in place of prose wherever a figure can say it."
+     "title": "Anthropic, skill-creator",
+     "url": "https://raw.githubusercontent.com/anthropics/skills/main/skills/skill-creator/SKILL.md"
     },
     {
-     "text": "Draw a sequence in Mermaid, and any other figure in SVG, a table among them, as a table stands in for prose."
-    },
-    {
-     "text": "Give each SVG figure of the template a skeleton of its own beside it, `images/template-<name>.svg`, that shows the figure's layout by the slots' names, give it an alt text with no slot, and say in the section's note where the deliverable puts its own figure, as a figure the template names but does not hold shows broken, and the example's figure shows one product's content in place of the layout."
-    },
-    {
-     "text": "Name the template's file in `template`."
+     "title": "Shankar et al., Who Validates the Validators?",
+     "url": "https://arxiv.org/abs/2404.12272"
     }
-   ]
+   ],
+   "steps": []
   },
   {
    "intent": "Q3",
-   "thinking": "Keep a section only where the role would fall short of the goal without it. Add one where a deliverable with every section would still fail the role.",
-   "steps": [
+   "name": "LLM-as-a-judge calibration",
+   "aliases": [
+    "inter-rater agreement"
+   ],
+   "thinking": "Write each question as the moment the role uses the deliverable, what it needs there, and what it's after in that, in a clause that opens with \"so that\" and names that end. Leave the clause out only where what the role needs is the goal itself. Ask it for yes or no, as a vague or scaled question gives verdicts that differ from run to run and that no one can act on. Use a question once an evaluator judges it right on several kept deliverables whose answer someone who knows the role's work has given, with both passes and fails among them. Count how many of the passes and how many of the fails it got right, as agreement on one deliverable, or on a set of passes alone, shows nothing. Keep those deliverables and their answers, so that you judge each change to a question on them again. Judge with a model other than the one that made the deliverable, and let it answer that it can't tell.",
+   "applies": "Every question an evaluator judges, before the first run that rests on its verdict, and again after each change to it.",
+   "excludes": "A check that a script makes needs no calibration, as it judges the same way each time. Where no one who knows the role's work can give the answer for a kept deliverable, you can't calibrate the question yet. Ask the user.",
+   "cost": "Each question needs kept deliverables with known answers, both passes and fails, before it's used, and someone who knows the work to give those answers.",
+   "sources": [
     {
-     "text": "Repeat until no such deliverable can be imagined."
+     "title": "Anthropic, Demystifying evals for AI agents",
+     "url": "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents"
+    },
+    {
+     "title": "Anthropic, Develop tests",
+     "url": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests"
+    },
+    {
+     "title": "Husain, Creating a LLM-as-a-Judge",
+     "url": "https://hamel.dev/blog/posts/llm-judge/"
+    },
+    {
+     "title": "McHugh, Interrater reliability: the kappa statistic, Biochemia Medica 2012",
+     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3900052/"
+    },
+    {
+     "title": "Zheng et al., Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena",
+     "url": "https://arxiv.org/abs/2306.05685"
     }
-   ]
+   ],
+   "steps": []
   },
   {
    "intent": "Q4",
-   "thinking": "Name in inputs each kind whose deliverables a deliverable of this kind is made from, and in preconditions each kind whose deliverables must pass before one of this kind is made, each by the name of its best practice's folder. The plan holds each deliverable's own inputs and preconditions, the paths of the deliverables it takes, to these kinds, and orders it after them. A kind left out lets a deliverable be made on what is not there yet, and a kind named without need holds the deliverable back.",
+   "name": "Template",
+   "aliases": [
+    "Mandatory Elements Present"
+   ],
+   "thinking": "Give a template where the kind's deliverable is one document, and name its parts where it's a set of files of a known form, such as code or a prompt, as those files' own form already lays them out and a template would only copy it. A template holds a section for each thing the role uses toward the goal, fixed text for what every deliverable of the kind shares, and a slot for the rest. Keep a section only where the role would fall short of the goal without it, as an AI writes past what a deliverable needs when it's only told not to, and the template leaves it no room. After each section, write a GitHub note whose first line opens with `DELETE_TEMPLATE_COMMENT:`, saying of each slot what it holds, what its reader uses it for, and whether it's optional. In JSON, write the note as a key `DELETE_TEMPLATE_COMMENT`. Where the deliverable has a JSON Schema of its own, make the schema the template and write each note in its field's description, as a second note beside the schema drifts from it. In Markdown, mark each slot as code, `` `<name>` ``, as Markdown drops a bare `<name>` as an HTML tag. Draw a figure in place of prose wherever one can say it: a sequence in Mermaid, and any other figure in SVG, with a skeleton beside the template, `images/template-<name>.svg`, that shows the layout by the slots' names. Give each part an id and what the role needs of it.",
+   "applies": "Every kind: a template where its deliverable is one document, and parts where it's a set of files of a known form.",
+   "excludes": "A best practice never gives both, as each would claim the deliverable's form and they'd drift apart.",
+   "cost": "A template fixes the order of sections, so a deliverable that would read better in another order waits for the template to change.",
+   "sources": [
+    {
+     "title": "Nygard, Documenting Architecture Decisions",
+     "url": "https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions"
+    },
+    {
+     "title": "MADR",
+     "url": "https://adr.github.io/madr/"
+    },
+    {
+     "title": "Meszaros and Doble, A Pattern Language for Pattern Writing",
+     "url": "https://www.hillside.net/index.php/a-pattern-language-for-pattern-writing"
+    },
+    {
+     "title": "Anthropic, Effective context engineering for AI agents",
+     "url": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"
+    }
+   ],
    "steps": []
   },
   {
    "intent": "Q5",
-   "thinking": "Write each question as the moment the role uses the sections, what it needs from them, and what it is after in that, in a clause that begins with \"so that\". The evaluator then judges by the role's intent. A question that asks only for a sign of good work can be met in words while the role goes without.",
-   "steps": [
+   "name": "Related patterns",
+   "aliases": [
+    "pattern language"
+   ],
+   "thinking": "Name in `inputs` each kind whose deliverables a deliverable of this kind is made from, and in `preconditions` each kind whose deliverables must pass before one of this kind is made, each by the name of its best practice's folder. The plan holds each deliverable's own inputs and preconditions to these kinds, and orders it after them. A kind left out lets a deliverable be made on what isn't there yet. A kind named without need holds the deliverable back.",
+   "applies": "Every kind. Each list is empty where the kind takes none.",
+   "excludes": "The lists name kinds, not files. The plan names the deliverables that a given deliverable takes.",
+   "cost": "A deliverable of the kind can't start before the kinds it names, so a wrong entry delays every deliverable of the kind.",
+   "sources": [
     {
-     "text": "Leave out the \"so that\" clause only where what the role needs is the goal itself."
+     "title": "Alexander et al., A Pattern Language, pattern 159",
+     "url": "https://www.patternlanguage.com/apl/aplsample/apl159/apl159.htm"
     },
     {
-     "text": "Have two evaluators judge one real deliverable by the question, and rewrite it where they differ."
+     "title": "Alexander 1977, as Wikipedia's Pattern language sums it up",
+     "url": "https://en.wikipedia.org/wiki/Pattern_language",
+     "secondary": true
+    },
+    {
+     "title": "Gamma et al. 1994, as Wikipedia's Software design pattern sums it up",
+     "url": "https://en.wikipedia.org/wiki/Software_design_pattern",
+     "secondary": true
     }
-   ]
+   ],
+   "steps": []
   },
   {
    "intent": "Q6",
-   "thinking": "Give each section, each dependency among sections and the whole a question, and add one that fails each deliverable that would pass them all and still fail its role, as the questions are complete only when none such is left.",
-   "steps": [
+   "name": "Evidence-based software engineering",
+   "aliases": [
+    "multivocal literature review"
+   ],
+   "thinking": "Turn each failure a question asks of into a question that the field can answer. Search the field's primary sources and its established guides for the way it handles that case: standards, the guides of a tool's makers, books, and papers, ahead of blogs. Weigh each source by its authority, its method, and whether its claims rest on data. Where sources disagree, look first for a difference of context that explains it, and state the practice with that context. Otherwise take the side of the stronger evidence, and write which side you took and why. Stop once new sources add no new finding. Call the practice by the name the field knows it by, such as information hiding or Given-When-Then, and list the other names it goes by, as a name brings the field's knowledge to a reader who knows it. Put the name beside what the role needs of it, as no study shows that a name alone serves a model better than the idea said plainly. Name each source read, and mark one where only a summary of it was read. A practice reasoned out alone misses what the field already knows.",
+   "applies": "Every practice.",
+   "excludes": "A convention of the tools that run or check the best practice, such as the marker of a template's note, has those tools as its source, as no field holds it.",
+   "cost": "Research takes longer than reasoning a practice out, and the maker weighs each source's authority before using it.",
+   "sources": [
     {
-     "text": "Where two questions would fail the same deliverables for the same reason, merge them, but keep a key one on its own."
+     "title": "Durham, Evidence-Based Software Engineering",
+     "url": "https://ebse.webspace.durham.ac.uk/"
     },
     {
-     "text": "Dig each question until it shows the idea the role must grasp, and ask whether the role grasps it, so that the template gives it a figure."
+     "title": "Garousi, Felderer and Mäntylä, Guidelines for including grey literature and conducting multivocal literature reviews in software engineering",
+     "url": "https://arxiv.org/abs/1707.02553"
     },
     {
-     "text": "Judge real deliverables that their role found short, and where one passes, add or mend the question that should have failed it."
+     "title": "GRADE Handbook",
+     "url": "https://gdt.gradepro.org/app/handbook/handbook.html"
+    },
+    {
+     "title": "AGREE II Users Manual and 23-item Instrument",
+     "url": "https://www.agreetrust.org/wp-content/uploads/2017/12/AGREE-II-Users-Manual-and-23-item-Instrument-2009-Update-2017.pdf"
+    },
+    {
+     "title": "Google eng-practices, The Standard of Code Review",
+     "url": "https://google.github.io/eng-practices/review/reviewer/standard.html"
+    },
+    {
+     "title": "Anthropic, Skill authoring best practices",
+     "url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices"
+    },
+    {
+     "title": "Meszaros and Doble, A Pattern Language for Pattern Writing",
+     "url": "https://www.hillside.net/index.php/a-pattern-language-for-pattern-writing"
     }
-   ]
+   ],
+   "steps": []
   },
   {
    "intent": "Q7",
-   "thinking": "Write first what the deliverable must be for the question's role, and why the role needs it so, in short sentences. A generator that grasps the intent finds its own way where the case differs. One that holds only steps follows them off the mark.",
-   "steps": [
+   "name": "Visible forces",
+   "aliases": [
+    "Pros, Cons, and Decision"
+   ],
+   "thinking": "Write first what the deliverable must be for the question's role, and why the role needs it so, in short sentences and in plain words, with no capitals that demand. Then write where the practice applies and where it doesn't, with what to do there instead, and what following it costs. A generator that knows why, and where a practice stops, finds its own way where the case differs, and sets the practice aside where it no longer serves the goal. Keep only what the generator lacks. Leave out what a capable model already knows, such as what a test is, as each needless sentence costs reading and hides what matters.",
+   "applies": "Every practice.",
+   "excludes": "A template's notes say only what a slot holds and what its reader uses it for, as the practice behind them already says why.",
+   "cost": "A practice takes longer to write and to read than a bare rule. Lead with what the deliverable must be, so that a reader can stop there.",
+   "sources": [
     {
-     "text": "Add a step only where a generator that holds the intent would still not know how, such as a format to keep or a place to look, and say what the step achieves."
+     "title": "Google C++ Style Guide",
+     "url": "https://google.github.io/styleguide/cppguide.html"
     },
     {
-     "text": "Give each step its trace, the call that shows it done: a command it runs, a file it reads to its end, or a file it makes. Order the steps as their calls come, as Lane holds the role to each step by its trace alone, in the steps' order, and holds its end until each trace comes back. Leave the trace out where some runs rightly skip the call, such as on a step of a case, as Lane would stop the end of each such run, and where no call shows the action, such as a judgment, which the evaluator then checks."
+     "title": "Google Python Style Guide",
+     "url": "https://google.github.io/styleguide/pyguide.html"
     },
     {
-     "text": "Where the content must be found before it is written, such as the roles of a product vision, say what to look at, how to find all of it, and when to ask the user."
+     "title": "Meszaros and Doble, A Pattern Language for Pattern Writing",
+     "url": "https://www.hillside.net/index.php/a-pattern-language-for-pattern-writing"
     },
     {
-     "text": "Make one real deliverable by the practice, judge it by the question, and mend the intent where the answer stays no."
+     "title": "Gamma et al. 1994, as Wikipedia's Software design pattern sums it up",
+     "url": "https://en.wikipedia.org/wiki/Software_design_pattern",
+     "secondary": true
+    },
+    {
+     "title": "Anthropic, Prompting best practices",
+     "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"
+    },
+    {
+     "title": "Anthropic, skill-creator",
+     "url": "https://raw.githubusercontent.com/anthropics/skills/main/skills/skill-creator/SKILL.md"
+    },
+    {
+     "title": "Anthropic, Skill authoring best practices",
+     "url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices"
     }
-   ]
+   ],
+   "steps": []
   },
   {
    "intent": "Q8",
-   "thinking": "Order the questions so that each comes before those that build on it, and give each one practice in that order, as the generator then meets no question with nothing to go by.",
+   "name": "Degrees of freedom",
+   "thinking": "Give a step only where skipping it or doing it out of order breaks the deliverable, such as running the tests before the code changes. Say everything else in the thinking, and leave the way to the generator, as a model that holds the intent often reasons past a hand-written plan, and the evaluator judges what was made, not the path. Give each step its trace, the call that shows it done: `run` for a command run, matched whole, `read` for a file read to its end, or `write` for a file made. Write each take as the step writes it, with a value the role's start gives as `{<name>}`, such as `{deliverable}`, a whole take for a file or one word of a command. For `run` and `write`, give more than one take where any of them shows the step done, and for `read`, each file the step reads whole. Order the steps as their calls come, as Lane holds the role to each step by its trace, in the steps' order, and holds its end until each trace comes back.",
+   "applies": "An action whose skipping or order breaks the deliverable, and that a call shows on every run.",
+   "excludes": "An action of a case, which only some runs take, and a judgment, which no call shows, are no steps: a trace on either would stop the runs that rightly don't make it. Say them in the thinking, and the evaluator checks them.",
+   "cost": "Lane holds the role's end until each trace comes back, so a step given without need holds every run to it.",
+   "sources": [
+    {
+     "title": "Anthropic, Skill authoring best practices",
+     "url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices"
+    },
+    {
+     "title": "Anthropic, Prompting best practices",
+     "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"
+    },
+    {
+     "title": "Anthropic, Demystifying evals for AI agents",
+     "url": "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents"
+    },
+    {
+     "title": "Lane, The lanes",
+     "url": "../../../../lane/docs/lanes.md"
+    }
+   ],
    "steps": []
   },
   {
    "intent": "Q9",
-   "thinking": "Make the product's own deliverable of the kind from its design tree by the template and the practices, pass it by the questions, and name its file in `example`, as one finished deliverable shows what the comments alone do not.",
-   "steps": [
+   "name": "Diverse, canonical examples",
+   "thinking": "Make deliverables of the kind by the template and the practices, pass each by the questions, and name them in `example`: one file, or a folder of several. Choose them to differ where the kind allows, in product, size, and shape, so that the generator sees what stays the same across them, which is the intent, and doesn't copy one product's content. Where a deliverable lies elsewhere for its own reader, such as a product vision in the developers' folder, name its path in `source` and have a script copy it with its figures beside the best practice, as a copy made by hand drifts from the deliverable, and a symbolic link shows as a line of text on GitHub and on Windows. Give no example until a deliverable of the kind passes, as one made to another form teaches that form.",
+   "applies": "Every kind, once a deliverable of it passes.",
+   "excludes": "Where the kind has one deliverable alone, such as a repository's one product vision, the example is that one, as the kind allows no other.",
+   "cost": "Each example is a whole deliverable to make and pass, and you make each again when the best practice changes.",
+   "sources": [
     {
-     "text": "Where the deliverable lies elsewhere for its own reader, such as a product vision in the developers' folder, name its path in `source` and copy it with its figures beside the best practice by a script, such as ccpm's `dev/scripts/practices.py example`, as a copy made by hand drifts from the deliverable, and a symbolic link shows as a line of text on GitHub and on Windows."
+     "title": "Anthropic, Prompting best practices",
+     "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"
+    },
+    {
+     "title": "Anthropic, Effective context engineering for AI agents",
+     "url": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"
+    },
+    {
+     "title": "Moher et al., Guidance for Developers of Health Research Reporting Guidelines, PLoS Medicine 2010",
+     "url": "https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.1000217"
     }
-   ]
+   ],
+   "steps": []
   },
   {
    "intent": "Q10",
-   "thinking": "Have the role, or an AI holding what it wants, use the example for the goal, and set its verdict against the evaluator's, as only a deliverable made and used shows whether the whole works.",
-   "steps": [
+   "name": "Pilot testing",
+   "aliases": [
+    "evaluations first"
+   ],
+   "thinking": "Hold back some real cases of the kind from the making, as you write the best practice to close the shortfalls of the cases you make it from, and only cases it hasn't met show whether it holds beyond them. Have a fresh generator, with the best practice alone, make a deliverable for each case held back, on each model that runs it. Have the role, or an AI holding what the role wants, use each deliverable for the goal. Check that the generator used the best practice as meant, not only that it had it. Read the deliverables and the verdicts, not only their counts. Trace each shortfall to the goal, a question, or a practice, and mend it there. Then judge the mended best practice again on the kept cases and on new ones held back.",
+   "applies": "Every best practice before its first use, and again after each change to it.",
+   "excludes": "A trial shows whether the whole works. It doesn't show whether each question judges right, which the kept deliverables of Q3 show.",
+   "cost": "Cases held back can't shape the best practice, so the maker needs more real cases than it writes from, and each trial runs a generator and the role on each.",
+   "sources": [
     {
-     "text": "Trace each difference to the goal, the template, a question or a practice, and mend it there."
+     "title": "Anthropic, Skill authoring best practices",
+     "url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices"
     },
     {
-     "text": "Go through again with the next real deliverable."
+     "title": "Anthropic, Demystifying evals for AI agents",
+     "url": "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents"
+    },
+    {
+     "title": "World Health Organization, safe surgery tools and resources",
+     "url": "https://www.who.int/teams/integrated-health-services/patient-safety/research/safe-surgery/tool-and-resources"
+    },
+    {
+     "title": "Moher et al., Guidance for Developers of Health Research Reporting Guidelines, PLoS Medicine 2010",
+     "url": "https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.1000217"
+    },
+    {
+     "title": "Urbach et al. 2014 in the New England Journal of Medicine, as HospiMedica reports it",
+     "url": "https://www.hospimedica.com/surgical-techniques/articles/294752136/surgical-checklists-less-effective-than-previously-assumed.html",
+     "secondary": true
+    },
+    {
+     "title": "Bosk et al. 2009 in The Lancet, as ScienceDaily reports it",
+     "url": "https://www.sciencedaily.com/releases/2009/09/090916092657.htm",
+     "secondary": true
     }
-   ]
+   ],
+   "steps": []
   }
  ]
 }

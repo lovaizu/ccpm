@@ -59,6 +59,32 @@ KEPT = re.compile(r"^(?:[a-z][a-z0-9+.-]*:|#)")
 # rn's own best practices, where a kind that lies beside no best practice's folder is sought.
 OWN = os.path.join(RN, "best-practices")
 PRACTICE = "best-practice.json"
+# The best practices made by the meta before its remake, each by its kind, held to the form they
+# were made in: each section asked of, and no practice holding more than its thinking and steps.
+# Each kind leaves the list once the remade meta makes its best practice again.
+BEFORE = (
+    "architecture",
+    "code",
+    "plan",
+    "plugin",
+    "product-vision",
+    "prompt",
+    "readme",
+    "refactor-code",
+    "refactor-doc",
+)
+# What the Markdown says after a source of which only a summary was read.
+SECONDARY = ", secondary, as the maker read only a summary of it"
+# What a practice holds since the meta's remake, beside its thinking and steps, each with what
+# its Markdown calls it: the established way it takes, where it applies and where it doesn't, what
+# it costs, and its sources. Other names are left out, as a practice may go by none.
+HELD = {
+    "name": "Name",
+    "applies": "Applies",
+    "excludes": "Excludes",
+    "cost": "Cost",
+    "sources": "Sources",
+}
 
 
 def part_ids(items: list[dict[str, Any]]) -> list[str]:
@@ -274,12 +300,12 @@ def texts(value: Any) -> list[str]:
     return []
 
 
-def faults(data: dict[str, Any], template: list[str] | None = None) -> list[str]:
+def faults(data: dict[str, Any], template: list[str] | None = None, each: bool = True) -> list[str]:
     """Each fault of the best practice's form, in words: questions numbered in their order, each
-    about a part it has, a section of its template where it has one, or the whole, every part or
-    section and the whole asked of, each question with one practice in the same order, each step's
-    trace one that every run makes and a call can match, and each question named in the text one
-    that is there."""
+    about a part it has, a section of its template where it has one, or the whole, the whole asked
+    of, and every part or section too where each is set, as the meta asked before its remake, each
+    question with one practice in the same order, each step's trace one that every run makes and a
+    call can match, and each question named in the text one that is there."""
     found = []
     if template is None:
         ids, leaves, what = part_ids(data.get("parts", [])), leaf_ids(data.get("parts", [])), "part"
@@ -291,7 +317,7 @@ def faults(data: dict[str, Any], template: list[str] | None = None) -> list[str]
     for part in sorted({i for i in ids if ids.count(i) > 1}):  # pragma: no mutate
         found.append(f"{what} {part} is named more than once")
     named_parts = {a.strip() for q in data["intents"] for a in q["about"].split(",")}
-    for part in leaves:
+    for part in leaves if each else []:
         if part not in named_parts:
             found.append(f"{what} {part} has no question about it")
     if WHOLE not in named_parts:
@@ -334,6 +360,26 @@ def trace_faults(data: dict[str, Any]) -> list[str]:
     return found
 
 
+def remade_faults(data: dict[str, Any]) -> list[str]:
+    """Each fault of a best practice made since the meta's remake, in words: a field HELD names
+    that a practice lacks or leaves empty, and a step with no trace, as a step stands only where
+    skipping it or its order breaks the deliverable, which Lane holds by the trace."""
+    found = []
+    for practice in data["practices"]:
+        for field in HELD:
+            value = practice.get(field)
+            if not (value.strip() if isinstance(value, str) else value):
+                found.append(f"the practice of {practice['intent']} has no {field}")
+    for practice in data["practices"]:
+        for n, step in enumerate(practice["steps"], 1):
+            if "trace" not in step:
+                found.append(
+                    f"step {n} of {practice['intent']} carries no trace, as a step stands only"
+                    " where Lane must hold it; say the rest in the thinking"
+                )
+    return found
+
+
 def listed(takes: list[str]) -> str:
     """The texts in code, joined by commas, with or before the last."""
     *rest, last = [f"`{t}`" for t in takes]
@@ -356,6 +402,37 @@ def parts(items: list[dict[str, Any]], depth: int = 0) -> list[str]:
         lines.append(f"{'  ' * depth}- **{item['id']}**: {item['what']}")
         lines.extend(parts(item.get("parts", []), depth + 1))
     return lines
+
+
+def named(practice: dict[str, Any]) -> str:
+    """The practice's name, with the other names it goes by, where it goes by any."""
+    others = practice.get("aliases", [])
+    if not others:
+        return practice["name"]
+    *rest, last = others
+    joined = f"{', '.join(rest)}{',' if len(rest) > 1 else ''} and {last}" if rest else last
+    return f"{practice['name']}, also known as {joined}"
+
+
+def source_line(source: dict[str, Any]) -> str:
+    """The source as an item of a list, linked, marked where only a summary of it was read."""
+    line = f"- [{source['title']}]({source['url']})"
+    return line + (SECONDARY if source.get("secondary") else "")
+
+
+def held_lines(practice: dict[str, Any]) -> list[str]:
+    """The practice's name, thinking, where it applies and doesn't, cost and sources, each under its
+    label, as far as it holds them; its thinking alone where it was made before the remake."""
+    out = []
+    if "name" in practice:
+        out += ["**Name**", "", named(practice), ""]
+    out += ["**Thinking**", "", practice["thinking"]]
+    for field in ("applies", "excludes", "cost"):
+        if field in practice:
+            out += ["", f"**{HELD[field]}**", "", practice[field]]
+    if "sources" in practice:
+        out += ["", "**Sources**", "", *map(source_line, practice["sources"])]
+    return out
 
 
 def link_of(path: str, kind: str) -> str:
@@ -392,7 +469,7 @@ def markdown_of(path: str, data: dict[str, Any]) -> str:
     for practice in data["practices"]:
         question = questions[practice["intent"]]
         out += ["", f"### {question['id']}", "", question["what"], ""]
-        out += ["**Thinking**", "", practice["thinking"]]
+        out += held_lines(practice)
         if practice["steps"]:
             out += ["", "**Steps**", ""]
             out += [step_line(n, s) for n, s in enumerate(practice["steps"], 1)]
@@ -449,7 +526,9 @@ def form(path: str) -> list[str]:
     found = missing(path, data)
     if found:
         return found + late
-    found = faults(data, template(path, data)) + unheld(path, data)
+    before = kind_of(path) in BEFORE
+    found = faults(data, template(path, data), each=before)
+    found += ([] if before else remade_faults(data)) + unheld(path, data)
     target = os.path.splitext(path)[0] + ".md"
     try:
         with open(target, encoding="utf-8") as f:
