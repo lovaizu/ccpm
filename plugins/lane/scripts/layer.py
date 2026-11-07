@@ -354,10 +354,12 @@ def reworded_in(
     results = {a["name"]: a.get("results") for a in read_before(root)["subagents"]}
     named = routes.named(routes_before) if routes_before else []
     said = []
-    for name in dict.fromkeys([*before, *named]):
-        file = step.steps_file(root, name, name in skills(routes_before))
-        if file is None or not os.path.isfile(file):
-            continue
+    names = dict.fromkeys([*before, *named])
+    files = {name: step.steps_file(root, name, name in skills(routes_before)) for name in names}
+    # A subagent whose file is gone, or whose part is not there, is passed over before the loop, so
+    # no line runs only where Python 3.9 jumps past it.
+    there = {name: file for name, file in files.items() if file and os.path.isfile(file)}
+    for name, file in there.items():
         with open(file, encoding="utf-8") as f:
             lines = f.readlines()
         bare = [line.rstrip("\n") for line in lines]
