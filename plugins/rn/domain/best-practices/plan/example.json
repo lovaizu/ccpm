@@ -37,11 +37,46 @@
       "status": "doing",
       "intents": [
         {"id": "Q1", "good": false, "decisions": []},
-        {"id": "Q2", "good": false, "decisions": []},
+        {
+          "id": "Q2",
+          "good": false,
+          "decisions": [
+            {
+              "about": "A practice's form",
+              "decided": "each practice holds its established name and other names it goes by, what the deliverable must be and why, where it applies and where it doesn't, what it costs, and its sources, as the pattern form and Google's rules with pros and cons give",
+              "by": "research"
+            },
+            {
+              "about": "Template or parts",
+              "decided": "a kind whose deliverable is one document gives a template, and a kind whose deliverable is a set of files of a known form, such as code or a prompt, names its parts instead",
+              "by": "reasoning"
+            }
+          ]
+        },
         {"id": "Q3", "good": false, "decisions": []},
         {"id": "Q4", "good": false, "decisions": []},
-        {"id": "Q5", "good": false, "decisions": []},
-        {"id": "Q6", "good": false, "decisions": []},
+        {
+          "id": "Q5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "A question an evaluator can be trusted on",
+              "decided": "a question is used once an evaluator judges it right on several kept deliverables whose answer is known, passes and fails among them, as two verdicts on one deliverable show no reliability",
+              "by": "research"
+            }
+          ]
+        },
+        {
+          "id": "Q6",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Which questions to ask",
+              "decided": "the questions ask where makers of the kind fail the role, as a run made without the best practice shows and the field's sources name, not one for each section, as a list of the failures that matter works where a list for completeness doesn't",
+              "by": "research"
+            }
+          ]
+        },
         {
           "id": "Q7",
           "good": false,
@@ -55,12 +90,42 @@
               "about": "How a practice names an idea",
               "decided": "a practice calls an established idea by its established name, such as single responsibility or Given-When-Then, with why it serves the role, as the name carries the field's whole knowledge to a maker who knows it",
               "by": "reasoning"
+            },
+            {
+              "about": "How the research runs",
+              "decided": "the maker searches the field's primary sources and its established guides, weighs each by its authority, writes where sources disagree which way it takes and why, and stops once new sources add nothing",
+              "by": "research"
+            },
+            {
+              "about": "Which practices get steps",
+              "decided": "a step is given only where skipping it or doing it out of order breaks the deliverable, and each such step gets its trace; the rest is left to the maker who holds the intent",
+              "by": "research"
             }
           ]
         },
         {"id": "Q8", "good": false, "decisions": []},
-        {"id": "Q9", "good": false, "decisions": []},
-        {"id": "Q10", "good": false, "decisions": []}
+        {
+          "id": "Q9",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Examples",
+              "decided": "the best practice gives examples that differ from one another where the kind allows, so the maker takes the intent and not one product's particulars",
+              "by": "research"
+            }
+          ]
+        },
+        {
+          "id": "Q10",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Evaluations before the best practice",
+              "decided": "the evaluation comes first: real cases of the kind are made without the best practice, the shortfalls are kept, and the best practice holds what closes them, then is tried on cases held back",
+              "by": "research"
+            }
+          ]
+        }
       ]
     },
     {
