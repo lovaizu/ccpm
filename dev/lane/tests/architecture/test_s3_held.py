@@ -271,7 +271,7 @@ class TestAdapterRun(helpers.RunTest):
         gave = self.claude.call(NOTER, *bash(self.gives))
         ended = self.claude.stop(NOTER)
         # Then: it was given its part whole as it started, the plugin's folder put in
-        with open(os.path.join(self.plugin, "prompts", "noter.md"), encoding="utf-8") as f:
+        with open(os.path.join(self.plugin, "domain", "noter.md"), encoding="utf-8") as f:
             part = f.read().replace("${CLAUDE_PLUGIN_ROOT}", self.plugin)
         self.assertEqual(self.part.context, [part])
         # And: each call went through, the result script exited 0, the result was kept, and noter

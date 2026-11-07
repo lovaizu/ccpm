@@ -116,6 +116,18 @@ class TestPart(helpers.PluginTest):
         self.write(part, "## Steps\n\n1. Go.\n")
         self.assertEqual(step.lines_of(self.plugin, "writer"), ["## Steps", "", "1. Go."])
 
+    def test_the_one_markdown_file_under_domain_the_body_names_is_the_part(self):
+        # Given: writer's body naming its part under domain/, as the plugin best practice's
+        # template does, and the JSON Schema of its values beside it
+        self.entry(
+            "Your part is in `${CLAUDE_PLUGIN_ROOT}/domain/writer.md`, and your values are in the"
+            " form of `${CLAUDE_PLUGIN_ROOT}/domain/writer-in.schema.json`."
+        )
+        # When: its part is looked for
+        # Then: it is the Markdown file, a schema being no part
+        part = os.path.join(self.plugin, "domain", "writer.md")
+        self.assertEqual(step.part(self.plugin, "writer"), part)
+
     def test_a_file_under_core_roles_the_body_names_is_the_part_too(self):
         # Given: writer's body naming its role's flow under core/roles/, beside a form elsewhere
         self.entry(
@@ -133,6 +145,7 @@ class TestPart(helpers.PluginTest):
             "Work on.",
             "Read `${CLAUDE_PLUGIN_ROOT}/prompts/a.md` and `${CLAUDE_PLUGIN_ROOT}/prompts/b.md`.",
             "Read `${CLAUDE_PLUGIN_ROOT}/prompts/../x.md`.",
+            "Read `${CLAUDE_PLUGIN_ROOT}/domain/w.json`.",
             "Read `${CLAUDE_PLUGIN_ROOT}/scripts/a.md`.",
             (
                 "Read `${CLAUDE_PLUGIN_ROOT}/prompts/a.md` and"

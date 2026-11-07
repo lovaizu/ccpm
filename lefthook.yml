@@ -71,7 +71,7 @@ pre-commit:
     - "dev/lane/tests/product-vision/changelog/agents/linter.md"
     - "dev/lane/tests/product-vision/changelog/agents/noter.md"
     - "dev/lane/tests/product-vision/changelog/agents/reviewer.md"
-    - "dev/lane/tests/product-vision/changelog/prompts/noter.md"
+    - "dev/lane/tests/product-vision/changelog/domain/noter.md"
     - "dev/lane/tests/product-vision/changelog/scripts/check.py"
     - "dev/lane/tests/product-vision/checker/agents/examiner.md"
     - "dev/lane/tests/product-vision/checker/scripts/check.py"

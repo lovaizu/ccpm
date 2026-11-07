@@ -36,8 +36,11 @@ after another one ends with a given result, a word such as `more`.
   shows it.
 - Python 3.9 or later, run as `python3`, on the same computers: `python3 --version` shows it.
 - A plugin that Claude Code takes as valid: `claude plugin validate <your plugin's folder>` passes.
-- A skill and subagents with their steps as a numbered list under `## Steps`: `lay.py print`
-  refuses your rules where a step they name is not in that list.
+- A rule on a step needs that step in a numbered list under `## Steps`, in the file of the skill
+  or subagent, or in the part that its file names under your plugin's `domain/`: `lay.py print`
+  refuses a rule whose step isn't in that list. Steps that your plugin keeps in another form, such
+  as the practices of a best practice, reach Lane through an adapter, as
+  [The lanes](docs/lanes.md#the-ports) says.
 - Each subagent with rules, and each that your routes name, sets `background: true` in its
   frontmatter: `lay.py print` refuses your rules where one does not. Lane tells one start of a
   subagent from another by the ID that Claude Code gives back at once for a start in the
@@ -250,6 +253,17 @@ conversation, Lane adds the next start beside it. Lane stops any other start, an
 due. Where the main conversation would end its turn while a start is due and no subagent runs,
 Lane keeps it going once with the start due. Where it still ends, Lane lets it end and tells you
 whose step to fix, as a hold with no end would need you to break it.
+
+**How does Lane hold a subagent to the order of its steps?** A rule of the trace kind, such as
+run_step, names the call that shows its step done, such as a command run. Lane stops a call that
+is a later step's trace while an earlier step's hasn't come back, and stops the subagent's end
+while any hasn't. It shows the subagent the step due. It never reads what a file says to judge a
+step.
+
+**Can the main conversation reword what a subagent gets?** No. Only the main conversation starts
+your subagents. Where your routes name the command that gives each start its text, a start goes
+through only with what the command printed. A subagent that ended to put a point to the person is
+resumed only with the person's own words.
 
 **What if a subagent ends without giving its result?** Lane keeps the subagent going once with the
 sentence of its last step. Where it still ends with no result, Lane tells the main conversation to

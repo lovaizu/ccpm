@@ -407,13 +407,15 @@ only where the lane rests on the calls kept:
 Your subagent's file may be only its entry: its frontmatter and a body naming its part, such as
 
 ```markdown
-Your steps are in `${CLAUDE_PLUGIN_ROOT}/prompts/writer.md`, given to you as you start. Take them on what you are given.
+Your part is in `${CLAUDE_PLUGIN_ROOT}/domain/writer.md`, given to you as you start. Take it on what you're given.
 ```
 
-Then its steps are those of the part: the one file under your plugin's `prompts/` or
-`core/roles/` that the body names in backticks, such as
-`${CLAUDE_PLUGIN_ROOT}/core/roles/writing.md`, where a role's flow lies apart from Claude Code. The
-part's name need not be the subagent's. `lay.py print` shows the part's steps, `lay.py write`
+Then its steps are those of the part: the one Markdown file under your plugin's `domain/` that the
+body names in backticks, where [the plugin best
+practice](../../rn/domain/best-practices/plugin/best-practice.md#q1) keeps the work's knowledge.
+The part's name need not be the subagent's. lane also reads a part under `prompts/` or
+`core/roles/`, where plugins laid before kept theirs. Move such a part to `domain/` when you next
+lay the plugin's lanes. `lay.py print` shows the part's steps, `lay.py write`
 writes each lane's sentence into them, and the guard reads them there. Where a body names no such
 file, or more than one, lane reads the steps from the subagent's file itself.
 

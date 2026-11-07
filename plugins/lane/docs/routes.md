@@ -68,7 +68,7 @@ For `changelog`, whose skill `write` starts `writer` and then `reviewer`, and `w
 ```
 
 - `orchestrator` names a skill of your plugin, `skills/<skill>/SKILL.md`. Its steps lie in that
-  file, or in the one part under `core/roles/` or `prompts/` that its body names, as
+  file, or in the one part under `domain/` that its body names, as
   [the lanes](lanes.md#a-subagents-part) say of a subagent's part. `lay.py print` refuses routes
   whose skill is not there, or whose steps do not have `step`.
 - Leave out `step` where the skill's part holds no numbered list. `lay.py write` then lays nothing
