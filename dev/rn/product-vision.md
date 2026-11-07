@@ -25,20 +25,17 @@ law. They show whether a change brought its objective closer.
 
 rn instead of asking an AI in one prompt, reading its draft and fixing it:
 
-- **One design tree back from the goal, for O1**: rn plans every deliverable the goal needs back
-  from it in one tree, so no deliverable goes missing or comes out of order.
+- **Planned back from the goal, for O1**: rn lays out every deliverable the goal needs, and the
+  order it needs them in, before it makes any, so none goes missing or comes out of order.
 - **Made from a best practice, for O1**: rn builds each deliverable by the best practice of its
   kind toward what its people are after, where an AI starting from scratch maps it from similar
   text.
-- **Checked by purpose, not by rules, for O1**: rn checks whether the people a deliverable is for
-  get what they're after, so the user gets no findings off the purpose to sort.
-- **Asked only what's theirs, for O1**: rn asks the user one point at a time in the main
-  conversation, and only what the purpose and the best practices leave to them. It decides the
-  rest and explains it at the end. A point that a turn finds open goes back to the main
-  conversation, the user and rn settle it there, and the turn starts again.
-- **Tried as it's used, for O1**: rn tries each deliverable as its people would use it, so it
-  serves them in use, not only on reading.
-- **The steps held on every run, for O1**: on every run, [Lane](../lane/product-vision.md) holds
-  the steps of each practice, so no deliverable misses a step that an AI skipped on one run.
-- **Picked up where it stopped, for O1**: rn goes on from the tree where the work stopped, so it
-  doesn't ask the user again what they already answered.
+- **Checked as it's used, for O1**: rn tries each deliverable as its people would use it, and
+  checks whether they get what they're after, not whether it follows rules, so the user gets no
+  findings off the purpose to sort.
+- **Asked only what's theirs, for O1**: rn asks the user one point at a time, and only what the
+  purpose and the best practices leave to them. It decides the rest and explains it at the end.
+- **Every step on every run, picked up where it stopped, for O1**: rn keeps each step of the
+  best practice on every run, with [Lane](../lane/product-vision.md), and goes on where the work
+  stopped, so no deliverable misses a step an AI skipped once, and the user never answers a point
+  twice.

@@ -422,18 +422,8 @@
           "decisions": [
             {
               "about": "Concept",
-              "decided": "against asking an AI in one prompt, reading its draft and fixing it: one design tree back from the goal, so no deliverable is missing or out of order; each made from its kind's best practice; checked by whether its people get what they are after, not by rules; the user asked one point at a time in the main conversation, only what is theirs, the rest decided and explained at the end; tried as it is used; each practice's steps held by Lane on every run; picked up from the tree where it stopped",
+              "decided": "against asking an AI in one prompt, reading its draft and fixing it, in five ideas the user sees: planned back from the goal, so no deliverable is missing or out of order; made from its kind's best practice; checked as it is used, by whether its people get what they are after, not by rules; the user asked one point at a time, only what is theirs, the rest decided and explained at the end; every step kept on every run, and the work picked up where it stopped",
               "by": "user"
-            },
-            {
-              "about": "Where the design is settled",
-              "decided": "in the main conversation, one point at a time, talked through with the user",
-              "by": "user"
-            },
-            {
-              "about": "A point a turn finds open",
-              "decided": "goes back to the main conversation, is settled there, and the turn starts again",
-              "by": "reasoning"
             }
           ]
         },
@@ -521,6 +511,16 @@
           "id": "Q1",
           "good": false,
           "decisions": [
+            {
+              "about": "Where the design is settled",
+              "decided": "in the main conversation, one point at a time, talked through with the user",
+              "by": "user"
+            },
+            {
+              "about": "A point a turn finds open",
+              "decided": "goes back to the main conversation, is settled there, and the turn starts again",
+              "by": "reasoning"
+            },
             {
               "about": "A turn",
               "decided": "the generator makes the deliverable by the best practice's practices until the evaluator judges every intent good; the evaluator is given the intents and the deliverable, never the design",
