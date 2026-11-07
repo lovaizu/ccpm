@@ -377,63 +377,39 @@
       "kind": "readme",
       "inputs": ["dev/rn/product-vision.md"],
       "preconditions": [],
-      "status": "open",
+      "status": "doing",
       "intents": [
-        {
-          "id": "Q1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q4",
-          "good": false,
-          "decisions": []
-        },
+        {"id": "Q1", "good": true, "decisions": []},
+        {"id": "Q2", "good": true, "decisions": []},
+        {"id": "Q3", "good": true, "decisions": []},
+        {"id": "Q4", "good": true, "decisions": []},
         {
           "id": "Q5",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "Installation tried",
+              "decided": "once the rebuilt rn is built, its install steps are followed from nothing as a newcomer would, and the README is mended where they fall short",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "Q6",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The walkthrough recorded",
+              "decided": "the walkthrough takes its output from a recorded run of the rebuilt rn, the product vision test's own",
+              "by": "reasoning"
+            }
+          ]
         },
-        {
-          "id": "Q7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q8",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q9",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q10",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q11",
-          "good": false,
-          "decisions": []
-        }
+        {"id": "Q7", "good": true, "decisions": []},
+        {"id": "Q8", "good": true, "decisions": []},
+        {"id": "Q9", "good": true, "decisions": []},
+        {"id": "Q10", "good": true, "decisions": []},
+        {"id": "Q11", "good": true, "decisions": []}
       ]
     },
     {
@@ -461,6 +437,11 @@
             {
               "about": "A point a turn finds open",
               "decided": "goes back to the main conversation, is settled there, and the turn starts again",
+              "by": "reasoning"
+            },
+            {
+              "about": "Where the work goes",
+              "decided": "rn commits each deliverable on a branch of its own and keeps one draft pull request for the work; the user merges it, rn never does",
               "by": "reasoning"
             },
             {

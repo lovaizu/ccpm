@@ -18,6 +18,8 @@ that are yours.
   until you answer.
 - rn isn't for a quick draft you'll fix yourself. It plans, makes, and tries each piece, so it takes
   longer than asking Claude Code once.
+- rn doesn't merge your work. It commits each piece on a branch and leaves one draft pull request
+  for you to merge.
 
 ## Requirements
 
