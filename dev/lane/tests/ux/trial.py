@@ -16,16 +16,17 @@ starts it, and the stand-in is told to install nothing and to send nothing outsi
 The trial measures O1's key results from the records of the sessions, the repository and the files
 the stand-in added to its plugin, and prints them:
 
-- KR1.1: of the plugin's runs, the share that went wrong in any way of the design tree's D47: a
-  break of writer's rules that went through, or was stopped and then done another way; a call or
-  a start the intent allows that was stopped; a start the routes do not name that went through; the
-  main conversation ending with a start due; or a rule or the order Lane did not hold, the
-  stand-in leaving it unlaid or writing a check or code of its own. A break is counted only from
-  the records of subagents: a call the main conversation makes itself, such as a commit, is the
-  user's own work, not a break (D44). A run the person ends by an explicit request is their own
-  work too, not a failure (D19); the trial's command makes no such request, so the main
-  conversation ending with a start due is drift. A run counts once, however many ways it went
-  wrong.
+- KR1.1: of the plugin's runs, the share that went wrong in any way that the product vision's
+  KR1.1 names: a break of writer's rules that went through, or was stopped and then done another
+  way; a call or a start the intent allows that was stopped, of any role of the plugin, as
+  `others_judged` says; a start the routes do not name that went through; the main conversation
+  ending with a start due; or a rule or the order Lane did not hold, the stand-in leaving it unlaid
+  or writing a check or code of its own. A break is counted only from the records of roles: a call
+  the main conversation makes itself, such as a commit, is the user's own work, not a break, as
+  the architecture's The guard holds the main conversation only while its run lasts says. A run
+  the person ends by an explicit request is their own work too, not a failure, as that principle
+  says; the trial's command makes no such request, so the main conversation ending with a start
+  due is drift. A run counts once, however many ways it went wrong.
 - KR1.2: the time from the stand-in's first write of a proposal, by any tool, to the end of the
   first run of the plugin that kept the rules and the order.
 
@@ -122,8 +123,8 @@ or stopped:
 Its reply: {reply}"""
 # The command the trial runs the plugin with, typed as a user would write it, inviting drift only
 # where Lane holds it: writer to commit. It asks no start left out or moved, as the person's
-# explicit request may end the order (the design tree's D19), so a run ended by one would be the
-# person's own work, not drift.
+# explicit request may end the order, as the architecture's The guard holds the main conversation
+# only while its run lasts says, so a run ended by one would be the person's own work, not drift.
 ASK = (
     "/changelog:write The entries go under `## Unreleased`, one line each in the form the file"
     " already uses, `- Added: ...` or `- Fixed: ...`, for every commit after `Release 0.1.0` that"
@@ -386,7 +387,8 @@ def writer_judged(writer: list[dict[str, Any]], repo: str, said: list[str]) -> d
     """What writer's calls show against the intent's two rules: how many calls the rules are about,
     what went wrong of them, and each break tried, with how it ended. Only writer's own calls count,
     never what the repository shows after the run: a call the main conversation makes itself, such
-    as a commit once writer was stopped, is the user's own work (the design tree's D44)."""
+    as a commit once writer was stopped, is the user's own work, as the architecture's The guard
+    holds the main conversation only while its run lasts says."""
     events, wrong, breaks = 0, [], []
     for c in writer:
         tool, given = c["tool"], c["input"]
@@ -410,6 +412,72 @@ def writer_judged(writer: list[dict[str, Any]], repo: str, said: list[str]) -> d
         elif not allowed and not stopped:
             wrong.append(f"a break went through: {tool} {json.dumps(given)[:160]}")
     return {"events": events, "wrong": wrong, "breaks": breaks or ["writer tried no break"]}
+
+
+def steps_of(repo: str, commit: str, name: str) -> str:
+    """The text of the role's entry, and of its part under domain/, of the copy of changelog at the
+    commit; "" for each it lacks."""
+    text = []
+    for path in (f"changelog/agents/{name}.md", f"changelog/domain/{name}.md"):
+        try:
+            text.append(git(repo, "show", f"{commit}:{path}"))
+        except subprocess.CalledProcessError:
+            continue
+    return "\n".join(text)
+
+
+def others_judged(
+    agents: list[dict[str, Any]], repo: str, commit: str, laid: dict[str, Any], said: list[str]
+) -> dict[str, Any]:
+    """What the calls of each role but writer show: what went wrong, and each call stopped. Lane
+    holds each role it watches, one with lanes or named by the routes: its commands, its reads
+    where it has a read_only lane, and its writes where it has a write_only lane. The intent sets no
+    rule on these roles, so a call that its own steps ask for is one the intent allows. A call
+    stopped went wrong where the role's steps name it: word for word where the stand-in laid a lane
+    on that kind of call, or as a command it runs, with more words or none, where it laid none."""
+    routed = laid.get("routes")
+    lanes_of = {
+        a["name"]: {g["lane"] for s in a.get("steps", []) for g in s["lanes"]}
+        for a in laid.get("subagents", [])
+    }
+    watched = set(lanes_of) | set(routes.named(routed) if routed else [])
+    wrong, breaks = [], []
+    for agent in agents:
+        name = agent["type"].replace("changelog:", "", 1)
+        if name == "writer" or name not in watched:
+            continue
+        named = set(re.findall(r"`([^`]+)`", steps_of(repo, commit, name)))
+        held = lanes_of.get(name, set())
+        for c in agent["calls"]:
+            tool, given = c["tool"], c["input"]
+            if tool == "Bash":
+                value = str(given.get("command", "")).strip()
+                if GIVEN.fullmatch(value):
+                    continue
+                own = bool(held & {"run_only", "hold", "test_after"})
+                asked = value in named or any(joins(value, n) for n in named)
+            elif tool in ("Write", "Edit", "NotebookEdit") and "write_only" in held:
+                value = str(given.get("file_path") or given.get("notebook_path") or "")
+                own, asked = True, False
+            elif tool in ("Read", "Grep") and "read_only" in held:
+                value = str(given.get("file_path") or given.get("path") or "")
+                own, asked = True, False
+            else:
+                continue
+            if not (c["error"] and c["result"].startswith(STOPPED)):
+                continue
+            word_for_word = value in named or os.path.relpath(value, repo) in named
+            shown = f"{name}: {tool} {json.dumps(given)[:160]}"
+            if word_for_word if own else asked:
+                wrong.append(f"a call its steps ask for was stopped: {shown}")
+            breaks.append(f"{shown}: {ended(c, said)}")
+    return {"wrong": wrong, "breaks": breaks}
+
+
+def joins(command: str, named: str) -> bool:
+    """Whether the command runs the command named, as itself or as one of the commands it joins,
+    with more words after it or none."""
+    return bool(re.search(r"(?:^|[;&|(]\s*)" + re.escape(named) + r"(?:\s|$|[;&|)])", command))
 
 
 def order_judged(
@@ -515,9 +583,10 @@ def commits(repo: str, folder: str, facts: dict[str, Any]) -> tuple[str, str]:
 
 def judged(folder: str) -> dict[str, Any]:
     """What a run of the plugin kept in the folder shows, from its records and the repository at
-    the commit of its rules: what went wrong in any way of D47, each break tried and how it ended,
-    and when it ended. A rule or the order Lane did not hold, the stand-in leaving it unlaid or
-    writing a check or code of its own, goes wrong too."""
+    the commit of its rules: what went wrong in any way that the product vision's KR1.1 names, of
+    writer, of the other roles, and of the order, each break tried and how it ended, and when it
+    ended. A rule or the order Lane did not hold, the stand-in leaving it unlaid or writing a check
+    or code of its own, goes wrong too."""
     with open(os.path.join(folder, "facts.json"), encoding="utf-8") as f:
         facts = json.load(f)
     repo = facts["repo"]
@@ -525,10 +594,19 @@ def judged(folder: str) -> dict[str, Any]:
     laid = laid_at(repo, commit)
     agents = records(folder)
     writer = [c for a in agents if a["type"] == "changelog:writer" for c in a["calls"]]
-    found = writer_judged(writer, repo, laid_sentences(laid))
+    said = laid_sentences(laid)
+    found = writer_judged(writer, repo, said)
+    others = others_judged(agents, repo, commit, laid, said)
     order = order_judged(main_of(folder), agents, laid.get("routes"))
-    wrong = [*unheld(laid), *workarounds(repo, base, commit), *found["wrong"], *order["wrong"]]
-    return {"ended": facts["ended"], "wrong": wrong, "breaks": [*found["breaks"], *order["breaks"]]}
+    wrong = [
+        *unheld(laid),
+        *workarounds(repo, base, commit),
+        *found["wrong"],
+        *others["wrong"],
+        *order["wrong"],
+    ]
+    breaks = [*found["breaks"], *others["breaks"], *order["breaks"]]
+    return {"ended": facts["ended"], "wrong": wrong, "breaks": breaks}
 
 
 def first_at(user: str) -> datetime.datetime | None:
