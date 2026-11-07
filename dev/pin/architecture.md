@@ -16,23 +16,23 @@ This document calls them the guard, as the plugin best practice names a plugin's
 ## Principles
 
 Pin builds on these principles of
-[the plugin best practice](../plugin-best-practice.md#principles):
+[the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md):
 
-- [The core apart from Claude Code](../plugin-best-practice.md#the-core-apart-from-claude-code)
-- [An entry points to its part](../plugin-best-practice.md#an-entry-points-to-its-part)
-- [What a machine can see of the work](../plugin-best-practice.md#what-a-machine-can-see-of-the-work)
-- [No check passes what it did not check](../plugin-best-practice.md#no-check-passes-what-it-did-not-check)
-- [The guard tells each role its steps again](../plugin-best-practice.md#the-guard-tells-each-role-its-steps-again)
-- [Where a plugin writes its files](../plugin-best-practice.md#where-a-plugin-writes-its-files)
-- [Languages](../plugin-best-practice.md#languages)
-- [Where the orchestrator runs](../plugin-best-practice.md#where-the-orchestrator-runs)
-- [Messages](../plugin-best-practice.md#messages)
-- [The form of a file](../plugin-best-practice.md#the-form-of-a-file)
-- [Asking until nothing is left to decide](../plugin-best-practice.md#asking-until-nothing-is-left-to-decide)
-- [Python 3.9 and the standard library](../plugin-best-practice.md#python-39-and-the-standard-library)
-- [Code kept once](../plugin-best-practice.md#code-kept-once)
+- [The core apart from Claude Code](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q1)
+- [An entry points to its part](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q2)
+- [What a machine can see of the work](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q11)
+- [No check passes what it did not check](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q10)
+- [The guard tells each role its steps again](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q9)
+- [Where a plugin writes its files](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q12)
+- [Languages](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q19)
+- [Where the orchestrator runs](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q5)
+- [Messages](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q5)
+- [The form of a file](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q7)
+- [Asking until nothing is left to decide](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q17)
+- [Python 3.9 and the standard library](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q13)
+- [Code kept once](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q14)
 
-Under [Read by those who did not make it](../plugin-best-practice.md#read-by-those-who-did-not-make-it),
+Under [Read by those who did not make it](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q20),
 no evaluator reads the design: the person reads all of it to confirm it.
 
 Pin adds these. Each why says how a point goes wrong without the rule. KR1.1 of the product vision
@@ -155,7 +155,7 @@ why, and what it costs.
 
 - **The orchestrator in the main conversation** over a subagent that carries each point between
   the person and the pinner: only the main conversation can ask the person, as
-  [Where the orchestrator runs](../plugin-best-practice.md#where-the-orchestrator-runs) says. A
+  [Where the orchestrator runs](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q5) says. A
   subagent in between would only carry each point and each answer once more, and could reword
   them (KR1.1). It costs the main conversation passing each point, which no hook sees.
 - **The pinner as a subagent** over the main conversation settling the design itself: the guard
@@ -340,13 +340,13 @@ The user installs Pin as [the README](../../plugins/pin/README.md#installation) 
 and the pinner runs `check.py` through the Bash tool.
 
 - **`check.py` on Python 3.9 and its standard library only**, as
-  [Python 3.9 and the standard library](../plugin-best-practice.md#python-39-and-the-standard-library)
+  [Python 3.9 and the standard library](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q13)
   says, over a later Python or packages: the user then installs nothing else for Pin. The guard is
   Lane's code, which needs the same. It costs `check.py` reading Markdown with no parser but its
   own, in `tree.py`.
 - **The design tree in `.pin/<yyyymmdd>-<name>/` at the root of the repository**, or where the
   user's AI says, as
-  [Where a plugin writes its files](../plugin-best-practice.md#where-a-plugin-writes-its-files)
+  [Where a plugin writes its files](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q12)
   says for what may be kept, over the system's temporary folder: a stopped run goes on from it, and
   the AI that makes the work reads it there. It costs the user choosing whether git keeps `.pin/`.
 
@@ -384,7 +384,7 @@ dev/pin/
 ```
 
 - **`hooks/lane/` as a link to Lane's code in this marketplace**, as
-  [Code kept once](../plugin-best-practice.md#code-kept-once) says, over a copy: a fix in Lane's
+  [Code kept once](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q14) says, over a copy: a fix in Lane's
   code reaches Pin's guard at once. It costs a fix to the rules or routes reaching Pin only once a
   developer lays Pin's proposal again with `lay.py write`.
 - **`LICENSE-grilling` in Pin's folder** over the notice in the repository's root alone: `pin:down`
@@ -394,8 +394,8 @@ dev/pin/
 
 ## Tests
 
-Pin tests by [Test in the plugin best practice](../plugin-best-practice.md#test), and differs from
-it where this section says. Each cell of the figure says how far its level tries the unit: FULL,
+Pin tests by [the architecture best practice](../../plugins/turn/core/domain/best-practices/architecture/best-practice.md#q12) and [the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q22), and differs from
+them where this section says. Each cell of the figure says how far its level tries the unit: FULL,
 each case and edge; HAPPY, the main paths; SMOKE, a run that confirms what lower levels checked.
 
 ![Pin's tests](images/tests.svg)

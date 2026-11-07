@@ -8,7 +8,7 @@ Goal: The user has the work made from their plan be what they mean, with no poin
     - Grounds: plugins/pin/core/roles/pinner.md, The design tree.
     - Also serves: product-vision/Q5
     - **D2 Kept as a design tree**: a Markdown nested list whose nesting is that service (reasoning)
-      - Grounds: dev/plugin-best-practice.md, The form of a file.
+      - Grounds: plugins/rn/domain/best-practices/plugin/best-practice.md, Q7.
       - **D3 Checked by check.py**: every question served, every decision reaching the goal (reasoning)
         - Grounds: a machine checks what a machine can see.
         - **D4 After each change**: the pinner runs it, the guard holds it to that (reasoning)
@@ -16,7 +16,7 @@ Goal: The user has the work made from their plan be what they mean, with no poin
       - **D5 Changed only with Read and Edit**: reading the branch the node stands in (reasoning)
         - Grounds: a command changes a line without its branch.
       - **D6 The form in tree.py alone**: Turn's designer takes it through a link (reasoning)
-        - Grounds: dev/plugin-best-practice.md, Code kept once.
+        - Grounds: plugins/rn/domain/best-practices/plugin/best-practice.md, Q14.
     - **D43 Down to nothing left to choose**: a choice the maker would still make is a child missing (reasoning)
       - Grounds: the Goal: "with no point left to guess"; the ux trial of 2026-11-06, where an output's layout was left to the maker.
     - **D7 When done**: no decision open, and the whole confirmed (reasoning)
@@ -30,7 +30,7 @@ Goal: The user has the work made from their plan be what they mean, with no poin
   - **D10 A point the user's AI settled stays**: marked `maker`, never asked again (reasoning)
     - Grounds: a point asked again or settled otherwise fails O1.
     - **D11 Handed over in the design tree**: not in the text Pin is started with (reasoning)
-      - Grounds: dev/plugin-best-practice.md, The form of a file.
+      - Grounds: plugins/rn/domain/best-practices/plugin/best-practice.md, Q7.
   - **D12 Passed on as given**: the main conversation puts each point whole and passes the answer word for word (reasoning)
     - Grounds: a point reworded is a question no one asked.
 - **Q3** Is the user asked only what is theirs, one point at a time?
@@ -40,7 +40,7 @@ Goal: The user has the work made from their plan be what they mean, with no poin
     - **D14 How found**: with Read and Grep, by the pinner itself (reasoning)
       - Grounds: a background end would restart the pinner while a point waits.
   - **D15 A decision is the user's**: where two ways serve the goal equally, or it is hard to undo (reasoning)
-    - Grounds: dev/plugin-best-practice.md, Asking until nothing is left to decide.
+    - Grounds: plugins/rn/domain/best-practices/plugin/best-practice.md, Q17.
     - **D16 Put with a recommendation**: so yes accepts it (reasoning)
       - Grounds: Matt Pocock's grilling, SKILL.md.
   - **D17 One point to a message**: the pinner ends each start with one (reasoning)
@@ -57,13 +57,13 @@ Goal: The user has the work made from their plan be what they mean, with no poin
       - Grounds: D19
 - **Q5** Does the run follow its course on every run?
   - **D22 The orchestrator is the skill down**: in the main conversation, typed or called by the user's AI (reasoning)
-    - Grounds: dev/plugin-best-practice.md, Where the orchestrator runs.
+    - Grounds: plugins/rn/domain/best-practices/plugin/best-practice.md, Q5.
     - **D23 The pinner a subagent**: so the guard holds its writes and its check (reasoning)
       - Grounds: Lane holds a subagent's every call.
     - **D24 Routes**: down starts pinner, pinner's `asks` waits for the user, its `done` ends the run (reasoning)
       - Grounds: dev/lane/design-tree.md D26.
     - **D25 No go-between**: the main conversation asks the person itself (reasoning)
-      - Grounds: dev/plugin-best-practice.md, Where the orchestrator runs: "only the main conversation can ask the person".
+      - Grounds: plugins/rn/domain/best-practices/plugin/best-practice.md, Q5: "only the main conversation can ask the person".
 - **Q6** Does the user choose Pin and start it from its README alone?
   - **D26 One sentence**: Pin settles every point of your plan before an AI makes it, asking you only what is yours (reasoning)
     - Grounds: readme/best-practice.json Q1.
@@ -94,9 +94,9 @@ Goal: The user has the work made from their plan be what they mean, with no poin
     - Grounds: D12, D19
     - Also serves: architecture/Q6
   - **D35 A CHANGELOG**: Pin has none yet (research)
-    - Grounds: dev/plugin-best-practice.md, The version and the CHANGELOG.
+    - Grounds: plugins/rn/domain/best-practices/plugin/best-practice.md, Q24.
   - **D36 Tested at unit and architecture fully**: the ux trial confirms O1, typed and called (reasoning)
-    - Grounds: dev/plugin-best-practice.md, Test.
+    - Grounds: plugins/turn/core/domain/best-practices/architecture/best-practice.md, Q12.
     - Also serves: architecture/Q11
 - **readme/Q1** Telling a colleague about the product, does the reader retell the opening from memory?
 - **readme/Q2** Reading the gain, does the reader tell what the product would let them do, and so whether it is for them?

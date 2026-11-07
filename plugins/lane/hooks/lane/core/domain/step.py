@@ -20,8 +20,9 @@ BREAK = re.compile(r"[ \t]*\n[ \t]*")
 # What Claude Code puts the plugin's folder in for, in a subagent's file, before the subagent reads
 # it.
 ROOT = "${CLAUDE_PLUGIN_ROOT}"
-# The folders a part lies in, in the plugin: its prompts, or each role's flow, as
-# dev/plugin-best-practice.md's Directory structure places it.
+# The folders a part lies in, in the plugin: its prompts, or each role's flow, as the plugins built
+# before the template of plugins/rn/domain/best-practices/plugin/ place it, which puts it in
+# domain/.
 PARTS = ("prompts", "core/roles")
 # Where an entry's body names a part: a file under one of those folders, by the plugin's folder, in
 # backticks.

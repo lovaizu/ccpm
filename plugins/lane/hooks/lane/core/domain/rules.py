@@ -131,7 +131,7 @@ SHAPE = shape(
 GIVEN = lanes.GIVEN
 # What a subagent is told to do where lane cannot check a lane, given who must fix it: a role asks
 # the main conversation for what lies outside its work and goes on with the rest, as
-# dev/plugin-best-practice.md's Asking for what lies outside the work says.
+# Q18 of plugins/rn/domain/best-practices/plugin/best-practice.md says.
 ASK = "Ask the main conversation for the fix: {fix}. Go on with the rest of your work meanwhile."
 # What the main conversation is told to do where lane cannot check its run: it alone can tell the
 # user, who must have it fixed.

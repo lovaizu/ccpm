@@ -38,7 +38,8 @@ of each message, the run's folder and the work, and prints them:
 
 A run counts only where each frequent case of its trial came up. It passes where nothing went
 wrong in KR1.1, and, for o2, nothing in KR2.1. A trial passes where every run passes, three of
-three by default, as dev/plugin-best-practice.md's Results that vary from run to run says. The UX
+three by default, as Q12 of plugins/turn/core/domain/best-practices/architecture/best-practice.md
+says. The UX
 gives no key result a target, so each measure is set against the last trial's.
 
 Run as `python3 dev/turn/tests/ux/trial.py [readme|man-page|o2|all] [runs]`, all and three by

@@ -7,7 +7,7 @@ the work goes on. What this is for is in [the product vision](product-vision.md)
 
 ## Principles
 
-Rn follows [the plugin best practice](../plugin-best-practice.md#principles), and adds these.
+Rn follows [the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md), and adds these.
 
 ### Every task traces back to the purpose
 
@@ -44,7 +44,7 @@ A conversation that carries days of work swells and drifts, and a fresh one star
 An approval is the person's `/rn:ty` and feedback their `/rn:gm`, skills the AI cannot call, and
 Rn's scripts take either only where Claude Code's record shows the person typed it after the
 proposal
-([The caller approves what is theirs](../plugin-best-practice.md#the-caller-approves-what-is-theirs)).
+([The caller approves what is theirs](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q16)).
 
 The orchestrator runs Rn's scripts itself, so a script that took its word would take an approval
 never given.
@@ -238,7 +238,7 @@ plugins/rn/
 
 ## Test
 
-Rn is tested as [Test](../plugin-best-practice.md#test) says.
+Rn is tested as [the architecture best practice](../../plugins/turn/core/domain/best-practices/architecture/best-practice.md#q12) and [the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q22) say.
 
 | Deployment unit | unit | architecture | ux |
 |---|---|---|---|

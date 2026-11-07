@@ -5,7 +5,7 @@ Goal: The user has the plugin they build run as they designed it, on every run.
 
 - **Q1** Does each role keep its steps on every call?
   - **D1 Held by a hook**: a hook checks each call, as a prompt alone is advice (reasoning)
-    - Grounds: dev/plugin-best-practice.md, The guard tells each role its steps again: "a hook runs every time, while an instruction is only advice."
+    - Grounds: plugins/rn/domain/best-practices/plugin/best-practice.md, Q9: "A hook runs every time, while an instruction is only advice."
     - Also serves: product-vision/Q5
     - **D2 Only a role with rules**: told by the event's agent_type (research)
       - Grounds: Trial on Claude Code 2.1.319, 2026-11-06: a subagent's events carry its agent_type.
@@ -30,7 +30,7 @@ Goal: The user has the plugin they build run as they designed it, on every run.
     - Grounds: the order then needs no code.
     - Also serves: Q3, product-vision/Q5
     - **D11 The orchestrator is the skill**: run in the main conversation (reasoning)
-      - Grounds: dev/plugin-best-practice.md, Where the orchestrator runs.
+      - Grounds: plugins/rn/domain/best-practices/plugin/best-practice.md, Q5.
       - **D12 Each next start told**: beside what the conversation reads anyway, as additionalContext (reasoning)
         - Grounds: Claude Code's own means first.
         - **D13 The first start**: on the event that begins the run (research)
@@ -61,7 +61,7 @@ Goal: The user has the plugin they build run as they designed it, on every run.
       - **D25 A later result replaces the earlier**: a role resumed gives the next (reasoning)
         - Grounds: D26
       - **D26 A route may wait for the user**: `"waits": true`, for a result such as `asks` (reasoning)
-        - Grounds: dev/plugin-best-practice.md, Messages: a role that needs the person ends with its point.
+        - Grounds: plugins/rn/domain/best-practices/plugin/best-practice.md, Q6: a role's last message begins with `For the person:` where it holds a point for the person.
         - **D27 The run goes on**: the point put to the user, the role resumed with the answer (reasoning)
           - Grounds: Q2
         - **D28 A new call of the skill ends a waiting run**: and begins another (reasoning)
@@ -70,7 +70,7 @@ Goal: The user has the plugin they build run as they designed it, on every run.
       - **D29 The skill gives a result**: the `on` of the route that ends the run (reasoning)
         - Grounds: D30
     - **D30 Another plugin's skill is one move**: its own guard holds it, the caller checks nothing meanwhile (reasoning)
-      - Grounds: dev/plugin-best-practice.md, A plugin that uses another: "Two guards holding one conversation at once would each stop the other's moves."
+      - Grounds: plugins/rn/domain/best-practices/plugin/best-practice.md, Q15: "two guards on one conversation would stop each other's moves."
     - **D31 Several starts at once**: only of a role in `fan_out`, their result by `precedence` (reasoning)
       - Grounds: a role not made to run beside itself would run so unapproved.
 - **Q3** Does the user write no check and no code of their own?
@@ -78,7 +78,7 @@ Goal: The user has the plugin they build run as they designed it, on every run.
     - Grounds: Q3
     - Also serves: product-vision/Q5
     - **D33 lay.py print first**: each step shown as it will read (reasoning)
-      - Grounds: dev/plugin-best-practice.md, The caller approves what is theirs.
+      - Grounds: plugins/rn/domain/best-practices/plugin/best-practice.md, Q16.
     - **D34 lay.py write**: lays only what print showed (reasoning)
       - Grounds: D33
     - **D35 Lane's code put into the plugin**: whoever runs it needs no Lane (reasoning)
@@ -137,7 +137,7 @@ Goal: The user has the plugin they build run as they designed it, on every run.
     - Grounds: D35
     - Also serves: architecture/Q9
   - **D62 Tested at unit and architecture fully**: the ux trial confirms O1 in claude -p and interactively (reasoning)
-    - Grounds: dev/plugin-best-practice.md, Test.
+    - Grounds: plugins/turn/core/domain/best-practices/architecture/best-practice.md, Q12.
     - Also serves: architecture/Q11
 - **readme/Q1** Telling a colleague about the product, does the reader retell the opening from memory?
 - **readme/Q2** Reading the gain, does the reader tell what the product would let them do, and so whether it is for them?

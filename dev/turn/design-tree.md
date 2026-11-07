@@ -46,7 +46,7 @@ Goal: The user gets work with which the people it is for achieve what they are a
         - Grounds: The user, 2026-11-06, on Turn's roles ("planner,designer,generator,evaluatorとorchestratorだけかと"), chose to put Turn's designer back, using Pin's design tree and check, over keeping Pin's pinner.
         - Grounds: the pinner hid the design role outside Turn's roles.
         - **D15 The design in Pin's form**: written and checked through Pin's tree.py, linked, not copied (reasoning)
-          - Grounds: dev/plugin-best-practice.md Code kept once: Pin's tree.py and Lane's guard are linked, so a form or a fix kept once cannot drift.
+          - Grounds: plugins/rn/domain/best-practices/plugin/best-practice.md, Q14: Pin's tree.py and Lane's guard are linked, so a form or a fix kept once cannot drift.
       - **D16 Facts found by the designer**: shown to the user to confirm (reasoning)
         - Grounds: plugins/pin/core/roles/pinner.md:91 "A fact is yours to find, never the person's to tell you"
       - **D17 The rest weighed by the purpose, the facts and the answers**: one they favor settled by the designer (reasoning)
@@ -116,16 +116,16 @@ Goal: The user gets work with which the people it is for achieve what they are a
         - Also serves: Q7
 - **Q6** Does the run follow its course on every run?
   - **D41 The orchestrator is the main conversation**: following Turn's skill `up`, typed or called by the user's AI (user)
-    - Grounds: The user, 2026-11-06, once trials showed hooks hold the main conversation to a course: "オーケストレータはメインにしよう" (the orchestrator runs in the main conversation), as dev/plugin-best-practice.md Where the orchestrator runs now says for every plugin.
-    - Grounds: dev/plugin-best-practice.md Where the orchestrator runs: "The orchestrator runs in the main conversation, started by the plugin's skill"
+    - Grounds: The user, 2026-11-06, once trials showed hooks hold the main conversation to a course: "オーケストレータはメインにしよう" (the orchestrator runs in the main conversation), as plugins/rn/domain/best-practices/plugin/best-practice.md, Q5 now says for every plugin.
+    - Grounds: plugins/rn/domain/best-practices/plugin/best-practice.md, Q5: "its skill makes the main conversation the orchestrator"
     - **D42 It starts each role**: and puts each point to the user (reasoning)
       - Grounds: D41
     - **D43 Moved by Lane's routes**: one course of subagents (reasoning)
       - Grounds: D41
       - **D44 Held by the guard**: Lane's hooks, holding the orchestrator to the routes and each role to its rules (reasoning)
-        - Grounds: dev/plugin-best-practice.md The guard tells each role its steps again: "The guard holds the orchestrator in the main conversation to the router's course the same way".
+        - Grounds: plugins/rn/domain/best-practices/plugin/best-practice.md, Q8: Lane "gives the main conversation each next start from the role that ended and the result it gave".
         - **D45 Linked, not copied**: Lane's guard reached through a link (reasoning)
-          - Grounds: dev/plugin-best-practice.md Code kept once: Pin's tree.py and Lane's guard are linked, so a form or a fix kept once cannot drift.
+          - Grounds: plugins/rn/domain/best-practices/plugin/best-practice.md, Q14: Pin's tree.py and Lane's guard are linked, so a form or a fix kept once cannot drift.
       - **D46 `asks`**: a result whose route starts no one, so a waiting point reaches the user (reasoning)
         - Grounds: D44
       - **D47 The next role's run values**: handed to the orchestrator by the role before the step, so the guard holds every start (reasoning)
@@ -321,7 +321,7 @@ Goal: The user gets work with which the people it is for achieve what they are a
       - Grounds: D120
     - **D122 `tests/ux/`**: the trials of O1 (reasoning)
       - Grounds: D120
-  - **D123 Tests**: by the plugin best practice's Test, said only where Turn differs (reasoning)
+  - **D123 Tests**: by the architecture and plugin best practices' tests, said only where Turn differs (reasoning)
     - Grounds: architecture/best-practice.json Q11 thinking: "Each deployment unit has a cell at each level whose ground, a part's contract, this document or the product vision, says what the unit must do, and an empty cell says why."
     - Grounds: D93
     - Also serves: architecture/Q11, architecture/Q12, architecture/Q13, architecture/Q14

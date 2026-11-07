@@ -36,7 +36,8 @@ repository holds each fact the intents correct, so a right pinner finds it, nor 
 Pin, as a right pinner settles a point the person does not mind where a ground favors one way, and
 puts it only where none does. A run passes where nothing went wrong in KR1.1 and the design tree
 holds with no decision open. A trial passes where every run passes, three of three by default, as
-dev/plugin-best-practice.md's Results that vary from run to run says. The product vision gives no
+Q12 of plugins/turn/core/domain/best-practices/architecture/best-practice.md says. The product
+vision gives no
 key result a target, so each measure is set against the last trial's.
 
 Run as `python3 dev/pin/tests/ux/trial.py [typed|called|both] [runs]`, both and three by default.

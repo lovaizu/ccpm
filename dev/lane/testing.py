@@ -4,10 +4,11 @@ folder, git reading no setting of the machine it runs on, since a repository mad
 for every test spends most of the tests' time; and, for a plugin whose lanes lane laid, lane's code
 as the plugin takes it through a link, and each lane its hooks/lanes.json lays; and, for an
 architecture test, a double of Claude Code that sends the hook events and calls the hooks' entries
-and the plugins' scripts in the test's own process, kept once as dev/plugin-best-practice.md's
-Architecture: the parts joined has it. What a run
+and the plugins' scripts in the test's own process, kept once as Q22 of
+plugins/rn/domain/best-practices/plugin/best-practice.md has it. What a run
 of a plugin's tests writes is in one folder of its own, `<plugin>/<yyyymmdd>-tests-<random>/` in the
-system's temporary folder, as dev/plugin-best-practice.md's Where a plugin writes its files has it,
+system's temporary folder, as Q12 of plugins/rn/domain/best-practices/plugin/best-practice.md has
+it,
 the plugin's tests being in dev/<plugin>/tests/; and such a folder for what a trial uses only
 while it runs."""
 
@@ -47,7 +48,7 @@ RUNS: dict[str, str] = {}
 def temporary(plugin: str, name: str) -> str:
     """A new folder of the plugin's, `<plugin>/<yyyymmdd>-<name>-<random>/` in the system's
     temporary folder, for what a test or a trial uses only while it runs, as
-    dev/plugin-best-practice.md's Where a plugin writes its files has it."""
+    Q12 of plugins/rn/domain/best-practices/plugin/best-practice.md has it."""
     top = os.path.join(tempfile.gettempdir(), plugin)
     os.makedirs(top, exist_ok=True)
     return tempfile.mkdtemp(prefix=time.strftime(f"%Y%m%d-{name}-"), dir=top)
@@ -186,7 +187,7 @@ def hypothesis() -> Any:
 LAUNCHED = "async_launched"
 # What the double of Claude Code does where the hooks reference says nothing, each as a try of the
 # real Claude Code showed it, with the version and the day of the try, as
-# dev/plugin-best-practice.md's Where a double's results come from asks. A double that does what
+# Q22 of plugins/rn/domain/best-practices/plugin/best-practice.md asks. A double that does what
 # no try showed passes a test that the real Claude Code fails.
 TRIES = [
     {
@@ -430,7 +431,7 @@ class ClaudeCode:
     enabled gives the event, as Claude Code merges every plugin's hooks, and acts on what the
     entries print. It calls each entry in the test's own process, as `inside` says, and does not run
     the rest of its command, which checks for Python: the parts are joined in one process, as
-    dev/plugin-best-practice.md's Architecture: the parts joined has it, and a configuration file
+    Q22 of plugins/rn/domain/best-practices/plugin/best-practice.md has it, and a configuration file
     such as hooks.json is not tested. A call denied is not made; a call asked of the person is made
     where the person's next set answer is yes; any other is made for real in the folder the session
     works in, and comes back as PostToolUse, or PostToolUseFailure where it failed. An end blocked

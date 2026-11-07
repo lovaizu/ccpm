@@ -33,7 +33,8 @@ For each run of the plugin the trial also prints each break tried and how it end
 its sentence or gone through, or that none was tried. That is information only: a role that keeps
 its step tries no break, and the architecture tests hold the stop of each break. A run of the trial
 passes where no run of the plugin went wrong; a trial passes where every run passes, three of three
-by default, as dev/plugin-best-practice.md's Results that vary from run to run says. O1's key
+by default, as Q12 of plugins/turn/core/domain/best-practices/architecture/best-practice.md says.
+O1's key
 results have no target, so each measure is set against the last trial's.
 
 Run as `python3 dev/lane/tests/ux/trial.py [runs]`, three by default. It prints the folder of each

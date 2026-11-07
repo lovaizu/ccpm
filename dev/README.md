@@ -3,7 +3,7 @@
 Each plugin's product vision, architecture, tests and trials live here. Installing a plugin
 copies only its own folder, so nothing here reaches its users' machines.
 
-Every plugin is built by [the plugin best practice](./plugin-best-practice.md).
+Every plugin is built by [the plugin best practice](../plugins/rn/domain/best-practices/plugin/best-practice.md).
 [.claude/rules/dev.md](../.claude/rules/dev.md) gives the order the work on a plugin goes in.
 
 - [Turn](./turn/)
@@ -17,8 +17,7 @@ Every plugin is built by [the plugin best practice](./plugin-best-practice.md).
 CI runs these checks on every push: the linter, the formatter, the type checker, each plugin's unit
 and architecture tests with the lines and branches they run counted, Claude Code's check of every
 manifest, and Mermaid's parse of every diagram in the Markdown files. pytest runs the tests on
-every processor at once, as [Unit: code](./plugin-best-practice.md#unit-code) says. Run the checks
-from the top of the repository:
+every processor at once. Run the checks from the top of the repository:
 
 ```console
 uv sync --locked
@@ -42,7 +41,7 @@ Claude Code and Mermaid's parser come from `dev/scripts/package-lock.json`.
 
 On the newest Python, CI also installs the `test-quality` group, by
 `uv sync --locked --group test-quality`. With it, `sh dev/scripts/check.sh` also checks for copied code. CI
-then runs two more checks, as [Unit: code](./plugin-best-practice.md#unit-code) says:
+then runs two more checks, as [the architecture best practice](../plugins/turn/core/domain/best-practices/architecture/best-practice.md#q12) says:
 
 - `sh dev/scripts/properties.sh` runs the property-based tests, on many inputs each in CI and on few
   elsewhere.

@@ -12,8 +12,9 @@ used to fail the run: it takes a limit of 0 as no limit.
 Cosmic Ray changes the files it tests, so each worker runs on a copy of its own; one worker for each
 processor, as each mutant is tested on its own, each on a port free when the run starts, so two runs
 at once do not test each other's copies. The copies of each plugin's run are in
-<plugin>/<yyyymmdd>-mutate-<random>/ in the system's temporary folder (dev/plugin-best-practice.md,
-Where a plugin writes its files), removed when the run ends, and the system's temporary folder the
+<plugin>/<yyyymmdd>-mutate-<random>/ in the system's temporary folder (Q12 of
+plugins/rn/domain/best-practices/plugin/best-practice.md), removed when the run ends, and the
+system's temporary folder the
 workers' tests are given is in it, so what a test killed on its timeout leaves goes with it."""
 
 from __future__ import annotations
@@ -100,8 +101,8 @@ def started(copy: str, ports: list[int]) -> list[subprocess.Popen[bytes]]:
 
 def linked(folders: list[str]) -> list[str]:
     """Each module in the folders that is a link: what a plugin takes from another through a link is
-    mutated in the plugin it is from, with that plugin's tests (dev/plugin-best-practice.md, Code
-    kept once)."""
+    mutated in the plugin it is from, with that plugin's tests (Q14 of
+    plugins/rn/domain/best-practices/plugin/best-practice.md)."""
     return sorted(
         os.path.join(top, name)
         for folder in folders
@@ -156,7 +157,7 @@ def untested(db: str) -> list[str]:
     """Each mutant in the database that no test run checked, as the worker failed before or after
     its tests ran, such as where a mutant removed the code of its worker's copy, by its module, its
     line and the last line the worker printed. cr-report counts such a mutant as caught, though no
-    test caught it (dev/plugin-best-practice.md, No check passes what it did not check)."""
+    test caught it (plugins/rn/domain/best-practices/plugin/best-practice.md, Q10)."""
     failed = (WorkerOutcome.EXCEPTION, WorkerOutcome.ABNORMAL)
     with use_db(db, WorkDB.Mode.open) as work:
         items = {item.job_id: item for item in work.work_items}
@@ -191,7 +192,8 @@ def mutated(plugin: str, since: str) -> bool:
         written(plugin, ports, since, config)
         subprocess.run(["cosmic-ray", "init", config, db], check=True)
         # A line marked `# pragma: no mutate` has no mutant a test can tell apart, for the reason
-        # the plugin's cosmic-ray.toml gives (dev/plugin-best-practice.md, Unit: code).
+        # the plugin's cosmic-ray.toml gives
+        # (plugins/turn/core/domain/best-practices/architecture/best-practice.md, Q12).
         subprocess.run(["cr-filter-pragma", db], check=True)
         if since:
             filtered_by_git(copy, config, db)

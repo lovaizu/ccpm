@@ -13,13 +13,13 @@ role, puts each point to the user and passes each answer back, as given.
 
 ## Principles
 
-Turn builds on [the principles of the plugin best practice](../plugin-best-practice.md#principles),
+Turn builds on [the principles of the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md),
 and adds these.
 
 ### No learning from each run
 
 Turn does not take
-[Learning from each run](../plugin-best-practice.md#learning-from-each-run). No role
+[Learning from each run](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q21). No role
 follows the work once it is handed over.
 
 *Why*: no step of the product vision follows the work handed over, and a step there would ask
@@ -362,12 +362,12 @@ in its main conversation as [Calling Turn](../../plugins/turn/docs/calling.md) s
 
 - **Python 3.9 and its standard library only, for Turn's scripts and the guard,** over a later
   Python or packages: the user installs nothing else for Turn, as [Python 3.9 and the standard
-  library](../plugin-best-practice.md#python-39-and-the-standard-library) says, and starts sooner
+  library](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q13) says, and starts sooner
   (KR1.2). It costs the code going without what later versions and packages give.
 - **A run's folder in `.turn/<yyyymmdd>-<name>/` at the root of the repository, or where the
   user's AI says,** over a folder outside the repository: the user reads each check of the
   work there, and a run that stopped goes on from it in any session (KR1.2), as
-  [Where a plugin writes its files](../plugin-best-practice.md#where-a-plugin-writes-its-files)
+  [Where a plugin writes its files](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q12)
   says for what may be kept. It costs a folder in the user's repository that they keep out of
   their commits.
 - **A new kind's best practice in `.turn/best-practices/`** over the run's folder: every later run
@@ -435,18 +435,18 @@ dev/turn/
   figures in the repository, and a run of `plan.py example` after each change to them.
 - **The Design tree in [Pin's form](../../plugins/pin/core/roles/pinner.md#the-design-tree),
   written, read and checked by Pin's `tree.py` through a link,** as
-  [Code kept once](../plugin-best-practice.md#code-kept-once) says, over a form and checks of
+  [Code kept once](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q14) says, over a form and checks of
   Turn's own: a form kept twice drifts, and a design tree made by Turn reads as one made by Pin
   (KR1.1). It costs a change to Pin's form changing Turn's Design tree, with no line of Turn
   changed, and Turn's tests running Pin's code.
 - **`hooks/lane/` as a link to Lane's code in this marketplace** over a copy, as [Code kept
-  once](../plugin-best-practice.md#code-kept-once) says: a fix to the guard reaches every plugin it
+  once](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q14) says: a fix to the guard reaches every plugin it
   holds (KR1.1). It costs a fix in Lane reaching Turn's guard only once a developer lays Turn's
   rules again with Lane's `lay.py`.
 
 ## Tests
 
-Turn tests by [Test in the plugin best practice](../plugin-best-practice.md#test),
+Turn tests by [the architecture best practice](../../plugins/turn/core/domain/best-practices/architecture/best-practice.md#q12) and [the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q22),
 and differs from them where this section says.
 
 ![Turn's tests](images/tests.svg)

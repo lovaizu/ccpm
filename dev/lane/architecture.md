@@ -20,25 +20,25 @@ Lane's code and its user docs, [the lanes](../../plugins/lane/docs/lanes.md) and
 ## Principles
 
 Lane builds on these principles of
-[the plugin best practice](../plugin-best-practice.md#principles):
+[the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md):
 
-- [What a machine can see of the work](../plugin-best-practice.md#what-a-machine-can-see-of-the-work)
-- [No check passes what it did not check](../plugin-best-practice.md#no-check-passes-what-it-did-not-check)
-- [The guard tells each role its steps again](../plugin-best-practice.md#the-guard-tells-each-role-its-steps-again)
-- [Where a plugin writes its files](../plugin-best-practice.md#where-a-plugin-writes-its-files)
-- [Asking for what lies outside the work](../plugin-best-practice.md#asking-for-what-lies-outside-the-work),
+- [What a machine can see of the work](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q11)
+- [No check passes what it did not check](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q10)
+- [The guard tells each role its steps again](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q9)
+- [Where a plugin writes its files](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q12)
+- [Asking for what lies outside the work](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q18),
   in what the guard tells a subagent about a fault
-- [The caller approves what is theirs](../plugin-best-practice.md#the-caller-approves-what-is-theirs)
-- [Python 3.9 and the standard library](../plugin-best-practice.md#python-39-and-the-standard-library)
-- [Code kept once](../plugin-best-practice.md#code-kept-once)
+- [The caller approves what is theirs](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q16)
+- [Python 3.9 and the standard library](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q13)
+- [Code kept once](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q14)
 
 Lane takes none of the principles for a plugin with an orchestrator and roles. It does not take
-[An entry points to its part](../plugin-best-practice.md#an-entry-points-to-its-part),
-[Languages](../plugin-best-practice.md#languages) or
-[Learning from each run](../plugin-best-practice.md#learning-from-each-run) either. Lane has no
+[An entry points to its part](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q2),
+[Languages](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q19) or
+[Learning from each run](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q21) either. Lane has no
 role, skill or agent of its own, and it talks with no person: the user runs `lay.py` themselves,
 and the guard runs inside the user's plugin. Lane departs from
-[The core apart from Claude Code](../plugin-best-practice.md#the-core-apart-from-claude-code) in
+[The core apart from Claude Code](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q1) in
 where its core lies, as [Directory structure](#directory-structure) says.
 
 Lane adds these. Each why says how a run of the user's plugin goes wrong without the rule. KR1.1
@@ -75,7 +75,7 @@ rules and routes only from what `lay.py write` wrote, and holds them to the chec
 a call that cannot be checked.
 
 *Why*: the user approves their rules and routes, as
-[The caller approves what is theirs](../plugin-best-practice.md#the-caller-approves-what-is-theirs)
+[The caller approves what is theirs](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q16)
 says. A rule copied or edited by hand would be one that no one approved. It could stop a move that
 the user's steps allow (KR1.1).
 
@@ -108,7 +108,7 @@ plugin or of Claude Code to the role and to whoever runs the plugin, with who mu
 
 *Why*: a call let through unchecked could break the step that the rule is there to hold, and the
 role would go on (KR1.1), as
-[No check passes what it did not check](../plugin-best-practice.md#no-check-passes-what-it-did-not-check)
+[No check passes what it did not check](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q10)
 says. The role can mend its own call, but only whoever runs the plugin can have a fault fixed.
 
 ### Claude Code's own means first
@@ -210,7 +210,7 @@ why, and what it costs.
 - **The checks as entries of the plugin's `hooks/hooks.json`, acting by the event's `agent_type`,**
   over hooks in a subagent's or the skill's own file: Claude Code ignores hooks in a plugin agent's
   own file, and a SubagentStop hook in a skill's own file did not fire in a trial, as
-  [The guard tells each role its steps again](../plugin-best-practice.md#the-guard-tells-each-role-its-steps-again)
+  [The guard tells each role its steps again](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q9)
   says, so only these entries hold every role (KR1.1). It costs the guard starting on every tool
   call of the plugin, and returning at once for a call it does not hold.
 - **Lane's code put into the plugin** over running it from where Lane is installed: the plugin then
@@ -263,7 +263,7 @@ why, and what it costs.
   choose not to answer, and a run that waits would otherwise have no way to be let go. Only such a
   call, or a route with neither a `to` nor `waits`, ends the run, and only that route's `on` is a
   result the skill gives. Otherwise a plugin whose role needs the person, as
-  [Messages](../plugin-best-practice.md#messages) has every such role, would end its run at the
+  [Messages](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q5) has every such role, would end its run at the
   first point put to the person, and its later starts would go unheld (KR1.1). It costs one more
   key in the routes.
 - **Only the subagents that the routes name in `fan_out` running several at once** over any
@@ -296,7 +296,7 @@ why, and what it costs.
   by the PostToolUse of a run of the dependency's result script in the main conversation, with the
   caller's guard checking nothing meanwhile, over both guards holding the conversation: two guards
   on one conversation would each stop the other's moves, as
-  [A plugin that uses another](../plugin-best-practice.md#a-plugin-that-uses-another) says
+  [A plugin that uses another](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q15) says
   (KR1.1). It costs a dependency's skill that ends with no result leaving its move open, so the end
   of a turn is kept going once, as for any start due.
 
@@ -707,18 +707,18 @@ the plugin's hook entries, each a command in `sh` that runs `python3`, on the co
 runs the plugin. After an update of Lane, the user runs `lay.py up` on their plugin.
 
 - **Lane's code on Python 3.9 and its standard library only**, as
-  [Python 3.9 and the standard library](../plugin-best-practice.md#python-39-and-the-standard-library)
+  [Python 3.9 and the standard library](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q13)
   says, over a later Python or packages: whoever runs the plugin then installs nothing for Lane
   (KR1.1). Each hook's command checks for `python3` in `sh` first, as the guard cannot even read the
   event without Python. It costs each tool call that a rule is about being stopped where Python is
   missing.
 - **The kept calls and the Run in the system's temporary folder**, as
-  [Where a plugin writes its files](../plugin-best-practice.md#where-a-plugin-writes-its-files)
+  [Where a plugin writes its files](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q12)
   says for files used only while a plugin runs, over a folder in the repository: they mean nothing
   once the session ends. It costs a call that needs its kept calls being one that cannot be checked
   where the system clears that folder during a run.
 - **A plugin's `hooks/lane/` as a link to Lane's code in this marketplace**, as
-  [Code kept once](../plugin-best-practice.md#code-kept-once) says, over a copy: a fix to the guard
+  [Code kept once](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q14) says, over a copy: a fix to the guard
   reaches every plugin here (KR1.1). Elsewhere it is a copy that carries Lane's version, which
   `lay.py up` reads, as a link cannot reach across repositories. It costs a copy keeping Lane's
   code of the day it was laid until `lay.py up` runs.
@@ -766,24 +766,24 @@ dev/lane/
 - **Code that several components share beside them in `core/domain/`**, each module for one data
   or one form, such as the Rules laid or a Step, over a copy in each component: a copy would be
   fixed in one component and left wrong in another, as
-  [Code kept once](../plugin-best-practice.md#code-kept-once) says (KR1.1). A module that only one
+  [Code kept once](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q14) says (KR1.1). A module that only one
   component uses lies in that component. It costs a change to a shared module reaching every
   component that uses it, whose tests must all pass.
 - **Lane's core in `hooks/lane/core/domain/`** over `core/` at the plugin's root, where
-  [The core apart from Claude Code](../plugin-best-practice.md#the-core-apart-from-claude-code) puts
+  [The core apart from Claude Code](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q1) puts
   it: `lay.py` lays `hooks/lane/` into each plugin whole, by one link or one copy, and a core
   outside it would need a second (KR1.1). It costs Lane's core lying apart from where every other
   plugin keeps its core. Lane has no roles of its own, so it has no `core/roles/`.
 
 ## Tests
 
-Lane tests by [Test in the plugin best practice](../plugin-best-practice.md#test), and differs from
-it where this section says.
+Lane tests by [the architecture best practice](../../plugins/turn/core/domain/best-practices/architecture/best-practice.md#q12) and [the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q22), and differs from
+them where this section says.
 
 ![Lane's tests](images/tests.svg)
 
 Cosmic Ray and Hypothesis in the figure run the mutation testing and the property-based tests that
-[Unit: code](../plugin-best-practice.md#unit-code) asks for. They are the tools that
+[the architecture best practice](../../plugins/turn/core/domain/best-practices/architecture/best-practice.md#q12) asks for. They are the tools that
 [the repository's development setup](../README.md#the-property-based-tests-and-the-mutation-testing)
 gives every plugin, not a choice of Lane's.
 

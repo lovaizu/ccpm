@@ -17,7 +17,7 @@ ruff check .
 ruff format --check .
 
 # Code copied between files is fixed in one and left wrong in the other, so code more than one file
-# needs is kept once (dev/plugin-best-practice.md, Code kept once); every file is read at once, whichever plugins are
+# needs is kept once (plugins/rn/domain/best-practices/plugin/best-practice.md, Q14); every file is read at once, whichever plugins are
 # given, as a copy can lie in any two. A link is the file it points to, so is left out.
 if command -v pylint >/dev/null 2>&1; then
   git ls-files '*.py' | while read -r file; do [ -L "$file" ] || echo "$file"; done \
@@ -53,7 +53,7 @@ for design in dev/*/design-tree.md; do
 done
 
 # Every figure carries the one style of dev/images/figures.css, so the figures look alike and a
-# colour is changed in one place (dev/plugin-best-practice.md, Directory structure).
+# colour is changed in one place (.claude/rules/dev.md, step 3).
 python3 dev/scripts/figures.py check
 
 # A Mermaid diagram GitHub cannot parse shows as an error in its place, unseen until someone opens

@@ -109,7 +109,7 @@
   <text class="label start" x="30" y="490" text-anchor="start">No row: installed Turn, the repository and the temporary folder hold files and run nothing, and the tests reach them through the processes that read them.</text>
   <text class="label start" x="30" y="509" text-anchor="start">Pin's tree.py and Lane's code, linked into Turn, are tested by their own plugins.</text>
   <rect class="frame" x="20" y="522" width="1420" height="368" rx="8"/>
-  <text class="frame-name" x="36" y="544" text-anchor="start">Where Turn's tests differ from the plugin best practice's Test</text>
+  <text class="frame-name" x="36" y="544" text-anchor="start">Where Turn's tests differ from the best practices</text>
   <text class="name start" x="42" y="572" text-anchor="start">unit</text>
   <text class="label start" x="42" y="594" text-anchor="start">No stand-in, as no user takes part.</text>
   <text class="name start" x="512" y="572" text-anchor="start">architecture</text>
