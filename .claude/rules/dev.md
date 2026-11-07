@@ -19,7 +19,7 @@ Open `refactor-doc/best-practice.json` as well when the work is a document, and
 `refactor-code/best-practice.json` when it is code: that one finishes it.
 
 When a step's work needs something that its best practice does not ask, mend that best practice as
-Q8 of [meta/best-practice.json](../../plugins/turn/core/domain/best-practices/meta/best-practice.md)
+Q10 of [meta/best-practice.json](../../plugins/turn/core/domain/best-practices/meta/best-practice.md)
 says. Do so whichever plugin you are building. Then make the work again against the mended best
 practice.
 

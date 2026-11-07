@@ -20,31 +20,36 @@
   },
   {
    "id": "Q4",
+   "about": "inputs, preconditions",
+   "what": "Setting each section against what fills it, does the generator find the kinds a deliverable is made from and those that must pass before it is made, so that no deliverable of the kind is made before what it takes?"
+  },
+  {
+   "id": "Q5",
    "about": "intents",
    "what": "Judging a deliverable by a question, does the evaluator see what the role is after at that moment, so that it judges whether the role gets that, not whether the words are there?"
   },
   {
-   "id": "Q5",
+   "id": "Q6",
    "about": "template, intents",
    "what": "Going through the template, does the generator find a question for each section, each dependency among sections and the whole, so that no way the deliverable fails its role goes unasked?"
   },
   {
-   "id": "Q6",
+   "id": "Q7",
    "about": "practices",
    "what": "Following a practice, does the generator grasp what the question's role is after and why, so that it makes what serves the role even where no step says how?"
   },
   {
-   "id": "Q7",
+   "id": "Q8",
    "about": "intents, practices",
    "what": "Going through the questions in order, does the generator find a practice for each, so that it meets no question with nothing to go by?"
   },
   {
-   "id": "Q8",
+   "id": "Q9",
    "about": "example, source",
    "what": "Reading the example, does the generator see what the template's slots become in one deliverable, so that it fills its own to the same intent?"
   },
   {
-   "id": "Q9",
+   "id": "Q10",
    "about": "the whole",
    "what": "Using a deliverable made by the best practice and passed, does its role achieve its purpose?"
   }
@@ -65,6 +70,7 @@
     "Mark each slot as code, `` `<name>` ``, as a bare `<name>` is dropped as an HTML tag where the template is shown.",
     "After each section, write one GitHub note whose first line is `DELETE_TEMPLATE_COMMENT:`, saying for each slot what it holds, what its reader uses it for and whether it is optional, as the generator fills a slot to its intent only when the note says it, and finds and deletes each note by its marker.",
     "Where the deliverable is JSON, write each note as a key `DELETE_TEMPLATE_COMMENT`, as JSON holds no comment.",
+    "Where the deliverable has a JSON Schema of its own, such as the design tree, make the schema the template, its top fields the sections, and write each slot's note in the description of its field, as a second note beside the schema drifts from it.",
     "Give the content found by digging a slot for its intent and why alone, in the fewest words, and a figure in place of prose wherever a figure can say it.",
     "Draw a sequence in Mermaid, and any other figure in SVG, a table among them, as a table stands in for prose.",
     "Give each SVG figure of the template a skeleton of its own beside it, `images/template-<name>.svg`, that shows the figure's layout by the slots' names, give it an alt text with no slot, and say in the section's note where the deliverable puts its own figure, as a figure the template names but does not hold shows broken, and the example's figure shows one product's content in place of the layout.",
@@ -80,6 +86,11 @@
   },
   {
    "intent": "Q4",
+   "thinking": "Name in inputs each kind whose deliverables a deliverable of this kind is made from, and in preconditions each kind whose deliverables must pass before one of this kind is made, each by the name of its best practice's folder. The plan holds each deliverable's own inputs and preconditions, the paths of the deliverables it takes, to these kinds, and orders it after them. A kind left out lets a deliverable be made on what is not there yet, and a kind named without need holds the deliverable back.",
+   "steps": []
+  },
+  {
+   "intent": "Q5",
    "thinking": "Write each question as the moment the role uses the sections, what it needs from them, and what it is after in that, in a clause that begins with \"so that\". The evaluator then judges by the role's intent. A question that asks only for a sign of good work can be met in words while the role goes without.",
    "steps": [
     "Leave out the \"so that\" clause only where what the role needs is the goal itself.",
@@ -87,7 +98,7 @@
    ]
   },
   {
-   "intent": "Q5",
+   "intent": "Q6",
    "thinking": "Give each section, each dependency among sections and the whole a question, and add one that fails each deliverable that would pass them all and still fail its role, as the questions are complete only when none such is left.",
    "steps": [
     "Where two questions would fail the same deliverables for the same reason, merge them, but keep a key one on its own.",
@@ -96,7 +107,7 @@
    ]
   },
   {
-   "intent": "Q6",
+   "intent": "Q7",
    "thinking": "Write first what the deliverable must be for the question's role, and why the role needs it so, in short sentences. A generator that grasps the intent finds its own way where the case differs. One that holds only steps follows them off the mark.",
    "steps": [
     "Add a step only where a generator that holds the intent would still not know how, such as a format to keep or a place to look, and say what the step achieves.",
@@ -105,19 +116,19 @@
    ]
   },
   {
-   "intent": "Q7",
+   "intent": "Q8",
    "thinking": "Order the questions so that each comes before those that build on it, and give each one practice in that order, as the generator then meets no question with nothing to go by.",
    "steps": []
   },
   {
-   "intent": "Q8",
+   "intent": "Q9",
    "thinking": "Make the product's own deliverable of the kind from its design tree by the template and the practices, pass it by the questions, and name its file in `example`, as one finished deliverable shows what the comments alone do not.",
    "steps": [
     "Where the deliverable lies elsewhere for its own reader, such as a product vision in the developers' folder, name its path in `source` and copy it with its figures beside the best practice by `plan.py example`, as a copy made by hand drifts from the deliverable, and a symbolic link shows as a line of text on GitHub and on Windows."
    ]
   },
   {
-   "intent": "Q9",
+   "intent": "Q10",
    "thinking": "Have the role, or an AI holding what it wants, use the example for the goal, and set its verdict against the evaluator's, as only a deliverable made and used shows whether the whole works.",
    "steps": [
     "Trace each difference to the goal, the template, a question or a practice, and mend it there.",
