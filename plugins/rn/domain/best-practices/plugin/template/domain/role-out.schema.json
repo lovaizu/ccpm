@@ -1,0 +1,101 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "<role>'s out",
+  "description": "What the role <role> gives as it ends: its result, its last message, and its answers where it judges a work by questions. The role's part names this file.",
+  "type": "object",
+  "required": [
+    "result",
+    "reply"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "description": "The fixed word the role gives as it ends, by running python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py <role> <result>, such as asks for a point to the person and done, as the routes go on by the word and never by what the role writes.",
+      "enum": [
+        "<result>"
+      ]
+    },
+    "reply": {
+      "description": "The role's last message. It begins with the line For the person: where it holds a point for the person, which the main conversation puts to them as given, one point a message. Otherwise it holds what the next role starts with, such as its run values, and nothing more.",
+      "type": "string"
+    },
+    "answers": {
+      "description": "The answers of a role that judges a work by questions, in a file the role writes: each question met, with the lines of the work that meet it, or not met, with what the work's user still lacks, and each point open that only the person can settle. Optional.",
+      "type": "object",
+      "required": [
+        "met",
+        "not_met"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "met": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "question",
+              "lines"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "question": {
+                "description": "The question, by its ID.",
+                "type": "string"
+              },
+              "lines": {
+                "description": "Each line of the work that meets it, as it stands, so that a reader checks the answer by reading them.",
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "not_met": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "question",
+              "lacks"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "question": {
+                "description": "The question, by its ID.",
+                "type": "string"
+              },
+              "lacks": {
+                "description": "What the work's user still lacks, in their terms, never how to make it, as the maker holds the sources and mends the work its own way.",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "open": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "question",
+              "what"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "question": {
+                "description": "The question the point bears on, by its ID.",
+                "type": "string"
+              },
+              "what": {
+                "description": "The point that only the person can settle.",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
