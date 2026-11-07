@@ -84,7 +84,8 @@ folder.
 
 ## What you're given back, and what you give
 
-Each role ends with a message that holds what `tree.py` printed. Where the planner gives `done`,
+Each role ends with a message that holds what `tree.py` printed. Once Lane says to start no more,
+end the run by the command Lane named as it began, with the result the last role gave. Where the planner gives `done`,
 tell the user its message in their language, keeping each path and each decision word for word: the
 deliverables, the files made with them, and each decision taken without asking. Where it names
 what's missing to push, such as a sign-in of `gh`, ask the user for it, and go on with the rest

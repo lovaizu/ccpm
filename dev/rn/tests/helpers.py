@@ -165,3 +165,189 @@ class RunTest(testing.GitTest):
     def handed(self, data: dict[str, Any]) -> str:
         """The change handed by tree.py change: what it printed."""
         return starts.change(json.dumps(data))
+
+
+# A small best practice of the kind `note`, which the run keeps as its own: two intents, each of a
+# part of its own, so a round has two evaluators.
+NOTE = {
+    "goal": "Someone new to tidy sorts their folder with it.",
+    "inputs": [],
+    "preconditions": [],
+    "parts": [{"id": "use", "what": "How to use it."}],
+    "intents": [
+        {"id": "Q1", "about": "use", "what": "Can the reader sort their folder by it?"},
+        {"id": "Q2", "about": "the whole", "what": "Does each answer come when needed?"},
+    ],
+    "practices": [
+        {
+            "intent": "Q1",
+            "thinking": "Show the run.",
+            "steps": [
+                {
+                    "text": "Read what it takes from.",
+                    "trace": {"action": "read", "takes": ["{inputs}"]},
+                }
+            ],
+        },
+        {"intent": "Q2", "thinking": "Order it.", "steps": []},
+    ],
+}
+NOTES = "NOTES.md"
+# What a note says once the generator has made it.
+NOTED = "# Notes\n\nRun `tidy --dry-run` to see each move, then `tidy` to make them.\n"
+
+
+def note_tree(by: str = "user", **given: Any) -> dict[str, Any]:
+    """A tree of the one deliverable, a note of the kind note, taking from the product vision."""
+    d = {
+        "name": "a note on tidy's dry run",
+        "path": NOTES,
+        "kind": "note",
+        "inputs": ["dev/product-vision.md"],
+        "preconditions": [],
+        "status": "doing",
+        "intents": [
+            {"id": "Q1", "good": False, "decisions": []},
+            {"id": "Q2", "good": False, "decisions": []},
+        ],
+    }
+    d.update(given)
+    return {"goal": {"decided": GOAL, "by": by}, "deliverables": [d]}
+
+
+class Claude(testing.ClaudeCode):
+    """The double of Claude Code, which also keeps what the last Bash call printed, or its error, as
+    the call's result hands it to whoever made it."""
+
+    printed = ""
+
+    def made(self, tool: str, given: dict[str, Any]) -> tuple[Any, str | None]:
+        response, error = super().made(tool, given)
+        if tool == "Bash":
+            self.printed = error if error is not None else response["stdout"]
+        return response, error
+
+
+def lines_of(context: list[str]) -> list[str]:
+    """Lane's lines to the main conversation in the context the hooks added, each headed `rn:`."""
+    return [line for said in context for line in said.splitlines() if line.startswith("rn: ")]
+
+
+class FlowTest(RunTest):
+    """A test of a path of rn's sequences, in tidy's repository: rn's guard, by its hook entries on
+    its lanes and routes laid, tree.py, throwaway.py and the adapters run real, through a double of
+    Claude Code working in the repository; doubles stand in for the main conversation, the roles,
+    making set calls and giving set results, and the user, giving set answers."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.env = {**os.environ, "TMPDIR": self.tmp}
+        hook, guard, schema = testing.lane_code(RN, "hook", "guard", "schema")
+
+        def handed(event: dict[str, Any]) -> str:
+            named = event["hook_event_name"]
+            wrong = hook.event_wrong({"agent_id": "main", "agent_type": "", **event}, named)
+            if not wrong and named == "PostToolUse" and event["tool_name"] == "Agent":
+                out = schema.held(guard.BACK, event["tool_response"])
+                wrong = out.told() if out is not None else ""
+            return wrong
+
+        self.claude = Claude(RN, self.repo, self.env, check=handed)
+        self.made_runs = 0
+
+    def new(self, role: str) -> Any:
+        """A new run of rn's role."""
+        self.made_runs += 1
+        return testing.Run(f"rn:{role}", f"{role[0]}{self.made_runs}")
+
+    def begins(self) -> list[str]:
+        """The user types `/rn:up`: the lines Lane gives the main conversation."""
+        return lines_of(self.claude.typed("rn:up"))
+
+    def calls_up(self) -> list[str]:
+        """The main conversation calls the skill rn:up itself: Lane's lines it's told."""
+        called = self.claude.skill("rn:up")
+        self.assertTrue(called.made, called.said)
+        return lines_of(called.context)
+
+    def tree_command(self, *words: str) -> str:
+        """The command of tree.py with the words."""
+        return " ".join(("python3", f"{RN}/scripts/tree.py", *words))
+
+    def hands(self, change: dict[str, Any]) -> str:
+        """The main conversation hands the change to tree.py change on its standard input: what it
+        printed."""
+        command = f"{self.tree_command('change')} <<'EOF'\n{json.dumps(change)}\nEOF"
+        told_ = self.claude.call(None, "Bash", {"command": command, "description": "d"})
+        self.assertTrue(told_.made, told_.said)
+        return self.claude.printed
+
+    def main_runs(self, *words: str) -> str:
+        """The main conversation runs tree.py with the words: what it printed."""
+        told_ = self.claude.call(
+            None, "Bash", {"command": self.tree_command(*words), "description": "d"}
+        )
+        self.assertTrue(told_.made, told_.said)
+        return self.claude.printed
+
+    def starts(self, run: Any, prompt: str) -> Any:
+        """The main conversation starts the run with the prompt, which goes through, and ends its
+        turn: what Lane told the start."""
+        told_ = self.claude.start(None, run, prompt)
+        self.assertTrue(told_.made, told_.said)
+        self.assertTrue(self.claude.end_turn().made)
+        return told_
+
+    def cut_and_start(self, role: str) -> tuple[Any, dict[str, Any]]:
+        """The main conversation runs the start command for the role and starts a new run of it
+        with what it printed: the run and its values."""
+        printed = self.main_runs("start", role)
+        run = self.new(role)
+        self.starts(run, printed)
+        return run, json.loads(printed.splitlines()[0])
+
+    def does(self, run: Any, tool: str, **given: Any) -> Any:
+        """The run's call of the tool with its input."""
+        return self.claude.call(run, tool, given)
+
+    def runs(self, run: Any, command: str) -> str:
+        """The run runs the command with Bash, which goes through: what it printed."""
+        told_ = self.does(run, "Bash", command=command, description="d")
+        self.assertTrue(told_.made, told_.said)
+        return self.claude.printed
+
+    def writes(self, run: Any, path: str, data: Any) -> None:
+        """The run writes the data at the path with Write, as JSON where it's no text, which goes
+        through."""
+        text = data if isinstance(data, str) else json.dumps(data)
+        told_ = self.does(run, "Write", file_path=os.path.join(self.repo, path), content=text)
+        self.assertTrue(told_.made, told_.said)
+
+    def reads(self, run: Any, path: str) -> None:
+        """The run reads the file at the path whole, which goes through."""
+        told_ = self.does(run, "Read", file_path=os.path.join(self.repo, path))
+        self.assertTrue(told_.made, told_.said)
+
+    def gives(self, run: Any, on: str) -> None:
+        """The run gives its result by its result command, which goes through."""
+        name = run.kind.split(":")[1]
+        self.runs(run, f"python3 {RN}/hooks/lane/result.py {name} {on}")
+
+    def ends(self, run: Any) -> list[str]:
+        """The run ends, let end, and its end reaches the main conversation: Lane's lines it's
+        told."""
+        ended = self.claude.stop(run)
+        self.assertTrue(ended.made, ended.said)
+        return lines_of(self.claude.notify(run))
+
+    def plans(self, planner: Any, values: dict[str, Any], *edits: dict[str, Any]) -> str:
+        """The planner writes each edit and has tree.py write it, then commits: what the commit
+        printed."""
+        for edit in edits:
+            self.writes(planner, values["edit"], edit)
+            self.runs(planner, self.tree_command("write", values["run"], values["edit"]))
+        return self.runs(planner, self.tree_command("commit", values["run"]))
+
+    def gave(self, printed: str) -> str:
+        """The result a tree.py command names."""
+        return printed.split("Give `")[1].split("`")[0]
