@@ -1,136 +1,152 @@
-# Rn
+# `rn`
 
-Rn is a Claude Code plugin that takes a piece of work you ask for in rough words to a pull request
-that meets your purpose, asking you only what is yours to decide.
+rn is a Claude Code plugin that makes what you ask for, such as a document, code, or a plugin, so
+that the people it's for can use it for what they're after.
 
-Rn is for you if you want to hand a whole piece of work in your GitHub repository to an agent, even
-work of days, without writing out what you want first. You answer what Rn asks, decide at each stop
-from what Rn shows you there, and get a pull request that meets your purpose.
+rn is being rebuilt, and this README describes the rebuilt rn, which isn't released yet. Until
+then, the installation below gives the earlier rn 0.9.0, which works another way, and the
+walkthrough shows the run the rebuilt rn makes, not a recorded one.
 
-Claude Code alone builds on your words as they stand, and over days one conversation swells and
-drifts. Rn first asks you each point behind your words, one per message, with the answer it
-recommends, and writes your purpose down as a goal and acceptance criteria that every task serves.
-It carries only a short record of the plan from move to move, so the work neither swells nor drifts
-and goes on in any conversation. [Turn](../turn/README.md), installed with Rn, makes each document
-and the finished work, and an AI that did not make it uses it in your place before you see it.
+rn is for you when you want an AI to make work that takes several pieces, such as a feature with
+its README and its code, and you'd rather answer a few points than read and fix drafts. With it,
+you hand the work's people what they can use without fixing it, and you answer only the points
+that are yours.
 
 **Non-goals**
 
-- Rn does not merge: it marks the pull request ready, and the merge is yours.
-- Rn does not push to your default branch: it works on a branch of its own.
-- Rn sends nothing to its makers without your yes.
-- Rn does not change the best practices Turn ships: a question you add to the intents of a
-  kind of work goes into `.turn/best-practices/` in your repository.
+- rn doesn't settle your purpose or your intent. A point it leaves to you holds the work it touches
+  until you answer.
+- rn isn't for a quick draft you'll fix yourself. It plans, makes, and tries each piece, so it takes
+  longer than asking Claude Code once.
 
 ## Requirements
 
-- Claude Code.
-- A git repository whose remote is on GitHub, with its default branch protected so that it takes a
-  change only through a reviewed pull request.
-- The GitHub command-line tool `gh`, logged in to an account that can push to the repository.
-- Python 3.9 or later, run as `python3`, and `jq`.
-- Recommended: Claude Code in a [Docker Sandbox](https://docs.docker.com/ai/sandboxes/) with the
-  permission mode `bypassPermissions`, so the agents are not stopped at each command and what they
-  do stays inside the sandbox.
+- macOS or Linux: `uname` shows it. No one has tried rn on Windows yet.
+- Claude Code 2.1.319 or later: `claude --version` shows it.
+- Python 3.9 or later, run as `python3`: `python3 --version` shows it.
 
 ## Installation
 
 ```console
-/plugin marketplace add lovaizu/ccpm
-/plugin install rn@ccpm
+claude plugin marketplace add lovaizu/ccpm
+claude plugin install rn@ccpm
 ```
 
-Claude Code installs Turn with Rn. `claude plugin list` then lists `rn@ccpm` and `turn@ccpm`, each
-with `Status: ✔ enabled`.
+`claude plugin list` then lists `rn@ccpm`, and `lane@ccpm`, which comes with it.
 
 ## Walkthrough
 
-Your app is written in JavaScript, and you want it moved to TypeScript, work that takes days:
+At the end, your tool `tidy` has a dry run, and its README shows how to use it. You've answered
+two points and typed `/rn:up` twice.
 
-```console
-> /rn:up move this app to TypeScript
+`tidy` sorts a Downloads folder into folders by type. You want it to show what it would move before
+it moves anything. At the root of its repository, in Claude Code, you type:
+
+```text
+/rn:up tidy should show what it would move, without moving it
 ```
 
-Rn asks the points to decide, one per message, each with what it looked up and the answer it
-recommends:
+rn shows:
 
-```console
-● Points to decide
-  ▶ 1. What the move is for
-    2. What shows the move is done
-
-  1. What the move is for
-  I take it the move is to stop type mistakes before they ship: three of last quarter's
-  production bugs (#81, #87, #93) were a value of the wrong type, undefined where a number
-  was expected.
-  a. Stop such mistakes before they ship (recommended). Costs more than renaming files, since
-     the types must be strict enough to catch them. Can be changed later.
-  b. Have the code in TypeScript, however loose its types. Quicker, but the three bugs could
-     come back. Can be changed later.
-  What is the move for? Answer with a letter or in your own words.
-
-> a
+```text
+Goal: someone about to sort their Downloads folder with tidy sees what it would move, and moves
+nothing they didn't mean to. Is that what you're after?
 ```
 
-From your answers Rn writes the goal and the acceptance criteria on a draft pull request, and stops
-for your sign-off. `/rn:ty` approves; `/rn:gm <feedback>` asks for a change.
+You answer `yes, that's it`. rn shows:
 
-```console
-● Goal sign-off
-  The goal is on the draft pull request: https://github.com/you/app/pull/42
-  G1: A value of the wrong type fails the build. So mistakes like last quarter's three bugs
-      do not ship.
-  AC1: Code that repeats each of the three bugs fails the build.
-  AC2: The app builds and runs as before.
-  AC3: Every file of src/cart and src/checkout is TypeScript.
-  /rn:ty to approve, /rn:gm <feedback> to ask for a change.
+```text
+Plan, back from the goal:
+1. README.md: the dry run in Walkthrough, so the code is built to what the reader is told.
+2. tidy/cli.py: the option --dry-run, with its tests.
 
-> /rn:ty
+Point 1 of 1 for README.md: should the dry run list each file with the folder it would go to, or
+only a count for each folder? Each would serve. I'd list each file, as the reader checks names
+before moving anything.
 ```
 
-Where the purpose needs documents, such as an architecture for the move, Rn stops for them the same
-way. It then carries out the tasks. When you come back another day, `/rn:up` alone, in a new
-conversation, brings back the sign-off still waiting, or the next point to decide, and asks nothing
-again. Rn stops at the finished work with each choice it made without asking you, with why:
+You answer `each file`. rn makes README.md, and you close Claude Code before it goes on. The next
+day, in a new conversation, you type:
 
-```console
-● Deliverable sign-off
-  The finished work is on the pull request: https://github.com/you/app/pull/42
-  deliverable: https://github.com/you/app/blob/typescript/src/cart/bugs.test.ts,
-    https://github.com/you/app/blob/typescript/src/cart/cart.ts,
-    https://github.com/you/app/blob/typescript/src/checkout/checkout.ts
-  - The three bugs are kept as tests in src/cart/bugs.test.ts that must fail to type-check:
-    the build already runs the tests, so AC1 is checked on every build.
-  /rn:ty to approve, /rn:gm <feedback> to ask for a change.
-
-> /rn:ty
+```text
+/rn:up
 ```
 
-Last, Rn offers what the work taught, one learning per message, as a question to add to the
-intents of that kind of work in `.turn/best-practices/`, or as an issue to Rn's makers, and marks the
-pull request ready:
+rn shows:
 
-```console
-● The pull request is ready to merge: https://github.com/you/app/pull/42
+```text
+Picking up "tidy shows what it would move" at 2. tidy/cli.py, the README done.
+```
+
+Some time later, rn shows:
+
+```text
+Done: README.md and tidy/cli.py are changed, with tests/test_dry_run.py. Each was tried as its
+people would use it, and meets every question of its kind's best practice.
+
+Decided without asking you:
+- The README shows tidy --dry-run before tidy, as its reader checks first.   (README best practice)
+- --dry-run prints each move as "<file> -> <folder>", as the README shows.   (from README.md)
 ```
 
 ## How it works
 
-![How Rn works](images/how-it-works.svg)
+![The usual way and rn, with the five problems marked](images/problem.svg)
 
-The orchestrator, Rn's AI in your conversation, is the only part that talks with you. Rn's scripts
-keep the steering, the short record of the plan, on the work's branch, and take an approval only
-where Claude Code's record shows you typed it.
+1. **The AI makes the one piece you asked for, and misses the others it needs, or makes them out of
+   order.** rn lays out every piece the goal needs, and the order it needs them in, before it makes
+   any.
+2. **The AI starts from scratch, and writes what similar texts say, not what its people need.** rn
+   makes each piece by the best practice of its kind, which holds the goal its people reach, a
+   template of what it holds, and the questions they ask of it.
+3. **Its review gives many findings, few about whether the work serves its people.** A second AI,
+   the evaluator, tries each piece as its people would, and asks only those questions. rn makes the
+   piece again until it meets every question.
+4. **It asks you what it could find out, and guesses what only you know.** rn asks you one point at
+   a time, only what the purpose and the best practices leave to you. It decides the rest, and says
+   what it decided at the end.
+5. **It skips a step it kept the time before, and a new conversation starts the work over.** Lane,
+   a plugin that comes with rn, holds each step on every run. rn keeps the work in your repository,
+   so `/rn:up` picks it up where it stopped.
+
+![rn settles what the purpose or a best practice settles, and asks you the rest](images/how-asks.svg)
+
+**How does rn tell what to ask you?** A point that comes up while rn makes a piece goes to your
+conversation with rn. rn settles it there when the purpose or a best practice settles it. Otherwise
+it asks you, one point at a time, and you answer in your own words. rn then makes the piece
+again with your answer.
+
+![The evaluator gets the piece and its questions, never the design](images/how-evaluator.svg)
+
+**How can an AI judge an AI's work?** The evaluator is a fresh AI that gets only the piece and the
+questions of its kind. It never gets the design. It judges by what the piece's
+people get, not by what its maker meant. The generator, which made the piece, makes it again until
+the evaluator finds every question met.
+
+![Lane stops a step that's broken, and shows the step's own sentence](images/how-steps.svg)
+
+**How does rn keep every step, every time?** Lane watches what each part of rn does. Lane stops
+a part that breaks a step, such as by running a command the step doesn't name, and shows it the
+step's own sentence. The part then goes back to the step.
+
+![Each decision and result goes into .rn/, and /rn:up reads it in a new conversation](images/how-resume.svg)
+
+**What if the conversation ends partway?** rn writes each decision and each result into the folder
+`.rn/<date>-<goal>/` of your repository as it goes. `/rn:up` alone reads that folder and goes on
+from the next step, so you never answer a point twice.
+
+![For a kind rn has no best practice for, rn makes one first](images/how-new-kind.svg)
+
+**What if rn has no best practice for your kind of work?** rn first makes one, by its best practice
+for best practices, and keeps it in `.rn/<date>-<goal>/best-practices/`. It then makes your piece
+by it.
 
 ## Documentation
 
-- `/rn:up`, `/rn:ty` and `/rn:gm` are all there is to use.
-- [The changelog](CHANGELOG.md) says what changed in each version.
-
-## Development
-
-[Rn's development folder](../../dev/rn/README.md) holds its UX, its architecture and its tests.
+- [Lane](../lane/README.md): for one who wants to know how Lane holds each step.
+- [Changelog](CHANGELOG.md): the changes in each version.
+- [Issues](https://github.com/lovaizu/ccpm/issues): where you ask for help or report a fault.
 
 ## License
 
-[MIT License](../../LICENSE)
+[The `MIT` License](../../LICENSE)
