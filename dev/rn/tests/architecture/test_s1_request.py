@@ -7,10 +7,9 @@ from __future__ import annotations
 
 import json
 import os
-from unittest import mock
 
 import helpers
-from helpers import GOAL, RUN, repository, runs
+from helpers import GOAL, repository, runs
 
 
 class Request(helpers.FlowTest):
@@ -18,13 +17,14 @@ class Request(helpers.FlowTest):
         # Given: the user types /rn:up with what they want, and the main conversation hands it
         lines = self.begins()
         self.assertTrue(lines[-1].startswith("rn: Start `rn:planner`."), lines)
-        with mock.patch.object(runs, "today", return_value="20261108"):
-            said = self.hands({"request": "tidy dry run"})
-        self.assertIn(f"the change for {RUN} is kept", said)
+        # The run takes today's date, as tree.py change runs in a process of its own.
+        run = os.path.join(".rn", f"{runs.today()}-tidy-dry-run")
+        said = self.hands({"request": "tidy dry run"})
+        self.assertIn(f"the change for {run} is kept", said)
         # When: the main conversation starts the planner with its cut, which drafts the goal,
         # writes it, and commits
         planner, values = self.cut_and_start("planner")
-        self.assertEqual(values["run"], RUN)
+        self.assertEqual(values["run"], run)
         printed = self.plans(
             planner,
             values,
@@ -37,23 +37,20 @@ class Request(helpers.FlowTest):
         self.gives(planner, "asks")
         # Then: the run ends, the goal committed on the work's branch
         self.assertEqual(self.ends(planner), ["rn: planner gave `asks`. Start no more subagents."])
+        self.assertEqual(repository.ran("git", "branch", "--show-current"), repository.branch(run))
         self.assertEqual(
-            repository.ran("git", "branch", "--show-current"), "rn/20261108-tidy-dry-run"
-        )
-        self.assertEqual(
-            json.loads(repository.committed(RUN, runs.tree_path(RUN)) or "{}")["goal"]["by"],
+            json.loads(repository.committed(run, runs.tree_path(run)) or "{}")["goal"]["by"],
             "maker",
         )
         # And: the main conversation reads the goal to confirm, which it puts to the user
         self.assertEqual(
-            self.main_runs("points"), f"Run: {RUN}\nThe goal, to confirm, at goal: {GOAL}\n"
+            self.main_runs("points"), f"Run: {run}\nThe goal, to confirm, at goal: {GOAL}\n"
         )
         self.assertTrue(self.claude.end_turn().made)
 
     def test_a_start_with_other_text_than_the_cut_is_stopped(self):
         self.begins()
-        with mock.patch.object(runs, "today", return_value="20261108"):
-            self.hands({"request": "tidy dry run"})
+        self.hands({"request": "tidy dry run"})
         printed = self.main_runs("start", "planner")
         told = self.claude.start(None, self.new("planner"), printed + "\nAnd make the README too.")
         self.assertFalse(told.made)
@@ -61,11 +58,13 @@ class Request(helpers.FlowTest):
 
     def test_the_planner_writes_nothing_but_its_edit(self):
         self.begins()
-        with mock.patch.object(runs, "today", return_value="20261108"):
-            self.hands({"request": "tidy dry run"})
+        self.hands({"request": "tidy dry run"})
         planner, _ = self.cut_and_start("planner")
         told = self.does(
-            planner, "Write", file_path=os.path.join(self.repo, runs.tree_path(RUN)), content="{}"
+            planner,
+            "Write",
+            file_path=os.path.join(self.repo, runs.tree_path(".rn/x")),
+            content="{}",
         )
         self.assertFalse(told.made)
         self.assertIn("Write only", told.reason())
