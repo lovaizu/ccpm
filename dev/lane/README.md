@@ -1,8 +1,7 @@
 # lane
 
 What lane must give its users is in [its product vision](product-vision.md). How lane is
-built to give it, and how it is checked, is in [architecture.md](architecture.md). Every decision
-of both lies in [design-tree.md](design-tree.md).
+built to give it, and how it is checked, is in [architecture.md](architecture.md).
 
 - Tests: run `python3 -m unittest discover -s dev/lane/tests` from the repository root. They lie
   in `tests/unit/`, at the path of what each tests, and `tests/architecture/`, a file for each

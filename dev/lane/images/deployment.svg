@@ -60,7 +60,7 @@
   <rect class="unit" x="340" y="180" width="380" height="120" rx="6"/>
   <text class="name start" x="354" y="206" text-anchor="start">lay.py process</text>
   <text class="kind start" x="354" y="224" text-anchor="start">[python3 3.9 or later]</text>
-  <text class="label start" x="354" y="248" text-anchor="start">lay.py, proposal.py, lanes/, routes.py, ports.py</text>
+  <text class="label start" x="354" y="248" text-anchor="start">lay.py, proposal.py, lanes/, step.py, routes.py, ports.py</text>
   <rect class="unit" x="340" y="350" width="380" height="100" rx="6"/>
   <text class="name start" x="354" y="376" text-anchor="start">adapter process</text>
   <text class="kind start" x="354" y="394" text-anchor="start">[python3]</text>
@@ -73,7 +73,7 @@
   <text class="name start" x="394" y="526" text-anchor="start">the plugin&#x27;s folder</text>
   <text class="kind start" x="394" y="544" text-anchor="start">[Claude Code plugin]</text>
   <text class="label start" x="394" y="568" text-anchor="start">Lane&#x27;s code, as a link or a copy</text>
-  <text class="data start" x="394" y="586" text-anchor="start">Steps&#x27; file, Step, Hook entry,</text>
+  <text class="data start" x="394" y="586" text-anchor="start">Role, Part, Step, Hook entry,</text>
   <text class="data start" x="394" y="604" text-anchor="start">Rules laid, Adapter, Test cases</text>
   <rect class="ext" x="820" y="180" width="220" height="64" rx="4"/>
   <text class="name" x="930.0" y="208" text-anchor="middle">Claude Code</text>
@@ -81,7 +81,7 @@
   <rect class="unit" x="1160" y="180" width="360" height="150" rx="6"/>
   <text class="name start" x="1174" y="206" text-anchor="start">hook process</text>
   <text class="kind start" x="1174" y="224" text-anchor="start">[python3 3.9 or later · one for each event]</text>
-  <text class="label start" x="1174" y="248" text-anchor="start">hook.py, guard.py, lanes/,</text>
+  <text class="label start" x="1174" y="248" text-anchor="start">hook.py, guard.py, lanes/, step.py,</text>
   <text class="label start" x="1174" y="266" text-anchor="start">called.py, routes.py, ports.py</text>
   <rect class="unit" x="1160" y="370" width="360" height="90" rx="6"/>
   <text class="name start" x="1174" y="396" text-anchor="start">adapter process</text>
@@ -95,12 +95,13 @@
   <text class="name start" x="834" y="566" text-anchor="start">temporary folder</text>
   <text class="kind start" x="834" y="584" text-anchor="start">[the system&#x27;s]</text>
   <text class="data start" x="834" y="608" text-anchor="start">Run, Start, Kept call,</text>
-  <text class="data start" x="834" y="626" text-anchor="start">Start value, Result</text>
+  <text class="data start" x="834" y="626" text-anchor="start">Start value, Result, Given text,</text>
+  <text class="data start" x="834" y="644" text-anchor="start">Person&#x27;s words</text>
   <rect class="unit" x="1160" y="500" width="360" height="160" rx="6"/>
   <text class="name start" x="1174" y="526" text-anchor="start">the installed plugin</text>
   <text class="kind start" x="1174" y="544" text-anchor="start">[Claude Code plugin folder]</text>
   <text class="label start" x="1174" y="568" text-anchor="start">Lane&#x27;s code</text>
-  <text class="data start" x="1174" y="586" text-anchor="start">Steps&#x27; file, Step, Hook entry,</text>
+  <text class="data start" x="1174" y="586" text-anchor="start">Role, Part, Step, Hook entry,</text>
   <text class="data start" x="1174" y="604" text-anchor="start">Rules laid, Adapter, Test cases</text>
   <path class="line" d="M640,84 L640,110 L180,110 L180,180" marker-end="url(#arrow)"/>
   <text class="label small halo" x="188" y="104" text-anchor="start">installs Lane [claude plugin install]</text>
