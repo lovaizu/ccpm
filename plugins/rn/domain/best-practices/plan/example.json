@@ -369,70 +369,7 @@
       "name": "rn's product vision says what rn is for",
       "path": "dev/rn/product-vision.md",
       "kind": "product-vision",
-      "inputs": [],
-      "preconditions": [],
-      "status": "open",
-      "intents": [
-        {
-          "id": "Q1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The plugins",
-              "decided": "rn and Lane; Turn is a part of rn; Pin is no plugin of its own; Lane stays apart with its own product vision, dev/lane/product-vision.md, as other plugins use it",
-              "by": "user"
-            },
-            {
-              "about": "Roles",
-              "decided": "the user: one who asks rn for a deliverable, such as a document, code or a plugin, for the people it is for",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "Q2",
-          "good": false,
-          "decisions": [
-            {
-              "about": "O1",
-              "decided": "the user has each deliverable they mean made, with which the people it is for achieve what they are after, and is asked only what is theirs",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "Q3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "Q4",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Key results",
-              "decided": "KR1.1 the share of deliverables handed over that the people they are for could not use for what they are after; KR1.2 the share of the points rn asks whose answer the purpose or a best practice settles; KR1.3 the time from the request to the deliverable, the user's time answering included; each lower or shorter is better, and they weigh in that order",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "Q5",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Concept",
-              "decided": "against asking an AI in one prompt, reading its draft and fixing it, in five ideas the user sees: planned back from the goal, so no deliverable is missing or out of order; made from its kind's best practice; checked as it is used, by whether its people get what they are after, not by rules; the user asked one point at a time, only what is theirs, the rest decided and explained at the end; every step kept on every run, and the work picked up where it stopped",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "Q6",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "A newcomer learns from the README what rn does",
@@ -511,6 +448,11 @@
           "id": "Q1",
           "good": false,
           "decisions": [
+            {
+              "about": "The plugins",
+              "decided": "rn and Lane; Turn is a part of rn; Pin is no plugin of its own; Lane stays apart with its own product vision, as other plugins use it",
+              "by": "user"
+            },
             {
               "about": "Where the design is settled",
               "decided": "in the main conversation, one point at a time, talked through with the user",
