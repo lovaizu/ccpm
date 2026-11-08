@@ -135,7 +135,7 @@
           "decisions": [
             {
               "about": "A role whose steps come from its best practice",
-              "decided": "The template's proposal gives its sample role only a steps adapter and no lanes on steps of its part, as Lane's architecture lays the lanes of an adapter's steps",
+              "decided": "The template's proposal gives its sample role only a steps adapter and no lanes on steps of its part",
               "by": "reasoning"
             }
           ]
@@ -253,76 +253,7 @@
       "name": "The user reaches their goal through the plan's deliverables, which leave nothing out and start nothing too early",
       "path": "plugins/rn/domain/best-practices/plan",
       "kind": "meta",
-      "inputs": [],
-      "preconditions": ["plugins/rn/domain/best-practices/meta"],
-      "status": "doing",
-      "intents": [
-        {"id": "Q1", "good": true, "decisions": []},
-        {"id": "Q2", "good": true, "decisions": []},
-        {"id": "Q3", "good": true, "decisions": []},
-        {"id": "Q4", "good": true, "decisions": []},
-        {"id": "Q5", "good": true, "decisions": []},
-        {"id": "Q6", "good": true, "decisions": []},
-        {"id": "Q7", "good": true, "decisions": []},
-        {
-          "id": "Q8",
-          "good": true,
-          "decisions": [
-            {
-              "about": "The size of a deliverable",
-              "decided": "Q2's practices size each deliverable so that one maker makes it whole and one reader reads it whole. A larger work splits by the parts its architecture names, each after the parts it takes from, and a deliverable of the whole comes after them",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "Q9",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The example's statuses and decisions",
-              "decided": "The example, a copy of this tree, shows a deliverable doing only once each of its preconditions has the status done, and each decision without its grounds",
-              "by": "reasoning"
-            },
-            {
-              "about": "Slots this tree doesn't use",
-              "decided": "The template's note on each slot this tree leaves unused, such as a research deliverable and a decision by maker, shows that slot filled in one short instance",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "Q10",
-          "good": false,
-          "decisions": [
-            {
-              "about": "A status against its preconditions",
-              "decided": "Q5's practices start a deliverable only once each of its preconditions has the status done",
-              "by": "reasoning"
-            },
-            {
-              "about": "An example from a later deliverable",
-              "decided": "A best practice whose example copies a later deliverable counts as done for what comes after it once every other intent is good, and the plan names the deliverable its example waits on",
-              "by": "reasoning"
-            },
-            {
-              "about": "What a precondition is",
-              "decided": "A deliverable's preconditions name each deliverable whose result it needs passed before it starts, a deliverable of each kind its best practice names in preconditions among them where the work holds one",
-              "by": "reasoning"
-            },
-            {
-              "about": "The check of a status",
-              "decided": "tree.py check fails a deliverable doing or done while a precondition has another status, except a best practice that waits only on its example, with a test that fails before the check exists",
-              "by": "reasoning"
-            },
-            {
-              "about": "The best practice a deliverable follows",
-              "decided": "Each deliverable that isn't done names as a precondition the meta deliverable of its own kind's best practice where the plan holds one, and tree.py check fails one that leaves it out",
-              "by": "reasoning"
-            }
-          ]
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "This plan holds every deliverable the goal needs, each after what it stands on",
