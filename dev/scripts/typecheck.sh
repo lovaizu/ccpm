@@ -1,14 +1,17 @@
 #!/bin/sh
-# The type check of one plugin, as `sh dev/scripts/typecheck.sh <plugin>`, for dev/scripts/check.sh and the test
-# command of the plugin's cosmic-ray.toml, run from the top of the repository. Each plugin keeps its
-# tests in dev/<plugin>/tests/, as Q1 of plugins/rn/domain/best-practices/plugin/best-practice.md
-# says, and its scripts find their modules by putting their own folders on sys.path. Plugins share
-# module names, such as stop, so the check takes each on its own with its folders as search paths,
-# and dev/lane/ and dev/lane/trials/, which keep testing.py and trying.py, what every plugin's tests
-# and trials share. What the plugins' hooks share is lane's, reached through a link in each plugin's
-# own folder. The check takes a folder of lane's code linked whole, as rn's hooks/lane/, in lane
-# alone, as git lists the link and not the files in it: read through that link, lane's modules meet the plugin's of the same
-# names, such as call, and the check fails.
+# The type check of one plugin, run from the top of the repository as
+# `sh dev/scripts/typecheck.sh <plugin>`, for dev/scripts/check.sh and the test command of the
+# plugin's cosmic-ray.toml.
+# - Each plugin keeps its tests in dev/<plugin>/tests/, as Q1 of
+#   plugins/rn/domain/best-practices/plugin/best-practice.md says, and its scripts find their modules
+#   by putting their own folders on sys.path.
+# - Plugins share module names, such as stop, so the check takes each plugin on its own. Its search
+#   paths are the plugin's folders, plus dev/lane/ and dev/lane/trials/, which keep testing.py and
+#   trying.py for every plugin's tests and trials.
+# - The plugins' hooks share lane's code through a link in each plugin's folder. Where that link is a
+#   whole folder, such as rn's hooks/lane/, the check reads the code only in lane. git lists the link
+#   and not the files in it, and lane's modules read through the link would clash with the plugin's
+#   modules of the same names, such as call.
 set -e
 
 plugin=$1

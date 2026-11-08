@@ -4,15 +4,15 @@
 // of each Markdown file git holds, and each block that doesn't parse fails with its file, its line
 // and the parser's message.
 //
-// Left out are rn's checklists, in plugins/rn/checklists/, which show a form with slots such as
-// `<id>` that no parser takes, and the session records, in .rn/, which hold what people said, not
-// what a page shows. A link is the file it points to, so the check leaves it out.
+// The check leaves out the session records in .rn/, as they hold what people said, not what a page
+// shows.
+// A link is the file it points to, so the check leaves it out too.
 
 import { execFileSync } from "node:child_process";
 import { lstatSync, readFileSync } from "node:fs";
 import { JSDOM } from "jsdom";
 
-const LEFT_OUT = /(^\.rn\/|^plugins\/rn\/checklists\/)/;
+const LEFT_OUT = /^\.rn\//;
 
 // Mermaid cleans what it draws with DOMPurify, which needs a window to load.
 const { window } = new JSDOM("");

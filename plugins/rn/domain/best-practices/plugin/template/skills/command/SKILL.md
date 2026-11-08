@@ -4,14 +4,15 @@ description: <What a run gives the person>. Use when the person types /<plugin>:
 argument-hint: "<the request, in the person's words>"
 ---
 
-You're `<plugin>`'s orchestrator in this conversation, for the request "$ARGUMENTS". `<Plugin>`'s folder is `${CLAUDE_PLUGIN_ROOT}`. Your part is in `${CLAUDE_PLUGIN_ROOT}/domain/<command>.md`: read it whole first, and then take it on the request.
+You're `<plugin>`'s orchestrator in this conversation, for the request "$ARGUMENTS". `<Plugin>`'s folder is `${CLAUDE_PLUGIN_ROOT}`. Your part is in `${CLAUDE_PLUGIN_ROOT}/domain/<command>.md`: read it whole first, and then carry it out for the request.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - `<command>`: the skill's name, as the person types it after `/<plugin>:`.
 > - `<What a run gives the person>`, `<do what>`: what the person gets, and the words they would ask
->   it in, as Claude Code picks a skill by them.
-> - `disable-model-invocation: true` in the frontmatter, where the skill approves what's the
->   caller's, such as a merge, so that only the caller's own act starts it.
-> - The body: the part, `domain/<command>.md`, in the form of `domain/role.md`, read whole by the
->   main conversation, as a part a skill names comes back whole after `/compact`.
+>   for it in. Claude Code picks a skill by them.
+> - `disable-model-invocation: true`: add it to the frontmatter when the skill approves something
+>   that's the caller's to decide, such as a merge. Then only the caller can start the skill.
+> - The body: it points to the part, `domain/<command>.md`, written in the form of `domain/role.md`.
+>   The main conversation reads the part whole. A part that a skill names comes back whole after
+>   `/compact`.

@@ -85,17 +85,17 @@ At the end, you have `<result>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - The first figure: the deliverable's own at images/problem.svg, the product named in its alt
->   text, in the form that shows the problem gone at a glance, such as the skeleton here: the way
->   the reader would do the work without the product on top and the product under it, the problem
->   left in the one and gone in the other.
+> - The first figure: the deliverable's own, at images/problem.svg, with the product named in its
+>   alt text. It lets the reader see at a glance that the problem goes away. The skeleton here is one such form: the
+>   way the reader would do the work without the product on top, and the product below it, with the
+>   problem left in the one and gone in the other.
 > - `<problem>`, `<how it goes away>`: each problem the reader feels in the work, in their words,
 >   and what the product does that makes it go away, in a sentence or two, so that the reader
 >   pictures their own problem gone. A numbered list, each item's number the one the figure marks
 >   it with, so the reader finds it on the figure.
-> - The second figure: one for each doubt, each followed by its line, the deliverable's own at
->   images/how-<name>.svg, the product named in its alt text, in the form that shows at a glance
->   how the product does the doubted thing, such as the skeleton here: the user, the product's
+> - The second figure: one for each doubt, followed by its paragraph. Each is the deliverable's own,
+>   at images/how-<name>.svg, with the product named in its alt text. It shows at a glance how the
+>   product does the doubted thing. The skeleton here is one such form: the user, the product's
 >   parts and what they pass, with the lines that do it marked. One figure for several doubts shows
 >   none of them at a glance.
 > - `<doubt>`, `<how it does it>`: each point where a newcomer would ask whether the product can

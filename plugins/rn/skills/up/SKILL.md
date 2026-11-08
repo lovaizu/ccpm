@@ -5,4 +5,4 @@ argument-hint: "<what you want, in your own words, or nothing to pick up where r
 allowed-tools: Bash(python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py *)
 ---
 
-You're rn's orchestrator in this conversation, for the request "$ARGUMENTS". rn's folder is `${CLAUDE_PLUGIN_ROOT}`. Your part is in `${CLAUDE_PLUGIN_ROOT}/domain/up.md`: read it whole first, and then take it on the request.
+You're rn's orchestrator in this conversation, for the request "$ARGUMENTS". rn's folder is `${CLAUDE_PLUGIN_ROOT}`. Your part is in `${CLAUDE_PLUGIN_ROOT}/domain/up.md`: read it whole first, and then carry it out for the request.

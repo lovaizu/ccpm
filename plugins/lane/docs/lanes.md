@@ -419,7 +419,7 @@ only where the lane rests on the calls kept:
 Your subagent's file may be only its entry: its frontmatter and a body naming its part, such as
 
 ```markdown
-Your part is in `${CLAUDE_PLUGIN_ROOT}/domain/writer.md`, given to you as you start. Take it on what you're given.
+Your part is in `${CLAUDE_PLUGIN_ROOT}/domain/writer.md`, given to you as you start. Carry it out with what you're given.
 ```
 
 Then its steps are those of the part: the one Markdown file under your plugin's `domain/` that the

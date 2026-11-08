@@ -10,7 +10,7 @@
   "additionalProperties": false,
   "properties": {
     "result": {
-      "description": "The fixed word the role gives as it ends, by running python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py <role> <result>, such as asks for a point to the person and done, as the routes go on by the word and never by what the role writes.",
+      "description": "The fixed word the role gives as it ends, by running python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py <role> <result>, such as asks for a point to the person and done. The routes go on by this word, never by what the role writes.",
       "enum": [
         "<result>"
       ]
@@ -68,7 +68,7 @@
                 "type": "string"
               },
               "lacks": {
-                "description": "What the work's user still lacks, in their terms, never how to make it, as the maker holds the sources and mends the work its own way.",
+                "description": "What the work's user still lacks, in their terms, never how to make it, because the maker holds the sources and mends the work in its own way.",
                 "type": "string"
               }
             }

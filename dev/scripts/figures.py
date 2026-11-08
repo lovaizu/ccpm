@@ -1,8 +1,9 @@
-"""Every figure's style kept once, in dev/images/figures.css, run as `python3 dev/scripts/figures.py
-write|check` from the top of the repository. A page shows a figure by `<img>`, which reads no file
-beside it, so each SVG git holds carries a copy of the style in its own `<style>`: `write` puts the
-copy in each, and `check`, run by dev/scripts/check.sh, fails on any figure whose copy lags
-behind."""
+"""Keeps every figure's style in one place, dev/images/figures.css. Run it from the top of the
+repository as `python3 dev/scripts/figures.py write|check`.
+
+A page shows a figure through `<img>`, which reads no other file, so each SVG that git holds carries
+a copy of the style in its own `<style>`. `write` puts the copy in each figure. `check`, which
+dev/scripts/check.sh runs, fails on any figure whose copy lags behind."""
 
 from __future__ import annotations
 

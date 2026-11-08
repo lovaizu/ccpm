@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "<role>'s in",
-  "description": "What the main conversation gives the role <role>: its run values as it starts, and the person's answer as it resumes it. The role's part names this file, and the guard holds the role's calls to the run values.",
+  "description": "What the main conversation gives the role <role>: its run values as it starts, and the person's answer as it resumes it. The role's part names this file, and the guard limits the role's calls to the run values.",
   "type": "object",
   "required": [
     "start"
@@ -9,7 +9,7 @@
   "additionalProperties": false,
   "properties": {
     "start": {
-      "description": "The run values, one JSON object on the first line of the prompt that starts the role, each a value the guard holds its calls to, such as the path of the file it writes. The rest of the prompt, where there is any, holds the request as given.",
+      "description": "The run values, one JSON object on the first line of the prompt that starts the role, each one a value that the guard limits the role's calls to, such as the path of the file it writes. The rest of the prompt, where there is any, holds the request as given.",
       "type": "object",
       "required": [
         "<value>"
@@ -23,7 +23,7 @@
       }
     },
     "resume": {
-      "description": "The message by which the main conversation resumes the role with SendMessage, for a role that ends with a point for the person: its first line, then the person's answer as they wrote it, as a summed-up answer loses what the person meant.",
+      "description": "The message by which the main conversation resumes the role with SendMessage, for a role that ends with a point for the person: its first line, then the person's answer as they wrote it, because a summary loses what the person meant.",
       "type": "string",
       "pattern": "^The person's answer, word for word:\\n"
     }

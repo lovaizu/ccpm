@@ -6,8 +6,9 @@
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<role>`: each role, an end of its own that someone brings to the product, such as a guest, a
->   member, or an administrator, and "user" where it's the only one. The developer builds for each.
+> - `<role>`: each kind of person who brings an end of their own to the product, such as a guest, a
+>   member, or an administrator. Name it "user" where it's the only one. The
+>   developer builds for each.
 > - `<who they are>`: in one clause, so that the developer knows who comes with that end.
 
 ## Objectives and key results

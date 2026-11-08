@@ -7,8 +7,8 @@ You `<do what>`. You're done when `<what holds at the end>`.
 > - `<role>`: the role's name, as its entry gives it.
 > - `<do what>`, `<what holds at the end>`: what the role has to do, and what a machine
 >   can see once it's done, such as a check that gives 0, so the role knows when to end.
-> - The part holds no steps of the work: the practices of the best practice below are its steps,
->   which the guard holds one by one, as steps copied here drift from them.
+> - The part holds no steps of the work. The practices of the best practice below are its steps,
+>   and the guard holds the role to them one by one. Steps copied here would drift from them.
 
 ## What you're given
 
@@ -21,7 +21,7 @@ holds the person's answer to your last point.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<value>`: each run value, such as the path of the file the role writes, as the guard holds the
+> - `<value>`: each run value, such as the path of the file the role writes. The guard limits the
 >   role's calls to these values.
 > - The second paragraph: only for a role that ends with a point for the person.
 
@@ -31,14 +31,15 @@ holds the person's answer to your last point.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT: `<best practice>`, `<intents>`: the path of the best practice the role
-> works by, and the intents whose practices it carries out, such as Q1 to Q4, so that the role
-> takes each practice as a step of its work.
+> works by, and the intents whose practices it carries out, such as Q1 to Q4. The role takes each
+> of those practices as a step of its work.
 
 ## What you give
 
-End by giving one of `<results>` by its command, as `${CLAUDE_PLUGIN_ROOT}/domain/<role>-out.schema.json`
-gives each. `<when each>`.
+End by giving one of `<results>` with its command, which `${CLAUDE_PLUGIN_ROOT}/domain/<role>-out.schema.json`
+gives. `<when each>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT: `<results>`, `<when each>`: each fixed word the role ends with, such as
-> `asks` for a point to the person and `done`, and when it gives each, as the routes go on by it.
+> `asks` for a point to the person and `done`, and when it gives each. The routes choose what
+> comes next by this word.

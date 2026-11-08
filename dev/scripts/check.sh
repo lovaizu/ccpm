@@ -35,19 +35,21 @@ done
 pyrefly check --search-path dev/lane --search-path dev/scripts --search-path dev/scripts/tests \
   --search-path plugins/rn/domain dev/scripts/*.py dev/scripts/tests/*.py
 
-# The check finds in each best practice the faults its form shows, its Markdown, made from its JSON
-# for a person to read, left behind it, and its example, where it's a copy of a document of the
-# repository, left behind that document, as each says what rn doesn't hold. It also finds each file
-# in its folder that none of them holds, such as a figure the document dropped, left over. Each
-# kind's best practice lies in its own folder of rn's as `best-practice.json`. Its template and its
-# example lie beside it.
-# An example in JSON holds to its template where that's a JSON Schema.
+# Each kind's best practice lies in a folder of its own in rn, as `best-practice.json`. Its template
+# and its example lie beside it. The check fails on:
+# - a fault in a best practice's form
+# - a best practice's Markdown that lags behind its JSON, from which practices.py makes it for a
+#   person to read
+# - an example that copies a document of the repository and lags behind that document
+# - an example in JSON that breaks its template, where the template is a JSON Schema
+# - a file in the folder that none of them uses, such as a figure that the document dropped
+# Each of these would make the folder say what rn doesn't hold.
 python3 dev/scripts/practices.py form plugins/rn/domain/best-practices/*/best-practice.json
 
-# Each run's design tree, where the work's documents take their decisions from, as step 1 of
-# .claude/rules/dev.md says, holds its form and the plan best practice's order, by rn's own check of it: a deliverable
-# before what it takes from, or a kind with no best practice, fails here, not in a document made
-# from the tree.
+# Each run's design tree is where the work's documents take their decisions from, as step 1 of
+# .claude/rules/dev.md says. rn's own check holds the tree to its form and to the order of the plan
+# best practice. So a deliverable placed before what it takes from, or a kind with no best practice,
+# fails here and not later in a document made from the tree.
 for design in .rn/*/design-tree.json; do
   if [ -f "$design" ]; then
     python3 plugins/rn/scripts/tree.py check "$design"
@@ -62,14 +64,14 @@ python3 dev/scripts/figures.py check
 # the page, so Mermaid's own parser parses each.
 sh dev/scripts/mermaid.sh
 
-# The unit and architecture tests, `test*.py`, unittest's own pattern, run by pytest as
-# pyproject.toml sets it, at once on each processor by pytest-xdist. dev/scripts/properties.sh runs
-# apart the property-based tests, whose inputs change from run to run. Each plugin's run is a
+# The unit and architecture tests, `test*.py` as unittest names them, run by pytest as
+# pyproject.toml sets it, on every processor at once through pytest-xdist. The property-based tests,
+# whose inputs change from run to run, run apart in dev/scripts/properties.sh. Each plugin runs in a
 # process of its own, as each puts its own `helpers` and code on sys.path.
 if [ -n "$reached" ]; then
-  # Only the tests whose code the change reaches, which pytest-testmon chooses by the code each test
-  # ran when it last ran, kept in the file TESTMON_DATAFILE names, else in .testmondata. A selection
-  # runs only some lines, so this run counts none. CI counts them.
+  # Only the tests whose code the change reaches. pytest-testmon chooses them by the code that each
+  # test ran last time, kept in the file that TESTMON_DATAFILE names, or else in .testmondata. A
+  # selection runs only some lines, so this run counts no coverage. CI counts it.
   if python -c 'import testmon' 2>/dev/null; then
     choose=--testmon
   else
@@ -81,8 +83,8 @@ if [ -n "$reached" ]; then
     pytest -q -n auto $choose "dev/$plugin/tests"
   done
 else
-  # Every test, with the lines and branches each plugin's tests run counted, those of the processes
-  # they start among them, as .coveragerc sets.
+  # Every test, counting the lines and branches that each plugin's tests run, including those of the
+  # processes they start, as .coveragerc sets.
   for plugin in $plugins; do
     coverage run --source="plugins/$plugin" -m pytest -q -n auto "dev/$plugin/tests"
   done
@@ -90,8 +92,8 @@ else
   coverage report
 fi
 
-# The tests of the checks themselves, such as pre-push.sh's and mermaid.sh's, on every run, as they're
-# few and quick, whichever plugins the run gets. What they test is shell, which coverage doesn't
+# The tests of the checks themselves, such as those of pre-push.sh and mermaid.sh, run every time,
+# whichever plugins the run gets, as they're few and quick. They test shell, which coverage doesn't
 # count.
 pytest -q -n auto dev/scripts/tests
 

@@ -10,5 +10,5 @@
 > DELETE_TEMPLATE_COMMENT:
 > - The form of [Keep a Changelog](https://keepachangelog.com): a heading for each release by its
 >   version, and `Added`, `Changed`, `Fixed` or `Removed` under it.
-> - `<What a user can now do>`, `<what it gives them>`: each change a user notices, one line each,
->   with why it helps them, as the user reads the list to decide whether to update.
+> - `<What a user can now do>`, `<what it gives them>`: each change that a user notices, on a line
+>   of its own, with how it helps them. The user reads the list to decide whether to update.
