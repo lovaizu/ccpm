@@ -14,7 +14,7 @@ USAGE = "usage: python3 ${CLAUDE_PLUGIN_ROOT}/scripts/<command>.py <args>"
 
 
 def main(argv: list[str]) -> int:
-    """Runs the command on its arguments, and gives 0, 1 or 2 as the module says."""
+    """Runs the command on its arguments, and gives the exit code that the module names."""
     if not argv:
         print(USAGE, file=sys.stderr)
         return 2
