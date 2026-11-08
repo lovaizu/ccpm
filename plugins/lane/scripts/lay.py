@@ -54,9 +54,11 @@ class _Part(NamedTuple):
 def main(argv: list[str], out: IO[str], err: IO[str], lane: str) -> int:
     """Runs the command in argv with Lane at the folder given, and gives the exit code. It writes
     what it shows to out, and what's wrong to err."""
-    if len(argv) != 3 or argv[1] not in ("print", "write"):
+    if len(argv) != 3 or argv[1] not in ("print", "write", "up"):
         err.write(USAGE + "\n")
         return 2
+    if argv[1] == "up":
+        return _up(os.path.abspath(argv[2]), out, err, lane)
     try:
         checked = proposal.checked(argv[2])
     except proposal.Refused as refused:
@@ -221,10 +223,7 @@ def _write(checked: proposal.Checked, out: IO[str], err: IO[str], lane: str) -> 
     hooks = os.path.join(root, "hooks")
     os.makedirs(hooks, exist_ok=True)
     _save(os.path.join(hooks, "lanes.json"), checked.laid.data)
-    names = [r.name for r in checked.laid.roles]
-    if checked.laid.routes is not None:
-        names += routes.named(checked.laid.routes)
-    held = tuple(dict.fromkeys(routes.typed(checked.manifest.name, n) for n in names))
+    held = _held(checked.manifest.name, checked.laid)
     existing = _json(os.path.join(hooks, "hooks.json"))
     _save(os.path.join(hooks, "hooks.json"), entries.merged(existing, checked.manifest.name, held))
     for path, adapter in checked.adapters.items():
@@ -266,6 +265,88 @@ def _write(checked: proposal.Checked, out: IO[str], err: IO[str], lane: str) -> 
     shutil.rmtree(folder)
     out.write(f"claude plugin validate passed it, so lay.py removed {folder}.\n")
     return 0
+
+
+def _held(name: str, found: laid.Laid) -> tuple[str, ...]:
+    """The agent type of each role that the guard holds: each role with lanes or named by the
+    routes."""
+    names = [r.name for r in found.roles]
+    if found.routes is not None:
+        names += routes.named(found.routes)
+    return tuple(dict.fromkeys(routes.typed(name, n) for n in names))
+
+
+def _up(root: str, out: IO[str], err: IO[str], lane: str) -> int:
+    """Brings the plugin's copy of Lane's code, its hook entries, and the sentences in its steps to
+    this version of Lane, and shows each lane laid. It gives the exit code."""
+    try:
+        manifest = plugin.manifest(root)
+        found = laid.read(root)
+    except (plugin.Fault, laid.Unlaid) as why:
+        err.write(f"lay.py: {why}\n")
+        return 1
+    current = lane_code.version(lane)
+    done = []
+    code = lane_code.state(root)
+    if code is not None and code.kind == "link":
+        done.append("hooks/lane is a link to Lane's code")
+    elif code is None or lane_code.older(code.version, current):
+        lane_code.lay(lane, root)
+        done.append(f"hooks/lane, a copy of Lane's code at {current}")
+    else:
+        done.append(f"hooks/lane is Lane's code at {code.version} already")
+    path = os.path.join(root, "hooks", "hooks.json")
+    existing = _json(path)
+    if not entries.current(existing, manifest.name, _held(manifest.name, found)):
+        _save(path, entries.merged(existing, manifest.name, _held(manifest.name, found)))
+        done.append("hooks/hooks.json in Lane's current form")
+    shown = []
+    for name, part in _parts_laid(root, found):
+        said = laid.sentences(found, name, part.steps)
+        pairs = [
+            (e, lanes.sentence(s.lane, s.takes))
+            for s in said
+            for e in lanes.earlier(s.lane, s.takes)
+        ]
+        text = sentences.reworded(part.text, part.steps, pairs)
+        if text != part.text:
+            with open(part.path, "w", encoding="utf-8") as f:
+                f.write(text)
+            done.append(
+                f"{os.path.relpath(part.path, root)}, the sentences in Lane's current wording"
+            )
+        steps = {s.number: s.says for s in step.numbered(text)}
+        for each in said:
+            if each.lane in ("follow_routes", "end_by"):
+                continue
+            line = f"- {name}, step {each.step}: {lanes.sentence(each.lane, each.takes)}"
+            if each.step is not None and lanes.sentence(each.lane, each.takes) not in steps.get(
+                each.step, ""
+            ):
+                line += " Its step no longer says it."
+            shown.append(line)
+    out.write(f"{manifest.name}: lay.py up brought {root} to Lane {current}:\n")
+    out.write("".join(f"- {d}\n" for d in done))
+    out.write("lanes laid:\n" + "".join(f"{s}\n" for s in shown))
+    return 0
+
+
+def _parts_laid(root: str, found: laid.Laid) -> list[tuple[str, step.Part]]:
+    """The skill that the routes name, then each role with lanes or named by the routes, each with
+    its part, where Lane can read it."""
+    names = [found.routes.orchestrator] if found.routes is not None else []
+    names += [r.name for r in found.roles]
+    if found.routes is not None:
+        names += [n for n in routes.named(found.routes) if ":" not in n]
+    parts = []
+    for name in dict.fromkeys(names):
+        skill = found.routes is not None and name == found.routes.orchestrator
+        try:
+            entry = plugin.skill(root, name) if skill else plugin.subagent(root, name)
+            parts.append((name, step.part(root, entry)))
+        except plugin.Fault:
+            continue
+    return parts
 
 
 def _json(path: str) -> dict | None:

@@ -59,6 +59,12 @@ class TestReworded(testing.FolderTest):
             "1. Do. New. Then.\n",
         )
 
+    def test_a_current_sentence_that_an_earlier_one_begins_is_left_as_it_is(self):
+        text = "1. Do. End. Then more.\n"
+        self.assertEqual(
+            sentences.reworded(text, step.numbered(text), [("End.", "End. Then more.")]), text
+        )
+
     def test_words_outside_the_steps_are_left_as_they_were(self):
         text = "Old.\n\n1. Do.\n"
         self.assertEqual(sentences.reworded(text, step.numbered(text), [("Old.", "New.")]), text)

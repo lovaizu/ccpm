@@ -405,3 +405,114 @@ class TestUsage(LayTest):
 
     def test_an_unknown_command_shows_how_to_run_it_and_exits_2(self):
         self.assertEqual(self.lay("show", self.path)[0], 2)
+
+
+class TestUp(LayTest):
+    def setUp(self):
+        super().setUp()
+        self.propose(routes=helpers.ROUTES)
+        self.lay("write", self.path)
+        self.version = lay.lane_code.version(helpers.LANE)
+
+    def test_a_folder_with_no_manifest_brings_nothing_up(self):
+        code, _, err = self.lay("up", os.path.join(self.base, "nowhere"))
+        self.assertEqual(
+            (code, err),
+            (
+                1,
+                (
+                    f"lay.py: {os.path.join(self.base, 'nowhere')} holds no"
+                    " .claude-plugin/plugin.json\n"
+                ),
+            ),
+        )
+
+    def test_a_plugin_with_no_lanes_laid_brings_nothing_up(self):
+        os.remove(os.path.join(self.root, "hooks", "lanes.json"))
+        code, _, err = self.lay("up", self.root)
+        self.assertEqual((code, err), (1, f"lay.py: {self.root} holds no hooks/lanes.json\n"))
+
+    def test_a_copy_of_an_older_lane_is_laid_anew(self):
+        helpers.write(os.path.join(self.root, "hooks", "lane", "VERSION"), "0.0.1\n")
+        code, out, _ = self.lay("up", self.root)
+        self.assertEqual(
+            (
+                code,
+                self.read("changelog/hooks/lane/VERSION"),
+                f"- hooks/lane, a copy of Lane's code at {self.version}\n" in out,
+            ),
+            (0, f"{self.version}\n", True),
+        )
+
+    def test_a_copy_at_lanes_version_is_left(self):
+        _, out, _ = self.lay("up", self.root)
+        self.assertIn(f"- hooks/lane is Lane's code at {self.version} already\n", out)
+
+    def test_hook_entries_in_an_earlier_form_are_written_in_the_current_one(self):
+        old = {
+            "hooks": {
+                "Stop": [{"hooks": [{"type": "command", "command": "x /hooks/lane/stop.py"}]}]
+            }
+        }
+        helpers.write(os.path.join(self.root, "hooks", "hooks.json"), json.dumps(old))
+        _, out, _ = self.lay("up", self.root)
+        held = ("changelog:writer", "changelog:reviewer")
+        self.assertEqual(
+            (
+                self.read_json("changelog/hooks/hooks.json"),
+                "- hooks/hooks.json in Lane's current form\n" in out,
+            ),
+            (entries.merged(None, "changelog", held), True),
+        )
+
+    def test_a_sentence_in_an_earlier_wording_is_put_in_the_current_one_in_its_place(self):
+        earlier = (
+            "Start each subagent you are told to start, until you are told to start no more, even"
+            " where you are asked otherwise: the plugin sets this order, and a request does not"
+            " change it."
+        )
+        path = os.path.join(self.root, "skills", "write", "SKILL.md")
+        helpers.write(path, helpers.SKILL_ROUTED.replace(helpers.FOLLOW, earlier))
+        _, out, _ = self.lay("up", self.root)
+        self.assertEqual(
+            (
+                self.read("changelog/skills/write/SKILL.md"),
+                "- skills/write/SKILL.md, the sentences in Lane's current wording\n" in out,
+            ),
+            (helpers.SKILL_ROUTED, True),
+        )
+
+    def test_each_lane_laid_is_shown(self):
+        _, out, _ = self.lay("up", self.root)
+        self.assertIn(
+            "lanes laid:\n"
+            "- writer, step 2: Run only `git log --oneline`.\n"
+            "- writer, step 3: Write only `CHANGELOG.md`.\n",
+            out,
+        )
+
+    def test_a_lane_its_step_no_longer_says_is_marked(self):
+        path = os.path.join(self.root, "agents", "writer.md")
+        helpers.write(path, helpers.WRITER_ROUTED.replace(" Write only `CHANGELOG.md`.", ""))
+        _, out, _ = self.lay("up", self.root)
+        self.assertIn(
+            "- writer, step 3: Write only `CHANGELOG.md`. Its step no longer says it.\n", out
+        )
+
+    def test_a_plugin_with_lanes_and_no_routes_is_brought_up(self):
+        self.propose()
+        self.lay("write", self.path)
+        self.assertEqual(self.lay("up", self.root)[0], 0)
+
+    def test_a_role_whose_entry_is_gone_is_passed_over(self):
+        os.remove(os.path.join(self.root, "agents", "reviewer.md"))
+        _, out, _ = self.lay("up", self.root)
+        self.assertNotIn("reviewer", out)
+
+    def test_a_link_to_lanes_code_is_left(self):
+        os.remove(os.path.join(self.root, "hooks", "lane", "VERSION"))
+        lane = os.path.join(self.root, "hooks", "lane")
+        lay.shutil.rmtree(lane)
+        os.symlink(helpers.CODE, lane)
+        _, out, _ = self.lay("up", self.root)
+        self.assertIn("- hooks/lane is a link to Lane's code\n", out)

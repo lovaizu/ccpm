@@ -39,6 +39,8 @@ def reworded(text: str, steps: list[step.Step], pairs: list[tuple[str, str]]) ->
     for item in steps:
         block = "\n".join(lines[item.first : item.last + 1])
         for old, new in pairs:
-            block = block.replace(old, new)
+            # A current sentence that an earlier one begins stays whole.
+            kept = block.split(new)
+            block = new.join(k.replace(old, new) for k in kept)
         lines[item.first : item.last + 1] = block.split("\n")
     return "\n".join(lines)
