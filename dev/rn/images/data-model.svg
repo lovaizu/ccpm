@@ -215,7 +215,7 @@
   <text class="label small halo" x="1533" y="774" text-anchor="start">0..*</text>
   <text class="label small halo" x="1066" y="318" text-anchor="start">1..*</text>
   <path class="line" d="M230,300 L290,300 L290,850 L1170,850 L1170,836"/>
-  <text class="label small halo" x="600" y="844" text-anchor="middle">carries the answers of</text>
+  <text class="label small halo" x="600" y="844" text-anchor="middle">carries the answers and small points of</text>
   <text class="label small halo" x="234" y="318" text-anchor="start">0..1</text>
   <text class="label small halo" x="1174" y="848" text-anchor="start">0..1</text>
   <path class="line" d="M230,648 L260,648 L260,864 L1200,864 L1200,836"/>

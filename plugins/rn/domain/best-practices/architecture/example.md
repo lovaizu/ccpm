@@ -18,8 +18,8 @@ Each part carries a piece of that idea:
 - **`tree.py`** alone reads and writes the tree, cuts each role's part of it, and commits each
   change on the work's branch, with one draft pull request for the user to merge.
 - **The generator** makes a deliverable whole from its decisions and its kind's best practice, round
-  after round in a turn. It settles each small point that has one answer and names it in its
-  Result, and names each other point the decisions leave open.
+  after round in a turn. It settles each small point that has one answer and writes it in the
+  round's Making record, and names each other point the decisions leave open.
 - **`throwaway.py`** runs the commands that the planner gave for the deliverable, in a throwaway
   copy, and keeps what they gave as the try record.
 - **The evaluator**, fresh in each round, reads the deliverable and its try record as its people,
@@ -170,10 +170,11 @@ design holds, as KR1.1 counts.
 ### The maker settles a point with one answer
 
 The generator settles a point that no decision holds only where the purpose and its kind's best
-practice settle it one way, such as a phrase or the form of a printed line. It names the point,
-with what settles it, in the Result it gives with `made`. Once the phase's intents are good, the
-planner writes each point that the generator's last `made` named into the tree, as a decision by
-`maker`. The report of the decisions taken without asking reads it there. Any other point, such as
+practice settle it one way, such as a phrase or the form of a printed line. In each round, it
+writes each such point that the deliverable holds, with what settles it, in the round's Making
+record. Once the phase's intents are good, the planner's Change reaches the last round's Making
+record through the Round, and the planner writes each point it names into the tree, as a decision
+by `maker`. The report of the decisions taken without asking reads it there. Any other point, such as
 a choice between ways that serve the people differently, or one that touches what the user
 approved, is a point of the design. The generator names it open for the main conversation, as
 [A point found open goes back to the main conversation](#a-point-found-open-goes-back-to-the-main-conversation)
@@ -183,8 +184,11 @@ says.
 round, so it holds the deliverable as a decision does, and no round loses it. Putting it to the
 user gives them nothing to weigh, as KR1.2 counts. In the tree, it stands with every other
 decision, so the next phase's cut holds it, and the report that the user reads before they merge
-names it with the other decisions taken without asking. A choice between ways that serve the
-people differently is the user's. One that the generator takes alone can come out another way in
+names it with the other decisions taken without asking. The round's folder keeps the Making
+record, while a Result reaches only the conversation that got it. A conversation that ends before
+the planner writes the points then loses none of them. A lost point would leave the next phase free
+to make it another way, as KR1.1 counts. A choice between ways that serve the people
+differently is the user's. One that the generator takes alone can come out another way in
 the next round, and hands the people a way that no one weighed for them, as KR1.1 counts.
 
 ### The maker checks first
@@ -388,22 +392,23 @@ These choices in the components are ones a developer would question:
 - **Request**: the user's words after `/rn:up`, as they typed them.
 - **Change**: what one start of the planner writes: the request, the decisions the main
   conversation settled, a point that a role's Result named open, a remark as a point open, a turn's
-  answers, through the Round that holds them, with the small points that the generator's Result
-  named, or a push that waited on the user.
+  answers and the small points of the generator's last Making record, through the Round that
+  holds them, or a push that waited on the user.
 - **Tree edit**: what the planner hands `tree.py` to write: each node it changes, the grounds, and
   its answer to each node touched: it holds, or the planner leaves it open.
 - **Cut**: the text `tree.py` gives a role to start with: its run values and its part of the tree,
   and for the generator, each of last round's shortfalls, through the Round that holds them.
 - **Result**: what a role gives the main conversation as it ends a start: one of its fixed words,
-  such as `asks` or `made`, with its message, such as the report that comes with `done`, the
-  point that comes with `open`, or the small points that come with `made`.
+  such as `asks` or `made`, with its message, such as the report that comes with `done` or the
+  point that comes with `open`.
 - **Point**: a decision the main conversation settles, whether the tree holds it open, a turn
   found it, or the user remarked it during a turn. A point found or remarked reaches the tree
   through a Change, as a decision not yet settled, and reaches the main conversation from there.
 - **Turn**: the making of one deliverable from its settled decisions, through both phases.
-- **Round**: one making of the deliverable in a phase, and the evaluators' answers to it.
-- **Making record**: the generator's record of a round, `generator.json`: what it made, its own
-  answer to each intent, and each point it found open.
+- **Round**: one making of the deliverable in a phase, with its Making record, its Try record, and
+  the evaluators' Answers to it.
+- **Making record**: the generator's record of a round, `generator.json`: what it made, each
+  small point it settled, its own answer to each intent, and each point it found open.
 - **Answers**: an evaluator's record of a round, `evaluator-<group>.json`: each intent met with the
   lines that meet it, or not met with what the people still lack.
 - **Try record**: the commands that try a deliverable and what each gave on the generator's last
@@ -536,7 +541,7 @@ sequenceDiagram
     G->>R: brings the deliverable in line with the design, by its phase's practices, keeping each part that rests on a decision
     G->>W: runs it, with the commands from its cut
     W->>R: copies the repository, runs the commands there as given, and writes what they gave (Try record)
-    G->>R: answers each intent as the deliverable's people, and writes its record (Making record)
+    G->>R: answers each intent as the deliverable's people, and writes its record, with each small point it settled (Making record)
   end
   alt the design leaves a point open, or only a changed decision meets an intent
     G-->>M: gives open, naming the point or the decision (Result)
@@ -550,7 +555,7 @@ sequenceDiagram
     P-->>M: gives asks
     Note over M,T: The run ends, and the main conversation takes the point from tree.py points and settles it, as S2 draws.
   else every intent is met by its own answers
-    G-->>M: gives made, naming each small point it settled (Result)
+    G-->>M: gives made (Result)
     M->>T: start, for each evaluator
     T-->>M: a cut for each group of the phase's intents (Cut)
     par one for each group, at once
@@ -573,7 +578,7 @@ sequenceDiagram
     else one gave more
       Note over M,G: The next round starts from the design, each shortfall beside its intent.
     else every one gave good
-      M->>T: start, for the planner, with the turn's answers and the small points of the generator's last made (Change)
+      M->>T: start, for the planner, with the turn's answers and the small points of its last Making record, through the Round (Change)
       T-->>M: the planner's cut (Cut)
       M->>P: starts it (Cut)
       P->>T: write, with each intent good, and each small point as a decision by maker (Tree edit)
