@@ -10,7 +10,7 @@ plugin. The guard holds each role to its steps by what a machine can find of the
 role wrote: each step's trace, a call such as a command run or a file read, comes in the steps'
 order, and each call stays within what the step's lanes allow. It holds the main conversation to
 the routes: from the result that a role gives by running the result script, it names the next
-start, and it stops any other, until the person turns the run with a prompt of their own. Where
+start, and it stops any other, until the person redirects the run with a prompt of their own. Where
 the routes name a command that gives each start its text, it lets a start through only with that
 text, and it lets a resume through only with the person's own words. Each stop shows the role its
 step's own sentence again. A text of the plugin in its own form, such as the steps of its best
@@ -132,7 +132,7 @@ one approved.
 Each type of lane is one check for every plugin, and the routes are one way of telling the next
 start for every plugin. What differs between plugins reaches the guard only as a lane's values, as
 a value given for one start of a role, or through an adapter at a port. An adapter is the user's
-script that turns their plugin's own text into Lane's form, such as a deliverable's intents read
+script that gives their plugin's own text in Lane's form, such as a deliverable's intents read
 from a design tree. No line of Lane's code names another plugin.
 
 *Why*: the user then writes no check and no code for the order. Where Lane can't hold a step or
@@ -205,12 +205,12 @@ one, a stop of a start, a call of that skill, a dialog asking the person while a
 waits, and the end of a turn. It reads the conversation's other events, such as a task
 notification or the person's prompt, only to tell it the next start or to keep the person's words.
 Without a run's record, as after the system clears its temporary folder, no run is on. Lane holds
-the order against drift, not against the person. Once the person has written a prompt while the
-run is on, the guard lets the conversation stop a start of the run with TaskStop, which
-[Claude Code documents](https://code.claude.com/docs/en/sub-agents), and a call of the skill then
-ends the run and begins another. A typed command of the skill is such a prompt itself. Until then,
-a stop or a call of the skill is a move off the routes, and the guard stops it as any other. A turn
-that ends with a start due goes on once with the start. If the person explicitly asked to leave
+the order against drift, not against the person, who may redirect the run. Once the person has
+written a prompt while the run is on, the guard lets the conversation stop a start of the run with
+TaskStop, which [Claude Code documents](https://code.claude.com/docs/en/sub-agents). After such a
+prompt, a call of the skill ends the run and begins another. A typed command of the skill is such a
+prompt itself. Without such a prompt, a stop or a call of the skill is a move off the routes, and
+the guard stops it as any other. A turn that ends with a start due goes on once with the start. If the person explicitly asked to leave
 the start out, the conversation ends the turn again, and the turn then ends.
 
 *Why*: the same conversation holds the user's own work outside the run and beside it too. A stop of
@@ -236,7 +236,7 @@ the routes name.
   read through an adapter, a command held for the person's approval, a value given for each start,
   a start held to the text that the plugin's command gave, a role resumed with the person's answer,
   a start from within a role, several starts of one role at once, a role or skill of a dependency,
-  a role that ends with no result, and a run that the person turns by a prompt, with its starts
+  a role that ends with no result, and a run that the person redirects by a prompt, with its starts
   stopped and the skill called again. Without a branch, the user would hold that step or order with
   code of their own.
 - **S4**: the user wants to run `lay.py up` on their plugin after an update of Lane, and find their
@@ -274,9 +274,9 @@ What each decides alone:
 - **hook.py**: how Claude Code's hook input reads and how the guard's answer goes back. No other
   component knows that form. `hook.py` hands on the events of a role with lanes or named by the
   routes, and the main conversation's events, which carry no `agent_type` key.
-- **guard.py**: which checks run on an event, whether a run is on, whether the person has turned
-  it by a prompt, and what the role, the main conversation, and whoever runs the plugin hear from
-  it.
+- **guard.py**: which checks run on an event, whether a run is on, whether the person has
+  redirected it by a prompt, and what the role, the main conversation, and whoever runs the plugin
+  hear from it.
 - **called.py**: what Lane keeps of each run of the skill and of each start of a role: the calls as
   they come back, the results, the texts each start got, the person's messages while the run is
   on, and the text the routes' command gave for each start. It also decides how several
@@ -542,7 +542,7 @@ sequenceDiagram
   H->>G: the main conversation's event (Event)
   G->>RT: is it the skill the routes name (Route)
   alt it is
-    opt a run is on, which the person turned, as S3 a run the person turns draws
+    opt a run is on, which the person redirected, as S3 a run the person redirects draws
       G->>C: ends the run (Run)
     end
     G->>C: keeps a new run (Run)
@@ -647,9 +647,9 @@ sequenceDiagram
   end
 ```
 
-### S3: a run the person turns
+### S3: a run the person redirects
 
-The person writes here while a run is on, such as a remark that changes the work under way.
+The person writes a prompt here while a run is on, such as a remark that changes the work under way.
 
 ```mermaid
 sequenceDiagram
@@ -670,14 +670,14 @@ sequenceDiagram
   CC->>H: PreToolUse of it (Event)
   H->>G: checks it (Event)
   G->>C: reads the person's words kept in the run (Person's words)
-  alt the person wrote a prompt, and the call stops a start
+  alt the person wrote a prompt, and the conversation stops a start
     H-->>CC: nothing to tell, so the stop goes on (Answer)
     CC->>S: stops it
     CC->>H: PostToolUse of the stop (Event)
     H->>G: the stop came back (Event)
     G->>C: keeps the stop (Kept call)
     Note over M,G: The start counts as one that ended with no result, as S3 a run draws.
-  else the person wrote a prompt, and the call calls the skill
+  else the person wrote a prompt, and the conversation calls the skill
     H-->>CC: nothing to tell, so the call goes on (Answer)
     Note over M,G: The guard ends the run and begins another, as S3 a run draws.
   else the person wrote no prompt while the run is on
@@ -686,13 +686,13 @@ sequenceDiagram
   end
 ```
 
-- **A stop or a new call of the skill let through once the person has written a prompt in the
-  run** over one let through at any time, or only while the run waits: a prompt is how the person
-  asks for a change, and the hook input of UserPromptSubmit holds it as they wrote it. A stop let
-  through at any time would let the conversation drop a start that the routes name, and a run turned
-  only while it waits would hold the person to work they've changed. The cost: a prompt about
-  anything else, such as a question back to the conversation, also lets it stop a start until the
-  run ends.
+- **A stop or a new call of the skill let through once the person has written a prompt while the
+  run is on** over one let through at any time, or only while the run waits: a prompt is how the
+  person asks for a change, and the hook input of UserPromptSubmit holds it as they wrote it. A stop
+  let through at any time would let the conversation drop a start that the routes name. A run that
+  the person may redirect only while it waits would hold them to work they've changed. The cost: a
+  prompt about anything else, such as a question back to the conversation, also lets the
+  conversation stop a start until the run ends.
 
 ### S3: a role's call held to its steps
 
