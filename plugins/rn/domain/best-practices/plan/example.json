@@ -78,7 +78,7 @@
     },
     {
       "name": "Lane's code has a design, tests written first, and code as the code best practice says",
-      "path": "plugins/lane/domain",
+      "path": "plugins/lane/hooks/lane/domain",
       "kind": "code",
       "inputs": ["dev/lane/architecture.md"],
       "preconditions": [],
@@ -100,7 +100,7 @@
       "path": "plugins/lane",
       "kind": "plugin",
       "inputs": ["dev/lane/architecture.md"],
-      "preconditions": ["plugins/lane/domain"],
+      "preconditions": ["plugins/lane/hooks/lane/domain"],
       "status": "doing",
       "intents": [
         {"id": "Q1", "good": false, "decisions": []},
