@@ -41,6 +41,8 @@ law. They show whether a change brought its objective closer.
 > - `<present way>`: what the roles do today without the product, such as doing the work by hand.
 >   The developer sets the product against it.
 > - `<idea>`: each idea that sets the product apart from the present way, at most five, each in a
->   few words. The developer builds these, and not a copy of the present way.
+>   few words. The first is what the product values most, and the others serve it. The
+>   developer builds these, and not a copy of the present way, and decides by the first where no
+>   line says.
 > - `<why it meets the objective>`: why the idea meets the objective where the present way falls
->   short, in one sentence begun in lowercase, from what the role does, finds, or receives.
+>   short, in one short sentence begun in lowercase, from what the role does, finds, or receives.

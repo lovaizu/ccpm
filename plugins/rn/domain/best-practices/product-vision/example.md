@@ -25,18 +25,13 @@ law. They show whether a change brought its objective closer.
 
 rn instead of asking an AI in one prompt, reading its draft and fixing it:
 
-- **Planned back from the goal, replanned as it goes, for O1**: rn lays out every deliverable the
-  goal needs, and the order it needs them in, then makes them from the first and plans again from
-  what each one and each answer shows, so none goes missing or comes out of order.
-- **Made from a best practice, for O1**: rn builds each deliverable by the best practice of its
-  kind toward what its people are after, making that best practice first by its best practice for
-  best practices where the kind has none, where an AI starting from scratch maps it from similar
-  text.
-- **Checked as it's used, for O1**: rn tries each deliverable as its people would use it, and
-  checks whether they get what they're after, not whether it follows rules, so the user gets no
-  findings off the purpose to sort.
-- **Asked only what's theirs, for O1**: rn asks the user one point at a time, and only what the
-  purpose and the best practices leave to them. It decides the rest and explains it at the end.
-- **Every step on every run, picked up where it stopped, for O1**: rn keeps each step of the
-  best practice on every run, and goes on where the work stopped, so no deliverable misses a step
-  an AI skipped once, and the user never answers a point twice.
+- **From the intent, never patched, for O1**: rn makes and improves each deliverable only from the
+  decisions that hold what the user means, never by patching a draft.
+- **Good for its people, for O1**: rn makes each deliverable by its kind's best practice and judges
+  it only by what its people get.
+- **Only the user's points asked, for O1**: rn asks one point at a time, only what the purpose and
+  the best practices leave open.
+- **Planned back from the goal, replanned as it goes, for O1**: rn makes the deliverables from the
+  first and plans again from each result.
+- **Every step, every run, for O1**: rn keeps each step on every run and goes on where the work
+  stopped.

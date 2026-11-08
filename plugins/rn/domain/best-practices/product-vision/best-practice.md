@@ -20,7 +20,7 @@ The developer builds a product with which its users achieve what they're after.
 | Q2 | Objectives and key results, Roles | Reading an objective, does the developer see the end its role is after, so that they build toward that end rather than toward a means or a measure of it? |
 | Q3 | Objectives and key results | Weighing a piece of work, does the developer see which one objective it brings closer, or that it brings none closer, so that they know what the work is for or drop it? |
 | Q4 | Objectives and key results | After a change, does the developer see from the key results whether to keep it, so that they keep only what brings the role's end closer? |
-| Q5 | Roles, Objectives and key results, Concept | Weighing the product against what its roles do today, does the developer see why it meets each objective where that way doesn't, so that they build what sets it apart and not a copy of that way? |
+| Q5 | Roles, Objectives and key results, Concept | Weighing the product against what its roles do today, or meeting a choice no line names, does the developer see what the product values most and why it meets each objective where that way doesn't, so that they build what sets it apart and every choice leans the same way? |
 | Q6 | the whole | Changing how the product works inside while its roles see the same, does the developer find the product vision still true, so that it holds as long as the roles' ends do? |
 
 ## Practices
@@ -80,11 +80,11 @@ Key results count what the role does or feels that shows it meets its end, as [o
 
 ### Q5
 
-Weighing the product against what its roles do today, does the developer see why it meets each objective where that way doesn't, so that they build what sets it apart and not a copy of that way?
+Weighing the product against what its roles do today, or meeting a choice no line names, does the developer see what the product values most and why it meets each objective where that way doesn't, so that they build what sets it apart and every choice leans the same way?
 
 **Thinking**
 
-Concept holds the few ideas that set the product apart from what its roles do today and make it meet each objective. No one can read a concept off facts: its maker finds it by reacting to tries against the problem. So draw the ideas out of the user one point at a time, by proposals built on their own words. A bare question or a list to pick from gives them nothing to push against, and ideas offered before their own crowd them out.
+Concept holds the few ideas that set the product apart from what its roles do today and make it meet each objective. No one can read a concept off facts: its maker finds it by reacting to tries against the problem. So draw the ideas out of the user one point at a time, by proposals built on their own words. A bare question or a list to pick from gives them nothing to push against, and ideas offered before their own crowd them out. The first idea is what the product values most, and the others serve it. Each idea is a name of a few words and one short sentence, as a concept read at once leads two developers to the same choice, while a long one leaves each to pick the part they like.
 
 **Steps**
 
@@ -92,7 +92,9 @@ Concept holds the few ideas that set the product apart from what its roles do to
 2. Ask for the user's ideas, and grow each by a proposal, such as a sharper form or a variant, and by why it beats the present way.
 3. Argue against the ideas kept, and propose the riskiest assumption under them with how to check it, as the [Lean Startup](https://theleanstartup.com/principles) tests a leap of faith first.
 4. Stop once at most five ideas stand out, each meeting an objective where the present way doesn't.
-5. Keep, where the design lives, each idea tried, whose it was, and why it stayed, went, or merged with another, in the user's words.
+5. Put first the idea the others serve, and name it so that the user knows it at once as what the product values most.
+6. Give someone who has only the concept a choice that no line names, such as whether to add a check, and keep the concept only once they choose as the user would.
+7. Keep, where the design lives, each idea tried, whose it was, and why it stayed, went, or merged with another, in the user's words.
 
 ### Q6
 

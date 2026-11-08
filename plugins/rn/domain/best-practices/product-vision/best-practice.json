@@ -29,7 +29,7 @@
   {
    "id": "Q5",
    "about": "Roles, Objectives and key results, Concept",
-   "what": "Weighing the product against what its roles do today, does the developer see why it meets each objective where that way doesn't, so that they build what sets it apart and not a copy of that way?"
+   "what": "Weighing the product against what its roles do today, or meeting a choice no line names, does the developer see what the product values most and why it meets each objective where that way doesn't, so that they build what sets it apart and every choice leans the same way?"
   },
   {
    "id": "Q6",
@@ -91,7 +91,7 @@
   },
   {
    "intent": "Q5",
-   "thinking": "Concept holds the few ideas that set the product apart from what its roles do today and make it meet each objective. No one can read a concept off facts: its maker finds it by reacting to tries against the problem. So draw the ideas out of the user one point at a time, by proposals built on their own words. A bare question or a list to pick from gives them nothing to push against, and ideas offered before their own crowd them out.",
+   "thinking": "Concept holds the few ideas that set the product apart from what its roles do today and make it meet each objective. No one can read a concept off facts: its maker finds it by reacting to tries against the problem. So draw the ideas out of the user one point at a time, by proposals built on their own words. A bare question or a list to pick from gives them nothing to push against, and ideas offered before their own crowd them out. The first idea is what the product values most, and the others serve it. Each idea is a name of a few words and one short sentence, as a concept read at once leads two developers to the same choice, while a long one leaves each to pick the part they like.",
    "steps": [
     {
      "text": "Ask what the roles do today and where it falls short of each objective, and say the user's words back as a reading they can correct."
@@ -104,6 +104,12 @@
     },
     {
      "text": "Stop once at most five ideas stand out, each meeting an objective where the present way doesn't."
+    },
+    {
+     "text": "Put first the idea the others serve, and name it so that the user knows it at once as what the product values most."
+    },
+    {
+     "text": "Give someone who has only the concept a choice that no line names, such as whether to add a check, and keep the concept only once they choose as the user would."
     },
     {
      "text": "Keep, where the design lives, each idea tried, whose it was, and why it stayed, went, or merged with another, in the user's words."
