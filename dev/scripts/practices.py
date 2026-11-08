@@ -67,11 +67,8 @@ CASES = "cases"
 # were made in: each section asked of, and no practice holding more than its thinking and steps.
 # Each kind leaves the list once the remade meta makes its best practice again.
 BEFORE = (
-    "architecture",
     "plan",
-    "plugin",
     "product-vision",
-    "prompt",
     "readme",
     "refactor-doc",
 )

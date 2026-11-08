@@ -11,12 +11,6 @@
       "status": "done"
     },
     {
-      "name": "Lane's design checks each practice step and each change",
-      "path": "dev/lane/architecture.md",
-      "kind": "architecture",
-      "status": "done"
-    },
-    {
       "name": "Each best practice holds the field's established way, named so its maker grasps the intent",
       "path": "plugins/rn/domain/best-practices/meta",
       "kind": "meta",
@@ -218,6 +212,11 @@
               "about": "What is the field's and what is this repository's",
               "decided": "Claude Code's documented behavior stays as the field's facts, and this repository's own choices, such as Lane as the guard, lay.py, tree.py, Python 3.9 with its standard library, and the folders rn writes, go to the plugin deliverables of the design tree",
               "by": "reasoning"
+            },
+            {
+              "about": "Roles that run at once",
+              "decided": "roles that run at the same time each work in a workspace of their own, such as a git worktree and a temporary folder no other role writes, and their results join only through the one who started them, as two makers in one workspace overwrite each other's files unseen",
+              "by": "user"
             }
           ]
         },
@@ -369,6 +368,37 @@
       ]
     },
     {
+      "name": "Lane's design checks each practice step and each change",
+      "path": "dev/lane/architecture.md",
+      "kind": "architecture",
+      "inputs": [],
+      "preconditions": ["plugins/rn/domain/best-practices/architecture"],
+      "status": "open",
+      "intents": [
+        {
+          "id": "Q1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The design made before",
+              "decided": "made anew by the remade architecture best practice, as the design made before left its code with no module boundaries and no dependency rule",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {"id": "Q2", "good": false, "decisions": []},
+        {"id": "Q3", "good": false, "decisions": []},
+        {"id": "Q4", "good": false, "decisions": []},
+        {"id": "Q5", "good": false, "decisions": []},
+        {"id": "Q6", "good": false, "decisions": []},
+        {"id": "Q7", "good": false, "decisions": []},
+        {"id": "Q8", "good": false, "decisions": []},
+        {"id": "Q9", "good": false, "decisions": []},
+        {"id": "Q10", "good": false, "decisions": []},
+        {"id": "Q11", "good": false, "decisions": []}
+      ]
+    },
+    {
       "name": "Lane's code is designed, tested first, and written as the code best practice says",
       "path": "plugins/lane/domain",
       "kind": "code",
@@ -384,6 +414,11 @@
             {
               "about": "The dependency check",
               "decided": null
+            },
+            {
+              "about": "A port in Python",
+              "decided": "a port is a typing.Protocol or a plain function the core takes, as Python 3.9 gives both with no package",
+              "by": "reasoning"
             }
           ]
         },
@@ -392,7 +427,17 @@
         {"id": "Q5", "good": false, "decisions": []},
         {"id": "Q6", "good": false, "decisions": []},
         {"id": "Q7", "good": false, "decisions": []},
-        {"id": "Q8", "good": false, "decisions": []},
+        {
+          "id": "Q8",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The tests command",
+              "decided": "the trace's tests command is `python -m unittest discover -s dev/lane/tests`, the command each red and green runs",
+              "by": "reasoning"
+            }
+          ]
+        },
         {"id": "Q9", "good": false, "decisions": []},
         {"id": "Q10", "good": false, "decisions": []},
         {"id": "Q11", "good": false, "decisions": []},
@@ -407,7 +452,17 @@
             }
           ]
         },
-        {"id": "Q13", "good": false, "decisions": []},
+        {
+          "id": "Q13",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Where each tool runs",
+              "decided": "the tests a change reaches and coverage run before each push, and every test, Cosmic Ray's mutation testing, and Hypothesis's properties run in CI, as a full mutation run takes hours and fills the disk",
+              "by": "reasoning"
+            }
+          ]
+        },
         {"id": "Q14", "good": false, "decisions": []}
       ]
     },
@@ -419,44 +474,55 @@
       "preconditions": ["plugins/lane/domain"],
       "status": "doing",
       "intents": [
-        {"id": "Q1", "good": false, "decisions": []},
+        {
+          "id": "Q1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The product vision trial",
+              "decided": "on Opus, the model Lane's users run, by dev/lane/tests/product-vision/trial.py, its plugin given a part with no numbered list, a steps adapter, a start-text command and a route that waits for the person, and its judge counting steps out of order, starts unlike the command's text and resumes not in the person's words; its judge first right on kept records whose answer is known; three of three runs pass",
+              "by": "reasoning"
+            }
+          ]
+        },
         {"id": "Q2", "good": false, "decisions": []},
         {"id": "Q3", "good": false, "decisions": []},
         {"id": "Q4", "good": false, "decisions": []},
         {"id": "Q5", "good": false, "decisions": []},
         {"id": "Q6", "good": false, "decisions": []},
-        {"id": "Q7", "good": false, "decisions": []},
+        {
+          "id": "Q7",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Where Lane writes",
+              "decided": "a run's records in `lane/<yyyymmdd>-<name>/` under the system's temporary folder, and nothing in `${CLAUDE_PLUGIN_ROOT}`",
+              "by": "reasoning"
+            }
+          ]
+        },
         {"id": "Q8", "good": false, "decisions": []},
-        {"id": "Q9", "good": false, "decisions": []},
+        {
+          "id": "Q9",
+          "good": false,
+          "decisions": [
+            {
+              "about": "What Lane runs on",
+              "decided": "Python 3.9 or later and its standard library alone, checked in CI on 3.9 and the newest Python, as python3 is wherever git is and a plugin installs no package",
+              "by": "reasoning"
+            }
+          ]
+        },
         {"id": "Q10", "good": false, "decisions": []},
         {"id": "Q11", "good": false, "decisions": []},
-        {"id": "Q12", "good": false, "decisions": []},
-        {"id": "Q13", "good": false, "decisions": []},
-        {"id": "Q14", "good": false, "decisions": []},
-        {"id": "Q15", "good": false, "decisions": []},
-        {"id": "Q16", "good": false, "decisions": []},
-        {"id": "Q17", "good": false, "decisions": []},
-        {"id": "Q18", "good": false, "decisions": []},
-        {"id": "Q19", "good": false, "decisions": []},
-        {"id": "Q20", "good": false, "decisions": []},
-        {"id": "Q21", "good": false, "decisions": []},
-        {"id": "Q22", "good": false, "decisions": []},
-        {"id": "Q23", "good": false, "decisions": []},
-        {"id": "Q24", "good": false, "decisions": []},
-        {"id": "Q25", "good": false, "decisions": []},
         {
-          "id": "Q26",
+          "id": "Q12",
           "good": false,
           "decisions": [
             {
               "about": "The code made before",
               "decided": "Lane's code and tests made before go whole, and Lane is made anew by the remade code best practice, as no one can tell where code made without it falls short",
               "by": "user"
-            },
-            {
-              "about": "The product vision trial",
-              "decided": "on Opus by dev/lane/tests/product-vision/trial.py, its plugin given a part with no numbered list, a steps adapter, a start-text command and a route that waits for the person, and its judge counting steps out of order, starts unlike the command's text and resumes not in the person's words; its judge first right on kept records whose answer is known",
-              "by": "reasoning"
             }
           ]
         }
@@ -513,7 +579,32 @@
       "name": "rn's design says how a turn carries out a best practice",
       "path": "dev/rn/architecture.md",
       "kind": "architecture",
-      "status": "done"
+      "inputs": ["dev/rn/product-vision.md", "plugins/rn/README.md"],
+      "preconditions": ["plugins/rn/domain/best-practices/architecture"],
+      "status": "open",
+      "intents": [
+        {
+          "id": "Q1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The design made before",
+              "decided": "made anew by the remade architecture best practice, as the design made before left its code with no module boundaries and no dependency rule",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {"id": "Q2", "good": false, "decisions": []},
+        {"id": "Q3", "good": false, "decisions": []},
+        {"id": "Q4", "good": false, "decisions": []},
+        {"id": "Q5", "good": false, "decisions": []},
+        {"id": "Q6", "good": false, "decisions": []},
+        {"id": "Q7", "good": false, "decisions": []},
+        {"id": "Q8", "good": false, "decisions": []},
+        {"id": "Q9", "good": false, "decisions": []},
+        {"id": "Q10", "good": false, "decisions": []},
+        {"id": "Q11", "good": false, "decisions": []}
+      ]
     },
     {
       "name": "rn's code is designed, tested first, and written as the code best practice says",
@@ -530,12 +621,42 @@
         {"id": "Q5", "good": false, "decisions": []},
         {"id": "Q6", "good": false, "decisions": []},
         {"id": "Q7", "good": false, "decisions": []},
-        {"id": "Q8", "good": false, "decisions": []},
+        {
+          "id": "Q8",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The tests command",
+              "decided": "the trace's tests command is `python -m unittest discover -s dev/rn/tests`, the command each red and green runs",
+              "by": "reasoning"
+            }
+          ]
+        },
         {"id": "Q9", "good": false, "decisions": []},
         {"id": "Q10", "good": false, "decisions": []},
         {"id": "Q11", "good": false, "decisions": []},
-        {"id": "Q12", "good": false, "decisions": []},
-        {"id": "Q13", "good": false, "decisions": []},
+        {
+          "id": "Q12",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The complexity check",
+              "decided": "ruff's C901 at McCabe's limit of 10 and its PLR09 size rules, on the code and the tests, as for Lane",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "Q13",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Where each tool runs",
+              "decided": "the tests a change reaches and coverage run before each push, and every test, Cosmic Ray's mutation testing, and Hypothesis's properties run in CI, as for Lane",
+              "by": "reasoning"
+            }
+          ]
+        },
         {"id": "Q14", "good": false, "decisions": []}
       ]
     },
@@ -554,16 +675,56 @@
         {"id": "Q5", "good": false, "decisions": []},
         {"id": "Q6", "good": false, "decisions": []},
         {"id": "Q7", "good": false, "decisions": []},
-        {"id": "Q8", "good": false, "decisions": []},
+        {
+          "id": "Q8",
+          "good": false,
+          "decisions": [
+            {
+              "about": "What holds each rule",
+              "decided": "Lane holds each rule of a role's steps that must hold on every run, and the architecture tests try each lane both where a double keeps the rule and where it breaks it",
+              "by": "reasoning"
+            }
+          ]
+        },
         {"id": "Q9", "good": false, "decisions": []},
         {"id": "Q10", "good": false, "decisions": []},
-        {"id": "Q11", "good": false, "decisions": []},
+        {
+          "id": "Q11",
+          "good": false,
+          "decisions": [
+            {
+              "about": "How rn reports to the user",
+              "decided": "a few plain sentences with no headings: the conclusion, its grounds, and what it should be, with the one decision asked for last with a recommendation",
+              "by": "reasoning"
+            }
+          ]
+        },
         {"id": "Q12", "good": false, "decisions": []},
         {"id": "Q13", "good": false, "decisions": []},
         {"id": "Q14", "good": false, "decisions": []},
         {"id": "Q15", "good": false, "decisions": []},
-        {"id": "Q16", "good": false, "decisions": []},
-        {"id": "Q17", "good": false, "decisions": []}
+        {
+          "id": "Q16",
+          "good": false,
+          "decisions": [
+            {
+              "about": "How a prompt is tried",
+              "decided": "no prompt runs alone on a model: rn's prompts are tried by rn's product vision trial on Opus in lovaizu/playground, each trial part checked on kept records first",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "Q17",
+          "good": false,
+          "decisions": [
+            {
+              "about": "How many runs pass",
+              "decided": "three of three runs of each objective's main use pass, on Opus",
+              "by": "reasoning"
+            }
+          ]
+        }
       ]
     },
     {
@@ -589,77 +750,51 @@
       "path": "plugins/rn",
       "kind": "plugin",
       "inputs": ["dev/rn/architecture.md"],
-      "preconditions": ["plugins/rn/domain"],
+      "preconditions": ["plugins/rn/domain", "plugins/rn/agents"],
       "status": "doing",
       "intents": [
-        {"id": "Q1", "good": false, "decisions": []},
-        {"id": "Q2", "good": false, "decisions": []},
-        {"id": "Q3", "good": false, "decisions": []},
-        {"id": "Q4", "good": false, "decisions": []},
-        {"id": "Q5", "good": false, "decisions": []},
-        {"id": "Q6", "good": false, "decisions": []},
-        {"id": "Q7", "good": false, "decisions": []},
-        {"id": "Q8", "good": false, "decisions": []},
         {
-          "id": "Q9",
+          "id": "Q1",
           "good": false,
           "decisions": [
             {
-              "about": "A step's trace",
-              "decided": "meta's form gives each practice step a trace a machine can check, and each kind's steps get one, so rn's steps adapter hands Lane what to hold",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {"id": "Q10", "good": false, "decisions": []},
-        {"id": "Q11", "good": false, "decisions": []},
-        {"id": "Q12", "good": false, "decisions": []},
-        {"id": "Q13", "good": false, "decisions": []},
-        {"id": "Q14", "good": false, "decisions": []},
-        {"id": "Q15", "good": false, "decisions": []},
-        {"id": "Q16", "good": false, "decisions": []},
-        {"id": "Q17", "good": false, "decisions": []},
-        {"id": "Q18", "good": false, "decisions": []},
-        {"id": "Q19", "good": false, "decisions": []},
-        {"id": "Q20", "good": false, "decisions": []},
-        {"id": "Q21", "good": false, "decisions": []},
-        {
-          "id": "Q22",
-          "good": false,
-          "decisions": [
-            {
-              "about": "claude plugin eval",
-              "decided": "not used: a case is one prompt in an empty workspace that never stops for an answer, while rn's walkthrough answers points and resumes; the product vision trials run on Lane's trial driver in lovaizu/playground",
+              "about": "The product vision trial",
+              "decided": "on Opus, the model rn's users run, on Lane's trial driver in lovaizu/playground, with a stand-in for the user holding an intent rn never sees, each key result set against the last trial; not by claude plugin eval, whose case is one prompt in an empty workspace that never stops for an answer",
               "by": "research"
+            },
+            {
+              "about": "Who judges a deliverable",
+              "decided": "an evaluator that didn't make it, given only what the deliverable's people have and the questions of its kind",
+              "by": "reasoning"
             }
           ]
         },
         {
-          "id": "Q23",
+          "id": "Q2",
           "good": false,
           "decisions": [
             {
-              "about": "The plugin's icon",
-              "decided": null
+              "about": "The guard",
+              "decided": "Lane holds each traced step of each role, laid from rn's proposal by lay.py, and rn's steps adapter hands Lane each kind's traced steps",
+              "by": "reasoning"
             }
           ]
         },
-        {"id": "Q24", "good": false, "decisions": []},
-        {"id": "Q25", "good": false, "decisions": []},
         {
-          "id": "Q26",
+          "id": "Q3",
           "good": false,
           "decisions": [
             {
-              "about": "Pin and Turn",
-              "decided": "plugins/pin and plugins/turn go once rn holds their parts; the branch turn-held keeps the eight Turn commits no branch held, and each is taken where rn's design keeps what it fixes, then the branch goes",
+              "about": "Who talks with the user",
+              "decided": "the main conversation starts each role and puts each point to the user as the role gave it, one point at a time with a recommendation, in the user's language, and resumes the role with the answer word for word; the repository is written in its own language",
               "by": "reasoning"
-            },
-            {
-              "about": "Lane's old part folders",
-              "decided": "Lane's guard stops reading prompts/ and core/roles/ in the change that removes Pin and Turn, as their parts lie there until then",
-              "by": "reasoning"
-            },
+            }
+          ]
+        },
+        {
+          "id": "Q4",
+          "good": false,
+          "decisions": [
             {
               "about": "A start value that is null",
               "decided": "a run lane whose value is null lets no command through, and a run_step command the adapter gives counts as allowed, so the generator gets run_only",
@@ -667,23 +802,100 @@
             },
             {
               "about": "A file a role must not read",
-              "decided": "Lane gains a lane that stops a read of the files it names, and the planner and generator get it for the design tree, as no role reads the tree",
+              "decided": "Lane's read_never lane keeps the planner and the generator from the design tree, as no role reads the tree",
               "by": "reasoning"
             },
             {
               "about": "Permission for tree.py",
-              "decided": "the skill names tree.py in allowed-tools, and the prose check reads no front matter, as a prompt per call costs the user time",
+              "decided": "the skill names tree.py in allowed-tools, as a prompt per call costs the user time",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {"id": "Q5", "good": false, "decisions": []},
+        {"id": "Q6", "good": false, "decisions": []},
+        {
+          "id": "Q7",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Where rn writes",
+              "decided": "what the user may keep in `.rn/<yyyymmdd>-<goal>/` at the repository's root, what a run uses only while it runs in `rn/<yyyymmdd>-<name>/` under the system's temporary folder, and nothing in `${CLAUDE_PLUGIN_ROOT}`",
+              "by": "reasoning"
+            },
+            {
+              "about": "Makers that run at once",
+              "decided": "each generator that runs beside another works in a git worktree and a temporary folder of its own, and the main conversation joins their results",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "Q8",
+          "good": false,
+          "decisions": [
+            {
+              "about": "How a run picks up",
+              "decided": "each role starts with one JSON line of run values and resumes with a message whose first line is `The person's answer, word for word:`, its in and out held to JSON Schemas; the design tree and each round's answers are JSON that tree.py writes, and records only added to are JSON Lines",
               "by": "reasoning"
             },
             {
               "about": "Picking up a run on another branch",
               "decided": "/rn:up alone finds the runs on rn's work branches and picks up the one the user means, asking only where more than one waits",
               "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "Q9",
+          "good": false,
+          "decisions": [
+            {
+              "about": "What rn runs on",
+              "decided": "Python 3.9 or later and its standard library alone, checked in CI on 3.9 and the newest Python",
+              "by": "reasoning"
             },
+            {
+              "about": "The plugin's icon",
+              "decided": null
+            }
+          ]
+        },
+        {
+          "id": "Q10",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Taking in Lane",
+              "decided": "rn names lane in its dependencies, and takes Lane's hook code through a relative symbolic link, so the code is written and tested once",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "Q11",
+          "good": false,
+          "decisions": [
+            {
+              "about": "When rn is released",
+              "decided": "only when the user says so, tagged and listed in the marketplace and the root README",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "Q12",
+          "good": false,
+          "decisions": [
             {
               "about": "The code made before",
               "decided": "rn's code and tests made before go whole, and rn is made anew by the remade code best practice, as no one can tell where code made without it falls short",
               "by": "user"
+            },
+            {
+              "about": "Lessons from a run",
+              "decided": "after the user approves the work, the main conversation reads the run's records once for what fell short and why, puts a lesson of the project's own into its rules, and sends a general one to rn's repository as an issue only when the user says yes",
+              "by": "reasoning"
             }
           ]
         }
