@@ -3,7 +3,7 @@ of its runs, and the texts it was given, its prompt and each message sent after,
 agent_id in `lane/<yyyymmdd>-<session>-<plugin>/<agent_id>.jsonl` of the system's temporary folder,
 each plugin's guard keeping its own record of a session, as one run may be held by two plugins'
 guards, its own plugin's and one that routes it; as
-Q7 of plugins/rn/domain/best-practices/plugin/best-practice.md has it for what is used only while a
+Q12 of plugins/rn/domain/best-practices/plugin/best-practice.md has it for what is used only while a
 plugin runs; a line of JSON each, read back for the run the subagent is in, from its last start, as
 a subagent resumed keeps its ID and gives a result again."""
 

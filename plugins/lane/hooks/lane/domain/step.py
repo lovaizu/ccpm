@@ -22,8 +22,8 @@ BREAK = re.compile(r"[ \t]*\n[ \t]*")
 # it.
 ROOT = "${CLAUDE_PLUGIN_ROOT}"
 # Where an entry's body names a part, by the plugin's folder, in backticks: a Markdown file under
-# domain/, the folder that keeps the work's knowledge apart from the files whose form Claude Code
-# fixes, as the knowledge there holds other files, such as a JSON Schema of the role's values.
+# domain/, where the template of plugins/rn/domain/best-practices/plugin/ puts each part, as the
+# knowledge there holds other files, such as a JSON Schema of the role's values.
 PART = re.compile(r"`" + re.escape(ROOT) + r"/domain/(?P<md>[^`]+\.md)`")
 
 

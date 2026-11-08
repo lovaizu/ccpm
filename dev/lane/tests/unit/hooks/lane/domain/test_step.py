@@ -117,8 +117,8 @@ class TestPart(helpers.PluginTest):
         self.assertEqual(step.lines_of(self.plugin, "writer"), ["## Steps", "", "1. Go."])
 
     def test_the_one_markdown_file_under_domain_the_body_names_is_the_part(self):
-        # Given: writer's body naming its part under domain/, as an entry of a plugin with parts
-        # does, and the JSON Schema of its values beside it
+        # Given: writer's body naming its part under domain/, as the plugin best practice's
+        # template does, and the JSON Schema of its values beside it
         self.entry(
             "Your part is in `${CLAUDE_PLUGIN_ROOT}/domain/writer.md`, and your values are in the"
             " form of `${CLAUDE_PLUGIN_ROOT}/domain/writer-in.schema.json`."

@@ -53,38 +53,9 @@ DATA: dict[str, Any] = {
     ],
 }
 
-# What a practice holds beside its thinking and steps in a best practice made since the meta's
-# remake: the established way it takes, where it holds, what it costs, and where it comes from.
-HELD: dict[str, Any] = {
-    "name": "Test-driven development",
-    "aliases": ["test-first", "red-green-refactor"],
-    "applies": "Where the behavior is known.",
-    "excludes": "Where it is still sought.",
-    "cost": "The tests come first.",
-    "sources": [
-        {"title": "Fowler", "url": "https://martinfowler.com/"},
-        {"title": "A summary", "url": "https://example.com/", "secondary": True},
-    ],
-}
 
-
-def remade(data: dict[str, Any]) -> dict[str, Any]:
-    """The best practice in the form held since the meta's remake: each practice with what HELD
-    holds, and only the steps that carry a trace, as a step of a case carries none."""
-    made = copy.deepcopy(data)
-    for practice in made["practices"]:
-        practice.update(copy.deepcopy(HELD))
-        practice["steps"] = [s for s in practice["steps"] if "trace" in s]
-    return made
-
-
-REMADE = remade(DATA)
-
-# A best practice of the kind `kind`, beside no other kind's, which is no kind made before the
-# meta's remake.
+# A best practice of the kind `kind`, beside no other kind's.
 PATH = os.path.join("kind", "best-practice.json")
-# A best practice of a kind made before the meta's remake.
-BEFORE = os.path.join("readme", "best-practice.json")
 
 
 def changed(change):
@@ -245,80 +216,6 @@ class Faults(unittest.TestCase):
                     changed(traced),
                     ["step 1 of Q2 takes an empty text in its trace, which no call matches"],
                 )
-
-
-class Remade(unittest.TestCase):
-    """remade_faults, the faults of a best practice made since the meta's remake, and the list of
-    those made before it."""
-
-    def test_a_remade_best_practice_has_none(self):
-        # Given: each practice with each field it holds, and each step with its trace
-        # When: its faults are sought
-        # Then: there are none
-        self.assertEqual(practices.remade_faults(REMADE), [])
-
-    def test_each_field_a_practice_lacks_is_named(self):
-        # Given: a practice with none of the new fields, and another with only its name
-        data = copy.deepcopy(REMADE)
-        for field in HELD:
-            del data["practices"][0][field]
-            if field != "name":
-                del data["practices"][1][field]
-        # When: its faults are sought
-        found = practices.remade_faults(data)
-        # Then: each field it must hold and lacks is named, each in its practice; other names
-        # are not, as a practice may go by none
-        self.assertEqual(
-            found,
-            [
-                "the practice of Q1 has no name",
-                "the practice of Q1 has no applies",
-                "the practice of Q1 has no excludes",
-                "the practice of Q1 has no cost",
-                "the practice of Q1 has no sources",
-                "the practice of Q2 has no applies",
-                "the practice of Q2 has no excludes",
-                "the practice of Q2 has no cost",
-                "the practice of Q2 has no sources",
-            ],
-        )
-
-    def test_an_empty_field_is_named_as_lacking(self):
-        # Given: a practice whose name is blank and whose sources are none
-        data = copy.deepcopy(REMADE)
-        data["practices"][1].update(name=" ", sources=[])
-        # When: its faults are sought
-        # Then: both are named, as neither tells the generator anything
-        self.assertEqual(
-            practices.remade_faults(data),
-            ["the practice of Q2 has no name", "the practice of Q2 has no sources"],
-        )
-
-    def test_a_step_with_no_trace_is_named(self):
-        # Given: a step that carries no trace, as a step of a case does
-        data = copy.deepcopy(REMADE)
-        data["practices"][0]["steps"].append({"text": "Where it fails, mend it."})
-        # When: its faults are sought
-        # Then: it is named, as a step stands only where skipping it or its order breaks the
-        # deliverable, and Lane holds such a step by its trace
-        self.assertEqual(
-            practices.remade_faults(data),
-            [
-                (
-                    "step 2 of Q1 carries no trace, as a step stands only where Lane must hold"
-                    " it; say the rest in the thinking"
-                )
-            ],
-        )
-
-    def test_each_kind_made_before_the_remake_is_one_of_rn_s_own_but_meta(self):
-        # Given: the list of the best practices made before the meta's remake
-        # When: it is set against rn's own best practices
-        own = set(os.listdir(practices.OWN))
-        # Then: each is one of them, so an entry stays only while its best practice does, and
-        # the meta is not one, as it is remade
-        self.assertLessEqual(set(practices.BEFORE), own)
-        self.assertNotIn("meta", practices.BEFORE)
 
 
 TEMPLATE = """# <Product>
@@ -616,25 +513,6 @@ class Leftovers(testing.FolderTest):
             [self.at("images", "old.svg"), self.at("notes.md")],
         )
 
-    def test_each_file_of_its_cases_is_held(self):
-        # Given: kept cases with known verdicts in the folder's cases/, at any depth
-        self.write(self.at("cases", "a-pass.md"), "a")
-        self.write(self.at("cases", "b", "test_b.py"), "b")
-        # When: the files it does not hold are sought
-        # Then: none of the cases is one, as each is a deliverable the evaluator is judged on
-        self.assertEqual(practices.leftovers(self.path, self.data), [])
-
-    def test_a_file_named_cases_is_no_folder_of_cases(self):
-        # Given: a file whose name is that of the folder of cases, and a file under a folder whose
-        # name only opens with it
-        self.write(self.at("cases.md"), "c")
-        self.write(self.at("cases-old", "a.md"), "a")
-        # Then: each is a leftover, as only what lies under cases/ is a case
-        self.assertEqual(
-            practices.leftovers(self.path, self.data),
-            [self.at("cases-old", "a.md"), self.at("cases.md")],
-        )
-
     def test_a_hidden_file_is_no_leftover(self):
         self.write(self.at("images", ".DS_Store"), "")
         self.assertEqual(practices.leftovers(self.path, self.data), [])
@@ -837,54 +715,6 @@ class Markdown(unittest.TestCase):
             lines[start : start + 3], ["- **a**: A.", "  - **b**: B.", "    - **c**: C."]
         )
 
-    def test_shows_each_field_a_practice_holds_since_the_remake(self):
-        # Given: a best practice whose practices hold each new field
-        # When: its Markdown is made
-        text = practices.markdown_of(PATH, REMADE)
-        # Then: each practice shows its name and other names, its thinking, where it applies and
-        # where it does not, its cost, and its sources, a secondary one marked, before its steps
-        self.assertIn(
-            "### Q1\n\nDoes it?\n\n**Name**\n\nTest-driven development, also known as"
-            " test-first and red-green-refactor\n\n**Thinking**\n\nThink.\n\n"
-            "**Applies**\n\nWhere the behavior is known.\n\n"
-            "**Excludes**\n\nWhere it is still sought.\n\n"
-            "**Cost**\n\nThe tests come first.\n\n"
-            "**Sources**\n\n- [Fowler](https://martinfowler.com/)\n"
-            "- [A summary](https://example.com/), secondary, as the maker read only a summary"
-            " of it\n\n"
-            "**Steps**\n\n1. Do.",
-            text,
-        )
-
-    def test_shows_a_name_with_no_other_names_alone(self):
-        # Given: a practice that goes by one name
-        data = copy.deepcopy(REMADE)
-        data["practices"][1]["aliases"] = []
-        del data["practices"][0]["aliases"]
-        # When: its Markdown is made
-        text = practices.markdown_of(PATH, data)
-        # Then: the name stands alone
-        self.assertEqual(text.count("**Name**\n\nTest-driven development\n\n"), 2)
-
-    def test_shows_three_other_names_with_a_comma_before_the_last(self):
-        # Given: a practice that goes by one other name, and one that goes by three
-        data = copy.deepcopy(REMADE)
-        data["practices"][0]["aliases"] = ["a"]
-        data["practices"][1]["aliases"] = ["a", "b", "c"]
-        # When: its Markdown is made
-        text = practices.markdown_of(PATH, data)
-        # Then: one stands alone, and three are joined as a list is
-        self.assertIn("Test-driven development, also known as a\n", text)
-        self.assertIn("Test-driven development, also known as a, b, and c\n", text)
-
-    def test_shows_no_new_field_of_a_practice_that_holds_none(self):
-        # Given: a best practice made before the meta's remake
-        # When: its Markdown is made
-        text = practices.markdown_of(PATH, DATA)
-        # Then: it shows none of the new fields, so its Markdown stays as it was
-        for label in ("Name", "Applies", "Excludes", "Cost", "Sources"):
-            self.assertNotIn(f"**{label}**", text)
-
     def test_leaves_out_what_a_best_practice_has_none_of(self):
         data = copy.deepcopy(DATA)
         del data["parts"]
@@ -900,19 +730,19 @@ class Practices(testing.FolderTest):
         super().setUp()
         self.folder = os.path.join(self.base, "kind")
         self.path = os.path.join(self.folder, "best-practice.json")
-        self.write_json(self.path, REMADE)
+        self.write_json(self.path, DATA)
 
     def test_form_fails_until_markdown_writes_it(self):
         self.assertEqual(ran("form", self.path)[0], 1)
         self.assertEqual(ran("markdown", self.path), (0, "", ""))
         self.assertEqual(
             self.read(os.path.join(self.folder, "best-practice.md")),
-            practices.markdown_of(self.path, REMADE),
+            practices.markdown_of(self.path, DATA),
         )
         self.assertEqual(ran("form", self.path), (0, "", ""))
 
     def test_form_fails_on_a_fault_of_the_form(self):
-        data = copy.deepcopy(REMADE)
+        data = copy.deepcopy(DATA)
         data["practices"].pop()
         self.write_json(self.path, data)
         ran("markdown", self.path)
@@ -920,103 +750,38 @@ class Practices(testing.FolderTest):
         self.assertEqual(code, 1)
         self.assertIn(f"practices.py: {self.path}: {practices.faults(data)[0]}", err)
 
-    def made_before(self, data: dict[str, Any]) -> str:
-        """Writes the data as the best practice of a kind made before the meta's remake, and its
-        Markdown; gives its path."""
-        path = os.path.join(self.base, BEFORE)
-        self.write_json(path, data)
-        ran("markdown", path)
-        return path
-
-    def asked_of_the_whole(self, template: str) -> dict[str, Any]:
-        """The data with no parts, each question about the whole, naming the template."""
+    def test_form_holds_the_questions_to_the_template_beside_it(self):
         data = copy.deepcopy(DATA)
         del data["parts"]
         for question in data["intents"]:
             question["about"] = "the whole"
-        data["template"] = template
-        return data
-
-    def test_form_holds_the_questions_of_one_made_before_the_remake_to_each_section(self):
-        # Given: a best practice made before the meta's remake, whose template has a section no
-        # question is about
-        path = self.made_before(self.asked_of_the_whole("template.md"))
-        self.write(os.path.join(os.path.dirname(path), "template.md"), "# <P>\n\n## Use\n")
-        ran("markdown", path)
-        # When: form checks it
-        code, _, err = ran("form", path)
-        # Then: the section is named, as the old meta asked of each section
-        self.assertEqual(code, 1)
-        self.assertIn(f"practices.py: {path}: section Use has no question about it", err)
-        self.assertIn(
-            "[template.md](template.md)",
-            self.read(os.path.join(os.path.dirname(path), "best-practice.md")),
-        )
-
-    def test_form_holds_one_made_before_the_remake_to_each_entry_of_a_template_folder(self):
-        # Given: a best practice made before the meta's remake, whose template is a folder with an
-        # entry no question is about
-        path = self.made_before(self.asked_of_the_whole("template"))
-        folder = os.path.dirname(path)
-        self.write(os.path.join(folder, "template", "skills", "up", "SKILL.md"), "# up\n")
-        # When: form checks it
-        # Then: the entry is named, and the template's files are held, as no leftover is named
-        self.assertEqual(
-            ran("form", path),
-            (1, "", f"practices.py: {path}: section skills has no question about it\n"),
-        )
-
-    def test_form_asks_no_question_of_each_section_of_a_remade_best_practice(self):
-        # Given: a best practice made since the meta's remake, whose template has a section no
-        # question is about
-        data = remade(self.asked_of_the_whole("template.md"))
+        data["template"] = "template.md"
         self.write_json(self.path, data)
         self.write(os.path.join(self.folder, "template.md"), "# <P>\n\n## Use\n")
         ran("markdown", self.path)
-        # When: form checks it
-        # Then: it finds no fault, as its questions ask where makers fail, not of each section
-        self.assertEqual(ran("form", self.path), (0, "", ""))
-
-    def test_form_holds_one_made_before_the_remake_to_no_new_field(self):
-        # Given: a best practice made before the meta's remake, its practices with no name, no
-        # sources and a step of a case with no trace
-        path = self.made_before(DATA)
-        # When: form checks it
-        # Then: it finds no fault, as it is held to the old form until it is remade
-        self.assertEqual(ran("form", path), (0, "", ""))
-
-    def test_form_names_each_field_a_remade_best_practice_lacks(self):
-        # Given: a best practice made since the meta's remake, in the old form
-        self.write_json(self.path, DATA)
-        ran("markdown", self.path)
-        # When: form checks it
         code, _, err = ran("form", self.path)
-        # Then: each field it lacks and each step with no trace is named
         self.assertEqual(code, 1)
-        for fault in practices.remade_faults(DATA):
-            self.assertIn(f"practices.py: {self.path}: {fault}\n", err)
-        self.assertIn("the practice of Q1 has no name", err)
+        self.assertIn(f"practices.py: {self.path}: section Use has no question about it", err)
+        self.assertIn(
+            "[template.md](template.md)", self.read(os.path.join(self.folder, "best-practice.md"))
+        )
 
-    def test_form_takes_a_practice_with_its_name_aliases_scope_cost_and_sources(self):
-        # Given: a best practice whose practices hold each new field
-        # When: its Markdown is written and form checks it
-        ran("markdown", self.path)
-        # Then: rn's form of a best practice takes it
-        self.assertEqual(ran("form", self.path), (0, "", ""))
-
-    def test_form_fails_on_a_source_with_no_url(self):
-        # Given: a source that names no place to read it
-        data = copy.deepcopy(REMADE)
-        del data["practices"][0]["sources"][0]["url"]
+    def test_form_holds_the_questions_to_a_template_that_is_a_folder_and_keeps_its_files(self):
+        data = copy.deepcopy(DATA)
+        del data["parts"]
+        for question in data["intents"]:
+            question["about"] = "the whole"
+        data["template"] = "template"
         self.write_json(self.path, data)
-        # When: form checks it
-        code, _, err = ran("form", self.path)
-        # Then: it is out of rn's form of a best practice
-        self.assertEqual(code, 1)
-        self.assertIn('is out of its form: $.practices[0].sources[0]: expected the key "url"', err)
+        self.write(os.path.join(self.folder, "template", "skills", "up", "SKILL.md"), "# up\n")
+        ran("markdown", self.path)
+        self.assertEqual(
+            ran("form", self.path),
+            (1, "", f"practices.py: {self.path}: section skills has no question about it\n"),
+        )
 
     def test_form_fails_on_a_file_it_names_that_is_not_beside_it(self):
-        self.write_json(self.path, dict(REMADE, example="example.md"))
+        self.write_json(self.path, dict(DATA, example="example.md"))
         code, _, err = ran("form", self.path)
         self.assertEqual(code, 1)
         self.assertIn(f"practices.py: {self.path}: its example example.md is not beside it", err)
@@ -1030,7 +795,7 @@ class Practices(testing.FolderTest):
     def test_form_fails_on_a_best_practice_that_names_no_kinds_it_takes(self):
         for key in ("inputs", "preconditions"):
             with self.subTest(key=key):
-                data = copy.deepcopy(REMADE)
+                data = copy.deepcopy(DATA)
                 del data[key]
                 self.write_json(self.path, data)
                 code, _, err = ran("form", self.path)
@@ -1038,7 +803,7 @@ class Practices(testing.FolderTest):
                 self.assertIn(f'is out of its form: $: expected the key "{key}"', err)
 
     def test_form_fails_on_a_kind_it_takes_that_has_no_best_practice(self):
-        self.write_json(self.path, dict(REMADE, inputs=["gone"]))
+        self.write_json(self.path, dict(DATA, inputs=["gone"]))
         code, _, err = ran("form", self.path)
         self.assertEqual(code, 1)
         self.assertIn(
@@ -1048,7 +813,7 @@ class Practices(testing.FolderTest):
         )
 
     def test_form_fails_on_an_example_out_of_the_schema_that_is_its_template(self):
-        data = copy.deepcopy(REMADE)
+        data = copy.deepcopy(DATA)
         del data["parts"]
         for question in data["intents"]:
             question["about"] = "goal, the whole"
@@ -1069,7 +834,7 @@ class Practices(testing.FolderTest):
         )
 
     def test_form_fails_on_a_markdown_changed_by_hand(self):
-        made = practices.markdown_of(self.path, REMADE)
+        made = practices.markdown_of(self.path, DATA)
         for changed in (made + "More.\n", made[:-1]):
             with self.subTest(changed=changed[-6:]):
                 self.write(os.path.join(self.folder, "best-practice.md"), changed)
@@ -1081,7 +846,7 @@ class Practices(testing.FolderTest):
 
     def sourced(self) -> str:
         """Names a source for the example, and writes it with a figure; gives the example's path."""
-        self.write_json(self.path, dict(REMADE, example="example.md", source="../doc/source.md"))
+        self.write_json(self.path, dict(DATA, example="example.md", source="../doc/source.md"))
         self.write(os.path.join(self.base, "doc", "source.md"), "![A](images/a.svg) [b](b.md)\n")
         self.write(os.path.join(self.base, "doc", "images", "a.svg"), "<svg/>")
         ran("markdown", self.path)
@@ -1124,7 +889,7 @@ class Practices(testing.FolderTest):
                 self.assertIn("a.svg, which its example copies, is not there", err)
 
     def test_a_source_with_no_example_to_copy_to_is_named(self):
-        self.write_json(self.path, dict(REMADE, source="../doc/source.md"))
+        self.write_json(self.path, dict(DATA, source="../doc/source.md"))
         ran("markdown", self.path)
         for command in ("form", "example"):
             with self.subTest(command=command):

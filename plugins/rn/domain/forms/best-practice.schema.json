@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "best practice",
-  "description": "A kind's best practice. It holds its goal. It names the template beside it, which holds the form a good deliverable of the kind takes, or else the parts such a deliverable has. It names the example beside it, one deliverable made by it, or a folder of such deliverables, and the deliverable the example copies, if it copies one, by its path from the best practice's folder. It names the kinds such a deliverable takes its content from, in inputs, and those whose deliverables must pass before it starts, in preconditions, each by the name of its best practice's folder. It holds the intents, the questions such a deliverable answers yes to, and a practice for each. A practice names the established way it takes, by its name and the other names it goes by. It holds its thinking, what the deliverable must be and why, where it applies and where it doesn't, what it costs, and its sources. It holds its steps where it needs them, each with the call that shows it done where every run makes one. A best practice made before the meta's remake holds only the thinking and the steps. An evaluator gets its goal, its parts, and its intents alone.",
+  "description": "A kind's best practice. It holds its goal. It names the template beside it, which holds the form a good deliverable of the kind takes, or else the parts such a deliverable has. It names the example beside it, one deliverable made by it, and the deliverable the example copies, if it copies one, by its path from the best practice's folder. It names the kinds such a deliverable takes its content from, in inputs, and those whose deliverables must pass before it starts, in preconditions, each by the name of its best practice's folder. It holds the intents, the questions such a deliverable answers yes to, and a practice for each: its thinking, what to do and why, and its steps where it needs them, each with the call that shows it done where every run makes one. An evaluator gets its goal, its parts, and its intents alone.",
   "type": "object",
   "required": [
     "goal",
@@ -80,55 +80,8 @@
           "intent": {
             "type": "string"
           },
-          "name": {
-            "description": "The name the field knows the practice by, such as test-driven development.",
-            "type": "string"
-          },
-          "aliases": {
-            "description": "The other names the practice goes by.",
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
           "thinking": {
-            "description": "What the deliverable must be for the question's role, and why.",
             "type": "string"
-          },
-          "applies": {
-            "description": "Where the practice applies.",
-            "type": "string"
-          },
-          "excludes": {
-            "description": "Where the practice doesn't apply, and what to do there instead.",
-            "type": "string"
-          },
-          "cost": {
-            "description": "What following the practice costs.",
-            "type": "string"
-          },
-          "sources": {
-            "description": "Where the practice comes from: each source by its title and where it lies, marked secondary where the maker read only a summary of it.",
-            "type": "array",
-            "items": {
-              "type": "object",
-              "required": [
-                "title",
-                "url"
-              ],
-              "additionalProperties": false,
-              "properties": {
-                "title": {
-                  "type": "string"
-                },
-                "url": {
-                  "type": "string"
-                },
-                "secondary": {
-                  "type": "boolean"
-                }
-              }
-            }
           },
           "steps": {
             "type": "array",

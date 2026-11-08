@@ -17,7 +17,7 @@ ruff check .
 ruff format --check .
 
 # Code copied between files is fixed in one and left wrong in the other, so code more than one file
-# needs is kept once (plugins/rn/domain/best-practices/code/best-practice.md, Q4); every file is read at once, whichever plugins are
+# needs is kept once (plugins/rn/domain/best-practices/plugin/best-practice.md, Q14); every file is read at once, whichever plugins are
 # given, as a copy can lie in any two. A link is the file it points to, so is left out.
 if command -v pylint >/dev/null 2>&1; then
   git ls-files '*.py' | while read -r file; do [ -L "$file" ] || echo "$file"; done \

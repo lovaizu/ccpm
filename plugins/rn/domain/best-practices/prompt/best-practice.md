@@ -2,7 +2,7 @@
 
 ## Goal
 
-The AI that runs the prompt does the task as the one who asked for it means, in every case it meets and on every run.
+When an AI agent gets the prompt for a request that the prompt is made for, it does the task as the prompt's writer means. It does so with only what its run gives it, on every run, and in cases that the writer did not foresee.
 
 ## Inputs
 
@@ -10,580 +10,274 @@ The AI that runs the prompt does the task as the one who asked for it means, in 
 
 ## Parts
 
-- **description**: The name and the description by which a host chooses the prompt for a request, or its caller knows it: what the prompt does and the requests it's for, the main use first.
-- **tools**: The tools the AI may use, set where the host reads and enforces them, such as a subagent's tools field: each tool an action of the task needs, and none other.
-- **guards**: What holds each rule that must hold on every run outside the AI's judgment, such as a permission rule, a hook, or the program that calls the model, with the tests that show it holding.
-- **body**: The text the AI reads when it runs the prompt.
-  - **goal**: What the task is for and for whom, what lies outside it, and the checks that tell done from looking done.
-  - **context**: Each fact the AI needs and can't find or know on its own, such as what someone decided before the run, and where to find the rest, such as its inputs' paths.
-  - **rules**: How the AI judges the cases the task meets, each rule with its reason, and the choices it hands back.
-  - **steps**: The actions whose order or completeness the result depends on, in their order, each one action with what shows it done, and the programs a step runs.
-  - **examples**: A few cases that differ, each with the result the writer means, set apart from the instructions.
-  - **output**: What the AI hands back, to whom, and in what form, with what it checked and what it didn't.
-- **references**: The detail only some runs need, in files the body links once and says when to read.
-- **evals**: The tasks that try the prompt, drawn from real cases with the result each should reach, some held back from its making, with the graders that judge each run and the kept records that proved them.
+- **description**: What the host reads to choose the prompt for a request: a name that says what the prompt does, and a description of what it does and the requests it is used for.
+- **tools**: The tools the AI may use. The prompt lists them where the host reads them, when the host allows such a list. The host refuses any tool not on it.
+- **goal**: What the AI reads first in the body: what it is to achieve, for whom, how it knows it is done, and what lies outside its task.
+- **context**: What the AI needs and cannot find or know on its own: the situation, its inputs and where they are, and the rules of this place.
+- **steps**: The steps, in the order the AI takes them. Each step names the result that holds when it ends. It gives either the rules the step needs, each with its reason, or the script that does the step and how to run it.
+- **output**: What the AI hands back, in what form, and to whom.
+- **trials**: The trials that try the prompt in real use: runs of the whole that the prompt is part of, on requests as big as real ones. They also hold the stand-ins that play the person and the parts the prompt works with, the judges, each an AI that gives pass or fail on one point, and the checks on each run's record.
 
 ## Intents
 
 | ID | About | Question |
 | --- | --- | --- |
-| Q1 | goal | Reading the goal, does the AI see the end its task serves, what lies outside it, and the checks that tell done from looking done, so that it stops once it meets the end, and not at its last step or before? |
-| Q2 | context | Starting with only the prompt and what its run gives it, does the AI find in the prompt each fact it can't find or know on its own, and where to look for the rest, so that it acts on facts and not on guesses? |
-| Q3 | rules | Meeting a case that the words of any of its rules don't reach, can the AI decide it as the writer would, from the reason that rule gives, so that the rules hold where their words stop? |
-| Q4 | examples | Where a case shows the result's form or judgment better than words, does the AI see in the examples the pattern the writer means across cases that differ, so that it follows the intent in the case before it and copies no one case's particulars? |
-| Q5 | steps | Following the prompt, does the AI meet a step wherever skipping an action or taking it out of order breaks the result, and only there, each one action with what shows it done, and its own judgment everywhere else, so that it keeps the order that matters and reasons freely in the rest? |
-| Q6 | steps | Where a step has one right result, such as a check, a count, or a file's form, does the AI run a program that gives it and act on what the program reports, so that what must be right doesn't hang on the AI's judgment from run to run? |
-| Q7 | tools | Taking each action its task calls for, does the AI find the tool it needs allowed, and each tool its task doesn't need withheld by the host, so that the run never stalls on a missing tool and a slip can't reach what lies outside the task? |
-| Q8 | guards | For each rule that must hold on every run, such as a file never written or a step never skipped, does something outside the AI hold it, and does a test show it holding both where the AI keeps the rule and where it breaks it, so that what must hold doesn't rest on the AI's attention? |
-| Q9 | rules, output | Meeting a choice that isn't its own, such as an action hard to undo, one that others share, or one between ways the caller's intent leaves open, does the AI hand it back, and settle every other choice itself, so that the caller keeps their intent and answers only what the AI can't settle? |
-| Q10 | output | Taking what the AI hands back, can the caller act on it without asking anything further, a program by a fixed form and a person by plain words, with what the AI did and what it didn't, so that the work goes on without a round trip? |
-| Q11 | output | Where the AI puts a decision, a proposal, or a report to a person, can the person decide from its first lines, and reach the details only where they ask, so that they spend their attention only on what's theirs? |
-| Q12 | output | Acting on what the AI reports it did or found, does the caller meet each claim backed by a check the AI ran on the real thing, and learn what it left unchecked, so that they act only on what holds? |
-| Q13 | description | Choosing among many prompts by name and description alone, does the host pick this one for each request it's for and pass it over for a near one it isn't for, and does the body then do what the description promises, so that the prompt runs where it's meant and its caller gets what it promised? |
-| Q14 | body, references | Reading the prompt once, does the AI meet each instruction in one place, each thing under one term, and no two instructions that pull apart, so that it spends no reasoning on reconciling them and never follows the wrong one? |
-| Q15 | body, references | Reading the prompt, does the AI meet only lines that change what it does, with the detail that only some runs need in a file it reads then, so that its attention goes to what counts in its case? |
-| Q16 | evals | Trying a prompt that runs more than once, does the maintainer have tasks drawn from real failures, where a behavior should happen and where it shouldn't, each run graded by code where code can tell and by a judge proven on kept records where it can't, so that a failing eval points at the prompt and not at the eval? |
-| Q17 | the whole | Trying a prompt that runs more than once, on requests held back from its making, of each kind it's for, several times on each model it runs on, does the AI do the task as the one who asked for it means on every run? |
+| Q1 | goal | When the AI believes it has finished, can it tell from the prompt whether it has reached what the task is for, so that it stops at that purpose and not at the last step? |
+| Q2 | goal | When the AI meets a choice that is the user's, such as one between options that serve equally or an action hard to undo, does it hand the choice to the user rather than make it, so that the user's purpose and intent stay the user's? |
+| Q3 | context | Given the prompt and only what its run gives it, can the AI do each step without guessing a fact, such as where its inputs are or a rule of the place it works in, so that its result rests on facts, not on guesses? |
+| Q4 | goal, steps | Taking the steps in order, does the AI arrive at what the goal says the task is for, with no step that leads it elsewhere, so that following the prompt is the way to its purpose? |
+| Q5 | steps | When the AI meets a case a step's rule does not name, can it decide the case as the writer would, from the reason the rule gives, so that the rules hold where their words do not reach? |
+| Q6 | steps | When the AI is run twice on the same input, does each step whose result must not vary, such as a check or a file's form, give the same result both times, so that what must hold does not hang on chance? |
+| Q7 | tools, steps | Can the AI take every action its steps call for with the tools it is allowed, so that the run never stalls on a missing tool? |
+| Q8 | tools | When the AI, during a run, reaches for an action that lies outside its task, does the host refuse it, so that a slip of the AI cannot harm what lies outside the task? |
+| Q9 | steps, output | When the caller, the person or the AI that started the prompt, takes what the AI hands back, can it act on it without asking the AI anything further, so that the work goes on without a round trip? |
+| Q10 | description | When a request the prompt is made for comes, and a request near it that it is not made for, does the host, such as Claude Code, choose the prompt for the first and pass it over for the second, from the name and the description alone, so that the prompt runs where it is meant and nowhere else? |
+| Q11 | description, goal | Once the host has chosen the prompt by its description, does the AI do the task the description says, all of it and nothing more, so that the caller gets what the description promised? |
+| Q12 | the whole | When the prompt is run several times on each kind of request it is made for, does the AI reach the result the prompt names on every run, so that the user can count on it? |
+| Q13 | the whole | Does every line of the prompt change what the AI does toward the task, so that none draws its attention from the lines that do? |
+| Q14 | steps | For each rule of the steps that must hold on every run, does a hook hold it, and does a test try the hook both where the AI keeps the rule and where it breaks it, so that a rule that must hold does not rest on the AI's attention? |
+| Q15 | trials | When a trial fails, can the maintainer tell from its record that the prompt went wrong and not the trial: its set-up, a stand-in, a judge or a check, so that they mend the prompt only for a cause the record shows? |
+| Q16 | output | When the AI puts a decision, a proposal or a report to the person, can the person approve or decide from its first lines alone, and reach the details only where they ask, so that the person spends their attention only on what is theirs? |
+| Q17 | output | When the caller acts on what the AI reports it did or found, does each claim hold as far as the report says it was checked, so that the caller acts only on what holds? |
 
 ## Practices
 
 ### Q1
 
-Reading the goal, does the AI see the end its task serves, what lies outside it, and the checks that tell done from looking done, so that it stops once it meets the end, and not at its last step or before?
-
-**Name**
-
-Success criteria, also known as definition of done and stop conditions
+When the AI believes it has finished, can it tell from the prompt whether it has reached what the task is for, so that it stops at that purpose and not at the last step?
 
 **Thinking**
 
-Write first what the task is for and for whom, as a model that knows the end behind a request connects it to what it finds and doesn't infer the end on its own. Then name each condition that holds once the AI meets the end, each with the check that shows it: a command to run where one exists, else what to look at and where. An agent stops once its work looks done, and a check that its environment gives back, such as a test's result, is what tells it the work has reached its end. Write what lies outside the task, as a capable model widens a narrow task with steps no one asked for. Say where the AI stops short of the end: at a blocker it can't pass, or at a choice that isn't its own, which Q9 names, handing back what it found. Say too what isn't a stop, such as a subagent or a command it started that still runs, as a model can end its turn on a summary that announces its next step instead of taking it.
+The AI stops when its work looks done. So the prompt says what the result is for, and gives a check that tells done from looking done.
 
-**Applies**
+**Steps**
 
-Every prompt for a task with an end, and most where the AI runs many steps or runs unattended.
-
-**Excludes**
-
-A prompt for one answer, such as a label for a ticket, ends with its answer, and its output form says when it's done, as Q10 says. Leave out a check the model makes unasked, such as a final review of its own code on a model whose guide says it verifies its work on its own, as one written in makes it check twice.
-
-**Cost**
-
-The writer settles the end and a check for each condition before writing the rest, and a condition with no check leaves the AI to judge it, which Q12 then holds to what it checked.
-
-**Sources**
-
-- [Anthropic, Define success criteria and build evaluations](https://platform.claude.com/docs/en/test-and-evaluate/develop-tests)
-- [Anthropic, Building effective agents](https://www.anthropic.com/engineering/building-effective-agents)
-- [Anthropic, Prompting Claude Fable 5](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5)
-- [Anthropic, Prompting Claude Opus 5](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5)
-- [Anthropic, Prompting Claude Opus 5.5](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5-5)
-- [OpenAI, GPT-5 prompting guide](https://cookbook.openai.com/examples/gpt-5/gpt-5_prompting_guide)
+1. For each thing that holds once the task is met, give the check that shows it: a command to run where one exists, or else what to look up and where.
+2. Write when the AI stops: once every check passes, or at a blocker it cannot pass. At a blocker, the AI hands it back with what it found.
 
 ### Q2
 
-Starting with only the prompt and what its run gives it, does the AI find in the prompt each fact it can't find or know on its own, and where to look for the rest, so that it acts on facts and not on guesses?
-
-**Name**
-
-Context engineering, also known as just-in-time context and the colleague test
+When the AI meets a choice that is the user's, such as one between options that serve equally or an action hard to undo, does it hand the choice to the user rather than make it, so that the user's purpose and intent stay the user's?
 
 **Thinking**
 
-The AI that runs the prompt is able but new to the place, like a brilliant employee on their first day. A subagent starts with none of the conversation that started it, none of the files read there, and none of what someone decided there, so a brief holds whatever its writer knows and the subagent doesn't. Write each fact the AI can't find or know on its own: what someone decided before the run, the terms of the place, its rules, and what the writer knows without saying it. For what it can find, give where to look, such as a path, a command, or an identifier, and let it load what it needs as it goes, as a prompt that holds everything spends attention on what most runs don't need. A pointer to a document gives the AI that document only where it reads it whole and knows what to take from it, so say what the AI takes from it, and where an order or a check from it must hold, write it into the prompt as Q5 and Q8 say. Try the prompt on someone with none of your context, such as a fresh AI given only what a run gives it. Where they'd stop or guess, the AI does too, so add the fact they lacked.
-
-**Applies**
-
-Every prompt, and most a brief that one AI writes for another, which starts with nothing but the brief.
-
-**Excludes**
-
-What a capable model already knows, such as what a test is, needs no line, as Q15 says. A fact that changes from run to run goes in what the run gives, such as its inputs, not in the prompt's text.
-
-**Cost**
-
-The writer names what they know without saying it, which takes a reading by someone without their context, and the AI reads each fact added on every run.
-
-**Sources**
-
-- [Anthropic, Prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices)
-- [Anthropic, Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)
-- [Anthropic, How we built our multi-agent research system](https://www.anthropic.com/engineering/multi-agent-research-system)
-- [Claude Code, Create custom subagents](https://code.claude.com/docs/en/sub-agents)
-- [Google, Prompt design strategies](https://ai.google.dev/gemini-api/docs/prompting-strategies)
+A choice is the user's where the AI has no ground to pick one option over another, or where the choice is hard to undo. The prompt names those choices and how the AI asks about them. It leaves every other choice to the AI.
 
 **Steps**
 
-1. Read each input whole before you write the prompt. The trace: `{inputs}` read to its end.
+1. Among the choices the task meets, mark each action that is hard to undo, touches what others share, or destroys something.
 
 ### Q3
 
-Meeting a case that the words of any of its rules don't reach, can the AI decide it as the writer would, from the reason that rule gives, so that the rules hold where their words stop?
-
-**Name**
-
-Explain the why, also known as the right altitude and heuristics over rigid rules
+Given the prompt and only what its run gives it, can the AI do each step without guessing a fact, such as where its inputs are or a rule of the place it works in, so that its result rests on facts, not on guesses?
 
 **Thinking**
 
-Give each rule with the reason it serves, as a model generalizes from the reason to cases the rule doesn't name, such as never using ellipses because a text-to-speech engine reads the reply aloud. Write the rule at the right altitude: specific enough to guide what the AI does, and general enough to leave it a heuristic. Hard-coded if-else logic breaks on the first case its writer didn't foresee, and vague guidance leaves the AI to guess what the writer assumed. Say what to do, not what to avoid, as a model told what not to do still has to guess the alternative. Write plainly, with no capitals or warnings for weight, as a current model follows a plain instruction, and one written as CRITICAL or MUST overtriggers. Where a rule says always or never, say what the AI does when it can't keep it. In place of a list of edge cases, give the way to judge them and a few examples that differ, as Q4 says.
-
-**Applies**
-
-Every rule of a prompt that the AI applies by judgment.
-
-**Excludes**
-
-A rule that must hold on every run rests on a guard as well, as Q8 says. The prompt still gives its reason, so that the AI keeps it and the guard rarely has to stop it.
-
-**Cost**
-
-A reason lengthens the rule, so give each reason once, where the rule stands, as Q14 says.
-
-**Sources**
-
-- [Anthropic, Prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices)
-- [Anthropic, Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)
-- [Anthropic, Prompting Claude Fable 5](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5)
-- [Anthropic, How we built our multi-agent research system](https://www.anthropic.com/engineering/multi-agent-research-system)
-- [Google, Prompt design strategies](https://ai.google.dev/gemini-api/docs/prompting-strategies)
-
-### Q4
-
-Where a case shows the result's form or judgment better than words, does the AI see in the examples the pattern the writer means across cases that differ, so that it follows the intent in the case before it and copies no one case's particulars?
-
-**Name**
-
-Few-shot prompting, also known as multishot prompting and diverse, canonical examples
-
-**Thinking**
-
-Where the result's form, tone, or judgment shows better than it's told, give a few examples, such as three to five, as examples steer a model's output more reliably than a description. Make them relevant to the real cases, and different from one another where the cases differ, so that the AI takes what stays the same across them and no one case's particulars. Keep their format the same, as the AI copies a difference of format too. Set them apart from the instructions, such as in tags of their own, so that the AI tells an example from a rule. For a judgment, show each as the case, the way of judging, and the result. Draw them from real cases, and keep them apart from the evals' tasks, as an example that's also a task makes its eval pass by copying.
-
-**Applies**
-
-A prompt whose result has a form, a tone, or a judgment that words state less exactly than a case shows.
-
-**Excludes**
-
-Where a schema or a fixed form states the result whole, give the schema, as Q10 says. A prompt whose task has no pattern to show, such as a brief whose specification holds the cases, needs no examples.
-
-**Cost**
-
-The AI reads each example on every run, and too many lead the model to fit them and not the task.
-
-**Sources**
-
-- [Anthropic, Prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices)
-- [Anthropic, Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)
-- [Anthropic, Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)
-- [Google, Prompt design strategies](https://ai.google.dev/gemini-api/docs/prompting-strategies)
-- [OpenAI, Prompt engineering](https://platform.openai.com/docs/guides/prompt-engineering)
-
-### Q5
-
-Following the prompt, does the AI meet a step wherever skipping an action or taking it out of order breaks the result, and only there, each one action with what shows it done, and its own judgment everywhere else, so that it keeps the order that matters and reasons freely in the rest?
-
-**Name**
-
-Degrees of freedom, also known as low and high freedom and workflow checklists
-
-**Thinking**
-
-Match how closely the prompt leads to how fragile the task is. Where only one way is safe, such as a migration that must run in sequence, give numbered steps, each one action with the result or the call that shows it done. Where many ways lead to the result, such as a review, give the end and the heuristics, and let the AI find its way, as a model told to think thoroughly often reasons past a plan written by hand. Keep standing rules, such as what never to read, apart from the steps, as a step that bundles them hides which action it asks for. Where a step's order must hold on every run, such as the tests run before the code, write it as a step and have a guard hold it, as Q8 says. A pointer to another document's order holds nothing. Grade the result, not the path, as Q16 says, so that the AI keeps to no path but the steps.
-
-**Applies**
-
-Every prompt with actions whose order or completeness the result depends on.
-
-**Excludes**
-
-A task with many valid paths and no fragile action needs no steps. Its prompt gives the end, the rules, and the checks.
-
-**Cost**
-
-A step binds every run to it, and steps written for an earlier model often lead a newer one worse than its own reasoning, so each one stands only where its order matters.
-
-**Sources**
-
-- [Anthropic, Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)
-- [Anthropic, Prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices)
-- [Anthropic, Prompting Claude Fable 5](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5)
-- [Anthropic, Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)
-
-### Q6
-
-Where a step has one right result, such as a check, a count, or a file's form, does the AI run a program that gives it and act on what the program reports, so that what must be right doesn't hang on the AI's judgment from run to run?
-
-**Name**
-
-Utility scripts and feedback loops, also known as solve, don't defer and plan-validate-execute
-
-**Thinking**
-
-A program gives one result on every run, and the AI's judgment varies from run to run, so a step that has one right result, such as a check, a count, or a file's form, is a program the AI runs. Say whether the AI runs the program or reads it, as running it costs only its output. Have the program handle its own errors and say what to put right, such as which field is missing and which fields exist, so that the AI mends what it names. Close the loop: the AI runs the check, mends what it reports, and runs it again until it passes. Before a batch or a change hard to undo, have the AI write its plan in a form a program checks, and check it before acting. Where the AI writes a file, a tool that takes it whole or a narrow interface keeps it from errors that a hand-made format invites, such as a count of lines.
-
-**Applies**
-
-Each step with one right result, and each change hard to undo or made to many things at once.
-
-**Excludes**
-
-A step of judgment with many good results stays the AI's, judged by the evals.
-
-**Cost**
-
-The program is code of its own, made and tested by the code best practice before anyone tries the prompt that runs it.
-
-**Sources**
-
-- [Anthropic, Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)
-- [Anthropic, Building effective agents](https://www.anthropic.com/engineering/building-effective-agents)
-- [Anthropic, Define success criteria and build evaluations](https://platform.claude.com/docs/en/test-and-evaluate/develop-tests)
-
-### Q7
-
-Taking each action its task calls for, does the AI find the tool it needs allowed, and each tool its task doesn't need withheld by the host, so that the run never stalls on a missing tool and a slip can't reach what lies outside the task?
-
-**Name**
-
-Least privilege, also known as Excessive Agency, OWASP LLM06 and a minimal viable set of tools
-
-**Thinking**
-
-List each action the task takes and the tool that takes it, and allow those tools alone, where the host enforces the list, such as a subagent's tools field. An agent can take a damaging action from a confused or manipulated output whatever the cause, and it can't misuse a tool it doesn't have. Prefer a narrow tool to an open-ended one, such as a tool that writes one file over a shell, as a shell allows every command. Give each tool one purpose that no other overlaps, as a model, like an engineer, can't choose well between two tools that do the same. Know what the host's fields do: some grant, and some restrict, such as Claude Code's allowed-tools on a skill, which only approves tools ahead and withholds none, beside its disallowed-tools, which removes them. Where a tool the task needs also allows an action it must never take, add a guard, as Q8 says.
-
-**Applies**
-
-Every prompt the host runs with tools.
-
-**Excludes**
-
-A prompt that runs with no tools, such as a single call that only answers, has no list to set.
-
-**Cost**
-
-Each tool left off stalls a run that needs it, which only a run shows, so read the evals' records for a tool the host refused.
-
-**Sources**
-
-- [OWASP, LLM06:2025 Excessive Agency](https://genai.owasp.org/llmrisk/llm062025-excessive-agency/)
-- [Anthropic, Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)
-- [Anthropic, Writing effective tools for agents](https://www.anthropic.com/engineering/writing-tools-for-agents)
-- [Claude Code, Create custom subagents](https://code.claude.com/docs/en/sub-agents)
-- [Claude Code, Extend Claude with skills](https://code.claude.com/docs/en/skills)
-
-### Q8
-
-For each rule that must hold on every run, such as a file never written or a step never skipped, does something outside the AI hold it, and does a test show it holding both where the AI keeps the rule and where it breaks it, so that what must hold doesn't rest on the AI's attention?
-
-**Name**
-
-Deterministic guardrails, also known as complete mediation and enforcement outside the model
-
-**Thinking**
-
-The AI keeps a rule on most runs, not on every run. A guard outside it runs on every call, such as a host's permission rule, a hook, or the program that calls the model and checks what comes back, so a rule that must hold on every run rests on one, such as a file never written, a command never run, or a step never skipped. A guard holds an order by the call that shows a step done, such as the tests run before anyone writes the code. Test each guard with code in the AI's place, once keeping the rule and once breaking it, as such a test runs in seconds with no model, and a guard never seen to stop a break may stop nothing. Have the guard's message say what to do instead, so that the AI goes on from it. The prompt still says the rule and its reason, as Q3 says.
-
-**Applies**
-
-Each rule whose break harms what lies outside the task or breaks its result, on any run.
-
-**Excludes**
-
-A rule of judgment that no call shows, such as whether a name is clear, has no guard. The evals check it. A rule that holds only in some cases stops the runs outside them, so it stays a rule of the prompt.
-
-**Cost**
-
-Each guard is code to build and test, and a guard on a rule that needn't always hold stops the runs that rightly break it.
-
-**Sources**
-
-- [Claude Code, Automate actions with hooks](https://code.claude.com/docs/en/hooks-guide)
-- [OWASP, LLM06:2025 Excessive Agency](https://genai.owasp.org/llmrisk/llm062025-excessive-agency/)
-- [Anthropic, Building effective agents](https://www.anthropic.com/engineering/building-effective-agents)
-- [Anthropic, How we built our multi-agent research system](https://www.anthropic.com/engineering/multi-agent-research-system)
-
-### Q9
-
-Meeting a choice that isn't its own, such as an action hard to undo, one that others share, or one between ways the caller's intent leaves open, does the AI hand it back, and settle every other choice itself, so that the caller keeps their intent and answers only what the AI can't settle?
-
-**Name**
-
-Human-in-the-loop checkpoints, also known as agentic eagerness and ambiguity and permission handling
-
-**Thinking**
-
-Name the kinds of choice that go back to the caller: an action that destroys something or is hard to undo, one that others see or share, such as a push or a message sent, a change of the task's scope, and input that only the caller has. Say that the AI settles every other choice itself, from the facts it finds, the goal, and what the caller said, and writes what it settled and why, as a model left unsure stops to ask what it could settle, and each needless question costs the caller a round trip. Tie the threshold to the action's risk: low for a tool that deletes or pays, high for one that only reads. At a choice that goes back, the AI asks and ends its turn, rather than ending on a promise.
-
-**Applies**
-
-Every prompt whose AI acts for a caller who can answer.
-
-**Excludes**
-
-A run with no one to answer, such as one that runs unattended, can't hand a choice back. Its prompt says what the AI does instead, such as taking the safe default or stopping with what it found.
-
-**Cost**
-
-Each choice handed back stops the work until the caller answers, and the writer weighs that against the cost of a wrong choice.
-
-**Sources**
-
-- [Anthropic, Prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices)
-- [Anthropic, Prompting Claude Fable 5](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5)
-- [OpenAI, GPT-5 prompting guide](https://cookbook.openai.com/examples/gpt-5/gpt-5_prompting_guide)
-- [Google, Prompt design strategies](https://ai.google.dev/gemini-api/docs/prompting-strategies)
-- [OWASP, LLM06:2025 Excessive Agency](https://genai.owasp.org/llmrisk/llm062025-excessive-agency/)
-
-### Q10
-
-Taking what the AI hands back, can the caller act on it without asking anything further, a program by a fixed form and a person by plain words, with what the AI did and what it didn't, so that the work goes on without a round trip?
-
-**Name**
-
-Structured outputs, also known as an output contract and a handoff by reference
-
-**Thinking**
-
-Name the caller, the person or the program that takes what the AI hands back, and what it does next. List what it needs for that: the result, what the AI did, and what it didn't and why. Choose the form by who reads it. Where a program reads it, give a schema the program checks, such as a host's structured outputs or a tool whose field takes only the allowed values, as a model told the form matches it on most runs and a schema holds it on all. Where a person reads it, write plain words, as Q11 says. Where the result is large, such as code or a report, have the AI write it to a file and hand back the path, as each copy through another AI loses detail and costs its tokens again.
-
-**Applies**
-
-Every prompt, as each hands something back to a caller.
-
-**Excludes**
-
-How a report puts a decision to a person is Q11's. What the report claims is Q12's.
-
-**Cost**
-
-A fixed form changes with each reader that takes it, and the program that reads it changes with it.
-
-**Sources**
-
-- [Anthropic, Prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices)
-- [Anthropic, How we built our multi-agent research system](https://www.anthropic.com/engineering/multi-agent-research-system)
-- [OpenAI, Prompt engineering](https://platform.openai.com/docs/guides/prompt-engineering)
-- [Google, Prompt design strategies](https://ai.google.dev/gemini-api/docs/prompting-strategies)
-
-### Q11
-
-Where the AI puts a decision, a proposal, or a report to a person, can the person decide from its first lines, and reach the details only where they ask, so that they spend their attention only on what's theirs?
-
-**Name**
-
-Bottom line up front, also known as BLUF and the inverted pyramid
-
-**Thinking**
-
-Have the AI open with what it asks or reports, and why, as a person approves from the conclusion and its grounds and reads further only where these leave them unsure. Then the grounds, in plain sentences, in the words the person uses, with no term of the AI's own. Put one decision to the person in each message, with the one the AI recommends, worded so that yes takes it, as a message that asks several things at once gets several half answers. Keep the details until the person asks, and leave out what wouldn't change what they do next. Short isn't the aim: readable sentences, not fragments, abbreviations, or chains of arrows.
-
-**Applies**
-
-Every prompt whose AI puts a decision, a proposal, or a report to a person.
-
-**Excludes**
-
-What a program reads takes its fixed form, as Q10 says. A person who asks for the whole, such as a full log, gets it.
-
-**Cost**
-
-The AI holds back detail, so a person who wanted it asks once more.
-
-**Sources**
-
-- [Army Regulation 25-50, as Wikipedia's BLUF (communication) sums it up](https://en.wikipedia.org/wiki/BLUF_(communication)), secondary, as the maker read only a summary of it
-- [Google, Technical Writing One, Paragraphs](https://developers.google.com/tech-writing/one/paragraphs)
-- [Anthropic, Prompting Claude Fable 5](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5)
-
-### Q12
-
-Acting on what the AI reports it did or found, does the caller meet each claim backed by a check the AI ran on the real thing, and learn what it left unchecked, so that they act only on what holds?
-
-**Name**
-
-Grounded claims, also known as investigate before answering and outcome verification
-
-**Thinking**
-
-The caller can't tell a claim the AI checked from one it guessed, so have each claim rest on a check the AI ran on the real thing in this run: the file read, the command run, the record opened, never memory, a guess, or another AI's summary. An agent can say it booked a flight while no booking exists, so the claim names the outcome it checked, not the action it took. Judge a check by a result that comes back pass or fail, such as a command's exit code, not by a few lines of its output. Check every item a claim names, not a sample. Have the report say what the AI checked and what it didn't, and why, so that it never reads as covering more than it does. On a long run, have the AI audit each claim against a tool result before it reports, as that nearly ends made-up reports of progress.
-
-**Applies**
-
-Every prompt whose AI reports what it did or found.
-
-**Excludes**
-
-An answer from what the model knows, with nothing in the run to check it on, says so. Ask for grounded claims, not for checks the model makes unasked, as a check written in on top of its own costs tokens and adds nothing.
-
-**Cost**
-
-Each claim waits for its check, and a report says less than the AI believes.
-
-**Sources**
-
-- [Anthropic, Prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices)
-- [Anthropic, Prompting Claude Fable 5](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5)
-- [Anthropic, Prompting Claude Opus 5](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5)
-- [Anthropic, Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)
-
-### Q13
-
-Choosing among many prompts by name and description alone, does the host pick this one for each request it's for and pass it over for a near one it isn't for, and does the body then do what the description promises, so that the prompt runs where it's meant and its caller gets what it promised?
-
-**Name**
-
-Discovery by description, also known as trigger evals and balanced problem sets
-
-**Thinking**
-
-A host chooses among many prompts by their names and descriptions alone, which it holds in context while the bodies stay unread. So the description says what the prompt does and when to use it, in the words a request uses, the main use first, as a host may cut a long description short. Write it in the third person, as the host puts it into its own prompt. Tell the prompt apart from its neighbors, as two that claim the same requests split them by chance. Have the body do what the description promises, all of it and nothing more, so that the caller gets the task the host chose it for. Write requests the prompt is for and near ones it isn't, and try both on the host, as a description tried only on its own requests comes to claim every request near them.
-
-**Applies**
-
-Every prompt a host or a caller chooses by its description, such as a skill or a subagent.
-
-**Excludes**
-
-A prompt that its caller starts by name alone, such as a system prompt a program sends or a brief written for one run, needs no choosing. Its description, where it has one, only names it for its reader.
-
-**Cost**
-
-Trying the choice takes many requests on the host, again whenever a neighbor's description changes.
-
-**Sources**
-
-- [Anthropic, Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)
-- [Claude Code, Extend Claude with skills](https://code.claude.com/docs/en/skills)
-- [Claude Code, Create custom subagents](https://code.claude.com/docs/en/sub-agents)
-- [Anthropic, Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)
-
-### Q14
-
-Reading the prompt once, does the AI meet each instruction in one place, each thing under one term, and no two instructions that pull apart, so that it spends no reasoning on reconciling them and never follows the wrong one?
-
-**Name**
-
-Single source of truth, also known as consistent terminology and no contradictory instructions
-
-**Thinking**
-
-Write each instruction in one place, and call each thing by one term throughout, such as always field and never box or element, as the AI reads two terms as two things and two places as two rules. Check each instruction against each other, the exceptions most, and write an exception where its rule stands. A model that follows instructions closely spends its reasoning on reconciling two that pull apart, rather than picking one, and a prompt freed of them runs better. A sentence that explains why one instruction doesn't cover another marks such a pair: settle it at its source, so that the two say one thing.
-
-**Applies**
-
-Every prompt, and every set of prompts and files a run reads together.
-
-**Excludes**
-
-A short reminder of one rule near the end of a long prompt, where a model's guide advises one, is no second source, as it restates the rule and adds none.
-
-**Cost**
-
-A check of every pair of instructions, again after each change.
-
-**Sources**
-
-- [OpenAI, GPT-5 prompting guide](https://cookbook.openai.com/examples/gpt-5/gpt-5_prompting_guide)
-- [Anthropic, Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)
-- [Google, Prompt design strategies](https://ai.google.dev/gemini-api/docs/prompting-strategies)
-- [Anthropic, Prompting Claude Opus 5](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5)
-
-### Q15
-
-Reading the prompt, does the AI meet only lines that change what it does, with the detail that only some runs need in a file it reads then, so that its attention goes to what counts in its case?
-
-**Name**
-
-Progressive disclosure, also known as context budget and the smallest set of high-signal tokens
-
-**Thinking**
-
-Every line takes some of the AI's attention, and its recall falls as its context grows, so keep only the lines that change what the AI does. Leave out what a capable model already knows. Move what only some runs need to a file the body links, with when to read it, such as for a form only some requests fill, as a file costs nothing until it's read. Link each such file from the body, one level deep, as a model may read only the head of a file that another file links. Give a long reference a list of its contents at its top, such as past 100 lines, so that a partial read still shows what it holds. Keep within the size the host documents, such as a skill's body under 500 lines. Cut a line, run the evals, and put back only what a run then lacked.
-
-**Applies**
-
-Every prompt, and most one a host loads beside many others.
-
-**Excludes**
-
-Minimal isn't short: the facts of Q2 and the reasons of Q3 stay, as a prompt cut below them leaves the AI to guess.
-
-**Cost**
-
-A file read only when needed may go unread when it's needed, so the line that links it says when.
-
-**Sources**
-
-- [Anthropic, Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)
-- [Anthropic, Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)
-- [Claude Code, Extend Claude with skills](https://code.claude.com/docs/en/skills)
-
-### Q16
-
-Trying a prompt that runs more than once, does the maintainer have tasks drawn from real failures, where a behavior should happen and where it shouldn't, each run graded by code where code can tell and by a judge proven on kept records where it can't, so that a failing eval points at the prompt and not at the eval?
-
-**Name**
-
-Evaluation-driven development, also known as evals first and LLM-as-a-judge calibration
-
-**Thinking**
-
-Write the evals before the prompt. Run the task without the prompt, or without the change, and keep each way it fails, so that the prompt solves real failures, not imagined ones. A few tasks, such as 20 to 50, drawn from real failures are a start. Write each task so that two who know the work would give it the same verdict, and so that an AI that follows the prompt can pass it. Take cases where a behavior should happen and cases where it shouldn't, as an eval of one side makes the prompt do the thing everywhere. Start each run from a clean place, run it as the prompt runs in use, with the parts it works with, as an agent is its harness and its model together, and grade what it made, not the path it took. Grade by code wherever code can tell, such as a test, a file's state, or a tool called. Leave a judge only what code can't, one point to each judge, answered yes or no, with a way to answer that it can't tell. Use a judge, and a stand-in that plays the person with only their intent, only once each has shown it right on kept records whose verdicts someone who knows the work gave. Read the records, not only the scores. Where a run fails, look first at the eval: its task, its graders, and its harness. Change one thing between two runs, and change the prompt only for a cause a record shows.
-
-**Applies**
-
-Every prompt that runs more than once, before its first use and after each change to it or to the model it runs on.
-
-**Excludes**
-
-A brief written for one run, such as a task handed to one subagent, has no suite. Its caller checks the result it hands back against the purpose, as Q12 says.
-
-**Cost**
-
-The evals take more work than the first prompt, and each judge needs its own kept records with known verdicts before it's used.
-
-**Sources**
-
-- [Anthropic, Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)
-- [Anthropic, Define success criteria and build evaluations](https://platform.claude.com/docs/en/test-and-evaluate/develop-tests)
-- [Anthropic, Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)
-- [Anthropic, Prompt engineering overview](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/overview)
-- [Anthropic, How we built our multi-agent research system](https://www.anthropic.com/engineering/multi-agent-research-system)
-- [OpenAI, Prompt engineering](https://platform.openai.com/docs/guides/prompt-engineering)
+The AI is able but new to this place. It sees nothing of the conversation that started it. So the prompt gives what the AI cannot find or know, and says where the rest lies.
 
 **Steps**
 
-1. Run the evals before you write or change the prompt, and see the tasks it's for fail. The trace: `{tests}` run.
+1. For each step, list the facts it needs: its inputs and where they lie, the terms it uses, the rules of the place, and what the writer knows without saying.
+2. Give the prompt to a fresh AI with only what a run gives it, see where it guesses, and add the fact it lacked.
 
-### Q17
+### Q4
 
-Trying a prompt that runs more than once, on requests held back from its making, of each kind it's for, several times on each model it runs on, does the AI do the task as the one who asked for it means on every run?
-
-**Name**
-
-Held-out evaluation, also known as pass^k and regression evals
+Taking the steps in order, does the AI arrive at what the goal says the task is for, with no step that leads it elsewhere, so that following the prompt is the way to its purpose?
 
 **Thinking**
 
-Hold some real requests back from the making, as the writer mends the prompt on the requests they see, and only requests it hasn't met show whether it holds beyond them. Run each with a fresh AI given only the prompt and what a run gives it, several times, on each model the prompt runs on, as a prompt that leads one model well can leave a smaller one short and over-explain to a larger one. Count a task passed only where every run passes, such as by pass^k, where the caller counts on the result each time, and by pass@k only where one success among tries is enough. Read the records of the runs, not only their counts. Trace each shortfall to the goal, a question, or a practice, mend it there, and run again on new requests held back. Keep the tasks that pass as regression evals, run on each change to the prompt or to the model.
+The prompt says first what the task is for, for whom and why. Each step then follows as a result on the way there, with what that result is for. The AI chooses how to reach each result and knows when to go on. Where a step does not fit the case, the AI follows what the step is for. Steps given without their intent are followed off the mark.
 
-**Applies**
+**Steps**
 
-Every prompt that runs more than once, before its first use and again after each change to it or to the model it runs on.
+1. Write a step only where an AI that holds the task's intent would still not know what to do, such as a check to run or a form to keep.
+2. Write the steps in the order their results must hold, so the AI sees that order, such as in a numbered list.
+3. Check that a later step or the goal uses each step's result, and cut a step whose result nothing uses.
+4. Check that the last step leaves what the goal says the task is for.
 
-**Excludes**
+### Q5
 
-A brief written for one run, such as a task handed to one subagent, has no requests to hold back, as its one run is its use. Its caller checks the result it hands back against the purpose, as Q12 says. A trial shows whether the whole works, not whether each grader judges right, which the kept records of Q16 show.
+When the AI meets a case a step's rule does not name, can it decide the case as the writer would, from the reason the rule gives, so that the rules hold where their words do not reach?
 
-**Cost**
+**Thinking**
 
-Requests held back can't shape the prompt, so the writer needs more real requests than they write from, and each trial runs the prompt several times on each model.
+A rule that says what it is for lets the AI apply it where the writer meant it. It also lets the AI judge a case that no rule names. So each rule carries its reason.
 
-**Sources**
+**Steps**
 
-- [Anthropic, Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)
-- [Anthropic, Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)
-- [Anthropic, Writing effective tools for agents](https://www.anthropic.com/engineering/writing-tools-for-agents)
-- [Anthropic, Define success criteria and build evaluations](https://platform.claude.com/docs/en/test-and-evaluate/develop-tests)
+1. Write the rule as what to do, in plain words, with no capitals or warnings for emphasis.
+2. Where a rule says always or never, say what the AI does when the rule cannot be met.
+3. In place of a list of edge cases, give the way of judging and a few typical examples that differ from one another.
+4. Think of a case the rule does not name, read only the rule and its reason, and check that they lead where the writer would go. Where they do not, mend the reason.
+
+### Q6
+
+When the AI is run twice on the same input, does each step whose result must not vary, such as a check or a file's form, give the same result both times, so that what must hold does not hang on chance?
+
+**Thinking**
+
+The AI's judgment varies from run to run. That suits a step that has many good ways. So a program does a step that has one right result. The program gives that result on every run and handles its own errors. The AI runs the program.
+
+**Steps**
+
+1. Run the prompt twice on one input, and compare what those steps gave.
+
+### Q7
+
+Can the AI take every action its steps call for with the tools it is allowed, so that the run never stalls on a missing tool?
+
+**Thinking**
+
+Each action that a step calls for needs a tool that the AI is allowed. Without that tool, the AI cannot take the step, however well the writer writes it.
+
+**Steps**
+
+1. For each step, list each action it takes and the tool that takes it, a script's command among them.
+2. Check each tool against those the prompt allows. Where the prompt does not allow a tool, add the tool or change the step.
+3. Run the prompt, and read the record of the run for a tool call the host refused.
+
+### Q8
+
+When the AI, during a run, reaches for an action that lies outside its task, does the host refuse it, so that a slip of the AI cannot harm what lies outside the task?
+
+**Thinking**
+
+A rule in words holds only while the AI follows it. So the writer makes the host refuse each action that must never happen.
+
+**Steps**
+
+1. List the actions the task must never take, such as writing where it only reads.
+2. Allow only the tools Q7's list needs.
+3. Where a tool it needs also allows an action it must never take, add a rule the host enforces, such as a deny rule or a hook.
+4. Run the prompt on a request that tempts such an action, and check in the record that the host refused it.
+
+### Q9
+
+When the caller, the person or the AI that started the prompt, takes what the AI hands back, can it act on it without asking the AI anything further, so that the work goes on without a round trip?
+
+**Thinking**
+
+The caller sees only what comes back. So the prompt says what that is, in what form, and to whom. A step makes each thing in it.
+
+**Steps**
+
+1. Name the caller, and what it does next with the result.
+2. List what it needs for that: the result, what was done, and what was not done and why.
+3. Choose the form by who reads it: a fixed form, such as JSON, where a script reads it, and short plain words where a person does.
+4. Check that a step makes each thing the output names.
+5. Hand the output alone to someone in the caller's place, and see whether they can act without asking.
+
+### Q10
+
+When a request the prompt is made for comes, and a request near it that it is not made for, does the host, such as Claude Code, choose the prompt for the first and pass it over for the second, from the name and the description alone, so that the prompt runs where it is meant and nowhere else?
+
+**Thinking**
+
+To pick a prompt for a request, the host reads only the name and the description of each of many prompts. So the name and the description say what the prompt does and when to use it, in the words users ask in. They also tell the prompt apart from the others.
+
+**Steps**
+
+1. Write down several requests the prompt is made for, in a user's own words, and several near ones it is not made for.
+2. Write the description: what the prompt does, then the requests and situations it is used for, the main use first.
+3. Give each request written down to a fresh session with the prompt installed, and see which prompt the host chooses. Where it chooses wrongly, mend the description.
+
+### Q11
+
+Once the host has chosen the prompt by its description, does the AI do the task the description says, all of it and nothing more, so that the caller gets what the description promised?
+
+**Thinking**
+
+The description and the body say the same one task. The AI then does the task that the host chose the prompt for.
+
+**Steps**
+
+1. Set what the description says the prompt does against what the goal and the steps have the AI do. For each thing in one and not the other, add it to the body or take it out of the description.
+
+### Q12
+
+When the prompt is run several times on each kind of request it is made for, does the AI reach the result the prompt names on every run, so that the user can count on it?
+
+**Thinking**
+
+The writer knows a prompt by what a fresh AI does with it. So the writer runs it on real requests of each kind, several times, and judges it from the record of what the AI did.
+
+**Steps**
+
+1. Gather requests of each kind the prompt is made for. Hold some back, and do not use them while making the prompt.
+2. Run each with a fresh AI that has only the prompt and what a run gives it, several times, on the model the prompt will run on.
+3. Mend the prompt only for a cause seen in a record.
+4. Run the requests held back last. They show whether the prompt holds beyond the requests that the writer mended it on.
+
+### Q13
+
+Does every line of the prompt change what the AI does toward the task, so that none draws its attention from the lines that do?
+
+**Thinking**
+
+Every line takes some of the AI's attention. So the prompt keeps only the lines that change what the AI does. It keeps detail that the AI needs only sometimes in a place that the AI reads only then.
+
+**Steps**
+
+1. Move detail that only some runs need out of the prompt, to a place the AI reads only when it needs the detail, such as a file the prompt links directly. Say in the prompt when to read it.
+2. Run Q12's trials again after cutting, and put back what a run then lacked.
+
+### Q14
+
+For each rule of the steps that must hold on every run, does a hook hold it, and does a test try the hook both where the AI keeps the rule and where it breaks it, so that a rule that must hold does not rest on the AI's attention?
+
+**Thinking**
+
+The AI keeps a rule on most runs, not on every run. A hook runs on every call, so it holds a rule that must hold, such as a file the AI must not write. A test that puts code in the AI's place tries the hook in seconds, without the model. So no trial runs the prompt alone. What the prompt's words leave is the AI's variance and the faults of the design, and only the trials in real use bring those out.
+
+**Steps**
+
+1. List each rule of the steps that must hold on every run, and for each, a case where the AI keeps it and a case where it breaks it.
+2. Hold each such rule with a hook or a deny rule, not with the prompt's words alone.
+3. Test the hook on each case, one case at a time.
+
+### Q15
+
+When a trial fails, can the maintainer tell from its record that the prompt went wrong and not the trial: its set-up, a stand-in, a judge or a check, so that they mend the prompt only for a cause the record shows?
+
+**Thinking**
+
+A trial's own parts are the set-up, the stand-ins, the judges and the checks. These parts are code and prompts of their own. So the maintainer builds each part test first. Before a whole run trusts a part, the maintainer sees the part work right on a record kept from an earlier run. A whole run then only confirms, and a failure in it points to the prompt.
+
+**Steps**
+
+1. Decide by code every point that the record shows, such as a tool called, a file's content or a command's output. Leave to a judge only what code cannot decide.
+2. Give each judge one point, its definitions and a pass or fail. Give it messages of each kind whose answer is known, and use it only once it judges them right.
+3. Give the stand-in for the person only their intent, which the prompt never sees, and the whole of each message it answers. Check on kept conversations that it answers from the intent alone and makes nothing up.
+4. Build each part alone and run it small on a kept record before any whole run.
+5. Between two runs, change one thing, the prompt or a part of the trial, never both. Where a trial fails, look in its record first at the trial's own parts. Mend the prompt only for a cause in the prompt.
+
+### Q16
+
+When the AI puts a decision, a proposal or a report to the person, can the person approve or decide from its first lines alone, and reach the details only where they ask, so that the person spends their attention only on what is theirs?
+
+**Thinking**
+
+The person approves from the conclusion and its grounds. They read further only where these leave them unsure. So a message opens with what it asks or reports and why, in plain sentences. It keeps the rest until the person asks for it.
+
+**Steps**
+
+1. Write a few plain sentences with no headings or labels, in short paragraphs, one point each: the context and the conclusion; the grounds; the purpose and what it should be.
+2. Put what the person is to decide alone on the last line, with one recommendation. Ask for one decision in each message.
+3. Where the person asks for more, add what it is now, with the place it rests on, and the gap between that and what it should be.
+4. Use the words the person uses, and say a term of your own in everyday words or leave it out.
+
+### Q17
+
+When the caller acts on what the AI reports it did or found, does each claim hold as far as the report says it was checked, so that the caller acts only on what holds?
+
+**Thinking**
+
+The caller cannot tell a claim the AI checked from one it guessed. So each claim rests on a check that the AI ran on the real thing, on every item the claim names. The report says what the AI left unchecked.
+
+**Steps**
+
+1. Check each claim on the real thing before reporting it: read the file, run the check, open the record; never from memory, a guess or what another agent's summary says.
+2. Judge a check by a result that comes back pass or fail, such as a command's exit code, not by a few lines of its output.
+3. Judge another agent's work from the records and files it names, set against the task's purpose, not from its summary.
+4. Check every item the claim names, not a sample.
+5. Say what was checked and what was not, and why, so the report never reads as covering more than it did.

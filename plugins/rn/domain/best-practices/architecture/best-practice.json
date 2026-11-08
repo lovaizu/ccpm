@@ -1,402 +1,280 @@
 {
-  "goal": "The developer builds and changes each part of the product on its own, and the parts together give its product vision.",
-  "template": "template.md",
-  "example": "examples",
-  "inputs": [
-    "product-vision",
-    "readme"
-  ],
-  "preconditions": [],
-  "intents": [
+ "goal": "The developer builds and changes each part of the product so that the parts together give its product vision.",
+ "template": "template.md",
+ "example": "example.md",
+ "source": "../../../../../dev/rn/architecture.md",
+ "inputs": [
+  "product-vision",
+  "readme"
+ ],
+ "preconditions": [],
+ "intents": [
+  {
+   "id": "Q1",
+   "about": "the opening",
+   "what": "Starting on any part, does the developer see the one idea by which the product gives its product vision, and the piece of it the part carries out, so that every part they build serves that idea?"
+  },
+  {
+   "id": "Q2",
+   "about": "User stories",
+   "what": "Following a step of an objective's main use, as the README's walkthrough shows it, does the developer find the one user story that carries it, so that each part traces back to what a role does?"
+  },
+  {
+   "id": "Q3",
+   "about": "Principles",
+   "what": "Meeting a case no line of the document names, do two developers of different parts reach the same decision from a principle's why, so that the parts still fit where the document is silent?"
+  },
+  {
+   "id": "Q4",
+   "about": "User stories, Components",
+   "what": "Facing a decision the stories need, does the developer find the one component that alone decides it, so that no decision is made twice and drifts?"
+  },
+  {
+   "id": "Q5",
+   "about": "Components",
+   "what": "Starting on a component, does the developer know what kind of thing it is and what it is made with, so that the components fit without anyone choosing alone?"
+  },
+  {
+   "id": "Q6",
+   "about": "Data model",
+   "what": "Making one component that writes a data and another that reads it, do two developers join it to the other data the same way, so that the data fits while its fields change freely?"
+  },
+  {
+   "id": "Q7",
+   "about": "User stories, Components, Data model, Sequences",
+   "what": "Following a user story from its role's first request to its end, does the developer see at each step which component acts, along which arrow, and what data it hands on, so that they build each step knowing who acts and on what?"
+  },
+  {
+   "id": "Q8",
+   "about": "User stories, Components, Data model, Sequences",
+   "what": "Of any story, component or data, does the developer see which objective of the product vision needs it, so that what none needs can go?"
+  },
+  {
+   "id": "Q9",
+   "about": "Components, Data model, Deployment",
+   "what": "Setting the product up from nothing, does the developer put each component where it runs and each data where it is kept, and start the product, so that they need ask no one?"
+  },
+  {
+   "id": "Q10",
+   "about": "Components, Data model, Directory structure",
+   "what": "Making or changing a component or a data, does the developer find the one place its files belong, so that each change lands in one place?"
+  },
+  {
+   "id": "Q11",
+   "about": "Deployment, Tests",
+   "what": "Asked whether anything in the product goes untested, does the developer see for each deployment unit which levels cover it, how far each tries it, and why a level is missing, so that no gap is left unseen?"
+  },
+  {
+   "id": "Q12",
+   "about": "Tests",
+   "what": "Writing a test at one level, does the developer know what to run real, what doubles stand in for, what to cover and when it passes, so that a failing test names the rule, path or use it breaks?"
+  },
+  {
+   "id": "Q13",
+   "about": "Tests",
+   "what": "When the unit and architecture tests pass, does the developer know the product does what this document says, so that the product vision level is left only to confirm the product in real use?"
+  },
+  {
+   "id": "Q14",
+   "about": "Components, Sequences, Deployment, Directory structure, Tests",
+   "what": "Doubting a choice the document makes, such as a tool or how far a level tries a unit, does the developer see what would be lost by the other way, so that they keep or change it knowing what it was for?"
+  },
+  {
+   "id": "Q15",
+   "about": "the whole",
+   "what": "Following a principle while building a part, does the developer find every figure and list asking the same of that part, so that they never choose between the document and itself?"
+  },
+  {
+   "id": "Q16",
+   "about": "the whole",
+   "what": "Changing how a component works inside while the product vision and the principles stay, does the developer find every line of the document still true, so that the document needs no change for it?"
+  }
+ ],
+ "practices": [
+  {
+   "intent": "Q1",
+   "thinking": "The opening says, as one idea seen from above, how the product turns what its roles bring into what the product vision promises. It points to the product vision and does not repeat it. Every part then reads as a piece of that idea.",
+   "steps": [
     {
-      "id": "Q1",
-      "about": "Drivers",
-      "what": "Choosing between structures, does the developer find each use case the product carries and each quality it must have, each quality said as a scenario with a measure, so that each part is there for a driver and the drivers decide between structures?"
-    },
-    {
-      "id": "Q2",
-      "about": "Structure",
-      "what": "Starting on a part, does the developer find it as one element at one level of abstraction, a container that runs code or keeps data or a component inside one, with its type, its technology, the one responsibility it holds, and where its files lie, so that they build it on its own and a change of one responsibility lands in one element?"
-    },
-    {
-      "id": "Q3",
-      "about": "Dependencies",
-      "what": "Adding a dependency between two parts, does the developer find which part may depend on which, the core on nothing outside it and each outside thing reached through a port at its edge, stated where a machine checks it on each change, so that a change of the outside stays in one adapter and the core runs whole in a test?"
-    },
-    {
-      "id": "Q4",
-      "about": "Interfaces",
-      "what": "Making a part that hands data to another, do the developers of both sides find what crosses, its form, which side owns that form, and where its contract lies, with each data named alike in every view, so that the parts join without either reading the other's code?"
-    },
-    {
-      "id": "Q5",
-      "about": "Runtime",
-      "what": "Following a use case from its role's first request to its end, does the developer see at each step which element acts, along which relation, with which data, and each branch, so that they build each step knowing who acts on what?"
-    },
-    {
-      "id": "Q6",
-      "about": "Deployment",
-      "what": "Setting the product up from nothing, does the developer find where each container runs and where it keeps each data, what each environment gives it, each outside thing it uses, and how it starts, so that they need ask no one?"
-    },
-    {
-      "id": "Q7",
-      "about": "the opening, Decisions",
-      "what": "Doubting a choice, or meeting a case no line names, does the developer find the idea the parts carry out, the rules every part follows with their reasons, and for each decision its context, the options it beat, and its consequences, so that they keep, change, or extend it knowing what it was for?"
-    },
-    {
-      "id": "Q8",
-      "about": "the whole",
-      "what": "Changing how a component works inside while the drivers stay, does the developer find every line of the architecture still true, so that the architecture changes only with its drivers and its structure, and its readers trust it?"
-    },
-    {
-      "id": "Q9",
-      "about": "Tests",
-      "what": "Testing a part or a path, does the developer find for each level what it checks against, what runs real, where doubles stand in and what keeps each true to what it stands for, and when the level passes, with each case at the lowest level that can catch it, so that a failing test points to one part or one path and the slow levels stay few?"
-    },
-    {
-      "id": "Q10",
-      "about": "Runtime, Tests",
-      "what": "Before writing the code of a use case, does the developer find a test for each path through its runtime view at the level that joins the parts, so that they build the parts to join as the architecture says and see when they do?"
-    },
-    {
-      "id": "Q11",
-      "about": "the whole",
-      "what": "With only the architecture and what it rests on, can a developer new to the product build a part in its place, test it at each level, and have it join the others, meeting each element under one name in every view?"
+     "text": "Once the rest is written, check that each component carries out a piece of the idea, and change the idea or the component where one does not."
     }
-  ],
-  "practices": [
+   ]
+  },
+  {
+   "intent": "Q2",
+   "thinking": "There is one story for each way a role meets the product at its edge, drawn from the objectives and the README's walkthrough, each naming what it carries, such as a step of the walkthrough or resuming a run that stopped. Each part then traces to what the role does, and a convenience added is a story added, while the product vision and the README stay as they are.",
+   "steps": [
     {
-      "intent": "Q1",
-      "name": "Quality attribute scenarios",
-      "aliases": [
-        "architecturally significant requirements",
-        "architecture drivers",
-        "utility tree"
-      ],
-      "thinking": "List the drivers before any structure. Take a use case for each way a role meets the product at its edge, from the product vision and the README, such as a command typed or a page opened, each naming the steps of the README's walkthrough it carries. Write each quality the product must have as a scenario of six parts: the source, the stimulus, the environment, the part it reaches, the response, and the measure that judges the response, such as \"a developer adds a kind of rule, and the change touches one component and its tests.\" A quality named alone, such as maintainable or fast, gives a structure nothing to meet, as every system is modifiable for some changes and not for others. Take the qualities from what the product vision asks, and from the developer's own needs, most of all how the product changes and how its tests run. These decide its structure, and no user names them. Rank the scenarios by what each is worth and the effort it takes to meet, and weigh each structure the document chooses by those at the top. Trace each element, relation, and data of the document to the use cases and scenarios that need it, and take out what none needs.",
-      "applies": "Every architecture, before its structure, and again when the product vision or the README changes.",
-      "excludes": "A requirement that shapes no structure, such as the wording of a message, is no driver. The part that holds it keeps it.",
-      "cost": "The scenarios take thought before any structure, and each measure must be one someone can check. A measure set higher than the product vision needs costs structure that nobody uses.",
-      "sources": [
-        {
-          "title": "Bass, Clements and Kazman, Software Architecture in Practice, second edition, section 4.3, Quality Attribute Scenarios",
-          "url": "https://people.ece.ubc.ca/matei/EECE417/BASS/ch04lev1sec3.html"
-        },
-        {
-          "title": "arc42, section 10, Quality Requirements",
-          "url": "https://docs.arc42.org/section-10/"
-        },
-        {
-          "title": "ADR GitHub organization, Architectural Decision Records",
-          "url": "https://adr.github.io/"
-        }
-      ],
-      "steps": [
-        {
-          "text": "Read each input whole, the product vision and the README, before you list the drivers.",
-          "trace": {
-            "action": "read",
-            "takes": [
-              "{inputs}"
-            ]
-          }
-        }
+     "text": "Go through each exchange of the README's walkthrough, and the main use of each objective it doesn't run, and name the one way at the product's edge that carries each step. Add a story where none does.",
+     "trace": {
+      "action": "read",
+      "takes": [
+       "{inputs}"
       ]
-    },
-    {
-      "intent": "Q2",
-      "name": "C4 model",
-      "aliases": [
-        "levels of abstraction",
-        "hierarchical decomposition",
-        "building block view"
-      ],
-      "thinking": "Describe the product at one level of abstraction at a time. Its context holds the people and the systems outside it that it meets. Its containers each run code or keep data, such as a command, a hook script, a service, or a folder of files. Inside each container that holds more than one decision likely to change, its components each group code behind one interface. Draw each level as a figure of its own, as a figure that sets a person, a process, and a module side by side shows neither how the product runs nor how its code divides. Give each element its type, its technology, and the one responsibility it holds in a few words, and give each figure a legend for every symbol. Give a component one decision to hide, such as a data format or how the product talks to another program, as a component that holds a list of unrelated decisions changes for each of them and grows until no one reads it whole. Split an element whose responsibility takes an \"and\" to say. Name where each element's files lie, so that a change lands in one place. Stop at the component, as the modules and functions inside one are its code's, which the code best practice divides.",
-      "applies": "Every product. The component level applies to each container that holds more than one decision likely to change.",
-      "excludes": "A container that holds one decision, such as a script of a few lines, needs no component level.",
-      "cost": "Each level is a figure to keep true, and where a component ends takes thought that the code would otherwise take later, at a higher price.",
-      "sources": [
-        {
-          "title": "Brown, The C4 model for visualising software architecture",
-          "url": "https://c4model.com/"
-        },
-        {
-          "title": "Brown, C4 model, Container",
-          "url": "https://c4model.com/abstractions/container"
-        },
-        {
-          "title": "Brown, C4 model, Component",
-          "url": "https://c4model.com/abstractions/component"
-        },
-        {
-          "title": "Brown, C4 model, Notation",
-          "url": "https://c4model.com/diagrams/notation"
-        },
-        {
-          "title": "arc42, Overview",
-          "url": "https://arc42.org/overview"
-        }
-      ],
-      "steps": []
-    },
-    {
-      "intent": "Q3",
-      "name": "Dependency rule",
-      "aliases": [
-        "ports and adapters",
-        "hexagonal architecture",
-        "clean architecture",
-        "layered architecture"
-      ],
-      "thinking": "Say which element may depend on which, with every dependency pointing inward. The core, the elements that hold the product's rules, depends on nothing outside it, such as a file system, a clock, a network, a program the product calls, or the platform that runs it. Where the core needs something outside, it names what it needs as a port, in its own terms, and an adapter at the edge carries the port out for one technology. A test then stands its own adapter in the real one's place, and a new technology is a new adapter. Draw the dependencies as arrows with no cycle among them, as a cycle makes two elements one, which the developer builds and tests only as a whole. Say where a machine checks the rule on each change, such as a test that reads the imports or a tool of the language, as a rule that's only drawn erodes at the first deadline. Give a port to each outside thing that varies or that a test must stand in for, as a port with one adapter and no test that needs it costs a layer and gives nothing.",
-      "applies": "Every product with rules of its own and something outside them.",
-      "excludes": "A product that only joins outside things, with no rules of its own, such as a script that pipes one command into another, has no core to keep apart. How the code holds the rule inside a component is the code's, as the code best practice's dependency rule says.",
-      "cost": "Each port is an interface and an adapter more, and the adapter copies the data that crosses it into the core's own form.",
-      "sources": [
-        {
-          "title": "Martin, The Clean Architecture, 2012",
-          "url": "https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html"
-        },
-        {
-          "title": "Cockburn, Hexagonal architecture",
-          "url": "https://alistair.cockburn.us/hexagonal-architecture/"
-        },
-        {
-          "title": "ArchUnit User Guide",
-          "url": "https://www.archunit.org/userguide/html/000_Index.html"
-        },
-        {
-          "title": "Thoughtworks, Fitness function-driven development",
-          "url": "https://www.thoughtworks.com/insights/articles/fitness-function-driven-development"
-        }
-      ],
-      "steps": []
-    },
-    {
-      "intent": "Q4",
-      "name": "Interface contract",
-      "aliases": [
-        "published interface",
-        "consumer-driven contract",
-        "concept model"
-      ],
-      "thinking": "For each relation between two containers, or between the product and something outside it, name what crosses, its form, such as a JSON Schema, a command's arguments, or an API, which side owns that form, and where the contract lies, as two developers who each guess the form build halves that don't join. Let the side that offers the interface own it, and the side that takes it test against it. Pass plain data in the form the inner side uses, as passing the outer side's own records ties the core to it. Draw the data the parts pass or keep as a concept model, each data once by its name, with the relations between them and how many of each a relation joins, in a notation its readers know, such as a class diagram of the Unified Modeling Language, so that every view names each data alike. Leave each data's fields to its contract or its code, as the concept model holds only what stays while the fields change.",
-      "applies": "Every relation between containers, and each with the outside.",
-      "excludes": "A call between components inside one container is an interface of the code, as the code best practice's interface part says.",
-      "cost": "Each contract is a file to keep, and a change to it reaches both sides at once.",
-      "sources": [
-        {
-          "title": "Martin, The Clean Architecture, 2012",
-          "url": "https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html"
-        },
-        {
-          "title": "Vocke, The Practical Test Pyramid",
-          "url": "https://martinfowler.com/articles/practical-test-pyramid.html"
-        },
-        {
-          "title": "Brown, C4 model, Notation",
-          "url": "https://c4model.com/diagrams/notation"
-        },
-        {
-          "title": "Cockburn, Hexagonal architecture",
-          "url": "https://alistair.cockburn.us/hexagonal-architecture/"
-        }
-      ],
-      "steps": []
-    },
-    {
-      "intent": "Q5",
-      "name": "Runtime view",
-      "aliases": [
-        "dynamic diagram",
-        "sequence diagram",
-        "use case realization"
-      ],
-      "thinking": "For each use case that branches, or whose path crosses the elements in an order one sentence can't give, draw its steps in order, from the role's first request to what the use case gives them. At each step, show which element acts, along which relation of the structure, and with which data of the concept model. Draw each branch, each step that sends work back, and each question put to a role, as each is a path the parts must join on and a test must take. Keep each step at the boundary between elements, as a step inside one component is its code's and goes untrue when the code changes. Check that each step runs along a relation the structure draws, and add the relation or move the step where none does.",
-      "applies": "Each use case whose steps cross elements in an order a developer would otherwise guess.",
-      "excludes": "A use case that one element carries alone, or whose path one sentence says, needs no figure, as each figure is one more to keep true.",
-      "cost": "A figure for each use case, kept true as the structure changes.",
-      "sources": [
-        {
-          "title": "Brown, C4 model, Dynamic diagram",
-          "url": "https://c4model.com/diagrams/dynamic"
-        },
-        {
-          "title": "arc42, Overview",
-          "url": "https://arc42.org/overview"
-        }
-      ],
-      "steps": []
-    },
-    {
-      "intent": "Q6",
-      "name": "Deployment view",
-      "aliases": [
-        "deployment diagram",
-        "physical view"
-      ],
-      "thinking": "Draw each environment the product runs in, such as the user's computer, a server, or a CI runner, with what it gives the product, such as an interpreter's version. In each, draw the containers it runs, and the data it keeps. Beside them, draw each thing outside the product that the containers depend on, with what they use of it. Say how a developer sets the product up and starts it, in a few sentences. A developer then runs the product without asking, and knows what each container can reach.",
-      "applies": "Every product, with an environment for each place it runs that differs, such as a test environment.",
-      "excludes": "How a user installs the product lies in its README. Point to it.",
-      "cost": "A figure for each environment, kept true as the infrastructure changes.",
-      "sources": [
-        {
-          "title": "Brown, C4 model, Deployment diagram",
-          "url": "https://c4model.com/diagrams/deployment"
-        },
-        {
-          "title": "arc42, Overview",
-          "url": "https://arc42.org/overview"
-        }
-      ],
-      "steps": []
-    },
-    {
-      "intent": "Q7",
-      "name": "Architecture decision records",
-      "aliases": [
-        "decision log",
-        "crosscutting concepts",
-        "solution strategy"
-      ],
-      "thinking": "Open with the strategy, in a few sentences: the idea by which the parts give the product vision, and the few decisions that shape every part. Keep each rule that every part meeting the same case follows, with its reason, so that a developer carries the reason to a case no line names. Record each decision that shapes the structure, a quality, a dependency, an interface, or how the developers build the product, and that a developer would question. Give its context, the forces at play. Give the decision, and each option it beat. Give its consequences, its costs among them. A developer who meets a decision without its reasons can only follow it blindly or undo it blindly. Mark a decision that a later one replaces, with a link to the later one, and keep it, as the decision and its reasons still explain the code built on it.",
-      "applies": "Each decision that's hard to undo or that a developer would question.",
-      "excludes": "A decision any capable developer would make the same way needs no record.",
-      "cost": "Each record takes writing as the team makes the decision, and a reader meets the replaced records beside the ones that hold.",
-      "sources": [
-        {
-          "title": "Nygard, Documenting Architecture Decisions",
-          "url": "https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions"
-        },
-        {
-          "title": "ADR GitHub organization, Architectural Decision Records",
-          "url": "https://adr.github.io/"
-        },
-        {
-          "title": "MADR",
-          "url": "https://adr.github.io/madr/"
-        },
-        {
-          "title": "arc42, Overview",
-          "url": "https://arc42.org/overview"
-        }
-      ],
-      "steps": []
-    },
-    {
-      "intent": "Q8",
-      "name": "Architecturally significant decisions",
-      "aliases": [
-        "the important stuff"
-      ],
-      "thinking": "Keep in the architecture only what stays while the drivers stay: the elements, their responsibilities, their relations and contracts, the rules, and the decisions behind them. Leave how an element works inside, such as its steps, a value it uses, a retry's seconds, or a data's fields, to its code and its contract, as a line about the inside goes untrue at the next change, and an architecture that changes with every fix is one its readers stop trusting. To check, imagine a change inside a component, such as a new value or a step moved, mark each line it would make untrue, and move each marked line to where that component's code or contract keeps it. Repeat with a change of another kind until the change marks no line.",
-      "applies": "Every line of the architecture.",
-      "excludes": "A detail that more than one part relies on, such as a limit two containers share, belongs to a contract, and the contract holds it.",
-      "cost": "A developer looks up the inside of a component in its code, not in the architecture.",
-      "sources": [
-        {
-          "title": "Fowler, Software Architecture Guide",
-          "url": "https://martinfowler.com/architecture/"
-        },
-        {
-          "title": "Nygard, Documenting Architecture Decisions",
-          "url": "https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions"
-        },
-        {
-          "title": "ADR GitHub organization, Architectural Decision Records",
-          "url": "https://adr.github.io/"
-        }
-      ],
-      "steps": []
-    },
-    {
-      "intent": "Q9",
-      "name": "Test pyramid",
-      "aliases": [
-        "test sizes",
-        "practical test pyramid",
-        "contract test"
-      ],
-      "thinking": "Give each test level the one thing it checks against, and test each case at the lowest level that can catch it. The unit level checks a part against its contract, and holds most of the cases, as the code best practice draws them. The integration level checks the parts against this document, each path of the runtime view across the real joins between the parts, such as a repository's architecture tests. The acceptance level checks the real product in real use against the product vision, in a few runs that confirm what the lower levels checked. A case tested again at a higher level adds that level's slowness and flakiness and catches nothing new, and a level that holds most of the cases, such as end-to-end tests, fails in ways no one can place. For each level, say what runs real, where doubles stand in, at the ports of the dependency rule, and what keeps each double true to what it stands for. Draw a double from the real thing's documentation or a recorded run of it, and check it against the real thing by a contract test, as a double that gives what the real thing never would passes a test that the real one fails. Say when each level passes. For a test whose result varies by nature, such as one that runs an AI, say how many runs of how many must meet the expectation. When a higher level finds a fault, first add its test at the lowest level that missed it, see it fail, and fix it there. Trust a check that the levels rest on, such as a trial's judge, only once it has failed on a case that breaks what it checks.",
-      "applies": "Every product with more than one part.",
-      "excludes": "How to draw the cases of a unit is the code best practice's. Where a higher level is as fast and as steady as the unit level, the pyramid's shape matters less.",
-      "cost": "Each level needs its own doubles and setup, and the contract tests run against the real thing on its schedule, not on each change.",
-      "sources": [
-        {
-          "title": "Fowler, TestPyramid",
-          "url": "https://martinfowler.com/bliki/TestPyramid.html"
-        },
-        {
-          "title": "Vocke, The Practical Test Pyramid",
-          "url": "https://martinfowler.com/articles/practical-test-pyramid.html"
-        },
-        {
-          "title": "Winters, Manshreck and Wright, Software Engineering at Google, chapter 11, Testing Overview",
-          "url": "https://abseil.io/resources/swe-book/html/ch11.html"
-        },
-        {
-          "title": "Fowler, ContractTest",
-          "url": "https://martinfowler.com/bliki/ContractTest.html"
-        }
-      ],
-      "steps": []
-    },
-    {
-      "intent": "Q10",
-      "name": "Acceptance test-driven development",
-      "aliases": [
-        "outside-in development",
-        "double-loop test-driven development"
-      ],
-      "thinking": "Draw the integration level's test list from the runtime view, before any code. Take one test for each path through each use case: the main flow, each branch, each step that sends work back, and each question put to a role, until every move from one step to the next lies on some path. Each test runs its path from the first step to the end, through the real joins between the parts, with a double only at a port whose real thing the level can't run. The work on a use case starts with its failing test, and the unit tests drawn from each part's contract run inside it, as the code best practice says. A test list drawn from the code after it's written follows what the code does, not what the architecture says, and a path no test takes is one where the parts may not join.",
-      "applies": "Each use case the runtime view draws.",
-      "excludes": "A use case that one element carries alone gets its tests at that element's unit level.",
-      "cost": "Each test comes before the code that would make it easy to write, so the first one builds the harness the others use.",
-      "sources": [
-        {
-          "title": "Freeman and Pryce, Growing Object-Oriented Software, Guided by Tests, as its table of contents gives it",
-          "url": "https://growing-object-oriented-software.com/toc.html",
-          "secondary": true
-        },
-        {
-          "title": "Vocke, The Practical Test Pyramid",
-          "url": "https://martinfowler.com/articles/practical-test-pyramid.html"
-        },
-        {
-          "title": "Beck, Canon TDD, 2023",
-          "url": "https://newsletter.kentbeck.com/p/canon-tdd"
-        }
-      ],
-      "steps": []
-    },
-    {
-      "intent": "Q11",
-      "name": "Views and viewpoints",
-      "aliases": [
-        "architecture description",
-        "correspondence rules"
-      ],
-      "thinking": "Make each view answer one concern of the developer, as the other questions give them, and name each element, relation, and data alike in every view. A developer who meets a figure that breaks a rule, or a name that differs from the list, must choose which to follow, and guesses. Check the whole by building one use case in thought, with only the architecture and what it rests on: follow it from its driver through the structure, its contracts, its runtime path, its place on disk and in deployment, and its tests, and mend each place where the trail breaks. Repeat with a use case of another shape.",
-      "applies": "The whole architecture, once each section holds its content, and after each change.",
-      "excludes": "Whether the product built from it gives the product vision is the acceptance level's to show, not this reading's.",
-      "cost": "A reading of the whole after each change.",
-      "sources": [
-        {
-          "title": "ISO/IEC/IEEE 42010, as Wikipedia's IEEE 1471 sums it up",
-          "url": "https://en.wikipedia.org/wiki/IEEE_1471",
-          "secondary": true
-        },
-        {
-          "title": "ISO/IEC/IEEE 42010, as TRAK's What is an Architecture Viewpoint sums it up",
-          "url": "https://trakviewpoints.sourceforge.io/what_is_an_architecture_viewpoint.html",
-          "secondary": true
-        },
-        {
-          "title": "Brown, C4 model, Notation",
-          "url": "https://c4model.com/diagrams/notation"
-        }
-      ],
-      "steps": []
+     }
     }
-  ]
+   ]
+  },
+  {
+   "intent": "Q3",
+   "thinking": "Each principle is one rule that every part meeting the same decision follows, with its why: what goes wrong without it. A developer carries the why to a case the rule does not name.",
+   "steps": [
+    {
+     "text": "Point to the principles of the architecture this one builds on, and write only what this product adds or changes."
+    },
+    {
+     "text": "Take a case no rule names, decide it from each why as two developers of different parts would, and sharpen the why where they differ."
+    }
+   ]
+  },
+  {
+   "intent": "Q4",
+   "thinking": "One component alone makes each decision the stories need, above all one hard to make or likely to change, and a list under the figure says so by the component's name. A decision two components share is made twice and drifts. A box holds only the component's name and type, as a box that holds sentences no longer shows the parts and their joins at a glance.",
+   "steps": [
+    {
+     "text": "List each decision the stories need by asking at each step of each sequence what must be decided there, and move the decision or split the component where two components or none make it."
+    },
+    {
+     "text": "Label each arrow with what one does to another and the data it hands on, never a word such as \"uses\"."
+    }
+   ]
+  },
+  {
+   "intent": "Q5",
+   "thinking": "Each box has its type and technology, and the figure a legend for every symbol. A store of data is a box like a component's, as its type, such as a folder of JSON files, tells it apart. A developer otherwise chooses them alone, and the components stop fitting.",
+   "steps": [
+    {
+     "text": "Read the figure without the text around it, and add to the legend whatever symbol a reader would still have to ask about; what a part does goes to the list under the figure, not into its box."
+    }
+   ]
+  },
+  {
+   "intent": "Q6",
+   "thinking": "The data are drawn as a concept model in a UML class diagram, which most developers read: each data once, as a class by its name alone, each relation named with how many of each it joins at both ends, and a filled diamond at the whole where one data holds the other's parts, never a hollow one, which readers take in different ways. The data are grouped in frames, one for each component or part of the product that keeps them, set in the order the stories meet them, with the data most others join in the middle, so the reader sees how the data hang together before reading a relation. A list under the figure says what a data is in a few words only where its name could be taken for another's, such as two data that both start a role; a name the reader already reads right gets no line, as such a line only gives them the figure to read again. The fields are left to where the data is built. Two developers then join a data the same way while its fields change freely.",
+   "steps": []
+  },
+  {
+   "intent": "Q7",
+   "thinking": "Each story is drawn as its steps in order, from the role's first request to what the story gives them, each step taken by a component along an arrow of Components and handing on a named data. Each branch, each step that sends work back and each question put to the role is drawn, as each path of the story, and its test, rests on them.",
+   "steps": [
+    {
+     "text": "Check that each step runs along an arrow of Components, and add the arrow or give the step to another component where none does."
+    }
+   ]
+  },
+  {
+   "intent": "Q8",
+   "thinking": "The document keeps only the stories, components and data that an objective needs. Each can then go once no objective needs it.",
+   "steps": [
+    {
+     "text": "Trace each component and each data to the stories whose sequences reach it, and each story to the objective whose use or intent it carries, and remove what reaches none."
+    }
+   ]
+  },
+  {
+   "intent": "Q9",
+   "thinking": "Each component and each data sits in one deployment unit, within the environment where it runs or is kept, with each thing outside the product it depends on, and no infrastructure the components do not need. The developer then knows what each can reach and how the product starts.",
+   "steps": []
+  },
+  {
+   "intent": "Q10",
+   "thinking": "The folders and files that hold each component and each data are drawn as they lie on disk, one line each, leaving out what lies inside a component. The developer then finds the one place to change it.",
+   "steps": []
+  },
+  {
+   "intent": "Q11",
+   "thinking": "Each deployment unit has a cell at each level whose ground, a part's contract, this document or the product vision, says what the unit must do, and an empty cell says why. A level is named by what it checks against, not by its means. Unit and architecture carry most of the checking and run on every change; product vision tests are few.",
+   "steps": [
+    {
+     "text": "Leave out a unit whose every cell would be empty, and say why under the table."
+    },
+    {
+     "text": "Check that each story's sequence runs from start to end at the architecture level in some row."
+    }
+   ]
+  },
+  {
+   "intent": "Q12",
+   "thinking": "Each test is drawn from the one thing its level checks against: the ways a part's contract divides at unit, the paths the sequences draw at architecture, and an objective's main use at real size at product vision. It runs only that real and stands doubles in for the rest. A failing test then names the rule, path or use it breaks.",
+   "steps": [
+    {
+     "text": "Point to the project's shared test rules, and write only where this product differs from them."
+    },
+    {
+     "text": "At unit, divide each input and each result the contract names into classes the part treats alike, the refused ones among them, and write one test for each class."
+    },
+    {
+     "text": "Where a class ends on an ordered scale, such as a length or a count, write one test at each end and one at the nearest value of the next class."
+    },
+    {
+     "text": "Where the contract's result turns on a combination of conditions, write one test for each combination that can occur, with the result it gives."
+    },
+    {
+     "text": "At unit, pass when every test passes, every line and branch runs and every mutant is caught, and add a unit test for each gap that coverage, mutation testing or a property-based test finds, as these tools confirm the tests drawn from the contract and draw none themselves."
+    },
+    {
+     "text": "At unit, run a part an AI does on the real model, with one input for each class, both where the contract says the part acts and where it says it does not, and doubles for the parts it works with."
+    },
+    {
+     "text": "At architecture, run real what joins the components, such as hooks and scripts, and stand a double in for each component an AI runs and each thing outside the product, so the level calls no model and gives the same result each run."
+    },
+    {
+     "text": "At architecture, write one test for each path through each story's sequence, the main flow, each branch, each step that sends work back and each question put to the role, until every move from one step to the next lies on some path."
+    },
+    {
+     "text": "Run the unit and architecture tests that a change reaches before each push, and every test in CI, as running every test before each push makes each change wait, and a selection misses a test that reads a file the change edits."
+    },
+    {
+     "text": "At product vision, once unit and architecture pass, run the real product on each objective's main use, as the README's walkthrough shows it, at the size of a real request, with an AI standing in for the role that holds an intent the product never sees."
+    },
+    {
+     "text": "At product vision, measure each key result as the product vision words it, and set each measure against the last one by the direction the product vision gives it, as the product vision gives no target."
+    },
+    {
+     "text": "At product vision, run each role on the model its users run and judge each run from its records, and try no case a lower level can test, as another model makes other slips than the users meet, and each run is slow and costly."
+    },
+    {
+     "text": "For a test whose result varies from run to run, write how many runs of how many must meet the expectation."
+    }
+   ]
+  },
+  {
+   "intent": "Q13",
+   "thinking": "Each double gives only results in the form the part's contract gives them, the refusals among them, and is checked as the part's unit tests check the part. Unit and architecture together then show that every path holds for the real parts.",
+   "steps": [
+    {
+     "text": "Draw a double of something outside the product from its documentation or from a recorded run of the real thing, as a double that gives what the real thing never would passes a test that the real one fails."
+    },
+    {
+     "text": "For a fault a higher level finds, name the case or path the lower level missed, add its test at the level that must catch it, see it fail, then fix it there."
+    },
+    {
+     "text": "Trust a check, such as a test, a hook or the judge of a trial, only once you have seen it fail on a case that breaks what it checks, or, for a judge, once it is right on kept records whose answer you know, as a check that can't fail lets everything through unseen."
+    }
+   ]
+  },
+  {
+   "intent": "Q14",
+   "thinking": "Beside each choice a developer would question, such as a technology, a tool or how far a level tries a unit, stands why it beat the other way and what it costs. The developer then keeps or changes it knowing what it was for.",
+   "steps": [
+    {
+     "text": "Read each figure as a developer new to the product, and give a why and a cost to each choice they would question."
+    }
+   ]
+  },
+  {
+   "intent": "Q15",
+   "thinking": "Each principle and every part it rules say the same. A developer who meets a figure breaking a principle must choose which to follow.",
+   "steps": []
+  },
+  {
+   "intent": "Q16",
+   "thinking": "The document holds only what stays while the product vision and the principles stay. How a component works inside is left to where it is built, as a line about the inside goes untrue at the next change.",
+   "steps": [
+    {
+     "text": "Imagine a change to how a component works inside, such as its steps, a value it uses or a data's fields, mark each line it would make untrue, and repeat with a change of another kind until no line is marked."
+    }
+   ]
+  }
+ ]
 }

@@ -15,25 +15,34 @@ each change on the work's branch and keeps one draft pull request for the user t
 ## Principles
 
 rn builds on [the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md).
-It takes as they stand the practices of
-[Q1](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q1),
-[Q2](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q2), and
-[Q4](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q4) to
-[Q11](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q11). Lane is its guard, the hook that [Q2](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q2) gives each rule of a role's steps that must
-hold on every run, and rn names Lane in its dependencies, as
-[Q10](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q10) says, since the
+It takes as they stand the practices from
+[Q1](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q1) to
+[Q4](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q4),
+[Q6](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q6) to
+[Q16](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q16),
+[Q18](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q18) to
+[Q20](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q20), and
+[Q22](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q22) to
+[Q25](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q25). Lane is its guard, as
+[Q9](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q9) says, and rn names Lane in
+its dependencies, as
+[Q15](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q15) says, since the
 generator runs Lane's `lay.py` when a deliverable is a plugin.
 
-rn differs from one practice, and keeps one choice of its own:
+rn differs from three of them:
 
-- **[Q3](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q3)**: the main conversation settles the points of the design, which the practice leaves
-  to a role, and puts each point to the user itself. *Why*: the design is the user's intent, so rn
-  settles it where the user talks. No role stands between a point and the user, and nothing
-  carries a point back and forth. The main conversation still makes and judges nothing of a
-  deliverable, and the planner writes each point, so Lane holds every change to the tree.
-- **No lesson taken in**: rn takes in no lesson once a run ends. *Why*: no step of the product
-  vision follows the work once the user has the draft pull request, and a step there would ask the
-  user more, which KR1.2 counts. It costs a lesson that one run meets coming back in a later run.
+- **[Q5](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q5) and
+  [Q17](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q17)**: the main conversation
+  settles the points of the design, which the practice leaves to a role, and puts each point to the
+  user itself, which [Q17](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q17) leaves
+  to a role. *Why*: the design is the user's intent, so rn settles it where the user talks. No role
+  stands between a point and the user, and nothing carries a point back and forth. The main
+  conversation still makes and judges nothing of a deliverable, and the planner writes each point,
+  so Lane holds every change to the tree.
+- **[Q21](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q21)**: rn takes in no lesson
+  once a run ends. *Why*: no step of the product vision follows the work once the user has the
+  draft pull request, and a step there would ask the user more, which KR1.2 counts. It costs a
+  lesson that one run meets coming back in a later run.
 
 rn adds these. Each why says how a run goes wrong for the user without the rule.
 
@@ -130,7 +139,7 @@ one draft pull request for the work. The user merges it, and rn never does. A ru
 
 *Why*: a conversation can end at any point, and work kept only in it goes with it, so the
 user answers again, as KR1.2 counts. The merge is the user's, as
-[Q3](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q3) says.
+[Q16](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q16) says.
 
 ## User stories
 
@@ -454,11 +463,12 @@ Lane with it, and types `/rn:up` in Claude Code at the root of their repository.
   there as rn needs them, and the README names Windows as not yet tried. It costs a user on
   Windows having no tried way.
 - **Python 3.9 and its standard library only, for `tree.py`, `throwaway.py`, and the adapters,**
-  over a later Python or packages, as `python3` is wherever git is: the user installs
+  over a later Python or packages, as
+  [Q13](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q13) says: the user installs
   nothing for rn. It costs the code going without what later versions give.
 - **A run's files in `.rn/<yyyymmdd>-<goal>/` of the repository, committed on the work's branch,**
   over the system's temporary folder, as
-  [Q7](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q7) says for what the user
+  [Q12](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q12) says for what the user
   may keep: a run picks up from them in any conversation, and each round's records stay for the
   user to read. A user who keeps `.rn/` out by `.gitignore` still gets each commit, with its
   grounds in the message. It costs a folder in the user's repository, which the draft pull request
@@ -509,7 +519,8 @@ dev/rn/
                                      tree.py commits it
 ```
 
-- **The parts in `domain/`, with the best practices and the code beside them,** over Turn's
+- **The parts in `domain/`, with the best practices and the code beside them,** as
+  [Q1](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q1) says, over Turn's
   `core/roles/` and `core/domain/`: rn now holds Turn, so it keeps one folder of its own
   knowledge, where Lane finds each part. It costs moving every file of Turn's.
 - **No progress file** over a file that says where the run stands: the design tree's statuses and
@@ -518,8 +529,8 @@ dev/rn/
 
 ## Tests
 
-rn tests by [the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#q9)
-and [the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q1),
+rn tests by [the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#q12)
+and [the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q22),
 and differs from them where this section says.
 
 ![rn's tests](images/tests.svg)
@@ -528,14 +539,14 @@ and differs from them where this section says.
   writes the tree wrong, hands a role another's cut, or hands the evaluator the design, and no
   higher level checks every case. It costs the most tests to keep up as the tree's form changes.
 - **Lane's double of Claude Code and its trial driver, taken from `dev/lane/`,** over a double of
-  rn's own, as [Q10](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q10) says: one
+  rn's own, as [Q14](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q14) says: one
   double sends the events that a recorded Claude Code sent, for both plugins. It costs a change to
   Lane's double reaching rn's tests.
 - **`claude plugin eval` left out of the trials** over a suite of eval cases: an eval case runs one
   prompt in an empty workspace and never stops for an answer, while the walkthrough types `/rn:up`
   twice, answers two points, and goes on in a new conversation. An eval run leaves `gh` real, so it
-  would open a real pull request, and a case run on one prompt tries a skill alone, which meets
-  only the cases set up for it. It costs the
+  would open a real pull request, and a case run on one prompt tries a skill alone, which
+  [Q22](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q22) rules out. It costs the
   trials their own driver, which Lane's already is.
 - **The trials `HAPPY` for the Claude Code process, and `SMOKE` for the rest,** over every row
   alike: only the trials run the prompts, while the other rows only confirm what lower levels

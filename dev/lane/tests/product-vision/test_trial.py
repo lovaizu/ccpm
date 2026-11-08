@@ -1,5 +1,5 @@
 """The judge of trial.py, tried on kept records whose answers the intent settles, before any run
-rests on it, as Q9 of the architecture best practice asks of a trial's judge: for each count the
+rests on it, as Q13 of the architecture best practice asks of a trial's judge: for each count the
 judge makes of writer's practices, of each start's text and of each resume, a record that should
 pass and one that should fail. Each record holds the entries Claude Code 2.1.319 keeps, as its
 sessions showed them: a tool use in an assistant entry, its result in a user entry with Claude

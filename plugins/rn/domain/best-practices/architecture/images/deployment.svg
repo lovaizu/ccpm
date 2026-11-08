@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1760 880" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+  <title>rn&#x27;s deployment</title>
+  <style>
+    .bg { fill: #ffffff; }
+    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .lane { fill: #ddf4ff; stroke: #54aeff; }
+    .store { fill: #fff8c5; stroke: #9a6700; stroke-width: 1.5; }
+    .ext { fill: #eaeef2; stroke: #d0d7de; stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .unit { fill: #ddf4ff; fill-opacity: 0.35; stroke: #0969da; stroke-width: 1.2; }
+    .frame { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    .frame-name { fill: #0969da; font-size: 13px; font-weight: 600; }
+    .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
+    .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
+    .label { fill: #1f2328; font-size: 13px; }
+    .small { font-size: 12px; }
+    .data { fill: #8250df; font-size: 12px; font-style: italic; }
+    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .dashed { stroke-dasharray: 5 4; }
+    .head { fill: #59636e; }
+    .hole { fill: #ffffff; stroke: #59636e; stroke-width: 1.5; }
+    .halo { stroke: #ffffff; stroke-width: 7; stroke-linejoin: round; paint-order: stroke; }
+    .mid { text-anchor: middle; }
+    .start { text-anchor: start; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; }
+      .box { fill: #161b22; stroke: #3d444d; }
+      .lane { fill: #0c2d6b; stroke: #4493f8; }
+      .store { fill: #2e2a1a; stroke: #d29922; }
+      .ext { fill: #21262d; stroke: #3d444d; }
+      .unit { fill: #0c2d6b; stroke: #4493f8; }
+      .frame { stroke: #4493f8; }
+      .frame-name { fill: #4493f8; }
+      .name, .label { fill: #f0f6fc; }
+      .kind { fill: #9198a1; }
+      .data { fill: #c297ff; }
+      .line { stroke: #9198a1; }
+      .head { fill: #9198a1; }
+      .hole { fill: #0d1117; stroke: #9198a1; }
+      .halo { stroke: #0d1117; }
+    }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path class="head" d="M0,0 L10,5 L0,10 z"/>
+    </marker>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1760" height="880"/>
+  <rect class="ext" x="1460" y="210" width="270" height="64" rx="4"/>
+  <text class="name" x="1595.0" y="240.0" text-anchor="middle">ccpm marketplace</text>
+  <text class="kind" x="1595.0" y="257.0" text-anchor="middle">[git repository on GitHub]</text>
+  <rect class="ext" x="1460" y="350" width="270" height="64" rx="4"/>
+  <text class="name" x="1595.0" y="380.0" text-anchor="middle">GitHub</text>
+  <text class="kind" x="1595.0" y="397.0" text-anchor="middle">[the repository&#x27;s remote]</text>
+  <rect class="ext" x="1460" y="90" width="270" height="64" rx="4"/>
+  <text class="name" x="1595.0" y="120.0" text-anchor="middle">Claude</text>
+  <text class="kind" x="1595.0" y="137.0" text-anchor="middle">[the model, by Anthropic&#x27;s API]</text>
+  <rect class="frame" x="20" y="20" width="1280" height="790" rx="8"/>
+  <text class="frame-name" x="32" y="44" text-anchor="start">the user&#x27;s computer</text>
+  <text class="kind start" x="197.79999999999998" y="44" text-anchor="start">[macOS or Linux · Claude Code 2.1.319 or later · python3 3.9 or later · git · gh]</text>
+  <rect class="unit" x="900" y="60" width="380" height="130" rx="6"/>
+  <text class="name start" x="914" y="86" text-anchor="start">Claude Code process</text>
+  <text class="kind start" x="914" y="104" text-anchor="start">[Claude Code CLI]</text>
+  <text class="label start" x="914" y="128" text-anchor="start">main conversation, planner, generator,</text>
+  <text class="label start" x="914" y="146" text-anchor="start">evaluator</text>
+  <rect class="unit" x="900" y="220" width="380" height="100" rx="6"/>
+  <text class="name start" x="914" y="246" text-anchor="start">Lane&#x27;s folder</text>
+  <text class="kind start" x="914" y="264" text-anchor="start">[Claude Code plugin, a dependency]</text>
+  <text class="label start" x="914" y="288" text-anchor="start">lay.py</text>
+  <rect class="unit" x="900" y="480" width="380" height="100" rx="6"/>
+  <text class="name start" x="914" y="506" text-anchor="start">lay.py process</text>
+  <text class="kind start" x="914" y="524" text-anchor="start">[python3]</text>
+  <text class="label start" x="914" y="548" text-anchor="start">lay.py, for a deliverable that&#x27;s a plugin</text>
+  <rect class="unit" x="470" y="60" width="400" height="230" rx="6"/>
+  <text class="name start" x="484" y="86" text-anchor="start">rn&#x27;s folder</text>
+  <text class="kind start" x="484" y="104" text-anchor="start">[Claude Code plugin, installed]</text>
+  <text class="label start" x="484" y="128" text-anchor="start">the skill, the agents, the parts,</text>
+  <text class="label start" x="484" y="146" text-anchor="start">the best practices, the forms, tree.py,</text>
+  <text class="label start" x="484" y="164" text-anchor="start">throwaway.py, the adapters, and Lane&#x27;s</text>
+  <text class="label start" x="484" y="182" text-anchor="start">code, copied in from the link</text>
+  <text class="data start" x="484" y="200" text-anchor="start">Rules laid</text>
+  <rect class="unit" x="40" y="60" width="400" height="110" rx="6"/>
+  <text class="name start" x="54" y="86" text-anchor="start">hook process</text>
+  <text class="kind start" x="54" y="104" text-anchor="start">[python3 · one for each event]</text>
+  <text class="label start" x="54" y="128" text-anchor="start">guard</text>
+  <rect class="unit" x="40" y="200" width="400" height="110" rx="6"/>
+  <text class="name start" x="54" y="226" text-anchor="start">adapter process</text>
+  <text class="kind start" x="54" y="244" text-anchor="start">[python3]</text>
+  <text class="label start" x="54" y="268" text-anchor="start">steps adapter, items adapter</text>
+  <rect class="unit" x="470" y="330" width="400" height="110" rx="6"/>
+  <text class="name start" x="484" y="356" text-anchor="start">tree.py process</text>
+  <text class="kind start" x="484" y="374" text-anchor="start">[python3 · git, gh]</text>
+  <text class="label start" x="484" y="398" text-anchor="start">tree.py</text>
+  <rect class="unit" x="470" y="470" width="400" height="110" rx="6"/>
+  <text class="name start" x="484" y="496" text-anchor="start">throwaway.py process</text>
+  <text class="kind start" x="484" y="514" text-anchor="start">[python3]</text>
+  <text class="label start" x="484" y="538" text-anchor="start">throwaway.py, and the deliverable&#x27;s commands</text>
+  <rect class="unit" x="40" y="340" width="400" height="240" rx="6"/>
+  <text class="name start" x="54" y="366" text-anchor="start">the user&#x27;s repository</text>
+  <text class="kind start" x="54" y="384" text-anchor="start">[git working tree · the work&#x27;s branch]</text>
+  <text class="label start" x="54" y="408" text-anchor="start">each deliverable, at the path the plan gives</text>
+  <text class="data start" x="54" y="426" text-anchor="start">Design tree, Best practice made on the run,</text>
+  <text class="data start" x="54" y="444" text-anchor="start">Making record, Answers, Try record,</text>
+  <text class="data start" x="54" y="462" text-anchor="start">Deliverable, Commit</text>
+  <rect class="unit" x="470" y="610" width="400" height="170" rx="6"/>
+  <text class="name start" x="484" y="636" text-anchor="start">temporary folder</text>
+  <text class="kind start" x="484" y="654" text-anchor="start">[the system&#x27;s]</text>
+  <text class="label start" x="484" y="678" text-anchor="start">the throwaway copy and home, each tree</text>
+  <text class="label start" x="484" y="696" text-anchor="start">edit until committed, and Lane&#x27;s record</text>
+  <text class="label start" x="484" y="714" text-anchor="start">of each run</text>
+  <path class="line" d="M1280,120 L1460,120" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="1370" y="112" text-anchor="middle">sends each turn</text>
+  <path class="line" d="M1280,170 L1400,170 L1400,240 L1460,240" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="1290" y="160" text-anchor="start">installs rn and Lane</text>
+  <path class="line" d="M870,380 L1460,380" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="1090" y="372" text-anchor="middle">pushes, keeps the draft pull request [git, gh]</text>
+  <text class="frame-name" x="30" y="850" text-anchor="start">Legend</text>
+  <rect class="frame" x="100" y="835" width="36" height="22" rx="4"/>
+  <text class="label small" x="144" y="850" text-anchor="start">an environment, with its technology</text>
+  <rect class="unit" x="420" y="835" width="36" height="22" rx="4"/>
+  <text class="label small" x="464" y="850" text-anchor="start">a deployment unit, with the components and the data it holds</text>
+  <rect class="ext" x="900" y="835" width="36" height="22" rx="4"/>
+  <text class="label small" x="944" y="850" text-anchor="start">outside rn, with what rn uses of it</text>
+</svg>
