@@ -8,18 +8,6 @@
       "name": "Every prose ccpm keeps is checked by lovaizu/checks",
       "path": "lefthook.yml",
       "kind": "code",
-      "status": "done"
-    },
-    {
-      "name": "rn can plan from a best practice for planning",
-      "path": "plugins/rn/domain/best-practices/plan",
-      "kind": "meta",
-      "status": "done"
-    },
-    {
-      "name": "The shared plugin best practice says what rn and Lane share",
-      "path": "plugins/rn/domain/best-practices/plugin",
-      "kind": "meta",
       "inputs": [],
       "preconditions": [],
       "status": "doing",
@@ -27,23 +15,32 @@
         {"id": "Q1", "good": true, "decisions": []},
         {"id": "Q2", "good": true, "decisions": []},
         {"id": "Q3", "good": true, "decisions": []},
-        {"id": "Q4", "good": true, "decisions": []},
-        {"id": "Q5", "good": true, "decisions": []},
-        {"id": "Q6", "good": true, "decisions": []},
         {
-          "id": "Q7",
+          "id": "Q4",
           "good": false,
           "decisions": [
             {
-              "about": "Roles that run at once",
-              "decided": "roles that run at the same time each work in a workspace of their own, such as a git worktree and a temporary folder no other role writes, and their results join only through the one who started them, as two makers in one workspace overwrite each other's files unseen",
+              "about": "What the check reads",
+              "decided": "every file ccpm keeps, none left out, and in a JSON file every string of two words or more, such as a decision or a question, as prose left out goes on unchecked",
               "by": "user"
+            },
+            {
+              "about": "What reads JSON",
+              "decided": "lovaizu/checks reads each such string, in a new release that lefthook.yml and the CI job prose name",
+              "by": "reasoning"
+            },
+            {
+              "about": "The code that goes whole",
+              "decided": "Lane's and rn's code and tests go before the check covers everything, as mending the prose of files that go is work lost. These go: plugins/lane/hooks, plugins/lane/scripts, dev/lane/tests, dev/lane/trials, dev/lane/testing.py, dev/lane/cosmic-ray.toml, the Python files of plugins/rn/domain, plugins/rn/hooks, plugins/rn/scripts, dev/rn/tests and dev/rn/cosmic-ray.toml. Their designs, product visions, READMEs, prompts and manifests stay, and check.sh and CI stop running what goes",
+              "by": "reasoning"
             }
           ]
         },
-        {"id": "Q8", "good": true, "decisions": []},
-        {"id": "Q9", "good": true, "decisions": []},
-        {"id": "Q10", "good": true, "decisions": []}
+        {"id": "Q5", "good": true, "decisions": []},
+        {"id": "Q6", "good": false, "decisions": []},
+        {"id": "Q7", "good": true, "decisions": []},
+        {"id": "Q8", "good": false, "decisions": []},
+        {"id": "Q9", "good": false, "decisions": []}
       ]
     },
     {
@@ -65,7 +62,17 @@
         {"id": "Q3", "good": false, "decisions": []},
         {"id": "Q4", "good": false, "decisions": []},
         {"id": "Q5", "good": false, "decisions": []},
-        {"id": "Q6", "good": false, "decisions": []},
+        {
+          "id": "Q6",
+          "good": false,
+          "decisions": [
+            {
+              "about": "How a best practice gets better",
+              "decided": "on what stands: its questions stay, it takes in what research shows missing, and a question goes only for a reason in its role's purpose. The maker reads each best practice whole and puts its improvements to the user one best practice at a time",
+              "by": "user"
+            }
+          ]
+        },
         {
           "id": "Q7",
           "good": false,
@@ -92,6 +99,65 @@
             }
           ]
         },
+        {"id": "Q8", "good": false, "decisions": []},
+        {"id": "Q9", "good": false, "decisions": []},
+        {
+          "id": "Q10",
+          "good": false,
+          "decisions": [
+            {
+              "about": "How the maker checks a best practice, with no answer key written by the AI it judges and no count standing in for a judgment of a state",
+              "decided": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "The shared plugin best practice says what rn and Lane share",
+      "path": "plugins/rn/domain/best-practices/plugin",
+      "kind": "meta",
+      "inputs": [],
+      "preconditions": ["plugins/rn/domain/best-practices/meta"],
+      "status": "open",
+      "intents": [
+        {"id": "Q1", "good": false, "decisions": []},
+        {"id": "Q2", "good": false, "decisions": []},
+        {"id": "Q3", "good": false, "decisions": []},
+        {"id": "Q4", "good": false, "decisions": []},
+        {"id": "Q5", "good": false, "decisions": []},
+        {"id": "Q6", "good": false, "decisions": []},
+        {
+          "id": "Q7",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Roles that run at once",
+              "decided": "roles that run at the same time each work in a workspace of their own, such as a git worktree and a temporary folder no other role writes, and their results join only through the one who started them, as two makers in one workspace overwrite each other's files unseen",
+              "by": "user"
+            }
+          ]
+        },
+        {"id": "Q8", "good": false, "decisions": []},
+        {"id": "Q9", "good": false, "decisions": []},
+        {"id": "Q10", "good": false, "decisions": []}
+      ]
+    },
+    {
+      "name": "Each part a developer builds by the design gives, with the others, the product vision",
+      "path": "plugins/rn/domain/best-practices/architecture",
+      "kind": "meta",
+      "inputs": [],
+      "preconditions": ["plugins/rn/domain/best-practices/meta"],
+      "status": "open",
+      "intents": [
+        {"id": "Q1", "good": false, "decisions": []},
+        {"id": "Q2", "good": false, "decisions": []},
+        {"id": "Q3", "good": false, "decisions": []},
+        {"id": "Q4", "good": false, "decisions": []},
+        {"id": "Q5", "good": false, "decisions": []},
+        {"id": "Q6", "good": false, "decisions": []},
+        {"id": "Q7", "good": false, "decisions": []},
         {"id": "Q8", "good": false, "decisions": []},
         {"id": "Q9", "good": false, "decisions": []},
         {"id": "Q10", "good": false, "decisions": []}
@@ -135,6 +201,127 @@
             }
           ]
         }
+      ]
+    },
+    {
+      "name": "An AI given a prompt does the task as its writer means, in cases the writer didn't foresee",
+      "path": "plugins/rn/domain/best-practices/prompt",
+      "kind": "meta",
+      "inputs": [],
+      "preconditions": ["plugins/rn/domain/best-practices/meta"],
+      "status": "open",
+      "intents": [
+        {"id": "Q1", "good": false, "decisions": []},
+        {"id": "Q2", "good": false, "decisions": []},
+        {"id": "Q3", "good": false, "decisions": []},
+        {"id": "Q4", "good": false, "decisions": []},
+        {"id": "Q5", "good": false, "decisions": []},
+        {"id": "Q6", "good": false, "decisions": []},
+        {"id": "Q7", "good": false, "decisions": []},
+        {"id": "Q8", "good": false, "decisions": []},
+        {"id": "Q9", "good": false, "decisions": []},
+        {"id": "Q10", "good": false, "decisions": []}
+      ]
+    },
+    {
+      "name": "The user reaches their goal through the plan's deliverables, which leave nothing out and start nothing too early",
+      "path": "plugins/rn/domain/best-practices/plan",
+      "kind": "meta",
+      "inputs": [],
+      "preconditions": ["plugins/rn/domain/best-practices/meta"],
+      "status": "open",
+      "intents": [
+        {"id": "Q1", "good": false, "decisions": []},
+        {"id": "Q2", "good": false, "decisions": []},
+        {"id": "Q3", "good": false, "decisions": []},
+        {"id": "Q4", "good": false, "decisions": []},
+        {"id": "Q5", "good": false, "decisions": []},
+        {"id": "Q6", "good": false, "decisions": []},
+        {"id": "Q7", "good": false, "decisions": []},
+        {"id": "Q8", "good": false, "decisions": []},
+        {"id": "Q9", "good": false, "decisions": []},
+        {"id": "Q10", "good": false, "decisions": []}
+      ]
+    },
+    {
+      "name": "This plan holds every deliverable the goal needs, each after what it stands on",
+      "path": ".rn/20261107-rn/design-tree.json",
+      "kind": "plan",
+      "inputs": [],
+      "preconditions": ["plugins/rn/domain/best-practices/plan"],
+      "status": "doing",
+      "intents": [
+        {"id": "Q1", "good": false, "decisions": []},
+        {"id": "Q2", "good": false, "decisions": []},
+        {"id": "Q3", "good": false, "decisions": []},
+        {"id": "Q4", "good": false, "decisions": []},
+        {"id": "Q5", "good": false, "decisions": []},
+        {"id": "Q6", "good": false, "decisions": []},
+        {"id": "Q7", "good": false, "decisions": []},
+        {"id": "Q8", "good": false, "decisions": []},
+        {"id": "Q9", "good": false, "decisions": []},
+        {"id": "Q10", "good": false, "decisions": []},
+        {"id": "Q11", "good": false, "decisions": []}
+      ]
+    },
+    {
+      "name": "A developer builds from the product vision a product with which its users achieve their aim",
+      "path": "plugins/rn/domain/best-practices/product-vision",
+      "kind": "meta",
+      "inputs": [],
+      "preconditions": ["plugins/rn/domain/best-practices/meta"],
+      "status": "open",
+      "intents": [
+        {"id": "Q1", "good": false, "decisions": []},
+        {"id": "Q2", "good": false, "decisions": []},
+        {"id": "Q3", "good": false, "decisions": []},
+        {"id": "Q4", "good": false, "decisions": []},
+        {"id": "Q5", "good": false, "decisions": []},
+        {"id": "Q6", "good": false, "decisions": []},
+        {"id": "Q7", "good": false, "decisions": []},
+        {"id": "Q8", "good": false, "decisions": []},
+        {"id": "Q9", "good": false, "decisions": []},
+        {"id": "Q10", "good": false, "decisions": []}
+      ]
+    },
+    {
+      "name": "A newcomer starts using the product from its README alone, only when it serves their work",
+      "path": "plugins/rn/domain/best-practices/readme",
+      "kind": "meta",
+      "inputs": [],
+      "preconditions": ["plugins/rn/domain/best-practices/meta"],
+      "status": "open",
+      "intents": [
+        {"id": "Q1", "good": false, "decisions": []},
+        {"id": "Q2", "good": false, "decisions": []},
+        {"id": "Q3", "good": false, "decisions": []},
+        {"id": "Q4", "good": false, "decisions": []},
+        {"id": "Q5", "good": false, "decisions": []},
+        {"id": "Q6", "good": false, "decisions": []},
+        {"id": "Q7", "good": false, "decisions": []},
+        {"id": "Q8", "good": false, "decisions": []},
+        {"id": "Q9", "good": false, "decisions": []},
+        {"id": "Q10", "good": false, "decisions": []}
+      ]
+    },
+    {
+      "name": "A reader takes in a reworked document as its writer meant, reading once from the top",
+      "path": "plugins/rn/domain/best-practices/refactor-doc",
+      "kind": "meta",
+      "inputs": [],
+      "preconditions": ["plugins/rn/domain/best-practices/meta"],
+      "status": "open",
+      "intents": [
+        {"id": "Q1", "good": false, "decisions": []},
+        {"id": "Q2", "good": false, "decisions": []},
+        {"id": "Q3", "good": false, "decisions": []},
+        {"id": "Q4", "good": false, "decisions": []},
+        {"id": "Q5", "good": false, "decisions": []},
+        {"id": "Q6", "good": false, "decisions": []},
+        {"id": "Q7", "good": false, "decisions": []},
+        {"id": "Q8", "good": false, "decisions": []},
+        {"id": "Q9", "good": false, "decisions": []},
+        {"id": "Q10", "good": false, "decisions": []}
       ]
     },
     {
@@ -208,6 +395,24 @@
       ]
     },
     {
+      "name": "Lane's README reads as its writer meant, to a newcomer reading it once",
+      "path": "plugins/lane/README.md",
+      "kind": "refactor-doc",
+      "inputs": [],
+      "preconditions": ["plugins/lane"],
+      "status": "open",
+      "intents": [
+        {"id": "Q1", "good": false, "decisions": []},
+        {"id": "Q2", "good": false, "decisions": []},
+        {"id": "Q3", "good": false, "decisions": []},
+        {"id": "Q4", "good": false, "decisions": []},
+        {"id": "Q5", "good": false, "decisions": []},
+        {"id": "Q6", "good": false, "decisions": []},
+        {"id": "Q7", "good": false, "decisions": []},
+        {"id": "Q8", "good": false, "decisions": []}
+      ]
+    },
+    {
       "name": "rn's product vision says what rn is for",
       "path": "dev/rn/product-vision.md",
       "kind": "product-vision",
@@ -277,6 +482,33 @@
         {"id": "Q7", "good": false, "decisions": []},
         {"id": "Q8", "good": false, "decisions": []},
         {"id": "Q9", "good": false, "decisions": []}
+      ]
+    },
+    {
+      "name": "Each of rn's roles does its part as its prompt means, on every run",
+      "path": "plugins/rn/agents",
+      "kind": "prompt",
+      "inputs": ["dev/rn/architecture.md"],
+      "preconditions": ["plugins/rn/domain"],
+      "status": "open",
+      "intents": [
+        {"id": "Q1", "good": false, "decisions": []},
+        {"id": "Q2", "good": false, "decisions": []},
+        {"id": "Q3", "good": false, "decisions": []},
+        {"id": "Q4", "good": false, "decisions": []},
+        {"id": "Q5", "good": false, "decisions": []},
+        {"id": "Q6", "good": false, "decisions": []},
+        {"id": "Q7", "good": false, "decisions": []},
+        {"id": "Q8", "good": false, "decisions": []},
+        {"id": "Q9", "good": false, "decisions": []},
+        {"id": "Q10", "good": false, "decisions": []},
+        {"id": "Q11", "good": false, "decisions": []},
+        {"id": "Q12", "good": false, "decisions": []},
+        {"id": "Q13", "good": false, "decisions": []},
+        {"id": "Q14", "good": false, "decisions": []},
+        {"id": "Q15", "good": false, "decisions": []},
+        {"id": "Q16", "good": false, "decisions": []},
+        {"id": "Q17", "good": false, "decisions": []}
       ]
     },
     {
