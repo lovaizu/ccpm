@@ -389,6 +389,7 @@ class Faults(unittest.TestCase):
             "intents": [],
         }
         tree["deliverables"].insert(1, meta)
+        tree["deliverables"][2]["preconditions"] = [".rn/r/best-practices/man-page/"]
         self.assertEqual(self.faults(tree), [])
 
     def test_a_meta_deliverable_whose_kind_no_later_deliverable_takes(self):
@@ -508,6 +509,58 @@ class Faults(unittest.TestCase):
             trees.faults(tree, lambda p: False, finder, None),
             ["D4 is doing while its precondition .rn/r/best-practices/man-page is doing"],
         )
+
+    def test_a_deliverable_that_leaves_out_the_meta_deliverable_of_its_kind(self):
+        # Given: the readme best practice in the making, then a README that doesn't name it
+        practice = {
+            "name": "m",
+            "path": ".rn/r/best-practices/readme",
+            "kind": "meta",
+            "inputs": [],
+            "preconditions": [],
+            "status": "open",
+            "intents": [],
+        }
+        tree = small()
+        tree["deliverables"].insert(0, practice)
+        # When: the tree is checked
+        # Then: the README fails for leaving its kind's best practice out
+        self.assertEqual(
+            self.faults(tree),
+            [
+                (
+                    "D2 leaves out of its preconditions .rn/r/best-practices/readme, the best"
+                    " practice of its kind"
+                )
+            ],
+        )
+        # And: the README that names it passes, as does one done
+        tree["deliverables"][1]["preconditions"] = [".rn/r/best-practices/readme"]
+        self.assertEqual(self.faults(tree), [])
+        tree["deliverables"][1] = helpers.done("README.md", "r")
+        self.assertEqual(self.faults(tree), [])
+
+    def test_a_meta_deliverable_of_the_kind_meta_needs_not_itself(self):
+        # Given: the meta best practice in the making, and a best practice made to it
+        meta = lambda path, preconditions: {
+            "name": "m",
+            "path": path,
+            "kind": "meta",
+            "inputs": [],
+            "preconditions": preconditions,
+            "status": "open",
+            "intents": [],
+        }
+        tree = small()
+        tree["deliverables"][:0] = [
+            meta(".rn/r/best-practices/meta", []),
+            meta(".rn/r/best-practices/man-page", [".rn/r/best-practices/meta"]),
+        ]
+        tree["deliverables"][3].update(kind="man-page", intents=[])
+        tree["deliverables"][3]["preconditions"] = [".rn/r/best-practices/man-page"]
+        # When: the tree is checked
+        # Then: the meta best practice doesn't name itself, and the rest name theirs
+        self.assertEqual(self.faults(tree), [])
 
 
 class Shown(unittest.TestCase):
@@ -674,6 +727,10 @@ class Edges(unittest.TestCase):
         self.assertEqual(
             trees.faults(after, lambda p: False, FINDER, "Q9"),
             [
+                (
+                    "D1 leaves out of its preconditions .rn/r/best-practices/man-page, the best"
+                    " practice of its kind"
+                ),
                 "D1's kind man-page has no best practice, nor a meta one before it",
                 "D2 makes the kind man-page, which no later deliverable takes",
             ],
@@ -682,7 +739,7 @@ class Edges(unittest.TestCase):
             meta(1, "alpha"),
             kind_of(2, "code", "x/man-page"),
             kind_of(3, "man-page"),
-            kind_of(4, "alpha"),
+            kind_of(4, "alpha", preconditions=[".rn/r/best-practices/alpha"]),
         )
         self.assertEqual(
             trees.faults(other, lambda p: False, FINDER, "Q9"),

@@ -60,7 +60,7 @@
             }
           },
           "preconditions": {
-            "description": "The path of each deliverable whose result it needs passed before it starts, a deliverable of each kind its best practice names in preconditions among them.",
+            "description": "The path of each deliverable whose result it needs passed before it starts, a deliverable of each kind its best practice names in preconditions among them, and the meta deliverable of its own kind where the tree holds one, and tree.py write refuses an edit that leaves that one out.",
             "type": "array",
             "items": {
               "type": "string"

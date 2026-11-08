@@ -328,7 +328,8 @@ def faults(
     """Each way the tree's order breaks the plan best practice's rules, in words: a path two
     deliverables hold, a deliverable before what it takes from, an input or precondition that
     names neither a deliverable nor a file, a deliverable doing or done while a precondition isn't
-    passed, a kind with neither a best practice nor a meta deliverable before it, a meta
+    passed, a deliverable not done that leaves out of its preconditions the meta deliverable of its
+    kind, a kind with neither a best practice nor a meta deliverable before it, a meta
     deliverable whose kind no later deliverable takes, a research deliverable no later one takes
     from, and the intents of a deliverable unlike its kind's. The example is the ID of the meta
     best practice's intent that asks of the example, None where it has none."""
@@ -354,25 +355,33 @@ def faults(
                     )
         if done(d):
             continue
+        for e in listed:
+            if e is not d and makes(e) == d["kind"] and e["path"] not in d["preconditions"]:
+                found.append(
+                    f"D{n} leaves out of its preconditions {e['path']}, the best practice of its"
+                    " kind"
+                )
         practiced = finder(d["kind"])
-        made_before = any(
-            e["kind"] == META and os.path.basename(e["path"].rstrip("/")) == d["kind"]
-            for e in listed[: n - 1]
-        )
+        made_before = any(makes(e) == d["kind"] for e in listed[: n - 1])
         if practiced is None and not made_before:
             found.append(f"D{n}'s kind {d['kind']} has no best practice, nor a meta one before it")
         elif practiced is not None and [i["id"] for i in d["intents"]] != practiced:
             found.append(f"D{n}'s intents aren't those of its kind {d['kind']}, in their order")
         later = listed[n:]
-        if d["kind"] == META:
-            made_kind = os.path.basename(d["path"].rstrip("/"))
-            if not any(e["kind"] == made_kind for e in later):
-                found.append(f"D{n} makes the kind {made_kind}, which no later deliverable takes")
+        made_kind = makes(d)
+        if made_kind is not None and not any(e["kind"] == made_kind for e in later):
+            found.append(f"D{n} makes the kind {made_kind}, which no later deliverable takes")
         if d["kind"] == RESEARCH and not any(
             d["path"] in e.get("inputs", []) + e.get("preconditions", []) for e in later
         ):
             found.append(f"D{n} is research that no later deliverable takes from")
     return found
+
+
+def makes(d: dict[str, Any]) -> str | None:
+    """The kind whose best practice the deliverable makes, by the name of its folder, where it's a
+    meta deliverable; None where it's of another kind."""
+    return os.path.basename(d["path"].rstrip("/")) if d["kind"] == META else None
 
 
 def passed(d: dict[str, Any], example: str | None) -> bool:

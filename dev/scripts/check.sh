@@ -50,7 +50,8 @@ python3 dev/scripts/practices.py form plugins/rn/domain/best-practices/*/best-pr
 # .claude/rules/dev.md says. rn's own check holds the tree to its form and to the order of the plan
 # best practice. So the check here fails each of these, before a document made from the tree
 # rests on it: a deliverable placed before what it takes from, one started before its
-# preconditions finish, and a kind with no best practice.
+# preconditions finish, one that leaves the best practice of its kind out of its preconditions, and
+# a kind with no best practice.
 for design in .rn/*/design-tree.json; do
   if [ -f "$design" ]; then
     python3 plugins/rn/scripts/tree.py check "$design"

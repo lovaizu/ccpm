@@ -121,7 +121,7 @@
      }
     },
     "preconditions": {
-     "description": "The path of each deliverable whose result this one needs passed before it starts, a deliverable of each kind that its best practice names in preconditions among them, such as the code that a README describes. The list stays empty where the deliverable needs none.",
+     "description": "The path of each deliverable whose result this one needs passed before it starts, a deliverable of each kind that its best practice names in preconditions among them, such as the code that a README describes, and the meta deliverable of its own kind where the tree holds one. The list stays empty where the deliverable needs none.",
      "type": "array",
      "items": {
       "type": "string"
