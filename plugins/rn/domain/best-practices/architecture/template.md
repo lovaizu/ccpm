@@ -17,7 +17,11 @@ Each part carries a piece of that idea:
 
 ## Principles
 
-`<Product>` builds on [`<other>`](<path>), and adds these.
+`<Product>` builds on [`<other>`](<path>). It differs from these of its principles:
+
+- **[`<principle>`](<link>)**: `<instead>`. *Why*: `<why>`.
+
+`<Product>` adds these.
 
 ### `<name>`
 
@@ -27,12 +31,16 @@ Each part carries a piece of that idea:
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<other>`, `<path>`: the architecture whose principles this one builds on, with the sentence
->   that names it. Leave the sentence out where the architecture builds on no other.
+> - `<other>`, `<path>`: the architecture or best practice whose principles this one builds on,
+>   with the sentence that names it. Leave the sentence out where the architecture builds on none.
+> - `<principle>`, `<link>`, `<instead>`: each principle of `<other>` that the product sets aside or
+>   changes, by its name and a link to where `<other>` says it, and what holds instead. A developer
+>   who reads `<other>` follows each of its principles that this list doesn't name. Leave the list
+>   and the sentence before it out where the product takes every principle as it stands.
 > - `<name>`: the few words a reader finds the principle by.
 > - `<rule>`: one rule every part meeting the same decision follows, what must be absent among them.
-> - `<why>`: what the rule is there for, the key result of the product vision it moves, and what
->   goes wrong for a role of the product vision or the developer without it.
+> - `<why>`: what the rule or the change is there for, the key result of the product vision it
+>   moves, and what goes wrong for a role of the product vision or the developer without it.
 
 ## User stories
 
@@ -172,7 +180,8 @@ hold:
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<shared rules>`, `<path>`: the project's shared test rules.
+> - `<shared rules>`, `<path>`: the test rules the product shares, such as those of the best practice
+>   it builds on.
 > - The figure: the deliverable's own at images/tests.svg, the product named in its alt text. It's
 >   a table with a row for each deployment unit, by its name in Deployment, and a column for each
 >   test level from narrow to wide, each named by what it checks against. Unit checks against a

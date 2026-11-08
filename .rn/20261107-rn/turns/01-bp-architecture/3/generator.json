@@ -1,0 +1,46 @@
+{
+ "met": [
+  {
+   "question": "Q1",
+   "lines": "architecture/best-practice.json:2 \"The developer builds and changes each part of the product so that the parts together give its product vision.\" The new slot for the principles the product sets aside or changes serves that end too: the developer builds each part by the principles that hold for this product."
+  },
+  {
+   "question": "Q2",
+   "lines": "architecture/template.md:5-16 gives each part's piece of the idea a slot and a note. architecture/template.md:20-22 gives each principle of the architecture or best practice the product builds on that it sets aside or changes a slot, with what holds instead and why, and architecture/template.md:34-43 says what each slot holds, that the developer follows every principle the list doesn't name, and when to leave the list out. architecture/template.md:174-177 and architecture/template.md:195-198 give the parts left to the trial a slot in Tests, with its note."
+  },
+  {
+   "question": "Q3",
+   "lines": "architecture/template.md:1-199 The change adds no section. The list of principles set aside or changed sits in Principles, where the developer looks for the rules every part follows, before the principles this product adds."
+  },
+  {
+   "question": "Q4",
+   "lines": "architecture/best-practice.json:6-10 The inputs are meta, product-vision and readme, and architecture/best-practice.md:15-19 lists them. Meta covers the best practice the architecture builds on and tests by, which fills architecture/template.md:20-22 and architecture/template.md:170, as the plugin best practice does in the example at architecture/example.md:31 and architecture/example.md:755. architecture/template.md:34-35 and architecture/template.md:183-184 name the other architecture or best practice and the test rules the product shares, so each slot traces to an input."
+  },
+  {
+   "question": "Q5",
+   "lines": "architecture/best-practice.json:12-93 Every question keeps its wording, its moment and its \"so that\" clause."
+  },
+  {
+   "question": "Q6",
+   "lines": "architecture/best-practice.json:24-27 Q3 asks of Principles, and its practice now covers the principles set aside or changed. architecture/best-practice.json:79-82 Q14 asks of Principles too, so the why of each change names the key result it moves. Each section, each join, and the whole keep their questions."
+  },
+  {
+   "question": "Q7",
+   "lines": "architecture/best-practice.md:74 The thinking of Q3 says why the document names each principle set aside or changed, with what holds instead: a developer who reads the other principle follows it unless told it doesn't hold. It names the field's way, tailored conformance to ISO/IEC/IEEE 12207, which declares each clause a project leaves out or modifies. architecture/best-practice.md:78 gives the step. architecture/best-practice.md:177 points to the test rules the product shares."
+  },
+  {
+   "question": "Q8",
+   "lines": "architecture/best-practice.md:44-236 Each of Q1 to Q16 keeps one practice, in order. The change adds or renumbers no question."
+  },
+  {
+   "question": "Q10",
+   "lines": "architecture/best-practice.md:68-79, 167-216 Reading Q3, Q12, Q13 and Q14 whole, a maker finds one place for each piece: what the product sets aside or changes in Principles before what it adds, the shared test rules at the top of Tests, the parts left to the trial in Tests, and the key result in each why. No two practices ask opposite things."
+  }
+ ],
+ "not_met": [
+  {
+   "question": "Q9",
+   "lacks": "The example, a copy of dev/rn/architecture.md, fills the pieces of the opening at architecture/example.md:11-27 and the principles rn sets aside or changes at architecture/example.md:46-59, but its Tests names no part left to the trial, so the generator can't see the slot at architecture/template.md:174-177 filled, and some whys of its choices, such as architecture/example.md:745-751, name no key result. This waits on rn's architecture, whose next round adds the parts left to the trial and the key results, as the decision \"The example shows the parts left to the trial once rn's architecture names them\" says."
+  }
+ ]
+}

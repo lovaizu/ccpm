@@ -14,6 +14,7 @@ The developer builds and changes each part of the product so that the parts toge
 
 ## Inputs
 
+- [meta](../meta/best-practice.md)
 - [product-vision](../product-vision/best-practice.md)
 - [readme](../readme/best-practice.md)
 
@@ -70,11 +71,11 @@ Meeting a case no line of the document names, do two developers of different par
 
 **Thinking**
 
-Each principle is one rule that every part meeting the same decision follows, with its why: what goes wrong without it. A developer carries the why to a case the rule doesn't name.
+Each principle is one rule that every part meeting the same decision follows, with its why: what goes wrong without it. A developer carries the why to a case the rule doesn't name. Where the product builds on another architecture or a best practice, the document points to it and doesn't repeat it, and names each of its principles that the product sets aside or changes, with what holds instead and why, as a project that claims tailored conformance to [ISO/IEC/IEEE 12207](https://www.iso.org/standard/63712.html) declares each of its clauses that the project leaves out or modifies. A developer who reads the other principle follows it unless the document says it doesn't hold, and the parts stop fitting.
 
 **Steps**
 
-1. Point to the principles of the architecture this one builds on, and write only what this product adds or changes.
+1. Point to the architecture or best practice this one builds on, list each of its principles that this product sets aside or changes, with what holds instead, and write as principles only what this product adds.
 2. Take a case no rule names, decide it from each why as two developers of different parts would, and sharpen the why where they differ.
 
 ### Q4
@@ -173,7 +174,7 @@ The developer draws each test from the one thing its level checks against: the w
 
 **Steps**
 
-1. Point to the project's shared test rules, and write only where this product differs from them.
+1. Point to the test rules the product shares, such as those of the best practice it builds on, and write only where this product differs from them.
 2. At unit, divide each input and each result the contract names into classes the part treats alike, the refused ones among them, and write one test for each class, by equivalence partitioning as the [glossary](https://glossary.istqb.org) of the International Software Testing Qualifications Board defines it.
 3. Where a class ends on an ordered scale, such as a length or a count, write one test at each end and one at the nearest value of the next class, by boundary value analysis.
 4. Where the contract's result turns on a combination of conditions, write one test for each combination that can occur, with the result it gives, by decision table testing.

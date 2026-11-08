@@ -4,6 +4,7 @@
  "example": "example.md",
  "source": "../../../../../dev/rn/architecture.md",
  "inputs": [
+  "meta",
   "product-vision",
   "readme"
  ],
@@ -117,10 +118,10 @@
   },
   {
    "intent": "Q3",
-   "thinking": "Each principle is one rule that every part meeting the same decision follows, with its why: what goes wrong without it. A developer carries the why to a case the rule doesn't name.",
+   "thinking": "Each principle is one rule that every part meeting the same decision follows, with its why: what goes wrong without it. A developer carries the why to a case the rule doesn't name. Where the product builds on another architecture or a best practice, the document points to it and doesn't repeat it, and names each of its principles that the product sets aside or changes, with what holds instead and why, as a project that claims tailored conformance to [ISO/IEC/IEEE 12207](https://www.iso.org/standard/63712.html) declares each of its clauses that the project leaves out or modifies. A developer who reads the other principle follows it unless the document says it doesn't hold, and the parts stop fitting.",
    "steps": [
     {
-     "text": "Point to the principles of the architecture this one builds on, and write only what this product adds or changes."
+     "text": "Point to the architecture or best practice this one builds on, list each of its principles that this product sets aside or changes, with what holds instead, and write as principles only what this product adds."
     },
     {
      "text": "Take a case no rule names, decide it from each why as two developers of different parts would, and sharpen the why where they differ."
@@ -198,7 +199,7 @@
    "thinking": "The developer draws each test from the one thing its level checks against: the ways a part's contract divides at unit, the paths the sequences draw at architecture, and an objective's main use at real size at product vision. It runs only that real and stands [test doubles](https://martinfowler.com/bliki/TestDouble.html) in for the rest. A failing test then names the rule, path, or use it breaks. No level runs a part that an AI does alone on the model, as [the plugin best practice](../plugin/best-practice.md#q22) says. A trial of one part alone meets only the cases its developer set up, and finds no fault that a real request brings out. Instead, a guard, such as a hook that refuses a call that breaks a step, holds each rule of the part that must hold on every run, and the architecture tests run the guard on each path, with a double in the part's place.",
    "steps": [
     {
-     "text": "Point to the project's shared test rules, and write only where this product differs from them."
+     "text": "Point to the test rules the product shares, such as those of the best practice it builds on, and write only where this product differs from them."
     },
     {
      "text": "At unit, divide each input and each result the contract names into classes the part treats alike, the refused ones among them, and write one test for each class, by equivalence partitioning as the [glossary](https://glossary.istqb.org) of the International Software Testing Qualifications Board defines it."
