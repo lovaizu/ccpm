@@ -894,7 +894,7 @@
             },
             {
               "about": "Lessons from a run",
-              "decided": "after the user approves the work, the main conversation reads the run's records once for what fell short and why, puts a lesson of the project's own into its rules, and sends a general one to rn's repository as an issue only when the user says yes",
+              "decided": "rn takes in no lesson once a run ends, as no step of the product vision needs one and reading the records afterward asks the user more, which KR1.2 counts",
               "by": "reasoning"
             }
           ]
