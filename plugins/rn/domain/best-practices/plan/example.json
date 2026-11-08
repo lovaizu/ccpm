@@ -26,7 +26,36 @@
       "name": "The shared plugin best practice says what rn and Lane share",
       "path": "plugins/rn/domain/best-practices/plugin",
       "kind": "meta",
-      "status": "done"
+      "inputs": [],
+      "preconditions": [],
+      "status": "doing",
+      "intents": [
+        {"id": "Q1", "good": false, "decisions": []},
+        {"id": "Q2", "good": false, "decisions": []},
+        {"id": "Q3", "good": false, "decisions": []},
+        {"id": "Q4", "good": false, "decisions": []},
+        {"id": "Q5", "good": false, "decisions": []},
+        {"id": "Q6", "good": false, "decisions": []},
+        {"id": "Q7", "good": false, "decisions": []},
+        {
+          "id": "Q8",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The maker checks first",
+              "decided": "Q20's practices have the maker answer each question the way the evaluator does, as the work's user, with the lines that meet it or what the user still lacks, before it hands the work on. Only the evaluator's answers count, as the maker reads what it meant",
+              "by": "reasoning"
+            },
+            {
+              "about": "A shortfall goes back to its decision",
+              "decided": "Q20's practices send a shortfall back to the decision that serves it. The maker brings the work in line with the decisions and lays no fix beside them. Where only a changed decision meets the shortfall, the maker names that decision for whoever settles the design",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {"id": "Q9", "good": false, "decisions": []},
+        {"id": "Q10", "good": false, "decisions": []}
+      ]
     },
     {
       "name": "Each part a developer builds by the design gives, with the others, the product vision",
@@ -50,7 +79,31 @@
       "name": "The user reaches their goal through the plan's deliverables, which leave nothing out and start nothing too early",
       "path": "plugins/rn/domain/best-practices/plan",
       "kind": "meta",
-      "status": "done"
+      "inputs": [],
+      "preconditions": [],
+      "status": "doing",
+      "intents": [
+        {"id": "Q1", "good": false, "decisions": []},
+        {"id": "Q2", "good": false, "decisions": []},
+        {"id": "Q3", "good": false, "decisions": []},
+        {"id": "Q4", "good": false, "decisions": []},
+        {"id": "Q5", "good": false, "decisions": []},
+        {"id": "Q6", "good": false, "decisions": []},
+        {"id": "Q7", "good": false, "decisions": []},
+        {
+          "id": "Q8",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The size of a deliverable",
+              "decided": "Q2's practices size each deliverable so that one maker makes it whole and one reader reads it whole. A larger work splits by the parts its architecture names, each after the parts it takes from, and a deliverable of the whole comes after them",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {"id": "Q9", "good": false, "decisions": []},
+        {"id": "Q10", "good": false, "decisions": []}
+      ]
     },
     {
       "name": "This plan holds every deliverable the goal needs, each after what it stands on",
