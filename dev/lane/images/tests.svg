@@ -57,12 +57,12 @@
   <text class="kind start" x="42" y="128" text-anchor="start">[python3 3.9 or later]</text>
   <rect class="unit" x="272" y="80" width="380" height="110" rx="6"/>
   <text class="name start" x="284" y="108" text-anchor="start">unittest, Cosmic Ray, Hypothesis · FULL</text>
-  <text class="label start" x="284" y="130" text-anchor="start">a proposal laid or refused; the steps,</text>
-  <text class="label start" x="284" y="149" text-anchor="start">hook entries and Lane&#x27;s code written</text>
+  <text class="label start" x="284" y="130" text-anchor="start">a proposal laid or refused, and the steps,</text>
+  <text class="label start" x="284" y="149" text-anchor="start">hook entries, and Lane&#x27;s code written</text>
   <rect class="unit" x="662" y="80" width="380" height="110" rx="6"/>
   <text class="name start" x="674" y="108" text-anchor="start">unittest · FULL</text>
   <text class="label start" x="674" y="130" text-anchor="start">lay.py and the files it lays real, a double</text>
-  <text class="label start" x="674" y="149" text-anchor="start">of claude: each path of S1, S2 and S4</text>
+  <text class="label start" x="674" y="149" text-anchor="start">of claude: each path of S1, S2, and S4</text>
   <rect class="box" x="1052" y="80" width="380" height="110" rx="6"/>
   <text class="name start" x="1064" y="108" text-anchor="start">a trial on Opus · SMOKE</text>
   <text class="label start" x="1064" y="130" text-anchor="start">the stand-in lays its lanes and routes</text>
@@ -72,9 +72,9 @@
   <text class="kind start" x="42" y="248" text-anchor="start">[python3 3.9 or later]</text>
   <rect class="unit" x="272" y="200" width="380" height="110" rx="6"/>
   <text class="name start" x="284" y="228" text-anchor="start">unittest, Cosmic Ray, Hypothesis · FULL</text>
-  <text class="label start" x="284" y="250" text-anchor="start">each type of lane; a step due by its trace;</text>
-  <text class="label start" x="284" y="269" text-anchor="start">a call kept; a run begun and ended; the next</text>
-  <text class="label start" x="284" y="288" text-anchor="start">start; a text as given; a text at each port</text>
+  <text class="label start" x="284" y="250" text-anchor="start">each type of lane, a step due by its trace,</text>
+  <text class="label start" x="284" y="269" text-anchor="start">a call kept, a run begun and ended, the next</text>
+  <text class="label start" x="284" y="288" text-anchor="start">start, a text as given, and a text at each port</text>
   <rect class="unit" x="662" y="200" width="380" height="110" rx="6"/>
   <text class="name start" x="674" y="228" text-anchor="start">unittest · FULL</text>
   <text class="label start" x="674" y="250" text-anchor="start">the guard by the hook entries, doubles of</text>
@@ -109,7 +109,7 @@
   <text class="frame-name" x="32" y="534" text-anchor="start">Where Lane&#x27;s tests differ from the best practices</text>
   <text class="name start" x="42" y="562" text-anchor="start">unit</text>
   <text class="label start" x="42" y="584" text-anchor="start">Doubles: each event of Claude Code as JSON, in the</text>
-  <text class="label start" x="42" y="602" text-anchor="start">fields its hooks reference documents; claude as a</text>
+  <text class="label start" x="42" y="602" text-anchor="start">fields its hooks reference documents, and claude as a</text>
   <text class="label start" x="42" y="620" text-anchor="start">script on PATH, printing what a recorded run of it printed.</text>
   <text class="label start" x="42" y="638" text-anchor="start">No stand-in, as no user takes part.</text>
   <text class="name start" x="512" y="562" text-anchor="start">architecture</text>
@@ -118,13 +118,13 @@
   <text class="label start" x="512" y="620" text-anchor="start">Doubles: Claude Code, sending each path&#x27;s events in</text>
   <text class="label start" x="512" y="638" text-anchor="start">order, the main conversation&#x27;s as a trial on Claude</text>
   <text class="label start" x="512" y="656" text-anchor="start">Code 2.1.319 recorded them, kept beside the double</text>
-  <text class="label start" x="512" y="674" text-anchor="start">with the version and the date; the skill and the</text>
-  <text class="label start" x="512" y="692" text-anchor="start">roles, making set calls and giving results that</text>
+  <text class="label start" x="512" y="674" text-anchor="start">with the version and the date, and the skill and the</text>
+  <text class="label start" x="512" y="692" text-anchor="start">roles, which make set calls and give results that</text>
   <text class="label start" x="512" y="710" text-anchor="start">result.py takes, or one it refuses on the path that</text>
   <text class="label start" x="512" y="728" text-anchor="start">tries it.</text>
   <text class="label start" x="512" y="746" text-anchor="start">Stand-in: a set answer for the person of a held</text>
   <text class="label start" x="512" y="764" text-anchor="start">command.</text>
-  <text class="label start" x="512" y="782" text-anchor="start">Each type of lane laid on some path; an adapter of</text>
+  <text class="label start" x="512" y="782" text-anchor="start">Each type of lane laid on some path, and an adapter of</text>
   <text class="label start" x="512" y="800" text-anchor="start">the tests&#x27; own at the steps and items ports, on a</text>
   <text class="label start" x="512" y="818" text-anchor="start">best practice and a design tree of their own.</text>
   <text class="name start" x="982" y="562" text-anchor="start">product vision</text>

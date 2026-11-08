@@ -1,10 +1,11 @@
 # The checks of ccpm's own clone. The prose checks that lovaizu repositories
-# share come from lovaizu/checks, before each commit and on its message; the
-# workflow Tests runs them on each push, at the commit of the same tag.
+# share come from lovaizu/checks. They run before each commit and on its
+# message. The workflow Tests runs them on each push, at the commit of the same
+# tag.
 # Turned on once in a clone by `lefthook install`.
 remotes:
   - git_url: https://github.com/lovaizu/checks
-    ref: v0.1.4
+    ref: v0.1.6
     configs:
       - hooks.yml
 
@@ -31,17 +32,9 @@ pre-commit:
     - "dev/scripts/package-lock.json"
     - "LICENSE"
     - "plugins/rn/LICENSE-grilling"
-    # The checks read an SVG file as plain text, its style and all, until
-    # lovaizu/checks#9 reads only the text that a figure shows.
-    - "**.svg"
-    # The patterns of Vale's own settings are regular expressions.
-    - ".vale.ini"
-    # Vale lints the front matter of Markdown, the scope text.frontmatter, which lovaizu/checks
-    # doesn't ignore yet, so the skill's allowed-tools fail on their parentheses.
-    - "plugins/rn/skills/up/*.md"
 
 # The checks of what a push changes, on the commits pushed, which git gives
-# the hook on its standard input; dev/README.md says what they are.
+# the hook on its standard input. dev/README.md describes them.
 pre-push:
   jobs:
     - name: check

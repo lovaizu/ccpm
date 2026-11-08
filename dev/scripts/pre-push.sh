@@ -1,32 +1,31 @@
 #!/bin/sh
 # Before a push, the checks of what the push changes, on the commits pushed:
 # `sh dev/scripts/check.sh --reached`, for each plugin `sh dev/scripts/changed.sh` names, which runs
-# only the tests the change reaches; every test, the property-based tests and the mutation testing
-# are CI's. Run by the pre-push job of lefthook.yml, with uv on PATH, which sets up the check tools
+# only the tests the change reaches. Every test, the property-based tests, and the mutation testing
+# are CI's. The pre-push job of lefthook.yml runs it, with uv on PATH, which sets up the check tools
 # in the commits pushed from their uv.lock.
 set -e
 
 # What each test ran when it last ran, from which pytest-testmon chooses the tests a change reaches,
-# kept in the clone, as each push is checked in a worktree of its own that goes when it ends.
+# kept in the clone, as the check of each push runs in a worktree of its own that goes when it ends.
 TESTMON_DATAFILE="$(git rev-parse --show-toplevel)/.testmondata"
 export TESTMON_DATAFILE
 
 if ! command -v uv >/dev/null 2>&1; then
-  echo "pre-push: uv is not on PATH; install it" \
-    "(https://docs.astral.sh/uv/getting-started/installation/), with which pre-push sets up the" \
-    "check tools by \`uv sync --locked\`" >&2
+  echo "pre-push: uv isn't on PATH. Install it, as pre-push sets up the check tools with it by" \
+    "\`uv sync --locked\`: https://docs.astral.sh/uv/getting-started/installation/" >&2
   exit 1
 fi
 if ! command -v npm >/dev/null 2>&1; then
-  echo "pre-push: npm is not on PATH; install Node.js (https://nodejs.org/en/download), with which" \
-    "pre-push sets up Mermaid's parser by \`npm ci\`" >&2
+  echo "pre-push: npm isn't on PATH. Install Node.js, as pre-push sets up Mermaid's parser with it" \
+    "by \`npm ci\`: https://nodejs.org/en/download" >&2
   exit 1
 fi
 zero=0000000000000000000000000000000000000000
 while read -r _ local _ remote; do
   [ "$local" = "$zero" ] && continue
-  # Counted from the commit the branch is at on the remote, checked when it was pushed, or from
-  # where a branch new there left main; CI counts from the commit before where its `tests` passed,
+  # Counted from the commit the branch is at on the remote, checked when its push ran, or from
+  # where a branch new there left main. CI counts from the commit before where its `tests` passed,
   # which only CI knows, else from where the branch left main too.
   if [ "$remote" = "$zero" ]; then
     base=$(git merge-base "$local" origin/main)

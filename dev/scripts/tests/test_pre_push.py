@@ -188,7 +188,7 @@ class PrePushTest(unittest.TestCase):
                 # Then: the push stops before it checks anything, and says the tool isn't on
                 # PATH.
                 self.assertNotEqual(done.returncode, 0)
-                self.assertIn(f"{tool} is not on PATH", done.stderr)
+                self.assertIn(f"{tool} isn't on PATH", done.stderr)
                 self.assertEqual(self.read("changed"), [])
 
 

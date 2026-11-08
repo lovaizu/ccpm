@@ -1,10 +1,10 @@
 # The tools that build and check the plugins, set up by `uv sync --locked` from uv.lock, which holds
-# each at the version and hashes it was locked with. Nothing here is installed by the plugins' users.
+# each at the version and hashes of its lock. The plugins' users install nothing here.
 [project]
 name = "ccpm"
 version = "0"
-# The oldest Python users run (plugins/rn/domain/best-practices/plugin/best-practice.md, Q13), which ruff
-# takes as the version it checks for.
+# The oldest Python that users run, as Q13 of plugins/rn/domain/best-practices/plugin/best-practice.md
+# says, which ruff takes as the version it checks for.
 requires-python = ">=3.9"
 
 [dependency-groups]
@@ -25,7 +25,7 @@ test-quality = [
 ]
 
 # The choice of the tests a change reaches before a push, which needs a newer Python only to choose
-# them; without it the push runs every test.
+# them. Without it, the push runs every test.
 push = [
   "pytest-testmon>=2.3.0",
 ]
@@ -49,12 +49,12 @@ line-length = 100
 extend-select = ["E501"]
 
 [tool.pyrefly]
-# requires-python's oldest, as pyrefly does not read it there.
+# requires-python's oldest, as pyrefly doesn't read it there.
 python-version = "3.9"
 
 [tool.pytest.ini_options]
-# unittest's own pattern, which the tests are named by; the repository a product vision trial
-# works in, with tests of its own, is left out.
+# unittest's own pattern, which the names of the tests follow. pytest leaves out the repository a
+# product vision trial works in, with tests of its own.
 python_files = ["test*.py"]
 norecursedirs = [".*", "__pycache__", "node_modules", "tidy"]
 addopts = ["-p", "no:cacheprovider"]

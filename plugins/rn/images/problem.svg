@@ -46,7 +46,7 @@
   </defs>
   <rect class="bg" width="1000" height="540"/>
   <rect class="frame" x="10" y="10" width="980" height="200" rx="8"/>
-  <text class="frame-name" x="24" y="32">The usual way: an AI asked in one prompt, its draft read and fixed</text>
+  <text class="frame-name" x="24" y="32">The usual way: you ask an AI in one prompt, then read and fix its draft</text>
   <rect class="box" x="40" y="60" width="120" height="60" rx="6"/>
   <text class="name" x="100.0" y="95.0">You</text>
   <rect class="box" x="300" y="60" width="170" height="60" rx="6"/>
@@ -65,7 +65,7 @@
   <path class="line" d="M700,90 L806,90" marker-end="url(#a)"/>
   <text class="label small mid halo" x="753" y="80">many findings,</text>
   <text class="label small mid halo" x="753" y="105">few that matter</text>
-  <text class="label small" x="60" y="190">A step kept one time is skipped the next, and a new conversation starts the work over.</text>
+  <text class="label small" x="60" y="190">The AI keeps a step one time and skips it the next, and a new conversation starts the work over.</text>
   <circle class="lane" cx="228" cy="58" r="11"/>
   <text class="name" x="228" y="63">4</text>
   <circle class="lane" cx="300" cy="60" r="11"/>
@@ -107,7 +107,7 @@
   <path class="line dashed" d="M690,435 L555,435 L555,364" marker-end="url(#a)"/>
   <text class="label small mid halo" x="620" y="425">a question not met</text>
   <rect class="lane" x="230" y="480" width="620" height="36" rx="6"/>
-  <text class="name" x="540.0" y="503.0">Lane holds every step; .rn/ keeps the work to pick up</text>
+  <text class="name" x="540.0" y="503.0">Lane holds every step, and .rn/ keeps the work to pick up</text>
   <circle class="lane" cx="310" cy="290" r="11"/>
   <text class="name" x="310" y="295">1</text>
   <circle class="lane" cx="480" cy="300" r="11"/>

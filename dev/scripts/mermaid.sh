@@ -1,6 +1,6 @@
 #!/bin/sh
 # Every Mermaid diagram of the repository parsed as GitHub parses it, run from the top of the
-# repository by dev/scripts/check.sh; dev/scripts/mermaid.mjs says how. The parser comes with
+# repository by dev/scripts/check.sh. dev/scripts/mermaid.mjs says how. The parser comes with
 # dev/scripts/package-lock.json. Without it, the check fails, as a skipped check would pass a
 # diagram that nobody parsed.
 here=$(dirname "$0")

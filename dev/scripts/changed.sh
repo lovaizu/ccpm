@@ -10,7 +10,7 @@ set -e
 
 all=$(sh dev/scripts/plugins.sh)
 changed=$(git diff --name-only "$1" "$2" | grep -vE '^(\.rn/|\.claude/rules/|dev/([^/]+/)?[^/]+\.md$|README\.md$|LICENSE$)' || true)
-# A document with a Mermaid diagram is read by dev/scripts/mermaid.mjs, which check.sh runs.
+# dev/scripts/mermaid.mjs, which check.sh runs, reads a document with a Mermaid diagram.
 diagrams=$(git diff --name-only "$1" "$2" -- '*.md' ':!.rn/' | while read -r file; do
   if git show "$2:$file" 2>/dev/null | grep -q '^ *```mermaid'; then echo "$file"; fi
 done)
@@ -21,8 +21,9 @@ if printf '%s\n' "$changed" | grep -qvE "^(plugins|dev)/($(echo $all | tr ' ' '|
   echo $all
   exit 0
 fi
-# Each link of the commit, as the plugin it is in and the path it points to from the top, as a
-# plugin takes another's code through a link (plugins/rn/domain/best-practices/plugin/best-practice.md, Q14).
+# Each link of the commit, as the plugin it's in and the path it points to from the top, as a
+# plugin takes another's code through a link, as Q14 of
+# plugins/rn/domain/best-practices/plugin/best-practice.md says.
 links=$(git ls-tree -r "$2" | awk '$1 == "120000" {print $3, $4}' | while read -r blob link; do
   plugin=${link#plugins/}
   echo "${plugin%%/*} $(dirname "$link")/$(git cat-file -p "$blob")"

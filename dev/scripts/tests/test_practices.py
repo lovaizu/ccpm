@@ -1,7 +1,7 @@
 """dev/scripts/practices.py, what a person or CI runs on rn's best practices: faults names each
 fault of a best practice's form, markdown_of makes the Markdown a person reads, and copies makes the
-copy of its example; form names those faults, its Markdown and the copy left behind, and each file
-in its folder none of them holds; markdown writes its Markdown beside it; and example writes the
+copy of its example. form names those faults, its Markdown and the copy left behind, and each file
+in its folder none of them holds. markdown writes its Markdown beside it, and example writes the
 copy of its example from its source."""
 
 from __future__ import annotations
@@ -557,7 +557,7 @@ class Leftovers(testing.FolderTest):
 
 
 class Copies(testing.FolderTest):
-    """copies, the files of an example that is a copy of the document its source names."""
+    """copies, the files of an example that's a copy of the document its source names."""
 
     def setUp(self) -> None:
         super().setUp()
@@ -845,7 +845,7 @@ class Practices(testing.FolderTest):
                 )
 
     def sourced(self) -> str:
-        """Names a source for the example, and writes it with a figure; gives the example's path."""
+        """Names a source for the example, and writes it with a figure. Gives the example's path."""
         self.write_json(self.path, dict(DATA, example="example.md", source="../doc/source.md"))
         self.write(os.path.join(self.base, "doc", "source.md"), "![A](images/a.svg) [b](b.md)\n")
         self.write(os.path.join(self.base, "doc", "images", "a.svg"), "<svg/>")

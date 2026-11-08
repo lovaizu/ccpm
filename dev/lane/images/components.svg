@@ -62,7 +62,7 @@
   <text class="kind" x="460.0" y="247.0" text-anchor="middle">[command line · Python 3.9]</text>
   <rect class="ext" x="960" y="200" width="200" height="220" rx="4"/>
   <text class="name" x="1060.0" y="308.0" text-anchor="middle">Claude Code</text>
-  <text class="kind" x="1060.0" y="325.0" text-anchor="middle">[CLI]</text>
+  <text class="kind" x="1060.0" y="325.0" text-anchor="middle">[command-line tool]</text>
   <rect class="ext" x="1300" y="200" width="240" height="64" rx="4"/>
   <text class="name" x="1420.0" y="230.0" text-anchor="middle">main conversation</text>
   <text class="kind" x="1420.0" y="247.0" text-anchor="middle">[skill · part in Markdown]</text>
@@ -98,7 +98,7 @@
   <text class="kind" x="760.0" y="863.0" text-anchor="middle">[module · Python 3.9]</text>
   <rect class="box" x="1330" y="690" width="200" height="64" rx="0"/>
   <text class="name" x="1430.0" y="720.0" text-anchor="middle">Runs kept</text>
-  <text class="kind" x="1430.0" y="737.0" text-anchor="middle">[files · JSONL]</text>
+  <text class="kind" x="1430.0" y="737.0" text-anchor="middle">[files · JSON Lines]</text>
   <rect class="ext" x="30" y="690" width="200" height="64" rx="4"/>
   <text class="name" x="130.0" y="720.0" text-anchor="middle">Adapter</text>
   <text class="kind" x="130.0" y="737.0" text-anchor="middle">[script · Python 3]</text>
@@ -233,6 +233,6 @@
   <text class="label small" x="474" y="1090" text-anchor="start">outside Lane; with a head: the product vision&#x27;s role</text>
   <rect class="frame" x="830" y="1075" width="36" height="22" rx="4"/>
   <text class="label small" x="874" y="1090" text-anchor="start">Lane&#x27;s code, laid into the user&#x27;s plugin</text>
-  <text class="label small" x="1150" y="1082" text-anchor="start">a box: name and [type · technology]; [tool] on an arrow</text>
+  <text class="label small" x="1150" y="1082" text-anchor="start">a box: name and [type · technology], an arrow: [tool]</text>
   <text class="data" x="1150" y="1098" text-anchor="start">data handed on, named as in the data model</text>
 </svg>

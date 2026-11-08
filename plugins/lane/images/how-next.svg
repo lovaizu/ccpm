@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
-  <title>Lane tells the main conversation the start due, stops any other, keeps it going, and has a subagent that gave no result started again</title>
+  <title>Lane gives the main conversation the start due, stops any other, keeps it going, and has a subagent that gave no result started again</title>
   <style>
     .bg { fill: #ffffff; }
     .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
@@ -54,15 +54,15 @@
   <path class="line" d="M220,80 L616,80" marker-end="url(#a)"/>
   <text class="label small mid halo" x="420" y="70">writer’s end reaches it</text>
   <path class="line" d="M620,106 L224,106" marker-end="url(#a)"/>
-  <text class="data mid halo" x="420" y="126">beside it: Start `changelog:reviewer`.</text>
+  <text class="data mid halo" x="420" y="126">beside it: “Start `changelog:reviewer`.”</text>
   <path class="line" d="M220,180 L616,180" marker-end="url(#a)"/>
   <text class="label small mid halo" x="420" y="170">it starts changelog:writer again</text>
   <path class="line" d="M620,206 L224,206" marker-end="url(#a)"/>
-  <text class="data mid halo" x="420" y="226">stopped, told: Start `changelog:reviewer`.</text>
+  <text class="data mid halo" x="420" y="226">stopped, told: “Start `changelog:reviewer`.”</text>
   <path class="line" d="M220,280 L616,280" marker-end="url(#a)"/>
   <text class="label small mid halo" x="420" y="270">it would end its turn, no subagent running</text>
   <path class="line" d="M620,306 L224,306" marker-end="url(#a)"/>
-  <text class="data mid halo" x="420" y="326">kept going once: Start `changelog:reviewer`.</text>
+  <text class="data mid halo" x="420" y="326">kept going once: “Start `changelog:reviewer`.”</text>
   <path class="line" d="M1000,400 L784,400" marker-end="url(#a)"/>
   <text class="label small mid halo" x="890" y="390">it would end, no result given</text>
   <path class="line" d="M780,426 L996,426" marker-end="url(#a)"/>
@@ -70,5 +70,5 @@
   <path class="line" d="M1000,500 L784,500" marker-end="url(#a)"/>
   <text class="label small mid halo" x="890" y="490">it ends, still no result</text>
   <path class="line" d="M620,526 L224,526" marker-end="url(#a)"/>
-  <text class="data mid halo" x="420" y="546">told: Start `changelog:writer` again.</text>
+  <text class="data mid halo" x="420" y="546">told: “Start `changelog:writer` again.”</text>
 </svg>

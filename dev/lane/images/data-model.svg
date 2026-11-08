@@ -114,7 +114,7 @@
   <text class="label small halo" x="408.0" y="340" text-anchor="start">holds</text>
   <text class="label small halo" x="408.0" y="374" text-anchor="start">0..*</text>
   <path class="line" d="M130.0,286 L130.0,380"/>
-  <text class="label small halo" x="138.0" y="340" text-anchor="start">is tested by</text>
+  <text class="label small halo" x="138.0" y="340" text-anchor="start">tested by</text>
   <text class="label small halo" x="138.0" y="302" text-anchor="start">1</text>
   <text class="label small halo" x="138.0" y="374" text-anchor="start">1..*</text>
   <path class="line" d="M220,108 L310,108"/>
@@ -129,11 +129,11 @@
   <text class="label small halo" x="494" y="126" text-anchor="start">0..*</text>
   <text class="label small halo" x="572" y="126" text-anchor="start">0..1</text>
   <path class="line" d="M600,258 L490,258"/>
-  <text class="label small halo" x="540" y="250" text-anchor="middle">is laid from</text>
+  <text class="label small halo" x="540" y="250" text-anchor="middle">laid from</text>
   <text class="label small halo" x="568" y="276" text-anchor="start">0..1</text>
   <text class="label small halo" x="494" y="276" text-anchor="start">1</text>
   <path class="line" d="M490,420 L540,420 L540,470 L950.0,470 L950.0,436"/>
-  <text class="label small halo" x="700" y="464" text-anchor="middle">names, from and to</text>
+  <text class="label small halo" x="700" y="464" text-anchor="middle">names as from and to</text>
   <text class="label small halo" x="494" y="434" text-anchor="start">0..*</text>
   <text class="label small halo" x="958.0" y="452" text-anchor="start">1..2</text>
   <path class="line" d="M860,108 L780,108"/>
@@ -220,7 +220,7 @@
   <text class="label small halo" x="1334" y="760" text-anchor="start">1</text>
   <text class="label small halo" x="1458" y="760" text-anchor="start">0..1</text>
   <path class="line" d="M1300,740 L1300,680 L1710,680 L1710,258 L1670,258"/>
-  <text class="label small halo" x="1600" y="674" text-anchor="middle">is kept as</text>
+  <text class="label small halo" x="1600" y="674" text-anchor="middle">kept as</text>
   <text class="label small halo" x="1308" y="732" text-anchor="start">1</text>
   <text class="label small halo" x="1674" y="276" text-anchor="start">0..1</text>
   <text class="frame-name" x="30" y="900" text-anchor="start">Legend</text>

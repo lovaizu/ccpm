@@ -60,7 +60,7 @@
   <text class="data mid halo" x="775" y="120">… Run only `git log --oneline`.</text>
   <rect class="lane" x="580" y="170" width="390" height="56" rx="6"/>
   <text class="name" x="775" y="203">Check</text>
-  <text class="data mid halo" x="775" y="250">stops git commit, shows: changelog: Run only `git log --oneline`.</text>
+  <text class="data mid halo" x="775" y="250">stops git commit, shows “Run only `git log --oneline`.”</text>
   <path class="line" d="M470,130 L576,72" marker-end="url(#a)"/>
   <text class="label small mid halo" x="523" y="90">the sentence</text>
   <path class="line" d="M470,160 L576,196" marker-end="url(#a)"/>

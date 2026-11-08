@@ -68,7 +68,7 @@ class MermaidTest(unittest.TestCase):
         self.assertIn("npm ci --ignore-scripts", done.stderr)
 
     def test_no_node_fails_and_says_how_to_get_it(self):
-        # Given: PATH has no node.
+        # Given: no node on PATH.
         env = dict(self.env, PATH=without(self.env["PATH"], "node", os.path.join(self.dir, "bin")))
         self.holding("flowchart LR\n  a --> b")
         # When: the check runs.

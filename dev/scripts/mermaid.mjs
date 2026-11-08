@@ -1,12 +1,12 @@
 // Every Mermaid diagram drawn as GitHub draws it, run from the top of the repository by
-// dev/scripts/mermaid.sh. GitHub shows a diagram it cannot parse as an error in
-// its place, which no one sees until they open the page, so each ```mermaid block of each Markdown
-// file git holds is parsed by Mermaid's own parser, and each block that does not parse fails with
-// its file, its line and the parser's message.
+// dev/scripts/mermaid.sh. GitHub shows a diagram it can't parse as an error in its place, which
+// stays unseen until someone opens the page, so Mermaid's own parser parses each ```mermaid block
+// of each Markdown file git holds, and each block that doesn't parse fails with its file, its line
+// and the parser's message.
 //
 // Left out are rn's checklists, in plugins/rn/checklists/, which show a form with slots such as
-// `<id>` that no parser takes; and the session records, in .rn/, which hold what was said, not what
-// is shown. A link is the file it points to, so is left out.
+// `<id>` that no parser takes, and the session records, in .rn/, which hold what people said, not
+// what a page shows. A link is the file it points to, so the check leaves it out.
 
 import { execFileSync } from "node:child_process";
 import { lstatSync, readFileSync } from "node:fs";

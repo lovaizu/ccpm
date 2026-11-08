@@ -2,8 +2,8 @@
 # The checks CI runs on every push, beside the property-based tests and the mutation testing, run
 # from the top of the repository with the tools of pyproject.toml's dev group. Given plugin names,
 # such as `sh dev/scripts/check.sh rn`, the type check, the tests and the manifests are those
-# plugins' alone; CI gives none and checks every plugin. Given `--reached` first, as before a push,
-# the tests are only those the change reaches, and their lines and branches are not counted.
+# plugins' alone. CI gives none and checks every plugin. Given `--reached` first, as before a push,
+# the tests are only those the change reaches, and it doesn't count their lines and branches.
 set -e
 
 reached=""
@@ -16,15 +16,16 @@ plugins=${*:-$(sh dev/scripts/plugins.sh)}
 ruff check .
 ruff format --check .
 
-# Code copied between files is fixed in one and left wrong in the other, so code more than one file
-# needs is kept once (plugins/rn/domain/best-practices/plugin/best-practice.md, Q14); every file is read at once, whichever plugins are
-# given, as a copy can lie in any two. A link is the file it points to, so is left out.
+# A fix to code copied between files lands in one and leaves the other wrong, so the repository keeps
+# code more than one file needs once, as Q14 of plugins/rn/domain/best-practices/plugin/best-practice.md
+# says. The check reads every file at once, whichever plugins it gets, as a copy can lie in any two.
+# A link is the file it points to, so the check leaves it out.
 if command -v pylint >/dev/null 2>&1; then
   git ls-files '*.py' | while read -r file; do [ -L "$file" ] || echo "$file"; done \
     | xargs pylint --disable=all --enable=duplicate-code --score=no
 else
-  echo "check.sh: copied code not checked, as pylint is not installed; it comes with pyproject.toml's"\
-    "test-quality group, on Python 3.11 or later"
+  echo "check.sh: copied code goes unchecked, as pylint isn't installed. It comes with"\
+    "pyproject.toml's test-quality group, on Python 3.11 or later"
 fi
 
 for plugin in $plugins; do
@@ -34,16 +35,17 @@ done
 pyrefly check --search-path dev/lane --search-path dev/scripts --search-path dev/scripts/tests \
   --search-path plugins/rn/domain dev/scripts/*.py dev/scripts/tests/*.py
 
-# A best practice is checked for the faults its form shows, its Markdown, made from its JSON for a
-# person to read, for being left behind it, and its example, where it is a copy of a document of the
-# repository, for being left behind that document, as each says what rn does not hold; and a file in
-# its folder that none of them holds, such as a figure the document dropped, for being left over.
-# Each kind's lies in its own folder of rn's as best-practice.json, beside its template and its
-# example. An example in JSON holds to its template where that is a JSON Schema.
+# The check finds in each best practice the faults its form shows, its Markdown, made from its JSON
+# for a person to read, left behind it, and its example, where it's a copy of a document of the
+# repository, left behind that document, as each says what rn doesn't hold. It also finds each file
+# in its folder that none of them holds, such as a figure the document dropped, left over. Each
+# kind's best practice lies in its own folder of rn's as `best-practice.json`. Its template and its
+# example lie beside it.
+# An example in JSON holds to its template where that's a JSON Schema.
 python3 dev/scripts/practices.py form plugins/rn/domain/best-practices/*/best-practice.json
 
-# Each run's design tree, where the work's documents take their decisions from (.claude/rules/dev.md,
-# step 1), holds its form and the plan best practice's order, by rn's own check of it: a deliverable
+# Each run's design tree, where the work's documents take their decisions from, as step 1 of
+# .claude/rules/dev.md says, holds its form and the plan best practice's order, by rn's own check of it: a deliverable
 # before what it takes from, or a kind with no best practice, fails here, not in a document made
 # from the tree.
 for design in .rn/*/design-tree.json; do
@@ -52,27 +54,27 @@ for design in .rn/*/design-tree.json; do
   fi
 done
 
-# Every figure carries the one style of dev/images/figures.css, so the figures look alike and a
-# colour is changed in one place (.claude/rules/dev.md, step 3).
+# Every figure carries the one style of dev/images/figures.css, so the figures look alike and one
+# place changes a color, as step 3 of .claude/rules/dev.md says.
 python3 dev/scripts/figures.py check
 
-# A Mermaid diagram GitHub cannot parse shows as an error in its place, unseen until someone opens
-# the page, so each is parsed by Mermaid's own parser.
+# A Mermaid diagram GitHub can't parse shows as an error in its place, unseen until someone opens
+# the page, so Mermaid's own parser parses each.
 sh dev/scripts/mermaid.sh
 
 # The unit and architecture tests, `test*.py`, unittest's own pattern, run by pytest as
-# pyproject.toml sets it, at once on each processor (pytest-xdist); the property-based tests, whose
-# inputs change from run to run, are run apart by dev/scripts/properties.sh. Each plugin's run is a
+# pyproject.toml sets it, at once on each processor by pytest-xdist. dev/scripts/properties.sh runs
+# apart the property-based tests, whose inputs change from run to run. Each plugin's run is a
 # process of its own, as each puts its own `helpers` and code on sys.path.
 if [ -n "$reached" ]; then
   # Only the tests whose code the change reaches, which pytest-testmon chooses by the code each test
   # ran when it last ran, kept in the file TESTMON_DATAFILE names, else in .testmondata. A selection
-  # runs only some lines, so none are counted; CI counts them.
+  # runs only some lines, so this run counts none. CI counts them.
   if python -c 'import testmon' 2>/dev/null; then
     choose=--testmon
   else
     choose=""
-    echo "check.sh: every test run, as pytest-testmon is not installed; it comes with"\
+    echo "check.sh: every test runs, as pytest-testmon isn't installed. It comes with"\
       "pyproject.toml's push group, on Python 3.11 or later"
   fi
   for plugin in $plugins; do
@@ -88,8 +90,8 @@ else
   coverage report
 fi
 
-# The tests of the checks themselves, such as pre-push.sh's and mermaid.sh's, on every run, as they
-# are few and quick, whichever plugins are given. What they test is shell, which coverage does not
+# The tests of the checks themselves, such as pre-push.sh's and mermaid.sh's, on every run, as they're
+# few and quick, whichever plugins the run gets. What they test is shell, which coverage doesn't
 # count.
 pytest -q -n auto dev/scripts/tests
 
