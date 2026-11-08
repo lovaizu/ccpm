@@ -194,12 +194,17 @@ spends their time and gives them nothing to weigh, as KR1.2 counts.
 ### A remark during a turn is a point
 
 A remark the user makes while a turn runs is a point. The main conversation first stops each role
-of the turn that still runs, with `TaskStop`. It then settles the remark as it settles any point,
-the planner writes it into the tree, and the turn goes on from the design as changed. No one adds
-the remark to a running role's start or messages.
+of the turn that still runs, with `TaskStop`. The remark is a prompt of the user's, so Lane lets the
+stop through, as
+[its principle on how long the guard holds the main conversation](../lane/architecture.md#the-guard-holds-the-main-conversation-only-while-its-run-lasts)
+says. The main conversation then settles the remark as it settles any point, and calls `/rn:up`,
+which ends the turn's run and begins another. The planner writes the remark into the tree, and the
+turn goes on from the design as changed. No one adds the remark to a running role's start or
+messages.
 
 *Why*: a role that runs on makes or judges a deliverable by a design about to change, and its
-result costs the user a round, as KR1.3 measures. A remark passed to a role reaches the deliverable
+result costs the user a round, as KR1.3 measures. A turn that went on in the run that the remark
+broke would start its next role from a cut made before the remark. A remark passed to a role reaches the deliverable
 beside the design, as [Good from the root](#good-from-the-root) rules out, and the next round loses
 it, so the user says it again, as KR1.2 counts.
 
@@ -270,15 +275,17 @@ What each decides alone:
 - **throwaway.py**: where a deliverable's commands run, and what of them the try record keeps.
 - **steps adapter**, **items adapter**: how rn's best practices and design tree read in the forms
   of Lane's steps and items ports.
-- **guard**: whether a role's call keeps its lanes, which start is due, and whether a start's text
-  is the one `tree.py` gave, as [Lane's architecture](../lane/architecture.md) says.
+- **guard**: whether a role's call keeps its lanes, which start is due, whether a start's text
+  is the one `tree.py` gave, and whether a stop of a role or a call of `/rn:up` during a run follows
+  a prompt of the user's, as [Lane's architecture](../lane/architecture.md) says.
 
 These choices in the components are ones a developer would question:
 
 - **The main conversation calling `/rn:up` again once it settles a point** over resuming the role
   that stopped: the point comes from the main conversation, not from the user's words alone, and
   Lane lets a resume carry the user's words and nothing else. A new call of the skill begins a run,
-  whose first start is the planner with the text `tree.py` cut from the change. The cost: the main
+  whose first start is the planner with the text `tree.py` cut from the change. During a run, Lane
+  lets such a call through only once the user has written a prompt, and it then ends that run. The cost: the main
   conversation reads the skill's part again on each call.
 - **One point a user settles in each change** over the points of a deliverable written at once: each
   answer is in the tree before the next point goes out, so a conversation that ends loses none,
@@ -501,23 +508,33 @@ sequenceDiagram
 sequenceDiagram
   actor U as user
   participant M as main conversation
+  participant T as tree.py
   participant G as generator
   participant E as evaluator
   participant P as planner
   Note over M,P: A turn runs, as the last section draws.
   U->>M: a remark, in their own words (Point)
+  Note over U,M: The remark is a prompt of the user's, so the guard lets each stop through.
   opt a role of the turn still runs
     M->>G: stops it [TaskStop]
     M->>E: stops each [TaskStop]
     M->>P: stops it [TaskStop]
   end
-  Note over U,M: The main conversation settles the remark as a point, as S2 draws, and the turn goes on from the design as changed.
+  Note over U,M: The main conversation settles the remark as a point, as S2 draws.
+  M->>M: calls /rn:up
+  Note over M,P: The guard ends the turn's run and begins another, as Lane's S3 a run the person redirects draws.
+  M->>T: start, for the planner, with the decisions settled (Change)
+  Note over M,P: The planner writes the remark into the tree, as S2 draws, and gives ready, so the turn goes on from the design as changed.
 ```
 
 - **Each role that still runs stopped with `TaskStop`** over letting it end, or sending it the
   remark: a role let end gives a result made by a design about to change, and a remark sent to it
   reaches the deliverable beside the design. Claude Code's subagents reference documents
   `TaskStop`. The cost: the stopped round gives no result, so its work goes unused.
+- **A call of `/rn:up` once the main conversation settles the remark** over starting the stopped
+  role again in the same run: the new run's first start is the planner, which writes the remark before any role
+  starts, and Lane ends the old run on such a call once the user has written a prompt. The cost:
+  the main conversation reads the skill's part again.
 
 ### S3: picking up
 
