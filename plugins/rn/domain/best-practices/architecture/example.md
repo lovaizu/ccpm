@@ -139,10 +139,15 @@ A turn is a unit inside `/rn:up`, with no skill of its own, and Lane holds its f
   [A point found open goes back to the main conversation](#a-point-found-open-goes-back-to-the-main-conversation)
   says.
 - **Its rounds' records** lie in the run's folder, under `turns/`, as
-  [Directory structure](#directory-structure) shows.
+  [Directory structure](#directory-structure) shows. Each Round names its phase, and a question's id
+  in its records belongs to that phase's best practice: the kind's for the first phase, and
+  `refactor-doc`'s or `refactor-code`'s for the second.
 
 *Why*: a deliverable handed over with an intent not met fails its people, as KR1.1 counts. A
-sentence polished before what it says holds needs polishing again, which KR1.3 measures.
+sentence polished before what it says holds needs polishing again, which KR1.3 measures. The
+best practices of both phases number their questions from Q1, so an id on a Round that doesn't
+name its phase could point to either. The planner could then mark good an intent of the other best
+practice, and hand over a deliverable with an intent not met, as KR1.1 counts.
 
 ### Good from the root
 
@@ -297,14 +302,16 @@ its grounds in the commit message. It commits a deliverable once its turn ends g
 one draft pull request for the work. The user merges it, and rn never does. The planner runs only
 `tree.py write`, `commit`, and `report`. `commit` pushes the branch once it commits a deliverable,
 and a push that waited on the user goes out on the planner's next `commit`. A run's files lie in
-`.rn/<yyyymmdd>-<goal>/`, and `/rn:up` alone goes on from them.
+`.rn/<yyyymmdd>-<goal>/`, and `/rn:up` alone goes on from them. Where the push of the last
+deliverable fails, the planner gives `asks` and names what the push lacks, never `done`. It gives
+`done` with the report once, on the start that pushes.
 
 *Why*: a conversation can end at any point, and work kept only in it goes with it, so the
 user answers again, as KR1.2 counts. The merge is the user's, as
 [Q16](../plugin/best-practice.md#q16) says. A merge by rn would
 put on the main branch work that the user never read whole, and hand the people a fault the
-evaluators missed, as KR1.1 counts. Why `commit` pushes only with a deliverable, and why the
-planner runs only these three commands, are choices under
+evaluators missed, as KR1.1 counts. Why `commit` pushes only with a deliverable, why the planner
+runs only these three commands, and why a failed last push gives `asks`, are choices under
 [S4: the work handed over](#s4-the-work-handed-over).
 
 ## User stories
@@ -415,14 +422,16 @@ These choices in the components are ones a developer would question:
   found it, or the user remarked it during a turn. A point found or remarked reaches the tree
   through a Change, as a decision not yet settled, and reaches the main conversation from there.
 - **Turn**: the making of one deliverable from its settled decisions, through both phases.
-- **Round**: one making of the deliverable in a phase, with its Making record, its Try record, and
-  the evaluators' Answers to it.
+- **Round**: one making of the deliverable in a phase, which it names, with its Making record,
+  its Try record, and the evaluators' Answers to it. A question's id in its records belongs to the
+  best practice of its phase: the kind's for the first phase, and `refactor-doc`'s or
+  `refactor-code`'s for the second.
 - **Making record**: the generator's record of a round, `generator.json`: what it made, each
   small point it settled, its own answer to each intent, and each point it found open. Each small
   point and each answer names the intent it serves by its question's id, as Answers does.
 - **Answers**: an evaluator's record of a round, `evaluator-<group>.json`: each intent, by its
-  question's id in the best practice of the deliverable's kind, met with the lines that meet it, or
-  not met with what the people still lack.
+  question's id in the best practice of the Round's phase, met with the lines that meet it, or not
+  met with what the people still lack.
 - **Try record**: the commands that try a deliverable and what each gave on the generator's last
   pass of a round, `throwaway.txt`.
 - **Accepted shortfall**: a decision of the user's, under the intent it costs, that says what the
@@ -551,7 +560,7 @@ sequenceDiagram
   participant P as planner
   participant R as run's folder and the deliverable
   M->>T: start, for the generator
-  T->>R: makes the next round's folder (Round)
+  T->>R: makes the next round's folder, which names its phase (Round)
   T-->>M: the generator's cut: the deliverable's decisions, its kind, its phase, the commands that try it, and each of last round's shortfalls beside its intent (Cut)
   M->>G: starts it (Cut)
   loop until it would answer each intent met, or finds a point open
@@ -612,7 +621,9 @@ sequenceDiagram
           P-->>M: gives asks
         else its points are settled
           P-->>M: gives ready
-        else every deliverable is done
+        else every deliverable is done, and the push failed
+          P-->>M: gives asks, naming what the push lacks (Result)
+        else every deliverable is done, and the branch is pushed
           P-->>M: gives done, with the report (Result)
         end
       end
@@ -755,7 +766,12 @@ sequenceDiagram
   Note over P,T: commit then pushes the branch, as tree.py has no command of its own for a push.
   alt git or gh can't push, such as with no login
     T-->>P: what's missing, the commit kept on the branch
-    P-->>M: names it in its message, and gives its result as the rest of the work goes on
+    alt a deliverable is left
+      P-->>M: names it in its message, and gives asks or ready as the rest of the work goes on (Result)
+    else every deliverable is done
+      P-->>M: gives asks, naming what the push lacks, and never done (Result)
+      Note over M,P: The run ends with no start due.
+    end
     M->>U: asks for what's missing
     U->>M: gives it, such as a login
     Note over U,M: The user's words are a prompt, so the guard lets the call of /rn:up through. Where a turn still runs, the main conversation first stops its roles, as S2: a remark during a turn draws.
@@ -775,7 +791,7 @@ sequenceDiagram
   else it has one
     T->>GH: pushes the branch [git] (Commit)
   end
-  opt every deliverable is done
+  opt every deliverable is done, and this start pushed the branch
     P->>T: report
     T-->>P: each decision taken without asking, with its grounds, from the design tree
     P-->>M: gives done, with the report
@@ -797,6 +813,11 @@ sequenceDiagram
   deliverable's commit pushes it with no step of its own, so a planner that skipped such a step
   can't leave the user a pull request without the deliverable, as KR1.1 counts. The cost: a push
   that waited needs a `commit` with nothing new to commit.
+- **The planner giving `asks` where the push of the last deliverable fails** over `done` with the
+  report: `done` would show the user `Done` and a draft pull request that GitHub doesn't hold yet,
+  so they couldn't read or merge the deliverables, as KR1.1 counts. The start that pushes would
+  then give `done` again. With `asks`, the run ends with no start due, the user gives what the push
+  lacks, and `done` comes once, after the push. The cost: the report waits for the user's answer.
 
 ## Deployment
 

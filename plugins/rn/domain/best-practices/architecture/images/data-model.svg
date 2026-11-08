@@ -239,6 +239,11 @@
   <text class="label small halo" x="1420" y="460" text-anchor="start">role to</text>
   <text class="label small halo" x="1354" y="486" text-anchor="start">0..*</text>
   <text class="label small halo" x="1486" y="486" text-anchor="start">1</text>
+  <path class="line" d="M1165,780 L1165,765 L1115,765 L1115,306 L1160,306"/>
+  <text class="label small halo" x="1123" y="380" text-anchor="start">follows its</text>
+  <text class="label small halo" x="1123" y="394" text-anchor="start">phase&#x27;s</text>
+  <text class="label small halo" x="1173" y="776" text-anchor="start">0..*</text>
+  <text class="label small halo" x="1156" y="324" text-anchor="end">1</text>
   <text class="frame-name" x="30" y="990" text-anchor="start">Legend</text>
   <text class="label small" x="100" y="990" text-anchor="start">a number at a line&#x27;s end: how many of the data at that end the other joins: 1 one, 0..1 none or one, 1..* one or more, 0..* any number</text>
   <path class="head" d="M100,1016 L109,1022 L118,1016 L109,1010 Z"/>
