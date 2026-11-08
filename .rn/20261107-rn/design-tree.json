@@ -395,7 +395,7 @@
         },
         {
           "id": "Q15",
-          "good": true,
+          "good": false,
           "decisions": [
             {
               "about": "Which calls of the main conversation the guard holds",
