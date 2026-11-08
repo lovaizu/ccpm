@@ -6,15 +6,15 @@ The main conversation settles each point of the design with the user, one at a t
 planner with it. The planner has `tree.py` write the point into the tree, and lays out the plan back
 from the goal. Once the main conversation has settled a deliverable's points, a turn makes it from
 them and its kind's best practice, round after round. The generator makes the deliverable whole
-from the design and answers each intent as its people would, and fresh evaluators, reading as those
-people, say where it meets each intent or what they still lack. A shortfall goes back to the
-decision that serves it, and the next round starts from the design, bringing the deliverable in
-line with the decisions. A point that only the user can settle, or a remark the user makes during a
-turn, goes back to the main conversation. Lane, the plugin that holds a
-plugin's roles to their steps, holds each role to the steps of the practices it carries out and the
-main conversation to the routes, and lets a role start only with the text that `tree.py` cut for
-it. `tree.py` commits each change on the work's branch and keeps one draft pull request for the user
-to merge.
+from the design, and answers each intent as its people would. Fresh evaluators read it as those
+people, and say where it meets each intent or what they still lack. A shortfall goes back to the
+decision that serves it. The next round starts from the design, and brings the deliverable in line
+with the decisions. A point that only the user can settle, or a remark the user makes during a
+turn, goes back to the main conversation. Lane, the plugin that holds a plugin's roles to their
+steps, holds each role to the steps of the practices it carries out. It holds the main conversation
+to the routes, which name the next start from each role's result, and lets a role start only with
+the text that `tree.py` cut for it. `tree.py` commits each change on the work's branch and keeps one
+draft pull request for the user to merge.
 
 ## Principles
 
@@ -33,7 +33,7 @@ its dependencies, as
 [Q15](../plugin/best-practice.md#q15) says, since the
 generator runs Lane's `lay.py` when a deliverable is a plugin.
 
-rn differs from three of them:
+rn differs from three of its practices:
 
 - **[Q5](../plugin/best-practice.md#q5) and
   [Q17](../plugin/best-practice.md#q17)**: the main conversation
@@ -120,8 +120,8 @@ A turn is a unit inside `/rn:up`, with no skill of its own, and Lane holds its f
   practice. The second makes how it reads, by `refactor-doc` for a document or `refactor-code` for
   code, and changes nothing it says.
 - **Each phase goes round after round**: in each round, the generator brings the deliverable in
-  line with the design and the evaluators answer each intent of the phase, until every intent is
-  good.
+  line with the design, and the evaluators answer each intent of the phase. An intent is good once
+  the evaluators answer it met, and the rounds go on until every intent is good.
 - **It ends** once every intent of both phases is good, which the planner writes into the tree as
   it commits the deliverable. Or it stops at a point that only the user can settle, as
   [A point found open goes back to the main conversation](#a-point-found-open-goes-back-to-the-main-conversation)
@@ -144,8 +144,7 @@ whether the decisions meet a shortfall, as only the generator makes the delivera
 - Where the decisions meet the shortfall, they stand, and the round brings the deliverable in line
   with them.
 - Where only a changed decision would meet it, the generator gives `open` and names that decision.
-  The main conversation settles it, the planner writes it, and the turn goes on from the changed
-  design, as
+  The decision then goes back to the main conversation, as
   [A point found open goes back to the main conversation](#a-point-found-open-goes-back-to-the-main-conversation)
   says.
 
@@ -161,7 +160,7 @@ design holds, as KR1.1 counts.
 Before it gives `made`, the generator answers each intent of the phase the way the evaluators do,
 as the deliverable's people, with the lines that meet it or what they still lack. Where it would
 answer one not met, it brings the deliverable in line with the design again. Where only a changed
-decision would meet an intent, it gives `open` with that decision named instead of `made`, as
+decision would meet an intent, it gives `open` instead of `made`, as
 [Good from the root](#good-from-the-root) says. Only the evaluators' answers make an intent good.
 
 *Why*: a lack that the maker could have seen otherwise costs a round of evaluators to find, and the
@@ -181,11 +180,15 @@ as KR1.1 counts.
 
 ### A point found open goes back to the main conversation
 
-Where the generator finds a point the design leaves open or names a decision that must change, or
-an evaluator finds a point only the user can settle, the run stops there. The main conversation
-settles the point, the planner writes it, and the turn goes on from the design as changed. Where
-only a change to a decision the user settled would meet a shortfall, rn takes it to the user only
-with a fact their answer didn't weigh. Otherwise it stays an accepted shortfall.
+The run stops at a point found open, in either of these cases:
+
+- The generator finds a point that the design leaves open, or names a decision that must change.
+- An evaluator finds a point that only the user can settle.
+
+The main conversation settles the point, the planner writes it, and the turn goes on from the
+design as changed. Where only a change to a decision that the user settled would meet a shortfall,
+rn takes the decision to the user only with a fact that their answer didn't weigh. Without such a
+fact, the shortfall stays as an accepted shortfall.
 
 *Why*: a role that settles such a point itself makes a part that the design doesn't hold, which
 [Good from the root](#good-from-the-root) rules out for a fix. Asking the user again what they settled
@@ -193,22 +196,28 @@ spends their time and gives them nothing to weigh, as KR1.2 counts.
 
 ### A remark during a turn is a point
 
-A remark the user makes while a turn runs is a point. The main conversation first stops each role
-of the turn that still runs, with `TaskStop`. The remark is a prompt of the user's, so Lane lets the
-stop through, as
-[its principle on how long the guard holds the main conversation](../../../../../dev/lane/architecture.md#the-guard-holds-the-main-conversation-only-while-its-run-lasts)
-says. Right after the stop, the main conversation calls `/rn:up` with the remark, which ends the
-turn's run and begins another. It hands the planner the remark settled, where the purpose or a best
-practice settles it, or else as a point open. The planner writes it into the tree. A remark settled
-lets the turn go on from the design as changed. For a point open, the planner gives `asks`, the run
-ends with no start due, and the main conversation puts the point to the user as it puts any point.
-No one adds the remark to a running role's start or messages.
+A remark that the user makes while a turn runs is a point. The main conversation takes it in these
+steps, which [S2: a remark during a turn](#s2-a-remark-during-a-turn) draws:
+
+1. The main conversation stops each role of the turn that still runs, with `TaskStop`. The remark
+   is a prompt of the user's, so Lane lets the stop through, as
+   [its principle on how long the guard holds the main conversation](../../../../../dev/lane/architecture.md#the-guard-holds-the-main-conversation-only-while-its-run-lasts)
+   says.
+2. Right after the stop, the main conversation calls `/rn:up` with the remark, which ends the
+   turn's run and begins another. It hands the planner the remark settled, where the purpose or a
+   best practice settles it, or else as a point open.
+3. The planner writes the remark into the tree. For a remark settled, the turn goes on from the
+   design as changed. For a point open, the planner gives `asks`, so the run ends with no start
+   due, and the main conversation puts the point to the user as it puts any point.
+
+No one passes the remark to a role that runs, as
+[Each role gets only its cut](#each-role-gets-only-its-cut) says.
 
 *Why*: a role that runs on makes or judges a deliverable by a design about to change, and its
-result costs the user a round, as KR1.3 measures. A turn that went on in the run that the remark
-broke would start its next role from a cut made before the remark. A remark passed to a role
-reaches the deliverable beside the design, as [Good from the root](#good-from-the-root) rules out,
-and the next round loses it, so the user says it again, as KR1.2 counts.
+result costs the user a round, as KR1.3 measures. A turn that went on in the stopped run would
+start its next role from a cut made before the remark. A remark passed to a role reaches the
+deliverable beside the design, and the next round loses it, so the user says it again, as KR1.2
+counts.
 
 ### Tried in a throwaway copy
 
@@ -416,9 +425,10 @@ sequenceDiagram
 ```
 
 - **The run ending at `asks`, a route with neither a next start nor a wait,** over a route that
-  waits for the user: such a route has the main conversation resume the planner with the user's
-  words alone, while the main conversation settles points by reasoning too. The cost: the start of
-  a role started by mistake between two runs goes unheld, though Lane still holds its calls.
+  waits for the user: a route that waits has the main conversation resume the planner with the
+  user's words alone, but the main conversation also settles points by reasoning, with no words of
+  the user's. The cost: a role started by mistake between two runs starts unheld, though Lane still
+  holds its calls.
 
 ### S2 and S3: a deliverable made in its turn
 
@@ -539,16 +549,16 @@ sequenceDiagram
 ```
 
 - **Each role that still runs stopped with `TaskStop`** over letting it end, or sending it the
-  remark: a role let end gives a result made by a design about to change, and a remark sent to it
-  reaches the deliverable beside the design. Claude Code's subagents reference documents
+  remark, for the reasons that
+  [A remark during a turn is a point](#a-remark-during-a-turn-is-a-point) gives.
+  [Claude Code's subagents reference](https://code.claude.com/docs/en/sub-agents) documents
   `TaskStop`. The cost: the stopped round gives no result, so its work goes unused.
 - **A call of `/rn:up` right after the stop, with the remark settled or as a point open,** over
-  starting the stopped role again in the same run, or putting the remark to the user first: the
-  new run's first start is the planner, which writes the remark before any role starts, and Lane
-  ends the old run on such a call once the user has written a prompt. The stopped run still has a
-  start due, which Lane has the main conversation take before its turn ends, so the user would get
-  the point only after a role ran by the old design. The cost: the planner runs twice for a remark
-  that's the user's. It first writes the remark open, and later the user's answer.
+  putting the remark to the user first: the stopped run still has a start due, which Lane has the
+  main conversation take before its turn ends. The user would then get the point only after a role
+  ran by the old design. Why the main conversation calls `/rn:up` rather than resuming the stopped
+  role is the first choice in [Components](#components). The cost: the planner runs twice for a
+  remark that's the user's. It first writes the remark open, and later the user's answer.
 
 ### S3: picking up
 
@@ -581,7 +591,7 @@ sequenceDiagram
       Note over M,P: The main conversation goes on with the points, as S2 draws.
     else it's doing
       P-->>M: gives ready
-      Note over M,P: The turn goes on from its last round, as the last section draws.
+      Note over M,P: The turn goes on from its last round, as the sequence of a deliverable made in its turn draws.
     end
   end
 ```
