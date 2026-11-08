@@ -33,7 +33,7 @@
         {"id": "Q1", "good": true, "decisions": []},
         {
           "id": "Q2",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The main conversation's part",
@@ -49,7 +49,7 @@
         },
         {
           "id": "Q3",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The proposal",
@@ -64,14 +64,14 @@
           "decisions": [
             {
               "about": "The best practices the roles work by",
-              "decided": "The plugin best practice takes meta as a precondition",
+              "decided": "The plugin best practice takes meta and code as preconditions. A plugin deliverable names as preconditions its prompts and each plugin it takes a part from, such as Lane's",
               "by": "reasoning"
             }
           ]
         },
         {
           "id": "Q5",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "What the user gets from a check",
@@ -88,13 +88,18 @@
               "about": "The entries' descriptions",
               "decided": "A question asks whether a person's request in their own words reaches the plugin's skill, and whether an agent starts only from its own plugin's skill, with a practice for writing the entries' descriptions",
               "by": "reasoning"
+            },
+            {
+              "about": "The manifest's description",
+              "decided": "Q25 asks too whether the manifest's description, which the marketplace shows, says to a would-be user what they achieve with the plugin",
+              "by": "reasoning"
             }
           ]
         },
         {"id": "Q7", "good": true, "decisions": []},
         {
           "id": "Q8",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The maker checks first",
@@ -124,7 +129,17 @@
             }
           ]
         },
-        {"id": "Q10", "good": false, "decisions": []}
+        {
+          "id": "Q10",
+          "good": false,
+          "decisions": [
+            {
+              "about": "A role whose steps come from its best practice",
+              "decided": "The template's proposal gives its sample role only a steps adapter and no lanes on steps of its part, as Lane's architecture lays the lanes of an adapter's steps",
+              "by": "reasoning"
+            }
+          ]
+        }
       ]
     },
     {
@@ -431,7 +446,17 @@
         {"id": "Q1", "good": false, "decisions": []},
         {"id": "Q2", "good": false, "decisions": []},
         {"id": "Q3", "good": false, "decisions": []},
-        {"id": "Q4", "good": false, "decisions": []},
+        {
+          "id": "Q4",
+          "good": false,
+          "decisions": [
+            {
+              "about": "A role whose steps come only through an adapter",
+              "decided": "lay.py print takes a role whose part holds no numbered steps and whose steps come through its steps adapter, its routes included",
+              "by": "reasoning"
+            }
+          ]
+        },
         {"id": "Q5", "good": false, "decisions": []},
         {"id": "Q6", "good": false, "decisions": []},
         {"id": "Q7", "good": false, "decisions": []},
@@ -560,7 +585,7 @@
       "path": "plugins/rn",
       "kind": "plugin",
       "inputs": ["dev/rn/architecture.md"],
-      "preconditions": ["plugins/rn/domain/best-practices/plugin", "plugins/rn/domain/best-practices/architecture", "plugins/rn/domain/best-practices/plan", "plugins/rn/domain", "plugins/rn/agents"],
+      "preconditions": ["plugins/rn/domain/best-practices/plugin", "plugins/rn/domain/best-practices/architecture", "plugins/rn/domain/best-practices/plan", "plugins/lane", "plugins/rn/domain", "plugins/rn/agents"],
       "status": "open",
       "intents": [
         {"id": "Q1", "good": false, "decisions": []},

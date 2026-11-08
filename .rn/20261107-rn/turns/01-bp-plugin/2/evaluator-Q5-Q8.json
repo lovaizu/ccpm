@@ -1,0 +1,58 @@
+{
+ "met": [
+  {
+   "question": "Q5",
+   "lines": [
+    "plugin/best-practice.md:23",
+    "plugin/best-practice.md:27",
+    "plugin/best-practice.md:28",
+    "plugin/best-practice.md:31",
+    "plugin/best-practice.md:33",
+    "plugin/best-practice.md:38",
+    "plugin/best-practice.md:39",
+    "plugin/best-practice.md:44",
+    "plugin/best-practice.md:48",
+    "plugin/best-practice.md:49"
+   ]
+  },
+  {
+   "question": "Q7",
+   "lines": [
+    "plugin/best-practice.md:59",
+    "plugin/best-practice.md:71",
+    "plugin/best-practice.md:85",
+    "plugin/best-practice.md:109",
+    "plugin/best-practice.md:121",
+    "plugin/best-practice.md:145",
+    "plugin/best-practice.md:157",
+    "plugin/best-practice.md:169",
+    "plugin/best-practice.md:193",
+    "plugin/best-practice.md:253",
+    "plugin/best-practice.md:285",
+    "plugin/best-practice.md:309",
+    "plugin/best-practice.md:356"
+   ]
+  },
+  {
+   "question": "Q8",
+   "lines": [
+    "plugin/best-practice.md:53",
+    "plugin/best-practice.md:76",
+    "plugin/best-practice.md:77",
+    "plugin/best-practice.md:109",
+    "plugin/best-practice.md:121",
+    "plugin/best-practice.md:145",
+    "plugin/best-practice.md:157",
+    "plugin/best-practice.md:277",
+    "plugin/best-practice.md:348",
+    "plugin/best-practice.md:368"
+   ]
+  }
+ ],
+ "not_met": [
+  {
+   "question": "Q6",
+   "lacks": "The template's manifest holds a description that the marketplace shows to someone deciding whether to install the plugin, as plugin/template/.claude-plugin/plugin.json:2 says: \"<what its users achieve>: what a user achieves with it, in the user's words, as the marketplace shows it\". No question asks about it. Q23 at plugin/best-practice.md:45 asks only that Claude Code reads the manifest's form, Q24 at plugin/best-practice.md:46 asks about updates, Q25 at plugin/best-practice.md:47 asks about the README, and Q26 at plugin/best-practice.md:48 asks about the skill's and agents' descriptions. The generator going through the template finds no question for that section, and the evaluator can't fail a plugin whose marketplace description doesn't tell a would-be user what they'd achieve with it. That way of failing its users goes unasked."
+  }
+ ]
+}
