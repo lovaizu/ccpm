@@ -16,6 +16,7 @@ The developer builds a Claude Code plugin whose roles work together to make some
 
 - [meta](../meta/best-practice.md)
 - [code](../code/best-practice.md)
+- [prompt](../prompt/best-practice.md)
 
 ## Intents
 
@@ -57,7 +58,7 @@ Placing a file of the plugin, does the developer see which part takes the form C
 
 **Thinking**
 
-Skills, agents, hooks, and scripts take the form Claude Code fixes, each named as its caller calls it, such as the command a person types, and hand the job to the file in `domain/` that does it. `domain/` holds the knowledge of the work in one folder, with no folders split by role, and names no tool of an agent, such as the Agent tool or `AskUserQuestion`: only the entries name them. What only the developers need, such as the tests and the architecture, lies outside the plugin's folder, as installing copies only that folder. A developer then finds a job where the structure puts it, two entries to one job don't drift apart, and what the plugin knows outlives the agent it runs on, as [hexagonal architecture](https://alistair.cockburn.us/hexagonal-architecture/) says. The code in `domain/` and `scripts/` passes by the [code best practice](../code/best-practice.md) before the plugin does, as the plugin rests on it. In a plan, the plugin's deliverable names in its preconditions each part it rests on: its code, its prompts, such as the agents, and each plugin it takes a part from, such as Lane for its guard, so the plugin starts only once each part it rests on has passed.
+Skills, agents, hooks, and scripts take the form Claude Code fixes, each named as its caller calls it, such as the command a person types, and hand the job to the file in `domain/` that does it. `domain/` holds the knowledge of the work in one folder, with no folders split by role, and names no tool of an agent, such as the Agent tool or `AskUserQuestion`: only the entries name them. What only the developers need, such as the tests and the architecture, lies outside the plugin's folder, as installing copies only that folder. A developer then finds a job where the structure puts it, two entries to one job don't drift apart, and what the plugin knows outlives the agent it runs on, as [hexagonal architecture](https://alistair.cockburn.us/hexagonal-architecture/) says. The plugin rests on its code and its prompts, so each passes by its own best practice before the plugin does: the code in `domain/` and `scripts/` by the [code best practice](../code/best-practice.md), and the prompts, the entries and the parts in `domain/`, by the [prompt best practice](../prompt/best-practice.md). In a plan, the plugin's deliverable names in its preconditions each part it rests on: its code, its prompts, and each plugin it takes a part from, such as Lane for its guard. A plugin with no prompts, such as Lane, names no prompt among them. The plugin then starts only once each part it rests on has passed.
 
 **Steps**
 
@@ -69,13 +70,12 @@ Starting a role, does the developer have it hold its whole part before its first
 
 **Thinking**
 
-A role works from all it has to do only when it holds its whole part from its first call. Claude Code makes an agent's body its system prompt and reads no other file into it. It puts the plugin's folder in place of `${CLAUDE_PLUGIN_ROOT}` only in an entry's own body, not in what the Bash tool runs nor in a file that Read reads, as [environment variables](https://code.claude.com/docs/en/plugins/manifest-reference#environment-variables) says. After `/compact`, a part that a skill names comes back whole, while the skill's own body survives only as the summary retells it.
+A role works from all it has to do only when it holds its whole part from its first call. Claude Code makes an agent's body its system prompt and reads no other file into it. It puts the plugin's folder in place of `${CLAUDE_PLUGIN_ROOT}` only in an entry's own body, not in what the Bash tool runs nor in a file that Read reads, as [environment variables](https://code.claude.com/docs/en/plugins/manifest-reference#environment-variables) says. After `/compact`, a part that a skill names comes back whole, while the skill's own body survives only as the summary retells it. So the main conversation reads the skill's part whole first. An agent's part is one file in `domain/` that its entry names, and it reaches the agent whole as the agent starts, which the guard of Q9 gives.
 
 **Steps**
 
 1. Have each entry's body say that the plugin's folder is `${CLAUDE_PLUGIN_ROOT}` and name the role's part in `domain/`, and have the part name each file as `${CLAUDE_PLUGIN_ROOT}/<path>`.
-2. Have the guard of Q9 give an agent its part whole as the agent starts, through the `SubagentStart` hook's `additionalContext` with the folder put in, and have the skill's body make the main conversation read its part whole first.
-3. Run `lay.py print` on the plugin's proposal, which Q8 and Q9 have the developer write, and read in what it prints that it found each role's part. The trace: `python3 ${dependency:lane}/scripts/lay.py print {proposal}` run.
+2. Have the skill's body make the main conversation read its part whole first, and have each agent's body say that the agent gets its part as it starts, as the template's `agents/role.md` says.
 
 ### Q3
 
@@ -83,7 +83,7 @@ Writing a role's part, does the developer put in it only what the role has to do
 
 **Thinking**
 
-A role's part says what the role has to do, what a machine can see once it's done, what it's given, the best practice and the intents whose practices it carries out, and what it gives as it ends, as `domain/role.md` shows. The steps of the work are those practices, which the adapter of the plugin's proposal gives the guard, and which the guard holds one by one, as Q9 says. Steps copied into a part drift from the practices they came from, and the role then follows the copy.
+A role's part says what the role has to do, what a machine can see once it's done, what it's given, the best practice and the intents whose practices it carries out, and what it gives as it ends, as `domain/role.md` shows. The steps of the work are those practices. The part names them by their intents, so the steps adapter of Q9 gives them to the guard, which holds the role to them one by one. Steps copied into a part drift from the practices they came from, and the role then follows the copy.
 
 **Steps**
 
@@ -99,7 +99,7 @@ Where a work has jobs that need different context or tools, each job has a role 
 
 **Steps**
 
-1. Set each agent's `tools` to the tools that its part's practices use, and `background: true`, as the guard of Q9 counts a start once its role ends.
+1. Set each agent's `tools` to the tools that its part's practices use, and `background: true`, as the guard that Q9 lays counts a start only once its role ends.
 
 ### Q5
 
@@ -107,7 +107,7 @@ Following a run from the person's request, does the developer see the main conve
 
 **Thinking**
 
-Where a plugin has roles, its skill makes the main conversation the orchestrator, by a part of its own in the form of `domain/command.md`. Nobody relays: the main conversation starts each role that the routes of Q8 name, so each role's point reaches it, and it puts the point to the person as given and resumes the role with their answer word for word by SendMessage. It makes, judges, and decides nothing of the work. A subagent's last message reaches only the one who started it, and only the main conversation can ask the person, as [subagents](https://code.claude.com/docs/en/sub-agents#available-tools) says. So an agent between them would only carry points: a point reworded on the way is a question that no role asked, and an answer summed up loses what the person meant. A resumed role keeps its whole conversation, as [resume subagents](https://code.claude.com/docs/en/sub-agents#resume-subagents) says. An AI calls the plugin by the same skill, as its own orchestrator runs in the main conversation too.
+Where a plugin has roles, its skill makes the main conversation the orchestrator, by a part of its own in the form of `domain/command.md`. Nobody relays: the main conversation starts each role in the order that the routes of Q8 give, so each role's point reaches it, and it puts the point to the person as given and resumes the role with their answer word for word by SendMessage. It makes, judges, and decides nothing of the work. A subagent's last message reaches only the one who started it, and only the main conversation can ask the person, as [subagents](https://code.claude.com/docs/en/sub-agents#available-tools) says. So an agent between them would only carry points: a point reworded on the way is a question that no role asked, and an answer summed up loses what the person meant. A resumed role keeps its whole conversation, as [resume subagents](https://code.claude.com/docs/en/sub-agents#resume-subagents) says. An AI calls the plugin by the same skill, as its own orchestrator runs in the main conversation too.
 
 **Steps**
 
@@ -119,7 +119,7 @@ Starting, resuming, or ending a role, can a machine check what passes between th
 
 **Thinking**
 
-Each role's in and out keep to JSON Schemas in `domain/`, drawn from `domain/role-in.schema.json` and `domain/role-out.schema.json`. A role starts with one JSON line of run values, the values that the guard of Q9 holds its calls to, and resumes with a message whose first line is `The person's answer, word for word:`. It ends by giving a result, a fixed word such as `asks` or `done`, by the result script that the routes of Q8 lay, and its last message begins with `For the person:` where it holds a point for the person. A role that judges a work by questions writes its answers with the lines of the work that meet each question. A machine checks a fixed form, while words written freely leave each reader to guess.
+Each role's in and out keep to JSON Schemas in `domain/`, drawn from `domain/role-in.schema.json` and `domain/role-out.schema.json`. A role starts with one JSON line of run values, which its in schema names for the guard of Q9 to hold its calls to, and resumes with a message whose first line is `The person's answer, word for word:`. It ends by giving a result, a fixed word such as `asks` or `done`, which its out schema names for the routes of Q8 to go on from, and its last message begins with `For the person:` where it holds a point for the person. A role that judges a work by questions writes its answers with the lines of the work that meet each question. A machine checks a fixed form, while words written freely leave each reader to guess.
 
 **Steps**
 
@@ -143,11 +143,11 @@ Following a run from a role's end to the next start, does every run take the sam
 
 **Thinking**
 
-Where a run goes in fixed moves, its routes keep the course. Lane lays them in `hooks/lanes.json` from the plugin's proposal, a JSON file kept at the root of the repository as the template's `.lane/` shows, and gives the main conversation each next start from the role that ended and the result it gave. Code follows a course the same way every time, where a conversation told the course drifts from it. Lane keeps each run's state in a file, so a compacted or stopped conversation goes on from its last move. Where a run's course changes with what it finds, the skill's part keeps the course instead.
+Where a run goes in fixed moves, its routes keep the course. Lane lays them in `hooks/lanes.json` from the plugin's proposal, a JSON file kept at the root of the repository as the template's `.lane/` shows, and gives the main conversation each next start from the role that ended and the result it gave. `lay.py print` shows the routes as the main conversation meets them, before `lay.py write` lays them as Q9 says. Code follows a course the same way every time, where a conversation told the course drifts from it. Lane keeps each run's state in a file, so a compacted or stopped conversation goes on from its last move. Where a run's course changes with what it finds, the skill's part keeps the course instead.
 
 **Steps**
 
-1. Write the routes in the plugin's proposal, run `lay.py print` on it and read what it prints, and then run `lay.py write`. The trace: `python3 ${dependency:lane}/scripts/lay.py write {proposal}` run.
+1. Write the routes in the plugin's proposal, run `lay.py print` on it, and read in what it prints that each result of each role, a dependency's role or skill among them, leads to its next start, to a wait for the person, or to the run's end. The trace: `python3 ${dependency:lane}/scripts/lay.py print {proposal}` run.
 
 ### Q9
 
@@ -155,11 +155,13 @@ Where an instruction alone doesn't hold a step, does the developer have a hook s
 
 **Thinking**
 
-The plugin's hooks are its guard, laid by [Lane](../../../../lane/README.md) from the plugin's proposal as lanes and routes. Where a role's steps are the practices of its best practice, the proposal names a steps adapter that gives Lane those practices' steps with their traces, and lays no lane on a step of the role's part, as the part holds no numbered step. Lane lays the lanes of each step that the adapter gives from the step's trace, and gives the role each lane's sentence with its part as it starts, as [Lane's architecture](../../../../../dev/lane/architecture.md#one-wording-for-the-step-and-the-check) says and the template's `.lane/` shows. The proposal lays lanes on numbered steps only for a part that holds its own. A lane holds each practice step whose drift shows in a tool call or in how a role ends: its hook stops what would break the step and gives the role the step again. Branch protection or permission rules hold what's hard to undo. A hook runs every time, while an instruction is only advice. Hooks fire on the main conversation's calls with no `agent_type`, and on a role's with the role's, as [hooks](https://code.claude.com/docs/en/hooks) says, so one `hooks/hooks.json` holds both. A plugin's agent ignores `hooks`, `mcpServers`, and `permissionMode` in its own frontmatter, as [plugin agents](https://code.claude.com/docs/en/plugins/components#frontmatter-fields-in-plugin-agents) says, and a `SubagentStop` hook in a skill's frontmatter didn't fire in a trial on Claude Code 2.1.318, so the plugin keeps its hooks in `hooks/hooks.json`.
+The plugin's hooks are its guard, laid by [Lane](../../../../lane/README.md) from the plugin's proposal as lanes and routes. Where a role's steps are the practices of its best practice, the proposal names a steps adapter that gives Lane those practices' steps with their traces, and lays no lane on a step of the role's part, as the part holds no numbered step. Lane lays the lanes of each step that the adapter gives from the step's trace, and gives the role each lane's sentence with its part as it starts, as [Lane's architecture](../../../../../dev/lane/architecture.md#one-wording-for-the-step-and-the-check) says and the template's `.lane/` shows. The proposal lays lanes on numbered steps only for a part that holds its own. The guard gives a role its part whole through the `SubagentStart` hook's `additionalContext`, with the plugin's folder put in place of `${CLAUDE_PLUGIN_ROOT}`, as [a subagent's part](../../../../lane/docs/lanes.md#a-subagents-part) says. `lay.py print` shows the proposal as the guard holds it, so a part, a step, or a lane that Lane can't find shows before `lay.py write` lays any of them. A lane holds each practice step whose drift shows in a tool call or in how a role ends: its hook stops what would break the step and gives the role the step again. Branch protection or permission rules hold what's hard to undo. A hook runs every time, while an instruction is only advice. Hooks fire on the main conversation's calls with no `agent_type`, and on a role's with the role's, as [hooks](https://code.claude.com/docs/en/hooks) says, so one `hooks/hooks.json` holds both. A plugin's agent ignores `hooks`, `mcpServers`, and `permissionMode` in its own frontmatter, as [plugin agents](https://code.claude.com/docs/en/plugins/components#frontmatter-fields-in-plugin-agents) says, and a `SubagentStop` hook in a skill's frontmatter didn't fire in a trial on Claude Code 2.1.318, so the plugin keeps its hooks in `hooks/hooks.json`.
 
 **Steps**
 
 1. Name in each step of the best practices that the roles use a trace that a machine can check, such as a command run, a file read, or a test made. Then name in the proposal the steps adapter that gives Lane those steps, and lay a lane only on a numbered step of a part. The trace: `{proposal}` made.
+2. Run `lay.py print` on the proposal, and read in what it prints that it found each role's part and each step that the adapter gives, with its lanes. The trace: `python3 ${dependency:lane}/scripts/lay.py print {proposal}` run.
+3. Run `lay.py write`, which lays the proposal into the plugin's steps and `hooks/`, and removes the proposal. The trace: `python3 ${dependency:lane}/scripts/lay.py write {proposal}` run.
 
 ### Q10
 
@@ -231,7 +233,7 @@ Where another plugin already does a job, the plugin names it in `dependencies` o
 
 **Steps**
 
-1. Name the dependency in `plugin.json`, and run `lay.py print` on routes that name it.
+1. Name the dependency in `plugin.json`, and name its role or its skill in the routes that Q8 has the developer read in `lay.py print`.
 
 ### Q16
 
