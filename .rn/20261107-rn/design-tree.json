@@ -47,7 +47,7 @@
             },
             {
               "about": "A plugin with no roles",
-              "decided": "The template's notes say which files a plugin with no roles, such as Lane, leaves out: the agents, the roles' parts and schemas, and the proposal's routes",
+              "decided": "The template's notes say which files a plugin with no roles, such as Lane, leaves out: the agents, the roles' parts and schemas, the proposal, and hooks/hooks.json",
               "by": "reasoning"
             }
           ]
