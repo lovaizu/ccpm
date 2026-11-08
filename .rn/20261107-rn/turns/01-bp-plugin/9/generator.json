@@ -1,0 +1,70 @@
+{
+ "met": [
+  {
+   "question": "Q1",
+   "lines": [
+    "plugin/best-practice.md:5 names only the one end, that the plugin's users achieve what they're after, for a plugin with roles and for one with none, such as Lane.",
+    "plugin/best-practice.md:376 judges the whole by the same end. The marketplace part added in round 9 serves it: a would-be user can't reach that end before they find and install the plugin, as plugin/best-practice.md:352 says."
+   ]
+  },
+  {
+   "question": "Q2",
+   "lines": [
+    "plugin/template/README.md:13-36 gives the order to write the files in. Step 4 at plugin/template/README.md:25-27 writes the marketplace entry and the root README line once the manifest gives the name and the description that both take, and says that both lie at the root of the repository.",
+    "plugin/template/marketplace/.claude-plugin/marketplace.json:2 says what each slot holds, and that where the marketplace exists, the plugin deliverable adds only its entry. plugin/template/marketplace/README.md:9-15 says the same of the root README's line.",
+    "plugin/template/README.md:38-41 says which files a plugin with no roles leaves out. It skips steps 7 and 8 now."
+   ]
+  },
+  {
+   "question": "Q3",
+   "lines": [
+    "plugin/best-practice.md:5 asks for a plugin with which its users achieve what they're after. plugin/template/marketplace/.claude-plugin/marketplace.json:7-13 gives the entry by which /plugin lists the plugin and installs it from its source, and plugin/template/marketplace/README.md:5 gives the line by which a would-be user finds it on the repository's page.",
+    "plugin/template/docs/page.md:1-24 gives a page for each need beyond the README. The other sections keep their notes: plugin/template/.claude-plugin/plugin.json:2, plugin/template/CHANGELOG.md:13-14, plugin/template/skills/command/SKILL.md:12-13, plugin/template/domain/role.md:10-12."
+   ]
+  },
+  {
+   "question": "Q4",
+   "lines": [
+    "plugin/best-practice.md:11-14 names architecture and product-vision as inputs. plugin/best-practice.md:352 says why the product vision is one: the manifest's description says in the words of its users what they achieve, so the plugin deliverable takes the product vision as an input. plugin/best-practice.md:356 writes the description from its opening.",
+    "plugin/best-practice.md:16-20 names meta, code, and prompt as preconditions, and plugin/best-practice.md:62 says why, with a plugin of no prompts naming none, and each plugin it takes a part from among them.",
+    "plugin/template/README.md:8-36 says which files the code and prompt deliverables make first and which the plugin deliverable makes once they pass, the marketplace entry and the root README line among them."
+   ]
+  },
+  {
+   "question": "Q5",
+   "lines": [
+    "plugin/best-practice.md:26-52 keep each question as the moment, what the role needs, and a so-that clause, in the words that the evaluators of round 4 found met. Round 9 changes no question's words."
+   ]
+  },
+  {
+   "question": "Q6",
+   "lines": [
+    "plugin/best-practice.md:26-52 give each section, the dependencies among them, and the whole a question. The new section marketplace has Q23 at plugin/best-practice.md:48, for the marketplace's check of its manifest, and Q25 at plugin/best-practice.md:50, for the would-be user who finds the plugin through it."
+   ]
+  },
+  {
+   "question": "Q7",
+   "lines": [
+    "plugin/best-practice.md:352 says why the plugin deliverable writes the marketplace entry and the root README line: a would-be user finds the plugin in /plugin only through the entry, and on the repository's page only through the line. It names the display fields of Claude Code's marketplace reference as the established way. plugin/best-practice.md:340 points the listing of the plugin to Q25, so the fact lies in one place."
+   ]
+  },
+  {
+   "question": "Q8",
+   "lines": [
+    "plugin/best-practice.md:54-376 give each of Q1 to Q27 a practice. plugin/best-practice.md:332 runs claude plugin validate --strict on the marketplace that the template's entry goes into. A copy of plugin/template/marketplace/.claude-plugin/marketplace.json with its slots filled passed that check."
+   ]
+  },
+  {
+   "question": "Q10",
+   "lines": [
+    "plugin/best-practice.md:5 and plugin/best-practice.md:376 hold the whole to the users' end. A developer who follows plugin/template/README.md:8-41 starts the plugin only on parts that have passed, takes the description from the product vision, lists the plugin in the marketplace and the root README, and lays the guard last. A would-be user then finds the plugin, installs it, and gets a plugin that they can use whole."
+   ]
+  }
+ ],
+ "not_met": [
+  {
+   "question": "Q9",
+   "lacks": "The best practice names no example, so the generator has no finished plugin that shows what the slots become. It waits on Lane's plugin deliverable, as the decision on the example says: 'The plugin best practice's example is Lane's plugin, named once Lane's plugin deliverable ends'."
+  }
+ ]
+}

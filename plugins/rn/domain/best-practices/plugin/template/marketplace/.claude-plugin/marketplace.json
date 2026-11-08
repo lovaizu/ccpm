@@ -1,0 +1,14 @@
+{
+  "DELETE_TEMPLATE_COMMENT": "The marketplace's file, which lies at .claude-plugin/marketplace.json in the root of the repository that holds the plugin, as Q25 says. /plugin lists the plugin to a would-be user only by its entry here, and installs it from the entry's source. Where the marketplace already has this file, add only the plugin's entry to plugins and keep the rest. <marketplace>, <what the marketplace offers>, <owner>: the marketplace's own name, what it offers, and who keeps it, for a new marketplace alone. <plugin>: the name that the plugin's manifest gives. source: the plugin's folder from the marketplace's root, starting with ./. Leave description out of the entry where its source is a relative path, so the manifest's description lies in one place, as Q25 says. <category>: the kind of work the plugin helps with, such as development. Optional.",
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "<marketplace>",
+  "description": "<What the marketplace offers>.",
+  "owner": { "name": "<owner>" },
+  "plugins": [
+    {
+      "name": "<plugin>",
+      "source": "./plugins/<plugin>",
+      "category": "<category>"
+    }
+  ]
+}
