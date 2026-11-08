@@ -1,0 +1,7 @@
+{"met":[
+{"question":"Q1","lines":["architecture/best-practice.md:5","architecture/best-practice.json:2"]},
+{"question":"Q2","lines":["architecture/template.md:3","architecture/template.md:9-16","architecture/template.md:18-43","architecture/template.md:45-59","architecture/template.md:61-86","architecture/template.md:88-108","architecture/template.md:110-133","architecture/template.md:135-151","architecture/template.md:153-166","architecture/template.md:168-209"]},
+{"question":"Q3","lines":["architecture/best-practice.md:5","architecture/best-practice.md:25-40","architecture/template.md:3-7","architecture/template.md:18","architecture/template.md:45","architecture/template.md:61","architecture/template.md:88","architecture/template.md:110","architecture/template.md:135","architecture/template.md:153","architecture/template.md:168"]},
+{"question":"Q4","lines":["architecture/best-practice.md:15-19","architecture/best-practice.json:6-11","architecture/template.md:3","architecture/template.md:11","architecture/template.md:20","architecture/template.md:34-35","architecture/template.md:53-58","architecture/template.md:170","architecture/template.md:187-188"]}
+],
+"not_met":[]}

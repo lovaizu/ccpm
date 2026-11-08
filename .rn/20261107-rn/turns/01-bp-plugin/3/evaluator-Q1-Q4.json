@@ -1,0 +1,58 @@
+{
+ "met": [
+  {
+   "question": "Q1",
+   "lines": [
+    "plugin/best-practice.md:5",
+    "plugin/best-practice.json:2",
+    "plugin/best-practice.md:50"
+   ]
+  },
+  {
+   "question": "Q2",
+   "lines": [
+    "plugin/template/README.md:8",
+    "plugin/template/README.md:10",
+    "plugin/template/README.md:11",
+    "plugin/template/README.md:13",
+    "plugin/template/README.md:14",
+    "plugin/template/README.md:15",
+    "plugin/template/README.md:18",
+    "plugin/template/README.md:20",
+    "plugin/template/.claude-plugin/plugin.json:2",
+    "plugin/template/agents/role.md:11",
+    "plugin/template/domain/role.md:6",
+    "plugin/template/domain/role.md:34",
+    "plugin/template/domain/command.md:9",
+    "plugin/template/skills/command/SKILL.md:10",
+    "plugin/template/.lane/yyyymmdd-plugin/plugin.json:2",
+    "plugin/template/scripts/command.py:5",
+    "plugin/template/hooks/hooks.json:2",
+    "plugin/template/CHANGELOG.md:13"
+   ]
+  },
+  {
+   "question": "Q3",
+   "lines": [
+    "plugin/template/.claude-plugin/plugin.json:4",
+    "plugin/template/README.md:4",
+    "plugin/template/CHANGELOG.md:14",
+    "plugin/template/skills/command/SKILL.md:7",
+    "plugin/template/domain/command.md:3",
+    "plugin/template/domain/role.md:3",
+    "plugin/template/domain/role-in.schema.json:4",
+    "plugin/template/domain/role-out.schema.json:4",
+    "plugin/template/agents/role.md:8",
+    "plugin/template/scripts/command.py:1",
+    "plugin/template/.lane/yyyymmdd-plugin/plugin.json:2",
+    "plugin/template/hooks/hooks.json:2"
+   ]
+  }
+ ],
+ "not_met": [
+  {
+   "question": "Q4",
+   "lacks": "The generator reading Preconditions, at plugin/best-practice.md:15 to plugin/best-practice.md:18 and plugin/best-practice.json:7, finds only meta and code, yet plugin/best-practice.md:60 says the plugin rests on its prompts, such as the agents, and its parts in domain/ are prompts of the kind prompt. So neither the generator nor the plan's check finds that the plugin's prompts of kind prompt must pass before the plugin starts, and the generator can make a plugin on agents and parts that haven't passed yet."
+  }
+ ]
+}

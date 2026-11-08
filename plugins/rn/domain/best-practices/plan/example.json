@@ -153,7 +153,7 @@
         {"id": "Q1", "good": true, "decisions": []},
         {
           "id": "Q2",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "Each part's piece of the idea",
