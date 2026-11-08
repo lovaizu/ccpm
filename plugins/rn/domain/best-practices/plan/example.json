@@ -103,8 +103,23 @@
             },
             {
               "about": "Good from the root",
-              "decided": "a shortfall goes back to the decision that serves it, and the next round makes the deliverable again from the design. No fix goes onto the deliverable beside the design, and no one adds to a role's start on the way",
-              "by": "reasoning"
+              "decided": "a shortfall goes back to the decision that serves it, and the next round starts from the design: the generator brings the deliverable in line with the decisions, so that each part rests on one, and keeps what already does. No fix goes onto the deliverable beside the design, and no one adds to a role's start on the way",
+              "by": "user"
+            },
+            {
+              "about": "A shortfall that only a changed decision meets",
+              "decided": "the generator judges whether the decisions meet a shortfall, or only a changed decision does. For the second, it gives open and names the decision, and the main conversation settles it, the planner writes it, and the turn goes on from the changed design",
+              "by": "user"
+            },
+            {
+              "about": "A remark during a turn",
+              "decided": "a remark the user makes while a turn runs is a point. The main conversation settles it, the planner writes it into the tree, and the turn goes on from the design as changed. No one adds the remark to a running role's start or messages",
+              "by": "user"
+            },
+            {
+              "about": "How a role still running stops when a remark comes",
+              "decided": "the main conversation stops each role of the turn that still runs with TaskStop, which Claude Code's subagents reference documents, before it settles the remark. The call of /rn:up that follows begins a new run, as Lane begins one at each Skill call of the skill its routes name",
+              "by": "research"
             },
             {
               "about": "The maker checks first",
