@@ -21,13 +21,13 @@ practice gets one made before its first deliverable.
 *Why*: a deliverable left out shows only when the work reaches it, and one made before what it takes
 needs making again, as KR1.1 and KR1.3 count.
 
-### Intent, not spec
+### Intent in the tree
 
-The design tree and this document hold intent only. The developer of a part settles how it works
-inside, where they build it.
+A design tree holds what each deliverable is for and the decisions that serve it. How a deliverable
+works inside is the generator's to settle as it makes it.
 
-*Why*: a spec written into the design grows with each finding and goes untrue at the next change, so
-the maker builds to lines that no longer hold, as KR1.1 counts.
+*Why*: a tree that takes in each detail grows with every finding and goes untrue at the next change,
+and the generator then makes the deliverable to lines that no longer hold, as KR1.1 counts.
 
 ### The main conversation settles, the planner writes
 
@@ -118,8 +118,8 @@ Before the user merges, rn proposes each change to a best practice that the run'
 call for. A change the user takes becomes a deliverable of the run. A turn makes it, the user merges
 it with the rest, and later runs of the repository work by it.
 
-*Why*: without it, rn's operator finds a best practice's gap only when a user meets it again, run
-after run.
+*Why*: without it, whoever runs rn in the repository meets the same gap in a best practice run after
+run.
 
 ### Tried in a throwaway copy
 
@@ -165,8 +165,7 @@ What each decides alone:
 
 - **user**: the goal, each point the purpose and the best practices leave open, whether to merge.
 - **main conversation**: whether a point is the user's, how it's settled, the words it's put in,
-  whether each lack an evaluator names goes on, which changes to a best practice the run calls
-  for.
+  whether each lack an evaluator names goes on, which changes to a best practice the run calls for.
 - **planner**: the goal drafted from the request, the plan, each deliverable's kind, inputs,
   preconditions, size, and the commands that try it, whether each node a change touches still holds.
 - **generator**: the deliverable, each small point that the purpose and the best practice settle one
@@ -185,8 +184,7 @@ These choices in the components are ones a developer would question:
 
 - **The main conversation calling `/rn:up` again with each settled point** over resuming the role
   that stopped, as Lane lets a resume carry only the user's words, and a new run starts the planner
-  from a cut it holds, as KR1.1 counts. The cost: the main conversation reads the skill's part on
-  each call.
+  from a cut it holds. The cost: the main conversation reads the skill's part on each call.
 - **One point a user settles in each change** over a deliverable's points written at once: each
   answer is in the tree before the next goes out, so a conversation that ends loses none, as KR1.2
   counts. The cost: a run of the planner for each point.
@@ -194,7 +192,8 @@ These choices in the components are ones a developer would question:
   no decision of an earlier change into this one, as KR1.1 counts. The cost: it reads its cut on
   each start.
 - **`tree.py` alone reading the tree and committing it** over a script for each: one reader of the
-  tree's form can't drift from another, as KR1.2 counts. The cost: `tree.py` needs git and `gh`.
+  tree's form leaves its developer no second reader to keep in step. The cost: `tree.py` needs git
+  and `gh`.
 
 ## Data model
 
@@ -314,6 +313,7 @@ sequenceDiagram
     else each gave more or good
       M->>M: judges each lack by the purpose
       M->>T: start, for the planner, with each intent good and each lack kept (Change)
+      T-->>M: the planner's cut (Cut)
       M->>P: starts it (Cut)
       P->>T: writes them, and commits (Tree edit)
       alt a lack is kept
@@ -439,9 +439,9 @@ The user installs rn as [the README](../../../README.md#installation) says, whic
 Lane with it, and types `/rn:up` in Claude Code at the root of their repository.
 
 - **macOS and Linux** over Windows as well: `python3` and the link of `hooks/lane/` work there as rn
-  needs them, as KR1.1 counts. The cost: a user on Windows has no tried way.
+  needs them. The cost: a user on Windows has no tried way.
 - **Python 3.9 and its standard library only** over a later Python or packages: the user installs
-  nothing for rn, as KR1.3 counts. The cost: the code goes without what later versions give.
+  nothing for rn. The cost: the code goes without what later versions give.
 - **A run's files in `.rn/<yyyymmdd>-<goal>/`, committed on the work's branch,** over the system's
   temporary folder: a run picks up from them in any conversation, as KR1.2 counts. The cost: a
   folder in the user's repository.
@@ -476,10 +476,10 @@ dev/rn/
 ```
 
 - **The parts in `domain/`, with the best practices and the code beside them,** over folders by
-  type: one folder of rn's own knowledge, where Lane finds each part, as KR1.1 counts. The cost:
-  moving every file of Turn's.
+  type: one folder of rn's own knowledge, where Lane finds each part. The cost: moving every file of
+  Turn's.
 - **No progress file** over a file that says where the run stands: the tree's statuses and the
-  rounds' records already hold it, and a second record drifts, as KR1.2 counts. The cost: `tree.py`
+  rounds' records already hold it, and a second record would drift from them. The cost: `tree.py`
   reads the rounds' folders.
 
 ## Tests
@@ -494,8 +494,8 @@ where this section says.
 - **The `tree.py` process tried `FULL` at unit and at architecture** over `HAPPY`: a fault there
   writes the tree wrong or hands a role another's cut, and no higher level checks every case, as
   KR1.1 counts. The cost: the most tests to keep up as the tree's form changes.
-- **Lane's double of Claude Code and its trial driver** over rn's own: one double serves both
-  plugins, as KR1.1 counts. The cost: a change to Lane's double reaches rn's tests.
+- **Lane's double of Claude Code and its trial driver** over rn's own: its developer keeps one
+  double for both plugins. The cost: a change to Lane's double reaches rn's tests.
 - **`claude plugin eval` left out of the trials** over eval cases: a case runs one prompt and never
   stops for an answer, while the walkthrough answers points and goes on in a new conversation, as
   KR1.2 counts. The cost: the trials need their own driver, which Lane's already is.

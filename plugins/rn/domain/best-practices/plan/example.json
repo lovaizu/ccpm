@@ -197,8 +197,8 @@
               "by": "user"
             },
             {
-              "about": "Intent, not spec",
-              "decided": "the design tree and the architecture hold intent only. The maker of a part settles how it works inside, where they build it",
+              "about": "Intent in the tree",
+              "decided": "a design tree holds what each deliverable is for and the decisions that serve it. The generator settles how a deliverable works inside as it makes it",
               "by": "user"
             },
             {
@@ -488,7 +488,7 @@
             },
             {
               "about": "The product vision trial",
-              "decided": "on Opus by dev/lane/tests/product-vision/trial.py, its plugin given a part with no numbered list, a steps adapter, a start-text command and a route that waits for the person, and its judge counting steps out of order, starts unlike the command's text and resumes not in the person's words. Its judge is first right on kept records whose answer someone knows",
+              "decided": "runs on Opus, and its judge counts each step, start, and resume that the guard let through against Lane's product vision. The judge is first right on kept records whose answer someone knows",
               "by": "reasoning"
             }
           ]
@@ -761,13 +761,7 @@
         {
           "id": "Q9",
           "good": false,
-          "decisions": [
-            {
-              "about": "A step's trace",
-              "decided": "meta's form gives each practice step a trace a machine can check, and each kind's steps get one, so rn's steps adapter hands Lane what to hold",
-              "by": "reasoning"
-            }
-          ]
+          "decisions": []
         },
         {
           "id": "Q10",
@@ -867,26 +861,6 @@
             {
               "about": "Pin and Turn",
               "decided": "plugins/pin and plugins/turn go once rn holds their parts. The branch turn-held keeps the eight Turn commits no branch held, rn takes each where its design keeps what it fixes, then the branch goes",
-              "by": "reasoning"
-            },
-            {
-              "about": "Lane's old part folders",
-              "decided": "Lane's guard stops reading prompts/ and core/roles/ in the change that removes Pin and Turn, as their parts lie there until then",
-              "by": "reasoning"
-            },
-            {
-              "about": "A null start value",
-              "decided": "a run lane whose value is null lets no command through, and a run_step command the adapter gives counts as allowed, so the generator gets run_only",
-              "by": "reasoning"
-            },
-            {
-              "about": "A file a role must not read",
-              "decided": "Lane gains a lane that stops a read of the files it names, and the planner and generator get it for the design tree, as no role reads the tree",
-              "by": "reasoning"
-            },
-            {
-              "about": "Permission for tree.py",
-              "decided": "the skill names tree.py in allowed-tools, and the prose check reads no front matter, as a prompt per call costs the user time",
               "by": "reasoning"
             },
             {
