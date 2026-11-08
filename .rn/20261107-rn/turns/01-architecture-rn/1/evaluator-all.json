@@ -1,0 +1,22 @@
+{
+ "met": [
+  {"question": "Q1", "lines": ["dev/rn/architecture.md:3-16"]},
+  {"question": "Q2", "lines": ["dev/rn/architecture.md:205-214"]},
+  {"question": "Q4", "lines": ["dev/rn/architecture.md:222-241"]},
+  {"question": "Q5", "lines": ["dev/rn/architecture.md:218"]},
+  {"question": "Q6", "lines": ["dev/rn/architecture.md:266-285"]},
+  {"question": "Q7", "lines": ["dev/rn/architecture.md:383-444"]},
+  {"question": "Q8", "lines": ["dev/rn/architecture.md:52-201"]},
+  {"question": "Q9", "lines": ["dev/rn/architecture.md:528-556"]},
+  {"question": "Q10", "lines": ["dev/rn/architecture.md:558-602"]},
+  {"question": "Q11", "lines": ["dev/rn/architecture.md:604-630"]},
+  {"question": "Q12", "lines": ["dev/rn/architecture.md:604-630"]},
+  {"question": "Q13", "lines": ["dev/rn/architecture.md:604-630"]},
+  {"question": "Q14", "lines": ["dev/rn/architecture.md:446-461"]},
+  {"question": "Q16", "lines": ["dev/rn/architecture.md:111-162"]}
+ ],
+ "not_met": [
+  {"question": "Q3", "lacks": "A developer building the generator or tree.py can't tell from Good from the root whether a shortfall changes a decision or only the next round's making, nor who judges which, so two developers can build it two ways."},
+  {"question": "Q15", "lacks": "A developer reading The maker checks first doesn't learn what the generator does when the design can't meet an intent, which only the S2 and S3 sequence shows, and the heading 'a deliverable made in turns' reads as several turns for one deliverable while the principles give it one turn."}
+ ]
+}

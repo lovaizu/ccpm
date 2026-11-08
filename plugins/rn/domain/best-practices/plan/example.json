@@ -90,11 +90,11 @@
       "preconditions": [],
       "status": "doing",
       "intents": [
-        {"id": "Q1", "good": false, "decisions": []},
-        {"id": "Q2", "good": false, "decisions": []},
+        {"id": "Q1", "good": true, "decisions": []},
+        {"id": "Q2", "good": true, "decisions": []},
         {
           "id": "Q3",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "A turn",
@@ -133,19 +133,19 @@
             }
           ]
         },
-        {"id": "Q4", "good": false, "decisions": []},
-        {"id": "Q5", "good": false, "decisions": []},
-        {"id": "Q6", "good": false, "decisions": []},
-        {"id": "Q7", "good": false, "decisions": []},
-        {"id": "Q8", "good": false, "decisions": []},
-        {"id": "Q9", "good": false, "decisions": []},
-        {"id": "Q10", "good": false, "decisions": []},
-        {"id": "Q11", "good": false, "decisions": []},
-        {"id": "Q12", "good": false, "decisions": []},
-        {"id": "Q13", "good": false, "decisions": []},
+        {"id": "Q4", "good": true, "decisions": []},
+        {"id": "Q5", "good": true, "decisions": []},
+        {"id": "Q6", "good": true, "decisions": []},
+        {"id": "Q7", "good": true, "decisions": []},
+        {"id": "Q8", "good": true, "decisions": []},
+        {"id": "Q9", "good": true, "decisions": []},
+        {"id": "Q10", "good": true, "decisions": []},
+        {"id": "Q11", "good": true, "decisions": []},
+        {"id": "Q12", "good": true, "decisions": []},
+        {"id": "Q13", "good": true, "decisions": []},
         {
           "id": "Q14",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The size of a turn",
@@ -154,8 +154,8 @@
             }
           ]
         },
-        {"id": "Q15", "good": false, "decisions": []},
-        {"id": "Q16", "good": false, "decisions": []}
+        {"id": "Q15", "good": true, "decisions": []},
+        {"id": "Q16", "good": true, "decisions": []}
       ]
     },
     {
