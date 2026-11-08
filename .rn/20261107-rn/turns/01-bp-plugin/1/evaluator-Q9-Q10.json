@@ -1,0 +1,13 @@
+{
+ "met": [],
+ "not_met": [
+  {
+   "question": "Q9",
+   "lacks": "The generator has no finished plugin to read. The plugin practice names only a template and the architecture input, with no example and no source: see plugins/rn/domain/best-practices/plugin/best-practice.json:3-4, and its folder holds only plugin/best-practice.json, plugin/best-practice.md and plugin/template/. So the generator can't see what the slots <role>, <value>, <results>, <intents>, <tools> and the skill's <command> become together in one real plugin, such as how one role's part, its two schemas, its agent entry, the skill's part and the proposal's routes fit. It fills its own from the template comments alone."
+  },
+  {
+   "question": "Q10",
+   "lacks": "A developer who follows the plugin practice whole can't settle how to test a role whose rules no guard holds, such as a judgment. Plugin Q22 at plugins/rn/domain/best-practices/plugin/best-practice.md:304 says the test levels are the architecture practice's and that no level runs a prompt, a skill, or an agent alone on a model. That architecture practice, at plugins/rn/domain/best-practices/architecture/best-practice.md:181, says to run such a part on the real model at unit where no guard holds each of its rules. The developer meets two practices that say opposite things for the same case, and hesitates over which holds. With no finished plugin to compare against, as Q9 says, they also can't see the whole of a plugin made by these practices, so they can't check their own plugin against one that passed."
+  }
+ ]
+}

@@ -1,0 +1,56 @@
+{
+ "met": [
+  {
+   "question": "Q5",
+   "lines": [
+    "plugins/rn/domain/best-practices/architecture/best-practice.json:15",
+    "plugins/rn/domain/best-practices/architecture/best-practice.json:20",
+    "plugins/rn/domain/best-practices/architecture/best-practice.json:25",
+    "plugins/rn/domain/best-practices/architecture/best-practice.json:30",
+    "plugins/rn/domain/best-practices/architecture/best-practice.json:35",
+    "plugins/rn/domain/best-practices/architecture/best-practice.json:40",
+    "plugins/rn/domain/best-practices/architecture/best-practice.json:45",
+    "plugins/rn/domain/best-practices/architecture/best-practice.json:50",
+    "plugins/rn/domain/best-practices/architecture/best-practice.json:55",
+    "plugins/rn/domain/best-practices/architecture/best-practice.json:60",
+    "plugins/rn/domain/best-practices/architecture/best-practice.json:65",
+    "plugins/rn/domain/best-practices/architecture/best-practice.json:70",
+    "plugins/rn/domain/best-practices/architecture/best-practice.json:75",
+    "plugins/rn/domain/best-practices/architecture/best-practice.json:80",
+    "plugins/rn/domain/best-practices/architecture/best-practice.json:85",
+    "plugins/rn/domain/best-practices/architecture/best-practice.json:90"
+   ]
+  },
+  {
+   "question": "Q8",
+   "lines": [
+    "plugins/rn/domain/best-practices/architecture/best-practice.json:95",
+    "plugins/rn/domain/best-practices/architecture/best-practice.json:104",
+    "plugins/rn/domain/best-practices/architecture/best-practice.json:119",
+    "plugins/rn/domain/best-practices/architecture/best-practice.json:131",
+    "plugins/rn/domain/best-practices/architecture/best-practice.json:143",
+    "plugins/rn/domain/best-practices/architecture/best-practice.json:152",
+    "plugins/rn/domain/best-practices/architecture/best-practice.json:157",
+    "plugins/rn/domain/best-practices/architecture/best-practice.json:166",
+    "plugins/rn/domain/best-practices/architecture/best-practice.json:175",
+    "plugins/rn/domain/best-practices/architecture/best-practice.json:180",
+    "plugins/rn/domain/best-practices/architecture/best-practice.json:185",
+    "plugins/rn/domain/best-practices/architecture/best-practice.json:197",
+    "plugins/rn/domain/best-practices/architecture/best-practice.json:239",
+    "plugins/rn/domain/best-practices/architecture/best-practice.json:257",
+    "plugins/rn/domain/best-practices/architecture/best-practice.json:266",
+    "plugins/rn/domain/best-practices/architecture/best-practice.json:271"
+   ]
+  }
+ ],
+ "not_met": [
+  {
+   "question": "Q6",
+   "lacks": "Each template section and each join among them has its question: the opening Q1, Principles Q3, User stories Q2, Components Q4 and Q5, Data model Q6, Sequences Q7, Deployment Q9, Directory structure Q10, Tests Q11 to Q13, the joins Q4, Q7 to Q11, and Q14, and the whole Q15 and Q16. Still, no question asks whether the parts, built as the document says, together move the product vision's key results, which the goal at plugins/rn/domain/best-practices/architecture/best-practice.json:2 is after. Q8 asks only that each part traces to an objective, Q2 that each walkthrough step has a story, and Q15 and Q16 that the document agrees with itself and stays true. So a document that's complete, traceable, and consistent, yet whose choices and principles ignore what a key result measures, such as how often rn asks the user or how long a round takes, passes every question. Its developer then builds that design faithfully, and the product misses its vision. The example weighs its choices against KR1.1 to KR1.3 at plugins/rn/domain/best-practices/architecture/example.md:58, 207, 229, 323, 326, and 543, but a generator gets this only by copying the example. No question asks for it, and the slot `<why>` at plugins/rn/domain/best-practices/architecture/template.md:64 doesn't say to name a key result."
+  },
+  {
+   "question": "Q7",
+   "lacks": "Most practices say what the document must be for the developer and why, and name the field's way, such as C4, the Unified Modeling Language, information hiding, the test pyramid, and architecture decision records. The practice for Q8 at plugins/rn/domain/best-practices/architecture/best-practice.json:167 and 170 differs. It has the generator keep only what an objective needs and remove what reaches none, which is the generator's own check. It doesn't say that the developer who reads the document must see which objective each story, component, and data serves, or why they need to see it. The template has no slot for that trace either. A generator that follows the practice cuts the orphans but leaves the trace unwritten. The developer then has to rebuild it through sequences, stories, and walkthrough steps before they can tell what may go. The example writes the trace in prose that neither the practice nor the template asks for, at plugins/rn/domain/best-practices/architecture/example.md:264, 283, and 360."
+  }
+ ]
+}

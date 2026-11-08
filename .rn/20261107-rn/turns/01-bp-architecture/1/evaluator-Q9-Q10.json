@@ -1,0 +1,29 @@
+{
+ "met": [
+  {
+   "question": "Q10",
+   "lines": [
+    "plugins/rn/domain/best-practices/architecture/best-practice.md:5",
+    "plugins/rn/domain/best-practices/architecture/best-practice.md:24-39",
+    "plugins/rn/domain/best-practices/architecture/best-practice.md:195-199",
+    "plugins/rn/domain/best-practices/architecture/template.md:151-164",
+    "plugins/rn/domain/best-practices/architecture/example.md:3-27",
+    "plugins/rn/domain/best-practices/architecture/example.md:61-260",
+    "plugins/rn/domain/best-practices/architecture/example.md:264-277",
+    "plugins/rn/domain/best-practices/architecture/example.md:281-333",
+    "plugins/rn/domain/best-practices/architecture/example.md:337-364",
+    "plugins/rn/domain/best-practices/architecture/example.md:366-658",
+    "plugins/rn/domain/best-practices/architecture/example.md:662-705",
+    "plugins/rn/domain/best-practices/architecture/example.md:709-751",
+    "plugins/rn/domain/best-practices/architecture/example.md:755-811",
+    "plugins/rn/domain/best-practices/architecture/images/tests.svg"
+   ]
+  }
+ ],
+ "not_met": [
+  {
+   "question": "Q9",
+   "lacks": "The generator can't see what the newest slot of Tests becomes in a real deliverable. The template's note at template.md:162-164, and Q13's step at architecture/best-practice.md:199, ask Tests to name each part that makes a judgment no guard can hold, with its judgment, as the trial is its first check. The example never does this. At example.md:786-788 it gives only two judgments as a 'such as' inside the cost of a choice, 'whether a point is the user's or whether the deliverable meets an intent', and names no part. The parts are the main conversation and the evaluator. Components also gives other judgments of the same sort, such as the planner's 'whether each node a change touches still holds' at example.md:294 and the generator's 'whether the decisions meet a shortfall' at example.md:297. So a generator copying the example can't tell whether a 'such as' in a cost meets the slot, whether it must name every such part or only a few, or where in Tests the list goes. Every other slot of the template has a filled counterpart in the example that the generator can follow."
+  }
+ ]
+}
