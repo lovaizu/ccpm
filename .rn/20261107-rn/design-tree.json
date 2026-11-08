@@ -94,7 +94,7 @@
             },
             {
               "about": "What the plugin deliverable makes",
-              "decided": "The template's order says which files the plugin's code and prompt deliverables make, the scripts and schemas by code and the entries and parts by prompt, and which the plugin deliverable makes once they pass: the manifest, the proposal and its adapters, hooks/hooks.json by lay.py, and the CHANGELOG",
+              "decided": "The template's order says which files the plugin's code and prompt deliverables make, the scripts and schemas by code and the entries and parts by prompt, and which the plugin deliverable makes once they pass: the manifest, the pages in docs/, the proposal and its adapters, hooks/hooks.json by lay.py, and the CHANGELOG",
               "by": "reasoning"
             }
           ]
