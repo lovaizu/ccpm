@@ -27,7 +27,7 @@
       "path": "plugins/rn/domain/best-practices/plugin",
       "kind": "meta",
       "inputs": [],
-      "preconditions": [],
+      "preconditions": ["plugins/rn/domain/best-practices/meta"],
       "status": "doing",
       "intents": [
         {"id": "Q1", "good": true, "decisions": []},
@@ -147,7 +147,7 @@
       "path": "plugins/rn/domain/best-practices/architecture",
       "kind": "meta",
       "inputs": [],
-      "preconditions": [],
+      "preconditions": ["plugins/rn/domain/best-practices/meta"],
       "status": "doing",
       "intents": [
         {"id": "Q1", "good": true, "decisions": []},
@@ -254,7 +254,7 @@
       "path": "plugins/rn/domain/best-practices/plan",
       "kind": "meta",
       "inputs": [],
-      "preconditions": [],
+      "preconditions": ["plugins/rn/domain/best-practices/meta"],
       "status": "doing",
       "intents": [
         {"id": "Q1", "good": true, "decisions": []},
@@ -314,6 +314,11 @@
               "about": "The check of a status",
               "decided": "tree.py check fails a deliverable doing or done while a precondition has another status, except a best practice that waits only on its example, with a test that fails before the check exists",
               "by": "reasoning"
+            },
+            {
+              "about": "The best practice a deliverable follows",
+              "decided": "Each deliverable that isn't done names as a precondition the meta deliverable of its own kind's best practice where the plan holds one, and tree.py check fails one that leaves it out",
+              "by": "reasoning"
             }
           ]
         }
@@ -354,7 +359,7 @@
       "path": "dev/rn/architecture.md",
       "kind": "architecture",
       "inputs": ["dev/rn/product-vision.md", "plugins/rn/domain/best-practices/plugin"],
-      "preconditions": [],
+      "preconditions": ["plugins/rn/domain/best-practices/architecture"],
       "status": "doing",
       "intents": [
         {"id": "Q1", "good": false, "decisions": []},
@@ -415,7 +420,7 @@
           "decisions": [
             {
               "about": "The parts left to the trial",
-              "decided": "Tests lists each part that makes a judgment no guard can hold, with that judgment, such as the evaluator judging whether a deliverable meets an intent, the main conversation judging whether a point is the user's, and the generator judging whether the decisions meet a shortfall",
+              "decided": "Tests lists under its figure each deployment unit that no test level reaches, such as rn's folder and the lay.py process, with why. Tests lists each part that makes a judgment no guard can hold, with that judgment, such as the evaluator judging whether a deliverable meets an intent, the main conversation judging whether a point is the user's, and the generator judging whether the decisions meet a shortfall",
               "by": "reasoning"
             }
           ]
@@ -445,7 +450,7 @@
       "path": "plugins/lane/hooks/lane/domain",
       "kind": "code",
       "inputs": ["dev/lane/architecture.md"],
-      "preconditions": ["dev/rn/architecture.md"],
+      "preconditions": ["plugins/rn/domain/best-practices/code", "dev/rn/architecture.md"],
       "status": "open",
       "intents": [
         {"id": "Q1", "good": false, "decisions": []},
@@ -474,7 +479,7 @@
       "path": "plugins/lane",
       "kind": "plugin",
       "inputs": ["dev/lane/architecture.md"],
-      "preconditions": ["plugins/lane/hooks/lane/domain"],
+      "preconditions": ["plugins/rn/domain/best-practices/plugin", "plugins/lane/hooks/lane/domain"],
       "status": "open",
       "intents": [
         {"id": "Q1", "good": false, "decisions": []},
@@ -526,7 +531,7 @@
       "path": "plugins/lane/README.md",
       "kind": "refactor-doc",
       "inputs": [],
-      "preconditions": ["plugins/lane"],
+      "preconditions": ["plugins/rn/domain/best-practices/refactor-doc", "plugins/lane"],
       "status": "open",
       "intents": [
         {"id": "Q1", "good": false, "decisions": []},
@@ -544,7 +549,7 @@
       "path": "plugins/rn/domain",
       "kind": "code",
       "inputs": ["dev/rn/architecture.md"],
-      "preconditions": ["plugins/lane"],
+      "preconditions": ["plugins/rn/domain/best-practices/code", "plugins/lane"],
       "status": "open",
       "intents": [
         {"id": "Q1", "good": false, "decisions": []},
@@ -563,7 +568,7 @@
       "path": "plugins/rn/agents",
       "kind": "prompt",
       "inputs": ["dev/rn/architecture.md"],
-      "preconditions": ["plugins/rn/domain"],
+      "preconditions": ["plugins/rn/domain/best-practices/prompt", "plugins/rn/domain"],
       "status": "open",
       "intents": [
         {"id": "Q1", "good": false, "decisions": []},
@@ -696,7 +701,7 @@
       "path": "plugins/rn/README.md",
       "kind": "readme",
       "inputs": ["dev/rn/product-vision.md"],
-      "preconditions": ["plugins/rn"],
+      "preconditions": ["plugins/rn/domain/best-practices/readme", "plugins/rn"],
       "status": "open",
       "intents": [
         {"id": "Q1", "good": true, "decisions": []},
