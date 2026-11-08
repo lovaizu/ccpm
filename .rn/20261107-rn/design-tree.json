@@ -294,11 +294,16 @@
         },
         {
           "id": "Q4",
-          "good": true,
+          "good": false,
           "decisions": [
             {
               "about": "The commands that try a deliverable",
               "decided": "the planner decides the commands that try each deliverable as its people would run them, its install steps among them, and what stands in for a file outside the repository, and gives them in the run's values. throwaway.py runs them as given",
+              "by": "reasoning"
+            },
+            {
+              "about": "The form of the design tree",
+              "decided": "the form of the design tree lies in the plan best practice's template, plan/design-tree.schema.json, which tree.py checks a tree by, and Directory structure names it there",
               "by": "reasoning"
             }
           ]
@@ -367,7 +372,7 @@
         {"id": "Q11", "good": true, "decisions": []},
         {
           "id": "Q12",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "When a product vision trial fails",
@@ -394,12 +399,22 @@
               "about": "rn as the user installs it",
               "decided": "the product vision trial installs rn from this repository's marketplace into the throwaway home, as a user does, and an architecture test checks that the installed folder holds Lane's code",
               "by": "reasoning"
+            },
+            {
+              "about": "The main conversation's own steps",
+              "decided": "Tests lists the main conversation's steps that the guard doesn't hold among what the trial checks first: one point at a time, /rn:up after each point settled, a new plan shown before the first point, and Picking up said. A trial fails where the session's records show one skipped, and no line says the guard holds them",
+              "by": "reasoning"
+            },
+            {
+              "about": "The adapters' tests",
+              "decided": "the adapters get unit tests, mutation testing, and property-based tests, as tree.py and throwaway.py do",
+              "by": "reasoning"
             }
           ]
         },
         {
           "id": "Q14",
-          "good": true,
+          "good": false,
           "decisions": [
             {
               "about": "The key result a choice moves",
