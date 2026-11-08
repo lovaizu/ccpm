@@ -1,0 +1,72 @@
+{
+ "met": [
+  {
+   "question": "Q9",
+   "lines": [
+    "rn/architecture.md:830",
+    "rn/architecture.md:833",
+    "rn/architecture.md:838",
+    "rn/architecture.md:841",
+    "rn/architecture.md:846",
+    "rn/architecture.md:850",
+    "rn/architecture.md:855",
+    "rn/architecture.md:859",
+    "rn/architecture.md:864",
+    "rn/architecture.md:871",
+    "rn/architecture.md:876",
+    "rn/architecture.md:915",
+    "rn/architecture.md:917",
+    "rn/architecture.md:920",
+    "rn/images/deployment.svg:58",
+    "rn/images/deployment.svg:74",
+    "rn/images/deployment.svg:90",
+    "rn/images/deployment.svg:98",
+    "rn/images/deployment.svg:105"
+   ]
+  },
+  {
+   "question": "Q11",
+   "lines": [
+    "rn/architecture.md:950",
+    "rn/architecture.md:952",
+    "rn/architecture.md:954",
+    "rn/architecture.md:985",
+    "rn/architecture.md:993",
+    "rn/architecture.md:999",
+    "rn/architecture.md:1012",
+    "rn/architecture.md:1027",
+    "rn/images/tests.svg:48",
+    "rn/images/tests.svg:56",
+    "rn/images/tests.svg:72",
+    "rn/images/tests.svg:87",
+    "rn/images/tests.svg:101",
+    "rn/images/tests.svg:104",
+    "rn/images/tests.svg:113",
+    "rn/images/tests.svg:116",
+    "rn/images/tests.svg:130"
+   ]
+  },
+  {
+   "question": "Q12",
+   "lines": [
+    "rn/architecture.md:911",
+    "rn/architecture.md:912",
+    "rn/architecture.md:1007",
+    "rn/architecture.md:1035",
+    "rn/architecture.md:1039",
+    "rn/architecture.md:1047",
+    "rn/images/tests.svg:148",
+    "rn/images/tests.svg:150",
+    "rn/images/tests.svg:155",
+    "rn/images/tests.svg:163",
+    "rn/images/tests.svg:179"
+   ]
+  }
+ ],
+ "not_met": [
+  {
+   "question": "Q10",
+   "lacks": "Writing a property-based test, which Tests asks for at unit on tree.py, throwaway.py, and the adapters, as rn/architecture.md:974-976 and the unit cells of rn/images/tests.svg say, the developer finds no place for its file. Directory structure names only tests/unit/ 'unit tests, at the path of what each tests', architecture/, and product-vision/, at rn/architecture.md:910-913, while the property-based tests that exist lie in one file at the top of the tests folder, dev/rn/tests/properties.py, which the structure doesn't show. A new property test for an adapter can then land beside the adapter's unit tests or in that file, so the developer can't tell the one place it belongs. Every other component and data finds one place: the parts, entries, forms, the Design tree's form, the code, the hooks, the adapters, the run's folder, and the round's records."
+  }
+ ]
+}

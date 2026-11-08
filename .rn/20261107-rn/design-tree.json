@@ -294,7 +294,7 @@
         },
         {
           "id": "Q4",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The commands that try a deliverable",
@@ -368,7 +368,17 @@
         },
         {"id": "Q8", "good": true, "decisions": []},
         {"id": "Q9", "good": true, "decisions": []},
-        {"id": "Q10", "good": true, "decisions": []},
+        {
+          "id": "Q10",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Where the property-based tests lie",
+              "decided": "the property-based tests lie in dev/rn/tests/properties*.py at the top of the tests folder, as dev/scripts/properties.sh finds them, and Directory structure names them there",
+              "by": "reasoning"
+            }
+          ]
+        },
         {"id": "Q11", "good": true, "decisions": []},
         {
           "id": "Q12",
@@ -388,7 +398,7 @@
         },
         {
           "id": "Q13",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The parts left to the trial",
@@ -414,7 +424,7 @@
         },
         {
           "id": "Q14",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The key result a choice moves",
