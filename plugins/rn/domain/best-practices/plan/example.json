@@ -21,12 +21,12 @@
           "decisions": [
             {
               "about": "What the check reads",
-              "decided": "every file ccpm keeps, none left out, and in a JSON file every string of two words or more, such as a decision or a question, as prose left out goes on unchecked",
+              "decided": "all the text of every file ccpm keeps, as prose left out goes on unchecked. ccpm leaves out only what it names in its own lefthook.yml or .vale.ini",
               "by": "user"
             },
             {
-              "about": "What reads JSON",
-              "decided": "lovaizu/checks reads each such string, in a new release that lefthook.yml and the CI job prose name",
+              "about": "The version of the checks",
+              "decided": "lefthook.yml and the CI job prose name the first release of lovaizu/checks that reads all text, which lovaizu/checks#6 makes",
               "by": "reasoning"
             },
             {
