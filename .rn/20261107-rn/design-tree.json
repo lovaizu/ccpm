@@ -32,7 +32,7 @@
       "intents": [
         {
           "id": "Q1",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The goal of every plugin",
@@ -43,7 +43,7 @@
         },
         {
           "id": "Q2",
-          "good": true,
+          "good": false,
           "decisions": [
             {
               "about": "The main conversation's part",
@@ -59,16 +59,26 @@
               "about": "A plugin with no roles",
               "decided": "The template's notes say which files a plugin with no roles, such as Lane, leaves out: the agents, the roles' parts and schemas, the proposal, and hooks/hooks.json",
               "by": "reasoning"
+            },
+            {
+              "about": "A skill that does its work itself",
+              "decided": "The note of the skill's part says that in a plugin with no roles the part holds the work's own steps and starts no role",
+              "by": "reasoning"
             }
           ]
         },
         {
           "id": "Q3",
-          "good": true,
+          "good": false,
           "decisions": [
             {
               "about": "The proposal",
               "decided": "The template holds the plugin's proposal, with its routes, its lanes and the adapter that gives Lane the practices' steps, and says what each holds and where it lies",
+              "by": "reasoning"
+            },
+            {
+              "about": "Pages beyond the README",
+              "decided": "The template holds docs/<page>.md for each page the plugin's users need beyond the README, such as Lane's docs/lanes.md for writing rules",
               "by": "reasoning"
             }
           ]

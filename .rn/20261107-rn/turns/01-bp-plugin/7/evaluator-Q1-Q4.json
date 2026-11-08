@@ -1,0 +1,38 @@
+{
+  "met": [
+    {
+      "question": "Q1",
+      "lines": [
+        "plugin/best-practice.md:5",
+        "plugin/best-practice.json:2",
+        "plugin/best-practice.md:375"
+      ]
+    },
+    {
+      "question": "Q4",
+      "lines": [
+        "plugin/best-practice.md:13",
+        "plugin/best-practice.md:17",
+        "plugin/best-practice.md:18",
+        "plugin/best-practice.md:19",
+        "plugin/best-practice.md:61",
+        "plugin/template/README.md:4",
+        "plugin/template/README.md:8",
+        "plugin/template/README.md:21",
+        "plugin/template/domain/role.md:38",
+        "plugin/best-practice.md:355",
+        "architecture/template.md:3"
+      ]
+    }
+  ],
+  "not_met": [
+    {
+      "question": "Q2",
+      "lacks": "A developer building a plugin whose skill does its work itself, with no roles, can't tell what that skill's part holds. The best practice allows such a plugin at plugin/best-practice.md:110: \"Where a plugin has roles, its skill makes the main conversation the orchestrator.\" plugin/template/README.md:33 leaves out the agents, the proposal, and hooks/hooks.json for a plugin with no roles, but keeps the skill and its part. That part keeps as fixed text, at plugin/template/domain/command.md:3 to :6 and :17, that the main conversation starts each role it's told to start and makes nothing of the work, and at plugin/template/domain/command.md:57 it ends the run once Lane says to start no more. Filling the template, such a developer gets a part that has the main conversation start roles and wait on routes that don't exist, and no form for the work that the skill does itself."
+    },
+    {
+      "question": "Q3",
+      "lacks": "A plugin whose users need a page beyond the README to use it finds no section for that page. Lane's users, for one, write their rules from docs/lanes.md and docs/routes.md, which plugins/lane/README.md:281 offers \"for you as you write rules.\" The template and its order, at plugin/template/README.md:8 to :35, hold no such page, and the readme kind leaves each later need to \"its own kind of page,\" at readme/best-practice.md:141. Such a plugin made with every section of the template still leaves its users without what they need to use it."
+    }
+  ]
+}
