@@ -289,7 +289,8 @@ text that `tree.py` gave. Of the main conversation's calls, it holds its starts 
 with `TaskStop`, and its calls of `/rn:up` to the routes, and none of its other calls, such as a
 write to a file, as
 [Lane's principle on how long the guard holds the main conversation](../../../../../dev/lane/architecture.md#the-guard-holds-the-main-conversation-only-while-its-run-lasts)
-says.
+says. The product vision trial checks first the main conversation's own steps, such as putting one
+point at a time, which the guard doesn't hold, as [Tests](#tests) lists.
 
 *Why*: an AI that skipped a step once skips it again on another run, and the deliverable misses
 what the step was there to make sound, as KR1.1 counts. The main conversation reads and researches
@@ -358,7 +359,8 @@ What each decides alone:
   that must change, it only finds and names.
 - **evaluator**: where the deliverable meets each intent of its group for its people, or what they
   still lack. A point that their use leaves open, it only finds and names.
-- **tree.py**: the form of the design tree and of a change, the order of the deliverables, from
+- **tree.py**: whether a design tree is in the form of the plan best practice's template, and a
+  change in its form in `domain/forms/`, the order of the deliverables, from
   their inputs and preconditions, each role's cut, the nodes an edit touches, each turn's phase,
   round and groups, the points open for the main conversation, which deliverables of the plan are
   new, as the planner's last Change added or reordered them, the runs under `.rn/` not yet done,
@@ -891,6 +893,9 @@ plugins/rn/
 │                                    edit, Making record, and Answers
 ├── domain/best-practices/<kind>/    every kind's best practice: plan, plugin, and those of each
 │                                    deliverable, meta among them
+├── domain/best-practices/plan/design-tree.schema.json
+│                                    the form of the Design tree, the plan best practice's
+│                                    template, which tree.py checks each tree by
 ├── domain/*.py                      the code of tree.py and throwaway.py
 ├── scripts/tree.py, throwaway.py    their entries, which hand each command to that code
 ├── hooks/hooks.json, lanes.json     the guard's hook entries, and rn's lanes and routes as laid
@@ -921,6 +926,14 @@ dev/rn/
   `core/roles/` and `core/domain/`: rn now holds Turn, so it keeps one folder of its own
   knowledge, where Lane finds each part and holds each role to its steps, as KR1.1 counts. The
   cost: moving every file of Turn's.
+- **The form of the Design tree in the plan best practice's template** over a schema in
+  `domain/forms/` or a form in `tree.py`'s code: the planner lays out the tree by the plan best
+  practice, whose template is the tree's form, as every best practice's template is the form of its
+  deliverable. A second form beside it would drift from the template, and `tree.py` would then refuse
+  a tree written by the best practice, or pass one that it rules out. A cut drawn from such a tree
+  can leave a role without a decision, and its deliverable fails its people, as KR1.1 counts. The
+  cost: a change to the template reaches `tree.py`'s checks at once, so its tests run on each such
+  change.
 - **No progress file** over a file that says where the run stands: the design tree's statuses and
   the rounds' records already hold it, and a second record of it drifts from them. A run that
   picks up from a record that drifted asks the user again, as KR1.2 counts, or makes a round again,
@@ -944,9 +957,12 @@ The product vision trial is the first check of each judgment that these parts ma
 hold:
 
 - **main conversation**: whether a point is the user's or settled by the purpose or a best
-  practice, and how it's settled. It also keeps off the work: it reads no design tree itself, and
-  writes neither the tree nor a deliverable, as Lane holds only its starts of roles, its stops, and
-  its calls of `/rn:up`.
+  practice, and how it's settled. It also takes its own steps: it puts the points to the user one
+  at a time, calls `/rn:up` after each point the user settles, shows a new plan before the first
+  point, and says `Picking up` where it picks up a run. And it keeps off the work: it reads no
+  design tree itself, and writes neither the tree nor a deliverable. Lane holds none of these, as it
+  holds only how the main conversation starts roles, stops them, and calls `/rn:up`, not whether it
+  calls `/rn:up` after a point.
 - **planner**: the goal it drafts, the deliverables of the plan with their kinds and sizes, the
   commands that try each deliverable as its people would run them, and whether each node that an
   edit touches still holds.
@@ -957,7 +973,7 @@ hold:
 
 Cosmic Ray and Hypothesis in the figure run the mutation testing and the property-based tests that
 [the architecture best practice](best-practice.md#q12)
-asks for. They're the tools that
+asks for, on `tree.py`, `throwaway.py`, and the adapters alike. They're the tools that
 [the repository's development setup](../../../../../dev/README.md#the-property-based-tests-and-the-mutation-testing)
 gives every plugin, not a choice of rn's.
 
@@ -966,20 +982,22 @@ gives every plugin, not a choice of rn's.
   a fault that the users' Python would meet shows before a deliverable does, as KR1.1 counts.
   pytest still runs them at once in CI, as [the development setup](../../../../../dev/README.md#the-checks-on-every-push)
   says. The cost: a failing assertion of unittest's shows less of the values than pytest's.
-- **The `tree.py` and adapter processes tried `FULL` at unit and at architecture** over `HAPPY`: a
-  fault in `tree.py` writes the tree wrong, hands a role another's cut, or hands the evaluator the
-  design. A fault in an adapter holds a role to steps not its own on every start, and no role
-  notices. No higher level checks every case, so such a fault would reach the people, as KR1.1
-  counts. The cost: the most tests to keep up as the forms of the tree and the best practices
-  change.
+- **The `tree.py` and adapter processes tried `FULL` at unit and at architecture, with the mutation
+  testing and the property-based tests at unit,** over `HAPPY`, or unit tests alone for the
+  adapters: a fault in `tree.py` writes the tree wrong, hands a role another's cut, or hands the
+  evaluator the design. A fault in an adapter holds a role to steps not its own on every start, and
+  no role notices. No higher level checks every case, and only the mutation testing and the
+  property-based tests show a case that the unit tests drawn from the contract missed, so such a
+  fault would reach the people, as KR1.1 counts. The cost: the most tests to keep up as the forms of
+  the tree and the best practices change, and a mutation run that takes longer with each adapter.
 - **The `throwaway.py` process tried `FULL` at unit and `HAPPY` at architecture:** a fault in the
   copy lets a command change the user's own files, which can't be undone, or tries the deliverable
   on other files than its people's, as KR1.1 counts, so unit tries each case of it. It joins rn
   only where the generator runs it on each pass of its own check, so the paths of a turn try that
   join, and trying each case of the copy again there would add nothing. The cost: a command that
   reaches the copy in a way no unit test sets up shows only in a trial.
-- **What the main conversation and the roles must do on every run held by the guard, and no level
-  running a part in Markdown alone,** as
+- **The roles' steps and the main conversation's starts of roles, stops, and calls of `/rn:up` held
+  by the guard, and no level running a part in Markdown alone,** as
   [Q22](../plugin/best-practice.md#q22) says, over a unit trial
   of each part on the model: the architecture tests run rn's lanes and routes as laid on each path,
   so a passing run shows that the guard stops each call, start, and end that breaks a step or a
@@ -1026,18 +1044,23 @@ gives every plugin, not a choice of rn's.
   The product vision gives these key results no target, so the last trial's measure is the line.
   The cost: the first trial has no last trial to set KR1.2 and KR1.3 against, so it fails only on
   a use.
-- **A trial failing where the session's records show the main conversation read the design tree,
-  or wrote the tree or a deliverable, and naming that call,** over a trial that judges only the
-  steps, the uses, and the key results: the guard holds none of the main conversation's calls but
-  its starts of roles, its stops, and its calls of `/rn:up`, as
-  [Every step on every run](#every-step-on-every-run) says, so no lower level checks that it keeps
-  off the work. A main conversation that wrote the tree itself would leave the nodes around the change
-  saying what held before, and one that wrote a deliverable would lay a fix beside the design, as
-  [Good from the root](#good-from-the-root) rules out. Either can still hand the people a
-  deliverable they use on this run, so a trial on the uses alone would pass it, and a later run's
-  people would meet the fault, as KR1.1 counts. The cost: the trial's judge reads each call of the
-  main conversation in the session's records, and counts only once it's right on kept records with
-  a known answer.
+- **A trial failing where the session's records show the main conversation skipped a step of its
+  own, read the design tree, or wrote the tree or a deliverable, and naming that step or call,**
+  over a trial that judges only the roles' steps, the uses, and the key results: the guard holds
+  none of the main conversation's calls but its starts of roles, its stops, and its calls of
+  `/rn:up`, as [Every step on every run](#every-step-on-every-run) says, and the architecture tests
+  stand a double in for the main conversation. So no lower level checks that it takes its own steps
+  or keeps off the work. Two points put at once, or a point the user settled with no `/rn:up` after
+  it, leave an answer outside the tree, which goes if the conversation ends, so the user answers it
+  again, as KR1.2 counts. A new plan not shown leaves the user no chance to catch a deliverable
+  missing or not needed before rn makes it, and no `Picking up` leaves them to work out where the
+  work stands, which both spend their time, as KR1.3 measures. A main conversation that wrote the
+  tree itself would leave the nodes around the change saying what held before, and one that wrote a
+  deliverable would lay a fix beside the design, as [Good from the root](#good-from-the-root) rules
+  out, so a later deliverable rests on no design, as KR1.1 counts. Each of these can still hand the
+  people a deliverable they use on this run, so a trial on the uses alone would pass it. The cost: the
+  trial's judge reads each step and call of the main conversation in the session's records, and
+  counts only once it's right on kept records with a known answer.
 - **The trial's `tidy` holding each fact a deliverable needs, such as where it's hosted,** over a
   placeholder: no way of making a README can give a real clone command from a placeholder, so a
   trial would fail on the fixture and not on rn, and KR1.1 would count a fault of the fixture's.
