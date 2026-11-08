@@ -2,7 +2,7 @@
 
 ## Goal
 
-The developer builds a Claude Code plugin whose roles work together to make something, with which its users achieve what they're after.
+The developer builds a Claude Code plugin with which its users achieve what they're after.
 
 ## Template
 
