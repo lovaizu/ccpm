@@ -472,8 +472,9 @@
         {"id": "Q23", "good": false, "decisions": []},
         {"id": "Q24", "good": false, "decisions": []},
         {"id": "Q25", "good": false, "decisions": []},
+        {"id": "Q26", "good": false, "decisions": []},
         {
-          "id": "Q26",
+          "id": "Q27",
           "good": false,
           "decisions": [
             {
@@ -559,7 +560,7 @@
       "path": "plugins/rn",
       "kind": "plugin",
       "inputs": ["dev/rn/architecture.md"],
-      "preconditions": ["plugins/rn/domain", "plugins/rn/agents"],
+      "preconditions": ["plugins/rn/domain/best-practices/plugin", "plugins/rn/domain/best-practices/architecture", "plugins/rn/domain/best-practices/plan", "plugins/rn/domain", "plugins/rn/agents"],
       "status": "open",
       "intents": [
         {"id": "Q1", "good": false, "decisions": []},
@@ -616,8 +617,9 @@
         },
         {"id": "Q24", "good": false, "decisions": []},
         {"id": "Q25", "good": false, "decisions": []},
+        {"id": "Q26", "good": false, "decisions": []},
         {
-          "id": "Q26",
+          "id": "Q27",
           "good": false,
           "decisions": [
             {
