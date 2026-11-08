@@ -25,8 +25,9 @@ law. They show whether a change brought its objective closer.
 
 rn instead of asking an AI in one prompt, reading its draft and fixing it:
 
-- **Planned back from the goal, for O1**: rn lays out every deliverable the goal needs, and the
-  order it needs them in, before it makes any, so none goes missing or comes out of order.
+- **Planned back from the goal, replanned as it goes, for O1**: rn lays out every deliverable the
+  goal needs, and the order it needs them in, then makes them from the first and plans again from
+  what each one and each answer shows, so none goes missing or comes out of order.
 - **Made from a best practice, for O1**: rn builds each deliverable by the best practice of its
   kind toward what its people are after, where an AI starting from scratch maps it from similar
   text.

@@ -98,8 +98,8 @@ Decided without asking you:
 ![The usual way and rn, with the five problems marked](images/problem.svg)
 
 1. **The AI makes the one piece you asked for, and misses the others it needs, or makes them out of
-   order.** rn lays out every piece the goal needs, and the order it needs them in, before it makes
-   any.
+   order.** rn lays out every piece the goal needs, and the order it needs them in, and plans again
+   from what each piece and each answer shows.
 2. **The AI starts from scratch, and writes what similar texts say, not what its people need.** rn
    makes each piece by the best practice of its kind, which holds the goal its people reach, a
    template of what it holds, and the questions they ask of it.

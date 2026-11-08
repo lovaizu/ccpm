@@ -140,7 +140,47 @@
       "name": "rn's product vision says what rn is for",
       "path": "dev/rn/product-vision.md",
       "kind": "product-vision",
-      "status": "done"
+      "inputs": [],
+      "preconditions": [],
+      "status": "doing",
+      "intents": [
+        {
+          "id": "Q1",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "Q2",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "Q3",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "Q4",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "Q5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Replanned as it goes",
+              "decided": "rn plans back from the goal, makes the deliverables from the first, and plans again from what each finished deliverable and each answer shows",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "Q6",
+          "good": true,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "rn's design says how a turn carries out a best practice",

@@ -11,15 +11,15 @@ repository keeps every decision, so a conversation that ends loses nothing.
 rn builds on [the plugin best
 practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md), and adds these.
 
-### Planned back from the goal
+### Planned back from the goal, replanned as it goes
 
-The planner lays out every deliverable the goal needs, each after what it takes, before any turn
-makes one, by [the plan best
-practice](../../plugins/rn/domain/best-practices/plan/best-practice.md). A kind with no best
-practice gets one made before its first deliverable.
+The planner lays out every deliverable the goal needs, each after what it takes, by [the plan best
+practice](../../plugins/rn/domain/best-practices/plan/best-practice.md), and turns make them from
+the first. Each settled point and each finished deliverable goes back to the planner, which plans
+again from it. A kind with no best practice gets one made before its first deliverable.
 
-*Why*: a deliverable left out shows only when the work reaches it, and one made before what it takes
-needs making again, as KR1.1 and KR1.3 count.
+*Why*: a deliverable left out shows only when the work reaches it, and a plan kept as first laid
+out goes on making what a finished deliverable or an answer has changed, as KR1.1 and KR1.3 count.
 
 ### Intent in the tree
 
@@ -266,7 +266,7 @@ sequenceDiagram
   T-->>M: the planner's cut (Cut)
   M->>P: starts it (Cut)
   loop until the tree holds and each node touched is answered
-    P->>T: writes each decision (Tree edit)
+    P->>T: writes each decision, and the plan again where the change calls for it (Tree edit)
     T-->>P: each node the edit touches, or what's wrong
   end
   P->>T: commits (Tree edit)
