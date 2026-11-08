@@ -64,7 +64,7 @@
           "decisions": [
             {
               "about": "The best practices the roles work by",
-              "decided": "The plugin best practice takes meta and code as preconditions. A plugin deliverable names as preconditions its prompts and each plugin it takes a part from, such as Lane's",
+              "decided": "The plugin best practice takes meta, code, and prompt as preconditions. A plugin with no prompts, such as Lane, names none of that kind. A plugin deliverable names as preconditions each plugin it takes a part from too, such as Lane's",
               "by": "reasoning"
             }
           ]
@@ -82,7 +82,7 @@
         },
         {
           "id": "Q6",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The entries' descriptions",
@@ -113,7 +113,7 @@
             },
             {
               "about": "What a step rests on",
-              "decided": "A step that rests on the guard, the proposal or the routes names the question whose practice makes it, and the questions keep their order and numbers",
+              "decided": "A step that checks what the guard, the proposal or the routes hold lies in the practice of Q8 or Q9, which makes them. The practices of Q2 to Q6 say what the parts hold for Q8 and Q9 to lay, and the questions keep their order and numbers",
               "by": "reasoning"
             }
           ]
@@ -131,7 +131,7 @@
         },
         {
           "id": "Q10",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "A role whose steps come from its best practice",
@@ -307,7 +307,7 @@
             },
             {
               "about": "What a precondition is",
-              "decided": "A deliverable's preconditions name each deliverable whose result it needs passed before it starts, a deliverable of each kind its best practice names in preconditions among them",
+              "decided": "A deliverable's preconditions name each deliverable whose result it needs passed before it starts, a deliverable of each kind its best practice names in preconditions among them where the work holds one",
               "by": "reasoning"
             },
             {
