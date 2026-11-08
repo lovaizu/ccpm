@@ -181,7 +181,8 @@ in the round's Making record. Once the phase's intents are good, the planner's C
 last round's Making record through the Round, and the planner writes each point it names into the
 tree under that intent, as a decision by `maker`. The report of the decisions taken without asking
 reads it there. Any other point, such as a choice between ways that serve the people differently,
-or one that touches what the user approved, is a point of the design. The generator names it open for the main conversation, as
+or one that touches what the user approved, is a point of the design. The generator names it open
+for the main conversation, as
 [A point found open goes back to the main conversation](#a-point-found-open-goes-back-to-the-main-conversation)
 says.
 
@@ -652,9 +653,10 @@ sequenceDiagram
 - **The guard taking `open`, then `more`, then `good` among the evaluators' results** over the
   first result that comes: a point found open changes the design, so a next round started on
   another evaluator's `more` would make the deliverable by a design about to change, and cost the
-  user that round, as KR1.3 measures. One `more` means some of the people still lack what an intent asks, so the turn can't
-  end on another evaluator's `good`, as KR1.1 counts. The cost: the main conversation waits for the
-  slowest evaluator of the round, though another already gave `open`.
+  user that round, as KR1.3 measures. One `more` means some of the people still lack what an
+  intent asks, so the turn can't end on another evaluator's `good`, as KR1.1 counts. The cost: the
+  main conversation waits for the slowest evaluator of the round, though another already gave
+  `open`.
 - **One evaluator for each group of intents, all at once,** over one for every intent: each is fresh
   on fewer intents, as KR1.1 asks, and they run side by side, as KR1.3 asks. The cost: each evaluator
   reads the whole deliverable.
@@ -942,7 +944,9 @@ The product vision trial is the first check of each judgment that these parts ma
 hold:
 
 - **main conversation**: whether a point is the user's or settled by the purpose or a best
-  practice, and how it's settled.
+  practice, and how it's settled. It also keeps off the work: it reads no design tree itself, and
+  writes neither the tree nor a deliverable, as Lane holds only its starts of roles, its stops, and
+  its calls of `/rn:up`.
 - **planner**: the goal it drafts, the deliverables of the plan with their kinds and sizes, the
   commands that try each deliverable as its people would run them, and whether each node that an
   edit touches still holds.
@@ -1022,6 +1026,18 @@ gives every plugin, not a choice of rn's.
   The product vision gives these key results no target, so the last trial's measure is the line.
   The cost: the first trial has no last trial to set KR1.2 and KR1.3 against, so it fails only on
   a use.
+- **A trial failing where the session's records show the main conversation read the design tree,
+  or wrote the tree or a deliverable, and naming that call,** over a trial that judges only the
+  steps, the uses, and the key results: the guard holds none of the main conversation's calls but
+  its starts of roles, its stops, and its calls of `/rn:up`, as
+  [Every step on every run](#every-step-on-every-run) says, so no lower level checks that it keeps
+  off the work. A main conversation that wrote the tree itself would leave the nodes around the change
+  saying what held before, and one that wrote a deliverable would lay a fix beside the design, as
+  [Good from the root](#good-from-the-root) rules out. Either can still hand the people a
+  deliverable they use on this run, so a trial on the uses alone would pass it, and a later run's
+  people would meet the fault, as KR1.1 counts. The cost: the trial's judge reads each call of the
+  main conversation in the session's records, and counts only once it's right on kept records with
+  a known answer.
 - **The trial's `tidy` holding each fact a deliverable needs, such as where it's hosted,** over a
   placeholder: no way of making a README can give a real clone command from a placeholder, so a
   trial would fail on the fixture and not on rn, and KR1.1 would count a fault of the fixture's.
