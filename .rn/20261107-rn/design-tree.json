@@ -86,7 +86,7 @@
       "intents": [
         {
           "id": "Q1",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "What the code runs on",
@@ -102,7 +102,7 @@
         },
         {
           "id": "Q2",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The modules beside the architecture's components",
@@ -133,7 +133,7 @@
         },
         {
           "id": "Q3",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "Interfaces",
@@ -144,7 +144,7 @@
         },
         {
           "id": "Q4",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "Where a proposal lies",
@@ -225,7 +225,7 @@
         },
         {
           "id": "Q5",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "Input from outside",
@@ -241,7 +241,7 @@
         },
         {
           "id": "Q6",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "Where a lane type's tests lie",
@@ -252,7 +252,7 @@
         },
         {
           "id": "Q7",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "schema.py's callers in rn",
@@ -261,7 +261,17 @@
             }
           ]
         },
-        {"id": "Q8", "good": false, "decisions": []},
+        {
+          "id": "Q8",
+          "good": false,
+          "decisions": [
+            {
+              "about": "What finds the gaps of the tests",
+              "decided": "check.sh holds Lane's code to every line and branch run, properties.py tries a laid sentence and an item's ID on many inputs, and CI's mutation testing runs on the lines that a change reaches",
+              "by": "reasoning"
+            }
+          ]
+        },
         {
           "id": "Q9",
           "good": false,
