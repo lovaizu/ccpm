@@ -1,0 +1,50 @@
+{
+ "met": [
+  {
+   "question": "Q5",
+   "lines": [
+    "rn/images/components.svg:57",
+    "rn/images/components.svg:60",
+    "rn/images/components.svg:63",
+    "rn/images/components.svg:66",
+    "rn/images/components.svg:75",
+    "rn/images/components.svg:78",
+    "rn/images/components.svg:81",
+    "rn/images/components.svg:84",
+    "rn/images/components.svg:102",
+    "rn/images/components.svg:111",
+    "rn/images/components.svg:164",
+    "rn/architecture.md:284",
+    "rn/architecture.md:298",
+    "rn/architecture.md:306",
+    "rn/architecture.md:698",
+    "rn/architecture.md:726",
+    "rn/architecture.md:731",
+    "rn/architecture.md:735",
+    "rn/architecture.md:737"
+   ]
+  },
+  {
+   "question": "Q8",
+   "lines": [
+    "rn/architecture.md:261",
+    "rn/architecture.md:263",
+    "rn/architecture.md:280",
+    "rn/architecture.md:363",
+    "rn/architecture.md:364",
+    "rn/architecture.md:365",
+    "rn/architecture.md:366"
+   ]
+  }
+ ],
+ "not_met": [
+  {
+   "question": "Q6",
+   "lacks": "The evaluator's developer writes Answers, and the developers of tree.py and the planner read them: as a turn's answers inside the planner's Change, at rn/architecture.md:342 and rn/architecture.md:506, and as each shortfall beside its intent in the generator's Cut, at rn/architecture.md:479. The data model joins Change only to Request, Point and Tree edit, and Cut only to Design tree, at rn/images/data-model.svg:103-118. No line joins Change or Cut to Answers or to the Round that holds them. The developers can't tell whether a Change or a Cut holds the answers themselves or reaches them through their round, so each joins them its own way."
+  },
+  {
+   "question": "Q7",
+   "lacks": "On the path of S4 where git or gh can't push, at rn/architecture.md:651-654, the main conversation asks the user for what's missing, and then the story stops. The developer can't tell which component pushes the kept commit and opens the draft pull request once the user supplies it, or along which arrow. So they can't build the steps from there to the user's merge, most of all when this was the last deliverable and no later commit follows."
+  }
+ ]
+}

@@ -303,8 +303,8 @@
       "preconditions": ["plugins/rn/domain/best-practices/architecture"],
       "status": "doing",
       "intents": [
-        {"id": "Q1", "good": false, "decisions": []},
-        {"id": "Q2", "good": false, "decisions": []},
+        {"id": "Q1", "good": true, "decisions": []},
+        {"id": "Q2", "good": true, "decisions": []},
         {
           "id": "Q3",
           "good": true,
@@ -346,14 +346,44 @@
             }
           ]
         },
-        {"id": "Q4", "good": false, "decisions": []},
+        {
+          "id": "Q4",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The commands that try a deliverable",
+              "decided": "the planner decides the commands that try each deliverable as its people would run them, its install steps among them, and what stands in for a file outside the repository, and gives them in the run's values. throwaway.py runs them as given",
+              "by": "reasoning"
+            }
+          ]
+        },
         {"id": "Q5", "good": true, "decisions": []},
-        {"id": "Q6", "good": false, "decisions": []},
-        {"id": "Q7", "good": false, "decisions": []},
-        {"id": "Q8", "good": false, "decisions": []},
-        {"id": "Q9", "good": false, "decisions": []},
-        {"id": "Q10", "good": false, "decisions": []},
-        {"id": "Q11", "good": false, "decisions": []},
+        {
+          "id": "Q6",
+          "good": false,
+          "decisions": [
+            {
+              "about": "How a Change and a Cut reach the answers",
+              "decided": "a Change and a Cut reach the evaluators' answers through the Round that holds them, and the data model draws both joins",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "Q7",
+          "good": false,
+          "decisions": [
+            {
+              "about": "A push that waited on the user",
+              "decided": "once the user gives what was missing for a push, the main conversation calls /rn:up, and the planner has tree.py push the kept commits and open the draft pull request, as the other paths of S4 go",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {"id": "Q8", "good": true, "decisions": []},
+        {"id": "Q9", "good": true, "decisions": []},
+        {"id": "Q10", "good": true, "decisions": []},
+        {"id": "Q11", "good": true, "decisions": []},
         {"id": "Q12", "good": true, "decisions": []},
         {
           "id": "Q13",
@@ -361,14 +391,19 @@
           "decisions": [
             {
               "about": "The parts left to the trial",
-              "decided": "Tests lists under its figure each deployment unit that no test level reaches, such as rn's folder and the lay.py process, with why. Tests lists each part that makes a judgment no guard can hold, with that judgment, such as the evaluator judging whether a deliverable meets an intent, the main conversation judging whether a point is the user's, and the generator judging whether the decisions meet a shortfall",
+              "decided": "Tests lists under its figure each deployment unit that no test level reaches, such as the lay.py process, with why. Tests lists each part that makes a judgment no guard can hold, with that judgment, such as the evaluator judging whether a deliverable meets an intent, the main conversation judging whether a point is the user's, and the generator judging whether the decisions meet a shortfall",
+              "by": "reasoning"
+            },
+            {
+              "about": "rn as the user installs it",
+              "decided": "the product vision trial installs rn from this repository's marketplace into the throwaway home, as a user does, and an architecture test checks that the installed folder holds Lane's code",
               "by": "reasoning"
             }
           ]
         },
         {
           "id": "Q14",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The key result a choice moves",
@@ -382,7 +417,17 @@
             }
           ]
         },
-        {"id": "Q15", "good": false, "decisions": []},
+        {
+          "id": "Q15",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Which calls of the main conversation the guard holds",
+              "decided": "the guard holds the main conversation's starts of roles, its TaskStop, and its calls of /rn:up, by the routes, and none of its other calls, such as its writes",
+              "by": "reasoning"
+            }
+          ]
+        },
         {"id": "Q16", "good": true, "decisions": []}
       ]
     },
