@@ -64,7 +64,7 @@
           "decisions": [
             {
               "about": "The best practices the roles work by",
-              "decided": "The plugin best practice takes meta as a precondition, so the best practice each role works by passes before the plugin starts",
+              "decided": "The plugin best practice takes meta as a precondition",
               "by": "reasoning"
             }
           ]
@@ -108,7 +108,7 @@
             },
             {
               "about": "What a step rests on",
-              "decided": "A step that rests on the guard, the proposal or the routes names the question whose practice makes it, so the questions keep their order and numbers",
+              "decided": "A step that rests on the guard, the proposal or the routes names the question whose practice makes it, and the questions keep their order and numbers",
               "by": "reasoning"
             }
           ]
@@ -183,7 +183,7 @@
           "decisions": [
             {
               "about": "A part that an AI does",
-              "decided": "Q12 runs no part that an AI does alone on the model at any level, as plugin Q22 says, and drops the unit step that ran one where no guard holds its rules. Q13 names the product vision trial as the first check of a judgment that no guard can hold, such as whether a deliverable meets an intent, and the architecture says which parts that leaves to the trial",
+              "decided": "Q12 runs no part that an AI does alone on the model at any level, and drops the unit step that ran one where no guard holds its rules. Q13 names the product vision trial as the first check of a judgment that no guard can hold, such as whether a deliverable meets an intent, and the architecture says which parts that leaves to the trial",
               "by": "reasoning"
             }
           ]
@@ -335,7 +335,7 @@
             },
             {
               "about": "How a role still running stops when a remark comes",
-              "decided": "the main conversation stops each role of the turn that still runs with TaskStop, which Claude Code's subagents reference documents, before it settles the remark. The remark is a prompt of the person's, so Lane lets the stop through. Right after the stop, the main conversation calls /rn:up with the remark, which ends the run and begins another. It hands the planner the remark as it settled it, where the purpose or a best practice settles it, or else as a point open. The planner writes it into the tree, and for a point open gives asks, which ends the run, so the main conversation puts the point to the user with no start due",
+              "decided": "the main conversation stops each role of the turn that still runs with TaskStop before it settles the remark, and Lane lets that stop through. Right after the stop, the main conversation calls /rn:up with the remark, which ends the run and begins another. It hands the planner the remark as it settled it, where the purpose or a best practice settles it, or else as a point open. The planner writes it into the tree, and for a point open gives asks, which ends the run, so the main conversation puts the point to the user with no start due",
               "by": "research"
             },
             {
@@ -531,7 +531,7 @@
           "decisions": [
             {
               "about": "A step's trace",
-              "decided": "meta's form gives each practice step a trace a machine can check, and each kind's steps get one, so rn's steps adapter hands Lane what to hold",
+              "decided": "meta's form gives each practice step a trace a machine can check, and each kind's steps get one. rn's steps adapter hands Lane each trace",
               "by": "reasoning"
             }
           ]
@@ -587,7 +587,7 @@
             },
             {
               "about": "A null start value",
-              "decided": "a run lane whose value is null lets no command through, and a run_step command the adapter gives counts as allowed, so the generator gets run_only",
+              "decided": "a run lane whose value is null lets no command through, and a run_step command the adapter gives counts as allowed, and the generator gets run_only",
               "by": "reasoning"
             },
             {
