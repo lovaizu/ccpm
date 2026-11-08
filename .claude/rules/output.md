@@ -6,10 +6,10 @@ Claude Code do not already say.
 
 ## Verification
 
-- **Check your work before you report it, as Q17 of
-  [prompt/best-practice.json](../../plugins/rn/domain/best-practices/prompt/best-practice.md)
+- **Check your work before you report it, as Q12 of
+  [prompt/best-practice.json](../../plugins/rn/domain/best-practices/prompt/best-practice.md#q12)
   says.**
-- **Judge `dev/scripts/check.sh` by its exit code**, as that Q17 judges a check.
+- **Judge `dev/scripts/check.sh` by its exit code**, as that Q12 judges a check.
 - **A push is done only once you have read its CI run.** The report of the push says the run's
   result.
   - Rationale: a push left unchecked hands its failure to whoever pushes next.
@@ -26,8 +26,8 @@ Claude Code do not already say.
 - **Do not open with praise, and do not defend a mistake.** When something is wrong, correct it.
 - **Keep a code example to 10 lines or fewer.** For more, show only the lines that matter, or put
   the code in its own file.
-- **Put a decision, a proposal or a report to the user as Q16 of
-  [prompt/best-practice.json](../../plugins/rn/domain/best-practices/prompt/best-practice.md)
+- **Put a decision, a proposal or a report to the user as Q11 of
+  [prompt/best-practice.json](../../plugins/rn/domain/best-practices/prompt/best-practice.md#q11)
   says.**
 - **Before you say that something cannot be done, offer one other way.**
   - Rationale: praise, and defending a mistake, take the reader's attention and give them nothing

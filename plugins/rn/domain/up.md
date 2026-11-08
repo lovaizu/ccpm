@@ -44,8 +44,8 @@ open of the deliverable at hand, by its ID, with the intent of its kind's best p
 bears on.
 
 Judge each point by one test. Name to yourself the ways it could go, then weigh them by the goal,
-the facts, what the user said, and the decisions already made, as Q17 of
-`${CLAUDE_PLUGIN_ROOT}/domain/best-practices/plugin/best-practice.md` says:
+the facts, what the user said, and the decisions already made, as Q9 of
+`${CLAUDE_PLUGIN_ROOT}/domain/best-practices/prompt/best-practice.md` says:
 
 - **A fact** is yours to find, never the user's to tell you, such as what a file says or what a
   tool does. Find it with Read, Grep, or a command, and settle the point by `research`, with the

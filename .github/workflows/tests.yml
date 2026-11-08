@@ -74,7 +74,8 @@ jobs:
             echo "check=false" >> "$GITHUB_OUTPUT"
           fi
 
-  # The oldest Python users run and the newest (plugins/rn/domain/best-practices/plugin/best-practice.md, Q13). 3.9 runs on
+  # The oldest Python users run and the newest: only a run on 3.9 shows that the code still runs there,
+  # and only a run on the newest shows what a new Python breaks. 3.9 runs on
   # Ubuntu 24.04, as setup-python has no 3.9 for Ubuntu 26.04, which ubuntu-latest now is.
   check:
     needs: changed

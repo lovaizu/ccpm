@@ -1,7 +1,7 @@
 #!/bin/sh
 # The type check of one plugin, as `sh dev/scripts/typecheck.sh <plugin>`, for dev/scripts/check.sh and the test
 # command of the plugin's cosmic-ray.toml, run from the top of the repository. Each plugin keeps its
-# tests in dev/<plugin>/tests/ (plugins/rn/domain/best-practices/plugin/best-practice.md, Q1), and its scripts find their modules by
+# tests in dev/<plugin>/tests/, outside its folder, as an install copies only the plugin's folder, and its scripts find their modules by
 # putting their own folders on sys.path; plugins share module names, such as stop, so each is
 # type-checked on its own with its folders as search paths, and dev/lane/ and dev/lane/trials/,
 # where testing.py and trying.py, what every plugin's tests and trials share, are kept. What the

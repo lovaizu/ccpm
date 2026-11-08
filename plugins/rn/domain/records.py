@@ -1,9 +1,9 @@
-"""A round's records checked before the role that wrote one gives its result, as Q11 of the plugin
-best practice asks of what a machine can see: the generator's Making record, each file it names
-made, each intent it names one of the turn's kind, and the try record written after it where it
-names commands; and an evaluator's Answers, each intent of its group answered once, none outside
-it, and each line it quotes standing in what the evaluator may read. Each check gives the result
-the role gives."""
+"""A round's records checked before the role that wrote one gives its result, as Q2 of the plugin
+best practice gives code what a machine can decide: the generator's Making record, each file it
+names made, each intent it names one of the turn's kind, and the try record written after it where
+it names commands; and an evaluator's Answers, each intent of its group answered once, none outside
+it, and each line it quotes standing in what the evaluator may read. Each check gives the result the
+role gives."""
 
 from __future__ import annotations
 

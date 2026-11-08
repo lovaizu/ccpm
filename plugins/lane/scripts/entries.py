@@ -37,7 +37,7 @@ MATCHED_EVENTS = EVENTS[:4]
 # the old, one for each subagent and event.
 CODE = "/hooks/lane/"
 # Python writes no compiled files into the plugin's folder, which would show as the plugin's own
-# changes where it lies in the user's repository, as Q12 of
+# changes where it lies in the user's repository, as Q7 of
 # plugins/rn/domain/best-practices/plugin/best-practice.md keeps what is used only while it runs out
 # of the repository.
 SCRIPT = 'exec python3 -B "${{CLAUDE_PLUGIN_ROOT}}/hooks/lane/{script}.py" '

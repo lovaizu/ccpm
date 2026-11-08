@@ -113,8 +113,8 @@
   <text class="name start" x="42" y="590" text-anchor="start">Claude Code process</text>
   <text class="kind start" x="42" y="608" text-anchor="start">[the skill, the agents]</text>
   <rect class="bg" x="272" y="560" width="380" height="110" rx="6"/>
-  <text class="label start" x="284" y="590" text-anchor="start">Empty: no prompt is tried alone, as Q22 of</text>
-  <text class="label start" x="284" y="609" text-anchor="start">the plugin best practice says.</text>
+  <text class="label start" x="284" y="590" text-anchor="start">Empty: no prompt is tried alone, as a trial</text>
+  <text class="label start" x="284" y="609" text-anchor="start">of one meets only the cases set up for it.</text>
   <rect class="unit" x="662" y="560" width="380" height="110" rx="6"/>
   <text class="name start" x="674" y="588" text-anchor="start">lay.py print, claude plugin validate · HAPPY</text>
   <text class="label start" x="674" y="610" text-anchor="start">each entry names its part, its tools, and</text>

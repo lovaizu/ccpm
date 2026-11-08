@@ -47,7 +47,8 @@ Code that Lane rests on: whether SubagentStart came before the Agent call came b
 Lane kept what start.py printed as the command's stdout. That is information only: a role that keeps
 its step tries no break, and the architecture tests hold the stop of each break. A run of the trial
 passes where no run of the plugin went wrong; a trial passes where every run passes, three of three
-by default, as Q12 of plugins/rn/domain/best-practices/architecture/best-practice.md says.
+by default, the count Q9 of plugins/rn/domain/best-practices/architecture/best-practice.md asks a
+level that runs an AI to name.
 O1's key results have no target, so each measure is set against the last trial's.
 
 Run as `python3 dev/lane/tests/product-vision/trial.py [runs]`, three by default. It prints the

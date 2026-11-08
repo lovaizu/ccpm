@@ -3,8 +3,8 @@
 [project]
 name = "ccpm"
 version = "0"
-# The oldest Python users run (plugins/rn/domain/best-practices/plugin/best-practice.md, Q13), which ruff
-# takes as the version it checks for.
+# The oldest Python users run, as python3 is wherever git is and a plugin installs no package, which
+# ruff takes as the version it checks for.
 requires-python = ">=3.9"
 
 [dependency-groups]

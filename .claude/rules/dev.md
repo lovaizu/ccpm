@@ -76,9 +76,8 @@ open, as step 1 says. Have the user agree to it before you make the architecture
 
 **Write `dev/<plugin>/architecture.md` on [the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md),
 with `architecture/best-practice.json` open. Have the user agree to it.** Place its files as
-[the plugin best practice's template](../../plugins/rn/domain/best-practices/plugin/template) lays
-them out. Design the plugin to take in what is general, as
-[Q21 of the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q21) says.
+[the plugin best practice's parts](../../plugins/rn/domain/best-practices/plugin/best-practice.md#parts) name them. Design the plugin to take in what is
+general, so that a lesson that one run meets improves every later run.
 
 **Put the style of `dev/images/figures.css` into each figure with `python3 dev/scripts/figures.py
 write`.** `dev/scripts/check.sh` fails on a figure whose copy of the style differs from that file.
@@ -113,15 +112,18 @@ a. **List the unit tests of its code with `code/best-practice.json` open, as
    each combination of conditions and each state change of the part's contract. Write each, run it
    and see it fail.**
 
-b. **Write the code with `code/best-practice.json` open until the tests pass**, as
-   [Q13 and Q14 of the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q13) say.
+b. **Write the code with `code/best-practice.json` open until the tests pass, in Python 3.9 or
+   later and its standard library alone. Keep code that more than one plugin needs once, as
+   [Q10 of the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q10) says.**
+   - Rationale: `python3` is wherever git is, and a plugin installs no package.
 
 c. **Write each prompt, a skill or an agent, with
    [prompt/best-practice.json](../../plugins/rn/domain/best-practices/prompt/best-practice.md)
-   open. Run no trial of it alone, as
-   [Q22 of the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q22)
-   says.** Each rule of its steps that must hold on every run goes to a lane in d, as Q14 of
-   `prompt/best-practice.json` says, and e tests it.
+   open. Run no trial of it alone. Try it in the plugin's real use, as
+   [Q1 of the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q1) says.** Each rule of its steps that must hold on every
+   run goes to a lane in d, as Q8 of `prompt/best-practice.json` says, and e tests it.
+   - Rationale: a trial of one prompt alone meets only the cases that its maker set up, so it finds
+     no fault that a real request brings out.
 
 d. **Lay the lanes the prompts' steps call for with `plugins/lane/scripts/lay.py`, with
    `prompt/best-practice.json` open.** Write them in a proposal in the form
@@ -133,12 +135,12 @@ d. **Lay the lanes the prompts' steps call for with `plugins/lane/scripts/lay.py
      tests.
 
 e. **Write the slice's architecture tests, as
-   [Q12 of the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#q12) and
-   [Q22 of the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q22) say: one for each path through its sequences, with what joins the parts run real and a double
+   [Q9](../../plugins/rn/domain/best-practices/architecture/best-practice.md#q9) and
+   [Q10 of the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#q10) say: one for each path through its sequences, with what joins the parts run real and a double
    for each role an AI runs. Run them, and fix each failure at the part or the handoff where it
    lies.**
 
-**After a trial, change a prompt or a document only for a cause that the records confirm, as Q15 of
+**After a trial, change a prompt or a document only for a cause that the records confirm, as Q16 of
 `prompt/best-practice.json` says. Trace that cause to what the README and the architecture say the
 prompt or document should be.**
 
@@ -148,32 +150,32 @@ prompt or document should be.**
 **Run every trial on Opus, and name the model in the run.**
 
 - Rationale: Opus is the model the plugins' users run.
-  [Q12 of the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#q12) runs each role on the model its users run.
+  [Q12 of the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q12) tries the plugin on each model its users run.
 
 **Run a trial that needs a real GitHub repository in `lovaizu/playground`.** This repository is
 kept for the product vision trials that
-[Q12 of the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#q12)
-asks for.
+[Q9 of the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#q9)
+asks for at its acceptance level.
 
 ### 7. Confirm the whole in real use
 
 **Once every slice is built and every unit and architecture test passes, try the plugin as its
 user to confirm the product vision, as
-[Q12 of the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#q12) says.**
+[Q12 of the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q12) says.**
 Try it on each objective's main use, as the README's walkthrough shows it, at the size of a real request. Use a stand-in that holds an
 intent the plugin never sees.
 
 **When the trial finds a fault, first test it at the level that missed it, as
-[Q13 of the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#q13)
+[Q9 of the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#q9)
 says. Then confirm the whole again.**
 
 ### 8. Check the structure
 
-**Pass the checks of [Q23 of the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q23).**
+**Pass the checks of [Q9 of the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q9).**
 
 ### 9. Release
 
-**Release as [Q24 of the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q24) says, and only when the user says
+**Release as [Q11 of the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q11) says, and only when the user says
 so. Before you ask the user to merge, make the [final check](final-check.md). Never merge the pull
 request yourself, and never use `--admin`.**
 

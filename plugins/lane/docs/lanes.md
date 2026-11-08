@@ -423,8 +423,8 @@ Your part is in `${CLAUDE_PLUGIN_ROOT}/domain/writer.md`, given to you as you st
 ```
 
 Then its steps are those of the part: the one Markdown file under your plugin's `domain/` that the
-body names in backticks, where [the plugin best
-practice](../../rn/domain/best-practices/plugin/best-practice.md#q1) keeps the work's knowledge.
+body names in backticks, the folder that keeps the work's knowledge apart from the files whose
+form Claude Code fixes.
 The part's name need not be the subagent's. `lay.py print` shows the part's steps, `lay.py write`
 writes each lane's sentence into them, and the guard reads them there. Where a body names no such
 file, or more than one, lane reads the steps from the subagent's file itself.

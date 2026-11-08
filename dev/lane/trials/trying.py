@@ -52,7 +52,7 @@ LIMITS = (
 
 def folder(plugin: str, name: str) -> str:
     """A new folder of the plugin's for a run of the trial of the name, in the system's temporary
-    folder as Q12 of plugins/rn/domain/best-practices/plugin/best-practice.md has it, outside any
+    folder as Q7 of plugins/rn/domain/best-practices/plugin/best-practice.md has it, outside any
     ccpm
     clone, so the conversations started in it load none of its instructions; its path is printed
     first, for whoever runs the trial to find what the run writes there. The path is given with

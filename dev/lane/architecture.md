@@ -24,37 +24,24 @@ Lane's code and its user docs, [the lanes](../../plugins/lane/docs/lanes.md) and
 Lane builds on [the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md).
 It takes these of its practices as they stand:
 
-- [Q7](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q7), files in a form that a
-  script checks
-- [Q10](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q10), a pass told apart from
-  a check that couldn't run
-- [Q11](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q11), a machine checks all
+- [Q2](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q2), each job in the least powerful component that holds it, and a machine checking all
   that it can see
-- [Q12](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q12), where a plugin writes
-  its files
-- [Q13](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q13), Python 3.9 and its
-  standard library
-- [Q14](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q14), code kept once
-- [Q16](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q16), the caller approves
-  what's theirs
-- [Q18](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q18), in what the guard says
-  of a fault: ask for what lies outside the work, and go on
-- [Q22](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q22) to
-  [Q25](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q25), the tests, the
-  manifest, the releases, and the README
+- [Q3](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q3), the user decides what's theirs
+- [Q5](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q5), a hook that can't run stops the call it guards
+- [Q7](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q7), where a plugin writes its files
+- [Q9](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q9), a fresh install finding each file and tool it uses, and the manifest
+- [Q10](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q10), other plugins named as dependencies, and code kept once
+- [Q11](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q11), the releases
 
-Lane is the guard that [Q9](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q9)
-names, so it carries out for the user's plugin what
-[Q2](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q2),
-[Q5](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q5),
-[Q6](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q6),
-[Q8](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q8), and
-[Q15](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q15) ask of a guard. Lane has no
-role, skill, or agent of its own, and talks with no person: the user runs `lay.py` themselves, and
-the guard runs inside the user's plugin. So Lane takes none of the practices for a plugin's roles,
-Q3 to Q6, Q17, and Q19 to Q21. Lane differs from
-[Q1](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q1) in where its own knowledge
-lies, as [Directory structure](#directory-structure) says.
+Lane is the hook that [Q2](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q2) gives each rule that must hold on every call, so it carries out for
+the user's plugin what [Q3](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q3) and [Q8](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q8) ask: each point put to the person as the role wrote it,
+and a run that goes on from what it wrote down. Lane has no role, skill, or agent of its own, and
+talks with no person: the user runs `lay.py` themselves, and the guard runs inside the user's
+plugin. So Lane has no prompt of its own for the prompt best practice to make. In what the guard
+says of a fault, a role asks for what lies outside its work and goes on with the rest, as a way
+round would leave the work checked on other terms than its purpose set. Lane keeps its own
+knowledge apart from where other plugins keep theirs, as
+[Directory structure](#directory-structure) says.
 
 Lane adds these. Each why says how a run of the user's plugin goes wrong without the rule. KR1.1
 of the product vision counts the share of runs that go wrong in any such way.
@@ -114,7 +101,7 @@ The guard reads a path that a lane takes from the project's folder, `CLAUDE_PROJ
 path that a call names from the folder that the call runs in.
 
 *Why*: the user approves their lanes and routes, as
-[Q16](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q16) says. A lane copied or
+[Q3](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q3) says. A lane copied or
 edited by hand would be one that no one approved, and could stop a move that the user's steps
 allow. The guard stops every command that a role's run_only lanes don't name, so that stop
 is part of what the user approves. Unshown, they'd first meet the stop on a run. A command that a
@@ -156,7 +143,7 @@ plugin or of Claude Code to the role and to whoever runs the plugin, with who mu
 
 *Why*: a call let through unchecked could break the step that the lane is there to hold, and the
 role would go on, as
-[Q10](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q10) says. The role can mend
+[Q5](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q5) says. The role can mend
 its own call, but only whoever runs the plugin can have a fault fixed.
 
 ### Claude Code's own means first
@@ -189,7 +176,7 @@ the point to the person, such as `AskUserQuestion`, and has the conversation put
 role wrote it, in its reply. Nothing else goes into either.
 
 *Why*: a role started by another role carries what that role chose to pass on, not what the plugin
-gives it, as [Q5](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q5) says. A text
+gives it, as [Q3](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q3) says. A text
 reworded on the way is a start that no one approved, and an answer summed up loses what the person
 meant, so the role works from other words than the plugin and the person gave. A dialog's options
 are the conversation's rewording of the point, and the person's choice among them reaches no
@@ -289,8 +276,8 @@ why, and what it costs.
 
 - **The checks as entries of the plugin's `hooks/hooks.json`, acting by the event's `agent_type`,**
   over hooks in a role's or the skill's own file: Claude Code ignores hooks in a plugin agent's own
-  file, and a SubagentStop hook in a skill's own file didn't fire in a trial, as
-  [Q9](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q9) says, so only these
+  file, as [Q4](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q4) says, and a SubagentStop hook in a skill's own file didn't fire in a
+  trial, so only these
   entries hold every role. It costs the guard starting on every tool call of the plugin, and
   returning at once for a call it doesn't hold.
 - **Lane's code put into the plugin** over running it from where Lane lies installed: the plugin
@@ -344,8 +331,7 @@ why, and what it costs.
   `background: true`, which `lay.py print` asks of it.
 - **The part, the steps, and the lanes' sentences given to a role whole, as context that Claude Code
   adds as it starts,** over a lane that has it read its own part: a role could still skip the read
- , and a part that Claude Code adds holds the role's whole part before its first call, as
-  [Q2](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q2) asks. It costs the guard
+ , and a part that Claude Code adds holds the role's whole part before its first call. It costs the guard
   reading the part, and the steps at their port, on each start of a role with lanes.
 - **A later result of a start taking the place of its earlier one** over a start held to its first
   result: a role that ends to wait for an answer, with a result whose route waits, then moves the
@@ -359,7 +345,7 @@ why, and what it costs.
   that waits would otherwise have no way out. Only such a call, or a route with neither a `to` nor
   `waits`, ends the run, and only that route's `on` is a result the skill gives. Otherwise a plugin
   whose role needs the person, as
-  [Q5](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q5) has every such role, would
+  [Q3](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q3) has every such role, would
   end its run at the first point put to the person, and its later starts would go unheld.
   It costs one more key in the routes.
 - **Only the roles that the routes name in `fan_out` running several at once** over any role beside
@@ -387,8 +373,7 @@ why, and what it costs.
 - **A dependency's skill that a route names counted as one move,** which its Skill call begins and
   the PostToolUse of a run of the dependency's result script in the main conversation ends, while the
   caller's guard checks nothing, over both guards holding the conversation: two guards
-  on one conversation would each stop the other's moves, as
-  [Q15](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q15) says. It costs a
+  on one conversation would each stop the other's moves. It costs a
   dependency's skill that ends with no result leaving its move open, so the guard keeps the end of
   a turn going once, as for any start due.
 - **The person's messages kept from the event of each prompt while a run waits** over the main
@@ -857,18 +842,18 @@ The user installs Lane as [the README](../../plugins/lane/README.md#installation
 the plugin's hook entries, each a command in `sh` that runs `python3`, on the computer of whoever
 runs the plugin. After an update of Lane, the user runs `lay.py up` on their plugin.
 
-- **Lane's code on Python 3.9 and its standard library only**, as
-  [Q13](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q13) says, over a later
-  Python or packages: whoever runs the plugin then installs nothing for Lane. Each hook's
+- **Lane's code on Python 3.9 and its standard library only**, over a later
+  Python or packages, as `python3` is wherever git is: whoever runs the plugin then installs
+  nothing for Lane. Each hook's
   command checks for `python3` in `sh` first, as the guard can't even read the event without
   Python. It costs each tool call that a lane is about stopping where Python is missing.
 - **The kept calls and the run in the system's temporary folder**, as
-  [Q12](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q12) says for files used only
+  [Q7](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q7) says for files used only
   while a plugin runs, over a folder in the repository: they mean nothing once the session ends. It
   costs a call that needs its kept calls being one that the guard can't check where the system
   clears that folder during a run.
 - **A plugin's `hooks/lane/` as a link to Lane's code in this marketplace**, as
-  [Q14](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q14) says, over a copy: a fix
+  [Q10](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q10) says, over a copy: a fix
   to the guard reaches every plugin here. Elsewhere it's a copy that carries Lane's
   version, which `lay.py up` reads, as a link can't reach across repositories. It costs a copy
   keeping Lane's code of the day `lay.py` laid it until `lay.py up` runs.
@@ -920,32 +905,32 @@ dev/lane/
 - **Code that several components share beside them in `domain/`**, with each module for one data
   or one form, such as the Rules laid or a Step, over a copy in each component: a copy would get a fix in
   one component and stay wrong in another, as
-  [Q14](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q14) says. A module
+  [Q4 of the code best practice](../../plugins/rn/domain/best-practices/code/best-practice.md#q4) says. A module
   that only one component uses lies in that component. It costs a change to a shared module
   reaching every component that uses it, whose tests must all pass.
 - **Lane's own knowledge in `hooks/lane/domain/`** over `domain/` at the plugin's root, where
-  [Q1](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q1) puts it: `lay.py` lays
+  every other plugin here keeps its own: `lay.py` lays
   `hooks/lane/` into each plugin whole, by one link or one copy, and a folder outside it would need
-  a second. Under `hooks/lane/`, it takes the name `domain/` that Q1 gives, with no `core/`
+  a second. Under `hooks/lane/`, it takes the name `domain/` that other plugins use, with no `core/`
   around it, as nothing else lies beside it. It costs Lane's knowledge lying apart from where
   every other plugin keeps its own. Lane has no roles, so `domain/` holds no part.
 - **A role's part found under the plugin's `domain/`, or else in its entry,** over any folder that
-  the entry names: the plugin best practice's
-  [template](../../plugins/rn/domain/best-practices/plugin/template) puts each part there, so
+  the entry names: `domain/` keeps a plugin's knowledge apart from the files whose form Claude
+  Code fixes, so
   `step.py` looks in one place, and a plugin with steps in its entry, as the README's walkthrough
   has them, needs no part. It costs a plugin that keeps its parts elsewhere moving them before it
   lays its lanes.
 
 ## Tests
 
-Lane tests by [the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#q12)
-and [the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q22),
+Lane tests by [the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#q9)
+and [the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q1),
 and differs from them where this section says.
 
 ![Lane's tests](images/tests.svg)
 
 Cosmic Ray and Hypothesis in the figure run the mutation testing and the property-based tests that
-[the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#q12)
+[the code best practice](../../plugins/rn/domain/best-practices/code/best-practice.md#q13)
 asks for. They're the tools that
 [the repository's development setup](../README.md#the-property-based-tests-and-the-mutation-testing)
 gives every plugin, not a choice of Lane's.
