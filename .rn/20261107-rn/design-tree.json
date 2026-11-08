@@ -370,7 +370,7 @@
         {"id": "Q9", "good": true, "decisions": []},
         {
           "id": "Q10",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "Where the property-based tests lie",
