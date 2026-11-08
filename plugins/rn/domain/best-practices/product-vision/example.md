@@ -29,7 +29,8 @@ rn instead of asking an AI in one prompt, reading its draft and fixing it:
   goal needs, and the order it needs them in, then makes them from the first and plans again from
   what each one and each answer shows, so none goes missing or comes out of order.
 - **Made from a best practice, for O1**: rn builds each deliverable by the best practice of its
-  kind toward what its people are after, where an AI starting from scratch maps it from similar
+  kind toward what its people are after, making that best practice first by its best practice for
+  best practices where the kind has none, where an AI starting from scratch maps it from similar
   text.
 - **Checked as it's used, for O1**: rn tries each deliverable as its people would use it, and
   checks whether they get what they're after, not whether it follows rules, so the user gets no

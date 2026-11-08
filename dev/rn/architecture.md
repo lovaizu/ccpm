@@ -16,10 +16,11 @@ practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md), and a
 The planner lays out every deliverable the goal needs, each after what it takes, by [the plan best
 practice](../../plugins/rn/domain/best-practices/plan/best-practice.md), and turns make them from
 the first. Each settled point and each finished deliverable goes back to the planner, which plans
-again from it. A kind with no best practice gets one made before its first deliverable.
+again from it. A kind with no best practice gets one made before its first deliverable, by the meta
+best practice.
 
-*Why*: a deliverable left out shows only when the work reaches it, and a plan kept as first laid
-out goes on making what a finished deliverable or an answer has changed, as KR1.1 and KR1.3 count.
+*Why*: a deliverable left out shows only when the work reaches it, and a plan kept as first laid out
+goes on making what a finished deliverable or an answer has changed, as KR1.1 and KR1.3 count.
 
 ### Intent in the tree
 
@@ -87,17 +88,18 @@ reads what it meant, not what it wrote, as KR1.1 counts.
 ### The evaluator seeks the good
 
 An evaluator reads as the deliverable's people and confirms where each intent gives them what
-they're after. It names a lack only where they'd fall short of their aim.
+they're after. For an intent not yet good, it says what would make it good for them, and it looks
+for no fault beyond that.
 
 *Why*: a finding the people never meet sends the deliverable back for a change that gives them
 nothing, and its fix can break what they do meet, as KR1.1 and KR1.3 count.
 
 ### The designer judges the evaluators
 
-The main conversation judges each lack an evaluator names by the purpose before anything changes. A
-lack goes on to the next round only where the people fall short of their aim without it and it asks
-for intent, not for how a part works inside. Anything else changes neither the deliverable nor the
-tree.
+The main conversation judges what each evaluator says would make an intent good, from the design
+tree and the purpose, before anything changes. It goes on only where the people fall short of their
+aim without it and it asks for intent, not for how a part works inside, and then it goes back to the
+decision that serves it, never onto the deliverable.
 
 *Why*: an evaluator answered by addition alone makes the deliverable and the tree grow each round,
 until the people can't find what they need in it, as KR1.1 and KR1.3 count.

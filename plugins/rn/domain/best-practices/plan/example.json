@@ -172,6 +172,11 @@
               "about": "Replanned as it goes",
               "decided": "rn plans back from the goal, makes the deliverables from the first, and plans again from what each finished deliverable and each answer shows",
               "by": "user"
+            },
+            {
+              "about": "A best practice made first",
+              "decided": "where a kind has no best practice, rn makes one first by its best practice for best practices",
+              "by": "user"
             }
           ]
         },
@@ -228,12 +233,12 @@
             },
             {
               "about": "The evaluator seeks the good",
-              "decided": "an evaluator reads as the deliverable's people and confirms where each intent gives them what they're after. It names a lack only where they would fall short of their aim",
+              "decided": "an evaluator reads as the deliverable's people and confirms where each intent gives them what they're after. For an intent not yet good, it says what would make it good, and it looks for no fault beyond that",
               "by": "user"
             },
             {
               "about": "The designer judges the evaluators",
-              "decided": "the main conversation judges each lack an evaluator names by the purpose before anything changes: whether the people fall short without it, and whether it's an intent or only how a part works inside. Only a lack of intent goes on",
+              "decided": "the main conversation judges what each evaluator says would make an intent good by the design tree and the purpose. Only what the people need and what asks for intent goes on, back to the decision that serves it, never onto the deliverable",
               "by": "user"
             },
             {
