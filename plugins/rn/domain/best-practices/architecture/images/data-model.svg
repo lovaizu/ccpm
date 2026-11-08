@@ -86,6 +86,10 @@
   <text class="name" x="1255.0" y="473.0" text-anchor="middle">Step</text>
   <rect class="box" x="1160" y="600" width="190" height="56" rx="0"/>
   <text class="name" x="1255.0" y="633.0" text-anchor="middle">Port JSON</text>
+  <rect class="frame" x="1410" y="40" width="290" height="680" rx="8"/>
+  <text class="frame-name" x="1422" y="710" text-anchor="start">the lanes laid</text>
+  <rect class="box" x="1500" y="440" width="190" height="56" rx="0"/>
+  <text class="name" x="1595.0" y="473.0" text-anchor="middle">Rules laid</text>
   <rect class="box" x="870" y="780" width="190" height="56" rx="0"/>
   <text class="name" x="965.0" y="813.0" text-anchor="middle">Turn</text>
   <rect class="box" x="1150" y="780" width="190" height="56" rx="0"/>
@@ -206,6 +210,11 @@
   <text class="label small halo" x="1300" y="729" text-anchor="middle">judges</text>
   <text class="label small halo" x="1533" y="774" text-anchor="start">0..*</text>
   <text class="label small halo" x="1066" y="318" text-anchor="start">1..*</text>
+  <path class="line" d="M1500,468 L1350,468"/>
+  <text class="label small halo" x="1420" y="446" text-anchor="start">holds each</text>
+  <text class="label small halo" x="1420" y="460" text-anchor="start">role to</text>
+  <text class="label small halo" x="1354" y="486" text-anchor="start">0..*</text>
+  <text class="label small halo" x="1486" y="486" text-anchor="start">1</text>
   <text class="frame-name" x="30" y="990" text-anchor="start">Legend</text>
   <text class="label small" x="100" y="990" text-anchor="start">a number at a line&#x27;s end: how many of the data at that end the other joins: 1 one, 0..1 none or one, 1..* one or more, 0..* any number</text>
   <path class="head" d="M100,1016 L109,1022 L118,1016 L109,1010 Z"/>

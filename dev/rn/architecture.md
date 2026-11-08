@@ -16,49 +16,44 @@ Each part carries a piece of that idea:
   goal.
 - **`tree.py`** alone reads and writes the tree, cuts each role's part of it, and commits each
   change on the work's branch, with one draft pull request for the user to merge.
-- **A turn** makes a deliverable from its decisions, round after round. The generator makes it
-  whole, and `throwaway.py` runs its commands as its people would, in a throwaway copy. Fresh
-  evaluators read it and its try record as those people, and say where it meets each intent or what
-  they still lack. A point that a role finds open, or a remark of the user's during a turn, goes
-  back to the main conversation.
-- **Lane**, the plugin that holds a plugin's roles to their steps, holds each role to the steps of
-  the practices it carries out, the main conversation to the routes, which name the next start from
-  each role's result, and each start to the text that `tree.py` cut for it. The steps adapter and
-  the items adapter let Lane read rn's best practices and design tree.
+- **The generator** makes a deliverable whole from its decisions and its kind's best practice, round
+  after round in a turn, and names each point the decisions leave open.
+- **`throwaway.py`** runs the deliverable's commands as its people would, in a throwaway copy, and
+  keeps what they gave as the try record.
+- **The evaluator**, fresh in each round, reads the deliverable and its try record as its people,
+  and says where it meets each intent or what they still lack. A point that it or the generator
+  finds open, or a remark of the user's during a turn, goes back to the main conversation.
+- **The guard**, the code of Lane, the plugin that holds a plugin's roles to their steps, holds
+  each role to the steps of the practices it carries out, the main conversation to the routes,
+  which name the next start from each role's result, and each start to the text that `tree.py` cut
+  for it.
+- **The steps adapter** and **the items adapter** let the guard read rn's best practices and design
+  tree.
 
 ## Principles
 
 rn builds on [the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md).
-It takes as they stand the practices from
-[Q1](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q1) to
-[Q4](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q4),
-[Q6](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q6) to
-[Q16](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q16),
-[Q18](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q18) to
-[Q20](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q20), and
-[Q22](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q22) to
-[Q25](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q25). Lane is its guard, as
-[Q9](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q9) says, and rn names Lane in
-its dependencies, as
-[Q15](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q15) says, since the
-generator runs Lane's `lay.py` when a deliverable is a plugin.
-
-rn differs from three of its practices:
+It differs from these of its practices:
 
 - **[Q5](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q5) and
   [Q17](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q17)**: the main conversation
-  settles the points of the design, which the practice leaves to a role, and puts each point to the
-  user itself, which [Q17](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q17) leaves
-  to a role. *Why*: the design is the user's intent, so rn settles it where the user talks. No role
-  stands between a point and the user, and nothing carries a point back and forth. The main
-  conversation still makes and judges nothing of a deliverable, and the planner writes each point,
-  so Lane holds every change to the tree.
+  settles the points of the design, which
+  [Q5](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q5) leaves to a role, and puts
+  each point to the user itself, which
+  [Q17](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q17) leaves to a role. The
+  main conversation still makes and judges nothing of a deliverable, and the planner writes each
+  point, so Lane holds every change to the tree. *Why*: the design is the user's intent, so rn
+  settles it where the user talks. No role stands between a point and the user, so the main
+  conversation weighs each point with all the user said, and asks them none that the purpose
+  settles, as KR1.2 counts.
 - **[Q21](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q21)**: rn takes in no lesson
   once a run ends. *Why*: no step of the product vision follows the work once the user has the
-  draft pull request, and a step there would ask the user more, which KR1.2 counts. The cost: a
-  lesson that one run meets can come back in a later run.
+  draft pull request, and a step there would ask the user more, which KR1.2 counts. A lesson that
+  one run meets can come back in a later run, where the evaluators find it again before the
+  deliverable goes out. It then costs that run a round, as KR1.3 measures, and not what the people
+  get, as KR1.1 counts.
 
-rn adds these. Each why says how a run goes wrong for the user without the rule.
+rn adds these.
 
 ### Planned back from the goal
 
@@ -236,8 +231,10 @@ counts.
 The commands that try a deliverable, its install steps among them, run only in a throwaway copy of
 the repository, with a throwaway home.
 
-*Why*: a command run as the people run it, such as `tidy` on a Downloads folder, would otherwise
-change the user's own files, which can't be undone.
+*Why*: a try that doesn't run the commands as the people run them misses what they would meet,
+and hands over a deliverable they can't use, as KR1.1 counts. A command run as the people run it,
+such as `tidy` on a Downloads folder, would otherwise change the user's own files, which can't be
+undone.
 
 ### Every step on every run
 
@@ -316,8 +313,10 @@ These choices in the components are ones a developer would question:
   resuming the role that stopped: the point comes from the main conversation, not from the user's
   words alone, and Lane lets a resume carry the user's words and nothing else. A new call of the
   skill begins a run, whose first start is the planner with the text `tree.py` cut from the change.
-  During a run, Lane lets such a call through only once the user has written a prompt, and it then
-  ends that run. The cost: the main conversation reads the skill's part again on each call.
+  Lane then holds that start as it holds every other, so no role works from a point that the tree
+  doesn't hold, as KR1.1 counts. During a run, Lane lets such a call through only once the user has
+  written a prompt, and it then ends that run. The cost: the main conversation reads the skill's
+  part again on each call.
 - **One point a user settles in each change** over the points of a deliverable written at once: each
   answer is in the tree before the next point goes out, so a conversation that ends loses none,
   as KR1.2 counts. The cost: a run of the planner for each such point.
@@ -325,12 +324,14 @@ These choices in the components are ones a developer would question:
   keeps to its own cut, and a fresh planner carries no decision of an earlier change into this
   one, as KR1.1 counts. The cost: the planner reads its cut again on each start.
 - **The generator running `throwaway.py` once it has made the deliverable** over each evaluator
-  running it: the evaluators of a round run at once, and one try record for the round lets them
-  judge the same run of the commands. The cost: an evaluator can't try a command that the try
-  record doesn't hold, and names it as a lack instead.
+  running it: the evaluators of a round run at once, as KR1.3 asks, and one try record for the
+  round lets them judge the same run of the commands. The cost: an evaluator can't try a command
+  that the try record doesn't hold, and names it as a lack instead.
 - **`tree.py` committing and keeping the draft pull request** over a script of its own: each commit
   holds a tree edit, and the edit's grounds make its message, which only `tree.py` reads in the
-  form the planner writes. The cost: `tree.py` needs git, and `gh` for the pull request.
+  form the planner writes. A second reader of that form would drift from `tree.py` as the form
+  changes, and a commit it missed would leave a decision that the user then answers again, as
+  KR1.2 counts. The cost: `tree.py` needs git, and `gh` for the pull request.
 
 ## Data model
 
@@ -356,12 +357,14 @@ These choices in the components are ones a developer would question:
 - **Accepted shortfall**: a decision of the user's, under the intent it costs, that says what the
   people lack by it.
 - **Port JSON**: a best practice's steps or a tree's items in the forms of Lane's ports.
+- **Rules laid**: rn's lanes and routes as Lane laid them, which hold each role to its steps and
+  name the next start from each result.
 
-The data serve O1 through the stories whose sequences hand them on. Cut, Result, Design tree,
-Tree edit, and Commit lie on every story's sequence, and so do Step and Port JSON, which the guard
-reads at each start. Request lies on that of S1, Point on those of S1 to S3, and Change on those of
-S2 and S3. Deliverable, Intent, Decision, Accepted shortfall, Best practice, and a turn's records
-lie on those of S2 and S3, and Deliverable and Draft pull request on that of S4.
+The data serve O1 through the stories whose sequences hand them on. Cut, Result, Design tree, Tree
+edit, and Commit lie on every story's sequence, and so do Step, Port JSON, and Rules laid, which the
+guard reads at each start. Request lies on that of S1, Point on those of S1 to S3, and Change on
+those of S2 and S3. Deliverable, Intent, Decision, Accepted shortfall, Best practice, and a turn's
+records lie on those of S2 and S3, and Deliverable and Draft pull request on that of S4.
 
 ## Sequences
 
@@ -456,8 +459,9 @@ sequenceDiagram
 - **The run ending at `asks`, a route with neither a next start nor a wait,** over a route that
   waits for the user: a route that waits has the main conversation resume the planner with the
   user's words alone, but the main conversation also settles points by reasoning, with no words of
-  the user's. The cost: a role started by mistake between two runs starts unheld, though Lane still
-  holds its calls.
+  the user's. A route that waits would have it put to the user each point that the purpose settles,
+  as KR1.2 counts. The cost: a role started by mistake between two runs starts unheld, though Lane
+  still holds its calls.
 
 ### S2 and S3: a deliverable made in its turn
 
@@ -526,19 +530,22 @@ sequenceDiagram
 
 - **A turn inside `/rn:up`, with no skill of its own,** over a skill for a turn: the user types
   only `/rn:up`, as the walkthrough does, and the routes of one skill take the work from the
-  planner's `ready` through the rounds and back to the planner with no call between them. The cost:
-  `/rn:up`'s routes carry the results of every role.
+  planner's `ready` through the rounds and back to the planner with no call between them. The user
+  then spends no time on a turn, as KR1.3 measures. The cost: `/rn:up`'s routes carry the results
+  of every role.
 - **The generator bringing the deliverable in line with the design in each round, keeping each
   part that rests on a decision,** over mending the lines that last round found short, or making
   the whole deliverable anew: each round's deliverable holds only what the design holds, and keeps
-  what an evaluator found met. The cost: the generator reads each part against the decisions,
-  however small the shortfall.
+  what an evaluator found met, so no change breaks what the people already get, as KR1.1 counts.
+  The cost: the generator reads each part against the decisions, however small the shortfall.
 - **The generator answering each intent before it gives `made`** over leaving every answer to the
-  evaluators: a lack it can see costs no round of evaluators. The cost: the generator reads the
-  deliverable again as its people in each round.
-- **The rounds without a limit** over a turn that stops after a set number: a shortfall that only
-  a changed decision meets goes back as a point open, so a turn goes on only while the generator can meet what
-  the evaluators find. The cost: a turn runs long while its evaluators keep finding new shortfalls.
+  evaluators: a lack it can see costs no round of evaluators, as KR1.3 measures. The cost: the
+  generator reads the deliverable again as its people in each round.
+- **The rounds without a limit** over a turn that stops after a set number: a turn that stops
+  after a set number hands over a deliverable with an intent not met, as KR1.1 counts, which comes
+  before KR1.3. A shortfall that only a changed decision meets goes back as a point open, so a turn
+  goes on only while the generator can meet what the evaluators find. The cost: a turn runs long
+  while its evaluators keep finding new shortfalls, as KR1.3 measures.
 - **One evaluator for each group of intents, all at once,** over one for every intent: each is fresh
   on fewer intents, as KR1.1 asks, and they run side by side, as KR1.3 asks. The cost: each evaluator
   reads the whole deliverable.
@@ -578,15 +585,17 @@ sequenceDiagram
 ```
 
 - **Each role that still runs stopped with `TaskStop`** over letting it end, or sending it the
-  remark, for the reasons that
-  [A remark during a turn is a point](#a-remark-during-a-turn-is-a-point) gives.
-  [Claude Code's subagents reference](https://code.claude.com/docs/en/sub-agents) documents
-  `TaskStop`. The cost: the stopped round gives no result, so its work goes unused.
+  remark, for the reasons that [A remark during a turn is a
+  point](#a-remark-during-a-turn-is-a-point) gives: a role that runs on costs the user a round, as
+  KR1.3 measures, and a remark sent to it makes the user say it again, as KR1.2 counts. [Claude
+  Code's subagents reference](https://code.claude.com/docs/en/sub-agents) documents `TaskStop`. The
+  cost: the stopped round gives no result, so its work goes unused.
 - **A call of `/rn:up` right after the stop, with the remark settled or as a point open,** over
   putting the remark to the user first: the stopped run still has a start due, which Lane has the
   main conversation take before its turn ends. The user would then get the point only after a role
-  ran by the old design. Why the main conversation calls `/rn:up` rather than resuming the stopped
-  role is the first choice in [Components](#components). The cost: the planner runs twice for a
+  ran by the old design, and wait for it, as KR1.3 measures. Why the main conversation calls
+  `/rn:up` rather than resuming the stopped role is the first choice in [Components](#components).
+  The cost: the planner runs twice for a
   remark that's the user's. It first writes the remark open, and later the user's answer.
 
 ### S3: picking up
@@ -679,30 +688,36 @@ say. `hooks/lane/` of rn then reaches Lane's code through its link.
 
 - **Claude Code 2.1.319 or later** over an earlier version: rn runs under its guard, which needs
   it, as [Lane's README](../../plugins/lane/README.md#requirements) says, and rn's tests stand on
-  Lane's double of Claude Code, recorded from 2.1.319. The cost: a user on an earlier Claude Code
-  updates before rn runs.
+  Lane's double of Claude Code, recorded from 2.1.319. Without the guard, a role that skips a step
+  hands the people a deliverable that misses what the step makes sound, as KR1.1 counts. The cost:
+  a user on an earlier Claude Code updates before rn runs.
 - **macOS and Linux** over Windows as well: `python3` and the symbolic link of `hooks/lane/` work
-  there as rn needs them, and the README names Windows as not yet tried. The cost: a user on
+  there as rn needs them, and the README names Windows as not yet tried. A run on a system rn
+  hasn't tried could fail at a step that its tests never met, as KR1.1 counts. The cost: a user on
   Windows has no tried way.
 - **Python 3.9 and its standard library only, for `tree.py`, `throwaway.py`, and the adapters,**
   over a later Python or packages, as
   [Q13](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q13) says: the user installs
-  nothing for rn. The cost: the code goes without what later versions give.
+  nothing for rn, so no setup lies between their request and the deliverable, as KR1.3 measures.
+  The cost: the code goes without what later versions give.
 - **A run's files in `.rn/<yyyymmdd>-<goal>/` of the repository, committed on the work's branch,**
   over the system's temporary folder, as
   [Q12](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q12) says for what the user
-  may keep: a run picks up from them in any conversation, and each round's records stay for the
-  user to read. A user who keeps `.rn/` out by `.gitignore` still gets each commit, with its
-  grounds in the message. The cost: a folder in the user's repository, which the draft pull request
-  shows.
+  may keep: a run picks up from them in any conversation, so the user answers no point again, as
+  KR1.2 counts, and each round's records stay for the user to read. A user who keeps `.rn/` out by
+  `.gitignore` still gets each commit, with its grounds in the message. The cost: a folder in the
+  user's repository, which the draft pull request shows.
 - **A best practice made on a run in the run's `best-practices/`** over rn's own folder: rn's folder
-  changes with each update, and a later run of the repository finds it there. `tree.py` looks for a
+  changes with each update, and a later run of the repository finds it there, so it isn't made
+  again, as KR1.3 measures. `tree.py` looks for a
   kind in the run's folder, then in rn's own, then in the repository's earlier runs. The cost: a
   later run may take a best practice made for an earlier run's work.
 - **The throwaway copy and home in the system's temporary folder** over a folder in the repository:
   the copy means nothing once the round ends, and a command run there can't reach the user's own
-  files. The cost: a command that needs a file outside the repository, such as one in the
-  user's Downloads folder, gets a made-up one in the throwaway home.
+  files. rn then tries the deliverable as its people would without harm, for KR1.1, as [Tried in a
+  throwaway copy](#tried-in-a-throwaway-copy) says. The cost: a command that needs a file outside
+  the repository, such as one in the user's Downloads folder, gets a made-up one in the throwaway
+  home.
 
 ## Directory structure
 
@@ -745,10 +760,12 @@ dev/rn/
 - **The parts in `domain/`, with the best practices and the code beside them,** as
   [Q1](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q1) says, over Turn's
   `core/roles/` and `core/domain/`: rn now holds Turn, so it keeps one folder of its own
-  knowledge, where Lane finds each part. The cost: moving every file of Turn's.
+  knowledge, where Lane finds each part and holds each role to its steps, as KR1.1 counts. The
+  cost: moving every file of Turn's.
 - **No progress file** over a file that says where the run stands: the design tree's statuses and
-  the rounds' records already hold it, and a second record of it drifts from them. The cost:
-  `tree.py` reads the rounds' folders to tell which round is due.
+  the rounds' records already hold it, and a second record of it drifts from them. A run that
+  picks up from a record that drifted asks the user again, as KR1.2 counts, or makes a round again,
+  as KR1.3 measures. The cost: `tree.py` reads the rounds' folders to tell which round is due.
 
 ## Tests
 
@@ -758,6 +775,23 @@ and differs from them where this section says.
 
 ![rn's tests](images/tests.svg)
 
+No test level reaches these deployment units, so the table leaves them out:
+
+- **Lane's folder**, **rn's folder**, **the user's repository**, and **the temporary folder**: they
+  hold files and run nothing.
+- **The lay.py process**: it runs Lane's code, which Lane's own tests try.
+
+The product vision trial is the first check of each judgment that these parts make and no guard can
+hold:
+
+- **main conversation**: whether a point is the user's or settled by the purpose or a best
+  practice, and how it's settled.
+- **planner**: the goal it drafts, the deliverables of the plan with their kinds and sizes, and
+  whether each node that an edit touches still holds.
+- **generator**: whether the deliverable carries out its decisions by its kind's best practice, its
+  own answer to each intent, and whether the decisions meet a shortfall.
+- **evaluator**: whether the deliverable meets each intent of its group for its people.
+
 Cosmic Ray and Hypothesis in the figure run the mutation testing and the property-based tests that
 [the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#q12)
 asks for. They're the tools that
@@ -766,46 +800,54 @@ gives every plugin, not a choice of rn's.
 
 - **The tests written with unittest** over pytest's own form: unittest is part of Python's
   standard library, so the tests run on Python 3.9 with nothing installed, as rn's code does, and
+  a fault that the users' Python would meet shows before a deliverable does, as KR1.1 counts.
   pytest still runs them at once in CI, as [the development setup](../README.md#the-checks-on-every-push)
   says. The cost: a failing assertion of unittest's shows less of the values than pytest's.
 - **The `tree.py` and adapter processes tried `FULL` at unit and at architecture** over `HAPPY`: a
   fault in `tree.py` writes the tree wrong, hands a role another's cut, or hands the evaluator the
   design. A fault in an adapter holds a role to steps not its own on every start, and no role
-  notices. No higher level checks every case. The cost: the most tests to keep up as the forms of
-  the tree and the best practices change.
+  notices. No higher level checks every case, so such a fault would reach the people, as KR1.1
+  counts. The cost: the most tests to keep up as the forms of the tree and the best practices
+  change.
 - **The `throwaway.py` process tried `FULL` at unit and `HAPPY` at architecture:** a fault in the
-  copy lets a command change the user's own files, which can't be undone, so unit tries each case
-  of it. It joins rn only where the generator runs it once a round, so the paths of a turn try that
-  join, and trying each case of the copy again there would add nothing. The cost: a command that
-  reaches the copy in a way no unit test sets up shows only in a trial.
+  copy lets a command change the user's own files, which can't be undone, or tries the deliverable
+  on other files than its people's, as KR1.1 counts, so unit tries each case of it. It joins rn
+  only where the generator runs it once a round, so the paths of a turn try that join, and trying
+  each case of the copy again there would add nothing. The cost: a command that reaches the copy in
+  a way no unit test sets up shows only in a trial.
 - **What the main conversation and the roles must do on every run held by the guard, and no level
   running a part in Markdown alone,** as
   [Q22](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q22) says, over a unit trial
   of each part on the model: the architecture tests run rn's lanes and routes as laid on each path,
   so a passing run shows that the guard stops each call, start, and end that breaks a step or a
-  route, whatever a part in Markdown does. The cost: a judgment that no lane can hold, such as
-  whether a point is the user's or whether the deliverable meets an intent, is first tried in a
-  trial.
+  route, whatever a part in Markdown does. A unit trial would meet only the cases its developer set
+  up, and the role would still skip a step it never met on the user's run, as KR1.1 counts. The
+  cost: each judgment that the list under the figure names is first tried in a trial.
 - **Lane's double of Claude Code and its trial driver, taken from `dev/lane/`,** over a double of
   rn's own, as [Q14](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q14) says: one
-  double sends the events that a recorded Claude Code sent, for both plugins. The cost: a change to
-  Lane's double reaches rn's tests.
+  double sends the events that a recorded Claude Code sent, for both plugins, so a path passes only
+  where the real Claude Code would let it, as KR1.1 counts. The cost: a change to Lane's double
+  reaches rn's tests.
 - **`claude plugin eval` left out of the trials** over a suite of eval cases: an eval case runs one
   prompt in an empty workspace and never stops for an answer, while the walkthrough types `/rn:up`
-  twice, answers two points, and goes on in a new conversation. An eval run leaves `gh` real, so it
-  would open a real pull request, and a case run on one prompt tries a skill alone, which
+  twice, answers two points, and goes on in a new conversation, which the trial measures KR1.2 and
+  KR1.3 on. An eval run leaves `gh` real, so it would open a real pull request, and a case run on
+  one prompt tries a skill alone, which
   [Q22](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q22) rules out. The cost: the
   trials need their own driver, which Lane's already is.
 - **The trials `HAPPY` for the Claude Code process, and `SMOKE` for the rest,** over every row
-  alike: only the trials run the prompts, while the other rows only confirm what lower levels
-  checked. The cost: a fault in a prompt shows only once every lower level passes.
+  alike: only the trials run the prompts, so they try the main paths of the walkthrough, where the
+  judgments under the figure meet KR1.1 and KR1.2, while the other rows only confirm what lower
+  levels checked. The cost: a fault in a prompt shows only once every lower level passes.
 - **The trials on Opus** over another model: rn's users run Opus, as
   [the rules of building the plugins](../../.claude/rules/dev.md#6-build-each-slice) say, and
-  another model makes other slips than the users meet. The cost: each trial runs at Opus's price.
+  another model makes other slips than the users meet, so the trial would measure KR1.1 and KR1.2
+  on runs the users never get. The cost: each trial runs at Opus's price.
 - **A trial passing where 3 runs of 3 come through every step** over fewer runs, or 2 of 3: a step
-  that rn keeps on 2 runs of 3 is one it skips on the user's third run, which
+  that rn keeps on 2 runs of 3 is one it skips on the user's third run, as KR1.1 counts, which
   [Every step on every run](#every-step-on-every-run) rules out. The cost: three runs of the
   walkthrough for each trial, and a slip rarer than that can still pass.
 - **The trial's `tidy` holding each fact a deliverable needs, such as where it's hosted,** over a
   placeholder: no way of making a README can give a real clone command from a placeholder, so a
-  trial would fail on the fixture and not on rn. The cost: keeping the fixture's facts true.
+  trial would fail on the fixture and not on rn, and KR1.1 would count a fault of the fixture's.
+  The cost: keeping the fixture's facts true.
