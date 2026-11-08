@@ -306,7 +306,7 @@
         {"id": "Q5", "good": true, "decisions": []},
         {
           "id": "Q6",
-          "good": true,
+          "good": false,
           "decisions": [
             {
               "about": "How a Change and a Cut reach the answers",
@@ -322,12 +322,17 @@
               "about": "How an answer names its intent",
               "decided": "each answer names the intent it answers by the question's id in the deliverable's kind's best practice, and the data model joins Answers to Intent",
               "by": "reasoning"
+            },
+            {
+              "about": "How the Making record names its intents",
+              "decided": "the generator's own answers and each small point in the Making record name the intent they serve by the question's id, and the planner writes each small point under that intent. The data model joins the Making record to Intent",
+              "by": "reasoning"
             }
           ]
         },
         {
           "id": "Q7",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "A push that waited on the user",
@@ -379,11 +384,11 @@
         },
         {
           "id": "Q14",
-          "good": true,
+          "good": false,
           "decisions": [
             {
               "about": "The key result a choice moves",
-              "decided": "each principle's and each choice's reason names the key result of rn's product vision it moves",
+              "decided": "each principle's and each choice's reason names the key result of rn's product vision it moves, the push on a deliverable's commit, the planner's three commands of tree.py, and the guard's order among the evaluators' results among them",
               "by": "reasoning"
             },
             {
@@ -395,7 +400,7 @@
         },
         {
           "id": "Q15",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "Which calls of the main conversation the guard holds",
