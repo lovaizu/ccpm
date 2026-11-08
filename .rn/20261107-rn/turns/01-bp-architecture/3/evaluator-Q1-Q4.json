@@ -1,0 +1,48 @@
+{
+  "met": [
+    {
+      "question": "Q1",
+      "lines": [
+        "architecture/best-practice.json:2",
+        "architecture/best-practice.md:5"
+      ]
+    },
+    {
+      "question": "Q3",
+      "lines": [
+        "architecture/template.md:3",
+        "architecture/template.md:18",
+        "architecture/template.md:45",
+        "architecture/template.md:61",
+        "architecture/template.md:88",
+        "architecture/template.md:110",
+        "architecture/template.md:135",
+        "architecture/template.md:153",
+        "architecture/template.md:168",
+        "architecture/best-practice.md:25",
+        "architecture/best-practice.md:39"
+      ]
+    },
+    {
+      "question": "Q4",
+      "lines": [
+        "architecture/best-practice.json:6",
+        "architecture/best-practice.json:11",
+        "architecture/best-practice.md:17",
+        "architecture/best-practice.md:18",
+        "architecture/best-practice.md:19",
+        "architecture/template.md:3",
+        "architecture/template.md:20",
+        "architecture/template.md:53",
+        "architecture/template.md:55",
+        "architecture/template.md:170"
+      ]
+    }
+  ],
+  "not_met": [
+    {
+      "question": "Q2",
+      "lacks": "Filling in Tests, the generator meets two answers on what the figure's rows hold. The template's note at architecture/template.md:186 gives a row to each deployment unit, and its skeleton has no place for a unit that has no row. The practice at architecture/best-practice.md:164, though, leaves out a unit whose every cell would be empty and says why under the table. A generator that fills only the template draws a row of empty cells, or drops the unit and doesn't say why. A developer who asks whether anything goes untested then can't tell whether someone left out a unit with no row on purpose. The other sections tell the generator what each slot holds, in what order, and when to leave it out."
+    }
+  ]
+}

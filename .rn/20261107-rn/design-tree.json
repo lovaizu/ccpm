@@ -169,13 +169,18 @@
               "about": "What the product changes of what it builds on",
               "decided": "The template's Principles holds a slot for each principle of the architecture or best practice it builds on that the product sets aside or changes, with what holds instead",
               "by": "reasoning"
+            },
+            {
+              "about": "A deployment unit with no row",
+              "decided": "The template's Tests holds a slot under the figure for each deployment unit left out of it, with why no test level reaches it",
+              "by": "reasoning"
             }
           ]
         },
         {"id": "Q3", "good": true, "decisions": []},
         {
           "id": "Q4",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "What an architecture builds on",
