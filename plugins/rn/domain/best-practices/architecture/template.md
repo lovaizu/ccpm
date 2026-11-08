@@ -171,6 +171,10 @@ sequenceDiagram
 
 ![The product's tests](images/template-tests.svg)
 
+No test level reaches these deployment units, so the table leaves them out:
+
+- **`<unit>`**: `<why no level>`.
+
 The product vision trial is the first check of each judgment that these parts make and no guard can
 hold:
 
@@ -183,15 +187,21 @@ hold:
 > - `<shared rules>`, `<path>`: the test rules the product shares, such as those of the best practice
 >   it builds on.
 > - The figure: the deliverable's own at images/tests.svg, the product named in its alt text. It's
->   a table with a row for each deployment unit, by its name in Deployment, and a column for each
->   test level from narrow to wide, each named by what it checks against. Unit checks against a
->   part's contract, architecture against this document, and product vision against the product
->   vision, in real use. Each cell holds the tool, how far it tries the unit, and what it checks in
->   a few words. `FULL` tries each case and edge, `HAPPY` the main paths, and `SMOKE` a run that
->   confirms what lower levels checked. An empty cell says why. Under it, for each level, the text
->   says what runs real, what doubles stand in for and where their results come from, who stands
->   in for the role, and when it passes, with how many runs of how many where a result varies. It
->   says so only where the product differs from the shared rules.
+>   a table with a row for each deployment unit that some level tries, by its name in Deployment,
+>   and a column for each test level from narrow to wide, each named by what it checks against.
+>   Unit checks against a part's contract, architecture against this document, and product vision
+>   against the product vision, in real use. Each cell holds the tool, how far it tries the unit,
+>   and what it checks in a few words. `FULL` tries each case and edge, `HAPPY` the main paths, and
+>   `SMOKE` a run that confirms what lower levels checked. An empty cell says why. After the units
+>   it leaves out, for each level, the text says what runs real, what doubles stand in for and
+>   where their results come from, who stands in for the role, and when it passes, with how many
+>   runs of how many where a result varies. It says so only where the product differs from the
+>   shared rules.
+> - `<unit>`, `<why no level>`: each deployment unit, by its name in Deployment, whose every cell
+>   would be empty, and why no level reaches it, such as a folder that holds files and runs
+>   nothing, or a process that runs another product's code, which that product's own tests try.
+>   The developer reads in it that the document leaves the unit out on purpose, not by a miss.
+>   Leave the list and the sentence before it out where every unit has a row.
 > - `<part>`, `<judgment>`: each component, by its name in Components, that makes a judgment no
 >   guard can hold, such as whether a deliverable meets an intent, and that judgment. The developer
 >   reads in it what passing unit and architecture tests leave unchecked. Leave the list and the
