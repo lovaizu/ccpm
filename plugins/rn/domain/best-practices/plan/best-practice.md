@@ -44,11 +44,12 @@ Working back from the goal, does the maker find every deliverable the goal needs
 
 **Thinking**
 
-Lay out the deliverables up front, back from the goal, as a [work breakdown structure](https://en.wikipedia.org/wiki/Work_breakdown_structure) does: the deliverables that make the goal, then for each the deliverables it takes, until one takes nothing. A deliverable left out shows only when the work reaches it, and the work stops there.
+Lay out the deliverables up front, back from the goal, as a [work breakdown structure](https://en.wikipedia.org/wiki/Work_breakdown_structure) does: the deliverables that make the goal, then for each the deliverables it takes, until one takes nothing. A deliverable left out shows only when the work reaches it, and the work stops there. Size each deliverable so that one maker makes it whole and one reader reads it whole, as a work package, the lowest level of a work breakdown structure, is the size one owner delivers. A maker that can't hold the whole drops parts of it, and a reader that can't read it whole can't judge whether it meets its intents.
 
 **Steps**
 
 1. Put in a research deliverable before the decisions it serves, where a decision needs what no one has found yet, at the top level in the order of the work.
+2. Where a work is larger than one maker makes whole, split it into a deliverable for each part its architecture names, each after the parts it takes from, and put a deliverable of the whole after them, such as the README of a product after the code of its parts. The architecture already says where the parts meet, so each part stands alone, and the deliverable of the whole holds what only the parts together show.
 
 ### Q3
 
