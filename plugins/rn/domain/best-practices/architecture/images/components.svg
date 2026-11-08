@@ -95,11 +95,11 @@
   <path class="line" d="M860,220 L860,114" marker-end="url(#arrow)"/>
   <text class="label small halo" x="868" y="150" text-anchor="start">puts each point, and shows</text>
   <text class="label small halo" x="868" y="164" text-anchor="start">the plan and Done</text>
-  <text class="data halo" x="868" y="178" text-anchor="start">Point</text>
+  <text class="data halo" x="868" y="178" text-anchor="start">Point, Deliverable</text>
   <path class="line" d="M720,82 L320,82" marker-end="url(#arrow)"/>
   <text class="label small halo" x="520" y="74" text-anchor="middle">merges the pull request</text>
   <path class="line" d="M720,240 L320,240" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="520" y="232" text-anchor="middle">runs start, points, status [Bash]</text>
+  <text class="label small halo" x="520" y="232" text-anchor="middle">runs start, points, plan, status [Bash]</text>
   <text class="data halo" x="520" y="258" text-anchor="middle">Request, Change</text>
   <path class="line" d="M320,270 L720,270" marker-end="url(#arrow)"/>
   <text class="label small halo" x="520" y="288" text-anchor="middle">gives</text>

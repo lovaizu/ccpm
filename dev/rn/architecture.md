@@ -294,7 +294,9 @@ that the purpose settles, as KR1.2 counts.
 
 `tree.py` commits every change to the tree on the work's own branch as the planner writes it, with
 its grounds in the commit message. It commits a deliverable once its turn ends good, and keeps
-one draft pull request for the work. The user merges it, and rn never does. A run's files lie in
+one draft pull request for the work. The user merges it, and rn never does. The planner runs only
+`tree.py write`, `commit`, and `report`. `commit` pushes the branch once it commits a deliverable,
+and a push that waited on the user goes out on the planner's next `commit`. A run's files lie in
 `.rn/<yyyymmdd>-<goal>/`, and `/rn:up` alone goes on from them.
 
 *Why*: a conversation can end at any point, and work kept only in it goes with it, so the
@@ -346,7 +348,8 @@ What each decides alone:
   still lack. A point that their use leaves open, it only finds and names.
 - **tree.py**: the form of the design tree and of a change, the order of the deliverables, from
   their inputs and preconditions, each role's cut, the nodes an edit touches, each turn's phase,
-  round and groups, the points open for the main conversation, the runs under `.rn/` not yet done,
+  round and groups, the points open for the main conversation, which deliverables of the plan are
+  new, as the planner's last Change added or reordered them, the runs under `.rn/` not yet done,
   each commit, the branch, and the draft pull request, the deliverable of a run not yet done and
   its last round, and the report of each decision taken without asking, read from the design tree
   with its grounds.
@@ -511,7 +514,12 @@ sequenceDiagram
     T->>R: commits on the work's branch, the grounds as its message
     alt a point is open
       P-->>M: gives asks
-      Note over M,T: The main conversation shows the plan where it's new, and goes on with the points.
+      M->>T: plan (Design tree)
+      T-->>M: the deliverables in order, each with its status, marked new where the planner's last Change added or reordered one (Deliverable)
+      opt the plan is new
+        M->>U: the plan, before the first point (Deliverable)
+      end
+      Note over M,T: The main conversation goes on with the points, from the top of this section.
     else the deliverable at hand has none left, which the change says
       P-->>M: gives ready
       Note over M,P: A turn starts, as the next section draws.
@@ -593,8 +601,8 @@ sequenceDiagram
         Note over M,G: The phase of how it reads, by refactor-doc or refactor-code.
       else the phase was of how it reads
         P->>T: write, with the deliverable done (Tree edit)
-        P->>T: commit, with the deliverable, and push (Tree edit)
-        Note over P,T: S4 draws the commit and the pull request.
+        P->>T: commit, with the deliverable (Tree edit)
+        Note over P,T: S4 draws the commit, the push, and the pull request.
         alt the next deliverable has a point open
           P-->>M: gives asks
         else its points are settled
@@ -731,8 +739,9 @@ sequenceDiagram
   participant P as planner
   participant T as tree.py
   participant GH as GitHub
-  P->>T: commit, with the deliverable, and push (Tree edit)
-  T->>T: commits the deliverable and the tree on the work's branch, the grounds as its message
+  P->>T: commit, with the deliverable (Tree edit)
+  T->>T: commits the deliverable and the tree on the work's branch, the grounds as its message (Commit)
+  Note over P,T: commit then pushes the branch, as tree.py has no command of its own for a push.
   alt git or gh can't push, such as with no login
     T-->>P: what's missing, the commit kept on the branch
     P-->>M: names it in its message, and gives its result as the rest of the work goes on
@@ -743,17 +752,17 @@ sequenceDiagram
     M->>T: start, for the planner, with the push that waited (Change)
     T-->>M: the planner's cut (Cut)
     M->>P: starts it (Cut)
-    P->>T: push (Commit)
+    P->>T: commit again, with no Tree edit left to commit
     alt the work has no pull request yet
-      T->>GH: pushes the kept commits, opens a draft pull request [gh]
+      T->>GH: pushes the kept commits, opens a draft pull request [gh] (Commit)
     else it has one
-      T->>GH: pushes the kept commits [git]
+      T->>GH: pushes the kept commits [git] (Commit)
     end
     Note over M,P: Where a deliverable is left, the planner gives asks or ready, as the sequence of a deliverable made in its turn draws.
   else the work has no pull request yet
-    T->>GH: pushes the branch, opens a draft pull request [gh]
+    T->>GH: pushes the branch, opens a draft pull request [gh] (Commit)
   else it has one
-    T->>GH: pushes the branch [git]
+    T->>GH: pushes the branch [git] (Commit)
   end
   opt every deliverable is done
     P->>T: report
