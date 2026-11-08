@@ -140,7 +140,47 @@
       "name": "rn's product vision says what rn is for",
       "path": "dev/rn/product-vision.md",
       "kind": "product-vision",
-      "status": "done"
+      "inputs": [],
+      "preconditions": [],
+      "status": "doing",
+      "intents": [
+        {
+          "id": "Q1",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "Q2",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "Q3",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "Q4",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "Q5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Better with each run",
+              "decided": "before the user merges, rn proposes each change to a best practice that the run's points and shortfalls call for, and later runs work by each change the user takes",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "Q6",
+          "good": true,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "rn's design says how a turn carries out a best practice",
@@ -199,11 +239,6 @@
             {
               "about": "Intent, not spec",
               "decided": "the design tree and the architecture hold intent only. The maker of a part settles how it works inside, where they build it",
-              "by": "user"
-            },
-            {
-              "about": "Lessons before the merge",
-              "decided": "before the user merges, rn proposes each change to a best practice that the run's points and lacks call for, and each change the user takes becomes a deliverable of the run",
               "by": "user"
             }
           ]
@@ -954,6 +989,11 @@
               "about": "The walkthrough recorded",
               "decided": "the walkthrough takes its output from a recorded run of the rebuilt rn, the product vision test's own",
               "by": "reasoning"
+            },
+            {
+              "about": "Proposals before the merge",
+              "decided": "the walkthrough's Done shows a proposed change to a best practice from the run, and the user takes it",
+              "by": "user"
             }
           ]
         },

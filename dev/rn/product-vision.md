@@ -38,3 +38,6 @@ rn instead of asking an AI in one prompt, reading its draft and fixing it:
 - **Every step on every run, picked up where it stopped, for O1**: rn keeps each step of the
   best practice on every run, and goes on where the work stopped, so no deliverable misses a step
   an AI skipped once, and the user never answers a point twice.
+- **Better with each run, for O1**: before the user merges, rn proposes each change to a best
+  practice that the run's points and shortfalls call for, and later runs work by each change the
+  user takes, so a lesson one run meets doesn't come back in the next.

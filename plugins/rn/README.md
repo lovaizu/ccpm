@@ -93,6 +93,18 @@ Decided without asking you:
 - --dry-run prints each move as "<file> -> <folder>", as the README shows.   (from README.md)
 ```
 
+rn also shows:
+
+```text
+Proposed for the best practices, before you merge:
+1. README best practice: a dry run lists each item it would change, as its reader checks names
+   before acting.   (from your answer to point 1)
+Take it?
+```
+
+You answer `yes`. rn adds the change to the draft pull request, and later runs in your repository
+work by it.
+
 ## How it works
 
 ![The usual way and rn, with the five problems marked](images/problem.svg)
@@ -144,6 +156,10 @@ from the next step, so you never answer a point twice.
 **What if rn has no best practice for your kind of work?** rn first makes one, by its best practice
 for best practices, and keeps it in the folder `best-practices/` of `.rn/<date>-<goal>/`. It then
 makes your piece by it.
+
+**Does rn get better with use?** Before you merge, rn proposes each change to a best practice that
+the run's points and shortfalls call for. Each change you take goes into the same draft pull
+request, so later runs in your repository work by it.
 
 ## Documentation
 
