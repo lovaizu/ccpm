@@ -200,6 +200,11 @@
               "about": "Intent, not spec",
               "decided": "the design tree and the architecture hold intent only. The maker of a part settles how it works inside, where they build it",
               "by": "user"
+            },
+            {
+              "about": "Lessons before the merge",
+              "decided": "before the user merges, rn proposes each change to a best practice that the run's points and lacks call for, and each change the user takes becomes a deliverable of the run",
+              "by": "user"
             }
           ]
         },

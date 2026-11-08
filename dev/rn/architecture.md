@@ -112,12 +112,14 @@ their answer didn't weigh.
 *Why*: a role that settles such a point makes a part the design doesn't hold, as KR1.1 counts, and
 asking the user again what they settled gives them nothing to weigh, as KR1.2 counts.
 
-### No lesson after a run
+### Lessons go to the best practices before the merge
 
-rn takes in no lesson once a run ends.
+Before the user merges, rn proposes each change to a best practice that the run's points and lacks
+call for. A change the user takes becomes a deliverable of the run. A turn makes it, the user merges
+it with the rest, and later runs of the repository work by it.
 
-*Why*: no step of the product vision follows the draft pull request, and a step there would ask the
-user more, as KR1.2 counts.
+*Why*: a lesson left out comes back in every later run, where it costs a round or a deliverable that
+misses it, as KR1.1 and KR1.3 count.
 
 ### Tried in a throwaway copy
 
@@ -163,7 +165,8 @@ What each decides alone:
 
 - **user**: the goal, each point the purpose and the best practices leave open, whether to merge.
 - **main conversation**: whether a point is the user's, how it's settled, the words it's put in,
-  whether each lack an evaluator names goes on.
+  whether each lack an evaluator names goes on, which changes to a best practice the run calls
+  for.
 - **planner**: the goal drafted from the request, the plan, each deliverable's kind, inputs,
   preconditions, size, and the commands that try it, whether each node a change touches still holds.
 - **generator**: the deliverable, each small point that the purpose and the best practice settle one
@@ -418,9 +421,12 @@ sequenceDiagram
   end
   opt every deliverable is done and pushed
     P->>T: report
-    T-->>P: each decision taken without asking
+    T-->>P: each decision taken without asking, and the points and lacks the run met
     P-->>M: gives done, with the report
-    M->>U: Done, and the decisions taken without asking
+    M->>U: Done, the decisions taken without asking, and each change to a best practice the run calls for (Point)
+    opt the user takes a change
+      Note over M,P: The main conversation calls /rn:up with it, and the planner adds it as a deliverable, as S2 draws.
+    end
     U->>GH: merges the draft pull request
   end
 ```
