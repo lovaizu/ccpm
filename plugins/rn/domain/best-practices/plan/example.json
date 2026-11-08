@@ -306,7 +306,7 @@
         {"id": "Q5", "good": true, "decisions": []},
         {
           "id": "Q6",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "How a Change and a Cut reach the answers",
@@ -337,7 +337,7 @@
         },
         {
           "id": "Q7",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "A push that waited on the user",
@@ -367,18 +367,23 @@
         {"id": "Q11", "good": true, "decisions": []},
         {
           "id": "Q12",
-          "good": true,
+          "good": false,
           "decisions": [
             {
               "about": "When a product vision trial fails",
               "decided": "a product vision trial fails when the stand-in for a deliverable's people can't use it for the use the walkthrough shows, or when KR1.2 or KR1.3 comes out worse than the last trial's, and the failure names the use or the key result",
+              "by": "reasoning"
+            },
+            {
+              "about": "The main conversation keeping off the work",
+              "decided": "Tests lists the main conversation keeping off the design tree and the deliverables among the judgments left to the trial, and a trial fails where the session's records show the main conversation read the tree or wrote the tree or a deliverable",
               "by": "reasoning"
             }
           ]
         },
         {
           "id": "Q13",
-          "good": true,
+          "good": false,
           "decisions": [
             {
               "about": "The parts left to the trial",
