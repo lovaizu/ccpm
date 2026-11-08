@@ -76,8 +76,8 @@
   },
   {
    "id": "Q14",
-   "about": "Components, Sequences, Deployment, Directory structure, Tests",
-   "what": "Doubting a choice the document makes, such as a tool or how far a level tries a unit, does the developer see what the other way would lose, so that they keep or change it knowing what it was for?"
+   "about": "Principles, Components, Sequences, Deployment, Directory structure, Tests",
+   "what": "Doubting a principle or a choice the document makes, such as a tool or how far a level tries a unit, does the developer see which key result of the product vision it moves and what the other way would lose, so that they keep or change it knowing what it was for?"
   },
   {
    "id": "Q15",
@@ -93,7 +93,7 @@
  "practices": [
   {
    "intent": "Q1",
-   "thinking": "The opening says, as one idea seen as a whole, how the product turns what its roles bring into what the product vision promises. It points to the product vision and doesn't repeat it. Every part then reads as a piece of that idea.",
+   "thinking": "The opening says, as one idea seen as a whole, how the product turns what its roles bring into what the product vision promises. It points to the product vision and doesn't repeat it. Under the idea, a list gives each part the piece of the idea it carries out. A developer starting on a part then reads what it's for in the whole, and builds it to serve the idea.",
    "steps": [
     {
      "text": "After writing the rest, check that each component carries out a piece of the idea, and change the idea or the component where one doesn't."
@@ -164,10 +164,10 @@
   },
   {
    "intent": "Q8",
-   "thinking": "The document keeps only the stories, components, and data that an objective needs. Each can then go once no objective needs it.",
+   "thinking": "The document shows its developer which objective of the product vision each story, component, and data serves. Each story names the objective whose main use or intent it carries. Each component and each data names the stories whose sequences reach it, and so the objectives it serves. The developer then finds what can go once no objective needs it, without rebuilding the trace through the sequences, as [requirements traceability](https://doi.org/10.1109/ICRE.1994.292398) follows each part back to the need it comes from.",
    "steps": [
     {
-     "text": "Trace each component and each data to the stories whose sequences reach it, and each story to the objective whose use or intent it carries, and remove what reaches none."
+     "text": "Trace each component and each data to the stories whose sequences reach it, and each story to the objective whose use or intent it carries. Write the trace in each section, and remove what reaches none."
     }
    ]
   },
@@ -255,10 +255,13 @@
   },
   {
    "intent": "Q14",
-   "thinking": "Beside each choice a developer would question, such as a technology, a tool or how far a level tries a unit, stands why it beat the other way and what it costs, as an [architecture decision record](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions) keeps its context and consequences. The developer then keeps or changes it knowing what it was for.",
+   "thinking": "Beside each choice a developer would question, such as a technology, a tool or how far a level tries a unit, stands why it beat the other way and what it costs, as an [architecture decision record](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions) keeps its context and consequences. Each why of a choice or a principle names the key result of the product vision it moves, as the [Architecture Tradeoff Analysis Method](https://www.sei.cmu.edu/library/atam-method-for-architecture-evaluation/) ties each architectural approach to the quality attribute that the business goals ask for. A document can be complete and consistent while a choice works against a key result, such as one that asks the user more often, and its developer builds that design faithfully while the product misses its vision. With the key result named, the developer keeps or changes a rule or a choice by what the product vision measures, knowing what it was for.",
    "steps": [
     {
      "text": "Read each figure as a developer new to the product, and give a why and a cost to each choice they would question."
+    },
+    {
+     "text": "Where a choice moves one key result at the cost of another, such as fewer questions for a longer run, name both, and weigh them in the order the product vision gives its key results."
     }
    ]
   },

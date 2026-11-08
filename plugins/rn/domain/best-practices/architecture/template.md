@@ -2,11 +2,18 @@
 
 This document says how the parts of `<Product>` give [its product vision](<board>). `<idea>`.
 
+Each part carries a piece of that idea:
+
+- **`<part>`** `<piece>`.
+
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - `<board>`: the path to the product's product vision.
 > - `<idea>`: how the product turns what its roles bring into what the product vision
 >   promises, as one idea seen as a whole that every part carries out, in a few sentences.
+> - `<part>`, `<piece>`: each component, or a few that carry one piece together, by their names
+>   in Components, and the piece of the idea they carry out, in a sentence. A developer starting
+>   on a part reads in it what the part is for in the whole.
 
 ## Principles
 
@@ -24,10 +31,12 @@ This document says how the parts of `<Product>` give [its product vision](<board
 >   that names it. Leave the sentence out where the architecture builds on no other.
 > - `<name>`: the few words a reader finds the principle by.
 > - `<rule>`: one rule every part meeting the same decision follows, what must be absent among them.
-> - `<why>`: what the rule is there for, and what goes wrong for a role of the product vision
->   or the developer without it.
+> - `<why>`: what the rule is there for, the key result of the product vision it moves, and what
+>   goes wrong for a role of the product vision or the developer without it.
 
 ## User stories
+
+`<objectives>`.
 
 - **`S<n>`**: `<role>` wants `<way>`. It carries `<steps>`.
 
@@ -38,12 +47,14 @@ This document says how the parts of `<Product>` give [its product vision](<board
 > - `<steps>`: the steps of the README's walkthrough, or of an objective's main use it doesn't
 >   run, that rest on it, and each convenience the product vision's intent asks for that it
 >   carries, such as resuming a run that stopped.
+> - `<objectives>`: the objective of the product vision whose main use or intent each story
+>   carries, by its ID. One sentence covers the stories that share an objective.
 
 ## Components
 
 ![The product's components](images/template-components.svg)
 
-What each decides alone:
+`<objectives>`. What each decides alone:
 
 - **`<component>`**: `<what it alone decides>`.
 
@@ -57,17 +68,22 @@ What each decides alone:
 >   its type, and its technology alone, so the figure shows the parts and their joins at a glance.
 >   Each arrow says what one does to another, with the data it hands on, named as in the data
 >   model. A legend explains every symbol.
+> - `<objectives>`: the stories whose sequences reach each component, and so the objectives it
+>   serves. One sentence covers the components that share them.
 > - `<component>`, `<what it alone decides>`: each role of the figure and each component, by its
 >   name in the figure, and the decisions the stories need that it alone makes.
 > - `<choice>`, `<other way>`: each choice a developer would question, such as a technology, or a
 >   tool, and the way it beat. Leave them out where no choice is in question.
-> - `<why>`, `<cost>`: what the choice gives, and what it costs.
+> - `<why>`, `<cost>`: what the choice gives, with the key result of the product vision it moves,
+>   and what it costs.
 
 ## Data model
 
 ![The product's data](images/template-data-model.svg)
 
 - **`<Data>`**: `<what it is>`.
+
+`<objectives>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
@@ -80,6 +96,8 @@ What each decides alone:
 >   middle.
 > - `<Data>`, `<what it is>`: each data whose name a reader could take for another's, by its name,
 >   and what it's in a few words, without its fields.
+> - `<objectives>`: the stories whose sequences hand on or keep each data, and so the objectives it
+>   serves. One sentence covers the data that share them.
 
 ## Sequences
 
@@ -145,6 +163,11 @@ sequenceDiagram
 
 ![The product's tests](images/template-tests.svg)
 
+The product vision trial is the first check of each judgment that these parts make and no guard can
+hold:
+
+- **`<part>`**: `<judgment>`.
+
 - **`<choice>`** over `<other way>`: `<why>`. The cost: `<cost>`.
 
 > [!NOTE]
@@ -159,7 +182,9 @@ sequenceDiagram
 >   confirms what lower levels checked. An empty cell says why. Under it, for each level, the text
 >   says what runs real, what doubles stand in for and where their results come from, who stands
 >   in for the role, and when it passes, with how many runs of how many where a result varies. It
->   says so only where the product differs from the shared rules. It names each part that makes a
->   judgment no guard can hold, such as whether a deliverable meets an intent, as the product vision
->   trial is that judgment's first check.
+>   says so only where the product differs from the shared rules.
+> - `<part>`, `<judgment>`: each component, by its name in Components, that makes a judgment no
+>   guard can hold, such as whether a deliverable meets an intent, and that judgment. The developer
+>   reads in it what passing unit and architecture tests leave unchecked. Leave the list and the
+>   sentence before it out where no part makes such a judgment.
 > - `<choice>`, `<other way>`, `<why>`, `<cost>`: as in Components.

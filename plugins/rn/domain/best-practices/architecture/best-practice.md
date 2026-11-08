@@ -34,7 +34,7 @@ The developer builds and changes each part of the product so that the parts toge
 | Q11 | Deployment, Tests | Asked whether anything in the product goes untested, does the developer see for each deployment unit which levels cover it, how far each tries it, and why a level is missing, so that no gap goes unseen? |
 | Q12 | Tests | Writing a test at one level, does the developer know what to run real, what doubles stand in for, what to cover and when it passes, so that a failing test names the rule, path, or use it breaks? |
 | Q13 | Tests | When the unit and architecture tests pass, does the developer know the product does what this document says, so that the product vision level only confirms the product in real use? |
-| Q14 | Components, Sequences, Deployment, Directory structure, Tests | Doubting a choice the document makes, such as a tool or how far a level tries a unit, does the developer see what the other way would lose, so that they keep or change it knowing what it was for? |
+| Q14 | Principles, Components, Sequences, Deployment, Directory structure, Tests | Doubting a principle or a choice the document makes, such as a tool or how far a level tries a unit, does the developer see which key result of the product vision it moves and what the other way would lose, so that they keep or change it knowing what it was for? |
 | Q15 | the whole | Following a principle while building a part, does the developer find every figure and list asking the same of that part, so that they never choose between the document and itself? |
 | Q16 | the whole | Changing how a component works inside while the product vision and the principles stay, does the developer find every line of the document still true, so that the document needs no change for it? |
 
@@ -46,7 +46,7 @@ Starting on any part, does the developer see the one idea by which the product g
 
 **Thinking**
 
-The opening says, as one idea seen as a whole, how the product turns what its roles bring into what the product vision promises. It points to the product vision and doesn't repeat it. Every part then reads as a piece of that idea.
+The opening says, as one idea seen as a whole, how the product turns what its roles bring into what the product vision promises. It points to the product vision and doesn't repeat it. Under the idea, a list gives each part the piece of the idea it carries out. A developer starting on a part then reads what it's for in the whole, and builds it to serve the idea.
 
 **Steps**
 
@@ -128,11 +128,11 @@ Of any story, component or data, does the developer see which objective of the p
 
 **Thinking**
 
-The document keeps only the stories, components, and data that an objective needs. Each can then go once no objective needs it.
+The document shows its developer which objective of the product vision each story, component, and data serves. Each story names the objective whose main use or intent it carries. Each component and each data names the stories whose sequences reach it, and so the objectives it serves. The developer then finds what can go once no objective needs it, without rebuilding the trace through the sequences, as [requirements traceability](https://doi.org/10.1109/ICRE.1994.292398) follows each part back to the need it comes from.
 
 **Steps**
 
-1. Trace each component and each data to the stories whose sequences reach it, and each story to the objective whose use or intent it carries, and remove what reaches none.
+1. Trace each component and each data to the stories whose sequences reach it, and each story to the objective whose use or intent it carries. Write the trace in each section, and remove what reaches none.
 
 ### Q9
 
@@ -203,15 +203,16 @@ Each double gives only results in the form the part's contract gives them, the r
 
 ### Q14
 
-Doubting a choice the document makes, such as a tool or how far a level tries a unit, does the developer see what the other way would lose, so that they keep or change it knowing what it was for?
+Doubting a principle or a choice the document makes, such as a tool or how far a level tries a unit, does the developer see which key result of the product vision it moves and what the other way would lose, so that they keep or change it knowing what it was for?
 
 **Thinking**
 
-Beside each choice a developer would question, such as a technology, a tool or how far a level tries a unit, stands why it beat the other way and what it costs, as an [architecture decision record](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions) keeps its context and consequences. The developer then keeps or changes it knowing what it was for.
+Beside each choice a developer would question, such as a technology, a tool or how far a level tries a unit, stands why it beat the other way and what it costs, as an [architecture decision record](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions) keeps its context and consequences. Each why of a choice or a principle names the key result of the product vision it moves, as the [Architecture Tradeoff Analysis Method](https://www.sei.cmu.edu/library/atam-method-for-architecture-evaluation/) ties each architectural approach to the quality attribute that the business goals ask for. A document can be complete and consistent while a choice works against a key result, such as one that asks the user more often, and its developer builds that design faithfully while the product misses its vision. With the key result named, the developer keeps or changes a rule or a choice by what the product vision measures, knowing what it was for.
 
 **Steps**
 
 1. Read each figure as a developer new to the product, and give a why and a cost to each choice they would question.
+2. Where a choice moves one key result at the cost of another, such as fewer questions for a longer run, name both, and weigh them in the order the product vision gives its key results.
 
 ### Q15
 
