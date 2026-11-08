@@ -218,6 +218,11 @@
               "about": "What is the field's and what is this repository's",
               "decided": "Claude Code's documented behavior stays as the field's facts, and this repository's own choices, such as Lane as the guard, lay.py, tree.py, Python 3.9 with its standard library, and the folders rn writes, go to the plugin deliverables of the design tree",
               "by": "reasoning"
+            },
+            {
+              "about": "Roles that run at once",
+              "decided": "roles that run at the same time each work in a workspace of their own, such as a git worktree and a temporary folder no other role writes, and their results join only through the one who started them, as two makers in one workspace overwrite each other's files unseen",
+              "by": "user"
             }
           ]
         },
