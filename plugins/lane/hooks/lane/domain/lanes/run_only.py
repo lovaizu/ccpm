@@ -14,13 +14,13 @@ def check(call: lanes.Call, given: dict[str, list[str]], context: lanes.Context)
     """What the role may run, where the call is a Bash command that no lane of the role names, or
     None where the call goes on.
 
-    It raises `lanes.Unchecked` where the Bash call gives no command.
+    It raises `lanes.Malformed` where the Bash call gives no command.
     """
     if call.tool != "Bash":
         return None
     run = call.input.get("command")
     if not isinstance(run, str):
-        raise lanes.Unchecked("the Bash call gives no command")
+        raise lanes.Malformed("the Bash call gives no command")
     if any(command.matches(run, c) for c in context.commands):
         return None
     if not context.commands:

@@ -30,17 +30,6 @@ NOTIFICATION = "<task-notification>"
 STATUSES = ("async_launched", "completed")
 
 
-class _Fault(Exception):
-    """A run that the guard can't check, with what's wrong, who must fix it, and the sentence it's
-    about, or None where it's about the routes."""
-
-    def __init__(self, what: str, who: str, about: str | None = None) -> None:
-        super().__init__(what)
-        self.what = what
-        self.who = who
-        self.about = about
-
-
 class _Context:
     """What the guard reads of the plugin and the record as it answers one event."""
 
@@ -80,7 +69,7 @@ def answer(name: str, root: str, event: exchange.Event) -> exchange.Answer:
         if begun is not None:
             return _begin(context, found, begun, current)
         return _within(context, current or called.Run(skill, [], {}, []))
-    except _Fault as fault:
+    except exchange.Fault as fault:
         return _told(name, event, skill, fault.about, fault.what, fault.who)
 
 
@@ -136,8 +125,8 @@ def _begin(
 def _check_skill(context: _Context, found: laid.Laid) -> None:
     """Checks that the skill's step still says the routes' sentence.
 
-    It raises _Fault where the guard can't read the skill's part, where the part holds no such
-    step, or where the step no longer says the sentence.
+    It raises `exchange.Fault` where the guard can't read the skill's part, where the part holds no
+    such step, or where the step no longer says the sentence.
     """
     given = context.routes
     lay_again = exchange.LAY_AGAIN.format(plugin=context.name)
@@ -145,13 +134,13 @@ def _check_skill(context: _Context, found: laid.Laid) -> None:
     try:
         part = step.part(context.root, plugin.skill(context.root, given.orchestrator))
     except plugin.Fault as why:
-        raise _Fault(str(why), lay_again, about) from None
+        raise exchange.Fault(str(why), lay_again, about) from None
     said = lanes.sentence("follow_routes", [])
     steps = {s.number: s.says for s in part.steps}
     if given.step not in steps:
-        raise _Fault(f"the steps hold no step {given.step}", lay_again, about)
+        raise exchange.Fault(f"the steps hold no step {given.step}", lay_again, about)
     if said not in steps[given.step]:
-        raise _Fault(f'step {given.step} no longer says "{said}"', lay_again, about)
+        raise exchange.Fault(f'step {given.step} no longer says "{said}"', lay_again, about)
 
 
 def _start_line(context: _Context, role: str) -> str:
@@ -210,7 +199,7 @@ def _next(context: _Context, current: called.Run) -> str:
     given = context.routes
     due = routes.due(given, current.groups)
     if due.kind == "unordered":
-        raise _Fault(
+        raise exchange.Fault(
             f"the runs of {due.role} gave results that precedence doesn't order",
             f"the maker of {context.name} must order each result of {due.role} in precedence",
         )
@@ -332,7 +321,7 @@ def _moved(context: _Context, current: called.Run) -> exchange.Answer:
         back = event.tool_response if isinstance(event.tool_response, dict) else {}
         status, agent = back.get("status"), back.get("agentId")
         if status not in STATUSES or not isinstance(agent, str):
-            raise _Fault(
+            raise exchange.Fault(
                 f"the Agent call came back with the status `{status}`, where Claude Code"
                 " documents async_launched or completed",
                 exchange.CLAUDE_CODE,
@@ -364,7 +353,7 @@ def _ran(context: _Context) -> exchange.Answer:
             continue
         back = context.event.tool_response
         if not isinstance(back, dict) or not isinstance(back.get("stdout"), str):
-            raise _Fault("the Bash call came back with no stdout", exchange.CLAUDE_CODE)
+            raise exchange.Fault("the Bash call came back with no stdout", exchange.CLAUDE_CODE)
         context.record.add({"kind": "given", "role": role, "text": back["stdout"]})
     return exchange.Answer()
 

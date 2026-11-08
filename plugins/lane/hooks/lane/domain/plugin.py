@@ -102,20 +102,32 @@ def skill(root: str, name: str) -> Entry:
 
 
 def read(path: str) -> Entry:
-    """The entry in the file, its frontmatter being the lines between a first line `---` and the
-    next `---`."""
+    """The entry in the file."""
     with open(path, encoding="utf-8") as f:
         text = f.read()
+    settings, body = _split(text)
+    return Entry(path, settings, body)
+
+
+def frontmatter(text: str) -> dict[str, str]:
+    """Each key that the text's frontmatter sets, with its value as text, none where the text has
+    no frontmatter."""
+    return _split(text)[0]
+
+
+def _split(text: str) -> tuple[dict[str, str], str]:
+    """The keys of the text's frontmatter, the lines between a first line `---` and the next
+    `---`, and the text after it."""
     lines = text.split("\n")
     if lines[0] != "---" or "---" not in lines[1:]:
-        return Entry(path, {}, text)
+        return {}, text
     end = lines.index("---", 1)
     settings = {}
     for line in lines[1:end]:
         found = SETTING.fullmatch(line.strip())
         if found:
             settings[found[1]] = _unquoted(found[2].strip())
-    return Entry(path, settings, "\n".join(lines[end + 1 :]))
+    return settings, "\n".join(lines[end + 1 :])
 
 
 def _unquoted(value: str) -> str:

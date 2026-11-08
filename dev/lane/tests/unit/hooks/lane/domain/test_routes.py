@@ -1,19 +1,11 @@
 """The cases of routes.py's contract: whether a plugin can follow its routes, which results a role
 may give, and which start is due from the starts kept, as plugins/lane/docs/routes.md gives them."""
 
+import helpers
 from helpers import called, laid, routes, testing
 
 # The walkthrough's routes: write starts writer, then reviewer, and writer again on `more`.
-CHANGELOG = {
-    "orchestrator": "write",
-    "step": 1,
-    "routes": [
-        {"from": "write", "to": "writer"},
-        {"from": "writer", "on": "written", "to": "reviewer"},
-        {"from": "reviewer", "on": "more", "to": "writer"},
-        {"from": "reviewer", "on": "good"},
-    ],
-}
+CHANGELOG = helpers.ROUTES
 ROUTES = routes.parsed(CHANGELOG)
 
 

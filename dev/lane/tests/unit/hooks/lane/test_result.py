@@ -10,15 +10,7 @@ import sys
 import helpers
 from helpers import result, testing
 
-ROUTES = {
-    "orchestrator": "write",
-    "routes": [
-        {"from": "write", "to": "writer"},
-        {"from": "writer", "on": "written", "to": "reviewer"},
-        {"from": "reviewer", "on": "more", "to": "writer"},
-        {"from": "reviewer", "on": "good"},
-    ],
-}
+ROUTES = helpers.ROUTES
 
 
 class ResultTest(testing.FolderTest):

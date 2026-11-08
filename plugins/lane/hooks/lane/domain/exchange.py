@@ -13,6 +13,18 @@ LAY_AGAIN = "the maker of {plugin} must lay its lanes again with Lane's lay.py w
 CLAUDE_CODE = "Anthropic must fix Claude Code, whose hook input isn't as its documentation gives it"
 
 
+class Fault(Exception):
+    """A check that the guard can't run, with what's wrong, who must fix it, and what it's about:
+    a lane's sentence, a lane as text, or None where it's about every lane of the role or about the
+    routes."""
+
+    def __init__(self, what: str, who: str, about: Any = None) -> None:
+        super().__init__(what)
+        self.what = what
+        self.who = who
+        self.about = about
+
+
 class Event(NamedTuple):
     """A hook event, as hook.py reads it from Claude Code's hook input."""
 

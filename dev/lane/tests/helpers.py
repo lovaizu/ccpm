@@ -37,29 +37,54 @@ import schema
 import sentences
 import step
 import testing
-from lanes import run_only, write_only
+from lanes import (
+    edit_only,
+    end_when,
+    every_item,
+    hold,
+    in_form,
+    read_never,
+    read_only,
+    read_whole,
+    run_only,
+    run_step,
+    test_after,
+    write_only,
+    write_step,
+)
 
 __all__ = [
     "called",
     "command",
+    "edit_only",
+    "end_when",
     "entries",
+    "every_item",
     "exchange",
     "guard",
+    "hold",
     "hook",
+    "in_form",
     "laid",
     "lane_code",
     "lanes",
     "lay",
     "plugin",
     "proposal",
+    "read_never",
+    "read_only",
+    "read_whole",
     "result",
     "routes",
     "run_only",
+    "run_step",
     "schema",
     "sentences",
     "step",
+    "test_after",
     "testing",
     "write_only",
+    "write_step",
 ]
 
 # The walkthrough's plugin, changelog: its skill write, and its subagent writer, with the two

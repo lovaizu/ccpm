@@ -9,6 +9,7 @@ A type's module holds `WORDING`, its sentence, with each place that a take fills
 - `TRACE`, true where the type is of the trace kind, naming the call that shows its step done.
 - `END`, true where the guard checks the type as the role gives its result.
 - `check`, where the type checks a call before it runs.
+- `stands`, where the type asks more of its takes than every type does.
 """
 
 from __future__ import annotations
@@ -68,7 +69,13 @@ PLACE = re.compile(r"`<([a-z]+)>`")
 
 
 class Unchecked(ValueError):
-    """A lane that the guard can't check on this call, with what's wrong."""
+    """A lane that the guard can't check on this call, as what it takes is wrong, with what's
+    wrong."""
+
+
+class Malformed(Unchecked):
+    """A call that no lane can check, as the hook input gives it out of its documented form, with
+    what's wrong."""
 
 
 class Call(NamedTuple):
@@ -156,7 +163,7 @@ def stands(name: str, takes: list[str]) -> list[str]:
                 f" {len(takes)}"
             )
         ]
-    faults = []
+    faults = list(getattr(TYPES[name], "stands", lambda found: [])(placed(name, takes)))
     if any(not t.strip() for t in takes):
         faults.append(f"{name} is given an empty thing")
     for where, things in placed(name, takes).items():
@@ -241,8 +248,26 @@ def called_path(call: Call) -> str | None:
     else:
         return None
     if not isinstance(named, str):
-        raise Unchecked(f"the {call.tool} call names no path that Lane reads")
+        raise Malformed(f"the {call.tool} call names no path that Lane reads")
     return os.path.normpath(os.path.join(call.cwd, named))
+
+
+def writes(call: Call, paths: list[str]) -> bool:
+    """Whether the call is a Write, an Edit, or a NotebookEdit of one of the paths or of a file
+    under one."""
+    if call.tool not in ("Write", "Edit", "NotebookEdit"):
+        return False
+    return under(called_path(call) or "", paths)
+
+
+def ran(call: Call, commands: list[str]) -> bool:
+    """Whether the call is a Bash run of one of the commands, as `command.matches` matches it."""
+    run = call.input.get("command")
+    return (
+        call.tool == "Bash"
+        and isinstance(run, str)
+        and any(command.matches(run, c) for c in commands)
+    )
 
 
 def under(path: str, folders: list[str]) -> bool:

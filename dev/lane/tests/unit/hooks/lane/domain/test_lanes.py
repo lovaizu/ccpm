@@ -81,12 +81,39 @@ class TestSentence(testing.FolderTest):
 
 class TestStands(testing.FolderTest):
     def test_a_lane_with_a_thing_for_each_place_stands(self):
-        self.assertEqual(lanes.stands("in_form", ["a.json", "x.json"]), [])
+        self.assertEqual(lanes.stands("in_form", ["a.json", "${CLAUDE_PLUGIN_ROOT}/x.json"]), [])
 
     def test_a_lane_with_too_few_things_cannot_stand(self):
         self.assertEqual(
             lanes.stands("in_form", ["a.json"]),
             ["in_form takes a thing for each of its places, output and form, and is given 1"],
+        )
+
+    def test_a_form_named_by_the_plugins_folder_stands(self):
+        self.assertEqual(
+            lanes.stands("in_form", ["a.json", "${CLAUDE_PLUGIN_ROOT}/forms/a.md"]), []
+        )
+
+    def test_a_form_not_named_by_the_plugins_folder_cannot_stand(self):
+        self.assertEqual(
+            lanes.stands("in_form", ["a.json", "forms/a.json"]),
+            [
+                (
+                    "in_form takes the form `forms/a.json` by its path in the plugin, as"
+                    " `${CLAUDE_PLUGIN_ROOT}/<path>`"
+                )
+            ],
+        )
+
+    def test_a_form_of_another_kind_cannot_stand(self):
+        self.assertEqual(
+            lanes.stands("in_form", ["a.json", "${CLAUDE_PLUGIN_ROOT}/forms/a.txt"]),
+            [
+                (
+                    "in_form takes a form that is a `.json` JSON Schema or a `.md` template, not"
+                    " `${CLAUDE_PLUGIN_ROOT}/forms/a.txt`"
+                )
+            ],
         )
 
     def test_an_empty_thing_cannot_stand(self):

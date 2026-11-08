@@ -187,6 +187,21 @@
               "by": "research"
             },
             {
+              "about": "A file read to its end",
+              "decided": "the guard keeps a Read's file's lines as they stood when the Read came back, so a later change of the file leaves the trace as the Read made it",
+              "by": "reasoning"
+            },
+            {
+              "about": "Takes that the sentence lists",
+              "decided": "a lane's sentence lists its takes with `or`, so a trace or a lane checked at the end holds where any one of its takes does, while every_item asks each item of each input",
+              "by": "reasoning"
+            },
+            {
+              "about": "A Markdown form",
+              "decided": "an output holds to a Markdown template where it has each heading of the template in the template's order, more headings among them, and each key of the template's frontmatter",
+              "by": "reasoning"
+            },
+            {
               "about": "Fields that the reference leaves out",
               "decided": "SendMessage gives `to` and `message`, and Bash gives back `stdout`, as the old Lane's tries of Claude Code recorded them",
               "by": "research"

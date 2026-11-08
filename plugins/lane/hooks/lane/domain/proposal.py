@@ -13,9 +13,11 @@ from typing import NamedTuple
 
 import command
 import laid
+import lanes
 import plugin
 import routes
 import step
+from lanes import in_form
 
 
 class Refused(ValueError):
@@ -87,6 +89,7 @@ def checked(path: str) -> Checked:
     except plugin.Fault as why:
         raise Refused([str(why)]) from None
     faults = _step_faults(found, parts) + _dependency_faults(found, manifest)
+    faults += _form_faults(found, root)
     faults += _routes_faults(found, manifest, skill)
     faults += _shared_faults(root, found, parts)
     if faults:
@@ -149,6 +152,20 @@ def _step_faults(found: laid.Laid, parts: dict[str, step.Part]) -> list[str]:
                 faults.append(
                     f"step {lane.step} of {role.name}: {part.path} holds no step {lane.step}"
                 )
+    return faults
+
+
+def _form_faults(found: laid.Laid, root: str) -> list[str]:
+    """Each form of an in_form lane that Lane can't read in the plugin."""
+    faults = []
+    for role in found.roles:
+        for lane in role.lanes:
+            if lane.lane != "in_form":
+                continue
+            for form in lanes.placed("in_form", list(lane.takes))["form"]:
+                why = in_form.readable(form.replace(command.ROOT, root))
+                if why:
+                    faults.append(f"step {lane.step} of {role.name}: {why}")
     return faults
 
 

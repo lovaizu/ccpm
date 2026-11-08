@@ -135,6 +135,44 @@ class TestChecked(ProposalTest):
         self.propose()
         self.assertEqual(proposal.checked(self.path).parts["writer"].steps, [])
 
+    def form(self, name):
+        lanes = [{"lane": "in_form", "takes": ["CHANGELOG.md", f"${{CLAUDE_PLUGIN_ROOT}}/{name}"]}]
+        text = helpers.WRITER.replace(
+            "into `CHANGELOG.md`.",
+            "into `CHANGELOG.md`. Write `CHANGELOG.md` in the form of"
+            f" `${{CLAUDE_PLUGIN_ROOT}}/{name}`.",
+        )
+        helpers.write(os.path.join(self.root, "agents", "writer.md"), text)
+        self.propose(subagents=[{"name": "writer", "steps": [{"step": 3, "lanes": lanes}]}])
+
+    def test_a_form_that_isnt_there_is_refused(self):
+        self.form("forms/gone.md")
+        self.assertEqual(
+            self.refused(),
+            [f"step 3 of writer: the form {self.root}/forms/gone.md isn't there"],
+        )
+
+    def test_a_form_lane_doesnt_read_is_refused(self):
+        helpers.write(
+            os.path.join(self.root, "forms", "a.json"), '{"type": "string", "format": "date"}'
+        )
+        self.form("forms/a.json")
+        self.assertEqual(
+            self.refused(),
+            [
+                (
+                    f"step 3 of writer: the form {self.root}/forms/a.json is no form that Lane"
+                    " reads:"
+                    " $: `format` is no keyword that Lane reads in a form"
+                )
+            ],
+        )
+
+    def test_a_form_lane_reads_stands(self):
+        helpers.write(os.path.join(self.root, "forms", "a.md"), "# Notes\n")
+        self.form("forms/a.md")
+        self.assertEqual(proposal.checked(self.path).laid.roles[0].name, "writer")
+
     def test_a_dependency_the_manifest_does_not_declare_is_refused(self):
         lanes = [{"lane": "run_only", "takes": ["python3 ${dependency:checker}/c.py"]}]
         self.propose(subagents=[{"name": "writer", "steps": [{"step": 2, "lanes": lanes}]}])
