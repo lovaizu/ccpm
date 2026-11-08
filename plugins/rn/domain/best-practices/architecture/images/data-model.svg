@@ -112,9 +112,9 @@
   <text class="label small halo" x="288" y="200" text-anchor="start">written as</text>
   <text class="label small halo" x="234" y="268" text-anchor="start">1</text>
   <text class="label small halo" x="290" y="100" text-anchor="start">1..*</text>
-  <path class="line" d="M230,628 L380,628 L380,316"/>
+  <path class="line" d="M230,612 L380,612 L380,316"/>
   <text class="label small halo" x="388" y="590" text-anchor="start">cut from</text>
-  <text class="label small halo" x="234" y="646" text-anchor="start">0..*</text>
+  <text class="label small halo" x="234" y="630" text-anchor="start">0..*</text>
   <text class="label small halo" x="388" y="334" text-anchor="start">1</text>
   <path class="line" d="M135,780 L135,656"/>
   <text class="label small halo" x="143" y="720" text-anchor="start">ends the start of</text>
@@ -210,6 +210,14 @@
   <text class="label small halo" x="1300" y="729" text-anchor="middle">judges</text>
   <text class="label small halo" x="1533" y="774" text-anchor="start">0..*</text>
   <text class="label small halo" x="1066" y="318" text-anchor="start">1..*</text>
+  <path class="line" d="M230,300 L290,300 L290,850 L1170,850 L1170,836"/>
+  <text class="label small halo" x="600" y="844" text-anchor="middle">carries the answers of</text>
+  <text class="label small halo" x="234" y="318" text-anchor="start">0..1</text>
+  <text class="label small halo" x="1174" y="848" text-anchor="start">0..1</text>
+  <path class="line" d="M230,648 L260,648 L260,864 L1200,864 L1200,836"/>
+  <text class="label small halo" x="600" y="880" text-anchor="middle">carries the shortfalls of</text>
+  <text class="label small halo" x="234" y="666" text-anchor="start">0..1</text>
+  <text class="label small halo" x="1204" y="850" text-anchor="start">0..1</text>
   <path class="line" d="M1500,468 L1350,468"/>
   <text class="label small halo" x="1420" y="446" text-anchor="start">holds each</text>
   <text class="label small halo" x="1420" y="460" text-anchor="start">role to</text>

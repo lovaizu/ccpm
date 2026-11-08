@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1480 1090" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1480 1230" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
   <title>rn&#x27;s tests</title>
   <style>
     .bg { fill: #ffffff; }
@@ -44,7 +44,7 @@
       <path class="head" d="M0,0 L10,5 L0,10 z"/>
     </marker>
   </defs>
-  <rect class="bg" x="0" y="0" width="1480" height="1090"/>
+  <rect class="bg" x="0" y="0" width="1480" height="1230"/>
   <text class="name start" x="42" y="46" text-anchor="start">Deployment unit</text>
   <text class="name start" x="284" y="40" text-anchor="start">unit</text>
   <text class="kind start" x="284" y="58" text-anchor="start">one part against its contract</text>
@@ -123,38 +123,55 @@
   <text class="name start" x="1064" y="588" text-anchor="start">a trial on Opus · HAPPY</text>
   <text class="label start" x="1064" y="610" text-anchor="start">the walkthrough on tidy, at the size of</text>
   <text class="label start" x="1064" y="629" text-anchor="start">a real request</text>
-  <text class="frame-name" x="30" y="705" text-anchor="start">Legend</text>
-  <rect class="unit" x="105" y="690" width="36" height="22" rx="4"/>
-  <text class="label small" x="149" y="705" text-anchor="start">runs on every push and in CI</text>
-  <rect class="box" x="380" y="690" width="36" height="22" rx="4"/>
-  <text class="label small" x="424" y="705" text-anchor="start">runs once every lower level passes</text>
-  <text class="label small" x="700" y="705" text-anchor="start">tool · FULL, HAPPY or SMOKE, then what the tests check</text>
-  <rect class="frame" x="20" y="730" width="1440" height="340" rx="8"/>
-  <text class="frame-name" x="32" y="754" text-anchor="start">Where rn&#x27;s tests differ from the best practices</text>
-  <text class="name start" x="42" y="780" text-anchor="start">unit</text>
-  <text class="label start" x="42" y="802" text-anchor="start">Doubles: git in a repository of the test&#x27;s own,</text>
-  <text class="label start" x="42" y="820" text-anchor="start">made in the temporary folder, and gh as a script on</text>
-  <text class="label start" x="42" y="838" text-anchor="start">PATH, printing what a recorded run of it printed.</text>
-  <text class="label start" x="42" y="856" text-anchor="start">No stand-in, as no user takes part.</text>
-  <text class="name start" x="512" y="780" text-anchor="start">architecture</text>
-  <text class="label start" x="512" y="802" text-anchor="start">Real: tree.py, throwaway.py, the adapters, and the</text>
-  <text class="label start" x="512" y="820" text-anchor="start">guard by rn&#x27;s hook entries, on a copy of tidy.</text>
-  <text class="label start" x="512" y="838" text-anchor="start">Doubles: Lane&#x27;s double of Claude Code, the main</text>
-  <text class="label start" x="512" y="856" text-anchor="start">conversation and the roles, which make set calls and</text>
-  <text class="label start" x="512" y="874" text-anchor="start">give set results, and gh as at unit.</text>
-  <text class="label start" x="512" y="892" text-anchor="start">Stand-in: a set answer for each point put to the user.</text>
-  <text class="label start" x="512" y="910" text-anchor="start">Each route of rn on some path.</text>
-  <text class="name start" x="982" y="780" text-anchor="start">product vision</text>
-  <text class="label start" x="982" y="802" text-anchor="start">Subject: tidy, as the README&#x27;s walkthrough runs it,</text>
-  <text class="label start" x="982" y="820" text-anchor="start">on lovaizu/playground for the push and the pull</text>
-  <text class="label start" x="982" y="838" text-anchor="start">request, by Lane&#x27;s trial driver.</text>
-  <text class="label start" x="982" y="856" text-anchor="start">Stand-ins: an AI on Opus with the user&#x27;s intent,</text>
-  <text class="label start" x="982" y="874" text-anchor="start">written before the run and never shown to rn, who</text>
-  <text class="label start" x="982" y="892" text-anchor="start">types /rn:up twice, and one for the people of each</text>
-  <text class="label start" x="982" y="910" text-anchor="start">deliverable, who judges KR1.1 by using it.</text>
-  <text class="label start" x="982" y="928" text-anchor="start">Measures KR1.2 from the records, and KR1.3 from</text>
-  <text class="label start" x="982" y="946" text-anchor="start">the request to Done, each against the last trial&#x27;s.</text>
-  <text class="label start" x="982" y="964" text-anchor="start">Passes where 3 runs of 3 come through every step.</text>
-  <text class="label start" x="42" y="1020" text-anchor="start">A judge of the records, such as the one of KR1.2, counts only once it&#x27;s right on kept records with a known answer.</text>
-  <text class="label start" x="42" y="1042" text-anchor="start">A fault found higher gets a test at the level that missed it, seen to fail, before the fix.</text>
+  <rect class="box" x="30" y="680" width="232" height="110" rx="6"/>
+  <text class="name start" x="42" y="710" text-anchor="start">rn&#x27;s folder</text>
+  <text class="kind start" x="42" y="728" text-anchor="start">[Claude Code plugin, installed]</text>
+  <rect class="bg" x="272" y="680" width="380" height="110" rx="6"/>
+  <text class="label start" x="284" y="710" text-anchor="start">Empty: it holds files and runs nothing.</text>
+  <rect class="unit" x="662" y="680" width="380" height="110" rx="6"/>
+  <text class="name start" x="674" y="708" text-anchor="start">unittest, claude plugin install · HAPPY</text>
+  <text class="label start" x="674" y="730" text-anchor="start">rn installed from this repository&#x27;s</text>
+  <text class="label start" x="674" y="749" text-anchor="start">marketplace into a throwaway home holds</text>
+  <text class="label start" x="674" y="768" text-anchor="start">Lane&#x27;s code</text>
+  <rect class="box" x="1052" y="680" width="380" height="110" rx="6"/>
+  <text class="name start" x="1064" y="708" text-anchor="start">a trial on Opus · SMOKE</text>
+  <text class="label start" x="1064" y="730" text-anchor="start">rn installed from this repository&#x27;s</text>
+  <text class="label start" x="1064" y="749" text-anchor="start">marketplace into a throwaway home, as a</text>
+  <text class="label start" x="1064" y="768" text-anchor="start">user does</text>
+  <text class="frame-name" x="30" y="825" text-anchor="start">Legend</text>
+  <rect class="unit" x="105" y="810" width="36" height="22" rx="4"/>
+  <text class="label small" x="149" y="825" text-anchor="start">runs on every push and in CI</text>
+  <rect class="box" x="380" y="810" width="36" height="22" rx="4"/>
+  <text class="label small" x="424" y="825" text-anchor="start">runs once every lower level passes</text>
+  <text class="label small" x="700" y="825" text-anchor="start">tool · FULL, HAPPY or SMOKE, then what the tests check</text>
+  <rect class="frame" x="20" y="850" width="1440" height="360" rx="8"/>
+  <text class="frame-name" x="32" y="874" text-anchor="start">Where rn&#x27;s tests differ from the best practices</text>
+  <text class="name start" x="42" y="900" text-anchor="start">unit</text>
+  <text class="label start" x="42" y="922" text-anchor="start">Doubles: git in a repository of the test&#x27;s own,</text>
+  <text class="label start" x="42" y="940" text-anchor="start">made in the temporary folder, and gh as a script on</text>
+  <text class="label start" x="42" y="958" text-anchor="start">PATH, printing what a recorded run of it printed.</text>
+  <text class="label start" x="42" y="976" text-anchor="start">No stand-in, as no user takes part.</text>
+  <text class="name start" x="512" y="900" text-anchor="start">architecture</text>
+  <text class="label start" x="512" y="922" text-anchor="start">Real: tree.py, throwaway.py, the adapters, and the</text>
+  <text class="label start" x="512" y="940" text-anchor="start">guard by rn&#x27;s hook entries, on a copy of tidy.</text>
+  <text class="label start" x="512" y="958" text-anchor="start">Doubles: Lane&#x27;s double of Claude Code, the main</text>
+  <text class="label start" x="512" y="976" text-anchor="start">conversation and the roles, which make set calls and</text>
+  <text class="label start" x="512" y="994" text-anchor="start">give set results, and gh as at unit.</text>
+  <text class="label start" x="512" y="1012" text-anchor="start">Stand-in: a set answer for each point put to the user.</text>
+  <text class="label start" x="512" y="1030" text-anchor="start">Each route of rn on some path.</text>
+  <text class="name start" x="982" y="900" text-anchor="start">product vision</text>
+  <text class="label start" x="982" y="922" text-anchor="start">Subject: tidy, as the README&#x27;s walkthrough runs it,</text>
+  <text class="label start" x="982" y="940" text-anchor="start">on lovaizu/playground for the push and the pull</text>
+  <text class="label start" x="982" y="958" text-anchor="start">request, by Lane&#x27;s trial driver, with rn installed</text>
+  <text class="label start" x="982" y="976" text-anchor="start">from this repository&#x27;s marketplace into a</text>
+  <text class="label start" x="982" y="994" text-anchor="start">throwaway home, as a user does.</text>
+  <text class="label start" x="982" y="1012" text-anchor="start">Stand-ins: an AI on Opus with the user&#x27;s intent,</text>
+  <text class="label start" x="982" y="1030" text-anchor="start">written before the run and never shown to rn, who</text>
+  <text class="label start" x="982" y="1048" text-anchor="start">types /rn:up twice, and one for the people of each</text>
+  <text class="label start" x="982" y="1066" text-anchor="start">deliverable, who judges KR1.1 by using it.</text>
+  <text class="label start" x="982" y="1084" text-anchor="start">Measures KR1.2 from the records, and KR1.3 from</text>
+  <text class="label start" x="982" y="1102" text-anchor="start">the request to Done, each against the last trial&#x27;s.</text>
+  <text class="label start" x="982" y="1120" text-anchor="start">Passes where 3 runs of 3 come through every step.</text>
+  <text class="label start" x="42" y="1160" text-anchor="start">A judge of the records, such as the one of KR1.2, counts only once it&#x27;s right on kept records with a known answer.</text>
+  <text class="label start" x="42" y="1182" text-anchor="start">A fault found higher gets a test at the level that missed it, seen to fail, before the fix.</text>
 </svg>
