@@ -159,5 +159,7 @@ sequenceDiagram
 >   confirms what lower levels checked. An empty cell says why. Under it, for each level, the text
 >   says what runs real, what doubles stand in for and where their results come from, who stands
 >   in for the role, and when it passes, with how many runs of how many where a result varies. It
->   says so only where the product differs from the shared rules.
+>   says so only where the product differs from the shared rules. It names each part that makes a
+>   judgment no guard can hold, such as whether a deliverable meets an intent, as the product vision
+>   trial is that judgment's first check.
 > - `<choice>`, `<other way>`, `<why>`, `<cost>`: as in Components.

@@ -1,0 +1,45 @@
+{
+ "met": [
+  {
+   "question": "Q1",
+   "lines": "plugins/rn/domain/best-practices/architecture/best-practice.json:2 \"The developer builds and changes each part of the product so that the parts together give its product vision.\" The changed practices serve that end: plugins/rn/domain/best-practices/architecture/best-practice.json:198 has the guard hold each rule of a part an AI does on every run, and plugins/rn/domain/best-practices/architecture/best-practice.json:240 has the document name each part whose judgment the trial checks first, so the developer knows which parts passing tests leave unchecked."
+  },
+  {
+   "question": "Q2",
+   "lines": "plugins/rn/domain/best-practices/architecture/template.md:162-164 \"It names each part that makes a judgment no guard can hold, such as whether a deliverable meets an intent, as the product vision trial is that judgment's first check.\" The note of Tests says what the text under the figure holds, now including these parts, with the reason."
+  },
+  {
+   "question": "Q3",
+   "lines": "plugins/rn/domain/best-practices/architecture/template.md:141-165 The change adds no section. The parts left to the trial go to Tests, the section the developer reads when asking what each level covers."
+  },
+  {
+   "question": "Q4",
+   "lines": "plugins/rn/domain/best-practices/architecture/best-practice.json:6-10 The inputs, product-vision and readme, and the preconditions stay. The decision changes no kind the document takes."
+  },
+  {
+   "question": "Q5",
+   "lines": "plugins/rn/domain/best-practices/architecture/best-practice.json:68-76 Q12 and Q13 keep their wording, each with its moment and its \"so that\" clause. Q13's \"so that the product vision level only confirms the product in real use\" still holds: plugins/rn/domain/best-practices/architecture/best-practice.json:240 \"the trial confirms the rest\" once the document names the parts whose judgment no guard can hold."
+  },
+  {
+   "question": "Q6",
+   "lines": "plugins/rn/domain/best-practices/architecture/best-practice.json:73-76 and 240-244 Q13 now also asks of the dependency between Tests and the product vision level: a deliverable that leaves a judgment no guard can hold unnamed fails Q13, as its developer would take passing tests as a check of that judgment."
+  },
+  {
+   "question": "Q7",
+   "lines": "plugins/rn/domain/best-practices/architecture/best-practice.json:198 opens the new part of Q12 with the rule and its why, that a trial of one part alone meets only the cases its developer set up and finds no fault that a real request brings out. It names its source, the plugin best practice's Q22, and the established way, a guard such as a hook that refuses a call that breaks a step. plugins/rn/domain/best-practices/architecture/best-practice.json:240 gives the why of naming the parts, that the developer then knows what passing unit and architecture tests leave unchecked. plugins/rn/domain/best-practices/architecture/best-practice.json:243 adds one step, where to write them, which the thinking leaves open."
+  },
+  {
+   "question": "Q8",
+   "lines": "plugins/rn/domain/best-practices/architecture/best-practice.json:197 and 239 Q12 and Q13 each keep one practice, and each question keeps its order. Dropping the unit step leaves no question without a practice."
+  },
+  {
+   "question": "Q9",
+   "lines": "plugins/rn/domain/best-practices/architecture/example.md:781-788 holds the guard for what the main conversation and the roles must do on every run, runs no part in Markdown alone at any level, and names as its cost that a judgment no lane can hold, such as whether a point is the user's or whether the deliverable meets an intent, is first tried in a trial. The example already fills Tests to the decision's intent, and practices.py form finds the copy in line with dev/rn/architecture.md."
+  },
+  {
+   "question": "Q10",
+   "lines": "Reading Q11 to Q13 whole, plugins/rn/domain/best-practices/architecture/best-practice.json:185-255, a maker meets one rule for parts an AI does: no level runs one alone at line 198, architecture stands a double in for it at line 216, the product vision trial tries no case a lower level can test at line 231, and Tests names what only the trial checks at line 243. No step still asks for a unit run on the model, so the maker follows each without choosing between them."
+  }
+ ],
+ "not_met": []
+}

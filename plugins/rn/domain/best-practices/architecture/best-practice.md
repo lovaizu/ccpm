@@ -169,7 +169,7 @@ Writing a test at one level, does the developer know what to run real, what doub
 
 **Thinking**
 
-The developer draws each test from the one thing its level checks against: the ways a part's contract divides at unit, the paths the sequences draw at architecture, and an objective's main use at real size at product vision. It runs only that real and stands [test doubles](https://martinfowler.com/bliki/TestDouble.html) in for the rest. A failing test then names the rule, path, or use it breaks.
+The developer draws each test from the one thing its level checks against: the ways a part's contract divides at unit, the paths the sequences draw at architecture, and an objective's main use at real size at product vision. It runs only that real and stands [test doubles](https://martinfowler.com/bliki/TestDouble.html) in for the rest. A failing test then names the rule, path, or use it breaks. No level runs a part that an AI does alone on the model, as [the plugin best practice](../plugin/best-practice.md#q22) says. A trial of one part alone meets only the cases its developer set up, and finds no fault that a real request brings out. Instead, a guard, such as a hook that refuses a call that breaks a step, holds each rule of the part that must hold on every run, and the architecture tests run the guard on each path, with a double in the part's place.
 
 **Steps**
 
@@ -178,14 +178,13 @@ The developer draws each test from the one thing its level checks against: the w
 3. Where a class ends on an ordered scale, such as a length or a count, write one test at each end and one at the nearest value of the next class, by boundary value analysis.
 4. Where the contract's result turns on a combination of conditions, write one test for each combination that can occur, with the result it gives, by decision table testing.
 5. At unit, pass when every test passes, every line and branch runs, and the tests catch every mutant. Add a unit test for each gap that coverage, mutation testing, or a property-based test finds, as these tools confirm the tests drawn from the contract and draw none themselves.
-6. At unit, where no guard holds each rule of a part an AI does on every run, run the part on the real model, with one input for each class, both where the contract says the part acts and where it says it doesn't, and doubles for the parts it works with.
-7. At architecture, run real what joins the components, such as hooks and scripts, and stand a double in for each component an AI runs and each thing outside the product, so the level calls no model and gives the same result each run.
-8. At architecture, write one test for each path through each story's sequence, the main flow, each branch, each step that sends work back and each question put to the role, until every move from one step to the next lies on some path.
-9. Run the unit and architecture tests that a change reaches before each push, and every test in CI, as running every test before each push makes each change wait, and a selection misses a test that reads a file the change edits.
-10. At product vision, once unit and architecture pass, run the real product on each objective's main use, as the README's walkthrough shows it, at the size of a real request, with an AI standing in for the role that holds an intent the product never gets.
-11. At product vision, measure each key result as the product vision words it, and set each measure against the last one by the direction the product vision gives it, as the product vision gives no target.
-12. At product vision, run each role on the model its users run and judge each run from its records, and try no case a lower level can test, as another model makes other slips than the users meet, and each run is slow and costly.
-13. For a test whose result varies from run to run, write how many runs of how many must meet the expectation.
+6. At architecture, run real what joins the components, such as hooks and scripts, and stand a double in for each component an AI runs and each thing outside the product, so the level calls no model and gives the same result each run.
+7. At architecture, write one test for each path through each story's sequence, the main flow, each branch, each step that sends work back and each question put to the role, until every move from one step to the next lies on some path.
+8. Run the unit and architecture tests that a change reaches before each push, and every test in CI, as running every test before each push makes each change wait, and a selection misses a test that reads a file the change edits.
+9. At product vision, once unit and architecture pass, run the real product on each objective's main use, as the README's walkthrough shows it, at the size of a real request, with an AI standing in for the role that holds an intent the product never gets.
+10. At product vision, measure each key result as the product vision words it, and set each measure against the last one by the direction the product vision gives it, as the product vision gives no target.
+11. At product vision, run each role on the model its users run and judge each run from its records, and try no case a lower level can test, as another model makes other slips than the users meet, and each run is slow and costly.
+12. For a test whose result varies from run to run, write how many runs of how many must meet the expectation.
 
 ### Q13
 
@@ -193,13 +192,14 @@ When the unit and architecture tests pass, does the developer know the product d
 
 **Thinking**
 
-Each double gives only results in the form the part's contract gives them, the refusals among them, and its own tests check it as the part's unit tests check the part. Unit and architecture together then show that every path holds for the real parts.
+Each double gives only results in the form the part's contract gives them, the refusals among them, and its own tests check it as the part's unit tests check the part. Unit and architecture together then show that every path holds for the real parts. A judgment that an AI makes and that no guard can hold, such as whether a deliverable meets an intent, gets no check at either level, so the product vision trial checks it first. The document names each part that such a judgment leaves to the trial. The developer then knows what passing unit and architecture tests leave unchecked, and the trial confirms the rest.
 
 **Steps**
 
-1. Draw a double of something outside the product from its documentation or from a recorded run of the real thing, as a double that gives what the real thing never would passes a test that the real one fails.
-2. For a fault a higher level finds, name the case or path the lower level missed, add its test at the level that must catch it, see it fail, then fix it there.
-3. Trust a check, such as a test, a hook or the judge of a trial, only once you have seen it fail on a case that breaks what it checks. Trust a judge once it's right on kept records whose answer you know. A check that can't fail lets everything through unseen.
+1. Name in Tests each part that makes a judgment no guard can hold, with the judgment, as the product vision trial is its first check.
+2. Draw a double of something outside the product from its documentation or from a recorded run of the real thing, as a double that gives what the real thing never would passes a test that the real one fails.
+3. For a fault a higher level finds, name the case or path the lower level missed, add its test at the level that must catch it, see it fail, then fix it there.
+4. Trust a check, such as a test, a hook or the judge of a trial, only once you have seen it fail on a case that breaks what it checks. Trust a judge once it's right on kept records whose answer you know. A check that can't fail lets everything through unseen.
 
 ### Q14
 
