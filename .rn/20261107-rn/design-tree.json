@@ -14,7 +14,37 @@
       "name": "Lane's design checks each practice step and each change",
       "path": "dev/lane/architecture.md",
       "kind": "architecture",
-      "status": "done"
+      "inputs": ["dev/lane/product-vision.md"],
+      "preconditions": [],
+      "status": "doing",
+      "intents": [
+        {"id": "Q1", "good": false, "decisions": []},
+        {"id": "Q2", "good": false, "decisions": []},
+        {
+          "id": "Q3",
+          "good": false,
+          "decisions": [
+            {
+              "about": "A run the person turns",
+              "decided": "after a prompt of the person's while a run is on, the guard lets the main conversation stop a start of the run with TaskStop, which Claude Code's subagents reference documents, and a call of the skill that the routes name then ends the run and begins another. Without such a prompt, a stop or a call of the skill is a move off the routes, held as any other",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {"id": "Q4", "good": false, "decisions": []},
+        {"id": "Q5", "good": false, "decisions": []},
+        {"id": "Q6", "good": false, "decisions": []},
+        {"id": "Q7", "good": false, "decisions": []},
+        {"id": "Q8", "good": false, "decisions": []},
+        {"id": "Q9", "good": false, "decisions": []},
+        {"id": "Q10", "good": false, "decisions": []},
+        {"id": "Q11", "good": false, "decisions": []},
+        {"id": "Q12", "good": false, "decisions": []},
+        {"id": "Q13", "good": false, "decisions": []},
+        {"id": "Q14", "good": false, "decisions": []},
+        {"id": "Q15", "good": false, "decisions": []},
+        {"id": "Q16", "good": false, "decisions": []}
+      ]
     },
     {
       "name": "Each best practice holds the field's established way, named so its maker grasps the intent",
@@ -118,7 +148,7 @@
             },
             {
               "about": "How a role still running stops when a remark comes",
-              "decided": "the main conversation stops each role of the turn that still runs with TaskStop, which Claude Code's subagents reference documents, before it settles the remark. The call of /rn:up that follows begins a new run, as Lane begins one at each Skill call of the skill its routes name",
+              "decided": "the main conversation stops each role of the turn that still runs with TaskStop, which Claude Code's subagents reference documents, before it settles the remark. The remark is a prompt of the person's, so Lane lets the stop through, and the call of /rn:up that follows ends the run and begins another",
               "by": "research"
             },
             {
