@@ -186,96 +186,7 @@
       "name": "Each part a developer builds by the design gives, with the others, the product vision",
       "path": "plugins/rn/domain/best-practices/architecture",
       "kind": "meta",
-      "inputs": [],
-      "preconditions": ["plugins/rn/domain/best-practices/meta"],
-      "status": "doing",
-      "intents": [
-        {"id": "Q1", "good": true, "decisions": []},
-        {
-          "id": "Q2",
-          "good": true,
-          "decisions": [
-            {
-              "about": "Each part's piece of the idea",
-              "decided": "The template's opening holds a slot for the piece of the one idea each part carries out",
-              "by": "reasoning"
-            },
-            {
-              "about": "The parts left to the trial",
-              "decided": "The template's Tests holds a slot for each part that makes a judgment no guard can hold, with that judgment",
-              "by": "reasoning"
-            },
-            {
-              "about": "What the product changes of what it builds on",
-              "decided": "The template's Principles holds a slot for each principle of the architecture or best practice it builds on that the product sets aside or changes, with what holds instead",
-              "by": "reasoning"
-            },
-            {
-              "about": "A deployment unit with no row",
-              "decided": "The template's Tests holds a slot under the figure for each deployment unit left out of it, with why no test level reaches it",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {"id": "Q3", "good": true, "decisions": []},
-        {
-          "id": "Q4",
-          "good": true,
-          "decisions": [
-            {
-              "about": "What an architecture builds on",
-              "decided": "The architecture best practice takes meta as an input, for the best practice the architecture builds on and tests by",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {"id": "Q5", "good": true, "decisions": []},
-        {
-          "id": "Q6",
-          "good": true,
-          "decisions": [
-            {
-              "about": "The key results",
-              "decided": "A question asks whether each choice and principle names the key result of the product vision it moves, and the template's slot for a choice's reason asks for it",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "Q7",
-          "good": true,
-          "decisions": [
-            {
-              "about": "The trace to the objectives",
-              "decided": "Q8's practice has the document show its developer which objective each story, component and data serves, and the template holds a slot for it",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "Q8",
-          "good": true,
-          "decisions": [
-            {
-              "about": "A part that an AI does",
-              "decided": "Q12 runs no part that an AI does alone on the model at any level, and drops the unit step that ran one where no guard holds its rules. Q13 names the product vision trial as the first check of a judgment that no guard can hold, such as whether a deliverable meets an intent, and the architecture says which parts that leaves to the trial",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "Q9",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The parts left to the trial in the example",
-              "decided": "The example shows the parts left to the trial once rn's architecture names them",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {"id": "Q10", "good": true, "decisions": []}
-      ]
+      "status": "done"
     },
     {
       "name": "A maker of code designs it, tests it first, and writes it as the field's established practice says",
@@ -337,7 +248,7 @@
         {"id": "Q2", "good": true, "decisions": []},
         {
           "id": "Q3",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "A turn",
@@ -406,6 +317,11 @@
               "about": "How a point found in a turn reaches the main conversation",
               "decided": "a role that finds a point open names it in its Result, which ends the run. The main conversation calls /rn:up with it, the planner writes it into the tree as a decision with decided null, and tree.py points gives it to the main conversation. The data model joins Result to Point through the planner's Change, and the sequence of a turn draws the path",
               "by": "reasoning"
+            },
+            {
+              "about": "How an answer names its intent",
+              "decided": "each answer names the intent it answers by the question's id in the deliverable's kind's best practice, and the data model joins Answers to Intent",
+              "by": "reasoning"
             }
           ]
         },
@@ -417,6 +333,11 @@
               "about": "A push that waited on the user",
               "decided": "once the user gives what was missing for a push, the main conversation calls /rn:up, and the planner has tree.py push the kept commits and open the draft pull request, as the other paths of S4 go",
               "by": "reasoning"
+            },
+            {
+              "about": "A run the user picks",
+              "decided": "where the user picks one of several runs, the main conversation calls /rn:up with a Request that carries the picked run's folder. tree.py status reads that run's Design tree and gives the deliverable not yet done with its last round, and the data model names both, and S3 draws the step",
+              "by": "reasoning"
             }
           ]
         },
@@ -426,7 +347,7 @@
         {"id": "Q11", "good": true, "decisions": []},
         {
           "id": "Q12",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "When a product vision trial fails",
@@ -469,7 +390,7 @@
         },
         {
           "id": "Q15",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "Which calls of the main conversation the guard holds",
