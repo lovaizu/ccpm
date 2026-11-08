@@ -228,6 +228,12 @@
   <text class="label small halo" x="600" y="880" text-anchor="middle">carries the shortfalls of</text>
   <text class="label small halo" x="234" y="666" text-anchor="start">0..1</text>
   <text class="label small halo" x="1204" y="850" text-anchor="start">0..1</text>
+  <path class="line" d="M1150,922 L1085,922 L1085,700 L1045,700 L1045,316"/>
+  <text class="label small halo" x="1053" y="560" text-anchor="start">names each,</text>
+  <text class="label small halo" x="1053" y="574" text-anchor="start">by its</text>
+  <text class="label small halo" x="1053" y="588" text-anchor="start">question&#x27;s id</text>
+  <text class="label small halo" x="1146" y="940" text-anchor="end">0..*</text>
+  <text class="label small halo" x="1053" y="334" text-anchor="start">1..*</text>
   <path class="line" d="M1500,468 L1350,468"/>
   <text class="label small halo" x="1420" y="446" text-anchor="start">holds each</text>
   <text class="label small halo" x="1420" y="460" text-anchor="start">role to</text>

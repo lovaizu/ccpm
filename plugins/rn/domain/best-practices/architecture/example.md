@@ -171,12 +171,12 @@ design holds, as KR1.1 counts.
 
 The generator settles a point that no decision holds only where the purpose and its kind's best
 practice settle it one way, such as a phrase or the form of a printed line. In each round, it
-writes each such point that the deliverable holds, with what settles it, in the round's Making
-record. Once the phase's intents are good, the planner's Change reaches the last round's Making
-record through the Round, and the planner writes each point it names into the tree, as a decision
-by `maker`. The report of the decisions taken without asking reads it there. Any other point, such as
-a choice between ways that serve the people differently, or one that touches what the user
-approved, is a point of the design. The generator names it open for the main conversation, as
+writes each such point that the deliverable holds, with what settles it and the intent it serves,
+in the round's Making record. Once the phase's intents are good, the planner's Change reaches the
+last round's Making record through the Round, and the planner writes each point it names into the
+tree under that intent, as a decision by `maker`. The report of the decisions taken without asking
+reads it there. Any other point, such as a choice between ways that serve the people differently,
+or one that touches what the user approved, is a point of the design. The generator names it open for the main conversation, as
 [A point found open goes back to the main conversation](#a-point-found-open-goes-back-to-the-main-conversation)
 says.
 
@@ -301,7 +301,11 @@ and a push that waited on the user goes out on the planner's next `commit`. A ru
 
 *Why*: a conversation can end at any point, and work kept only in it goes with it, so the
 user answers again, as KR1.2 counts. The merge is the user's, as
-[Q16](../plugin/best-practice.md#q16) says.
+[Q16](../plugin/best-practice.md#q16) says. A merge by rn would
+put on the main branch work that the user never read whole, and hand the people a fault the
+evaluators missed, as KR1.1 counts. Why `commit` pushes only with a deliverable, and why the
+planner runs only these three commands, are choices under
+[S4: the work handed over](#s4-the-work-handed-over).
 
 ## User stories
 
@@ -414,7 +418,8 @@ These choices in the components are ones a developer would question:
 - **Round**: one making of the deliverable in a phase, with its Making record, its Try record, and
   the evaluators' Answers to it.
 - **Making record**: the generator's record of a round, `generator.json`: what it made, each
-  small point it settled, its own answer to each intent, and each point it found open.
+  small point it settled, its own answer to each intent, and each point it found open. Each small
+  point and each answer names the intent it serves by its question's id, as Answers does.
 - **Answers**: an evaluator's record of a round, `evaluator-<group>.json`: each intent, by its
   question's id in the best practice of the deliverable's kind, met with the lines that meet it, or
   not met with what the people still lack.
@@ -593,7 +598,7 @@ sequenceDiagram
       M->>T: start, for the planner, with the turn's answers and the small points of its last Making record, through the Round (Change)
       T-->>M: the planner's cut (Cut)
       M->>P: starts it (Cut)
-      P->>T: write, with each intent good, and each small point as a decision by maker (Tree edit)
+      P->>T: write, with each intent good, and each small point as a decision by maker, under the intent it names (Tree edit)
       T->>R: writes it (Design tree)
       alt the phase was of what the deliverable says
         P->>T: commit (Tree edit)
@@ -633,6 +638,12 @@ sequenceDiagram
   before KR1.3. A shortfall that only a changed decision meets goes back as a point open, so a turn
   goes on only while the generator can meet what the evaluators find. The cost: a turn runs long
   while its evaluators keep finding new shortfalls, as KR1.3 measures.
+- **The guard taking `open`, then `more`, then `good` among the evaluators' results** over the
+  first result that comes: a point found open changes the design, so a next round started on
+  another evaluator's `more` would make the deliverable by a design about to change, and cost the
+  user that round, as KR1.3 measures. One `more` means some of the people still lack what an intent asks, so the turn can't
+  end on another evaluator's `good`, as KR1.1 counts. The cost: the main conversation waits for the
+  slowest evaluator of the round, though another already gave `open`.
 - **One evaluator for each group of intents, all at once,** over one for every intent: each is fresh
   on fewer intents, as KR1.1 asks, and they run side by side, as KR1.3 asks. The cost: each evaluator
   reads the whole deliverable.
@@ -772,6 +783,20 @@ sequenceDiagram
     U->>GH: reads the draft pull request, and merges it
   end
 ```
+
+- **`commit` pushing once it commits a deliverable** over a push on each commit: a commit on the
+  user's computer already keeps the work, and a deliverable gives the pull request something for
+  the user to read. A push on each commit of the tree would add its time to each point the user
+  answers, as KR1.3 measures, and would ask for a missing login before the user has anything to
+  read. The cost: the decisions committed since the last deliverable reach GitHub only with the
+  next one.
+- **The planner running only `tree.py write`, `commit`, and `report`** over the planner running
+  `points`, `plan`, or a push of its own: `points` and `plan` give the main conversation what it
+  settles and shows the user, so the planner can't take up a point and settle it outside the
+  user's conversation, which would ask the user what the purpose settles, as KR1.2 counts. A
+  deliverable's commit pushes it with no step of its own, so a planner that skipped such a step
+  can't leave the user a pull request without the deliverable, as KR1.1 counts. The cost: a push
+  that waited needs a `commit` with nothing new to commit.
 
 ## Deployment
 
