@@ -5,22 +5,22 @@ paths:
   - ".claude-plugin/**"
 ---
 
-# Plugin development (ccpm)
+# Plugin development in ccpm
 
 Build each plugin by [the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md), taking what
 its requirements call for.
 
 This file holds the order the work goes in. Each step names the best practice in
 `plugins/rn/domain/best-practices/` to open while doing it. A best practice's goal says what the deliverable's user achieves. Its template, or else its parts, says what the deliverable holds.
-Its intents ask, each as a question, whether the user gets what they are after from the
+Its intents ask, each as a question, whether the user gets what they're after from the
 deliverable. Its practices hold a way to make each question pass.
 Open `refactor-doc/best-practice.json` as well when the work is a document, and
-`refactor-code/best-practice.json` when it is code: that one finishes it.
+`refactor-code/best-practice.json` when it's code: that one finishes it.
 
-When a step's work needs something that its best practice does not ask, mend that best practice as
-Q10 of [meta/best-practice.json](../../plugins/rn/domain/best-practices/meta/best-practice.md)
-says. Do so whichever plugin you are building. Then make the work again against the mended best
-practice.
+When a step's work needs something that its best practice doesn't ask, mend that best practice as
+Q6 of [meta/best-practice.json](../../plugins/rn/domain/best-practices/meta/best-practice.md)
+says. Do so whichever plugin you are building. Then make the work again against the mended
+best practice.
 
 - Rationale: every plugin here uses the same best practices, so a gap left in one comes back in
   every plugin that uses it.
@@ -30,54 +30,54 @@ Before you commit work made before a rule or a best practice changed, read it ag
 - Rationale: that work passed the rules as they were then. Committed unread, it brings back what
   the change set out to stop.
 
-Until the user says yes, install nothing, and send nothing to a service outside the repository's
-git and GitHub, such as a translator or a web API. Fetching a public page to read it needs no ask.
+Until the user says yes, install nothing, and send nothing to a translator, a web API, or any other
+service outside the repository's git and GitHub. Fetching a public page to read it needs no ask.
 Say so in every brief to a subagent and in every `claude -p` you start.
 
 - Rationale: text sent out may hold what the user never meant to share, such as their email
   address.
 
-Source: facts confirmed in the official docs (plugins reference / plugin marketplaces, prompting
-best practices / skill authoring best practices) and the official plugins.
+Source: facts confirmed in the official plugins and in the official docs: plugins reference, plugin
+marketplaces, prompting best practices, and skill authoring best practices.
 
 ## Steps
 
 ### 1. Write the product vision
 
-**Settle the product vision's decisions in the work's one design tree,
-`.rn/<yyyymmdd>-<goal>/design-tree.json`, in the form of
-[the plan best practice's template](../../plugins/rn/domain/best-practices/plan/design-tree.schema.json),
-with `product-vision/best-practice.json` open. After each change, read the path from the node
+**With `product-vision/best-practice.json` open, settle the product vision's decisions in the
+work's one design tree, `.rn/<yyyymmdd>-<goal>/design-tree.json`, in the form of
+[the plan best practice's template](../../plugins/rn/domain/best-practices/plan/design-tree.schema.json). After each change, read the path from the node
 changed up to the goal and every node the change touches, as Q9 of
 [the plan best practice](../../plugins/rn/domain/best-practices/plan/best-practice.md#q9) says. Write `dev/<plugin>/product-vision.md` from the tree by
 `product-vision/template.md`. Have the user agree to it before you make anything else.** Do the
-same for each document after it: its questions and decisions go into the same tree, and the
-document is written from them by its kind's template. `dev/scripts/check.sh` checks each tree by
+same for each document after it: its questions and decisions go into the same tree, and you
+write the document from them by its kind's template. `dev/scripts/check.sh` checks each tree by
 rn's `tree.py check`.
 
 - Rationale: a change made by finding an ID or a word never shows the branch the node stands in,
-  so the nodes above and below it go on saying what held before, and the tree drifts from its goal.
+  so the nodes over and under it go on saying what held before, and the tree drifts from its goal.
 - Rationale: each sentence of a document then rests on a decision of the tree, and two documents
   that rest on one decision say the same thing. The template holds each document to what its
   reader needs, as an AI told only to be brief still writes past it.
 - Rationale: the README takes two things from the product vision: what the user gains, and the
-  objectives whose main use its walkthrough runs. The architecture says how the plugin gives the product vision. If you make them before the product vision, they rest on a goal that the user has not
+  objectives whose main use its walkthrough runs. The architecture says how the plugin gives the product vision. If you make them before the product vision, they rest on a goal that the user hasn't
   agreed to.
 
 ### 2. Write the README
 
-**Write `plugins/<plugin>/README.md` from the product vision with `readme/best-practice.json`
-open, as step 1 says. Have the user agree to it before you make the architecture.**
+**With `readme/best-practice.json` open, write `plugins/<plugin>/README.md` from the product
+vision, as step 1 says. Have the user agree to it before you make the architecture.**
 
-- Rationale: everything after the README is built to what it promises the user. Built before it,
+- Rationale: you build everything after the README to what it promises the user. Built before it,
   that work would stand on a measure that no one has settled.
 
 ### 3. Write the architecture
 
-**Write `dev/<plugin>/architecture.md` on [the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md),
-with `architecture/best-practice.json` open. Have the user agree to it.** Place its files as
+**With `architecture/best-practice.json` open, write `dev/<plugin>/architecture.md` on
+[the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md). Have
+the user agree to it.** Place its files as
 [the plugin best practice's template](../../plugins/rn/domain/best-practices/plugin/template) lays
-them out. Design the plugin to take in what is general, as
+them out. Design the plugin to take in what's general, as
 [Q21 of the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q21) says.
 
 **Put the style of `dev/images/figures.css` into each figure with `python3 dev/scripts/figures.py
@@ -85,7 +85,7 @@ write`.** `dev/scripts/check.sh` fails on a figure whose copy of the style diffe
 
 ### 4. Have the README and the architecture read once
 
-**Have a new reader who does not know the discussion read the README and the architecture once, as
+**Have a new reader who doesn't know the discussion read the README and the architecture once, as
 their readers would. Settle each finding by fixing the decision or principle it comes from.**
 
 - Rationale: a reading after every fix turns each finding into a patch. The documents then drift
@@ -146,21 +146,21 @@ prompt or document should be.**
 
 **Run every trial on Opus, and name the model in the run.**
 
-- Rationale: Opus is the model the plugins' users run.
+- Rationale: the plugins' users run Opus.
   [Q12 of the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#q12) runs each role on the model its users run.
 
-**Run a trial that needs a real GitHub repository in `lovaizu/playground`.** This repository is
-kept for the product vision trials that
+**Run a trial that needs a real GitHub repository in `lovaizu/playground`.** This repository
+exists for the product vision trials that
 [Q12 of the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#q12)
 asks for.
 
 ### 7. Confirm the whole in real use
 
-**Once every slice is built and every unit and architecture test passes, try the plugin as its
+**Once you have built every slice and every unit and architecture test passes, try the plugin as its
 user to confirm the product vision, as
 [Q12 of the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#q12) says.**
 Try it on each objective's main use, as the README's walkthrough shows it, at the size of a real request. Use a stand-in that holds an
-intent the plugin never sees.
+intent the plugin never receives.
 
 **When the trial finds a fault, first test it at the level that missed it, as
 [Q13 of the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#q13)
@@ -176,5 +176,5 @@ says. Then confirm the whole again.**
 so. Before you ask the user to merge, make the [final check](final-check.md). Never merge the pull
 request yourself, and never use `--admin`.**
 
-- Rationale: the user decides what reaches users. `main` is protected, so only the user can clear
+- Rationale: the user decides what reaches users. `main` has branch protection, so only the user can clear
   its required review.

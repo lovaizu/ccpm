@@ -26,8 +26,8 @@
             },
             {
               "about": "The version of the checks",
-              "decided": "lefthook.yml and the CI job prose name the first release of lovaizu/checks that reads all text, which lovaizu/checks#6 makes",
-              "by": "reasoning"
+              "decided": "lefthook.yml and the CI job prose name the release that lovaizu/checks#12 makes. It reads in each file the text that the file's format holds as prose, by a table that it takes from each format's spec and tests cell by cell, as fixing one misreading at a time after a consumer shows it never ends",
+              "by": "user"
             },
             {
               "about": "The code that goes whole",
@@ -58,7 +58,17 @@
       "status": "doing",
       "intents": [
         {"id": "Q1", "good": false, "decisions": []},
-        {"id": "Q2", "good": false, "decisions": []},
+        {
+          "id": "Q2",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The template's form in ccpm",
+              "decided": "a slot reads `` `<name>` ``. A note is a GitHub note whose first line is `DELETE_TEMPLATE_COMMENT:`, or in JSON a key `DELETE_TEMPLATE_COMMENT`. A sequence is Mermaid and any other figure SVG, with its skeleton at `images/template-<name>.svg`, as GitHub shows each of these unchanged",
+              "by": "reasoning"
+            }
+          ]
+        },
         {"id": "Q3", "good": false, "decisions": []},
         {"id": "Q4", "good": false, "decisions": []},
         {"id": "Q5", "good": false, "decisions": []},
@@ -106,8 +116,9 @@
           "good": false,
           "decisions": [
             {
-              "about": "How the maker checks a best practice, with no answer key written by the AI it judges and no count standing in for a judgment of a state",
-              "decided": null
+              "about": "How the maker checks a best practice",
+              "decided": "by reading it whole and judging two things: that each question asks what its user essentially intends, and that a maker follows each practice without hesitation. No method and no count stands in for that reading. A best practice covers no case in full at first: once the product vision trial shows the deliverables closer to the goal, it ships and gets better in use",
+              "by": "user"
             }
           ]
         }
