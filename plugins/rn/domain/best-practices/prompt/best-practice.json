@@ -140,7 +140,7 @@
     {
       "id": "Q17",
       "about": "the whole",
-      "what": "Run several times on requests held back from its making, of each kind it's for and on each model it runs on, does the AI do the task as the one who asked for it means on every run?"
+      "what": "Trying a prompt that runs more than once, on requests held back from its making, of each kind it's for, several times on each model it runs on, does the AI do the task as the one who asked for it means on every run?"
     }
   ],
   "practices": [
@@ -693,8 +693,8 @@
         "regression evals"
       ],
       "thinking": "Hold some real requests back from the making, as the writer mends the prompt on the requests they see, and only requests it hasn't met show whether it holds beyond them. Run each with a fresh AI given only the prompt and what a run gives it, several times, on each model the prompt runs on, as a prompt that leads one model well can leave a smaller one short and over-explain to a larger one. Count a task passed only where every run passes, such as by pass^k, where the caller counts on the result each time, and by pass@k only where one success among tries is enough. Read the records of the runs, not only their counts. Trace each shortfall to the goal, a question, or a practice, mend it there, and run again on new requests held back. Keep the tasks that pass as regression evals, run on each change to the prompt or to the model.",
-      "applies": "Every prompt before its first use, and again after each change to it or to the model it runs on.",
-      "excludes": "A trial shows whether the whole works, not whether each grader judges right, which the kept records of Q16 show.",
+      "applies": "Every prompt that runs more than once, before its first use and again after each change to it or to the model it runs on.",
+      "excludes": "A brief written for one run, such as a task handed to one subagent, has no requests to hold back, as its one run is its use. Its caller checks the result it hands back against the purpose, as Q12 says. A trial shows whether the whole works, not whether each grader judges right, which the kept records of Q16 show.",
       "cost": "Requests held back can't shape the prompt, so the writer needs more real requests than they write from, and each trial runs the prompt several times on each model.",
       "sources": [
         {

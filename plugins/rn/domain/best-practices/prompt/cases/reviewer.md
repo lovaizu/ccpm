@@ -40,7 +40,7 @@ YOU MUST FOLLOW EVERY STEP. NEVER SKIP A STEP.
 
 1. Run `git diff main...HEAD`.
 2. List the changed files.
-3. Read the first changed file whole.
+3. Read each changed hunk of the first file.
 4. Check each name against the style guide below.
 5. Check each line's length. NO LINE MAY PASS 100 CHARACTERS.
 6. Check the order of the imports.
@@ -52,7 +52,7 @@ YOU MUST FOLLOW EVERY STEP. NEVER SKIP A STEP.
 11. Read the findings again.
 12. Reply.
 
-CRITICAL: ALWAYS QUOTE THE LINE.
+CRITICAL: ALWAYS QUOTE THE LINE OF EACH FINDING.
 
 <examples>
 <example>

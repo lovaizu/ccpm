@@ -66,4 +66,4 @@ Report when done.
 | Q14 | yes | Each instruction stands once, and none pulls against another. |
 | Q15 | yes | The brief is short, and each line bears on the task. |
 | Q16 | n/a | A brief for one run has no suite, and its caller checks the result. |
-| Q17 | no | Its one run wrote the code before the tests, the order the brief meant to hold. |
+| Q17 | n/a | A brief for one run has no requests to hold back, as its one run is its use, and its caller checks the result. |

@@ -43,7 +43,7 @@ The AI that runs the prompt does the task as the one who asked for it means, in 
 | Q14 | body, references | Reading the prompt once, does the AI meet each instruction in one place, each thing under one term, and no two instructions that pull apart, so that it spends no reasoning on reconciling them and never follows the wrong one? |
 | Q15 | body, references | Reading the prompt, does the AI meet only lines that change what it does, with the detail that only some runs need in a file it reads then, so that its attention goes to what counts in its case? |
 | Q16 | evals | Trying a prompt that runs more than once, does the maintainer have tasks drawn from real failures, where a behavior should happen and where it shouldn't, each run graded by code where code can tell and by a judge proven on kept records where it can't, so that a failing eval points at the prompt and not at the eval? |
-| Q17 | the whole | Run several times on requests held back from its making, of each kind it's for and on each model it runs on, does the AI do the task as the one who asked for it means on every run? |
+| Q17 | the whole | Trying a prompt that runs more than once, on requests held back from its making, of each kind it's for, several times on each model it runs on, does the AI do the task as the one who asked for it means on every run? |
 
 ## Practices
 
@@ -559,7 +559,7 @@ The evals take more work than the first prompt, and each judge needs its own kep
 
 ### Q17
 
-Run several times on requests held back from its making, of each kind it's for and on each model it runs on, does the AI do the task as the one who asked for it means on every run?
+Trying a prompt that runs more than once, on requests held back from its making, of each kind it's for, several times on each model it runs on, does the AI do the task as the one who asked for it means on every run?
 
 **Name**
 
@@ -571,11 +571,11 @@ Hold some real requests back from the making, as the writer mends the prompt on 
 
 **Applies**
 
-Every prompt before its first use, and again after each change to it or to the model it runs on.
+Every prompt that runs more than once, before its first use and again after each change to it or to the model it runs on.
 
 **Excludes**
 
-A trial shows whether the whole works, not whether each grader judges right, which the kept records of Q16 show.
+A brief written for one run, such as a task handed to one subagent, has no requests to hold back, as its one run is its use. Its caller checks the result it hands back against the purpose, as Q12 says. A trial shows whether the whole works, not whether each grader judges right, which the kept records of Q16 show.
 
 **Cost**
 
