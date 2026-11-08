@@ -1,0 +1,79 @@
+{
+ "met": [
+  {
+   "question": "Q5",
+   "lines": [
+    "dev/rn/architecture.md:324",
+    "dev/rn/images/components.svg:50",
+    "dev/rn/images/components.svg:57",
+    "dev/rn/images/components.svg:60",
+    "dev/rn/images/components.svg:66",
+    "dev/rn/images/components.svg:75",
+    "dev/rn/images/components.svg:78",
+    "dev/rn/images/components.svg:81",
+    "dev/rn/architecture.md:328",
+    "dev/rn/architecture.md:329",
+    "dev/rn/architecture.md:330",
+    "dev/rn/architecture.md:332",
+    "dev/rn/architecture.md:335",
+    "dev/rn/architecture.md:341",
+    "dev/rn/architecture.md:345",
+    "dev/rn/architecture.md:347",
+    "dev/rn/architecture.md:353",
+    "dev/rn/architecture.md:355",
+    "dev/rn/architecture.md:357",
+    "dev/rn/architecture.md:362",
+    "dev/rn/architecture.md:800",
+    "dev/rn/architecture.md:827",
+    "dev/rn/architecture.md:833"
+   ]
+  },
+  {
+   "question": "Q6",
+   "lines": [
+    "dev/rn/architecture.md:392",
+    "dev/rn/architecture.md:394",
+    "dev/rn/architecture.md:396",
+    "dev/rn/architecture.md:402",
+    "dev/rn/architecture.md:407",
+    "dev/rn/architecture.md:411",
+    "dev/rn/architecture.md:413",
+    "dev/rn/architecture.md:415",
+    "dev/rn/architecture.md:420",
+    "dev/rn/images/data-model.svg:104",
+    "dev/rn/images/data-model.svg:108",
+    "dev/rn/images/data-model.svg:121",
+    "dev/rn/images/data-model.svg:133",
+    "dev/rn/images/data-model.svg:175",
+    "dev/rn/images/data-model.svg:215",
+    "dev/rn/images/data-model.svg:219",
+    "dev/rn/images/data-model.svg:224",
+    "dev/rn/images/data-model.svg:228",
+    "dev/rn/images/data-model.svg:236"
+   ]
+  },
+  {
+   "question": "Q8",
+   "lines": [
+    "dev/rn/architecture.md:306",
+    "dev/rn/architecture.md:308",
+    "dev/rn/architecture.md:310",
+    "dev/rn/architecture.md:314",
+    "dev/rn/architecture.md:318",
+    "dev/rn/architecture.md:326",
+    "dev/rn/architecture.md:327",
+    "dev/rn/architecture.md:426",
+    "dev/rn/architecture.md:427",
+    "dev/rn/architecture.md:428",
+    "dev/rn/architecture.md:429",
+    "dev/rn/architecture.md:430"
+   ]
+  }
+ ],
+ "not_met": [
+  {
+   "question": "Q7",
+   "lacks": "Following S2, which carries 'the plan shown with its first point' at dev/rn/architecture.md:311, the developer reaches the step 'The main conversation shows the plan where it's new' at dev/rn/architecture.md:514. They can't see where the main conversation gets the plan, or how it knows that the plan is new. No arrow in the sequence or in the components figure hands it the plan. tree.py points gives only the points open with their intents and inputs, at dev/rn/architecture.md:480. A Result's message names only the report with done and the point with open, at dev/rn/architecture.md:404. The main conversation never reads the design tree itself, at dev/rn/architecture.md:105. So the developer building this step doesn't know which component hands the plan on, along which arrow, or in what data. Every other step of S1 to S4 names who acts, the arrow, and the data."
+  }
+ ]
+}

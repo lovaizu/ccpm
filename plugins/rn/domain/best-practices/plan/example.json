@@ -306,7 +306,7 @@
         {"id": "Q5", "good": true, "decisions": []},
         {
           "id": "Q6",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "How a Change and a Cut reach the answers",
@@ -331,12 +331,17 @@
           "decisions": [
             {
               "about": "A push that waited on the user",
-              "decided": "once the user gives what was missing for a push, the main conversation calls /rn:up, and the planner has tree.py push the kept commits and open the draft pull request, as the other paths of S4 go",
+              "decided": "once the user gives what was missing for a push, the main conversation calls /rn:up, and the planner runs tree.py commit again, which pushes the kept commits and opens the draft pull request, as the other paths of S4 go",
               "by": "reasoning"
             },
             {
               "about": "A run the user picks",
               "decided": "where the user picks one of several runs, the main conversation calls /rn:up with a Request that carries the picked run's folder. tree.py status reads that run's Design tree and gives the deliverable not yet done with its last round, and the data model names both, and S3 draws the step",
+              "by": "reasoning"
+            },
+            {
+              "about": "The plan the main conversation shows",
+              "decided": "tree.py plan gives the main conversation the deliverables in order, each with its status, marked new where the planner's last Change added or reordered a deliverable. The main conversation shows a new plan before the first point, and S2 draws the step",
               "by": "reasoning"
             }
           ]
@@ -400,6 +405,11 @@
             {
               "about": "How often a round runs throwaway.py",
               "decided": "the generator runs throwaway.py on each pass of its own check, and the evaluators read the try record of its last pass, which the round keeps",
+              "by": "reasoning"
+            },
+            {
+              "about": "The commands the planner runs on tree.py",
+              "decided": "the planner runs tree.py write, commit, and report. commit commits and pushes, and once the user gives what a push lacked, the planner runs commit again, which pushes the kept commits. The components figure and every sequence name these three",
               "by": "reasoning"
             }
           ]

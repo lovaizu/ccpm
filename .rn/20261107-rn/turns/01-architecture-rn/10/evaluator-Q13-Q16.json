@@ -1,0 +1,103 @@
+{
+ "met": [
+  {
+   "question": "Q13",
+   "lines": [
+    "dev/rn/architecture.md:880",
+    "dev/rn/architecture.md:886",
+    "dev/rn/architecture.md:889",
+    "dev/rn/architecture.md:894",
+    "dev/rn/architecture.md:910",
+    "dev/rn/architecture.md:916",
+    "dev/rn/architecture.md:922",
+    "dev/rn/architecture.md:936",
+    "dev/rn/architecture.md:950",
+    "dev/rn/images/tests.svg:65",
+    "dev/rn/images/tests.svg:66",
+    "dev/rn/images/tests.svg:96",
+    "dev/rn/images/tests.svg:108",
+    "dev/rn/images/tests.svg:161",
+    "dev/rn/images/tests.svg:180",
+    "plugins/rn/domain/best-practices/plugin/best-practice.md:312"
+   ]
+  },
+  {
+   "question": "Q14",
+   "lines": [
+    "dev/rn/architecture.md:48",
+    "dev/rn/architecture.md:53",
+    "dev/rn/architecture.md:68",
+    "dev/rn/architecture.md:79",
+    "dev/rn/architecture.md:94",
+    "dev/rn/architecture.md:107",
+    "dev/rn/architecture.md:119",
+    "dev/rn/architecture.md:144",
+    "dev/rn/architecture.md:163",
+    "dev/rn/architecture.md:183",
+    "dev/rn/architecture.md:202",
+    "dev/rn/architecture.md:213",
+    "dev/rn/architecture.md:234",
+    "dev/rn/architecture.md:259",
+    "dev/rn/architecture.md:271",
+    "dev/rn/architecture.md:288",
+    "dev/rn/architecture.md:300",
+    "dev/rn/architecture.md:364",
+    "dev/rn/architecture.md:373",
+    "dev/rn/architecture.md:376",
+    "dev/rn/architecture.md:379",
+    "dev/rn/architecture.md:384",
+    "dev/rn/architecture.md:466",
+    "dev/rn/architecture.md:522",
+    "dev/rn/architecture.md:610",
+    "dev/rn/architecture.md:615",
+    "dev/rn/architecture.md:620",
+    "dev/rn/architecture.md:623",
+    "dev/rn/architecture.md:628",
+    "dev/rn/architecture.md:666",
+    "dev/rn/architecture.md:672",
+    "dev/rn/architecture.md:791",
+    "dev/rn/architecture.md:796",
+    "dev/rn/architecture.md:800",
+    "dev/rn/architecture.md:805",
+    "dev/rn/architecture.md:812",
+    "dev/rn/architecture.md:817",
+    "dev/rn/architecture.md:862",
+    "dev/rn/architecture.md:867",
+    "dev/rn/architecture.md:899",
+    "dev/rn/architecture.md:905",
+    "dev/rn/architecture.md:910",
+    "dev/rn/architecture.md:916",
+    "dev/rn/architecture.md:922",
+    "dev/rn/architecture.md:930",
+    "dev/rn/architecture.md:936",
+    "dev/rn/architecture.md:943",
+    "dev/rn/architecture.md:950",
+    "dev/rn/architecture.md:954",
+    "dev/rn/architecture.md:958",
+    "dev/rn/architecture.md:962",
+    "dev/rn/architecture.md:970"
+   ]
+  },
+  {
+   "question": "Q16",
+   "lines": [
+    "dev/rn/architecture.md:328",
+    "dev/rn/architecture.md:347",
+    "dev/rn/architecture.md:353",
+    "dev/rn/architecture.md:394",
+    "dev/rn/architecture.md:413",
+    "dev/rn/architecture.md:434",
+    "dev/rn/architecture.md:540",
+    "dev/rn/architecture.md:547",
+    "dev/rn/architecture.md:826",
+    "dev/rn/images/tests.svg:65"
+   ]
+  }
+ ],
+ "not_met": [
+  {
+   "question": "Q15",
+   "lacks": "Building tree.py's commands, the developer meets two answers to what the planner runs on it. The components figure at dev/rn/images/components.svg:123 and dev/rn/images/components.svg:124 has the planner run only `write`, `commit`, and `report`, handing it a Tree edit. S4 at dev/rn/architecture.md:746 has the planner run `push` and hand it a Commit once the user gives what a push lacked, and dev/rn/architecture.md:596 and dev/rn/architecture.md:734 have `commit` push as well. So the developer still has to choose between the figure and the sequence on whether tree.py has a `push` command and what the planner hands it."
+  }
+ ]
+}
