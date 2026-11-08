@@ -327,7 +327,7 @@
         {"id": "Q2", "good": true, "decisions": []},
         {
           "id": "Q3",
-          "good": true,
+          "good": false,
           "decisions": [
             {
               "about": "A turn",
@@ -363,12 +363,17 @@
               "about": "The evaluator seeks the good",
               "decided": "an evaluator reads as the deliverable's people, and says for each intent where the deliverable meets it, or what the people still lack to reach good. It hunts no defect that the people would never meet",
               "by": "reasoning"
+            },
+            {
+              "about": "A small point no decision holds",
+              "decided": "the generator settles a point no decision holds where the purpose and the best practice settle it one way, such as a phrase or the form of a printed line, and writes it as a decision by maker. A choice between ways that serve the people differently, or one that touches what the user approved, goes open to the main conversation",
+              "by": "reasoning"
             }
           ]
         },
         {
           "id": "Q4",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The commands that try a deliverable",
@@ -385,6 +390,11 @@
             {
               "about": "How a Change and a Cut reach the answers",
               "decided": "a Change and a Cut reach the evaluators' answers through the Round that holds them, and the data model draws both joins",
+              "by": "reasoning"
+            },
+            {
+              "about": "How a point found in a turn reaches the main conversation",
+              "decided": "a role that finds a point open names it in its Result, which ends the run. The main conversation calls /rn:up with it, the planner writes it into the tree as a decision with decided null, and tree.py points gives it to the main conversation. The data model joins Result to Point through the planner's Change, and the sequence of a turn draws the path",
               "by": "reasoning"
             }
           ]
@@ -404,10 +414,20 @@
         {"id": "Q9", "good": true, "decisions": []},
         {"id": "Q10", "good": true, "decisions": []},
         {"id": "Q11", "good": true, "decisions": []},
-        {"id": "Q12", "good": true, "decisions": []},
+        {
+          "id": "Q12",
+          "good": false,
+          "decisions": [
+            {
+              "about": "When a product vision trial fails",
+              "decided": "a product vision trial fails when the stand-in for a deliverable's people can't use it for the use the walkthrough shows, or when KR1.2 or KR1.3 comes out worse than the last trial's, and the failure names the use or the key result",
+              "by": "reasoning"
+            }
+          ]
+        },
         {
           "id": "Q13",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The parts left to the trial",
@@ -444,6 +464,11 @@
             {
               "about": "Which calls of the main conversation the guard holds",
               "decided": "the guard holds the main conversation's starts of roles, its TaskStop, and its calls of /rn:up, by the routes, and none of its other calls, such as its writes",
+              "by": "reasoning"
+            },
+            {
+              "about": "How often a round runs throwaway.py",
+              "decided": "the generator runs throwaway.py on each pass of its own check, and the evaluators read the try record of its last pass, which the round keeps",
               "by": "reasoning"
             }
           ]

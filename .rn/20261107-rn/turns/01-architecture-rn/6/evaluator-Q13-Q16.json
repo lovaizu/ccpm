@@ -1,0 +1,63 @@
+{
+ "met": [
+  {
+   "question": "Q13",
+   "lines": [
+    "dev/rn/images/tests.svg",
+    "dev/rn/architecture.md:812",
+    "dev/rn/architecture.md:818",
+    "dev/rn/architecture.md:821",
+    "dev/rn/architecture.md:841",
+    "dev/rn/architecture.md:847",
+    "dev/rn/architecture.md:853",
+    "dev/rn/architecture.md:866",
+    "dev/rn/architecture.md:881"
+   ]
+  },
+  {
+   "question": "Q14",
+   "lines": [
+    "dev/rn/architecture.md:45",
+    "dev/rn/architecture.md:50",
+    "dev/rn/architecture.md:65",
+    "dev/rn/architecture.md:76",
+    "dev/rn/architecture.md:89",
+    "dev/rn/architecture.md:102",
+    "dev/rn/architecture.md:114",
+    "dev/rn/architecture.md:139",
+    "dev/rn/architecture.md:158",
+    "dev/rn/architecture.md:173",
+    "dev/rn/architecture.md:184",
+    "dev/rn/architecture.md:202",
+    "dev/rn/architecture.md:225",
+    "dev/rn/architecture.md:237",
+    "dev/rn/architecture.md:254",
+    "dev/rn/architecture.md:266",
+    "dev/rn/architecture.md:325",
+    "dev/rn/architecture.md:420",
+    "dev/rn/architecture.md:476",
+    "dev/rn/architecture.md:548",
+    "dev/rn/architecture.md:604",
+    "dev/rn/architecture.md:723",
+    "dev/rn/architecture.md:794",
+    "dev/rn/architecture.md:836"
+   ]
+  },
+  {
+   "question": "Q16",
+   "lines": [
+    "dev/rn/architecture.md:293",
+    "dev/rn/architecture.md:295",
+    "dev/rn/architecture.md:380",
+    "dev/rn/architecture.md:388",
+    "dev/rn/architecture.md:756"
+   ]
+  }
+ ],
+ "not_met": [
+  {
+   "question": "Q15",
+   "lacks": "Building the generator's part, its double in the architecture tests, or throwaway.py's try record, the developer can't tell how often a round runs throwaway.py. The components choice at dev/rn/architecture.md:341-344 says 'one try record for the round lets them judge the same run of the commands', and Tests at dev/rn/architecture.md:850 says 'where the generator runs it once a round', so one run for each round. The sequence of a deliverable made in its turn, at dev/rn/architecture.md:498-503, runs it inside the loop of the maker's own check, once for each pass in which the generator brings the deliverable in line again. So the developer must choose between the two, and between which of several try records the evaluators read."
+  }
+ ]
+}

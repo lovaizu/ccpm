@@ -1,0 +1,66 @@
+{
+ "met": [
+  {
+   "question": "Q9",
+   "lines": [
+    "dev/rn/images/deployment.svg:58",
+    "dev/rn/images/deployment.svg:59",
+    "dev/rn/images/deployment.svg:61",
+    "dev/rn/images/deployment.svg:74",
+    "dev/rn/images/deployment.svg:98",
+    "dev/rn/images/deployment.svg:105",
+    "dev/rn/architecture.md:703",
+    "dev/rn/architecture.md:706",
+    "dev/rn/architecture.md:711",
+    "dev/rn/architecture.md:714",
+    "dev/rn/architecture.md:719",
+    "dev/rn/architecture.md:737",
+    "dev/rn/architecture.md:744",
+    "dev/rn/architecture.md:749",
+    "dev/rn/architecture.md:355"
+   ]
+  },
+  {
+   "question": "Q10",
+   "lines": [
+    "dev/rn/architecture.md:758",
+    "dev/rn/architecture.md:761",
+    "dev/rn/architecture.md:764",
+    "dev/rn/architecture.md:765",
+    "dev/rn/architecture.md:769",
+    "dev/rn/architecture.md:771",
+    "dev/rn/architecture.md:773",
+    "dev/rn/architecture.md:781",
+    "dev/rn/architecture.md:785",
+    "dev/rn/architecture.md:787",
+    "dev/rn/architecture.md:790",
+    "dev/rn/architecture.md:794",
+    "dev/rn/architecture.md:799"
+   ]
+  },
+  {
+   "question": "Q11",
+   "lines": [
+    "dev/rn/images/tests.svg:48",
+    "dev/rn/images/tests.svg:56",
+    "dev/rn/images/tests.svg:104",
+    "dev/rn/images/tests.svg:116",
+    "dev/rn/images/tests.svg:130",
+    "dev/rn/images/tests.svg:146",
+    "dev/rn/architecture.md:812",
+    "dev/rn/architecture.md:814",
+    "dev/rn/architecture.md:816",
+    "dev/rn/architecture.md:841",
+    "dev/rn/architecture.md:847",
+    "dev/rn/architecture.md:866",
+    "dev/rn/architecture.md:881"
+   ]
+  }
+ ],
+ "not_met": [
+  {
+   "question": "Q12",
+   "lacks": "Writing a product vision trial, the developer can't tell when it passes beyond the runs coming through every step. The figure at dev/rn/images/tests.svg:168-174 has a stand-in for each deliverable's people judge KR1.1 by using it, and measures KR1.2 and KR1.3 against the last trial's. It doesn't say whether a run fails the trial when that stand-in couldn't use the deliverable, or when KR1.2 or KR1.3 got worse. So a failing trial can't name the use it breaks, and a trial can pass while the people can't use what rn handed over. Unit and architecture give what runs real, the doubles, the coverage and what each test checks, at dev/rn/images/tests.svg:149-161 and dev/rn/architecture.md:853-858."
+  }
+ ]
+}
