@@ -4,13 +4,16 @@ This document says how the parts of rn give [its product vision](../../../../../
 work as a design tree in the user's repository, which only the code of `tree.py` reads and writes.
 The main conversation settles each point of the design with the user, one at a time, and starts the
 planner with it. The planner has `tree.py` write the point into the tree, and lays out the plan back
-from the goal. Once the main conversation has settled a deliverable's points, a turn makes it: the
-generator makes it by its kind's best practice, and fresh evaluators judge each intent as the
-deliverable's people would. An evaluator gets the deliverable and its intents alone. A point that a
-turn finds open goes back to the main conversation. Lane, the plugin that holds a plugin's roles to
-their steps, holds each role to the steps of the practices it carries out and the main conversation
-to the routes, and lets a role start only with the text that `tree.py` cut for it. `tree.py` commits
-each change on the work's branch and keeps one draft pull request for the user to merge.
+from the goal. Once the main conversation has settled a deliverable's points, a turn makes it from
+them and its kind's best practice, round after round. The generator makes the deliverable whole
+from the design and answers each intent as its people would, and fresh evaluators, reading as those
+people, say where it meets each intent or what they still lack. A shortfall goes back to the
+decision that serves it, and the next round makes the deliverable again from the design. A point
+that only the user can settle goes back to the main conversation. Lane, the plugin that holds a
+plugin's roles to their steps, holds each role to the steps of the practices it carries out and the
+main conversation to the routes, and lets a role start only with the text that `tree.py` cut for
+it. `tree.py` commits each change on the work's branch and keeps one draft pull request for the user
+to merge.
 
 ## Principles
 
@@ -57,6 +60,17 @@ practice gets a meta deliverable before its first deliverable, made by the meta 
 takes needs making again. The people it's for then can't use it as handed over, as KR1.1 counts,
 and the user waits longer, which KR1.3 measures.
 
+### One round makes a deliverable whole
+
+The planner makes each deliverable one that a generator makes whole in a round and an evaluator
+reads whole. A larger work, such as a plugin's code, splits into a deliverable for each component of
+its architecture, each after the components it takes from. The deliverable of the plugin as a whole
+comes after them, and checks how they join by the architecture tests.
+
+*Why*: a deliverable larger than a round comes out in pieces that no one design holds together, and
+an evaluator that reads only part of it answers an intent on lines it never read. Its people then
+meet what no one read whole, as KR1.1 counts.
+
 ### The main conversation settles, the planner writes
 
 The main conversation settles each point of the design, in the user's conversation, one at a time.
@@ -74,11 +88,13 @@ around it would go on saying what held before. A deliverable built on them then 
 ### Each role gets only its cut
 
 `tree.py` cuts each role's part of the tree, and the main conversation starts the role with that
-text alone. No role, and not the main conversation, reads the design tree itself.
+text alone. No one adds a fix or a hint to a start on the way. No role, and not the main
+conversation, reads the design tree itself.
 
 *Why*: a role that reads the whole tree takes up decisions that aren't its own, and an evaluator
 that reads it judges whether the deliverable follows the design, not what its people get. A
-deliverable its people can't use then passes, as KR1.1 counts.
+deliverable its people can't use then passes, as KR1.1 counts. A fix added to a start reaches the
+deliverable beside the design, as [Good from the root](#good-from-the-root) rules out.
 
 ### The evaluator has only what the deliverable's people have
 
@@ -92,15 +108,58 @@ design or the practices checks how its maker made the deliverable, not what it g
 KR1.1 counts. An evaluator that isn't told of an accepted shortfall sends it back every round,
 and the turn never ends, which KR1.3 measures.
 
-### A turn makes until every intent is good
+### A turn makes a deliverable until every intent is good
 
-A turn's generator makes the deliverable, and its evaluators judge it, round after round, until
-every intent of the kind is good. A deliverable then gets a turn of its own for how it reads, by
-`refactor-doc` for a document or `refactor-code` for code, which changes nothing it says.
+A turn is a unit inside `/rn:up`, with no skill of its own, and Lane holds its flow by the routes.
+
+- **It starts from** the decisions the main conversation settled for the deliverable, as `tree.py`
+  cuts them, and the best practice of the deliverable's kind. It starts once the planner gives
+  `ready`.
+- **Its phases** come in order. The first makes what the deliverable says, by its kind's best
+  practice. The second makes how it reads, by `refactor-doc` for a document or `refactor-code` for
+  code, and changes nothing it says.
+- **Each phase goes round after round**: in each round, the generator makes the deliverable and
+  the evaluators answer each intent of the phase, until every intent is good.
+- **It ends** once every intent of both phases is good, which the planner writes into the tree as
+  it commits the deliverable. Or it stops at a point that only the user can settle.
+- **Its rounds' records** lie in the run's folder, under `turns/`, as
+  [Directory structure](#directory-structure) shows.
 
 *Why*: a deliverable handed over with an intent not met fails its people, as KR1.1 counts. A
-sentence that a turn polishes before what it says holds needs polishing again, which KR1.3
-measures.
+sentence polished before what it says holds needs polishing again, which KR1.3 measures.
+
+### Good from the root
+
+A shortfall goes back to the decision that serves it. `tree.py` cuts the next round's generator
+start with the deliverable's decisions and each shortfall beside the intent it falls short of. The
+generator makes the deliverable again from the design, and mends no line beside it.
+
+*Why*: a fix laid on the deliverable beside the design is a part that no decision holds. The next
+round loses it, or keeps it though no one settled it, and a fix for one evaluator's finding breaks
+an intent that another found met. The people then get a deliverable no design holds, as KR1.1
+counts.
+
+### The maker checks first
+
+Before it gives `made`, the generator answers each intent of the phase the way the evaluators do,
+as the deliverable's people, with the lines that meet it or what they still lack. Where it would
+answer one not met, it makes the deliverable again from the design. Only the evaluators' answers
+make an intent good.
+
+*Why*: a lack that the maker could have seen otherwise costs a round of evaluators to find, and the
+user waits longer, which KR1.3 measures. The maker reads what it meant, not only what it wrote, so
+its own answer making an intent good would let a deliverable its people can't use pass, as KR1.1
+counts.
+
+### The evaluator seeks the good
+
+An evaluator reads as the deliverable's people. For each intent, it says where the deliverable
+meets it, or what the people still lack to reach good. It hunts no defect that the people would
+never meet.
+
+*Why*: a finding that the people never meet sends the deliverable back for a change that gives them
+nothing, and the turn runs longer, which KR1.3 measures. A fix for it can break what they do meet,
+as KR1.1 counts.
 
 ### A point found open goes back to the main conversation
 
@@ -109,8 +168,8 @@ settle, the run stops there. The main conversation settles the point, and the tu
 from the design. Where only a change to a decision the user settled would meet a shortfall, rn takes
 it to the user only with a fact their answer didn't weigh. Otherwise it stays an accepted shortfall.
 
-*Why*: a fix made beside the design is a part that no decision holds. The next round loses it, or
-keeps it though no one settled it, as KR1.1 counts. Asking the user again what they settled
+*Why*: a role that settles such a point itself makes a part that the design doesn't hold, which
+[Good from the root](#good-from-the-root) rules out for a fix. Asking the user again what they settled
 spends their time and gives them nothing to weigh, as KR1.2 counts.
 
 ### Tried in a throwaway copy
@@ -133,7 +192,7 @@ what the step was there to make sound, as KR1.1 counts.
 ### The repository holds the work
 
 `tree.py` commits every change to the tree on the work's own branch as the planner writes it, with
-its grounds in the commit message. It commits a deliverable once its last turn is good, and keeps
+its grounds in the commit message. It commits a deliverable once its turn ends good, and keeps
 one draft pull request for the work. The user merges it, and rn never does. A run's files lie in
 `.rn/<yyyymmdd>-<goal>/`, and `/rn:up` alone goes on from them.
 
@@ -165,14 +224,14 @@ What each decides alone:
 - **main conversation**: whether a point is the user's or settled by the purpose or a best
   practice, how it's settled, the words it's put in, and when a deliverable has no point left.
 - **planner**: the goal as drafted from the request, the plan, each deliverable's kind, inputs and
-  preconditions, whether each node a change touches still holds, and each status and intent made
-  good from a turn's answers.
-- **generator**: the deliverable, each small point of making it, such as a phrase, and the points
-  the design leaves open.
-- **evaluator**: whether the deliverable meets each intent of its group, and the points only the
-  user can settle.
+  preconditions, each deliverable's size, so that a round makes it whole, whether each node a
+  change touches still holds, and each status and intent made good from the evaluators' answers.
+- **generator**: the deliverable, each small point of making it, such as a phrase, its own answer
+  to each intent before it gives `made`, and the points the design leaves open.
+- **evaluator**: where the deliverable meets each intent of its group for its people, or what they
+  still lack, and the points only the user can settle.
 - **tree.py**: the form of the design tree and of a change, the order of the deliverables, each
-  role's cut, the nodes an edit touches, each turn's round and groups, the points open for the
+  role's cut, the nodes an edit touches, each turn's phase, round and groups, the points open for the
   main conversation, each commit, the branch, and the draft pull request, and the report of each
   decision taken without asking, read from the run's commits.
 - **throwaway.py**: where a deliverable's commands run, and what of them the try record keeps.
@@ -214,8 +273,10 @@ These choices in the components are ones a developer would question:
 - **Cut**: the text `tree.py` gives a role to start with: its run values and its part of the tree.
 - **Point**: a decision the main conversation settles, whether the tree holds it open or a turn
   found it.
+- **Turn**: the making of one deliverable from its settled decisions, through both phases.
+- **Round**: one making of the deliverable in a phase, and the evaluators' answers to it.
 - **Making record**: the generator's record of a round, `generator.json`: what it made, each small
-  point it decided, and each point it found open.
+  point it decided, its own answer to each intent, and each point it found open.
 - **Answers**: an evaluator's record of a round, `evaluator-<group>.json`: each intent met with the
   lines that meet it, or not met with what the people still lack.
 - **Try record**: the commands that try a deliverable and what each gave, `throwaway.txt`.
@@ -288,7 +349,7 @@ sequenceDiagram
     T-->>M: the planner's cut (Cut)
     M->>P: starts it (Cut)
     opt the goal is newly the user's
-      Note over P: lays out the deliverables back from the goal, a meta deliverable before the first of a kind with no best practice
+      Note over P: lays out the deliverables back from the goal, each one a round makes whole, a meta deliverable before the first of a kind with no best practice
     end
     loop until the tree holds and each node touched is answered
       P->>T: write, with each decision (Tree edit)
@@ -330,40 +391,43 @@ sequenceDiagram
   participant R as run's folder and the deliverable
   M->>T: start, for the generator
   T->>R: makes the next round's folder (Round)
-  T-->>M: the generator's cut: the deliverable's decisions, its kind, and last round's shortfalls (Cut)
+  T-->>M: the generator's cut: the deliverable's decisions, its kind, its phase, and each of last round's shortfalls beside its intent (Cut)
   M->>G: starts it (Cut)
-  G->>R: makes the deliverable by its kind's practices, and writes its record (Making record)
+  loop until it would answer each intent met, or finds a point open
+    G->>R: makes the deliverable from the design, by its phase's practices
+    G->>W: runs it
+    W->>R: copies the repository, runs the deliverable's commands there, and writes what they gave (Try record)
+    G->>R: answers each intent as the deliverable's people, and writes its record (Making record)
+  end
   alt the design leaves a point open
     G-->>M: gives open
     Note over M,G: The run ends, and the main conversation settles the point, as S2 draws.
-  else every point is made
-    G->>W: runs it
-    W->>R: copies the repository, runs the deliverable's commands there, and writes what they gave (Try record)
+  else every intent is met by its own answers
     G-->>M: gives made
     M->>T: start, for each evaluator
-    T-->>M: a cut for each group of the kind's intents (Cut)
+    T-->>M: a cut for each group of the phase's intents (Cut)
     par one for each group, at once
       M->>E: starts it (Cut)
-      E->>R: reads the deliverable, its inputs, and the try record
-      E->>R: writes its answers (Answers)
+      E->>R: reads the deliverable, its inputs, and the try record, as its people
+      E->>R: writes where it meets each intent, or what its people still lack (Answers)
       E-->>M: gives open, more, or good
     end
     Note over M,E: Of the evaluators' results, the guard takes open, then more, then good.
     alt an evaluator gave open
       Note over M,E: The run ends, and the main conversation settles the point, as S2 draws.
     else one gave more
-      Note over M,G: The next round, from the shortfalls.
+      Note over M,G: The next round makes the deliverable again from the design, each shortfall beside its intent.
     else every one gave good
       M->>T: start, for the planner, with the turn's answers (Change)
       T-->>M: the planner's cut (Cut)
       M->>P: starts it (Cut)
       P->>T: write, with each intent good (Tree edit)
       T->>R: writes it (Design tree)
-      alt the turn was of what the deliverable says
+      alt the phase was of what the deliverable says
         P->>T: commit (Tree edit)
         P-->>M: gives ready
-        Note over M,G: The turn of how it reads, by refactor-doc or refactor-code.
-      else the turn was of how it reads
+        Note over M,G: The phase of how it reads, by refactor-doc or refactor-code.
+      else the phase was of how it reads
         P->>T: write, with the deliverable done (Tree edit)
         P->>T: commit, with the deliverable, and push (Tree edit)
         Note over P,T: S4 draws the commit and the pull request.
@@ -379,6 +443,16 @@ sequenceDiagram
   end
 ```
 
+- **A turn inside `/rn:up`, with no skill of its own,** over a skill for a turn: the user types
+  only `/rn:up`, as the walkthrough does, and the routes of one skill take the work from the
+  planner's `ready` through the rounds and back to the planner with no call between them. The cost:
+  `/rn:up`'s routes carry the results of every role.
+- **The generator making the whole deliverable again in each round** over mending the lines that
+  last round found short: each round's deliverable holds only what the design holds. The cost: a
+  round makes the whole deliverable, however small the shortfall.
+- **The generator answering each intent before it gives `made`** over leaving every answer to the
+  evaluators: a lack it can see costs no round of evaluators. The cost: the generator reads the
+  deliverable again as its people in each round.
 - **The rounds without a limit** over a turn that stops after a set number: a shortfall the design
   can't meet goes back as a point open, so a turn goes on only while the generator can meet what
   the evaluators find. The cost: a turn runs long while its evaluators keep finding new shortfalls.
@@ -513,6 +587,7 @@ dev/rn/
 .rn/<yyyymmdd>-<goal>/               Design tree, as design-tree.json
 .rn/<yyyymmdd>-<goal>/best-practices/<kind>/   a best practice made on the run
 .rn/<yyyymmdd>-<goal>/turns/<nn>-<deliverable>/<round>/   Making record, Answers, and Try record
+                                     of each Round, the rounds of both phases in order
 <the paths the plan gives>           each deliverable
 <temporary folder>/rn/<yyyymmdd>-<goal>/   the throwaway copy and home, and each Tree edit until
                                      tree.py commits it
