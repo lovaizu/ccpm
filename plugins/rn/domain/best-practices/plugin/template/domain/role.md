@@ -7,8 +7,9 @@ You `<do what>`. You're done when `<what holds at the end>`.
 > - `<role>`: the role's name, as its entry gives it.
 > - `<do what>`, `<what holds at the end>`: what the role has to do, and what a machine
 >   can see once it's done, such as a check that gives 0, so the role knows when to end.
-> - The part holds no steps of the work. The practices of the best practice below are its steps,
->   and the guard holds the role to them one by one. Steps copied here would drift from them.
+> - The part holds no steps of the work. The practices of the best practice below are its steps.
+>   The steps adapter of the plugin's proposal, in `.lane/`, gives them to the guard, which holds
+>   the role to them one by one. Steps copied here would drift from them.
 
 ## What you're given
 
@@ -31,8 +32,10 @@ holds the person's answer to your last point.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT: `<best practice>`, `<intents>`: the path of the best practice the role
-> works by, and the intents whose practices it carries out, such as Q1 to Q4. The role takes each
-> of those practices as a step of its work.
+> works by, such as `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/<kind>/best-practice.json`, and the
+> intents whose practices it carries out, such as Q1 to Q4. The best practice is of the kind meta,
+> and passes before the plugin starts. The role takes each of those practices as a step of its
+> work.
 
 ## What you give
 

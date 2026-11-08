@@ -12,21 +12,25 @@ The developer builds a Claude Code plugin whose roles work together to make some
 
 - [architecture](../architecture/best-practice.md)
 
+## Preconditions
+
+- [meta](../meta/best-practice.md)
+
 ## Intents
 
 | ID | About | Question |
 | --- | --- | --- |
 | Q1 | domain, skills, agents, hooks, scripts | Placing a file of the plugin, does the developer see which part takes the form Claude Code fixes and which holds the work's own knowledge, so that each job lies in one place and what the plugin knows outlives the agent it runs on? |
-| Q2 | agents, skills, domain | Starting a role, does the developer have it hold its whole part before its first call, each file the part names found wherever Claude Code installs the plugin, so that the role works from all it has to do? |
+| Q2 | agents, skills, domain, .lane | Starting a role, does the developer have it hold its whole part before its first call, each file the part names found wherever Claude Code installs the plugin, so that the role works from all it has to do? |
 | Q3 | domain | Writing a role's part, does the developer put in it only what the role has to do and which parts of the best practice it uses, so that the role takes the practices as the steps of its work and no copy of them drifts? |
 | Q4 | agents | Splitting the work into roles, does the developer give each job a role of its own with only what the job needs, so that nothing from other work leads a role astray? |
-| Q5 | skills, agents | Following a run from the person's request, does the developer see the main conversation start each role, put each point a role has for the person to them as given, and take the answer back word for word, so that no agent between them rewords a question or sums up an answer? |
-| Q6 | domain | Starting, resuming, or ending a role, can a machine check what passes between the main conversation and the role, so that no start or end goes by unchecked? |
-| Q7 | domain | Choosing how to keep a file that the plugin reads, does the developer keep it in a form that a script checks, so that a file out of form shows before anyone reads it? |
-| Q8 | hooks | Following a run from a role's end to the next start, does every run take the same moves, so that a stopped run goes on from its last move? |
-| Q9 | hooks | Where an instruction alone doesn't hold a step, does the developer have a hook stop the role and tell it the step again when it drifts, so that the step holds on every run? |
-| Q10 | hooks, scripts | Reading what a check gave, does the developer tell a pass from a check that couldn't run, so that nothing passes unchecked? |
-| Q11 | scripts | Checking a role's work, does the developer have a script or the project's own tools check all that a machine can see, so that an AI reads only for what no machine can? |
+| Q5 | skills, agents, domain | Following a run from the person's request, does the developer see the main conversation start each role, put each point a role has for the person to them as given, and take the answer back word for word, so that no agent between them rewords a question or sums up an answer? |
+| Q6 | domain | Starting, resuming, or ending a role, can a machine check what passes between the main conversation and the role, so that each role works from the run's values and the person's own words, and the run moves on by the result that the role gave? |
+| Q7 | domain | Choosing how to keep a file that the plugin reads, does the developer keep it in a form that a script checks, so that no role or person acts on a file out of form? |
+| Q8 | hooks, .lane | Following a run from a role's end to the next start, does every run take the same moves, so that a stopped run goes on from its last move? |
+| Q9 | hooks, .lane | Where an instruction alone doesn't hold a step, does the developer have a hook stop the role and tell it the step again when it drifts, so that the plugin's users get on every run what the step makes, not only on the runs where the role kept to it? |
+| Q10 | hooks, scripts | Reading what a check gave, does the developer tell a pass from a check that couldn't run, so that the plugin's users and its developer never act on a pass that no check made? |
+| Q11 | scripts | Checking a role's work, does the developer have a script or the project's own tools check all that a machine can see, so that the work reaches its user with no fault that a machine could find, and no round of an AI goes to one? |
 | Q12 | scripts | Writing a file as it runs, does the plugin put it where its user chooses whether git keeps it, so that a stopped run leaves nothing behind and an update loses nothing? |
 | Q13 | scripts, hooks | Running on a user's machine, does the plugin need only what's already there, so that it runs wherever git does? |
 | Q14 | hooks, scripts | Needing code that another plugin of the marketplace has, does the developer keep it in one place, so that they write, test, and fix it once? |
@@ -37,11 +41,12 @@ The developer builds a Claude Code plugin whose roles work together to make some
 | Q19 | domain | Reading what the plugin says and writes, do the person and the repository's later readers each find it in their own language, so that the person approves what they read? |
 | Q20 | agents | Before the work reaches its user, does a role that didn't make it check it in the user's place, so that the work's user gets what they're after and not what its maker meant? |
 | Q21 | skills, domain | Once a run ends, does the plugin take in what fell short and why, so that a lesson met once improves every later run? |
-| Q22 | skills, agents, hooks | Testing the plugin at each level that its architecture names, does the developer know what of Claude Code to run real and what to stand in for, so that every path holds on every push and the trials meet what users meet? |
+| Q22 | skills, agents, hooks | Testing the plugin at each level that its architecture names, does the developer know what of Claude Code to run real and what to stand in for, so that the developer learns of a broken path before a push reaches users, and the trials meet what users meet? |
 | Q23 | .claude-plugin | Installing the plugin, does each user get a manifest that Claude Code reads, so that the install never fails on its form? |
 | Q24 | .claude-plugin, CHANGELOG.md | Deciding whether to update, does a user find what changed for them in a version they get, so that they update knowing what it gives? |
 | Q25 | README.md | Coming to the plugin, does its user find a README made for them, so that they learn from it what they achieve with the plugin and how? |
-| Q26 | the whole | Using a plugin built by this best practice, do its users achieve what they're after? |
+| Q26 | skills, agents | Asking for the work in their own words, does a person reach the plugin's skill, and does each of its agents start only from that skill, so that the person gets a run of the plugin without knowing its command, and no role runs outside the run that its routes hold? |
+| Q27 | the whole | Using a plugin built by this best practice, do its users achieve what they're after? |
 
 ## Practices
 
@@ -68,8 +73,8 @@ A role works from all it has to do only when it holds its whole part from its fi
 **Steps**
 
 1. Have each entry's body say that the plugin's folder is `${CLAUDE_PLUGIN_ROOT}` and name the role's part in `domain/`, and have the part name each file as `${CLAUDE_PLUGIN_ROOT}/<path>`.
-2. Have the guard give an agent its part whole as the agent starts, through the `SubagentStart` hook's `additionalContext` with the folder put in, and have the skill's body make the main conversation read its part whole first.
-3. Run `lay.py print` on the plugin's proposal, and read in what it prints that it found each role's part. The trace: `python3 ${dependency:lane}/scripts/lay.py print {proposal}` run.
+2. Have the guard of Q9 give an agent its part whole as the agent starts, through the `SubagentStart` hook's `additionalContext` with the folder put in, and have the skill's body make the main conversation read its part whole first.
+3. Run `lay.py print` on the plugin's proposal, which Q8 and Q9 have the developer write, and read in what it prints that it found each role's part. The trace: `python3 ${dependency:lane}/scripts/lay.py print {proposal}` run.
 
 ### Q3
 
@@ -77,7 +82,7 @@ Writing a role's part, does the developer put in it only what the role has to do
 
 **Thinking**
 
-A role's part says what the role has to do, what a machine can see once it's done, what it's given, the best practice and the intents whose practices it carries out, and what it gives as it ends, as `domain/role.md` shows. The steps of the work are those practices, which the guard holds one by one. Steps copied into a part drift from the practices they came from, and the role then follows the copy.
+A role's part says what the role has to do, what a machine can see once it's done, what it's given, the best practice and the intents whose practices it carries out, and what it gives as it ends, as `domain/role.md` shows. The steps of the work are those practices, which the adapter of the plugin's proposal gives the guard, and which the guard holds one by one, as Q9 says. Steps copied into a part drift from the practices they came from, and the role then follows the copy.
 
 **Steps**
 
@@ -93,7 +98,7 @@ Where a work has jobs that need different context or tools, each job has a role 
 
 **Steps**
 
-1. Set each agent's `tools` to the tools that its part's practices use, and `background: true`, as the guard counts a start once its role ends.
+1. Set each agent's `tools` to the tools that its part's practices use, and `background: true`, as the guard of Q9 counts a start once its role ends.
 
 ### Q5
 
@@ -101,7 +106,7 @@ Following a run from the person's request, does the developer see the main conve
 
 **Thinking**
 
-Where a plugin has roles, its skill makes the main conversation the orchestrator. Nobody relays: the main conversation starts each role the routes name, so each role's point reaches it, and it puts the point to the person as given and resumes the role with their answer word for word by SendMessage. It makes, judges, and decides nothing of the work. A subagent's last message reaches only the one who started it, and only the main conversation can ask the person, as [subagents](https://code.claude.com/docs/en/sub-agents#available-tools) says. So an agent between them would only carry points: a point reworded on the way is a question that no role asked, and an answer summed up loses what the person meant. A resumed role keeps its whole conversation, as [resume subagents](https://code.claude.com/docs/en/sub-agents#resume-subagents) says. An AI calls the plugin by the same skill, as its own orchestrator runs in the main conversation too.
+Where a plugin has roles, its skill makes the main conversation the orchestrator, by a part of its own in the form of `domain/command.md`. Nobody relays: the main conversation starts each role that the routes of Q8 name, so each role's point reaches it, and it puts the point to the person as given and resumes the role with their answer word for word by SendMessage. It makes, judges, and decides nothing of the work. A subagent's last message reaches only the one who started it, and only the main conversation can ask the person, as [subagents](https://code.claude.com/docs/en/sub-agents#available-tools) says. So an agent between them would only carry points: a point reworded on the way is a question that no role asked, and an answer summed up loses what the person meant. A resumed role keeps its whole conversation, as [resume subagents](https://code.claude.com/docs/en/sub-agents#resume-subagents) says. An AI calls the plugin by the same skill, as its own orchestrator runs in the main conversation too.
 
 **Steps**
 
@@ -109,11 +114,11 @@ Where a plugin has roles, its skill makes the main conversation the orchestrator
 
 ### Q6
 
-Starting, resuming, or ending a role, can a machine check what passes between the main conversation and the role, so that no start or end goes by unchecked?
+Starting, resuming, or ending a role, can a machine check what passes between the main conversation and the role, so that each role works from the run's values and the person's own words, and the run moves on by the result that the role gave?
 
 **Thinking**
 
-Each role's in and out keep to JSON Schemas in `domain/`, drawn from `domain/role-in.schema.json` and `domain/role-out.schema.json`. A role starts with one JSON line of run values, the values that the guard holds its calls to, and resumes with a message whose first line is `The person's answer, word for word:`. It ends by giving a result, a fixed word such as `asks` or `done`, by Lane's result script, and its last message begins with `For the person:` where it holds a point for the person. A role that judges a work by questions writes its answers with the lines of the work that meet each question. A machine checks a fixed form, while words written freely leave each reader to guess.
+Each role's in and out keep to JSON Schemas in `domain/`, drawn from `domain/role-in.schema.json` and `domain/role-out.schema.json`. A role starts with one JSON line of run values, the values that the guard of Q9 holds its calls to, and resumes with a message whose first line is `The person's answer, word for word:`. It ends by giving a result, a fixed word such as `asks` or `done`, by the result script that the routes of Q8 lay, and its last message begins with `For the person:` where it holds a point for the person. A role that judges a work by questions writes its answers with the lines of the work that meet each question. A machine checks a fixed form, while words written freely leave each reader to guess.
 
 **Steps**
 
@@ -121,7 +126,7 @@ Each role's in and out keep to JSON Schemas in `domain/`, drawn from `domain/rol
 
 ### Q7
 
-Choosing how to keep a file that the plugin reads, does the developer keep it in a form that a script checks, so that a file out of form shows before anyone reads it?
+Choosing how to keep a file that the plugin reads, does the developer keep it in a form that a script checks, so that no role or person acts on a file out of form?
 
 **Thinking**
 
@@ -137,7 +142,7 @@ Following a run from a role's end to the next start, does every run take the sam
 
 **Thinking**
 
-Where a run goes in fixed moves, its routes keep the course. Lane lays them in `hooks/lanes.json` from the plugin's proposal, and gives the main conversation each next start from the role that ended and the result it gave. Code follows a course the same way every time, where a conversation told the course drifts from it. Lane keeps each run's state in a file, so a compacted or stopped conversation goes on from its last move. Where a run's course changes with what it finds, the skill's part keeps the course instead.
+Where a run goes in fixed moves, its routes keep the course. Lane lays them in `hooks/lanes.json` from the plugin's proposal, a JSON file kept at the root of the repository as the template's `.lane/` shows, and gives the main conversation each next start from the role that ended and the result it gave. Code follows a course the same way every time, where a conversation told the course drifts from it. Lane keeps each run's state in a file, so a compacted or stopped conversation goes on from its last move. Where a run's course changes with what it finds, the skill's part keeps the course instead.
 
 **Steps**
 
@@ -145,11 +150,11 @@ Where a run goes in fixed moves, its routes keep the course. Lane lays them in `
 
 ### Q9
 
-Where an instruction alone doesn't hold a step, does the developer have a hook stop the role and tell it the step again when it drifts, so that the step holds on every run?
+Where an instruction alone doesn't hold a step, does the developer have a hook stop the role and tell it the step again when it drifts, so that the plugin's users get on every run what the step makes, not only on the runs where the role kept to it?
 
 **Thinking**
 
-The plugin's hooks are its guard, laid by [Lane](../../../../lane/README.md) from the plugin's proposal as lanes and routes. A lane holds each practice step whose drift shows in a tool call or in how a role ends: its hook stops what would break the step and gives the role the step again. Branch protection or permission rules hold what's hard to undo. A hook runs every time, while an instruction is only advice. Hooks fire on the main conversation's calls with no `agent_type`, and on a role's with the role's, as [hooks](https://code.claude.com/docs/en/hooks) says, so one `hooks/hooks.json` holds both. A plugin's agent ignores `hooks`, `mcpServers`, and `permissionMode` in its own frontmatter, as [plugin agents](https://code.claude.com/docs/en/plugins/components#frontmatter-fields-in-plugin-agents) says, and a `SubagentStop` hook in a skill's frontmatter didn't fire in a trial on Claude Code 2.1.318, so the plugin keeps its hooks in `hooks/hooks.json`.
+The plugin's hooks are its guard, laid by [Lane](../../../../lane/README.md) from the plugin's proposal as lanes and routes. Where a role's steps are the practices of its best practice, the proposal names a steps adapter that gives Lane those practices' steps with their traces, as the template's `.lane/` shows. A lane holds each practice step whose drift shows in a tool call or in how a role ends: its hook stops what would break the step and gives the role the step again. Branch protection or permission rules hold what's hard to undo. A hook runs every time, while an instruction is only advice. Hooks fire on the main conversation's calls with no `agent_type`, and on a role's with the role's, as [hooks](https://code.claude.com/docs/en/hooks) says, so one `hooks/hooks.json` holds both. A plugin's agent ignores `hooks`, `mcpServers`, and `permissionMode` in its own frontmatter, as [plugin agents](https://code.claude.com/docs/en/plugins/components#frontmatter-fields-in-plugin-agents) says, and a `SubagentStop` hook in a skill's frontmatter didn't fire in a trial on Claude Code 2.1.318, so the plugin keeps its hooks in `hooks/hooks.json`.
 
 **Steps**
 
@@ -157,7 +162,7 @@ The plugin's hooks are its guard, laid by [Lane](../../../../lane/README.md) fro
 
 ### Q10
 
-Reading what a check gave, does the developer tell a pass from a check that couldn't run, so that nothing passes unchecked?
+Reading what a check gave, does the developer tell a pass from a check that couldn't run, so that the plugin's users and its developer never act on a pass that no check made?
 
 **Thinking**
 
@@ -169,7 +174,7 @@ A check ends in one of three results: no problem, a problem, or couldn't check, 
 
 ### Q11
 
-Checking a role's work, does the developer have a script or the project's own tools check all that a machine can see, so that an AI reads only for what no machine can?
+Checking a role's work, does the developer have a script or the project's own tools check all that a machine can see, so that the work reaches its user with no fault that a machine could find, and no round of an AI goes to one?
 
 **Thinking**
 
@@ -297,7 +302,7 @@ Where a person calls the plugin, the main conversation looks once, after the cal
 
 ### Q22
 
-Testing the plugin at each level that its architecture names, does the developer know what of Claude Code to run real and what to stand in for, so that every path holds on every push and the trials meet what users meet?
+Testing the plugin at each level that its architecture names, does the developer know what of Claude Code to run real and what to stand in for, so that the developer learns of a broken path before a push reaches users, and the trials meet what users meet?
 
 **Thinking**
 
@@ -343,6 +348,18 @@ Coming to the plugin, does its user find a README made for them, so that they le
 `README.md` is a deliverable of its own, of the kind [readme](../readme/best-practice.md), made from the plugin's product vision before the plugin's architecture. The plugin keeps it in its folder, so the README reaches each user with the plugin.
 
 ### Q26
+
+Asking for the work in their own words, does a person reach the plugin's skill, and does each of its agents start only from that skill, so that the person gets a run of the plugin without knowing its command, and no role runs outside the run that its routes hold?
+
+**Thinking**
+
+Claude Code picks a skill by the description in its entry's frontmatter, as [skills](https://code.claude.com/docs/en/skills#frontmatter-reference) says. It picks an agent by its description too, as [subagents](https://code.claude.com/docs/en/sub-agents#understand-automatic-delegation) says. The skill's description says what a run gives the person, and then when to use it, in the words a person asks for that work in, as [writing effective descriptions](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices#writing-effective-descriptions) says. It speaks in the third person and puts the key use first, as Claude Code cuts a long description short in the list of skills. A person who doesn't know the command then still reaches a run, and the guard of Q9 with it. Each agent's description names the plugin it serves and the skill that alone starts it, such as `Started by rn's up alone`, and asks for no other use, such as `use proactively`. An agent that another conversation starts runs outside any run, so no route of Q8 follows its end, and its point for the person reaches no one who puts it to them.
+
+**Steps**
+
+1. In a product vision trial of Q22, ask for the work in a user's own words, without the command, and check that the skill starts.
+
+### Q27
 
 Using a plugin built by this best practice, do its users achieve what they're after?
 
