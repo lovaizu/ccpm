@@ -166,11 +166,12 @@
   <text class="label small halo" x="1230" y="194" text-anchor="middle">runs the skill, adds</text>
   <text class="label small halo" x="1230" y="208" text-anchor="middle">what Lane says</text>
   <path class="line" d="M1300,248 L1160,248" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="1230" y="266" text-anchor="middle">runs commands,</text>
-  <text class="label small halo" x="1230" y="280" text-anchor="middle">starts roles,</text>
-  <text class="label small halo" x="1230" y="294" text-anchor="middle">messages them, ends</text>
-  <text class="label small halo" x="1230" y="308" text-anchor="middle">its turn [Bash,</text>
-  <text class="label small halo" x="1230" y="322" text-anchor="middle">Agent, SendMessage]</text>
+  <text class="label small halo" x="1230" y="262" text-anchor="middle">runs commands,</text>
+  <text class="label small halo" x="1230" y="275" text-anchor="middle">starts, messages,</text>
+  <text class="label small halo" x="1230" y="288" text-anchor="middle">stops roles, ends</text>
+  <text class="label small halo" x="1230" y="301" text-anchor="middle">its turn [Bash,</text>
+  <text class="label small halo" x="1230" y="314" text-anchor="middle">Agent, SendMessage,</text>
+  <text class="label small halo" x="1230" y="327" text-anchor="middle">TaskStop]</text>
   <path class="line" d="M1160,372 L1300,372" marker-end="url(#arrow)"/>
   <text class="label small halo" x="1230" y="346" text-anchor="middle">runs it in the back-</text>
   <text class="label small halo" x="1230" y="360" text-anchor="middle">ground, adds its part</text>
