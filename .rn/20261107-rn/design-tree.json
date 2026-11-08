@@ -149,15 +149,30 @@
               "about": "The parts left to the trial",
               "decided": "The template's Tests holds a slot for each part that makes a judgment no guard can hold, with that judgment",
               "by": "reasoning"
+            },
+            {
+              "about": "What the product changes of what it builds on",
+              "decided": "The template's Principles holds a slot for each principle of the architecture or best practice it builds on that the product sets aside or changes, with what holds instead",
+              "by": "reasoning"
             }
           ]
         },
         {"id": "Q3", "good": true, "decisions": []},
-        {"id": "Q4", "good": true, "decisions": []},
+        {
+          "id": "Q4",
+          "good": false,
+          "decisions": [
+            {
+              "about": "What an architecture builds on",
+              "decided": "The architecture best practice takes meta as an input, for the best practice the architecture builds on and tests by",
+              "by": "reasoning"
+            }
+          ]
+        },
         {"id": "Q5", "good": true, "decisions": []},
         {
           "id": "Q6",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The key results",
@@ -168,7 +183,7 @@
         },
         {
           "id": "Q7",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The trace to the objectives",
@@ -248,6 +263,11 @@
               "about": "The example's statuses and decisions",
               "decided": "The example, a copy of this tree, shows a deliverable doing only once each of its preconditions has the status done, and each decision without its grounds",
               "by": "reasoning"
+            },
+            {
+              "about": "Slots this tree doesn't use",
+              "decided": "The template's note on each slot this tree leaves unused, such as a research deliverable and a decision by maker, shows that slot filled in one short instance",
+              "by": "reasoning"
             }
           ]
         },
@@ -257,12 +277,22 @@
           "decisions": [
             {
               "about": "A status against its preconditions",
-              "decided": "Q5's practices start a deliverable only once each of its preconditions has the status done, and tree.py check fails a deliverable doing or done while a precondition has another status",
+              "decided": "Q5's practices start a deliverable only once each of its preconditions has the status done",
               "by": "reasoning"
             },
             {
               "about": "An example from a later deliverable",
               "decided": "A best practice whose example copies a later deliverable counts as done for what comes after it once every other intent is good, and the plan names the deliverable its example waits on",
+              "by": "reasoning"
+            },
+            {
+              "about": "What a precondition is",
+              "decided": "A deliverable's preconditions name each deliverable whose result it needs passed before it starts, a deliverable of each kind its best practice names in preconditions among them",
+              "by": "reasoning"
+            },
+            {
+              "about": "The check of a status",
+              "decided": "tree.py check fails a deliverable doing or done while a precondition has another status, except a best practice that waits only on its example, with a test that fails before the check exists",
               "by": "reasoning"
             }
           ]
@@ -303,7 +333,7 @@
       "name": "rn's design says how a turn carries out a best practice",
       "path": "dev/rn/architecture.md",
       "kind": "architecture",
-      "inputs": ["dev/rn/product-vision.md"],
+      "inputs": ["dev/rn/product-vision.md", "plugins/rn/domain/best-practices/plugin"],
       "preconditions": [],
       "status": "doing",
       "intents": [
@@ -359,11 +389,26 @@
         {"id": "Q10", "good": false, "decisions": []},
         {"id": "Q11", "good": false, "decisions": []},
         {"id": "Q12", "good": true, "decisions": []},
-        {"id": "Q13", "good": false, "decisions": []},
+        {
+          "id": "Q13",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The parts left to the trial",
+              "decided": "Tests lists each part that makes a judgment no guard can hold, with that judgment, such as the evaluator judging whether a deliverable meets an intent, the main conversation judging whether a point is the user's, and the generator judging whether the decisions meet a shortfall",
+              "by": "reasoning"
+            }
+          ]
+        },
         {
           "id": "Q14",
           "good": false,
           "decisions": [
+            {
+              "about": "The key result a choice moves",
+              "decided": "each principle's and each choice's reason names the key result of rn's product vision it moves",
+              "by": "reasoning"
+            },
             {
               "about": "The size of a turn",
               "decided": "the planner makes each deliverable one that a generator makes whole in a round and an evaluator reads whole. A larger work, such as a plugin's code, splits by the components of its architecture, each after what it takes from the others, and the plugin's deliverable checks how they join by the architecture tests",

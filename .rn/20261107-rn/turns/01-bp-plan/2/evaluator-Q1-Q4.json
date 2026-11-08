@@ -1,0 +1,6 @@
+{"met":[
+{"question":"Q1","lines":["plan/best-practice.md:5","plan/best-practice.json:2","plan/design-tree.schema.json:13","plan/design-tree.schema.json:22","plan/best-practice.md:39"]},
+{"question":"Q2","lines":["plan/best-practice.md:9","plan/design-tree.schema.json:4","plan/design-tree.schema.json:10","plan/design-tree.schema.json:31","plan/design-tree.schema.json:56","plan/design-tree.schema.json:64","plan/design-tree.schema.json:68","plan/design-tree.schema.json:117","plan/design-tree.schema.json:124","plan/design-tree.schema.json:131","plan/design-tree.schema.json:138","plan/design-tree.schema.json:165","plan/design-tree.schema.json:207","plan/design-tree.schema.json:219"]},
+{"question":"Q3","lines":["plan/best-practice.md:5","plan/design-tree.schema.json:13","plan/design-tree.schema.json:31","plan/design-tree.schema.json:47","plan/design-tree.schema.json:56","plan/design-tree.schema.json:117","plan/design-tree.schema.json:124","plan/design-tree.schema.json:131","plan/design-tree.schema.json:161","plan/design-tree.schema.json:207","plan/design-tree.schema.json:68"]},
+{"question":"Q4","lines":["plan/best-practice.json:6","plan/best-practice.json:7","plan/best-practice.md:60","plan/design-tree.schema.json:31","plan/design-tree.schema.json:138","plan/design-tree.schema.json:165"]}
+],"not_met":[]}

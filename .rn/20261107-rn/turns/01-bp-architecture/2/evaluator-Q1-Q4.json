@@ -1,0 +1,46 @@
+{
+  "met": [
+    {
+      "question": "Q1",
+      "lines": [
+        "architecture/best-practice.md:5",
+        "architecture/best-practice.json:2"
+      ]
+    },
+    {
+      "question": "Q3",
+      "lines": [
+        "architecture/best-practice.md:5",
+        "architecture/best-practice.md:22",
+        "architecture/best-practice.md:24",
+        "architecture/best-practice.md:26",
+        "architecture/best-practice.md:27",
+        "architecture/best-practice.md:29",
+        "architecture/best-practice.md:30",
+        "architecture/best-practice.md:32",
+        "architecture/best-practice.md:33",
+        "architecture/best-practice.md:34",
+        "architecture/best-practice.md:39",
+        "architecture/template.md:3",
+        "architecture/template.md:18",
+        "architecture/template.md:37",
+        "architecture/template.md:53",
+        "architecture/template.md:80",
+        "architecture/template.md:102",
+        "architecture/template.md:127",
+        "architecture/template.md:145",
+        "architecture/template.md:160"
+      ]
+    }
+  ],
+  "not_met": [
+    {
+      "question": "Q2",
+      "lacks": "Filling in Principles, the generator finds a place only for the other architecture it builds on and for the principles this product adds, as architecture/template.md:20 and architecture/template.md:33 say, while architecture/best-practice.md:77 asks it to write what this product adds or changes. A generator whose product sets aside or changes one of the other architecture's principles, as the example's product does with three of the plugin best practice's at architecture/example.md:46, doesn't know whether that goes as an added principle, in the opening sentence, or nowhere. The developer then can't count on the deliverable to tell them which of the other architecture's principles hold for this product."
+    },
+    {
+      "question": "Q4",
+      "lacks": "Setting Principles and Tests against what fills them, the generator finds that it makes the deliverable from the architecture or best practice it builds on, at architecture/template.md:20 and architecture/template.md:30, and from the project's shared test rules, at architecture/template.md:162 and architecture/template.md:175. The example builds on the plugin best practice and tests by it, at architecture/example.md:31 and architecture/example.md:755. Neither kind is in inputs or preconditions, which name only product-vision and readme, at architecture/best-practice.json:6 and architecture/best-practice.json:10. The plan therefore can't order an architecture after the architecture or best practice it builds on, and the generator can make one, and write only what it adds, before what it builds on is there or has passed."
+    }
+  ]
+}
