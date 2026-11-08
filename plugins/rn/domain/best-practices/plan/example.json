@@ -118,7 +118,7 @@
             },
             {
               "about": "How a role still running stops when a remark comes",
-              "decided": "the main conversation stops each role of the turn that still runs with TaskStop, which Claude Code's subagents reference documents, before it settles the remark. The call of /rn:up that follows begins a new run, as Lane begins one at each Skill call of the skill its routes name",
+              "decided": "the main conversation stops each role of the turn that still runs with TaskStop, which Claude Code's subagents reference documents, before it settles the remark. The remark is a prompt of the person's, so Lane lets the stop through, and the call of /rn:up that follows ends the run and begins another",
               "by": "research"
             },
             {
