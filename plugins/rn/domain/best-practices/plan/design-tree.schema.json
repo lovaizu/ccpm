@@ -121,14 +121,14 @@
      }
     },
     "preconditions": {
-     "description": "The path of each deliverable that must pass before this one starts, each of a kind that its best practice names in preconditions. The list stays empty where the deliverable needs none.",
+     "description": "The path of each deliverable that must have the status done before this one starts, each of a kind that its best practice names in preconditions. The list stays empty where the deliverable needs none.",
      "type": "array",
      "items": {
       "type": "string"
      }
     },
     "status": {
-     "description": "Where the deliverable stands. open: no work on it has started. doing: someone is making it.",
+     "description": "Where the deliverable stands. open: no work on it has started. doing: someone is making it, which starts only once each of its preconditions has the status done or is a best practice that waits only on its example.",
      "enum": [
       "open",
       "doing"
