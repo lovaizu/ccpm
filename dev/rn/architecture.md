@@ -9,17 +9,15 @@ repository keeps every decision, so a conversation that ends loses nothing.
 ## Principles
 
 rn builds on [the plugin best
-practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md). It differs from these of
-its practices:
+practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md). It differs from it in
+these:
 
-- **[Q5](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q5) and
-  [Q17](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q17)**: the main conversation
-  settles the points of the design and puts each to the user itself, which the practices leave to a
-  role. *Why*: the design is the user's intent, so rn settles it where the user talks, and no role
-  stands between a point and the user, as KR1.2 counts.
-- **[Q21](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q21)**: rn takes in no
-  lesson once a run ends. *Why*: no step of the product vision follows the draft pull request, and a
-  step there would ask the user more, as KR1.2 counts.
+- **Who settles the design**: the main conversation settles the points of the design and puts each
+  to the user itself, where the plugin best practice leaves both to a role. *Why*: the design is the
+  user's intent, so rn settles it where the user talks, and no role stands between a point and the
+  user, as KR1.2 counts.
+- **Lessons**: rn takes in no lesson once a run ends. *Why*: no step of the product vision follows
+  the draft pull request, and a step there would ask the user more, as KR1.2 counts.
 
 rn adds these.
 
@@ -48,8 +46,8 @@ where the purpose or a best practice settles it, and puts the rest to the user w
 recommendation. Only the planner writes the tree.
 
 *Why*: a point settled outside the user's conversation comes back as rework, or asks the user what
-the purpose settles, and a change that Lane doesn't hold leaves the nodes around it stale, as
-KR1.1 and KR1.2 count.
+the purpose settles, and a change that Lane doesn't hold leaves the nodes around it stale, as KR1.1
+and KR1.2 count.
 
 ### Each role gets only its cut
 
@@ -145,9 +143,8 @@ the step makes sound, as KR1.1 counts.
 `tree.py` commits every change to the tree and each finished deliverable on the work's own branch,
 with one draft pull request that the user merges.
 
-*Why*: a conversation can end at any point, and work kept only in it makes the user answer again,
-as KR1.2 counts. The merge is the user's, as
-[Q16](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q16) says.
+*Why*: a conversation can end at any point, and work kept only in it makes the user answer again, as
+KR1.2 counts. The merge is the user's.
 
 ## User stories
 
@@ -440,8 +437,7 @@ Lane with it, and types `/rn:up` in Claude Code at the root of their repository.
 
 - **macOS and Linux** over Windows as well: `python3` and the link of `hooks/lane/` work there as rn
   needs them, as KR1.1 counts. The cost: a user on Windows has no tried way.
-- **Python 3.9 and its standard library only** over a later Python or packages, as
-  [Q13](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q13) says: the user installs
+- **Python 3.9 and its standard library only** over a later Python or packages: the user installs
   nothing for rn, as KR1.3 counts. The cost: the code goes without what later versions give.
 - **A run's files in `.rn/<yyyymmdd>-<goal>/`, committed on the work's branch,** over the system's
   temporary folder: a run picks up from them in any conversation, as KR1.2 counts. The cost: a
@@ -476,28 +472,27 @@ dev/rn/
 <the paths the plan gives>           each deliverable
 ```
 
-- **The parts in `domain/`, with the best practices and the code beside them,** as
-  [Q1](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q1) says: one folder of rn's
-  own knowledge, where Lane finds each part, as KR1.1 counts. The cost: moving every file of Turn's.
+- **The parts in `domain/`, with the best practices and the code beside them,** over folders by
+  type: one folder of rn's own knowledge, where Lane finds each part, as KR1.1 counts. The cost:
+  moving every file of Turn's.
 - **No progress file** over a file that says where the run stands: the tree's statuses and the
   rounds' records already hold it, and a second record drifts, as KR1.2 counts. The cost: `tree.py`
   reads the rounds' folders.
 
 ## Tests
 
-rn tests by [the architecture best
-practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#q12) and [the plugin
-best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q22), and differs from
-them where this section says.
+rn tests by the test rules of [the architecture best
+practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md) and [the plugin best
+practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md), and differs from them
+where this section says.
 
 ![rn's tests](images/tests.svg)
 
 - **The `tree.py` process tried `FULL` at unit and at architecture** over `HAPPY`: a fault there
   writes the tree wrong or hands a role another's cut, and no higher level checks every case, as
   KR1.1 counts. The cost: the most tests to keep up as the tree's form changes.
-- **Lane's double of Claude Code and its trial driver** over rn's own, as
-  [Q14](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q14) says: one double serves
-  both plugins, as KR1.1 counts. The cost: a change to Lane's double reaches rn's tests.
+- **Lane's double of Claude Code and its trial driver** over rn's own: one double serves both
+  plugins, as KR1.1 counts. The cost: a change to Lane's double reaches rn's tests.
 - **`claude plugin eval` left out of the trials** over eval cases: a case runs one prompt and never
   stops for an answer, while the walkthrough answers points and goes on in a new conversation, as
   KR1.2 counts. The cost: the trials need their own driver, which Lane's already is.

@@ -9,7 +9,8 @@ This document says how the parts of `<Product>` give [its product vision](<board
 >   promises, as one idea seen as a whole that every part carries out. Two or three sentences.
 > - Every slot below says what holds while a component changes inside. It names no command, file,
 >   field, step, or count that one component alone uses, as the developer of that component settles
->   them where they build it.
+>   them where they build it. It names a rule of another document by what the rule says, never by
+>   a question's ID, as the developer reads this document without that one's questions.
 
 ## Principles
 
