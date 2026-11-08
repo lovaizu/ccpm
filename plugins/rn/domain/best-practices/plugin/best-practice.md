@@ -246,7 +246,7 @@ Separation of code and state, also known as stateless processes
 
 **Thinking**
 
-The plugin's code and its state live apart, as each update replaces the code. `${CLAUDE_PLUGIN_ROOT}` is the installed version's own folder, and it changes with each update, with the old folder removed 14 days later, so write nothing there. Keep what must outlast an update, such as installed packages or a cache, in `${CLAUDE_PLUGIN_DATA}`, which survives updates and goes when the user uninstalls the plugin from the last place it's installed. Keep the user's work, and what they may want git to keep, in their project, in one folder named after the plugin, so that one line of `.gitignore` decides it. Keep what serves only one run, the tests' files among them, in the system's temporary folder, so that a run stopped halfway leaves nothing the user must clean up.
+The plugin's code and its state live apart, as each update replaces the code. `${CLAUDE_PLUGIN_ROOT}` is the installed version's own folder, and it changes with each update, with the old folder removed 14 days later, so write nothing there. Keep what must outlast an update, such as installed packages or a cache, in `${CLAUDE_PLUGIN_DATA}`, which survives updates and goes when the user uninstalls the plugin from the last place it's installed. Keep the user's work, and what they may want git to keep, in their project, in one folder named after the plugin, so that one line of `.gitignore` decides it. Keep what serves only one run, the tests' files among them, in the system's temporary folder, and remove it as the run ends, so that a finished run leaves nothing behind and a run stopped halfway leaves nothing the user must clean up.
 
 **Applies**
 

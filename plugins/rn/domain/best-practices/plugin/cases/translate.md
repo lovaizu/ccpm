@@ -32,12 +32,13 @@ anyone trusts its verdicts.
 
 `skills/doc/SKILL.md` carries `disable-model-invocation: true` and
 `allowed-tools: Bash(python3 ${CLAUDE_PLUGIN_ROOT}/scripts/sections.py *)`. Its body says: "Keep
-every code block as the original has it. If the file `<name>.<language>.md` already exists,
-write over it."
+every code block as the original has it. If the file `<name>.<language>.md` already exists, and
+`sections.py` records no run in progress on it, write over it."
 
-`scripts/sections.py` splits the document into sections and records each one done in
-`${TMPDIR}/translate/<document>.json`, and `scripts/glossary.py`, a copy of the `terms` plugin's
-module, reads and writes `${CLAUDE_PLUGIN_ROOT}/glossary.json`.
+`scripts/sections.py` splits the document into sections, adds each section translated to the end of
+`<name>.<language>.md`, and records each one done in `${TMPDIR}/translate/<document>.json`.
+`scripts/glossary.py`, a copy of the `terms` plugin's module, reads and writes
+`${CLAUDE_PLUGIN_ROOT}/glossary.json`.
 
 The skill's frontmatter also holds one `PostToolUse` hook on `Write`, with `onFailure: block`,
 which checks that a file the skill wrote keeps the original's headings. The plugin has no

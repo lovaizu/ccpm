@@ -30,10 +30,11 @@ trusts its verdicts.
 ```
 
 `skills/pr/SKILL.md` runs `scripts/diff.py`, which writes the diff to the system's temporary folder,
-starts a reader for each concern, and shows the user their findings. `skills/post/SKILL.md` carries
+starts a reader for each concern, shows the user their findings, and has `diff.py` remove the diff
+once the readers end. `skills/post/SKILL.md` carries
 `disable-model-invocation: true`, and posts only the findings the user kept.
 
-`agents/security.md`, `agents/tests.md`, `agents/naming.md`, and `agents/summary.md` each carry
+`agents/security.md`, `agents/tests.md`, and `agents/naming.md` each carry
 `tools: Read, Grep, Glob` and a description like this one, of about 600 characters:
 
 ```markdown
@@ -77,8 +78,8 @@ name a file and a line. It has no `onFailure`.
 | Q3 | yes | Posting is the user's: `post` takes only their call, and posts only what they kept. |
 | Q4 | yes | Each reader can only read, and `post` acts only on the user's call. |
 | Q5 | no | The `SubagentStop` hook has no `onFailure`, so a reader ends unchecked when its script fails. |
-| Q6 | no | Four descriptions of about 600 characters stay in every session's context, and "use proactively" sends Claude to the readers on any change. |
-| Q7 | yes | The diff lives in the system's temporary folder, and the plugin keeps nothing else. |
+| Q6 | no | Three descriptions of about 600 characters stay in every session's context, and "use proactively" sends Claude to the readers on any change. |
+| Q7 | yes | The diff lives in the system's temporary folder until the readers end, and the plugin keeps nothing else. |
 | Q8 | no | The findings live only in the conversation, so a stopped review reads every concern again. |
 | Q9 | no | `diff.py` needs `gh`, signed in, which the README never names, and no install on a fresh machine came before the release. |
 | Q10 | yes | It needs no other plugin and copies no code. |
