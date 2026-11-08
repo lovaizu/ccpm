@@ -1,0 +1,54 @@
+{
+ "met": [
+  {
+   "question": "Q1",
+   "lines": [
+    "plugin/best-practice.md:5",
+    "plugin/best-practice.json:2",
+    "plugin/best-practice.md:372",
+    "plugin/best-practice.md:376"
+   ]
+  },
+  {
+   "question": "Q2",
+   "lines": [
+    "plugin/template/README.md:8",
+    "plugin/template/README.md:13",
+    "plugin/template/README.md:16",
+    "plugin/template/README.md:21",
+    "plugin/template/README.md:23",
+    "plugin/template/README.md:38",
+    "plugin/template/.claude-plugin/plugin.json:2",
+    "plugin/template/domain/role.md:8",
+    "plugin/template/domain/role.md:36",
+    "plugin/template/domain/command.md:10",
+    "plugin/template/agents/role.md:12",
+    "plugin/template/skills/command/SKILL.md:11",
+    "plugin/template/docs/page.md:7",
+    "plugin/template/marketplace/.claude-plugin/marketplace.json:2",
+    "plugin/template/.lane/yyyymmdd-plugin/plugin.json:2",
+    "plugin/template/hooks/hooks.json:2",
+    "plugin/template/CHANGELOG.md:11"
+   ]
+  },
+  {
+   "question": "Q3",
+   "lines": [
+    "plugin/best-practice.md:5",
+    "plugin/best-practice.md:62",
+    "plugin/best-practice.md:352",
+    "plugin/template/README.md:21",
+    "plugin/template/README.md:30",
+    "plugin/template/README.md:38",
+    "plugin/template/agents/role.md:19",
+    "plugin/template/domain/role.md:13"
+   ]
+  }
+ ],
+ "not_met": [
+  {
+   "question": "Q4",
+   "lacks": "The generator who orders a plugin deliverable by its kinds finds among its preconditions only meta, code and prompt, at plugin/best-practice.md:16-20 and plugin/best-practice.json:8-12. Yet plugin/best-practice.md:62 and plugin/best-practice.md:233 say the plugin starts only once each plugin it takes a part from, such as Lane for its guard, has passed. As the plan holds each deliverable's preconditions only to the kinds the best practice names, the generator can't place that other plugin among them, and can make a plugin whose guard or routes rest on a plugin that hasn't passed yet."
+  }
+ ]
+}

@@ -69,7 +69,7 @@
         },
         {
           "id": "Q3",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The proposal",
@@ -90,7 +90,7 @@
         },
         {
           "id": "Q4",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The best practices the roles work by",
