@@ -25,19 +25,19 @@
        ]
       },
       {
-       "says": "Where a behavior the change will touch has no test, write a test of what the code does now, and see it pass.",
+       "says": "Where a behavior that the change reaches has no test, write a test of what the code does now, and see it pass.",
        "lanes": []
       },
       {
-       "says": "After each small change of structure, such as a rename or a moved function, run the tests. Where a test fails, undo the change and make a smaller one.",
+       "says": "After each small change of structure, such as a rename or a moved function, run the tests. Where a test fails, undo the change, then make a smaller one.",
        "lanes": []
       },
       {
-       "says": "Leave each test's expected result as it was, and change a test's call only where a name it uses was renamed.",
+       "says": "Leave each test's expected result as it was, and change a test's call only where the change renamed a name it uses.",
        "lanes": []
       },
       {
-       "says": "Where a behavior looks wrong, keep the behavior and its test. Return it as a point about what the code does, rather than change it here.",
+       "says": "Keep a behavior that looks wrong, along with its test. Return it as a point about what the code does, rather than change it here.",
        "lanes": []
       }
      ]
@@ -50,7 +50,7 @@
        "lanes": []
       },
       {
-       "says": "Keep a comment that says what the code cannot say plainly, such as what a regular expression matches.",
+       "says": "Keep a comment that says what the code can't say plainly, such as what a regular expression matches.",
        "lanes": []
       }
      ]
@@ -63,7 +63,7 @@
        "lanes": []
       },
       {
-       "says": "Make a name say more the farther from its definition it is read.",
+       "says": "Make a name say more the farther from its definition the maintainer reads it.",
        "lanes": []
       }
      ]
@@ -93,7 +93,7 @@
        "lanes": []
       },
       {
-       "says": "Where the code truly cannot keep a rule in one place, say at each place where the other places are, such as in a comment beside it.",
+       "says": "Where the code truly can't keep a rule in one place, say at each place where the other places are, such as in a comment beside it.",
        "lanes": []
       },
       {
@@ -110,11 +110,11 @@
        "lanes": []
       },
       {
-       "says": "Flag a function whose sentence needs an \"and\", or for which the reader had to read another body.",
+       "says": "Flag a function whose sentence needs an \"and\" or for which the reader had to read another body.",
        "lanes": []
       },
       {
-       "says": "Join back two functions that cannot be understood apart.",
+       "says": "Join back two functions that the reader can't understand apart.",
        "lanes": []
       },
       {
@@ -144,7 +144,7 @@
      "list": "Q8",
      "steps": [
       {
-       "says": "Read each line as a maintainer who knows the language but not the purpose, and flag code that looks wrong, roundabout or more than it needs.",
+       "says": "Read each line as a maintainer who knows the language but not the purpose, and flag code that looks wrong, roundabout, or more than it needs.",
        "lanes": []
       },
       {

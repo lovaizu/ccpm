@@ -77,7 +77,7 @@
   <rect class="box" x="110" y="570" width="36" height="22" rx="0"/>
   <text class="label small start" x="154" y="585" text-anchor="start">component or store of data</text>
   <rect class="ext" x="410" y="570" width="36" height="22" rx="6"/>
-  <text class="label small start" x="454" y="585" text-anchor="start">outside the product; with a head: a role of the product vision</text>
+  <text class="label small start" x="454" y="585" text-anchor="start">outside the product, with a head: a role of the product vision</text>
   <text class="label small start" x="840" y="577" text-anchor="start">a box: name and [type · technology]</text>
   <text class="data start" x="840" y="593" text-anchor="start">data handed on, named as in the data model</text>
 </svg>

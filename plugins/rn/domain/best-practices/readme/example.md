@@ -142,8 +142,8 @@ from the next step, so you never answer a point twice.
 ![For a kind rn has no best practice for, rn makes one first](images/how-new-kind.svg)
 
 **What if rn has no best practice for your kind of work?** rn first makes one, by its best practice
-for best practices, and keeps it in `.rn/<date>-<goal>/best-practices/`. It then makes your piece
-by it.
+for best practices, and keeps it in the folder `best-practices/` of `.rn/<date>-<goal>/`. It then
+makes your piece by it.
 
 ## Documentation
 

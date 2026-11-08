@@ -53,206 +53,37 @@
       "name": "Each best practice holds the field's established way, named so its maker grasps the intent",
       "path": "plugins/rn/domain/best-practices/meta",
       "kind": "meta",
-      "inputs": [],
-      "preconditions": [],
-      "status": "doing",
-      "intents": [
-        {"id": "Q1", "good": false, "decisions": []},
-        {
-          "id": "Q2",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The template's form in ccpm",
-              "decided": "a slot reads `` `<name>` ``. A note is a GitHub note whose first line is `DELETE_TEMPLATE_COMMENT:`, or in JSON a key `DELETE_TEMPLATE_COMMENT`. A sequence is Mermaid and any other figure SVG, with its skeleton at `images/template-<name>.svg`, as GitHub shows each of these unchanged",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {"id": "Q3", "good": false, "decisions": []},
-        {"id": "Q4", "good": false, "decisions": []},
-        {"id": "Q5", "good": false, "decisions": []},
-        {
-          "id": "Q6",
-          "good": false,
-          "decisions": [
-            {
-              "about": "How a best practice gets better",
-              "decided": "on what stands: its questions stay, it takes in what research shows missing, and a question goes only for a reason in its role's purpose. The maker reads each best practice whole and puts its improvements to the user one best practice at a time",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "Q7",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Where a practice comes from",
-              "decided": "each practice is the way the field has established for its case, found by research and named with its source, not reasoned out alone",
-              "by": "user"
-            },
-            {
-              "about": "How a practice names an idea",
-              "decided": "a practice calls an established idea by its established name, such as single responsibility or Given-When-Then, with why it serves the role, as the name carries the field's whole knowledge to a maker who knows it",
-              "by": "reasoning"
-            },
-            {
-              "about": "Languages and tools",
-              "decided": "a practice holds for any language and tool that makes the kind, and names one only as an example, as a practice tied to one language fails a deliverable made in another",
-              "by": "user"
-            },
-            {
-              "about": "Intent, not method",
-              "decided": "a practice gives the intent, its established ways, and when each fits, and the design tree picks the way and the tool for each deliverable's case, settled with the user where it's theirs",
-              "by": "user"
-            }
-          ]
-        },
-        {"id": "Q8", "good": false, "decisions": []},
-        {"id": "Q9", "good": false, "decisions": []},
-        {
-          "id": "Q10",
-          "good": false,
-          "decisions": [
-            {
-              "about": "How the maker checks a best practice",
-              "decided": "by reading it whole and judging two things: that each question asks what its user essentially intends, and that a maker follows each practice without hesitation. No method and no count stands in for that reading. A best practice covers no case in full at first: once the product vision trial shows the deliverables closer to the goal, it ships and gets better in use",
-              "by": "user"
-            }
-          ]
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "The shared plugin best practice says what rn and Lane share",
       "path": "plugins/rn/domain/best-practices/plugin",
       "kind": "meta",
-      "inputs": [],
-      "preconditions": ["plugins/rn/domain/best-practices/meta"],
-      "status": "open",
-      "intents": [
-        {"id": "Q1", "good": false, "decisions": []},
-        {"id": "Q2", "good": false, "decisions": []},
-        {"id": "Q3", "good": false, "decisions": []},
-        {"id": "Q4", "good": false, "decisions": []},
-        {"id": "Q5", "good": false, "decisions": []},
-        {"id": "Q6", "good": false, "decisions": []},
-        {
-          "id": "Q7",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Roles that run at once",
-              "decided": "roles that run at the same time each work in a workspace of their own, such as a git worktree and a temporary folder no other role writes, and their results join only through the one who started them, as two makers in one workspace overwrite each other's files unseen",
-              "by": "user"
-            }
-          ]
-        },
-        {"id": "Q8", "good": false, "decisions": []},
-        {"id": "Q9", "good": false, "decisions": []},
-        {"id": "Q10", "good": false, "decisions": []}
-      ]
+      "status": "done"
     },
     {
       "name": "Each part a developer builds by the design gives, with the others, the product vision",
       "path": "plugins/rn/domain/best-practices/architecture",
       "kind": "meta",
-      "inputs": [],
-      "preconditions": ["plugins/rn/domain/best-practices/meta"],
-      "status": "open",
-      "intents": [
-        {"id": "Q1", "good": false, "decisions": []},
-        {"id": "Q2", "good": false, "decisions": []},
-        {"id": "Q3", "good": false, "decisions": []},
-        {"id": "Q4", "good": false, "decisions": []},
-        {"id": "Q5", "good": false, "decisions": []},
-        {"id": "Q6", "good": false, "decisions": []},
-        {"id": "Q7", "good": false, "decisions": []},
-        {"id": "Q8", "good": false, "decisions": []},
-        {"id": "Q9", "good": false, "decisions": []},
-        {"id": "Q10", "good": false, "decisions": []}
-      ]
+      "status": "done"
     },
     {
       "name": "A maker of code designs it, tests it first, and writes it as the field's established practice says",
       "path": "plugins/rn/domain/best-practices/code",
       "kind": "meta",
-      "inputs": [],
-      "preconditions": ["plugins/rn/domain/best-practices/meta"],
-      "status": "doing",
-      "intents": [
-        {"id": "Q1", "good": false, "decisions": []},
-        {"id": "Q2", "good": false, "decisions": []},
-        {
-          "id": "Q3",
-          "good": false,
-          "decisions": [
-            {
-              "about": "What the best practice covers",
-              "decided": "the code's design, design patterns, test design, test-driven development, and the test code, each held to the same design principles as the code it tests, built on the questions that stand, adding what research shows missing, and dropping a question only for a reason in the role's purpose",
-              "by": "user"
-            }
-          ]
-        },
-        {"id": "Q4", "good": false, "decisions": []},
-        {"id": "Q5", "good": false, "decisions": []},
-        {"id": "Q6", "good": false, "decisions": []},
-        {"id": "Q7", "good": false, "decisions": []},
-        {"id": "Q8", "good": false, "decisions": []},
-        {"id": "Q9", "good": false, "decisions": []},
-        {
-          "id": "Q10",
-          "good": false,
-          "decisions": [
-            {
-              "about": "How the best practice shows it works",
-              "decided": "code made by it leaves few findings to mutation testing, property-based testing, and CI: surviving mutants, with the lines marked to keep from mutation counted beside them, counterexamples a property finds, and CI failures after the local checks pass, each lower than the last. The evaluator's questions judge the design these tools can't see",
-              "by": "user"
-            }
-          ]
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "An AI given a prompt does the task as its writer means, in cases the writer didn't foresee",
       "path": "plugins/rn/domain/best-practices/prompt",
       "kind": "meta",
-      "inputs": [],
-      "preconditions": ["plugins/rn/domain/best-practices/meta"],
-      "status": "open",
-      "intents": [
-        {"id": "Q1", "good": false, "decisions": []},
-        {"id": "Q2", "good": false, "decisions": []},
-        {"id": "Q3", "good": false, "decisions": []},
-        {"id": "Q4", "good": false, "decisions": []},
-        {"id": "Q5", "good": false, "decisions": []},
-        {"id": "Q6", "good": false, "decisions": []},
-        {"id": "Q7", "good": false, "decisions": []},
-        {"id": "Q8", "good": false, "decisions": []},
-        {"id": "Q9", "good": false, "decisions": []},
-        {"id": "Q10", "good": false, "decisions": []}
-      ]
+      "status": "done"
     },
     {
       "name": "The user reaches their goal through the plan's deliverables, which leave nothing out and start nothing too early",
       "path": "plugins/rn/domain/best-practices/plan",
       "kind": "meta",
-      "inputs": [],
-      "preconditions": ["plugins/rn/domain/best-practices/meta"],
-      "status": "open",
-      "intents": [
-        {"id": "Q1", "good": false, "decisions": []},
-        {"id": "Q2", "good": false, "decisions": []},
-        {"id": "Q3", "good": false, "decisions": []},
-        {"id": "Q4", "good": false, "decisions": []},
-        {"id": "Q5", "good": false, "decisions": []},
-        {"id": "Q6", "good": false, "decisions": []},
-        {"id": "Q7", "good": false, "decisions": []},
-        {"id": "Q8", "good": false, "decisions": []},
-        {"id": "Q9", "good": false, "decisions": []},
-        {"id": "Q10", "good": false, "decisions": []}
-      ]
+      "status": "done"
     },
     {
       "name": "This plan holds every deliverable the goal needs, each after what it stands on",
@@ -279,61 +110,19 @@
       "name": "A developer builds from the product vision a product with which its users achieve their aim",
       "path": "plugins/rn/domain/best-practices/product-vision",
       "kind": "meta",
-      "inputs": [],
-      "preconditions": ["plugins/rn/domain/best-practices/meta"],
-      "status": "open",
-      "intents": [
-        {"id": "Q1", "good": false, "decisions": []},
-        {"id": "Q2", "good": false, "decisions": []},
-        {"id": "Q3", "good": false, "decisions": []},
-        {"id": "Q4", "good": false, "decisions": []},
-        {"id": "Q5", "good": false, "decisions": []},
-        {"id": "Q6", "good": false, "decisions": []},
-        {"id": "Q7", "good": false, "decisions": []},
-        {"id": "Q8", "good": false, "decisions": []},
-        {"id": "Q9", "good": false, "decisions": []},
-        {"id": "Q10", "good": false, "decisions": []}
-      ]
+      "status": "done"
     },
     {
       "name": "A newcomer starts using the product from its README alone, only when it serves their work",
       "path": "plugins/rn/domain/best-practices/readme",
       "kind": "meta",
-      "inputs": [],
-      "preconditions": ["plugins/rn/domain/best-practices/meta"],
-      "status": "open",
-      "intents": [
-        {"id": "Q1", "good": false, "decisions": []},
-        {"id": "Q2", "good": false, "decisions": []},
-        {"id": "Q3", "good": false, "decisions": []},
-        {"id": "Q4", "good": false, "decisions": []},
-        {"id": "Q5", "good": false, "decisions": []},
-        {"id": "Q6", "good": false, "decisions": []},
-        {"id": "Q7", "good": false, "decisions": []},
-        {"id": "Q8", "good": false, "decisions": []},
-        {"id": "Q9", "good": false, "decisions": []},
-        {"id": "Q10", "good": false, "decisions": []}
-      ]
+      "status": "done"
     },
     {
       "name": "A reader takes in a reworked document as its writer meant, reading once from the top",
       "path": "plugins/rn/domain/best-practices/refactor-doc",
       "kind": "meta",
-      "inputs": [],
-      "preconditions": ["plugins/rn/domain/best-practices/meta"],
-      "status": "open",
-      "intents": [
-        {"id": "Q1", "good": false, "decisions": []},
-        {"id": "Q2", "good": false, "decisions": []},
-        {"id": "Q3", "good": false, "decisions": []},
-        {"id": "Q4", "good": false, "decisions": []},
-        {"id": "Q5", "good": false, "decisions": []},
-        {"id": "Q6", "good": false, "decisions": []},
-        {"id": "Q7", "good": false, "decisions": []},
-        {"id": "Q8", "good": false, "decisions": []},
-        {"id": "Q9", "good": false, "decisions": []},
-        {"id": "Q10", "good": false, "decisions": []}
-      ]
+      "status": "done"
     },
     {
       "name": "Lane's code has a design, tests written first, and code as the code best practice says",
@@ -523,7 +312,7 @@
       ]
     },
     {
-      "name": "rn works as designed, with Pin and Turn removed",
+      "name": "rn works as designed, and no Pin or Turn remains",
       "path": "plugins/rn",
       "kind": "plugin",
       "inputs": ["dev/rn/architecture.md"],

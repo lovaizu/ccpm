@@ -1,5 +1,5 @@
 {
- "goal": "The maintainer is a person or an AI who comes to change the code at any time after it is written. The maintainer changes the code quickly without breaking another behavior. They understand each part on one reading, and they find the one place where the change belongs.",
+ "goal": "The maintainer is a person or an AI who comes to change the code at any time after someone writes it. The maintainer changes the code quickly without breaking another behavior. They understand each part on one reading, and they find the one place where the change belongs.",
  "inputs": [],
  "preconditions": [],
  "intents": [
@@ -11,12 +11,12 @@
   {
    "id": "Q2",
    "about": "the whole",
-   "what": "Whatever line the maintainer reads, code or comment, would they lose something they need if it were gone, so that every line they read earns its place?"
+   "what": "Whatever line the maintainer reads, code or comment, would they lose something they need without it, so that every line they read earns its place?"
   },
   {
    "id": "Q3",
    "about": "the whole",
-   "what": "When the maintainer reads any name in the code, can they say what it holds or does without going to where it is defined, so that they read the code without hunting for definitions?"
+   "what": "When the maintainer reads any name in the code, can they say what it holds or does without going to its definition, so that they read the code without hunting for definitions?"
   },
   {
    "id": "Q4",
@@ -26,7 +26,7 @@
   {
    "id": "Q5",
    "about": "the whole",
-   "what": "With one rule or one design decision to change, can the maintainer find the one place that holds it and make the whole change there, so that a change is made once and whole?"
+   "what": "With one rule or one design decision to change, can the maintainer find the one place that holds it and make the whole change there, so that they make a change once and whole?"
   },
   {
    "id": "Q6",
@@ -41,7 +41,7 @@
   {
    "id": "Q8",
    "about": "the whole",
-   "what": "Where code looks wrong or roundabout, can the maintainer learn right there why it is so, before they change it, so that they do not undo what it is there for?"
+   "what": "Where code looks wrong or roundabout, can the maintainer learn right there why it's so, before they change it, so that they don't undo what it's there for?"
   }
  ],
  "practices": [
@@ -59,16 +59,16 @@
      }
     },
     {
-     "text": "Where a behavior the change will touch has no test, write a test of what the code does now, and see it pass."
+     "text": "Where a behavior that the change reaches has no test, write a test of what the code does now, and see it pass."
     },
     {
-     "text": "After each small change of structure, such as a rename or a moved function, run the tests. Where a test fails, undo the change and make a smaller one."
+     "text": "After each small change of structure, such as a rename or a moved function, run the tests. Where a test fails, undo the change, then make a smaller one."
     },
     {
-     "text": "Leave each test's expected result as it was, and change a test's call only where a name it uses was renamed."
+     "text": "Leave each test's expected result as it was, and change a test's call only where the change renamed a name it uses."
     },
     {
-     "text": "Where a behavior looks wrong, keep the behavior and its test. Return it as a point about what the code does, rather than change it here."
+     "text": "Keep a behavior that looks wrong, along with its test. Return it as a point about what the code does, rather than change it here."
     }
    ]
   },
@@ -80,7 +80,7 @@
      "text": "Fold into its caller each function or layer that only passes a call on. Drop each parameter to which every caller gives the same value, and use that value inside."
     },
     {
-     "text": "Keep a comment that says what the code cannot say plainly, such as what a regular expression matches."
+     "text": "Keep a comment that says what the code can't say plainly, such as what a regular expression matches."
     }
    ]
   },
@@ -92,7 +92,7 @@
      "text": "For each name, write in a few words what it holds or does, without looking at its definition. Then look at the definition, and flag the name where the two differ."
     },
     {
-     "text": "Make a name say more the farther from its definition it is read."
+     "text": "Make a name say more the farther from its definition the maintainer reads it."
     }
    ]
   },
@@ -107,7 +107,7 @@
   },
   {
    "intent": "Q5",
-   "thinking": "The code writes each rule or design decision once, in the module whose job it is. The code does not tie together things unrelated in meaning, however alike they look.",
+   "thinking": "The code writes each rule or design decision once, in the module that has that job. The code doesn't tie together things unrelated in meaning, however alike they look.",
    "steps": [
     {
      "text": "For each rule or decision the code holds, such as a limit, a format or a path, list every place that writes it."
@@ -119,7 +119,7 @@
      "text": "Where code reaches into another module's insides, have it use what that module offers its callers."
     },
     {
-     "text": "Where the code truly cannot keep a rule in one place, say at each place where the other places are, such as in a comment beside it."
+     "text": "Where the code truly can't keep a rule in one place, say at each place where the other places are, such as in a comment beside it."
     },
     {
      "text": "Pick one rule, imagine that it changed, and count the places that would change. Mend the code until that count is one."
@@ -134,10 +134,10 @@
      "text": "Read each function, test functions included, once from the top, and write in one sentence what it does."
     },
     {
-     "text": "Flag a function whose sentence needs an \"and\", or for which the reader had to read another body."
+     "text": "Flag a function whose sentence needs an \"and\" or for which the reader had to read another body."
     },
     {
-     "text": "Join back two functions that cannot be understood apart."
+     "text": "Join back two functions that the reader can't understand apart."
     },
     {
      "text": "Write a clever construct in its plain form."
@@ -161,10 +161,10 @@
   },
   {
    "intent": "Q8",
-   "thinking": "Where the code cannot say why it is so, the reason stands where the maintainer meets the code, such as a limit outside the code or a way tried and dropped.",
+   "thinking": "Where the code can't say why it's so, the reason stands where the maintainer meets the code, such as a limit outside the code or a way tried and dropped.",
    "steps": [
     {
-     "text": "Read each line as a maintainer who knows the language but not the purpose, and flag code that looks wrong, roundabout or more than it needs."
+     "text": "Read each line as a maintainer who knows the language but not the purpose, and flag code that looks wrong, roundabout, or more than it needs."
     },
     {
      "text": "For each, first make the code say it plainly, where it can."

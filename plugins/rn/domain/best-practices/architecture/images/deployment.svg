@@ -59,7 +59,7 @@
   <text class="kind start" x="197.79999999999998" y="44" text-anchor="start">[macOS or Linux · Claude Code 2.1.319 or later · python3 3.9 or later · git · gh]</text>
   <rect class="unit" x="900" y="60" width="380" height="130" rx="6"/>
   <text class="name start" x="914" y="86" text-anchor="start">Claude Code process</text>
-  <text class="kind start" x="914" y="104" text-anchor="start">[Claude Code CLI]</text>
+  <text class="kind start" x="914" y="104" text-anchor="start">[Claude Code command-line tool]</text>
   <text class="label start" x="914" y="128" text-anchor="start">main conversation, planner, generator,</text>
   <text class="label start" x="914" y="146" text-anchor="start">evaluator</text>
   <rect class="unit" x="900" y="220" width="380" height="100" rx="6"/>
@@ -117,7 +117,7 @@
   <rect class="frame" x="100" y="835" width="36" height="22" rx="4"/>
   <text class="label small" x="144" y="850" text-anchor="start">an environment, with its technology</text>
   <rect class="unit" x="420" y="835" width="36" height="22" rx="4"/>
-  <text class="label small" x="464" y="850" text-anchor="start">a deployment unit, with the components and the data it holds</text>
+  <text class="label small" x="464" y="850" text-anchor="start">a deployment unit, with what it holds: components and data</text>
   <rect class="ext" x="900" y="835" width="36" height="22" rx="4"/>
   <text class="label small" x="944" y="850" text-anchor="start">outside rn, with what rn uses of it</text>
 </svg>

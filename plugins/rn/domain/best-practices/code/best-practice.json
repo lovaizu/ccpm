@@ -7,23 +7,23 @@
  "parts": [
   {
    "id": "manifest",
-   "what": "What the maintainer needs to set the code up on a fresh machine and run its tests: everything the code needs to run, with the versions it runs on, and how to run the tests."
+   "what": "what the maintainer needs to set the code up on a fresh machine and run its tests: everything the code needs to run, with the versions it runs on, and how to run the tests."
   },
   {
    "id": "module-opening",
-   "what": "For each module, a few words on what this module alone decides, at the place the maintainer meets first when they open the module."
+   "what": "for each module, a few words on what this module alone decides, at the place the maintainer meets first when they open the module."
   },
   {
    "id": "interface",
-   "what": "Each name a module offers to others, with everything a caller needs to call it without reading its body: the types it takes and gives, what it gives, what it expects of what it takes and each way it refuses."
+   "what": "each name a module offers to others, with everything a caller needs to call it without reading its body: the types it takes and gives, what it gives, what it expects of what it takes and each way it refuses."
   },
   {
    "id": "body",
-   "what": "The code under each interface that gives the behavior."
+   "what": "the code under each interface that gives the behavior."
   },
   {
    "id": "tests",
-   "what": "Tests of the specification's cases, one test for each case, so the maintainer can tell which test checks which case and which code. Each test has a name that says the behavior it checks, and shows the situation, what is done and what must be so."
+   "what": "tests of the specification's cases, one test for each case, so the maintainer can tell which test checks which case and which code. Each test has a name that says the behavior it checks, and shows the situation, the action, and what must be so."
   }
  ],
  "intents": [
@@ -50,7 +50,7 @@
   {
    "id": "Q5",
    "about": "body",
-   "what": "When something the code takes from outside is wrong, can whoever ran the code put it right from only what the code tells them, with nothing left half done, so that a fault from outside never leaves them stuck or their data half changed?"
+   "what": "When something the code takes from outside is wrong, can whoever ran the code put it right from only what the code shows them, with nothing left half done, so that a fault from outside never leaves them stuck or their data half changed?"
   },
   {
    "id": "Q6",
@@ -76,7 +76,7 @@
  "practices": [
   {
    "intent": "Q1",
-   "thinking": "What the code gives for its setup names everything the code needs. Each test sets up and clears everything it uses, and a real tool it runs does only what the test asks of it. A test's result then rests on the code alone, not on the machine or on when a tool's own work runs.",
+   "thinking": "What the code gives for its setup names everything the code needs. Each test sets up and clears everything it uses, and a real tool it runs does only what the test asks of it. A test's result then rests on the code alone, not on the machine or on when a tool's own work runs, as a [hermetic](https://abseil.io/resources/swe-book/html/ch11.html) test holds all it needs to set up, run, and clear its environment.",
    "steps": [
     {
      "text": "For each real tool the tests run, such as git, find each thing it does on its own beyond the call, such as reading the machine's settings or starting maintenance in the background, and turn it off in the test's own settings."
@@ -94,19 +94,22 @@
   },
   {
    "intent": "Q2",
-   "thinking": "Each module alone decides one thing that the specification leaves to the code. The module says that thing briefly where the maintainer meets it first, such as at its top.",
+   "thinking": "Each module alone decides one thing that the specification leaves to the code, most of all one likely to change, as [information hiding](https://doi.org/10.1145/361598.361623) says. The module says that thing briefly where the maintainer meets it first, such as at its top.",
    "steps": [
     {
-     "text": "Where the module cannot say that thing briefly, split the module."
+     "text": "Where the module can't say that thing briefly, split the module."
     },
     {
-     "text": "Take a behavior that the specification might change, and read only what the modules say they decide. Check that what they say points to one module. Where it does not, rewrite what the modules say, or move the decision."
+     "text": "Take a behavior that the specification might change, and read only what the modules say they decide. Check that what they say points to one module. Where it doesn't, rewrite what the modules say, or move the decision."
+    },
+    {
+     "text": "Where a decision meets a problem that a known design pattern solves, such as Strategy or Adapter in [Design Patterns](https://en.wikipedia.org/wiki/Design_Patterns), use the pattern by its name, and only where a case of the specification needs it now, as Q4 says. The name gives the maintainer the whole design at once."
     }
    ]
   },
   {
    "intent": "Q3",
-   "thinking": "The interface tells a caller everything they need to make the call. The caller then need not read the body, and the body can change behind the interface.",
+   "thinking": "The interface gives a caller everything they need to make the call: what it expects, what it gives, and what stays true, as [design by contract](https://www.eiffel.com/values/design-by-contract/introduction/) states them. The caller then need not read the body, and the body can change behind the interface.",
    "steps": [
     {
      "text": "Choose the names other modules may use, and mark every other name as internal."
@@ -121,13 +124,13 @@
      "text": "Leave out of that what the types already say."
     },
     {
-     "text": "Have someone who has not read the body write a call from the interface alone, and run the call. Where the call fails or they had to guess, add what was missing."
+     "text": "Have someone who hasn't read the body write a call from the interface alone, and run the call. Where the call fails or they had to guess, add what was missing."
     }
    ]
   },
   {
    "intent": "Q4",
-   "thinking": "The code gives only the behaviors the specification asks for, in the form its cases ask for now. The maintainer then carries nothing that no one needs.",
+   "thinking": "The code gives only the behaviors the specification asks for, in the form its cases ask for now. The maintainer then carries nothing that no one needs, as [You Aren't Gonna Need It](https://martinfowler.com/bliki/Yagni.html) says.",
    "steps": [
     {
      "text": "For each option, mode and case the code handles, name the case of the specification that asks for it."
@@ -136,16 +139,16 @@
   },
   {
    "intent": "Q5",
-   "thinking": "The code checks what comes from outside, such as arguments, files, settings and the replies of other programs, where it comes in and before the code does anything. When the code refuses an input, its message tells whoever ran the code which program refused, what was wrong, where, and what the code accepts.",
+   "thinking": "The code checks what comes from outside, such as arguments, files, settings and the replies of other programs, where it comes in and before the code does anything, as [fail fast](https://martinfowler.com/ieeeSoftware/failFast.pdf) says. When the code refuses an input, its message lets whoever ran the code know which program refused, what was wrong, where, and what the code accepts.",
    "steps": [
     {
-     "text": "At that place, read the input into the form the inside of the code uses. Check its type and format, and whether its value makes sense for what the code is to do."
+     "text": "At that place, read the input into the form the inside of the code uses, as [parse, don't validate](https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/) says. Check its type and format, and whether its value makes sense for what the code is to do."
     },
     {
-     "text": "Refuse a value that the code cannot read, rather than guess it. Catch only the error you mean to handle."
+     "text": "Refuse a value that the code can't read, rather than guess it. Catch only the error you mean to handle."
     },
     {
-     "text": "Write each check so that it runs however the code is run. Do not write it as a check that can be turned off, such as an assert."
+     "text": "Write each check so that it runs however someone runs the code. Don't write it as a check that someone can turn off, such as an assert."
     },
     {
      "text": "Give the code each wrong input that the specification names. Read each message as the one who ran the code, and check that they can put the input right from the message alone."
@@ -154,7 +157,7 @@
   },
   {
    "intent": "Q6",
-   "thinking": "The tests come from the specification's cases, and they come before the code. Each test checks one behavior, so it says which case it checks.",
+   "thinking": "The tests come from the specification's cases, and they come before the code, as [test-driven development](https://martinfowler.com/bliki/TestDrivenDevelopment.html) has them. Each test checks one behavior, so it says which case it checks.",
    "steps": [
     {
      "text": "List every case the specification names: the usual one, each edge, and each refusal.",
@@ -166,13 +169,16 @@
      }
     },
     {
-     "text": "Name each test for the behavior it checks. Where the name needs \"and\", split the test."
+     "text": "Name each test for the behavior it checks. Where the name needs \"and,\" split the test."
     },
     {
-     "text": "Write each test so its reader sees the situation, what is done and what must be so, such as in three parts: Given, When and Then."
+     "text": "Write each test so its reader grasps the situation, the action, and what must be so, such as in the three parts [Given, When, and Then](https://martinfowler.com/bliki/GivenWhenThen.html)."
     },
     {
      "text": "Write each expected value from the specification, not from what the code gives."
+    },
+    {
+     "text": "Hold the test code to the same design as the code it tests: set up what many tests share in one place, keep logic such as loops and branches out of a test, and give each failure a message that names the case, as [unit tests](https://abseil.io/resources/swe-book/html/ch12.html) of Software Engineering at Google says. Test code that needs tests of its own hides the faults it should catch."
     },
     {
      "text": "Run each test before you write its code, and see it fail.",
@@ -190,10 +196,10 @@
   },
   {
    "intent": "Q7",
-   "thinking": "The tests call the code as its callers do, so they fail only where a caller would break.",
+   "thinking": "The tests call the code as its callers do, so they fail only where a caller would break, as testing through public interfaces in [Software Engineering at Google](https://abseil.io/resources/swe-book/html/ch12.html) says.",
    "steps": [
     {
-     "text": "Use the real parts where they run fast and wholly inside the test, and a stand-in only for what is slow or outside it."
+     "text": "Use the real parts where they run fast and wholly inside the test, and a stand-in only for what's slow or outside it."
     },
     {
      "text": "Change a body without changing what its interface says, and run the tests. Rewrite each test that fails so that it calls the code through the interface."
@@ -214,7 +220,7 @@
      }
     },
     {
-     "text": "Change the code in small ways, such as with a mutation testing tool. For each change under which the tests still pass, add or mend the test of the behavior that the change breaks.",
+     "text": "Change the code in small ways, such as with a [mutation testing](https://research.google/pubs/state-of-mutation-testing-at-google/) tool. For each change under which the tests still pass, add or mend the test of the behavior that the change breaks.",
      "trace": {
       "action": "run",
       "takes": [
@@ -223,25 +229,19 @@
      }
     },
     {
-     "text": "Run the code over many inputs that the specification allows, such as with property-based tests. Keep each input that the code fails on as a fixed test."
+     "text": "Run the code over many inputs that the specification allows, such as with [property-based tests](https://hypothesis.works/articles/what-is-property-based-testing/). Keep each input that the code fails on as a fixed test."
     }
    ]
   },
   {
    "intent": "Q9",
-   "thinking": "Only a change that someone new to the code makes shows whether the code lets them change it and trust the result.",
+   "thinking": "The whole holds when each preceding question holds. The tools of Q8 and CI measure what a machine can: the mutants that survive, the inputs that a property finds the code fails on, and the CI failures after the local checks pass. Each change leaves fewer of them than the last. Read the code whole as a maintainer new to it for the rest, the design that no tool can check.",
    "steps": [
     {
-     "text": "Have someone who has not seen the code, a person or an AI, set it up and make one change the specification asks for, with only the code and its specification."
+     "text": "Count the surviving mutants, with the lines kept from mutation counted beside them, the inputs a property finds, and the CI failures after the local checks pass, and set each count against the last."
     },
     {
-     "text": "Note each body they read to find the place or to write a call, and each time they could not tell whether another behavior broke."
-    },
-    {
-     "text": "Have them run the changed code with a wrong input, and note where its message did not tell them how to put it right."
-    },
-    {
-     "text": "Trace each note to the part whose question it fails, and mend that part."
+     "text": "Trace each finding to the part whose question it fails, and mend that part."
     }
    ]
   }

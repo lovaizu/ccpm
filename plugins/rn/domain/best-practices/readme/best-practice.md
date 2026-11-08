@@ -138,7 +138,7 @@ Needing more than the README gives, such as fuller use or help, does the reader 
 
 **Thinking**
 
-The README holds what the reader needs to decide and to start. For each later need, such as fuller use or help, it links one place. No one reads a README that holds everything.
+The README holds what the reader needs to decide and to start. For each later need, such as fuller use or help, it links one place. No one reads a README that holds everything, and each later need has its own kind of page, as [Diátaxis](https://diataxis.fr) sorts tutorials, how-to guides, reference, and explanation.
 
 **Steps**
 
@@ -162,7 +162,7 @@ Reading from the top, does the reader find each answer just when they come to ne
 
 **Thinking**
 
-Order the README so that each reader stops once they have what they came for: the opening for every reader, the installation for one who has chosen the product, the walkthrough and How it works for one still weighing it, and what comes after through links. A reader who must pass what they don't need leaves before what they do.
+Order the README so that each reader stops once they have what they came for: the opening for every reader, the installation for one who has chosen the product, the walkthrough and How it works for one still weighing it, and what comes after through links. A reader who must pass what they don't need leaves before what they do, as the [inverted pyramid](https://www.nngroup.com/articles/inverted-pyramid/) puts first what every reader needs.
 
 **Steps**
 

@@ -21,15 +21,15 @@ The developer builds a Claude Code plugin whose roles work together to make some
 | Q3 | domain | Writing a role's part, does the developer put in it only what the role has to do and which parts of the best practice it uses, so that the role takes the practices as the steps of its work and no copy of them drifts? |
 | Q4 | agents | Splitting the work into roles, does the developer give each job a role of its own with only what the job needs, so that nothing from other work leads a role astray? |
 | Q5 | skills, agents | Following a run from the person's request, does the developer see the main conversation start each role, put each point a role has for the person to them as given, and take the answer back word for word, so that no agent between them rewords a question or sums up an answer? |
-| Q6 | domain | Starting, resuming, or ending a role, do the main conversation and the guard find what passes between them in one fixed form, so that a machine checks each start and each end? |
+| Q6 | domain | Starting, resuming, or ending a role, can a machine check what passes between the main conversation and the role, so that no start or end goes by unchecked? |
 | Q7 | domain | Choosing how to keep a file that the plugin reads, does the developer keep it in a form that a script checks, so that a file out of form shows before anyone reads it? |
-| Q8 | hooks | Following a run from a role's end to the next start, does the developer find the course in routes that the guard holds, so that every run takes the same moves and a stopped one goes on from its last? |
+| Q8 | hooks | Following a run from a role's end to the next start, does every run take the same moves, so that a stopped run goes on from its last move? |
 | Q9 | hooks | Where an instruction alone doesn't hold a step, does the developer have a hook stop the role and tell it the step again when it drifts, so that the step holds on every run? |
 | Q10 | hooks, scripts | Reading what a check gave, does the developer tell a pass from a check that couldn't run, so that nothing passes unchecked? |
 | Q11 | scripts | Checking a role's work, does the developer have a script or the project's own tools check all that a machine can see, so that an AI reads only for what no machine can? |
 | Q12 | scripts | Writing a file as it runs, does the plugin put it where its user chooses whether git keeps it, so that a stopped run leaves nothing behind and an update loses nothing? |
 | Q13 | scripts, hooks | Running on a user's machine, does the plugin need only what's already there, so that it runs wherever git does? |
-| Q14 | hooks, scripts | Needing code that another plugin of the marketplace has, does the developer take it in through a link, so that the developer writes, tests, and fixes it in one place? |
+| Q14 | hooks, scripts | Needing code that another plugin of the marketplace has, does the developer keep it in one place, so that they write, test, and fix it once? |
 | Q15 | .claude-plugin, hooks | Having another plugin do a job, does the developer take the part of it that does the job, so that the other runs as its makers built and tested it and nobody writes it again? |
 | Q16 | skills | Reaching a point that's the caller's, such as a merge, does the plugin take it as approved only by the caller's own act, so that no AI decides for them? |
 | Q17 | domain | Meeting a point that the work needs, does a role put to the person only what's theirs, one point at a time with a recommendation, so that a point settled before the work doesn't come back as rework? |
@@ -63,11 +63,13 @@ Starting a role, does the developer have it hold its whole part before its first
 
 **Thinking**
 
-An entry's body says that the plugin's folder is `${CLAUDE_PLUGIN_ROOT}` and names the role's part in `domain/`. The guard gives a role its part whole as the role starts, through the `SubagentStart` hook's `additionalContext`, with the folder put in, and the skill's body has the main conversation read its part whole first. The part names each file as `${CLAUDE_PLUGIN_ROOT}/<path>`. Claude Code makes an agent's body its system prompt and reads no other file into it. It puts the folder in place of `${CLAUDE_PLUGIN_ROOT}` only in an entry's own body, not in what the Bash tool runs nor in a file that Read reads, as [environment variables](https://code.claude.com/docs/en/plugins/manifest-reference#environment-variables) says. After `/compact`, a part that a skill names comes back whole, while the skill's own body survives only as the summary retells it.
+A role works from all it has to do only when it holds its whole part from its first call. Claude Code makes an agent's body its system prompt and reads no other file into it. It puts the plugin's folder in place of `${CLAUDE_PLUGIN_ROOT}` only in an entry's own body, not in what the Bash tool runs nor in a file that Read reads, as [environment variables](https://code.claude.com/docs/en/plugins/manifest-reference#environment-variables) says. After `/compact`, a part that a skill names comes back whole, while the skill's own body survives only as the summary retells it.
 
 **Steps**
 
-1. Run `lay.py print` on the plugin's proposal, and read in what it prints that it found each role's part. The trace: `python3 ${dependency:lane}/scripts/lay.py print {proposal}` run.
+1. Have each entry's body say that the plugin's folder is `${CLAUDE_PLUGIN_ROOT}` and name the role's part in `domain/`, and have the part name each file as `${CLAUDE_PLUGIN_ROOT}/<path>`.
+2. Have the guard give an agent its part whole as the agent starts, through the `SubagentStart` hook's `additionalContext` with the folder put in, and have the skill's body make the main conversation read its part whole first.
+3. Run `lay.py print` on the plugin's proposal, and read in what it prints that it found each role's part. The trace: `python3 ${dependency:lane}/scripts/lay.py print {proposal}` run.
 
 ### Q3
 
@@ -87,7 +89,7 @@ Splitting the work into roles, does the developer give each job a role of its ow
 
 **Thinking**
 
-Where a work has jobs that need different context or tools, each job has a role of its own, an agent whose `tools` name only what the job needs. A role starts in a fresh context, so nothing from other work leads it astray, as [subagents](https://code.claude.com/docs/en/sub-agents) says.
+Where a work has jobs that need different context or tools, each job has a role of its own, an agent whose `tools` name only what the job needs. A role starts in a fresh context, so nothing from other work leads it astray, as [subagents](https://code.claude.com/docs/en/sub-agents) says. Roles that run at the same time each work in a workspace of their own, such as a git worktree and a temporary folder that no other role writes, and their results join only through the one who started them, as two makers in one workspace overwrite each other's files unseen.
 
 **Steps**
 
@@ -107,7 +109,7 @@ Where a plugin has roles, its skill makes the main conversation the orchestrator
 
 ### Q6
 
-Starting, resuming, or ending a role, do the main conversation and the guard find what passes between them in one fixed form, so that a machine checks each start and each end?
+Starting, resuming, or ending a role, can a machine check what passes between the main conversation and the role, so that no start or end goes by unchecked?
 
 **Thinking**
 
@@ -123,7 +125,7 @@ Choosing how to keep a file that the plugin reads, does the developer keep it in
 
 **Thinking**
 
-A file that a plugin reads is JSON held to a JSON Schema, with a tree nested in it, such as a design tree. A document that the plugin rewrites, such as the design tree or a round's answers, is JSON. A record that it only adds to, such as Lane's calls, is JSON Lines, so that adding a record never rewrites what's there. A script finds a file out of form before anyone reads it, and the guard checks the nodes around a change to a tree, so the parts around it don't drift. A file that shows the form of a deliverable, such as a template or an example, keeps the deliverable's own format, as a template in another format shows a form that the deliverable can't take.
+A file that a plugin reads keeps to a schema that a script checks, such as JSON with a [JSON Schema](https://json-schema.org), with a tree nested in it, such as a design tree. A document that the plugin rewrites, such as the design tree or a round's answers, keeps such a form. A record that it only adds to, such as Lane's calls, is an append-only log, such as [JSON Lines](https://jsonlines.org), so that adding a record never rewrites what's there. A script finds a file out of form before anyone reads it, and the guard checks the nodes around a change to a tree, so the parts around it don't drift. A file that shows the form of a deliverable, such as a template or an example, keeps the deliverable's own format, as a template in another format shows a form that the deliverable can't take.
 
 **Steps**
 
@@ -131,7 +133,7 @@ A file that a plugin reads is JSON held to a JSON Schema, with a tree nested in 
 
 ### Q8
 
-Following a run from a role's end to the next start, does the developer find the course in routes that the guard holds, so that every run takes the same moves and a stopped one goes on from its last?
+Following a run from a role's end to the next start, does every run take the same moves, so that a stopped run goes on from its last move?
 
 **Thinking**
 
@@ -159,7 +161,7 @@ Reading what a check gave, does the developer tell a pass from a check that coul
 
 **Thinking**
 
-A check ends in one of three results: no problem, a problem, or couldn't check, such as the exit codes 0, 1, and 2. The developer decides beforehand what follows each, and tests it. A hook whose command fails stops the call, by `onFailure: block`, and a hook that finds no Python 3.9 stops each call of the plugin's own roles with why. A skipped test, a job that didn't run, or a command that failed counts as no pass. A reader takes a check that stays silent when it couldn't check for one that found nothing.
+A check ends in one of three results: no problem, a problem, or couldn't check, such as the exit codes 0, 1, and 2. The developer decides beforehand what follows each, and tests it. A hook whose command fails stops the call, by `onFailure: block`, and a hook that finds no Python 3.9 stops each call of the plugin's own roles with why. A skipped test, a job that didn't run, or a command that failed counts as no pass, as [fail securely](https://owasp.org/www-community/Fail_securely) says. A reader takes a check that stays silent when it couldn't check for one that found nothing.
 
 **Steps**
 
@@ -195,15 +197,15 @@ Running on a user's machine, does the plugin need only what's already there, so 
 
 **Thinking**
 
-Where users' machines may lack other runtimes or packages, what runs there needs only Python 3.9 or later and its standard library. python3 is wherever git is, and a plugin installs no packages. CI runs the checks on Python 3.9 and on the newest Python: only a run on 3.9 shows that the code still runs there, and only a run on the newest shows what a new Python breaks.
+Where users' machines may lack other runtimes or packages, what runs there needs only a runtime that's already on them and its standard library, such as Python 3.9 or later, which is wherever git is, and a plugin installs no packages. CI runs the checks on the oldest runtime that the plugin supports and on the newest: only a run on the oldest shows that the code still runs there, and only a run on the newest shows what a new release breaks.
 
 **Steps**
 
-1. Run the checks in CI on Python 3.9 and on the newest Python.
+1. Run the checks in CI on the oldest runtime that the plugin supports and on the newest, such as Python 3.9 and the newest Python.
 
 ### Q14
 
-Needing code that another plugin of the marketplace has, does the developer take it in through a link, so that the developer writes, tests, and fixes it in one place?
+Needing code that another plugin of the marketplace has, does the developer keep it in one place, so that they write, test, and fix it once?
 
 **Thinking**
 
@@ -299,11 +301,14 @@ Testing the plugin at each level that its architecture names, does the developer
 
 **Thinking**
 
-The test levels are the [architecture best practice](../architecture/best-practice.md)'s. No level runs a prompt, a skill, or an agent alone on a model: the guard holds each rule of a role's steps that must hold on every run, and the architecture tests run the guard on each path, with a double in each role's place. A trial of one role alone meets only the cases that its developer set up, so it finds no fault that a real request brings out. A double of Claude Code runs each hook's entry and script in the test's own process, as a new process of Python would run it, and sends what its documentation says or what a recorded try of the real Claude Code showed. `claude plugin validate` checks a configuration written by hand, such as `hooks.json`, and no test runs its commands. Each Claude Code that a product vision trial starts runs on a configuration folder of its own, holding only the plugins under test, with the developer's login as `CLAUDE_CODE_OAUTH_TOKEN`, as [multiple accounts](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts) says, and the stand-in answers each ask to allow a call from what the screen shows, as a person would. The developer's own settings would change what the trial tries. The cost: a fault in a prompt shows only in a product vision trial.
+The test levels are the [architecture best practice](../architecture/best-practice.md)'s. No level runs a prompt, a skill, or an agent alone on a model, as a trial of one role alone meets only the cases that its developer set up, and finds no fault that a real request brings out. Instead, the guard holds each rule of a role's steps that must hold on every run, and the architecture tests run the guard on each path, with a double in each role's place. The cost: a fault in a prompt shows only in a product vision trial.
 
 **Steps**
 
-1. Write the architecture tests with a double of Claude Code that runs each hook's entry in the test's own process, and run them with the unit tests before each push.
+1. Write the architecture tests with a double of Claude Code that runs each hook's entry and script in the test's own process, as a new process of Python would run it, and sends what its documentation says or what a recorded try of the real Claude Code showed. Run them with the unit tests before each push.
+2. Check each configuration written by hand, such as `hooks.json`, with `claude plugin validate`, as no test runs its commands.
+3. Start each Claude Code of a product vision trial on a configuration folder of its own that holds only the plugins under test, with the developer's login as `CLAUDE_CODE_OAUTH_TOKEN`, as [multiple accounts](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts) says, as the developer's own settings would change what the trial tries.
+4. Have the stand-in answer each ask to allow a call from what the screen shows, as a person would.
 
 ### Q23
 
@@ -323,7 +328,7 @@ Deciding whether to update, does a user find what changed for them in a version 
 
 **Thinking**
 
-A plugin gets a release only when whoever decides what reaches users says so. `plugin.json` holds `version` once, in semver, and the largest change that users see decides which part of it rises, as users get an update only when the version rises and `plugin.json` wins over the marketplace entry. The CHANGELOG gives each change that users notice one line, with why it helps them. Each release has a tag `<plugin>--v<version>`, as a dependency's version range resolves against these tags, and the marketplace and the root README list it.
+A plugin gets a release only when whoever decides what reaches users says so. `plugin.json` holds `version` once, in [Semantic Versioning](https://semver.org), and the largest change that users see decides which part of it rises, as users get an update only when the version rises and `plugin.json` wins over the marketplace entry. The CHANGELOG gives each change that users notice one line, with why it helps them, as [Keep a Changelog](https://keepachangelog.com) does. Each release has a tag `<plugin>--v<version>`, as a dependency's version range resolves against these tags, and the marketplace and the root README list it.
 
 **Steps**
 
@@ -343,4 +348,4 @@ Using a plugin built by this best practice, do its users achieve what they're af
 
 **Thinking**
 
-Each practice is the ideal for the case it names. A plugin takes what its architecture calls for, and where it differs from a practice, its architecture says why. Build each next plugin by this best practice, and mend each place where it falls short where the shortfall lies, in the goal, the template, a question, or a practice, as only a plugin built and used shows whether the whole works.
+Each practice is the ideal for the case it names. A plugin takes what its architecture calls for, and where it differs from a practice, its architecture says why. Read this best practice whole as [Q10 of the meta best practice](../meta/best-practice.md#q10) says. Once the product vision trial shows a plugin built by it closer to the goal, ship it, and mend each shortfall met in use where it lies: in the goal, the template, a question, or a practice.

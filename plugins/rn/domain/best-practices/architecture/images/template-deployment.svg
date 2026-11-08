@@ -79,5 +79,5 @@
   <text class="label small start" x="384" y="470" text-anchor="start">deployment unit [technology]: the components that run in it</text>
   <text class="data start" x="780" y="470" text-anchor="start">data kept</text>
   <rect class="ext" x="860" y="455" width="36" height="22" rx="4"/>
-  <text class="label small start" x="904" y="470" text-anchor="start">outside the product; an arrow says what is used</text>
+  <text class="label small start" x="904" y="470" text-anchor="start">outside the product, an arrow: what it uses</text>
 </svg>

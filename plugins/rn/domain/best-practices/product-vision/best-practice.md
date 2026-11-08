@@ -31,7 +31,7 @@ Listing whom to build for, does the developer find every role that comes to the 
 
 **Thinking**
 
-Each role is one end that someone brings to the product. Cut the roles by that end, not by who or what takes them: a person and an AI that want the same are one role. A cut by kind hides an end or splits one.
+Each role is one end that someone brings to the product, the job they hire it for, as the [jobs theory](https://hbr.org/2016/09/know-your-customers-jobs-to-be-done) of Clayton Christensen says. Cut the roles by that end, not by who or what takes them: a person and an AI that want the same are one role. A cut by kind hides an end or splits one.
 
 **Steps**
 
@@ -49,7 +49,7 @@ An objective is the end the role is after in its own work, with the role as its 
 
 **Steps**
 
-1. Ask why of each part of the objective until no further end shows, and write that end. Move a part that says how to Concept, and one that says how it would show to the key results.
+1. Ask why of each part of the objective until no further end shows, as the [five whys](https://en.wikipedia.org/wiki/Five_whys) do, and write that end. Move a part that says how to Concept, and one that says how it would show to the key results.
 2. Confirm with the user an objective that rests on what someone only said or guessed, not on what anyone saw the role do.
 
 ### Q3
@@ -71,7 +71,7 @@ After a change, does the developer see from the key results whether to keep it, 
 
 **Thinking**
 
-Key results count what the role does or feels that shows it meets its end: the first how well, and the last how fast. A change that betters a later one counts only while none before it gets worse. A result had fast but not well is no gain, and a count of the product's own output can rise while the role misses its end.
+Key results count what the role does or feels that shows it meets its end, as [objectives and key results](https://www.whatmatters.com/faqs/okr-meaning-definition-example) set them: the first how well, and the last how fast. A change that betters a later one counts only while none before it gets worse. A result had fast but not well is no gain, and a count of the product's own output can rise while the role misses its end.
 
 **Steps**
 
@@ -90,7 +90,7 @@ Concept holds the few ideas that set the product apart from what its roles do to
 
 1. Ask what the roles do today and where it falls short of each objective, and say the user's words back as a reading they can correct.
 2. Ask for the user's ideas, and grow each by a proposal, such as a sharper form or a variant, and by why it beats the present way.
-3. Argue against the ideas kept, and propose the riskiest assumption under them with how to check it.
+3. Argue against the ideas kept, and propose the riskiest assumption under them with how to check it, as the [Lean Startup](https://theleanstartup.com/principles) tests a leap of faith first.
 4. Stop once at most five ideas stand out, each meeting an objective where the present way doesn't.
 5. Keep, where the design lives, each idea tried, whose it was, and why it stayed, went, or merged with another, in the user's words.
 

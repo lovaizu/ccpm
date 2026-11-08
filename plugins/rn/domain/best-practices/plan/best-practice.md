@@ -44,7 +44,7 @@ Working back from the goal, does the maker find every deliverable the goal needs
 
 **Thinking**
 
-Lay out the deliverables up front, back from the goal: the deliverables that make the goal, then for each the deliverables it takes, until one takes nothing. A deliverable left out shows only when the work reaches it, and the work stops there.
+Lay out the deliverables up front, back from the goal, as a [work breakdown structure](https://en.wikipedia.org/wiki/Work_breakdown_structure) does: the deliverables that make the goal, then for each the deliverables it takes, until one takes nothing. A deliverable left out shows only when the work reaches it, and the work stops there.
 
 **Steps**
 
@@ -72,11 +72,11 @@ Ordering the deliverables, does the maker find what each one takes from its inpu
 
 **Thinking**
 
-Have a script order the deliverables from each one's inputs and preconditions, never by thinking the order out case by case. Give each deliverable in inputs the path of each deliverable it takes its content from, and in preconditions the path of each that must pass before it starts, each of a kind its best practice names there. One kind's deliverables serve different products, so the paths, not the kinds, say which deliverable comes first.
+Have a script order the deliverables from each one's inputs and preconditions, never by thinking the order out case by case, as a [topological sort](https://en.wikipedia.org/wiki/Topological_sorting) gives one order that keeps every dependency. Give each deliverable in inputs the path of each deliverable it takes its content from, and in preconditions the path of each that must pass before it starts, each of a kind its best practice names there. One kind's deliverables serve different products, so the paths, not the kinds, say which deliverable comes first.
 
 **Steps**
 
-1. After each change, have tree.py check that the tree holds every deliverable needed, that each comes after its inputs and preconditions, that each research deliverable serves a later decision, and that a later deliverable uses each meta deliverable's kind.
+1. After each change, have a script, such as rn's tree.py, check that the tree holds every deliverable needed, that each comes after its inputs and preconditions, that each research deliverable serves a later decision, and that a later deliverable uses each meta deliverable's kind.
 2. Order the tests by level, unit, then architecture, then the product vision, each after the level below passes, as a higher level finds a fault later and at a higher cost.
 3. Put a check before the deliverables that trust its results, and trust it only once someone has seen a test of it fail, or, for a judge, once it's right on examples whose answer someone knows.
 
@@ -86,7 +86,7 @@ Making a deliverable, does the maker find each intent of its best practice with 
 
 **Thinking**
 
-Give each deliverable the intents of its best practice in that best practice's order, each with the decisions that answer it. Leave a point's decided null while it's open, so the maker asks about it instead of guessing. Settle each decision once its inputs exist, and revise the plan forward from each turn's result, as a decision settled before its inputs rests on a guess.
+Give each deliverable the intents of its best practice in that best practice's order, each with the decisions that answer it. Leave a point's decided null while it's open, so the maker asks about it instead of guessing. Settle each decision once its inputs exist, and revise the plan forward from each turn's result, as a decision settled before its inputs rests on a guess, which the [last responsible moment](https://blog.codinghorror.com/the-last-responsible-moment/) avoids.
 
 ### Q7
 
@@ -110,7 +110,7 @@ Changing a node of the tree, does the maker find each node the change touches, s
 
 **Thinking**
 
-After each change to a node, go through the nodes tree.py lists: up to the goal, then the later decisions of the deliverable, then the deliverables before and after it that it takes from or gives to. Answer each as holding or as changed, as Lane's every_item asks, and start the list again after each change. A node left unread goes on saying what held before.
+After each change to a node, go through the nodes that a script, such as rn's tree.py, lists: up to the goal, then the later decisions of the deliverable, then the deliverables before and after it that it takes from or gives to. Answer each as holding or as changed, as a checker such as Lane's every_item asks, and start the list again after each change. A node left unread goes on saying what held before.
 
 ### Q10
 
@@ -126,4 +126,4 @@ Following the plan through the work, does the user reach their goal, every deliv
 
 **Thinking**
 
-Plan and resume the rest of the work by this best practice, and mend each place it falls short where the shortfall lies, in the goal, the template, a question, or a practice. Only a plan used through real work shows whether the whole reaches the goal.
+Read this best practice whole as [Q10 of the meta best practice](../meta/best-practice.md#q10) says. Once the product vision trial shows plans made by it closer to the goal, ship it, and mend each shortfall met in use where it lies: in the goal, the template, a question, or a practice.

@@ -1,5 +1,5 @@
 {
-  "DELETE_TEMPLATE_COMMENT": "<plugin>: the plugin's name, as its folder and its commands carry it. <what its users achieve>: what a user achieves with it, in the user's words, as the marketplace shows it. <author>: who keeps it. dependencies: each plugin of the marketplace that this one uses, such as lane for its guard; optional. version: semver, held here alone, raised only at a release.",
+  "DELETE_TEMPLATE_COMMENT": "<plugin>: the name that the plugin's folder and its commands carry. <what its users achieve>: what a user achieves with it, in the user's words, as the marketplace shows it. <author>: who keeps it. dependencies: each plugin of the marketplace that this one uses, such as lane for its guard. Optional. version: semver, held here alone, raised only at a release.",
   "name": "<plugin>",
   "description": "<What its users achieve>.",
   "version": "0.1.0",
