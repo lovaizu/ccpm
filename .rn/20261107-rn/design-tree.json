@@ -43,7 +43,7 @@
         },
         {
           "id": "Q2",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The main conversation's part",
@@ -80,12 +80,17 @@
               "about": "Pages beyond the README",
               "decided": "The template holds docs/<page>.md for each page the plugin's users need beyond the README, such as Lane's docs/lanes.md for writing rules",
               "by": "reasoning"
+            },
+            {
+              "about": "The plugin's place in the marketplace",
+              "decided": "The template holds the plugin's entry in the marketplace's .claude-plugin/marketplace.json and its line in the root README, and its order has the plugin deliverable write both",
+              "by": "reasoning"
             }
           ]
         },
         {
           "id": "Q4",
-          "good": true,
+          "good": false,
           "decisions": [
             {
               "about": "The best practices the roles work by",
@@ -95,6 +100,11 @@
             {
               "about": "What the plugin deliverable makes",
               "decided": "The template's order says which files the plugin's code and prompt deliverables make, the scripts and schemas by code and the entries and parts by prompt, and which the plugin deliverable makes once they pass: the manifest, the pages in docs/, the proposal and its adapters, hooks/hooks.json by lay.py, and the CHANGELOG",
+              "by": "reasoning"
+            },
+            {
+              "about": "The product vision",
+              "decided": "The plugin best practice takes product-vision as an input, for the manifest's description",
               "by": "reasoning"
             }
           ]
