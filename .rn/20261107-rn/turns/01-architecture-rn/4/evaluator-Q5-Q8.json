@@ -1,0 +1,25 @@
+{
+ "met": [
+  {
+   "question": "Q5",
+   "lines": [
+    "dev/rn/images/components.svg",
+    "dev/rn/architecture.md:267-291"
+   ]
+  }
+ ],
+ "not_met": [
+  {
+   "question": "Q6",
+   "lacks": "Result and Message, which the roles give and the planner hands on, aren't in the data model, so the developer can't tell how they join the other data."
+  },
+  {
+   "question": "Q7",
+   "lacks": "In S3 the main conversation runs status and says Picking up before the planner gives its result, so the developer can't tell which component decides that only one run remains or what data carries that."
+  },
+  {
+   "question": "Q8",
+   "lacks": "The stories, the components' decisions and the data don't name the objective or key result that needs them, so the developer can't see what nothing needs."
+  }
+ ]
+}
