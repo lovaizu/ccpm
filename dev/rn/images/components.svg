@@ -108,13 +108,13 @@
   <text class="label small halo" x="218" y="160" text-anchor="start">pushes, keeps the draft</text>
   <text class="label small halo" x="218" y="174" text-anchor="start">pull request [git, gh]</text>
   <path class="line" d="M830,284 L830,360 L260,360 L260,420" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="268" y="396" text-anchor="start">starts it [Agent]</text>
+  <text class="label small halo" x="268" y="396" text-anchor="start">starts it, stops it [Agent, TaskStop]</text>
   <text class="data halo" x="268" y="410" text-anchor="start">Cut</text>
   <path class="line" d="M830,360 L830,420" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="838" y="396" text-anchor="start">starts it [Agent]</text>
+  <text class="label small halo" x="838" y="396" text-anchor="start">starts it, stops it [Agent, TaskStop]</text>
   <text class="data halo" x="838" y="410" text-anchor="start">Cut</text>
   <path class="line" d="M830,360 L1170,360 L1170,420" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="1062" y="352" text-anchor="middle">starts each, at once [Agent]</text>
+  <text class="label small halo" x="1062" y="352" text-anchor="middle">starts each at once, stops each [Agent, TaskStop]</text>
   <text class="data halo" x="1062" y="366" text-anchor="middle">Cut</text>
   <path class="line" d="M1250,420 L1250,320 L900,320 L900,284" marker-end="url(#arrow)"/>
   <text class="label small halo" x="1080" y="314" text-anchor="middle">each role gives its result, and ends</text>

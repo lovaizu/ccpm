@@ -8,8 +8,9 @@ from the goal. Once the main conversation has settled a deliverable's points, a 
 them and its kind's best practice, round after round. The generator makes the deliverable whole
 from the design and answers each intent as its people would, and fresh evaluators, reading as those
 people, say where it meets each intent or what they still lack. A shortfall goes back to the
-decision that serves it, and the next round makes the deliverable again from the design. A point
-that only the user can settle goes back to the main conversation. Lane, the plugin that holds a
+decision that serves it, and the next round starts from the design, bringing the deliverable in
+line with the decisions. A point that only the user can settle, or a remark the user makes during a
+turn, goes back to the main conversation. Lane, the plugin that holds a
 plugin's roles to their steps, holds each role to the steps of the practices it carries out and the
 main conversation to the routes, and lets a role start only with the text that `tree.py` cut for
 it. `tree.py` commits each change on the work's branch and keeps one draft pull request for the user
@@ -88,13 +89,13 @@ around it would go on saying what held before. A deliverable built on them then 
 ### Each role gets only its cut
 
 `tree.py` cuts each role's part of the tree, and the main conversation starts the role with that
-text alone. No one adds a fix or a hint to a start on the way. No role, and not the main
-conversation, reads the design tree itself.
+text alone. No one adds a fix, a hint, or a remark of the user's to a start on the way, or to a
+message to a role that runs. No role, and not the main conversation, reads the design tree itself.
 
 *Why*: a role that reads the whole tree takes up decisions that aren't its own, and an evaluator
 that reads it judges whether the deliverable follows the design, not what its people get. A
-deliverable its people can't use then passes, as KR1.1 counts. A fix added to a start reaches the
-deliverable beside the design, as [Good from the root](#good-from-the-root) rules out.
+deliverable its people can't use then passes, as KR1.1 counts. A fix or a remark added to a start
+reaches the deliverable beside the design, as [Good from the root](#good-from-the-root) rules out.
 
 ### The evaluator has only what the deliverable's people have
 
@@ -118,8 +119,9 @@ A turn is a unit inside `/rn:up`, with no skill of its own, and Lane holds its f
 - **Its phases** come in order. The first makes what the deliverable says, by its kind's best
   practice. The second makes how it reads, by `refactor-doc` for a document or `refactor-code` for
   code, and changes nothing it says.
-- **Each phase goes round after round**: in each round, the generator makes the deliverable and
-  the evaluators answer each intent of the phase, until every intent is good.
+- **Each phase goes round after round**: in each round, the generator brings the deliverable in
+  line with the design and the evaluators answer each intent of the phase, until every intent is
+  good.
 - **It ends** once every intent of both phases is good, which the planner writes into the tree as
   it commits the deliverable. Or it stops at a point that only the user can settle, as
   [A point found open goes back to the main conversation](#a-point-found-open-goes-back-to-the-main-conversation)
@@ -132,31 +134,34 @@ sentence polished before what it says holds needs polishing again, which KR1.3 m
 
 ### Good from the root
 
-A shortfall goes back to the decisions that serve its intent. `tree.py` cuts the next round's
-generator start with the deliverable's decisions and each shortfall beside the intent it falls
-short of, and with nothing else. The generator makes the deliverable again from the design, and
-mends no line beside it. Whether a shortfall changes a decision is the generator's to decide, as
-only the generator makes the deliverable from the decisions:
+A shortfall goes back to the decisions that serve its intent, and the next round starts from the
+design. `tree.py` cuts the next round's generator start with the deliverable's decisions and each
+shortfall beside the intent it falls short of, and with nothing else. The generator brings the
+deliverable in line with the decisions, so that each part of it rests on one, and keeps each part
+that already does. It lays no fix on the deliverable beside the design. The generator judges
+whether the decisions meet a shortfall, as only the generator makes the deliverable from them:
 
-- Where some making of the decisions would meet the shortfall, the decisions stand, and the round
-  makes the deliverable that way.
-- Where no making of the decisions would meet it, a decision must change. The generator gives
-  `open` with that point, and the main conversation settles it, as
+- Where the decisions meet the shortfall, they stand, and the round brings the deliverable in line
+  with them.
+- Where only a changed decision would meet it, the generator gives `open` and names that decision.
+  The main conversation settles it, the planner writes it, and the turn goes on from the changed
+  design, as
   [A point found open goes back to the main conversation](#a-point-found-open-goes-back-to-the-main-conversation)
   says.
 
 *Why*: a fix laid on the deliverable beside the design is a part that no decision holds. The next
 round loses it, or keeps it though no one settled it, and a fix for one evaluator's finding breaks
-an intent that another found met. A decision that a role changes is one that no one settled, and
-an evaluator can't tell the two cases apart, as it never gets the design. The people then get a
-deliverable no design holds, as KR1.1 counts.
+an intent that another found met. A part made anew though a decision already held it can lose what
+an evaluator found met. A decision that a role changes is one that no one settled, and an evaluator
+can't tell the two cases apart, as it never gets the design. The people then get a deliverable no
+design holds, as KR1.1 counts.
 
 ### The maker checks first
 
 Before it gives `made`, the generator answers each intent of the phase the way the evaluators do,
 as the deliverable's people, with the lines that meet it or what they still lack. Where it would
-answer one not met, it makes the deliverable again from the design. Where no making of the design
-would meet an intent, it gives `open` with that point instead of `made`, as
+answer one not met, it brings the deliverable in line with the design again. Where only a changed
+decision would meet an intent, it gives `open` with that decision named instead of `made`, as
 [Good from the root](#good-from-the-root) says. Only the evaluators' answers make an intent good.
 
 *Why*: a lack that the maker could have seen otherwise costs a round of evaluators to find, and the
@@ -176,15 +181,27 @@ as KR1.1 counts.
 
 ### A point found open goes back to the main conversation
 
-Where the generator finds a point the design leaves open or a decision that must change, or an
-evaluator a point only the user can settle, the run stops there. The main conversation settles the
-point, the planner writes it, and the turn starts again from the design. Where only a change to a
-decision the user settled would meet a shortfall, rn takes it to the user only with a fact their
-answer didn't weigh. Otherwise it stays an accepted shortfall.
+Where the generator finds a point the design leaves open or names a decision that must change, or
+an evaluator finds a point only the user can settle, the run stops there. The main conversation
+settles the point, the planner writes it, and the turn goes on from the design as changed. Where
+only a change to a decision the user settled would meet a shortfall, rn takes it to the user only
+with a fact their answer didn't weigh. Otherwise it stays an accepted shortfall.
 
 *Why*: a role that settles such a point itself makes a part that the design doesn't hold, which
 [Good from the root](#good-from-the-root) rules out for a fix. Asking the user again what they settled
 spends their time and gives them nothing to weigh, as KR1.2 counts.
+
+### A remark during a turn is a point
+
+A remark the user makes while a turn runs is a point. The main conversation first stops each role
+of the turn that still runs, with `TaskStop`. It then settles the remark as it settles any point,
+the planner writes it into the tree, and the turn goes on from the design as changed. No one adds
+the remark to a running role's start or messages.
+
+*Why*: a role that runs on makes or judges a deliverable by a design about to change, and its
+result costs the user a round, as KR1.3 measures. A remark passed to a role reaches the deliverable
+beside the design, as [Good from the root](#good-from-the-root) rules out, and the next round loses
+it, so the user says it again, as KR1.2 counts.
 
 ### Tried in a throwaway copy
 
@@ -219,8 +236,8 @@ user answers again, as KR1.2 counts. The merge is the user's, as
 - **S1**: the user wants to type `/rn:up` with what they want, in their own words, and confirm the
   goal rn reads in it. It carries the walkthrough's first `/rn:up` and the goal put to the user.
 - **S2**: the user wants to answer each point rn puts to them, one at a time, in their own words.
-  It carries the plan shown with its first point, the answer `each file`, and each point that comes
-  up while rn makes a deliverable.
+  It carries the plan shown with its first point, the answer `each file`, each point that comes up
+  while rn makes a deliverable, and each remark the user makes meanwhile.
 - **S3**: the user wants to type `/rn:up` alone in a new conversation, and have rn go on where it
   stopped, asked nothing again. It carries the walkthrough's second `/rn:up` and `Picking up`.
 - **S4**: the user wants each deliverable committed on a branch, one draft pull request to merge,
@@ -236,13 +253,14 @@ What each decides alone:
 - **user**: what's theirs: the goal, each point the purpose and the best practices leave open, and
   whether to merge.
 - **main conversation**: whether a point is the user's or settled by the purpose or a best
-  practice, how it's settled, the words it's put in, and when a deliverable has no point left.
+  practice, how it's settled, the words it's put in, when a deliverable has no point left, and
+  which roles of a turn to stop when the user makes a remark.
 - **planner**: the goal as drafted from the request, the plan, each deliverable's kind, inputs and
   preconditions, each deliverable's size, so that a round makes it whole, whether each node a
   change touches still holds, and each status and intent made good from the evaluators' answers.
 - **generator**: the deliverable, each small point of making it, such as a phrase, its own answer
-  to each intent before it gives `made`, the points the design leaves open, and whether a shortfall
-  changes a decision.
+  to each intent before it gives `made`, the points the design leaves open, and whether the
+  decisions meet a shortfall or only a changed decision does.
 - **evaluator**: where the deliverable meets each intent of its group for its people, or what they
   still lack, and the points only the user can settle.
 - **tree.py**: the form of the design tree and of a change, the order of the deliverables, each
@@ -286,8 +304,8 @@ These choices in the components are ones a developer would question:
 - **Tree edit**: what the planner hands `tree.py` to write: each node it changes, the grounds, and
   its answer to each node touched: it holds, or the planner leaves it open.
 - **Cut**: the text `tree.py` gives a role to start with: its run values and its part of the tree.
-- **Point**: a decision the main conversation settles, whether the tree holds it open or a turn
-  found it.
+- **Point**: a decision the main conversation settles, whether the tree holds it open, a turn
+  found it, or the user remarked it during a turn.
 - **Turn**: the making of one deliverable from its settled decisions, through both phases.
 - **Round**: one making of the deliverable in a phase, and the evaluators' answers to it.
 - **Making record**: the generator's record of a round, `generator.json`: what it made, each small
@@ -409,13 +427,13 @@ sequenceDiagram
   T-->>M: the generator's cut: the deliverable's decisions, its kind, its phase, and each of last round's shortfalls beside its intent (Cut)
   M->>G: starts it (Cut)
   loop until it would answer each intent met, or finds a point open
-    G->>R: makes the deliverable from the design, by its phase's practices
+    G->>R: brings the deliverable in line with the design, by its phase's practices, keeping each part that rests on a decision
     G->>W: runs it
     W->>R: copies the repository, runs the deliverable's commands there, and writes what they gave (Try record)
     G->>R: answers each intent as the deliverable's people, and writes its record (Making record)
   end
-  alt the design leaves a point open, or no making of it meets an intent
-    G-->>M: gives open
+  alt the design leaves a point open, or only a changed decision meets an intent
+    G-->>M: gives open, naming the point or the decision
     Note over M,G: The run ends, and the main conversation settles the point, as S2 draws.
   else every intent is met by its own answers
     G-->>M: gives made
@@ -431,7 +449,7 @@ sequenceDiagram
     alt an evaluator gave open
       Note over M,E: The run ends, and the main conversation settles the point, as S2 draws.
     else one gave more
-      Note over M,G: The next round makes the deliverable again from the design, each shortfall beside its intent.
+      Note over M,G: The next round starts from the design, each shortfall beside its intent.
     else every one gave good
       M->>T: start, for the planner, with the turn's answers (Change)
       T-->>M: the planner's cut (Cut)
@@ -462,18 +480,44 @@ sequenceDiagram
   only `/rn:up`, as the walkthrough does, and the routes of one skill take the work from the
   planner's `ready` through the rounds and back to the planner with no call between them. The cost:
   `/rn:up`'s routes carry the results of every role.
-- **The generator making the whole deliverable again in each round** over mending the lines that
-  last round found short: each round's deliverable holds only what the design holds. The cost: a
-  round makes the whole deliverable, however small the shortfall.
+- **The generator bringing the deliverable in line with the design in each round, keeping each
+  part that rests on a decision,** over mending the lines that last round found short, or making
+  the whole deliverable anew: each round's deliverable holds only what the design holds, and keeps
+  what an evaluator found met. The cost: the generator reads each part against the decisions,
+  however small the shortfall.
 - **The generator answering each intent before it gives `made`** over leaving every answer to the
   evaluators: a lack it can see costs no round of evaluators. The cost: the generator reads the
   deliverable again as its people in each round.
-- **The rounds without a limit** over a turn that stops after a set number: a shortfall the design
-  can't meet goes back as a point open, so a turn goes on only while the generator can meet what
+- **The rounds without a limit** over a turn that stops after a set number: a shortfall that only
+  a changed decision meets goes back as a point open, so a turn goes on only while the generator can meet what
   the evaluators find. The cost: a turn runs long while its evaluators keep finding new shortfalls.
 - **One evaluator for each group of intents, all at once,** over one for every intent: each is fresh
   on fewer intents, as KR1.1 asks, and they run side by side, as KR1.3 asks. The cost: each evaluator
   reads the whole deliverable.
+
+### S2: a remark during a turn
+
+```mermaid
+sequenceDiagram
+  actor U as user
+  participant M as main conversation
+  participant G as generator
+  participant E as evaluator
+  participant P as planner
+  Note over M,P: A turn runs, as the last section draws.
+  U->>M: a remark, in their own words (Point)
+  opt a role of the turn still runs
+    M->>G: stops it [TaskStop]
+    M->>E: stops each [TaskStop]
+    M->>P: stops it [TaskStop]
+  end
+  Note over U,M: The main conversation settles the remark as a point, as S2 draws, and the turn goes on from the design as changed.
+```
+
+- **Each role that still runs stopped with `TaskStop`** over letting it end, or sending it the
+  remark: a role let end gives a result made by a design about to change, and a remark sent to it
+  reaches the deliverable beside the design. Claude Code's subagents reference documents
+  `TaskStop`. The cost: the stopped round gives no result, so its work goes unused.
 
 ### S3: picking up
 
