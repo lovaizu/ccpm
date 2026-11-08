@@ -31,7 +31,7 @@
             },
             {
               "about": "The code that goes whole",
-              "decided": "Lane's and rn's code and tests go before the check covers everything, as mending the prose of files that go is work lost. These go: plugins/lane/hooks, plugins/lane/scripts, dev/lane/tests, dev/lane/trials, dev/lane/testing.py, dev/lane/cosmic-ray.toml, the Python files of plugins/rn/domain, plugins/rn/hooks, plugins/rn/scripts, dev/rn/tests and dev/rn/cosmic-ray.toml. Their designs, product visions, READMEs, prompts and manifests stay, and check.sh and CI stop running what goes",
+              "decided": "Lane's and rn's code and tests stay until the code deliverable that makes each anew removes them, as check.sh checks this tree and the best practices' form with rn's code, which runs on Lane's. Until then lefthook.yml leaves out their folders, plugins/lane/hooks, plugins/lane/scripts, plugins/lane/docs, which shows the lanes and routes of that code, dev/lane/tests, dev/lane/trials, dev/lane/testing.py, plugins/rn/hooks, plugins/rn/scripts, dev/rn/tests and the Python files of plugins/rn/domain, as mending the prose of files that go is work lost",
               "by": "reasoning"
             }
           ]
