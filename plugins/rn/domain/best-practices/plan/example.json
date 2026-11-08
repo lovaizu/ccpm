@@ -30,10 +30,20 @@
       "preconditions": ["plugins/rn/domain/best-practices/meta"],
       "status": "doing",
       "intents": [
-        {"id": "Q1", "good": true, "decisions": []},
+        {
+          "id": "Q1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The goal of every plugin",
+              "decided": "The goal names only the end that the users of every plugin of the kind are after, a plugin with no roles such as Lane among them: the developer builds a Claude Code plugin with which its users achieve what they're after",
+              "by": "reasoning"
+            }
+          ]
+        },
         {
           "id": "Q2",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The main conversation's part",
@@ -65,7 +75,7 @@
         },
         {
           "id": "Q4",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The best practices the roles work by",

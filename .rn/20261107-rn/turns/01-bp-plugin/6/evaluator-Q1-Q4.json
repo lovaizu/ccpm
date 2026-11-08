@@ -1,0 +1,53 @@
+{
+  "met": [
+    {
+      "question": "Q2",
+      "lines": [
+        "plugin/template/README.md:8-35",
+        "plugin/template/.claude-plugin/plugin.json:2",
+        "plugin/template/CHANGELOG.md:9-14",
+        "plugin/template/hooks/hooks.json:2",
+        "plugin/template/agents/role.md:10-19",
+        "plugin/template/skills/command/SKILL.md:9-18",
+        "plugin/template/scripts/command.py:5-7",
+        "plugin/template/domain/role.md:5-14",
+        "plugin/template/domain/command.md:8-17",
+        "plugin/template/domain/role-in.schema.json:4",
+        "plugin/template/domain/role-out.schema.json:4",
+        "plugin/template/.lane/yyyymmdd-plugin/plugin.json:2",
+        "plugin/template/.lane/yyyymmdd-plugin/plugin/adapters/steps-practices.py:5-13"
+      ]
+    },
+    {
+      "question": "Q3",
+      "lines": [
+        "plugin/best-practice.md:5",
+        "plugin/best-practice.md:48-51",
+        "plugin/template/README.md:3-6",
+        "plugin/template/README.md:33-35",
+        "plugin/template/.claude-plugin/plugin.json:2",
+        "plugin/template/CHANGELOG.md:13-14",
+        "plugin/template/skills/command/SKILL.md:12-13",
+        "plugin/template/domain/command.md:3-6",
+        "plugin/template/domain/role.md:10-12"
+      ]
+    },
+    {
+      "question": "Q4",
+      "lines": [
+        "plugin/best-practice.md:11-19",
+        "plugin/best-practice.md:61",
+        "plugin/best-practice.md:232",
+        "plugin/template/README.md:8-19",
+        "plugin/template/domain/role.md:36-40",
+        "architecture/template.md:3"
+      ]
+    }
+  ],
+  "not_met": [
+    {
+      "question": "Q1",
+      "lacks": "A developer who builds a plugin with no roles, such as Lane, which plugin/template/README.md:33-35 counts as a plugin of this kind, reads in the goal at plugin/best-practice.md:5 an end their plugin can't have: a plugin 'whose roles work together to make something'. The goal ties the users' end to what the plugin holds, so that developer can't see from it the one end that every part of their plugin serves, nor tell whether the goal is theirs at all."
+    }
+  ]
+}
