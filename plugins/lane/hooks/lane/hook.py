@@ -17,12 +17,13 @@ from typing import Any
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "domain"))
 
+import exchange
 import guard
 
 # The events of a tool call, whose input names the tool and gives its input.
 TOOL_EVENTS = ("PreToolUse", "PostToolUse")
 # Who fixes a hook input out of its documented form.
-CLAUDE_CODE = guard.CLAUDE_CODE
+CLAUDE_CODE = exchange.CLAUDE_CODE
 
 
 class _Unread(ValueError):
@@ -67,7 +68,7 @@ def _unread(name: str, what: str, maker: str | None) -> str:
     )
 
 
-def _event(text: str) -> guard.Event:
+def _event(text: str) -> exchange.Event:
     """The event in the hook input.
 
     It raises _Unread where the input isn't a JSON object, or lacks a field that the hooks
@@ -88,7 +89,7 @@ def _event(text: str) -> guard.Event:
             raise _Unread(f"the hook input of {name} gives no tool_name")
         if not isinstance(data.get("tool_input"), dict):
             raise _Unread(f"the hook input of {name} gives no tool_input")
-    return guard.Event(
+    return exchange.Event(
         name=name,
         session=data["session_id"],
         cwd=data["cwd"],
@@ -103,7 +104,7 @@ def _event(text: str) -> guard.Event:
     )
 
 
-def _shown(name: str, answer: guard.Answer) -> str:
+def _shown(name: str, answer: exchange.Answer) -> str:
     """The answer as the hook output of the event, or nothing where it says nothing."""
     out: dict[str, Any] = {}
     specific: dict[str, Any] = {}

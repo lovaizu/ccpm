@@ -4,3 +4,4 @@ from __future__ import annotations
 
 WORDING = "After changing `<output>`, pass `<test>`."
 COMMANDS = "test"
+END = True

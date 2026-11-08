@@ -113,7 +113,12 @@ class TestChecked(ProposalTest):
         self.propose()
         self.assertEqual(
             self.refused(),
-            [f"{path} doesn't set `background: true`, which a role with lanes sets"],
+            [
+                (
+                    f"{path} doesn't set `background: true`, which a role with lanes or named by"
+                    " the routes sets"
+                )
+            ],
         )
 
     def test_a_lane_on_a_step_the_steps_dont_hold_is_refused(self):
@@ -203,3 +208,91 @@ class TestSharedPart(ProposalTest):
                 )
             ],
         )
+
+
+class TestRoutes(ProposalTest):
+    def route(self, **more):
+        self.propose(routes={**helpers.ROUTES, **more})
+
+    def skill_path(self):
+        return os.path.join(self.root, "skills", "write", "SKILL.md")
+
+    def test_routes_that_can_be_followed_give_the_skills_part(self):
+        self.route()
+        skill = proposal.checked(self.path).skill
+        self.assertEqual(skill.path if skill else None, self.skill_path())
+
+    def test_each_role_the_routes_name_has_its_part(self):
+        self.route()
+        self.assertEqual(sorted(proposal.checked(self.path).parts), ["reviewer", "writer"])
+
+    def test_a_proposal_of_routes_alone_stands(self):
+        self.propose({"plugin": "changelog", "routes": helpers.ROUTES})
+        self.assertIsNone(proposal.checked(self.path).laid.role("writer"))
+
+    def test_routes_whose_skill_is_not_there_are_refused(self):
+        lead = [{"from": "draft", "to": "writer"}, {"from": "writer", "on": "done"}]
+        self.route(orchestrator="draft", routes=lead)
+        self.assertEqual(self.refused(), [f"{self.root} holds no skills/draft/SKILL.md"])
+
+    def test_routes_on_a_step_the_skill_does_not_hold_are_refused(self):
+        self.route(step=7)
+        self.assertEqual(
+            self.refused(),
+            [f"the routes lie on step 7 of write, and {self.skill_path()} holds no step 7"],
+        )
+
+    def test_routes_on_a_step_of_a_skill_with_no_numbered_list_are_refused(self):
+        helpers.write(self.skill_path(), "---\nname: write\n---\nStart writer.\n")
+        self.route()
+        self.assertEqual(
+            self.refused(),
+            [
+                (
+                    f"the routes lie on step 1 of write, and {self.skill_path()} holds no numbered"
+                    " list, so they give no step"
+                )
+            ],
+        )
+
+    def test_routes_with_no_step_stand_beside_a_skill_with_no_numbered_list(self):
+        helpers.write(self.skill_path(), "Start writer.\n")
+        self.propose(routes={k: v for k, v in helpers.ROUTES.items() if k != "step"})
+        skill = proposal.checked(self.path).skill
+        self.assertEqual(skill.steps if skill else None, [])
+
+    def test_a_role_the_routes_name_not_set_to_run_in_the_background_is_refused(self):
+        path = os.path.join(self.root, "agents", "reviewer.md")
+        helpers.write(path, helpers.REVIEWER.replace("background: true\n", ""))
+        self.route()
+        self.assertEqual(
+            self.refused(),
+            [
+                (
+                    f"{path} doesn't set `background: true`, which a role with lanes or named by"
+                    " the routes sets"
+                )
+            ],
+        )
+
+    def test_a_dependency_the_routes_name_and_the_manifest_does_not_declare_is_refused(self):
+        lead = [
+            helpers.ROUTES["routes"][0],
+            {"from": "writer", "on": "written", "to": "checker:examiner"},
+            {"from": "checker:examiner", "on": "done"},
+        ]
+        self.route(routes=lead)
+        self.assertEqual(
+            self.refused(),
+            [
+                (
+                    "the routes name checker:examiner, and the manifest of changelog doesn't"
+                    " declare"
+                    " checker"
+                )
+            ],
+        )
+
+    def test_routes_that_cannot_be_followed_are_refused(self):
+        self.route(fan_out=["noter"])
+        self.assertEqual(self.refused(), ["fan_out names noter, which no route starts"])

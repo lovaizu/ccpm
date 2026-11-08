@@ -5,7 +5,7 @@ import json
 import os
 
 import helpers
-from helpers import guard, testing
+from helpers import exchange, guard, testing
 
 SESSION = "s1"
 
@@ -19,7 +19,7 @@ class GuardTest(testing.FolderTest):
         helpers.changelog(self.root)
 
     def call(self, tool, agent="changelog:writer", **given):
-        event = guard.Event(
+        event = exchange.Event(
             name="PreToolUse",
             session=SESSION,
             cwd=self.project,
@@ -36,7 +36,7 @@ class GuardTest(testing.FolderTest):
 
 class TestHeld(GuardTest):
     def test_a_command_its_lanes_name_goes_on(self):
-        self.assertEqual(self.bash("git log --oneline"), guard.Answer())
+        self.assertEqual(self.bash("git log --oneline"), exchange.Answer())
 
     def test_a_command_its_lanes_dont_name_is_denied_with_its_steps_sentence(self):
         self.assertEqual(
@@ -55,13 +55,13 @@ class TestHeld(GuardTest):
 
     def test_a_path_reads_from_the_project_folder_wherever_the_role_works(self):
         found = self.call("Write", file_path=os.path.join(self.project, "CHANGELOG.md"))
-        self.assertEqual(found, guard.Answer())
+        self.assertEqual(found, exchange.Answer())
 
     def test_a_call_of_a_role_with_no_lanes_goes_on(self):
-        self.assertEqual(self.bash("git commit", agent="changelog:reviewer"), guard.Answer())
+        self.assertEqual(self.bash("git commit", agent="changelog:reviewer"), exchange.Answer())
 
     def test_a_call_of_another_plugins_role_goes_on(self):
-        self.assertEqual(self.bash("git commit", agent="other:writer"), guard.Answer())
+        self.assertEqual(self.bash("git commit", agent="other:writer"), exchange.Answer())
 
     def lay(self, steps, text=None):
         """Lays writer's lanes as given, its entry holding the text given or its laid steps."""
@@ -72,14 +72,49 @@ class TestHeld(GuardTest):
 
     def test_a_lane_checked_only_at_the_end_lets_each_call_through(self):
         lane = {"lane": "end_when", "takes": ["CHANGELOG.md"]}
-        text = helpers.WRITER.replace("wrote.\n", "wrote. End only once `CHANGELOG.md` is made.\n")
+        text = helpers.WRITER.replace(
+            "wrote.\n",
+            "wrote. End only once `CHANGELOG.md` is made. End by running"
+            f" `{helpers.RESULT} writer done`.{helpers.ENDS}\n",
+        )
         self.lay([{"step": 4, "lanes": [lane]}], text)
-        self.assertEqual(self.bash("git commit"), guard.Answer())
+        self.assertEqual(self.bash("git commit"), exchange.Answer())
 
     def test_a_part_with_no_numbered_list_has_its_lanes_held_all_the_same(self):
         text = "---\nname: writer\nbackground: true\n---\nWrite the entries.\n"
         helpers.write(os.path.join(self.root, "agents", "writer.md"), text)
         self.assertIn("Run only", self.bash("git commit").deny or "")
+
+
+class TestStart(GuardTest):
+    def start(self):
+        event = exchange.Event(
+            name="SubagentStart",
+            session=SESSION,
+            cwd=self.project,
+            agent_id="a1",
+            agent_type="changelog:writer",
+        )
+        return guard.answer("changelog", self.root, self.project, event)
+
+    def test_a_role_whose_steps_say_every_sentence_is_given_nothing(self):
+        self.assertEqual(self.start(), exchange.Answer())
+
+    def test_a_part_of_its_own_is_given_whole_with_the_plugins_folder_put_in(self):
+        helpers.write(
+            os.path.join(self.root, "domain", "writer.md"), "Read `${CLAUDE_PLUGIN_ROOT}/a.md`.\n"
+        )
+        helpers.write(
+            os.path.join(self.root, "agents", "writer.md"),
+            "---\nname: writer\nbackground: true\n---\n"
+            "Your part is in `${CLAUDE_PLUGIN_ROOT}/domain/writer.md`.\n",
+        )
+        self.assertEqual(
+            self.start().context,
+            f"Read `{self.root}/a.md`.\n\n"
+            "changelog: Run only `git log --oneline`.\n\n"
+            "changelog: Write only `CHANGELOG.md`.",
+        )
 
 
 class TestCannotCheck(GuardTest):
@@ -104,6 +139,27 @@ class TestCannotCheck(GuardTest):
             )
             * 2,
         )
+
+    def end(self, again):
+        event = exchange.Event(
+            name="SubagentStop",
+            session=SESSION,
+            cwd=self.project,
+            agent_id="a1",
+            agent_type="changelog:writer",
+            stop_active=again,
+        )
+        return guard.answer("changelog", self.root, self.project, event)
+
+    def test_lanes_laid_that_cannot_be_read_keep_the_role_going_once_as_it_ends(self):
+        helpers.write(os.path.join(self.root, "hooks", "lanes.json"), "{")
+        found = self.end(False)
+        self.assertEqual((found.block is not None, found.block == found.tell), (True, True))
+
+    def test_lanes_laid_that_cannot_be_read_let_a_role_kept_going_once_end(self):
+        helpers.write(os.path.join(self.root, "hooks", "lanes.json"), "{")
+        found = self.end(True)
+        self.assertEqual((found.block, found.tell is not None), (None, True))
 
     def test_a_role_no_longer_set_to_run_in_the_background_stops_the_call(self):
         path = os.path.join(self.root, "agents", "writer.md")
@@ -165,7 +221,7 @@ class TestCannotCheck(GuardTest):
         )
 
     def test_no_project_folder_stops_the_call(self):
-        event = guard.Event(
+        event = exchange.Event(
             name="PreToolUse",
             session=SESSION,
             cwd=self.project,

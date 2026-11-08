@@ -3,3 +3,4 @@
 from __future__ import annotations
 
 WORDING = "End only once `<output>` is made."
+END = True

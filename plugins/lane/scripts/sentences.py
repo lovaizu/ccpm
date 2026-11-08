@@ -23,7 +23,9 @@ def said(
         if not dropped:
             continue
         block = "\n".join(lines[item.first : item.last + 1])
-        for sentence in dropped:
+        # The longest first, as an earlier wording may begin a later one, such as the result
+        # sentence before Lane added its second sentence.
+        for sentence in sorted(dropped, key=len, reverse=True):
             block = block.replace(" " + sentence, "")
         block = " ".join([block.rstrip(" "), *added]) if added else block
         lines[item.first : item.last + 1] = block.split("\n")

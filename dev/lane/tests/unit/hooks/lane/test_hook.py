@@ -8,13 +8,13 @@ import sys
 from unittest import mock
 
 import helpers
-from helpers import guard, hook, testing
+from helpers import exchange, guard, hook, testing
 
 ROOT = "/plugins/changelog"
 COMMON = {"session_id": "s1", "cwd": "/work", "transcript_path": "/t.jsonl"}
 
 
-NOTHING = guard.Answer()
+NOTHING = exchange.Answer()
 
 
 def answered(given, answer=NOTHING, argv=("hook.py", "changelog"), env=None):
@@ -46,7 +46,7 @@ class TestEvent(testing.FolderTest):
                 "changelog",
                 ROOT,
                 "/work",
-                guard.Event(
+                exchange.Event(
                     name="PostToolUse",
                     session="s1",
                     cwd="/work",
@@ -85,7 +85,7 @@ class TestAnswer(testing.FolderTest):
         self.assertEqual(answered(self.event("PreToolUse"))[:2], ("", 0))
 
     def test_a_deny_goes_back_as_the_permission_decision(self):
-        out, code, _ = answered(self.event("PreToolUse"), guard.Answer(deny="why"))
+        out, code, _ = answered(self.event("PreToolUse"), exchange.Answer(deny="why"))
         self.assertEqual(
             (json.loads(out), code),
             (
@@ -101,22 +101,22 @@ class TestAnswer(testing.FolderTest):
         )
 
     def test_an_ask_goes_back_as_the_permission_decision(self):
-        out, _, _ = answered(self.event("PreToolUse"), guard.Answer(ask="why"))
+        out, _, _ = answered(self.event("PreToolUse"), exchange.Answer(ask="why"))
         self.assertEqual(json.loads(out)["hookSpecificOutput"]["permissionDecision"], "ask")
 
     def test_context_goes_back_as_additional_context_of_the_event(self):
-        out, _, _ = answered(self.event("PostToolUse"), guard.Answer(context="next"))
+        out, _, _ = answered(self.event("PostToolUse"), exchange.Answer(context="next"))
         self.assertEqual(
             json.loads(out),
             {"hookSpecificOutput": {"hookEventName": "PostToolUse", "additionalContext": "next"}},
         )
 
     def test_a_block_goes_back_as_the_decision_and_its_reason(self):
-        out, _, _ = answered(self.event("SubagentStop"), guard.Answer(block="go on"))
+        out, _, _ = answered(self.event("SubagentStop"), exchange.Answer(block="go on"))
         self.assertEqual(json.loads(out), {"decision": "block", "reason": "go on"})
 
     def test_what_whoever_runs_the_plugin_hears_goes_back_as_a_system_message(self):
-        out, _, _ = answered(self.event("Stop"), guard.Answer(tell="left"))
+        out, _, _ = answered(self.event("Stop"), exchange.Answer(tell="left"))
         self.assertEqual(json.loads(out), {"systemMessage": "left"})
 
 

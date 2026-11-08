@@ -96,8 +96,7 @@ class TestPrint(LayTest):
         )
         _, out, _ = self.lay("print", self.path)
         self.assertIn(
-            "writer, in agents/writer.md, which holds no numbered list, so writer is given these"
-            " as it starts:\n"
+            "writer is given these as it starts, as no step says them:\n"
             "- Run only `git log --oneline`.\n"
             "- Write only `CHANGELOG.md`.\n",
             out,
@@ -209,6 +208,14 @@ class TestWrite(LayTest):
         self.lay("write", self.path)
         self.assertEqual(self.read("changelog/agents/writer.md"), text)
 
+    def test_a_part_with_no_numbered_list_laid_again_is_left_as_it_was(self):
+        text = "---\nname: writer\nbackground: true\n---\nWrite the entries.\n"
+        helpers.write(os.path.join(self.root, "agents", "writer.md"), text)
+        self.lay("write", self.path)
+        self.propose()
+        self.lay("write", self.path)
+        self.assertEqual(self.read("changelog/agents/writer.md"), text)
+
     def test_a_part_shared_by_two_roles_gets_its_sentences_once(self):
         helpers.share_part(self.root)
         lanes = [{"lane": "write_only", "takes": ["a"]}]
@@ -219,6 +226,117 @@ class TestWrite(LayTest):
         self.assertEqual(
             self.read("changelog/domain/writer.md"), "1. Read.\n2. Write. Write only `a`.\n"
         )
+
+
+class TestRoutes(LayTest):
+    def setUp(self):
+        super().setUp()
+        self.propose(routes=helpers.ROUTES)
+
+    def test_the_routes_are_shown_a_line_for_each(self):
+        _, out, _ = self.lay("print", self.path)
+        self.assertIn(
+            "routes of write\n"
+            "- write starts writer\n"
+            "- writer gives `written`: start reviewer\n"
+            "- reviewer gives `more`: start writer\n"
+            "- reviewer gives `good`: the run ends\n",
+            out,
+        )
+
+    def test_a_route_that_waits_and_starts_at_once_are_shown(self):
+        waits = {"from": "reviewer", "on": "asks", "waits": True}
+        given = {**helpers.ROUTES, "routes": [*helpers.ROUTES["routes"], waits]}
+        self.propose(routes={**given, "precedence": ["asks", "more", "good"], "command": "c"})
+        _, out, _ = self.lay("print", self.path)
+        self.assertIn(
+            "- reviewer gives `asks`: the run waits for the person\n"
+            '- the results of starts at once, first to last: ["asks", "more", "good"]\n'
+            "- each start's text: what `c <name>` prints for it\n",
+            out,
+        )
+
+    def test_a_role_that_fans_out_is_shown(self):
+        self.propose(
+            routes={**helpers.ROUTES, "fan_out": ["reviewer"], "precedence": ["more", "good"]}
+        )
+        _, out, _ = self.lay("print", self.path)
+        self.assertIn("- reviewer may run several times at once\n", out)
+
+    def test_the_routes_and_results_are_written_into_the_steps(self):
+        self.lay("write", self.path)
+        self.assertEqual(
+            [
+                self.read(f"changelog/{p}")
+                for p in ("skills/write/SKILL.md", "agents/writer.md", "agents/reviewer.md")
+            ],
+            [helpers.SKILL_ROUTED, helpers.WRITER_ROUTED, helpers.REVIEWER_ROUTED],
+        )
+
+    def test_each_role_the_routes_name_has_hook_entries_of_its_own(self):
+        self.lay("write", self.path)
+        held = ("changelog:writer", "changelog:reviewer")
+        self.assertEqual(
+            self.read_json("changelog/hooks/hooks.json"), entries.merged(None, "changelog", held)
+        )
+
+    def test_routes_left_out_of_a_new_proposal_have_their_sentences_taken_out(self):
+        self.lay("write", self.path)
+        self.propose()
+        self.lay("write", self.path)
+        self.assertEqual(
+            [
+                self.read(f"changelog/{p}")
+                for p in ("skills/write/SKILL.md", "agents/writer.md", "agents/reviewer.md")
+            ],
+            [helpers.SKILL, helpers.WRITER_LAID, helpers.REVIEWER],
+        )
+
+    def test_routes_laid_again_say_each_sentence_once(self):
+        self.lay("write", self.path)
+        self.propose(routes=helpers.ROUTES)
+        self.lay("write", self.path)
+        self.assertEqual(self.read("changelog/skills/write/SKILL.md"), helpers.SKILL_ROUTED)
+
+    def test_a_skill_laid_before_and_gone_since_is_passed_over(self):
+        self.lay("write", self.path)
+        os.remove(os.path.join(self.root, "skills", "write", "SKILL.md"))
+        self.propose()
+        self.assertEqual(self.lay("write", self.path)[0], 0)
+
+    def test_a_role_laid_before_and_gone_since_is_passed_over(self):
+        self.lay("write", self.path)
+        os.remove(os.path.join(self.root, "agents", "reviewer.md"))
+        self.propose()
+        self.assertEqual(self.lay("write", self.path)[0], 0)
+
+    def test_a_result_sentence_laid_in_an_earlier_wording_is_put_in_the_current_one(self):
+        helpers.write(
+            os.path.join(self.root, "agents", "reviewer.md"),
+            helpers.REVIEWER.replace(
+                "none is.\n",
+                f"none is. End by running `{helpers.RESULT} reviewer more` or"
+                f" `{helpers.RESULT} reviewer good`.\n",
+            ),
+        )
+        self.lay("write", self.path)
+        self.assertEqual(self.read("changelog/agents/reviewer.md"), helpers.REVIEWER_ROUTED)
+
+    def test_routes_with_no_step_show_what_the_main_conversation_is_told_as_the_run_begins(self):
+        helpers.write(os.path.join(self.root, "skills", "write", "SKILL.md"), "Start writer.\n")
+        self.propose(routes={k: v for k, v in helpers.ROUTES.items() if k != "step"})
+        _, out, _ = self.lay("print", self.path)
+        self.assertIn(
+            "write, in skills/write/SKILL.md\n"
+            "the main conversation is told these as it starts, as no step says them:\n"
+            f"- {helpers.FOLLOW}\n"
+            f"- End by running `{helpers.RESULT} write good`.{helpers.ENDS}\n",
+            out,
+        )
+
+    def test_the_commands_of_a_role_held_to_run_only_hold_its_result_commands(self):
+        _, out, _ = self.lay("print", self.path)
+        self.assertIn(f"commands: `git log --oneline`, `{helpers.RESULT} writer written`\n", out)
 
 
 class TestUsage(LayTest):

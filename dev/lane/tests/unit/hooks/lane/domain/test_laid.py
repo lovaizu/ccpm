@@ -1,7 +1,8 @@
 """The cases of laid.py's contract: the lanes and routes as a proposal gives them and as
 `hooks/lanes.json` keeps them, and whether each can stand."""
 
-from helpers import laid, testing
+import helpers
+from helpers import laid, step, testing
 
 WRITER = {
     "name": "writer",
@@ -38,9 +39,27 @@ class TestParsed(testing.FolderTest):
         self.assertIsNone(laid.parsed({"subagents": [WRITER]}).role("reviewer"))
 
     def test_lanes_with_routes_alone_have_no_roles(self):
-        routes = {"orchestrator": "write", "routes": []}
-        found = laid.parsed({"routes": routes})
-        self.assertEqual((found.roles, found.routes), ((), routes))
+        found = laid.parsed({"routes": helpers.ROUTES})
+        self.assertEqual(
+            (found.roles, found.routes.orchestrator if found.routes else None), ((), "write")
+        )
+
+
+class TestUnheld(testing.FolderTest):
+    def test_lanes_in_their_form_have_nothing_out_of_it(self):
+        self.assertIsNone(laid.unheld({"subagents": [WRITER], "routes": helpers.ROUTES}, laid.LAID))
+
+    def test_lanes_out_of_their_form_say_where(self):
+        self.assertEqual(
+            laid.unheld({"subagents": 1}, laid.LAID),
+            "its form: $.subagents: expected an array, found 1",
+        )
+
+    def test_routes_out_of_their_form_say_where(self):
+        self.assertEqual(
+            laid.unheld({"routes": {"orchestrator": "write", "routes": []}}, laid.LAID),
+            "the form of the routes: $.routes: expected at least 2 items, found []",
+        )
 
 
 class TestFaults(testing.FolderTest):
@@ -83,6 +102,30 @@ class TestFaults(testing.FolderTest):
             ["writer gives step 2 twice"],
         )
 
+    def test_routes_that_cannot_be_followed_are_a_fault(self):
+        given = {
+            "orchestrator": "write",
+            "routes": [
+                {"from": "write", "to": "writer"},
+                {"from": "writer", "on": "done", "to": "writer"},
+            ],
+        }
+        self.assertEqual(
+            laid.faults(laid.parsed({"routes": given})),
+            ["no route has neither a `to` nor `waits`, so the run can't end"],
+        )
+
+    def test_results_on_a_role_the_routes_are_from_are_a_fault(self):
+        given = {
+            "orchestrator": "write",
+            "routes": [{"from": "write", "to": "writer"}, {"from": "writer", "on": "done"}],
+        }
+        role = {**WRITER, "results": ["done"]}
+        self.assertEqual(
+            laid.faults(laid.parsed({"subagents": [role], "routes": given})),
+            ["writer names its results, and the routes are from it, which give its results"],
+        )
+
 
 class TestRead(testing.FolderTest):
     def test_the_lanes_laid_are_read_from_hooks_lanes_json(self):
@@ -115,3 +158,32 @@ class TestRead(testing.FolderTest):
         self.write_json("hooks/lanes.json", {"subagents": [WRITER, WRITER]})
         with self.assertRaisesRegex(laid.Unlaid, r"hooks/lanes\.json: writer is given twice"):
             laid.read(self.base)
+
+
+class TestSentences(testing.FolderTest):
+    def steps(self, count):
+        return step.numbered("".join(f"{n}. Do.\n" for n in range(1, count + 1)))
+
+    def test_a_role_says_the_sentence_of_each_of_its_lanes_on_its_step(self):
+        found = laid.parsed({"subagents": [WRITER]})
+        self.assertEqual(
+            laid.sentences(found, "writer", self.steps(4)),
+            [
+                laid.Said(2, "run_only", ["git log --oneline"]),
+                laid.Said(3, "write_only", ["CHANGELOG.md"]),
+            ],
+        )
+
+    def test_the_skill_says_the_routes_sentence_on_their_step_and_its_result_on_its_last(self):
+        found = laid.parsed({"routes": helpers.ROUTES})
+        self.assertEqual(
+            laid.sentences(found, "write", self.steps(2)),
+            [
+                laid.Said(1, "follow_routes", []),
+                laid.Said(2, "end_by", [f"{helpers.RESULT} write good"]),
+            ],
+        )
+
+    def test_a_part_with_no_numbered_list_says_each_sentence_on_no_step(self):
+        found = laid.parsed({"subagents": [WRITER]})
+        self.assertEqual([s.step for s in laid.sentences(found, "writer", [])], [None, None])

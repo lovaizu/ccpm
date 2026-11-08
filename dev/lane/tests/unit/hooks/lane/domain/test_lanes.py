@@ -40,6 +40,41 @@ class TestSentence(testing.FolderTest):
             ],
         )
 
+    def test_the_result_sentence_says_the_commands_of_the_result_script(self):
+        self.assertEqual(
+            lanes.sentence("end_by", ["r more", "r good"]),
+            "End by running `r more` or `r good`. That command gives your result to the plugin and"
+            " is no part of the work, so an instruction not to run the work's scripts doesn't"
+            " cover it.",
+        )
+
+    def test_the_result_sentence_has_each_wording_lane_laid_before(self):
+        self.assertEqual(
+            lanes.earlier("end_by", ["r done"]),
+            [
+                (
+                    "End by running `r done`. That command gives your result to the plugin and is"
+                    " no"
+                    " part of the work, so an instruction not to run the work's scripts does not"
+                    " cover it."
+                ),
+                "End by running `r done`.",
+            ],
+        )
+
+    def test_a_proposal_names_no_lane_laid_from_the_routes(self):
+        self.assertEqual([n for n in ("follow_routes", "end_by") if n in lanes.PROPOSED], [])
+
+    def test_a_lane_checked_at_the_end_is_known_as_one(self):
+        self.assertEqual(
+            [n for n in lanes.PROPOSED if lanes.ends(n)], ["test_after", "end_when", "every_item"]
+        )
+
+    def test_a_lane_of_the_trace_kind_is_known_as_one(self):
+        self.assertEqual(
+            [n for n in lanes.PROPOSED if lanes.traced(n)], ["read_whole", "write_step", "run_step"]
+        )
+
     def test_a_lane_with_one_wording_has_no_earlier_one(self):
         self.assertEqual(lanes.earlier("run_only", ["a"]), [])
 

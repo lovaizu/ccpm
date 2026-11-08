@@ -14,7 +14,7 @@ from typing import NamedTuple
 import command
 import laid
 import plugin
-import schema
+import routes
 import step
 
 
@@ -39,6 +39,8 @@ class Checked(NamedTuple):
     laid: laid.Laid
     # The part of each role with lanes, by its name.
     parts: dict[str, step.Part]
+    # The part of the skill that the routes name, or None where the proposal gives no routes.
+    skill: step.Part | None
 
 
 def checked(path: str) -> Checked:
@@ -65,36 +67,73 @@ def checked(path: str) -> Checked:
         raise Refused([f"{path} isn't there"]) from None
     except json.JSONDecodeError as why:
         raise Refused([f"{path} is no JSON: {why}"]) from None
-    out = schema.held(laid.PROPOSAL, data)
+    out = laid.unheld(data, laid.PROPOSAL)
     if out:
-        raise Refused([f"{path} is out of its form: {out.told()}"])
+        raise Refused([f"{path} is out of {out}"])
     found = laid.parsed(data)
     faults = laid.faults(found)
     if faults:
         raise Refused(faults)
     root = os.path.normpath(os.path.join(os.path.dirname(os.path.dirname(folder)), data["plugin"]))
+    names = [r.name for r in found.roles]
+    named = routes.named(found.routes) if found.routes is not None else []
+    names += [n for n in named if ":" not in n and n not in names]
     try:
         manifest = plugin.manifest(root)
-        parts = {r.name: _part(root, r) for r in found.roles}
+        parts = {n: _part(root, n) for n in names}
+        skill = None
+        if found.routes is not None:
+            skill = step.part(root, plugin.skill(root, found.routes.orchestrator))
     except plugin.Fault as why:
         raise Refused([str(why)]) from None
     faults = _step_faults(found, parts) + _dependency_faults(found, manifest)
+    faults += _routes_faults(found, manifest, skill)
     faults += _shared_faults(root, found, parts)
     if faults:
         raise Refused(faults)
-    return Checked(path, root, manifest, found, parts)
+    return Checked(path, root, manifest, found, parts, skill)
 
 
-def _part(root: str, role: laid.Role) -> step.Part:
+def _routes_faults(
+    found: laid.Laid, manifest: plugin.Manifest, skill: step.Part | None
+) -> list[str]:
+    """Each fault of the routes against the plugin's files: a step that the skill doesn't hold, and
+    a dependency that the manifest doesn't declare."""
+    if found.routes is None or skill is None:
+        return []
+    given = found.routes
+    faults = []
+    if given.step is not None and not skill.steps:
+        faults.append(
+            f"the routes lie on step {given.step} of {given.orchestrator}, and {skill.path} holds"
+            " no numbered list, so they give no step"
+        )
+    elif given.step is not None and given.step not in {s.number for s in skill.steps}:
+        faults.append(
+            f"the routes lie on step {given.step} of {given.orchestrator}, and {skill.path} holds"
+            f" no step {given.step}"
+        )
+    for name in routes.named(given):
+        dependency = name.split(":")[0]
+        if ":" in name and dependency not in manifest.dependencies:
+            faults.append(
+                f"the routes name {name}, and the manifest of {manifest.name} doesn't declare"
+                f" {dependency}"
+            )
+    return faults
+
+
+def _part(root: str, name: str) -> step.Part:
     """The role's part, which its entry names, the entry running the role in the background.
 
     It raises `plugin.Fault` where Lane can't read the entry or its part, or where the entry doesn't
     run the role in the background.
     """
-    entry = plugin.subagent(root, role.name)
+    entry = plugin.subagent(root, name)
     if not entry.background:
         raise plugin.Fault(
-            f"{entry.path} doesn't set `background: true`, which a role with lanes sets"
+            f"{entry.path} doesn't set `background: true`, which a role with lanes or named"
+            " by the routes sets"
         )
     return step.part(root, entry)
 
@@ -137,7 +176,7 @@ def _shared_faults(root: str, found: laid.Laid, parts: dict[str, step.Part]) -> 
     sharing: dict[str, list[laid.Role]] = {}
     for role in list(found.roles) + before:
         try:
-            path = parts[role.name].path if role.name in parts else _part(root, role).path
+            path = parts[role.name].path if role.name in parts else _part(root, role.name).path
         except plugin.Fault:
             continue
         sharing.setdefault(path, []).append(role)

@@ -118,6 +118,16 @@
               "about": "One hook entry",
               "decided": "hook.py alone is the entry of every event, as the hook input names its event. The architecture's entry for each event would add files that decide nothing",
               "by": "reasoning"
+            },
+            {
+              "about": "guard.py split",
+              "decided": "guard.py holds a role's events, conversation.py the main conversation's run, and exchange.py the event and the answer that pass between hook.py and them, so that no two modules import each other",
+              "by": "reasoning"
+            },
+            {
+              "about": "The sentences a role's steps carry",
+              "decided": "laid.py gives each sentence that the lanes and routes lay, for lay.py to write and for the guard to find in the steps",
+              "by": "reasoning"
             }
           ]
         },
@@ -155,6 +165,31 @@
               "about": "A part of its own",
               "decided": "the guard gives a role its part as it starts only where the part is a file apart from the entry, as Claude Code gives the entry's body already",
               "by": "reasoning"
+            },
+            {
+              "about": "Who gives a result",
+              "decided": "a role gives a result where the routes name it, where it names its results, or where it has a lane checked at the end or of the trace kind, so that the guard checks its traces as it ends",
+              "by": "reasoning"
+            },
+            {
+              "about": "The record of a session",
+              "decided": "called.py adds each entry as one line at the end of record.jsonl in one write, so hooks that run at once each add a whole line, and a run's state comes from the entries alone",
+              "by": "reasoning"
+            },
+            {
+              "about": "A role kept going once",
+              "decided": "the guard reads stop_hook_active, which Claude Code gives Stop and SubagentStop, to tell a role or a turn kept going once, and keeps no mark of its own",
+              "by": "research"
+            },
+            {
+              "about": "A task notification",
+              "decided": "a prompt that begins with <task-notification> brings a role's end and is none of the person's words, as a try of Claude Code 2.1.319 showed",
+              "by": "research"
+            },
+            {
+              "about": "Fields that the reference leaves out",
+              "decided": "SendMessage gives `to` and `message`, and Bash gives back `stdout`, as the old Lane's tries of Claude Code recorded them",
+              "by": "research"
             }
           ]
         },

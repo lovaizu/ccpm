@@ -29,7 +29,9 @@ import entries
 import laid
 import lane_code
 import lanes
+import plugin
 import proposal
+import routes
 import sentences
 import step
 
@@ -45,7 +47,7 @@ class _Part(NamedTuple):
     """A part's text as `lay.py write` lays it, and the roles whose steps it holds."""
 
     part: step.Part
-    roles: list[laid.Role]
+    names: list[str]
     text: str
 
 
@@ -74,72 +76,131 @@ def _laid_before(root: str) -> laid.Laid | None:
         return None
 
 
+def _names(checked: proposal.Checked, before: laid.Laid | None) -> list[tuple[str, step.Part]]:
+    """The skill that the routes name, then each role with lanes or named by the routes, each with
+    its part. The names of the lanes laid before follow, where the proposal gives them no more and
+    their parts are still there, so that their sentences come out."""
+    given = checked.laid.routes
+    found = [(given.orchestrator, checked.skill)] if given is not None and checked.skill else []
+    found += list(checked.parts.items())
+    if before is None:
+        return found
+    names = {n for n, _ in found}
+    old = [r.name for r in before.roles]
+    if before.routes is not None:
+        old += routes.named(before.routes)
+        skill = before.routes.orchestrator
+        if skill not in names:
+            try:
+                found.append((skill, step.part(checked.root, plugin.skill(checked.root, skill))))
+            except plugin.Fault:
+                pass
+            names.add(skill)
+    for name in dict.fromkeys(n for n in old if ":" not in n and n not in names):
+        try:
+            found.append((name, step.part(checked.root, plugin.subagent(checked.root, name))))
+        except plugin.Fault:
+            continue
+    return found
+
+
 def _parts(checked: proposal.Checked) -> list[_Part]:
-    """Each part of the proposal's roles, with its text as `lay.py write` lays it."""
+    """Each part of the skill and the roles, with its text as `lay.py write` lays it."""
     before = _laid_before(checked.root)
     found: dict[str, _Part] = {}
-    for role in checked.laid.roles:
-        part = checked.parts[role.name]
+    for name, part in _names(checked, before):
         if part.path in found:
-            found[part.path].roles.append(role)
+            found[part.path].names.append(name)
             continue
         adds: dict[int, list[str]] = {}
         drops: dict[int, list[str]] = {}
-        for lane in role.lanes:
-            adds.setdefault(lane.step, []).append(lanes.sentence(lane.lane, list(lane.takes)))
-            drops.setdefault(lane.step, []).extend(lanes.earlier(lane.lane, list(lane.takes)))
-        old = before.role(role.name) if before else None
-        for lane in old.lanes if old else ():
-            takes = list(lane.takes)
-            said = [lanes.sentence(lane.lane, takes), *lanes.earlier(lane.lane, takes)]
-            drops.setdefault(lane.step, []).extend(said)
+        for each in laid.sentences(checked.laid, name, part.steps):
+            if each.step is not None:
+                adds.setdefault(each.step, []).append(lanes.sentence(each.lane, each.takes))
+                drops.setdefault(each.step, []).extend(lanes.earlier(each.lane, each.takes))
+        for each in laid.sentences(before, name, part.steps) if before else []:
+            if each.step is not None:
+                said = [
+                    lanes.sentence(each.lane, each.takes),
+                    *lanes.earlier(each.lane, each.takes),
+                ]
+                drops.setdefault(each.step, []).extend(said)
         text = sentences.said(part.text, part.steps, adds, drops) if part.steps else part.text
-        found[part.path] = _Part(part, [role], text)
+        found[part.path] = _Part(part, [name], text)
     return list(found.values())
 
 
-def _commands(role: laid.Role) -> list[str]:
-    """Each command that the role may run, as its lanes write it."""
+def _commands(said: list[laid.Said]) -> list[str]:
+    """Each command that the sentences let a role run, as they write it."""
     found = []
-    for lane in role.lanes:
-        where = lanes.commands_place(lane.lane)
+    for each in said:
+        where = lanes.commands_place(each.lane)
         if where:
-            found += lanes.placed(lane.lane, list(lane.takes))[where]
+            found += lanes.placed(each.lane, each.takes)[where]
     return list(dict.fromkeys(found))
 
 
 def _show(checked: proposal.Checked, out: IO[str]) -> None:
-    """Shows each role's steps as `lay.py write` would lay them."""
+    """Shows the routes, and each step as `lay.py write` would lay it."""
     out.write(
         f"{checked.manifest.name}: the lanes of {checked.root}, as lay.py write would lay them\n"
     )
+    if checked.laid.routes is not None:
+        out.write("\n" + _routes_shown(checked.laid.routes))
     for each in _parts(checked):
-        for role in each.roles:
-            out.write("\n" + _shown(checked.root, role, each))
+        for name in each.names:
+            said = laid.sentences(checked.laid, name, each.part.steps)
+            out.write("\n" + _shown(checked, name, said, each))
 
 
-def _shown(root: str, role: laid.Role, each: _Part) -> str:
-    """What `print` shows of the role, from its part as `lay.py write` lays it."""
-    where = os.path.relpath(each.part.path, root)
-    if not each.part.steps:
-        said = [lanes.sentence(lane.lane, list(lane.takes)) for lane in role.lanes]
-        return (
-            f"{role.name}, in {where}, which holds no numbered list, so {role.name} is given"
-            " these as it starts:\n" + "".join(f"- {s}\n" for s in said)
+def _routes_shown(given: routes.Routes) -> str:
+    """The routes, a line for each, and how the starts at once and their texts go."""
+    lines = [f"routes of {given.orchestrator}"]
+    for route in given.routes:
+        if route.on is None:
+            lines.append(f"- {route.source} starts {route.to}")
+        elif route.to:
+            lines.append(f"- {route.source} gives `{route.on}`: start {route.to}")
+        elif route.waits:
+            lines.append(f"- {route.source} gives `{route.on}`: the run waits for the person")
+        else:
+            lines.append(f"- {route.source} gives `{route.on}`: the run ends")
+    for role in given.fan_out:
+        lines.append(f"- {role} may run several times at once")
+    if given.precedence is not None:
+        lines.append(
+            f"- the results of starts at once, first to last: {json.dumps(given.precedence)}"
         )
-    lines = [f"{role.name}, in {where}"]
-    commands = _commands(role)
-    if any(lane.lane == "run_only" for lane in role.lanes):
+    if given.command:
+        lines.append(f"- each start's text: what `{given.command} <name>` prints for it")
+    return "\n".join(lines) + "\n"
+
+
+def _shown(checked: proposal.Checked, name: str, said: list[laid.Said], each: _Part) -> str:
+    """What `print` shows of the role or the skill of the name, from its part as `lay.py write`
+    lays it."""
+    where = os.path.relpath(each.part.path, checked.root)
+    told = [s for s in said if s.step is None or not each.part.steps]
+    lines = [f"{name}, in {where}"]
+    role = checked.laid.role(name)
+    commands = _commands(said)
+    if role is not None and any(lane.lane == "run_only" for lane in role.lanes):
         lines.append("commands: " + ", ".join(f"`{c}`" for c in commands))
         for item in step.numbered(each.text):
             for span in dict.fromkeys(SPAN.findall(item.says)):
                 if " " in span and not any(
                     c == span or c.endswith((" " + span, "/" + span)) for c in commands
                 ):
-                    lines.append(
-                        f"step {item.number} names `{span}`, which {role.name} may not run"
-                    )
+                    lines.append(f"step {item.number} names `{span}`, which {name} may not run")
     lines += [f"{item.number}. {item.says}" for item in step.numbered(each.text)]
+    if told:
+        whom = (
+            "the main conversation is told"
+            if role is None and checked.skill
+            else f"{name} is given"
+        )
+        lines.append(f"{whom} these as it starts, as no step says them:")
+        lines += [f"- {lanes.sentence(s.lane, s.takes)}" for s in told]
     return "\n".join(lines) + "\n"
 
 
@@ -156,7 +217,10 @@ def _write(checked: proposal.Checked, out: IO[str], err: IO[str], lane: str) -> 
     hooks = os.path.join(root, "hooks")
     os.makedirs(hooks, exist_ok=True)
     _save(os.path.join(hooks, "lanes.json"), checked.laid.data)
-    held = tuple(f"{checked.manifest.name}:{r.name}" for r in checked.laid.roles)
+    names = [r.name for r in checked.laid.roles]
+    if checked.laid.routes is not None:
+        names += routes.named(checked.laid.routes)
+    held = tuple(dict.fromkeys(routes.typed(checked.manifest.name, n) for n in names))
     existing = _json(os.path.join(hooks, "hooks.json"))
     _save(os.path.join(hooks, "hooks.json"), entries.merged(existing, checked.manifest.name, held))
     code = lane_code.lay(lane, root)

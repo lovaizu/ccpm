@@ -3,3 +3,4 @@
 from __future__ import annotations
 
 WORDING = "Answer every item of `<input>`."
+END = True

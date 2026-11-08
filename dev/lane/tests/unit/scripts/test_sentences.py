@@ -38,6 +38,12 @@ class TestSaid(testing.FolderTest):
     def test_a_sentence_dropped_that_the_step_doesnt_say_leaves_it(self):
         self.assertEqual(said("1. Do.\n", {}, {1: ["A."]}), "1. Do.\n")
 
+    def test_a_sentence_dropped_that_begins_another_dropped_one_takes_neither_apart(self):
+        self.assertEqual(
+            said("1. Do. End. Then more.\n", {1: ["End. Then more."]}, {1: ["End."]}),
+            "1. Do. End. Then more.\n",
+        )
+
     def test_a_sentence_dropped_and_added_moves_to_the_end(self):
         self.assertEqual(said("1. A. Do.\n", {1: ["A."]}, {1: ["A."]}), "1. Do. A.\n")
 

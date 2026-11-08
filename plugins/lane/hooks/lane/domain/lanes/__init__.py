@@ -6,6 +6,8 @@ A type's module holds `WORDING`, its sentence, with each place that a take fills
 - `EARLIER`, each wording that Lane laid before, newest first, where Lane laid one.
 - `COMMANDS`, the place whose takes are commands that the role may run, where it has one. The
   takes of every other place are paths.
+- `TRACE`, true where the type is of the trace kind, naming the call that shows its step done.
+- `END`, true where the guard checks the type as the role gives its result.
 - `check`, where the type checks a call before it runs.
 """
 
@@ -21,6 +23,7 @@ import command
 
 from lanes import (
     edit_only,
+    end_by,
     end_when,
     every_item,
     follow_routes,
@@ -54,10 +57,12 @@ TYPES: dict[str, ModuleType] = {
         follow_routes,
         end_when,
         every_item,
+        end_by,
     )
 }
-# The types a proposal may name: follow_routes comes from the routes alone.
-PROPOSED = tuple(n for n in TYPES if n != "follow_routes")
+# The types a proposal may name. `lay.py write` lays follow_routes and end_by from the routes and
+# from the lanes checked at the end.
+PROPOSED = tuple(n for n in TYPES if n not in ("follow_routes", "end_by"))
 # A place in a wording, such as `<output>`, with its name.
 PLACE = re.compile(r"`<([a-z]+)>`")
 
@@ -90,6 +95,16 @@ class Context(NamedTuple):
 def commands_place(name: str) -> str | None:
     """The lane's place whose takes are commands that the role may run, or None."""
     return getattr(TYPES[name], "COMMANDS", None)
+
+
+def traced(name: str) -> bool:
+    """Whether the lane is of the trace kind."""
+    return getattr(TYPES[name], "TRACE", False)
+
+
+def ends(name: str) -> bool:
+    """Whether the guard checks the lane as the role gives its result."""
+    return getattr(TYPES[name], "END", False)
 
 
 def places(name: str) -> tuple[str, ...]:

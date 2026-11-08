@@ -11,7 +11,9 @@ import os
 from typing import Any, NamedTuple
 
 import lanes
+import routes
 import schema
+import step
 
 # The form of a role's lanes, as the proposal gives them.
 SUBAGENT = {
@@ -106,13 +108,25 @@ class Role(NamedTuple):
     results: tuple[str, ...] | None
 
 
+class Said(NamedTuple):
+    """A sentence that the lanes and routes lay in a role's or the skill's steps."""
+
+    # The number of the step that the sentence ends, or None where no step says it.
+    step: int | None
+    # The type of lane that the sentence says, follow_routes for the routes' sentence, or end_by
+    # for the result sentence.
+    lane: str
+    # What the sentence takes.
+    takes: list[str]
+
+
 class Laid(NamedTuple):
     """The lanes and routes, as the proposal or `hooks/lanes.json` gives them."""
 
     # Each role with lanes.
     roles: tuple[Role, ...]
-    # The routes as the JSON gives them, or None.
-    routes: dict[str, Any] | None
+    # The routes, or None where the JSON gives none.
+    routes: routes.Routes | None
     # The JSON, as `lay.py write` writes it into `hooks/lanes.json`.
     data: dict[str, Any]
 
@@ -121,9 +135,19 @@ class Laid(NamedTuple):
         return next((r for r in self.roles if r.name == name), None)
 
 
+def unheld(data: Any, form: dict[str, Any]) -> str | None:
+    """Where the JSON is out of the form of `hooks/lanes.json` or of a proposal, or its routes out
+    of theirs, such as `its form: $.subagents: expected an array, found 1`, or None where it
+    holds."""
+    out = schema.held(form, data)
+    if out:
+        return f"its form: {out.told()}"
+    out = schema.held(routes.SCHEMA, data["routes"]) if "routes" in data else None
+    return f"the form of the routes: {out.told()}" if out else None
+
+
 def parsed(data: dict[str, Any]) -> Laid:
-    """The lanes and routes in the JSON, which holds to the form of `hooks/lanes.json` or of a
-    proposal already."""
+    """The lanes and routes in the JSON, of which `unheld` finds nothing out of its form."""
     roles = []
     for given in data.get("subagents", []):
         found = tuple(
@@ -136,25 +160,51 @@ def parsed(data: dict[str, Any]) -> Laid:
             Role(given["name"], found, given.get("adapter"), given.get("steps_adapter"), results)
         )
     laid = {k: v for k, v in data.items() if k != "plugin"}
-    return Laid(tuple(roles), data.get("routes"), laid)
+    given = routes.parsed(data["routes"]) if "routes" in data else None
+    return Laid(tuple(roles), given, laid)
 
 
 def faults(found: Laid) -> list[str]:
-    """What keeps the lanes from standing, none where each can stand."""
+    """What keeps the lanes and routes from standing, none where each can stand."""
     shown = []
+    if found.routes is not None:
+        shown += routes.faults(found.routes)
+        for role in found.roles:
+            if role.results is not None and routes.results(found.routes, role.name) is not None:
+                shown.append(
+                    f"{role.name} names its results, and the routes are from it, which give its"
+                    " results"
+                )
     names = [r.name for r in found.roles]
     for name in dict.fromkeys(n for n in names if names.count(n) > 1):
         shown.append(f"{name} is given twice")
     for role, given in zip(found.roles, found.data.get("subagents", [])):
         steps = [s["step"] for s in given["steps"]]
-        for step in dict.fromkeys(s for s in steps if steps.count(s) > 1):
-            shown.append(f"{role.name} gives step {step} twice")
+        for number in dict.fromkeys(s for s in steps if steps.count(s) > 1):
+            shown.append(f"{role.name} gives step {number} twice")
         for lane in role.lanes:
             where = f"step {lane.step} of {role.name}"
             shown += [f"{where}: {f}" for f in lanes.stands(lane.lane, list(lane.takes))]
             if lane.adapter is not None and lane.lane not in PORTED:
                 shown.append(f"{where}: {lane.lane} reads no port, so it takes no adapter")
     return shown
+
+
+def sentences(found: Laid, name: str, steps: list[step.Step]) -> list[Said]:
+    """Each sentence that the lanes and routes lay in the steps of the role or the skill of the
+    name, whose part holds the steps given: the role's lanes' sentences, the routes' sentence on
+    the skill's step, and the result sentence on the last step. A part with no numbered list says
+    none of them."""
+    role = found.role(name)
+    said = [Said(lane.step, lane.lane, list(lane.takes)) for lane in role.lanes] if role else []
+    if found.routes is not None and found.routes.orchestrator == name:
+        said.append(Said(found.routes.step, "follow_routes", []))
+    commands = routes.result_commands(found, name)
+    if commands:
+        said.append(Said(steps[-1].number if steps else None, "end_by", commands))
+    if not steps:
+        said = [Said(None, s.lane, s.takes) for s in said]
+    return said
 
 
 def read(root: str) -> Laid:
@@ -171,9 +221,9 @@ def read(root: str) -> Laid:
         raise Unlaid(f"{root} holds no hooks/lanes.json") from None
     except json.JSONDecodeError as why:
         raise Unlaid(f"{path} is no JSON: {why}") from None
-    out = schema.held(LAID, data)
+    out = unheld(data, LAID)
     if out:
-        raise Unlaid(f"{path} is out of its form: {out.told()}")
+        raise Unlaid(f"{path} is out of {out}")
     found = parsed(data)
     shown = faults(found)
     if shown:
