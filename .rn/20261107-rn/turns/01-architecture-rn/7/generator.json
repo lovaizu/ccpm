@@ -1,0 +1,21 @@
+{
+  "met": [
+    {"question": "Q1", "lines": ["rn/architecture.md:3-9", "rn/architecture.md:11-33"]},
+    {"question": "Q2", "lines": ["rn/architecture.md:298-313"]},
+    {"question": "Q3", "lines": ["rn/architecture.md:37-58", "rn/architecture.md:82-98", "rn/architecture.md:169-185", "rn/architecture.md:210-230"]},
+    {"question": "Q4", "lines": ["rn/architecture.md:315-352", "rn/architecture.md:334-337", "rn/architecture.md:345-346"]},
+    {"question": "Q5", "lines": ["rn/images/components.svg", "rn/architecture.md:317"]},
+    {"question": "Q6", "lines": ["rn/images/data-model.svg:63-70", "rn/images/data-model.svg:119-122", "rn/architecture.md:387-399", "rn/architecture.md:219-222"]},
+    {"question": "Q7", "lines": ["rn/architecture.md:421-748", "rn/architecture.md:539-550", "rn/architecture.md:561-570", "rn/architecture.md:718"]},
+    {"question": "Q8", "lines": ["rn/architecture.md:300", "rn/architecture.md:319-321", "rn/architecture.md:415-419"]},
+    {"question": "Q9", "lines": ["rn/images/deployment.svg", "rn/architecture.md:750-805"]},
+    {"question": "Q10", "lines": ["rn/architecture.md:807-853"]},
+    {"question": "Q11", "lines": ["rn/images/tests.svg", "rn/architecture.md:863-867"]},
+    {"question": "Q12", "lines": ["rn/images/tests.svg:174-178", "rn/architecture.md:857-859", "rn/architecture.md:940-951"]},
+    {"question": "Q13", "lines": ["rn/architecture.md:869-879", "rn/architecture.md:904-910", "rn/architecture.md:917-924"]},
+    {"question": "Q14", "lines": ["rn/architecture.md:40-56", "rn/architecture.md:60-294", "rn/architecture.md:354-380", "rn/architecture.md:940-951"]},
+    {"question": "Q15", "lines": ["rn/architecture.md:371-375", "rn/architecture.md:533-538", "rn/architecture.md:900-903", "rn/architecture.md:407-408", "rn/architecture.md:89-91", "rn/architecture.md:169-176"]},
+    {"question": "Q16", "lines": ["rn/architecture.md:385-413", "rn/architecture.md:169-176"]}
+  ],
+  "not_met": []
+}

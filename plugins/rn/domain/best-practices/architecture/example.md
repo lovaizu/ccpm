@@ -2,10 +2,10 @@
 
 This document says how the parts of rn give [its product vision](../../../../../dev/rn/product-vision.md). rn holds the
 work as decisions in a design tree, apart from the deliverables made from them. The user's
-conversation alone settles a decision. Every other part makes a deliverable from the decisions and
-its kind's best practice, or judges it as its people do, who never see the decisions. A deliverable
-that falls short of its people goes back to the decision that serves it, never to a fix beside the
-design, and a conversation that ends loses nothing, as the tree in the repository holds every
+conversation alone settles a point of the design. Every other part makes a deliverable from the
+decisions and its kind's best practice, or judges it as its people do, who never see the decisions.
+A deliverable that falls short of its people goes back to the decision that serves it, never to a
+fix beside the design, and a conversation that ends loses nothing, as the repository holds every
 decision.
 
 Each part carries a piece of that idea:
@@ -17,12 +17,14 @@ Each part carries a piece of that idea:
 - **`tree.py`** alone reads and writes the tree, cuts each role's part of it, and commits each
   change on the work's branch, with one draft pull request for the user to merge.
 - **The generator** makes a deliverable whole from its decisions and its kind's best practice, round
-  after round in a turn, and names each point the decisions leave open.
+  after round in a turn. It settles each small point that has one answer, and names each other
+  point the decisions leave open.
 - **`throwaway.py`** runs the commands that the planner gave for the deliverable, in a throwaway
   copy, and keeps what they gave as the try record.
 - **The evaluator**, fresh in each round, reads the deliverable and its try record as its people,
   and says where it meets each intent or what they still lack. A point that it or the generator
-  finds open, or a remark of the user's during a turn, goes back to the main conversation.
+  finds open, or a remark of the user's during a turn, goes back to the main conversation through
+  the planner and the tree.
 - **The guard**, the code of Lane, the plugin that holds a plugin's roles to their steps, holds
   each role to the steps of the practices it carries out, and each start to the text that `tree.py`
   cut for it. It holds the main conversation's starts of roles, its stops, and its calls of `/rn:up`
@@ -84,7 +86,9 @@ It settles a point itself where the purpose or a best practice settles it, and p
 the user with a recommendation. A point the user answers by leaving it to rn counts as theirs.
 Only the planner changes the tree, by handing `tree.py` a tree edit. After each edit it answers
 each node that `tree.py` lists as touched, and where a node no longer holds, it leaves that point
-open for the main conversation. A role never settles a point of the design.
+open for the main conversation. A role never settles a point of the design. The generator settles
+only a small point of making, as
+[The maker settles a point with one answer](#the-maker-settles-a-point-with-one-answer) says.
 
 *Why*: a point settled outside the user's conversation comes back as rework, or asks the user what
 the purpose settles, which KR1.2 counts. Of the main conversation's calls, Lane holds only its
@@ -162,6 +166,25 @@ an evaluator found met. A decision that a role changes is one that no one settle
 can't tell the two cases apart, as it never gets the design. The people then get a deliverable no
 design holds, as KR1.1 counts.
 
+### The maker settles a point with one answer
+
+The generator settles a point that no decision holds only where the purpose and its kind's best
+practice settle it one way, such as a phrase or the form of a printed line. It writes the point in
+its Making record as a decision by `maker`, and `tree.py` puts it in the message of the commit that
+holds the deliverable. Any other point, such as a choice between ways that serve the people
+differently, or one that touches what the user approved, is a point of the design. The generator
+names it open for the main conversation, as
+[A point found open goes back to the main conversation](#a-point-found-open-goes-back-to-the-main-conversation)
+says.
+
+*Why*: a point that the purpose and the best practice settle one way comes out the same in every
+round, so it holds the deliverable as a decision does, and no round loses it. Putting it to the
+user gives them nothing to weigh, as KR1.2 counts. In the commit, it reaches the report of the
+decisions taken without asking, which the user reads before they merge. A choice between ways
+that serve the people differently is the user's. One that the generator takes alone can come out
+another way in the next round, and hands the people a way that no one weighed for them, as KR1.1
+counts.
+
 ### The maker checks first
 
 Before it gives `made`, the generator answers each intent of the phase the way the evaluators do,
@@ -193,15 +216,20 @@ The run stops at a point found open, in either of these cases:
 - An evaluator finds a point that the people's use leaves open, such as a choice between ways
   that serve them alike.
 
-A role only finds and names such a point. The main conversation alone decides whether the
-purpose or a best practice settles it or it's the user's. It settles the point, the planner writes
-it, and the turn goes on from the design as changed. Where only a change to a decision that the
-user settled would meet a shortfall, rn takes the decision to the user only with a fact that their
-answer didn't weigh. Without such a fact, the shortfall stays as an accepted shortfall.
+A role only finds and names such a point, in the Result that ends the run. The main conversation
+calls `/rn:up` with it, the planner writes it into the tree as a decision not yet settled, and
+`tree.py points` gives it to the main conversation, as it gives any point open. The main
+conversation alone decides whether the purpose or a best practice settles it or it's the user's.
+It settles the point, the planner writes it, and the turn goes on from the design as changed.
+Where only a change to a decision that the user settled would meet a shortfall, rn takes the
+decision to the user only with a fact that their answer didn't weigh. Without such a fact, the
+shortfall stays as an accepted shortfall.
 
 *Why*: a role that settles such a point itself makes a part that the design doesn't hold, which
-[Good from the root](#good-from-the-root) rules out for a fix. Asking the user again what they settled
-spends their time and gives them nothing to weigh, as KR1.2 counts.
+[Good from the root](#good-from-the-root) rules out for a fix. A point that reaches the main
+conversation only in a Result goes with the conversation if it ends, while one in the tree waits
+for the next `/rn:up`, so the user answers no point twice, as KR1.2 counts. Asking the user again
+what they settled spends their time and gives them nothing to weigh, as KR1.2 counts.
 
 ### A remark during a turn is a point
 
@@ -303,9 +331,10 @@ What each decides alone:
   for a file outside the repository, whether each node a change touches still holds, each status
   and intent made good from the evaluators' answers, and which result to give for the runs left
   that its cut lists.
-- **generator**: the deliverable, each small point of making it, such as a phrase, its own answer
-  to each intent before it gives `made`, and whether the decisions meet a shortfall. A point the
-  design leaves open, or a decision that must change, it only finds and names.
+- **generator**: the deliverable, each small point of making it that the purpose and its kind's
+  best practice settle one way, such as a phrase, its own answer to each intent before it gives
+  `made`, and whether the decisions meet a shortfall. A point the design leaves open, or a decision
+  that must change, it only finds and names.
 - **evaluator**: where the deliverable meets each intent of its group for its people, or what they
   still lack. A point that their use leaves open, it only finds and names.
 - **tree.py**: the form of the design tree and of a change, the order of the deliverables, from
@@ -324,8 +353,9 @@ What each decides alone:
 
 These choices in the components are ones a developer would question:
 
-- **The main conversation calling `/rn:up` again once it settles a point, with a remark, or once
-  the user gives what a push lacked,** over resuming the role that stopped: the point comes from
+- **The main conversation calling `/rn:up` again once it settles a point, with a point a role
+  found open, with a remark, or once the user gives what a push lacked,** over resuming the role
+  that stopped: the point comes from
   the main conversation, not from the user's words alone, and Lane lets a resume carry the user's
   words and nothing else. A new call of the skill begins a run, whose first start is the planner
   with the text `tree.py` cut from the change. Lane then holds that start as it holds every other,
@@ -338,9 +368,10 @@ These choices in the components are ones a developer would question:
 - **The planner started fresh for each change** over one planner kept for the run: each start
   keeps to its own cut, and a fresh planner carries no decision of an earlier change into this
   one, as KR1.1 counts. The cost: the planner reads its cut again on each start.
-- **The generator running `throwaway.py` once it has made the deliverable** over each evaluator
-  running it: the evaluators of a round run at once, as KR1.3 asks, and one try record for the
-  round lets them judge the same run of the commands. The cost: an evaluator can't try a command
+- **The generator running `throwaway.py` on each pass of its own check** over each evaluator
+  running it: the evaluators of a round run at once, as KR1.3 asks. The round keeps the try record
+  of the generator's last pass, so every evaluator judges the same run of the commands, on the
+  deliverable as the generator gave it with `made`. The cost: an evaluator can't try a command
   that the try record doesn't hold, and names it as a lack instead.
 - **`tree.py` committing and keeping the draft pull request** over a script of its own: each commit
   holds a tree edit, and the edit's grounds make its message, which only `tree.py` reads in the
@@ -354,23 +385,27 @@ These choices in the components are ones a developer would question:
 
 - **Request**: the user's words after `/rn:up`, as they typed them.
 - **Change**: what one start of the planner writes: the request, the decisions the main
-  conversation settled, a remark as a point open, a turn's answers, through the Round that holds
-  them, or a push that waited on the user.
+  conversation settled, a point that a role's Result named open, a remark as a point open, a turn's
+  answers, through the Round that holds them, or a push that waited on the user.
 - **Tree edit**: what the planner hands `tree.py` to write: each node it changes, the grounds, and
   its answer to each node touched: it holds, or the planner leaves it open.
 - **Cut**: the text `tree.py` gives a role to start with: its run values and its part of the tree,
   and for the generator, each of last round's shortfalls, through the Round that holds them.
 - **Result**: what a role gives the main conversation as it ends a start: one of its fixed words,
-  such as `asks` or `made`, with its message, such as the report that comes with `done`.
+  such as `asks` or `made`, with its message, such as the report that comes with `done` or the
+  point that comes with `open`.
 - **Point**: a decision the main conversation settles, whether the tree holds it open, a turn
-  found it, or the user remarked it during a turn.
+  found it, or the user remarked it during a turn. A point found or remarked reaches the tree
+  through a Change, as a decision not yet settled, and reaches the main conversation from there.
 - **Turn**: the making of one deliverable from its settled decisions, through both phases.
 - **Round**: one making of the deliverable in a phase, and the evaluators' answers to it.
 - **Making record**: the generator's record of a round, `generator.json`: what it made, each small
-  point it decided, its own answer to each intent, and each point it found open.
+  point it settled, as a decision by `maker`, its own answer to each intent, and each point it
+  found open.
 - **Answers**: an evaluator's record of a round, `evaluator-<group>.json`: each intent met with the
   lines that meet it, or not met with what the people still lack.
-- **Try record**: the commands that try a deliverable and what each gave, `throwaway.txt`.
+- **Try record**: the commands that try a deliverable and what each gave on the generator's last
+  pass of a round, `throwaway.txt`.
 - **Accepted shortfall**: a decision of the user's, under the intent it costs, that says what the
   people lack by it.
 - **Port JSON**: a best practice's steps or a tree's items in the forms of Lane's ports.
@@ -502,8 +537,16 @@ sequenceDiagram
     G->>R: answers each intent as the deliverable's people, and writes its record (Making record)
   end
   alt the design leaves a point open, or only a changed decision meets an intent
-    G-->>M: gives open, naming the point or the decision
-    Note over M,G: The run ends, and the main conversation settles the point, as S2 draws.
+    G-->>M: gives open, naming the point or the decision (Result)
+    M->>M: calls /rn:up with the point
+    M->>T: start, for the planner, with the point open (Change)
+    T-->>M: the planner's cut (Cut)
+    M->>P: starts it (Cut)
+    P->>T: write, with the point as a decision not yet settled (Tree edit)
+    T->>R: writes it (Design tree)
+    P->>T: commit (Tree edit)
+    P-->>M: gives asks
+    Note over M,T: The run ends, and the main conversation takes the point from tree.py points and settles it, as S2 draws.
   else every intent is met by its own answers
     G-->>M: gives made
     M->>T: start, for each evaluator
@@ -515,8 +558,16 @@ sequenceDiagram
       E-->>M: gives open, more, or good
     end
     Note over M,E: Of the evaluators' results, the guard takes open, then more, then good.
-    alt an evaluator gave open
-      Note over M,E: The run ends, and the main conversation settles the point, as S2 draws.
+    alt an evaluator gave open, naming the point (Result)
+      M->>M: calls /rn:up with the point
+      M->>T: start, for the planner, with the point open (Change)
+      T-->>M: the planner's cut (Cut)
+      M->>P: starts it (Cut)
+      P->>T: write, with the point as a decision not yet settled (Tree edit)
+      T->>R: writes it (Design tree)
+      P->>T: commit (Tree edit)
+      P-->>M: gives asks
+      Note over M,T: The run ends, and the main conversation takes the point from tree.py points and settles it, as S2 draws.
     else one gave more
       Note over M,G: The next round starts from the design, each shortfall beside its intent.
     else every one gave good
@@ -664,7 +715,7 @@ sequenceDiagram
   participant T as tree.py
   participant GH as GitHub
   P->>T: commit, with the deliverable, and push (Tree edit)
-  T->>T: commits the deliverable and the tree on the work's branch
+  T->>T: commits the deliverable and the tree on the work's branch, each small point that the Making records settled in its message
   alt git or gh can't push, such as with no login
     T-->>P: what's missing, the commit kept on the branch
     P-->>M: names it in its message, and gives its result as the rest of the work goes on
@@ -847,9 +898,9 @@ gives every plugin, not a choice of rn's.
 - **The `throwaway.py` process tried `FULL` at unit and `HAPPY` at architecture:** a fault in the
   copy lets a command change the user's own files, which can't be undone, or tries the deliverable
   on other files than its people's, as KR1.1 counts, so unit tries each case of it. It joins rn
-  only where the generator runs it once a round, so the paths of a turn try that join, and trying
-  each case of the copy again there would add nothing. The cost: a command that reaches the copy in
-  a way no unit test sets up shows only in a trial.
+  only where the generator runs it on each pass of its own check, so the paths of a turn try that
+  join, and trying each case of the copy again there would add nothing. The cost: a command that
+  reaches the copy in a way no unit test sets up shows only in a trial.
 - **What the main conversation and the roles must do on every run held by the guard, and no level
   running a part in Markdown alone,** as
   [Q22](../plugin/best-practice.md#q22) says, over a unit trial
@@ -890,6 +941,14 @@ gives every plugin, not a choice of rn's.
   that rn keeps on 2 runs of 3 is one it skips on the user's third run, as KR1.1 counts, which
   [Every step on every run](#every-step-on-every-run) rules out. The cost: three runs of the
   walkthrough for each trial, and a slip rarer than that can still pass.
+- **A trial failing where a stand-in can't use its deliverable for the use the walkthrough shows,
+  or where KR1.2 or KR1.3 comes out worse than the last trial's, and naming that use or key
+  result,** over a trial that passes on the steps alone: a run can come through every step and
+  still hand the people a deliverable they can't use, as KR1.1 counts. It can also ask the user more
+  of what the purpose settles, or take more of their time than before, as KR1.2 and KR1.3 measure.
+  The product vision gives these key results no target, so the last trial's measure is the line.
+  The cost: the first trial has no last trial to set KR1.2 and KR1.3 against, so it fails only on
+  a use.
 - **The trial's `tidy` holding each fact a deliverable needs, such as where it's hosted,** over a
   placeholder: no way of making a README can give a real clone command from a placeholder, so a
   trial would fail on the fixture and not on rn, and KR1.1 would count a fault of the fixture's.

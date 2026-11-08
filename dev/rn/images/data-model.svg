@@ -105,9 +105,9 @@
   <text class="label small halo" x="143" y="154" text-anchor="start">0..1</text>
   <text class="label small halo" x="143" y="254" text-anchor="start">1</text>
   <path class="line" d="M135,440 L135,316"/>
-  <text class="label small halo" x="143" y="380" text-anchor="start">settled in</text>
-  <text class="label small halo" x="143" y="434" text-anchor="start">1..*</text>
-  <text class="label small halo" x="143" y="334" text-anchor="start">0..1</text>
+  <text class="label small halo" x="143" y="380" text-anchor="start">carried in</text>
+  <text class="label small halo" x="143" y="434" text-anchor="start">0..*</text>
+  <text class="label small halo" x="143" y="334" text-anchor="start">0..*</text>
   <path class="line" d="M230,275 L280,275 L280,108 L330,108"/>
   <text class="label small halo" x="288" y="200" text-anchor="start">written as</text>
   <text class="label small halo" x="234" y="268" text-anchor="start">1</text>
@@ -116,6 +116,10 @@
   <text class="label small halo" x="388" y="590" text-anchor="start">cut from</text>
   <text class="label small halo" x="234" y="630" text-anchor="start">0..*</text>
   <text class="label small halo" x="388" y="334" text-anchor="start">1</text>
+  <path class="line" d="M40,808 L30,808 L30,304 L40,304"/>
+  <text class="label small halo" x="36" y="552" text-anchor="start">carried in</text>
+  <text class="label small halo" x="34" y="774" text-anchor="start">0..1</text>
+  <text class="label small halo" x="34" y="334" text-anchor="start">0..1</text>
   <path class="line" d="M135,780 L135,656"/>
   <text class="label small halo" x="143" y="720" text-anchor="start">ends the start of</text>
   <text class="label small halo" x="143" y="774" text-anchor="start">0..1</text>
