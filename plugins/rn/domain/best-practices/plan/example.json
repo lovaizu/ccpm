@@ -25,7 +25,7 @@
           "good": false,
           "decisions": [
             {
-              "about": "A run the person turns",
+              "about": "A run the person redirects",
               "decided": "after a prompt of the person's while a run is on, the guard lets the main conversation stop a start of the run with TaskStop, which Claude Code's subagents reference documents, and a call of the skill that the routes name then ends the run and begins another. Without such a prompt, a stop or a call of the skill is a move off the routes, held as any other",
               "by": "reasoning"
             }
