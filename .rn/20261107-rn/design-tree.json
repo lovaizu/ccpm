@@ -202,6 +202,16 @@
               "by": "reasoning"
             },
             {
+              "about": "An adapter's place in a proposal",
+              "decided": "lay.py tries an adapter where it lies beside the proposal, as <plugin>/adapters/, or else where an earlier write laid it in the plugin's hooks/adapters/, so a proposal laid again needs no copy of an adapter that holds",
+              "by": "reasoning"
+            },
+            {
+              "about": "A record made only as needed",
+              "decided": "called.py makes a session's folder with its first entry, so a session with no role held and no run leaves nothing in the temporary folder",
+              "by": "reasoning"
+            },
+            {
               "about": "Fields that the reference leaves out",
               "decided": "SendMessage gives `to` and `message`, and Bash gives back `stdout`, as the old Lane's tries of Claude Code recorded them",
               "by": "research"

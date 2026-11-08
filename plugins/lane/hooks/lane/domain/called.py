@@ -75,6 +75,7 @@ class Record(NamedTuple):
     def add(self, entry: dict[str, Any]) -> None:
         """Adds the entry at the record's end, in one write."""
         line = (json.dumps(entry, ensure_ascii=False) + "\n").encode("utf-8")
+        os.makedirs(self.folder, exist_ok=True)
         handle = os.open(self._path(), os.O_WRONLY | os.O_APPEND | os.O_CREAT, 0o600)
         try:
             os.write(handle, line)
@@ -94,7 +95,7 @@ class Record(NamedTuple):
 
 
 def record(session: str, plugin: str) -> Record:
-    """The record of the session for the plugin, whose folder this makes where it isn't there."""
+    """The record of the session for the plugin. Its folder comes with its first entry."""
     top = os.path.join(tempfile.gettempdir(), "lane")
     found = sorted(
         glob.glob(os.path.join(glob.escape(top), f"*-{glob.escape(session)}-{glob.escape(plugin)}"))
@@ -102,7 +103,6 @@ def record(session: str, plugin: str) -> Record:
     folder = (
         found[0] if found else os.path.join(top, f"{time.strftime('%Y%m%d')}-{session}-{plugin}")
     )
-    os.makedirs(folder, exist_ok=True)
     return Record(folder)
 
 

@@ -339,6 +339,51 @@ class TestRoutes(LayTest):
         self.assertIn(f"commands: `git log --oneline`, `{helpers.RESULT} writer written`\n", out)
 
 
+class TestAdapters(LayTest):
+    def setUp(self):
+        super().setUp()
+        folder = os.path.join(self.folder, "changelog", "adapters")
+        helpers.write(
+            os.path.join(folder, "values-w.py"),
+            'import json, sys\nt = json.load(sys.stdin)["texts"]\n'
+            'print(json.dumps({"values": {"a": t} if t else {}}))\n',
+        )
+        cases = [
+            {"given": {"texts": ["x"]}, "gives": {"values": {"a": ["x"]}}},
+            {"given": {"texts": []}, "gives": {"values": {}}},
+        ]
+        helpers.write(os.path.join(folder, "values-w.json"), json.dumps(cases))
+        self.propose([{**helpers.WRITER_LANES, "adapter": "hooks/adapters/values-w.py"}])
+
+    def test_what_an_adapter_gives_for_each_case_is_shown(self):
+        _, out, _ = self.lay("print", self.path)
+        self.assertIn(
+            "\nadapter hooks/adapters/values-w.py\n"
+            '- given {"texts": ["x"]}\n'
+            '  gives {"values": {"a": ["x"]}}\n'
+            '- given {"texts": []}\n'
+            '  gives {"values": {}}\n',
+            out,
+        )
+
+    def test_an_adapter_and_its_cases_are_written_into_the_plugin(self):
+        self.lay("write", self.path)
+        self.assertEqual(
+            sorted(os.listdir(os.path.join(self.root, "hooks", "adapters"))),
+            ["values-w.json", "values-w.py"],
+        )
+
+    def test_an_adapter_laid_in_the_plugin_before_stays_where_it_lies(self):
+        self.lay("write", self.path)
+        self.propose([{**helpers.WRITER_LANES, "adapter": "hooks/adapters/values-w.py"}])
+        _, out, _ = self.lay("write", self.path)
+        self.assertNotIn("and its cases", out)
+
+    def test_writing_an_adapter_is_shown(self):
+        _, out, _ = self.lay("write", self.path)
+        self.assertIn("- hooks/adapters/values-w.py and its cases\n", out)
+
+
 class TestUsage(LayTest):
     def test_run_as_a_script_it_exits_with_its_code(self):
         script = os.path.join(helpers.SCRIPTS, "lay.py")

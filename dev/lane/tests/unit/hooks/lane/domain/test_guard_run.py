@@ -3,11 +3,9 @@ run that passes on each start as given" and "S3: a result given" draw them."""
 
 import json
 import os
-import tempfile
-from unittest import mock
 
 import helpers
-from helpers import exchange, guard, testing
+from helpers import exchange, guard
 
 FOLLOW = helpers.FOLLOW
 RESULT = helpers.RESULT
@@ -21,15 +19,9 @@ NO_START = (
 )
 
 
-class RunTest(testing.FolderTest):
+class RunTest(helpers.PluginTest):
     def setUp(self):
         super().setUp()
-        patcher = mock.patch.object(tempfile, "tempdir", self.base)
-        patcher.start()
-        self.addCleanup(patcher.stop)
-        self.root = os.path.join(self.base, "changelog")
-        self.project = os.path.join(self.base, "project")
-        os.makedirs(self.project)
         helpers.changelog(self.root, with_routes=True)
         self.agents = 0
 

@@ -5,11 +5,9 @@ them."""
 
 import json
 import os
-import tempfile
-from unittest import mock
 
 import helpers
-from helpers import exchange, guard, testing
+from helpers import exchange, guard
 
 RESULT = helpers.RESULT
 STEPS = [
@@ -43,14 +41,9 @@ background: true
 """
 
 
-class StepsTest(testing.FolderTest):
+class StepsTest(helpers.PluginTest):
     def setUp(self):
         super().setUp()
-        patcher = mock.patch.object(tempfile, "tempdir", self.base)
-        patcher.start()
-        self.addCleanup(patcher.stop)
-        self.root = os.path.join(self.base, "changelog")
-        self.project = os.path.join(self.base, "project")
         helpers.changelog(self.root)
         helpers.write(os.path.join(self.root, "agents", "writer.md"), TEXT)
         lanes = {"subagents": [{"name": "writer", "steps": STEPS}]}

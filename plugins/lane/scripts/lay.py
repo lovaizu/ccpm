@@ -151,6 +151,10 @@ def _show(checked: proposal.Checked, out: IO[str]) -> None:
         for name in each.names:
             said = laid.sentences(checked.laid, name, each.part.steps)
             out.write("\n" + _shown(checked, name, said, each))
+    for path, adapter in checked.adapters.items():
+        out.write(f"\nadapter {path}\n")
+        for given, gave in adapter.tried:
+            out.write(f"- given {json.dumps(given)}\n  gives {json.dumps(gave)}\n")
 
 
 def _routes_shown(given: routes.Routes) -> str:
@@ -223,6 +227,13 @@ def _write(checked: proposal.Checked, out: IO[str], err: IO[str], lane: str) -> 
     held = tuple(dict.fromkeys(routes.typed(checked.manifest.name, n) for n in names))
     existing = _json(os.path.join(hooks, "hooks.json"))
     _save(os.path.join(hooks, "hooks.json"), entries.merged(existing, checked.manifest.name, held))
+    for path, adapter in checked.adapters.items():
+        target = os.path.join(root, os.path.dirname(path))
+        if os.path.realpath(adapter.folder) != os.path.realpath(target):
+            os.makedirs(target, exist_ok=True)
+            for name in (os.path.basename(path), os.path.basename(path)[: -len(".py")] + ".json"):
+                shutil.copyfile(os.path.join(adapter.folder, name), os.path.join(target, name))
+            wrote.append(f"{path} and its cases")
     code = lane_code.lay(lane, root)
     shown = (
         "a link to Lane's code"

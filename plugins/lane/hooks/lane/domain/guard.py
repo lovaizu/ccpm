@@ -9,6 +9,7 @@ call that the guard can't check stops" says.
 
 from __future__ import annotations
 
+import time
 from typing import Any, NamedTuple
 
 import called
@@ -17,12 +18,16 @@ import conversation
 import laid
 import lanes
 import plugin
+import ports
 import routes
 import step
 from exchange import CLAUDE_CODE, LAY_AGAIN, Answer, Event, Fault
 
 # What the record keeps of a call's input: what the lanes read of it, and not what it writes.
 KEPT = ("file_path", "notebook_path", "path", "command", "offset", "limit")
+# The most seconds that a role's call waits for the Agent call that started the role to come back,
+# as the role starts a moment before.
+WAIT = 3.0
 # What a role hears as it starts a role of the plugin, which only the main conversation starts.
 NO_START = (
     "Start no subagent of this plugin: only the main conversation starts one, with what the plugin"
@@ -114,8 +119,9 @@ def _check_steps(found: laid.Laid, role: str, part: step.Part, lay_again: str) -
 
 
 def _start(held: _Held, event: Event) -> Answer:
-    """The answer to the start of the role: its part, where it's a file of its own, and each
-    sentence that no step says, as context that Claude Code adds as the role starts."""
+    """The answer to the start of the role, as context that Claude Code adds as the role starts:
+    its part, where it's a file of its own, each sentence that no step says, and each step list
+    that its steps adapter gives, where the Agent call that started it came back already."""
     told = [
         lanes.sentence(s.lane, s.takes)
         for s in laid.sentences(held.laid, held.name, held.part.steps)
@@ -125,12 +131,44 @@ def _start(held: _Held, event: Event) -> Answer:
     if held.part.own:
         given.append(held.part.text.replace(command.ROOT, held.root).rstrip("\n"))
     given += [f"{held.plugin}: {s}" for s in told]
+    role = held.laid.role(held.name)
+    values = _values(held, event.agent_id, wait=False)
+    if role is not None and role.steps_adapter and values is not None:
+        for each in _adapted(held, role.steps_adapter, values):
+            numbered = [f"{n}. {s.says}" for n, s in enumerate(each.steps, 1)]
+            given.append(
+                f"{held.plugin}: The steps of {each.name}, in their order:\n" + "\n".join(numbered)
+            )
     return Answer(context="\n\n".join(given)) if given else Answer()
 
 
+class _Step(NamedTuple):
+    """A step of a step list: what it says, and the type and takes of each lane of its trace."""
+
+    says: str
+    traces: tuple[tuple[str, dict[str, list[str]]], ...]
+
+
+class _List(NamedTuple):
+    """A step list: the numbered list of the role's part, or a list that its steps adapter gives."""
+
+    name: str
+    steps: tuple[_Step, ...]
+
+
+class _Checks(NamedTuple):
+    """What the checks of one call of the role read: what each lane takes, the step lists, what
+    the lanes allow beside their own takes, and the calls kept of the start."""
+
+    given: dict[laid.Lane, dict[str, list[str]] | None]
+    lists: list[_List]
+    context: lanes.Context
+    kept: list[lanes.Call]
+
+
 def _call(held: _Held, event: Event) -> Answer:
-    """The answer to a tool call of the role: a deny with the sentence that the call breaks, or
-    nothing."""
+    """The answer to a tool call of the role: a deny with the sentence that the call breaks, an
+    ask with the sentence of a command held for the person, or nothing."""
     if held.project is None:
         raise Fault(
             "Claude Code gave the hook no CLAUDE_PROJECT_DIR",
@@ -139,48 +177,129 @@ def _call(held: _Held, event: Event) -> Answer:
         )
     if _starts_one(held, event):
         return Answer(deny=f"{held.plugin}: {NO_START}")
-    results = routes.result_commands(held.laid, held.name)
     run = event.tool_input.get("command") if event.tool == "Bash" else None
     if isinstance(run, str) and _result_of(held, run) is not None:
-        expanded = [c.replace(command.ROOT, held.root) for c in results]
+        results = routes.result_commands(held.laid, held.name)
         if _result_of(held, run) in routes.allowed(held.laid, held.name):
-            role = held.laid.role(held.name)
-            found = role.lanes if role else ()
-            given = {lane: _given(held, held.project, lane) for lane in found}
-            return _ending(held, event, given, _context(held, given))
-        joined = " and ".join(f"`{c}`" for c in expanded)
+            return _ending(held, _checks(held, event, held.project))
+        joined = " and ".join(f"`{c.replace(command.ROOT, held.root)}`" for c in results)
         return Answer(
             deny=f"{held.plugin}: {lanes.sentence('end_by', results)}\nThe commands you may end"
             f" by: {joined}."
         )
-    role = held.laid.role(held.name)
-    found = role.lanes if role else ()
+    checks = _checks(held, event, held.project)
     call = lanes.Call(event.tool or "", event.tool_input, event.cwd)
-    given = {lane: _given(held, held.project, lane) for lane in found}
-    context = _context(held, given)
-    for lane in found:
+    for lane, given in checks.given.items():
         kind = lanes.TYPES[lane.lane]
-        if given[lane] is None or not hasattr(kind, "check"):
+        if given is None or not hasattr(kind, "check"):
             continue
-        line = _checked(held, lane, kind.check, call, given[lane], context)
+        line = _checked(held, lane, kind.check, call, given, checks.context)
         if line:
             return Answer(deny=f"{held.plugin}: {_sentence(lane)}\n{line}")
-    kept = _kept(held, event.agent_id)
-    due = _due(held, given, kept)
-    if due is not None and any(
-        lanes.TYPES[lane.lane].traced(call, given[lane])
-        for lane in found
-        if lanes.traced(lane.lane) and given[lane] is not None and lane.step > due[0]
-    ):
-        return Answer(deny=f"{held.plugin}: {due[1]}\n{due[2]}")
-    for lane in found:
-        if (
-            lane.lane == "hold"
-            and given[lane] is not None
-            and lanes.TYPES["hold"].held(call, given[lane])
-        ):
+    for each in checks.lists:
+        due = _due(each, checks.kept)
+        if due is None:
+            continue
+        later = each.steps[due[0] + 1 :]
+        if any(lanes.TYPES[t].traced(call, g) for s in later for t, g in s.traces):
+            return Answer(deny=f"{held.plugin}: {due[1]}\n{due[2]}")
+    for lane, given in checks.given.items():
+        if lane.lane == "hold" and given is not None and lanes.TYPES["hold"].held(call, given):
             return Answer(ask=f"{held.plugin}: {_sentence(lane)}")
     return Answer()
+
+
+def _checks(held: _Held, event: Event, project: str) -> _Checks:
+    """What the checks of the call read, the start's values among them where a lane or an adapter
+    needs them."""
+    role = held.laid.role(held.name)
+    found = role.lanes if role else ()
+    values: dict[str, Any] = {}
+    if role is not None and (
+        role.adapter or role.steps_adapter or any(command.values(t) for l in found for t in l.takes)
+    ):
+        values = _values(held, event.agent_id, wait=True) or {}
+    given = {lane: _given(held, project, lane, values) for lane in found}
+    lists = [_laid_list(held, found, given)]
+    if role is not None and role.steps_adapter:
+        lists += _adapted(held, role.steps_adapter, values)
+    return _Checks(given, lists, _context(held, given, lists, values), _kept(held, event.agent_id))
+
+
+def _values(held: _Held, agent: str | None, wait: bool) -> dict[str, Any] | None:
+    """The values of the start of the agent, read at the values port from the texts that the start
+    holds. A role starts a moment before its Agent call comes back, so where wait holds, this
+    waits a few seconds for the call. It gives None where the call hasn't come back.
+
+    It raises Fault where the call doesn't come back in time, or the values adapter fails.
+    """
+    deadline = time.monotonic() + WAIT
+    texts = called.texts(held.record.entries(), agent or "")
+    while texts is None and wait and time.monotonic() < deadline:
+        time.sleep(0.05)
+        texts = called.texts(held.record.entries(), agent or "")
+    if texts is None:
+        if not wait:
+            return None
+        raise Fault(
+            f"the Agent call that started {held.name} didn't come back within {WAIT} seconds",
+            f"the main conversation must start {held.name} again",
+        )
+    role = held.laid.role(held.name)
+    adapter = role.adapter if role else None
+    try:
+        return ports.values(texts, held.root, adapter)
+    except ports.Unported as why:
+        raise Fault(str(why), f"the maker of {held.plugin} must fix {adapter}") from None
+
+
+def _laid_list(
+    held: _Held, found: tuple[laid.Lane, ...], given: dict[laid.Lane, dict[str, list[str]] | None]
+) -> _List:
+    """The step list of the role's lanes of the trace kind, by their steps' numbers."""
+    says = {s.number: s.says for s in held.part.steps}
+    traces = [l for l in found if lanes.traced(l.lane) and given[l] is not None]
+    steps = []
+    for number in sorted({l.step for l in traces}):
+        on = [l for l in traces if l.step == number]
+        text = says.get(number, " ".join(_sentence(l) for l in on))
+        steps.append(_Step(text, tuple((l.lane, given[l] or {}) for l in on)))
+    return _List("steps", tuple(steps))
+
+
+def _adapted(held: _Held, adapter: str, values: dict[str, Any]) -> list[_List]:
+    """The step lists that the role's steps adapter gives for the start's values, each step saying
+    the sentence of each lane of its trace too.
+
+    It raises Fault where the adapter fails or gives a lane that can't stand.
+    """
+    who = f"the maker of {held.plugin} must fix {adapter}"
+    try:
+        given = ports.steps(values, held.root, adapter)
+    except ports.Unported as why:
+        raise Fault(str(why), who) from None
+    found = []
+    for each in given:
+        steps = []
+        for item in each["steps"]:
+            traces = []
+            said = [item["says"]]
+            for lane in item["lanes"]:
+                faults = lanes.stands(lane["lane"], lane["takes"])
+                if faults:
+                    raise Fault(f"{adapter} gives a lane that can't stand: {faults[0]}", who)
+                said.append(lanes.sentence(lane["lane"], lane["takes"]))
+                try:
+                    takes = lanes.given(
+                        lane["lane"], lane["takes"], values, held.root, held.project or ""
+                    )
+                except lanes.Unchecked as why:
+                    raise Fault(str(why), who) from None
+                if takes is not None:
+                    traces.append((lane["lane"], takes))
+            steps.append(_Step(" ".join(said), tuple(traces)))
+        found.append(_List(each["list"], tuple(steps)))
+    return found
 
 
 def _sentence(lane: laid.Lane) -> str:
@@ -211,46 +330,48 @@ def _kept(held: _Held, agent: str | None) -> list[lanes.Call]:
     ]
 
 
-def _due(
-    held: _Held, given: dict[laid.Lane, dict[str, list[str]] | None], kept: list[lanes.Call]
-) -> tuple[int, str, str] | None:
-    """The first step whose traces haven't all come back, with what the step says and what's
-    missing of its traces, or None where every trace came back."""
-    role = held.laid.role(held.name)
-    traces = [
-        l for l in (role.lanes if role else ()) if lanes.traced(l.lane) and given[l] is not None
-    ]
-    says = {s.number: s.says for s in held.part.steps}
-    for number in sorted({l.step for l in traces}):
-        for lane in [l for l in traces if l.step == number]:
-            missing = lanes.TYPES[lane.lane].done(given[lane], kept)
+def _due(each: _List, kept: list[lanes.Call]) -> tuple[int, str, str] | None:
+    """The index of the first step of the list whose traces haven't all come back, with what the
+    step says and what's missing of its traces, or None where every trace came back."""
+    for index, item in enumerate(each.steps):
+        for lane, given in item.traces:
+            missing = lanes.TYPES[lane].done(given, kept)
             if missing:
-                return number, says.get(number, _sentence(lane)), missing
+                return index, item.says, missing
     return None
 
 
-def _ending(
-    held: _Held,
-    event: Event,
-    given: dict[laid.Lane, dict[str, list[str]] | None],
-    context: lanes.Context,
-) -> Answer:
+def _ending(held: _Held, checks: _Checks) -> Answer:
     """The answer to the role's run of the result script with a result it may give: a deny where a
     step's trace hasn't come back or a lane checked at the end isn't kept, or nothing."""
-    kept = _kept(held, event.agent_id)
-    due = _due(held, given, kept)
-    if due is not None:
-        return Answer(deny=f"{held.plugin}: {due[1]}\n{due[2]}")
-    role = held.laid.role(held.name)
+    for each in checks.lists:
+        due = _due(each, checks.kept)
+        if due is not None:
+            return Answer(deny=f"{held.plugin}: {due[1]}\n{due[2]}")
     told = []
-    for lane in role.lanes if role else ():
+    for lane, given in checks.given.items():
         kind = lanes.TYPES[lane.lane]
-        if given[lane] is None or not hasattr(kind, "end"):
+        if given is None or not hasattr(kind, "end"):
             continue
-        missing = _checked(held, lane, kind.end, given[lane], kept, context)
+        context = checks.context
+        if lane.adapter is not None:
+            context = context._replace(items=_items(held, lane.adapter, dict(context.values)))
+        missing = _checked(held, lane, kind.end, given, checks.kept, context)
         if missing:
             told.append(f"{held.plugin}: {_sentence(lane)}\n{missing}")
     return Answer(deny="\n".join(told)) if told else Answer()
+
+
+def _items(held: _Held, adapter: str, values: dict[str, Any]) -> Any:
+    """What reads the items of an input through the adapter, for every_item."""
+
+    def read(path: str, text: str) -> list[str]:
+        try:
+            return ports.items(path, text, values, held.root, adapter)
+        except ports.Unported as why:
+            raise lanes.Unchecked(str(why)) from None
+
+    return read
 
 
 def _starts_one(held: _Held, event: Event) -> bool:
@@ -336,24 +457,34 @@ _ON = {
 }
 
 
-def _given(held: _Held, project: str, lane: laid.Lane) -> dict[str, list[str]] | None:
+def _given(
+    held: _Held, project: str, lane: laid.Lane, values: dict[str, Any]
+) -> dict[str, list[str]] | None:
     """What the lane takes on this call, as lanes.given puts it."""
     try:
-        return lanes.given(lane.lane, list(lane.takes), {}, held.root, project)
+        return lanes.given(lane.lane, list(lane.takes), values, held.root, project)
     except lanes.Unchecked as why:
         said = laid.Said(lane.step, lane.lane, list(lane.takes))
         raise Fault(str(why), LAY_AGAIN.format(plugin=held.plugin), said) from None
 
 
-def _context(held: _Held, given: dict[laid.Lane, dict[str, list[str]] | None]) -> lanes.Context:
+def _context(
+    held: _Held,
+    given: dict[laid.Lane, dict[str, list[str]] | None],
+    lists: list[_List],
+    values: dict[str, Any],
+) -> lanes.Context:
     """What the role's lanes allow beside each lane's own takes: each command that any of its
-    lanes names, its result commands, and the forms of its in_form lanes and its own part to
-    read."""
+    lanes or its step lists names, its result commands, and the forms of its in_form lanes and its
+    own part to read."""
     commands: list[str] = []
     for lane, places in given.items():
         where = lanes.commands_place(lane.lane)
         if where and places is not None:
             commands += places[where]
+    commands += [
+        c for each in lists for s in each.steps for t, g in s.traces for c in g.get("commands", [])
+    ]
     results = routes.result_commands(held.laid, held.name)
     commands += [c.replace(command.ROOT, held.root) for c in results]
     forms = [
@@ -362,4 +493,4 @@ def _context(held: _Held, given: dict[laid.Lane, dict[str, list[str]] | None]) -
         if lane.lane == "in_form" and places
         for f in places["form"]
     ]
-    return lanes.Context(tuple(dict.fromkeys(commands)), (*forms, held.part.path))
+    return lanes.Context(tuple(dict.fromkeys(commands)), (*forms, held.part.path), values)

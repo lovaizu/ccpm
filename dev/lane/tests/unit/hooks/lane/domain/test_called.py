@@ -53,6 +53,10 @@ class TestRecord(testing.FolderTest):
     def test_a_record_with_no_entry_reads_as_none(self):
         self.assertEqual(called.record("s1", "changelog").entries(), [])
 
+    def test_a_record_read_before_its_first_entry_makes_no_folder(self):
+        called.record("s1", "changelog").entries()
+        self.assertFalse(os.path.exists(os.path.join(self.base, "lane")))
+
     def test_each_plugin_keeps_a_record_of_its_own(self):
         called.record("s1", "changelog").add({"kind": "a"})
         self.assertEqual(called.record("s1", "checker").entries(), [])

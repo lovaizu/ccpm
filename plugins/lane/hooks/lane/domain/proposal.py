@@ -9,12 +9,13 @@ from __future__ import annotations
 
 import json
 import os
-from typing import NamedTuple
+from typing import Any, NamedTuple
 
 import command
 import laid
 import lanes
 import plugin
+import ports
 import routes
 import step
 from lanes import in_form
@@ -26,6 +27,15 @@ class Refused(ValueError):
     def __init__(self, faults: list[str]) -> None:
         super().__init__("; ".join(faults))
         self.faults = faults
+
+
+class Adapter(NamedTuple):
+    """An adapter that the proposal names, tried on its cases."""
+
+    # The folder that holds the adapter and its cases: beside the proposal, or in the plugin.
+    folder: str
+    # What it gives for each case: the port's JSON given, and what it gave.
+    tried: list[tuple[Any, Any]]
 
 
 class Checked(NamedTuple):
@@ -43,6 +53,8 @@ class Checked(NamedTuple):
     parts: dict[str, step.Part]
     # The part of the skill that the routes name, or None where the proposal gives no routes.
     skill: step.Part | None
+    # Each adapter that the proposal names, by its path in the plugin.
+    adapters: dict[str, Adapter]
 
 
 def checked(path: str) -> Checked:
@@ -92,9 +104,40 @@ def checked(path: str) -> Checked:
     faults += _form_faults(found, root)
     faults += _routes_faults(found, manifest, skill)
     faults += _shared_faults(root, found, parts)
+    adapters, adapted = _adapters(found, root, os.path.join(folder, manifest.name, "adapters"))
+    faults += adapted
     if faults:
         raise Refused(faults)
-    return Checked(path, root, manifest, found, parts, skill)
+    return Checked(path, root, manifest, found, parts, skill, adapters)
+
+
+def _adapters(found: laid.Laid, root: str, beside: str) -> tuple[dict[str, Adapter], list[str]]:
+    """Each adapter that the proposal names, tried on its cases where it lies beside the proposal
+    or else in the plugin, and each fault: an adapter named for another port, or one that fails its
+    cases."""
+    named = []
+    for role in found.roles:
+        named += [(role.adapter, "values", f"the values adapter of {role.name}")]
+        named += [(role.steps_adapter, "steps", f"the steps adapter of {role.name}")]
+        named += [
+            (lane.adapter, "items", f"the adapter of every_item on step {lane.step} of {role.name}")
+            for lane in role.lanes
+        ]
+    adapters: dict[str, Adapter] = {}
+    faults = []
+    for adapter, port, what in named:
+        if adapter is None:
+            continue
+        given = ports.ADAPTER.fullmatch(adapter)
+        if given is not None and given[1] != port:
+            faults.append(f"{what} is {adapter}, named for the {given[1]} port")
+            continue
+        here = os.path.isfile(os.path.join(beside, os.path.basename(adapter)))
+        folder = beside if here else os.path.join(root, "hooks", "adapters")
+        shown, failed = ports.tried(root, adapter, folder)
+        faults += [f"{what}: {f}" for f in failed]
+        adapters[adapter] = Adapter(folder, shown)
+    return adapters, faults
 
 
 def _routes_faults(

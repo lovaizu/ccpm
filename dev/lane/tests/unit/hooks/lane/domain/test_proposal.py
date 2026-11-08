@@ -3,6 +3,7 @@ checked against the plugin's files, as the architecture's sequence "S1: lay.py p
 
 import json
 import os
+from typing import ClassVar
 
 import helpers
 from helpers import proposal, testing
@@ -334,3 +335,88 @@ class TestRoutes(ProposalTest):
     def test_routes_that_cannot_be_followed_are_refused(self):
         self.route(fan_out=["noter"])
         self.assertEqual(self.refused(), ["fan_out names noter, which no route starts"])
+
+
+class TestAdapters(ProposalTest):
+    VALUES = (
+        'import json, sys\nt = json.load(sys.stdin)["texts"]\n'
+        'print(json.dumps({"values": {"a": t} if t else {}}))\n'
+    )
+    CASES: ClassVar[list] = [
+        {"given": {"texts": ["x"]}, "gives": {"values": {"a": ["x"]}}},
+        {"given": {"texts": []}, "gives": {"values": {}}},
+    ]
+
+    def adapter(self, folder, name="values-w"):
+        helpers.write(os.path.join(folder, f"{name}.py"), self.VALUES)
+        helpers.write(os.path.join(folder, f"{name}.json"), json.dumps(self.CASES))
+
+    def test_an_adapter_beside_the_proposal_is_tried_on_its_cases(self):
+        self.adapter(os.path.join(os.path.dirname(self.path), "changelog", "adapters"))
+        self.propose(subagents=[{**helpers.WRITER_LANES, "adapter": "hooks/adapters/values-w.py"}])
+        found = proposal.checked(self.path).adapters["hooks/adapters/values-w.py"]
+        self.assertEqual(
+            found.tried,
+            [({"texts": ["x"]}, {"values": {"a": ["x"]}}), ({"texts": []}, {"values": {}})],
+        )
+
+    def test_an_adapter_laid_in_the_plugin_before_is_tried_where_it_lies(self):
+        folder = os.path.join(self.root, "hooks", "adapters")
+        self.adapter(folder)
+        self.propose(subagents=[{**helpers.WRITER_LANES, "adapter": "hooks/adapters/values-w.py"}])
+        self.assertEqual(
+            proposal.checked(self.path).adapters["hooks/adapters/values-w.py"].folder, folder
+        )
+
+    def test_an_adapter_that_fails_a_case_is_refused(self):
+        folder = os.path.join(os.path.dirname(self.path), "changelog", "adapters")
+        self.adapter(folder)
+        helpers.write(
+            os.path.join(folder, "values-w.json"),
+            json.dumps([{"given": {"texts": []}, "gives": {"values": {"b": []}}}]),
+        )
+        self.propose(subagents=[{**helpers.WRITER_LANES, "adapter": "hooks/adapters/values-w.py"}])
+        self.assertEqual(
+            self.refused(),
+            [
+                (
+                    "the values adapter of writer: hooks/adapters/values-w.py gives"
+                    ' {"values": {}} for case 1, where its cases say {"values": {"b": []}}'
+                ),
+                (
+                    "the values adapter of writer: hooks/adapters/values-w.json holds no case that"
+                    " gives nothing"
+                ),
+            ],
+        )
+
+    def test_an_adapter_named_for_another_port_is_refused(self):
+        self.adapter(os.path.join(os.path.dirname(self.path), "changelog", "adapters"), "items-w")
+        self.propose(
+            subagents=[{**helpers.WRITER_LANES, "steps_adapter": "hooks/adapters/items-w.py"}]
+        )
+        self.assertEqual(
+            self.refused(),
+            ["the steps adapter of writer is hooks/adapters/items-w.py, named for the items port"],
+        )
+
+    def test_an_adapter_of_every_item_is_tried_at_the_items_port(self):
+        folder = os.path.join(os.path.dirname(self.path), "changelog", "adapters")
+        helpers.write(os.path.join(folder, "items-w.py"), "print('{\"items\": []}')\n")
+        helpers.write(
+            os.path.join(folder, "items-w.json"),
+            json.dumps(
+                [{"given": {"input": "a", "text": "", "values": {}}, "gives": {"items": []}}]
+            ),
+        )
+        lane = {
+            "lane": "every_item",
+            "takes": ["review.md"],
+            "adapter": "hooks/adapters/items-w.py",
+        }
+        text = helpers.WRITER.replace("you wrote.", "you wrote. Answer every item of `review.md`.")
+        helpers.write(os.path.join(self.root, "agents", "writer.md"), text)
+        self.propose(subagents=[{"name": "writer", "steps": [{"step": 4, "lanes": [lane]}]}])
+        self.assertEqual(
+            sorted(proposal.checked(self.path).adapters), ["hooks/adapters/items-w.py"]
+        )

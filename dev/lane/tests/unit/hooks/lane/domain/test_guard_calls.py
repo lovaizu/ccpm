@@ -5,17 +5,14 @@ import json
 import os
 
 import helpers
-from helpers import exchange, guard, testing
+from helpers import called, exchange, guard
 
 SESSION = "s1"
 
 
-class GuardTest(testing.FolderTest):
+class GuardTest(helpers.PluginTest):
     def setUp(self):
         super().setUp()
-        self.root = os.path.join(self.base, "changelog")
-        self.project = os.path.join(self.base, "project")
-        os.makedirs(self.project)
         helpers.changelog(self.root)
 
     def call(self, tool, agent="changelog:writer", **given):
@@ -212,6 +209,14 @@ class TestCannotCheck(GuardTest):
             ),
         )
         helpers.write(os.path.join(self.root, "agents", "writer.md"), text)
+        start = {
+            "kind": "start",
+            "agent": "a1",
+            "role": "writer",
+            "prompt": "Write.",
+            "status": "x",
+        }
+        called.record(SESSION, "changelog").add(start)
         self.assertEqual(
             self.bash("ls").deny,
             "changelog: lane cannot check write_only on step 3 of writer: the start was given no"

@@ -48,7 +48,8 @@ def end(given: dict[str, list[str]], calls: list[lanes.Call], context: lanes.Con
             elif target not in written:
                 written.append(target)
         texts = [_text(p) for p in written]
-        left = [i for i in items(text) if not any(answered(i, t) for t in texts)]
+        found = context.items(path, text) if context.items is not None else items(text)
+        left = [i for i in found if not any(answered(i, t) for t in texts)]
         if left:
             return (
                 f"No file written since the last change of `{path}` answers"

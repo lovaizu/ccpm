@@ -17,6 +17,8 @@ for folder in (DEV, SCRIPTS, DOMAIN, CODE):
         sys.path.insert(0, folder)
 
 import json
+import tempfile
+from unittest import mock
 
 # Lane's modules, which each test takes from here, so that Lane's folders are on sys.path first.
 import called
@@ -30,6 +32,7 @@ import lane_code
 import lanes
 import lay
 import plugin
+import ports
 import proposal
 import result
 import routes
@@ -54,6 +57,7 @@ from lanes import (
 )
 
 __all__ = [
+    "PluginTest",
     "called",
     "command",
     "edit_only",
@@ -70,6 +74,7 @@ __all__ = [
     "lanes",
     "lay",
     "plugin",
+    "ports",
     "proposal",
     "read_never",
     "read_only",
@@ -207,3 +212,17 @@ def changelog(root: str, with_lanes: bool = True, with_routes: bool = False) -> 
         if with_routes:
             given["routes"] = ROUTES
         write(os.path.join(root, "hooks", "lanes.json"), json.dumps(given))
+
+
+class PluginTest(testing.FolderTest):
+    """A test with a folder for the plugin at `root` and one for the project at `project`, the
+    system's temporary folder standing in the test's own folder."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        patcher = mock.patch.object(tempfile, "tempdir", self.base)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        self.root = os.path.join(self.base, "changelog")
+        self.project = os.path.join(self.base, "project")
+        os.makedirs(self.project, exist_ok=True)

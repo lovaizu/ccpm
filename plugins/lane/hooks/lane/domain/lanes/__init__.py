@@ -17,7 +17,7 @@ from __future__ import annotations
 import os
 import re
 from collections.abc import Mapping
-from types import ModuleType
+from types import MappingProxyType, ModuleType
 from typing import Any, NamedTuple
 
 import command
@@ -97,6 +97,11 @@ class Context(NamedTuple):
     commands: tuple[str, ...]
     # Each path that read_only lets the role read beside its inputs.
     readable: tuple[str, ...]
+    # The values of the start, by name.
+    values: Mapping[str, Any] = MappingProxyType({})
+    # What reads the items of an input, given its path and its text, where an adapter reads them,
+    # or None for Lane's own form.
+    items: Any = None
 
 
 def commands_place(name: str) -> str | None:
