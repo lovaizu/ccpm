@@ -77,11 +77,78 @@
       "status": "done"
     },
     {
+      "name": "rn's product vision says what rn is for",
+      "path": "dev/rn/product-vision.md",
+      "kind": "product-vision",
+      "status": "done"
+    },
+    {
+      "name": "rn's design says how a turn carries out a best practice",
+      "path": "dev/rn/architecture.md",
+      "kind": "architecture",
+      "inputs": ["dev/rn/product-vision.md"],
+      "preconditions": [],
+      "status": "doing",
+      "intents": [
+        {"id": "Q1", "good": false, "decisions": []},
+        {"id": "Q2", "good": false, "decisions": []},
+        {
+          "id": "Q3",
+          "good": false,
+          "decisions": [
+            {
+              "about": "A turn",
+              "decided": "once the main conversation has settled a deliverable's decisions, a turn makes it from them and its kind's best practice, round after round until every intent is good, or stops at a point that only the user can settle. A turn is a unit inside /rn:up and has no skill of its own. Lane holds its flow by the routes",
+              "by": "user"
+            },
+            {
+              "about": "Good from the root",
+              "decided": "a shortfall goes back to the decision that serves it, and the next round makes the deliverable again from the design. No fix goes onto the deliverable beside the design, and no one adds to a role's start on the way",
+              "by": "reasoning"
+            },
+            {
+              "about": "The maker checks first",
+              "decided": "before it gives made, the generator answers each intent the way the evaluators do, as the deliverable's people, with the lines that meet it or what they still lack. Only the evaluators' answers make an intent good",
+              "by": "reasoning"
+            },
+            {
+              "about": "The evaluator seeks the good",
+              "decided": "an evaluator reads as the deliverable's people, and says for each intent where the deliverable meets it, or what the people still lack to reach good. It hunts no defect that the people would never meet",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {"id": "Q4", "good": false, "decisions": []},
+        {"id": "Q5", "good": false, "decisions": []},
+        {"id": "Q6", "good": false, "decisions": []},
+        {"id": "Q7", "good": false, "decisions": []},
+        {"id": "Q8", "good": false, "decisions": []},
+        {"id": "Q9", "good": false, "decisions": []},
+        {"id": "Q10", "good": false, "decisions": []},
+        {"id": "Q11", "good": false, "decisions": []},
+        {"id": "Q12", "good": false, "decisions": []},
+        {"id": "Q13", "good": false, "decisions": []},
+        {
+          "id": "Q14",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The size of a turn",
+              "decided": "the planner makes each deliverable one that a generator makes whole in a round and an evaluator reads whole. A larger work, such as a plugin's code, splits by the components of its architecture, each after what it takes from the others, and the plugin's deliverable checks how they join by the architecture tests",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {"id": "Q15", "good": false, "decisions": []},
+        {"id": "Q16", "good": false, "decisions": []}
+      ]
+    },
+    {
       "name": "Lane's code has a design, tests written first, and code as the code best practice says",
       "path": "plugins/lane/hooks/lane/domain",
       "kind": "code",
       "inputs": ["dev/lane/architecture.md"],
-      "preconditions": [],
+      "preconditions": ["dev/rn/architecture.md"],
       "status": "open",
       "intents": [
         {"id": "Q1", "good": false, "decisions": []},
@@ -163,18 +230,6 @@
         {"id": "Q7", "good": false, "decisions": []},
         {"id": "Q8", "good": false, "decisions": []}
       ]
-    },
-    {
-      "name": "rn's product vision says what rn is for",
-      "path": "dev/rn/product-vision.md",
-      "kind": "product-vision",
-      "status": "done"
-    },
-    {
-      "name": "rn's design says how a turn carries out a best practice",
-      "path": "dev/rn/architecture.md",
-      "kind": "architecture",
-      "status": "done"
     },
     {
       "name": "rn's code has a design, tests written first, and code as the code best practice says",
