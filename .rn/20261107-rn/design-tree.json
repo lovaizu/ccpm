@@ -327,16 +327,26 @@
               "about": "How the Making record names its intents",
               "decided": "the generator's own answers and each small point in the Making record name the intent they serve by the question's id, and the planner writes each small point under that intent. The data model joins the Making record to Intent",
               "by": "reasoning"
+            },
+            {
+              "about": "The best practice of a round's ids",
+              "decided": "each Round names its phase, and a question's id in its records belongs to that phase's best practice: the kind's for the content phase, refactor-doc's or refactor-code's for the reading phase. The data model joins Round to the best practice of its phase",
+              "by": "reasoning"
             }
           ]
         },
         {
           "id": "Q7",
-          "good": true,
+          "good": false,
           "decisions": [
             {
               "about": "A push that waited on the user",
               "decided": "once the user gives what was missing for a push, the main conversation calls /rn:up, and the planner runs tree.py commit again, which pushes the kept commits and opens the draft pull request, as the other paths of S4 go",
+              "by": "reasoning"
+            },
+            {
+              "about": "A push that fails on the last deliverable",
+              "decided": "where the push of the last deliverable fails, the planner gives asks naming what the push lacks, never done. The start after the user gives it pushes, and only then does the planner give done with the report, once",
               "by": "reasoning"
             },
             {
@@ -384,7 +394,7 @@
         },
         {
           "id": "Q14",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The key result a choice moves",
