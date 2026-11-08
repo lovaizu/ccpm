@@ -1,0 +1,4 @@
+# Proper nouns that keep their capitals in a heading, as the Google style
+# says of names. lovaizu/checks accepts the first two for every repository.
+Claude Code
+README

@@ -1,11 +1,11 @@
 {
   "goal": {
-    "decided": "The user has each deliverable they mean made by rn, every deliverable meeting each intent of its best practice, and is asked only what is theirs.",
+    "decided": "rn makes each deliverable the user means, every deliverable meeting each intent of its best practice, and asks the user only what's theirs.",
     "by": "user"
   },
   "deliverables": [
     {
-      "name": "Every prose ccpm keeps is checked by lovaizu/checks",
+      "name": "lovaizu/checks checks all the text that ccpm keeps",
       "path": "lefthook.yml",
       "kind": "code",
       "inputs": [],
@@ -89,7 +89,7 @@
             },
             {
               "about": "Languages and tools",
-              "decided": "a practice holds for any language and tool the kind is made with, and names one only as an example, as a practice tied to one language fails a deliverable made in another",
+              "decided": "a practice holds for any language and tool that makes the kind, and names one only as an example, as a practice tied to one language fails a deliverable made in another",
               "by": "user"
             },
             {
@@ -179,7 +179,7 @@
           "decisions": [
             {
               "about": "What the best practice covers",
-              "decided": "the code's design, design patterns, test design, test-driven development, and the test code, each held to the same design principles as the code it tests; built on the questions that stand, adding what research shows missing, and dropping a question only for a reason in the role's purpose",
+              "decided": "the code's design, design patterns, test design, test-driven development, and the test code, each held to the same design principles as the code it tests, built on the questions that stand, adding what research shows missing, and dropping a question only for a reason in the role's purpose",
               "by": "user"
             }
           ]
@@ -196,7 +196,7 @@
           "decisions": [
             {
               "about": "How the best practice shows it works",
-              "decided": "code made by it leaves few findings to mutation testing, property-based testing, and CI: surviving mutants, with those marked as not to be mutated counted beside them, counterexamples a property finds, and CI failures after the local checks pass, each lower than the last; the evaluator's questions judge the design these tools can't see",
+              "decided": "code made by it leaves few findings to mutation testing, property-based testing, and CI: surviving mutants, with the lines marked to keep from mutation counted beside them, counterexamples a property finds, and CI failures after the local checks pass, each lower than the last. The evaluator's questions judge the design these tools can't see",
               "by": "user"
             }
           ]
@@ -325,7 +325,7 @@
       ]
     },
     {
-      "name": "Lane's code is designed, tested first, and written as the code best practice says",
+      "name": "Lane's code has a design, tests written first, and code as the code best practice says",
       "path": "plugins/lane/domain",
       "kind": "code",
       "inputs": ["dev/lane/architecture.md"],
@@ -382,12 +382,12 @@
           "decisions": [
             {
               "about": "The code made before",
-              "decided": "Lane's code and tests made before go whole, and Lane is made anew by the remade code best practice, as no one can tell where code made without it falls short",
+              "decided": "Lane's code and tests made before go whole, and the improved code best practice makes Lane anew, as no one can tell where code made without it falls short",
               "by": "user"
             },
             {
               "about": "The product vision trial",
-              "decided": "on Opus by dev/lane/tests/product-vision/trial.py, its plugin given a part with no numbered list, a steps adapter, a start-text command and a route that waits for the person, and its judge counting steps out of order, starts unlike the command's text and resumes not in the person's words; its judge first right on kept records whose answer is known",
+              "decided": "on Opus by dev/lane/tests/product-vision/trial.py, its plugin given a part with no numbered list, a steps adapter, a start-text command and a route that waits for the person, and its judge counting steps out of order, starts unlike the command's text and resumes not in the person's words. Its judge is first right on kept records whose answer someone knows",
               "by": "reasoning"
             }
           ]
@@ -436,7 +436,7 @@
           "decisions": [
             {
               "about": "Installation tried",
-              "decided": "once the rebuilt rn is built, its install steps are followed from nothing as a newcomer would, and the README is mended where they fall short",
+              "decided": "once the rebuilt rn exists, the maker follows its install steps from nothing as a newcomer would, and mends the README where they fall short",
               "by": "reasoning"
             }
           ]
@@ -466,7 +466,7 @@
       "status": "done"
     },
     {
-      "name": "rn's code is designed, tested first, and written as the code best practice says",
+      "name": "rn's code has a design, tests written first, and code as the code best practice says",
       "path": "plugins/rn/domain",
       "kind": "code",
       "inputs": ["dev/rn/architecture.md"],
@@ -556,7 +556,7 @@
           "decisions": [
             {
               "about": "claude plugin eval",
-              "decided": "not used: a case is one prompt in an empty workspace that never stops for an answer, while rn's walkthrough answers points and resumes; the product vision trials run on Lane's trial driver in lovaizu/playground",
+              "decided": "not used: a case is one prompt in an empty workspace that never stops for an answer, while rn's walkthrough answers points and resumes. The product vision trials run on Lane's trial driver in lovaizu/playground",
               "by": "research"
             }
           ]
@@ -579,7 +579,7 @@
           "decisions": [
             {
               "about": "Pin and Turn",
-              "decided": "plugins/pin and plugins/turn go once rn holds their parts; the branch turn-held keeps the eight Turn commits no branch held, and each is taken where rn's design keeps what it fixes, then the branch goes",
+              "decided": "plugins/pin and plugins/turn go once rn holds their parts. The branch turn-held keeps the eight Turn commits no branch held, rn takes each where its design keeps what it fixes, then the branch goes",
               "by": "reasoning"
             },
             {
@@ -588,7 +588,7 @@
               "by": "reasoning"
             },
             {
-              "about": "A start value that is null",
+              "about": "A null start value",
               "decided": "a run lane whose value is null lets no command through, and a run_step command the adapter gives counts as allowed, so the generator gets run_only",
               "by": "reasoning"
             },
@@ -609,7 +609,7 @@
             },
             {
               "about": "The code made before",
-              "decided": "rn's code and tests made before go whole, and rn is made anew by the remade code best practice, as no one can tell where code made without it falls short",
+              "decided": "rn's code and tests made before go whole, and the improved code best practice makes rn anew, as no one can tell where code made without it falls short",
               "by": "user"
             }
           ]

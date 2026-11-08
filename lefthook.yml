@@ -34,6 +34,8 @@ pre-commit:
     # The checks read an SVG file as plain text, its style and all, until
     # lovaizu/checks#9 reads only the text that a figure shows.
     - "**.svg"
+    # The patterns of Vale's own settings are regular expressions.
+    - ".vale.ini"
     # Vale lints the front matter of Markdown, the scope text.frontmatter, which lovaizu/checks
     # doesn't ignore yet, so the skill's allowed-tools fail on their parentheses.
     - "plugins/rn/skills/up/*.md"
