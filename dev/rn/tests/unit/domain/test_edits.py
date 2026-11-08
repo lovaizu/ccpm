@@ -72,6 +72,9 @@ class Write(Base):
         said = self.stopped(self.writes, [{"id": "D2", "inputs": ["gone.md"]}])
         self.assertEqual(said, "D2 names gone.md in its inputs, neither a deliverable nor a file")
         self.assertIn("D9 is no node", self.stopped(self.writes, [{"id": "D9"}]))
+        ahead = [{"id": "D2", "preconditions": ["README.md"], "status": "doing"}]
+        said = self.stopped(self.writes, ahead)
+        self.assertEqual(said, "D2 is doing while its precondition README.md is open")
         self.assertEqual(self.tree_now(), before)
 
     def test_each_node_touched_is_listed_until_answered(self):
@@ -354,6 +357,18 @@ class Check(Base):
             ["D1 takes README.md in its inputs, which comes later"],
         )
         self.assertEqual(json.loads(self.read(runs.tree_path(RUN)))["goal"]["by"], "user")
+
+    def test_a_deliverable_doing_ahead_of_its_precondition(self):
+        # Given: tidy/cli.py doing, with the README, still open, as its precondition
+        tree = helpers.walkthrough()
+        tree["deliverables"][1].update(preconditions=["README.md"], status="doing")
+        self.lays(tree)
+        # When: the tree is checked
+        # Then: tidy/cli.py's start ahead of the README fails
+        self.assertEqual(
+            edits.check(runs.tree_path(RUN)),
+            ["D2 is doing while its precondition README.md is open"],
+        )
 
 
 class TurnGood(Base):

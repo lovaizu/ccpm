@@ -322,12 +322,16 @@ def set_deliverable(found: dict[str, Any], node: dict[str, Any], finder: Finder)
         found["intents"] = made(found, finder)["intents"]
 
 
-def faults(tree: dict[str, Any], exists: Callable[[str], bool], finder: Finder) -> list[str]:
+def faults(
+    tree: dict[str, Any], exists: Callable[[str], bool], finder: Finder, example: str | None
+) -> list[str]:
     """Each way the tree's order breaks the plan best practice's rules, in words: a path two
     deliverables hold, a deliverable before what it takes from, an input or precondition that
-    names neither a deliverable nor a file, a kind with neither a best practice nor a meta
-    deliverable before it, a meta deliverable whose kind no later deliverable takes, a research
-    deliverable no later one takes from, and the intents of a deliverable unlike its kind's."""
+    names neither a deliverable nor a file, a deliverable doing or done while a precondition isn't
+    passed, a kind with neither a best practice nor a meta deliverable before it, a meta
+    deliverable whose kind no later deliverable takes, a research deliverable no later one takes
+    from, and the intents of a deliverable unlike its kind's. The example is the ID of the meta
+    best practice's intent that asks of the example, None where it has none."""
     found = []
     listed = deliverables(tree)
     paths = [d["path"] for d in listed]
@@ -340,6 +344,14 @@ def faults(tree: dict[str, Any], exists: Callable[[str], bool], finder: Finder) 
                     found.append(f"D{n} takes {p} in its {field}, which comes later")
                 elif p not in paths and not exists(p):
                     found.append(f"D{n} names {p} in its {field}, neither a deliverable nor a file")
+        if d["status"] != "open":
+            for p in d.get("preconditions", []):
+                # A precondition that comes later already fails above, by the order.
+                before = next((e for e in listed[: n - 1] if e["path"] == p), None)
+                if before is not None and not passed(before, example):
+                    found.append(
+                        f"D{n} is {d['status']} while its precondition {p} is {before['status']}"
+                    )
         if done(d):
             continue
         practiced = finder(d["kind"])
@@ -361,6 +373,16 @@ def faults(tree: dict[str, Any], exists: Callable[[str], bool], finder: Finder) 
         ):
             found.append(f"D{n} is research that no later deliverable takes from")
     return found
+
+
+def passed(d: dict[str, Any], example: str | None) -> bool:
+    """Whether the deliverable counts as done for what comes after it: done, or a best practice
+    whose every intent is good but the one that asks of its example, as Q5 of the plan best
+    practice counts one that waits only on a later deliverable its example copies."""
+    if done(d):
+        return True
+    short = [i["id"] for i in d.get("intents", []) if not i["good"]]
+    return d["kind"] == META and all(i == example for i in short)
 
 
 def open_decisions(tree: dict[str, Any], n: int) -> list[tuple[str, dict[str, Any]]]:

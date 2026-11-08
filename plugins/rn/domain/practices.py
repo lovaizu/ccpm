@@ -19,6 +19,8 @@ OWN = os.path.join(os.path.dirname(os.path.abspath(__file__)), "best-practices")
 PRACTICE = "best-practice.json"
 # What an intent's about names where the intent asks of the deliverable as a whole.
 WHOLE = "the whole"
+# What a meta intent's about names where the intent asks of the best practice's example.
+EXAMPLE = "example"
 # The kinds whose deliverable is code, which a turn of how it reads takes by refactor-code; every
 # other kind's deliverable is a document, which a turn of how it reads takes by refactor-doc.
 CODE = ("code", "plugin")

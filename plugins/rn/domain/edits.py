@@ -38,7 +38,7 @@ def held(run: str, tree: dict[str, Any]) -> None:
         files.held(runs.tree_path(run), tree, files.read(trees.FORM))
     except files.Unreadable as why:
         raise Stop(str(why)) from None
-    found = trees.faults(tree, exists, starts.finder(run))
+    found = trees.faults(tree, exists, starts.finder(run), starts.example(run))
     if found:
         raise Stop("\n".join(found))
 
@@ -245,4 +245,4 @@ def check(path: str) -> list[str]:
     """Each fault of the design tree at the path: of its form, or of its order."""
     tree = trees.load(path)
     run = os.path.dirname(path)
-    return trees.faults(tree, exists, starts.finder(run))
+    return trees.faults(tree, exists, starts.finder(run), starts.example(run))

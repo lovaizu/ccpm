@@ -331,6 +331,22 @@ class Generator(Base):
         self.assertIn("the kind man-page has no best practice yet", str(stop.exception))
 
 
+class Example(Base):
+    def test_the_meta_intent_that_asks_of_the_example(self):
+        # Given: rn's own meta best practice, whose Q9 asks of the example and its source
+        # When: the run asks for the intent of the example
+        # Then: it's Q9
+        self.assertEqual(starts.example(RUN), "Q9")
+        # And: a meta best practice of the run's own with no such intent has none
+        own = helpers.practices.read(
+            os.path.join(helpers.practices.OWN, "meta", "best-practice.json")
+        )
+        for intent in own["intents"]:
+            intent["about"] = intent["about"].replace("example, ", "")
+        self.write_json(os.path.join(RUN, "best-practices", "meta", "best-practice.json"), own)
+        self.assertIsNone(starts.example(RUN))
+
+
 class Evaluator(Base):
     def test_each_group_cut_once_in_order_then_the_first_without_answers(self):
         tree = helpers.decided(
