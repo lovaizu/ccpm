@@ -14,37 +14,7 @@
       "name": "Lane's design checks each practice step and each change",
       "path": "dev/lane/architecture.md",
       "kind": "architecture",
-      "inputs": ["dev/lane/product-vision.md"],
-      "preconditions": [],
-      "status": "doing",
-      "intents": [
-        {"id": "Q1", "good": false, "decisions": []},
-        {"id": "Q2", "good": false, "decisions": []},
-        {
-          "id": "Q3",
-          "good": false,
-          "decisions": [
-            {
-              "about": "A run the person redirects",
-              "decided": "after a prompt of the person's while a run is on, the guard lets the main conversation stop a start of the run with TaskStop, which Claude Code's subagents reference documents, and a call of the skill that the routes name then ends the run and begins another. Without such a prompt, a stop or a call of the skill is a move off the routes, held as any other",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {"id": "Q4", "good": false, "decisions": []},
-        {"id": "Q5", "good": false, "decisions": []},
-        {"id": "Q6", "good": false, "decisions": []},
-        {"id": "Q7", "good": false, "decisions": []},
-        {"id": "Q8", "good": false, "decisions": []},
-        {"id": "Q9", "good": false, "decisions": []},
-        {"id": "Q10", "good": false, "decisions": []},
-        {"id": "Q11", "good": false, "decisions": []},
-        {"id": "Q12", "good": false, "decisions": []},
-        {"id": "Q13", "good": false, "decisions": []},
-        {"id": "Q14", "good": false, "decisions": []},
-        {"id": "Q15", "good": false, "decisions": []},
-        {"id": "Q16", "good": false, "decisions": []}
-      ]
+      "status": "done"
     },
     {
       "name": "Each best practice holds the field's established way, named so its maker grasps the intent",
