@@ -9,17 +9,7 @@ repository keeps every decision, so a conversation that ends loses nothing.
 ## Principles
 
 rn builds on [the plugin best
-practice](../plugin/best-practice.md). It differs from it in
-these:
-
-- **Who settles the design**: the main conversation settles the points of the design and puts each
-  to the user itself, where the plugin best practice leaves both to a role. *Why*: the design is the
-  user's intent, so rn settles it where the user talks, and no role stands between a point and the
-  user, as KR1.2 counts.
-- **Lessons**: rn takes in no lesson once a run ends. *Why*: no step of the product vision follows
-  the draft pull request, and a step there would ask the user more, as KR1.2 counts.
-
-rn adds these.
+practice](../plugin/best-practice.md), and adds these.
 
 ### Planned back from the goal
 
@@ -121,6 +111,13 @@ their answer didn't weigh.
 
 *Why*: a role that settles such a point makes a part the design doesn't hold, as KR1.1 counts, and
 asking the user again what they settled gives them nothing to weigh, as KR1.2 counts.
+
+### No lesson after a run
+
+rn takes in no lesson once a run ends.
+
+*Why*: no step of the product vision follows the draft pull request, and a step there would ask the
+user more, as KR1.2 counts.
 
 ### Tried in a throwaway copy
 

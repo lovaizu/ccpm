@@ -7,10 +7,6 @@ This document says how the parts of `<Product>` give [its product vision](<board
 > - `<board>`: the path to the product's product vision.
 > - `<idea>`: how the product turns what its roles bring into what the product vision
 >   promises, as one idea seen as a whole that every part carries out. Two or three sentences.
-> - Every slot below says what holds while a component changes inside. It names no command, file,
->   field, step, or count that one component alone uses, as the developer of that component settles
->   them where they build it. It names a rule of another document by what the rule says, never by
->   a question's ID, as the developer reads this document without that one's questions.
 
 ## Principles
 
@@ -30,7 +26,7 @@ This document says how the parts of `<Product>` give [its product vision](<board
 >   apart.
 > - `<name>`: the few words a reader finds the principle by.
 > - `<rule>`: one to three short sentences that every part meeting the same decision follows, what
->   must be absent among them, with no way a component carries it out.
+>   must be absent among them.
 > - `<why>`: one or two sentences: what goes wrong for a role of the product vision without the
 >   rule, ending with the key result it guards, such as `as KR1.1 counts`.
 
@@ -112,7 +108,7 @@ sequenceDiagram
 >   thing outside the product it reaches.
 > - `<step>`: what one does to another and the data it hands on, as the data model names it, in a
 >   few words. Each branch, each step that sends work back, and each question put to the role are
->   among them. A component's own steps inside stay out, as one arrow stands for them.
+>   among them.
 > - `<choice>`, `<other way>`, `<why>`, `<cost>`: as in Components.
 
 ## Deployment
