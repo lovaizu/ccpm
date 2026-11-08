@@ -1,0 +1,50 @@
+{
+  "met": [
+    {
+      "question": "Q1",
+      "lines": "plugins/rn/domain/best-practices/plugin/best-practice.json:2 keeps the one end, that the plugin's users achieve what they're after. The changed practice at :334 serves it, as the maker checks as the work's user, and only the evaluator's answers count."
+    },
+    {
+      "question": "Q2",
+      "lines": "plugins/rn/domain/best-practices/plugin/best-practice.json:3 names the template as it was. The change adds no section and no slot, as the maker check and the shortfall's way back say how roles work, not what the plugin's files hold."
+    },
+    {
+      "question": "Q3",
+      "lines": "plugins/rn/domain/best-practices/plugin/best-practice.json:3 names the same template, and the practice at :334 needs no new section of it. The evaluator's agent already lies under agents, as the step at :337 shows."
+    },
+    {
+      "question": "Q4",
+      "lines": "plugins/rn/domain/best-practices/plugin/best-practice.json:4-7 keep architecture as the one input and no preconditions. The change takes nothing from another kind."
+    },
+    {
+      "question": "Q5",
+      "lines": "plugins/rn/domain/best-practices/plugin/best-practice.json:107 keeps the moment and the intent of Q20, before the work reaches its user, so that the user gets what they're after and not what its maker meant. The practice at :334 now says what the maker answers at that moment, the lines that meet each question or what the user still lacks. So an evaluator judges whether the user gets that, not whether a check exists."
+    },
+    {
+      "question": "Q6",
+      "lines": "plugins/rn/domain/best-practices/plugin/best-practice.json:107 asks the question that both new parts serve. A maker that checks first and sends each shortfall back to its decision gives the user what they're after, not what the maker meant. The intents at :8-139 stand as they were. The change drops and weakens none of them."
+    },
+    {
+      "question": "Q7",
+      "lines": "plugins/rn/domain/best-practices/plugin/best-practice.json:334 says in short sentences what the maker does and why. The maker answers each question the same way before it hands the work on, as a lack that it could see costs a round of the evaluator, and the user waits longer. It sends each shortfall back to the decision that serves the question, such as a node of a design tree, as the design is the work's single source of truth and a fix beside the design is a part that no decision holds. Where only a changed decision meets the shortfall, it names that decision and leaves it as it stands, as a decision that the maker changes is one that no one settled. It names no tool, and the design tree comes only as an example. It adds no step, as the self-check is a judgment that no call shows."
+    },
+    {
+      "question": "Q8",
+      "lines": "plugins/rn/domain/best-practices/plugin/best-practice.json:333 holds the one practice for Q20, in the order of the intents. It comes after Q19 and before Q21."
+    },
+    {
+      "question": "Q10",
+      "lines": "plugins/rn/domain/best-practices/plugin/best-practice.md:280 reads whole in plain order. It gives the evaluator and its answers, why it hunts no defect, and the plan as the case with no evaluator. It then gives the maker's own check before it hands on, and where a shortfall goes. A maker of a plugin such as Lane follows it without hesitation. It agrees with rn's own design at dev/rn/architecture.md:145-179."
+    }
+  ],
+  "not_met": [
+    {
+      "question": "Q7",
+      "lacks": "The maker's own check before it hands on rests on reasoning alone, as the design tree's decision records. plugins/rn/domain/best-practices/plugin/best-practice.json:334 names no source in the field for it, so a reader can't check it against an established way. Finding one needs research outside the repository, which this turn sends nothing to."
+    },
+    {
+      "question": "Q9",
+      "lacks": "plugins/rn/domain/best-practices/plugin/best-practice.json:1-7 names no example, so a reader finds the maker check and the shortfall's way back in one deliverable only at dev/rn/architecture.md:145-179. This predates the turn, and only a new decision, an example for the plugin best practice, meets it."
+    }
+  ]
+}
