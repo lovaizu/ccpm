@@ -31,4 +31,5 @@
 >    lane holds.
 >
 > A plugin with no roles, such as Lane, leaves out the agents, each role's part and its two
-> schemas, and the proposal's routes.
+> schemas, the proposal, and `hooks/hooks.json`, as it has no role for a guard to hold. It skips
+> steps 5 and 6.

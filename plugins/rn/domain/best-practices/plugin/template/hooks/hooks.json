@@ -1,4 +1,4 @@
 {
-  "DELETE_TEMPLATE_COMMENT": "Lane's lay.py write writes this file from the plugin's proposal, with hooks/lanes.json and hooks/lane/ beside it. Add an entry by hand only for a hook that no lane holds: a command that runs python3 on a file under hooks/, with onFailure block where a failure must stop the call.",
+  "DELETE_TEMPLATE_COMMENT": "Lane's lay.py write writes this file from the plugin's proposal, with hooks/lanes.json and hooks/lane/ beside it. Add an entry by hand only for a hook that no lane holds: a command that runs python3 on a file under hooks/, with onFailure block where a failure must stop the call. A plugin with no roles, such as Lane, leaves out this file, as it has no proposal for lay.py write to lay.",
   "hooks": {}
 }

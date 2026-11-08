@@ -1,0 +1,68 @@
+{
+ "met": [
+  {
+   "question": "Q1",
+   "lines": [
+    "plugin/best-practice.md:5 keeps the one end, that the plugin's users achieve what they're after. The order at plugin/template/README.md:8-35 serves it: the plugin deliverable starts only once the code and prompts it rests on have passed, and holds only the files its plugin uses."
+   ]
+  },
+  {
+   "question": "Q2",
+   "lines": [
+    "plugin/template/README.md:10-31 gives the order to write the files in, the schemas, scripts, parts, and entries first, and hooks/hooks.json last by lay.py write at plugin/template/README.md:30.",
+    "plugin/template/domain/command.md:1-71 holds the skill's part apart from a role's part: how it takes the request at plugin/template/domain/command.md:19-28, the step Lane lays the routes on at plugin/template/domain/command.md:30-39, how it puts a point and resumes the role word for word at plugin/template/domain/command.md:41-53, and how it reads the records at the end at plugin/template/domain/command.md:55-71.",
+    "plugin/template/README.md:33-35 says which files a plugin with no roles, such as Lane, leaves out: the agents, each role's part and its two schemas, the proposal, and hooks/hooks.json, so it skips steps 5 and 6. The notes of each such file say it too: plugin/template/agents/role.md:19, plugin/template/domain/role.md:13-14, plugin/template/.lane/yyyymmdd-plugin/plugin.json:2, and plugin/template/hooks/hooks.json:2. plugin/template/README.md:18-19 says that a plugin with no prompts holds no entries or parts."
+   ]
+  },
+  {
+   "question": "Q3",
+   "lines": [
+    "plugin/template/.claude-plugin/plugin.json:2, plugin/template/agents/role.md:8, plugin/template/domain/role.md:3, plugin/template/domain/command.md:3, and plugin/template/.lane/yyyymmdd-plugin/plugin.json:2 each serve the goal, and the template holds no section that no question asks for. plugin/template/.lane/yyyymmdd-plugin/plugin.json:5-9 holds only the steps adapter for the sample role."
+   ]
+  },
+  {
+   "question": "Q4",
+   "lines": [
+    "plugin/best-practice.md:15-19 name meta, code, and prompt as the kinds that must pass first. plugin/best-practice.md:61 says why, with a plugin of no prompts, such as Lane, naming no prompt, and each plugin it takes a part from among its preconditions too.",
+    "plugin/template/README.md:8-11 says that the code and prompt deliverables pass before the plugin deliverable starts, and that the plan names them among its preconditions.",
+    "plugin/template/README.md:13-19 says which files the code deliverable makes: the schemas and the scripts. It says which the prompt deliverable makes: the parts and the entries.plugin/template/README.md:21-31 says which the plugin deliverable makes once they pass: the manifest, the CHANGELOG, the proposal and its adapters, and hooks/hooks.json by lay.py write."
+   ]
+  },
+  {
+   "question": "Q5",
+   "lines": [
+    "plugin/best-practice.md:25-51 keep each question as the moment, what the role needs, and a so-that clause, unchanged since round 4, where the evaluators found them met."
+   ]
+  },
+  {
+   "question": "Q6",
+   "lines": [
+    "plugin/best-practice.md:25-51 give each section, the dependencies among them, and the whole a question, unchanged since round 4. The order at plugin/template/README.md:8-31 keeps the dependency of Q1, that the plugin starts only once its code and prompts pass."
+   ]
+  },
+  {
+   "question": "Q7",
+   "lines": [
+    "plugin/best-practice.md:61 says why the code and prompts pass first: the plugin rests on them. plugin/template/README.md:34 says why a plugin with no roles leaves out the proposal and hooks/hooks.json: it has no role for a guard to hold, so a developer can judge a plugin the note doesn't name."
+   ]
+  },
+  {
+   "question": "Q8",
+   "lines": [
+    "plugin/best-practice.md:55-375 give each question a practice, unchanged since round 4. plugin/template/README.md:27-29 keeps the print of the proposal before lay.py write, the order that the steps of Q8 and Q9 keep."
+   ]
+  },
+  {
+   "question": "Q10",
+   "lines": [
+    "plugin/best-practice.md:5 and plugin/best-practice.md:374 hold the whole to the users' end. A developer who follows plugin/template/README.md:8-35 starts the plugin only on code and prompts that have passed, writes only the files their plugin holds, and lays the guard last, so the users get a plugin whose parts each passed."
+   ]
+  }
+ ],
+ "not_met": [
+  {
+   "question": "Q9",
+   "lacks": "The best practice names no example, so the generator has no finished plugin that shows what the slots become. It waits on Lane's plugin deliverable, as the decision on the example says: 'The plugin best practice's example is Lane's plugin, named once Lane's plugin deliverable ends'."
+  }
+ ]
+}
