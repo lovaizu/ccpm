@@ -118,7 +118,7 @@ Write first what the deliverable must be for the question's role, and why the ro
 **Steps**
 
 1. Add a step only where a generator that holds the intent would still not know how, such as a format to keep or a place to look, and say what the step achieves.
-2. Give each step its trace, the call that shows it done: a command it runs, a file it reads to its end, or a file it makes. Order the steps as their calls come, as a checker such as Lane holds the role to each step by its trace alone, in the steps' order, and holds its end until each trace comes back. Leave the trace out where some runs rightly skip the call, such as on a step of a case, as Lane would stop the end of each such run, and where no call shows the action, such as a judgment, which the evaluator then checks.
+2. Give each step its trace, the call that shows it done: a command it runs, a file it reads to its end, or a file it makes. Order the steps as their calls come, as a checker such as Lane holds the role to each step by its trace alone, in the steps' order, and holds its end until each trace comes back. Leave the trace out in two cases. One is where some runs rightly skip the call, such as on a step of a case, as Lane would stop the end of each such run. The other is where no call shows the action, such as a judgment, which the evaluator then checks.
 3. Where the generator must find the content before it writes it, such as the roles of a product vision, say what to look at, how to find all of it, and when to ask the user.
 
 ### Q8
@@ -139,7 +139,7 @@ Make the product's own deliverable of the kind from its design tree by the templ
 
 **Steps**
 
-1. Where the deliverable lies elsewhere for its own reader, such as a product vision in the developers' folder, name its path in `source` and copy it with its figures beside the best practice by a script, such as ccpm's `dev/scripts/practices.py example`, as a copy made by hand drifts from the deliverable, and a symbolic link shows as a line of text on GitHub and on Windows.
+1. Where the deliverable lies elsewhere for its own reader, such as a product vision in the developers' folder, name its path in `source`. Copy it with its figures beside the best practice by a script, such as ccpm's `dev/scripts/practices.py example`. A copy made by hand drifts from the deliverable, and a symbolic link shows as a line of text on GitHub and on Windows.
 
 ### Q10
 

@@ -358,7 +358,7 @@
      "text": "Check each configuration written by hand, such as `hooks.json`, with `claude plugin validate`, as no test runs its commands."
     },
     {
-     "text": "Start each Claude Code of a product vision trial on a configuration folder of its own that holds only the plugins under test, with the developer's login as `CLAUDE_CODE_OAUTH_TOKEN`, as [multiple accounts](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts) says, as the developer's own settings would change what the trial tries."
+     "text": "Start each Claude Code of a product vision trial on a configuration folder of its own that holds only the plugins under test, with the developer's login as `CLAUDE_CODE_OAUTH_TOKEN`, as [multiple accounts](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts) says. The developer's own settings would change what the trial tries."
     },
     {
      "text": "Have the stand-in answer each ask to allow a call from what the screen shows, as a person would."

@@ -5,7 +5,7 @@
 ### Changed
 
 - `/rn:up` with what you want lays out every piece the goal needs, and the order it needs them in, before it makes any, so no piece goes missing or comes before what it takes.
-- rn makes each piece by the best practice of its kind, and a second AI that gets only the piece, what it takes from, and a record of its commands tried in a throwaway copy judges it as its people would, until it meets every question of its kind, so what you get is usable as it comes.
+- rn makes each piece by the best practice of its kind. A second AI judges it as its people would, given only the piece, what it takes from, and a record of its commands tried in a throwaway copy. rn makes the piece again until it meets every question of its kind, so what you get is usable as it comes.
 - rn asks you one point at a time, only what the purpose and the best practices leave to you, with its recommendation, and says at the end what it decided without asking, so your answers go only to what's yours.
 - `/rn:up` alone, in a new conversation, picks the work up where it stopped from `.rn/<date>-<goal>/` in your repository, so you never answer a point twice.
 - rn commits each piece on its own branch `rn/<date>-<goal>` and keeps one draft pull request for you to merge, so the work stays in your repository and the merge stays yours.

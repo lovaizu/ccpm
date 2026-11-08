@@ -71,8 +71,8 @@ def part_ids(items: list[dict[str, Any]]) -> list[str]:
 
 
 def leaf_ids(items: list[dict[str, Any]]) -> list[str]:
-    """The id of each part that holds no parts of its own, in order: a question asks of a part made
-    of parts through them."""
+    """The id of each part that holds no parts of its own, in order, as a question about a part made
+    of parts asks about it through those parts."""
     found = []
     for item in items:
         found.extend(leaf_ids(item["parts"]) if item.get("parts") else [item["id"]])
@@ -430,7 +430,7 @@ def behind(path: str, data: dict) -> list[str]:
 
 def strays(path: str, data: dict) -> list[str]:
     """Each file in the best practice's folder that neither it, its template nor its example holds,
-    in words. None where the copy of its source fails, which behind names."""
+    in words. None where the copy of its source fails, which `behind` names."""
     try:
         found = leftovers(path, data)
     except FileNotFoundError:

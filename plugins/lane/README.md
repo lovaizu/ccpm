@@ -4,7 +4,7 @@ Lane is a Claude Code plugin that has the skill and subagents of the plugin you 
 steps you wrote and go in the order you set, on every run.
 
 Lane 0.1.0 is still in development and not yet released. The walkthrough below shows what Lane sets
-out to show, not yet a recorded run, until a recorded run's output takes its place.
+out to do. It isn't the output of a recorded run yet.
 
 Lane is for you when you build a Claude Code plugin whose skill and subagents work in numbered
 steps, and some step must hold on every run. With it, your plugin runs as you designed it, and you
@@ -26,8 +26,8 @@ after another one ends with a given result, a word such as `more`.
 - Lane doesn't judge the work. The next start comes from the result a subagent gives.
 - Lane approves no command for anyone. A command you hold for approval goes to the person through
   Claude Code's own permission prompt.
-- Lane reads a file that your subagents write and a rule checks, such as a list of items each needing
-  an answer, only in Lane's format. A file in another format needs an adapter, a script of yours
+- Lane reads a file that your subagents write and a rule checks, such as a list of items that each
+  need an answer, only in Lane's format. A file in another format needs an adapter, a script of yours
   that turns it into Lane's format, as [The lanes](docs/lanes.md#the-ports) says.
 
 ## Requirements
@@ -235,8 +235,8 @@ conversation is your own work, and Lane checks none of it.
 ![A run of the skill, from its call to its last start, between your own work](images/how-run.svg)
 
 **How does Lane tell a run of your plugin from your own work in the same conversation?** A run
-starts at a call of your skill, as you type `/changelog:write` or as an AI calls it. It ends once a route
-starts no more. Outside a run, Lane checks nothing. Within it, Lane checks only four things in the
+starts at a call of your skill, as you type `/changelog:write` or as an AI calls it. It ends once a
+route starts no more. Outside a run, Lane checks nothing. Within it, Lane checks only four things in the
 main conversation: each start of a subagent, each message that resumes a subagent, a dialog that
 asks the person while a subagent's point waits, and the end of a turn. Lane stops such a dialog,
 as its options would reword the point, and has the point put in the reply, so the person answers

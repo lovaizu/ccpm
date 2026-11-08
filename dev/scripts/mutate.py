@@ -61,8 +61,8 @@ def free_ports(count: int) -> list[int]:
 
 def outside_venv(folder: str, names: list[str]) -> list[str]:
     """What copytree leaves out of a copy of the repository: the virtual environment uv makes in
-    .venv, as the workers run the tools from where it lies, and the copy would take half made the
-    files Python writes in it while the first workers start."""
+    .venv. The workers run the tools from where it lies, and Python writes files in it while the
+    first workers start, which a copy would catch half written."""
     return [".venv"] if folder == "." else []
 
 
@@ -114,9 +114,9 @@ def linked(folders: list[str]) -> list[str]:
 
 
 def written(plugin: str, ports: list[int], since: str, path: str) -> None:
-    """The run's config, written at the path: the plugin's cosmic-ray.toml, its links left out
-    beside the modules it leaves out itself, the workers on the ports its distributor, and the
-    commit the changed lines count from given to the git filter, where there is one."""
+    """The run's config, written at the path: the plugin's cosmic-ray.toml, with its links left
+    out beside the modules it leaves out itself, its distributor's workers on the ports, and, where
+    there is one, the commit from which the git filter counts the changed lines."""
     config = load_config(config_of(plugin))
     own = list(config.get("excluded-modules", []))
     config["excluded-modules"] = own + linked(config["module-path"])

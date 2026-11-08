@@ -24,9 +24,10 @@ fi
 zero=0000000000000000000000000000000000000000
 while read -r _ local _ remote; do
   [ "$local" = "$zero" ] && continue
-  # Counted from the commit the branch is at on the remote, checked when its push ran, or from
-  # where a branch new there left main. CI counts from the commit before where its `tests` passed,
-  # which only CI knows, else from where the branch left main too.
+  # The changes count from the commit that the branch is at on the remote, which its own push
+  # checked, or, for a branch new on the remote, from where it left main. CI counts from the commit
+  # before the one where its `tests` last passed, which only CI knows, or else from where the
+  # branch left main too.
   if [ "$remote" = "$zero" ]; then
     base=$(git merge-base "$local" origin/main)
   else

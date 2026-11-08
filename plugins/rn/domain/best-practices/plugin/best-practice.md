@@ -307,7 +307,7 @@ The test levels are the [architecture best practice](../architecture/best-practi
 
 1. Write the architecture tests with a double of Claude Code that runs each hook's entry and script in the test's own process, as a new process of Python would run it, and sends what its documentation says or what a recorded try of the real Claude Code showed. Run them with the unit tests before each push.
 2. Check each configuration written by hand, such as `hooks.json`, with `claude plugin validate`, as no test runs its commands.
-3. Start each Claude Code of a product vision trial on a configuration folder of its own that holds only the plugins under test, with the developer's login as `CLAUDE_CODE_OAUTH_TOKEN`, as [multiple accounts](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts) says, as the developer's own settings would change what the trial tries.
+3. Start each Claude Code of a product vision trial on a configuration folder of its own that holds only the plugins under test, with the developer's login as `CLAUDE_CODE_OAUTH_TOKEN`, as [multiple accounts](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts) says. The developer's own settings would change what the trial tries.
 4. Have the stand-in answer each ask to allow a call from what the screen shows, as a person would.
 
 ### Q23

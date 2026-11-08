@@ -12,10 +12,15 @@ Every plugin follows [the plugin best practice](../plugins/rn/domain/best-practi
 
 ## The checks on every push
 
-CI runs these checks on every push: the linter, the formatter, the type checker, each plugin's unit
-and architecture tests with the lines and branches they run counted, Claude Code's check of every
-manifest, and Mermaid's parse of every diagram in the Markdown files. pytest runs the tests on
-every processor at once. Run the checks from the top of the repository:
+CI runs these checks on every push:
+
+- the linter, the formatter, and the type checker
+- each plugin's unit and architecture tests
+- the coverage of the lines and branches that those tests run
+- Claude Code's check of every manifest
+- Mermaid's parse of every diagram in the Markdown files
+
+pytest runs the tests on every processor at once. Run the checks from the top of the repository:
 
 ```console
 uv sync --locked
@@ -32,29 +37,32 @@ and CI parses them.
 Each tool the checks install must match the hashes of the files in its lock, so a version
 replaced on PyPI or npm after the lock doesn't install. The Python tools come from `uv.lock`.
 `uv lock` makes that file from `pyproject.toml`, with each tool at the newest version that runs on
-each Python.
-Claude Code and Mermaid's parser come from `dev/scripts/package-lock.json`.
+each Python. Claude Code and Mermaid's parser come from `dev/scripts/package-lock.json`.
 
 ## The property-based tests and the mutation testing
 
 On the newest Python, CI also installs the `test-quality` group, by
-`uv sync --locked --group test-quality`. With it, `sh dev/scripts/check.sh` also checks for copied code. CI
-then runs two more checks, as [the architecture best practice](../plugins/rn/domain/best-practices/architecture/best-practice.md#q12) says:
+`uv sync --locked --group test-quality`. With it, `sh dev/scripts/check.sh` also checks for copied
+code. CI then runs two more checks, as
+[the architecture best practice](../plugins/rn/domain/best-practices/architecture/best-practice.md#q12)
+says:
 
 - `sh dev/scripts/properties.sh` runs the property-based tests, on many inputs each in CI and on few
   elsewhere.
 - `sh dev/scripts/mutate.sh` runs the mutation testing of each plugin that has a
   `dev/<plugin>/cosmic-ray.toml`.
 
-Each of `sh dev/scripts/check.sh <plugin>`, `sh dev/scripts/properties.sh <plugin>`, and `sh dev/scripts/mutate.sh <plugin>`
-checks that plugin alone. `sh dev/scripts/mutate.sh --since <commit> <plugin>` runs only the mutants on the
-lines changed since that commit.
+Each of `sh dev/scripts/check.sh <plugin>`, `sh dev/scripts/properties.sh <plugin>`, and
+`sh dev/scripts/mutate.sh <plugin>` checks that plugin alone.
+`sh dev/scripts/mutate.sh --since <commit> <plugin>` runs only the mutants on the lines changed
+since that commit.
 
 ## Before each commit and each push
 
 Before each commit, lefthook checks the prose of the files staged and of the commit message by
-[lovaizu/checks](https://github.com/lovaizu/checks), at the version that `lefthook.yml` names. The
-files that `lefthook.yml` excludes date from before the check. CI checks every file the same way.
+[lovaizu/checks](https://github.com/lovaizu/checks), at the version that `lefthook.yml` names.
+`lefthook.yml` leaves out only the files that no one here writes, such as lockfiles, and the code
+that the design tree makes anew. CI checks every file the same way.
 
 `dev/scripts/pre-push.sh` runs `sh dev/scripts/check.sh` on the commits pushed, and stops the
 push on a failure. It checks each plugin that `sh dev/scripts/changed.sh` names: those the push
@@ -65,5 +73,5 @@ chosen by pytest-testmon, without the lines counted. testmon keeps what each tes
 3.11 or later. On an older Python, every test runs. Every test, the property-based tests, and the
 mutation testing run in CI.
 
-Turn the hooks on once in a clone with `lefthook install`. They need on the PATH what
-[lovaizu/checks](https://github.com/lovaizu/checks#readme) says it needs, and uv.
+Turn the hooks on once in a clone with `lefthook install`. They need uv on the PATH, and what
+[lovaizu/checks](https://github.com/lovaizu/checks#readme) says it needs.

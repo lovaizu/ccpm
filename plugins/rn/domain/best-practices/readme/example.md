@@ -26,8 +26,8 @@ that are yours.
 - macOS or Linux: `uname` shows it. No one has tried rn on Windows yet.
 - Claude Code 2.1.319 or later: `claude --version` shows it.
 - Python 3.9 or later, run as `python3`: `python3 --version` shows it.
-- git, and the GitHub command-line tool `gh` signed in to the repository's host: `gh auth status` shows it. rn keeps
-  your work in a draft pull request.
+- git, and the GitHub command-line tool `gh` signed in to the repository's host: `gh auth status`
+  shows it. rn keeps your work in a draft pull request.
 
 ## Installation
 
@@ -123,8 +123,8 @@ again with your answer.
 ![The evaluator gets the piece and its questions, never the design](images/how-evaluator.svg)
 
 **How can an AI judge an AI's work?** The evaluator is a fresh AI that gets only the piece and the
-questions of its kind. It never gets the design. It judges by what the piece's
-people get, not by what its maker meant. The generator, which made the piece, makes it again until
+questions of its kind. It never gets the design. It judges by what the piece's people get, not by
+what its maker meant. The generator, which made the piece, makes it again until
 the evaluator finds every question met.
 
 ![Lane stops a step that's broken, and shows the step's own sentence](images/how-steps.svg)

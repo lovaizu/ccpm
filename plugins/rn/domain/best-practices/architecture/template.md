@@ -47,7 +47,7 @@ What each decides alone:
 
 - **`<component>`**: `<what it alone decides>`.
 
-- **`<choice>`** over `<other way>`: `<why>`. It costs `<cost>`.
+- **`<choice>`** over `<other way>`: `<why>`. The cost: `<cost>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
@@ -92,7 +92,7 @@ sequenceDiagram
   A->>B: #lt;step#gt;
 ```
 
-- **`<choice>`** over `<other way>`: `<why>`. It costs `<cost>`.
+- **`<choice>`** over `<other way>`: `<why>`. The cost: `<cost>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
@@ -112,7 +112,7 @@ sequenceDiagram
 
 `<start>`.
 
-- **`<choice>`** over `<other way>`: `<why>`. It costs `<cost>`.
+- **`<choice>`** over `<other way>`: `<why>`. The cost: `<cost>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
@@ -130,7 +130,7 @@ sequenceDiagram
 <path>  <holds>
 ```
 
-- **`<choice>`** over `<other way>`: `<why>`. It costs `<cost>`.
+- **`<choice>`** over `<other way>`: `<why>`. The cost: `<cost>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
@@ -145,7 +145,7 @@ sequenceDiagram
 
 ![The product's tests](images/template-tests.svg)
 
-- **`<choice>`** over `<other way>`: `<why>`. It costs `<cost>`.
+- **`<choice>`** over `<other way>`: `<why>`. The cost: `<cost>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:

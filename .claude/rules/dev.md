@@ -7,17 +7,18 @@ paths:
 
 # Plugin development in ccpm
 
-Build each plugin by [the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md), taking what
-its requirements call for.
+Build each plugin by
+[the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md), taking
+from it what the plugin's requirements call for.
 
 This file holds the order the work goes in. Each step names the best practice in
-`plugins/rn/domain/best-practices/` to open while doing it. A best practice's goal says what the deliverable's user achieves. Its template, or else its parts, says what the deliverable holds.
-Its intents ask, each as a question, whether the user gets what they're after from the
-deliverable. Its practices hold a way to make each question pass.
-Open `refactor-doc/best-practice.json` as well when the work is a document, and
-`refactor-code/best-practice.json` when it's code: that one finishes it.
+`plugins/rn/domain/best-practices/` to open while doing it. A best practice's goal says what the
+deliverable's user achieves. Its template, or else its parts, says what the deliverable holds. Its
+intents ask, each as a question, whether the user gets what they're after from the deliverable. Its
+practices hold a way to make each question pass. Finish a document with
+`refactor-doc/best-practice.json` open as well, and code with `refactor-code/best-practice.json`.
 
-When a step's work needs something that its best practice doesn't ask, mend that best practice as
+When a step's work needs something that its best practice doesn't ask for, mend that best practice as
 Q6 of [meta/best-practice.json](../../plugins/rn/domain/best-practices/meta/best-practice.md)
 says. Do so whichever plugin you are building. Then make the work again against the mended
 best practice.
@@ -60,8 +61,9 @@ rn's `tree.py check`.
   that rest on one decision say the same thing. The template holds each document to what its
   reader needs, as an AI told only to be brief still writes past it.
 - Rationale: the README takes two things from the product vision: what the user gains, and the
-  objectives whose main use its walkthrough runs. The architecture says how the plugin gives the product vision. If you make them before the product vision, they rest on a goal that the user hasn't
-  agreed to.
+  objectives whose main use its walkthrough runs. The architecture says how the plugin gives the
+  product vision. If you make either before the product vision, it rests on a goal that the user
+  hasn't agreed to.
 
 ### 2. Write the README
 
@@ -125,16 +127,17 @@ c. **Write each prompt, a skill or an agent, with
 d. **Lay the lanes the prompts' steps call for with `plugins/lane/scripts/lay.py`, with
    `prompt/best-practice.json` open.** Write them in a proposal in the form
    [the lanes](../../plugins/lane/docs/lanes.md#the-proposal) gives. Read what `lay.py print`
-   prints of it, and lay it with `lay.py write`. Add a check that no lane holds to Lane with
-   `code/best-practice.json` open, as a lane of its own in a file of its own. Each check is then
-   written and tested once.
+   prints of it, and lay it with `lay.py write`. Where a step needs a check that no lane holds,
+   add the check to Lane as a lane of its own, in a file of its own, with `code/best-practice.json`
+   open. Each check then lives in one place in Lane, so you write and test it once.
    - Rationale: the architecture tests run the lanes and routes as laid, so lay them before those
      tests.
 
 e. **Write the slice's architecture tests, as
    [Q12 of the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#q12) and
-   [Q22 of the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q22) say: one for each path through its sequences, with what joins the parts run real and a double
-   for each role an AI runs. Run them, and fix each failure at the part or the handoff where it
+   [Q22 of the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q22)
+   say: one for each path through its sequences, with what joins the parts run real and a double for
+   each role an AI runs. Run them, and fix each failure at the part or the handoff where it
    lies.**
 
 **After a trial, change a prompt or a document only for a cause that the records confirm, as Q15 of
@@ -159,8 +162,8 @@ asks for.
 **Once you have built every slice and every unit and architecture test passes, try the plugin as its
 user to confirm the product vision, as
 [Q12 of the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#q12) says.**
-Try it on each objective's main use, as the README's walkthrough shows it, at the size of a real request. Use a stand-in that holds an
-intent the plugin never receives.
+Try it on each objective's main use, as the README's walkthrough shows it, at the size of a real
+request. Use a stand-in that holds an intent the plugin never receives.
 
 **When the trial finds a fault, first test it at the level that missed it, as
 [Q13 of the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#q13)
@@ -176,5 +179,5 @@ says. Then confirm the whole again.**
 so. Before you ask the user to merge, make the [final check](final-check.md). Never merge the pull
 request yourself, and never use `--admin`.**
 
-- Rationale: the user decides what reaches users. `main` has branch protection, so only the user can clear
-  its required review.
+- Rationale: the user decides what reaches users. `main` has branch protection, so only the user can
+  clear its required review.

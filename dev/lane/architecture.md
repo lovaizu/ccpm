@@ -2,8 +2,8 @@
 
 This document says how the parts of Lane give [its product vision](product-vision.md). A role is a
 subagent of the user's plugin. The plugin's skill runs in the main conversation and starts the
-roles, and a route names the skill as it names a role. The user writes the lanes that hold each role's steps and the routes that order the
-roles in a proposal, a JSON file. `lay.py`, Lane's command, shows each step as it'll read, and once
+roles, and a route names the skill as it names a role. The user writes the lanes that hold each
+role's steps and the routes that order the roles in a proposal, a JSON file. `lay.py`, Lane's command, shows each step as it'll read, and once
 the user approves, lays into the plugin each lane's sentence and the guard, Lane's check script,
 with the result script beside it. On a run, Claude Code runs the guard on each hook event of the
 plugin. The guard holds each role to its steps by what a machine can find of them, never by what the
@@ -66,10 +66,10 @@ end, or a file made, as a lane of the trace kind names it. A role's steps come i
 in its order: the numbered list of its part, or one list for each intent whose practices the role
 carries out. Within a list, the guard stops a call that's a later step's trace while an earlier
 step's trace hasn't come back, and stops the role's end while any step's trace hasn't come back.
-It gives the role the sentence of the first step not done. A step whose trace not every run makes
-carries no trace lane, and steps of two lists have no order between them. A command that a trace
-names is one the role may run, beside its run_only lanes, a step list's that an adapter gives among
-them. The guard never reads what a file says to judge whether a step went well.
+It gives the role the sentence of the first step not done. A step whose trace some runs rightly
+skip carries no trace lane, and steps of two lists have no order between them. The role may run
+each command that a trace names, besides those of its run_only lanes, and this holds for a step list
+that an adapter gives too. The guard never reads what a file says to judge whether a step went well.
 
 *Why*: a role that skips a step, or does it after the step that rests on it, gives work that the
 step was there to make sound, and goes on. The guard would otherwise stop a role held to run_only
@@ -84,7 +84,8 @@ When the guard stops a tool call or an end, it gives the role or the main conver
 of the step that the call breaks, headed by the plugin's name. On the next line, it says what the
 lane allows, such as the commands the role may run, or what's missing.
 
-*Why*: a role whose call meets only a refusal makes the call another way, and so breaks its step. A role that meets the sentence of its own step goes back to the step.
+*Why*: a role whose call meets only a refusal makes the call another way, and so breaks its step.
+A role that meets the sentence of its own step goes back to the step.
 
 ### One wording for the step and the check
 
@@ -108,8 +109,8 @@ each step as it'll read, the commands that each role with a run_only lane may ru
 that names in backticks a command that its role may not run. It runs each adapter on its test cases
 and shows what it gives. The guard takes its lanes and routes only from what `lay.py write` wrote,
 and holds them, and what an adapter gives on a run, to the checks of `lanes/` and `routes.py` that
-`lay.py print` makes too. Where
-they no longer pass those checks, it stops each call they're about, as a call it can't check.
+`lay.py print` makes too. Where they no longer pass those checks, it stops each call they're about,
+as a call it can't check.
 The guard reads a path that a lane takes from the project's folder, `CLAUDE_PROJECT_DIR`, and the
 path that a call names from the folder that the call runs in.
 
@@ -117,9 +118,10 @@ path that a call names from the folder that the call runs in.
 [Q16](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q16) says. A lane copied or
 edited by hand would be one that no one approved, and could stop a move that the user's steps
 allow. The guard stops every command that a role's run_only lanes don't name, so that stop
-is part of what the user approves. Unshown, they'd first meet the stop on a run. A command that a
-lane takes, holding a start's value given as null, names no command, as a start given nothing to
-run may run nothing, where a lane let through would let the role run any command. The user approves
+is part of what the user approves. Unshown, they'd first meet the stop on a run. Where a lane takes
+its command from a start's value and the start gives null, the lane names no command, as a start
+given nothing to run may run nothing. Letting that lane through would let the role run any command.
+The user approves
 an adapter by its test cases, as what it gives on a run comes from the plugin's own files. A lane
 names a file of the project as the user approved it. Read from the folder the session works in,
 which moves with each `cd`, the same lane would name another file, and let through a write that no
@@ -141,8 +143,8 @@ form needs an adapter, not a new type of lane.
 
 The guard judges a role only from the fields of the hook input that Claude Code documents, and from
 the runs of the result script. Where the documentation doesn't say when an event comes, a recorded
-try of Claude Code settles it, as [Tests](#tests) says. It never judges from what a role writes about its work, from a shell
-command taken apart, or from Claude Code's record of a session.
+try of Claude Code settles it, as [Tests](#tests) says. It never judges from what a role writes
+about its work, from a shell command taken apart, or from Claude Code's record of a session.
 
 *Why*: an AI that says it kept a step may not have kept it. A reading of a shell command misses the
 forms that no one foresaw. Claude Code doesn't document its record, so a reading of the record
@@ -199,12 +201,12 @@ prompt, so the guard would hold no words of the person's to resume the role with
 
 The guard holds the main conversation from the call of the skill that the routes name until a route
 starts no more. There it stops or keeps going only the starts of roles, the messages that resume
-one, a dialog asking the person while a role's point waits, and the end of a turn. It reads the conversation's other events, such as a task notification
-or the person's prompt, only to tell it the next start or to keep the person's words. Without a
-run's record, as after the system clears its temporary folder, no run is on. Lane holds the order
-against drift, not against the person: a turn that ends with a start due goes on once with the
-start, and then ends, as a conversation that the person explicitly asked to leave the start out
-ends it again.
+one, a dialog asking the person while a role's point waits, and the end of a turn. It reads the
+conversation's other events, such as a task notification or the person's prompt, only to tell it
+the next start or to keep the person's words. Without a run's record, as after the system clears
+its temporary folder, no run is on. Lane holds the order against drift, not against the person: a
+turn that ends with a start due goes on once with the start. If the person explicitly asked to
+leave the start out, the conversation ends the turn again, and the turn then ends.
 
 *Why*: the same conversation holds the user's own work outside the run and beside it too. A stop of
 that work stops a move that the steps allow, and a hold that the person can't end overrides a
@@ -255,8 +257,7 @@ What each decides alone:
   files.
 - **lanes/**: for each type of lane, its sentence, what it takes, what breaks it, whether it's of
   the trace kind, and whether it names the commands a role may run, and the sentences laid from
-  the routes. Each type lies in a module of
-  its own. It also decides whether a lane can stand at all, a check that `proposal.py` makes before
+  the routes. Each type lies in a module of its own. It also decides whether a lane can stand at all, a check that `proposal.py` makes before
   laying and `guard.py` makes again on the lanes laid and on what an adapter gives.
 - **step.py**: a role's step lists, read from the numbered list of its part or through `ports.py`
   at the steps port, and which step of each list is due: the first whose trace hasn't come back.
@@ -274,7 +275,8 @@ What each decides alone:
 - **routes.py**: whether the user's plugin can follow its routes, which results a role may give,
   which start is due from the routes and the results kept, which result several starts at once give
   together, whether a start's text and a resume's message are as the plugin and the person gave
-  them, and that only the main conversation starts a role of the plugin. `proposal.py` and `guard.py` both hold the routes to its check, as with the lanes. The guard
+  them, and that only the main conversation starts a role of the plugin. `proposal.py` and
+  `guard.py` both hold the routes to its check, as with the lanes. The guard
   asks it which results a role may give before the result script runs. `result.py` asks it again,
   in case the guard didn't check the command.
 - **ports.py**: how a text of the plugin becomes the form in which a check takes it, at the values,
@@ -291,66 +293,66 @@ why, and what it costs.
   over hooks in a role's or the skill's own file: Claude Code ignores hooks in a plugin agent's own
   file, and a SubagentStop hook in a skill's own file didn't fire in a trial, as
   [Q9](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q9) says, so only these
-  entries hold every role. It costs the guard starting on every tool call of the plugin, and
-  returning at once for a call it doesn't hold.
+  entries hold every role. The cost: the guard starts on every tool call of the plugin, and
+  returns at once for a call it doesn't hold.
 - **Lane's code put into the plugin** over running it from where Lane lies installed: the plugin
-  then needs nothing from Lane. It costs a fix in Lane reaching a plugin only once the user
+  then needs nothing from Lane. The cost: a fix in Lane reaches a plugin only once the user
   runs `lay.py up`, as S4 does.
 - **A step held by its trace** over a step held by what the role wrote: a trace is a call that the
   hook input documents, as
   [The check judges only what Claude Code documents](#the-check-judges-only-what-claude-code-documents)
-  asks, while what a role wrote takes a reader to judge. It costs a step that no call shows
-  going unheld, which the work's own check, such as an evaluator, must catch.
+  asks, while what a role wrote takes a reader to judge. The cost: a step that no call shows
+  goes unheld, and the work's own check, such as an evaluator, must catch it.
 - **The steps of a plugin's best practices read at the steps port** over steps the proposal names
   one by one: a plugin may make a best practice on a run, such as one made for a new kind of work,
   which no proposal laid before can name, and the adapter reads each step and its trace where the
-  plugin keeps them. It costs the user an adapter, and a fault in a best practice's traces
-  showing only on a run, as a call the guard can't check.
+  plugin keeps them. The cost: the user writes an adapter, and a fault in a best practice's traces
+  shows only on a run, as a call the guard can't check.
 - **The items of every_item read at the items port, given the start's values,** over items read
   from the input's text alone: a deliverable's intents and the nodes that a change to a tree
   touches lie in a design tree that a plugin's own script reads, such as rn's `tree.py`, for the
-  deliverable or the change that the start names. It costs an adapter for each such plugin.
+  deliverable or the change that the start names. The cost: an adapter for each such plugin.
 - **A lane that names the files a role must not read, read_never, beside read_only,** over
   read_only alone: a role kept from one file, such as a design tree that another role keeps,
   would otherwise have to name each file it may read, and the guard would stop a read of a file
-  added to the project later. It costs a type of lane more, and a read by a command its run_only lanes name going
-  unchecked, as with read_only.
+  added to the project later. The cost: one more type of lane, and a read by a command that its
+  run_only lanes name goes unchecked, as with read_only.
 - **A command matched whole** over a command taken apart: a reading of the shell's grammar would let
   a lane name a part of a command, but
   [The check judges only what Claude Code documents](#the-check-judges-only-what-claude-code-documents)
-  rules it out. It costs a role with a run_only lane running only the commands its lanes
+  rules it out. The cost: a role with a run_only lane runs only the commands its lanes
   name, word for word. It reads and writes files with Read, Grep, Write, and Edit, whose paths the
   hook input gives. A role with no run_only lane runs any command, as no step of it limits them.
 - **Each plugin's guard keeping its own record of a session** over one record for both: two guards
   hold a start of a dependency's role that the routes name, its own plugin's and the one whose
   routes start it. Each would write what the other reads, and a copy of Lane's code of another
-  version could read the other's lines wrongly. It costs the start, the result, and the end
-  of such a role kept twice.
+  version could read the other's lines wrongly. The cost: the guard keeps the start, the result,
+  and the end of such a role twice.
 - **`called.py` keeping the calls of each start itself** over reading Claude Code's record of the
   session: the guard never reads that record, as
   [The check judges only what Claude Code documents](#the-check-judges-only-what-claude-code-documents)
-  says, and the hook input of one event doesn't hold the calls before it. It costs a write
-  on each call that comes back, and no call known that the hooks didn't see.
+  says, and the hook input of one event doesn't hold the calls before it. The cost: a write
+  on each call that comes back, and the guard knows no call that the hooks didn't see.
 - **A result counted only from a run of the result script** over reading the role's reply: a reply
-  such as "No more entries" could read as `more`. It costs each role that the routes name
-  one more tool call as it ends.
+  such as "No more entries" could read as `more`. The cost: each role that the routes name
+  makes one more tool call as it ends.
 - **An adapter as a script that Lane runs** over a module that Lane imports: `lay.py up` then
-  replaces Lane's code without touching an adapter, and a fault in an adapter can't break the guard
- . It costs a process started within the hook's time for each read through an adapter.
+  replaces Lane's code without touching an adapter, and a fault in an adapter can't break the
+  guard. The cost: each read through an adapter starts a process within the hook's time.
 - **Each role with lanes or named by the routes running in the background** over one that runs in
   the foreground: its start comes back at once with the role's ID, so the guard joins each start to
   its own values by documented fields alone. Its end then reaches the main conversation as a
-  task notification, which carries the next start. It costs the role's file setting
+  task notification, which carries the next start. The cost: the role's file sets
   `background: true`, which `lay.py print` asks of it.
 - **The part, the steps, and the lanes' sentences given to a role whole, as context that Claude Code
-  adds as it starts,** over a lane that has it read its own part: a role could still skip the read
- , and a part that Claude Code adds holds the role's whole part before its first call, as
-  [Q2](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q2) asks. It costs the guard
-  reading the part, and the steps at their port, on each start of a role with lanes.
+  adds as it starts,** over a lane that has it read its own part: a role could still skip the
+  read, and a part that Claude Code adds holds the role's whole part before its first call, as
+  [Q2](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q2) asks. The cost: the guard
+  reads the part, and the steps at their port, on each start of a role with lanes.
 - **A later result of a start taking the place of its earlier one** over a start held to its first
   result: a role that ends to wait for an answer, with a result whose route waits, then moves the
-  routes on once resumed. Otherwise the user would write code for that order. It costs the
-  guard keeping each role's ID and result for the whole run, not only until its start counts.
+  routes on once resumed. Otherwise the user would write code for that order. The cost: the
+  guard keeps each role's ID and result for the whole run, not only until its start counts.
 - **A route that waits for the user, `"waits": true` in place of a `to`,** over a route that ends
   the run, for a result such as `asks` with which a role ends to put a point to the person. The main
   conversation then puts the point to the user and resumes the role with their answer. The run goes
@@ -361,41 +363,41 @@ why, and what it costs.
   whose role needs the person, as
   [Q5](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q5) has every such role, would
   end its run at the first point put to the person, and its later starts would go unheld.
-  It costs one more key in the routes.
+  The cost: one more key in the routes.
 - **Only the roles that the routes name in `fan_out` running several at once** over any role beside
   itself: a role whose steps weren't made for it, such as one that writes a file that each of its
   starts writes, would then run so with no one having approved it, as
-  [What the user approved is what runs](#what-the-user-approved-is-what-runs) says. It costs
-  the user naming each such role and ordering its results.
+  [What the user approved is what runs](#what-the-user-approved-is-what-runs) says. The cost:
+  the user names each such role and orders its results.
 - **A run begun at the expansion of the typed command or at the PostToolUse of the Skill call** over
   a prompt read for the command's words: these are the two ways Claude Code documents a skill
   begun, as
   [The check judges only what Claude Code documents](#the-check-judges-only-what-claude-code-documents)
   asks, while a prompt that quotes the command would match its words and begin no skill.
-  It costs a skill followed without a call, such as its text pasted, being no run, and unheld.
+  The cost: a skill followed without a call, such as its text pasted, is no run, and goes unheld.
 - **Each start told as context that Claude Code adds** over a message of Lane's own: Claude Code
   puts it beside an event that the conversation reads in any case. The guard names the first
   start on the event that begins the run. It names each next one on the UserPromptSubmit that a
   role's end brings, and on the PostToolUse of a dependency's result script. The PostToolUse of
-  each start asks the conversation to wait for that role to end. It costs a start that the
-  conversation may pass over, so the guard stops a start not due with the one due, and keeps the
-  end of a turn going.
+  each start asks the conversation to wait for that role to end. The cost: the conversation may
+  pass over a start, so the guard stops a start not due with the one due, and keeps the end of a
+  turn going.
 - **The end of a turn kept going once while a start is due and no role of the run still runs, then
   let end with the user told whose step to fix,** over a hold until the start goes through: a hold
-  with no end would need a person to break it, which is no check. It costs a run whose conversation
-  passes the start over twice stopping with the start due, which KR1.1 counts as gone wrong.
+  with no end would need a person to break it, which is no check. The cost: a run whose conversation
+  passes the start over twice stops with the start due, which KR1.1 counts as gone wrong.
 - **A dependency's skill that a route names counted as one move,** which its Skill call begins and
   the PostToolUse of a run of the dependency's result script in the main conversation ends, while the
   caller's guard checks nothing, over both guards holding the conversation: two guards
   on one conversation would each stop the other's moves, as
-  [Q15](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q15) says. It costs a
-  dependency's skill that ends with no result leaving its move open, so the guard keeps the end of
+  [Q15](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q15) says. The cost: a
+  dependency's skill that ends with no result leaves its move open, so the guard keeps the end of
   a turn going once, as for any start due.
 - **The person's messages kept from the event of each prompt while a run waits** over the main
   conversation's own word for what the person said: the hook input of UserPromptSubmit holds the
-  prompt as the person wrote it, while the conversation's account of it could sum it up. It
-  costs a prompt that isn't an answer, such as a question back to the main conversation, counting
-  among the person's words that the role gets.
+  prompt as the person wrote it, while the conversation's account of it could sum it up. The cost:
+  a prompt that isn't an answer, such as a question back to the main conversation, counts among the
+  person's words that the role gets.
 
 ## Data model
 
@@ -508,10 +510,10 @@ sequenceDiagram
 
 - **`claude plugin validate` run by `lay.py write`** over a check of the plugin's form of Lane's
   own, as [Claude Code's own means first](#claude-codes-own-means-first) says: Claude Code loads the
-  plugin by the same check. It costs a write that fails where `claude` isn't on PATH.
+  plugin by the same check. The cost: the write fails where `claude` isn't on PATH.
 - **The proposal removed once written** over a proposal kept beside the plugin: the plugin's
   `hooks/lanes.json` then holds the one copy of what the user approved, which no stale proposal
-  can contradict. It costs a change to the lanes later starting from a new proposal, which
+  can contradict. The cost: a later change to the lanes starts from a new proposal, which
   `lay.py up` helps write, as it says each lane laid.
 
 ### S3: a run that passes on each start as given
@@ -861,17 +863,17 @@ runs the plugin. After an update of Lane, the user runs `lay.py up` on their plu
   [Q13](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q13) says, over a later
   Python or packages: whoever runs the plugin then installs nothing for Lane. Each hook's
   command checks for `python3` in `sh` first, as the guard can't even read the event without
-  Python. It costs each tool call that a lane is about stopping where Python is missing.
+  Python. The cost: where Python is missing, each tool call that a lane is about stops.
 - **The kept calls and the run in the system's temporary folder**, as
   [Q12](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q12) says for files used only
-  while a plugin runs, over a folder in the repository: they mean nothing once the session ends. It
-  costs a call that needs its kept calls being one that the guard can't check where the system
-  clears that folder during a run.
+  while a plugin runs, over a folder in the repository: they mean nothing once the session ends. The
+  cost: where the system clears that folder during a run, the guard can't check a call that needs
+  its kept calls.
 - **A plugin's `hooks/lane/` as a link to Lane's code in this marketplace**, as
   [Q14](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q14) says, over a copy: a fix
   to the guard reaches every plugin here. Elsewhere it's a copy that carries Lane's
-  version, which `lay.py up` reads, as a link can't reach across repositories. It costs a copy
-  keeping Lane's code of the day `lay.py` laid it until `lay.py up` runs.
+  version, which `lay.py up` reads, as a link can't reach across repositories. The cost: a copy
+  keeps Lane's code of the day `lay.py` laid it until `lay.py up` runs.
 
 ## Directory structure
 
@@ -918,22 +920,22 @@ dev/lane/
 ```
 
 - **Code that several components share beside them in `domain/`**, with each module for one data
-  or one form, such as the Rules laid or a Step, over a copy in each component: a copy would get a fix in
-  one component and stay wrong in another, as
+  or one form, such as the Rules laid or a Step, over a copy in each component: a copy would get a
+  fix in one component and stay wrong in another, as
   [Q14](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q14) says. A module
-  that only one component uses lies in that component. It costs a change to a shared module
-  reaching every component that uses it, whose tests must all pass.
+  that only one component uses lies in that component. The cost: a change to a shared module
+  reaches every component that uses it, and all their tests must pass.
 - **Lane's own knowledge in `hooks/lane/domain/`** over `domain/` at the plugin's root, where
   [Q1](../../plugins/rn/domain/best-practices/plugin/best-practice.md#q1) puts it: `lay.py` lays
   `hooks/lane/` into each plugin whole, by one link or one copy, and a folder outside it would need
   a second. Under `hooks/lane/`, it takes the name `domain/` that Q1 gives, with no `core/`
-  around it, as nothing else lies beside it. It costs Lane's knowledge lying apart from where
+  around it, as nothing else lies beside it. The cost: the knowledge of Lane lies apart from where
   every other plugin keeps its own. Lane has no roles, so `domain/` holds no part.
 - **A role's part found under the plugin's `domain/`, or else in its entry,** over any folder that
   the entry names: the plugin best practice's
   [template](../../plugins/rn/domain/best-practices/plugin/template) puts each part there, so
   `step.py` looks in one place, and a plugin with steps in its entry, as the README's walkthrough
-  has them, needs no part. It costs a plugin that keeps its parts elsewhere moving them before it
+  has them, needs no part. The cost: a plugin that keeps its parts elsewhere moves them before it
   lays its lanes.
 
 ## Tests
@@ -952,24 +954,24 @@ gives every plugin, not a choice of Lane's.
 
 - **The lay.py, hook, and result script processes tried `FULL` at unit and at architecture** over
   `HAPPY`: a fault in any of them writes into a plugin what no one approved, or lets a break
-  through. Only these levels check every case on every push. It costs the most tests to
+  through. Only these levels check every case on every push. The cost: the most tests to
   keep up as the code changes.
 - **An adapter of the tests' own at the steps and items ports,** which reads a best practice and a
   design tree of the tests' own, over a real plugin's adapter. Lane knows no plugin, so its tests try
-  each port's form, not a plugin's way of filling it. It costs a fault in a plugin's
-  adapter showing only in that plugin's own tests.
+  each port's form, not a plugin's way of filling it. The cost: a fault in a plugin's
+  adapter shows only in that plugin's own tests.
 - **The trials `SMOKE`** over `HAPPY`: they only confirm in real use what the lower levels have
-  checked, and each step of a trial costs a run of the model. It costs a fault that only a real run
-  brings out showing once every lower level passes.
+  checked, and each step of a trial costs a run of the model. The cost: a fault that only a real run
+  brings out shows once every lower level passes.
 - **The trial judging the calls of every role of the plugin** over those of the role that the
   intent holds to lanes: a call that a role's own steps ask for and the intent allows is one the
-  lanes allow, so its stop went wrong, as KR1.1 counts it. It costs reading each role's record of
+  lanes allow, so its stop went wrong, as KR1.1 counts it. The cost: reading each role's record of
   each run.
 - **The double of Claude Code sending the main conversation's events as a trial on Claude Code
   2.1.319 recorded them,** beside the double with the version and the date, over what the hooks
   reference alone says: where the reference says nothing, a double would send what no Claude Code
-  sends, and pass a test that the real one fails. It costs a try of the real Claude Code
-  again where a new version may act otherwise.
+  sends, and pass a test that the real one fails. The cost: another try of the real Claude Code
+  where a new version may act otherwise.
 - **The trial in `claude -p` as well as in an interactive session** over one of them: Claude Code
   2.1.319 brings a background role's end back to the main conversation in both, so a plugin may run
-  either way. It costs each trial run twice.
+  either way. The cost: each trial runs twice.
