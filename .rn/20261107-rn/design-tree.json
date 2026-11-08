@@ -411,6 +411,11 @@
               "about": "The commands the planner runs on tree.py",
               "decided": "the planner runs tree.py write, commit, and report. commit commits and pushes, and once the user gives what a push lacked, the planner runs commit again, which pushes the kept commits. The components figure and every sequence name these three",
               "by": "reasoning"
+            },
+            {
+              "about": "When commit pushes",
+              "decided": "tree.py commit pushes once it commits a deliverable, not on every commit",
+              "by": "maker"
             }
           ]
         },
