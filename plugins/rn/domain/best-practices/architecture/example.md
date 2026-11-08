@@ -204,7 +204,9 @@ These choices in the components are ones a developer would question:
 - **Tree edit**: what the planner hands `tree.py` to write, with its answer to each node touched.
 - **Cut**: the text a role starts with, its part of the tree.
 - **Point**: a decision the main conversation settles, whether the tree holds it open, a turn found
-  it, or the user remarked it.
+  it, or the user remarked it, and a change to a best practice that the run calls for.
+- **Lack kept**: a lack an evaluator named that the main conversation judged one of intent, which
+  the next round's generator gets beside its intent.
 - **Making record**: the generator's record of a round.
 - **Answers**: an evaluator's record of a round, each intent met with the lines that meet it, or
   with what the people lack.
@@ -312,7 +314,7 @@ sequenceDiagram
       Note over M,E: The main conversation settles the point, as S2 draws.
     else each gave more or good
       M->>M: judges each lack by the purpose
-      M->>T: start, for the planner, with each intent good and each lack kept (Change)
+      M->>T: start, for the planner, with each intent good and each lack kept (Change, Lack kept)
       T-->>M: the planner's cut (Cut)
       M->>P: starts it (Cut)
       P->>T: writes them, and commits (Tree edit)
@@ -502,6 +504,7 @@ where this section says.
 - **The trials `HAPPY` for the Claude Code process, and `SMOKE` for the rest,** over every row
   alike: only the trials run the prompts, as KR1.1 counts. The cost: a fault in a prompt shows only
   once every lower level passes.
-- **The main conversation's judgment of points and lacks checked first by the trial** over a test at
-  a lower level: no guard can hold a judgment by the purpose, as KR1.2 counts. The cost: a wrong
-  judgment shows only in a trial.
+- **The judgments no guard can hold checked first by the trial** over a test at a lower level: the
+  main conversation's of each point and lack, the generator's of whether the decisions meet a
+  shortfall, and the evaluator's of whether the deliverable meets an intent, as a double stands in
+  for each at the lower levels. The cost: a wrong judgment shows only in a trial.

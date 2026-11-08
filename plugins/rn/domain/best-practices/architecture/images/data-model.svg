@@ -94,7 +94,9 @@
   <rect class="box" x="1150" y="880" width="190" height="56" rx="0"/>
   <text class="name" x="1245.0" y="913.0" text-anchor="middle">Making record</text>
   <rect class="box" x="1430" y="880" width="190" height="56" rx="0"/>
+  <rect class="box" x="870" y="880" width="190" height="56" rx="0"/>
   <text class="name" x="1525.0" y="913.0" text-anchor="middle">Try record</text>
+  <text class="name" x="965.0" y="913.0" text-anchor="middle">Lack kept</text>
   <path class="line" d="M135,136 L135,260"/>
   <text class="label small halo" x="143" y="200" text-anchor="start">carried in</text>
   <text class="label small halo" x="143" y="154" text-anchor="start">0..1</text>
@@ -189,6 +191,10 @@
   <path class="head" d="M1245,836 L1251,845 L1245,854 L1239,845 Z"/>
   <text class="label small halo" x="1253" y="862" text-anchor="start">holds</text>
   <text class="label small halo" x="1233" y="874" text-anchor="start">1</text>
+  <path class="line" d="M965,836 L965,880"/>
+  <path class="head" d="M965,836 L971,845 L965,854 L959,845 Z"/>
+  <text class="label small halo" x="973" y="862" text-anchor="start">keeps, for the next round</text>
+  <text class="label small halo" x="953" y="874" text-anchor="end">0..*</text>
   <path class="line" d="M1340,850 L1385,850 L1385,908 L1430,908"/>
   <path class="head" d="M1340,850 L1349,844 L1358,850 L1349,856 Z"/>
   <text class="label small halo" x="1393" y="880" text-anchor="start">holds</text>

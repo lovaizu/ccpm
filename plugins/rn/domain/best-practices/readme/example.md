@@ -124,8 +124,9 @@ again with your answer.
 
 **How can an AI judge an AI's work?** The evaluator is a fresh AI that gets only the piece and the
 questions of its kind. It never gets the design. It judges by what the piece's people get, not by
-what its maker meant. The generator, which made the piece, makes it again until
-the evaluator finds every question met.
+what its maker meant. rn weighs each lack the evaluator finds by your purpose, and the
+generator, which made the piece, makes it again for each lack its people would meet, until the piece
+meets every question.
 
 ![Lane stops a step that's broken, and shows the step's own sentence](images/how-steps.svg)
 
