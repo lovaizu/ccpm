@@ -1,9 +1,10 @@
 """The tests of lefthook.yml: the commits and CI check the prose by one version of lovaizu/checks,
-each file left out of the check is one that git holds, and the pre-push job gets what git gives
-the hook."""
+each pattern left out of the check matches a file that git holds, and the pre-push job gets what
+git gives the hook."""
 
 from __future__ import annotations
 
+import fnmatch
 import os
 import re
 import subprocess
@@ -29,8 +30,8 @@ class LefthookTest(unittest.TestCase):
         # Then: the two match.
         self.assertEqual(ci, named)
 
-    def test_each_file_left_out_is_one_git_holds(self):
-        # Given: the files that pre-commit leaves out, and the files git holds.
+    def test_each_pattern_left_out_matches_a_file_git_holds(self):
+        # Given: the patterns that pre-commit leaves out, and the files git holds.
         text = read("lefthook.yml")
         block = text[text.index("pre-commit:\n  exclude:\n") :].split("\n\n")[0]
         left = re.findall(r'^    - "([^"]+)"$', block, re.MULTILINE)
@@ -39,9 +40,10 @@ class LefthookTest(unittest.TestCase):
                 ["git", "ls-files"], cwd=TOP, capture_output=True, text=True, check=True
             ).stdout.splitlines()
         )
-        # Then: each file left out is one git holds, so that none stays on the list once it goes.
+        # Then: each pattern matches a file git holds, so that none stays on the list once its
+        # files go.
         self.assertTrue(left)
-        self.assertEqual([path for path in left if path not in held], [])
+        self.assertEqual([glob for glob in left if not fnmatch.filter(held, glob)], [])
 
     def test_the_pre_push_job_gets_what_git_gives_the_hook(self):
         # Given: the pre-push job.
