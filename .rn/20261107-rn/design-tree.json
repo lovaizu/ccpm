@@ -118,7 +118,7 @@
             },
             {
               "about": "How a role still running stops when a remark comes",
-              "decided": "the main conversation stops each role of the turn that still runs with TaskStop, which Claude Code's subagents reference documents, before it settles the remark. The remark is a prompt of the person's, so Lane lets the stop through, and the call of /rn:up that follows ends the run and begins another",
+              "decided": "the main conversation stops each role of the turn that still runs with TaskStop, which Claude Code's subagents reference documents, before it settles the remark. The remark is a prompt of the person's, so Lane lets the stop through. Right after the stop, the main conversation calls /rn:up with the remark, which ends the run and begins another. The planner writes the remark into the tree, settled where the purpose or a best practice settles it, else as a point open, and gives asks, which ends the run, so the main conversation puts the point to the user with no start due",
               "by": "research"
             },
             {
