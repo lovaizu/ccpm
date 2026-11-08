@@ -45,10 +45,9 @@
     </marker>
   </defs>
   <rect class="bg" x="0" y="0" width="1720" height="1060"/>
-  <rect class="frame" x="20" y="40" width="250" height="680" rx="8"/>
-  <text class="frame-name" x="32" y="710" text-anchor="start"></text>
-  <text class="frame-name" x="32" y="690" text-anchor="start">what the main</text>
-  <text class="frame-name" x="32" y="708" text-anchor="start">conversation passes</text>
+  <rect class="frame" x="20" y="40" width="250" height="920" rx="8"/>
+  <text class="frame-name" x="32" y="930" text-anchor="start">what the main</text>
+  <text class="frame-name" x="32" y="948" text-anchor="start">conversation passes</text>
   <rect class="frame" x="310" y="40" width="790" height="680" rx="8"/>
   <text class="frame-name" x="322" y="710" text-anchor="start">the design tree, and git</text>
   <rect class="frame" x="1130" y="40" width="250" height="680" rx="8"/>
@@ -63,6 +62,8 @@
   <text class="name" x="135.0" y="473.0" text-anchor="middle">Point</text>
   <rect class="box" x="40" y="600" width="190" height="56" rx="0"/>
   <text class="name" x="135.0" y="633.0" text-anchor="middle">Cut</text>
+  <rect class="box" x="40" y="780" width="190" height="56" rx="0"/>
+  <text class="name" x="135.0" y="813.0" text-anchor="middle">Result</text>
   <rect class="box" x="330" y="80" width="190" height="56" rx="0"/>
   <text class="name" x="425.0" y="113.0" text-anchor="middle">Tree edit</text>
   <rect class="box" x="600" y="80" width="190" height="56" rx="0"/>
@@ -111,6 +112,10 @@
   <text class="label small halo" x="388" y="590" text-anchor="start">cut from</text>
   <text class="label small halo" x="234" y="646" text-anchor="start">0..*</text>
   <text class="label small halo" x="388" y="334" text-anchor="start">1</text>
+  <path class="line" d="M135,780 L135,656"/>
+  <text class="label small halo" x="143" y="720" text-anchor="start">ends the start of</text>
+  <text class="label small halo" x="143" y="774" text-anchor="start">0..1</text>
+  <text class="label small halo" x="143" y="674" text-anchor="start">1</text>
   <path class="line" d="M230,468 L600,468"/>
   <text class="label small halo" x="415" y="460" text-anchor="middle">is, while open</text>
   <text class="label small halo" x="234" y="486" text-anchor="start">0..1</text>
