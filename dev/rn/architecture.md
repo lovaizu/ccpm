@@ -121,7 +121,9 @@ A turn is a unit inside `/rn:up`, with no skill of its own, and Lane holds its f
 - **Each phase goes round after round**: in each round, the generator makes the deliverable and
   the evaluators answer each intent of the phase, until every intent is good.
 - **It ends** once every intent of both phases is good, which the planner writes into the tree as
-  it commits the deliverable. Or it stops at a point that only the user can settle.
+  it commits the deliverable. Or it stops at a point that only the user can settle, as
+  [A point found open goes back to the main conversation](#a-point-found-open-goes-back-to-the-main-conversation)
+  says.
 - **Its rounds' records** lie in the run's folder, under `turns/`, as
   [Directory structure](#directory-structure) shows.
 
@@ -130,21 +132,32 @@ sentence polished before what it says holds needs polishing again, which KR1.3 m
 
 ### Good from the root
 
-A shortfall goes back to the decision that serves it. `tree.py` cuts the next round's generator
-start with the deliverable's decisions and each shortfall beside the intent it falls short of. The
-generator makes the deliverable again from the design, and mends no line beside it.
+A shortfall goes back to the decisions that serve its intent. `tree.py` cuts the next round's
+generator start with the deliverable's decisions and each shortfall beside the intent it falls
+short of, and with nothing else. The generator makes the deliverable again from the design, and
+mends no line beside it. Whether a shortfall changes a decision is the generator's to decide, as
+only the generator makes the deliverable from the decisions:
+
+- Where some making of the decisions would meet the shortfall, the decisions stand, and the round
+  makes the deliverable that way.
+- Where no making of the decisions would meet it, a decision must change. The generator gives
+  `open` with that point, and the main conversation settles it, as
+  [A point found open goes back to the main conversation](#a-point-found-open-goes-back-to-the-main-conversation)
+  says.
 
 *Why*: a fix laid on the deliverable beside the design is a part that no decision holds. The next
 round loses it, or keeps it though no one settled it, and a fix for one evaluator's finding breaks
-an intent that another found met. The people then get a deliverable no design holds, as KR1.1
-counts.
+an intent that another found met. A decision that a role changes is one that no one settled, and
+an evaluator can't tell the two cases apart, as it never gets the design. The people then get a
+deliverable no design holds, as KR1.1 counts.
 
 ### The maker checks first
 
 Before it gives `made`, the generator answers each intent of the phase the way the evaluators do,
 as the deliverable's people, with the lines that meet it or what they still lack. Where it would
-answer one not met, it makes the deliverable again from the design. Only the evaluators' answers
-make an intent good.
+answer one not met, it makes the deliverable again from the design. Where no making of the design
+would meet an intent, it gives `open` with that point instead of `made`, as
+[Good from the root](#good-from-the-root) says. Only the evaluators' answers make an intent good.
 
 *Why*: a lack that the maker could have seen otherwise costs a round of evaluators to find, and the
 user waits longer, which KR1.3 measures. The maker reads what it meant, not only what it wrote, so
@@ -163,10 +176,11 @@ as KR1.1 counts.
 
 ### A point found open goes back to the main conversation
 
-Where the generator finds a point the design leaves open, or an evaluator a point only the user can
-settle, the run stops there. The main conversation settles the point, and the turn starts again
-from the design. Where only a change to a decision the user settled would meet a shortfall, rn takes
-it to the user only with a fact their answer didn't weigh. Otherwise it stays an accepted shortfall.
+Where the generator finds a point the design leaves open or a decision that must change, or an
+evaluator a point only the user can settle, the run stops there. The main conversation settles the
+point, the planner writes it, and the turn starts again from the design. Where only a change to a
+decision the user settled would meet a shortfall, rn takes it to the user only with a fact their
+answer didn't weigh. Otherwise it stays an accepted shortfall.
 
 *Why*: a role that settles such a point itself makes a part that the design doesn't hold, which
 [Good from the root](#good-from-the-root) rules out for a fix. Asking the user again what they settled
@@ -227,7 +241,8 @@ What each decides alone:
   preconditions, each deliverable's size, so that a round makes it whole, whether each node a
   change touches still holds, and each status and intent made good from the evaluators' answers.
 - **generator**: the deliverable, each small point of making it, such as a phrase, its own answer
-  to each intent before it gives `made`, and the points the design leaves open.
+  to each intent before it gives `made`, the points the design leaves open, and whether a shortfall
+  changes a decision.
 - **evaluator**: where the deliverable meets each intent of its group for its people, or what they
   still lack, and the points only the user can settle.
 - **tree.py**: the form of the design tree and of a change, the order of the deliverables, each
@@ -378,7 +393,7 @@ sequenceDiagram
   words alone, while the main conversation settles points by reasoning too. The cost: the start of
   a role started by mistake between two runs goes unheld, though Lane still holds its calls.
 
-### S2 and S3: a deliverable made in turns
+### S2 and S3: a deliverable made in its turn
 
 ```mermaid
 sequenceDiagram
@@ -399,7 +414,7 @@ sequenceDiagram
     W->>R: copies the repository, runs the deliverable's commands there, and writes what they gave (Try record)
     G->>R: answers each intent as the deliverable's people, and writes its record (Making record)
   end
-  alt the design leaves a point open
+  alt the design leaves a point open, or no making of it meets an intent
     G-->>M: gives open
     Note over M,G: The run ends, and the main conversation settles the point, as S2 draws.
   else every intent is met by its own answers
