@@ -1,0 +1,69 @@
+{
+ "met": [
+  {
+   "question": "Q1",
+   "lines": [
+    "plugin/best-practice.md:5 names only the one end, that the plugin's users achieve what they're after, which holds for a plugin with roles and for one with none, such as Lane.",
+    "plugin/best-practice.md:375 judges the whole by the same end, and each part added in round 8 serves it: plugin/template/docs/page.md:1-12 gives the users a page for a need that the README leaves, and plugin/template/domain/command.md:19-21 gives a plugin with no roles a part that its skill works from."
+   ]
+  },
+  {
+   "question": "Q2",
+   "lines": [
+    "plugin/template/README.md:10-33 gives the order to write the files in: the schemas, scripts, parts, and entries first, then the manifest, the CHANGELOG, the docs pages, the proposal, and hooks/hooks.json last by lay.py write at plugin/template/README.md:32.",
+    "plugin/template/domain/command.md holds the skill's part apart from a role's part at plugin/template/domain/role.md:1-50. For a plugin with no roles, plugin/template/domain/command.md:19-21 says that the part holds the work's own steps and starts no role, plugin/template/domain/command.md:43-44 says that the Steps section then holds those steps, numbered, with no route on them, and plugin/template/domain/command.md:77-78 says how the part ends with no result command. plugin/best-practice.md:110 gives the reason in the thinking of Q5.",
+    "plugin/template/README.md:35-38 says which files a plugin with no roles leaves out, and points to the notes of the skill's part for one whose skill does the work itself."
+   ]
+  },
+  {
+   "question": "Q3",
+   "lines": [
+    "plugin/best-practice.md:5 asks for a plugin with which its users achieve what they're after. plugin/template/docs/page.md:1-24 gives a page for each need the users have beyond the README, as the thinking of Q25 at plugin/best-practice.md:351 asks, with Lane's lanes page as one such need. plugin/template/README.md:27-28 leaves the page out where the README holds all the users need.",
+    "Each other section serves the end too: plugin/template/.claude-plugin/plugin.json:2, plugin/template/CHANGELOG.md:13-14, plugin/template/skills/command/SKILL.md:12-13, plugin/template/domain/role.md:10-12. plugin/template/.lane/yyyymmdd-plugin/plugin.json:5-9 holds only the steps adapter for the sample role."
+   ]
+  },
+  {
+   "question": "Q4",
+   "lines": [
+    "plugin/best-practice.md:15-19 name meta, code, and prompt as the kinds that must pass first, and plugin/best-practice.md:61 says why, with a plugin of no prompts naming none, and each plugin it takes a part from among its preconditions.",
+    "plugin/template/README.md:8-33 says which files the code and prompt deliverables make first and which the plugin deliverable makes once they pass."
+   ]
+  },
+  {
+   "question": "Q5",
+   "lines": [
+    "plugin/best-practice.md:25-51 keep each question as the moment, what the role needs, and a so-that clause, in the words that the evaluators of round 4 found met."
+   ]
+  },
+  {
+   "question": "Q6",
+   "lines": [
+    "plugin/best-practice.md:25-51 give each section, the dependencies among them, and the whole a question. The new section docs has Q25 at plugin/best-practice.md:49, and the question of the whole at plugin/best-practice.md:51 asks for the end that the goal at plugin/best-practice.md:5 names."
+   ]
+  },
+  {
+   "question": "Q7",
+   "lines": [
+    "plugin/best-practice.md:110 says why a plugin with no roles has its skill do the work itself: nobody stands between the person and the work. plugin/best-practice.md:351 says why each page beyond the README serves one need, and names Diátaxis as the field's established way. plugin/best-practice.md:61 and plugin/best-practice.md:288 keep their reasons."
+   ]
+  },
+  {
+   "question": "Q8",
+   "lines": [
+    "plugin/best-practice.md:55-375 give each of Q1 to Q27 a practice. plugin/template/README.md:29-31 keeps the print of the proposal before lay.py write, the order that the practices of Q8 and Q9 keep at plugin/best-practice.md:140-164."
+   ]
+  },
+  {
+   "question": "Q10",
+   "lines": [
+    "plugin/best-practice.md:5 and plugin/best-practice.md:375 hold the whole to the users' end. A developer who follows plugin/template/README.md:8-38 starts the plugin only on parts that have passed, writes a skill's part that does the work itself where the plugin has no roles, gives the users a page for each need beyond the README, and lays the guard last. The users then get a plugin that they can use whole."
+   ]
+  }
+ ],
+ "not_met": [
+  {
+   "question": "Q9",
+   "lacks": "The best practice names no example, so the generator has no finished plugin that shows what the slots become. It waits on Lane's plugin deliverable, as the decision on the example says: 'The plugin best practice's example is Lane's plugin, named once Lane's plugin deliverable ends'."
+  }
+ ]
+}

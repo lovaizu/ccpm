@@ -24,12 +24,15 @@
 >    it takes a part from, such as Lane for its guard.
 > 4. `CHANGELOG.md`, with each change under `[Unreleased]`, and a heading for its version at each
 >    release.
-> 5. The proposal and its adapters, `.lane/yyyymmdd-plugin/`, once the steps, the entries, and the
+> 5. `docs/page.md`, a page for each need that the users have beyond the README, once the files it
+>    covers exist. Leave it out where the README holds all they need.
+> 6. The proposal and its adapters, `.lane/yyyymmdd-plugin/`, once the steps, the entries, and the
 >    scripts its lanes take exist. Run `lay.py print` on it, read what it prints, and then run
 >    `lay.py write`.
-> 6. `hooks/hooks.json`, which `lay.py write` writes last. Add to it by hand only a hook that no
+> 7. `hooks/hooks.json`, which `lay.py write` writes last. Add to it by hand only a hook that no
 >    lane holds.
 >
 > A plugin with no roles, such as Lane, leaves out the agents, each role's part and its two
 > schemas, the proposal, and `hooks/hooks.json`, as it has no role for a guard to hold. It skips
-> steps 5 and 6.
+> steps 6 and 7. Where it has a skill, the skill does the work itself, as the notes of
+> `domain/command.md` say.

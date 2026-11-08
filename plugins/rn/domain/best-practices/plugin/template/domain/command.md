@@ -14,7 +14,11 @@ done when `<what holds at the end>`.
 > - `<what a run gives them>`: what the person gets from a run, in their terms.
 > - `<what holds at the end>`: what shows the run done, such as the last role giving `done` and the
 >   person having its message, or a point that waits for the person's answer.
-> - The second and third sentences: keep them as they stand, as Q5 says.
+> - The second and third sentences: keep them as they stand where the plugin has roles, as Q5
+>   says.
+> - A plugin with no roles: the skill does the work itself, so its part holds the work's own steps
+>   and starts no role, as Q5 says. Put what the part does of the work in place of the second and
+>   third sentences, and fill the sections below as their notes say for such a plugin.
 
 ## What you're given
 
@@ -36,7 +40,8 @@ The request is the person's words after `/<plugin>:<command>`, as they typed the
 > step that the proposal's routes name in `step`. `lay.py write` adds to it the routes' sentence and
 > the skill's result command. Optional: where the course of a run changes with what it finds, the
 > part keeps the course in prose in place of this section, and the routes name no `step`, so Lane
-> gives the run the routes as it begins.
+> gives the run the routes as it begins. In a plugin with no roles, this section holds the work's
+> own steps in place of this one, numbered, one action each, and no route lies on them.
 
 ## Putting a point to the person
 
@@ -69,3 +74,5 @@ command that Lane gives you, with the result the last role gave.
 > - `<the plugin's repository>`: where the plugin's developers take issues, such as
 >   `lovaizu/ccpm`.
 > - The reading of the records: keep it as it stands, as Q21 says.
+> - A plugin with no roles: open the section with what the person gets once the last step ends,
+>   in place of the last role's message, and leave out the result command, as Lane gives none.
