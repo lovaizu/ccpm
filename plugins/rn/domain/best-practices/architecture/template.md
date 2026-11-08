@@ -27,8 +27,8 @@ This document says how the parts of `<Product>` give [its product vision](<board
 > - `<name>`: the few words a reader finds the principle by.
 > - `<rule>`: one to three short sentences that every part meeting the same decision follows, what
 >   must be absent among them.
-> - `<why>`: one or two sentences: what goes wrong for a role of the product vision without the
->   rule, ending with the key result it guards, such as `as KR1.1 counts`.
+> - `<why>`: one or two sentences: what goes wrong without the rule for a role of the product
+>   vision, naming the key result it guards, or for the product's developer or operator.
 
 ## User stories
 

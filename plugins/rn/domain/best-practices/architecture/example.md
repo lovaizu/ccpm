@@ -118,8 +118,8 @@ Before the user merges, rn proposes each change to a best practice that the run'
 call for. A change the user takes becomes a deliverable of the run. A turn makes it, the user merges
 it with the rest, and later runs of the repository work by it.
 
-*Why*: a lesson left out comes back in every later run, where it costs a round or a deliverable that
-misses it, as KR1.1 and KR1.3 count.
+*Why*: without it, rn's operator finds a best practice's gap only when a user meets it again, run
+after run.
 
 ### Tried in a throwaway copy
 
