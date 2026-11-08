@@ -33,7 +33,7 @@
         {"id": "Q1", "good": true, "decisions": []},
         {
           "id": "Q2",
-          "good": true,
+          "good": false,
           "decisions": [
             {
               "about": "The main conversation's part",
@@ -43,6 +43,11 @@
             {
               "about": "The order of the template's files",
               "decided": "The template gives the order in which the developer writes its files, the parts and their schemas first and hooks/hooks.json last by lay.py",
+              "by": "reasoning"
+            },
+            {
+              "about": "A plugin with no roles",
+              "decided": "The template's notes say which files a plugin with no roles, such as Lane, leaves out: the agents, the roles' parts and schemas, and the proposal's routes",
               "by": "reasoning"
             }
           ]
@@ -65,6 +70,11 @@
             {
               "about": "The best practices the roles work by",
               "decided": "The plugin best practice takes meta, code, and prompt as preconditions. A plugin with no prompts, such as Lane, names none of that kind. A plugin deliverable names as preconditions each plugin it takes a part from too, such as Lane's",
+              "by": "reasoning"
+            },
+            {
+              "about": "What the plugin deliverable makes",
+              "decided": "The template's order says which files the plugin's code and prompt deliverables make, the scripts and schemas by code and the entries and parts by prompt, and which the plugin deliverable makes once they pass: the manifest, the proposal and its adapters, hooks/hooks.json by lay.py, and the CHANGELOG",
               "by": "reasoning"
             }
           ]

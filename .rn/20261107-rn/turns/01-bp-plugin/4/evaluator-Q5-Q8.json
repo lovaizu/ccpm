@@ -1,0 +1,75 @@
+{
+  "met": [
+    {
+      "question": "Q5",
+      "lines": [
+        "plugin/best-practice.md:25",
+        "plugin/best-practice.md:26",
+        "plugin/best-practice.md:29",
+        "plugin/best-practice.md:30",
+        "plugin/best-practice.md:32",
+        "plugin/best-practice.md:33",
+        "plugin/best-practice.md:34",
+        "plugin/best-practice.md:40",
+        "plugin/best-practice.md:44",
+        "plugin/best-practice.md:50",
+        "plugin/best-practice.md:51"
+      ]
+    },
+    {
+      "question": "Q6",
+      "lines": [
+        "plugin/best-practice.md:23",
+        "plugin/best-practice.md:26",
+        "plugin/best-practice.md:30",
+        "plugin/best-practice.md:32",
+        "plugin/best-practice.md:33",
+        "plugin/best-practice.md:39",
+        "plugin/best-practice.md:47",
+        "plugin/best-practice.md:48",
+        "plugin/best-practice.md:49",
+        "plugin/best-practice.md:50",
+        "plugin/best-practice.md:51",
+        "plugin/template/README.md:8",
+        "plugin/template/README.md:10",
+        "plugin/template/README.md:15"
+      ]
+    },
+    {
+      "question": "Q7",
+      "lines": [
+        "plugin/best-practice.md:61",
+        "plugin/best-practice.md:73",
+        "plugin/best-practice.md:86",
+        "plugin/best-practice.md:98",
+        "plugin/best-practice.md:110",
+        "plugin/best-practice.md:122",
+        "plugin/best-practice.md:134",
+        "plugin/best-practice.md:146",
+        "plugin/best-practice.md:158",
+        "plugin/best-practice.md:172",
+        "plugin/best-practice.md:196",
+        "plugin/best-practice.md:232",
+        "plugin/best-practice.md:256",
+        "plugin/best-practice.md:288",
+        "plugin/best-practice.md:312",
+        "plugin/best-practice.md:351",
+        "plugin/best-practice.md:363"
+      ]
+    },
+    {
+      "question": "Q8",
+      "lines": [
+        "plugin/best-practice.md:55",
+        "plugin/best-practice.md:104",
+        "plugin/best-practice.md:140",
+        "plugin/best-practice.md:274",
+        "plugin/best-practice.md:280",
+        "plugin/best-practice.md:369",
+        "plugin/best-practice.md:375",
+        "plugin/template/README.md:8"
+      ]
+    }
+  ],
+  "not_met": []
+}
