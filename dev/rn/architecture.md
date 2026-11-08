@@ -312,8 +312,9 @@ Each story carries a part of the main use of O1, rn's only objective, as the wal
   from it, each point that comes up while rn makes a deliverable, and each remark the user makes
   meanwhile.
 - **S3**: the user wants to type `/rn:up` alone in a new conversation, and have rn go on where it
-  stopped, asked nothing again. It carries the walkthrough's second `/rn:up`, `Picking up`, and rn
-  making tidy/cli.py from where the work stopped.
+  stopped, asked nothing again. It carries the walkthrough's second `/rn:up`, `Picking up`, rn
+  making tidy/cli.py from where the work stopped, and the user picking one run where more than one
+  isn't yet done.
 - **S4**: the user wants each deliverable committed on a branch, one draft pull request to merge,
   and the decisions rn took without asking them. It carries the walkthrough's `Done`, the user's
   merge, and what the user gives where a push lacks it, such as a login.
@@ -346,8 +347,9 @@ What each decides alone:
 - **tree.py**: the form of the design tree and of a change, the order of the deliverables, from
   their inputs and preconditions, each role's cut, the nodes an edit touches, each turn's phase,
   round and groups, the points open for the main conversation, the runs under `.rn/` not yet done,
-  each commit, the branch, and the draft pull request, and the report of each decision taken
-  without asking, read from the design tree with its grounds.
+  each commit, the branch, and the draft pull request, the deliverable of a run not yet done and
+  its last round, and the report of each decision taken without asking, read from the design tree
+  with its grounds.
 - **throwaway.py**: where a deliverable's commands run, and what of them the try record keeps. It
   runs the commands as the planner gave them.
 - **steps adapter**, **items adapter**: how rn's best practices and design tree read in the forms
@@ -360,14 +362,14 @@ What each decides alone:
 These choices in the components are ones a developer would question:
 
 - **The main conversation calling `/rn:up` again once it settles a point, with a point a role
-  found open, with a remark, or once the user gives what a push lacked,** over resuming the role
-  that stopped: the point comes from
-  the main conversation, not from the user's words alone, and Lane lets a resume carry the user's
-  words and nothing else. A new call of the skill begins a run, whose first start is the planner
-  with the text `tree.py` cut from the change. Lane then holds that start as it holds every other,
-  so no role works from a point that the tree doesn't hold, as KR1.1 counts. During a run, Lane
-  lets such a call through only once the user has written a prompt, and it then ends that run. The
-  cost: the main conversation reads the skill's part again on each call.
+  found open, with a remark, with the run the user picked, or once the user gives what a push
+  lacked,** over resuming the role that stopped: the point comes from the main conversation, not
+  from the user's words alone, and Lane lets a resume carry the user's words and nothing else. A
+  new call of the skill begins a run, whose first start is the planner with the text `tree.py` cut
+  for it. Lane then holds that start as it holds every other, so no role works from a point that
+  the tree doesn't hold, as KR1.1 counts. During a run, Lane lets such a call through only once the
+  user has written a prompt, and it then ends that run. The cost: the main conversation reads the
+  skill's part again on each call.
 - **One point a user settles in each change** over the points of a deliverable written at once: each
   answer is in the tree before the next point goes out, so a conversation that ends loses none,
   as KR1.2 counts. The cost: a run of the planner for each such point.
@@ -389,7 +391,8 @@ These choices in the components are ones a developer would question:
 
 ![rn's data](images/data-model.svg)
 
-- **Request**: the user's words after `/rn:up`, as they typed them.
+- **Request**: the user's words after `/rn:up`, as they typed them, or the folder of the run they
+  picked, which the main conversation hands with `/rn:up`, and whose Design tree `tree.py` reads.
 - **Change**: what one start of the planner writes: the request, the decisions the main
   conversation settled, a point that a role's Result named open, a remark as a point open, a turn's
   answers and the small points of the generator's last Making record, through the Round that
@@ -409,8 +412,9 @@ These choices in the components are ones a developer would question:
   the evaluators' Answers to it.
 - **Making record**: the generator's record of a round, `generator.json`: what it made, each
   small point it settled, its own answer to each intent, and each point it found open.
-- **Answers**: an evaluator's record of a round, `evaluator-<group>.json`: each intent met with the
-  lines that meet it, or not met with what the people still lack.
+- **Answers**: an evaluator's record of a round, `evaluator-<group>.json`: each intent, by its
+  question's id in the best practice of the deliverable's kind, met with the lines that meet it, or
+  not met with what the people still lack.
 - **Try record**: the commands that try a deliverable and what each gave on the generator's last
   pass of a round, `throwaway.txt`.
 - **Accepted shortfall**: a decision of the user's, under the intent it costs, that says what the
@@ -421,9 +425,9 @@ These choices in the components are ones a developer would question:
 
 The data serve O1 through the stories whose sequences hand them on. Cut, Result, Design tree, Tree
 edit, and Commit lie on every story's sequence, and so do Step, Port JSON, and Rules laid, which the
-guard reads at each start. Request lies on that of S1, Point on those of S1 to S3, and Change on
-those of S2 to S4. Deliverable, Intent, Decision, Accepted shortfall, Best practice, and a turn's
-records lie on those of S2 and S3, and Deliverable and Draft pull request on that of S4.
+guard reads at each start. Request lies on those of S1 and S3, Point on those of S1 to S3, and
+Change on those of S2 to S4. Deliverable, Intent, Decision, Accepted shortfall, Best practice, and
+a turn's records lie on those of S2 and S3, and Deliverable and Draft pull request on that of S4.
 
 ## Sequences
 
@@ -682,27 +686,33 @@ sequenceDiagram
   participant T as tree.py
   participant P as planner
   participant R as run's folder
-  U->>M: /rn:up, alone, in a new conversation
-  M->>T: start, for the planner
+  U->>M: /rn:up, alone, in a new conversation (Request)
+  M->>T: start, for the planner (Request)
   T->>R: reads each run under .rn/
   T-->>M: the planner's cut, with each run not yet done (Cut)
   M->>P: starts it (Cut)
   alt the cut names no run
     P-->>M: gives done, with none to pick up (Result)
     M->>U: says so
-  else it names more than one
-    P-->>M: gives asks, with each by its goal (Result)
-    M->>U: which one? (Point)
-    U->>M: answers
-    Note over U,M: The main conversation calls /rn:up with the run's folder, and the run picks up from it.
-  else it names one
+  else it names one or more
+    opt it names more than one
+      P-->>M: gives asks, with each by its goal (Result)
+      M->>U: which one? (Point)
+      U->>M: answers
+      M->>M: calls /rn:up with the run's folder
+      M->>T: start, for the planner, with the run's folder (Request)
+      T->>R: reads that run (Design tree)
+      T-->>M: the planner's cut, for that run (Cut)
+      M->>P: starts it (Cut)
+    end
     alt the deliverable at hand has a point open
       P-->>M: gives asks (Result)
     else it's doing
       P-->>M: gives ready (Result)
     end
-    M->>T: status
-    T-->>M: where the work stands
+    M->>T: status, with the run's folder where the user picked one (Request)
+    T->>R: reads the run and its rounds (Design tree)
+    T-->>M: the deliverable not yet done, with its last round (Deliverable, Round)
     M->>U: Picking up, at the deliverable not yet done
     alt the planner gave asks
       Note over M,P: The main conversation goes on with the points, as S2 draws.

@@ -1,0 +1,284 @@
+{
+ "met": [
+  {
+   "question": "Q1",
+   "lines": [
+    "rn/architecture.md:3",
+    "rn/architecture.md:4",
+    "rn/architecture.md:5",
+    "rn/architecture.md:6",
+    "rn/architecture.md:7",
+    "rn/architecture.md:8",
+    "rn/architecture.md:9",
+    "rn/architecture.md:11",
+    "rn/architecture.md:13",
+    "rn/architecture.md:15",
+    "rn/architecture.md:18",
+    "rn/architecture.md:20",
+    "rn/architecture.md:23",
+    "rn/architecture.md:25",
+    "rn/architecture.md:29",
+    "rn/architecture.md:33"
+   ]
+  },
+  {
+   "question": "Q2",
+   "lines": [
+    "rn/architecture.md:306",
+    "rn/architecture.md:308",
+    "rn/architecture.md:310",
+    "rn/architecture.md:314",
+    "rn/architecture.md:315",
+    "rn/architecture.md:316",
+    "rn/architecture.md:317"
+   ]
+  },
+  {
+   "question": "Q3",
+   "lines": [
+    "rn/architecture.md:38",
+    "rn/architecture.md:39",
+    "rn/architecture.md:41",
+    "rn/architecture.md:52",
+    "rn/architecture.md:59",
+    "rn/architecture.md:61",
+    "rn/architecture.md:72",
+    "rn/architecture.md:83",
+    "rn/architecture.md:101",
+    "rn/architecture.md:112",
+    "rn/architecture.md:124",
+    "rn/architecture.md:147",
+    "rn/architecture.md:170",
+    "rn/architecture.md:194",
+    "rn/architecture.md:207",
+    "rn/architecture.md:217",
+    "rn/architecture.md:240",
+    "rn/architecture.md:265",
+    "rn/architecture.md:278",
+    "rn/architecture.md:293"
+   ]
+  },
+  {
+   "question": "Q4",
+   "lines": [
+    "rn/architecture.md:328",
+    "rn/architecture.md:330",
+    "rn/architecture.md:332",
+    "rn/architecture.md:335",
+    "rn/architecture.md:341",
+    "rn/architecture.md:345",
+    "rn/architecture.md:347",
+    "rn/architecture.md:348",
+    "rn/architecture.md:349",
+    "rn/architecture.md:350",
+    "rn/architecture.md:353",
+    "rn/architecture.md:355",
+    "rn/architecture.md:357"
+   ]
+  },
+  {
+   "question": "Q5",
+   "lines": [
+    "rn/images/components.svg",
+    "rn/architecture.md:324",
+    "rn/architecture.md:800"
+   ]
+  },
+  {
+   "question": "Q6",
+   "lines": [
+    "rn/images/data-model.svg:107",
+    "rn/images/data-model.svg:108",
+    "rn/images/data-model.svg:218",
+    "rn/images/data-model.svg:219",
+    "rn/images/data-model.svg:220",
+    "rn/architecture.md:394",
+    "rn/architecture.md:395",
+    "rn/architecture.md:396",
+    "rn/architecture.md:402",
+    "rn/architecture.md:407",
+    "rn/architecture.md:408",
+    "rn/architecture.md:409",
+    "rn/architecture.md:411",
+    "rn/architecture.md:415",
+    "rn/architecture.md:416",
+    "rn/architecture.md:417"
+   ]
+  },
+  {
+   "question": "Q7",
+   "lines": [
+    "rn/architecture.md:434",
+    "rn/architecture.md:435",
+    "rn/architecture.md:436",
+    "rn/architecture.md:437",
+    "rn/architecture.md:688",
+    "rn/architecture.md:689",
+    "rn/architecture.md:690",
+    "rn/architecture.md:691",
+    "rn/architecture.md:692",
+    "rn/architecture.md:696",
+    "rn/architecture.md:697",
+    "rn/architecture.md:698",
+    "rn/architecture.md:699",
+    "rn/architecture.md:700",
+    "rn/architecture.md:701",
+    "rn/architecture.md:702",
+    "rn/architecture.md:703",
+    "rn/architecture.md:704",
+    "rn/architecture.md:705",
+    "rn/architecture.md:713",
+    "rn/architecture.md:714",
+    "rn/architecture.md:715",
+    "rn/architecture.md:716",
+    "rn/images/components.svg"
+   ]
+  },
+  {
+   "question": "Q8",
+   "lines": [
+    "rn/architecture.md:306",
+    "rn/architecture.md:326",
+    "rn/architecture.md:327",
+    "rn/architecture.md:426",
+    "rn/architecture.md:427",
+    "rn/architecture.md:428",
+    "rn/architecture.md:429",
+    "rn/architecture.md:430"
+   ]
+  },
+  {
+   "question": "Q9",
+   "lines": [
+    "rn/images/deployment.svg",
+    "rn/architecture.md:771",
+    "rn/architecture.md:774",
+    "rn/architecture.md:787",
+    "rn/architecture.md:800",
+    "rn/architecture.md:805",
+    "rn/architecture.md:812",
+    "rn/architecture.md:817"
+   ]
+  },
+  {
+   "question": "Q10",
+   "lines": [
+    "rn/architecture.md:827",
+    "rn/architecture.md:853",
+    "rn/architecture.md:854",
+    "rn/architecture.md:855",
+    "rn/architecture.md:857",
+    "rn/architecture.md:858"
+   ]
+  },
+  {
+   "question": "Q11",
+   "lines": [
+    "rn/images/tests.svg",
+    "rn/architecture.md:880",
+    "rn/architecture.md:882",
+    "rn/architecture.md:884",
+    "rn/architecture.md:910",
+    "rn/architecture.md:916",
+    "rn/architecture.md:950"
+   ]
+  },
+  {
+   "question": "Q12",
+   "lines": [
+    "rn/architecture.md:874",
+    "rn/architecture.md:875",
+    "rn/architecture.md:922",
+    "rn/architecture.md:923",
+    "rn/architecture.md:924",
+    "rn/architecture.md:925",
+    "rn/architecture.md:926",
+    "rn/architecture.md:927",
+    "rn/architecture.md:928",
+    "rn/architecture.md:929",
+    "rn/architecture.md:950",
+    "rn/architecture.md:954",
+    "rn/architecture.md:958",
+    "rn/architecture.md:962",
+    "rn/architecture.md:963"
+   ]
+  },
+  {
+   "question": "Q13",
+   "lines": [
+    "rn/architecture.md:886",
+    "rn/architecture.md:889",
+    "rn/architecture.md:891",
+    "rn/architecture.md:894",
+    "rn/architecture.md:897",
+    "rn/architecture.md:935",
+    "rn/architecture.md:936",
+    "rn/architecture.md:937",
+    "rn/architecture.md:938",
+    "rn/architecture.md:939"
+   ]
+  },
+  {
+   "question": "Q14",
+   "lines": [
+    "rn/architecture.md:51",
+    "rn/architecture.md:57",
+    "rn/architecture.md:69",
+    "rn/architecture.md:70",
+    "rn/architecture.md:81",
+    "rn/architecture.md:99",
+    "rn/architecture.md:370",
+    "rn/architecture.md:375",
+    "rn/architecture.md:380",
+    "rn/architecture.md:388",
+    "rn/architecture.md:468",
+    "rn/architecture.md:526",
+    "rn/architecture.md:613",
+    "rn/architecture.md:618",
+    "rn/architecture.md:794",
+    "rn/architecture.md:803",
+    "rn/architecture.md:865",
+    "rn/architecture.md:907",
+    "rn/architecture.md:913",
+    "rn/architecture.md:918",
+    "rn/architecture.md:939",
+    "rn/architecture.md:959",
+    "rn/architecture.md:965"
+   ]
+  },
+  {
+   "question": "Q15",
+   "lines": [
+    "rn/architecture.md:31",
+    "rn/architecture.md:32",
+    "rn/architecture.md:96",
+    "rn/architecture.md:282",
+    "rn/architecture.md:283",
+    "rn/architecture.md:284",
+    "rn/architecture.md:357",
+    "rn/architecture.md:358",
+    "rn/architecture.md:362",
+    "rn/architecture.md:363",
+    "rn/architecture.md:364",
+    "rn/architecture.md:365",
+    "rn/architecture.md:366",
+    "rn/architecture.md:367",
+    "rn/architecture.md:368",
+    "rn/architecture.md:369",
+    "rn/architecture.md:380",
+    "rn/architecture.md:381"
+   ]
+  },
+  {
+   "question": "Q16",
+   "lines": [
+    "rn/architecture.md:394",
+    "rn/architecture.md:415",
+    "rn/architecture.md:416",
+    "rn/architecture.md:867",
+    "rn/architecture.md:870"
+   ]
+  }
+ ],
+ "not_met": []
+}

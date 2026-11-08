@@ -100,10 +100,10 @@
   <text class="label small halo" x="520" y="74" text-anchor="middle">merges the pull request</text>
   <path class="line" d="M720,240 L320,240" marker-end="url(#arrow)"/>
   <text class="label small halo" x="520" y="232" text-anchor="middle">runs start, points, status [Bash]</text>
-  <text class="data halo" x="520" y="258" text-anchor="middle">Change</text>
+  <text class="data halo" x="520" y="258" text-anchor="middle">Request, Change</text>
   <path class="line" d="M320,270 L720,270" marker-end="url(#arrow)"/>
   <text class="label small halo" x="520" y="288" text-anchor="middle">gives</text>
-  <text class="data halo" x="520" y="302" text-anchor="middle">Cut, Point</text>
+  <text class="data halo" x="520" y="302" text-anchor="middle">Cut, Point, Deliverable, Round</text>
   <path class="line" d="M210,220 L210,114" marker-end="url(#arrow)"/>
   <text class="label small halo" x="218" y="160" text-anchor="start">pushes, keeps the draft</text>
   <text class="label small halo" x="218" y="174" text-anchor="start">pull request [git, gh]</text>
