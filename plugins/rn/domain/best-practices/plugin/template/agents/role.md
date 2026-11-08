@@ -16,3 +16,4 @@ background: true
 > - `background: true`: keep it, because the guard counts a start only once its role ends.
 > - The body: keep these lines as they stand. Before the role's first call, the guard gives the
 >   role its whole part, with the folder filled in.
+> - A plugin with no roles, such as Lane, leaves out this file, as it starts no agent.

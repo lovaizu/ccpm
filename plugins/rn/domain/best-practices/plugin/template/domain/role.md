@@ -10,6 +10,8 @@ You `<do what>`. You're done when `<what holds at the end>`.
 > - The part holds no steps of the work. The practices of the best practice below are its steps.
 >   The steps adapter of the plugin's proposal, in `.lane/`, gives them to the guard, which holds
 >   the role to them one by one. Steps copied here would drift from them.
+> - A plugin with no roles, such as Lane, leaves out this file and the role's two schemas,
+>   `domain/role-in.schema.json` and `domain/role-out.schema.json`.
 
 ## What you're given
 
