@@ -1,176 +1,106 @@
-"""A step of a subagent or of a skill, read from the file its steps are in: its entry, the file in
-the plugin's agents/ Claude Code takes the subagent from by the name in its frontmatter, or the
-skill's `skills/<name>/SKILL.md`; or its part, the one Markdown file under the plugin's domain/ the
-entry's body names in backticks, where it names one;
-and the step's text, its numbered line under `## Steps` and the lines its text goes on in, the list
-under it, such as its In and Out, left out."""
+"""Decides which file holds a role's steps, its part, and how a part's numbered list reads as steps.
+
+A role's part is the one Markdown file under the plugin's `domain/` that its entry names in
+backticks, by the path the role reads it by, or else the entry itself.
+"""
 
 from __future__ import annotations
 
-import itertools
 import os
 import re
-from typing import Any, Callable, NamedTuple
+from typing import NamedTuple
 
-import template
+import plugin
 
-# A line that goes on a step's text: indented, and beginning no list item.
-GOES_ON = re.compile(r"^[ \t]+(?![-*+] |\d+\. )\S")
-# A line break, with the blanks around it, as a step's text reads it.
-BREAK = re.compile(r"[ \t]*\n[ \t]*")
-# What Claude Code puts the plugin's folder in for, in a subagent's file, before the subagent reads
-# it.
-ROOT = "${CLAUDE_PLUGIN_ROOT}"
-# Where an entry's body names a part, by the plugin's folder, in backticks: a Markdown file under
-# domain/, where the template of plugins/rn/domain/best-practices/plugin/ puts each part, as the
-# knowledge there holds other files, such as a JSON Schema of the role's values.
-PART = re.compile(r"`" + re.escape(ROOT) + r"/domain/(?P<md>[^`]+\.md)`")
-
-
-def agent_file(root: str, name: str) -> str | None:
-    """The file in the plugin's agents/ whose frontmatter names the subagent; None where none
-    does."""
-    folder = os.path.join(root, "agents")
-    names = sorted(os.listdir(folder)) if os.path.isdir(folder) else []
-    for file in (os.path.join(folder, n) for n in names if n.endswith(".md")):
-        with open(file, encoding="utf-8") as f:
-            lines = f.read().splitlines()
-        if template.value(lines, "name") == name:
-            return file
-    return None
-
-
-def skill_file(root: str, name: str) -> str | None:
-    """The plugin's `skills/<name>/SKILL.md`, which Claude Code takes the skill of the name from;
-    None where it is not there."""
-    file = os.path.join(root, "skills", name, "SKILL.md")
-    return file if os.path.isfile(file) else None
-
-
-def entry_file(root: str, name: str, skill: bool = False) -> str | None:
-    """The entry of the subagent of the name, or of the skill where `skill`; None where none is
-    there."""
-    return skill_file(root, name) if skill else agent_file(root, name)
-
-
-def background(entry: str) -> bool:
-    """Whether the subagent's entry, the file at the path, sets `background: true`, so Claude Code
-    runs the subagent in the background however it is started, and its start gives back the ID
-    of its run at once."""
-    with open(entry, encoding="utf-8") as f:
-        return template.value(f.read().splitlines(), "background") == "true"
-
-
-# A step's numbered line, its number first.
-NUMBERED = re.compile(r"([0-9]+)\. ")
-
-
-def steps(lines: list[str]) -> range:
-    """Where the file's lines under the `## Steps` heading are, up to the next heading; none where
-    it has no such heading."""
-    found = template.headings(lines, template.body(lines))
-    # A heading's line in the file counts from 1, so it is the index of the line after it, and the
-    # next heading's line, the last the steps are looked for in, is no step's.
-    start = next((at for at, level, said in found if (level, said) == (2, "Steps")), len(lines))
-    end = next((at for at, _, _ in found if at > start), len(lines))
-    return range(start, end)
-
-
-def last(lines: list[str]) -> int | None:
-    """The number of the file's last step under `## Steps`; None where it has none."""
-    numbers = [m[1] for m in map(NUMBERED.match, (lines[at] for at in steps(lines))) if m]
-    return int(numbers[-1]) if numbers else None
-
-
-def span(lines: list[str], number: int) -> tuple[int, int] | None:
-    """Where the step of the number is among the file's lines, from its numbered line under the
-    `## Steps` heading, up to the next heading, to the line after the last its text goes on in;
-    None where the Steps have no such step."""
-    for at in steps(lines):
-        if lines[at].startswith(f"{number}. "):
-            goes_on = itertools.takewhile(GOES_ON.match, lines[at + 1 :])
-            return at, at + 1 + len(list(goes_on))
-    return None
-
-
-def says(lines: list[str], where: tuple[int, int]) -> str:
-    """The step's text at where it is, each line break read as a space."""
-    return BREAK.sub(" ", "\n".join(lines[where[0] : where[1]]))
-
-
-def part(root: str, name: str, skill: bool = False) -> str | None:
-    """The part the entry of the subagent, or of the skill where `skill`, names in its body, the one
-    Markdown file under the plugin's domain/ it names in backticks, lying under domain/, whether it
-    is there or not; None where its body names no such file, or more than one, or there is no
-    entry."""
-    entry = entry_file(root, name, skill)
-    if entry is None:
-        return None
-    with open(entry, encoding="utf-8") as f:
-        lines = f.read().splitlines()
-    files = set()
-    for m in PART.finditer("\n".join(lines[template.body(lines) :])):
-        folder = os.path.join(root, "domain")
-        file = os.path.normpath(os.path.join(folder, m["md"]))
-        files.add(file if file.startswith(folder + os.sep) else "")
-    file = files.pop() if len(files) == 1 else ""
-    return file or None
-
-
-def steps_file(root: str, name: str, skill: bool = False) -> str | None:
-    """The file the steps of the subagent, or of the skill where `skill`, are in: its part, as
-    `part` finds it, or its entry where it names none; None where there is no entry."""
-    return part(root, name, skill) or entry_file(root, name, skill)
-
-
-def lines_of(root: str, name: str, skill: bool = False) -> list[str]:
-    """The lines of the file the steps of the subagent, or of the skill where `skill`, are in; none
-    where no file gives it, or its part is not there."""
-    file = steps_file(root, name, skill)
-    if file is None or not os.path.isfile(file):
-        return []
-    with open(file, encoding="utf-8") as f:
-        return f.read().splitlines()
-
-
-def holds(root: str, name: str, number: int, sentence: str, skill: bool = False) -> bool:
-    """Whether the step of the number of the subagent, or of the skill where `skill`, still says
-    the sentence, word for word."""
-    lines = lines_of(root, name, skill)
-    where = span(lines, number)
-    return where is not None and sentence in says(lines, where)
+# A part that an entry names in backticks: a Markdown file under the plugin's domain/.
+NAMED_PART = re.compile(r"`\$\{CLAUDE_PLUGIN_ROOT\}/(domain/[^`]+\.md)`")
+# The first line of an item of a numbered list. It holds the item's number, then its text.
+ITEM = re.compile(r"(\d+)\.\s+(.*)")
+# A line that opens or closes a code fence.
+FENCE = re.compile(r"(```|~~~)")
 
 
 class Step(NamedTuple):
-    """A step of a step list: what it says, as the role reads it, and its lanes of the trace kind,
-    each naming the call that shows the step done."""
+    """One item of a part's numbered list."""
 
+    # The number that the item gives itself.
+    number: int
+    # The item's text, without its number, over each of its lines.
     says: str
-    traces: list[Any]
+    # The index of the item's first line in the part's text.
+    first: int
+    # The index of the item's last line.
+    last: int
 
 
-def numbered(root: str, name: str, laid: list[Any], trace: Any) -> list[Step]:
-    """The step list of the numbered list of the subagent's steps: each step a lane is laid on, by
-    the lanes `laid`, each with its step's number, in the order of the numbers, saying its text as
-    it reads with its number left out, with its lanes of the kinds of `trace`; a step the file no
-    longer has left out, as the guard holds each lane to its step apart."""
-    lines = lines_of(root, name)
-    found = []
-    for number in sorted({g.step for g in laid if g.step}):
-        where = span(lines, number)
-        if where is None:
+class Part(NamedTuple):
+    """The file that holds a role's steps."""
+
+    # The file's absolute path.
+    path: str
+    # The file's whole text.
+    text: str
+    # Whether the part is a file of its own, apart from the role's entry.
+    own: bool
+    # The items of the file's first numbered list, none where it has no such list.
+    steps: list[Step]
+
+
+def part(root: str, entry: plugin.Entry) -> Part:
+    """The part of the role of the entry, in the plugin at the root.
+
+    It raises `plugin.Fault` where the entry names one part, and the plugin doesn't hold it.
+    """
+    named = set(NAMED_PART.findall(entry.body))
+    if len(named) != 1:
+        with open(entry.path, encoding="utf-8") as f:
+            text = f.read()
+        return Part(entry.path, text, False, numbered(text))
+    relative = named.pop()
+    path = os.path.join(root, relative)
+    try:
+        with open(path, encoding="utf-8") as f:
+            text = f.read()
+    except FileNotFoundError:
+        shown = os.path.relpath(entry.path, root)
+        raise plugin.Fault(f"{shown} names its part {relative}, which isn't there") from None
+    return Part(path, text, True, numbered(text))
+
+
+def numbered(text: str) -> list[Step]:
+    """The items of the first numbered list in the text, outside any code fence.
+
+    An item runs on over each line indented under it, and over a blank line that an indented line
+    follows. The list ends at the first other line that starts no item.
+    """
+    lines = text.split("\n")
+    found: list[Step] = []
+    fenced = False
+    index = 0
+    while index < len(lines):
+        line = lines[index]
+        if FENCE.match(line):
+            fenced = not fenced
+        item = None if fenced else ITEM.fullmatch(line)
+        if item:
+            last = _last_line(lines, index)
+            says = "\n".join([item[2], *lines[index + 1 : last + 1]])
+            found.append(Step(int(item[1]), says, index, last))
+            index = last + 1
             continue
-        said = says(lines, where)[len(f"{number}. ") :]
-        found.append(Step(said, [g for g in laid if g.step == number and g.lane in trace]))
+        if found and line.strip():
+            break
+        index += 1
     return found
 
 
-def due(steps: list[Step], missing: Callable[[Step], str]) -> tuple[int, str] | None:
-    """The step due of the list, by its place, with what of its traces is missing, as `missing`
-    reads it: the first whose traces haven't all come back, a step with no trace passed over, as no
-    call shows it done; None where none is."""
-    for at, each in enumerate(steps):
-        left = missing(each) if each.traces else ""
-        if left:
-            return at, left
-    return None
+def _last_line(lines: list[str], first: int) -> int:
+    """The index of the last line of the item that starts at the line given."""
+    last = first
+    for index in range(first + 1, len(lines)):
+        line = lines[index]
+        if line[:1] in (" ", "\t") and line.strip():
+            last = index
+        elif line.strip():
+            break
+    return last

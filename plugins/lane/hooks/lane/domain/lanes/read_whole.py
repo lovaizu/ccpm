@@ -1,40 +1,7 @@
-"""read_whole: a lane of the trace kind, whose step is done once the subagent has read each input
-its step names to its end: its Read calls, by their offset and limit, have covered every line of
-it, a Read naming no limit covering as many lines as the Read tool gives by default; a Read of an
-input is its trace."""
+"""Holds a step done once the role has read a file it takes to its end, as a lane of the trace
+kind."""
 
 from __future__ import annotations
 
-from lanes.done import Done, lines_read, text
-from lanes.write_only import in_plugin
-
-ACTION = "read"
 WORDING = "Read `<input>` to its end."
-CALLS = True
 TRACE = True
-
-
-def traces(tool: str, value: str, given: dict[str, list[str]], done: Done) -> bool:
-    """Whether a call of the tool on the value, the field of its input a lane judges, is the trace
-    of the lane taking the things given: a Read of one of its inputs."""
-    file = done.full(value)
-    inputs = [done.full(in_plugin(named, done.root)) for named in given["input"]]
-    return tool == "Read" and file in inputs
-
-
-def missing(given: dict[str, list[str]], done: Done) -> str:
-    """What is missing: each input not there, or with a line no Read covered, by the first line
-    left unread; "" where each was read to its end."""
-    found = []
-    for named in given["input"]:
-        file = done.full(in_plugin(named, done.root))
-        said = text(file)
-        if said is None:
-            found.append(f"`{named}` is no file to read")
-            continue
-        count = len(said.splitlines())
-        read = lines_read(done, file)
-        left = [n for n in range(1, count + 1) if n not in read]
-        if left or not read:
-            found.append(f"`{named}` unread from line {left[0] if left else 1}")
-    return "; ".join(found)

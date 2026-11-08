@@ -1,467 +1,191 @@
-"""What each hook's command runs: the event Claude Code hands on stdin read, the guard asked where
-the event is of a subagent of the plugin or of the main conversation, and its answer given in
-Claude Code's JSON output of the event: a break or a start not due denied with its sentence, the
-next start added as context, an end kept going, an error told the user too."""
+"""The cases of hook.py's contract: Claude Code's hook input read as an event, and the guard's
+answer given back in the form the hooks reference documents."""
 
-import io
 import json
 import os
-import runpy
-import unittest
+import subprocess
+import sys
 from unittest import mock
 
 import helpers
-from helpers import hook
+from helpers import guard, hook, testing
 
-AGENT_TYPE = "changelog:writer"
-RUN_BREAK = (
-    f"changelog: {helpers.RUN}\nThe commands you may run, each word for word: `git log --oneline`."
-)
+ROOT = "/plugins/changelog"
+COMMON = {"session_id": "s1", "cwd": "/work", "transcript_path": "/t.jsonl"}
 
 
-class HookTest(helpers.PluginTest):
-    def setUp(self) -> None:
-        super().setUp()
-        self.lay()
+NOTHING = guard.Answer()
 
-    def answered(
-        self, given: object, argv: tuple = ("changelog",), held: str = "PreToolUse"
-    ) -> dict:
-        """What the hook of the event held, PreToolUse by default, answers on stdout, given the
-        event, as JSON or as the text itself, with the command's words."""
+
+def answered(given, answer=NOTHING, argv=("hook.py", "changelog"), env=None):
+    """What hook.py prints for the input, its exit code, and the arguments that the guard got. A
+    stand-in for the guard gives the answer."""
+    with mock.patch.object(guard, "answer", return_value=answer) as asked:
         text = given if isinstance(given, str) else json.dumps(given)
-        out = io.StringIO()
-        hook.main(held, list(argv), io.StringIO(text), out, self.plugin)
-        return helpers.answer(out.getvalue())
+        out, code = hook.main(
+            list(argv), text, {"CLAUDE_PROJECT_DIR": "/work"} if env is None else env, ROOT
+        )
+    return out, code, asked.call_args
 
 
-def denied(reason: str, user: str = "") -> dict:
-    """The answer denying the call with the reason, telling the user where there is anything."""
-    found = {
-        "hookSpecificOutput": {
-            "hookEventName": "PreToolUse",
-            "permissionDecision": "deny",
-            "permissionDecisionReason": reason,
+class TestEvent(testing.FolderTest):
+    def test_a_tool_event_of_a_role_reaches_the_guard_with_each_field(self):
+        given = {
+            **COMMON,
+            "hook_event_name": "PostToolUse",
+            "agent_id": "a1",
+            "agent_type": "changelog:writer",
+            "tool_name": "Bash",
+            "tool_input": {"command": "ls"},
+            "tool_response": {"stdout": "x"},
         }
-    }
-    return {"systemMessage": user, **found} if user else found
-
-
-class TestAnswer(HookTest):
-    def test_a_call_its_lanes_allow_is_answered_nothing(self):
-        # Given: writer with the README's lanes laid
-        # When: it runs git log --oneline
-        # Then: the hook prints nothing, so the call goes on
-        self.assertEqual(self.answered(self.bash("git log --oneline")), {})
-
-    def test_a_break_is_denied_with_the_sentence_headed_by_the_plugins_name(self):
-        # Given: writer with the README's lanes laid
-        # When: it runs git commit
-        # Then: the call is denied, the reason the sentence headed changelog:, the user told
-        # nothing, as a break is the subagent's to put right
-        self.assertEqual(self.answered(self.bash("git commit -m m")), denied(RUN_BREAK))
-
-    def test_an_error_is_told_the_subagent_and_the_user(self):
-        # Given: hooks/lanes.json removed
-        os.remove(os.path.join(self.plugin, "hooks", "lanes.json"))
-        # When: writer runs git log --oneline
-        found = self.answered(self.bash("git log --oneline"))
-        # Then: the call is denied, and the user told the same, headed changelog:
-        reason = found["hookSpecificOutput"]["permissionDecisionReason"]
-        self.assertTrue(reason.startswith("changelog: lane cannot check the lanes of writer:"))
-        self.assertEqual(found, denied(reason, reason))
-
-    def test_a_call_of_no_subagent_of_the_plugin_is_answered_nothing(self):
-        for agent in (None, "other:writer", "changelog-x:writer", "general-purpose"):
-            with self.subTest(agent=agent):
-                # Given: writer with the README's lanes laid
-                # When: the main conversation, a subagent of another plugin, one of a plugin
-                # whose name begins with changelog, or a built-in subagent runs git commit
-                # Then: the hook prints nothing, as lane checks this plugin's subagents alone
-                self.assertEqual(self.answered(self.bash("git commit", agent)), {})
-
-
-class TestEvent(HookTest):
-    def test_an_event_lane_acts_on_none_of_is_held_to_the_fields_every_event_has(self):
-        # Given: a PostToolUseFailure, an event lane lays no entry for, and one with no session
-        failed = {**self.bash("ls", held="PostToolUseFailure"), "error": "e"}
-        # When: its fields are held to what the hooks reference documents
-        # Then: it holds, as it has those every event has, and the one with no session does not
-        self.assertEqual(hook.event_wrong(failed, "PostToolUseFailure"), "")
-        unsessioned = {k: v for k, v in failed.items() if k != "session_id"}
-        self.assertIn("session_id", hook.event_wrong(unsessioned, "PostToolUseFailure"))
-
-    def test_an_event_out_of_its_documented_fields_is_an_error_for_claude_code(self):
-        good = self.bash("ls")
-        for event, wrong in (
-            ({**good, "cwd": os.path.join(self.base, "gone")}, "$.cwd: expected a folder"),
-            ({**good, "cwd": 1}, "$.cwd: expected a string"),
-            ({**good, "tool_input": "ls"}, "$.tool_input: expected an object"),
-            ({**good, "hook_event_name": "PostToolUse"}, "$.hook_event_name: expected"),
-            ({k: v for k, v in good.items() if k != "tool_name"}, 'expected the key "tool_name"'),
-        ):
-            with self.subTest(wrong=wrong):
-                # Given: writer's event with a folder not there, a folder not text, an input not
-                # an object, another event's name, or no tool
-                # When: the hook is handed it
-                found = self.answered(event)
-                # Then: the call is denied, telling what is wrong, for Claude Code to fix
-                reason = found["hookSpecificOutput"]["permissionDecisionReason"]
-                self.assertIn("the hook was handed no event as Claude Code hands it, ", reason)
-                self.assertIn(wrong, reason)
-                self.assertIn("`claude update`", reason)
-
-    def test_text_that_is_no_json_object_is_an_error_naming_this_hook(self):
-        for text in ("not json", "[1]"):
-            with self.subTest(text=text):
-                # Given: the hook handed no JSON, or JSON that is no object
-                # When: it is run
-                found = self.answered(text)
-                # Then: the call is denied, as no subagent can be told from it, and the user told
-                reason = found["hookSpecificOutput"]["permissionDecisionReason"]
-                self.assertTrue(
-                    reason.startswith(
-                        "changelog: lane cannot check the lanes of this hook: it was handed no"
-                        " JSON object."
-                    ),
-                    reason,
-                )
-                self.assertEqual(found["systemMessage"], reason)
-
-
-class TestCommand(HookTest):
-    def test_a_command_not_naming_the_plugin_stops_every_subagents_call(self):
-        for argv in ((), ("changelog", "x"), ("change log",), ("a/b",)):
-            with self.subTest(argv=argv):
-                # Given: a hook's command giving no name, two words, or no name of a plugin
-                # When: writer runs git log --oneline
-                found = self.answered(self.bash("git log --oneline"), argv)
-                # Then: the call is denied, headed lane:, as the plugin is not known
-                reason = found["hookSpecificOutput"]["permissionDecisionReason"]
-                self.assertTrue(
-                    reason.startswith("lane: lane cannot check the lanes of this hook: its command")
-                )
-                self.assertIn("`lay.py write`", reason)
-
-    def test_a_command_not_naming_the_plugin_lets_the_main_conversation_go_on(self):
-        # Given: a hook's command giving no name
-        # When: the main conversation runs a command
-        # Then: nothing is printed, as lane checks subagents alone
-        self.assertEqual(self.answered(self.bash("ls", None), ()), {})
-
-
-class TestEntry(HookTest):
-    def test_pretooluse_py_runs_the_hook_on_its_event_with_claude_codes_plugin_folder(self):
-        # Given: writer running git commit, and the plugin's folder in CLAUDE_PLUGIN_ROOT
-        stdin, out = io.StringIO(json.dumps(self.bash("git commit"))), io.StringIO()
-        env = mock.patch.dict(os.environ, {"CLAUDE_PLUGIN_ROOT": self.plugin})
-        argv = mock.patch("sys.argv", ["pretooluse.py", "changelog"])
-        # When: pretooluse.py runs as Claude Code runs it
-        with env, argv, mock.patch("sys.stdin", stdin), mock.patch("sys.stdout", out):
-            runpy.run_path(os.path.join(helpers.CODE, "pretooluse.py"), run_name="__main__")
-        # Then: it answers as the hook does
-        self.assertEqual(helpers.answer(out.getvalue()), denied(RUN_BREAK))
-
-
-class TestRoutes(HookTest):
-    def setUp(self) -> None:
-        super().setUp()
-        self.route()
-
-    def begin(self) -> dict:
-        """The run begun by `/changelog:write` typed: what the hook answers."""
-        return self.answered(self.expansion(), held="UserPromptExpansion")
-
-    def test_the_next_start_is_added_as_context_as_the_run_begins_and_goes_on(self):
-        started = self.start("writer", "PostToolUse", helpers.back("w1", "async_launched"))
-        for event, held in (
-            (self.expansion(), "UserPromptExpansion"),
-            (started, "PostToolUse"),
-            (self.notified("w1"), "UserPromptSubmit"),
-        ):
-            with self.subTest(held=held):
-                # Given: the routes laid
-                # When: the skill's command is typed, its start of writer comes back launched,
-                # or a task-notification reaches the main conversation
-                found = self.answered(event, held=held)
-                # Then: the line is added as context of the event, headed changelog:
-                self.assertEqual(found["hookSpecificOutput"]["hookEventName"], held)
-                self.assertTrue(
-                    found["hookSpecificOutput"]["additionalContext"].startswith("changelog: ")
-                )
-                self.assertNotIn("systemMessage", found)
-
-    def test_the_skill_called_by_an_ai_begins_the_run(self):
-        # Given: the routes laid
-        # When: the Skill call of changelog:write comes back
-        found = self.answered(self.skill_call("changelog:write", "PostToolUse"), held="PostToolUse")
-        # Then: the first start is added as context
-        context = found["hookSpecificOutput"]["additionalContext"]
-        self.assertEqual(context, "changelog: Start `changelog:writer`.")
-
-    def test_a_start_while_one_runs_in_the_background_is_denied(self):
-        # Given: the run begun, its start of writer launched in the background
-        self.begin()
-        back = self.start("writer", "PostToolUse", helpers.back("w1", "async_launched"))
-        self.answered(back, held="PostToolUse")
-        # When: the main conversation's start of reviewer reaches the hook
-        found = self.answered(self.start("reviewer"))
-        # Then: it is denied, telling it to wait
-        reason = found["hookSpecificOutput"]["permissionDecisionReason"]
-        self.assertIn("Wait for `changelog:writer` to end", reason)
-
-    def test_a_subagent_ending_with_no_result_is_blocked_with_its_sentence(self):
-        # Given: writer giving no result
-        # When: it is about to end
-        found = self.answered(self.subagent("SubagentStop", "writer", "a1"), held="SubagentStop")
-        # Then: it is blocked, told its last step's sentence headed changelog:
-        gives = f"python3 {self.plugin}/hooks/lane/result.py writer written"
+        _, _, asked = answered(given)
         self.assertEqual(
-            found,
-            {
-                "decision": "block",
-                "reason": f"changelog: End by running `{gives}`.{helpers.NOT_WORK}",
-            },
+            asked.args,
+            (
+                "changelog",
+                ROOT,
+                "/work",
+                guard.Event(
+                    name="PostToolUse",
+                    session="s1",
+                    cwd="/work",
+                    agent_id="a1",
+                    agent_type="changelog:writer",
+                    tool="Bash",
+                    tool_input={"command": "ls"},
+                    tool_response={"stdout": "x"},
+                ),
+            ),
         )
 
-    def test_an_unnamed_start_is_denied_with_the_sentence_and_the_start_each_line_headed(self):
-        # Given: the run begun, writer due
-        self.begin()
-        # When: the main conversation starts reviewer
-        # Then: it is denied, told the sentence and on the next line the start, each headed
+    def test_an_event_of_the_main_conversation_has_no_agent(self):
+        given = {**COMMON, "hook_event_name": "UserPromptSubmit", "prompt": "hi"}
+        event = answered(given)[2].args[3]
+        self.assertEqual((event.agent_type, event.prompt), (None, "hi"))
+
+    def test_the_command_of_an_expansion_is_read(self):
+        given = {**COMMON, "hook_event_name": "UserPromptExpansion", "command_name": "c:w"}
+        self.assertEqual(answered(given)[2].args[3].command, "c:w")
+
+    def test_whether_a_stop_hook_kept_it_going_is_read(self):
+        given = {**COMMON, "hook_event_name": "Stop", "stop_hook_active": True}
+        self.assertTrue(answered(given)[2].args[3].stop_active)
+
+    def test_no_project_folder_reaches_the_guard_as_none(self):
+        given = {**COMMON, "hook_event_name": "Stop"}
+        self.assertIsNone(answered(given, env={})[2].args[2])
+
+
+class TestAnswer(testing.FolderTest):
+    def event(self, name):
+        return {**COMMON, "hook_event_name": name, "tool_name": "Bash", "tool_input": {}}
+
+    def test_nothing_to_tell_prints_nothing(self):
+        self.assertEqual(answered(self.event("PreToolUse"))[:2], ("", 0))
+
+    def test_a_deny_goes_back_as_the_permission_decision(self):
+        out, code, _ = answered(self.event("PreToolUse"), guard.Answer(deny="why"))
         self.assertEqual(
-            self.answered(self.start("reviewer")),
-            denied(f"changelog: {helpers.FOLLOW}\nchangelog: Start `changelog:writer`."),
+            (json.loads(out), code),
+            (
+                {
+                    "hookSpecificOutput": {
+                        "hookEventName": "PreToolUse",
+                        "permissionDecision": "deny",
+                        "permissionDecisionReason": "why",
+                    }
+                },
+                0,
+            ),
         )
 
-    def test_a_turn_ending_with_a_start_due_is_blocked_once_then_the_user_told(self):
-        # Given: the run begun, writer due
-        self.begin()
-        # When: the main conversation ends its turn, and, kept going, ends it again
-        kept = self.answered(self.turn(), held="Stop")
-        ended = self.answered(self.turn(True), held="Stop")
-        # Then: it is blocked with the sentence and the start, then let end, the user told what
-        # is left, headed by the plugin's name
-        reason = f"changelog: {helpers.FOLLOW}\nchangelog: Start `changelog:writer`."
-        self.assertEqual(kept, {"decision": "block", "reason": reason})
+    def test_an_ask_goes_back_as_the_permission_decision(self):
+        out, _, _ = answered(self.event("PreToolUse"), guard.Answer(ask="why"))
+        self.assertEqual(json.loads(out)["hookSpecificOutput"]["permissionDecision"], "ask")
+
+    def test_context_goes_back_as_additional_context_of_the_event(self):
+        out, _, _ = answered(self.event("PostToolUse"), guard.Answer(context="next"))
         self.assertEqual(
-            ended,
-            {
-                "systemMessage": "changelog: lane let the run of write end with"
-                " `changelog:writer` still due: the maker of changelog must fix step 1 of write in"
-                " skills/write/SKILL.md, which starts it."
-            },
+            json.loads(out),
+            {"hookSpecificOutput": {"hookEventName": "PostToolUse", "additionalContext": "next"}},
         )
 
-    def test_an_event_whose_agent_type_is_empty_is_dropped(self):
-        # Given: the run begun
-        self.begin()
-        # When: the end of Claude Code's prompt-suggestion fork, of an empty agent_type, comes
-        event = {**self.subagent("SubagentStop", "writer", "f1"), "agent_type": ""}
-        found = self.answered(event, held="SubagentStop")
-        # Then: nothing is told, and nothing is kept
-        self.assertEqual(found, {})
-        self.assertEqual(helpers.called.kept(helpers.KEPT, "f1"), [])
+    def test_a_block_goes_back_as_the_decision_and_its_reason(self):
+        out, _, _ = answered(self.event("SubagentStop"), guard.Answer(block="go on"))
+        self.assertEqual(json.loads(out), {"decision": "block", "reason": "go on"})
 
-    def test_an_error_at_another_event_is_told_the_user_too(self):
-        # Given: hooks/lanes.json removed
-        os.remove(os.path.join(self.plugin, "hooks", "lanes.json"))
-        # When: writer starts
-        found = self.answered(self.subagent("SubagentStart", "writer", "a1"), held="SubagentStart")
-        # Then: the error is the context and the user's message alike
-        told = found["hookSpecificOutput"]["additionalContext"]
-        self.assertTrue(told.startswith("changelog: lane cannot check the lanes of writer:"))
-        self.assertEqual(found["systemMessage"], told)
-
-    def test_an_error_of_the_guard_at_an_end_is_told_once(self):
-        for held, event in (
-            ("SubagentStop", lambda active: self.subagent("SubagentStop", "writer", "a1", active)),
-            ("Stop", self.turn),
-        ):
-            for active, blocked in ((False, True), (True, False)):
-                with self.subTest(held=held, active=active):
-                    # Given: the run begun, then hooks/lanes.json removed
-                    self.setUp()
-                    self.begin()
-                    os.remove(os.path.join(self.plugin, "hooks", "lanes.json"))
-                    # When: writer or the main conversation is about to end, kept going by a
-                    # stop hook before or not
-                    found = self.answered(event(active), held=held)
-                    # Then: it is blocked with the error the first time, and ends the second
-                    self.assertEqual("decision" in found, blocked)
-
-    def test_an_error_before_the_guard_at_subagentstop_is_told_once(self):
-        stop = self.subagent("SubagentStop", "writer", "a1")
-        for given, argv, blocked in (
-            ("x", ("changelog",), True),
-            (stop, (), True),
-            ({**stop, "stop_hook_active": True}, (), False),
-        ):
-            with self.subTest(given=given, argv=argv):
-                # Given: SubagentStop handed no JSON object, or by a command not naming the
-                # plugin, kept going by a stop hook before or not
-                # When: the hook runs
-                found = self.answered(given, argv, "SubagentStop")
-                # Then: the end is blocked with the error, but where it was kept going before
-                self.assertEqual("decision" in found, blocked)
-
-    def test_an_event_out_of_its_fields_is_an_error_for_claude_code(self):
-        stop = self.subagent("SubagentStop", "writer", "a1")
-        for event, held, wrong in (
-            ({**stop, "stop_hook_active": "no"}, "SubagentStop", "$.stop_hook_active"),
-            ({**stop, "stop_hook_active": 1}, "SubagentStop", "$.stop_hook_active"),
-            ({**stop, "agent_id": "../x"}, "SubagentStop", "$.agent_id"),
-            (self.start("writer", "PostToolUse"), "PostToolUse", '"tool_response"'),
-            ({**self.turn(), "stop_hook_active": "no"}, "Stop", "$.stop_hook_active"),
-            ({**self.prompt(), "prompt": 1}, "UserPromptSubmit", "$.prompt"),
-        ):
-            with self.subTest(wrong=wrong):
-                # Given: the run begun, and an event of a wrong field, an ID naming another
-                # folder, or no response
-                self.begin()
-                # When: the hook is handed it
-                found = self.answered(event, held=held)
-                # Then: it tells what is wrong
-                self.assertIn(wrong, found["systemMessage"])
+    def test_what_whoever_runs_the_plugin_hears_goes_back_as_a_system_message(self):
+        out, _, _ = answered(self.event("Stop"), guard.Answer(tell="left"))
+        self.assertEqual(json.loads(out), {"systemMessage": "left"})
 
 
-class TestDependency(HookTest):
-    def test_an_event_of_a_dependencys_subagent_the_routes_name_reaches_the_guard(self):
-        # Given: routes to checker's examiner
-        self.depend()
-        # When: examiner is about to end with no result
-        stop = self.subagent("SubagentStop", "checker:examiner", "e1")
-        found = self.answered(stop, held="SubagentStop")
-        # Then: the guard keeps it going, headed by changelog's name
-        self.assertEqual(found["decision"], "block")
-        self.assertTrue(found["reason"].startswith("changelog: End by running "), found)
-
-    def test_an_event_of_another_plugins_subagent_no_route_names_is_answered_nothing(self):
-        # Given: routes to checker's examiner
-        self.depend()
-        # When: checker's linter is about to end
-        # Then: nothing is said
-        stop = self.subagent("SubagentStop", "checker:linter", "x1")
-        self.assertEqual(self.answered(stop, held="SubagentStop"), {})
-
-
-class TestEntries(HookTest):
-    def test_each_events_script_runs_the_hook_on_its_event(self):
-        self.route()
-        for script, held, event in (
-            ("posttooluse", "PostToolUse", self.came_back("ls")),
-            ("subagentstart", "SubagentStart", self.subagent("SubagentStart", "writer", "a1")),
-            ("subagentstop", "SubagentStop", self.subagent("SubagentStop", "writer", "a1")),
-            ("userpromptexpansion", "UserPromptExpansion", self.expansion("changelog:other")),
-            ("userpromptsubmit", "UserPromptSubmit", self.prompt()),
-            ("stop", "Stop", self.turn()),
-        ):
-            with self.subTest(script=script):
-                # Given: the event, and the plugin's folder in CLAUDE_PLUGIN_ROOT
-                stdin, out = io.StringIO(json.dumps(event)), io.StringIO()
-                env = mock.patch.dict(os.environ, {"CLAUDE_PLUGIN_ROOT": self.plugin})
-                argv = mock.patch("sys.argv", [f"{script}.py", "changelog"])
-                # When: the event's script runs as Claude Code runs it
-                with env, argv, mock.patch("sys.stdin", stdin), mock.patch("sys.stdout", out):
-                    runpy.run_path(os.path.join(helpers.CODE, f"{script}.py"), run_name="__main__")
-                # Then: it answers as the hook does on that event
-                expected = io.StringIO()
-                hook.main(
-                    held, ["changelog"], io.StringIO(json.dumps(event)), expected, self.plugin
-                )
-                self.assertEqual(out.getvalue(), expected.getvalue())
-
-
-class TestU3(HookTest):
-    def test_a_held_command_is_asked_of_the_person_with_its_sentence(self):
-        # Given: writer holding git push for the person's approval
-        self.lay_lanes([{"step": 2, "lanes": [{"lane": "hold", "takes": ["git push"]}]}])
-        # When: it runs git push
-        found = self.answered(self.bash("git push"))
-        # Then: Claude Code is asked to put it to the person, with the sentence headed changelog:
-        said = "changelog: Run `git push` only with the person's approval."
+class TestUnread(testing.FolderTest):
+    def test_input_that_is_no_json_blocks_with_why_and_who_fixes_it(self):
+        out, code, _ = answered("{")
         self.assertEqual(
-            found,
-            {
-                "hookSpecificOutput": {
-                    "hookEventName": "PreToolUse",
-                    "permissionDecision": "ask",
-                    "permissionDecisionReason": said,
-                }
-            },
+            (out, code),
+            (
+                (
+                    "changelog: lane cannot check the lanes of this hook: the hook input is no"
+                    " JSON object. Ask the main conversation for the fix: Anthropic must fix"
+                    " Claude Code, whose hook input isn't as its documentation gives it. Go on"
+                    " with the rest of your work meanwhile."
+                ),
+                2,
+            ),
         )
 
-    def test_a_part_is_given_as_it_is_as_the_subagent_starts(self):
-        # Given: writer's entry naming its part
-        part = os.path.join(self.plugin, "domain", "writer.md")
-        self.write(part, helpers.LAID.split("---\n\n", 1)[1])
-        self.write(self.agent_file, helpers.PART_ENTRY.format(name="writer"))
-        # When: writer starts
-        start = self.subagent("SubagentStart", "writer", "a1")
-        found = self.answered(start, held="SubagentStart")
-        # Then: the part is added as context, headed by nothing
-        context = found["hookSpecificOutput"]["additionalContext"]
-        self.assertEqual(context, self.read(part))
+    def test_input_with_no_event_name_blocks(self):
+        out, code, _ = answered({**COMMON})
+        self.assertEqual(code, 2)
+        self.assertIn("the hook input gives no hook_event_name", out)
 
-    def test_an_agent_call_of_the_main_conversation_gives_its_prompt_to_the_start_it_made(self):
-        # Given: writer laid, and the main conversation's Agent call starting it
-        given = {"prompt": "p", "subagent_type": AGENT_TYPE}
-        call = {**self.event("Agent", given, None), "tool_use_id": "t1"}
-        # When: the call is made, writer starts, and the call comes back launched in the
-        # background
-        self.assertEqual(self.answered(call), {})
-        self.answered(self.subagent("SubagentStart", "writer", "a1"), held="SubagentStart")
-        self.assertIsNone(helpers.called.texts(helpers.KEPT, "a1"))
-        back = {
-            **self.event("Agent", given, None, "PostToolUse"),
-            "tool_use_id": "t1",
-            "tool_response": helpers.back("a1", "async_launched"),
-        }
-        self.assertEqual(self.answered(back, held="PostToolUse"), {})
-        # Then: writer's start of the ID it gave is given the call's prompt
-        self.assertEqual(helpers.called.texts(helpers.KEPT, "a1"), ["p"])
+    def test_a_tool_event_with_no_tool_name_blocks(self):
+        given = {**COMMON, "hook_event_name": "PostToolUse", "tool_input": {}}
+        out, _, _ = answered(given)
+        self.assertIn("the hook input of PostToolUse gives no tool_name", out)
 
-    def test_a_start_of_the_run_coming_back_gives_its_prompt_to_the_start_it_made(self):
-        # Given: the routes laid, and the run begun
-        self.route()
-        self.answered(self.expansion(), held="UserPromptExpansion")
-        # When: its start of writer comes back launched in the background, told to wait
-        back = self.start("writer", "PostToolUse", helpers.back("w1", "async_launched"))
-        found = self.answered(back, held="PostToolUse")
-        self.assertIn("Wait for", found["hookSpecificOutput"]["additionalContext"])
-        # Then: writer's start of the ID it gave is given the call's prompt
-        self.assertEqual(helpers.called.texts(helpers.KEPT, "w1"), ["p"])
+    def test_a_tool_event_with_no_tool_input_blocks(self):
+        given = {**COMMON, "hook_event_name": "PreToolUse", "tool_name": "Bash"}
+        out, _, _ = answered(given)
+        self.assertIn("the hook input of PreToolUse gives no tool_input", out)
 
-    def test_a_message_is_kept_where_its_call_goes_on_alone(self):
-        # Given: the run begun, its start w1 of writer ended with no result, and a start w2
-        self.route()
-        self.answered(self.expansion(), held="UserPromptExpansion")
-        back = self.start("writer", "PostToolUse", helpers.back("w1", "async_launched"))
-        self.answered(back, held="PostToolUse")
-        for active in (False, True):
-            stop = self.subagent("SubagentStop", "writer", "w1", active)
-            self.answered(stop, held="SubagentStop")
-        helpers.called.keep(helpers.KEPT, "w2", helpers.called.given("p"))
-        # When: the main conversation sends w1 a message, which is stopped, and w2 one, which
-        # goes on
-        to_w1 = self.event("SendMessage", {"to": "w1", "message": "m"}, None)
-        self.assertIn("hookSpecificOutput", self.answered(to_w1))
-        to_w2 = self.event("SendMessage", {"to": "w2", "message": "n"}, None)
-        self.assertEqual(self.answered(to_w2), {})
-        # Then: the message that went on alone is kept
-        self.assertEqual(helpers.called.texts(helpers.KEPT, "w1"), ["p"])
-        self.assertEqual(helpers.called.texts(helpers.KEPT, "w2"), ["p", "n"])
-
-    def test_an_agent_call_stopped_keeps_nothing(self):
-        # Given: the run begun, writer due
-        self.route()
-        self.answered(self.expansion(), held="UserPromptExpansion")
-        # When: the main conversation's start of reviewer is stopped
-        self.answered({**self.start("reviewer"), "tool_use_id": "t1"})
-        # Then: nothing is kept for any start of reviewer
-        self.answered(self.subagent("SubagentStart", "reviewer", "r1"), held="SubagentStart")
-        self.assertIsNone(helpers.called.texts(helpers.KEPT, "r1"))
+    def test_a_command_naming_no_plugin_blocks_headed_by_lane(self):
+        out, code, _ = answered({**COMMON, "hook_event_name": "Stop"}, argv=("hook.py",))
+        self.assertEqual(
+            (out, code),
+            (
+                (
+                    "lane: lane cannot check the lanes of this hook: the hook's command names no"
+                    " plugin. Ask the main conversation for the fix: the maker of the plugin must"
+                    " lay its lanes again with Lane's lay.py write. Go on with the rest of your"
+                    " work meanwhile."
+                ),
+                2,
+            ),
+        )
 
 
-if __name__ == "__main__":
-    unittest.main()
+class TestRun(testing.FolderTest):
+    def run_hook(self, text):
+        script = os.path.join(helpers.CODE, "hook.py")
+        return subprocess.run(
+            [sys.executable, "-B", script, "changelog"],
+            input=text,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+    def test_run_as_a_script_it_prints_the_answer_and_exits_0(self):
+        done = self.run_hook(json.dumps({**COMMON, "hook_event_name": "Stop"}))
+        self.assertEqual((done.stdout, done.returncode), ("", 0))
+
+    def test_run_as_a_script_on_input_it_cannot_read_it_says_why_on_stderr_and_exits_2(self):
+        done = self.run_hook("{")
+        self.assertEqual(done.returncode, 2)
+        self.assertIn("the hook input is no JSON object", done.stderr)
+
+    def test_the_plugin_folder_is_the_folder_above_hooks(self):
+        self.assertEqual(hook.plugin_root(os.path.join(ROOT, "hooks", "lane", "hook.py")), ROOT)

@@ -1,9 +1,0 @@
-{"plugin": "changelog",
- "subagents": [{"name": "noter", "steps": [
-  {"step": 1, "lanes": [{"lane": "read_only", "takes": ["CHANGELOG.md", "review.md"]},
-                        {"lane": "read_whole", "takes": ["CHANGELOG.md"]}]},
-  {"step": 2, "lanes": [{"lane": "write_only", "takes": ["{work}", "answers.md"]},
-                        {"lane": "in_form", "takes": ["{work}", "${CLAUDE_PLUGIN_ROOT}/forms/notes.json"]}]},
-  {"step": 3, "lanes": [{"lane": "test_after", "takes": ["{work}", "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/check.py notes.json"]}]},
-  {"step": 4, "lanes": [{"lane": "every_item", "takes": ["review.md"], "adapter": "hooks/adapters/items-findings.py"}]},
-  {"step": 5, "lanes": [{"lane": "end_when", "takes": ["{work}"]}]}]}]}

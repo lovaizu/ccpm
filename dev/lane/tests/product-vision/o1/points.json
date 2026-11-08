@@ -1,6 +1,0 @@
-[{"message": "reviewer has a question before it finishes the review. writer left two commits without an entry, and reviewer can't tell from their messages whether a user notices them:\n\n- `Refactor the note store`\n- `Fix a typo in the help text`\n\nShould either of these get an entry in CHANGELOG.md?",
-  "asked": ["Refactor the note store", "Fix a typo in the help text"]},
- {"message": "Before reviewer settles the review, it needs your call on three commits that have no entry: `Bump the test runner`, `Remove the unused sync module` and `Refactor the note store`. Does a user notice any of them?",
-  "asked": ["Bump the test runner", "Remove the unused sync module", "Refactor the note store"]},
- {"message": "reviewer found every entry right. The entries under `## Unreleased` are:\n\n- Added: a search over the notes.\n- Fixed: a crash on an empty note.\n- Added: tags to notes.\n\nThe run of /changelog:write is done.",
-  "asked": []}]

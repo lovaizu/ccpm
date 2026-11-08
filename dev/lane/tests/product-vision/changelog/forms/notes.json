@@ -1,3 +1,0 @@
-{"type": "object", "required": ["version", "entries"], "additionalProperties": false,
- "properties": {"version": {"type": "string"},
-                "entries": {"type": "array", "minItems": 1, "items": {"type": "string"}}}}

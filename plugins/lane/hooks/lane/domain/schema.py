@@ -1,16 +1,13 @@
-"""A JSON Schema, of the keywords Anthropic's structured outputs accept, in draft-07's wording: the
-basic types, properties, required, additionalProperties false, items, enum, const, anyOf, allOf of
-schemas with no $ref, a $ref within the schema to it or its $defs or definitions, and minItems 0 or
-1; with title, description, default and $schema, which say what a value is and check nothing. A
-schema is read whole before any value is held to it, and one using any other keyword, or a keyword
-in another shape, is refused, so no value is let through by a keyword left unread; a $ref coming
-back to itself is refused too, as structured outputs refuse a recursive schema. A value held to it
-gives the one point it is out by: its place, what was expected and what was found, as
-check-jsonschema gives jsonschema's best match, the point highest in the value first. lane's own
-schemas, such as a port's in ports.py, which `checked` never reads, may give additionalProperties a
-schema each key beside the properties is held to, for an object of keys known only on a run, and
-may use minimum, minLength and pattern, as the routes' in rules.py do, and minItems of any
-number."""
+"""Decides whether a JSON value holds to a JSON Schema, and which schemas Lane reads as a form.
+
+A form is a schema that a step's output follows, such as in_form's. `checked` reads a form only in
+the keywords that Anthropic's structured outputs accept, so that a model can write to any form that
+Lane holds an output to. `held` reads those keywords and the few more that Lane's own schemas use:
+`minimum`, `minLength`, `minItems` of any count, and `additionalProperties` given as a schema.
+
+rn's scripts take this module through a link, so `checked`, `held`, `Out`, and `Unread` keep their
+contract for them too.
+"""
 
 from __future__ import annotations
 
@@ -18,13 +15,12 @@ import json
 import re
 from typing import Any, Callable, NamedTuple
 
-# Each basic type, with what tells a value of it as Python reads JSON, and its name in a message.
+# Each basic type, with the test of a value as Python reads it from JSON, and its name in a message.
 TYPES: dict[str, tuple[Callable[[Any], bool], str]] = {
     "object": (lambda v: isinstance(v, dict), "an object"),
     "array": (lambda v: isinstance(v, list), "an array"),
     "string": (lambda v: isinstance(v, str), "a string"),
-    # JSON tells no integer from a number with no fraction, so 1.0 is an integer, as draft-07 has
-    # it.
+    # JSON has no integer apart from a number with no fraction, so draft-07 takes 1.0 as one.
     "integer": (
         lambda v: (
             not isinstance(v, bool)
@@ -36,335 +32,313 @@ TYPES: dict[str, tuple[Callable[[Any], bool], str]] = {
     "boolean": (lambda v: isinstance(v, bool), "a boolean"),
     "null": (lambda v: v is None, "null"),
 }
-# The keywords that check nothing, read and left.
+# The keywords that only describe a value, which a check passes over.
 NOTES = {"title", "description", "default", "$schema"}
-# Where a $ref may point within the schema, beside the schema itself.
-DEFINED = ("$defs", "definitions")
-# A key a place names as `.key`; any other is named as `["key"]`.
-PLAIN_KEY = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
-# How much of a value found a message shows.
+# The keywords of a form, besides the notes, as structured outputs accept them.
+FORM_KEYWORDS = {
+    "type",
+    "properties",
+    "required",
+    "additionalProperties",
+    "items",
+    "enum",
+    "const",
+    "anyOf",
+    "allOf",
+    "$ref",
+    "$defs",
+    "definitions",
+    "minItems",
+    "pattern",
+}
+# A $ref that a form may hold: to the whole schema, or to a schema under $defs or definitions.
+FORM_REF = re.compile(r"#(/(\$defs|definitions)/[^/]+)?")
+# A key that a place shows as `.key`. Any other key shows as `["key"]`.
+PLAIN_KEY = re.compile(r"[A-Za-z_$][A-Za-z0-9_$]*")
+# The most characters of a value that a message shows.
 SHOWN = 40
 
 
 class Unread(ValueError):
-    """A schema lane does not read whole: the place in it and what is wrong there."""
+    """A schema that Lane doesn't read as a form, with the place in it and what's wrong there."""
 
 
 class Out(NamedTuple):
-    """What a value is out by: the place in it, as `$` and its keys and indexes, what was expected
-    there and what was found."""
+    """The point at which a value is out of its schema."""
 
+    # The keys and indexes from the top of the value to the point.
     path: tuple[Any, ...]
+    # What the schema asks for there.
     expected: str
+    # What the value holds there, as JSON, cut short.
     found: str
 
     def told(self) -> str:
-        """The point as the subagent is told it."""
+        """The point in words, such as `$.lines[0]: expected a string, found 3`."""
         return f"{place(self.path)}: expected {self.expected}, found {self.found}"
 
 
+def checked(form: Any) -> None:
+    """Reads a schema as a form, whole, before Lane holds any value to it.
+
+    It raises Unread where the schema uses a keyword that structured outputs don't accept, or one in
+    a shape they don't accept, or a $ref that points outside the schema, to nothing, or back to
+    itself.
+    """
+    _check_node(form, form, (), ())
+
+
+def held(given: dict[str, Any], value: Any) -> Out | None:
+    """The point at which the value is out of the schema, or None where the value holds.
+
+    Where the value is out at several points, the point is the first one that a reader meets from
+    the top of the value. In anyOf, it's the point of the branch that holds the value deepest.
+    The schema is one that `checked` reads, or one of Lane's own.
+    """
+    return _out(given, given, value, ())
+
+
 def place(path: tuple[Any, ...]) -> str:
-    """The place as check-jsonschema names it: `$`, then `.key`, `["key"]` or `[index]`."""
-    named = ["$"]
+    """The path as a place, `$` followed by `.key`, `["key"]`, or `[index]` for each step."""
+    shown = "$"
     for step in path:
         if isinstance(step, int):
-            named.append(f"[{step}]")
+            shown += f"[{step}]"
         elif PLAIN_KEY.fullmatch(step):
-            named.append(f".{step}")
+            shown += f".{step}"
         else:
-            named.append(f"[{json.dumps(step)}]")
-    return "".join(named)
+            shown += f"[{json.dumps(step)}]"
+    return shown
 
 
 def shown(value: Any) -> str:
-    """The value as JSON, cut where it is long."""
+    """The value as JSON, cut short after the most characters that a message shows."""
     text = json.dumps(value, ensure_ascii=False)
-    return text if len(text) <= SHOWN else text[: SHOWN - 3] + "..."
+    return text if len(text) <= SHOWN else text[:SHOWN] + "..."
 
 
-def scalar(value: Any) -> bool:
-    """Whether the value is a string, a number, a boolean or null, as enum and const take."""
-    return value is None or isinstance(value, (str, int, float))
+def _check_node(node: Any, root: Any, at: tuple[Any, ...], refs: tuple[str, ...]) -> None:
+    """Reads the schema at the place, and follows each $ref in it. refs holds the $refs that the
+    reading has followed so far."""
+    if not isinstance(node, dict):
+        raise Unread(f"{place(at)}: expected a schema object, found {shown(node)}")
+    for key in node:
+        if key not in FORM_KEYWORDS and key not in NOTES:
+            raise Unread(f"{place(at)}: `{key}` is no keyword that Lane reads in a form")
+    for key, value in node.items():
+        if key in CHECKS:
+            CHECKS[key](value, root, at + (key,), refs)
 
 
-def same(a: Any, b: Any) -> bool:
-    """Whether two values enum or const compare are equal, as JSON has them: a boolean is no number,
-    and 1 is 1.0."""
-    return (a, isinstance(a, bool)) == (b, isinstance(b, bool))
+def _check_type(value: Any, root: Any, at: tuple[Any, ...], refs: tuple[str, ...]) -> None:
+    names = value if isinstance(value, list) else [value]
+    if not names or not all(isinstance(n, str) and n in TYPES for n in names):
+        raise Unread(f"{place(at)}: expected a basic type or a list of them, found {shown(value)}")
 
 
-def checked(schema: Any) -> None:
-    """Stops with Unread naming the place and what is wrong there, where the schema is not one lane
-    reads whole."""
-    node(schema, schema, "$", ())
-
-
-def node(schema: Any, root: Any, at: str, refs: tuple[str, ...]) -> None:
-    """Stops where the schema at the place, in the root it lies in, is not one lane reads, following
-    each $ref, refs being those followed to reach it."""
-    if not isinstance(schema, dict):
-        raise Unread(f"{at}: expected a schema object, found {shown(schema)}")
-    # Draft-07 leaves every keyword beside a $ref unread, so one there would check nothing; the
-    # definitions it points to are read through it.
-    if "$ref" in schema and set(schema) - NOTES - {"$ref", *DEFINED}:
-        raise Unread(f"{at}: expected $ref alone, as draft-07 reads no keyword beside it")
-    for key, value in schema.items():
-        if key not in KEYWORDS and key not in NOTES:
-            *each, last = KEYWORDS
-            raise Unread(
-                f"{at}: `{key}` is no keyword lane reads; it reads {', '.join(each)} and {last},"
-                " as Anthropic's structured outputs accept"
-            )
-        if key in KEYWORDS:
-            KEYWORDS[key][0](value, root, f"{at}.{key}", refs)
-
-
-def types_named(value: Any) -> list[str]:
-    """The types a type keyword names, one or a list."""
-    return value if isinstance(value, list) else [value]
-
-
-def type_read(value: Any, root: Any, at: str, refs: tuple[str, ...]) -> None:
-    named = types_named(value)
-    if not named or not all(isinstance(t, str) and t in TYPES for t in named):
-        raise Unread(f"{at}: expected one of {', '.join(TYPES)}, or a list of them")
-
-
-def schemas_read(value: Any, root: Any, at: str, refs: tuple[str, ...]) -> None:
+def _check_schemas(value: Any, root: Any, at: tuple[Any, ...], refs: tuple[str, ...]) -> None:
+    """Reads an object of schemas, as properties, $defs, and definitions hold."""
     if not isinstance(value, dict):
-        raise Unread(f"{at}: expected an object of schemas")
-    for key, each in value.items():
-        node(each, root, f"{at}.{key}", refs)
+        raise Unread(f"{place(at)}: expected an object of schemas, found {shown(value)}")
+    for key, node in value.items():
+        _check_node(node, root, at + (key,), refs)
 
 
-def list_read(value: Any, root: Any, at: str, refs: tuple[str, ...]) -> None:
-    if not isinstance(value, list) or not value:
-        raise Unread(f"{at}: expected a list of schemas")
-    for index, each in enumerate(value):
-        node(each, root, f"{at}[{index}]", refs)
-
-
-def all_of_read(value: Any, root: Any, at: str, refs: tuple[str, ...]) -> None:
-    list_read(value, root, at, refs)
-    for index, each in enumerate(value):
-        if "$ref" in each:
-            raise Unread(
-                f"{at}[{index}]: expected a schema without $ref, as structured outputs take none"
-                " in allOf"
-            )
-
-
-def required_read(value: Any, root: Any, at: str, refs: tuple[str, ...]) -> None:
+def _check_required(value: Any, root: Any, at: tuple[Any, ...], refs: tuple[str, ...]) -> None:
     if not isinstance(value, list) or not all(isinstance(k, str) for k in value):
-        raise Unread(f"{at}: expected a list of keys")
+        raise Unread(f"{place(at)}: expected a list of key names, found {shown(value)}")
 
 
-def additional_read(value: Any, root: Any, at: str, refs: tuple[str, ...]) -> None:
+def _check_additional(value: Any, root: Any, at: tuple[Any, ...], refs: tuple[str, ...]) -> None:
     if value is not False:
-        raise Unread(f"{at}: expected false, as structured outputs take no other")
+        raise Unread(f"{place(at)}: expected false, found {shown(value)}")
 
 
-def enum_read(value: Any, root: Any, at: str, refs: tuple[str, ...]) -> None:
-    if not isinstance(value, list) or not value or not all(map(scalar, value)):
-        raise Unread(f"{at}: expected a list of strings, numbers, booleans or nulls")
+def _check_items(value: Any, root: Any, at: tuple[Any, ...], refs: tuple[str, ...]) -> None:
+    _check_node(value, root, at, refs)
 
 
-def const_read(value: Any, root: Any, at: str, refs: tuple[str, ...]) -> None:
-    if not scalar(value):
-        raise Unread(f"{at}: expected a string, a number, a boolean or null")
+def _check_enum(value: Any, root: Any, at: tuple[Any, ...], refs: tuple[str, ...]) -> None:
+    if not isinstance(value, list) or any(isinstance(v, (dict, list)) for v in value):
+        raise Unread(
+            f"{place(at)}: expected a list of strings, numbers, booleans or nulls, found"
+            f" {shown(value)}"
+        )
 
 
-def min_items_read(value: Any, root: Any, at: str, refs: tuple[str, ...]) -> None:
-    if isinstance(value, bool) or value not in (0, 1):
-        raise Unread(f"{at}: expected 0 or 1, as structured outputs take no other")
+def _check_any_of(value: Any, root: Any, at: tuple[Any, ...], refs: tuple[str, ...]) -> None:
+    if not isinstance(value, list):
+        raise Unread(f"{place(at)}: expected a list of schemas, found {shown(value)}")
+    for index, node in enumerate(value):
+        _check_node(node, root, at + (index,), refs)
 
 
-def ref_read(value: Any, root: Any, at: str, refs: tuple[str, ...]) -> None:
-    target = resolved(value, root, at)
+def _check_all_of(value: Any, root: Any, at: tuple[Any, ...], refs: tuple[str, ...]) -> None:
+    if isinstance(value, list):
+        for index, node in enumerate(value):
+            if isinstance(node, dict) and "$ref" in node:
+                raise Unread(
+                    f"{place(at + (index,))}: expected a schema without $ref, as structured"
+                    " outputs take none in allOf"
+                )
+    _check_any_of(value, root, at, refs)
+
+
+def _check_ref(value: Any, root: Any, at: tuple[Any, ...], refs: tuple[str, ...]) -> None:
+    if not isinstance(value, str) or not FORM_REF.fullmatch(value):
+        raise Unread(
+            f"{place(at)}: expected #, #/$defs/<name> or #/definitions/<name>, found {shown(value)}"
+        )
     if value in refs:
-        raise Unread(f"{at}: {value} comes back to itself, as structured outputs take none")
-    node(target, root, value, (*refs, value))
+        raise Unread(
+            f"{place(at)}: {value} comes back to itself, and structured outputs take no recursive"
+            " schema"
+        )
+    target = tuple(value.split("/")[1:])
+    _check_node(_resolved(value, root, at), root, target, refs + (value,))
 
 
-def resolved(ref: Any, root: Any, at: str) -> Any:
-    """The schema a $ref points to within the root; stops where it points to none there."""
-    if not isinstance(ref, str) or not (ref == "#" or ref.startswith("#/")):
-        raise Unread(f"{at}: expected a reference within the schema, `#` or `#/...`")
-    target = root
-    for part in ref.split("/")[1:]:
-        key = part.replace("~1", "/").replace("~0", "~")
-        if not isinstance(target, dict) or key not in target:
-            raise Unread(f"{at}: {ref} points to nothing in the schema")
-        target = target[key]
-    return target
+def _check_min_items(value: Any, root: Any, at: tuple[Any, ...], refs: tuple[str, ...]) -> None:
+    if isinstance(value, bool) or value not in (0, 1):
+        raise Unread(f"{place(at)}: expected 0 or 1, found {shown(value)}")
 
 
-def held(schema: dict[str, Any], value: Any) -> Out | None:
-    """The point the value is out of the schema by, a schema `checked` has read whole; None where
-    it holds to it."""
-    return out(schema, schema, value, ())
+def _check_pattern(value: Any, root: Any, at: tuple[Any, ...], refs: tuple[str, ...]) -> None:
+    try:
+        re.compile(value)
+    except (re.error, TypeError):
+        raise Unread(f"{place(at)}: expected a regular expression, found {shown(value)}") from None
 
 
-def out(schema: dict[str, Any], root: Any, value: Any, path: tuple[Any, ...]) -> Out | None:
-    """The point the value at the path is out of the schema by, the root's $refs followed."""
-    for key, held_to in HELD.items():
-        if key in schema:
-            found = held_to(schema, root, value, path)
+# How `checked` reads each keyword that holds more than a constant.
+CHECKS: dict[str, Callable[[Any, Any, tuple[Any, ...], tuple[str, ...]], None]] = {
+    "type": _check_type,
+    "properties": _check_schemas,
+    "$defs": _check_schemas,
+    "definitions": _check_schemas,
+    "required": _check_required,
+    "additionalProperties": _check_additional,
+    "items": _check_items,
+    "enum": _check_enum,
+    "anyOf": _check_any_of,
+    "allOf": _check_all_of,
+    "$ref": _check_ref,
+    "minItems": _check_min_items,
+    "pattern": _check_pattern,
+}
+
+
+def _resolved(ref: str, root: Any, at: tuple[Any, ...]) -> Any:
+    """The schema that the $ref points to within the root.
+
+    It raises Unread where the $ref points to nothing in the root.
+    """
+    if ref == "#":
+        return root
+    _, folder, name = ref.split("/")
+    found = root.get(folder, {}) if isinstance(root, dict) else {}
+    if not isinstance(found, dict) or name not in found:
+        raise Unread(f"{place(at)}: {ref} points to nothing in the schema")
+    return found[name]
+
+
+def _same(a: Any, b: Any) -> bool:
+    """Whether two JSON values are equal, true and 1 being two values, as JSON has them."""
+    if isinstance(a, bool) or isinstance(b, bool):
+        return isinstance(a, bool) and isinstance(b, bool) and a == b
+    if isinstance(a, list) and isinstance(b, list):
+        return len(a) == len(b) and all(_same(x, y) for x, y in zip(a, b))
+    if isinstance(a, dict) and isinstance(b, dict):
+        return a.keys() == b.keys() and all(_same(a[k], b[k]) for k in a)
+    return a == b
+
+
+def _counted(count: int, noun: str) -> str:
+    return f"{count} {noun}" if count == 1 else f"{count} {noun}s"
+
+
+def _out(node: dict[str, Any], root: Any, value: Any, path: tuple[Any, ...]) -> Out | None:
+    """The point at which the value at the path is out of the schema node."""
+    for check in (_type_out, _value_out, _object_out, _array_out, _branches_out):
+        found = check(node, root, value, path)
+        if found:
+            return found
+    if "$ref" in node:
+        return _out(_resolved(node["$ref"], root, path), root, value, path)
+    return None
+
+
+def _type_out(node: dict[str, Any], root: Any, value: Any, path: tuple[Any, ...]) -> Out | None:
+    if "type" not in node:
+        return None
+    names = node["type"] if isinstance(node["type"], list) else [node["type"]]
+    if any(TYPES[n][0](value) for n in names):
+        return None
+    return Out(path, " or ".join(TYPES[n][1] for n in names), shown(value))
+
+
+def _value_out(node: dict[str, Any], root: Any, value: Any, path: tuple[Any, ...]) -> Out | None:
+    """The point at which the value is out of enum, const, minimum, minLength, or pattern."""
+    if "enum" in node and not any(_same(value, v) for v in node["enum"]):
+        return Out(path, "one of " + ", ".join(shown(v) for v in node["enum"]), shown(value))
+    if "const" in node and not _same(value, node["const"]):
+        return Out(path, shown(node["const"]), shown(value))
+    if "minimum" in node and TYPES["number"][0](value) and value < node["minimum"]:
+        return Out(path, f"at least {node['minimum']}", shown(value))
+    if isinstance(value, str):
+        if "minLength" in node and len(value) < node["minLength"]:
+            return Out(path, "at least " + _counted(node["minLength"], "character"), shown(value))
+        if "pattern" in node and not re.search(node["pattern"], value):
+            return Out(path, f"text matching {node['pattern']}", shown(value))
+    return None
+
+
+def _object_out(node: dict[str, Any], root: Any, value: Any, path: tuple[Any, ...]) -> Out | None:
+    if not isinstance(value, dict):
+        return None
+    for key in node.get("required", []):
+        if key not in value:
+            return Out(path, f"the key {shown(key)}", "an object without it")
+    properties = node.get("properties", {})
+    extra = node.get("additionalProperties", True)
+    for key, item in value.items():
+        if key in properties:
+            found = _out(properties[key], root, item, path + (key,))
+        elif extra is False:
+            found = Out(path + (key,), "no such key", shown(item))
+        elif isinstance(extra, dict):
+            found = _out(extra, root, item, path + (key,))
+        else:
+            found = None
+        if found:
+            return found
+    return None
+
+
+def _array_out(node: dict[str, Any], root: Any, value: Any, path: tuple[Any, ...]) -> Out | None:
+    if not isinstance(value, list):
+        return None
+    if len(value) < node.get("minItems", 0):
+        return Out(path, "at least " + _counted(node["minItems"], "item"), shown(value))
+    if "items" in node:
+        for index, item in enumerate(value):
+            found = _out(node["items"], root, item, path + (index,))
             if found:
                 return found
     return None
 
 
-def ref_out(schema: dict[str, Any], root: Any, value: Any, path: tuple[Any, ...]) -> Out | None:
-    return out(resolved(schema["$ref"], root, ""), root, value, path)
-
-
-def type_out(schema: dict[str, Any], root: Any, value: Any, path: tuple[Any, ...]) -> Out | None:
-    named = types_named(schema["type"])
-    if any(TYPES[t][0](value) for t in named):
-        return None
-    return Out(path, " or ".join(TYPES[t][1] for t in named), shown(value))
-
-
-def enum_out(schema: dict[str, Any], root: Any, value: Any, path: tuple[Any, ...]) -> Out | None:
-    allowed = schema["enum"]
-    if any(same(value, a) for a in allowed):
-        return None
-    return Out(path, "one of " + ", ".join(map(shown, allowed)), shown(value))
-
-
-def const_out(schema: dict[str, Any], root: Any, value: Any, path: tuple[Any, ...]) -> Out | None:
-    return None if same(value, schema["const"]) else Out(path, shown(schema["const"]), shown(value))
-
-
-def required_out(
-    schema: dict[str, Any], root: Any, value: Any, path: tuple[Any, ...]
-) -> Out | None:
-    missing = [k for k in schema["required"] if isinstance(value, dict) and k not in value]
-    if not missing:
-        return None
-    return Out(path, f"the key {shown(missing[0])}", "an object without it")
-
-
-def additional_out(
-    schema: dict[str, Any], root: Any, value: Any, path: tuple[Any, ...]
-) -> Out | None:
-    known = schema.get("properties", {})
-    extra = [k for k in value if k not in known] if isinstance(value, dict) else []
-    each = schema["additionalProperties"]
-    if isinstance(each, dict):
-        found = (out(each, root, value[k], (*path, k)) for k in extra)
-        return next(filter(None, found), None)
-    # Beside a schema, additionalProperties is true or false, as `checked` or lane's own give it.
-    if each or not extra:
-        return None
-    keys = ", ".join(map(shown, known)) or "none"
-    return Out(path, f"only the keys {keys}", f"the key {shown(extra[0])}")
-
-
-def properties_out(
-    schema: dict[str, Any], root: Any, value: Any, path: tuple[Any, ...]
-) -> Out | None:
-    if not isinstance(value, dict):
-        return None
-    for key, each in schema["properties"].items():
-        found = out(each, root, value[key], (*path, key)) if key in value else None
+def _branches_out(node: dict[str, Any], root: Any, value: Any, path: tuple[Any, ...]) -> Out | None:
+    for branch in node.get("allOf", []):
+        found = _out(branch, root, value, path)
         if found:
             return found
-    return None
-
-
-def items_out(schema: dict[str, Any], root: Any, value: Any, path: tuple[Any, ...]) -> Out | None:
-    for index, each in enumerate(value if isinstance(value, list) else []):
-        found = out(schema["items"], root, each, (*path, index))
-        if found:
-            return found
-    return None
-
-
-def min_items_out(
-    schema: dict[str, Any], root: Any, value: Any, path: tuple[Any, ...]
-) -> Out | None:
-    least = schema["minItems"]
-    if isinstance(value, list) and len(value) < least:
-        # A list is shorter than least only where least is 1 or more.
-        plural = least > 1  # pragma: no mutate
-        return Out(path, f"at least {least} item{'s' * plural}", str(len(value) or "none"))
-    return None
-
-
-def minimum_out(schema: dict[str, Any], root: Any, value: Any, path: tuple[Any, ...]) -> Out | None:
-    least = schema["minimum"]
-    if TYPES["number"][0](value) and value < least:
-        return Out(path, f"a number of at least {shown(least)}", shown(value))
-    return None
-
-
-def min_length_out(
-    schema: dict[str, Any], root: Any, value: Any, path: tuple[Any, ...]
-) -> Out | None:
-    least = schema["minLength"]
-    if isinstance(value, str) and len(value) < least:
-        return Out(path, f"a string of length {least} or more", shown(value))
-    return None
-
-
-def pattern_out(schema: dict[str, Any], root: Any, value: Any, path: tuple[Any, ...]) -> Out | None:
-    # A pattern is searched for anywhere in the string, as JSON Schema has it, its anchors
-    # holding it to the whole.
-    asked = schema["pattern"]
-    if isinstance(value, str) and not re.search(asked, value):
-        return Out(path, f"a string matching {asked}", shown(value))
-    return None
-
-
-def all_of_out(schema: dict[str, Any], root: Any, value: Any, path: tuple[Any, ...]) -> Out | None:
-    for each in schema["allOf"]:
-        found = out(each, root, value, path)
-        if found:
-            return found
-    return None
-
-
-def any_of_out(schema: dict[str, Any], root: Any, value: Any, path: tuple[Any, ...]) -> Out | None:
-    """None where the value holds to a choice; otherwise the point of the choice it went deepest
-    in, the first of those, as jsonschema's best match takes; or, where it went into none, that it
-    holds to none."""
-    found = [out(each, root, value, path) for each in schema["anyOf"]]
-    if None in found:
+    if "anyOf" not in node:
         return None
-    deeper = [f for f in found if f and f.path[len(path) :]]
-    if deeper:
-        return max(deeper, key=lambda f: len(f.path))
-    return Out(path, "a value of one of its anyOf choices", shown(value))
-
-
-# Each keyword lane reads, in the order a value is held to them, so the point highest in the value
-# is found first: how it is read in a schema, `<keyword>_read(value, root, at, refs)`, which stops
-# with Unread naming the place where the keyword's value is not one lane reads, and the point a
-# value is out by under it, `<keyword>_out(schema, root, value, path)`, None where it holds.
-KEYWORDS: dict[str, tuple[Callable[..., None], Callable[..., Out | None]]] = {
-    "$ref": (ref_read, ref_out),
-    "type": (type_read, type_out),
-    "enum": (enum_read, enum_out),
-    "const": (const_read, const_out),
-    "required": (required_read, required_out),
-    "additionalProperties": (additional_read, additional_out),
-    "minItems": (min_items_read, min_items_out),
-    "properties": (schemas_read, properties_out),
-    "items": (node, items_out),
-    "allOf": (all_of_read, all_of_out),
-    "anyOf": (list_read, any_of_out),
-    "$defs": (schemas_read, lambda *_: None),
-    "definitions": (schemas_read, lambda *_: None),
-}
-# The keywords lane's own schemas may use beside those, which structured outputs do not accept, so
-# `checked` refuses them in a plugin's form; each with the point a value is out by under it.
-OWN: dict[str, Callable[..., Out | None]] = {
-    "minimum": minimum_out,
-    "minLength": min_length_out,
-    "pattern": pattern_out,
-}
-# Each keyword a value is held to, in order, lane's own last, as each holds a number or a string,
-# with no place inside it.
-HELD = {**{k: v[1] for k, v in KEYWORDS.items()}, **OWN}
+    outs = []
+    for branch in node["anyOf"]:
+        found = _out(branch, root, value, path)
+        if not found:
+            return None
+        outs.append(found)
+    return max(outs, key=lambda o: len(o.path))
