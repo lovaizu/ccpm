@@ -5,7 +5,8 @@
   "architecture"
  ],
  "preconditions": [
-  "meta"
+  "meta",
+  "code"
  ],
  "intents": [
   {
@@ -130,8 +131,8 @@
   },
   {
    "id": "Q25",
-   "about": "README.md",
-   "what": "Coming to the plugin, does its user find a README made for them, so that they learn from it what they achieve with the plugin and how?"
+   "about": ".claude-plugin, README.md",
+   "what": "Coming to the plugin, does a would-be user find in the manifest's description what they achieve with it, and its user a README made for them, so that they choose to install it knowing what it gives, and learn from the README what they achieve with it and how?"
   },
   {
    "id": "Q26",
@@ -147,7 +148,7 @@
  "practices": [
   {
    "intent": "Q1",
-   "thinking": "Skills, agents, hooks, and scripts take the form Claude Code fixes, each named as its caller calls it, such as the command a person types, and hand the job to the file in `domain/` that does it. `domain/` holds the knowledge of the work in one folder, with no folders split by role, and names no tool of an agent, such as the Agent tool or `AskUserQuestion`: only the entries name them. What only the developers need, such as the tests and the architecture, lies outside the plugin's folder, as installing copies only that folder. A developer then finds a job where the structure puts it, two entries to one job don't drift apart, and what the plugin knows outlives the agent it runs on, as [hexagonal architecture](https://alistair.cockburn.us/hexagonal-architecture/) says.",
+   "thinking": "Skills, agents, hooks, and scripts take the form Claude Code fixes, each named as its caller calls it, such as the command a person types, and hand the job to the file in `domain/` that does it. `domain/` holds the knowledge of the work in one folder, with no folders split by role, and names no tool of an agent, such as the Agent tool or `AskUserQuestion`: only the entries name them. What only the developers need, such as the tests and the architecture, lies outside the plugin's folder, as installing copies only that folder. A developer then finds a job where the structure puts it, two entries to one job don't drift apart, and what the plugin knows outlives the agent it runs on, as [hexagonal architecture](https://alistair.cockburn.us/hexagonal-architecture/) says. The code in `domain/` and `scripts/` passes by the [code best practice](../code/best-practice.md) before the plugin does, as the plugin rests on it. In a plan, the plugin's deliverable names in its preconditions each part it rests on: its code, its prompts, such as the agents, and each plugin it takes a part from, such as Lane for its guard, so the plugin starts only once each part it rests on has passed.",
    "steps": [
     {
      "text": "Grep `domain/` for the name of each tool of an agent, and move each line it finds to the entry that uses the tool."
@@ -237,10 +238,10 @@
   },
   {
    "intent": "Q9",
-   "thinking": "The plugin's hooks are its guard, laid by [Lane](../../../../lane/README.md) from the plugin's proposal as lanes and routes. Where a role's steps are the practices of its best practice, the proposal names a steps adapter that gives Lane those practices' steps with their traces, as the template's `.lane/` shows. A lane holds each practice step whose drift shows in a tool call or in how a role ends: its hook stops what would break the step and gives the role the step again. Branch protection or permission rules hold what's hard to undo. A hook runs every time, while an instruction is only advice. Hooks fire on the main conversation's calls with no `agent_type`, and on a role's with the role's, as [hooks](https://code.claude.com/docs/en/hooks) says, so one `hooks/hooks.json` holds both. A plugin's agent ignores `hooks`, `mcpServers`, and `permissionMode` in its own frontmatter, as [plugin agents](https://code.claude.com/docs/en/plugins/components#frontmatter-fields-in-plugin-agents) says, and a `SubagentStop` hook in a skill's frontmatter didn't fire in a trial on Claude Code 2.1.318, so the plugin keeps its hooks in `hooks/hooks.json`.",
+   "thinking": "The plugin's hooks are its guard, laid by [Lane](../../../../lane/README.md) from the plugin's proposal as lanes and routes. Where a role's steps are the practices of its best practice, the proposal names a steps adapter that gives Lane those practices' steps with their traces, and lays no lane on a step of the role's part, as the part holds no numbered step. Lane lays the lanes of each step that the adapter gives from the step's trace, and gives the role each lane's sentence with its part as it starts, as [Lane's architecture](../../../../../dev/lane/architecture.md#one-wording-for-the-step-and-the-check) says and the template's `.lane/` shows. The proposal lays lanes on numbered steps only for a part that holds its own. A lane holds each practice step whose drift shows in a tool call or in how a role ends: its hook stops what would break the step and gives the role the step again. Branch protection or permission rules hold what's hard to undo. A hook runs every time, while an instruction is only advice. Hooks fire on the main conversation's calls with no `agent_type`, and on a role's with the role's, as [hooks](https://code.claude.com/docs/en/hooks) says, so one `hooks/hooks.json` holds both. A plugin's agent ignores `hooks`, `mcpServers`, and `permissionMode` in its own frontmatter, as [plugin agents](https://code.claude.com/docs/en/plugins/components#frontmatter-fields-in-plugin-agents) says, and a `SubagentStop` hook in a skill's frontmatter didn't fire in a trial on Claude Code 2.1.318, so the plugin keeps its hooks in `hooks/hooks.json`.",
    "steps": [
     {
-     "text": "Name in each step of the best practices that the roles use a trace that a machine can check, such as a command run, a file read, or a test made, and lay a lane on it in the proposal.",
+     "text": "Name in each step of the best practices that the roles use a trace that a machine can check, such as a command run, a file read, or a test made. Then name in the proposal the steps adapter that gives Lane those steps, and lay a lane only on a numbered step of a part.",
      "trace": {
       "action": "write",
       "takes": [
@@ -297,7 +298,7 @@
   },
   {
    "intent": "Q15",
-   "thinking": "Where another plugin already does a job, the plugin names it in `dependencies` of its `plugin.json`. Where one role of the other does the job, a route names the role as `<dependency>:<role>`, and the main conversation starts it as one of its own and puts its points to the person, while the other's guard holds its calls. Where the job is the other's whole run, a route names its skill as `<dependency>:<skill>`, and the main conversation calls the skill as one move, which ends once the other gives its result. Meanwhile the other's guard holds the conversation, and the plugin's own checks nothing, as two guards on one conversation would stop each other's moves.",
+   "thinking": "Where another plugin already does a job, the plugin names it in `dependencies` of its `plugin.json`, and the plugin's deliverable names it in its preconditions, as Q1 says. Where one role of the other does the job, a route names the role as `<dependency>:<role>`, and the main conversation starts it as one of its own and puts its points to the person, while the other's guard holds its calls. Where the job is the other's whole run, a route names its skill as `<dependency>:<skill>`, and the main conversation calls the skill as one move, which ends once the other gives its result. Meanwhile the other's guard holds the conversation, and the plugin's own checks nothing, as two guards on one conversation would stop each other's moves.",
    "steps": [
     {
      "text": "Name the dependency in `plugin.json`, and run `lay.py print` on routes that name it."
@@ -398,8 +399,12 @@
   },
   {
    "intent": "Q25",
-   "thinking": "`README.md` is a deliverable of its own, of the kind [readme](../readme/best-practice.md), made from the plugin's product vision before the plugin's architecture. The plugin keeps it in its folder, so the README reaches each user with the plugin.",
-   "steps": []
+   "thinking": "A would-be user reads the manifest's `description` in the listings of `/plugin` before they install, and decides by it whether the plugin is for them, as [display fields](https://code.claude.com/docs/en/plugins/marketplace-reference#display-fields) says. So it says in one sentence what a user achieves with the plugin, in the words of its product vision's users, as a value proposition does, and not what the plugin holds or how it works. A would-be user who reads only what the plugin holds can't tell whether it gets them what they're after. A marketplace entry's `description` wins over the manifest's, and Claude Code reads the manifest before install only where the entry's source is a relative path, so the description lies in one place: in the manifest where the source is a relative path, and in the entry otherwise. `README.md` is a deliverable of its own, of the kind [readme](../readme/best-practice.md), made from the plugin's product vision before the plugin's architecture. The plugin keeps it in its folder, so the README reaches each user with the plugin.",
+   "steps": [
+    {
+     "text": "Write the description from the opening of the plugin's product vision, and leave `description` out of the plugin's marketplace entry where its source is a relative path, so the two never differ."
+    }
+   ]
   },
   {
    "intent": "Q26",

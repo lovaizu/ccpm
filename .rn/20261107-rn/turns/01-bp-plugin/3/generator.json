@@ -1,0 +1,68 @@
+{
+ "met": [
+  {
+   "question": "Q1",
+   "lines": [
+    "plugin/best-practice.md:5 keeps the one end, that the plugin's users achieve what they're after. The new parts each serve a run that reaches those users: the description that a would-be user reads before install at plugin/best-practice.md:349, and the role whose steps come only through its adapter at plugin/best-practice.md:158."
+   ]
+  },
+  {
+   "question": "Q2",
+   "lines": [
+    "plugin/template/README.md:8-20 gives the order to write the files in.",
+    "plugin/template/.lane/yyyymmdd-plugin/plugin.json:2 says what each field of the proposal holds, and that steps stays empty for a role whose steps come only through its steps adapter, as for the sample role at plugin/template/.lane/yyyymmdd-plugin/plugin.json:8.",
+    "plugin/template/.claude-plugin/plugin.json:2 says that the description is one sentence in the words of the product vision's users, as /plugin shows it before install, and where it lies alone."
+   ]
+  },
+  {
+   "question": "Q3",
+   "lines": [
+    "plugin/template/.claude-plugin/plugin.json:4 holds the description that a would-be user needs to choose the plugin, now asked by plugin/best-practice.md:48.",
+    "plugin/template/.lane/yyyymmdd-plugin/plugin.json:5-9 holds only the steps adapter for the sample role, with no lane on a step its part doesn't hold, so the developer reads nothing that Lane would refuse."
+   ]
+  },
+  {
+   "question": "Q5",
+   "lines": [
+    "plugin/best-practice.md:48 asks, at the moment a would-be user comes to the plugin, for what they achieve with it, so that they choose to install it knowing what it gives.",
+    "plugin/best-practice.md:24-50 keep each question as the moment, what the role needs, and a so-that clause."
+   ]
+  },
+  {
+   "question": "Q6",
+   "lines": [
+    "plugin/best-practice.md:48 now asks about the manifest's description in plugin/template/.claude-plugin/plugin.json:4, the one section that no question asked in round 2.",
+    "plugin/best-practice.md:24-50 give each other section, the dependencies among them, and the whole a question, as round 2 found."
+   ]
+  },
+  {
+   "question": "Q7",
+   "lines": [
+    "plugin/best-practice.md:349 says what a would-be user is after, why the description says what they achieve and not what the plugin holds, names the established way, a value proposition, and the source, the display fields of the marketplace reference.",
+    "plugin/best-practice.md:158 says why a role whose steps come only through its adapter carries no lane on its part's steps, and names Lane's architecture as the source.",
+    "plugin/best-practice.md:60 says why the plugin's deliverable waits on its code, its prompts, and each plugin it takes a part from."
+   ]
+  },
+  {
+   "question": "Q8",
+   "lines": [
+    "plugin/best-practice.md:343-353 gives Q25 a practice for both its parts, the description and the README, with one step.",
+    "plugin/best-practice.md:54-371 give each of Q1 to Q27 a practice, in the order of plugin/best-practice.md:24-50."
+   ]
+  }
+ ],
+ "not_met": [
+  {
+   "question": "Q4",
+   "lacks": "plugin/best-practice.md:60 has the plugin's deliverable name in its preconditions its prompts and each plugin it takes a part from, such as Lane, but plugin/best-practice.md:15-18 names only meta and code as the kinds that must pass first. plan/design-tree.schema.json:124 lets a deliverable name only a deliverable 'of a kind that its best practice names in preconditions', so whoever plans a plugin finds no kind under which a prompt or Lane's plugin may hold the plugin back. Only a changed decision meets this. Decision D4Q4-1, 'The plugin best practice takes meta and code as preconditions', would also need prompt and plugin."
+  },
+  {
+   "question": "Q9",
+   "lacks": "The best practice names no example. It waits on Lane's plugin deliverable, as decision D4Q9-1 says: 'The plugin best practice's example is Lane's plugin, named once Lane's plugin deliverable ends'."
+  },
+  {
+   "question": "Q10",
+   "lacks": "A developer who follows the template's proposal at plugin/template/.lane/yyyymmdd-plugin/plugin.json:5-9, as Lane's architecture lays it, still meets a refusal from today's lay.py print, which stops on a role whose file has no step, at plugins/lane/hooks/lane/domain/proposal.py:184-185. This waits on Lane's code deliverable, plugins/lane/hooks/lane/domain, whose Q4 decision has lay.py print take such a role. With no example yet, as Q9 finds, the developer has no finished plugin that shows the working shape either."
+  }
+ ]
+}

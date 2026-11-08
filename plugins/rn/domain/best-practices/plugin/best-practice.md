@@ -15,6 +15,7 @@ The developer builds a Claude Code plugin whose roles work together to make some
 ## Preconditions
 
 - [meta](../meta/best-practice.md)
+- [code](../code/best-practice.md)
 
 ## Intents
 
@@ -44,7 +45,7 @@ The developer builds a Claude Code plugin whose roles work together to make some
 | Q22 | skills, agents, hooks | Testing the plugin at each level that its architecture names, does the developer know what of Claude Code to run real and what to stand in for, so that the developer learns of a broken path before a push reaches users, and the trials meet what users meet? |
 | Q23 | .claude-plugin | Installing the plugin, does each user get a manifest that Claude Code reads, so that the install never fails on its form? |
 | Q24 | .claude-plugin, CHANGELOG.md | Deciding whether to update, does a user find what changed for them in a version they get, so that they update knowing what it gives? |
-| Q25 | README.md | Coming to the plugin, does its user find a README made for them, so that they learn from it what they achieve with the plugin and how? |
+| Q25 | .claude-plugin, README.md | Coming to the plugin, does a would-be user find in the manifest's description what they achieve with it, and its user a README made for them, so that they choose to install it knowing what it gives, and learn from the README what they achieve with it and how? |
 | Q26 | skills, agents | Asking for the work in their own words, does a person reach the plugin's skill, and does each of its agents start only from that skill, so that the person gets a run of the plugin without knowing its command, and no role runs outside the run that its routes hold? |
 | Q27 | the whole | Using a plugin built by this best practice, do its users achieve what they're after? |
 
@@ -56,7 +57,7 @@ Placing a file of the plugin, does the developer see which part takes the form C
 
 **Thinking**
 
-Skills, agents, hooks, and scripts take the form Claude Code fixes, each named as its caller calls it, such as the command a person types, and hand the job to the file in `domain/` that does it. `domain/` holds the knowledge of the work in one folder, with no folders split by role, and names no tool of an agent, such as the Agent tool or `AskUserQuestion`: only the entries name them. What only the developers need, such as the tests and the architecture, lies outside the plugin's folder, as installing copies only that folder. A developer then finds a job where the structure puts it, two entries to one job don't drift apart, and what the plugin knows outlives the agent it runs on, as [hexagonal architecture](https://alistair.cockburn.us/hexagonal-architecture/) says.
+Skills, agents, hooks, and scripts take the form Claude Code fixes, each named as its caller calls it, such as the command a person types, and hand the job to the file in `domain/` that does it. `domain/` holds the knowledge of the work in one folder, with no folders split by role, and names no tool of an agent, such as the Agent tool or `AskUserQuestion`: only the entries name them. What only the developers need, such as the tests and the architecture, lies outside the plugin's folder, as installing copies only that folder. A developer then finds a job where the structure puts it, two entries to one job don't drift apart, and what the plugin knows outlives the agent it runs on, as [hexagonal architecture](https://alistair.cockburn.us/hexagonal-architecture/) says. The code in `domain/` and `scripts/` passes by the [code best practice](../code/best-practice.md) before the plugin does, as the plugin rests on it. In a plan, the plugin's deliverable names in its preconditions each part it rests on: its code, its prompts, such as the agents, and each plugin it takes a part from, such as Lane for its guard, so the plugin starts only once each part it rests on has passed.
 
 **Steps**
 
@@ -154,11 +155,11 @@ Where an instruction alone doesn't hold a step, does the developer have a hook s
 
 **Thinking**
 
-The plugin's hooks are its guard, laid by [Lane](../../../../lane/README.md) from the plugin's proposal as lanes and routes. Where a role's steps are the practices of its best practice, the proposal names a steps adapter that gives Lane those practices' steps with their traces, as the template's `.lane/` shows. A lane holds each practice step whose drift shows in a tool call or in how a role ends: its hook stops what would break the step and gives the role the step again. Branch protection or permission rules hold what's hard to undo. A hook runs every time, while an instruction is only advice. Hooks fire on the main conversation's calls with no `agent_type`, and on a role's with the role's, as [hooks](https://code.claude.com/docs/en/hooks) says, so one `hooks/hooks.json` holds both. A plugin's agent ignores `hooks`, `mcpServers`, and `permissionMode` in its own frontmatter, as [plugin agents](https://code.claude.com/docs/en/plugins/components#frontmatter-fields-in-plugin-agents) says, and a `SubagentStop` hook in a skill's frontmatter didn't fire in a trial on Claude Code 2.1.318, so the plugin keeps its hooks in `hooks/hooks.json`.
+The plugin's hooks are its guard, laid by [Lane](../../../../lane/README.md) from the plugin's proposal as lanes and routes. Where a role's steps are the practices of its best practice, the proposal names a steps adapter that gives Lane those practices' steps with their traces, and lays no lane on a step of the role's part, as the part holds no numbered step. Lane lays the lanes of each step that the adapter gives from the step's trace, and gives the role each lane's sentence with its part as it starts, as [Lane's architecture](../../../../../dev/lane/architecture.md#one-wording-for-the-step-and-the-check) says and the template's `.lane/` shows. The proposal lays lanes on numbered steps only for a part that holds its own. A lane holds each practice step whose drift shows in a tool call or in how a role ends: its hook stops what would break the step and gives the role the step again. Branch protection or permission rules hold what's hard to undo. A hook runs every time, while an instruction is only advice. Hooks fire on the main conversation's calls with no `agent_type`, and on a role's with the role's, as [hooks](https://code.claude.com/docs/en/hooks) says, so one `hooks/hooks.json` holds both. A plugin's agent ignores `hooks`, `mcpServers`, and `permissionMode` in its own frontmatter, as [plugin agents](https://code.claude.com/docs/en/plugins/components#frontmatter-fields-in-plugin-agents) says, and a `SubagentStop` hook in a skill's frontmatter didn't fire in a trial on Claude Code 2.1.318, so the plugin keeps its hooks in `hooks/hooks.json`.
 
 **Steps**
 
-1. Name in each step of the best practices that the roles use a trace that a machine can check, such as a command run, a file read, or a test made, and lay a lane on it in the proposal. The trace: `{proposal}` made.
+1. Name in each step of the best practices that the roles use a trace that a machine can check, such as a command run, a file read, or a test made. Then name in the proposal the steps adapter that gives Lane those steps, and lay a lane only on a numbered step of a part. The trace: `{proposal}` made.
 
 ### Q10
 
@@ -226,7 +227,7 @@ Having another plugin do a job, does the developer take the part of it that does
 
 **Thinking**
 
-Where another plugin already does a job, the plugin names it in `dependencies` of its `plugin.json`. Where one role of the other does the job, a route names the role as `<dependency>:<role>`, and the main conversation starts it as one of its own and puts its points to the person, while the other's guard holds its calls. Where the job is the other's whole run, a route names its skill as `<dependency>:<skill>`, and the main conversation calls the skill as one move, which ends once the other gives its result. Meanwhile the other's guard holds the conversation, and the plugin's own checks nothing, as two guards on one conversation would stop each other's moves.
+Where another plugin already does a job, the plugin names it in `dependencies` of its `plugin.json`, and the plugin's deliverable names it in its preconditions, as Q1 says. Where one role of the other does the job, a route names the role as `<dependency>:<role>`, and the main conversation starts it as one of its own and puts its points to the person, while the other's guard holds its calls. Where the job is the other's whole run, a route names its skill as `<dependency>:<skill>`, and the main conversation calls the skill as one move, which ends once the other gives its result. Meanwhile the other's guard holds the conversation, and the plugin's own checks nothing, as two guards on one conversation would stop each other's moves.
 
 **Steps**
 
@@ -341,11 +342,15 @@ A plugin gets a release only when whoever decides what reaches users says so. `p
 
 ### Q25
 
-Coming to the plugin, does its user find a README made for them, so that they learn from it what they achieve with the plugin and how?
+Coming to the plugin, does a would-be user find in the manifest's description what they achieve with it, and its user a README made for them, so that they choose to install it knowing what it gives, and learn from the README what they achieve with it and how?
 
 **Thinking**
 
-`README.md` is a deliverable of its own, of the kind [readme](../readme/best-practice.md), made from the plugin's product vision before the plugin's architecture. The plugin keeps it in its folder, so the README reaches each user with the plugin.
+A would-be user reads the manifest's `description` in the listings of `/plugin` before they install, and decides by it whether the plugin is for them, as [display fields](https://code.claude.com/docs/en/plugins/marketplace-reference#display-fields) says. So it says in one sentence what a user achieves with the plugin, in the words of its product vision's users, as a value proposition does, and not what the plugin holds or how it works. A would-be user who reads only what the plugin holds can't tell whether it gets them what they're after. A marketplace entry's `description` wins over the manifest's, and Claude Code reads the manifest before install only where the entry's source is a relative path, so the description lies in one place: in the manifest where the source is a relative path, and in the entry otherwise. `README.md` is a deliverable of its own, of the kind [readme](../readme/best-practice.md), made from the plugin's product vision before the plugin's architecture. The plugin keeps it in its folder, so the README reaches each user with the plugin.
+
+**Steps**
+
+1. Write the description from the opening of the plugin's product vision, and leave `description` out of the plugin's marketplace entry where its source is a relative path, so the two never differ.
 
 ### Q26
 
