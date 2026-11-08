@@ -908,6 +908,8 @@ dev/rn/
 ├── README.md                        for rn's developers
 ├── cosmic-ray.toml                  the mutation testing
 └── tests/
+    ├── properties*.py               the property-based tests of tree.py, throwaway.py, and the
+    │                                adapters, where dev/scripts/properties.sh finds them
     ├── unit/                        unit tests, at the path of what each tests
     ├── architecture/                a test for each path of each sequence
     └── product-vision/              the trials of O1, and the repository tidy that they work in
@@ -975,7 +977,9 @@ Cosmic Ray and Hypothesis in the figure run the mutation testing and the propert
 [the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#q12)
 asks for, on `tree.py`, `throwaway.py`, and the adapters alike. They're the tools that
 [the repository's development setup](../README.md#the-property-based-tests-and-the-mutation-testing)
-gives every plugin, not a choice of rn's.
+gives every plugin, not a choice of rn's. So is where the property-based tests lie, which
+`dev/scripts/properties.sh` sets for every plugin, as [Directory structure](#directory-structure)
+shows.
 
 - **The tests written with unittest** over pytest's own form: unittest is part of Python's
   standard library, so the tests run on Python 3.9 with nothing installed, as rn's code does, and
