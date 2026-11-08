@@ -53,7 +53,7 @@ def answer(name: str, root: str, project: str | None, event: Event) -> Answer:
     if event.agent_type is None:
         return conversation.answer(name, root, event)
     if not event.agent_type.startswith(name + ":"):
-        return Answer()
+        return _dependency(name, root, event)
     role = event.agent_type[len(name) + 1 :]
     try:
         held = _held(name, root, project, role, event.session)
@@ -175,7 +175,7 @@ def _call(held: _Held, event: Event) -> Answer:
             f"whoever runs {held.plugin} must run it in a Claude Code that gives each hook"
             " CLAUDE_PROJECT_DIR",
         )
-    if _starts_one(held, event):
+    if _starts_one(held.plugin, held.laid, event):
         return Answer(deny=f"{held.plugin}: {NO_START}")
     run = event.tool_input.get("command") if event.tool == "Bash" else None
     if isinstance(run, str) and _result_of(held, run) is not None:
@@ -374,12 +374,55 @@ def _items(held: _Held, adapter: str, values: dict[str, Any]) -> Any:
     return read
 
 
-def _starts_one(held: _Held, event: Event) -> bool:
+def _dependency(name: str, root: str, event: Event) -> Answer:
+    """The answer to an event of a dependency's role that the routes name. Its start of a role of
+    the plugin stops, the guard keeps its result by the dependency's result script, and it goes on
+    once where it would end with no result. The dependency's own guard holds its other calls."""
+    try:
+        found = laid.read(root)
+    except laid.Unlaid:
+        return Answer()
+    role = event.agent_type or ""
+    if found.routes is None or role not in routes.named(found.routes):
+        return Answer()
+    record = called.record(event.session, name)
+    written = _dependency_results(found, role)
+    if event.name == "PreToolUse" and _starts_one(name, found, event):
+        return Answer(deny=f"{name}: {NO_START}")
+    run = event.tool_input.get("command") if event.tool == "Bash" else None
+    if event.name == "PostToolUse" and isinstance(run, str):
+        for result, written_command in written.items():
+            if command.matches(run, written_command):
+                record.add(
+                    {"kind": "result", "agent": event.agent_id, "role": role, "result": result}
+                )
+    if event.name != "SubagentStop":
+        return Answer()
+    if not _gave(record.entries(), event.agent_id) and not event.stop_active:
+        dependency = role.split(":")[0]
+        return Answer(
+            block=f"{name}: {lanes.sentence('end_by', list(written.values()))}\n"
+            f"`${{dependency:{dependency}}}` stands for the folder that holds the plugin"
+            f" {dependency}."
+        )
+    record.add({"kind": "ended", "agent": event.agent_id})
+    return Answer()
+
+
+def _dependency_results(found: laid.Laid, role: str) -> dict[str, str]:
+    """The command by which the dependency's role or skill gives each result of a route from it, by
+    the result. Each runs the result script of the dependency, in the dependency's folder."""
+    dependency, _, short = role.partition(":")
+    given = routes.results(found.routes, role) if found.routes is not None else None
+    script = f"python3 ${{dependency:{dependency}}}/hooks/lane/result.py {short}"
+    return {r: f"{script} {r}" for r in given or []}
+
+
+def _starts_one(name: str, found: laid.Laid, event: Event) -> bool:
     """Whether the call starts a role of the plugin that the guard holds, or a role or a skill of
     a dependency that the routes name."""
-    named = routes.named(held.laid.routes) if held.laid.routes is not None else []
-    names = [r.name for r in held.laid.roles] + named
-    started = {routes.typed(held.plugin, n) for n in names}
+    named = routes.named(found.routes) if found.routes is not None else []
+    started = {routes.typed(name, n) for n in [r.name for r in found.roles] + named}
     if event.tool == "Agent":
         return event.tool_input.get("subagent_type") in started
     return event.tool == "Skill" and event.tool_input.get("skill") in started

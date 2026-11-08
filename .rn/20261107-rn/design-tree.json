@@ -212,6 +212,11 @@
               "by": "reasoning"
             },
             {
+              "about": "A dependency's move",
+              "decided": "a start due of `<dependency>:<name>` goes through as an Agent call or a Skill call alike, as the routes don't say which the name is, and a Skill call's move runs until the main conversation runs the dependency's result script",
+              "by": "reasoning"
+            },
+            {
               "about": "Fields that the reference leaves out",
               "decided": "SendMessage gives `to` and `message`, and Bash gives back `stdout`, as the old Lane's tries of Claude Code recorded them",
               "by": "research"

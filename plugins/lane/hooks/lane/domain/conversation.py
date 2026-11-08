@@ -250,8 +250,9 @@ def _move(context: _Context, current: called.Run) -> exchange.Answer:
     event = context.event
     due = routes.due(context.routes, current.groups)
     follow = context.line(lanes.sentence("follow_routes", []))
-    if event.tool == "Agent":
-        role = _held_type(context, event.tool_input.get("subagent_type"))
+    if event.tool in ("Agent", "Skill"):
+        key = "subagent_type" if event.tool == "Agent" else "skill"
+        role = _held_type(context, event.tool_input.get(key))
         if role is None:
             return exchange.Answer()
         refused = _start_refused(context, current, due, role)
@@ -331,19 +332,37 @@ def _moved(context: _Context, current: called.Run) -> exchange.Answer:
             {"kind": "start", "agent": agent, "role": role, "prompt": prompt, "status": status}
         )
         return exchange.Answer(context=_next(context, context.run() or current))
+    if event.tool == "Skill":
+        role = _held_type(context, event.tool_input.get("skill"))
+        if role is not None:
+            context.record.add({"kind": "skill", "skill": role})
+        return exchange.Answer()
     if event.tool == "SendMessage":
         to, text = event.tool_input.get("to"), event.tool_input.get("message", "")
         if any(s.agent == to for g in current.groups for s in g.starts):
             context.record.add({"kind": "message", "agent": to, "text": text})
         return exchange.Answer()
-    if event.tool == "Bash" and context.routes.command:
-        return _ran(context)
+    if event.tool == "Bash":
+        return _ran(context, current)
     return exchange.Answer()
 
 
-def _ran(context: _Context) -> exchange.Answer:
-    """Keeps what the routes' command printed, where the Bash call ran it for a role."""
+def _ran(context: _Context, current: called.Run) -> exchange.Answer:
+    """Keeps what the routes' command printed, where the Bash call ran it for a role, and the result
+    of a dependency's skill, where the call ran the dependency's result script as its move runs."""
     run = context.event.tool_input.get("command")
+    moving = current.groups[-1].starts[0] if current.groups else None
+    if moving is not None and moving.agent is None and moving.running and isinstance(run, str):
+        dependency, _, short = moving.role.partition(":")
+        script = f"python3 ${{dependency:{dependency}}}/hooks/lane/result.py {short}"
+        for result in routes.results(context.routes, moving.role) or []:
+            if command.matches(run, f"{script} {result}"):
+                context.record.add(
+                    {"kind": "result", "agent": None, "role": moving.role, "result": result}
+                )
+                return exchange.Answer(context=_next(context, context.run() or current))
+    if not context.routes.command:
+        return exchange.Answer()
     for role in routes.named(context.routes):
         if (
             ":" in role
@@ -377,7 +396,8 @@ def _stops(context: _Context, current: called.Run) -> exchange.Answer:
     """The answer to the end of the main conversation's turn: it goes on once while a start is due
     and no start of the run still runs, and the run ends where it would end again."""
     due = routes.due(context.routes, current.groups)
-    if due.kind in ("waits", "wait"):
+    moving = due.kind == "wait" and current.groups[-1].starts[0].agent is None
+    if due.kind == "waits" or (due.kind == "wait" and not moving):
         return exchange.Answer()
     if not context.event.stop_active:
         follow = lanes.sentence("follow_routes", [])
