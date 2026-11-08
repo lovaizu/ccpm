@@ -61,7 +61,31 @@
       "name": "Each part a developer builds by the design gives, with the others, the product vision",
       "path": "plugins/rn/domain/best-practices/architecture",
       "kind": "meta",
-      "status": "done"
+      "inputs": [],
+      "preconditions": [],
+      "status": "doing",
+      "intents": [
+        {"id": "Q1", "good": false, "decisions": []},
+        {"id": "Q2", "good": false, "decisions": []},
+        {"id": "Q3", "good": false, "decisions": []},
+        {"id": "Q4", "good": false, "decisions": []},
+        {"id": "Q5", "good": false, "decisions": []},
+        {"id": "Q6", "good": false, "decisions": []},
+        {"id": "Q7", "good": false, "decisions": []},
+        {
+          "id": "Q8",
+          "good": false,
+          "decisions": [
+            {
+              "about": "A part that an AI does",
+              "decided": "Q12 runs no part that an AI does alone on the model at any level, as plugin Q22 says, and drops the unit step that ran one where no guard holds its rules. Q13 names the product vision trial as the first check of a judgment that no guard can hold, such as whether a deliverable meets an intent, and the architecture says which parts that leaves to the trial",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {"id": "Q9", "good": false, "decisions": []},
+        {"id": "Q10", "good": false, "decisions": []}
+      ]
     },
     {
       "name": "A maker of code designs it, tests it first, and writes it as the field's established practice says",
