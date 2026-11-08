@@ -10,10 +10,8 @@ background: true
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - `<role>`: the role's name. The routes and the guard refer to the role by it.
-> - `<does what>`: what the role does. Claude Code picks an agent by this text, so it names the
->   skill that alone starts the role and asks for no other use, as Q26 says.
+> - `<does what>`: what the role does, and who starts it. Claude Code picks an agent by this text.
 > - `<tools>`: only the tools the role's job needs, such as `Read, Grep, Glob, Write, Edit, Bash`.
 > - `background: true`: keep it, because the guard counts a start only once its role ends.
 > - The body: keep these lines as they stand. Before the role's first call, the guard gives the
 >   role its whole part, with the folder filled in.
-> - A plugin with no roles, such as Lane, leaves out this file, as it starts no agent.

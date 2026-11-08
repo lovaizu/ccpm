@@ -10,9 +10,9 @@ You're `<plugin>`'s orchestrator in this conversation, for the request "$ARGUMEN
 > DELETE_TEMPLATE_COMMENT:
 > - `<command>`: the skill's name, as the person types it after `/<plugin>:`.
 > - `<What a run gives the person>`, `<do what>`: what the person gets, and the words they would ask
->   for it in, the key use first. Claude Code picks a skill by them, as Q26 says.
+>   for it in. Claude Code picks a skill by them.
 > - `disable-model-invocation: true`: add it to the frontmatter when the skill approves something
 >   that's the caller's to decide, such as a merge. Then only the caller can start the skill.
-> - The body: it points to the part, `domain/<command>.md`, written in the form of
->   `domain/command.md`. The main conversation reads the part whole. A part that a skill names
->   comes back whole after `/compact`.
+> - The body: it points to the part, `domain/<command>.md`, written in the form of `domain/role.md`.
+>   The main conversation reads the part whole. A part that a skill names comes back whole after
+>   `/compact`.

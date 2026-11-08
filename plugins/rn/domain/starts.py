@@ -57,15 +57,6 @@ def finder(run: str) -> trees.Finder:
     return find
 
 
-def example(run: str) -> str | None:
-    """The ID of the meta best practice's intent that asks of the example, for the run; None
-    where the run finds no meta best practice or it has no such intent."""
-    path = practices.found(trees.META, run)
-    data = practices.read(path) if path else {"intents": []}
-    asked = (i["id"] for i in data["intents"] if practices.EXAMPLE in practices.abouts(i))
-    return next(asked, None)
-
-
 def practice_of(run: str, kind: str) -> dict[str, Any]:
     """The kind's best practice for the run; refuses, by Stop, a kind with none."""
     path = practices.found(kind, run)

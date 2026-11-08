@@ -28,7 +28,7 @@
    }
   },
   "deliverables": {
-   "description": "Every deliverable the goal needs, in the order of the work, each after the deliverables its inputs and preconditions name. A research deliverable comes before the decisions it serves, and a meta deliverable before the first deliverable of its kind, each at the top level. A research deliverable reads like this: `{\"name\": \"The planner knows how plugins hand a task to a subagent\", \"path\": \".rn/20261107-rn/research/subagents.md\", \"kind\": \"research\", \"inputs\": [], \"preconditions\": [], \"status\": \"open\", \"intents\": []}`, and a later deliverable names its path in inputs.",
+   "description": "Every deliverable the goal needs, in the order of the work, each after the deliverables its inputs and preconditions name. A research deliverable comes before the decisions it serves, and a meta deliverable before the first deliverable of its kind, each at the top level.",
    "type": "array",
    "items": {
     "anyOf": [
@@ -44,7 +44,7 @@
  },
  "$defs": {
   "by": {
-   "description": "Who settled the point. user: the user decided it. maker: the maker of the deliverable decided it, such as `{\"about\": \"The figure's form\", \"decided\": \"The README shows the flow as a Mermaid sequence\", \"by\": \"maker\"}`. reasoning: it follows from the goal and the best practices. research: a source found it. The reason itself goes in the commit message that makes the decision.",
+   "description": "Who settled the point. user: the user decided it. maker: the maker of the deliverable decided it. reasoning: it follows from the goal and the best practices. research: a source found it. The reason itself goes in the commit message that makes the decision.",
    "enum": [
     "user",
     "maker",
@@ -114,21 +114,21 @@
      "$ref": "#/$defs/kind"
     },
     "inputs": {
-     "description": "The path of each deliverable this one takes its content from, each of a kind that its best practice names in inputs. A path may name a file outside the tree that already exists, such as `[\"docs/api.md\"]` for a README of an API that the work doesn't change. The list stays empty where the deliverable takes none.",
+     "description": "The path of each deliverable this one takes its content from, each of a kind that its best practice names in inputs. A path may name a file outside the tree that already exists. The list stays empty where the deliverable takes none.",
      "type": "array",
      "items": {
       "type": "string"
      }
     },
     "preconditions": {
-     "description": "The path of each deliverable whose result this one needs passed before it starts, a deliverable of each kind that its best practice names in preconditions among them, such as the code that a README describes, and the meta deliverable of its own kind where the tree holds one. The list stays empty where the deliverable needs none.",
+     "description": "The path of each deliverable that must pass before this one starts, each of a kind that its best practice names in preconditions. The list stays empty where the deliverable needs none.",
      "type": "array",
      "items": {
       "type": "string"
      }
     },
     "status": {
-     "description": "Where the deliverable stands. open: no work on it has started. doing: someone is making it, which starts only once each of its preconditions has the status done or is a best practice that waits only on its example.",
+     "description": "Where the deliverable stands. open: no work on it has started. doing: someone is making it.",
      "enum": [
       "open",
       "doing"

@@ -60,14 +60,14 @@
             }
           },
           "preconditions": {
-            "description": "The path of each deliverable whose result it needs passed before it starts, a deliverable of each kind its best practice names in preconditions among them, and the meta deliverable of its own kind where the tree holds one, and tree.py write refuses an edit that leaves that one out.",
+            "description": "The path of each deliverable that must pass before it starts.",
             "type": "array",
             "items": {
               "type": "string"
             }
           },
           "status": {
-            "description": "Where a deliverable stands: open, doing, or done. A deliverable goes doing only once each of its preconditions has the status done or is a best practice that waits only on its example, and tree.py write refuses an edit that sets it sooner.",
+            "description": "Where a deliverable stands: open, doing, or done.",
             "enum": [
               "open",
               "doing",

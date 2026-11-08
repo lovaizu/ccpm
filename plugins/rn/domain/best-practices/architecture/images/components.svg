@@ -95,15 +95,15 @@
   <path class="line" d="M860,220 L860,114" marker-end="url(#arrow)"/>
   <text class="label small halo" x="868" y="150" text-anchor="start">puts each point, and shows</text>
   <text class="label small halo" x="868" y="164" text-anchor="start">the plan and Done</text>
-  <text class="data halo" x="868" y="178" text-anchor="start">Point, Deliverable</text>
+  <text class="data halo" x="868" y="178" text-anchor="start">Point</text>
   <path class="line" d="M720,82 L320,82" marker-end="url(#arrow)"/>
   <text class="label small halo" x="520" y="74" text-anchor="middle">merges the pull request</text>
   <path class="line" d="M720,240 L320,240" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="520" y="232" text-anchor="middle">runs start, points, plan, status [Bash]</text>
-  <text class="data halo" x="520" y="258" text-anchor="middle">Request, Change</text>
+  <text class="label small halo" x="520" y="232" text-anchor="middle">runs start, points, status [Bash]</text>
+  <text class="data halo" x="520" y="258" text-anchor="middle">Change</text>
   <path class="line" d="M320,270 L720,270" marker-end="url(#arrow)"/>
   <text class="label small halo" x="520" y="288" text-anchor="middle">gives</text>
-  <text class="data halo" x="520" y="302" text-anchor="middle">Cut, Point, Deliverable, Round</text>
+  <text class="data halo" x="520" y="302" text-anchor="middle">Cut, Point</text>
   <path class="line" d="M210,220 L210,114" marker-end="url(#arrow)"/>
   <text class="label small halo" x="218" y="160" text-anchor="start">pushes, keeps the draft</text>
   <text class="label small halo" x="218" y="174" text-anchor="start">pull request [git, gh]</text>
@@ -153,9 +153,9 @@
   <text class="label small halo" x="750" y="914" text-anchor="middle">reads the try record, writes</text>
   <text class="data halo" x="750" y="928" text-anchor="middle">Answers</text>
   <path class="line" d="M1400,452 L1280,452" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="1340" y="492" text-anchor="middle">holds each start, stop,</text>
-  <text class="label small halo" x="1340" y="506" text-anchor="middle">and call of /rn:up, and</text>
-  <text class="label small halo" x="1340" y="520" text-anchor="middle">each call of every role</text>
+  <text class="label small halo" x="1340" y="492" text-anchor="middle">holds each start,</text>
+  <text class="label small halo" x="1340" y="506" text-anchor="middle">and each call</text>
+  <text class="label small halo" x="1340" y="520" text-anchor="middle">of every role</text>
   <text class="label small halo" x="1340" y="534" text-anchor="middle">[hooks]</text>
   <path class="line" d="M1510,420 L1510,284" marker-end="url(#arrow)"/>
   <text class="label small halo" x="1518" y="350" text-anchor="start">reads</text>

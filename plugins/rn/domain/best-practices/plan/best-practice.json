@@ -70,13 +70,10 @@
   },
   {
    "intent": "Q2",
-   "thinking": "Lay out the deliverables up front, back from the goal, as a [work breakdown structure](https://en.wikipedia.org/wiki/Work_breakdown_structure) does: the deliverables that make the goal, then for each the deliverables it takes, until one takes nothing. A deliverable left out shows only when the work reaches it, and the work stops there. Size each deliverable so that one maker makes it whole and one reader reads it whole, as a work package, the lowest level of a work breakdown structure, is the size one owner delivers. A maker that can't hold the whole drops parts of it, and a reader that can't read it whole can't judge whether it meets its intents.",
+   "thinking": "Lay out the deliverables up front, back from the goal, as a [work breakdown structure](https://en.wikipedia.org/wiki/Work_breakdown_structure) does: the deliverables that make the goal, then for each the deliverables it takes, until one takes nothing. A deliverable left out shows only when the work reaches it, and the work stops there.",
    "steps": [
     {
      "text": "Put in a research deliverable before the decisions it serves, where a decision needs what no one has found yet, at the top level in the order of the work."
-    },
-    {
-     "text": "Where a work is larger than one maker makes whole, split it into a deliverable for each part its architecture names, each after the parts it takes from, and put a deliverable of the whole after them, such as the README of a product after the code of its parts. The architecture already says where the parts meet, so each part stands alone, and the deliverable of the whole holds what only the parts together show."
     }
    ]
   },
@@ -92,13 +89,10 @@
   },
   {
    "intent": "Q5",
-   "thinking": "Have a script order the deliverables from each one's inputs and preconditions, never by thinking the order out case by case, as a [topological sort](https://en.wikipedia.org/wiki/Topological_sorting) gives one order that keeps every dependency. Give each deliverable in inputs the path of each deliverable it takes its content from, and in preconditions the path of each deliverable whose result it needs passed before it starts, a deliverable of each kind its best practice names in preconditions among them where the work holds one, such as the code that a README describes. A plugin with no prompts, such as Lane, names none of kind prompt. Name among them too the meta deliverable of the deliverable's own kind where the plan holds one, such as the plugin best practice for Lane's plugin, as a deliverable made while its best practice is still in the making meets intents that may yet change. One kind's deliverables serve different products, so the paths, not the kinds, say which deliverable comes first. Start a deliverable only once each of its preconditions has the status done, as a [finish-to-start dependency](https://en.wikipedia.org/wiki/Dependency_%28project_management%29) holds a successor until its predecessor finishes. A deliverable started on a precondition still in the making rests on what may yet change, and the user can no longer read its status as a sign that what it needs holds.",
+   "thinking": "Have a script order the deliverables from each one's inputs and preconditions, never by thinking the order out case by case, as a [topological sort](https://en.wikipedia.org/wiki/Topological_sorting) gives one order that keeps every dependency. Give each deliverable in inputs the path of each deliverable it takes its content from, and in preconditions the path of each that must pass before it starts, each of a kind its best practice names there. One kind's deliverables serve different products, so the paths, not the kinds, say which deliverable comes first.",
    "steps": [
     {
-     "text": "After each change, have a script, such as rn's tree.py, check that the tree holds every deliverable needed, that each comes after its inputs and preconditions, that none is doing or done while one of its preconditions has another status, that each deliverable not done names the meta deliverable of its kind among its preconditions, that each research deliverable serves a later decision, and that a later deliverable uses each meta deliverable's kind."
-    },
-    {
-     "text": "Where a best practice's example copies a deliverable that comes later in the plan, such as the plugin best practice's example of Lane's plugin, name that deliverable in a decision of the example's intent. Count the best practice as done for what comes after it once every other intent is good, and have the script count it so too. The example then holds a [finish-to-finish dependency](https://en.wikipedia.org/wiki/Dependency_%28project_management%29) on that deliverable: the best practice finishes only once the deliverable does. Held to finish-to-start, the two would wait on each other, as the maker makes the deliverable to the best practice."
+     "text": "After each change, have a script, such as rn's tree.py, check that the tree holds every deliverable needed, that each comes after its inputs and preconditions, that each research deliverable serves a later decision, and that a later deliverable uses each meta deliverable's kind."
     },
     {
      "text": "Order the tests by level, unit, then architecture, then the product vision, each after the level below passes, as a higher level finds a fault later and at a higher cost."

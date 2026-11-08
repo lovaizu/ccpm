@@ -2,26 +2,18 @@
 
 This document says how the parts of `<Product>` give [its product vision](<board>). `<idea>`.
 
-Each part carries a piece of that idea:
-
-- **`<part>`** `<piece>`.
-
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - `<board>`: the path to the product's product vision.
 > - `<idea>`: how the product turns what its roles bring into what the product vision
->   promises, as one idea seen as a whole that every part carries out, in a few sentences.
-> - `<part>`, `<piece>`: each component, or a few that carry one piece together, by their names
->   in Components, and the piece of the idea they carry out, in a sentence. A developer starting
->   on a part reads in it what the part is for in the whole.
+>   promises, as one idea seen as a whole that every part carries out. Two or three sentences.
+> - Every slot below says what holds while a component changes inside. It names no command, file,
+>   field, step, or count that one component alone uses, as the developer of that component settles
+>   them where they build it.
 
 ## Principles
 
-`<Product>` builds on [`<other>`](<path>). It differs from these of its principles:
-
-- **[`<principle>`](<link>)**: `<instead>`. *Why*: `<why>`.
-
-`<Product>` adds these.
+`<Product>` builds on [`<other>`](<path>), and adds these.
 
 ### `<name>`
 
@@ -31,20 +23,17 @@ Each part carries a piece of that idea:
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<other>`, `<path>`: the architecture or best practice whose principles this one builds on,
->   with the sentence that names it. Leave the sentence out where the architecture builds on none.
-> - `<principle>`, `<link>`, `<instead>`: each principle of `<other>` that the product sets aside or
->   changes, by its name and a link to where `<other>` says it, and what holds instead. A developer
->   who reads `<other>` follows each of its principles that this list doesn't name. Leave the list
->   and the sentence before it out where the product takes every principle as it stands.
+> - `<other>`, `<path>`: the architecture whose principles this one builds on, with the sentence
+>   that names it. Leave the sentence out where the architecture builds on no other.
+> - A principle only where two developers of different parts would otherwise decide one case
+>   apart.
 > - `<name>`: the few words a reader finds the principle by.
-> - `<rule>`: one rule every part meeting the same decision follows, what must be absent among them.
-> - `<why>`: what the rule or the change is there for, the key result of the product vision it
->   moves, and what goes wrong for a role of the product vision or the developer without it.
+> - `<rule>`: one to three short sentences that every part meeting the same decision follows, what
+>   must be absent among them, with no way a component carries it out.
+> - `<why>`: one or two sentences: what goes wrong for a role of the product vision without the
+>   rule, ending with the key result it guards, such as `as KR1.1 counts`.
 
 ## User stories
-
-`<objectives>`.
 
 - **`S<n>`**: `<role>` wants `<way>`. It carries `<steps>`.
 
@@ -55,14 +44,12 @@ Each part carries a piece of that idea:
 > - `<steps>`: the steps of the README's walkthrough, or of an objective's main use it doesn't
 >   run, that rest on it, and each convenience the product vision's intent asks for that it
 >   carries, such as resuming a run that stopped.
-> - `<objectives>`: the objective of the product vision whose main use or intent each story
->   carries, by its ID. One sentence covers the stories that share an objective.
 
 ## Components
 
 ![The product's components](images/template-components.svg)
 
-`<objectives>`. What each decides alone:
+What each decides alone:
 
 - **`<component>`**: `<what it alone decides>`.
 
@@ -76,22 +63,19 @@ Each part carries a piece of that idea:
 >   its type, and its technology alone, so the figure shows the parts and their joins at a glance.
 >   Each arrow says what one does to another, with the data it hands on, named as in the data
 >   model. A legend explains every symbol.
-> - `<objectives>`: the stories whose sequences reach each component, and so the objectives it
->   serves. One sentence covers the components that share them.
 > - `<component>`, `<what it alone decides>`: each role of the figure and each component, by its
->   name in the figure, and the decisions the stories need that it alone makes.
+>   name in the figure, and the decisions the stories need that it alone makes, each in a few
+>   words, joined by commas, in one sentence.
 > - `<choice>`, `<other way>`: each choice a developer would question, such as a technology, or a
->   tool, and the way it beat. Leave them out where no choice is in question.
-> - `<why>`, `<cost>`: what the choice gives, with the key result of the product vision it moves,
->   and what it costs.
+>   tool, and the way it beat, in a few words each. Leave them out where no choice is in question.
+> - `<why>`, `<cost>`: what the choice gives, ending with the key result as the `<why>` of a
+>   principle does, and what it costs, in one sentence each.
 
 ## Data model
 
 ![The product's data](images/template-data-model.svg)
 
 - **`<Data>`**: `<what it is>`.
-
-`<objectives>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
@@ -104,8 +88,6 @@ Each part carries a piece of that idea:
 >   middle.
 > - `<Data>`, `<what it is>`: each data whose name a reader could take for another's, by its name,
 >   and what it's in a few words, without its fields.
-> - `<objectives>`: the stories whose sequences hand on or keep each data, and so the objectives it
->   serves. One sentence covers the data that share them.
 
 ## Sequences
 
@@ -129,7 +111,7 @@ sequenceDiagram
 >   thing outside the product it reaches.
 > - `<step>`: what one does to another and the data it hands on, as the data model names it, in a
 >   few words. Each branch, each step that sends work back, and each question put to the role are
->   among them.
+>   among them. A component's own steps inside stay out, as one arrow stands for them.
 > - `<choice>`, `<other way>`, `<why>`, `<cost>`: as in Components.
 
 ## Deployment
@@ -171,39 +153,18 @@ sequenceDiagram
 
 ![The product's tests](images/template-tests.svg)
 
-No test level reaches these deployment units, so the table leaves them out:
-
-- **`<unit>`**: `<why no level>`.
-
-The product vision trial is the first check of each judgment that these parts make and no guard can
-hold:
-
-- **`<part>`**: `<judgment>`.
-
 - **`<choice>`** over `<other way>`: `<why>`. The cost: `<cost>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<shared rules>`, `<path>`: the test rules the product shares, such as those of the best practice
->   it builds on.
+> - `<shared rules>`, `<path>`: the project's shared test rules.
 > - The figure: the deliverable's own at images/tests.svg, the product named in its alt text. It's
->   a table with a row for each deployment unit that some level tries, by its name in Deployment,
->   and a column for each test level from narrow to wide, each named by what it checks against.
->   Unit checks against a part's contract, architecture against this document, and product vision
->   against the product vision, in real use. Each cell holds the tool, how far it tries the unit,
->   and what it checks in a few words. `FULL` tries each case and edge, `HAPPY` the main paths, and
->   `SMOKE` a run that confirms what lower levels checked. An empty cell says why. After the units
->   it leaves out, for each level, the text says what runs real, what doubles stand in for and
->   where their results come from, who stands in for the role, and when it passes, with how many
->   runs of how many where a result varies. It says so only where the product differs from the
->   shared rules.
-> - `<unit>`, `<why no level>`: each deployment unit, by its name in Deployment, whose every cell
->   would be empty, and why no level reaches it, such as a folder that holds files and runs
->   nothing, or a process that runs another product's code, which that product's own tests try.
->   The developer reads in it that the document leaves the unit out on purpose, not by a miss.
->   Leave the list and the sentence before it out where every unit has a row.
-> - `<part>`, `<judgment>`: each component, by its name in Components, that makes a judgment no
->   guard can hold, such as whether a deliverable meets an intent, and that judgment. The developer
->   reads in it what passing unit and architecture tests leave unchecked. Leave the list and the
->   sentence before it out where no part makes such a judgment.
+>   a table with a row for each deployment unit, by its name in Deployment, and a column for each
+>   test level from narrow to wide, each named by what it checks against. Unit checks against a
+>   part's contract, architecture against this document, and product vision against the product
+>   vision, in real use. Each cell holds the tool, how far it tries the unit, and what it checks in
+>   a few words. `FULL` tries each case and edge, `HAPPY` the main paths, and `SMOKE` a run that
+>   confirms what lower levels checked. An empty cell says why. Under it, one sentence for each
+>   level where the product differs from the shared rules says what runs real, what doubles stand
+>   in for, who stands in for the role, or when it passes.
 > - `<choice>`, `<other way>`, `<why>`, `<cost>`: as in Components.

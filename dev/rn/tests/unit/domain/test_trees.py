@@ -9,8 +9,7 @@ import unittest
 import helpers
 from helpers import trees
 
-FINDER_OF = {"readme": ["Q1", "Q2"], "code": ["Q1"], "meta": [], "research": [], "plan": []}
-FINDER = FINDER_OF.get
+FINDER = {"readme": ["Q1", "Q2"], "code": ["Q1"], "meta": [], "research": [], "plan": []}.get
 
 
 def small() -> dict:
@@ -344,7 +343,7 @@ class Apply(unittest.TestCase):
 class Faults(unittest.TestCase):
     def faults(self, tree, files=()):
         """The tree's faults, the files given there."""
-        return trees.faults(tree, lambda p: p in files, FINDER, "Q9")
+        return trees.faults(tree, lambda p: p in files, FINDER)
 
     def test_a_tree_in_order_has_none(self):
         self.assertEqual(self.faults(small()), [])
@@ -389,7 +388,6 @@ class Faults(unittest.TestCase):
             "intents": [],
         }
         tree["deliverables"].insert(1, meta)
-        tree["deliverables"][2]["preconditions"] = [".rn/r/best-practices/man-page/"]
         self.assertEqual(self.faults(tree), [])
 
     def test_a_meta_deliverable_whose_kind_no_later_deliverable_takes(self):
@@ -439,127 +437,6 @@ class Faults(unittest.TestCase):
             "kind": "gone",
             "status": "done",
         }
-        self.assertEqual(self.faults(tree), [])
-
-    def test_a_deliverable_doing_while_a_precondition_is_not_done(self):
-        # Given: the code doing, with the README, still doing, as its precondition
-        tree = small()
-        tree["deliverables"][1].update(preconditions=["README.md"], status="doing")
-        # When: the tree is checked
-        # Then: the code's start ahead of the README fails
-        self.assertEqual(
-            self.faults(tree), ["D2 is doing while its precondition README.md is doing"]
-        )
-
-    def test_a_deliverable_open_while_a_precondition_is_not_done(self):
-        tree = small()
-        tree["deliverables"][1]["preconditions"] = ["README.md"]
-        self.assertEqual(self.faults(tree), [])
-
-    def test_a_deliverable_doing_once_each_precondition_is_done(self):
-        tree = small()
-        tree["deliverables"][0] = helpers.done("README.md", "r")
-        tree["deliverables"][1].update(preconditions=["README.md"], status="doing")
-        self.assertEqual(self.faults(tree), [])
-
-    def test_a_precondition_that_is_a_file_outside_the_tree(self):
-        tree = small()
-        tree["deliverables"][1].update(preconditions=["dev/pv.md"], status="doing")
-        self.assertEqual(self.faults(tree, files=("dev/pv.md",)), [])
-
-    def test_a_best_practice_that_waits_only_on_its_example(self):
-        # Given: the man-page best practice, its every intent good but the example's, as the
-        # precondition of a man page doing
-        practice = {
-            "name": "m",
-            "path": ".rn/r/best-practices/man-page",
-            "kind": "meta",
-            "inputs": [],
-            "preconditions": [],
-            "status": "doing",
-            "intents": [
-                {"id": "Q1", "good": True, "decisions": []},
-                {"id": "Q9", "good": False, "decisions": []},
-            ],
-        }
-        page = {
-            "name": "p",
-            "path": "man/tidy.1",
-            "kind": "man-page",
-            "inputs": [],
-            "preconditions": [".rn/r/best-practices/man-page"],
-            "status": "doing",
-            "intents": [],
-        }
-        tree = small()
-        tree["deliverables"] += [practice, page]
-        finder = {**FINDER_OF, "meta": ["Q1", "Q9"]}.get
-        # When: the tree is checked
-        # Then: the best practice counts as done for the man page
-        self.assertEqual(trees.faults(tree, lambda p: False, finder, "Q9"), [])
-        # And: one more intent short of good holds the man page back
-        practice["intents"][0]["good"] = False
-        self.assertEqual(
-            trees.faults(tree, lambda p: False, finder, "Q9"),
-            ["D4 is doing while its precondition .rn/r/best-practices/man-page is doing"],
-        )
-        # And: so does a best practice whose example has no intent of its own
-        practice["intents"][0]["good"] = True
-        self.assertEqual(
-            trees.faults(tree, lambda p: False, finder, None),
-            ["D4 is doing while its precondition .rn/r/best-practices/man-page is doing"],
-        )
-
-    def test_a_deliverable_that_leaves_out_the_meta_deliverable_of_its_kind(self):
-        # Given: the readme best practice in the making, then a README that doesn't name it
-        practice = {
-            "name": "m",
-            "path": ".rn/r/best-practices/readme",
-            "kind": "meta",
-            "inputs": [],
-            "preconditions": [],
-            "status": "open",
-            "intents": [],
-        }
-        tree = small()
-        tree["deliverables"].insert(0, practice)
-        # When: the tree is checked
-        # Then: the README fails for leaving its kind's best practice out
-        self.assertEqual(
-            self.faults(tree),
-            [
-                (
-                    "D2 leaves out of its preconditions .rn/r/best-practices/readme, the best"
-                    " practice of its kind"
-                )
-            ],
-        )
-        # And: the README that names it passes, as does one done
-        tree["deliverables"][1]["preconditions"] = [".rn/r/best-practices/readme"]
-        self.assertEqual(self.faults(tree), [])
-        tree["deliverables"][1] = helpers.done("README.md", "r")
-        self.assertEqual(self.faults(tree), [])
-
-    def test_a_meta_deliverable_of_the_kind_meta_needs_not_itself(self):
-        # Given: the meta best practice in the making, and a best practice made to it
-        meta = lambda path, preconditions: {
-            "name": "m",
-            "path": path,
-            "kind": "meta",
-            "inputs": [],
-            "preconditions": preconditions,
-            "status": "open",
-            "intents": [],
-        }
-        tree = small()
-        tree["deliverables"][:0] = [
-            meta(".rn/r/best-practices/meta", []),
-            meta(".rn/r/best-practices/man-page", [".rn/r/best-practices/meta"]),
-        ]
-        tree["deliverables"][3].update(kind="man-page", intents=[])
-        tree["deliverables"][3]["preconditions"] = [".rn/r/best-practices/man-page"]
-        # When: the tree is checked
-        # Then: the meta best practice doesn't name itself, and the rest name theirs
         self.assertEqual(self.faults(tree), [])
 
 
@@ -710,14 +587,14 @@ class Edges(unittest.TestCase):
             kind_of(1, "readme"), kind_of(2, "readme", inputs=["d3.md"]), kind_of(3, "readme")
         )
         self.assertEqual(
-            trees.faults(tree, lambda p: False, FINDER, "Q9"),
+            trees.faults(tree, lambda p: False, FINDER),
             ["D2 takes d3.md in its inputs, which comes later"],
         )
 
     def test_a_deliverable_done_is_passed_over_and_the_next_still_held(self):
         tree = tree_of(helpers.done("a.md", "a"), kind_of(2, "man-page"))
         self.assertEqual(
-            trees.faults(tree, lambda p: False, FINDER, "Q9"),
+            trees.faults(tree, lambda p: False, FINDER),
             ["D2's kind man-page has no best practice, nor a meta one before it"],
         )
 
@@ -725,12 +602,8 @@ class Edges(unittest.TestCase):
         meta = lambda n, name: kind_of(n, "meta", f".rn/r/best-practices/{name}")
         after = tree_of(kind_of(1, "man-page"), meta(2, "man-page"))
         self.assertEqual(
-            trees.faults(after, lambda p: False, FINDER, "Q9"),
+            trees.faults(after, lambda p: False, FINDER),
             [
-                (
-                    "D1 leaves out of its preconditions .rn/r/best-practices/man-page, the best"
-                    " practice of its kind"
-                ),
                 "D1's kind man-page has no best practice, nor a meta one before it",
                 "D2 makes the kind man-page, which no later deliverable takes",
             ],
@@ -739,29 +612,29 @@ class Edges(unittest.TestCase):
             meta(1, "alpha"),
             kind_of(2, "code", "x/man-page"),
             kind_of(3, "man-page"),
-            kind_of(4, "alpha", preconditions=[".rn/r/best-practices/alpha"]),
+            kind_of(4, "alpha"),
         )
         self.assertEqual(
-            trees.faults(other, lambda p: False, FINDER, "Q9"),
+            trees.faults(other, lambda p: False, FINDER),
             ["D3's kind man-page has no best practice, nor a meta one before it"],
         )
         later = tree_of(meta(1, "man-page"), kind_of(2, "readme"), kind_of(3, "code"))
         self.assertIn(
             "D1 makes the kind man-page, which no later deliverable takes",
-            trees.faults(later, lambda p: False, FINDER, "Q9"),
+            trees.faults(later, lambda p: False, FINDER),
         )
 
     def test_intents_fewer_than_the_kinds(self):
         d = kind_of(1, "readme")
         d["intents"] = d["intents"][:1]
         self.assertEqual(
-            trees.faults(tree_of(d), lambda p: False, FINDER, "Q9"),
+            trees.faults(tree_of(d), lambda p: False, FINDER),
             ["D1's intents aren't those of its kind readme, in their order"],
         )
 
     def test_a_kind_that_sorts_after_research_is_no_research(self):
         tree = tree_of(kind_of(1, "spec"), kind_of(2, "readme"))
-        found = trees.faults(tree, lambda p: False, {"spec": [], "readme": ["Q1", "Q2"]}.get, "Q9")
+        found = trees.faults(tree, lambda p: False, {"spec": [], "readme": ["Q1", "Q2"]}.get)
         self.assertEqual(found, [])
 
     def test_an_open_deliverable_shows_its_questions(self):

@@ -4,7 +4,6 @@
  "example": "example.md",
  "source": "../../../../../dev/rn/architecture.md",
  "inputs": [
-  "meta",
   "product-vision",
   "readme"
  ],
@@ -77,8 +76,8 @@
   },
   {
    "id": "Q14",
-   "about": "Principles, Components, Sequences, Deployment, Directory structure, Tests",
-   "what": "Doubting a principle or a choice the document makes, such as a tool or how far a level tries a unit, does the developer see which key result of the product vision it moves and what the other way would lose, so that they keep or change it knowing what it was for?"
+   "about": "Components, Sequences, Deployment, Directory structure, Tests",
+   "what": "Doubting a choice the document makes, such as a tool or how far a level tries a unit, does the developer see what the other way would lose, so that they keep or change it knowing what it was for?"
   },
   {
    "id": "Q15",
@@ -94,7 +93,7 @@
  "practices": [
   {
    "intent": "Q1",
-   "thinking": "The opening says, as one idea seen as a whole, how the product turns what its roles bring into what the product vision promises. It points to the product vision and doesn't repeat it. Under the idea, a list gives each part the piece of the idea it carries out. A developer starting on a part then reads what it's for in the whole, and builds it to serve the idea.",
+   "thinking": "The opening says, as one idea seen as a whole, how the product turns what its roles bring into what the product vision promises. It points to the product vision and doesn't repeat it. Every part then reads as a piece of that idea.",
    "steps": [
     {
      "text": "After writing the rest, check that each component carries out a piece of the idea, and change the idea or the component where one doesn't."
@@ -118,10 +117,10 @@
   },
   {
    "intent": "Q3",
-   "thinking": "Each principle is one rule that every part meeting the same decision follows, with its why: what goes wrong without it. A developer carries the why to a case the rule doesn't name. Where the product builds on another architecture or a best practice, the document points to it and doesn't repeat it, and names each of its principles that the product sets aside or changes, with what holds instead and why, as a project that claims tailored conformance to [ISO/IEC/IEEE 12207](https://www.iso.org/standard/63712.html) declares each of its clauses that the project leaves out or modifies. A developer who reads the other principle follows it unless the document says it doesn't hold, and the parts stop fitting.",
+   "thinking": "Each principle is one rule that every part meeting the same decision follows, with its why: what goes wrong without it. A developer carries the why to a case the rule doesn't name.",
    "steps": [
     {
-     "text": "Point to the architecture or best practice this one builds on, list each of its principles that this product sets aside or changes, with what holds instead, and write as principles only what this product adds."
+     "text": "Point to the principles of the architecture this one builds on, and write only what this product adds or changes."
     },
     {
      "text": "Take a case no rule names, decide it from each why as two developers of different parts would, and sharpen the why where they differ."
@@ -165,10 +164,10 @@
   },
   {
    "intent": "Q8",
-   "thinking": "The document shows its developer which objective of the product vision each story, component, and data serves. Each story names the objective whose main use or intent it carries. Each component and each data names the stories whose sequences reach it, and so the objectives it serves. The developer then finds what can go once no objective needs it, without rebuilding the trace through the sequences, as [requirements traceability](https://doi.org/10.1109/ICRE.1994.292398) follows each part back to the need it comes from.",
+   "thinking": "The document keeps only the stories, components, and data that an objective needs. Each can then go once no objective needs it.",
    "steps": [
     {
-     "text": "Trace each component and each data to the stories whose sequences reach it, and each story to the objective whose use or intent it carries. Write the trace in each section, and remove what reaches none."
+     "text": "Trace each component and each data to the stories whose sequences reach it, and each story to the objective whose use or intent it carries, and remove what reaches none."
     }
    ]
   },
@@ -196,10 +195,10 @@
   },
   {
    "intent": "Q12",
-   "thinking": "The developer draws each test from the one thing its level checks against: the ways a part's contract divides at unit, the paths the sequences draw at architecture, and an objective's main use at real size at product vision. It runs only that real and stands [test doubles](https://martinfowler.com/bliki/TestDouble.html) in for the rest. A failing test then names the rule, path, or use it breaks. No level runs a part that an AI does alone on the model, as [the plugin best practice](../plugin/best-practice.md#q22) says. A trial of one part alone meets only the cases its developer set up, and finds no fault that a real request brings out. Instead, a guard, such as a hook that refuses a call that breaks a step, holds each rule of the part that must hold on every run, and the architecture tests run the guard on each path, with a double in the part's place.",
+   "thinking": "The developer draws each test from the one thing its level checks against: the ways a part's contract divides at unit, the paths the sequences draw at architecture, and an objective's main use at real size at product vision. It runs only that real and stands [test doubles](https://martinfowler.com/bliki/TestDouble.html) in for the rest. A failing test then names the rule, path, or use it breaks.",
    "steps": [
     {
-     "text": "Point to the test rules the product shares, such as those of the best practice it builds on, and write only where this product differs from them."
+     "text": "Point to the project's shared test rules, and write only where this product differs from them."
     },
     {
      "text": "At unit, divide each input and each result the contract names into classes the part treats alike, the refused ones among them, and write one test for each class, by equivalence partitioning as the [glossary](https://glossary.istqb.org) of the International Software Testing Qualifications Board defines it."
@@ -212,6 +211,9 @@
     },
     {
      "text": "At unit, pass when every test passes, every line and branch runs, and the tests catch every mutant. Add a unit test for each gap that coverage, mutation testing, or a property-based test finds, as these tools confirm the tests drawn from the contract and draw none themselves."
+    },
+    {
+     "text": "At unit, where no guard holds each rule of a part an AI does on every run, run the part on the real model, with one input for each class, both where the contract says the part acts and where it says it doesn't, and doubles for the parts it works with."
     },
     {
      "text": "At architecture, run real what joins the components, such as hooks and scripts, and stand a double in for each component an AI runs and each thing outside the product, so the level calls no model and gives the same result each run."
@@ -238,11 +240,8 @@
   },
   {
    "intent": "Q13",
-   "thinking": "Each double gives only results in the form the part's contract gives them, the refusals among them, and its own tests check it as the part's unit tests check the part. Unit and architecture together then show that every path holds for the real parts. A judgment that an AI makes and that no guard can hold, such as whether a deliverable meets an intent, gets no check at either level, so the product vision trial checks it first. The document names each part that such a judgment leaves to the trial. The developer then knows what passing unit and architecture tests leave unchecked, and the trial confirms the rest.",
+   "thinking": "Each double gives only results in the form the part's contract gives them, the refusals among them, and its own tests check it as the part's unit tests check the part. Unit and architecture together then show that every path holds for the real parts.",
    "steps": [
-    {
-     "text": "Name in Tests each part that makes a judgment no guard can hold, with the judgment, as the product vision trial is its first check."
-    },
     {
      "text": "Draw a double of something outside the product from its documentation or from a recorded run of the real thing, as a double that gives what the real thing never would passes a test that the real one fails."
     },
@@ -256,13 +255,10 @@
   },
   {
    "intent": "Q14",
-   "thinking": "Beside each choice a developer would question, such as a technology, a tool or how far a level tries a unit, stands why it beat the other way and what it costs, as an [architecture decision record](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions) keeps its context and consequences. Each why of a choice or a principle names the key result of the product vision it moves, as the [Architecture Tradeoff Analysis Method](https://www.sei.cmu.edu/library/atam-method-for-architecture-evaluation/) ties each architectural approach to the quality attribute that the business goals ask for. A document can be complete and consistent while a choice works against a key result, such as one that asks the user more often, and its developer builds that design faithfully while the product misses its vision. With the key result named, the developer keeps or changes a rule or a choice by what the product vision measures, knowing what it was for.",
+   "thinking": "Beside each choice a developer would question, such as a technology, a tool or how far a level tries a unit, stands why it beat the other way and what it costs, as an [architecture decision record](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions) keeps its context and consequences. The developer then keeps or changes it knowing what it was for.",
    "steps": [
     {
      "text": "Read each figure as a developer new to the product, and give a why and a cost to each choice they would question."
-    },
-    {
-     "text": "Where a choice moves one key result at the cost of another, such as fewer questions for a longer run, name both, and weigh them in the order the product vision gives its key results."
     }
    ]
   },

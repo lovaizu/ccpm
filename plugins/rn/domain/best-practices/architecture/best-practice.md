@@ -14,7 +14,6 @@ The developer builds and changes each part of the product so that the parts toge
 
 ## Inputs
 
-- [meta](../meta/best-practice.md)
 - [product-vision](../product-vision/best-practice.md)
 - [readme](../readme/best-practice.md)
 
@@ -35,7 +34,7 @@ The developer builds and changes each part of the product so that the parts toge
 | Q11 | Deployment, Tests | Asked whether anything in the product goes untested, does the developer see for each deployment unit which levels cover it, how far each tries it, and why a level is missing, so that no gap goes unseen? |
 | Q12 | Tests | Writing a test at one level, does the developer know what to run real, what doubles stand in for, what to cover and when it passes, so that a failing test names the rule, path, or use it breaks? |
 | Q13 | Tests | When the unit and architecture tests pass, does the developer know the product does what this document says, so that the product vision level only confirms the product in real use? |
-| Q14 | Principles, Components, Sequences, Deployment, Directory structure, Tests | Doubting a principle or a choice the document makes, such as a tool or how far a level tries a unit, does the developer see which key result of the product vision it moves and what the other way would lose, so that they keep or change it knowing what it was for? |
+| Q14 | Components, Sequences, Deployment, Directory structure, Tests | Doubting a choice the document makes, such as a tool or how far a level tries a unit, does the developer see what the other way would lose, so that they keep or change it knowing what it was for? |
 | Q15 | the whole | Following a principle while building a part, does the developer find every figure and list asking the same of that part, so that they never choose between the document and itself? |
 | Q16 | the whole | Changing how a component works inside while the product vision and the principles stay, does the developer find every line of the document still true, so that the document needs no change for it? |
 
@@ -47,7 +46,7 @@ Starting on any part, does the developer see the one idea by which the product g
 
 **Thinking**
 
-The opening says, as one idea seen as a whole, how the product turns what its roles bring into what the product vision promises. It points to the product vision and doesn't repeat it. Under the idea, a list gives each part the piece of the idea it carries out. A developer starting on a part then reads what it's for in the whole, and builds it to serve the idea.
+The opening says, as one idea seen as a whole, how the product turns what its roles bring into what the product vision promises. It points to the product vision and doesn't repeat it. Every part then reads as a piece of that idea.
 
 **Steps**
 
@@ -71,11 +70,11 @@ Meeting a case no line of the document names, do two developers of different par
 
 **Thinking**
 
-Each principle is one rule that every part meeting the same decision follows, with its why: what goes wrong without it. A developer carries the why to a case the rule doesn't name. Where the product builds on another architecture or a best practice, the document points to it and doesn't repeat it, and names each of its principles that the product sets aside or changes, with what holds instead and why, as a project that claims tailored conformance to [ISO/IEC/IEEE 12207](https://www.iso.org/standard/63712.html) declares each of its clauses that the project leaves out or modifies. A developer who reads the other principle follows it unless the document says it doesn't hold, and the parts stop fitting.
+Each principle is one rule that every part meeting the same decision follows, with its why: what goes wrong without it. A developer carries the why to a case the rule doesn't name.
 
 **Steps**
 
-1. Point to the architecture or best practice this one builds on, list each of its principles that this product sets aside or changes, with what holds instead, and write as principles only what this product adds.
+1. Point to the principles of the architecture this one builds on, and write only what this product adds or changes.
 2. Take a case no rule names, decide it from each why as two developers of different parts would, and sharpen the why where they differ.
 
 ### Q4
@@ -129,11 +128,11 @@ Of any story, component or data, does the developer see which objective of the p
 
 **Thinking**
 
-The document shows its developer which objective of the product vision each story, component, and data serves. Each story names the objective whose main use or intent it carries. Each component and each data names the stories whose sequences reach it, and so the objectives it serves. The developer then finds what can go once no objective needs it, without rebuilding the trace through the sequences, as [requirements traceability](https://doi.org/10.1109/ICRE.1994.292398) follows each part back to the need it comes from.
+The document keeps only the stories, components, and data that an objective needs. Each can then go once no objective needs it.
 
 **Steps**
 
-1. Trace each component and each data to the stories whose sequences reach it, and each story to the objective whose use or intent it carries. Write the trace in each section, and remove what reaches none.
+1. Trace each component and each data to the stories whose sequences reach it, and each story to the objective whose use or intent it carries, and remove what reaches none.
 
 ### Q9
 
@@ -170,22 +169,23 @@ Writing a test at one level, does the developer know what to run real, what doub
 
 **Thinking**
 
-The developer draws each test from the one thing its level checks against: the ways a part's contract divides at unit, the paths the sequences draw at architecture, and an objective's main use at real size at product vision. It runs only that real and stands [test doubles](https://martinfowler.com/bliki/TestDouble.html) in for the rest. A failing test then names the rule, path, or use it breaks. No level runs a part that an AI does alone on the model, as [the plugin best practice](../plugin/best-practice.md#q22) says. A trial of one part alone meets only the cases its developer set up, and finds no fault that a real request brings out. Instead, a guard, such as a hook that refuses a call that breaks a step, holds each rule of the part that must hold on every run, and the architecture tests run the guard on each path, with a double in the part's place.
+The developer draws each test from the one thing its level checks against: the ways a part's contract divides at unit, the paths the sequences draw at architecture, and an objective's main use at real size at product vision. It runs only that real and stands [test doubles](https://martinfowler.com/bliki/TestDouble.html) in for the rest. A failing test then names the rule, path, or use it breaks.
 
 **Steps**
 
-1. Point to the test rules the product shares, such as those of the best practice it builds on, and write only where this product differs from them.
+1. Point to the project's shared test rules, and write only where this product differs from them.
 2. At unit, divide each input and each result the contract names into classes the part treats alike, the refused ones among them, and write one test for each class, by equivalence partitioning as the [glossary](https://glossary.istqb.org) of the International Software Testing Qualifications Board defines it.
 3. Where a class ends on an ordered scale, such as a length or a count, write one test at each end and one at the nearest value of the next class, by boundary value analysis.
 4. Where the contract's result turns on a combination of conditions, write one test for each combination that can occur, with the result it gives, by decision table testing.
 5. At unit, pass when every test passes, every line and branch runs, and the tests catch every mutant. Add a unit test for each gap that coverage, mutation testing, or a property-based test finds, as these tools confirm the tests drawn from the contract and draw none themselves.
-6. At architecture, run real what joins the components, such as hooks and scripts, and stand a double in for each component an AI runs and each thing outside the product, so the level calls no model and gives the same result each run.
-7. At architecture, write one test for each path through each story's sequence, the main flow, each branch, each step that sends work back and each question put to the role, until every move from one step to the next lies on some path.
-8. Run the unit and architecture tests that a change reaches before each push, and every test in CI, as running every test before each push makes each change wait, and a selection misses a test that reads a file the change edits.
-9. At product vision, once unit and architecture pass, run the real product on each objective's main use, as the README's walkthrough shows it, at the size of a real request, with an AI standing in for the role that holds an intent the product never gets.
-10. At product vision, measure each key result as the product vision words it, and set each measure against the last one by the direction the product vision gives it, as the product vision gives no target.
-11. At product vision, run each role on the model its users run and judge each run from its records, and try no case a lower level can test, as another model makes other slips than the users meet, and each run is slow and costly.
-12. For a test whose result varies from run to run, write how many runs of how many must meet the expectation.
+6. At unit, where no guard holds each rule of a part an AI does on every run, run the part on the real model, with one input for each class, both where the contract says the part acts and where it says it doesn't, and doubles for the parts it works with.
+7. At architecture, run real what joins the components, such as hooks and scripts, and stand a double in for each component an AI runs and each thing outside the product, so the level calls no model and gives the same result each run.
+8. At architecture, write one test for each path through each story's sequence, the main flow, each branch, each step that sends work back and each question put to the role, until every move from one step to the next lies on some path.
+9. Run the unit and architecture tests that a change reaches before each push, and every test in CI, as running every test before each push makes each change wait, and a selection misses a test that reads a file the change edits.
+10. At product vision, once unit and architecture pass, run the real product on each objective's main use, as the README's walkthrough shows it, at the size of a real request, with an AI standing in for the role that holds an intent the product never gets.
+11. At product vision, measure each key result as the product vision words it, and set each measure against the last one by the direction the product vision gives it, as the product vision gives no target.
+12. At product vision, run each role on the model its users run and judge each run from its records, and try no case a lower level can test, as another model makes other slips than the users meet, and each run is slow and costly.
+13. For a test whose result varies from run to run, write how many runs of how many must meet the expectation.
 
 ### Q13
 
@@ -193,27 +193,25 @@ When the unit and architecture tests pass, does the developer know the product d
 
 **Thinking**
 
-Each double gives only results in the form the part's contract gives them, the refusals among them, and its own tests check it as the part's unit tests check the part. Unit and architecture together then show that every path holds for the real parts. A judgment that an AI makes and that no guard can hold, such as whether a deliverable meets an intent, gets no check at either level, so the product vision trial checks it first. The document names each part that such a judgment leaves to the trial. The developer then knows what passing unit and architecture tests leave unchecked, and the trial confirms the rest.
+Each double gives only results in the form the part's contract gives them, the refusals among them, and its own tests check it as the part's unit tests check the part. Unit and architecture together then show that every path holds for the real parts.
 
 **Steps**
 
-1. Name in Tests each part that makes a judgment no guard can hold, with the judgment, as the product vision trial is its first check.
-2. Draw a double of something outside the product from its documentation or from a recorded run of the real thing, as a double that gives what the real thing never would passes a test that the real one fails.
-3. For a fault a higher level finds, name the case or path the lower level missed, add its test at the level that must catch it, see it fail, then fix it there.
-4. Trust a check, such as a test, a hook or the judge of a trial, only once you have seen it fail on a case that breaks what it checks. Trust a judge once it's right on kept records whose answer you know. A check that can't fail lets everything through unseen.
+1. Draw a double of something outside the product from its documentation or from a recorded run of the real thing, as a double that gives what the real thing never would passes a test that the real one fails.
+2. For a fault a higher level finds, name the case or path the lower level missed, add its test at the level that must catch it, see it fail, then fix it there.
+3. Trust a check, such as a test, a hook or the judge of a trial, only once you have seen it fail on a case that breaks what it checks. Trust a judge once it's right on kept records whose answer you know. A check that can't fail lets everything through unseen.
 
 ### Q14
 
-Doubting a principle or a choice the document makes, such as a tool or how far a level tries a unit, does the developer see which key result of the product vision it moves and what the other way would lose, so that they keep or change it knowing what it was for?
+Doubting a choice the document makes, such as a tool or how far a level tries a unit, does the developer see what the other way would lose, so that they keep or change it knowing what it was for?
 
 **Thinking**
 
-Beside each choice a developer would question, such as a technology, a tool or how far a level tries a unit, stands why it beat the other way and what it costs, as an [architecture decision record](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions) keeps its context and consequences. Each why of a choice or a principle names the key result of the product vision it moves, as the [Architecture Tradeoff Analysis Method](https://www.sei.cmu.edu/library/atam-method-for-architecture-evaluation/) ties each architectural approach to the quality attribute that the business goals ask for. A document can be complete and consistent while a choice works against a key result, such as one that asks the user more often, and its developer builds that design faithfully while the product misses its vision. With the key result named, the developer keeps or changes a rule or a choice by what the product vision measures, knowing what it was for.
+Beside each choice a developer would question, such as a technology, a tool or how far a level tries a unit, stands why it beat the other way and what it costs, as an [architecture decision record](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions) keeps its context and consequences. The developer then keeps or changes it knowing what it was for.
 
 **Steps**
 
 1. Read each figure as a developer new to the product, and give a why and a cost to each choice they would question.
-2. Where a choice moves one key result at the cost of another, such as fewer questions for a longer run, name both, and weigh them in the order the product vision gives its key results.
 
 ### Q15
 

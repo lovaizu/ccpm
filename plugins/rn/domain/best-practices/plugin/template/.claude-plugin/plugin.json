@@ -1,5 +1,5 @@
 {
-  "DELETE_TEMPLATE_COMMENT": "<plugin>: the name that the plugin's folder and its commands carry. <what its users achieve>: what a user achieves with it, in one sentence in the words of the product vision's users, as /plugin shows it to a would-be user before install, as Q25 says. Leave description out of the marketplace entry where its source is a relative path, so it lies here alone. <author>: who keeps it. dependencies: each plugin of the marketplace that this one uses, such as lane for its guard. Optional. version: SemVer, kept only here, and raised only at a release.",
+  "DELETE_TEMPLATE_COMMENT": "<plugin>: the name that the plugin's folder and its commands carry. <what its users achieve>: what a user achieves with it, in the user's words, as the marketplace shows it. <author>: who keeps it. dependencies: each plugin of the marketplace that this one uses, such as lane for its guard. Optional. version: SemVer, kept only here, and raised only at a release.",
   "name": "<plugin>",
   "description": "<What its users achieve>.",
   "version": "0.1.0",

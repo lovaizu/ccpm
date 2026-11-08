@@ -7,7 +7,7 @@ repository, as `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py <command> <args>`:
 - `write <run> <edit>`, `commit <run>`, `deliver <run>`, `report <run>`: the planner's tree edit
   written, the change committed, a deliverable done committed and pushed, and the report;
 - `record <path>`: a Making record or an Answers checked;
-- `check <tree>`: a design tree's form, order, and statuses against preconditions checked.
+- `check <tree>`: a design tree's form and order checked.
 
 Each prints what its reader acts on and gives 0; or prints what's wrong and gives 1; or prints why
 it can't read what it needs and gives 2. It needs only Python 3.9 and its standard library, and
