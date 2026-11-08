@@ -1,17 +1,21 @@
-"""Holds a role's end until an output it takes is there."""
+"""end_when: the subagent gives its result only once an output its step names is made: there, as a
+file or a folder, named from the folder it works in."""
 
 from __future__ import annotations
 
 import os
 
-import lanes
+from lanes.done import Done
 
+ACTION = "end"
 WORDING = "End only once `<output>` is made."
-END = True
+CALLS = False
 
 
-def end(given: dict[str, list[str]], calls: list[lanes.Call], context: lanes.Context) -> str | None:
-    """What's missing, where no output is there, or None."""
-    if any(os.path.exists(p) for p in given["output"]):
-        return None
-    return f"{lanes.listed(given['output'])} isn't there."
+def missing(given: dict[str, list[str]], done: Done) -> str:
+    """What is missing: that none of the outputs is there, as the sentence lists them with `or`;
+    "" where one is."""
+    outputs = given["output"]
+    if any(os.path.exists(done.full(o)) for o in outputs):
+        return ""
+    return f"{' and '.join(f'`{o}`' for o in outputs)} not there"

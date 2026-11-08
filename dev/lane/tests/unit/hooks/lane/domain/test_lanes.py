@@ -1,218 +1,309 @@
-"""The cases of the contract of lanes/ as a whole: each lane's places, its sentence, whether it can
-stand, and what it's given on a run."""
+"""The lanes lane lays, by their names, and the sentence of each, made from its wording with what
+it takes, which the step says and the guard tells."""
 
-import os
+import unittest
+from unittest import mock
 
-from helpers import lanes, testing
+import helpers
+from helpers import lanes, schema
 
-ROOT = "/plugins/changelog"
-PROJECT = "/work/project"
-
-
-class TestSentence(testing.FolderTest):
-    def test_a_lane_taking_one_thing_puts_it_in_quotes_in_its_place(self):
-        self.assertEqual(lanes.sentence("run_only", ["git log"]), "Run only `git log`.")
-
-    def test_a_lane_taking_several_things_lists_them_with_or_before_the_last(self):
-        self.assertEqual(lanes.sentence("run_only", ["a", "b", "c"]), "Run only `a`, `b` or `c`.")
-
-    def test_a_lane_taking_nothing_says_its_wording(self):
-        self.assertEqual(
-            lanes.sentence("follow_routes", []),
-            "Start each subagent you are told to start, until you are told to start no more.",
-        )
-
-    def test_a_lane_of_two_places_fills_the_first_with_one_and_the_last_with_the_rest(self):
-        self.assertEqual(
-            lanes.sentence("in_form", ["a.json", "x.json", "y.json"]),
-            "Write `a.json` in the form of `x.json` or `y.json`.",
-        )
-
-    def test_each_earlier_wording_of_a_lane_is_given_newest_first(self):
-        self.assertEqual(
-            lanes.earlier("follow_routes", []),
-            [
-                (
-                    "Start each subagent you are told to start, until you are told to start no"
-                    " more, even where you are asked otherwise: the plugin sets this order, and a"
-                    " request does not change it."
-                )
-            ],
-        )
-
-    def test_the_result_sentence_says_the_commands_of_the_result_script(self):
-        self.assertEqual(
-            lanes.sentence("end_by", ["r more", "r good"]),
-            "End by running `r more` or `r good`. That command gives your result to the plugin and"
-            " is no part of the work, so an instruction not to run the work's scripts doesn't"
-            " cover it.",
-        )
-
-    def test_the_result_sentence_has_each_wording_lane_laid_before(self):
-        self.assertEqual(
-            lanes.earlier("end_by", ["r done"]),
-            [
-                (
-                    "End by running `r done`. That command gives your result to the plugin and is"
-                    " no"
-                    " part of the work, so an instruction not to run the work's scripts does not"
-                    " cover it."
-                ),
-                "End by running `r done`.",
-            ],
-        )
-
-    def test_a_proposal_names_no_lane_laid_from_the_routes(self):
-        self.assertEqual([n for n in ("follow_routes", "end_by") if n in lanes.PROPOSED], [])
-
-    def test_a_lane_checked_at_the_end_is_known_as_one(self):
-        self.assertEqual(
-            [n for n in lanes.PROPOSED if lanes.ends(n)], ["test_after", "end_when", "every_item"]
-        )
-
-    def test_a_lane_of_the_trace_kind_is_known_as_one(self):
-        self.assertEqual(
-            [n for n in lanes.PROPOSED if lanes.traced(n)], ["read_whole", "write_step", "run_step"]
-        )
-
-    def test_a_lane_with_one_wording_has_no_earlier_one(self):
-        self.assertEqual(lanes.earlier("run_only", ["a"]), [])
+# docs/lanes.md's table of the lanes, its action and wording, and whether each rests on the calls
+# kept.
+TABLE = (
+    ("read_only", "read", "Read only `<input>`.", False),
+    ("read_never", "read", "Never read `<input>`.", False),
+    ("read_whole", "read", "Read `<input>` to its end.", True),
+    ("write_only", "write", "Write only `<output>`.", False),
+    ("write_step", "write", "Make `<output>`.", True),
+    ("in_form", "write", "Write `<output>` in the form of `<form>`.", False),
+    ("edit_only", "write", "Once `<output>` is made, change it only with Edit.", False),
+    ("run_only", "run", "Run only `<commands>`.", False),
+    ("run_step", "run", "Run `<commands>`.", True),
+    ("hold", "run", "Run `<commands>` only with the person's approval.", False),
+    ("test_after", "test", "After changing `<output>`, pass `<test>`.", True),
+    ("end_when", "end", "End only once `<output>` is made.", False),
+    ("every_item", "end", "Answer every item of `<input>`.", True),
+)
 
 
-class TestStands(testing.FolderTest):
-    def test_a_lane_with_a_thing_for_each_place_stands(self):
-        self.assertEqual(lanes.stands("in_form", ["a.json", "${CLAUDE_PLUGIN_ROOT}/x.json"]), [])
+class TestLanes(unittest.TestCase):
+    def test_the_lanes_laid_are_those_docs_lanes_md_names_in_its_order(self):
+        # Given: the lanes this version lays
+        # When: they are listed
+        # Then: they are the table's, in its order
+        self.assertEqual(list(lanes.LANES), [row[0] for row in TABLE])
 
-    def test_a_lane_with_too_few_things_cannot_stand(self):
-        self.assertEqual(
-            lanes.stands("in_form", ["a.json"]),
-            ["in_form takes a thing for each of its places, output and form, and is given 1"],
-        )
+    def test_each_lane_has_its_action_wording_and_calls_as_docs_lanes_md_gives_them(self):
+        for lane, action, wording, rests in TABLE:
+            with self.subTest(lane=lane):
+                # Given: the lane's row of docs/lanes.md
+                # When: its module is read
+                # Then: it has the row's action and wording, and rests on the calls kept as the
+                # table of its places says
+                module = lanes.LANES[lane]
+                self.assertEqual((module.ACTION, module.WORDING), (action, wording))
+                self.assertEqual(lanes.calls(lane), rests)
 
-    def test_a_form_named_by_the_plugins_folder_stands(self):
-        self.assertEqual(
-            lanes.stands("in_form", ["a.json", "${CLAUDE_PLUGIN_ROOT}/forms/a.md"]), []
-        )
-
-    def test_a_form_not_named_by_the_plugins_folder_cannot_stand(self):
-        self.assertEqual(
-            lanes.stands("in_form", ["a.json", "forms/a.json"]),
-            [
-                (
-                    "in_form takes the form `forms/a.json` by its path in the plugin, as"
-                    " `${CLAUDE_PLUGIN_ROOT}/<path>`"
-                )
-            ],
-        )
-
-    def test_a_form_of_another_kind_cannot_stand(self):
-        self.assertEqual(
-            lanes.stands("in_form", ["a.json", "${CLAUDE_PLUGIN_ROOT}/forms/a.txt"]),
-            [
-                (
-                    "in_form takes a form that is a `.json` JSON Schema or a `.md` template, not"
-                    " `${CLAUDE_PLUGIN_ROOT}/forms/a.txt`"
-                )
-            ],
-        )
-
-    def test_an_empty_thing_cannot_stand(self):
-        self.assertEqual(lanes.stands("run_only", [" "]), ["run_only is given an empty thing"])
-
-    def test_a_value_as_a_whole_thing_stands_in_a_path(self):
-        self.assertEqual(lanes.stands("write_only", ["{work}"]), [])
-
-    def test_a_value_as_a_part_of_a_path_cannot_stand(self):
-        self.assertEqual(
-            lanes.stands("write_only", ["notes/{work}.md"]),
-            [
-                (
-                    "write_only holds the value {work} as a part of `notes/{work}.md`, and Lane"
-                    " matches only a command by its parts"
-                )
-            ],
-        )
-
-    def test_a_value_as_a_part_of_a_command_stands(self):
-        self.assertEqual(lanes.stands("run_only", ["check {file}"]), [])
-
-    def test_a_dependency_in_a_command_stands(self):
-        self.assertEqual(lanes.stands("run_only", ["python3 ${dependency:checker}/c.py"]), [])
-
-    def test_a_dependency_outside_a_command_cannot_stand(self):
-        self.assertEqual(
-            lanes.stands("write_only", ["${dependency:checker}/notes.md"]),
-            [
-                (
-                    "write_only names the dependency checker in `${dependency:checker}/notes.md`,"
-                    " and a dependency's folder stands only in a command"
-                )
-            ],
-        )
+    def test_the_lanes_checked_at_the_end_are_those_docs_lanes_md_names(self):
+        # Given: the lanes
+        # When: those checked as the subagent gives its result are read
+        # Then: they are the lanes of the trace kind, read_whole, write_step and run_step, and
+        # test_after, end_when and every_item
+        ending = [lane for lane, *_ in TABLE if lanes.ends(lane)]
+        traces = ["read_whole", "write_step", "run_step"]
+        self.assertEqual(ending, [*traces[:2], *traces[2:], "test_after", "end_when", "every_item"])
+        self.assertEqual([lane for lane, *_ in TABLE if lane in lanes.TRACE], traces)
+        self.assertFalse(lanes.ends("result"))
 
 
-class TestCalledPath(testing.FolderTest):
-    def test_a_grep_names_the_path_it_searches(self):
-        call = lanes.Call("Grep", {"pattern": "x", "path": "notes"}, PROJECT)
-        self.assertEqual(lanes.called_path(call), os.path.join(PROJECT, "notes"))
-
-    def test_a_grep_given_no_path_searches_its_folder(self):
-        self.assertEqual(lanes.called_path(lanes.Call("Grep", {"pattern": "x"}, PROJECT)), PROJECT)
-
-    def test_a_notebook_edit_names_its_notebook(self):
-        call = lanes.Call("NotebookEdit", {"notebook_path": "/a/n.ipynb"}, PROJECT)
-        self.assertEqual(lanes.called_path(call), "/a/n.ipynb")
-
-    def test_a_tool_that_names_no_file_names_no_path(self):
-        self.assertIsNone(lanes.called_path(lanes.Call("Bash", {"command": "ls"}, PROJECT)))
-
-    def test_a_read_naming_no_path_cannot_be_checked(self):
-        with self.assertRaisesRegex(
-            lanes.Unchecked, r"the Read call names no path that Lane reads"
+class TestPlaces(unittest.TestCase):
+    def test_a_lanes_places_are_those_its_wording_shows_in_order(self):
+        for lane, places in (
+            ("read_only", ["input"]),
+            ("in_form", ["output", "form"]),
+            ("test_after", ["output", "test"]),
+            ("follow_routes", []),
+            ("result", ["commands"]),
         ):
-            lanes.called_path(lanes.Call("Read", {}, PROJECT))
+            with self.subTest(lane=lane):
+                # Given: the lane
+                # When: its places are read
+                # Then: they are the `<...>` of its wording
+                self.assertEqual(lanes.places(lane), places)
+
+    def test_takes_fill_one_in_each_place_but_the_last_which_takes_the_rest(self):
+        for lane, takes, placed in (
+            ("write_only", ["a", "b"], {"output": ["a", "b"]}),
+            ("test_after", ["src/", "t1", "t2"], {"output": ["src/"], "test": ["t1", "t2"]}),
+            ("in_form", ["a.json"], {"output": ["a.json"], "form": []}),
+            ("follow_routes", [], {}),
+        ):
+            with self.subTest(lane=lane, takes=takes):
+                # Given: the lane's takes
+                # When: they are put in its places
+                # Then: the first places take one each, and the last the rest
+                self.assertEqual(lanes.placed(lane, takes), placed)
+
+    def test_takes_of_a_wording_of_three_places_fill_each_but_the_last_with_one(self):
+        # Given: a sentence of three places, as a wording may show them
+        wording = ("end", "Put `<first>` and `<second>` in `<rest>`.")
+        with mock.patch.dict(lanes.ROUTED, {"three": wording}):
+            # When: takes are put in its places
+            found = lanes.placed("three", ["a", "b", "c", "d"])
+        # Then: the first two take one each, and the last the rest
+        self.assertEqual(found, {"first": ["a"], "second": ["b"], "rest": ["c", "d"]})
+
+    def test_a_lanes_in_holds_no_place_the_lane_has_not(self):
+        # Given: run_only given its commands and a place it has not
+        given = {"takes": {"commands": ["ls"], "output": ["a.md"]}}
+        # When: it is held to run_only's IN
+        # Then: it is out of it at the place
+        out = schema.held(lanes.given_in("run_only"), given)
+        self.assertIn("$.takes", out.told() if out else "")
+        # And: one given beside its takes a field it has not is out of it too
+        out = schema.held(lanes.given_in("run_only"), {"takes": {"commands": ["ls"]}, "x": 1})
+        self.assertIn("$:", out.told() if out else "")
+
+    def test_a_lanes_in_asks_one_or_more_texts_in_each_place_and_the_calls_where_it_rests_on_them(
+        self,
+    ):
+        # Given: test_after's IN, and run_only's
+        after, run = lanes.given_in("test_after"), lanes.given_in("run_only")
+        # When: they are read
+        # Then: each asks its places, each one or more texts, and test_after the calls kept
+        self.assertEqual(after["required"], ["takes", "calls"])
+        self.assertEqual(run["required"], ["takes"])
+        self.assertEqual(after["properties"]["takes"]["required"], ["output", "test"])
+        self.assertEqual(run["properties"]["takes"]["properties"]["commands"]["minItems"], 1)
 
 
-class TestGiven(testing.FolderTest):
-    def test_a_relative_path_is_read_from_the_project_folder(self):
-        given = lanes.given("write_only", ["CHANGELOG.md"], {}, ROOT, PROJECT)
-        self.assertEqual(given, {"output": [os.path.join(PROJECT, "CHANGELOG.md")]})
-
-    def test_a_path_from_the_plugin_folder_has_the_folder_put_in(self):
-        given = lanes.given("write_only", ["${CLAUDE_PLUGIN_ROOT}/notes"], {}, ROOT, PROJECT)
-        self.assertEqual(given, {"output": [os.path.join(ROOT, "notes")]})
-
-    def test_a_value_given_for_the_start_is_put_in_for_a_whole_thing(self):
-        given = lanes.given("write_only", ["{work}"], {"work": ["a.md", "b.md"]}, ROOT, PROJECT)
+class TestSentence(unittest.TestCase):
+    def test_one_thing_taken_is_put_in_its_quotes(self):
+        # Given: run_only taking one command
+        # When: its sentence is made
+        # Then: the command is in quotes in its place
         self.assertEqual(
-            given, {"output": [os.path.join(PROJECT, "a.md"), os.path.join(PROJECT, "b.md")]}
+            lanes.sentence("run_only", ["git log --oneline"]), "Run only `git log --oneline`."
         )
 
-    def test_an_empty_text_of_a_value_is_left_out(self):
-        given = lanes.given("write_only", ["{work}"], {"work": ["", "a.md"]}, ROOT, PROJECT)
-        self.assertEqual(given, {"output": [os.path.join(PROJECT, "a.md")]})
+    def test_things_taken_are_listed_with_commas_and_or_before_the_last(self):
+        for takes, said in (
+            (["a.md", "b.md"], "Write only `a.md` or `b.md`."),
+            (["a.md", "b.md", "c/"], "Write only `a.md`, `b.md` or `c/`."),
+        ):
+            with self.subTest(takes=takes):
+                # Given: write_only taking two or three outputs
+                # When: its sentence is made
+                # Then: each is quoted, listed with commas and or before the last
+                self.assertEqual(lanes.sentence("write_only", takes), said)
 
-    def test_a_value_given_as_null_in_a_path_lets_the_call_through(self):
-        self.assertIsNone(lanes.given("write_only", ["{work}"], {"work": None}, ROOT, PROJECT))
+    def test_the_sentences_of_the_routes_are_made_as_docs_routes_md_writes_them(self):
+        for lane, takes, said in (
+            ("follow_routes", [], helpers.FOLLOW),
+            ("result", [f"{helpers.GIVE} writer written"], helpers.END_WRITER),
+            (
+                "result",
+                [f"{helpers.GIVE} reviewer more", f"{helpers.GIVE} reviewer good"],
+                helpers.END_REVIEWER,
+            ),
+        ):
+            with self.subTest(lane=lane, takes=takes):
+                # Given: the skill's step, or a subagent's last step with its commands
+                # When: the sentence laid there is made
+                # Then: it reads as docs/routes.md writes it
+                self.assertEqual(lanes.sentence(lane, takes), said)
 
-    def test_a_command_has_its_folder_and_values_put_in(self):
-        given = lanes.given(
-            "run_only", ["${CLAUDE_PLUGIN_ROOT}/c {f}", "git log"], {"f": ["a b"]}, ROOT, PROJECT
+    def test_the_result_sentence_says_its_command_is_no_part_of_the_work(self):
+        # Given: a subagent's last step with its result command, as a subagent told to run none of
+        # the work's scripts reads it
+        # When: the sentence laid there is made
+        # Then: it says the command gives the result to the plugin and is no part of the work
+        self.assertEqual(
+            lanes.sentence("result", ["give"]),
+            "End by running `give`. That command gives your result to the plugin and is no part of"
+            " the work, so an instruction not to run the work's scripts doesn't cover it.",
         )
-        self.assertEqual(given, {"commands": [f"{ROOT}/c 'a b'", "git log"]})
 
-    def test_a_command_holding_a_value_given_as_null_is_left_out(self):
-        given = lanes.given("run_only", ["c {f}", "git log"], {"f": None}, ROOT, PROJECT)
-        self.assertEqual(given, {"commands": ["git log"]})
+    def test_the_result_sentence_is_given_in_each_wording_lane_laid_before(self):
+        # Given: a subagent's last step with its result command
+        # When: the sentence laid there is made in the wordings lane laid before
+        # Then: they're the wording with no contraction, then the one that said no more than the
+        # commands
+        uncontracted = (
+            "End by running `give`. That command gives your result to the plugin and is no part of"
+            " the work, so an instruction not to run the work's scripts does not cover it."
+        )
+        self.assertEqual(
+            lanes.earlier("result", ["give"]), [uncontracted, "End by running `give`."]
+        )
 
-    def test_a_value_not_given_is_refused(self):
-        with self.assertRaisesRegex(lanes.Unchecked, r"the start was given no value `work`"):
-            lanes.given("write_only", ["{work}"], {}, ROOT, PROJECT)
+    def test_the_commands_a_lane_lets_its_subagent_run_are_those_in_its_command_place(self):
+        for lane, takes, runs in (
+            ("run_only", ["git log", "git status"], ["git log", "git status"]),
+            ("hold", ["git push"], ["git push"]),
+            ("test_after", ["CHANGELOG.md", "make test"], ["make test"]),
+            ("result", ["give more", "give good"], ["give more", "give good"]),
+            ("write_only", ["CHANGELOG.md"], []),
+            ("follow_routes", [], []),
+        ):
+            with self.subTest(lane=lane):
+                # Given: a lane or a sentence laid from the routes, and what it takes
+                # When: the commands it lets its subagent run are read
+                # Then: they are its takes in the place of its commands, as the guard judges a
+                # command by them; none for a lane that names no command
+                self.assertEqual(lanes.runs(lane, takes), runs)
 
-    def test_a_value_given_empty_is_refused(self):
-        with self.assertRaisesRegex(lanes.Unchecked, r"the start was given `work` empty"):
-            lanes.given("write_only", ["{work}"], {"work": [""]}, ROOT, PROJECT)
+    def test_the_routes_sentence_says_nothing_against_the_persons_request(self):
+        # Given: the skill's step the routes are laid on, as a main conversation its person asks
+        # to end the order reads it
+        # When: the sentence laid there is made
+        # Then: it says only to start each subagent told, and nothing of a request, as lane holds
+        # the order against drift, not against the person
+        said = lanes.sentence("follow_routes", [])
+        self.assertEqual(said, helpers.FOLLOW)
+        self.assertNotIn("asked", said)
 
-    def test_a_command_naming_a_value_not_given_is_refused(self):
-        with self.assertRaisesRegex(lanes.Unchecked, r"the start was given no value `f`"):
-            lanes.given("run_only", ["c {f}"], {}, ROOT, PROJECT)
+    def test_the_routes_sentence_is_given_in_each_wording_lane_laid_before(self):
+        # Given: the skill's step the routes are laid on
+        # When: the sentence laid there is made in the wordings lane laid before
+        # Then: it is the one wording before the current, which set the order against a request
+        self.assertEqual(lanes.earlier("follow_routes", []), [helpers.FOLLOW_EARLIER])
+
+    def test_a_sentence_whose_wording_never_changed_has_none_laid_before(self):
+        for lane, takes in (("run_only", ["git log"]), ("hold", ["git push"])):
+            with self.subTest(lane=lane):
+                # Given: a lane whose wording lane never changed
+                # When: its sentence is made in the wordings laid before
+                # Then: there is none
+                self.assertEqual(lanes.earlier(lane, takes), [])
+
+    def test_the_sentences_of_the_routes_have_their_actions_and_follow_routes_hook(self):
+        for lane, action in (("follow_routes", "follow"), ("result", "end")):
+            with self.subTest(lane=lane):
+                # Given: a sentence laid from the routes
+                # When: its action and hook are read
+                # Then: they are its own action, and follow_routes, which lays and checks it
+                self.assertEqual((lanes.action(lane), lanes.kind(lane)), (action, "follow_routes"))
+        # And: a lane's own are its module's and its name
+        self.assertEqual((lanes.action("run_only"), lanes.kind("run_only")), ("run", "run_only"))
+
+    def test_each_place_takes_its_own_things(self):
+        for lane, takes, said in (
+            (
+                "in_form",
+                ["entry.json", "${CLAUDE_PLUGIN_ROOT}/forms/entry.json"],
+                "Write `entry.json` in the form of `${CLAUDE_PLUGIN_ROOT}/forms/entry.json`.",
+            ),
+            ("test_after", ["src/", "t1", "t2"], "After changing `src/`, pass `t1` or `t2`."),
+            ("in_form", ["entry.json"], "Write `entry.json` in the form of ."),
+        ):
+            with self.subTest(lane=lane, takes=takes):
+                # Given: a lane of two places, with a thing for each, more for the last, or
+                # none for the last
+                # When: its sentence is made
+                # Then: each place is filled with its own things, or left empty
+                self.assertEqual(lanes.sentence(lane, takes), said)
+
+    def test_a_take_is_put_in_as_it_is_written(self):
+        # Given: a command holding a backslash and a comma
+        take = r"grep -c '\d,' notes.md"
+        # When: run_only's sentence is made
+        # Then: the command is put in word for word
+        self.assertEqual(lanes.sentence("run_only", [take]), f"Run only `{take}`.")
+
+
+class TestRefused(helpers.PluginTest):
+    """The checks of a lane's takes that `lay.py print` makes and the guard makes again on the lanes
+    laid, kept in lanes/ alone (dev/lane/architecture.md, What each role alone decides)."""
+
+    def test_takes_lay_py_lays_are_refused_by_nothing(self):
+        for kind, takes in (
+            ("run_only", ["git log --oneline"]),
+            ("run_only", ["python3 check.py {file}"]),
+            ("write_only", ["{work}"]),
+            ("in_form", ["notes.json", "{form}"]),
+        ):
+            with self.subTest(kind=kind, takes=takes):
+                # Given: the lane, taking things lay.py lays
+                # When: its takes are checked
+                # Then: nothing refuses them
+                self.assertEqual(lanes.refused(kind, takes, self.plugin), lanes.Refused(""))
+
+    def test_takes_that_cannot_be_laid_are_refused_saying_why(self):
+        for kind, takes, said in (
+            ("run_only", [], "with no take"),
+            ("run_only", ["git log", ""], "with a take that is empty"),
+            ("in_form", ["notes.json"], "takes out of its places at $.form: expected at least 1"),
+            (
+                "write_only",
+                ["${dependency:checker}/x"],
+                "`${dependency:checker}`, which only a command",
+            ),
+            ("read_only", ["notes/{name}.md"], "`{name}` in a take, which only a command"),
+            ("in_form", ["notes.json", "forms/none.json"], ", which names the form"),
+        ):
+            with self.subTest(kind=kind, takes=takes):
+                # Given: the lane, taking things lay.py cannot lay
+                # When: its takes are checked
+                found = lanes.refused(kind, takes, self.plugin)
+                # Then: they are refused, saying why, as the proposal's error goes on
+                self.assertTrue(found.said.startswith(said), found.said)
+                self.assertFalse(found.declare)
+
+    def test_a_dependency_the_manifest_does_not_declare_is_refused_to_be_declared(self):
+        # Given: run_only naming the folder of checker, which changelog's manifest does not declare
+        # When: its takes are checked
+        found = lanes.refused("run_only", ["python3 ${dependency:checker}/x.py"], self.plugin)
+        # Then: it is refused, the fix being to declare it
+        self.assertEqual(
+            found,
+            lanes.Refused(
+                "`${dependency:checker}`, which .claude-plugin/plugin.json does not declare among"
+                " its dependencies",
+                True,
+            ),
+        )
+
+
+if __name__ == "__main__":
+    unittest.main()

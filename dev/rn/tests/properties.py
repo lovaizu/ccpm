@@ -69,7 +69,7 @@ class TestTrees(unittest.TestCase):
         for a in ids:
             for b in ids:
                 if a != b:
-                    self.assertFalse(every_item.answered(a, b), (a, b))
+                    self.assertFalse(every_item.stands(a, b), (a, b))
 
     @given(shapes(), shapes())
     def test_a_change_never_touches_a_node_it_changed(self, before, after):

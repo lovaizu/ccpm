@@ -1,0 +1,3 @@
+{"plugin": "checker",
+ "subagents": [{"name": "examiner", "results": ["asks", "done"], "steps": [
+  {"step": 1, "lanes": [{"lane": "read_only", "takes": ["CHANGELOG.md"]}]}]}]}

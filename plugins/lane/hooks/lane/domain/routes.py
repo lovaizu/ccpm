@@ -1,282 +1,360 @@
-"""Decides whether a plugin can follow its routes, which results a role may give, and which start
-is due from the starts of a run, as plugins/lane/docs/routes.md gives the routes.
+"""The routes, as docs/routes.md gives them: the results each subagent may give, and the result
+command it gives each by; and the next start of a run of the skill the routes start from, decided
+from the routes and the run's starts as they came back, with the result each started subagent
+gave, and told in its line of docs/routes.md's table. A route that waits has the user answer the
+subagent's point, with no start due, until the subagent, resumed with the answer, gives a later
+result.
 
-A route names the role that the skill starts next after a role ends with a result. A role of the
-plugin goes by its name, and a role or a skill of a dependency by `<dependency>:<name>`.
-"""
+A start counts once its subagent has ended: as its call comes back `completed`, or, come back
+`async_launched`, once the subagent of the ID it gave has ended. Starts joined to the one before
+them, as further starts of a subagent the routes fan out, or as a start made again for one that
+ended with no result, count together, once every one has ended: their results give the one they
+share, or the first of them in the order the routes give. The starts after the end are left out,
+as the run is over once no start is left."""
 
 from __future__ import annotations
 
-from typing import Any, NamedTuple, Protocol
+from typing import Any, Callable, NamedTuple
 
-import called
-import command
-import lanes
+# The result command, as a step writes it and Claude Code puts the plugin's folder in it: the
+# folder of the plugin the subagent is of, its own, or a dependency's as lanes/ names one.
+COMMAND = "python3 {folder}/hooks/lane/result.py {name} {on}"
+OWN = "${CLAUDE_PLUGIN_ROOT}"
+DEPENDENCY = "${{dependency:{name}}}"
 
-# A result, as a role gives it by the result script.
-RESULT = {"type": "string", "pattern": "^[a-z][a-z0-9_-]*$"}
-# The form of the routes, as plugins/lane/docs/routes.md gives it.
-SCHEMA = {
-    "type": "object",
-    "required": ["orchestrator", "routes"],
-    "additionalProperties": False,
-    "properties": {
-        "orchestrator": {"type": "string"},
-        "step": {"type": "integer", "minimum": 1},
-        "command": {"type": "string", "minLength": 1},
-        "routes": {
-            "type": "array",
-            "minItems": 2,
-            "items": {
-                "type": "object",
-                "required": ["from"],
-                "additionalProperties": False,
-                "properties": {
-                    "from": {"type": "string"},
-                    "on": RESULT,
-                    "to": {"type": "string"},
-                    "waits": {"const": True},
-                },
-            },
-        },
-        "fan_out": {"type": "array", "items": {"type": "string"}},
-        "precedence": {
-            "anyOf": [
-                {"type": "array", "items": RESULT},
-                {"type": "object", "additionalProperties": {"type": "array", "items": RESULT}},
-            ]
-        },
-    },
-}
-# The result of a role that gives one where no route and no `results` name any.
+
+# How a start is joined to the starts before it: as a further run of a subagent fanned out, or as
+# a run started again where one of them ended with no result.
+MORE = "more"
+AGAIN = "again"
+
+
+class Start(NamedTuple):
+    """A start of the run as its call came back: the subagent started, by its name, the
+    status the call gave, the ID of the subagent's run, and how it is joined to the starts before
+    it, MORE or AGAIN, or "" where it is not."""
+
+    name: str
+    status: str
+    agent: str
+    joined: str = ""
+
+
+class Next(NamedTuple):
+    """The next start: `start` with the subagent due, `wait` with the subagent run in the
+    background, `reply` with the subagent whose point the user is to answer, as its route waits,
+    or `end` with none; the subagent and result it follows, where it follows one;
+    whether it is the start of a subagent again, as a run of it ended with no result; how many runs
+    gave the result it follows; and, waiting, whether more runs of the subagent may start, as the
+    routes fan it out."""
+
+    kind: str
+    name: str
+    gave: tuple[str, str] | None
+    again: bool = False
+    runs: int = 1
+    more: bool = False
+
+
+class Unordered(ValueError):
+    """Where the runs of a subagent at once gave results the routes give no order to take one of
+    them by: the subagent's name, and what is wrong."""
+
+    def __init__(self, name: str, wrong: str) -> None:
+        super().__init__(wrong)
+        self.name = name
+
+
+def command(name: str, on: str) -> str:
+    """The command the subagent of the name gives the result by: by its own plugin's result script,
+    in the plugin's folder, or in its dependency's where it is a dependency's,
+    `<dependency>:<name>`, as its own plugin lays it."""
+    dependency, colon, own = name.rpartition(":")
+    folder = DEPENDENCY.format(name=dependency) if colon else OWN
+    return COMMAND.format(folder=folder, name=own, on=on)
+
+
+# The result a subagent with a lane checked at its end gives where no route is from it.
 DONE = "done"
 
 
-class Route(NamedTuple):
-    """One route of the routes."""
-
-    # The role that ends, or the skill for the first start.
-    source: str
-    # The result that the role ends with, or None for the first start.
-    on: str | None
-    # The role or the dependency's skill to start next, or None.
-    to: str | None
-    # Whether the run waits for the person's answer to the role's point.
-    waits: bool
-
-
-class Routes(NamedTuple):
-    """The routes of a plugin, as `hooks/lanes.json` gives them."""
-
-    # The skill that starts the roles, by its folder under skills/.
-    orchestrator: str
-    # The skill's step that the routes' sentence ends, or None where the skill holds no list.
-    step: int | None
-    # The command that prints the text of each start, or None.
-    command: str | None
-    # Each route, in the order the routes give them.
-    routes: tuple[Route, ...]
-    # Each role that the skill may start several times at once.
-    fan_out: tuple[str, ...]
-    # The order of results for every role, or one order for each role by its name, or None.
-    precedence: list[str] | dict[str, list[str]] | None
+def gives(
+    routes: dict[str, Any] | None, name: str, ends: bool, own: list[str] | None = None
+) -> list[str]:
+    """The results the subagent or skill of the name may give, `ends` saying whether a lane of it is
+    checked at its end: for the skill the routes start from, those of each route that ends the run,
+    as it ends its run by one of them; for a subagent, those the routes from it are on; where
+    none is, its own results, or DONE where it names none and a lane of it is checked at its
+    end."""
+    if routes and name == routes["orchestrator"]:
+        return list(dict.fromkeys(r["on"] for r in routes["routes"] if ends_run(r)))
+    found = ons(routes, name) if routes else []
+    return found or own or ([DONE] if ends else [])
 
 
-class Due(NamedTuple):
-    """Where a run stands: what the main conversation is to do next."""
-
-    # `start`, `wait`, `again`, `waits`, `end`, or `unordered`.
-    kind: str
-    # The role to start, to wait for, to start again, whose point waits, or that ended the run.
-    role: str
-    # The result that led here, or None.
-    result: str | None = None
-    # The role that gave that result, or None.
-    after: str | None = None
-    # How many starts gave that result, or how many starts run.
-    count: int = 0
-    # The ID of the start whose point waits, or None.
-    agent: str | None = None
+def ends_run(route: dict[str, Any]) -> bool:
+    """Whether the route ends the run: it has neither a `to` nor `waits`."""
+    return "to" not in route and "waits" not in route
 
 
-def parsed(data: dict[str, Any]) -> Routes:
-    """The routes in the JSON, which holds to SCHEMA."""
-    found = tuple(
-        Route(r["from"], r.get("on"), r.get("to"), r.get("waits") is True) for r in data["routes"]
-    )
-    return Routes(
-        data["orchestrator"],
-        data.get("step"),
-        data.get("command"),
-        found,
-        tuple(data.get("fan_out", [])),
-        data.get("precedence"),
-    )
-
-
-def faults(found: Routes) -> list[str]:
-    """What keeps a plugin from following the routes, none where it can follow them."""
-    shown = []
-    first = [r for r in found.routes if r.source == found.orchestrator]
-    if len(first) > 1:
-        shown.append(f"the routes hold more than one route from {found.orchestrator}")
-    elif not first or first[0].on is not None or first[0].to is None:
-        shown.append(
-            f"the routes hold no route from {found.orchestrator} with a `to` and no `on`, the"
-            " first start"
-        )
-    seen = set()
-    for route in found.routes:
-        if route.source == found.orchestrator:
-            continue
-        if route.on is None:
-            shown.append(f"the route from {route.source} to {route.to} has no `on`")
-        elif (route.source, route.on) in seen:
-            shown.append(f"two routes from {route.source} are on `{route.on}`")
-        seen.add((route.source, route.on))
-        if route.to and route.waits:
-            shown.append(
-                f"the route from {route.source} on `{route.on}` has both a `to` and `waits`"
-            )
-        if route.waits and route.source in found.fan_out:
-            shown.append(
-                f"{route.source} fans out, so Lane can't tell which of its starts to resume on"
-                f" `{route.on}`"
-            )
-    sources = {r.source for r in found.routes}
-    for to in dict.fromkeys(r.to for r in found.routes if r.to):
-        if to not in sources:
-            shown.append(f"{to} is started, and no route is from it, so it has no result to give")
-    if not any(r.to is None and not r.waits for r in found.routes if r.on is not None):
-        shown.append("no route has neither a `to` nor `waits`, so the run can't end")
-    return shown + _fan_out_faults(found)
-
-
-def _fan_out_faults(found: Routes) -> list[str]:
-    """What keeps fan_out and precedence from telling the result of starts at once."""
-    shown = []
-    started = {r.to for r in found.routes}
-    for role in found.fan_out:
-        given = results(found, role) or []
-        if role not in started:
-            shown.append(f"fan_out names {role}, which no route starts")
-        elif len(given) > 1 and not set(given) <= set(_order(found, role)):
-            shown.append(
-                f"{role} fans out and gives more than one result, so precedence orders each of them"
-            )
-    if isinstance(found.precedence, dict):
-        orders = {
-            f" for {role}": (o, results(found, role) or [], f"from {role} ")
-            for role, o in found.precedence.items()
-        }
-    else:
-        every = [r.on for r in found.routes if r.on]
-        orders = {"": (found.precedence or [], every, "")}
-    for where, (order, given, source) in orders.items():
-        for result in dict.fromkeys(order):
-            if order.count(result) > 1:
-                shown.append(f"precedence names `{result}` twice{where}")
-            if result not in given:
-                shown.append(f"precedence names `{result}`, which no route {source}is on")
-    return shown
-
-
-def _order(found: Routes, role: str) -> list[str]:
-    """The order of the role's results, first to last, or none where precedence gives none."""
-    if isinstance(found.precedence, dict):
-        return found.precedence.get(role, [])
-    return found.precedence or []
-
-
-def results(found: Routes, name: str) -> list[str] | None:
-    """The results that the role of the name may give by the routes, or None where no route is
-    from it. The skill gives the result of each route that ends the run."""
-    if name == found.orchestrator:
-        return [r.on for r in found.routes if r.on and r.to is None and not r.waits]
-    ons = [r.on for r in found.routes if r.source == name and r.on]
-    return ons or None
-
-
-class _Laid(Protocol):
-    """What allowed and result_commands read of the lanes laid, as the Laid of laid.py gives it."""
-
-    @property
-    def routes(self) -> Routes | None: ...
-
-    def role(self, name: str) -> Any: ...
-
-
-def allowed(found: _Laid, name: str) -> list[str]:
-    """The results that the role of the name may give: those of the routes from it, else those its
-    `results` name, else `done`."""
-    if found.routes is not None:
-        by_routes = results(found.routes, name)
-        if by_routes is not None:
-            return by_routes
-    role = found.role(name)
-    if role is not None and role.results is not None:
-        return list(role.results)
-    return [DONE]
-
-
-def result_commands(found: _Laid, name: str) -> list[str]:
-    """The commands by which the role or the skill of the name gives each result it may give, none
-    where it gives no result.
-
-    A role gives a result where the routes name it, where it names its results, or where it has a
-    lane that the guard checks as the role gives its result.
-    """
-    by_routes = None if found.routes is None else results(found.routes, name)
-    role = found.role(name)
-    lanes_end = role is not None and any(
-        lanes.ends(lane.lane) or lanes.traced(lane.lane) for lane in role.lanes
-    )
-    if by_routes is None and not lanes_end and (role is None or role.results is None):
-        return []
-    return [f"python3 {command.ROOT}/hooks/lane/result.py {name} {r}" for r in allowed(found, name)]
-
-
-def named(found: Routes) -> list[str]:
-    """Each role or dependency's skill that the routes name, once, the skill aside."""
-    names = [n for r in found.routes for n in (r.source, r.to) if n]
-    return [n for n in dict.fromkeys(names) if n != found.orchestrator]
-
-
-def typed(plugin: str, name: str) -> str:
-    """The name that Claude Code gives a role: `<plugin>:<name>` for the plugin's own role, and a
-    dependency's role as the routes name it."""
+def kind(name: str, plugin: str) -> str:
+    """The type Claude Code gives the subagent of the name, as the routes of the plugin name it:
+    `<plugin>:<name>` for one of its own, or the name itself for a dependency's, which names its
+    plugin already."""
     return name if ":" in name else f"{plugin}:{name}"
 
 
-def combined(found: Routes, role: str, given: list[str]) -> str | None:
-    """The result of starts of the role at once, or None where they gave different results that no
-    order of precedence holds."""
-    if len(set(given)) == 1:
-        return given[0]
-    order = _order(found, role)
-    if not set(given) <= set(order):
-        return None
-    return next(r for r in order if r in given)
+def ons(routes: dict[str, Any], name: str) -> list[str]:
+    """The results the subagent of the name gives, as the routes from it are on them, in order."""
+    return [r["on"] for r in routes["routes"] if r["from"] == name and "on" in r]
 
 
-def due(found: Routes, groups: list[called.Group]) -> Due:
-    """Where the run stands, from the groups of starts of the run, in their order."""
-    first = next(r for r in found.routes if r.source == found.orchestrator)
-    now = Due("start", first.to or "")
-    for group in groups:
-        if any(s.running for s in group.starts):
-            return Due("wait", group.role, count=len(group.starts))
-        if any(s.result is None for s in group.starts):
-            return Due("again", group.role)
-        result = combined(found, group.role, [s.result or "" for s in group.starts])
-        route = next((r for r in found.routes if r.source == group.role and r.on == result), None)
-        if route is None:
-            return Due("unordered", group.role)
-        count = len(group.starts)
-        if route.to:
-            now = Due("start", route.to, result, group.role, count)
-        elif route.waits:
-            now = Due("waits", group.role, result, group.role, count, group.starts[0].agent)
-        else:
-            return Due("end", group.role, result, group.role, count)
-    return now
+def named(routes: dict[str, Any]) -> list[str]:
+    """Each name the routes give, the skill they start from first, then each as a route names it,
+    once."""
+    names = [routes["orchestrator"]]
+    for r in routes["routes"]:
+        names += [r[k] for k in ("from", "to") if k in r]
+    return list(dict.fromkeys(names))
+
+
+def giving(routes: dict[str, Any]) -> list[str]:
+    """Each subagent that gives a result: those the routes are from, the skill left out."""
+    return [n for n in named(routes) if ons(routes, n)]
+
+
+def listed(things: list[str]) -> str:
+    """The things, listed with commas and `and` before the last."""
+    return " and ".join(filter(None, [", ".join(things[:-1]), things[-1]]))
+
+
+def fans_out(routes: dict[str, Any], name: str) -> bool:
+    """Whether the skill may start the subagent of the name several times at once."""
+    return name in routes.get("fan_out", [])
+
+
+def order(routes: dict[str, Any], name: str) -> list[str] | None:
+    """The order the results of the subagent of the name are taken in, first to last: its own, or
+    the one for every subagent; None where the routes give neither."""
+    given = routes.get("precedence")
+    return given.get(name) if isinstance(given, dict) else given
+
+
+def unordered(routes: dict[str, Any]) -> str | None:
+    """What is wrong where the routes fan out a subagent giving several results that its order
+    does not hold each of, so the result of its runs at once could not be told: the first such,
+    as `lay.py print` refuses it and the guard holds the routes laid to it; None where none is."""
+    for name in routes.get("fan_out", []):
+        ons_ = ons(routes, name)
+        taken = order(routes, name) or []
+        if ons_[1:] and not all(on in taken for on in ons_):
+            results = listed([f"`{on}`" for on in ons_])
+            return (
+                f"gives {name} in `fan_out`, whose results {results} the routes do not order in"
+                " `precedence`, so the result of its runs at once could not be told"
+            )
+    return None
+
+
+def refused(routes: dict[str, Any]) -> str:
+    """Why the routes, in their JSON Schema, cannot be followed, as `lay.py print` refuses them and
+    the guard holds the routes laid to it, said as the proposal's error goes on; "" where they can:
+    no one first route, from the skill, with a `to` and no `on`; a route with both a `to` and
+    `waits`, or one that waits from a subagent fanned out, whose run to resume could not be told;
+    another route with no `on`, or two from one subagent on one result; a route to the skill,
+    which gives no result, or to a subagent no route is from; no route that ends; an order of
+    results, or a subagent fanned out, as `ordered` checks them."""
+    lead, each = routes["orchestrator"], routes["routes"]
+    if ":" in lead:
+        return (
+            f"gives {lead} as the skill the routes start from, a skill of another plugin, whose"
+            " steps the routes cannot be laid on"
+        )
+    first = [r for r in each if r["from"] == lead]
+    # A first route alone is the start; with none or two, there is none, which has no `to`.
+    start: dict[str, Any] = {}
+    if len(first) == 1:
+        start = first[0]  # pragma: no mutate
+    if "on" in start or "to" not in start:
+        return (
+            f"gives the routes no one route from {lead} with a `to` and no `on`, which starts the"
+            " run"
+        )
+    seen: list[tuple[str, str]] = []
+    for r in each:
+        on = f" on `{r['on']}`" if "on" in r else ""
+        if "to" in r and "waits" in r:
+            return f"gives a route from {r['from']}{on} with both a `to` and `waits`"
+        if "waits" in r and fans_out(routes, r["from"]):
+            return (
+                f"gives a route from {r['from']}{on} that waits, though {r['from']} is in"
+                " `fan_out`, so lane could not tell which of its runs to resume"
+            )
+        if r["from"] == lead:
+            continue
+        if "on" not in r:
+            return f"gives a route from {r['from']} with no `on`"
+        if (r["from"], r["on"]) in seen:
+            return f"gives two routes from {r['from']} on `{r['on']}`"
+        seen.append((r["from"], r["on"]))
+    froms = [f for f, _ in seen]
+    for r in each:
+        to = r.get("to")
+        if to == lead:
+            return (
+                f"gives a route to {lead}, the skill the routes start from, which gives no result"
+            )
+        if to is not None and to not in froms:
+            return (
+                f"gives a route to {to}, which no route is from, so it would have no result to give"
+            )
+    if not any(ends_run(r) for r in each):
+        return "gives no route with neither a `to` nor `waits`, so the run cannot end"
+    return ordered(routes, froms)
+
+
+def ordered(routes: dict[str, Any], froms: list[str]) -> str:
+    """Why the routes' orders of results, or the subagents they fan out, cannot be followed, the
+    subagents routes are from being `froms`; "" where they can: an order of the results of a
+    subagent no route is from, naming a result twice or one no route from its subagent is on; a
+    subagent fanned out that no route starts, or one giving several results its order does not
+    hold each of, as `unordered` says."""
+    precedence = routes.get("precedence")
+    orders = precedence if isinstance(precedence, dict) else {"": precedence or []}
+    for name, taken in orders.items():
+        if name and name not in froms:
+            return f"gives an order of the results of {name}, which no route is from"
+        given = ons(routes, name) if name else [r["on"] for r in routes["routes"] if "on" in r]
+        for at, on in enumerate(taken):
+            if on in taken[:at]:
+                return f"gives `{on}` twice in an order of results"
+            if on not in given:
+                which = f"no route from {name}" if name else "no route"
+                return f"gives `{on}` in an order of results, which {which} is on"
+    starts = [r["to"] for r in routes["routes"] if "to" in r]
+    for name in routes.get("fan_out", []):
+        if name not in starts:
+            return f"gives {name} in `fan_out`, which no route starts"
+    return unordered(routes) or ""
+
+
+def combined(routes: dict[str, Any], name: str, given: list[str]) -> str:
+    """The result of the runs of the subagent of the name, which gave the results: the one they
+    share, or the first of them in its order. Stops with Unordered where they differ and the order
+    does not hold each."""
+    found = list(dict.fromkeys(given))
+    if not found[1:]:
+        # The results hold one here, so its first is its last.
+        return found[0]  # pragma: no mutate
+    taken = order(routes, name) or []
+    if not all(on in taken for on in found):
+        gave = listed([f"`{on}`" for on in found])
+        wrong = f"the runs of {name} at once gave {gave}, and the routes order not each of them"
+        raise Unordered(name, wrong + " in `precedence`")
+    return min(found, key=taken.index)
+
+
+def next_start(
+    routes: dict[str, Any],
+    starts: list[Start],
+    result: Callable[[str], str | None],
+    ended: Callable[[str], bool],
+    left: Callable[[str], bool] = lambda agent: False,
+) -> Next:
+    """The next start after the starts, as `result` gives the result of a subagent's run by its ID,
+    `ended` whether it has ended, and `left` whether a run of it ended with no result once: the
+    skill's route at first; after each start, with those joined to it, the route of their
+    subagent on their result once every run has ended, the user to answer where it waits, or the
+    same subagent again where a run is left with no result; a wait while any runs in the
+    background, a subagent resumed with an answer among them. Stops with Unordered where their
+    results cannot be told one."""
+    first = next(r["to"] for r in routes["routes"] if r["from"] == routes["orchestrator"])
+    found = Next("start", first, None)
+    name, runs = "", list[Start]()
+    for s in starts:
+        joins = bool(s.joined) and s.name == name
+        # A next start is `end`, `reply`, `start` or `wait`, `end` the first of them in order.
+        over = found.kind == "end"  # pragma: no mutate
+        # Once the runs have led to the end, a start joined to them may still come back.
+        if over and not joins:
+            break
+        name, runs = s.name, [*runs, s] if joins else [s]
+        found = taken(routes, name, runs, result, ended, left)
+    return found
+
+
+def running(s: Start, ended: Callable[[str], bool]) -> bool:
+    """Whether the start's subagent still runs: launched in the background and not ended."""
+    # The guard holds a status to `completed` and `async_launched` as the call comes back.
+    background = s.status != "completed"  # pragma: no mutate
+    return background and not ended(s.agent)
+
+
+def taken(
+    routes: dict[str, Any],
+    name: str,
+    runs: list[Start],
+    result: Callable[[str], str | None],
+    ended: Callable[[str], bool],
+    left: Callable[[str], bool],
+) -> Next:
+    """The next start after the runs of the subagent of the name, joined, as `next_start` has
+    it."""
+    if any(running(s, ended) for s in runs):
+        return Next("wait", name, None, more=fans_out(routes, name))
+    counted = in_place(runs, result, left)
+    given = [on for on in (result(s.agent) for s in counted) if on is not None]
+    if len(given) < len(counted):
+        return Next("start", name, None, True)
+    on = combined(routes, name, given)
+    route = next((r for r in routes["routes"] if (r["from"], r.get("on")) == (name, on)), None)
+    if route is None:
+        return Next("start", name, None, True)
+    if "waits" in route:
+        return Next("reply", name, (name, on), runs=len(given))
+    kind = "start" if "to" in route else "end"
+    return Next(kind, route.get("to", ""), (name, on), runs=len(given))
+
+
+def in_place(
+    runs: list[Start], result: Callable[[str], str | None], left: Callable[[str], bool]
+) -> list[Start]:
+    """The runs that count: each run started again takes the place of one that ended with no result,
+    the first of them in order, so that run is out of the count even where it gives a result once
+    resumed."""
+    replaced = [s for s in runs if left(s.agent) or result(s.agent) is None]
+    out = replaced[: sum(s.joined == AGAIN for s in runs)]
+    return [s for s in runs if s not in out]
+
+
+# What the main conversation is told where a subagent's route waits: the user, not a subagent,
+# gives the next move, and the subagent resumed with their answer gives the next result.
+REPLY = (
+    "Put its point to the user as it wrote it, in your reply, and resume `{named}` with their"
+    " answer by SendMessage."
+)
+
+
+def line(found: Next, plugin: str) -> str:
+    """What the main conversation is told of the next start, as docs/routes.md's table has it, the
+    plugin's name heading it left to whoever tells it."""
+    # A next start is `end`, `reply`, `start` or `wait`, `wait` the last of them in order.
+    waiting = found.kind == "wait"  # pragma: no mutate
+    named = kind(found.name, plugin)
+    if waiting and found.more:
+        return f"Wait for every run of `{named}` to end: you are told the next start once each has."
+    if waiting:
+        return f"Wait for `{named}` to end: you are told the next start once it has."
+    gave = f"{found.gave[0]} gave `{found.gave[1]}`. " if found.gave else ""
+    # A run counts where it gave a result, so the runs are never fewer than 1.
+    several = found.runs > 1  # pragma: no mutate
+    if found.gave and several:
+        gave = f"The {found.runs} runs of {found.gave[0]} gave `{found.gave[1]}`. "
+    # A next start is `end`, `reply`, `start` or `wait`, `end` the first of them in order.
+    if found.kind == "end":  # pragma: no mutate
+        return gave + "Start no more subagents."
+    if found.kind == "reply":
+        return gave + REPLY.format(named=named)
+    if found.again:
+        return f"{found.name} ended with no result. Start `{named}` again."
+    return gave + f"Start `{named}`."

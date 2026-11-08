@@ -1,167 +1,98 @@
-"""Holds what a role writes to its output to one of the forms it takes.
-
-A form is a `.json` JSON Schema, which schema.py reads as a form, or a `.md` Markdown template. A
-JSON output holds to the schema, and so does each line of a `.jsonl` one. A Markdown output holds
-each heading of its template in the template's order, and each key of the template's frontmatter.
-"""
+"""in_form: the subagent writes an output its step names in the form the step names, a file of the
+plugin named as `${CLAUDE_PLUGIN_ROOT}/<path in the plugin>`, the path the subagent reads it by,
+such as a changelog entry as JSON of a schema, or a report as Markdown with a template's headings.
+A write of the output is held to the form before it is made: a Write by its content, an Edit by the
+file's text with the edit made; a NotebookEdit of it is stopped, as no form holds a notebook's
+text. As the subagent gives its result, each output there is held to the form again, as a command
+its lanes name may have written it."""
 
 from __future__ import annotations
 
-import json
 import os
-import re
+from typing import Any
 
-import command
-import plugin
-import schema
+from lanes import forms, run_only, write_only
+from lanes.done import Done, text
 
-import lanes
-
+ACTION = "write"
 WORDING = "Write `<output>` in the form of `<form>`."
-# A heading of a Markdown text.
-HEADING = re.compile(r"^#{1,6} .+$", re.MULTILINE)
+CALLS = False
 
 
-def stands(found: dict[str, list[str]]) -> list[str]:
-    """What keeps the forms from standing. A lane names each form by its path in the plugin, and
-    each form is a `.json` JSON Schema or a `.md` template."""
-    faults = []
-    for form in found["form"]:
-        if not form.startswith(command.ROOT + "/"):
-            faults.append(
-                f"in_form takes the form `{form}` by its path in the plugin, as"
-                f" `{command.ROOT}/<path>`"
-            )
-        elif not form.endswith((".json", ".md")):
-            faults.append(
-                f"in_form takes a form that is a `.json` JSON Schema or a `.md` template, not"
-                f" `{form}`"
-            )
-    return faults
+def form(named: str, root: str) -> forms.Form:
+    """The form named, a file of the plugin at root; stops with ValueError saying why where it is
+    not named from the plugin's folder, lies out of the plugin, which installing does not copy, or
+    gives no form lane reads."""
+    if not named.startswith(run_only.ROOT + "/"):
+        raise ValueError(
+            f"is not named as {run_only.ROOT}/<path in the plugin>, so the subagent has no path to"
+            " read it by"
+        )
+    # The path is judged as named, not as a link in it resolves: installing copies the file a link
+    # in the plugin points to into the plugin.
+    # One form named gives one path.
+    path = os.path.normpath(run_only.named([named], root)[0])  # pragma: no mutate
+    if not write_only.allows(path, [os.path.normpath(root)], root, root):
+        raise ValueError("lies out of the plugin, whose folder alone installing copies")
+    return forms.read(path)
 
 
-def readable(form: str) -> str | None:
-    """What keeps Lane from reading the form at the path, or None where it reads it."""
+def refused(named: str, root: str) -> str:
+    """Why the form named cannot be laid in the plugin at root; "" where it can."""
     try:
-        if form.endswith(".md"):
-            _read(form)
-        else:
-            _schema(form)
-    except lanes.Unchecked as why:
-        return str(why)
-    return None
+        form(named, root)
+    except ValueError as why:
+        return f"names the form {named}, which {why}"
+    return ""
 
 
-def check(call: lanes.Call, given: dict[str, list[str]], context: lanes.Context) -> str | None:
-    """Where the text that the call writes to an output is out of every form, or None where the
-    call goes on. The check holds an Edit with its change made to the file's text.
-
-    It raises `lanes.Unchecked` where a form isn't there or isn't one that Lane reads.
-    """
-    if call.tool not in ("Write", "Edit"):
+def text_written(tool: str, given: dict[str, Any], file: str) -> str | None:
+    """The text the call leaves in the file, a full path: a Write's content, or the file's text
+    with an Edit made; None where an Edit would make no change, its text not found."""
+    # The guard holds a write of Write or Edit to the form, Write the last of them in order.
+    if tool == "Write":  # pragma: no mutate
+        return str(given.get("content", ""))
+    try:
+        with open(file, encoding="utf-8") as f:
+            now = f.read()
+    except (OSError, UnicodeDecodeError):
+        now = ""
+    old, new = str(given.get("old_string", "")), str(given.get("new_string", ""))
+    if not old or old not in now:
         return None
-    path = lanes.called_path(call) or ""
-    if not lanes.under(path, given["output"]):
-        return None
-    return _out(path, _written(call, path), given["form"], "The content")
+    return now.replace(old, new) if given.get("replace_all") is True else now.replace(old, new, 1)
 
 
-def end(given: dict[str, list[str]], calls: list[lanes.Call], context: lanes.Context) -> str | None:
-    """Where an output that's there is out of every form, or None, as a command may have written
-    it.
-
-    It raises `lanes.Unchecked` where a form isn't there or isn't one that Lane reads.
-    """
-    for path in given["output"]:
-        if os.path.isfile(path):
-            with open(path, encoding="utf-8") as f:
-                out = _out(path, f.read(), given["form"], f"`{path}`")
-            if out is not None:
-                return out
-    return None
-
-
-def _written(call: lanes.Call, path: str) -> str:
-    """The text that the call leaves in the file: a Write's content, or an Edit's change made."""
-    if call.tool == "Write":
-        return str(call.input.get("content", ""))
-    try:
-        with open(path, encoding="utf-8") as f:
-            text = f.read()
-    except OSError:
-        text = ""
-    old, new = str(call.input.get("old_string", "")), str(call.input.get("new_string", ""))
-    return text.replace(old, new) if call.input.get("replace_all") else text.replace(old, new, 1)
+def out_of(
+    tool: str, given: dict[str, Any], places: dict[str, list[str]], root: str, cwd: str
+) -> str:
+    """The point the call's write of an output taken is out of the forms taken by, as the first of
+    them holds it, each output named from the folder the call is made in; "" where the call writes
+    no output, an Edit would change nothing, or the text holds to one of the forms."""
+    path = given.get("notebook_path") if tool == "NotebookEdit" else given.get("file_path")
+    file = os.path.realpath(os.path.join(cwd, str(path)))
+    outputs = [o for o in places["output"] if write_only.allows(file, [o], root, cwd)]
+    if not outputs:
+        return ""
+    if tool == "NotebookEdit":
+        return f"`{outputs[0]}`: expected a write by Write or Edit, found NotebookEdit"
+    said = text_written(tool, given, file)
+    return "" if said is None else held(places, file, said, root)
 
 
-def _out(path: str, text: str, forms: list[str], what: str) -> str | None:
-    """Where the text is out of the first form, or None where it holds to any form. what names the
-    text in the message."""
-    found = []
-    for form in forms:
-        out = _held(path, text, form, what)
-        if out is None:
-            return None
-        found.append(out)
-    return found[0]
+def held(places: dict[str, list[str]], file: str, said: str, root: str) -> str:
+    """The point the text of the file is out of the forms by, as the first of them holds it; ""
+    where it holds to one of them."""
+    points = [forms.held(form(f, root), file, said) for f in places["form"]]
+    return "" if not all(points) else points[0]
 
 
-def _held(path: str, text: str, form: str, what: str) -> str | None:
-    """Where the output's text is out of the form, or None where it holds."""
-    if form.endswith(".md"):
-        return _template_out(text, form, what)
-    loaded = _schema(form)
-    if path.endswith(".jsonl"):
-        for number, line in enumerate(text.splitlines(), 1):
-            if line.strip():
-                out = _value_out(line, loaded, f"Line {number}", form)
-                if out:
-                    return out
-        return None
-    return _value_out(text, loaded, what, form)
-
-
-def _value_out(text: str, loaded: dict, what: str, form: str) -> str | None:
-    try:
-        value = json.loads(text)
-    except json.JSONDecodeError as why:
-        return f"{what} is no JSON at line {why.lineno}, column {why.colno}: {why.msg}"
-    out = schema.held(loaded, value)
-    return f"{what} is out of `{form}`: {out.told()}" if out else None
-
-
-def _read(form: str) -> str:
-    try:
-        with open(form, encoding="utf-8") as f:
-            return f.read()
-    except OSError:
-        raise lanes.Unchecked(f"the form {form} isn't there") from None
-
-
-def _schema(form: str) -> dict:
-    """The JSON Schema in the form's file, read whole as a form."""
-    try:
-        loaded = json.loads(_read(form))
-        schema.checked(loaded)
-    except (json.JSONDecodeError, schema.Unread) as why:
-        raise lanes.Unchecked(f"the form {form} is no form that Lane reads: {why}") from None
-    return loaded
-
-
-def _template_out(text: str, form: str, what: str) -> str | None:
-    """Where the Markdown text lacks a heading of the template, in its order, or a key of the
-    template's frontmatter, or None where it holds them all."""
-    template = _read(form)
-    keys = plugin.frontmatter(template)
-    have = plugin.frontmatter(text)
-    for key in keys:
-        if key not in have:
-            return f"{what} is out of `{form}`: its frontmatter lacks the key `{key}`."
-    headings = HEADING.findall(text)
-    at = 0
-    for heading in HEADING.findall(template):
-        if heading in headings[at:]:
-            at = headings.index(heading, at) + 1
-        else:
-            return f"{what} is out of `{form}`: it lacks the heading `{heading}`."
-    return None
+def missing(given: dict[str, list[str]], done: Done) -> str:
+    """What is out of form, as the subagent gives its result: the first output there whose text is
+    out of the forms, with the point; "" where each holds."""
+    for output in given["output"]:
+        said = text(done.full(output))
+        point = held(given, done.full(output), said, done.root) if said is not None else ""
+        if point:
+            return f"`{output}`: {point}"
+    return ""

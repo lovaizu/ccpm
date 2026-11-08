@@ -1,0 +1,5 @@
+{"plugin": "changelog",
+ "subagents": [
+  {"name": "writer", "steps_adapter": "hooks/adapters/steps-practices.py", "steps": [
+   {"step": 2, "lanes": [{"lane": "run_step", "takes": ["git log --oneline"]}]},
+   {"step": 3, "lanes": [{"lane": "write_step", "takes": ["CHANGELOG.md"]}]}]}]}

@@ -1,207 +1,225 @@
-"""The cases of ports.py's contract: a text of the plugin read at the values, items, and steps
-ports, in Lane's own form or through the plugin's adapter, as plugins/lane/docs/lanes.md gives the
-ports."""
+"""The ports lane reads a plugin's text at, each by its JSON in and out, a JSON Schema each, and
+lane's one reading of it: the values a subagent started from and the items of an input."""
+
+from __future__ import annotations
 
 import json
 import os
+import subprocess
+import unittest
+from unittest import mock
 
-from helpers import ports, testing
+import helpers
+from helpers import ports, schema
 
-ECHO = "import json, sys\nprint(json.dumps({given}))\n"
-
-
-class AdapterTest(testing.FolderTest):
-    def adapter(self, name, body):
-        path = os.path.join(self.base, "hooks", "adapters", name)
-        self.write(path, body)
-        return f"hooks/adapters/{name}"
+# A run's JSON as a prompt or a script gives it, naming the work and a checklist.
+RUN = {"work": ["a.md", "b.md"], "checklist": "c.md"}
 
 
-class TestValues(AdapterTest):
-    def test_each_json_object_a_text_holds_gives_its_values(self):
+def values(texts: list) -> dict:
+    """The run's values lane reads at the values port in the texts."""
+    return ports.read("values", {"texts": texts})["values"]
+
+
+class TestValues(unittest.TestCase):
+    def test_a_json_object_gives_each_text_and_each_list_of_texts_under_its_name(self):
+        # Given: a prompt that is a JSON object of a list and a text
+        # When: the values are read
+        # Then: the list stands for its texts, the text for itself
         self.assertEqual(
-            ports.values(['{"work": "a.md", "files": ["b", "c"]}']),
-            {"work": ["a.md"], "files": ["b", "c"]},
+            values([json.dumps(RUN)]), {"work": ["a.md", "b.md"], "checklist": ["c.md"]}
         )
 
-    def test_each_line_of_a_text_that_is_an_object_gives_its_values(self):
-        self.assertEqual(ports.values(['Do it.\n{"work": "a.md"}\nThanks.']), {"work": ["a.md"]})
+    def test_the_later_json_gives_a_name_over_the_earlier(self):
+        # Given: a prompt naming the work, then a script's print naming it again and more
+        texts = ['{"work": "a.md"}', '{"work": "b.md", "has": "h.md"}']
+        # When: the values are read
+        # Then: the later gives the work, the earlier what the later leaves
+        self.assertEqual(values(texts), {"work": ["b.md"], "has": ["h.md"]})
 
-    def test_a_later_text_takes_the_place_of_an_earlier_one(self):
-        self.assertEqual(ports.values(['{"work": "a"}', '{"work": "b"}']), {"work": ["b"]})
+    def test_json_printed_over_several_lines_is_read_whole(self):
+        # Given: a print of one JSON object indented over lines, with an object of its own inside
+        text = json.dumps({"work": "a.md", "item": {"x": "y"}}, indent=2)
+        # When: the values are read
+        # Then: the object's names alone are read
+        self.assertEqual(values([text]), {"work": ["a.md"]})
 
-    def test_a_value_of_null_is_kept_as_null(self):
-        self.assertEqual(ports.values(['{"work": null}']), {"work": None})
+    def test_a_print_of_lines_gives_each_line_that_is_a_json_object(self):
+        # Given: a print of a line of words, a line of a JSON list and a line of a JSON object
+        text = 'Started.\n["x"]\n{"work": "a.md"}'
+        # When: the values are read
+        # Then: the line that is an object gives its names
+        self.assertEqual(values([text]), {"work": ["a.md"]})
 
-    def test_a_value_of_another_type_is_none_of_lanes(self):
-        self.assertEqual(ports.values(['{"work": 1, "a": [1], "b": "x"}']), {"b": ["x"]})
+    def test_a_value_of_another_kind_gives_nothing(self):
+        # Given: names of a number and an object, and a list of texts and a number
+        text = '{"n": 1, "o": {}, "l": ["a.md", 2]}'
+        # When: the values are read
+        # Then: the list gives its texts alone, and the others nothing
+        self.assertEqual(values([text]), {"l": ["a.md"]})
 
-    def test_a_text_that_holds_no_object_gives_none(self):
-        self.assertEqual(ports.values(["Write the entries.", "[1]"]), {})
-
-    def test_an_adapter_gives_the_values_in_place_of_lanes_own_form(self):
-        path = self.adapter(
-            "values-w.py",
-            "import json, sys\n"
-            't = json.load(sys.stdin)["texts"]\n'
-            'print(json.dumps({"values": {"work": t}}))\n',
-        )
-        self.assertEqual(ports.values(["p", "m"], self.base, path), {"work": ["p", "m"]})
-
-
-class TestItems(AdapterTest):
-    def test_lanes_own_form_reads_the_items_of_the_text(self):
-        self.assertEqual(ports.items("r.md", "- B-1 x\n", {}), ["B-1"])
-
-    def test_an_adapter_is_given_the_input_its_text_and_the_values(self):
-        body = (
-            "import json, sys\n"
-            "g = json.load(sys.stdin)\n"
-            'print(json.dumps({"items": [g["input"], g["text"], *g["values"]["v"]]}))\n'
-        )
-        path = self.adapter("items-w.py", body)
-        self.assertEqual(
-            ports.items("r.md", "t", {"v": ["x"]}, self.base, path), ["r.md", "t", "x"]
-        )
-
-
-class TestSteps(AdapterTest):
-    def test_an_adapter_gives_its_step_lists(self):
-        lists = {
-            "lists": [
-                {
-                    "list": "Q1",
-                    "steps": [{"says": "Run.", "lanes": [{"lane": "run_step", "takes": ["make"]}]}],
-                }
-            ]
-        }
-        path = self.adapter("steps-w.py", ECHO.format(given=repr(lists)))
-        self.assertEqual(ports.steps({}, self.base, path), lists["lists"])
-
-
-class TestAdapterFaults(AdapterTest):
-    def test_an_adapter_that_fails_cannot_be_read(self):
-        path = self.adapter("values-w.py", "import sys\nsys.exit('broken')\n")
-        with self.assertRaisesRegex(
-            ports.Unported, r"hooks/adapters/values-w\.py exited with 1: broken"
+    def test_null_gives_null_the_caller_saying_there_is_none(self):
+        for texts, value in (
+            (['{"work": null}'], None),
+            (['{"work": ["a.md"]}', '{"work": null}'], None),
+            (['{"work": null}', '{"work": "a.md"}'], ["a.md"]),
         ):
-            ports.values([], self.base, path)
+            with self.subTest(texts=texts):
+                # Given: the work given as null, alone, over a list before it, or under a text after
+                # When: the values are read
+                # Then: the later gives the work, null standing as null
+                self.assertEqual(values(texts), {"work": value})
 
-    def test_an_adapter_that_gives_no_json_cannot_be_read(self):
-        path = self.adapter("values-w.py", "print('hi')\n")
-        with self.assertRaisesRegex(ports.Unported, r"values-w\.py gave no JSON: "):
-            ports.values([], self.base, path)
+    def test_text_that_holds_no_json_object_gives_nothing(self):
+        for text in ("Do your steps.", "", '["a.md"]', "1"):
+            with self.subTest(text=text):
+                # Given: a prompt of words, of nothing, of a JSON list or a number
+                # When: the values are read
+                # Then: none is given
+                self.assertEqual(values([text]), {})
 
-    def test_an_adapter_answering_out_of_its_port_cannot_be_read(self):
-        path = self.adapter("values-w.py", "print('{\"values\": 1}')\n")
-        with self.assertRaisesRegex(
-            ports.Unported,
-            r"values-w\.py answered out of the values port: \$\.values: expected an object,"
-            r" found 1",
+
+class TestSchemas(unittest.TestCase):
+    def test_each_ports_json_is_the_one_docs_lanes_md_gives(self):
+        # Given: the ports' JSON Schemas docs/lanes.md gives under The ports
+        with open(os.path.join(helpers.LANE, "docs", "lanes.md"), encoding="utf-8") as f:
+            text = f.read().split("## The ports")[1].split("\n## ")[0]
+        shown = json.loads(text.split("```json\n")[1].split("```")[0])
+        # When: the ports' are read in lane's code
+        # Then: they are the same
+        self.assertEqual(shown, ports.PORTS)
+
+    def test_lanes_reading_of_each_port_gives_what_its_out_holds(self):
+        for port, given in (
+            ("values", {"texts": [json.dumps(RUN), "x"]}),
+            ("items", {"input": "r.md", "text": "- B-1: fix\n- plain\n", "values": {}}),
         ):
-            ports.values([], self.base, path)
+            with self.subTest(port=port, given=given):
+                # Given: the port's JSON in, held to its schema
+                self.assertIsNone(schema.held(ports.PORTS[port]["in"], given))
+                # When: lane reads it
+                found = ports.read(port, given)
+                # Then: what it gives back holds to the port's out
+                self.assertIsNone(schema.held(ports.PORTS[port]["out"], found), found)
 
-    def test_an_adapter_that_isnt_there_cannot_be_read(self):
-        with self.assertRaisesRegex(ports.Unported, r"hooks/adapters/gone\.py isn't there"):
-            ports.values([], self.base, "hooks/adapters/gone.py")
+    def test_null_given_for_a_value_holds_to_the_values_ports_out(self):
+        # Given: an adapter's answer giving the work as null
+        # When: it is held to the values port's out
+        # Then: it holds, null being a value of its own beside the list of texts
+        self.assertIsNone(schema.held(ports.PORTS["values"]["out"], {"values": {"work": None}}))
 
-    def test_an_adapter_with_no_answer_in_time_cannot_be_read(self):
-        path = self.adapter("values-w.py", "import time\ntime.sleep(5)\n")
-        with self.assertRaisesRegex(
-            ports.Unported, r"values-w\.py gave no answer within 0\.2 seconds"
+    def test_an_answer_out_of_a_ports_out_is_found_with_its_point(self):
+        for port, found, point in (
+            ("values", {"values": {"work": "a.md"}}, "$.values.work: expected an array or null"),
+            ("values", {"values": {"work": [1]}}, "$.values.work[0]: expected a string"),
+            ("items", {"items": "B-1"}, "$.items: expected an array"),
+            ("items", {}, '$: expected the key "items"'),
         ):
-            ports.run(self.base, path, "values", {"texts": []}, 0.2)
-
-    def test_an_adapter_finds_the_plugin_by_its_folder(self):
-        body = (
-            "import json, os\n"
-            'print(json.dumps({"values": {"root": [os.environ["CLAUDE_PLUGIN_ROOT"]]}}))\n'
-        )
-        path = self.adapter("values-w.py", body)
-        self.assertEqual(ports.values([], self.base, path), {"root": [self.base]})
+            with self.subTest(port=port, found=found):
+                # Given: an answer out of the port's out
+                # When: it is held to it
+                out = schema.held(ports.PORTS[port]["out"], found)
+                # Then: the point it is out by is found
+                self.assertIn(point, out.told() if out else "")
 
 
-class TestCases(AdapterTest):
-    def cases(self, cases):
-        self.write(os.path.join(self.base, "hooks", "adapters", "values-w.json"), json.dumps(cases))
+class TestLeft(unittest.TestCase):
+    def test_what_is_left_of_the_hooks_time_is_counted_from_the_event(self):
+        for now, left in ((40.0, 8.0), (43.0, 5.0), (48.0, 0), (85.0, 0)):
+            # Given: the guard begun on an event at 40, the clock at now
+            clock = mock.patch.object(ports.time, "monotonic", return_value=now)
+            with self.subTest(now=now), clock:
+                # When: the seconds left are counted
+                # Then: they are what is left of the 8 seconds since, none once spent
+                self.assertEqual(ports.left(40.0), left)
 
-    def test_an_adapter_that_gives_each_case_has_no_fault(self):
-        path = self.adapter(
-            "values-w.py",
-            "import json, sys\n"
-            'given = json.load(sys.stdin)["texts"]\n'
-            'print(json.dumps({"values": {"a": ["b"]} if given else {}}))\n',
-        )
-        self.cases(
-            [
-                {"given": {"texts": ["x"]}, "gives": {"values": {"a": ["b"]}}},
-                {"given": {"texts": []}, "gives": {"values": {}}},
-            ]
-        )
-        self.assertEqual(ports.tried(self.base, path)[1], [])
 
-    def test_a_case_the_adapter_gives_otherwise_is_a_fault(self):
-        path = self.adapter("values-w.py", "print('{\"values\": {}}')\n")
-        self.cases(
-            [
-                {"given": {"texts": ["x"]}, "gives": {"values": {"a": ["b"]}}},
-                {"given": {"texts": []}, "gives": {"values": {}}},
-            ]
-        )
+class TestRun(unittest.TestCase):
+    def ran(self, seconds: float = 8.0, err: str = "") -> object:
+        """The seconds an adapter is given by run, given the seconds; or, where it exits 1 printing
+        err, what it is told it did."""
+        done = subprocess.CompletedProcess([], 1 if err else 0, '{"items": []}', err)
+        with mock.patch.object(ports.subprocess, "run", return_value=done) as run:
+            try:
+                ports.run("a.py", "items", {"input": "a", "text": ""}, "/p", seconds)
+            except ports.Failed as failed:
+                return str(failed)
+        self.given = run.call_args.kwargs
+        return run.call_args.kwargs["timeout"]
+
+    def test_an_adapter_is_given_the_seconds_given(self):
+        for seconds in (8.0, 2.5, 0):
+            with self.subTest(seconds=seconds):
+                # Given: the seconds left, as the guard counts them
+                # When: an adapter is run
+                # Then: it is given them
+                self.assertEqual(self.ran(seconds), seconds)
+
+    def test_an_adapter_is_given_the_plugins_folder_as_claude_code_gives_a_hook(self):
+        # Given: the plugin's folder /p
+        # When: an adapter is run
+        self.ran()
+        # Then: it is run with CLAUDE_PLUGIN_ROOT set to it, the rest of the environment kept, so
+        # it finds the plugin's files wherever it is run from
+        env = self.given["env"]
+        self.assertEqual(env["CLAUDE_PLUGIN_ROOT"], "/p")
+        self.assertEqual(env["PATH"], os.environ["PATH"])
+
+    def test_what_an_adapter_does_out_of_its_port_is_told(self):
+        for out, told in (
+            ("not json", "printed no JSON: "),
+            ('{"items": "B-1"}', "answered out of the items port at $.items: expected an array"),
+        ):
+            with self.subTest(out=out):
+                # Given: an adapter that prints no JSON, or JSON out of its port's out
+                done = subprocess.CompletedProcess([], 0, out, "")
+                # When: it is run
+                run = mock.patch.object(ports.subprocess, "run", return_value=done)
+                with run, self.assertRaises(ports.Failed) as failed:
+                    ports.run("a.py", "items", {"input": "a", "text": ""}, "/p", 8.0)
+                # Then: what it did is told
+                self.assertIn(told, str(failed.exception))
+
+    def test_an_adapter_giving_no_answer_in_time_is_told_so(self):
+        # Given: an adapter that runs past the seconds it is given
+        late = subprocess.TimeoutExpired("python3", 8.0)
+        # When: it is run
+        run = mock.patch.object(ports.subprocess, "run", side_effect=late)
+        with run, self.assertRaises(ports.Failed) as failed:
+            ports.run("a.py", "items", {"input": "a", "text": ""}, "/p", 8.0)
+        # Then: it is told it gave no answer within the hook's time
         self.assertEqual(
-            ports.tried(self.base, path)[1],
-            [
-                (
-                    'hooks/adapters/values-w.py gives {"values": {}} for case 1, where its cases'
-                    " say"
-                    ' {"values": {"a": ["b"]}}'
-                )
-            ],
+            str(failed.exception), "gave no answer within the 8 seconds the hook leaves it"
         )
 
-    def test_a_case_the_adapter_fails_on_is_a_fault(self):
-        path = self.adapter("values-w.py", "import sys\nsys.exit(2)\n")
-        self.cases([{"given": {"texts": []}, "gives": {"values": {}}}])
+    def test_an_answer_in_its_port_is_given_back(self):
+        # Given: an adapter that answers in its port's out
+        done = subprocess.CompletedProcess([], 0, '{"items": ["B-1"]}', "")
+        # When: it is run
+        with mock.patch.object(ports.subprocess, "run", return_value=done):
+            found = ports.run("a.py", "items", {"input": "a", "text": ""}, "/p", 8.0)
+        # Then: its answer is given back
+        self.assertEqual(found, {"items": ["B-1"]})
+
+    def test_an_adapter_exiting_other_than_0_is_told_its_last_line_of_errors(self):
+        # Given: an adapter exiting 1, printing two lines of errors
+        # When: it is run
+        # Then: what it did is told by its exit and its last line
         self.assertEqual(
-            ports.tried(self.base, path)[1], ["hooks/adapters/values-w.py exited with 2: "]
+            self.ran(err="Traceback\nKeyError: 'text'\n"), "exited 1: KeyError: 'text'"
         )
 
-    def test_cases_with_none_that_gives_nothing_are_a_fault(self):
-        path = self.adapter("values-w.py", 'print(\'{"values": {"a": ["b"]}}\')\n')
-        self.cases([{"given": {"texts": ["x"]}, "gives": {"values": {"a": ["b"]}}}])
+
+class TestItems(unittest.TestCase):
+    def test_the_items_are_the_ids_top_level_list_items_begin_with(self):
+        # Given: a review of two items keyed by IDs, a nested one and one of no ID
+        text = "- B-1: fix\n  - B-9: nested\n1. **R33** pass\n- fix the hook\n"
+        # When: lane reads it at the items port
+        # Then: they are the IDs of the top-level items, in order
         self.assertEqual(
-            ports.tried(self.base, path)[1],
-            ["hooks/adapters/values-w.json holds no case that gives nothing"],
+            ports.read("items", {"input": "r.md", "text": text}), {"items": ["B-1", "R33"]}
         )
 
-    def test_an_adapter_with_no_cases_is_a_fault(self):
-        path = self.adapter("values-w.py", "")
-        self.assertEqual(
-            ports.tried(self.base, path)[1],
-            ["hooks/adapters/values-w.json isn't there, which holds the adapter's cases"],
-        )
 
-    def test_cases_out_of_their_form_are_a_fault(self):
-        path = self.adapter("values-w.py", "")
-        self.cases([{"given": {"texts": 1}, "gives": {"values": {}}}])
-        self.assertEqual(
-            ports.tried(self.base, path)[1],
-            [
-                (
-                    "hooks/adapters/values-w.json is out of its form: $[0].given.texts: expected an"
-                    " array, found 1"
-                )
-            ],
-        )
-
-    def test_an_adapter_named_for_no_port_is_a_fault(self):
-        self.assertEqual(
-            ports.tried(self.base, "hooks/adapters/w.py")[1],
-            [
-                (
-                    "hooks/adapters/w.py isn't named hooks/adapters/<port>-<name>.py for the"
-                    " values,"
-                    " items or steps port"
-                )
-            ],
-        )
+if __name__ == "__main__":
+    unittest.main()

@@ -1,0 +1,3 @@
+{"plugin": "changelog",
+ "subagents": [{"name": "drafter", "steps": [
+  {"step": 2, "lanes": [{"lane": "write_only", "takes": ["{work}"]}]}]}]}

@@ -1,190 +1,206 @@
-"""Decides what Lane keeps of a session, and how the starts of a run join one another.
-
-Each plugin's guard keeps its own record of a session, in the system's temporary folder, at
-`lane/<yyyymmdd>-<session>-<plugin>/record.jsonl`. The record holds one JSON object a line, each an
-entry with a `kind`. The guard of each hook event adds an entry in one write at the file's end, so
-that hooks that run at once each add a whole line.
-
-The kinds of entry:
-- `run`, with `skill`, begins a run, in place of any run before it. `end` ends it.
-- `start`, with `agent`, `role`, `prompt`, and `status`, keeps an Agent call of the main
-  conversation that came back.
-- `skill`, with `skill`, keeps a Skill call of a dependency's skill that the routes name.
-- `call`, with `agent`, `tool`, `input`, and `cwd`, keeps a tool call of a role that came back.
-- `result`, with `agent`, `role`, and `result`, keeps a result. A dependency's skill gives its
-  result with `agent` null.
-- `message`, with `agent` and `text`, keeps a SendMessage call to a start that came back.
-- `ended`, with `agent`, keeps the end of a role.
-- `given`, with `role` and `text`, keeps what the routes' command printed for a start.
-- `words`, with `text`, keeps a prompt of the person's while a role's point waits.
-"""
+"""The calls kept: each call of a subagent as it came back, each result it gave, each start and end
+of its runs, and the texts it was given, its prompt and each message sent after, kept under its
+agent_id in `lane/<yyyymmdd>-<session>-<plugin>/<agent_id>.jsonl` of the system's temporary folder,
+each plugin's guard keeping its own record of a session, as one run may be held by two plugins'
+guards, its own plugin's and one that routes it; as
+Q12 of plugins/rn/domain/best-practices/plugin/best-practice.md has it for what is used only while a
+plugin runs; a line of JSON each, read back for the run the subagent is in, from its last start, as
+a subagent resumed keeps its ID and gives a result again."""
 
 from __future__ import annotations
 
 import glob
 import json
 import os
+import re
 import tempfile
 import time
-from typing import Any, NamedTuple
+from typing import Any
+
+import schema
+from lanes import follow_routes
+from routes import Start
+
+# An ID Claude Code gives a session or a subagent, as it can name a file of its own in a folder.
+ID = re.compile(r"[A-Za-z0-9_-][A-Za-z0-9._-]*")
+START = {"kind": "start"}
+END = {"kind": "end"}
+# The record of the run of the skill the routes name, beside each start's, by its agent_id: its
+# begin, a START, each start of the run as it came back, each end told, and its end, an END, where
+# the run was let end with a start due. Claude Code gives no subagent this ID.
+RUN = "run"
+# What an Agent call gives back that is kept: its status and the ID of the subagent's run.
+KEPT_BACK = ("status", "agentId")
 
 
-class Start(NamedTuple):
-    """One start of a role in a run, or one move of a dependency's skill."""
-
-    # The ID that Claude Code gave the start, or None for a dependency's skill.
-    agent: str | None
-    # The role, or the dependency's skill.
-    role: str
-    # The prompt of the Agent call that made the start.
-    prompt: str
-    # Whether the start still runs.
-    running: bool
-    # The last result that the start gave since it began, or since a message resumed it, or None.
-    result: str | None
+def record(plugin: str, session: str) -> str:
+    """The session as the plugin's guard keeps its record, apart from any other plugin's, which the
+    functions below take as `session`."""
+    return f"{session}-{plugin}"
 
 
-class Group(NamedTuple):
-    """Starts of one role that run at once, which the routes count as one move."""
-
-    # The role.
-    role: str
-    # Each start, in the order the main conversation made them.
-    starts: tuple[Start, ...]
+def gave(on: str) -> dict[str, Any]:
+    """The entry of a result given."""
+    return {"kind": "result", "on": on}
 
 
-class Run(NamedTuple):
-    """The run that a record keeps."""
-
-    # The skill that the run began with.
-    skill: str
-    # Each group of starts, in their order.
-    groups: list[Group]
-    # The last text that the routes' command printed for each role, by the role's name.
-    given: dict[str, str]
-    # Each prompt of the person's since the last message to a start.
-    words: list[str]
+def call(tool: str, given: dict[str, Any], back: Any = None, joined: str = "") -> dict[str, Any]:
+    """The entry of a call of the tool with the input as it came back, with what an Agent call gave
+    back of its start, and how that start is joined to those before it, where it is."""
+    kept = {k: back[k] for k in KEPT_BACK if k in back} if isinstance(back, dict) else None
+    entry = {"kind": "call", "tool": tool, "input": given, **({"back": kept} if kept else {})}
+    return {**entry, **({"joined": joined} if joined else {})}
 
 
-class Record(NamedTuple):
-    """The record of a session for one plugin."""
-
-    # The folder that holds the record.
-    folder: str
-
-    def add(self, entry: dict[str, Any]) -> None:
-        """Adds the entry at the record's end, in one write."""
-        line = (json.dumps(entry, ensure_ascii=False) + "\n").encode("utf-8")
-        os.makedirs(self.folder, exist_ok=True)
-        handle = os.open(self._path(), os.O_WRONLY | os.O_APPEND | os.O_CREAT, 0o600)
-        try:
-            os.write(handle, line)
-        finally:
-            os.close(handle)
-
-    def entries(self) -> list[dict[str, Any]]:
-        """Each entry of the record, in the order the guard added them."""
-        try:
-            with open(self._path(), encoding="utf-8") as f:
-                return [json.loads(line) for line in f if line.strip()]
-        except FileNotFoundError:
-            return []
-
-    def _path(self) -> str:
-        return os.path.join(self.folder, "record.jsonl")
+def file(session: str, agent: str, made: bool) -> str:
+    """The file the agent's entries are kept in: in the session's folder, the one of the day it was
+    made, so a session going on past midnight keeps one, or of today where none was, made where
+    `made`. Stops with ValueError where an ID could name a file elsewhere."""
+    if not ID.fullmatch(agent):
+        raise ValueError(f"{schema.shown(agent)} is no ID Claude Code gives")
+    return os.path.join(folder(session, made), f"{agent}.jsonl")
 
 
-def record(session: str, plugin: str) -> Record:
-    """The record of the session for the plugin. Its folder comes with its first entry."""
+def folder(session: str, made: bool) -> str:
+    """The session's folder of the calls kept, as `file` says. Stops with ValueError where the ID
+    could name a folder elsewhere."""
+    if not ID.fullmatch(session):
+        raise ValueError(f"{schema.shown(session)} is no ID Claude Code gives")
     top = os.path.join(tempfile.gettempdir(), "lane")
-    found = sorted(
-        glob.glob(os.path.join(glob.escape(top), f"*-{glob.escape(session)}-{glob.escape(plugin)}"))
-    )
-    folder = (
-        found[0] if found else os.path.join(top, f"{time.strftime('%Y%m%d')}-{session}-{plugin}")
-    )
-    return Record(folder)
+    day = "[0-9]" * 8
+    found = sorted(glob.glob(os.path.join(glob.escape(top), f"{day}-{glob.escape(session)}")))
+    place = found[0] if found else os.path.join(top, time.strftime(f"%Y%m%d-{session}"))
+    if made:
+        os.makedirs(place, exist_ok=True)
+    return place
 
 
-def run(entries: list[dict[str, Any]]) -> Run | None:
-    """The run that the entries keep, or None where no run is on."""
-    begun = [i for i, e in enumerate(entries) if e["kind"] in ("run", "end")]
-    if not begun or entries[begun[-1]]["kind"] == "end":
-        return None
-    first = begun[-1]
-    since = entries[first + 1 :]
-    given = {e["role"]: e["text"] for e in since if e["kind"] == "given"}
-    messages = [i for i, e in enumerate(since) if e["kind"] == "message"]
-    words = [
-        e["text"] for e in since[messages[-1] + 1 if messages else 0 :] if e["kind"] == "words"
-    ]
-    return Run(entries[first]["skill"], _groups(since), given, words)
+def keep(session: str, agent: str, entry: dict[str, Any]) -> None:
+    """Keeps the entry under the agent's ID in the session's folder, after those before."""
+    written(file(session, agent, True), entry)
 
 
-def _groups(entries: list[dict[str, Any]]) -> list[Group]:
-    """The groups of starts that the entries of a run keep."""
-    starts: dict[Any, dict[str, Any]] = {}
-    order: list[list[Any]] = []
-    early: dict[Any, dict[str, Any]] = {}
-    for entry in entries:
-        kind = entry["kind"]
-        if kind in ("start", "skill"):
-            agent = entry.get("agent")
-            role = str(entry.get("role") or entry.get("skill"))
-            state = {
-                "role": role,
-                "prompt": entry.get("prompt", ""),
-                "running": True,
-                "result": None,
-            }
-            state.update(early.pop(agent, {}) if agent else {})
-            key = agent if agent else ("skill", len(order))
-            starts[key] = state
-            _join(order, starts, key, role)
+def written(path: str, entry: dict[str, Any]) -> None:
+    """Writes the entry at the end of the file at the path, a line of JSON."""
+    with open(path, "a", encoding="utf-8") as f:
+        f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+
+
+def kept(session: str, agent: str) -> list[dict[str, Any]]:
+    """The entries kept under the agent's ID, in order; none where none are. Stops with ValueError
+    naming the file where a line is no entry, as an entry left unread could let a start through."""
+    return read(file(session, agent, False))
+
+
+def read(path: str) -> list[dict[str, Any]]:
+    """The entries of the file at the path, as `kept` reads them."""
+    try:
+        with open(path, encoding="utf-8") as f:
+            lines = f.read().splitlines()
+    except FileNotFoundError:
+        return []
+    entries = []
+    for text in lines:
+        try:
+            entry = json.loads(text)
+        except ValueError:
+            entry = None
+        if isinstance(entry, dict):
+            entries.append(entry)
             continue
-        key = entry.get("agent")
-        if key is None and kind == "result":
-            key = next((k for g in reversed(order) for k in g if isinstance(k, tuple)), None)
-        target = starts.get(key) if key is not None else None
-        if target is None:
-            target = early.setdefault(key, {})
-        if kind == "result":
-            target["result"] = entry["result"]
-            if key is None or isinstance(key, tuple):
-                target["running"] = False
-        elif kind == "message":
-            target["running"], target["result"] = True, None
-        elif kind == "ended":
-            target["running"] = False
-    return [Group(starts[g[0]]["role"], tuple(_start(k, starts[k]) for k in g)) for g in order if g]
+        shown = os.path.relpath(path, tempfile.gettempdir())
+        raise ValueError(f"{shown} holds a line that is no entry")
+    return entries
 
 
-def _join(order: list[list[Any]], starts: dict[Any, dict[str, Any]], key: Any, role: str) -> None:
-    """Puts the start of the key in the last group, where it joins it, or in a group of its own."""
-    last = order[-1] if order else []
-    if last and starts[last[0]]["role"] == role and not isinstance(key, tuple):
-        failed = [k for k in last if not starts[k]["running"] and starts[k]["result"] is None]
-        if failed:
-            last[last.index(failed[0])] = key
-            return
-        if any(starts[k]["running"] for k in last):
-            last.append(key)
-            return
-    order.append([key])
+def this_run(session: str, agent: str) -> list[dict[str, Any]]:
+    """The entries of the agent's run it is in: those from its last start."""
+    entries = kept(session, agent)
+    starts = [n for n, e in enumerate(entries) if e.get("kind") == "start"]
+    return entries[starts[-1] :] if starts else entries
 
 
-def _start(key: Any, state: dict[str, Any]) -> Start:
-    agent = None if isinstance(key, tuple) else key
-    return Start(agent, state["role"], state["prompt"], state["running"], state["result"])
+def result(session: str, agent: str) -> str | None:
+    """The result the agent gave last in its run; None where it gave none."""
+    given = [e["on"] for e in this_run(session, agent) if e.get("kind") == "result"]
+    return given[-1] if given else None
 
 
-def texts(entries: list[dict[str, Any]], agent: str) -> list[str] | None:
-    """The prompt that started the agent and each message sent to it after, or None where its
-    start hasn't come back yet."""
-    found = None
-    for entry in entries:
-        if entry["kind"] == "start" and entry["agent"] == agent:
-            found = [entry["prompt"]]
-        elif entry["kind"] == "message" and entry.get("agent") == agent and found is not None:
-            found.append(entry["text"])
+def left_without_result(session: str, agent: str) -> bool:
+    """Whether a run of the agent ended with no result: its entries from a start to an end hold no
+    result, in any of its runs."""
+    gave = False
+    for e in kept(session, agent):
+        kind = e.get("kind")
+        if kind == "start":
+            gave = False
+        gave = gave or kind == "result"
+        if kind == "end" and not gave:
+            return True
+    return False
+
+
+def ended(session: str, agent: str) -> bool:
+    """Whether the agent's run has ended."""
+    return END in this_run(session, agent)
+
+
+def starts(session: str, agent: str, named: list[str], plugin: str) -> list[Start]:
+    """The starts of the subagents and dependencies' skills of the names kept under the agent, of
+    the run it is in, as their calls came back, in order, each with how it is joined to those
+    before it."""
+    found = []
+    for e in this_run(session, agent):
+        back = e.get("back")
+        name = follow_routes.started(e.get("tool", ""), e.get("input", {}), named, plugin)
+        if e.get("kind") == "call" and back and name:
+            found.append(Start(name, back["status"], back["agentId"], e.get("joined", "")))
     return found
+
+
+def begun(session: str) -> bool:
+    """Whether a run of the skill the routes name has begun in the session and not been let end."""
+    entries = this_run(session, RUN)
+    return START in entries and END not in entries
+
+
+def said(line: str, seen: int) -> dict[str, Any]:
+    """The entry of a line told the main conversation, with how many entries the starts of the run
+    had kept as it was told."""
+    return {"kind": "told", "line": line, "seen": seen}
+
+
+def told(session: str, line: str, seen: int) -> bool:
+    """Whether the line was told in the run with the starts holding as many entries as `seen`, so it
+    tells of what was told already."""
+    return said(line, seen) in this_run(session, RUN)
+
+
+def calls(session: str, agent: str, run: bool = False) -> list[dict[str, Any]]:
+    """The agent's calls kept, as each came back, of all its runs, or of the run it is in where
+    `run`."""
+    entries = this_run(session, agent) if run else kept(session, agent)
+    return [e for e in entries if e.get("kind") == "call"]
+
+
+def given(text: str) -> dict[str, Any]:
+    """The entry of the prompt a run was given, as the Agent call that started it came back with
+    the run's ID."""
+    return {"kind": "given", "text": text}
+
+
+def message(text: str) -> dict[str, Any]:
+    """The entry of a message sent to a run."""
+    return {"kind": "message", "text": text}
+
+
+def texts(session: str, agent: str) -> list[str] | None:
+    """The texts the agent's run was given, in the order they were sent: its prompt, kept once as
+    the Agent call that started it came back, and each message sent to it after; None where no
+    prompt is kept yet, as a run starts before that call comes back with its ID."""
+    entries = kept(session, agent)
+    prompt = next((e["text"] for e in entries if e.get("kind") == "given"), None)
+    if prompt is None:
+        return None
+    sent = [e["text"] for e in entries if e.get("kind") == "message"]
+    return [prompt, *sent]

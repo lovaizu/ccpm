@@ -1,67 +1,56 @@
-"""Holds a role's end until a file it wrote names each item of its input.
-
-The items come from the items port, in Lane's own form, which `items` reads, or through the
-plugin's adapter. An item counts as answered where its ID stands as a word of its own in a file
-that the role wrote after its last change of the input, the input aside.
-"""
+"""every_item: the subagent gives its result only once it has answered every item of an input its
+step names, read at the items port, each by its ID, such as `B-1`, `R33` or `KR1.1`: an item is
+answered where its ID stands as a word of its own in a file the subagent wrote in this run after
+its last change of the input, the input left out, as rewriting the input keeps every ID in it, and
+a change to it may change its items. An item with no ID is not counted, as no text tells an answer
+to it from any other."""
 
 from __future__ import annotations
 
 import re
 
-import lanes
+from lanes.done import Done, text, written
 
+ACTION = "end"
 WORDING = "Answer every item of `<input>`."
-END = True
-# A top-level item of a Markdown list that begins with an ID, such as `B-1`, `R33`, or `KR1.1`,
-# bare or in bold, code, or brackets.
-ITEM = re.compile(r"^[-*+]\s+(?:\*\*|`|\[)?([A-Z][A-Za-z]*-?\d+(?:\.\d+)*)", re.MULTILINE)
+CALLS = True
 
 
-def items(text: str) -> list[str]:
-    """The ID of each item that Lane's own form of the items port reads in the text."""
-    return list(dict.fromkeys(ITEM.findall(text)))
-
-
-def answered(item: str, text: str) -> bool:
-    """Whether the text names the item's ID as a word of its own, so that `B-1` answers neither
-    `B-12`, `B-1.2`, nor `AB-1`."""
-    return re.search(rf"(?<![\w.-]){re.escape(item)}(?![\w-]|\.\w)", text) is not None
-
-
-def end(given: dict[str, list[str]], calls: list[lanes.Call], context: lanes.Context) -> str | None:
-    """What's left to answer, or None where a file written since the last change of each input
-    names every item of it."""
-    for path in given["input"]:
-        try:
-            with open(path, encoding="utf-8") as f:
-                text = f.read()
-        except OSError:
-            return f"`{path}` isn't there to read its items."
-        written = []
-        for call in calls:
-            if call.tool not in ("Write", "Edit", "NotebookEdit"):
-                continue
-            target = lanes.called_path(call) or ""
-            if lanes.under(target, [path]):
-                written = []
-            elif target not in written:
-                written.append(target)
-        texts = [_text(p) for p in written]
-        found = context.items(path, text) if context.items is not None else items(text)
-        left = [i for i in found if not any(answered(i, t) for t in texts)]
+def missing(given: dict[str, list[str]], done: Done) -> str:
+    """What is missing: each input that is no file to read, and each ID answered in no file the
+    subagent wrote in this run after its last change of that input; "" where every item is
+    answered."""
+    inputs = {done.full(i): i for i in given["input"]}
+    found = []
+    for file, named in inputs.items():
+        said = text(file)
+        if said is None:
+            found.append(f"`{named}` is no file to read")
+            continue
+        answers = [t for t in map(text, since(done, file, inputs)) if t is not None]
+        left = [k for k in done.items(named, said) if not any(stands(k, a) for a in answers)]
         if left:
-            return (
-                f"No file written since the last change of `{path}` answers"
-                f" {', '.join(f'`{i}`' for i in left)}."
-            )
-    return None
+            found.append(f"{', '.join(left)} of `{named}` unanswered")
+    return "; ".join(found)
 
 
-def _text(path: str) -> str:
-    """The file's text, or nothing where it's gone."""
-    try:
-        with open(path, encoding="utf-8") as f:
-            return f.read()
-    except OSError:
-        return ""
+def since(done: Done, file: str, inputs: dict[str, str]) -> list[str]:
+    """The files the subagent wrote in this run after its last change of the input, a full path,
+    the inputs left out, each once: a change to the input may change its items, so it restarts
+    the count."""
+    files: list[str] = []
+    for each in written(done, done.run):
+        if each == file:
+            files = []
+        elif each not in inputs:
+            files.append(each)
+    return list(dict.fromkeys(files))
+
+
+def stands(key: str, answer: str) -> bool:
+    """Whether the key stands in the answer as a word of its own, so `B-1` is not found in `B-12`,
+    `B-1.2` or `AB-1`."""
+    return (
+        re.search(rf"(?<![A-Za-z0-9-]){re.escape(key)}(?![A-Za-z0-9]|[.-][0-9])", answer)
+        is not None
+    )

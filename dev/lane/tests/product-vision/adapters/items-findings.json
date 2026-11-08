@@ -1,0 +1,4 @@
+[{"given": {"input": "review.md", "text": "# Review\n\n## Finding 1\n\nx\n\n## Finding 2\n\ny\n",
+            "values": {"work": ["review.md"]}},
+  "gives": {"items": ["F1", "F2"]}},
+ {"given": {"input": "review.md", "text": "# Review\n\nNothing found.\n", "values": {}}, "gives": {"items": []}}]

@@ -1,166 +1,237 @@
-"""The cases of called.py's contract: what Lane keeps of a session in its record, and how the starts
-of a run join one another."""
+"""The calls kept: each call of a subagent as it came back, each result it gave and each start and
+end of its runs, under its agent_id in the session's folder of the system's temporary folder, read
+back for the run it is in."""
 
 import os
-import tempfile
-import time
+import shutil
+import unittest
 from unittest import mock
 
-from helpers import called, testing
+import helpers
+from helpers import called, routes
 
 
-def run(*entries):
-    """The run that the entries keep, after a run of write begins."""
-    found = called.run([{"kind": "run", "skill": "write"}, *entries])
-    assert found is not None
-    return found
+def on(day: str):
+    """time.strftime as it formats on the day."""
+    return lambda form: form.replace("%Y%m%d", day)
 
 
-def start(agent, role="writer", prompt="", status="async_launched"):
-    return {"kind": "start", "agent": agent, "role": role, "prompt": prompt, "status": status}
+class CalledTest(helpers.PluginTest):
+    def keep(self, agent: str, *entries: dict) -> None:
+        """Keeps each entry under the agent's ID in session s1."""
+        for entry in entries:
+            called.keep("s1", agent, entry)
 
 
-def result(agent, given, role="writer"):
-    return {"kind": "result", "agent": agent, "role": role, "result": given}
+class TestKeep(CalledTest):
+    def test_entries_are_kept_in_order_under_the_agent_in_the_sessions_folder(self):
+        # Given: no entry kept yet
+        # When: writer's start and its result are kept
+        self.keep("a1", called.START, called.gave("written"))
+        # Then: they are read back in order, from lane/<yyyymmdd>-s1/a1.jsonl
+        self.assertEqual(called.kept("s1", "a1"), [called.START, called.gave("written")])
+        (folder,) = os.listdir(os.path.join(self.base, "lane"))
+        self.assertRegex(folder, r"^[0-9]{8}-s1$")
+        self.assertTrue(os.path.isfile(os.path.join(self.base, "lane", folder, "a1.jsonl")))
 
+    def test_the_sessions_folder_is_kept_over_a_change_of_day(self):
+        # Given: an entry kept on one day
+        with mock.patch.object(called.time, "strftime", side_effect=on("20261103")):
+            self.keep("a1", called.START)
+        # When: another is kept the next day
+        with mock.patch.object(called.time, "strftime", side_effect=on("20261104")):
+            self.keep("a1", called.END)
+            # Then: both are in the folder of the first
+            self.assertEqual(called.kept("s1", "a1"), [called.START, called.END])
+        self.assertEqual(os.listdir(os.path.join(self.base, "lane")), ["20261103-s1"])
 
-def ended(agent):
-    return {"kind": "ended", "agent": agent}
+    def test_an_entry_is_kept_in_the_first_days_folder_of_the_session(self):
+        # Given: the session's folders of two days, as one going on past midnight left them
+        for day in ("20261104", "20261103"):
+            os.makedirs(os.path.join(self.base, "lane", f"{day}-s1"))
+        # When: an entry is kept
+        self.keep("a1", called.START)
+        # Then: it is in the first day's folder
+        first = os.path.join(self.base, "lane", "20261103-s1", "a1.jsonl")
+        self.assertEqual(called.read(first), [called.START])
 
+    def test_an_entry_is_kept_as_its_text_reads(self):
+        # Given: a message of text out of ASCII
+        # When: it is kept
+        self.keep("a1", called.message("über"))
+        # Then: its line holds the text as it reads, as UTF-8
+        (folder,) = os.listdir(os.path.join(self.base, "lane"))
+        line = self.read(os.path.join(self.base, "lane", folder, "a1.jsonl"))
+        self.assertEqual(line, '{"kind": "message", "text": "über"}\n')
 
-class TestRecord(testing.FolderTest):
-    def setUp(self):
-        super().setUp()
-        patcher = mock.patch.object(tempfile, "tempdir", self.base)
-        patcher.start()
-        self.addCleanup(patcher.stop)
+    def test_an_agent_with_nothing_kept_has_nothing(self):
+        # Given: nothing kept
+        # When: an agent's entries are read
+        # Then: there are none
+        self.assertEqual(called.kept("s1", "a1"), [])
 
-    def test_a_session_keeps_its_record_in_a_folder_of_its_own_in_the_temporary_folder(self):
-        found = called.record("s1", "changelog")
-        day = time.strftime("%Y%m%d")
-        self.assertEqual(found.folder, os.path.join(self.base, "lane", f"{day}-s1-changelog"))
-
-    def test_a_record_made_on_an_earlier_day_is_found_again(self):
-        os.makedirs(os.path.join(self.base, "lane", "20261101-s1-changelog"))
-        self.assertTrue(called.record("s1", "changelog").folder.endswith("20261101-s1-changelog"))
-
-    def test_each_entry_added_is_read_back_in_its_order(self):
-        found = called.record("s1", "changelog")
-        found.add({"kind": "a"})
-        found.add({"kind": "b"})
-        self.assertEqual(called.record("s1", "changelog").entries(), [{"kind": "a"}, {"kind": "b"}])
-
-    def test_a_record_with_no_entry_reads_as_none(self):
-        self.assertEqual(called.record("s1", "changelog").entries(), [])
-
-    def test_a_record_read_before_its_first_entry_makes_no_folder(self):
-        called.record("s1", "changelog").entries()
+    def test_reading_makes_no_folder(self):
+        # Given: nothing kept in the session
+        # When: an agent's entries and texts are read
+        called.kept("s1", "a1")
+        called.texts("s1", "a1")
+        # Then: no folder is made for the session
         self.assertFalse(os.path.exists(os.path.join(self.base, "lane")))
 
-    def test_each_plugin_keeps_a_record_of_its_own(self):
-        called.record("s1", "changelog").add({"kind": "a"})
-        self.assertEqual(called.record("s1", "checker").entries(), [])
-
-
-class TestRun(testing.FolderTest):
-    def test_no_run_begun_is_no_run(self):
-        self.assertIsNone(called.run([]))
-
-    def test_a_run_that_ended_is_no_run(self):
-        self.assertIsNone(called.run([{"kind": "run", "skill": "write"}, {"kind": "end"}]))
-
-    def test_a_run_keeps_its_skill(self):
-        self.assertEqual(run().skill, "write")
-
-    def test_a_new_run_takes_the_place_of_the_one_before(self):
-        found = run(start("a1"), {"kind": "run", "skill": "write"})
-        self.assertEqual(found.groups, [])
-
-    def test_a_start_running_is_kept_as_running(self):
-        self.assertEqual(
-            run(start("a1")).groups,
-            [called.Group("writer", (called.Start("a1", "writer", "", True, None),))],
+    def test_entries_that_cannot_be_read_are_refused(self):
+        # Given: a line that is no JSON object among the entries
+        self.keep("a1", called.START)
+        (folder,) = os.listdir(os.path.join(self.base, "lane"))
+        with open(os.path.join(self.base, "lane", folder, "a1.jsonl"), "a") as f:
+            f.write("[1]\n")
+        # When: they are read
+        # Then: they are refused, naming the file
+        with self.assertRaises(ValueError) as refused:
+            called.kept("s1", "a1")
+        self.assertIn(
+            f"lane/{folder}/a1.jsonl holds a line that is no entry", str(refused.exception)
         )
 
-    def test_a_start_that_ended_with_a_result_keeps_it(self):
-        found = run(start("a1"), result("a1", "written"), ended("a1"))
-        self.assertEqual(
-            found.groups[0].starts[0], called.Start("a1", "writer", "", False, "written")
+    def test_an_id_that_cannot_name_a_file_is_refused(self):
+        for session, agent in (("..", "a1"), ("s1", "a/b"), ("s1", "")):
+            # Given: a session or agent ID that would name a file elsewhere, or none
+            # When: an entry is kept under it
+            # Then: it is refused
+            with self.subTest(session=session, agent=agent), self.assertRaises(ValueError):
+                called.keep(session, agent, called.START)
+
+
+class TestThisRun(CalledTest):
+    def test_the_result_is_the_last_given_in_the_run(self):
+        # Given: writer giving `written` twice, the later after a call
+        call = called.call("Bash", {"command": "ls"})
+        self.keep("a1", called.START, called.gave("more"), call, called.gave("written"))
+        # When: its result is read
+        # Then: it is the later
+        self.assertEqual(called.result("s1", "a1"), "written")
+
+    def test_a_resumed_run_has_none_of_the_earlier_runs_result_or_end(self):
+        # Given: a run that gave `written` and ended, then a start again, as on a resume
+        self.keep("a1", called.START, called.gave("written"), called.END, called.START)
+        # When: its result and end are read
+        # Then: there are none, as the resumed run gives its own
+        self.assertIsNone(called.result("s1", "a1"))
+        self.assertFalse(called.ended("s1", "a1"))
+
+    def test_a_run_ended_is_read_so(self):
+        # Given: a run that ended
+        self.keep("a1", called.START, called.END)
+        # When: whether it ended is read
+        # Then: it did
+        self.assertTrue(called.ended("s1", "a1"))
+
+
+class TestLeftWithoutResult(CalledTest):
+    def test_an_agent_left_without_a_result_is_one_whose_run_ended_giving_none(self):
+        gave = called.gave("written")
+        for entries, left in (
+            ((called.START, called.END), True),
+            ((called.START, gave, called.END), False),
+            ((called.START, called.END, called.START, gave, called.END), True),
+            ((called.START, gave, called.END, called.START, called.END), True),
+            ((called.START,), False),
+            ((), False),
+        ):
+            with self.subTest(entries=entries):
+                # Given: a run that ended with no result, one that gave a result, one resumed
+                # after it ended with none or with one, one still running, or none kept
+                self.keep("a1", *entries)
+                # When: whether a run of it ended with no result is read
+                # Then: it is, where any of its runs ended giving none
+                self.assertEqual(called.left_without_result("s1", "a1"), left)
+                shutil.rmtree(os.path.join(self.base, "lane"), ignore_errors=True)
+
+
+class TestStarts(CalledTest):
+    def test_the_starts_are_the_agent_calls_of_routed_subagents_as_they_came_back(self):
+        # Given: the run's start of writer as it came back, a read, and a start of Explore
+        writer = called.call("Agent", {"subagent_type": "changelog:writer"}, helpers.back("w1"))
+        explore = called.call("Agent", {"subagent_type": "Explore"}, helpers.back("x1"))
+        self.keep("lead1", called.START, writer, called.call("Read", {}), explore)
+        # When: the run's starts of the routes are read
+        found = called.starts("s1", "lead1", ["writer", "reviewer"], "changelog")
+        # Then: they are writer's alone, with its status and ID
+        self.assertEqual(found, [routes.Start("writer", "completed", "w1")])
+
+
+class TestRun(CalledTest):
+    def test_the_starts_are_those_of_the_last_run_alone(self):
+        # Given: a run with a start of writer, then a run begun again with a start of reviewer
+        writer = called.call("Agent", {"subagent_type": "changelog:writer"}, helpers.back("w1"))
+        again = called.call("Agent", {"subagent_type": "changelog:reviewer"}, helpers.back("r1"))
+        self.keep(called.RUN, called.START, writer, called.START, again)
+        # When: the run's starts are read
+        found = called.starts("s1", called.RUN, ["writer", "reviewer"], "changelog")
+        # Then: they are the last run's alone
+        self.assertEqual(found, [routes.Start("reviewer", "completed", "r1")])
+
+    def test_a_run_is_begun_from_its_start_until_it_is_let_end(self):
+        for entries, begun in (
+            ((), False),
+            ((called.START,), True),
+            ((called.START, called.END), False),
+            ((called.START, called.END, called.START), True),
+        ):
+            with self.subTest(entries=entries):
+                # Given: no run, a run begun, one let end, or one begun again after
+                shutil.rmtree(os.path.join(self.base, "lane"), ignore_errors=True)
+                self.keep(called.RUN, *entries)
+                # When: whether a run is begun is asked
+                # Then: it is from its start until it is let end
+                self.assertEqual(called.begun("s1"), begun)
+
+    def test_a_line_told_is_known_by_the_entries_the_starts_held(self):
+        # Given: a run, told a line as its starts held 3 entries
+        self.keep(called.RUN, called.START, called.said("reviewer gave `good`.", 3))
+        # When: whether it was told is asked, with as many entries, with more, or another line
+        # Then: it was told only with as many entries, of that line
+        self.assertTrue(called.told("s1", "reviewer gave `good`.", 3))
+        self.assertFalse(called.told("s1", "reviewer gave `good`.", 4))
+        self.assertFalse(called.told("s1", "writer gave `written`.", 3))
+
+
+class TestGiven(CalledTest):
+    def test_a_runs_texts_are_its_prompt_and_each_message_after(self):
+        # Given: a run given its prompt, and a message sent to it
+        self.keep("a1", called.START, called.given("p"), called.message("m"))
+        # When: its texts are read
+        # Then: they are the prompt, then the message
+        self.assertEqual(called.texts("s1", "a1"), ["p", "m"])
+
+    def test_a_run_given_no_prompt_yet_has_no_texts(self):
+        # Given: a run started, sent a message, before its start came back with its prompt
+        self.keep("a1", called.START, called.message("m"))
+        # When: its texts are read
+        # Then: there are none yet, as its prompt is not known
+        self.assertIsNone(called.texts("s1", "a1"))
+        self.assertIsNone(called.texts("s1", "a2"))
+
+    def test_the_calls_kept_are_those_of_every_run_or_of_the_run_it_is_in(self):
+        # Given: a call before the run's start and one after
+        first, second = (
+            called.call("Read", {"file_path": "a"}),
+            called.call("Read", {"file_path": "b"}),
         )
-
-    def test_a_later_result_takes_the_place_of_an_earlier_one(self):
-        found = run(start("a1"), result("a1", "asks"), result("a1", "written"), ended("a1"))
-        self.assertEqual(found.groups[0].starts[0].result, "written")
-
-    def test_a_start_that_ended_before_its_call_came_back_is_not_running(self):
-        found = run(result("a1", "written"), ended("a1"), start("a1", status="completed"))
-        self.assertEqual(
-            found.groups[0].starts[0], called.Start("a1", "writer", "", False, "written")
-        )
-
-    def test_a_message_resumes_a_start_with_no_result_yet(self):
-        found = run(
-            start("a1"),
-            result("a1", "asks"),
-            ended("a1"),
-            {"kind": "message", "agent": "a1", "text": "x"},
-        )
-        self.assertEqual(found.groups[0].starts[0][3:], (True, None))
-
-    def test_starts_of_another_role_make_a_group_of_their_own(self):
-        found = run(start("a1"), result("a1", "written"), ended("a1"), start("r1", "reviewer"))
-        self.assertEqual([g.role for g in found.groups], ["writer", "reviewer"])
-
-    def test_a_start_made_while_one_of_its_role_runs_joins_it(self):
-        found = run(start("r1", "reviewer"), start("r2", "reviewer"))
-        self.assertEqual([len(g.starts) for g in found.groups], [2])
-
-    def test_a_start_made_after_every_start_of_its_role_ended_makes_a_new_group(self):
-        found = run(
-            start("r1", "reviewer"),
-            result("r1", "more", "reviewer"),
-            ended("r1"),
-            start("r2", "reviewer"),
-        )
-        self.assertEqual([len(g.starts) for g in found.groups], [1, 1])
-
-    def test_a_start_made_again_takes_the_place_of_one_with_no_result(self):
-        found = run(start("r1", "reviewer"), ended("r1"), start("r2", "reviewer"))
-        self.assertEqual([s.agent for s in found.groups[0].starts], ["r2"])
-
-    def test_a_dependencys_skill_begun_is_a_move_running_until_its_result(self):
-        found = run({"kind": "skill", "skill": "checker:check"})
-        self.assertEqual(
-            found.groups[0].starts[0], called.Start(None, "checker:check", "", True, None)
-        )
-
-    def test_the_result_of_a_dependencys_skill_ends_its_move(self):
-        found = run(
-            {"kind": "skill", "skill": "checker:check"}, result(None, "done", "checker:check")
-        )
-        self.assertEqual(found.groups[0].starts[0][3:], (False, "done"))
-
-    def test_the_last_text_given_for_a_role_is_kept(self):
-        given = [{"kind": "given", "role": "writer", "text": t} for t in ("a", "b")]
-        self.assertEqual(run(*given).given, {"writer": "b"})
-
-    def test_the_persons_words_since_the_last_message_are_kept(self):
-        found = run(
-            {"kind": "words", "text": "old"},
-            {"kind": "message", "agent": "a1", "text": "m"},
-            {"kind": "words", "text": "yes"},
-        )
-        self.assertEqual(found.words, ["yes"])
+        self.keep("a1", first, called.START, second, called.END)
+        # When: the calls are read
+        # Then: all are given, or those of the run alone
+        self.assertEqual(called.calls("s1", "a1"), [first, second])
+        self.assertEqual(called.calls("s1", "a1", True), [second])
 
 
-class TestTexts(testing.FolderTest):
-    def test_a_start_has_its_prompt_and_each_message_sent_after(self):
-        entries = [start("a1", prompt="p"), {"kind": "message", "agent": "a1", "text": "m"}]
-        self.assertEqual(called.texts(entries, "a1"), ["p", "m"])
+class TestRecord(unittest.TestCase):
+    def test_each_plugins_guard_keeps_a_session_apart(self):
+        # Given: the session s1, and the plugins changelog and checker
+        # When: the record each keeps of it is named
+        # Then: each is its own, the session first
+        self.assertEqual(called.record("changelog", "s1"), "s1-changelog")
+        self.assertNotEqual(called.record("checker", "s1"), called.record("changelog", "s1"))
 
-    def test_a_message_to_another_start_is_none_of_its_texts(self):
-        entries = [start("a1", prompt="p"), {"kind": "message", "agent": "a2", "text": "m"}]
-        self.assertEqual(called.texts(entries, "a1"), ["p"])
 
-    def test_an_agent_not_yet_kept_has_no_texts(self):
-        self.assertIsNone(called.texts([], "a1"))
+if __name__ == "__main__":
+    unittest.main()

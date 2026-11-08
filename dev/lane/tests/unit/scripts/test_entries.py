@@ -1,127 +1,144 @@
-"""The cases of entries.py's contract: the hook entries that run the guard on each event, merged
-with the plugin's own entries."""
+"""lane's entries in a plugin's hooks/hooks.json: one for the plugin in each event lane acts on, the
+tool calls' run on every call, each command checking for Python first, every other entry left as
+it was."""
 
-import json
 import os
-import subprocess
+import unittest
 
-from helpers import entries, testing
+import helpers
+from helpers import entries, proposal
 
-HELD = ("changelog:writer",)
-# Each event that the guard reads, as the architecture's sequences draw them.
-EVENTS = (
-    "PreToolUse PostToolUse SubagentStart SubagentStop UserPromptExpansion UserPromptSubmit Stop"
-)
-OWN = {"type": "command", "command": "echo own"}
+# An entry of the plugin's own, which lane leaves as it is.
+OWN = {"matcher": "Bash", "hooks": [{"type": "command", "command": "sh own.sh"}]}
+# lane's entries of the old shape, one for each subagent and event.
+RUNS = 'exec python3 "${CLAUDE_PLUGIN_ROOT}/hooks/lane/'
+OLD = {"matcher": "Bash", "hooks": [{"type": "command", "command": RUNS + 'pretooluse.py" a:b'}]}
+OLD_STOP = {
+    "matcher": "a:b",
+    "hooks": [{"type": "command", "command": RUNS + 'subagentstop.py" a:b'}],
+}
 
 
-def commands(hooks, event):
-    return [h["command"] for g in hooks["hooks"][event] for h in g["hooks"]]
+class TestEntry(unittest.TestCase):
+    def test_the_entry_runs_lanes_code_on_every_call_naming_the_plugin(self):
+        # Given: changelog with lanes laid in writer
+        # When: its entry is made
+        # Then: it matches every tool, gives the plugin's name, and blocks the call where the
+        # hook fails
+        self.assertEqual(entries.entry("changelog", ["writer"], "PreToolUse"), helpers.ENTRY)
 
+    def test_each_other_events_entry_runs_its_script_and_tells_nothing_without_python(self):
+        # Given: changelog with lanes laid in writer
+        # When: the entries of each event are made
+        # Then: each runs its event's script, lets the event go on where Python cannot run, and
+        # blocks nothing where it fails, as only a tool call is to be stopped
+        for event, entry in helpers.HOOKS["hooks"].items():
+            with self.subTest(event=event):
+                self.assertEqual(entries.entry("changelog", ["writer"], event), *entry)
 
-class TestLaid(testing.FolderTest):
-    def test_each_event_the_guard_reads_has_an_entry(self):
-        self.assertEqual(list(entries.laid("changelog", HELD)["hooks"]), EVENTS.split())
-
-    def test_each_entry_runs_the_guard_with_the_plugins_name(self):
-        command = commands(entries.laid("changelog", HELD), "Stop")[0]
-        self.assertTrue(
-            command.endswith('exec python3 -B "${CLAUDE_PLUGIN_ROOT}/hooks/lane/hook.py" changelog')
+    def test_without_python_each_subagent_with_lanes_is_matched_in_the_event(self):
+        # Given: changelog with lanes laid in writer and reviewer
+        # When: its command is made
+        command = entries.command("changelog", ["writer", "reviewer"], "PreToolUse")
+        # Then: the event's agent_type is looked for as either subagent, with a blank after the
+        # colon or none
+        self.assertIn(
+            """*'"agent_type":"changelog:writer"'*|*'"agent_type": "changelog:writer"'*"""
+            """|*'"agent_type":"changelog:reviewer"'*|*'"agent_type": "changelog:reviewer"'*)""",
+            command,
         )
 
-    def test_each_tool_and_subagent_entry_matches_every_tool_and_type(self):
-        hooks = entries.laid("changelog", HELD)["hooks"]
-        self.assertEqual(
-            [hooks[e][0].get("matcher") for e in EVENTS.split()],
-            ["*", "*", "*", "*", None, None, None],
-        )
 
-    def test_a_pre_tool_use_entry_that_fails_blocks_the_call(self):
-        hook = entries.laid("changelog", HELD)["hooks"]["PreToolUse"][0]["hooks"][0]
-        self.assertEqual(hook["onFailure"], "block")
+class TestPut(unittest.TestCase):
+    def test_the_entry_is_put_into_hooks_with_none(self):
+        # Given: no hooks
+        # When: changelog's entry is put in
+        # Then: it is the one entry of each event lane acts on
+        self.assertEqual(entries.put({"hooks": {}}, "changelog", ["writer"]), helpers.HOOKS)
 
-
-class TestWithoutPython(testing.FolderTest):
-    def run_entry(self, event, given):
-        """Runs the entry of the event in sh where python3 fails, as where Python 3.9 is missing."""
-        os.makedirs("bin")
-        self.write("bin/python3", "#!/bin/sh\nexit 1\n")
-        os.chmod("bin/python3", 0o755)
-        command = commands(entries.laid("changelog", HELD), event)[0]
-        env = {"PATH": f"{self.base}/bin:/usr/bin:/bin"}
-        return subprocess.run(
-            ["sh", "-c", command],
-            input=json.dumps(given),
-            capture_output=True,
-            text=True,
-            env=env,
-            check=False,
-        )
-
-    def test_a_call_of_a_held_role_is_denied_with_what_to_install(self):
-        done = self.run_entry("PreToolUse", {"agent_type": "changelog:writer"})
-        told = "changelog: install Python 3.9 or later, run as python3, for its hooks to run"
-        said = json.loads(done.stdout)
-        decision = said["hookSpecificOutput"]
-        self.assertEqual(
-            (
-                said["systemMessage"],
-                decision["permissionDecision"],
-                decision["permissionDecisionReason"],
-            ),
-            (told, "deny", told),
-        )
-
-    def test_a_call_of_another_role_goes_on(self):
-        done = self.run_entry("PreToolUse", {"agent_type": "changelog:reviewer"})
-        self.assertEqual((done.stdout, done.returncode), ("", 0))
-
-    def test_another_event_goes_on(self):
-        done = self.run_entry("Stop", {"agent_type": "changelog:writer"})
-        self.assertEqual((done.stdout, done.returncode), ("", 0))
-
-
-class TestMerged(testing.FolderTest):
-    def test_the_plugins_own_entries_are_kept_beside_lanes(self):
-        own = {"hooks": {"Stop": [{"hooks": [OWN]}], "Notification": [{"hooks": [OWN]}]}}
-        found = entries.merged(own, "changelog", HELD)
-        self.assertEqual(
-            (commands(found, "Stop")[0], commands(found, "Notification")),
-            ("echo own", ["echo own"]),
-        )
-
-    def test_lanes_entries_laid_before_are_replaced(self):
-        old = {
-            "hooks": {
-                "Stop": [
-                    {
-                        "hooks": [
-                            {
-                                "type": "command",
-                                "command": 'python3 "${CLAUDE_PLUGIN_ROOT}/hooks/lane/stop.py"'
-                                " changelog",
-                            }
-                        ]
-                    }
-                ]
-            }
+    def test_lanes_old_entries_give_way_to_the_one_at_the_place_of_the_first(self):
+        # Given: the plugin's entry between two of lane's old shape, and one at SubagentStop
+        hooks = {
+            "hooks": {"PreToolUse": [OLD, OWN, OLD], "SubagentStop": [OLD_STOP], "Stop": [OWN]}
         }
-        found = entries.merged(old, "changelog", HELD)
-        self.assertEqual(found, entries.laid("changelog", HELD))
+        # When: changelog's entry is put in
+        # Then: it is in the first one's place, the others of lane's gone, SubagentStop's in
+        # place of lane's old one there, the other events' after, and the plugin's own as they
+        # were
+        found = entries.put(hooks, "changelog", ["writer"])["hooks"]
+        self.assertEqual(found["PreToolUse"], [helpers.ENTRY, OWN])
+        self.assertEqual(found["Stop"], [OWN, *helpers.HOOKS["hooks"]["Stop"]])
+        self.assertEqual(found["SubagentStop"], helpers.HOOKS["hooks"]["SubagentStop"])
+        self.assertEqual(
+            list(found),
+            [
+                "PreToolUse",
+                "SubagentStop",
+                "Stop",
+                "PostToolUse",
+                "SubagentStart",
+                "UserPromptExpansion",
+                "UserPromptSubmit",
+            ],
+        )
 
-    def test_no_entries_before_gives_lanes_alone(self):
-        self.assertEqual(entries.merged(None, "changelog", HELD), entries.laid("changelog", HELD))
-
-
-class TestCurrent(testing.FolderTest):
-    def test_entries_as_lane_lays_them_now_are_current(self):
-        laid = entries.merged({"hooks": {"Stop": [{"hooks": [OWN]}]}}, "changelog", HELD)
-        self.assertTrue(entries.current(laid, "changelog", HELD))
-
-    def test_entries_in_another_form_are_not_current(self):
-        old = {
-            "hooks": {
-                "Stop": [{"hooks": [{"type": "command", "command": "x /hooks/lane/stop.py"}]}]
-            }
+    def test_with_no_subagent_laid_lanes_entry_is_taken_out(self):
+        # Given: lane's entry beside the plugin's own
+        hooks = {
+            **helpers.HOOKS,
+            "hooks": {**helpers.HOOKS["hooks"], "PreToolUse": [OWN, helpers.ENTRY]},
         }
-        self.assertFalse(entries.current(old, "changelog", HELD))
+        # When: the entry is put in for no subagent
+        # Then: lane's are gone, the plugin's own kept, and each event that held lane's alone
+        # left out
+        self.assertEqual(entries.put(hooks, "changelog", []), {"hooks": {"PreToolUse": [OWN]}})
+
+
+class TestRead(helpers.PluginTest):
+    def path(self) -> str:
+        """The plugin's hooks.json."""
+        return os.path.join(self.plugin, "hooks", "hooks.json")
+
+    def test_hooks_are_read_and_written_back_as_they_are(self):
+        # Given: no hooks.json
+        # When: it is read, and the entry written into it
+        # Then: it is read as empty, and back as written, indented by two
+        self.assertEqual(entries.read(self.plugin), {"hooks": {}})
+        entries.written(self.plugin, helpers.HOOKS)
+        self.assertEqual(entries.read(self.plugin), helpers.HOOKS)
+        self.assertTrue(self.read(self.path()).startswith('{\n  "hooks": {\n'))
+
+    def test_hooks_are_written_as_their_text_reads(self):
+        # Given: a hook whose command holds text out of ASCII
+        hooks = {"hooks": {"Stop": [{"hooks": [{"type": "command", "command": "echo über"}]}]}}
+        # When: it is written
+        entries.written(self.plugin, hooks)
+        # Then: the file holds the text as it reads, as UTF-8
+        self.assertIn('"command": "echo über"', self.read(self.path()))
+
+    def test_hooks_not_in_claude_codes_shape_are_refused(self):
+        for text in (
+            "{",
+            "[]",
+            '{"hooks": []}',
+            '{"hooks": {"PreToolUse": {}}}',
+            '{"hooks": {"Stop": [1]}}',
+            '{"hooks": {"Stop": [{"hooks": [1]}]}}',
+        ):
+            with self.subTest(text=text):
+                # Given: hooks.json of no JSON, no object, no object of events, an event of no
+                # list, an entry of no object, or a hook of no object
+                self.write(self.path(), text)
+                # When: it is read
+                with self.assertRaises(proposal.Stop) as stop:
+                    entries.read(self.plugin)
+                # Then: it is refused, naming it
+                self.assertEqual(
+                    str(stop.exception),
+                    f"lay.py: {self.path()} is not in the shape Claude Code reads; fix it and run"
+                    " again.",
+                )
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -1,22 +1,30 @@
-"""Holds a step done once the role has run a command it takes, as a lane of the trace kind."""
+"""run_step: a lane of the trace kind, whose step the subagent has done once a command it names, one
+of them, came back in this start: a Bash call of it, matched whole as run_only matches a command,
+each value the start's own, kept as it came back, as lane keeps no call that failed."""
 
 from __future__ import annotations
 
-import lanes
+from lanes import run_only
+from lanes.done import Done
 
+ACTION = "run"
 WORDING = "Run `<commands>`."
-COMMANDS = "commands"
+CALLS = True
 TRACE = True
 
 
-def traced(call: lanes.Call, given: dict[str, list[str]]) -> bool:
-    """Whether the call is a Bash run of one of the commands."""
-    return lanes.ran(call, given["commands"])
+def traces(tool: str, value: str, given: dict[str, list[str]], done: Done) -> bool:
+    """Whether a call of the tool on the value, the field of its input a lane judges, is the trace
+    of the lane taking the things given: a Bash call of one of its commands."""
+    return tool == "Bash" and run_only.allows(
+        value, given["commands"], done.root, done.cwd, done.values
+    )
 
 
-def done(given: dict[str, list[str]], calls: list[lanes.Call]) -> str | None:
-    """What's left to run, or None where a run of one of the commands came back, or where a value
-    given as null leaves no command."""
-    if not given["commands"] or any(traced(c, given) for c in calls):
-        return None
-    return f"{lanes.listed(given['commands'])} hasn't run yet."
+def missing(given: dict[str, list[str]], done: Done) -> str:
+    """What's missing: that none of the commands came back in this start; "" where one did."""
+    for c in done.run:
+        command = str(c.get("input", {}).get("command", ""))
+        if traces(str(c.get("tool", "")), command, given, done):
+            return ""
+    return f"{' or '.join(f'`{t}`' for t in given['commands'])} not run"

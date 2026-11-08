@@ -1,54 +1,40 @@
-"""Holds a step done once the role has read a file it takes to its end, as a lane of the trace
-kind."""
+"""read_whole: a lane of the trace kind, whose step is done once the subagent has read each input
+its step names to its end: its Read calls, by their offset and limit, have covered every line of
+it, a Read naming no limit covering as many lines as the Read tool gives by default; a Read of an
+input is its trace."""
 
 from __future__ import annotations
 
-import lanes
+from lanes.done import Done, lines_read, text
+from lanes.write_only import in_plugin
 
+ACTION = "read"
 WORDING = "Read `<input>` to its end."
+CALLS = True
 TRACE = True
-# The lines that a Read with no limit reads, as the Read tool documents it.
-READ_LINES = 2000
 
 
-def traced(call: lanes.Call, given: dict[str, list[str]]) -> bool:
-    """Whether the call is a Read of an input."""
-    return call.tool == "Read" and lanes.under(lanes.called_path(call) or "", given["input"])
+def traces(tool: str, value: str, given: dict[str, list[str]], done: Done) -> bool:
+    """Whether a call of the tool on the value, the field of its input a lane judges, is the trace
+    of the lane taking the things given: a Read of one of its inputs."""
+    file = done.full(value)
+    inputs = [done.full(in_plugin(named, done.root)) for named in given["input"]]
+    return tool == "Read" and file in inputs
 
 
-def done(given: dict[str, list[str]], calls: list[lanes.Call]) -> str | None:
-    """What's left to read, or None where the Reads kept cover every line of an input."""
-    missing = []
-    for path in given["input"]:
-        left = _unread(path, [c for c in calls if traced(c, {"input": [path]})])
-        if left is None:
-            return None
-        missing.append(left)
-    return missing[0]
-
-
-def _unread(path: str, reads: list[lanes.Call]) -> str | None:
-    """What of the file the Reads leave unread, or None where they cover every line. A Read that
-    the guard kept gives the file's lines as they stood then, under `lines`."""
-    counts = [r.input["lines"] for r in reads if isinstance(r.input.get("lines"), int)]
-    if counts:
-        count = counts[-1]
-    else:
-        try:
-            with open(path, encoding="utf-8", errors="replace") as f:
-                count = len(f.read().splitlines())
-        except OSError:
-            return f"`{path}` isn't there to read."
-    if not reads:
-        return f"`{path}` is unread."
-    covered = set()
-    for read in reads:
-        first = max(1, int(read.input.get("offset") or 1))
-        covered.update(range(first, first + int(read.input.get("limit") or READ_LINES)))
-    gaps = [n for n in range(1, count + 1) if n not in covered]
-    if not gaps:
-        return None
-    end = gaps[0]
-    while end + 1 in gaps:
-        end += 1
-    return f"`{path}` has lines {gaps[0]} to {end} unread."
+def missing(given: dict[str, list[str]], done: Done) -> str:
+    """What is missing: each input not there, or with a line no Read covered, by the first line
+    left unread; "" where each was read to its end."""
+    found = []
+    for named in given["input"]:
+        file = done.full(in_plugin(named, done.root))
+        said = text(file)
+        if said is None:
+            found.append(f"`{named}` is no file to read")
+            continue
+        count = len(said.splitlines())
+        read = lines_read(done, file)
+        left = [n for n in range(1, count + 1) if n not in read]
+        if left or not read:
+            found.append(f"`{named}` unread from line {left[0] if left else 1}")
+    return "; ".join(found)

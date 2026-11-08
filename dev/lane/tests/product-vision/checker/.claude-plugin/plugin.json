@@ -1,0 +1,1 @@
+{"name": "checker", "description": "A stand-in dependency for lane's tests: a skill naming a check script of its own, and a subagent another plugin routes.", "version": "0.1.0"}
