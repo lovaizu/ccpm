@@ -161,8 +161,14 @@
         },
         {
           "id": "Q4",
-          "good": true,
-          "decisions": []
+          "good": false,
+          "decisions": [
+            {
+              "about": "Two key results",
+              "decided": "one how well the people use each deliverable, and one how long the user waits for it. Asking only the user's points shows in the second",
+              "by": "user"
+            }
+          ]
         },
         {
           "id": "Q5",
@@ -170,7 +176,7 @@
           "decisions": [
             {
               "about": "The concept",
-              "decided": "rn values most that it makes and improves each deliverable only from the decisions that hold what the user means, never by patching a draft. Good for its people, only the user's points asked, planned back from the goal and replanned as it goes, and every step on every run serve it",
+              "decided": "rn values most the vital few only: the design tree keeps only the decisions that move the goal, each deliverable comes from them by its kind's best practice, and no trivial finding piles up on either. Judged by its people, only the user's points asked, planned back from the goal and replanned as it goes, and every step on every run serve it",
               "by": "user"
             }
           ]

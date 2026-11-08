@@ -153,9 +153,9 @@
   <text class="label start" x="982" y="904" text-anchor="start">written before the run and never shown to rn, who</text>
   <text class="label start" x="982" y="922" text-anchor="start">types /rn:up twice, and one for the people of each</text>
   <text class="label start" x="982" y="940" text-anchor="start">deliverable, who judges KR1.1 by using it.</text>
-  <text class="label start" x="982" y="958" text-anchor="start">Measures KR1.2 from the records, and KR1.3 from</text>
-  <text class="label start" x="982" y="976" text-anchor="start">the request to Done, each against the last trial&#x27;s.</text>
+  <text class="label start" x="982" y="958" text-anchor="start">Measures KR1.2 from the request to Done,</text>
+  <text class="label start" x="982" y="976" text-anchor="start">against the last trial&#x27;s.</text>
   <text class="label start" x="982" y="994" text-anchor="start">Passes where 3 runs of 3 come through every step.</text>
-  <text class="label start" x="42" y="1050" text-anchor="start">A judge of the records, such as the one of KR1.2, counts only once it&#x27;s right on kept records with a known answer.</text>
+  <text class="label start" x="42" y="1050" text-anchor="start">A judge of the records, such as the one of KR1.1, counts only once it&#x27;s right on kept records with a known answer.</text>
   <text class="label start" x="42" y="1072" text-anchor="start">A fault found higher gets a test at the level that missed it, seen to fail, before the fix.</text>
 </svg>

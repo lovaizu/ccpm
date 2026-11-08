@@ -53,7 +53,7 @@
   {
    "id": "Q10",
    "about": "the whole",
-   "what": "Using a deliverable made by the best practice and passed, does its role achieve its purpose?"
+   "what": "Using a deliverable made by the best practice and passed, does its role achieve its purpose by the vital few alone, so that no trivial many pile up and bury them?"
   }
  ],
  "practices": [
@@ -168,8 +168,11 @@
   },
   {
    "intent": "Q10",
-   "thinking": "Read the best practice whole and judge two things: that each question asks what its user essentially intends, and that a maker follows each practice without hesitation. Judge by reading, not by a method or a count, as a method of judging adds work and shows nothing that the reading doesn't. No best practice covers every case at first. Once the product vision trial shows the deliverables closer to the goal, ship it and better it in use, as Q6 says.",
+   "thinking": "Keep only the vital few, the parts, questions, practices, and findings that the role's end needs, and keep out the trivial many, as Juran's Pareto principle names them. Each of the trivial many seems right alone, so it gets added, and each one added buries the vital few deeper, until neither the maker nor the role finds what counts. Every best practice follows this, and so does each deliverable made by it. Read the best practice whole and judge two things: that each question asks what its user essentially intends, and that a maker follows each practice without hesitation. Judge by reading, not by a method or a count, as a method of judging adds work and shows nothing that the reading doesn't. No best practice covers every case at first. Once the product vision trial shows the deliverables closer to the goal, ship it and better it in use, as Q6 says.",
    "steps": [
+    {
+     "text": "Take out each part, question, practice, or finding whose loss would leave the role no further from its end."
+    },
     {
      "text": "Where a deliverable in use falls short of its role, trace the cause to the goal, the template, a question or a practice, and mend it there."
     }

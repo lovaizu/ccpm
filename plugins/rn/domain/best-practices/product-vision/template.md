@@ -27,7 +27,8 @@ law. They show whether a change brought its objective closer.
 > - `<objective>`: the end one role of Roles is after in its own work, in one sentence begun in
 >   lowercase, as it follows a colon. The developer builds toward it.
 > - `<key result>`: what the developer counts of what the role does or feels, in one sentence begun
->   in lowercase. The developer reads it after a change to decide whether to keep the change.
+>   in lowercase: `KR<n>.1` how well the role meets the objective, and `KR<n>.2` how fast. The
+>   developer reads it after a change to decide whether to keep the change.
 > - `<direction>`: which way is better, such as "Lower is better."
 
 ## Concept

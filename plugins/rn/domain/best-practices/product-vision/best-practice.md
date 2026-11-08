@@ -71,12 +71,13 @@ After a change, does the developer see from the key results whether to keep it, 
 
 **Thinking**
 
-Key results count what the role does or feels that shows it meets its end, as [objectives and key results](https://www.whatmatters.com/faqs/okr-meaning-definition-example) set them: the first how well, and the last how fast. A change that betters a later one counts only while none before it gets worse. A result had fast but not well is no gain, and a count of the product's own output can rise while the role misses its end.
+Key results count what the role does or feels that shows it meets its end, as [objectives and key results](https://www.whatmatters.com/faqs/okr-meaning-definition-example) set them: one how well and one how fast. A change that betters a later one counts only while none before it gets worse. A result had fast but not well is no gain, and a count of the product's own output can rise while the role misses its end. Any other count is an improvement to follow, not a key result, as one of the two already shows it or it moves no end.
 
 **Steps**
 
 1. List how success or failure would show in what the role does or feels, such as giving up, undoing a result, or working around the product.
 2. Make each a share, an average per user, a count, or a time, and name what it's a share or an average of.
+3. Keep the one result that shows how well and the one that shows how fast, and drop each other.
 
 ### Q5
 

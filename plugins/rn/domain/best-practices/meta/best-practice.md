@@ -25,7 +25,7 @@ The generator can make deliverables with which their role achieves its purpose.
 | Q7 | practices | Following a practice, does the generator grasp what the question's role is after and why, so that it makes what serves the role even where no step says how? |
 | Q8 | intents, practices | Going through the questions in order, does the generator find a practice for each, so that it meets no question with nothing to go by? |
 | Q9 | example, source | Reading the example, does the generator see what the template's slots become in one deliverable, so that it fills its own to the same intent? |
-| Q10 | the whole | Using a deliverable made by the best practice and passed, does its role achieve its purpose? |
+| Q10 | the whole | Using a deliverable made by the best practice and passed, does its role achieve its purpose by the vital few alone, so that no trivial many pile up and bury them? |
 
 ## Practices
 
@@ -143,12 +143,13 @@ Make the product's own deliverable of the kind from its design tree by the templ
 
 ### Q10
 
-Using a deliverable made by the best practice and passed, does its role achieve its purpose?
+Using a deliverable made by the best practice and passed, does its role achieve its purpose by the vital few alone, so that no trivial many pile up and bury them?
 
 **Thinking**
 
-Read the best practice whole and judge two things: that each question asks what its user essentially intends, and that a maker follows each practice without hesitation. Judge by reading, not by a method or a count, as a method of judging adds work and shows nothing that the reading doesn't. No best practice covers every case at first. Once the product vision trial shows the deliverables closer to the goal, ship it and better it in use, as Q6 says.
+Keep only the vital few, the parts, questions, practices, and findings that the role's end needs, and keep out the trivial many, as Juran's Pareto principle names them. Each of the trivial many seems right alone, so it gets added, and each one added buries the vital few deeper, until neither the maker nor the role finds what counts. Every best practice follows this, and so does each deliverable made by it. Read the best practice whole and judge two things: that each question asks what its user essentially intends, and that a maker follows each practice without hesitation. Judge by reading, not by a method or a count, as a method of judging adds work and shows nothing that the reading doesn't. No best practice covers every case at first. Once the product vision trial shows the deliverables closer to the goal, ship it and better it in use, as Q6 says.
 
 **Steps**
 
-1. Where a deliverable in use falls short of its role, trace the cause to the goal, the template, a question or a practice, and mend it there.
+1. Take out each part, question, practice, or finding whose loss would leave the role no further from its end.
+2. Where a deliverable in use falls short of its role, trace the cause to the goal, the template, a question or a practice, and mend it there.

@@ -20,7 +20,7 @@ again from it. A kind with no best practice gets one made before its first deliv
 best practice.
 
 *Why*: a deliverable left out shows only when the work reaches it, and a plan kept as first laid out
-goes on making what a finished deliverable or an answer has changed, as KR1.1 and KR1.3 count.
+goes on making what a finished deliverable or an answer has changed, as KR1.1 and KR1.2 count.
 
 ### Intent in the tree
 
@@ -56,7 +56,7 @@ accepted, in the people's terms.
 
 *Why*: the people never see what the maker meant, so an evaluator that does judges the making, not
 what the people get, as KR1.1 counts. One not told of an accepted shortfall sends it back every
-round, as KR1.3 counts.
+round, as KR1.2 counts.
 
 ### A turn makes a deliverable until every intent is good
 
@@ -66,7 +66,7 @@ reads. The turn ends once every intent of both phases is good, or stops at a poi
 settle.
 
 *Why*: a deliverable handed over with an intent not met fails its people, as KR1.1 counts, and a
-sentence polished before what it says holds needs polishing again, as KR1.3 counts.
+sentence polished before what it says holds needs polishing again, as KR1.2 counts.
 
 ### Good from the root
 
@@ -82,7 +82,7 @@ unsettled, and it can break what another intent met, as KR1.1 counts.
 The generator reads the deliverable as its people before it hands it on. Only the evaluators and the
 main conversation's judgment of their answers make an intent good.
 
-*Why*: a lack the maker could see costs a round of evaluators, as KR1.3 counts, while the maker
+*Why*: a lack the maker could see costs a round of evaluators, as KR1.2 counts, while the maker
 reads what it meant, not what it wrote, as KR1.1 counts.
 
 ### The evaluator seeks the good
@@ -92,7 +92,7 @@ they're after. For an intent not yet good, it says what would make it good for t
 for no fault beyond that.
 
 *Why*: a finding the people never meet sends the deliverable back for a change that gives them
-nothing, and its fix can break what they do meet, as KR1.1 and KR1.3 count.
+nothing, and its fix can break what they do meet, as KR1.1 and KR1.2 count.
 
 ### The designer judges the evaluators
 
@@ -102,7 +102,7 @@ aim without it and it asks for intent, not for how a part works inside, and then
 decision that serves it, never onto the deliverable.
 
 *Why*: an evaluator answered by addition alone makes the deliverable and the tree grow each round,
-until the people can't find what they need in it, as KR1.1 and KR1.3 count.
+until the people can't find what they need in it, as KR1.1 and KR1.2 count.
 
 ### A point found open goes back to the main conversation
 
@@ -243,7 +243,7 @@ sequenceDiagram
 ```
 
 - **The planner drafting the goal** over asking the user for it: the user confirms a goal written to
-  the plan best practice faster than they write one, as KR1.3 counts. The cost: a planner run first.
+  the plan best practice faster than they write one, as KR1.2 counts. The cost: a planner run first.
 
 ### S2: a point settled
 
@@ -336,7 +336,7 @@ sequenceDiagram
 ```
 
 - **A turn inside `/rn:up`, with no skill of its own,** over a skill for a turn: the user types only
-  `/rn:up`, and one skill's routes carry the work through the rounds, as KR1.3 counts. The cost:
+  `/rn:up`, and one skill's routes carry the work through the rounds, as KR1.2 counts. The cost:
   `/rn:up`'s routes carry every role's results.
 - **The main conversation judging the lacks before the planner writes them** over each lack going
   straight to the next round: only a lack of intent changes the deliverable, so it doesn't grow
@@ -344,7 +344,7 @@ sequenceDiagram
 - **The rounds without a limit** over a set number: a turn that stops early hands over an intent not
   met, as KR1.1 counts. The cost: a turn runs long while the evaluators find lacks of intent.
 - **One evaluator for each group of intents, all at once,** over one for every intent: each is fresh
-  on fewer intents, as KR1.1 counts, and they run side by side, as KR1.3 counts. The cost: each
+  on fewer intents, as KR1.1 counts, and they run side by side, as KR1.2 counts. The cost: each
   reads the whole deliverable.
 
 ### S2: a remark during a turn
@@ -374,7 +374,7 @@ sequenceDiagram
 ```
 
 - **Each role that still runs stopped** over letting it end: a role that runs on works by a design
-  about to change, and costs the user a round, as KR1.3 counts. The cost: the stopped round's work
+  about to change, and costs the user a round, as KR1.2 counts. The cost: the stopped round's work
   goes unused.
 
 ### S3: picking up
