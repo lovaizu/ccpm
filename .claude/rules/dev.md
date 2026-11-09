@@ -106,7 +106,7 @@ one key result by the thinnest path.**
 ### 6. Build each slice
 
 **For each slice, in order, do a to e. Write each part's unit tests first, and see them fail. Only
-then write its code, as N6 of
+then write its code, as N5 of
 [code/best-practice.json](../../plugins/rn/domain/best-practices/code/best-practice.md)
 says.**
 

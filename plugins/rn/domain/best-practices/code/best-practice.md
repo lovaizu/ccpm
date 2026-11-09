@@ -2,7 +2,7 @@
 
 ## Goal
 
-The maintainer is a person or an AI who takes the code over. The maintainer changes what the code does. They know that whoever runs the code still gets each behavior its specification asks for. They also know that whoever runs it learns how to put right anything wrong that comes from outside.
+Maintainers, people or AI agents, change what the code does and know that every behavior its specification asks for still holds, and whoever runs the code can fix a wrong input from outside.
 
 ## Inputs
 
@@ -16,148 +16,123 @@ The maintainer is a person or an AI who takes the code over. The maintainer chan
 - **body**: the code under each interface that gives the behavior.
 - **tests**: tests of the specification's cases, one test for each case, so the maintainer can tell which test checks which case and which code. Each test has a name that says the behavior it checks, and shows the situation, the action, and what must be so.
 
+## Critical success factors
+
+| ID | Factor |
+| --- | --- |
+| C1 | The maintainer finds the one place where a change belongs. |
+| C2 | The tests show whether every behavior still holds. |
+| C3 | Whoever runs the code can fix a wrong input from outside. |
+
 ## Necessary conditions
 
-| ID | Condition | Parts |
-| --- | --- | --- |
-| N1 | When the maintainer sets the code up on a fresh machine from only what the code gives for its setup, and runs the tests again and in any order, do they see the tests pass each time, so that a failing test points at the code and never at the machine or the order? | manifest, tests |
-| N2 | With one behavior to change, can the maintainer tell which module to open from what each module says it alone decides, without reading the modules' bodies, so that they change the behavior in one place? | module-opening |
-| N3 | When the maintainer calls a name that another module offers, can they write a call that works from the name's interface alone, without reading its body, so that the body can change behind the interface without breaking its callers? | interface |
-| N4 | For each behavior the code has, can the maintainer name the case of the specification that needs it, so that the code holds no behavior that no one asked for? | interface, body |
-| N5 | When something the code takes from outside is wrong, can whoever ran the code put it right from only what the code shows them, with nothing left half done, so that a fault from outside never leaves them stuck or their data half changed? | body |
-| N6 | For each case the specification names, its edges and refusals included, can the maintainer point to the one test that checks it, and tell the case from that test's name, so that they know which case a failing test breaks? | tests |
-| N7 | When the maintainer changes a body and its callers still get what its interface says, do the tests still pass, so that they can improve a body without fear? | interface, tests |
-| N8 | When the maintainer breaks the behavior a test checks, does that test fail, so that a broken behavior never goes unnoticed? | body, tests |
-| N9 | With only the code and its specification, can the maintainer make a change the specification asks for, and know from the tests that every other behavior still holds? | the whole |
+| ID | Factor | Condition | Parts |
+| --- | --- | --- | --- |
+| N1 | C1 | Does each module say, where the maintainer first meets it, the one thing it alone decides? | module-opening |
+| N2 | C1 | Does each name that a module offers state everything a caller needs to call it without reading its body? | interface |
+| N3 | C1 | Does each behavior of the code trace to a case of the specification that asks for it? | interface, body |
+| N4 | C2 | Do the tests pass in any order and on every run, on a fresh machine set up from the code's setup alone? | manifest, tests |
+| N5 | C2 | Does each case of the specification, its edges and refusals included, have one test whose name says the case? | tests |
+| N6 | C2 | Do the tests call the code only as its callers do, through its interfaces? | interface, tests |
+| N7 | C2 | Does breaking any behavior make a test fail? | body, tests |
+| N8 | C3 | Does the code refuse a wrong input from outside before it acts, with a message from which whoever ran it can fix the input? | body |
 
 ## Practices
 
 ### N1
 
-When the maintainer sets the code up on a fresh machine from only what the code gives for its setup, and runs the tests again and in any order, do they see the tests pass each time, so that a failing test points at the code and never at the machine or the order?
+Does each module say, where the maintainer first meets it, the one thing it alone decides?
 
 **Thinking**
 
-What the code gives for its setup names everything the code needs. Each test sets up and clears everything it uses, and a real tool it runs does only what the test asks of it. A test's result then rests on the code alone, not on the machine or on when a tool's own work runs, as a [hermetic](https://abseil.io/resources/swe-book/html/ch11.html) test holds all it needs to set up, run, and clear its environment.
+A maintainer with one behavior to change should find the one module to open without reading the bodies. David Parnas's [information hiding](https://doi.org/10.1145/361598.361623) gives each module one decision that the specification leaves to the code, most of all one that's likely to change. Decide the modules in order. First, list the decisions that the specification leaves to the code. Second, give each decision to one module. Third, have the module state its decision in a few words where the maintainer meets it first, such as at its top. If the module can't state it briefly, split the module. Where a decision meets a problem that a known design pattern solves, such as Strategy or Adapter in [Design Patterns](https://en.wikipedia.org/wiki/Design_Patterns), use the pattern by its name, and only where a case of the specification needs it now, as N3 says. The name gives the maintainer the whole design at once.
+
+**Steps**
+
+1. Take a behavior that the specification might change, and read only what the modules say they decide. Check that it points to one module. Where it doesn't, rewrite what the modules say, or move the decision.
+
+### N2
+
+Does each name that a module offers state everything a caller needs to call it without reading its body?
+
+**Thinking**
+
+A caller who needn't read the body lets the body change behind the interface without breaking them. [Design by contract](https://www.eiffel.com/values/design-by-contract/introduction/), by Bertrand Meyer, states what a call expects, what it gives, and what stays true. Decide the interface in order. First, choose the names that other modules may use, and mark every other name as internal. Second, give each name the types it takes and gives, such as in its signature where the language allows. Third, write beside it, such as in a doc comment, what it gives, what comes back when there's nothing to give, what it expects of what it takes, what else it changes, and each way it refuses a correct call. Leave out what the types already say.
+
+**Steps**
+
+1. Have someone who hasn't read the body write a call from the interface alone, and run the call. Where the call fails or they had to guess, add what was missing.
+
+### N3
+
+Does each behavior of the code trace to a case of the specification that asks for it?
+
+**Thinking**
+
+Every behavior that no one asked for is code the maintainer must carry and keep working. [You Aren't Gonna Need It](https://martinfowler.com/bliki/Yagni.html) keeps only what the cases ask for now, in the form they ask for. For each option, mode, and case that the code handles, name the case of the specification that asks for it. Remove what no case asks for.
+
+### N4
+
+Do the tests pass in any order and on every run, on a fresh machine set up from the code's setup alone?
+
+**Thinking**
+
+When a test fails, the cause should lie in the code. Neither the machine nor the order of the tests should cause it. A [hermetic](https://abseil.io/resources/swe-book/html/ch11.html) test holds everything it needs to set up, run, and clear its environment. So the code's setup names everything the code needs, with the versions it runs on, and each test sets up and clears everything it uses. A real tool that a test runs does only what the test asks of it.
 
 **Steps**
 
 1. For each real tool the tests run, such as git, find each thing it does on its own beyond the call, such as reading the machine's settings or starting maintenance in the background, and turn it off in the test's own settings.
-2. Set the code up on a clean machine or container, from what the code gives for its setup alone.
-3. Add to what the setup reads each thing the setup or the tests found missing, such as a runtime or a library, with the versions the code runs on.
-4. Run the tests several times, and in a shuffled order.
-
-### N2
-
-With one behavior to change, can the maintainer tell which module to open from what each module says it alone decides, without reading the modules' bodies, so that they change the behavior in one place?
-
-**Thinking**
-
-Each module alone decides one thing that the specification leaves to the code, most of all one likely to change, as [information hiding](https://doi.org/10.1145/361598.361623) says. The module says that thing briefly where the maintainer meets it first, such as at its top.
-
-**Steps**
-
-1. Where the module can't say that thing briefly, split the module.
-2. Take a behavior that the specification might change, and read only what the modules say they decide. Check that what they say points to one module. Where it doesn't, rewrite what the modules say, or move the decision.
-3. Where a decision meets a problem that a known design pattern solves, such as Strategy or Adapter in [Design Patterns](https://en.wikipedia.org/wiki/Design_Patterns), use the pattern by its name, and only where a case of the specification needs it now, as N4 says. The name gives the maintainer the whole design at once.
-
-### N3
-
-When the maintainer calls a name that another module offers, can they write a call that works from the name's interface alone, without reading its body, so that the body can change behind the interface without breaking its callers?
-
-**Thinking**
-
-The interface gives a caller everything they need to make the call: what it expects, what it gives, and what stays true, as [design by contract](https://www.eiffel.com/values/design-by-contract/introduction/) states them. The caller then need not read the body, and the body can change behind the interface.
-
-**Steps**
-
-1. Choose the names other modules may use, and mark every other name as internal.
-2. Say for each name the types it takes and gives, such as in its signature where the language allows.
-3. Write beside it, such as in a doc comment, what it gives, what comes back when there is nothing to give, what it expects of what it takes, what else it changes, and each way it refuses a right call.
-4. Leave out of that what the types already say.
-5. Have someone who hasn't read the body write a call from the interface alone, and run the call. Where the call fails or they had to guess, add what was missing.
-
-### N4
-
-For each behavior the code has, can the maintainer name the case of the specification that needs it, so that the code holds no behavior that no one asked for?
-
-**Thinking**
-
-The code gives only the behaviors the specification asks for, in the form its cases ask for now. The maintainer then carries nothing that no one needs, as [You Aren't Gonna Need It](https://martinfowler.com/bliki/Yagni.html) says.
-
-**Steps**
-
-1. For each option, mode and case the code handles, name the case of the specification that asks for it.
+2. Set the code up on a clean machine or container, from the code's setup alone, and add to the setup each missing thing that the setup or the tests found, such as a runtime.
+3. Run the tests several times, and in a shuffled order.
 
 ### N5
 
-When something the code takes from outside is wrong, can whoever ran the code put it right from only what the code shows them, with nothing left half done, so that a fault from outside never leaves them stuck or their data half changed?
+Does each case of the specification, its edges and refusals included, have one test whose name says the case?
 
 **Thinking**
 
-The code checks what comes from outside, such as arguments, files, settings and the replies of other programs, where it comes in and before the code does anything, as [fail fast](https://martinfowler.com/ieeeSoftware/failFast.pdf) says. When the code refuses an input, its message lets whoever ran the code know which program refused, what was wrong, where, and what the code accepts.
+A maintainer whose test fails should know which case it breaks. [Test-driven development](https://martinfowler.com/bliki/TestDrivenDevelopment.html) writes the tests from the specification's cases before the code. Decide the tests in order. First, list every case that the specification names: the usual one, each edge, and each refusal. Second, write one test for each case, named for the behavior it checks. If the name needs `and`, split the test. Third, write each test so that its reader grasps the situation, the action, and what must be so, such as in the three parts [Given, When, and Then](https://martinfowler.com/bliki/GivenWhenThen.html), with each expected value taken from the specification, not from what the code gives. Hold the test code to the same design as the code it tests: put what many tests share in one place, keep loops and branches out of a test, and give each failure a message that names the case, as Software Engineering at Google advises for [unit tests](https://abseil.io/resources/swe-book/html/ch12.html).
 
 **Steps**
 
-1. At that place, read the input into the form the inside of the code uses, as [parse, don't validate](https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/) says. Check its type and format, and whether its value makes sense for what the code is to do.
-2. Refuse a value that the code can't read, rather than guess it. Catch only the error you mean to handle.
-3. Write each check so that it runs however someone runs the code. Don't write it as a check that someone can turn off, such as an assert.
-4. Give the code each wrong input that the specification names. Read each message as the one who ran the code, and check that they can put the input right from the message alone.
+1. List every case that the specification names. The trace: `{inputs}` read to its end.
+2. Run each test before you write its code, and see it fail. The trace: `{tests}` run.
+3. Compare the list of cases with the tests, and check that each case points to one test.
 
 ### N6
 
-For each case the specification names, its edges and refusals included, can the maintainer point to the one test that checks it, and tell the case from that test's name, so that they know which case a failing test breaks?
+Do the tests call the code only as its callers do, through its interfaces?
 
 **Thinking**
 
-The tests come from the specification's cases, and they come before the code, as [test-driven development](https://martinfowler.com/bliki/TestDrivenDevelopment.html) has them. Each test checks one behavior, so it says which case it checks.
+A test that calls the code as its callers do fails only where a caller would break, so the maintainer can improve a body without fear. Software Engineering at Google calls this testing through public interfaces. For each test, ask whether it reaches anything that a caller can't. If it does, rewrite it to use the interface. Use the real parts where they run fast and wholly inside the test, and a stand-in only for what's slow or outside it.
 
 **Steps**
 
-1. List every case the specification names: the usual one, each edge, and each refusal. The trace: `{inputs}` read to its end.
-2. Name each test for the behavior it checks. Where the name needs "and," split the test.
-3. Write each test so its reader grasps the situation, the action, and what must be so, such as in the three parts [Given, When, and Then](https://martinfowler.com/bliki/GivenWhenThen.html).
-4. Write each expected value from the specification, not from what the code gives.
-5. Hold the test code to the same design as the code it tests: set up what many tests share in one place, keep logic such as loops and branches out of a test, and give each failure a message that names the case, as [unit tests](https://abseil.io/resources/swe-book/html/ch12.html) of Software Engineering at Google says. Test code that needs tests of its own hides the faults it should catch.
-6. Run each test before you write its code, and see it fail. The trace: `{tests}` run.
-7. Compare the list of cases with the tests, and check that each case points to one test.
+1. Change a body without changing what its interface says, and run the tests. Rewrite each test that fails so that it calls the code through the interface.
 
 ### N7
 
-When the maintainer changes a body and its callers still get what its interface says, do the tests still pass, so that they can improve a body without fear?
+Does breaking any behavior make a test fail?
 
 **Thinking**
 
-The tests call the code as its callers do, so they fail only where a caller would break, as testing through public interfaces in [Software Engineering at Google](https://abseil.io/resources/swe-book/html/ch12.html) says.
+A test is worth the faults it catches, so each test checks the result its case asks for, and a broken behavior makes it fail. Machines can measure how well the tests catch faults: the lines no test runs, the mutants that survive, and the inputs that a property finds the code fails on. Use them to find the tests that are missing, and compare each count with the last, so that each change leaves fewer.
 
 **Steps**
 
-1. Use the real parts where they run fast and wholly inside the test, and a stand-in only for what's slow or outside it.
-2. Change a body without changing what its interface says, and run the tests. Rewrite each test that fails so that it calls the code through the interface.
+1. Find each line or branch that no test runs, such as by measuring coverage while the tests run, and add a test for each. The trace: `{coverage}` run.
+2. Change the code in small ways with a [mutation testing](https://research.google/pubs/state-of-mutation-testing-at-google/) tool. For each change under which the tests still pass, add or fix the test of the behavior that the change breaks. The trace: `{mutation}` run.
+3. Run the code over many inputs that the specification allows, such as with [property-based tests](https://hypothesis.works/articles/what-is-property-based-testing/). Keep each input that the code fails on as a fixed test.
 
 ### N8
 
-When the maintainer breaks the behavior a test checks, does that test fail, so that a broken behavior never goes unnoticed?
+Does the code refuse a wrong input from outside before it acts, with a message from which whoever ran it can fix the input?
 
 **Thinking**
 
-A test is worth the faults it catches. So each test checks the result that its case asks for, and a broken behavior makes the test fail.
+A fault from outside should never leave whoever ran the code stuck or their data half changed. [Fail fast](https://martinfowler.com/ieeeSoftware/failFast.pdf) checks what comes from outside, such as arguments, files, settings, and the replies of other programs, where it comes in and before the code does anything. Decide the checks in order. First, at that place, read the input into the form that the inside of the code uses, as [parse, don't validate](https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/) says, and check its type, its format, and whether its value makes sense for the task. Second, refuse a value that the code can't read, instead of guessing it, and catch only the errors you mean to handle. Third, write the message so that whoever ran the code learns which program refused, what was wrong, where, and what the code accepts. Write each check so that it runs however someone runs the code, unlike an assert that someone can turn off.
 
 **Steps**
 
-1. Find each line or branch no test runs, such as by counting them while the tests run, and add a test for each. The trace: `{coverage}` run.
-2. Change the code in small ways, such as with a [mutation testing](https://research.google/pubs/state-of-mutation-testing-at-google/) tool. For each change under which the tests still pass, add or mend the test of the behavior that the change breaks. The trace: `{mutation}` run.
-3. Run the code over many inputs that the specification allows, such as with [property-based tests](https://hypothesis.works/articles/what-is-property-based-testing/). Keep each input that the code fails on as a fixed test.
-
-### N9
-
-With only the code and its specification, can the maintainer make a change the specification asks for, and know from the tests that every other behavior still holds?
-
-**Thinking**
-
-The whole holds when each preceding question holds. The tools of N8 and CI measure what a machine can: the mutants that survive, the inputs that a property finds the code fails on, and the CI failures after the local checks pass. Each change leaves fewer of them than the last. Read the code whole as a maintainer new to it for the rest, the design that no tool can check.
-
-**Steps**
-
-1. Count the surviving mutants, with the lines kept from mutation counted beside them, the inputs a property finds, and the CI failures after the local checks pass, and set each count against the last.
-2. Trace each finding to the part whose question it fails, and mend that part.
+1. Give the code each wrong input that the specification names. Read each message as the person who ran the code, and check that they can fix the input from the message alone.

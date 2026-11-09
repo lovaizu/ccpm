@@ -425,11 +425,6 @@
           "id": "N8",
           "good": false,
           "decisions": []
-        },
-        {
-          "id": "N9",
-          "good": false,
-          "decisions": []
         }
       ]
     },
@@ -685,11 +680,6 @@
         },
         {
           "id": "N8",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N9",
           "good": false,
           "decisions": []
         }
