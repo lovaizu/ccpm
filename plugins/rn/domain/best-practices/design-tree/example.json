@@ -424,11 +424,11 @@
         },
         {
           "id": "N9",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "Lane's architecture",
-              "decided": "Lane's architecture changes so that it holds what rn rests on: the orchestrator's own grounds, a sign-off passed only after /rn:ty, and a run held again from its Place after a pause",
+              "decided": "rn rests on Lane's resume with the main conversation's grounds, its route that waits until the person's command, and its run port that picks a run up",
               "by": "reasoning"
             }
           ]
