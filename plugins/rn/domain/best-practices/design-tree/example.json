@@ -447,7 +447,13 @@
         {
           "id": "N11",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The run's worktree",
+              "decided": "in .claude/worktrees/, where Claude Code's EnterWorktree enters an existing worktree from any conversation",
+              "by": "research"
+            }
+          ]
         },
         {
           "id": "N12",
@@ -462,7 +468,13 @@
         {
           "id": "N14",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "Where a role stands",
+              "decided": "each step of a role ends with tree.py committing its work and its place, a step that Lane holds, as Lane keeps its own record only in the system's temporary folder and ends it at a pause",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N15",

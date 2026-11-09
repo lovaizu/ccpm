@@ -67,7 +67,7 @@
   <rect class="unit" x="390" y="100" width="320" height="150" rx="4"/>
   <text class="name start" x="402" y="122">rn&#x27;s folder</text>
   <text class="kind start" x="402" y="139">[Claude Code plugin, installed]</text>
-  <text class="label small" x="402" y="156">the skill, the agents, the parts, rn&#x27;s best</text>
+  <text class="label small" x="402" y="156">the skills, the agents, the parts, rnthe skill, the agents, the parts, rn&#x27;s best#x27;s best</text>
   <text class="label small" x="402" y="173">practices, tree.py, throwaway.py, the</text>
   <text class="label small" x="402" y="190">adapters, and the guard, which is Lane&#x27;s code</text>
   <text class="label small" x="402" y="207">copied in by Lane</text>
@@ -82,14 +82,14 @@
   <rect class="unit" x="390" y="280" width="320" height="90" rx="4"/>
   <text class="name start" x="402" y="302">tree.py process</text>
   <text class="kind start" x="402" y="319">[python3 · git, gh]</text>
-  <text class="label small" x="402" y="336">tree.py</text>
+  <text class="label small" x="402" y="336">tree.py, run by a role, or by a hook at a compaction</text>
   <rect class="unit" x="390" y="400" width="320" height="90" rx="4"/>
   <text class="name start" x="402" y="422">throwaway.py process</text>
   <text class="kind start" x="402" y="439">[python3]</text>
   <text class="label small" x="402" y="456">throwaway.py, and the deliverable&#x27;s commands</text>
   <rect class="unit" x="40" y="340" width="320" height="130" rx="4"/>
-  <text class="name start" x="52" y="362">the user&#x27;s repository</text>
-  <text class="kind start" x="52" y="379">[git working tree · the work&#x27;s branch]</text>
+  <text class="name start" x="52" y="362">rn&#x27;s worktree</text>
+  <text class="kind start" x="52" y="379">[git worktree · the work&#x27;s branch]</text>
   <text class="data" x="52" y="394">Deliverable</text>
   <text class="data" x="52" y="409">Design tree, and each Round&#x27;s records</text>
   <text class="data" x="52" y="424">Best practice made on a run</text>
@@ -114,7 +114,7 @@
   <path class="line" d="M710,300 L1110,300 L1110,272 L1160,272" marker-end="url(#arrow)"/>
   <text class="label small halo" x="910" y="292" text-anchor="middle">opens each issue the user says yes to [gh]</text>
   <path class="line" d="M710,325 L1130,325 L1130,372 L1160,372" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="915" y="317" text-anchor="middle">pushes, keeps the draft pull request [git, gh]</text>
+  <text class="label small halo" x="915" y="317" text-anchor="middle">pushes, keeps the pull request, reads its comments [git, gh]</text>
   <text class="frame-name" x="30" y="680">Legend</text>
   <rect class="frame" x="100" y="666" width="30" height="20"/>
   <text class="label small" x="140" y="680" text-anchor="start">an environment, with its technology</text>

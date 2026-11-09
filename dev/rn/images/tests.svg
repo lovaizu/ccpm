@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 620" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 632" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
   <title>rn&#x27;s tests</title>
   <style>
     .bg { fill: #ffffff; }
@@ -55,7 +55,7 @@
       <path class="hole" d="M0,0 L12,6 L0,12 z"/>
     </marker>
   </defs>
-  <rect class="bg" x="0" y="0" width="1180" height="620"/>
+  <rect class="bg" x="0" y="0" width="1180" height="632"/>
   <text class="name start" x="250" y="50">unit</text>
   <text class="kind start" x="250" y="68">one part against its contract</text>
   <text class="name start" x="560" y="50">architecture</text>
@@ -108,9 +108,10 @@
   <rect class="box" x="380" y="440" width="30" height="20" rx="4"/>
   <text class="label small" x="420" y="454" text-anchor="start">runs once every lower level passes</text>
   <text class="label small" x="700" y="454" text-anchor="start">tool · FULL each case, HAPPY the main paths, or SMOKE one run</text>
-  <rect class="frame" x="20" y="480" width="1140" height="110" rx="6"/>
-  <text class="frame-name" x="36" y="504">Where rn's tests differ from the best practices</text>
-  <text class="label small" x="36" y="530" text-anchor="start">Architecture: Lane&#x27;s double of Claude Code stands in for each role, with a set answer for each point put to the user.</text>
-  <text class="label small" x="36" y="552" text-anchor="start">Product vision: the README&#x27;s walkthrough on lovaizu/playground, run by an AI on Opus that holds an intent rn never sees.</text>
-  <text class="label small" x="36" y="574" text-anchor="start">It passes where 3 runs of 3 come through every step.</text>
+  <rect class="frame" x="20" y="480" width="1140" height="132" rx="6"/>
+  <text class="frame-name" x="36" y="504">Where rn&#x27;s tests differ from the best practices</text>
+  <text class="label small" x="36" y="530" text-anchor="start">Architecture: Lane&#x27;s double of Claude Code stands in for each role, with a set answer for each point and sign-off put to the user.</text>
+  <text class="label small" x="36" y="552" text-anchor="start">It also checks that each role has its agent and its part, that its forms carry the data its sequences hand on, and that Lane holds each lane a principle rests on.</text>
+  <text class="label small" x="36" y="574" text-anchor="start">Product vision: the README&#x27;s walkthrough on lovaizu/playground, run by an AI on Opus that holds an intent rn never sees. It passes where 3 runs of 3 come through every step.</text>
+  <text class="label small" x="36" y="596" text-anchor="start">Only it shows each judgment of the orchestrator&#x27;s and whether an intent is good, as only an AI makes them.</text>
 </svg>

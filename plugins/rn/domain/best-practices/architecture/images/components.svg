@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1480 1090" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-200 0 1680 1090" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
   <title>rn&#x27;s components</title>
   <style>
     .bg { fill: #ffffff; }
@@ -55,7 +55,14 @@
       <path class="hole" d="M0,0 L12,6 L0,12 z"/>
     </marker>
   </defs>
-  <rect class="bg" x="0" y="0" width="1480" height="1090"/>
+  <rect class="bg" x="-200" y="0" width="1680" height="1090"/>
+  <rect class="ext" x="-180" y="208" width="170" height="64" rx="4"/>
+  <text class="name" x="-95" y="240" text-anchor="middle">Claude Code</text>
+  <text class="kind" x="-95" y="257" text-anchor="middle">[command-line tool]</text>
+  <path class="line" d="M-10,236 L116,236" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="53" y="200" text-anchor="middle">runs it before and</text>
+  <text class="label small halo" x="53" y="214" text-anchor="middle">after a compaction [hooks]</text>
+  <text class="data halo" x="53" y="228" text-anchor="middle">Place</text>
   <rect class="ext" x="120" y="50" width="200" height="64" rx="4"/>
   <text class="name" x="220.0" y="82.0" text-anchor="middle">GitHub</text>
   <text class="kind" x="220.0" y="99.0" text-anchor="middle">[git host, gh]</text>
@@ -89,7 +96,7 @@
   <text class="kind" x="500.0" y="669.0" text-anchor="middle">[command line · Python 3.9]</text>
   <rect class="box" x="680" y="620" width="200" height="64" rx="0"/>
   <text class="name" x="780.0" y="652.0" text-anchor="middle">Deliverables</text>
-  <text class="kind" x="780.0" y="669.0" text-anchor="middle">[files of the repository]</text>
+  <text class="kind" x="780.0" y="669.0" text-anchor="middle">[files in rn&#x27;s worktree]</text>
   <rect class="box" x="1240" y="620" width="200" height="64" rx="0"/>
   <text class="name" x="1340.0" y="652.0" text-anchor="middle">adapters</text>
   <text class="kind" x="1340.0" y="669.0" text-anchor="middle">[scripts · Python 3.9]</text>
@@ -100,28 +107,33 @@
   <text class="name" x="1340.0" y="852.0" text-anchor="middle">Best practices</text>
   <text class="kind" x="1340.0" y="869.0" text-anchor="middle">[folders · JSON, Markdown]</text>
   <path class="line" d="M620,82 L320,82" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="470" y="74" text-anchor="middle">merges the draft pull request</text>
+  <text class="label small halo" x="470" y="74" text-anchor="middle">merges the pull request</text>
   <path class="line" d="M700,114 L700,220" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="692" y="165" text-anchor="end">types /rn:up, answers</text>
+  <text class="label small halo" x="692" y="158" text-anchor="end">types /rn:up, /rn:dn,</text>
+  <text class="label small halo" x="692" y="172" text-anchor="end">/rn:ty, /rn:gm, answers</text>
   <path class="line" d="M760,220 L760,114" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="768" y="160" text-anchor="start">asks each point that&#x27;s theirs</text>
-  <text class="data halo" x="768" y="174" text-anchor="start">Point</text>
+  <text class="label small halo" x="768" y="146" text-anchor="start">asks each point that&#x27;s theirs,</text>
+  <text class="label small halo" x="768" y="160" text-anchor="start">and puts up each sign-off</text>
+  <text class="data halo" x="768" y="174" text-anchor="start">Point, Sign-off</text>
   <path class="line" d="M220,220 L220,114" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="228" y="146" text-anchor="start">pushes, keeps the draft</text>
-  <text class="label small halo" x="228" y="160" text-anchor="start">pull request, opens each issue</text>
+  <text class="label small halo" x="228" y="132" text-anchor="start">pushes, keeps the pull request,</text>
+  <text class="label small halo" x="228" y="146" text-anchor="start">marks it ready, reads its</text>
+  <text class="label small halo" x="228" y="160" text-anchor="start">comments, opens each issue</text>
   <text class="label small halo" x="228" y="174" text-anchor="start">the user says yes to [git, gh]</text>
   <path class="line" d="M620,252 L320,252" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="470" y="230" text-anchor="middle">gets each cut, lists the runs left,</text>
-  <text class="label small halo" x="470" y="244" text-anchor="middle">opens each issue [Bash]</text>
-  <text class="data halo" x="470" y="268" text-anchor="middle">Cut</text>
+  <text class="label small halo" x="470" y="196" text-anchor="middle">makes the run&#x27;s worktree, gets each cut,</text>
+  <text class="label small halo" x="470" y="210" text-anchor="middle">lists the runs left, pushes, commits a pause,</text>
+  <text class="label small halo" x="470" y="224" text-anchor="middle">gets the comments, marks the pull</text>
+  <text class="label small halo" x="470" y="238" text-anchor="middle">request ready, opens each issue [Bash]</text>
+  <text class="data halo" x="470" y="268" text-anchor="middle">Cut, Place</text>
   <path class="line" d="M730,284 L730,350"/>
   <path class="line" d="M220,350 L1060,350"/>
   <path class="line" d="M220,350 L220,420" marker-end="url(#arrow)"/>
   <path class="line" d="M780,350 L780,420" marker-end="url(#arrow)"/>
   <path class="line" d="M1060,350 L1060,420" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="740" y="298" text-anchor="start">starts each role and gets its result, and resumes</text>
-  <text class="label small halo" x="740" y="312" text-anchor="start">the tree-keeper or a generator [Agent, SendMessage]</text>
-  <text class="data halo" x="740" y="326" text-anchor="start">Cut, Decision, Lack kept</text>
+  <text class="label small halo" x="740" y="298" text-anchor="start">starts each role, gets its result, resumes the tree-keeper</text>
+  <text class="label small halo" x="740" y="312" text-anchor="start">or a generator, and stops each [Agent, SendMessage, TaskStop]</text>
+  <text class="data halo" x="740" y="326" text-anchor="start">Cut, Decision, Lack kept, Place</text>
   <path class="line" d="M150,420 L150,284" marker-end="url(#arrow)"/>
   <text class="label small halo" x="158" y="310" text-anchor="start">writes the tree,</text>
   <text class="label small halo" x="158" y="324" text-anchor="start">and commits [Bash]</text>
@@ -129,6 +141,9 @@
   <text class="label small halo" x="68" y="700" text-anchor="start">writes, reads,</text>
   <text class="label small halo" x="68" y="714" text-anchor="start">cuts, commits</text>
   <text class="data halo" x="68" y="728" text-anchor="start">Design tree</text>
+  <path class="line" d="M720,420 L720,390 L290,390 L290,288" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="500" y="384" text-anchor="middle">commits each step&#x27;s work [Bash]</text>
+  <text class="data halo" x="500" y="406" text-anchor="middle">Place</text>
   <path class="line" d="M700,484 L700,560 L500,560 L500,620" marker-end="url(#arrow)"/>
   <text class="label small halo" x="600" y="580" text-anchor="middle">tries it [Bash]</text>
   <text class="data halo" x="600" y="594" text-anchor="middle">Try record</text>

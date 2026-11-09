@@ -123,6 +123,21 @@
   <text class="label small halo" x="1108" y="500" text-anchor="start">answers</text>
   <text class="label small" x="1108" y="654" text-anchor="start">0..*</text>
   <text class="label small" x="1108" y="364" text-anchor="start">1</text>
+  <rect class="box" x="40" y="200" width="180" height="48" rx="0"/>
+  <text class="name" x="130.0" y="229.0" text-anchor="middle">Sign-off</text>
+  <path class="line" d="M220,218 L400,218 L400,148"/>
+  <text class="label small halo" x="310" y="210" text-anchor="middle">of the plan</text>
+  <text class="label small" x="226" y="210" text-anchor="start">0..*</text>
+  <text class="label small" x="408" y="166" text-anchor="start">0..1</text>
+  <path class="line" d="M220,236 L620,236 L620,148"/>
+  <text class="label small halo" x="520" y="228" text-anchor="middle">of a deliverable</text>
+  <text class="label small" x="226" y="252" text-anchor="start">0..*</text>
+  <text class="label small" x="614" y="166" text-anchor="end">0..1</text>
+  <rect class="box" x="330" y="760" width="180" height="48" rx="0"/>
+  <text class="name" x="420.0" y="789.0" text-anchor="middle">Place</text>
+  <path class="line" d="M650,708 L650,784 L510,784" marker-start="url(#diamond)"/>
+  <text class="label small halo" x="580" y="776" text-anchor="middle">keeps, at each step</text>
+  <text class="label small" x="516" y="800" text-anchor="start">0..*</text>
   <text class="frame-name" x="30" y="910">Legend</text>
   <text class="label small" x="100" y="910" text-anchor="start">a number at a line&#x27;s end: how many of the data at that end the other joins: 1 one, 0..1 none or one, 1..* one or more, 0..* any number</text>
   <path class="line" d="M100,936 L130,936" marker-start="url(#diamond)"/>
