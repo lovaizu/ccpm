@@ -80,14 +80,14 @@ next day, in a new conversation, you type:
 rn shows:
 
 ```text
-Resuming "tidy shows what it would move" at step 2, tidy/cli.py. README.md is done.
+Picking up "tidy shows what it would move" at step 2, tidy/cli.py. README.md is done.
 ```
 
 Later, rn shows:
 
 ```text
-Done: README.md and tidy/cli.py are updated, with tests/test_dry_run.py. Each piece was tried as
-its users would use it, and meets every item of its kind's checklist.
+Done: README.md and tidy/cli.py are updated, with tests/test_dry_run.py. Each piece was read and
+tried as its users would use it, and gives them what they need from it.
 
 Decided without asking you:
 - The README shows tidy --dry-run before tidy, because users check first.   (README best practice)
@@ -96,52 +96,64 @@ Decided without asking you:
 
 ## How it works
 
-![The usual way and rn, with the five problems marked](images/problem.svg)
+![In the usual way you are in the fix loop, and with rn the loop runs without you](images/problem.svg)
 
-1. The AI builds the one piece you asked for, and misses the other pieces it needs, or builds them
+1. Each round of fixes adds to the draft, and the few points that matter get lost among the many
+   that don't.
+
+   rn keeps in a design tree only the decisions that matter to the goal, and builds each piece from
+   them by the best practice for its kind. A shortfall changes the decision it comes from, not the
+   piece.
+
+2. You or an AI judge the draft by how it reads, not by whether its users can use it.
+
+   A second AI, the evaluator, reads each piece as its users would. rn builds the piece again until
+   its users get what they need from it.
+
+3. The AI guesses what only you know, and asks you what it could find out itself.
+
+   rn asks you one point at a time, and only what your purpose and the best practices leave open. It
+   decides the rest, and reports those decisions at the end.
+
+4. The AI builds the one piece you asked for, and misses the other pieces it needs, or builds them
    in the wrong order.
 
-   rn lists every piece the goal needs and the order to build them in. It plans again after it
-   builds each piece and after each answer.
+   rn lists every piece your goal needs, in the order to build them, and builds them from the first.
+   It plans again after each answer and each piece.
 
-2. The AI starts from scratch and writes what similar texts say, not what its users need.
+5. The AI keeps a step one time and skips it the next, and a new conversation starts the work over.
 
-   rn builds each piece by the best practice for its kind. A best practice states the goal that the
-   piece's users reach, a template for the piece, and a checklist of what the users need from it.
+   Lane, a plugin installed with rn, holds each part of rn to its steps on every run. Your
+   repository keeps the work, so `/rn:up` goes on where it stopped.
 
-3. An AI review produces many findings, and few of them are about whether the work serves its
-   users.
+### Which points does rn ask you?
 
-   A second AI, the evaluator, tries each piece as its users would, and checks only that
-   checklist. rn builds the piece again until it meets every item.
+| Point in the walkthrough | Settled by | Why |
+| --- | --- | --- |
+| Should the dry run list each file, or a count for each folder? | you | Either would work, and your purpose doesn't say which your users need. |
+| The README shows `tidy --dry-run` before `tidy`. | rn | The README best practice puts first what the reader does first. |
+| `--dry-run` prints each move as `<file> -> <folder>`. | rn | README.md, already done, shows that output. |
 
-4. The AI asks you what it could find out itself, and guesses what only you know.
-
-   rn asks you one question at a time, and only what the purpose and the best practices leave
-   open. It decides the rest, and reports those decisions at the end.
-
-5. The AI follows a step one time and skips it the next, and a new conversation starts the work
-   over.
-
-   Lane, a plugin installed with rn, enforces each step on every run. rn keeps the work in your
-   repository, so `/rn:up` resumes where it stopped.
-
-### How does rn decide what to ask you?
-
-![rn decides what the purpose or a best practice answers, and asks you the rest](images/how-asks.svg)
-
-When a question comes up while rn builds a piece, rn checks whether the purpose or a best practice
-answers it. If one does, rn decides it. If not, rn asks you, one question at a time, and you answer
-in your own words. rn then builds the piece again with your answer.
+rn settles a point itself when your purpose, a best practice, or a piece already done answers it.
+It asks you the rest, with the option it recommends.
 
 ### How can an AI judge another AI's work?
 
-![The evaluator gets the piece and its checklist, never the design](images/how-evaluator.svg)
+| | Generator, which builds the piece | Evaluator, which judges it |
+| --- | --- | --- |
+| What the piece's users need from it | yes | yes |
+| The decisions in the design tree | yes | no |
+| The best practice's steps | yes | no |
+| The piece, and a record of it tried in a throwaway copy | builds them | yes |
 
-The evaluator is a separate AI that gets only the piece and the checklist for its kind. It never
-gets the design, so it judges by what the piece's users get, not by what its builder intended. rn
-weighs each gap that the evaluator finds against your purpose. The generator, the AI that built the
-piece, builds it again for each gap that its users would hit, until the piece meets every item.
+The evaluator gets only what the piece's users have. It judges what they get, not what the
+generator meant.
+
+### Won't rn's fixes pile up too?
+
+rn takes a shortfall that the evaluator names only where the users would fall short without it,
+and then changes the decision the shortfall comes from. The next round builds the piece from the
+design tree again, so every part of the piece rests on a decision.
 
 ### How does rn follow every step, every time?
 
@@ -153,18 +165,14 @@ that step. The part then returns to the step.
 
 ### What if the conversation ends partway?
 
-![Each decision and result goes into .rn/, and /rn:up reads it in a new conversation](images/how-resume.svg)
-
-As it works, rn writes each decision and each result to the folder `.rn/<date>-<goal>/` in your
-repository. `/rn:up` with no arguments reads that folder and continues from the next step, so you
-never answer a question twice.
+rn commits each decision and each finished piece to your work's branch as it goes, in the folder
+`.rn/<date>-<goal>/` and at the piece's own path. `/rn:up` alone, in a new conversation, reads that
+folder and goes on from the next step, so you never answer a point twice.
 
 ### What if rn has no best practice for your kind of work?
 
-![For a kind of work rn has no best practice for, rn creates one first](images/how-new-kind.svg)
-
-rn first creates one, by its best practice for writing best practices. It keeps the new one in the
-folder `best-practices/` of `.rn/<date>-<goal>/`, and then builds your piece by it.
+rn first makes one, by its best practice for best practices, and keeps it in the folder
+`.rn/<date>-<goal>/`. It then builds your piece by it.
 
 ## Documentation
 

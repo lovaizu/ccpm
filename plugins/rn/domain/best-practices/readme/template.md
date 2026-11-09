@@ -96,10 +96,12 @@ At the end, you have `<result>`.
 >   and in a sentence or two what the product does that makes it go away. A numbered list, each
 >   item's number the one the figure marks it with. The problem stands on the item's first line,
 >   and how it goes away follows as a paragraph of its own.
-> - The second figure: one for each doubt. It stands under the doubt's heading, before its paragraph. Each is the deliverable's own,
->   at images/how-<name>.svg, with the product named in its alt text, showing how the product does
->   the doubted thing. The skeleton here is one such form: the user, the product's parts and what
->   they pass, with the lines that do it marked.
+> - The second figure: what shows how the product does the doubted thing, under the doubt's
+>   heading, before its paragraph. It's a figure of the deliverable's own at images/how-<name>.svg
+>   with the product named in its alt text, a table, or the real thing from the walkthrough's
+>   example, such as a message. The skeleton here is one such form: the user,
+>   the product's parts and what they pass, with the lines that do it marked. Leave it out where
+>   the paragraph is enough.
 > - `<doubt>`, `<how it does it>`: each point where a newcomer would ask whether the product can
 >   really do that, and in a sentence or two how the product does it. The doubt, as the reader would
 >   ask it, is a heading of its own.
