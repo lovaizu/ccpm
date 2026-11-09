@@ -109,5 +109,5 @@ At the end, you have `<result>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<license>`: the name of the license.
+> - `<license>`: the license's identifier in the SPDX License List, such as MIT.
 > - `<path>`: the license's full text.

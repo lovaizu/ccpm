@@ -138,8 +138,8 @@ the revised tree.
 
 ## License
 
-[The `MIT` License](../../../../../LICENSE)
+[MIT](../../../../../LICENSE)
 
 rn's way of asking one question at a time with a recommendation comes from
 [grilling](https://github.com/mattpocock/skills/blob/4ae2317ddb22b046e26455e4f9c9b3aaaf62212d/skills/productivity/grilling/SKILL.md),
-by Matt Pocock, under the `MIT` License in [LICENSE-grilling](../../../LICENSE-grilling).
+by Matt Pocock. Its license is [MIT](../../../LICENSE-grilling).

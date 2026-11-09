@@ -287,4 +287,4 @@ start it again.
 
 ## License
 
-[The `MIT` License](../../LICENSE)
+[MIT](../../LICENSE)
