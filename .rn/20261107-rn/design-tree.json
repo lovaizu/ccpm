@@ -318,6 +318,11 @@
               "about": "The size of a deliverable",
               "decided": "the planner sizes each deliverable so one generator makes it whole and one evaluator reads it whole",
               "by": "reasoning"
+            },
+            {
+              "about": "One generator per deliverable",
+              "decided": "a run makes each deliverable once, and judging by its people and remaking from the design tree finish it. Several generators run side by side only when the developers check a best practice: a lack all of them share is the best practice's, and a lack one alone shows is the generator's. Three generators on every run would cost about three times the time of KR1.2 for a gain on KR1.1 that no trial has shown",
+              "by": "user"
             }
           ]
         },
