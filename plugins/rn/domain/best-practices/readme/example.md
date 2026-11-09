@@ -100,8 +100,7 @@ Decided without asking you:
 
 In everything, rn builds up only the few things that matter to your goal, and never a pile of
 small fixes. It keeps them in a design tree: your goal, with each decision that serves it. From the
-tree, rn builds each part of your work. In the walkthrough, the parts are README.md and
-tidy/cli.py.
+tree, rn builds each part that your work needs: its README, its code, and anything else.
 
 ### 1. Does it build what you mean, without a careful prompt?
 
