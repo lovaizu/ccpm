@@ -1,53 +1,75 @@
 {
- "goal": "The maintainer is a person or an AI who comes to change the code at any time after someone writes it. The maintainer changes the code quickly without breaking another behavior. They understand each part on one reading, and they find the one place where the change belongs.",
+ "goal": "Maintainers, people or AI agents who come to the code at any time, change it quickly without breaking another behavior.",
  "inputs": [],
  "preconditions": [],
+ "critical_success_factors": [
+  {
+   "id": "C1",
+   "what": "Every caller gets the same behavior after a change of structure."
+  },
+  {
+   "id": "C2",
+   "what": "The maintainer understands each part in one reading."
+  },
+  {
+   "id": "C3",
+   "what": "The maintainer finds the one place where a change belongs."
+  }
+ ],
  "necessary_conditions": [
   {
    "id": "N1",
+   "csf": "C1",
    "about": "the whole",
-   "what": "After the code's structure changes, does each caller get every behavior it got before, whether the caller is a person, a script or other code, so that a change of structure is safe for every caller?"
+   "what": "After a change of structure, does each caller, whether a person, a script, or other code, get every behavior it got before?"
   },
   {
    "id": "N2",
+   "csf": "C2",
    "about": "the whole",
-   "what": "Whatever line the maintainer reads, code or comment, would they lose something they need without it, so that every line they read earns its place?"
+   "what": "Does each line, whether code or a comment, give the maintainer something they need?"
   },
   {
    "id": "N3",
+   "csf": "C2",
    "about": "the whole",
-   "what": "When the maintainer reads any name in the code, can they say what it holds or does without going to its definition, so that they read the code without hunting for definitions?"
+   "what": "Does each name say what it holds or does, without its definition?"
   },
   {
    "id": "N4",
+   "csf": "C2",
    "about": "the whole",
-   "what": "Each time the maintainer meets a name, can they tell rightly whether it names a thing they have already met, and which one, so that they never take two things for one or one thing for two?"
+   "what": "Does each thing have one name, and does each name refer to one thing?"
   },
   {
    "id": "N5",
+   "csf": "C2",
    "about": "the whole",
-   "what": "With one rule or one design decision to change, can the maintainer find the one place that holds it and make the whole change there, so that they make a change once and whole?"
+   "what": "Can the maintainer say in one sentence what each function does after one reading from the top?"
   },
   {
    "id": "N6",
+   "csf": "C2",
    "about": "the whole",
-   "what": "When the maintainer reads any function once from the top, with nothing from outside it but the names it uses, can they say in one sentence what it does, so that they grasp it at one reading?"
+   "what": "Where code looks wrong or roundabout, does it say why right there?"
   },
   {
    "id": "N7",
+   "csf": "C3",
    "about": "the whole",
-   "what": "When the maintainer moves from one module to another, do they find each kind of thing done the same way, so that each difference they meet is one the code needs?"
+   "what": "Does the code write each rule or design decision once, in the module that has that job?"
   },
   {
    "id": "N8",
+   "csf": "C3",
    "about": "the whole",
-   "what": "Where code looks wrong or roundabout, can the maintainer learn right there why it's so, before they change it, so that they don't undo what it's there for?"
+   "what": "Does the code do each kind of thing the same way throughout, with a reason beside each difference?"
   }
  ],
  "practices": [
   {
    "intent": "N1",
-   "thinking": "The structure changes in small steps, and each step keeps every behavior. The tests from before the change check each step. No step changes a behavior.",
+   "thinking": "A change of structure is safe only if no caller can tell it happened. Martin Fowler's [refactoring](https://refactoring.com) changes the structure in small steps, each of which keeps every behavior, checked by the tests from before the change. Decide each step by asking whether the tests can tell you it kept every behavior. If a behavior that the change reaches has no test, write one first. If a step is too big to check, make a smaller one.",
    "steps": [
     {
      "text": "Run the tests before any change, and begin only when every one passes.",
@@ -62,56 +84,49 @@
      "text": "Where a behavior that the change reaches has no test, write a test of what the code does now, and see it pass."
     },
     {
-     "text": "After each small change of structure, such as a rename or a moved function, run the tests. Where a test fails, undo the change, then make a smaller one."
+     "text": "After each small change of structure, such as a rename or a moved function, run the tests. Where a test fails, undo the change, and make a smaller one."
     },
     {
      "text": "Leave each test's expected result as it was, and change a test's call only where the change renamed a name it uses."
     },
     {
-     "text": "Keep a behavior that looks wrong, along with its test. Return it as a point about what the code does, rather than change it here."
+     "text": "Keep a behavior that looks wrong, along with its test. Report it as a point about what the code does, instead of changing it here."
     }
    ]
   },
   {
    "intent": "N2",
-   "thinking": "Each line earns its place by what the maintainer would lose without it. What gives the maintainer nothing comes out, and version control keeps it.",
-   "steps": [
-    {
-     "text": "Fold into its caller each function or layer that only passes a call on. Drop each parameter to which every caller gives the same value, and use that value inside."
-    },
-    {
-     "text": "Keep a comment that says what the code can't say plainly, such as what a regular expression matches."
-    }
-   ]
+   "thinking": "Every line costs the maintainer reading time. For each line, ask what the maintainer would lose without it. Remove what gives them nothing, since version control keeps it. Fold into its caller each function or layer that only passes a call on, and drop each parameter to which every caller gives the same value. Keep a comment that says what the code can't say plainly, such as what a regular expression matches.",
+   "steps": []
   },
   {
    "intent": "N3",
-   "thinking": "A name says in whole words what it holds or does, so the maintainer reads each line without going to a definition.",
-   "steps": [
-    {
-     "text": "For each name, write in a few words what it holds or does, without looking at its definition. Then look at the definition, and flag the name where the two differ."
-    },
-    {
-     "text": "Make a name say more the farther from its definition the maintainer reads it."
-    }
-   ]
+   "thinking": "A name that says what it holds lets the maintainer read each line without going to a definition. For each name, write in a few words what it holds or does without looking at its definition, then compare with the definition, and rename it where the two differ. Make a name say more the farther from its definition the maintainer reads it.",
+   "steps": []
   },
   {
    "intent": "N4",
-   "thinking": "Each thing has one name, the word its users and documents already use for it, and each name names one thing.",
+   "thinking": "A maintainer who meets two names takes them for two things, and one name used for two things merges them. List the things the code handles, and the names the code gives each. For each thing, keep the word its users already use, such as the one in its documents. If two names refer to one thing, keep one. If one name refers to two things, give one of them another name.",
+   "steps": []
+  },
+  {
+   "intent": "N5",
+   "thinking": "A function that does one thing at one level, and takes what it uses as inputs, asks its reader to hold only what it says. Read each function, test functions included, once from the top, and write in one sentence what it does. If the sentence needs `and`, or you had to read another body, split the function, or make it take what it reached for as an input. A long function reads as calls to steps, each named for what it does. Join back two functions that the reader can't understand apart, and write a clever construct in its plain form.",
+   "steps": []
+  },
+  {
+   "intent": "N6",
+   "thinking": "A maintainer who doesn't know why odd code is so may undo what it's there for. Read each line as a maintainer who knows the language but not the purpose, and mark code that looks wrong, roundabout, or more than it needs. For each, first make the code say it plainly where it can. Where it can't, state the reason right there, such as a limit outside the code or a way tried and dropped.",
    "steps": [
     {
-     "text": "List the things the code handles, and for each the names the code gives it."
+     "text": "Check each comment against the code beside it, and correct or remove one that no longer holds."
     }
    ]
   },
   {
-   "intent": "N5",
-   "thinking": "The code writes each rule or design decision once, in the module that has that job. The code doesn't tie together things unrelated in meaning, however alike they look.",
+   "intent": "N7",
+   "thinking": "A rule written in several places changes in some of them and not the others. Write each rule or design decision once, in the module that has that job, and leave apart things that only look alike but differ in meaning. For each rule or decision the code holds, such as a limit, a format, or a path, list every place that writes it, and keep one.",
    "steps": [
-    {
-     "text": "For each rule or decision the code holds, such as a limit, a format or a path, list every place that writes it."
-    },
     {
      "text": "Where a shared function takes flags so that each caller gets its own path, split it into one function for each rule."
     },
@@ -119,60 +134,17 @@
      "text": "Where code reaches into another module's insides, have it use what that module offers its callers."
     },
     {
-     "text": "Where the code truly can't keep a rule in one place, say at each place where the other places are, such as in a comment beside it."
+     "text": "Where the code truly can't keep a rule in one place, say at each place where the others are, such as in a comment beside it."
     },
     {
-     "text": "Pick one rule, imagine that it changed, and count the places that would change. Mend the code until that count is one."
-    }
-   ]
-  },
-  {
-   "intent": "N6",
-   "thinking": "A function does one thing at one level, and takes what it uses as its inputs. Its reader then holds in mind only what the function says. A long function reads as calls to steps, each named for what it does.",
-   "steps": [
-    {
-     "text": "Read each function, test functions included, once from the top, and write in one sentence what it does."
-    },
-    {
-     "text": "Flag a function whose sentence needs an \"and\" or for which the reader had to read another body."
-    },
-    {
-     "text": "Join back two functions that the reader can't understand apart."
-    },
-    {
-     "text": "Write a clever construct in its plain form."
-    }
-   ]
-  },
-  {
-   "intent": "N7",
-   "thinking": "The code does each kind of thing one way throughout. That way is the one the code already has, the nearest code first, unless a better way replaces it everywhere. A difference then means a real difference.",
-   "steps": [
-    {
-     "text": "List the kinds of thing the code does in many places, such as reporting an error, checking an input, reading a file, or laying out a module or a test."
-    },
-    {
-     "text": "For each kind, gather each way the code does it."
-    },
-    {
-     "text": "Where a place needs another way, say why beside it, such as in a comment."
+     "text": "Pick one rule, imagine that it changed, and count the places that would change. Change the code until that count is one."
     }
    ]
   },
   {
    "intent": "N8",
-   "thinking": "Where the code can't say why it's so, the reason stands where the maintainer meets the code, such as a limit outside the code or a way tried and dropped.",
-   "steps": [
-    {
-     "text": "Read each line as a maintainer who knows the language but not the purpose, and flag code that looks wrong, roundabout, or more than it needs."
-    },
-    {
-     "text": "For each, first make the code say it plainly, where it can."
-    },
-    {
-     "text": "Check each comment against the code beside it, and correct or remove one that no longer holds."
-    }
-   ]
+   "thinking": "When the code does each kind of thing one way, a difference means a real difference. List the kinds of thing the code does in many places, such as reporting an error, checking an input, reading a file, or laying out a module or a test. For each kind, gather each way the code does it, and keep the one the code already uses most, the nearest code first, unless a better way replaces it everywhere. Where a place needs another way, say why beside it, such as in a comment.",
+   "steps": []
   }
  ]
 }
