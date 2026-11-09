@@ -2,13 +2,14 @@
 
 ## Roles
 
-- **`<role>`**: `<who they are>`.
+- `<role>`\
+  `<who they are>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - `<role>`: each kind of person who comes to the product with a goal of their own, such as a
 >   guest, a member, or an administrator. Name it "user" where it's the only one.
-> - `<who they are>`: the people in the role and the job they hire the product for, in one clause.
+> - `<who they are>`: the people in the role and the job they hire the product for, in one clause begun in uppercase.
 
 ## Objectives and key results
 
@@ -33,7 +34,8 @@ law. They show whether a change brought its objective closer.
 
 `<Product>` `<the one way>`.
 
-- **`<idea>`, for `O<n>`**: `<what it gives>`.
+- `<idea>`, for `O<n>`\
+  `<what it gives>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
@@ -41,5 +43,4 @@ law. They show whether a change brought its objective closer.
 >   said as what the users see the product do, in one sentence that goes on from the product's
 >   name.
 > - `<idea>`: each idea that the one way needs to work, at most five, each in a few words.
-> - `<what it gives>`: what the idea gives the role toward the objective, in one short sentence
->   begun in lowercase.
+> - `<what it gives>`: what the idea gives the role toward the objective, in one short sentence.

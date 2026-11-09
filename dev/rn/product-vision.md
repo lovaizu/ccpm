@@ -2,8 +2,8 @@
 
 ## Roles
 
-- **user**: one who asks rn for a deliverable, such as a document, code or a plugin, for the people
-  it's for.
+- user\
+  One who asks rn for a deliverable, such as a document, code or a plugin, for the people it's for.
 
 ## Objectives and key results
 
@@ -24,9 +24,10 @@ law. They show whether a change brought its objective closer.
 rn does a task, checks how far the work came toward the goal, and changes the remaining tasks to
 bring the work closer, until the work reaches the goal.
 
-- **Judged by the people it's for, for O1**: rn checks how far the work came by whether the people
-  it's for can do what they're after with it.
-- **Made by best practice, for O1**: rn does each task by the best practice of its kind, so that
-  each task moves the work forward.
-- **Each decision kept, for O1**: rn keeps the goal and each decision with who made it, so that
-  each change of the tasks keeps to what the user decided.
+- Judged by the people it's for, for O1\
+  rn checks how far the work came by whether the people it's for can do what they're after with it.
+- Made by best practice, for O1\
+  rn does each task by the best practice of its kind, so that each task moves the work forward.
+- Each decision kept, for O1\
+  rn keeps the goal and each decision with who made it, so that each change of the tasks keeps to
+  what the user decided.
