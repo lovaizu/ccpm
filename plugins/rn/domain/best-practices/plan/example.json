@@ -128,11 +128,93 @@
       "status": "done"
     },
     {
-      "name": "rn's design says how a turn carries out a best practice",
+      "name": "A newcomer decides from the README alone whether rn fits their work, and starts using it",
+      "path": "plugins/rn/README.md",
+      "kind": "readme",
+      "inputs": [
+        "dev/rn/product-vision.md"
+      ],
+      "preconditions": [
+        "plugins/rn"
+      ],
+      "status": "doing",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The walkthrough recorded",
+              "decided": "the walkthrough takes its output from a recorded run of the rebuilt rn, the product vision test's own",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N7",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Installation tried",
+              "decided": "once the rebuilt rn exists, the maker follows its install steps from nothing as a newcomer would, and mends the README where they fall short",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N10",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N11",
+          "good": true,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "rn's developers build its parts so that together they deliver its product vision",
       "path": "dev/rn/architecture.md",
       "kind": "architecture",
       "inputs": [
-        "dev/rn/product-vision.md"
+        "dev/rn/product-vision.md",
+        "plugins/rn/README.md"
       ],
       "preconditions": [],
       "status": "doing",
@@ -915,87 +997,6 @@
               "by": "research"
             }
           ]
-        }
-      ]
-    },
-    {
-      "name": "A newcomer decides from the README alone whether rn fits their work, and starts using it",
-      "path": "plugins/rn/README.md",
-      "kind": "readme",
-      "inputs": [
-        "dev/rn/product-vision.md"
-      ],
-      "preconditions": [
-        "plugins/rn"
-      ],
-      "status": "doing",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The walkthrough recorded",
-              "decided": "the walkthrough takes its output from a recorded run of the rebuilt rn, the product vision test's own",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N7",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N9",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Installation tried",
-              "decided": "once the rebuilt rn exists, the maker follows its install steps from nothing as a newcomer would, and mends the README where they fall short",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N10",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N11",
-          "good": true,
-          "decisions": []
         }
       ]
     }
