@@ -18,11 +18,10 @@ pre-commit:
     - "dev/scripts/files.py"
     - "dev/scripts/schema.py"
     # Files no one here writes: the lockfiles their tools write, and the
-    # licenses as their authors wrote them.
+    # license as its authors wrote it.
     - "uv.lock"
     - "dev/scripts/package-lock.json"
     - "LICENSE"
-    - "plugins/rn/LICENSE-grilling"
 
 # The checks of what a push changes, on the commits pushed, which git gives
 # the hook on its standard input. dev/README.md describes them.
