@@ -21,7 +21,7 @@ The developers build and change the parts of the product so that together they d
 
 | ID | Factor |
 | --- | --- |
-| C1 | The developers know what each part must do for the users, and why. |
+| C1 | The developers know what each part must do, for the users or for the product's development and operation, and why. |
 | C2 | Parts that different developers build fit together. |
 | C3 | The developers can place, set up, and start every part without asking anyone. |
 | C4 | The developers know that the product does what the document says before users try it. |
@@ -33,7 +33,7 @@ The developers build and change the parts of the product so that together they d
 | --- | --- | --- | --- |
 | N1 | C1 | Does the opening state the one idea by which the product delivers its vision? | the opening |
 | N2 | C1 | Does each step of each objective's main use, as the README's walkthrough shows it, have one user story that carries it? | User stories |
-| N3 | C1 | Does each user story, component, and kind of data trace to an objective of the product vision that needs it? | User stories, Components, Data model, Sequences |
+| N3 | C1 | Does each principle, user story, component, and kind of data trace to what the README promises the users, or to a need of the product's development or operation? | Principles, User stories, Components, Data model, Sequences |
 | N4 | C2 | Does each principle give a rule and a reason from which two developers decide a case that no line names the same way? | Principles |
 | N5 | C2 | Does each decision that the stories need belong to exactly one component? | User stories, Components |
 | N6 | C2 | Does each component state its type and its technology? | Components |
@@ -76,11 +76,11 @@ The stories connect the parts to what the users do, so every part can trace back
 
 ### N3
 
-Does each user story, component, and kind of data trace to an objective of the product vision that needs it?
+Does each principle, user story, component, and kind of data trace to what the README promises the users, or to a need of the product's development or operation?
 
 **Thinking**
 
-A part that no objective needs costs effort to build and to keep, and gives the users nothing. For each component and each kind of data, ask which stories' sequences reach it. For each story, ask which objective's use it carries. Remove whatever reaches no objective. This is requirements traceability, applied from the parts back to the product vision.
+A part that nothing needs costs effort to build and to keep, and gives no one anything. Three sources say what the parts must do. The README carries what the users get from the product vision: the steps of its walkthrough, and the doubts that its How it works answers. Development adds what the developers need to build, test, and change the parts. Operation adds what keeps the product working across runs and updates, such as where its work outlives a run. For each principle and each story, ask which step, doubt, or need it carries. For each component and each kind of data, ask which principle or which story's sequence reaches it. Remove whatever reaches none. This is requirements traceability, applied from the parts back to their sources.
 
 ### N4
 
@@ -88,7 +88,7 @@ Does each principle give a rule and a reason from which two developers decide a 
 
 **Thinking**
 
-Developers of different parts meet the same kind of decision, and decide it apart unless a principle settles it. The principles of The Open Group Architecture Framework (TOGAF) give each a statement, a rationale, and its implications. Derive the principles from the ideas of the product vision's concept, by which the product carries out its one way. First, for each idea, ask what every part must hold alike for it to come true, such as where the work's state lives. A part that held it otherwise would break a key result. Each answer is a principle. Second, for each, write the rule in one to three short sentences. Third, write the reason: what goes wrong without the rule, for a role of the product vision, naming the key result it guards, or for the developers or operators. A developer carries the reason to a case that the rule doesn't name. Point to the principles of any architecture this one builds on, and write only what this product adds or changes.
+Developers of different parts meet the same kind of decision, and decide it apart unless a principle settles it. The principles of The Open Group Architecture Framework (TOGAF) give each a statement, a rationale, and its implications. Derive the principles from the README's How it works, which answers each doubt of the users from an idea of the product vision's concept, and from the needs of development and operation. First, for each answer and each need, ask what every part must hold alike for it to come true, such as where the work's state lives. A part that held it otherwise would break a key result. Each answer is a principle. Second, for each, write the rule in one to three short sentences. Third, write the reason: what goes wrong without the rule, for a role of the product vision, naming the key result it guards, or for the developers or the operators. A developer carries the reason to a case that the rule doesn't name. Point to the principles of any architecture this one builds on, and write only what this product adds or changes.
 
 **Steps**
 

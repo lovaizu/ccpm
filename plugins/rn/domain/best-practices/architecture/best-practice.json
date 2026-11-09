@@ -11,7 +11,7 @@
  "critical_success_factors": [
   {
    "id": "C1",
-   "what": "The developers know what each part must do for the users, and why."
+   "what": "The developers know what each part must do, for the users or for the product's development and operation, and why."
   },
   {
    "id": "C2",
@@ -46,8 +46,8 @@
   {
    "id": "N3",
    "csf": "C1",
-   "about": "User stories, Components, Data model, Sequences",
-   "what": "Does each user story, component, and kind of data trace to an objective of the product vision that needs it?"
+   "about": "Principles, User stories, Components, Data model, Sequences",
+   "what": "Does each principle, user story, component, and kind of data trace to what the README promises the users, or to a need of the product's development or operation?"
   },
   {
    "id": "N4",
@@ -155,12 +155,12 @@
   },
   {
    "intent": "N3",
-   "thinking": "A part that no objective needs costs effort to build and to keep, and gives the users nothing. For each component and each kind of data, ask which stories' sequences reach it. For each story, ask which objective's use it carries. Remove whatever reaches no objective. This is requirements traceability, applied from the parts back to the product vision.",
+   "thinking": "A part that nothing needs costs effort to build and to keep, and gives no one anything. Three sources say what the parts must do. The README carries what the users get from the product vision: the steps of its walkthrough, and the doubts that its How it works answers. Development adds what the developers need to build, test, and change the parts. Operation adds what keeps the product working across runs and updates, such as where its work outlives a run. For each principle and each story, ask which step, doubt, or need it carries. For each component and each kind of data, ask which principle or which story's sequence reaches it. Remove whatever reaches none. This is requirements traceability, applied from the parts back to their sources.",
    "steps": []
   },
   {
    "intent": "N4",
-   "thinking": "Developers of different parts meet the same kind of decision, and decide it apart unless a principle settles it. The principles of The Open Group Architecture Framework (TOGAF) give each a statement, a rationale, and its implications. Derive the principles from the ideas of the product vision's concept, by which the product carries out its one way. First, for each idea, ask what every part must hold alike for it to come true, such as where the work's state lives. A part that held it otherwise would break a key result. Each answer is a principle. Second, for each, write the rule in one to three short sentences. Third, write the reason: what goes wrong without the rule, for a role of the product vision, naming the key result it guards, or for the developers or operators. A developer carries the reason to a case that the rule doesn't name. Point to the principles of any architecture this one builds on, and write only what this product adds or changes.",
+   "thinking": "Developers of different parts meet the same kind of decision, and decide it apart unless a principle settles it. The principles of The Open Group Architecture Framework (TOGAF) give each a statement, a rationale, and its implications. Derive the principles from the README's How it works, which answers each doubt of the users from an idea of the product vision's concept, and from the needs of development and operation. First, for each answer and each need, ask what every part must hold alike for it to come true, such as where the work's state lives. A part that held it otherwise would break a key result. Each answer is a principle. Second, for each, write the rule in one to three short sentences. Third, write the reason: what goes wrong without the rule, for a role of the product vision, naming the key result it guards, or for the developers or the operators. A developer carries the reason to a case that the rule doesn't name. Point to the principles of any architecture this one builds on, and write only what this product adds or changes.",
    "steps": [
     {
      "text": "Take a case that no rule names, and decide it from each reason as two developers of different parts would. Where they differ, sharpen the reason."
