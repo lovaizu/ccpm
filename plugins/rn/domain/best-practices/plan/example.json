@@ -219,6 +219,11 @@
         },
         {
           "id": "N5",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N6",
           "good": false,
           "decisions": [
             {
@@ -227,11 +232,6 @@
               "by": "user"
             }
           ]
-        },
-        {
-          "id": "N6",
-          "good": true,
-          "decisions": []
         }
       ]
     },

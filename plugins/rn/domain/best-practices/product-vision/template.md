@@ -6,10 +6,9 @@
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<role>`: each kind of person who brings an end of their own to the product, such as a guest, a
->   member, or an administrator. Name it "user" where it's the only one. The
->   developer builds for each.
-> - `<who they are>`: in one clause, so that the developer knows who comes with that end.
+> - `<role>`: each kind of person who comes to the product with a goal of their own, such as a
+>   guest, a member, or an administrator. Name it "user" where it's the only one.
+> - `<who they are>`: the people in the role and the job they hire the product for, in one clause.
 
 ## Objectives and key results
 
@@ -24,11 +23,10 @@ law. They show whether a change brought its objective closer.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<objective>`: the end one role of Roles is after in its own work, in one sentence begun in
->   lowercase, as it follows a colon. The developer builds toward it.
-> - `<key result>`: what the developer counts of what the role does or feels, in one sentence begun
->   in lowercase: `KR<n>.1` how well the role meets the objective, and `KR<n>.2` how fast. The
->   developer reads it after a change to decide whether to keep the change.
+> - `<objective>`: what one role of Roles is trying to achieve in their own work, in one sentence
+>   begun in lowercase, as it follows a colon.
+> - `<key result>`: what the developers measure of what the role does, in one sentence begun in
+>   lowercase: `KR<n>.1` how well the role achieves the objective, and `KR<n>.2` how fast.
 > - `<direction>`: which way is better, such as "Lower is better."
 
 ## Concept
@@ -40,10 +38,7 @@ law. They show whether a change brought its objective closer.
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - `<present way>`: what the roles do today without the product, such as doing the work by hand.
->   The developer sets the product against it.
 > - `<idea>`: each idea that sets the product apart from the present way, at most five, each in a
->   few words. The first is what the product values most, and the others serve it. The
->   developer builds these, and not a copy of the present way, and decides by the first where no
->   line says.
-> - `<why it meets the objective>`: why the idea meets the objective where the present way falls
->   short, in one short sentence begun in lowercase, from what the role does, finds, or receives.
+>   few words. The first is what the product values most.
+> - `<why it meets the objective>`: what the idea gives the role toward the objective that the
+>   present way doesn't, in one short sentence begun in lowercase.
