@@ -20,69 +20,7 @@
       "name": "Each best practice holds the field's established way, named so its maker grasps the intent",
       "path": "plugins/rn/domain/best-practices/meta",
       "kind": "meta",
-      "status": "doing",
-      "inputs": [],
-      "preconditions": [],
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The levels",
-              "decided": "a best practice holds one goal, the critical success factors under it, and the necessary conditions under each factor, each level the vital few of the level it serves. Each necessary condition is a state of the deliverable, written as a question, with one practice",
-              "by": "user"
-            },
-            {
-              "about": "The names",
-              "decided": "Critical success factors, as John Rockart named them, and Necessary conditions, as a goal tree names them",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The template's sections",
-              "decided": "each necessary condition names the sections that hold it, and each section holds one or more conditions",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The example",
-              "decided": "the readme best practice, made anew by this one, as a README is a form every generator knows",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "The shared plugin best practice says what rn and Lane share",
@@ -957,29 +895,13 @@
         },
         {
           "id": "N7",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N8",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The problems and doubts",
-              "decided": "five that would change whether a reader tries rn: getting what they mean without a careful prompt, small fixes piling up, holding on their own work every time, trusting rn's own check, and a plan that turns out wrong. How much time it takes and picking up where it stopped, the walkthrough settles",
-              "by": "reasoning"
-            },
-            {
-              "about": "The answers",
-              "decided": "the design tree draws out what they mean, a problem changes its decision in the tree, best practice for every step with Lane holding each step on every run, the check with only what the users have from the architecture, and the tree revised on each run",
-              "by": "reasoning"
-            },
-            {
-              "about": "The form",
-              "decided": "one figure of the mechanism with each problem and doubt marked beside the part that answers it, then each as a numbered heading with its answer",
-              "by": "reasoning"
-            }
-          ]
+          "good": true,
+          "decisions": []
         },
         {
           "id": "N9",
@@ -999,7 +921,7 @@
         },
         {
           "id": "N11",
-          "good": false,
+          "good": true,
           "decisions": []
         }
       ]
