@@ -12,7 +12,7 @@ The user reaches their goal through the deliverables of the plan, none missing, 
 
 [example.json](example.json), a copy of [../../../../../.rn/20261107-rn/design-tree.json](../../../../../.rn/20261107-rn/design-tree.json)
 
-## Intents
+## Vital few
 
 | ID | About | Question |
 | --- | --- | --- |
@@ -126,4 +126,4 @@ Following the plan through the work, does the user reach their goal, every deliv
 
 **Thinking**
 
-Read this best practice whole as [Q10 of the meta best practice](../meta/best-practice.md#q10) says. Once the product vision trial shows plans made by it closer to the goal, ship it, and mend each shortfall met in use where it lies: in the goal, the template, a question, or a practice.
+Once the product vision trial shows plans made by it closer to the goal, ship it, and mend each shortfall met in use where it lies, as [the meta best practice](../meta/best-practice.md#q2) says.

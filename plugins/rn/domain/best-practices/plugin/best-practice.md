@@ -12,7 +12,7 @@ The developer builds a Claude Code plugin whose roles work together to make some
 
 - [architecture](../architecture/best-practice.md)
 
-## Intents
+## Vital few
 
 | ID | About | Question |
 | --- | --- | --- |
@@ -348,4 +348,4 @@ Using a plugin built by this best practice, do its users achieve what they're af
 
 **Thinking**
 
-Each practice is the ideal for the case it names. A plugin takes what its architecture calls for, and where it differs from a practice, its architecture says why. Read this best practice whole as [Q10 of the meta best practice](../meta/best-practice.md#q10) says. Once the product vision trial shows a plugin built by it closer to the goal, ship it, and mend each shortfall met in use where it lies: in the goal, the template, a question, or a practice.
+Each practice is the ideal for the case it names. A plugin takes what its architecture calls for, and where it differs from a practice, its architecture says why. Once the product vision trial shows a plugin built by it closer to the goal, ship it, and mend each shortfall met in use where it lies, as [the meta best practice](../meta/best-practice.md#q2) says.

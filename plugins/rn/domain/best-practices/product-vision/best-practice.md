@@ -12,7 +12,7 @@ The developer builds a product with which its users achieve what they're after.
 
 [example.md](example.md), a copy of [../../../../../dev/rn/product-vision.md](../../../../../dev/rn/product-vision.md)
 
-## Intents
+## Vital few
 
 | ID | About | Question |
 | --- | --- | --- |

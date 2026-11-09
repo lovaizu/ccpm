@@ -278,7 +278,7 @@ def texts(value: Any) -> list[str]:
 def faults(data: dict[str, Any], template: list[str] | None = None) -> list[str]:
     """Each fault of the best practice's form, in words: questions numbered in their order, each
     about a part it has, a section of its template where it has one, or the whole, every part or
-    section and the whole asked of, each question with one practice in the same order, each step's
+    section asked of, each question with one practice in the same order, each step's
     trace one that every run makes and a call can match, and each question named in the text one
     that's there."""
     found = []
@@ -295,8 +295,6 @@ def faults(data: dict[str, Any], template: list[str] | None = None) -> list[str]
     for part in leaves:
         if part not in named_parts:
             found.append(f"{what} {part} has no question about it")
-    if WHOLE not in named_parts:
-        found.append(f"no question is about {WHOLE}")
     questions = [q["id"] for q in data["intents"]]
     expected = [f"Q{n}" for n in range(1, len(questions) + 1)]
     if questions != expected:
@@ -387,7 +385,7 @@ def markdown_of(path: str, data: dict[str, Any]) -> str:
         out += ["", "## Parts", "", *parts(data["parts"])]
     # A table and headings of their own, as the prose check reads a capital after a colon as a
     # fault.
-    out += ["", "## Intents", "", "| ID | About | Question |", "| --- | --- | --- |"]
+    out += ["", "## Vital few", "", "| ID | About | Question |", "| --- | --- | --- |"]
     out += [f"| {q['id']} | {q['about']} | {q['what']} |" for q in data["intents"]]
     out += ["", "## Practices"]
     for practice in data["practices"]:

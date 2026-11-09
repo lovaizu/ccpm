@@ -16,7 +16,7 @@ Someone who meets the product for the first time starts using it, from the READM
 
 - [product-vision](../product-vision/best-practice.md)
 
-## Intents
+## Vital few
 
 | ID | About | Question |
 | --- | --- | --- |

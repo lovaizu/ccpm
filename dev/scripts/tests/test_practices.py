@@ -112,11 +112,11 @@ class Faults(unittest.TestCase):
 
         self.assertEqual(changed(add), ["part c has no question about it"])
 
-    def test_no_question_about_the_whole(self):
+    def test_no_question_about_the_whole_is_no_fault(self):
         def narrow(d):
             d["intents"][1]["about"] = "b"
 
-        self.assertEqual(changed(narrow), ["no question is about the whole"])
+        self.assertEqual(changed(narrow), [])
 
     def test_a_best_practice_of_one_question_about_the_whole(self):
         data = {
@@ -675,7 +675,7 @@ class Markdown(unittest.TestCase):
         expected = ["# `kind`\n", "The reader gets it.", "## Parts", "- **a**: A.", "  - **b**: B."]
         expected += [
             (
-                "## Intents\n\n| ID | About | Question |\n| --- | --- | --- |\n"
+                "## Vital few\n\n| ID | About | Question |\n| --- | --- | --- |\n"
                 "| Q1 | a | Does it? |\n| Q2 | b, the whole | After Q1, does all? |\n\n"
                 "## Practices\n"
             ),

@@ -17,7 +17,7 @@ The developer builds and changes each part of the product so that the parts toge
 - [product-vision](../product-vision/best-practice.md)
 - [readme](../readme/best-practice.md)
 
-## Intents
+## Vital few
 
 | ID | About | Question |
 | --- | --- | --- |

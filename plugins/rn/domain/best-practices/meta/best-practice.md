@@ -12,20 +12,16 @@ The generator can make deliverables with which their role achieves its purpose.
 
 [../product-vision/best-practice.json](../product-vision/best-practice.json)
 
-## Intents
+## Vital few
 
 | ID | About | Question |
 | --- | --- | --- |
 | Q1 | goal | Reading the goal, does the generator see the one end the deliverable's role is after, so that every part of the deliverable serves that end? |
-| Q2 | template | Filling in the template, does the generator know what each section holds and in what order, so that the deliverable holds what its role uses and nothing more? |
-| Q3 | goal, template | Setting the template against the goal, does the generator find each section the goal needs and none it doesn't, so that the role finds all it needs and reads nothing it doesn't? |
-| Q4 | inputs, preconditions | Setting each section against what fills it, does the generator find the kinds it makes a deliverable from and those that must pass before it makes one, so that it makes no deliverable of the kind before what the deliverable takes? |
-| Q5 | intents | Judging a deliverable by a question, does the evaluator see what the role is after at that moment, so that it judges whether the role gets that, not whether the words are there? |
-| Q6 | template, intents | Going through the template, does the generator find a question for each section, each dependency among sections and the whole, so that no way the deliverable fails its role goes unasked? |
-| Q7 | practices | Following a practice, does the generator grasp what the question's role is after and why, so that it makes what serves the role even where no step says how? |
-| Q8 | intents, practices | Going through the questions in order, does the generator find a practice for each, so that it meets no question with nothing to go by? |
-| Q9 | example, source | Reading the example, does the generator see what the template's slots become in one deliverable, so that it fills its own to the same intent? |
-| Q10 | the whole | Using a deliverable made by the best practice and passed, does its role achieve its purpose by the vital few alone, so that no trivial many pile up and bury them? |
+| Q2 | intents | Making or judging a deliverable, do the generator and the evaluator see what decides whether its role reaches that end, so that each part of the deliverable carries one of those things? |
+| Q3 | template | Filling in the template, does the generator find a slot for each vital one and the form its sentences take, so that the deliverable holds the vital few and has room for nothing else? |
+| Q4 | practices | Making each vital one, does the generator grasp what it must be and why, by the field's established way, so that it makes it where no step says how, and the same way on every run? |
+| Q5 | inputs, preconditions | Setting each section against what fills it, does the generator find the kinds it makes a deliverable from and those that must pass before it makes one, so that it makes no deliverable of the kind before what the deliverable takes? |
+| Q6 | example, source | Reading the example, does the generator see what the template's slots become in one deliverable, so that it fills its own to the same intent? |
 
 ## Practices
 
@@ -43,11 +39,28 @@ Write the end the deliverable's role is after as one sentence, with the role as 
 
 ### Q2
 
-Filling in the template, does the generator know what each section holds and in what order, so that the deliverable holds what its role uses and nothing more?
+Making or judging a deliverable, do the generator and the evaluator see what decides whether its role reaches that end, so that each part of the deliverable carries one of those things?
 
 **Thinking**
 
-Write the template anew from the goal: a section for each thing the role uses toward the goal, fixed text for what every deliverable of the kind shares, and a slot for the rest. An AI writes past what a deliverable needs when it only gets an instruction not to, so the template leaves no room for more.
+The vital few are what decides whether the role reaches its end, as Juran's Pareto principle names them: each one a thing without which the role fails its end. Few things decide it, so they come out few, though fewness isn't the aim. Write each as the moment the role uses it, what the role gets there, and what it's after in that, in a "so that" clause, and ask whether the deliverable gives it. The evaluator then confirms that the role gets each one, not that the words are there. The template, the practices and each deliverable grow from the vital few alone, so nothing else finds a place in them. Leave out the "so that" clause only where what the role gets is the goal itself.
+
+**Steps**
+
+1. Walk through the role's use of the deliverable toward its end, one moment at a time, and name at each moment what the role would fail its end without.
+2. Dig each one until it shows the idea the role must grasp, so that the template gives it a figure.
+3. Merge two that the role fails without for the same reason, but keep a key one on its own.
+4. Order them so that each comes after those it builds on.
+5. To better a best practice, start from what stands: keep each vital one its use has shown, take in what research shows missing, and drop one only where the role reaches its end without it. A best practice made anew loses what its use has taught it.
+6. Ship a best practice once the product vision trial shows its deliverables closer to the goal, as none covers every case at first. Where a deliverable in use falls short of its role, find the vital one it lacked or gave wrong, and mend the goal, that vital one, its slot or its practice, where the cause lies.
+
+### Q3
+
+Filling in the template, does the generator find a slot for each vital one and the form its sentences take, so that the deliverable holds the vital few and has room for nothing else?
+
+**Thinking**
+
+Write the template anew from the vital few: a section or a slot for each, with the form its sentences take, such as one rule and one why, and fixed text for what every deliverable of the kind shares. An AI writes past what a deliverable needs when it only gets an instruction not to, so the template leaves no room for more.
 
 **Steps**
 
@@ -60,19 +73,22 @@ Write the template anew from the goal: a section for each thing the role uses to
 7. Give each figure of the template a skeleton of its own that shows the figure's layout by the slots' names, with an alt text that holds no slot, and say in the section's note where the deliverable puts its own figure. A figure that the template names but doesn't hold shows broken, and the example's figure shows one product's content in place of the layout.
 8. Name the template's file in `template`.
 
-### Q3
+### Q4
 
-Setting the template against the goal, does the generator find each section the goal needs and none it doesn't, so that the role finds all it needs and reads nothing it doesn't?
+Making each vital one, does the generator grasp what it must be and why, by the field's established way, so that it makes it where no step says how, and the same way on every run?
 
 **Thinking**
 
-Keep a section only where the role would fall short of the goal without it. Add one where a deliverable with every section would still fail the role.
+Write first what the deliverable must be to give the role the vital one, and why the role needs it so, in short sentences. A generator that grasps the intent finds its own way where the case differs. One that holds only steps follows them off the mark. Take each practice from the way the field has established for its case, found by research, and name its source, as a way reasoned out alone misses what the field has learned. Call an established idea by its established name, such as single responsibility or Given-When-Then, with why it serves the role, as the name carries the field's knowledge to a maker who knows it. Write the practice for any language and tool that makes the kind, and name one only as an example. Give the intent, its established ways and when each fits, and leave the way and the tool for each deliverable to its plan, as a practice tied to one tool fails a deliverable made with another. Give each vital one one practice, in their order, so that the generator meets none with nothing to go by.
 
 **Steps**
 
-1. Repeat until you can imagine no such deliverable.
+1. Add a step only where a generator that holds the intent would still not know how, such as a format to keep or a place to look, and say what the step achieves.
+2. Give each step its trace, the call that shows it done: a command it runs, a file it reads to its end, or a file it makes. Order the steps as their calls come, as a checker such as Lane holds the role to each step by its trace alone, in the steps' order, and holds its end until each trace comes back. Leave the trace out in two cases. One is where some runs rightly skip the call, such as on a step of a case, as Lane would stop the end of each such run. The other is where no call shows the action, such as a judgment, which the evaluator then checks.
+3. Where the generator must find the content before it writes it, such as the roles of a product vision, say what to look at, how to find all of it, and when to ask the user.
+4. Read each practice as a generator new to the kind, and where they would hesitate, add what they lack.
 
-### Q4
+### Q5
 
 Setting each section against what fills it, does the generator find the kinds it makes a deliverable from and those that must pass before it makes one, so that it makes no deliverable of the kind before what the deliverable takes?
 
@@ -80,76 +96,14 @@ Setting each section against what fills it, does the generator find the kinds it
 
 Name in inputs each kind whose deliverables the generator makes a deliverable of this kind from, and in preconditions each kind whose deliverables must pass before it makes one of this kind, each by the name of its best practice's folder. The plan holds each deliverable's own inputs and preconditions, the paths of the deliverables it takes, to these kinds, and orders it after them. A kind left out lets the generator make a deliverable on what isn't there yet, and a kind named without need holds the deliverable back.
 
-### Q5
-
-Judging a deliverable by a question, does the evaluator see what the role is after at that moment, so that it judges whether the role gets that, not whether the words are there?
-
-**Thinking**
-
-Write each question as the moment the role uses the sections, what it needs from them, and what it's after in that, in a "so that" clause. The evaluator then judges by the role's intent. A deliverable can meet a question that asks only for a sign of good work with words alone, while the role goes without.
-
-**Steps**
-
-1. Leave out the "so that" clause only where what the role needs is the goal itself.
-
 ### Q6
-
-Going through the template, does the generator find a question for each section, each dependency among sections and the whole, so that no way the deliverable fails its role goes unasked?
-
-**Thinking**
-
-Give each section, each dependency among sections and the whole a question, and add one that fails each deliverable that would pass them all and still fail its role, as the questions are complete only when none such remains.
-
-**Steps**
-
-1. To better a best practice, start from what stands: keep its questions, take in what research shows missing, and drop a question only for a reason in its role's purpose. A best practice made anew loses what its use has taught it.
-2. Where two questions would fail the same deliverables for the same reason, merge them, but keep a key one on its own.
-3. Dig each question until it shows the idea the role must grasp, and ask whether the role grasps it, so that the template gives it a figure.
-4. Judge real deliverables that their role found short, and where one passes, add or mend the question that should have failed it.
-
-### Q7
-
-Following a practice, does the generator grasp what the question's role is after and why, so that it makes what serves the role even where no step says how?
-
-**Thinking**
-
-Write first what the deliverable must be for the question's role, and why the role needs it so, in short sentences. A generator that grasps the intent finds its own way where the case differs. One that holds only steps follows them off the mark. Take each practice from the way the field has established for its case, found by research, and name its source, as a way reasoned out alone misses what the field has learned. Call an established idea by its established name, such as single responsibility or Given-When-Then, with why it serves the role, as the name carries the field's knowledge to a maker who knows it. Write the practice for any language and tool that makes the kind, and name one only as an example. Give the intent, its established ways and when each fits, and leave the way and the tool for each deliverable to its plan, as a practice tied to one tool fails a deliverable made with another.
-
-**Steps**
-
-1. Add a step only where a generator that holds the intent would still not know how, such as a format to keep or a place to look, and say what the step achieves.
-2. Give each step its trace, the call that shows it done: a command it runs, a file it reads to its end, or a file it makes. Order the steps as their calls come, as a checker such as Lane holds the role to each step by its trace alone, in the steps' order, and holds its end until each trace comes back. Leave the trace out in two cases. One is where some runs rightly skip the call, such as on a step of a case, as Lane would stop the end of each such run. The other is where no call shows the action, such as a judgment, which the evaluator then checks.
-3. Where the generator must find the content before it writes it, such as the roles of a product vision, say what to look at, how to find all of it, and when to ask the user.
-
-### Q8
-
-Going through the questions in order, does the generator find a practice for each, so that it meets no question with nothing to go by?
-
-**Thinking**
-
-Order the questions so that each comes before those that build on it, and give each one practice in that order, as the generator then meets no question with nothing to go by.
-
-### Q9
 
 Reading the example, does the generator see what the template's slots become in one deliverable, so that it fills its own to the same intent?
 
 **Thinking**
 
-Make the product's own deliverable of the kind from its design tree by the template and the practices, pass it by the questions, and name its file in `example`, as one finished deliverable shows what the comments alone don't.
+Make the product's own deliverable of the kind from its design tree by the template and the practices, confirm in it each vital one, and name its file in `example`, as one finished deliverable shows what the comments alone don't.
 
 **Steps**
 
 1. Where the deliverable lies elsewhere for its own reader, such as a product vision in the developers' folder, name its path in `source`. Copy it with its figures beside the best practice by a script, such as ccpm's `dev/scripts/practices.py example`. A copy made by hand drifts from the deliverable, and a symbolic link shows as a line of text on GitHub and on Windows.
-
-### Q10
-
-Using a deliverable made by the best practice and passed, does its role achieve its purpose by the vital few alone, so that no trivial many pile up and bury them?
-
-**Thinking**
-
-Keep only the vital few, the parts, questions, practices, and findings that the role's end needs, and keep out the trivial many, as Juran's Pareto principle names them. Each of the trivial many seems right alone, so it gets added, and each one added buries the vital few deeper, until neither the maker nor the role finds what counts. Every best practice follows this, and so does each deliverable made by it. Read the best practice whole and judge two things: that each question asks what its user essentially intends, and that a maker follows each practice without hesitation. Judge by reading, not by a method or a count, as a method of judging adds work and shows nothing that the reading doesn't. No best practice covers every case at first. Once the product vision trial shows the deliverables closer to the goal, ship it and better it in use, as Q6 says.
-
-**Steps**
-
-1. Take out each part, question, practice, or finding whose loss would leave the role no further from its end.
-2. Where a deliverable in use falls short of its role, trace the cause to the goal, the template, a question or a practice, and mend it there.

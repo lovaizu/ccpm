@@ -4,7 +4,7 @@
 
 The reader is a person or an AI who reads the document for a purpose, at any time after its writer writes it. They read it in its own language or through a machine translation into theirs. The reader reads once from the top and only the parts their purpose needs, and takes in what the document says as its writer meant.
 
-## Intents
+## Vital few
 
 | ID | About | Question |
 | --- | --- | --- |

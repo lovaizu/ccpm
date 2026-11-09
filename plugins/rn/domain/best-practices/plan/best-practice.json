@@ -129,7 +129,7 @@
   },
   {
    "intent": "Q11",
-   "thinking": "Read this best practice whole as [Q10 of the meta best practice](../meta/best-practice.md#q10) says. Once the product vision trial shows plans made by it closer to the goal, ship it, and mend each shortfall met in use where it lies: in the goal, the template, a question, or a practice.",
+   "thinking": "Once the product vision trial shows plans made by it closer to the goal, ship it, and mend each shortfall met in use where it lies, as [the meta best practice](../meta/best-practice.md#q2) says.",
    "steps": []
   }
  ]

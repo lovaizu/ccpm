@@ -20,7 +20,57 @@
       "name": "Each best practice holds the field's established way, named so its maker grasps the intent",
       "path": "plugins/rn/domain/best-practices/meta",
       "kind": "meta",
-      "status": "done"
+      "status": "doing",
+      "inputs": [],
+      "preconditions": [],
+      "intents": [
+        {
+          "id": "Q1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q2",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The vital few",
+              "decided": "each best practice grows from its vital few, the things without which its deliverable's role fails its end. Its template, questions and practices each come from one of them, so following it yields only the vital few, with no check for anything else",
+              "by": "user"
+            },
+            {
+              "about": "The name",
+              "decided": "Vital few, Juran's name, the heading under which a best practice lists them. What counts is that each is vital, and fewness follows",
+              "by": "user"
+            },
+            {
+              "about": "The key in JSON",
+              "decided": "stays intents until the code best practice makes rn's code anew, which then names it vital_few",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "Q3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q6",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "The shared plugin best practice says what rn and Lane share",
@@ -38,11 +88,16 @@
       "intents": [
         {
           "id": "Q1",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "Q2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "Q3",
           "good": false,
           "decisions": [
             {
@@ -53,43 +108,18 @@
           ]
         },
         {
-          "id": "Q3",
-          "good": true,
-          "decisions": []
-        },
-        {
           "id": "Q4",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "Q5",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "Q6",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "Q7",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "Q8",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "Q9",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "Q10",
-          "good": true,
+          "good": false,
           "decisions": []
         }
       ]

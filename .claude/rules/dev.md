@@ -14,12 +14,12 @@ from it what the plugin's requirements call for.
 This file holds the order the work goes in. Each step names the best practice in
 `plugins/rn/domain/best-practices/` to open while doing it. A best practice's goal says what the
 deliverable's user achieves. Its template, or else its parts, says what the deliverable holds. Its
-intents ask, each as a question, whether the user gets what they're after from the deliverable. Its
-practices hold a way to make each question pass. Finish a document with
+vital few ask, each as a question, whether the deliverable gives the user a thing without which they
+fail their end. Its practices hold a way to make each one. Finish a document with
 `refactor-doc/best-practice.json` open as well, and code with `refactor-code/best-practice.json`.
 
 When a step's work needs something that its best practice doesn't ask for, mend that best practice as
-Q6 of [meta/best-practice.json](../../plugins/rn/domain/best-practices/meta/best-practice.md)
+Q2 of [meta/best-practice.json](../../plugins/rn/domain/best-practices/meta/best-practice.md)
 says. Do so whichever plugin you are building. Then make the work again against the mended
 best practice.
 
