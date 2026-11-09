@@ -545,39 +545,38 @@
       ]
     },
     {
-      "name": "Lane's design checks each practice step and each change, and holds what rn rests on",
+      "name": "Lane's design checks each practice step and each change",
       "path": "dev/lane/architecture.md",
       "kind": "architecture",
       "inputs": [
-        "dev/lane/product-vision.md",
-        "dev/rn/architecture.md"
+        "dev/lane/product-vision.md"
       ],
       "preconditions": [],
       "status": "doing",
       "necessary_conditions": [
         {
           "id": "N1",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N2",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N3",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N4",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N5",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The orchestrator's own words",
@@ -586,68 +585,69 @@
             },
             {
               "about": "A sign-off",
-              "decided": "a lane passes the run beyond a sign-off only after the person typed the command that approves it, such as rn's /rn:ty",
+              "decided": "a route may wait until the person types a command that the plugin names, and the guard moves the run on only then",
               "by": "reasoning"
             },
             {
               "about": "A paused run",
-              "decided": null
+              "decided": "at a call of the skill, where the plugin's adapter gives at the run port the results the plugin kept, the guard holds the routes on from them",
+              "by": "reasoning"
             }
           ]
         },
         {
           "id": "N6",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N7",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N8",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N9",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N10",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N11",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N12",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N13",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N14",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N15",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N16",
-          "good": false,
+          "good": true,
           "decisions": []
         }
       ]
