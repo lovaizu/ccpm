@@ -4,14 +4,14 @@ This document says how the parts of rn give [its product vision](../../../../../
 only the vital few of each deliverable: what its people can't do without. A designer settles the
 user's goal and the decisions that serve it in a design tree, asking the user only the points that
 are theirs. A generator makes each deliverable from its decisions, round after round, until
-evaluators that have only what its people have find every intent met. A shortfall changes the
+evaluators that have only what its people have find every intent met. A lack changes the
 decision it comes from, not the deliverable.
 
 ## User stories
 
 - S1: the user wants to type `/rn:up` with what they want, in their own words, so that they get the
-  deliverable they mean without writing a specification. It carries the walkthrough's first `/rn:up`
-  and the goal put to the user.
+  deliverable they mean without writing a specification. It carries the walkthrough's first
+  `/rn:up`, the goal put to the user, and each deliverable made with no more questions.
 - S2: the user wants to answer each point rn puts to them, one at a time, so that they spend their
   time only on what's theirs to decide. It carries the plan shown with its first point, the answer
   `each file`, and each remark the user makes meanwhile.
@@ -20,7 +20,7 @@ decision it comes from, not the deliverable.
   `Picking up`.
 - S4: the user wants each deliverable committed, one draft pull request, and the decisions rn took
   without asking, so that they check the work and merge it themselves. It carries the walkthrough's
-  `Done` and the merge.
+  `Done`, each change to a best practice and each lesson that rn proposes there, and the merge.
 
 ## Components
 
@@ -32,15 +32,16 @@ What each decides alone:
   The goal, each point the purpose and the best practices leave open, each change to a best
   practice, and whether to merge.
 - orchestrator\
-  Nothing of the work. It starts the role that the routes name, and passes each question and answer
-  word for word.
+  Nothing: the routes decide which role starts next, and the roles decide what to ask and what to
+  show the user.
 - designer\
   Whether a point is the user's, each point the purpose or a best practice settles, which lacks an
   evaluator names go on, which changes to a best practice to propose, and which lessons are general.
 - planner\
   The goal drafted from the request, the deliverables and their order, each one's kind, the
-  commands that try it, and the plan again after each settled point and finished deliverable. A
-  kind with no best practice gets one first, as a deliverable of its own.
+  commands that try it, whether a kind needs a best practice made first, as a deliverable of its
+  own, which run to pick up, and the deliverables again after each settled point and
+  finished deliverable.
 - generator\
   The deliverable, and each small point that the purpose and the best practice settle one way.
 - evaluator\
@@ -51,8 +52,10 @@ What each decides alone:
 - throwaway.py\
   Where a deliverable's commands run.
 - guard\
-  Whether a role's call keeps its steps, and that a deliverable's command runs only through
+  Whether a role's call keeps its steps, and whether a deliverable's command runs only through
   throwaway.py, as [Lane's architecture](../../../../../dev/lane/architecture.md) says.
+- adapters\
+  How rn's best practices and design tree reach the guard in the form Lane reads.
 
 The choices made, and why:
 
@@ -68,7 +71,7 @@ The choices made, and why:
 - Cut\
   The part of the design tree that a role starts with.
 - Point\
-  A decision that the designer settles, or puts to the user.
+  A question put to the user, with its recommendation, while its decision is open.
 - Lack kept\
   A lack an evaluator named that the designer kept, which the next round's generator gets.
 
@@ -103,19 +106,19 @@ KR1.1 counts.
 
 ### Back to the design tree on a problem
 
-A shortfall changes the decision it comes from, and the next round makes the deliverable from the
+A lack changes the decision it comes from, and the next round makes the deliverable from the
 design, never with a fix beside it.
 
-*Why*: no decision holds a fix beside the design, so the next round loses it or it breaks what
-another intent met, as KR1.1 counts.
+*Why*: a fix beside the design rests on no decision, so the next round, made from the design, loses
+it or breaks another intent with it, as KR1.1 counts.
 
 ### The design tree revised on each run
 
-What a run finds changes the plan before the next deliverable, and the best practice before the next
-run, once the user takes the change.
+What a run finds changes the design tree before the next deliverable, and the best practice before
+the next run, once the user takes the change.
 
-*Why*: a plan or a best practice kept as first laid out makes the same miss again, as KR1.1 and
-KR1.2 count.
+*Why*: a design tree or a best practice kept as first laid out makes the same miss again, as KR1.1
+and KR1.2 count.
 
 ### Tried in a throwaway copy
 
@@ -126,8 +129,8 @@ and a lane of Lane holds each role to it.
 
 ### The repository holds the work
 
-`tree.py` commits every change to the tree and each finished deliverable on the work's own branch as
-it's made.
+Every part keeps the run's state only in the run's folder and the deliverables on the work's own
+branch, which `tree.py` commits as they change.
 
 *Why*: work kept only in a conversation that ends makes the user answer again, as KR1.2 counts.
 
@@ -176,8 +179,8 @@ sequenceDiagram
       O->>D: resumes it with the answer word for word
     end
   end
-  D-->>O: the points settled (Point)
-  O->>P: starts it, with the points settled (Cut)
+  D-->>O: the points settled (Decision)
+  O->>P: starts it, with the points settled word for word (Cut)
   P->>T: writes each decision, plans again, and commits
   alt a point is open
     P-->>O: asks
@@ -188,7 +191,7 @@ sequenceDiagram
   Note over U,O: A remark the user makes meanwhile goes to the designer as a point, and the orchestrator stops each role of the rounds that still runs.
 ```
 
-### S2 and S3: a deliverable made in rounds
+### S1: a deliverable made in rounds
 
 ```mermaid
 sequenceDiagram
@@ -198,6 +201,7 @@ sequenceDiagram
   participant E as evaluator
   participant D as designer
   participant P as planner
+  participant T as tree.py
   O->>G: starts it (Cut, Lack kept)
   G->>G: makes the deliverable from the design
   G->>W: tries it (Try record)
@@ -217,6 +221,7 @@ sequenceDiagram
     else
       D-->>O: each intent good, and each lack kept (Lack kept)
       O->>P: starts it (Lack kept)
+      P->>T: marks each intent good, keeps each lack, and commits
       alt a lack is kept
         P-->>O: ready
         Note over O,G: The next round starts from the design.
@@ -245,7 +250,8 @@ sequenceDiagram
     O->>U: puts it as written (Point)
     U->>O: answers
   else one is left
-    O->>U: Picking up, at the deliverable not yet done
+    P-->>O: picks it up, at the deliverable not yet done
+    O->>U: Picking up, as written
     Note over O,P: The work goes on, as S2 or the rounds draw.
   end
 ```
