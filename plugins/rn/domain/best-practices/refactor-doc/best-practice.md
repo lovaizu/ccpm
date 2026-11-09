@@ -2,127 +2,132 @@
 
 ## Goal
 
-The reader is a person or an AI who reads the document for a purpose, at any time after its writer writes it. They read it in its own language or through a machine translation into theirs. The reader reads once from the top and only the parts their purpose needs, and takes in what the document says as its writer meant.
+Whether they read the original or a machine translation, readers understand the document as its writer meant, in one read of only the parts they need.
+
+## Critical success factors
+
+| ID | Factor |
+| --- | --- |
+| C1 | The reader finds the parts they need without reading the rest. |
+| C2 | The reader understands each sentence and figure on the first read. |
+| C3 | Every part of the document says the same thing about each fact and uses the same name for each thing. |
 
 ## Necessary conditions
 
-| ID | Condition | Sections |
-| --- | --- | --- |
-| N1 | Does the reader find each fact said in one place only, in the document or in what they read beside it, with every other place pointing there, so that two places never tell them different things? | the whole |
-| N2 | Coming to the document for a purpose, can the reader tell from each heading and the sentence under it what the section gives them, so they read the sections their purpose needs and skip the rest? | the whole |
-| N3 | Where the document gives steps in order, choices that depend on a case, or how several things relate, does the reader see it at a glance, without piecing it together from sentences, so that they grasp it without effort? | the whole |
-| N4 | Reading from the top, can the reader understand each sentence from what they have read before it, without turning back, reading ahead, or knowing what the document neither says nor points to, so that they read straight through? | the whole |
-| N5 | When the reader reads any sentence once, as written or through a machine translation into their own language, can they say who or what does what in it, so that no sentence is misread? | the whole |
-| N6 | Each time the reader meets a name, can they tell rightly whether it names a thing they have already met, and which one, so that they never take two things for one or one thing for two? | the whole |
-| N7 | When the reader meets a word they haven't used themselves, can they tell what it means right where they meet it, so that no word stops them? | the whole |
-| N8 | Does each word the reader reads carry part of what the document says, so that no word costs them time and gives them nothing? | the whole |
+| ID | Factor | Condition | Sections |
+| --- | --- | --- | --- |
+| N1 | C1 | Do each heading and the first sentence under it say what the section gives the reader? | the whole |
+| N2 | C1 | Does the document hold only what its readers need? | the whole |
+| N3 | C2 | Does each sentence come after everything it depends on? | the whole |
+| N4 | C2 | Do lists, tables, and diagrams show the steps, the choices, and the relations that prose would make the reader piece together? | the whole |
+| N5 | C2 | Does each sentence make one point, with the actor as its subject and an active verb? | the whole |
+| N6 | C2 | Does the document use the words its readers already use, in their usual meaning? | the whole |
+| N7 | C3 | Does the document state each fact in one place, with every other place linking to it? | the whole |
+| N8 | C3 | Does each thing have one name, used the same way throughout, and does each name refer to one thing? | the whole |
 
 ## Practices
 
 ### N1
 
-Does the reader find each fact said in one place only, in the document or in what they read beside it, with every other place pointing there, so that two places never tell them different things?
+Do each heading and the first sentence under it say what the section gives the reader?
 
 **Thinking**
 
-The document says each fact, including one that a figure draws or the work itself shows, in the one place where the reader looks for it. Every other place points there. A change made in that one place then reaches every reader, as a [single source of truth](https://en.wikipedia.org/wiki/Single_source_of_truth) does.
+Each section covers one topic, and its heading and first sentence say what the reader gets from it. Readers choose sections by their headings and first sentences, and skip the rest. Readers scan the first words of [headings](https://www.nngroup.com/articles/headings-pickup-lines/), so put the most telling words first.
 
 **Steps**
 
-1. Where two places say a fact in different ways, keep both, and send the difference back so that someone settles it with what the document says. Choosing one would change what the document says.
-2. Replace each other place's copy with a link to that place, saying in a few words what the reader finds there.
+1. Name the readers and the purposes they come with. Read only the headings and the first sentences for each purpose. Rewrite a heading or first sentence that would make the reader miss a section the purpose needs. Rewrite one that would make them read a section it doesn't need.
 
 ### N2
 
-Coming to the document for a purpose, can the reader tell from each heading and the sentence under it what the section gives them, so they read the sections their purpose needs and skip the rest?
+Does the document hold only what its readers need?
 
 **Thinking**
 
-The reader picks sections by their headings and first sentences. So each section holds one thing and says at its start what it gives, as readers scan the first words of [headings](https://www.nngroup.com/articles/headings-pickup-lines/).
+Remove each word, sentence, and section that gives the reader nothing they need. Text that carries nothing still costs the reader time, as Strunk and White's rule to omit needless words puts it. Keep the small words that show the structure of a sentence, such as articles and `that`.
 
 **Steps**
 
-1. Start each heading with the words that tell the most.
-2. Name the reader and the purposes they come with. Read only the headings and first sentences for each purpose. Where the reader would miss a section that the purpose needs, or read one that it doesn't need, rewrite the section's heading or first sentence.
+1. After cutting, read each changed section again from the top, and check that it still says everything it said before. The trace: `{deliverable}` read to its end.
 
 ### N3
 
-Where the document gives steps in order, choices that depend on a case, or how several things relate, does the reader see it at a glance, without piecing it together from sentences, so that they grasp it without effort?
+Does each sentence come after everything it depends on?
 
 **Thinking**
 
-The reader grasps at once an order or a relation that the form of a list, a table, or a diagram shows. When sentences tell the same, the reader must piece it together.
+Put each sentence after everything it depends on, so that the reader never has to turn back or read ahead. Start each sentence with what the reader already knows, and end it with what's new. Linguists call this the given-new order of [information structure](https://en.wikipedia.org/wiki/Information_structure).
 
 **Steps**
 
-1. Choose a form whose shape shows that order or relation, such as a numbered list for steps in order, a bulleted list for items whose order doesn't matter, a table for things compared on the same points, or a diagram for who passes what to whom.
-2. Draw a sequence diagram as text that the page draws, such as Mermaid inside the document, as its steps go from top to bottom and leave no layout to choose.
-3. Draw a diagram of structure, such as parts and what passes between them, as a drawing whose layout the writer sets, such as an SVG file beside the document shown as an image, as its layout carries its meaning.
-4. Write in each box only its part's name, and at most its type, and what each part does in a list under the figure, by the part's name, as a box that holds sentences hides the layout it stands in.
-5. Draw every part alike in shape and color, and set one apart only where the reader must tell it apart and its name and type don't, as a shape such as a database's cylinder says what the part may not be, and a color draws the eye to a part that needs no more weight than the rest.
-6. Lay the parts out so that the layout shows the reader something before they read a line: parts that belong together side by side in a frame that names what holds them together, the groups in the order the reader meets them, such as from the top left along the course a run takes, and the part most others join in the middle. Boxes set in a grid tell nothing, and the reader must trace every line.
-7. Draw a table the reader takes in whole at a glance, such as which tests cover which part, as an SVG in the same way, so its marks and groups line up. Keep a table the reader looks a row up in as Markdown, so they can search and copy it.
-8. Set the SVG's colors under prefers-color-scheme, so that it follows the page's light or dark scheme.
+1. If a sentence depends on something outside the document, such as an earlier discussion, state it in the sentence or link to where it's stated.
+2. Put the conditions and exceptions of a rule next to the rule. Put a short condition before its instruction, so that a reader it doesn't apply to can skip the instruction.
 
 ### N4
 
-Reading from the top, can the reader understand each sentence from what they have read before it, without turning back, reading ahead, or knowing what the document neither says nor points to, so that they read straight through?
+Do lists, tables, and diagrams show the steps, the choices, and the relations that prose would make the reader piece together?
 
 **Thinking**
 
-Each sentence comes after everything it rests on, so the reader never holds a sentence open while they look for what it needs.
+Show steps, choices, and relations in a form whose shape shows them. A reader takes in at once what a list, a table, or a diagram shows, but has to assemble the same thing from sentences.
 
 **Steps**
 
-1. Where a sentence rests on something outside the document, such as an earlier talk, say it in the sentence or link to the place that says it.
-2. Start each sentence with what the reader already has, and end it with what's new, the given-new order of [information structure](https://en.wikipedia.org/wiki/Information_structure).
-3. Put a rule's conditions and exceptions beside the rule, where the reader takes them in most easily. Put a short condition before its instruction, so that a reader whose case it isn't can skip the instruction.
+1. Choose the form by what it shows: a numbered list for steps in order, a bulleted list for items in no order, a table for things compared on the same points, and a diagram for who passes what to whom.
+2. Draw a sequence diagram as text that the page renders, such as Mermaid, because its steps run from top to bottom and leave no layout to choose.
+3. Draw a structure diagram, such as parts and what passes between them, as a file whose layout the writer sets, such as SVG, because its layout carries meaning.
 
 ### N5
 
-When the reader reads any sentence once, as written or through a machine translation into their own language, can they say who or what does what in it, so that no sentence is misread?
+Does each sentence make one point, with the actor as its subject and an active verb?
 
 **Thinking**
 
-A sentence that makes one point, names who acts, and keeps plain order has one reading for the reader and for a machine translator alike, as [Simplified Technical English](https://www.asd-ste100.org) and the [Google developer documentation style guide](https://developers.google.com/style/voice) write.
+A sentence that makes one point, names the actor as its subject, and follows it with an active verb has one meaning for both a reader and a machine translator. [Simplified Technical English](https://www.asd-ste100.org) and the [Google developer documentation style guide](https://developers.google.com/style/translation) both write this way for readers who read in a second language.
 
 **Steps**
 
-1. Split a sentence that makes more than one point, or that links more than two clauses with "and," "or," or "but," into one sentence for each point.
-2. Follow the subject at once with an active verb that carries the action. Keep the object close after the verb. Turn a noun made from a verb back into the verb.
-3. Keep the small words that show the structure of a sentence, such as articles, "that," "who," "then," and "of."
-4. Where a pronoun or a "which" could point to two nouns, replace it with the noun it means. Break a string of nouns apart with prepositions.
-5. Read each sentence once as a machine translator would, word by word in its order and with nothing from outside it, and say who does what. Where the sentence reads two ways, reword it. The trace: `{deliverable}` read to its end.
+1. Split a sentence that makes more than one point into one sentence for each point.
+2. Follow the subject with a verb that carries the action, and keep the object close to the verb. Turn a noun made from a verb, such as `decision`, back into the verb.
+3. If a pronoun or `which` could refer to two nouns, replace it with the noun it means.
+4. Read each sentence as a machine translator would: word by word, with nothing from outside the sentence. If it reads two ways, or would read unnaturally in another language, rewrite it. The trace: `{deliverable}` read to its end.
 
 ### N6
 
-Each time the reader meets a name, can they tell rightly whether it names a thing they have already met, and which one, so that they never take two things for one or one thing for two?
+Does the document use the words its readers already use, in their usual meaning?
 
 **Thinking**
 
-Each thing has one name, the one its reader already uses, written the same way each time. Each name names one thing. The reader, and a translator, then keep one picture of each thing from start to end.
+Use the words that the readers' field commonly uses for each thing, in their usual meaning. A reader reads each word with the meaning they already know. A word that the writer or their team coined, an idiom, or an abstract phrase that stands for a thing, such as `the end` for a goal, makes the reader guess. The [Federal Plain Language Guidelines](https://www.plainlanguage.gov/guidelines/) call for familiar words for the same reason.
+
+**Steps**
+
+1. For each term, check that readers in the field use it with this meaning. If they don't, use the term they use, or define it where the reader first meets it.
+2. Replace each idiom and each abstract phrase with the plain words for what it means.
+3. Write out each abbreviation where the reader first meets it, as the [Google developer documentation style guide](https://developers.google.com/style/abbreviations) does.
 
 ### N7
 
-When the reader meets a word they haven't used themselves, can they tell what it means right where they meet it, so that no word stops them?
+Does the document state each fact in one place, with every other place linking to it?
 
 **Thinking**
 
-The reader takes each word with the meaning they already give it. So the writer replaces a word new to the reader with everyday words, even a word the writer's team uses every day, or gives its meaning where the reader first meets it.
+State each fact, including one that a figure draws or the work itself shows, in the one place where the reader looks for it, and link to it from every other place. A change made in that place then reaches every reader, and no two places can disagree. This is the principle of a [single source of truth](https://en.wikipedia.org/wiki/Single_source_of_truth).
 
 **Steps**
 
-1. Write each abbreviation out in full where the reader first meets it, as the [Google developer documentation style guide](https://developers.google.com/style/abbreviations) does.
-2. Where the document gives a common word a meaning of its own, replace it with a word the reader doesn't already read another way.
+1. If two places state a fact differently, keep both, and ask whoever owns the document which is right. Choosing one yourself would change what the document says.
+2. Replace every other copy with a link to that place, with a few words on what the reader finds there.
 
 ### N8
 
-Does each word the reader reads carry part of what the document says, so that no word costs them time and gives them nothing?
+Does each thing have one name, used the same way throughout, and does each name refer to one thing?
 
 **Thinking**
 
-A word or a sentence that carries nothing of what the document says still costs the reader time, so it goes. A word that shows the structure of a sentence stays.
+Give each thing one name, the one its readers already use, spelled the same way each time, and use each name for one thing only. The reader, and a translator, then keep one picture of each thing from start to end.
 
 **Steps**
 
-1. Read each changed section again from the top, and check that it still says all it said before. The trace: `{deliverable}` read to its end.
+1. List the names the document uses. If two names refer to one thing, keep the one readers already use. If one name refers to two things, give one of them another name.

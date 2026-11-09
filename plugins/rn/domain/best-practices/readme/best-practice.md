@@ -33,7 +33,7 @@ A newcomer decides from the README alone whether the product fits their work, an
 | N3 | C1 | Does the README say at the top where the product isn't ready for use yet? | the opening |
 | N4 | C1 | Does the README name the license and link its full text? | License |
 | N5 | C1 | Does the README answer each question in the order a reader comes to ask it? | the whole |
-| N6 | C2 | Does the walkthrough show a real run that delivers, on typical work, the gain the opening promises? | Walkthrough |
+| N6 | C2 | Does the walkthrough show a real run that delivers, on typical work, the benefit the opening promises? | Walkthrough |
 | N7 | C2 | Does the README show, for each problem readers have today, how the product removes it? | How it works |
 | N8 | C2 | Does the README show how the product does each thing a newcomer would doubt it can do? | How it works |
 | N9 | C3 | Can a reader with nothing set up install the product by the README alone, and see that it works? | Requirements, Installation |
@@ -102,17 +102,17 @@ Order the README by who needs what: the opening for every reader, the installati
 
 ### N6
 
-Does the walkthrough show a real run that delivers, on typical work, the gain the opening promises?
+Does the walkthrough show a real run that delivers, on typical work, the benefit the opening promises?
 
 **Thinking**
 
-Show one real run of the use that most readers come for, on work like theirs, from what the reader gives the product to the result they keep, with the product's real output. This shows the reader the promised gain happening, not only a claim of it. Diátaxis calls this a [tutorial](https://diataxis.fr/tutorials/): one task, carried through to a result.
+Show one real run of the use that most readers come for, on work like theirs, from what the reader gives the product to the result they keep, with the product's real output. This shows the reader the promised benefit happening, not only a claim of it. Diátaxis calls this a [tutorial](https://diataxis.fr/tutorials/): one task, carried through to a result.
 
 **Steps**
 
 1. Choose the use from what readers ask for most and from the objectives of the product vision. The trace: `{inputs}` read to its end.
 2. Take each exchange from the record of a real run, in the form the reader meets it, and cut only what the reader doesn't need to see the result.
-3. If the result doesn't show the gain the opening promises, choose another piece of work or another use.
+3. If the result doesn't show the benefit the opening promises, choose another piece of work or another use.
 
 ### N7
 

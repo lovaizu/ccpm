@@ -4,7 +4,7 @@
 
 `<status>`.
 
-`<Product>` is for you when `<your situation>`. With it, you `<gain>`.
+`<Product>` is for you when `<your situation>`. With it, you `<benefit>`.
 
 **Non-goals**
 
@@ -17,7 +17,7 @@
 > - `<status>`: where the product isn't yet fit for use, such as a release still in development.
 >   Leave it out where the product is ready for use.
 > - `<your situation>`: the work the reader wants done.
-> - `<gain>`: the end the reader reaches with the product.
+> - `<benefit>`: what the reader achieves with the product.
 > - `<expectation>`: each thing a reader might expect of the product that it doesn't do. Leave out
 >   Non-goals where there's none.
 

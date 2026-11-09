@@ -56,7 +56,7 @@
    "id": "N6",
    "csf": "C2",
    "about": "Walkthrough",
-   "what": "Does the walkthrough show a real run that delivers, on typical work, the gain the opening promises?"
+   "what": "Does the walkthrough show a real run that delivers, on typical work, the benefit the opening promises?"
   },
   {
    "id": "N7",
@@ -142,7 +142,7 @@
   },
   {
    "intent": "N6",
-   "thinking": "Show one real run of the use that most readers come for, on work like theirs, from what the reader gives the product to the result they keep, with the product's real output. This shows the reader the promised gain happening, not only a claim of it. Diátaxis calls this a [tutorial](https://diataxis.fr/tutorials/): one task, carried through to a result.",
+   "thinking": "Show one real run of the use that most readers come for, on work like theirs, from what the reader gives the product to the result they keep, with the product's real output. This shows the reader the promised benefit happening, not only a claim of it. Diátaxis calls this a [tutorial](https://diataxis.fr/tutorials/): one task, carried through to a result.",
    "steps": [
     {
      "text": "Choose the use from what readers ask for most and from the objectives of the product vision.",
@@ -157,7 +157,7 @@
      "text": "Take each exchange from the record of a real run, in the form the reader meets it, and cut only what the reader doesn't need to see the result."
     },
     {
-     "text": "If the result doesn't show the gain the opening promises, choose another piece of work or another use."
+     "text": "If the result doesn't show the benefit the opening promises, choose another piece of work or another use."
     }
    ]
   },
