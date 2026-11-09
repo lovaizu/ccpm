@@ -30,6 +30,8 @@ What each decides alone:
 - `<component>`\
   `<what it alone decides>`.
 
+The choices made, and why:
+
 - `<choice>` over `<other way>`\
   `<why>`. The cost: `<cost>`.
 
@@ -62,9 +64,9 @@ What each decides alone:
 >   It draws the data as a concept model in a class diagram of the Unified Modeling Language. Each
 >   data the components pass or keep is a class by its name alone. Each relation between two data
 >   has its name, and how many of each it joins at both ends, with a filled diamond at the whole
->   where one holds the other's parts. A named frame for each component that keeps them groups the
->   data, the frames in the order the stories meet them, and the data most others join in the
->   middle.
+>   where one holds the other's parts. A named frame for each component or store that keeps them
+>   groups the data, the frames in the order the stories meet them, and the data most others join
+>   in the middle.
 > - `<Data>`, `<what it is>`: each data whose name a reader could take for another's, by its name,
 >   and what it's in a few words, without its fields.
 
@@ -161,7 +163,7 @@ sequenceDiagram
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<shared rules>`, `<path>`: the project's shared test rules.
+> - `<shared rules>`, `<path>`: the test rules of the best practices that the product follows.
 > - The figure: the deliverable's own at images/tests.svg, the product named in its alt text. It's
 >   a table with a row for each deployment unit, by its name in Deployment, and a column for each
 >   test level from narrow to wide, each named by what it checks against. Unit checks against a

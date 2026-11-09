@@ -124,7 +124,7 @@ Does the data model show how each kind of data relates to the others, without it
 
 **Thinking**
 
-Two developers who build the writer and the reader of the same data must join it to the other data in the same way, while its fields stay free to change. A concept model in a class diagram of the Unified Modeling Language (UML), which most developers read, shows this. Decide it in order. First, list each kind of data that the components pass or keep, and draw each once, as a class by its name alone. Second, for each pair that relates, name the relation, and give how many of each it joins at both ends. Where one holds the other's parts, put a filled diamond at the whole, since readers take a hollow one in different ways. Third, group the data in a frame for each component that keeps them, in the order the stories meet them, with the data that most others join in the middle. Leave the fields to where the developer builds the data. Below the figure, say in a few words what a kind of data is only where a reader could take its name for another's.
+Two developers who build the writer and the reader of the same data must join it to the other data in the same way, while its fields stay free to change. A concept model in a class diagram of the Unified Modeling Language (UML), which most developers read, shows this. Decide it in order. First, list each kind of data that the components pass or keep, and draw each once, as a class by its name alone. Second, for each pair that relates, name the relation, and give how many of each it joins at both ends. Where one holds the other's parts, put a filled diamond at the whole, since readers take a hollow one in different ways. Third, group the data in a frame for each component or store that keeps them, in the order the stories meet them, with the data that most others join in the middle. Leave the fields to where the developer builds the data. Below the figure, say in a few words what a kind of data is only where a reader could take its name for another's.
 
 ### N8
 
@@ -181,7 +181,7 @@ Does each test level say what runs real, what test doubles replace, what the tes
 
 **Thinking**
 
-A failing test should name the rule, path, or use that it breaks. Draw each test from the one thing its level checks against: the ways a part's contract divides at unit, the paths the sequences draw at architecture, and an objective's main use at real size at product vision. Run only that thing real, and replace the rest with [test doubles](https://martinfowler.com/bliki/TestDouble.html). Point to the project's shared test rules, and write only where this product differs from them.
+A failing test should name the rule, path, or use that it breaks. Draw each test from the one thing its level checks against: the ways a part's contract divides at unit, the paths the sequences draw at architecture, and an objective's main use at real size at product vision. Run only that thing real, and replace the rest with [test doubles](https://martinfowler.com/bliki/TestDouble.html). Point to the test rules of the best practices that the product follows, and write only where this product differs from them.
 
 **Steps**
 
@@ -204,7 +204,7 @@ Does each thing that the document says the product does rest on a part that a un
 
 **Thinking**
 
-The product vision tests are slow and few, so they can only confirm what the lower levels already showed. A thing that only a prompt holds, such as a rule an AI keeps by its instructions, varies from run to run, and no unit or architecture test can show it. For each thing the document says the product does, name the part that holds it. Where only a prompt holds it, give it to a part that a test can run, such as a guard of the architecture the product builds on, and draw that part in Components. The lower levels then show it only if each double behaves like the part it replaces. Give each double only results in the form the part's contract gives, refusals among them, and test the double as the part's unit tests test the part.
+The product vision tests are slow and few, so they can only confirm what the lower levels already showed. A thing that only a prompt holds, such as a rule an AI keeps by its instructions, varies from run to run, and no unit or architecture test can show it. For each thing the document says the product does, name the part that holds it. Where only a prompt holds it, give it to a part that a test can run, such as a guard of the architecture the product builds on, and draw that part in Components. A judgment that only an AI can make, such as whether a point is the user's, stays with the AI. Test it on the real model as step 5 of N13 says, or, where the architecture the product builds on runs no prompt alone, say in Tests that only the product vision tests show it. The lower levels then show it only if each double behaves like the part it replaces. Give each double only results in the form the part's contract gives, refusals among them, and test the double as the part's unit tests test the part.
 
 **Steps**
 
