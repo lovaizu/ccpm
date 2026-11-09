@@ -14,8 +14,7 @@ every result before it takes it, and a lack changes the decision it comes from, 
   deliverable they mean without writing a specification. It carries the walkthrough's first
   `/rn:up`, the goal put to the user, and each deliverable made in rounds.
 - S2: the user wants to answer each point rn puts to them, one at a time, so that they spend their
-  time only on what's theirs to decide. It carries the answer `each file`, and each remark the user
-  makes meanwhile.
+  time only on what's theirs to decide. It carries the answer `each file`.
 - S3: the user wants to sign off the plan and each deliverable with `/rn:ty`, or send it back with
   `/rn:gm`, so that nothing rests on what they didn't mean. It carries the plan and each deliverable
   put up for sign-off, each `/rn:ty`, and `/rn:gm` with what to change or with their comments on the
@@ -39,12 +38,9 @@ What each decides alone:
   The goal, each point the purpose and the best practices leave open, each sign-off, each change to
   a best practice, each lesson sent to rn's repository, when to pause, and whether to merge.
 - orchestrator\
-  Whether a point is the user's, each other point by the purpose and the best practices, the
-  deliverables with their order, kind, and size, which go on while a sign-off waits, whether to take
-  each role's result or send it back, how to take each remark of the user's, which lacks the
-  people fall short by and the decision each changes, when a deliverable is ready for its sign-off,
-  the plan at each turn's end, which changes to a best practice and lessons to propose, and which
-  run to pick up.
+  Whether a point is the user's, and each other point from the purpose and the best practices: the
+  deliverables and their plan, whether to take each role's result or send it back, which lacks the
+  people fall short by, and what to propose at Done.
 - tree-keeper\
   How each decision of the orchestrator's goes into the design tree, which nodes a change touches,
   and the plan drafted again at each turn's end.
@@ -236,7 +232,6 @@ sequenceDiagram
   else
     Note over O,K: The rounds of each deliverable start, as S1 draws.
   end
-  Note over U,O: The orchestrator judges how to take a remark the user makes meanwhile.
 ```
 
 ### S3: a sign-off
