@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 300" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
-  <title>The evaluator gets the piece and its questions, never the design</title>
+  <title>The evaluator gets the piece and its checklist, never the design</title>
   <style>
     .bg { fill: #ffffff; }
     .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
@@ -54,16 +54,16 @@
   <rect class="lane" x="760" y="75" width="200" height="60" rx="6"/>
   <text class="name" x="860.0" y="110.0">Evaluator</text>
   <rect class="store" x="760" y="200" width="200" height="60" rx="6"/>
-  <text class="name" x="860.0" y="227.0">Questions</text>
+  <text class="name" x="860.0" y="227.0">Checklist</text>
   <text class="kind" x="860.0" y="246.0">of the piece's kind</text>
   <path class="line" d="M180,105 L256,105" marker-end="url(#a)"/>
   <path class="line" d="M430,105 L516,105" marker-end="url(#a)"/>
-  <text class="label small mid halo" x="473" y="95">makes</text>
+  <text class="label small mid halo" x="473" y="95">builds</text>
   <path class="line" d="M660,105 L756,105" marker-end="url(#a)"/>
   <text class="label small mid halo" x="708" y="95">the piece</text>
   <path class="line" d="M860,200 L860,139" marker-end="url(#a)"/>
   <path class="line dashed" d="M860,75 L860,30 L345,30 L345,71" marker-end="url(#a)"/>
-  <text class="label small mid halo" x="600" y="22">a question not met: made again</text>
+  <text class="label small mid halo" x="600" y="22">an item not met: built again</text>
   <path class="line dashed" d="M100,140 L100,280 L690,280"/>
   <path class="line" d="M684,270 L704,290 M704,270 L684,290"/>
   <text class="label small mid halo" x="400" y="270">never reaches the evaluator</text>

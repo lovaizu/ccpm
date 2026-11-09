@@ -966,7 +966,7 @@
       ]
     },
     {
-      "name": "A newcomer learns from the README what rn does",
+      "name": "A newcomer decides from the README alone whether rn fits their work, and starts using it",
       "path": "plugins/rn/README.md",
       "kind": "readme",
       "inputs": [

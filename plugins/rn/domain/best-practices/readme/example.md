@@ -1,24 +1,24 @@
 # `rn`
 
-rn is a Claude Code plugin that makes what you ask for, such as a document, code, or a plugin, so
-that the people it's for can use it for what they're after.
+rn is a Claude Code plugin that builds what you ask for, such as a document, code, or a plugin, so
+that the people who use it can do what they need with it.
 
-rn is being rebuilt, and this README describes the rebuilt rn, which isn't released yet. Until
-then, the installation below gives the earlier rn 0.9.0, which works another way, and the
-walkthrough shows the run the rebuilt rn makes, not a recorded one.
+rn is being rebuilt. This README describes the rebuilt rn, which isn't released yet. Until its release,
+the installation below installs the earlier rn 0.9.0, which works differently, and the walkthrough
+shows the run that the design of the rebuilt rn lays out, not a recorded run.
 
-rn is for you when you want an AI to make work that takes several pieces, such as a feature with
-its README and its code, and you'd rather answer a few points than read and fix drafts. With it,
-you hand the work's people what they can use without fixing it, and you answer only the points
-that are yours.
+rn is for you when you want an AI to build work made of several pieces, such as a feature with its
+README and its code, and you'd rather answer a few questions than read and fix drafts. With it, you
+hand over work that its users can use without fixes, and rn asks you only what it can't decide
+itself.
 
 **Non-goals**
 
-- rn doesn't settle your purpose or your intent. A point it leaves to you holds the work it touches
-  until you answer.
-- rn isn't for a quick draft you'll fix yourself. It plans, makes, and tries each piece, so it takes
-  longer than asking Claude Code once.
-- rn doesn't merge your work. It commits each piece on a branch and leaves one draft pull request
+- rn doesn't decide your purpose or what you want. When rn leaves a question to you, the work that
+  depends on it waits for your answer.
+- rn isn't for a quick draft that you'll fix yourself. It plans, builds, and tests each piece, so it
+  takes longer than a single prompt to Claude Code.
+- rn doesn't merge your work. It commits each piece to a branch and leaves one draft pull request
   for you to merge.
 
 ## Requirements
@@ -40,11 +40,11 @@ claude plugin install rn@ccpm
 
 ## Walkthrough
 
-At the end, your tool `tidy` has a dry run, and its README shows how to use it. You've answered
-two points and typed `/rn:up` twice.
+At the end, your tool `tidy` has a dry-run option, and its README shows how to use it. You've
+answered two questions and typed `/rn:up` twice.
 
-`tidy` sorts a Downloads folder into folders by type. You want it to show what it would move before
-it moves anything. At the root of its repository, in Claude Code, you type:
+`tidy` sorts a Downloads folder into subfolders by file type. You want it to show what it would
+move before it moves anything. In Claude Code, at the root of its repository, you type:
 
 ```text
 /rn:up tidy should show what it would move, without moving it
@@ -53,24 +53,25 @@ it moves anything. At the root of its repository, in Claude Code, you type:
 rn shows:
 
 ```text
-Goal: someone about to sort their Downloads folder with tidy sees what it would move, and moves
-nothing they didn't mean to. Is that what you're after?
+Goal: before sorting their Downloads folder with tidy, a user sees what it would move, so that
+nothing moves that they didn't intend. Is that what you want?
 ```
 
-You answer `yes, that's it`. rn shows:
+You answer `yes`. rn shows:
 
 ```text
-Plan, back from the goal:
-1. README.md: the dry run in Walkthrough, so the code is built to what the reader is told.
-2. tidy/cli.py: the option --dry-run, with its tests.
+Plan, working back from the goal:
+1. README.md: describe the dry run in the Walkthrough, so that the code is built to match what
+   the reader is told.
+2. tidy/cli.py: add the --dry-run option, with tests.
 
-Point 1 of 1 for README.md: should the dry run list each file with the folder it would go to, or
-only a count for each folder? Each would serve. I'd list each file, as the reader checks names
-before moving anything.
+Question 1 of 1 for README.md: should the dry run list each file with its target folder, or only
+a count for each folder? Either would work. I recommend listing each file, because users check
+file names before they move anything.
 ```
 
-You answer `each file`. rn makes README.md, and you close Claude Code before it goes on. The next
-day, in a new conversation, you type:
+You answer `each file`. rn updates README.md, and you close Claude Code before it continues. The
+next day, in a new conversation, you type:
 
 ```text
 /rn:up
@@ -79,83 +80,83 @@ day, in a new conversation, you type:
 rn shows:
 
 ```text
-Picking up "tidy shows what it would move" at 2. tidy/cli.py, the README done.
+Resuming "tidy shows what it would move" at step 2, tidy/cli.py. README.md is done.
 ```
 
-Some time later, rn shows:
+Later, rn shows:
 
 ```text
-Done: README.md and tidy/cli.py are changed, with tests/test_dry_run.py. Each was tried as its
-people would use it, and meets every question of its kind's best practice.
+Done: README.md and tidy/cli.py are updated, with tests/test_dry_run.py. Each piece was tried as
+its users would use it, and meets every item of its kind's checklist.
 
 Decided without asking you:
-- The README shows tidy --dry-run before tidy, as its reader checks first.   (README best practice)
-- --dry-run prints each move as "<file> -> <folder>", as the README shows.   (from README.md)
+- The README shows tidy --dry-run before tidy, because users check first.   (README best practice)
+- --dry-run prints each move as "<file> -> <folder>", as the README shows.   (README.md)
 ```
 
 ## How it works
 
 ![The usual way and rn, with the five problems marked](images/problem.svg)
 
-1. **The AI makes the one piece you asked for, and misses the others it needs, or makes them out of
-   order.** rn lays out every piece the goal needs, and the order it needs them in, and plans again
-   from what each piece and each answer shows.
-2. **The AI starts from scratch, and writes what similar texts say, not what its people need.** rn
-   makes each piece by the best practice of its kind, which holds the goal its people reach, a
-   template of what it holds, and the questions they ask of it.
-3. **Its review gives many findings, few about whether the work serves its people.** A second AI,
-   the evaluator, tries each piece as its people would, and asks only those questions. rn makes the
-   piece again until it meets every question.
-4. **It asks you what it could find out, and guesses what only you know.** rn asks you one point at
-   a time, only what the purpose and the best practices leave to you. It decides the rest, and says
-   what it decided at the end.
-5. **It skips a step it kept the time before, and a new conversation starts the work over.** Lane,
-   a plugin that comes with rn, holds each step on every run. rn keeps the work in your repository,
-   so `/rn:up` picks it up where it stopped.
+1. **The AI builds the one piece you asked for, and misses the other pieces it needs, or builds
+   them in the wrong order.** rn lists every piece the goal needs and the order to build them in.
+   It plans again after it builds each piece and after each answer.
+2. **The AI starts from scratch and writes what similar texts say, not what its users need.** rn
+   builds each piece by the best practice for its kind. A best practice states the goal that the
+   piece's users reach, a template for the piece, and a checklist of what the users need from it.
+3. **An AI review produces many findings, and few of them are about whether the work serves its
+   users.** A second AI, the evaluator, tries each piece as its users would, and checks only that
+   checklist. rn builds the piece again until it meets every item.
+4. **The AI asks you what it could find out itself, and guesses what only you know.** rn asks you
+   one question at a time, and only what the purpose and the best practices leave open. It decides
+   the rest, and reports those decisions at the end.
+5. **The AI follows a step one time and skips it the next, and a new conversation starts the work
+   over.** Lane, a plugin installed with rn, enforces each step on every run. rn keeps the work in
+   your repository, so `/rn:up` resumes where it stopped.
 
-![rn settles what the purpose or a best practice settles, and asks you the rest](images/how-asks.svg)
+![rn decides what the purpose or a best practice answers, and asks you the rest](images/how-asks.svg)
 
-**How does rn tell what to ask you?** A point that comes up while rn makes a piece goes to your
-conversation with rn. rn settles it there when the purpose or a best practice settles it. Otherwise
-it asks you, one point at a time, and you answer in your own words. rn then makes the piece
-again with your answer.
+**How does rn decide what to ask you?** When a question comes up while rn builds a piece, rn
+checks whether the purpose or a best practice answers it. If one does, rn decides it. If not, rn
+asks you, one question at a time, and you answer in your own words. rn then builds the piece again
+with your answer.
 
-![The evaluator gets the piece and its questions, never the design](images/how-evaluator.svg)
+![The evaluator gets the piece and its checklist, never the design](images/how-evaluator.svg)
 
-**How can an AI judge an AI's work?** The evaluator is a fresh AI that gets only the piece and the
-questions of its kind. It never gets the design. It judges by what the piece's people get, not by
-what its maker meant. rn weighs each lack the evaluator finds by your purpose, and the
-generator, which made the piece, makes it again for each lack its people would meet, until the piece
-meets every question.
+**How can an AI judge another AI's work?** The evaluator is a separate AI that gets only the piece
+and the checklist for its kind. It never gets the design, so it judges by what the piece's users
+get, not by what its builder intended. rn weighs each gap that the evaluator finds against your
+purpose. The generator, the AI that built the piece, builds it again for each gap that its users
+would hit, until the piece meets every item.
 
-![Lane stops a step that's broken, and shows the step's own sentence](images/how-steps.svg)
+![Lane stops a call that breaks its step, and shows the text of the step](images/how-steps.svg)
 
-**How does rn keep every step, every time?** Lane watches what each part of rn does. Lane stops
-a part that breaks a step, such as by running a command the step doesn't name, and shows it the
-step's own sentence. The part then goes back to the step.
+**How does rn follow every step, every time?** Lane watches each tool call that each part of rn
+makes. When a part breaks a step, such as by running a command that the step doesn't name, Lane
+stops the call and shows the part the text of that step. The part then returns to the step.
 
 ![Each decision and result goes into .rn/, and /rn:up reads it in a new conversation](images/how-resume.svg)
 
-**What if the conversation ends partway?** rn writes each decision and each result into the folder
-`.rn/<date>-<goal>/` of your repository as it goes. `/rn:up` alone reads that folder and goes on
-from the next step, so you never answer a point twice.
+**What if the conversation ends partway?** As it works, rn writes each decision and each result to
+the folder `.rn/<date>-<goal>/` in your repository. `/rn:up` with no arguments reads that folder
+and continues from the next step, so you never answer a question twice.
 
-![For a kind rn has no best practice for, rn makes one first](images/how-new-kind.svg)
+![For a kind of work rn has no best practice for, rn creates one first](images/how-new-kind.svg)
 
-**What if rn has no best practice for your kind of work?** rn first makes one, by its best practice
-for best practices, and keeps it in the folder `best-practices/` of `.rn/<date>-<goal>/`. It then
-makes your piece by it.
+**What if rn has no best practice for your kind of work?** rn first creates one, by its
+best practice for writing best practices. It keeps the new one in the folder
+`best-practices/` of `.rn/<date>-<goal>/`, and then builds your piece by it.
 
 ## Documentation
 
-- [Lane](../../../../lane/README.md): for one who wants to know how Lane holds each step.
+- [Lane](../../../../lane/README.md): how Lane enforces each step.
 - [Changelog](../../../CHANGELOG.md): the changes in each version.
-- [Issues](https://github.com/lovaizu/ccpm/issues): where you ask for help or report a fault.
+- [Issues](https://github.com/lovaizu/ccpm/issues): where to ask for help or report a bug.
 
 ## License
 
 [The `MIT` License](../../../../../LICENSE)
 
-rn's way of asking one point at a time with a recommendation comes from
+rn's way of asking one question at a time with a recommendation comes from
 [grilling](https://github.com/mattpocock/skills/blob/4ae2317ddb22b046e26455e4f9c9b3aaaf62212d/skills/productivity/grilling/SKILL.md),
-by Matt Pocock, under the `MIT` License that [LICENSE-grilling](../../../LICENSE-grilling) gives.
+by Matt Pocock, under the `MIT` License in [LICENSE-grilling](../../../LICENSE-grilling).
