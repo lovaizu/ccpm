@@ -29,7 +29,7 @@ The developers build a product with which its users achieve their goals.
 | N3 | C1 | Does the vision describe only what the users do and get, not how the product works inside? | the whole |
 | N4 | C2 | Does each objective have key results that measure how well and how fast its role achieves it, each with the direction that's better? | Objectives and key results |
 | N5 | C2 | Are the objectives distinct, so that each piece of work serves one of them? | Objectives and key results |
-| N6 | C3 | Does the concept state first the one way, as its maker means it, by which the product brings the users to their objectives, and then the few ideas that this way needs? | Concept |
+| N6 | C3 | Does the concept state first the one way, as its maker means it, by which the product brings the users to their objectives, and then the ideas that keep this way holding at each moment of their use? | Concept |
 
 ## Practices
 
@@ -79,12 +79,13 @@ The developers decide what to build by asking which objective a piece of work se
 
 ### N6
 
-Does the concept state first the one way, as its maker means it, by which the product brings the users to their objectives, and then the few ideas that this way needs?
+Does the concept state first the one way, as its maker means it, by which the product brings the users to their objectives, and then the ideas that keep this way holding at each moment of their use?
 
 **Thinking**
 
-The developers make many choices that no line of the vision names, and the concept lets each of them lean the same way. Fred Brooks, in The Mythical Man-Month, calls this conceptual integrity: one set of design ideas that every part follows. The one way comes from whoever conceived the product, because an analysis of what goes wrong today yields only a list of fixes with no center. Decide in order. First, get from the user how the product brings its users to their objectives. Write it in one sentence as what the users see the product do. Second, for each thing that this way needs to work, write an idea, and what it gives the role toward the objective. An idea that the way doesn't need goes. Check by taking a design choice that no line names, and deciding it by the one way.
+The developers make many choices that no line of the vision names, and the concept lets each of them lean the same way. Fred Brooks, in The Mythical Man-Month, calls this conceptual integrity: one set of design ideas that every part follows. The one way and the ideas that carry it out come from whoever conceived the product, because an analysis of what goes wrong today yields only a list of fixes with no center. Decide in order. First, get from the user how the product brings its users to their objectives, and the ideas by which it does so. Write the one way in one sentence as what the users see the product do. Second, write each idea the user gave, with what it gives the role toward the objective. Third, find where the user's ideas leave the one way unheld. Walk through the users' use in time: when they start, while the product works, when something goes wrong, and on the next use. At each moment, ask what keeps the one way holding there. Where no idea answers, propose one, and confirm it with the user. An idea that the way doesn't need goes. Check by taking a design choice that no line names, at each of those moments, and deciding it by the one way and its ideas.
 
 **Steps**
 
-1. Ask the user how the product brings its users to their objectives, before you write the concept.
+1. Ask the user how the product brings its users to their objectives, and by which ideas, before you write the concept.
+2. Confirm each idea you propose with the user.

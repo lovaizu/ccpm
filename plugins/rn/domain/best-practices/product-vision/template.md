@@ -42,5 +42,6 @@ law. They show whether a change brought its objective closer.
 > - `<the one way>`: how the product brings its users to their objectives, as its maker means it,
 >   said as what the users see the product do, in one sentence that goes on from the product's
 >   name.
-> - `<idea>`: each idea that the one way needs to work, at most five, each in a few words.
+> - `<idea>`: each idea that keeps the one way holding at a moment of the users' use, at most five,
+>   each in a few words.
 > - `<what it gives>`: what the idea gives the role toward the objective, in one short sentence.
