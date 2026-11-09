@@ -21,16 +21,18 @@ law. They show whether a change brought its objective closer.
 
 ## Concept
 
-rn instead of asking an AI in one prompt, reading its draft and fixing it:
+rn instead of letting an AI agent plan the work once, carry it out task by task, and have reviewers
+look for faults:
 
-- **The vital few only, for O1**: rn keeps in the design tree only the decisions that move the
-  goal, and makes and improves each deliverable from them by its kind's best practice, so no
-  trivial finding piles up on either.
-- **Judged by its people, for O1**: rn judges each deliverable only by whether its people get what
-  they're after.
-- **Only the user's points asked, for O1**: rn asks one point at a time, only what the purpose and
-  the best practices leave open.
-- **Planned back from the goal, replanned as it goes, for O1**: rn makes the deliverables from the
-  first and plans again from each result.
-- **Every step, every run, for O1**: rn keeps each step on every run and goes on where the work
-  stopped.
+- **Replanned toward the goal, for O1**: rn plans back from the goal and plans again after each
+  finished deliverable and each answer, so what it learns on the way changes the rest of the work,
+  and a misread in the first plan doesn't last to the end.
+- **One plan with every decision, for O1**: rn keeps the goal, the deliverables it needs, and each
+  decision with who made it in one plan, so each deliverable serves the goal and the user decides
+  each point once.
+- **Made by the established way, for O1**: rn makes each deliverable by the way its field has
+  established for its kind, so its quality doesn't rest on what an AI thinks of at the moment, and
+  rn asks the user only what that way leaves open.
+- **Judged by its people, for O1**: rn judges each deliverable by what lets its people do what
+  they're after, not by the faults a reviewer finds, so small findings off the purpose don't pile
+  up on it.
