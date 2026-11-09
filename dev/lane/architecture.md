@@ -74,6 +74,10 @@ The choices made, and why:
   A rule that names the call that shows its step done.
 - Run\
   One run of the skill that the routes name, from its call to the route that starts no more.
+- Start\
+  One start of a role in a run, with each time the main conversation resumes it.
+- Event\
+  One call of a role or of the main conversation, as Claude Code's hook input gives it.
 - Given text\
   The text that the plugin's command gave for one start, which the start must carry.
 - Port JSON\
@@ -168,7 +172,7 @@ sequenceDiagram
   participant RT as routes
   participant AD as adapter
   U->>L: print (Proposal)
-  L->>L: reads each role's steps from the plugin's files
+  L->>L: reads each role's steps from the plugin's files (Step list)
   L->>LN: checks each rule, and makes its sentence (Rule)
   L->>RT: checks the routes (Route)
   opt the proposal names an adapter
@@ -217,7 +221,7 @@ sequenceDiagram
   G-->>M: the first start
   loop until a route starts no more
     M->>R: starts the role due, with the text given (Given text)
-    G->>RT: is it the start due, with the text given (Route, Given text)
+    G->>RT: is it the start due, with the text given (Route, Start, Given text)
     alt it isn't
       G-->>M: stops it, with the start due
     else it is
@@ -253,7 +257,7 @@ sequenceDiagram
   participant G as guard
   participant LN as lanes/
   R->>G: a tool call (Event)
-  G->>LN: checks it against the step due and its rules (Rule, Trace)
+  G->>LN: checks it against the step due and its rules (Step list, Rule, Trace)
   alt the rules allow it
     G-->>R: lets it go on, and keeps it
   else it breaks a rule, as git commit does
@@ -361,6 +365,7 @@ dev/lane/
 └── tests/                          the unit, architecture, and product vision tests
 
 .lane/<yyyymmdd>-<plugin>/          the Proposal, and each adapter with its test cases
+<the plugin>/agents/                each role's Step list, with the sentences that lay.py writes
 <the plugin>/hooks/hooks.json       each hook entry
 <the plugin>/hooks/lanes.json       the Rules laid and the routes
 <the plugin>/hooks/adapters/        each adapter

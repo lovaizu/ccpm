@@ -574,27 +574,27 @@
       "necessary_conditions": [
         {
           "id": "N1",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N2",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N3",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N4",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N5",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The orchestrator's own words",
@@ -615,57 +615,57 @@
         },
         {
           "id": "N6",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N7",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N8",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N9",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N10",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N11",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N12",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N13",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N14",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N15",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N16",
-          "good": false,
+          "good": true,
           "decisions": []
         }
       ]

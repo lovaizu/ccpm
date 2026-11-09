@@ -108,9 +108,9 @@
   <text class="label small halo" x="438" y="328" text-anchor="start">each sentence</text>
   <text class="data halo" x="438" y="342" text-anchor="start">Rule, Route</text>
   <path class="line" d="M360,244 V340 H300 V652 H284" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="292" y="560" text-anchor="end">writes the sentences,</text>
-  <text class="label small halo" x="292" y="574" text-anchor="end">the hook entries, the</text>
-  <text class="label small halo" x="292" y="588" text-anchor="end">Rules laid, Lane&#x27;s code</text>
+  <text class="label small halo" x="308" y="640" text-anchor="start">lays the sentences, the hook entries,</text>
+  <text class="label small halo" x="308" y="654" text-anchor="start">and Lane&#x27;s code</text>
+  <text class="data halo" x="308" y="668" text-anchor="start">Rule, Trace, Route</text>
   <path class="line" d="M330,224 H290 V432 H244" marker-end="url(#arrow)"/>
   <text class="label small halo" x="282" y="320" text-anchor="end">runs it on its</text>
   <text class="label small halo" x="282" y="334" text-anchor="end">test cases [stdio]</text>
@@ -118,7 +118,7 @@
   <path class="line" d="M1050,260 V396" marker-end="url(#arrow)"/>
   <text class="label small halo" x="1042" y="296" text-anchor="end">runs it on each event</text>
   <text class="label small halo" x="1042" y="310" text-anchor="end">[stdin, stdout]</text>
-  <text class="data halo" x="1042" y="324" text-anchor="end">Event, Answer</text>
+  <text class="data halo" x="1042" y="324" text-anchor="end">Event</text>
   <path class="line" d="M1230,178 L1154,178" marker-end="url(#arrow)"/>
   <text class="label small halo" x="1192" y="170" text-anchor="middle">starts roles</text>
   <path class="line" d="M1230,300 H1192 V240 H1154" marker-end="url(#arrow)"/>
@@ -135,13 +135,14 @@
   <text class="data halo" x="867" y="448" text-anchor="middle">Rule, Trace, Route</text>
   <path class="line" d="M1050,480 V616" marker-end="url(#arrow)"/>
   <text class="label small halo" x="1058" y="540" text-anchor="start">keeps, reads</text>
-  <text class="data halo" x="1058" y="554" text-anchor="start">Run, Start, Result,</text>
-  <text class="data halo" x="1058" y="568" text-anchor="start">Person&#x27;s words</text>
+  <text class="data halo" x="1058" y="554" text-anchor="start">Run, Start, Event, Result,</text>
+  <text class="data halo" x="1058" y="568" text-anchor="start">Given text, Person&#x27;s words</text>
   <path class="line" d="M970,480 V560 H260 V616" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="620" y="552" text-anchor="middle">reads the steps and the Rules laid</text>
-  <path class="line" d="M990,480 V590 H120 V468" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="620" y="584" text-anchor="middle">reads a text at a port [stdio]</text>
-  <text class="data halo" x="620" y="604" text-anchor="middle">Port JSON</text>
+  <text class="data halo" x="620" y="576" text-anchor="middle">Step list, Rule, Trace, Route</text>
+  <text class="label small halo" x="620" y="552" text-anchor="middle">reads the steps, the rules, and the routes</text>
+  <path class="line" d="M990,480 V604 H120 V468" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="620" y="598" text-anchor="middle">reads a text at a port [stdio]</text>
+  <text class="data halo" x="620" y="618" text-anchor="middle">Port JSON</text>
   <text class="frame-name" x="30" y="740" text-anchor="start">Legend</text>
   <rect class="box" x="100" y="726" width="30" height="20"/>
   <text class="label small" x="140" y="740" text-anchor="start">a component of Lane, or a store of its data</text>
