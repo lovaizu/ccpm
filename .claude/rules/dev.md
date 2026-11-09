@@ -61,9 +61,9 @@ write the document from them by its kind's template.
   that rest on one decision say the same thing. The template holds each document to what its
   reader needs, as an AI told only to be brief still writes past it.
 - Rationale: the README takes two things from the product vision: what the user gains, and the
-  objectives whose main use its walkthrough runs. The architecture says how the plugin gives the
-  product vision. If you make either before the product vision, it rests on a goal that the user
-  hasn't agreed to.
+  objectives whose main use its walkthrough runs. The architecture says how the plugin gives
+  what the README promises from it. If you make either before the product vision, it rests on a
+  goal that the user hasn't agreed to.
 
 ### 2. Write the README
 

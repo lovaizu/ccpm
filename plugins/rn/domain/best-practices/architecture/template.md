@@ -1,12 +1,12 @@
 # `<Product>` architecture
 
-This document says how the parts of `<Product>` give [its product vision](<board>). `<idea>`.
+This document says how the parts of `<Product>` give what [its README](<readme>) promises. `<idea>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<board>`: the path to the product's product vision.
-> - `<idea>`: how the product turns what its roles bring into what the product vision
->   promises, as one idea seen as a whole that every part carries out. Two or three sentences.
+> - `<readme>`: the path to the product's README.
+> - `<idea>`: how the product turns what its roles bring into what the README promises, as one
+>   idea seen as a whole that every part carries out. Two or three sentences.
 
 ## User stories
 

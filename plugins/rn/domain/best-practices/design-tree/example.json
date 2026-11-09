@@ -172,6 +172,36 @@
               "about": "The walkthrough recorded",
               "decided": "the walkthrough takes its output from a recorded run of the rebuilt rn, the product vision test's own",
               "by": "reasoning"
+            },
+            {
+              "about": "Sign-offs",
+              "decided": "the user signs off the plan, the goal and the deliverables with their decisions, before rn makes anything, and each deliverable once its evaluators find it good, before the next rests on it. The last sign-off marks the draft pull request ready, and the merge stays the user's",
+              "by": "user"
+            },
+            {
+              "about": "Commands",
+              "decided": "/rn:up starts a run and picks one up, /rn:dn pauses it, /rn:ty approves the sign-off waiting, and /rn:gm sends it back with the user's words or their comments on the pull request, Done included",
+              "by": "user"
+            },
+            {
+              "about": "What a pause keeps",
+              "decided": "/rn:dn stops each role at once and commits and pushes its work so far with the step it was on. /rn:up, in any conversation or on another computer, goes on from that step, and shows where it stopped, what comes next, and the point or sign-off waiting. A run closed without /rn:dn goes back only to its last step, as rn keeps its state at the end of each step",
+              "by": "user"
+            },
+            {
+              "about": "Waiting on a sign-off",
+              "decided": "while a deliverable waits for /rn:ty, rn goes on with each deliverable that doesn't rest on it",
+              "by": "user"
+            },
+            {
+              "about": "What a sign-off shows",
+              "decided": "what the evaluators found the people can do with the deliverable, the decisions taken without asking, and a link to its changes in the pull request. /rn:gm alone takes every comment the user wrote on the pull request since the sign-off",
+              "by": "user"
+            },
+            {
+              "about": "A full conversation",
+              "decided": "rn marks its place before Claude Code compacts the conversation and goes on from its records after, so the user needn't pause for it",
+              "by": "user"
             }
           ]
         },
@@ -182,8 +212,14 @@
         },
         {
           "id": "N8",
-          "good": true,
-          "decisions": []
+          "good": false,
+          "decisions": [
+            {
+              "about": "The user's own checkout",
+              "decided": "rn works in a git worktree of its own on the work's branch, so the user goes on with their own work while rn runs",
+              "by": "user"
+            }
+          ]
         },
         {
           "id": "N9",

@@ -1,5 +1,5 @@
 {
- "goal": "The developers build and change the parts of the product so that together they deliver the product vision.",
+ "goal": "The developers build and change the parts of the product so that together they deliver what the README promises the users.",
  "template": "template.md",
  "example": "example.md",
  "source": "../../../../../dev/rn/architecture.md",
@@ -35,7 +35,7 @@
    "id": "N1",
    "csf": "C1",
    "about": "the opening",
-   "what": "Does the opening state the one idea by which the product delivers its vision?"
+   "what": "Does the opening state the one idea by which the product delivers what its README promises?"
   },
   {
    "id": "N2",
@@ -131,7 +131,7 @@
  "practices": [
   {
    "intent": "N1",
-   "thinking": "Each part is a piece of one idea, and a developer who knows the idea builds a part that serves it. The solution strategy of [arc42](https://arc42.org) states the few fundamental decisions that shape the whole system. Decide the idea in order. First, take the one way that the product vision's concept states first, by which the product brings its users to their objectives. Second, ask how the system as a whole makes that way work: what it takes in from the roles, and what it turns that into. Third, write the answer in two or three sentences that a developer can hold in mind while building any part. Point to the product vision instead of repeating it.",
+   "thinking": "Each part is a piece of one idea, and a developer who knows the idea builds a part that serves it. The solution strategy of [arc42](https://arc42.org) states the few fundamental decisions that shape the whole system. Decide the idea in order. First, take the one way that the README's How it works states first, from the product vision's concept, by which the product brings its users to their objectives. Second, ask how the system as a whole makes that way work: what it takes in from the roles, and what it turns that into. Third, write the answer in two or three sentences that a developer can hold in mind while building any part. Point to the README instead of repeating it.",
    "steps": [
     {
      "text": "After writing the rest, check that each component carries out a piece of the idea. Change the idea or the component where one doesn't."

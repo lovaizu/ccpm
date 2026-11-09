@@ -2,7 +2,7 @@
 
 ## Goal
 
-The developers build and change the parts of the product so that together they deliver the product vision.
+The developers build and change the parts of the product so that together they deliver what the README promises the users.
 
 ## Template
 
@@ -31,7 +31,7 @@ The developers build and change the parts of the product so that together they d
 
 | ID | Factor | Condition | Sections |
 | --- | --- | --- | --- |
-| N1 | C1 | Does the opening state the one idea by which the product delivers its vision? | the opening |
+| N1 | C1 | Does the opening state the one idea by which the product delivers what its README promises? | the opening |
 | N2 | C1 | Does each step of each objective's main use, as the README's walkthrough shows it, have one user story that carries it? | User stories |
 | N3 | C1 | Does each principle, user story, component, and kind of data trace to what the README promises the users, or to a need of the product's development or operation? | Principles, User stories, Components, Data model, Sequences |
 | N4 | C2 | Does each principle give a rule and a reason from which two developers decide a case that no line names the same way? | Principles |
@@ -52,11 +52,11 @@ The developers build and change the parts of the product so that together they d
 
 ### N1
 
-Does the opening state the one idea by which the product delivers its vision?
+Does the opening state the one idea by which the product delivers what its README promises?
 
 **Thinking**
 
-Each part is a piece of one idea, and a developer who knows the idea builds a part that serves it. The solution strategy of [arc42](https://arc42.org) states the few fundamental decisions that shape the whole system. Decide the idea in order. First, take the one way that the product vision's concept states first, by which the product brings its users to their objectives. Second, ask how the system as a whole makes that way work: what it takes in from the roles, and what it turns that into. Third, write the answer in two or three sentences that a developer can hold in mind while building any part. Point to the product vision instead of repeating it.
+Each part is a piece of one idea, and a developer who knows the idea builds a part that serves it. The solution strategy of [arc42](https://arc42.org) states the few fundamental decisions that shape the whole system. Decide the idea in order. First, take the one way that the README's How it works states first, from the product vision's concept, by which the product brings its users to their objectives. Second, ask how the system as a whole makes that way work: what it takes in from the roles, and what it turns that into. Third, write the answer in two or three sentences that a developer can hold in mind while building any part. Point to the README instead of repeating it.
 
 **Steps**
 
