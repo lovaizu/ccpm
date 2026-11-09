@@ -41,7 +41,7 @@ What each decides alone:
 - orchestrator\
   Whether a point is the user's, each other point by the purpose and the best practices, the
   deliverables with their order, kind, and size, which go on while a sign-off waits, whether to take
-  each role's result or send it back, which roles a remark of the user's stops, which lacks the
+  each role's result or send it back, how to take each remark of the user's, which lacks the
   people fall short by and the decision each changes, when a deliverable is ready for its sign-off,
   the plan at each turn's end, which changes to a best practice and lessons to propose, and which
   run to pick up.
@@ -236,7 +236,7 @@ sequenceDiagram
   else
     Note over O,K: The rounds of each deliverable start, as S1 draws.
   end
-  Note over U,O: The orchestrator judges a remark the user makes meanwhile as a point, and stops only each role whose cut rests on a decision it changes.
+  Note over U,O: The orchestrator judges how to take a remark the user makes meanwhile.
 ```
 
 ### S3: a sign-off
@@ -310,7 +310,7 @@ sequenceDiagram
   participant K as tree-keeper
   participant G as generator
   U->>O: /rn:up, alone, in a new conversation
-  O->>T: lists the runs left, and removes the worktree of each run merged
+  O->>T: lists the runs left
   alt no run is left
     O->>U: says so
   else more than one is left
@@ -351,7 +351,7 @@ sequenceDiagram
   O->>U: Done, with the pull request
   alt the user sends it back
     U->>O: /rn:gm with what to change, or alone
-    Note over U,O: The pull request goes back to draft, and the work goes on, as S3 draws.
+    Note over U,O: The work goes on, as S3 draws.
   else
     U->>GH: merges the pull request
   end
