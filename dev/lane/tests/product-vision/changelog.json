@@ -1,4 +1,0 @@
-{"plugin": "changelog",
- "subagents": [{"name": "writer", "steps": [
-  {"step": 2, "lanes": [{"lane": "run_only", "takes": ["git log --oneline"]}]},
-  {"step": 3, "lanes": [{"lane": "write_only", "takes": ["CHANGELOG.md"]}]}]}]}

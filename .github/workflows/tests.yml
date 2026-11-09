@@ -14,74 +14,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Every unit and architecture test of every plugin runs on each push and counts its lines and
-  # branches. The property-based tests and the mutation testing, which check that the unit tests are
-  # enough, run on what changed since the last commit of the branch whose run passed, else since the
-  # branch left main. They run for each plugin `sh dev/scripts/changed.sh` names, each in a job of
-  # its own, all at once. They run whole on main after a commit that didn't pass, and for a plugin
-  # whose version the push changes, as before a release. A push that changes only what no test
-  # reads, such as the design tree and the documents of dev/ without a diagram, runs no test, and
-  # `tests` still passes once its prose passes, as main takes a pull request only when `tests` has
-  # passed.
-  changed:
-    runs-on: ubuntu-latest
-    outputs:
-      check: ${{ steps.changed.outputs.check }}
-      plugins: ${{ steps.changed.outputs.plugins }}
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          fetch-depth: 0
-      - id: changed
-        env:
-          BRANCH: ${{ github.ref_name }}
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          # The newest commit whose run passed, in the history of the commit checked out. A run that
-          # stopped or failed checked nothing that holds, so this step checks again what that run
-          # changed.
-          passed=""
-          for sha in $(gh run list -R "$GITHUB_REPOSITORY" --workflow tests.yml --branch "$BRANCH" \
-            --status success --limit 50 --json headSha --jq '.[].headSha' 2>/dev/null); do
-            if git merge-base --is-ancestor "$sha" HEAD 2>/dev/null; then
-              passed=$sha
-              break
-            fi
-          done
-          if [ -n "$passed" ]; then
-            base=$passed
-          elif [ "$GITHUB_REF" != refs/heads/main ]; then
-            base=$(git merge-base HEAD origin/main)
-          else
-            base=""
-          fi
-          if [ -n "$base" ]; then
-            plugins=$(sh dev/scripts/changed.sh "$base" HEAD)
-          else
-            plugins=$(sh dev/scripts/plugins.sh)
-          fi
-          matrix=$(for plugin in $plugins; do
-            since=$base
-            manifest="plugins/$plugin/.claude-plugin/plugin.json"
-            if [ -n "$base" ] && git diff "$base" HEAD -- "$manifest" \
-              | grep -qE '^[-+][[:space:]]*"version"'; then
-              since=""
-            fi
-            jq -nc --arg plugin "$plugin" --arg since "$since" '{plugin: $plugin, since: $since}'
-          done | jq -sc .)
-          echo "plugins=$matrix" >> "$GITHUB_OUTPUT"
-          if [ -n "$plugins" ]; then
-            echo "check=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "check=false" >> "$GITHUB_OUTPUT"
-          fi
-
   # The oldest Python that users run and the newest, as Q13 of
   # `plugins/rn/domain/best-practices/plugin/best-practice.md` says. 3.9 runs on Ubuntu 24.04, as
   # setup-python has no 3.9 for Ubuntu 26.04, which `ubuntu-latest` now is.
   check:
-    needs: changed
-    if: needs.changed.outputs.check == 'true'
     strategy:
       matrix:
         include:
@@ -112,33 +48,7 @@ jobs:
           echo "$PWD/node_modules/.bin" >> "$GITHUB_PATH"
       - run: uv run --no-sync sh dev/scripts/check.sh
 
-  test-quality:
-    needs: changed
-    if: needs.changed.outputs.check == 'true'
-    strategy:
-      fail-fast: false
-      matrix:
-        include: ${{ fromJSON(needs.changed.outputs.plugins) }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          fetch-depth: 0
-      - id: python
-        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
-        with:
-          python-version: "3.x"
-      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
-      - env:
-          UV_PYTHON: ${{ steps.python.outputs.python-path }}
-        run: uv sync --locked --group test-quality
-      - run: uv run --no-sync sh dev/scripts/properties.sh ${{ matrix.plugin }}
-      - if: hashFiles(format('dev/{0}/cosmic-ray.toml', matrix.plugin)) != ''
-        env:
-          SINCE: ${{ matrix.since }}
-        run: uv run --no-sync sh dev/scripts/mutate.sh ${SINCE:+--since "$SINCE"} ${{ matrix.plugin }}
-
-  # What main requires: every job passed, or the checks skipped as the preceding comments say.
+  # What main requires: every job passed.
   # The prose checks of lefthook.yml on every file it doesn't exclude, as they run before each
   # commit, from lovaizu/checks at the commit of the tag lefthook.yml names.
   prose:
@@ -148,16 +58,11 @@ jobs:
       - uses: lovaizu/checks@9880b8247f74c50a51a526f178832422da33e493 # v0.1.6
 
   tests:
-    needs: [changed, check, test-quality, prose]
+    needs: [check, prose]
     if: always()
     runs-on: ubuntu-latest
     steps:
       - env:
-          CHANGED: ${{ needs.changed.result }}
-          CHECK: ${{ needs.changed.outputs.check }}
           CHECKED: ${{ needs.check.result }}
-          TESTED: ${{ needs.test-quality.result }}
           PROSE: ${{ needs.prose.result }}
-        run: |
-          [ "$CHANGED" = success ] && [ "$PROSE" = success ] || exit 1
-          [ "$CHECK" = false ] || { [ "$CHECKED" = success ] && [ "$TESTED" = success ]; }
+        run: '[ "$CHECKED" = success ] && [ "$PROSE" = success ]'

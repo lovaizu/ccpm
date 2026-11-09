@@ -1,6 +1,6 @@
 """The tests of dev/scripts/pre-push.sh: it checks the commits each push sends, given on its
 standard input as git gives them, and stops the push where the check fails. Each test runs the
-script in a repository of its own, with stand-ins for check.sh, changed.sh, uv and npm, so that it
+script in a repository of its own, with stand-ins for check.sh, uv and npm, so that it
 checks what the script decides and not the checks it runs."""
 
 from __future__ import annotations
@@ -20,11 +20,6 @@ ZERO = "0" * 40
 CHECK = """#!/bin/sh
 echo "$PWD $*" >> "$LOG/check"
 [ ! -e bad ]
-"""
-# The stand-in for changed.sh names the plugins in the file plugins of the commit it gets.
-CHANGED = """#!/bin/sh
-echo "$*" >> "$LOG/changed"
-git show "$2:plugins" 2>/dev/null || true
 """
 # The stand-in for uv runs, for `uv run --no-sync`, the command after it, and does nothing else.
 UV = """#!/bin/sh
@@ -51,7 +46,6 @@ class PrePushTest(unittest.TestCase):
         os.makedirs(scripts)
         shutil.copy(os.path.join(TOP, "dev", "scripts", "pre-push.sh"), scripts)
         self.write(os.path.join(scripts, "check.sh"), CHECK)
-        self.write(os.path.join(scripts, "changed.sh"), CHANGED)
         self.main = self.commit("plugins", "rn\n")
         self.git("update-ref", "refs/remotes/origin/main", self.main)
 
@@ -112,11 +106,10 @@ class PrePushTest(unittest.TestCase):
         local = self.commit("good", "")
         # When: git pushes it.
         done = self.push((local, self.main))
-        # Then: the push goes on, the check got --reached and the plugins changed.sh named, and no
-        # worktree stays.
+        # Then: the push goes on, the check ran with no arguments, and no worktree stays.
         self.assertEqual(done.returncode, 0, done.stderr)
         [checked] = self.read("check")
-        self.assertTrue(checked.endswith(" --reached rn"), checked)
+        self.assertEqual(len(checked.split()), 1, checked)
         self.assertEqual(len(self.worktrees()), 1)
 
     def test_the_check_reads_the_commits_pushed_not_the_working_tree(self):
@@ -130,37 +123,9 @@ class PrePushTest(unittest.TestCase):
         [checked] = self.read("check")
         self.assertNotEqual(checked.split()[0], self.repo)
 
-    def test_a_branch_on_the_remote_is_counted_from_where_the_remote_has_it(self):
-        # Given: two commits, the remote having the first.
-        first = self.commit("one", "")
-        second = self.commit("two", "")
-        # When: git pushes the second.
-        self.push((second, first))
-        # Then: changed.sh got the change from the first to the second.
-        self.assertEqual(self.read("changed"), [f"{first} {second}"])
-
-    def test_a_branch_new_on_the_remote_is_counted_from_where_it_left_main(self):
-        # Given: a commit after main.
-        local = self.commit("one", "")
-        # When: git pushes it as a branch new to the remote.
-        self.push((local, ZERO))
-        # Then: changed.sh got the change from main to the commit.
-        self.assertEqual(self.read("changed"), [f"{self.main} {local}"])
-
     def test_a_branch_deleted_is_not_checked(self):
         # When: a push deletes a branch.
         done = self.push((ZERO, self.main))
-        # Then: the push goes on, with nothing checked.
-        self.assertEqual(done.returncode, 0, done.stderr)
-        self.assertEqual(self.read("changed"), [])
-        self.assertEqual(self.read("check"), [])
-
-    def test_a_push_that_changes_no_plugin_is_not_checked(self):
-        # Given: a commit with a file the check fails, for which changed.sh names no plugin.
-        self.commit("bad", "")
-        local = self.commit("plugins", "")
-        # When: git pushes it.
-        done = self.push((local, self.main))
         # Then: the push goes on, with nothing checked.
         self.assertEqual(done.returncode, 0, done.stderr)
         self.assertEqual(self.read("check"), [])
@@ -189,7 +154,7 @@ class PrePushTest(unittest.TestCase):
                 # PATH.
                 self.assertNotEqual(done.returncode, 0)
                 self.assertIn(f"{tool} isn't on PATH", done.stderr)
-                self.assertEqual(self.read("changed"), [])
+                self.assertEqual(self.read("check"), [])
 
 
 if __name__ == "__main__":

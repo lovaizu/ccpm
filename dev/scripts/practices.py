@@ -6,7 +6,7 @@ its Markdown beside it. `example` writes the copy of its example from the work i
 and removes each file that none of them holds. Each gives 0, or 1 where it names any fault, and 2
 with its usage where it gets no command it takes. It's ccpm's own tooling, kept out of rn's
 folder, as no run of rn checks a best practice's Markdown or the copy of its example. It holds
-each best practice to rn's form of it, `plugins/rn/domain/forms/best-practice.schema.json`."""
+each best practice to its form, `forms/best-practice.schema.json` beside this script."""
 
 from __future__ import annotations
 
@@ -16,15 +16,14 @@ import re
 import sys
 from typing import Any, Callable
 
-# rn's folder of the work's knowledge. Its best practices lie there, as do their form and the code
-# that reads a file to its form.
+# rn's folder of the work's knowledge, where its best practices lie. Their form, and the code that
+# reads a file to its form, lie beside this script.
 RN = os.path.join(
     os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
     "plugins",
     "rn",
     "domain",
 )
-sys.path.insert(0, RN)  # pragma: no mutate
 
 import files
 import schema

@@ -14,18 +14,10 @@ remotes:
 # the prose of files that go is work lost.
 pre-commit:
   exclude:
-    - "plugins/lane/hooks**"
-    - "plugins/lane/scripts**"
-    - "dev/lane/tests**"
-    - "dev/lane/trials**"
-    - "dev/lane/testing.py"
-    - "dev/lane/cosmic-ray.toml"
     - "plugins/lane/docs**"
-    - "plugins/rn/hooks**"
-    - "plugins/rn/scripts**"
-    - "dev/rn/tests**"
-    - "plugins/rn/domain/[a-z]*.py"
-    - "dev/rn/cosmic-ray.toml"
+    - "dev/scripts/files.py"
+    - "dev/scripts/schema.py"
+    - "dev/scripts/tests/testing.py"
     # Files no one here writes: the lockfiles their tools write, and the
     # licenses as their authors wrote them.
     - "uv.lock"

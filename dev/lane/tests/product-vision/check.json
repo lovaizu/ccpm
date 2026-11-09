@@ -1,7 +1,0 @@
-{"plugin": "checker",
- "subagents": [{"name": "examiner", "steps": [
-  {"step": 1, "lanes": [{"lane": "read_only", "takes": ["CHANGELOG.md"]}]}]}],
- "routes": {"orchestrator": "check", "step": 1, "routes": [
-  {"from": "check", "to": "examiner"},
-  {"from": "examiner", "on": "asks"},
-  {"from": "examiner", "on": "done"}]}}

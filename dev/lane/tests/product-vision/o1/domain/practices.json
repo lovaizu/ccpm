@@ -1,4 +1,0 @@
-{"Q1": {"asks": "Does each commit a user notices have its entry?",
-        "practices": [
-         {"says": "List the commits since the last version with `git log --oneline`.", "shows": {"runs": "git log --oneline"}},
-         {"says": "Write an entry into `CHANGELOG.md` for each commit a user notices.", "shows": {"makes": "CHANGELOG.md"}}]}}

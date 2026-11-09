@@ -17,7 +17,7 @@ from typing import Any
 
 import helpers
 
-sys.path[:0] = [os.path.join(helpers.TOP, "dev", f) for f in ("scripts", "lane")]
+sys.path.insert(0, os.path.join(helpers.TOP, "dev", "scripts"))
 
 import practices
 import testing
