@@ -121,7 +121,7 @@ c. **Write each prompt, a skill or an agent, with
    [prompt/best-practice.json](../../plugins/rn/domain/best-practices/prompt/best-practice.md)
    open. Run no trial of it alone, as
    [N25 of the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#n25)
-   says.** Each rule of its steps that must hold on every run goes to a lane in d, as N14 of
+   says.** Each rule of its steps that must hold on every run goes to a lane in d, as N12 of
    `prompt/best-practice.json` says, and e tests it.
 
 d. **Lay the lanes the prompts' steps call for with `plugins/lane/scripts/lay.py`, with
@@ -140,7 +140,7 @@ e. **Write the slice's architecture tests, as
    each role an AI runs. Run them, and fix each failure at the part or the handoff where it
    lies.**
 
-**After a trial, change a prompt or a document only for a cause that the records confirm, as N15 of
+**After a trial, change a prompt or a document only for a cause that the records confirm, as N17 of
 `prompt/best-practice.json` says. Trace that cause to what the README and the architecture say the
 prompt or document should be.**
 

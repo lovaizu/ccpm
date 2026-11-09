@@ -6,10 +6,10 @@ Claude Code don't already say.
 
 ## Verification
 
-- **Check your work before you report it, as N17 of
+- **Check your work before you report it, as N15 of
   [prompt/best-practice.json](../../plugins/rn/domain/best-practices/prompt/best-practice.md)
   says.**
-- **Judge `dev/scripts/check.sh` by its exit code**, as that N17 says to judge a check.
+- **Judge `dev/scripts/check.sh` by its exit code**, as that N15 says to judge a check.
 - **A push isn't done until you have read its CI run.** The report of the push says the run's
   result.
   - Rationale: a push left unchecked hands its failure to whoever pushes next.
@@ -27,7 +27,7 @@ Claude Code don't already say.
   - Rationale: praise and a defense take the reader's attention and give them nothing to act on.
 - **Keep a code example to 10 lines or fewer.** For more, show only the lines that matter, or put
   the code in its own file.
-- **Put a decision, a proposal, or a report to the user as N16 of
+- **Put a decision, a proposal, or a report to the user as N14 of
   [prompt/best-practice.json](../../plugins/rn/domain/best-practices/prompt/best-practice.md)
   says.**
 - **Before you say that there's no way to do something, offer one other way.**
