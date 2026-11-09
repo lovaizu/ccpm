@@ -83,7 +83,7 @@
    "id": "N9",
    "csf": "C2",
    "about": "the whole",
-   "what": "Do every figure and list agree with the principles on what each part does?"
+   "what": "Do the figures, lists, and sentences agree with one another, and with the architecture that the product builds on, on what each part does?"
   },
   {
    "id": "N10",
@@ -118,7 +118,7 @@
   {
    "id": "N15",
    "csf": "C5",
-   "about": "Components, Sequences, Deployment, Directory structure, Tests",
+   "about": "Components, Deployment, Directory structure, Tests",
    "what": "Does each choice whose other way would cost a key result say what the other way would lose?"
   },
   {
@@ -201,7 +201,7 @@
   },
   {
    "intent": "N9",
-   "thinking": "A developer who finds a figure that breaks a principle must choose which one to follow, and two developers choose differently. For each principle, ask which figures and lists describe the parts it governs, and check that each of them says the same. Where one doesn't, decide by the principle's reason which is right, and change the other.",
+   "thinking": "A developer who finds two places that say different things about a part must choose which to follow, and two developers choose differently. The architecture that the product builds on, such as a shared best practice for its kind of product, holds rules that each part must keep as well. For each part, gather what every figure, list, and sentence says it does, and what each rule of that architecture asks of a part of its kind. Where two disagree, decide by the reasons of the principles and of those rules which is right, and change the other.",
    "steps": []
   },
   {
@@ -211,12 +211,12 @@
   },
   {
    "intent": "N11",
-   "thinking": "A developer making a change must find the one place it belongs. Lay out the folders by component, so that each component and each kind of data has its own place. Show each folder and file that holds a component or a kind of data, one line each, nested as on disk, without the files inside a component. Check that, for any change to a component, a developer can name the one folder it goes in.",
+   "thinking": "A developer making a change must find the one place it belongs. Lay out the folders by component, so that each component and each kind of data has its own place. First, say in one sentence for each top folder whom its files are for, such as the users who install the product or only its developers. Then show each folder and file that holds a component or a kind of data, by its real name, one line each, nested as on disk, without the files inside a component. Beside each, say what it does or holds, in the words a developer looks for when making a change. Check that, for any change to a component, a developer can name the one folder it goes in.",
    "steps": []
   },
   {
    "intent": "N12",
-   "thinking": "A part that no test level covers can break unseen. The [test pyramid](https://martinfowler.com/articles/practical-test-pyramid.html) puts most checks at the narrow, fast levels and few at the wide, slow ones. Name each level by what it checks against: unit against a part's contract, architecture against this document, and product vision against the product vision, in real use. Decide the table in order. First, list each deployment unit as a row. Second, for each level, ask what the unit must do by that level's ground, and fill the cell with the tool, how far it tries the unit, and what it checks. `FULL` tries each case and edge, `HAPPY` the main paths, and `SMOKE` one run that confirms what the lower levels checked. Third, where a cell stays empty, say why. Unit and architecture carry most of the checking, and run on every change.",
+   "thinking": "A part that no test level covers can break unseen. The [test pyramid](https://martinfowler.com/articles/practical-test-pyramid.html) puts most checks at the narrow, fast levels and few at the wide, slow ones. Name each level by what it checks against: unit against a part's contract, architecture against this document, and product vision against the product vision, in real use. Decide the table in order. First, list each deployment unit as a row. Second, for each level, ask what the unit must do by that level's ground, and fill the cell with the tool and how far it tries the unit, and nothing more. `FULL` tries each case and edge, `HAPPY` the main paths, and `SMOKE` one run that confirms what the lower levels checked. Third, where a cell stays empty, say why. Unit and architecture carry most of the checking, and run on every change.",
    "steps": [
     {
      "text": "Leave out a unit whose every cell would be empty, and say why under the table."

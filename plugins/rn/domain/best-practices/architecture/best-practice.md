@@ -39,13 +39,13 @@ The developers build and change the parts of the product so that together they d
 | N6 | C2 | Does each component state its type and its technology? | Components |
 | N7 | C2 | Does the data model show how each kind of data relates to the others, without its fields? | Data model |
 | N8 | C2 | Does each user story have a sequence that shows, at each step, which component acts, along which arrow, and with which data? | User stories, Components, Data model, Sequences |
-| N9 | C2 | Do every figure and list agree with the principles on what each part does? | the whole |
+| N9 | C2 | Do the figures, lists, and sentences agree with one another, and with the architecture that the product builds on, on what each part does? | the whole |
 | N10 | C3 | Does Deployment show where each component runs, where the product keeps each kind of data, and how the product starts? | Components, Data model, Deployment |
 | N11 | C3 | Does each component and each kind of data have one place for its files? | Components, Data model, Directory structure |
 | N12 | C4 | Does Tests show, for each deployment unit, which test levels cover it, how thoroughly, and why a level is missing? | Deployment, Tests |
 | N13 | C4 | Does each test level say what runs real, what test doubles replace, what the tests cover, and when they pass? | Tests |
 | N14 | C4 | Do the unit and architecture tests together check everything the document says the product does? | Tests |
-| N15 | C5 | Does each choice whose other way would cost a key result say what the other way would lose? | Components, Sequences, Deployment, Directory structure, Tests |
+| N15 | C5 | Does each choice whose other way would cost a key result say what the other way would lose? | Components, Deployment, Directory structure, Tests |
 | N16 | C5 | Does the document hold only what stays true while the product vision and the principles stay, and leave each component's internals out? | the whole |
 
 ## Practices
@@ -140,11 +140,11 @@ A developer building a step must know who acts there, on what, and what comes ne
 
 ### N9
 
-Do every figure and list agree with the principles on what each part does?
+Do the figures, lists, and sentences agree with one another, and with the architecture that the product builds on, on what each part does?
 
 **Thinking**
 
-A developer who finds a figure that breaks a principle must choose which one to follow, and two developers choose differently. For each principle, ask which figures and lists describe the parts it governs, and check that each of them says the same. Where one doesn't, decide by the principle's reason which is right, and change the other.
+A developer who finds two places that say different things about a part must choose which to follow, and two developers choose differently. The architecture that the product builds on, such as a shared best practice for its kind of product, holds rules that each part must keep as well. For each part, gather what every figure, list, and sentence says it does, and what each rule of that architecture asks of a part of its kind. Where two disagree, decide by the reasons of the principles and of those rules which is right, and change the other.
 
 ### N10
 
@@ -160,7 +160,7 @@ Does each component and each kind of data have one place for its files?
 
 **Thinking**
 
-A developer making a change must find the one place it belongs. Lay out the folders by component, so that each component and each kind of data has its own place. Show each folder and file that holds a component or a kind of data, one line each, nested as on disk, without the files inside a component. Check that, for any change to a component, a developer can name the one folder it goes in.
+A developer making a change must find the one place it belongs. Lay out the folders by component, so that each component and each kind of data has its own place. First, say in one sentence for each top folder whom its files are for, such as the users who install the product or only its developers. Then show each folder and file that holds a component or a kind of data, by its real name, one line each, nested as on disk, without the files inside a component. Beside each, say what it does or holds, in the words a developer looks for when making a change. Check that, for any change to a component, a developer can name the one folder it goes in.
 
 ### N12
 
@@ -168,7 +168,7 @@ Does Tests show, for each deployment unit, which test levels cover it, how thoro
 
 **Thinking**
 
-A part that no test level covers can break unseen. The [test pyramid](https://martinfowler.com/articles/practical-test-pyramid.html) puts most checks at the narrow, fast levels and few at the wide, slow ones. Name each level by what it checks against: unit against a part's contract, architecture against this document, and product vision against the product vision, in real use. Decide the table in order. First, list each deployment unit as a row. Second, for each level, ask what the unit must do by that level's ground, and fill the cell with the tool, how far it tries the unit, and what it checks. `FULL` tries each case and edge, `HAPPY` the main paths, and `SMOKE` one run that confirms what the lower levels checked. Third, where a cell stays empty, say why. Unit and architecture carry most of the checking, and run on every change.
+A part that no test level covers can break unseen. The [test pyramid](https://martinfowler.com/articles/practical-test-pyramid.html) puts most checks at the narrow, fast levels and few at the wide, slow ones. Name each level by what it checks against: unit against a part's contract, architecture against this document, and product vision against the product vision, in real use. Decide the table in order. First, list each deployment unit as a row. Second, for each level, ask what the unit must do by that level's ground, and fill the cell with the tool and how far it tries the unit, and nothing more. `FULL` tries each case and edge, `HAPPY` the main paths, and `SMOKE` one run that confirms what the lower levels checked. Third, where a cell stays empty, say why. Unit and architecture carry most of the checking, and run on every change.
 
 **Steps**
 

@@ -98,9 +98,6 @@ sequenceDiagram
   A->>B: #lt;step#gt;
 ```
 
-- `<choice>` over `<other way>`\
-  `<why>`. The cost: `<cost>`.
-
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - One section for each user story. Stories that share their steps share a section.
@@ -111,7 +108,6 @@ sequenceDiagram
 > - `<step>`: what one does to another and the data it hands on, as the data model names it, in a
 >   few words. Each branch, each step that sends work back, and each question put to the role are
 >   among them.
-> - `<choice>`, `<other way>`, `<why>`, `<cost>`: as in Components.
 
 ## Deployment
 
@@ -134,6 +130,8 @@ sequenceDiagram
 
 ## Directory structure
 
+`<places>`.
+
 ```text
 <path>  <holds>
 ```
@@ -143,9 +141,12 @@ sequenceDiagram
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<path>`: each folder and file that holds a component or a data, nested as on disk, without the
->   files inside a component.
-> - `<holds>`: the component or the data it holds, as Components names it.
+> - `<places>`: one sentence for each top folder, saying whom its files are for, such as the users
+>   who install the product or only its developers.
+> - `<path>`: each folder and file that holds a component or a data, by its real name, nested as on
+>   disk, without the files inside a component.
+> - `<holds>`: what it does or holds, in the words a developer looks for when making a change,
+>   naming the component or the data as Components and the data model name them.
 > - `<choice>`, `<other way>`, `<why>`, `<cost>`: as in Components.
 
 ## Tests
@@ -164,8 +165,8 @@ sequenceDiagram
 >   a table with a row for each deployment unit, by its name in Deployment, and a column for each
 >   test level from narrow to wide, each named by what it checks against. Unit checks against a
 >   part's contract, architecture against this document, and product vision against the product
->   vision, in real use. Each cell holds the tool, how far it tries the unit, and what it checks in
->   a few words. `FULL` tries each case and edge, `HAPPY` the main paths, and `SMOKE` a run that
+>   vision, in real use. Each cell holds the tool and how far it tries the unit, and nothing more.
+>   `FULL` tries each case and edge, `HAPPY` the main paths, and `SMOKE` a run that
 >   confirms what lower levels checked. An empty cell says why. Under it, one sentence for each
 >   level where the product differs from the shared rules says what runs real, what doubles stand
 >   in for, who stands in for the role, or when it passes.
