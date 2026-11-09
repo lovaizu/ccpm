@@ -75,18 +75,18 @@ KR1.2 counts.
 
 ## User stories
 
-- S1\
-  The user wants to type `/rn:up` with what they want, in their own words. It carries the
-  walkthrough's first `/rn:up` and the goal put to the user.
-- S2\
-  The user wants to answer each point rn puts to them, one at a time. It carries the plan shown with
-  its first point, the answer `each file`, and each remark the user makes meanwhile.
-- S3\
-  The user wants to type `/rn:up` alone in a new conversation and have rn go on where it stopped. It
-  carries the walkthrough's second `/rn:up` and `Picking up`.
-- S4\
-  The user wants each deliverable committed, one draft pull request to merge, and the decisions rn
-  took without asking. It carries the walkthrough's `Done` and the merge.
+- S1: the user wants to type `/rn:up` with what they want, in their own words, so that they get the
+  deliverable they mean without writing a specification. It carries the walkthrough's first `/rn:up`
+  and the goal put to the user.
+- S2: the user wants to answer each point rn puts to them, one at a time, so that they spend their
+  time only on what's theirs to decide. It carries the plan shown with its first point, the answer
+  `each file`, and each remark the user makes meanwhile.
+- S3: the user wants to type `/rn:up` alone in a new conversation and have rn go on where it
+  stopped, so that they never answer a point twice. It carries the walkthrough's second `/rn:up` and
+  `Picking up`.
+- S4: the user wants each deliverable committed, one draft pull request, and the decisions rn took
+  without asking, so that they check the work and merge it themselves. It carries the walkthrough's
+  `Done` and the merge.
 
 ## Components
 

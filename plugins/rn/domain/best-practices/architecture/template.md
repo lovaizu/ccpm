@@ -29,13 +29,13 @@ This document says how the parts of `<Product>` give [its product vision](<board
 
 ## User stories
 
-- `S<n>`\
-  `<role>` wants `<way>`. It carries `<steps>`.
+- `S<n>`: `<role>` wants `<way>`, so that `<benefit>`. It carries `<steps>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - `<role>`: a role of the product vision, as the product vision names it.
 > - `<way>`: one way the role meets the product at its edge, such as a command they type.
+> - `<benefit>`: what the role gains by it, toward an objective of the product vision.
 > - `<steps>`: the steps of the README's walkthrough, or of an objective's main use it doesn't
 >   run, that rest on it, and each convenience the product vision's intent asks for that it
 >   carries, such as resuming a run that stopped.
