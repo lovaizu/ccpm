@@ -21,8 +21,7 @@ law. They show whether a change brought its objective closer.
 
 ## Concept
 
-rn moves the work toward the goal by the vital few, the few points that bring it there, and piles
-up none of the trivial many.
+rn builds up the vital few, and never the trivial many.
 
 - What the user really wants, drawn out, for O1\
   rn asks the user along its design tree, the goal with every decision under it, and so draws out
