@@ -21,16 +21,18 @@ law. They show whether a change brought its objective closer.
 
 ## Concept
 
-rn revises its design tree, the goal with every decision under it, on each run by what the run
-found, and goes on by the revised tree toward the goal.
+rn moves the work toward the goal by the vital few, the few points that bring it there, and piles
+up none of the trivial many.
 
 - What the user really wants, drawn out, for O1\
-  rn asks the user along the design tree, and so draws out what they really want.
+  rn asks the user along its design tree, the goal with every decision under it, and so draws out
+  what they really want.
 - Every step by best practice, for O1\
   rn plans, makes, and asks the user, each by the best practice of its kind.
 - Judged by the people it's for, for O1\
   rn judges and improves each deliverable by whether the people it's for achieve what they're
-  after with it, and aims at the vital few, not a pile of the trivial many.
+  after with it.
 - Back to the design tree on a problem, for O1\
-  rn decides each problem it finds by going back to the design tree, and aims at the vital few, not
-  a pile of the trivial many.
+  rn decides each problem it finds by going back to the design tree.
+- The design tree revised on each run, for O1\
+  rn revises the design tree on each run by what the run found, and goes on by it toward the goal.
