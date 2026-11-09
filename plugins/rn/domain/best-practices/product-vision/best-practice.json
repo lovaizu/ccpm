@@ -60,10 +60,10 @@
  "practices": [
   {
    "intent": "N1",
-   "thinking": "The developers build for the people Roles lists, so a missing role goes unserved, and two roles merged into one get a product that fits neither. Define each role by the job it hires the product to do, as in Clayton Christensen's theory of the jobs that customers hire a product for, not by a job title. Decide the roles in order. First, list everyone who touches the product: those who use it, set it up, run it, or receive what it makes. Second, for each, ask what job they hire the product to do. Third, merge the people who hire it for the same job, and split a group whose members hire it for different jobs. Name the role `user` where there's only one. Check that each role has a job that no other role has.",
+   "thinking": "The developers build for the people Roles lists, so a missing role goes unserved, and two roles merged into one get a product that fits neither. Define each role by the job it hires the product to do, as in Clayton Christensen's theory of the jobs that customers hire a product for, not by a job title. Start from the job that the product exists to do, and name who hires it for that job. Then ask whether that job gets done only if the product also does a job for someone else, such as setting it up on a shared server. Each such person is a role as well. Split a role whose members hire the product for different jobs. Name the role `user` where there's only one. Check that each role has a job that no other role has.",
    "steps": [
     {
-     "text": "Ask the user about each person who touches the product and whose job you can't tell from what the product does."
+     "text": "Ask the user about each person whose job you can't tell from what the product does."
     }
    ]
   },
@@ -89,7 +89,7 @@
   },
   {
    "intent": "N6",
-   "thinking": "The developers make many choices that no line of the vision names, and the concept lets each of them lean the same way. April Dunford's positioning method, in Obviously Awesome, gives the decisions in order. First, name the current way: what the users do today without the product, such as asking an AI in one prompt and fixing its draft. Second, list where the product differs from that way. Third, for each difference, say what it gives the role toward an objective that the current way doesn't. Keep at most five, and put first the one the product values most, so that it settles a choice where the others conflict. Check that, given a design choice no line names, a developer can decide it by the first idea.",
+   "thinking": "The developers make many choices that no line of the vision names, and the concept lets each of them lean the same way. April Dunford's positioning method, in Obviously Awesome, gives the decisions in order. First, name the current way: what the users do today without the product, such as asking an AI in one prompt and fixing its draft. Second, for each key result, ask what in the current way makes the role fall short on it, and name the cause. Third, for each cause that the product removes, write the idea by which it removes it, and what that gives the role toward the objective. Put first the idea that moves the first key result most, so that it settles a choice where the others conflict. Check that, given a design choice no line names, a developer can decide it by the first idea.",
    "steps": [
     {
      "text": "Ask the user which idea the product values most, if the objectives don't settle it."

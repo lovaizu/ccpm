@@ -152,7 +152,7 @@ Does the host refuse each action that lies outside the task?
 
 **Thinking**
 
-A rule in words holds only while the AI follows it, so a slip of the AI can harm what lies outside the task unless the host refuses the action, by the principle of [least privilege](https://doi.org/10.1109/PROC.1975.9939). List the actions that the task must never take, such as writing where it only reads. Allow only the tools that N10's list needs. Where a tool it needs also allows an action it must never take, add a rule that the host enforces, such as a hook.
+A rule in words holds only while the AI follows it, so a slip of the AI can harm what lies outside the task unless the host refuses the action, by the principle of [least privilege](https://doi.org/10.1109/PROC.1975.9939). Allow only the tools that N10's list needs. Where a tool it needs can also act outside the task, such as writing where the task only reads, add a rule that the host enforces, such as a hook.
 
 ### N12
 

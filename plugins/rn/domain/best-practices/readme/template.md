@@ -75,9 +75,9 @@ At the end, you have `<result>`.
 
 ![The usual way and the product](images/template-problem.svg)
 
-1. `<problem>`.
+`<problem>`.
 
-   `<how it goes away>`.
+`<how it goes away>`.
 
 ### `<doubt>`
 
@@ -92,19 +92,18 @@ At the end, you have `<result>`.
 > - The first figure: the deliverable's own, at images/problem.svg, with the product named in its
 >   alt text. The skeleton here is one such form: the way the reader would do the work without the
 >   product on top, and the product below it, with the problem left in the one and gone in the other.
-> - `<problem>`, `<how it goes away>`: each problem the reader feels in the work, in their words,
->   and in a sentence or two what the product does that makes it go away. A numbered list, each
->   item's number the one the figure marks it with. The problem stands on the item's first line,
->   and how it goes away follows as a paragraph of its own.
+> - `<problem>`, `<how it goes away>`: the problem that brings the reader to the product, in their
+>   words, and in a sentence or two what the product changes that makes it go away, each a
+>   paragraph of its own.
 > - The second figure: what shows how the product does the doubted thing, under the doubt's
 >   heading, before its paragraph. It's a figure of the deliverable's own at images/how-<name>.svg
 >   with the product named in its alt text, a table, or the real thing from the walkthrough's
->   example, such as a message. The skeleton here is one such form: the user,
->   the product's parts and what they pass, with the lines that do it marked. Leave it out where
->   the paragraph is enough.
-> - `<doubt>`, `<how it does it>`: each point where a newcomer would ask whether the product can
->   really do that, and in a sentence or two how the product does it. The doubt, as the reader would
->   ask it, is a heading of its own.
+>   example, such as a message. The skeleton here is one such form: the user, the product's parts
+>   and what they pass, with the lines that do it marked. Leave it out where the paragraph is
+>   enough.
+> - `<doubt>`, `<how it does it>`: for each key result of the product, the newcomer's doubt that the
+>   product achieves it, as they would ask it, as a heading of its own, and in a sentence or two
+>   how the product does it.
 > - `<title>`, `<path>`: the page that explains it further, where it needs a long sequence of
 >   figures. Leave it out where the paragraph is enough.
 

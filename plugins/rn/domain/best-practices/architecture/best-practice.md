@@ -45,7 +45,7 @@ The developers build and change the parts of the product so that together they d
 | N12 | C4 | Does Tests show, for each deployment unit, which test levels cover it, how thoroughly, and why a level is missing? | Deployment, Tests |
 | N13 | C4 | Does each test level say what runs real, what test doubles replace, what the tests cover, and when they pass? | Tests |
 | N14 | C4 | Do the unit and architecture tests together check everything the document says the product does? | Tests |
-| N15 | C5 | Does each choice that a developer would question say what the other way would lose? | Components, Sequences, Deployment, Directory structure, Tests |
+| N15 | C5 | Does each choice whose other way would cost a key result say what the other way would lose? | Components, Sequences, Deployment, Directory structure, Tests |
 | N16 | C5 | Does the document hold only what stays true while the product vision and the principles stay, and leave each component's internals out? | the whole |
 
 ## Practices
@@ -88,7 +88,7 @@ Does each principle give a rule and a reason from which two developers decide a 
 
 **Thinking**
 
-Developers of different parts meet the same kind of decision, and decide it apart unless a principle settles it. The principles of The Open Group Architecture Framework (TOGAF) give each a statement, a rationale, and its implications. Decide the principles in order. First, list the decisions that more than one part meets, where two developers could choose differently, such as how parts store their state. Second, for each, write the rule in one to three short sentences. Third, write the reason: what goes wrong without the rule, for a role of the product vision, naming the key result it guards, or for the developers or operators. A developer carries the reason to a case that the rule doesn't name. Point to the principles of any architecture this one builds on, and write only what this product adds or changes.
+Developers of different parts meet the same kind of decision, and decide it apart unless a principle settles it. The principles of The Open Group Architecture Framework (TOGAF) give each a statement, a rationale, and its implications. Derive the principles from the opening's one idea. First, ask what every part must hold alike for the idea to come true, such as where the work's state lives. A part that held it otherwise would break a key result. Each answer is a principle. Second, for each, write the rule in one to three short sentences. Third, write the reason: what goes wrong without the rule, for a role of the product vision, naming the key result it guards, or for the developers or operators. A developer carries the reason to a case that the rule doesn't name. Point to the principles of any architecture this one builds on, and write only what this product adds or changes.
 
 **Steps**
 
@@ -100,7 +100,7 @@ Does each decision that the stories need belong to exactly one component?
 
 **Thinking**
 
-Two components that make the same decision make it twice, and the two copies drift apart. David Parnas's information hiding gives each module one decision that's likely to change, and hides it from the rest. Decide the components in order. First, list each decision that the stories need, by asking at each step of each sequence what someone must decide there. Second, give each decision to one component, putting first the decisions that are hard to make or likely to change. Third, where two components need the same decision, give it to one, and have the other ask that one. List under the figure what each component alone decides.
+Two components that make the same decision make it twice, and the two copies drift apart. David Parnas's information hiding gives each module one decision that's hard to make or likely to change, and hides it from the rest. Decide the components in order. First, take from the stories the decisions that are hard to make or likely to change, such as where the product keeps the work's state. Second, give each such decision to one component. Third, where two components need the same decision, give it to one, and have the other ask that one. List under the figure what each component alone decides.
 
 **Steps**
 
@@ -214,15 +214,15 @@ The product vision tests are slow and few, so they can only confirm what the low
 
 ### N15
 
-Does each choice that a developer would question say what the other way would lose?
+Does each choice whose other way would cost a key result say what the other way would lose?
 
 **Thinking**
 
-A developer who doubts a choice and can't see what it was for may undo it and bring back the problem it solved. An [architecture decision record](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions), by Michael Nygard, keeps a decision with its context and consequences. For each choice that a developer would question, such as a technology, a tool, or how far a level tests a unit, name the other way it beat, what the choice gives, ending with the key result it serves, and what it costs. Write it beside the choice, one sentence for each.
+A developer who doubts a choice and can't see what it was for may undo it and bring back the problem it solved. An [architecture decision record](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions), by Michael Nygard, keeps a decision with its context and consequences. For each choice whose other way would bring back a problem that costs a key result, such as a technology, a tool, or how far a level tests a unit, name the other way it beat, what the choice gives, ending with the key result it serves, and what it costs. Write it beside the choice, one sentence for each.
 
 **Steps**
 
-1. Read each figure as a developer new to the product, and give a reason and a cost to each choice they would question.
+1. For each choice that a figure shows, ask what the other way would bring back. Give a reason and a cost only where it would cost a key result.
 
 ### N16
 

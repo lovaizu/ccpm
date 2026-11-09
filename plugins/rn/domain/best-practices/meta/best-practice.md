@@ -54,7 +54,7 @@ Do the critical success factors name the few things that must all hold for the u
 
 **Thinking**
 
-The factors decide where the generator spends its effort, so they must be the few things that the users can't reach the goal without, as John Rockart defined critical success factors, usually three to six. Find them by walking through the users' use of the deliverable, from the moment they first meet it to the moment they reach the goal. At each moment, ask what must be true here, or the users stop or go wrong. Write each answer as a state in one sentence. Merge the states that fail together, and keep only the vital few, in Joseph Juran's term. Then test the set in both directions. For necessity, ask of each factor: if it failed, would the users still reach the goal? If they would, drop it. For sufficiency, ask of the set: if every factor held, could the users still fail? If they could, find the missing factor.
+The factors decide where the generator spends its effort, so they must be the few things that the users can't reach the goal without, as John Rockart defined critical success factors, usually three to six. Derive them from the goal: ask what must go right for the users to reach it, or they fail. Write each answer as a state in one sentence, and merge two states that fail together. These are the vital few, in Joseph Juran's term. Then test the set in both directions. For necessity, ask of each factor: if it failed, would the users still reach the goal? If they would, drop it. For sufficiency, walk through the users' use of the deliverable, from the moment they first meet it to the moment they reach the goal. At each moment, ask whether the users could still stop or go wrong there while every factor holds. If they could, find the missing factor.
 
 ### N3
 
@@ -66,8 +66,7 @@ The conditions are what the generator meets and the evaluator checks, so each mu
 
 **Steps**
 
-1. If a deliverable that meets every condition still fails its users, find the level that caused it, whether the goal, a factor, a condition, or a practice, and fix it there.
-2. To improve a best practice, start from the conditions that use has confirmed, and add what research shows.
+1. If a deliverable that meets every condition still fails its users, find the level that caused it, whether the goal, a factor, a condition, or a practice, and rebuild that level from the level it serves.
 
 ### N4
 
@@ -95,7 +94,7 @@ A practice is the only place where the generator learns how to meet a condition 
 **Steps**
 
 1. Give a trace to each step that every run takes and a tool call shows: a command it runs, a file it reads in full, or a file it writes. Order the steps as their calls come, because a checker such as Lane checks each step by its trace in that order. The evaluator checks the steps that are judgments.
-2. Where the generator must find the content before it writes it, such as the users of a product vision, say where to look, how to find all of it, and when to ask the user.
+2. Where the generator must find the content before it writes it, such as the users of a product vision, say what the content serves, how to derive it from that, and when to ask the user.
 
 ### N6
 
@@ -129,7 +128,3 @@ Does following the best practice put into the deliverable only the vital few, th
 **Thinking**
 
 A deliverable that holds the trivial many beside the vital few buries what its users need, and each round of work adds more. Joseph Juran named the few causes that decide most of a result the vital few. Get them by building, not by checking: each level of the best practice is the vital few of the level it serves. The goal names the one purpose, the factors the few things that purpose can't go without, and each condition the state that a factor needs. Write each practice the same way: start from what its condition serves, and derive the content from it, such as a README's problems from the product vision's objectives and their key results. A practice whose steps collect every item of a kind and then keep some, such as every problem readers have, fills the deliverable with the many. Never add a question or a check for fewness. It adds findings of its own, and the few follow from the build.
-
-**Steps**
-
-1. Follow only the practices on a real deliverable of the kind. For each part of the result, ask whether its users would fail their goal without it. Where they wouldn't, find the practice that produced the part, and rewrite that practice to start from what it serves.

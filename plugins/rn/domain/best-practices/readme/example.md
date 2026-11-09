@@ -98,81 +98,24 @@ Decided without asking you:
 
 ![In the usual way you are in the fix loop, and with rn the loop runs without you](images/problem.svg)
 
-1. Each round of fixes adds to the draft, and the few points that matter get lost among the many
-   that don't.
+When you ask an AI in one prompt, you read each draft and ask for fixes. Each round adds to the
+draft, and the few points that matter get lost among the many that don't.
 
-   rn keeps in a design tree only the decisions that matter to the goal, and builds each piece from
-   them by the best practice for its kind. A shortfall changes the decision it comes from, not the
-   piece.
+rn takes you out of that loop. It keeps in a design tree only the decisions that matter to your
+goal, and builds each piece from them by the best practice for its kind. A shortfall changes the
+decision it comes from, not the piece, so the piece never fills up with fixes.
 
-2. You or an AI judge the draft by how it reads, not by whether its users can use it.
+### Does what rn hands over work without your fixes?
 
-   A second AI, the evaluator, reads each piece as its users would. rn builds the piece again until
-   its users get what they need from it.
+A second AI, the evaluator, reads each piece as its users would, with only what they have, and
+never the design. rn builds the piece again from the design tree until its users get what they
+need from it.
 
-3. The AI guesses what only you know, and asks you what it could find out itself.
+### How much of your time does it take?
 
-   rn asks you one point at a time, and only what your purpose and the best practices leave open. It
-   decides the rest, and reports those decisions at the end.
-
-4. The AI builds the one piece you asked for, and misses the other pieces it needs, or builds them
-   in the wrong order.
-
-   rn lists every piece your goal needs, in the order to build them, and builds them from the first.
-   It plans again after each answer and each piece.
-
-5. The AI keeps a step one time and skips it the next, and a new conversation starts the work over.
-
-   Lane, a plugin installed with rn, holds each part of rn to its steps on every run. Your
-   repository keeps the work, so `/rn:up` goes on where it stopped.
-
-### Which points does rn ask you?
-
-| Point in the walkthrough | Settled by | Why |
-| --- | --- | --- |
-| Should the dry run list each file, or a count for each folder? | you | Either would work, and your purpose doesn't say which your users need. |
-| The README shows `tidy --dry-run` before `tidy`. | rn | The README best practice puts first what the reader does first. |
-| `--dry-run` prints each move as `<file> -> <folder>`. | rn | README.md, already done, shows that output. |
-
-rn settles a point itself when your purpose, a best practice, or a piece already done answers it.
-It asks you the rest, with the option it recommends.
-
-### How can an AI judge another AI's work?
-
-| | Generator, which builds the piece | Evaluator, which judges it |
-| --- | --- | --- |
-| What the piece's users need from it | yes | yes |
-| The decisions in the design tree | yes | no |
-| The best practice's steps | yes | no |
-| The piece, and a record of it tried in a throwaway copy | builds them | yes |
-
-The evaluator gets only what the piece's users have. It judges what they get, not what the
-generator meant.
-
-### Won't rn's fixes pile up too?
-
-rn takes a shortfall that the evaluator names only where the users would fall short without it,
-and then changes the decision the shortfall comes from. The next round builds the piece from the
-design tree again, so every part of the piece rests on a decision.
-
-### How does rn follow every step, every time?
-
-![Lane stops a call that breaks its step, and shows the text of the step](images/how-steps.svg)
-
-Lane watches each tool call that each part of rn makes. When a part breaks a step, such as by
-running a command that the step doesn't name, Lane stops the call and shows the part the text of
-that step. The part then returns to the step.
-
-### What if the conversation ends partway?
-
-rn commits each decision and each finished piece to your work's branch as it goes, in the folder
-`.rn/<date>-<goal>/` and at the piece's own path. `/rn:up` alone, in a new conversation, reads that
-folder and goes on from the next step, so you never answer a point twice.
-
-### What if rn has no best practice for your kind of work?
-
-rn first makes one, by its best practice for best practices, and keeps it in the folder
-`.rn/<date>-<goal>/`. It then builds your piece by it.
+You answer only what your purpose and the best practices leave open, one point at a time. In the
+walkthrough, that's two answers. rn keeps the work in your repository as it goes, so `/rn:up` in a
+new conversation goes on where it stopped, and you never answer a point twice.
 
 ## Documentation
 

@@ -1001,18 +1001,18 @@
           "good": true,
           "decisions": [
             {
-              "about": "The pains",
-              "decided": "one pain for each idea of the product vision's Concept, in its order, each in the words of someone who asks an AI in one prompt and fixes its draft",
+              "about": "The problem",
+              "decided": "from the concept's first idea: asking an AI in one prompt keeps the user in the fix loop, and the fixes bury the few points that matter",
               "by": "reasoning"
             },
             {
-              "about": "The change behind them",
-              "decided": "in the usual way the user is in the fix loop. With rn the loop runs between the generator and the evaluator, from the design tree, and the user answers only their points",
+              "about": "The change",
+              "decided": "rn takes the user out of the loop: it builds from only the decisions that matter, and a shortfall changes its decision, not the piece",
               "by": "reasoning"
             },
             {
               "about": "The form",
-              "decided": "one before-and-after figure of who is in the fix loop, each pain marked on it, and a numbered item for each pain with what rn changes",
+              "decided": "one before-and-after figure of who is in the fix loop, then the problem and the change as a paragraph each",
               "by": "reasoning"
             }
           ]
@@ -1022,33 +1022,13 @@
           "good": true,
           "decisions": [
             {
-              "about": "Which points rn asks the user",
-              "decided": "a table that gives who settled each point of the walkthrough and by what",
+              "about": "KR1.1",
+              "decided": "the doubt whether what rn hands over works without fixes, answered by the evaluator reading each piece as its users would",
               "by": "reasoning"
             },
             {
-              "about": "How an AI can judge another AI's work",
-              "decided": "a table of what the generator and the evaluator each get: the evaluator gets only what the deliverable's people have",
-              "by": "reasoning"
-            },
-            {
-              "about": "Why rn's fixes don't pile up",
-              "decided": "one sentence: a shortfall goes on only where the people fall short without it, and it changes the decision it comes from, not the deliverable",
-              "by": "reasoning"
-            },
-            {
-              "about": "How rn keeps every step",
-              "decided": "the figure of Lane stopping a call that breaks its step",
-              "by": "reasoning"
-            },
-            {
-              "about": "A conversation that ends partway",
-              "decided": "one sentence: rn commits each decision and deliverable on the work's branch as it goes, and /rn:up alone picks up from it",
-              "by": "reasoning"
-            },
-            {
-              "about": "A kind with no best practice",
-              "decided": "one sentence: rn makes one first by its best practice for best practices, and keeps it in the run's folder",
+              "about": "KR1.2",
+              "decided": "the doubt how much of the user's time it takes, answered by only their points, one at a time, and picking up where it stopped",
               "by": "reasoning"
             }
           ]

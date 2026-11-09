@@ -171,11 +171,11 @@ Does a script or a tool check everything that a machine can check, leaving to th
 
 **Thinking**
 
-A tool finds the same thing every time, at once, while an AI finds only some, and spends a round on each. List what each role's work must hold. For each item, ask whether a machine can see it. If it can, give it to a script, a hook, or the project's own tools, such as a formatter, a linter, or a type checker. Leave to an AI only what no machine can check.
+A tool finds the same thing every time, at once, while an AI finds only some, and spends a round on each. Take the conditions that the best practice of each role's work sets. For each condition, ask whether a machine can see it. If it can, give it to a script, a hook, or the project's own tools, such as a formatter, a linter, or a type checker. Leave to an AI only what no machine can check.
 
 **Steps**
 
-1. Give each item that a machine can see to a script that the role runs before it gives its result.
+1. Give each condition that a machine can see to a script that the role runs before it gives its result.
 
 ### N11
 
@@ -251,7 +251,7 @@ After each run, does the plugin find what fell short and why, and put each lesso
 
 **Thinking**
 
-A lesson met once should improve every later run, and the user chooses what leaves their project. After the caller approves the work, the main conversation looks once through what the run kept for what fell short and why, quoting each cause from the records. For each lesson, ask whether it's the project's own or general. A lesson of the project's own goes into the project's rules. A general lesson goes to the plugin's repository as an issue, only when the user says yes.
+A lesson met once should improve every later run, and the user chooses what leaves their project. After the caller approves the work, the main conversation asks once where the run fell short of its goal or cost the user time, and finds why in the records, quoting each cause. For each lesson, ask whether it's the project's own or general. A lesson of the project's own goes into the project's rules. A general lesson goes to the plugin's repository as an issue, only when the user says yes.
 
 **Steps**
 

@@ -34,8 +34,8 @@ A newcomer decides from the README alone whether the product fits their work, an
 | N4 | C1 | Does the README name the license and link its full text? | License |
 | N5 | C1 | Does the README answer each question in the order a reader comes to ask it? | the whole |
 | N6 | C2 | Does the walkthrough show a real run that delivers, on typical work, the benefit the opening promises? | Walkthrough |
-| N7 | C2 | Does the README show, for each problem readers have today, how the product removes it? | How it works |
-| N8 | C2 | Does the README show how the product does each thing a newcomer would doubt it can do? | How it works |
+| N7 | C2 | Does the README show how the product removes the problem that brings readers to it? | How it works |
+| N8 | C2 | Does the README show how the product achieves each key result that a newcomer would doubt? | How it works |
 | N9 | C3 | Can a reader with nothing set up install the product by the README alone, and see that it works? | Requirements, Installation |
 | N10 | C3 | Does the README link where to go for fuller use and for help? | Documentation |
 
@@ -60,11 +60,11 @@ Does the README list what readers might expect the product to do but it doesn't?
 
 **Thinking**
 
-A reader who needs something the product doesn't do should find out before they install it. Decide which expectations to list by asking, for each thing similar products do and each thing readers ask about: would a reasonable reader assume this product does it, and would its absence change their decision? List only those that pass both questions. Where the product meets the need another way, say so in the same item. A design document lists its non-goals for the same reason: they mark the edge of the scope where readers would otherwise guess.
+A reader who needs something the product doesn't do should find out before they install it. Derive the expectations from the opening: its category and its key benefit lead a reader to expect certain things, such as undoing its changes from a tool that edits files. For each thing the opening leads a reader to expect, ask whether the product does it, and whether its absence would change the reader's decision. List only those that the product doesn't do and whose absence would. Where the product meets the need another way, say so in the same item. A design document lists its non-goals for the same reason: they mark the edge of the scope where readers would otherwise guess.
 
 **Steps**
 
-1. Collect what readers expect from similar products and what they ask about, and ask the user whether each is in scope.
+1. Ask the user about each expectation whose scope the product vision doesn't settle.
 
 ### N3
 
@@ -115,28 +115,28 @@ A reader trusts a benefit they've seen happen more than one they only read about
 
 ### N7
 
-Does the README show, for each problem readers have today, how the product removes it?
+Does the README show how the product removes the problem that brings readers to it?
 
 **Thinking**
 
-A reader chooses a product when they recognize their own problem and see it gone. Alexander Osterwalder's Value Proposition Canvas gives the first decisions. List the pains that readers have with their current way of working, in their words, and keep those that a target reader actually feels and that the product removes. For each pain, decide the one point that the reader must take away: what the product changes so that the pain goes away. Then choose the form by what the point compares, as Gene Zelazny's Say It With Charts does: decide the message, then the comparison, then the form that shows it at a glance. A change in who does what, or in where a step happens, is a before-and-after comparison: draw the current way and the product's way side by side. Show the pain in the current way, and its absence in the product's way. If one figure shows the change behind all the pains, draw one and mark each pain on it. A point that one sentence makes clear needs no figure. Check that a newcomer can say back, for their own pain, what the product changes.
+A reader chooses a product when they recognize their own problem and see it gone. Take the problem from the product vision. The first idea of its concept is what the product values most, set against the current way of working. The problem is where the current way fails the target reader on that idea, in the reader's words, such as reading and fixing an AI's drafts round after round. Decide the one point that the reader must take away: what the product changes so that the problem goes away. The other ideas of the concept serve that change, so show each only as a part of it. Then choose the form by what the point compares, as Gene Zelazny's Say It With Charts does: decide the message, then the comparison, then the form that shows it at a glance. A change in who does what, or in where a step happens, is a before-and-after comparison. Draw the current way and the product's way side by side, with the problem in the one and gone in the other. A point that one sentence makes clear needs no figure. Check that a newcomer can say back what the product changes for them.
 
 **Steps**
 
-1. Take the pains from the Concept section of the product vision, one for each idea where the current way falls short, and from what readers complain about in the current way. The trace: `{inputs}` read to its end.
-2. For each pain, take from the design what the product changes. Ask the user about any that the design doesn't settle.
+1. Take the problem from the first idea of the product vision's concept and the current way it names. The trace: `{inputs}` read to its end.
+2. Take from the design what the product changes. Ask the user where the design doesn't settle it.
 
 ### N8
 
-Does the README show how the product does each thing a newcomer would doubt it can do?
+Does the README show how the product achieves each key result that a newcomer would doubt?
 
 **Thinking**
 
-A reader believes a product can do something once they can picture it happening. Don Norman calls this picture the conceptual model, in The Design of Everyday Things. Decide each answer in order. First, write the doubt in the reader's words, such as: does it really follow every step? Second, decide the one point that resolves it, in one sentence, such as: code outside the AI enforces each step, not the AI's memory. If you can't write the point in one sentence, you don't yet understand the design well enough to explain it. Third, decide what the point compares or what motion it shows, as Gene Zelazny's Say It With Charts does. Fourth, choose the form that shows it most directly. If the real thing can show it, such as a screen, a message, or a folder listing from the walkthrough's example, show the real thing. A flow takes a figure, a comparison takes a table, and a point that one sentence makes clear takes the sentence. Check that a newcomer can say the point back after seeing the answer.
+A reader tries a product once they believe it gives what it promises, and the product vision's key results say what it promises: how well and how fast the reader reaches the objective. A reader believes it once they can picture it happening. Don Norman calls this picture the conceptual model, in The Design of Everyday Things. Decide each answer in order. First, for each key result, write the reader's doubt in their words, such as: does what comes out work without fixes? Second, decide the one point that resolves it, in one sentence, such as: a second AI reads each piece as its users would, and rn builds it again until they get what they need. If you can't write the point in one sentence, you don't yet understand the design well enough to explain it. Third, decide what the point compares or what motion it shows, as Gene Zelazny's Say It With Charts does. Fourth, choose the form that shows it most directly. If the real thing can show it, such as a message from the walkthrough's example, show the real thing. A flow takes a figure, a comparison takes a table, and a point that one sentence makes clear takes the sentence. Check that a newcomer can say the point back after seeing the answer.
 
 **Steps**
 
-1. Read the README as a newcomer, and mark each claim that the current way can't match. For each answer, ask what the newcomer would doubt next, until no doubt remains. The trace: `{deliverable}` read to its end.
+1. Take each key result from the product vision's objectives. The trace: `{inputs}` read to its end.
 2. For each doubt, take how the product does it from the design. Ask the user about any that the design doesn't settle.
 
 ### N9

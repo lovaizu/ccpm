@@ -119,7 +119,7 @@
    "id": "N15",
    "csf": "C5",
    "about": "Components, Sequences, Deployment, Directory structure, Tests",
-   "what": "Does each choice that a developer would question say what the other way would lose?"
+   "what": "Does each choice whose other way would cost a key result say what the other way would lose?"
   },
   {
    "id": "N16",
@@ -160,7 +160,7 @@
   },
   {
    "intent": "N4",
-   "thinking": "Developers of different parts meet the same kind of decision, and decide it apart unless a principle settles it. The principles of The Open Group Architecture Framework (TOGAF) give each a statement, a rationale, and its implications. Decide the principles in order. First, list the decisions that more than one part meets, where two developers could choose differently, such as how parts store their state. Second, for each, write the rule in one to three short sentences. Third, write the reason: what goes wrong without the rule, for a role of the product vision, naming the key result it guards, or for the developers or operators. A developer carries the reason to a case that the rule doesn't name. Point to the principles of any architecture this one builds on, and write only what this product adds or changes.",
+   "thinking": "Developers of different parts meet the same kind of decision, and decide it apart unless a principle settles it. The principles of The Open Group Architecture Framework (TOGAF) give each a statement, a rationale, and its implications. Derive the principles from the opening's one idea. First, ask what every part must hold alike for the idea to come true, such as where the work's state lives. A part that held it otherwise would break a key result. Each answer is a principle. Second, for each, write the rule in one to three short sentences. Third, write the reason: what goes wrong without the rule, for a role of the product vision, naming the key result it guards, or for the developers or operators. A developer carries the reason to a case that the rule doesn't name. Point to the principles of any architecture this one builds on, and write only what this product adds or changes.",
    "steps": [
     {
      "text": "Take a case that no rule names, and decide it from each reason as two developers of different parts would. Where they differ, sharpen the reason."
@@ -169,7 +169,7 @@
   },
   {
    "intent": "N5",
-   "thinking": "Two components that make the same decision make it twice, and the two copies drift apart. David Parnas's information hiding gives each module one decision that's likely to change, and hides it from the rest. Decide the components in order. First, list each decision that the stories need, by asking at each step of each sequence what someone must decide there. Second, give each decision to one component, putting first the decisions that are hard to make or likely to change. Third, where two components need the same decision, give it to one, and have the other ask that one. List under the figure what each component alone decides.",
+   "thinking": "Two components that make the same decision make it twice, and the two copies drift apart. David Parnas's information hiding gives each module one decision that's hard to make or likely to change, and hides it from the rest. Decide the components in order. First, take from the stories the decisions that are hard to make or likely to change, such as where the product keeps the work's state. Second, give each such decision to one component. Third, where two components need the same decision, give it to one, and have the other ask that one. List under the figure what each component alone decides.",
    "steps": [
     {
      "text": "Label each arrow with what one component does to another and the data it passes, not a word such as `uses`."
@@ -285,10 +285,10 @@
   },
   {
    "intent": "N15",
-   "thinking": "A developer who doubts a choice and can't see what it was for may undo it and bring back the problem it solved. An [architecture decision record](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions), by Michael Nygard, keeps a decision with its context and consequences. For each choice that a developer would question, such as a technology, a tool, or how far a level tests a unit, name the other way it beat, what the choice gives, ending with the key result it serves, and what it costs. Write it beside the choice, one sentence for each.",
+   "thinking": "A developer who doubts a choice and can't see what it was for may undo it and bring back the problem it solved. An [architecture decision record](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions), by Michael Nygard, keeps a decision with its context and consequences. For each choice whose other way would bring back a problem that costs a key result, such as a technology, a tool, or how far a level tests a unit, name the other way it beat, what the choice gives, ending with the key result it serves, and what it costs. Write it beside the choice, one sentence for each.",
    "steps": [
     {
-     "text": "Read each figure as a developer new to the product, and give a reason and a cost to each choice they would question."
+     "text": "For each choice that a figure shows, ask what the other way would bring back. Give a reason and a cost only where it would cost a key result."
     }
    ]
   },

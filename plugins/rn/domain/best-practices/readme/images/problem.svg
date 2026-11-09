@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 610" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
-  <title>In the usual way you are in the fix loop, and with rn the loop runs without you, with the five problems marked</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 530" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+  <title>In the usual way you are in the fix loop, and with rn the loop runs without you</title>
   <style>
     .bg { fill: #ffffff; }
     .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
@@ -44,77 +44,51 @@
       <path class="head" d="M0,0 L10,5 L0,10 z"/>
     </marker>
   </defs>
-    <rect class="bg" width="1000" height="610"/>
-  <rect class="frame" x="10" y="10" width="980" height="230" rx="8"/>
+      <rect class="bg" width="1000" height="530"/>
+  <rect class="frame" x="10" y="10" width="980" height="180" rx="8"/>
   <text class="frame-name" x="24" y="32">The usual way: you ask an AI in one prompt, and you are in the fix loop</text>
-  <rect class="box" x="40" y="70" width="120" height="60" rx="6"/>
-  <text class="name" x="100.0" y="105.0">You</text>
-  <rect class="box" x="330" y="70" width="150" height="60" rx="6"/>
-  <text class="name" x="405.0" y="105.0">AI</text>
-  <rect class="store" x="620" y="70" width="120" height="60" rx="6"/>
-  <text class="name" x="680.0" y="105.0">Draft</text>
-  <path class="line" d="M160,100 L326,100" marker-end="url(#a)"/>
-  <text class="label small mid halo" x="243" y="90">a prompt,</text>
-  <text class="label small mid halo" x="243" y="118">each gap a guess</text>
-  <path class="line" d="M480,100 L616,100" marker-end="url(#a)"/>
-  <text class="label small mid halo" x="548" y="90">one piece,</text>
-  <text class="label small mid halo" x="548" y="118">the rest missed</text>
-  <path class="line" d="M680,130 L680,185 L100,185 L100,134" marker-end="url(#a)"/>
-  <text class="label small mid halo" x="290" y="172">judged by how it reads to you</text>
-  <text class="label small mid halo" x="530" y="172">fixes pile up, few that matter</text>
-  <text class="label small" x="60" y="220">The AI keeps a step one time and skips it the next, and a new conversation starts the work over.</text>
-  <circle class="lane" cx="243" cy="58" r="11"/>
-  <text class="name" x="243" y="63">3</text>
-  <circle class="lane" cx="548" cy="58" r="11"/>
-  <text class="name" x="548" y="63">4</text>
-  <circle class="lane" cx="290" cy="150" r="11"/>
-  <text class="name" x="290" y="155">2</text>
-  <circle class="lane" cx="530" cy="150" r="11"/>
-  <text class="name" x="530" y="155">1</text>
-  <circle class="lane" cx="45" cy="215" r="11"/>
-  <text class="name" x="45" y="220">5</text>
-  <rect class="frame" x="10" y="255" width="980" height="345" rx="8"/>
-  <text class="frame-name" x="24" y="277">rn: the fix loop runs without you</text>
-  <rect class="box" x="30" y="330" width="100" height="60" rx="6"/>
-  <text class="name" x="80.0" y="365.0">You</text>
-  <rect class="store" x="260" y="310" width="180" height="100" rx="6"/>
-  <text class="name" x="350.0" y="347.0">Design tree</text>
-  <text class="kind" x="350.0" y="366.0">every piece, in order,</text>
-  <text class="kind" x="350.0" y="382.0">only the decisions that matter</text>
-  <rect class="box" x="510" y="330" width="150" height="60" rx="6"/>
-  <text class="name" x="585.0" y="365.0">Generator</text>
-  <rect class="store" x="710" y="320" width="120" height="80" rx="6"/>
-  <text class="name" x="770.0" y="365.0">Piece</text>
-  <rect class="box" x="900" y="330" width="80" height="60" rx="6"/>
-  <text class="name" x="940.0" y="365.0">You</text>
-  <path class="line" d="M130,345 L256,345" marker-end="url(#a)"/>
-  <text class="label small mid halo" x="193" y="335">your words</text>
-  <path class="line dashed" d="M256,375 L134,375" marker-end="url(#a)"/>
-  <text class="label small mid halo" x="193" y="400">only your points,</text>
-  <text class="label small mid halo" x="193" y="415">one at a time</text>
-  <path class="line" d="M440,360 L506,360" marker-end="url(#a)"/>
-  <text class="label small mid halo" x="473" y="335">by its kind's</text>
-  <text class="label small mid halo" x="473" y="350">best practice</text>
-  <path class="line" d="M660,360 L706,360" marker-end="url(#a)"/>
-  <text class="label small mid halo" x="683" y="350">makes</text>
-  <path class="line" d="M830,360 L896,360" marker-end="url(#a)"/>
-  <text class="label small mid halo" x="863" y="350">to merge</text>
-  <rect class="lane" x="685" y="455" width="170" height="50" rx="6"/>
-  <text class="name" x="770.0" y="485.0">Evaluator</text>
-  <path class="line" d="M770,455 L770,404" marker-end="url(#a)"/>
-  <text class="label small start halo" x="788" y="433">reads it as its users do</text>
-  <path class="line dashed" d="M685,480 L350,480 L350,414" marker-end="url(#a)"/>
-  <text class="label small mid halo" x="515" y="470">a shortfall: back to its decision</text>
-  <rect class="lane" x="240" y="540" width="640" height="36" rx="6"/>
-  <text class="name" x="560.0" y="563.0">Lane holds every step on every run, and the repository keeps the work</text>
-  <circle class="lane" cx="260" cy="310" r="11"/>
-  <text class="name" x="260" y="315">1</text>
-  <circle class="lane" cx="440" cy="310" r="11"/>
-  <text class="name" x="440" y="315">4</text>
-  <circle class="lane" cx="193" cy="375" r="11"/>
-  <text class="name" x="193" y="380">3</text>
-  <circle class="lane" cx="770" cy="430" r="11"/>
-  <text class="name" x="770" y="435">2</text>
-  <circle class="lane" cx="240" cy="558" r="11"/>
-  <text class="name" x="240" y="563">5</text>
+  <rect class="box" x="40" y="60" width="120" height="60" rx="6"/>
+  <text class="name" x="100.0" y="95.0">You</text>
+  <rect class="box" x="330" y="60" width="150" height="60" rx="6"/>
+  <text class="name" x="405.0" y="95.0">AI</text>
+  <rect class="store" x="620" y="60" width="120" height="60" rx="6"/>
+  <text class="name" x="680.0" y="95.0">Draft</text>
+  <path class="line" d="M160,90 L326,90" marker-end="url(#a)"/>
+  <text class="label small mid halo" x="243" y="80">a prompt</text>
+  <path class="line" d="M480,90 L616,90" marker-end="url(#a)"/>
+  <text class="label small mid halo" x="548" y="80">writes</text>
+  <path class="line" d="M680,120 L680,165 L100,165 L100,124" marker-end="url(#a)"/>
+  <text class="label small mid halo" x="390" y="155">you read each draft and ask for fixes, and the fixes pile up</text>
+  <rect class="frame" x="10" y="205" width="980" height="315" rx="8"/>
+  <text class="frame-name" x="24" y="227">rn: the fix loop runs without you</text>
+  <rect class="box" x="30" y="280" width="100" height="60" rx="6"/>
+  <text class="name" x="80.0" y="315.0">You</text>
+  <rect class="store" x="260" y="260" width="180" height="100" rx="6"/>
+  <text class="name" x="350.0" y="297.0">Design tree</text>
+  <text class="kind" x="350.0" y="316.0">only the decisions</text>
+  <text class="kind" x="350.0" y="332.0">that matter</text>
+  <rect class="box" x="510" y="280" width="150" height="60" rx="6"/>
+  <text class="name" x="585.0" y="315.0">Generator</text>
+  <rect class="store" x="710" y="270" width="120" height="80" rx="6"/>
+  <text class="name" x="770.0" y="315.0">Piece</text>
+  <rect class="box" x="900" y="280" width="80" height="60" rx="6"/>
+  <text class="name" x="940.0" y="315.0">You</text>
+  <path class="line" d="M130,295 L256,295" marker-end="url(#a)"/>
+  <text class="label small mid halo" x="193" y="285">your words</text>
+  <path class="line dashed" d="M256,325 L134,325" marker-end="url(#a)"/>
+  <text class="label small mid halo" x="193" y="350">only your points,</text>
+  <text class="label small mid halo" x="193" y="365">one at a time</text>
+  <path class="line" d="M440,310 L506,310" marker-end="url(#a)"/>
+  <text class="label small mid halo" x="473" y="285">by its kind's</text>
+  <text class="label small mid halo" x="473" y="300">best practice</text>
+  <path class="line" d="M660,310 L706,310" marker-end="url(#a)"/>
+  <text class="label small mid halo" x="683" y="300">builds</text>
+  <path class="line" d="M830,310 L896,310" marker-end="url(#a)"/>
+  <text class="label small mid halo" x="863" y="300">to merge</text>
+  <rect class="lane" x="685" y="420" width="170" height="50" rx="6"/>
+  <text class="name" x="770.0" y="450.0">Evaluator</text>
+  <path class="line" d="M770,420 L770,354" marker-end="url(#a)"/>
+  <text class="label small start halo" x="788" y="390">reads it as its users do</text>
+  <path class="line dashed" d="M685,445 L350,445 L350,364" marker-end="url(#a)"/>
+  <text class="label small mid halo" x="515" y="435">a shortfall: back to its decision</text>
 </svg>

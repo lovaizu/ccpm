@@ -57,10 +57,11 @@ What each decides alone:
 >   Each arrow says what one does to another, with the data it hands on, named as in the data
 >   model. A legend explains every symbol.
 > - `<component>`, `<what it alone decides>`: each role of the figure and each component, by its
->   name in the figure, and the decisions the stories need that it alone makes, each in a few
->   words, joined by commas, in one sentence.
-> - `<choice>`, `<other way>`: each choice a developer would question, such as a technology, or a
->   tool, and the way it beat, in a few words each. Leave them out where no choice is in question.
+>   name in the figure, and the decisions that are hard to make or likely to change that it alone
+>   makes, each in a few words, joined by commas, in one sentence.
+> - `<choice>`, `<other way>`: each choice whose other way would cost a key result, such as a
+>   technology, or a tool, and the way it beat, in a few words each. Leave them out where no
+>   choice is such.
 > - `<why>`, `<cost>`: what the choice gives, ending with the key result as the `<why>` of a
 >   principle does, and what it costs, in one sentence each.
 
