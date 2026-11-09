@@ -218,7 +218,8 @@ you name, such as an approval.
 ### "Each check is code to write and test."
 
 You see your steps as they'll read with their rules, and approve them. Lane makes each rule's
-sentence and its check from one type, and lays both into your plugin.
+sentence and its check from one type, and lays both into your plugin. Where your plugin keeps its
+steps or its records in a form of its own, an adapter, a script of yours, gives them in Lane's form.
 
 ### "A run that stops starts over."
 
