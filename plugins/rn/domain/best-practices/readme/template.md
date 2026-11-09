@@ -101,8 +101,8 @@ At the end, you have `<result>`.
 >   example, such as a message. The skeleton here is one such form: the user, the product's parts
 >   and what they pass, with the lines that do it marked. Leave it out where the paragraph is
 >   enough.
-> - `<doubt>`, `<how it does it>`: for each key result of the product, the newcomer's doubt that the
->   product achieves it, as they would ask it, as a heading of its own, and in a sentence or two
+> - `<doubt>`, `<how it does it>`: each doubt that the walkthrough leaves a newcomer about a key
+>   result of the product, as they would ask it, as a heading of its own, and in a sentence or two
 >   how the product does it.
 > - `<title>`, `<path>`: the page that explains it further, where it needs a long sequence of
 >   figures. Leave it out where the paragraph is enough.
