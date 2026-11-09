@@ -252,7 +252,7 @@
   },
   {
    "intent": "N7",
-   "thinking": "Code follows a course the same way every time, while a conversation that's told the course drifts from it. Ask whether a run goes in fixed moves. If it does, its routes keep the course. Lane lays them in `hooks/lanes.json` from the plugin's proposal, and gives the main conversation each next start from the role that ended and the result it gave. Lane keeps each run's state in a file, so that a compacted or stopped conversation goes on from its last move. If the course changes with what the run finds, the skill's part keeps the course instead.",
+   "thinking": "Code follows a course the same way every time, while a conversation that's told the course drifts from it. Ask whether a run goes in fixed moves. If it does, its routes keep the course. Lane lays them in `hooks/lanes.json` from the plugin's proposal, and gives the main conversation each next start from the role that ended and the result it gave. Lane keeps each run's state in a file, so that a compacted or stopped conversation goes on from its last move. If the course changes with what the run finds, the orchestrator's part keeps the course instead.",
    "steps": [
     {
      "text": "Write the routes in the plugin's proposal, run `lay.py print` on it and read what it prints, and then run `lay.py write`.",
@@ -303,7 +303,7 @@
    "thinking": "A question reworded on the way is a question that no role asked, and an answer summed up loses what the person meant. A subagent's last message reaches only the one who started it, and only the main conversation can ask the person, as [subagents](https://code.claude.com/docs/en/sub-agents#available-tools) says. So the skill makes the main conversation the orchestrator. It starts each role that the routes name, puts each of the role's questions to the person as written, and resumes the role with their answer word for word by SendMessage. A resumed role keeps its whole conversation, as [resume subagents](https://code.claude.com/docs/en/sub-agents#resume-subagents) says. The main conversation makes, judges, and decides nothing of the work. An AI calls the plugin by the same skill, since its own orchestrator also runs in the main conversation.",
    "steps": [
     {
-     "text": "Write an architecture test that runs the skill's part through a start and a resume of each role, and check that each prompt holds only the run values and the person's words."
+     "text": "Write an architecture test that runs the orchestrator's part through a start and a resume of each role, and check that each prompt holds only the run values and the person's words."
     }
    ]
   },
@@ -353,7 +353,7 @@
    "thinking": "A lesson met once should improve every later run, and the user chooses what leaves their project. After the caller approves the work, the main conversation asks once where the run fell short of its goal or cost the user time, and finds why in the records, quoting each cause. For each lesson, ask whether it's the project's own or general. A lesson of the project's own goes into the project's rules. A general lesson goes to the plugin's repository as an issue, only when the user says yes.",
    "steps": [
     {
-     "text": "Have the skill's part read the run's records with Read before it ends, and quote each cause it names."
+     "text": "Have the orchestrator's part read the run's records with Read before it ends, and quote each cause it names."
     }
    ]
   },

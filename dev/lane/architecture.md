@@ -551,7 +551,7 @@ sequenceDiagram
   else it isn't
     H-->>CC: nothing to tell (Answer)
   end
-  CC->>M: runs the skill's part, with the context beside it
+  CC->>M: runs the orchestrator's part, with the context beside it
   Note over M,G: Outside a run, the guard tells the main conversation nothing.
   loop until a route starts no more
     opt the routes name the command that gives each start its text
@@ -610,7 +610,7 @@ sequenceDiagram
         else reviewer gave good, whose route starts no more
           H-->>CC: context, the result, and start no more roles (Answer)
           G->>C: ends the run (Run)
-          M->>CC: runs the result script with good, as the skill's part says, so a caller's route can take it
+          M->>CC: runs the result script with good, as the orchestrator's part says, so a caller's route can take it
         else the role ended with no result
           H-->>CC: context, start it again (Answer)
         end

@@ -71,7 +71,7 @@ For `changelog`, whose skill `write` starts `writer` and then `reviewer`, and `w
   file, or in the one part under `domain/` that its body names, as
   [the lanes](lanes.md#a-subagents-part) say of a subagent's part. `lay.py print` refuses routes
   whose skill is not there, or whose steps do not have `step`.
-- Leave out `step` where the skill's part holds no numbered list. `lay.py write` then lays nothing
+- Leave out `step` where the orchestrator's part holds no numbered list. `lay.py write` then lays nothing
   in the skill, and lane tells the main conversation the routes' sentence and the skill's result
   command as the run begins, before the first start.
 - `command`, where you give it, names your plugin's command that gives each start its text, as

@@ -317,7 +317,7 @@ plugins/rn/
 │   ├── generator.md               starts the generator
 │   └── evaluator.md               starts the evaluator
 ├── domain/
-│   ├── up.md                      what the orchestrator does
+│   ├── orchestrator.md            what the orchestrator does
 │   ├── designer.md                what the designer does
 │   ├── planner.md                 what the planner does
 │   ├── generator.md               what the generator does

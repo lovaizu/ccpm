@@ -135,7 +135,7 @@ Where a run goes in fixed moves, does code hold the order of the moves and keep 
 
 **Thinking**
 
-Code follows a course the same way every time, while a conversation that's told the course drifts from it. Ask whether a run goes in fixed moves. If it does, its routes keep the course. Lane lays them in `hooks/lanes.json` from the plugin's proposal, and gives the main conversation each next start from the role that ended and the result it gave. Lane keeps each run's state in a file, so that a compacted or stopped conversation goes on from its last move. If the course changes with what the run finds, the skill's part keeps the course instead.
+Code follows a course the same way every time, while a conversation that's told the course drifts from it. Ask whether a run goes in fixed moves. If it does, its routes keep the course. Lane lays them in `hooks/lanes.json` from the plugin's proposal, and gives the main conversation each next start from the role that ended and the result it gave. Lane keeps each run's state in a file, so that a compacted or stopped conversation goes on from its last move. If the course changes with what the run finds, the orchestrator's part keeps the course instead.
 
 **Steps**
 
@@ -187,7 +187,7 @@ A question reworded on the way is a question that no role asked, and an answer s
 
 **Steps**
 
-1. Write an architecture test that runs the skill's part through a start and a resume of each role, and check that each prompt holds only the run values and the person's words.
+1. Write an architecture test that runs the orchestrator's part through a start and a resume of each role, and check that each prompt holds only the run values and the person's words.
 
 ### N12
 
@@ -255,7 +255,7 @@ A lesson met once should improve every later run, and the user chooses what leav
 
 **Steps**
 
-1. Have the skill's part read the run's records with Read before it ends, and quote each cause it names.
+1. Have the orchestrator's part read the run's records with Read before it ends, and quote each cause it names.
 
 ### N18
 
