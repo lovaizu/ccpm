@@ -227,7 +227,23 @@
      "list": "Q1",
      "steps": [
       {
-       "says": "Ask why of each part of the sentence until no further end shows, and keep that end.",
+       "says": "Write the goal, and ask why of each part of it until the end itself shows.",
+       "lanes": []
+      },
+      {
+       "says": "Walk through the role's use of the deliverable toward the goal, one moment at a time, and name at each moment what decides whether the role reaches the goal.",
+       "lanes": []
+      },
+      {
+       "says": "Write each one as the question of its moment, with a \"so that\" clause where what the role gets differs from the goal.",
+       "lanes": []
+      },
+      {
+       "says": "To better a best practice, start from the vital few its use has confirmed, and take in what research shows.",
+       "lanes": []
+      },
+      {
+       "says": "Where a deliverable in use falls short of its role, mend the vital one that caused it.",
        "lanes": []
       }
      ]
