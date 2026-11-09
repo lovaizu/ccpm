@@ -31,6 +31,7 @@ A generator that follows a best practice produces deliverables that serve their 
 | N5 | C2 | Does each practice give the way of thinking that produces its condition's state: the decisions in order, the question at each, and the criteria for choosing, taken from an established method? | practices |
 | N6 | C2 | Does the example show a finished deliverable of the kind that meets every necessary condition? | example, source |
 | N7 | C3 | Does the best practice name the kinds of deliverable that this kind builds on, and the kinds that must pass before work on it starts? | inputs, preconditions |
+| N8 | C1 | Does following the best practice put into the deliverable only the vital few, the things without which its users fail their goal? | the whole |
 
 ## Practices
 
@@ -120,3 +121,15 @@ A deliverable must say what the deliverables it builds on say, and the deliverab
 
 1. When a deliverable changes, find the deliverables built on it and update them in the same change.
 2. When an input changes, check the deliverable against it again.
+
+### N8
+
+Does following the best practice put into the deliverable only the vital few, the things without which its users fail their goal?
+
+**Thinking**
+
+A deliverable that holds the trivial many beside the vital few buries what its users need, and each round of work adds more. Joseph Juran named the few causes that decide most of a result the vital few. Get them by building, not by checking: each level of the best practice is the vital few of the level it serves. The goal names the one purpose, the factors the few things that purpose can't go without, and each condition the state that a factor needs. Write each practice the same way: start from what its condition serves, and derive the content from it, such as a README's problems from the product vision's objectives and their key results. A practice whose steps collect every item of a kind and then keep some, such as every problem readers have, fills the deliverable with the many. Never add a question or a check for fewness. It adds findings of its own, and the few follow from the build.
+
+**Steps**
+
+1. Follow only the practices on a real deliverable of the kind. For each part of the result, ask whether its users would fail their goal without it. Where they wouldn't, find the practice that produced the part, and rewrite that practice to start from what it serves.

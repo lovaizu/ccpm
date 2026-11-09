@@ -60,6 +60,12 @@
    "csf": "C3",
    "about": "inputs, preconditions",
    "what": "Does the best practice name the kinds of deliverable that this kind builds on, and the kinds that must pass before work on it starts?"
+  },
+  {
+   "id": "N8",
+   "csf": "C1",
+   "about": "the whole",
+   "what": "Does following the best practice put into the deliverable only the vital few, the things without which its users fail their goal?"
   }
  ],
  "practices": [
@@ -140,6 +146,15 @@
     },
     {
      "text": "When an input changes, check the deliverable against it again."
+    }
+   ]
+  },
+  {
+   "intent": "N8",
+   "thinking": "A deliverable that holds the trivial many beside the vital few buries what its users need, and each round of work adds more. Joseph Juran named the few causes that decide most of a result the vital few. Get them by building, not by checking: each level of the best practice is the vital few of the level it serves. The goal names the one purpose, the factors the few things that purpose can't go without, and each condition the state that a factor needs. Write each practice the same way: start from what its condition serves, and derive the content from it, such as a README's problems from the product vision's objectives and their key results. A practice whose steps collect every item of a kind and then keep some, such as every problem readers have, fills the deliverable with the many. Never add a question or a check for fewness. It adds findings of its own, and the few follow from the build.",
+   "steps": [
+    {
+     "text": "Follow only the practices on a real deliverable of the kind. For each part of the result, ask whether its users would fail their goal without it. Where they wouldn't, find the practice that produced the part, and rewrite that practice to start from what it serves."
     }
    ]
   }
