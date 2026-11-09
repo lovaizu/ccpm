@@ -188,11 +188,6 @@
               "by": "user"
             },
             {
-              "about": "Waiting on a sign-off",
-              "decided": "while a deliverable waits for /rn:ty, rn goes on with each deliverable that doesn't rest on it",
-              "by": "user"
-            },
-            {
               "about": "What a sign-off shows",
               "decided": "what the evaluators found the people can do with the deliverable, the decisions taken without asking, and a link to its changes in the pull request. /rn:gm alone takes every comment the user wrote on the pull request since the sign-off",
               "by": "user"
@@ -270,7 +265,7 @@
           "decisions": [
             {
               "about": "The principles",
-              "decided": "one for each idea of rn's concept, one for the throwaway copy, and one for the repository holding the work",
+              "decided": "one for each idea of rn's concept, one for the sign-off, one for the throwaway copy, and one for the repository holding the work",
               "by": "reasoning"
             },
             {
@@ -362,21 +357,6 @@
             {
               "about": "Planning again",
               "decided": "at each turn's end, from the design tree",
-              "by": "user"
-            },
-            {
-              "about": "Messages with the tree-keeper",
-              "decided": "the orchestrator and the tree-keeper talk by messages through the run",
-              "by": "user"
-            },
-            {
-              "about": "Messages with a generator",
-              "decided": "the orchestrator resumes a generator only with the decision on its open point, or with a result sent back and its ground",
-              "by": "user"
-            },
-            {
-              "about": "Messages with an evaluator",
-              "decided": "none, as the orchestrator only starts it",
               "by": "user"
             },
             {
@@ -481,11 +461,6 @@
           "good": true,
           "decisions": [
             {
-              "about": "The size of a deliverable",
-              "decided": "the orchestrator sizes each deliverable so one generator makes it whole and one evaluator reads it whole",
-              "by": "reasoning"
-            },
-            {
               "about": "One generator per deliverable",
               "decided": "a run makes each deliverable once, and judging by its people and remaking from the design tree finish it. Several generators run side by side only when the developers check a best practice: a lack all of them share is the best practice's, and a lack one alone shows is the generator's. Three generators on every run would cost about three times the time of KR1.2 for a gain on KR1.1 that no trial has shown",
               "by": "user"
@@ -503,44 +478,74 @@
       "name": "Lane's product vision says what Lane is for",
       "path": "dev/lane/product-vision.md",
       "kind": "product-vision",
-      "inputs": [],
-      "preconditions": [],
+      "status": "done"
+    },
+    {
+      "name": "A newcomer decides from Lane's README alone whether Lane fits their plugin, and starts using it",
+      "path": "plugins/lane/README.md",
+      "kind": "readme",
+      "inputs": [
+        "dev/lane/product-vision.md"
+      ],
+      "preconditions": [
+        "plugins/lane"
+      ],
       "status": "doing",
       "necessary_conditions": [
         {
           "id": "N1",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N2",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N3",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N4",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N5",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N6",
           "good": false,
-          "decisions": [
-            {
-              "about": "The concept in its current form",
-              "decided": null
-            }
-          ]
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N11",
+          "good": false,
+          "decisions": []
         }
       ]
     },
@@ -549,34 +554,35 @@
       "path": "dev/lane/architecture.md",
       "kind": "architecture",
       "inputs": [
-        "dev/lane/product-vision.md"
+        "dev/lane/product-vision.md",
+        "plugins/lane/README.md"
       ],
       "preconditions": [],
       "status": "doing",
       "necessary_conditions": [
         {
           "id": "N1",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N2",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N3",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N4",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N5",
-          "good": true,
+          "good": false,
           "decisions": [
             {
               "about": "The orchestrator's own words",
@@ -597,57 +603,57 @@
         },
         {
           "id": "N6",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N7",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N8",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N9",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N10",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N11",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N12",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N13",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N14",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N15",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N16",
-          "good": true,
+          "good": false,
           "decisions": []
         }
       ]
@@ -858,75 +864,6 @@
       ]
     },
     {
-      "name": "A newcomer decides from Lane's README alone whether Lane fits their plugin, and starts using it",
-      "path": "plugins/lane/README.md",
-      "kind": "readme",
-      "inputs": [
-        "dev/lane/product-vision.md"
-      ],
-      "preconditions": [
-        "plugins/lane"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N9",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N10",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N11",
-          "good": false,
-          "decisions": []
-        }
-      ]
-    },
-    {
       "name": "rn's code has a design, tests written first, and code as the code best practice says",
       "path": "plugins/rn/domain",
       "kind": "code",
@@ -1099,7 +1036,28 @@
         {
           "id": "N2",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "Messages with the tree-keeper",
+              "decided": "the orchestrator and the tree-keeper talk by messages through the run",
+              "by": "user"
+            },
+            {
+              "about": "Messages with a generator",
+              "decided": "the orchestrator resumes a generator only with the decision on its open point, or with a result sent back and its ground",
+              "by": "user"
+            },
+            {
+              "about": "Messages with an evaluator",
+              "decided": "none, as the orchestrator only starts it",
+              "by": "user"
+            },
+            {
+              "about": "Waiting on a sign-off",
+              "decided": "while a deliverable waits for /rn:ty, rn goes on with each deliverable that doesn't rest on it",
+              "by": "user"
+            }
+          ]
         },
         {
           "id": "N3",
@@ -1240,7 +1198,7 @@
           "decisions": [
             {
               "about": "Picking up a run on another branch",
-              "decided": "/rn:up alone finds the runs on rn's work branches and picks up the one the user means, asking only where more than one waits",
+              "decided": "/rn:up alone finds the runs in rn's worktrees and picks up the one the user means, asking only where more than one waits",
               "by": "reasoning"
             }
           ]
@@ -1308,13 +1266,7 @@
         {
           "id": "N20",
           "good": false,
-          "decisions": [
-            {
-              "about": "Pin and Turn",
-              "decided": "plugins/pin and plugins/turn go once rn holds their parts. The branch turn-held keeps the eight Turn commits no branch held, rn takes each where its design keeps what it fixes, then the branch goes",
-              "by": "reasoning"
-            }
-          ]
+          "decisions": []
         },
         {
           "id": "N21",
