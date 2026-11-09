@@ -99,13 +99,12 @@ Does the document use the words its readers already use, in their usual meaning?
 
 **Thinking**
 
-Use the words that the readers' field commonly uses for each thing, in their usual meaning. A reader reads each word with the meaning they already know. A word that the writer or their team coined, an idiom, or an abstract phrase that stands for a thing, such as `the end` for a goal, makes the reader guess. The [Federal Plain Language Guidelines](https://www.plainlanguage.gov/guidelines/) call for familiar words for the same reason.
+Use the words that readers in the field commonly use for each thing, in their usual meaning. A reader reads each word with the meaning they already know, so any other word makes them guess, such as a term the team coined. The [Federal Plain Language Guidelines](https://www.plainlanguage.gov/guidelines/) call for familiar words for the same reason.
 
 **Steps**
 
-1. For each term, check that readers in the field use it with this meaning. If they don't, use the term they use, or define it where the reader first meets it.
-2. Replace each idiom and each abstract phrase with the plain words for what it means.
-3. Write out each abbreviation where the reader first meets it, as the [Google developer documentation style guide](https://developers.google.com/style/abbreviations) does.
+1. For each word, ask whether a reader in the field would use it for this thing, in this meaning. If not, use the word they would use, or define it where the reader first meets it.
+2. Write out each abbreviation where the reader first meets it, as the [Google developer documentation style guide](https://developers.google.com/style/abbreviations) does.
 
 ### N7
 
