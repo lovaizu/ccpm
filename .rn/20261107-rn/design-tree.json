@@ -158,32 +158,32 @@
           "decisions": [
             {
               "about": "The principles",
-              "decided": "one for each idea of rn's concept, as the architecture best practice derives them, and one each for the throwaway copy and the repository holding the work, which the README's doubts and picking up rest on",
+              "decided": "one for each idea of rn's concept, and one each for the throwaway copy and the repository holding the work",
               "by": "reasoning"
             },
             {
               "about": "Drawn out along the design tree",
-              "decided": "the design tree holds the goal and, for each deliverable, what it's for and the decisions that serve it, never how it works inside, and only the planner writes it. The main conversation settles one point at a time, itself where the purpose or a best practice settles it, else with the user. Each role starts with its own part of the tree alone",
+              "decided": "the designer settles each point, itself where the purpose or a best practice settles it, else with the user one point at a time with a recommendation. Only the planner writes the tree, which holds intent and decisions, never how a deliverable works inside. Each role starts with its own cut",
               "by": "user"
             },
             {
               "about": "Every step by best practice",
-              "decided": "each role works by the best practice of its work, one made by the meta best practice where a kind has none, and Lane holds each role to its steps on every run",
+              "decided": "each role works by the best practice of its work. A kind with none gets one planned as a deliverable of its own, made by the meta best practice first. Lane holds each role to its steps",
               "by": "user"
             },
             {
               "about": "Judged by the people it's for",
-              "decided": "an evaluator has only what the deliverable's people have, confirms where each intent gives them what they're after, and for one not yet good says what would make it good. A turn makes the deliverable until every intent is good, or a point only the user can settle stops it",
+              "decided": "an evaluator has only what the people have, confirms where each intent gives them what they're after, and says what would make one not yet good. A turn makes the deliverable until every intent is good",
               "by": "user"
             },
             {
               "about": "Back to the design tree on a problem",
-              "decided": "the main conversation judges each lack an evaluator names by the purpose and the tree, and keeps only one the people fall short by. A kept lack, a point found open, and a remark of the user's go back to the decision they come from, and the next round makes the deliverable from the design, never a fix beside it",
+              "decided": "the designer judges each lack by the purpose and the tree, keeps only one the people fall short by, and takes it back to its decision. The next round makes the deliverable from the design",
               "by": "user"
             },
             {
               "about": "The design tree revised on each run",
-              "decided": "the planner lays out every deliverable the goal needs, each after what it takes, and plans again after each settled point and each finished deliverable",
+              "decided": "the planner plans again after each settled point and finished deliverable. Before the merge, the designer proposes each change to a best practice that the run's lacks call for, and a change the user takes becomes a deliverable",
               "by": "user"
             }
           ]
@@ -191,7 +191,13 @@
         {
           "id": "N5",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The orchestrator and the designer",
+              "decided": "the main conversation is the orchestrator and decides nothing of the work, as the plugin best practice says. The designer, a role of its own, settles the points, judges the lacks, and proposes the changes to best practices",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N6",
