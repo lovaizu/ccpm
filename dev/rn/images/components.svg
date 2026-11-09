@@ -110,8 +110,9 @@
   <text class="label small halo" x="768" y="160" text-anchor="start">puts each question as written</text>
   <text class="data halo" x="768" y="174" text-anchor="start">Point</text>
   <path class="line" d="M220,220 L220,114" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="228" y="160" text-anchor="start">pushes, keeps the draft</text>
-  <text class="label small halo" x="228" y="174" text-anchor="start">pull request [git, gh]</text>
+  <text class="label small halo" x="228" y="146" text-anchor="start">pushes, keeps the draft</text>
+  <text class="label small halo" x="228" y="160" text-anchor="start">pull request, opens each issue</text>
+  <text class="label small halo" x="228" y="174" text-anchor="start">the user says yes to [git, gh]</text>
   <path class="line" d="M620,252 L320,252" marker-end="url(#arrow)"/>
   <text class="label small halo" x="470" y="244" text-anchor="middle">gets each role&#x27;s cut [Bash]</text>
   <text class="data halo" x="470" y="268" text-anchor="middle">Cut</text>
@@ -125,7 +126,7 @@
   <text class="data halo" x="740" y="326" text-anchor="start">Cut, Point</text>
   <path class="line" d="M150,420 L150,284" marker-end="url(#arrow)"/>
   <text class="label small halo" x="158" y="310" text-anchor="start">writes the tree,</text>
-  <text class="label small halo" x="158" y="324" text-anchor="start">and commits [Bash]</text>
+  <text class="label small halo" x="158" y="324" text-anchor="start">commits, opens issues [Bash]</text>
   <path class="line" d="M120,252 L60,252 L60,852 L120,852" marker-end="url(#arrow)"/>
   <text class="label small halo" x="68" y="700" text-anchor="start">writes, reads,</text>
   <text class="label small halo" x="68" y="714" text-anchor="start">cuts, commits</text>

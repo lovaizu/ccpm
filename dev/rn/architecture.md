@@ -4,7 +4,8 @@ This document says how the parts of rn give [its product vision](product-vision.
 only the vital few of each deliverable: what its people can't do without. A designer settles the
 user's goal and the decisions that serve it in a design tree, asking the user only the points that
 are theirs. A generator makes each deliverable from its decisions, round after round, until
-evaluators that have only what its people have find every intent met. A shortfall changes the decision it comes from, not the deliverable.
+evaluators that have only what its people have find every intent met. A shortfall changes the
+decision it comes from, not the deliverable.
 
 ## User stories
 
@@ -35,7 +36,7 @@ What each decides alone:
   word for word.
 - designer\
   Whether a point is the user's, each point the purpose or a best practice settles, which lacks an
-  evaluator names go on, and which changes to a best practice to propose.
+  evaluator names go on, which changes to a best practice to propose, and which lessons are general.
 - planner\
   The goal drafted from the request, the deliverables and their order, each one's kind, the
   commands that try it, and the plan again after each settled point and finished deliverable. A
@@ -45,11 +46,15 @@ What each decides alone:
 - evaluator\
   Where the deliverable meets each intent of its group for its people, or what would make it good.
 - tree.py\
-  The tree's form, each role's cut, each commit, and the draft pull request.
+  The tree's form, each role's cut, each commit, the draft pull request, and each issue that the
+  user says yes to.
 - throwaway.py\
   Where a deliverable's commands run.
 - guard\
-  Whether a role's call keeps its steps, as [Lane's architecture](../lane/architecture.md) says.
+  Whether a role's call keeps its steps, and that a deliverable's command runs only through
+  throwaway.py, as [Lane's architecture](../lane/architecture.md) says.
+
+The choices made, and why:
 
 - One generator for each deliverable over several side by side\
   Three generators would take about three times as long for a gain in KR1.1 that no trial has shown,
@@ -66,14 +71,15 @@ What each decides alone:
   A decision that the designer settles, or puts to the user.
 - Lack kept\
   A lack an evaluator named that the designer kept, which the next round's generator gets.
-- Accepted shortfall\
-  A decision of the user's that says what the people lack by it.
 
 ## Principles
 
 rn builds on [the plugin best
 practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md), and adds these rules,
-which every part keeps.
+which every part keeps. It differs from [N17 of the plugin best
+practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#n17) in who finds the
+lessons and when: the designer finds them in the run's lacks before the merge, since the
+orchestrator decides nothing of the work, and the user merges after rn ends.
 
 ### Drawn out along the design tree
 
@@ -113,7 +119,8 @@ KR1.2 count.
 
 ### Tried in a throwaway copy
 
-A deliverable's commands run only in a throwaway copy of the repository, with a throwaway home.
+A deliverable's commands run only in a throwaway copy of the repository, with a throwaway home,
+and a lane of Lane holds each role to it.
 
 *Why*: a command run as the people run it would otherwise change the user's own files.
 
@@ -263,10 +270,15 @@ sequenceDiagram
   end
   opt every deliverable is done
     O->>D: starts it, with the run's lacks (Cut)
-    D-->>O: each change to a best practice to propose (Point)
-    O->>U: Done, the decisions taken without asking, and each change proposed (Point)
+    D-->>O: each change to a best practice to propose, and each general lesson (Point)
+    O->>U: Done, the decisions taken without asking, each change proposed, and each lesson (Point)
     opt the user takes a change
       Note over U,P: The planner adds it as a deliverable, as S2 draws.
+    end
+    opt the user says yes to a general lesson
+      O->>P: starts it, with the answer word for word (Point)
+      P->>T: has it opened as an issue
+      T->>GH: opens the issue on rn's repository
     end
     U->>GH: merges the draft pull request
   end
@@ -321,8 +333,7 @@ plugins/rn/
 │   ├── lanes.json                 the steps the guard holds each role to
 │   ├── lane/                      the guard: Lane's code, copied in by Lane
 │   └── adapters/                  give the guard rn's best practices and design tree
-├── README.md                      for rn's users
-└── CHANGELOG.md                   the changes in each version
+└── README.md                      for rn's users
 
 dev/rn/
 ├── product-vision.md              rn's product vision
@@ -337,15 +348,13 @@ dev/rn/
 └── best-practices/                each best practice made on a run
 ```
 
-Each role's part in `domain/` has its forms beside it, as the plugin best practice names them. Each
-folder that holds a document keeps its figures in `images/` beside it.
-
 ## Tests
 
 rn tests by the test rules of [the architecture best
 practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md) and [the plugin best
 practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md), and differs from them
-where this section says.
+where this section says. Whether a point is the user's, and whether an intent is good, only the
+roles judge, so only the product vision tests show them.
 
 ![rn's tests](images/tests.svg)
 

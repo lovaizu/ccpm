@@ -51,15 +51,12 @@
     <marker id="diamond" viewBox="0 0 16 10" refX="16" refY="5" markerWidth="14" markerHeight="9" orient="auto-start-reverse">
       <path class="head" d="M0,5 L8,0 L16,5 L8,10 z"/>
     </marker>
-    <marker id="kindof" viewBox="0 0 12 12" refX="12" refY="6" markerWidth="12" markerHeight="12" orient="auto-start-reverse">
-      <path class="hole" d="M0,0 L12,6 L0,12 z"/>
-    </marker>
   </defs>
   <rect class="bg" x="0" y="0" width="1200" height="960"/>
   <rect class="frame" x="20" y="70" width="240" height="320" rx="6"/>
   <text class="frame-name" x="32" y="378">what the orchestrator passes</text>
-  <rect class="frame" x="310" y="70" width="500" height="500" rx="6"/>
-  <text class="frame-name" x="322" y="558">the design tree</text>
+  <rect class="frame" x="310" y="70" width="500" height="320" rx="6"/>
+  <text class="frame-name" x="322" y="378">the design tree</text>
   <rect class="frame" x="940" y="70" width="220" height="320" rx="6"/>
   <text class="frame-name" x="952" y="378">the best practices</text>
   <rect class="frame" x="310" y="610" width="850" height="260" rx="6"/>
@@ -74,8 +71,6 @@
   <text class="name" x="700.0" y="129.0" text-anchor="middle">Deliverable</text>
   <rect class="box" x="330" y="300" width="180" height="48" rx="0"/>
   <text class="name" x="420.0" y="329.0" text-anchor="middle">Decision</text>
-  <rect class="box" x="330" y="480" width="180" height="48" rx="0"/>
-  <text class="name" x="420.0" y="509.0" text-anchor="middle">Accepted shortfall</text>
   <rect class="box" x="960" y="100" width="180" height="48" rx="0"/>
   <text class="name" x="1050.0" y="129.0" text-anchor="middle">Best practice</text>
   <rect class="box" x="960" y="300" width="180" height="48" rx="0"/>
@@ -102,8 +97,6 @@
   <path class="line" d="M640,148 L640,324 L510,324" marker-start="url(#diamond)"/>
   <text class="label small halo" x="648" y="240" text-anchor="start">holds</text>
   <text class="label small" x="516" y="340" text-anchor="start">0..*</text>
-  <path class="line" d="M420,480 L420,348" marker-end="url(#kindof)"/>
-  <text class="label small halo" x="428" y="420" text-anchor="start">is a kind of</text>
   <path class="line" d="M790,124 L960,124"/>
   <text class="label small halo" x="875.0" y="116" text-anchor="middle">follows its kind&#x27;s</text>
   <text class="label small" x="796" y="140" text-anchor="start">0..*</text>
@@ -134,7 +127,5 @@
   <text class="label small" x="100" y="910" text-anchor="start">a number at a line&#x27;s end: how many of the data at that end the other joins: 1 one, 0..1 none or one, 1..* one or more, 0..* any number</text>
   <path class="line" d="M100,936 L130,936" marker-start="url(#diamond)"/>
   <text class="label small" x="140" y="940" text-anchor="start">at the whole, which holds its parts</text>
-  <path class="line" d="M400,936 L430,936" marker-end="url(#kindof)"/>
-  <text class="label small" x="440" y="940" text-anchor="start">at the data that the other is a kind of</text>
-  <text class="label small" x="720" y="940" text-anchor="start">a frame: the data one part of rn keeps or passes</text>
+  <text class="label small" x="420" y="940" text-anchor="start">a frame: a part or a store of rn, and the data it keeps or passes</text>
 </svg>

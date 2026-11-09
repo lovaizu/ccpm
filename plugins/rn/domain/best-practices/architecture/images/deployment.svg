@@ -111,6 +111,8 @@
   <path class="line" d="M1060,180 L1100,180 L1100,252 L1160,252" marker-end="url(#arrow)"/>
   <text class="label small halo" x="1106" y="196" text-anchor="start">installs</text>
   <text class="label small halo" x="1106" y="210" text-anchor="start">rn and Lane</text>
+  <path class="line" d="M710,300 L1110,300 L1110,272 L1160,272" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="910" y="292" text-anchor="middle">opens each issue the user says yes to [gh]</text>
   <path class="line" d="M710,325 L1130,325 L1130,372 L1160,372" marker-end="url(#arrow)"/>
   <text class="label small halo" x="915" y="317" text-anchor="middle">pushes, keeps the draft pull request [git, gh]</text>
   <text class="frame-name" x="30" y="680">Legend</text>
