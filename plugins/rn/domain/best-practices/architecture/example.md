@@ -3,75 +3,8 @@
 This document says how the parts of rn give [its product vision](../../../../../dev/rn/product-vision.md). rn builds up
 only the vital few of each deliverable: what its people can't do without. A designer settles the
 user's goal and the decisions that serve it in a design tree, asking the user only the points that
-are theirs. A turn makes each deliverable from its decisions, and evaluators that have only what its
-people have judge it. A shortfall changes the decision it comes from, not the deliverable.
-
-## Principles
-
-rn builds on [the plugin best
-practice](../plugin/best-practice.md), and adds these.
-
-### Drawn out along the design tree
-
-The designer settles each point of the design: itself where the purpose or a best practice settles
-it, and with the user, one point at a time with a recommendation, where neither does. Only the
-planner writes the design tree, which holds what each deliverable is for and the decisions that
-serve it, never how it works inside. Each role starts with its own cut of the tree alone.
-
-*Why*: a point settled by a role that reads decisions not its own makes what the user didn't mean,
-as KR1.1 counts, and asking the user what the purpose settles costs their time, as KR1.2 counts.
-
-### Every step by best practice
-
-Each role works by the best practice of its work. Where a kind of deliverable has none, the planner
-plans one as a deliverable of its own, made by the meta best practice before the first deliverable
-of that kind. Lane holds each role to the steps of its best practice.
-
-*Why*: an AI that skipped a step once skips it again on another run, and the deliverable misses what
-the step makes sound, as KR1.1 counts.
-
-### Judged by the people it's for
-
-An evaluator gets only what the deliverable's people have. It confirms where each intent gives them
-what they're after, and for one not yet good, says what would make it good. A turn makes the
-deliverable round after round until every intent is good.
-
-*Why*: the people never see what the maker meant, so an evaluator that does judges the making, and a
-deliverable handed over with an intent not met fails its people, as KR1.1 counts.
-
-### Back to the design tree on a problem
-
-The designer judges each lack an evaluator names by the purpose and the tree, and keeps only one
-that the people would fall short by. A kept lack goes back to the decision it comes from, and the
-next round makes the deliverable from the design, never with a fix beside it.
-
-*Why*: no decision holds a fix beside the design, so the next round loses it or it breaks what
-another intent met, and a deliverable answered by addition grows each round, as KR1.1 and KR1.2
-count.
-
-### The design tree revised on each run
-
-The planner plans again after each settled point and each finished deliverable. Before the user
-merges, the designer proposes each change to a best practice that the run's lacks call for, and a
-change the user takes becomes a deliverable of the run.
-
-*Why*: a plan kept as first laid out goes on making what an answer has changed, and a gap left in a
-best practice comes back on the next run of its kind, as KR1.1 and KR1.2 count.
-
-### Tried in a throwaway copy
-
-The commands that try a deliverable run only in a throwaway copy of the repository, with a throwaway
-home.
-
-*Why*: a command run as the people run it would otherwise change the user's own files.
-
-### The repository holds the work
-
-`tree.py` commits every change to the tree and each finished deliverable on the work's own branch,
-with one draft pull request that the user merges.
-
-*Why*: a conversation can end at any point, and work kept only in it makes the user answer again, as
-KR1.2 counts.
+are theirs. A generator makes each deliverable from its decisions, round after round, until
+evaluators that have only what its people have find every intent met. A shortfall changes the decision it comes from, not the deliverable.
 
 ## User stories
 
@@ -104,12 +37,13 @@ What each decides alone:
   Whether a point is the user's, each point the purpose or a best practice settles, which lacks an
   evaluator names go on, and which changes to a best practice to propose.
 - planner\
-  The goal drafted from the request, the deliverables and their order, each one's kind, and the
-  commands that try it.
+  The goal drafted from the request, the deliverables and their order, each one's kind, the
+  commands that try it, and the plan again after each settled point and finished deliverable. A
+  kind with no best practice gets one first, as a deliverable of its own.
 - generator\
   The deliverable, and each small point that the purpose and the best practice settle one way.
 - evaluator\
-  Where the deliverable meets each intent of its group for its people, or what they lack.
+  Where the deliverable meets each intent of its group for its people, or what would make it good.
 - tree.py\
   The tree's form, each role's cut, each commit, and the draft pull request.
 - throwaway.py\
@@ -134,6 +68,61 @@ What each decides alone:
   A lack an evaluator named that the designer kept, which the next round's generator gets.
 - Accepted shortfall\
   A decision of the user's that says what the people lack by it.
+
+## Principles
+
+rn builds on [the plugin best
+practice](../plugin/best-practice.md), and adds these rules,
+which every part keeps.
+
+### Drawn out along the design tree
+
+Each role starts with its own cut of the design tree alone.
+
+*Why*: a role that reads decisions not its own makes what the user didn't mean, as KR1.1 counts.
+
+### Every step by best practice
+
+Each role works by the best practice of its kind of work, and Lane holds it to the steps.
+
+*Why*: an AI that skipped a step once skips it again, and the deliverable misses what the step makes
+sound, as KR1.1 counts.
+
+### Judged by the people it's for
+
+An evaluator gets only what the deliverable's people have.
+
+*Why*: an evaluator that knows what the maker meant judges the making, not what the people get, as
+KR1.1 counts.
+
+### Back to the design tree on a problem
+
+A shortfall changes the decision it comes from, and the next round makes the deliverable from the
+design, never with a fix beside it.
+
+*Why*: no decision holds a fix beside the design, so the next round loses it or it breaks what
+another intent met, as KR1.1 counts.
+
+### The design tree revised on each run
+
+What a run finds changes the plan before the next deliverable, and the best practice before the next
+run, once the user takes the change.
+
+*Why*: a plan or a best practice kept as first laid out makes the same miss again, as KR1.1 and
+KR1.2 count.
+
+### Tried in a throwaway copy
+
+A deliverable's commands run only in a throwaway copy of the repository, with a throwaway home.
+
+*Why*: a command run as the people run it would otherwise change the user's own files.
+
+### The repository holds the work
+
+`tree.py` commits every change to the tree and each finished deliverable on the work's own branch as
+it's made.
+
+*Why*: work kept only in a conversation that ends makes the user answer again, as KR1.2 counts.
 
 ## Sequences
 
@@ -187,12 +176,12 @@ sequenceDiagram
     P-->>O: asks
   else the deliverable at hand has none left
     P-->>O: ready
-    Note over O,P: A turn starts, as the next section draws.
+    Note over O,P: The rounds of the deliverable start, as the next section draws.
   end
-  Note over U,O: A remark the user makes meanwhile goes to the designer as a point, and the orchestrator stops each role of the turn that still runs.
+  Note over U,O: A remark the user makes meanwhile goes to the designer as a point, and the orchestrator stops each role of the rounds that still runs.
 ```
 
-### S2 and S3: a deliverable made in its turn
+### S2 and S3: a deliverable made in rounds
 
 ```mermaid
 sequenceDiagram
@@ -250,7 +239,7 @@ sequenceDiagram
     U->>O: answers
   else one is left
     O->>U: Picking up, at the deliverable not yet done
-    Note over O,P: The work goes on, as S2 or the turn draws.
+    Note over O,P: The work goes on, as S2 or the rounds draw.
   end
 ```
 

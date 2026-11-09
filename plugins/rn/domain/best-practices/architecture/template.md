@@ -8,25 +8,6 @@ This document says how the parts of `<Product>` give [its product vision](<board
 > - `<idea>`: how the product turns what its roles bring into what the product vision
 >   promises, as one idea seen as a whole that every part carries out. Two or three sentences.
 
-## Principles
-
-`<Product>` builds on [`<other>`](<path>), and adds these.
-
-### `<name>`
-
-`<rule>`.
-
-*Why*: `<why>`.
-
-> [!NOTE]
-> DELETE_TEMPLATE_COMMENT:
-> - `<other>`, `<path>`: the architecture whose principles this one builds on, with the sentence
->   that names it. Leave the sentence out where the architecture builds on no other.
-> - `<name>`: the few words a reader finds the principle by.
-> - `<rule>`: one to three short sentences that every part meeting the same decision follows.
-> - `<why>`: one or two sentences: what goes wrong without the rule for a role of the product
->   vision, naming the key result it guards, or for the product's developer or operator.
-
 ## User stories
 
 - `S<n>`: `<role>` wants `<way>`, so that `<benefit>`. It carries `<steps>`.
@@ -86,6 +67,26 @@ What each decides alone:
 >   middle.
 > - `<Data>`, `<what it is>`: each data whose name a reader could take for another's, by its name,
 >   and what it's in a few words, without its fields.
+
+## Principles
+
+`<Product>` builds on [`<other>`](<path>), and adds these rules, which every part keeps.
+
+### `<name>`
+
+`<rule>`.
+
+*Why*: `<why>`.
+
+> [!NOTE]
+> DELETE_TEMPLATE_COMMENT:
+> - `<other>`, `<path>`: the architecture whose principles this one builds on, with the sentence
+>   that names it. Leave the sentence out where the architecture builds on no other.
+> - `<name>`: the few words a reader finds the principle by.
+> - `<rule>`: one sentence that every part meeting the same decision follows, naming the parts as
+>   Components names them. It holds what no single component's line can say.
+> - `<why>`: one sentence: what goes wrong without the rule for a role of the product vision,
+>   naming the key result it guards, or for the product's developer or operator.
 
 ## Sequences
 
