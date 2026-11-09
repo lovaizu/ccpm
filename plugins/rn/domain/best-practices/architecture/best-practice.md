@@ -44,7 +44,7 @@ The developers build and change the parts of the product so that together they d
 | N11 | C3 | Does each component and each kind of data have one place for its files? | Components, Data model, Directory structure |
 | N12 | C4 | Does Tests show, for each deployment unit, which test levels cover it, how thoroughly, and why a level is missing? | Deployment, Tests |
 | N13 | C4 | Does each test level say what runs real, what test doubles replace, what the tests cover, and when they pass? | Tests |
-| N14 | C4 | Do the unit and architecture tests together check everything the document says the product does? | Tests |
+| N14 | C4 | Does each thing that the document says the product does rest on a part that a unit or architecture test can check? | Components, Tests |
 | N15 | C5 | Does each choice whose other way would cost a key result say what the other way would lose? | Components, Deployment, Directory structure, Tests |
 | N16 | C5 | Does the document hold only what stays true while the product vision and the principles stay, and leave each component's internals out? | the whole |
 
@@ -200,11 +200,11 @@ A failing test should name the rule, path, or use that it breaks. Draw each test
 
 ### N14
 
-Do the unit and architecture tests together check everything the document says the product does?
+Does each thing that the document says the product does rest on a part that a unit or architecture test can check?
 
 **Thinking**
 
-The product vision tests are slow and few, so they can only confirm what the lower levels already showed. Unit and architecture together show it only if each double behaves like the part it replaces. Give each double only results in the form the part's contract gives, refusals among them, and test the double as the part's unit tests test the part. Then, for each thing the document says the product does, name the unit or architecture test that checks it, and add a test where none does.
+The product vision tests are slow and few, so they can only confirm what the lower levels already showed. A thing that only a prompt holds, such as a rule an AI keeps by its instructions, varies from run to run, and no unit or architecture test can show it. For each thing the document says the product does, name the part that holds it. Where only a prompt holds it, give it to a part that a test can run, such as a guard of the architecture the product builds on, and draw that part in Components. The lower levels then show it only if each double behaves like the part it replaces. Give each double only results in the form the part's contract gives, refusals among them, and test the double as the part's unit tests test the part.
 
 **Steps**
 

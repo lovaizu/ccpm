@@ -112,8 +112,8 @@
   {
    "id": "N14",
    "csf": "C4",
-   "about": "Tests",
-   "what": "Do the unit and architecture tests together check everything the document says the product does?"
+   "about": "Components, Tests",
+   "what": "Does each thing that the document says the product does rest on a part that a unit or architecture test can check?"
   },
   {
    "id": "N15",
@@ -270,7 +270,7 @@
   },
   {
    "intent": "N14",
-   "thinking": "The product vision tests are slow and few, so they can only confirm what the lower levels already showed. Unit and architecture together show it only if each double behaves like the part it replaces. Give each double only results in the form the part's contract gives, refusals among them, and test the double as the part's unit tests test the part. Then, for each thing the document says the product does, name the unit or architecture test that checks it, and add a test where none does.",
+   "thinking": "The product vision tests are slow and few, so they can only confirm what the lower levels already showed. A thing that only a prompt holds, such as a rule an AI keeps by its instructions, varies from run to run, and no unit or architecture test can show it. For each thing the document says the product does, name the part that holds it. Where only a prompt holds it, give it to a part that a test can run, such as a guard of the architecture the product builds on, and draw that part in Components. The lower levels then show it only if each double behaves like the part it replaces. Give each double only results in the form the part's contract gives, refusals among them, and test the double as the part's unit tests test the part.",
    "steps": [
     {
      "text": "Draw a double of something outside the product from its documentation or from a recorded run of the real thing. A double that gives what the real thing never would passes a test that the real one fails."

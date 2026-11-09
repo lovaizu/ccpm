@@ -168,7 +168,7 @@ sequenceDiagram
 >   part's contract, architecture against this document, and product vision against the product
 >   vision, in real use. Each cell holds the tool and how far it tries the unit, and nothing more.
 >   `FULL` tries each case and edge, `HAPPY` the main paths, and `SMOKE` a run that
->   confirms what lower levels checked. An empty cell says why. Under it, one sentence for each
->   level where the product differs from the shared rules says what runs real, what doubles stand
->   in for, who stands in for the role, or when it passes.
+>   confirms what lower levels checked. An empty cell says why. In a frame under the table, one
+>   sentence for each level where the product differs from the shared rules says what runs real,
+>   what doubles stand in for, who stands in for the role, or when it passes.
 > - `<choice>`, `<other way>`, `<why>`, `<cost>`: as in Components.
