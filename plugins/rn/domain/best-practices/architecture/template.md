@@ -29,7 +29,8 @@ This document says how the parts of `<Product>` give [its product vision](<board
 
 ## User stories
 
-- **`S<n>`**: `<role>` wants `<way>`. It carries `<steps>`.
+- `S<n>`\
+  `<role>` wants `<way>`. It carries `<steps>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
@@ -45,9 +46,11 @@ This document says how the parts of `<Product>` give [its product vision](<board
 
 What each decides alone:
 
-- **`<component>`**: `<what it alone decides>`.
+- `<component>`\
+  `<what it alone decides>`.
 
-- **`<choice>`** over `<other way>`: `<why>`. The cost: `<cost>`.
+- `<choice>` over `<other way>`\
+  `<why>`. The cost: `<cost>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
@@ -69,7 +72,8 @@ What each decides alone:
 
 ![The product's data](images/template-data-model.svg)
 
-- **`<Data>`**: `<what it is>`.
+- `<Data>`\
+  `<what it is>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
@@ -94,7 +98,8 @@ sequenceDiagram
   A->>B: #lt;step#gt;
 ```
 
-- **`<choice>`** over `<other way>`: `<why>`. The cost: `<cost>`.
+- `<choice>` over `<other way>`\
+  `<why>`. The cost: `<cost>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
@@ -114,7 +119,8 @@ sequenceDiagram
 
 `<start>`.
 
-- **`<choice>`** over `<other way>`: `<why>`. The cost: `<cost>`.
+- `<choice>` over `<other way>`\
+  `<why>`. The cost: `<cost>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
@@ -132,7 +138,8 @@ sequenceDiagram
 <path>  <holds>
 ```
 
-- **`<choice>`** over `<other way>`: `<why>`. The cost: `<cost>`.
+- `<choice>` over `<other way>`\
+  `<why>`. The cost: `<cost>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
@@ -147,7 +154,8 @@ sequenceDiagram
 
 ![The product's tests](images/template-tests.svg)
 
-- **`<choice>`** over `<other way>`: `<why>`. The cost: `<cost>`.
+- `<choice>` over `<other way>`\
+  `<why>`. The cost: `<cost>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
