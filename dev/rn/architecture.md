@@ -423,29 +423,63 @@ Lane with it, and types `/rn:up` in Claude Code at the root of their repository.
 
 ```text
 plugins/rn/
-├── .claude-plugin/plugin.json       rn's manifest, naming Lane in its dependencies
-├── skills/up/SKILL.md               the main conversation's entry, /rn:up
-├── agents/                          the entries of the planner, the generator, and the evaluator
-├── domain/                          each role's part, the forms, the best practices, and the code
-│                                    of tree.py and throwaway.py
-├── scripts/                         tree.py and throwaway.py
-├── hooks/                           the guard's entries, the lanes and routes as laid, the guard as
-│                                    a link to Lane's code, and the adapters
-└── README.md, CHANGELOG.md, images/   for rn's users
+├── .claude-plugin/
+│   └── plugin.json                    rn's manifest, naming Lane in its dependencies
+├── skills/
+│   └── up/
+│       └── SKILL.md                   the main conversation's entry, /rn:up
+├── agents/
+│   ├── planner.md                     the planner's entry
+│   ├── generator.md                   the generator's entry
+│   └── evaluator.md                   the evaluator's entry
+├── domain/
+│   ├── up.md                          the main conversation's part
+│   ├── planner.md                     the planner's part
+│   ├── generator.md                   the generator's part
+│   ├── evaluator.md                   the evaluator's part
+│   ├── <role>-in.schema.json          the form of each role's Cut
+│   ├── <role>-out.schema.json         the form of what each role gives, such as a Tree edit
+│   ├── tree.py                        tree.py's code
+│   ├── throwaway.py                   throwaway.py's code
+│   └── best-practices/
+│       ├── <kind>/                    each kind's Best practice, with its Steps
+│       └── plan/
+│           └── design-tree.schema.json   the form of the Design tree
+├── scripts/
+│   ├── tree.py                        tree.py's entry
+│   └── throwaway.py                   throwaway.py's entry
+├── hooks/
+│   ├── hooks.json                     the guard's entries
+│   ├── lanes.json                     the lanes and routes as laid
+│   ├── lane/                          the guard, a link to Lane's code
+│   └── adapters/
+│       ├── steps.py                   the steps adapter, giving Port JSON
+│       └── items.py                   the items adapter, giving Port JSON
+├── README.md                          for rn's users
+├── CHANGELOG.md                       the changes in each version
+└── images/                            the README's figures
 
 dev/rn/
-├── product-vision.md, architecture.md, images/   rn's product vision and architecture
-├── README.md                        for rn's developers
-└── tests/                           the unit, architecture, and product vision tests
+├── product-vision.md                  rn's product vision
+├── architecture.md                    this document
+├── images/                            the figures of both
+├── README.md                          for rn's developers
+└── tests/
+    ├── unit/                          the unit tests
+    ├── architecture/                  the architecture tests
+    └── product-vision/                the product vision tests
 
-.rn/<yyyymmdd>-<goal>/               Design tree, a best practice made on the run, and the records
-                                     of each round
-<the paths the plan gives>           each deliverable
+.rn/<yyyymmdd>-<goal>/                 a run's files, on the work's branch
+├── design-tree.json                   the Design tree, with each Accepted shortfall and Lack kept
+├── best-practices/<kind>/             a Best practice made on the run
+└── rounds/<deliverable>/<round>/      each Round's Making record, Answers, and Try record
+
+<each deliverable's path>              each Deliverable, where the plan puts it
 ```
 
 - The parts in `domain/`, with the best practices and the code beside them, over folders by type\
-  One folder of rn's own knowledge, where Lane finds each part. The cost: moving every file of
-  Turn's.
+  One folder of rn's own knowledge, where Lane finds each part. The cost: a role's part and its forms
+  sit among the other roles' files, told apart by their names.
 - No progress file over a file that says where the run stands\
   The tree's statuses and the rounds' records already hold it, and a second record would drift from
   them. The cost: `tree.py` reads the rounds' folders.
