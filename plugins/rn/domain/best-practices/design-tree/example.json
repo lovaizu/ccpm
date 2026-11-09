@@ -1,6 +1,6 @@
 {
   "goal": {
-    "decided": "rn makes each deliverable the user means, every deliverable meeting each intent of its best practice, and asks the user only what's theirs.",
+    "decided": "The user gets from rn each deliverable they mean, every one meeting each intent of its best practice, and answers only what's theirs.",
     "by": "user"
   },
   "deliverables": [
@@ -8,12 +8,6 @@
       "name": "lovaizu/checks checks all the text that ccpm keeps",
       "path": "lefthook.yml",
       "kind": "code",
-      "status": "done"
-    },
-    {
-      "name": "Lane's design checks each practice step and each change",
-      "path": "dev/lane/architecture.md",
-      "kind": "architecture",
       "status": "done"
     },
     {
@@ -26,10 +20,59 @@
       "name": "The shared plugin best practice says what rn and Lane share",
       "path": "plugins/rn/domain/best-practices/plugin",
       "kind": "meta",
-      "status": "done"
+      "inputs": [],
+      "preconditions": [],
+      "status": "doing",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": [
+            {
+              "about": "What carries the architecture's vital few",
+              "decided": null
+            }
+          ]
+        },
+        {
+          "id": "N8",
+          "good": true,
+          "decisions": []
+        }
+      ]
     },
     {
-      "name": "Each part a developer builds by the design gives, with the others, the product vision",
+      "name": "Each part a developer builds by the design gives, with the others, what the README promises",
       "path": "plugins/rn/domain/best-practices/architecture",
       "kind": "meta",
       "inputs": [],
@@ -76,6 +119,11 @@
           "id": "N7",
           "good": false,
           "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
         }
       ]
     },
@@ -83,13 +131,111 @@
       "name": "A maker of code designs it, tests it first, and writes it as the field's established practice says",
       "path": "plugins/rn/domain/best-practices/code",
       "kind": "meta",
-      "status": "done"
+      "inputs": [],
+      "preconditions": [],
+      "status": "doing",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": [
+            {
+              "about": "What carries the architecture's vital few",
+              "decided": null
+            }
+          ]
+        },
+        {
+          "id": "N8",
+          "good": true,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "An AI given a prompt does the task as its writer means, in cases the writer didn't foresee",
       "path": "plugins/rn/domain/best-practices/prompt",
       "kind": "meta",
-      "status": "done"
+      "inputs": [],
+      "preconditions": [],
+      "status": "doing",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": [
+            {
+              "about": "What carries the architecture's vital few",
+              "decided": null
+            }
+          ]
+        },
+        {
+          "id": "N8",
+          "good": true,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "The user reaches their goal through the design tree's deliverables, which leave nothing out and start nothing too early",
@@ -240,7 +386,7 @@
       ]
     },
     {
-      "name": "rn's developers build its parts so that together they deliver its product vision",
+      "name": "rn's developers build its parts so that together they give what its README promises",
       "path": "dev/rn/architecture.md",
       "kind": "architecture",
       "inputs": [
@@ -252,22 +398,22 @@
       "necessary_conditions": [
         {
           "id": "N1",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N2",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N3",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N4",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The principles",
@@ -303,7 +449,7 @@
         },
         {
           "id": "N5",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The orchestrator",
@@ -404,12 +550,12 @@
         },
         {
           "id": "N6",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N7",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "What the design tree holds",
@@ -417,6 +563,194 @@
               "by": "user"
             }
           ]
+        },
+        {
+          "id": "N8",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Lane's architecture",
+              "decided": "Lane's architecture changes so that it holds what rn rests on: the orchestrator's own grounds, a sign-off passed only after /rn:ty, and a run held again from its Place after a pause",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N10",
+          "good": true,
+          "decisions": [
+            {
+              "about": "A best practice made on a run",
+              "decided": "kept in .rn/best-practices/ of the user's repository, where every later run finds it and takes it over rn's own of the same kind",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N11",
+          "good": true,
+          "decisions": [
+            {
+              "about": "The run's worktree",
+              "decided": "in .claude/worktrees/, beside the worktrees that Claude Code makes, which EnterWorktree enters from any conversation",
+              "by": "research"
+            }
+          ]
+        },
+        {
+          "id": "N12",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N13",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N14",
+          "good": true,
+          "decisions": [
+            {
+              "about": "Where a role stands",
+              "decided": "each step of a role ends with tree.py committing its work and its place, a step that Lane holds, as Lane keeps its own record only in the system's temporary folder and ends it at a pause",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N15",
+          "good": true,
+          "decisions": [
+            {
+              "about": "The size of a deliverable",
+              "decided": "the orchestrator sizes each deliverable so one generator makes it whole and one evaluator reads it whole",
+              "by": "reasoning"
+            },
+            {
+              "about": "One generator per deliverable",
+              "decided": "a run makes each deliverable once, and judging by its people and remaking from the design tree finish it. Several generators run side by side only when the developers check a best practice: a lack all of them share is the best practice's, and a lack one alone shows is the generator's. Three generators on every run would cost about three times the time of KR1.2 for a gain on KR1.1 that no trial has shown",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N16",
+          "good": true,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "Lane's product vision says what Lane is for",
+      "path": "dev/lane/product-vision.md",
+      "kind": "product-vision",
+      "inputs": [],
+      "preconditions": [],
+      "status": "doing",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The concept in its current form",
+              "decided": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Lane's design checks each practice step and each change, and holds what rn rests on",
+      "path": "dev/lane/architecture.md",
+      "kind": "architecture",
+      "inputs": [
+        "dev/lane/product-vision.md",
+        "dev/rn/architecture.md"
+      ],
+      "preconditions": [],
+      "status": "doing",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The orchestrator's own words",
+              "decided": "the guard lets the orchestrator start or resume a role with its own grounds beside the person's words, which it still keeps word for word",
+              "by": "user"
+            },
+            {
+              "about": "A sign-off",
+              "decided": "a lane passes the run beyond a sign-off only after the person typed the command that approves it, such as rn's /rn:ty",
+              "by": "reasoning"
+            },
+            {
+              "about": "A paused run",
+              "decided": null
+            }
+          ]
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
         },
         {
           "id": "N8",
@@ -431,24 +765,12 @@
         {
           "id": "N10",
           "good": false,
-          "decisions": [
-            {
-              "about": "A best practice made on a run",
-              "decided": "kept in .rn/best-practices/ of the user's repository, where every later run finds it and takes it over rn's own of the same kind",
-              "by": "user"
-            }
-          ]
+          "decisions": []
         },
         {
           "id": "N11",
           "good": false,
-          "decisions": [
-            {
-              "about": "The run's worktree",
-              "decided": "in .claude/worktrees/, beside the worktrees that Claude Code makes, which EnterWorktree enters from any conversation",
-              "by": "research"
-            }
-          ]
+          "decisions": []
         },
         {
           "id": "N12",
@@ -463,29 +785,12 @@
         {
           "id": "N14",
           "good": false,
-          "decisions": [
-            {
-              "about": "Where a role stands",
-              "decided": "each step of a role ends with tree.py committing its work and its place, a step that Lane holds, as Lane keeps its own record only in the system's temporary folder and ends it at a pause",
-              "by": "reasoning"
-            }
-          ]
+          "decisions": []
         },
         {
           "id": "N15",
           "good": false,
-          "decisions": [
-            {
-              "about": "The size of a deliverable",
-              "decided": "the orchestrator sizes each deliverable so one generator makes it whole and one evaluator reads it whole",
-              "by": "reasoning"
-            },
-            {
-              "about": "One generator per deliverable",
-              "decided": "a run makes each deliverable once, and judging by its people and remaking from the design tree finish it. Several generators run side by side only when the developers check a best practice: a lack all of them share is the best practice's, and a lack one alone shows is the generator's. Three generators on every run would cost about three times the time of KR1.2 for a gain on KR1.1 that no trial has shown",
-              "by": "user"
-            }
-          ]
+          "decisions": []
         },
         {
           "id": "N16",
@@ -619,13 +924,7 @@
         {
           "id": "N11",
           "good": false,
-          "decisions": [
-            {
-              "about": "The orchestrator's own words",
-              "decided": "the guard lets the orchestrator start or resume a role with its own grounds beside the person's words, which it still keeps word for word",
-              "by": "user"
-            }
-          ]
+          "decisions": []
         },
         {
           "id": "N12",
@@ -706,10 +1005,12 @@
       ]
     },
     {
-      "name": "Lane's README reads as its writer meant, to a newcomer reading it once",
+      "name": "A newcomer decides from Lane's README alone whether Lane fits their plugin, and starts using it",
       "path": "plugins/lane/README.md",
-      "kind": "refactor-doc",
-      "inputs": [],
+      "kind": "readme",
+      "inputs": [
+        "dev/lane/product-vision.md"
+      ],
       "preconditions": [
         "plugins/lane"
       ],
@@ -752,6 +1053,21 @@
         },
         {
           "id": "N8",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N11",
           "good": false,
           "decisions": []
         }
@@ -806,6 +1122,105 @@
         },
         {
           "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "Each of rn's commands does what the user typed it for, on every run",
+      "path": "plugins/rn/skills",
+      "kind": "prompt",
+      "inputs": [
+        "dev/rn/architecture.md"
+      ],
+      "preconditions": [
+        "plugins/rn/domain"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N11",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N12",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N13",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N14",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N15",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N16",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N17",
           "good": false,
           "decisions": []
         }
@@ -925,7 +1340,8 @@
       ],
       "preconditions": [
         "plugins/rn/domain",
-        "plugins/rn/agents"
+        "plugins/rn/agents",
+        "plugins/rn/skills"
       ],
       "status": "doing",
       "necessary_conditions": [
