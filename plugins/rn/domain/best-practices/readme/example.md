@@ -8,16 +8,16 @@ the installation below installs the earlier rn 0.9.0, which works differently, a
 shows the run that the design of the rebuilt rn lays out, not a recorded run.
 
 rn is for you when you want an AI to build work made of several pieces, such as a feature with its
-README and its code, and you'd rather answer a few questions than read and fix drafts. With it, you
-hand over work that its users can use without fixes, and rn asks you only what it can't decide
-itself.
+README and its code, and you'd rather answer a few questions than review what an AI made and ask for
+fixes. With it, you hand over work that its users can use without fixes, and rn asks you only what
+it can't decide itself.
 
 ## Non-goals
 
 - rn doesn't decide your purpose or what you want. When rn leaves a question to you, the work that
   depends on it waits for your answer.
-- rn isn't for a quick draft that you'll fix yourself. It plans, builds, and tests each piece, so it
-  takes longer than a single prompt to Claude Code.
+- rn isn't for a quick first version that you'll fix yourself. It plans, builds, and tests each
+  piece, so it takes longer than a single prompt to Claude Code.
 - rn doesn't merge your work. It commits each piece to a branch and leaves one draft pull request
   for you to merge.
 
@@ -96,26 +96,19 @@ Decided without asking you:
 
 ## How it works
 
-![In the usual way you are in the fix loop, and with rn the loop runs without you](images/problem.svg)
+![Working with an AI, small fixes pile up and bury the few points that matter, and with rn only those few build up](images/problem.svg)
 
-When you ask an AI in one prompt, you read each draft and ask for fixes. Each round adds to the
-draft, and the few points that matter get lost among the many that don't.
+When you work with an AI, you review what it made and ask for fixes, round after round. Each round
+adds small fixes to your work, and they bury the few points that matter.
 
-rn takes you out of that loop. It keeps in a design tree only the decisions that matter to your
-goal, and builds each piece from them by the best practice for its kind. A shortfall changes the
-decision it comes from, not the piece, so the piece never fills up with fixes.
+In everything it does, rn builds up only those few points. It plans, builds, and asks you by the
+best practice for each kind of work. It takes each problem back to the plan that the problem comes
+from, so small fixes never pile up in your work.
 
-### Does what rn hands over work without your fixes?
+### Does it hold on your own work, every time?
 
-A second AI, the evaluator, reads each piece as its users would, with only what they have, and
-never the design. rn builds the piece again from the design tree until its users get what they
-need from it.
-
-### How much of your time does it take?
-
-You answer only what your purpose and the best practices leave open, one point at a time. In the
-walkthrough, that's two answers. rn keeps the work in your repository as it goes, so `/rn:up` in a
-new conversation goes on where it stopped, and you never answer a point twice.
+On any work, rn checks each piece by whether its users can do what they need with it, and builds
+it again until they can. It doesn't hand you a piece that fails that check.
 
 ## Documentation
 
