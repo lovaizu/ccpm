@@ -1,6 +1,6 @@
 {
- "DELETE_TEMPLATE_COMMENT": "<role>: the role the goal names, such as `the developer`. <achieves what>: what the role achieves with the deliverable. <kind>: the kind of deliverable, such as `readme`. <ext>: the deliverable's own format, such as `md`. The example is optional, until one deliverable of the kind exists. <source>: the path, from the best practice's folder, of the deliverable the example copies, optional, where the example is a copy. inputs: each kind whose deliverables the generator makes a deliverable of this kind from, and preconditions: each kind whose deliverables pass before the generator makes it, each <kind> by the name of its best practice's folder. Each list is empty where it takes none.",
- "goal": "<The role> <achieves what>.",
+ "DELETE_TEMPLATE_COMMENT": "<users>: who uses the deliverable, such as `the developer`. <achieve what>: what they achieve with it. <kind>: the kind of deliverable, such as `readme`. <ext>: the deliverable's own format, such as `md`. The example is optional until one deliverable of the kind exists. <source>: the path, from the best practice's folder, of the deliverable that the example copies. Optional, for an example that's a copy. inputs: each kind of deliverable that this kind builds on. preconditions: each kind whose deliverables must pass before work on this kind starts. Each <kind> is the folder name of its best practice. Each list is empty where there's none.",
+ "goal": "<Users> <achieve what>.",
  "template": "<kind>-template.<ext>",
  "example": "<kind>-example.<ext>",
  "source": "<source>",
@@ -12,28 +12,28 @@
  ],
  "critical_success_factors": [
   {
-   "DELETE_TEMPLATE_COMMENT": "One for each thing that must go right for the role to reach the goal. <state>: the thing as a state, in one sentence.",
+   "DELETE_TEMPLATE_COMMENT": "One for each thing that must go right for the users to reach the goal. <state>: the thing, as a state, in one sentence.",
    "id": "C<n>",
    "what": "<State>."
   }
  ],
  "necessary_conditions": [
   {
-   "DELETE_TEMPLATE_COMMENT": "One for each state of the deliverable that a critical success factor needs, each after those it builds on. csf: the ID of the factor it serves. <section>: the heading of the template that holds the condition, as written there, or `the whole` where the whole holds it. <When>: the moment a role uses it, such as `Reading the goal`. <role>: the role that uses it, the one the goal names or one that serves it, such as `the evaluator`. <get what>: what that role gets there. <so that>: the factor it serves.",
+   "DELETE_TEMPLATE_COMMENT": "One for each state of the deliverable that a critical success factor needs. csf: the ID of the factor it serves. <section>: each heading of the template that holds the condition, as written there, or `the whole` where the whole deliverable holds it. <question>: the state, as a yes-or-no question about the deliverable.",
    "id": "N<n>",
    "csf": "C<n>",
    "about": "<section>, <section>",
-   "what": "<When>, does <role> <get what>, so that <so that>?"
+   "what": "<Question>?"
   }
  ],
  "practices": [
   {
-   "DELETE_TEMPLATE_COMMENT": "One for each necessary condition, in their order. <must be>: what the deliverable must be to meet the condition, in short sentences. <why>: why the role needs it so. <step>: one action a generator that holds the intent still needs to know, such as a format to keep or a place to look, saying what it achieves, optional. <case>: when the step applies, optional. trace: the call that shows the step done. <action>: run for a command run, matched whole, read for a file read to its end, or write for a file made. <take>: the command or the file's path, written as the step writes it, a value the role's start gives as `{<name>}`, such as `{deliverable}`. For run and write, `takes` holds more than one where any of them shows the step done, and for read, each file the step reads whole. Given to a step that every run makes and a call shows.",
+   "DELETE_TEMPLATE_COMMENT": "One for each necessary condition, in the same order. <must be>: what the deliverable must be to meet the condition, in short sentences. <why>: why its users need that. <method>: the name and source of the method that the field has established. <step>: one action that a generator who understands the intent still needs to know, with what it achieves. Optional. <case>: when the step applies. Optional. trace: the tool call that shows the step done. Given only to a step that every run takes. <action>: `run` for a command, matched in full, `read` for a file read in full, or `write` for a file written. <take>: the command or the file's path, as the step writes it, with a value given at the start of the run written as `{<name>}`, such as `{deliverable}`. For `run` and `write`, any one of several `takes` shows the step done. For `read`, the step reads each of them in full.",
    "intent": "N<n>",
-   "thinking": "<Must be>. <Why>.",
+   "thinking": "<Must be>. <Why>. <Method>.",
    "steps": [
     {
-     "text": "<step>.",
+     "text": "<Step>.",
      "trace": {
       "action": "<action>",
       "takes": [

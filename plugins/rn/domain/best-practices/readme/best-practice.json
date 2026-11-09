@@ -1,5 +1,5 @@
 {
- "goal": "Someone who meets the product for the first time starts using it, from the README alone, only when it serves their work.",
+ "goal": "A newcomer decides from the README alone whether the product fits their work, and if it does, starts using it.",
  "template": "template.md",
  "example": "example.md",
  "source": "../../../README.md",
@@ -10,15 +10,15 @@
  "critical_success_factors": [
   {
    "id": "C1",
-   "what": "The reader knows whether the product serves their work."
+   "what": "The reader knows whether the product fits their work."
   },
   {
    "id": "C2",
-   "what": "The reader believes the product gives what it promises, before they try it."
+   "what": "The reader trusts, before trying it, that the product delivers what it promises."
   },
   {
    "id": "C3",
-   "what": "The reader gets the product working on their own."
+   "what": "The reader installs the product and starts using it without help."
   }
  ],
  "necessary_conditions": [
@@ -26,105 +26,105 @@
    "id": "N1",
    "csf": "C1",
    "about": "the opening",
-   "what": "Reading the opening, does the reader tell what the product is and what it would let them do, so that they know whether the product serves their work?"
+   "what": "Does the opening say what the product is, who it's for, and what it lets them achieve?"
   },
   {
    "id": "N2",
    "csf": "C1",
    "about": "the opening",
-   "what": "Before installing, does the reader see what the product doesn't do that they might expect of it, so that they know whether the product serves their work?"
+   "what": "Does the README list what readers might expect the product to do but it doesn't?"
   },
   {
    "id": "N3",
    "csf": "C1",
    "about": "the opening",
-   "what": "Before installing, does the reader see where the product isn't yet fit for use, so that they know whether the product serves their work now?"
+   "what": "Does the README say at the top where the product isn't ready for use yet?"
   },
   {
    "id": "N4",
    "csf": "C1",
    "about": "License",
-   "what": "Weighing the product, does the reader find the terms on which they and their team may use it, so that they know whether the product serves their work?"
+   "what": "Does the README name the license and link its full text?"
   },
   {
    "id": "N5",
    "csf": "C1",
    "about": "the whole",
-   "what": "Reading from the top, does the reader find each answer just when they come to need it, so that they know whether the product serves their work without reading past what they need?"
+   "what": "Does the README answer each question in the order a reader comes to ask it?"
   },
   {
    "id": "N6",
    "csf": "C2",
    "about": "Walkthrough",
-   "what": "After the walkthrough, has the reader seen the product give, on work like theirs, the gain the opening promised, so that they believe the product gives what it promises before they try it?"
+   "what": "Does the walkthrough show a real run that delivers, on typical work, the gain the opening promises?"
   },
   {
    "id": "N7",
    "csf": "C2",
    "about": "How it works",
-   "what": "For each problem they feel in the work, does the reader picture how the product makes it go away, so that they believe the product gives what it promises before they try it?"
+   "what": "Does the README show, for each problem readers have today, how the product removes it?"
   },
   {
    "id": "N8",
    "csf": "C2",
    "about": "How it works",
-   "what": "At each point where they would ask whether the product can really do that, does the reader picture how it does it, so that they believe the product gives what it promises before they try it?"
+   "what": "Does the README show how the product does each thing a newcomer would doubt it can do?"
   },
   {
    "id": "N9",
    "csf": "C3",
    "about": "Requirements, Installation",
-   "what": "Starting with nothing set up, does the reader install the product by the README's steps alone and see that it works, so that they get the product working on their own?"
+   "what": "Can a reader with nothing set up install the product by the README alone, and see that it works?"
   },
   {
    "id": "N10",
    "csf": "C3",
    "about": "Documentation",
-   "what": "Needing more than the README gives, such as fuller use or help, does the reader find where to go next, so that they get the product working on their own?"
+   "what": "Does the README link where to go for fuller use and for help?"
   }
  ],
  "practices": [
   {
    "intent": "N1",
-   "thinking": "The opening names the kind of thing the product is, whom it's for by the work they want done, and the end they reach with it, from the objectives of the product vision, in words the reader already uses and with no feature name or mechanism. Its first sentence says in short what the product is. From it, the reader judges whether the product serves their own end, and whether to read on. It takes the form of Geoffrey Moore's positioning statement in Crossing the Chasm: for whom, their need, the category, and the one benefit.",
+   "thinking": "The opening names the kind of product, the people it's for by the work they want done, and what they achieve with it, taken from the objectives of the product vision. It uses words the reader already knows, and leaves out feature names and internals. Most readers decide from the opening alone whether to read on. Geoffrey Moore's positioning statement, from Crossing the Chasm, gives the form: the target customer, their need, the product category, and the key benefit.",
    "steps": [
     {
-     "text": "Read only the opening, put it away, and say it as to a colleague. Where a part goes missing or comes out otherwise, shorten it, or put what the product does in place of each vague or praising word."
+     "text": "Read only the opening, then put it away and explain the product as you would to a colleague. Shorten any part you forgot or got wrong, and replace each vague or praising word with what the product does."
     },
     {
-     "text": "Name the group and the work more closely where a reader outside that group couldn't tell that the product isn't for them."
+     "text": "If a reader outside the target group couldn't tell that the product isn't for them, describe the group and their work more precisely."
     }
    ]
   },
   {
    "intent": "N2",
-   "thinking": "List each thing a reader could reasonably expect of the product and it doesn't do, as the non-goals of a design document name what lies outside its scope. A reader who needs one of them then learns that before they install.",
+   "thinking": "List each thing a reader could reasonably expect the product to do that it doesn't. A reader who needs one of them learns it before installing. A design document states the same in its non-goals: what lies outside its scope.",
    "steps": [
     {
-     "text": "Gather what readers might expect from similar products and from what readers ask, and ask the user whether each is in or out."
+     "text": "Collect what readers expect from similar products and what they ask about, and ask the user whether each is in scope."
     }
    ]
   },
   {
    "intent": "N3",
-   "thinking": "Where the product isn't yet fit for use, such as a release still in development or one no longer kept up, say so at the top, by the state as [repostatus.org](https://www.repostatus.org) names the states of a project, such as work in progress, and what it means for the reader's work. A reader who starts on it otherwise finds out only once their work rests on it.",
+   "thinking": "If the product isn't ready for use, such as a release still in development or one no longer maintained, say so at the top, with what that means for the reader's work. Otherwise a reader finds out only after their work depends on it. [repostatus.org](https://www.repostatus.org) defines the common states of a project, such as Work in Progress, Suspended, and Unsupported.",
    "steps": []
   },
   {
    "intent": "N4",
-   "thinking": "Name the license by its identifier in the [Software Package Data Exchange (SPDX) License List](https://spdx.org/licenses/) and link its full text. A reader may rule the product in or out by its license alone, and the identifier lets them and their tools recognize it at once.",
+   "thinking": "Name the license by its identifier in the [Software Package Data Exchange (SPDX) License List](https://spdx.org/licenses/), and link its full text. Some readers rule a product in or out by its license alone, and the identifier lets them and their tools recognize it at once.",
    "steps": [
     {
-     "text": "Open the link, and check that it reaches the license the name says."
+     "text": "Open the link and check that it leads to the license the README names."
     }
    ]
   },
   {
    "intent": "N5",
-   "thinking": "Order the README so that each reader stops once they have what they came for: the opening for every reader, the installation for one who has chosen the product, the walkthrough and How it works for one still weighing it, and what comes after through links. A reader who must pass what they don't need leaves before what they do, as the [inverted pyramid](https://www.nngroup.com/articles/inverted-pyramid/) puts first what every reader needs.",
+   "thinking": "Order the README by who needs what: the opening for every reader, the installation for readers who have decided, the walkthrough and How it works for readers still deciding, and links for everything after. Each reader can stop once they have what they came for. A reader who has to read past what they don't need often leaves before reaching what they do. The [inverted pyramid](https://www.nngroup.com/articles/inverted-pyramid/) puts first what every reader needs.",
    "steps": [
     {
-     "text": "Read the README from the top as someone who meets the product for the first time, and after each section, write the question the reader now has.",
+     "text": "Read the README from the top as a newcomer, and after each section, write down the question you have next.",
      "trace": {
       "action": "read",
       "takes": [
@@ -133,19 +133,19 @@
      }
     },
     {
-     "text": "Check that the next part answers that question. Move a section that answers a later one."
+     "text": "Check that the next section answers that question. Move any section that answers a later one."
     },
     {
-     "text": "Cut what no reader needs at the point where it stands, or move it to the document a link leads to."
+     "text": "Remove what no reader needs at that point, or move it to a linked document."
     }
    ]
   },
   {
    "intent": "N6",
-   "thinking": "Show one real run of the use most readers come for, on work like theirs, from what the reader gives to the result they keep, with the product's real output. The reader then watches the gain happen. It's the one task a tutorial carries the reader through to its result, as [Diátaxis](https://diataxis.fr/tutorials/) names a tutorial.",
+   "thinking": "Show one real run of the use that most readers come for, on work like theirs, from what the reader gives the product to the result they keep, with the product's real output. This shows the reader the promised gain happening, not only a claim of it. Diátaxis calls this a [tutorial](https://diataxis.fr/tutorials/): one task, carried through to a result.",
    "steps": [
     {
-     "text": "Pick the use from what readers ask for most and from the objectives of the product vision.",
+     "text": "Choose the use from what readers ask for most and from the objectives of the product vision.",
      "trace": {
       "action": "read",
       "takes": [
@@ -154,19 +154,19 @@
      }
     },
     {
-     "text": "Take each exchange from the record of a real run, in the form the reader meets it, cutting only what the reader doesn't need to see the result."
+     "text": "Take each exchange from the record of a real run, in the form the reader meets it, and cut only what the reader doesn't need to see the result."
     },
     {
-     "text": "If the result doesn't show the gain the opening promised, pick another piece of work or another use."
+     "text": "If the result doesn't show the gain the opening promises, choose another piece of work or another use."
     }
    ]
   },
   {
    "intent": "N7",
-   "thinking": "Each problem the reader feels in the present way, in their own words, gets a figure in which they see it left in that way and gone with the product, and a sentence or two on what the product does that makes it go away. A reader chooses the product once they can picture their own problem gone. These are the pains and the pain relievers of the Value Proposition Canvas of Alexander Osterwalder.",
+   "thinking": "For each problem readers have with their current way of working, described in their words, draw a figure that shows the problem in the current way and gone with the product. Add a sentence or two on what the product does to remove it. Readers choose a product once they can picture their own problem gone. In Alexander Osterwalder's Value Proposition Canvas, these are the customer's pains and the product's pain relievers.",
    "steps": [
     {
-     "text": "Take the problems from the Concept section of the product vision, one where the present way falls short for each idea, and from what readers complain of in that way.",
+     "text": "Take the problems from the Concept section of the product vision, one for each idea where the current way falls short, and from what readers complain about in the current way.",
      "trace": {
       "action": "read",
       "takes": [
@@ -175,19 +175,19 @@
      }
     },
     {
-     "text": "For each, take from the design what the product does that makes it go away. Ask the user each one the design doesn't settle."
+     "text": "For each problem, take from the design what the product does to remove it. Ask the user about any that the design doesn't settle."
     },
     {
-     "text": "Look at each figure as a newcomer, and where they couldn't picture from it what its line says, draw it again."
+     "text": "Look at each figure as a newcomer. If they couldn't picture from it what its text says, redraw it."
     }
    ]
   },
   {
    "intent": "N8",
-   "thinking": "Each point a newcomer would doubt gets a figure of its own that draws what its line says, and a sentence or two on how the product does it. A reader believes a product can do a thing once they can picture how, as the conceptual model in Don Norman's The Design of Everyday Things lets a user predict what a thing does. One figure for each doubt lets the reader see each at a glance.",
+   "thinking": "For each thing a newcomer would doubt the product can do, draw a figure of its own that shows how, and add a sentence or two. Readers believe a product can do something once they can picture how it works. Don Norman calls this picture the conceptual model, in The Design of Everyday Things. One figure for each doubt lets the reader take in each at a glance.",
    "steps": [
     {
-     "text": "Read the README as a newcomer, and mark each thing it says that the present way can't do. Ask of each answer what the newcomer would doubt next, until no doubt remains.",
+     "text": "Read the README as a newcomer, and mark each claim that the current way can't match. For each answer, ask what the newcomer would doubt next, until no doubt remains.",
      "trace": {
       "action": "read",
       "takes": [
@@ -196,25 +196,25 @@
      }
     },
     {
-     "text": "For each point, take how the product does it from the design. Ask the user each one the design doesn't settle."
+     "text": "For each doubt, take how the product does it from the design. Ask the user about any that the design doesn't settle."
     },
     {
-     "text": "Look at each figure as a newcomer, and where they couldn't picture from it what its line says, draw it again."
+     "text": "Look at each figure as a newcomer. If they couldn't picture from it what its text says, redraw it."
     }
    ]
   },
   {
    "intent": "N9",
-   "thinking": "The requirements and the install steps serve a reader who has nothing set up, each as a command to copy, and end with a sign that the product works, as the Install section of [Standard Readme](https://github.com/RichardLitt/standard-readme) holds them. The author's own setup hides the gaps.",
+   "thinking": "Write the requirements and the installation steps for a reader with nothing set up, each as a command they can copy, and end with a sign that the product works. The author's own setup hides the gaps. [Standard Readme](https://github.com/RichardLitt/standard-readme) holds these in its Install section.",
    "steps": [
     {
-     "text": "From a machine or sandbox where nothing the product needs is in place, follow the steps as written and do nothing they don't say. If a step fails or needs what the README doesn't say, write that in and start again."
+     "text": "On a machine or sandbox with nothing the product needs, follow the steps exactly as written. If a step fails or needs something the README doesn't mention, add it and start again."
     }
    ]
   },
   {
    "intent": "N10",
-   "thinking": "The README holds what the reader needs to decide and to start. For each later need, such as fuller use or help, it links one place. No one reads a README that holds everything, and each later need has its own kind of page, as [Diátaxis](https://diataxis.fr) sorts tutorials, how-to guides, reference, and explanation.",
+   "thinking": "The README holds only what a reader needs to decide and to start. For each later need, such as fuller use or help, it links one place. A README that holds everything goes unread, and each later need has its own kind of page, which [Diátaxis](https://diataxis.fr) sorts into tutorials, how-to guides, reference, and explanation.",
    "steps": [
     {
      "text": "Open each link."

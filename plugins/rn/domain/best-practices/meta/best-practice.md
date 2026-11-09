@@ -2,7 +2,7 @@
 
 ## Goal
 
-The generator makes deliverables with which their role achieves its purpose.
+A generator that follows a best practice produces deliverables that serve their users' purpose.
 
 ## Template
 
@@ -16,107 +16,113 @@ The generator makes deliverables with which their role achieves its purpose.
 
 | ID | Factor |
 | --- | --- |
-| C1 | The generator and the evaluator know what the deliverable achieves and what decides it. |
-| C2 | The generator meets each necessary condition the same way on every run. |
-| C3 | The generator makes the deliverable once what it takes is there. |
+| C1 | The necessary conditions cover what users need from the deliverable. |
+| C2 | The generator meets every necessary condition in every deliverable. |
+| C3 | Each deliverable stays consistent with the deliverables it builds on and the deliverables built on it. |
 
 ## Necessary conditions
 
 | ID | Factor | Condition | Sections |
 | --- | --- | --- | --- |
-| N1 | C1 | Starting a deliverable, does the generator know in one sentence the end its role is after, so that it knows what the deliverable achieves? | goal |
-| N2 | C1 | Starting a deliverable, does the generator know the few things that must go right for the role to reach that end, so that it knows what decides the deliverable? | critical_success_factors |
-| N3 | C1 | Making or judging a deliverable, do the generator and the evaluator know, each as a question, the states of the deliverable that each critical success factor needs, so that both know what decides it? | necessary_conditions |
-| N4 | C2 | Filling in the template, does the generator find for each necessary condition its section and the form its sentences take, so that it meets the condition the same way on every run? | template |
-| N5 | C2 | Meeting a necessary condition, does the generator grasp its intent and the field's established way, so that it meets the condition the same way on every run? | practices |
-| N6 | C2 | Reading the example, does the generator see what the template's sections become in one deliverable, so that it meets each condition the same way on every run? | example, source |
-| N7 | C3 | Starting a deliverable, does the generator know the kinds it makes the deliverable from and the kinds that must pass first, so that it makes the deliverable once what it takes is there? | inputs, preconditions |
+| N1 | C1 | Does the goal state, in one sentence, who uses the deliverable and what purpose it serves for them? | goal |
+| N2 | C1 | Do the critical success factors name the few things that must all hold for the users to reach the goal? | critical_success_factors |
+| N3 | C1 | Does each necessary condition ask, as a yes-or-no question, whether the deliverable holds a state that its factor needs? | necessary_conditions |
+| N4 | C2 | Does the template give each necessary condition a section, and each slot a note on what it holds and in what form? | template |
+| N5 | C2 | Does each practice say what the deliverable must be, why, and which established method achieves it? | practices |
+| N6 | C2 | Does the example show a finished deliverable of the kind that meets every necessary condition? | example, source |
+| N7 | C3 | Does the best practice name the kinds of deliverable that this kind builds on, and the kinds that must pass before work on it starts? | inputs, preconditions |
 
 ## Practices
 
 ### N1
 
-Starting a deliverable, does the generator know in one sentence the end its role is after, so that it knows what the deliverable achieves?
+Does the goal state, in one sentence, who uses the deliverable and what purpose it serves for them?
 
 **Thinking**
 
-Write the end the role is after as one sentence, with the role as its subject.
+Write the goal as one sentence whose subject is the deliverable's users. Name the users and what they achieve with the deliverable. The factors and the conditions all derive from this sentence, so it states the purpose itself, not a means to it.
 
 **Steps**
 
-1. Ask why of each part of the sentence until the end itself shows.
+1. Ask why of the sentence until the answer is the purpose itself.
 
 ### N2
 
-Starting a deliverable, does the generator know the few things that must go right for the role to reach that end, so that it knows what decides the deliverable?
+Do the critical success factors name the few things that must all hold for the users to reach the goal?
 
 **Thinking**
 
-The critical success factors are the few things that must go right for the role to reach its end, as John Rockart named them: with each one in place, the role reaches its end. Each level of a best practice holds the vital few of the level it serves, as Juran's Pareto principle names them: the critical success factors hold what the goal needs, and the necessary conditions what each factor needs. Write each factor as one sentence that states it.
+A critical success factor is one of the few things that must go right for the users to reach the goal, as John Rockart defined the term. Write each factor as a state, in one sentence. Together, the factors are sufficient: when all of them hold, the users reach the goal. Keep only the vital few, in Joseph Juran's term, so that each condition serves one of them.
 
 **Steps**
 
-1. Walk through the role's use of the deliverable toward the goal, one moment at a time, and name what must go right at each.
+1. Walk through how the users use the deliverable, one step at a time, and name what must go right at each step.
+2. Check that the goal follows when every factor holds. If it doesn't, a factor is missing.
 
 ### N3
 
-Making or judging a deliverable, do the generator and the evaluator know, each as a question, the states of the deliverable that each critical success factor needs, so that both know what decides it?
+Does each necessary condition ask, as a yes-or-no question, whether the deliverable holds a state that its factor needs?
 
 **Thinking**
 
-Each necessary condition is a state of the deliverable that its critical success factor needs, as a goal tree names it. Write each as a question of the moment the role uses it, what the role gets there, and the factor it serves, in a "so that" clause. The evaluator confirms each condition, and its practice makes it.
+A necessary condition is a state of the deliverable that a factor needs, as in a goal tree. Write each as a yes-or-no question about the deliverable, and name the factor it serves in `csf`. The generator meets each condition by its practice, and the evaluator checks each by its question.
 
 **Steps**
 
-1. For each critical success factor, name each state of the deliverable it needs.
-2. To better a best practice, start from the conditions its use has confirmed, and take in what research shows.
-3. Where a deliverable in use falls short of its role, mend the level that caused it: the goal, a critical success factor, a necessary condition, or its practice.
+1. For each factor, list each state of the deliverable that it needs.
+2. If a deliverable that meets every condition still fails its users, find the level that caused it, whether the goal, a factor, a condition, or a practice, and fix it there.
+3. To improve a best practice, start from the conditions that use has confirmed, and add what research shows.
 
 ### N4
 
-Filling in the template, does the generator find for each necessary condition its section and the form its sentences take, so that it meets the condition the same way on every run?
+Does the template give each necessary condition a section, and each slot a note on what it holds and in what form?
 
 **Thinking**
 
-The template holds each necessary condition in a section, with the form its sentences take, such as one rule and one why, and fixed text for what every deliverable of the kind shares. Each section holds one or more conditions, and each condition names its sections in `about`.
+The template is the skeleton of the deliverable. Each section holds one or more conditions, and each condition names its sections in `about`. Slots hold what changes from one deliverable to the next, and fixed text holds what every deliverable of the kind shares.
 
 **Steps**
 
-1. Mark each slot so that its reader can tell it from fixed text and the page that shows it keeps it, such as `` `<name>` `` in Markdown.
-2. After each section, write one note that says for each slot what it holds, the form it takes, and whether it's optional. Open the note with a marker by which the generator finds and deletes it, and write it in the form the deliverable's format holds, such as a comment in Markdown or a key in JSON.
-3. Where the deliverable has a JSON Schema of its own, such as the design tree, make the schema the template, its top fields the sections, and each slot's note the description of its field.
-4. Give a slot a figure wherever a figure says it, drawn as text that shows each change in a diff, such as Mermaid for a sequence, SVG for any other figure, and a table. Give each figure a skeleton in the template that shows its layout by the slots' names, and say in the note where the deliverable puts its own.
+1. Mark each slot so that the reader can tell it from fixed text and the rendered page still shows it, such as `` `<name>` `` in Markdown.
+2. After each section, write one note that says, for each slot, what it holds, the form it takes, and whether it's optional. Start the note with a marker by which the generator finds and deletes it, in the form the deliverable's format allows, such as a note block in Markdown or a key in JSON.
+3. If the deliverable has a JSON Schema of its own, such as the design tree, use the schema as the template: its top-level fields are the sections, and the description of each field is its note.
+4. Where a figure explains a slot better than words, draw it in a text format that shows each change in a diff, such as Mermaid for a sequence, SVG for other figures, or a table. Put a skeleton of each figure in the template, labeled with the names of its slots, and say in the note where the deliverable keeps its own.
 
 ### N5
 
-Meeting a necessary condition, does the generator grasp its intent and the field's established way, so that it meets the condition the same way on every run?
+Does each practice say what the deliverable must be, why, and which established method achieves it?
 
 **Thinking**
 
-Each necessary condition has one practice. It says first, in short sentences, what the deliverable must be to meet that condition, and why the role needs it so, so that the generator finds its way in any case. It then gives the way the field has established for that, found by research, by its established name and with its source, such as single responsibility or Given-When-Then, so that the name carries the field's knowledge to the generator. The practice holds why and how to find the content, and the template's note the slot's form, so that each fact stands in one place and the two never drift apart. It names a language or a tool as an example, and gives each established way with when it fits, so that each deliverable's plan picks the way and the tool.
+Each condition has one practice. The practice first says what the deliverable must be to meet the condition, and why its users need that. With the reason, the generator can meet the condition in cases the template doesn't cover. The practice then names the method the field has established for it, found by research, with its source, such as single responsibility or Given-When-Then. The name carries the field's knowledge. Where the field has several methods, give each with when it fits. Name a language or a tool only as an example, so that each deliverable's plan chooses its own. The reasons and the way to find the content go in the practice, and the form of each slot goes in the template's note, so that each fact stands in one place.
 
 **Steps**
 
-1. Add a step where a generator that holds the intent still needs to know how, such as a format to keep or a place to look, and say what the step achieves.
-2. Give each step that every run makes and a call shows its trace: a command it runs, a file it reads to its end, or a file it makes. Order the steps as their calls come, as a checker such as Lane holds the role to each step by its trace, in that order. The evaluator checks a step that's a judgment.
-3. Where the generator finds the content before it writes it, such as the roles of a product vision, say what to look at, how to find all of it, and when to ask the user.
+1. Add a step only where a generator that understands the intent still needs to know how, such as a format to keep or a place to look. Say what the step achieves.
+2. Give a trace to each step that every run takes and a tool call shows: a command it runs, a file it reads in full, or a file it writes. Order the steps as their calls come, because a checker such as Lane checks each step by its trace in that order. The evaluator checks the steps that are judgments.
+3. Where the generator must find the content before it writes it, such as the users of a product vision, say where to look, how to find all of it, and when to ask the user.
 
 ### N6
 
-Reading the example, does the generator see what the template's sections become in one deliverable, so that it meets each condition the same way on every run?
+Does the example show a finished deliverable of the kind that meets every necessary condition?
 
 **Thinking**
 
-Make the product's own deliverable of the kind from its design tree by the template and the practices, confirm in it each necessary condition, and name its file in `example`, as one finished deliverable shows what the sections become.
+The example is the product's own deliverable of the kind, made from its design tree with the template and the practices, and checked against every condition. Name its file in `example`. One finished deliverable shows what each section becomes.
 
 **Steps**
 
-1. Where the deliverable lies elsewhere for its own reader, such as a product vision in the developers' folder, name its path in `source`, and copy it with its figures beside the best practice by a script, such as ccpm's `dev/scripts/practices.py example`, so that the copy stays the same as the deliverable.
+1. If the deliverable lives elsewhere for its own readers, such as a product vision in the developers' folder, put its path in `source`, and copy it and its figures next to the best practice with a script, such as ccpm's `dev/scripts/practices.py example`, so that the copy stays the same as the original.
 
 ### N7
 
-Starting a deliverable, does the generator know the kinds it makes the deliverable from and the kinds that must pass first, so that it makes the deliverable once what it takes is there?
+Does the best practice name the kinds of deliverable that this kind builds on, and the kinds that must pass before work on it starts?
 
 **Thinking**
 
-Inputs name each kind whose deliverables the generator makes a deliverable of this kind from, and preconditions each kind whose deliverables pass before it makes one, each by the name of its best practice's folder. The plan then holds each deliverable's own paths to them, and orders it after them.
+List in `inputs` each kind of deliverable that this kind builds on, and in `preconditions` each kind that must pass before work on it starts, each by the folder name of its best practice. The deliverables built on this kind are those whose best practices name it in `inputs`. Listing them here as well would write the same fact twice. The plan holds the paths of each deliverable's inputs and orders the deliverable after them.
+
+**Steps**
+
+1. When a deliverable changes, find the deliverables built on it and update them in the same change.
+2. When an input changes, check the deliverable against it again.
