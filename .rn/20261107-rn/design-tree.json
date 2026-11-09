@@ -534,7 +534,7 @@
             },
             {
               "about": "The product vision trial",
-              "decided": "runs on Opus, and its judge counts each step, start, and resume that the guard let through against Lane's product vision. The judge is first right on kept records whose answer someone knows",
+              "decided": "its judge counts each step, start, and resume that the guard let through against Lane's product vision",
               "by": "reasoning"
             }
           ]
@@ -874,8 +874,8 @@
           "good": false,
           "decisions": [
             {
-              "about": "claude plugin eval",
-              "decided": "not used: a case is one prompt in an empty workspace that never stops for an answer, while rn's walkthrough answers points and resumes. The product vision trials run on Lane's trial driver in lovaizu/playground",
+              "about": "The product vision trials",
+              "decided": "run on Lane's trial driver in lovaizu/playground, as rn's walkthrough answers points and resumes",
               "by": "research"
             }
           ]
@@ -883,12 +883,7 @@
         {
           "id": "Q23",
           "good": false,
-          "decisions": [
-            {
-              "about": "The plugin's icon",
-              "decided": null
-            }
-          ]
+          "decisions": []
         },
         {
           "id": "Q24",
