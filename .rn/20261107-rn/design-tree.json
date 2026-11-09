@@ -399,6 +399,11 @@
               "about": "Commands only in a throwaway copy",
               "decided": "held by a lane of its own in Lane, as dev.md says of a check that no lane holds",
               "by": "reasoning"
+            },
+            {
+              "about": "A remark during the rounds",
+              "decided": "the orchestrator judges it as a point, and stops only each role whose cut rests on a decision it changes",
+              "by": "user"
             }
           ]
         },

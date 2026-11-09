@@ -41,9 +41,10 @@ What each decides alone:
 - orchestrator\
   Whether a point is the user's, each other point by the purpose and the best practices, the
   deliverables with their order, kind, and size, which go on while a sign-off waits, whether to take
-  each role's result or send it back, which lacks the people fall short by and the decision each
-  changes, when a deliverable is ready for its sign-off, the plan at each turn's end, which changes
-  to a best practice and lessons to propose, and which run to pick up.
+  each role's result or send it back, which roles a remark of the user's stops, which lacks the
+  people fall short by and the decision each changes, when a deliverable is ready for its sign-off,
+  the plan at each turn's end, which changes to a best practice and lessons to propose, and which
+  run to pick up.
 - tree-keeper\
   How each decision of the orchestrator's goes into the design tree, which nodes a change touches,
   and the plan drafted again at each turn's end.
@@ -235,7 +236,7 @@ sequenceDiagram
   else
     Note over O,K: The rounds of each deliverable start, as S1 draws.
   end
-  Note over U,O: A remark the user makes meanwhile is a point, and the orchestrator stops each role of the rounds that still runs.
+  Note over U,O: The orchestrator judges a remark the user makes meanwhile as a point, and stops only each role whose cut rests on a decision it changes.
 ```
 
 ### S3: a sign-off
