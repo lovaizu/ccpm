@@ -258,6 +258,11 @@
         {
           "id": "N3",
           "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
           "decisions": [
             {
               "about": "A turn",
@@ -300,11 +305,6 @@
               "by": "user"
             }
           ]
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
         },
         {
           "id": "N5",
@@ -354,6 +354,11 @@
         {
           "id": "N14",
           "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N15",
+          "good": false,
           "decisions": [
             {
               "about": "The size of a deliverable",
@@ -361,11 +366,6 @@
               "by": "reasoning"
             }
           ]
-        },
-        {
-          "id": "N15",
-          "good": false,
-          "decisions": []
         },
         {
           "id": "N16",

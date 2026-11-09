@@ -111,7 +111,7 @@ then write its code, as N6 of
 says.**
 
 a. **Write the unit tests of its code with `code/best-practice.json` open, as
-   [N12 of the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#n12) says: one for each class, each edge
+   [N13 of the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#n13) says: one for each class, each edge
    and each rule of the part's contract. Run them and see them fail.**
 
 b. **Write the code with `code/best-practice.json` open until the tests pass**, as
@@ -134,7 +134,7 @@ d. **Lay the lanes the prompts' steps call for with `plugins/lane/scripts/lay.py
      tests.
 
 e. **Write the slice's architecture tests, as
-   [N12 of the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#n12) and
+   [N13 of the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#n13) and
    [N22 of the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#n22)
    say: one for each path through its sequences, with what joins the parts run real and a double for
    each role an AI runs. Run them, and fix each failure at the part or the handoff where it
@@ -150,23 +150,23 @@ prompt or document should be.**
 **Run every trial on Opus, and name the model in the run.**
 
 - Rationale: the plugins' users run Opus.
-  [N12 of the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#n12) runs each role on the model its users run.
+  [N13 of the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#n13) runs each role on the model its users run.
 
 **Run a trial that needs a real GitHub repository in `lovaizu/playground`.** This repository
 exists for the product vision trials that
-[N12 of the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#n12)
+[N13 of the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#n13)
 asks for.
 
 ### 7. Confirm the whole in real use
 
 **Once you have built every slice and every unit and architecture test passes, try the plugin as its
 user to confirm the product vision, as
-[N12 of the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#n12) says.**
+[N13 of the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#n13) says.**
 Try it on each objective's main use, as the README's walkthrough shows it, at the size of a real
 request. Use a stand-in that holds an intent the plugin never receives.
 
 **When the trial finds a fault, first test it at the level that missed it, as
-[N13 of the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#n13)
+[N14 of the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#n14)
 says. Then confirm the whole again.**
 
 ### 8. Check the structure

@@ -78,7 +78,7 @@ Have a script order the deliverables from each one's inputs and preconditions, n
 
 1. After each change, have a script, such as rn's tree.py, check that the tree holds every deliverable needed, that each comes after its inputs and preconditions, that each research deliverable serves a later decision, and that a later deliverable uses each meta deliverable's kind.
 2. Order the tests by level, unit, then architecture, then the product vision, each after the level below passes, as a higher level finds a fault later and at a higher cost.
-3. Put a check, and a test that shows the check failing, before the deliverables that trust its results, as [the architecture best practice](../architecture/best-practice.md#n13) trusts a check only then.
+3. Put a check, and a test that shows the check failing, before the deliverables that trust its results, as [the architecture best practice](../architecture/best-practice.md#n14) trusts a check only then.
 
 ### N6
 

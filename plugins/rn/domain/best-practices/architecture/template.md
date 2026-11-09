@@ -22,11 +22,8 @@ This document says how the parts of `<Product>` give [its product vision](<board
 > DELETE_TEMPLATE_COMMENT:
 > - `<other>`, `<path>`: the architecture whose principles this one builds on, with the sentence
 >   that names it. Leave the sentence out where the architecture builds on no other.
-> - A principle only where two developers of different parts would otherwise decide one case
->   apart.
 > - `<name>`: the few words a reader finds the principle by.
-> - `<rule>`: one to three short sentences that every part meeting the same decision follows, what
->   must be absent among them.
+> - `<rule>`: one to three short sentences that every part meeting the same decision follows.
 > - `<why>`: one or two sentences: what goes wrong without the rule for a role of the product
 >   vision, naming the key result it guards, or for the product's developer or operator.
 
@@ -55,9 +52,8 @@ What each decides alone:
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - The figure: the deliverable's own at images/components.svg, the product named in its alt text.
->   It holds each role the stories need and each store of data, a store a plain box like a
->   component's, as its type sets it apart and it needs no more weight. Each box holds its name,
->   its type, and its technology alone, so the figure shows the parts and their joins at a glance.
+>   It holds each role the stories need and each store of data, a store drawn as a plain box like a
+>   component's. Each box holds its name, its type, and its technology alone.
 >   Each arrow says what one does to another, with the data it hands on, named as in the data
 >   model. A legend explains every symbol.
 > - `<component>`, `<what it alone decides>`: each role of the figure and each component, by its
