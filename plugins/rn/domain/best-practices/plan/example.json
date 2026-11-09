@@ -228,7 +228,7 @@
           "decisions": [
             {
               "about": "The concept",
-              "decided": "rn does a task, checks how far the work came toward the goal, and changes the remaining tasks to bring the work closer, until the work reaches the goal. Judging by the people a deliverable is for, making by best practice, and keeping each decision serve that way",
+              "decided": "rn revises its design tree on each run by what the run found, and goes on by it toward the goal. It draws out what the user really wants along the tree, plans, makes, and asks by best practice, judges and improves each deliverable by its people, and goes back to the tree on a problem, aiming at the vital few, not a pile of the trivial many",
               "by": "user"
             }
           ]

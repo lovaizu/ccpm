@@ -21,13 +21,16 @@ law. They show whether a change brought its objective closer.
 
 ## Concept
 
-rn does a task, checks how far the work came toward the goal, and changes the remaining tasks to
-bring the work closer, until the work reaches the goal.
+rn revises its design tree, the goal with every decision under it, on each run by what the run
+found, and goes on by the revised tree toward the goal.
 
+- What the user really wants, drawn out, for O1\
+  rn asks the user along the design tree, and so draws out what they really want.
+- Every step by best practice, for O1\
+  rn plans, makes, and asks the user, each by the best practice of its kind.
 - Judged by the people it's for, for O1\
-  rn checks how far the work came by whether the people it's for can do what they're after with it.
-- Made by best practice, for O1\
-  rn does each task by the best practice of its kind, so that each task moves the work forward.
-- Each decision kept, for O1\
-  rn keeps the goal and each decision with who made it, so that each change of the tasks keeps to
-  what the user decided.
+  rn judges and improves each deliverable by whether the people it's for achieve what they're
+  after with it, and aims at the vital few, not a pile of the trivial many.
+- Back to the design tree on a problem, for O1\
+  rn decides each problem it finds by going back to the design tree, and aims at the vital few, not
+  a pile of the trivial many.
