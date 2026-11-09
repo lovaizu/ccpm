@@ -1,7 +1,7 @@
 {
  "$schema": "http://json-schema.org/draft-07/schema#",
  "title": "design tree",
- "description": "The plan of a piece of work, at .rn/<yyyymmdd>-<goal>/design-tree.json: the goal, and the deliverables in the order of the work, each with the intents of its best practice in that best practice's order, each intent with its decisions. It keeps only what holds now, and git keeps the history of each point.",
+ "description": "The plan of a piece of work, at .rn/<yyyymmdd>-<goal>/design-tree.json: the goal, and the deliverables in the order of the work, each with the necessary conditions of its best practice in that best practice's order, each necessary condition with its decisions. It keeps only what holds now, and git keeps the history of each point.",
  "type": "object",
  "required": [
   "goal",
@@ -53,7 +53,7 @@
    ]
   },
   "name": {
-   "description": "The one thing that holds toward the goal once the deliverable exists, so that the user knows where the work stands without opening it. It leaves out the path and the kind, which have fields of their own.",
+   "description": "The one thing that holds toward the goal once the deliverable exists. It leaves out the path and the kind, which have fields of their own.",
    "type": "string"
   },
   "path": {
@@ -61,11 +61,11 @@
    "type": "string"
   },
   "kind": {
-   "description": "The name of the folder of the best practice whose intents the deliverable meets, such as readme.",
+   "description": "The name of the folder of the best practice whose necessary conditions the deliverable meets, such as readme.",
    "type": "string"
   },
   "done": {
-   "description": "A deliverable that meets every intent of its best practice. It keeps one line, its name, path, kind, and status, as its decisions now hold in the deliverable itself.",
+   "description": "A deliverable that meets every necessary condition of its best practice. It keeps one line: its name, path, kind, and status.",
    "type": "object",
    "required": [
     "name",
@@ -85,13 +85,13 @@
      "$ref": "#/$defs/kind"
     },
     "status": {
-     "description": "done: the deliverable meets every intent of its best practice.",
+     "description": "done: the deliverable meets every necessary condition of its best practice.",
      "const": "done"
     }
    }
   },
   "open": {
-   "description": "A deliverable not yet done, with the intents of its best practice and the decisions that answer them.",
+   "description": "A deliverable not yet done, with the necessary conditions of its best practice and the decisions that answer them.",
    "type": "object",
    "required": [
     "name",
@@ -135,7 +135,7 @@
      ]
     },
     "necessary_conditions": {
-     "description": "Each intent of the deliverable's best practice, in that best practice's order.",
+     "description": "Each necessary condition of the deliverable's best practice, in that best practice's order.",
      "type": "array",
      "items": {
       "$ref": "#/$defs/intent"
@@ -144,7 +144,7 @@
    }
   },
   "intent": {
-   "description": "One intent of the best practice, with whether the deliverable meets it and the decisions that answer it.",
+   "description": "One necessary condition of the best practice, with whether the deliverable meets it and the decisions that answer it.",
    "type": "object",
    "required": [
     "id",
@@ -154,15 +154,15 @@
    "additionalProperties": false,
    "properties": {
     "id": {
-     "description": "The intent's ID in its best practice, such as N1.",
+     "description": "The necessary condition's ID in its best practice, such as N1.",
      "type": "string"
     },
     "good": {
-     "description": "true once the deliverable meets the intent, false until then.",
+     "description": "true once the deliverable meets the necessary condition, false until then.",
      "type": "boolean"
     },
     "decisions": {
-     "description": "The decisions that answer the intent, each settled once its inputs exist. The list stays empty until a point of the intent comes up.",
+     "description": "The decisions that answer the necessary condition, each settled once its inputs exist. The list stays empty until a point of the necessary condition comes up.",
      "type": "array",
      "items": {
       "anyOf": [
@@ -178,7 +178,7 @@
    }
   },
   "about": {
-   "description": "The point of the intent that the decision settles, in a few words.",
+   "description": "The point of the necessary condition that the decision settles, in a few words.",
    "type": "string"
   },
   "settled": {

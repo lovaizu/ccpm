@@ -2,7 +2,7 @@
 
 ## Goal
 
-The user reaches their goal through the deliverables of the plan, none missing, none started before what it needs, and the plan revised after each turn.
+The maker builds every deliverable that the user's goal needs, each after what it needs and from settled decisions, and the user knows where the work stands.
 
 ## Template
 
@@ -12,118 +12,118 @@ The user reaches their goal through the deliverables of the plan, none missing, 
 
 [example.json](example.json), a copy of [../../../../../.rn/20261107-rn/design-tree.json](../../../../../.rn/20261107-rn/design-tree.json)
 
+## Critical success factors
+
+| ID | Factor |
+| --- | --- |
+| C1 | The plan holds every deliverable that the goal needs, each after the deliverables it needs. |
+| C2 | The maker builds each deliverable from settled decisions, and asks the user only what's theirs to decide. |
+| C3 | The maker and the user see where the work stands, and pick it up from there. |
+| C4 | The plan stays true as the work changes it. |
+
 ## Necessary conditions
 
-| ID | Condition | Sections |
-| --- | --- | --- |
-| N1 | Reading the goal, does the maker see the one end the user is after, so that every deliverable of the plan serves that end? | goal |
-| N2 | Working back from the goal, does the maker find every deliverable the goal needs, so that none is missing when the work reaches it? | deliverables |
-| N3 | Taking up a deliverable, does the maker find the best practice of its kind, or a meta deliverable that makes one before it, so that each deliverable meets the intents of a best practice? | deliverables |
-| N4 | Reading a deliverable's name in the plan, does the user see what it brings toward the goal, so that they know where the work stands and what comes next without opening it? | deliverables |
-| N5 | Ordering the deliverables, does the maker find what each one takes from its inputs and preconditions, so that none starts before what it needs? | deliverables |
-| N6 | Making a deliverable, does the maker find each intent of its best practice with the decisions that answer it and the points still open, so that it makes the deliverable from the settled decisions and asks about the rest? | deliverables |
-| N7 | Reading a decision, does the user see who settled it, so that they're asked only what's theirs? | deliverables |
-| N8 | Picking up the work, does the maker see where each deliverable stands and which intents it meets, so that it goes on from where the work stopped? | deliverables |
-| N9 | Changing a node of the tree, does the maker find each node the change touches, so that no node goes on saying what held before? | goal, deliverables |
-| N10 | Reading the plan, does the user find only what holds now, so that they act on the current decisions and not on how someone reached them? | goal, deliverables |
-| N11 | Following the plan through the work, does the user reach their goal, every deliverable made, none started before what it needs, and the plan revised after each turn? | the whole |
+| ID | Factor | Condition | Sections |
+| --- | --- | --- | --- |
+| N1 | C1 | Does the goal state, in one sentence, what the user is trying to achieve? | goal |
+| N2 | C1 | Does the tree hold every deliverable that the goal needs? | deliverables |
+| N3 | C1 | Does each deliverable name its kind, with a best practice for that kind or a deliverable before it that makes one? | deliverables |
+| N4 | C1 | Does each deliverable name the deliverables it takes content from and those that must pass before it starts, and come after all of them? | deliverables |
+| N5 | C2 | Does each deliverable hold the decisions and the open points for each necessary condition of its best practice? | deliverables |
+| N6 | C2 | Does each decision say who settled it? | deliverables |
+| N7 | C3 | Does each deliverable's name say what it brings toward the goal? | deliverables |
+| N8 | C3 | Does each deliverable show its status and which necessary conditions it meets? | deliverables |
+| N9 | C4 | After a change to a node, does every node that the change touches agree with it? | goal, deliverables |
+| N10 | C4 | Does the tree hold only what holds now? | goal, deliverables |
 
 ## Practices
 
 ### N1
 
-Reading the goal, does the maker see the one end the user is after, so that every deliverable of the plan serves that end?
+Does the goal state, in one sentence, what the user is trying to achieve?
 
 **Thinking**
 
-Write the end the user is after as one sentence, with the user as its subject, and name in by who settled it. Each deliverable then answers to that end, and one that serves none drops out.
+Every deliverable in the plan is there to serve the goal, so the goal decides what goes in and what stays out. Write what the user is trying to achieve as one sentence with the user as its subject. Ask why until the answer is the user's own purpose and no longer a deliverable. Name in `by` who settled it. Check that each deliverable of the plan serves the goal, and drop one that serves nothing.
 
 ### N2
 
-Working back from the goal, does the maker find every deliverable the goal needs, so that none is missing when the work reaches it?
+Does the tree hold every deliverable that the goal needs?
 
 **Thinking**
 
-Lay out the deliverables up front, back from the goal, as a [work breakdown structure](https://en.wikipedia.org/wiki/Work_breakdown_structure) does: the deliverables that make the goal, then for each the deliverables it takes, until one takes nothing. A deliverable left out shows only when the work reaches it, and the work stops there.
+A deliverable left out shows up only when the work reaches it, and the work stops there. A [work breakdown structure](https://en.wikipedia.org/wiki/Work_breakdown_structure) finds every deliverable up front by working back from the goal. Decide the tree in order. First, ask which deliverables together make the goal true. Second, for each, ask which deliverables it takes its content from. Repeat until a deliverable takes nothing. Third, where a decision needs facts that no one has found yet, put a research deliverable before it.
 
 **Steps**
 
-1. Put in a research deliverable before the decisions it serves, where a decision needs what no one has found yet, at the top level in the order of the work.
+1. Put each research deliverable at the top level, in the order of the work.
 
 ### N3
 
-Taking up a deliverable, does the maker find the best practice of its kind, or a meta deliverable that makes one before it, so that each deliverable meets the intents of a best practice?
+Does each deliverable name its kind, with a best practice for that kind or a deliverable before it that makes one?
 
 **Thinking**
 
-Give each deliverable the kind whose best practice it meets, by the name of that best practice's folder. The maker then makes it to that best practice's intents. Where a kind has no best practice yet, put a meta deliverable for it at the top level before the first deliverable of the kind, as a deliverable made with no best practice meets no stated intent.
+A deliverable made without a best practice meets no stated condition, so no one can tell whether it's good. Give each deliverable the kind whose best practice it meets, by the folder name of that best practice. Where a kind has no best practice yet, put a deliverable that makes one, of the kind `meta`, at the top level before the first deliverable of that kind.
 
 ### N4
 
-Reading a deliverable's name in the plan, does the user see what it brings toward the goal, so that they know where the work stands and what comes next without opening it?
+Does each deliverable name the deliverables it takes content from and those that must pass before it starts, and come after all of them?
 
 **Thinking**
 
-Write the one thing that holds toward the goal once the deliverable exists. Leave out its path and kind, which have fields of their own.
-
-### N5
-
-Ordering the deliverables, does the maker find what each one takes from its inputs and preconditions, so that none starts before what it needs?
-
-**Thinking**
-
-Have a script order the deliverables from each one's inputs and preconditions, never by thinking the order out case by case, as a [topological sort](https://en.wikipedia.org/wiki/Topological_sorting) gives one order that keeps every dependency. Give each deliverable in inputs the path of each deliverable it takes its content from, and in preconditions the path of each that must pass before it starts, each of a kind its best practice names there. One kind's deliverables serve different products, so the paths, not the kinds, say which deliverable comes first.
+A deliverable started before its inputs rests on a guess. Give each deliverable, in `inputs`, the path of each deliverable it takes content from, and in `preconditions`, the path of each one that must pass before it starts, each of a kind that its best practice names there. Use paths, not kinds, since deliverables of one kind can serve different products. Then let a script order the deliverables by these paths, as a [topological sort](https://en.wikipedia.org/wiki/Topological_sorting) gives an order that keeps every dependency, instead of working out the order case by case.
 
 **Steps**
 
-1. After each change, have a script, such as rn's tree.py, check that the tree holds every deliverable needed, that each comes after its inputs and preconditions, that each research deliverable serves a later decision, and that a later deliverable uses each meta deliverable's kind.
-2. Order the tests by level, unit, then architecture, then the product vision, each after the level below passes, as a higher level finds a fault later and at a higher cost.
+1. After each change, have a script, such as rn's `tree.py`, check that each deliverable comes after its inputs and preconditions, that each research deliverable serves a later decision, and that a later deliverable uses each meta deliverable's kind.
+2. Order the tests by level: unit, then architecture, then product vision, each after the level below passes. A higher level finds a fault later, at a higher cost.
 3. Put a check, and a test that shows the check failing, before the deliverables that trust its results, as [the architecture best practice](../architecture/best-practice.md#n14) trusts a check only then.
+
+### N5
+
+Does each deliverable hold the decisions and the open points for each necessary condition of its best practice?
+
+**Thinking**
+
+The maker builds a deliverable from the decisions that answer its best practice's conditions, and asks about the points still open instead of guessing. Give each deliverable the necessary conditions of its best practice, in that best practice's order, each with its decisions. Leave a point's `decided` null while it's open. Settle each decision once its inputs exist, and no earlier, as the [last responsible moment](https://blog.codinghorror.com/the-last-responsible-moment/) avoids a decision that rests on a guess. After each result, revise the plan forward from it.
 
 ### N6
 
-Making a deliverable, does the maker find each intent of its best practice with the decisions that answer it and the points still open, so that it makes the deliverable from the settled decisions and asks about the rest?
+Does each decision say who settled it?
 
 **Thinking**
 
-Give each deliverable the intents of its best practice in that best practice's order, each with the decisions that answer it. Leave a point's decided null while it's open, so the maker asks about it instead of guessing. Settle each decision once its inputs exist, and revise the plan forward from each turn's result, as a decision settled before its inputs rests on a guess, which the [last responsible moment](https://blog.codinghorror.com/the-last-responsible-moment/) avoids.
+The user should spend their time only on the decisions that are theirs. Name in `by` who settled each decision: the user, the maker, reasoning from the goal and the best practices, or research. Keep the grounds out of the tree, and write them in the commit message that makes the decision, so that the user finds them in git.
 
 ### N7
 
-Reading a decision, does the user see who settled it, so that they're asked only what's theirs?
+Does each deliverable's name say what it brings toward the goal?
 
 **Thinking**
 
-Name in by who settled each decision: the user, the maker, reasoning from the goal and the best practices, or research. Keep no grounds in the tree, as the reason for a decision goes in the commit message that makes it. The user then weighs only the decisions that are theirs, and finds the grounds of the rest in git.
+The user reads the plan to see where the work stands and what comes next, without opening each deliverable. For each deliverable, ask what holds toward the goal once it exists, and write that as its name. Leave out its path and its kind, which have fields of their own.
 
 ### N8
 
-Picking up the work, does the maker see where each deliverable stands and which intents it meets, so that it goes on from where the work stopped?
+Does each deliverable show its status and which necessary conditions it meets?
 
 **Thinking**
 
-Keep each deliverable's status, open, doing, or done, and each intent's good, true once the deliverable meets it. Whoever picks up the work goes on from the first deliverable not done, without reading back through what came before.
+Whoever picks up the work must go on from where it stopped, without reading back through what came before. Keep each deliverable's status: `open`, `doing`, or `done`. Keep, for each necessary condition, whether the deliverable meets it, in `good`. The work then resumes at the first deliverable that isn't done.
 
 ### N9
 
-Changing a node of the tree, does the maker find each node the change touches, so that no node goes on saying what held before?
+After a change to a node, does every node that the change touches agree with it?
 
 **Thinking**
 
-After each change to a node, go through the nodes that a script, such as rn's tree.py, lists: up to the goal, then the later decisions of the deliverable, then the deliverables before and after it that it takes from or gives to. Answer each as holding or as changed, as a checker such as Lane's every_item asks, and start the list again after each change. A node left unread goes on saying what held before.
+A node that a change touches, left unread, goes on saying what held before. After each change to a node, go through the nodes that a script, such as rn's `tree.py`, lists: up to the goal, then the later decisions of the deliverable, then the deliverables before and after it that it takes from or gives to. Answer each as holding or as changed, as a checker such as Lane's `every_item` asks. Start the list again after each change.
 
 ### N10
 
-Reading the plan, does the user find only what holds now, so that they act on the current decisions and not on how someone reached them?
+Does the tree hold only what holds now?
 
 **Thinking**
 
-Keep only what holds now. A deliverable done keeps one line, its name, path, kind, and status, and a research deliverable goes once the decisions hold what it found. Git keeps how each point came about, and a history in the tree reads as part of the current decision.
-
-### N11
-
-Following the plan through the work, does the user reach their goal, every deliverable made, none started before what it needs, and the plan revised after each turn?
-
-**Thinking**
-
-Once the product vision trial shows plans made by it closer to the goal, ship it, and mend each shortfall met in use where it lies, as [the meta best practice](../meta/best-practice.md#n2) says.
+A reader acts on what the plan says, and reads any history in it as part of the current decision. Keep only what holds now. A deliverable that's done keeps one line: its name, path, kind, and status. A research deliverable goes once the decisions hold what it found. Git keeps how each point came about.
