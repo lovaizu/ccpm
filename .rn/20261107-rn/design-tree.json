@@ -222,7 +222,13 @@
         {
           "id": "N10",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "A best practice made on a run",
+              "decided": "kept in .rn/best-practices/ of the user's repository, where every later run finds it and takes it over rn's own of the same kind",
+              "by": "user"
+            }
+          ]
         },
         {
           "id": "N11",
