@@ -7,8 +7,8 @@
 
 ## Objectives and key results
 
-- O1: the user has each deliverable they mean made, with which the people it's for achieve what
-  they're after.
+- O1: the user gets each deliverable they mean, one that the people it's for can use to achieve
+  what they're after.
   - KR1.1: the share of the deliverables rn hands over that the people they're for couldn't use
     for what they're after. Lower is better.
   - KR1.2: the time from the user's request to the deliverable, the user's own time answering rn
@@ -22,17 +22,21 @@ law. They show whether a change brought its objective closer.
 ## Concept
 
 In everything, rn builds up only the vital few, and never the trivial many. Joseph Juran named
-these two sides of the [Pareto principle](https://en.wikipedia.org/wiki/Pareto_principle).
+these two sides of the [Pareto principle](https://en.wikipedia.org/wiki/Pareto_principle): the few
+causes that bring most of a result, and the many that bring little.
 
-- What the user really wants, drawn out, for O1\
-  rn asks the user along its design tree, the goal with every decision under it, and so draws out
-  what they really want.
+- The deliverable the user means, drawn out, for O1\
+  rn asks the user along its design tree, their goal with every decision under it, and so draws out
+  the deliverable they mean.
 - Every step by best practice, for O1\
-  rn plans, makes, and asks the user, each by the best practice of its kind.
+  rn plans, makes, and asks the user, each by the best practice of its kind, so that each step
+  holds the few things its kind of work needs.
 - Judged by the people it's for, for O1\
-  rn judges and improves each deliverable by whether the people it's for achieve what they're
-  after with it.
+  rn judges each deliverable by whether the people it's for achieve what they're after with it, so
+  that it improves only what they need.
 - Back to the design tree on a problem, for O1\
-  rn decides each problem it finds by going back to the design tree.
+  rn decides each problem it finds by going back to the design tree, so that the fix changes the
+  decision that the problem comes from.
 - The design tree revised on each run, for O1\
-  rn revises the design tree on each run by what the run found, and goes on by it toward the goal.
+  rn revises the design tree by what each run found, so that the next run goes toward the user's
+  goal by what rn now knows.
