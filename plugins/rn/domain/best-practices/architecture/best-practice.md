@@ -83,7 +83,7 @@ Facing a decision the stories need, does the developer find the one component th
 
 **Thinking**
 
-One component alone makes each decision the stories need, most of all one hard to make or likely to change, and a list under the figure says so by the component's name. Two components that share a decision make it twice, and it drifts, as [information hiding](https://doi.org/10.1145/361598.361623) has each module hide one decision likely to change. A box holds only the component's name and type, as a box that holds sentences no longer shows the parts and their joins at a glance.
+One component alone makes each decision the stories need, most of all one hard to make or likely to change, and a list under the figure says so by the component's name. Two components that share a decision make it twice, and it drifts, as [information hiding](https://doi.org/10.1145/361598.361623) has each module hide one decision likely to change.
 
 **Steps**
 
@@ -100,7 +100,7 @@ Each box has its type and technology, and the figure a legend for every symbol, 
 
 **Steps**
 
-1. Read the figure without the text around it, and add to the legend whatever symbol a reader would still have to ask about. What a part does goes to the list under the figure, not into its box.
+1. Read the figure without the text around it, and add to the legend whatever symbol a reader would still have to ask about. Draw the boxes and lay them out as [Q3 of the refactor-doc best practice](../refactor-doc/best-practice.md#q3) says.
 
 ### Q6
 

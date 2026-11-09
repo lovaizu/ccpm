@@ -95,7 +95,6 @@ Concept holds the few ideas that set the product apart from what its roles do to
 4. Stop once at most five ideas stand out, each meeting an objective where the present way doesn't.
 5. Put first the idea the others serve, and name it so that the user knows it at once as what the product values most.
 6. Give someone who has only the concept a choice that no line names, such as whether to add a check, and keep the concept only once they choose as the user would.
-7. Keep, where the design lives, each idea tried, whose it was, and why it stayed, went, or merged with another, in the user's words.
 
 ### Q6
 

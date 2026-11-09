@@ -98,7 +98,7 @@
      "text": "Order the tests by level, unit, then architecture, then the product vision, each after the level below passes, as a higher level finds a fault later and at a higher cost."
     },
     {
-     "text": "Put a check before the deliverables that trust its results, and trust it only once someone has seen a test of it fail, or, for a judge, once it's right on examples whose answer someone knows."
+     "text": "Put a check, and a test that shows the check failing, before the deliverables that trust its results, as [the architecture best practice](../architecture/best-practice.md#q13) trusts a check only then."
     }
    ]
   },
