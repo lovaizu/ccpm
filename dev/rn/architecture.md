@@ -439,10 +439,6 @@ dev/rn/
 └── best-practices/                each best practice made on a run
 ```
 
-- rn's worktree in `.claude/worktrees/` over a folder of rn's own\
-  Claude Code enters a worktree there from any conversation, as KR1.2 counts. The cost: the folder
-  holds the worktrees that Claude Code makes for other work too.
-
 ## Tests
 
 rn tests by the test rules of [the architecture best

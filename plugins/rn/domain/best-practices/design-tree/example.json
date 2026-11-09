@@ -445,7 +445,7 @@
           "decisions": [
             {
               "about": "The run's worktree",
-              "decided": "in .claude/worktrees/, where Claude Code's EnterWorktree enters an existing worktree from any conversation",
+              "decided": "in .claude/worktrees/, beside the worktrees that Claude Code makes, which EnterWorktree enters from any conversation",
               "by": "research"
             }
           ]
