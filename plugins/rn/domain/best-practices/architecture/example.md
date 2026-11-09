@@ -333,13 +333,11 @@ plugins/rn/
 │   ├── lane/                      the guard: Lane's code, copied in by Lane
 │   └── adapters/                  give the guard rn's best practices and design tree
 ├── README.md                      for rn's users
-├── CHANGELOG.md                   the changes in each version
-└── images/                        the README's figures
+└── CHANGELOG.md                   the changes in each version
 
 dev/rn/
 ├── product-vision.md              rn's product vision
 ├── architecture.md                this document
-├── images/                        the figures of both
 ├── README.md                      for rn's developers
 └── tests/                         the unit, architecture, and product vision tests
 
@@ -350,7 +348,8 @@ dev/rn/
 └── best-practices/                each best practice made on a run
 ```
 
-Each role's part in `domain/` has its forms beside it, as the plugin best practice names them.
+Each role's part in `domain/` has its forms beside it, as the plugin best practice names them. Each
+folder that holds a document keeps its figures in `images/` beside it.
 
 ## Tests
 
