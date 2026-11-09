@@ -7,7 +7,7 @@ rn is being rebuilt. This README describes the rebuilt rn, which isn't released 
 the installation below installs the earlier rn 0.9.0, which works differently, and the walkthrough
 shows the run that the design of the rebuilt rn lays out, not a recorded run.
 
-rn is for you when you want an AI to build work made of several pieces, such as a feature with its
+rn is for you when you want an AI to build work made of several parts, such as a feature with its
 README and its code, and you'd rather answer a few questions than review what an AI made and ask for
 fixes. With it, you hand over work that its users can use without fixes, and rn asks you only what
 it can't decide itself.
@@ -17,8 +17,8 @@ it can't decide itself.
 - rn doesn't decide your purpose or what you want. When rn leaves a question to you, the work that
   depends on it waits for your answer.
 - rn isn't for a quick first version that you'll fix yourself. It plans, builds, and tests each
-  piece, so it takes longer than a single prompt to Claude Code.
-- rn doesn't merge your work. It commits each piece to a branch and leaves one draft pull request
+  part, so it takes longer than a single prompt to Claude Code.
+- rn doesn't merge your work. It commits each part to a branch and leaves one draft pull request
   for you to merge.
 
 ## Requirements
@@ -86,7 +86,7 @@ Picking up "tidy shows what it would move" at step 2, tidy/cli.py. README.md is 
 Later, rn shows:
 
 ```text
-Done: README.md and tidy/cli.py are updated, with tests/test_dry_run.py. Each piece was read and
+Done: README.md and tidy/cli.py are updated, with tests/test_dry_run.py. Each part was read and
 tried as its users would use it, and gives them what they need from it.
 
 Decided without asking you:
@@ -96,20 +96,23 @@ Decided without asking you:
 
 ## How it works
 
-![How rn works: it builds each piece from a design tree of your goal and decisions, checks it as its users would, and takes each problem back to the tree](images/how-it-works.svg)
+![How rn works: it builds each part of your work from a design tree of your goal and decisions, checks it as its users would, and takes each problem back to the tree](images/how-it-works.svg)
 
-In everything, rn builds up only the few points that matter to your goal, and never a pile of
-small fixes. It keeps those points in a design tree: your goal, with every decision under it.
+In everything, rn builds up only the few things that matter to your goal, and never a pile of
+small fixes. It keeps them in a design tree: your goal, with each decision that serves it. From the
+tree, rn builds each part of your work. In the walkthrough, the parts are README.md and
+tidy/cli.py.
 
 ### 1. Does it build what you mean, without a careful prompt?
 
-Along the design tree, rn asks you one point at a time. It asks only what your goal and the best
-practices leave open. You get the work you mean, and you answer only the points that are yours.
+Along the design tree, rn asks you one question at a time. It asks only what your goal and the best
+practices leave open. You get the work you mean, and you answer only the questions that are yours
+to decide.
 
 ### 2. Do small fixes pile up in your work?
 
-No. When a check finds a problem, rn changes the decision in the design tree that the problem comes
-from, and builds the piece again from it. Your work holds only the points that matter.
+No. When rn's check finds a problem in a part, rn changes the decision in the design tree that the
+problem comes from, and builds the part again from it. Your work holds only what matters.
 
 ### 3. Does it hold on your own work, every time?
 
@@ -119,12 +122,13 @@ the same steps, whatever the work.
 
 ### 4. Can you trust its own check?
 
-The check reads each piece as its users would, with only what they have, and never the design tree.
-It passes a piece only when its users can do what they need with it.
+The check reads each part as its users would, with only what they have, and never the design tree.
+It passes a part only when its users can do what they need with it.
 
 ### 5. What if the plan turns out wrong?
 
-rn revises the design tree with what each run finds, and the next pieces follow the revised tree.
+rn revises the design tree, its plan included, with what each run finds, and the next parts follow
+the revised tree.
 
 ## Documentation
 

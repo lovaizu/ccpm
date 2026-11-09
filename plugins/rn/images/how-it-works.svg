@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1070 470" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
-  <title>How rn works: it builds each piece from a design tree of your goal and decisions, checks it as its users would, and takes each problem back to the tree</title>
+  <title>How rn works: it builds each part of your work from a design tree of your goal and decisions, checks it as its users would, and takes each problem back to the tree</title>
   <style>
     .bg { fill: #ffffff; }
     .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
@@ -51,14 +51,14 @@
   <text class="name" x="75.0" y="225.0">You</text>
   <rect class="store" x="230" y="170" width="180" height="100" rx="6"/>
   <text class="name" x="320.0" y="209.0">Design tree</text>
-  <text class="kind" x="320.0" y="228.0">your goal and every</text>
-  <text class="kind" x="320.0" y="243.0">decision under it</text>
+  <text class="kind" x="320.0" y="228.0">your goal and each</text>
+  <text class="kind" x="320.0" y="243.0">decision serving it</text>
   <rect class="box" x="470" y="170" width="150" height="100" rx="6"/>
   <text class="name" x="545.0" y="209.0">Build</text>
-  <text class="kind" x="545.0" y="228.0">each piece by the</text>
+  <text class="kind" x="545.0" y="228.0">each part by the</text>
   <text class="kind" x="545.0" y="243.0">best practice</text>
   <rect class="store" x="680" y="185" width="110" height="70" rx="6"/>
-  <text class="name" x="735.0" y="225.0">Piece</text>
+  <text class="name" x="735.0" y="225.0">Part</text>
   <rect class="lane" x="655" y="340" width="160" height="70" rx="6"/>
   <text class="name" x="735.0" y="364.0">Check</text>
   <text class="kind" x="735.0" y="383.0">with only what</text>
