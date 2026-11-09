@@ -999,14 +999,8 @@
         },
         {
           "id": "N5",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Installation tried",
-              "decided": "once the rebuilt rn exists, the maker follows its install steps from nothing as a newcomer would, and mends the README where they fall short",
-              "by": "reasoning"
-            }
-          ]
+          "good": true,
+          "decisions": []
         },
         {
           "id": "N6",
@@ -1031,16 +1025,17 @@
         },
         {
           "id": "N9",
-          "good": true,
-          "decisions": []
+          "good": false,
+          "decisions": [
+            {
+              "about": "Installation tried",
+              "decided": "once the rebuilt rn exists, the maker follows its install steps from nothing as a newcomer would, and mends the README where they fall short",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N10",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N11",
           "good": true,
           "decisions": []
         }

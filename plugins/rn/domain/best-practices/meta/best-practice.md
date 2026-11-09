@@ -10,7 +10,7 @@ The generator makes deliverables with which their role achieves its purpose.
 
 ## Example
 
-[../product-vision/best-practice.json](../product-vision/best-practice.json)
+[../readme/best-practice.json](../readme/best-practice.json)
 
 ## Critical success factors
 

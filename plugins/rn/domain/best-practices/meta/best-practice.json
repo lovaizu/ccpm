@@ -1,7 +1,7 @@
 {
  "goal": "The generator makes deliverables with which their role achieves its purpose.",
  "template": "template.json",
- "example": "../product-vision/best-practice.json",
+ "example": "../readme/best-practice.json",
  "inputs": [],
  "preconditions": [],
  "critical_success_factors": [

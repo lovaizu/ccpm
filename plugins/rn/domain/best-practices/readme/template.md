@@ -13,16 +13,13 @@
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - `<kind>`: the kind of thing the product is, such as a command-line tool.
-> - `<what it gives>`: the one thing the product gives the reader, in words the reader already uses,
->   so that the sentence says in short what the product is.
-> - `<status>`: where the product isn't yet fit for use, such as a release still in development, so
->   that the reader doesn't rest their work on it unaware. Leave it out where the product is ready
->   for use.
-> - `<your situation>`: the work the reader wants done, so that a reader can tell whether they're
->   in it.
+> - `<what it gives>`: the one thing the product gives the reader, in words the reader already uses.
+> - `<status>`: where the product isn't yet fit for use, such as a release still in development.
+>   Leave it out where the product is ready for use.
+> - `<your situation>`: the work the reader wants done.
 > - `<gain>`: the end the reader reaches with the product.
-> - `<expectation>`: each thing a reader might expect of the product that it doesn't do, so that a
->   reader who needs it turns away before installing. Leave out Non-goals where there's none.
+> - `<expectation>`: each thing a reader might expect of the product that it doesn't do. Leave out
+>   Non-goals where there's none.
 
 ## Requirements
 
@@ -86,22 +83,18 @@ At the end, you have `<result>`.
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - The first figure: the deliverable's own, at images/problem.svg, with the product named in its
->   alt text. It lets the reader see at a glance that the problem goes away. The skeleton here is one such form: the
->   way the reader would do the work without the product on top, and the product below it, with the
->   problem left in the one and gone in the other.
+>   alt text. The skeleton here is one such form: the way the reader would do the work without the
+>   product on top, and the product below it, with the problem left in the one and gone in the other.
 > - `<problem>`, `<how it goes away>`: each problem the reader feels in the work, in their words,
->   and what the product does that makes it go away, in a sentence or two, so that the reader
->   pictures their own problem gone. A numbered list, each item's number the one the figure marks
->   it with, so the reader finds it on the figure.
+>   and in a sentence or two what the product does that makes it go away. A numbered list, each
+>   item's number the one the figure marks it with.
 > - The second figure: one for each doubt, followed by its paragraph. Each is the deliverable's own,
->   at images/how-<name>.svg, with the product named in its alt text. It shows at a glance how the
->   product does the doubted thing. The skeleton here is one such form: the user, the product's
->   parts and what they pass, with the lines that do it marked. One figure for several doubts shows
->   none of them at a glance.
+>   at images/how-<name>.svg, with the product named in its alt text, showing how the product does
+>   the doubted thing. The skeleton here is one such form: the user, the product's parts and what
+>   they pass, with the lines that do it marked.
 > - `<doubt>`, `<how it does it>`: each point where a newcomer would ask whether the product can
->   really do that, and how the product does it, in a sentence or two, so that the reader believes
->   it before they try it. The doubt as the reader would ask it, in bold, opens the paragraph that
->   comes just after its figure, so it needs no letter or number.
+>   really do that, and in a sentence or two how the product does it. The doubt as the reader would
+>   ask it, in bold and with no letter or number, opens the paragraph just after its figure.
 > - `<title>`, `<path>`: the page that explains it further, where it needs a long sequence of
 >   figures. Leave it out where the paragraph is enough.
 
