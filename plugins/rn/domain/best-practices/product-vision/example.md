@@ -21,14 +21,12 @@ law. They show whether a change brought its objective closer.
 
 ## Concept
 
-rn instead of an AI agent that plans the work once, carries out the plan task by task, and has
-reviewers look for faults:
+rn does a task, checks how far the work came toward the goal, and changes the remaining tasks to
+bring the work closer, until the work reaches the goal.
 
-- **Replanned toward the goal, for O1**: rn plans the rest of the work again after each deliverable
-  and each answer, so a misread in the first plan doesn't reach the end.
-- **Made by best practice, for O1**: rn makes each deliverable by the best practice of its kind,
-  not by what the AI thinks of on that run.
-- **Judged by the people it's for, for O1**: rn judges each deliverable by whether the people it's
-  for can do what they're after with it, not by the faults that a reviewer finds.
-- **Each decision kept in the plan, for O1**: rn keeps in the plan each decision and who made it,
-  so the user decides each point once.
+- **Judged by the people it's for, for O1**: rn checks how far the work came by whether the people
+  it's for can do what they're after with it.
+- **Made by best practice, for O1**: rn does each task by the best practice of its kind, so that
+  each task moves the work forward.
+- **Each decision kept, for O1**: rn keeps the goal and each decision with who made it, so that
+  each change of the tasks keeps to what the user decided.

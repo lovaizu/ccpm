@@ -228,7 +228,7 @@
           "decisions": [
             {
               "about": "The concept",
-              "decided": "rn sets itself apart from an AI agent that plans once, works task by task, and has reviewers look for faults. What it values most: it reaches the goal even when the first plan was wrong, as it plans again after each deliverable and answer. Made by best practice, judged by the people it's for, and each decision kept in the plan serve it",
+              "decided": "rn does a task, checks how far the work came toward the goal, and changes the remaining tasks to bring the work closer, until the work reaches the goal. Judging by the people a deliverable is for, making by best practice, and keeping each decision serve that way",
               "by": "user"
             }
           ]

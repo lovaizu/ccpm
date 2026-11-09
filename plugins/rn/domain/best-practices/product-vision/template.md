@@ -31,14 +31,15 @@ law. They show whether a change brought its objective closer.
 
 ## Concept
 
-`<Product>` instead of `<present way>`:
+`<Product>` `<the one way>`.
 
-- **`<idea>`, for `O<n>`**: `<why it meets the objective>`.
+- **`<idea>`, for `O<n>`**: `<what it gives>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<present way>`: what the roles do today without the product, such as doing the work by hand.
-> - `<idea>`: each idea that sets the product apart from the present way, at most five, each in a
->   few words. The first is what the product values most.
-> - `<why it meets the objective>`: what the idea gives the role toward the objective that the
->   present way doesn't, in one short sentence begun in lowercase.
+> - `<the one way>`: how the product brings its users to their objectives, as its maker means it,
+>   said as what the users see the product do, in one sentence that goes on from the product's
+>   name.
+> - `<idea>`: each idea that the one way needs to work, at most five, each in a few words.
+> - `<what it gives>`: what the idea gives the role toward the objective, in one short sentence
+>   begun in lowercase.

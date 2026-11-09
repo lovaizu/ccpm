@@ -56,7 +56,7 @@ Does the opening state the one idea by which the product delivers its vision?
 
 **Thinking**
 
-Each part is a piece of one idea, and a developer who knows the idea builds a part that serves it. The solution strategy of [arc42](https://arc42.org) states the few fundamental decisions that shape the whole system. Decide the idea in order. First, take the first idea of the product vision's concept, which is what the product values most. Second, ask how the system as a whole makes that idea true: what it takes in from the roles, and what it turns that into. Third, write the answer in two or three sentences that a developer can hold in mind while building any part. Point to the product vision instead of repeating it.
+Each part is a piece of one idea, and a developer who knows the idea builds a part that serves it. The solution strategy of [arc42](https://arc42.org) states the few fundamental decisions that shape the whole system. Decide the idea in order. First, take the one way that the product vision's concept states first, by which the product brings its users to their objectives. Second, ask how the system as a whole makes that way work: what it takes in from the roles, and what it turns that into. Third, write the answer in two or three sentences that a developer can hold in mind while building any part. Point to the product vision instead of repeating it.
 
 **Steps**
 

@@ -18,7 +18,7 @@ The developers build a product with which its users achieve their goals.
 | --- | --- |
 | C1 | The developers know whom the product serves and what each of them is trying to achieve. |
 | C2 | The developers can tell whether a change brings the users closer to their goals. |
-| C3 | The developers know what sets the product apart from the way users work today. |
+| C3 | The developers know the one way by which the product brings its users to their goals, so that every choice leans toward it. |
 
 ## Necessary conditions
 
@@ -29,7 +29,7 @@ The developers build a product with which its users achieve their goals.
 | N3 | C1 | Does the vision describe only what the users do and get, not how the product works inside? | the whole |
 | N4 | C2 | Does each objective have key results that measure how well and how fast its role achieves it, each with the direction that's better? | Objectives and key results |
 | N5 | C2 | Are the objectives distinct, so that each piece of work serves one of them? | Objectives and key results |
-| N6 | C3 | Does the concept name the users' current way of working and the few ideas that set the product apart from it, the first being what the product values most? | Concept |
+| N6 | C3 | Does the concept state first the one way, as its maker means it, by which the product brings the users to their objectives, and then the few ideas that this way needs? | Concept |
 
 ## Practices
 
@@ -79,12 +79,12 @@ The developers decide what to build by asking which objective a piece of work se
 
 ### N6
 
-Does the concept name the users' current way of working and the few ideas that set the product apart from it, the first being what the product values most?
+Does the concept state first the one way, as its maker means it, by which the product brings the users to their objectives, and then the few ideas that this way needs?
 
 **Thinking**
 
-The developers make many choices that no line of the vision names, and the concept lets each of them lean the same way. April Dunford's positioning method, in Obviously Awesome, gives the decisions in order. First, name the current way: what the users do today without the product, such as asking an AI in one prompt and fixing its draft. Second, for each key result, ask what in the current way makes the role fall short on it, and name the cause. Third, for each cause that the product removes, write the idea by which it removes it, and what that gives the role toward the objective. Put first the idea that moves the first key result most, so that it settles a choice where the others conflict. Check that, given a design choice no line names, a developer can decide it by the first idea.
+The developers make many choices that no line of the vision names, and the concept lets each of them lean the same way. Fred Brooks, in The Mythical Man-Month, calls this conceptual integrity: one set of design ideas that every part follows. The one way comes from whoever conceived the product, because an analysis of what goes wrong today yields only a list of fixes with no center. Decide in order. First, get from the user how the product brings its users to their objectives. Write it in one sentence as what the users see the product do. Second, for each thing that this way needs to work, write an idea, and what it gives the role toward the objective. An idea that the way doesn't need goes. Check by taking a design choice that no line names, and deciding it by the one way.
 
 **Steps**
 
-1. Ask the user which idea the product values most, if the objectives don't settle it.
+1. Ask the user how the product brings its users to their objectives, before you write the concept.
