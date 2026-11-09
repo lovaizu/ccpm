@@ -47,12 +47,12 @@ Does the opening say what the product is, who it's for, and what it lets them ac
 
 **Thinking**
 
-The opening names the kind of product, the people it's for by the work they want done, and what they achieve with it, taken from the objectives of the product vision. It uses words the reader already knows, and leaves out feature names and internals. Most readers decide from the opening alone whether to read on. Geoffrey Moore's positioning statement, from Crossing the Chasm, gives the form: the target customer, their need, the product category, and the key benefit.
+Most readers decide from the opening alone whether to read on, so it must let a newcomer tell within a few sentences whether the product is for them. Geoffrey Moore's positioning statement, from Crossing the Chasm, gives the decisions in order. First, the target: the people the product is for, named by the work they want done, narrowly enough that a reader outside the group can tell it isn't for them. Second, their need: what they can't do well today, in their words. Third, the category: a kind of thing the reader already knows, such as a command-line tool, which gives them something to compare it with. Fourth, the key benefit: what they achieve with the product, taken from the objectives of the product vision, as an end they reach, not a feature. Write the opening from these four, in words the reader already uses, and leave out feature names and internals.
 
 **Steps**
 
 1. Read only the opening, then put it away and explain the product as you would to a colleague. Shorten any part you forgot or got wrong, and replace each vague or praising word with what the product does.
-2. If a reader outside the target group couldn't tell that the product isn't for them, describe the group and their work more precisely.
+2. Read the opening as someone outside the target. If they couldn't tell that the product isn't for them, name the target and their work more precisely.
 
 ### N2
 
@@ -60,7 +60,7 @@ Does the README list what readers might expect the product to do but it doesn't?
 
 **Thinking**
 
-List each thing a reader could reasonably expect the product to do that it doesn't. A reader who needs one of them learns it before installing. A design document states the same in its non-goals: what lies outside its scope.
+A reader who needs something the product doesn't do should find out before they install it. Decide which expectations to list by asking, for each thing similar products do and each thing readers ask about: would a reasonable reader assume this product does it, and would its absence change their decision? List only those that pass both questions. Where the product meets the need another way, say so in the same item. A design document lists its non-goals for the same reason: they mark the edge of the scope where readers would otherwise guess.
 
 **Steps**
 
@@ -72,7 +72,7 @@ Does the README say at the top where the product isn't ready for use yet?
 
 **Thinking**
 
-If the product isn't ready for use, such as a release still in development or one no longer maintained, say so at the top, with what that means for the reader's work. Otherwise a reader finds out only after their work depends on it. [repostatus.org](https://www.repostatus.org) defines the common states of a project, such as Work in Progress, Suspended, and Unsupported.
+A reader who builds on a product that isn't ready finds out only after their work depends on it. Decide the product's state by the states that [repostatus.org](https://www.repostatus.org) defines, such as Concept, Work in Progress, Active, and Unsupported. If the state is anything but Active, say it at the top, with what it means for the reader's work: what works now, and what they get if they install today. Check that a newcomer can say, after the opening, whether they can rely on the product today.
 
 ### N4
 
@@ -80,7 +80,7 @@ Does the README name the license and link its full text?
 
 **Thinking**
 
-Name the license by its identifier in the [Software Package Data Exchange (SPDX) License List](https://spdx.org/licenses/), and link its full text. Some readers rule a product in or out by its license alone, and the identifier lets them and their tools recognize it at once.
+Some readers rule a product in or out by its license alone, so they must find it at once and recognize it. Name the license by its identifier in the [Software Package Data Exchange (SPDX) License List](https://spdx.org/licenses/), which readers and their tools recognize, and link its full text. If the product includes work under other licenses, name each with its source.
 
 **Steps**
 
@@ -92,7 +92,7 @@ Does the README answer each question in the order a reader comes to ask it?
 
 **Thinking**
 
-Order the README by who needs what: the opening for every reader, the installation for readers who have decided, the walkthrough and How it works for readers still deciding, and links for everything after. Each reader can stop once they have what they came for. A reader who has to read past what they don't need often leaves before reaching what they do. The [inverted pyramid](https://www.nngroup.com/articles/inverted-pyramid/) puts first what every reader needs.
+Readers come with questions in a typical order, and leave when the next answer isn't where they look. Decide the order by listing the readers and the question each has next. Every reader first asks what the product is and whether it's for them. A reader who has decided asks how to install it. A reader still deciding asks whether it really works, and how. A reader who has started asks where to learn more. Order the sections so that each answer comes just when its question does, and each reader can stop once they have what they came for. The [inverted pyramid](https://www.nngroup.com/articles/inverted-pyramid/) puts first what every reader needs, for the same reason.
 
 **Steps**
 
@@ -106,13 +106,12 @@ Does the walkthrough show a real run that delivers, on typical work, the benefit
 
 **Thinking**
 
-Show one real run of the use that most readers come for, on work like theirs, from what the reader gives the product to the result they keep, with the product's real output. This shows the reader the promised benefit happening, not only a claim of it. Diátaxis calls this a [tutorial](https://diataxis.fr/tutorials/): one task, carried through to a result.
+A reader trusts a benefit they've seen happen more than one they only read about. Decide three things in order. First, the use: the one that most readers come for, taken from the main use of the product vision's objectives. Second, the task: one like the reader's own work, small enough to show from start to end, and real enough that the benefit shows in its result. If the result wouldn't show the benefit the opening promises, choose another task. Third, the cut: show every exchange from what the reader gives to the result they keep, with the product's real output, and cut only what doesn't bear on the result. State the result first, so that the reader knows where the run goes. Diátaxis calls this a [tutorial](https://diataxis.fr/tutorials/): one concrete task, carried through to a visible result. Check that a newcomer can say, after reading, what the product would give them on their own work.
 
 **Steps**
 
 1. Choose the use from what readers ask for most and from the objectives of the product vision. The trace: `{inputs}` read to its end.
-2. Take each exchange from the record of a real run, in the form the reader meets it, and cut only what the reader doesn't need to see the result.
-3. If the result doesn't show the benefit the opening promises, choose another piece of work or another use.
+2. Take each exchange from the record of a real run, in the form the reader meets it.
 
 ### N7
 
@@ -120,13 +119,12 @@ Does the README show, for each problem readers have today, how the product remov
 
 **Thinking**
 
-For each problem readers have with their current way of working, described in their words, draw a figure that shows the problem in the current way and gone with the product. Add a sentence or two on what the product does to remove it. Readers choose a product once they can picture their own problem gone. In Alexander Osterwalder's Value Proposition Canvas, these are the customer's pains and the product's pain relievers.
+A reader chooses a product when they recognize their own problem and see it gone. Alexander Osterwalder's Value Proposition Canvas gives the first decisions. List the pains that readers have with their current way of working, in their words, and keep those that a target reader actually feels and that the product removes. For each pain, decide the one point that the reader must take away: what the product changes so that the pain goes away. Then choose the form by what the point compares, as Gene Zelazny's Say It With Charts does: decide the message, then the comparison, then the form that shows it at a glance. A change in who does what, or in where a step happens, is a before-and-after comparison: draw the current way and the product's way side by side. Show the pain in the current way, and its absence in the product's way. If one figure shows the change behind all the pains, draw one and mark each pain on it. A point that one sentence makes clear needs no figure. Check that a newcomer can say back, for their own pain, what the product changes.
 
 **Steps**
 
-1. Take the problems from the Concept section of the product vision, one for each idea where the current way falls short, and from what readers complain about in the current way. The trace: `{inputs}` read to its end.
-2. For each problem, take from the design what the product does to remove it. Ask the user about any that the design doesn't settle.
-3. Look at each figure as a newcomer. If they couldn't picture from it what its text says, redraw it.
+1. Take the pains from the Concept section of the product vision, one for each idea where the current way falls short, and from what readers complain about in the current way. The trace: `{inputs}` read to its end.
+2. For each pain, take from the design what the product changes. Ask the user about any that the design doesn't settle.
 
 ### N8
 
@@ -134,13 +132,12 @@ Does the README show how the product does each thing a newcomer would doubt it c
 
 **Thinking**
 
-For each thing a newcomer would doubt the product can do, draw a figure of its own that shows how, and add a sentence or two. Readers believe a product can do something once they can picture how it works. Don Norman calls this picture the conceptual model, in The Design of Everyday Things. One figure for each doubt lets the reader take in each at a glance.
+A reader believes a product can do something once they can picture it happening. Don Norman calls this picture the conceptual model, in The Design of Everyday Things. Decide each answer in order. First, write the doubt in the reader's words, such as: does it really follow every step? Second, decide the one point that resolves it, in one sentence, such as: code outside the AI enforces each step, not the AI's memory. If you can't write the point in one sentence, you don't yet understand the design well enough to explain it. Third, decide what the point compares or what motion it shows, as Gene Zelazny's Say It With Charts does. Fourth, choose the form that shows it most directly. If the real thing can show it, such as a screen, a message, or a folder listing from the walkthrough's example, show the real thing. A flow takes a figure, a comparison takes a table, and a point that one sentence makes clear takes the sentence. Check that a newcomer can say the point back after seeing the answer.
 
 **Steps**
 
 1. Read the README as a newcomer, and mark each claim that the current way can't match. For each answer, ask what the newcomer would doubt next, until no doubt remains. The trace: `{deliverable}` read to its end.
 2. For each doubt, take how the product does it from the design. Ask the user about any that the design doesn't settle.
-3. Look at each figure as a newcomer. If they couldn't picture from it what its text says, redraw it.
 
 ### N9
 
@@ -148,7 +145,7 @@ Can a reader with nothing set up install the product by the README alone, and se
 
 **Thinking**
 
-Write the requirements and the installation steps for a reader with nothing set up, each as a command they can copy, and end with a sign that the product works. The author's own setup hides the gaps. [Standard Readme](https://github.com/RichardLitt/standard-readme) holds these in its Install section.
+A reader who can't install the product never gets to use it, and the author's own setup hides what a newcomer lacks. Decide the steps by starting from a machine with nothing on it. List everything the product needs, each with a command whose output shows that the reader has it. Write each install step as a command the reader can copy. End with a sign the reader can see that the product works. A step that only works with something the README doesn't mention is missing a requirement. [Standard Readme](https://github.com/RichardLitt/standard-readme) holds these in its Install section.
 
 **Steps**
 
@@ -160,7 +157,7 @@ Does the README link where to go for fuller use and for help?
 
 **Thinking**
 
-The README holds only what a reader needs to decide and to start. For each later need, such as fuller use or help, it links one place. A README that holds everything goes unread, and each later need has its own kind of page, which [Diátaxis](https://diataxis.fr) sorts into tutorials, how-to guides, reference, and explanation.
+The README stays short only if each later need has its own place to go. Decide the links by listing what a reader needs after they start, such as fuller use, reference, help, and the changes in each version, and give one link for each, with whom it's for. Each need has its own kind of page, which [Diátaxis](https://diataxis.fr) sorts into tutorials, how-to guides, reference, and explanation. Check that each link opens the page it names.
 
 **Steps**
 
