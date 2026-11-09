@@ -952,7 +952,12 @@
         },
         {
           "id": "N7",
-          "good": true,
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
           "decisions": [
             {
               "about": "The problems and doubts",
@@ -972,7 +977,7 @@
           ]
         },
         {
-          "id": "N8",
+          "id": "N9",
           "good": false,
           "decisions": [
             {
@@ -983,8 +988,13 @@
           ]
         },
         {
-          "id": "N9",
+          "id": "N10",
           "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N11",
+          "good": false,
           "decisions": []
         }
       ]

@@ -30,7 +30,7 @@ A generator that follows a best practice produces deliverables that serve their 
 | N4 | C2 | Does the template give each necessary condition a section, and each slot a note on what it holds and in what form? | template |
 | N5 | C2 | Does each practice give the way of thinking that produces its condition's state: the decisions in order, the question at each, and the criteria for choosing, taken from an established method? | practices |
 | N6 | C2 | Does the example show a finished deliverable of the kind that meets every necessary condition? | example, source |
-| N7 | C3 | Does the best practice name the kinds of deliverable that this kind builds on, and the kinds that must pass before work on it starts? | inputs, preconditions |
+| N7 | C3 | Does the best practice name the kinds of deliverable that this kind builds on, with a condition that carries each of their vital few that its users need, and the kinds that must pass before work on it starts? | inputs, preconditions |
 | N8 | C1 | Does following the best practice put into the deliverable only the vital few, the things without which its users fail their goal? | the whole |
 
 ## Practices
@@ -110,11 +110,11 @@ The example shows the generator what following the best practice produces, which
 
 ### N7
 
-Does the best practice name the kinds of deliverable that this kind builds on, and the kinds that must pass before work on it starts?
+Does the best practice name the kinds of deliverable that this kind builds on, with a condition that carries each of their vital few that its users need, and the kinds that must pass before work on it starts?
 
 **Thinking**
 
-A deliverable must say what the deliverables it builds on say, and the deliverables built on it must follow it. To find the inputs, ask of each part of the deliverable where its content comes from. Each kind of deliverable that supplies content is an input, such as the product vision for a README. To find the preconditions, ask what must hold before work on the deliverable can start, such as an agreed product vision. List the inputs in `inputs` and the preconditions in `preconditions`, each by the folder name of its best practice. The deliverables built on this kind are those whose best practices name it in `inputs`. Listing them here as well would write the same fact twice. The plan holds the paths of each deliverable's inputs, and orders the deliverable after them.
+A deliverable must say what the deliverables it builds on say, and the deliverables built on it must follow it. To find the inputs, ask of each part of the deliverable where its content comes from. Each kind of deliverable that supplies content is an input, such as the product vision for a README. To find the preconditions, ask what must hold before work on the deliverable can start, such as an agreed product vision. Then go the other way, from each input to the deliverable, since a deliverable that drops what it rests on fails its users while every part it holds is sound. For each input, take its vital few, such as the concept and the key results of a product vision, and ask which of them the deliverable's users need. For each one they need, decide which part of the deliverable carries it, and make sure a condition asks for it, such as a README showing what the key results promise. List the inputs in `inputs` and the preconditions in `preconditions`, each by the folder name of its best practice. The deliverables built on this kind are those whose best practices name it in `inputs`. Listing them here as well would write the same fact twice. The plan holds the paths of each deliverable's inputs, and orders the deliverable after them.
 
 **Steps**
 

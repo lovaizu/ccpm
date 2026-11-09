@@ -59,7 +59,7 @@
    "id": "N7",
    "csf": "C3",
    "about": "inputs, preconditions",
-   "what": "Does the best practice name the kinds of deliverable that this kind builds on, and the kinds that must pass before work on it starts?"
+   "what": "Does the best practice name the kinds of deliverable that this kind builds on, with a condition that carries each of their vital few that its users need, and the kinds that must pass before work on it starts?"
   },
   {
    "id": "N8",
@@ -136,7 +136,7 @@
   },
   {
    "intent": "N7",
-   "thinking": "A deliverable must say what the deliverables it builds on say, and the deliverables built on it must follow it. To find the inputs, ask of each part of the deliverable where its content comes from. Each kind of deliverable that supplies content is an input, such as the product vision for a README. To find the preconditions, ask what must hold before work on the deliverable can start, such as an agreed product vision. List the inputs in `inputs` and the preconditions in `preconditions`, each by the folder name of its best practice. The deliverables built on this kind are those whose best practices name it in `inputs`. Listing them here as well would write the same fact twice. The plan holds the paths of each deliverable's inputs, and orders the deliverable after them.",
+   "thinking": "A deliverable must say what the deliverables it builds on say, and the deliverables built on it must follow it. To find the inputs, ask of each part of the deliverable where its content comes from. Each kind of deliverable that supplies content is an input, such as the product vision for a README. To find the preconditions, ask what must hold before work on the deliverable can start, such as an agreed product vision. Then go the other way, from each input to the deliverable, since a deliverable that drops what it rests on fails its users while every part it holds is sound. For each input, take its vital few, such as the concept and the key results of a product vision, and ask which of them the deliverable's users need. For each one they need, decide which part of the deliverable carries it, and make sure a condition asks for it, such as a README showing what the key results promise. List the inputs in `inputs` and the preconditions in `preconditions`, each by the folder name of its best practice. The deliverables built on this kind are those whose best practices name it in `inputs`. Listing them here as well would write the same fact twice. The plan holds the paths of each deliverable's inputs, and orders the deliverable after them.",
    "steps": [
     {
      "text": "When a deliverable changes, find the deliverables built on it and update them in the same change."

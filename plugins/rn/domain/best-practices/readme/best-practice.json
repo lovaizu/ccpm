@@ -14,10 +14,14 @@
   },
   {
    "id": "C2",
-   "what": "The reader trusts, before trying it, that the product delivers what it promises."
+   "what": "The reader learns what they get from the product in work like their own."
   },
   {
    "id": "C3",
+   "what": "The reader understands why the product can give it, and trusts that it does."
+  },
+  {
+   "id": "C4",
    "what": "The reader installs the product and starts using it without help."
   }
  ],
@@ -56,25 +60,37 @@
    "id": "N6",
    "csf": "C2",
    "about": "Walkthrough",
-   "what": "Does the walkthrough show a real run that delivers, on typical work, the benefit the opening promises?"
+   "what": "Does the walkthrough show a real run on typical work that delivers what the product vision's key results promise, in a form the reader can see?"
   },
   {
    "id": "N7",
-   "csf": "C2",
+   "csf": "C3",
    "about": "How it works",
-   "what": "Does How it works answer the problems and doubts that bring readers to the product, by showing how it works and what each reader gets from it?"
+   "what": "Does How it works state first, in the reader's words, the one way that the product vision's concept puts first, and build the rest of its explanation from it?"
   },
   {
    "id": "N8",
    "csf": "C3",
+   "about": "How it works",
+   "what": "Does How it works answer the problems and doubts that bring readers to the product, each by the part of the product that answers it and how that part follows from the one way?"
+  },
+  {
+   "id": "N9",
+   "csf": "C4",
    "about": "Requirements, Installation",
    "what": "Can a reader with nothing set up install the product by the README alone, and see that it works?"
   },
   {
-   "id": "N9",
-   "csf": "C3",
+   "id": "N10",
+   "csf": "C4",
    "about": "Documentation",
    "what": "Does the README link where to go for fuller use and for help?"
+  },
+  {
+   "id": "N11",
+   "csf": "C1",
+   "about": "the whole",
+   "what": "Does the README hold only the vital few: nothing missing without which a reader fails to decide or to start, and nothing they could skip without loss?"
   }
  ],
  "practices": [
@@ -109,6 +125,9 @@
    "thinking": "Some readers rule a product in or out by its license alone, so they must find it at once and recognize it. Name the license by its identifier in the [Software Package Data Exchange (SPDX) License List](https://spdx.org/licenses/), which readers and their tools recognize, and link its full text. If the product includes work under other licenses, name each with its source.",
    "steps": [
     {
+     "text": "Take the license from the product's license file."
+    },
+    {
      "text": "Open the link and check that it leads to the license the README names."
     }
    ]
@@ -136,7 +155,7 @@
   },
   {
    "intent": "N6",
-   "thinking": "A reader trusts a benefit they've seen happen more than one they only read about. Decide three things in order. First, the use: the one that most readers come for, taken from the main use of the product vision's objectives. Second, the task: one like the reader's own work, small enough to show from start to end, and real enough that the benefit shows in its result. If the result wouldn't show the benefit the opening promises, choose another task. Third, the cut: show every exchange from what the reader gives to the result they keep, with the product's real output, and cut only what doesn't bear on the result. State the result first, so that the reader knows where the run goes. Diátaxis calls this a [tutorial](https://diataxis.fr/tutorials/): one concrete task, carried through to a visible result. Check that a newcomer can say, after reading, what the product would give them on their own work.",
+   "thinking": "A reader trusts a benefit they've seen happen more than one they only read about. Decide four things in order. First, the use: the one that most readers come for, taken from the main use of the product vision's objectives. Second, the task: one like the reader's own work, small enough to show from start to end, and real enough that the benefit shows in its result. If the result wouldn't show the benefit the opening promises, choose another task. Third, the cut: show every exchange from what the reader gives to the result they keep, with the product's real output, and cut only what doesn't bear on the result. Fourth, make each key result of the product vision show in the run, since the key results say what the product promises. For how well, show the result in use as its users would use it. For how fast, show what the reader spent, such as the questions they answered. State the result first, so that the reader knows where the run goes. Diátaxis calls this a [tutorial](https://diataxis.fr/tutorials/): one concrete task, carried through to a visible result. Check that a newcomer can say, after reading, what the product would give them on their own work.",
    "steps": [
     {
      "text": "Choose the use from what readers ask for most and from the objectives of the product vision.",
@@ -154,33 +173,47 @@
   },
   {
    "intent": "N7",
-   "thinking": "A reader tries a product when the push of their problem and the pull of what the product gives them outweigh their doubts about it. Bob Moesta calls these the forces of progress, in Demand-Side Sales 101, from the theory of the jobs that customers hire a product for. Decide in order. First, list the problems that the target reader would name in their work, and the doubts they would raise about the product, in their words, such as, for a backup tool, that their backups fail without warning, or whether it works with their network drive. Second, keep only those whose answer would change whether the reader tries the product. A doubt that the walkthrough already settles needs nothing more. Third, for each one left, take the part of the product that answers it, first from the product vision's concept, then from the architecture. Where neither has one, tell whether an idea that matters to the users is missing, or only the way to make it work. Fourth, put those parts together as one mechanism, starting from the concept's one way. Show it in one figure, with each problem and doubt beside the part that answers it, and what the reader gets from that part. Label each part in the reader's words, and where a part has a name of the product's own, explain the part in a few words. Check that a newcomer can say back how the product gives them what it promises, and why they can trust that it does.",
+   "thinking": "A reader trusts a product they can explain to themselves, and they explain it from one idea, not from a list of parts. Barbara Minto's pyramid principle, in The Minto Pyramid Principle, puts one governing thought at the top and makes everything below support it. Decide in order. First, take the one way that the product vision's concept states first, which is what the product values most. Second, say it in the reader's words, as what they see the product do in their work, in one sentence. Third, build the figure and the answers of How it works below it, so that each part shows how it carries out that one way. Check that a newcomer can say the one way back, and say how each answer follows from it.",
    "steps": [
     {
      "text": "Take the concept from the product vision. The trace: `{inputs}` read to its end."
-    },
+    }
+   ]
+  },
+  {
+   "intent": "N8",
+   "thinking": "A reader tries a product when the push of their problem and the pull of what the product gives them outweigh their doubts about it. Bob Moesta calls these the forces of progress, in Demand-Side Sales 101, from the theory of the jobs that customers hire a product for. Decide in order. First, list the problems that the target reader would name in their work, and the doubts they would raise about the product, in their words, such as, for a backup tool, that their backups fail without warning, or whether it works with their network drive. Second, keep only those whose answer would change whether the reader tries the product. A doubt that the walkthrough already settles needs nothing more. Third, for each one left, take the part of the product that answers it, first from the product vision's concept, then from the architecture. Where neither has one, tell whether an idea that matters to the users is missing, or only the way to make it work. Fourth, put those parts together as one mechanism below the one way, and say for each part how it follows from that way. Show it in one figure, with each problem and doubt beside the part that answers it, and what the reader gets from that part. Label each part in the reader's words, and where a part has a name of the product's own, explain the part in a few words. Check that a newcomer can say back how the product gives them what it promises, and why they can trust that it does.",
+   "steps": [
     {
      "text": "Where an idea that matters to the users is missing, ask the user to add it to the product vision. Where only the way to make it work is missing, record it in the design tree as a requirement that the architecture meets."
     }
    ]
   },
   {
-   "intent": "N8",
+   "intent": "N9",
    "thinking": "A reader who can't install the product never gets to use it, and the author's own setup hides what a newcomer lacks. Decide the steps by starting from a machine with nothing on it. List everything the product needs, each with a command whose output shows that the reader has it. Write each install step as a command the reader can copy. End with a sign the reader can see that the product works. A step that only works with something the README doesn't mention is missing a requirement. [Standard Readme](https://github.com/RichardLitt/standard-readme) holds these in its Install section.",
    "steps": [
+    {
+     "text": "Take each requirement and each install command from the product's manifest and code, never from memory."
+    },
     {
      "text": "On a machine or sandbox with nothing the product needs, follow the steps exactly as written. If a step fails or needs something the README doesn't mention, add it and start again."
     }
    ]
   },
   {
-   "intent": "N9",
+   "intent": "N10",
    "thinking": "The README stays short only if each later need has its own place to go. Decide the links by listing what a reader needs after they start, such as fuller use, reference, help, and the changes in each version, and give one link for each, with whom it's for. Each need has its own kind of page, which [Diátaxis](https://diataxis.fr) sorts into tutorials, how-to guides, reference, and explanation. Check that each link opens the page it names.",
    "steps": [
     {
      "text": "Open each link."
     }
    ]
+  },
+  {
+   "intent": "N11",
+   "thinking": "Every line costs the reader time, and a line they don't need buries the ones they do, while a missing one stops them. The vital few, in Joseph Juran's term, come from what they serve: each section from the condition it meets, and each sentence from what its section must give. Write each section by deriving its content from its condition, not by gathering everything you could say and cutting it. Then read the whole README once as a newcomer, from the top to the first command. Mark each place where you would stop, because something you need isn't there, and each sentence you could skip without losing anything. Rebuild the section behind each mark from its condition. Check that a newcomer reaches the decision and the first command without stopping, and finds no sentence they didn't need.",
+   "steps": []
   }
  ]
 }

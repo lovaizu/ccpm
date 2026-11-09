@@ -21,8 +21,9 @@ A newcomer decides from the README alone whether the product fits their work, an
 | ID | Factor |
 | --- | --- |
 | C1 | The reader knows whether the product fits their work. |
-| C2 | The reader trusts, before trying it, that the product delivers what it promises. |
-| C3 | The reader installs the product and starts using it without help. |
+| C2 | The reader learns what they get from the product in work like their own. |
+| C3 | The reader understands why the product can give it, and trusts that it does. |
+| C4 | The reader installs the product and starts using it without help. |
 
 ## Necessary conditions
 
@@ -33,10 +34,12 @@ A newcomer decides from the README alone whether the product fits their work, an
 | N3 | C1 | Does the README say at the top where the product isn't ready for use yet? | the opening |
 | N4 | C1 | Does the README name the license and link its full text? | License |
 | N5 | C1 | Does the README answer each question in the order a reader comes to ask it? | the whole |
-| N6 | C2 | Does the walkthrough show a real run that delivers, on typical work, the benefit the opening promises? | Walkthrough |
-| N7 | C2 | Does How it works answer the problems and doubts that bring readers to the product, by showing how it works and what each reader gets from it? | How it works |
-| N8 | C3 | Can a reader with nothing set up install the product by the README alone, and see that it works? | Requirements, Installation |
-| N9 | C3 | Does the README link where to go for fuller use and for help? | Documentation |
+| N6 | C2 | Does the walkthrough show a real run on typical work that delivers what the product vision's key results promise, in a form the reader can see? | Walkthrough |
+| N7 | C3 | Does How it works state first, in the reader's words, the one way that the product vision's concept puts first, and build the rest of its explanation from it? | How it works |
+| N8 | C3 | Does How it works answer the problems and doubts that bring readers to the product, each by the part of the product that answers it and how that part follows from the one way? | How it works |
+| N9 | C4 | Can a reader with nothing set up install the product by the README alone, and see that it works? | Requirements, Installation |
+| N10 | C4 | Does the README link where to go for fuller use and for help? | Documentation |
+| N11 | C1 | Does the README hold only the vital few: nothing missing without which a reader fails to decide or to start, and nothing they could skip without loss? | the whole |
 
 ## Practices
 
@@ -83,7 +86,8 @@ Some readers rule a product in or out by its license alone, so they must find it
 
 **Steps**
 
-1. Open the link and check that it leads to the license the README names.
+1. Take the license from the product's license file.
+2. Open the link and check that it leads to the license the README names.
 
 ### N5
 
@@ -101,11 +105,11 @@ Readers come with questions in a typical order, and leave when the next answer i
 
 ### N6
 
-Does the walkthrough show a real run that delivers, on typical work, the benefit the opening promises?
+Does the walkthrough show a real run on typical work that delivers what the product vision's key results promise, in a form the reader can see?
 
 **Thinking**
 
-A reader trusts a benefit they've seen happen more than one they only read about. Decide three things in order. First, the use: the one that most readers come for, taken from the main use of the product vision's objectives. Second, the task: one like the reader's own work, small enough to show from start to end, and real enough that the benefit shows in its result. If the result wouldn't show the benefit the opening promises, choose another task. Third, the cut: show every exchange from what the reader gives to the result they keep, with the product's real output, and cut only what doesn't bear on the result. State the result first, so that the reader knows where the run goes. Diátaxis calls this a [tutorial](https://diataxis.fr/tutorials/): one concrete task, carried through to a visible result. Check that a newcomer can say, after reading, what the product would give them on their own work.
+A reader trusts a benefit they've seen happen more than one they only read about. Decide four things in order. First, the use: the one that most readers come for, taken from the main use of the product vision's objectives. Second, the task: one like the reader's own work, small enough to show from start to end, and real enough that the benefit shows in its result. If the result wouldn't show the benefit the opening promises, choose another task. Third, the cut: show every exchange from what the reader gives to the result they keep, with the product's real output, and cut only what doesn't bear on the result. Fourth, make each key result of the product vision show in the run, since the key results say what the product promises. For how well, show the result in use as its users would use it. For how fast, show what the reader spent, such as the questions they answered. State the result first, so that the reader knows where the run goes. Diátaxis calls this a [tutorial](https://diataxis.fr/tutorials/): one concrete task, carried through to a visible result. Check that a newcomer can say, after reading, what the product would give them on their own work.
 
 **Steps**
 
@@ -114,18 +118,29 @@ A reader trusts a benefit they've seen happen more than one they only read about
 
 ### N7
 
-Does How it works answer the problems and doubts that bring readers to the product, by showing how it works and what each reader gets from it?
+Does How it works state first, in the reader's words, the one way that the product vision's concept puts first, and build the rest of its explanation from it?
 
 **Thinking**
 
-A reader tries a product when the push of their problem and the pull of what the product gives them outweigh their doubts about it. Bob Moesta calls these the forces of progress, in Demand-Side Sales 101, from the theory of the jobs that customers hire a product for. Decide in order. First, list the problems that the target reader would name in their work, and the doubts they would raise about the product, in their words, such as, for a backup tool, that their backups fail without warning, or whether it works with their network drive. Second, keep only those whose answer would change whether the reader tries the product. A doubt that the walkthrough already settles needs nothing more. Third, for each one left, take the part of the product that answers it, first from the product vision's concept, then from the architecture. Where neither has one, tell whether an idea that matters to the users is missing, or only the way to make it work. Fourth, put those parts together as one mechanism, starting from the concept's one way. Show it in one figure, with each problem and doubt beside the part that answers it, and what the reader gets from that part. Label each part in the reader's words, and where a part has a name of the product's own, explain the part in a few words. Check that a newcomer can say back how the product gives them what it promises, and why they can trust that it does.
+A reader trusts a product they can explain to themselves, and they explain it from one idea, not from a list of parts. Barbara Minto's pyramid principle, in The Minto Pyramid Principle, puts one governing thought at the top and makes everything below support it. Decide in order. First, take the one way that the product vision's concept states first, which is what the product values most. Second, say it in the reader's words, as what they see the product do in their work, in one sentence. Third, build the figure and the answers of How it works below it, so that each part shows how it carries out that one way. Check that a newcomer can say the one way back, and say how each answer follows from it.
 
 **Steps**
 
 1. Take the concept from the product vision. The trace: `{inputs}` read to its end.
-2. Where an idea that matters to the users is missing, ask the user to add it to the product vision. Where only the way to make it work is missing, record it in the design tree as a requirement that the architecture meets.
 
 ### N8
+
+Does How it works answer the problems and doubts that bring readers to the product, each by the part of the product that answers it and how that part follows from the one way?
+
+**Thinking**
+
+A reader tries a product when the push of their problem and the pull of what the product gives them outweigh their doubts about it. Bob Moesta calls these the forces of progress, in Demand-Side Sales 101, from the theory of the jobs that customers hire a product for. Decide in order. First, list the problems that the target reader would name in their work, and the doubts they would raise about the product, in their words, such as, for a backup tool, that their backups fail without warning, or whether it works with their network drive. Second, keep only those whose answer would change whether the reader tries the product. A doubt that the walkthrough already settles needs nothing more. Third, for each one left, take the part of the product that answers it, first from the product vision's concept, then from the architecture. Where neither has one, tell whether an idea that matters to the users is missing, or only the way to make it work. Fourth, put those parts together as one mechanism below the one way, and say for each part how it follows from that way. Show it in one figure, with each problem and doubt beside the part that answers it, and what the reader gets from that part. Label each part in the reader's words, and where a part has a name of the product's own, explain the part in a few words. Check that a newcomer can say back how the product gives them what it promises, and why they can trust that it does.
+
+**Steps**
+
+1. Where an idea that matters to the users is missing, ask the user to add it to the product vision. Where only the way to make it work is missing, record it in the design tree as a requirement that the architecture meets.
+
+### N9
 
 Can a reader with nothing set up install the product by the README alone, and see that it works?
 
@@ -135,9 +150,10 @@ A reader who can't install the product never gets to use it, and the author's ow
 
 **Steps**
 
-1. On a machine or sandbox with nothing the product needs, follow the steps exactly as written. If a step fails or needs something the README doesn't mention, add it and start again.
+1. Take each requirement and each install command from the product's manifest and code, never from memory.
+2. On a machine or sandbox with nothing the product needs, follow the steps exactly as written. If a step fails or needs something the README doesn't mention, add it and start again.
 
-### N9
+### N10
 
 Does the README link where to go for fuller use and for help?
 
@@ -148,3 +164,11 @@ The README stays short only if each later need has its own place to go. Decide t
 **Steps**
 
 1. Open each link.
+
+### N11
+
+Does the README hold only the vital few: nothing missing without which a reader fails to decide or to start, and nothing they could skip without loss?
+
+**Thinking**
+
+Every line costs the reader time, and a line they don't need buries the ones they do, while a missing one stops them. The vital few, in Joseph Juran's term, come from what they serve: each section from the condition it meets, and each sentence from what its section must give. Write each section by deriving its content from its condition, not by gathering everything you could say and cutting it. Then read the whole README once as a newcomer, from the top to the first command. Mark each place where you would stop, because something you need isn't there, and each sentence you could skip without losing anything. Rebuild the section behind each mark from its condition. Check that a newcomer reaches the decision and the first command without stopping, and finds no sentence they didn't need.

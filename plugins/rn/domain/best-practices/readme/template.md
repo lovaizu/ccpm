@@ -73,9 +73,9 @@ At the end, you have `<result>`.
 
 ## How it works
 
-![How the product works](images/template-how-it-works.svg)
+`<the one way>`.
 
-`<how it works>`.
+![How the product works](images/template-how-it-works.svg)
 
 ### `<problem or doubt>`
 
@@ -83,14 +83,16 @@ At the end, you have `<result>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
+> - `<the one way>`: the one way that the product vision's concept puts first, in the reader's
+>   words, as what they see the product do in their work, in one sentence.
 > - The figure: the deliverable's own, at images/how-it-works.svg, with the product named in its alt
->   text. It shows the product's mechanism as one flow, starting from the concept's one way, with
->   each problem and doubt beside the part that answers it, and what the reader gets from that
->   part. The skeleton here is one such form.
-> - `<how it works>`: the mechanism in a sentence or two, starting from the concept's one way.
+>   text. It shows the product's mechanism as one flow below the one way, with each problem and
+>   doubt beside the part that answers it, and what the reader gets from that part. The skeleton
+>   here is one such form.
 > - `<problem or doubt>`, `<answer>`: each problem or doubt that would change whether the reader
 >   tries the product, as they would say it, as a heading of its own, and in a sentence or two the
->   part of the mechanism that answers it and what the reader gets from it.
+>   part of the mechanism that answers it, how it follows from the one way, and what the reader
+>   gets from it.
 
 ## Documentation
 
