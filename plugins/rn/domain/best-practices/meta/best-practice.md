@@ -17,7 +17,7 @@ The generator can make deliverables with which their role achieves its purpose.
 | ID | About | Question |
 | --- | --- | --- |
 | Q1 | goal | Reading the goal, does the generator see the one end the deliverable's role is after, so that every part of the deliverable serves that end? |
-| Q2 | intents | Making or judging a deliverable, do the generator and the evaluator see what decides whether its role reaches that end, so that each part of the deliverable carries one of those things? |
+| Q2 | vital_few | Making or judging a deliverable, do the generator and the evaluator see what decides whether its role reaches that end, so that each part of the deliverable carries one of those things? |
 | Q3 | template | Filling in the template, does the generator find a slot for each vital one and the form its sentences take, so that the deliverable holds the vital few and has room for nothing else? |
 | Q4 | practices | Making each vital one, does the generator grasp what it must be and why, by the field's established way, so that it makes it where no step says how, and the same way on every run? |
 | Q5 | inputs, preconditions | Setting each section against what fills it, does the generator find the kinds it makes a deliverable from and those that must pass before it makes one, so that it makes no deliverable of the kind before what the deliverable takes? |
@@ -71,7 +71,6 @@ Write the template anew from the vital few: a section or a slot for each, with t
 5. Give the content found by digging a slot for its intent and why alone, in the fewest words, and a figure in place of prose wherever a figure can say it.
 6. Draw each figure in a form that stays text, so that a change to it shows in a diff, such as Mermaid for a sequence and SVG for any other figure. A table counts as a figure too, as it stands in for prose.
 7. Give each figure of the template a skeleton of its own that shows the figure's layout by the slots' names, with an alt text that holds no slot, and say in the section's note where the deliverable puts its own figure. A figure that the template names but doesn't hold shows broken, and the example's figure shows one product's content in place of the layout.
-8. Name the template's file in `template`.
 
 ### Q4
 
@@ -86,7 +85,6 @@ Write first what the deliverable must be to give the role the vital one, and why
 1. Add a step only where a generator that holds the intent would still not know how, such as a format to keep or a place to look, and say what the step achieves.
 2. Give each step its trace, the call that shows it done: a command it runs, a file it reads to its end, or a file it makes. Order the steps as their calls come, as a checker such as Lane holds the role to each step by its trace alone, in the steps' order, and holds its end until each trace comes back. Leave the trace out in two cases. One is where some runs rightly skip the call, such as on a step of a case, as Lane would stop the end of each such run. The other is where no call shows the action, such as a judgment, which the evaluator then checks.
 3. Where the generator must find the content before it writes it, such as the roles of a product vision, say what to look at, how to find all of it, and when to ask the user.
-4. Read each practice as a generator new to the kind, and where they would hesitate, add what they lack.
 
 ### Q5
 

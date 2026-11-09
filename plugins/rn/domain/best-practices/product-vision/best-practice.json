@@ -5,7 +5,7 @@
  "source": "../../../../../dev/rn/product-vision.md",
  "inputs": [],
  "preconditions": [],
- "intents": [
+ "vital_few": [
   {
    "id": "Q1",
    "about": "Roles",

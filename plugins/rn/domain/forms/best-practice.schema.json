@@ -7,7 +7,7 @@
     "goal",
     "inputs",
     "preconditions",
-    "intents",
+    "vital_few",
     "practices"
   ],
   "additionalProperties": false,
@@ -42,7 +42,7 @@
         "$ref": "#/$defs/part"
       }
     },
-    "intents": {
+    "vital_few": {
       "type": "array",
       "minItems": 1,
       "items": {

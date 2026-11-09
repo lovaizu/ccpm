@@ -8,7 +8,7 @@
   "readme"
  ],
  "preconditions": [],
- "intents": [
+ "vital_few": [
   {
    "id": "Q1",
    "about": "the opening",

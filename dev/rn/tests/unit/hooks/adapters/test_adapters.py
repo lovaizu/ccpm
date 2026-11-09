@@ -46,7 +46,7 @@ class Steps(helpers.testing.FolderTest):
     def test_the_lists_of_a_best_practice_by_its_path_and_none_with_no_path(self):
         lists = imported("steps-practices")["lists"]
         path = os.path.join(helpers.practices.OWN, "refactor-code", "best-practice.json")
-        found = lists({"practice": [path], "intents": None})
+        found = lists({"practice": [path], "vital_few": None})
         self.assertEqual(
             found[0]["steps"][0]["lanes"], [{"lane": "run_step", "takes": ["{tests}"]}]
         )

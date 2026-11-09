@@ -15,7 +15,7 @@ CONTENT = ".rn/20261108-tidy-dry-run/turns/01-readme-md/01"
 
 def good(tree, n=1):
     """The tree with each intent of the deliverable of the number good."""
-    for i in tree["deliverables"][n - 1]["intents"]:
+    for i in tree["deliverables"][n - 1]["vital_few"]:
         i["good"] = True
     return tree
 
@@ -149,7 +149,7 @@ class Planner(Base):
         self.assertEqual(values["tree"], runs.tree_path(RUN))
         self.assertEqual(values["edit"], os.path.join(runs.temporary(RUN), runs.EDIT))
         self.assertTrue(values["practice"].endswith(os.path.join("plan", "best-practice.json")))
-        self.assertIsNone(values["intents"])
+        self.assertIsNone(values["vital_few"])
         self.assertIn("# A new run", cut)
         self.assertIn("tidy dry run", cut)
         self.assertTrue(os.path.isdir(RUN))
@@ -324,7 +324,7 @@ class Generator(Base):
         with self.assertRaises(starts.Stop) as stop:
             starts.start("generator")
         self.assertIn("has no deliverable left to make", str(stop.exception))
-        d = {**helpers.deliverable("tidy.1", "readme", intents=[]), "kind": "man-page"}
+        d = {**helpers.deliverable("tidy.1", "readme", vital_few=[]), "kind": "man-page"}
         self.lays({"goal": {"decided": GOAL, "by": "user"}, "deliverables": [d]})
         with self.assertRaises(starts.Stop) as stop:
             starts.start("generator")

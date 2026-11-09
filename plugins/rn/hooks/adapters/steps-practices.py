@@ -24,7 +24,7 @@ def lists(values: dict[str, list[str] | None]) -> list[dict[str, object]]:
     if not named:
         return []
     path = named[0].replace("${CLAUDE_PLUGIN_ROOT}", ROOT)
-    return practices.steps(practices.read(path), values.get("intents"))
+    return practices.steps(practices.read(path), values.get("vital_few"))
 
 
 # Run as the adapter, and not when a test imports it.

@@ -201,7 +201,7 @@ WRITES = re.compile(r"(?<![0-9&])>|\btee\b|json\.dump|\.write\(|\bsed\s+-i")
 # writer's practices of the intent its start names, as o1/domain/practices.json keeps them, in
 # Lane's form: what a steps adapter laid must give for writer's start.
 PRACTICES = [("run_step", ["git log --oneline"]), ("write_step", ["CHANGELOG.md"])]
-INTENTS = {"intents": ["Q1"]}
+INTENTS = {"vital_few": ["Q1"]}
 
 
 def git(repo: str, *args: str) -> str:

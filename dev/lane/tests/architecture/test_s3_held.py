@@ -356,7 +356,7 @@ class TestSteps(helpers.RunTest):
 
     def test_the_steps_of_an_intent_read_through_the_adapter_are_held_in_their_order(self):
         # Given: writer started on Q2, whose steps read CHANGELOG.md whole, then run git status
-        self.claude.start(None, WRITER, '{"intents": ["Q2"]}')
+        self.claude.start(None, WRITER, '{"vital_few": ["Q2"]}')
         # When: it runs git status first, then reads CHANGELOG.md and runs git status again
         early = self.claude.call(WRITER, *bash("git status"))
         read = self.claude.call(WRITER, "Read", {"file_path": "CHANGELOG.md"})

@@ -291,15 +291,15 @@ def faults(data: dict[str, Any], template: list[str] | None = None) -> list[str]
     # Each id counts once or more in ids, which it comes from.
     for part in sorted({i for i in ids if ids.count(i) > 1}):  # pragma: no mutate
         found.append(f"{what} {part} is named more than once")
-    named_parts = {a.strip() for q in data["intents"] for a in q["about"].split(",")}
+    named_parts = {a.strip() for q in data["vital_few"] for a in q["about"].split(",")}
     for part in leaves:
         if part not in named_parts:
             found.append(f"{what} {part} has no question about it")
-    questions = [q["id"] for q in data["intents"]]
+    questions = [q["id"] for q in data["vital_few"]]
     expected = [f"Q{n}" for n in range(1, len(questions) + 1)]
     if questions != expected:
         found.append(f"questions are {', '.join(questions)}, not numbered in order from Q1")
-    for q in data["intents"]:
+    for q in data["vital_few"]:
         for about in (a.strip() for a in q["about"].split(",")):
             if about != WHOLE and about not in ids:
                 where = "part" if template is None else "section of the template"
@@ -369,7 +369,7 @@ def markdown_of(path: str, data: dict[str, Any]) -> str:
     where its best practice lies, or else its parts, and its intents, then the practice for each
     intent, under the question it meets."""
     kind = kind_of(path)
-    questions = {q["id"]: q for q in data["intents"]}
+    questions = {q["id"]: q for q in data["vital_few"]}
     out = [f"# `{kind}`", "", "## Goal", "", data["goal"]]
     for key in ("template", "example"):
         if key in data:
@@ -386,7 +386,7 @@ def markdown_of(path: str, data: dict[str, Any]) -> str:
     # A table and headings of their own, as the prose check reads a capital after a colon as a
     # fault.
     out += ["", "## Vital few", "", "| ID | About | Question |", "| --- | --- | --- |"]
-    out += [f"| {q['id']} | {q['about']} | {q['what']} |" for q in data["intents"]]
+    out += [f"| {q['id']} | {q['about']} | {q['what']} |" for q in data["vital_few"]]
     out += ["", "## Practices"]
     for practice in data["practices"]:
         question = questions[practice["intent"]]

@@ -7,7 +7,7 @@ import sys
 
 TASKS = {
     "writer": "Write the entries of the next release into `CHANGELOG.md`.\n"
-    + json.dumps({"intents": ["Q1"]}),
+    + json.dumps({"vital_few": ["Q1"]}),
     "reviewer": "Review the entries under `## Unreleased` of `CHANGELOG.md`.",
 }
 name = sys.argv[1] if len(sys.argv) > 1 else ""

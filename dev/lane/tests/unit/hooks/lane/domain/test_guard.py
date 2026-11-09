@@ -2282,7 +2282,7 @@ class TestPortSteps(LanesTest):
         laid = self.read_json(os.path.join(self.plugin, "hooks", "lanes.json"))
         laid["subagents"][0]["steps_adapter"] = "hooks/adapters/steps-w.py"
         self.write_json(os.path.join(self.plugin, "hooks", "lanes.json"), laid)
-        self.given('{"intents": ["Q1", "Q2"]}')
+        self.given('{"vital_few": ["Q1", "Q2"]}')
 
     def test_a_later_step_of_a_list_is_stopped_and_another_lists_first_goes_through(self):
         # Given: writer, which has run nothing

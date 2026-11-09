@@ -5,7 +5,7 @@
     "practice": [
      "${CLAUDE_PLUGIN_ROOT}/domain/best-practices/refactor-code/best-practice.json"
     ],
-    "intents": null
+    "vital_few": null
    }
   },
   "gives": {
@@ -166,7 +166,7 @@
     "practice": [
      "${CLAUDE_PLUGIN_ROOT}/domain/best-practices/readme/best-practice.json"
     ],
-    "intents": [
+    "vital_few": [
      "Q8",
      "Q9"
     ]
@@ -216,7 +216,7 @@
     "practice": [
      "${CLAUDE_PLUGIN_ROOT}/domain/best-practices/meta/best-practice.json"
     ],
-    "intents": [
+    "vital_few": [
      "Q1"
     ]
    }

@@ -100,7 +100,7 @@
     "inputs",
     "preconditions",
     "status",
-    "intents"
+    "vital_few"
    ],
    "additionalProperties": false,
    "properties": {
@@ -134,7 +134,7 @@
       "doing"
      ]
     },
-    "intents": {
+    "vital_few": {
      "description": "Each intent of the deliverable's best practice, in that best practice's order.",
      "type": "array",
      "items": {

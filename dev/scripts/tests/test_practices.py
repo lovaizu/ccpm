@@ -36,7 +36,7 @@ DATA: dict[str, Any] = {
     "inputs": [],
     "preconditions": [],
     "parts": [{"id": "a", "what": "A.", "parts": [{"id": "b", "what": "B."}]}],
-    "intents": [
+    "vital_few": [
         {"id": "Q1", "about": "a", "what": "Does it?"},
         {"id": "Q2", "about": "b, the whole", "what": "After Q1, does all?"},
     ],
@@ -70,7 +70,7 @@ class Faults(unittest.TestCase):
 
     def test_questions_out_of_number_order(self):
         def swap(d):
-            d["intents"].reverse()
+            d["vital_few"].reverse()
             d["practices"].reverse()
 
         self.assertIn("questions are Q2, Q1, not numbered in order from Q1", changed(swap))
@@ -90,7 +90,7 @@ class Faults(unittest.TestCase):
 
     def test_about_a_part_that_is_not_there(self):
         def wrong(d):
-            d["intents"][0]["about"] = "c"
+            d["vital_few"][0]["about"] = "c"
 
         self.assertEqual(changed(wrong), ["Q1 is about c, which is no part"])
 
@@ -114,28 +114,28 @@ class Faults(unittest.TestCase):
 
     def test_no_question_about_the_whole_is_no_fault(self):
         def narrow(d):
-            d["intents"][1]["about"] = "b"
+            d["vital_few"][1]["about"] = "b"
 
         self.assertEqual(changed(narrow), [])
 
     def test_a_best_practice_of_one_question_about_the_whole(self):
         data = {
             "goal": "G.",
-            "intents": [{"id": "Q1", "about": "the whole", "what": "Does it?"}],
+            "vital_few": [{"id": "Q1", "about": "the whole", "what": "Does it?"}],
             "practices": [{"intent": "Q1", "thinking": "T.", "steps": []}],
         }
         self.assertEqual(practices.faults(data), [])
 
     def test_two_questions_of_one_number(self):
         def same(d):
-            d["intents"][1]["id"] = "Q1"
+            d["vital_few"][1]["id"] = "Q1"
             d["practices"][1]["intent"] = "Q1"
 
         self.assertIn("questions are Q1, Q1, not numbered in order from Q1", changed(same))
 
     def test_a_question_numbered_otherwise_is_not_named_as_missing(self):
         def letter(d):
-            d["intents"][0]["id"] = "A"
+            d["vital_few"][0]["id"] = "A"
             d["practices"][0]["intent"] = "A"
 
         self.assertEqual(
@@ -148,13 +148,13 @@ class Faults(unittest.TestCase):
 
     def test_about_a_part_named_after_the_whole_that_is_not_there(self):
         def wrong(d):
-            d["intents"][0]["about"] = "z"
+            d["vital_few"][0]["about"] = "z"
 
         self.assertEqual(changed(wrong), ["Q1 is about z, which is no part"])
 
     def test_a_question_named_in_a_intent_that_is_not_there(self):
         def name(d):
-            d["intents"][0]["what"] = "Before Q3, does it?"
+            d["vital_few"][0]["what"] = "Before Q3, does it?"
 
         self.assertEqual(changed(name), ["Q3 is named, but there is no such question"])
 
@@ -236,7 +236,7 @@ BY_TEMPLATE = {
     "goal": "The reader gets it.",
     "inputs": [],
     "preconditions": [],
-    "intents": [
+    "vital_few": [
         {"id": "Q1", "about": "the opening, Roles", "what": "Does it?"},
         {"id": "Q2", "about": "OKRs, the whole", "what": "Does all?"},
     ],
@@ -285,8 +285,8 @@ class NotesLeft(unittest.TestCase):
 
 class Keys(unittest.TestCase):
     def test_each_key_in_order_but_the_comments(self):
-        text = '{"DELETE_TEMPLATE_COMMENT": "x", "goal": "<g>", "intents": [], "practices": []}'
-        self.assertEqual(practices.keys(text), ["goal", "intents", "practices"])
+        text = '{"DELETE_TEMPLATE_COMMENT": "x", "goal": "<g>", "vital_few": [], "practices": []}'
+        self.assertEqual(practices.keys(text), ["goal", "vital_few", "practices"])
 
     def test_keeps_a_key_that_sorts_before_the_comments(self):
         self.assertEqual(
@@ -617,7 +617,7 @@ class FaultsByTemplate(unittest.TestCase):
 
     def test_about_what_is_no_section(self):
         def wrong(d):
-            d["intents"][0]["about"] = "the opening, Scenarios, Roles"
+            d["vital_few"][0]["about"] = "the opening, Scenarios, Roles"
 
         self.assertEqual(
             self.by(wrong), ["Q1 is about Scenarios, which is no section of the template"]
@@ -625,7 +625,7 @@ class FaultsByTemplate(unittest.TestCase):
 
     def test_a_section_no_question_is_about(self):
         def narrow(d):
-            d["intents"][0]["about"] = "Roles"
+            d["vital_few"][0]["about"] = "Roles"
 
         self.assertEqual(self.by(narrow), ["section the opening has no question about it"])
 
@@ -753,7 +753,7 @@ class Practices(testing.FolderTest):
     def test_form_holds_the_questions_to_the_template_beside_it(self):
         data = copy.deepcopy(DATA)
         del data["parts"]
-        for question in data["intents"]:
+        for question in data["vital_few"]:
             question["about"] = "the whole"
         data["template"] = "template.md"
         self.write_json(self.path, data)
@@ -769,7 +769,7 @@ class Practices(testing.FolderTest):
     def test_form_holds_the_questions_to_a_template_that_is_a_folder_and_keeps_its_files(self):
         data = copy.deepcopy(DATA)
         del data["parts"]
-        for question in data["intents"]:
+        for question in data["vital_few"]:
             question["about"] = "the whole"
         data["template"] = "template"
         self.write_json(self.path, data)
@@ -815,7 +815,7 @@ class Practices(testing.FolderTest):
     def test_form_fails_on_an_example_out_of_the_schema_that_is_its_template(self):
         data = copy.deepcopy(DATA)
         del data["parts"]
-        for question in data["intents"]:
+        for question in data["vital_few"]:
             question["about"] = "goal, the whole"
         data.update(template="plan.schema.json", example="example.json")
         self.write_json(self.path, data)

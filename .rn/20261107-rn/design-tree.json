@@ -23,7 +23,7 @@
       "status": "doing",
       "inputs": [],
       "preconditions": [],
-      "intents": [
+      "vital_few": [
         {
           "id": "Q1",
           "good": false,
@@ -42,11 +42,6 @@
               "about": "The name",
               "decided": "Vital few, Juran's name, the heading under which a best practice lists them. What counts is that each is vital, and fewness follows",
               "by": "user"
-            },
-            {
-              "about": "The key in JSON",
-              "decided": "stays intents until the code best practice makes rn's code anew, which then names it vital_few",
-              "by": "reasoning"
             }
           ]
         },
@@ -68,7 +63,13 @@
         {
           "id": "Q6",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The example",
+              "decided": "the plan best practice, made anew by this one, as the design tree that every deliverable rests on comes from it",
+              "by": "reasoning"
+            }
+          ]
         }
       ]
     },
@@ -85,7 +86,7 @@
       "inputs": [],
       "preconditions": [],
       "status": "doing",
-      "intents": [
+      "vital_few": [
         {
           "id": "Q1",
           "good": false,
@@ -173,7 +174,7 @@
       "inputs": [],
       "preconditions": [],
       "status": "doing",
-      "intents": [
+      "vital_few": [
         {
           "id": "Q1",
           "good": true,
@@ -227,7 +228,7 @@
       ],
       "preconditions": [],
       "status": "doing",
-      "intents": [
+      "vital_few": [
         {
           "id": "Q1",
           "good": false,
@@ -368,7 +369,7 @@
         "dev/rn/architecture.md"
       ],
       "status": "open",
-      "intents": [
+      "vital_few": [
         {
           "id": "Q1",
           "good": false,
@@ -427,7 +428,7 @@
         "plugins/lane/hooks/lane/domain"
       ],
       "status": "doing",
-      "intents": [
+      "vital_few": [
         {
           "id": "Q1",
           "good": false,
@@ -580,7 +581,7 @@
         "plugins/lane"
       ],
       "status": "open",
-      "intents": [
+      "vital_few": [
         {
           "id": "Q1",
           "good": false,
@@ -634,7 +635,7 @@
         "plugins/lane"
       ],
       "status": "open",
-      "intents": [
+      "vital_few": [
         {
           "id": "Q1",
           "good": false,
@@ -693,7 +694,7 @@
         "plugins/rn/domain"
       ],
       "status": "open",
-      "intents": [
+      "vital_few": [
         {
           "id": "Q1",
           "good": false,
@@ -793,7 +794,7 @@
         "plugins/rn/agents"
       ],
       "status": "doing",
-      "intents": [
+      "vital_few": [
         {
           "id": "Q1",
           "good": false,
@@ -959,7 +960,7 @@
         "plugins/rn"
       ],
       "status": "doing",
-      "intents": [
+      "vital_few": [
         {
           "id": "Q1",
           "good": true,

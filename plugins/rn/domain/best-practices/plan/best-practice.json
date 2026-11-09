@@ -5,7 +5,7 @@
  "source": "../../../../../.rn/20261107-rn/design-tree.json",
  "inputs": [],
  "preconditions": [],
- "intents": [
+ "vital_few": [
   {
    "id": "Q1",
    "about": "goal",

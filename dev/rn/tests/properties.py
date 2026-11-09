@@ -53,7 +53,7 @@ def shapes(draw):
                 "inputs": [f"d{n - 1}.md"] if n and draw(st.booleans()) else [],
                 "preconditions": [],
                 "status": "open",
-                "intents": intents,
+                "vital_few": intents,
             }
         )
     return {"goal": {"decided": "g", "by": "user"}, "deliverables": deliverables}

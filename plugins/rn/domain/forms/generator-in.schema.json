@@ -21,7 +21,7 @@
         "mutation",
         "proposal",
         "practice",
-        "intents",
+        "vital_few",
         "record"
       ],
       "additionalProperties": false,
@@ -92,7 +92,7 @@
           "description": "The path of the best practice the round makes the deliverable by.",
           "type": "string"
         },
-        "intents": {
+        "vital_few": {
           "description": "The intents whose practices it carries out, null for every one.",
           "type": [
             "array",

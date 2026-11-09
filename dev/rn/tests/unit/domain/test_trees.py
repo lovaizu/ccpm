@@ -26,7 +26,7 @@ def small() -> dict:
                     "inputs": [],
                     "preconditions": [],
                     "status": "doing",
-                    "intents": [
+                    "vital_few": [
                         {"id": "Q1", "good": False, "decisions": []},
                         {
                             "id": "Q2",
@@ -45,7 +45,7 @@ def small() -> dict:
                     "inputs": ["README.md"],
                     "preconditions": [],
                     "status": "open",
-                    "intents": [{"id": "Q1", "good": False, "decisions": []}],
+                    "vital_few": [{"id": "Q1", "good": False, "decisions": []}],
                 },
             ],
         }
@@ -100,8 +100,8 @@ class Changed(unittest.TestCase):
     def test_a_node_whose_content_differs_or_that_went(self):
         # Given: the small tree, its Q1 made good, its decision a settled, and D2 removed
         after = copy.deepcopy(small())
-        after["deliverables"][0]["intents"][0]["good"] = True
-        after["deliverables"][0]["intents"][1]["decisions"][1].update(decided="y", by="user")
+        after["deliverables"][0]["vital_few"][0]["good"] = True
+        after["deliverables"][0]["vital_few"][1]["decisions"][1].update(decided="y", by="user")
         del after["deliverables"][1]
         # When: rn finds the change
         found = trees.changed(small(), after)
@@ -125,7 +125,7 @@ class Touched(unittest.TestCase):
         # Given: the small tree, D1's first decision changed
         before = small()
         after = copy.deepcopy(before)
-        after["deliverables"][0]["intents"][1]["decisions"][0]["decided"] = "z"
+        after["deliverables"][0]["vital_few"][1]["decisions"][0]["decided"] = "z"
         keys = trees.changed(before, after)
         # When: rn lists the nodes it touches
         # Then: up to the goal, the later decision, and D2, which takes from D1
@@ -134,7 +134,7 @@ class Touched(unittest.TestCase):
     def test_an_intent_touches_the_later_decisions_and_neighbours(self):
         before = small()
         after = copy.deepcopy(before)
-        after["deliverables"][0]["intents"][0]["good"] = True
+        after["deliverables"][0]["vital_few"][0]["good"] = True
         keys = trees.changed(before, after)
         self.assertEqual(
             trees.touched(before, after, keys), ["goal", "D1", "D1Q2-1", "D1Q2-2", "D2"]
@@ -163,7 +163,7 @@ class Touched(unittest.TestCase):
         # Given: D1's open decision removed
         before = small()
         after = copy.deepcopy(before)
-        del after["deliverables"][0]["intents"][1]["decisions"][1]
+        del after["deliverables"][0]["vital_few"][1]["decisions"][1]
         keys = trees.changed(before, after)
         # Then: its intent, its deliverable, the goal, and D2
         self.assertEqual(trees.touched(before, after, keys), ["goal", "D1", "D1Q2", "D2"])
@@ -211,7 +211,7 @@ class Apply(unittest.TestCase):
                 "inputs": [],
                 "preconditions": [],
                 "status": "open",
-                "intents": [
+                "vital_few": [
                     {"id": "Q1", "good": False, "decisions": []},
                     {"id": "Q2", "good": False, "decisions": []},
                 ],
@@ -221,7 +221,7 @@ class Apply(unittest.TestCase):
     def test_a_deliverable_of_a_kind_with_no_best_practice_has_no_intent_yet(self):
         given = {"name": "n", "path": "m.1", "kind": "man-page", "inputs": [], "preconditions": []}
         after = self.applied({"after": "D2", **given})
-        self.assertEqual(after["deliverables"][2]["intents"], [])
+        self.assertEqual(after["deliverables"][2]["vital_few"], [])
 
     def test_a_deliverable_added_needs_its_fields_and_a_place(self):
         self.assertEqual(
@@ -243,7 +243,7 @@ class Apply(unittest.TestCase):
 
     def test_a_kind_changed_takes_its_new_kinds_intents(self):
         after = self.applied({"id": "D2", "kind": "readme"})
-        self.assertEqual([i["id"] for i in after["deliverables"][1]["intents"]], ["Q1", "Q2"])
+        self.assertEqual([i["id"] for i in after["deliverables"][1]["vital_few"]], ["Q1", "Q2"])
 
     def test_a_deliverable_done_keeps_one_line_once_each_intent_is_good(self):
         good = [{"id": f"D1Q{n}", "good": True} for n in (1, 2)]
@@ -271,7 +271,7 @@ class Apply(unittest.TestCase):
             {"id": "D1Q1", "about": "c", "decided": None},
             {"id": "D1Q2", "about": "a", "decided": "w", "by": "reasoning"},
         )
-        intents = after["deliverables"][0]["intents"]
+        intents = after["deliverables"][0]["vital_few"]
         self.assertEqual(intents[0]["decisions"], [{"about": "c", "decided": None}])
         self.assertEqual(
             intents[1]["decisions"][0], {"about": "a", "decided": "w", "by": "reasoning"}
@@ -279,20 +279,21 @@ class Apply(unittest.TestCase):
 
     def test_an_intent_is_made_good(self):
         after = self.applied({"id": "D2Q1", "good": True})
-        self.assertTrue(after["deliverables"][1]["intents"][0]["good"])
+        self.assertTrue(after["deliverables"][1]["vital_few"][0]["good"])
 
     def test_a_decision_is_set_opened_or_removed(self):
         after = self.applied({"id": "D1Q2-2", "decided": "y", "by": "research"})
         self.assertEqual(
-            after["deliverables"][0]["intents"][1]["decisions"][1],
+            after["deliverables"][0]["vital_few"][1]["decisions"][1],
             {"about": "b", "decided": "y", "by": "research"},
         )
         after = self.applied({"id": "D1Q2-1", "decided": None})
         self.assertEqual(
-            after["deliverables"][0]["intents"][1]["decisions"][0], {"about": "a", "decided": None}
+            after["deliverables"][0]["vital_few"][1]["decisions"][0],
+            {"about": "a", "decided": None},
         )
         after = self.applied({"id": "D1Q2-1", "remove": True})
-        self.assertEqual(len(after["deliverables"][0]["intents"][1]["decisions"]), 1)
+        self.assertEqual(len(after["deliverables"][0]["vital_few"][1]["decisions"]), 1)
 
     def test_a_decision_settled_by_no_one_is_refused(self):
         self.assertEqual(
@@ -315,7 +316,8 @@ class Apply(unittest.TestCase):
             answers=[{"id": "D1Q2-1", "holds": False}, {"id": "D2", "holds": True}]
         )
         self.assertEqual(
-            after["deliverables"][0]["intents"][1]["decisions"][0], {"about": "a", "decided": None}
+            after["deliverables"][0]["vital_few"][1]["decisions"][0],
+            {"about": "a", "decided": None},
         )
 
     def test_an_answer_that_a_node_no_decision_no_longer_holds_is_refused(self):
@@ -329,7 +331,7 @@ class Apply(unittest.TestCase):
             {"id": "D1Q2-1", "remove": True}, answers=[{"id": "D1Q2-1", "holds": False}]
         )
         self.assertEqual(
-            after["deliverables"][0]["intents"][1]["decisions"], [{"about": "b", "decided": None}]
+            after["deliverables"][0]["vital_few"][1]["decisions"], [{"about": "b", "decided": None}]
         )
 
     def test_the_tree_given_is_left_as_it_was(self):
@@ -374,7 +376,7 @@ class Faults(unittest.TestCase):
 
     def test_a_kind_with_no_best_practice_nor_a_meta_deliverable_before_it(self):
         tree = small()
-        tree["deliverables"][1].update(kind="man-page", intents=[])
+        tree["deliverables"][1].update(kind="man-page", vital_few=[])
         self.assertEqual(
             self.faults(tree), ["D2's kind man-page has no best practice, nor a meta one before it"]
         )
@@ -385,7 +387,7 @@ class Faults(unittest.TestCase):
             "inputs": [],
             "preconditions": [],
             "status": "open",
-            "intents": [],
+            "vital_few": [],
         }
         tree["deliverables"].insert(1, meta)
         self.assertEqual(self.faults(tree), [])
@@ -399,7 +401,7 @@ class Faults(unittest.TestCase):
             "inputs": [],
             "preconditions": [],
             "status": "open",
-            "intents": [],
+            "vital_few": [],
         }
         tree["deliverables"].append(meta)
         self.assertEqual(
@@ -415,7 +417,7 @@ class Faults(unittest.TestCase):
             "inputs": [],
             "preconditions": [],
             "status": "open",
-            "intents": [],
+            "vital_few": [],
         }
         tree["deliverables"].insert(0, research)
         self.assertEqual(self.faults(tree), ["D1 is research that no later deliverable takes from"])
@@ -424,7 +426,7 @@ class Faults(unittest.TestCase):
 
     def test_intents_unlike_the_kinds(self):
         tree = small()
-        tree["deliverables"][0]["intents"].reverse()
+        tree["deliverables"][0]["vital_few"].reverse()
         self.assertEqual(
             self.faults(tree), ["D1's intents aren't those of its kind readme, in their order"]
         )
@@ -448,7 +450,7 @@ class Shown(unittest.TestCase):
 
     def test_the_tree_is_shown_with_each_id(self):
         tree = small()
-        tree["deliverables"][1]["intents"][0]["good"] = True
+        tree["deliverables"][1]["vital_few"][0]["good"] = True
         tree["deliverables"].append(
             {"name": "d", "path": "d.md", "kind": "readme", "status": "done"}
         )
@@ -476,7 +478,7 @@ def kind_of(n, kind, path=None, **given):
         "inputs": [],
         "preconditions": [],
         "status": "open",
-        "intents": [{"id": i, "good": False, "decisions": []} for i in FINDER(kind) or []],
+        "vital_few": [{"id": i, "good": False, "decisions": []} for i in FINDER(kind) or []],
     }
     d.update(given)
     return d
@@ -500,13 +502,13 @@ class Edges(unittest.TestCase):
         before = small()
         after = copy.deepcopy(before)
         after["goal"]["decided"] = "h"
-        after["deliverables"][1]["intents"][0]["good"] = True
+        after["deliverables"][1]["vital_few"][0]["good"] = True
         # Then: the goal reaches every deliverable, and D2's intent what stands over it
         self.assertEqual(trees.touched(before, after, trees.changed(before, after)), ["D1", "D2"])
         # And: a node removed beside another changed
         after = copy.deepcopy(before)
-        del after["deliverables"][0]["intents"][1]["decisions"][1]
-        after["deliverables"][1]["intents"][0]["good"] = True
+        del after["deliverables"][0]["vital_few"][1]["decisions"][1]
+        after["deliverables"][1]["vital_few"][0]["good"] = True
         self.assertEqual(
             trees.touched(before, after, trees.changed(before, after)), ["goal", "D1", "D1Q2", "D2"]
         )
@@ -514,11 +516,11 @@ class Edges(unittest.TestCase):
     def test_the_later_decisions_are_those_of_the_deliverable_alone(self):
         # Given: D2, whose path sorts after D1's, holding a decision, and a decision of D1 added
         before = small()
-        before["deliverables"][1]["intents"][0]["decisions"] = [
+        before["deliverables"][1]["vital_few"][0]["decisions"] = [
             {"about": "z", "decided": "y", "by": "user"}
         ]
         after = copy.deepcopy(before)
-        after["deliverables"][0]["intents"][0]["decisions"] = [{"about": "c", "decided": None}]
+        after["deliverables"][0]["vital_few"][0]["decisions"] = [{"about": "c", "decided": None}]
         # Then: D1's later decisions, not D2's
         self.assertEqual(
             trees.touched(before, after, trees.changed(before, after)),
@@ -548,10 +550,10 @@ class Edges(unittest.TestCase):
         )
         after = trees.apply(tree, edit, FINDER)
         self.assertEqual(
-            [x["about"] for x in after["deliverables"][0]["intents"][1]["decisions"]],
+            [x["about"] for x in after["deliverables"][0]["vital_few"][1]["decisions"]],
             ["a", "b", "aa"],
         )
-        self.assertEqual(after["deliverables"][0]["intents"][1]["decisions"][0]["decided"], "w")
+        self.assertEqual(after["deliverables"][0]["vital_few"][1]["decisions"][0]["decided"], "w")
 
     def test_an_id_that_names_a_path_adds_nothing(self):
         with self.assertRaises(trees.Refused) as stop:
@@ -577,10 +579,12 @@ class Edges(unittest.TestCase):
         )
         after = trees.apply(small(), edit, FINDER)
         self.assertEqual(after["deliverables"][0]["name"], "m")
-        self.assertEqual([i["id"] for i in after["deliverables"][0]["intents"]], ["Q1"])
+        self.assertEqual([i["id"] for i in after["deliverables"][0]["vital_few"]], ["Q1"])
         edit = helpers.loaded({"grounds": "g", "nodes": [{"id": "D2", "kind": "code"}]})
         after = trees.apply(small(), edit, FINDER)
-        self.assertEqual(after["deliverables"][1]["intents"], small()["deliverables"][1]["intents"])
+        self.assertEqual(
+            after["deliverables"][1]["vital_few"], small()["deliverables"][1]["vital_few"]
+        )
 
     def test_a_deliverable_before_one_later_that_it_takes_from(self):
         tree = tree_of(
@@ -626,7 +630,7 @@ class Edges(unittest.TestCase):
 
     def test_intents_fewer_than_the_kinds(self):
         d = kind_of(1, "readme")
-        d["intents"] = d["intents"][:1]
+        d["vital_few"] = d["vital_few"][:1]
         self.assertEqual(
             trees.faults(tree_of(d), lambda p: False, FINDER),
             ["D1's intents aren't those of its kind readme, in their order"],

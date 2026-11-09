@@ -4,7 +4,7 @@
  "example": "../product-vision/best-practice.json",
  "inputs": [],
  "preconditions": [],
- "intents": [
+ "vital_few": [
   {
    "id": "Q1",
    "about": "goal",
@@ -12,7 +12,7 @@
   },
   {
    "id": "Q2",
-   "about": "intents",
+   "about": "vital_few",
    "what": "Making or judging a deliverable, do the generator and the evaluator see what decides whether its role reaches that end, so that each part of the deliverable carries one of those things?"
   },
   {
@@ -94,9 +94,6 @@
     },
     {
      "text": "Give each figure of the template a skeleton of its own that shows the figure's layout by the slots' names, with an alt text that holds no slot, and say in the section's note where the deliverable puts its own figure. A figure that the template names but doesn't hold shows broken, and the example's figure shows one product's content in place of the layout."
-    },
-    {
-     "text": "Name the template's file in `template`."
     }
    ]
   },
@@ -112,9 +109,6 @@
     },
     {
      "text": "Where the generator must find the content before it writes it, such as the roles of a product vision, say what to look at, how to find all of it, and when to ask the user."
-    },
-    {
-     "text": "Read each practice as a generator new to the kind, and where they would hesitate, add what they lack."
     }
    ]
   },
