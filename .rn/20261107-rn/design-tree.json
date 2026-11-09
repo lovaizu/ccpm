@@ -187,53 +187,7 @@
       "name": "rn's product vision says what rn is for",
       "path": "dev/rn/product-vision.md",
       "kind": "product-vision",
-      "inputs": [],
-      "preconditions": [],
-      "status": "doing",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Two key results",
-              "decided": "one how well the people use each deliverable, and one how long the user waits for it. Asking only the user's points shows in the second",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N5",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The concept",
-              "decided": "In everything, rn builds up only the vital few, and never the trivial many. It draws out what the user really wants along the design tree, plans, makes, and asks by best practice, judges and improves each deliverable by its people, goes back to the tree on a problem, and revises the tree on each run by what the run found",
-              "by": "user"
-            }
-          ]
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "rn's design says how a turn carries out a best practice",
