@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1070 470" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
-  <title>How rn works: it builds each part of your work from a design tree of your goal and decisions, checks it as its users would, and takes each problem back to the tree</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1160 540" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+  <title>How rn works: your goal and decisions in a design tree, each deliverable made by a best practice, tried in a copy, read by evaluators as its people, and handed to you as a draft pull request</title>
   <style>
     .bg { fill: #ffffff; }
     .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
@@ -14,6 +14,8 @@
     .label { fill: #1f2328; font-size: 13px; }
     .small { font-size: 12px; }
     .data { fill: #8250df; font-size: 12px; font-style: italic; }
+    .quote { fill: #8250df; font-size: 12px; font-style: italic; }
+    .gets { fill: #1a7f37; font-size: 12px; font-weight: 600; }
     .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
     .dashed { stroke-dasharray: 5 4; }
     .head { fill: #59636e; }
@@ -21,6 +23,7 @@
     .halo { stroke: #ffffff; stroke-width: 7; stroke-linejoin: round; paint-order: stroke; }
     .mid { text-anchor: middle; }
     .start { text-anchor: start; }
+    .end { text-anchor: end; }
     @media (prefers-color-scheme: dark) {
       .bg { fill: #0d1117; }
       .box { fill: #161b22; stroke: #3d444d; }
@@ -33,6 +36,8 @@
       .name, .label { fill: #f0f6fc; }
       .kind { fill: #9198a1; }
       .data { fill: #c297ff; }
+      .quote { fill: #c297ff; }
+      .gets { fill: #3fb950; }
       .line { stroke: #9198a1; }
       .head { fill: #9198a1; }
       .hole { fill: #0d1117; stroke: #9198a1; }
@@ -40,48 +45,74 @@
     }
   </style>
   <defs>
-    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
       <path class="head" d="M0,0 L10,5 L0,10 z"/>
     </marker>
   </defs>
-  <rect class="bg" width="1070" height="470"/>
-  <rect class="frame" x="200" y="40" width="640" height="400" rx="8"/>
-  <text class="frame-name" x="214" y="62">rn</text>
-  <rect class="box" x="20" y="190" width="110" height="60" rx="6"/>
-  <text class="name" x="75.0" y="225.0">You</text>
-  <rect class="store" x="230" y="170" width="180" height="100" rx="6"/>
-  <text class="name" x="320.0" y="209.0">Design tree</text>
-  <text class="kind" x="320.0" y="228.0">your goal and each</text>
-  <text class="kind" x="320.0" y="243.0">decision serving it</text>
-  <rect class="box" x="470" y="170" width="150" height="100" rx="6"/>
-  <text class="name" x="545.0" y="209.0">Build</text>
-  <text class="kind" x="545.0" y="228.0">each part by the</text>
-  <text class="kind" x="545.0" y="243.0">best practice</text>
-  <rect class="store" x="680" y="185" width="110" height="70" rx="6"/>
-  <text class="name" x="735.0" y="225.0">Part</text>
-  <rect class="lane" x="655" y="340" width="160" height="70" rx="6"/>
-  <text class="name" x="735.0" y="364.0">Check</text>
-  <text class="kind" x="735.0" y="383.0">with only what</text>
-  <text class="kind" x="735.0" y="398.0">its users have</text>
-  <rect class="box" x="940" y="190" width="110" height="60" rx="6"/>
-  <text class="name" x="995.0" y="225.0">You</text>
-  <path class="line" d="M130,210 L226,210" marker-end="url(#a)"/>
-  <text class="label small mid halo" x="165" y="200">goal</text>
-  <path class="line dashed" d="M226,235 L134,235" marker-end="url(#a)"/>
-  <text class="label small mid halo" x="165" y="255">questions</text>
-  <path class="line" d="M410,220 L466,220" marker-end="url(#a)"/>
-  <path class="line" d="M620,220 L676,220" marker-end="url(#a)"/>
-  <path class="line" d="M735,255 L735,336" marker-end="url(#a)"/>
-  <path class="line" d="M790,220 L936,220" marker-end="url(#a)"/>
-  <text class="label small mid halo" x="888" y="210">once its users</text>
-  <text class="label small mid halo" x="888" y="240">can use it</text>
-  <path class="line dashed" d="M655,375 L320,375 L320,274" marker-end="url(#a)"/>
-  <text class="label small mid halo" x="490" y="368">a problem goes back to its decision</text>
-  <path class="line dashed" d="M280,170 C280,120 360,120 360,166" marker-end="url(#a)"/>
-  <text class="label small mid halo" x="320" y="118">revised on each run</text>
-  <text class="frame-name mid" x="320" y="295">① what you mean</text>
-  <text class="frame-name mid" x="490" y="400">② no pile of fixes</text>
-  <text class="frame-name mid" x="545" y="295">③ the same steps every run</text>
-  <text class="frame-name mid" x="735" y="432">④ judged by its users</text>
-  <text class="frame-name mid" x="320" y="100">⑤ a wrong plan corrected</text>
+  <rect class="bg" x="0" y="0" width="1160" height="540"/>
+
+  <!-- You -->
+  <rect class="box" x="20" y="85" width="150" height="60" rx="6"/>
+  <text class="name" x="95" y="120">You</text>
+
+  <!-- rn, held by Lane -->
+  <rect class="frame" x="250" y="20" width="890" height="500" rx="8"/>
+  <text class="frame-name start" x="264" y="44">rn</text>
+  <text class="quote end" x="1126" y="44">“Does it skip a step when no one watches?”</text>
+  <text class="gets end" x="1126" y="61">Lane, installed with rn, holds each part to its steps.</text>
+
+  <!-- Design tree -->
+  <path class="store" d="M310,80 A110,9 0 0 1 530,80 V150 A110,9 0 0 1 310,150 Z"/>
+  <path class="store" d="M310,80 A110,9 0 0 0 530,80"/>
+  <text class="name" x="420" y="116">Design tree</text>
+  <text class="kind" x="420" y="136">your goal and each decision</text>
+  <text class="quote start" x="552" y="104">“It builds the wrong thing.”</text>
+  <text class="gets start" x="552" y="121">You get the deliverable you mean.</text>
+
+  <path class="line" d="M172,105 L306,105" marker-end="url(#arrow)"/>
+  <text class="label halo mid" x="239" y="97">your request, answers</text>
+  <path class="line" d="M306,130 L174,130" marker-end="url(#arrow)"/>
+  <text class="label halo mid" x="239" y="149">one question at a time</text>
+
+  <!-- Making -->
+  <path class="line" d="M380,161 V296" marker-end="url(#arrow)"/>
+  <text class="label halo start" x="388" y="250">decisions</text>
+
+  <rect class="box" x="310" y="300" width="200" height="60" rx="6"/>
+  <text class="name" x="410" y="326">Maker</text>
+  <text class="kind" x="410" y="346">by its kind's best practice</text>
+  <text class="quote mid" x="410" y="390">“It misses what this kind of work needs.”</text>
+  <text class="gets mid" x="410" y="407">You get what that kind needs.</text>
+
+  <rect class="box" x="590" y="300" width="200" height="60" rx="6"/>
+  <text class="name" x="690" y="326">Throwaway copy</text>
+  <text class="kind" x="690" y="346">of your repository</text>
+  <text class="quote mid" x="690" y="390">“Does it change files, or merge?”</text>
+  <text class="gets mid" x="690" y="407">Only a copy. You merge.</text>
+
+  <rect class="box" x="880" y="300" width="200" height="60" rx="6"/>
+  <text class="name" x="980" y="326">Evaluators</text>
+  <text class="kind" x="980" y="346">read it as its people</text>
+  <text class="quote start" x="884" y="390">“Its people can't use it.”</text>
+  <text class="gets start" x="884" y="407">You get one they can use.</text>
+
+  <path class="line" d="M510,330 L586,330" marker-end="url(#arrow)"/>
+  <text class="label halo mid" x="548" y="320">tries it</text>
+  <path class="line" d="M790,330 L876,330" marker-end="url(#arrow)"/>
+  <text class="label halo mid" x="833" y="320">what it gave</text>
+
+  <!-- A shortfall goes back to the tree -->
+  <path class="line" d="M1080,330 H1110 V190 H450 V161" marker-end="url(#arrow)"/>
+  <text class="label halo mid" x="780" y="194">a shortfall: back to the decision it comes from</text>
+  <text class="quote mid" x="780" y="222">“Each fix breaks something else.”</text>
+  <text class="gets mid" x="780" y="239">The fix changes the decision, not the deliverable.</text>
+
+  <!-- Handed over -->
+  <path class="line" d="M1068,362 V446" marker-end="url(#arrow)"/>
+  <text class="label halo end" x="1060" y="432">each aim met</text>
+  <rect class="box" x="880" y="450" width="200" height="54" rx="6"/>
+  <text class="name" x="980" y="474">Draft pull request</text>
+  <text class="kind" x="980" y="492">on rn's own branch</text>
+  <path class="line" d="M880,477 H95 V149" marker-end="url(#arrow)"/>
+  <text class="label halo mid" x="560" y="481">you merge it</text>
 </svg>

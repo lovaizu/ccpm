@@ -1,8 +1,10 @@
 # Proper nouns that keep their capitals in a heading, as the Google style
 # says of names. lovaizu/checks accepts the first two for every repository.
 # MIT and SPDX are the names that license readers know a license and its list
-# by, so a README writes them unchanged.
+# by, so a README writes them unchanged. rn is a product name, lowercase
+# in its own heading too.
 Claude Code
 README
 MIT
 SPDX
+rn

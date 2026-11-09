@@ -1,33 +1,38 @@
-# `rn`
+# rn
 
-rn is a Claude Code plugin that builds what you ask for, such as a document, code, or a plugin, so
-that the people who use it can do what they need with it.
+rn is a Claude Code plugin that makes what you ask for, such as a document, code, or a plugin, so
+that the people it's for can use it for what they're after.
 
-rn is being rebuilt. This README describes the rebuilt rn, which isn't released yet. Until its release,
-the installation below installs the earlier rn 0.9.0, which works differently, and the walkthrough
-shows the run that the design of the rebuilt rn lays out, not a recorded run.
+rn 0.9.0 is being rebuilt, and the rebuilt rn isn't released yet. Its code isn't built yet, so
+don't install it for your work today. The walkthrough below shows what rn sets out to do. It isn't
+the output of a recorded run.
 
-rn is for you when you want an AI to build work made of several parts, such as a feature with its
-README and its code, and you'd rather answer a few questions than review what an AI made and ask for
-fixes. With it, you hand over work that its users can use without fixes, and rn asks you only what
-it can't decide itself.
+rn is for you when you have Claude Code make something in a GitHub repository for other people to
+use, such as readers, users, or teammates. Often, you get something that looks done, and then you
+find that it isn't what you meant, or that its people can't use it. With rn, you get each
+deliverable you mean, one its people can use, and you spend your own time only on the questions
+that are yours to decide.
 
 ## Non-goals
 
-- rn doesn't decide your purpose or what you want. When rn leaves a question to you, the work that
-  depends on it waits for your answer.
-- rn isn't for a quick first version that you'll fix yourself. It plans, builds, and tests each
-  part, so it takes longer than a single prompt to Claude Code.
-- rn doesn't merge your work. It commits each part to a branch and leaves one draft pull request
-  for you to merge.
+- rn doesn't put the deliverable in front of real people. Its evaluators are AI subagents that read
+  the deliverable as its people would.
+- rn doesn't finish on its own where your goal leaves a question open. It stops, asks you, and
+  waits for your answer.
+- rn doesn't make a small change faster than Claude Code alone. It plans each deliverable, and its
+  evaluators read it again after each round, with no set limit on rounds. For a one-line fix, ask
+  Claude Code directly.
+- rn doesn't merge. It leaves one draft pull request, and you merge it.
 
 ## Requirements
 
-- macOS or Linux: `uname` shows it. No one has tried rn on Windows yet.
+- macOS or Linux: `uname` shows `Darwin` or `Linux`.
 - Claude Code 2.1.319 or later: `claude --version` shows it.
 - Python 3.9 or later, run as `python3`: `python3 --version` shows it.
-- git, and the GitHub command-line tool `gh` signed in to the repository's host: `gh auth status`
-  shows it. rn keeps your work in a draft pull request.
+- Git: `git --version` shows it.
+- The GitHub command-line tool `gh`, logged in to GitHub: `gh auth status` shows `Logged in to github.com`.
+- Your work in a GitHub repository that you can push to: at the repository's root,
+  `gh repo view --json viewerPermission` shows `WRITE`, `MAINTAIN`, or `ADMIN`.
 
 ## Installation
 
@@ -36,42 +41,59 @@ claude plugin marketplace add lovaizu/ccpm
 claude plugin install rn@ccpm
 ```
 
-`claude plugin list` then lists `rn@ccpm`, and `lane@ccpm`, which comes with it.
+`claude plugin list` then shows `rn@ccpm` and `lane@ccpm`. Installing rn installs Lane with it.
+To see that rn works, start Claude Code at the root of your repository and type `/rn:up` alone.
+rn says that it has no run to pick up.
 
 ## Walkthrough
 
-At the end, your tool `tidy` has a dry-run option, and its README shows how to use it. You've
-answered two questions and typed `/rn:up` twice.
+At the end, you have a draft pull request that adds type hints to every file of your library. The
+code of the people who call the library is then checked against those hints. You typed `/rn:up`
+twice and answered two questions.
 
-`tidy` sorts a Downloads folder into subfolders by file type. You want it to show what it would
-move before it moves anything. In Claude Code, at the root of its repository, you type:
+`invoicer` is a Python library on GitHub that other teams call to total their invoices. It has no
+type hints, so a caller learns of a wrong argument only when their code fails. In Claude Code, at
+the root of the repository of `invoicer`, you type:
 
 ```text
-/rn:up tidy should show what it would move, without moving it
+/rn:up type hints for invoicer, so that the people who call it see what each function takes
 ```
 
 rn shows:
 
 ```text
-Goal: before sorting their Downloads folder with tidy, a user sees what it would move, so that
-nothing moves that they didn't intend. Is that what you want?
+The goal, as I'd put it:
+  The people who call invoicer learn from their editor and their type checker what each
+  function takes and returns, before their code runs.
+Is that what you're after?
 ```
 
-You answer `yes`. rn shows:
+You type:
 
 ```text
-Plan, working back from the goal:
-1. README.md: describe the dry run in the Walkthrough, so that the code is built to match what
-   the reader is told.
-2. tidy/cli.py: add the --dry-run option, with tests.
-
-Question 1 of 1 for README.md: should the dry run list each file with its target folder, or only
-a count for each folder? Either would work. I recommend listing each file, because users check
-file names before they move anything.
+yes
 ```
 
-You answer `each file`. rn updates README.md, and you close Claude Code before it continues. The
-next day, in a new conversation, you type:
+rn shows:
+
+```text
+The plan:
+  1. Type hints in the code of invoicer, checked by mypy --strict
+  2. invoicer marked as typed, so that the callers' type checkers read its hints
+
+A question that's yours:
+  Should the hints cover each file, or only the functions that callers import?
+  I recommend only those functions, as they're all that callers see.
+```
+
+You type:
+
+```text
+each file
+```
+
+rn makes the first deliverable and asks nothing more. You close Claude Code before rn finishes. The
+next day, in a new conversation at the root of the repository, you type:
 
 ```text
 /rn:up
@@ -80,62 +102,95 @@ next day, in a new conversation, you type:
 rn shows:
 
 ```text
-Picking up "tidy shows what it would move" at step 2, tidy/cli.py. README.md is done.
+Picking up "type hints for invoicer", at "invoicer marked as typed".
 ```
 
-Later, rn shows:
+Once rn finishes, it shows:
 
 ```text
-Done: README.md and tidy/cli.py are updated, with tests/test_dry_run.py. Each part was read and
-tried as its users would use it, and gives them what they need from it.
+Done. Draft pull request: https://github.com/<owner>/invoicer/pull/12
 
-Decided without asking you:
-- The README shows tidy --dry-run before tidy, because users check first.   (README best practice)
-- --dry-run prints each move as "<file> -> <folder>", as the README shows.   (README.md)
+Decisions I took without asking:
+- Added src/invoicer/py.typed, as type checkers skip a library's hints without it.
+- Typed amounts and rates as Decimal, as the code already computes with Decimal.
 ```
+
+A caller who installs the branch of the pull request and passes the tax rate as text in `app.py`:
+
+```python
+from decimal import Decimal
+from invoicer import Line, total
+
+lines = [Line("Hosting", Decimal("40.00"))]
+print(total(lines, "0.19"))
+```
+
+gets this from mypy before the code runs:
+
+```console
+$ mypy app.py
+app.py:5: error: Argument 2 to "total" has incompatible type "str"; expected "Decimal"  [arg-type]
+Found 1 error in 1 file (checked 1 source file)
+```
+
+You then merge the draft pull request.
 
 ## How it works
 
-![How rn works: it builds each part of your work from a design tree of your goal and decisions, checks it as its users would, and takes each problem back to the tree](images/how-it-works.svg)
+In everything it does, rn works only on the few things that decide whether the people a deliverable
+is for can use it, and leaves out the rest.
 
-In everything, rn builds up only the few things that matter to your goal, and never a pile of
-small fixes. It keeps them in a design tree: your goal, with each decision that serves it. From the
-tree, rn builds each part that your work needs: its README, its code, and anything else.
+![How rn works: your goal and decisions in a design tree, each deliverable made by a best practice, tried in a copy, read by evaluators as its people, and handed to you as a draft pull request](images/how-it-works.svg)
 
-### 1. Does it build what you mean, without a careful prompt?
+### "I can't spell out every detail up front, so it builds the wrong thing."
 
-Along the design tree, rn asks you one question at a time. It asks only what your goal and the best
-practices leave open. You get the work you mean, and you answer only the questions that are yours
-to decide.
+rn drafts your goal from your request, and you confirm it. It then asks you the decisions under
+that goal, one at a time and each with its recommendation, and keeps them in a design tree. The
+design tree is rn's record of your goal and every decision under it. rn asks only the decisions
+that change what the people get, and plans again after each answer and each finished deliverable.
+So you get the deliverable you mean without writing a specification.
 
-### 2. Do small fixes pile up in your work?
+### "Its output misses what this kind of work needs."
 
-No. When rn's check finds a problem in a part, rn changes the decision in the design tree that the
-problem comes from, and builds the part again from it. Your work holds only what matters.
+rn plans, makes, and asks by the best practice for each kind of deliverable: one for a README, one
+for code, and so on. A best practice holds the few things that its kind of work needs. Where rn has none for a
+kind, it makes one before the first deliverable of that kind. What a best practice settles, rn
+settles without asking you, and lists in its report.
 
-### 3. Does it hold on your own work, every time?
+### "It looks done, but the people it's for can't use it."
 
-rn plans, builds, and asks you by the best practice for each kind of work, and
-[Lane](../../../../lane/README.md), which comes with rn, holds each step of it on every run. Every run takes
-the same steps, whatever the work.
+Before rn hands a deliverable over, its evaluators, AI subagents, read it as its people would. They
+get only what those people have, never what rn meant. rn makes the deliverable again, round after
+round, until the evaluators find each of its aims met for those people. So rn improves only what the
+people need, and you get a deliverable they can use.
 
-### 4. Can you trust its own check?
+### "Each fix breaks something else."
 
-The check reads each part as its users would, with only what they have, and never the design tree.
-It passes a part only when its users can do what they need with it.
+rn takes each shortfall back to the decision it comes from, changes that decision, and makes the
+deliverable again from the design tree. It doesn't patch the deliverable. A shortfall that the
+people would never meet changes nothing. So a fix holds, and the deliverable doesn't grow with each
+round.
 
-### 5. What if the plan turns out wrong?
+### "Does it skip a step when no one watches?"
 
-rn revises the design tree, its plan included, with what each run finds, and the next parts follow
-the revised tree.
+No. Lane, a plugin installed with rn, holds each part of rn to the steps of its best practice on
+every run. Lane stops a call that leaves those steps, and shows the part the step it's on. The
+steps hold the few things that the work needs, so none of them goes missing.
+
+### "Does it change the repository's files, or merge on its own?"
+
+No. rn tries a deliverable as its people would, so it runs the deliverable's commands only in a
+throwaway copy of your repository, with a throwaway home folder. It commits each answer and each
+deliverable on its own branch, so you never answer a question twice, even after a closed
+conversation. It leaves one draft pull request, and the merge is yours.
 
 ## Documentation
 
-- [Lane](../../../../lane/README.md): how Lane enforces each step.
-- [Changelog](../../../CHANGELOG.md): the changes in each version.
-- [Issues](https://github.com/lovaizu/ccpm/issues): where to ask for help or report a bug.
+- [Changelog](../../../CHANGELOG.md): for you after an update, the changes in each version.
+- [Lane](../../../../lane/README.md): for you if you want to know what Lane does, or use it in a plugin of
+  your own.
+- [Issues](https://github.com/lovaizu/ccpm/issues): where you ask for help or report a fault.
 
 ## License
 
 [MIT](../../../../../LICENSE)
-
