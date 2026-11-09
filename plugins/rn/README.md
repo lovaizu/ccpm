@@ -96,19 +96,35 @@ Decided without asking you:
 
 ## How it works
 
-![Working with an AI, small fixes pile up and bury the few points that matter, and with rn only those few build up](images/problem.svg)
+![How rn works: it builds each piece from a design tree of your goal and decisions, checks it as its users would, and takes each problem back to the tree](images/how-it-works.svg)
 
-When you work with an AI, you review what it made and ask for fixes, round after round. Each round
-adds small fixes to your work, and they bury the few points that matter.
+In everything, rn builds up only the few points that matter to your goal, and never a pile of
+small fixes. It keeps those points in a design tree: your goal, with every decision under it.
 
-In everything it does, rn builds up only those few points. It plans, builds, and asks you by the
-best practice for each kind of work. It takes each problem back to the plan that the problem comes
-from, so small fixes never pile up in your work.
+### 1. Does it build what you mean, without a careful prompt?
 
-### Does it hold on your own work, every time?
+Along the design tree, rn asks you one point at a time. It asks only what your goal and the best
+practices leave open. You get the work you mean, and you answer only the points that are yours.
 
-On any work, rn checks each piece by whether its users can do what they need with it, and builds
-it again until they can. It doesn't hand you a piece that fails that check.
+### 2. Do small fixes pile up in your work?
+
+No. When a check finds a problem, rn changes the decision in the design tree that the problem comes
+from, and builds the piece again from it. Your work holds only the points that matter.
+
+### 3. Does it hold on your own work, every time?
+
+rn plans, builds, and asks you by the best practice for each kind of work, and
+[Lane](../lane/README.md), which comes with rn, holds each step of it on every run. Every run takes
+the same steps, whatever the work.
+
+### 4. Can you trust its own check?
+
+The check reads each piece as its users would, with only what they have, and never the design tree.
+It passes a piece only when its users can do what they need with it.
+
+### 5. What if the plan turns out wrong?
+
+rn revises the design tree with what each run finds, and the next pieces follow the revised tree.
 
 ## Documentation
 

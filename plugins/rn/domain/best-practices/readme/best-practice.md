@@ -34,10 +34,9 @@ A newcomer decides from the README alone whether the product fits their work, an
 | N4 | C1 | Does the README name the license and link its full text? | License |
 | N5 | C1 | Does the README answer each question in the order a reader comes to ask it? | the whole |
 | N6 | C2 | Does the walkthrough show a real run that delivers, on typical work, the benefit the opening promises? | Walkthrough |
-| N7 | C2 | Does the README show how the product removes the problem that brings readers to it? | How it works |
-| N8 | C2 | Does the README show how the product achieves each key result that a newcomer still doubts after the walkthrough? | How it works |
-| N9 | C3 | Can a reader with nothing set up install the product by the README alone, and see that it works? | Requirements, Installation |
-| N10 | C3 | Does the README link where to go for fuller use and for help? | Documentation |
+| N7 | C2 | Does How it works answer the problems and doubts that bring readers to the product, by showing how it works and what each reader gets from it? | How it works |
+| N8 | C3 | Can a reader with nothing set up install the product by the README alone, and see that it works? | Requirements, Installation |
+| N9 | C3 | Does the README link where to go for fuller use and for help? | Documentation |
 
 ## Practices
 
@@ -115,31 +114,18 @@ A reader trusts a benefit they've seen happen more than one they only read about
 
 ### N7
 
-Does the README show how the product removes the problem that brings readers to it?
+Does How it works answer the problems and doubts that bring readers to the product, by showing how it works and what each reader gets from it?
 
 **Thinking**
 
-A reader chooses a product when they recognize their own problem and see it gone. Take the problem from the one way that the product vision's concept states first, which is what the product values most. The problem is what the target reader suffers in their work where that way is missing, in the reader's words, such as small fixes that pile up on an AI's output until they bury what matters. Decide the one point that the reader must take away: what the product does so that the problem goes away. The other ideas of the concept serve that way, so show each only as a part of it. Then choose the form by what the point compares, as Gene Zelazny's Say It With Charts does: decide the message, then the comparison, then the form that shows it at a glance. A change in who does what, or in where a step happens, is a before-and-after comparison. Draw the reader's work without the product and with it side by side, with the problem in the one and gone in the other. Draw only what the point compares, such as who is in a loop, and label each part in the reader's words. A part that the point doesn't need, such as a component's name, belongs in the design. A point that one sentence makes clear needs no figure. Check that a newcomer can say back what the product changes for them.
+A reader tries a product when the push of their problem and the pull of what the product gives them outweigh their doubts about it. Bob Moesta calls these the forces of progress, in Demand-Side Sales 101, from the theory of the jobs that customers hire a product for. Decide in order. First, list the problems that the target reader would name in their work, and the doubts they would raise about the product, in their words, such as: small fixes pile up on what an AI makes, or: does it hold on your own work every time? Second, keep only those whose answer would change whether the reader tries the product. A doubt that the walkthrough already settles needs nothing more. Third, for each one left, take the part of the product that answers it, first from the product vision's concept, then from the architecture. Where neither has one, tell whether an idea that matters to the users is missing, or only the way to make it work. Fourth, put those parts together as one mechanism, starting from the concept's one way. Show it in one figure, with each problem and doubt beside the part that answers it, and what the reader gets from that part. Label each part in the reader's words, and where a part has a name of the product's own, such as a design tree, explain the part in a few words. Check that a newcomer can say back how the product gives them what it promises, and why they can trust that it does.
 
 **Steps**
 
-1. Take the problem from the one way that the product vision's concept states first. The trace: `{inputs}` read to its end.
-2. Take from the design what the product changes. Ask the user where the design doesn't settle it.
+1. Take the concept from the product vision. The trace: `{inputs}` read to its end.
+2. Where an idea that matters to the users is missing, ask the user to add it to the product vision. Where only the way to make it work is missing, record it in the design tree as a requirement that the architecture meets.
 
 ### N8
-
-Does the README show how the product achieves each key result that a newcomer still doubts after the walkthrough?
-
-**Thinking**
-
-A reader tries a product once they believe it gives what it promises, and the product vision's key results say what it promises: how well and how fast the reader reaches the objective. The walkthrough already shows one real run, and a run that the reader has seen settles most doubts. Decide each answer in order. First, for each key result, write the reader's doubt in their words, such as: does what comes out work without fixes? Ask whether the walkthrough settles it. A doubt that it settles needs nothing more. What it leaves is whether the result holds on the reader's own work, every time, not only on the example. Second, for each doubt left, decide the one point that settles it, in one sentence, taken from the idea of the concept that makes it hold, such as: rn judges each piece by whether its users can do what they need with it. A reader believes it once they can picture it happening, which Don Norman calls the conceptual model, in The Design of Everyday Things. If you can't write the point in one sentence, you don't yet understand the design well enough to explain it. Third, decide what the point compares or what motion it shows, as Gene Zelazny's Say It With Charts does. Fourth, choose the form that shows it most directly. If the real thing can show it, such as a message from the walkthrough's example, show the real thing. A flow takes a figure, a comparison takes a table, and a point that one sentence makes clear takes the sentence. Check that a newcomer can say the point back after seeing the answer.
-
-**Steps**
-
-1. Take each key result from the product vision's objectives. The trace: `{inputs}` read to its end.
-2. For each doubt, take how the product does it from the design. Ask the user about any that the design doesn't settle.
-
-### N9
 
 Can a reader with nothing set up install the product by the README alone, and see that it works?
 
@@ -151,7 +137,7 @@ A reader who can't install the product never gets to use it, and the author's ow
 
 1. On a machine or sandbox with nothing the product needs, follow the steps exactly as written. If a step fails or needs something the README doesn't mention, add it and start again.
 
-### N10
+### N9
 
 Does the README link where to go for fuller use and for help?
 

@@ -73,39 +73,24 @@ At the end, you have `<result>`.
 
 ## How it works
 
-![The usual way and the product](images/template-problem.svg)
-
-`<problem>`.
-
-`<how it goes away>`.
-
-### `<doubt>`
-
 ![How the product works](images/template-how-it-works.svg)
 
-`<how it does it>`.
+`<how it works>`.
 
-[`<title>`](<path>)
+### `<problem or doubt>`
+
+`<answer>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - The first figure: the deliverable's own, at images/problem.svg, with the product named in its
->   alt text. The skeleton here is one such form: the way the reader would do the work without the
->   product on top, and the product below it, with the problem left in the one and gone in the other.
-> - `<problem>`, `<how it goes away>`: the problem that brings the reader to the product, in their
->   words, and in a sentence or two what the product changes that makes it go away, each a
->   paragraph of its own.
-> - The second figure: what shows how the product does the doubted thing, under the doubt's
->   heading, before its paragraph. It's a figure of the deliverable's own at images/how-<name>.svg
->   with the product named in its alt text, a table, or the real thing from the walkthrough's
->   example, such as a message. The skeleton here is one such form: the user, the product's parts
->   and what they pass, with the lines that do it marked. Leave it out where the paragraph is
->   enough.
-> - `<doubt>`, `<how it does it>`: each doubt that the walkthrough leaves a newcomer about a key
->   result of the product, as they would ask it, as a heading of its own, and in a sentence or two
->   how the product does it.
-> - `<title>`, `<path>`: the page that explains it further, where it needs a long sequence of
->   figures. Leave it out where the paragraph is enough.
+> - The figure: the deliverable's own, at images/how-it-works.svg, with the product named in its alt
+>   text. It shows the product's mechanism as one flow, starting from the concept's one way, with
+>   each problem and doubt beside the part that answers it, and what the reader gets from that
+>   part. The skeleton here is one such form.
+> - `<how it works>`: the mechanism in a sentence or two, starting from the concept's one way.
+> - `<problem or doubt>`, `<answer>`: each problem or doubt that would change whether the reader
+>   tries the product, as they would say it, as a heading of its own, and in a sentence or two the
+>   part of the mechanism that answers it and what the reader gets from it.
 
 ## Documentation
 

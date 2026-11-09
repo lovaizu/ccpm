@@ -955,40 +955,24 @@
           "good": true,
           "decisions": [
             {
-              "about": "The problem",
-              "decided": "from the concept's first idea: asking an AI in one prompt keeps the user in the fix loop, and the fixes bury the few points that matter",
+              "about": "The problems and doubts",
+              "decided": "five that would change whether a reader tries rn: getting what they mean without a careful prompt, small fixes piling up, holding on their own work every time, trusting rn's own check, and a plan that turns out wrong. How much time it takes and picking up where it stopped, the walkthrough settles",
               "by": "reasoning"
             },
             {
-              "about": "The change",
-              "decided": "rn takes the user out of the loop: it builds from only the decisions that matter, and a shortfall changes its decision, not the piece",
+              "about": "The answers",
+              "decided": "the design tree draws out what they mean, a problem changes its decision in the tree, best practice for every step with Lane holding each step on every run, the check with only what the users have from the architecture, and the tree revised on each run",
               "by": "reasoning"
             },
             {
               "about": "The form",
-              "decided": "one before-and-after figure of who is in the fix loop, then the problem and the change as a paragraph each",
+              "decided": "one figure of the mechanism with each problem and doubt marked beside the part that answers it, then each as a numbered heading with its answer",
               "by": "reasoning"
             }
           ]
         },
         {
           "id": "N8",
-          "good": true,
-          "decisions": [
-            {
-              "about": "KR1.1",
-              "decided": "the doubt whether what rn hands over works without fixes, answered by the evaluator reading each piece as its users would",
-              "by": "reasoning"
-            },
-            {
-              "about": "KR1.2",
-              "decided": "the doubt how much of the user's time it takes, answered by only their points, one at a time, and picking up where it stopped",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N9",
           "good": false,
           "decisions": [
             {
@@ -999,7 +983,7 @@
           ]
         },
         {
-          "id": "N10",
+          "id": "N9",
           "good": true,
           "decisions": []
         }

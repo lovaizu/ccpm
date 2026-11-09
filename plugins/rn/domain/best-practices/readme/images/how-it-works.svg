@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1070 470" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+  <title>How rn works: it builds each piece from a design tree of your goal and decisions, checks it as its users would, and takes each problem back to the tree</title>
+  <style>
+    .bg { fill: #ffffff; }
+    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .lane { fill: #ddf4ff; stroke: #54aeff; }
+    .store { fill: #fff8c5; stroke: #9a6700; stroke-width: 1.5; }
+    .ext { fill: #eaeef2; stroke: #d0d7de; stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .unit { fill: #ddf4ff; fill-opacity: 0.35; stroke: #0969da; stroke-width: 1.2; }
+    .frame { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    .frame-name { fill: #0969da; font-size: 13px; font-weight: 600; }
+    .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
+    .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
+    .label { fill: #1f2328; font-size: 13px; }
+    .small { font-size: 12px; }
+    .data { fill: #8250df; font-size: 12px; font-style: italic; }
+    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .dashed { stroke-dasharray: 5 4; }
+    .head { fill: #59636e; }
+    .hole { fill: #ffffff; stroke: #59636e; stroke-width: 1.5; }
+    .halo { stroke: #ffffff; stroke-width: 7; stroke-linejoin: round; paint-order: stroke; }
+    .mid { text-anchor: middle; }
+    .start { text-anchor: start; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; }
+      .box { fill: #161b22; stroke: #3d444d; }
+      .lane { fill: #0c2d6b; stroke: #4493f8; }
+      .store { fill: #2e2a1a; stroke: #d29922; }
+      .ext { fill: #21262d; stroke: #3d444d; }
+      .unit { fill: #0c2d6b; stroke: #4493f8; }
+      .frame { stroke: #4493f8; }
+      .frame-name { fill: #4493f8; }
+      .name, .label { fill: #f0f6fc; }
+      .kind { fill: #9198a1; }
+      .data { fill: #c297ff; }
+      .line { stroke: #9198a1; }
+      .head { fill: #9198a1; }
+      .hole { fill: #0d1117; stroke: #9198a1; }
+      .halo { stroke: #0d1117; }
+    }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path class="head" d="M0,0 L10,5 L0,10 z"/>
+    </marker>
+  </defs>
+  <rect class="bg" width="1070" height="470"/>
+  <rect class="frame" x="200" y="40" width="640" height="400" rx="8"/>
+  <text class="frame-name" x="214" y="62">rn</text>
+  <rect class="box" x="20" y="190" width="110" height="60" rx="6"/>
+  <text class="name" x="75.0" y="225.0">You</text>
+  <rect class="store" x="230" y="170" width="180" height="100" rx="6"/>
+  <text class="name" x="320.0" y="209.0">Design tree</text>
+  <text class="kind" x="320.0" y="228.0">your goal and every</text>
+  <text class="kind" x="320.0" y="243.0">decision under it</text>
+  <rect class="box" x="470" y="170" width="150" height="100" rx="6"/>
+  <text class="name" x="545.0" y="209.0">Build</text>
+  <text class="kind" x="545.0" y="228.0">each piece by the</text>
+  <text class="kind" x="545.0" y="243.0">best practice</text>
+  <rect class="store" x="680" y="185" width="110" height="70" rx="6"/>
+  <text class="name" x="735.0" y="225.0">Piece</text>
+  <rect class="lane" x="655" y="340" width="160" height="70" rx="6"/>
+  <text class="name" x="735.0" y="364.0">Check</text>
+  <text class="kind" x="735.0" y="383.0">with only what</text>
+  <text class="kind" x="735.0" y="398.0">its users have</text>
+  <rect class="box" x="940" y="190" width="110" height="60" rx="6"/>
+  <text class="name" x="995.0" y="225.0">You</text>
+  <path class="line" d="M130,210 L226,210" marker-end="url(#a)"/>
+  <text class="label small mid halo" x="165" y="200">goal</text>
+  <path class="line dashed" d="M226,235 L134,235" marker-end="url(#a)"/>
+  <text class="label small mid halo" x="165" y="255">questions</text>
+  <path class="line" d="M410,220 L466,220" marker-end="url(#a)"/>
+  <path class="line" d="M620,220 L676,220" marker-end="url(#a)"/>
+  <path class="line" d="M735,255 L735,336" marker-end="url(#a)"/>
+  <path class="line" d="M790,220 L936,220" marker-end="url(#a)"/>
+  <text class="label small mid halo" x="888" y="210">once its users</text>
+  <text class="label small mid halo" x="888" y="240">can use it</text>
+  <path class="line dashed" d="M655,375 L320,375 L320,274" marker-end="url(#a)"/>
+  <text class="label small mid halo" x="490" y="368">a problem goes back to its decision</text>
+  <path class="line dashed" d="M280,170 C280,120 360,120 360,166" marker-end="url(#a)"/>
+  <text class="label small mid halo" x="320" y="118">revised on each run</text>
+  <text class="frame-name mid" x="320" y="295">① what you mean</text>
+  <text class="frame-name mid" x="490" y="400">② no pile of fixes</text>
+  <text class="frame-name mid" x="545" y="295">③ the same steps every run</text>
+  <text class="frame-name mid" x="735" y="432">④ judged by its users</text>
+  <text class="frame-name mid" x="320" y="100">⑤ a wrong plan corrected</text>
+</svg>
