@@ -24,7 +24,7 @@ every result before it takes it, and a lack changes the decision it comes from, 
   their time nor the work so far. It carries the walkthrough's `/rn:dn` and `Paused`.
 - S5: the user wants to type `/rn:up` alone in a new conversation and have rn go on where it
   stopped, so that they never answer a point twice or wait for work made again. It carries the
-  walkthrough's second `/rn:up`, `Picking up`, and a conversation that Claude Code compacts.
+  walkthrough's second `/rn:up` and `Picking up`.
 - S6: the user wants one pull request, the decisions rn took without asking, and the lessons of the
   run, so that they check the work and merge it themselves. It carries the walkthrough's `Done`,
   each change to a best practice and each lesson that rn proposes there, and the merge.
@@ -161,8 +161,7 @@ user would spend their time setting them right, as KR1.2 counts.
 ### The repository holds the work
 
 Every part keeps the run's state only in the run's folder and the deliverables on the work's own
-branch, in rn's own worktree, and `tree.py` commits them at the end of each step, at a pause, and
-before Claude Code compacts the conversation.
+branch, in rn's own worktree, and `tree.py` commits them at the end of each step and at a pause.
 
 *Why*: work kept only in a conversation that ends, or left uncommitted at a pause, makes the user
 answer or wait for it again, as KR1.2 counts.
@@ -313,31 +312,23 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
   actor U as user
-  participant CC as Claude Code
   participant O as orchestrator
   participant T as tree.py
   participant K as tree-keeper
   participant G as generator
-  alt a new conversation
-    U->>O: /rn:up, alone
-    O->>T: lists the runs left, and removes the worktree of each run merged
-    alt no run is left
-      O->>U: says so
-    else more than one is left
-      O->>U: which one (Point)
-      U->>O: answers
-    end
-    O->>O: enters the run's worktree
-    O->>U: Picking up, where it stopped, and the point or sign-off waiting
-    O->>K: starts it, on the run picked up (Cut)
-    O->>G: starts each that stood in a step, at that step (Cut, Place)
-    Note over O,G: The work goes on, as S1, S2, or S3 draws.
-  else Claude Code compacts the conversation
-    CC->>T: runs it before the compaction, which commits each role's work (Place)
-    CC->>T: runs it after the compaction
-    T-->>O: where the run stands (Place)
-    Note over O,T: The orchestrator goes on from there.
+  U->>O: /rn:up, alone, in a new conversation
+  O->>T: lists the runs left, and removes the worktree of each run merged
+  alt no run is left
+    O->>U: says so
+  else more than one is left
+    O->>U: which one (Point)
+    U->>O: answers
   end
+  O->>O: enters the run's worktree
+  O->>U: Picking up, where it stopped, and the point or sign-off waiting
+  O->>K: starts it, on the run picked up (Cut)
+  O->>G: starts each that stood in a step, at that step (Cut, Place)
+  Note over O,G: The work goes on, as S1, S2, or S3 draws.
 ```
 
 ### S6: the work handed over
@@ -426,7 +417,7 @@ plugins/rn/
 │   ├── tree.py                    runs the code of tree.py
 │   └── throwaway.py               runs the code of throwaway.py
 ├── hooks/
-│   ├── hooks.json                 starts the guard on each call, and tree.py at a compaction
+│   ├── hooks.json                 starts the guard on each call
 │   ├── lanes.json                 the steps the guard holds each role to
 │   ├── lane/                      the guard: Lane's code, copied in by Lane
 │   └── adapters/                  give the guard rn's best practices and design tree

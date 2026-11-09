@@ -82,7 +82,7 @@
   <rect class="unit" x="390" y="280" width="320" height="90" rx="4"/>
   <text class="name start" x="402" y="302">tree.py process</text>
   <text class="kind start" x="402" y="319">[python3 · git, gh]</text>
-  <text class="label small" x="402" y="336">tree.py, run by a role, or by a hook at a compaction</text>
+  <text class="label small" x="402" y="336">tree.py</text>
   <rect class="unit" x="390" y="400" width="320" height="90" rx="4"/>
   <text class="name start" x="402" y="422">throwaway.py process</text>
   <text class="kind start" x="402" y="439">[python3]</text>
