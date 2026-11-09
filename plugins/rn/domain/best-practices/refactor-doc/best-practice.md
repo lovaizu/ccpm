@@ -38,6 +38,7 @@ Each section covers one topic, and its heading and first sentence say what the r
 **Steps**
 
 1. Name the readers and the purposes they come with. Read only the headings and the first sentences for each purpose. Rewrite a heading or first sentence that would make the reader miss a section the purpose needs. Rewrite one that would make them read a section it doesn't need.
+2. Give each item that a reader looks for, such as a question they have, a heading of its own, so that it shows in the outline and a link can point to it.
 
 ### N2
 

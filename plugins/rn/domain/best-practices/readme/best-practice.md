@@ -29,7 +29,7 @@ A newcomer decides from the README alone whether the product fits their work, an
 | ID | Factor | Condition | Sections |
 | --- | --- | --- | --- |
 | N1 | C1 | Does the opening say what the product is, who it's for, and what it lets them achieve? | the opening |
-| N2 | C1 | Does the README list what readers might expect the product to do but it doesn't? | the opening |
+| N2 | C1 | Does the README list what readers might expect the product to do but it doesn't? | Non-goals |
 | N3 | C1 | Does the README say at the top where the product isn't ready for use yet? | the opening |
 | N4 | C1 | Does the README name the license and link its full text? | License |
 | N5 | C1 | Does the README answer each question in the order a reader comes to ask it? | the whole |

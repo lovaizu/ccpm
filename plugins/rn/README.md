@@ -12,7 +12,7 @@ README and its code, and you'd rather answer a few questions than read and fix d
 hand over work that its users can use without fixes, and rn asks you only what it can't decide
 itself.
 
-**Non-goals**
+## Non-goals
 
 - rn doesn't decide your purpose or what you want. When rn leaves a question to you, the work that
   depends on it waits for your answer.
@@ -98,54 +98,73 @@ Decided without asking you:
 
 ![The usual way and rn, with the five problems marked](images/problem.svg)
 
-1. **The AI builds the one piece you asked for, and misses the other pieces it needs, or builds
-   them in the wrong order.** rn lists every piece the goal needs and the order to build them in.
-   It plans again after it builds each piece and after each answer.
-2. **The AI starts from scratch and writes what similar texts say, not what its users need.** rn
-   builds each piece by the best practice for its kind. A best practice states the goal that the
+1. The AI builds the one piece you asked for, and misses the other pieces it needs, or builds them
+   in the wrong order.
+
+   rn lists every piece the goal needs and the order to build them in. It plans again after it
+   builds each piece and after each answer.
+
+2. The AI starts from scratch and writes what similar texts say, not what its users need.
+
+   rn builds each piece by the best practice for its kind. A best practice states the goal that the
    piece's users reach, a template for the piece, and a checklist of what the users need from it.
-3. **An AI review produces many findings, and few of them are about whether the work serves its
-   users.** A second AI, the evaluator, tries each piece as its users would, and checks only that
+
+3. An AI review produces many findings, and few of them are about whether the work serves its
+   users.
+
+   A second AI, the evaluator, tries each piece as its users would, and checks only that
    checklist. rn builds the piece again until it meets every item.
-4. **The AI asks you what it could find out itself, and guesses what only you know.** rn asks you
-   one question at a time, and only what the purpose and the best practices leave open. It decides
-   the rest, and reports those decisions at the end.
-5. **The AI follows a step one time and skips it the next, and a new conversation starts the work
-   over.** Lane, a plugin installed with rn, enforces each step on every run. rn keeps the work in
-   your repository, so `/rn:up` resumes where it stopped.
+
+4. The AI asks you what it could find out itself, and guesses what only you know.
+
+   rn asks you one question at a time, and only what the purpose and the best practices leave
+   open. It decides the rest, and reports those decisions at the end.
+
+5. The AI follows a step one time and skips it the next, and a new conversation starts the work
+   over.
+
+   Lane, a plugin installed with rn, enforces each step on every run. rn keeps the work in your
+   repository, so `/rn:up` resumes where it stopped.
+
+### How does rn decide what to ask you?
 
 ![rn decides what the purpose or a best practice answers, and asks you the rest](images/how-asks.svg)
 
-**How does rn decide what to ask you?** When a question comes up while rn builds a piece, rn
-checks whether the purpose or a best practice answers it. If one does, rn decides it. If not, rn
-asks you, one question at a time, and you answer in your own words. rn then builds the piece again
-with your answer.
+When a question comes up while rn builds a piece, rn checks whether the purpose or a best practice
+answers it. If one does, rn decides it. If not, rn asks you, one question at a time, and you answer
+in your own words. rn then builds the piece again with your answer.
+
+### How can an AI judge another AI's work?
 
 ![The evaluator gets the piece and its checklist, never the design](images/how-evaluator.svg)
 
-**How can an AI judge another AI's work?** The evaluator is a separate AI that gets only the piece
-and the checklist for its kind. It never gets the design, so it judges by what the piece's users
-get, not by what its builder intended. rn weighs each gap that the evaluator finds against your
-purpose. The generator, the AI that built the piece, builds it again for each gap that its users
-would hit, until the piece meets every item.
+The evaluator is a separate AI that gets only the piece and the checklist for its kind. It never
+gets the design, so it judges by what the piece's users get, not by what its builder intended. rn
+weighs each gap that the evaluator finds against your purpose. The generator, the AI that built the
+piece, builds it again for each gap that its users would hit, until the piece meets every item.
+
+### How does rn follow every step, every time?
 
 ![Lane stops a call that breaks its step, and shows the text of the step](images/how-steps.svg)
 
-**How does rn follow every step, every time?** Lane watches each tool call that each part of rn
-makes. When a part breaks a step, such as by running a command that the step doesn't name, Lane
-stops the call and shows the part the text of that step. The part then returns to the step.
+Lane watches each tool call that each part of rn makes. When a part breaks a step, such as by
+running a command that the step doesn't name, Lane stops the call and shows the part the text of
+that step. The part then returns to the step.
+
+### What if the conversation ends partway?
 
 ![Each decision and result goes into .rn/, and /rn:up reads it in a new conversation](images/how-resume.svg)
 
-**What if the conversation ends partway?** As it works, rn writes each decision and each result to
-the folder `.rn/<date>-<goal>/` in your repository. `/rn:up` with no arguments reads that folder
-and continues from the next step, so you never answer a question twice.
+As it works, rn writes each decision and each result to the folder `.rn/<date>-<goal>/` in your
+repository. `/rn:up` with no arguments reads that folder and continues from the next step, so you
+never answer a question twice.
+
+### What if rn has no best practice for your kind of work?
 
 ![For a kind of work rn has no best practice for, rn creates one first](images/how-new-kind.svg)
 
-**What if rn has no best practice for your kind of work?** rn first creates one, by its
-best practice for writing best practices. It keeps the new one in the folder
-`best-practices/` of `.rn/<date>-<goal>/`, and then builds your piece by it.
+rn first creates one, by its best practice for writing best practices. It keeps the new one in the
+folder `best-practices/` of `.rn/<date>-<goal>/`, and then builds your piece by it.
 
 ## Documentation
 

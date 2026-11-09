@@ -6,10 +6,6 @@
 
 `<Product>` is for you when `<your situation>`. With it, you `<benefit>`.
 
-**Non-goals**
-
-- `<Product>` doesn't `<expectation>`.
-
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - `<kind>`: the kind of thing the product is, such as a command-line tool.
@@ -18,6 +14,13 @@
 >   Leave it out where the product is ready for use.
 > - `<your situation>`: the work the reader wants done.
 > - `<benefit>`: what the reader achieves with the product.
+
+## Non-goals
+
+- `<Product>` doesn't `<expectation>`.
+
+> [!NOTE]
+> DELETE_TEMPLATE_COMMENT:
 > - `<expectation>`: each thing a reader might expect of the product that it doesn't do. Leave out
 >   Non-goals where there's none.
 
@@ -72,11 +75,15 @@ At the end, you have `<result>`.
 
 ![The usual way and the product](images/template-problem.svg)
 
-1. **`<problem>`.** `<how it goes away>`.
+1. `<problem>`.
+
+   `<how it goes away>`.
+
+### `<doubt>`
 
 ![How the product works](images/template-how-it-works.svg)
 
-**`<doubt>`** `<how it does it>`.
+`<how it does it>`.
 
 [`<title>`](<path>)
 
@@ -87,14 +94,15 @@ At the end, you have `<result>`.
 >   product on top, and the product below it, with the problem left in the one and gone in the other.
 > - `<problem>`, `<how it goes away>`: each problem the reader feels in the work, in their words,
 >   and in a sentence or two what the product does that makes it go away. A numbered list, each
->   item's number the one the figure marks it with.
-> - The second figure: one for each doubt, followed by its paragraph. Each is the deliverable's own,
+>   item's number the one the figure marks it with. The problem stands on the item's first line,
+>   and how it goes away follows as a paragraph of its own.
+> - The second figure: one for each doubt. It stands under the doubt's heading, before its paragraph. Each is the deliverable's own,
 >   at images/how-<name>.svg, with the product named in its alt text, showing how the product does
 >   the doubted thing. The skeleton here is one such form: the user, the product's parts and what
 >   they pass, with the lines that do it marked.
 > - `<doubt>`, `<how it does it>`: each point where a newcomer would ask whether the product can
->   really do that, and in a sentence or two how the product does it. The doubt as the reader would
->   ask it, in bold and with no letter or number, opens the paragraph just after its figure.
+>   really do that, and in a sentence or two how the product does it. The doubt, as the reader would
+>   ask it, is a heading of its own.
 > - `<title>`, `<path>`: the page that explains it further, where it needs a long sequence of
 >   figures. Leave it out where the paragraph is enough.
 
