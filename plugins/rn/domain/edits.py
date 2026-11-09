@@ -124,7 +124,7 @@ def ready(run: str, tree: dict[str, Any]) -> None:
     cut = runs.kept(run, starts.CUT) or {}
     if cut.get("kind") == "turn" and not cut["reading"]:
         d = trees.deliverable(tree, cut["path"])
-        short = [i["id"] for i in d.get("vital_few", []) if not i["good"]]
+        short = [i["id"] for i in d.get("necessary_conditions", []) if not i["good"]]
         if short:
             raise Stop(f"the turn met each intent of {cut['path']}: make {', '.join(short)} good")
 

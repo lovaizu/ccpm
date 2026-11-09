@@ -458,13 +458,13 @@ values = json.load(sys.stdin)["values"]
 lists = [
     {"list": q, "steps": [
         {"says": s, "lanes": [{"lane": "run_step", "takes": [c]}]} for s, c in PRACTICES[q]]}
-    for q in values.get("vital_few") or [] if q in PRACTICES
+    for q in values.get("necessary_conditions") or [] if q in PRACTICES
 ]
 print(json.dumps({"lists": lists}))
 """
 STEPS_CASES = [
     {
-        "given": {"values": {"vital_few": ["Q2"]}},
+        "given": {"values": {"necessary_conditions": ["Q2"]}},
         "gives": {
             "lists": [
                 {

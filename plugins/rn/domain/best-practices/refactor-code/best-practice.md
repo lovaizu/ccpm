@@ -4,7 +4,7 @@
 
 The maintainer is a person or an AI who comes to change the code at any time after someone writes it. The maintainer changes the code quickly without breaking another behavior. They understand each part on one reading, and they find the one place where the change belongs.
 
-## Vital few
+## Necessary conditions
 
 | ID | About | Question |
 | --- | --- | --- |

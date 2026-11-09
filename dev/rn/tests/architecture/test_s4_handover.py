@@ -20,7 +20,7 @@ class Handover(helpers.FlowTest):
             os.path.join(RUN, "best-practices", "note", "best-practice.json"), helpers.NOTE
         )
         tree = helpers.note_tree()
-        for i in tree["deliverables"][0]["vital_few"]:
+        for i in tree["deliverables"][0]["necessary_conditions"]:
             i["good"] = True
         self.commits(tree)
         round_ = os.path.join(RUN, "turns", "01-notes-md-reading", "01")

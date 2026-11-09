@@ -1,13 +1,13 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "best practice",
-  "description": "A kind's best practice. It holds its goal. It names the template beside it, which holds the form a good deliverable of the kind takes, or else the parts such a deliverable has. It names the example beside it, one deliverable made by it, and the deliverable the example copies, if it copies one, by its path from the best practice's folder. It names the kinds such a deliverable takes its content from, in inputs, and those whose deliverables must pass before it starts, in preconditions, each by the name of its best practice's folder. It holds the intents, the questions such a deliverable answers yes to, and a practice for each: its thinking, what to do and why, and its steps where it needs them, each with the call that shows it done where every run makes one. An evaluator gets its goal, its parts, and its intents alone.",
+  "description": "A kind's best practice. It holds its goal, and may hold the critical success factors, the few things that must go right for the deliverable's role to reach that goal. It names the template beside it, which holds the form a good deliverable of the kind takes, or else the parts such a deliverable has. It names the example beside it, one deliverable made by it, and the deliverable the example copies, if it copies one, by its path from the best practice's folder. It names the kinds such a deliverable takes its content from, in inputs, and those whose deliverables must pass before it starts, in preconditions, each by the name of its best practice's folder. It holds the necessary conditions, each a state of the deliverable that a critical success factor needs, written as a question such a deliverable answers yes to, and a practice for each: its thinking, what to do and why, and its steps where it needs them, each with the call that shows it done where every run makes one. An evaluator gets its goal, its critical success factors, its parts, and its necessary conditions alone.",
   "type": "object",
   "required": [
     "goal",
     "inputs",
     "preconditions",
-    "vital_few",
+    "necessary_conditions",
     "practices"
   ],
   "additionalProperties": false,
@@ -42,7 +42,26 @@
         "$ref": "#/$defs/part"
       }
     },
-    "vital_few": {
+    "critical_success_factors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "what"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "what": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "necessary_conditions": {
       "type": "array",
       "minItems": 1,
       "items": {
@@ -55,6 +74,9 @@
         "additionalProperties": false,
         "properties": {
           "id": {
+            "type": "string"
+          },
+          "csf": {
             "type": "string"
           },
           "about": {

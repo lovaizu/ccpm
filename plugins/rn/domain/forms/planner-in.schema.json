@@ -16,7 +16,7 @@
         "tree",
         "edit",
         "practice",
-        "vital_few"
+        "necessary_conditions"
       ],
       "additionalProperties": false,
       "properties": {
@@ -36,7 +36,7 @@
           "description": "The plan best practice's path, whose practices are the planner's steps.",
           "type": "string"
         },
-        "vital_few": {
+        "necessary_conditions": {
           "description": "The intents whose practices the planner carries out, null for every one.",
           "type": [
             "array",

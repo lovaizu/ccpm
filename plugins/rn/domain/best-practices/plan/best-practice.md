@@ -12,7 +12,7 @@ The user reaches their goal through the deliverables of the plan, none missing, 
 
 [example.json](example.json), a copy of [../../../../../.rn/20261107-rn/design-tree.json](../../../../../.rn/20261107-rn/design-tree.json)
 
-## Vital few
+## Necessary conditions
 
 | ID | About | Question |
 | --- | --- | --- |

@@ -7,7 +7,7 @@
   "product-vision"
  ],
  "preconditions": [],
- "vital_few": [
+ "necessary_conditions": [
   {
    "id": "Q1",
    "about": "the opening",

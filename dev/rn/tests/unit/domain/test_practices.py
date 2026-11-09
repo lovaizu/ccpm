@@ -14,7 +14,7 @@ DATA = {
     "goal": "g",
     "inputs": [],
     "preconditions": [],
-    "vital_few": [
+    "necessary_conditions": [
         {"id": "Q1", "about": "a", "what": "?"},
         {"id": "Q2", "about": "b", "what": "?"},
         {"id": "Q3", "about": "the whole, a", "what": "?"},
@@ -89,7 +89,7 @@ class Groups(unittest.TestCase):
         self.assertEqual(practices.groups(DATA), [["Q1", "Q2", "Q4", "Q5"], ["Q3"]])
 
     def test_each_part_its_own_group(self):
-        data = {"vital_few": [{"id": "Q1", "about": "b"}, {"id": "Q2", "about": "a"}]}
+        data = {"necessary_conditions": [{"id": "Q1", "about": "b"}, {"id": "Q2", "about": "a"}]}
         self.assertEqual(practices.groups(data), [["Q1"], ["Q2"]])
 
 

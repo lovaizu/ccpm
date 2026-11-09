@@ -13,13 +13,14 @@ from it what the plugin's requirements call for.
 
 This file holds the order the work goes in. Each step names the best practice in
 `plugins/rn/domain/best-practices/` to open while doing it. A best practice's goal says what the
-deliverable's user achieves. Its template, or else its parts, says what the deliverable holds. Its
-vital few ask, each as a question, whether the deliverable gives the user a thing without which they
-fail their end. Its practices hold a way to make each one. Finish a document with
+deliverable's user achieves, and its critical success factors what must go right for that. Its
+necessary conditions ask, each as a question, whether the deliverable holds a state that a factor
+needs. Its template, or else its parts, says where the deliverable holds each, and its practices
+hold a way to meet each one. Finish a document with
 `refactor-doc/best-practice.json` open as well, and code with `refactor-code/best-practice.json`.
 
 When a step's work needs something that its best practice doesn't ask for, mend that best practice as
-Q2 of [meta/best-practice.json](../../plugins/rn/domain/best-practices/meta/best-practice.md)
+Q3 of [meta/best-practice.json](../../plugins/rn/domain/best-practices/meta/best-practice.md)
 says. Do so whichever plugin you are building. Then make the work again against the mended
 best practice.
 

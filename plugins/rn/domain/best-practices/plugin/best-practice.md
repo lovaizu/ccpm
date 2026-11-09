@@ -12,7 +12,7 @@ The developer builds a Claude Code plugin whose roles work together to make some
 
 - [architecture](../architecture/best-practice.md)
 
-## Vital few
+## Necessary conditions
 
 | ID | About | Question |
 | --- | --- | --- |

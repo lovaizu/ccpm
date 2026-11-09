@@ -37,7 +37,9 @@ RESULT = "python3 /p/changelog/hooks/lane/result.py {name} {on}"
 # The plugin's folder, and the command that Lane names for each start, as the routes name it.
 ROOT = "/p/changelog"
 START = "python3 /p/changelog/scripts/start.py {name}"
-WRITER_TEXT = 'Write the entries of the next release into `CHANGELOG.md`.\n{"vital_few": ["Q1"]}'
+WRITER_TEXT = (
+    'Write the entries of the next release into `CHANGELOG.md`.\n{"necessary_conditions": ["Q1"]}'
+)
 REVIEWER_TEXT = "Review the entries under `## Unreleased` of `CHANGELOG.md`."
 ROUTES = {
     "orchestrator": "write",
@@ -638,7 +640,8 @@ ADAPTER = """import json, sys
 PRACTICES = [{"says": "List.", "lanes": [{"lane": "run_step", "takes": ["git log --oneline"]}]},
              {"says": "Write.", "lanes": [{"lane": "write_step", "takes": ["CHANGELOG.md"]}]}]
 values = json.load(sys.stdin)["values"]
-lists = [{"list": q, "steps": PRACTICES} for q in values.get("vital_few") or [] if q == "Q1"]
+named = values.get("necessary_conditions") or []
+lists = [{"list": q, "steps": PRACTICES} for q in named if q == "Q1"]
 print(json.dumps({"lists": lists}))
 """
 

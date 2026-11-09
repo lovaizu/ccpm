@@ -76,7 +76,7 @@ def deliverable(path: str, kind: str, **given: Any) -> dict[str, Any]:
         "inputs": [],
         "preconditions": [],
         "status": "open",
-        "vital_few": [{"id": i, "good": False, "decisions": []} for i in intents],
+        "necessary_conditions": [{"id": i, "good": False, "decisions": []} for i in intents],
     }
     made.update(given)
     return made
@@ -111,7 +111,7 @@ def decided(tree: dict[str, Any], n: int, intent: str, about: str, what: Any, by
     """The tree with a decision about the point under the intent of the deliverable of the
     number, open where what's None."""
     made = copy.deepcopy(tree)
-    for i in made["deliverables"][n - 1]["vital_few"]:
+    for i in made["deliverables"][n - 1]["necessary_conditions"]:
         if i["id"] == intent:
             decision = {"about": about, "decided": what}
             if what is not None:
@@ -182,7 +182,7 @@ NOTE = {
     "inputs": [],
     "preconditions": [],
     "parts": [{"id": "use", "what": "How to use it."}],
-    "vital_few": [
+    "necessary_conditions": [
         {"id": "Q1", "about": "use", "what": "Can the reader sort their folder by it?"},
         {"id": "Q2", "about": "the whole", "what": "Does each answer come when needed?"},
     ],
@@ -214,7 +214,7 @@ def note_tree(by: str = "user", **given: Any) -> dict[str, Any]:
         "inputs": ["dev/product-vision.md"],
         "preconditions": [],
         "status": "doing",
-        "vital_few": [
+        "necessary_conditions": [
             {"id": "Q1", "good": False, "decisions": []},
             {"id": "Q2", "good": False, "decisions": []},
         ],

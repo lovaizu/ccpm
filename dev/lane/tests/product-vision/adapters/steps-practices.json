@@ -1,4 +1,4 @@
-[{"given": {"values": {"vital_few": ["Q2"]}},
+[{"given": {"values": {"necessary_conditions": ["Q2"]}},
   "gives": {"lists": [{"list": "Q2", "steps": [
    {"says": "Read the file whole.", "lanes": [{"lane": "read_whole", "takes": ["CHANGELOG.md"]}]},
    {"says": "Check the tree is clean.", "lanes": [{"lane": "run_step", "takes": ["git status"]}]}]}]}},

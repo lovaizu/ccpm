@@ -71,7 +71,11 @@ def questions(run: str) -> Callable[[str], dict[str, str]]:
 
     def asked(kind: str) -> dict[str, str]:
         path = practices.found(kind, run)
-        return {i["id"]: i["what"] for i in practices.read(path)["vital_few"]} if path else {}
+        return (
+            {i["id"]: i["what"] for i in practices.read(path)["necessary_conditions"]}
+            if path
+            else {}
+        )
 
     return asked
 
@@ -228,14 +232,20 @@ def planner_values(run: str | None) -> dict[str, Any]:
     """The planner's run values for the run; none of a run where there's no run at hand."""
     practice = os.path.join(practices.OWN, "plan", practices.PRACTICE)
     if run is None:
-        return {"run": None, "tree": None, "edit": None, "practice": practice, "vital_few": None}
+        return {
+            "run": None,
+            "tree": None,
+            "edit": None,
+            "practice": practice,
+            "necessary_conditions": None,
+        }
     edit = os.path.join(runs.temporary(run), runs.EDIT)
     return {
         "run": run,
         "tree": runs.tree_path(run),
         "edit": edit,
         "practice": practice,
-        "vital_few": None,
+        "necessary_conditions": None,
     }
 
 
@@ -346,7 +356,7 @@ def turn_good(run: str) -> tuple[int, bool] | None:
 
 def reads(d: dict[str, Any]) -> bool:
     """Whether the deliverable's turn at hand is of how it reads: once each intent is good."""
-    return bool(d["vital_few"]) and all(i["good"] for i in d["vital_few"])
+    return bool(d["necessary_conditions"]) and all(i["good"] for i in d["necessary_conditions"])
 
 
 def turn_kind(d: dict[str, Any], reading: bool) -> str:
@@ -411,7 +421,7 @@ def open_points(run: str, tree: dict[str, Any], n: int) -> list[str]:
 def values_of(run: str, d: dict[str, Any], practice: str, record: str) -> dict[str, Any]:
     """The generator's run values for the deliverable."""
     inputs = [p for p in d["inputs"] if os.path.isfile(p)]
-    held = {x["about"]: x["decided"] for i in d["vital_few"] for x in i["decisions"]}
+    held = {x["about"]: x["decided"] for i in d["necessary_conditions"] for x in i["decisions"]}
     name = os.path.basename(os.path.normpath(d["path"]))
     proposal = None
     if d["kind"] == "plugin":
@@ -425,7 +435,7 @@ def values_of(run: str, d: dict[str, Any], practice: str, record: str) -> dict[s
         **found,
         "proposal": proposal,
         "practice": practice,
-        "vital_few": None,
+        "necessary_conditions": None,
         "record": record,
     }
 
@@ -452,7 +462,7 @@ def generator_cut(run: str) -> str:
     values = values_of(run, d, practice, record)
     asked = questions(run)(d["kind"])
     decided = []
-    for intent in d["vital_few"]:
+    for intent in d["necessary_conditions"]:
         for x in intent["decisions"]:
             if x["decided"] is not None:
                 decided.append(f"- {intent['id']} {x['about']}: {x['decided']}")
@@ -467,7 +477,7 @@ def generator_cut(run: str) -> str:
     out += ["", "## Its decisions", "", *(decided or ["None yet."])]
     if not reading:
         out += ["", "## Its intents", ""]
-        out += [f"- {i['id']}: {asked.get(i['id'], '')}" for i in d["vital_few"]]
+        out += [f"- {i['id']}: {asked.get(i['id'], '')}" for i in d["necessary_conditions"]]
     # rn numbers round folders in order, so a next round's sorts after the last.
     short = runs.shortfalls(before) if before and round_ != before else []  # pragma: no mutate
     if short:
@@ -480,7 +490,7 @@ def accepted(d: dict[str, Any], ids: list[str]) -> list[str]:
     """Each lack the user accepted under the intents of the IDs, as a line."""
     return [
         f"- {i['id']}: {x['decided']}"
-        for i in d["vital_few"]
+        for i in d["necessary_conditions"]
         if i["id"] in ids
         for x in i["decisions"]
         if x["about"] == ACCEPTED and x.get("by") == "user"
@@ -524,7 +534,7 @@ def evaluator_cut(run: str) -> str:
         "try": try_,
         "answers": answers,
     }
-    asked = {i["id"]: i["what"] for i in data["vital_few"]}
+    asked = {i["id"]: i["what"] for i in data["necessary_conditions"]}
     out = [line(values), f"# The intents of {name}, {names.index(name) + 1} of {len(names)}", ""]
     out += [f"The people it's for, and what they're after: {data['goal']}", ""]
     out += [f"- {i}: {asked[i]}" for i in ids]

@@ -10,7 +10,7 @@ with open(os.path.join(os.environ["CLAUDE_PLUGIN_ROOT"], "domain", "practices.js
 values = json.load(sys.stdin)["values"]
 lists = [
     {"list": q, "steps": [{"says": p["says"], "lanes": [p["trace"]]} for p in practices[q]]}
-    for q in values.get("vital_few") or []
+    for q in values.get("necessary_conditions") or []
     if q in practices
 ]
 print(json.dumps({"lists": lists}))

@@ -48,7 +48,7 @@ def read(path: str) -> dict[str, Any]:
 
 def intents(data: dict[str, Any]) -> list[str]:
     """The ID of each intent of the best practice, in its order."""
-    return [i["id"] for i in data["vital_few"]]
+    return [i["id"] for i in data["necessary_conditions"]]
 
 
 def reading(kind: str) -> str:
@@ -70,7 +70,7 @@ def groups(data: dict[str, Any]) -> list[list[str]]:
     intent, the IDs of each in the best practice's order. An evaluator judges a group fresh, and
     the evaluators of a round judge theirs at once."""
     made: list[tuple[set[str], list[str]]] = []
-    for intent in data["vital_few"]:
+    for intent in data["necessary_conditions"]:
         named = abouts(intent)
         joined = [g for g in made if g[0] & named]
         kept = (named, [intent["id"]])

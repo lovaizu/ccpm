@@ -36,7 +36,7 @@ DATA: dict[str, Any] = {
     "inputs": [],
     "preconditions": [],
     "parts": [{"id": "a", "what": "A.", "parts": [{"id": "b", "what": "B."}]}],
-    "vital_few": [
+    "necessary_conditions": [
         {"id": "Q1", "about": "a", "what": "Does it?"},
         {"id": "Q2", "about": "b, the whole", "what": "After Q1, does all?"},
     ],
@@ -64,13 +64,75 @@ def changed(change):
     return practices.faults(data)
 
 
+class Factors(unittest.TestCase):
+    """The critical success factors, which a best practice may hold, each with a necessary
+    condition under it."""
+
+    def factored(self, change=lambda d: None):
+        data = copy.deepcopy(DATA)
+        data["critical_success_factors"] = [{"id": "C1", "what": "A."}, {"id": "C2", "what": "B."}]
+        data["necessary_conditions"][0]["csf"] = "C1"
+        data["necessary_conditions"][1]["csf"] = "C2"
+        change(data)
+        return data
+
+    def test_a_sound_best_practice_of_factors_has_none(self):
+        self.assertEqual(practices.faults(self.factored()), [])
+
+    def test_factors_out_of_number_order(self):
+        def swap(d):
+            d["critical_success_factors"].reverse()
+
+        self.assertEqual(
+            practices.faults(self.factored(swap)),
+            ["factors are C2, C1, not numbered in order from C1"],
+        )
+
+    def test_a_condition_under_no_factor(self):
+        def stray(d):
+            d["necessary_conditions"][1]["csf"] = "C3"
+
+        self.assertEqual(
+            practices.faults(self.factored(stray)),
+            [
+                "Q2 is under C3, which is no critical success factor",
+                "C2 has no necessary condition under it",
+            ],
+        )
+
+    def test_a_condition_that_names_no_factor(self):
+        def bare(d):
+            del d["necessary_conditions"][0]["csf"]
+            d["necessary_conditions"][1]["csf"] = "C1"
+
+        self.assertEqual(
+            practices.faults(self.factored(bare)),
+            [
+                "Q1 is under None, which is no critical success factor",
+                "C2 has no necessary condition under it",
+            ],
+        )
+
+    def test_the_markdown_lists_the_factors_and_each_condition_under_its_factor(self):
+        text = practices.markdown_of(PATH, self.factored())
+        self.assertIn(
+            "## Critical success factors\n\n| ID | Factor |\n| --- | --- |\n| C1 | A. |\n"
+            "| C2 | B. |\n\n## Necessary conditions\n\n| ID | Factor | About | Question |\n"
+            "| --- | --- | --- | --- |\n"
+            "| Q1 | C1 | a | Does it? |\n| Q2 | C2 | b, the whole | After Q1, does all? |\n\n"
+            "## Practices\n",
+            text,
+        )
+        self.assertNotIn("Critical success factors", practices.markdown_of(PATH, DATA))
+
+
 class Faults(unittest.TestCase):
     def test_a_sound_best_practice_has_none(self):
         self.assertEqual(practices.faults(DATA), [])
 
     def test_questions_out_of_number_order(self):
         def swap(d):
-            d["vital_few"].reverse()
+            d["necessary_conditions"].reverse()
             d["practices"].reverse()
 
         self.assertIn("questions are Q2, Q1, not numbered in order from Q1", changed(swap))
@@ -90,7 +152,7 @@ class Faults(unittest.TestCase):
 
     def test_about_a_part_that_is_not_there(self):
         def wrong(d):
-            d["vital_few"][0]["about"] = "c"
+            d["necessary_conditions"][0]["about"] = "c"
 
         self.assertEqual(changed(wrong), ["Q1 is about c, which is no part"])
 
@@ -114,28 +176,28 @@ class Faults(unittest.TestCase):
 
     def test_no_question_about_the_whole_is_no_fault(self):
         def narrow(d):
-            d["vital_few"][1]["about"] = "b"
+            d["necessary_conditions"][1]["about"] = "b"
 
         self.assertEqual(changed(narrow), [])
 
     def test_a_best_practice_of_one_question_about_the_whole(self):
         data = {
             "goal": "G.",
-            "vital_few": [{"id": "Q1", "about": "the whole", "what": "Does it?"}],
+            "necessary_conditions": [{"id": "Q1", "about": "the whole", "what": "Does it?"}],
             "practices": [{"intent": "Q1", "thinking": "T.", "steps": []}],
         }
         self.assertEqual(practices.faults(data), [])
 
     def test_two_questions_of_one_number(self):
         def same(d):
-            d["vital_few"][1]["id"] = "Q1"
+            d["necessary_conditions"][1]["id"] = "Q1"
             d["practices"][1]["intent"] = "Q1"
 
         self.assertIn("questions are Q1, Q1, not numbered in order from Q1", changed(same))
 
     def test_a_question_numbered_otherwise_is_not_named_as_missing(self):
         def letter(d):
-            d["vital_few"][0]["id"] = "A"
+            d["necessary_conditions"][0]["id"] = "A"
             d["practices"][0]["intent"] = "A"
 
         self.assertEqual(
@@ -148,13 +210,13 @@ class Faults(unittest.TestCase):
 
     def test_about_a_part_named_after_the_whole_that_is_not_there(self):
         def wrong(d):
-            d["vital_few"][0]["about"] = "z"
+            d["necessary_conditions"][0]["about"] = "z"
 
         self.assertEqual(changed(wrong), ["Q1 is about z, which is no part"])
 
     def test_a_question_named_in_a_intent_that_is_not_there(self):
         def name(d):
-            d["vital_few"][0]["what"] = "Before Q3, does it?"
+            d["necessary_conditions"][0]["what"] = "Before Q3, does it?"
 
         self.assertEqual(changed(name), ["Q3 is named, but there is no such question"])
 
@@ -236,7 +298,7 @@ BY_TEMPLATE = {
     "goal": "The reader gets it.",
     "inputs": [],
     "preconditions": [],
-    "vital_few": [
+    "necessary_conditions": [
         {"id": "Q1", "about": "the opening, Roles", "what": "Does it?"},
         {"id": "Q2", "about": "OKRs, the whole", "what": "Does all?"},
     ],
@@ -285,8 +347,11 @@ class NotesLeft(unittest.TestCase):
 
 class Keys(unittest.TestCase):
     def test_each_key_in_order_but_the_comments(self):
-        text = '{"DELETE_TEMPLATE_COMMENT": "x", "goal": "<g>", "vital_few": [], "practices": []}'
-        self.assertEqual(practices.keys(text), ["goal", "vital_few", "practices"])
+        text = (
+            '{"DELETE_TEMPLATE_COMMENT": "x", "goal": "<g>", "necessary_conditions": [],'
+            ' "practices": []}'
+        )
+        self.assertEqual(practices.keys(text), ["goal", "necessary_conditions", "practices"])
 
     def test_keeps_a_key_that_sorts_before_the_comments(self):
         self.assertEqual(
@@ -617,7 +682,7 @@ class FaultsByTemplate(unittest.TestCase):
 
     def test_about_what_is_no_section(self):
         def wrong(d):
-            d["vital_few"][0]["about"] = "the opening, Scenarios, Roles"
+            d["necessary_conditions"][0]["about"] = "the opening, Scenarios, Roles"
 
         self.assertEqual(
             self.by(wrong), ["Q1 is about Scenarios, which is no section of the template"]
@@ -625,7 +690,7 @@ class FaultsByTemplate(unittest.TestCase):
 
     def test_a_section_no_question_is_about(self):
         def narrow(d):
-            d["vital_few"][0]["about"] = "Roles"
+            d["necessary_conditions"][0]["about"] = "Roles"
 
         self.assertEqual(self.by(narrow), ["section the opening has no question about it"])
 
@@ -675,7 +740,7 @@ class Markdown(unittest.TestCase):
         expected = ["# `kind`\n", "The reader gets it.", "## Parts", "- **a**: A.", "  - **b**: B."]
         expected += [
             (
-                "## Vital few\n\n| ID | About | Question |\n| --- | --- | --- |\n"
+                "## Necessary conditions\n\n| ID | About | Question |\n| --- | --- | --- |\n"
                 "| Q1 | a | Does it? |\n| Q2 | b, the whole | After Q1, does all? |\n\n"
                 "## Practices\n"
             ),
@@ -753,7 +818,7 @@ class Practices(testing.FolderTest):
     def test_form_holds_the_questions_to_the_template_beside_it(self):
         data = copy.deepcopy(DATA)
         del data["parts"]
-        for question in data["vital_few"]:
+        for question in data["necessary_conditions"]:
             question["about"] = "the whole"
         data["template"] = "template.md"
         self.write_json(self.path, data)
@@ -769,7 +834,7 @@ class Practices(testing.FolderTest):
     def test_form_holds_the_questions_to_a_template_that_is_a_folder_and_keeps_its_files(self):
         data = copy.deepcopy(DATA)
         del data["parts"]
-        for question in data["vital_few"]:
+        for question in data["necessary_conditions"]:
             question["about"] = "the whole"
         data["template"] = "template"
         self.write_json(self.path, data)
@@ -815,7 +880,7 @@ class Practices(testing.FolderTest):
     def test_form_fails_on_an_example_out_of_the_schema_that_is_its_template(self):
         data = copy.deepcopy(DATA)
         del data["parts"]
-        for question in data["vital_few"]:
+        for question in data["necessary_conditions"]:
             question["about"] = "goal, the whole"
         data.update(template="plan.schema.json", example="example.json")
         self.write_json(self.path, data)

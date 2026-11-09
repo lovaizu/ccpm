@@ -81,7 +81,7 @@ def nodes(tree: dict[str, Any]) -> list[tuple[str, tuple[str, ...]]]:
     found: list[tuple[str, tuple[str, ...]]] = [(GOAL, (GOAL,))]
     for n, d in enumerate(deliverables(tree), 1):
         found.append((f"D{n}", ("d", d["path"])))
-        for intent in d.get("vital_few", []):
+        for intent in d.get("necessary_conditions", []):
             found.append((f"D{n}{intent['id']}", ("i", d["path"], intent["id"])))
             for k, decision in enumerate(intent["decisions"], 1):
                 key = ("x", d["path"], intent["id"], decision["about"])
@@ -94,7 +94,7 @@ def content(tree: dict[str, Any]) -> dict[tuple[str, ...], Any]:
     held: dict[tuple[str, ...], Any] = {(GOAL,): tree["goal"]}
     for d in deliverables(tree):
         held[("d", d["path"])] = {k: d.get(k) for k in FIELDS}
-        for intent in d.get("vital_few", []):
+        for intent in d.get("necessary_conditions", []):
             held[("i", d["path"], intent["id"])] = intent["good"]
             for decision in intent["decisions"]:
                 key = ("x", d["path"], intent["id"], decision["about"])
@@ -185,7 +185,7 @@ def deliverable(tree: dict[str, Any], path: str) -> dict[str, Any]:
 
 def intent_of(tree: dict[str, Any], key: tuple[str, ...]) -> dict[str, Any]:
     """The intent of the key of an intent or of a decision under it."""
-    intents = deliverable(tree, key[1])["vital_few"]
+    intents = deliverable(tree, key[1])["necessary_conditions"]
     return next(i for i in intents if i["id"] == key[2])  # pragma: no mutate
 
 
@@ -199,7 +199,7 @@ def made(given: dict[str, Any], finder: Finder) -> dict[str, Any]:
     practice where that's found, none good yet."""
     fresh = {k: given[k] for k in FIELDS if k in given and k != "status"}  # pragma: no mutate
     fresh["status"] = given.get("status", "open")
-    fresh["vital_few"] = [
+    fresh["necessary_conditions"] = [
         {"id": i, "good": False, "decisions": []} for i in finder(fresh["kind"]) or []
     ]
     return fresh
@@ -308,7 +308,7 @@ def set_deliverable(found: dict[str, Any], node: dict[str, Any], finder: Finder)
     where the kind changes, and the deliverable kept in one line once it's done, where each
     intent is good."""
     if node.get("status") == DONE:
-        short = [i["id"] for i in found.get("vital_few", []) if not i["good"]]
+        short = [i["id"] for i in found.get("necessary_conditions", []) if not i["good"]]
         if short:
             raise Refused(f"it isn't done while {', '.join(short)} isn't good")
         for k in list(found):
@@ -319,7 +319,7 @@ def set_deliverable(found: dict[str, Any], node: dict[str, Any], finder: Finder)
     kind = found["kind"]
     found.update({k: node[k] for k in FIELDS if k in node})
     if found["kind"] != kind and not done(found):
-        found["vital_few"] = made(found, finder)["vital_few"]
+        found["necessary_conditions"] = made(found, finder)["necessary_conditions"]
 
 
 def faults(tree: dict[str, Any], exists: Callable[[str], bool], finder: Finder) -> list[str]:
@@ -349,7 +349,7 @@ def faults(tree: dict[str, Any], exists: Callable[[str], bool], finder: Finder) 
         )
         if practiced is None and not made_before:
             found.append(f"D{n}'s kind {d['kind']} has no best practice, nor a meta one before it")
-        elif practiced is not None and [i["id"] for i in d["vital_few"]] != practiced:
+        elif practiced is not None and [i["id"] for i in d["necessary_conditions"]] != practiced:
             found.append(f"D{n}'s intents aren't those of its kind {d['kind']}, in their order")
         later = listed[n:]
         if d["kind"] == META:
@@ -366,7 +366,7 @@ def faults(tree: dict[str, Any], exists: Callable[[str], bool], finder: Finder) 
 def open_decisions(tree: dict[str, Any], n: int) -> list[tuple[str, dict[str, Any]]]:
     """Each decision of the deliverable of the number still open, by its ID."""
     found = []
-    for intent in numbered(tree, n).get("vital_few", []):
+    for intent in numbered(tree, n).get("necessary_conditions", []):
         for k, decision in enumerate(intent["decisions"], 1):
             if decision["decided"] is None:
                 found.append((f"D{n}{intent['id']}-{k}", decision))
@@ -386,7 +386,7 @@ def view(tree: dict[str, Any], questions: Callable[[str], dict[str, str]]) -> st
             line += "".join(f"; {t}" for t in taken)
         lines.append(line)
         asked = {} if done(d) else questions(d["kind"])
-        for intent in d.get("vital_few", []):
+        for intent in d.get("necessary_conditions", []):
             good = "good" if intent["good"] else "not good yet"
             said = asked.get(intent["id"], "")
             lines.append(f"  - D{n}{intent['id']}, {good}: {said}".rstrip())

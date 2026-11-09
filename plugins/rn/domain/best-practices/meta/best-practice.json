@@ -1,61 +1,104 @@
 {
- "goal": "The generator can make deliverables with which their role achieves its purpose.",
+ "goal": "The generator makes deliverables with which their role achieves its purpose.",
  "template": "template.json",
  "example": "../product-vision/best-practice.json",
  "inputs": [],
  "preconditions": [],
- "vital_few": [
+ "critical_success_factors": [
+  {
+   "id": "C1",
+   "what": "The generator and the evaluator know what the deliverable achieves and what decides it."
+  },
+  {
+   "id": "C2",
+   "what": "The generator meets each necessary condition the same way on every run."
+  },
+  {
+   "id": "C3",
+   "what": "The generator makes the deliverable once what it takes is there."
+  }
+ ],
+ "necessary_conditions": [
   {
    "id": "Q1",
-   "about": "goal, vital_few",
-   "what": "Making or judging a deliverable, do the generator and the evaluator know the end its role is after and the few things that decide whether the role reaches it, so that every part of the deliverable carries one of them?"
+   "csf": "C1",
+   "about": "goal",
+   "what": "Starting a deliverable, does the generator know in one sentence the end its role is after, so that it knows what the deliverable achieves?"
   },
   {
    "id": "Q2",
-   "about": "template",
-   "what": "Filling in the template, does the generator find a slot for each vital one and the form its sentences take, so that the deliverable holds the vital few?"
+   "csf": "C1",
+   "about": "critical_success_factors",
+   "what": "Starting a deliverable, does the generator know the few things that must go right for the role to reach that end, so that it knows what decides the deliverable?"
   },
   {
    "id": "Q3",
-   "about": "practices",
-   "what": "Making each vital one, does the generator grasp its intent and the field's established way to make it, so that it makes it in any case, the same way on every run?"
+   "csf": "C1",
+   "about": "necessary_conditions",
+   "what": "Making or judging a deliverable, do the generator and the evaluator know, each as a question, the states of the deliverable that each critical success factor needs, so that both know what decides it?"
   },
   {
    "id": "Q4",
-   "about": "inputs, preconditions",
-   "what": "Starting a deliverable, does the generator know the kinds it makes the deliverable from and the kinds that must pass first, so that it makes the deliverable on what's there?"
+   "csf": "C2",
+   "about": "template",
+   "what": "Filling in the template, does the generator find for each necessary condition its section and the form its sentences take, so that it meets the condition the same way on every run?"
   },
   {
    "id": "Q5",
+   "csf": "C2",
+   "about": "practices",
+   "what": "Meeting a necessary condition, does the generator grasp its intent and the field's established way, so that it meets the condition the same way on every run?"
+  },
+  {
+   "id": "Q6",
+   "csf": "C2",
    "about": "example, source",
-   "what": "Reading the example, does the generator see what the template's slots become in one deliverable, so that it fills its own to the same intent?"
+   "what": "Reading the example, does the generator see what the template's sections become in one deliverable, so that it meets each condition the same way on every run?"
+  },
+  {
+   "id": "Q7",
+   "csf": "C3",
+   "about": "inputs, preconditions",
+   "what": "Starting a deliverable, does the generator know the kinds it makes the deliverable from and the kinds that must pass first, so that it makes the deliverable once what it takes is there?"
   }
  ],
  "practices": [
   {
    "intent": "Q1",
-   "thinking": "The goal is the one end the role is after, in one sentence with the role as its subject. The vital few are the things that decide whether the role reaches it, as Juran's Pareto principle names them: with each one in place the role reaches its end, and with one missing it falls short. Each one is a question of the moment the role uses it, what the role gets there, and what it's after in that, and the evaluator confirms that the role gets it.",
+   "thinking": "Write the end the role is after as one sentence, with the role as its subject.",
    "steps": [
     {
-     "text": "Write the goal, and ask why of each part of it until the end itself shows."
-    },
-    {
-     "text": "Walk through the role's use of the deliverable toward the goal, one moment at a time, and name at each moment what decides whether the role reaches the goal."
-    },
-    {
-     "text": "Write each one as the question of its moment, with a \"so that\" clause where what the role gets differs from the goal."
-    },
-    {
-     "text": "To better a best practice, start from the vital few its use has confirmed, and take in what research shows."
-    },
-    {
-     "text": "Where a deliverable in use falls short of its role, mend the vital one that caused it."
+     "text": "Ask why of each part of the sentence until the end itself shows."
     }
    ]
   },
   {
    "intent": "Q2",
-   "thinking": "The template holds one slot for each vital one, with the form its sentences take, such as one rule and one why, and fixed text for what every deliverable of the kind shares. The generator fills each slot with what this deliverable needs for that vital one.",
+   "thinking": "The critical success factors are the few things that must go right for the role to reach its end, as John Rockart named them: with each one in place, the role reaches its end. Each level of a best practice holds the vital few of the level it serves, as Juran's Pareto principle names them: the critical success factors hold what the goal needs, and the necessary conditions what each factor needs. Write each factor as one sentence that states it.",
+   "steps": [
+    {
+     "text": "Walk through the role's use of the deliverable toward the goal, one moment at a time, and name what must go right at each."
+    }
+   ]
+  },
+  {
+   "intent": "Q3",
+   "thinking": "Each necessary condition is a state of the deliverable that its critical success factor needs, as a goal tree names it. Write each as a question of the moment the role uses it, what the role gets there, and the factor it serves, in a \"so that\" clause. The evaluator confirms each condition, and its practice makes it.",
+   "steps": [
+    {
+     "text": "For each critical success factor, name each state of the deliverable it needs."
+    },
+    {
+     "text": "To better a best practice, start from the conditions its use has confirmed, and take in what research shows."
+    },
+    {
+     "text": "Where a deliverable in use falls short of its role, mend the level that caused it: the goal, a critical success factor, a necessary condition, or its practice."
+    }
+   ]
+  },
+  {
+   "intent": "Q4",
+   "thinking": "The template holds each necessary condition in a section, with the form its sentences take, such as one rule and one why, and fixed text for what every deliverable of the kind shares. Each section holds one or more conditions, and each condition names its sections in `about`.",
    "steps": [
     {
      "text": "Mark each slot so that its reader can tell it from fixed text and the page that shows it keeps it, such as `` `<name>` `` in Markdown."
@@ -72,8 +115,8 @@
    ]
   },
   {
-   "intent": "Q3",
-   "thinking": "Each vital one has one practice. It says first, in short sentences, what the deliverable must be to give the role that vital one, and why the role needs it so, so that the generator finds its way in any case. It then gives the way the field has established for that, found by research, by its established name and with its source, such as single responsibility or Given-When-Then, so that the name carries the field's knowledge to the generator. It names a language or a tool as an example, and gives each established way with when it fits, so that each deliverable's plan picks the way and the tool.",
+   "intent": "Q5",
+   "thinking": "Each necessary condition has one practice. It says first, in short sentences, what the deliverable must be to meet that condition, and why the role needs it so, so that the generator finds its way in any case. It then gives the way the field has established for that, found by research, by its established name and with its source, such as single responsibility or Given-When-Then, so that the name carries the field's knowledge to the generator. It names a language or a tool as an example, and gives each established way with when it fits, so that each deliverable's plan picks the way and the tool.",
    "steps": [
     {
      "text": "Add a step where a generator that holds the intent still needs to know how, such as a format to keep or a place to look, and say what the step achieves."
@@ -87,18 +130,18 @@
    ]
   },
   {
-   "intent": "Q4",
-   "thinking": "Inputs name each kind whose deliverables the generator makes a deliverable of this kind from, and preconditions each kind whose deliverables pass before it makes one, each by the name of its best practice's folder. The plan then holds each deliverable's own paths to them, and orders it after them.",
-   "steps": []
-  },
-  {
-   "intent": "Q5",
-   "thinking": "Make the product's own deliverable of the kind from its design tree by the template and the practices, confirm in it each vital one, and name its file in `example`, as one finished deliverable shows what the slots become.",
+   "intent": "Q6",
+   "thinking": "Make the product's own deliverable of the kind from its design tree by the template and the practices, confirm in it each necessary condition, and name its file in `example`, as one finished deliverable shows what the sections become.",
    "steps": [
     {
      "text": "Where the deliverable lies elsewhere for its own reader, such as a product vision in the developers' folder, name its path in `source`, and copy it with its figures beside the best practice by a script, such as ccpm's `dev/scripts/practices.py example`, so that the copy stays the same as the deliverable."
     }
    ]
+  },
+  {
+   "intent": "Q7",
+   "thinking": "Inputs name each kind whose deliverables the generator makes a deliverable of this kind from, and preconditions each kind whose deliverables pass before it makes one, each by the name of its best practice's folder. The plan then holds each deliverable's own paths to them, and orders it after them.",
+   "steps": []
   }
  ]
 }

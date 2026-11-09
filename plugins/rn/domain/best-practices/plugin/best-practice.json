@@ -5,7 +5,7 @@
   "architecture"
  ],
  "preconditions": [],
- "vital_few": [
+ "necessary_conditions": [
   {
    "id": "Q1",
    "about": "domain, skills, agents, hooks, scripts",
