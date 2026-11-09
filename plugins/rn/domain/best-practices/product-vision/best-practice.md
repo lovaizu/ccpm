@@ -14,18 +14,18 @@ The developer builds a product with which its users achieve what they're after.
 
 ## Necessary conditions
 
-| ID | About | Question |
+| ID | Condition | Sections |
 | --- | --- | --- |
-| Q1 | Roles | Listing whom to build for, does the developer find every role that comes to the product with an end of its own, so that they leave out or split in two no one the product must serve? |
-| Q2 | Objectives and key results, Roles | Reading an objective, does the developer see the end its role is after, so that they build toward that end rather than toward a means or a measure of it? |
-| Q3 | Objectives and key results | Weighing a piece of work, does the developer see which one objective it brings closer, or that it brings none closer, so that they know what the work is for or drop it? |
-| Q4 | Objectives and key results | After a change, does the developer see from the key results whether to keep it, so that they keep only what brings the role's end closer? |
-| Q5 | Roles, Objectives and key results, Concept | Weighing the product against what its roles do today, or meeting a choice no line names, does the developer see what the product values most and why it meets each objective where that way doesn't, so that they build what sets it apart and every choice leans the same way? |
-| Q6 | the whole | Changing how the product works inside while its roles see the same, does the developer find the product vision still true, so that it holds as long as the roles' ends do? |
+| N1 | Listing whom to build for, does the developer find every role that comes to the product with an end of its own, so that they leave out or split in two no one the product must serve? | Roles |
+| N2 | Reading an objective, does the developer see the end its role is after, so that they build toward that end rather than toward a means or a measure of it? | Objectives and key results, Roles |
+| N3 | Weighing a piece of work, does the developer see which one objective it brings closer, or that it brings none closer, so that they know what the work is for or drop it? | Objectives and key results |
+| N4 | After a change, does the developer see from the key results whether to keep it, so that they keep only what brings the role's end closer? | Objectives and key results |
+| N5 | Weighing the product against what its roles do today, or meeting a choice no line names, does the developer see what the product values most and why it meets each objective where that way doesn't, so that they build what sets it apart and every choice leans the same way? | Roles, Objectives and key results, Concept |
+| N6 | Changing how the product works inside while its roles see the same, does the developer find the product vision still true, so that it holds as long as the roles' ends do? | the whole |
 
 ## Practices
 
-### Q1
+### N1
 
 Listing whom to build for, does the developer find every role that comes to the product with an end of its own, so that they leave out or split in two no one the product must serve?
 
@@ -39,7 +39,7 @@ Each role is one end that someone brings to the product, the job they hire it fo
 2. Name the only role the user, as the reader learns nothing more from a name made up for it.
 3. Ask the user who else comes to the product, and confirm with them each role the request doesn't show.
 
-### Q2
+### N2
 
 Reading an objective, does the developer see the end its role is after, so that they build toward that end rather than toward a means or a measure of it?
 
@@ -52,7 +52,7 @@ An objective is the end the role is after in its own work, with the role as its 
 1. Ask why of each part of the objective until no further end shows, as the [five whys](https://en.wikipedia.org/wiki/Five_whys) do, and write that end. Move a part that says how to Concept, and one that says how it would show to the key results.
 2. Confirm with the user an objective that rests on what someone only said or guessed, not on what anyone saw the role do.
 
-### Q3
+### N3
 
 Weighing a piece of work, does the developer see which one objective it brings closer, or that it brings none closer, so that they know what the work is for or drop it?
 
@@ -65,7 +65,7 @@ Each piece of work brings exactly one objective closer. A gain under two objecti
 1. Merge two objectives that one piece of work brings closer together, and split one whose gains pieces of work bring closer apart.
 2. Check by naming, for each change planned or recently made, the one objective it brings closer.
 
-### Q4
+### N4
 
 After a change, does the developer see from the key results whether to keep it, so that they keep only what brings the role's end closer?
 
@@ -79,7 +79,7 @@ Key results count what the role does or feels that shows it meets its end, as [o
 2. Make each a share, an average per user, a count, or a time, and name what it's a share or an average of.
 3. Keep the one result that shows how well and the one that shows how fast, and drop each other.
 
-### Q5
+### N5
 
 Weighing the product against what its roles do today, or meeting a choice no line names, does the developer see what the product values most and why it meets each objective where that way doesn't, so that they build what sets it apart and every choice leans the same way?
 
@@ -96,7 +96,7 @@ Concept holds the few ideas that set the product apart from what its roles do to
 5. Put first the idea the others serve, and name it so that the user knows it at once as what the product values most.
 6. Give someone who has only the concept a choice that no line names, such as whether to add a check, and keep the concept only once they choose as the user would.
 
-### Q6
+### N6
 
 Changing how the product works inside while its roles see the same, does the developer find the product vision still true, so that it holds as long as the roles' ends do?
 

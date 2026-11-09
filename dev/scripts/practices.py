@@ -43,7 +43,7 @@ MARKER = "DELETE_TEMPLATE_COMMENT"
 SCHEMA = "$schema"
 NOTE = re.compile(r"^> \[!NOTE\]\n> " + MARKER + r":.*(?:\n>.*)*", re.MULTILINE)
 MARK = re.compile(r"^(?:> " + MARKER + r":|\s*\"" + MARKER + r"\"\s*:)", re.MULTILINE)
-QUESTION = re.compile(r"\bQ\d+\b")
+QUESTION = re.compile(r"\bN\d+\b")
 # A step that holds only in a case opens with Where or If and its case, as the template writes one.
 CASE = re.compile(r"^(?:Where|If) ")
 # What each action of a trace has its calls do, as the Markdown names them.
@@ -293,11 +293,11 @@ def faults(data: dict[str, Any], template: list[str] | None = None) -> list[str]
     named_parts = {a.strip() for q in data["necessary_conditions"] for a in q["about"].split(",")}
     for part in leaves:
         if part not in named_parts:
-            found.append(f"{what} {part} has no question about it")
+            found.append(f"{what} {part} has no condition about it")
     questions = [q["id"] for q in data["necessary_conditions"]]
-    expected = [f"Q{n}" for n in range(1, len(questions) + 1)]
+    expected = [f"N{n}" for n in range(1, len(questions) + 1)]
     if questions != expected:
-        found.append(f"questions are {', '.join(questions)}, not numbered in order from Q1")
+        found.append(f"conditions are {', '.join(questions)}, not numbered in order from N1")
     for q in data["necessary_conditions"]:
         for about in (a.strip() for a in q["about"].split(",")):
             if about != WHOLE and about not in ids:
@@ -305,11 +305,11 @@ def faults(data: dict[str, Any], template: list[str] | None = None) -> list[str]
                 found.append(f"{q['id']} is about {about}, which is no {where}")
     answered = [p["intent"] for p in data["practices"]]
     if answered != questions:
-        found.append(f"practices meet {', '.join(answered)}, not each question once in its order")
+        found.append(f"practices meet {', '.join(answered)}, not each condition once in its order")
     found += csf_faults(data)
     found += trace_faults(data)
     for named in sorted({n for t in texts(data) for n in QUESTION.findall(t)} - set(questions)):
-        found.append(f"{named} is named, but there is no such question")
+        found.append(f"{named} is named, but there is no such condition")
     return found
 
 
@@ -406,20 +406,23 @@ def markdown_of(path: str, data: dict[str, Any]) -> str:
         out += ["", "## Parts", "", *parts(data["parts"])]
     # A table and headings of their own, as the prose check reads a capital after a colon as a
     # fault.
+    # The last column names what each condition is about: the template's sections, or else the
+    # parts.
+    held = "Parts" if "parts" in data else "Sections"
     factors = data.get("critical_success_factors", [])
     if factors:
         out += ["", "## Critical success factors", "", "| ID | Factor |", "| --- | --- |"]
         out += [f"| {c['id']} | {c['what']} |" for c in factors]
-        out += ["", "## Necessary conditions", "", "| ID | Factor | About | Question |"]
+        out += ["", "## Necessary conditions", "", f"| ID | Factor | Condition | {held} |"]
         out += ["| --- | --- | --- | --- |"]
         out += [
-            f"| {q['id']} | {q['csf']} | {q['about']} | {q['what']} |"
+            f"| {q['id']} | {q['csf']} | {q['what']} | {q['about']} |"
             for q in data["necessary_conditions"]
         ]
     else:
-        out += ["", "## Necessary conditions", "", "| ID | About | Question |"]
+        out += ["", "## Necessary conditions", "", f"| ID | Condition | {held} |"]
         out += ["| --- | --- | --- |"]
-        out += [f"| {q['id']} | {q['about']} | {q['what']} |" for q in data["necessary_conditions"]]
+        out += [f"| {q['id']} | {q['what']} | {q['about']} |" for q in data["necessary_conditions"]]
     out += ["", "## Practices"]
     for practice in data["practices"]:
         question = questions[practice["intent"]]

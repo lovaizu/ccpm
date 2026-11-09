@@ -154,7 +154,7 @@
    "additionalProperties": false,
    "properties": {
     "id": {
-     "description": "The intent's ID in its best practice, such as Q1.",
+     "description": "The intent's ID in its best practice, such as N1.",
      "type": "string"
     },
     "good": {

@@ -4,49 +4,49 @@
  "preconditions": [],
  "necessary_conditions": [
   {
-   "id": "Q1",
+   "id": "N1",
    "about": "the whole",
    "what": "After the code's structure changes, does each caller get every behavior it got before, whether the caller is a person, a script or other code, so that a change of structure is safe for every caller?"
   },
   {
-   "id": "Q2",
+   "id": "N2",
    "about": "the whole",
    "what": "Whatever line the maintainer reads, code or comment, would they lose something they need without it, so that every line they read earns its place?"
   },
   {
-   "id": "Q3",
+   "id": "N3",
    "about": "the whole",
    "what": "When the maintainer reads any name in the code, can they say what it holds or does without going to its definition, so that they read the code without hunting for definitions?"
   },
   {
-   "id": "Q4",
+   "id": "N4",
    "about": "the whole",
    "what": "Each time the maintainer meets a name, can they tell rightly whether it names a thing they have already met, and which one, so that they never take two things for one or one thing for two?"
   },
   {
-   "id": "Q5",
+   "id": "N5",
    "about": "the whole",
    "what": "With one rule or one design decision to change, can the maintainer find the one place that holds it and make the whole change there, so that they make a change once and whole?"
   },
   {
-   "id": "Q6",
+   "id": "N6",
    "about": "the whole",
    "what": "When the maintainer reads any function once from the top, with nothing from outside it but the names it uses, can they say in one sentence what it does, so that they grasp it at one reading?"
   },
   {
-   "id": "Q7",
+   "id": "N7",
    "about": "the whole",
    "what": "When the maintainer moves from one module to another, do they find each kind of thing done the same way, so that each difference they meet is one the code needs?"
   },
   {
-   "id": "Q8",
+   "id": "N8",
    "about": "the whole",
    "what": "Where code looks wrong or roundabout, can the maintainer learn right there why it's so, before they change it, so that they don't undo what it's there for?"
   }
  ],
  "practices": [
   {
-   "intent": "Q1",
+   "intent": "N1",
    "thinking": "The structure changes in small steps, and each step keeps every behavior. The tests from before the change check each step. No step changes a behavior.",
    "steps": [
     {
@@ -73,7 +73,7 @@
    ]
   },
   {
-   "intent": "Q2",
+   "intent": "N2",
    "thinking": "Each line earns its place by what the maintainer would lose without it. What gives the maintainer nothing comes out, and version control keeps it.",
    "steps": [
     {
@@ -85,7 +85,7 @@
    ]
   },
   {
-   "intent": "Q3",
+   "intent": "N3",
    "thinking": "A name says in whole words what it holds or does, so the maintainer reads each line without going to a definition.",
    "steps": [
     {
@@ -97,7 +97,7 @@
    ]
   },
   {
-   "intent": "Q4",
+   "intent": "N4",
    "thinking": "Each thing has one name, the word its users and documents already use for it, and each name names one thing.",
    "steps": [
     {
@@ -106,7 +106,7 @@
    ]
   },
   {
-   "intent": "Q5",
+   "intent": "N5",
    "thinking": "The code writes each rule or design decision once, in the module that has that job. The code doesn't tie together things unrelated in meaning, however alike they look.",
    "steps": [
     {
@@ -127,7 +127,7 @@
    ]
   },
   {
-   "intent": "Q6",
+   "intent": "N6",
    "thinking": "A function does one thing at one level, and takes what it uses as its inputs. Its reader then holds in mind only what the function says. A long function reads as calls to steps, each named for what it does.",
    "steps": [
     {
@@ -145,7 +145,7 @@
    ]
   },
   {
-   "intent": "Q7",
+   "intent": "N7",
    "thinking": "The code does each kind of thing one way throughout. That way is the one the code already has, the nearest code first, unless a better way replaces it everywhere. A difference then means a real difference.",
    "steps": [
     {
@@ -160,7 +160,7 @@
    ]
   },
   {
-   "intent": "Q8",
+   "intent": "N8",
    "thinking": "Where the code can't say why it's so, the reason stands where the maintainer meets the code, such as a limit outside the code or a way tried and dropped.",
    "steps": [
     {

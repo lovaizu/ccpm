@@ -18,23 +18,23 @@ Someone who meets the product for the first time starts using it, from the READM
 
 ## Necessary conditions
 
-| ID | About | Question |
+| ID | Condition | Sections |
 | --- | --- | --- |
-| Q1 | the opening | Telling a colleague about the product, does the reader retell the opening from memory, so that they can weigh the product and pass it on without reading it again? |
-| Q2 | the opening | Reading the gain, does the reader tell what the product would let them do, so that they know whether it's for them? |
-| Q3 | the opening | Before installing, does the reader see what the product doesn't do that they might expect of it, so that a reader who needs that turns away before they install? |
-| Q4 | the opening | Before installing, does the reader see where the product isn't yet fit for use, so that they don't rest their work on it unaware? |
-| Q5 | Requirements, Installation | Starting with nothing set up, does the reader install the product by the README's steps alone and see that it works, so that they can start without help? |
-| Q6 | the opening, Walkthrough | After the walkthrough, does the reader see that the product would give them, on work of their own, the gain the opening promised, so that they choose it on what it does and not on what it claims? |
-| Q7 | How it works | For each problem they feel in the work, does the reader picture how the product makes it go away, so that they see it solves their own problem? |
-| Q8 | How it works | At each point where they would ask whether the product can really do that, does the reader picture how it does it, so that they believe it before they try it? |
-| Q9 | Documentation | Needing more than the README gives, such as fuller use or help, does the reader find where to go next, so that the README need hold only what they need to decide and to start? |
-| Q10 | License | Weighing whether they may use the product, does the reader find the terms for them and their team, so that they can rule it in or out on its license? |
-| Q11 | the whole | Reading from the top, does the reader find each answer just when they come to need it, so that they can stop once they have what they came for? |
+| N1 | Telling a colleague about the product, does the reader retell the opening from memory, so that they can weigh the product and pass it on without reading it again? | the opening |
+| N2 | Reading the gain, does the reader tell what the product would let them do, so that they know whether it's for them? | the opening |
+| N3 | Before installing, does the reader see what the product doesn't do that they might expect of it, so that a reader who needs that turns away before they install? | the opening |
+| N4 | Before installing, does the reader see where the product isn't yet fit for use, so that they don't rest their work on it unaware? | the opening |
+| N5 | Starting with nothing set up, does the reader install the product by the README's steps alone and see that it works, so that they can start without help? | Requirements, Installation |
+| N6 | After the walkthrough, does the reader see that the product would give them, on work of their own, the gain the opening promised, so that they choose it on what it does and not on what it claims? | the opening, Walkthrough |
+| N7 | For each problem they feel in the work, does the reader picture how the product makes it go away, so that they see it solves their own problem? | How it works |
+| N8 | At each point where they would ask whether the product can really do that, does the reader picture how it does it, so that they believe it before they try it? | How it works |
+| N9 | Needing more than the README gives, such as fuller use or help, does the reader find where to go next, so that the README need hold only what they need to decide and to start? | Documentation |
+| N10 | Weighing whether they may use the product, does the reader find the terms for them and their team, so that they can rule it in or out on its license? | License |
+| N11 | Reading from the top, does the reader find each answer just when they come to need it, so that they can stop once they have what they came for? | the whole |
 
 ## Practices
 
-### Q1
+### N1
 
 Telling a colleague about the product, does the reader retell the opening from memory, so that they can weigh the product and pass it on without reading it again?
 
@@ -46,7 +46,7 @@ The opening says in a few short sentences what the product is, whom it's for, wh
 
 1. Read only the opening, put it away, and say it as to a colleague. Where a part goes missing or comes out otherwise, shorten it, or put what the product does in place of each vague or praising word.
 
-### Q2
+### N2
 
 Reading the gain, does the reader tell what the product would let them do, so that they know whether it's for them?
 
@@ -58,7 +58,7 @@ Name whom the product is for by the work they want done, and the gain as the end
 
 1. Name the group and the work more closely where a reader outside that group couldn't tell that the product isn't for them.
 
-### Q3
+### N3
 
 Before installing, does the reader see what the product doesn't do that they might expect of it, so that a reader who needs that turns away before they install?
 
@@ -70,7 +70,7 @@ List only what a reader could reasonably expect of the product and it doesn't do
 
 1. Gather what readers might expect from similar products and from what readers ask, and ask the user whether each is in or out.
 
-### Q4
+### N4
 
 Before installing, does the reader see where the product isn't yet fit for use, so that they don't rest their work on it unaware?
 
@@ -78,7 +78,7 @@ Before installing, does the reader see where the product isn't yet fit for use, 
 
 Where the product isn't yet fit for use, such as a release still in development or one no longer kept up, say so at the top. A reader who starts on it otherwise finds out only once their work rests on it.
 
-### Q5
+### N5
 
 Starting with nothing set up, does the reader install the product by the README's steps alone and see that it works, so that they can start without help?
 
@@ -90,7 +90,7 @@ The requirements and the install steps serve a reader who has nothing set up, ea
 
 1. From a machine or sandbox where nothing the product needs is in place, follow the steps as written and do nothing they don't say. If a step fails or needs what the README doesn't say, write that in and start again.
 
-### Q6
+### N6
 
 After the walkthrough, does the reader see that the product would give them, on work of their own, the gain the opening promised, so that they choose it on what it does and not on what it claims?
 
@@ -104,7 +104,7 @@ Show one real run of the use most readers come for, on work like theirs, from wh
 2. Take each exchange from the record of a real run, in the form the reader meets it, cutting only what the reader doesn't need to see the result.
 3. If the result doesn't show the gain the opening promised, pick another piece of work or another use.
 
-### Q7
+### N7
 
 For each problem they feel in the work, does the reader picture how the product makes it go away, so that they see it solves their own problem?
 
@@ -118,7 +118,7 @@ Each problem the reader feels in the present way, in their own words, gets a fig
 2. For each, take from the design what the product does that makes it go away. Ask the user each one the design doesn't settle.
 3. Look at each figure as a newcomer, and where they couldn't picture from it what its line says, draw it again.
 
-### Q8
+### N8
 
 At each point where they would ask whether the product can really do that, does the reader picture how it does it, so that they believe it before they try it?
 
@@ -132,7 +132,7 @@ Each point a newcomer would doubt gets a figure of its own that draws what its l
 2. For each point, take how the product does it from the design. Ask the user each one the design doesn't settle.
 3. Look at each figure as a newcomer, and where they couldn't picture from it what its line says, draw it again.
 
-### Q9
+### N9
 
 Needing more than the README gives, such as fuller use or help, does the reader find where to go next, so that the README need hold only what they need to decide and to start?
 
@@ -144,7 +144,7 @@ The README holds what the reader needs to decide and to start. For each later ne
 
 1. Open each link.
 
-### Q10
+### N10
 
 Weighing whether they may use the product, does the reader find the terms for them and their team, so that they can rule it in or out on its license?
 
@@ -156,7 +156,7 @@ Name the license and link its full text. A reader may rule the product out by it
 
 1. Open the link, and check that it reaches the license the name says.
 
-### Q11
+### N11
 
 Reading from the top, does the reader find each answer just when they come to need it, so that they can stop once they have what they came for?
 

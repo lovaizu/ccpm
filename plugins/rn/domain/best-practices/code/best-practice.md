@@ -18,21 +18,21 @@ The maintainer is a person or an AI who takes the code over. The maintainer chan
 
 ## Necessary conditions
 
-| ID | About | Question |
+| ID | Condition | Parts |
 | --- | --- | --- |
-| Q1 | manifest, tests | When the maintainer sets the code up on a fresh machine from only what the code gives for its setup, and runs the tests again and in any order, do they see the tests pass each time, so that a failing test points at the code and never at the machine or the order? |
-| Q2 | module-opening | With one behavior to change, can the maintainer tell which module to open from what each module says it alone decides, without reading the modules' bodies, so that they change the behavior in one place? |
-| Q3 | interface | When the maintainer calls a name that another module offers, can they write a call that works from the name's interface alone, without reading its body, so that the body can change behind the interface without breaking its callers? |
-| Q4 | interface, body | For each behavior the code has, can the maintainer name the case of the specification that needs it, so that the code holds no behavior that no one asked for? |
-| Q5 | body | When something the code takes from outside is wrong, can whoever ran the code put it right from only what the code shows them, with nothing left half done, so that a fault from outside never leaves them stuck or their data half changed? |
-| Q6 | tests | For each case the specification names, its edges and refusals included, can the maintainer point to the one test that checks it, and tell the case from that test's name, so that they know which case a failing test breaks? |
-| Q7 | interface, tests | When the maintainer changes a body and its callers still get what its interface says, do the tests still pass, so that they can improve a body without fear? |
-| Q8 | body, tests | When the maintainer breaks the behavior a test checks, does that test fail, so that a broken behavior never goes unnoticed? |
-| Q9 | the whole | With only the code and its specification, can the maintainer make a change the specification asks for, and know from the tests that every other behavior still holds? |
+| N1 | When the maintainer sets the code up on a fresh machine from only what the code gives for its setup, and runs the tests again and in any order, do they see the tests pass each time, so that a failing test points at the code and never at the machine or the order? | manifest, tests |
+| N2 | With one behavior to change, can the maintainer tell which module to open from what each module says it alone decides, without reading the modules' bodies, so that they change the behavior in one place? | module-opening |
+| N3 | When the maintainer calls a name that another module offers, can they write a call that works from the name's interface alone, without reading its body, so that the body can change behind the interface without breaking its callers? | interface |
+| N4 | For each behavior the code has, can the maintainer name the case of the specification that needs it, so that the code holds no behavior that no one asked for? | interface, body |
+| N5 | When something the code takes from outside is wrong, can whoever ran the code put it right from only what the code shows them, with nothing left half done, so that a fault from outside never leaves them stuck or their data half changed? | body |
+| N6 | For each case the specification names, its edges and refusals included, can the maintainer point to the one test that checks it, and tell the case from that test's name, so that they know which case a failing test breaks? | tests |
+| N7 | When the maintainer changes a body and its callers still get what its interface says, do the tests still pass, so that they can improve a body without fear? | interface, tests |
+| N8 | When the maintainer breaks the behavior a test checks, does that test fail, so that a broken behavior never goes unnoticed? | body, tests |
+| N9 | With only the code and its specification, can the maintainer make a change the specification asks for, and know from the tests that every other behavior still holds? | the whole |
 
 ## Practices
 
-### Q1
+### N1
 
 When the maintainer sets the code up on a fresh machine from only what the code gives for its setup, and runs the tests again and in any order, do they see the tests pass each time, so that a failing test points at the code and never at the machine or the order?
 
@@ -47,7 +47,7 @@ What the code gives for its setup names everything the code needs. Each test set
 3. Add to what the setup reads each thing the setup or the tests found missing, such as a runtime or a library, with the versions the code runs on.
 4. Run the tests several times, and in a shuffled order.
 
-### Q2
+### N2
 
 With one behavior to change, can the maintainer tell which module to open from what each module says it alone decides, without reading the modules' bodies, so that they change the behavior in one place?
 
@@ -59,9 +59,9 @@ Each module alone decides one thing that the specification leaves to the code, m
 
 1. Where the module can't say that thing briefly, split the module.
 2. Take a behavior that the specification might change, and read only what the modules say they decide. Check that what they say points to one module. Where it doesn't, rewrite what the modules say, or move the decision.
-3. Where a decision meets a problem that a known design pattern solves, such as Strategy or Adapter in [Design Patterns](https://en.wikipedia.org/wiki/Design_Patterns), use the pattern by its name, and only where a case of the specification needs it now, as Q4 says. The name gives the maintainer the whole design at once.
+3. Where a decision meets a problem that a known design pattern solves, such as Strategy or Adapter in [Design Patterns](https://en.wikipedia.org/wiki/Design_Patterns), use the pattern by its name, and only where a case of the specification needs it now, as N4 says. The name gives the maintainer the whole design at once.
 
-### Q3
+### N3
 
 When the maintainer calls a name that another module offers, can they write a call that works from the name's interface alone, without reading its body, so that the body can change behind the interface without breaking its callers?
 
@@ -77,7 +77,7 @@ The interface gives a caller everything they need to make the call: what it expe
 4. Leave out of that what the types already say.
 5. Have someone who hasn't read the body write a call from the interface alone, and run the call. Where the call fails or they had to guess, add what was missing.
 
-### Q4
+### N4
 
 For each behavior the code has, can the maintainer name the case of the specification that needs it, so that the code holds no behavior that no one asked for?
 
@@ -89,7 +89,7 @@ The code gives only the behaviors the specification asks for, in the form its ca
 
 1. For each option, mode and case the code handles, name the case of the specification that asks for it.
 
-### Q5
+### N5
 
 When something the code takes from outside is wrong, can whoever ran the code put it right from only what the code shows them, with nothing left half done, so that a fault from outside never leaves them stuck or their data half changed?
 
@@ -104,7 +104,7 @@ The code checks what comes from outside, such as arguments, files, settings and 
 3. Write each check so that it runs however someone runs the code. Don't write it as a check that someone can turn off, such as an assert.
 4. Give the code each wrong input that the specification names. Read each message as the one who ran the code, and check that they can put the input right from the message alone.
 
-### Q6
+### N6
 
 For each case the specification names, its edges and refusals included, can the maintainer point to the one test that checks it, and tell the case from that test's name, so that they know which case a failing test breaks?
 
@@ -122,7 +122,7 @@ The tests come from the specification's cases, and they come before the code, as
 6. Run each test before you write its code, and see it fail. The trace: `{tests}` run.
 7. Compare the list of cases with the tests, and check that each case points to one test.
 
-### Q7
+### N7
 
 When the maintainer changes a body and its callers still get what its interface says, do the tests still pass, so that they can improve a body without fear?
 
@@ -135,7 +135,7 @@ The tests call the code as its callers do, so they fail only where a caller woul
 1. Use the real parts where they run fast and wholly inside the test, and a stand-in only for what's slow or outside it.
 2. Change a body without changing what its interface says, and run the tests. Rewrite each test that fails so that it calls the code through the interface.
 
-### Q8
+### N8
 
 When the maintainer breaks the behavior a test checks, does that test fail, so that a broken behavior never goes unnoticed?
 
@@ -149,13 +149,13 @@ A test is worth the faults it catches. So each test checks the result that its c
 2. Change the code in small ways, such as with a [mutation testing](https://research.google/pubs/state-of-mutation-testing-at-google/) tool. For each change under which the tests still pass, add or mend the test of the behavior that the change breaks. The trace: `{mutation}` run.
 3. Run the code over many inputs that the specification allows, such as with [property-based tests](https://hypothesis.works/articles/what-is-property-based-testing/). Keep each input that the code fails on as a fixed test.
 
-### Q9
+### N9
 
 With only the code and its specification, can the maintainer make a change the specification asks for, and know from the tests that every other behavior still holds?
 
 **Thinking**
 
-The whole holds when each preceding question holds. The tools of Q8 and CI measure what a machine can: the mutants that survive, the inputs that a property finds the code fails on, and the CI failures after the local checks pass. Each change leaves fewer of them than the last. Read the code whole as a maintainer new to it for the rest, the design that no tool can check.
+The whole holds when each preceding question holds. The tools of N8 and CI measure what a machine can: the mutants that survive, the inputs that a property finds the code fails on, and the CI failures after the local checks pass. Each change leaves fewer of them than the last. Read the code whole as a maintainer new to it for the rest, the design that no tool can check.
 
 **Steps**
 

@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # The oldest Python that users run and the newest, as Q13 of
+  # The oldest Python that users run and the newest, as N13 of
   # `plugins/rn/domain/best-practices/plugin/best-practice.md` says. 3.9 runs on Ubuntu 24.04, as
   # setup-python has no 3.9 for Ubuntu 26.04, which `ubuntu-latest` now is.
   check:

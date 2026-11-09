@@ -20,43 +20,43 @@
  ],
  "necessary_conditions": [
   {
-   "id": "Q1",
+   "id": "N1",
    "csf": "C1",
    "about": "goal",
    "what": "Starting a deliverable, does the generator know in one sentence the end its role is after, so that it knows what the deliverable achieves?"
   },
   {
-   "id": "Q2",
+   "id": "N2",
    "csf": "C1",
    "about": "critical_success_factors",
    "what": "Starting a deliverable, does the generator know the few things that must go right for the role to reach that end, so that it knows what decides the deliverable?"
   },
   {
-   "id": "Q3",
+   "id": "N3",
    "csf": "C1",
    "about": "necessary_conditions",
    "what": "Making or judging a deliverable, do the generator and the evaluator know, each as a question, the states of the deliverable that each critical success factor needs, so that both know what decides it?"
   },
   {
-   "id": "Q4",
+   "id": "N4",
    "csf": "C2",
    "about": "template",
    "what": "Filling in the template, does the generator find for each necessary condition its section and the form its sentences take, so that it meets the condition the same way on every run?"
   },
   {
-   "id": "Q5",
+   "id": "N5",
    "csf": "C2",
    "about": "practices",
    "what": "Meeting a necessary condition, does the generator grasp its intent and the field's established way, so that it meets the condition the same way on every run?"
   },
   {
-   "id": "Q6",
+   "id": "N6",
    "csf": "C2",
    "about": "example, source",
    "what": "Reading the example, does the generator see what the template's sections become in one deliverable, so that it meets each condition the same way on every run?"
   },
   {
-   "id": "Q7",
+   "id": "N7",
    "csf": "C3",
    "about": "inputs, preconditions",
    "what": "Starting a deliverable, does the generator know the kinds it makes the deliverable from and the kinds that must pass first, so that it makes the deliverable once what it takes is there?"
@@ -64,7 +64,7 @@
  ],
  "practices": [
   {
-   "intent": "Q1",
+   "intent": "N1",
    "thinking": "Write the end the role is after as one sentence, with the role as its subject.",
    "steps": [
     {
@@ -73,7 +73,7 @@
    ]
   },
   {
-   "intent": "Q2",
+   "intent": "N2",
    "thinking": "The critical success factors are the few things that must go right for the role to reach its end, as John Rockart named them: with each one in place, the role reaches its end. Each level of a best practice holds the vital few of the level it serves, as Juran's Pareto principle names them: the critical success factors hold what the goal needs, and the necessary conditions what each factor needs. Write each factor as one sentence that states it.",
    "steps": [
     {
@@ -82,7 +82,7 @@
    ]
   },
   {
-   "intent": "Q3",
+   "intent": "N3",
    "thinking": "Each necessary condition is a state of the deliverable that its critical success factor needs, as a goal tree names it. Write each as a question of the moment the role uses it, what the role gets there, and the factor it serves, in a \"so that\" clause. The evaluator confirms each condition, and its practice makes it.",
    "steps": [
     {
@@ -97,14 +97,14 @@
    ]
   },
   {
-   "intent": "Q4",
+   "intent": "N4",
    "thinking": "The template holds each necessary condition in a section, with the form its sentences take, such as one rule and one why, and fixed text for what every deliverable of the kind shares. Each section holds one or more conditions, and each condition names its sections in `about`.",
    "steps": [
     {
      "text": "Mark each slot so that its reader can tell it from fixed text and the page that shows it keeps it, such as `` `<name>` `` in Markdown."
     },
     {
-     "text": "After each section, write one note that says for each slot what it holds, what its reader uses it for, and whether it's optional. Open the note with a marker by which the generator finds and deletes it, and write it in the form the deliverable's format holds, such as a comment in Markdown or a key in JSON."
+     "text": "After each section, write one note that says for each slot what it holds, the form it takes, and whether it's optional. Open the note with a marker by which the generator finds and deletes it, and write it in the form the deliverable's format holds, such as a comment in Markdown or a key in JSON."
     },
     {
      "text": "Where the deliverable has a JSON Schema of its own, such as the design tree, make the schema the template, its top fields the sections, and each slot's note the description of its field."
@@ -115,8 +115,8 @@
    ]
   },
   {
-   "intent": "Q5",
-   "thinking": "Each necessary condition has one practice. It says first, in short sentences, what the deliverable must be to meet that condition, and why the role needs it so, so that the generator finds its way in any case. It then gives the way the field has established for that, found by research, by its established name and with its source, such as single responsibility or Given-When-Then, so that the name carries the field's knowledge to the generator. It names a language or a tool as an example, and gives each established way with when it fits, so that each deliverable's plan picks the way and the tool.",
+   "intent": "N5",
+   "thinking": "Each necessary condition has one practice. It says first, in short sentences, what the deliverable must be to meet that condition, and why the role needs it so, so that the generator finds its way in any case. It then gives the way the field has established for that, found by research, by its established name and with its source, such as single responsibility or Given-When-Then, so that the name carries the field's knowledge to the generator. The practice holds why and how to find the content, and the template's note the slot's form, so that each fact stands in one place and the two never drift apart. It names a language or a tool as an example, and gives each established way with when it fits, so that each deliverable's plan picks the way and the tool.",
    "steps": [
     {
      "text": "Add a step where a generator that holds the intent still needs to know how, such as a format to keep or a place to look, and say what the step achieves."
@@ -130,7 +130,7 @@
    ]
   },
   {
-   "intent": "Q6",
+   "intent": "N6",
    "thinking": "Make the product's own deliverable of the kind from its design tree by the template and the practices, confirm in it each necessary condition, and name its file in `example`, as one finished deliverable shows what the sections become.",
    "steps": [
     {
@@ -139,7 +139,7 @@
    ]
   },
   {
-   "intent": "Q7",
+   "intent": "N7",
    "thinking": "Inputs name each kind whose deliverables the generator makes a deliverable of this kind from, and preconditions each kind whose deliverables pass before it makes one, each by the name of its best practice's folder. The plan then holds each deliverable's own paths to them, and orders it after them.",
    "steps": []
   }

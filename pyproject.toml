@@ -3,7 +3,7 @@
 [project]
 name = "ccpm"
 version = "0"
-# The oldest Python that users run, as Q13 of plugins/rn/domain/best-practices/plugin/best-practice.md
+# The oldest Python that users run, as N13 of plugins/rn/domain/best-practices/plugin/best-practice.md
 # says, which ruff takes as the version it checks for.
 requires-python = ">=3.9"
 

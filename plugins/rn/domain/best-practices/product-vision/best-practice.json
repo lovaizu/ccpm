@@ -7,39 +7,39 @@
  "preconditions": [],
  "necessary_conditions": [
   {
-   "id": "Q1",
+   "id": "N1",
    "about": "Roles",
    "what": "Listing whom to build for, does the developer find every role that comes to the product with an end of its own, so that they leave out or split in two no one the product must serve?"
   },
   {
-   "id": "Q2",
+   "id": "N2",
    "about": "Objectives and key results, Roles",
    "what": "Reading an objective, does the developer see the end its role is after, so that they build toward that end rather than toward a means or a measure of it?"
   },
   {
-   "id": "Q3",
+   "id": "N3",
    "about": "Objectives and key results",
    "what": "Weighing a piece of work, does the developer see which one objective it brings closer, or that it brings none closer, so that they know what the work is for or drop it?"
   },
   {
-   "id": "Q4",
+   "id": "N4",
    "about": "Objectives and key results",
    "what": "After a change, does the developer see from the key results whether to keep it, so that they keep only what brings the role's end closer?"
   },
   {
-   "id": "Q5",
+   "id": "N5",
    "about": "Roles, Objectives and key results, Concept",
    "what": "Weighing the product against what its roles do today, or meeting a choice no line names, does the developer see what the product values most and why it meets each objective where that way doesn't, so that they build what sets it apart and every choice leans the same way?"
   },
   {
-   "id": "Q6",
+   "id": "N6",
    "about": "the whole",
    "what": "Changing how the product works inside while its roles see the same, does the developer find the product vision still true, so that it holds as long as the roles' ends do?"
   }
  ],
  "practices": [
   {
-   "intent": "Q1",
+   "intent": "N1",
    "thinking": "Each role is one end that someone brings to the product, the job they hire it for, as the [jobs theory](https://hbr.org/2016/09/know-your-customers-jobs-to-be-done) of Clayton Christensen says. Cut the roles by that end, not by who or what takes them: a person and an AI that want the same are one role. A cut by kind hides an end or splits one.",
    "steps": [
     {
@@ -54,7 +54,7 @@
    ]
   },
   {
-   "intent": "Q2",
+   "intent": "N2",
    "thinking": "An objective is the end the role is after in its own work, with the role as its subject. It says nothing of the product, of how the role reaches the end, or of how it would show. A product built to a means or a measure can deliver it while the role misses its end.",
    "steps": [
     {
@@ -66,7 +66,7 @@
    ]
   },
   {
-   "intent": "Q3",
+   "intent": "N3",
    "thinking": "Each piece of work brings exactly one objective closer. A gain under two objectives leaves the developer unable to tell which one the work serves.",
    "steps": [
     {
@@ -78,7 +78,7 @@
    ]
   },
   {
-   "intent": "Q4",
+   "intent": "N4",
    "thinking": "Key results count what the role does or feels that shows it meets its end, as [objectives and key results](https://www.whatmatters.com/faqs/okr-meaning-definition-example) set them: one how well and one how fast. A change that betters a later one counts only while none before it gets worse. A result had fast but not well is no gain, and a count of the product's own output can rise while the role misses its end. Any other count is an improvement to follow, not a key result, as one of the two already shows it or it moves no end.",
    "steps": [
     {
@@ -93,7 +93,7 @@
    ]
   },
   {
-   "intent": "Q5",
+   "intent": "N5",
    "thinking": "Concept holds the few ideas that set the product apart from what its roles do today and make it meet each objective. No one can read a concept off facts: its maker finds it by reacting to tries against the problem. So draw the ideas out of the user one point at a time, by proposals built on their own words. A bare question or a list to pick from gives them nothing to push against, and ideas offered before their own crowd them out. The first idea is what the product values most, and the others serve it. Each idea is a name of a few words and one short sentence, as a concept read at once leads two developers to the same choice, while a long one leaves each to pick the part they like.",
    "steps": [
     {
@@ -117,7 +117,7 @@
    ]
   },
   {
-   "intent": "Q6",
+   "intent": "N6",
    "thinking": "The product vision says only what the roles are after, do, see and receive, and nothing of how the product works inside. Any design that gives the roles the same then leaves it true.",
    "steps": [
     {

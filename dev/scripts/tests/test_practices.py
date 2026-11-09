@@ -36,19 +36,19 @@ DATA: dict[str, Any] = {
     "preconditions": [],
     "parts": [{"id": "a", "what": "A.", "parts": [{"id": "b", "what": "B."}]}],
     "necessary_conditions": [
-        {"id": "Q1", "about": "a", "what": "Does it?"},
-        {"id": "Q2", "about": "b, the whole", "what": "After Q1, does all?"},
+        {"id": "N1", "about": "a", "what": "Does it?"},
+        {"id": "N2", "about": "b, the whole", "what": "After N1, does all?"},
     ],
     "practices": [
         {
-            "intent": "Q1",
+            "intent": "N1",
             "thinking": "Think.",
             "steps": [
                 {"text": "Do.", "trace": {"action": "run", "takes": ["make", "make all"]}},
                 {"text": "Where it fails, mend it."},
             ],
         },
-        {"intent": "Q2", "thinking": "Then.", "steps": []},
+        {"intent": "N2", "thinking": "Then.", "steps": []},
     ],
 }
 
@@ -94,7 +94,7 @@ class Factors(unittest.TestCase):
         self.assertEqual(
             practices.faults(self.factored(stray)),
             [
-                "Q2 is under C3, which is no critical success factor",
+                "N2 is under C3, which is no critical success factor",
                 "C2 has no necessary condition under it",
             ],
         )
@@ -107,7 +107,7 @@ class Factors(unittest.TestCase):
         self.assertEqual(
             practices.faults(self.factored(bare)),
             [
-                "Q1 is under None, which is no critical success factor",
+                "N1 is under None, which is no critical success factor",
                 "C2 has no necessary condition under it",
             ],
         )
@@ -116,13 +116,18 @@ class Factors(unittest.TestCase):
         text = practices.markdown_of(PATH, self.factored())
         self.assertIn(
             "## Critical success factors\n\n| ID | Factor |\n| --- | --- |\n| C1 | A. |\n"
-            "| C2 | B. |\n\n## Necessary conditions\n\n| ID | Factor | About | Question |\n"
+            "| C2 | B. |\n\n## Necessary conditions\n\n| ID | Factor | Condition | Parts |\n"
             "| --- | --- | --- | --- |\n"
-            "| Q1 | C1 | a | Does it? |\n| Q2 | C2 | b, the whole | After Q1, does all? |\n\n"
+            "| N1 | C1 | Does it? | a |\n| N2 | C2 | After N1, does all? | b, the whole |\n\n"
             "## Practices\n",
             text,
         )
         self.assertNotIn("Critical success factors", practices.markdown_of(PATH, DATA))
+
+    def test_the_markdown_names_the_sections_where_a_template_holds_the_form(self):
+        data = {k: v for k, v in DATA.items() if k != "parts"}
+        text = practices.markdown_of(PATH, dict(data, template="template.md"))
+        self.assertIn("| ID | Condition | Sections |\n", text)
 
 
 class Faults(unittest.TestCase):
@@ -134,26 +139,26 @@ class Faults(unittest.TestCase):
             d["necessary_conditions"].reverse()
             d["practices"].reverse()
 
-        self.assertIn("questions are Q2, Q1, not numbered in order from Q1", changed(swap))
+        self.assertIn("conditions are N2, N1, not numbered in order from N1", changed(swap))
 
     def test_practices_not_in_the_questions_order(self):
         def swap(d):
             d["practices"].reverse()
 
-        expected = "practices meet Q2, Q1, not each question once in its order"
+        expected = "practices meet N2, N1, not each condition once in its order"
         self.assertEqual(changed(swap), [expected])
 
     def test_a_question_with_no_method(self):
         def drop(d):
             d["practices"].pop()
 
-        self.assertEqual(changed(drop), ["practices meet Q1, not each question once in its order"])
+        self.assertEqual(changed(drop), ["practices meet N1, not each condition once in its order"])
 
     def test_about_a_part_that_is_not_there(self):
         def wrong(d):
             d["necessary_conditions"][0]["about"] = "c"
 
-        self.assertEqual(changed(wrong), ["Q1 is about c, which is no part"])
+        self.assertEqual(changed(wrong), ["N1 is about c, which is no part"])
 
     def test_a_part_named_twice(self):
         def twice(d):
@@ -163,15 +168,15 @@ class Faults(unittest.TestCase):
 
     def test_a_question_named_in_the_text_that_is_not_there(self):
         def name(d):
-            d["practices"][1]["thinking"] = "As Q3 says."
+            d["practices"][1]["thinking"] = "As N3 says."
 
-        self.assertEqual(changed(name), ["Q3 is named, but there is no such question"])
+        self.assertEqual(changed(name), ["N3 is named, but there is no such condition"])
 
     def test_a_part_no_question_is_about(self):
         def add(d):
             d["parts"].append({"id": "c", "what": "C."})
 
-        self.assertEqual(changed(add), ["part c has no question about it"])
+        self.assertEqual(changed(add), ["part c has no condition about it"])
 
     def test_no_question_about_the_whole_is_no_fault(self):
         def narrow(d):
@@ -182,17 +187,17 @@ class Faults(unittest.TestCase):
     def test_a_best_practice_of_one_question_about_the_whole(self):
         data = {
             "goal": "G.",
-            "necessary_conditions": [{"id": "Q1", "about": "the whole", "what": "Does it?"}],
-            "practices": [{"intent": "Q1", "thinking": "T.", "steps": []}],
+            "necessary_conditions": [{"id": "N1", "about": "the whole", "what": "Does it?"}],
+            "practices": [{"intent": "N1", "thinking": "T.", "steps": []}],
         }
         self.assertEqual(practices.faults(data), [])
 
     def test_two_questions_of_one_number(self):
         def same(d):
-            d["necessary_conditions"][1]["id"] = "Q1"
-            d["practices"][1]["intent"] = "Q1"
+            d["necessary_conditions"][1]["id"] = "N1"
+            d["practices"][1]["intent"] = "N1"
 
-        self.assertIn("questions are Q1, Q1, not numbered in order from Q1", changed(same))
+        self.assertIn("conditions are N1, N1, not numbered in order from N1", changed(same))
 
     def test_a_question_numbered_otherwise_is_not_named_as_missing(self):
         def letter(d):
@@ -202,8 +207,8 @@ class Faults(unittest.TestCase):
         self.assertEqual(
             changed(letter),
             [
-                "questions are A, Q2, not numbered in order from Q1",
-                "Q1 is named, but there is no such question",
+                "conditions are A, N2, not numbered in order from N1",
+                "N1 is named, but there is no such condition",
             ],
         )
 
@@ -211,13 +216,13 @@ class Faults(unittest.TestCase):
         def wrong(d):
             d["necessary_conditions"][0]["about"] = "z"
 
-        self.assertEqual(changed(wrong), ["Q1 is about z, which is no part"])
+        self.assertEqual(changed(wrong), ["N1 is about z, which is no part"])
 
     def test_a_question_named_in_a_intent_that_is_not_there(self):
         def name(d):
-            d["necessary_conditions"][0]["what"] = "Before Q3, does it?"
+            d["necessary_conditions"][0]["what"] = "Before N3, does it?"
 
-        self.assertEqual(changed(name), ["Q3 is named, but there is no such question"])
+        self.assertEqual(changed(name), ["N3 is named, but there is no such condition"])
 
     def test_a_value_that_is_no_text_names_no_question(self):
         def number(d):
@@ -228,7 +233,7 @@ class Faults(unittest.TestCase):
     def test_a_step_of_a_case_that_carries_a_trace(self):
         # Given: a step that holds only where its case does, opening with Where or If, with a trace
         expected = (
-            "step 2 of Q1 holds only in its case, so it carries no trace, as a run outside the case"
+            "step 2 of N1 holds only in its case, so it carries no trace, as a run outside the case"
             " never makes it"
         )
         for opening in ("Where it fails", "If it fails"):
@@ -253,7 +258,7 @@ class Faults(unittest.TestCase):
 
         # Then: the later step's trace is still named
         expected = (
-            "step 2 of Q2 holds only in its case, so it carries no trace, as a run outside the case"
+            "step 2 of N2 holds only in its case, so it carries no trace, as a run outside the case"
             " never makes it"
         )
         self.assertEqual(changed(traced), [expected])
@@ -275,7 +280,7 @@ class Faults(unittest.TestCase):
             with self.subTest(empty=empty):
                 self.assertEqual(
                     changed(traced),
-                    ["step 1 of Q2 takes an empty text in its trace, which no call matches"],
+                    ["step 1 of N2 takes an empty text in its trace, which no call matches"],
                 )
 
 
@@ -298,8 +303,8 @@ BY_TEMPLATE = {
     "inputs": [],
     "preconditions": [],
     "necessary_conditions": [
-        {"id": "Q1", "about": "the opening, Roles", "what": "Does it?"},
-        {"id": "Q2", "about": "OKRs, the whole", "what": "Does all?"},
+        {"id": "N1", "about": "the opening, Roles", "what": "Does it?"},
+        {"id": "N2", "about": "OKRs, the whole", "what": "Does all?"},
     ],
     "practices": DATA["practices"],
 }
@@ -684,14 +689,14 @@ class FaultsByTemplate(unittest.TestCase):
             d["necessary_conditions"][0]["about"] = "the opening, Scenarios, Roles"
 
         self.assertEqual(
-            self.by(wrong), ["Q1 is about Scenarios, which is no section of the template"]
+            self.by(wrong), ["N1 is about Scenarios, which is no section of the template"]
         )
 
     def test_a_section_no_question_is_about(self):
         def narrow(d):
             d["necessary_conditions"][0]["about"] = "Roles"
 
-        self.assertEqual(self.by(narrow), ["section the opening has no question about it"])
+        self.assertEqual(self.by(narrow), ["section the opening has no condition about it"])
 
     def test_parts_beside_the_template(self):
         def add(d):
@@ -739,14 +744,14 @@ class Markdown(unittest.TestCase):
         expected = ["# `kind`\n", "The reader gets it.", "## Parts", "- **a**: A.", "  - **b**: B."]
         expected += [
             (
-                "## Necessary conditions\n\n| ID | About | Question |\n| --- | --- | --- |\n"
-                "| Q1 | a | Does it? |\n| Q2 | b, the whole | After Q1, does all? |\n\n"
+                "## Necessary conditions\n\n| ID | Condition | Parts |\n| --- | --- | --- |\n"
+                "| N1 | Does it? | a |\n| N2 | After N1, does all? | b, the whole |\n\n"
                 "## Practices\n"
             ),
             (
-                "### Q1\n\nDoes it?\n\n**Thinking**\n\nThink.\n\n**Steps**\n\n"
+                "### N1\n\nDoes it?\n\n**Thinking**\n\nThink.\n\n**Steps**\n\n"
                 "1. Do. The trace: `make` or `make all` run.\n2. Where it fails, mend it.\n\n"
-                "### Q2\n"
+                "### N2\n"
             ),
         ]
         for line in expected:
@@ -825,7 +830,7 @@ class Practices(helpers.FolderTest):
         ran("markdown", self.path)
         code, _, err = ran("form", self.path)
         self.assertEqual(code, 1)
-        self.assertIn(f"practices.py: {self.path}: section Use has no question about it", err)
+        self.assertIn(f"practices.py: {self.path}: section Use has no condition about it", err)
         self.assertIn(
             "[template.md](template.md)", self.read(os.path.join(self.folder, "best-practice.md"))
         )
@@ -841,7 +846,7 @@ class Practices(helpers.FolderTest):
         ran("markdown", self.path)
         self.assertEqual(
             ran("form", self.path),
-            (1, "", f"practices.py: {self.path}: section skills has no question about it\n"),
+            (1, "", f"practices.py: {self.path}: section skills has no condition about it\n"),
         )
 
     def test_form_fails_on_a_file_it_names_that_is_not_beside_it(self):

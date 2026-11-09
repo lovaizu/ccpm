@@ -6,20 +6,20 @@ The maintainer is a person or an AI who comes to change the code at any time aft
 
 ## Necessary conditions
 
-| ID | About | Question |
+| ID | Condition | Sections |
 | --- | --- | --- |
-| Q1 | the whole | After the code's structure changes, does each caller get every behavior it got before, whether the caller is a person, a script or other code, so that a change of structure is safe for every caller? |
-| Q2 | the whole | Whatever line the maintainer reads, code or comment, would they lose something they need without it, so that every line they read earns its place? |
-| Q3 | the whole | When the maintainer reads any name in the code, can they say what it holds or does without going to its definition, so that they read the code without hunting for definitions? |
-| Q4 | the whole | Each time the maintainer meets a name, can they tell rightly whether it names a thing they have already met, and which one, so that they never take two things for one or one thing for two? |
-| Q5 | the whole | With one rule or one design decision to change, can the maintainer find the one place that holds it and make the whole change there, so that they make a change once and whole? |
-| Q6 | the whole | When the maintainer reads any function once from the top, with nothing from outside it but the names it uses, can they say in one sentence what it does, so that they grasp it at one reading? |
-| Q7 | the whole | When the maintainer moves from one module to another, do they find each kind of thing done the same way, so that each difference they meet is one the code needs? |
-| Q8 | the whole | Where code looks wrong or roundabout, can the maintainer learn right there why it's so, before they change it, so that they don't undo what it's there for? |
+| N1 | After the code's structure changes, does each caller get every behavior it got before, whether the caller is a person, a script or other code, so that a change of structure is safe for every caller? | the whole |
+| N2 | Whatever line the maintainer reads, code or comment, would they lose something they need without it, so that every line they read earns its place? | the whole |
+| N3 | When the maintainer reads any name in the code, can they say what it holds or does without going to its definition, so that they read the code without hunting for definitions? | the whole |
+| N4 | Each time the maintainer meets a name, can they tell rightly whether it names a thing they have already met, and which one, so that they never take two things for one or one thing for two? | the whole |
+| N5 | With one rule or one design decision to change, can the maintainer find the one place that holds it and make the whole change there, so that they make a change once and whole? | the whole |
+| N6 | When the maintainer reads any function once from the top, with nothing from outside it but the names it uses, can they say in one sentence what it does, so that they grasp it at one reading? | the whole |
+| N7 | When the maintainer moves from one module to another, do they find each kind of thing done the same way, so that each difference they meet is one the code needs? | the whole |
+| N8 | Where code looks wrong or roundabout, can the maintainer learn right there why it's so, before they change it, so that they don't undo what it's there for? | the whole |
 
 ## Practices
 
-### Q1
+### N1
 
 After the code's structure changes, does each caller get every behavior it got before, whether the caller is a person, a script or other code, so that a change of structure is safe for every caller?
 
@@ -35,7 +35,7 @@ The structure changes in small steps, and each step keeps every behavior. The te
 4. Leave each test's expected result as it was, and change a test's call only where the change renamed a name it uses.
 5. Keep a behavior that looks wrong, along with its test. Return it as a point about what the code does, rather than change it here.
 
-### Q2
+### N2
 
 Whatever line the maintainer reads, code or comment, would they lose something they need without it, so that every line they read earns its place?
 
@@ -48,7 +48,7 @@ Each line earns its place by what the maintainer would lose without it. What giv
 1. Fold into its caller each function or layer that only passes a call on. Drop each parameter to which every caller gives the same value, and use that value inside.
 2. Keep a comment that says what the code can't say plainly, such as what a regular expression matches.
 
-### Q3
+### N3
 
 When the maintainer reads any name in the code, can they say what it holds or does without going to its definition, so that they read the code without hunting for definitions?
 
@@ -61,7 +61,7 @@ A name says in whole words what it holds or does, so the maintainer reads each l
 1. For each name, write in a few words what it holds or does, without looking at its definition. Then look at the definition, and flag the name where the two differ.
 2. Make a name say more the farther from its definition the maintainer reads it.
 
-### Q4
+### N4
 
 Each time the maintainer meets a name, can they tell rightly whether it names a thing they have already met, and which one, so that they never take two things for one or one thing for two?
 
@@ -73,7 +73,7 @@ Each thing has one name, the word its users and documents already use for it, an
 
 1. List the things the code handles, and for each the names the code gives it.
 
-### Q5
+### N5
 
 With one rule or one design decision to change, can the maintainer find the one place that holds it and make the whole change there, so that they make a change once and whole?
 
@@ -89,7 +89,7 @@ The code writes each rule or design decision once, in the module that has that j
 4. Where the code truly can't keep a rule in one place, say at each place where the other places are, such as in a comment beside it.
 5. Pick one rule, imagine that it changed, and count the places that would change. Mend the code until that count is one.
 
-### Q6
+### N6
 
 When the maintainer reads any function once from the top, with nothing from outside it but the names it uses, can they say in one sentence what it does, so that they grasp it at one reading?
 
@@ -104,7 +104,7 @@ A function does one thing at one level, and takes what it uses as its inputs. It
 3. Join back two functions that the reader can't understand apart.
 4. Write a clever construct in its plain form.
 
-### Q7
+### N7
 
 When the maintainer moves from one module to another, do they find each kind of thing done the same way, so that each difference they meet is one the code needs?
 
@@ -118,7 +118,7 @@ The code does each kind of thing one way throughout. That way is the one the cod
 2. For each kind, gather each way the code does it.
 3. Where a place needs another way, say why beside it, such as in a comment.
 
-### Q8
+### N8
 
 Where code looks wrong or roundabout, can the maintainer learn right there why it's so, before they change it, so that they don't undo what it's there for?
 

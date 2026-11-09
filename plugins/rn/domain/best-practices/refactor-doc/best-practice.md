@@ -6,20 +6,20 @@ The reader is a person or an AI who reads the document for a purpose, at any tim
 
 ## Necessary conditions
 
-| ID | About | Question |
+| ID | Condition | Sections |
 | --- | --- | --- |
-| Q1 | the whole | Does the reader find each fact said in one place only, in the document or in what they read beside it, with every other place pointing there, so that two places never tell them different things? |
-| Q2 | the whole | Coming to the document for a purpose, can the reader tell from each heading and the sentence under it what the section gives them, so they read the sections their purpose needs and skip the rest? |
-| Q3 | the whole | Where the document gives steps in order, choices that depend on a case, or how several things relate, does the reader see it at a glance, without piecing it together from sentences, so that they grasp it without effort? |
-| Q4 | the whole | Reading from the top, can the reader understand each sentence from what they have read before it, without turning back, reading ahead, or knowing what the document neither says nor points to, so that they read straight through? |
-| Q5 | the whole | When the reader reads any sentence once, as written or through a machine translation into their own language, can they say who or what does what in it, so that no sentence is misread? |
-| Q6 | the whole | Each time the reader meets a name, can they tell rightly whether it names a thing they have already met, and which one, so that they never take two things for one or one thing for two? |
-| Q7 | the whole | When the reader meets a word they haven't used themselves, can they tell what it means right where they meet it, so that no word stops them? |
-| Q8 | the whole | Does each word the reader reads carry part of what the document says, so that no word costs them time and gives them nothing? |
+| N1 | Does the reader find each fact said in one place only, in the document or in what they read beside it, with every other place pointing there, so that two places never tell them different things? | the whole |
+| N2 | Coming to the document for a purpose, can the reader tell from each heading and the sentence under it what the section gives them, so they read the sections their purpose needs and skip the rest? | the whole |
+| N3 | Where the document gives steps in order, choices that depend on a case, or how several things relate, does the reader see it at a glance, without piecing it together from sentences, so that they grasp it without effort? | the whole |
+| N4 | Reading from the top, can the reader understand each sentence from what they have read before it, without turning back, reading ahead, or knowing what the document neither says nor points to, so that they read straight through? | the whole |
+| N5 | When the reader reads any sentence once, as written or through a machine translation into their own language, can they say who or what does what in it, so that no sentence is misread? | the whole |
+| N6 | Each time the reader meets a name, can they tell rightly whether it names a thing they have already met, and which one, so that they never take two things for one or one thing for two? | the whole |
+| N7 | When the reader meets a word they haven't used themselves, can they tell what it means right where they meet it, so that no word stops them? | the whole |
+| N8 | Does each word the reader reads carry part of what the document says, so that no word costs them time and gives them nothing? | the whole |
 
 ## Practices
 
-### Q1
+### N1
 
 Does the reader find each fact said in one place only, in the document or in what they read beside it, with every other place pointing there, so that two places never tell them different things?
 
@@ -32,7 +32,7 @@ The document says each fact, including one that a figure draws or the work itsel
 1. Where two places say a fact in different ways, keep both, and send the difference back so that someone settles it with what the document says. Choosing one would change what the document says.
 2. Replace each other place's copy with a link to that place, saying in a few words what the reader finds there.
 
-### Q2
+### N2
 
 Coming to the document for a purpose, can the reader tell from each heading and the sentence under it what the section gives them, so they read the sections their purpose needs and skip the rest?
 
@@ -45,7 +45,7 @@ The reader picks sections by their headings and first sentences. So each section
 1. Start each heading with the words that tell the most.
 2. Name the reader and the purposes they come with. Read only the headings and first sentences for each purpose. Where the reader would miss a section that the purpose needs, or read one that it doesn't need, rewrite the section's heading or first sentence.
 
-### Q3
+### N3
 
 Where the document gives steps in order, choices that depend on a case, or how several things relate, does the reader see it at a glance, without piecing it together from sentences, so that they grasp it without effort?
 
@@ -64,7 +64,7 @@ The reader grasps at once an order or a relation that the form of a list, a tabl
 7. Draw a table the reader takes in whole at a glance, such as which tests cover which part, as an SVG in the same way, so its marks and groups line up. Keep a table the reader looks a row up in as Markdown, so they can search and copy it.
 8. Set the SVG's colors under prefers-color-scheme, so that it follows the page's light or dark scheme.
 
-### Q4
+### N4
 
 Reading from the top, can the reader understand each sentence from what they have read before it, without turning back, reading ahead, or knowing what the document neither says nor points to, so that they read straight through?
 
@@ -78,7 +78,7 @@ Each sentence comes after everything it rests on, so the reader never holds a se
 2. Start each sentence with what the reader already has, and end it with what's new, the given-new order of [information structure](https://en.wikipedia.org/wiki/Information_structure).
 3. Put a rule's conditions and exceptions beside the rule, where the reader takes them in most easily. Put a short condition before its instruction, so that a reader whose case it isn't can skip the instruction.
 
-### Q5
+### N5
 
 When the reader reads any sentence once, as written or through a machine translation into their own language, can they say who or what does what in it, so that no sentence is misread?
 
@@ -94,7 +94,7 @@ A sentence that makes one point, names who acts, and keeps plain order has one r
 4. Where a pronoun or a "which" could point to two nouns, replace it with the noun it means. Break a string of nouns apart with prepositions.
 5. Read each sentence once as a machine translator would, word by word in its order and with nothing from outside it, and say who does what. Where the sentence reads two ways, reword it. The trace: `{deliverable}` read to its end.
 
-### Q6
+### N6
 
 Each time the reader meets a name, can they tell rightly whether it names a thing they have already met, and which one, so that they never take two things for one or one thing for two?
 
@@ -102,7 +102,7 @@ Each time the reader meets a name, can they tell rightly whether it names a thin
 
 Each thing has one name, the one its reader already uses, written the same way each time. Each name names one thing. The reader, and a translator, then keep one picture of each thing from start to end.
 
-### Q7
+### N7
 
 When the reader meets a word they haven't used themselves, can they tell what it means right where they meet it, so that no word stops them?
 
@@ -115,7 +115,7 @@ The reader takes each word with the meaning they already give it. So the writer 
 1. Write each abbreviation out in full where the reader first meets it, as the [Google developer documentation style guide](https://developers.google.com/style/abbreviations) does.
 2. Where the document gives a common word a meaning of its own, replace it with a word the reader doesn't already read another way.
 
-### Q8
+### N8
 
 Does each word the reader reads carry part of what the document says, so that no word costs them time and gives them nothing?
 

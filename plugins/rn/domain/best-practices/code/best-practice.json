@@ -28,54 +28,54 @@
  ],
  "necessary_conditions": [
   {
-   "id": "Q1",
+   "id": "N1",
    "about": "manifest, tests",
    "what": "When the maintainer sets the code up on a fresh machine from only what the code gives for its setup, and runs the tests again and in any order, do they see the tests pass each time, so that a failing test points at the code and never at the machine or the order?"
   },
   {
-   "id": "Q2",
+   "id": "N2",
    "about": "module-opening",
    "what": "With one behavior to change, can the maintainer tell which module to open from what each module says it alone decides, without reading the modules' bodies, so that they change the behavior in one place?"
   },
   {
-   "id": "Q3",
+   "id": "N3",
    "about": "interface",
    "what": "When the maintainer calls a name that another module offers, can they write a call that works from the name's interface alone, without reading its body, so that the body can change behind the interface without breaking its callers?"
   },
   {
-   "id": "Q4",
+   "id": "N4",
    "about": "interface, body",
    "what": "For each behavior the code has, can the maintainer name the case of the specification that needs it, so that the code holds no behavior that no one asked for?"
   },
   {
-   "id": "Q5",
+   "id": "N5",
    "about": "body",
    "what": "When something the code takes from outside is wrong, can whoever ran the code put it right from only what the code shows them, with nothing left half done, so that a fault from outside never leaves them stuck or their data half changed?"
   },
   {
-   "id": "Q6",
+   "id": "N6",
    "about": "tests",
    "what": "For each case the specification names, its edges and refusals included, can the maintainer point to the one test that checks it, and tell the case from that test's name, so that they know which case a failing test breaks?"
   },
   {
-   "id": "Q7",
+   "id": "N7",
    "about": "interface, tests",
    "what": "When the maintainer changes a body and its callers still get what its interface says, do the tests still pass, so that they can improve a body without fear?"
   },
   {
-   "id": "Q8",
+   "id": "N8",
    "about": "body, tests",
    "what": "When the maintainer breaks the behavior a test checks, does that test fail, so that a broken behavior never goes unnoticed?"
   },
   {
-   "id": "Q9",
+   "id": "N9",
    "about": "the whole",
    "what": "With only the code and its specification, can the maintainer make a change the specification asks for, and know from the tests that every other behavior still holds?"
   }
  ],
  "practices": [
   {
-   "intent": "Q1",
+   "intent": "N1",
    "thinking": "What the code gives for its setup names everything the code needs. Each test sets up and clears everything it uses, and a real tool it runs does only what the test asks of it. A test's result then rests on the code alone, not on the machine or on when a tool's own work runs, as a [hermetic](https://abseil.io/resources/swe-book/html/ch11.html) test holds all it needs to set up, run, and clear its environment.",
    "steps": [
     {
@@ -93,7 +93,7 @@
    ]
   },
   {
-   "intent": "Q2",
+   "intent": "N2",
    "thinking": "Each module alone decides one thing that the specification leaves to the code, most of all one likely to change, as [information hiding](https://doi.org/10.1145/361598.361623) says. The module says that thing briefly where the maintainer meets it first, such as at its top.",
    "steps": [
     {
@@ -103,12 +103,12 @@
      "text": "Take a behavior that the specification might change, and read only what the modules say they decide. Check that what they say points to one module. Where it doesn't, rewrite what the modules say, or move the decision."
     },
     {
-     "text": "Where a decision meets a problem that a known design pattern solves, such as Strategy or Adapter in [Design Patterns](https://en.wikipedia.org/wiki/Design_Patterns), use the pattern by its name, and only where a case of the specification needs it now, as Q4 says. The name gives the maintainer the whole design at once."
+     "text": "Where a decision meets a problem that a known design pattern solves, such as Strategy or Adapter in [Design Patterns](https://en.wikipedia.org/wiki/Design_Patterns), use the pattern by its name, and only where a case of the specification needs it now, as N4 says. The name gives the maintainer the whole design at once."
     }
    ]
   },
   {
-   "intent": "Q3",
+   "intent": "N3",
    "thinking": "The interface gives a caller everything they need to make the call: what it expects, what it gives, and what stays true, as [design by contract](https://www.eiffel.com/values/design-by-contract/introduction/) states them. The caller then need not read the body, and the body can change behind the interface.",
    "steps": [
     {
@@ -129,7 +129,7 @@
    ]
   },
   {
-   "intent": "Q4",
+   "intent": "N4",
    "thinking": "The code gives only the behaviors the specification asks for, in the form its cases ask for now. The maintainer then carries nothing that no one needs, as [You Aren't Gonna Need It](https://martinfowler.com/bliki/Yagni.html) says.",
    "steps": [
     {
@@ -138,7 +138,7 @@
    ]
   },
   {
-   "intent": "Q5",
+   "intent": "N5",
    "thinking": "The code checks what comes from outside, such as arguments, files, settings and the replies of other programs, where it comes in and before the code does anything, as [fail fast](https://martinfowler.com/ieeeSoftware/failFast.pdf) says. When the code refuses an input, its message lets whoever ran the code know which program refused, what was wrong, where, and what the code accepts.",
    "steps": [
     {
@@ -156,7 +156,7 @@
    ]
   },
   {
-   "intent": "Q6",
+   "intent": "N6",
    "thinking": "The tests come from the specification's cases, and they come before the code, as [test-driven development](https://martinfowler.com/bliki/TestDrivenDevelopment.html) has them. Each test checks one behavior, so it says which case it checks.",
    "steps": [
     {
@@ -195,7 +195,7 @@
    ]
   },
   {
-   "intent": "Q7",
+   "intent": "N7",
    "thinking": "The tests call the code as its callers do, so they fail only where a caller would break, as testing through public interfaces in [Software Engineering at Google](https://abseil.io/resources/swe-book/html/ch12.html) says.",
    "steps": [
     {
@@ -207,7 +207,7 @@
    ]
   },
   {
-   "intent": "Q8",
+   "intent": "N8",
    "thinking": "A test is worth the faults it catches. So each test checks the result that its case asks for, and a broken behavior makes the test fail.",
    "steps": [
     {
@@ -234,8 +234,8 @@
    ]
   },
   {
-   "intent": "Q9",
-   "thinking": "The whole holds when each preceding question holds. The tools of Q8 and CI measure what a machine can: the mutants that survive, the inputs that a property finds the code fails on, and the CI failures after the local checks pass. Each change leaves fewer of them than the last. Read the code whole as a maintainer new to it for the rest, the design that no tool can check.",
+   "intent": "N9",
+   "thinking": "The whole holds when each preceding question holds. The tools of N8 and CI measure what a machine can: the mutants that survive, the inputs that a property finds the code fails on, and the CI failures after the local checks pass. Each change leaves fewer of them than the last. Read the code whole as a maintainer new to it for the rest, the design that no tool can check.",
    "steps": [
     {
      "text": "Count the surviving mutants, with the lines kept from mutation counted beside them, the inputs a property finds, and the CI failures after the local checks pass, and set each count against the last."

@@ -9,64 +9,64 @@
  "preconditions": [],
  "necessary_conditions": [
   {
-   "id": "Q1",
+   "id": "N1",
    "about": "the opening",
    "what": "Telling a colleague about the product, does the reader retell the opening from memory, so that they can weigh the product and pass it on without reading it again?"
   },
   {
-   "id": "Q2",
+   "id": "N2",
    "about": "the opening",
    "what": "Reading the gain, does the reader tell what the product would let them do, so that they know whether it's for them?"
   },
   {
-   "id": "Q3",
+   "id": "N3",
    "about": "the opening",
    "what": "Before installing, does the reader see what the product doesn't do that they might expect of it, so that a reader who needs that turns away before they install?"
   },
   {
-   "id": "Q4",
+   "id": "N4",
    "about": "the opening",
    "what": "Before installing, does the reader see where the product isn't yet fit for use, so that they don't rest their work on it unaware?"
   },
   {
-   "id": "Q5",
+   "id": "N5",
    "about": "Requirements, Installation",
    "what": "Starting with nothing set up, does the reader install the product by the README's steps alone and see that it works, so that they can start without help?"
   },
   {
-   "id": "Q6",
+   "id": "N6",
    "about": "the opening, Walkthrough",
    "what": "After the walkthrough, does the reader see that the product would give them, on work of their own, the gain the opening promised, so that they choose it on what it does and not on what it claims?"
   },
   {
-   "id": "Q7",
+   "id": "N7",
    "about": "How it works",
    "what": "For each problem they feel in the work, does the reader picture how the product makes it go away, so that they see it solves their own problem?"
   },
   {
-   "id": "Q8",
+   "id": "N8",
    "about": "How it works",
    "what": "At each point where they would ask whether the product can really do that, does the reader picture how it does it, so that they believe it before they try it?"
   },
   {
-   "id": "Q9",
+   "id": "N9",
    "about": "Documentation",
    "what": "Needing more than the README gives, such as fuller use or help, does the reader find where to go next, so that the README need hold only what they need to decide and to start?"
   },
   {
-   "id": "Q10",
+   "id": "N10",
    "about": "License",
    "what": "Weighing whether they may use the product, does the reader find the terms for them and their team, so that they can rule it in or out on its license?"
   },
   {
-   "id": "Q11",
+   "id": "N11",
    "about": "the whole",
    "what": "Reading from the top, does the reader find each answer just when they come to need it, so that they can stop once they have what they came for?"
   }
  ],
  "practices": [
   {
-   "intent": "Q1",
+   "intent": "N1",
    "thinking": "The opening says in a few short sentences what the product is, whom it's for, where it isn't yet fit for use, and what it doesn't do. Its first sentence names the kind of thing the product is and the one thing it gives the reader, in words the reader already uses and with no feature name or mechanism, so that it says in short what the product is. A reader weighs the product and passes it on by what they remember of the opening.",
    "steps": [
     {
@@ -75,7 +75,7 @@
    ]
   },
   {
-   "intent": "Q2",
+   "intent": "N2",
    "thinking": "Name whom the product is for by the work they want done, and the gain as the end they reach with the product, from the objectives of the product vision. A reader can tell from that whether the product serves their own end.",
    "steps": [
     {
@@ -84,7 +84,7 @@
    ]
   },
   {
-   "intent": "Q3",
+   "intent": "N3",
    "thinking": "List only what a reader could reasonably expect of the product and it doesn't do. A reader who needs it then learns that before they install.",
    "steps": [
     {
@@ -93,12 +93,12 @@
    ]
   },
   {
-   "intent": "Q4",
+   "intent": "N4",
    "thinking": "Where the product isn't yet fit for use, such as a release still in development or one no longer kept up, say so at the top. A reader who starts on it otherwise finds out only once their work rests on it.",
    "steps": []
   },
   {
-   "intent": "Q5",
+   "intent": "N5",
    "thinking": "The requirements and the install steps serve a reader who has nothing set up, each as a command to copy, and end with a sign that the product works. The author's own setup hides the gaps.",
    "steps": [
     {
@@ -107,7 +107,7 @@
    ]
   },
   {
-   "intent": "Q6",
+   "intent": "N6",
    "thinking": "Show one real run of the use most readers come for, on work like theirs, from what the reader gives to the result they keep, with the product's real output. The reader then watches the gain happen, not only promised.",
    "steps": [
     {
@@ -128,7 +128,7 @@
    ]
   },
   {
-   "intent": "Q7",
+   "intent": "N7",
    "thinking": "Each problem the reader feels in the present way, in their own words, gets a figure in which they see it left in that way and gone with the product, and a sentence or two on what the product does that makes it go away. A reader chooses the product once they can picture their own problem gone.",
    "steps": [
     {
@@ -149,7 +149,7 @@
    ]
   },
   {
-   "intent": "Q8",
+   "intent": "N8",
    "thinking": "Each point a newcomer would doubt gets a figure of its own that draws what its line says, and a sentence or two on how the product does it. A reader believes a product can do a thing once they can picture how. A figure of the whole that answers several doubts at once shows none of them at a glance.",
    "steps": [
     {
@@ -170,7 +170,7 @@
    ]
   },
   {
-   "intent": "Q9",
+   "intent": "N9",
    "thinking": "The README holds what the reader needs to decide and to start. For each later need, such as fuller use or help, it links one place. No one reads a README that holds everything, and each later need has its own kind of page, as [Diátaxis](https://diataxis.fr) sorts tutorials, how-to guides, reference, and explanation.",
    "steps": [
     {
@@ -179,7 +179,7 @@
    ]
   },
   {
-   "intent": "Q10",
+   "intent": "N10",
    "thinking": "Name the license and link its full text. A reader may rule the product out by its license alone.",
    "steps": [
     {
@@ -188,7 +188,7 @@
    ]
   },
   {
-   "intent": "Q11",
+   "intent": "N11",
    "thinking": "Order the README so that each reader stops once they have what they came for: the opening for every reader, the installation for one who has chosen the product, the walkthrough and How it works for one still weighing it, and what comes after through links. A reader who must pass what they don't need leaves before what they do, as the [inverted pyramid](https://www.nngroup.com/articles/inverted-pyramid/) puts first what every reader needs.",
    "steps": [
     {

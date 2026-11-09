@@ -31,7 +31,7 @@ holds the person's answer to your last point.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT: `<best practice>`, `<intents>`: the path of the best practice the role
-> works by, and the intents whose practices it carries out, such as Q1 to Q4. The role takes each
+> works by, and the intents whose practices it carries out, such as N1 to N4. The role takes each
 > of those practices as a step of its work.
 
 ## What you give
