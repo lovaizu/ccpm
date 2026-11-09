@@ -62,7 +62,7 @@
   <rect class="unit" x="740" y="100" width="320" height="110" rx="4"/>
   <text class="name start" x="752" y="122">Claude Code process</text>
   <text class="kind start" x="752" y="139">[Claude Code command-line tool]</text>
-  <text class="label small" x="752" y="156">orchestrator, designer, planner, generator,</text>
+  <text class="label small" x="752" y="156">orchestrator, tree-keeper, generator,</text>
   <text class="label small" x="752" y="173">evaluator</text>
   <rect class="unit" x="390" y="100" width="320" height="150" rx="4"/>
   <text class="name start" x="402" y="122">rn&#x27;s folder</text>

@@ -73,11 +73,8 @@
   <text class="name" x="1340.0" y="252.0" text-anchor="middle">Lanes laid</text>
   <text class="kind" x="1340.0" y="269.0" text-anchor="middle">[file · JSON]</text>
   <rect class="box" x="120" y="420" width="200" height="64" rx="0"/>
-  <text class="name" x="220.0" y="452.0" text-anchor="middle">planner</text>
+  <text class="name" x="220.0" y="452.0" text-anchor="middle">tree-keeper</text>
   <text class="kind" x="220.0" y="469.0" text-anchor="middle">[agent · part in Markdown]</text>
-  <rect class="box" x="400" y="420" width="200" height="64" rx="0"/>
-  <text class="name" x="500.0" y="452.0" text-anchor="middle">designer</text>
-  <text class="kind" x="500.0" y="469.0" text-anchor="middle">[agent · part in Markdown]</text>
   <rect class="box" x="680" y="420" width="200" height="64" rx="0"/>
   <text class="name" x="780.0" y="452.0" text-anchor="middle">generator</text>
   <text class="kind" x="780.0" y="469.0" text-anchor="middle">[agent · part in Markdown]</text>
@@ -107,26 +104,27 @@
   <path class="line" d="M700,114 L700,220" marker-end="url(#arrow)"/>
   <text class="label small halo" x="692" y="165" text-anchor="end">types /rn:up, answers</text>
   <path class="line" d="M760,220 L760,114" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="768" y="160" text-anchor="start">puts each question as written</text>
+  <text class="label small halo" x="768" y="160" text-anchor="start">asks each point that&#x27;s theirs</text>
   <text class="data halo" x="768" y="174" text-anchor="start">Point</text>
   <path class="line" d="M220,220 L220,114" marker-end="url(#arrow)"/>
   <text class="label small halo" x="228" y="146" text-anchor="start">pushes, keeps the draft</text>
   <text class="label small halo" x="228" y="160" text-anchor="start">pull request, opens each issue</text>
   <text class="label small halo" x="228" y="174" text-anchor="start">the user says yes to [git, gh]</text>
   <path class="line" d="M620,252 L320,252" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="470" y="244" text-anchor="middle">gets each role&#x27;s cut [Bash]</text>
+  <text class="label small halo" x="470" y="230" text-anchor="middle">gets each cut, lists the runs left,</text>
+  <text class="label small halo" x="470" y="244" text-anchor="middle">opens each issue [Bash]</text>
   <text class="data halo" x="470" y="268" text-anchor="middle">Cut</text>
   <path class="line" d="M730,284 L730,350"/>
   <path class="line" d="M220,350 L1060,350"/>
   <path class="line" d="M220,350 L220,420" marker-end="url(#arrow)"/>
-  <path class="line" d="M500,350 L500,420" marker-end="url(#arrow)"/>
   <path class="line" d="M780,350 L780,420" marker-end="url(#arrow)"/>
   <path class="line" d="M1060,350 L1060,420" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="740" y="312" text-anchor="start">starts each role, resumes it, and gets its result [Agent, SendMessage]</text>
-  <text class="data halo" x="740" y="326" text-anchor="start">Cut, Point</text>
+  <text class="label small halo" x="740" y="298" text-anchor="start">starts each role and gets its result, and resumes</text>
+  <text class="label small halo" x="740" y="312" text-anchor="start">the tree-keeper or a generator [Agent, SendMessage]</text>
+  <text class="data halo" x="740" y="326" text-anchor="start">Cut, Decision, Lack kept</text>
   <path class="line" d="M150,420 L150,284" marker-end="url(#arrow)"/>
   <text class="label small halo" x="158" y="310" text-anchor="start">writes the tree,</text>
-  <text class="label small halo" x="158" y="324" text-anchor="start">commits, opens issues [Bash]</text>
+  <text class="label small halo" x="158" y="324" text-anchor="start">and commits [Bash]</text>
   <path class="line" d="M120,252 L60,252 L60,852 L120,852" marker-end="url(#arrow)"/>
   <text class="label small halo" x="68" y="700" text-anchor="start">writes, reads,</text>
   <text class="label small halo" x="68" y="714" text-anchor="start">cuts, commits</text>
@@ -147,7 +145,6 @@
   <text class="label small halo" x="660" y="938" text-anchor="middle">writes</text>
   <text class="data halo" x="660" y="952" text-anchor="middle">Answers</text>
   <path class="line" d="M200,484 L200,540"/>
-  <path class="line" d="M500,484 L500,540"/>
   <path class="line" d="M860,484 L860,540"/>
   <path class="line" d="M1040,484 L1040,540"/>
   <path class="line" d="M200,540 L1200,540 L1200,852 L1240,852" marker-end="url(#arrow)"/>
