@@ -69,19 +69,16 @@
  "practices": [
   {
    "intent": "N1",
-   "thinking": "Each section covers one topic, and its heading and first sentence say what the reader gets from it. Readers choose sections by their headings and first sentences, and skip the rest. Readers scan the first words of [headings](https://www.nngroup.com/articles/headings-pickup-lines/), so put the most telling words first.",
+   "thinking": "Readers choose what to read by the headings and the first sentences, and skip the rest. Decide the sections in order. First, list the readers with the purposes they come with. Second, split the document so that each section serves one topic: a reader with a given purpose reads a section whole or skips it whole. Third, write each heading so that its first words are the ones the reader scans for, as Nielsen Norman Group found that readers scan the first words of [headings](https://www.nngroup.com/articles/headings-pickup-lines/). Fourth, make the first sentence under the heading say what the section gives. Give each item that a reader looks for, such as a question they have, a heading of its own, so that it shows in the outline and a link can point to it.",
    "steps": [
     {
-     "text": "Name the readers and the purposes they come with. Read only the headings and the first sentences for each purpose. Rewrite a heading or first sentence that would make the reader miss a section the purpose needs. Rewrite one that would make them read a section it doesn't need."
-    },
-    {
-     "text": "Give each item that a reader looks for, such as a question they have, a heading of its own, so that it shows in the outline and a link can point to it."
+     "text": "Read only the headings and the first sentences for each purpose. Rewrite a heading or first sentence that would make the reader miss a section the purpose needs. Rewrite one that would make them read a section it doesn't need."
     }
    ]
   },
   {
    "intent": "N2",
-   "thinking": "Remove each word, sentence, and section that gives the reader nothing they need. Text that carries nothing still costs the reader time, as Strunk and White's rule to omit needless words puts it. Keep the small words that show the structure of a sentence, such as articles and `that`.",
+   "thinking": "Every word costs the reader time, and words that carry nothing still cost it. For each sentence, ask which reader needs it, at this point, and for what. If no reader does, cut it, or move it to a linked document where a reader does. Within a sentence, ask the same of each word, as Strunk and White's rule to omit needless words does. Keep the small words that show the structure of a sentence, such as articles and `that`, because without them both a reader and a machine translator parse the sentence with more effort.",
    "steps": [
     {
      "text": "After cutting, read each changed section again from the top, and check that it still says everything it said before.",
@@ -96,23 +93,20 @@
   },
   {
    "intent": "N3",
-   "thinking": "Put each sentence after everything it depends on, so that the reader never has to turn back or read ahead. Start each sentence with what the reader already knows, and end it with what's new. Linguists call this the given-new order of [information structure](https://en.wikipedia.org/wiki/Information_structure).",
+   "thinking": "A reader who has to turn back or read ahead loses the thread. For each sentence, ask what the reader must already know to understand it, and place it after that. Within a sentence, start with what the reader already knows and end with what's new, the given-new order of [information structure](https://en.wikipedia.org/wiki/Information_structure). Put a short condition before its instruction, so that a reader it doesn't apply to can skip the instruction. Put the exceptions of a rule next to the rule.",
    "steps": [
     {
      "text": "If a sentence depends on something outside the document, such as an earlier discussion, state it in the sentence or link to where it's stated."
     },
     {
-     "text": "Put the conditions and exceptions of a rule next to the rule. Put a short condition before its instruction, so that a reader it doesn't apply to can skip the instruction."
+     "text": "Read the document from the top, and mark each place where you had to look back or ahead. Move what the place needed to before it."
     }
    ]
   },
   {
    "intent": "N4",
-   "thinking": "Show steps, choices, and relations in a form whose shape shows them. A reader takes in at once what a list, a table, or a diagram shows, but has to assemble the same thing from sentences.",
+   "thinking": "A reader takes in at once a relation that a form shows, but has to assemble it from sentences. For each passage, ask what relation it describes, and choose the form by the answer. Steps in order take a numbered list. Items in no order take a bulleted list. Things compared on the same points take a table. Who passes what to whom takes a diagram. An argument, where one point leads to the next by because or but, stays in prose, since a list drops those links.",
    "steps": [
-    {
-     "text": "Choose the form by what it shows: a numbered list for steps in order, a bulleted list for items in no order, a table for things compared on the same points, and a diagram for who passes what to whom."
-    },
     {
      "text": "Draw a sequence diagram as text that the page renders, such as Mermaid, because its steps run from top to bottom and leave no layout to choose."
     },
@@ -123,16 +117,10 @@
   },
   {
    "intent": "N5",
-   "thinking": "A sentence that makes one point, names the actor as its subject, and follows it with an active verb has one meaning for both a reader and a machine translator. [Simplified Technical English](https://www.asd-ste100.org) and the [Google developer documentation style guide](https://developers.google.com/style/translation) both write this way for readers who read in a second language.",
+   "thinking": "A sentence with one meaning reads the same for every reader, and for a machine translator. [Simplified Technical English](https://www.asd-ste100.org) and the [Google developer documentation style guide](https://developers.google.com/style/translation) give the rules for this, for readers who read in a second language. For each sentence, ask how many points it makes, and split it into one sentence for each. Ask who acts, make the actor the subject, and follow it with a verb that carries the action. Ask whether each pronoun could refer to two nouns, and if so, use the noun.",
    "steps": [
     {
-     "text": "Split a sentence that makes more than one point into one sentence for each point."
-    },
-    {
-     "text": "Follow the subject with a verb that carries the action, and keep the object close to the verb. Turn a noun made from a verb, such as `decision`, back into the verb."
-    },
-    {
-     "text": "If a pronoun or `which` could refer to two nouns, replace it with the noun it means."
+     "text": "Turn a noun made from a verb, such as `decision`, back into the verb, and keep the object close to the verb."
     },
     {
      "text": "Read each sentence as a machine translator would: word by word, with nothing from outside the sentence. If it reads two ways, or would read unnaturally in another language, rewrite it.",
@@ -147,11 +135,8 @@
   },
   {
    "intent": "N6",
-   "thinking": "Use the words that readers in the field commonly use for each thing, in their usual meaning. A reader reads each word with the meaning they already know, so any other word makes them guess, such as a term the team coined. The [Federal Plain Language Guidelines](https://www.plainlanguage.gov/guidelines/) call for familiar words for the same reason.",
+   "thinking": "A reader reads each word with the meaning they already know, so any other word makes them guess, such as a term the team coined. For each word, ask whether a reader in the field would use it for this thing, in this meaning. If not, use the word they would use. If no such word exists, define the term where the reader first meets it. The [Federal Plain Language Guidelines](https://www.plainlanguage.gov/guidelines/) call for familiar words for the same reason.",
    "steps": [
-    {
-     "text": "For each word, ask whether a reader in the field would use it for this thing, in this meaning. If not, use the word they would use, or define it where the reader first meets it."
-    },
     {
      "text": "Write out each abbreviation where the reader first meets it, as the [Google developer documentation style guide](https://developers.google.com/style/abbreviations) does."
     }
@@ -159,24 +144,17 @@
   },
   {
    "intent": "N7",
-   "thinking": "State each fact, including one that a figure draws or the work itself shows, in the one place where the reader looks for it, and link to it from every other place. A change made in that place then reaches every reader, and no two places can disagree. This is the principle of a [single source of truth](https://en.wikipedia.org/wiki/Single_source_of_truth).",
+   "thinking": "Two places that state one fact drift apart, and the reader can't tell which one holds. For each fact, ask where a reader would look for it first. That place states it, and every other place links to it, with a few words on what the reader finds there. This includes a fact that a figure draws or the work itself shows. It's the principle of a [single source of truth](https://en.wikipedia.org/wiki/Single_source_of_truth).",
    "steps": [
     {
      "text": "If two places state a fact differently, keep both, and ask whoever owns the document which is right. Choosing one yourself would change what the document says."
-    },
-    {
-     "text": "Replace every other copy with a link to that place, with a few words on what the reader finds there."
     }
    ]
   },
   {
    "intent": "N8",
-   "thinking": "Give each thing one name, the one its readers already use, spelled the same way each time, and use each name for one thing only. The reader, and a translator, then keep one picture of each thing from start to end.",
-   "steps": [
-    {
-     "text": "List the names the document uses. If two names refer to one thing, keep the one readers already use. If one name refers to two things, give one of them another name."
-    }
-   ]
+   "thinking": "A reader who meets two names takes them for two things, and one name used for two things merges them. List the names the document uses for things. For each thing, keep the name its readers already use, spelled the same way each time. If two names refer to one thing, keep one. If one name refers to two things, give one of them another name. The reader, and a translator, then keep one picture of each thing from start to end.",
+   "steps": []
   }
  ]
 }
