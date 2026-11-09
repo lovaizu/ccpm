@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1160 540" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
-  <title>How rn works: your goal and decisions in a design tree, each deliverable made by a best practice, tried in a copy, read by evaluators as its people, and handed to you as a draft pull request</title>
+  <title>How rn works: your goal and decisions in a design tree, each deliverable made by a best practice, tried in a copy, read by evaluators as its people, and handed to you in a pull request for your sign-off</title>
   <style>
     .bg { fill: #ffffff; }
     .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
@@ -70,7 +70,8 @@
   <text class="gets start" x="552" y="121">You get the deliverable you mean.</text>
 
   <path class="line" d="M172,105 L306,105" marker-end="url(#arrow)"/>
-  <text class="label halo mid" x="239" y="97">your request, answers</text>
+  <text class="label halo mid" x="239" y="80">your request, answers,</text>
+  <text class="label halo mid" x="239" y="97">what to change</text>
   <path class="line" d="M306,130 L174,130" marker-end="url(#arrow)"/>
   <text class="label halo mid" x="239" y="149">one question at a time</text>
 
@@ -88,7 +89,7 @@
   <text class="name" x="690" y="326">Throwaway copy</text>
   <text class="kind" x="690" y="346">of your repository</text>
   <text class="quote mid" x="690" y="390">“Does it change files, or merge?”</text>
-  <text class="gets mid" x="690" y="407">Only a copy. You merge.</text>
+  <text class="gets mid" x="690" y="407">Its own worktree and a copy. You merge.</text>
 
   <rect class="box" x="880" y="300" width="200" height="60" rx="6"/>
   <text class="name" x="980" y="326">Evaluators</text>
@@ -111,8 +112,8 @@
   <path class="line" d="M1068,362 V446" marker-end="url(#arrow)"/>
   <text class="label halo end" x="1060" y="432">each aim met</text>
   <rect class="box" x="880" y="450" width="200" height="54" rx="6"/>
-  <text class="name" x="980" y="474">Draft pull request</text>
-  <text class="kind" x="980" y="492">on rn's own branch</text>
+  <text class="name" x="980" y="474">Pull request</text>
+  <text class="kind" x="980" y="492">draft until your last sign-off</text>
   <path class="line" d="M880,477 H95 V149" marker-end="url(#arrow)"/>
-  <text class="label halo mid" x="560" y="481">you merge it</text>
+  <text class="label halo mid" x="560" y="481">each deliverable, for your /rn:ty or /rn:gm, then your merge</text>
 </svg>

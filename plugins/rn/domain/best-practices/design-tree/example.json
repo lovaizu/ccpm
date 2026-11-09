@@ -197,11 +197,6 @@
               "about": "What a sign-off shows",
               "decided": "what the evaluators found the people can do with the deliverable, the decisions taken without asking, and a link to its changes in the pull request. /rn:gm alone takes every comment the user wrote on the pull request since the sign-off",
               "by": "user"
-            },
-            {
-              "about": "A full conversation",
-              "decided": "rn marks its place before Claude Code compacts the conversation and goes on from its records after, so the user needn't pause for it",
-              "by": "user"
             }
           ]
         },
@@ -212,7 +207,7 @@
         },
         {
           "id": "N8",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The user's own checkout",
@@ -404,6 +399,11 @@
               "about": "Commands only in a throwaway copy",
               "decided": "held by a lane of its own in Lane, as dev.md says of a check that no lane holds",
               "by": "reasoning"
+            },
+            {
+              "about": "A full conversation",
+              "decided": "rn marks its place before Claude Code compacts the conversation and goes on from its records after, so the user needn't pause for it",
+              "by": "user"
             }
           ]
         },

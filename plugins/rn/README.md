@@ -10,8 +10,8 @@ the output of a recorded run.
 rn is for you when you have Claude Code make something in a GitHub repository for other people to
 use, such as readers, users, or teammates. Often, you get something that looks done, and then you
 find that it isn't what you meant, or that its people can't use it. With rn, you get each
-deliverable you mean, one its people can use, and you spend your own time only on the questions
-that are yours to decide.
+deliverable you mean, one its people can use, and you spend your own time only on what's yours:
+the questions rn can't settle, and a sign-off on each deliverable.
 
 ## Non-goals
 
@@ -22,7 +22,8 @@ that are yours to decide.
 - rn doesn't make a small change faster than Claude Code alone. It plans each deliverable, and its
   evaluators read it again after each round, with no set limit on rounds. For a one-line fix, ask
   Claude Code directly.
-- rn doesn't merge. It leaves one draft pull request, and you merge it.
+- rn doesn't merge. It leaves one pull request, ready once you sign off the last deliverable, and
+  you merge it.
 
 ## Requirements
 
@@ -47,9 +48,10 @@ rn says that it has no run to pick up.
 
 ## Walkthrough
 
-At the end, you have a draft pull request that adds type hints to every file of your library. The
-code of the people who call the library is then checked against those hints. You typed `/rn:up`
-twice and answered two questions.
+At the end, you have a pull request, ready to merge, that adds type hints to every file of your
+library. The code of the people who call the library is then checked against those hints. You
+answered two questions, signed off the plan and each of the two deliverables, and paused the run
+once overnight.
 
 `invoicer` is a Python library on GitHub that other teams call to total their invoices. It has no
 type hints, so a caller learns of a wrong argument only when their code fails. In Claude Code, at
@@ -77,10 +79,6 @@ yes
 rn shows:
 
 ```text
-The plan:
-  1. Type hints in the code of invoicer, checked by mypy --strict
-  2. invoicer marked as typed, so that the callers' type checkers read its hints
-
 A question that's yours:
   Should the hints cover each file, or only the functions that callers import?
   I recommend only those functions, as they're all that callers see.
@@ -92,8 +90,35 @@ You type:
 each file
 ```
 
-rn makes the first deliverable and asks nothing more. You close Claude Code before rn finishes. The
-next day, in a new conversation at the root of the repository, you type:
+rn shows:
+
+```text
+The plan, for your sign-off:
+  1. Type hints in each file of invoicer, checked by mypy --strict
+  2. invoicer marked as typed, so that the callers' type checkers read its hints
+/rn:ty to approve, or /rn:gm with what to change.
+```
+
+You type:
+
+```text
+/rn:ty
+```
+
+rn makes both deliverables. At the end of the day, before rn finishes, you type:
+
+```text
+/rn:dn
+```
+
+rn shows:
+
+```text
+Paused "type hints for invoicer" while making "Type hints in each file of invoicer".
+Its work so far is pushed. Type /rn:up in any conversation to go on.
+```
+
+The next day, in a new conversation at the root of the repository, you type:
 
 ```text
 /rn:up
@@ -102,17 +127,49 @@ next day, in a new conversation at the root of the repository, you type:
 rn shows:
 
 ```text
-Picking up "type hints for invoicer", at "invoicer marked as typed".
+Picking up "type hints for invoicer", making "Type hints in each file of invoicer",
+where it stopped.
 ```
 
-Once rn finishes, it shows:
+Later, rn shows:
 
 ```text
-Done. Draft pull request: https://github.com/<owner>/invoicer/pull/12
+"Type hints in each file of invoicer", for your sign-off:
+  What its people can do with it: a caller's type checker names a wrong argument before
+  the code runs.
+  Decisions I took without asking:
+  - Typed amounts and rates as Decimal, as the code already computes with Decimal.
+  Changes: https://github.com/<owner>/invoicer/pull/12/files
+/rn:ty to approve, or /rn:gm with what to change.
+```
 
-Decisions I took without asking:
-- Added src/invoicer/py.typed, as type checkers skip a library's hints without it.
-- Typed amounts and rates as Decimal, as the code already computes with Decimal.
+You type:
+
+```text
+/rn:ty
+```
+
+rn shows:
+
+```text
+"invoicer marked as typed", for your sign-off:
+  What its people can do with it: a caller's type checker reads the hints of invoicer.
+  Decisions I took without asking:
+  - Added src/invoicer/py.typed, as type checkers skip a library's hints without it.
+  Changes: https://github.com/<owner>/invoicer/pull/12/files
+/rn:ty to approve, or /rn:gm with what to change.
+```
+
+You type:
+
+```text
+/rn:ty
+```
+
+rn shows:
+
+```text
+Done. The pull request is ready for your merge: https://github.com/<owner>/invoicer/pull/12
 ```
 
 A caller who installs the branch of the pull request and passes the tax rate as text in `app.py`:
@@ -133,14 +190,14 @@ app.py:5: error: Argument 2 to "total" has incompatible type "str"; expected "De
 Found 1 error in 1 file (checked 1 source file)
 ```
 
-You then merge the draft pull request.
+You then merge the pull request.
 
 ## How it works
 
 In everything it does, rn works only on the few things that decide whether the people a deliverable
 is for can use it, and leaves out the rest.
 
-![How rn works: your goal and decisions in a design tree, each deliverable made by a best practice, tried in a copy, read by evaluators as its people, and handed to you as a draft pull request](images/how-it-works.svg)
+![How rn works: your goal and decisions in a design tree, each deliverable made by a best practice, tried in a copy, read by evaluators as its people, and handed to you in a pull request for your sign-off](images/how-it-works.svg)
 
 ### "I can't spell out every detail up front, so it builds the wrong thing."
 
@@ -148,7 +205,9 @@ rn drafts your goal from your request, and you confirm it. It then asks you the 
 that goal, one at a time and each with its recommendation, and keeps them in a design tree. The
 design tree is rn's record of your goal and every decision under it. rn asks only the decisions
 that change what the people get, and plans again after each answer and each finished deliverable.
-So you get the deliverable you mean without writing a specification.
+You sign off the plan, and each deliverable before the next one rests on it. Type `/rn:gm` with
+what to change, or alone to send your comments on the pull request, and rn takes it back to the
+design tree. So you get the deliverable you mean without writing a specification.
 
 ### "Its output misses what this kind of work needs."
 
@@ -179,10 +238,11 @@ steps hold the few things that the work needs, so none of them goes missing.
 
 ### "Does it change the repository's files, or merge on its own?"
 
-No. rn tries a deliverable as its people would, so it runs the deliverable's commands only in a
-throwaway copy of your repository, with a throwaway home folder. It commits each answer and each
-deliverable on its own branch, so you never answer a question twice, even after a closed
-conversation. It leaves one draft pull request, and the merge is yours.
+No. rn works in a git worktree of its own, on its own branch, so you go on with your own work
+meanwhile. It runs a deliverable's commands only in a throwaway copy of your repository, with a
+throwaway home folder. It commits each answer and each step's work on its branch, so you never
+answer a question twice, even after a closed conversation. It leaves one pull request, and the
+merge is yours.
 
 ## Documentation
 
