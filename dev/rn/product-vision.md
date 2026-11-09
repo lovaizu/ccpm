@@ -21,8 +21,8 @@ law. They show whether a change brought its objective closer.
 
 ## Concept
 
-In everything, rn builds up only the
-[vital few](https://en.wikipedia.org/wiki/Pareto_principle), and never the trivial many.
+In everything, rn builds up only the vital few, and never the trivial many. Joseph Juran named
+these two sides of the [Pareto principle](https://en.wikipedia.org/wiki/Pareto_principle).
 
 - What the user really wants, drawn out, for O1\
   rn asks the user along its design tree, the goal with every decision under it, and so draws out
