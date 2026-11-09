@@ -96,7 +96,7 @@
    "id": "N11",
    "csf": "C3",
    "about": "skills, agents",
-   "what": "Does the main conversation start each role, put each of the role's questions to the person as written, and return the answer word for word?"
+   "what": "Does the main conversation hold the talk with the person, have the roles do the work, and check each role's result before it acts on it?"
   },
   {
    "id": "N12",
@@ -300,10 +300,10 @@
   },
   {
    "intent": "N11",
-   "thinking": "A question reworded on the way is a question that no role asked, and an answer summed up loses what the person meant. A subagent's last message reaches only the one who started it, and only the main conversation can ask the person, as [subagents](https://code.claude.com/docs/en/sub-agents#available-tools) says. So the skill makes the main conversation the orchestrator. It starts each role that the routes name, puts each of the role's questions to the person as written, and resumes the role with their answer word for word by SendMessage. A resumed role keeps its whole conversation, as [resume subagents](https://code.claude.com/docs/en/sub-agents#resume-subagents) says. The main conversation makes, judges, and decides nothing of the work. An AI calls the plugin by the same skill, since its own orchestrator also runs in the main conversation.",
+   "thinking": "Only the main conversation can ask the person, and a subagent's last message reaches only the one who started it, as [subagents](https://code.claude.com/docs/en/sub-agents#available-tools) says. So the skill makes the main conversation the orchestrator, which holds the talk with the person: it asks them each point that's theirs, one at a time with a recommendation, and settles the rest by the purpose and the best practices. It makes nothing itself, so that its conversation keeps room for the talk and the judgments. It starts each role that the routes name for the work, and resumes a role by SendMessage, which keeps the role's whole conversation, as [resume subagents](https://code.claude.com/docs/en/sub-agents#resume-subagents) says. A role's result is a claim, and the role may have read the work wrong. So the orchestrator checks each result against the purpose and the best practices before it acts on it, and sends a role back with the ground where the result falls short. An AI calls the plugin by the same skill, since its own orchestrator also runs in the main conversation.",
    "steps": [
     {
-     "text": "Write an architecture test that runs the orchestrator's part through a start and a resume of each role, and check that each prompt holds only the run values and the person's words."
+     "text": "Write an architecture test that runs the orchestrator's part through a start, a result sent back, and a resume of each role, and check that each prompt holds only the run values, the person's words, and the orchestrator's grounds."
     }
    ]
   },

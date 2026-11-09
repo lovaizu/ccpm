@@ -265,7 +265,7 @@
             },
             {
               "about": "The design tree revised on each run",
-              "decided": "what a run finds changes the plan before the next deliverable, and a best practice before the next run once the user takes the change",
+              "decided": "what a run finds changes the design tree before the next deliverable, and a best practice before the next run once the user takes the change",
               "by": "user"
             }
           ]
@@ -276,32 +276,42 @@
           "decisions": [
             {
               "about": "The orchestrator",
-              "decided": "the main conversation, which decides nothing of the work, as the plugin best practice says",
-              "by": "reasoning"
-            },
-            {
-              "about": "The designer",
-              "decided": "a role of its own",
-              "by": "reasoning"
-            },
-            {
-              "about": "Who settles a point",
-              "decided": "the designer, which asks no one where the purpose or a best practice settles it",
+              "decided": "the main conversation, which talks with the user, runs the work, and makes every judgment and the final decision, and makes nothing itself",
               "by": "user"
             },
             {
-              "about": "A point for the user",
-              "decided": "the designer puts one at a time, with a recommendation",
+              "about": "The orchestrator's judgments",
+              "decided": "from the purpose and the best practices, never taking a role's result as given",
+              "by": "user"
+            },
+            {
+              "about": "The tree-keeper",
+              "decided": "writes what the orchestrator decides into the design tree, checks the path up to the goal and each node the change touches, and drafts the plan again at each turn's end",
               "by": "user"
             },
             {
               "about": "Who writes the design tree",
-              "decided": "the planner alone",
+              "decided": "the tree-keeper alone",
+              "by": "user"
+            },
+            {
+              "about": "Who settles a point",
+              "decided": "the orchestrator, which asks the user only the points that are theirs",
+              "by": "user"
+            },
+            {
+              "about": "A point for the user",
+              "decided": "one at a time, with a recommendation",
               "by": "user"
             },
             {
               "about": "A kind with no best practice",
-              "decided": "the planner plans one first, as a deliverable of its own, made by the meta best practice",
+              "decided": "the orchestrator plans one first, as a deliverable of its own, made by the meta best practice",
+              "by": "user"
+            },
+            {
+              "about": "What the generator does",
+              "decided": "makes the deliverable from its cut and its best practice, checks it by the best practice's questions before it returns, and returns an open point instead of guessing",
               "by": "user"
             },
             {
@@ -311,7 +321,7 @@
             },
             {
               "about": "Judging a lack",
-              "decided": "the designer judges each lack by the purpose and the tree, and keeps only one the people fall short by",
+              "decided": "the orchestrator judges each lack by the purpose and the best practices, and keeps only one the people fall short by, as a change to the decision it comes from",
               "by": "user"
             },
             {
@@ -321,12 +331,27 @@
             },
             {
               "about": "Planning again",
-              "decided": "the planner plans again after each settled point and each finished deliverable",
+              "decided": "at each turn's end, from the design tree",
+              "by": "user"
+            },
+            {
+              "about": "Messages with the tree-keeper",
+              "decided": "the orchestrator and the tree-keeper talk by messages through the run",
+              "by": "user"
+            },
+            {
+              "about": "Messages with a generator",
+              "decided": "the orchestrator resumes a generator only with the decision on its open point, or with a result sent back and its ground",
+              "by": "user"
+            },
+            {
+              "about": "Messages with an evaluator",
+              "decided": "none, as the orchestrator only starts it",
               "by": "user"
             },
             {
               "about": "Changes to a best practice",
-              "decided": "before the merge, the designer proposes each change that the run's lacks call for",
+              "decided": "before the merge, the orchestrator proposes each change that the run's lacks call for",
               "by": "user"
             },
             {
@@ -409,7 +434,7 @@
           "decisions": [
             {
               "about": "The size of a deliverable",
-              "decided": "the planner sizes each deliverable so one generator makes it whole and one evaluator reads it whole",
+              "decided": "the orchestrator sizes each deliverable so one generator makes it whole and one evaluator reads it whole",
               "by": "reasoning"
             },
             {
@@ -551,7 +576,13 @@
         {
           "id": "N11",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The orchestrator's own words",
+              "decided": "the guard lets the orchestrator start or resume a role with its own grounds beside the person's words, which it still keeps word for word",
+              "by": "user"
+            }
+          ]
         },
         {
           "id": "N12",
@@ -772,7 +803,13 @@
         {
           "id": "N5",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The orchestrator's part",
+              "decided": "checks each role's result against the purpose and the best practices before it acts on it, never taking it as given",
+              "by": "user"
+            }
+          ]
         },
         {
           "id": "N6",

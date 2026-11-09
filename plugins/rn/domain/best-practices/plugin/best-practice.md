@@ -37,7 +37,7 @@ The developers build a Claude Code plugin whose roles work together to make what
 | N8 | C2 | Does a hook hold each step that an instruction alone doesn't, by stopping a role that drifts and giving it the step again? | hooks |
 | N9 | C2 | Does each check report a pass, a failure, and a check that couldn't run as three different results? | hooks, scripts |
 | N10 | C2 | Does a script or a tool check everything that a machine can check, leaving to the AI only what no machine can? | scripts |
-| N11 | C3 | Does the main conversation start each role, put each of the role's questions to the person as written, and return the answer word for word? | skills, agents |
+| N11 | C3 | Does the main conversation hold the talk with the person, have the roles do the work, and check each role's result before it acts on it? | skills, agents |
 | N12 | C3 | Does the plugin count a point that's the caller's, such as a merge, as approved only by the caller's own act? | skills |
 | N13 | C3 | Does each role ask the person only what's theirs to decide, one question at a time, with a recommendation? | domain |
 | N14 | C3 | When something outside the work stops a role, such as a permission or a tool, does the role ask for it and go on with the rest? | domain |
@@ -179,15 +179,15 @@ A tool finds the same thing every time, at once, while an AI finds only some, an
 
 ### N11
 
-Does the main conversation start each role, put each of the role's questions to the person as written, and return the answer word for word?
+Does the main conversation hold the talk with the person, have the roles do the work, and check each role's result before it acts on it?
 
 **Thinking**
 
-A question reworded on the way is a question that no role asked, and an answer summed up loses what the person meant. A subagent's last message reaches only the one who started it, and only the main conversation can ask the person, as [subagents](https://code.claude.com/docs/en/sub-agents#available-tools) says. So the skill makes the main conversation the orchestrator. It starts each role that the routes name, puts each of the role's questions to the person as written, and resumes the role with their answer word for word by SendMessage. A resumed role keeps its whole conversation, as [resume subagents](https://code.claude.com/docs/en/sub-agents#resume-subagents) says. The main conversation makes, judges, and decides nothing of the work. An AI calls the plugin by the same skill, since its own orchestrator also runs in the main conversation.
+Only the main conversation can ask the person, and a subagent's last message reaches only the one who started it, as [subagents](https://code.claude.com/docs/en/sub-agents#available-tools) says. So the skill makes the main conversation the orchestrator, which holds the talk with the person: it asks them each point that's theirs, one at a time with a recommendation, and settles the rest by the purpose and the best practices. It makes nothing itself, so that its conversation keeps room for the talk and the judgments. It starts each role that the routes name for the work, and resumes a role by SendMessage, which keeps the role's whole conversation, as [resume subagents](https://code.claude.com/docs/en/sub-agents#resume-subagents) says. A role's result is a claim, and the role may have read the work wrong. So the orchestrator checks each result against the purpose and the best practices before it acts on it, and sends a role back with the ground where the result falls short. An AI calls the plugin by the same skill, since its own orchestrator also runs in the main conversation.
 
 **Steps**
 
-1. Write an architecture test that runs the orchestrator's part through a start and a resume of each role, and check that each prompt holds only the run values and the person's words.
+1. Write an architecture test that runs the orchestrator's part through a start, a result sent back, and a resume of each role, and check that each prompt holds only the run values, the person's words, and the orchestrator's grounds.
 
 ### N12
 
