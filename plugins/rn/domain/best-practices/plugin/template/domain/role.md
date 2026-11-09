@@ -27,12 +27,11 @@ holds the person's answer to your last point.
 
 ## The best practice you use
 
-`<best practice>`: `<intents>`.
+`<best practice>`: `<conditions>`.
 
 > [!NOTE]
-> DELETE_TEMPLATE_COMMENT: `<best practice>`, `<intents>`: the path of the best practice the role
-> works by, and the intents whose practices it carries out, such as N1 to N4. The role takes each
-> of those practices as a step of its work.
+> DELETE_TEMPLATE_COMMENT: `<best practice>`, `<conditions>`: the path of the best practice the
+> role works by, and the necessary conditions whose practices it carries out, such as N1 to N4.
 
 ## What you give
 

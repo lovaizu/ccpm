@@ -448,7 +448,13 @@
         {
           "id": "N1",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The code made before",
+              "decided": "Lane's code and tests made before go whole, and the improved code best practice makes Lane anew, as no one can tell where code made without it falls short",
+              "by": "user"
+            }
+          ]
         },
         {
           "id": "N2",
@@ -568,17 +574,7 @@
         {
           "id": "N25",
           "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N26",
-          "good": false,
           "decisions": [
-            {
-              "about": "The code made before",
-              "decided": "Lane's code and tests made before go whole, and the improved code best practice makes Lane anew, as no one can tell where code made without it falls short",
-              "by": "user"
-            },
             {
               "about": "The product vision trial",
               "decided": "its judge counts each step, start, and resume that the guard let through against Lane's product vision",
@@ -814,7 +810,13 @@
         {
           "id": "N1",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The code made before",
+              "decided": "rn's code and tests made before go whole, and the improved code best practice makes rn anew, as no one can tell where code made without it falls short",
+              "by": "user"
+            }
+          ]
         },
         {
           "id": "N2",
@@ -844,7 +846,13 @@
         {
           "id": "N7",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "Picking up a run on another branch",
+              "decided": "/rn:up alone finds the runs on rn's work branches and picks up the one the user means, asking only where more than one waits",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N8",
@@ -909,7 +917,13 @@
         {
           "id": "N20",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "Pin and Turn",
+              "decided": "plugins/pin and plugins/turn go once rn holds their parts. The branch turn-held keeps the eight Turn commits no branch held, rn takes each where its design keeps what it fixes, then the branch goes",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N21",
@@ -919,13 +933,7 @@
         {
           "id": "N22",
           "good": false,
-          "decisions": [
-            {
-              "about": "The product vision trials",
-              "decided": "run on Lane's trial driver in lovaizu/playground, as rn's walkthrough answers points and resumes",
-              "by": "research"
-            }
-          ]
+          "decisions": []
         },
         {
           "id": "N23",
@@ -940,26 +948,11 @@
         {
           "id": "N25",
           "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N26",
-          "good": false,
           "decisions": [
             {
-              "about": "Pin and Turn",
-              "decided": "plugins/pin and plugins/turn go once rn holds their parts. The branch turn-held keeps the eight Turn commits no branch held, rn takes each where its design keeps what it fixes, then the branch goes",
-              "by": "reasoning"
-            },
-            {
-              "about": "Picking up a run on another branch",
-              "decided": "/rn:up alone finds the runs on rn's work branches and picks up the one the user means, asking only where more than one waits",
-              "by": "reasoning"
-            },
-            {
-              "about": "The code made before",
-              "decided": "rn's code and tests made before go whole, and the improved code best practice makes rn anew, as no one can tell where code made without it falls short",
-              "by": "user"
+              "about": "The product vision trials",
+              "decided": "run on Lane's trial driver in lovaizu/playground, as rn's walkthrough answers points and resumes",
+              "by": "research"
             }
           ]
         }

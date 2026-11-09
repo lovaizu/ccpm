@@ -80,7 +80,7 @@ vision, as step 1 says. Have the user agree to it before you make the architectu
 the user agree to it.** Place its files as
 [the plugin best practice's template](../../plugins/rn/domain/best-practices/plugin/template) lays
 them out. Design the plugin to take in what's general, as
-[N21 of the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#n21) says.
+[N17 of the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#n17) says.
 
 **Put the style of `dev/images/figures.css` into each figure with `python3 dev/scripts/figures.py
 write`.** `dev/scripts/check.sh` fails on a figure whose copy of the style differs from that file.
@@ -115,12 +115,12 @@ a. **Write the unit tests of its code with `code/best-practice.json` open, as
    and each rule of the part's contract. Run them and see them fail.**
 
 b. **Write the code with `code/best-practice.json` open until the tests pass**, as
-   [N13 and N14 of the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#n13) say.
+   [N19 and N20 of the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#n19) say.
 
 c. **Write each prompt, a skill or an agent, with
    [prompt/best-practice.json](../../plugins/rn/domain/best-practices/prompt/best-practice.md)
    open. Run no trial of it alone, as
-   [N22 of the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#n22)
+   [N25 of the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#n25)
    says.** Each rule of its steps that must hold on every run goes to a lane in d, as N14 of
    `prompt/best-practice.json` says, and e tests it.
 
@@ -135,7 +135,7 @@ d. **Lay the lanes the prompts' steps call for with `plugins/lane/scripts/lay.py
 
 e. **Write the slice's architecture tests, as
    [N13 of the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#n13) and
-   [N22 of the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#n22)
+   [N25 of the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#n25)
    say: one for each path through its sequences, with what joins the parts run real and a double for
    each role an AI runs. Run them, and fix each failure at the part or the handoff where it
    lies.**
@@ -171,11 +171,11 @@ says. Then confirm the whole again.**
 
 ### 8. Check the structure
 
-**Pass the checks of [N23 of the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#n23).**
+**Pass the checks of [N22 of the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#n22).**
 
 ### 9. Release
 
-**Release as [N24 of the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#n24) says, and only when the user says
+**Release as [N23 of the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#n23) says, and only when the user says
 so. Before you ask the user to merge, make the [final check](final-check.md). Never merge the pull
 request yourself, and never use `--admin`.**
 
