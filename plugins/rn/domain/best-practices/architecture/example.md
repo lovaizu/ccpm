@@ -118,14 +118,6 @@ An evaluator gets only what the deliverable's people have.
 *Why*: an evaluator that knows what the maker meant judges the making, not what the people get, as
 KR1.1 counts.
 
-### Checked before it's taken
-
-A role's result reaches the design tree, the deliverable, or the user only once the orchestrator
-has checked it against the purpose and the best practices.
-
-*Why*: a role that read its work wrong passes the mistake on, and the deliverable misses what the
-user means, as KR1.1 counts.
-
 ### Signed off before it's built on
 
 The plan and each deliverable reach the work that rests on them, and the pull request becomes ready,
@@ -371,10 +363,6 @@ sequenceDiagram
 The user installs rn as [the README](../../../README.md#installation) says, which installs
 Lane with it, and types `/rn:up` in Claude Code at the root of their repository.
 
-- A run's files in `.rn/<yyyymmdd>-<goal>/`, committed on the work's branch, over the system's
-  temporary folder\
-  A run picks up from them in any conversation, as KR1.2 counts. The cost: a folder in the user's
-  repository.
 - rn's own git worktree for each run, over the user's checkout\
   The user goes on with their own work while rn runs, and a pause leaves nothing of theirs to set
   right, as KR1.2 counts. The cost: a worktree on disk for each run until its merge.

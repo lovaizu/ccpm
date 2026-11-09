@@ -149,22 +149,8 @@ You type:
 /rn:ty
 ```
 
-rn shows:
-
-```text
-"invoicer marked as typed", for your sign-off:
-  What its people can do with it: a caller's type checker reads the hints of invoicer.
-  Decisions I took without asking:
-  - Added src/invoicer/py.typed, as type checkers skip a library's hints without it.
-  Changes: https://github.com/<owner>/invoicer/pull/12/files
-/rn:ty to approve, or /rn:gm with what to change.
-```
-
-You type:
-
-```text
-/rn:ty
-```
+rn puts up "invoicer marked as typed" for your sign-off in the same form, and you type `/rn:ty`
+again.
 
 rn shows:
 
