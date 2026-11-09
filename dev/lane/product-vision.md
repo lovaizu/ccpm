@@ -2,7 +2,8 @@
 
 ## Roles
 
-- **user**: one who builds a Claude Code plugin whose roles work in steps, either a person or an AI.
+- user\
+  One who builds a Claude Code plugin whose roles work in steps, either a person or an AI.
 
 ## Objectives and key results
 
@@ -25,16 +26,16 @@ law. They show whether a change brought its objective closer.
 
 ## Concept
 
-Lane instead of writing the steps and the order in prompts, with a hook of one's own for what must
-hold:
+Lane holds each role of the user's plugin to the steps and the order the user wrote, on every run,
+by checks it lays from them.
 
-- **The step says it again, for O1**: a role that Lane stops from breaking a step gets that
-  step's own sentence, so it goes back to the step, where a hook that only refuses leaves it to
-  seek another way.
-- **The result from a run, not from a reply, for O1**: a role gives its result by running a
-  script, so Lane never reads a reply such as "No more entries" as `more`.
-- **The order as routes, for O1**: the user names which role comes next after which result, and
-  Lane gives and holds each next move, so no code keeps the order, and a run goes on after Claude
-  Code compacts its conversation.
-- **Checks laid, not written, for O1**: the user reads their steps and routes as they read once
-  laid, approves them, and gets the checks laid into the plugin with none to write or test.
+- The step said again, for O1\
+  A role that Lane stops gets the step's own sentence, and goes back to the step.
+- The result from a run, not from a reply, for O1\
+  A role gives its result by running a script, so Lane never misreads a reply as a result.
+- The order as routes, for O1\
+  The user names which move comes after each result, and Lane gives and holds each next move.
+- Checks laid, not written, for O1\
+  The user approves their steps and routes as laid, and writes and tests no check.
+- A run picked up where it stopped, for O1\
+  After a pause, a new conversation goes on from the results that the plugin kept.
