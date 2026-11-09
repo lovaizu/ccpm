@@ -27,14 +27,14 @@ The developers build a Claude Code plugin whose roles work together to make what
 
 | ID | Factor | Condition | Sections |
 | --- | --- | --- | --- |
-| N1 | C1 | Does each file sit where its job belongs: the entries in the form Claude Code fixes, and the knowledge of the work in `domain/`? | domain, skills, agents, hooks, scripts |
+| N1 | C1 | Does each file sit where the architecture's Directory structure puts its job: the entries in the form Claude Code fixes, and the knowledge of the work in `domain/`? | domain, skills, agents, hooks, scripts |
 | N2 | C1 | Does each role receive its whole part before its first call, with every file the part names found wherever Claude Code installs the plugin? | agents, skills, domain |
 | N3 | C1 | Does each role's part hold only what the role must do and which practices it carries out, with no copy of their steps? | domain |
-| N4 | C1 | Does each job have a role of its own, with only the tools and the context that the job needs? | agents |
-| N5 | C2 | Does a machine check what passes between the main conversation and each role at each start, resume, and end? | domain |
+| N4 | C1 | Does each job have a role of its own, as the architecture's Components names it, with only the tools and the context that the job needs? | agents |
+| N5 | C2 | Does a machine check what passes between the main conversation and each role at each start, resume, and end, in forms that carry the data the architecture's sequences hand on? | domain |
 | N6 | C2 | Does each file that the plugin reads keep a form that a script checks? | domain |
 | N7 | C2 | Where a run goes in fixed moves, does code hold the order of the moves and keep the run's state in a file? | hooks |
-| N8 | C2 | Does a hook hold each step that an instruction alone doesn't, by stopping a role that drifts and giving it the step again? | hooks |
+| N8 | C2 | Does a hook hold each step, and each rule of the architecture's principles, that an instruction alone doesn't, by stopping a role that drifts and giving it the step again? | hooks |
 | N9 | C2 | Does each check report a pass, a failure, and a check that couldn't run as three different results? | hooks, scripts |
 | N10 | C2 | Does a script or a tool check everything that a machine can check, leaving to the AI only what no machine can? | scripts |
 | N11 | C3 | Does the main conversation hold the talk with the person, have the roles do the work, and check each role's result before it acts on it? | skills, agents |
@@ -51,17 +51,17 @@ The developers build a Claude Code plugin whose roles work together to make what
 | N22 | C5 | Do the plugin and the marketplace pass Claude Code's check of their manifests? | .claude-plugin |
 | N23 | C5 | Does each release have a version and a changelog entry that tell users what changed for them? | .claude-plugin, CHANGELOG.md |
 | N24 | C5 | Does the plugin ship a README made for its users by the readme best practice? | README.md |
-| N25 | C6 | Does each test level say what of Claude Code runs real and what a double replaces? | skills, agents, hooks |
+| N25 | C6 | Does each test level say what of Claude Code runs real and what a double replaces, as the architecture's Tests sets? | skills, agents, hooks |
 
 ## Practices
 
 ### N1
 
-Does each file sit where its job belongs: the entries in the form Claude Code fixes, and the knowledge of the work in `domain/`?
+Does each file sit where the architecture's Directory structure puts its job: the entries in the form Claude Code fixes, and the knowledge of the work in `domain/`?
 
 **Thinking**
 
-A developer finds each job where the structure puts it, and what the plugin knows outlives the agent it runs on. Alistair Cockburn's [hexagonal architecture](https://alistair.cockburn.us/hexagonal-architecture/) keeps the core apart from the adapters that connect it to the outside. Decide where each file goes by asking whether Claude Code fixes its form. Skills, agents, hooks, and scripts take the form Claude Code fixes, each named as its caller calls it, such as the command a person types, and hand the job to the file in `domain/` that does it. `domain/` holds the knowledge of the work in one folder, with no folders split by role, and names no tool of an agent, such as the Agent tool or `AskUserQuestion`: only the entries name them. Two entries for one job then can't drift apart. Keep what only the developers need, such as the tests and the architecture, outside the plugin's folder, since installing copies only that folder.
+A developer finds each job where the structure puts it, and what the plugin knows outlives the agent it runs on. Alistair Cockburn's [hexagonal architecture](https://alistair.cockburn.us/hexagonal-architecture/) keeps the core apart from the adapters that connect it to the outside. Take each file's place from the architecture's Directory structure, and decide where each file goes by asking whether Claude Code fixes its form. Skills, agents, hooks, and scripts take the form Claude Code fixes, each named as its caller calls it, such as the command a person types, and hand the job to the file in `domain/` that does it. `domain/` holds the knowledge of the work in one folder, with no folders split by role, and names no tool of an agent, such as the Agent tool or `AskUserQuestion`: only the entries name them. Two entries for one job then can't drift apart. Keep what only the developers need, such as the tests and the architecture, outside the plugin's folder, since installing copies only that folder.
 
 **Steps**
 
@@ -95,11 +95,11 @@ A role follows whatever its part says, so steps copied into the part drift from 
 
 ### N4
 
-Does each job have a role of its own, with only the tools and the context that the job needs?
+Does each job have a role of its own, as the architecture's Components names it, with only the tools and the context that the job needs?
 
 **Thinking**
 
-A role starts in a fresh context, so nothing from other work leads it astray, as [subagents](https://code.claude.com/docs/en/sub-agents) says. Decide the roles by asking which context and which tools each job needs. Jobs that need different context or tools get a role each: an agent whose `tools` name only what the job needs. Roles that run at the same time each work in a workspace of their own, such as a git worktree and a temporary folder that no other role writes. Their results join only through the one who started them, since two makers in one workspace overwrite each other's files unseen.
+A role starts in a fresh context, so nothing from other work leads it astray, as [subagents](https://code.claude.com/docs/en/sub-agents) says. Take the roles from the architecture's Components, and decide each role's tools by asking which context and which tools its job needs. Jobs that need different context or tools get a role each: an agent whose `tools` name only what the job needs. Roles that run at the same time each work in a workspace of their own, such as a git worktree and a temporary folder that no other role writes. Their results join only through the one who started them, since two makers in one workspace overwrite each other's files unseen.
 
 **Steps**
 
@@ -107,11 +107,11 @@ A role starts in a fresh context, so nothing from other work leads it astray, as
 
 ### N5
 
-Does a machine check what passes between the main conversation and each role at each start, resume, and end?
+Does a machine check what passes between the main conversation and each role at each start, resume, and end, in forms that carry the data the architecture's sequences hand on?
 
 **Thinking**
 
-A machine can check a fixed form, while words written freely leave each reader to guess. Keep each role's input and output to JSON Schemas in `domain/`, drawn from `domain/role-in.schema.json` and `domain/role-out.schema.json`. A role starts with one JSON line of run values, the values that the guard holds its calls to. It resumes with a message whose first line is `The person's answer, word for word:`. It ends by giving a result, a fixed word such as `asks` or `done`, by Lane's result script, and its last message begins with `For the person:` where it holds a question for the person. A role that judges a work by questions writes its answers with the lines of the work that meet each question.
+A machine can check a fixed form, while words written freely leave each reader to guess. Keep each role's input and output to JSON Schemas in `domain/`, drawn from `domain/role-in.schema.json` and `domain/role-out.schema.json`. A role starts with one JSON line of run values, the values that the guard holds its calls to. Each form carries the data that the architecture's sequences hand on at that start, resume, or end, as the data model names it. It resumes with a message that holds the main conversation's own grounds, and the person's words word for word where it has them. It ends by giving a result, a fixed word such as `asks` or `done`, by Lane's result script, and its last message begins with `For the person:` where it holds a question for the person. A role that judges a work by questions writes its answers with the lines of the work that meet each question.
 
 **Steps**
 
@@ -143,11 +143,11 @@ Code follows a course the same way every time, while a conversation that's told 
 
 ### N8
 
-Does a hook hold each step that an instruction alone doesn't, by stopping a role that drifts and giving it the step again?
+Does a hook hold each step, and each rule of the architecture's principles, that an instruction alone doesn't, by stopping a role that drifts and giving it the step again?
 
 **Thinking**
 
-A hook runs every time, while an instruction is only advice. The plugin's hooks are its guard, laid by [Lane](../../../../lane/README.md) from the plugin's proposal as lanes and routes. For each step of the practices, ask whether its drift shows in a tool call or in how a role ends. If it does, lay a lane on it: its hook stops what would break the step and gives the role the step again. Branch protection or permission rules hold what's hard to undo. Keep all hooks in `hooks/hooks.json`. Hooks fire on the main conversation's calls with no `agent_type`, and on a role's with the role's, as [hooks](https://code.claude.com/docs/en/hooks) says. A plugin's agent ignores `hooks`, `mcpServers`, and `permissionMode` in its own frontmatter, as [plugin agents](https://code.claude.com/docs/en/plugins/components#frontmatter-fields-in-plugin-agents) says, and a `SubagentStop` hook in a skill's frontmatter didn't fire in a trial on Claude Code 2.1.318.
+A hook runs every time, while an instruction is only advice. The plugin's hooks are its guard, laid by [Lane](../../../../lane/README.md) from the plugin's proposal as lanes and routes. For each step of the practices, and each rule of the architecture's principles, ask whether its drift shows in a tool call or in how a role ends. If it does, lay a lane on it: its hook stops what would break the step and gives the role the step again. Branch protection or permission rules hold what's hard to undo. Keep all hooks in `hooks/hooks.json`. Hooks fire on the main conversation's calls with no `agent_type`, and on a role's with the role's, as [hooks](https://code.claude.com/docs/en/hooks) says. A plugin's agent ignores `hooks`, `mcpServers`, and `permissionMode` in its own frontmatter, as [plugin agents](https://code.claude.com/docs/en/plugins/components#frontmatter-fields-in-plugin-agents) says, and a `SubagentStop` hook in a skill's frontmatter didn't fire in a trial on Claude Code 2.1.318.
 
 **Steps**
 
@@ -339,11 +339,11 @@ A user learns from the README what they achieve with the plugin and how. Make `R
 
 ### N25
 
-Does each test level say what of Claude Code runs real and what a double replaces?
+Does each test level say what of Claude Code runs real and what a double replaces, as the architecture's Tests sets?
 
 **Thinking**
 
-Every path should hold on every push, and the trials should meet what users meet. The test levels are those of the [architecture best practice](../architecture/best-practice.md). No level runs a prompt, a skill, or an agent alone on a model, since a trial of one role alone meets only the cases its developer set up, and finds no fault that a real request brings out. Instead, the guard holds each rule of a role's steps that must hold on every run, and the architecture tests run the guard on each path, with a double in each role's place. The cost: a fault in a prompt shows only in a product vision trial.
+Every path should hold on every push, and the trials should meet what users meet. The test levels are those of the [architecture best practice](../architecture/best-practice.md), and the architecture's Tests sets what each runs real for this plugin. No level runs a prompt, a skill, or an agent alone on a model, since a trial of one role alone meets only the cases its developer set up, and finds no fault that a real request brings out. Instead, the guard holds each rule of a role's steps that must hold on every run, and the architecture tests run the guard on each path, with a double in each role's place. The cost: a fault in a prompt shows only in a product vision trial.
 
 **Steps**
 

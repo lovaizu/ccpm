@@ -16,8 +16,9 @@ You start with one JSON line of your run values, `<value>`, in the form of
 `${CLAUDE_PLUGIN_ROOT}/domain/<role>-in.schema.json`. A name in braces, such as `{<value>}`, stands
 for your run value of that name: put the value in its place in a command.
 
-The main conversation may resume you with a message whose first line is `The person's answer, word for word:`. The rest
-holds the person's answer to your last point.
+The main conversation may resume you with a message whose first line is `The main conversation's
+grounds:`. The lines after it hold its decision on your last result and why. Where the person
+answered, a line `The person's words, word for word:` follows, with their words as they wrote them.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:

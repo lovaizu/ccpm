@@ -71,7 +71,7 @@
    "id": "N2",
    "csf": "C1",
    "about": "description, goal",
-   "what": "Does the body do exactly the task that the description says?"
+   "what": "Does the body do exactly the task that the description says, which the architecture gives the role?"
   },
   {
    "id": "N3",
@@ -137,7 +137,7 @@
    "id": "N13",
    "csf": "C5",
    "about": "steps, output",
-   "what": "Can the caller act on what comes back without asking the AI anything further?"
+   "what": "Can the caller act on what comes back, in the form that the architecture's sequences hand on, without asking the AI anything further?"
   },
   {
    "id": "N14",
@@ -172,7 +172,7 @@
   },
   {
    "intent": "N2",
-   "thinking": "The caller gets what the description promised only if the body does that same task. Compare what the description says the prompt does with what the goal and the steps have the AI do. For each thing that's in one and not the other, add it to the body or take it out of the description.",
+   "thinking": "The caller gets what the description promised only if the body does that same task. Take the task from the architecture: what the role's line in Components says it alone decides, and each step that the sequences give it. Compare what the description says the prompt does with what the goal and the steps have the AI do. For each thing that's in one and not the other, add it to the body or take it out of the description.",
    "steps": []
   },
   {
@@ -246,7 +246,7 @@
   },
   {
    "intent": "N13",
-   "thinking": "The caller gets only what comes back, so a result that needs a follow-up question costs a round trip. Name the caller and what it does next with the result. List what it needs for that: the result, what the AI did, and what it didn't do and why. Choose the form by who reads it: a fixed form, such as JSON, where a script reads it, and short plain words where a person does.",
+   "thinking": "The caller gets only what comes back, so a result that needs a follow-up question costs a round trip. Name the caller and what it does next with the result. Take what comes back from the step of the architecture's sequences where the role answers, with the data as the data model names it. List what it needs for that: the result, what the AI did, and what it didn't do and why. Choose the form by who reads it: a fixed form, such as JSON, where a script reads it, and short plain words where a person does.",
    "steps": [
     {
      "text": "Check that a step makes each thing that the output names."

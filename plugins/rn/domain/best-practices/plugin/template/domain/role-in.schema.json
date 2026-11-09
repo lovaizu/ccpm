@@ -23,9 +23,9 @@
       }
     },
     "resume": {
-      "description": "The message by which the main conversation resumes the role with SendMessage, for a role that ends with a point for the person: its first line, then the person's answer as they wrote it, because a summary loses what the person meant.",
+      "description": "The message by which the main conversation resumes the role with SendMessage: its first line, then its decision on the role's last result and why, and, where the person answered, a line that opens the person's words as they wrote them, because a summary loses what the person meant.",
       "type": "string",
-      "pattern": "^The person's answer, word for word:\\n"
+      "pattern": "^The main conversation's grounds:\\n"
     }
   }
 }

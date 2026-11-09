@@ -30,7 +30,7 @@ Maintainers, people or AI agents, change what the code does and know that every 
 | --- | --- | --- | --- |
 | N1 | C1 | Does each module say, where the maintainer first meets it, the one thing it alone decides? | module-opening |
 | N2 | C1 | Does each name that a module offers state everything a caller needs to call it without reading its body? | interface |
-| N3 | C1 | Does each behavior of the code trace to a case of the specification that asks for it? | interface, body |
+| N3 | C1 | Does each behavior of the code trace to a case of its specification, which is what the architecture asks of its part? | interface, body |
 | N4 | C2 | Do the tests pass in any order and on every run, on a fresh machine set up from the code's setup alone? | manifest, tests |
 | N5 | C2 | Does each case of the specification, its edges and refusals included, have one test whose name says the case? | tests |
 | N6 | C2 | Do the tests call the code only as its callers do, through its interfaces? | interface, tests |
@@ -65,11 +65,11 @@ A caller who needn't read the body lets the body change behind the interface wit
 
 ### N3
 
-Does each behavior of the code trace to a case of the specification that asks for it?
+Does each behavior of the code trace to a case of its specification, which is what the architecture asks of its part?
 
 **Thinking**
 
-Every behavior that no one asked for is code the maintainer must carry and keep working. [You Aren't Gonna Need It](https://martinfowler.com/bliki/Yagni.html) keeps only what the cases ask for now, in the form they ask for. For each option, mode, and case that the code handles, name the case of the specification that asks for it. Remove what no case asks for.
+Every behavior that no one asked for is code the maintainer must carry and keep working. [You Aren't Gonna Need It](https://martinfowler.com/bliki/Yagni.html) keeps only what the cases ask for now, in the form they ask for. The specification is what the architecture asks of the part: the decisions its line gives the part, the rules of the principles, and each step of a sequence that the part takes or answers, with the data as the data model names it. For each option, mode, and case that the code handles, name the case of the specification that asks for it. Remove what no case asks for.
 
 ### N4
 

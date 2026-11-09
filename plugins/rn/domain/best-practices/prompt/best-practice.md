@@ -34,7 +34,7 @@ An AI agent that gets the prompt for a request it's meant for does the task as t
 | ID | Factor | Condition | Parts |
 | --- | --- | --- | --- |
 | N1 | C1 | Do the name and the description let the host choose the prompt for each request it's for, and pass it over for a near request it isn't for? | description |
-| N2 | C1 | Does the body do exactly the task that the description says? | description, goal |
+| N2 | C1 | Does the body do exactly the task that the description says, which the architecture gives the role? | description, goal |
 | N3 | C2 | Does the goal say what the task is for, and how the AI checks that it has reached it? | goal |
 | N4 | C2 | Does the prompt give every fact that the AI can't find or know on its own, and say where the rest lies? | context |
 | N5 | C3 | Does each step lead toward what the goal says the task is for, with the last step reaching it? | goal, steps |
@@ -45,7 +45,7 @@ An AI agent that gets the prompt for a request it's meant for does the task as t
 | N10 | C4 | Can the AI take every action that the steps call for with the tools it may use? | tools, steps |
 | N11 | C4 | Does the host refuse each action that lies outside the task? | tools |
 | N12 | C4 | Does a hook hold each rule that must hold on every run, with a test of the hook both where the AI keeps the rule and where it breaks it? | steps |
-| N13 | C5 | Can the caller act on what comes back without asking the AI anything further? | steps, output |
+| N13 | C5 | Can the caller act on what comes back, in the form that the architecture's sequences hand on, without asking the AI anything further? | steps, output |
 | N14 | C5 | Can the person decide from the first lines of each message that the AI writes to them? | output |
 | N15 | C5 | Does each claim that the AI reports rest on a check it ran on the real thing, with what it didn't check stated? | output |
 | N16 | C6 | Do trials on each kind of request the prompt is for, each run several times on the model its users run, show the AI reaching the result on every run? | the whole |
@@ -63,11 +63,11 @@ To pick a prompt for a request, the host reads only the name and the description
 
 ### N2
 
-Does the body do exactly the task that the description says?
+Does the body do exactly the task that the description says, which the architecture gives the role?
 
 **Thinking**
 
-The caller gets what the description promised only if the body does that same task. Compare what the description says the prompt does with what the goal and the steps have the AI do. For each thing that's in one and not the other, add it to the body or take it out of the description.
+The caller gets what the description promised only if the body does that same task. Take the task from the architecture: what the role's line in Components says it alone decides, and each step that the sequences give it. Compare what the description says the prompt does with what the goal and the steps have the AI do. For each thing that's in one and not the other, add it to the body or take it out of the description.
 
 ### N3
 
@@ -168,11 +168,11 @@ The AI keeps a rule on most runs, not on every run. A [hook](https://code.claude
 
 ### N13
 
-Can the caller act on what comes back without asking the AI anything further?
+Can the caller act on what comes back, in the form that the architecture's sequences hand on, without asking the AI anything further?
 
 **Thinking**
 
-The caller gets only what comes back, so a result that needs a follow-up question costs a round trip. Name the caller and what it does next with the result. List what it needs for that: the result, what the AI did, and what it didn't do and why. Choose the form by who reads it: a fixed form, such as JSON, where a script reads it, and short plain words where a person does.
+The caller gets only what comes back, so a result that needs a follow-up question costs a round trip. Name the caller and what it does next with the result. Take what comes back from the step of the architecture's sequences where the role answers, with the data as the data model names it. List what it needs for that: the result, what the AI did, and what it didn't do and why. Choose the form by who reads it: a fixed form, such as JSON, where a script reads it, and short plain words where a person does.
 
 **Steps**
 
