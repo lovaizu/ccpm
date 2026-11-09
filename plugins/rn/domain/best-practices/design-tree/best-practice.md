@@ -1,4 +1,4 @@
-# `plan`
+# `design-tree`
 
 ## Goal
 
@@ -16,10 +16,10 @@ The maker builds every deliverable that the user's goal needs, each after what i
 
 | ID | Factor |
 | --- | --- |
-| C1 | The plan holds every deliverable that the goal needs, each after the deliverables it needs. |
+| C1 | The design tree holds every deliverable that the goal needs, each after the deliverables it needs. |
 | C2 | The maker builds each deliverable from settled decisions, and asks the user only what's theirs to decide. |
 | C3 | The maker and the user see where the work stands, and pick it up from there. |
-| C4 | The plan stays true as the work changes it. |
+| C4 | The design tree stays true as the work changes it. |
 
 ## Necessary conditions
 
@@ -44,7 +44,7 @@ Does the goal state, in one sentence, what the user is trying to achieve?
 
 **Thinking**
 
-Every deliverable in the plan is there to serve the goal, so the goal decides what goes in and what stays out. Write what the user is trying to achieve as one sentence with the user as its subject. Ask why until the answer is the user's own purpose and no longer a deliverable. Name in `by` who settled it. Check that each deliverable of the plan serves the goal, and drop one that serves nothing.
+Every deliverable in the design tree is there to serve the goal, so the goal decides what goes in and what stays out. Write what the user is trying to achieve as one sentence with the user as its subject. Ask why until the answer is the user's own purpose and no longer a deliverable. Name in `by` who settled it. Check that each deliverable of the design tree serves the goal, and drop one that serves nothing.
 
 ### N2
 
@@ -86,7 +86,7 @@ Does each deliverable hold the decisions and the open points for each necessary 
 
 **Thinking**
 
-The maker builds a deliverable from the decisions that answer its best practice's conditions, and asks about the points still open instead of guessing. Give each deliverable the necessary conditions of its best practice, in that best practice's order, each with its decisions. Leave a point's `decided` null while it's open. Settle each decision once its inputs exist, and no earlier, as the [last responsible moment](https://blog.codinghorror.com/the-last-responsible-moment/) avoids a decision that rests on a guess. After each result, revise the plan forward from it.
+The maker builds a deliverable from the decisions that answer its best practice's conditions, and asks about the points still open instead of guessing. Give each deliverable the necessary conditions of its best practice, in that best practice's order, each with its decisions. Leave a point's `decided` null while it's open. Settle each decision once its inputs exist, and no earlier, as the [last responsible moment](https://blog.codinghorror.com/the-last-responsible-moment/) avoids a decision that rests on a guess. After each result, revise the design tree forward from it.
 
 ### N6
 
@@ -102,7 +102,7 @@ Does each deliverable's name say what it brings toward the goal?
 
 **Thinking**
 
-The user reads the plan to see where the work stands and what comes next, without opening each deliverable. For each deliverable, ask what holds toward the goal once it exists, and write that as its name. Leave out its path and its kind, which have fields of their own.
+The user reads the design tree to see where the work stands and what comes next, without opening each deliverable. For each deliverable, ask what holds toward the goal once it exists, and write that as its name. Leave out its path and its kind, which have fields of their own.
 
 ### N8
 
@@ -126,4 +126,4 @@ Does the tree hold only what holds now?
 
 **Thinking**
 
-A reader acts on what the plan says, and reads any history in it as part of the current decision. Keep only what holds now. A deliverable that's done keeps one line: its name, path, kind, and status. A research deliverable goes once the decisions hold what it found. Git keeps how each point came about.
+A reader acts on what the design tree says, and reads any history in it as part of the current decision. Keep only what holds now. A deliverable that's done keeps one line: its name, path, kind, and status. A research deliverable goes once the decisions hold what it found. Git keeps how each point came about.

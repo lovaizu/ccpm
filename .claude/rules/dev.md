@@ -48,9 +48,9 @@ marketplaces, prompting best practices, and skill authoring best practices.
 
 **With `product-vision/best-practice.json` open, settle the product vision's decisions in the
 work's one design tree, `.rn/<yyyymmdd>-<goal>/design-tree.json`, in the form of
-[the plan best practice's template](../../plugins/rn/domain/best-practices/plan/design-tree.schema.json). After each change, read the path from the node
+[the design tree best practice's template](../../plugins/rn/domain/best-practices/design-tree/design-tree.schema.json). After each change, read the path from the node
 changed up to the goal and every node the change touches, as N9 of
-[the plan best practice](../../plugins/rn/domain/best-practices/plan/best-practice.md#n9) says. Write `dev/<plugin>/product-vision.md` from the tree by
+[the design tree best practice](../../plugins/rn/domain/best-practices/design-tree/best-practice.md#n9) says. Write `dev/<plugin>/product-vision.md` from the tree by
 `product-vision/template.md`. Have the user agree to it before you make anything else.** Do the
 same for each document after it: its questions and decisions go into the same tree, and you
 write the document from them by its kind's template.

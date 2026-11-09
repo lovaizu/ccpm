@@ -92,15 +92,15 @@
       "status": "done"
     },
     {
-      "name": "The user reaches their goal through the plan's deliverables, which leave nothing out and start nothing too early",
-      "path": "plugins/rn/domain/best-practices/plan",
-      "kind": "meta",
+      "name": "The user reaches their goal through the design tree's deliverables, which leave nothing out and start nothing too early",
+      "path": "plugins/rn/domain/best-practices/design-tree",
+      "kind": "design-tree",
       "status": "done"
     },
     {
-      "name": "This plan holds every deliverable the goal needs, each after what it stands on",
+      "name": "This design tree holds every deliverable the goal needs, each after what it stands on",
       "path": ".rn/20261107-rn/design-tree.json",
-      "kind": "plan",
+      "kind": "design-tree",
       "status": "done"
     },
     {
