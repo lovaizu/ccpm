@@ -53,8 +53,7 @@ changed up to the goal and every node the change touches, as Q9 of
 [the plan best practice](../../plugins/rn/domain/best-practices/plan/best-practice.md#q9) says. Write `dev/<plugin>/product-vision.md` from the tree by
 `product-vision/template.md`. Have the user agree to it before you make anything else.** Do the
 same for each document after it: its questions and decisions go into the same tree, and you
-write the document from them by its kind's template. `dev/scripts/check.sh` checks each tree by
-rn's `tree.py check`.
+write the document from them by its kind's template.
 
 - Rationale: a change made by finding an ID or a word never shows the branch the node stands in,
   so the nodes over and under it go on saying what held before, and the tree drifts from its goal.

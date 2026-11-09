@@ -10,24 +10,14 @@ requires-python = ">=3.9"
 [dependency-groups]
 # The checks of dev/scripts/check.sh, on every Python users run.
 dev = [
-  "coverage>=7.10",
   "pyrefly>=1.4.0",
   "pytest>=8.4",
   "pytest-xdist>=3.8.0",
   "ruff>=0.17.2",
 ]
-# The check for copied code, the property-based tests and the mutation testing, which need a newer
-# Python only to check, not to run.
+# The check for copied code, which needs a newer Python only to check, not to run.
 test-quality = [
-  "cosmic-ray>=8.7.0",
-  "hypothesis>=6.170.9",
   "pylint>=4.1.3",
-]
-
-# The choice of the tests a change reaches before a push, which needs a newer Python only to choose
-# them. Without it, the push runs every test.
-push = [
-  "pytest-testmon>=2.3.0",
 ]
 
 [tool.uv]
@@ -37,7 +27,6 @@ package = false
 
 [tool.uv.dependency-groups]
 test-quality = { requires-python = ">=3.11" }
-push = { requires-python = ">=3.11" }
 
 [tool.ruff]
 # The widest a line may be: of the Python, which E501 below checks, and of the documents, which no
@@ -53,8 +42,7 @@ extend-select = ["E501"]
 python-version = "3.9"
 
 [tool.pytest.ini_options]
-# unittest's own pattern, which the names of the tests follow. pytest leaves out the repository a
-# product vision trial works in, with tests of its own.
+# unittest's own pattern, which the names of the tests follow.
 python_files = ["test*.py"]
-norecursedirs = [".*", "__pycache__", "node_modules", "tidy"]
+norecursedirs = [".*", "__pycache__", "node_modules"]
 addopts = ["-p", "no:cacheprovider"]

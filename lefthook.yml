@@ -17,7 +17,6 @@ pre-commit:
     - "plugins/lane/docs**"
     - "dev/scripts/files.py"
     - "dev/scripts/schema.py"
-    - "dev/scripts/tests/testing.py"
     # Files no one here writes: the lockfiles their tools write, and the
     # licenses as their authors wrote them.
     - "uv.lock"

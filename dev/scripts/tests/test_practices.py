@@ -20,7 +20,6 @@ import helpers
 sys.path.insert(0, os.path.join(helpers.TOP, "dev", "scripts"))
 
 import practices
-import testing
 
 
 def ran(*argv):
@@ -379,7 +378,7 @@ SCHEMA = {
 }
 
 
-class Unheld(testing.FolderTest):
+class Unheld(helpers.FolderTest):
     """unheld, the point an example in JSON is out of the template beside it by, where the template
     is a JSON Schema."""
 
@@ -433,7 +432,7 @@ class Unheld(testing.FolderTest):
         self.assertIn("example.json is not JSON", found[0])
 
 
-class Beside(testing.FolderTest):
+class Beside(helpers.FolderTest):
     """template and missing, on the files a best practice names beside it."""
 
     def setUp(self) -> None:
@@ -548,7 +547,7 @@ class Shown(unittest.TestCase):
         self.assertEqual(practices.shown(text), [])
 
 
-class Leftovers(testing.FolderTest):
+class Leftovers(helpers.FolderTest):
     """leftovers, each file in a best practice's folder that neither it, its template nor its
     example holds."""
 
@@ -621,7 +620,7 @@ class Leftovers(testing.FolderTest):
         )
 
 
-class Copies(testing.FolderTest):
+class Copies(helpers.FolderTest):
     """copies, the files of an example that's a copy of the document its source names."""
 
     def setUp(self) -> None:
@@ -788,7 +787,7 @@ class Markdown(unittest.TestCase):
         self.assertEqual(text.count("**Steps**"), 1)
 
 
-class Practices(testing.FolderTest):
+class Practices(helpers.FolderTest):
     """form and markdown, on a best practice of the kind `kind`."""
 
     def setUp(self) -> None:
