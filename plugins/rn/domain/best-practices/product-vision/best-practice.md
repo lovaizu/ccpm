@@ -37,55 +37,68 @@ The developers build a product with which its users achieve their goals.
 
 Does Roles list every kind of person who comes to the product with a goal of their own?
 
-**Thinking**
+The developers build for the people Roles lists, so a missing role goes unserved, and two roles merged into one get a product that fits neither. The method is Clayton Christensen's theory of the jobs that customers hire a product for.
 
-The developers build for the people Roles lists, so a missing role goes unserved, and two roles merged into one get a product that fits neither. Define each role by the job it hires the product to do, as in Clayton Christensen's theory of the jobs that customers hire a product for, not by a job title. Start from the job that the product exists to do, and name who hires it for that job. Then ask whether that job gets done only if the product also does a job for someone else, such as setting it up on a shared server. Each such person is a role as well. Split a role whose members hire the product for different jobs. Name the role `user` where there's only one. Check that each role has a job that no other role has.
-
-**Steps**
-
-1. Ask the user about each person whose job you can't tell from what the product does.
+1. *While deciding.* Define each role by the job it hires the product to do, not by a job title.
+2. *While deciding.* Start from the job that the product exists to do, and name who hires it for that job.
+3. *While deciding.* Then ask whether that job gets done only if the product also does a job for someone else, such as setting it up on a shared server. Each such person is a role as well.
+4. *While deciding.* Ask the user about each person whose job you can't tell from what the product does.
+5. *While deciding.* Split a role whose members hire the product for different jobs. Name the role `user` where there's only one.
+6. *While making.* Check that each role has a job that no other role has.
 
 ### N2
 
 Does each objective state, in one sentence, what one role is trying to achieve in their own work?
 
-**Thinking**
+The developers build toward the objectives, so each must name the end that a role reaches. A feature or a measure of that end isn't an objective. An objective in John Doerr's Measure What Matters is a qualitative goal that a key result then measures.
 
-The developers build toward the objectives, so each must name the end that a role reaches. A feature or a measure of that end isn't an objective. An objective in John Doerr's Measure What Matters is a qualitative goal that a key result then measures. For each role, write its job as the end they reach in their own work, in one sentence with the role as the subject. Ask why that end matters to them until the answer is their own goal and no longer the product's. Write one objective for each distinct end. Check that the objective still makes sense with the product's name taken out.
+1. *While deciding.* For each role, write its job as the end they reach in their own work, in one sentence with the role as the subject.
+2. *While deciding.* Ask why that end matters to them until the answer is their own goal and no longer the product's.
+3. *While deciding.* Write one objective for each distinct end.
+4. *While making.* Check that the objective still makes sense with the product's name taken out.
 
 ### N3
 
 Does the vision describe only what the users do and get, not how the product works inside?
 
-**Thinking**
+The vision must stay true while the inside of the product changes, so it describes only the problem space: what users do and get. How the product does it belongs to the solution space, in the architecture.
 
-The vision must stay true while the inside of the product changes, so it describes only the problem space: what users do and get. How the product does it belongs to the solution space, in the architecture. For each sentence, ask whether it would change if the product's internals changed while users saw the same. If it would, move it to the architecture.
+1. *While making.* For each sentence, ask whether it would change if the product's internals changed while users saw the same. If it would, move it to the architecture.
 
 ### N4
 
 Does each objective have key results that measure how well and how fast its role achieves it, each with the direction that's better?
 
-**Thinking**
+The developers keep a change only if it brings the users closer to their goals, so each objective needs measures that show that after a change. The International Organization for Standardization (ISO) standard 9241-11 defines usability by effectiveness and efficiency, among other measures, and these give the two key results.
 
-The developers keep a change only if it brings the users closer to their goals, so each objective needs measures that show that after a change. The International Organization for Standardization (ISO) standard 9241-11 defines usability by effectiveness and efficiency, among other measures, and these give the two key results. The first measures how well: the share of attempts in which the role reaches the objective, or its complement, such as the share of deliverables the users can't use. The second measures how fast: the time or effort the role spends to reach it. Give each the direction that's better. Rank them: keep a change that improves one only if none ranked before it gets worse, with how well before how fast. Give no targets, since a measure made a target stops being a good measure, as Goodhart's law says. Check that a developer can measure both after a change and decide from them whether to keep it.
+1. *While deciding.* Make the first key result measure how well: the share of attempts in which the role reaches the objective, or its complement, such as the share of deliverables the users can't use.
+2. *While deciding.* Make the second measure how fast: the time or effort the role spends to reach it.
+3. *While deciding.* Give each the direction that's better.
+4. *While deciding.* Rank them: keep a change that improves one only if none ranked before it gets worse, with how well before how fast.
+5. *While deciding.* Give no targets, since a measure made a target stops being a good measure, as Goodhart's law says.
+6. *While making.* Check that a developer can measure both after a change and decide from them whether to keep it.
 
 ### N5
 
 Are the objectives distinct, so that each piece of work serves one of them?
 
-**Thinking**
+The developers decide what to build by asking which objective a piece of work serves, which works only if the objectives don't overlap.
 
-The developers decide what to build by asking which objective a piece of work serves, which works only if the objectives don't overlap. For each pair of objectives, ask whether a piece of work could serve one without the other. If not, merge them. Then take the work the product plans, and name the objective each piece serves. A piece that serves none is either not needed or shows a missing objective. Ask the user which.
+1. *While deciding.* For each pair of objectives, ask whether a piece of work could serve one without the other. If not, merge them.
+2. *While deciding.* Then take the work the product plans, and name the objective each piece serves.
+3. *While deciding.* A piece that serves none is either not needed or shows a missing objective. Ask the user which.
 
 ### N6
 
 Does the concept state first the one way, as its maker means it, by which the product brings the users to their objectives, and then the ideas that keep this way holding at each moment of their use?
 
-**Thinking**
+The developers make many choices that no line of the vision names, and the concept lets each of them lean the same way. Fred Brooks, in The Mythical Man-Month, calls this conceptual integrity: one set of design ideas that every part follows. The one way and the ideas that carry it out come from whoever conceived the product, because an analysis of what goes wrong today yields only a list of fixes with no center.
 
-The developers make many choices that no line of the vision names, and the concept lets each of them lean the same way. Fred Brooks, in The Mythical Man-Month, calls this conceptual integrity: one set of design ideas that every part follows. The one way and the ideas that carry it out come from whoever conceived the product, because an analysis of what goes wrong today yields only a list of fixes with no center. Decide in order. First, get from the user how the product brings its users to their objectives, and the ideas by which it does so. Write the one way in one sentence as what the users see the product do. Second, write each idea the user gave, with what it gives the role toward the objective. Third, find where the user's ideas leave the one way unheld. Walk through the users' use from the moment they first meet the product to the moment they reach the objective, and list its moments, as a [customer journey map](https://www.nngroup.com/articles/journey-mapping-101/) does. At each moment, ask what keeps the one way holding there. Where no idea answers, propose one, and confirm it with the user. An idea that the way doesn't need goes. Check by taking a design choice that no line names, at each of those moments, and deciding it by the one way and its ideas.
-
-**Steps**
-
-1. Ask the user how the product brings its users to their objectives, and by which ideas, before you write the concept.
-2. Confirm each idea you propose with the user.
+1. *While deciding.* Ask the user how the product brings its users to their objectives, and by which ideas, before you write the concept.
+2. *While deciding.* Write the one way in one sentence as what the users see the product do.
+3. *While deciding.* Write each idea the user gave, with what it gives the role toward the objective.
+4. *While deciding.* Find where the user's ideas leave the one way unheld. Walk through the users' use from the moment they first meet the product to the moment they reach the objective, and list its moments, as a [customer journey map](https://www.nngroup.com/articles/journey-mapping-101/) does.
+5. *While deciding.* At each moment, ask what keeps the one way holding there. Where no idea answers, propose one.
+6. *While deciding.* Confirm each idea you propose with the user.
+7. *While deciding.* An idea that the way doesn't need goes.
+8. *While making.* Check by taking a design choice that no line names, at each of those moments, and deciding it by the one way and its ideas.

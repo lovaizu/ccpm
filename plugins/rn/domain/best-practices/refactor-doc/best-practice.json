@@ -69,18 +69,48 @@
  "practices": [
   {
    "intent": "N1",
-   "thinking": "Readers choose what to read by the headings and the first sentences, and skip the rest. Decide the sections in order. First, list the readers with the purposes they come with. Second, split the document so that each section serves one topic: a reader with a given purpose reads a section whole or skips it whole. Third, write each heading so that its first words are the ones the reader scans for, as Nielsen Norman Group found that readers scan the first words of [headings](https://www.nngroup.com/articles/headings-pickup-lines/). Fourth, make the first sentence under the heading say what the section gives. Give each item that a reader looks for, such as a question they have, a heading of its own, so that it shows in the outline and a link can point to it.",
-   "steps": [
+   "why": "Readers choose what to read by the headings and the first sentences, and skip the rest. Nielsen Norman Group found that readers scan the first words of [headings](https://www.nngroup.com/articles/headings-pickup-lines/).",
+   "items": [
     {
+     "at": "decide",
+     "text": "List the readers with the purposes they come with."
+    },
+    {
+     "at": "decide",
+     "text": "Split the document so that each section serves one topic: a reader with a given purpose reads a section whole or skips it whole."
+    },
+    {
+     "at": "make",
+     "text": "Write each heading so that its first words are the ones the reader scans for."
+    },
+    {
+     "at": "make",
+     "text": "Make the first sentence under the heading say what the section gives. Give each item that a reader looks for, such as a question they have, a heading of its own, so that it shows in the outline and a link can point to it."
+    },
+    {
+     "at": "make",
      "text": "Read only the headings and the first sentences for each purpose. Rewrite a heading or first sentence that would make the reader miss a section the purpose needs. Rewrite one that would make them read a section it doesn't need."
     }
    ]
   },
   {
    "intent": "N2",
-   "thinking": "Every word costs the reader time, and words that carry nothing still cost it. For each sentence, ask which reader needs it, at this point, and for what. If no reader does, cut it, or move it to a linked document where a reader does. Within a sentence, ask the same of each word, as Strunk and White's rule to omit needless words does. Keep the small words that show the structure of a sentence, such as articles and `that`, because without them both a reader and a machine translator parse the sentence with more effort.",
-   "steps": [
+   "why": "Every word costs the reader time, and words that carry nothing still cost it. Strunk and White's rule is to omit needless words. Without the small words that show the structure of a sentence, both a reader and a machine translator parse the sentence with more effort.",
+   "items": [
     {
+     "at": "make",
+     "text": "For each sentence, ask which reader needs it, at this point, and for what. If no reader does, cut it, or move it to a linked document where a reader does."
+    },
+    {
+     "at": "make",
+     "text": "Within a sentence, ask the same of each word."
+    },
+    {
+     "at": "make",
+     "text": "Keep the small words that show the structure of a sentence, such as articles and `that`."
+    },
+    {
+     "at": "make",
      "text": "After cutting, read each changed section again from the top, and check that it still says everything it said before.",
      "trace": {
       "action": "read",
@@ -93,36 +123,70 @@
   },
   {
    "intent": "N3",
-   "thinking": "A reader who has to turn back or read ahead loses the thread. For each sentence, ask what the reader must already know to understand it, and place it after that. Within a sentence, start with what the reader already knows and end with what's new, the given-new order of [information structure](https://en.wikipedia.org/wiki/Information_structure). Put a short condition before its instruction, so that a reader it doesn't apply to can skip the instruction. Put the exceptions of a rule next to the rule.",
-   "steps": [
+   "why": "A reader who has to turn back or read ahead loses the thread. The given-new order comes from [information structure](https://en.wikipedia.org/wiki/Information_structure).",
+   "items": [
     {
+     "at": "make",
+     "text": "For each sentence, ask what the reader must already know to understand it, and place it after that."
+    },
+    {
+     "at": "make",
      "text": "If a sentence depends on something outside the document, such as an earlier discussion, state it in the sentence or link to where it's stated."
     },
     {
+     "at": "make",
+     "text": "Within a sentence, start with what the reader already knows and end with what's new."
+    },
+    {
+     "at": "make",
+     "text": "Put a short condition before its instruction, so that a reader it doesn't apply to can skip the instruction. Put the exceptions of a rule next to the rule."
+    },
+    {
+     "at": "make",
      "text": "Read the document from the top, and mark each place where you had to look back or ahead. Move what the place needed to before it."
     }
    ]
   },
   {
    "intent": "N4",
-   "thinking": "A reader takes in at once a relation that a form shows, but has to assemble it from sentences. For each passage, ask what relation it describes, and choose the form by the answer. Steps in order take a numbered list. Items in no order take a bulleted list. Things compared on the same points take a table. Who passes what to whom takes a diagram. An argument, where one point leads to the next by because or but, stays in prose, since a list drops those links.",
-   "steps": [
+   "why": "A reader takes in at once a relation that a form shows, but has to assemble it from sentences.",
+   "items": [
     {
+     "at": "decide",
+     "text": "For each passage, ask what relation it describes, and choose the form by the answer. Steps in order take a numbered list. Items in no order take a bulleted list. Things compared on the same points take a table. Who passes what to whom takes a diagram. An argument, where one point leads to the next by because or but, stays in prose, since a list drops those links."
+    },
+    {
+     "at": "make",
      "text": "Draw a sequence diagram as text that the page renders, such as Mermaid, because its steps run from top to bottom and leave no layout to choose."
     },
     {
+     "at": "make",
      "text": "Draw a structure diagram, such as parts and what passes between them, as a file whose layout the writer sets, such as SVG, because its layout carries meaning."
     }
    ]
   },
   {
    "intent": "N5",
-   "thinking": "A sentence with one meaning reads the same for every reader, and for a machine translator. [Simplified Technical English](https://www.asd-ste100.org) and the [Google developer documentation style guide](https://developers.google.com/style/translation) give the rules for this, for readers who read in a second language. For each sentence, ask how many points it makes, and split it into one sentence for each. Ask who acts, make the actor the subject, and follow it with a verb that carries the action. Ask whether each pronoun could refer to two nouns, and if so, use the noun.",
-   "steps": [
+   "why": "A sentence with one meaning reads the same for every reader, and for a machine translator. [Simplified Technical English](https://www.asd-ste100.org) and the [Google developer documentation style guide](https://developers.google.com/style/translation) give the rules for this, for readers who read in a second language.",
+   "items": [
     {
+     "at": "make",
+     "text": "For each sentence, ask how many points it makes, and split it into one sentence for each."
+    },
+    {
+     "at": "make",
+     "text": "Ask who acts, make the actor the subject, and follow it with a verb that carries the action."
+    },
+    {
+     "at": "make",
+     "text": "Ask whether each pronoun could refer to two nouns, and if so, use the noun."
+    },
+    {
+     "at": "make",
      "text": "Turn a noun made from a verb, such as `decision`, back into the verb, and keep the object close to the verb."
     },
     {
+     "at": "make",
      "text": "Read each sentence as a machine translator would: word by word, with nothing from outside the sentence. If it reads two ways, or would read unnaturally in another language, rewrite it.",
      "trace": {
       "action": "read",
@@ -135,26 +199,49 @@
   },
   {
    "intent": "N6",
-   "thinking": "A reader reads each word with the meaning they already know, so any other word makes them guess, such as a term the team coined. For each word, ask whether a reader in the field would use it for this thing, in this meaning. If not, use the word they would use. If no such word exists, define the term where the reader first meets it. The [Federal Plain Language Guidelines](https://www.plainlanguage.gov/guidelines/) call for familiar words for the same reason.",
-   "steps": [
+   "why": "A reader reads each word with the meaning they already know, so any other word makes them guess, such as a term the team coined. The [Federal Plain Language Guidelines](https://www.plainlanguage.gov/guidelines/) call for familiar words for the same reason.",
+   "items": [
     {
+     "at": "make",
+     "text": "For each word, ask whether a reader in the field would use it for this thing, in this meaning. If not, use the word they would use. If no such word exists, define the term where the reader first meets it."
+    },
+    {
+     "at": "make",
      "text": "Write out each abbreviation where the reader first meets it, as the [Google developer documentation style guide](https://developers.google.com/style/abbreviations) does."
     }
    ]
   },
   {
    "intent": "N7",
-   "thinking": "Two places that state one fact drift apart, and the reader can't tell which one holds. For each fact, ask where a reader would look for it first. That place states it, and every other place links to it, with a few words on what the reader finds there. This includes a fact that a figure draws or the work itself shows. It's the principle of a [single source of truth](https://en.wikipedia.org/wiki/Single_source_of_truth).",
-   "steps": [
+   "why": "Two places that state one fact drift apart, and the reader can't tell which one holds. It's the principle of a [single source of truth](https://en.wikipedia.org/wiki/Single_source_of_truth).",
+   "items": [
     {
+     "at": "make",
+     "text": "For each fact, ask where a reader would look for it first. That place states it, and every other place links to it, with a few words on what the reader finds there. This includes a fact that a figure draws or the work itself shows."
+    },
+    {
+     "at": "decide",
      "text": "If two places state a fact differently, keep both, and ask whoever owns the document which is right. Choosing one yourself would change what the document says."
     }
    ]
   },
   {
    "intent": "N8",
-   "thinking": "A reader who meets two names takes them for two things, and one name used for two things merges them. List the names the document uses for things. For each thing, keep the name its readers already use, spelled the same way each time. If two names refer to one thing, keep one. If one name refers to two things, give one of them another name. The reader, and a translator, then keep one picture of each thing from start to end.",
-   "steps": []
+   "why": "A reader who meets two names takes them for two things, and one name used for two things merges them. The reader, and a translator, then keep one picture of each thing from start to end.",
+   "items": [
+    {
+     "at": "make",
+     "text": "List the names the document uses for things."
+    },
+    {
+     "at": "make",
+     "text": "For each thing, keep the name its readers already use, spelled the same way each time."
+    },
+    {
+     "at": "make",
+     "text": "If two names refer to one thing, keep one. If one name refers to two things, give one of them another name."
+    }
+   ]
   }
  ]
 }

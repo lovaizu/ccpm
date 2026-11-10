@@ -98,10 +98,13 @@ KR1.1.
 
 ### A step held by the calls that show it
 
-The guard judges a role only from the calls that Claude Code's hook input documents, each step by its
-trace and in its order, and never from what the role wrote.
+The guard holds each step that a call shows only by the calls that Claude Code's hook input
+documents. It holds each by its trace, in its order. A role's result names each step that no call shows, and
+the guard stops a result that leaves one out, with that step's sentence.
 
-*Why*: a role that says it kept a step may not have kept it, which raises KR1.1.
+*Why*: a role that says it kept a step may not have kept it, so a call shows each step that one can.
+Where none can, the role's own list still finds a step it forgot, and a forgotten step raises
+KR1.1.
 
 ### A result only from the result script
 
@@ -278,7 +281,7 @@ sequenceDiagram
   participant RS as result script
   participant RT as routes
   R->>RS: runs it with its result (Result)
-  G->>RT: may the role give it, and has each step's trace come back (Route, Trace)
+  G->>RT: may the role give it, has each step's trace come back, and does it name each step that no call shows (Route, Trace, Step list)
   alt it may
     RS->>RT: may the role give it (Route, Result)
     G->>G: keeps the result (Result)

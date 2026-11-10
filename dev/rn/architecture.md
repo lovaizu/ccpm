@@ -54,7 +54,7 @@ What each decides alone:
 - throwaway.py\
   Where a deliverable's commands run.
 - guard\
-  Whether a role's call keeps its steps, whether a deliverable's command runs only through
+  Whether a role's call keeps its steps, whether its result names each item it carries, whether a deliverable's command runs only through
   throwaway.py, and whether the run passes a sign-off only after the user's `/rn:ty`, by the lanes
   that rn lays in [Lane](../lane/architecture.md).
 - adapters\
@@ -106,6 +106,15 @@ Each role works by the best practice of its kind of work, and Lane holds it to t
 
 *Why*: an AI that skipped a step once skips it again, and the deliverable misses what the step makes
 sound, which raises KR1.1.
+
+### Every item handled
+
+Each role reads in full what it starts with and each best practice its part names. Its result names
+each item of each list it carries: each practice item it took, each intent it judged, each node it
+checked, and each lack and comment it judged. Lane holds each read by its trace, and checks each
+result against the whole list.
+
+*Why*: an item dropped takes from the deliverable what the item holds, which raises KR1.1.
 
 ### Judged by the people it's for
 

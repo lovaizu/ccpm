@@ -94,26 +94,37 @@
         "type": "object",
         "required": [
           "intent",
-          "thinking",
-          "steps"
+          "why",
+          "items"
         ],
         "additionalProperties": false,
         "properties": {
           "intent": {
             "type": "string"
           },
-          "thinking": {
+          "why": {
+            "description": "What the condition gives the users, and the method the items come from, with its source.",
             "type": "string"
           },
-          "steps": {
+          "items": {
+            "description": "Each decision with its question and criterion, each step, and the check from the users' side, in the order the maker takes them. An item's ID is its condition's ID and its place, such as N6.2, which a role names in its result once it has taken the item.",
             "type": "array",
+            "minItems": 1,
             "items": {
               "type": "object",
               "required": [
+                "at",
                 "text"
               ],
               "additionalProperties": false,
               "properties": {
+                "at": {
+                  "description": "When the maker takes the item: `decide` while it settles the work's decisions, `make` while it makes the deliverable.",
+                  "enum": [
+                    "decide",
+                    "make"
+                  ]
+                },
                 "text": {
                   "type": "string"
                 },

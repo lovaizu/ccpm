@@ -131,18 +131,44 @@
  "practices": [
   {
    "intent": "N1",
-   "thinking": "Each part is a piece of one idea, and a developer who knows the idea builds a part that serves it. The solution strategy of [arc42](https://arc42.org) states the few fundamental decisions that shape the whole system. Decide the idea in order. First, take the one way that the README's How it works states first, from the product vision's concept, by which the product brings its users to their objectives. Second, ask how the system as a whole makes that way work: what it takes in from the roles, and what it turns that into. Third, write the answer in two or three sentences that a developer can hold in mind while building any part. Point to the README instead of repeating it.",
-   "steps": [
+   "why": "Each part is a piece of one idea, and a developer who knows the idea builds a part that serves it. The solution strategy of [arc42](https://arc42.org) states the few fundamental decisions that shape the whole system.",
+   "items": [
     {
+     "at": "decide",
+     "text": "Take the one way that the README's How it works states first, from the product vision's concept, by which the product brings its users to their objectives."
+    },
+    {
+     "at": "decide",
+     "text": "Ask how the system as a whole makes that way work: what it takes in from the roles, and what it turns that into."
+    },
+    {
+     "at": "make",
+     "text": "Write the answer in two or three sentences that a developer can hold in mind while building any part. Point to the README instead of repeating it."
+    },
+    {
+     "at": "make",
      "text": "After writing the rest, check that each component carries out a piece of the idea. Change the idea or the component where one doesn't."
     }
    ]
   },
   {
    "intent": "N2",
-   "thinking": "The stories connect the parts to what the users do, so every part can trace back to a step a user takes. Jeff Patton's user story mapping lays the steps of the main use along a backbone, and hangs a [user story](https://www.mountaingoatsoftware.com/agile/user-stories) on each. Take the backbone from the README's walkthrough, and from the main use of each objective that the walkthrough doesn't run. For each step, ask how the role meets the product at its edge there, such as a command they type, and write one story for each such way, naming the steps it carries. Add a story for each convenience the product vision asks for, such as resuming a run that stopped.",
-   "steps": [
+   "why": "The stories connect the parts to what the users do, so every part can trace back to a step a user takes. Jeff Patton's user story mapping lays the steps of the main use along a backbone, and hangs a [user story](https://www.mountaingoatsoftware.com/agile/user-stories) on each.",
+   "items": [
     {
+     "at": "decide",
+     "text": "Take the backbone from the README's walkthrough, and from the main use of each objective that the walkthrough doesn't run."
+    },
+    {
+     "at": "decide",
+     "text": "For each step, ask how the role meets the product at its edge there, such as a command they type, and write one story for each such way, naming the steps it carries."
+    },
+    {
+     "at": "decide",
+     "text": "Add a story for each convenience the product vision asks for, such as resuming a run that stopped."
+    },
+    {
+     "at": "make",
      "text": "Go through each exchange of the README's walkthrough, and the main use of each objective it doesn't run, and name the one story that carries each step. Add a story where none does.",
      "trace": {
       "action": "read",
@@ -155,148 +181,388 @@
   },
   {
    "intent": "N3",
-   "thinking": "A part that nothing needs costs effort to build and to keep, and gives no one anything. Three sources say what the parts must do. The README carries what the users get from the product vision: the steps of its walkthrough, and the doubts that its How it works answers. Development adds what the developers need to build, test, and change the parts. Operation adds what keeps the product working across runs and updates, such as where its work outlives a run. For each principle and each story, ask which step, doubt, or need it carries. For each component and each kind of data, ask which principle or which story's sequence reaches it. Remove whatever reaches none. This is requirements traceability, applied from the parts back to their sources.",
-   "steps": []
+   "why": "A part that nothing needs costs effort to build and to keep, and gives no one anything. Three sources say what the parts must do. The README carries what the users get from the product vision: the steps of its walkthrough, and the doubts that its How it works answers. Development adds what the developers need to build, test, and change the parts. Operation adds what keeps the product working across runs and updates, such as where its work outlives a run. The method is requirements traceability, applied from the parts back to their sources.",
+   "items": [
+    {
+     "at": "decide",
+     "text": "For each principle and each story, ask which step, doubt, or need it carries."
+    },
+    {
+     "at": "decide",
+     "text": "For each component and each kind of data, ask which principle or which story's sequence reaches it."
+    },
+    {
+     "at": "make",
+     "text": "Remove whatever reaches none."
+    }
+   ]
   },
   {
    "intent": "N4",
-   "thinking": "Developers of different parts meet the same kind of decision, and decide it apart unless a principle settles it. The principles of The Open Group Architecture Framework (TOGAF) give each a statement, a rationale, and its implications. Derive the principles from the README's How it works, which answers each doubt of the users from an idea of the product vision's concept, and from the needs of development and operation. First, for each answer and each need, ask what every part must hold alike for it to come true, such as where the work's state lives. A part that held it otherwise would break a key result. Each thing that every part must hold alike is a principle. Leave out what a single component's line already says, since a principle holds only a rule that spans parts. Second, for each, write the rule in one sentence, naming the parts as Components names them. Third, write the reason in one sentence: what goes wrong without the rule, for a role of the product vision, naming the key result it guards, or for the developers or the operators. A developer carries the reason to a case that the rule doesn't name. Point to the principles of any architecture this one builds on, and write only what this product adds or changes.",
-   "steps": [
+   "why": "Developers of different parts meet the same kind of decision, and decide it apart unless a principle settles it. The principles of The Open Group Architecture Framework (TOGAF) give each a statement, a rationale, and its implications.",
+   "items": [
     {
+     "at": "decide",
+     "text": "Derive the principles from the README's How it works, which answers each doubt of the users from an idea of the product vision's concept, and from the needs of development and operation."
+    },
+    {
+     "at": "decide",
+     "text": "For each answer and each need, ask what every part must hold alike for it to come true, such as where the work's state lives. A part that held it otherwise would break a key result. Each thing that every part must hold alike is a principle."
+    },
+    {
+     "at": "decide",
+     "text": "Leave out what a single component's line already says, since a principle holds only a rule that spans parts."
+    },
+    {
+     "at": "decide",
+     "text": "For each principle, write the rule in one sentence, naming the parts as Components names them."
+    },
+    {
+     "at": "decide",
+     "text": "Write the reason in one sentence: what goes wrong without the rule, for a role of the product vision, naming the key result it guards, or for the developers or the operators. A developer carries the reason to a case that the rule doesn't name."
+    },
+    {
+     "at": "make",
+     "text": "Point to the principles of any architecture this one builds on, and write only what this product adds or changes."
+    },
+    {
+     "at": "make",
      "text": "Take a case that no rule names, and decide it from each reason as two developers of different parts would. Where they differ, sharpen the reason."
     }
    ]
   },
   {
    "intent": "N5",
-   "thinking": "Two components that make the same decision make it twice, and the two copies drift apart. David Parnas's information hiding gives each module one decision that's hard to make or likely to change, and hides it from the rest. Decide the components in order. First, take from the stories the decisions that are hard to make or likely to change, such as where the product keeps the work's state. Second, give each such decision to one component. Third, where two components need the same decision, give it to one, and have the other ask that one. List under the figure what each component alone decides.",
-   "steps": [
+   "why": "Two components that make the same decision make it twice, and the two copies drift apart. David Parnas's information hiding gives each module one decision that's hard to make or likely to change, and hides it from the rest.",
+   "items": [
     {
+     "at": "decide",
+     "text": "Take from the stories the decisions that are hard to make or likely to change, such as where the product keeps the work's state."
+    },
+    {
+     "at": "decide",
+     "text": "Give each such decision to one component."
+    },
+    {
+     "at": "decide",
+     "text": "Where two components need the same decision, give it to one, and have the other ask that one."
+    },
+    {
+     "at": "make",
+     "text": "List under the figure what each component alone decides."
+    },
+    {
+     "at": "make",
      "text": "Label each arrow with what one component does to another and the data it passes, not a word such as `uses`."
     }
    ]
   },
   {
    "intent": "N6",
-   "thinking": "A developer who doesn't know what kind of thing a component is, or what it's built with, chooses alone, and the components stop fitting. The [C4 model](https://c4model.com/diagrams/container) gives each box its name, its type, such as a script, a skill, or a folder of JSON files, and its technology. Draw a store of data as a box like a component's, since its type sets it apart. For each component, decide the type and the technology from the product's constraints, such as the runtime its users have. Give the figure a legend for every symbol.",
-   "steps": [
+   "why": "A developer who doesn't know what kind of thing a component is, or what it's built with, chooses alone, and the components stop fitting. The [C4 model](https://c4model.com/diagrams/container) gives each box its name, its type, such as a script, a skill, or a folder of JSON files, and its technology.",
+   "items": [
     {
+     "at": "decide",
+     "text": "For each component, decide the type and the technology from the product's constraints, such as the runtime its users have."
+    },
+    {
+     "at": "make",
+     "text": "Draw a store of data as a box like a component's, since its type sets it apart."
+    },
+    {
+     "at": "make",
+     "text": "Give the figure a legend for every symbol."
+    },
+    {
+     "at": "make",
      "text": "Read the figure without the text around it, and add to the legend whatever symbol a reader would still have to ask about. Draw and lay out the figure as [N4 of the refactor-doc best practice](../refactor-doc/best-practice.md#n4) says."
     }
    ]
   },
   {
    "intent": "N7",
-   "thinking": "Two developers who build the writer and the reader of the same data must join it to the other data in the same way, while its fields stay free to change. A concept model in a class diagram of the Unified Modeling Language (UML), which most developers read, shows this. Decide it in order. First, list each kind of data that the components pass or keep, and draw each once, as a class by its name alone. Second, for each pair that relates, name the relation, and give how many of each it joins at both ends. Where one holds the other's parts, put a filled diamond at the whole, since readers take a hollow one in different ways. Third, group the data in a frame for each component or store that keeps them, in the order the stories meet them, with the data that most others join in the middle. Leave the fields to where the developer builds the data. Below the figure, say in a few words what a kind of data is only where a reader could take its name for another's.",
-   "steps": []
+   "why": "Two developers who build the writer and the reader of the same data must join it to the other data in the same way, while its fields stay free to change. A concept model in a class diagram of the Unified Modeling Language (UML), which most developers read, shows this.",
+   "items": [
+    {
+     "at": "decide",
+     "text": "List each kind of data that the components pass or keep."
+    },
+    {
+     "at": "make",
+     "text": "Draw each once, as a class by its name alone."
+    },
+    {
+     "at": "decide",
+     "text": "For each pair that relates, name the relation, and give how many of each it joins at both ends."
+    },
+    {
+     "at": "make",
+     "text": "Where one holds the other's parts, put a filled diamond at the whole, since readers take a hollow one in different ways."
+    },
+    {
+     "at": "make",
+     "text": "Group the data in a frame for each component or store that keeps them, in the order the stories meet them, with the data that most others join in the middle."
+    },
+    {
+     "at": "make",
+     "text": "Leave the fields to where the developer builds the data."
+    },
+    {
+     "at": "make",
+     "text": "Below the figure, say in a few words what a kind of data is only where a reader could take its name for another's."
+    }
+   ]
   },
   {
    "intent": "N8",
-   "thinking": "A developer building a step must know who acts there, on what, and what comes next. A [UML](https://www.omg.org/spec/UML) sequence diagram draws a story's steps in order, from the role's first request to what the story gives them. For each story, draw each step as a message from one component to another along an arrow of Components, with the data it passes, named as in the data model. Draw each branch, each step that sends work back, and each question put to the role, since each path of the story, and its test, rests on them. Stories that share their steps share a diagram.",
-   "steps": [
+   "why": "A developer building a step must know who acts there, on what, and what comes next. A [UML](https://www.omg.org/spec/UML) sequence diagram draws a story's steps in order, from the role's first request to what the story gives them.",
+   "items": [
     {
+     "at": "make",
+     "text": "For each story, draw each step as a message from one component to another along an arrow of Components, with the data it passes, named as in the data model."
+    },
+    {
+     "at": "make",
+     "text": "Draw each branch, each step that sends work back, and each question put to the role, since each path of the story, and its test, rests on them."
+    },
+    {
+     "at": "make",
+     "text": "Let stories that share their steps share a diagram."
+    },
+    {
+     "at": "make",
      "text": "Check that each step runs along an arrow of Components. Where none does, add the arrow, or give the step to another component."
     }
    ]
   },
   {
    "intent": "N9",
-   "thinking": "A developer who finds two places that say different things about a part must choose which to follow, and two developers choose differently. The architecture that the product builds on, such as a shared best practice for its kind of product, holds rules that each part must keep as well. For each part, gather what every figure, list, and sentence says it does, and what each rule of that architecture asks of a part of its kind. Where two disagree, decide by the reasons of the principles and of those rules which is right, and change the other.",
-   "steps": []
+   "why": "A developer who finds two places that say different things about a part must choose which to follow, and two developers choose differently. The architecture that the product builds on, such as a shared best practice for its kind of product, holds rules that each part must keep as well.",
+   "items": [
+    {
+     "at": "decide",
+     "text": "For each part, gather what every figure, list, and sentence says it does, and what each rule of that architecture asks of a part of its kind."
+    },
+    {
+     "at": "decide",
+     "text": "Where two disagree, decide by the reasons of the principles and of those rules which is right, and change the other."
+    }
+   ]
   },
   {
    "intent": "N10",
-   "thinking": "A developer setting up the product needs to know where each part runs, what it can reach, and how it starts. A [C4 deployment diagram](https://c4model.com/diagrams/deployment) shows this. Decide it in order. First, list each environment the product runs in, such as the user's computer or CI, with its technology. Second, place each component and each kind of data in one deployment unit within its environment. Third, add each thing outside the product that the components depend on, with what they use of it, and no infrastructure that they don't need. Then write in one sentence how the product starts. Check that a developer could set the product up from nothing by the figure and that sentence.",
-   "steps": []
+   "why": "A developer setting up the product needs to know where each part runs, what it can reach, and how it starts. A [C4 deployment diagram](https://c4model.com/diagrams/deployment) shows this.",
+   "items": [
+    {
+     "at": "decide",
+     "text": "List each environment the product runs in, such as the user's computer or CI, with its technology."
+    },
+    {
+     "at": "decide",
+     "text": "Place each component and each kind of data in one deployment unit within its environment."
+    },
+    {
+     "at": "decide",
+     "text": "Add each thing outside the product that the components depend on, with what they use of it, and no infrastructure that they don't need."
+    },
+    {
+     "at": "make",
+     "text": "Write in one sentence how the product starts."
+    },
+    {
+     "at": "make",
+     "text": "Check that a developer could set the product up from nothing by the figure and that sentence."
+    }
+   ]
   },
   {
    "intent": "N11",
-   "thinking": "A developer making a change must find the one place it belongs. Lay out the folders by component, so that each component and each kind of data has its own place. First, say in one sentence for each top folder whom its files are for, such as the users who install the product or only its developers. Then show each folder and file that holds a component or a kind of data, by its real name, one line each, nested as on disk, without the files inside a component. Beside each, say what it does or holds, in the words a developer looks for when making a change. Check that, for any change to a component, a developer can name the one folder it goes in.",
-   "steps": []
+   "why": "A developer making a change must find the one place it belongs.",
+   "items": [
+    {
+     "at": "decide",
+     "text": "Lay out the folders by component, so that each component and each kind of data has its own place."
+    },
+    {
+     "at": "make",
+     "text": "Say in one sentence for each top folder whom its files are for, such as the users who install the product or only its developers."
+    },
+    {
+     "at": "make",
+     "text": "Show each folder and file that holds a component or a kind of data, by its real name, one line each, nested as on disk, without the files inside a component."
+    },
+    {
+     "at": "make",
+     "text": "Beside each, say what it does or holds, in the words a developer looks for when making a change."
+    },
+    {
+     "at": "make",
+     "text": "Check that, for any change to a component, a developer can name the one folder it goes in."
+    }
+   ]
   },
   {
    "intent": "N12",
-   "thinking": "A part that no test level covers can break unseen. The [test pyramid](https://martinfowler.com/articles/practical-test-pyramid.html) puts most checks at the narrow, fast levels and few at the wide, slow ones. Name each level by what it checks against: unit against a part's contract, architecture against this document, and product vision against the product vision, in real use. Decide the table in order. First, list each deployment unit as a row. Second, for each level, ask what the unit must do by that level's ground, and fill the cell with the tool and how far it tries the unit, and nothing more. `FULL` tries each case and edge, `HAPPY` the main paths, and `SMOKE` one run that confirms what the lower levels checked. Third, where a cell stays empty, say why. Unit and architecture carry most of the checking, and run on every change.",
-   "steps": [
+   "why": "A part that no test level covers can break unseen. The [test pyramid](https://martinfowler.com/articles/practical-test-pyramid.html) puts most checks at the narrow, fast levels and few at the wide, slow ones. Unit and architecture carry most of the checking, and run on every change.",
+   "items": [
     {
+     "at": "decide",
+     "text": "Name each level by what it checks against: unit against a part's contract, architecture against this document, and product vision against the product vision, in real use."
+    },
+    {
+     "at": "decide",
+     "text": "List each deployment unit as a row."
+    },
+    {
+     "at": "decide",
+     "text": "For each level, ask what the unit must do by that level's ground, and fill the cell with the tool and how far it tries the unit, and nothing more. `FULL` tries each case and edge, `HAPPY` the main paths, and `SMOKE` one run that confirms what the lower levels checked."
+    },
+    {
+     "at": "decide",
+     "text": "Where a cell stays empty, say why."
+    },
+    {
+     "at": "make",
      "text": "Leave out a unit whose every cell would be empty, and say why under the table."
     },
     {
+     "at": "make",
      "text": "Check that each story's sequence runs from start to end at the architecture level in some row."
     }
    ]
   },
   {
    "intent": "N13",
-   "thinking": "A failing test should name the rule, path, or use that it breaks. Draw each test from the one thing its level checks against: the ways a part's contract divides at unit, the paths the sequences draw at architecture, and an objective's main use at real size at product vision. Run only that thing real, and replace the rest with [test doubles](https://martinfowler.com/bliki/TestDouble.html). Point to the test rules of the best practices that the product follows, and write only where this product differs from them.",
-   "steps": [
+   "why": "A failing test should name the rule, path, or use that it breaks.",
+   "items": [
     {
+     "at": "make",
+     "text": "Draw each test from the one thing its level checks against: the ways a part's contract divides at unit, the paths the sequences draw at architecture, and an objective's main use at real size at product vision."
+    },
+    {
+     "at": "make",
+     "text": "Run only that thing real, and replace the rest with [test doubles](https://martinfowler.com/bliki/TestDouble.html)."
+    },
+    {
+     "at": "make",
+     "text": "Point to the test rules of the best practices that the product follows, and write only where this product differs from them."
+    },
+    {
+     "at": "make",
      "text": "At unit, divide each input and each result that the contract names into classes that the part treats alike, the refused ones among them, and write one test for each class. This is equivalence partitioning, as the [glossary](https://glossary.istqb.org) of the International Software Testing Qualifications Board defines it."
     },
     {
+     "at": "make",
      "text": "Where a class ends on an ordered scale, such as a length or a count, write one test at each end and one at the nearest value of the next class. This is boundary value analysis."
     },
     {
+     "at": "make",
      "text": "Where the contract's result depends on a combination of conditions, write one test for each combination that can occur, with the result it gives. This is decision table testing."
     },
     {
+     "at": "make",
      "text": "At unit, pass when every test passes, every line and branch runs, and the tests catch every mutant. Add a unit test for each gap that coverage, mutation testing, or a property-based test finds. These tools confirm the tests drawn from the contract, and draw none themselves."
     },
     {
+     "at": "make",
      "text": "At unit, where no guard holds each rule of a part that an AI does on every run, run the part on the real model, with one input for each class, both where the contract says the part acts and where it says it doesn't, and doubles for the parts it works with."
     },
     {
+     "at": "make",
      "text": "At architecture, run real what joins the components, such as hooks and scripts, and replace each component that an AI runs and each thing outside the product with a double, so that the level calls no model and gives the same result on each run."
     },
     {
+     "at": "make",
      "text": "At architecture, write one test for each path through each story's sequence: the main flow, each branch, each step that sends work back, and each question put to the role, until every move from one step to the next lies on some path."
     },
     {
+     "at": "make",
      "text": "Run the unit and architecture tests that a change reaches before each push, and every test in CI. Running every test before each push makes each change wait, and a selection misses a test that reads a file the change edits."
     },
     {
+     "at": "make",
      "text": "At product vision, once unit and architecture pass, run the real product on each objective's main use, as the README's walkthrough shows it, at the size of a real request, with an AI in the role that holds an intent the product never receives."
     },
     {
+     "at": "make",
      "text": "At product vision, measure each key result as the product vision words it, and compare each measure with the last one by the direction the product vision gives, since the product vision sets no target."
     },
     {
+     "at": "make",
      "text": "At product vision, run each role on the model its users run, judge each run from its records, and try no case that a lower level can test. Another model makes other mistakes than the users meet, and each run is slow and costly."
     },
     {
+     "at": "make",
      "text": "For a test whose result varies from run to run, write how many runs out of how many must meet the expectation."
     }
    ]
   },
   {
    "intent": "N14",
-   "thinking": "The product vision tests are slow and few, so they can only confirm what the lower levels already showed. A thing that only a prompt holds, such as a rule an AI keeps by its instructions, varies from run to run, and no unit or architecture test can show it. For each thing the document says the product does, name the part that holds it. Where only a prompt holds it, give it to a part that a test can run, such as a guard of the architecture the product builds on, and draw that part in Components. A judgment that only an AI can make, such as whether a point is the user's, stays with the AI. Test it on the real model as step 5 of N13 says, or, where the architecture the product builds on runs no prompt alone, say in Tests that only the product vision tests show it. The lower levels then show it only if each double behaves like the part it replaces. Give each double only results in the form the part's contract gives, refusals among them, and test the double as the part's unit tests test the part.",
-   "steps": [
+   "why": "The product vision tests are slow and few, so they can only confirm what the lower levels already showed. A thing that only a prompt holds, such as a rule an AI keeps by its instructions, varies from run to run, and no unit or architecture test can show it. The lower levels show a part only if each double behaves like the part it replaces.",
+   "items": [
     {
+     "at": "decide",
+     "text": "For each thing the document says the product does, name the part that holds it."
+    },
+    {
+     "at": "decide",
+     "text": "Where only a prompt holds it, give it to a part that a test can run, such as a guard of the architecture the product builds on, and draw that part in Components."
+    },
+    {
+     "at": "decide",
+     "text": "Leave a judgment that only an AI can make, such as whether a point is the user's, with the AI. Test it on the real model as N13.8 says, or, where the architecture the product builds on runs no prompt alone, say in Tests that only the product vision tests show it."
+    },
+    {
+     "at": "make",
+     "text": "Give each double only results in the form the part's contract gives, refusals among them, and test the double as the part's unit tests test the part."
+    },
+    {
+     "at": "make",
      "text": "Draw a double of something outside the product from its documentation or from a recorded run of the real thing. A double that gives what the real thing never would passes a test that the real one fails."
     },
     {
+     "at": "make",
      "text": "For a fault that a higher level finds, name the case or path that the lower level missed, add its test at the level that must catch it, see it fail, and then fix it there."
     },
     {
+     "at": "make",
      "text": "Trust a check, such as a test, a hook, or the judge of a trial, only once you have seen it fail on a case that breaks what it checks. Trust a judge once it's right on kept records whose answer you know."
     }
    ]
   },
   {
    "intent": "N15",
-   "thinking": "A developer who doubts a choice and can't see what it was for may undo it and bring back the problem it solved. An [architecture decision record](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions), by Michael Nygard, keeps a decision with its context and consequences. For each choice whose other way would bring back a problem that costs a key result, such as a technology, a tool, or how far a level tests a unit, name the other way it beat, what the choice gives, ending with the key result it serves, and what it costs. Write it beside the choice, one sentence for each.",
-   "steps": [
+   "why": "A developer who doubts a choice and can't see what it was for may undo it and bring back the problem it solved. An [architecture decision record](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions), by Michael Nygard, keeps a decision with its context and consequences.",
+   "items": [
     {
+     "at": "decide",
+     "text": "For each choice whose other way would bring back a problem that costs a key result, such as a technology, a tool, or how far a level tests a unit, name the other way it beat, what the choice gives, ending with the key result it serves, and what it costs."
+    },
+    {
+     "at": "make",
+     "text": "Write it beside the choice, one sentence for each."
+    },
+    {
+     "at": "make",
      "text": "For each choice that a figure shows, ask what the other way would bring back. Give a reason and a cost only where it would cost a key result."
     }
    ]
   },
   {
    "intent": "N16",
-   "thinking": "A line about how a component works inside becomes untrue at the next change to that component, and the developer then can't trust the document. Information hiding keeps such details inside the module. For each line, ask whether it would become untrue if a component's internals changed while the product vision and the principles stayed. If it would, move it to where the developer builds the component.",
-   "steps": [
+   "why": "A line about how a component works inside becomes untrue at the next change to that component, and the developer then can't trust the document. Information hiding keeps such details inside the module.",
+   "items": [
     {
+     "at": "make",
+     "text": "For each line, ask whether it would become untrue if a component's internals changed while the product vision and the principles stayed."
+    },
+    {
+     "at": "make",
+     "text": "If it would, move it to where the developer builds the component."
+    },
+    {
+     "at": "make",
      "text": "Imagine a change to how a component works inside, such as its steps, a value it uses, or a data's fields, and mark each line it would make untrue. Repeat with a change of another kind until you mark no line."
     }
    ]

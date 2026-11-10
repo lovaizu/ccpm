@@ -44,10 +44,12 @@ SCHEMA = "$schema"
 NOTE = re.compile(r"^> \[!NOTE\]\n> " + MARKER + r":.*(?:\n>.*)*", re.MULTILINE)
 MARK = re.compile(r"^(?:> " + MARKER + r":|\s*\"" + MARKER + r"\"\s*:)", re.MULTILINE)
 QUESTION = re.compile(r"\bN\d+\b")
-# A step that holds only in a case opens with Where or If and its case, as the template writes one.
+# An item that holds only in a case opens with Where or If and its case, as the template writes one.
 CASE = re.compile(r"^(?:Where|If) ")
 # What each action of a trace has its calls do, as the Markdown names them.
 DONE = {"run": "run", "read": "read to its end", "write": "made"}
+# When the maker takes each item, as the Markdown names it.
+AT = {"decide": "*While deciding.*", "make": "*While making.*"}
 # A link or a figure in Markdown, a fenced code block, whose text links nothing, and a link's target
 # that a copy elsewhere still reaches unchanged: another site, or a place in the same page.
 LINK = re.compile(r"(!?)(\[[^\]]*\]\()([^)\s]+)(\))")
@@ -277,7 +279,7 @@ def texts(value: Any) -> list[str]:
 def faults(data: dict[str, Any], template: list[str] | None = None) -> list[str]:
     """Each fault of the best practice's form, in words: questions numbered in their order, each
     about a part it has, a section of its template where it has one, or the whole, every part or
-    section asked of, each question with one practice in the same order, each step's
+    section asked of, each question with one practice in the same order, each item's
     trace one that every run makes and a call can match, and each question named in the text one
     that's there."""
     found = []
@@ -335,21 +337,21 @@ def csf_faults(data: dict[str, Any]) -> list[str]:
 
 
 def trace_faults(data: dict[str, Any]) -> list[str]:
-    """Each fault of a step's trace, in words: a trace on a step that holds only in its case, which
-    a run outside the case never makes, so Lane would stop that run's end, and an empty text taken,
-    which no call matches."""
+    """Each fault of an item's trace, in words: a trace on an item that holds only in its case,
+    which a run outside the case never makes, so Lane would stop that run's end, and an empty text
+    taken, which no call matches."""
     found = []
     for practice in data["practices"]:
-        for n, step in enumerate(practice["steps"], 1):
-            if "trace" not in step:
+        for n, item in enumerate(practice["items"], 1):
+            if "trace" not in item:
                 continue
-            where = f"step {n} of {practice['intent']}"
-            if CASE.match(step["text"]):
+            where = f"{practice['intent']}.{n}"
+            if CASE.match(item["text"]):
                 found.append(
                     f"{where} holds only in its case, so it carries no trace, as a run outside the"
                     " case never makes it"
                 )
-            if any(not take.strip() for take in step["trace"]["takes"]):
+            if any(not take.strip() for take in item["trace"]["takes"]):
                 found.append(f"{where} takes an empty text in its trace, which no call matches")
     return found
 
@@ -360,11 +362,12 @@ def listed(takes: list[str]) -> str:
     return f"{', '.join(rest)} or {last}" if rest else last
 
 
-def step_line(n: int, step: dict[str, Any]) -> str:
-    """The step as a line of a numbered list, with the calls its trace takes and what they do."""
-    line = f"{n}. {step['text']}"
-    if "trace" in step:
-        trace = step["trace"]
+def item_line(n: int, item: dict[str, Any]) -> str:
+    """The item as a line of a numbered list, with when the maker takes it, and the calls its trace
+    takes and what they do."""
+    line = f"{n}. {AT[item['at']]} {item['text']}"
+    if "trace" in item:
+        trace = item["trace"]
         line += f" The trace: {listed(trace['takes'])} {DONE[trace['action']]}."
     return line
 
@@ -427,10 +430,8 @@ def markdown_of(path: str, data: dict[str, Any]) -> str:
     for practice in data["practices"]:
         question = questions[practice["intent"]]
         out += ["", f"### {question['id']}", "", question["what"], ""]
-        out += ["**Thinking**", "", practice["thinking"]]
-        if practice["steps"]:
-            out += ["", "**Steps**", ""]
-            out += [step_line(n, s) for n, s in enumerate(practice["steps"], 1)]
+        out += [practice["why"], ""]
+        out += [item_line(n, s) for n, s in enumerate(practice["items"], 1)]
     return "\n".join(out) + "\n"
 
 

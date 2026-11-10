@@ -88,67 +88,187 @@
  "practices": [
   {
    "intent": "N1",
-   "thinking": "Every deliverable in the design tree is there to serve the goal, so the goal decides what goes in and what stays out. Write what the user is trying to achieve as one sentence with the user as its subject. Ask why until the answer is the user's own purpose and no longer a deliverable. Name in `by` who settled it. Check that each deliverable of the design tree serves the goal, and drop one that serves nothing.",
-   "steps": []
+   "why": "Every deliverable in the design tree is there to serve the goal, so the goal decides what goes in and what stays out.",
+   "items": [
+    {
+     "at": "decide",
+     "text": "Write what the user is trying to achieve as one sentence with the user as its subject."
+    },
+    {
+     "at": "decide",
+     "text": "Ask why until the answer is the user's own purpose and no longer a deliverable."
+    },
+    {
+     "at": "decide",
+     "text": "Name in `by` who settled it."
+    },
+    {
+     "at": "make",
+     "text": "Check that each deliverable of the design tree serves the goal, and drop one that serves nothing."
+    }
+   ]
   },
   {
    "intent": "N2",
-   "thinking": "A deliverable left out shows up only when the work reaches it, and the work stops there. A [work breakdown structure](https://en.wikipedia.org/wiki/Work_breakdown_structure) finds every deliverable up front by working back from the goal. Decide the tree in order. First, ask which deliverables together make the goal true. Second, for each, ask which deliverables it takes its content from. Repeat until a deliverable takes nothing. Third, where a decision needs facts that no one has found yet, put a research deliverable before it.",
-   "steps": [
+   "why": "A deliverable left out shows up only when the work reaches it, and the work stops there. A [work breakdown structure](https://en.wikipedia.org/wiki/Work_breakdown_structure) finds every deliverable up front by working back from the goal.",
+   "items": [
     {
+     "at": "decide",
+     "text": "Ask which deliverables together make the goal true."
+    },
+    {
+     "at": "decide",
+     "text": "For each, ask which deliverables it takes its content from. Repeat until a deliverable takes nothing."
+    },
+    {
+     "at": "decide",
+     "text": "Where a decision needs facts that no one has found yet, put a research deliverable before it."
+    },
+    {
+     "at": "make",
      "text": "Put each research deliverable at the top level, in the order of the work."
     }
    ]
   },
   {
    "intent": "N3",
-   "thinking": "A deliverable made without a best practice meets no stated condition, so no one can tell whether it's good. Give each deliverable the kind whose best practice it meets, by the folder name of that best practice. Where a kind has no best practice yet, put a deliverable that makes one, of the kind `meta`, at the top level before the first deliverable of that kind.",
-   "steps": []
+   "why": "A deliverable made without a best practice meets no stated condition, so no one can tell whether it's good.",
+   "items": [
+    {
+     "at": "decide",
+     "text": "Give each deliverable the kind whose best practice it meets, by the folder name of that best practice."
+    },
+    {
+     "at": "decide",
+     "text": "Where a kind has no best practice yet, put a deliverable that makes one, of the kind `meta`, at the top level before the first deliverable of that kind."
+    }
+   ]
   },
   {
    "intent": "N4",
-   "thinking": "A deliverable started before its inputs rests on a guess. Give each deliverable, in `inputs`, the path of each deliverable it takes content from, and in `preconditions`, the path of each one that must pass before it starts, each of a kind that its best practice names there. Use paths, not kinds, since deliverables of one kind can serve different products. Then let a script order the deliverables by these paths, as a [topological sort](https://en.wikipedia.org/wiki/Topological_sorting) gives an order that keeps every dependency, instead of working out the order case by case.",
-   "steps": [
+   "why": "A deliverable started before its inputs rests on a guess.",
+   "items": [
     {
+     "at": "decide",
+     "text": "Give each deliverable, in `inputs`, the path of each deliverable it takes content from, and in `preconditions`, the path of each one that must pass before it starts, each of a kind that its best practice names there. Use paths, not kinds, since deliverables of one kind can serve different products."
+    },
+    {
+     "at": "make",
+     "text": "Let a script order the deliverables by these paths, as a [topological sort](https://en.wikipedia.org/wiki/Topological_sorting) gives an order that keeps every dependency, instead of working out the order case by case."
+    },
+    {
+     "at": "make",
      "text": "After each change, have a script, such as rn's `tree.py`, check that each deliverable comes after its inputs and preconditions, that each research deliverable serves a later decision, and that a later deliverable uses each meta deliverable's kind."
     },
     {
+     "at": "make",
      "text": "Order the tests by level: unit, then architecture, then product vision, each after the level below passes. A higher level finds a fault later, at a higher cost."
     },
     {
+     "at": "make",
      "text": "Put a check, and a test that shows the check failing, before the deliverables that trust its results, as [the architecture best practice](../architecture/best-practice.md#n14) trusts a check only then."
     }
    ]
   },
   {
    "intent": "N5",
-   "thinking": "The maker builds a deliverable from the decisions that answer its best practice's conditions, and asks about the points still open instead of guessing. Give each deliverable the necessary conditions of its best practice, in that best practice's order, each with its decisions. Leave a point's `decided` null while it's open. Settle each decision once its inputs exist, and no earlier, as the [last responsible moment](https://blog.codinghorror.com/the-last-responsible-moment/) avoids a decision that rests on a guess. After each result, revise the design tree forward from it.",
-   "steps": []
+   "why": "The maker builds a deliverable from the decisions that answer its best practice's conditions, and asks about the points still open instead of guessing.",
+   "items": [
+    {
+     "at": "decide",
+     "text": "Give each deliverable the necessary conditions of its best practice, in that best practice's order, each with its decisions."
+    },
+    {
+     "at": "decide",
+     "text": "Leave a point's `decided` null while it's open."
+    },
+    {
+     "at": "decide",
+     "text": "Settle each decision once its inputs exist, and no earlier, as the [last responsible moment](https://blog.codinghorror.com/the-last-responsible-moment/) avoids a decision that rests on a guess."
+    },
+    {
+     "at": "make",
+     "text": "After each result, revise the design tree forward from it."
+    }
+   ]
   },
   {
    "intent": "N6",
-   "thinking": "The user should spend their time only on the decisions that are theirs. Name in `by` who settled each decision: the user, the maker, reasoning from the goal and the best practices, or research. Keep the grounds out of the tree, and write them in the commit message that makes the decision, so that the user finds them in git.",
-   "steps": []
+   "why": "The user should spend their time only on the decisions that are theirs.",
+   "items": [
+    {
+     "at": "decide",
+     "text": "Name in `by` who settled each decision: the user, the maker, reasoning from the goal and the best practices, or research."
+    },
+    {
+     "at": "make",
+     "text": "Keep the grounds out of the tree, and write them in the commit message that makes the decision, so that the user finds them in git."
+    }
+   ]
   },
   {
    "intent": "N7",
-   "thinking": "The user reads the design tree to see where the work stands and what comes next, without opening each deliverable. For each deliverable, ask what holds toward the goal once it exists, and write that as its name. Leave out its path and its kind, which have fields of their own.",
-   "steps": []
+   "why": "The user reads the design tree to see where the work stands and what comes next, without opening each deliverable.",
+   "items": [
+    {
+     "at": "make",
+     "text": "For each deliverable, ask what holds toward the goal once it exists, and write that as its name."
+    },
+    {
+     "at": "make",
+     "text": "Leave out its path and its kind, which have fields of their own."
+    }
+   ]
   },
   {
    "intent": "N8",
-   "thinking": "Whoever picks up the work must go on from where it stopped, without reading back through what came before. Keep each deliverable's status: `open`, `doing`, or `done`. Keep, for each necessary condition, whether the deliverable meets it, in `good`. The work then resumes at the first deliverable that isn't done.",
-   "steps": []
+   "why": "Whoever picks up the work must go on from where it stopped, without reading back through what came before. The work then resumes at the first deliverable that isn't done.",
+   "items": [
+    {
+     "at": "make",
+     "text": "Keep each deliverable's status: `open`, `doing`, or `done`."
+    },
+    {
+     "at": "make",
+     "text": "Keep, for each necessary condition, whether the deliverable meets it, in `good`."
+    }
+   ]
   },
   {
    "intent": "N9",
-   "thinking": "A node that a change touches, left unread, goes on saying what held before. After each change to a node, go through the nodes that a script, such as rn's `tree.py`, lists: up to the goal, then the later decisions of the deliverable, then the deliverables before and after it that it takes from or gives to. Answer each as holding or as changed, as a checker such as Lane's `every_item` asks. Start the list again after each change.",
-   "steps": []
+   "why": "A node that a change touches, left unread, goes on saying what held before.",
+   "items": [
+    {
+     "at": "make",
+     "text": "After each change to a node, go through the nodes that a script, such as rn's `tree.py`, lists: up to the goal, then the later decisions of the deliverable, then the deliverables before and after it that it takes from or gives to."
+    },
+    {
+     "at": "make",
+     "text": "Answer each as holding or as changed, as a checker such as Lane's `every_item` asks."
+    },
+    {
+     "at": "make",
+     "text": "Start the list again after each change."
+    }
+   ]
   },
   {
    "intent": "N10",
-   "thinking": "A reader acts on what the design tree says, and reads any history in it as part of the current decision. Keep only what holds now. A deliverable that's done keeps one line: its name, path, kind, and status. A research deliverable goes once the decisions hold what it found. Git keeps how each point came about.",
-   "steps": []
+   "why": "A reader acts on what the design tree says, and reads any history in it as part of the current decision. Git keeps how each point came about.",
+   "items": [
+    {
+     "at": "make",
+     "text": "Keep only what holds now."
+    },
+    {
+     "at": "make",
+     "text": "Keep one line for a deliverable that's done: its name, path, kind, and status."
+    },
+    {
+     "at": "make",
+     "text": "Drop a research deliverable once the decisions hold what it found."
+    }
+   ]
   }
  ]
 }

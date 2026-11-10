@@ -186,24 +186,48 @@
  "practices": [
   {
    "intent": "N1",
-   "thinking": "A developer finds each job where the structure puts it, and what the plugin knows outlives the agent it runs on. Alistair Cockburn's [hexagonal architecture](https://alistair.cockburn.us/hexagonal-architecture/) keeps the core apart from the adapters that connect it to the outside. Take each file's place from the architecture's Directory structure, and decide where each file goes by asking whether Claude Code fixes its form. Skills, agents, hooks, and scripts take the form Claude Code fixes, each named as its caller calls it, such as the command a person types, and hand the job to the file in `domain/` that does it. `domain/` holds the knowledge of the work in one folder, with no folders split by role, and names no tool of an agent, such as the Agent tool or `AskUserQuestion`: only the entries name them. Two entries for one job then can't drift apart. Keep what only the developers need, such as the tests and the architecture, outside the plugin's folder, since installing copies only that folder.",
-   "steps": [
+   "why": "A developer finds each job where the structure puts it, and what the plugin knows outlives the agent it runs on. Alistair Cockburn's [hexagonal architecture](https://alistair.cockburn.us/hexagonal-architecture/) keeps the core apart from the adapters that connect it to the outside. Two entries for one job then can't drift apart.",
+   "items": [
     {
+     "at": "decide",
+     "text": "Take each file's place from the architecture's Directory structure, and decide where each file goes by asking whether Claude Code fixes its form."
+    },
+    {
+     "at": "make",
+     "text": "Skills, agents, hooks, and scripts take the form Claude Code fixes, each named as its caller calls it, such as the command a person types, and hand the job to the file in `domain/` that does it."
+    },
+    {
+     "at": "make",
+     "text": "`domain/` holds the knowledge of the work in one folder, with no folders split by role, and names no tool of an agent, such as the Agent tool or `AskUserQuestion`: only the entries name them."
+    },
+    {
+     "at": "make",
+     "text": "Keep what only the developers need, such as the tests and the architecture, outside the plugin's folder, since installing copies only that folder."
+    },
+    {
+     "at": "make",
      "text": "Search `domain/` for the name of each tool of an agent, and move each line it finds to the entry that uses the tool."
     }
    ]
   },
   {
    "intent": "N2",
-   "thinking": "A role works from all it has to do only when it holds its whole part from its first call. Three facts of Claude Code decide how. It makes an agent's body its system prompt and reads no other file into it. It replaces `${CLAUDE_PLUGIN_ROOT}` with the plugin's folder only in an entry's own body, not in what the Bash tool runs or in a file that Read reads, as [environment variables](https://code.claude.com/docs/en/plugins/manifest-reference#environment-variables) says. After `/compact`, a part that a skill names comes back whole, while the skill's own body survives only as the summary retells it. So each entry names its part, and the guard or the skill delivers the part whole at the start.",
-   "steps": [
+   "why": "A role works from all it has to do only when it holds its whole part from its first call. Three facts of Claude Code decide how. It makes an agent's body its system prompt and reads no other file into it. It replaces `${CLAUDE_PLUGIN_ROOT}` with the plugin's folder only in an entry's own body, not in what the Bash tool runs or in a file that Read reads, as [environment variables](https://code.claude.com/docs/en/plugins/manifest-reference#environment-variables) says. After `/compact`, a part that a skill names comes back whole, while the skill's own body survives only as the summary retells it.",
+   "items": [
     {
+     "at": "decide",
+     "text": "Have each entry name its part, and have the guard or the skill deliver the part whole at the start."
+    },
+    {
+     "at": "make",
      "text": "Have each entry's body say that the plugin's folder is `${CLAUDE_PLUGIN_ROOT}` and name the role's part in `domain/`, and have the part name each file as `${CLAUDE_PLUGIN_ROOT}/<path>`."
     },
     {
+     "at": "make",
      "text": "Have the guard give an agent its part whole as the agent starts, through the `SubagentStart` hook's `additionalContext` with the folder filled in, and have the skill's body make the main conversation read its part whole first."
     },
     {
+     "at": "make",
      "text": "Run `lay.py print` on the plugin's proposal, and check in what it prints that it found each role's part.",
      "trace": {
       "action": "run",
@@ -216,45 +240,134 @@
   },
   {
    "intent": "N3",
-   "thinking": "A role follows whatever its part says, so steps copied into the part drift from the practices they came from, and the role follows the copy. A role's part says what the role has to do, what a machine can see once it's done, what it's given, the best practice and the conditions whose practices it carries out, and what it gives as it ends, as `domain/role.md` shows. The steps of the work are those practices, and the guard holds them one by one.",
-   "steps": [
+   "why": "A role follows whatever its part says, so steps copied into the part drift from the practices they came from, and the role follows the copy. The steps of the work are those practices, and the guard holds them one by one.",
+   "items": [
     {
+     "at": "decide",
+     "text": "Make a role's part say what the role has to do, what a machine can see once it's done, what it's given, the best practice and the conditions whose practices it carries out, and what it gives as it ends, as `domain/role.md` shows."
+    },
+    {
+     "at": "make",
      "text": "Search each part for a numbered list, and replace each step it holds with the condition whose practice the step carries out."
     }
    ]
   },
   {
    "intent": "N4",
-   "thinking": "A role starts in a fresh context, so nothing from other work leads it astray, as [subagents](https://code.claude.com/docs/en/sub-agents) says. Take the roles from the architecture's Components, and decide each role's tools by asking which context and which tools its job needs. Jobs that need different context or tools get a role each: an agent whose `tools` name only what the job needs. Roles that run at the same time each work in a workspace of their own, such as a git worktree and a temporary folder that no other role writes. Their results join only through the one who started them, since two makers in one workspace overwrite each other's files unseen.",
-   "steps": [
+   "why": "A role starts in a fresh context, so nothing from other work leads it astray, as [subagents](https://code.claude.com/docs/en/sub-agents) says. Two makers in one workspace overwrite each other's files unseen.",
+   "items": [
     {
+     "at": "decide",
+     "text": "Take the roles from the architecture's Components, and decide each role's tools by asking which context and which tools its job needs."
+    },
+    {
+     "at": "decide",
+     "text": "Jobs that need different context or tools get a role each: an agent whose `tools` name only what the job needs."
+    },
+    {
+     "at": "decide",
+     "text": "Roles that run at the same time each work in a workspace of their own, such as a git worktree and a temporary folder that no other role writes."
+    },
+    {
+     "at": "decide",
+     "text": "Their results join only through the one who started them."
+    },
+    {
+     "at": "make",
      "text": "Set each agent's `tools` to the tools that its part's practices use, and `background: true`, since the guard counts a start once its role ends."
     }
    ]
   },
   {
    "intent": "N5",
-   "thinking": "A machine can check a fixed form, while words written freely leave each reader to guess. Keep each role's input and output to JSON Schemas in `domain/`, drawn from `domain/role-in.schema.json` and `domain/role-out.schema.json`. A role starts with one JSON line of run values, the values that the guard holds its calls to. Each form carries the data that the architecture's sequences hand on at that start, resume, or end, as the data model names it. It resumes with a message that holds the main conversation's own grounds, and the person's words word for word where it has them. It ends by giving a result, a fixed word such as `asks` or `done`, by Lane's result script, and its last message begins with `For the person:` where it holds a question for the person. A role that judges a work by questions writes its answers with the lines of the work that meet each question.",
-   "steps": [
+   "why": "A machine can check a fixed form, while words written freely leave each reader to guess.",
+   "items": [
     {
+     "at": "decide",
+     "text": "Keep each role's input and output to JSON Schemas in `domain/`, drawn from `domain/role-in.schema.json` and `domain/role-out.schema.json`."
+    },
+    {
+     "at": "decide",
+     "text": "A role starts with one JSON line of run values, the values that the guard holds its calls to."
+    },
+    {
+     "at": "decide",
+     "text": "Each form carries the data that the architecture's sequences hand on at that start, resume, or end, as the data model names it."
+    },
+    {
+     "at": "decide",
+     "text": "It resumes with a message that holds the main conversation's own grounds, and the person's words word for word where it has them."
+    },
+    {
+     "at": "decide",
+     "text": "It ends by giving a result, a fixed word such as `asks` or `done`, by Lane's result script, and its last message begins with `For the person:` where it holds a question for the person."
+    },
+    {
+     "at": "decide",
+     "text": "A role that judges a work by questions writes its answers with the lines of the work that meet each question."
+    },
+    {
+     "at": "make",
+     "text": "Have each role's result name the IDs of the practice items it took, of the conditions its part names. The orchestrator's result names those it takes while it settles the decisions, and the generator's those it takes while it makes the deliverable."
+    },
+    {
+     "at": "make",
+     "text": "Have the guard stop an end whose result leaves out an item."
+    },
+    {
+     "at": "make",
      "text": "Write each role's two schemas, and have the script that a role runs before it gives its result hold the role's answers to them."
     }
    ]
   },
   {
    "intent": "N6",
-   "thinking": "A script finds a file out of form before anyone reads it. Decide each file's form by how the plugin uses it. A document that the plugin rewrites, such as a design tree, keeps a form that a script checks, such as JSON with a [JSON Schema](https://json-schema.org). A record that it only adds to, such as Lane's calls, is an append-only log, such as [JSON Lines](https://jsonlines.org), so that adding a record never rewrites what's there. A file that shows the form of a deliverable, such as a template or an example, keeps the deliverable's own format, since a template in another format shows a form that the deliverable can't take. The guard checks the nodes around each change to a tree, so that the parts around it don't drift.",
-   "steps": [
+   "why": "A script finds a file out of form before anyone reads it.",
+   "items": [
     {
+     "at": "decide",
+     "text": "Decide each file's form by how the plugin uses it."
+    },
+    {
+     "at": "decide",
+     "text": "A document that the plugin rewrites, such as a design tree, keeps a form that a script checks, such as JSON with a [JSON Schema](https://json-schema.org)."
+    },
+    {
+     "at": "decide",
+     "text": "A record that it only adds to, such as Lane's calls, is an append-only log, such as [JSON Lines](https://jsonlines.org), so that adding a record never rewrites what's there."
+    },
+    {
+     "at": "decide",
+     "text": "A file that shows the form of a deliverable, such as a template or an example, keeps the deliverable's own format, since a template in another format shows a form that the deliverable can't take."
+    },
+    {
+     "at": "decide",
+     "text": "The guard checks the nodes around each change to a tree, so that the parts around it don't drift."
+    },
+    {
+     "at": "make",
      "text": "Have each script that reads a file hold it to its schema, and write a unit test that gives the script a file out of form and checks that the script fails with the schema's error."
     }
    ]
   },
   {
    "intent": "N7",
-   "thinking": "Code follows a course the same way every time, while a conversation that's told the course drifts from it. Ask whether a run goes in fixed moves. If it does, its routes keep the course. Lane lays them in `hooks/lanes.json` from the plugin's proposal, and gives the main conversation each next start from the role that ended and the result it gave. Lane keeps each run's state in a file, so that a compacted or stopped conversation goes on from its last move. If the course changes with what the run finds, the orchestrator's part keeps the course instead.",
-   "steps": [
+   "why": "Code follows a course the same way every time, while a conversation that's told the course drifts from it.",
+   "items": [
     {
+     "at": "decide",
+     "text": "Ask whether a run goes in fixed moves."
+    },
+    {
+     "at": "decide",
+     "text": "If it does, its routes keep the course. Lane lays them in `hooks/lanes.json` from the plugin's proposal, and gives the main conversation each next start from the role that ended and the result it gave. Lane keeps each run's state in a file, so that a compacted or stopped conversation goes on from its last move."
+    },
+    {
+     "at": "decide",
+     "text": "If the course changes with what the run finds, the orchestrator's part keeps the course instead."
+    },
+    {
+     "at": "make",
      "text": "Write the routes in the plugin's proposal, run `lay.py print` on it and read what it prints, and then run `lay.py write`.",
      "trace": {
       "action": "run",
@@ -267,9 +380,34 @@
   },
   {
    "intent": "N8",
-   "thinking": "A hook runs every time, while an instruction is only advice. The plugin's hooks are its guard, laid by [Lane](../../../../lane/README.md) from the plugin's proposal as lanes and routes. For each step of the practices, and each rule of the architecture's principles, ask whether its drift shows in a tool call or in how a role ends. If it does, lay a lane on it: its hook stops what would break the step and gives the role the step again. Branch protection or permission rules hold what's hard to undo. Keep all hooks in `hooks/hooks.json`. Hooks fire on the main conversation's calls with no `agent_type`, and on a role's with the role's, as [hooks](https://code.claude.com/docs/en/hooks) says. A plugin's agent ignores `hooks`, `mcpServers`, and `permissionMode` in its own frontmatter, as [plugin agents](https://code.claude.com/docs/en/plugins/components#frontmatter-fields-in-plugin-agents) says, and a `SubagentStop` hook in a skill's frontmatter didn't fire in a trial on Claude Code 2.1.318.",
-   "steps": [
+   "why": "A hook runs every time, while an instruction is only advice. The plugin's hooks are its guard, laid by [Lane](../../../../lane/README.md) from the plugin's proposal as lanes and routes. Hooks fire on the main conversation's calls with no `agent_type`, and on a role's with the role's, as [hooks](https://code.claude.com/docs/en/hooks) says. A plugin's agent ignores `hooks`, `mcpServers`, and `permissionMode` in its own frontmatter, as [plugin agents](https://code.claude.com/docs/en/plugins/components#frontmatter-fields-in-plugin-agents) says, and a `SubagentStop` hook in a skill's frontmatter didn't fire in a trial on Claude Code 2.1.318.",
+   "items": [
     {
+     "at": "decide",
+     "text": "For each step of the practices, and each rule of the architecture's principles, ask whether its drift shows in a tool call or in how a role ends."
+    },
+    {
+     "at": "decide",
+     "text": "If it does, lay a lane on it: its hook stops what would break the step and gives the role the step again."
+    },
+    {
+     "at": "decide",
+     "text": "Branch protection or permission rules hold what's hard to undo."
+    },
+    {
+     "at": "decide",
+     "text": "Keep all hooks in `hooks/hooks.json`."
+    },
+    {
+     "at": "make",
+     "text": "Have each role read in full each best practice its part names before its first change, and lay a lane on it by the read's trace."
+    },
+    {
+     "at": "make",
+     "text": "Write a hook's message as the role's next instruction, as Claude Code delivers it: the sentence of the step or the item that the role broke or skipped, and why it matters, as work to do on the deliverable. Never name the check's own record, such as the result's list of items, which the role would mend instead of doing the step."
+    },
+    {
+     "at": "make",
      "text": "Name in each step of the best practices that the roles use a trace that a machine can check, such as a command run, a file read, or a test made, and lay a lane on it in the proposal.",
      "trace": {
       "action": "write",
@@ -282,122 +420,300 @@
   },
   {
    "intent": "N9",
-   "thinking": "A reader takes a check that stays silent when it couldn't check for one that found nothing. End each check in one of three results: no problem, a problem, or couldn't check, such as the exit codes 0, 1, and 2. Decide beforehand what follows each, and test it. A hook whose command fails stops the call, by `onFailure: block`, and a hook that finds no Python 3.9 stops each call of the plugin's own roles and says why. A skipped test, a job that didn't run, or a command that failed counts as no pass, as [fail securely](https://owasp.org/www-community/Fail_securely) says.",
-   "steps": [
+   "why": "A reader takes a check that stays silent when it couldn't check for one that found nothing.",
+   "items": [
     {
+     "at": "decide",
+     "text": "End each check in one of three results: no problem, a problem, or couldn't check, such as the exit codes 0, 1, and 2."
+    },
+    {
+     "at": "decide",
+     "text": "Decide beforehand what follows each, and test it."
+    },
+    {
+     "at": "decide",
+     "text": "A hook whose command fails stops the call, by `onFailure: block`, and a hook that finds no Python 3.9 stops each call of the plugin's own roles and says why."
+    },
+    {
+     "at": "decide",
+     "text": "A skipped test, a job that didn't run, or a command that failed counts as no pass, as [fail securely](https://owasp.org/www-community/Fail_securely) says."
+    },
+    {
+     "at": "make",
      "text": "Write a unit test for each of the three results of each check, and an architecture test that runs each hook with its script missing."
     }
    ]
   },
   {
    "intent": "N10",
-   "thinking": "A tool finds the same thing every time, at once, while an AI finds only some, and spends a round on each. Take the conditions that the best practice of each role's work sets. For each condition, ask whether a machine can see it. If it can, give it to a script, a hook, or the project's own tools, such as a formatter, a linter, or a type checker. Leave to an AI only what no machine can check.",
-   "steps": [
+   "why": "A tool finds the same thing every time, at once, while an AI finds only some, and spends a round on each.",
+   "items": [
     {
+     "at": "decide",
+     "text": "Take the conditions that the best practice of each role's work sets."
+    },
+    {
+     "at": "decide",
+     "text": "For each condition, ask whether a machine can see it."
+    },
+    {
+     "at": "decide",
+     "text": "If it can, give it to a script, a hook, or the project's own tools, such as a formatter, a linter, or a type checker."
+    },
+    {
+     "at": "decide",
+     "text": "Leave to an AI only what no machine can check."
+    },
+    {
+     "at": "make",
      "text": "Give each condition that a machine can see to a script that the role runs before it gives its result."
     }
    ]
   },
   {
    "intent": "N11",
-   "thinking": "Only the main conversation can ask the person, and a subagent's last message reaches only the one who started it, as [subagents](https://code.claude.com/docs/en/sub-agents#available-tools) says. So the skill makes the main conversation the orchestrator, which holds the talk with the person: it asks them each point that's theirs, one at a time with a recommendation, and settles the rest by the purpose and the best practices. It makes nothing itself, so that its conversation keeps room for the talk and the judgments. It starts each role that the routes name for the work, and resumes a role by SendMessage, which keeps the role's whole conversation, as [resume subagents](https://code.claude.com/docs/en/sub-agents#resume-subagents) says. A role's result is a claim, and the role may have read the work wrong. So the orchestrator checks each result against the purpose and the best practices before it acts on it, and sends a role back with the ground where the result falls short. An AI calls the plugin by the same skill, since its own orchestrator also runs in the main conversation.",
-   "steps": [
+   "why": "Only the main conversation can ask the person, and a subagent's last message reaches only the one who started it, as [subagents](https://code.claude.com/docs/en/sub-agents#available-tools) says. A role's result is a claim, and the role may have read the work wrong.",
+   "items": [
     {
+     "at": "decide",
+     "text": "The skill makes the main conversation the orchestrator, which holds the talk with the person: it asks them each point that's theirs, one at a time with a recommendation, and settles the rest by the purpose and the best practices."
+    },
+    {
+     "at": "decide",
+     "text": "It makes nothing itself, so that its conversation keeps room for the talk and the judgments."
+    },
+    {
+     "at": "decide",
+     "text": "It starts each role that the routes name for the work, and resumes a role by SendMessage, which keeps the role's whole conversation, as [resume subagents](https://code.claude.com/docs/en/sub-agents#resume-subagents) says."
+    },
+    {
+     "at": "decide",
+     "text": "The orchestrator checks each result against the purpose and the best practices before it acts on it, and sends a role back with the ground where the result falls short."
+    },
+    {
+     "at": "decide",
+     "text": "An AI calls the plugin by the same skill, since its own orchestrator also runs in the main conversation."
+    },
+    {
+     "at": "make",
      "text": "Write an architecture test that runs the orchestrator's part through a start, a result sent back, and a resume of each role, and check that each prompt holds only the run values, the person's words, and the orchestrator's grounds."
     }
    ]
   },
   {
    "intent": "N12",
-   "thinking": "An AI that decides for the caller leaves them answerable for what they never saw, and an approval that an agent can give itself stops nothing. List the points that are the caller's, such as what's hard to undo, like a merge. Make each count as approved only by the caller's own act, such as a skill that the AI can't call.",
-   "steps": [
+   "why": "An AI that decides for the caller leaves them answerable for what they never saw, and an approval that an agent can give itself stops nothing.",
+   "items": [
     {
+     "at": "decide",
+     "text": "List the points that are the caller's, such as what's hard to undo, like a merge."
+    },
+    {
+     "at": "decide",
+     "text": "Make each count as approved only by the caller's own act, such as a skill that the AI can't call."
+    },
+    {
+     "at": "make",
      "text": "Set `disable-model-invocation: true` in the frontmatter of each skill that approves such a point."
     }
    ]
   },
   {
    "intent": "N13",
-   "thinking": "A point settled before the work doesn't come back as rework, and a question about what the person doesn't care about spends their time on the plugin's job. Matt Pocock's [grilling](https://github.com/mattpocock/skills/blob/main/skills/productivity/grilling/SKILL.md) gives the method. For each point the work needs, ask whether facts can settle it. If they can, the role finds them itself and shows each fact the work rests on. Ask whether the purpose and the best practices settle it. If they do, the role decides it and reports it at the end. Only a point that's left goes to the person: one point per message, with a recommendation.",
-   "steps": [
+   "why": "A point settled before the work doesn't come back as rework, and a question about what the person doesn't care about spends their time on the plugin's job. Matt Pocock's [grilling](https://github.com/mattpocock/skills/blob/main/skills/productivity/grilling/SKILL.md) gives the method.",
+   "items": [
     {
+     "at": "decide",
+     "text": "For each point the work needs, ask whether facts can settle it."
+    },
+    {
+     "at": "decide",
+     "text": "If they can, the role finds them itself and shows each fact the work rests on."
+    },
+    {
+     "at": "decide",
+     "text": "Ask whether the purpose and the best practices settle it."
+    },
+    {
+     "at": "decide",
+     "text": "If they do, the role decides it and reports it at the end."
+    },
+    {
+     "at": "decide",
+     "text": "Only a point that's left goes to the person: one point per message, with a recommendation."
+    },
+    {
+     "at": "make",
      "text": "Write an architecture test that resumes the role with an answer, and check that its next message holds one point."
     }
    ]
   },
   {
    "intent": "N14",
-   "thinking": "The person clears a missing permission or tool in a moment, while a way around it leaves the work checked on other terms than its purpose set. When something outside the work stops a role, the role asks for it, goes on with the rest meanwhile, and doesn't look for a way around.",
-   "steps": [
+   "why": "The person clears a missing permission or tool in a moment, while a way around it leaves the work checked on other terms than its purpose set.",
+   "items": [
     {
+     "at": "decide",
+     "text": "When something outside the work stops a role, the role asks for it, goes on with the rest meanwhile, and doesn't look for a way around."
+    },
+    {
+     "at": "make",
      "text": "Write an architecture test whose double of Claude Code denies a call, and check that the role's message asks for it."
     }
    ]
   },
   {
    "intent": "N15",
-   "thinking": "The person approves what they read, and others read the repository later. Talk with the person in their language, and write the repository in the repository's language, or English where it has none. Show the person exactly what the plugin writes.",
-   "steps": []
+   "why": "The person approves what they read, and others read the repository later.",
+   "items": [
+    {
+     "at": "make",
+     "text": "Talk with the person in their language, and write the repository in the repository's language, or English where it has none."
+    },
+    {
+     "at": "make",
+     "text": "Show the person exactly what the plugin writes."
+    }
+   ]
   },
   {
    "intent": "N16",
-   "thinking": "The maker reads what it meant, not what it wrote, so a role that didn't make the work checks it first, given only what the work's users have, as Anthropic's [harness design](https://www.anthropic.com/engineering/harness-design-long-running-apps) describes. Ask whether the users get something that no machine can check. If they do, an evaluator checks it. It answers each condition as met, with the lines that meet it, or as not met, with what the users still lack, and never how to fix it, since the maker holds the sources and decides the fix. A hunt for defects finds something in every work and never ends. Where the caller reads the whole work to approve it, such as a plan, no evaluator reads it first, since the caller is its first reader.",
-   "steps": [
+   "why": "The maker reads what it meant, not what it wrote, so a role that didn't make the work checks it first, given only what the work's users have, as Anthropic's [harness design](https://www.anthropic.com/engineering/harness-design-long-running-apps) describes. A hunt for defects finds something in every work and never ends.",
+   "items": [
     {
+     "at": "decide",
+     "text": "Ask whether the users get something that no machine can check."
+    },
+    {
+     "at": "decide",
+     "text": "If they do, an evaluator checks it. It answers each condition as met, with the lines that meet it, or as not met, with what the users still lack, and never how to fix it, since the maker holds the sources and decides the fix."
+    },
+    {
+     "at": "decide",
+     "text": "Where the caller reads the whole work to approve it, such as a plan, no evaluator reads it first, since the caller is its first reader."
+    },
+    {
+     "at": "make",
      "text": "Give the evaluator's agent only the tools to read the work and write its answers, and lay a lane that holds it to reading only what the work's users have."
     }
    ]
   },
   {
    "intent": "N17",
-   "thinking": "A lesson met once should improve every later run, and the user chooses what leaves their project. After the caller approves the work, the main conversation asks once where the run fell short of its goal or cost the user time, and finds why in the records, quoting each cause. For each lesson, ask whether it's the project's own or general. A lesson of the project's own goes into the project's rules. A general lesson goes to the plugin's repository as an issue, only when the user says yes.",
-   "steps": [
+   "why": "A lesson met once should improve every later run, and the user chooses what leaves their project.",
+   "items": [
     {
+     "at": "make",
+     "text": "After the caller approves the work, the main conversation asks once where the run fell short of its goal or cost the user time, and finds why in the records, quoting each cause."
+    },
+    {
+     "at": "make",
+     "text": "For each lesson, ask whether it's the project's own or general."
+    },
+    {
+     "at": "make",
+     "text": "A lesson of the project's own goes into the project's rules."
+    },
+    {
+     "at": "make",
+     "text": "A general lesson goes to the plugin's repository as an issue, only when the user says yes."
+    },
+    {
+     "at": "make",
      "text": "Have the orchestrator's part read the run's records with Read before it ends, and quote each cause it names."
     }
    ]
   },
   {
    "intent": "N18",
-   "thinking": "One folder named after the plugin lets the user decide with one line of `.gitignore` whether git keeps it. For each file the plugin writes, ask how long it must last. What the user may keep goes in `.<plugin>/<yyyymmdd>-<name>/` at the root of the repository. What the plugin uses only while it runs, its tests' files among them, goes in `<plugin>/<yyyymmdd>-<name>/` in the folder that `tempfile.gettempdir()` gives, which `TMPDIR` moves, and the system clears it. What must outlast an update goes in `${CLAUDE_PLUGIN_DATA}`. Nothing goes in `${CLAUDE_PLUGIN_ROOT}`, which changes with each update. An agent reads without asking only inside the working folder, as [working directories](https://code.claude.com/docs/en/permissions#working-directories) says.",
-   "steps": [
+   "why": "One folder named after the plugin lets the user decide with one line of `.gitignore` whether git keeps it. An agent reads without asking only inside the working folder, as [working directories](https://code.claude.com/docs/en/permissions#working-directories) says.",
+   "items": [
     {
+     "at": "decide",
+     "text": "For each file the plugin writes, ask how long it must last."
+    },
+    {
+     "at": "decide",
+     "text": "What the user may keep goes in `.<plugin>/<yyyymmdd>-<name>/` at the root of the repository."
+    },
+    {
+     "at": "decide",
+     "text": "What the plugin uses only while it runs, its tests' files among them, goes in `<plugin>/<yyyymmdd>-<name>/` in the folder that `tempfile.gettempdir()` gives, which `TMPDIR` moves, and the system clears it."
+    },
+    {
+     "at": "decide",
+     "text": "What must outlast an update goes in `${CLAUDE_PLUGIN_DATA}`."
+    },
+    {
+     "at": "decide",
+     "text": "Nothing goes in `${CLAUDE_PLUGIN_ROOT}`, which changes with each update."
+    },
+    {
+     "at": "make",
      "text": "Search the plugin for each path it writes, and check that each lies under `.<plugin>/`, the system's temporary folder, or `${CLAUDE_PLUGIN_DATA}`."
     }
    ]
   },
   {
    "intent": "N19",
-   "thinking": "A plugin that needs a package the user lacks fails on their machine. Where users' machines may lack other runtimes or packages, run only on a runtime that's already there and its standard library, such as Python 3.9 or later, which is wherever git is, and install no packages. Run the checks in CI on the oldest runtime that the plugin supports and on the newest. Only a run on the oldest shows that the code still runs there, and only a run on the newest shows what a new release breaks.",
-   "steps": [
+   "why": "A plugin that needs a package the user lacks fails on their machine. Only a run on the oldest shows that the code still runs there, and only a run on the newest shows what a new release breaks.",
+   "items": [
     {
+     "at": "decide",
+     "text": "Where users' machines may lack other runtimes or packages, run only on a runtime that's already there and its standard library, such as Python 3.9 or later, which is wherever git is, and install no packages."
+    },
+    {
+     "at": "make",
      "text": "Run the checks in CI on the oldest runtime that the plugin supports and on the newest, such as Python 3.9 and the newest Python."
     }
    ]
   },
   {
    "intent": "N20",
-   "thinking": "Developers write, test, and fix code kept in one place only once. Keep code that more than one plugin needs in the plugin whose job it does, such as Lane's hooks. The others take it in through a relative symbolic link, since installing copies a link's target into the plugin, as [symlinks in a marketplace](https://code.claude.com/docs/en/plugins/host-marketplace#share-files-within-a-marketplace-with-symlinks) documents.",
-   "steps": [
+   "why": "Developers write, test, and fix code kept in one place only once.",
+   "items": [
     {
+     "at": "decide",
+     "text": "Keep code that more than one plugin needs in the plugin whose job it does, such as Lane's hooks."
+    },
+    {
+     "at": "decide",
+     "text": "The others take it in through a relative symbolic link, since installing copies a link's target into the plugin, as [symlinks in a marketplace](https://code.claude.com/docs/en/plugins/host-marketplace#share-files-within-a-marketplace-with-symlinks) documents."
+    },
+    {
+     "at": "make",
      "text": "Run a check for copied code, such as `pylint --enable=duplicate-code`, over the marketplace's Python."
     }
    ]
   },
   {
    "intent": "N21",
-   "thinking": "The other plugin runs as its makers built and tested it, and nobody writes it again. Name it in `dependencies` of the plugin's `plugin.json`. Then ask whether the job is one role of the other plugin or its whole run. For one role, a route names it as `<dependency>:<role>`, and the main conversation starts it as one of its own and puts its questions to the person, while the other plugin's guard holds its calls. For the whole run, a route names its skill as `<dependency>:<skill>`, and the main conversation calls the skill as one move, which ends once the other plugin gives its result. Meanwhile the other plugin's guard holds the conversation, and this plugin's guard checks nothing, since two guards on one conversation would stop each other's moves.",
-   "steps": [
+   "why": "The other plugin runs as its makers built and tested it, and nobody writes it again.",
+   "items": [
     {
+     "at": "decide",
+     "text": "Ask whether the job is one role of the other plugin or its whole run."
+    },
+    {
+     "at": "decide",
+     "text": "For one role, a route names it as `<dependency>:<role>`, and the main conversation starts it as one of its own and puts its questions to the person, while the other plugin's guard holds its calls."
+    },
+    {
+     "at": "decide",
+     "text": "For the whole run, a route names its skill as `<dependency>:<skill>`, and the main conversation calls the skill as one move, which ends once the other plugin gives its result. Meanwhile the other plugin's guard holds the conversation, and this plugin's guard checks nothing, since two guards on one conversation would stop each other's moves."
+    },
+    {
+     "at": "make",
      "text": "Name the dependency in `plugin.json`, and run `lay.py print` on the routes that name it."
     }
    ]
   },
   {
    "intent": "N22",
-   "thinking": "A malformed manifest fails every user at install. Check each plugin and the marketplace with Claude Code's own validator.",
-   "steps": [
+   "why": "A malformed manifest fails every user at install.",
+   "items": [
     {
+     "at": "make",
      "text": "Run `claude plugin validate --strict` on the plugin and on the marketplace.",
      "trace": {
       "action": "run",
@@ -410,32 +726,70 @@
   },
   {
    "intent": "N23",
-   "thinking": "Users decide whether to update by what changed for them, and get an update only when the version rises. Release only when whoever decides what reaches users says so. Keep `version` once, in `plugin.json`, in [Semantic Versioning](https://semver.org), since `plugin.json` wins over the marketplace entry. Let the largest change that users see decide which part of the version rises. Give each change that users notice one line in the CHANGELOG, with why it helps them, as [Keep a Changelog](https://keepachangelog.com) does. Tag each release `<plugin>--v<version>`, since a dependency's version range resolves against these tags, and list it in the marketplace and the root README.",
-   "steps": [
+   "why": "Users decide whether to update by what changed for them, and get an update only when the version rises.",
+   "items": [
     {
+     "at": "make",
+     "text": "Release only when whoever decides what reaches users says so."
+    },
+    {
+     "at": "make",
+     "text": "Keep `version` once, in `plugin.json`, in [Semantic Versioning](https://semver.org), since `plugin.json` wins over the marketplace entry."
+    },
+    {
+     "at": "make",
+     "text": "Let the largest change that users see decide which part of the version rises."
+    },
+    {
+     "at": "make",
+     "text": "Give each change that users notice one line in the CHANGELOG, with why it helps them, as [Keep a Changelog](https://keepachangelog.com) does."
+    },
+    {
+     "at": "make",
+     "text": "Tag each release `<plugin>--v<version>`, since a dependency's version range resolves against these tags, and list it in the marketplace and the root README."
+    },
+    {
+     "at": "make",
      "text": "Tag each release with `claude plugin tag --push`."
     }
    ]
   },
   {
    "intent": "N24",
-   "thinking": "A user learns from the README what they achieve with the plugin and how. Make `README.md` as a deliverable of its own, of the kind [readme](../readme/best-practice.md), from the plugin's product vision and before the plugin's architecture. Keep it in the plugin's folder, so that it reaches each user with the plugin.",
-   "steps": []
+   "why": "A user learns from the README what they achieve with the plugin and how.",
+   "items": [
+    {
+     "at": "make",
+     "text": "Make `README.md` as a deliverable of its own, of the kind [readme](../readme/best-practice.md), from the plugin's product vision and before the plugin's architecture."
+    },
+    {
+     "at": "make",
+     "text": "Keep it in the plugin's folder, so that it reaches each user with the plugin."
+    }
+   ]
   },
   {
    "intent": "N25",
-   "thinking": "Every path should hold on every push, and the trials should meet what users meet. The test levels are those of the [architecture best practice](../architecture/best-practice.md), and the architecture's Tests sets what each runs real for this plugin. No level runs a prompt, a skill, or an agent alone on a model, since a trial of one role alone meets only the cases its developer set up, and finds no fault that a real request brings out. Instead, the guard holds each rule of a role's steps that must hold on every run, and the architecture tests run the guard on each path, with a double in each role's place. The cost: a fault in a prompt shows only in a product vision trial.",
-   "steps": [
+   "why": "Every path should hold on every push, and the trials should meet what users meet. The test levels are those of the [architecture best practice](../architecture/best-practice.md), and the architecture's Tests sets what each runs real for this plugin. No level runs a prompt, a skill, or an agent alone on a model, since a trial of one role alone meets only the cases its developer set up, and finds no fault that a real request brings out. The cost: a fault in a prompt shows only in a product vision trial.",
+   "items": [
     {
+     "at": "decide",
+     "text": "Instead, the guard holds each rule of a role's steps that must hold on every run, and the architecture tests run the guard on each path, with a double in each role's place."
+    },
+    {
+     "at": "make",
      "text": "Write the architecture tests with a double of Claude Code that runs each hook's entry and script in the test's own process, as a new process of Python would run it, and sends what its documentation says or what a recorded run of the real Claude Code showed. Run them with the unit tests before each push."
     },
     {
+     "at": "make",
      "text": "Check each configuration written by hand, such as `hooks.json`, with `claude plugin validate`, since no test runs its commands."
     },
     {
+     "at": "make",
      "text": "Start each Claude Code of a product vision trial on a configuration folder of its own that holds only the plugins under test, with the developer's login as `CLAUDE_CODE_OAUTH_TOKEN`, as [multiple accounts](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts) says, since the developer's own settings would change what the trial tries."
     },
     {
+     "at": "make",
      "text": "Have the stand-in answer each request to allow a call from what the screen shows, as a person would."
     }
    ]
