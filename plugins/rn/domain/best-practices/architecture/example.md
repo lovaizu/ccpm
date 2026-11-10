@@ -251,7 +251,6 @@ sequenceDiagram
     T->>GH: pushes, and opens or keeps the draft pull request
   end
   O->>U: the plan or the deliverable, with what the people can do with it, the decisions taken without asking, and its changes (Sign-off)
-  Note over O,K: Each deliverable that doesn't rest on it goes on meanwhile, as S1 draws.
   alt the user approves
     U->>O: /rn:ty
     O->>K: it's signed off (Decision)
