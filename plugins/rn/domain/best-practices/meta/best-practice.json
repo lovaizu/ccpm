@@ -187,7 +187,7 @@
     },
     {
      "at": "decide",
-     "text": "Derive the items from what the condition gives the users, and list them in the order the generator takes them: each decision with the question to ask and the criterion for choosing where there are options, then each step, and last how to check the result from the users' side, such as asking whether a newcomer can say the point back. Make each item one thing to take, since a role names each item it took, and a check finds one left out."
+     "text": "Derive the items from what the condition gives the users, and list them in the order the generator takes them: each decision with the question to ask and the criterion for choosing where there are options, then each step, and last how to check the result from the users' side, such as asking whether a newcomer can say the point back. Make each item one thing to take, since a role names each item it took by its ID, its condition's ID and its place, such as N6.2, and a check finds one left out."
     },
     {
      "at": "decide",

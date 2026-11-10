@@ -110,8 +110,8 @@ sound, which raises KR1.1.
 ### Every item handled
 
 Each role reads in full what it starts with and each best practice its part names. Its result names
-each item of each list it carries: each practice item it took, each intent it judged, each node it
-checked, and each lack and comment it judged. Lane holds each read by its trace, and checks each
+each item of each list it carries: each decision of its cut it checked, each practice item it took,
+each condition and intent it judged, and each lack and comment it judged. Lane holds each read by its trace, and checks each
 result against the whole list.
 
 *Why*: an item dropped takes from the deliverable what the item holds, which raises KR1.1.

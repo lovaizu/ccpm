@@ -100,7 +100,8 @@ KR1.1.
 
 The guard holds each step that a call shows only by the calls that Claude Code's hook input
 documents. It holds each by its trace, in its order. A role's result names each step that no call shows, and
-the guard stops a result that leaves one out, with that step's sentence.
+the guard stops a result that leaves one out, with that step's sentence. What an item made stays
+with the plugin's own check.
 
 *Why*: a role that says it kept a step may not have kept it, so a call shows each step that one can.
 Where none can, the role's own list still finds a step it forgot, and a forgotten step raises
