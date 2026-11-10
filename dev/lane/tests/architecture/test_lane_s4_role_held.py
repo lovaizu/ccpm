@@ -4,9 +4,8 @@ runs it, holds writer to its commands."""
 from __future__ import annotations
 
 import json
-import subprocess
 
-from lanetest import WRITER_RUN_ONLY, RepositoryTest, bash
+from lanetest import WRITER_RUN_ONLY, RepositoryTest, bash, run_entry
 
 
 class RoleHeld(RepositoryTest):
@@ -17,17 +16,9 @@ class RoleHeld(RepositoryTest):
         self.entry = hooks["hooks"]["PreToolUse"][0]["hooks"][0]["command"]
 
     def call(self, event: object) -> str:
-        """What the hook entry prints for the event, run by sh with the plugin's folder as
-        CLAUDE_PLUGIN_ROOT, as Claude Code runs a plugin's hook."""
-        env = {**self.env, "CLAUDE_PLUGIN_ROOT": self.path("changelog")}
-        ran = subprocess.run(
-            ["sh", "-c", self.entry],
-            input=json.dumps(event),
-            env=env,
-            capture_output=True,
-            text=True,
-            check=False,
-        )
+        """What the hook entry prints for the event, run as the double of Claude Code runs a
+        plugin's hook."""
+        ran = run_entry(self.entry, json.dumps(event), self.env, self.path("changelog"))
         self.assertEqual(ran.returncode, 0, ran.stderr)
         return ran.stdout
 

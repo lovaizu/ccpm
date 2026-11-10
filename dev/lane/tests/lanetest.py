@@ -3,13 +3,17 @@ walkthrough, a double of Claude Code's command line, and a temporary repository 
 
 from __future__ import annotations
 
+import contextlib
+import io
 import json
 import os
+import runpy
+import shlex
 import shutil
-import subprocess
 import sys
 import tempfile
 import unittest
+from dataclasses import dataclass
 from typing import Any
 
 TOP = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
@@ -22,6 +26,50 @@ sys.path[:0] = [os.path.join(LANE, "hooks", "lane"), os.path.join(LANE, "scripts
 # for a plugin whose hooks.json held a number for its hooks.
 PASSED = "✔ Validation passed"
 FAILED = "✘ Found 1 error:\n  ❯ hooks: Invalid input: expected record, received number"
+
+
+@dataclass
+class Ran:
+    """What a script gave as it ran: its exit code, and what it printed on stdout and stderr."""
+
+    returncode: int
+    stdout: str
+    stderr: str
+
+
+def run_script(argv: list[str], given: str, env: dict[str, str], cwd: str) -> Ran:
+    """Runs the Python script that argv names in this process, as a new process of Python would
+    run it: as `__main__`, with argv, the text on stdin, the environment, and the folder, each put
+    back after it."""
+    saved = (sys.argv, sys.stdin, dict(os.environ), os.getcwd(), list(sys.path))
+    out, err = io.StringIO(), io.StringIO()
+    code = 0
+    try:
+        sys.argv, sys.stdin = list(argv), io.StringIO(given)
+        os.environ.clear()
+        os.environ.update(env)
+        os.chdir(cwd)
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            try:
+                runpy.run_path(argv[0], run_name="__main__")
+            except SystemExit as exit:
+                code = exit.code if isinstance(exit.code, int) else (0 if exit.code is None else 1)
+    finally:
+        sys.argv, sys.stdin = saved[0], saved[1]
+        os.environ.clear()
+        os.environ.update(saved[2])
+        os.chdir(saved[3])
+        sys.path[:] = saved[4]
+    return Ran(code, out.getvalue(), err.getvalue())
+
+
+def run_entry(command: str, given: str, env: dict[str, str], plugin: str) -> Ran:
+    """Runs a hook entry's command as the double of Claude Code: the plugin's folder put in for
+    `${CLAUDE_PLUGIN_ROOT}`, and the Python script it names run in this process."""
+    words = shlex.split(command.replace("${CLAUDE_PLUGIN_ROOT}", plugin))
+    if words[0] != "python3":
+        raise AssertionError(f"the hook entry runs {words[0]}, not python3: {command}")
+    return run_script(words[1:], given, {**env, "CLAUDE_PLUGIN_ROOT": plugin}, plugin)
 
 
 class RepositoryTest(unittest.TestCase):
@@ -68,17 +116,9 @@ class RepositoryTest(unittest.TestCase):
         self.write(text, ".lane", "20261110-changelog", "changelog.json")
         return self.path(".lane", "20261110-changelog", "changelog.json")
 
-    def lay(self, *args: str) -> subprocess.CompletedProcess[str]:
+    def lay(self, *args: str) -> Ran:
         """Runs lay.py as the user does, from the repository's root."""
-        script = os.path.join(LANE, "scripts", "lay.py")
-        return subprocess.run(
-            [sys.executable, script, *args],
-            cwd=self.root,
-            env=self.env,
-            capture_output=True,
-            text=True,
-            check=False,
-        )
+        return run_script([os.path.join(LANE, "scripts", "lay.py"), *args], "", self.env, self.root)
 
 
 WRITER_RUN_ONLY = {
