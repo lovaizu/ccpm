@@ -5,7 +5,7 @@
   },
   "deliverables": [
     {
-      "name": "lovaizu/checks checks all the text that ccpm keeps",
+      "name": "lovaizu/checks checks the Markdown that ccpm keeps, the files that people read and the prompts",
       "path": "lefthook.yml",
       "kind": "code",
       "status": "done"

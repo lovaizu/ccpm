@@ -1,6 +1,6 @@
 """The tests of lefthook.yml: the commits and CI check the prose by one version of lovaizu/checks,
-each pattern left out of the check matches a file that git holds, and the pre-push job gets what
-git gives the hook."""
+only in Markdown, each pattern left out of the check matches a file that git holds, and the
+pre-push job gets what git gives the hook."""
 
 from __future__ import annotations
 
@@ -30,10 +30,17 @@ class LefthookTest(unittest.TestCase):
         # Then: the two match.
         self.assertEqual(ci, named)
 
+    def test_the_prose_check_reads_only_markdown(self):
+        # Given: the pre-commit hook.
+        text = read("lefthook.yml")
+        hook = text[text.index("pre-commit:\n") :].split("\n\n")[0]
+        # Then: its job prose takes only Markdown, the files that people read and the prompts.
+        self.assertIn('  jobs:\n    - name: prose\n      glob: "*.md"\n', hook)
+
     def test_each_pattern_left_out_matches_a_file_git_holds(self):
         # Given: the patterns that pre-commit leaves out, and the files git holds.
         text = read("lefthook.yml")
-        block = text[text.index("pre-commit:\n  exclude:\n") :].split("\n\n")[0]
+        block = text[text.index("  exclude:\n") :].split("\n\n")[0]
         left = re.findall(r'^    - "([^"]+)"$', block, re.MULTILINE)
         held = set(
             subprocess.run(
