@@ -23,6 +23,12 @@ fi
 pyrefly check --search-path dev/scripts --search-path dev/scripts/tests dev/scripts/*.py \
   dev/scripts/tests/*.py
 
+# Lane's code, laid into each plugin, and its tests.
+pyrefly check --search-path plugins/lane/hooks/lane --search-path plugins/lane/scripts \
+  --search-path dev/lane/tests plugins/lane/hooks/lane/*.py plugins/lane/hooks/lane/domain/*.py \
+  plugins/lane/hooks/lane/domain/lanes/*.py plugins/lane/scripts/*.py dev/lane/tests/*.py \
+  dev/lane/tests/*/*.py
+
 # Each kind's best practice lies in a folder of its own in rn, as `best-practice.json`. Its template
 # and its example lie beside it. The check fails on:
 # - a fault in a best practice's form
@@ -42,7 +48,7 @@ python3 dev/scripts/figures.py check
 # the page, so Mermaid's own parser parses each.
 sh dev/scripts/mermaid.sh
 
-pytest -q -n auto dev/scripts/tests
+pytest -q -n auto dev/scripts/tests dev/lane/tests
 
 for manifest in plugins/*/.claude-plugin/plugin.json; do
   claude plugin validate "${manifest%/.claude-plugin/plugin.json}" --strict
