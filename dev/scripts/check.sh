@@ -8,7 +8,7 @@ ruff check .
 ruff format --check .
 
 # A fix to code copied between files lands in one and leaves the other wrong, so the repository keeps
-# code more than one file needs once, as N14 of plugins/rn/domain/best-practices/plugin/best-practice.md
+# code more than one file needs once, as N20 of plugins/rn/domain/best-practices/plugin/best-practice.md
 # says. The check reads every file at once, as a copy can lie in any two.
 # A link is the file it points to, so the check leaves it out.
 if command -v pylint >/dev/null 2>&1; then

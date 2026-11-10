@@ -80,17 +80,21 @@
     },
     {
      "at": "decide",
-     "text": "Split a role whose members hire the product for different jobs. Name the role `user` where there's only one."
+     "text": "Split a role whose members hire the product for different jobs."
+    },
+    {
+     "at": "decide",
+     "text": "Name the role `user` where there's only one."
     },
     {
      "at": "make",
-     "text": "Check that each role has a job that no other role has."
+     "text": "Read Roles as a developer would, and check that each role has a job that no other role has."
     }
    ]
   },
   {
    "intent": "N2",
-   "why": "The developers build toward the objectives, so each must name the end that a role reaches. A feature or a measure of that end isn't an objective. An objective in John Doerr's Measure What Matters is a qualitative goal that a key result then measures.",
+   "why": "The developers build toward the objectives, so each must name the end that a role reaches, and neither a feature nor a measure of that end. The method is the objective of John Doerr's Measure What Matters: a qualitative goal that a key result then measures.",
    "items": [
     {
      "at": "decide",
@@ -106,13 +110,13 @@
     },
     {
      "at": "make",
-     "text": "Check that the objective still makes sense with the product's name taken out."
+     "text": "Read each objective with the product's name taken out, and check that it still makes sense."
     }
    ]
   },
   {
    "intent": "N3",
-   "why": "The vision must stay true while the inside of the product changes, so it describes only the problem space: what users do and get. How the product does it belongs to the solution space, in the architecture.",
+   "why": "The vision must stay true while the inside of the product changes, so it describes only what users do and get, and leaves how the product does it to the architecture. The method is the split between the problem space, what the users need, and the solution space, what meets the need, in Dan Olsen's The Lean Product Playbook.",
    "items": [
     {
      "at": "make",
@@ -152,7 +156,7 @@
   },
   {
    "intent": "N5",
-   "why": "The developers decide what to build by asking which objective a piece of work serves, which works only if the objectives don't overlap.",
+   "why": "The developers decide what to build by asking which objective a piece of work serves, which works only if the objectives don't overlap. The method is Barbara Minto's rule, in The Minto Pyramid Principle, that the groups be mutually exclusive and together collectively exhaustive.",
    "items": [
     {
      "at": "decide",
@@ -160,7 +164,7 @@
     },
     {
      "at": "decide",
-     "text": "Then take the work the product plans, and name the objective each piece serves."
+     "text": "Take the work the product plans, and name the objective each piece serves."
     },
     {
      "at": "decide",
@@ -170,11 +174,11 @@
   },
   {
    "intent": "N6",
-   "why": "The developers make many choices that no line of the vision names, and the concept lets each of them lean the same way. Fred Brooks, in The Mythical Man-Month, calls this conceptual integrity: one set of design ideas that every part follows. The one way and the ideas that carry it out come from whoever conceived the product, because an analysis of what goes wrong today yields only a list of fixes with no center.",
+   "why": "The developers make many choices that no line of the vision names, and the concept lets each of them lean the same way. Fred Brooks, in The Mythical Man-Month, calls this conceptual integrity: one set of design ideas that every part follows.",
    "items": [
     {
      "at": "decide",
-     "text": "Ask the user how the product brings its users to their objectives, and by which ideas, before you write the concept."
+     "text": "Ask the user how the product brings its users to their objectives, and by which ideas, before you write the concept, since the one way and the ideas that carry it out come from whoever conceived the product, and an analysis of what goes wrong today yields only a list of fixes with no center."
     },
     {
      "at": "decide",
@@ -186,7 +190,7 @@
     },
     {
      "at": "decide",
-     "text": "Find where the user's ideas leave the one way unheld. Walk through the users' use from the moment they first meet the product to the moment they reach the objective, and list its moments, as a [customer journey map](https://www.nngroup.com/articles/journey-mapping-101/) does."
+     "text": "Find where the user's ideas leave the one way unheld: walk through the users' use from the moment they first meet the product to the moment they reach the objective, and list its moments, as a [customer journey map](https://www.nngroup.com/articles/journey-mapping-101/) does."
     },
     {
      "at": "decide",
@@ -198,7 +202,7 @@
     },
     {
      "at": "decide",
-     "text": "An idea that the way doesn't need goes."
+     "text": "Drop each idea that the one way doesn't need."
     },
     {
      "at": "make",

@@ -135,7 +135,13 @@
    "items": [
     {
      "at": "decide",
-     "text": "Take the one way that the README's How it works states first, from the product vision's concept, by which the product brings its users to their objectives."
+     "text": "Take the one way that the README's How it works states first, from the product vision's concept, by which the product brings its users to their objectives.",
+     "trace": {
+      "action": "read",
+      "takes": [
+       "{inputs}"
+      ]
+     }
     },
     {
      "at": "decide",
@@ -147,7 +153,7 @@
     },
     {
      "at": "make",
-     "text": "After writing the rest, check that each component carries out a piece of the idea. Change the idea or the component where one doesn't."
+     "text": "After writing the rest, read each component's line as a developer who knows only the idea, and check that they can see which piece of the idea it carries out. Change the idea or the component where they can't."
     }
    ]
   },
@@ -169,23 +175,17 @@
     },
     {
      "at": "make",
-     "text": "Go through each exchange of the README's walkthrough, and the main use of each objective it doesn't run, and name the one story that carries each step. Add a story where none does.",
-     "trace": {
-      "action": "read",
-      "takes": [
-       "{inputs}"
-      ]
-     }
+     "text": "Go through each exchange of the README's walkthrough, and the main use of each objective it doesn't run, and name the one story that carries each step. Add a story where none does."
     }
    ]
   },
   {
    "intent": "N3",
-   "why": "A part that nothing needs costs effort to build and to keep, and gives no one anything. Three sources say what the parts must do. The README carries what the users get from the product vision: the steps of its walkthrough, and the doubts that its How it works answers. Development adds what the developers need to build, test, and change the parts. Operation adds what keeps the product working across runs and updates, such as where its work outlives a run. The method is requirements traceability, applied from the parts back to their sources.",
+   "why": "A part that nothing needs costs effort to build and to keep, and gives no one anything. The method is requirements traceability, as Orlena Gotel and Anthony Finkelstein [analyze it](https://doi.org/10.1109/ICRE.1994.292398), applied from the parts back to their sources.",
    "items": [
     {
      "at": "decide",
-     "text": "For each principle and each story, ask which step, doubt, or need it carries."
+     "text": "For each principle and each story, ask which step, doubt, or need it carries, from three sources. The README carries what the users get from the product vision: the steps of its walkthrough, and the doubts that its How it works answers. Development adds what the developers need to build, test, and change the parts. Operation adds what keeps the product working across runs and updates, such as where its work outlives a run."
     },
     {
      "at": "decide",
@@ -214,11 +214,11 @@
      "text": "Leave out what a single component's line already says, since a principle holds only a rule that spans parts."
     },
     {
-     "at": "decide",
+     "at": "make",
      "text": "For each principle, write the rule in one sentence, naming the parts as Components names them."
     },
     {
-     "at": "decide",
+     "at": "make",
      "text": "Write the reason in one sentence: what goes wrong without the rule, for a role of the product vision, naming the key result it guards, or for the developers or the operators. A developer carries the reason to a case that the rule doesn't name."
     },
     {
@@ -267,6 +267,10 @@
     },
     {
      "at": "make",
+     "text": "Draw and lay out the figure as [N4 of the refactor-doc best practice](../refactor-doc/best-practice.md#n4) says."
+    },
+    {
+     "at": "make",
      "text": "Draw a store of data as a box like a component's, since its type sets it apart."
     },
     {
@@ -275,7 +279,7 @@
     },
     {
      "at": "make",
-     "text": "Read the figure without the text around it, and add to the legend whatever symbol a reader would still have to ask about. Draw and lay out the figure as [N4 of the refactor-doc best practice](../refactor-doc/best-practice.md#n4) says."
+     "text": "Read the figure without the text around it, and add to the legend whatever symbol a reader would still have to ask about."
     }
    ]
   },
@@ -288,12 +292,12 @@
      "text": "List each kind of data that the components pass or keep."
     },
     {
-     "at": "make",
-     "text": "Draw each once, as a class by its name alone."
-    },
-    {
      "at": "decide",
      "text": "For each pair that relates, name the relation, and give how many of each it joins at both ends."
+    },
+    {
+     "at": "make",
+     "text": "Draw each once, as a class by its name alone."
     },
     {
      "at": "make",
@@ -331,20 +335,20 @@
     },
     {
      "at": "make",
-     "text": "Check that each step runs along an arrow of Components. Where none does, add the arrow, or give the step to another component."
+     "text": "Read each sequence as the developer who builds one of its steps, and check that they can tell, at each step, which component acts, along which arrow of Components, with which data, and what comes next. Where no arrow carries a step, add the arrow, or give the step to another component."
     }
    ]
   },
   {
    "intent": "N9",
-   "why": "A developer who finds two places that say different things about a part must choose which to follow, and two developers choose differently. The architecture that the product builds on, such as a shared best practice for its kind of product, holds rules that each part must keep as well.",
+   "why": "A developer who finds two places that say different things about a part must choose which to follow, and two developers choose differently. [ISO/IEC/IEEE 42010](https://www.iso.org/standard/74393.html) keeps the views of an architecture consistent by correspondences, which relate what each view says about the same element.",
    "items": [
     {
-     "at": "decide",
-     "text": "For each part, gather what every figure, list, and sentence says it does, and what each rule of that architecture asks of a part of its kind."
+     "at": "make",
+     "text": "For each part, gather what every figure, list, and sentence says it does, and what each rule of the architecture that the product builds on asks of a part of its kind. That architecture, such as a shared best practice for its kind of product, holds rules that each part must keep as well."
     },
     {
-     "at": "decide",
+     "at": "make",
      "text": "Where two disagree, decide by the reasons of the principles and of those rules which is right, and change the other."
     }
    ]
@@ -377,7 +381,7 @@
   },
   {
    "intent": "N11",
-   "why": "A developer making a change must find the one place it belongs.",
+   "why": "A developer making a change must find the one place it belongs. Simon Brown's package by component, in Robert C. Martin's *Clean Architecture*, lays out the code by the components that the architecture draws.",
    "items": [
     {
      "at": "decide",
@@ -403,7 +407,7 @@
   },
   {
    "intent": "N12",
-   "why": "A part that no test level covers can break unseen. The [test pyramid](https://martinfowler.com/articles/practical-test-pyramid.html) puts most checks at the narrow, fast levels and few at the wide, slow ones. Unit and architecture carry most of the checking, and run on every change.",
+   "why": "A part that no test level covers can break unseen. The [test pyramid](https://martinfowler.com/articles/practical-test-pyramid.html) puts most checks at the narrow, fast levels and few at the wide, slow ones.",
    "items": [
     {
      "at": "decide",
@@ -416,6 +420,10 @@
     {
      "at": "decide",
      "text": "For each level, ask what the unit must do by that level's ground, and fill the cell with the tool and how far it tries the unit, and nothing more. `FULL` tries each case and edge, `HAPPY` the main paths, and `SMOKE` one run that confirms what the lower levels checked."
+    },
+    {
+     "at": "decide",
+     "text": "Give unit and architecture most of the checking, and run them on every change."
     },
     {
      "at": "decide",
@@ -433,7 +441,7 @@
   },
   {
    "intent": "N13",
-   "why": "A failing test should name the rule, path, or use that it breaks.",
+   "why": "A failing test should name the rule, path, or use that it breaks. Each level runs real only what it checks against and replaces the rest with [test doubles](https://martinfowler.com/bliki/TestDouble.html), and draws its unit tests by the test techniques that the [glossary](https://glossary.istqb.org) of the International Software Testing Qualifications Board (ISTQB) defines: equivalence partitioning, boundary value analysis, and decision table testing.",
    "items": [
     {
      "at": "make",
@@ -441,7 +449,7 @@
     },
     {
      "at": "make",
-     "text": "Run only that thing real, and replace the rest with [test doubles](https://martinfowler.com/bliki/TestDouble.html)."
+     "text": "Run only that thing real, and replace the rest with test doubles."
     },
     {
      "at": "make",
@@ -449,7 +457,7 @@
     },
     {
      "at": "make",
-     "text": "At unit, divide each input and each result that the contract names into classes that the part treats alike, the refused ones among them, and write one test for each class. This is equivalence partitioning, as the [glossary](https://glossary.istqb.org) of the International Software Testing Qualifications Board defines it."
+     "text": "At unit, divide each input and each result that the contract names into classes that the part treats alike, the refused ones among them, and write one test for each class. This is equivalence partitioning."
     },
     {
      "at": "make",
@@ -461,7 +469,11 @@
     },
     {
      "at": "make",
-     "text": "At unit, pass when every test passes, every line and branch runs, and the tests catch every mutant. Add a unit test for each gap that coverage, mutation testing, or a property-based test finds. These tools confirm the tests drawn from the contract, and draw none themselves."
+     "text": "At unit, pass when every test passes, every line and branch runs, and the tests catch every mutant."
+    },
+    {
+     "at": "make",
+     "text": "Add a unit test for each gap that coverage, mutation testing, or a property-based test finds. These tools confirm the tests drawn from the contract, and draw none themselves."
     },
     {
      "at": "make",
@@ -489,7 +501,15 @@
     },
     {
      "at": "make",
-     "text": "At product vision, run each role on the model its users run, judge each run from its records, and try no case that a lower level can test. Another model makes other mistakes than the users meet, and each run is slow and costly."
+     "text": "At product vision, run each role on the model its users run, since another model makes other mistakes than the users meet."
+    },
+    {
+     "at": "make",
+     "text": "At product vision, judge each run from its records."
+    },
+    {
+     "at": "make",
+     "text": "At product vision, try no case that a lower level can test, since each run is slow and costly."
     },
     {
      "at": "make",
@@ -499,7 +519,7 @@
   },
   {
    "intent": "N14",
-   "why": "The product vision tests are slow and few, so they can only confirm what the lower levels already showed. A thing that only a prompt holds, such as a rule an AI keeps by its instructions, varies from run to run, and no unit or architecture test can show it. The lower levels show a part only if each double behaves like the part it replaces.",
+   "why": "The product vision tests are slow and few, so they can only confirm what the lower levels already showed, and a thing that only a prompt holds, such as a rule an AI keeps by its instructions, varies from run to run where no unit or architecture test can show it. The [Humble Object](https://martinfowler.com/bliki/HumbleObject.html) pattern of Gerard Meszaros's *xUnit Test Patterns* moves the logic out of a part that's hard to test into a part that a test can run.",
    "items": [
     {
      "at": "decide",
@@ -511,11 +531,23 @@
     },
     {
      "at": "decide",
-     "text": "Leave a judgment that only an AI can make, such as whether a point is the user's, with the AI. Test it on the real model as N13.8 says, or, where the architecture the product builds on runs no prompt alone, say in Tests that only the product vision tests show it."
+     "text": "Leave a judgment that only an AI can make, such as whether a point is the user's, with the AI."
+    },
+    {
+     "at": "decide",
+     "text": "Decide where to test such a judgment: on the real model, as N13.9 says, or, where the architecture the product builds on runs no prompt alone, only in the product vision tests."
     },
     {
      "at": "make",
-     "text": "Give each double only results in the form the part's contract gives, refusals among them, and test the double as the part's unit tests test the part."
+     "text": "Where only the product vision tests show such a judgment, say so in Tests."
+    },
+    {
+     "at": "make",
+     "text": "The lower levels show a part only if each double behaves like the part it replaces, so give each double only results in the form the part's contract gives, refusals among them."
+    },
+    {
+     "at": "make",
+     "text": "Test each double as the part's unit tests test the part."
     },
     {
      "at": "make",
@@ -551,7 +583,7 @@
   },
   {
    "intent": "N16",
-   "why": "A line about how a component works inside becomes untrue at the next change to that component, and the developer then can't trust the document. Information hiding keeps such details inside the module.",
+   "why": "A line about how a component works inside becomes untrue at the next change to that component, and the developer then can't trust the document. David Parnas's [information hiding](https://doi.org/10.1145/361598.361623) keeps such details inside the module.",
    "items": [
     {
      "at": "make",

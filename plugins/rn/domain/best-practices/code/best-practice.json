@@ -93,23 +93,29 @@
  "practices": [
   {
    "intent": "N1",
-   "why": "A maintainer with one behavior to change should find the one module to open without reading the bodies. David Parnas's [information hiding](https://doi.org/10.1145/361598.361623) gives each module one decision that the specification leaves to the code, most of all one that's likely to change. The name of a known design pattern gives the maintainer the whole design at once.",
+   "why": "A maintainer with one behavior to change should find the one module to open without reading the bodies. David Parnas's [information hiding](https://doi.org/10.1145/361598.361623) gives each module one decision that the specification leaves to the code, most of all one that's likely to change.",
    "items": [
     {
      "at": "decide",
-     "text": "List the decisions that the specification leaves to the code."
+     "text": "List the decisions that the specification leaves to the code.",
+     "trace": {
+      "action": "read",
+      "takes": [
+       "{inputs}"
+      ]
+     }
     },
     {
      "at": "decide",
      "text": "Give each decision to one module."
     },
     {
-     "at": "make",
-     "text": "Have the module state its decision in a few words where the maintainer meets it first, such as at its top. If the module can't state it briefly, split the module."
+     "at": "decide",
+     "text": "Where a decision meets a problem that a known design pattern solves, such as Strategy or Adapter in [Design Patterns](https://en.wikipedia.org/wiki/Design_Patterns), use the pattern by its name, since the name gives the maintainer the whole design at once. Use it only where a case of the specification needs it now, as N3 says."
     },
     {
-     "at": "decide",
-     "text": "Where a decision meets a problem that a known design pattern solves, such as Strategy or Adapter in [Design Patterns](https://en.wikipedia.org/wiki/Design_Patterns), use the pattern by its name, and only where a case of the specification needs it now, as N3 says."
+     "at": "make",
+     "text": "Have the module state its decision in a few words where the maintainer meets it first, such as at its top. If the module can't state it briefly, split the module."
     },
     {
      "at": "make",
@@ -145,11 +151,11 @@
   },
   {
    "intent": "N3",
-   "why": "Every behavior that no one asked for is code the maintainer must carry and keep working. [You Aren't Gonna Need It](https://martinfowler.com/bliki/Yagni.html) keeps only what the cases ask for now, in the form they ask for. The specification is what the architecture asks of the part: the decisions its line gives the part, the rules of the principles, and each step of a sequence that the part takes or answers, with the data as the data model names it.",
+   "why": "Every behavior that no one asked for is code the maintainer must carry and keep working. [You Aren't Gonna Need It](https://martinfowler.com/bliki/Yagni.html) keeps only what the cases ask for now, in the form they ask for.",
    "items": [
     {
      "at": "decide",
-     "text": "For each option, mode, and case that the code handles, name the case of the specification that asks for it."
+     "text": "For each option, mode, and case that the code handles, name the case of the specification that asks for it. The specification is what the architecture asks of the part: the decisions its line gives the part, the rules of the principles, and each step of a sequence that the part takes or answers, with the data as the data model names it."
     },
     {
      "at": "make",
@@ -159,15 +165,19 @@
   },
   {
    "intent": "N4",
-   "why": "When a test fails, the cause should lie in the code. Neither the machine nor the order of the tests should cause it. A [hermetic](https://abseil.io/resources/swe-book/html/ch11.html) test holds everything it needs to set up, run, and clear its environment. A real tool that a test runs does only what the test asks of it.",
+   "why": "When a test fails, the cause should lie in the code, never in the machine or in the order of the tests. A [hermetic](https://abseil.io/resources/swe-book/html/ch11.html) test holds everything it needs to set up, run, and clear its environment.",
    "items": [
     {
      "at": "make",
-     "text": "Have the code's setup name everything the code needs, with the versions it runs on, and have each test set up and clear everything it uses."
+     "text": "Have the code's setup name everything the code needs, with the versions it runs on."
     },
     {
      "at": "make",
-     "text": "For each real tool the tests run, such as git, find each thing it does on its own beyond the call, such as reading the machine's settings or starting maintenance in the background, and turn it off in the test's own settings."
+     "text": "Have each test set up and clear everything it uses."
+    },
+    {
+     "at": "make",
+     "text": "For each real tool the tests run, such as git, find each thing it does on its own beyond the call, such as reading the machine's settings or starting maintenance in the background, and turn it off in the test's own settings, so that the tool does only what the test asks of it."
     },
     {
      "at": "make",
@@ -175,7 +185,7 @@
     },
     {
      "at": "make",
-     "text": "Run the tests several times, and in a shuffled order."
+     "text": "Run the tests several times, and in a shuffled order, and check that they pass on every run."
     }
    ]
   },
@@ -185,13 +195,7 @@
    "items": [
     {
      "at": "decide",
-     "text": "List every case that the specification names: the usual one, each edge, and each refusal.",
-     "trace": {
-      "action": "read",
-      "takes": [
-       "{inputs}"
-      ]
-     }
+     "text": "List every case that the specification names: the usual one, each edge, and each refusal."
     },
     {
      "at": "make",
@@ -203,7 +207,15 @@
     },
     {
      "at": "make",
-     "text": "Hold the test code to the same design as the code it tests: put what many tests share in one place, keep loops and branches out of a test, and give each failure a message that names the case, as Software Engineering at Google advises for [unit tests](https://abseil.io/resources/swe-book/html/ch12.html)."
+     "text": "Keep each test readable on its own, with the values that its case turns on in its own body, and put in one helper only setup that many tests share, such as building the object under test, since Software Engineering at Google advises that [unit tests](https://abseil.io/resources/swe-book/html/ch12.html) be descriptive and meaningful rather than free of repetition."
+    },
+    {
+     "at": "make",
+     "text": "Keep loops and branches out of a test, as the same source advises."
+    },
+    {
+     "at": "make",
+     "text": "Give each failure a message that names the case, as the same source advises."
     },
     {
      "at": "make",
@@ -217,13 +229,13 @@
     },
     {
      "at": "make",
-     "text": "Compare the list of cases with the tests, and check that each case points to one test."
+     "text": "Compare the list of cases with the tests, as a maintainer whose test failed would, and check that each case points to one test and each test's name to its case."
     }
    ]
   },
   {
    "intent": "N6",
-   "why": "A test that calls the code as its callers do fails only where a caller would break, so the maintainer can improve a body without fear. Software Engineering at Google calls this testing through public interfaces.",
+   "why": "A test that calls the code as its callers do fails only where a caller would break, so the maintainer can improve a body without fear. Software Engineering at Google calls this [testing through public interfaces](https://abseil.io/resources/swe-book/html/ch12.html).",
    "items": [
     {
      "at": "make",
@@ -241,8 +253,12 @@
   },
   {
    "intent": "N7",
-   "why": "A test is worth the faults it catches, so each test checks the result its case asks for, and a broken behavior makes it fail. Machines can measure how well the tests catch faults: the lines no test runs, the mutants that survive, and the inputs that a property finds the code fails on. Use them to find the tests that are missing.",
+   "why": "A test is worth the faults it catches, so breaking a behavior must make a test fail. Coverage, [mutation testing](https://research.google/pubs/state-of-mutation-testing-at-google/), and [property-based testing](https://hypothesis.works/articles/what-is-property-based-testing/) measure how well the tests catch faults: the lines no test runs, the mutants that survive, and the inputs that a property finds the code fails on.",
    "items": [
+    {
+     "at": "make",
+     "text": "Have each test check the result that its case asks for."
+    },
     {
      "at": "make",
      "text": "Find each line or branch that no test runs, such as by measuring coverage while the tests run, and add a test for each.",
@@ -255,7 +271,7 @@
     },
     {
      "at": "make",
-     "text": "Change the code in small ways with a [mutation testing](https://research.google/pubs/state-of-mutation-testing-at-google/) tool. For each change under which the tests still pass, add or fix the test of the behavior that the change breaks.",
+     "text": "Change the code in small ways with a mutation testing tool. For each change under which the tests still pass, add or fix the test of the behavior that the change breaks.",
      "trace": {
       "action": "run",
       "takes": [
@@ -265,7 +281,7 @@
     },
     {
      "at": "make",
-     "text": "Run the code over many inputs that the specification allows, such as with [property-based tests](https://hypothesis.works/articles/what-is-property-based-testing/). Keep each input that the code fails on as a fixed test."
+     "text": "Run the code over many inputs that the specification allows, such as with property-based tests. Keep each input that the code fails on as a fixed test."
     },
     {
      "at": "make",
@@ -283,7 +299,11 @@
     },
     {
      "at": "make",
-     "text": "Refuse a value that the code can't read, instead of guessing it, and catch only the errors you mean to handle."
+     "text": "Refuse a value that the code can't read, instead of guessing it."
+    },
+    {
+     "at": "make",
+     "text": "Catch only the errors you mean to handle."
     },
     {
      "at": "make",

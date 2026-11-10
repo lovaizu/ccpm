@@ -56,10 +56,10 @@ Does the opening state the one idea by which the product delivers what its READM
 
 Each part is a piece of one idea, and a developer who knows the idea builds a part that serves it. The solution strategy of [arc42](https://arc42.org) states the few fundamental decisions that shape the whole system.
 
-1. *While deciding.* Take the one way that the README's How it works states first, from the product vision's concept, by which the product brings its users to their objectives.
+1. *While deciding.* Take the one way that the README's How it works states first, from the product vision's concept, by which the product brings its users to their objectives. The trace: `{inputs}` read to its end.
 2. *While deciding.* Ask how the system as a whole makes that way work: what it takes in from the roles, and what it turns that into.
 3. *While making.* Write the answer in two or three sentences that a developer can hold in mind while building any part. Point to the README instead of repeating it.
-4. *While making.* After writing the rest, check that each component carries out a piece of the idea. Change the idea or the component where one doesn't.
+4. *While making.* After writing the rest, read each component's line as a developer who knows only the idea, and check that they can see which piece of the idea it carries out. Change the idea or the component where they can't.
 
 ### N2
 
@@ -70,15 +70,15 @@ The stories connect the parts to what the users do, so every part can trace back
 1. *While deciding.* Take the backbone from the README's walkthrough, and from the main use of each objective that the walkthrough doesn't run.
 2. *While deciding.* For each step, ask how the role meets the product at its edge there, such as a command they type, and write one story for each such way, naming the steps it carries.
 3. *While deciding.* Add a story for each convenience the product vision asks for, such as resuming a run that stopped.
-4. *While making.* Go through each exchange of the README's walkthrough, and the main use of each objective it doesn't run, and name the one story that carries each step. Add a story where none does. The trace: `{inputs}` read to its end.
+4. *While making.* Go through each exchange of the README's walkthrough, and the main use of each objective it doesn't run, and name the one story that carries each step. Add a story where none does.
 
 ### N3
 
 Does each principle, user story, component, and kind of data trace to what the README promises the users, or to a need of the product's development or operation?
 
-A part that nothing needs costs effort to build and to keep, and gives no one anything. Three sources say what the parts must do. The README carries what the users get from the product vision: the steps of its walkthrough, and the doubts that its How it works answers. Development adds what the developers need to build, test, and change the parts. Operation adds what keeps the product working across runs and updates, such as where its work outlives a run. The method is requirements traceability, applied from the parts back to their sources.
+A part that nothing needs costs effort to build and to keep, and gives no one anything. The method is requirements traceability, as Orlena Gotel and Anthony Finkelstein [analyze it](https://doi.org/10.1109/ICRE.1994.292398), applied from the parts back to their sources.
 
-1. *While deciding.* For each principle and each story, ask which step, doubt, or need it carries.
+1. *While deciding.* For each principle and each story, ask which step, doubt, or need it carries, from three sources. The README carries what the users get from the product vision: the steps of its walkthrough, and the doubts that its How it works answers. Development adds what the developers need to build, test, and change the parts. Operation adds what keeps the product working across runs and updates, such as where its work outlives a run.
 2. *While deciding.* For each component and each kind of data, ask which principle or which story's sequence reaches it.
 3. *While making.* Remove whatever reaches none.
 
@@ -91,8 +91,8 @@ Developers of different parts meet the same kind of decision, and decide it apar
 1. *While deciding.* Derive the principles from the README's How it works, which answers each doubt of the users from an idea of the product vision's concept, and from the needs of development and operation.
 2. *While deciding.* For each answer and each need, ask what every part must hold alike for it to come true, such as where the work's state lives. A part that held it otherwise would break a key result. Each thing that every part must hold alike is a principle.
 3. *While deciding.* Leave out what a single component's line already says, since a principle holds only a rule that spans parts.
-4. *While deciding.* For each principle, write the rule in one sentence, naming the parts as Components names them.
-5. *While deciding.* Write the reason in one sentence: what goes wrong without the rule, for a role of the product vision, naming the key result it guards, or for the developers or the operators. A developer carries the reason to a case that the rule doesn't name.
+4. *While making.* For each principle, write the rule in one sentence, naming the parts as Components names them.
+5. *While making.* Write the reason in one sentence: what goes wrong without the rule, for a role of the product vision, naming the key result it guards, or for the developers or the operators. A developer carries the reason to a case that the rule doesn't name.
 6. *While making.* Point to the principles of any architecture this one builds on, and write only what this product adds or changes.
 7. *While making.* Take a case that no rule names, and decide it from each reason as two developers of different parts would. Where they differ, sharpen the reason.
 
@@ -115,9 +115,10 @@ Does each component state its type and its technology?
 A developer who doesn't know what kind of thing a component is, or what it's built with, chooses alone, and the components stop fitting. The [C4 model](https://c4model.com/diagrams/container) gives each box its name, its type, such as a script, a skill, or a folder of JSON files, and its technology.
 
 1. *While deciding.* For each component, decide the type and the technology from the product's constraints, such as the runtime its users have.
-2. *While making.* Draw a store of data as a box like a component's, since its type sets it apart.
-3. *While making.* Give the figure a legend for every symbol.
-4. *While making.* Read the figure without the text around it, and add to the legend whatever symbol a reader would still have to ask about. Draw and lay out the figure as [N4 of the refactor-doc best practice](../refactor-doc/best-practice.md#n4) says.
+2. *While making.* Draw and lay out the figure as [N4 of the refactor-doc best practice](../refactor-doc/best-practice.md#n4) says.
+3. *While making.* Draw a store of data as a box like a component's, since its type sets it apart.
+4. *While making.* Give the figure a legend for every symbol.
+5. *While making.* Read the figure without the text around it, and add to the legend whatever symbol a reader would still have to ask about.
 
 ### N7
 
@@ -126,8 +127,8 @@ Does the data model show how each kind of data relates to the others, without it
 Two developers who build the writer and the reader of the same data must join it to the other data in the same way, while its fields stay free to change. A concept model in a class diagram of the Unified Modeling Language (UML), which most developers read, shows this.
 
 1. *While deciding.* List each kind of data that the components pass or keep.
-2. *While making.* Draw each once, as a class by its name alone.
-3. *While deciding.* For each pair that relates, name the relation, and give how many of each it joins at both ends.
+2. *While deciding.* For each pair that relates, name the relation, and give how many of each it joins at both ends.
+3. *While making.* Draw each once, as a class by its name alone.
 4. *While making.* Where one holds the other's parts, put a filled diamond at the whole, since readers take a hollow one in different ways.
 5. *While making.* Group the data in a frame for each component or store that keeps them, in the order the stories meet them, with the data that most others join in the middle.
 6. *While making.* Leave the fields to where the developer builds the data.
@@ -142,16 +143,16 @@ A developer building a step must know who acts there, on what, and what comes ne
 1. *While making.* For each story, draw each step as a message from one component to another along an arrow of Components, with the data it passes, named as in the data model.
 2. *While making.* Draw each branch, each step that sends work back, and each question put to the role, since each path of the story, and its test, rests on them.
 3. *While making.* Let stories that share their steps share a diagram.
-4. *While making.* Check that each step runs along an arrow of Components. Where none does, add the arrow, or give the step to another component.
+4. *While making.* Read each sequence as the developer who builds one of its steps, and check that they can tell, at each step, which component acts, along which arrow of Components, with which data, and what comes next. Where no arrow carries a step, add the arrow, or give the step to another component.
 
 ### N9
 
 Do the figures, lists, and sentences agree with one another, and with the architecture that the product builds on, on what each part does?
 
-A developer who finds two places that say different things about a part must choose which to follow, and two developers choose differently. The architecture that the product builds on, such as a shared best practice for its kind of product, holds rules that each part must keep as well.
+A developer who finds two places that say different things about a part must choose which to follow, and two developers choose differently. [ISO/IEC/IEEE 42010](https://www.iso.org/standard/74393.html) keeps the views of an architecture consistent by correspondences, which relate what each view says about the same element.
 
-1. *While deciding.* For each part, gather what every figure, list, and sentence says it does, and what each rule of that architecture asks of a part of its kind.
-2. *While deciding.* Where two disagree, decide by the reasons of the principles and of those rules which is right, and change the other.
+1. *While making.* For each part, gather what every figure, list, and sentence says it does, and what each rule of the architecture that the product builds on asks of a part of its kind. That architecture, such as a shared best practice for its kind of product, holds rules that each part must keep as well.
+2. *While making.* Where two disagree, decide by the reasons of the principles and of those rules which is right, and change the other.
 
 ### N10
 
@@ -169,7 +170,7 @@ A developer setting up the product needs to know where each part runs, what it c
 
 Does each component and each kind of data have one place for its files?
 
-A developer making a change must find the one place it belongs.
+A developer making a change must find the one place it belongs. Simon Brown's package by component, in Robert C. Martin's *Clean Architecture*, lays out the code by the components that the architecture draws.
 
 1. *While deciding.* Lay out the folders by component, so that each component and each kind of data has its own place.
 2. *While making.* Say in one sentence for each top folder whom its files are for, such as the users who install the product or only its developers.
@@ -181,50 +182,57 @@ A developer making a change must find the one place it belongs.
 
 Does Tests show, for each deployment unit, which test levels cover it, how thoroughly, and why a level is missing?
 
-A part that no test level covers can break unseen. The [test pyramid](https://martinfowler.com/articles/practical-test-pyramid.html) puts most checks at the narrow, fast levels and few at the wide, slow ones. Unit and architecture carry most of the checking, and run on every change.
+A part that no test level covers can break unseen. The [test pyramid](https://martinfowler.com/articles/practical-test-pyramid.html) puts most checks at the narrow, fast levels and few at the wide, slow ones.
 
 1. *While deciding.* Name each level by what it checks against: unit against a part's contract, architecture against this document, and product vision against the product vision, in real use.
 2. *While deciding.* List each deployment unit as a row.
 3. *While deciding.* For each level, ask what the unit must do by that level's ground, and fill the cell with the tool and how far it tries the unit, and nothing more. `FULL` tries each case and edge, `HAPPY` the main paths, and `SMOKE` one run that confirms what the lower levels checked.
-4. *While deciding.* Where a cell stays empty, say why.
-5. *While making.* Leave out a unit whose every cell would be empty, and say why under the table.
-6. *While making.* Check that each story's sequence runs from start to end at the architecture level in some row.
+4. *While deciding.* Give unit and architecture most of the checking, and run them on every change.
+5. *While deciding.* Where a cell stays empty, say why.
+6. *While making.* Leave out a unit whose every cell would be empty, and say why under the table.
+7. *While making.* Check that each story's sequence runs from start to end at the architecture level in some row.
 
 ### N13
 
 Does each test level say what runs real, what test doubles replace, what the tests cover, and when they pass?
 
-A failing test should name the rule, path, or use that it breaks.
+A failing test should name the rule, path, or use that it breaks. Each level runs real only what it checks against and replaces the rest with [test doubles](https://martinfowler.com/bliki/TestDouble.html), and draws its unit tests by the test techniques that the [glossary](https://glossary.istqb.org) of the International Software Testing Qualifications Board (ISTQB) defines: equivalence partitioning, boundary value analysis, and decision table testing.
 
 1. *While making.* Draw each test from the one thing its level checks against: the ways a part's contract divides at unit, the paths the sequences draw at architecture, and an objective's main use at real size at product vision.
-2. *While making.* Run only that thing real, and replace the rest with [test doubles](https://martinfowler.com/bliki/TestDouble.html).
+2. *While making.* Run only that thing real, and replace the rest with test doubles.
 3. *While making.* Point to the test rules of the best practices that the product follows, and write only where this product differs from them.
-4. *While making.* At unit, divide each input and each result that the contract names into classes that the part treats alike, the refused ones among them, and write one test for each class. This is equivalence partitioning, as the [glossary](https://glossary.istqb.org) of the International Software Testing Qualifications Board defines it.
+4. *While making.* At unit, divide each input and each result that the contract names into classes that the part treats alike, the refused ones among them, and write one test for each class. This is equivalence partitioning.
 5. *While making.* Where a class ends on an ordered scale, such as a length or a count, write one test at each end and one at the nearest value of the next class. This is boundary value analysis.
 6. *While making.* Where the contract's result depends on a combination of conditions, write one test for each combination that can occur, with the result it gives. This is decision table testing.
-7. *While making.* At unit, pass when every test passes, every line and branch runs, and the tests catch every mutant. Add a unit test for each gap that coverage, mutation testing, or a property-based test finds. These tools confirm the tests drawn from the contract, and draw none themselves.
-8. *While making.* At unit, where no guard holds each rule of a part that an AI does on every run, run the part on the real model, with one input for each class, both where the contract says the part acts and where it says it doesn't, and doubles for the parts it works with.
-9. *While making.* At architecture, run real what joins the components, such as hooks and scripts, and replace each component that an AI runs and each thing outside the product with a double, so that the level calls no model and gives the same result on each run.
-10. *While making.* At architecture, write one test for each path through each story's sequence: the main flow, each branch, each step that sends work back, and each question put to the role, until every move from one step to the next lies on some path.
-11. *While making.* Run the unit and architecture tests that a change reaches before each push, and every test in CI. Running every test before each push makes each change wait, and a selection misses a test that reads a file the change edits.
-12. *While making.* At product vision, once unit and architecture pass, run the real product on each objective's main use, as the README's walkthrough shows it, at the size of a real request, with an AI in the role that holds an intent the product never receives.
-13. *While making.* At product vision, measure each key result as the product vision words it, and compare each measure with the last one by the direction the product vision gives, since the product vision sets no target.
-14. *While making.* At product vision, run each role on the model its users run, judge each run from its records, and try no case that a lower level can test. Another model makes other mistakes than the users meet, and each run is slow and costly.
-15. *While making.* For a test whose result varies from run to run, write how many runs out of how many must meet the expectation.
+7. *While making.* At unit, pass when every test passes, every line and branch runs, and the tests catch every mutant.
+8. *While making.* Add a unit test for each gap that coverage, mutation testing, or a property-based test finds. These tools confirm the tests drawn from the contract, and draw none themselves.
+9. *While making.* At unit, where no guard holds each rule of a part that an AI does on every run, run the part on the real model, with one input for each class, both where the contract says the part acts and where it says it doesn't, and doubles for the parts it works with.
+10. *While making.* At architecture, run real what joins the components, such as hooks and scripts, and replace each component that an AI runs and each thing outside the product with a double, so that the level calls no model and gives the same result on each run.
+11. *While making.* At architecture, write one test for each path through each story's sequence: the main flow, each branch, each step that sends work back, and each question put to the role, until every move from one step to the next lies on some path.
+12. *While making.* Run the unit and architecture tests that a change reaches before each push, and every test in CI. Running every test before each push makes each change wait, and a selection misses a test that reads a file the change edits.
+13. *While making.* At product vision, once unit and architecture pass, run the real product on each objective's main use, as the README's walkthrough shows it, at the size of a real request, with an AI in the role that holds an intent the product never receives.
+14. *While making.* At product vision, measure each key result as the product vision words it, and compare each measure with the last one by the direction the product vision gives, since the product vision sets no target.
+15. *While making.* At product vision, run each role on the model its users run, since another model makes other mistakes than the users meet.
+16. *While making.* At product vision, judge each run from its records.
+17. *While making.* At product vision, try no case that a lower level can test, since each run is slow and costly.
+18. *While making.* For a test whose result varies from run to run, write how many runs out of how many must meet the expectation.
 
 ### N14
 
 Does each thing that the document says the product does rest on a part that a unit or architecture test can check?
 
-The product vision tests are slow and few, so they can only confirm what the lower levels already showed. A thing that only a prompt holds, such as a rule an AI keeps by its instructions, varies from run to run, and no unit or architecture test can show it. The lower levels show a part only if each double behaves like the part it replaces.
+The product vision tests are slow and few, so they can only confirm what the lower levels already showed, and a thing that only a prompt holds, such as a rule an AI keeps by its instructions, varies from run to run where no unit or architecture test can show it. The [Humble Object](https://martinfowler.com/bliki/HumbleObject.html) pattern of Gerard Meszaros's *xUnit Test Patterns* moves the logic out of a part that's hard to test into a part that a test can run.
 
 1. *While deciding.* For each thing the document says the product does, name the part that holds it.
 2. *While deciding.* Where only a prompt holds it, give it to a part that a test can run, such as a guard of the architecture the product builds on, and draw that part in Components.
-3. *While deciding.* Leave a judgment that only an AI can make, such as whether a point is the user's, with the AI. Test it on the real model as N13.8 says, or, where the architecture the product builds on runs no prompt alone, say in Tests that only the product vision tests show it.
-4. *While making.* Give each double only results in the form the part's contract gives, refusals among them, and test the double as the part's unit tests test the part.
-5. *While making.* Draw a double of something outside the product from its documentation or from a recorded run of the real thing. A double that gives what the real thing never would passes a test that the real one fails.
-6. *While making.* For a fault that a higher level finds, name the case or path that the lower level missed, add its test at the level that must catch it, see it fail, and then fix it there.
-7. *While making.* Trust a check, such as a test, a hook, or the judge of a trial, only once you have seen it fail on a case that breaks what it checks. Trust a judge once it's right on kept records whose answer you know.
+3. *While deciding.* Leave a judgment that only an AI can make, such as whether a point is the user's, with the AI.
+4. *While deciding.* Decide where to test such a judgment: on the real model, as N13.9 says, or, where the architecture the product builds on runs no prompt alone, only in the product vision tests.
+5. *While making.* Where only the product vision tests show such a judgment, say so in Tests.
+6. *While making.* The lower levels show a part only if each double behaves like the part it replaces, so give each double only results in the form the part's contract gives, refusals among them.
+7. *While making.* Test each double as the part's unit tests test the part.
+8. *While making.* Draw a double of something outside the product from its documentation or from a recorded run of the real thing. A double that gives what the real thing never would passes a test that the real one fails.
+9. *While making.* For a fault that a higher level finds, name the case or path that the lower level missed, add its test at the level that must catch it, see it fail, and then fix it there.
+10. *While making.* Trust a check, such as a test, a hook, or the judge of a trial, only once you have seen it fail on a case that breaks what it checks. Trust a judge once it's right on kept records whose answer you know.
 
 ### N15
 
@@ -240,7 +248,7 @@ A developer who doubts a choice and can't see what it was for may undo it and br
 
 Does the document hold only what stays true while the product vision and the principles stay, and leave each component's internals out?
 
-A line about how a component works inside becomes untrue at the next change to that component, and the developer then can't trust the document. Information hiding keeps such details inside the module.
+A line about how a component works inside becomes untrue at the next change to that component, and the developer then can't trust the document. David Parnas's [information hiding](https://doi.org/10.1145/361598.361623) keeps such details inside the module.
 
 1. *While making.* For each line, ask whether it would become untrue if a component's internals changed while the product vision and the principles stayed.
 2. *While making.* If it would, move it to where the developer builds the component.

@@ -112,7 +112,13 @@
     },
     {
      "at": "decide",
-     "text": "Decide the key benefit: what they achieve with the product, taken from the objectives of the product vision, as an end they reach, not a feature."
+     "text": "Decide the key benefit: what they achieve with the product, taken from the objectives of the product vision, as an end they reach, not a feature.",
+     "trace": {
+      "action": "read",
+      "takes": [
+       "{inputs}"
+      ]
+     }
     },
     {
      "at": "make",
@@ -120,7 +126,11 @@
     },
     {
      "at": "make",
-     "text": "Read only the opening, then put it away and explain the product as you would to a colleague. Shorten any part you forgot or got wrong, and replace each vague or praising word with what the product does."
+     "text": "Read only the opening, then put it away and explain the product as you would to a colleague. Shorten any part you forgot or got wrong."
+    },
+    {
+     "at": "make",
+     "text": "Replace each vague or praising word in the opening with what the product does."
     },
     {
      "at": "make",
@@ -130,7 +140,7 @@
   },
   {
    "intent": "N2",
-   "why": "A reader who needs something the product doesn't do should find out before they install it. A design document lists its non-goals for the same reason: they mark the edge of the scope where readers would otherwise guess.",
+   "why": "A reader who needs something the product doesn't do should find out before they install it. The method is the non-goals of a design document, as in Malte Ubl's [Design Docs at Google](https://www.industrialempathy.com/posts/design-docs-at-google/): things that could reasonably be goals, listed to mark the edge of the scope where readers would otherwise guess.",
    "items": [
     {
      "at": "decide",
@@ -146,17 +156,21 @@
     },
     {
      "at": "make",
-     "text": "List only those that the product doesn't do and whose absence would. Where the product meets the need another way, say so in the same item."
+     "text": "List only the expectations that the product doesn't meet and whose absence would change the reader's decision."
+    },
+    {
+     "at": "make",
+     "text": "Where the product meets the need another way, say so in the same item."
     }
    ]
   },
   {
    "intent": "N3",
-   "why": "A reader who builds on a product that isn't ready finds out only after their work depends on it.",
+   "why": "A reader who builds on a product that isn't ready finds out only after their work depends on it. The method is the project states that [repostatus.org](https://www.repostatus.org) defines, such as Concept, Work in Progress, Active, and Unsupported.",
    "items": [
     {
      "at": "decide",
-     "text": "Decide the product's state by the states that [repostatus.org](https://www.repostatus.org) defines, such as Concept, Work in Progress, Active, and Unsupported."
+     "text": "Decide the product's state by the states that repostatus.org defines."
     },
     {
      "at": "make",
@@ -170,7 +184,7 @@
   },
   {
    "intent": "N4",
-   "why": "Some readers rule a product in or out by its license alone, so they must find it at once and recognize it.",
+   "why": "Some readers rule a product in or out by its license alone, so they must find it at once and recognize it. The method is the identifiers of the [Software Package Data Exchange (SPDX) License List](https://spdx.org/licenses/), which readers and their tools recognize.",
    "items": [
     {
      "at": "make",
@@ -178,7 +192,11 @@
     },
     {
      "at": "make",
-     "text": "Name the license by its identifier in the [Software Package Data Exchange (SPDX) License List](https://spdx.org/licenses/), which readers and their tools recognize, and link its full text."
+     "text": "Name the license by its SPDX identifier."
+    },
+    {
+     "at": "make",
+     "text": "Link the license's full text."
     },
     {
      "at": "make",
@@ -214,11 +232,11 @@
     },
     {
      "at": "make",
-     "text": "Check that the next section answers that question. Move any section that answers a later one."
+     "text": "Remove what no reader needs at that point, or move it to a linked document."
     },
     {
      "at": "make",
-     "text": "Remove what no reader needs at that point, or move it to a linked document."
+     "text": "Check that the next section answers that question. Move any section that answers a later one."
     }
    ]
   },
@@ -228,13 +246,7 @@
    "items": [
     {
      "at": "decide",
-     "text": "Choose the use: the one that most readers come for, taken from what readers ask for most and from the main use of the product vision's objectives.",
-     "trace": {
-      "action": "read",
-      "takes": [
-       "{inputs}"
-      ]
-     }
+     "text": "Choose the use that most readers come for, taken from what readers ask for most and from the main use of the product vision's objectives."
     },
     {
      "at": "decide",
@@ -245,12 +257,12 @@
      "text": "Decide the cut: show every exchange from what the reader gives to the result they keep, with the product's real output, and cut only what doesn't bear on the result."
     },
     {
-     "at": "make",
-     "text": "Take each exchange from the record of a real run, in the form the reader meets it."
+     "at": "decide",
+     "text": "Decide how each key result of the product vision shows in the run, since the key results say what the product promises. For how well, show the result in use as its users would use it. For how fast, show what the reader spent, such as the questions they answered."
     },
     {
      "at": "make",
-     "text": "Make each key result of the product vision show in the run, since the key results say what the product promises. For how well, show the result in use as its users would use it. For how fast, show what the reader spent, such as the questions they answered."
+     "text": "Take each exchange from the record of a real run, in the form the reader meets it."
     },
     {
      "at": "make",
@@ -268,13 +280,11 @@
    "items": [
     {
      "at": "decide",
-     "text": "Take the one way that the product vision's concept states first, which is what the product values most. Take the concept from the product vision.",
-     "trace": {
-      "action": "read",
-      "takes": [
-       "{inputs}"
-      ]
-     }
+     "text": "Take the concept from the product vision."
+    },
+    {
+     "at": "decide",
+     "text": "Take the one way that the concept states first, which is what the product values most."
     },
     {
      "at": "make",
@@ -304,11 +314,19 @@
     },
     {
      "at": "decide",
-     "text": "For each one left, take the part of the product that answers it, first from the product vision's concept, then from the architecture. Where neither has one, tell whether an idea that matters to the users is missing, or only the way to make it work."
+     "text": "For each one left, take the part of the product that answers it from the product vision's concept."
     },
     {
      "at": "decide",
-     "text": "Where an idea that matters to the users is missing, ask the user to add it to the product vision. Where only the way to make it work is missing, record it in the design tree as a requirement that the architecture meets."
+     "text": "Where the concept has none, tell whether an idea that matters to the users is missing, or only the way to make it work."
+    },
+    {
+     "at": "decide",
+     "text": "Where an idea that matters to the users is missing, ask the user to add it to the product vision."
+    },
+    {
+     "at": "decide",
+     "text": "Where only the way to make it work is missing, record it in the design tree as a requirement that the architecture meets."
     },
     {
      "at": "make",
@@ -316,7 +334,15 @@
     },
     {
      "at": "make",
-     "text": "Show it in one figure, with each problem and doubt beside the part that answers it, and what the reader gets from that part. Label each part in the reader's words, and where a part has a name of the product's own, explain the part in a few words."
+     "text": "Show the mechanism in one figure, with each problem and doubt beside the part that answers it, and what the reader gets from that part."
+    },
+    {
+     "at": "make",
+     "text": "Label each part in the reader's words."
+    },
+    {
+     "at": "make",
+     "text": "Where a part has a name of the product's own, explain the part in a few words."
     },
     {
      "at": "make",
@@ -330,19 +356,27 @@
    "items": [
     {
      "at": "decide",
-     "text": "Decide the steps by starting from a machine with nothing on it. List everything the product needs, each with a command whose output shows that the reader has it."
-    },
-    {
-     "at": "make",
      "text": "Take each requirement and each install command from the product's manifest and code, never from memory."
     },
     {
-     "at": "make",
-     "text": "Write each install step as a command the reader can copy. End with a sign the reader can see that the product works. A step that only works with something the README doesn't mention is missing a requirement."
+     "at": "decide",
+     "text": "Starting from a machine with nothing on it, list everything the product needs."
+    },
+    {
+     "at": "decide",
+     "text": "For each requirement, choose a command whose output shows that the reader has it."
     },
     {
      "at": "make",
-     "text": "On a machine or sandbox with nothing the product needs, follow the steps exactly as written. If a step fails or needs something the README doesn't mention, add it and start again."
+     "text": "Write each install step as a command the reader can copy."
+    },
+    {
+     "at": "make",
+     "text": "End the steps with a sign the reader can see that the product works."
+    },
+    {
+     "at": "make",
+     "text": "On a machine or sandbox with nothing the product needs, follow the steps exactly as written. If a step fails or needs something the README doesn't mention, a requirement is missing: add it and start again."
     }
    ]
   },
@@ -352,15 +386,15 @@
    "items": [
     {
      "at": "decide",
-     "text": "Decide the links by listing what a reader needs after they start, such as fuller use, reference, help, and the changes in each version, and give one link for each, with whom it's for."
+     "text": "List what a reader needs after they start, such as fuller use, reference, help, and the changes in each version."
     },
     {
      "at": "make",
-     "text": "Open each link."
+     "text": "Give one link for each need, with whom it's for."
     },
     {
      "at": "make",
-     "text": "Check that each link opens the page it names."
+     "text": "Open each link, and check that it opens the page it names."
     }
    ]
   },
@@ -374,7 +408,7 @@
     },
     {
      "at": "make",
-     "text": "Then read the whole README once as a newcomer, from the top to the first command. Mark each place where you would stop, because something you need isn't there, and each sentence you could skip without losing anything."
+     "text": "Read the whole README once as a newcomer, from the top to the first command. Mark each place where you would stop, because something you need isn't there, and each sentence you could skip without losing anything."
     },
     {
      "at": "make",

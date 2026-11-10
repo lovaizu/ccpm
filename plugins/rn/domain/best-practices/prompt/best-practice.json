@@ -174,40 +174,42 @@
      "text": "Write down several requests that the prompt is for, in a user's own words, and several near ones that it isn't for."
     },
     {
-     "at": "decide",
+     "at": "make",
      "text": "Write the description: what the prompt does, then the requests and situations to use it for, with the main use first, in the words users ask in."
     },
     {
-     "at": "decide",
+     "at": "make",
      "text": "Add what sets it apart from the other prompts, so that the host passes it over for the near requests."
     },
     {
      "at": "make",
-     "text": "Check each request on both lists against the name and the description alone."
+     "text": "Read only the name and the description, as the host does, and check that each request on the first list leads to the prompt and none on the second does."
     }
    ]
   },
   {
    "intent": "N2",
-   "why": "The caller gets what the description promised only if the body does that same task.",
+   "why": "The caller gets what the description promised only if the body does that same task. The method is requirements traceability, as Orlena Gotel and Anthony Finkelstein [analyze it](https://doi.org/10.1109/ICRE.1994.292398), which follows each requirement backward to its source and forward to what carries it.",
    "items": [
     {
      "at": "decide",
-     "text": "Take the task from the architecture: what the role's line in Components says it alone decides, and each step that the sequences give it."
-    },
-    {
-     "at": "decide",
-     "text": "Compare what the description says the prompt does with what the goal and the steps have the AI do."
+     "text": "Take the task from the architecture: what the role's line in Components says it alone decides, and each step that the sequences give it.",
+     "trace": {
+      "action": "read",
+      "takes": [
+       "{inputs}"
+      ]
+     }
     },
     {
      "at": "make",
-     "text": "For each thing that's in one and not the other, add it to the body or take it out of the description."
+     "text": "Compare what the description says the prompt does with what the goal and the steps have the AI do. For each thing that's in one and not the other, add it to the body or take it out of the description."
     }
    ]
   },
   {
    "intent": "N3",
-   "why": "The AI stops when its work looks done, so the prompt must say what the result is for, and give a check that separates done from looking done.",
+   "why": "The AI stops when its work looks done, so the prompt must say what the result is for, and give a check that separates done from looking done. The method is Claude Code's [best practices](https://code.claude.com/docs/en/best-practices#give-claude-a-check-to-run), which give the AI a check to run before anything counts as done.",
    "items": [
     {
      "at": "decide",
@@ -229,21 +231,13 @@
     },
     {
      "at": "decide",
-     "text": "For each fact, ask whether the AI can find it on its own."
-    },
-    {
-     "at": "decide",
-     "text": "If it can, say where it lies."
-    },
-    {
-     "at": "decide",
-     "text": "If it can't, give it."
+     "text": "For each fact, ask whether the AI can find it on its own. If it can, say where it lies. If it can't, give it."
     }
    ]
   },
   {
    "intent": "N5",
-   "why": "An AI that knows what each step is for chooses how to reach it, and follows the purpose where a step doesn't fit the case.",
+   "why": "An AI that knows what each step is for chooses how to reach it, and follows the purpose where a step doesn't fit the case. The method is the commander's intent of mission command, as the doctrine of the United States Army on mission command sets it out.",
    "items": [
     {
      "at": "decide",
@@ -258,7 +252,7 @@
      "text": "Give each step the result it leaves and what that result is for."
     },
     {
-     "at": "decide",
+     "at": "make",
      "text": "Write the steps in the order their results must hold, such as in a numbered list."
     },
     {
@@ -276,19 +270,19 @@
    "why": "A rule that says what it's for lets the AI apply it where the writer meant it, and judge a case that no rule names, as Anthropic's [prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices#add-context-to-improve-performance) say.",
    "items": [
     {
-     "at": "decide",
+     "at": "make",
      "text": "Write each rule as what to do, in plain words, with its reason."
     },
     {
-     "at": "decide",
+     "at": "make",
      "text": "Where a rule says always or never, say what the AI does when it can't keep the rule."
     },
     {
-     "at": "decide",
+     "at": "make",
      "text": "In place of a list of edge cases, give the way of judging and a few typical examples that differ from one another."
     },
     {
-     "at": "decide",
+     "at": "make",
      "text": "Use no capitals or warnings for emphasis, since they make the AI apply the rule too widely."
     },
     {
@@ -299,55 +293,39 @@
   },
   {
    "intent": "N7",
-   "why": "The user's purpose and intent stay the user's only if the AI hands them the choices that are theirs. A choice is the user's where the AI has no ground to pick one option over another, or where the choice is hard to undo.",
+   "why": "The user's purpose and intent stay the user's only if the AI hands them the choices that are theirs. The method is the guidance of Anthropic's [prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices#balancing-autonomy-and-safety) on balancing autonomy and safety, under which the AI asks before an action that's hard to reverse, affects shared systems, or could be destructive.",
    "items": [
     {
      "at": "decide",
-     "text": "Among the choices the task meets, mark each action that's hard to undo, touches what others share, or destroys something, and each choice between options that serve equally."
+     "text": "Among the choices the task meets, mark each that's the user's: each action that's hard to undo, touches what others share, or destroys something, and each choice between options that serve equally, where the AI has no ground to pick one over another. Leave every other choice to the AI."
     },
     {
-     "at": "decide",
-     "text": "Name those in the prompt, with how the AI asks about them."
-    },
-    {
-     "at": "decide",
-     "text": "Leave every other choice to the AI."
+     "at": "make",
+     "text": "Name the user's choices in the prompt, with how the AI asks about them."
     }
    ]
   },
   {
    "intent": "N8",
-   "why": "Every line takes some of the AI's attention from the lines that matter.",
+   "why": "Every line takes some of the AI's attention from the lines that matter. The method is the [progressive disclosure](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices) of the skill authoring best practices, which keeps detail that the AI needs only in some runs in a place that it reads only then.",
    "items": [
     {
-     "at": "decide",
-     "text": "For each line, ask whether removing it would change what the AI does."
-    },
-    {
-     "at": "decide",
-     "text": "If not, cut it."
-    },
-    {
-     "at": "decide",
-     "text": "Keep detail that the AI needs only in some runs in a place that it reads only then, by [progressive disclosure](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)."
+     "at": "make",
+     "text": "For each line, ask whether removing it would change what the AI does. If not, cut it."
     },
     {
      "at": "make",
-     "text": "Move detail that only some runs need to a file that the prompt links directly, and say in the prompt when to read it."
+     "text": "Move detail that the AI needs only in some runs to a file that the prompt links directly, and say in the prompt when to read it."
     }
    ]
   },
   {
    "intent": "N9",
-   "why": "The AI's judgment varies from run to run, which suits a step with many good ways and fails a step with one right result.",
+   "why": "The AI's judgment varies from run to run, which suits a step with many good ways and fails a step with one right result. The method is the [utility scripts](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices) of the skill authoring best practices.",
    "items": [
     {
      "at": "decide",
-     "text": "Read each step and ask whether it has one right result, such as a check or a file's form."
-    },
-    {
-     "at": "decide",
-     "text": "Give each such step to a program that gives that result on every run and handles its own errors, and have the AI run it, as the [utility scripts](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices) of the skill authoring best practices do."
+     "text": "Read each step and ask whether it has one right result, such as a check or a file's form. If it does, give it to a program that gives that result on every run and handles its own errors, and have the AI run it."
     }
    ]
   },
@@ -361,11 +339,7 @@
     },
     {
      "at": "decide",
-     "text": "Check each tool against those the prompt allows."
-    },
-    {
-     "at": "decide",
-     "text": "Where a step needs a tool that the prompt doesn't allow, allow the tool, or change the step so that it needs none."
+     "text": "Check each tool against those the prompt allows. Where a step needs a tool that the prompt doesn't allow, allow the tool, or change the step so that it needs none."
     }
    ]
   },
@@ -385,7 +359,7 @@
   },
   {
    "intent": "N12",
-   "why": "The AI keeps a rule on most runs, not on every run. A [hook](https://code.claude.com/docs/en/hooks) runs on every call, so it holds a rule that must hold, such as a file that the AI must not write. A test that puts code in the AI's place tries the hook in seconds without the model, so checking the rule needs no trial of the prompt.",
+   "why": "The AI keeps a rule on most runs, not on every run. The method is Claude Code's [best practices](https://code.claude.com/docs/en/best-practices#enforce-the-rules-that-cant-have-exceptions), which hold a rule that can't have exceptions with a hook or a deny rule.",
    "items": [
     {
      "at": "decide",
@@ -393,17 +367,17 @@
     },
     {
      "at": "decide",
-     "text": "Hold each such rule with a hook or a deny rule, not with the prompt's words alone."
+     "text": "Hold each such rule with a hook or a deny rule, not with the prompt's words alone, since a [hook](https://code.claude.com/docs/en/hooks) runs on every call, so it holds a rule that must hold, such as a file that the AI must not write."
     },
     {
      "at": "make",
-     "text": "Test the hook on each case, one case at a time."
+     "text": "Test the hook on each case, one case at a time, with code in the AI's place, which tries the hook in seconds without the model, so that checking the rule needs no trial of the prompt."
     }
    ]
   },
   {
    "intent": "N13",
-   "why": "The caller gets only what comes back, so a result that needs a follow-up question costs a round trip.",
+   "why": "The caller gets only what comes back, so a result that needs a follow-up question costs a round trip. The method is Ian Robinson's [consumer-driven contracts](https://martinfowler.com/articles/consumerDrivenContracts.html), under which what a provider gives comes from what its consumers need for their next move.",
    "items": [
     {
      "at": "decide",
@@ -415,7 +389,7 @@
     },
     {
      "at": "decide",
-     "text": "List what it needs for that: the result, what the AI did, and what it didn't do and why."
+     "text": "List what the caller needs for its next move: the result, what the AI did, and what it didn't do and why."
     },
     {
      "at": "decide",
@@ -433,7 +407,11 @@
    "items": [
     {
      "at": "make",
-     "text": "Open each message with what it asks or reports and why, in plain sentences, and keep the rest until the person asks for it."
+     "text": "Write each message in a few plain sentences with no headings or labels, in short paragraphs of one point each."
+    },
+    {
+     "at": "make",
+     "text": "Put first the context and the conclusion, what the message asks or reports and why, then the grounds, then the purpose and what it should be, and keep the rest until the person asks for it."
     },
     {
      "at": "make",
@@ -441,11 +419,11 @@
     },
     {
      "at": "make",
-     "text": "Write a few plain sentences with no headings or labels, in short paragraphs, one point each: first the context and the conclusion, then the grounds, then the purpose and what it should be."
+     "text": "Put what the person is to decide alone on the last line, with one recommendation."
     },
     {
      "at": "make",
-     "text": "Put what the person is to decide alone on the last line, with one recommendation. Ask for one decision in each message."
+     "text": "Ask for one decision in each message."
     },
     {
      "at": "make",
@@ -455,12 +433,8 @@
   },
   {
    "intent": "N15",
-   "why": "The caller can't tell a claim that the AI checked from one it guessed, and acts on both alike.",
+   "why": "The caller can't tell a claim that the AI checked from one it guessed, and acts on both alike. The method is the guidance of Anthropic's [prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices#minimizing-hallucinations-in-agentic-coding) on minimizing hallucinations, under which the AI opens what a claim rests on before it makes the claim.",
    "items": [
-    {
-     "at": "make",
-     "text": "Base each claim on a check that the AI ran on the real thing, on every item that the claim names, and say what it left unchecked."
-    },
     {
      "at": "make",
      "text": "Check each claim on the real thing before reporting it: read the file, run the check, open the record. Base it on none of memory, a guess, or another agent's summary."
@@ -485,33 +459,33 @@
   },
   {
    "intent": "N16",
-   "why": "The writer knows a prompt only by what the AI does with it in real use. A rule that must hold on every run rests on a hook, as N12 says. The rest, the AI's variance and the faults of the design, shows only when the product runs on real requests.",
+   "why": "The writer knows a prompt only by what the AI does with it in real use, where the AI's variance and the faults of the design show. The method is the repeated trials of Anthropic's [demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), whose pass^k is the chance that all k trials succeed.",
    "items": [
     {
      "at": "make",
-     "text": "Run the product vision trial on each kind of request that the prompt is for several times, on the model its users run."
+     "text": "Run the product vision trial on each kind of request that the prompt is for several times, on the model its users run. A rule that must hold on every run rests on a hook, as N12 says, so the trial tries the rest."
     },
     {
      "at": "make",
-     "text": "Judge the prompt from the record of what the AI did."
+     "text": "Where a run doesn't reach the result, change the prompt only for a cause that its record shows, as N17 says, and run the trial again."
     },
     {
      "at": "make",
-     "text": "Change the prompt only for a cause that a record of the product vision trial shows, as N17 says."
+     "text": "Judge the prompt from the record of what the AI did on each run, and check that every run reached the result."
     }
    ]
   },
   {
    "intent": "N17",
-   "why": "A trial's own parts, its set-up, its stand-ins, its judges, and its checks, are code and prompts of their own, and can fail like the prompt. A whole run then only confirms, and a failure in it points to the prompt.",
+   "why": "A trial's own parts, its set-up, its stand-ins, its judges, and its checks, are code and prompts of their own, and can fail like the prompt. The method is Anthropic's [demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), which takes code over a model to grade where it can, calibrates a model grader against human judgment, and reads the records to tell a failure of the agent from a failure of the trial.",
    "items": [
     {
-     "at": "make",
-     "text": "Build each part test first, and check it on a record kept from an earlier run before a whole run relies on it."
+     "at": "decide",
+     "text": "Decide by code every point that the record shows, such as a tool called, a file's content, or a command's output. Leave to a judge only what code can't decide."
     },
     {
      "at": "make",
-     "text": "Decide by code every point that the record shows, such as a tool called, a file's content, or a command's output. Leave to a judge only what code can't decide."
+     "text": "Build each part alone, test first, and run it small on a record kept from an earlier run before any whole run relies on it, so that a whole run only confirms, and a failure in it points to the prompt."
     },
     {
      "at": "make",
@@ -523,11 +497,11 @@
     },
     {
      "at": "make",
-     "text": "Build each part alone and run it small on a kept record before any whole run."
+     "text": "Between two runs, change one thing, the prompt or a part of the trial, never both."
     },
     {
      "at": "make",
-     "text": "Between two runs, change one thing, the prompt or a part of the trial, never both. Where a trial fails, look first in its record at the trial's own parts. Change the prompt only for a cause in the prompt."
+     "text": "Where a trial fails, look first in its record at the trial's own parts, and change the prompt only for a cause in the prompt."
     }
    ]
   }

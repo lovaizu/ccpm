@@ -44,6 +44,8 @@ SCHEMA = "$schema"
 NOTE = re.compile(r"^> \[!NOTE\]\n> " + MARKER + r":.*(?:\n>.*)*", re.MULTILINE)
 MARK = re.compile(r"^(?:> " + MARKER + r":|\s*\"" + MARKER + r"\"\s*:)", re.MULTILINE)
 QUESTION = re.compile(r"\bN\d+\b")
+# An item named in a text, by its condition's ID and its place, such as N6.2.
+ITEM = re.compile(r"\b(N\d+)\.(\d+)\b")
 # An item that holds only in a case opens with Where or If and its case, as the template writes one.
 CASE = re.compile(r"^(?:Where|If) ")
 # What each action of a trace has its calls do, as the Markdown names them.
@@ -280,7 +282,8 @@ def faults(data: dict[str, Any], template: list[str] | None = None) -> list[str]
     """Each fault of the best practice's form, in words: questions numbered in their order, each
     about a part it has, a section of its template where it has one, or the whole, every part or
     section asked of, each question with one practice in the same order, each item's
-    trace one that every run makes and a call can match, and each question named in the text one
+    trace one that every run makes and a call can match, each practice's items taken while
+    deciding before those taken while making, and each question and item named in the text one
     that's there."""
     found = []
     if template is None:
@@ -310,9 +313,41 @@ def faults(data: dict[str, Any], template: list[str] | None = None) -> list[str]
         found.append(f"practices meet {', '.join(answered)}, not each condition once in its order")
     found += csf_faults(data)
     found += trace_faults(data)
+    found += order_faults(data)
     for named in sorted({n for t in texts(data) for n in QUESTION.findall(t)} - set(questions)):
         found.append(f"{named} is named, but there is no such condition")
+    found += item_faults(data)
     return found
+
+
+def order_faults(data: dict[str, Any]) -> list[str]:
+    """Each item taken while deciding that comes after one taken while making in its practice, in
+    words, as the maker settles the work's decisions before it makes the deliverable."""
+    found = []
+    for practice in data["practices"]:
+        made = None
+        for n, item in enumerate(practice["items"], 1):
+            if item["at"] == "make" and made is None:
+                made = n
+            elif item["at"] == "decide" and made is not None:
+                where = practice["intent"]
+                found.append(
+                    f"{where}.{n} is taken while deciding, after {where}.{made}, which is taken"
+                    " while making"
+                )
+    return found
+
+
+def item_faults(data: dict[str, Any]) -> list[str]:
+    """Each item named in the text, such as N6.2, that its condition's practice doesn't hold, in
+    words."""
+    counts = {p["intent"]: len(p["items"]) for p in data["practices"]}
+    named = {m.group(0): m.groups() for t in texts(data) for m in ITEM.finditer(t)}
+    return [
+        f"{name} is named, but there is no such item"
+        for name, (intent, place) in sorted(named.items())
+        if not 1 <= int(place) <= counts.get(intent, 0)
+    ]
 
 
 def csf_faults(data: dict[str, Any]) -> list[str]:

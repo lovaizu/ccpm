@@ -101,7 +101,15 @@
    "items": [
     {
      "at": "decide",
-     "text": "Derive the factors from the goal: ask what must go right for the users to reach it, or they fail. Write each answer as a state in one sentence, and merge two states that fail together."
+     "text": "Derive the factors from the goal: ask what must go right for the users to reach it, or they fail."
+    },
+    {
+     "at": "decide",
+     "text": "Write each answer as a state in one sentence."
+    },
+    {
+     "at": "decide",
+     "text": "Merge two states that fail together."
     },
     {
      "at": "decide",
@@ -115,11 +123,15 @@
   },
   {
    "intent": "N3",
-   "why": "The conditions are what the generator meets and the evaluator checks, so each must be a state that someone reading only the deliverable can confirm. The method is the goal tree, which breaks each goal into the states that make it true.",
+   "why": "The conditions are what the generator meets and the evaluator checks, so each must be a state that someone reading only the deliverable can confirm. The method is the goal tree of William Dettmer's The Logical Thinking Process, which breaks a goal into its critical success factors and each factor into the necessary conditions that make it true.",
    "items": [
     {
      "at": "decide",
-     "text": "For each factor, ask how the deliverable makes it true. Write each answer, a state of the deliverable, as a yes-or-no question about the deliverable, and name its factor in `csf`."
+     "text": "For each factor, ask how the deliverable makes it true."
+    },
+    {
+     "at": "decide",
+     "text": "Write each answer, a state of the deliverable, as a yes-or-no question about the deliverable, with its factor named in `csf`."
     },
     {
      "at": "decide",
@@ -127,18 +139,26 @@
     },
     {
      "at": "decide",
-     "text": "If a condition needs several states of its own, make it a factor. If it only says how to meet another condition, move it into that condition's practice."
+     "text": "If a condition needs several states of its own, make it a factor."
+    },
+    {
+     "at": "decide",
+     "text": "If a condition only says how to meet another condition, move it into that condition's practice."
     },
     {
      "at": "make",
-     "text": "If a deliverable that meets every condition still fails its users, find the level that caused it, whether the goal, a factor, a condition, or a practice, and rebuild that level from the level it serves."
+     "text": "Read a deliverable that meets every condition as its users would. If it still fails them, find the level that caused it, whether the goal, a factor, a condition, or a practice, and rebuild that level from the level it serves."
     }
    ]
   },
   {
    "intent": "N4",
-   "why": "The template makes every deliverable of the kind hold each condition in the same place and the same form, so that no run has to invent the structure.",
+   "why": "The template makes every deliverable of the kind hold each condition in the same place and the same form, so that no run has to invent the structure. The method is the consistency and labeling principles of Robert Horn's Information Mapping, in Mapping Hypertext: like content takes like terms, format, and order, and each unit takes a label that says what it holds.",
    "items": [
+    {
+     "at": "decide",
+     "text": "If the deliverable has a JSON Schema of its own, such as the design tree, use the schema as the template: its top-level fields are the sections, and the description of each field is its note."
+    },
     {
      "at": "decide",
      "text": "Order the sections as the users need them, from the first thing they look for to the last."
@@ -156,60 +176,72 @@
      "text": "For each slot, choose the form that keeps the content the same shape across deliverables, such as one sentence, a list of commands, or a table with fixed columns. Each run fills a slot without a form in its own way."
     },
     {
+     "at": "decide",
+     "text": "Where a slot's practice calls for a figure, choose a text format that shows each change in a diff, such as Mermaid for a sequence or SVG for other figures."
+    },
+    {
      "at": "make",
      "text": "Mark each slot so that the reader can tell it from fixed text and the rendered page still shows it, such as `` `<name>` `` in Markdown."
     },
     {
      "at": "make",
-     "text": "After each section, write one note that says, for each slot, what it holds, the form it takes, and whether it's optional. Start the note with a marker by which the generator finds and deletes it, in the form the deliverable's format allows, such as a note block in Markdown or a key in JSON."
+     "text": "After each section, write one note that says, for each slot, what it holds, the form it takes, whether it's optional, and, for a figure, where the deliverable keeps its own."
     },
     {
      "at": "make",
-     "text": "If the deliverable has a JSON Schema of its own, such as the design tree, use the schema as the template: its top-level fields are the sections, and the description of each field is its note."
+     "text": "Start each note with a marker by which the generator finds and deletes it, in the form the deliverable's format allows, such as a note block in Markdown or a key in JSON."
     },
     {
      "at": "make",
-     "text": "Where a slot's practice calls for a figure, draw it in a text format that shows each change in a diff, such as Mermaid for a sequence or SVG for other figures. Put a skeleton of the figure in the template, labeled with the names of its slots, and say in the note where the deliverable keeps its own."
+     "text": "Where a slot holds a figure, put a skeleton of the figure in the template, labeled with the names of its slots."
     }
    ]
   },
   {
    "intent": "N5",
-   "why": "A practice is the only place where the generator learns how to meet a condition well, so it gives the way of thinking that produces the condition's state, not a description of the state. Its test: a generator that takes only this practice's items makes a deliverable that meets the condition every time.",
+   "why": "A practice is the only place where the generator learns how to meet a condition well, so it gives the way of thinking that produces the condition's state, not a description of the state. The method is the systematic approach to problem solving of Jeroen van Merriënboer's four-component instructional design model, in Ten Steps to Complex Learning: the phases that a competent performer goes through on a task, each with the rules of thumb that help in it.",
    "items": [
     {
      "at": "decide",
-     "text": "Find by research the method that the field has established for the condition's state. A name alone doesn't tell the generator what to do, so take the method's core steps as they apply to this deliverable."
+     "text": "Find by research the method that the field has established for the condition's state, and take its core steps as they apply to this deliverable, since a name alone doesn't tell the generator what to do."
     },
     {
-     "at": "decide",
-     "text": "Write in `why` what the condition gives the users, and the method's name and source."
+     "at": "make",
+     "text": "Write in `why`, in one or two sentences, what the condition gives the users, and the method's name and source."
     },
     {
-     "at": "decide",
-     "text": "Derive the items from what the condition gives the users, and list them in the order the generator takes them: each decision with the question to ask and the criterion for choosing where there are options, then each step, and last how to check the result from the users' side, such as asking whether a newcomer can say the point back. Make each item one thing to take, since a role names each item it took by its ID, its condition's ID and its place, such as N6.2, and a check finds one left out."
+     "at": "make",
+     "text": "List the items in the order the generator takes them: each decision, with the question to ask and the criterion for choosing where there are options in the same item, then each step, and last, only where the condition's own question doesn't already say how to check it, how to check the result from the users' side, such as asking whether a newcomer can say the point back."
     },
     {
-     "at": "decide",
-     "text": "Mark each item `decide` where the maker takes it while it settles the work's decisions, and `make` where it takes it while it makes the deliverable."
+     "at": "make",
+     "text": "Make each item one thing to take, since a role names each item it took by its ID, its condition's ID and its place, such as N6.2, and a check finds one left out."
     },
     {
-     "at": "decide",
-     "text": "Give a trace to each item that every run takes and a tool call shows: a command it runs, a file it reads in full, or a file it writes. Order the items as their calls come, because a checker such as Lane checks each item by its trace in that order. The evaluator checks what the judgments made."
+     "at": "make",
+     "text": "Give a trace to each item that every run takes and a tool call shows: a command it runs, a file it reads in full, or a file it writes. An item with a trace takes its place by its call, among the decisions or steps whose content it supplies, such as the read of an input just before the decision that takes from it, since a checker such as Lane checks each item by its trace in the order of the calls, and the evaluator checks what the judgments made."
     },
     {
-     "at": "decide",
+     "at": "make",
+     "text": "Mark each item `decide` where the maker takes it while it settles the work's decisions, and `make` where it takes it while it makes the deliverable. No `decide` item follows a `make` item, since the maker settles the decisions before it makes the deliverable."
+    },
+    {
+     "at": "make",
      "text": "Where the generator must find the content before it writes it, such as the users of a product vision, say what the content serves, how to derive it from that, and when to ask the user."
     },
     {
      "at": "make",
-     "text": "Write the reasons and the way to find the content in the practice, and the form of each slot in the template's note, so that each fact stands in one place. Name a language or a tool only as an example, so that each deliverable's plan chooses its own."
+     "text": "Write each reason and each way to find the content in the item that uses it, and the form of each slot in the template's note, so that each fact stands in one place."
+    },
+    {
+     "at": "make",
+     "text": "Name a language or a tool only as an example, so that each deliverable's plan chooses its own."
     }
    ]
   },
   {
    "intent": "N6",
-   "why": "The example shows the generator what following the best practice produces, which no description fully conveys.",
+   "why": "The example shows the generator what following the best practice produces, which no description fully conveys. The method is the worked example of John Sweller's cognitive load theory, which finds that a learner who studies a solved problem learns to solve the next one better than a learner who must work it out alone.",
    "items": [
     {
      "at": "make",
@@ -217,25 +249,25 @@
     },
     {
      "at": "make",
-     "text": "Check it against every condition as its users would."
-    },
-    {
-     "at": "make",
-     "text": "Where it falls short, fix the practice or the template that produced the shortfall, and make the example again from them. A fix made only in the example would hide the fault in the best practice."
-    },
-    {
-     "at": "make",
      "text": "Name the example's file in `example`."
     },
     {
      "at": "make",
-     "text": "If the deliverable lives elsewhere for its own readers, such as a product vision in the developers' folder, name its path in the best practice's `source` field. Have a script, such as ccpm's `dev/scripts/practices.py example`, copy it and its figures next to the best practice, so that the copy matches the original each time the script runs."
+     "text": "If the deliverable lives elsewhere for its own readers, such as a product vision in the developers' folder, name its path in the best practice's `source` field."
+    },
+    {
+     "at": "make",
+     "text": "Where the example has a `source`, have a script, such as ccpm's `dev/scripts/practices.py example`, copy the source and its figures next to the best practice, so that the copy matches the original each time the script runs."
+    },
+    {
+     "at": "make",
+     "text": "Check the example against every condition as its users would. Where it falls short, fix the practice or the template that produced the shortfall, and make the example again from them, since a fix made only in the example would hide the fault in the best practice."
     }
    ]
   },
   {
    "intent": "N7",
-   "why": "A deliverable must say what the deliverables it builds on say, and the deliverables built on it must follow it.",
+   "why": "A deliverable must say what the deliverables it builds on say, and the deliverables built on it must follow it. The method is requirements traceability, which Orlena Gotel and Anthony Finkelstein, in An Analysis of the Requirements Traceability Problem, define as following each requirement both backward to its source and forward to what carries it.",
    "items": [
     {
      "at": "decide",
@@ -247,11 +279,27 @@
     },
     {
      "at": "decide",
-     "text": "Go the other way, from each input to the deliverable, since a deliverable that drops what it rests on fails its users while every part it holds is sound. For each input, take its vital few, such as the concept and the key results of a product vision, and ask which of them the deliverable's users need. For each one they need, decide which part of the deliverable carries it, and make sure a condition asks for it, such as a README showing what the key results promise."
+     "text": "Go the other way, from each input to the deliverable, since a deliverable that drops what it rests on fails its users while every part it holds is sound: take the input's vital few, such as the concept and the key results of a product vision, and ask which of them the deliverable's users need."
+    },
+    {
+     "at": "decide",
+     "text": "For each of those vital few that the users need, decide which part of the deliverable carries it."
+    },
+    {
+     "at": "decide",
+     "text": "Make sure a condition asks for each of those vital few, such as a README showing what the key results promise."
     },
     {
      "at": "make",
-     "text": "List the inputs in `inputs` and the preconditions in `preconditions`, each by the folder name of its best practice. The deliverables built on this kind are those whose best practices name it in `inputs`, so listing them here as well would write the same fact twice. The plan holds the paths of each deliverable's inputs, and orders the deliverable after them."
+     "text": "List the inputs in `inputs` and the preconditions in `preconditions`, each by the folder name of its best practice."
+    },
+    {
+     "at": "make",
+     "text": "Leave out the kinds built on this kind, since their best practices name it in `inputs`, and listing them here as well would write the same fact twice."
+    },
+    {
+     "at": "make",
+     "text": "Leave out the paths of the inputs, since the plan holds the paths of each deliverable's inputs and orders the deliverable after them."
     },
     {
      "at": "make",
@@ -265,7 +313,7 @@
   },
   {
    "intent": "N8",
-   "why": "A deliverable that holds the trivial many beside the vital few buries what its users need, and each round of work adds more. Joseph Juran named the few causes that decide most of a result the vital few. Get them by building, not by checking, since a check for fewness adds findings of its own.",
+   "why": "A deliverable that holds the trivial many beside the vital few buries what its users need, and each round of work adds more. The method is Joseph Juran's Pareto principle, in his Quality Control Handbook, which names the few causes that decide most of a result the vital few.",
    "items": [
     {
      "at": "decide",
@@ -273,7 +321,11 @@
     },
     {
      "at": "decide",
-     "text": "Derive each practice's items from what its condition serves, such as a README's problems from the product vision's objectives and their key results. A practice that collects every thing of a kind and then keeps some, such as every problem readers have, fills the deliverable with the many."
+     "text": "Derive each practice's items from what its condition serves, such as a README's problems from the product vision's objectives and their key results, since a practice that collects every thing of a kind and then keeps some, such as every problem readers have, fills the deliverable with the many."
+    },
+    {
+     "at": "make",
+     "text": "Never add a question or a check for fewness. It adds findings of its own, and the few follow from the build."
     }
    ]
   }

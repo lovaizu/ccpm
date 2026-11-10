@@ -296,6 +296,48 @@ class Faults(unittest.TestCase):
                     ["N2.1 takes an empty text in its trace, which no call matches"],
                 )
 
+    def test_a_decide_item_after_a_make_item(self):
+        # Given: a practice whose item taken while deciding comes after one taken while making
+        def late(d):
+            d["practices"][0]["items"].append({"at": "decide", "text": "Choose again."})
+
+        # Then: the check names the late item, as the maker settles the decisions before it makes
+        expected = "N1.3 is taken while deciding, after N1.2, which is taken while making"
+        self.assertEqual(changed(late), [expected])
+
+    def test_decide_items_after_make_items_of_another_practice_are_no_fault(self):
+        # Given: a practice of decide items only, after one that ends with a make item
+        def other(d):
+            d["practices"][1]["items"] = [{"at": "decide", "text": "Choose."}]
+
+        self.assertEqual(changed(other), [])
+
+    def test_an_item_named_in_the_text_that_is_not_there(self):
+        # Given: a text naming the third item of N1, which has two, and the first of N2
+        def name(d):
+            d["practices"][1]["why"] = "As N1.3 says, and N2.1."
+
+        # Then: the check names only the item that isn't there
+        self.assertEqual(changed(name), ["N1.3 is named, but there is no such item"])
+
+    def test_an_item_of_a_condition_that_is_not_there(self):
+        def name(d):
+            d["practices"][1]["why"] = "As N3.1 says."
+
+        self.assertEqual(
+            changed(name),
+            [
+                "N3 is named, but there is no such condition",
+                "N3.1 is named, but there is no such item",
+            ],
+        )
+
+    def test_an_item_numbered_zero_is_not_there(self):
+        def name(d):
+            d["practices"][1]["why"] = "As N1.0 says."
+
+        self.assertEqual(changed(name), ["N1.0 is named, but there is no such item"])
+
 
 TEMPLATE = """# <Product>
 

@@ -103,13 +103,17 @@
     },
     {
      "at": "make",
-     "text": "Keep a behavior that looks wrong, along with its test. Report it as a point about what the code does, instead of changing it here."
+     "text": "Keep a behavior that looks wrong, along with its test."
+    },
+    {
+     "at": "make",
+     "text": "Report a behavior that looks wrong as a point about what the code does, instead of changing it here."
     }
    ]
   },
   {
    "intent": "N2",
-   "why": "Every line costs the maintainer reading time.",
+   "why": "Every line costs the maintainer reading time. The method is the removal of the smells Lazy Element, Speculative Generality, Middle Man, and Comments in Martin Fowler's Refactoring, second edition.",
    "items": [
     {
      "at": "make",
@@ -117,7 +121,11 @@
     },
     {
      "at": "make",
-     "text": "Fold into its caller each function or layer that only passes a call on, and drop each parameter to which every caller gives the same value."
+     "text": "Fold into its caller each function or layer that only passes a call on."
+    },
+    {
+     "at": "make",
+     "text": "Drop each parameter to which every caller gives the same value."
     },
     {
      "at": "make",
@@ -127,11 +135,15 @@
   },
   {
    "intent": "N3",
-   "why": "A name that says what it holds lets the maintainer read each line without going to a definition.",
+   "why": "A name that says what it holds lets the maintainer read each line without going to a definition. The method is the intention-revealing names of Robert C. Martin's Clean Code, with longer names for wider scopes.",
    "items": [
     {
      "at": "make",
-     "text": "For each name, write in a few words what it holds or does without looking at its definition, then compare with the definition, and rename it where the two differ."
+     "text": "For each name, write in a few words what it holds or does without looking at its definition."
+    },
+    {
+     "at": "make",
+     "text": "Compare those words with the definition, and rename the name where the two differ."
     },
     {
      "at": "make",
@@ -141,7 +153,7 @@
   },
   {
    "intent": "N4",
-   "why": "A maintainer who meets two names takes them for two things, and one name used for two things merges them.",
+   "why": "A maintainer who meets two names takes them for two things, and one name used for two things merges them. The method is the ubiquitous language of Eric Evans's Domain-Driven Design: the code names each thing with the word its users use.",
    "items": [
     {
      "at": "make",
@@ -153,13 +165,17 @@
     },
     {
      "at": "make",
-     "text": "If two names refer to one thing, keep one. If one name refers to two things, give one of them another name."
+     "text": "If two names refer to one thing, keep one."
+    },
+    {
+     "at": "make",
+     "text": "If one name refers to two things, give one of them another name."
     }
    ]
   },
   {
    "intent": "N5",
-   "why": "A function that does one thing at one level, and takes what it uses as inputs, asks its reader to hold only what it says.",
+   "why": "A function that does one thing at one level, and takes what it uses as inputs, asks its reader to hold only what it says. The method is the Composed Method of Kent Beck's Smalltalk Best Practice Patterns: each method does one identifiable task, with all its operations at one level of abstraction.",
    "items": [
     {
      "at": "make",
@@ -171,17 +187,25 @@
     },
     {
      "at": "make",
-     "text": "A long function reads as calls to steps, each named for what it does."
+     "text": "Write a long function as calls to steps, each named for what it does."
     },
     {
      "at": "make",
-     "text": "Join back two functions that the reader can't understand apart, and write a clever construct in its plain form."
+     "text": "Join back two functions that the reader can't understand apart."
+    },
+    {
+     "at": "make",
+     "text": "Write a clever construct in its plain form."
+    },
+    {
+     "at": "make",
+     "text": "Read each changed function once from the top as a maintainer new to it, and check that you can say in one sentence what it does."
     }
    ]
   },
   {
    "intent": "N6",
-   "why": "A maintainer who doesn't know why odd code is so may undo what it's there for.",
+   "why": "A maintainer who doesn't know why odd code is so may undo what it's there for. The method is the Comments smell of Martin Fowler's Refactoring: first change the code until it says the point itself, and comment only where it can't.",
    "items": [
     {
      "at": "make",
@@ -189,7 +213,11 @@
     },
     {
      "at": "make",
-     "text": "For each, first make the code say it plainly where it can. Where it can't, state the reason right there, such as a limit outside the code or a way tried and dropped."
+     "text": "For each mark, make the code say it plainly where it can."
+    },
+    {
+     "at": "make",
+     "text": "Where the code can't say it, state the reason right there, such as a limit outside the code or a way tried and dropped."
     },
     {
      "at": "make",
@@ -199,15 +227,19 @@
   },
   {
    "intent": "N7",
-   "why": "A rule written in several places changes in some of them and not the others.",
+   "why": "A rule written in several places changes in some of them and not the others. The method is the principle Don't Repeat Yourself of Andy Hunt and Dave Thomas's The Pragmatic Programmer: each piece of knowledge has one authoritative place in the system.",
    "items": [
     {
      "at": "make",
-     "text": "Write each rule or design decision once, in the module that has that job, and leave apart things that only look alike but differ in meaning."
+     "text": "For each rule or design decision the code holds, such as a limit, a format, or a path, list every place that writes it."
     },
     {
      "at": "make",
-     "text": "For each rule or decision the code holds, such as a limit, a format, or a path, list every place that writes it, and keep one."
+     "text": "Keep one of those places, in the module that has that job."
+    },
+    {
+     "at": "make",
+     "text": "Leave apart things that only look alike but differ in meaning."
     },
     {
      "at": "make",
@@ -229,7 +261,7 @@
   },
   {
    "intent": "N8",
-   "why": "When the code does each kind of thing one way, a difference means a real difference.",
+   "why": "When the code does each kind of thing one way, a difference means a real difference. The method is the consistency rule of [Python's style guide](https://peps.python.org/pep-0008/#a-foolish-consistency-is-the-hobgoblin-of-little-minds): consistency within a module matters most, then consistency within the project.",
    "items": [
     {
      "at": "make",
@@ -237,11 +269,19 @@
     },
     {
      "at": "make",
-     "text": "For each kind, gather each way the code does it, and keep the way that the code already uses most."
+     "text": "For each kind, gather each way the code does it."
     },
     {
      "at": "make",
-     "text": "Where the code uses two ways alike, keep the way of the code nearest to the place. Choose a better way only where it replaces the others everywhere."
+     "text": "Keep the way that the code already uses most."
+    },
+    {
+     "at": "make",
+     "text": "Where the code uses two ways alike, keep the way of the code nearest to the place."
+    },
+    {
+     "at": "make",
+     "text": "Choose a better way only where it replaces the others everywhere."
     },
     {
      "at": "make",
