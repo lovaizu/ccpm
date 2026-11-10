@@ -120,7 +120,7 @@ The plan and each deliverable reach the work that rests on them, and the pull re
 only after the user's `/rn:ty`, and the guard holds the run to it.
 
 *Why*: a wrong reading of what the user means, found only at the end, makes everything that rests
-on it made again, as KR1.1 and KR1.2 count.
+on it made again, which raises KR1.1 and adds to KR1.2.
 
 ### Back to the design tree on a problem
 
@@ -135,8 +135,8 @@ it or breaks another intent with it, which raises KR1.1.
 What a run finds changes the design tree before the next deliverable, and the best practice before
 the next run, once the user takes the change, which the orchestrator proposes before the merge.
 
-*Why*: a design tree or a best practice kept as first laid out makes the same miss again, as KR1.1
-and KR1.2 count.
+*Why*: a design tree or a best practice kept as first laid out makes the same miss again, which raises
+KR1.1 and adds to KR1.2.
 
 ### Tried in a throwaway copy
 
@@ -360,8 +360,8 @@ Lane with it, and types `/rn:up` in Claude Code at the root of their repository.
 - rn's own git worktree for each run, over the user's checkout\
   The user goes on with their own work while rn runs, and a pause leaves nothing of theirs to set right, which keeps KR1.2 short. The cost: a worktree on disk for each run until its merge.
 - A best practice made on a run in `.rn/best-practices/` over the run's folder\
-  Every later run in the repository finds it, and takes it over rn's own of the same kind, which raises
-  KR1.1. The cost: a later run misses what rn's own gains after it.
+  Every later run in the repository finds it, and takes it over rn's own of the same kind, which keeps
+  KR1.1 low. The cost: a later run misses what rn's own gains after it.
 
 ## Directory structure
 
