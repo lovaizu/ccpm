@@ -12,7 +12,7 @@ from lanetest import FAILED, LANE, WRITER_RUN_ONLY, RepositoryTest
 ENTRY = 'python3 "${CLAUDE_PLUGIN_ROOT}/hooks/lane/hook.py" changelog'
 
 
-def with_takes(*takes: str) -> dict:
+def with_takes(*takes: object) -> dict:
     """The proposal of the README's run_only rule on writer's step 2, with other takes."""
     lane = {"lane": "run_only", "takes": list(takes)}
     return {
@@ -69,6 +69,14 @@ class Writes(RepositoryTest):
         self.lay("write", self.propose(WRITER_RUN_ONLY))
         self.assertFalse(os.path.exists(self.path(".lane", "20261110-changelog")))
 
+    def test_a_folder_that_holds_more_than_the_proposal_stays(self) -> None:
+        path = self.propose(WRITER_RUN_ONLY)
+        self.write("notes", ".lane", "20261110-changelog", "notes.md")
+        out = self.lay("write", path).stdout
+        self.assertFalse(os.path.exists(path))
+        self.assertTrue(os.path.exists(self.path(".lane", "20261110-changelog", "notes.md")))
+        self.assertNotIn("Removed its folder", out)
+
     def test_it_says_what_it_wrote(self) -> None:
         out = self.lay("write", self.propose(WRITER_RUN_ONLY)).stdout
         self.assertEqual(
@@ -101,6 +109,12 @@ class Writes(RepositoryTest):
             self.read("changelog", "agents", "writer.md"),
         )
 
+    def test_the_json_it_writes_is_indented_by_two_blanks(self) -> None:
+        self.lay("write", self.propose(WRITER_RUN_ONLY))
+        for name in ("hooks.json", "lanes.json"):
+            text = self.read("changelog", "hooks", name)
+            self.assertEqual(text, json.dumps(json.loads(text), indent=2) + "\n")
+
     def test_the_hook_entry_is_written_once_however_often_it_writes(self) -> None:
         self.lay("write", self.propose(WRITER_RUN_ONLY))
         self.lay("write", self.propose(WRITER_RUN_ONLY))
@@ -117,6 +131,13 @@ class Validates(RepositoryTest):
         self.assertIn(
             "Fix what claude plugin validate found, and run lay.py write again.", ran.stdout
         )
+        self.assertTrue(os.path.exists(self.path(".lane", "20261110-changelog", "changelog.json")))
+
+    def test_a_validation_stopped_by_a_signal_keeps_the_proposal(self) -> None:
+        with open(os.path.join(self.bin, "claude"), "w", encoding="utf-8") as f:
+            f.write("#!/bin/sh\nkill -9 $$\n")
+        ran = self.lay("write", self.propose(WRITER_RUN_ONLY))
+        self.assertEqual(ran.returncode, 1)
         self.assertTrue(os.path.exists(self.path(".lane", "20261110-changelog", "changelog.json")))
 
     def test_a_validation_that_cant_run_keeps_the_proposal(self) -> None:
@@ -139,8 +160,17 @@ class Refuses(RepositoryTest):
         self.assertFalse(os.path.exists(self.path("changelog", "hooks")))
         return ran.stderr
 
+    def test_a_proposal_that_isnt_there(self) -> None:
+        path = self.path(".lane", "20261110-changelog", "changelog.json")
+        self.assertIn("isn't there", self.refused(None, path=path))
+
     def test_a_proposal_that_isnt_json(self) -> None:
         self.assertIn("isn't JSON", self.refused("{"))
+
+    def test_a_proposal_in_another_hidden_folder(self) -> None:
+        self.write(json.dumps(WRITER_RUN_ONLY), ".draft", "20261110-changelog", "changelog.json")
+        path = self.path(".draft", "20261110-changelog", "changelog.json")
+        self.assertIn("keep the proposal as .lane/", self.refused(None, path=path))
 
     def test_a_proposal_out_of_its_folder(self) -> None:
         self.write(json.dumps(WRITER_RUN_ONLY), "changelog.json")
@@ -188,6 +218,22 @@ class Refuses(RepositoryTest):
             "writer step 2: no type run_never; the types are run_only", self.refused(proposal)
         )
 
+    def test_a_take_that_isnt_text(self) -> None:
+        self.assertIn(
+            "$.subagents[0].steps[0].lanes[0].takes[1]: expected a text, found 3",
+            self.refused(with_takes("git log --oneline", 3)),
+        )
+
+    def test_a_step_number_that_is_true_or_false(self) -> None:
+        proposal = {
+            **WRITER_RUN_ONLY,
+            "subagents": [{"name": "writer", "steps": [{"step": True, "lanes": []}]}],
+        }
+        self.assertIn(
+            "$.subagents[0].steps[0].step: expected a whole number, found true",
+            self.refused(proposal),
+        )
+
     def test_takes_the_type_refuses(self) -> None:
         self.assertIn(
             "writer step 2: run_only takes at least one command", self.refused(with_takes())
@@ -199,3 +245,12 @@ class Usage(RepositoryTest):
         ran = self.lay()
         self.assertEqual(ran.returncode, 2)
         self.assertIn("usage: lay.py write <proposal>", ran.stderr)
+
+    def test_a_command_lay_py_lacks_shows_the_usage(self) -> None:
+        ran = self.lay("remove", self.propose(WRITER_RUN_ONLY))
+        self.assertEqual((ran.returncode, ran.stderr), (2, "usage: lay.py write <proposal>\n"))
+
+    def test_a_word_after_the_proposal_shows_the_usage(self) -> None:
+        ran = self.lay("write", self.propose(WRITER_RUN_ONLY), "again")
+        self.assertEqual((ran.returncode, ran.stderr), (2, "usage: lay.py write <proposal>\n"))
+        self.assertTrue(os.path.exists(self.path(".lane", "20261110-changelog", "changelog.json")))

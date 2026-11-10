@@ -38,6 +38,23 @@ class Read(unittest.TestCase):
             },
         )
 
+    def test_a_step_may_run_on_over_several_lines(self) -> None:
+        text = "Intro.\n## Steps\n1. One\n   two\n   three\n2. Four\n"
+        self.assertEqual(steps.read(text), {1: "One two three", 2: "Four"})
+
+    def test_a_line_indented_by_one_blank_goes_on_its_step(self) -> None:
+        self.assertEqual(steps.read("## Steps\n1. One\n two\n"), {1: "One two"})
+
+    def test_an_indented_line_before_the_first_step_is_no_step(self) -> None:
+        self.assertEqual(steps.read("## Steps\n   note\n1. One\n"), {1: "One"})
+
+    def test_an_indented_line_after_a_paragraph_is_no_step(self) -> None:
+        text = "## Steps\n1. One\nA paragraph.\n   indented\n2. Two\n"
+        self.assertEqual(steps.read(text), {1: "One", 2: "Two"})
+
+    def test_a_numbered_list_under_a_later_heading_is_no_step(self) -> None:
+        self.assertEqual(steps.read("## Steps\n1. One\n## Notes\n2. Two\n"), {1: "One"})
+
     def test_a_file_with_no_steps_heading_is_refused(self) -> None:
         with self.assertRaisesRegex(steps.StepsError, "no `## Steps` heading"):
             steps.read("---\nname: writer\n---\n\n1. A step.\n")

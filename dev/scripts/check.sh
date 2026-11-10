@@ -50,6 +50,25 @@ sh dev/scripts/mermaid.sh
 
 pytest -q -n auto dev/scripts/tests dev/lane/tests
 
+# A behavior that no test checks can break unseen, so the tests of Lane run every line and branch of
+# its code, and fail under every small change to it, as N7 of
+# plugins/rn/domain/best-practices/code/best-practice.md says. pyproject.toml and dev/lane/cosmic-ray.toml hold what each check counts.
+if command -v cosmic-ray >/dev/null 2>&1; then
+  scratch="$(mktemp -d)"
+  trap 'rm -r "$scratch"' EXIT
+  COVERAGE_FILE="$scratch/.coverage" coverage run -m pytest -q -p no:cacheprovider dev/lane/tests
+  COVERAGE_FILE="$scratch/.coverage" coverage combine -q
+  COVERAGE_FILE="$scratch/.coverage" coverage report
+  cosmic-ray init dev/lane/cosmic-ray.toml "$scratch/mutants.sqlite"
+  cr-filter-pragma "$scratch/mutants.sqlite"
+  cosmic-ray exec dev/lane/cosmic-ray.toml "$scratch/mutants.sqlite"
+  cr-report --surviving-only --show-diff "$scratch/mutants.sqlite"
+  cr-rate --fail-over 0 "$scratch/mutants.sqlite"
+else
+  echo "check.sh: how well Lane's tests catch faults goes unchecked, as cosmic-ray isn't"\
+    "installed. It comes with pyproject.toml's test-quality group, on Python 3.11 or later"
+fi
+
 for manifest in plugins/*/.claude-plugin/plugin.json; do
   claude plugin validate "${manifest%/.claude-plugin/plugin.json}" --strict
 done

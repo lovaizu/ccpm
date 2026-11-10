@@ -17,7 +17,7 @@ from typing import Any
 LANE_CODE = os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "hooks", "lane"
 )
-sys.path.insert(0, LANE_CODE)
+sys.path.insert(0, LANE_CODE)  # pragma: no mutate
 
 from domain import laid, steps
 from domain.lanes import TYPES
@@ -32,9 +32,10 @@ class Refused(Exception):
 
 
 def _expect(value: Any, kind: type, where: str) -> Any:
-    """The value, where it's of the kind. A value of any other kind refuses the proposal."""
+    """The value, where it's of the kind. A value of any other kind, or true or false, which no
+    field takes, refuses the proposal."""
     names = {list: "a list", dict: "an object", str: "a text", int: "a whole number"}
-    if not isinstance(value, kind) or (kind is int and isinstance(value, bool)):
+    if isinstance(value, bool) or not isinstance(value, kind):
         raise Refused(f"{where}: expected {names[kind]}, found {json.dumps(value)}")
     return value
 
@@ -113,10 +114,10 @@ def _sentences(lanes: list[dict[str, Any]]) -> list[str]:
 
 def _numbers(found: list[int]) -> str:
     """`step 2`, `steps 2 and 3`, or `steps 1, 2 and 3`."""
-    shown = [str(n) for n in found]
-    if len(shown) == 1:
-        return f"step {shown[0]}"
-    return f"steps {', '.join(shown[:-1])} and {shown[-1]}"
+    *rest, last = [str(n) for n in found]
+    if not rest:
+        return f"step {last}"
+    return f"steps {', '.join(rest)} and {last}"
 
 
 def _write(path: str, text: str) -> None:
@@ -202,11 +203,14 @@ def write(path: str) -> int:
 
 def main(argv: list[str]) -> int:
     """Runs the command that argv names."""
-    if len(argv) == 3 and argv[1] == "write":
-        return write(argv[2])
+    command = COMMANDS.get(argv[1]) if len(argv) == 3 else None
+    if command:
+        return command(argv[2])
     print(USAGE, file=sys.stderr)
     return 2
 
 
-if __name__ == "__main__":
+COMMANDS = {"write": write}
+
+if __name__ == "__main__":  # pragma: no mutate
     sys.exit(main(sys.argv))

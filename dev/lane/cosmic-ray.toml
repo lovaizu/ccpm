@@ -1,0 +1,12 @@
+# The mutation testing of Lane's code that dev/scripts/check.sh runs, as N7 of
+# plugins/rn/domain/best-practices/code/best-practice.md says. The check fails on each mutant under
+# which every test still passes. A line marked `# pragma: no mutate` holds only changes that can't
+# alter what the code does.
+[cosmic-ray]
+module-path = "plugins/lane"
+timeout = 30.0
+excluded-modules = []
+test-command = "python -m pytest -x -q -p no:cacheprovider dev/lane/tests"
+
+[cosmic-ray.distributor]
+name = "local"

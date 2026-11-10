@@ -333,7 +333,13 @@
         {
           "id": "N7",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The tools that find the missing tests",
+              "decided": "check.sh fails on any line or branch of Lane's code that the tests don't run, measured by coverage with the copies that lay.py write lays counted as the source, and on any mutant of cosmic-ray under which every test passes. hypothesis tries the guard over any call. All three come with the test-quality group and run on CI's newest Python. mutmut can't serve: it counts a mutant tested only when a test calls the code under the module name of its path from the root, and Lane's code runs as domain and __main__, as Claude Code runs it. fest skips mutants it takes for untested, some of them run.",
+              "by": "user"
+            }
+          ]
         },
         {
           "id": "N8",

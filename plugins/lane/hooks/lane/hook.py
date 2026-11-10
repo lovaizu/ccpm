@@ -8,20 +8,20 @@ import json
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))  # pragma: no mutate
 
 from domain import guard, laid
 
 NO_PLUGIN = (
-    "lane: Lane can't check this call, as its hook entry names no plugin. The maker of the plugin"
-    " must lay its proposal again with lay.py write."
+    "lane: Lane can't check this call, as its hook entry doesn't end in hook.py and one plugin's"
+    " name. The maker of the plugin must lay its proposal again with lay.py write."
 )
 
 
 def main(argv: list[str], given: str, folder: str) -> str:
     """What the hook prints for the event `given`, with the guard's code in `folder`, which lies
     in the plugin's hooks/ beside lanes.json."""
-    if len(argv) < 2:
+    if len(argv) != 2:
         told = NO_PLUGIN
     else:
         try:
@@ -42,7 +42,7 @@ def main(argv: list[str], given: str, folder: str) -> str:
     )
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no mutate
     printed = main(sys.argv, sys.stdin.read(), os.path.dirname(os.path.abspath(__file__)))
     if printed:
         print(printed)

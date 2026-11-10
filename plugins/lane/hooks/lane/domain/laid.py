@@ -46,7 +46,7 @@ def laid(plugin: str, roles: dict[str, list[dict[str, Any]]]) -> dict[str, Any]:
     }
 
 
-def read(hooks: str) -> dict[str, Any] | str:
+def read(hooks: str) -> dict[str, Any] | str:  # pragma: no mutate
     """The rules in the folder `hooks`, or a text that says why they can't serve."""
     path = os.path.join(hooks, "lanes.json")
     try:

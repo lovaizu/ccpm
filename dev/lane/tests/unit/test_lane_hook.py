@@ -10,16 +10,12 @@ import tempfile
 import unittest
 
 import hook
-from lanetest import bash
+from lanetest import WRITER_LAID, bash
 
-LAID = {
-    "plugin": "changelog",
-    "subagents": {
-        "writer": {
-            "steps": [{"step": 2, "lanes": [{"lane": "run_only", "takes": ["git log --oneline"]}]}]
-        }
-    },
-}
+NO_PLUGIN = (
+    "lane: Lane can't check this call, as its hook entry doesn't end in hook.py and one plugin's"
+    " name. The maker of the plugin must lay its proposal again with lay.py write."
+)
 
 
 class Hook(unittest.TestCase):
@@ -43,14 +39,14 @@ class Hook(unittest.TestCase):
         return decision["permissionDecisionReason"]
 
     def test_a_call_that_goes_on_gives_nothing(self) -> None:
-        self.lay(json.dumps(LAID))
+        self.lay(json.dumps(WRITER_LAID))
         self.assertEqual(
             hook.main(["hook.py", "changelog"], json.dumps(bash("git log --oneline")), self.folder),
             "",
         )
 
     def test_a_stop_is_a_denial_with_the_guards_reason(self) -> None:
-        self.lay(json.dumps(LAID))
+        self.lay(json.dumps(WRITER_LAID))
         self.assertTrue(
             self.stopped(bash("git commit")).startswith("changelog: Run only `git log --oneline`.")
         )
@@ -70,18 +66,19 @@ class Hook(unittest.TestCase):
         )
 
     def test_an_event_that_isnt_json_stops(self) -> None:
-        self.lay(json.dumps(LAID))
+        self.lay(json.dumps(WRITER_LAID))
         out = hook.main(["hook.py", "changelog"], "{", self.folder)
         reason = json.loads(out)["hookSpecificOutput"]["permissionDecisionReason"]
         self.assertIn("handed it no JSON object", reason)
 
     def test_an_entry_that_names_no_plugin_stops(self) -> None:
-        self.lay(json.dumps(LAID))
-        self.assertEqual(
-            self.stopped(bash("git log --oneline"), ("hook.py",)),
-            "lane: Lane can't check this call, as its hook entry names no plugin."
-            " The maker of the plugin must lay its proposal again with lay.py write.",
-        )
+        self.lay(json.dumps(WRITER_LAID))
+        self.assertEqual(self.stopped(bash("git log --oneline"), ("hook.py",)), NO_PLUGIN)
+
+    def test_an_entry_with_a_word_after_the_plugin_stops(self) -> None:
+        self.lay(json.dumps(WRITER_LAID))
+        argv = ("hook.py", "changelog", "again")
+        self.assertEqual(self.stopped(bash("git log --oneline"), argv), NO_PLUGIN)
 
 
 if __name__ == "__main__":

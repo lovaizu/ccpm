@@ -121,6 +121,17 @@ class RepositoryTest(unittest.TestCase):
         return run_script([os.path.join(LANE, "scripts", "lay.py"), *args], "", self.env, self.root)
 
 
+# What lay.py write lays in hooks/lanes.json for WRITER_RUN_ONLY.
+WRITER_LAID: dict[str, Any] = {
+    "plugin": "changelog",
+    "subagents": {
+        "writer": {
+            "steps": [{"step": 2, "lanes": [{"lane": "run_only", "takes": ["git log --oneline"]}]}]
+        }
+    },
+}
+
+
 WRITER_RUN_ONLY = {
     "plugin": "changelog",
     "subagents": [

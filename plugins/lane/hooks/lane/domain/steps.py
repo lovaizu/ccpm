@@ -41,7 +41,7 @@ def read(text: str) -> dict[int, str]:
     file holds no Step list."""
     lines = text.split("\n")
     return {
-        number: ITEM.sub("", " ".join(line.strip() for line in lines[first:after]), count=1)
+        number: ITEM.sub("", " ".join(line.strip() for line in lines[first:after]))
         for number, (first, after) in _items(text).items()
     }
 

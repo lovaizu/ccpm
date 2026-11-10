@@ -9,7 +9,7 @@ from domain.lanes import TYPES
 CLAUDE_CODE = "Run Claude Code 2.1.319 or later."
 
 
-def decide(event: Any, laid: Any, plugin: str) -> str | None:
+def decide(event: Any, laid: Any, plugin: str) -> str | None:  # pragma: no mutate
     """None where the call goes on, or the text that a stop gives the role.
 
     `event` is the PreToolUse event as Claude Code handed it. `laid` is the rules that lay.py write
@@ -33,12 +33,7 @@ def decide(event: Any, laid: Any, plugin: str) -> str | None:
     role = laid["subagents"].get(name)
     if role is None or event.get("tool_name") != "Bash":
         return None
-    run_only = [
-        lane["takes"]
-        for step in role["steps"]
-        for lane in step["lanes"]
-        if lane["lane"] == "run_only"
-    ]
+    run_only = [lane["takes"] for step in role["steps"] for lane in step["lanes"]]
     if not run_only:
         return None
     given = event.get("tool_input")
