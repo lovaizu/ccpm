@@ -64,11 +64,10 @@ The choices made, and why:
 
 - One generator for each deliverable over several side by side\
   Three generators would take about three times as long for a gain in KR1.1 that no trial has shown,
-  as KR1.2 counts. The cost: a lack in a best practice shows only when its developers run several
+  which adds to KR1.2. The cost: a lack in a best practice shows only when its developers run several
   generators to check it.
 - The orchestrator judging every point over a role of its own that settles them\
-  The user talks with the one that decides, and no answer passes through a role that rewords it, as
-  KR1.2 counts. The cost: the main conversation holds every judgment of the run.
+  The user talks with the one that decides, and no answer passes through a role that rewords it, which keeps KR1.2 short. The cost: the main conversation holds every judgment of the run.
 
 ## Data model
 
@@ -99,21 +98,21 @@ which every part keeps.
 Each role starts with its own cut of the design tree alone, and the guard lets it start only with
 the cut that `tree.py` gave for that role.
 
-*Why*: a role that reads decisions not its own makes what the user didn't mean, as KR1.1 counts.
+*Why*: a role that reads decisions not its own makes what the user didn't mean, which raises KR1.1.
 
 ### Every step by best practice
 
 Each role works by the best practice of its kind of work, and Lane holds it to the steps.
 
 *Why*: an AI that skipped a step once skips it again, and the deliverable misses what the step makes
-sound, as KR1.1 counts.
+sound, which raises KR1.1.
 
 ### Judged by the people it's for
 
 An evaluator gets only what the deliverable's people have.
 
-*Why*: an evaluator that knows what the maker meant judges the making, not what the people get, as
-KR1.1 counts.
+*Why*: an evaluator that knows what the maker meant judges the making, not what the people get, which
+raises KR1.1.
 
 ### Signed off before it's built on
 
@@ -129,7 +128,7 @@ A lack, or what the user sends back with `/rn:gm`, changes the decision it comes
 round makes the deliverable from the design, never with a fix beside it.
 
 *Why*: a fix beside the design rests on no decision, so the next round, made from the design, loses
-it or breaks another intent with it, as KR1.1 counts.
+it or breaks another intent with it, which raises KR1.1.
 
 ### The design tree revised on each run
 
@@ -145,7 +144,7 @@ A deliverable's commands run only in a throwaway copy of the repository, with a 
 and a lane of Lane holds each role to it.
 
 *Why*: a command run as the people run it would otherwise change the user's own files, and the
-user would spend their time setting them right, as KR1.2 counts.
+user would spend their time setting them right, which adds to KR1.2.
 
 ### The repository holds the work
 
@@ -153,7 +152,7 @@ Every part keeps the run's state only in the run's folder and the deliverables o
 branch, in rn's own worktree, and `tree.py` commits them at the end of each step and at a pause.
 
 *Why*: work kept only in a conversation that ends, or left uncommitted at a pause, makes the user
-answer or wait for it again, as KR1.2 counts.
+answer or wait for it again, which adds to KR1.2.
 
 ## Sequences
 
@@ -359,11 +358,10 @@ The user installs rn as [the README](../../../README.md#installation) says, whic
 Lane with it, and types `/rn:up` in Claude Code at the root of their repository.
 
 - rn's own git worktree for each run, over the user's checkout\
-  The user goes on with their own work while rn runs, and a pause leaves nothing of theirs to set
-  right, as KR1.2 counts. The cost: a worktree on disk for each run until its merge.
+  The user goes on with their own work while rn runs, and a pause leaves nothing of theirs to set right, which keeps KR1.2 short. The cost: a worktree on disk for each run until its merge.
 - A best practice made on a run in `.rn/best-practices/` over the run's folder\
-  Every later run in the repository finds it, and takes it over rn's own of the same kind, as KR1.1
-  counts. The cost: a later run misses what rn's own gains after it.
+  Every later run in the repository finds it, and takes it over rn's own of the same kind, which raises
+  KR1.1. The cost: a later run misses what rn's own gains after it.
 
 ## Directory structure
 
@@ -433,4 +431,4 @@ where this section says.
 
 - `tree.py` tried `FULL` at architecture over `HAPPY`\
   A fault there writes the tree wrong or hands a role another's cut, and no higher level checks each
-  case, as KR1.1 counts. The cost: the most tests to keep up as the tree's form changes.
+  case, which raises KR1.1. The cost: the most tests to keep up as the tree's form changes.

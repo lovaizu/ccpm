@@ -15,7 +15,7 @@ gives. Each stop gives the step's own sentence again.
 - S3: the user wants a run of their plugin to go in the order of their routes, so that no code of
   theirs keeps the order. It carries `/changelog:write`, each start that Lane names, the run's end, a
   start with only the text the plugin gives, a role resumed with the main conversation's grounds
-  and the person's words, and a route that waits for the person's command.
+  and the words of the person who uses the plugin, and a route that waits for that person's command.
 - S4: the user wants each subagent held to its steps, so that none breaks a step and goes on. It
   carries `writer` stopped at `git commit` and shown the sentence of its step 2.
 - S5: the user wants a result to count only from a run of the result script, so that no reply
@@ -50,18 +50,17 @@ What each decides alone:
 The choices made, and why:
 
 - The checks as entries of the plugin's `hooks/hooks.json` over hooks in a role's own file\
-  Claude Code ignores hooks in a plugin agent's own file, so only these entries hold every role, as
-  KR1.1 counts. The cost: the guard starts on every tool call of the plugin.
+  Claude Code ignores hooks in a plugin agent's own file, so only these entries hold every role, which keeps KR1.1 low. The cost: the guard starts on every tool call of the plugin.
 - Lane's code put into the plugin over running it from where Lane lies installed\
-  A plugin that needed Lane installed would run unchecked wherever Lane is missing, as KR1.1 counts.
+  A plugin that needed Lane installed would run unchecked wherever Lane is missing, which raises KR1.1.
   The cost: a fix in Lane reaches a plugin only once the user runs `lay.py up`.
 - A command matched whole over a command taken apart\
   A reading of the shell's grammar misses forms that no one foresaw, and lets a role break its step,
-  as KR1.1 counts. The cost: a role with a run_only rule runs only the commands its rules name.
+  which raises KR1.1. The cost: a role with a run_only rule runs only the commands its rules name.
 - Each role that Lane holds running in the background over one in the foreground\
-  Its start comes back at once with the role's ID, the one mark of each start, as KR1.1 counts. The cost: the role's file sets `background: true`.
+  Its start comes back at once with the role's ID, the one mark of each start. The guard checks each start against the order by that ID, which keeps KR1.1 low. The cost: the role's file sets `background: true`.
 - A route that waits until the person types a command over any prompt moving the run on\
-  A point that's the person's, such as an approval, counts only by their own act, as KR1.1 counts.
+  Lane takes a point that's the person's, such as an approval, only from their own act, which keeps KR1.1 low.
   The cost: one more key in the routes.
 
 ## Data model
@@ -94,21 +93,21 @@ which every part keeps.
 When the guard stops a call, it gives the role or the main conversation the sentence of the step
 that the call breaks.
 
-*Why*: a role that meets only a refusal makes the call another way, and breaks its step, as KR1.1
-counts.
+*Why*: a role that meets only a refusal makes the call another way, and breaks its step, which raises
+KR1.1.
 
 ### A step held by the calls that show it
 
 The guard judges a role only from the calls that Claude Code's hook input documents, each step by its
 trace and in its order, and never from what the role wrote.
 
-*Why*: a role that says it kept a step may not have kept it, as KR1.1 counts.
+*Why*: a role that says it kept a step may not have kept it, which raises KR1.1.
 
 ### A result only from the result script
 
 The guard and the routes take a role's result only from a run of the result script.
 
-*Why*: a reply such as "No more entries" would pass for `more`, as KR1.1 counts.
+*Why*: a reply such as "No more entries" would pass for `more`, which raises KR1.1.
 
 ### The main conversation passes on only what it's given
 
@@ -116,49 +115,48 @@ The main conversation alone starts each role, with only the text the plugin give
 with only its own grounds and the person's words as they wrote them.
 
 *Why*: a text reworded on the way has the role work from words that the plugin and the person never
-gave, as KR1.1 counts.
+gave, which raises KR1.1.
 
 ### One type makes the sentence and the check
 
 `lay.py` and the guard both take a rule's sentence and its check from `lanes/`, and from no other
 place.
 
-*Why*: a role told two wordings of one rule may keep the other, as KR1.1 counts.
+*Why*: a role told two wordings of one rule may keep the other, which raises KR1.1.
 
 ### What the user approved is what runs
 
 The guard takes its rules and routes only from what `lay.py write` wrote from a proposal that
 `lay.py print` showed.
 
-*Why*: a rule that no one approved could stop a move that the user's steps allow, as KR1.1 counts.
+*Why*: a rule that no one approved could stop a move that the user's steps allow, which raises KR1.1.
 
 ### A run picked up from the plugin's record
 
-At each call of the skill, the guard holds the routes on from the results that the plugin's adapter
-gives, where it names one.
+At each call of the skill, where the proposal names an adapter of the run port, the guard picks the
+run up from the results that the adapter gives.
 
-*Why*: a run that stopped would start its subagents over, as KR1.2 counts.
+*Why*: a run that stopped would start its subagents over, which adds to KR1.2.
 
 ### The guard holds only the run
 
 The guard holds the main conversation from the call of the skill until a route starts no more, and
 lets the person redirect the run by a prompt.
 
-*Why*: the same conversation holds the person's own work, which a hold would stop, as KR1.1 counts.
+*Why*: the same conversation holds the person's own work. A hold beyond the run would stop that work, which raises KR1.1.
 
 ### The plugin needs nothing from Lane
 
 The guard, the result script, and the rules lie in the user's plugin, and no line of Lane's code
 names a plugin.
 
-*Why*: whoever runs the plugin didn't choose Lane, and every plugin builder uses the same Lane, as
-KR1.1 counts.
+*Why*: whoever runs the plugin didn't choose Lane, so a plugin that needed Lane would run unchecked where Lane is missing, which raises KR1.1. Every plugin builder uses the same Lane, so code that named one plugin would fail the others.
 
 ### A call that the guard can't check stops
 
 When the guard can't check a call, it stops it, and says why and who must fix it.
 
-*Why*: a call let through unchecked could break the step that the rule holds, as KR1.1 counts.
+*Why*: a call let through unchecked could break the step that the rule holds, which raises KR1.1.
 
 ## Sequences
 
@@ -338,11 +336,10 @@ The user installs Lane as [the README](../../plugins/lane/README.md#installation
 on the computer of whoever runs the plugin.
 
 - Lane's code on Python 3.9 and its standard library only over a later Python or packages\
-  Whoever runs the plugin then installs nothing for Lane, as KR1.2 counts. The cost: where Python is
+  Whoever runs the plugin then installs nothing for Lane, which keeps KR1.2 short. The cost: where Python is
   missing, each call that a rule holds stops.
 - The run's record in the system's temporary folder over a folder in the repository\
-  The record means nothing once the session ends, and the plugin keeps what a later run needs, as S6
-  draws, as KR1.2 counts. The cost: where the system clears that folder during a run, the guard
+  The record means nothing once the session ends, and the plugin keeps what a later run needs, as S6 draws. A folder in the repository would leave the user files to clean up, which adds to KR1.2. The cost: where the system clears that folder during a run, the guard
   can't check a call that needs the record.
 
 ## Directory structure
@@ -383,10 +380,10 @@ where this section says.
 ![Lane's tests](images/tests.svg)
 
 - An adapter of the tests' own at each port over a real plugin's adapter\
-  Lane knows no plugin, so its tests try each port's form, as KR1.1 counts. The cost: a fault in a
+  Lane knows no plugin, so its tests try each port's form. A form left untried could fail in a user's plugin, which raises KR1.1. The cost: a fault in a
   plugin's adapter shows only in that plugin's own tests.
 - The double of Claude Code sending events as a run of Claude Code 2.1.319 recorded them, over what
   the hooks reference alone says\
   Where the reference says nothing, a double would send what no Claude Code sends, and pass a test
-  that the real one fails, as KR1.1 counts. The cost: another try of the real Claude Code for each
+  that the real one fails, which raises KR1.1. The cost: another try of the real Claude Code for each
   new version.

@@ -18,7 +18,7 @@ The developers build a Claude Code plugin whose roles work together to make what
 | --- | --- |
 | C1 | Each role holds everything its job needs, and nothing else. |
 | C2 | Every run follows the same steps, and nothing passes unchecked. |
-| C3 | The person decides only what's theirs, and reads each question as the role wrote it. |
+| C3 | The person who uses the plugin decides only what's theirs, and reads each question as the role wrote it. |
 | C4 | The work reaches its users as they need it, and each run improves the next. |
 | C5 | The plugin installs, runs, and updates cleanly on every user's machine. |
 | C6 | The developers know that the plugin works before users try it. |

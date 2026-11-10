@@ -27,7 +27,7 @@ A generator that follows a best practice produces deliverables that serve their 
 | N1 | C1 | Does the goal state, in one sentence, who uses the deliverable and what purpose it serves for them? | goal |
 | N2 | C1 | Do the critical success factors name the few things that must all hold for the users to reach the goal? | critical_success_factors |
 | N3 | C1 | Does each necessary condition ask, as a yes-or-no question, whether the deliverable holds a state that its factor needs? | necessary_conditions |
-| N4 | C2 | Does the template give each necessary condition a section, and each slot a note on what it holds and in what form? | template |
+| N4 | C2 | Does the template place each necessary condition in a section, and give each slot a note on what it holds and in what form? | template |
 | N5 | C2 | Does each practice give the way of thinking that produces its condition's state: the decisions in order, the question at each, and the criteria for choosing, taken from an established method? | practices |
 | N6 | C2 | Does the example show a finished deliverable of the kind that meets every necessary condition? | example, source |
 | N7 | C3 | Does the best practice name the kinds of deliverable that this kind builds on, with a condition that carries each of their vital few that its users need, and the kinds that must pass before work on it starts? | inputs, preconditions |
@@ -70,7 +70,7 @@ The conditions are what the generator meets and the evaluator checks, so each mu
 
 ### N4
 
-Does the template give each necessary condition a section, and each slot a note on what it holds and in what form?
+Does the template place each necessary condition in a section, and give each slot a note on what it holds and in what form?
 
 **Thinking**
 
@@ -106,7 +106,7 @@ The example shows the generator what following the best practice produces, which
 
 **Steps**
 
-1. If the deliverable lives elsewhere for its own readers, such as a product vision in the developers' folder, put its path in `source`, and copy it and its figures next to the best practice with a script, such as ccpm's `dev/scripts/practices.py example`, so that the copy stays the same as the original.
+1. If the deliverable lives elsewhere for its own readers, such as a product vision in the developers' folder, name its path in the best practice's `source` field. Have a script, such as ccpm's `dev/scripts/practices.py example`, copy it and its figures next to the best practice, so that the copy matches the original each time the script runs.
 
 ### N7
 

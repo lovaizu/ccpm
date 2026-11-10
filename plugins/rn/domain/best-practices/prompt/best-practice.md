@@ -16,7 +16,7 @@ An AI agent that gets the prompt for a request it's meant for does the task as t
 - **context**: what the AI needs and can't find or know on its own: the situation, its inputs and where they lie, and the rules of this place.
 - **steps**: the steps, in the order the AI takes them. Each step names the result that holds when it ends. It gives either the rules the step needs, each with its reason, or the script that does the step and how to run it.
 - **output**: what the AI hands back, in what form, and to whom.
-- **trials**: the trials that try the prompt in real use: runs of the whole that the prompt is part of, on requests as big as real ones. They also hold the stand-ins that play the person and the parts the prompt works with, the judges, each an AI that gives pass or fail on one point, and the checks on each run's record.
+- **trials**: the trials that try the prompt in real use: runs of the whole that the prompt is part of, on requests as big as real ones. They also hold the stand-ins that play the person the AI talks with and the parts the prompt works with, the judges, each an AI that gives pass or fail on one point, and the checks on each run's record.
 
 ## Critical success factors
 
@@ -160,7 +160,7 @@ Does a hook hold each rule that must hold on every run, with a test of the hook 
 
 **Thinking**
 
-The AI keeps a rule on most runs, not on every run. A [hook](https://code.claude.com/docs/en/hooks) runs on every call, so it holds a rule that must hold, such as a file that the AI must not write. A test that puts code in the AI's place tries the hook in seconds, without the model, so no trial runs the prompt alone. List each rule of the steps that must hold on every run, and for each, a case where the AI keeps it and a case where it breaks it. Hold each such rule with a hook or a deny rule, not with the prompt's words alone.
+The AI keeps a rule on most runs, not on every run. A [hook](https://code.claude.com/docs/en/hooks) runs on every call, so it holds a rule that must hold, such as a file that the AI must not write. A test that puts code in the AI's place tries the hook in seconds without the model, so checking the rule needs no trial of the prompt. List each rule of the steps that must hold on every run, and for each, a case where the AI keeps it and a case where it breaks it. Hold each such rule with a hook or a deny rule, not with the prompt's words alone.
 
 **Steps**
 

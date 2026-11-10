@@ -108,4 +108,4 @@ Does the code do each kind of thing the same way throughout, with a reason besid
 
 **Thinking**
 
-When the code does each kind of thing one way, a difference means a real difference. List the kinds of thing the code does in many places, such as reporting an error, checking an input, reading a file, or laying out a module or a test. For each kind, gather each way the code does it, and keep the one the code already uses most, the nearest code first, unless a better way replaces it everywhere. Where a place needs another way, say why beside it, such as in a comment.
+When the code does each kind of thing one way, a difference means a real difference. List the kinds of thing the code does in many places, such as reporting an error, checking an input, reading a file, or laying out a module or a test. For each kind, gather each way the code does it, and keep the way that the code already uses most. Where the code uses two ways alike, keep the way of the code nearest to the place. Choose a better way only where it replaces the others everywhere. Where a place needs another way, say why beside it, such as in a comment.

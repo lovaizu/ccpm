@@ -79,7 +79,7 @@ vision, as step 1 says. Have the user agree to it before you make the architectu
 [the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md). Have
 the user agree to it.** Place its files as
 [the plugin best practice's template](../../plugins/rn/domain/best-practices/plugin/template) lays
-them out. Design the plugin to take in what's general, as
+them out. Design the plugin so that each general lesson of a run reaches the plugin's repository, as
 [N17 of the plugin best practice](../../plugins/rn/domain/best-practices/plugin/best-practice.md#n17) says.
 
 **Put the style of `dev/images/figures.css` into each figure with `python3 dev/scripts/figures.py
@@ -147,7 +147,8 @@ prompt or document should be.**
 - Rationale: what an AI does varies from run to run. A line added for one run's slip meets a
   different slip in the next run, so the additions never settle.
 
-**Run every trial on Opus, and name the model in the run.**
+**Run every trial on Opus, and set the model in the command that starts the trial, such as
+`claude --model opus`.**
 
 - Rationale: the plugins' users run Opus.
   [N13 of the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md#n13) runs each role on the model its users run.

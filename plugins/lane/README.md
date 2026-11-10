@@ -212,7 +212,7 @@ so a reply such as "No more entries" never passes for `more`.
 ### "The skill forgets a start, or starts the wrong one."
 
 Lane gives the main conversation each start due by your routes, and stops any other. A start goes
-with only the text your plugin gives it, and a route can wait until the person types the command
+with only the text your plugin gives it, and a route can wait until the person who uses your plugin types the command
 you name, such as an approval.
 
 ### "Each check is code to write and test."

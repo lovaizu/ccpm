@@ -41,7 +41,7 @@
    "id": "N4",
    "csf": "C2",
    "about": "template",
-   "what": "Does the template give each necessary condition a section, and each slot a note on what it holds and in what form?"
+   "what": "Does the template place each necessary condition in a section, and give each slot a note on what it holds and in what form?"
   },
   {
    "id": "N5",
@@ -130,7 +130,7 @@
    "thinking": "The example shows the generator what following the best practice produces, which no description fully conveys. Make it from the product's own design tree by following the template and the practices exactly. Then check it against every condition as its users would. Where it falls short, fix the practice or the template that produced the shortfall, and make the example again from them. A fix made only in the example would hide the fault in the best practice. Name the example's file in `example`.",
    "steps": [
     {
-     "text": "If the deliverable lives elsewhere for its own readers, such as a product vision in the developers' folder, put its path in `source`, and copy it and its figures next to the best practice with a script, such as ccpm's `dev/scripts/practices.py example`, so that the copy stays the same as the original."
+     "text": "If the deliverable lives elsewhere for its own readers, such as a product vision in the developers' folder, name its path in the best practice's `source` field. Have a script, such as ccpm's `dev/scripts/practices.py example`, copy it and its figures next to the best practice, so that the copy matches the original each time the script runs."
     }
    ]
   },
