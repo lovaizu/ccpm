@@ -9,8 +9,8 @@ from domain import guard
 from lanetest import WRITER_LAID, bash
 
 try:
-    from hypothesis import given
-    from hypothesis import strategies as st
+    from hypothesis import given  # pyrefly: ignore[missing-import]
+    from hypothesis import strategies as st  # pyrefly: ignore[missing-import]
 except ImportError:
     raise unittest.SkipTest(
         "hypothesis isn't installed. It comes with pyproject.toml's test-quality group, on Python"
