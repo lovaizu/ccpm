@@ -49,7 +49,7 @@ jobs:
       - run: uv run --no-sync sh dev/scripts/check.sh
 
   # What main requires: every job passed.
-  # The prose checks of lefthook.yml on every file it doesn't exclude, as they run before each
+  # The prose checks of lefthook.yml on every Markdown file, as they run before each
   # commit, from lovaizu/checks at the commit of the tag lefthook.yml names.
   prose:
     runs-on: ubuntu-latest

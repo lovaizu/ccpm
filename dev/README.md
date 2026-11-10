@@ -41,8 +41,8 @@ each Python. Claude Code and Mermaid's parser come from `dev/scripts/package-loc
 
 Before each commit, lefthook checks the prose of the Markdown files staged and of the commit
 message by [lovaizu/checks](https://github.com/lovaizu/checks), at the version that `lefthook.yml`
-names. Markdown holds what people read and the prompts. `lefthook.yml` also leaves out Lane's pages
-that its code deliverable makes anew. CI checks every file the same way.
+names. Markdown holds what people read and the prompts. CI checks every Markdown file the same
+way.
 
 `dev/scripts/pre-push.sh` runs `sh dev/scripts/check.sh` on each commit pushed, and stops the
 push on a failure.
