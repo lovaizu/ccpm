@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+ACTION = "run"
+"""The action the rule watches, as lay.py print names it beside the sentence."""
+
 
 def sentence(takes: list[str]) -> str:
     """The sentence laid at the end of the step: `Run only `a` or `b`.`, for takes that `refused`

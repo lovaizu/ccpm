@@ -312,6 +312,11 @@
               "about": "The slices",
               "decided": "Seven slices, in this order. First, a role held to the commands its rules name, laid by lay.py write from a proposal. It carries S2 and S4. Second, lay.py print, which shows the steps as they'll read and refuses a proposal that can't stand. It carries S1. Third, a result only from the result script, and the starts in the order of the routes from a run's call to its end. It carries S3 and S5. Fourth, each step held in its order by its trace, each item that a role's result must name, and the other types of rule the steps call for. It carries S4. Fifth, a start with only the text the plugin gives, a role resumed with the main conversation's grounds and the person's words, and a route that waits until the person's command. It carries S3. Sixth, a run picked up at the run port. It carries S6. Seventh, lay.py up. It carries S7.",
               "by": "reasoning"
+            },
+            {
+              "about": "A command a step names",
+              "decided": "lay.py print takes a span in backticks for a command where the span holds a blank. A span of one word may name a file or a result, such as `CHANGELOG.md` or `more`, and a warning on each would teach the user to pass the warnings over. A reading by PATH would show one proposal differently on each computer. The commands line names each command the role may run, which shows a command of one word left out",
+              "by": "reasoning"
             }
           ]
         },

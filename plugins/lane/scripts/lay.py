@@ -1,14 +1,15 @@
-"""lay.py lays the rules of a proposal that the user approved into their plugin: each rule's
-sentence at the end of its step, the hook entries that run the guard, the rules in
-hooks/lanes.json, and Lane's code. It alone decides whether a proposal can stand, and what goes
-where in the plugin.
+"""lay.py shows the rules of a proposal as they'll read, and lays the rules that the user approved
+into their plugin: each rule's sentence at the end of its step, the hook entries that run the
+guard, the rules in hooks/lanes.json, and Lane's code. It alone decides whether a proposal can
+stand, and what goes where in the plugin.
 
-Run it as `python3 lay.py write <proposal>`."""
+Run it as `python3 lay.py print <proposal>`, then `python3 lay.py write <proposal>`."""
 
 from __future__ import annotations
 
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -22,8 +23,11 @@ sys.path.insert(0, LANE_CODE)  # pragma: no mutate
 from domain import laid, steps
 from domain.lanes import TYPES
 
-USAGE = "usage: lay.py write <proposal>"
+USAGE = "usage: lay.py print <proposal>\n       lay.py write <proposal>"
 ENTRY = 'python3 "${CLAUDE_PLUGIN_ROOT}/hooks/lane/hook.py" '
+# A span of a step in backticks. print takes one that holds a blank for a command. A span of one
+# word may be a file or a result, such as `CHANGELOG.md` or `more`, so print leaves it be.
+SPAN = re.compile(r"`([^`]+)`")
 PLACE = "keep the proposal as .lane/<yyyymmdd>-<plugin>/<plugin>.json at the root of the repository"
 
 
@@ -82,14 +86,20 @@ def parse(path: str) -> tuple[str, str, dict[str, Any]]:
         _expect(role, dict, where)
         role_name = _expect(role.get("name"), str, f"{where}.name")
         relative, text = _role_file(plugin, role_name)
-        for s, step in enumerate(_expect(role.get("steps"), list, f"{where}.steps")):
+        held = _expect(role.get("steps"), list, f"{where}.steps")
+        if not held:
+            raise Refused(f"{where}.steps: expected at least one step")
+        for s, step in enumerate(held):
             _expect(step, dict, f"{where}.steps[{s}]")
             number = _expect(step.get("step"), int, f"{where}.steps[{s}].step")
             try:
                 steps.laid(text, number, "", [])
             except steps.StepsError as error:
                 raise Refused(f"{relative}: {error}") from None
-            for k, lane in enumerate(_expect(step.get("lanes"), list, f"{where}.steps[{s}].lanes")):
+            lanes = _expect(step.get("lanes"), list, f"{where}.steps[{s}].lanes")
+            if not lanes:
+                raise Refused(f"{where}.steps[{s}].lanes: expected at least one lane")
+            for k, lane in enumerate(lanes):
                 at = f"{where}.steps[{s}].lanes[{k}]"
                 _expect(lane, dict, at)
                 kind = _expect(lane.get("lane"), str, f"{at}.lane")
@@ -126,17 +136,11 @@ def _write(path: str, text: str) -> None:
         f.write(text)
 
 
-def write(path: str) -> int:
-    """Lays the proposal at the path, and says what it did. Gives 1 where it can't stand or the
-    plugin doesn't pass claude plugin validate."""
-    try:
-        root, plugin, proposal = parse(path)
-    except Refused as refused:
-        print(f"lay.py: {path}: {refused}", file=sys.stderr)
-        return 1
-    hooks = os.path.join(plugin, "hooks")
-    before = laid.read(hooks)
-    roles = {role["name"]: role["steps"] for role in proposal["subagents"]}
+def _laid(plugin: str, roles: dict[str, list[dict[str, Any]]]) -> dict[str, tuple[str, str]]:
+    """Each role's file under the plugin, with its text as the rules lay it: each sentence at the
+    end of its step, in place of the sentences that hooks/lanes.json says were laid before."""
+    before = laid.read(os.path.join(plugin, "hooks"))
+    texts = {}
     for name, held in roles.items():
         relative, text = _role_file(plugin, name)
         gone = []
@@ -146,8 +150,75 @@ def write(path: str) -> int:
         for step in held:
             for sentence in _sentences(step["lanes"]):
                 text = steps.laid(text, step["step"], sentence, gone)
+        texts[name] = (relative, text)
+    return texts
+
+
+def _shown(name: str, held: list[dict[str, Any]], text: str) -> str:
+    """What print shows of a role: a row for each rule and each command a step names that the
+    role may not run, the commands it may run, and each step with a rule as it'll read."""
+    rows: dict[int, list[tuple[str, str, str]]] = {}
+    for step in held:
+        for lane in step["lanes"]:
+            kind = TYPES[lane["lane"]]
+            rows.setdefault(step["step"], []).append(
+                (f"{kind.ACTION}:", kind.sentence(lane["takes"]), lane["lane"])
+            )
+    commands = list(
+        dict.fromkeys(each for step in held for lane in step["lanes"] for each in lane["takes"])
+    )
+    said = steps.read(text)
+    numbers = max(len(f"step {number}") for number in [*said, *rows])
+    actions = max(len(row[0]) for each in rows.values() for row in each)
+    sentences = max(len(row[1]) for each in rows.values() for row in each)
+    lines = [f"Lanes of {name}, each checked only in {name}:"]
+    for number in sorted({*said, *rows}):
+        at = f"step {number}".ljust(numbers)
+        lines += [
+            f"  {at}  {action.ljust(actions)} {sentence.ljust(sentences)}  type {kind}"
+            for action, sentence, kind in rows.get(number, [])
+        ]
+        lines += [
+            f"  {at}  names `{span}`, which {name} may not run"
+            for span in dict.fromkeys(SPAN.findall(said.get(number, "")))
+            if " " in span and span not in commands
+        ]
+    *rest, last = [f"`{command}`" for command in commands]
+    named = f"{', '.join(rest)} or {last}" if rest else last
+    lines += [f"  commands: {name} may run only {named}", ""]
+    lines += [f"{number}. {said[number]}" for number in sorted(rows)]
+    return "\n".join(lines) + "\n"
+
+
+def show(path: str) -> int:
+    """Shows the proposal at the path as write would lay it, and writes nothing. Gives 1 where it
+    can't stand."""
+    try:
+        _, plugin, proposal = parse(path)
+    except Refused as refused:
+        print(f"lay.py: {path}: {refused}", file=sys.stderr)
+        return 1
+    roles = {role["name"]: role["steps"] for role in proposal["subagents"]}
+    texts = _laid(plugin, roles)
+    print("\n".join(_shown(name, held, texts[name][1]) for name, held in roles.items()), end="")
+    return 0
+
+
+def write(path: str) -> int:
+    """Lays the proposal at the path, and says what it did. Gives 1 where it can't stand or the
+    plugin doesn't pass claude plugin validate."""
+    try:
+        root, plugin, proposal = parse(path)
+    except Refused as refused:
+        print(f"lay.py: {path}: {refused}", file=sys.stderr)
+        return 1
+    hooks = os.path.join(plugin, "hooks")
+    roles = {role["name"]: role["steps"] for role in proposal["subagents"]}
+    for name, (relative, text) in _laid(plugin, roles).items():
         _write(os.path.join(plugin, relative), text)
-        print(f"Wrote {_numbers([step['step'] for step in held])} of {name} into {relative}.")
+        print(
+            f"Wrote {_numbers([step['step'] for step in roles[name]])} of {name} into {relative}."
+        )
 
     entries_path = os.path.join(hooks, "hooks.json")
     try:
@@ -210,7 +281,7 @@ def main(argv: list[str]) -> int:
     return 2
 
 
-COMMANDS = {"write": write}
+COMMANDS = {"print": show, "write": write}
 
 if __name__ == "__main__":  # pragma: no mutate
     sys.exit(main(sys.argv))

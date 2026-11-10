@@ -75,7 +75,9 @@ A subagent that starts another passes on what it chooses, not what your plugin g
 
 For each subagent with a run_only lane, `lay.py print` lists the commands it may run, on the line
 `commands`. Where a step of such a subagent names in backticks a command that it may not run,
-`lay.py print` says so beside that step's number, such as
+`lay.py print` says so beside that step's number. It takes a span in backticks for a command where
+the span holds a blank, as a span of one word may name a file or a result, such as `CHANGELOG.md`
+or `more`. It says, such as
 ``step 3  names `git status`, which writer may not run``. Add the command to a run_only lane before
 you approve, or the check stops it on every run.
 

@@ -9,6 +9,7 @@ import os
 
 from lanetest import FAILED, LANE, WRITER_RUN_ONLY, RepositoryTest
 
+USAGE = "usage: lay.py print <proposal>\n       lay.py write <proposal>\n"
 ENTRY = 'python3 "${CLAUDE_PLUGIN_ROOT}/hooks/lane/hook.py" changelog'
 
 
@@ -234,6 +235,19 @@ class Refuses(RepositoryTest):
             self.refused(proposal),
         )
 
+    def test_a_subagent_with_no_step(self) -> None:
+        proposal = {**WRITER_RUN_ONLY, "subagents": [{"name": "writer", "steps": []}]}
+        self.assertIn("$.subagents[0].steps: expected at least one step", self.refused(proposal))
+
+    def test_a_step_with_no_rule(self) -> None:
+        proposal = {
+            **WRITER_RUN_ONLY,
+            "subagents": [{"name": "writer", "steps": [{"step": 2, "lanes": []}]}],
+        }
+        self.assertIn(
+            "$.subagents[0].steps[0].lanes: expected at least one lane", self.refused(proposal)
+        )
+
     def test_takes_the_type_refuses(self) -> None:
         self.assertIn(
             "writer step 2: run_only takes at least one command", self.refused(with_takes())
@@ -244,13 +258,13 @@ class Usage(RepositoryTest):
     def test_no_command_shows_the_usage(self) -> None:
         ran = self.lay()
         self.assertEqual(ran.returncode, 2)
-        self.assertIn("usage: lay.py write <proposal>", ran.stderr)
+        self.assertEqual(ran.stderr, USAGE)
 
     def test_a_command_lay_py_lacks_shows_the_usage(self) -> None:
         ran = self.lay("remove", self.propose(WRITER_RUN_ONLY))
-        self.assertEqual((ran.returncode, ran.stderr), (2, "usage: lay.py write <proposal>\n"))
+        self.assertEqual((ran.returncode, ran.stderr), (2, USAGE))
 
     def test_a_word_after_the_proposal_shows_the_usage(self) -> None:
         ran = self.lay("write", self.propose(WRITER_RUN_ONLY), "again")
-        self.assertEqual((ran.returncode, ran.stderr), (2, "usage: lay.py write <proposal>\n"))
+        self.assertEqual((ran.returncode, ran.stderr), (2, USAGE))
         self.assertTrue(os.path.exists(self.path(".lane", "20261110-changelog", "changelog.json")))
