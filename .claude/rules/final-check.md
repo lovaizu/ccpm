@@ -17,8 +17,8 @@ reaches `main`, and that every point theirs to decide reaches them first.
     it, and never slip one in. When what the work should be already settles a point, asking the
     user about it spends their time on a decision with nothing for them to weigh.
 - **Before a change to a best practice, a shared rule, or a name merges, grep for every file that
-  rests on it, outside `.git` and `.rn`. Read each changed sentence as its reader would. Change
-  every file that rests on it in the same merge.**
+  rests on it, outside `.git`, `.rn`, and `.review`. Read each changed sentence as its reader
+  would. Change every file that rests on it in the same merge.**
   - Rationale: a source merged alone leaves the files that rest on it saying the old thing. A
     reader then meets both.
 - **Before you ask for the merge, run what the final check fixed, as its user would.**
