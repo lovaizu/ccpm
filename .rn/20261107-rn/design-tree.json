@@ -26,57 +26,7 @@
       "name": "Each part a developer builds by the design gives, with the others, what the README promises",
       "path": "plugins/rn/domain/best-practices/architecture",
       "kind": "meta",
-      "inputs": [],
-      "preconditions": [],
-      "status": "doing",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The words of each slot",
-              "decided": "the template sets the form of each slot's sentences, such as one rule in a sentence and one why in a sentence, so an architecture holds what its developer uses and leaves no room for more",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "A maker of code designs it, tests it first, and writes it as the field's established practice says",
@@ -237,242 +187,7 @@
       "name": "rn's developers build its parts so that together they give what its README promises",
       "path": "dev/rn/architecture.md",
       "kind": "architecture",
-      "inputs": [
-        "dev/rn/product-vision.md",
-        "plugins/rn/README.md"
-      ],
-      "preconditions": [],
-      "status": "doing",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": true,
-          "decisions": [
-            {
-              "about": "The principles",
-              "decided": "one for each idea of rn's concept, one for the sign-off, one for the throwaway copy, and one for the repository holding the work",
-              "by": "reasoning"
-            },
-            {
-              "about": "Drawn out along the design tree",
-              "decided": "each role starts with its own cut of the design tree alone",
-              "by": "user"
-            },
-            {
-              "about": "Every step by best practice",
-              "decided": "each role works by the best practice of its work, and Lane holds it to the steps",
-              "by": "user"
-            },
-            {
-              "about": "Judged by the people it's for",
-              "decided": "an evaluator has only what the deliverable's people have",
-              "by": "user"
-            },
-            {
-              "about": "Back to the design tree on a problem",
-              "decided": "a lack changes the decision it comes from, and the next round makes the deliverable from the design",
-              "by": "user"
-            },
-            {
-              "about": "The design tree revised on each run",
-              "decided": "what a run finds changes the design tree before the next deliverable, and a best practice before the next run once the user takes the change",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N5",
-          "good": true,
-          "decisions": [
-            {
-              "about": "The orchestrator",
-              "decided": "the main conversation, which talks with the user, runs the work, and makes every judgment and the final decision, and makes nothing itself",
-              "by": "user"
-            },
-            {
-              "about": "The orchestrator's judgments",
-              "decided": "from the purpose and the best practices, never taking a role's result as given",
-              "by": "user"
-            },
-            {
-              "about": "The tree-keeper",
-              "decided": "writes what the orchestrator decides into the design tree, checks the path up to the goal and each node the change touches, and drafts the plan again at each turn's end",
-              "by": "user"
-            },
-            {
-              "about": "Who writes the design tree",
-              "decided": "the tree-keeper alone",
-              "by": "user"
-            },
-            {
-              "about": "Who settles a point",
-              "decided": "the orchestrator, which asks the user only the points that are theirs",
-              "by": "user"
-            },
-            {
-              "about": "A point for the user",
-              "decided": "one at a time, with a recommendation",
-              "by": "user"
-            },
-            {
-              "about": "A kind with no best practice",
-              "decided": "the orchestrator plans one first, as a deliverable of its own, made by the meta best practice",
-              "by": "user"
-            },
-            {
-              "about": "What the generator does",
-              "decided": "makes the deliverable from its cut and its best practice, checks it by the best practice's questions before it returns, and returns an open point instead of guessing",
-              "by": "user"
-            },
-            {
-              "about": "What an evaluator answers",
-              "decided": "where each intent gives the people what they're after, or what would make it good",
-              "by": "user"
-            },
-            {
-              "about": "Judging a lack",
-              "decided": "the orchestrator judges each lack by the purpose and the best practices, and keeps only one the people fall short by, as a change to the decision it comes from",
-              "by": "user"
-            },
-            {
-              "about": "A deliverable finished",
-              "decided": "once every intent is good",
-              "by": "user"
-            },
-            {
-              "about": "Planning again",
-              "decided": "at each turn's end, from the design tree",
-              "by": "user"
-            },
-            {
-              "about": "Changes to a best practice",
-              "decided": "before the merge, the orchestrator proposes each change that the run's lacks call for",
-              "by": "user"
-            },
-            {
-              "about": "A change the user takes",
-              "decided": "becomes a deliverable",
-              "by": "user"
-            },
-            {
-              "about": "A general lesson",
-              "decided": "an issue on rn's repository, only when the user says yes, as N17 of the plugin best practice says",
-              "by": "user"
-            },
-            {
-              "about": "Commands only in a throwaway copy",
-              "decided": "held by a lane of its own in Lane, as dev.md says of a check that no lane holds",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N6",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": true,
-          "decisions": [
-            {
-              "about": "What the design tree holds",
-              "decided": "the intents and the decisions, never how a deliverable works inside",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N8",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N9",
-          "good": true,
-          "decisions": [
-            {
-              "about": "Lane's architecture",
-              "decided": "rn rests on Lane's resume with the main conversation's grounds, its route that waits until the person's command, and its run port that picks a run up",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N10",
-          "good": true,
-          "decisions": [
-            {
-              "about": "A best practice made on a run",
-              "decided": "kept in .rn/best-practices/ of the user's repository, where every later run finds it and takes it over rn's own of the same kind",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N11",
-          "good": true,
-          "decisions": [
-            {
-              "about": "The run's worktree",
-              "decided": "in .claude/worktrees/, beside the worktrees that Claude Code makes, which EnterWorktree enters from any conversation",
-              "by": "research"
-            }
-          ]
-        },
-        {
-          "id": "N12",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N13",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N14",
-          "good": true,
-          "decisions": [
-            {
-              "about": "Where a role stands",
-              "decided": "each step of a role ends with tree.py committing its work and its place, a step that Lane holds, as Lane keeps its own record only in the system's temporary folder and ends it at a pause",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N15",
-          "good": true,
-          "decisions": [
-            {
-              "about": "One generator per deliverable",
-              "decided": "a run makes each deliverable once, and judging by its people and remaking from the design tree finish it. Several generators run side by side only when the developers check a best practice: a lack all of them share is the best practice's, and a lack one alone shows is the generator's. Three generators on every run would cost about three times the time of KR1.2 for a gain on KR1.1 that no trial has shown",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N16",
-          "good": true,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Lane's product vision says what Lane is for",
@@ -565,110 +280,7 @@
       "name": "Lane's design checks each practice step and each change",
       "path": "dev/lane/architecture.md",
       "kind": "architecture",
-      "inputs": [
-        "dev/lane/product-vision.md",
-        "plugins/lane/README.md"
-      ],
-      "preconditions": [],
-      "status": "doing",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": true,
-          "decisions": [
-            {
-              "about": "The orchestrator's own words",
-              "decided": "the guard lets the orchestrator start or resume a role with its own grounds beside the person's words, which it still keeps word for word",
-              "by": "user"
-            },
-            {
-              "about": "A sign-off",
-              "decided": "a route may wait until the person types a command that the plugin names, and the guard moves the run on only then",
-              "by": "reasoning"
-            },
-            {
-              "about": "A paused run",
-              "decided": "at a call of the skill, where the plugin's adapter gives at the run port the results the plugin kept, the guard holds the routes on from them",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N6",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N9",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N10",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N11",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N12",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N13",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N14",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N15",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N16",
-          "good": true,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Lane's code has a design, tests written first, and code as the code best practice says",
@@ -680,7 +292,7 @@
       "preconditions": [
         "dev/rn/architecture.md"
       ],
-      "status": "open",
+      "status": "doing",
       "necessary_conditions": [
         {
           "id": "N1",
@@ -695,7 +307,13 @@
         {
           "id": "N3",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The slices",
+              "decided": "Seven slices, in this order. First, a role held to the commands its rules name, laid by lay.py write from a proposal. It carries S2 and S4. Second, lay.py print, which shows the steps as they'll read and refuses a proposal that can't stand. It carries S1. Third, a result only from the result script, and the starts in the order of the routes from a run's call to its end. It carries S3 and S5. Fourth, each step held in its order by its trace, with the other types of rule the steps call for. It carries S4. Fifth, a start with only the text the plugin gives, a role resumed with the main conversation's grounds and the person's words, and a route that waits until the person's command. It carries S3. Sixth, a run picked up at the run port. It carries S6. Seventh, lay.py up. It carries S7.",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N4",
