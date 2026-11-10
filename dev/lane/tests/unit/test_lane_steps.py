@@ -42,6 +42,9 @@ class Read(unittest.TestCase):
         text = "Intro.\n## Steps\n1. One\n   two\n   three\n2. Four\n"
         self.assertEqual(steps.read(text), {1: "One two three", 2: "Four"})
 
+    def test_a_blank_line_under_the_heading_leaves_each_step_whole(self) -> None:
+        self.assertEqual(steps.read("## Steps\n\n1. One\n   two\n"), {1: "One two"})
+
     def test_a_line_indented_by_one_blank_goes_on_its_step(self) -> None:
         self.assertEqual(steps.read("## Steps\n1. One\n two\n"), {1: "One two"})
 

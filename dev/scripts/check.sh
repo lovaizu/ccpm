@@ -63,7 +63,8 @@ if command -v cosmic-ray >/dev/null 2>&1; then
   cr-filter-pragma "$scratch/mutants.sqlite"
   cosmic-ray exec dev/lane/cosmic-ray.toml "$scratch/mutants.sqlite"
   cr-report --surviving-only --show-diff "$scratch/mutants.sqlite"
-  cr-rate --fail-over 0 "$scratch/mutants.sqlite"
+  # cr-rate's --fail-over takes 0 as no limit, so check.sh fails on any rate but 0 itself.
+  cr-rate "$scratch/mutants.sqlite" | awk '{ exit $1 != 0 }'
 else
   echo "check.sh: how well Lane's tests catch faults goes unchecked, as cosmic-ray isn't"\
     "installed. It comes with pyproject.toml's test-quality group, on Python 3.11 or later"
