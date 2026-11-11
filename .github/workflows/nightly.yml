@@ -6,8 +6,8 @@ name: Nightly
 # code runs with main's.
 on:
   schedule:
-    # 03:00 in Japan, once the day's pushes are done.
-    - cron: "0 18 * * *"
+    # 01:00 in Japan, when no push waits on the runners it takes.
+    - cron: "0 16 * * *"
   workflow_dispatch:
 
 permissions:
