@@ -1,0 +1,85 @@
+name: Nightly
+
+# GitHub starts a scheduled run only from the workflow on the default branch. That run checks no
+# code: it starts this workflow on main and on each branch of an open pull request that holds the
+# checks, so each run checks its own branch with that branch's rights and caches, and no branch's
+# code runs with main's.
+on:
+  schedule:
+    # 01:00 in Japan, when no push waits on the runners it takes.
+    - cron: "0 16 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  start:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+      pull-requests: read
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          heads=$(gh pr list --repo "$REPO" --state open --json headRefName,isCrossRepository \
+            --jq '.[] | select(.isCrossRepository | not) | .headRefName')
+          for ref in main $heads; do
+            # Only a branch that holds dev/scripts/quality.sh has the checks this run starts.
+            if gh api "repos/$REPO/contents/dev/scripts/quality.sh?ref=$ref" --silent 2>/dev/null
+            then
+              gh workflow run nightly.yml --repo "$REPO" --ref "$ref"
+            fi
+          done
+
+  # Every check that runs on its own, over the whole, as the architecture best practice times them:
+  # each check of Tests on the oldest Python and the newest, and on the newest, every mutant of
+  # Lane's code and the property-based tests at their most inputs. A run over a push's lines misses
+  # a test changed alone and a fault between parts that no one push changed together.
+  check:
+    if: github.event_name == 'workflow_dispatch'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - python: "3.9"
+            os: ubuntu-24.04
+          - python: "3.x"
+            os: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - id: python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: ${{ matrix.python }}
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+      - env:
+          UV_PYTHON: ${{ steps.python.outputs.python-path }}
+        run: uv sync --locked ${{ matrix.python == '3.x' && '--group test-quality' || '' }}
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "24"
+      - working-directory: dev/scripts
+        run: |
+          npm ci --ignore-scripts
+          node node_modules/@anthropic-ai/claude-code/install.cjs
+          echo "$PWD/node_modules/.bin" >> "$GITHUB_PATH"
+      - run: uv run --no-sync sh dev/scripts/check.sh
+      - if: matrix.python == '3.x'
+        run: uv run --no-sync sh dev/scripts/quality.sh
+
+  prose:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: lovaizu/checks@9880b8247f74c50a51a526f178832422da33e493 # v0.1.6
