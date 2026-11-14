@@ -54,7 +54,11 @@
        },
        {
         "at": "decide",
-        "text": "For each kind listed, search the repository for a file of that kind for the same product, such as `dev/rn/product-vision.md` for rn's README. Take the file where the user's request leaves what it says as it is. Add a deliverable at the file's path where the request changes what it must say, such as a product vision whose roles a new kind of user widens, and add a deliverable of that kind at a new path where no such file exists. Repeat N2.3 and this item for each deliverable you add, until one takes nothing."
+        "text": "For each kind listed, search the repository for a file of that kind for the same product, such as `dev/rn/product-vision.md` for rn's README. Take the file where the user's request leaves what it says as it is, and add a deliverable at the file's path where the request changes what it must say, such as a product vision whose roles a new kind of user widens."
+       },
+       {
+        "at": "decide",
+        "text": "Where the repository holds no such file, add a deliverable of that kind at a new path: in this product's folder, at the place where the repository keeps the file of that kind for another product, such as `dev/lane/product-vision.md` from `dev/rn/product-vision.md`. Where it keeps none, take the place where the tool that reads the kind looks for it, such as `README.md` at the top of the product's folder, which GitHub shows, and ask the user where neither gives one. Repeat N2.3, N2.4, and this item for each deliverable that N2.4 or this item adds, until one takes nothing."
        },
        {
         "at": "decide",
@@ -74,7 +78,7 @@
        },
        {
         "at": "decide",
-        "text": "Where no folder fits, search the field's guides and handbooks for how to make the deliverable. Where guides written for different products give the same steps, as they do for a changelog, put a deliverable that makes its best practice, of the kind `meta`, at the top level before the first deliverable of that kind."
+        "text": "Where no folder fits, search the field's guides and handbooks for how to make the deliverable. Where guides written for different products give the same steps, as they do for a changelog, put a deliverable that makes its best practice, of the kind `meta`, at the top level before the first deliverable of that kind, at the path `.rn/best-practices/<kind>/`. Name `<kind>` as the guides name the deliverable, in lowercase words joined by hyphens like the folder names of N2.2, such as `changelog`, and write it as the kind of the deliverable that no folder fit, since tree.py reads the best practice of a kind from `.rn/best-practices/<kind>/` where one lies there."
        },
        {
         "at": "decide",
@@ -90,7 +94,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "For each deliverable of a best practice's kind, write in its `inputs` the path of each file you took or deliverable you added at N2.4 for a kind that the best practice's `inputs` name, and in its `preconditions` the path of each one for a kind that its `preconditions` name, such as `dev/rn/product-vision.md` in the inputs of rn's README. Use paths, not kinds, since deliverables of one kind can serve different products."
+        "text": "For each deliverable of a best practice's kind, write in its `inputs` the path of each file you took or deliverable you added at N2.4 or N2.5 for a kind that the best practice's `inputs` name, and in its `preconditions` the path of each one for a kind that its `preconditions` name, such as `dev/rn/product-vision.md` in the inputs of rn's README. Use paths, not kinds, since deliverables of one kind can serve different products."
        },
        {
         "at": "decide",
@@ -114,7 +118,7 @@
        },
        {
         "at": "make",
-        "text": "Check that a later deliverable names each research deliverable in its inputs, and that a later deliverable has the kind that each meta deliverable makes, and drop one that none uses, since `tree.py write` doesn't check these."
+        "text": "Check that a later deliverable names each research deliverable in its inputs, and that a later deliverable has as its kind the last folder of each meta deliverable's path, and drop one that none uses, since `tree.py write` doesn't check these."
        }
       ]
      }
