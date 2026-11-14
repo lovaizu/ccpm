@@ -226,11 +226,11 @@
        },
        {
         "at": "make",
-        "text": "Run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py round {run} <path>`, with `<path>` the deliverable's `path` in the tree. It prints as JSON the deliverable's last round, the generator's making of it and the judging of that by one evaluator for each group of its best practice's conditions, with each evaluator's answers: `met` with each condition met and the lines that meet it, and `not_met` with each condition not met and what its people lack. It gives 1 where the deliverable has had no round."
+        "text": "Run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py round {run} <path>`, with `<path>` the deliverable's `path` in the tree. It prints as JSON the deliverable's last round, the generator's making of it and the judging of that by one evaluator for each group of its best practice's conditions, with each evaluator's answers: `good` with each condition good and the lines that meet it, and `more` with each condition not yet good and its `good_when`, what its people get once it's good. It gives 1 where the deliverable has had no round."
        },
        {
         "at": "make",
-        "text": "Set a condition's `good` true only once you answer its question yes against the deliverable as it stands: where `met` of the last round names it, read the lines it gives in the deliverable, and where no round has judged it, read the deliverable for the lines that meet it. Leave it false where `not_met` names it."
+        "text": "Set a condition's `good` true only once you answer its question yes against the deliverable as it stands: where `good` of the last round names it, read the lines it gives in the deliverable, and where no round has judged it, read the deliverable for the lines that meet it. Leave it false where `more` names it."
        },
        {
         "at": "make",
