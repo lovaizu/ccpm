@@ -1,12 +1,12 @@
 """What a person or CI runs on rn's best practices, as `python3 dev/scripts/practices.py
-form|markdown|example` with the JSON of one best practice or more: `form` names each fault of a best
-practice's form, its Markdown, made from its JSON for a person to read, left behind it, the copy of
-its example left behind the work it copies, and each file in its folder that none of them holds.
-`markdown` writes its Markdown beside it. `example` writes the copy of its example from the work its
-source names, and removes each file that none of them holds. Each gives 0, or 1 where it names any
-fault, and 2 with its usage where it gets no command it takes. It's ccpm's own tooling, kept out of
-rn's folder, as no run of rn checks a best practice's Markdown or the copy of its example. It holds
-each best practice to its form, `forms/best-practice.schema.json` beside this script."""
+form|markdown` with the JSON of one best practice or more: `form` names each fault of a best
+practice's form, its Markdown, made from its JSON for a person to read, left behind it, its
+template where it's a JSON Schema that schema.py doesn't read whole, and each file in its folder
+that neither it nor its template holds. `markdown` writes its Markdown beside
+it. Each gives 0, or 1 where it names any fault, and 2 with its usage where it gets no command it
+takes. It's ccpm's own tooling, kept out of rn's folder, as no run of rn checks a best practice's
+Markdown. It holds each best practice to its form, `forms/best-practice.schema.json` beside this
+script."""
 
 from __future__ import annotations
 
@@ -28,14 +28,7 @@ RN = os.path.join(
 import files
 import schema
 
-# The work each of ccpm's own best practices copies its example from, by paths from the top of the
-# repository. It lies here, outside the plugin, as Claude Code installs only the plugin's folder,
-# where the work isn't.
-SOURCES = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "examples.json")
-# Where a page of the repository lies on the web, for a link from a plugin to a file outside it.
-WEB = "https://github.com/lovaizu/ccpm/blob/main/"
-
-USAGE = "usage: python3 dev/scripts/practices.py form|markdown|example <best practice json>..."
+USAGE = "usage: python3 dev/scripts/practices.py form|markdown <best practice json>..."
 
 # What the about of a question may name beside the parts or sections: the whole deliverable.
 WHOLE = "the whole"
@@ -60,7 +53,7 @@ DONE = {"run": "run", "read": "read to its end", "write": "made"}
 # When the maker takes each item, as the Markdown names it.
 AT = {"decide": "*While deciding.*", "make": "*While making.*"}
 # A link or a figure in Markdown, a fenced code block, whose text links nothing, and a link's target
-# that a copy elsewhere still reaches unchanged: another site, or a place in the same page.
+# that names no file: another site, or a place in the same page.
 LINK = re.compile(r"(!?)(\[[^\]]*\]\()([^)\s]+)(\))")
 # `FENCE`'s flags stand in the pattern, as the two flags joined by `|`, `+`, or `^` make the same
 # number, mutants no test can tell apart.
@@ -69,33 +62,6 @@ KEPT = re.compile(r"^(?:[a-z][a-z0-9+.-]*:|#)")
 # rn's own best practices, where the check seeks a kind that lies beside no best practice's folder.
 OWN = os.path.join(RN, "best-practices")
 PRACTICE = "best-practice.json"
-
-
-def loaded(path: str) -> dict[str, Any]:
-    """The best practice at the path, with the source that SOURCES names for it as its own `source`,
-    a path from its folder. Refuses, as files.load does, a file out of its form."""
-    data = files.load(path, "best-practice")
-    with open(SOURCES, encoding="utf-8") as f:
-        named = json.load(f).get(os.path.relpath(path))
-    if named and "source" not in data:
-        data["source"] = os.path.relpath(named, os.path.dirname(path)).replace(os.sep, "/")
-    return data
-
-
-def plugin_of(path: str) -> str | None:
-    """The folder of the plugin that holds the path, where the path lies in one."""
-    parts = os.path.normpath(os.path.relpath(path)).split(os.sep)
-    return os.path.join(*parts[:2]) if parts[0] == "plugins" and len(parts) > 2 else None
-
-
-def reached(start: str, place: str) -> str:
-    """A link from the file at start to place, as a path from start's folder, or as the place's
-    page on the web where it lies outside start's plugin, which installs without it."""
-    plugin = plugin_of(start)
-    at = os.path.relpath(os.path.normpath(os.path.join(os.path.dirname(start), place)))
-    if plugin and not (at + os.sep).startswith(plugin + os.sep):
-        return WEB + at.replace(os.sep, "/")
-    return place
 
 
 def factors(data: dict[str, Any]) -> list[dict[str, Any]]:
@@ -210,6 +176,21 @@ def template(path: str, data: dict[str, Any]) -> list[Section] | None:
     return [(name,) for name in sections(text)]
 
 
+def unread(path: str, data: dict[str, Any]) -> list[str]:
+    """Why the template of the best practice at the path, where it's a JSON Schema, is no schema
+    that schema.py reads whole, in words, as a check that holds a deliverable to it would read
+    it wrong."""
+    if not data.get("template", "").endswith(".json"):
+        return []
+    try:
+        form = files.read(beside(path, data["template"]))
+        if SCHEMA in form:
+            schema.checked(form)
+    except (schema.Unread, files.Unreadable) as why:
+        return [f"its template {data['template']} is no schema it reads whole: {why}"]
+    return []
+
+
 # The lists of the kinds a best practice takes, each with the word for one of them.
 TAKEN = {"inputs": "input", "preconditions": "precondition"}
 
@@ -223,13 +204,11 @@ def practice_of(path: str, kind: str) -> str:
 
 
 def missing(path: str, data: dict[str, Any]) -> list[str]:
-    """Each file the best practice at the path names, its template and its example, that isn't
-    beside it, and each kind it takes that has no best practice beside its folder, in words."""
-    found = [
-        f"its {key} {data[key]} is not beside it"
-        for key in ("template", "example")
-        if key in data and not os.path.exists(beside(path, data[key]))
-    ]
+    """The template the best practice at the path names, where it isn't beside it, and each kind
+    it takes that has no best practice beside its folder, in words."""
+    found = []
+    if "template" in data and not os.path.exists(beside(path, data["template"])):
+        found.append(f"its template {data['template']} is not beside it")
     for key, called in TAKEN.items():
         found += [
             f"its {called} {kind} has no best practice beside it or among rn's own"
@@ -237,59 +216,6 @@ def missing(path: str, data: dict[str, Any]) -> list[str]:
             if not os.path.isfile(practice_of(path, kind))
         ]
     return found
-
-
-def unheld(path: str, data: dict[str, Any]) -> list[str]:
-    """The point the example of the best practice at the path is out of its template by, in words,
-    where both are JSON and the template is a JSON Schema, or why the check can't hold it to it."""
-    if not all(data.get(key, "").endswith(".json") for key in ("template", "example")):
-        return []
-    try:
-        form = files.read(beside(path, data["template"]))
-        if SCHEMA not in form:
-            return []
-        schema.checked(form)
-        value = files.read(beside(path, data["example"]))
-    except schema.Unread as why:
-        return [f"its template {data['template']} is no schema it reads whole: {why}"]
-    except files.Unreadable as why:
-        return [str(why)]
-    out = schema.held(form, value)
-    return [f"its example {data['example']} is out of its template: {out.told()}"] if out else []
-
-
-def copies(path: str, data: dict[str, Any]) -> dict[str, bytes]:
-    """The files of the example of the best practice at the path, where it names the work it's a
-    copy of in `source`, each path with what it holds: the work, each relative link in it set to
-    reach from the example what it reached from the work, and each figure it shows from under the
-    work's folder, at the same relative path beside the example. It gives none where it names no
-    source.
-    Refuses, by FileNotFoundError, a work or a figure that isn't there."""
-    if "source" not in data:
-        return {}
-    source = os.path.normpath(beside(path, data["source"]))
-    example = os.path.normpath(beside(path, data["example"]))
-    made: dict[str, bytes] = {}
-
-    def moved(link: re.Match[str]) -> str:
-        figure, opening, target, closing = link.groups()
-        if KEPT.match(target):
-            return link.group(0)
-        place = target.split("#")[0]
-        at = os.path.normpath(os.path.join(os.path.dirname(source), place))
-        if figure and not os.path.normpath(place).startswith(".."):
-            with open(at, "rb") as f:
-                made[os.path.normpath(os.path.join(os.path.dirname(example), place))] = f.read()
-            return link.group(0)
-        reach = os.path.relpath(at, os.path.dirname(example)).replace(os.sep, "/")
-        return figure + opening + reached(example, reach) + target[len(place) :] + closing
-
-    with open(source, encoding="utf-8") as f:
-        pieces = FENCE.split(f.read())
-    # The pieces between the code blocks, at the even places, are those that link.
-    text = "".join(p if n % 2 else LINK.sub(moved, p) for n, p in enumerate(pieces))
-    made[example] = text.encode("utf-8")
-    return made
 
 
 def shown(text: str) -> list[str]:
@@ -309,19 +235,14 @@ def shown(text: str) -> list[str]:
 
 def kept(path: str, data: dict[str, Any]) -> set[str]:
     """The files the folder of the best practice at the path holds by right: the best practice and
-    its Markdown, its template and the figures it shows, and its example, as the copy of its source
-    would now be where it names one, else with the figures it shows. Refuses, by FileNotFoundError,
-    a source or a figure of it that isn't there."""
+    its Markdown, and its template, each file in it where it's a folder, else the figures it
+    shows."""
     files = {path, os.path.splitext(path)[0] + ".md"}
-    copied = copies(path, data) if "example" in data else {}
-    files.update(copied)
-    for key in ("template", "example"):
-        if key not in data:
-            continue
-        named = os.path.normpath(beside(path, data[key]))
+    if "template" in data:
+        named = os.path.normpath(beside(path, data["template"]))
         files.add(named)
         files.update(os.path.join(r, n) for r, _, names in os.walk(named) for n in names)
-        if named not in copied and os.path.isfile(named):
+        if os.path.isfile(named):
             with open(named, encoding="utf-8") as f:
                 files.update(beside(named, figure) for figure in shown(f.read()))
     return {os.path.normpath(f) for f in files}
@@ -505,20 +426,12 @@ def link_of(path: str, kind: str) -> str:
 
 
 def markdown_of(path: str, data: dict[str, Any]) -> str:
-    """The best practice at the path as Markdown: its goal tree, a link to its template and its
-    example, with the work the example is a copy of, and a link to each kind it takes where it
-    takes any, to where its best practice lies, then each condition's practice, in the order of the
-    IDs, under the question it meets."""
+    """The best practice at the path as Markdown: its goal tree, a link to its template, and a link
+    to each kind it takes where it takes any, to where its best practice lies, then each
+    condition's practice, in the order of the IDs, under the question it meets."""
     out = [f"# `{kind_of(path)}`", "", "## Goal tree", "", *tree(data)]
-    for key in ("template", "example"):
-        if key in data:
-            out += ["", f"## {key.capitalize()}", "", f"[{data[key]}]({data[key]})"]
-    if "example" in data and "source" in data:
-        # The example comes last, so its link is the last line.
-        link = reached(path, data["source"])
-        # A page on the web goes by its path from the top of the repository.
-        shown_as = link.removeprefix(WEB)
-        out[-1] += f", a copy of [{shown_as}]({link})"
+    if "template" in data:
+        out += ["", "## Template", "", f"[{data['template']}]({data['template']})"]
     for key in TAKEN:
         if data[key]:
             out += ["", f"## {key.capitalize()}", ""]
@@ -530,57 +443,27 @@ def markdown_of(path: str, data: dict[str, Any]) -> str:
     return "\n".join(out) + "\n"
 
 
-def copied(path: str, data: dict) -> tuple[dict[str, bytes], list[str]]:
-    """The files of the best practice's example copied from its source, or else why the copy
-    can't make them."""
-    if "example" not in data:
-        return {}, [f"its source {data['source']} has no example to be copied to"]
-    try:
-        return copies(path, data), []
-    except FileNotFoundError as why:
-        return {}, [f"{why.filename}, which its example copies, is not there"]
-
-
-def behind(path: str, data: dict) -> list[str]:
-    """Each file of the best practice's example that differs from what its source makes, or why the
-    copy can't make it. None where it names no source."""
-    if "source" not in data:
-        return []
-    made, found = copied(path, data)
-    for copy, content in made.items():
-        try:
-            with open(copy, "rb") as f:
-                same = f.read() == content
-        except FileNotFoundError:
-            same = False
-        if not same:
-            found.append(f"{copy} is not a copy of its source; run practices.py example")
-    return found
-
-
 def strays(path: str, data: dict) -> list[str]:
-    """Each file in the best practice's folder that neither it, its template nor its example holds,
-    in words. None where the copy of its source fails, which `behind` names."""
-    try:
-        found = leftovers(path, data)
-    except FileNotFoundError:
-        return []
-    fix = "run practices.py example" if "source" in data else "remove it"
-    return [f"{file} is neither the template's nor the example's; {fix}" for file in found]
+    """Each file in the best practice's folder that neither it nor its template holds, in words."""
+    return [
+        f"{file} is neither the best practice's nor its template's; remove it"
+        for file in leftovers(path, data)
+    ]
 
 
 def form(path: str) -> list[str]:
-    """Each fault of the best practice's form, its Markdown and the copy of its example left
-    behind it, and each file in its folder that none of them holds."""
+    """Each fault of the best practice's form, its template where it's a schema that schema.py
+    doesn't read whole, its Markdown left behind it, and each file in its folder that neither it
+    nor its template holds."""
     try:
-        data = loaded(path)
+        data = files.load(path, "best-practice")
     except files.Unreadable as why:
         return [str(why)]
-    late = behind(path, data) + strays(path, data)
+    late = strays(path, data)
     found = missing(path, data)
     if found:
         return found + late
-    found = faults(data, template(path, data)) + unheld(path, data)
+    found = unread(path, data) + faults(data, template(path, data))
     target = os.path.splitext(path)[0] + ".md"
     try:
         with open(target, encoding="utf-8") as f:
@@ -594,7 +477,7 @@ def form(path: str) -> list[str]:
 def markdown(path: str) -> list[str]:
     """Writes the best practice's Markdown beside it, where a person can read it."""
     try:
-        data = loaded(path)
+        data = files.load(path, "best-practice")
     except files.Unreadable as why:
         return [str(why)]
     with open(os.path.splitext(path)[0] + ".md", "w", encoding="utf-8") as f:
@@ -602,30 +485,9 @@ def markdown(path: str) -> list[str]:
     return []
 
 
-def example(path: str) -> list[str]:
-    """Writes the best practice's example, and each figure it shows, as a copy of its source, and
-    removes each file in its folder that neither it, its template nor its example holds."""
-    try:
-        data = loaded(path)
-    except files.Unreadable as why:
-        return [str(why)]
-    if "source" not in data:
-        return ["it names no source to copy its example from"]
-    made, found = copied(path, data)
-    for copy, content in made.items():
-        os.makedirs(os.path.dirname(copy), exist_ok=True)
-        with open(copy, "wb") as f:
-            f.write(content)
-    # Only once the copy exists, as only then does it show which files it holds.
-    for file in leftovers(path, data) if made else []:
-        os.remove(file)
-    return found
-
-
 PRACTICES: dict[str, Callable[[str], list[str]]] = {
     "form": form,
     "markdown": markdown,
-    "example": example,
 }
 
 

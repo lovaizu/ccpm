@@ -187,7 +187,6 @@
   ]
  },
  "template": "template.md",
- "example": "example.md",
  "inputs": [],
  "preconditions": []
 }

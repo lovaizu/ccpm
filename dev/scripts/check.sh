@@ -43,13 +43,12 @@ held design pyrefly check --search-path dev/scripts --search-path dev/scripts/te
   --search-path dev/tests dev/scripts/*.py dev/scripts/tests/*.py dev/tests/*.py
 
 # Each kind's best practice lies in a folder of its own in rn, as `best-practice.json`. Its template
-# and its example lie beside it. The check fails on:
+# lies beside it. The check fails on:
 # - a fault in a best practice's form
 # - a best practice's Markdown that lags behind its JSON, from which practices.py makes it for a
 #   person to read
-# - an example that copies a document of the repository and lags behind that document
-# - an example in JSON that breaks its template, where the template is a JSON Schema
-# - a file in the folder that none of them uses, such as a figure that the document dropped
+# - a template that is a JSON Schema in a form that schema.py doesn't read whole
+# - a file in the folder that neither uses, such as a figure that the template dropped
 # Each of these would make the folder say what rn doesn't hold.
 python3 dev/scripts/practices.py form plugins/rn/domain/best-practices/*/best-practice.json
 

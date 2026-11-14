@@ -17,10 +17,6 @@
 
 [template.md](template.md)
 
-## Example
-
-[example.md](example.md), a copy of [dev/rn/product-vision.md](https://github.com/lovaizu/ccpm/blob/main/dev/rn/product-vision.md)
-
 ## Practices
 
 ### N1

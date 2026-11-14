@@ -95,7 +95,7 @@
       ]
      },
      {
-      "id": "N8",
+      "id": "N7",
       "about": "the whole",
       "what": "Does following the best practice put into the deliverable only the vital few, the things without which its users fail their goal?",
       "why": "A deliverable that holds the trivial many beside the vital few buries what its users need, and each round of work adds more. The method is Joseph Juran's Pareto principle, in his Quality Control Handbook, which names the few causes that decide most of a result the vital few.",
@@ -211,34 +211,6 @@
         "text": "Name a language or a tool only as an example, so that each deliverable's plan chooses its own."
        }
       ]
-     },
-     {
-      "id": "N6",
-      "about": "example, source",
-      "what": "Does the example show a finished deliverable of the kind that meets every necessary condition?",
-      "why": "The example shows the generator what following the best practice produces, which no description fully conveys. The method is the worked example of John Sweller's cognitive load theory, which finds that a learner who studies a solved problem learns to solve the next one better than a learner who must work it out alone.",
-      "items": [
-       {
-        "at": "make",
-        "text": "Make the example from the product's own design tree by taking the template and the practices exactly."
-       },
-       {
-        "at": "make",
-        "text": "Name the example's file in `example`."
-       },
-       {
-        "at": "make",
-        "text": "If the deliverable lives elsewhere for its own readers, such as a product vision in the developers' folder, name its path in the best practice's `source` field. Where the best practice ships without that deliverable, such as in a plugin, which installs only its own folder, keep the path with the script that copies it."
-       },
-       {
-        "at": "make",
-        "text": "Where the example copies a deliverable, have a script copy it and its figures next to the best practice, so that the copy matches the original each time the script runs."
-       },
-       {
-        "at": "make",
-        "text": "Check the example against every condition as its users would. Where it falls short, fix the practice or the template that produced the shortfall, and make the example again from them, since a fix made only in the example would hide the fault in the best practice."
-       }
-      ]
      }
     ]
    },
@@ -247,7 +219,7 @@
     "what": "Each deliverable stays consistent with the deliverables it builds on and the deliverables built on it.",
     "necessary_conditions": [
      {
-      "id": "N7",
+      "id": "N6",
       "about": "inputs, preconditions",
       "what": "Does the best practice name the kinds of deliverable that this kind builds on, with a condition that carries each of their vital few that its users need, and the kinds that must pass before work on it starts?",
       "why": "A deliverable must say what the deliverables it builds on say, and the deliverables built on it must follow it. The method is requirements traceability, which Orlena Gotel and Anthony Finkelstein, in An Analysis of the Requirements Traceability Problem, define as following each requirement both backward to its source and forward to what carries it.",
@@ -299,7 +271,6 @@
   ]
  },
  "template": "template.json",
- "example": "../readme/best-practice.json",
  "inputs": [],
  "preconditions": []
 }

@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "best practice",
-  "description": "A kind's best practice. Its goal holds the goal's sentence and the critical success factors, the few things that must go right for the deliverable's users to reach that goal. Each factor holds its necessary conditions, each a state of the deliverable that the factor needs, written as a question such a deliverable answers yes to, and each condition holds its practice: its why, which says what the condition gives the users and the method the items come from, and its items, each marked `decide` or `make` by when the maker takes it, and each with the call that shows it done where every run makes one. It names the template beside it, which holds the form a good deliverable of the kind takes, and whose sections each condition's about names. It names the example beside it, one deliverable made by it, and the deliverable the example copies, if it copies one, by its path from the best practice's folder. It names the kinds such a deliverable takes its content from, in inputs, and those whose deliverables must pass before it starts, in preconditions, each by the name of its best practice's folder. An evaluator gets its goal, its factors, and its conditions, without their practices.",
+  "description": "A kind's best practice. Its goal holds the goal's sentence and the critical success factors, the few things that must go right for the deliverable's users to reach that goal. Each factor holds its necessary conditions, each a state of the deliverable that the factor needs, written as a question such a deliverable answers yes to, and each condition holds its practice: its why, which says what the condition gives the users and the method the items come from, and its items, each marked `decide` or `make` by when the maker takes it, and each with the call that shows it done where every run makes one. It names the template beside it, which holds the form a good deliverable of the kind takes, and whose sections each condition's about names. It names the kinds such a deliverable takes its content from, in inputs, and those whose deliverables must pass before it starts, in preconditions, each by the name of its best practice's folder. An evaluator gets its goal, its factors, and its conditions, without their practices.",
   "type": "object",
   "required": [
     "goal",
@@ -31,12 +31,6 @@
       }
     },
     "template": {
-      "type": "string"
-    },
-    "example": {
-      "type": "string"
-    },
-    "source": {
       "type": "string"
     },
     "inputs": {

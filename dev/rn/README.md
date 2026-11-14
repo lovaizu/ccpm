@@ -5,5 +5,4 @@ its tests check it, is in [architecture.md](architecture.md).
 
 The best practice of each kind lies in
 [plugins/rn/domain/best-practices](../../plugins/rn/domain/best-practices/).
-`python3 dev/scripts/practices.py form <its JSON>` checks it, and `markdown` and `example` write
-its Markdown and the copy of its example.
+`python3 dev/scripts/practices.py form <its JSON>` checks it, and `markdown` writes its Markdown.

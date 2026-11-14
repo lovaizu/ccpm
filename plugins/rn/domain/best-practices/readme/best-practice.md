@@ -22,10 +22,6 @@
 
 [template.md](template.md)
 
-## Example
-
-[example.md](example.md), a copy of [../../../README.md](../../../README.md)
-
 ## Inputs
 
 - [product-vision](../product-vision/best-practice.md)

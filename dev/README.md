@@ -17,7 +17,7 @@ CI runs these checks on every push:
 - the linter, the formatter, and the type checker of the checks' own code, and its tests
 - the checks of the code's design: copied code, and a function more complex than one reading can
   follow
-- the form of each best practice, its Markdown, and the copy of its example
+- the form of each best practice, and its Markdown
 - the style of every figure
 - Mermaid's parse of every diagram in the Markdown files
 - Claude Code's check of every manifest

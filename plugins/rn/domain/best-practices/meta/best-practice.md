@@ -7,21 +7,16 @@
     - **N1** Does the goal state, in one sentence, who uses the deliverable and what purpose it serves for them? (goal)
     - **N2** Do the critical success factors name the few things that must all hold for the users to reach the goal? (critical_success_factors)
     - **N3** Does each necessary condition ask, as a yes-or-no question, whether the deliverable holds a state that its factor needs? (necessary_conditions)
-    - **N8** Does following the best practice put into the deliverable only the vital few, the things without which its users fail their goal? (the whole)
+    - **N7** Does following the best practice put into the deliverable only the vital few, the things without which its users fail their goal? (the whole)
   - **C2** The generator meets every necessary condition in every deliverable.
     - **N4** Does the template place each necessary condition in a section, and give each slot a note on what it holds and in what form? (template)
     - **N5** Does each practice give the way of thinking that produces its condition's state: the decisions in order, the question at each, and the criteria for choosing, taken from an established method? (why, items)
-    - **N6** Does the example show a finished deliverable of the kind that meets every necessary condition? (example, source)
   - **C3** Each deliverable stays consistent with the deliverables it builds on and the deliverables built on it.
-    - **N7** Does the best practice name the kinds of deliverable that this kind builds on, with a condition that carries each of their vital few that its users need, and the kinds that must pass before work on it starts? (inputs, preconditions)
+    - **N6** Does the best practice name the kinds of deliverable that this kind builds on, with a condition that carries each of their vital few that its users need, and the kinds that must pass before work on it starts? (inputs, preconditions)
 
 ## Template
 
 [template.json](template.json)
-
-## Example
-
-[../readme/best-practice.json](../readme/best-practice.json)
 
 ## Practices
 
@@ -97,18 +92,6 @@ A practice is the only place where the generator learns how to meet a condition 
 
 ### N6
 
-Does the example show a finished deliverable of the kind that meets every necessary condition?
-
-The example shows the generator what following the best practice produces, which no description fully conveys. The method is the worked example of John Sweller's cognitive load theory, which finds that a learner who studies a solved problem learns to solve the next one better than a learner who must work it out alone.
-
-1. *While making.* Make the example from the product's own design tree by taking the template and the practices exactly.
-2. *While making.* Name the example's file in `example`.
-3. *While making.* If the deliverable lives elsewhere for its own readers, such as a product vision in the developers' folder, name its path in the best practice's `source` field. Where the best practice ships without that deliverable, such as in a plugin, which installs only its own folder, keep the path with the script that copies it.
-4. *While making.* Where the example copies a deliverable, have a script copy it and its figures next to the best practice, so that the copy matches the original each time the script runs.
-5. *While making.* Check the example against every condition as its users would. Where it falls short, fix the practice or the template that produced the shortfall, and make the example again from them, since a fix made only in the example would hide the fault in the best practice.
-
-### N7
-
 Does the best practice name the kinds of deliverable that this kind builds on, with a condition that carries each of their vital few that its users need, and the kinds that must pass before work on it starts?
 
 A deliverable must say what the deliverables it builds on say, and the deliverables built on it must follow it. The method is requirements traceability, which Orlena Gotel and Anthony Finkelstein, in An Analysis of the Requirements Traceability Problem, define as following each requirement both backward to its source and forward to what carries it.
@@ -124,7 +107,7 @@ A deliverable must say what the deliverables it builds on say, and the deliverab
 9. *While making.* When a deliverable changes, find the deliverables built on it and update them in the same change.
 10. *While making.* When an input changes, check the deliverable against it again.
 
-### N8
+### N7
 
 Does following the best practice put into the deliverable only the vital few, the things without which its users fail their goal?
 

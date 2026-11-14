@@ -237,7 +237,6 @@
   ]
  },
  "template": "design-tree.schema.json",
- "example": "example.json",
  "inputs": [],
  "preconditions": []
 }

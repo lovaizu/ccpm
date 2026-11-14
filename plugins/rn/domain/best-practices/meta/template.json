@@ -1,5 +1,5 @@
 {
- "DELETE_TEMPLATE_COMMENT": "<users>: who uses the deliverable, such as `the developer`. <achieve what>: what they achieve with it. <kind>: the kind of deliverable, such as `readme`. <ext>: the deliverable's own format, such as `md`. The example is optional until one deliverable of the kind exists. <source>: the path, from the best practice's folder, of the deliverable that the example copies. Optional, for an example that's a copy of a deliverable that ships with the best practice. inputs: each kind of deliverable that this kind builds on. preconditions: each kind whose deliverables must pass before work on this kind starts. Each <kind> is the folder name of its best practice. Each list is empty where there's none.",
+ "DELETE_TEMPLATE_COMMENT": "<users>: who uses the deliverable, such as `the developer`. <achieve what>: what they achieve with it. <kind>: the kind of deliverable, such as `readme`. <ext>: the deliverable's own format, such as `md`. inputs: each kind of deliverable that this kind builds on. preconditions: each kind whose deliverables must pass before work on this kind starts. Each <kind> is the folder name of its best practice. Each list is empty where there's none.",
  "goal": {
   "what": "<Users> <achieve what>.",
   "critical_success_factors": [
@@ -36,8 +36,6 @@
   ]
  },
  "template": "<kind>-template.<ext>",
- "example": "<kind>-example.<ext>",
- "source": "<source>",
  "inputs": [
   "<kind>"
  ],

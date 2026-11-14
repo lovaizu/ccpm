@@ -353,8 +353,6 @@
   ]
  },
  "template": "template.md",
- "example": "example.md",
- "source": "../../../README.md",
  "inputs": [
   "product-vision"
  ],

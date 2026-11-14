@@ -22,10 +22,6 @@
 
 [design-tree.schema.json](design-tree.schema.json)
 
-## Example
-
-[example.json](example.json), a copy of [.rn/20261107-rn/design-tree.json](https://github.com/lovaizu/ccpm/blob/main/.rn/20261107-rn/design-tree.json)
-
 ## Practices
 
 ### N1

@@ -29,10 +29,6 @@
 
 [template.md](template.md)
 
-## Example
-
-[example.md](example.md), a copy of [dev/rn/architecture.md](https://github.com/lovaizu/ccpm/blob/main/dev/rn/architecture.md)
-
 ## Inputs
 
 - [product-vision](../product-vision/best-practice.md)

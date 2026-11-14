@@ -1,8 +1,7 @@
 """dev/scripts/practices.py, what a person or CI runs on rn's best practices: faults names each
-fault of a best practice's form, markdown_of makes the Markdown a person reads, and copies makes the
-copy of its example. form names those faults, its Markdown and the copy left behind, and each file
-in its folder none of them holds. markdown writes its Markdown beside it, and example writes the
-copy of its example from its source."""
+fault of a best practice's form, and markdown_of makes the Markdown a person reads. form names those
+faults, its Markdown left behind, and each file in its folder that neither it nor its template
+holds. markdown writes its Markdown beside it."""
 
 from __future__ import annotations
 
@@ -395,69 +394,6 @@ class Keys(unittest.TestCase):
         )
 
 
-SCHEMA = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "description": "A plan.",
-    "type": "object",
-    "required": ["goal"],
-    "properties": {"goal": {"type": "string", "description": "The end."}},
-}
-
-
-class Unheld(helpers.FolderTest):
-    """unheld, the point an example in JSON is out of the template beside it by, where the template
-    is a JSON Schema."""
-
-    def setUp(self) -> None:
-        super().setUp()
-        self.path = os.path.join("kind", "best-practice.json")
-        self.data = dict(DATA, template="plan.schema.json", example="example.json")
-        self.write_json(os.path.join("kind", "plan.schema.json"), SCHEMA)
-
-    def example(self, value: Any) -> list[str]:
-        self.write_json(os.path.join("kind", "example.json"), value)
-        return practices.unheld(self.path, self.data)
-
-    def test_none_where_the_example_holds_to_the_schema(self):
-        self.assertEqual(self.example({"goal": "g"}), [])
-
-    def test_the_point_the_example_is_out_by(self):
-        self.assertEqual(
-            self.example({"goal": 1}),
-            ["its example example.json is out of its template: $.goal: expected a string, found 1"],
-        )
-
-    def test_none_where_the_template_is_no_schema(self):
-        self.write_json(os.path.join("kind", "plan.schema.json"), {"goal": "<goal>"})
-        self.assertEqual(self.example({"goal": 1}), [])
-
-    def test_none_where_the_template_or_the_example_is_no_json(self):
-        self.write(os.path.join("kind", "example.md"), "# Plan\n")
-        self.write(os.path.join("kind", "template.md"), "# <Plan>\n")
-        for named in (
-            dict(self.data, example="example.md"),
-            dict(self.data, template="template.md"),
-            DATA,
-        ):
-            with self.subTest(named=named.get("template"), example=named.get("example")):
-                self.assertEqual(practices.unheld(self.path, named), [])
-
-    def test_a_schema_it_does_not_read_whole_is_named(self):
-        self.write_json(os.path.join("kind", "plan.schema.json"), dict(SCHEMA, oneOf=[]))
-        found = self.example({"goal": "g"})
-        self.assertEqual(len(found), 1)
-        self.assertTrue(
-            found[0].startswith("its template plan.schema.json is no schema it reads whole: $"),
-            found,
-        )
-
-    def test_an_example_that_is_no_json_is_named(self):
-        self.write(os.path.join("kind", "example.json"), "{")
-        found = practices.unheld(self.path, self.data)
-        self.assertEqual(len(found), 1)
-        self.assertIn("example.json is not JSON", found[0])
-
-
 class Beside(helpers.FolderTest):
     """template and missing, on the files a best practice names beside it."""
 
@@ -475,6 +411,42 @@ class Beside(helpers.FolderTest):
         named = dict(BY_TEMPLATE, template="template.md")
         self.assertEqual(practices.template(self.path, named), [(s,) for s in SECTIONS])
 
+    def test_a_template_that_is_a_json_schema_it_reads_whole_has_no_fault(self):
+        self.write(
+            os.path.join(self.folder, "template.json"),
+            '{"$schema": "http://json-schema.org/draft-07/schema#", "type": "object"}',
+        )
+        named = dict(BY_TEMPLATE, template="template.json")
+        self.assertEqual(practices.unread(self.path, named), [])
+
+    def test_a_template_that_is_a_json_schema_with_a_keyword_it_does_not_read(self):
+        self.write(
+            os.path.join(self.folder, "template.json"),
+            '{"$schema": "http://json-schema.org/draft-07/schema#", "type": "thing"}',
+        )
+        named = dict(BY_TEMPLATE, template="template.json")
+        (fault,) = practices.unread(self.path, named)
+        self.assertIn("its template template.json is no schema it reads whole", fault)
+
+    def test_a_template_in_json_that_is_no_json(self):
+        self.write(os.path.join(self.folder, "template.json"), "{")
+        named = dict(BY_TEMPLATE, template="template.json")
+        (fault,) = practices.unread(self.path, named)
+        self.assertIn("is not JSON", fault)
+
+    def test_a_template_in_json_that_is_no_schema_is_not_read_as_one(self):
+        self.write(
+            os.path.join(self.folder, "template.json"),
+            '{"DELETE_TEMPLATE_COMMENT": "x", "goal": "g"}',
+        )
+        named = dict(BY_TEMPLATE, template="template.json")
+        self.assertEqual(practices.unread(self.path, named), [])
+
+    def test_a_template_in_markdown_is_not_read_as_a_schema(self):
+        self.write(os.path.join(self.folder, "template.md"), TEMPLATE)
+        named = dict(BY_TEMPLATE, template="template.md")
+        self.assertEqual(practices.unread(self.path, named), [])
+
     def test_the_keys_of_a_template_in_json(self):
         self.write(
             os.path.join(self.folder, "template.json"),
@@ -482,19 +454,6 @@ class Beside(helpers.FolderTest):
         )
         named = dict(BY_TEMPLATE, template="template.json")
         self.assertEqual(practices.template(self.path, named), [("goal",)])
-
-    def test_each_file_named_that_is_not_there(self):
-        self.write(os.path.join(self.folder, "template.md"), TEMPLATE)
-        named = dict(BY_TEMPLATE, template="template.md", example="example.md")
-        self.assertEqual(
-            practices.missing(self.path, named), ["its example example.md is not beside it"]
-        )
-
-    def test_an_example_in_the_folder_of_another_kind(self):
-        named = dict(DATA, example="../other/best-practice.json")
-        self.write_json(self.path, named)
-        self.write(os.path.join(self.base, "other", "best-practice.json"), "{}")
-        self.assertEqual(practices.missing(self.path, named), [])
 
     def test_each_kind_it_takes_with_no_best_practice_beside_or_among_rn_s_own(self):
         named = dict(DATA, inputs=["note", "gone"], preconditions=["late", "note"])
@@ -574,25 +533,25 @@ class Shown(unittest.TestCase):
 
 
 class Leftovers(helpers.FolderTest):
-    """leftovers, each file in a best practice's folder that neither it, its template nor its
-    example holds."""
+    """leftovers, each file in a best practice's folder that neither it nor its template holds."""
 
     def setUp(self) -> None:
         super().setUp()
         self.folder = os.path.join("practices", "kind")
         self.path = os.path.join(self.folder, "best-practice.json")
-        self.data = dict(DATA, template="template.md", example="example.md")
+        self.data = dict(DATA, template="template.md")
         self.write(self.at("best-practice.json"), "{}")
         self.write(self.at("best-practice.md"), "# kind\n")
-        self.write(self.at("template.md"), "![The product](images/template-a.svg)\n")
+        self.write(
+            self.at("template.md"),
+            "![The product](images/template-a.svg)\n```text\n![Q](images/q.svg)\n```\n",
+        )
         self.write(self.at("images", "template-a.svg"), "<svg/>")
-        self.write(self.at("example.md"), "![P](images/a.svg)\n```text\n![Q](images/q.svg)\n```\n")
-        self.write(self.at("images", "a.svg"), "<svg/>")
 
     def at(self, *path: str) -> str:
         return os.path.join(self.folder, *path)
 
-    def test_none_where_each_file_is_its_own_or_a_figure_its_template_or_example_shows(self):
+    def test_none_where_each_file_is_its_own_or_a_figure_its_template_shows(self):
         self.assertEqual(practices.leftovers(self.path, self.data), [])
 
     def test_a_file_none_of_them_holds(self):
@@ -607,93 +566,20 @@ class Leftovers(helpers.FolderTest):
         self.write(self.at("images", ".DS_Store"), "")
         self.assertEqual(practices.leftovers(self.path, self.data), [])
 
-    def test_a_figure_the_old_copy_shows_is_a_leftover_once_its_source_dropped_it(self):
-        data = dict(self.data, source="../../doc/source.md")
-        self.write(os.path.join("doc", "source.md"), "No figure.\n")
-        self.assertEqual(practices.leftovers(self.path, data), [self.at("images", "a.svg")])
-
-    def test_an_example_with_no_template_keeps_the_figures_it_shows(self):
-        data = dict(DATA, example="example.md")
-        self.assertEqual(
-            practices.leftovers(self.path, data),
-            [self.at("images", "template-a.svg"), self.at("template.md")],
-        )
-
     def test_each_file_of_a_template_that_is_a_folder_is_held(self):
         data = dict(DATA, template="template")
         self.write(self.at("template", "skills", "up", "SKILL.md"), "s")
         self.write(self.at("template", ".claude-plugin", "plugin.json"), "{}")
         self.assertEqual(
             practices.leftovers(self.path, data),
-            [
-                self.at("example.md"),
-                self.at("images", "a.svg"),
-                self.at("images", "template-a.svg"),
-                self.at("template.md"),
-            ],
+            [self.at("images", "template-a.svg"), self.at("template.md")],
         )
 
-    def test_a_source_with_no_example_keeps_only_its_own_files(self):
-        data = dict(DATA, source="../../doc/source.md")
+    def test_with_no_template_only_its_own_files_are_held(self):
         self.assertEqual(
-            practices.leftovers(self.path, data),
-            [
-                self.at("example.md"),
-                self.at("images", "a.svg"),
-                self.at("images", "template-a.svg"),
-                self.at("template.md"),
-            ],
+            practices.leftovers(self.path, DATA),
+            [self.at("images", "template-a.svg"), self.at("template.md")],
         )
-
-
-class Copies(helpers.FolderTest):
-    """copies, the files of an example that's a copy of the document its source names."""
-
-    def setUp(self) -> None:
-        super().setUp()
-        self.path = os.path.join("practices", "kind", "best-practice.json")
-        self.data = dict(DATA, example="example.md", source="../../doc/source.md")
-        self.copy = os.path.join("practices", "kind", "example.md")
-
-    def made(self, text: str) -> dict[str, bytes]:
-        self.write(os.path.join("doc", "source.md"), text)
-        return practices.copies(self.path, self.data)
-
-    def test_none_where_it_names_no_source(self):
-        self.assertEqual(practices.copies(self.path, DATA), {})
-
-    def test_the_source_as_it_is_where_it_links_nothing(self):
-        self.assertEqual(self.made("# Doc\n\nText.\n"), {self.copy: b"# Doc\n\nText.\n"})
-
-    def test_a_link_reaches_from_the_copy_what_it_reached_from_the_source(self):
-        made = self.made("[a](other.md#part) and [b](../LICENSE)\n")
-        self.assertEqual(made[self.copy], b"[a](../../doc/other.md#part) and [b](../../LICENSE)\n")
-
-    def test_a_link_to_a_page_a_place_in_it_or_another_site_is_kept(self):
-        text = "[a](https://example.com/x) [b](#part) [c](mailto:a@b.c)\n"
-        self.assertEqual(self.made(text)[self.copy], text.encode())
-
-    def test_a_figure_under_the_source_is_copied_beside_the_copy(self):
-        self.write(os.path.join("doc", "images", "idea.svg"), "<svg/>")
-        made = self.made("![Idea](images/idea.svg)\n")
-        self.assertEqual(made[self.copy], b"![Idea](images/idea.svg)\n")
-        self.assertEqual(made[os.path.join("practices", "kind", "images", "idea.svg")], b"<svg/>")
-
-    def test_a_figure_above_the_source_is_linked_where_it_is(self):
-        made = self.made("![Idea](../idea.svg)\n")
-        self.assertEqual(made, {self.copy: b"![Idea](../../idea.svg)\n"})
-
-    def test_a_link_in_a_code_block_is_text_and_kept(self):
-        text = "```text\n[a](other.md)\n```\n[b](other.md)\n"
-        self.assertEqual(
-            self.made(text)[self.copy], b"```text\n[a](other.md)\n```\n[b](../../doc/other.md)\n"
-        )
-
-    def test_a_source_or_figure_not_there_is_refused(self):
-        with self.assertRaises(FileNotFoundError):
-            practices.copies(self.path, self.data)
-        with self.assertRaises(FileNotFoundError):
-            self.made("![Idea](images/idea.svg)\n")
 
 
 class FaultsByTemplate(unittest.TestCase):
@@ -768,28 +654,17 @@ class FaultsByNestedTemplate(unittest.TestCase):
 
 
 class Markdown(unittest.TestCase):
-    def test_names_the_source_its_example_is_copied_from(self):
-        named = dict(DATA, example="example.md", source="../../README.md")
-        text = practices.markdown_of(PATH, named)
-        self.assertIn(
-            "## Example\n\n[example.md](example.md),"
-            " a copy of [../../README.md](../../README.md)\n",
-            text,
-        )
-
-    def test_links_the_template_and_the_example_it_names(self):
-        named = dict(BY_TEMPLATE, template="template.md", example="example.md")
+    def test_links_the_template_it_names(self):
+        named = dict(BY_TEMPLATE, template="template.md")
         text = practices.markdown_of(PATH, named)
         self.assertIn("## Template\n\n[template.md](template.md)\n", text)
-        self.assertIn("## Example\n\n[example.md](example.md)\n", text)
         self.assertNotIn("## Template", practices.markdown_of(PATH, DATA))
-        self.assertNotIn("## Example", practices.markdown_of(PATH, DATA))
 
-    def test_links_each_kind_it_takes_after_the_example(self):
-        named = dict(DATA, example="example.md", inputs=["a"], preconditions=["b", "c"])
+    def test_links_each_kind_it_takes_after_the_template(self):
+        named = dict(DATA, template="template.md", inputs=["a"], preconditions=["b", "c"])
         text = practices.markdown_of(PATH, named)
         self.assertIn(
-            "[example.md](example.md)\n\n## Inputs\n\n- [a](../a/best-practice.md)\n\n"
+            "[template.md](template.md)\n\n## Inputs\n\n- [a](../a/best-practice.md)\n\n"
             "## Preconditions\n\n- [b](../b/best-practice.md)\n- [c](../c/best-practice.md)\n\n"
             "## Practices\n",
             text,
@@ -964,11 +839,11 @@ class Practices(helpers.FolderTest):
             (1, "", f"practices.py: {self.path}: section skills has no condition about it\n"),
         )
 
-    def test_form_fails_on_a_file_it_names_that_is_not_beside_it(self):
-        self.write_json(self.path, dict(DATA, example="example.md"))
+    def test_form_fails_on_a_template_it_names_that_is_not_beside_it(self):
+        self.write_json(self.path, dict(DATA, template="template.md"))
         code, _, err = ran("form", self.path)
         self.assertEqual(code, 1)
-        self.assertIn(f"practices.py: {self.path}: its example example.md is not beside it", err)
+        self.assertIn(f"practices.py: {self.path}: its template template.md is not beside it", err)
 
     def test_form_fails_on_a_json_out_of_its_schema(self):
         self.write_json(self.path, {"goal": "g"})
@@ -996,26 +871,6 @@ class Practices(helpers.FolderTest):
             err,
         )
 
-    def test_form_fails_on_an_example_out_of_the_schema_that_is_its_template(self):
-        data = copy.deepcopy(DATA)
-        for n in (1, 2):
-            condition(data, n)["about"] = "goal, the whole"
-        data.update(template="plan.schema.json", example="example.json")
-        self.write_json(self.path, data)
-        self.write_json(
-            os.path.join(self.folder, "plan.schema.json"),
-            {"$schema": "x", "type": "object", "properties": {"goal": {"type": "string"}}},
-        )
-        self.write_json(os.path.join(self.folder, "example.json"), {"goal": 1})
-        ran("markdown", self.path)
-        code, _, err = ran("form", self.path)
-        self.assertEqual(code, 1)
-        self.assertEqual(
-            err,
-            f"practices.py: {self.path}: its example example.json is out of its template:"
-            " $.goal: expected a string, found 1\n",
-        )
-
     def test_form_fails_on_a_markdown_changed_by_hand(self):
         made = practices.markdown_of(self.path, DATA)
         for changed in (made + "More.\n", made[:-1]):
@@ -1027,101 +882,21 @@ class Practices(helpers.FolderTest):
                     "best-practice.md is not as its JSON makes it; run practices.py markdown", err
                 )
 
-    def sourced(self) -> str:
-        """Names a source for the example, and writes it with a figure. Gives the example's path."""
-        self.write_json(self.path, dict(DATA, example="example.md", source="../doc/source.md"))
-        self.write(os.path.join(self.base, "doc", "source.md"), "![A](images/a.svg) [b](b.md)\n")
-        self.write(os.path.join(self.base, "doc", "images", "a.svg"), "<svg/>")
+    def test_form_says_to_remove_a_leftover(self):
         ran("markdown", self.path)
-        return os.path.join(self.folder, "example.md")
-
-    def test_form_fails_until_example_copies_the_source_and_its_figures(self):
-        example = self.sourced()
-        code, _, err = ran("form", self.path)
-        self.assertEqual(code, 1)
-        self.assertIn(f"practices.py: {self.path}: {example} is not a copy of its source", err)
-        self.assertIn("; run practices.py example", err)
-        self.assertEqual(ran("example", self.path), (0, "", ""))
-        self.assertEqual(self.read(example), "![A](images/a.svg) [b](../doc/b.md)\n")
-        self.assertEqual(self.read(os.path.join(self.folder, "images", "a.svg")), "<svg/>")
-        self.assertEqual(ran("form", self.path), (0, "", ""))
-
-    def test_form_fails_on_a_copy_or_figure_changed_by_hand(self):
-        example = self.sourced()
-        ran("example", self.path)
-        figure = os.path.join(self.folder, "images", "a.svg")
-        cuts = [(f, lambda text: "changed") for f in (example, figure)]
-        cuts += [(f, lambda text: text[:-1]) for f in (example, figure)]
-        for changed, cut in cuts:
-            with self.subTest(changed=changed, cut=cut("ab")):
-                ran("example", self.path)
-                self.write(changed, cut(self.read(changed)))
-                code, _, err = ran("form", self.path)
-                self.assertEqual(code, 1)
-                self.assertIn(
-                    f"{changed} is not a copy of its source; run practices.py example", err
-                )
-
-    def test_a_source_or_figure_not_there_is_named(self):
-        self.sourced()
-        os.remove(os.path.join(self.base, "doc", "images", "a.svg"))
-        for command in ("form", "example"):
-            with self.subTest(command=command):
-                code, _, err = ran(command, self.path)
-                self.assertEqual(code, 1)
-                self.assertIn("a.svg, which its example copies, is not there", err)
-
-    def test_a_source_with_no_example_to_copy_to_is_named(self):
-        self.write_json(self.path, dict(DATA, source="../doc/source.md"))
-        ran("markdown", self.path)
-        for command in ("form", "example"):
-            with self.subTest(command=command):
-                code, _, err = ran(command, self.path)
-                self.assertEqual(code, 1)
-                self.assertIn("its source ../doc/source.md has no example to be copied to", err)
-
-    def test_form_fails_on_a_figure_left_from_an_old_source_until_example_removes_it(self):
-        self.sourced()
-        ran("example", self.path)
-        old = os.path.join(self.folder, "images", "old.svg")
-        self.write(old, "<svg/>")
+        stray = os.path.join(self.folder, "notes.md")
+        self.write(stray, "n")
         code, _, err = ran("form", self.path)
         self.assertEqual(code, 1)
         self.assertIn(
-            f"practices.py: {self.path}: {old} is neither the template's nor the example's;"
-            " run practices.py example",
+            f"practices.py: {self.path}: {stray} is neither the best practice's nor its"
+            " template's; remove it",
             err,
-        )
-        self.assertEqual(ran("example", self.path), (0, "", ""))
-        self.assertFalse(os.path.exists(old))
-        self.assertEqual(ran("form", self.path), (0, "", ""))
-
-    def test_form_says_to_remove_a_leftover_where_no_source_makes_the_example(self):
-        ran("markdown", self.path)
-        stray = os.path.join(self.folder, "notes.md")
-        self.write(stray, "n")
-        code, _, err = ran("form", self.path)
-        self.assertEqual(code, 1)
-        self.assertIn(f"{stray} is neither the template's nor the example's; remove it", err)
-
-    def test_example_leaves_every_file_where_the_source_cannot_be_copied(self):
-        self.sourced()
-        stray = os.path.join(self.folder, "notes.md")
-        self.write(stray, "n")
-        os.remove(os.path.join(self.base, "doc", "source.md"))
-        self.assertEqual(ran("example", self.path)[0], 1)
-        self.assertTrue(os.path.exists(stray))
-
-    def test_example_names_a_best_practice_with_no_source(self):
-        code, _, err = ran("example", self.path)
-        self.assertEqual(code, 1)
-        self.assertIn(
-            f"practices.py: {self.path}: it names no source to copy its example from", err
         )
 
     def test_each_command_names_a_json_it_cannot_read(self):
         self.write(self.path, "{")
-        for command in ("form", "markdown", "example"):
+        for command in ("form", "markdown"):
             with self.subTest(command=command):
                 code, _, err = ran(command, self.path)
                 self.assertEqual(code, 1)
@@ -1138,7 +913,7 @@ class Practices(helpers.FolderTest):
         self.assertIn(f"practices.py: {gone}: there is no file {gone}", err)
 
     def test_a_command_it_does_not_take_gives_2_with_its_usage(self):
-        # When: practices.py gets a command that is none of form, markdown, and example.
+        # When: practices.py gets a command that is neither form nor markdown.
         code, _, err = ran("check", self.path)
         # Then: it gives 2, and says what it takes.
         self.assertEqual((code, err), (2, practices.USAGE + "\n"))
@@ -1148,30 +923,6 @@ class Practices(helpers.FolderTest):
         code, _, err = ran("form")
         # Then: it gives 2, and says what it takes.
         self.assertEqual((code, err), (2, practices.USAGE + "\n"))
-
-
-class ReachedTest(unittest.TestCase):
-    """A link from a plugin to a file outside it goes to the file's page on the web, as Claude Code
-    installs only the plugin's folder."""
-
-    def setUp(self):
-        here = os.getcwd()
-        os.chdir(helpers.TOP)
-        self.addCleanup(os.chdir, here)
-
-    def test_a_file_outside_the_plugin_by_its_page_on_the_web(self):
-        link = practices.reached("plugins/rn/a/example.md", "../../../dev/rn/b.md")
-        self.assertEqual(link, practices.WEB + "dev/rn/b.md")
-
-    def test_a_file_inside_the_plugin_by_its_path(self):
-        self.assertEqual(practices.reached("plugins/rn/a/example.md", "../b.md"), "../b.md")
-
-    def test_a_file_outside_any_plugin_by_its_path(self):
-        self.assertEqual(practices.reached("dev/rn/a.md", "../lane/b.md"), "../lane/b.md")
-
-    def test_the_source_named_outside_the_plugin_from_the_folder_of_the_best_practice(self):
-        path = "plugins/rn/domain/best-practices/architecture/best-practice.json"
-        self.assertEqual(practices.loaded(path)["source"], "../../../../../dev/rn/architecture.md")
 
 
 if __name__ == "__main__":

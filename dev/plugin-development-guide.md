@@ -314,8 +314,8 @@ how its parts relate: a part that belongs to one other sits inside it, and a par
 others rest on is named by its path or ID, as a design tree names each deliverable's inputs. After
 the AI changes a part, a script lists the parts that the change touches, and the AI reads each, as
 [the design tree best practice](../plugins/rn/domain/best-practices/design-tree/best-practice.md)
-asks after a change to a node. A file that shows the form of a deliverable, such as a template or
-an example, is in the deliverable's own format.
+asks after a change to a node. A file that shows the form of a deliverable, such as a template, is
+in the deliverable's own format.
 
 *When*: every plugin.
 
