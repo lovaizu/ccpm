@@ -14,13 +14,25 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open the architecture's user stories whose sequences the role takes part in, and write down several requests that the prompt is for, each in a user's own words, from the way the story's role meets the product, such as `turn issue 12 into a plan`. Then write down several near requests that it isn't for, each from a story that another part carries.",
+        "text": "Open the architecture, and find the component that the prompt carries out: its line in Components, and its file in Directory structure, such as `agents/planner.md`. This best practice calls it the prompt's component, and the person of a user story the story's role, as the architecture does.",
         "trace": {
          "action": "read",
          "takes": [
           "{inputs}"
          ]
         }
+       },
+       {
+        "at": "decide",
+        "text": "Open the user stories whose sequences the prompt's component takes part in, and write down several requests that the prompt is for, each in a user's own words, from the way the story's role meets the product, such as `turn issue 12 into a plan`."
+       },
+       {
+        "at": "decide",
+        "text": "Write down several near requests that the prompt isn't for, each from a user story that another component carries, in a user's own words."
+       },
+       {
+        "at": "make",
+        "text": "Write the prompt's name: the name of its file in Directory structure without the extension, such as `planner` for `agents/planner.md`. Where Directory structure gives no file, name it by what it does, in lowercase words joined by hyphens, such as `processing-pdfs`."
        },
        {
         "at": "make",
@@ -40,15 +52,15 @@
       "id": "N2",
       "about": "Description, Goal",
       "what": "Does the body do exactly the task that the description says, which the architecture gives the role?",
-      "why": "The caller gets what the description promised, and the product gets what the architecture gives the role, only if the body does that same task.",
+      "why": "The caller gets what the description promised, and the product gets what the architecture gives the prompt's component, only if the body does that same task.",
       "items": [
        {
         "at": "decide",
-        "text": "Take the task from the architecture: the role's line in Components, which says what the role alone decides, and each arrow from or to the role in Sequences, which says each step it takes and the data it hands on."
+        "text": "Take the task from the architecture: the line in Components of the prompt's component, the role that this question names, which says what the component alone decides, and each arrow from or to the component in Sequences, which says each step it takes and the data it hands on."
        },
        {
         "at": "make",
-        "text": "Compare what the description says the prompt does with what the goal and the steps have the AI do. For each thing that's in one and not the other, add it to the body or take it out of the description."
+        "text": "Hold the description and the body each against the task that N2.1 took. Where the description says what the task holds and the body doesn't do it, add it to the body. Where the description says what lies outside the task, cut it from the description, and where the body does what lies outside the task, cut it from the body."
        }
       ]
      }
@@ -66,7 +78,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Write what the task is for in one sentence: whom the result serves, the role of each user story whose sequence the role takes part in, and what they gain by it, the story's benefit, such as `so that the developer gets a plan they can approve in one reading`."
+        "text": "Write what the task is for in one sentence: whom the result serves, the story's role of each user story whose sequence the prompt's component takes part in, and what they gain by it, the story's benefit, such as `so that the developer gets a plan they can approve in one reading`."
        },
        {
         "at": "decide",
@@ -90,7 +102,11 @@
       "items": [
        {
         "at": "decide",
-        "text": "For each step, list the facts it needs. Take its inputs and where they lie from the arrows to the role in the architecture's Sequences and from its Directory structure, and the terms it uses from the data model. Take the rules of the place from the architecture's Principles and the rules they build on, such as the one folder a role writes in. Add what the writer knows without saying, such as a decision made in a meeting."
+        "text": "For each step, list the facts it needs. Take its inputs and where they lie from the arrows to the prompt's component in the architecture's Sequences and from its Directory structure, and the terms it uses from the data model. Take the rules of the place from the architecture's Principles and the rules they build on, such as the one folder a component writes in."
+       },
+       {
+        "at": "decide",
+        "text": "Add each decision of your cut that the steps turn on and the architecture doesn't hold, such as a limit that the user set on what the prompt may change. Where a step needs a fact that neither the architecture, your cut, nor the repository gives, such as which branch the prompt may push to, end with `asks`, naming the fact and your recommendation, since a fact only the user holds becomes a guess when the prompt leaves it out."
        },
        {
         "at": "decide",
@@ -112,7 +128,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Go through the steps that the role's arrows in the architecture's Sequences give it, and ask of each whether an AI that holds the goal, as N3.1 wrote it, would know how to reach the step's result. Write a step only where it wouldn't, such as a check to run or a form to keep, and leave the rest to the AI."
+        "text": "Go through the steps that the arrows of the prompt's component in the architecture's Sequences give it, and ask of each whether an AI that holds the goal, as N3.1 wrote it, would know how to reach the step's result. Write a step only where it wouldn't, such as a check to run or a form to keep, and leave the rest to the AI."
        },
        {
         "at": "decide",
@@ -168,11 +184,11 @@
       "items": [
        {
         "at": "decide",
-        "text": "Go through the steps, and each branch and each question to the role in the architecture's Sequences, and mark each choice that's the user's: each action that's hard to undo, touches what others share, or destroys something, as the list in Anthropic's [prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices#balancing-autonomy-and-safety) gives, such as a force push, a comment on a pull request, or deleting a branch, and each choice between options that serve the purpose equally, where the AI has no ground to pick one. Leave every other choice to the AI."
+        "text": "Go through the steps, and each branch and each question put to the story's role in the architecture's Sequences, and mark each choice that's the user's: each action that's hard to undo, touches what others share, or destroys something, as the list in Anthropic's [prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices#balancing-autonomy-and-safety) gives, such as a force push, a comment on a pull request, or deleting a branch, and each choice between options that serve the purpose equally, where the AI has no ground to pick one. Leave every other choice to the AI."
        },
        {
         "at": "make",
-        "text": "Name each of the user's choices in the step where it comes, with how it reaches the user. A role that runs as a subagent can't talk to the person, so it ends with the result that Sequences give for a question to its caller, with the point, the options, and its recommendation, such as `End with asks, naming the branch to push and your recommendation.` A role that runs in the main conversation asks the person in a message, as N14 says, one choice at a time."
+        "text": "Name each of the user's choices in the step where it comes, with how it reaches the user. A prompt that runs as a subagent can't talk to the person, so it ends with the result that Sequences give for a question to its caller, with the point, the options, and its recommendation, such as `End with asks, naming the branch to push and your recommendation.` A prompt that runs in the main conversation asks the person in a message, as N14 says, one choice at a time."
        }
       ]
      },
@@ -206,7 +222,11 @@
       "items": [
        {
         "at": "decide",
-        "text": "Read each step and ask whether it has one right result, such as a check or a file's form. If it does, give it to a program that gives that result on every run and handles its own errors, and have the AI run it."
+        "text": "Read each step and ask whether it has one right result, such as a check or a file's form. For each that does, look in the architecture's Components for a program that gives that result, such as the product's own check, and take its path from Directory structure."
+       },
+       {
+        "at": "make",
+        "text": "Have each such step run its program by that path. Where Components holds no program for it and the deliverable is a folder that holds scripts, such as a skill's, write one there that gives the result on every run and handles its own errors, such as `scripts/validate.py`. Where the deliverable can't hold it, end with `asks`, naming the step and the program it needs, since a part that the architecture lacks is a decision of the architecture."
        }
       ]
      },
@@ -238,7 +258,7 @@
        },
        {
         "at": "decide",
-        "text": "Where a tool it needs can also act outside the task, such as writing where the task only reads, add a rule that the host enforces: a deny rule where a permission pattern names the action, such as `Edit(./docs/**)`, or else a hook, as N12 says."
+        "text": "Where a tool it needs can also act outside the task, such as writing where the task only reads, add a rule that the host enforces: a deny rule where a permission pattern names the action, such as `Edit(./docs/**)`, in `permissions.deny` of the settings file that the architecture's Directory structure gives the host, such as `.claude/settings.json`, or else a hook, as N12 says. A prompt that ships in a plugin holds such a rule by a hook, since a plugin's files carry no permission rules."
        }
       ]
      },
@@ -254,7 +274,11 @@
        },
        {
         "at": "decide",
-        "text": "Hold each such rule with a deny rule where it limits what the AI may read, write, or run, and a permission pattern names it, such as `Read(./.env)`, since a deny rule holds in every permission mode. Hold it with a command [hook](https://code.claude.com/docs/en/hooks) where it's a step that must happen, or where it turns on more than a pattern names, such as a write allowed only into the run's own file."
+        "text": "Hold each such rule with a deny rule where it limits what the AI may read, write, or run, and a permission pattern names it, such as `Read(./.env)`, since a deny rule holds in every permission mode. Write it in the settings file of N11.2. Hold it with a command [hook](https://code.claude.com/docs/en/hooks) where it's a step that must happen, where it turns on more than a pattern names, such as a write allowed only into the run's own file, or where the prompt ships in a plugin, as N11.2 says."
+       },
+       {
+        "at": "make",
+        "text": "For each rule that a hook holds, look in the architecture's Components for a hook that holds such rules, such as a guard, and add the rule to it by the path Directory structure gives. Where Components holds none and the deliverable is a folder that holds a hooks file, such as a plugin's `hooks/hooks.json`, write the hook there. Where the deliverable can't hold it, end with `asks`, naming the rule and the hook it needs, as for a program in N9.2."
        },
        {
         "at": "make",
@@ -276,11 +300,11 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open each sequence that the role takes part in, and name the caller: the one whose arrow starts the role and who gets its answer. Write what the caller does with the result at its next arrow."
+        "text": "Open each sequence that the prompt's component takes part in, and name the caller: the one whose arrow starts the component and who gets its answer. Write what the caller does with the result at its next arrow."
        },
        {
         "at": "decide",
-        "text": "Take what comes back from the arrow where the role answers the caller, with the data as the data model names it."
+        "text": "Take what comes back from the arrow where the component answers the caller, with the data as the data model names it."
        },
        {
         "at": "decide",
@@ -303,28 +327,28 @@
       "why": "The person approves from the conclusion and its grounds, and reads further only where these leave them unsure. The [inverted pyramid](https://www.nngroup.com/articles/inverted-pyramid/) puts the conclusion first.",
       "items": [
        {
-        "at": "make",
-        "text": "Write each message in a few plain sentences with no headings or labels, in short paragraphs of one point each."
+        "at": "decide",
+        "text": "From N7.1 and N13.4, list each message that the prompt has its AI write to a person: each of the user's choices that it asks in the main conversation, and each result that a person reads. Where it writes none, such as a subagent whose result a script reads, leave the prompt as it is."
        },
        {
         "at": "make",
-        "text": "Put first the context and the conclusion, what the message asks or reports and why, then the grounds, then the purpose and what it should be, and keep the rest until the person asks for it."
+        "text": "In the prompt's Output section, write the order of each message, with its reason: first the context and the conclusion, what the message asks or reports and why, then the grounds, then the purpose and what it should be, and the rest only once the person asks, since the person decides from the first lines."
        },
        {
         "at": "make",
-        "text": "Use the words the person uses, and say a term of your own in everyday words or leave it out."
+        "text": "In the Output section, write the form of each message: a few plain sentences with no headings or labels, in short paragraphs of one point each."
        },
        {
         "at": "make",
-        "text": "Put what the person is to decide alone on the last line, with one recommendation."
+        "text": "In the Output section, write the terms that the person uses, taken from the user stories and the README, and that the AI says a term of its own in everyday words or leaves it out."
        },
        {
         "at": "make",
-        "text": "Ask for one decision in each message."
+        "text": "In the Output section, write that each message asks for one decision, alone on its last line, with one recommendation, such as `End with the one choice you need, and the option you recommend.`"
        },
        {
         "at": "make",
-        "text": "Where the person asks for more, add the current state, with the place it rests on, and the gap between that and what it should be."
+        "text": "In the Output section, write what the AI adds where the person asks for more: the current state, with the place it rests on, and the gap between that and what it should be."
        }
       ]
      },
@@ -335,24 +359,28 @@
       "why": "The caller can't tell a claim that the AI checked from one it guessed, and acts on both alike, so Anthropic's [prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices#minimizing-hallucinations-in-agentic-coding) have the AI open what a claim rests on before it makes the claim.",
       "items": [
        {
-        "at": "make",
-        "text": "Check each claim on the real thing before reporting it: read the file, run the check, open the record. Base it on none of memory, a guess, or another agent's summary."
+        "at": "decide",
+        "text": "From N13.3's list, take each claim that the AI reports, and name the check on the real thing that it rests on: the file to read, the command to run, or the record to open, a command that comes back pass or fail where the product has one, such as check.sh's exit code for `the checks pass`."
        },
        {
         "at": "make",
-        "text": "Judge a check by a result that comes back pass or fail, such as a command's exit code, not by a few lines of its output."
+        "text": "In the step that makes each claim, write its check from N15.1 for the AI to run before it reports the claim, with the reason, such as `Run check.sh before you report that the checks pass, since the caller acts on the report as checked.` Write that no claim rests on memory, a guess, or another agent's summary."
        },
        {
         "at": "make",
-        "text": "Judge another agent's work from the records and files it names, against the task's purpose, not from its summary."
+        "text": "Where a check is a command, write that the AI judges it by its pass or fail result, such as the exit code, not by a few lines of its output."
        },
        {
         "at": "make",
-        "text": "Check every item that the claim names, not a sample."
+        "text": "Where the AI reports on another agent's work, write that it opens the records and files that the agent names, and judges them against the task's purpose, not from the agent's summary."
        },
        {
         "at": "make",
-        "text": "Say what the AI checked and what it didn't, and why, so that the report never reads as covering more than it did."
+        "text": "Where a claim names several items, such as every file changed, write that the AI checks each one, not a sample."
+       },
+       {
+        "at": "make",
+        "text": "In the Output section, write that the AI states what it checked, what it didn't, and why, so that the report never reads as covering more than it did."
        }
       ]
      }
@@ -370,11 +398,27 @@
       "items": [
        {
         "at": "make",
-        "text": "Run each case of the prompt, in the folders that the architecture's Test strategy names for its test cases, k times on the model its users run, with the k that Test strategy sets. A rule that must hold on every run rests on a hook, as N12 says, so the unit tests try the rest."
+        "text": "Run each case of the prompt once, in the folders that the architecture's Test strategy names for its test cases, on the model its users run, with the test's parts as they stand, and keep the record of the run beside the case, such as the JSON lines that `claude -p --output-format stream-json --verbose` writes. Nothing relies on its result yet: it's the first record, on which N17 checks the test's parts.",
+        "trace": {
+         "action": "run",
+         "takes": [
+          "{case}"
+         ]
+        }
        },
        {
         "at": "make",
-        "text": "Open the record of each run, as the test's runner keeps it, such as the JSON lines that `claude -p --output-format stream-json --verbose` writes, and check from what the AI did, not from its last message, that every run reached the result."
+        "text": "Once each part of the test gives the right result on the kept records, as N17.2 to N17.7 check it, run each case k times on the model its users run, with the k that Test strategy sets. A rule that must hold on every run rests on a hook, as N12 says, so the unit tests try the rest.",
+        "trace": {
+         "action": "run",
+         "takes": [
+          "{tests}"
+         ]
+        }
+       },
+       {
+        "at": "make",
+        "text": "Open the record of each run, and check from what the AI did, not from its last message, that every run reached the result."
        },
        {
         "at": "make",
@@ -398,15 +442,27 @@
        },
        {
         "at": "make",
-        "text": "Build each part of the test alone, test first, and run it on a record kept from an earlier run, such as the JSON lines of one run saved beside the test, before any whole run relies on it, so that a whole run only confirms, and a failure in it points to the prompt."
+        "text": "Build each check by code alone, test first, and run it on the first records that N16.1 kept, before any whole run relies on it, so that a whole run only confirms, and a failure in it points to the prompt."
        },
        {
         "at": "make",
-        "text": "Give each judge one point, its definitions, and a pass or fail result. Run it on messages of each kind, kept from earlier runs, that the maintainer has marked pass or fail, and use it only once it gives each message the maintainer's mark."
+        "text": "Give each judge one point, its definitions, and a pass or fail result."
        },
        {
         "at": "make",
-        "text": "Give the stand-in for the person only their intent, which the test case gives and the prompt never gets, and the whole of each message it answers. Run it on conversations kept from earlier runs, and check that each answer comes from the intent alone and invents nothing."
+        "text": "Where a judge has no messages that the maintainer has marked, end with `asks`, handing the maintainer the messages of its point from the first records, each with the mark you'd give it, since only the maintainer's marks say what passes. Their marks come back as the person's words when you're resumed."
+       },
+       {
+        "at": "make",
+        "text": "Run each judge on the marked messages, and use it only once it gives each message the maintainer's mark."
+       },
+       {
+        "at": "make",
+        "text": "Give the stand-in for the person only their intent, which the test case gives and the prompt never gets, and the whole of each message it answers."
+       },
+       {
+        "at": "make",
+        "text": "Read the stand-in's answers in the conversations of the first records, and check that each answer comes from the intent alone and invents nothing."
        },
        {
         "at": "make",
