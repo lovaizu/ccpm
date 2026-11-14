@@ -10,7 +10,7 @@
     - **N7** Does following the best practice put into the deliverable only the vital few, the things without which its users fail their goal? (the whole)
   - **C2** The generator meets every necessary condition in every deliverable.
     - **N4** Does the template place each necessary condition in a section, and give each slot a note on what it holds and in what form? (template)
-    - **N5** Does each practice give the steps that produce its condition's state, in the order that a practitioner who makes that kind of deliverable takes them on site, each an act on something at hand with the question to ask, the criterion for choosing where there are options, and one example, so that a reader of a step can say what they open next and what they do there? (why, items)
+    - **N5** Does each practice give the steps that produce its condition's state, in the order that a practitioner who makes that kind of deliverable takes them on site, each an act on something at hand with the question to ask, the criterion for choosing where there are options, and an example where the act alone would leave the reader unsure, so that a reader of a step can say what they open next and what they do there? (why, items)
   - **C3** Each deliverable stays consistent with the deliverables it builds on and the deliverables built on it.
     - **N6** Does the best practice name the kinds of deliverable that this kind builds on, with a condition that carries each of their vital few that its users need, and the kinds that must pass before work on it starts? (inputs, preconditions)
 
@@ -78,7 +78,7 @@ The template makes every deliverable of the kind hold each condition in the same
 
 ### N5
 
-Does each practice give the steps that produce its condition's state, in the order that a practitioner who makes that kind of deliverable takes them on site, each an act on something at hand with the question to ask, the criterion for choosing where there are options, and one example, so that a reader of a step can say what they open next and what they do there?
+Does each practice give the steps that produce its condition's state, in the order that a practitioner who makes that kind of deliverable takes them on site, each an act on something at hand with the question to ask, the criterion for choosing where there are options, and an example where the act alone would leave the reader unsure, so that a reader of a step can say what they open next and what they do there?
 
 A practice is the only place where the generator learns how to meet a condition well, and a theory, model, or standard in place of the steps, such as a list of quality characteristics, leaves each run to work out what to do in its own way. So a practice writes the acts that practitioners of the kind take, in the way the procedures page of the Google developer documentation style guide writes a procedure: one action for each step, and the step's place and goal stated before its action.
 
