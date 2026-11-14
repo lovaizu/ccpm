@@ -180,6 +180,22 @@
       "decisions": []
     },
     {
+      "name": "The guard places each hook event on its own run, start, and role in each state of Claude Code that the README's main use and rn bring about",
+      "path": "dev/lane/tests/integration/test_events_placed.py",
+      "kind": "specific",
+      "inputs": [
+        "dev/lane/architecture.md"
+      ],
+      "preconditions": [
+        "dev/lane/tests/integration/test_s5_run_in_order.py",
+        "dev/lane/tests/integration/test_s6_subagent_held.py"
+      ],
+      "status": "open",
+      "check": "the integration tests in dev/lane/tests/integration/test_events_placed.py pass, each seen to fail first",
+      "good": false,
+      "decisions": []
+    },
+    {
       "name": "A run that stopped goes on where it stopped, after /compact or in a new conversation",
       "path": "dev/lane/tests/integration/test_s7_run_picked_up.py",
       "kind": "specific",
@@ -256,6 +272,26 @@
       "decisions": []
     },
     {
+      "name": "Each principle of Lane's architecture holds where the parts keep it, and its test fails where the part that holds it is taken out",
+      "path": "dev/lane/tests/integration/test_principles.py",
+      "kind": "specific",
+      "inputs": [
+        "dev/lane/architecture.md"
+      ],
+      "preconditions": [
+        "dev/lane/tests/integration/test_s1_proposal.py",
+        "dev/lane/tests/integration/test_s2_person_approves.py",
+        "dev/lane/tests/integration/test_s3_ai_approves.py",
+        "dev/lane/tests/integration/test_s4_proposed_again.py",
+        "dev/lane/tests/integration/test_s7_run_picked_up.py",
+        "dev/lane/tests/integration/test_events_placed.py"
+      ],
+      "status": "open",
+      "check": "the integration tests in dev/lane/tests/integration/test_principles.py pass, each seen to fail first",
+      "good": false,
+      "decisions": []
+    },
+    {
       "name": "A plugin held by Lane runs as its maker designed it at the size of a real request, as the product vision's key results show",
       "path": "plugins/lane",
       "kind": "specific",
@@ -270,7 +306,9 @@
         "dev/lane/tests/integration/test_s1_proposal.py",
         "dev/lane/tests/integration/test_s2_person_approves.py",
         "dev/lane/tests/integration/test_s3_ai_approves.py",
-        "dev/lane/tests/integration/test_s4_proposed_again.py"
+        "dev/lane/tests/integration/test_s4_proposed_again.py",
+        "dev/lane/tests/integration/test_events_placed.py",
+        "dev/lane/tests/integration/test_principles.py"
       ],
       "status": "open",
       "check": "the E2E tests of the README's main use, judged from their records, show KR1.1 and KR1.2 of the product vision",
@@ -374,6 +412,21 @@
       "decisions": []
     },
     {
+      "name": "The user's /rn:up with a request gets the goal put to them, and each deliverable made in rounds until every necessary condition is good",
+      "path": "dev/rn/tests/integration/test_s1_request.py",
+      "kind": "specific",
+      "inputs": [
+        "dev/rn/architecture.md"
+      ],
+      "preconditions": [
+        "dev/rn/tests/integration/test_rn_walking_skeleton.py"
+      ],
+      "status": "open",
+      "check": "the integration tests in dev/rn/tests/integration/test_s1_request.py pass, each seen to fail first",
+      "good": false,
+      "decisions": []
+    },
+    {
       "name": "rn puts to the person only what's theirs, one point at a time, and goes on from their answer",
       "path": "dev/rn/tests/integration/test_s2_point.py",
       "kind": "specific",
@@ -449,6 +502,46 @@
       "decisions": []
     },
     {
+      "name": "Each component of rn's architecture makes each decision it alone holds, and hands each part the data the data model names",
+      "path": "dev/rn/tests/integration/test_rn_components.py",
+      "kind": "specific",
+      "inputs": [
+        "dev/rn/architecture.md"
+      ],
+      "preconditions": [
+        "dev/rn/tests/integration/test_s1_request.py",
+        "dev/rn/tests/integration/test_s2_point.py",
+        "dev/rn/tests/integration/test_s3_sign_off.py",
+        "dev/rn/tests/integration/test_s4_pause.py",
+        "dev/rn/tests/integration/test_s5_pick_up.py",
+        "dev/rn/tests/integration/test_s6_handed_over.py"
+      ],
+      "status": "open",
+      "check": "the integration tests in dev/rn/tests/integration/test_rn_components.py pass, each seen to fail first",
+      "good": false,
+      "decisions": []
+    },
+    {
+      "name": "Each principle of rn's architecture holds where the parts keep it, and its test fails where the part that holds it is taken out",
+      "path": "dev/rn/tests/integration/test_rn_principles.py",
+      "kind": "specific",
+      "inputs": [
+        "dev/rn/architecture.md"
+      ],
+      "preconditions": [
+        "dev/rn/tests/integration/test_s1_request.py",
+        "dev/rn/tests/integration/test_s2_point.py",
+        "dev/rn/tests/integration/test_s3_sign_off.py",
+        "dev/rn/tests/integration/test_s4_pause.py",
+        "dev/rn/tests/integration/test_s5_pick_up.py",
+        "dev/rn/tests/integration/test_s6_handed_over.py"
+      ],
+      "status": "open",
+      "check": "the integration tests in dev/rn/tests/integration/test_rn_principles.py pass, each seen to fail first",
+      "good": false,
+      "decisions": []
+    },
+    {
       "name": "rn gives the deliverable a person means at the size of a real request, as the product vision's key results show",
       "path": "plugins/rn",
       "kind": "specific",
@@ -461,7 +554,10 @@
         "dev/rn/tests/integration/test_s3_sign_off.py",
         "dev/rn/tests/integration/test_s4_pause.py",
         "dev/rn/tests/integration/test_s5_pick_up.py",
-        "dev/rn/tests/integration/test_s6_handed_over.py"
+        "dev/rn/tests/integration/test_s6_handed_over.py",
+        "dev/rn/tests/integration/test_s1_request.py",
+        "dev/rn/tests/integration/test_rn_components.py",
+        "dev/rn/tests/integration/test_rn_principles.py"
       ],
       "status": "open",
       "check": "the E2E tests of the README's main use, judged from their records, show KR1.1 and KR1.2 of the product vision",
