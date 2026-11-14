@@ -25,14 +25,27 @@ from domain.event import (
 from domain.guard import LET_THROUGH, decide, in_run, result_since, run_of, starts_from_main
 from domain.laid_set import START as MOVE_START
 from domain.laid_set import Lane, Move
-from domain.run_record import AI, PERSON, Called, Noted, Result, Run, Start, Tied, load
+from domain.run_record import (
+    AI,
+    PERSON,
+    TURN_ENDED,
+    Called,
+    Noted,
+    Result,
+    Run,
+    Start,
+    Tied,
+    load,
+)
 from lane_parts import (
     CARRY_OUT,
     PLUGIN_ROOT,
     REVIEWER_END,
+    REVIEWER_GAVE_GOOD,
     ROOT,
     RUN_ONLY,
     SESSION,
+    SKILL_STEP,
     WRITER_GAVE_WRITTEN,
     WRITER_RUNNING,
     command,
@@ -217,6 +230,30 @@ def test_the_turn_ending_while_a_start_is_due_and_none_runs_is_stopped_with_the_
     keep(temp, *WRITER_GAVE_WRITTEN)
     decided = decide(event(TURN_ENDS, message="Should I go on?"), laid_set(), PLUGIN_ROOT, temp)
     assert (decided.stop, decided.said) == (True, START_REVIEWER)
+
+
+@pytest.mark.supports("test_the_skills_own_result_where_a_move_starts_no_more_ends_the_run")
+def test_the_turn_ending_where_the_moves_start_no_more_and_no_result_came_is_stopped_with_the_step(
+    temp: str,
+):
+    """Given a Run whose move due starts no more, and whose skill gave no result
+    When the main conversation ends its turn
+    Then the guard stops the end, with the sentence of the skill's step 1, its plugin's folder in
+    place of `${CLAUDE_PLUGIN_ROOT}`"""
+    keep(temp, *REVIEWER_GAVE_GOOD)
+    decided = decide(event(TURN_ENDS, message="Done."), laid_set(), PLUGIN_ROOT, temp)
+    sentence = SKILL_STEP.replace("${CLAUDE_PLUGIN_ROOT}", PLUGIN_ROOT)
+    assert (decided.stop, decided.said) == (True, f"changelog: {sentence}")
+
+
+@pytest.mark.supports("test_the_skills_own_result_where_a_move_starts_no_more_ends_the_run")
+def test_the_turn_ending_after_the_skills_result_is_let_through_and_ends_its_last_turn(temp: str):
+    """Given a Run that the skill's Result `good` ended in the turn that goes on
+    When the main conversation ends its turn
+    Then the guard lets it end, and adds that the turn ended"""
+    keep(temp, *REVIEWER_GAVE_GOOD, Result("write", "good"))
+    assert decide(event(TURN_ENDS, message="Done."), laid_set(), PLUGIN_ROOT, temp) == LET_THROUGH
+    assert load(temp, "changelog", SESSION)[-1] == Noted(TURN_ENDED)
 
 
 @pytest.mark.supports(

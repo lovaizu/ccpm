@@ -30,13 +30,14 @@ from domain.fault import Fault
 from domain.laid_set import START as MOVE_START
 from domain.laid_set import LaidSet, Lane, lanes_of
 from domain.lanes import End, Where, check_call, check_end
-from domain.routes import due, may_end_turn, opens_start, stand
+from domain.routes import due, may_end_turn, no_more, opens_start, stand
 from domain.run_record import (
     ENDED,
     LAID,
     PERSON,
     PROMPTED,
     SHOWN,
+    TURN_ENDED,
     Called,
     Line,
     Noted,
@@ -234,8 +235,27 @@ def _ends(at: _At) -> Decision:
 def _turn_ends(at: _At) -> Decision:
     if at.laid_set.proposes:
         return LET_THROUGH
-    held = [run for run in at.runs() if not run.ended and not may_end_turn(run)]
-    return Decision(stop=True, said=_moves(at, held)) if held else LET_THROUGH
+    runs = [run for run in at.runs() if not run.aside and (not run.ended or run.ending)]
+    held = [run for run in runs if not run.ended and not may_end_turn(run)]
+    if held:
+        return Decision(stop=True, said=_moves(at, held))
+    for run in runs:
+        stopped = _skills_end(at, run)
+        if stopped is not None:
+            return stopped
+    if any(run.ending for run in runs):
+        at.keep(Noted(TURN_ENDED))
+    return LET_THROUGH
+
+
+def _skills_end(at: _At, run: Run) -> Decision | None:
+    """The stop of the main conversation's turn by the first Lane of the Run's skill that its end
+    breaks, None where it keeps each, the skill's result due once the moves start no more."""
+    given = next((r.result for r in reversed(run.results) if not r.agent), "")
+    end = End(run.skill, at.event.message, result=given, due=run.ended or no_more(run.moves))
+    where = Where(at.event.cwd, at.event.root)
+    lane, verdict = check_end(lanes_of(at.laid_set, run.skill), end, where)
+    return None if lane is None else _stopped(at, lane, verdict.may, verdict.printed)
 
 
 def _held(runs: Sequence[Run], agent: str) -> tuple[Run, Start]:

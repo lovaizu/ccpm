@@ -13,7 +13,7 @@ from claude_code import run_python
 from domain.laid_set import dumps
 from domain.run_record import add, load
 from lane_example import LANE
-from lane_parts import SESSION, WRITER_RUNNING, laid_set
+from lane_parts import REVIEWER_GAVE_GOOD, SESSION, WRITER_GAVE_WRITTEN, WRITER_RUNNING, laid_set
 
 
 @pytest.fixture
@@ -87,3 +87,24 @@ def test_arguments_other_than_a_role_and_a_result_exit_2_with_the_usage(plugin: 
     writer_runs(plugin)
     code, _, err = result(plugin, "writer")
     assert code == 2 and "usage" in err
+
+
+@pytest.mark.supports("test_the_skills_own_result_where_a_move_starts_no_more_ends_the_run")
+def test_the_skills_result_once_its_moves_start_no_more_exits_0(plugin: dict[str, str]):
+    """Given a Run whose reviewer gave `good`, so that the move starts no more
+    When `result.py write good` runs
+    Then it exits 0"""
+    for line in REVIEWER_GAVE_GOOD:
+        add(line, plugin["temp"], "changelog", SESSION)
+    assert result(plugin, "write", "good")[0] == 0
+
+
+@pytest.mark.supports("test_the_skills_own_result_ends_only_the_run_of_the_skill_it_names")
+def test_the_skills_result_while_a_start_is_due_exits_1_with_why(plugin: dict[str, str]):
+    """Given a Run whose writer gave `written`, so that reviewer's start is due
+    When `result.py write good` runs
+    Then it exits 1, saying that no run holds `write` now"""
+    for line in WRITER_GAVE_WRITTEN:
+        add(line, plugin["temp"], "changelog", SESSION)
+    code, out, err = result(plugin, "write", "good")
+    assert code == 1 and "holds write" in out + err

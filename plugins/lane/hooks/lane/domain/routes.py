@@ -17,6 +17,7 @@ from domain.run_record import (
     LAID,
     PROMPTED,
     SHOWN,
+    TURN_ENDED,
     Called,
     Line,
     Noted,
@@ -44,11 +45,11 @@ def stand(lines: Sequence[Line], laid_set: LaidSet, session: str) -> tuple[Run, 
     line names and running until a Noted line of that subagent's end; each Result of a subagent for
     the Start its tie names and of the main conversation for the skill it names, as its role; the
     moves open by the Routes of the Run's skill after its call, each Result, and each command typed
-    that a Route of its goes after; `aside` the other plugin's skill from a Noted CALLED line until
-    a later Start or resume of the Run, which makes a move of the Route after that call; and the Run
-    ended once a Route's one move starts no more, or
-    once a later call of its skill begins a new Run of it, as each call line does. Raises Fault as
-    `first` does."""
+    that a Route of its goes after, none after the moves start no more; `aside` the other plugin's
+    skill from a Noted CALLED line until a later Start or resume of the Run, which makes a move of
+    the Route after that call; and the Run ended once its skill gave its own Result, `ending` until
+    a Noted TURN_ENDED line, or once a later call of its skill begins a new Run of it, as each call
+    line does. Raises Fault as `first` does."""
     runs: list[Run] = []
     for line in lines:
         if isinstance(line, Called):
@@ -103,15 +104,26 @@ def _of_agent(runs: Sequence[Run], agent: str) -> tuple[Run, int] | None:
 
 
 def _gave(line: Result, laid_set: LaidSet, runs: list[Run]) -> None:
-    found = _of_agent(runs, line.agent) if line.agent else None
+    if not line.agent:
+        _skill_gave(line, runs)
+        return
+    found = _of_agent(runs, line.agent)
     if found is None:
         return
     run, place = found
     result = replace(line, start=run.starts[place].number)
     run.results.append(result)
     moves = after_result(routes_of(laid_set, run.skill), result)
-    run.moves.extend(moves)
-    run.ended = run.ended or no_more(moves)
+    if not no_more(run.moves):
+        run.moves.extend(moves)
+
+
+def _skill_gave(line: Result, runs: list[Run]) -> None:
+    """The skill's own Result, which ends the Run of the skill it names."""
+    run = _going_run(runs, line.role)
+    if run is not None:
+        run.results.append(line)
+        run.ended = run.ending = True
 
 
 def _noted(line: Noted, runs: list[Run]) -> None:
@@ -120,6 +132,10 @@ def _noted(line: Noted, runs: list[Run]) -> None:
         if found is not None:
             run, place = found
             run.starts[place] = replace(run.starts[place], running=False)
+        return
+    if line.what == TURN_ENDED:
+        for each in runs:
+            each.ending = False
         return
     run = next((each for each in reversed(runs) if not each.ended), None)
     if run is None:
@@ -189,10 +205,21 @@ def opens_resume(run: Run, agent: str) -> bool:
 
 def may_end_turn(run: Run) -> bool:
     """Whether the main conversation may end its turn in the Run: a move due is a wait or waits for
-    a command, a subagent of the Run runs, or no move is due."""
-    if not run.moves or any(s.running for s in run.starts):
+    a command, a subagent of the Run runs, no move is due, or the moves start no more, where the
+    Lanes of the skill hold the end until it gives its result."""
+    if not run.moves or no_more(run.moves) or any(s.running for s in run.starts):
         return True
     return any(m.kind == WAIT or m.waits_for for m in run.moves)
+
+
+def holds(run: Run, role: str) -> bool:
+    """Whether the Run goes on and takes a result of the role now: of a subagent of a Start of the
+    Run that runs, or of its skill once a move due starts no more, as only that move ends a Run."""
+    if run.ended:
+        return False
+    if run.skill == role:
+        return any(move.kind == NO_MORE for move in due(run.moves, ""))
+    return any(start.role == role and start.running for start in run.starts)
 
 
 def no_more(moves: Sequence[Move]) -> bool:

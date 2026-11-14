@@ -73,6 +73,15 @@ def test_an_end_with_no_result_fails():
     ).passes
 
 
+@pytest.mark.supports("test_the_main_conversation_may_stop_while_a_subagent_runs")
+def test_an_end_by_which_no_result_is_due_passes():
+    """Given a gives_result Lane of the skill `write` that takes `good`
+    When the skill's turn ends with no result given, while its Run's moves don't start no more
+    Then the end passes, as no result of the skill is due yet"""
+    end = End("write", "Writer is at work.", due=False)
+    assert LANE_TYPE.check_end(("good",), end, WHERE).passes
+
+
 @pytest.mark.supports("test_an_end_with_no_result_is_held_with_the_sentence_of_the_last_step")
 def test_an_end_after_a_result_it_doesnt_take_fails():
     """Given a gives_result Lane of reviewer that takes `more` and `good`

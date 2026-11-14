@@ -14,7 +14,7 @@ from domain import run_record
 from domain.fault import Fault
 from domain.laid_set import load
 from domain.results import may_give
-from domain.routes import stand
+from domain.routes import holds, stand
 
 USAGE = "usage: result.py <role> <result>"
 
@@ -25,8 +25,8 @@ _PLUGIN_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(_
 def main(argv: list[str], environ: Mapping[str, str]) -> tuple[int, str, str]:
     """The exit code, stdout, and stderr of `result.py <role> <result>`: 0 and the result given,
     where the laid set of the plugin that holds this script lets the role give it, and a Run of the
-    conversation that goes on holds the role, as the skill of the Run or the role of a Start that
-    runs, each Run as `routes.stand`, the guard's code, works it out from the run record; 1 with the
+    conversation holds the role now, as `routes.holds` says of each Run that `routes.stand`, the
+    guard's code, works out from the run record; 1 with the
     results that the role may give where it may give no such result, or with why where no such Run
     holds the role; 2 with the usage where the arguments aren't a role and a result. It writes
     nothing to the run record."""
@@ -47,16 +47,10 @@ def main(argv: list[str], environ: Mapping[str, str]) -> tuple[int, str, str]:
         runs = stand(lines, laid_set, session)
     except Fault as fault:
         return 1, "", f"result.py: {fault}\n"
-    if not any(_holds(run, role) for run in runs):
+    if not any(holds(run, role) for run in runs):
         why = f"no run of {laid_set.plugin} in this conversation holds {role} now"
         return 1, "", f"result.py: {why}, so it takes no result of {role}.\n"
     return 0, f"{result}\n", ""
-
-
-def _holds(run: run_record.Run, role: str) -> bool:
-    """Whether the Run goes on and holds the role, as its skill or the role of a Start that runs."""
-    started = any(start.role == role and start.running for start in run.starts)
-    return not run.ended and (run.skill == role or started)
 
 
 if __name__ == "__main__":

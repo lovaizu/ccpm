@@ -119,6 +119,15 @@ WRITER_GAVE_WRITTEN: tuple[Line, ...] = (
     Result("writer", "written", "a1"),
     Noted("ended", "a1", "completed"),
 )
+# And once the main conversation started reviewer, subagent `a2`, which gave `good` and ended, so
+# that the move starts no more.
+REVIEWER_GAVE_GOOD: tuple[Line, ...] = (
+    *WRITER_GAVE_WRITTEN,
+    Start(2, "reviewer", CARRY_OUT, skill="write"),
+    Tied(2, "a2"),
+    Result("reviewer", "good", "a2"),
+    Noted("ended", "a2", "completed"),
+)
 
 
 def keep(temp: str, *lines: Line) -> None:

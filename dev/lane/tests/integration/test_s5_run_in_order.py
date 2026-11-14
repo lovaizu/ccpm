@@ -85,7 +85,6 @@ def test_the_command_gives_the_first_start_and_each_result_gives_the_next_until_
     )
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S5", "guard", "Run", "result.py")
 def test_the_skills_own_result_where_a_move_starts_no_more_ends_the_run(
     run: Conversation, laid: Repo

@@ -44,14 +44,17 @@ class Where:
 @dataclass(frozen=True)
 class End:
     """An end of a role: the role, its last message, the run values of its Start, the Result it
-    gave since its Start, "" for none, and each line that a command of its Lanes printed since its
-    Start or resume."""
+    gave since its Start, "" for none, each line that a command of its Lanes printed since its
+    Start or resume, and `due`, whether a result of the role is due by this end: always at a
+    subagent's end, and at the end of the skill's turn only where its Run's moves start no more or
+    the skill gave its result."""
 
     role: str
     message: str
     values: Mapping[str, str] = field(default_factory=dict)
     result: str = ""
     printed: tuple[str, ...] = ()
+    due: bool = True
 
 
 class LaneType(Protocol):

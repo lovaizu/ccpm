@@ -10,7 +10,16 @@ import os
 
 import pytest
 from claude_code import Conversation
-from lane_example import PROPOSAL, Repo, gives, id_of, propose, starts, write_command
+from lane_example import (
+    PROPOSAL,
+    Repo,
+    gives,
+    id_of,
+    propose,
+    result_command,
+    starts,
+    write_command,
+)
 
 START_WRITER = "changelog: Start `changelog:writer` with `Carry out your steps`."
 
@@ -63,10 +72,10 @@ def test_after_a_persons_lane_up_the_run_starts_each_subagent_and_ends_on_the_la
     /reload-plugins
     When the person types `/changelog:write`, the main conversation starts each subagent that
     Lane names, writer gives `written`, and reviewer gives `good`, and the main conversation then
-    ends its turn
+    runs the command its step 1 names, `result.py write good`, and ends its turn
     Then Lane names writer's start, then reviewer's after `written`, and `Start no more
-    subagents.` after `good`, as the walkthrough shows, and the turn ends unheld, as the run
-    ended"""
+    subagents.` after `good`, as the walkthrough shows, and the turn ends unheld, as the skill's
+    result ended the run"""
     laid_by_person(up, repo)
     typed = up.type("/changelog:write")
     _, writer = starts(up, "writer")
@@ -75,6 +84,7 @@ def test_after_a_persons_lane_up_the_run_starts_each_subagent_and_ends_on_the_la
     _, reviewer = starts(up, "reviewer")
     assert reviewer, "reviewer started"
     good = gives(repo, reviewer, "good")
+    up.bash(result_command(repo, "write", "good"))
     ended = up.stop("The entries are written and reviewed.")
     assert typed.said == START_WRITER
     assert written.said == (

@@ -11,6 +11,7 @@ from domain.routes import (
     after_result,
     due,
     first,
+    holds,
     may_end_turn,
     no_more,
     opens_call,
@@ -19,9 +20,10 @@ from domain.routes import (
     pick_up,
     stand,
 )
-from domain.run_record import CALLED, PERSON, Called, Noted, Result, Start, Tied
+from domain.run_record import CALLED, PERSON, TURN_ENDED, Called, Noted, Result, Start, Tied
 from lane_parts import (
     CARRY_OUT,
+    REVIEWER_GAVE_GOOD,
     ROUTES,
     SESSION,
     WRITER_GAVE_WRITTEN,
@@ -202,6 +204,14 @@ def test_the_turn_may_end_where_a_move_is_a_wait_or_waits_for_a_command():
 
 
 @pytest.mark.supports("test_the_skills_own_result_where_a_move_starts_no_more_ends_the_run")
+def test_the_turn_may_end_where_the_moves_start_no_more_as_the_skills_lanes_hold_its_end():
+    """Given a Run whose move due starts no more, and no subagent runs
+    When it's asked whether the turn may end
+    Then it may, as the Lanes of the skill hold the end until it gives its result"""
+    assert may_end_turn(run(moves=[Move(NO_MORE)]))
+
+
+@pytest.mark.supports("test_the_skills_own_result_where_a_move_starts_no_more_ends_the_run")
 def test_the_turn_may_end_where_no_move_is_due():
     """Given a Run with no move due
     When it's asked whether the turn may end
@@ -282,7 +292,8 @@ def test_the_lines_of_two_skills_give_a_run_of_each_holding_its_own_starts_and_r
     whose reviewer, a2, gave `more`
     When where they stand is worked out
     Then there are two Runs: `write`'s with writer's Start, running, and no move due, and
-    `review`'s with reviewer's Start and Result, ended by its Route after `more`"""
+    `review`'s with reviewer's Start and Result, and its Route after `more`, which starts no more,
+    due"""
     lines = (
         *WRITER_RUNNING,
         Called("review", PERSON),
@@ -295,10 +306,10 @@ def test_the_lines_of_two_skills_give_a_run_of_each_holding_its_own_starts_and_r
     assert [s.role for s in write.starts] == ["writer"] and write.starts[0].running
     assert (write.moves, write.ended) == ([], False)
     assert [s.role for s in review.starts] == ["reviewer"]
-    assert review.results == [Result("reviewer", "more", "a2", 2)] and review.ended
+    assert review.results == [Result("reviewer", "more", "a2", 2)]
+    assert review.moves == [Move(NO_MORE)]
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("test_the_skills_own_result_ends_only_the_run_of_the_skill_it_names")
 def test_the_main_conversations_result_moves_the_run_of_the_skill_it_names():
     """Given the lines of a Run of `write` whose reviewer's start is due, and of a Run of
@@ -309,6 +320,82 @@ def test_the_main_conversations_result_moves_the_run_of_the_skill_it_names():
     write, review = stand(lines, two_skills(), SESSION)
     assert review.ended and not write.ended
     assert write.moves == [Move(START, "reviewer")]
+
+
+@pytest.mark.supports("test_the_skills_own_result_where_a_move_starts_no_more_ends_the_run")
+def test_a_run_whose_route_starts_no_more_goes_on_until_the_skills_own_result():
+    """Given the lines of a Run of `write` whose reviewer, a2, gave `good`, so that the move starts
+    no more
+    When where it stands is worked out, before and after the main conversation's Result `good` of
+    `write`
+    Then it goes on with the move that starts no more due, and then it ended, in its last turn"""
+    (going,) = stand(REVIEWER_GAVE_GOOD, laid_set(), SESSION)
+    assert (going.ended, going.moves) == (False, [Move(NO_MORE)])
+    (ended,) = stand((*REVIEWER_GAVE_GOOD, Result("write", "good")), laid_set(), SESSION)
+    assert (ended.ended, ended.ending) == (True, True)
+    assert ended.results[-1] == Result("write", "good")
+
+
+@pytest.mark.supports(
+    "test_a_lane_of_the_skill_holds_its_turns_end_until_the_plugins_command_gives_0"
+)
+def test_a_run_that_its_skills_result_ended_leaves_its_last_turn_once_a_turn_ends():
+    """Given the lines of a Run of `write` that the main conversation's Result `good` ended
+    When where it stands is worked out after a line that the main conversation's turn ended
+    Then it ended, and its last turn is over"""
+    lines = (*WRITER_GAVE_WRITTEN, Result("write", "good"), Noted(TURN_ENDED))
+    (ended,) = stand(lines, laid_set(), SESSION)
+    assert (ended.ended, ended.ending) == (True, False)
+
+
+@pytest.mark.supports(
+    "test_a_command_that_a_route_goes_after_opens_its_moves_while_each_subagent_runs_on"
+)
+def test_a_result_after_the_moves_start_no_more_opens_no_move():
+    """Given the lines of a Run of `write` whose reviewer, a2, gave `good`, so that the move starts
+    no more, while writer, a3, runs
+    When where it stands is worked out after writer's `written`
+    Then the move that starts no more alone is due"""
+    lines = (
+        *WRITER_GAVE_WRITTEN,
+        Start(2, "reviewer", CARRY_OUT, skill="write"),
+        Tied(2, "a2"),
+        Start(3, "writer", CARRY_OUT, skill="write"),
+        Tied(3, "a3"),
+        Result("reviewer", "good", "a2"),
+        Result("writer", "written", "a3"),
+    )
+    (found,) = stand(lines, laid_set(), SESSION)
+    assert found.moves == [Move(NO_MORE)]
+
+
+@pytest.mark.supports(
+    "test_the_command_gives_the_first_start_and_each_result_gives_the_next_until_no_more"
+)
+def test_a_run_holds_the_role_of_a_start_that_runs_and_no_other():
+    """Given a Run in which writer runs
+    When it's asked whether the Run holds writer, and reviewer
+    Then it holds writer alone"""
+    given = run(starts=[Start(1, "writer", CARRY_OUT, agent="a1", running=True)])
+    assert holds(given, "writer") and not holds(given, "reviewer")
+
+
+@pytest.mark.supports("test_the_skills_own_result_where_a_move_starts_no_more_ends_the_run")
+def test_a_run_holds_its_skill_once_a_move_due_starts_no_more():
+    """Given a Run whose moves start writer or start no more, and one whose move starts reviewer
+    When it's asked of each whether it holds `write`, its skill
+    Then the first does, and the second doesn't"""
+    assert holds(run(moves=[Move(START, "writer"), Move(NO_MORE)]), "write")
+    assert not holds(writer_gave_written(), "write")
+
+
+@pytest.mark.supports("test_the_main_conversations_own_work_before_and_after_a_run_goes_unchecked")
+def test_a_run_that_ended_holds_no_role():
+    """Given a Run that ended, with writer still running
+    When it's asked whether it holds writer
+    Then it doesn't"""
+    given = run(starts=[Start(1, "writer", CARRY_OUT, agent="a1", running=True)], ended=True)
+    assert not holds(given, "writer")
 
 
 @pytest.mark.supports("test_the_kept_results_adapter_gets_the_words_typed_after_the_command")

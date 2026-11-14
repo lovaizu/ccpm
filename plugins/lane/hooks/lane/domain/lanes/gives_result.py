@@ -1,6 +1,7 @@
 """Decides the lane type gives_result: a role ends only once it gave one of the results it takes by
 running result.py, which the step that ends the role names, so that a reply never passes for a
-result, as the principle A result only from the result script says."""
+result, as the principle A result only from the result script says; the skill's turn ends freely
+until its result is due."""
 
 from __future__ import annotations
 
@@ -48,7 +49,7 @@ class GivesResult:
         return PASSES
 
     def check_end(self, takes: tuple[str, ...], end: End, where: Where) -> Verdict:
-        return PASSES if end.result in takes else Verdict(False)
+        return PASSES if end.result in takes or not end.due else Verdict(False)
 
 
 LANE_TYPE = GivesResult()
