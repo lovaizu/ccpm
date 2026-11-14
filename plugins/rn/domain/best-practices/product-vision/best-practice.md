@@ -26,12 +26,12 @@ Does Roles list every kind of person who comes to the product with a goal of the
 The developers build for the people Roles lists, so a missing role goes unserved, and two roles merged into one get a product that fits neither.
 
 1. *While deciding.* Find the job that the product exists to do in the goal and the decisions of your cut, and, where the repository already holds the product, in its README. Write it in one sentence as what the product gets done for the people who come to it, such as `turns a request into a deliverable that the people it's for can use`. Where none of these says it, ask the user what the product gets done, and for whom.
-2. *While deciding.* Name each kind of person who comes to the product for that job, by the job and not by a job title, such as `one who asks rn for a deliverable` in place of `developer`.
+2. *While deciding.* Name each kind of person who comes to the product for that job by the part of it they come to get done, not by a job title, such as `one who asks rn for a deliverable` in place of `developer`.
 3. *While deciding.* Ask whether that job gets done only if someone else also does a job with the product, such as an administrator who sets it up on a shared server for a team. Name each such person as a role as well.
 4. *While deciding.* For each person whose job the goal, the decisions, and what the product does leave unclear, ask the user `What does <person> come to the product to get done?`, with the job you'd guess as your recommendation.
 5. *While deciding.* Split a role where two of its members would count different results as their job done, such as a guest who browses a shop and a member who buys from it.
-6. *While deciding.* Name the role `user` where there's only one.
-7. *While making.* Read Roles as a developer would, and check that each role has a job that no other role has. Where two roles share a job, merge them.
+6. *While deciding.* Merge two roles where their members would count the same result as their job done, such as a new customer and a returning customer who both buy from a shop.
+7. *While deciding.* Name the role `user` where there's only one.
 
 ### N2
 
@@ -72,10 +72,11 @@ Are the objectives distinct, so that each piece of work serves one of them?
 
 The developers decide what to build by asking which objective a piece of work serves, which works only where each piece serves one objective.
 
-1. *While deciding.* List each piece of work the product plans that the decisions of your cut name. Where the repository already holds the product, add each of its open issues and each feature its README names. Where none of these lists any work, ask the user what the product is to do next.
-2. *While deciding.* For each piece of work, name the objective it serves, such as `O1` for `ask the user only what the best practice doesn't settle`.
-3. *While deciding.* For each pair of objectives, ask whether a piece of work could serve one without the other. If no piece could, merge the two.
-4. *While deciding.* For each piece that serves no objective, ask the user `Is <piece> not needed, or does it serve an end that no objective names?`, with the answer you'd give as your recommendation, and add the objective where it shows one missing.
+1. *While deciding.* Once each role has its objectives, and before you write any key result, list each piece of work the product plans that the decisions of your cut name. Where the repository already holds the product, add each of its open issues and each feature its README names. Where none of these lists any work, ask the user what the product is to do next.
+2. *While deciding.* For each piece of work, name each objective it serves, such as `O1` for `ask the user only what the best practice doesn't settle`.
+3. *While deciding.* For each pair of objectives, ask whether a piece of work could serve one without the other. If no piece could, merge the two into one objective, and name it in place of either wherever a piece names one of them.
+4. *While deciding.* For each piece that still names more than one objective, split it into parts that each serve one, such as `search and checkout` into `search` for the guest's objective and `checkout` for the member's. Where it doesn't split, name only the objective whose role would miss it most, such as the guest's for a faster first page, which a guest meets on every visit and a member once before checkout.
+5. *While deciding.* For each piece that serves no objective, ask the user `Is <piece> not needed, or does it serve an end that no objective names?`, with the answer you'd give as your recommendation, and add the objective where it shows one missing.
 
 ### N6
 

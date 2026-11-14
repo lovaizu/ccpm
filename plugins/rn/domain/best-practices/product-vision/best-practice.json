@@ -18,7 +18,7 @@
        },
        {
         "at": "decide",
-        "text": "Name each kind of person who comes to the product for that job, by the job and not by a job title, such as `one who asks rn for a deliverable` in place of `developer`."
+        "text": "Name each kind of person who comes to the product for that job by the part of it they come to get done, not by a job title, such as `one who asks rn for a deliverable` in place of `developer`."
        },
        {
         "at": "decide",
@@ -34,11 +34,11 @@
        },
        {
         "at": "decide",
-        "text": "Name the role `user` where there's only one."
+        "text": "Merge two roles where their members would count the same result as their job done, such as a new customer and a returning customer who both buy from a shop."
        },
        {
-        "at": "make",
-        "text": "Read Roles as a developer would, and check that each role has a job that no other role has. Where two roles share a job, merge them."
+        "at": "decide",
+        "text": "Name the role `user` where there's only one."
        }
       ]
      },
@@ -128,15 +128,19 @@
       "items": [
        {
         "at": "decide",
-        "text": "List each piece of work the product plans that the decisions of your cut name. Where the repository already holds the product, add each of its open issues and each feature its README names. Where none of these lists any work, ask the user what the product is to do next."
+        "text": "Once each role has its objectives, and before you write any key result, list each piece of work the product plans that the decisions of your cut name. Where the repository already holds the product, add each of its open issues and each feature its README names. Where none of these lists any work, ask the user what the product is to do next."
        },
        {
         "at": "decide",
-        "text": "For each piece of work, name the objective it serves, such as `O1` for `ask the user only what the best practice doesn't settle`."
+        "text": "For each piece of work, name each objective it serves, such as `O1` for `ask the user only what the best practice doesn't settle`."
        },
        {
         "at": "decide",
-        "text": "For each pair of objectives, ask whether a piece of work could serve one without the other. If no piece could, merge the two."
+        "text": "For each pair of objectives, ask whether a piece of work could serve one without the other. If no piece could, merge the two into one objective, and name it in place of either wherever a piece names one of them."
+       },
+       {
+        "at": "decide",
+        "text": "For each piece that still names more than one objective, split it into parts that each serve one, such as `search and checkout` into `search` for the guest's objective and `checkout` for the member's. Where it doesn't split, name only the objective whose role would miss it most, such as the guest's for a faster first page, which a guest meets on every visit and a member once before checkout."
        },
        {
         "at": "decide",
