@@ -109,8 +109,8 @@
       "why": "A deliverable that holds the trivial many beside the vital few buries what its users need, and each round of work adds more, so when every part serves what the users can't go without, they find what they need at once.",
       "items": [
        {
-        "at": "decide",
-        "text": "Derive each practice's items from what its condition serves, such as a README's problems from the product vision's objectives and their key results, since a practice that collects every thing of a kind and then keeps some, such as every problem readers have, fills the deliverable with the many."
+        "at": "make",
+        "text": "Read each item by which the generator finds the content it writes, such as the item by which a README's generator finds the problems it names, and ask what the item starts from. Where it gathers every thing of a kind and then keeps some, such as every problem that readers have, rewrite it to take the things from the part of an input or of the goal that its condition serves, such as the problems from the product vision's objectives and their key results, since gathering first fills the deliverable with the many."
        },
        {
         "at": "make",
@@ -136,7 +136,25 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open the deliverable's format. Where the deliverable has a JSON Schema of its own, such as the design tree, take the schema as the template: its fields are the sections, and the description of each field is its note. Elsewhere, write the template in the deliverable's own format, where each heading, or in JSON each key that holds content at any depth, is a section."
+        "text": "Open three or more deliverables of the kind made for different products, from the repository or from a search of the web, such as the READMEs of popular plugins on GitHub."
+       },
+       {
+        "at": "decide",
+        "text": "Take the format that those deliverables share as the deliverable's format, such as Markdown for a README. Where they differ, take the format that the tool or code that reads the deliverable takes, such as JSON for a file that a program loads."
+       },
+       {
+        "at": "decide",
+        "text": "Run `git ls-files '*.schema.json'`, and read the title and description of each JSON Schema that it lists.",
+        "trace": {
+         "action": "run",
+         "takes": [
+          "git ls-files '*.schema.json'"
+         ]
+        }
+       },
+       {
+        "at": "decide",
+        "text": "Where one of those schemas describes the deliverable, as design-tree.schema.json describes the design tree, take it as the template: its fields are the sections, and the description of each field is its note, since a second template would state each field's form twice. Elsewhere, write the template in the deliverable's format, where each heading, or in JSON each key that holds content at any depth, is a section."
        },
        {
         "at": "decide",

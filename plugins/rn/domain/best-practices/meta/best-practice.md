@@ -65,16 +65,19 @@ Does the template place each necessary condition in a section, and give each slo
 
 The template makes every deliverable of the kind hold each condition in the same place and the same form, so that no run invents the structure and the users find each thing where every other deliverable of the kind keeps it.
 
-1. *While deciding.* Open the deliverable's format. Where the deliverable has a JSON Schema of its own, such as the design tree, take the schema as the template: its fields are the sections, and the description of each field is its note. Elsewhere, write the template in the deliverable's own format, where each heading, or in JSON each key that holds content at any depth, is a section.
-2. *While deciding.* Order the sections as the users look for them, from the first thing to the last, such as a README's statement of what the product is before its install steps.
-3. *While deciding.* Place each condition in the section where the users need it, and name that section in the condition's `about`.
-4. *While deciding.* For each piece of text, ask whether every deliverable of the kind says it the same way. If it does, write it as fixed text. If it differs, make it a slot.
-5. *While deciding.* For each slot, choose the form that keeps the content the same shape across deliverables, such as one sentence, a list of commands, or a table with fixed columns. Each run fills a slot without a form in its own way.
-6. *While deciding.* Where a slot's practice calls for a figure, choose a text format that shows each change in a diff, such as Mermaid for a sequence or SVG for other figures.
-7. *While making.* Mark each slot so that the reader can tell it from fixed text and the rendered page still shows it, such as `` `<name>` `` in Markdown.
-8. *While making.* After each section, write one note that says, for each slot, what it holds, the form it takes, whether it's optional, and, for a figure, where the deliverable keeps its own.
-9. *While making.* Start each note with a marker by which the generator finds and deletes it, in the form the deliverable's format allows, such as a note block in Markdown or a key in JSON.
-10. *While making.* Where a slot holds a figure, put a skeleton of the figure in the template, labeled with the names of its slots.
+1. *While deciding.* Open three or more deliverables of the kind made for different products, from the repository or from a search of the web, such as the READMEs of popular plugins on GitHub.
+2. *While deciding.* Take the format that those deliverables share as the deliverable's format, such as Markdown for a README. Where they differ, take the format that the tool or code that reads the deliverable takes, such as JSON for a file that a program loads.
+3. *While deciding.* Run `git ls-files '*.schema.json'`, and read the title and description of each JSON Schema that it lists. The trace: `git ls-files '*.schema.json'` run.
+4. *While deciding.* Where one of those schemas describes the deliverable, as design-tree.schema.json describes the design tree, take it as the template: its fields are the sections, and the description of each field is its note, since a second template would state each field's form twice. Elsewhere, write the template in the deliverable's format, where each heading, or in JSON each key that holds content at any depth, is a section.
+5. *While deciding.* Order the sections as the users look for them, from the first thing to the last, such as a README's statement of what the product is before its install steps.
+6. *While deciding.* Place each condition in the section where the users need it, and name that section in the condition's `about`.
+7. *While deciding.* For each piece of text, ask whether every deliverable of the kind says it the same way. If it does, write it as fixed text. If it differs, make it a slot.
+8. *While deciding.* For each slot, choose the form that keeps the content the same shape across deliverables, such as one sentence, a list of commands, or a table with fixed columns. Each run fills a slot without a form in its own way.
+9. *While deciding.* Where a slot's practice calls for a figure, choose a text format that shows each change in a diff, such as Mermaid for a sequence or SVG for other figures.
+10. *While making.* Mark each slot so that the reader can tell it from fixed text and the rendered page still shows it, such as `` `<name>` `` in Markdown.
+11. *While making.* After each section, write one note that says, for each slot, what it holds, the form it takes, whether it's optional, and, for a figure, where the deliverable keeps its own.
+12. *While making.* Start each note with a marker by which the generator finds and deletes it, in the form the deliverable's format allows, such as a note block in Markdown or a key in JSON.
+13. *While making.* Where a slot holds a figure, put a skeleton of the figure in the template, labeled with the names of its slots.
 
 ### N5
 
@@ -118,6 +121,6 @@ Does following the best practice put into the deliverable only the vital few, th
 
 A deliverable that holds the trivial many beside the vital few buries what its users need, and each round of work adds more, so when every part serves what the users can't go without, they find what they need at once.
 
-1. *While deciding.* Derive each practice's items from what its condition serves, such as a README's problems from the product vision's objectives and their key results, since a practice that collects every thing of a kind and then keeps some, such as every problem readers have, fills the deliverable with the many.
+1. *While making.* Read each item by which the generator finds the content it writes, such as the item by which a README's generator finds the problems it names, and ask what the item starts from. Where it gathers every thing of a kind and then keeps some, such as every problem that readers have, rewrite it to take the things from the part of an input or of the goal that its condition serves, such as the problems from the product vision's objectives and their key results, since gathering first fills the deliverable with the many.
 2. *While making.* Read the best practice from its goal down, and for each factor, condition, and item, name what it makes true in the level it serves, such as the factor that a condition makes true. Drop each that makes nothing there true.
 3. *While making.* Read the conditions and the items for any that counts or caps the parts, such as `at most five sections`, and remove it, since the few follow from the build, and such a check adds findings of its own.
