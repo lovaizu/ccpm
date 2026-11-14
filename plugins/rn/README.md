@@ -17,8 +17,8 @@ the questions rn can't settle, and a sign-off on each deliverable.
 
 - rn doesn't put the deliverable in front of real people. Its evaluators are AI subagents that read
   the deliverable as its people would.
-- rn doesn't finish on its own where your goal leaves a question open. It stops, asks you, and
-  waits for your answer.
+- rn doesn't finish on its own where your goal leaves a question open. It asks you, and only the
+  work that rests on your answer waits for it. The rest goes on meanwhile.
 - rn doesn't make a small change faster than Claude Code alone. It plans each deliverable, and its
   evaluators read it again after each round, with no set limit on rounds. For a one-line fix, ask
   Claude Code directly.
@@ -191,7 +191,8 @@ rn drafts your goal from your request, and you confirm it. It then asks you the 
 that goal, one at a time and each with its recommendation, and keeps them in a design tree. The
 design tree is rn's record of your goal and every decision under it. rn asks only the decisions
 that change what the people get, and plans again after each answer and each finished deliverable.
-You sign off the plan, and each deliverable before the next one rests on it. Type `/rn:gm` with
+You sign off the plan, and each deliverable before the next one rests on it. While a question or a
+sign-off waits for you, rn goes on with the work that doesn't rest on it. Type `/rn:gm` with
 what to change, or alone to send your comments on the pull request, and rn takes it back to the
 design tree. So you get the deliverable you mean without writing a specification.
 

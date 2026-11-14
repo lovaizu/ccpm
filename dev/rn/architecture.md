@@ -5,20 +5,23 @@ promises. rn builds up only the vital few of each deliverable, what its people c
 decisions in a design tree: the orchestrator, the main conversation, settles them, asking the user
 only the points that are theirs, and a tree-keeper keeps them. A generator makes each deliverable
 from its decisions, round after round, until evaluators that have only what its people have find
-every necessary condition met, and the user signs it off before anything rests on it. The orchestrator checks
-every result before it takes it, and a lack changes the decision it comes from, not the deliverable.
+every necessary condition met, and the user signs it off before anything rests on it, while the
+work that rests on no point or sign-off still waiting goes on. The orchestrator checks every result
+before it takes it, and a lack changes the decision it comes from, not the deliverable.
 
 ## User stories
 
 - S1: the user wants to type `/rn:up` with what they want, in their own words, so that they get the
   deliverable they mean without writing a specification. It carries the walkthrough's first
   `/rn:up`, the goal put to the user, and each deliverable made in rounds.
-- S2: the user wants to answer each point rn puts to them, one at a time, so that they spend their
-  time only on what's theirs to decide. It carries the answer `each file`.
+- S2: the user wants to answer each point rn puts to them, one at a time, while rn goes on with the
+  work that rests on no open point, so that they spend their time only on what's theirs to decide,
+  and the run waits for them only where the work needs their answer. It carries the answer
+  `each file`.
 - S3: the user wants to sign off the plan and each deliverable with `/rn:ty`, or send it back with
-  `/rn:gm`, so that nothing rests on what they didn't mean. It carries the plan and each deliverable
-  put up for sign-off, each `/rn:ty`, and `/rn:gm` with what to change or with their comments on the
-  pull request.
+  `/rn:gm`, so that nothing rests on what they didn't mean, and nothing else waits for it. It
+  carries the plan and each deliverable put up for sign-off, each `/rn:ty`, and `/rn:gm` with what
+  to change or with their comments on the pull request.
 - S4: the user wants to type `/rn:dn` and stop the run at any moment, so that they lose neither
   their time nor the work so far. It carries the walkthrough's `/rn:dn` and `Paused`.
 - S5: the user wants to type `/rn:up` alone in a new conversation and have rn go on where it
@@ -40,8 +43,9 @@ What each decides alone:
   a best practice, each lesson sent to rn's repository, when to pause, and whether to merge.
 - orchestrator\
   Whether a point is the user's, and each other point from the purpose and the best practices: the
-  deliverables and their plan, whether to take each role's result or send it back, which lacks the
-  people fall short by, whether the whole pull request holds together, and what to propose at Done.
+  deliverables and their plan, which point or sign-off to put to the user next, whether to take
+  each role's result or send it back, which lacks the people fall short by, whether the whole pull
+  request holds together, and what to propose at Done.
 - tree-keeper\
   How each decision of the orchestrator's goes into the design tree, which nodes a change touches,
   and the plan drafted again at each turn's end.
@@ -50,7 +54,8 @@ What each decides alone:
 - evaluator\
   Where the deliverable meets each necessary condition of its group for its people, or what would make it good.
 - tree.py\
-  The tree's form and each deliverable whose turn has come to be doing, each role's cut and the
+  The tree's form and each deliverable whose turn has come to be doing, which is each one that rests
+  on no open point and on no plan or deliverable not yet signed off, each role's cut and the
   deliverables that start side by side, the run's worktree, the runs left and where each stopped, each
   commit, the pull request and the user's comments on it, the issue of each lesson that the user
   signs off, and each role's record and whether it holds each step and practice, which is rn's
@@ -72,6 +77,11 @@ The choices made, and why:
   generators to check it.
 - The orchestrator judging every point over a role of its own that settles them\
   The user talks with the one that decides, and no answer passes through a role that rewords it, which keeps KR1.2 short. The cost: the main conversation holds every judgment of the run.
+- tree.py finding the work that waits on a point or a sign-off over the orchestrator judging it\
+  A rule held in code holds on every run, so no work starts on an open point or on what the user
+  didn't sign off, which keeps KR1.1 low, and no work waits that rests on neither, which keeps KR1.2
+  short. The cost: each point waits for the tree-keeper to write it into the design tree before the
+  user sees it.
 
 ## Data model
 
@@ -134,10 +144,12 @@ raises KR1.1.
 ### Signed off before it's built on
 
 The plan and each deliverable reach the work that rests on them, and the pull request becomes ready,
-only after the user's `/rn:ty`, and the guard holds the run to it.
+only after the user's `/rn:ty`, which the guard holds the run to, and meanwhile each part goes on
+with the work that `tree.py` gives its turn, as it rests on no sign-off or point still waiting.
 
 *Why*: a wrong reading of what the user means, found only at the end, makes everything that rests
-on it made again, which raises KR1.1 and adds to KR1.2.
+on it made again, which raises KR1.1 and adds to KR1.2, and a run that held all its work for each
+point and sign-off would add the user's time away to the run's, which adds to KR1.2.
 
 ### Back to the design tree on a problem
 
@@ -198,14 +210,14 @@ sequenceDiagram
   K-->>O: what changed, and each node checked
   O->>O: checks it against the design tree best practice
   Note over U,O: The orchestrator settles each point, as S2 draws, and puts up the plan, as S3 draws.
-  loop each deliverable whose inputs are signed off
+  loop each deliverable whose turn has come, as it rests on no open point and on nothing not signed off
     O->>G: starts it (Cut, Lack kept)
     G->>G: makes the deliverable from the design, and checks it by the best practice
     G->>T: commits its work at the end of each step (Place)
     G->>W: tries it (Try record)
     alt the design leaves a point open
       G-->>O: asks, naming it
-      Note over O,G: The orchestrator settles it, as S2 draws, and starts a new generator from its cut once the tree holds the decision.
+      Note over O,G: The orchestrator settles it, as S2 draws, and starts a new generator from its cut once the tree holds the decision. The rounds of each other deliverable go on meanwhile.
     else something outside the work stops it, such as a missing tool
       G-->>O: lacks, naming it
       O->>U: what it lacks (Point)
@@ -243,20 +255,27 @@ sequenceDiagram
   participant K as tree-keeper
   participant T as tree.py
   loop each point open
-    alt the purpose or a best practice settles it
+    alt it's the user's
+      O->>K: the point, as a decision still open (Decision)
+      K->>T: writes it, and commits
+      K-->>O: what changed
+      par
+        O->>U: the point, with a recommendation, once no point or sign-off before it waits (Point)
+        U->>O: answers
+      and
+        Note over O,K: Meanwhile, the orchestrator settles each other point, and the rounds of each deliverable whose turn has come go on, as S1 draws.
+      end
+    else the purpose or a best practice settles it
       O->>O: settles it
-    else it's the user's
-      O->>U: one point, with a recommendation (Point)
-      U->>O: answers
     end
-  end
-  O->>K: each decision, with its ground (Decision)
-  K->>T: writes each, checks the path up and each node touched, and commits
-  K-->>O: what changed, and each node checked
-  alt the change falls short
-    O->>K: sends it back, with the ground
-  else
-    Note over O,K: The rounds of each deliverable start, as S1 draws.
+    O->>K: the decision, with its ground (Decision)
+    K->>T: writes it, checks the path up and each node touched, and commits it with each deliverable whose turn has come marked doing
+    K-->>O: what changed, each node checked, and each deliverable marked doing
+    alt the change falls short
+      O->>K: sends it back, with the ground
+    else
+      Note over O,K: The rounds of each deliverable marked doing start, as S1 draws.
+    end
   end
 ```
 
@@ -276,7 +295,8 @@ sequenceDiagram
   else
     T->>GH: pushes, and opens or keeps the draft pull request
   end
-  O->>U: the plan or the deliverable, with what the people can do with it, the decisions taken without asking, and its changes (Sign-off)
+  O->>U: the plan or the deliverable, with what the people can do with it, the decisions taken without asking, and its changes, once no point or sign-off before it waits (Sign-off)
+  Note over U,O: Meanwhile, the rounds of each deliverable whose turn has come go on, as S1 draws, and each that rests on this sign-off waits.
   alt the user approves
     U->>O: /rn:ty
     O->>K: it's signed off (Decision)
@@ -354,15 +374,16 @@ sequenceDiagram
   participant T as tree.py
   participant GH as GitHub
   O->>O: finds each change to a best practice and each general lesson in the run's lacks
-  loop each one found
-    alt a change to a best practice
-      O->>U: the change, with a recommendation (Point)
-      U->>O: answers
-      opt the user takes it
-        O->>K: adds it as a deliverable (Decision)
-        Note over O,K: It's made and signed off, as S1 and S3 draw.
-      end
-    else a general lesson
+  loop each change to a best practice found
+    O->>U: the change, with a recommendation (Point)
+    U->>O: answers
+    opt the user takes it
+      O->>K: adds it as a deliverable (Decision)
+      Note over O,K: It's made and signed off, as S1 and S3 draw.
+    end
+  end
+  par
+    loop each general lesson found
       O->>T: puts it up for the user's sign-off
       O->>U: the lesson, word for word, with a recommendation (Sign-off)
       alt the user approves
@@ -374,11 +395,12 @@ sequenceDiagram
         Note over U,T: The user's /rn:gm has tree.py drop it, and the orchestrator puts up again a lesson changed.
       end
     end
-  end
-  O->>O: reads the whole pull request against the goal at once: deliverables that contradict one another, a part beyond what the goal needs, work that does nothing toward it, and a file that rests on a changed best practice, rule, or name and still says the old thing
-  opt it finds one
-    O->>K: the decision it changes (Decision)
-    Note over O,K: The rounds start again from the design, as S1 draws, and S6 starts again once they end.
+  and
+    O->>O: reads the whole pull request against the goal at once: deliverables that contradict one another, a part beyond what the goal needs, work that does nothing toward it, and a file that rests on a changed best practice, rule, or name and still says the old thing
+    opt it finds one
+      O->>K: the decision it changes (Decision)
+      Note over O,K: The rounds start again from the design, as S1 draws, and S6 starts again once they end.
+    end
   end
   O->>T: marks the pull request ready
   T->>GH: marks it ready
