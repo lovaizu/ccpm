@@ -4,8 +4,8 @@ This document says how the parts of Lane give what [its README](../../plugins/la
 promises. Lane's up reads the user's steps alone and proposes from them the rules and the routes,
 each rule of a lane type that gives both the sentence the role reads and the check the guard runs.
 Lane lays them into the user's plugin only on the caller's own approval, a person's reply or an
-AI's own act. On each run, the guard laid there holds each role to the sentence of its step and
-gives the main conversation each start that the routes name, from results that only the result
+AI's own act. On each run once Claude Code loads it, the guard laid there holds each role to the
+sentence of its step and gives the main conversation each start that the routes name, from results that only the result
 script records. Each change goes into the steps, so each `/lane:up` proposes from them again and
 replaces what it laid before.
 
@@ -17,12 +17,14 @@ replaces what it laid before.
   beside a step that names a command its subagent may not run, and the result `written` that Lane
   names where the steps name none.
 - S2: the user wants to reply `yes`, or say what to change, so that Lane lays only what they
-  approved. It carries the reply `yes`, each `Wrote` line and `claude plugin validate passed`, and
-  `you say what to change, and Lane proposes again`.
+  approved, and holds their plugin's next run. It carries the reply `yes`, each `Wrote` line,
+  `claude plugin validate passed`, the line that asks for `/reload-plugins`, the person's
+  `/reload-plugins`, and `you say what to change, and Lane proposes again`.
 - S3: the user, where an AI builds the plugin, wants to call `/lane:up` itself, read the proposal,
-  and approve it by its own act, so that it reaches the plugin's first held run without waiting for
-  a person. It carries `it reads the proposal and approves it in the same way, with no person's
-  reply`.
+  and approve it by its own act, so that it lays the rules without waiting for a person's reply,
+  and reaches the plugin's first held run once whoever gives the conversation its prompts types
+  `/reload-plugins`, which it asks for. It carries `it reads the proposal and approves it in the
+  same way, with no person's reply`, and `asks whoever gives the conversation its prompts`.
 - S4: the user wants to run `/lane:up <plugin>` again after they change the steps or update Lane, so
   that the checks hold the steps as they now read, with Lane's newest code. It carries `Lane
   proposes from the steps as they now read, in place of what it laid before` and How it works'
@@ -232,8 +234,8 @@ what `lay.py print` showed, word for word. Where an AI called up by the Skill to
 own run of `lay.py write`.
 
 *Why*: rules laid that the user never read stop moves they meant to allow, which raises KR1.1, and
-an approval that waits for a person who isn't there leaves an AI unable to reach a first run, which
-adds to KR1.2.
+an approval that waits for a person's reply leaves an AI unable to lay the rules it read until a
+person reads them too, which adds to KR1.2.
 
 ### Lane's part replaced whole
 
@@ -386,8 +388,10 @@ sequenceDiagram
           L-->>UP: what failed
           UP-->>U: what to fix in the plugin
         else it passes
-          L-->>UP: each file written
-          UP-->>U: what Lane wrote, and that the check passed
+          L-->>UP: each file written, and to type /reload-plugins
+          UP-->>U: what Lane wrote, that the check passed, and to type /reload-plugins
+          U->>CC: /reload-plugins
+          Note over U,CC: Claude Code loads the laid hooks, which hold from the person's next prompt, as S5 draws.
         end
       end
     end
@@ -403,6 +407,7 @@ sequenceDiagram
   participant G as Lane's guard on up
   participant L as lay.py
   participant F as the plugin's files
+  actor D as whoever gives the conversation its prompts, a person or a program
   A->>CC: calls up by the Skill tool, for <plugin>
   CC->>G: the Skill tool call
   alt a person's run of up goes on, such as one whose Proposal awaits their reply
@@ -421,7 +426,10 @@ sequenceDiagram
     CC->>G: the call (Approval)
     G-->>CC: lets it through
     Note over L,F: lay.py lays the Proposal, as S2 draws.
-    L-->>A: each file written, and that the check passed
+    L-->>A: each file written, that the check passed, and to type /reload-plugins
+    A-->>D: ends its turn, asking for /reload-plugins
+    D->>CC: /reload-plugins
+    Note over A,CC: Claude Code loads the laid hooks, which hold from the next prompt, as S5 draws.
   end
 ```
 
@@ -649,8 +657,22 @@ sequenceDiagram
 ![Lane's deployment](images/deployment.svg)
 
 The user installs Lane as [the README](../../plugins/lane/README.md#installation) says and types
-`/lane:up <plugin>` in Claude Code at the root of their repository. From then on, Claude Code starts
-the laid guard on each hook event of the user's plugin, wherever it runs.
+`/lane:up <plugin>` in Claude Code at the root of their repository. Claude Code loads the laid
+guard as each session starts, and in the session that laid it once the person types
+`/reload-plugins`, and from then on starts it on each hook event of the user's plugin, wherever it
+runs.
+
+- The person's `/reload-plugins`, which the last line of `lay.py write` asks for, over a new
+  conversation\
+  Claude Code loads a plugin's `hooks/hooks.json` only as a session starts or once the person types
+  `/reload-plugins`, and holds it from the next prompt, as a recorded run shows, so one command
+  reaches the first held run in the conversation that built the plugin, which keeps KR1.2 short.
+  `lay.py write` asks for it, not up, so that each caller, a person or an AI, reads it on every lay,
+  as a run before it goes unheld, which raises KR1.1. The cost: no guard can stop a run before the
+  reload, as no hook runs on `/reload-plugins`, so none can tell whether it came, and an AI in the
+  main conversation waits for whoever gives the conversation its prompts, as Claude Code refuses
+  `reload-plugins` by the Skill tool and starts a subagent under the hooks the session loaded, as a
+  recorded run shows.
 
 - Lane's code copied into the user's plugin over hooks that call an installed Lane\
   Whoever runs the plugin needs no Lane, and the guard runs the code that Lane's tests ran until the
@@ -765,7 +787,8 @@ tests, and end-to-end (E2E) tests. Its test cases lie in `dev/lane/tests/`, and
   with the data it passes, and each kind of data in the data model.
 - Runs real: `lay.py`, the guard, `result.py`, the files that `lay.py write` lays in a plugin that
   the test sets up, and an adapter of the test's own. The double of Claude Code in `dev/tests/`
-  stands in for Claude Code, and sends each event as the recorded runs in `dev/tests/recorded/`
+  stands in for Claude Code, and sends each event, and loads each plugin's hooks as a conversation
+  starts and once the person types `/reload-plugins`, as the recorded runs in `dev/tests/recorded/`
   show. A test plays the person, up, the main conversation, and each subagent by the calls it makes
   on the double, and up gives only proposals in the form of `proposal.schema.json`, which up's unit
   tests show the real up giving.
@@ -785,8 +808,8 @@ tests, and end-to-end (E2E) tests. Its test cases lie in `dev/lane/tests/`, and
 
 - Tries: the key results KR1.1 and KR1.2, by the README's walkthrough at its real size: an AI builds
   a plugin the size of changelog from an intent that Lane never sees, approves its proposal once by
-  a person's reply and once by its own act, changes the steps between two runs of `/lane:up`, and
-  runs the plugin.
+  a person's reply and once by its own act, types `/reload-plugins` after each lay, changes the
+  steps between two runs of `/lane:up`, and runs the plugin.
 - Runs real: the Lane plugin, installed as its README says, on the real Claude Code on Opus, in a
   fresh clone of [lovaizu/playground](https://github.com/lovaizu/playground). An AI on Opus in the
   user's place holds the intent, and reads only what the screen shows, as `dev/scripts/e2e.py`

@@ -1,6 +1,8 @@
 """The integration cases of S3, an AI approves by its own act: an AI in the main conversation calls
 up by the Skill tool, reads the Proposal, mends a step where it falls short, and lays it by its own
-run of `lay.py write`, unless a person's run of up waits for their reply. The test plays the AI."""
+run of `lay.py write`, unless a person's run of up waits for their reply, and its plugin's run is
+held once the one who gives the conversation its prompts types /reload-plugins. The test plays the
+AI and that one."""
 
 from __future__ import annotations
 
@@ -9,10 +11,10 @@ import os
 import pytest
 from claude_code import Conversation
 from lane_example import (
+    LAID,
     PROPOSAL,
     WRITER_STEP_2,
     WRITER_STEP_2_WITH_SHOW,
-    WROTE,
     Repo,
     id_of,
     propose,
@@ -31,12 +33,32 @@ def test_an_ai_that_called_up_by_the_skill_tool_lays_by_its_own_run_of_lay_write
     """Given an AI in the main conversation called `lane:up` by the Skill tool for `changelog`
     When it runs `lay.py print` on the walkthrough's Proposal, and then `lay.py write` on its ID,
     with no person's reply between
-    Then the guard lets `lay.py write` through, and lay.py prints what the walkthrough shows"""
+    Then the guard lets `lay.py write` through, and lay.py prints what the walkthrough shows,
+    ending with the line that asks for /reload-plugins"""
     up.skill("lane:up", "changelog")
     printed = propose(up, repo, PROPOSAL)
     wrote = up.bash(write_command(id_of(printed.output)))
     assert not wrote.blocked
-    assert (wrote.exit_code, wrote.output) == (0, WROTE)
+    assert (wrote.exit_code, wrote.output) == (0, LAID)
+
+
+@pytest.mark.supports("S3", "guard", "Start")
+def test_after_an_ai_lays_the_reload_plugins_it_asks_for_has_its_call_of_the_skill_held(
+    up: Conversation, repo: Repo
+):
+    """Given an AI in the main conversation called `lane:up` by the Skill tool, and laid the
+    walkthrough's Proposal by its own run of `lay.py write`
+    When it ends its turn asking for /reload-plugins, the one who gives the conversation its
+    prompts types it, and the AI then calls `changelog:write` by the Skill tool
+    Then Lane names writer's start"""
+    up.skill("lane:up", "changelog")
+    printed = propose(up, repo, PROPOSAL)
+    up.bash(write_command(id_of(printed.output)))
+    up.stop("Lane laid its checks. Type /reload-plugins, so that they hold.")
+    up.type("/reload-plugins")
+    up.type("The checks are loaded. Run changelog:write.")
+    called = up.skill("changelog:write", "")
+    assert "changelog: Start `changelog:writer` with `Carry out your steps`." in called.said
 
 
 @pytest.mark.supports("S3", "guard", "Run", "Approval")

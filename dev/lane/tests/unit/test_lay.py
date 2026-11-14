@@ -10,7 +10,7 @@ from typing import Any
 
 import pytest
 from domain.run_record import PERSON, Run, save
-from lane_example import PROPOSAL, REVIEWER, TYPES, WRITE, WRITER, put, read
+from lane_example import PROPOSAL, RELOAD, REVIEWER, TYPES, WRITE, WRITER, put, read
 from lay import USAGE, main, types_text
 
 pytestmark = pytest.mark.xfail(
@@ -98,12 +98,14 @@ def test_print_of_a_file_that_isnt_json_exits_1_naming_it(cwd: str):
 def test_write_of_the_id_print_showed_exits_0_and_lays_it(cwd: str):
     """Given `lay.py print` showed the walkthrough's Proposal
     When `lay.py write changelog <ID>` runs
-    Then it exits 0, and changelog holds hooks/lanes.json"""
+    Then it exits 0, ending with the line that asks for /reload-plugins, and changelog holds
+    hooks/lanes.json"""
     _, out, _ = main(["print", "changelog", "proposal.json"], env(cwd), cwd)
     found = re.search(r"^ID: (\S+)$", out, re.MULTILINE)
     assert found
-    code, _, _ = main(["write", "changelog", found[1]], env(cwd), cwd)
-    assert code == 0 and os.path.isfile(os.path.join(cwd, "changelog", "hooks", "lanes.json"))
+    code, wrote, _ = main(["write", "changelog", found[1]], env(cwd), cwd)
+    assert code == 0 and wrote.endswith(RELOAD)
+    assert os.path.isfile(os.path.join(cwd, "changelog", "hooks", "lanes.json"))
 
 
 @pytest.mark.supports("test_lay_write_of_an_id_that_no_proposal_has_is_refused")

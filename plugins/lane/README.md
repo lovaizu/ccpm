@@ -58,11 +58,12 @@ Component inventory
 
 At the end, your plugin `changelog` has written the `CHANGELOG.md` entries of a project, and its
 reviewer has passed them. On each run, Lane held each subagent to the rules you approved and started
-the subagents in the order you set. You typed `/lane:up changelog`, `yes`, and `/changelog:write`
-to reach the first such run, in under five minutes, and wrote no check or code.
+the subagents in the order you set. You typed `/lane:up changelog`, `yes`, `/reload-plugins`, and
+`/changelog:write` to reach the first such run, in under five minutes, and wrote no check or code.
 
-This is a recorded run of Lane 0.1.0 on Claude Code 2.1.322. `<repo>` stands for the folder of the
-repository.
+This is a recorded run of Lane 0.1.0 on Claude Code 2.1.322, save `/reload-plugins` and Lane's line
+that asks for it: recorded runs of Claude Code 2.1.323 and 2.1.325 show that a plugin's hooks
+written during a session hold only after it. `<repo>` stands for the folder of the repository.
 
 `changelog` writes a project's `CHANGELOG.md`, and lives in the folder `changelog/` of the git
 repository of `tally`, a small Python tool, whose last version is 0.1.0. Its skill `write`, in
@@ -172,13 +173,24 @@ Wrote the checks of write, writer and reviewer into hooks/hooks.json.
 Wrote the lanes laid and the routes into hooks/lanes.json.
 Put lane's code in hooks/lane/.
 claude plugin validate passed.
+Type /reload-plugins, and the checks hold from your next prompt.
 ```
 
 Where a rule or a route isn't as you meant it, you say what to change, and Lane proposes again.
 Where an AI builds the plugin, it reads the proposal and approves it in the same way, with no
 person's reply.
 
-In the same session, you type:
+Claude Code loads a plugin's hooks as a session starts, and during a session only once you type
+`/reload-plugins`, so you type it:
+
+```text
+/reload-plugins
+```
+
+Claude Code lets no conversation reload its own plugins, so where an AI builds the plugin, it asks
+whoever gives the conversation its prompts, you or a program of yours, to type `/reload-plugins`.
+
+From the next prompt on, Lane's checks hold your plugin. In the same session, you type:
 
 ```text
 /changelog:write
@@ -273,9 +285,9 @@ Lanes of reviewer, each checked only in reviewer:
 You reply `yes`, and Lane lays them as before, with `Wrote steps 1 and 2 of reviewer into
 agents/reviewer.md.` in place of its line on step 2.
 
-You type `/changelog:write` again. By the same lines as before, Lane starts `writer`, then
-`reviewer`, which gives `more` for the missing entry, then `writer`, which adds it from the diff,
-then `reviewer`, which gives `good`. Lane stops six calls on the way, each a command not word for
+You type `/reload-plugins`, and then `/changelog:write` again. By the same lines as before, Lane
+starts `writer`, then `reviewer`, which gives `more` for the missing entry, then `writer`, which adds
+it from the diff, then `reviewer`, which gives `good`. Lane stops six calls on the way, each a command not word for
 word in the steps, such as
 `git show d417d74 && git show 7a84e02 && git show 0192711 && git show 8aba605`, and each time the
 subagent goes back to its step and runs each command as the step names it. The run ends with this

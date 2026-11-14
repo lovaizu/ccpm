@@ -164,7 +164,7 @@ ID: {id}
 Reply yes to lay these into changelog, or say what to change.
 """
 
-# What `lay.py write` prints for PROPOSAL, as the walkthrough shows it.
+# What laying PROPOSAL wrote, as the walkthrough shows it.
 WROTE = """\
 Wrote step 1 of write into skills/write/SKILL.md.
 Wrote steps 2, 3 and 4 of writer into agents/writer.md.
@@ -174,6 +174,15 @@ Wrote the lanes laid and the routes into hooks/lanes.json.
 Put lane's code in hooks/lane/.
 claude plugin validate passed.
 """
+
+# The line by which `lay.py write` ends once it laid a Proposal, as Claude Code loads the hooks
+# that Lane laid only as a session starts or once the person types /reload-plugins, and holds them
+# from the next prompt, as the records claude-code-2.1.323-hooks-reload.jsonl and
+# claude-code-2.1.325-hooks-self-reload.jsonl in dev/tests/recorded/ show.
+RELOAD = "Type /reload-plugins, and the checks hold from your next prompt.\n"
+
+# What `lay.py write` prints for PROPOSAL, as the walkthrough shows it.
+LAID = WROTE + RELOAD
 
 # The text of a start where the plugin has no adapter of a start's text.
 CARRY_OUT = "Carry out your steps"

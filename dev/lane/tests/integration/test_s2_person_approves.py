@@ -1,7 +1,7 @@
 """The integration cases of S2, a person approves or asks a change: Lane's guard on up holds up's
 turn until the person has the Proposal word for word, lets `lay.py write` through only after the
 person's reply, and lay.py lays the Proposal whole, or puts every file back where validation fails.
-The test plays the person and up."""
+The plugin's run is held once the person types /reload-plugins. The test plays the person and up."""
 
 from __future__ import annotations
 
@@ -10,10 +10,10 @@ import os
 import pytest
 from claude_code import Conversation
 from lane_example import (
+    LAID,
     PROPOSAL,
     WRITER_STEP_2,
     WRITER_STEP_2_WITH_SHOW,
-    WROTE,
     Repo,
     id_of,
     print_command,
@@ -42,12 +42,13 @@ def shown_to_person(up: Conversation, repo: Repo) -> str:
 def test_a_persons_yes_lays_the_proposal_and_validation_passes(up: Conversation, repo: Repo):
     """Given up gave the person the walkthrough's Proposal, word for word
     When the person replies `yes` and up runs `lay.py write changelog <ID>`
-    Then lay.py prints each `Wrote` line and `claude plugin validate passed`, as the walkthrough
-    shows, and the plugin holds hooks/lanes.json and hooks/lane/"""
+    Then lay.py prints each `Wrote` line, `claude plugin validate passed`, and the line that asks
+    for /reload-plugins, as the walkthrough shows, and the plugin holds hooks/lanes.json and
+    hooks/lane/"""
     printed = shown_to_person(up, repo)
     up.type("yes")
     wrote = up.bash(write_command(id_of(printed)))
-    assert (wrote.exit_code, wrote.output) == (0, WROTE)
+    assert (wrote.exit_code, wrote.output) == (0, LAID)
     assert os.path.isfile(os.path.join(repo.plugin, "hooks", "lanes.json"))
     assert os.path.isfile(os.path.join(repo.plugin, "hooks", "lane", "hook.py"))
 
@@ -163,7 +164,8 @@ def test_a_failed_validation_puts_back_each_file_that_laying_changed(up: Convers
     """Given `changelog` whose plugin.json `claude plugin validate` refuses, as its version isn't
     text, and up gave the person the walkthrough's Proposal, and the person replied `yes`
     When up runs `lay.py write`
-    Then lay.py exits 1 with what the validation said, and each file of the plugin is as before"""
+    Then lay.py exits 1 with what the validation said, and no line that asks for /reload-plugins,
+    and each file of the plugin is as before"""
     put(repo.plugin, ".claude-plugin/plugin.json", '{"name": "changelog", "version": 1}')
     before = {
         path: read(os.path.join(repo.plugin, path))
@@ -173,5 +175,23 @@ def test_a_failed_validation_puts_back_each_file_that_laying_changed(up: Convers
     up.type("yes")
     refused = up.bash(write_command(id_of(printed)))
     assert refused.exit_code == 1 and "version" in refused.output
+    assert "/reload-plugins" not in refused.output
     assert {path: read(os.path.join(repo.plugin, path)) for path in before} == before
     assert not os.path.exists(os.path.join(repo.plugin, "hooks"))
+
+
+@pytest.mark.supports("S2", "guard", "Start")
+def test_after_lane_lays_the_persons_reload_plugins_has_the_plugins_next_run_held(
+    up: Conversation, repo: Repo
+):
+    """Given the person replied `yes` and lay.py laid the walkthrough's Proposal, in the
+    conversation that started before it
+    When the person types /reload-plugins, and then `/changelog:write`
+    Then Lane names writer's start, as the walkthrough shows"""
+    printed = shown_to_person(up, repo)
+    up.type("yes")
+    up.bash(write_command(id_of(printed)))
+    up.stop(LAID)
+    up.type("/reload-plugins")
+    typed = up.type("/changelog:write")
+    assert "changelog: Start `changelog:writer` with `Carry out your steps`." in typed.said
