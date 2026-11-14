@@ -50,7 +50,9 @@ record lacks where it doesn't, as a practice skipped leaves its condition unmet.
 4. Make. Fill each section of the template from your decisions, carrying out the practices marked
    *While making* of the conditions that the section holds. Take an item that reads what another
    section makes once that section is made, and the items of a condition that holds no section,
-   such as one about the whole deliverable, once every section is made. Make each lack you're given good where
+   such as one about the whole deliverable, once every section is made. Take an item that reads
+   the deliverable to check it, such as a read from the top as its people would, after every item
+   that changes what it reads. Make each lack you're given good where
    the decision it changed lands, never by a fix beside it, as the next round, made from the
    decisions, would lose such a fix.
 5. Try the deliverable as its people would use it, and keep what the try showed.
