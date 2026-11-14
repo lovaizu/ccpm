@@ -1,7 +1,9 @@
-"""Decides where each Run of a conversation stands, worked out from the lines of its run record, and
-which moves the Routes of its skill make due: after the start of a Run, after each Result, and after
-a command that the person types; whether a start, a resume, or an end of the main conversation's
-turn is one of them; and where a run picked up from the Kept results stands."""
+"""Decides where each Run of a conversation stands, worked out from the lines of its run record, for
+the guard, `result.py`, and `lay.py` alike, and which moves the Routes of its skill make due: after
+the start of a Run, after each Result, after a command that the person types, and after another
+plugin's run that a move called; whether a start, a resume, a call of another plugin's skill, or an
+end of the main conversation's turn is one of them; and where a run picked up from the Kept results
+stands."""
 
 from __future__ import annotations
 
@@ -29,7 +31,9 @@ def stand(lines: Sequence[Line], laid_set: LaidSet, session: str) -> tuple[Run, 
     line names and running until a Noted line of that subagent's end; each Result of a subagent for
     the Start its tie names and of the main conversation for the skill it names, as its role; the
     moves open by the Routes of the Run's skill after its call, each Result, and each command typed
-    that a Route of its goes after; and the Run ended once a Route's one move starts no more, or
+    that a Route of its goes after; `aside` the other plugin's skill from a Noted CALLED line until
+    a later Start or resume of the Run, which makes a move of the Route after that call; and the Run
+    ended once a Route's one move starts no more, or
     once a later call of its skill begins a new Run of it, as each call line does. Raises Fault as
     `first` does."""
     raise NotImplementedError("routes.stand")
@@ -64,6 +68,12 @@ def opens_start(run: Run, role: str, text: str, given: str) -> bool:
     starts the role, the text is `given`, the text that the adapter gives for the role now or else
     Lane's, and no Start of the role that runs took the same text."""
     raise NotImplementedError("routes.opens_start")
+
+
+def opens_call(run: Run, skill: str) -> bool:
+    """Whether a call of the skill, `<plugin>:<skill>`, is one that the Run's moves open: a move due
+    calls that skill of another plugin."""
+    raise NotImplementedError("routes.opens_call")
 
 
 def opens_resume(run: Run, agent: str) -> bool:

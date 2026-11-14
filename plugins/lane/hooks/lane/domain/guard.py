@@ -42,8 +42,8 @@ def decide(event: Event, laid_set: LaidSet, plugin_root: str, temp: str) -> Deci
 def in_run(event: Event, laid_set: LaidSet, runs: Sequence[Run]) -> bool:
     """Whether the guard checks the moment, given the conversation's Runs: it lies between the call
     of a skill of the plugin and the end of that skill's Run, and comes from the main conversation
-    while such a Run goes on, or from a subagent that a Start of such a Run ties, as the principle
-    The guard checks only the run says."""
+    while such a Run goes on and stands aside from no other plugin's run, or from a subagent that a
+    Start of such a Run ties, as the principle The guard checks only the run says."""
     raise NotImplementedError("guard.in_run")
 
 

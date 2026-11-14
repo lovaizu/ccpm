@@ -24,6 +24,9 @@ SHOWN = "shown"  # `lay.py print` showed the text in `text`, in a Run of up
 PROMPTED = "prompted"  # the person typed a prompt, in a Run of up
 TURN_ENDED = "turn_ended"  # the main conversation's turn ended, in a Run of up
 LAID = "laid"  # `lay.py write` laid a Proposal, in a Run of up
+CALLED = (
+    "called"  # the main conversation called the other plugin's skill in `text`, as a move names
+)
 
 
 @dataclass(frozen=True)
@@ -95,8 +98,9 @@ class Run:
     works it out from the lines of the run record and never written whole: the plugin, its skill,
     the conversation's ID, who called the skill, PERSON or AI, each Start and Result of the Run in
     order, the moves open, the lines that a Lane's command printed for each subagent since its
-    Start, and whether the Run ended. A Run of Lane's up holds, besides, what `lay.py print` showed
-    last, and whether the person typed a prompt since then."""
+    Start, whether the Run ended, and `aside`, the other plugin's skill whose run the main
+    conversation follows since a move called it, "" for none. A Run of Lane's up holds, besides,
+    what `lay.py print` showed last, and whether the person typed a prompt since then."""
 
     plugin: str
     skill: str
@@ -107,6 +111,7 @@ class Run:
     moves: list[Move] = field(default_factory=list)
     printed: dict[str, list[str]] = field(default_factory=dict)
     ended: bool = False
+    aside: str = ""
     shown: str = ""
     prompted: bool = False
 

@@ -10,6 +10,8 @@ caller has the Proposal that `lay.py print` showed and you wait for their reply.
 - The plugin's folder, from the root of the repository, as the caller gave it.
 - `lay.py types`, which gives each lane type: its name, what it takes, the steps it suits, and its
   sentence.
+- `lay.py steps <plugin>`, which gives each Role and Step of the plugin without the text that Lane
+  laid before, with a note beside each laid sentence that the user changed.
 - `lay.py print <plugin> <proposal.json>`, which checks a Proposal in the form of
   `proposal.schema.json` and shows it, or says what's wrong and exits 1.
 - `lay.py write <plugin> <ID>`, which lays the Proposal of the ID.

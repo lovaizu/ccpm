@@ -11,7 +11,7 @@ from typing import Any
 import pytest
 from domain.run_record import PERSON, PROMPTED, SHOWN, TURN_ENDED, Called, Noted, add
 from lane_example import PROPOSAL, RELOAD, REVIEWER, TYPES, WRITE, WRITER, put, read
-from lay import USAGE, main, types_text
+from lay import USAGE, main, steps_text, types_text
 
 pytestmark = pytest.mark.xfail(
     strict=True, reason="Lane's parts are skeletons, their bodies unbuilt"
@@ -158,3 +158,27 @@ def test_write_after_the_run_of_up_that_showed_the_proposal_ended_exits_1_saying
     code, out, err = main(["write", "changelog", found[1]], given, cwd)
     assert code == 1 and "ended" in out + err
     assert not os.path.exists(os.path.join(cwd, "changelog", "hooks"))
+
+
+@pytest.mark.supports("test_lay_steps_gives_up_each_role_and_step_of_the_plugin")
+def test_steps_exits_0_with_each_role_and_its_steps(cwd: str):
+    """Given the walkthrough's `changelog`
+    When `lay.py steps changelog` runs
+    Then it exits 0 with the text of its Roles and Steps, writer's step 2 among them"""
+    code, out, err = main(["steps", "changelog"], env(cwd), cwd)
+    assert (code, out, err) == (0, steps_text(os.path.join(cwd, "changelog")), "")
+    assert "2. Read the commits since then with `git log --oneline`." in out
+
+
+@pytest.mark.supports("test_lay_steps_gives_up_each_role_and_step_of_the_plugin")
+def test_steps_of_a_plugin_whose_role_has_no_steps_exits_1_naming_its_file(cwd: str):
+    """Given `changelog` whose agents/reviewer.md holds no numbered list under `## Steps`
+    When `lay.py steps changelog` runs
+    Then it exits 1 naming agents/reviewer.md"""
+    put(
+        os.path.join(cwd, "changelog"),
+        "agents/reviewer.md",
+        "---\nname: reviewer\nbackground: true\n---\n\nReview the entries.\n",
+    )
+    code, out, err = main(["steps", "changelog"], env(cwd), cwd)
+    assert code == 1 and "agents/reviewer.md" in out + err

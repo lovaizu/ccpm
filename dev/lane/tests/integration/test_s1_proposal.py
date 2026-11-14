@@ -199,3 +199,15 @@ def test_lay_print_refuses_an_ends_checked_lane_of_the_skill_naming_a_value_no_s
     up.type("/lane:up changelog")
     refused = propose(up, repo, {**PROPOSAL, "lanes": lanes})
     assert refused.exit_code == 1 and "{deliverable}" in refused.output
+
+
+@pytest.mark.supports("S1", "up", "lay.py", "Role", "Step")
+def test_lay_steps_gives_up_each_role_and_step_of_the_plugin(up: Conversation):
+    """Given `changelog` as the walkthrough builds it, and the person typed `/lane:up changelog`
+    When up runs `lay.py steps changelog`
+    Then it prints write, writer, and reviewer, each with its Steps word for word, and exits 0"""
+    up.type("/lane:up changelog")
+    printed = up.bash(f"python3 {LAY} steps changelog")
+    assert printed.exit_code == 0
+    assert all(role in printed.output for role in ("write", "writer", "reviewer"))
+    assert "2. Read the commits since then with `git log --oneline`." in printed.output

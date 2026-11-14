@@ -14,9 +14,10 @@ def main(argv: list[str], environ: Mapping[str, str]) -> tuple[int, str, str]:
     """The exit code, stdout, and stderr of `result.py <role> <result>`: 0 and the result given,
     where the laid set of the plugin that holds this script lets the role give it, and a Run of the
     conversation that goes on holds the role, as the skill of the Run or the role of a Start that
-    runs; 1 with the results that the role may give where it may give no such result, or with why
-    where no such Run holds the role; 2 with the usage where the arguments aren't a role and a
-    result. It writes nothing to the run record."""
+    runs, each Run as `routes.stand`, the guard's code, works it out from the run record; 1 with the
+    results that the role may give where it may give no such result, or with why where no such Run
+    holds the role; 2 with the usage where the arguments aren't a role and a result. It writes
+    nothing to the run record."""
     raise NotImplementedError("result.main")
 
 

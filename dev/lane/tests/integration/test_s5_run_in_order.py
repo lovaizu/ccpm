@@ -581,3 +581,34 @@ def test_the_main_conversation_is_held_to_the_lanes_of_each_skill_whose_run_goes
     gives(repo, reviewer, "good")
     conv.bash(result_command(repo, "review", "good"))
     assert conv.bash("git diff").blocked
+
+
+CALLS_CHECK = [
+    PROPOSAL["routes"][0],
+    route("writer written", {"kind": "call", "role": "tally:check"}),
+    route("tally:check", start("reviewer")),
+    *PROPOSAL["routes"][2:],
+]
+
+
+@pytest.mark.supports("S5", "guard", "Route", "Run")
+def test_a_call_of_another_plugins_skill_that_a_move_names_sets_the_run_aside_until_a_move_after_it(
+    repo: Repo,
+):
+    """Given `changelog` laid with Routes whose move after writer's `written` calls `tally:check`,
+    a skill of another plugin, and whose Route after that call starts reviewer
+    When writer gives `written`, and the main conversation calls `tally:check` by the Skill tool,
+    ends its turn, starts reviewer, and then starts writer
+    Then Lane names the call, the call passes, the turn ends unheld though reviewer's start is due,
+    reviewer's start passes, and writer's start is stopped, as the Run stands aside no more"""
+    conv = laid_with(repo, with_routes(*CALLS_CHECK))
+    conv.type("/changelog:write")
+    _, writer = starts(conv, "writer")
+    assert writer
+    assert "tally:check" in gives(repo, writer, "written").said
+    assert not conv.skill("tally:check", "").blocked
+    assert not conv.stop("tally:check has its report.").blocked
+    reviewer, _ = starts(conv, "reviewer")
+    assert not reviewer.blocked
+    again, _ = starts(conv, "writer")
+    assert again.blocked

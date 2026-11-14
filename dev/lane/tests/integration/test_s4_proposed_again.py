@@ -12,6 +12,7 @@ import pytest
 from claude_code import Conversation
 from lane_example import (
     LANE,
+    LAY,
     PROPOSAL,
     PROPOSAL_AGAIN,
     REVIEWER_STEP_1_MENDED,
@@ -131,3 +132,17 @@ def test_up_after_an_update_of_lane_lays_the_newest_code_of_lane(laid: Repo):
     up.bash(write_command(id_of(printed.output)))
     assert read(old) == read(os.path.join(LANE, "hooks", "lane", "result.py"))
     assert not os.path.exists(os.path.join(laid.plugin, "hooks", "lane", "stale.py"))
+
+
+@pytest.mark.supports("S4", "up", "lay.py", "Laid", "Step")
+def test_lay_steps_gives_each_step_without_the_sentences_that_lane_laid(laid: Repo):
+    """Given `changelog` laid with the walkthrough's Proposal, so that writer's step 2 holds the
+    sentence `Run only `git log --oneline`.` that Lane laid
+    When the person types `/lane:up changelog`, and up runs `lay.py steps changelog`
+    Then writer's step 2 reads as the user wrote it, without Lane's sentence"""
+    up = conversation(laid, LANE, laid.plugin)
+    up.type("/lane:up changelog")
+    printed = up.bash(f"python3 {LAY} steps changelog")
+    assert printed.exit_code == 0
+    assert "2. Read the commits since then with `git log --oneline`." in printed.output
+    assert STEP_2_LAID not in printed.output

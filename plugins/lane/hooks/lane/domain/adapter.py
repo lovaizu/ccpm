@@ -30,8 +30,9 @@ def start_text(program: str, role: str, running: Sequence[Start], cwd: str) -> S
 def kept_results(program: str, args: str, cwd: str) -> list[Result]:
     """The Kept results that the adapter at the path gives, in the order the run gave them, for a
     call of the skill: it runs with no argument and `{"args": ...}` on stdin, the words typed after
-    the skill's command or the Skill tool's arguments, "" for none, which the hook event of the
-    call carries, and prints `{"results": [{"role", "result"}, ...]}`, none where the plugin starts
-    a run from the call, so that the plugin alone decides from the words whether the call starts a
-    run or picks one up. Raises Fault as start_text does."""
+    the skill's command or the Skill tool's arguments, "" for none, which the hook event of the call
+    carries, and prints `{"results": [{"role", "result"}, ...]}`, none where the words name no kept
+    work, as for a new request, so that the plugin alone names from the words which of its kept work
+    the call picks up, and the guard starts the Run anew where they name none. Raises Fault as
+    start_text does."""
     raise NotImplementedError("adapter.kept_results")

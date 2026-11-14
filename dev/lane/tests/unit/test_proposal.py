@@ -319,3 +319,24 @@ def test_a_proposal_whose_conversation_has_no_run_of_up_waits():
     When it's asked whether the Proposal still waits
     Then it does"""
     assert waits(KEPT, None)
+
+
+@pytest.mark.supports(
+    "test_a_call_of_another_plugins_skill_that_a_move_names_sets_the_run_aside_until_a_move_after_it"
+)
+def test_json_with_a_move_that_calls_another_plugins_skill_reads_as_a_call():
+    """Given the walkthrough's Proposal whose move after writer's `written` calls `tally:check`,
+    and whose Route after that call starts reviewer
+    When it's parsed
+    Then that move is a call of `tally:check`, and a Route goes after `tally:check`"""
+    given = changed(
+        routes=[
+            PROPOSAL["routes"][0],
+            route("writer written", {"kind": "call", "role": "tally:check"}),
+            route("tally:check", start("reviewer")),
+            *PROPOSAL["routes"][2:],
+        ]
+    )
+    found = parse(given, "p.json")
+    assert found.routes[1].moves == (Move("call", "tally:check"),)
+    assert found.routes[2].after == "tally:check"

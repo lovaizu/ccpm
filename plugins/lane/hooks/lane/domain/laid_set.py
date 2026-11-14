@@ -5,8 +5,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-# The kinds of a move after the start of a Run, a Result, or a command the person types.
-START, RESUME, WAIT, NO_MORE = "start", "resume", "wait", "no_more"
+# The kinds of a move after the start of a Run, a Result, a command the person types, or the end of
+# another plugin's run that a move called.
+START, RESUME, CALL, WAIT, NO_MORE = "start", "resume", "call", "wait", "no_more"
 
 
 @dataclass(frozen=True)
@@ -26,9 +27,11 @@ class Lane:
 
 @dataclass(frozen=True)
 class Move:
-    """One move of a Route: `kind` is START, RESUME, WAIT, or NO_MORE, `role` the role that a start
-    or a resume names, and `waits_for` the command, such as `/changelog:approve`, that the person
-    types before the move is due, or "" for a move due at once. A WAIT waits for no command."""
+    """One move of a Route: `kind` is START, RESUME, CALL, WAIT, or NO_MORE, `role` the role that a
+    start or a resume names, or the skill of another plugin, as `<plugin>:<skill>`, that a CALL
+    calls, as the plugin guide's A plugin that uses another says, and `waits_for` the command, such
+    as `/changelog:approve`, that the person types before the move is due, or "" for a move due at
+    once. A WAIT waits for no command."""
 
     kind: str
     role: str = ""
@@ -38,9 +41,10 @@ class Move:
 @dataclass(frozen=True)
 class Route:
     """The moves of one skill after one moment: `skill` is the skill whose Run the Route moves,
-    `after` is `first` for the start of its Run, `<role> <result>` for a Result, or the command the
-    person types, such as `/changelog:pause`. One move is the move due, and several are those among
-    which the skill's steps choose."""
+    `after` is `first` for the start of its Run, `<role> <result>` for a Result, the command the
+    person types, such as `/changelog:pause`, or the skill `<plugin>:<skill>` that a CALL called,
+    for the moves once the main conversation goes back to its own steps. One move is the move due,
+    and several are those among which the skill's steps choose."""
 
     skill: str
     after: str

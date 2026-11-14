@@ -23,7 +23,7 @@ checks them on each new version, and this list changes with the records.
 | A Run picked up in a new conversation | SessionEnd, then SessionStart with a new `session_id` and `transcript_path`. | The new `session_id`, which has no Run, so the guard picks the Run up from the kept results, as S7 draws. | `claude-code-2.1.323-worktree.jsonl:14-15` |
 | EnterWorktree | From the PostToolUse of EnterWorktree on, each event's `cwd` and `transcript_path` lie in the worktree, the `session_id` stays, and each hook's `CLAUDE_PROJECT_DIR` stays the root. | The `session_id`, never the `transcript_path`, so the Run goes on in the worktree. | `claude-code-2.1.323-worktree.jsonl:5-12` and `:21-30` |
 | A skill typed by a person | UserPromptSubmit, then UserPromptExpansion with `command_name` and `command_args`. | The `command_name`, which starts a Run that a person called. | `claude-code-2.1.322.jsonl:8-9` |
-| A skill called by the Skill tool | PreToolUse and PostToolUse of Skill with `tool_input.skill` and `args`, and no UserPromptExpansion; a skill that sets `disable-model-invocation: true` is refused before any hook. | `tool_input.skill`, which starts a Run that an AI called. | `claude-code-2.1.322-skill.jsonl:3-4`, `claude-code-2.1.323-skill-command.jsonl:16` |
+| A skill called by the Skill tool | PreToolUse and PostToolUse of Skill with `tool_input.skill` and `args`, and no UserPromptExpansion; a skill that sets `disable-model-invocation: true` is refused before any hook. | `tool_input.skill`, which starts a Run that an AI called, or, where it names another plugin's skill that a move of a Run names, sets that Run aside. | `claude-code-2.1.322-skill.jsonl:3-4`, `claude-code-2.1.323-skill-command.jsonl:16` |
 | A command of another skill typed while a subagent runs | The main conversation's Stop, then UserPromptSubmit and UserPromptExpansion of the other skill's `command_name`, with a new `prompt_id`, while the subagent runs on; its later calls and SubagentStop carry that `prompt_id`. | The `command_name`, which starts that skill's Run beside the first, and each event of the subagent by its `agent_id`, which keeps it on its Start's Run. | `claude-code-2.1.325-skill-command-while-subagent.jsonl:12-21` |
 | The result script run by Bash | PreToolUse and PostToolUse of Bash, with the subagent's `agent_id` where a subagent runs it; the command's environment holds `CLAUDE_CODE_SESSION_ID` and no ID of the subagent. | The `agent_id` of the PostToolUse, by which the guard adds the Result for the subagent that ran the script. | `claude-code-2.1.322.jsonl:14-16`, and the environment in `claude-code-2.1.322-bash-environment.jsonl:1-2` |
 
@@ -37,9 +37,11 @@ In each, Lane does what its line says, and never holds a call to the rules of an
   the roles. `claude-code-2.1.322-subagent-of-subagent.jsonl:2-4` shows the events.
 - A subagent's SendMessage to another subagent: the guard lets it through as talk that moves no Run,
   and the subagent it reaches stays on its own Start.
-- A subagent in the foreground: no role's subagent runs there, as `lay.py print` refuses a role
-  whose file doesn't set `background: true`; any other's events carry an `agent_id` that no Start
-  ties, and lie outside the Run. `claude-code-2.1.323-worktree.jsonl:23-28` shows the events.
+- A subagent in the foreground: the PostToolUse of its Agent call, which names it, comes only
+  after its calls and its SubagentStop, so no Start ties it while it works. No role's subagent runs
+  there, as `lay.py print` refuses a role whose file doesn't set `background: true`; any other's
+  events carry an `agent_id` that no Start ties, and lie outside the Run.
+  `claude-code-2.1.323-worktree.jsonl:23-28` shows the events.
 - A subagent stopped by TaskStop: no SubagentStop comes, and its `<task-notification>` says
   `killed`, so its Start runs no more with no Result, as S5 draws.
   `claude-code-2.1.323-task-stop.jsonl:9-15` shows the events.

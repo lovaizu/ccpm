@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import pytest
 from domain.fault import Fault
-from domain.laid_set import NO_MORE, RESUME, START, WAIT, Move, Route
+from domain.laid_set import CALL, NO_MORE, RESUME, START, WAIT, Move, Route
 from domain.routes import (
     after_command,
     after_result,
@@ -13,12 +13,13 @@ from domain.routes import (
     first,
     may_end_turn,
     no_more,
+    opens_call,
     opens_resume,
     opens_start,
     pick_up,
     stand,
 )
-from domain.run_record import PERSON, Called, Noted, Result, Start, Tied
+from domain.run_record import CALLED, PERSON, Called, Noted, Result, Start, Tied
 from lane_parts import (
     CARRY_OUT,
     ROUTES,
@@ -314,3 +315,39 @@ def test_a_later_call_of_a_skill_begins_a_new_run_and_ends_the_one_before():
     before, after = stand((*WRITER_RUNNING, Called("write", PERSON)), laid_set(), SESSION)
     assert before.ended and not after.ended
     assert after.moves == [Move(START, "writer")]
+
+
+CALLS_CHECK = (
+    ROUTES[0],
+    Route("write", "writer written", (Move(CALL, "tally:check"),)),
+    Route("write", "tally:check", (Move(START, "reviewer"),)),
+    *ROUTES[2:],
+)
+
+
+@pytest.mark.supports(
+    "test_a_call_of_another_plugins_skill_that_a_move_names_sets_the_run_aside_until_a_move_after_it"
+)
+def test_a_call_of_the_other_plugins_skill_that_a_move_due_names_is_opened():
+    """Given a Run whose move due calls `tally:check`
+    When a call of `tally:check`, and of `tally:other`, are asked
+    Then the moves open the first alone"""
+    given = run(moves=[Move(CALL, "tally:check")])
+    assert opens_call(given, "tally:check")
+    assert not opens_call(given, "tally:other")
+
+
+@pytest.mark.supports(
+    "test_a_call_of_another_plugins_skill_that_a_move_names_sets_the_run_aside_until_a_move_after_it"
+)
+def test_a_run_stands_aside_from_a_call_of_another_plugins_skill_until_a_start_after_it():
+    """Given the lines of a Run of `write` whose writer gave `written`, Routes whose move after it
+    calls `tally:check` and whose Route after that call starts reviewer, and a line of that call
+    When where the Run stands is worked out, before and after a Start of reviewer
+    Then it stands aside from `tally:check` with reviewer's start due, and then no more"""
+    called = (*WRITER_GAVE_WRITTEN, Noted(CALLED, "", "tally:check"))
+    (aside,) = stand(called, laid_set(routes=CALLS_CHECK), SESSION)
+    assert (aside.aside, aside.moves) == ("tally:check", [Move(START, "reviewer")])
+    back = (*called, Start(2, "reviewer", CARRY_OUT, skill="write"))
+    (after,) = stand(back, laid_set(routes=CALLS_CHECK), SESSION)
+    assert after.aside == ""

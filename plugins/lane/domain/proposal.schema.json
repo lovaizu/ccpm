@@ -30,7 +30,7 @@
         "required": ["skill", "after", "moves"],
         "properties": {
           "skill": {"type": "string", "description": "The skill whose run the route moves."},
-          "after": {"type": "string", "description": "`first`, `<role> <result>`, or a command the person types, such as `/changelog:pause`."},
+          "after": {"type": "string", "description": "`first`, `<role> <result>`, a command the person types, such as `/changelog:pause`, or the skill `<plugin>:<skill>` of another plugin that a move called, for the moves once the main conversation goes back to its own steps."},
           "moves": {
             "type": "array",
             "minItems": 1,
@@ -39,8 +39,8 @@
               "additionalProperties": false,
               "required": ["kind"],
               "properties": {
-                "kind": {"enum": ["start", "resume", "wait", "no_more"]},
-                "role": {"type": "string", "description": "The role that a start or a resume names."},
+                "kind": {"enum": ["start", "resume", "call", "wait", "no_more"]},
+                "role": {"type": "string", "description": "The role that a start or a resume names, or the skill `<plugin>:<skill>` of another plugin that a call calls."},
                 "waits_for": {"type": "string", "description": "The command the person types before the move is due."}
               }
             }
