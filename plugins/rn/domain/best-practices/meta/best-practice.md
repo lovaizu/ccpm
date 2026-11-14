@@ -58,10 +58,6 @@ The conditions are what the generator meets and the evaluator checks, so when ea
 3. *While deciding.* Judge each condition by three tests, and rewrite or drop one that fails any. It's checkable: two readers of the deliverable give the same answer. It's about the deliverable, not about how someone made it, as `Did the maker interview users?` is. It's necessary: if the answer were no, its factor would fail.
 4. *While deciding.* If a condition needs several states of its own, make it a factor.
 5. *While deciding.* If a condition only says how to meet another condition, move it into that condition's practice.
-6. *While making.* Search the repository for the deliverable of the kind that the product in your cut has, by the names and folders in which the deliverables you opened at N4.1 keep theirs, such as `README.md` at the top of the repository for a README.
-7. *While making.* Where the product has none, write one from the template for the product in your cut, as `trial.<ext>` in the round's folder, the folder of `{made}`, so that the trial stays out of the product.
-8. *While making.* Answer each condition yes or no about that deliverable.
-9. *While making.* Read that deliverable from the top as its users would. Where they would stop or go wrong in a part that every condition passes, find the level that caused it, whether the goal, a factor, a condition, or a practice, and rebuild that level from the level it serves.
 
 ### N4
 
@@ -111,13 +107,14 @@ A deliverable must say what the deliverables it builds on say, and the deliverab
 1. *While deciding.* Go through each section of the template and ask where its content comes from. Each kind of deliverable that supplies content is an input, such as the product vision for a README.
 2. *While deciding.* Of each input, ask whether work on the deliverable can start while the input still changes. Where it can't, the input's kind is a precondition too, such as an agreed product vision for a README.
 3. *While deciding.* Go the other way, from each input to the deliverable, since a deliverable that drops what it rests on fails its users while every part it holds is sound: take the input's vital few, such as the concept and the key results of a product vision, and ask which of them the deliverable's users need.
-4. *While deciding.* For each of those vital few that the users need, decide which part of the deliverable carries it.
-5. *While deciding.* Make sure a condition asks for each of those vital few, such as a README showing what the key results promise.
-6. *While making.* List the inputs in `inputs` and the preconditions in `preconditions`, each by the folder name of its best practice.
-7. *While making.* Leave out the kinds built on this kind, since their best practices name it in `inputs`, and listing them here as well would write the same fact twice.
-8. *While making.* Leave out the paths of the inputs, since the plan holds the paths of each deliverable's inputs and orders the deliverable after them.
-9. *While making.* Where you change a best practice that exists, update, in the same change, each condition that carries what you changed in each best practice that N1.2 took, such as a README's condition on the key results when the product vision's key results change.
-10. *While making.* Where an input's best practice changed since this one last changed, open it, and check each condition here that carries its vital few against what it holds now.
+4. *While deciding.* For each of those vital few that the users need, decide which section of the template carries it: the one where the users need it.
+5. *While deciding.* Where no condition asks for one of those vital few, write one under the factor that fails without it, and name in its `about` the section that N6.4 chose, such as a README's condition that it shows what the key results promise, under the factor that the reader sees which problem the product solves.
+6. *While deciding.* Judge each condition that N6.5 wrote by the three tests of N3.3, and rewrite or drop one that fails any.
+7. *While making.* List the inputs in `inputs` and the preconditions in `preconditions`, each by the folder name of its best practice.
+8. *While making.* Leave out the kinds built on this kind, since their best practices name it in `inputs`, and listing them here as well would write the same fact twice.
+9. *While making.* Leave out the paths of the inputs, since the plan holds the paths of each deliverable's inputs and orders the deliverable after them.
+10. *While making.* Where you change a best practice that exists, end with `asks`, naming each condition that carries what you changed in each best practice that N1.2 took, with the change it needs, such as a README's condition on the key results when the product vision's key results change, since your run values let you write only this best practice.
+11. *While making.* Where an input's best practice changed since this one last changed, open it, and check each condition here that carries its vital few against what it holds now.
 
 ### N7
 
@@ -128,3 +125,7 @@ A deliverable that holds the trivial many beside the vital few buries what its u
 1. *While making.* Read each item by which the generator finds the content it writes, such as the item by which a README's generator finds the problems it names, and ask what the item starts from. Where it gathers every thing of a kind and then keeps some, such as every problem that readers have, rewrite it to take the things from the part of an input or of the goal that its condition serves, such as the problems from the product vision's objectives and their key results, since gathering first fills the deliverable with the many.
 2. *While making.* Read the best practice from its goal down, and for each factor, condition, and item, name what it makes true in the level it serves, such as the factor that a condition makes true. Drop each that makes nothing there true.
 3. *While making.* Read the conditions and the items for any that counts or caps the parts, such as `at most five sections`, and remove it, since the few follow from the build, and such a check adds findings of its own.
+4. *While making.* Search the repository for the deliverable of the kind that the product in your cut has, by the names and folders in which the deliverables you opened at N4.1 keep theirs, such as `README.md` at the top of the repository for a README.
+5. *While making.* Where the product has none, write one from the template for the product in your cut, as `trial.<ext>` in the round's folder, the folder of `{made}`, so that the trial stays out of the product.
+6. *While making.* Answer each condition yes or no about that deliverable.
+7. *While making.* Read that deliverable from the top as its users would. Where they would stop or go wrong in a part that every condition passes, or read past a part that they don't need, find the level that caused it, whether the goal, a factor, a condition, or a practice, and rebuild that level from the level it serves.

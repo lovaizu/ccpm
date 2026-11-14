@@ -105,22 +105,6 @@
        {
         "at": "decide",
         "text": "If a condition only says how to meet another condition, move it into that condition's practice."
-       },
-       {
-        "at": "make",
-        "text": "Search the repository for the deliverable of the kind that the product in your cut has, by the names and folders in which the deliverables you opened at N4.1 keep theirs, such as `README.md` at the top of the repository for a README."
-       },
-       {
-        "at": "make",
-        "text": "Where the product has none, write one from the template for the product in your cut, as `trial.<ext>` in the round's folder, the folder of `{made}`, so that the trial stays out of the product."
-       },
-       {
-        "at": "make",
-        "text": "Answer each condition yes or no about that deliverable."
-       },
-       {
-        "at": "make",
-        "text": "Read that deliverable from the top as its users would. Where they would stop or go wrong in a part that every condition passes, find the level that caused it, whether the goal, a factor, a condition, or a practice, and rebuild that level from the level it serves."
        }
       ]
      },
@@ -141,6 +125,22 @@
        {
         "at": "make",
         "text": "Read the conditions and the items for any that counts or caps the parts, such as `at most five sections`, and remove it, since the few follow from the build, and such a check adds findings of its own."
+       },
+       {
+        "at": "make",
+        "text": "Search the repository for the deliverable of the kind that the product in your cut has, by the names and folders in which the deliverables you opened at N4.1 keep theirs, such as `README.md` at the top of the repository for a README."
+       },
+       {
+        "at": "make",
+        "text": "Where the product has none, write one from the template for the product in your cut, as `trial.<ext>` in the round's folder, the folder of `{made}`, so that the trial stays out of the product."
+       },
+       {
+        "at": "make",
+        "text": "Answer each condition yes or no about that deliverable."
+       },
+       {
+        "at": "make",
+        "text": "Read that deliverable from the top as its users would. Where they would stop or go wrong in a part that every condition passes, or read past a part that they don't need, find the level that caused it, whether the goal, a factor, a condition, or a practice, and rebuild that level from the level it serves."
        }
       ]
      }
@@ -298,11 +298,15 @@
        },
        {
         "at": "decide",
-        "text": "For each of those vital few that the users need, decide which part of the deliverable carries it."
+        "text": "For each of those vital few that the users need, decide which section of the template carries it: the one where the users need it."
        },
        {
         "at": "decide",
-        "text": "Make sure a condition asks for each of those vital few, such as a README showing what the key results promise."
+        "text": "Where no condition asks for one of those vital few, write one under the factor that fails without it, and name in its `about` the section that N6.4 chose, such as a README's condition that it shows what the key results promise, under the factor that the reader sees which problem the product solves."
+       },
+       {
+        "at": "decide",
+        "text": "Judge each condition that N6.5 wrote by the three tests of N3.3, and rewrite or drop one that fails any."
        },
        {
         "at": "make",
@@ -318,7 +322,7 @@
        },
        {
         "at": "make",
-        "text": "Where you change a best practice that exists, update, in the same change, each condition that carries what you changed in each best practice that N1.2 took, such as a README's condition on the key results when the product vision's key results change."
+        "text": "Where you change a best practice that exists, end with `asks`, naming each condition that carries what you changed in each best practice that N1.2 took, with the change it needs, such as a README's condition on the key results when the product vision's key results change, since your run values let you write only this best practice."
        },
        {
         "at": "make",
