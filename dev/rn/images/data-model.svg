@@ -98,15 +98,12 @@
   <text class="label small" x="226" y="140" text-anchor="start">0..*</text>
   <text class="label small" x="324" y="140" text-anchor="end">1</text>
   <path class="line" d="M220,324 L330,324"/>
-  <text class="label small halo" x="275.0" y="316" text-anchor="middle">asks for</text>
+  <text class="label small halo" x="275.0" y="316" text-anchor="middle">is, while open</text>
   <text class="label small" x="226" y="340" text-anchor="start">0..1</text>
-  <text class="label small" x="324" y="340" text-anchor="end">0..1</text>
+  <text class="label small" x="324" y="340" text-anchor="end">1</text>
   <path class="line" d="M510,124 L610,124" marker-start="url(#diamond)"/>
   <text class="label small halo" x="560.0" y="116" text-anchor="middle">holds</text>
   <text class="label small" x="604" y="140" text-anchor="end">1..*</text>
-  <path class="line" d="M450,148 L450,300" marker-start="url(#diamond)"/>
-  <text class="label small halo" x="458" y="270" text-anchor="start">holds, as its goal</text>
-  <text class="label small" x="458" y="294" text-anchor="start">1</text>
   <path class="line" d="M640,148 L640,324 L510,324" marker-start="url(#diamond)"/>
   <text class="label small halo" x="648" y="240" text-anchor="start">holds</text>
   <text class="label small" x="516" y="340" text-anchor="start">0..*</text>
@@ -135,30 +132,18 @@
   <path class="line" d="M1100,660 L1100,348"/>
   <text class="label small halo" x="1108" y="500" text-anchor="start">answers</text>
   <text class="label small" x="1108" y="654" text-anchor="start">0..*</text>
-  <text class="label small" x="1108" y="364" text-anchor="start">1..*</text>
-  <path class="line" d="M420,348 L420,420 L1000,420 L1000,348"/>
-  <text class="label small halo" x="700" y="412" text-anchor="middle">answers</text>
-  <text class="label small" x="428" y="364" text-anchor="start">0..*</text>
-  <text class="label small" x="1008" y="364" text-anchor="start">0..1</text>
-  <path class="line" d="M670,100 L670,40 L750,40 L750,100"/>
-  <text class="label small halo" x="710" y="32" text-anchor="middle">takes from, or waits for</text>
-  <text class="label small" x="664" y="94" text-anchor="end">0..*</text>
-  <text class="label small" x="756" y="94" text-anchor="start">0..*</text>
+  <text class="label small" x="1108" y="364" text-anchor="start">1</text>
   <rect class="box" x="960" y="760" width="180" height="48" rx="0"/>
   <text class="name" x="1050.0" y="789.0" text-anchor="middle">Made</text>
   <path class="line" d="M790,700 L880,700 L880,784 L960,784" marker-start="url(#diamond)"/>
   <text class="label small halo" x="888" y="748" text-anchor="start">holds</text>
   <text class="label small" x="954" y="800" text-anchor="end">0..1</text>
-  <path class="line" d="M790,840 L1170,840 L1170,336 L1140,336"/>
-  <text class="label small halo" x="875" y="832" text-anchor="middle">falls short of</text>
-  <text class="label small" x="796" y="862" text-anchor="start">0..*</text>
-  <text class="label small" x="1146" y="330" text-anchor="start">1</text>
   <rect class="box" x="40" y="200" width="180" height="48" rx="0"/>
   <text class="name" x="130.0" y="229.0" text-anchor="middle">Sign-off</text>
-  <path class="line" d="M220,218 L360,218 L360,148"/>
+  <path class="line" d="M220,218 L400,218 L400,148"/>
   <text class="label small halo" x="310" y="210" text-anchor="middle">of the plan</text>
   <text class="label small" x="226" y="210" text-anchor="start">0..*</text>
-  <text class="label small" x="368" y="166" text-anchor="start">0..1</text>
+  <text class="label small" x="408" y="166" text-anchor="start">0..1</text>
   <path class="line" d="M220,236 L620,236 L620,148"/>
   <text class="label small halo" x="520" y="228" text-anchor="middle">of a deliverable</text>
   <text class="label small" x="226" y="252" text-anchor="start">0..*</text>
