@@ -190,7 +190,7 @@
         "plugins/rn/domain/best-practices/architecture",
         "dev/scripts/trace.py"
       ],
-      "status": "open",
+      "status": "doing",
       "necessary_conditions": [
         {
           "id": "N1",
@@ -316,7 +316,7 @@
         "plugins/rn/domain/best-practices/architecture",
         "dev/scripts/trace.py"
       ],
-      "status": "open",
+      "status": "doing",
       "necessary_conditions": [
         {
           "id": "N1",
@@ -366,7 +366,13 @@
         {
           "id": "N10",
           "good": true,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "How the laid checks start",
+              "decided": "the checks that lay.py writes into the plugin hold from the prompt after the person types /reload-plugins, which lay.py write asks for, as Claude Code loads a plugin's hooks only as a session starts or on that command, and no conversation can reload itself; an AI that lays asks whoever gives its conversation the prompts",
+              "by": "research"
+            }
+          ]
         },
         {
           "id": "N11",
