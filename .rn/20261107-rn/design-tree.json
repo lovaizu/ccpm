@@ -331,7 +331,13 @@
         {
           "id": "N3",
           "good": true,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "Plugins with several skills",
+              "decided": "Lane holds a plugin with several skills that each start a run of their own: each skill's run is held to that skill's steps and routes, as a plugin with several commands is common and a skill left unheld raises KR1.1",
+              "by": "user"
+            }
+          ]
         },
         {
           "id": "N4",
