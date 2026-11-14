@@ -118,8 +118,9 @@
           "good": false,
           "decisions": [
             {
-              "about": "Where trace.py reads the name of each kind of data",
-              "decided": null
+              "about": "Where trace.py reads each element's name",
+              "decided": "each story by its `S<n>` in User stories, each principle by its heading under Principles, each role and component by its name in Components' list of what each decides alone, and each kind of data by each `<text class=\"name\">` of the architecture's images/data-model.svg, the one place that names every kind, as Data model's text names only the kinds a reader could confuse",
+              "by": "reasoning"
             }
           ]
         },
