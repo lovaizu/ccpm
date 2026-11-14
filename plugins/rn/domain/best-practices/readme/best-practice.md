@@ -34,8 +34,8 @@ Does the opening say what the product is, who it's for, and what it lets them ac
 
 Most readers decide from the opening alone whether to read on, so it lets a newcomer tell within a few sentences whether the product is for them.
 
-1. *While deciding.* Open the product vision and take from Roles the people the product is for, named by the work they want done, narrowly enough that a reader outside the role can tell it isn't for them, such as `you keep a Python library that others install` in place of `you write Python`. The trace: `{inputs}` read to its end.
-2. *While deciding.* Take from that role's objective what they achieve with the product, as an end they reach in their own work, not a feature, such as `release without breaking the code of those who use your library` in place of `checks for semantic versioning`.
+1. *While deciding.* Open the product vision and take from Roles the people the product is for. Where it lists several roles, take one whose members do their job for its own sake, not so that another role can do its job, such as a team that tracks its work in place of the administrator who sets the product up for it, and of those, the one that most readers are in, by the issues they open where the product has a tracker, and else the first. Name them by the work they want done, narrowly enough that a reader outside the role can tell it isn't for them, such as `you keep a Python library that others install` in place of `you write Python`. The trace: `{inputs}` read to its end.
+2. *While deciding.* Take from that role's objective what they achieve with the product, or, where the role has several, from the one whose use most readers come for, by the issues they open where the product has a tracker, and else the first. Write it as an end they reach in their own work, not a feature, such as `release without breaking the code of those who use your library` in place of `checks for semantic versioning`.
 3. *While deciding.* Take from the concept's one way the one thing the product gives the reader, in words the reader already uses, such as `finds each change in a release that breaks code that calls it`.
 4. *While deciding.* Open the product's manifest, such as plugin.json or pyproject.toml, which N3 and N9 take from too. The trace: `{manifest}` read to its end.
 5. *While deciding.* Name the kind of thing the reader installs, as the manifest shows it, by the word they already use for things of that kind, such as a command-line tool or a Claude Code plugin, so that they have something to compare it with.
@@ -55,8 +55,8 @@ A reader who needs something the product doesn't do finds out before they instal
 3. *While deciding.* Where the product has an issue tracker, add each request it closed without doing, such as one labeled `wontfix`.
 4. *While deciding.* For each expectation, find whether the product meets it, in its commands and settings in the manifest and code, or by trying it.
 5. *While deciding.* For each expectation it doesn't meet, ask whether a reader who needs it would decide against the product, and keep only those.
-6. *While deciding.* For each expectation kept that the product vision neither has the users do or get nor rules out, ask the user `Should <Product> <expectation>?`, and name what each answer does, such as `Should it undo its changes? No lists it in Non-goals; yes adds it to the product vision, and the README says at the top that it doesn't undo them yet.`
-7. *While deciding.* Keep each expectation that the product vision rules out or the user answers no to for Non-goals. Take each that the user answers yes to out of Non-goals, as what doesn't work yet for the opening's status.
+6. *While deciding.* For each expectation kept, read the product vision. It has the users do or get the expectation where an objective or an idea of the concept names it. It rules the expectation out where meeting it would break the concept's one way, or make a key result worse by its direction, such as asking before each change, where a key result counts the questions the user answers. Where the vision does neither, ask the user `Should <Product> <expectation>?`, and name what each answer does, such as `Should it undo its changes? No lists it in Non-goals; yes adds it to the product vision, and the README says at the top that it doesn't undo them yet.`
+7. *While deciding.* Keep for Non-goals each expectation that the product vision rules out or the user answers no to. Take out of Non-goals each that the product vision has the users do or get or the user answers yes to, as what doesn't work yet for the opening's status.
 8. *While making.* List each kept expectation as a thing the product doesn't do.
 9. *While making.* Where the product meets the need another way, say so in the same item, such as `doesn't undo its changes: commit before you run it, and git brings them back`.
 
@@ -69,7 +69,7 @@ A reader who builds on a product that isn't ready finds out before their work de
 1. *While deciding.* Take the product's version from the manifest and from its releases, such as the tags of its repository: a version below 1.0, or no release, means what it does may still change.
 2. *While deciding.* For each objective of the product vision, find the product's test of its role's use toward it, such as an end-to-end test, and check that it passes, or try the use where there's no test.
 3. *While deciding.* Where the repository's archived mark or a notice in it says that no one keeps the product up, take that.
-4. *While deciding.* Decide that the product is ready where it has a release of 1.0 or later, the use toward each objective works, it meets each expectation that the user said it should, and someone keeps it up. Otherwise, take what works now and what doesn't.
+4. *While deciding.* Decide that the product is ready where it has a release of 1.0 or later, the use toward each objective works, it meets each expectation taken out of Non-goals, and someone keeps it up. Otherwise, take what works now and what doesn't.
 5. *While making.* Where the product isn't ready, write at the top what works now and what a reader gets who installs it today, such as `In development: it checks a release's functions, not yet its classes.`
 
 ### N4
@@ -102,7 +102,7 @@ Does the walkthrough show a real run on typical work that delivers what the prod
 
 A reader trusts a benefit they've seen happen in work like their own more than one they only read about, so the walkthrough shows it happen.
 
-1. *While deciding.* Open the product vision and take as the use the objective of the role that the opening names, or, where the role has several, the one whose use most readers come for, by the issues they open where the product has a tracker, and else the first.
+1. *While deciding.* Open the product vision and take as the use the objective that the opening's benefit comes from.
 2. *While deciding.* Choose the task from the work that readers bring to that use: the issues and questions they open, where the product has a tracker, or else the role's job in the product vision. Take one like most of theirs, small enough to show from start to end, and whose result shows the benefit the opening promises, such as, for a release checker, one release of a small library with one change that breaks its callers.
 3. *While deciding.* For each key result of that objective, decide what in the run shows it. For how well, show the result in use as its users would use it, such as the caller's test that fails on the broken release. For how fast, show what the reader spent, such as the questions they answered.
 4. *While deciding.* Decide the cut: keep every exchange from what the reader gives to the result they keep, and cut only output that doesn't bear on the result, such as progress lines.
