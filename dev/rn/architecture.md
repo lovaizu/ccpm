@@ -66,7 +66,10 @@ What each decides alone:
   Decimal. It hands each other point back with `asks`, as only the orchestrator sees the whole
   design tree. It decides the form of the Cut it takes and of the Made it gives.
 - evaluator\
-  Which necessary conditions of its group the deliverable meets for its people, each in `good` with
+  Which necessary conditions of its group the deliverable meets for its people, of the best practice
+  of the deliverable's kind, on whether they reach their goal with it, or of the refactor best
+  practice that finishes it, on whether they understand it in one read and change it rightly, each
+  in `good` with
   the lines that meet it, and, for each other, in `more`, its `good_when`: what the people get once
   the deliverable is good, as the plugin guide's
   [Read by those who did not make it](../plugin-development-guide.md#read-by-those-who-did-not-make-it)
@@ -90,8 +93,9 @@ What each decides alone:
   the issue.
 - record.py\
   A record's form, and rn's check: whether a role's record holds each step of its part and each
-  practice of each best practice of its cut where the step takes it, and whether its result names
-  each item of each list it carries, and the result it accepted, kept in the record.
+  practice of each best practice of its cut where the step takes it, whether its result names each
+  item of each list it carries, and, at a generator's end, whether the deliverable holds the
+  template of its kind and nothing beside it, and the result it accepted, kept in the record.
 - throwaway.py\
   Where a deliverable's commands run.
 - guard\
@@ -134,6 +138,16 @@ The choices made, and why:
   takes about as long as one evaluator's reading, which keeps KR1.2 short. The cost: each evaluator
   reads the whole deliverable, so a round spends one reading for each group, and the orchestrator
   joins a `more` that two groups each name in part.
+- Evaluators by the refactor best practice beside those by the kind's best practice over one kind
+  of evaluator judging both\
+  Adding function and reworking structure are two jobs, and judged as one, what each round adds
+  breaks the structure unseen, so the people misread the deliverable and the next change
+  contradicts it, which raises KR1.1. The cost: one more reading in each round, which adds to KR1.2.
+- rn's check holding each deliverable to its kind's template over the evaluators judging its form\
+  The template holds only the vital few, so each sentence beyond it is trivia, which an evaluator
+  reading for its conditions passes and which buries what the people need, which raises KR1.1. The
+  cost: a deliverable that needs a section the template lacks waits for a change of its best
+  practice, which adds to KR1.2.
 - Rounds until the evaluators find every necessary condition good over a set limit on rounds\
   A limit would hand over a deliverable whose people still can't use it, which raises KR1.1, and
   KR1.1 comes before KR1.2, as the product vision orders them and the README's Non-goals promise.
@@ -338,8 +352,8 @@ sequenceDiagram
       O->>G: resumes it
     else done
       G->>GD: ends, with done
-      GD->>R: checks its record and its result (Record)
-      R-->>GD: each step, practice, or item they lack, or none, keeping the result in the record
+      GD->>R: checks its record, its result, and the deliverable (Record)
+      R-->>GD: each step, practice, or item they lack, and each place where the deliverable leaves its kind's template, or none, keeping the result in the record
       opt they lack one
         GD-->>G: holds its end, with what they lack
         Note over G,R: The generator carries out what they lack, and ends again. The guard holds each role's end, and each end of the orchestrator's turn, in the same way.
@@ -349,7 +363,7 @@ sequenceDiagram
       alt it falls short
         O->>G: sends it back, with the ground
       else
-        par one for each group of necessary conditions
+        par one for each group of necessary conditions, of the kind's best practice and of the refactor one
           O->>E: starts it (Cut)
           E->>T: commits its work at the end of each step (Place)
           E->>F: writes each necessary condition in good, with its lines, or in more, with its good_when (Answers)
@@ -722,7 +736,7 @@ checks that each names an element or a case one level up.
 - Passes when: line and branch coverage of 100%; 0 surviving mutants; 0 counterexamples from the
   property-based tests of `tree.py`'s reading and writing of the design tree and its list of the
   nodes that a change touches, `record.py`'s check of a record against a prompt's steps and its best
-  practices' practices, and each adapter's reading of a Cut or a record into Lane's form; for each
+  practices' practices and of a deliverable against its kind's template, and each adapter's reading of a Cut or a record into Lane's form; for each
   function, McCabe complexity of 10 at most, cognitive complexity of 15 at most, and at most 6
   returns, 12 branches, 5 arguments, and 50 statements; 0 findings from pyrefly, ruff, and pylint's
   checks; and, for each prompt, each case passing on all of its k = 3 runs, so that its accuracy,
