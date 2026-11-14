@@ -164,7 +164,15 @@
        },
        {
         "at": "decide",
-        "text": "For each sequence diagram you chose, find whether the place where readers read the document renders a diagram written as text: open that place's documentation on the document's format, such as GitHub's page on creating diagrams for a Markdown file read on GitHub, and note the text format it renders, such as Mermaid in a `mermaid` code block, or that it renders none."
+        "text": "Where you chose a sequence diagram, find the place where readers read the document: the site that a site generator builds from the document's folder, where a config in the repository names that folder, such as `docs_dir` in `mkdocs.yml`, and else the host that `git remote -v` names, such as GitHub for a remote on github.com, whose pages show the repository's files. Where neither names a place, ask the person who owns the document where its readers read it, with the place you'd take, since a diagram in a text format that the place doesn't render shows its readers code."
+       },
+       {
+        "at": "decide",
+        "text": "For each sequence diagram you chose, find whether the place that N4.2 found renders a diagram written as text: open that place's documentation on the document's format, such as GitHub's page on creating diagrams for a Markdown file read on GitHub, and note the text format it renders, such as Mermaid in a `mermaid` code block, or that it renders none."
+       },
+       {
+        "at": "decide",
+        "text": "For each diagram that you'll draw as a file, each structure diagram and each sequence diagram whose place renders no text format, choose its path. Where `{deliverable}` is a folder, take a path in it beside the document, named for what the diagram shows, such as `plugin-parts.svg`. Where `{deliverable}` is one file, ask the person who owns the document where the diagram goes, with the path beside the document that you'd give it, since a file outside `{deliverable}` changes what you weren't given."
        },
        {
         "at": "make",
@@ -176,7 +184,7 @@
        },
        {
         "at": "make",
-        "text": "Draw each structure diagram, and each sequence diagram whose place renders no text format, as a file whose layout the writer sets, such as SVG, because the layout of a structure diagram carries meaning, and a page that renders no diagram text still shows an image."
+        "text": "Draw each structure diagram, and each sequence diagram whose place renders no text format, as a file whose layout the writer sets, such as SVG, at the path that N4.4 chose or that the person's answer names, and link it from the document where its passage stood, because the layout of a structure diagram carries meaning, and a page that renders no diagram text still shows an image."
        }
       ]
      },
