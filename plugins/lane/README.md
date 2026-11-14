@@ -177,8 +177,8 @@ claude plugin validate passed.
 Type /reload-plugins, and the checks hold from your next prompt.
 ```
 
-In `hooks/hooks.json`, Lane adds its hook entries beside any of your own, and keeps yours as they
-are. When it lays again, it replaces only the entries it laid before.
+In `hooks/hooks.json`, Lane adds its hook entries beside any of your own, and keeps yours
+unchanged. When it lays again, it replaces only the entries it laid before.
 
 Where a rule or a route isn't as you meant it, you say what to change, and Lane proposes again.
 Where an AI builds the plugin, it reads the proposal and approves it in the same way, with no
