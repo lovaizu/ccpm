@@ -489,6 +489,11 @@
               "about": "What the kept-results adapter is given",
               "decided": "the guard gives the plugin's kept-results adapter the words typed after the command, or the Skill tool's args, which the hook event carries, so that the plugin alone decides from them whether the call starts a run or picks one up, as a plugin whose command takes a request needs to tell the two apart and no part of the plugin is asked before the guard",
               "by": "reasoning"
+            },
+            {
+              "about": "Who adds each Result",
+              "decided": "the guard adds each Result at the PostToolUse of a run of result.py that gave 0, and result.py only checks the result and refuses one the run doesn't wait for, as Claude Code gives a Bash command only CLAUDE_CODE_SESSION_ID and no agent_id (claude-code-2.1.322.jsonl:14-16), so only the hook event ties a result to the subagent that gave it, and a Result tied to no Start would let the wrong run go on, which raises KR1.1",
+              "by": "reasoning"
             }
           ]
         },
