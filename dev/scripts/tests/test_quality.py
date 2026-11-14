@@ -1,7 +1,8 @@
 """The tests of dev/scripts/quality.sh: given the commit a push started from, it checks only the
 code whose lines changed since it, and given nothing, the whole; it runs the property-based tests
 and mutation testing of each plugin that dev/<plugin>/cosmic-ray.toml names, and fails on any mutant
-under which every test passes. Each test runs the script in a repository of its own, with stand-ins
+under which every test passes; and it checks the pages of the documentation that the doubles'
+records name. Each test runs the script in a repository of its own, with stand-ins
 for pytest and cosmic-ray's commands, so that it checks what the script decides and not the tools it
 runs."""
 
@@ -42,9 +43,12 @@ class QualityTest(unittest.TestCase):
         for name, text in TOOLS.items():
             executable(os.path.join(bin_, name), text)
         self.env = dict(os.environ, **GIT_ENV, LOG=self.log)
+        # The repository's trace.py is a copy that goes with the test, so coverage, which counts
+        # trace.py by its name, measures no run of it.
+        self.env.pop("COVERAGE_PROCESS_START", None)
         self.env["PATH"] = bin_ + os.pathsep + self.env["PATH"]
         git_in(self.dir, self.env, "init", "-q", "-b", "main", self.repo)
-        for script in ("quality.sh", "findings.sh"):
+        for script in ("quality.sh", "findings.sh", "trace.py"):
             self.put(f"dev/scripts/{script}", self.source(script))
         # Plugin a has property-based tests, and plugin b none.
         for plugin in ("a", "b"):
@@ -149,6 +153,13 @@ class QualityTest(unittest.TestCase):
         self.assertNotEqual(done.returncode, 0)
         self.assertIn("cr-report --surviving-only --show-diff", self.ran())
         self.assertIn("Don't add a test only to clear a finding.", done.stdout)
+
+    def test_a_page_that_a_doubles_record_names_and_that_cannot_be_read_fails(self):
+        line = '{"event": "e", "source": "http://127.0.0.1:9/docs", "shows": "words"}\n'
+        self.put("dev/tests/recorded/thing-reference.jsonl", line)
+        result = self.quality()
+        self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("http://127.0.0.1:9/docs: can't be read", result.stdout + result.stderr)
 
 
 if __name__ == "__main__":

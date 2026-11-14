@@ -16,14 +16,18 @@ guide and rn's architecture.
 CI runs these checks on every push:
 
 - the linter, the formatter, and the type checker of the checks' own code, and its tests
-- the checks of the code's design: copied code, and a function more complex than one reading can
-  follow
+- the checks of the code's design: copied code, import cycles, and a function more complex than
+  one reading can follow
 - the form of each best practice, and its Markdown
 - the style of every figure
 - Mermaid's parse of every diagram in the Markdown files
 - Claude Code's check of every manifest
-- the tests of the E2E runner and of the double of Claude Code, and that they run every line and
-  branch of each
+- the trace of each plugin's test cases to its architecture, by `dev/scripts/trace.py`, once
+  `dev/<plugin>/tests/` holds them, and the plugin's unit and integration tests
+- the records that each double of the plugins' tests takes its results from, and each line it
+  names in them
+- the tests of the E2E runner, of the trace script, and of the double of Claude Code, and that they
+  run every line and branch of each
 
 Two more runs check the tests, not the change, as
 [the architecture best practice](../plugins/rn/domain/best-practices/architecture/best-practice.md)
@@ -31,7 +35,8 @@ times them, and no work waits on them:
 
 - On every push, `dev/scripts/quality.sh` runs mutation testing over the lines of each plugin's
   code that the push changed, and the plugin's property-based tests. A plugin's code comes under
-  them once `dev/<plugin>/cosmic-ray.toml` names it.
+  them once `dev/<plugin>/cosmic-ray.toml` names it. It also checks that each page of the
+  documentation that a double's record names still shows its words.
 - Each night, CI runs every check over the whole, of `main` and of each branch an open pull request
   comes from, where the branch holds these checks: every mutant of each plugin's code, and the
   property-based tests at their most inputs, among them.

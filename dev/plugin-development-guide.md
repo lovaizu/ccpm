@@ -437,14 +437,52 @@ plugin's cases lie in `dev/<plugin>/tests/`: the unit tests of its code in `unit
 property-based tests in `properties/`, the unit tests of its prompts in `prompts/`, the integration
 tests in `integration/`, and the E2E tests in `e2e/`, with the E2E test files that
 `dev/scripts/e2e.py` runs. `python3 dev/scripts/trace.py check <plugin>` reads the cases and the
-elements of the plugin's architecture by their names, and gives 0 only where each check of the
-trace that the architecture's Test strategy sets holds.
+elements of the plugin's architecture by their names. It gives 0 only where each case names what
+exists one level up, each element has an integration case, and each case of a principle fails as
+[A principle's test seen to fail](#a-principles-test-seen-to-fail) says. `trace.py doubles` and
+`trace.py sources` check the doubles, as
+[Each result of a double from a record](#each-result-of-a-double-from-a-record) says.
 
 *Why*: one form lets one script check the trace of every plugin, as every architecture names its
 elements by the template of the architecture best practice. A folder for each time a test runs lets
 each check run the tests it times: `check.sh` runs `unit/` and `integration/` on each push,
 `quality.sh` runs `properties/` in CI, and the developer runs `prompts/` and `e2e/` on the model when
 the Test strategy says.
+
+### A principle's test seen to fail
+
+Each integration case that names a principle takes the fixture `broken`, which takes out the part
+that holds the principle where the environment variable `TRACE_BROKEN` is `1`, and does nothing
+otherwise. The plugin defines `broken` beside the case, in its test file or in a `conftest.py` of
+`integration/`. `trace.py check <plugin>` runs each such case alone with `TRACE_BROKEN=1`, and gives 0
+only where each fails.
+
+*Why*: a test of a principle that still passes with the part that holds it taken out checks
+nothing of the principle, and only a run without the part shows that, as the architecture best
+practice says of a check trusted only once seen to fail. Only the plugin knows which part holds each
+principle, so its fixture takes the part out, and one form lets one script run the cases of every
+plugin. An environment variable reaches the fixture of each plugin, where an option of pytest that
+two plugins' `conftest.py` both added would stop the run that `check.sh` makes of their cases
+together.
+
+### Each result of a double from a record
+
+A double of something outside the product, such as Claude Code or `gh`, gives each result from one
+line of a JSONL file in the `recorded/` folder beside it. It takes the line by
+`line("<record>", "<event>")`, or a run of lines by `lines("<record>", "<first>", "<last>")`, each
+name written out as a string or as a name that its module sets to one. Each line names itself by
+`event`, once in its file. A record of a run of the real thing names that run by its file's name,
+`<thing>-<version>[-<what>].jsonl`. A line taken from the documentation lies in a file whose name
+holds no version, and carries `source`, the URL of its page, and `shows`, the words of the page that
+show it. `trace.py doubles`, which `check.sh` runs on each push, checks each line of each record and
+each name that a double gives. `trace.py sources`, which `quality.sh` runs in CI, checks that each
+page still shows its words.
+
+*Why*: a double that gives what the real thing never would passes a test that the real one fails,
+as the architecture best practice says of a double's source. A result taken from a line by names
+that a script reads leaves no result whose source no one can check, where a result written in code
+or named in a comment leaves one. A page changes apart from any push, so a check of it on each push
+would fail for a change that the push didn't make, and it runs with the checks of the tests.
 
 ### A prompt's unit tests on the model
 

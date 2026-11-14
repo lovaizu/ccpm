@@ -510,9 +510,11 @@ checks that each names an element or a case one level up.
   integration test that names it; every test names an element or a case one level up that exists;
   every unit case names an integration case; each test of a principle fails where its fixture
   `broken` takes out the part that holds the principle, which `trace.py` runs; and each result of a
-  double names the recorded run or the page of the documentation that shows it, which `trace.py`
-  checks against that source.
-- Runs: with the unit tests of the code before each push and on each push in CI.
+  double comes from a line of a record that names the recorded run or the page of the documentation
+  that shows it, which `trace.py doubles` checks, and each such page still shows its words, which
+  `trace.py sources` checks.
+- Runs: with the unit tests of the code before each push and on each push in CI, and the check of
+  the pages in CI with the checks of the tests, as a page changes apart from any push.
 
 ### E2E tests
 

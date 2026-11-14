@@ -1,7 +1,8 @@
 #!/bin/sh
 # The checks of how well the tests of each plugin's code catch faults, as the architecture best
 # practice times them: mutation testing, which fails on any mutant under which every test still
-# passes, and the property-based tests. A plugin's code comes under them once
+# passes, the property-based tests, and the pages of the documentation that the doubles' records
+# name, each of which must still show its words. A plugin's code comes under them once
 # dev/<plugin>/cosmic-ray.toml names it, and its property-based tests lie in
 # dev/<plugin>/tests/properties/. Run from the top of the repository with
 # the tools of pyproject.toml's test-quality group, as `sh dev/scripts/quality.sh [<base>]`. Given
@@ -75,3 +76,8 @@ for toml in dev/*/cosmic-ray.toml; do
   fi
 done
 [ -n "$found" ] || echo "quality.sh: no dev/<plugin>/cosmic-ray.toml names code to mutate"
+
+# Each line of a double's record taken from the documentation shows words that its page holds, as
+# the plugin guide's Test says. A page changes apart from any push, so the check runs here, apart
+# from the work, on each push and each night alike.
+held tests python3 dev/scripts/trace.py sources

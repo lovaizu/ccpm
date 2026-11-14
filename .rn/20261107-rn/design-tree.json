@@ -106,58 +106,74 @@
         "dev/plugin-development-guide.md"
       ],
       "preconditions": [],
-      "status": "open",
+      "status": "done",
       "necessary_conditions": [
         {
           "id": "N1",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N2",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "Where trace.py reads each element's name",
               "decided": "each story by its `S<n>` in User stories, each principle by its heading under Principles, each role and component by its name in Components' list of what each decides alone, and each kind of data by each `<text class=\"name\">` of the architecture's images/data-model.svg, the one place that names every kind, as Data model's text names only the kinds a reader could confuse",
+              "by": "reasoning"
+            },
+            {
+              "about": "The forms the checks read",
+              "decided": "a principle's case takes the fixture `broken`, active where TRACE_BROKEN=1; a double takes each result by `line`/`lines` from a JSONL line in `recorded/`, a run named by its file and a documentation line by `source` and `shows`; each form written once in the plugin guide's Test, as one form lets one script check every plugin",
               "by": "reasoning"
             }
           ]
         },
         {
           "id": "N3",
-          "good": false,
-          "decisions": []
+          "good": true,
+          "decisions": [
+            {
+              "about": "What trace.py checks",
+              "decided": "all five checks of the trace that each Test strategy sets: `check <plugin>` the names one level up, an integration case for each element, and each principle's case failing with `broken`; `doubles` each double's result taken from a line of a record that names its source; `sources` each documentation page still showing its words, as the plugin guide's Test says trace.py gives 0 only where each check holds and the architecture best practice lists all five",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N4",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "What runs the cases",
               "decided": "check.sh runs trace.py check on each plugin, each plugin's unit/ and integration/ cases, and pylint's cyclic-import check, as the plugin guide's Test and each architecture's Test strategy say, and pyproject.toml registers the supports marker",
+              "by": "reasoning"
+            },
+            {
+              "about": "When the page check runs",
+              "decided": "`trace.py sources` runs in quality.sh in CI, not in check.sh, as a page changes apart from any push and a check on each push must not fail for a change it didn't make",
               "by": "reasoning"
             }
           ]
         },
         {
           "id": "N5",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N6",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N7",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N8",
-          "good": false,
+          "good": true,
           "decisions": []
         }
       ]

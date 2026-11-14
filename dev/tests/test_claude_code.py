@@ -4,6 +4,7 @@ hooks reference says. A plugin of the test's own logs each payload that the doub
 
 from __future__ import annotations
 
+import copy
 import json
 import os
 import shutil
@@ -11,17 +12,52 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from typing import Any
 
 from claude_code import (
+    COMPACT,
     RECORDED,
+    RUN,
+    SEND_MESSAGE,
+    SKILL,
     Conversation,
-    compaction,
-    lines_of,
-    recorded,
+    lines,
+    record_lines,
     run_python,
-    send_message,
-    skill_call,
 )
+
+
+def payloads(record: str) -> dict[str, dict[str, Any]]:
+    """A copy of each payload of the record in recorded/, by the name of its event."""
+    return {r["event"]: copy.deepcopy(r["payload"]) for r in record_lines(record) if "payload" in r}
+
+
+def recorded() -> dict[str, dict[str, Any]]:
+    """Each payload of the recorded run of Claude Code 2.1.322, by the name of its event."""
+    return payloads(RUN)
+
+
+def skill_call() -> dict[str, dict[str, Any]]:
+    """Each payload of the record of a call of a plugin's skill by the Skill tool."""
+    return payloads(SKILL)
+
+
+def send_message() -> dict[str, dict[str, Any]]:
+    """Each payload of the record of a subagent resumed by SendMessage."""
+    return payloads(SEND_MESSAGE)
+
+
+def compaction() -> list[tuple[str, dict[str, Any]]]:
+    """Each event that /compact sends, by its name in the record, from PreCompact to PostCompact."""
+    sent = lines(COMPACT, "the person compacts the conversation", "the conversation is compacted")
+    return [(r["event"], r["payload"]) for r in sent]
+
+
+def lines_of(record: str) -> dict[str, dict[str, Any]]:
+    """A copy of each line of the record claude-code-2.1.323-<record>.jsonl, by its event."""
+    found = record_lines(f"claude-code-2.1.323-{record}.jsonl")
+    return {r["event"]: copy.deepcopy(r) for r in found}
+
 
 EVENTS = [
     "SessionStart",

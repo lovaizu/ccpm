@@ -68,14 +68,18 @@ python-version = "3.9"
 python_files = ["test*.py"]
 norecursedirs = [".*", "__pycache__", "node_modules"]
 addopts = ["-p", "no:cacheprovider"]
+# The mark by which each test case of a plugin names what it supports one level up, which
+# dev/scripts/trace.py reads, as the plugin guide's Test says.
+markers = ["supports(name): the key result, element, or integration case one level up"]
 
-# How much of the E2E runner and of the double of Claude Code the tests run, as N7 of
-# plugins/rn/domain/best-practices/code/best-practice.md says: every line and branch.
+# How much of the E2E runner, of the trace script, and of the double of Claude Code the tests run,
+# as N7 of plugins/rn/domain/best-practices/code/best-practice.md says: every line and branch.
 [tool.coverage.run]
 branch = true
 parallel = true
 include = [
   "*/dev/scripts/e2e.py",
+  "*/dev/scripts/trace.py",
   "*/dev/tests/claude_code.py",
 ]
 

@@ -18,13 +18,15 @@ own_python=$(git ls-files '*.py' | while read -r file; do [ -L "$file" ] || echo
 
 # A fix to code copied between files lands in one and leaves the other wrong, so the repository keeps
 # code more than one file needs once, as Code kept once of dev/plugin-development-guide.md
-# says. The check reads every file at once, as a copy can lie in any two.
+# says. Two modules that import each other can't change or be tested apart, so each architecture's
+# Test strategy checks for import cycles too. The check reads every file at once, as a copy or a
+# cycle can lie in any two.
 if command -v pylint >/dev/null 2>&1; then
   printf '%s\n' "$own_python" \
-    | held design xargs pylint --disable=all --enable=duplicate-code --score=no
+    | held design xargs pylint --disable=all --enable=duplicate-code,cyclic-import --score=no
 else
-  echo "check.sh: copied code goes unchecked, as pylint isn't installed. It comes with"\
-    "pyproject.toml's test-quality group, on Python 3.11 or later"
+  echo "check.sh: copied code and import cycles go unchecked, as pylint isn't installed. It comes"\
+    "with pyproject.toml's test-quality group, on Python 3.11 or later"
 fi
 
 # A function whose maintainer must hold more in mind at once than one reading gives, by how deep its
@@ -64,22 +66,48 @@ python3 dev/scripts/standalone.py check
 # the page, so Mermaid's own parser parses each.
 sh dev/scripts/mermaid.sh
 
-# A behavior that no test checks can break unseen, so the tests of the E2E runner and of the
-# double of Claude Code run every line and branch of their code, as the architecture best practice
-# says a unit passes. pyproject.toml holds what coverage counts. Mutation testing and the
-# property-based tests, which check the tests and not the change, run in CI by
+# Each test case of a plugin names what it supports one level up, and each element of its
+# architecture has an integration case, as the plugin guide's Test says, so a gap between the
+# parts shows before anyone builds around it. A plugin comes under the check once
+# dev/<plugin>/tests/ holds its cases, as its developers write every case before any part.
+plugin_tests=""
+for architecture in dev/*/architecture.md; do
+  plugin="${architecture#dev/}"
+  plugin="${plugin%/architecture.md}"
+  if [ -d "dev/$plugin/tests" ]; then
+    python3 dev/scripts/trace.py check "$plugin"
+  else
+    echo "check.sh: the trace of $plugin's cases goes unchecked, as dev/$plugin/tests/ holds"\
+      "none yet"
+  fi
+  # The unit and integration tests of each plugin run on each push, as the plugin guide's Test says.
+  for level in unit integration; do
+    [ ! -d "dev/$plugin/tests/$level" ] || plugin_tests="$plugin_tests dev/$plugin/tests/$level"
+  done
+done
+
+# A double that gives what the real thing never would passes a test that the real one fails, so each
+# double of the plugins' tests takes each result from a line of a record that names its source, as
+# the plugin guide's Test says. This part of the check needs no network, so it runs on each push;
+# quality.sh checks the documentation's pages.
+python3 dev/scripts/trace.py doubles
+
+# A behavior that no test checks can break unseen, so the tests of the checks' own code, the E2E
+# runner and the double of Claude Code among them, run every line and branch of what
+# pyproject.toml has coverage count, as the architecture best practice says a unit passes. Mutation
+# testing and the property-based tests, which check the tests and not the change, run in CI by
 # dev/scripts/quality.sh, as that best practice times them.
 if command -v coverage >/dev/null 2>&1; then
   # The tests run once, on each core, as coverage's own .pth starts it in each worker where
   # COVERAGE_PROCESS_START names its settings.
   COVERAGE_FILE="$scratch/.coverage" COVERAGE_PROCESS_START="$PWD/pyproject.toml" \
     coverage run --rcfile=pyproject.toml -m pytest -q -n auto -p no:cacheprovider \
-    dev/scripts/tests dev/tests
+    dev/scripts/tests dev/tests $plugin_tests
   COVERAGE_FILE="$scratch/.coverage" coverage combine -q
   COVERAGE_FILE="$scratch/.coverage" held tests coverage report
 else
-  pytest -q -n auto dev/scripts/tests dev/tests
-  echo "check.sh: which lines of the E2E runner and the double the tests run goes unchecked, as"\
+  pytest -q -n auto dev/scripts/tests dev/tests $plugin_tests
+  echo "check.sh: which lines of the checks' own code the tests run goes unchecked, as"\
     "coverage isn't installed. It comes with pyproject.toml's test-quality group, on Python 3.11"\
     "or later"
 fi

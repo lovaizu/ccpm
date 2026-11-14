@@ -8,8 +8,9 @@ PATH fails as recorded/claude-code-2.1.322-hook-failures.jsonl shows, and an ent
 runs in /bin/sh, as that record shows. /compact sends the events that
 recorded/claude-code-2.1.322-compact.jsonl shows, in the same conversation, a call of the Skill tool
 the events that recorded/claude-code-2.1.322-skill.jsonl shows, and a subagent resumed by
-SendMessage the events that recorded/claude-code-2.1.322-send-message.jsonl shows. An Edit, which no
-record holds, carries the input that the hooks reference gives it. A subagent's start of a subagent
+SendMessage the events that recorded/claude-code-2.1.322-send-message.jsonl shows. An Edit and a
+Read, which no record of a run holds, carry the input that the hooks reference gives them, as
+recorded/claude-code-hooks-reference.jsonl takes it from there. A subagent's start of a subagent
 sends the main conversation's start with the subagent's `agent_id` and `agent_type`, as each other
 call of a subagent carries them, and as the end-to-end test's record of Claude Code 2.1.322 shows at
 line 71 of the hooks.jsonl of its changelog run 20261112T054832Z, which commit eb093f4c holds. A
@@ -18,13 +19,16 @@ shows, a command that a skill's SKILL.md runs as the skill loads runs as
 recorded/claude-code-2.1.323-skill-command.jsonl shows, and fails on a typed command as
 recorded/claude-code-2.1.323-skill-command-fails.jsonl shows, and EnterWorktree and ExitWorktree
 move the conversation's folder as recorded/claude-code-2.1.323-worktree.jsonl shows, each a record
-of Claude Code 2.1.323, as LATER says. A test plays the person, the main conversation, and each
-subagent by the calls it makes on the double. Lane's tests and rn's tests share it."""
+of Claude Code 2.1.323, as the comment on those records below says. A test plays the person, the
+main conversation, and each subagent by the calls it makes on the double. Lane's tests and rn's
+tests share it. It takes each result from one line of a record, by `line` or `lines`, as the plugin
+guide's Test says of a double's results."""
 
 from __future__ import annotations
 
 import contextlib
 import copy
+import functools
 import io
 import json
 import os
@@ -41,12 +45,22 @@ from dataclasses import dataclass, field
 from typing import Any
 
 RECORDED = os.path.join(os.path.dirname(os.path.abspath(__file__)), "recorded")
-VERSION = "2.1.322"
-# The version of the records of what 2.1.322's records don't hold: TaskStop, a skill's command run
-# as the skill loads, and EnterWorktree. Each event of `claude -p` that both versions' records hold
-# carries the same fields in each, save `bashEditDiff` in the response of one Bash call of 2.1.323,
-# so the double sends the others as 2.1.322's records show.
-LATER = "2.1.323"
+# The records of runs of Claude Code 2.1.322, by the name of each file in recorded/.
+RUN = "claude-code-2.1.322.jsonl"
+COMPACT = "claude-code-2.1.322-compact.jsonl"
+SKILL = "claude-code-2.1.322-skill.jsonl"
+SEND_MESSAGE = "claude-code-2.1.322-send-message.jsonl"
+ENVIRONMENT = "claude-code-2.1.322-bash-environment.jsonl"
+# The records of what 2.1.322's records don't hold: TaskStop, a skill's command run as the skill
+# loads, and EnterWorktree, each of a run of 2.1.323. Each event of `claude -p` that both versions'
+# records hold carries the same fields in each, save `bashEditDiff` in the response of one Bash call
+# of 2.1.323, so the double sends the others as 2.1.322's records show.
+SKILL_COMMAND = "claude-code-2.1.323-skill-command.jsonl"
+TASK_STOP = "claude-code-2.1.323-task-stop.jsonl"
+WORKTREE = "claude-code-2.1.323-worktree.jsonl"
+# What the hooks reference shows of a call that no record of a run holds.
+REFERENCE = "claude-code-hooks-reference.jsonl"
+
 
 # The events whose plain standard output Claude Code adds to what the model reads, and those that
 # take a top-level decision, as the hooks reference says.
@@ -82,61 +96,36 @@ MATCHED = {
 }
 
 
-def recorded(version: str = VERSION) -> dict[str, dict[str, Any]]:
-    """Each payload of the recorded run, by the name of its event in the record."""
-    path = os.path.join(RECORDED, f"claude-code-{version}.jsonl")
-    with open(path, encoding="utf-8") as f:
-        return {r["event"]: r["payload"] for r in map(json.loads, f)}
+@functools.cache
+def record_lines(record: str) -> list[dict[str, Any]]:
+    """Each line of the record in recorded/, in its order."""
+    with open(os.path.join(RECORDED, record), encoding="utf-8") as f:
+        return [json.loads(each) for each in f]
 
 
-def compaction(version: str = VERSION) -> list[tuple[str, dict[str, Any]]]:
-    """Each event that /compact sends, by its name in the record, in the order of the record of a
-    conversation compacted between two runs of a skill: from PreCompact to PostCompact."""
-    path = os.path.join(RECORDED, f"claude-code-{version}-compact.jsonl")
-    with open(path, encoding="utf-8") as f:
-        records = [(r["event"], r["payload"]) for r in map(json.loads, f)]
-    names = [name for name, _ in records]
-    first = names.index("the person compacts the conversation")
-    return records[first : names.index("the conversation is compacted") + 1]
+def line(record: str, event: str) -> dict[str, Any]:
+    """A copy of the line of the record in recorded/ that the event names."""
+    return copy.deepcopy(next(each for each in record_lines(record) if each["event"] == event))
 
 
-def skill_call(version: str = VERSION) -> dict[str, dict[str, Any]]:
-    """Each payload of the record of a conversation in which the main conversation called a
-    plugin's skill by the Skill tool, by the name of its event in the record."""
-    path = os.path.join(RECORDED, f"claude-code-{version}-skill.jsonl")
-    with open(path, encoding="utf-8") as f:
-        return {r["event"]: r["payload"] for r in map(json.loads, f)}
+def lines(record: str, first: str, last: str) -> list[dict[str, Any]]:
+    """A copy of each line of the record in recorded/ from the first event to the last."""
+    events = [each["event"] for each in record_lines(record)]
+    return copy.deepcopy(record_lines(record)[events.index(first) : events.index(last) + 1])
 
 
-def send_message(version: str = VERSION) -> dict[str, dict[str, Any]]:
-    """Each payload of the record of a conversation in which the main conversation started a
-    subagent in the background, and resumed it by SendMessage once its end reached the main
-    conversation, by the name of its event in the record."""
-    path = os.path.join(RECORDED, f"claude-code-{version}-send-message.jsonl")
-    with open(path, encoding="utf-8") as f:
-        return {r["event"]: r["payload"] for r in map(json.loads, f)}
-
-
-def lines_of(record: str, version: str = LATER) -> dict[str, dict[str, Any]]:
-    """Each line of the record claude-code-<version>-<record>.jsonl, by the name of its event. The
-    line of a hook event holds its `payload`. The line of a call that no hook saw holds `hooks`
-    empty, with what the call gave."""
-    path = os.path.join(RECORDED, f"claude-code-{version}-{record}.jsonl")
-    with open(path, encoding="utf-8") as f:
-        return {r["event"]: r for r in map(json.loads, f)}
-
-
-def bash_environment(session_id: str, version: str = VERSION) -> dict[str, str]:
+def bash_environment(session_id: str) -> dict[str, str]:
     """What Claude Code adds to the environment of each Bash command of the conversation, of the
     main conversation and of a subagent alike, as the record shows. In the record, `session_id` is
     the ID of the conversation's transcript, which the hook payloads of the conversation carry as
     their `session_id`, a subagent's among them."""
-    path = os.path.join(RECORDED, f"claude-code-{version}-bash-environment.jsonl")
     added: dict[str, str] = {}
-    with open(path, encoding="utf-8") as f:
-        for record in map(json.loads, f):
-            for name, value in record["environment"].items():
-                added[name] = value.replace("<session_id>", session_id)
+    for ran in (
+        line(ENVIRONMENT, "the main conversation runs Bash"),
+        line(ENVIRONMENT, "a subagent runs Bash"),
+    ):
+        for name, value in ran["environment"].items():
+            added[name] = value.replace("<session_id>", session_id)
     return added
 
 
@@ -340,7 +329,6 @@ class Conversation:
         self.plugins = [Plugin.load(p) for p in plugins]
         self.env = env
         self.temp = temp
-        self.records = {**recorded(), **skill_call(), **send_message()}
         self.session_id = str(uuid.uuid4())
         self.prompt_id = ""
         self.agents: list[Agent] = []
@@ -349,13 +337,9 @@ class Conversation:
         # the branch of it and whether EnterWorktree made it.
         self.cwd = self.repo
         self.worktree: tuple[str, str, bool] | None = None
-        self.send("SessionStart", "session started", {})
+        self.send("SessionStart", line(RUN, "session started"), {})
 
     # What the double sends.
-
-    def payload(self, record: str, fields: dict[str, Any]) -> dict[str, Any]:
-        """The recorded payload of the record's event, made this conversation's, with the fields."""
-        return self.made(self.records[record], fields)
 
     def made(self, recorded: dict[str, Any], fields: dict[str, Any]) -> dict[str, Any]:
         """The recorded payload made this conversation's, with the fields."""
@@ -386,11 +370,11 @@ class Conversation:
             return os.path.join(self.temp, "worktree-transcripts", name)
         return os.path.join(self.temp, "transcripts")
 
-    def send(self, event: str, record: str, fields: dict[str, Any]) -> Answer:
-        """Sends the recorded event, made this conversation's with the fields, as deliver sends a
-        payload, and gives what came of it."""
-        payload = self.payload(record, fields)
-        assert payload["hook_event_name"] == event, f"record {record!r} is not of {event}"
+    def send(self, event: str, recorded: dict[str, Any], fields: dict[str, Any]) -> Answer:
+        """Sends the payload of the recorded line, made this conversation's with the fields, as
+        deliver sends a payload, and gives what came of it."""
+        payload = self.made(recorded["payload"], fields)
+        assert payload["hook_event_name"] == event, f"{recorded['event']!r} is not of {event}"
         return self.deliver(payload)
 
     def deliver(self, payload: dict[str, Any]) -> Answer:
@@ -484,14 +468,14 @@ class Conversation:
         recorded/claude-code-2.1.323-skill-command-fails.jsonl shows."""
         self.prompt_id = str(uuid.uuid4())
         answer = self.send(
-            "UserPromptSubmit", "a person types /lane:up changelog", {"prompt": prompt}
+            "UserPromptSubmit", line(RUN, "a person types /lane:up changelog"), {"prompt": prompt}
         )
         command = re.match(r"/([\w-]+):([\w-]+)(?: (.*))?$", prompt, re.DOTALL)
         if answer.blocked or not command or not self.has_skill(command[1], command[2]):
             return answer
         expanded = self.send(
             "UserPromptExpansion",
-            "the typed /lane:up expands",
+            line(RUN, "the typed /lane:up expands"),
             {
                 "prompt": prompt,
                 "command_name": f"{command[1]}:{command[2]}",
@@ -517,7 +501,10 @@ class Conversation:
         self.prompt_id = str(uuid.uuid4())
         answer = Answer()
         said = []
-        for _, recorded in compaction():
+        compaction = lines(
+            COMPACT, "the person compacts the conversation", "the conversation is compacted"
+        )
+        for recorded in (each["payload"] for each in compaction):
             fields: dict[str, Any] = {}
             if recorded["hook_event_name"] == "SubagentStop":
                 agent = self.next_id("a", 16)
@@ -611,7 +598,13 @@ class Conversation:
         EnterWorktree shows, and sends PostToolUse, or PostToolUseFailure where it fails, as the
         record shows."""
         who = {"agent_id": agent.id, "agent_type": agent.type} if agent else {}
-        record = "writer runs git log" if agent else "the main conversation runs lay.py print"
+        if agent:
+            record, ran = line(RUN, "writer runs git log"), line(RUN, "git log ran")
+        else:
+            record, ran = (
+                line(RUN, "the main conversation runs lay.py print"),
+                line(RUN, "lay.py print ran"),
+            )
         tool_input = {"command": command, "description": "Run a command"}
         use = {"tool_input": tool_input, "tool_use_id": self.next_id("toolu_", 24)}
         with self.acting(agent):
@@ -636,19 +629,15 @@ class Conversation:
                 code, out, err = done.returncode, done.stdout, done.stderr
             answer.exit_code, answer.output = code, out + err
             if code == 0:
-                response = {
-                    "stdout": out.rstrip("\n"),
-                    "stderr": err.rstrip("\n"),
-                    "interrupted": False,
-                    "isImage": False,
-                    "noOutputExpected": False,
-                }
-                ran = "git log ran" if agent else "lay.py print ran"
+                response = ran["payload"]["tool_response"]
+                response.update(stdout=out.rstrip("\n"), stderr=err.rstrip("\n"))
                 after = self.send("PostToolUse", ran, {**who, **use, "tool_response": response})
             else:
                 error = f"Exit code {code}\n" + (out + err).rstrip("\n")
                 after = self.send(
-                    "PostToolUseFailure", "a command fails", {**who, **use, "error": error}
+                    "PostToolUseFailure",
+                    line(RUN, "a command fails"),
+                    {**who, **use, "error": error},
                 )
             answer.said = "\n".join(s for s in (answer.said, after.said) if s)
             answer.ran += after.ran
@@ -662,14 +651,16 @@ class Conversation:
         in the record carries no `agent_id` and no `agent_type`. The record holds the Write of a new
         file, so the double writes no file that's there."""
         assert not os.path.exists(path), f"the record holds only a new file's Write: {path}"
-        tool_input = {"file_path": path, "content": content}
+        written = line(RUN, "CHANGELOG.md written")["payload"]
+        tool_input = dict(written["tool_input"], file_path=path, content=content)
         use = {"tool_input": tool_input, "tool_use_id": self.next_id("toolu_", 24)}
         if agent:
             use.update(agent_id=agent.id, agent_type=agent.type)
-            before, ran = "writer writes CHANGELOG.md", "CHANGELOG.md written"
+            before, ran = line(RUN, "writer writes CHANGELOG.md"), line(RUN, "CHANGELOG.md written")
         else:
-            use["tool_name"] = "Write"
-            before, ran = "the main conversation runs lay.py print", "lay.py print ran"
+            use["tool_name"] = written["tool_name"]
+            before = line(RUN, "the main conversation runs lay.py print")
+            ran = line(RUN, "lay.py print ran")
         with self.acting(agent):
             answer = self.send("PreToolUse", before, use)
             if answer.blocked:
@@ -677,14 +668,7 @@ class Conversation:
             os.makedirs(os.path.dirname(path), exist_ok=True)
             with open(path, "w", encoding="utf-8") as f:
                 f.write(content)
-            response = {
-                "type": "create",
-                "filePath": path,
-                "content": content,
-                "structuredPatch": [],
-                "originalFile": None,
-                "userModified": False,
-            }
+            response = dict(written["tool_response"], filePath=path, content=content)
             after = self.send("PostToolUse", ran, {**use, "tool_response": response})
             answer.said = "\n".join(s for s in (answer.said, after.said) if s)
             answer.ran += after.ran
@@ -693,33 +677,37 @@ class Conversation:
     def read(self, agent: Agent, path: str) -> Answer:
         """The agent calls the Read tool on the file at the path. The double sends the PreToolUse
         that the record holds of a subagent's call, with the tool's name and input as the hooks
-        reference gives Read's: `file_path`. It sends no PostToolUse, as neither the record nor the
+        reference gives Read's: `file_path`, as recorded/claude-code-hooks-reference.jsonl takes
+        them from there. It sends no PostToolUse, as neither the record nor the
         hooks reference shows Read's `tool_response`. The answer says whether a hook stopped the
         call, and what the agent reads."""
+        shown = line(REFERENCE, "a Read call's input")
         use = {
-            "tool_name": "Read",
-            "tool_input": {"file_path": path},
+            "tool_name": shown["tool_name"],
+            "tool_input": dict(shown["tool_input"], file_path=path),
             "tool_use_id": self.next_id("toolu_", 24),
             "agent_id": agent.id,
             "agent_type": agent.type,
         }
         with self.acting(agent):
-            return self.send("PreToolUse", "writer writes CHANGELOG.md", use)
+            return self.send("PreToolUse", line(RUN, "writer writes CHANGELOG.md"), use)
 
     def edit(self, path: str, old: str, new: str) -> Answer:
         """The main conversation calls the Edit tool to replace the one place of `old` in the file
         at the path with `new`. The double sends the PreToolUse that the record holds of a call of
         the main conversation, with the tool's name and input as the hooks reference gives Edit's:
-        `file_path`, `old_string`, `new_string`, and `replace_all`. Where the hooks let it through,
-        the double changes the file. It sends no PostToolUse, as neither the record nor the hooks
-        reference shows Edit's `tool_response`."""
+        `file_path`, `old_string`, `new_string`, and `replace_all`, as
+        recorded/claude-code-hooks-reference.jsonl takes them from there. Where the hooks let it
+        through, the double changes the file. It sends no PostToolUse, as neither the record nor the
+        hooks reference shows Edit's `tool_response`."""
         with open(path, encoding="utf-8") as f:
             text = f.read()
         assert text.count(old) == 1, f"Edit replaces one place of the text in {path}: {old!r}"
-        tool_input = {"file_path": path, "old_string": old, "new_string": new, "replace_all": False}
-        use = {"tool_name": "Edit", "tool_input": tool_input}
+        shown = line(REFERENCE, "an Edit call's input")
+        tool_input = dict(shown["tool_input"], file_path=path, old_string=old, new_string=new)
+        use = {"tool_name": shown["tool_name"], "tool_input": tool_input}
         use["tool_use_id"] = self.next_id("toolu_", 24)
-        answer = self.send("PreToolUse", "the main conversation runs lay.py print", use)
+        answer = self.send("PreToolUse", line(RUN, "the main conversation runs lay.py print"), use)
         if not answer.blocked:
             with open(path, "w", encoding="utf-8") as f:
                 f.write(text.replace(old, new))
@@ -740,10 +728,11 @@ class Conversation:
         the skill's text as the main conversation reads it."""
         plugin, _, name = skill.partition(":")
         if not self.model_may_call(plugin, name):
-            refused = lines_of("skill-command")[
+            refused = line(
+                SKILL_COMMAND,
                 "the main conversation calls rec:probe, whose SKILL.md holds"
-                " disable-model-invocation, by the Skill tool"
-            ]
+                " disable-model-invocation, by the Skill tool",
+            )
             error = refused["tool_result"].replace(refused["tool_input"]["skill"], skill)
             return Answer(blocked=True, said=error)
         use = {
@@ -751,16 +740,15 @@ class Conversation:
             "tool_use_id": self.next_id("toolu_", 24),
         }
         answer = self.send(
-            "PreToolUse", "the main conversation calls lane:up by the Skill tool", use
+            "PreToolUse", line(SKILL, "the main conversation calls lane:up by the Skill tool"), use
         )
         if answer.blocked:
             return answer
         if self.has_skill(plugin, name):
             answer.output = self.loaded(plugin, name)
-        response = {"success": True, "commandName": skill}
-        after = self.send(
-            "PostToolUse", "the Skill call of lane:up ran", {**use, "tool_response": response}
-        )
+        ran = line(SKILL, "the Skill call of lane:up ran")
+        response = dict(ran["payload"]["tool_response"], commandName=skill)
+        after = self.send("PostToolUse", ran, {**use, "tool_response": response})
         answer.said = "\n".join(x for x in (answer.said, after.said) if x)
         answer.ran += after.ran
         return answer
@@ -795,7 +783,7 @@ class Conversation:
         with self.acting(by):
             answer = self.send(
                 "PreToolUse",
-                "the main conversation starts writer in the background",
+                line(RUN, "the main conversation starts writer in the background"),
                 {**who, **use},
             )
         if answer.blocked:
@@ -804,18 +792,19 @@ class Conversation:
         agent = Agent(self, self.next_id("a", 16), subagent_type, description, use["tool_use_id"])
         self.agents.append(agent)
         started = self.send(
-            "SubagentStart", "writer starts", {"agent_id": agent.id, "agent_type": agent.type}
+            "SubagentStart",
+            line(RUN, "writer starts"),
+            {"agent_id": agent.id, "agent_type": agent.type},
         )
-        response = copy.deepcopy(self.records["writer runs in the background"]["tool_response"])
+        ran = line(RUN, "writer runs in the background")
+        response = ran["payload"]["tool_response"]
         response.update(
             agentId=agent.id,
             description=description,
             prompt=prompt,
             outputFile=agent.output_file,
         )
-        self.send(
-            "PostToolUse", "writer runs in the background", {**use, "tool_response": response}
-        )
+        self.send("PostToolUse", ran, {**use, "tool_response": response})
         return Answer(started.blocked, started.said, ran=answer.ran + started.ran), agent
 
     def resume(self, agent: Agent, message: str, summary: str = "Resume") -> Answer:
@@ -834,22 +823,25 @@ class Conversation:
             "tool_input": {**to, **filled, "content": message},
             "tool_use_id": self.next_id("toolu_", 24),
         }
-        answer = self.send("PreToolUse", "the main conversation resumes helper by SendMessage", use)
+        called = line(SEND_MESSAGE, "the main conversation resumes helper by SendMessage")
+        answer = self.send("PreToolUse", called, use)
         if answer.blocked:
             return answer
-        response = copy.deepcopy(self.records["the SendMessage call ran"]["tool_response"])
-        response.update(message=f"Resuming agent {agent.id[:7]}")
+        ran = line(SEND_MESSAGE, "the SendMessage call ran")
+        response = ran["payload"]["tool_response"]
+        recorded_id = response["resumedAgentId"]
+        response.update(message=response["message"].replace(recorded_id[:7], agent.id[:7]))
         response.update(resumedAgentId=agent.id, revivedAgentId=agent.id)
         response["pin"].update(id=agent.id, name=agent.id)
         self.send(
             "PostToolUse",
-            "the SendMessage call ran",
+            ran,
             {"tool_input": to, "tool_use_id": use["tool_use_id"], "tool_response": response},
         )
         agent.running, agent.tool_use_id = True, use["tool_use_id"]
         started = self.send(
             "SubagentStart",
-            "helper starts again on the message",
+            line(SEND_MESSAGE, "helper starts again on the message"),
             {"agent_id": agent.id, "agent_type": agent.type},
         )
         return Answer(started.blocked, started.said, ran=answer.ran + started.ran)
@@ -865,26 +857,27 @@ class Conversation:
         turn, with the turn's `prompt_id`, the status `killed`, and no result. The answer says
         whether a hook stopped the call, and what the main conversation reads beside the
         notification."""
-        lines = lines_of("task-stop")
         if not agent.running:
-            failed = lines["the main conversation stops by TaskStop a subagent whose end came"]
+            failed = line(
+                TASK_STOP, "the main conversation stops by TaskStop a subagent whose end came"
+            )
             error = failed["tool_result"].replace(failed["tool_input"]["task_id"], agent.id)
             return Answer(blocked=True, said=error)
         use = {"tool_input": {"task_id": agent.id}, "tool_use_id": self.next_id("toolu_", 24)}
-        called = lines["the main conversation stops sleeper by TaskStop"]["payload"]
+        called = line(TASK_STOP, "the main conversation stops sleeper by TaskStop")["payload"]
         answer = self.deliver(self.made(called, use))
         if answer.blocked:
             return answer
-        ran = lines["the TaskStop call ran"]["payload"]
-        response = {
-            "message": f"Successfully stopped task: {agent.id} ({agent.description})",
-            "task_id": agent.id,
-            "task_type": ran["tool_response"]["task_type"],
-            "command": agent.description,
-        }
+        ran = line(TASK_STOP, "the TaskStop call ran")["payload"]
+        stopped = ran["tool_response"]
+        message = stopped["message"].replace(stopped["task_id"], agent.id)
+        message = message.replace(f"({stopped['command']})", f"({agent.description})")
+        response = dict(stopped, message=message, task_id=agent.id, command=agent.description)
         after = self.deliver(self.made(ran, {**use, "tool_response": response}))
         agent.running, agent.killed = False, True
-        notified = lines["the stopped sleeper's notification reaches the main conversation"]
+        notified = line(
+            TASK_STOP, "the stopped sleeper's notification reaches the main conversation"
+        )
         prompt = notified["payload"]["prompt"]
         for tag, value in (
             ("task-id", agent.id),
@@ -923,13 +916,12 @@ class Conversation:
         whether a new worktree starts from HEAD or from the remote's default branch."""
         assert (name is None) != (path is None), "EnterWorktree takes a name or a path"
         assert self.worktree is None, "the record enters one worktree at a time"
-        lines = lines_of("worktree")
         if name:
-            called = lines["the main conversation enters a worktree by EnterWorktree"]
-            ran = lines["the EnterWorktree call ran"]
+            called = line(WORKTREE, "the main conversation enters a worktree by EnterWorktree")
+            ran = line(WORKTREE, "the EnterWorktree call ran")
         else:
-            called = lines["the main conversation enters the worktree by its path"]
-            ran = lines["the EnterWorktree call by path ran"]
+            called = line(WORKTREE, "the main conversation enters the worktree by its path")
+            ran = line(WORKTREE, "the EnterWorktree call by path ran")
         tool_input = {"name": name} if name else {"path": path}
         use = {"tool_input": tool_input, "tool_use_id": self.next_id("toolu_", 24)}
         answer = self.deliver(self.made(called["payload"], use))
@@ -974,13 +966,12 @@ class Conversation:
         where, branch, made = self.worktree
         assert action in ("remove", "keep"), f"ExitWorktree takes remove or keep: {action}"
         assert made or action == "keep", "ExitWorktree removes no worktree entered by path"
-        lines = lines_of("worktree")
         if action == "remove":
-            called = lines["the main conversation leaves the worktree by ExitWorktree"]
-            ran = lines["the ExitWorktree call ran"]
+            called = line(WORKTREE, "the main conversation leaves the worktree by ExitWorktree")
+            ran = line(WORKTREE, "the ExitWorktree call ran")
         else:
-            called = lines["the main conversation leaves the worktree it entered by path"]
-            ran = lines["the ExitWorktree call that keeps the worktree ran"]
+            called = line(WORKTREE, "the main conversation leaves the worktree it entered by path")
+            ran = line(WORKTREE, "the ExitWorktree call that keeps the worktree ran")
         use = {"tool_input": {"action": action}, "tool_use_id": self.next_id("toolu_", 24)}
         answer = self.deliver(self.made(called["payload"], use))
         if answer.blocked:
@@ -996,14 +987,9 @@ class Conversation:
         return answer
 
     def background_tasks(self) -> list[dict[str, Any]]:
+        task = line(RUN, "writer ends")["payload"]["background_tasks"][0]
         return [
-            {
-                "id": a.id,
-                "type": "subagent",
-                "status": "running",
-                "description": a.description,
-                "agent_type": a.type,
-            }
+            dict(task, id=a.id, description=a.description, agent_type=a.type)
             for a in self.agents
             if a.running
         ]
@@ -1013,7 +999,7 @@ class Conversation:
         the hooks said."""
         return self.send(
             "Stop",
-            "the main conversation stops",
+            line(SEND_MESSAGE, "the main conversation stops"),
             {
                 "last_assistant_message": last_message,
                 "background_tasks": self.background_tasks(),
@@ -1071,7 +1057,10 @@ class Agent:
         prompt_id = c.prompt_id
         c.prompt_id = self.prompt_id
         transcript = os.path.join(c.transcripts(), c.session_id, "subagents")
-        record = "writer ends again after its end was stopped" if self.stopped else "writer ends"
+        if self.stopped:
+            record = line(RUN, "writer ends again after its end was stopped")
+        else:
+            record = line(RUN, "writer ends")
         stopped = c.send(
             "SubagentStop",
             record,
@@ -1089,7 +1078,8 @@ class Agent:
             self.stopped = True
             return stopped, None
         self.running = False
-        notification = c.records["writer's end reaches the main conversation"]["prompt"]
+        reached = line(RUN, "writer's end reaches the main conversation")
+        notification = reached["payload"]["prompt"]
         notification = re.sub(
             r"<task-id>.*?</task-id>", f"<task-id>{self.id}</task-id>", notification
         )
@@ -1117,7 +1107,7 @@ class Agent:
         c.prompt_id = str(uuid.uuid4())
         notified = c.send(
             "UserPromptSubmit",
-            "writer's end reaches the main conversation",
+            reached,
             {"prompt": notification},
         )
         return stopped, notified
