@@ -379,7 +379,7 @@ the subagent reads each rule once, with the reason you give it.
 
 ### "A run that stops starts over."
 
-Lane keeps each run's starts, calls, and results in a record in the system's temporary folder, and
+Lane keeps each run's starts and results in a record in the system's temporary folder, and
 decides each move from that record, not from the conversation. So a run goes on where it stopped
 in the same conversation, even after `/compact`. A new conversation goes on from the results that
 your plugin keeps, through your adapter of them in `hooks/adapters/`, which prints
