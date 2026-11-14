@@ -54,11 +54,11 @@
        },
        {
         "at": "decide",
-        "text": "Ask why that end matters to the role, and ask again of each answer, until the answer is something the role reaches in their own work and no longer something the product does, such as going on from `rn writes the README` to `the people the README is for decide on the product with it`."
+        "text": "Ask why that end matters to the role, and ask again of each answer, until the answer is something the role reaches in their own work and no longer something the product does, such as going on from `rn writes the README` to `the people the README is for decide on the product with it`. Where an answer names two results, such as `the shop takes every order and no customer's data leaks`, ask why of each on its own."
        },
        {
         "at": "decide",
-        "text": "Write one objective for each distinct end, where two ends are distinct if a role can reach one without the other, such as a member who buys and an administrator who keeps the shop running."
+        "text": "Write one objective for each end that N2.2 reached. Where a role can't reach one of its ends without another, write the two as one objective, and keep them apart where it can reach one without the other, such as an administrator's `the shop takes every order` and `no customer's data leaks`, since a shop can take every order while its data leaks."
        },
        {
         "at": "make",
@@ -136,7 +136,7 @@
        },
        {
         "at": "decide",
-        "text": "For each pair of objectives, ask whether a piece of work could serve one without the other. If no piece could, merge the two into one objective, and name it in place of either wherever a piece names one of them."
+        "text": "For each pair of objectives of one role, look at the pieces that N5.2 named either of them for. Where there are such pieces and each names both, merge the two into one objective, and name it in place of either wherever a piece names one of them. Leave two objectives of different roles apart, since each objective states what one role is trying to achieve."
        },
        {
         "at": "decide",
@@ -174,7 +174,7 @@
        },
        {
         "at": "decide",
-        "text": "List the moments of the users' use, from the moment they first meet the product to the moment they reach the objective, as a [customer journey map](https://www.nngroup.com/articles/journey-mapping-101/) does, such as the request, the goal confirmed, the questions answered, the plan signed off, and each deliverable signed off."
+        "text": "Take each task that N4.1 wrote, from where its role starts to the result they keep, and list the moments of that use in order, as a [customer journey map](https://www.nngroup.com/articles/journey-mapping-101/) does, starting where the role first meets the product, such as the request, the goal confirmed, the questions answered, the plan signed off, and each deliverable signed off."
        },
        {
         "at": "decide",
@@ -182,15 +182,15 @@
        },
        {
         "at": "decide",
-        "text": "For each idea you propose, ask the user `Does <idea> keep <the one way> holding at <moment>, as you mean it?`, and keep it only where they say yes."
+        "text": "At each moment, take a design choice that no line of the vision names, such as whether to ask the user about a point the best practice settles, and decide it by the one way and its ideas. Where they don't decide it one way, rewrite the idea for that moment until they do."
+       },
+       {
+        "at": "decide",
+        "text": "For each idea you proposed or rewrote, ask the user `Does <idea> keep <the one way> holding at <moment>, as you mean it?`, and keep it only where they say yes."
        },
        {
         "at": "decide",
         "text": "Drop each idea where taking it out leaves the one way holding at every moment."
-       },
-       {
-        "at": "make",
-        "text": "At each moment, take a design choice that no line of the vision names, such as whether to ask the user about a point the best practice settles, and decide it by the one way and its ideas. Where they don't decide it one way, rewrite the idea for that moment until they do."
        }
       ]
      }
