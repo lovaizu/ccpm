@@ -27,19 +27,20 @@ these two sides of the [Pareto principle](https://en.wikipedia.org/wiki/Pareto_p
 causes that bring most of a result, and the many that bring little.
 
 - The deliverable the user means, drawn out, for O1\
-  rn keeps the user's goal and their decisions under it in a design tree, asks them only the
-  questions it can't settle, and has them sign off the plan and each deliverable before the next
-  work rests on it, and so draws out the deliverable they mean.
+  rn has the user confirm their goal, answer only the questions under it that rn can't settle, and
+  sign off the plan and each deliverable before the next work rests on it, and keeps their goal and
+  each decision under it as their design tree, so that it draws out the deliverable they mean.
 - Every step by best practice, for O1\
   rn plans, makes, and asks the user, each by the best practice of its kind, and lists for the user
   what a best practice settled without asking them, so that each step holds the few things its kind
   of work needs.
 - Judged by the people it's for, for O1\
-  rn judges each deliverable by whether the people it's for achieve what they're after with it, so
-  that it improves only what they need.
+  rn judges each deliverable by whether the people it's for achieve what they're after with it, and
+  at each sign-off shows the user what it found those people can do with it, so that it improves
+  only what they need.
 - Back to the design tree on a problem, for O1\
-  rn takes each problem it finds back to the user's design tree, so that the fix changes the
-  decision there that the problem comes from.
+  rn takes each problem it finds back to the decision in the user's design tree that it comes from,
+  so that the user sees each fix as that decision changed.
 - The design tree revised on each run, for O1\
   rn revises the user's design tree by what each run found, so that the next run goes toward their
   goal by what rn now knows.
