@@ -60,7 +60,9 @@ Does each behavior of the code trace to a case of its specification, which is wh
 Every behavior that no case asks for is code the maintainer must carry and keep working, while no test tells them whether it still holds.
 
 1. *While deciding.* For each option, mode, parameter, and branch that you plan for a module, name the unit case that calls for it, and drop it from the plan where none does, such as a `--dry-run` flag that no case runs, or a second file format that no case reads.
-2. *While making.* Once the tests pass, read each module's body and remove each option, mode, parameter, and branch that no case calls for, such as a fallback for an input that the interface already refuses.
+2. *While making.* Write the body one test at a time, once you see the test fail as N5.8 says: under the interface that the test calls, write the least code that makes it pass, such as `return []` for a test of an empty file before any code that reads an entry, and leave each other behavior to the test of its own case.
+3. *While making.* Run the tests once you write the code for a test, and take the next failing test only once all of them pass. Where a test that passed before fails, mend the body before you go on. The trace: `{tests}` run.
+4. *While making.* Once the tests pass, read each module's body and remove each option, mode, parameter, and branch that no case calls for, such as a fallback for an input that the interface already refuses.
 
 ### N4
 
@@ -109,10 +111,11 @@ The maintainer knows that every behavior still holds only where breaking any of 
 2. *While making.* Once the tests pass, run them with line and branch coverage measured by the tool that Test strategy names, such as coverage.py, and list each line and branch that no test runs. The trace: `{coverage}` run.
 3. *While making.* For each line or branch that no test runs, name the case that calls for it. Where none does, remove it, as N3 says. Where a case that the tests name does, make that case's test reach it through the interface. Where only a case that no test names would, take that case back to whoever designs the cases, such as with `asks`, and write no test for it.
 4. *While making.* For each interface that Test strategy names for property-based tests, write one property that holds for every input its contract allows, with a generator of those inputs, such as that reading back what was written gives it again.
-5. *While making.* For each mutant that survived, as the mutation testing that Test strategy runs apart from the work reports it, name the case that the changed code serves. Where none does, remove the code or make it simpler, so that no change of it passes unseen.
-6. *While making.* Where a surviving mutant can't change what the code does, such as `<` turned into `<=` where the two values are never equal, mark it beside the code as one that changes nothing, with why.
-7. *While making.* Where a surviving mutant breaks a case that the tests already name, make that case's test assert more closely so that the mutant fails it, and report why the design of the cases missed it, so that whoever designs them mends the cause. Add no case for a mutant, since such a case comes from the code that exists, not from what the part must do.
-8. *While making.* For each input on which a property-based test finds the code fails, ask whether the contract must take it. Where it needn't, narrow what the interface takes, and refuse the input as N8 says. Where it must, fix the code, keep the input as a test of the case it falls in, and report why the design of the cases missed it.
+5. *While making.* For each input on which a property-based test finds the code fails, ask whether the contract must take it. Where it needn't, narrow what the interface takes, and refuse the input as N8 says. Where it must, fix the code, keep the input as a test of the case it falls in, and report why the design of the cases missed it.
+6. *While making.* Where the round takes CI's report on the code's last push, from the mutation testing that Test strategy runs on each push apart from the work, open the log of that run, such as its job's log on the pull request, and list each mutant that it reports as surviving, with its file, its line, and the change it made.
+7. *While making.* For each mutant that N7.6 lists, name the case that the changed code serves. Where none does, remove the code or make it simpler, so that no change of it passes unseen.
+8. *While making.* Where a mutant that N7.6 lists can't change what the code does, such as `<` turned into `<=` where the two values are never equal, mark it beside the code as one that changes nothing, with why.
+9. *While making.* Where a mutant that N7.6 lists breaks a case that the tests already name, make that case's test assert more closely so that the mutant fails it, and report why the design of the cases missed it, so that whoever designs them mends the cause. Add no case for a mutant, since such a case comes from the code that exists, not from what the part must do.
 
 ### N8
 
@@ -121,7 +124,7 @@ Does the code refuse a wrong input from outside before it acts, with a message f
 Whoever ran the code fixes a wrong input from the message alone, and never finds their data half changed by a run that went on with it.
 
 1. *While deciding.* List each input that comes into the part from outside, from its interface and its unit cases, such as arguments, environment variables, files it reads, settings, and the replies of other programs, with the place in the code where each first comes in.
-2. *While making.* At the place where each input comes in, and before the code acts on it, read it into the form that the inside of the code works with, checking its type, its format, and whether its value makes sense for the task, such as reading a JSON line into an object whose fields hold only allowed values, so that no code inside meets the raw text.
+2. *While making.* In the body, at the place where each input comes in, and before the code acts on it, read it into the form that the inside of the code works with, checking its type, its format, and whether its value makes sense for the task, such as reading a JSON line into an object whose fields hold only allowed values, so that no code inside meets the raw text.
 3. *While making.* Refuse a value that the code can't read in exactly one way, instead of guessing it, such as a date written `03/04`, or a missing field that the specification gives no default for.
 4. *While making.* Catch an error only where the code can tell whoever ran it what to fix, such as a file they named that doesn't exist, and let every other error stop the program with its trace, never catching all errors at once, such as with a bare `except`.
 5. *While making.* Write each message so that whoever ran the code learns which program refused, what was wrong, where, and what the code accepts, such as `tally: plan.json, line 4: round must be a whole number from 1, not "one"`.

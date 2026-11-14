@@ -80,6 +80,20 @@
        },
        {
         "at": "make",
+        "text": "Write the body one test at a time, once you see the test fail as N5.8 says: under the interface that the test calls, write the least code that makes it pass, such as `return []` for a test of an empty file before any code that reads an entry, and leave each other behavior to the test of its own case."
+       },
+       {
+        "at": "make",
+        "text": "Run the tests once you write the code for a test, and take the next failing test only once all of them pass. Where a test that passed before fails, mend the body before you go on.",
+        "trace": {
+         "action": "run",
+         "takes": [
+          "{tests}"
+         ]
+        }
+       },
+       {
+        "at": "make",
         "text": "Once the tests pass, read each module's body and remove each option, mode, parameter, and branch that no case calls for, such as a fallback for an input that the interface already refuses."
        }
       ]
@@ -214,19 +228,23 @@
        },
        {
         "at": "make",
-        "text": "For each mutant that survived, as the mutation testing that Test strategy runs apart from the work reports it, name the case that the changed code serves. Where none does, remove the code or make it simpler, so that no change of it passes unseen."
-       },
-       {
-        "at": "make",
-        "text": "Where a surviving mutant can't change what the code does, such as `<` turned into `<=` where the two values are never equal, mark it beside the code as one that changes nothing, with why."
-       },
-       {
-        "at": "make",
-        "text": "Where a surviving mutant breaks a case that the tests already name, make that case's test assert more closely so that the mutant fails it, and report why the design of the cases missed it, so that whoever designs them mends the cause. Add no case for a mutant, since such a case comes from the code that exists, not from what the part must do."
-       },
-       {
-        "at": "make",
         "text": "For each input on which a property-based test finds the code fails, ask whether the contract must take it. Where it needn't, narrow what the interface takes, and refuse the input as N8 says. Where it must, fix the code, keep the input as a test of the case it falls in, and report why the design of the cases missed it."
+       },
+       {
+        "at": "make",
+        "text": "Where the round takes CI's report on the code's last push, from the mutation testing that Test strategy runs on each push apart from the work, open the log of that run, such as its job's log on the pull request, and list each mutant that it reports as surviving, with its file, its line, and the change it made."
+       },
+       {
+        "at": "make",
+        "text": "For each mutant that N7.6 lists, name the case that the changed code serves. Where none does, remove the code or make it simpler, so that no change of it passes unseen."
+       },
+       {
+        "at": "make",
+        "text": "Where a mutant that N7.6 lists can't change what the code does, such as `<` turned into `<=` where the two values are never equal, mark it beside the code as one that changes nothing, with why."
+       },
+       {
+        "at": "make",
+        "text": "Where a mutant that N7.6 lists breaks a case that the tests already name, make that case's test assert more closely so that the mutant fails it, and report why the design of the cases missed it, so that whoever designs them mends the cause. Add no case for a mutant, since such a case comes from the code that exists, not from what the part must do."
        }
       ]
      }
@@ -248,7 +266,7 @@
        },
        {
         "at": "make",
-        "text": "At the place where each input comes in, and before the code acts on it, read it into the form that the inside of the code works with, checking its type, its format, and whether its value makes sense for the task, such as reading a JSON line into an object whose fields hold only allowed values, so that no code inside meets the raw text."
+        "text": "In the body, at the place where each input comes in, and before the code acts on it, read it into the form that the inside of the code works with, checking its type, its format, and whether its value makes sense for the task, such as reading a JSON line into an object whose fields hold only allowed values, so that no code inside meets the raw text."
        },
        {
         "at": "make",
