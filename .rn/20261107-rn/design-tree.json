@@ -241,8 +241,14 @@
         },
         {
           "id": "N8",
-          "good": true,
-          "decisions": []
+          "good": false,
+          "decisions": [
+            {
+              "about": "Work while a point or a sign-off waits",
+              "decided": "rn puts each point to the user one at a time and goes on meanwhile with the work that rests on no open point and no unsigned plan or deliverable; only the work that rests on the answer or the sign-off waits",
+              "by": "user"
+            }
+          ]
         },
         {
           "id": "N9",
@@ -713,8 +719,14 @@
         },
         {
           "id": "N2",
-          "good": true,
-          "decisions": []
+          "good": false,
+          "decisions": [
+            {
+              "about": "Work while a point or a sign-off waits",
+              "decided": "rn puts each point to the user one at a time and goes on meanwhile with the work that rests on no open point and no unsigned plan or deliverable; only the work that rests on the answer or the sign-off waits",
+              "by": "user"
+            }
+          ]
         },
         {
           "id": "N3",
