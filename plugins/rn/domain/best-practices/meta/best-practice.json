@@ -10,11 +10,11 @@
       "id": "N1",
       "about": "goal",
       "what": "Does the goal state, in one sentence, who uses the deliverable and what purpose it serves for them?",
-      "why": "Every later decision rests on the goal, so it must name the purpose the users have, not a means to it. The method is the why and how laddering of goal-oriented requirements engineering, as in Knowledge Acquisition in Automated Specification (KAOS) by Axel van Lamsweerde: asking why moves up toward the goal, and asking how moves down toward the means.",
+      "why": "Every later decision rests on the goal, so a goal that names the purpose the users have, not a means to it, lets each factor, condition, and step serve what the users came for.",
       "items": [
        {
         "at": "decide",
-        "text": "Start from the people who use the deliverable, not from the deliverable: ask who reads or runs it, and what they're trying to get done when they do."
+        "text": "Open the cut of the design tree, the product vision where the product has one, and each best practice whose `inputs` name this kind, and list each kind of person who reads or runs a deliverable of the kind, with what they're trying to get done when they do, such as a developer who opens a README to decide whether a plugin solves their problem."
        },
        {
         "at": "decide",
@@ -22,15 +22,15 @@
        },
        {
         "at": "decide",
-        "text": "Ask why that achievement matters to them, and repeat until the next answer goes beyond what the deliverable can affect. The last answer within its reach is the goal."
+        "text": "Ask of the sentence why that achievement matters to the users, and write the answer as a sentence in the same form. Repeat until the next answer goes beyond what the deliverable can affect, and keep the last sentence within its reach as the goal, such as `starts using the plugin` for a README, where `ships their product sooner` goes beyond it."
        },
        {
         "at": "decide",
-        "text": "If the sentence names a part of the deliverable, such as a section or a feature, it states a means. Ask why once more."
+        "text": "If the sentence names a part of the deliverable, such as a section or a feature, it states a means: ask why once more."
        },
        {
         "at": "make",
-        "text": "Read the sentence without the deliverable's name in it. If it no longer says what the users achieve, rewrite it."
+        "text": "Read the goal's sentence with the deliverable's name taken out. If it no longer says what the users achieve, rewrite it."
        }
       ]
      },
@@ -38,27 +38,31 @@
       "id": "N2",
       "about": "critical_success_factors",
       "what": "Do the critical success factors name the few things that must all hold for the users to reach the goal?",
-      "why": "The factors decide where the generator spends its effort, so they must be the few things that the users can't reach the goal without, as John Rockart defined critical success factors, usually three to six. These are the vital few, in Joseph Juran's term.",
+      "why": "The factors decide where the generator spends its effort, so when they're the few things that the users can't reach the goal without, the effort goes where the users would otherwise fail.",
       "items": [
        {
         "at": "decide",
-        "text": "Derive the factors from the goal: ask what must go right for the users to reach it, or they fail."
+        "text": "Read the goal's sentence and list each thing that must go right for the users to reach it, or they fail."
        },
        {
         "at": "decide",
-        "text": "Write each answer as a state in one sentence."
+        "text": "Write each thing as a state in one sentence, such as `The reader sees on the first screen which problem the product solves`."
        },
        {
         "at": "decide",
-        "text": "Merge two states that fail together."
+        "text": "Of each pair of states, ask whether one can fail while the other holds. Where neither can, merge the two into one."
        },
        {
         "at": "decide",
-        "text": "For necessity, ask of each factor: if it failed, would the users still reach the goal? If they would, drop it."
+        "text": "Of each state, ask: if it failed, would the users still reach the goal? Where they would, drop it."
        },
        {
         "at": "decide",
-        "text": "For sufficiency, walk through the users' use of the deliverable, from the moment they first meet it to the moment they reach the goal. At each moment, ask whether the users could still stop or go wrong there while every factor holds. If they could, find the missing factor."
+        "text": "Write down, in order, each moment of the users' use of the deliverable, from the moment they first meet it to the moment they reach the goal, such as a README's reader landing on the page, deciding to install, installing, and first using the product."
+       },
+       {
+        "at": "decide",
+        "text": "At each moment, ask whether the users could still stop or go wrong there while every factor holds. Where they could, write the state that would stop it as a factor."
        }
       ]
      },
@@ -66,19 +70,19 @@
       "id": "N3",
       "about": "necessary_conditions",
       "what": "Does each necessary condition ask, as a yes-or-no question, whether the deliverable holds a state that its factor needs?",
-      "why": "The conditions are what the generator meets and the evaluator checks, so each must be a state that someone reading only the deliverable can confirm. The method is the goal tree of William Dettmer's The Logical Thinking Process, which breaks a goal into its critical success factors and each factor into the necessary conditions that make it true.",
+      "why": "The conditions are what the generator meets and the evaluator checks, so when each is a state that someone reading only the deliverable can confirm, every deliverable meets the same states, and every evaluator judges them the same way.",
       "items": [
        {
         "at": "decide",
-        "text": "For each factor, ask how the deliverable makes it true."
+        "text": "For each factor, list the states of the deliverable that make it true, such as `the first paragraph names the problem` for a README's factor that the reader sees which problem the product solves."
        },
        {
         "at": "decide",
-        "text": "Write each answer, a state of the deliverable, as a yes-or-no question about the deliverable, under its factor."
+        "text": "Write each state as a yes-or-no question about the deliverable, under its factor, such as `Does the first paragraph name the problem that the product solves?`"
        },
        {
         "at": "decide",
-        "text": "Judge each condition by three tests. It's checkable: two readers of the deliverable give the same answer. It's about the deliverable, not about how someone made it. It's necessary: if the answer were no, its factor would fail."
+        "text": "Judge each condition by three tests, and rewrite or drop one that fails any. It's checkable: two readers of the deliverable give the same answer. It's about the deliverable, not about how someone made it, as `Did the maker interview users?` is. It's necessary: if the answer were no, its factor would fail."
        },
        {
         "at": "decide",
@@ -90,7 +94,11 @@
        },
        {
         "at": "make",
-        "text": "Read a deliverable that meets every condition as its users would. If it still fails them, find the level that caused it, whether the goal, a factor, a condition, or a practice, and rebuild that level from the level it serves."
+        "text": "Open a deliverable of the kind that the product has, such as its README, or, where it has none, write one from the template for the product in the cut, and answer each condition yes or no about it."
+       },
+       {
+        "at": "make",
+        "text": "Read that deliverable from the top as its users would. Where they would stop or go wrong in a part that every condition passes, find the level that caused it, whether the goal, a factor, a condition, or a practice, and rebuild that level from the level it serves."
        }
       ]
      },
@@ -98,19 +106,19 @@
       "id": "N7",
       "about": "the whole",
       "what": "Does following the best practice put into the deliverable only the vital few, the things without which its users fail their goal?",
-      "why": "A deliverable that holds the trivial many beside the vital few buries what its users need, and each round of work adds more. The method is Joseph Juran's Pareto principle, in his Quality Control Handbook, which names the few causes that decide most of a result the vital few.",
+      "why": "A deliverable that holds the trivial many beside the vital few buries what its users need, and each round of work adds more, so when every part serves what the users can't go without, they find what they need at once.",
       "items": [
-       {
-        "at": "decide",
-        "text": "Make each level of the best practice the vital few of the level it serves: the goal names the one purpose, the factors the few things that purpose can't go without, and each condition the state that a factor needs."
-       },
        {
         "at": "decide",
         "text": "Derive each practice's items from what its condition serves, such as a README's problems from the product vision's objectives and their key results, since a practice that collects every thing of a kind and then keeps some, such as every problem readers have, fills the deliverable with the many."
        },
        {
         "at": "make",
-        "text": "Never add a question or a check for fewness. It adds findings of its own, and the few follow from the build."
+        "text": "Read the best practice from its goal down, and for each factor, condition, and item, name what it makes true in the level it serves, such as the factor that a condition makes true. Drop each that makes nothing there true."
+       },
+       {
+        "at": "make",
+        "text": "Read the conditions and the items for any that counts or caps the parts, such as `at most five sections`, and remove it, since the few follow from the build, and such a check adds findings of its own."
        }
       ]
      }
@@ -124,15 +132,15 @@
       "id": "N4",
       "about": "template",
       "what": "Does the template place each necessary condition in a section, and give each slot a note on what it holds and in what form?",
-      "why": "The template makes every deliverable of the kind hold each condition in the same place and the same form, so that no run has to invent the structure. The method is the consistency and labeling principles of Robert Horn's Information Mapping, in Mapping Hypertext: like content takes like terms, format, and order, and each unit takes a label that says what it holds.",
+      "why": "The template makes every deliverable of the kind hold each condition in the same place and the same form, so that no run invents the structure and the users find each thing where every other deliverable of the kind keeps it.",
       "items": [
        {
         "at": "decide",
-        "text": "In a template in JSON, each key that holds content, at any depth, is a section. If the deliverable has a JSON Schema of its own, such as the design tree, use the schema as the template: its fields are the sections, and the description of each field is its note."
+        "text": "Open the deliverable's format. Where the deliverable has a JSON Schema of its own, such as the design tree, take the schema as the template: its fields are the sections, and the description of each field is its note. Elsewhere, write the template in the deliverable's own format, where each heading, or in JSON each key that holds content at any depth, is a section."
        },
        {
         "at": "decide",
-        "text": "Order the sections as the users need them, from the first thing they look for to the last."
+        "text": "Order the sections as the users look for them, from the first thing to the last, such as a README's statement of what the product is before its install steps."
        },
        {
         "at": "decide",
@@ -192,7 +200,11 @@
        },
        {
         "at": "make",
-        "text": "Write each item as an act on something at hand, such as a file, a list, or a command, with the question to ask, the criterion for choosing where there are options in the same item, and one example from the deliverable's kind, such as `Open the product vision and list its key results` in place of `Consider the quality characteristics`."
+        "text": "Write each item as an act on something that the generator has, such as a file, a list, or a command, with the question to ask and, where there are options, the criterion for choosing, such as `Open the product vision and list its key results` in place of `Consider the quality characteristics`."
+       },
+       {
+        "at": "make",
+        "text": "Give an example from the deliverable's kind only where the act alone would leave the generator unsure what to open or what to write, such as the form of a sentence it must write, since an example beside a plain act is one more line to read past."
        },
        {
         "at": "make",
@@ -230,15 +242,15 @@
       "id": "N6",
       "about": "inputs, preconditions",
       "what": "Does the best practice name the kinds of deliverable that this kind builds on, with a condition that carries each of their vital few that its users need, and the kinds that must pass before work on it starts?",
-      "why": "A deliverable must say what the deliverables it builds on say, and the deliverables built on it must follow it. The method is requirements traceability, which Orlena Gotel and Anthony Finkelstein, in An Analysis of the Requirements Traceability Problem, define as following each requirement both backward to its source and forward to what carries it.",
+      "why": "A deliverable must say what the deliverables it builds on say, and the deliverables built on it must follow it, so that the users never meet two deliverables that disagree.",
       "items": [
        {
         "at": "decide",
-        "text": "To find the inputs, ask of each part of the deliverable where its content comes from. Each kind of deliverable that supplies content is an input, such as the product vision for a README."
+        "text": "Go through each section of the template and ask where its content comes from. Each kind of deliverable that supplies content is an input, such as the product vision for a README."
        },
        {
         "at": "decide",
-        "text": "To find the preconditions, ask what must hold before work on the deliverable can start, such as an agreed product vision."
+        "text": "Of each input, ask whether work on the deliverable can start while the input still changes. Where it can't, the input's kind is a precondition too, such as an agreed product vision for a README."
        },
        {
         "at": "decide",
@@ -266,11 +278,11 @@
        },
        {
         "at": "make",
-        "text": "When a deliverable changes, find the deliverables built on it and update them in the same change."
+        "text": "Where you change a best practice that exists, search the other best practices for this kind's folder name in their `inputs`, and, in the same change, update each of their conditions that carries what you changed, such as a README's condition on the key results when the product vision's key results change."
        },
        {
         "at": "make",
-        "text": "When an input changes, check the deliverable against it again."
+        "text": "Where an input's best practice changed since this one last changed, open it, and check each condition here that carries its vital few against what it holds now."
        }
       ]
      }
