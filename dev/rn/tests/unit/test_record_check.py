@@ -121,7 +121,9 @@ def test_a_practice_of_making_recorded_while_deciding_names_it():
     assert any("N1.2" in fault for fault in record_faults(Record(early), STEPS, (CODE,)))
 
 
-@pytest.mark.supports("test_the_orchestrators_turn_is_held_until_its_record_holds_each_step")
+@pytest.mark.supports(
+    "test_a_turn_that_puts_work_up_is_held_until_the_orchestrators_record_holds_each_step"
+)
 def test_a_record_of_a_role_with_no_best_practice_needs_only_its_steps():
     """Given the steps alone recorded, and no best practice
     When it's checked

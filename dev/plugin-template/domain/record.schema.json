@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "A record",
-  "description": "What one start of a role, or the orchestrator of a run, carried out, in the order it did: each step of its prompt once the step's result held, and each practice of a best practice while it carried the practice out. Only record.py add writes it, and the plugin's check, record.py check, reads it at the role's end, or at the end of the orchestrator's turn that puts work up for the person.",
+  "description": "What one start of a role, or the orchestrator of a run, carried out, in the order it did: each step of its prompt once the step's result held, and each practice of a best practice while it carried the practice out. Only record.py add writes it, and the plugin's check, record.py check, reads it at the role's end, or at each end of the orchestrator's turn, which it passes where the turn puts no work up for the person.",
   "type": "object",
   "required": [
     "entries"

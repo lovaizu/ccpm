@@ -38,6 +38,7 @@ def answers_faults(cut: Cut, answers: Answers) -> tuple[str, ...]:
 def check(role: str, result: str, cut_path: str, cwd: str, plugin_root: str) -> tuple[str, ...]:
     """Each fault of the role's end with the result: of a subagent, by the Cut at `cut_path`; of
     the orchestrator's turn, `up`, by the run of the worktree that holds `cwd`, whose turn needs no
-    Cut. Where it finds none at a subagent's end, it keeps the result in the role's record. Raises
-    CantRun where a file it reads is missing."""
+    Cut. It finds none in a turn that puts no work up for the user, such as one that asks a
+    question. Where it finds none at a subagent's end, it keeps the result in the role's record.
+    Raises CantRun where a file it reads is missing."""
     raise NotImplementedError("check.check")

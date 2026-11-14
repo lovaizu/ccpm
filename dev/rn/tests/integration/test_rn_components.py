@@ -26,6 +26,7 @@ from rn_example import (
     start,
     started,
     throwaway,
+    tree,
 )
 
 pytestmark = pytest.mark.xfail(strict=True, reason="rn's parts are skeletons, their bodies unbuilt")
@@ -59,15 +60,31 @@ def test_write_lists_the_typed_marker_among_the_nodes_a_change_of_the_hints_touc
 
 
 @pytest.mark.supports("record.py", "orchestrator", "guard", "Record")
-def test_the_orchestrators_turn_is_held_until_its_record_holds_each_step(
+def test_a_turn_that_puts_work_up_is_held_until_the_orchestrators_record_holds_each_step(
+    conv: Conversation, repo: Repo, run: Run
+):
+    """Given a run begun with the plan written, whose orchestrator recorded no step
+    When the main conversation puts the plan up for the user's sign-off and ends its turn
+    Then the guard holds the stop, with what rn's check found missing in the orchestrator's
+    record"""
+    _, keeper = started(conv, repo, run, "tree-keeper")
+    keeper_writes(keeper, repo, run, ANSWERED, "The plan.")
+    plan = os.path.join(repo.temp, "plan.json")
+    conv.write(None, plan, json.dumps({"of": "plan", "can_do": "", "decisions": [], "words": ""}))
+    conv.bash(tree(repo, "sign-off", run.folder, plan))
+    stopped = conv.stop("The plan, for your sign-off: ...")
+    assert stopped.blocked and "orchestrator" in stopped.said
+
+
+@pytest.mark.supports("record.py", "orchestrator", "guard", "Record")
+def test_a_turn_that_asks_a_question_ends_while_the_orchestrators_record_lacks_a_step(
     conv: Conversation, repo: Repo, run: Run
 ):
     """Given a run begun, whose orchestrator recorded no step
-    When the main conversation ends its turn
-    Then the guard holds the stop, with what rn's check found missing in the orchestrator's
-    record"""
-    stopped = conv.stop("The goal, as I'd put it: ...")
-    assert stopped.blocked and "orchestrator" in stopped.said
+    When the main conversation puts the goal to the user to confirm and ends its turn
+    Then the guard lets the turn end, as rn's check passes a turn that puts no work up"""
+    stopped = conv.stop("The goal, as I'd put it: ... Is that what you mean?")
+    assert not stopped.blocked
 
 
 @pytest.mark.supports("record.py", "tree-keeper", "Record")

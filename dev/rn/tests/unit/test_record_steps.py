@@ -72,7 +72,9 @@ def test_read_refuses_a_part_without_steps_numbered_from_1_in_order(tmp_path: An
         read(path, "odd")
 
 
-@pytest.mark.supports("test_the_orchestrators_turn_is_held_until_its_record_holds_each_step")
+@pytest.mark.supports(
+    "test_a_turn_that_puts_work_up_is_held_until_the_orchestrators_record_holds_each_step"
+)
 def test_of_role_of_the_orchestrator_holds_the_steps_of_its_part_and_of_each_command(tmp_path: Any):
     """Given a plugin whose orchestrator's part and each command's SKILL.md hold steps
     When the steps of `up` are asked for

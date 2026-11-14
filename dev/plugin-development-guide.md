@@ -151,9 +151,11 @@ mark names, such as *While deciding*. Each records by a command of the plugin's 
 orchestrator, its part. Each start of a role has a record of its own, and so has the orchestrator.
 The plugin's own check reads the record against the prompt's steps and the best practice's
 practices. The guard runs that check by a lane of [Lane](../plugins/lane/README.md) at a role's end,
-and at the end of the orchestrator's turn that puts work up for the caller. It passes the end only
-where the check gives 0, and gives the role or the orchestrator what the check says where it
-doesn't. [The template](plugin-template/domain/record.schema.json) holds the record's form.
+and at each end of the main conversation's turn in a run. The check passes a turn that puts no work
+up for the caller, such as one that asks a question, as Lane serves any plugin and can't tell which
+turn puts work up, which only the plugin knows. The guard passes the end only where the check gives
+0, and gives the role or the orchestrator what the check says where it doesn't.
+[The template](plugin-template/domain/record.schema.json) holds the record's form.
 
 *Why*: an AI that lists at its end the practices it carried out makes a claim that no one checks,
 and a practice skipped leaves its condition unmet in the work. A record made at the time shows each
