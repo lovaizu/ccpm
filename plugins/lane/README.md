@@ -61,9 +61,10 @@ reviewer has passed them. On each run, Lane held each subagent to the rules you 
 the subagents in the order you set. You typed `/lane:up changelog`, `yes`, `/reload-plugins`, and
 `/changelog:write` to reach the first such run, in under five minutes, and wrote no check or code.
 
-This is a recorded run of Lane 0.1.0 on Claude Code 2.1.322, save `/reload-plugins` and Lane's line
-that asks for it: recorded runs of Claude Code 2.1.323 and 2.1.325 show that a plugin's hooks
-written during a session hold only after it. `<repo>` stands for the folder of the repository.
+This is a recorded run of Lane 0.1.0 on Claude Code 2.1.322, except for `/reload-plugins` and
+Lane's line that asks for it, which that run lacks. The walkthrough adds them because recorded runs
+of Claude Code 2.1.323 and 2.1.325 show that a plugin's hooks written during a session hold only
+after `/reload-plugins`. `<repo>` stands for the folder of the repository.
 
 `changelog` writes a project's `CHANGELOG.md`, and lives in the folder `changelog/` of the git
 repository of `tally`, a small Python tool, whose last version is 0.1.0. Its skill `write`, in
@@ -175,6 +176,9 @@ Put lane's code in hooks/lane/.
 claude plugin validate passed.
 Type /reload-plugins, and the checks hold from your next prompt.
 ```
+
+In `hooks/hooks.json`, Lane adds its hook entries beside any of your own, and keeps yours as they
+are. When it lays again, it replaces only the entries it laid before.
 
 Where a rule or a route isn't as you meant it, you say what to change, and Lane proposes again.
 Where an AI builds the plugin, it reads the proposal and approves it in the same way, with no
