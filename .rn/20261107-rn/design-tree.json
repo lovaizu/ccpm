@@ -116,7 +116,12 @@
         {
           "id": "N2",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "Where trace.py reads the name of each kind of data",
+              "decided": null
+            }
+          ]
         },
         {
           "id": "N3",
