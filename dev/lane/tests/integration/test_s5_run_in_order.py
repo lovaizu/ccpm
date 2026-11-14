@@ -455,7 +455,6 @@ def two_skills(repo: Repo, proposal: dict[str, Any] = PROPOSAL_TWO_SKILLS) -> Co
     return laid_with(repo, proposal)
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S5", "guard", "Run", "Start", "Result", "Route")
 def test_runs_of_two_skills_go_on_side_by_side_each_moved_by_its_own_results(repo: Repo):
     """Given `changelog` laid with the skills `write` and `review`, and a Run of `write` in which
@@ -475,7 +474,10 @@ def test_runs_of_two_skills_go_on_side_by_side_each_moved_by_its_own_results(rep
     assert not answer.blocked and reviewer
     after_more = gives(repo, reviewer, "more").said
     assert START_NO_MORE in after_more and START_WRITER not in after_more
-    assert START_REVIEWER in gives(repo, writer, "written").said
+    assert (
+        "gave `written`. " + START_REVIEWER[len("changelog: ") :]
+        in gives(repo, writer, "written").said
+    )
 
 
 @pytest.mark.supports("S5", "guard", "Run", "Result", "result.py")
@@ -520,7 +522,6 @@ def test_the_stop_is_held_while_one_runs_start_is_due_though_another_runs_subage
     assert stopped.blocked and START_REVIEWER in stopped.said
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S5", "guard", "Start", "Run")
 def test_a_start_that_the_moves_of_two_runs_open_goes_to_the_run_that_began_first(repo: Repo):
     """Given a Run of `write` whose move due starts reviewer, and then a Run of `review`, whose
@@ -536,12 +537,14 @@ def test_a_start_that_the_moves_of_two_runs_open_goes_to_the_run_that_began_firs
     gives(repo, writer, "written")
     conv.type("/changelog:review")
     _, first = starts(conv, "reviewer")
-    assert first and START_WRITER in gives(repo, first, "more").said
+    assert (
+        first
+        and "gave `more`. " + START_WRITER[len("changelog: ") :] in gives(repo, first, "more").said
+    )
     _, second = starts(conv, "reviewer")
     assert second and START_NO_MORE in gives(repo, second, "more").said
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S5", "guard", "Run", "Lane", "lane types", "Call")
 def test_the_main_conversation_is_held_to_the_lanes_of_each_skill_whose_run_goes_on(repo: Repo):
     """Given `changelog` laid with `write`, whose step runs only `git log --oneline`, and

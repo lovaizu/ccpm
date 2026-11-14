@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 
-from domain.event import COMMAND, RAN, Event
+from domain.event import COMMAND, RAN, Call, Event
 from domain.laid_set import LaidSet
 from domain.run_record import Result, Run
 
@@ -26,6 +26,16 @@ def may_give(laid_set: LaidSet, role: str) -> tuple[str, ...]:
     )
 
 
+def named_by(call: Call) -> tuple[str, str] | None:
+    """The role and the result that a call runs result.py with, a command of a plugin's result.py
+    word for word with a role and a result, None for any other call, as result.py at the end of a
+    longer command."""
+    words = call.command.split() if call.kind == COMMAND else []
+    if len(words) != 4 or words[0] != "python3" or not words[1].endswith(_SCRIPT):
+        return None
+    return words[2], words[3]
+
+
 def given(event: Event, laid_set: LaidSet, runs: Sequence[Run]) -> Result | None:
     """The Result that a run of result.py gave, from the moment that tells it ran: a RAN of the
     command of the plugin's result.py, word for word with a role and a result, that gave 0. A
@@ -33,12 +43,12 @@ def given(event: Event, laid_set: LaidSet, runs: Sequence[Run]) -> Result | None
     the main conversation's is for the skill it names, in the Run of that skill. None for any other
     moment, as for result.py at the end of a longer command, which gives no Result."""
     call = event.call
-    if event.moment != RAN or event.failed or call is None or call.kind != COMMAND:
+    if event.moment != RAN or event.failed or call is None:
         return None
-    words = call.command.split()
-    if len(words) != 4 or words[0] != "python3" or not words[1].endswith(_SCRIPT):
+    named = named_by(call)
+    if named is None:
         return None
-    role, result = words[2], words[3]
+    role, result = named
     if result not in may_give(laid_set, role):
         return None
     if not event.agent:

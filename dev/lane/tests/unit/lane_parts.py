@@ -97,13 +97,14 @@ def writer_gave_written() -> Run:
 def two_skills(**fields: Any) -> LaidSet:
     """The laid set of `changelog` with its second skill `review` beside `write`."""
     review = Lane("review", 1, "skills/review/SKILL.md", "gives_result", ("good",), REVIEW_STEP)
-    return laid_set(
-        skills=("write", "review"),
-        roles=("write", "review", "writer", "reviewer"),
-        lanes=(*LANES, review),
-        routes=(*ROUTES, *REVIEW_ROUTES),
-        **fields,
-    )
+    given: dict[str, Any] = {
+        "skills": ("write", "review"),
+        "roles": ("write", "review", "writer", "reviewer"),
+        "lanes": (*LANES, review),
+        "routes": (*ROUTES, *REVIEW_ROUTES),
+    }
+    given.update(fields)
+    return laid_set(**given)
 
 
 # The lines of the run record at the moments of the walkthrough: once the person typed

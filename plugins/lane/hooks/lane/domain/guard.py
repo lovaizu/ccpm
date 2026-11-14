@@ -33,7 +33,8 @@ from domain.fault import Fault
 from domain.laid_set import RESUME as MOVE_RESUME
 from domain.laid_set import START as MOVE_START
 from domain.laid_set import LaidSet, Lane, lanes_of, routes_of
-from domain.lanes import End, Where, check_call, check_end
+from domain.lanes import End, Where, broken_by, check_call, check_end
+from domain.results import named_by
 from domain.routes import (
     due,
     goes_after,
@@ -157,7 +158,7 @@ def _call(at: _At) -> Decision:
     lane, verdict = check_call(lanes, call, start.values, where, at.root)
     if lane is None:
         return LET_THROUGH
-    return _stopped(at, lane, verdict.may, verdict.printed)
+    return _stopped(at, [lane], verdict.may, verdict.printed)
 
 
 def _main_call(at: _At, runs: Sequence[Run], call: Call) -> Decision:
@@ -171,7 +172,13 @@ def _main_call(at: _At, runs: Sequence[Run], call: Call) -> Decision:
     opened = next((run for run in going if opens_call(run, call.skill)), None)
     if call.kind == SKILL and opened is not None:
         at.keep(Noted(CALLED, text=call.skill))
-    return LET_THROUGH
+        return LET_THROUGH
+    skills = dict.fromkeys(run.skill for run in going if not run.aside)
+    lanes = [lane for skill in skills for lane in lanes_of(at.laid_set, skill)]
+    broken = broken_by(lanes, call, {}, Where(at.event.cwd, at.event.root), at.root)
+    if not broken:
+        return LET_THROUGH
+    return _stopped(at, [lane for lane, _ in broken], broken[0][1].may, "")
 
 
 def _resume(at: _At, going: Sequence[Run], call: Call) -> Decision:
@@ -192,8 +199,9 @@ def _resume(at: _At, going: Sequence[Run], call: Call) -> Decision:
     return LET_THROUGH
 
 
-def _stopped(at: _At, lane: Lane, may: Sequence[str], printed: str) -> Decision:
-    sentence = lane.sentence.replace("${CLAUDE_PLUGIN_ROOT}", at.root)
+def _stopped(at: _At, lanes: Sequence[Lane], may: Sequence[str], printed: str) -> Decision:
+    """The stop with the sentence of each Lane broken, the plugin's folder in it."""
+    sentence = " ".join(lane.sentence for lane in lanes).replace("${CLAUDE_PLUGIN_ROOT}", at.root)
     return Decision(stop=True, said=said.stop(at.laid_set.plugin, sentence, may, printed))
 
 
@@ -305,7 +313,7 @@ def _ends(at: _At) -> Decision:
     lane, verdict = check_end(lanes_of(at.laid_set, start.role), end, Where(event.cwd, event.root))
     if lane is None:
         return LET_THROUGH
-    return _stopped(at, lane, verdict.may, verdict.printed)
+    return _stopped(at, [lane], verdict.may, verdict.printed)
 
 
 def _turn_ends(at: _At) -> Decision:
@@ -331,7 +339,7 @@ def _skills_end(at: _At, run: Run) -> Decision | None:
     end = End(run.skill, at.event.message, result=given, due=run.ended or no_more(run.moves))
     where = Where(at.event.cwd, at.event.root)
     lane, verdict = check_end(lanes_of(at.laid_set, run.skill), end, where)
-    return None if lane is None else _stopped(at, lane, verdict.may, verdict.printed)
+    return None if lane is None else _stopped(at, [lane], verdict.may, verdict.printed)
 
 
 def _tied(runs: Sequence[Run], agent: str) -> tuple[Run, Start]:
@@ -385,6 +393,9 @@ def run_of(event: Event, laid_set: LaidSet, runs: Sequence[Run]) -> Run | None:
     if event.moment == TYPED and event.command:
         skill = event.command.partition(":")[2]
         return next((run for run in reversed(runs) if run.skill == skill), None)
+    named = named_by(call) if call is not None else None
+    if named is not None:
+        return next((run for run in runs if not run.ended and run.skill == named[0]), None)
     if call is not None and call.kind == START:
         role = call.role.partition(":")[2]
         return next((run for run in runs if not run.ended and _opens(run, role)), None)

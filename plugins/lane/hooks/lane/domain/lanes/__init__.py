@@ -140,12 +140,27 @@ def check_call(
     """The first Lane of the role, in the order of its steps, that the call breaks, with its
     Verdict, or None and PASSES where the call keeps every Lane. Raises Fault where a Lane names a
     type there isn't."""
+    broken = broken_by(lanes, call, values, where, plugin_root)
+    return broken[0] if broken else (None, PASSES)
+
+
+def broken_by(
+    lanes: Sequence[Lane],
+    call: Call,
+    values: Mapping[str, str],
+    where: Where,
+    plugin_root: str,
+) -> tuple[tuple[Lane, Verdict], ...]:
+    """Each Lane that the call breaks, with its Verdict, in the order of the steps as they are
+    given, such as the Lanes of several skills joined as one role's, each checked with each command
+    that any of them lets the role run; none where the call keeps every Lane. Raises Fault as
+    check_call does."""
     commands = may_run(lanes, plugin_root)
-    for lane in sorted(lanes, key=_step):
-        verdict = type_of(lane.type).check_call(lane.takes, call, values, where, commands)
-        if not verdict.passes:
-            return lane, verdict
-    return None, PASSES
+    checked = (
+        (lane, type_of(lane.type).check_call(lane.takes, call, values, where, commands))
+        for lane in lanes
+    )
+    return tuple((lane, verdict) for lane, verdict in checked if not verdict.passes)
 
 
 def check_end(lanes: Sequence[Lane], end: End, where: Where) -> tuple[Lane | None, Verdict]:

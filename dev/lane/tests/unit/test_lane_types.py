@@ -8,7 +8,17 @@ import pytest
 from domain.event import COMMAND, WRITE, Call
 from domain.fault import Fault
 from domain.laid_set import Lane
-from domain.lanes import PASSES, End, Where, check_call, check_end, may_run, type_of, types
+from domain.lanes import (
+    PASSES,
+    End,
+    Where,
+    broken_by,
+    check_call,
+    check_end,
+    may_run,
+    type_of,
+    types,
+)
 from lane_example import TYPES
 from lane_parts import LANES, PLUGIN_ROOT, ROOT
 
@@ -121,3 +131,21 @@ def test_an_end_that_keeps_every_lane_gives_none_and_passes():
     When writer ends having given `written`
     Then no Lane is broken"""
     assert check_end(WRITER, End("writer", "Done.", result="written"), WHERE) == (None, PASSES)
+
+
+@pytest.mark.supports(
+    "test_the_main_conversation_is_held_to_the_lanes_of_each_skill_whose_run_goes_on"
+)
+def test_each_lane_that_a_call_breaks_is_given_in_the_order_of_the_steps():
+    """Given run_only Lanes of `write` on `git log --oneline` and of `review` on `git diff`, joined
+    When the main conversation runs `git status`, and `git diff`
+    Then the first breaks both Lanes, in their order, and the second breaks none, as the joined
+    Lanes let it run each command that either takes"""
+    lanes = (
+        Lane("write", 1, "skills/write/SKILL.md", "run_only", ("git log --oneline",), "W"),
+        Lane("review", 2, "skills/review/SKILL.md", "run_only", ("git diff",), "R"),
+    )
+    status = broken_by(lanes, Call(COMMAND, command="git status"), {}, WHERE, PLUGIN_ROOT)
+    assert [lane.sentence for lane, _ in status] == ["W", "R"]
+    diff = broken_by(lanes, Call(COMMAND, command="git diff"), {}, WHERE, PLUGIN_ROOT)
+    assert diff == ()

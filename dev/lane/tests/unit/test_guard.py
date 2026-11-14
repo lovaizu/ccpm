@@ -454,7 +454,6 @@ def test_a_skills_call_goes_to_the_run_of_that_skill():
     assert run_of(moment, two_skills(), [write, review]) is review
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("test_the_skills_own_result_ends_only_the_run_of_the_skill_it_names")
 def test_the_main_conversations_run_of_result_py_goes_to_the_run_of_the_skill_it_names():
     """Given a Run of `write` and a Run of `review`
@@ -500,7 +499,6 @@ def test_a_subagent_that_no_start_ties_goes_to_no_run():
     assert run_of(moment, two_skills(), [writer_running()]) is None
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports(
     "test_the_main_conversation_is_held_to_the_lanes_of_each_skill_whose_run_goes_on"
 )
