@@ -11,10 +11,6 @@ import pytest
 from claude_code import POSTED_FIRST, Conversation
 from lane_example import Repo, conversation, gives, result_command, starts
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="Lane's parts are skeletons, their bodies unbuilt"
-)
-
 START_REVIEWER = "Start `changelog:reviewer` with `Carry out your steps`."
 START_WRITER = "changelog: Start `changelog:writer` with `Carry out your steps`."
 RUN_ONLY = "changelog: Run only `git log --oneline`."

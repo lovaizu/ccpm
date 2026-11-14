@@ -42,10 +42,6 @@ from domain.event import SKILL as SKILL_CALL
 from domain.fault import Fault
 from domain.guard import LET_THROUGH, Decision
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="Lane's parts are skeletons, their bodies unbuilt"
-)
-
 ENV = {"CLAUDE_PROJECT_DIR": "/repo"}
 
 
@@ -56,6 +52,7 @@ def payload(record: str, event: str, **fields: Any) -> str:
     return json.dumps(given).replace("<repo>", "/repo")
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("test_a_call_that_keeps_every_lane_of_its_role_passes")
 def test_a_subagents_bash_call_reads_as_a_call_of_a_command_by_it():
     """Given the recorded PreToolUse of writer's `git log --oneline`

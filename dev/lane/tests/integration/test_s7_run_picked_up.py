@@ -14,10 +14,6 @@ import pytest
 from claude_code import Conversation
 from lane_example import PROPOSAL, Repo, conversation, gives, lay, put, starts
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="Lane's parts are skeletons, their bodies unbuilt"
-)
-
 START_WRITER = "changelog: Start `changelog:writer` with `Carry out your steps`."
 START_REVIEWER = "changelog: Start `changelog:reviewer` with `Carry out your steps`."
 
@@ -31,6 +27,7 @@ def kept(repo: Repo, printed: str) -> Conversation:
     return conversation(repo, repo.plugin)
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S7", "Run", "The run kept in a file")
 def test_after_compact_the_run_goes_on_with_the_start_due(
     broken: bool, run: Conversation, laid: Repo
@@ -47,6 +44,7 @@ def test_after_compact_the_run_goes_on_with_the_start_due(
     assert START_REVIEWER in again.said and START_WRITER not in again.said
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S7", "Kept results", "adapter", "Result")
 def test_a_new_conversation_picks_up_from_the_kept_results_that_follow_the_routes(repo: Repo):
     """Given `changelog` laid with an adapter of its records that gives writer `written`
@@ -71,6 +69,7 @@ def test_kept_results_that_reach_a_route_that_starts_no_more_start_the_run_anew(
     assert START_WRITER in conv.type("/changelog:write").said
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S7", "Kept results", "guard")
 def test_kept_results_that_dont_follow_the_routes_stop_the_command_with_who_must_fix_it(
     repo: Repo,
@@ -84,6 +83,7 @@ def test_kept_results_that_dont_follow_the_routes_stop_the_command_with_who_must
     assert typed.blocked and "reviewer" in typed.said and "fix" in typed.said
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S7", "adapter", "guard")
 def test_an_adapter_of_the_records_that_fails_stops_the_command_with_why(repo: Repo):
     """Given `changelog` laid with an adapter of its records that prints what isn't JSON
@@ -110,6 +110,7 @@ def test_without_an_adapter_of_the_records_a_new_conversation_starts_the_run_ove
     assert START_WRITER in second.type("/changelog:write").said
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S7", "adapter", "Kept results", "guard")
 def test_the_kept_results_adapter_gets_the_words_typed_after_the_command(repo: Repo):
     """Given `changelog` laid with an adapter of its records that gives writer `written` where the

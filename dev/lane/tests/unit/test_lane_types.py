@@ -12,10 +12,6 @@ from domain.lanes import PASSES, End, Where, check_call, check_end, may_run, typ
 from lane_example import TYPES
 from lane_parts import LANES, PLUGIN_ROOT, ROOT
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="Lane's parts are skeletons, their bodies unbuilt"
-)
-
 WHERE = Where(ROOT, ROOT)
 WRITER = tuple(lane for lane in LANES if lane.role == "writer")
 RESULT = f"python3 {PLUGIN_ROOT}/hooks/lane/result.py writer written"
@@ -86,6 +82,7 @@ def test_a_call_that_breaks_a_lane_gives_that_lane():
     assert lane == WRITER[0] and not verdict.passes and RESULT in verdict.may
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("test_a_write_of_a_file_that_no_write_only_lane_takes_is_stopped")
 def test_a_call_that_breaks_a_later_lane_gives_that_lane():
     """Given writer's Lanes of the walkthrough

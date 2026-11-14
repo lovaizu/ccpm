@@ -24,10 +24,6 @@ from domain.run_record import (
 )
 from lane_parts import SESSION, WRITER_GAVE_WRITTEN, WRITER_RUNNING, keep
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="Lane's parts are skeletons, their bodies unbuilt"
-)
-
 
 @pytest.mark.supports("test_after_compact_the_run_goes_on_with_the_start_due")
 def test_the_run_record_lies_in_the_plugins_folder_of_the_temporary_folder_by_day_and_id():

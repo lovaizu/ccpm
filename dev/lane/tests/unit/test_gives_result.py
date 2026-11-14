@@ -9,10 +9,6 @@ from domain.lanes import PASSES, End, Where
 from domain.lanes.gives_result import LANE_TYPE
 from lane_parts import REVIEWER_END, ROOT, WRITER_END
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="Lane's parts are skeletons, their bodies unbuilt"
-)
-
 WHERE = Where(ROOT, ROOT)
 RESULT_PY = "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py"
 

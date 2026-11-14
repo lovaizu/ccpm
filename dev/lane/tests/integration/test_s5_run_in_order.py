@@ -34,10 +34,6 @@ from lane_example import (
     starts,
 )
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="Lane's parts are skeletons, their bodies unbuilt"
-)
-
 START_WRITER = "changelog: Start `changelog:writer` with `Carry out your steps`."
 START_REVIEWER = "changelog: Start `changelog:reviewer` with `Carry out your steps`."
 
@@ -89,6 +85,7 @@ def test_the_command_gives_the_first_start_and_each_result_gives_the_next_until_
     )
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S5", "guard", "Run", "result.py")
 def test_the_skills_own_result_where_a_move_starts_no_more_ends_the_run(
     run: Conversation, laid: Repo
@@ -105,6 +102,7 @@ def test_the_skills_own_result_where_a_move_starts_no_more_ends_the_run(
     assert not after.blocked
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S5", "adapter", "Start")
 def test_the_adapter_gives_a_start_its_text_and_run_values(repo: Repo):
     """Given `changelog` laid with an adapter of a start's text that gives writer
@@ -121,6 +119,7 @@ def test_the_adapter_gives_a_start_its_text_and_run_values(repo: Repo):
     assert writer and not started.blocked
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S5", "adapter", "guard")
 def test_an_adapter_failing_at_the_skills_call_gives_the_start_with_why_and_lets_the_call_run(
     repo: Repo,
@@ -135,6 +134,7 @@ def test_an_adapter_failing_at_the_skills_call_gives_the_start_with_why_and_lets
     assert "changelog:writer" in typed.said and "no plan yet" in typed.said
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S5", "adapter", "guard")
 def test_an_adapter_failing_at_a_later_single_move_gives_why_and_who_must_fix_it_in_its_place(
     repo: Repo,
@@ -159,6 +159,7 @@ def test_an_adapter_failing_at_a_later_single_move_gives_why_and_who_must_fix_it
     assert START_REVIEWER not in reached.said
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S5", "adapter", "Route")
 def test_an_adapter_failing_for_one_of_several_moves_gives_that_start_with_why_beside_the_rest(
     repo: Repo,
@@ -200,6 +201,7 @@ def test_a_start_with_a_text_other_than_the_plugins_is_stopped(run: Conversation
     assert agent is None and stopped.blocked and START_WRITER in stopped.said
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S5", "adapter", "guard")
 def test_a_start_whose_text_the_adapter_cant_give_is_stopped_with_who_must_fix_it(repo: Repo):
     """Given `changelog` laid with an adapter of a start's text that exits 1 for writer, saying
@@ -214,6 +216,7 @@ def test_a_start_whose_text_the_adapter_cant_give_is_stopped_with_who_must_fix_i
     assert "no plan yet" in stopped.said and "maker" in stopped.said
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S5", "Start", "adapter", "Route")
 def test_starts_side_by_side_each_with_a_text_other_than_those_of_its_role_that_run(repo: Repo):
     """Given `changelog` laid with a Route after `writer written` that starts writer again, and an
@@ -240,6 +243,7 @@ def test_starts_side_by_side_each_with_a_text_other_than_those_of_its_role_that_
     assert two and not other.blocked
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S5", "Start", "Route", "guard")
 def test_a_resume_that_a_route_lists_counts_as_a_start_of_the_subagent_it_resumes(repo: Repo):
     """Given `changelog` laid with a Route after `reviewer more` that resumes writer
@@ -280,6 +284,7 @@ def test_a_resume_in_a_plugin_whose_routes_list_none_passes_and_moves_no_run(
     assert stopped.blocked and START_REVIEWER in stopped.said
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S5", "guard", "Route")
 def test_a_resume_that_the_moves_dont_open_is_stopped_with_the_moves(repo: Repo):
     """Given `changelog` laid with a Route after `reviewer more` that resumes writer, and a Run
@@ -301,6 +306,7 @@ def test_a_resume_that_the_moves_dont_open_is_stopped_with_the_moves(repo: Repo)
     assert resumed.blocked and START_REVIEWER in resumed.said
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S5", "Route", "guard")
 def test_a_move_that_waits_for_a_command_is_due_once_the_person_types_it(repo: Repo):
     """Given `changelog` laid with a command `approve` that sets `disable-model-invocation: true`,
@@ -324,6 +330,7 @@ def test_a_move_that_waits_for_a_command_is_due_once_the_person_types_it(repo: R
     assert START_WRITER in conv.type("/changelog:approve").said
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S5", "Route", "guard")
 def test_a_command_that_a_route_goes_after_opens_its_moves_while_each_subagent_runs_on(repo: Repo):
     """Given `changelog` laid with a command `pause` and a Route after `/changelog:pause` whose move
@@ -346,6 +353,7 @@ def test_a_command_that_a_route_goes_after_opens_its_moves_while_each_subagent_r
     assert START_REVIEWER not in reached.said
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S5", "guard", "Start", "Result")
 def test_a_subagent_that_ends_with_no_result_as_task_stop_stopped_it_opens_no_route(
     run: Conversation,
@@ -390,6 +398,7 @@ def test_the_main_conversation_may_stop_while_a_subagent_runs(run: Conversation)
     assert not run.stop("Writer is at work.").blocked
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S5", "guard", "Route")
 def test_the_main_conversation_may_stop_where_a_move_waits_for_the_persons_reply(repo: Repo):
     """Given `changelog` laid with a Route after `reviewer good` that waits for the person's reply
@@ -423,6 +432,7 @@ def test_several_moves_let_the_skills_steps_choose_among_them_and_stop_any_other
     assert not chosen.blocked
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S5", "lane types", "Lane", "guard")
 def test_a_lane_of_the_skill_holds_its_turns_end_until_the_plugins_command_gives_0(repo: Repo):
     """Given `changelog` laid with an ends_checked Lane on the skill's step 1 that runs
@@ -458,6 +468,7 @@ def two_skills(repo: Repo, proposal: dict[str, Any] = PROPOSAL_TWO_SKILLS) -> Co
     return laid_with(repo, proposal)
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S5", "guard", "Run", "Start", "Result", "Route")
 def test_runs_of_two_skills_go_on_side_by_side_each_moved_by_its_own_results(repo: Repo):
     """Given `changelog` laid with the skills `write` and `review`, and a Run of `write` in which
@@ -522,6 +533,7 @@ def test_the_stop_is_held_while_one_runs_start_is_due_though_another_runs_subage
     assert stopped.blocked and START_REVIEWER in stopped.said
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S5", "guard", "Start", "Run")
 def test_a_start_that_the_moves_of_two_runs_open_goes_to_the_run_that_began_first(repo: Repo):
     """Given a Run of `write` whose move due starts reviewer, and then a Run of `review`, whose
@@ -542,6 +554,7 @@ def test_a_start_that_the_moves_of_two_runs_open_goes_to_the_run_that_began_firs
     assert second and START_NO_MORE in gives(repo, second, "more").said
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S5", "guard", "Run", "Lane", "lane types", "Call")
 def test_the_main_conversation_is_held_to_the_lanes_of_each_skill_whose_run_goes_on(repo: Repo):
     """Given `changelog` laid with `write`, whose step runs only `git log --oneline`, and
@@ -591,6 +604,7 @@ CALLS_CHECK = [
 ]
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S5", "guard", "Route", "Run")
 def test_a_call_of_another_plugins_skill_that_a_move_names_sets_the_run_aside_until_a_move_after_it(
     repo: Repo,

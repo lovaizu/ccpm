@@ -7,10 +7,6 @@ import pytest
 from domain.laid_set import NO_MORE, START, Move
 from domain.said import cant_check, ended_without, gave, moves, stop
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="Lane's parts are skeletons, their bodies unbuilt"
-)
-
 CARRY = {"writer": "Carry out your steps", "reviewer": "Carry out your steps"}
 RESULT = "python3 /repo/changelog/hooks/lane/result.py writer written"
 
@@ -64,6 +60,7 @@ def test_the_last_result_reads_start_no_more():
     assert told == "changelog: reviewer gave `good`. Start no more subagents."
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports(
     "test_a_subagent_that_ends_with_no_result_as_task_stop_stopped_it_opens_no_route"
 )

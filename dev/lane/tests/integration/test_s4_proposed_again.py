@@ -28,10 +28,6 @@ from lane_example import (
     write_command,
 )
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="Lane's parts are skeletons, their bodies unbuilt"
-)
-
 RELEASED = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "released")
 STEP_2_WRITTEN = "2. Read the commits since then with `git log --oneline`.\n"
 
@@ -82,6 +78,7 @@ def test_up_again_after_the_steps_changed_shows_the_lanes_of_the_steps_as_they_n
     )
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S4", "lay.py", "Laid", "Step")
 def test_a_laid_sentence_that_the_user_changed_is_kept_as_their_words_with_a_note(laid: Repo):
     """Given `changelog` laid with the walkthrough's Proposal, and the user changed the sentence
@@ -146,6 +143,7 @@ def test_up_after_an_update_of_lane_lays_the_newest_code_of_lane(laid: Repo):
     assert not os.path.exists(os.path.join(laid.plugin, "hooks", "lane", "stale.py"))
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S4", "up", "lay.py", "Laid", "Step")
 def test_lay_steps_gives_each_step_without_the_sentences_that_lane_laid(laid: Repo):
     """Given `changelog` laid with the walkthrough's Proposal, so that writer's step 2 holds the
@@ -160,6 +158,7 @@ def test_lay_steps_gives_each_step_without_the_sentences_that_lane_laid(laid: Re
     assert STEP_2_LAID not in printed.output
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S4", "lay.py", "Laid", "Step")
 @pytest.mark.parametrize("version", released())
 def test_up_after_an_update_of_lane_takes_each_sentence_that_a_released_lane_laid_out_of_the_steps(

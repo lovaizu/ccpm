@@ -6,15 +6,30 @@ plugin. It imports the lane types from `hooks/lane/`, the code it copies into ea
 
 from __future__ import annotations
 
+import json
 import os
+import subprocess
 import sys
 from collections.abc import Mapping
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "hooks", "lane"))
+# Lane's folder, which holds this script in scripts/ and its code in hooks/lane/.
+_LANE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(_LANE, "hooks", "lane"))
+
+from domain import laid_set, run_record
+from domain.fault import Fault
+from domain.routes import stand
+from laying import lay
+from proposal import check, keep, kept, parse, waits
+from shown import text
+from steps import fingerprint, laid_of, roles
 
 USAGE = (
     "usage: lay.py types | steps <plugin> | print <plugin> <proposal.json> | write <plugin> <ID>"
 )
+# The line by which `lay.py write` ends once it laid a Proposal, as Claude Code loads a plugin's
+# hooks only as a session starts or once the person types /reload-plugins.
+_RELOAD = "Type /reload-plugins, and the checks hold from your next prompt.\n"
 
 
 def types_text() -> str:
@@ -43,7 +58,82 @@ def main(argv: list[str], environ: Mapping[str, str], cwd: str) -> tuple[int, st
     said; 2 with the usage where the arguments are none of these. `print` keeps the Proposal with
     the conversation that `CLAUDE_CODE_SESSION_ID` names, which Claude Code gives each Bash
     command."""
-    raise NotImplementedError("lay.main")
+    try:
+        if len(argv) == 3 and argv[0] == "print":
+            return _print(os.path.join(cwd, argv[1]), os.path.join(cwd, argv[2]), environ)
+        if len(argv) == 3 and argv[0] == "write":
+            return _write(os.path.join(cwd, argv[1]), argv[2], environ)
+    except Fault as fault:
+        return 1, "", f"lay.py: {fault}\n"
+    return 2, "", USAGE + "\n"
+
+
+def _print(plugin_root: str, path: str, environ: Mapping[str, str]) -> tuple[int, str, str]:
+    try:
+        with open(path, encoding="utf-8") as f:
+            given = json.load(f)
+    except (OSError, ValueError) as e:
+        raise Fault(f"{path} can't be read as JSON ({e})", "up") from None
+    proposal = parse(given, path)
+    found = roles(plugin_root, laid_of(plugin_root))
+    refusal = check(proposal, found, plugin_root)
+    if refusal is not None:
+        faults = "".join(f"- {fault}\n" for fault in refusal.faults)
+        return 1, "", f"lay.py: the Proposal can't stand:\n{faults}"
+    conversation = environ.get("CLAUDE_CODE_SESSION_ID", "")
+    shown = keep(proposal, found, run_record.temp(environ), conversation)
+    return 0, text(shown, found), ""
+
+
+def _write(plugin_root: str, id: str, environ: Mapping[str, str]) -> tuple[int, str, str]:
+    temp = run_record.temp(environ)
+    given = kept(temp, _name(plugin_root), id)
+    if given is None:
+        return 1, "", f"lay.py: no Proposal has the ID {id}, so run `lay.py print` again.\n"
+    found = roles(plugin_root, laid_of(plugin_root))
+    if fingerprint(found) != given.steps:
+        why = f"the steps changed since `lay.py print` showed {id}"
+        return 1, "", f"lay.py: {why}, so run `lay.py print` on them again.\n"
+    if not waits(given, _run_of_up(temp, given.conversation)):
+        why = f"the Run of up that showed {id} ended without its approval"
+        return 1, "", f"lay.py: {why}, so propose again.\n"
+    laid = lay(given, found, plugin_root, os.path.join(_LANE, "hooks", "lane"), _validate)
+    if not laid.validated:
+        return 1, "\n".join(laid.lines) + "\n", ""
+    return 0, "\n".join(laid.lines) + "\n" + _RELOAD, ""
+
+
+def _name(plugin_root: str) -> str:
+    """The plugin's name, as its plugin.json gives it."""
+    path = os.path.join(plugin_root, ".claude-plugin", "plugin.json")
+    try:
+        with open(path, encoding="utf-8") as f:
+            return str(json.load(f)["name"])
+    except (OSError, ValueError, KeyError, TypeError) as e:
+        raise Fault(f"{path} gives no name ({e!r})", "the plugin's maker") from None
+
+
+def _run_of_up(temp: str, conversation: str) -> run_record.Run | None:
+    """The last Run of Lane's up in the conversation, None where it has none."""
+    own = laid_set.load(_LANE)
+    if not conversation or own is None:
+        return None
+    runs = stand(run_record.load(temp, own.plugin, conversation), own, conversation)
+    return next((run for run in reversed(runs) if run.skill == "up"), None)
+
+
+def _validate(plugin_root: str) -> tuple[bool, str]:
+    """Whether `claude plugin validate` passes on the plugin, and what it said."""
+    try:
+        done = subprocess.run(
+            ["claude", "plugin", "validate", plugin_root],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except FileNotFoundError:
+        return False, "lay.py: `claude` isn't on the PATH, so `claude plugin validate` can't run"
+    return done.returncode == 0, (done.stdout + done.stderr).strip()
 
 
 if __name__ == "__main__":

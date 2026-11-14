@@ -3,7 +3,12 @@ and the Laid, as `lay.py write` writes it and the guard reads it on each hook ev
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+import json
+import os
+from dataclasses import asdict, dataclass, field
+from typing import Any
+
+from domain.fault import Fault
 
 # The kinds of a move after the start of a Run, a Result, a command the person types, or the end of
 # another plugin's run that a move called.
@@ -92,28 +97,106 @@ class LaidSet:
 
 def dumps(laid_set: LaidSet) -> str:
     """The laid set as the JSON text of `hooks/lanes.json`, which `loads` reads back as it was."""
-    raise NotImplementedError("laid_set.dumps")
+    return json.dumps(asdict(laid_set), indent=2) + "\n"
+
+
+# Each field of a laid set's JSON, in its order.
+_FIELDS = (
+    "plugin",
+    "skills",
+    "roles",
+    "lanes",
+    "routes",
+    "text_adapter",
+    "results_adapter",
+    "laid",
+    "proposes",
+)
+
+
+def _wrong(path: str, what: str) -> Fault:
+    return Fault(f"{path} {what}, so run `/lane:up` again to lay it anew", "the plugin's maker")
 
 
 def loads(text: str, path: str) -> LaidSet:
     """The laid set of the JSON text read from the file at `path`. Raises Fault, naming the path and
     what isn't in the form, with `the plugin's maker` to fix it by running `/lane:up` again, where
     the text isn't a laid set."""
-    raise NotImplementedError("laid_set.loads")
+    try:
+        given = json.loads(text)
+    except ValueError as e:
+        raise _wrong(path, f"isn't JSON ({e})") from None
+    if not isinstance(given, dict):
+        raise _wrong(path, "isn't a JSON object")
+    missing = [name for name in _FIELDS if name not in given]
+    if missing:
+        raise _wrong(path, "lacks " + ", ".join(f"`{name}`" for name in missing))
+    try:
+        return _laid_set(given)
+    except (KeyError, TypeError, AttributeError) as e:
+        raise _wrong(path, f"holds a field out of form ({e!r})") from None
+
+
+def _laid_set(given: dict[str, Any]) -> LaidSet:
+    laid = given["laid"]
+    return LaidSet(
+        plugin=str(given["plugin"]),
+        skills=tuple(given["skills"]),
+        roles=tuple(given["roles"]),
+        lanes=tuple(
+            Lane(
+                str(each["role"]),
+                int(each["step"]),
+                str(each["file"]),
+                str(each["type"]),
+                tuple(each["takes"]),
+                str(each["sentence"]),
+            )
+            for each in given["lanes"]
+        ),
+        routes=tuple(
+            Route(
+                str(each["skill"]),
+                str(each["after"]),
+                tuple(
+                    Move(str(m["kind"]), str(m["role"]), str(m["waits_for"])) for m in each["moves"]
+                ),
+            )
+            for each in given["routes"]
+        ),
+        text_adapter=str(given["text_adapter"]),
+        results_adapter=str(given["results_adapter"]),
+        laid=Laid(
+            tuple(
+                LaidSentence(str(each["file"]), str(each["follows"]), str(each["sentence"]))
+                for each in laid["sentences"]
+            ),
+            tuple((str(event), str(command)) for event, command in laid["hooks"]),
+        ),
+        proposes=bool(given["proposes"]),
+    )
 
 
 def load(plugin_root: str) -> LaidSet | None:
     """The laid set of the plugin in the folder, or None where it has no `hooks/lanes.json`. Raises
     Fault as `loads` does."""
-    raise NotImplementedError("laid_set.load")
+    path = os.path.join(plugin_root, "hooks", "lanes.json")
+    if not os.path.exists(path):
+        return None
+    with open(path, encoding="utf-8") as f:
+        return loads(f.read(), path)
 
 
 def routes_of(laid_set: LaidSet, skill: str) -> tuple[Route, ...]:
     """Each Route of the skill, in their order; none for a name that isn't a skill of the laid
     set."""
-    raise NotImplementedError("laid_set.routes_of")
+    return tuple(route for route in laid_set.routes if route.skill == skill)
 
 
 def lanes_of(laid_set: LaidSet, role: str) -> tuple[Lane, ...]:
     """Each Lane of the role, in the order of its steps; none for a role that no Lane names."""
-    raise NotImplementedError("laid_set.lanes_of")
+    return tuple(sorted((lane for lane in laid_set.lanes if lane.role == role), key=_step))
+
+
+def _step(lane: Lane) -> int:
+    return lane.step

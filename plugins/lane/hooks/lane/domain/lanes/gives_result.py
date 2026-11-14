@@ -7,7 +7,10 @@ from __future__ import annotations
 from collections.abc import Mapping
 
 from domain.event import Call
-from domain.lanes import End, Verdict, Where
+from domain.lanes import PASSES, End, Verdict, Where
+
+# The command by which a role gives a result, as the role's step reads it.
+_RESULT_PY = "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py"
 
 
 class GivesResult:
@@ -20,16 +23,19 @@ class GivesResult:
     suits = "the step that ends a role, or the skill's step that starts the subagents"
 
     def sentence(self, role: str, takes: tuple[str, ...]) -> str:
-        raise NotImplementedError("gives_result.GivesResult.sentence")
+        commands = self.commands(role, takes)
+        return "End by running " + " or ".join(f"`{each}`" for each in commands) + "."
 
     def faults(self, role: str, takes: tuple[str, ...], is_skill: bool) -> list[str]:
-        raise NotImplementedError("gives_result.GivesResult.faults")
+        if not takes:
+            return ["a gives_result lane takes at least one result"]
+        return [f"the result `{each}` isn't one word" for each in takes if len(each.split()) != 1]
 
     def said(self, step: str, role: str, takes: tuple[str, ...]) -> bool:
-        raise NotImplementedError("gives_result.GivesResult.said")
+        return self.sentence(role, takes) in step
 
     def commands(self, role: str, takes: tuple[str, ...]) -> tuple[str, ...]:
-        raise NotImplementedError("gives_result.GivesResult.commands")
+        return tuple(f"{_RESULT_PY} {role} {each}" for each in takes)
 
     def check_call(
         self,
@@ -39,10 +45,10 @@ class GivesResult:
         where: Where,
         may_run: tuple[str, ...],
     ) -> Verdict:
-        raise NotImplementedError("gives_result.GivesResult.check_call")
+        return PASSES
 
     def check_end(self, takes: tuple[str, ...], end: End, where: Where) -> Verdict:
-        raise NotImplementedError("gives_result.GivesResult.check_end")
+        return PASSES if end.result in takes else Verdict(False)
 
 
 LANE_TYPE = GivesResult()

@@ -21,10 +21,6 @@ from lane_example import (
     write_command,
 )
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="Lane's parts are skeletons, their bodies unbuilt"
-)
-
 
 @pytest.mark.supports("S3", "Approval", "guard", "Run")
 def test_an_ai_that_called_up_by_the_skill_tool_lays_by_its_own_run_of_lay_write(
@@ -42,6 +38,7 @@ def test_an_ai_that_called_up_by_the_skill_tool_lays_by_its_own_run_of_lay_write
     assert (wrote.exit_code, wrote.output) == (0, LAID)
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S3", "guard", "Start")
 def test_after_an_ai_lays_the_reload_plugins_it_asks_for_has_its_call_of_the_skill_held(
     up: Conversation, repo: Repo
@@ -61,6 +58,7 @@ def test_after_an_ai_lays_the_reload_plugins_it_asks_for_has_its_call_of_the_ski
     assert "changelog: Start `changelog:writer` with `Carry out your steps`." in called.said
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S3", "guard", "Run", "Approval")
 def test_an_ais_call_of_up_while_a_persons_proposal_awaits_their_reply_keeps_the_persons_run(
     up: Conversation, repo: Repo

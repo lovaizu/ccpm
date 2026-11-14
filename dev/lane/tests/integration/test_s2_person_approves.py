@@ -25,10 +25,6 @@ from lane_example import (
     write_command,
 )
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="Lane's parts are skeletons, their bodies unbuilt"
-)
-
 
 def shown_to_person(up: Conversation, repo: Repo) -> str:
     """The person typed `/lane:up changelog`, up proposed PROPOSAL, and gave the person what
@@ -54,6 +50,7 @@ def test_a_persons_yes_lays_the_proposal_and_validation_passes(up: Conversation,
     assert os.path.isfile(os.path.join(repo.plugin, "hooks", "lane", "hook.py"))
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S2", "guard", "Proposal")
 def test_up_ending_its_turn_without_the_proposal_word_for_word_is_stopped_with_it(
     up: Conversation, repo: Repo
@@ -103,6 +100,7 @@ def test_a_reply_that_is_neither_yes_nor_a_change_ends_the_run_of_up(up: Convers
     assert not up.stop("Done.").blocked
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S2", "lay.py", "Proposal", "Run")
 def test_lay_write_after_the_run_of_up_ended_without_approval_is_refused(
     up: Conversation, repo: Repo
@@ -120,6 +118,7 @@ def test_lay_write_after_the_run_of_up_ended_without_approval_is_refused(
     assert not os.path.exists(os.path.join(repo.plugin, "hooks", "lanes.json"))
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S2", "guard", "Approval", "Laid only on the caller's own act")
 def test_lay_write_before_the_persons_reply_is_stopped(broken: bool, up: Conversation, repo: Repo):
     """Given the person typed `/lane:up changelog` and `lay.py print` showed a Proposal

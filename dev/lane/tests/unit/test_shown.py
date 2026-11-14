@@ -13,10 +13,6 @@ from proposal import keep, parse
 from shown import notes, reads, text
 from steps import Step, roles
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="Lane's parts are skeletons, their bodies unbuilt"
-)
-
 STEP_2 = "2. Read the commits since then with `git log --oneline`."
 
 
@@ -50,6 +46,7 @@ def test_a_step_that_says_its_sentence_already_reads_as_it_is():
     )
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("test_lay_print_notes_a_step_that_names_a_command_its_subagent_may_not_run")
 def test_a_step_that_names_a_command_its_subagent_may_not_run_gets_a_note(plugin: str):
     """Given writer's step 1 that names `cat CHANGELOG.md`, which no Lane lets writer run
@@ -60,6 +57,7 @@ def test_a_step_that_names_a_command_its_subagent_may_not_run_gets_a_note(plugin
     assert any("step 1" in n and "cat CHANGELOG.md" in n for n in found), found
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("test_lay_print_shows_each_step_as_it_will_read_with_the_routes_and_an_id")
 def test_a_role_whose_steps_name_no_command_gets_a_note_that_lane_holds_only_its_end(plugin: str):
     """Given the walkthrough's reviewer, whose steps name no command
@@ -69,6 +67,7 @@ def test_a_role_whose_steps_name_no_command_gets_a_note_that_lane_holds_only_its
     assert any("reviewer" in n for n in found), found
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports(
     "test_a_laid_sentence_that_the_user_changed_is_kept_as_their_words_with_a_note"
 )

@@ -14,10 +14,6 @@ from lane_example import WRITER, put, put_plugin
 from lane_parts import laid_set
 from steps import files_of, fingerprint, laid_of, roles
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="Lane's parts are skeletons, their bodies unbuilt"
-)
-
 STEP_2 = "2. Read the commits since then with `git log --oneline`."
 SENTENCE = "Run only `git log --oneline`."
 
@@ -67,6 +63,7 @@ def test_steps_in_a_file_that_the_body_names_by_the_plugin_root_belong_to_the_ro
     assert "domain/writer.md" in files_of(writer)
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("test_a_move_that_waits_for_a_command_is_due_once_the_person_types_it")
 def test_the_skills_steps_hold_those_of_each_command_named(plugin: str):
     """Given `changelog` with a command `approve` whose SKILL.md holds one Step
@@ -138,6 +135,7 @@ def test_the_fingerprint_changes_with_a_steps_words_and_stays_without(plugin: st
     assert first == same != changed
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("test_a_move_that_waits_for_a_command_is_due_once_the_person_types_it")
 def test_a_second_skill_that_no_route_names_as_a_command_raises_a_fault(plugin: str):
     """Given `changelog` with a second skill `approve`

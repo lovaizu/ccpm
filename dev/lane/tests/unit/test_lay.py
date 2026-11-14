@@ -13,10 +13,6 @@ from domain.run_record import PERSON, PROMPTED, SHOWN, TURN_ENDED, Called, Noted
 from lane_example import PROPOSAL, RELOAD, REVIEWER, TYPES, WRITE, WRITER, put, read
 from lay import USAGE, main, steps_text, types_text
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="Lane's parts are skeletons, their bodies unbuilt"
-)
-
 
 @pytest.fixture
 def cwd(tmp_path: Any) -> str:
@@ -36,6 +32,7 @@ def env(cwd: str) -> dict[str, str]:
     return dict(os.environ, TMPDIR=os.path.join(cwd, "tmp"))
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports(
     "test_lay_types_gives_each_type_with_what_it_takes_the_steps_it_suits_and_its_sentence"
 )
@@ -47,6 +44,7 @@ def test_types_names_each_lane_type():
     assert [name for name in TYPES if name not in found] == []
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports(
     "test_lay_types_gives_each_type_with_what_it_takes_the_steps_it_suits_and_its_sentence"
 )
@@ -142,6 +140,7 @@ def test_other_arguments_exit_2_with_the_usage(cwd: str):
     assert main(["print", "changelog"], env(cwd), cwd) == (2, "", USAGE + "\n")
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("test_lay_write_after_the_run_of_up_ended_without_approval_is_refused")
 def test_write_after_the_run_of_up_that_showed_the_proposal_ended_exits_1_saying_so(cwd: str):
     """Given `lay.py print` showed the walkthrough's Proposal in the conversation c1, whose Run of
@@ -160,6 +159,7 @@ def test_write_after_the_run_of_up_that_showed_the_proposal_ended_exits_1_saying
     assert not os.path.exists(os.path.join(cwd, "changelog", "hooks"))
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("test_lay_steps_gives_up_each_role_and_step_of_the_plugin")
 def test_steps_exits_0_with_each_role_and_its_steps(cwd: str):
     """Given the walkthrough's `changelog`
@@ -170,6 +170,7 @@ def test_steps_exits_0_with_each_role_and_its_steps(cwd: str):
     assert "2. Read the commits since then with `git log --oneline`." in out
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("test_lay_steps_gives_up_each_role_and_step_of_the_plugin")
 def test_steps_of_a_plugin_whose_role_has_no_steps_exits_1_naming_its_file(cwd: str):
     """Given `changelog` whose agents/reviewer.md holds no numbered list under `## Steps`

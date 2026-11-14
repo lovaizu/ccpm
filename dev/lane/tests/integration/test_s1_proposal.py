@@ -23,10 +23,6 @@ from lane_example import (
     start,
 )
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="Lane's parts are skeletons, their bodies unbuilt"
-)
-
 
 @pytest.mark.supports("S1", "up", "lay.py", "Proposal", "Role", "Step", "Lane", "Route")
 def test_lay_print_shows_each_step_as_it_will_read_with_the_routes_and_an_id(
@@ -41,6 +37,7 @@ def test_lay_print_shows_each_step_as_it_will_read_with_the_routes_and_an_id(
     assert (printed.exit_code, printed.output) == (0, shown(id_of(printed.output)))
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S1", "Lane type", "lane types")
 def test_lay_types_gives_each_type_with_what_it_takes_the_steps_it_suits_and_its_sentence(
     up: Conversation,
@@ -56,6 +53,7 @@ def test_lay_types_gives_each_type_with_what_it_takes_the_steps_it_suits_and_its
     assert "Run only `git log --oneline`." in printed.output
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S1", "up", "lay.py")
 def test_lay_print_refuses_a_proposal_that_leaves_out_an_adapter_and_shows_the_mended_one(
     up: Conversation, repo: Repo
@@ -71,6 +69,7 @@ def test_lay_print_refuses_a_proposal_that_leaves_out_an_adapter_and_shows_the_m
     assert mended.exit_code == 0 and id_of(mended.output)
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S1", "lay.py", "Role")
 def test_lay_print_refuses_a_subagent_whose_file_doesnt_set_background_true(
     up: Conversation, repo: Repo
@@ -88,6 +87,7 @@ def test_lay_print_refuses_a_subagent_whose_file_doesnt_set_background_true(
     assert not id_of(refused.output)
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S1", "lay.py", "Route")
 def test_lay_print_refuses_a_command_that_a_route_waits_for_and_the_model_may_call(
     up: Conversation, repo: Repo
@@ -106,6 +106,7 @@ def test_lay_print_refuses_a_command_that_a_route_waits_for_and_the_model_may_ca
     assert "disable-model-invocation: true" in refused.output
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S1", "lay.py", "Step")
 def test_lay_print_refuses_two_roles_that_take_their_steps_from_one_file(
     up: Conversation, repo: Repo
@@ -128,6 +129,7 @@ def test_lay_print_refuses_two_roles_that_take_their_steps_from_one_file(
     assert "writer" in refused.output and "reviewer" in refused.output
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S1", "lay.py", "Route", "Result")
 def test_lay_print_refuses_routes_that_reach_neither_each_role_nor_each_result(
     up: Conversation, repo: Repo
@@ -165,6 +167,7 @@ def test_lay_print_refuses_a_proposal_not_in_the_form_of_the_schema(up: Conversa
     assert refused.exit_code == 1 and "type" in refused.output
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S1", "lay.py", "Step")
 def test_lay_print_notes_a_step_that_names_a_command_its_subagent_may_not_run(
     up: Conversation, repo: Repo
@@ -187,6 +190,7 @@ def test_lay_print_notes_a_step_that_names_a_command_its_subagent_may_not_run(
     assert any("step 1" in each for each in noted), printed.output
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S1", "lay.py", "Lane")
 def test_lay_print_refuses_an_ends_checked_lane_of_the_skill_naming_a_value_no_start_fills(
     up: Conversation, repo: Repo
@@ -201,6 +205,7 @@ def test_lay_print_refuses_an_ends_checked_lane_of_the_skill_naming_a_value_no_s
     assert refused.exit_code == 1 and "{deliverable}" in refused.output
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S1", "up", "lay.py", "Role", "Step")
 def test_lay_steps_gives_up_each_role_and_step_of_the_plugin(up: Conversation):
     """Given `changelog` as the walkthrough builds it, and the person typed `/lane:up changelog`

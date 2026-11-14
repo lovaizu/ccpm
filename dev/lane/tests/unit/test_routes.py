@@ -32,10 +32,6 @@ from lane_parts import (
     writer_gave_written,
 )
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="Lane's parts are skeletons, their bodies unbuilt"
-)
-
 
 @pytest.mark.supports(
     "test_the_command_gives_the_first_start_and_each_result_gives_the_next_until_no_more"
@@ -80,6 +76,7 @@ def test_a_result_that_no_route_goes_after_raises_a_fault():
         after_result(ROUTES, Result("writer", "skipped", "a1", 1))
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports(
     "test_a_command_that_a_route_goes_after_opens_its_moves_while_each_subagent_runs_on"
 )
@@ -146,6 +143,7 @@ def test_a_start_with_the_text_of_a_start_of_its_role_that_runs_isnt_opened():
     assert not opens_start(given, "writer", "Write section 1", "Write section 1")
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports(
     "test_a_resume_that_a_route_lists_counts_as_a_start_of_the_subagent_it_resumes"
 )
@@ -158,6 +156,7 @@ def test_a_resume_due_of_a_subagent_the_run_started_that_runs_no_more_is_opened(
     assert opens_resume(given, "a1")
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("test_a_resume_that_the_moves_dont_open_is_stopped_with_the_moves")
 def test_a_resume_of_a_subagent_that_runs_or_that_the_run_didnt_start_isnt_opened():
     """Given a Run whose move due resumes writer, its subagent a1 running
@@ -221,6 +220,7 @@ def test_only_the_one_move_that_starts_no_more_is_no_more():
     assert not no_more((Move(START, "writer"), Move(NO_MORE)))
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("test_kept_results_that_reach_a_route_that_starts_no_more_start_the_run_anew")
 def test_no_kept_results_start_the_run_anew():
     """Given the walkthrough's Routes and no Kept results
@@ -229,6 +229,7 @@ def test_no_kept_results_start_the_run_anew():
     assert pick_up(ROUTES, []).fresh
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("test_kept_results_that_reach_a_route_that_starts_no_more_start_the_run_anew")
 def test_kept_results_that_reach_no_more_start_the_run_anew():
     """Given the walkthrough's Routes, and Kept results writer `written` and reviewer `good`
@@ -238,6 +239,7 @@ def test_kept_results_that_reach_no_more_start_the_run_anew():
     assert pick_up(ROUTES, kept).fresh
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports(
     "test_a_new_conversation_picks_up_from_the_kept_results_that_follow_the_routes"
 )
@@ -249,6 +251,7 @@ def test_kept_results_that_follow_the_routes_give_the_moves_after_the_last():
     assert not picked.fresh and picked.moves == (Move(START, "reviewer"),)
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports(
     "test_kept_results_that_dont_follow_the_routes_stop_the_command_with_who_must_fix_it"
 )
@@ -295,6 +298,7 @@ def test_the_lines_of_two_skills_give_a_run_of_each_holding_its_own_starts_and_r
     assert review.results == [Result("reviewer", "more", "a2", 2)] and review.ended
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("test_the_skills_own_result_ends_only_the_run_of_the_skill_it_names")
 def test_the_main_conversations_result_moves_the_run_of_the_skill_it_names():
     """Given the lines of a Run of `write` whose reviewer's start is due, and of a Run of
@@ -325,6 +329,7 @@ CALLS_CHECK = (
 )
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports(
     "test_a_call_of_another_plugins_skill_that_a_move_names_sets_the_run_aside_until_a_move_after_it"
 )
@@ -337,6 +342,7 @@ def test_a_call_of_the_other_plugins_skill_that_a_move_due_names_is_opened():
     assert not opens_call(given, "tally:other")
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports(
     "test_a_call_of_another_plugins_skill_that_a_move_names_sets_the_run_aside_until_a_move_after_it"
 )

@@ -8,10 +8,23 @@ stands."""
 from __future__ import annotations
 
 from collections.abc import Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
-from domain.laid_set import LaidSet, Move, Route
-from domain.run_record import Line, Result, Run
+from domain.fault import Fault
+from domain.laid_set import NO_MORE, START, WAIT, LaidSet, Move, Route, routes_of
+from domain.run_record import (
+    ENDED,
+    LAID,
+    PROMPTED,
+    SHOWN,
+    Called,
+    Line,
+    Noted,
+    Result,
+    Run,
+    Start,
+    Tied,
+)
 
 
 @dataclass(frozen=True)
@@ -36,19 +49,109 @@ def stand(lines: Sequence[Line], laid_set: LaidSet, session: str) -> tuple[Run, 
     ended once a Route's one move starts no more, or
     once a later call of its skill begins a new Run of it, as each call line does. Raises Fault as
     `first` does."""
-    raise NotImplementedError("routes.stand")
+    runs: list[Run] = []
+    for line in lines:
+        if isinstance(line, Called):
+            runs.append(_begun(line, laid_set, session, runs))
+        elif isinstance(line, Start):
+            _started(line, runs)
+        elif isinstance(line, Tied):
+            _tied(line, runs)
+        elif isinstance(line, Result):
+            _gave(line, laid_set, runs)
+        else:
+            _noted(line, runs)
+    return tuple(runs)
+
+
+def _begun(line: Called, laid_set: LaidSet, session: str, runs: list[Run]) -> Run:
+    for run in runs:
+        if run.skill == line.skill:
+            run.ended = True
+    moves = [] if laid_set.proposes else list(first(routes_of(laid_set, line.skill)))
+    return Run(laid_set.plugin, line.skill, session, line.by, moves=moves)
+
+
+def _going_run(runs: Sequence[Run], skill: str) -> Run | None:
+    return next((run for run in reversed(runs) if run.skill == skill and not run.ended), None)
+
+
+def _started(line: Start, runs: list[Run]) -> None:
+    run = _going_run(runs, line.skill)
+    if run is None:
+        return
+    run.starts.append(line)
+    opened = next((m for m in run.moves if m.kind == START and m.role == line.role), None)
+    if opened is not None:
+        run.moves.remove(opened)
+
+
+def _tied(line: Tied, runs: list[Run]) -> None:
+    for run in runs:
+        for place, start in enumerate(run.starts):
+            if start.number == line.start:
+                run.starts[place] = replace(start, agent=line.agent, running=True)
+
+
+def _of_agent(runs: Sequence[Run], agent: str) -> tuple[Run, int] | None:
+    """The Run and the place of the last Start that ties the subagent, None where none does."""
+    for run in reversed(runs):
+        for place in reversed(range(len(run.starts))):
+            if run.starts[place].agent == agent:
+                return run, place
+    return None
+
+
+def _gave(line: Result, laid_set: LaidSet, runs: list[Run]) -> None:
+    found = _of_agent(runs, line.agent) if line.agent else None
+    if found is None:
+        return
+    run, place = found
+    result = replace(line, start=run.starts[place].number)
+    run.results.append(result)
+    moves = after_result(routes_of(laid_set, run.skill), result)
+    run.moves.extend(moves)
+    run.ended = run.ended or no_more(moves)
+
+
+def _noted(line: Noted, runs: list[Run]) -> None:
+    if line.what == ENDED:
+        found = _of_agent(runs, line.agent)
+        if found is not None:
+            run, place = found
+            run.starts[place] = replace(run.starts[place], running=False)
+        return
+    run = next((each for each in reversed(runs) if not each.ended), None)
+    if run is None:
+        return
+    if line.what == SHOWN:
+        run.shown, run.prompted = line.text, False
+    elif line.what == PROMPTED:
+        run.prompted = True
+    elif line.what == LAID:
+        run.ended = True
 
 
 def first(routes: Sequence[Route]) -> tuple[Move, ...]:
     """The moves of the Route `first`. Raises Fault, with the plugin's maker to fix it by running
     `/lane:up` again, where no Route is `first`."""
-    raise NotImplementedError("routes.first")
+    return _moves_after(routes, "first")
+
+
+def _moves_after(routes: Sequence[Route], after: str) -> tuple[Move, ...]:
+    for route in routes:
+        if route.after == after:
+            return route.moves
+    raise Fault(
+        f"no Route goes after `{after}`, so run `/lane:up` again to lay the Routes anew",
+        "the plugin's maker",
+    )
 
 
 def after_result(routes: Sequence[Route], result: Result) -> tuple[Move, ...]:
     """The moves of the Route after the role's result. Raises Fault as `first` does where no Route
     goes after it."""
-    raise NotImplementedError("routes.after_result")
+    return _moves_after(routes, f"{result.role} {result.result}")
 
 
 def after_command(routes: Sequence[Route], command: str) -> tuple[Move, ...] | None:
@@ -60,14 +163,16 @@ def after_command(routes: Sequence[Route], command: str) -> tuple[Move, ...] | N
 def due(moves: Sequence[Move], typed: str) -> tuple[Move, ...]:
     """The moves that are due now: each that waits for no command, and each that waits for the
     command `typed`, "" where the person typed none."""
-    raise NotImplementedError("routes.due")
+    return tuple(move for move in moves if move.waits_for in ("", typed))
 
 
 def opens_start(run: Run, role: str, text: str, given: str) -> bool:
     """Whether a start of the role with the text is one that the Run's moves open: a move due
     starts the role, the text is `given`, the text that the adapter gives for the role now or else
     Lane's, and no Start of the role that runs took the same text."""
-    raise NotImplementedError("routes.opens_start")
+    opened = any(m.kind == START and m.role == role for m in due(run.moves, ""))
+    taken = any(s.role == role and s.running and s.text == text for s in run.starts)
+    return opened and text == given and not taken
 
 
 def opens_call(run: Run, skill: str) -> bool:
@@ -85,12 +190,14 @@ def opens_resume(run: Run, agent: str) -> bool:
 def may_end_turn(run: Run) -> bool:
     """Whether the main conversation may end its turn in the Run: a move due is a wait or waits for
     a command, a subagent of the Run runs, or no move is due."""
-    raise NotImplementedError("routes.may_end_turn")
+    if not run.moves or any(s.running for s in run.starts):
+        return True
+    return any(m.kind == WAIT or m.waits_for for m in run.moves)
 
 
 def no_more(moves: Sequence[Move]) -> bool:
     """Whether the moves are the one move that starts no more."""
-    raise NotImplementedError("routes.no_more")
+    return len(moves) == 1 and moves[0].kind == NO_MORE
 
 
 def pick_up(routes: Sequence[Route], kept: Sequence[Result]) -> PickUp:

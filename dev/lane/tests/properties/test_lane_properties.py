@@ -30,10 +30,6 @@ from lane_example import PROPOSAL, put
 from lane_parts import SESSION, two_skills
 from proposal import parse
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="Lane's parts are skeletons, their bodies unbuilt"
-)
-
 WORDS = st.text(st.characters(blacklist_categories=("Cs", "Cc")), min_size=1, max_size=40)
 NAMES = st.from_regex(r"[a-z][a-z0-9-]{0,11}", fullmatch=True)
 WHERE = Where("/repo", "/repo")
@@ -71,6 +67,7 @@ def test_any_json_value_parses_as_a_proposal_or_raises_a_fault(value: Any):
         pass
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("test_lay_print_shows_each_step_as_it_will_read_with_the_routes_and_an_id")
 @given(st.lists(NAMES, min_size=1, max_size=4))
 def test_a_proposal_with_any_results_of_reviewer_parses_with_each_route(results: list[str]):
@@ -100,6 +97,7 @@ def test_a_command_passes_run_only_exactly_when_it_is_one_it_takes(
     assert verdict.passes == (command == takes[0])
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("test_a_write_of_a_file_that_no_write_only_lane_takes_is_stopped")
 @given(NAMES, NAMES)
 def test_a_write_passes_write_only_exactly_when_it_names_the_file_it_takes(

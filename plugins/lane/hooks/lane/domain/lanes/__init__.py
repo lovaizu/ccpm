@@ -5,12 +5,17 @@ steps it suits says. Each type lies in a module of its own in this package."""
 
 from __future__ import annotations
 
+import importlib
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import Protocol
 
 from domain.event import Call
+from domain.fault import Fault
 from domain.laid_set import Lane
+
+# Each lane type's module in this package, by the type's name.
+_TYPES = ("run_only", "write_only", "read_never", "names_printed", "ends_checked", "gives_result")
 
 
 @dataclass(frozen=True)
@@ -96,19 +101,30 @@ class LaneType(Protocol):
 def types() -> dict[str, LaneType]:
     """Each lane type, by its name: run_only, write_only, read_never, names_printed, ends_checked,
     and gives_result."""
-    raise NotImplementedError("lanes.types")
+    return {name: importlib.import_module(f"domain.lanes.{name}").LANE_TYPE for name in _TYPES}
 
 
 def type_of(name: str) -> LaneType:
     """The lane type of the name. Raises Fault, naming each type there is, where none has it."""
-    raise NotImplementedError("lanes.type_of")
+    if name not in _TYPES:
+        there = ", ".join(_TYPES)
+        raise Fault(f"there's no lane type `{name}`; the types are {there}", "up")
+    return types()[name]
 
 
 def may_run(lanes: Sequence[Lane], plugin_root: str) -> tuple[str, ...]:
     """Each command that the role of the Lanes may run, as the commands of each Lane's type give
     them, once each, in the order of the steps, with the plugin's folder in place of
     `${CLAUDE_PLUGIN_ROOT}`; none where no Lane names a command."""
-    raise NotImplementedError("lanes.may_run")
+    found: dict[str, None] = {}
+    for lane in sorted(lanes, key=_step):
+        for command in type_of(lane.type).commands(lane.role, lane.takes):
+            found[command.replace("${CLAUDE_PLUGIN_ROOT}", plugin_root)] = None
+    return tuple(found)
+
+
+def _step(lane: Lane) -> int:
+    return lane.step
 
 
 def check_call(
@@ -121,11 +137,20 @@ def check_call(
     """The first Lane of the role, in the order of its steps, that the call breaks, with its
     Verdict, or None and PASSES where the call keeps every Lane. Raises Fault where a Lane names a
     type there isn't."""
-    raise NotImplementedError("lanes.check_call")
+    commands = may_run(lanes, plugin_root)
+    for lane in sorted(lanes, key=_step):
+        verdict = type_of(lane.type).check_call(lane.takes, call, values, where, commands)
+        if not verdict.passes:
+            return lane, verdict
+    return None, PASSES
 
 
 def check_end(lanes: Sequence[Lane], end: End, where: Where) -> tuple[Lane | None, Verdict]:
     """The first Lane of the role, in the order of its steps, that the end breaks, with its
     Verdict, or None and PASSES where the end keeps every Lane. Raises Fault as check_call does,
     and where the command of an ends_checked Lane can't be filled or run."""
-    raise NotImplementedError("lanes.check_end")
+    for lane in sorted(lanes, key=_step):
+        verdict = type_of(lane.type).check_end(lane.takes, end, where)
+        if not verdict.passes:
+            return lane, verdict
+    return None, PASSES

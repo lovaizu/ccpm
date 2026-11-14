@@ -9,10 +9,6 @@ from domain.lanes import PASSES, End, Where
 from domain.lanes.run_only import LANE_TYPE
 from lane_parts import PLUGIN_ROOT, ROOT
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="Lane's parts are skeletons, their bodies unbuilt"
-)
-
 WHERE = Where(ROOT, ROOT)
 RESULT = f"python3 {PLUGIN_ROOT}/hooks/lane/result.py writer written"
 MAY_RUN = ("git log --oneline", RESULT)

@@ -7,19 +7,31 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 
-from domain.laid_set import Move
+from domain.laid_set import NO_MORE, START, Move
 
 
 def moves(plugin: str, due: Sequence[Move], texts: dict[str, str]) -> str:
     """The moves due, each start with its text, such as ``changelog: Start `changelog:writer` with
     `Carry out your steps`.``, and `Start no more subagents.` for the move that starts no more."""
-    raise NotImplementedError("said.moves")
+    return f"{plugin}: {_moves(plugin, due, texts)}"
+
+
+def _moves(plugin: str, due: Sequence[Move], texts: dict[str, str]) -> str:
+    return " ".join(_move(plugin, move, texts) for move in due)
+
+
+def _move(plugin: str, move: Move, texts: dict[str, str]) -> str:
+    if move.kind == START:
+        return f"Start `{plugin}:{move.role}` with `{texts[move.role]}`."
+    if move.kind == NO_MORE:
+        return "Start no more subagents."
+    raise NotImplementedError(f"said: the words of a move of the kind {move.kind}")
 
 
 def gave(plugin: str, role: str, result: str, due: Sequence[Move], texts: dict[str, str]) -> str:
     """That the role gave the result, then the moves due, as ``changelog: writer gave `written`.
     Start `changelog:reviewer` with `Carry out your steps`.``"""
-    raise NotImplementedError("said.gave")
+    return f"{plugin}: {role} gave `{result}`. {_moves(plugin, due, texts)}"
 
 
 def ended_without(plugin: str, role: str) -> str:
@@ -31,9 +43,15 @@ def stop(plugin: str, sentence: str, may_run: Sequence[str], printed: str) -> st
     """A stop: the sentence of the step or the route broken, then, on the next line, each command
     that the role may run, each word for word, where it may run some, and what a command of the
     plugin's own printed, where one did."""
-    raise NotImplementedError("said.stop")
+    told = f"{plugin}: {sentence}"
+    if may_run:
+        commands = ", ".join(f"`{each}`" for each in may_run)
+        told += f"\nThe commands you may run, each word for word: {commands}."
+    if printed.strip():
+        told += f"\n{printed.strip()}"
+    return told
 
 
 def cant_check(plugin: str, why: str, who: str) -> str:
     """That the guard stopped what it can't check, with why and who must fix it."""
-    raise NotImplementedError("said.cant_check")
+    return f"{plugin}: Lane can't check this, as {why}, and {who} must fix it."

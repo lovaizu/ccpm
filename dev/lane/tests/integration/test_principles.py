@@ -24,10 +24,6 @@ from lane_example import (
     starts,
 )
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="Lane's parts are skeletons, their bodies unbuilt"
-)
-
 STEP_2_LAID = (
     "2. Read the commits since then with `git log --oneline`. Run only `git log --oneline`."
 )

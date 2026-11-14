@@ -25,10 +25,6 @@ from lane_example import (
     starts,
 )
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="Lane's parts are skeletons, their bodies unbuilt"
-)
-
 
 def laid_with(repo: Repo, proposal: dict[str, Any]) -> Conversation:
     lay(repo, proposal)
@@ -71,6 +67,7 @@ def test_a_command_not_word_for_word_is_stopped_with_the_steps_sentence_and_the_
     )
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S6", "lane types", "Call")
 def test_a_write_of_a_file_that_no_write_only_lane_takes_is_stopped(run: Conversation, laid: Repo):
     """Given a Run of `changelog` in which writer runs
@@ -85,6 +82,7 @@ def test_a_write_of_a_file_that_no_write_only_lane_takes_is_stopped(run: Convers
     assert not os.path.exists(os.path.join(laid.root, "NOTES.md"))
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S6", "lane types", "Call")
 def test_a_read_of_a_path_that_read_never_keeps_unread_is_stopped_and_its_bang_part_passes(
     repo: Repo,
@@ -103,6 +101,7 @@ def test_a_read_of_a_path_that_read_never_keeps_unread_is_stopped_and_its_bang_p
     assert not reviewer.read(os.path.join(repo.root, "notes", "public.md")).blocked
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S6", "guard", "Start", "Only the main conversation starts the roles")
 def test_a_subagents_start_of_a_role_is_stopped_with_the_sentence_of_its_last_step(
     broken: bool, run: Conversation
@@ -167,6 +166,7 @@ def test_an_end_with_no_result_is_held_with_the_sentence_of_the_last_step(
     )
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S6", "lane types", "Lane", "Call")
 def test_an_end_that_starts_no_line_with_a_line_that_its_command_printed_is_held(repo: Repo):
     """Given `changelog` laid with a names_printed Lane on writer's step 2 that takes
@@ -186,6 +186,7 @@ def test_an_end_that_starts_no_line_with_a_line_that_its_command_printed_is_held
     assert not let.blocked and reached
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S6", "lane types", "Lane", "Result")
 def test_an_end_whose_check_of_the_plugins_own_gives_other_than_0_is_held_with_what_it_printed(
     repo: Repo,
@@ -207,6 +208,7 @@ def test_an_end_whose_check_of_the_plugins_own_gives_other_than_0_is_held_with_w
     assert held.blocked and "no entry for --lines" in held.said and "check.py" in held.said
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S6", "lane types", "Start")
 def test_an_end_whose_check_names_a_value_its_start_didnt_give_is_held_with_who_must_fix_it(
     repo: Repo,
@@ -227,6 +229,7 @@ def test_an_end_whose_check_names_a_value_its_start_didnt_give_is_held_with_who_
     assert held.blocked and "{version}" in held.said and "fix" in held.said
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S6", "Start", "adapter", "lane types")
 def test_a_run_value_holds_each_subagent_to_the_value_of_its_own_start(repo: Repo):
     """Given `changelog` laid with a write_only Lane on writer's step 3 that takes

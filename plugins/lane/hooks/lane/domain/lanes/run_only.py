@@ -6,8 +6,9 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
-from domain.event import Call
-from domain.lanes import End, Verdict, Where
+from domain.event import COMMAND, Call
+from domain.lanes import PASSES, End, Verdict, Where
+from domain.lanes.pattern import matches
 
 
 class RunOnly:
@@ -18,16 +19,16 @@ class RunOnly:
     suits = "a step that runs a command, such as `Read the commits with `git log --oneline`.`"
 
     def sentence(self, role: str, takes: tuple[str, ...]) -> str:
-        raise NotImplementedError("run_only.RunOnly.sentence")
+        return "Run only " + " or ".join(f"`{each}`" for each in takes) + "."
 
     def faults(self, role: str, takes: tuple[str, ...], is_skill: bool) -> list[str]:
-        raise NotImplementedError("run_only.RunOnly.faults")
+        return [] if takes else ["a run_only lane takes at least one command"]
 
     def said(self, step: str, role: str, takes: tuple[str, ...]) -> bool:
-        raise NotImplementedError("run_only.RunOnly.said")
+        return self.sentence(role, takes) in step
 
     def commands(self, role: str, takes: tuple[str, ...]) -> tuple[str, ...]:
-        raise NotImplementedError("run_only.RunOnly.commands")
+        return takes
 
     def check_call(
         self,
@@ -37,10 +38,14 @@ class RunOnly:
         where: Where,
         may_run: tuple[str, ...],
     ) -> Verdict:
-        raise NotImplementedError("run_only.RunOnly.check_call")
+        if call.kind != COMMAND:
+            return PASSES
+        if any(matches(each, call.command, values) for each in (*takes, *may_run)):
+            return PASSES
+        return Verdict(False, may=may_run)
 
     def check_end(self, takes: tuple[str, ...], end: End, where: Where) -> Verdict:
-        raise NotImplementedError("run_only.RunOnly.check_end")
+        return PASSES
 
 
 LANE_TYPE = RunOnly()

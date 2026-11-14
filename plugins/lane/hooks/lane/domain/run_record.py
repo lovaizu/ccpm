@@ -8,9 +8,16 @@ type, or the skill that a result names, the record never keeps."""
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Union
+import datetime
+import glob
+import json
+import os
+import tempfile
+from collections.abc import Mapping
+from dataclasses import asdict, dataclass, field
+from typing import Any, Union
 
+from domain.fault import Fault
 from domain.laid_set import Move
 
 # Who called the skill that a Run runs.
@@ -116,34 +123,83 @@ class Run:
     prompted: bool = False
 
 
+def temp(environ: Mapping[str, str]) -> str:
+    """The system's temporary folder as the environment sets it, by TMPDIR, TEMP, or TMP, as
+    `tempfile.gettempdir()` reads them, or else the one it gives."""
+    for name in ("TMPDIR", "TEMP", "TMP"):
+        if environ.get(name):
+            return environ[name]
+    return tempfile.gettempdir()
+
+
 def path(temp: str, plugin: str, session: str) -> str:
     """The run record of the plugin in the conversation, which holds the lines of each skill's Run:
     `<temp>/<plugin>/<yyyymmdd>-<the conversation's ID>/run.jsonl`, `<yyyymmdd>` the day the
     conversation's first Run began, as the plugin guide places what a plugin uses only while it
     runs. The same plugin and conversation give the same file on a later day."""
-    raise NotImplementedError("run_record.path")
+    folder = os.path.join(temp, plugin)
+    found = sorted(glob.glob(os.path.join(glob.escape(folder), f"*-{glob.escape(session)}")))
+    if found:
+        return os.path.join(found[0], "run.jsonl")
+    day = datetime.date.today().strftime("%Y%m%d")
+    return os.path.join(folder, f"{day}-{session}", "run.jsonl")
+
+
+# Each kind of line by the name its JSON gives it.
+_KINDS: dict[str, Any] = {
+    "called": Called,
+    "start": Start,
+    "tied": Tied,
+    "result": Result,
+    "noted": Noted,
+}
 
 
 def dumps(line: Line) -> str:
     """The line as one line of JSON, ending with a newline, which `loads` reads back equal to it."""
-    raise NotImplementedError("run_record.dumps")
+    fields = asdict(line)
+    if isinstance(line, Start):
+        del fields["agent"], fields["running"]
+    if isinstance(line, Result):
+        del fields["start"]
+    kind = next(name for name, each in _KINDS.items() if isinstance(line, each))
+    return json.dumps({"line": kind, **fields}) + "\n"
 
 
 def loads(text: str, where: str) -> tuple[Line, ...]:
     """Each line of the text of the run record at `where`, in order. Raises Fault, naming the file
     and the line, with Lane to fix it, where a line isn't one that `dumps` writes. A last line cut
     short by a hook that still writes is left out."""
-    raise NotImplementedError("run_record.loads")
+    whole = text.split("\n")[:-1]
+    return tuple(_line(each, where, number) for number, each in enumerate(whole, 1))
+
+
+def _line(text: str, where: str, number: int) -> Line:
+    try:
+        fields = json.loads(text)
+        return _KINDS[fields.pop("line")](**fields)
+    except (ValueError, KeyError, TypeError, AttributeError):
+        raise Fault(f"{where}, line {number}, isn't a line of a run record", "Lane") from None
 
 
 def load(temp: str, plugin: str, session: str) -> tuple[Line, ...]:
     """Each line of the plugin's run record in the conversation, none where the conversation has
     none. Raises Fault as `loads` does."""
-    raise NotImplementedError("run_record.load")
+    where = path(temp, plugin, session)
+    if not os.path.exists(where):
+        return ()
+    with open(where, encoding="utf-8") as f:
+        return loads(f.read(), where)
 
 
 def add(line: Line, temp: str, plugin: str, session: str) -> None:
     """Adds the line at the end of the plugin's run record in the conversation, in one write, so
     that a hook that runs at the same time never loses it or another's, making its folder where it
     isn't there. It never rewrites a line."""
-    raise NotImplementedError("run_record.add")
+    where = path(temp, plugin, session)
+    os.makedirs(os.path.dirname(where), exist_ok=True)
+    handle = os.open(where, os.O_WRONLY | os.O_APPEND | os.O_CREAT, 0o600)
+    try:
+        os.write(handle, dumps(line).encode("utf-8"))
+    finally:
+        os.close(handle)

@@ -45,10 +45,6 @@ from lane_parts import (
     writer_running,
 )
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="Lane's parts are skeletons, their bodies unbuilt"
-)
-
 START_WRITER = "changelog: Start `changelog:writer` with `Carry out your steps`."
 START_REVIEWER = "changelog: Start `changelog:reviewer` with `Carry out your steps`."
 
@@ -71,6 +67,7 @@ def test_the_skills_command_typed_starts_the_run_with_the_first_start(temp: str)
     assert load(temp, "changelog", SESSION) == (Called("write", PERSON),)
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports(
     "test_an_ai_that_called_up_by_the_skill_tool_lays_by_its_own_run_of_lay_write"
 )
@@ -142,6 +139,7 @@ def test_a_subagents_call_that_keeps_every_lane_is_let_through_and_not_kept(temp
     assert load(temp, "changelog", SESSION) == WRITER_RUNNING
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports(
     "test_an_end_that_starts_no_line_with_a_line_that_its_command_printed_is_held"
 )
@@ -165,6 +163,7 @@ def test_what_a_lanes_command_printed_is_kept_for_its_subagent(temp: str):
     assert load(temp, "changelog", SESSION) == (*WRITER_RUNNING, printed)
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports(
     "test_a_subagents_start_of_a_role_is_stopped_with_the_sentence_of_its_last_step"
 )
@@ -379,6 +378,7 @@ def test_a_skills_call_goes_to_the_run_of_that_skill():
     assert run_of(moment, two_skills(), [write, review]) is review
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("test_the_skills_own_result_ends_only_the_run_of_the_skill_it_names")
 def test_the_main_conversations_run_of_result_py_goes_to_the_run_of_the_skill_it_names():
     """Given a Run of `write` and a Run of `review`
@@ -424,6 +424,7 @@ def test_a_subagent_that_no_start_ties_goes_to_no_run():
     assert run_of(moment, two_skills(), [writer_running()]) is None
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports(
     "test_the_main_conversation_is_held_to_the_lanes_of_each_skill_whose_run_goes_on"
 )

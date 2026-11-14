@@ -25,10 +25,6 @@ from plugin_validate import fails, passes
 from proposal import keep, parse
 from steps import roles
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="Lane's parts are skeletons, their bodies unbuilt"
-)
-
 CODE = os.path.join(LANE, "hooks", "lane")
 FILES = ("skills/write/SKILL.md", "agents/writer.md", "agents/reviewer.md")
 
@@ -82,6 +78,7 @@ def test_laying_the_walkthroughs_proposal_writes_what_the_walkthrough_says(plugi
     )
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("test_a_persons_yes_lays_the_proposal_and_validation_passes")
 def test_laying_copies_lanes_code_whole_into_hooks_lane(plugin: str):
     """Given the walkthrough's `changelog` and Proposal

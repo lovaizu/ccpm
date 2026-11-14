@@ -5,8 +5,9 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
-from domain.event import Call
-from domain.lanes import End, Verdict, Where
+from domain.event import WRITE, Call
+from domain.lanes import PASSES, End, Verdict, Where
+from domain.lanes.paths import names_file
 
 
 class WriteOnly:
@@ -17,16 +18,16 @@ class WriteOnly:
     suits = "a step that writes a file, such as `Write the new entries into `CHANGELOG.md`.`"
 
     def sentence(self, role: str, takes: tuple[str, ...]) -> str:
-        raise NotImplementedError("write_only.WriteOnly.sentence")
+        return "Write only " + " or ".join(f"`{each}`" for each in takes) + "."
 
     def faults(self, role: str, takes: tuple[str, ...], is_skill: bool) -> list[str]:
-        raise NotImplementedError("write_only.WriteOnly.faults")
+        return [] if takes else ["a write_only lane takes at least one path"]
 
     def said(self, step: str, role: str, takes: tuple[str, ...]) -> bool:
-        raise NotImplementedError("write_only.WriteOnly.said")
+        return self.sentence(role, takes) in step
 
     def commands(self, role: str, takes: tuple[str, ...]) -> tuple[str, ...]:
-        raise NotImplementedError("write_only.WriteOnly.commands")
+        return ()
 
     def check_call(
         self,
@@ -36,10 +37,14 @@ class WriteOnly:
         where: Where,
         may_run: tuple[str, ...],
     ) -> Verdict:
-        raise NotImplementedError("write_only.WriteOnly.check_call")
+        if call.kind != WRITE:
+            return PASSES
+        if any(names_file(each, call.path, values, where) for each in takes):
+            return PASSES
+        return Verdict(False)
 
     def check_end(self, takes: tuple[str, ...], end: End, where: Where) -> Verdict:
-        raise NotImplementedError("write_only.WriteOnly.check_end")
+        return PASSES
 
 
 LANE_TYPE = WriteOnly()

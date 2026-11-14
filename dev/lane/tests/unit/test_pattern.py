@@ -6,10 +6,6 @@ from __future__ import annotations
 import pytest
 from domain.lanes.pattern import fill, matches, names
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="Lane's parts are skeletons, their bodies unbuilt"
-)
-
 
 @pytest.mark.supports("test_a_run_value_holds_each_subagent_to_the_value_of_its_own_start")
 def test_names_of_a_pattern_without_braces_are_none():

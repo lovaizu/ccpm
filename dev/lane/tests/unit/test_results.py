@@ -10,10 +10,6 @@ from domain.results import given, may_give
 from domain.run_record import Result
 from lane_parts import PLUGIN_ROOT, event, laid_set, run, two_skills, writer_running
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="Lane's parts are skeletons, their bodies unbuilt"
-)
-
 
 def ran(command: str, agent: str = "", role: str = "", failed: bool = False):
     """The moment that tells the command ran, by the subagent where one is given."""

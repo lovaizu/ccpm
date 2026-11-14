@@ -11,10 +11,6 @@ from domain.fault import Fault
 from domain.laid_set import Laid, LaidSentence, dumps, lanes_of, load, loads, routes_of
 from lane_parts import LANES, REVIEW_ROUTES, ROUTES, laid_set, two_skills
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="Lane's parts are skeletons, their bodies unbuilt"
-)
-
 
 @pytest.mark.supports("test_a_persons_yes_lays_the_proposal_and_validation_passes")
 def test_a_laid_set_written_reads_back_as_it_was():

@@ -9,10 +9,6 @@ from domain.lanes import PASSES, End, Where
 from domain.lanes.write_only import LANE_TYPE
 from lane_parts import ROOT
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="Lane's parts are skeletons, their bodies unbuilt"
-)
-
 WHERE = Where(ROOT, ROOT)
 
 
@@ -42,6 +38,7 @@ def test_it_lets_the_role_run_no_command():
     assert LANE_TYPE.commands("writer", ("CHANGELOG.md",)) == ()
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("test_a_call_that_keeps_every_lane_of_its_role_passes")
 def test_a_write_of_the_file_it_takes_passes():
     """Given a write_only Lane that takes `CHANGELOG.md`
@@ -51,6 +48,7 @@ def test_a_write_of_the_file_it_takes_passes():
     assert LANE_TYPE.check_call(("CHANGELOG.md",), call, {}, WHERE, ()).passes
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("test_a_write_of_a_file_that_no_write_only_lane_takes_is_stopped")
 def test_a_write_of_another_file_fails():
     """Given a write_only Lane that takes `CHANGELOG.md`

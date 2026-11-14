@@ -15,10 +15,6 @@ from domain.run_record import add, load
 from lane_example import LANE
 from lane_parts import SESSION, WRITER_RUNNING, laid_set
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="Lane's parts are skeletons, their bodies unbuilt"
-)
-
 
 @pytest.fixture
 def plugin(tmp_path: Any) -> dict[str, str]:

@@ -16,10 +16,6 @@ from lane_example import PROPOSAL, REVIEWER, lane, put, put_plugin, route, start
 from proposal import Proposal, check, keep, kept, moves_of, parse, waits
 from steps import roles
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="Lane's parts are skeletons, their bodies unbuilt"
-)
-
 
 @pytest.fixture
 def plugin(tmp_path: Any) -> str:
@@ -116,6 +112,7 @@ def test_a_lane_on_a_step_there_isnt_is_refused(plugin: str):
     assert found and "5" in " ".join(found.faults)
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports(
     "test_lay_print_refuses_an_ends_checked_lane_of_the_skill_naming_a_value_no_start_fills"
 )
@@ -129,6 +126,7 @@ def test_a_lane_that_its_type_says_cant_stand_is_refused(plugin: str):
     assert found and "{deliverable}" in " ".join(found.faults)
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("test_lay_print_refuses_routes_that_reach_neither_each_role_nor_each_result")
 def test_a_result_that_no_route_goes_after_is_refused(plugin: str):
     """Given the walkthrough's Proposal with no Route after `reviewer more`
@@ -139,6 +137,7 @@ def test_a_result_that_no_route_goes_after_is_refused(plugin: str):
     assert found and "more" in " ".join(found.faults)
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("test_lay_print_refuses_routes_that_reach_neither_each_role_nor_each_result")
 def test_a_role_that_no_route_starts_is_refused(plugin: str):
     """Given the walkthrough's Proposal whose Route after `writer written` starts no more, so no
@@ -150,6 +149,7 @@ def test_a_role_that_no_route_starts_is_refused(plugin: str):
     assert found and "reviewer" in " ".join(found.faults)
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("test_lay_print_refuses_a_subagent_whose_file_doesnt_set_background_true")
 def test_a_subagent_without_background_true_is_refused_for_the_user_to_mend(plugin: str):
     """Given `changelog` whose reviewer doesn't set `background: true`
@@ -160,6 +160,7 @@ def test_a_subagent_without_background_true_is_refused_for_the_user_to_mend(plug
     assert found and found.in_files and "agents/reviewer.md" in " ".join(found.faults)
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports(
     "test_lay_print_refuses_a_command_that_a_route_waits_for_and_the_model_may_call"
 )
@@ -177,6 +178,7 @@ def test_a_waited_command_the_model_may_call_is_refused_for_the_user_to_mend(plu
     assert found and found.in_files and "skills/approve/SKILL.md" in " ".join(found.faults)
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports(
     "test_lay_print_refuses_a_proposal_that_leaves_out_an_adapter_and_shows_the_mended_one"
 )
@@ -189,6 +191,7 @@ def test_a_program_in_hooks_adapters_that_the_proposal_doesnt_name_is_refused_fo
     assert found and not found.in_files and "hooks/adapters/text" in " ".join(found.faults)
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports(
     "test_lay_print_refuses_a_proposal_that_leaves_out_an_adapter_and_shows_the_mended_one"
 )
@@ -200,6 +203,7 @@ def test_an_adapter_named_that_isnt_in_hooks_adapters_is_refused(plugin: str):
     assert found and "text" in " ".join(found.faults)
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("test_lay_print_refuses_two_roles_that_take_their_steps_from_one_file")
 def test_two_roles_that_take_their_steps_from_one_file_are_refused_for_the_user(plugin: str):
     """Given writer and reviewer that both name `${CLAUDE_PLUGIN_ROOT}/domain/part.md`
@@ -217,6 +221,7 @@ def test_two_roles_that_take_their_steps_from_one_file_are_refused_for_the_user(
     assert found and found.in_files and "domain/part.md" in " ".join(found.faults)
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports(
     "test_the_command_gives_the_first_start_and_each_result_gives_the_next_until_no_more"
 )
