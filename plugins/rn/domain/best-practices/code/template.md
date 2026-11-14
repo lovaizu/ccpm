@@ -15,8 +15,8 @@
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<module-opening>`: for each module, a few words on what this module alone decides, at the place
->   the maintainer meets first when they open the module.
+> - `<module-opening>`: for each module, one sentence on what this module alone decides, at the
+>   place the maintainer meets first when they open the module.
 
 ## Interface
 
@@ -25,8 +25,9 @@
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - `<interface>`: each name a module offers to others, with everything a caller needs to call it
->   without reading its body: the types it takes and gives, what it gives, what it expects of what
->   it takes and each way it refuses.
+>   without reading its body: the types it takes and gives, what it gives, what comes back when
+>   there's nothing to give, what it expects of what it takes, what else it changes, and each way it
+>   refuses a call.
 
 ## Body
 

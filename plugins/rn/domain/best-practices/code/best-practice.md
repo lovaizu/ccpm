@@ -33,94 +33,97 @@
 
 Does each module say, where the maintainer first meets it, the one thing it alone decides?
 
-A maintainer with one behavior to change should find the one module to open without reading the bodies. David Parnas's [information hiding](https://doi.org/10.1145/361598.361623) gives each module one decision that the specification leaves to the code, most of all one that's likely to change.
+A maintainer with one behavior to change finds the one module to open from what the modules say at their top, without reading a body, and changes the code in that one place.
 
-1. *While deciding.* List the decisions that the specification leaves to the code. The trace: `{inputs}` read to its end.
-2. *While deciding.* Give each decision to one module.
-3. *While deciding.* Where a decision meets a problem that a known design pattern solves, such as Strategy or Adapter in [Design Patterns](https://en.wikipedia.org/wiki/Design_Patterns), use the pattern by its name, since the name gives the maintainer the whole design at once. Use it only where a case of the specification needs it now, as N3 says.
-4. *While making.* Have the module state its decision in a few words where the maintainer meets it first, such as at its top. If the module can't state it briefly, split the module.
-5. *While making.* Take a behavior that the specification might change, and read only what the modules say they decide. Check that it points to one module. Where it doesn't, rewrite what the modules say, or move the decision.
+1. *While deciding.* Open the architecture at the part's line in Components, the principles, and each sequence that the part takes a step in, and open the part's skeleton and its unit cases in the test code. The unit cases, each with its Given, When, and Then, are the code's specification: each behavior of the code answers one of them, and the architecture's lines say only why a case asks what it does. The trace: `{inputs}` read to its end.
+2. *While deciding.* List the decisions that the specification leaves to the code: for each unit case, ask what the code could do in more than one way while the case still passes, such as the layout of a file that only the part reads, or the order in which it tries two sources. Each such choice is a decision left to the code, and a choice that a case, a principle, or the skeleton's interface already fixes isn't.
+3. *While deciding.* Give each decision to one module. Keep the skeleton's modules, which hold the decisions that the architecture gave the part, and add a module inside the part only for a decision that could change while the rest of the part stays, such as a file's layout that may change apart from the rules that read it. Keep two decisions in one module where a change of one always changes the other.
+4. *While deciding.* Where a decision has variants that the cases call for now, such as two remotes that each take their own commands, give each variant its own module behind one interface, and name that shape by its design pattern, such as Adapter, in the module that chooses among them, since the name tells the maintainer where a new variant goes. Make no variant that no case calls for, as N3 says.
+5. *While making.* Write at the top of each module, such as in its docstring, the sentence that the note of Module opening in the template asks for, naming what the module decides, not the steps it takes, such as `The layout of a record on disk.` Where the sentence joins two decisions that change for different reasons, split the module.
+6. *While making.* Once every module states its decision, take a change that a unit case might come to ask for, such as a new field in what the part keeps, read only the modules' first sentences, and name the one module to open. Where you name none or more than one, move the decision or rewrite the sentence, and repeat with a change of another kind until each change names one module.
 
 ### N2
 
 Does each name that a module offers state everything a caller needs to call it without reading its body?
 
-A caller who needn't read the body lets the body change behind the interface without breaking them. [Design by contract](https://www.eiffel.com/values/design-by-contract/introduction/), by Bertrand Meyer, states what a call expects, what it gives, and what stays true.
+A caller who learns from the interface alone how to call a name calls it right without reading its body, and the body can then change without breaking any caller.
 
-1. *While deciding.* Choose the names that other modules may use, and mark every other name as internal.
-2. *While making.* Give each name the types it takes and gives, such as in its signature where the language allows.
-3. *While making.* Write beside each name, such as in a doc comment, what it gives, what comes back when there's nothing to give, what it expects of what it takes, what else it changes, and each way it refuses a correct call.
-4. *While making.* Leave out what the types already say.
-5. *While making.* Have someone who hasn't read the body write a call from the interface alone, and run the call. Where the call fails or they had to guess, add what was missing.
+1. *While deciding.* List, for each module, the names that another module or a unit case calls, from the skeleton and the cases, and offer only those. Mark every other name as internal in the language's way, such as a leading underscore in Python, since a name that nothing outside calls is one the maintainer can change freely.
+2. *While making.* Give each offered name the types it takes and gives, such as in its signature where the language allows.
+3. *While making.* Write beside each offered name, such as in its doc comment, what the note of Interface in the template lists, leaving out what the types already say, such as `Gives the entries in the order they were added, or [] where the file is empty. Raises Wrong, naming the line, where a line isn't an entry.`
+4. *While making.* Once the unit tests pass, take each offered name and each test that calls it, and check that each value the test passes and each result it asserts is one that the signature and the doc comment state. Where a test relies on what only the body shows, such as the order of what comes back or a refusal, add it to the doc comment.
 
 ### N3
 
 Does each behavior of the code trace to a case of its specification, which is what the architecture asks of its part?
 
-Every behavior that no one asked for is code the maintainer must carry and keep working. [You Aren't Gonna Need It](https://martinfowler.com/bliki/Yagni.html) keeps only what the cases ask for now, in the form they ask for.
+Every behavior that no case asks for is code the maintainer must carry and keep working, while no test tells them whether it still holds.
 
-1. *While deciding.* For each option, mode, and case that the code handles, name the case of the specification that asks for it. The specification is what the architecture asks of the part: the decisions its line gives the part, the rules of the principles, and each step of a sequence that the part takes or answers, with the data as the data model names it.
-2. *While making.* Remove what no case asks for.
+1. *While deciding.* For each option, mode, parameter, and branch that you plan for a module, name the unit case that calls for it, and drop it from the plan where none does, such as a `--dry-run` flag that no case runs, or a second file format that no case reads.
+2. *While making.* Once the tests pass, read each module's body and remove each option, mode, parameter, and branch that no case calls for, such as a fallback for an input that the interface already refuses.
 
 ### N4
 
 Do the tests pass in any order and on every run, on a fresh machine set up from the code's setup alone?
 
-When a test fails, the cause should lie in the code, never in the machine or in the order of the tests. A [hermetic](https://abseil.io/resources/swe-book/html/ch11.html) test holds everything it needs to set up, run, and clear its environment.
+When a test fails, the maintainer finds the cause in the code, never in the machine or in the order the tests ran, and so can trust each failure.
 
-1. *While making.* Have the code's setup name everything the code needs, with the versions it runs on.
-2. *While making.* Have each test set up and clear everything it uses.
-3. *While making.* For each real tool the tests run, such as git, find each thing it does on its own beyond the call, such as reading the machine's settings or starting maintenance in the background, and turn it off in the test's own settings, so that the tool does only what the test asks of it.
-4. *While making.* Set the code up on a clean machine or container, from the code's setup alone, and add to the setup each missing thing that the setup or the tests found, such as a runtime.
-5. *While making.* Run the tests several times, and in a shuffled order, and check that they pass on every run.
+1. *While making.* Write the code's setup, such as pyproject.toml with its lock file, as the note of Manifest in the template says.
+2. *While making.* Have each test make each file, folder, and setting it uses, such as in a temporary folder of its own, and remove them when it ends, so that no test reads what another test or the machine left.
+3. *While making.* For each real tool that the tests run, such as git, read its documentation for what it reads and starts on its own beyond the call, such as the machine's settings or maintenance in the background, and turn each off in the test's own settings, such as by pointing `GIT_CONFIG_GLOBAL` at an empty file and setting `gc.auto` to 0.
+4. *While making.* Once the tests pass, run them at least three times, each in a new shuffled order whose seed the run prints, such as by the test runner's option to shuffle. Where a run fails, run its seed again to see the failure, and have the failing test set up itself what it took from another test, as N4.2 says.
+5. *While making.* Last, set the code up in a fresh container or a throwaway copy with an empty home, by the setup's commands alone, and run the tests there. Add to the setup each thing that the setup or a test found missing, such as a runtime or a tool, and run again until the tests pass.
 
 ### N5
 
 Does each case of the specification, its edges and refusals included, have one test whose name says the case?
 
-A maintainer whose test fails should know which case it breaks. [Test-driven development](https://martinfowler.com/bliki/TestDrivenDevelopment.html) writes the tests from the specification's cases before the code.
+A maintainer whose test fails knows from its name which case of the specification broke, and so what to mend.
 
-1. *While deciding.* Take the unit cases that the architecture's test cases hold for the part, each naming the integration case it supports, as [the architecture best practice](../architecture/best-practice.md) writes them before any code. These cases are the specification, so a case that no test names isn't in it.
-2. *While deciding.* Where the code needs a case that they don't hold, such as for a module inside the part, design it before its code as a test's name and its Given, When, and Then, the usual one, each edge, and each refusal, naming the case one level up that it supports. Take a case that names none back to the architecture, since it tests what no element asks for.
-3. *While making.* Write one test for each case, named for the behavior it checks. If the name needs `and`, split the test.
-4. *While making.* Write each test so that its reader grasps the situation, the action, and what must be so, such as in the three parts [Given, When, and Then](https://martinfowler.com/bliki/GivenWhenThen.html), with each expected value taken from the specification, not from what the code gives.
-5. *While making.* Keep each test readable on its own, with the values that its case turns on in its own body, and put in one helper only setup that many tests share, such as building the object under test, since Software Engineering at Google advises that [unit tests](https://abseil.io/resources/swe-book/html/ch12.html) be descriptive and meaningful rather than free of repetition.
-6. *While making.* Keep loops and branches out of a test, as the same source advises.
-7. *While making.* Give each failure a message that names the case, as the same source advises.
-8. *While making.* Run each test before you write its code, and see it fail. The trace: `{tests}` run.
-9. *While making.* Read the tests as a maintainer whose test failed would, and check that each test checks one case, that its name says the case, and that it names the case one level up that it supports.
+1. *While deciding.* For each module that N1.3 adds inside the part, design its cases before its code, each as a test's name with its Given, When, and Then, naming the unit case of the part that it supports: one for the usual input, one for each class of input that its interface treats alike, refusals among them, and one at each end of a class on an ordered scale, as [the architecture best practice](../architecture/best-practice.md) divides the inputs of a part into its unit cases. For example, `test_reads_back_an_entry_whose_text_holds_a_newline` supports `test_add_then_check_accepts_the_record`.
+2. *While deciding.* Where the code seems to need a case that supports no unit case of the part, such as a mode that the part's tests never reach, end with `asks` to take it back to the architecture, and don't write it, since it tests what no element asks for.
+3. *While making.* Write one test for each case that N5.1 designs, in the test code beside the part's unit tests, in the form that the note of Tests in the template gives. Where its name needs `and`, split it into two tests.
+4. *While making.* Take each value that a test expects from its case's Then, never from what the code gives when run, since a value copied from the code passes whatever the code does.
+5. *While making.* Keep in each test's own body the values that its case turns on, and put in a shared helper only the setup that many tests share, such as building the object under test, so that a reader grasps the test without opening another.
+6. *While making.* Keep loops and branches out of each test, since a test that loops over inputs hides which one failed: write one test for each input instead, or a parametrized test that names each.
+7. *While making.* Give an assertion a failure message that names the part of the case it checks, wherever the test's name and the values compared don't already say it, such as `the refused line is named`.
+8. *While making.* Run each test before you write the code it tests, and see it fail for the reason its Then names, not for a fault of the test itself, such as a misspelled name. The trace: `{tests}` run.
 
 ### N6
 
 Do the tests call the code only as its callers do, through its interfaces?
 
-A test that calls the code as its callers do fails only where a caller would break, so the maintainer can improve a body without fear. Software Engineering at Google calls this [testing through public interfaces](https://abseil.io/resources/swe-book/html/ch12.html).
+A test that calls the code as its callers do fails only where a caller would break, so the maintainer can improve a body without rewriting a test.
 
-1. *While making.* For each test, ask whether it reaches anything that a caller can't. If it does, rewrite it to use the interface.
-2. *While making.* Use the real parts where they run fast and wholly inside the test, and a stand-in only for what's slow or outside it.
-3. *While making.* Change a body without changing what its interface says, and run the tests. Rewrite each test that fails so that it calls the code through the interface.
+1. *While making.* Use in each test the real modules that run fast and wholly inside the test, such as a file in the test's own temporary folder, and a test double only for what's slow or outside the test, such as a network service or a model, as Test strategy sets for the unit level.
+2. *While making.* Read each test and ask whether it reaches anything that a caller can't, such as an internal name, a field of an object, or a file that the part keeps for itself. Where it does, rewrite it to call the interface, such as `store.entries()` in place of `store._lines`.
+3. *While making.* Once the tests pass, change a body without changing what its interface says, such as by renaming an internal helper, and run the tests. Rewrite each test that fails so that it calls the code through the interface.
 
 ### N7
 
 Does breaking any behavior make a test fail?
 
-A test is worth the faults it catches, so breaking a behavior must make a test fail. Coverage, [mutation testing](https://research.google/pubs/state-of-mutation-testing-at-google/), and [property-based testing](https://hypothesis.works/articles/what-is-property-based-testing/) measure how well the tests catch faults: the lines no test runs, the mutants that survive, and the inputs that a property finds the code fails on.
+The maintainer knows that every behavior still holds only where breaking any of them makes a test fail, so a test is worth the faults it catches.
 
-1. *While making.* Have each test check the result that its case asks for.
-2. *While making.* Find each line or branch that no test runs, such as by measuring coverage while the tests run, and add a test for each. The trace: `{coverage}` run.
-3. *While making.* Apart from the work, at the time that [the architecture best practice](../architecture/best-practice.md) sets for it, change the code in small ways with a mutation testing tool. For each change under which the tests still pass, first ask whether the part needs the code it changed. Remove the code that no case of the tests calls for, or make it simpler, so that no change of it passes unseen. Where the change can't alter what the code does, mark it with why. Add a test only where the change shows a case that the tests already name and check too loosely, and then report why the design of the test cases missed it, so that whoever designs the cases mends its cause. Add no case there, since a case added to catch a mutant comes from the code that exists, not from what the part must do: a new case goes back to the design.
-4. *While making.* Apart from the work, at the time that [the architecture best practice](../architecture/best-practice.md) sets for it, run the code over many inputs that the specification allows, such as with property-based tests. For each input that the code fails on, first ask whether the code needs to take it, and narrow what the part takes where it needn't. Else fix the code, keep the input as a fixed test of the case it falls in, and report why the design of the test cases missed it.
-5. *While making.* Compare each count with the last, and trace a rise to the design of the cases, not to the tests alone.
+1. *While making.* Have each test assert the whole result that its case's Then names, such as the full list that a call gives, not only that the call returned or that the list isn't empty.
+2. *While making.* Once the tests pass, run them with line and branch coverage measured by the tool that Test strategy names, such as coverage.py, and list each line and branch that no test runs. The trace: `{coverage}` run.
+3. *While making.* For each line or branch that no test runs, name the case that calls for it. Where none does, remove it, as N3 says. Where a case that the tests name does, make that case's test reach it through the interface. Where only a case that no test names would, take that case back to whoever designs the cases, such as with `asks`, and write no test for it.
+4. *While making.* For each interface that Test strategy names for property-based tests, write one property that holds for every input its contract allows, with a generator of those inputs, such as that reading back what was written gives it again.
+5. *While making.* For each mutant that survived, as the mutation testing that Test strategy runs apart from the work reports it, name the case that the changed code serves. Where none does, remove the code or make it simpler, so that no change of it passes unseen.
+6. *While making.* Where a surviving mutant can't change what the code does, such as `<` turned into `<=` where the two values are never equal, mark it beside the code as one that changes nothing, with why.
+7. *While making.* Where a surviving mutant breaks a case that the tests already name, make that case's test assert more closely so that the mutant fails it, and report why the design of the cases missed it, so that whoever designs them mends the cause. Add no case for a mutant, since such a case comes from the code that exists, not from what the part must do.
+8. *While making.* For each input on which a property-based test finds the code fails, ask whether the contract must take it. Where it needn't, narrow what the interface takes, and refuse the input as N8 says. Where it must, fix the code, keep the input as a test of the case it falls in, and report why the design of the cases missed it.
 
 ### N8
 
 Does the code refuse a wrong input from outside before it acts, with a message from which whoever ran it can fix the input?
 
-A fault from outside should never leave whoever ran the code stuck or their data half changed. [Fail fast](https://martinfowler.com/ieeeSoftware/failFast.pdf) checks what comes from outside, such as arguments, files, settings, and the replies of other programs, where it comes in and before the code does anything.
+Whoever ran the code fixes a wrong input from the message alone, and never finds their data half changed by a run that went on with it.
 
-1. *While making.* Where the input comes in, read it into the form that the inside of the code uses, as [parse, don't validate](https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/) says, and check its type, its format, and whether its value makes sense for the task.
-2. *While making.* Refuse a value that the code can't read, instead of guessing it.
-3. *While making.* Catch only the errors you mean to handle.
-4. *While making.* Write the message so that whoever ran the code learns which program refused, what was wrong, where, and what the code accepts.
-5. *While making.* Write each check so that it runs however someone runs the code, unlike an assert that someone can turn off.
-6. *While making.* Give the code each wrong input that the specification names. Read each message as the person who ran the code, and check that they can fix the input from the message alone.
+1. *While deciding.* List each input that comes into the part from outside, from its interface and its unit cases, such as arguments, environment variables, files it reads, settings, and the replies of other programs, with the place in the code where each first comes in.
+2. *While making.* At the place where each input comes in, and before the code acts on it, read it into the form that the inside of the code works with, checking its type, its format, and whether its value makes sense for the task, such as reading a JSON line into an object whose fields hold only allowed values, so that no code inside meets the raw text.
+3. *While making.* Refuse a value that the code can't read in exactly one way, instead of guessing it, such as a date written `03/04`, or a missing field that the specification gives no default for.
+4. *While making.* Catch an error only where the code can tell whoever ran it what to fix, such as a file they named that doesn't exist, and let every other error stop the program with its trace, never catching all errors at once, such as with a bare `except`.
+5. *While making.* Write each message so that whoever ran the code learns which program refused, what was wrong, where, and what the code accepts, such as `tally: plan.json, line 4: round must be a whole number from 1, not "one"`.
+6. *While making.* Write each check so that it runs however the code is run, such as an `if` that raises, never an `assert`, which `python -O` drops.
+7. *While making.* Last, run the code as its users run it, such as from the command line, with each wrong input that a refusal case names, and read each message alone: check that you can fix the input from it without opening the code.
