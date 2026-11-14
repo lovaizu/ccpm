@@ -107,6 +107,18 @@ The choices made, and why:
   didn't sign off, which keeps KR1.1 low, and no work waits that rests on neither, which keeps KR1.2
   short. The cost: each point waits for the tree-keeper to write it into the design tree before the
   user sees it.
+- A tree-keeper that writes the design tree over the orchestrator writing it\
+  The orchestrator checks each change to the tree against the design tree best practice as a
+  change that another made, since a writer who checks their own change reads what they meant, not
+  what they wrote, so fewer nodes that still disagree with a change reach a generator, which keeps
+  KR1.1 low. The cost: each decision waits for a resume of the tree-keeper before the work that
+  rests on it starts, which adds to KR1.2.
+- One evaluator for each group of necessary conditions over one evaluator for all of them\
+  Each evaluator judges one group in a context of its own, so what it found on one group doesn't
+  lead its answer on another, which keeps KR1.1 low, and the evaluators run side by side, so a round
+  takes about as long as one evaluator's reading, which keeps KR1.2 short. The cost: each evaluator
+  reads the whole deliverable, so a round spends one reading for each group, and the orchestrator
+  joins a lack that two groups each name in part.
 - The adapter of the results kept picking up the one run left from the root of the repository over
   picking up only in a run's worktree\
   The user types `/rn:up` at the root, as the README's walkthrough shows, and Lane asks the adapter
@@ -123,8 +135,14 @@ The choices made, and why:
 
 - Cut\
   The part of the design tree that a role starts with.
+- Design tree\
+  The goal, a Decision with no necessary condition, and the plan: each deliverable in the order of
+  the work, with what it takes from or waits for, as
+  [the design tree best practice](../../plugins/rn/domain/best-practices/design-tree/best-practice.md)
+  gives its form.
 - Point\
-  A question put to the user, with its recommendation, while its decision is open.
+  A question put to the user, with its recommendation: a decision while it's open, the goal
+  drafted, or what a role lacks from outside the work.
 - Sign-off\
   The plan, a deliverable, a lesson for rn's repository, or the pull request handed over, put to
   the user for `/rn:ty` or `/rn:gm`, with what the people can do with it, the decisions taken
@@ -152,7 +170,10 @@ which every part keeps. They change none of the guide's: the orchestrator resume
 ends on a point with the decision, and with the user's words word for word where they answered, as
 its [Messages](../plugin-development-guide.md#messages) says, as a new start would give the role
 the tree-keeper's words for what the user meant, while the design tree keeps the decision for each
-later round.
+later round. The guard's run record is Lane's, kept in the system's temporary folder, as
+[Lane's Deployment](../lane/architecture.md#deployment) says. It keeps nothing that a new
+conversation needs and the run's folder lacks, as the guard picks a run up from the result kept in
+each record, so The repository holds the work holds for the guard too.
 
 ### Drawn out along the design tree
 
@@ -254,15 +275,15 @@ sequenceDiagram
   K->>K: reads its part, the design tree best practice, and the design tree
   K-->>O: done
   O->>O: drafts the goal, and plans the deliverables
-  O->>U: the goal, to confirm (Point)
-  U->>O: answers
-  O->>K: resumes it, with the goal and the plan (Decision)
-  K->>T: writes them, and commits
+  O->>K: resumes it, with the goal drafted and the plan (Decision, Deliverable)
+  K->>T: writes them, and commits (Design tree)
   T-->>K: what changed, and each node they touch
   K->>K: checks that each node touched agrees with them
   K-->>O: what changed, and each node checked
   O->>O: checks it against the design tree best practice
-  Note over U,O: The orchestrator settles each point, as S2 draws, and puts up the plan, as S3 draws.
+  O->>U: the goal, to confirm, once the tree holds it (Point, Decision)
+  U->>O: answers
+  Note over U,O: The orchestrator has the goal written as the user confirmed it, and settles each other point, as S2 draws, and puts up the plan, as S3 draws.
   loop each deliverable whose turn has come, as it rests on no open point and on nothing not signed off
     GD->>A: asks for the text of the generator's start, with each start that runs
     A->>T: gets each deliverable doing, and the Cut of the first that no start that runs holds, with the path of a new Record for the start (Cut)
@@ -299,6 +320,7 @@ sequenceDiagram
       else
         par one for each group of necessary conditions
           O->>E: starts it (Cut)
+          E->>T: commits its work at the end of each step (Place)
           E->>F: writes each necessary condition met, or what the people lack (Answers)
           E-->>O: done
         end
@@ -307,7 +329,7 @@ sequenceDiagram
         O->>O: judges each lack by the purpose and the best practices
         alt a lack the people fall short by
           O->>K: the decision it changes, and the lack kept (Decision, Lack kept)
-          K->>T: writes the decision, and keeps the lack (Lack kept)
+          K->>T: writes the decision, and keeps the lack (Design tree, Lack kept)
           alt no decision that answers the lack's necessary condition changed since the round's cut
             T-->>K: refuses the lack, naming its necessary condition
             K-->>O: what it lacks
@@ -346,8 +368,8 @@ sequenceDiagram
     else the purpose or a best practice settles it
       O->>O: settles it
     end
-    O->>K: the decision, with its ground, and the plan where the decision changes it (Decision)
-    K->>T: writes it, and commits it with each deliverable whose turn has come marked doing
+    O->>K: the decision, with its ground, and the plan where the decision changes it (Decision, Deliverable)
+    K->>T: writes it, and commits it with each deliverable whose turn has come marked doing (Design tree)
     T-->>K: what changed, each node it touches, and each deliverable marked doing
     K->>K: checks that the path up and each node touched agree with it
     K-->>O: what changed, each node checked, and each deliverable marked doing
@@ -390,8 +412,8 @@ sequenceDiagram
     U->>O: /rn:ty
     O->>T: approves the sign-off waiting, as /rn:ty loads (Sign-off)
     O->>O: plans the rest again from what the user signed off
-    O->>K: it's signed off, with the plan where it changed (Decision)
-    K->>T: writes it, and commits it with each deliverable whose turn has come marked doing
+    O->>K: it's signed off, with the plan where it changed (Sign-off, Deliverable)
+    K->>T: writes it, and commits it with each deliverable whose turn has come marked doing (Design tree)
     T-->>K: what changed, each node it touches, and each deliverable marked doing
     K->>K: checks that each node touched agrees with it
     K-->>O: what changed, each node checked, and each deliverable marked doing
@@ -453,6 +475,7 @@ sequenceDiagram
   participant T as tree.py
   participant K as tree-keeper
   participant G as generator
+  participant E as evaluator
   U->>O: /rn:up, alone, in a new conversation at the root of the repository
   GD->>A: asks for the results kept, as /rn:up loads, in the folder the conversation works in
   A->>T: gets the run of the worktree that holds the folder, or else the runs left, and each Record of the run in the order of its starts (Record)
@@ -475,7 +498,8 @@ sequenceDiagram
   O->>U: Picking up, where it stopped, and the point or sign-off waiting
   O->>K: starts it, on the run picked up (Cut)
   O->>G: starts each that stood in a step, at that step (Cut, Place)
-  Note over O,G: Each start goes through the guard and the adapters in the run's worktree, the tree-keeper's first where the guard started the run anew, and the work goes on, as S1, S2, or S3 draws.
+  O->>E: starts each that stood in a step, at that step (Cut, Place)
+  Note over O,E: Each start goes through the guard and the adapters in the run's worktree, the tree-keeper's first where the guard started the run anew, and the work goes on, as S1, S2, or S3 draws.
 ```
 
 ### S6: the work handed over
@@ -493,7 +517,7 @@ sequenceDiagram
     O->>U: the change, with a recommendation (Point)
     U->>O: answers
     opt the user takes it
-      O->>K: adds it as a deliverable (Decision)
+      O->>K: adds it as a deliverable (Deliverable)
       Note over O,K: It's made and signed off, as S1 and S3 draw.
     end
   end
@@ -593,7 +617,8 @@ plugins/rn/
 │   ├── hooks.json                 starts the guard on each call
 │   ├── lanes.json                 the steps the guard holds each role to
 │   ├── lane/                      the guard: Lane's code, copied in by Lane
-│   └── adapters/                  give the guard rn's best practices and design tree
+│   └── adapters/                  give the guard each start's text from its Cut, and the results
+│                                  kept
 └── README.md                      for rn's users
 
 dev/rn/
