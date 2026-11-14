@@ -40,6 +40,17 @@ else
     "comes with pyproject.toml's test-quality group, on Python 3.11 or later"
 fi
 
+# The property-based tests take hypothesis, which comes with pyproject.toml's test-quality group on
+# Python 3.11 or later, where quality.sh runs them, so pyrefly reads them only where it can resolve
+# hypothesis.
+if python -c 'import hypothesis' 2>/dev/null; then
+  properties=""
+else
+  properties="--project-excludes=**/properties/**"
+  echo "check.sh: pyrefly leaves out the property-based tests, as hypothesis isn't installed. It"\
+    "comes with pyproject.toml's test-quality group, on Python 3.11 or later"
+fi
+
 # The checks' own Python, and the double of Claude Code with its tests.
 held design pyrefly check --search-path dev/scripts --search-path dev/scripts/tests \
   --search-path dev/tests dev/scripts/*.py dev/scripts/tests/*.py dev/tests/*.py
@@ -47,7 +58,7 @@ held design pyrefly check --search-path dev/scripts --search-path dev/scripts/te
 # Lane's parts and its test cases, which call them, as a type that doesn't fit across a handoff is a
 # gap between the parts, as N13 of the architecture best practice says. Each folder on the search
 # path is one that Claude Code, lay.py, or pytest puts on the import path of the code in it.
-held design pyrefly check --search-path plugins/lane/hooks/lane --search-path plugins/lane/scripts \
+held design pyrefly check $properties --search-path plugins/lane/hooks/lane --search-path plugins/lane/scripts \
   --search-path dev/tests --search-path dev/lane/tests --search-path dev/lane/tests/unit \
   --search-path dev/lane/tests/e2e --search-path dev/lane/tests/prompts \
   plugins/lane/hooks/lane/*.py plugins/lane/hooks/lane/domain/*.py \
@@ -57,7 +68,7 @@ held design pyrefly check --search-path plugins/lane/hooks/lane --search-path pl
 # rn's parts and its test cases, in the same way. plugins/rn/scripts stays off the search path, as
 # its tree.py, record.py, and throwaway.py share their names with the code of plugins/rn/domain
 # they run.
-held design pyrefly check --search-path plugins/rn/domain --search-path plugins/rn/hooks/adapters \
+held design pyrefly check $properties --search-path plugins/rn/domain --search-path plugins/rn/hooks/adapters \
   --search-path dev/tests --search-path dev/rn/tests --search-path dev/rn/tests/unit \
   --search-path dev/rn/tests/gh --search-path dev/rn/tests/e2e --search-path dev/rn/tests/prompts \
   plugins/rn/domain/*.py plugins/rn/domain/*/*.py plugins/rn/hooks/adapters/*.py \
