@@ -5,7 +5,7 @@
 - An AI agent that gets the prompt for a request it's meant for does the task as the writer means, with only what its run gives it, on every run, and in cases the writer didn't foresee.
   - **C1** The host runs the prompt for exactly the requests it's for.
     - **N1** Do the name and the description let the host choose the prompt for each request it's for, and pass it over for a near request it isn't for? (Description)
-    - **N2** Does the body do exactly the task that the description says, which the architecture gives the role? (Description, Goal)
+    - **N2** Does the body do exactly the task that the description says, which the architecture gives the prompt's component? (Description, Goal)
   - **C2** The AI knows what the task is for, and has every fact it needs.
     - **N3** Does the goal say what the task is for, and how the AI checks that it has reached it? (Goal)
     - **N4** Does the prompt give every fact that the AI can't find or know on its own, and say where the rest lies? (Context)
@@ -57,7 +57,7 @@ To pick a prompt for a request, the host reads only the name and the description
 
 ### N2
 
-Does the body do exactly the task that the description says, which the architecture gives the role?
+Does the body do exactly the task that the description says, which the architecture gives the prompt's component?
 
 The caller gets what the description promised, and the product gets what the architecture gives the prompt's component, only if the body does that same task.
 

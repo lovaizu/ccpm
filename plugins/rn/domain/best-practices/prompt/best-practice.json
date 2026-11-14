@@ -51,7 +51,7 @@
      {
       "id": "N2",
       "about": "Description, Goal",
-      "what": "Does the body do exactly the task that the description says, which the architecture gives the role?",
+      "what": "Does the body do exactly the task that the description says, which the architecture gives the prompt's component?",
       "why": "The caller gets what the description promised, and the product gets what the architecture gives the prompt's component, only if the body does that same task.",
       "items": [
        {
