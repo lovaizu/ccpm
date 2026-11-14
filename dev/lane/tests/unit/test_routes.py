@@ -20,10 +20,23 @@ from domain.routes import (
     pick_up,
     stand,
 )
-from domain.run_record import CALLED, PERSON, TURN_ENDED, Called, Noted, Result, Start, Tied
+from domain.run_record import (
+    CALLED,
+    ENDED,
+    PERSON,
+    TURN_ENDED,
+    TYPED,
+    Called,
+    Noted,
+    Result,
+    Start,
+    Tied,
+)
 from lane_parts import (
     CARRY_OUT,
+    RESUMES,
     REVIEWER_GAVE_GOOD,
+    REVIEWER_GAVE_MORE,
     ROUTES,
     SESSION,
     WRITER_GAVE_WRITTEN,
@@ -78,7 +91,6 @@ def test_a_result_that_no_route_goes_after_raises_a_fault():
         after_result(ROUTES, Result("writer", "skipped", "a1", 1))
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports(
     "test_a_command_that_a_route_goes_after_opens_its_moves_while_each_subagent_runs_on"
 )
@@ -145,7 +157,6 @@ def test_a_start_with_the_text_of_a_start_of_its_role_that_runs_isnt_opened():
     assert not opens_start(given, "writer", "Write section 1", "Write section 1")
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports(
     "test_a_resume_that_a_route_lists_counts_as_a_start_of_the_subagent_it_resumes"
 )
@@ -158,7 +169,6 @@ def test_a_resume_due_of_a_subagent_the_run_started_that_runs_no_more_is_opened(
     assert opens_resume(given, "a1")
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("test_a_resume_that_the_moves_dont_open_is_stopped_with_the_moves")
 def test_a_resume_of_a_subagent_that_runs_or_that_the_run_didnt_start_isnt_opened():
     """Given a Run whose move due resumes writer, its subagent a1 running
@@ -416,7 +426,6 @@ CALLS_CHECK = (
 )
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports(
     "test_a_call_of_another_plugins_skill_that_a_move_names_sets_the_run_aside_until_a_move_after_it"
 )
@@ -429,7 +438,6 @@ def test_a_call_of_the_other_plugins_skill_that_a_move_due_names_is_opened():
     assert not opens_call(given, "tally:other")
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports(
     "test_a_call_of_another_plugins_skill_that_a_move_names_sets_the_run_aside_until_a_move_after_it"
 )
@@ -444,3 +452,59 @@ def test_a_run_stands_aside_from_a_call_of_another_plugins_skill_until_a_start_a
     back = (*called, Start(2, "reviewer", CARRY_OUT, skill="write"))
     (after,) = stand(back, laid_set(routes=CALLS_CHECK), SESSION)
     assert after.aside == ""
+
+
+@pytest.mark.supports(
+    "test_a_resume_that_a_route_lists_counts_as_a_start_of_the_subagent_it_resumes"
+)
+def test_a_resume_line_ties_the_subagent_it_resumes_and_takes_the_resume_move():
+    """Given the lines of a Run whose writer, a1, gave `written`, Routes that resume writer after
+    reviewer's `more`, and a Start 2 that resumes Start 1
+    When where it stands is worked out
+    Then Start 2 is writer's, tied to a1 and running, and no move is due"""
+    lines = (*REVIEWER_GAVE_MORE, Start(3, "writer", CARRY_OUT, resumes=1, skill="write"))
+    (found,) = stand(lines, laid_set(routes=RESUMES), SESSION)
+    assert found.starts[-1] == Start(
+        3, "writer", CARRY_OUT, agent="a1", running=True, resumes=1, skill="write"
+    )
+    assert found.moves == []
+
+
+@pytest.mark.supports(
+    "test_a_command_that_a_route_goes_after_opens_its_moves_while_each_subagent_runs_on"
+)
+def test_a_command_typed_that_a_route_goes_after_puts_its_moves_in_place_of_those_before():
+    """Given the lines of a Run whose reviewer's start is due, and a Route after `/changelog:pause`
+    that starts no more
+    When where it stands is worked out after the person typed `/changelog:pause`
+    Then the move that starts no more alone is due"""
+    routes = (*ROUTES, Route("write", "/changelog:pause", (Move(NO_MORE),)))
+    lines = (*WRITER_GAVE_WRITTEN, Noted(TYPED, text="/changelog:pause"))
+    (found,) = stand(lines, laid_set(routes=routes), SESSION)
+    assert found.moves == [Move(NO_MORE)]
+
+
+@pytest.mark.supports("test_a_move_that_waits_for_a_command_is_due_once_the_person_types_it")
+def test_a_command_typed_that_a_move_waits_for_makes_that_move_due():
+    """Given the lines of a Run whose reviewer gave `good`, and a Route after it that starts writer
+    once the person types `/changelog:approve`
+    When where it stands is worked out after the person typed `/changelog:approve`
+    Then writer's start is due"""
+    routes = (
+        *ROUTES[:3],
+        Route("write", "reviewer good", (Move(START, "writer", "/changelog:approve"),)),
+    )
+    lines = (*REVIEWER_GAVE_GOOD, Noted(TYPED, text="/changelog:approve"))
+    (found,) = stand(lines, laid_set(routes=routes), SESSION)
+    assert due(found.moves, "") == (Move(START, "writer"),)
+
+
+@pytest.mark.supports(
+    "test_a_subagent_that_ends_with_no_result_as_task_stop_stopped_it_opens_no_route"
+)
+def test_a_subagent_that_ended_with_no_result_makes_its_start_due_again():
+    """Given the lines of a Run in which writer, a1, runs
+    When where it stands is worked out after a1 ended, killed, with no Result
+    Then writer's start is due again"""
+    (found,) = stand((*WRITER_RUNNING, Noted(ENDED, "a1", "killed")), laid_set(), SESSION)
+    assert found.moves == [Move(START, "writer")]

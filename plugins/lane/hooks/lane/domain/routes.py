@@ -11,13 +11,15 @@ from collections.abc import Sequence
 from dataclasses import dataclass, replace
 
 from domain.fault import Fault
-from domain.laid_set import NO_MORE, START, WAIT, LaidSet, Move, Route, routes_of
+from domain.laid_set import CALL, NO_MORE, RESUME, START, WAIT, LaidSet, Move, Route, routes_of
 from domain.run_record import (
+    CALLED,
     ENDED,
     LAID,
     PROMPTED,
     SHOWN,
     TURN_ENDED,
+    TYPED,
     Called,
     Line,
     Noted,
@@ -60,6 +62,10 @@ def stand(lines: Sequence[Line], laid_set: LaidSet, session: str) -> tuple[Run, 
             _tied(line, runs)
         elif isinstance(line, Result):
             _gave(line, laid_set, runs)
+        elif line.what in (TYPED, CALLED):
+            _moved(line, laid_set, runs)
+        elif line.what == ENDED:
+            _ended(line, runs)
         else:
             _noted(line, runs)
     return tuple(runs)
@@ -81,8 +87,13 @@ def _started(line: Start, runs: list[Run]) -> None:
     run = _going_run(runs, line.skill)
     if run is None:
         return
+    resumed = next((s for s in run.starts if line.resumes and s.number == line.resumes), None)
+    if resumed is not None:
+        line = replace(line, agent=resumed.agent, running=True)
     run.starts.append(line)
-    opened = next((m for m in run.moves if m.kind == START and m.role == line.role), None)
+    run.aside = ""
+    kind = RESUME if line.resumes else START
+    opened = next((m for m in run.moves if m.kind == kind and m.role == line.role), None)
     if opened is not None:
         run.moves.remove(opened)
 
@@ -126,13 +137,39 @@ def _skill_gave(line: Result, runs: list[Run]) -> None:
         run.ended = run.ending = True
 
 
-def _noted(line: Noted, runs: list[Run]) -> None:
-    if line.what == ENDED:
-        found = _of_agent(runs, line.agent)
-        if found is not None:
-            run, place = found
-            run.starts[place] = replace(run.starts[place], running=False)
+def _moved(line: Noted, laid_set: LaidSet, runs: list[Run]) -> None:
+    """The moves of each Run that goes on after a command that the person typed, or of the one Run
+    whose move due called the other plugin's skill, which then stands aside."""
+    for run in runs:
+        routes = routes_of(laid_set, run.skill)
+        if run.ended:
+            continue
+        if line.what == TYPED:
+            after = after_command(routes, line.text)
+            waited = [
+                replace(m, waits_for="") if m.waits_for == line.text else m for m in run.moves
+            ]
+            run.moves = list(after) if after is not None else waited
+        elif opens_call(run, line.text):
+            run.moves.remove(Move(CALL, line.text))
+            run.moves.extend(_moves_after(routes, line.text))
+            run.aside = line.text
+            return
+
+
+def _ended(line: Noted, runs: list[Run]) -> None:
+    """A subagent's end that reached the main conversation: its Start runs no more, and, where it
+    gave no Result since, as one that TaskStop stopped, its start or resume is due again."""
+    found = _of_agent(runs, line.agent)
+    if found is None:
         return
+    run, place = found
+    ended = run.starts[place] = replace(run.starts[place], running=False)
+    if not run.ended and not any(r.start == ended.number for r in run.results):
+        run.moves.append(Move(RESUME if ended.resumes else START, ended.role))
+
+
+def _noted(line: Noted, runs: list[Run]) -> None:
     if line.what == TURN_ENDED:
         for each in runs:
             each.ending = False
@@ -173,7 +210,14 @@ def after_result(routes: Sequence[Route], result: Result) -> tuple[Move, ...]:
 def after_command(routes: Sequence[Route], command: str) -> tuple[Move, ...] | None:
     """The moves of the Route that goes after the command that the person typed, such as
     `/changelog:pause`, or None where no Route goes after it."""
-    raise NotImplementedError("routes.after_command")
+    return next((route.moves for route in routes if route.after == command), None)
+
+
+def goes_after(run: Run, routes: Sequence[Route], command: str) -> bool:
+    """Whether a Route of the Run's skill goes after the command that the person typed, such as
+    `/changelog:pause`, or a move of the Run waits for it."""
+    waits = any(move.waits_for == command for move in run.moves)
+    return waits or after_command(routes, command) is not None
 
 
 def due(moves: Sequence[Move], typed: str) -> tuple[Move, ...]:
@@ -194,13 +238,16 @@ def opens_start(run: Run, role: str, text: str, given: str) -> bool:
 def opens_call(run: Run, skill: str) -> bool:
     """Whether a call of the skill, `<plugin>:<skill>`, is one that the Run's moves open: a move due
     calls that skill of another plugin."""
-    raise NotImplementedError("routes.opens_call")
+    return Move(CALL, skill) in due(run.moves, "")
 
 
 def opens_resume(run: Run, agent: str) -> bool:
     """Whether a resume of the subagent is one that the Run's moves open: a move due resumes its
     role, and the Run started the subagent, which runs no more."""
-    raise NotImplementedError("routes.opens_resume")
+    start = next((s for s in reversed(run.starts) if s.agent == agent), None)
+    if start is None or start.running:
+        return False
+    return Move(RESUME, start.role) in due(run.moves, "")
 
 
 def may_end_turn(run: Run) -> bool:

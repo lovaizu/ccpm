@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 
-from domain.laid_set import NO_MORE, START, Lane, Move, Route
+from domain.laid_set import CALL, RESUME, START, WAIT, Lane, Move, Route
 from domain.lanes import may_run
 from proposal import Proposal, role_order
 from steps import Role, Step
@@ -73,11 +73,13 @@ def _moves(moves: Sequence[Move]) -> str:
 
 
 def _move(move: Move) -> str:
-    if move.kind == START and not move.waits_for:
-        return f"start {move.role}"
-    if move.kind == NO_MORE:
-        return "start no more"
-    raise NotImplementedError(f"shown: the words of a move of the kind {move.kind}")
+    if move.kind == START and move.waits_for:
+        return f"start {move.role} once the person types {move.waits_for}"
+    if move.kind in (START, RESUME, CALL):
+        return f"{move.kind} {move.role}"
+    if move.kind == WAIT:
+        return "wait for the person's reply"
+    return "start no more"
 
 
 def _lanes(role: str, lanes: Sequence[Lane]) -> str:

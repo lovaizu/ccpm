@@ -8,7 +8,7 @@ from typing import Any
 
 import pytest
 from domain.laid_set import Laid
-from lane_example import PROPOSAL, WRITER, put, put_plugin, shown
+from lane_example import NO_MORE, PROPOSAL, WRITER, put, put_plugin, route, shown, start
 from proposal import keep, parse
 from shown import notes, reads, text
 from steps import Step, roles
@@ -93,3 +93,28 @@ def test_the_text_of_the_walkthroughs_proposal_is_what_the_walkthrough_shows(
     found = roles(plugin, Laid())
     given = keep(parse(PROPOSAL, "p.json"), found, str(tmp_path))
     assert text(given, found) == shown(given.id)
+
+
+@pytest.mark.supports("test_a_move_that_waits_for_a_command_is_due_once_the_person_types_it")
+def test_the_routes_show_each_kind_of_move_in_words(plugin: str, tmp_path: Any):
+    """Given the walkthrough's Proposal with Routes that start writer once the person types
+    `/changelog:approve`, resume writer, call `tally:check`, and wait for the person's reply
+    When its text is made
+    Then the Routes read each move in words"""
+    routes = [
+        route("first", start("writer")),
+        route("writer written", {"kind": "call", "role": "tally:check"}),
+        route("tally:check", start("reviewer")),
+        route("reviewer more", {"kind": "resume", "role": "writer"}),
+        route("reviewer good", start("writer", "/changelog:approve"), {"kind": "wait"}, NO_MORE),
+    ]
+    found = roles(plugin, Laid())
+    given = keep(parse({**PROPOSAL, "routes": routes}, "p.json"), found, str(tmp_path))
+    told = text(given, found)
+    assert "  writer `written`  call tally:check\n" in told
+    assert "  tally:check       start reviewer\n" in told
+    assert "  reviewer `more`   resume writer\n" in told
+    assert (
+        "  reviewer `good`   start writer once the person types /changelog:approve"
+        " or wait for the person's reply or start no more\n" in told
+    )

@@ -21,6 +21,8 @@ from domain.event import (
     ENDS,
     RAN,
     REACHED,
+    RESUME,
+    SKILL,
     START,
     TURN_ENDS,
     TYPED,
@@ -28,11 +30,22 @@ from domain.event import (
     Event,
 )
 from domain.fault import Fault
+from domain.laid_set import RESUME as MOVE_RESUME
 from domain.laid_set import START as MOVE_START
-from domain.laid_set import LaidSet, Lane, lanes_of
+from domain.laid_set import LaidSet, Lane, lanes_of, routes_of
 from domain.lanes import End, Where, check_call, check_end
-from domain.routes import due, may_end_turn, no_more, opens_start, stand
+from domain.routes import (
+    due,
+    goes_after,
+    may_end_turn,
+    no_more,
+    opens_call,
+    opens_resume,
+    opens_start,
+    stand,
+)
 from domain.run_record import (
+    CALLED,
     ENDED,
     LAID,
     PERSON,
@@ -49,6 +62,7 @@ from domain.run_record import (
     add,
     load,
 )
+from domain.run_record import TYPED as TYPED_LINE
 
 
 @dataclass(frozen=True)
@@ -121,7 +135,13 @@ def _typed(at: _At) -> Decision:
     going = [run for run in at.runs() if not run.ended]
     if laid_set.proposes and going and not event.command:
         at.keep(Noted(PROMPTED))
-    return LET_THROUGH
+    typed = f"/{event.command}"
+    moved = [run for run in going if goes_after(run, routes_of(laid_set, run.skill), typed)]
+    if not moved:
+        return LET_THROUGH
+    at = at.keep(Noted(TYPED_LINE, text=typed))
+    runs = [run for run in at.runs() if not run.ended and run.skill in {m.skill for m in moved}]
+    return Decision(context=_moves(at, runs))
 
 
 def _call(at: _At) -> Decision:
@@ -130,14 +150,46 @@ def _call(at: _At) -> Decision:
     if call is None or not in_run(event, at.laid_set, runs):
         return LET_THROUGH
     if starts_from_main(event):
-        return _start(at, runs, call) if call.kind == START and at.name(call.role) else LET_THROUGH
-    _, start = _held(runs, event.agent)
+        return _main_call(at, runs, call)
+    _, start = _tied(runs, event.agent)
     lanes = lanes_of(at.laid_set, start.role)
     where = Where(event.cwd, event.root)
     lane, verdict = check_call(lanes, call, start.values, where, at.root)
     if lane is None:
         return LET_THROUGH
     return _stopped(at, lane, verdict.may, verdict.printed)
+
+
+def _main_call(at: _At, runs: Sequence[Run], call: Call) -> Decision:
+    """The main conversation's call in a Run, as `in_run` places it: a start or a resume of a role
+    of the plugin, a call of another plugin's skill that a move due names, and any other."""
+    going = [run for run in runs if not run.ended]
+    if call.kind == START and at.name(call.role):
+        return _start(at, runs, call)
+    if call.kind == RESUME:
+        return _resume(at, going, call)
+    opened = next((run for run in going if opens_call(run, call.skill)), None)
+    if call.kind == SKILL and opened is not None:
+        at.keep(Noted(CALLED, text=call.skill))
+    return LET_THROUGH
+
+
+def _resume(at: _At, going: Sequence[Run], call: Call) -> Decision:
+    """A resume of a subagent of a Run whose Routes list a resume counts as a Start where the moves
+    open it, and is stopped with the moves where they don't; any other passes and moves no Run."""
+    found = next(((run, s) for run in going for s in run.starts if s.agent == call.agent), None)
+    if found is None:
+        return LET_THROUGH
+    run, resumed = found
+    routes = routes_of(at.laid_set, run.skill)
+    if not any(move.kind == MOVE_RESUME for route in routes for move in route.moves):
+        return LET_THROUGH
+    if not opens_resume(run, call.agent):
+        return Decision(stop=True, said=_moves(at, going))
+    number = 1 + sum(isinstance(line, Start) for line in at.lines)
+    role, values = resumed.role, resumed.values
+    at.keep(Start(number, role, call.text, values, resumes=resumed.number, skill=run.skill))
+    return LET_THROUGH
 
 
 def _stopped(at: _At, lane: Lane, may: Sequence[str], printed: str) -> Decision:
@@ -234,8 +286,10 @@ def _reached(at: _At) -> Decision:
         return LET_THROUGH
     at = at.keep(Noted(ENDED, event.agent, event.status))
     given = result_since(run, event.agent)
+    run, start = _tied(at.runs(), event.agent)
     if given is None:
-        return LET_THROUGH
+        ended = said.ended_without(at.laid_set.plugin, start.role)
+        return Decision(context=f"{ended}\n{_moves(at, [run])}")
     moves, texts = due(run.moves, ""), _texts(at, run)
     return Decision(context=said.gave(at.laid_set.plugin, given.role, given.result, moves, texts))
 
@@ -245,7 +299,7 @@ def _ends(at: _At) -> Decision:
     runs = at.runs()
     if not in_run(event, at.laid_set, runs):
         return LET_THROUGH
-    run, start = _held(runs, event.agent)
+    run, start = _tied(runs, event.agent)
     given = result_since(run, event.agent)
     end = End(start.role, event.message, start.values, given.result if given else "")
     lane, verdict = check_end(lanes_of(at.laid_set, start.role), end, Where(event.cwd, event.root))
@@ -280,12 +334,11 @@ def _skills_end(at: _At, run: Run) -> Decision | None:
     return None if lane is None else _stopped(at, lane, verdict.may, verdict.printed)
 
 
-def _held(runs: Sequence[Run], agent: str) -> tuple[Run, Start]:
-    """The Run that goes on and its last Start that tie the subagent, as `in_run` found them."""
+def _tied(runs: Sequence[Run], agent: str) -> tuple[Run, Start]:
+    """The Run and its last Start that tie the subagent, as `in_run` or `run_of` found them."""
     return next(
         (run, start)
         for run in reversed(runs)
-        if not run.ended
         for start in reversed(run.starts)
         if start.agent == agent
     )
@@ -310,11 +363,13 @@ _MOMENTS = {
 def in_run(event: Event, laid_set: LaidSet, runs: Sequence[Run]) -> bool:
     """Whether the guard checks the moment, given the conversation's Runs: it lies between the call
     of a skill of the plugin and the end of that skill's Run, and comes from the main conversation
-    while such a Run goes on and stands aside from no other plugin's run, or from a subagent that a
-    Start of such a Run ties, as the principle The guard checks only the run says."""
+    while such a Run goes on and stands aside from no other plugin's run, or, for a start or a
+    resume, which may make the move after that run, while it stands aside too, or from a subagent
+    that a Start of such a Run ties, as the principle The guard checks only the run says."""
     going = [run for run in runs if not run.ended and run.session == event.session]
     if starts_from_main(event):
-        return any(not run.aside for run in going)
+        moves_on = event.call is not None and event.call.kind in (START, RESUME)
+        return any(moves_on or not run.aside for run in going)
     return any(_start_of(run, event.agent) for run in going)
 
 

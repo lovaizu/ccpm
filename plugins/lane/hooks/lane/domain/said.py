@@ -9,7 +9,7 @@ from collections.abc import Mapping, Sequence
 from typing import Union
 
 from domain.fault import Fault
-from domain.laid_set import NO_MORE, START, Move
+from domain.laid_set import CALL, RESUME, START, WAIT, Move
 
 # The text of each start due by its role, or the Fault of the adapter that can't give it. Python
 # 3.9, which the laid plugin runs on, has no `|` between classes.
@@ -32,9 +32,13 @@ def _moves(plugin: str, due: Sequence[Move], texts: Texts, at_call: bool = False
 def _move(plugin: str, move: Move, texts: Texts, at_call: bool) -> str:
     if move.kind == START:
         return _start(f"{plugin}:{move.role}", texts[move.role], at_call)
-    if move.kind == NO_MORE:
-        return "Start no more subagents."
-    raise NotImplementedError(f"said: the words of a move of the kind {move.kind}")
+    if move.kind == RESUME:
+        return f"Resume `{plugin}:{move.role}` by SendMessage."
+    if move.kind == CALL:
+        return f"Call `{move.role}` by the Skill tool."
+    if move.kind == WAIT:
+        return "Wait for the person's reply."
+    return "Start no more subagents."
 
 
 def _start(role: str, given: str | Fault, at_call: bool) -> str:
@@ -48,12 +52,12 @@ def _start(role: str, given: str | Fault, at_call: bool) -> str:
 def gave(plugin: str, role: str, result: str, due: Sequence[Move], texts: Texts) -> str:
     """That the role gave the result, then the moves due, as ``changelog: writer gave `written`.
     Start `changelog:reviewer` with `Carry out your steps`.``"""
-    return f"{plugin}: {role} gave `{result}`. {_moves(plugin, due, texts)}"
+    return f"{plugin}: {role} gave `{result}`. {_moves(plugin, due, texts)}".rstrip()
 
 
 def ended_without(plugin: str, role: str) -> str:
     """That the role's subagent ended with no Result, as one that TaskStop stopped."""
-    raise NotImplementedError("said.ended_without")
+    return f"{plugin}: {role} ended with no result."
 
 
 def stop(plugin: str, sentence: str, may_run: Sequence[str], printed: str) -> str:

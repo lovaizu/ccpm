@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import pytest
 from domain.fault import Fault
-from domain.laid_set import NO_MORE, START, Move
+from domain.laid_set import CALL, NO_MORE, RESUME, START, WAIT, Move
 from domain.said import cant_check, ended_without, gave, moves, stop
 
 CARRY = {"writer": "Carry out your steps", "reviewer": "Carry out your steps"}
@@ -96,7 +96,6 @@ def test_a_start_whose_text_cant_be_given_later_reads_why_and_who_in_its_place()
     )
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports(
     "test_a_subagent_that_ends_with_no_result_as_task_stop_stopped_it_opens_no_route"
 )
@@ -152,3 +151,43 @@ def test_what_cant_be_checked_says_why_and_who_must_fix_it():
     Then it names both"""
     told = cant_check("changelog", "hooks/lanes.json isn't JSON", "the plugin's maker")
     assert "hooks/lanes.json isn't JSON" in told and "the plugin's maker" in told
+
+
+@pytest.mark.supports(
+    "test_a_resume_that_a_route_lists_counts_as_a_start_of_the_subagent_it_resumes"
+)
+def test_a_resume_due_names_the_role_and_sendmessage():
+    """Given the move that resumes writer
+    When the moves are told
+    Then they read ``changelog: Resume `changelog:writer` by SendMessage.``"""
+    told = moves("changelog", (Move(RESUME, "writer"),), CARRY)
+    assert told == "changelog: Resume `changelog:writer` by SendMessage."
+
+
+@pytest.mark.supports(
+    "test_a_call_of_another_plugins_skill_that_a_move_names_sets_the_run_aside_until_a_move_after_it"
+)
+def test_a_call_due_names_the_other_plugins_skill_and_the_skill_tool():
+    """Given the move that calls `tally:check`
+    When the moves are told
+    Then they read ``changelog: Call `tally:check` by the Skill tool.``"""
+    told = moves("changelog", (Move(CALL, "tally:check"),), CARRY)
+    assert told == "changelog: Call `tally:check` by the Skill tool."
+
+
+@pytest.mark.supports(
+    "test_the_main_conversation_may_stop_where_a_move_waits_for_the_persons_reply"
+)
+def test_a_wait_due_reads_wait_for_the_persons_reply():
+    """Given the move that waits for the person's reply
+    When the moves are told
+    Then they read `changelog: Wait for the person's reply.`"""
+    assert moves("changelog", (Move(WAIT),), CARRY) == "changelog: Wait for the person's reply."
+
+
+@pytest.mark.supports("test_a_move_that_waits_for_a_command_is_due_once_the_person_types_it")
+def test_a_result_after_which_no_move_is_due_yet_reads_the_result_alone():
+    """Given reviewer gave `good`, and no move is due until the person types a command
+    When it's told
+    Then it reads ``changelog: reviewer gave `good`.``"""
+    assert gave("changelog", "reviewer", "good", (), CARRY) == "changelog: reviewer gave `good`."

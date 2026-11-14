@@ -7,7 +7,7 @@ from __future__ import annotations
 from typing import Any
 
 from domain.event import CALL, COMMAND, Call, Event
-from domain.laid_set import NO_MORE, START, LaidSet, Lane, Move, Route
+from domain.laid_set import NO_MORE, RESUME, START, LaidSet, Lane, Move, Route
 from domain.run_record import PERSON, Called, Line, Noted, Result, Run, Start, Tied, add
 
 ROOT = "/repo"
@@ -119,8 +119,8 @@ WRITER_GAVE_WRITTEN: tuple[Line, ...] = (
     Result("writer", "written", "a1"),
     Noted("ended", "a1", "completed"),
 )
-# And once the main conversation started reviewer, subagent `a2`, which gave `good` and ended, so
-# that the move starts no more.
+# And once the main conversation started reviewer, subagent `a2`, which gave `good`, or `more`,
+# and ended.
 REVIEWER_GAVE_GOOD: tuple[Line, ...] = (
     *WRITER_GAVE_WRITTEN,
     Start(2, "reviewer", CARRY_OUT, skill="write"),
@@ -128,6 +128,13 @@ REVIEWER_GAVE_GOOD: tuple[Line, ...] = (
     Result("reviewer", "good", "a2"),
     Noted("ended", "a2", "completed"),
 )
+REVIEWER_GAVE_MORE: tuple[Line, ...] = (
+    *REVIEWER_GAVE_GOOD[:-2],
+    Result("reviewer", "more", "a2"),
+    Noted("ended", "a2", "completed"),
+)
+# The walkthrough's Routes with writer resumed after reviewer's `more`.
+RESUMES = (*ROUTES[:2], Route("write", "reviewer more", (Move(RESUME, "writer"),)), ROUTES[3])
 
 
 def keep(temp: str, *lines: Line) -> None:

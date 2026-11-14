@@ -15,6 +15,7 @@ from domain.event import (
     ENDS,
     RAN,
     REACHED,
+    RESUME,
     SKILL,
     START,
     TURN_ENDS,
@@ -22,11 +23,21 @@ from domain.event import (
     Call,
     Event,
 )
-from domain.guard import LET_THROUGH, decide, in_run, result_since, run_of, starts_from_main
+from domain.guard import (
+    LET_THROUGH,
+    Decision,
+    decide,
+    in_run,
+    result_since,
+    run_of,
+    starts_from_main,
+)
+from domain.laid_set import CALL as MOVE_CALL
+from domain.laid_set import NO_MORE, Lane, Move, Route
 from domain.laid_set import START as MOVE_START
-from domain.laid_set import Lane, Move
 from domain.run_record import (
     AI,
+    CALLED,
     PERSON,
     TURN_ENDED,
     Called,
@@ -37,12 +48,16 @@ from domain.run_record import (
     Tied,
     load,
 )
+from domain.run_record import TYPED as TYPED_LINE
 from lane_parts import (
     CARRY_OUT,
     PLUGIN_ROOT,
+    RESUMES,
     REVIEWER_END,
     REVIEWER_GAVE_GOOD,
+    REVIEWER_GAVE_MORE,
     ROOT,
+    ROUTES,
     RUN_ONLY,
     SESSION,
     SKILL_STEP,
@@ -514,3 +529,103 @@ def test_the_main_conversations_call_passes_where_a_going_skills_lanes_allow_it(
     assert not decide(command("git diff"), given, PLUGIN_ROOT, temp).stop
     stopped = decide(command("git status"), given, PLUGIN_ROOT, temp)
     assert stopped.stop and "`git log --oneline`" in stopped.said and "`git diff`." in stopped.said
+
+
+@pytest.mark.supports(
+    "test_a_resume_that_a_route_lists_counts_as_a_start_of_the_subagent_it_resumes"
+)
+def test_a_resume_that_the_moves_open_is_let_through_and_kept_as_a_start_of_its_subagent(
+    temp: str,
+):
+    """Given a Run whose move due resumes writer, whose subagent a1 ended
+    When the main conversation resumes a1 with `Carry out your steps`
+    Then the guard lets it through, and adds a Start of writer that resumes Start 1"""
+    keep(temp, *REVIEWER_GAVE_MORE)
+    moment = event(CALL, call=Call(RESUME, agent="a1", text=CARRY_OUT))
+    assert not decide(moment, laid_set(routes=RESUMES), PLUGIN_ROOT, temp).stop
+    added = Start(3, "writer", CARRY_OUT, resumes=1, skill="write")
+    assert load(temp, "changelog", SESSION)[-1] == added
+
+
+@pytest.mark.supports("test_a_resume_that_the_moves_dont_open_is_stopped_with_the_moves")
+def test_a_resume_that_the_moves_dont_open_is_stopped_with_the_moves(temp: str):
+    """Given Routes that list a resume, and a Run whose move due starts reviewer
+    When the main conversation resumes writer's subagent a1
+    Then the guard stops it, with reviewer's start"""
+    keep(temp, *WRITER_GAVE_WRITTEN)
+    moment = event(CALL, call=Call(RESUME, agent="a1", text=CARRY_OUT))
+    decided = decide(moment, laid_set(routes=RESUMES), PLUGIN_ROOT, temp)
+    assert decided.stop and START_REVIEWER in decided.said
+
+
+@pytest.mark.supports("test_a_resume_in_a_plugin_whose_routes_list_none_passes_and_moves_no_run")
+def test_a_resume_where_no_route_lists_one_is_let_through_and_not_kept(temp: str):
+    """Given the walkthrough's Routes, which list no resume, and a Run whose writer, a1, ended
+    When the main conversation resumes a1 with `Why this entry?`
+    Then the guard lets it through, and adds no line"""
+    keep(temp, *WRITER_GAVE_WRITTEN)
+    moment = event(CALL, call=Call(RESUME, agent="a1", text="Why this entry?"))
+    assert decide(moment, laid_set(), PLUGIN_ROOT, temp) == LET_THROUGH
+    assert load(temp, "changelog", SESSION) == WRITER_GAVE_WRITTEN
+
+
+@pytest.mark.supports(
+    "test_a_command_that_a_route_goes_after_opens_its_moves_while_each_subagent_runs_on"
+)
+def test_a_command_that_a_route_goes_after_is_kept_and_gives_its_moves(temp: str):
+    """Given a Route after `/changelog:pause` that starts no more, and a Run in which writer runs
+    When the person types `/changelog:pause`
+    Then the guard adds the command typed, and gives `Start no more subagents.` beside it"""
+    keep(temp, *WRITER_RUNNING)
+    given = laid_set(routes=(*ROUTES, Route("write", "/changelog:pause", (Move(NO_MORE),))))
+    decided = decide(event(TYPED, command="changelog:pause"), given, PLUGIN_ROOT, temp)
+    assert decided == Decision(context="changelog: Start no more subagents.")
+    assert load(temp, "changelog", SESSION)[-1] == Noted(TYPED_LINE, text="/changelog:pause")
+
+
+@pytest.mark.supports(
+    "test_a_subagent_that_ends_with_no_result_as_task_stop_stopped_it_opens_no_route"
+)
+def test_an_end_with_no_result_reaching_the_main_conversation_says_so_with_its_start_again(
+    temp: str,
+):
+    """Given a Run in which writer, a1, runs and gave no Result
+    When its end, killed, reaches the main conversation
+    Then the guard says that writer ended with no result, and gives writer's start again"""
+    keep(temp, *WRITER_RUNNING)
+    moment = event(REACHED, agent="a1", status="killed")
+    decided = decide(moment, laid_set(), PLUGIN_ROOT, temp)
+    assert decided.context == f"changelog: writer ended with no result.\n{START_WRITER}"
+
+
+@pytest.mark.supports(
+    "test_a_call_of_another_plugins_skill_that_a_move_names_sets_the_run_aside_until_a_move_after_it"
+)
+def test_a_call_of_another_plugins_skill_that_the_moves_open_is_let_through_and_kept(temp: str):
+    """Given a Run whose move due calls `tally:check`
+    When the main conversation calls `tally:check` by the Skill tool
+    Then the guard lets it through, and adds the call"""
+    routes = (
+        ROUTES[0],
+        Route("write", "writer written", (Move(MOVE_CALL, "tally:check"),)),
+        Route("write", "tally:check", (Move(MOVE_START, "reviewer"),)),
+        *ROUTES[2:],
+    )
+    keep(temp, *WRITER_GAVE_WRITTEN)
+    moment = event(CALL, call=Call(SKILL, skill="tally:check"))
+    assert decide(moment, laid_set(routes=routes), PLUGIN_ROOT, temp) == LET_THROUGH
+    assert load(temp, "changelog", SESSION)[-1] == Noted(CALLED, text="tally:check")
+
+
+@pytest.mark.supports(
+    "test_a_call_of_another_plugins_skill_that_a_move_names_sets_the_run_aside_until_a_move_after_it"
+)
+def test_the_main_conversations_start_lies_in_a_run_that_stands_aside_and_its_command_doesnt():
+    """Given a Run of `changelog` that stands aside from `tally:check`
+    When the main conversation starts `changelog:reviewer`, and runs `git status`
+    Then the start lies in the Run, as it may make the move after that call, and the command
+    doesn't"""
+    given = [run(aside="tally:check")]
+    start = event(CALL, call=Call(START, role="changelog:reviewer", text=CARRY_OUT))
+    assert in_run(start, laid_set(), given)
+    assert not in_run(command("git status"), laid_set(), given)

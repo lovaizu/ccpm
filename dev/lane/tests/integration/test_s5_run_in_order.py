@@ -236,7 +236,6 @@ def test_starts_side_by_side_each_with_a_text_other_than_those_of_its_role_that_
     assert two and not other.blocked
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S5", "Start", "Route", "guard")
 def test_a_resume_that_a_route_lists_counts_as_a_start_of_the_subagent_it_resumes(repo: Repo):
     """Given `changelog` laid with a Route after `reviewer more` that resumes writer
@@ -277,7 +276,6 @@ def test_a_resume_in_a_plugin_whose_routes_list_none_passes_and_moves_no_run(
     assert stopped.blocked and START_REVIEWER in stopped.said
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S5", "guard", "Route")
 def test_a_resume_that_the_moves_dont_open_is_stopped_with_the_moves(repo: Repo):
     """Given `changelog` laid with a Route after `reviewer more` that resumes writer, and a Run
@@ -299,7 +297,6 @@ def test_a_resume_that_the_moves_dont_open_is_stopped_with_the_moves(repo: Repo)
     assert resumed.blocked and START_REVIEWER in resumed.said
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S5", "Route", "guard")
 def test_a_move_that_waits_for_a_command_is_due_once_the_person_types_it(repo: Repo):
     """Given `changelog` laid with a command `approve` that sets `disable-model-invocation: true`,
@@ -323,7 +320,6 @@ def test_a_move_that_waits_for_a_command_is_due_once_the_person_types_it(repo: R
     assert START_WRITER in conv.type("/changelog:approve").said
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S5", "Route", "guard")
 def test_a_command_that_a_route_goes_after_opens_its_moves_while_each_subagent_runs_on(repo: Repo):
     """Given `changelog` laid with a command `pause` and a Route after `/changelog:pause` whose move
@@ -346,7 +342,6 @@ def test_a_command_that_a_route_goes_after_opens_its_moves_while_each_subagent_r
     assert START_REVIEWER not in reached.said
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S5", "guard", "Start", "Result")
 def test_a_subagent_that_ends_with_no_result_as_task_stop_stopped_it_opens_no_route(
     run: Conversation,
@@ -391,7 +386,6 @@ def test_the_main_conversation_may_stop_while_a_subagent_runs(run: Conversation)
     assert not run.stop("Writer is at work.").blocked
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S5", "guard", "Route")
 def test_the_main_conversation_may_stop_where_a_move_waits_for_the_persons_reply(repo: Repo):
     """Given `changelog` laid with a Route after `reviewer good` that waits for the person's reply
@@ -597,7 +591,6 @@ CALLS_CHECK = [
 ]
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S5", "guard", "Route", "Run")
 def test_a_call_of_another_plugins_skill_that_a_move_names_sets_the_run_aside_until_a_move_after_it(
     repo: Repo,
