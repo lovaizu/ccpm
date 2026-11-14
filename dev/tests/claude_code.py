@@ -506,8 +506,8 @@ class Conversation:
         plugin's hooks/hooks.json holds as it then reads, as the record shows. Before it, a
         hooks.json written in the conversation holds in no turn, as the record shows too, nor for a
         subagent started after the write, as recorded/claude-code-2.1.325-hooks-self-reload.jsonl
-        shows. No record shows a subagent's calls after /reload-plugins, and the double holds them
-        to the hooks reloaded as it holds the main conversation's."""
+        shows. A subagent started after /reload-plugins runs under the hooks reloaded, as
+        recorded/claude-code-2.1.325-hooks-reload-subagent.jsonl shows."""
         typed = line(HOOKS_RELOAD, "the person types /reload-plugins after hooks.json changed")
         assert not typed["fired"], "the record shows no hook run on /reload-plugins"
         self.plugins = [Plugin.load(p.root) for p in self.plugins]
