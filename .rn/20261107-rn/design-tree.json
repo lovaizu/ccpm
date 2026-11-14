@@ -298,7 +298,7 @@
             },
             {
               "about": "A new run or one picked up",
-              "decided": "a /rn:up with a request starts a new run whatever runs are left, and /rn:up alone picks one up; rn's kept-results adapter alone decides which, from the words typed after the command that Lane's guard gives it, and S1 shows what the guard and the adapters give at the /rn:up with a request, as the user decided the commands and Lane's architecture gives that decision to the plugin's adapter",
+              "decided": "a /rn:up with a request starts a new run whatever runs are left, and /rn:up alone picks one up; rn's kept-results adapter alone decides which, from the words typed after the command that Lane's guard gives it, and S1 shows what the guard and the adapters give at the /rn:up with a request, as the user decided the commands and Lane's architecture gives that decision to the plugin's adapter; white space alone after the command counts as /rn:up alone, as it holds no request",
               "by": "reasoning"
             }
           ]
@@ -365,7 +365,7 @@
           "decisions": [
             {
               "about": "Files of data forms and shared modules",
-              "decided": "Directory structure gives one place to each schema that holds a kind of data's form, beside the component that decides that form, and to fault.py, which tree.py, record.py, and repository share to say why they stopped, as a developer changing a form or a stop reason otherwise can't tell which folder holds it",
+              "decided": "Directory structure gives one place to each schema that holds a kind of data's form, beside the component that decides that form, and to fault.py, which tree.py, record.py, and repository share to say why they stopped and how each command ends, its output and exit code, which the adapters share too, as a developer changing a form or a stop reason otherwise can't tell which folder holds it",
               "by": "reasoning"
             }
           ]
