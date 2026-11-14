@@ -40,7 +40,15 @@
        },
        {
         "at": "make",
-        "text": "Open the description of each other prompt that the host chooses among for the near requests: each skill and agent of the product, in the folders that the architecture's Directory structure gives, and each of the host's own that a near request names, such as a built-in command. Where a near request fits the prompt's description as well as another's, add what sets the prompt apart, such as the kind of input it takes."
+        "text": "Open the `name` and the `description` in the frontmatter of each other skill and agent of the product, in the folders that the architecture's Directory structure gives them. Where a prompt's file isn't written yet, take its component's line in Components in place of its description, since that line says what the prompt is to do."
+       },
+       {
+        "at": "make",
+        "text": "For each near request that names one of the host's own prompts, such as a built-in command or a bundled skill, open its description where the host lists them, such as the [commands reference](https://code.claude.com/docs/en/commands) of Claude Code."
+       },
+       {
+        "at": "make",
+        "text": "Where a near request fits the prompt's description as well as another's, add what sets the prompt apart, such as the kind of input it takes."
        },
        {
         "at": "make",
@@ -56,7 +64,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Take the task from the architecture: the line in Components of the prompt's component, the role that this question names, which says what the component alone decides, and each arrow from or to the component in Sequences, which says each step it takes and the data it hands on."
+        "text": "Take the task from the architecture: the line in Components that N1.1 found for the prompt's component, which says what the component alone decides, and each arrow from or to the component in Sequences, which says each step it takes and the data it hands on."
        },
        {
         "at": "make",
@@ -426,7 +434,15 @@
        },
        {
         "at": "make",
-        "text": "Confirm by the E2E tests that the prompt, among the other parts, reaches the result on requests as big as real ones, since a unit test meets only the cases that its writer set up."
+        "text": "Open the E2E tests in the architecture's Test strategy: the command that its Tools line names, where its Passes when line says the result shows, such as a key result taken from the record of each run, and when its Runs line says they run, such as once every unit test and every integration test pass."
+       },
+       {
+        "at": "make",
+        "text": "Where every part that the E2E cases run has its body and the Runs line lets you start them, run the E2E tests by that command, and check from the result that Passes when names that the prompt, among the other parts, reaches the result on requests as big as real ones, since a unit test meets only the cases that its writer set up."
+       },
+       {
+        "at": "make",
+        "text": "Where a part that the E2E cases run is still a skeleton, such as one whose tests expect it to fail, or the Runs line leaves their start to someone else, such as the developer, leave them unrun, and say in your last message that they're unrun, why, and who runs them, since the caller takes what you don't name as checked."
        }
       ]
      },
@@ -438,7 +454,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Decide by code every point that the record shows, such as a tool called, a file's content, or a command's output. Leave to a judge only what code can't decide."
+        "text": "Open the Then of each test case of the prompt, in the folders that the architecture's Test strategy names, and for each point it names, ask whether the record of a run would show it, such as a tool called, a file's content, or a command's output. Decide by code each point that the record shows, and leave to a judge only what code can't decide, such as whether a plan reads as the request means."
        },
        {
         "at": "make",
