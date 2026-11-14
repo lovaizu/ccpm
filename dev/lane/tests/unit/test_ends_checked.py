@@ -129,7 +129,7 @@ def test_the_sentence_names_the_command():
 def test_it_lets_the_role_run_no_command_and_holds_no_call(where: Where):
     """Given an ends_checked Lane that runs `python3 check.py {result}`
     When its commands are asked, and writer runs `git status`
-    Then it names none, and gives PASSES for the call, as the guard runs the command"""
+    Then it names none, and gives PASSES for the call, as its check of the end runs the command"""
     takes = ("python3 check.py {result}",)
     assert LANE_TYPE.commands("writer", takes) == ()
     assert LANE_TYPE.check_call(takes, Call(COMMAND, command="git status"), {}, where, ()) == PASSES

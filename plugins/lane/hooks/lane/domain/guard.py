@@ -2,7 +2,9 @@
 skills that go on side by side the moment goes to, whether it lies in a Run and of a role whose
 Lanes name it, which facts of it the run record keeps, when a Run starts and ends, whether each
 call, start, and end passes, and what the main conversation or the role reads, from the laid set
-and the run record alone."""
+and the run record alone. The run record keeps no text of a start before a Start takes it, so the
+guard asks the adapter for that text again at each moment that needs it, such as the start's
+call."""
 
 from __future__ import annotations
 

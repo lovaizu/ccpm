@@ -70,8 +70,8 @@ What each decides alone:
   `read_never` keeps unread, the steps it suits, the sentence that the role reads in its step,
   whether a step's own words already say that sentence, what it keeps of a call's result for a
   later check, and the check of a call or of an end against it, such as, for `ends_checked`, a
-  subagent's end or the skill's turn's end by a command of the plugin's own, which the guard runs
-  with the role's run values and its result filled in.
+  subagent's end or the skill's turn's end by a command of the plugin's own, which it runs as the
+  guard checks the end, with the role's run values and its result filled in.
 - guard\
   The form of the laid set, `lanes.json`, with its Lanes, Routes, adapters, and Laid, which
   `lay.py write` writes through the guard's code, which Run, Start, and role each hook event
@@ -125,14 +125,15 @@ The choices made, and why:
   of both, so a role reads another's rule. Each would leave a run that breaks the steps or the
   order, so refusing them keeps KR1.1 low. The cost: before Lane proposes, up mends the Proposal,
   such as by naming the program, or the user mends their file.
-- An end held to a command of the plugin's own that the guard runs over a step that has the role
-  run it\
+- An end held to a command of the plugin's own that Lane runs at the end over a step that has the
+  role run it\
   A role that leaves its steps skips the step that checks its work too, and only the plugin knows
-  its own measure, such as whether a record holds each step, so the guard runs the plugin's
-  command on every end, with the run values of the role's Start and the Result it gave, and holds
-  the end until it gives 0, which keeps KR1.1 low. The cost: the command runs at each end, and at
-  each end of the skill's turn in a Run, so it must be quick and must hold at any of them, and a
-  name in braces that no Start fills, as on the skill, makes `lay.py print` refuse the lane.
+  its own measure, such as whether a record holds each step, so the guard has the `ends_checked`
+  lane type run the plugin's command on every end, with the run values of the role's Start and the
+  Result it gave, and holds the end until it gives 0, which keeps KR1.1 low. The cost: the command
+  runs at each end, and at each end of the skill's turn in a Run, so it must be quick and must hold
+  at any of them, and a name in braces that no Start fills, as on the skill, makes `lay.py print`
+  refuse the lane.
 - A role that reads nothing of a path still running the commands that its steps name over its
   result's alone\
   The plugin's maker names each such command word for word, and approves it in the proposal, so a
@@ -259,9 +260,9 @@ The choices made, and why:
   holds the moves of the Route after each Result at once, until the skill's steps make them, so
   that they can start side by side the work that rests on none waiting.
 - Laid\
-  The sentences that Lane added to the steps, by the file they lie in, with the words of each step
-  they follow, and the hook entries that are Lane's, in the form of the Lane that laid them, so that
-  the next `/lane:up`, of that Lane or of a newer one, can take Lane's text apart from the user's.
+  The sentences that Lane added to the steps, and the hook entries that are Lane's, in the form of
+  the Lane that laid them, so that the next `/lane:up`, of that Lane or of a newer one, can take
+  Lane's text apart from the user's.
 - Approval\
   The caller's own act that approves one Proposal: a person's reply, or an AI's own run of `lay.py
   write`.
@@ -295,14 +296,12 @@ The choices made, and why:
   go on side by side, one Run for each skill. No Run is written whole: the guard works each out on
   each event from the lines of the conversation's run record, which keeps only what no later payload
   gives again, each Run's call, each Start, its tie to a subagent, each Result, and each other fact
-  that one event alone tells, such as a subagent's end, a command that the person typed, what a
-  Lane keeps of a Call's result, a call of another plugin's skill that a move names, and, for up, its
-call by a person or an AI, what `lay.py print` showed, each prompt after it, each end of its turn,
-and the lay of `lay.py write`. A Run stands aside from that call of another plugin's skill until
-the main conversation makes a move of the Route after it. A call
-  of the skill that starts its run anew ends the Run before. A run of up ends instead once `lay.py
-  write` lays a Proposal, or once the turn on the person's prompt after a Proposal shown ends with
-  no `lay.py write` and no new `lay.py print`, as a Proposal waits for one reply.
+  that one event alone tells and a later move rests on, as Sequences draws each. A Run stands aside
+  from a call of another plugin's skill that a move names until the main conversation makes a move
+  of the Route after it. A call of the skill that starts its run anew ends the Run before. A run of
+  up ends instead once `lay.py write` lays a Proposal, or once the turn on the person's prompt after
+  a Proposal shown ends with no `lay.py write` and no new `lay.py print`, as a Proposal waits for
+  one reply.
 - Kept results\
   The results of a run that the user's plugin keeps in its own records, which the adapter gives.
 
@@ -599,6 +598,8 @@ sequenceDiagram
   participant G as guard
   participant RS as run record
   participant A as adapter
+  participant T as lane types
+  participant PC as the plugin's command
   participant SA as the plugin's subagent
   U->>CC: a command of the plugin's skill, such as /changelog:write
   Note over U,CC: An AI's call of the skill by the Skill tool starts the Run in the same way.
@@ -621,7 +622,6 @@ sequenceDiagram
         A-->>G: why
         G->>G: gives that start with why, beside the other moves
       end
-      Note over G,A: The run record keeps no text before a Start takes it, so the guard asks the adapter again at each move that needs the text, such as the start's call.
     end
     G-->>M: the Route's one move, or the moves among which the skill's steps choose, each start with its text
     alt the main conversation starts a subagent
@@ -684,15 +684,24 @@ sequenceDiagram
         G-->>M: that it ended with no Result, as its Start runs no more
       end
     end
-    opt the main conversation stops while a move is due
+    opt the main conversation ends its turn
       CC->>G: the stop
+      G->>RS: reads the lines, for each Run and the Result that its skill gave, if any
       alt a Run has a move due that is no wait and waits for no command, no subagent of that Run runs, and the adapter gave a text for a start among its moves or a move is no start
         G-->>M: stops it, with the moves of each such Run
-      else a Lane of a skill whose Run goes on holds its end, and the plugin's command that it names gives other than 0
-        G->>G: runs the command, in the folder that the conversation works in
-        G-->>M: stops it, with the Lane's sentence and what the command printed
-      else a subagent of each Run with a move due runs, as one that the main conversation resumed by SendMessage where no Route lists a resume does until its end reaches it, or the adapter failed
-        G-->>CC: lets it stop
+      else no move is due, or a subagent of each Run with a move due runs, as one that the main conversation resumed by SendMessage where no Route lists a resume does until its end reaches it, or the adapter failed
+        G->>T: checks the end of the turn by each Lane of each skill whose Run goes on, with the Result that the skill gave, if any, and the folder that the conversation works in
+        opt a Lane holds the end to a command of the plugin's own
+          T->>PC: runs the command, with the Result filled in, in the folder that the conversation works in
+          PC-->>T: its exit code, and what it printed
+        end
+        alt the command gave other than 0
+          T-->>G: that Lane, and what the command printed
+          G-->>M: stops it, with the Lane's sentence and what the command printed
+        else
+          T-->>G: the end passes
+          G-->>CC: lets it stop
+        end
       end
     end
   end
@@ -710,6 +719,7 @@ sequenceDiagram
   participant T as lane types
   participant R as result.py
   participant RS as run record
+  participant PC as the plugin's command
   loop each call the subagent makes
     SA->>CC: a tool call
     CC->>G: the call, with the subagent's agent_id and role
@@ -744,17 +754,31 @@ sequenceDiagram
   end
   SA->>CC: ends
   CC->>G: the end
+  G->>RS: reads the lines, for the subagent's Start, its Result, and what each Lane of the role kept since the Start or resume
   alt no Result for this start
     G-->>SA: stops the end, with the sentence of its last Step
-  else a Lane of the role checks the end against what it kept since the Start or resume, and the end breaks it
-    G-->>SA: stops the end, with the Lane's sentence and what the end lacks
-  else a Lane of the role holds its end, and the plugin's command that it names gives other than 0
-    G->>G: runs the command, with the run values of the Start and the Result, in the folder that the conversation works in
-    G-->>SA: stops the end, with the Lane's sentence and what the command printed
-  else the command can't be filled, as the Start gave no value that it names
-    G-->>SA: stops the end, with why and who must fix it
   else
-    G-->>CC: lets it end
+    G->>T: checks the end by each Lane of the role, with the Start's run values, the Result, what each Lane kept, and the folder that the conversation works in
+    alt a Lane checks the end against what it kept, and the end breaks it
+      T-->>G: that Lane, and what the end lacks
+      G-->>SA: stops the end, with the Lane's sentence and what the end lacks
+    else a Lane holds the end to a command of the plugin's own that names a value the Start didn't give
+      T-->>G: that the command can't be filled, naming the value
+      G-->>SA: stops the end, with why and who must fix it
+    else a Lane holds the end to a command of the plugin's own
+      T->>PC: runs the command, with the Start's run values and the Result filled in, in the folder that the conversation works in
+      PC-->>T: its exit code, and what it printed
+      alt other than 0
+        T-->>G: that Lane, and what the command printed
+        G-->>SA: stops the end, with the Lane's sentence and what the command printed
+      else 0
+        T-->>G: the end passes
+        G-->>CC: lets it end
+      end
+    else
+      T-->>G: the end passes
+      G-->>CC: lets it end
+    end
   end
 ```
 
