@@ -22,13 +22,7 @@
        },
        {
         "at": "decide",
-        "text": "Run the command. Where the code has no tests yet, the runner reports that none ran, which isn't a failure. If a test fails, change nothing, and end with `asks`, naming the test and its failure, since a test that already fails can't tell you whether a change broke something.",
-        "trace": {
-         "action": "run",
-         "takes": [
-          "{tests}"
-         ]
-        }
+        "text": "Run the test command that you took. Where the code has no tests yet, the runner reports that none ran, which isn't a failure. If a test fails, change nothing, and end with `asks`, naming the test and its failure, since a test that already fails can't tell you whether a change broke something."
        },
        {
         "at": "make",
