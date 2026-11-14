@@ -226,6 +226,21 @@
               "about": "The whole pull request read before Done",
               "decided": "before it marks the pull request ready, the orchestrator reads the whole change against the goal at once, for deliverables that contradict one another, a part beyond what the goal needs, work that does nothing toward it, and a file resting on a changed best practice, rule, or name that still says the old thing, and takes each back to the decision it changes",
               "by": "user"
+            },
+            {
+              "about": "One owner for each decision",
+              "decided": "tree.py alone lists the nodes a change touches and decides each deliverable's turn, where each start's Record and each round's records lie; the orchestrator alone plans; the tree-keeper checks that each node touched agrees; the adapters decide which work of a role waits, as two parts holding one decision leave its builders to guess",
+              "by": "reasoning"
+            },
+            {
+              "about": "The generator's own points",
+              "decided": "a generator settles only a point that its cut, the goal, and its best practice settle one way and that changes no decision of its cut and nothing of another deliverable, hands each other back with asks, and its Made carries each point it settled to the sign-off, as the README promises each sign-off shows the decisions taken without asking",
+              "by": "reasoning"
+            },
+            {
+              "about": "tree.py's parts",
+              "decided": "tree.py keeps the run's files, repository runs git and gh, and record.py keeps each record's form and rn's check, as the architecture best practice cuts a part by its reasons to change",
+              "by": "reasoning"
             }
           ]
         },
@@ -247,6 +262,26 @@
               "about": "Work while a point or a sign-off waits",
               "decided": "rn puts each point to the user one at a time and goes on meanwhile with the work that rests on no open point and no unsigned plan or deliverable; only the work that rests on the answer or the sign-off waits",
               "by": "user"
+            },
+            {
+              "about": "A point answered",
+              "decided": "the orchestrator resumes the role that asked, with the decision and the user's words word for word, as the plugin guide's Messages says and rn changes none of the guide's rules",
+              "by": "reasoning"
+            },
+            {
+              "about": "A run picked up",
+              "decided": "the adapter gives the results kept of the run whose worktree the conversation works in, or, at the repository's root, of the one run left, as the user types /rn:up at the root and Lane asks only as the skill is called",
+              "by": "reasoning"
+            },
+            {
+              "about": "After Done",
+              "decided": "/rn:ty signs off the pull request handed over and leaves the merge to the user, and /rn:gm sends it back to a draft and the work goes on, as the user decided the commands",
+              "by": "reasoning"
+            },
+            {
+              "about": "When rn's check runs",
+              "decided": "at each role's end and at the end of the orchestrator's turn that puts work up for the user, as the plugin guide says",
+              "by": "reasoning"
             }
           ]
         },
@@ -284,7 +319,13 @@
         {
           "id": "N14",
           "good": true,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The refactor best practices",
+              "decided": "the Cut carries the refactor best practice that finishes the deliverable, and rn's check checks the generator's record against each best practice of its cut, so the rule rests on a part",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N15",
