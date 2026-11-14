@@ -43,10 +43,10 @@ Does the tree hold every deliverable that the goal needs?
 A deliverable left out shows up only when the work reaches it, and the work stops there. The items follow a [work breakdown structure](https://en.wikipedia.org/wiki/Work_breakdown_structure), which practitioners build down from the end objective until the parts together hold all of the work.
 
 1. *While deciding.* Open the goal and the user's request, and list each deliverable that the user holds or uses once the goal holds, such as a plugin with its README. Keep one only where the goal fails without it, and ask the user about one you can't tell.
-2. *While deciding.* For each deliverable, list each kind that `inputs` and `preconditions` of its best practice name, in `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/<kind>/best-practice.json`, or, for a `specific` deliverable, each deliverable whose decisions it carries out. For each, take the file of the repository that already is one, such as the product vision that a README takes from, or else add a deliverable of that kind. Repeat for each deliverable you add until one takes nothing.
-3. *While deciding.* Break each deliverable down until it's a work package: a part that ends at a check showing, on its own, that the people the goal serves get a part of what it promises them, such as one integration test for each user story of an architecture in place of one test of the whole plugin. A larger part leaves its maker to settle at once what no one checks between, and a smaller one passes checks that show nothing toward the goal.
-4. *While deciding.* Where a decision needs a fact that neither the user's request, the repository, nor a deliverable of the tree holds, and that a source outside them can settle, such as how the host behaves in a case its documentation doesn't state, put a research deliverable before the deliverable that holds the decision.
-5. *While deciding.* Put each research deliverable at the top level, in the order of the work.
+2. *While deciding.* List the folders of `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/`, and for each deliverable, open `best-practice.json` of the folder whose goal names the deliverable's people and what they do with it, such as `readme` for a README. That folder is the deliverable's kind, which N3.1 writes. A deliverable that no folder's goal fits takes its kind at N3.2 or N3.3.
+3. *While deciding.* For each deliverable, list each kind that `inputs` and `preconditions` of the best practice you opened for it name, or, where you opened none, each deliverable whose decisions it carries out, such as the architecture whose user story an integration test checks.
+4. *While deciding.* For each kind listed, search the repository for a file of that kind for the same product, such as `dev/rn/product-vision.md` for rn's README. Take the file where the user's request leaves what it says as it is. Add a deliverable at the file's path where the request changes what it must say, such as a product vision whose roles a new kind of user widens, and add a deliverable of that kind at a new path where no such file exists. Repeat N2.3 and this item for each deliverable you add, until one takes nothing.
+5. *While deciding.* Break each deliverable down until it's a work package: a part that ends at a check showing, on its own, that the people the goal serves get a part of what it promises them, such as one integration test for each user story of an architecture in place of one test of the whole plugin. A larger part leaves its maker to settle at once what no one checks between, and a smaller one passes checks that show nothing toward the goal.
 
 ### N3
 
@@ -54,7 +54,7 @@ Does each deliverable name its kind: the best practice of the field's establishe
 
 A deliverable of a kind that every product shares has a way of making it that the field has settled, and its best practice brings that way to the maker. A deliverable of this product alone has no such way, and a best practice made for it would only restate the product's own decisions, so a check judges it instead.
 
-1. *While deciding.* List the folders of `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/`, and give a deliverable the folder whose goal names the deliverable's people and what they do with it, such as `readme` for a README. Where a deliverable holds parts of several such kinds, its kind is the one whose best practice names the others for those parts.
+1. *While deciding.* Write as each deliverable's kind the folder whose best practice you opened for it at N2.2. Where a deliverable holds parts of several such kinds, its kind is the one whose best practice names the others for those parts.
 2. *While deciding.* Where no folder fits, search the field's guides and handbooks for how to make the deliverable. Where guides written for different products give the same steps, as they do for a changelog, put a deliverable that makes its best practice, of the kind `meta`, at the top level before the first deliverable of that kind.
 3. *While deciding.* Where no such guides agree, give the deliverable the kind `specific`, such as a file that keeps a run's state, a file of the product's own specification, an integration test of its architecture, or an end-to-end test, and name in `check` the check that judges it, such as the test that passes once the deliverable exists.
 
@@ -64,12 +64,12 @@ Does each deliverable name the deliverables it takes content from and those that
 
 A deliverable started before its inputs rests on a guess, and its maker does the work again once they arrive. The items follow the [precedence diagram](https://en.wikipedia.org/wiki/Precedence_diagram_method) of scheduling, which lists each activity's predecessors before it orders the activities.
 
-1. *While deciding.* For each deliverable of a best practice's kind, open that best practice's `inputs` and `preconditions`, and write in the deliverable's `inputs` the path of each deliverable or existing file of a kind there that it takes content from, and in its `preconditions` the path of each one that must pass before it starts, such as `dev/rn/product-vision.md` in the inputs of rn's README. Use paths, not kinds, since deliverables of one kind can serve different products.
+1. *While deciding.* For each deliverable of a best practice's kind, write in its `inputs` the path of each file you took or deliverable you added at N2.4 for a kind that the best practice's `inputs` name, and in its `preconditions` the path of each one for a kind that its `preconditions` name, such as `dev/rn/product-vision.md` in the inputs of rn's README. Use paths, not kinds, since deliverables of one kind can serve different products.
 2. *While deciding.* For a `specific` deliverable, write in `inputs` the path of each deliverable whose decisions it carries out, such as the architecture whose user story an integration test checks, and in `preconditions` the path of each deliverable it runs, such as the parts that the test calls.
 3. *While deciding.* Put in the preconditions of each integration test the unit-tested parts it runs, and in those of each end-to-end (E2E) test the integration tests of the parts it runs, since a higher level finds a fault later, at a higher cost.
 4. *While deciding.* Where other deliverables' results rest on a check, such as a script that CI runs on them, put in their preconditions the check with a test that shows it failing on a case it must catch, since a check never seen failing may pass anything.
 5. *While making.* Write the deliverables in the order of the work: first each that names no deliverable of the tree in its inputs and preconditions, then each whose named deliverables all come before it, until you've placed each.
-6. *While making.* After each change, run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py write <run> <design tree> '<ground>'`, which gives 1 with each deliverable before one it takes from or waits for, each path that's neither a deliverable nor a file, and each two deliverables at one path, and fix each fault it names.
+6. *While making.* After each change, run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py write {run} {deliverable} '<ground>'`, where `{run}` is the run's folder, `.rn/<yyyymmdd>-<goal>`, `{deliverable}` is the design tree's path in it, and `<ground>` is why the change decides as it does, as N6.2 says. It gives 1 with each deliverable before one it takes from or waits for, each path that's neither a deliverable nor a file, and each two deliverables at one path, and leaves the run's tree as it was, so fix each fault it names and run it again. It gives 0 once it has committed the tree with `<ground>` as the commit message, and prints `changed`, `touched`, and `doing` as JSON.
 7. *While making.* Check that a later deliverable names each research deliverable in its inputs, and that a later deliverable has the kind that each meta deliverable makes, and drop one that none uses, since `tree.py write` doesn't check these.
 
 ### N5
@@ -82,10 +82,13 @@ The maker builds a deliverable from the decisions that answer its best practice'
 2. *While deciding.* For each condition, take each `decide` item of its practice, and write the point it settles as a decision's `about`, in a few words, such as `the roles` from the item of a product vision that names who hires the product. Where an item settles nothing for this deliverable, such as one whose case doesn't hold, write no point for it.
 3. *While deciding.* For a `specific` deliverable, write as its decisions each point that its check needs settled, such as which user story an integration test runs and what it shows.
 4. *While deciding.* Leave a point's `decided` null while a deliverable of the tree that it takes from isn't done, such as a README's people before the product vision is done, and put it to no one until then, since an answer given before its grounds exist rests on a guess.
-5. *While deciding.* Where a fact would settle a point, find it in the repository or a public source yourself, or put a research deliverable before it.
-6. *While deciding.* Settle each point where the user's words, the goal, the deliverables done, and the best practice leave one answer, or answers that differ only in how the work is done, not in what the user gets.
-7. *While deciding.* Put each point still open to the user, one in each message, with your recommendation and its ground, where the answers left differ in what the user gets, such as which people a product serves, and leave its `decided` null until they answer.
-8. *While making.* When a deliverable becomes done, take each null point of the later deliverables that takes from it, and settle it or put it to the user as this practice's decide items say.
+5. *While deciding.* Where a fact would settle a point, search the repository and the public documentation of what the point is about, and settle the point where a source states the fact.
+6. *While deciding.* Where no source states the fact but a trial or a longer search can find it, such as how the host behaves in a case its documentation doesn't state, add a research deliverable: of the kind `specific`, at `{run}/research/<question>.md`, named by what the deliverable that holds the point can decide once it's done, with `each question has an answer that names its source, a page a reader can open or a command with what it printed` as its check.
+7. *While deciding.* Write as the research deliverable's decisions the question it answers, as a question with one answer, and the point it serves, by the deliverable's path, the condition's ID, and the point's `about`, such as `plugins/rn/README.md N3: the install command`.
+8. *While deciding.* Write the research deliverable's path in the `inputs` of the deliverable that holds the point, and leave the point's `decided` null until the research deliverable is done.
+9. *While deciding.* Settle each point where the user's words, the goal, the deliverables done, and the best practice leave one answer, or answers that differ only in how the work is done, not in what the user gets.
+10. *While deciding.* Put each point still open to the user, one in each message, with your recommendation and its ground, where the answers left differ in what the user gets, such as which people a product serves, and leave its `decided` null until they answer.
+11. *While making.* When a deliverable becomes done, take each null point of the later deliverables that takes from it, and settle it or put it to the user as this practice's decide items say.
 
 ### N6
 
@@ -94,7 +97,7 @@ Does each decision say who settled it?
 The user checks, on each sign-off, the decisions taken without asking them, and finds the grounds of each in git.
 
 1. *While deciding.* Write in `by` who settled each decision: `user` where the user said or confirmed it, `research` where a source found it, `reasoning` where the goal and the best practices leave one answer, and `maker` where the maker chose among answers that differ only in how it makes its own deliverable.
-2. *While making.* Keep the grounds out of the tree, and write them in the commit message that makes the decision, so that the user finds them in git.
+2. *While making.* Write the grounds of each decision that a change makes, the point and why it holds, as `<ground>` of `tree.py write`, which commits the change with it as the commit message, and keep them out of the tree, so that the user finds them in git.
 
 ### N7
 
@@ -112,8 +115,10 @@ Does each deliverable show its status and which necessary conditions it meets?
 Whoever picks up the work goes on from where it stopped, without reading back through what came before.
 
 1. *While making.* Keep each deliverable's status: `open` as you add it, `doing` once its turn has come, which `tree.py write` marks, and `done` once each `good` it holds is true.
-2. *While making.* Set a condition's `good` true only once you answer its question yes against the deliverable as it stands: from each evaluator's answer in the deliverable's last round, which `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py round <run> <deliverable>` prints, or, where no evaluator judged it, by reading the deliverable for the lines that meet it. Set it back to false when a decision that answers it changes.
-3. *While making.* Set a `specific` deliverable's `good` true only once its `check` passes when you run it.
+2. *While making.* Run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py round {run} <path>`, with `<path>` the deliverable's `path` in the tree. It prints as JSON the deliverable's last round, the generator's making of it and the judging of that by one evaluator for each group of its best practice's conditions, with each evaluator's answers: `met` with each condition met and the lines that meet it, and `not_met` with each condition not met and what its people lack. It gives 1 where the deliverable has had no round.
+3. *While making.* Set a condition's `good` true only once you answer its question yes against the deliverable as it stands: where `met` of the last round names it, read the lines it gives in the deliverable, and where no round has judged it, read the deliverable for the lines that meet it. Leave it false where `not_met` names it.
+4. *While making.* Set a condition's `good` back to false when a decision that answers it changes.
+5. *While making.* Set a `specific` deliverable's `good` true only once its `check` passes when you run it.
 
 ### N9
 
@@ -133,4 +138,4 @@ A reader acts on what the design tree says, and reads any history in it as part 
 
 1. *While making.* Write a changed decision over its old text, with no note of what it said before.
 2. *While making.* Keep one line for a deliverable that's done: its name, path, kind, and status.
-3. *While making.* Drop a research deliverable once the decisions hold what it found.
+3. *While making.* Once each point that a research deliverable serves holds its answer, drop the research deliverable, and its path from the `inputs` that name it, since the decisions hold what it found and the run's folder keeps the file.

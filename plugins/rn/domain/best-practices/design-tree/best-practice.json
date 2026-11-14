@@ -46,19 +46,19 @@
        },
        {
         "at": "decide",
-        "text": "For each deliverable, list each kind that `inputs` and `preconditions` of its best practice name, in `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/<kind>/best-practice.json`, or, for a `specific` deliverable, each deliverable whose decisions it carries out. For each, take the file of the repository that already is one, such as the product vision that a README takes from, or else add a deliverable of that kind. Repeat for each deliverable you add until one takes nothing."
+        "text": "List the folders of `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/`, and for each deliverable, open `best-practice.json` of the folder whose goal names the deliverable's people and what they do with it, such as `readme` for a README. That folder is the deliverable's kind, which N3.1 writes. A deliverable that no folder's goal fits takes its kind at N3.2 or N3.3."
+       },
+       {
+        "at": "decide",
+        "text": "For each deliverable, list each kind that `inputs` and `preconditions` of the best practice you opened for it name, or, where you opened none, each deliverable whose decisions it carries out, such as the architecture whose user story an integration test checks."
+       },
+       {
+        "at": "decide",
+        "text": "For each kind listed, search the repository for a file of that kind for the same product, such as `dev/rn/product-vision.md` for rn's README. Take the file where the user's request leaves what it says as it is. Add a deliverable at the file's path where the request changes what it must say, such as a product vision whose roles a new kind of user widens, and add a deliverable of that kind at a new path where no such file exists. Repeat N2.3 and this item for each deliverable you add, until one takes nothing."
        },
        {
         "at": "decide",
         "text": "Break each deliverable down until it's a work package: a part that ends at a check showing, on its own, that the people the goal serves get a part of what it promises them, such as one integration test for each user story of an architecture in place of one test of the whole plugin. A larger part leaves its maker to settle at once what no one checks between, and a smaller one passes checks that show nothing toward the goal."
-       },
-       {
-        "at": "decide",
-        "text": "Where a decision needs a fact that neither the user's request, the repository, nor a deliverable of the tree holds, and that a source outside them can settle, such as how the host behaves in a case its documentation doesn't state, put a research deliverable before the deliverable that holds the decision."
-       },
-       {
-        "at": "decide",
-        "text": "Put each research deliverable at the top level, in the order of the work."
        }
       ]
      },
@@ -70,7 +70,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "List the folders of `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/`, and give a deliverable the folder whose goal names the deliverable's people and what they do with it, such as `readme` for a README. Where a deliverable holds parts of several such kinds, its kind is the one whose best practice names the others for those parts."
+        "text": "Write as each deliverable's kind the folder whose best practice you opened for it at N2.2. Where a deliverable holds parts of several such kinds, its kind is the one whose best practice names the others for those parts."
        },
        {
         "at": "decide",
@@ -90,7 +90,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "For each deliverable of a best practice's kind, open that best practice's `inputs` and `preconditions`, and write in the deliverable's `inputs` the path of each deliverable or existing file of a kind there that it takes content from, and in its `preconditions` the path of each one that must pass before it starts, such as `dev/rn/product-vision.md` in the inputs of rn's README. Use paths, not kinds, since deliverables of one kind can serve different products."
+        "text": "For each deliverable of a best practice's kind, write in its `inputs` the path of each file you took or deliverable you added at N2.4 for a kind that the best practice's `inputs` name, and in its `preconditions` the path of each one for a kind that its `preconditions` name, such as `dev/rn/product-vision.md` in the inputs of rn's README. Use paths, not kinds, since deliverables of one kind can serve different products."
        },
        {
         "at": "decide",
@@ -110,7 +110,7 @@
        },
        {
         "at": "make",
-        "text": "After each change, run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py write <run> <design tree> '<ground>'`, which gives 1 with each deliverable before one it takes from or waits for, each path that's neither a deliverable nor a file, and each two deliverables at one path, and fix each fault it names."
+        "text": "After each change, run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py write {run} {deliverable} '<ground>'`, where `{run}` is the run's folder, `.rn/<yyyymmdd>-<goal>`, `{deliverable}` is the design tree's path in it, and `<ground>` is why the change decides as it does, as N6.2 says. It gives 1 with each deliverable before one it takes from or waits for, each path that's neither a deliverable nor a file, and each two deliverables at one path, and leaves the run's tree as it was, so fix each fault it names and run it again. It gives 0 once it has committed the tree with `<ground>` as the commit message, and prints `changed`, `touched`, and `doing` as JSON."
        },
        {
         "at": "make",
@@ -148,7 +148,19 @@
        },
        {
         "at": "decide",
-        "text": "Where a fact would settle a point, find it in the repository or a public source yourself, or put a research deliverable before it."
+        "text": "Where a fact would settle a point, search the repository and the public documentation of what the point is about, and settle the point where a source states the fact."
+       },
+       {
+        "at": "decide",
+        "text": "Where no source states the fact but a trial or a longer search can find it, such as how the host behaves in a case its documentation doesn't state, add a research deliverable: of the kind `specific`, at `{run}/research/<question>.md`, named by what the deliverable that holds the point can decide once it's done, with `each question has an answer that names its source, a page a reader can open or a command with what it printed` as its check."
+       },
+       {
+        "at": "decide",
+        "text": "Write as the research deliverable's decisions the question it answers, as a question with one answer, and the point it serves, by the deliverable's path, the condition's ID, and the point's `about`, such as `plugins/rn/README.md N3: the install command`."
+       },
+       {
+        "at": "decide",
+        "text": "Write the research deliverable's path in the `inputs` of the deliverable that holds the point, and leave the point's `decided` null until the research deliverable is done."
        },
        {
         "at": "decide",
@@ -176,7 +188,7 @@
        },
        {
         "at": "make",
-        "text": "Keep the grounds out of the tree, and write them in the commit message that makes the decision, so that the user finds them in git."
+        "text": "Write the grounds of each decision that a change makes, the point and why it holds, as `<ground>` of `tree.py write`, which commits the change with it as the commit message, and keep them out of the tree, so that the user finds them in git."
        }
       ]
      }
@@ -214,7 +226,15 @@
        },
        {
         "at": "make",
-        "text": "Set a condition's `good` true only once you answer its question yes against the deliverable as it stands: from each evaluator's answer in the deliverable's last round, which `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py round <run> <deliverable>` prints, or, where no evaluator judged it, by reading the deliverable for the lines that meet it. Set it back to false when a decision that answers it changes."
+        "text": "Run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py round {run} <path>`, with `<path>` the deliverable's `path` in the tree. It prints as JSON the deliverable's last round, the generator's making of it and the judging of that by one evaluator for each group of its best practice's conditions, with each evaluator's answers: `met` with each condition met and the lines that meet it, and `not_met` with each condition not met and what its people lack. It gives 1 where the deliverable has had no round."
+       },
+       {
+        "at": "make",
+        "text": "Set a condition's `good` true only once you answer its question yes against the deliverable as it stands: where `met` of the last round names it, read the lines it gives in the deliverable, and where no round has judged it, read the deliverable for the lines that meet it. Leave it false where `not_met` names it."
+       },
+       {
+        "at": "make",
+        "text": "Set a condition's `good` back to false when a decision that answers it changes."
        },
        {
         "at": "make",
@@ -264,7 +284,7 @@
        },
        {
         "at": "make",
-        "text": "Drop a research deliverable once the decisions hold what it found."
+        "text": "Once each point that a research deliverable serves holds its answer, drop the research deliverable, and its path from the `inputs` that name it, since the decisions hold what it found and the run's folder keeps the file."
        }
       ]
      }
