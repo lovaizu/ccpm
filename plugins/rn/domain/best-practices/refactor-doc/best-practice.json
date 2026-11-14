@@ -14,7 +14,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open `{deliverable}`, the file or folder you write in, and read each document in it to its end before you change anything, such as each Markdown file of a folder, noting in a line what each section is for. Where it holds more than one document, take each item of this best practice for each of them.",
+        "text": "Read the document to its end before you change anything, and note in a line what each section is for.",
         "trace": {
          "action": "read",
          "takes": [
@@ -24,13 +24,7 @@
        },
        {
         "at": "decide",
-        "text": "Find the readers: open your cut, and read its goal and each input it names, such as a product vision and the users it names, and read the document's opening where it names its audience. List each kind of reader named there with the purpose they come with, such as `a developer who installs the plugin and wants its first command to run`. Where your cut names no input, take the readers from its goal and the document's opening alone. Where none of these names the readers, or two name different ones, ask the person who owns the document, since a document written for a guessed reader serves someone it wasn't meant for.",
-        "trace": {
-         "action": "read",
-         "takes": [
-          "{inputs}"
-         ]
-        }
+        "text": "Find the readers: open the work's goal and its inputs, such as the users that a product vision names, and the document's opening where it names its audience, and list each kind of reader named there with the purpose they come with, such as `a developer who installs the plugin and wants its first command to run`. Where none of these names the readers, or two name different ones, ask the person who owns the document, since a document written for a guessed reader serves someone it wasn't meant for."
        },
        {
         "at": "decide",
@@ -65,16 +59,12 @@
       "why": "Every sentence costs the reader time, and one that carries nothing they need still costs it and hides the sentences that do.",
       "items": [
        {
-        "at": "decide",
+        "at": "make",
         "text": "For each sentence, ask which reader on your list needs it, and for what, and mark each sentence that no reader on your list needs."
        },
        {
-        "at": "decide",
+        "at": "make",
         "text": "For each sentence you marked, look for a document whose readers need it: open each document that the document links, and each other document in `{deliverable}`, and take the one whose opening or headings name readers who come for what the sentence tells, such as a changelog for the story of why a tool was rewritten."
-       },
-       {
-        "at": "decide",
-        "text": "Where the document you took lies outside `{deliverable}`, or you took none and the sentence states a fact that a search of the repository finds in no other place, such as the reason for a choice, ask the person who owns the document where the sentence goes, with the place you'd put it, since cutting it loses the fact and writing outside `{deliverable}` changes another document."
        },
        {
         "at": "make",
@@ -82,7 +72,7 @@
        },
        {
         "at": "make",
-        "text": "Move each sentence you asked about to the place that the person's answer names in `{deliverable}`, and cut it where the answer puts it outside."
+        "text": "Where the document you took lies outside `{deliverable}`, or you took none and the sentence states a fact that a search of the repository finds in no other place, such as the reason for a choice, ask the person who owns the document where the sentence goes, with the place you'd put it, since cutting it loses the fact and writing outside `{deliverable}` changes another document."
        },
        {
         "at": "make",
@@ -160,19 +150,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "For each passage, ask what relation it describes, and choose the form by the answer, as the [Google developer documentation style guide](https://developers.google.com/style/lists) chooses a list. Steps in order take a numbered list. Items in no order take a bulleted list. Things compared on the same points take a table. Messages that parts pass one after another, where their order is what the reader needs, take a sequence diagram. Parts and what connects them, where which part connects to which matters and their order doesn't, take a structure diagram. An argument, where one point leads to the next by because or but, stays in prose, since a list drops those links."
-       },
-       {
-        "at": "decide",
-        "text": "Where you chose a sequence diagram, find the place where readers read the document: the site that a site generator builds from the document's folder, where a config in the repository names that folder, such as `docs_dir` in `mkdocs.yml`, and else the host that `git remote -v` names, such as GitHub for a remote on github.com, whose pages show the repository's files. Where neither names a place, ask the person who owns the document where its readers read it, with the place you'd take, since a diagram in a text format that the place doesn't render shows its readers code."
-       },
-       {
-        "at": "decide",
-        "text": "For each sequence diagram you chose, find whether the place that N4.2 found renders a diagram written as text: open that place's documentation on the document's format, such as GitHub's page on creating diagrams for a Markdown file read on GitHub, and note the text format it renders, such as Mermaid in a `mermaid` code block, or that it renders none."
-       },
-       {
-        "at": "decide",
-        "text": "For each diagram that you'll draw as a file, each structure diagram and each sequence diagram whose place renders no text format, choose its path. Where `{deliverable}` is a folder, take a path in it beside the document, named for what the diagram shows, such as `plugin-parts.svg`. Where `{deliverable}` is one file, ask the person who owns the document where the diagram goes, with the path beside the document that you'd give it, since a file outside `{deliverable}` changes what you weren't given."
+        "text": "For each passage, ask what relation it describes, and choose the form by the answer, as the [Google developer documentation style guide](https://developers.google.com/style/lists) chooses a list. Steps in order take a numbered list. Items in no order take a bulleted list. Things compared on the same points take a table. Who passes what to whom takes a diagram. An argument, where one point leads to the next by because or but, stays in prose, since a list drops those links."
        },
        {
         "at": "make",
@@ -180,11 +158,11 @@
        },
        {
         "at": "make",
-        "text": "Write each sequence diagram whose place renders a text format in that format, because its steps run from top to bottom and leave no layout to choose."
+        "text": "Draw a sequence diagram as text that the page renders, such as Mermaid, because its steps run from top to bottom and leave no layout to choose."
        },
        {
         "at": "make",
-        "text": "Draw each structure diagram, and each sequence diagram whose place renders no text format, as a file whose layout the writer sets, such as SVG, at the path that N4.4 chose or that the person's answer names, and link it from the document where its passage stood, because the layout of a structure diagram carries meaning, and a page that renders no diagram text still shows an image."
+        "text": "Draw a structure diagram, such as parts and what passes between them, as a file whose layout the writer sets, such as SVG, because its layout carries meaning."
        }
       ]
      },
@@ -234,7 +212,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Find the words the readers use: open the documentation of the product the readers work in, such as Claude Code's documentation for the readers of a Claude Code plugin, and what the readers wrote for the work themselves: each decision of your cut that the user settled, with its words, and each input your cut names that they wrote, such as an issue they opened. Where your cut holds none of their words, take the product's documentation alone."
+        "text": "Find the words the readers use: open the documentation of the product the readers work in, such as Claude Code's documentation for the readers of a Claude Code plugin, and what the readers wrote for the work themselves, such as the issues they opened and their words in the work's inputs."
        },
        {
         "at": "decide",
@@ -284,11 +262,7 @@
        },
        {
         "at": "make",
-        "text": "Where the place you chose is a section of the document, replace the fact in every other place with a link to that section and a few words on what the reader finds there, such as `For what each option does, see [Options](#options).`"
-       },
-       {
-        "at": "make",
-        "text": "Where the place you chose is the work itself, replace the fact in every place with how to see it there, linked to the file that shows it, such as `For what each option does, run check.sh --help.` with `check.sh` linked to the script."
+        "text": "In every other place, replace the fact with a link to its place and a few words on what the reader finds there, such as `For what each option does, see [Options](#options).`"
        }
       ]
      },

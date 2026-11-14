@@ -14,7 +14,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open the product vision and take from Roles the people the product is for. Where it lists several roles, take one whose members do their job for its own sake, not so that another role can do its job, such as a team that tracks its work in place of the administrator who sets the product up for it, and of those, the one that most readers are in, by the issues they open where the product has a tracker, and else the first. Name them by the work they want done, narrowly enough that a reader outside the role can tell it isn't for them, such as `you keep a Python library that others install` in place of `you write Python`.",
+        "text": "Open the product vision and take from Roles the people the product is for, named by the work they want done, narrowly enough that a reader outside the role can tell it isn't for them, such as `you keep a Python library that others install` in place of `you write Python`.",
         "trace": {
          "action": "read",
          "takes": [
@@ -24,7 +24,7 @@
        },
        {
         "at": "decide",
-        "text": "Take from that role's objective what they achieve with the product, or, where the role has several, from the one whose use most readers come for, by the issues they open where the product has a tracker, and else the first. Write it as an end they reach in their own work, not a feature, such as `release without breaking the code of those who use your library` in place of `checks for semantic versioning`."
+        "text": "Take from that role's objective what they achieve with the product, as an end they reach in their own work, not a feature, such as `release without breaking the code of those who use your library` in place of `checks for semantic versioning`."
        },
        {
         "at": "decide",
@@ -90,11 +90,11 @@
        },
        {
         "at": "decide",
-        "text": "For each expectation kept, read the product vision. It has the users do or get the expectation where an objective or an idea of the concept names it. It rules the expectation out where meeting it would break the concept's one way, or make a key result worse by its direction, such as asking before each change, where a key result counts the questions the user answers. Where the vision does neither, ask the user `Should <Product> <expectation>?`, and name what each answer does, such as `Should it undo its changes? No lists it in Non-goals; yes adds it to the product vision, and the README says at the top that it doesn't undo them yet.`"
+        "text": "For each expectation kept that the product vision neither has the users do or get nor rules out, ask the user `Should <Product> <expectation>?`, and name what each answer does, such as `Should it undo its changes? No lists it in Non-goals; yes adds it to the product vision, and the README says at the top that it doesn't undo them yet.`"
        },
        {
         "at": "decide",
-        "text": "Keep for Non-goals each expectation that the product vision rules out or the user answers no to. Take out of Non-goals each that the product vision has the users do or get or the user answers yes to, as what doesn't work yet for the opening's status."
+        "text": "Keep each expectation that the product vision rules out or the user answers no to for Non-goals. Take each that the user answers yes to out of Non-goals, as what doesn't work yet for the opening's status."
        },
        {
         "at": "make",
@@ -126,7 +126,7 @@
        },
        {
         "at": "decide",
-        "text": "Decide that the product is ready where it has a release of 1.0 or later, the use toward each objective works, it meets each expectation taken out of Non-goals, and someone keeps it up. Otherwise, take what works now and what doesn't."
+        "text": "Decide that the product is ready where it has a release of 1.0 or later, the use toward each objective works, it meets each expectation that the user said it should, and someone keeps it up. Otherwise, take what works now and what doesn't."
        },
        {
         "at": "make",
@@ -222,7 +222,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open the product vision and take as the use the objective that the opening's benefit comes from."
+        "text": "Open the product vision and take as the use the objective of the role that the opening names, or, where the role has several, the one whose use most readers come for, by the issues they open where the product has a tracker, and else the first."
        },
        {
         "at": "decide",
@@ -238,11 +238,7 @@
        },
        {
         "at": "make",
-        "text": "Search the repository's tests, and each folder that the product's README or documents say a run writes, for a recorded run of the task: a file that holds each step of one real run in order, what the user gave and what the product gave back, such as an end-to-end test's record. Take one whose first input starts the task that N6.2 chose and whose name or content names the version that the manifest names, as it shows what readers get today, and take its inputs and outputs as they're."
-       },
-       {
-        "at": "make",
-        "text": "Where N6.5 finds none, run the task with the product from a fresh start, such as in a throwaway copy of the repository with an empty home folder, and keep each input and output as it came."
+        "text": "Take a recorded run where one ran the same task on the version that the manifest names, such as an end-to-end test's record, as it shows what readers get today. Otherwise run the task with the product from a fresh start, such as in a throwaway copy of the repository with an empty home folder. Keep each input and output as it came."
        },
        {
         "at": "make",
@@ -362,7 +358,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "List each requirement and install command that the manifest and the code show, such as `engines` in package.json or `requires-python` in pyproject.toml. Where another tool installs the kind that N1.5 named, such as Claude Code for a plugin of its own, take the install commands from that tool's documentation, filled in with the names that the manifest and that tool's own files in the repository give, such as `claude plugin marketplace add <owner>/<repository>` and `claude plugin install <plugin>@<marketplace>`, with the plugin's name from plugin.json and the marketplace's from marketplace.json. Where neither gives a command, ask the user how readers install the product, since a command from memory fails on the reader's machine."
+        "text": "List each requirement and install command that the manifest and the code show, such as `engines` in package.json or `requires-python` in pyproject.toml, never from memory."
        },
        {
         "at": "decide",

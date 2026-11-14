@@ -49,13 +49,11 @@ To pick a prompt for a request, the host reads only the name and the description
 
 1. *While deciding.* Open the architecture, and find the component that the prompt carries out: its line in Components, and its file in Directory structure, such as `agents/planner.md`. This best practice calls it the prompt's component, and the person of a user story the story's role, as the architecture does. The trace: `{inputs}` read to its end.
 2. *While deciding.* Open the user stories whose sequences the prompt's component takes part in, and write down several requests that the prompt is for, each in a user's own words, from the way the story's role meets the product, such as `turn issue 12 into a plan`.
-3. *While deciding.* Write down several near requests that the prompt isn't for, each in a user's own words: a request that shares words or an input with one on the first list and needs another task, such as `review the plan for issue 12` beside `turn issue 12 into a plan`. Take them from the user stories that other components carry, and from the host's own prompts where the host lists them, such as the [commands reference](https://code.claude.com/docs/en/commands) of Claude Code, since the host chooses among its own prompts too.
+3. *While deciding.* Write down several near requests that the prompt isn't for, each from a user story that another component carries, in a user's own words.
 4. *While making.* Write the prompt's name: the name of its file in Directory structure without the extension, such as `planner` for `agents/planner.md`. Where Directory structure gives no file, name it by what it does, in lowercase words joined by hyphens, such as `processing-pdfs`.
 5. *While making.* Write the description in the third person: first what the prompt does, then `Use when` with the requests and situations of the first list, the main use first, such as `Extracts text and tables from PDF files. Use when the user mentions PDFs, forms, or document extraction.`
-6. *While making.* Open the `name` and the `description` in the frontmatter of each other skill and agent of the product, in the folders that the architecture's Directory structure gives them. Where a prompt's file isn't written yet, take its component's line in Components in place of its description, since that line says what the prompt is to do.
-7. *While making.* For each near request that names one of the host's own prompts, such as a built-in command or a bundled skill, open its description in the host's list that N1.3 took it from.
-8. *While making.* Where a near request fits the prompt's description as well as another's, add what sets the prompt apart, such as the kind of input it takes.
-9. *While making.* Read only the name and the description, as the host does, and check that each request on the first list leads to the prompt and none on the second does.
+6. *While making.* Open the description of each other prompt that the host chooses among for the near requests: each skill and agent of the product, in the folders that the architecture's Directory structure gives, and each of the host's own that a near request names, such as a built-in command. Where a near request fits the prompt's description as well as another's, add what sets the prompt apart, such as the kind of input it takes.
+7. *While making.* Read only the name and the description, as the host does, and check that each request on the first list leads to the prompt and none on the second does.
 
 ### N2
 
@@ -63,7 +61,7 @@ Does the body do exactly the task that the description says, which the architect
 
 The caller gets what the description promised, and the product gets what the architecture gives the prompt's component, only if the body does that same task.
 
-1. *While deciding.* Take the task from the architecture: the line in Components that N1.1 found for the prompt's component, which says what the component alone decides, and each arrow from or to the component in Sequences, which says each step it takes and the data it hands on.
+1. *While deciding.* Take the task from the architecture: the line in Components of the prompt's component, the role that this question names, which says what the component alone decides, and each arrow from or to the component in Sequences, which says each step it takes and the data it hands on.
 2. *While making.* Hold the description and the body each against the task that N2.1 took. Where the description says what the task holds and the body doesn't do it, add it to the body. Where the description says what lies outside the task, cut it from the description, and where the body does what lies outside the task, cut it from the body.
 
 ### N3
@@ -127,7 +125,7 @@ Does every line change what the AI does toward the task?
 Every line takes some of the AI's attention from the lines that matter, so prompt writers keep detail that the AI needs only in some runs in a file that it reads only then, as the [progressive disclosure](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices) of the skill authoring best practices does.
 
 1. *While making.* For each line, ask whether removing it would change what the AI does. If not, cut it, such as `Read the files carefully`, which the AI does without the line.
-2. *While making.* For detail that the AI needs only in some runs, where the deliverable is a folder that holds the prompt, such as a skill's, move the detail to a file in that folder that the prompt links directly, such as `reference.md`, and say in the prompt when to read it. Where the deliverable is the prompt's one file, such as an agent's, end with `asks`, naming the detail and the file it needs, as for a program in N9.2, since a file outside the deliverable is a decision of the architecture.
+2. *While making.* Move detail that the AI needs only in some runs to a file that the prompt links directly, and say in the prompt when to read it.
 
 ### N9
 
@@ -215,9 +213,7 @@ The writer knows a prompt only by what the AI does with it, where the AI's varia
 2. *While making.* Once each part of the test gives the right result on the kept records, as N17.2 to N17.7 check it, run each case k times on the model its users run, with the k that Test strategy sets. A rule that must hold on every run rests on a hook, as N12 says, so the unit tests try the rest. The trace: `{tests}` run.
 3. *While making.* Open the record of each run, and check from what the AI did, not from its last message, that every run reached the result.
 4. *While making.* Where a run didn't reach the result, find the cause in its record, as N17 says, change the prompt only for a cause in the prompt, and run the case k times again.
-5. *While making.* Open the E2E tests in the architecture's Test strategy: the command that its Tools line names, where its Passes when line says the result shows, such as a key result taken from the record of each run, and when its Runs line says they run, such as once every unit test and every integration test pass.
-6. *While making.* Where every part that the E2E cases run has its body and the Runs line lets you start them, run the E2E tests by that command, and check from the result that Passes when names that the prompt, among the other parts, reaches the result on requests as big as real ones, since a unit test meets only the cases that its writer set up.
-7. *While making.* Where a part that the E2E cases run is still a skeleton, such as one whose tests expect it to fail, or the Runs line leaves their start to someone else, such as the developer, leave them unrun, and say in your last message that they're unrun, why, and who runs them, since the caller takes what you don't name as checked.
+5. *While making.* Confirm by the E2E tests that the prompt, among the other parts, reaches the result on requests as big as real ones, since a unit test meets only the cases that its writer set up.
 
 ### N17
 
@@ -225,12 +221,12 @@ Can the maintainer tell from a failed test's record whether the prompt or the te
 
 A test's own parts, its set-up, its doubles, its judges, and its checks, are code and prompts of their own, and can fail like the prompt. Anthropic's [demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents) is how eval writers keep the two apart: they grade by code where they can, check a model grader against people's judgment, and read the records to tell a failure of the agent from a failure of the test.
 
-1. *While deciding.* Open the Then of each test case of the prompt, in the folders that the architecture's Test strategy names, and for each point it names, ask whether the record of a run would show it, such as a tool called, a file's content, or a command's output. Decide by code each point that the record shows, and leave to a judge only what code can't decide, such as whether a plan reads as the request means.
+1. *While deciding.* Decide by code every point that the record shows, such as a tool called, a file's content, or a command's output. Leave to a judge only what code can't decide.
 2. *While making.* Build each check by code alone, test first, and run it on the first records that N16.1 kept, before any whole run relies on it, so that a whole run only confirms, and a failure in it points to the prompt.
 3. *While making.* Give each judge one point, its definitions, and a pass or fail result.
 4. *While making.* Where a judge has no messages that the maintainer has marked, end with `asks`, handing the maintainer the messages of its point from the first records, each with the mark you'd give it, since only the maintainer's marks say what passes. Their marks come back as the person's words when you're resumed.
 5. *While making.* Run each judge on the marked messages, and use it only once it gives each message the maintainer's mark.
-6. *While making.* Where N14.1 found a message that the prompt has its AI write to a person, open the stand-in for the person, the AI that answers each such message in the person's place, among the test's parts in the folder of each case that the architecture's Test strategy names, or write it there where the case has none. Give it only the person's intent, which the test case gives and the prompt never gets, and the whole of each message it answers. Where N14.1 found none, the tests need no stand-in, since no message waits on a person.
-7. *While making.* Read the answers of each stand-in that N17.6 opened or wrote in the conversations of the first records, and check that each answer comes from the intent alone and invents nothing.
+6. *While making.* Give the stand-in for the person only their intent, which the test case gives and the prompt never gets, and the whole of each message it answers.
+7. *While making.* Read the stand-in's answers in the conversations of the first records, and check that each answer comes from the intent alone and invents nothing.
 8. *While making.* Between two runs, change one thing, the prompt or a part of the test, never both.
 9. *While making.* Where a test fails, open its record and look first at the test's own parts, and change the prompt only for a cause in the prompt.

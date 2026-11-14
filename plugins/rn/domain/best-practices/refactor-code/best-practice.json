@@ -22,7 +22,13 @@
        },
        {
         "at": "decide",
-        "text": "Run the test command that you took. Where the code has no tests yet, the runner reports that none ran, which isn't a failure. If a test fails, change nothing, and end with `asks`, naming the test and its failure, since a test that already fails can't tell you whether a change broke something."
+        "text": "Run the command. Where the code has no tests yet, the runner reports that none ran, which isn't a failure. If a test fails, change nothing, and end with `asks`, naming the test and its failure, since a test that already fails can't tell you whether a change broke something.",
+        "trace": {
+         "action": "run",
+         "takes": [
+          "{tests}"
+         ]
+        }
        },
        {
         "at": "make",
@@ -72,7 +78,7 @@
        },
        {
         "at": "make",
-        "text": "For each parameter, read every call of its function, and drop the parameter where every call gives it the same value written in the call itself, writing that value in the body, such as `retries=3` at each call, unless an entry point in the manifest or a document that a person follows names the function, since a caller outside the repository may give it another value. Keep the parameter where each call reads its value from outside the function, such as `settings.timeout` from a global setting, even where every call gives the same one, since dropping it would make the body read that thing, and the maintainer would have to read outside the function to sum it up, which N5.4 removes."
+        "text": "For each parameter, read every call of its function, and drop the parameter where every call gives it the same value, writing that value in the body, such as `retries=3` at each call, unless an entry point in the manifest or a document that a person follows names the function, since a caller outside the repository may give it another value."
        },
        {
         "at": "make",
@@ -144,7 +150,7 @@
        },
        {
         "at": "make",
-        "text": "Where you had to read something outside the function to write the sentence, such as a global setting it reads, make the function take that thing as a parameter, which each caller reads and N2.3 keeps, and where it was another function's body, rename that function so that its name says what it gives, as N3 does."
+        "text": "Where you had to read something outside the function to write the sentence, such as a global setting it reads, make the function take that thing as a parameter, and where it was another function's body, rename that function so that its name says what it gives, as N3 does."
        },
        {
         "at": "make",

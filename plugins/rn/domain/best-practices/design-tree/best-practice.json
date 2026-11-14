@@ -27,6 +27,10 @@
        {
         "at": "decide",
         "text": "Write `user` in `by` once they confirm it."
+       },
+       {
+        "at": "make",
+        "text": "For each deliverable, name the part of the goal's sentence it helps make true, and drop a deliverable for which you can name none."
        }
       ]
      },
@@ -42,7 +46,7 @@
        },
        {
         "at": "decide",
-        "text": "List the folders of `.rn/best-practices/`, where the best practices made on the product's runs lie, and of `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/`, where rn keeps its own, and for each deliverable, open `best-practice.json` of the folder whose goal names the deliverable's people and what they do with it, such as `readme` for a README. Where both hold a folder of one name, open the one in `.rn/best-practices/`, since tree.py judges the deliverable by that one. That folder's name is the deliverable's kind, which N3.1 writes. A deliverable that no folder's goal fits takes its kind at N3.2 or N3.3."
+        "text": "List the folders of `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/`, and for each deliverable, open `best-practice.json` of the folder whose goal names the deliverable's people and what they do with it, such as `readme` for a README. That folder is the deliverable's kind, which N3.1 writes. A deliverable that no folder's goal fits takes its kind at N3.2 or N3.3."
        },
        {
         "at": "decide",
@@ -50,19 +54,11 @@
        },
        {
         "at": "decide",
-        "text": "For each kind listed, search the repository for a file of that kind for the same product, such as `dev/rn/product-vision.md` for rn's README. Take the file where the user's request leaves what it says as it is, and add a deliverable at the file's path where the request changes what it must say, such as a product vision whose roles a new kind of user widens."
-       },
-       {
-        "at": "decide",
-        "text": "Where the repository holds no such file, add a deliverable of that kind at a new path: in this product's folder, at the place where the repository keeps the file of that kind for another product, such as `dev/lane/product-vision.md` from `dev/rn/product-vision.md`. Where it keeps none, take the place where the tool that reads the kind looks for it, such as `README.md` at the top of the product's folder, which GitHub shows, and ask the user where neither gives one. Repeat N2.3, N2.4, and this item for each deliverable that N2.4 or this item adds, until one takes nothing."
+        "text": "For each kind listed, search the repository for a file of that kind for the same product, such as `dev/rn/product-vision.md` for rn's README. Take the file where the user's request leaves what it says as it is. Add a deliverable at the file's path where the request changes what it must say, such as a product vision whose roles a new kind of user widens, and add a deliverable of that kind at a new path where no such file exists. Repeat N2.3 and this item for each deliverable you add, until one takes nothing."
        },
        {
         "at": "decide",
         "text": "Break each deliverable down until it's a work package: a part that ends at a check showing, on its own, that the people the goal serves get a part of what it promises them, such as one integration test for each user story of an architecture in place of one test of the whole plugin. A larger part leaves its maker to settle at once what no one checks between, and a smaller one passes checks that show nothing toward the goal."
-       },
-       {
-        "at": "decide",
-        "text": "For each deliverable listed, name the part of the goal's sentence it helps make true, itself or through a deliverable that takes from it, such as a product vision through the README that takes its roles, and drop a deliverable for which you can name none, since each point later put to the user for it asks about work that the goal doesn't need."
        }
       ]
      },
@@ -78,7 +74,7 @@
        },
        {
         "at": "decide",
-        "text": "Where no folder fits, search the field's guides and handbooks for how to make the deliverable. Where guides written for different products give the same steps, as they do for a changelog, put a deliverable that makes its best practice, of the kind `meta`, at the top level before the first deliverable of that kind, at the path `.rn/best-practices/<kind>/`. Name `<kind>` as the guides name the deliverable, in lowercase words joined by hyphens like the folder names of N2.2, such as `changelog`, and write it as the kind of the deliverable that no folder fit, since tree.py reads the best practice of a kind from `.rn/best-practices/<kind>/` where one lies there."
+        "text": "Where no folder fits, search the field's guides and handbooks for how to make the deliverable. Where guides written for different products give the same steps, as they do for a changelog, put a deliverable that makes its best practice, of the kind `meta`, at the top level before the first deliverable of that kind."
        },
        {
         "at": "decide",
@@ -94,7 +90,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "For each deliverable of a best practice's kind, write in its `inputs` the path of each file you took or deliverable you added at N2.4 or N2.5 for a kind that the best practice's `inputs` name, and in its `preconditions` the path of each one for a kind that its `preconditions` name, such as `dev/rn/product-vision.md` in the inputs of rn's README. Use paths, not kinds, since deliverables of one kind can serve different products."
+        "text": "For each deliverable of a best practice's kind, write in its `inputs` the path of each file you took or deliverable you added at N2.4 for a kind that the best practice's `inputs` name, and in its `preconditions` the path of each one for a kind that its `preconditions` name, such as `dev/rn/product-vision.md` in the inputs of rn's README. Use paths, not kinds, since deliverables of one kind can serve different products."
        },
        {
         "at": "decide",
@@ -106,15 +102,7 @@
        },
        {
         "at": "decide",
-        "text": "Open the files by which the repository runs its checks, such as its CI workflows and each script that their `run` lines name, such as `dev/scripts/check.sh`, and list each check that runs on a deliverable of the tree, such as `dev/scripts/figures.py` on a figure, and each deliverable of the tree that's itself such a check."
-       },
-       {
-        "at": "decide",
-        "text": "For each check listed, open the folder where the repository keeps the tests of its scripts, such as `dev/scripts/tests/`, and take the test that runs the check on a case it must catch and passes only where the check fails, such as `dev/scripts/tests/test_figures.py` for `dev/scripts/figures.py`. Where no test does, add a deliverable of the kind `specific` at the path where that folder would keep it, such as `dev/scripts/tests/test_<script>.py`, with `the test runs the check on a case it must catch and passes only where the check fails` as its check."
-       },
-       {
-        "at": "decide",
-        "text": "For each deliverable that a check runs on, put two paths in its preconditions: the check's and its test's, since a check never seen failing may pass anything."
+        "text": "Where other deliverables' results rest on a check, such as a script that CI runs on them, put in their preconditions the check with a test that shows it failing on a case it must catch, since a check never seen failing may pass anything."
        },
        {
         "at": "make",
@@ -126,7 +114,7 @@
        },
        {
         "at": "make",
-        "text": "Check that a later deliverable names each research deliverable in its inputs, and that a later deliverable has as its kind the last folder of each meta deliverable's path, and drop one that none uses, since `tree.py write` doesn't check these."
+        "text": "Check that a later deliverable names each research deliverable in its inputs, and that a later deliverable has the kind that each meta deliverable makes, and drop one that none uses, since `tree.py write` doesn't check these."
        }
       ]
      }
@@ -144,7 +132,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "For each deliverable of a best practice's kind, open `best-practice.json` of the kind's folder, in `.rn/best-practices/` or in `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/` as N2.2 chooses between them, and write under the deliverable each necessary condition's ID, in that best practice's order, with `good` false. Where neither holds the kind, as for a kind whose meta deliverable N3.2 added, leave the deliverable's `necessary_conditions` empty, since its conditions exist only once that meta deliverable is done."
+        "text": "For each deliverable of a best practice's kind, open `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/<kind>/best-practice.json`, and write under the deliverable each necessary condition's ID, in that best practice's order, with `good` false."
        },
        {
         "at": "decide",
@@ -185,10 +173,6 @@
        {
         "at": "make",
         "text": "When a deliverable becomes done, take each null point of the later deliverables that takes from it, and settle it or put it to the user as this practice's decide items say."
-       },
-       {
-        "at": "make",
-        "text": "When a meta deliverable becomes done, carry out N5.1 and the decide items after it for each deliverable of its kind, now that its best practice exists."
        }
       ]
      },

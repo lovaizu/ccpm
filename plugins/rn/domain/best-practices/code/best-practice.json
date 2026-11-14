@@ -128,7 +128,7 @@
        },
        {
         "at": "make",
-        "text": "Last, set the code up in a fresh container, by the setup's commands alone, and run the tests there. Start the container from the base image that the setup names, or else from a bare image of the operating system it runs on, such as `debian:12`, and put in it only the files that a clone of the repository would hold once this run's work is committed: each file that the repository tracks, as it stands now, and each file that this run added and the repository doesn't ignore, such as the list that `git ls-files --cached --others --exclude-standard` gives. Leave out each file that the repository ignores, such as a virtual environment or a cache, since it holds what the machine made and not what the setup makes. Take a container, not a copy on the same machine, since a copy still finds the machine's runtimes and tools, and so can't show one that the setup leaves out. Add to the setup each thing that the setup or a test found missing, such as a runtime or a tool, and run again until the tests pass. Where the machine runs no container, give `asks` at the end in place of `done`, naming this step as not taken."
+        "text": "Last, set the code up in a fresh container or a throwaway copy with an empty home, by the setup's commands alone, and run the tests there. Add to the setup each thing that the setup or a test found missing, such as a runtime or a tool, and run again until the tests pass."
        }
       ]
      },
@@ -228,11 +228,11 @@
        },
        {
         "at": "make",
-        "text": "For each input on which a property-based test finds the code fails, ask whether the contract must take it. Where it needn't, narrow what the interface takes, and refuse the input as N8 says. Where it must, fix the code, keep the input as a test of the case it falls in, and give `asks` at the end in place of `done`, naming the input, its case, and why the design of the cases missed it, such as a class of input that the case's Given doesn't divide, so that whoever designs the cases mends the cause."
+        "text": "For each input on which a property-based test finds the code fails, ask whether the contract must take it. Where it needn't, narrow what the interface takes, and refuse the input as N8 says. Where it must, fix the code, keep the input as a test of the case it falls in, and report why the design of the cases missed it."
        },
        {
         "at": "make",
-        "text": "Where the message that resumes you, whose first line is `The main conversation's grounds:`, names CI's report on the code's last push, from the mutation testing that Test strategy runs on each push apart from the work, open the log of that run where the message names it, such as the mutation job's log on the pull request, and list each mutant that it reports as surviving, with its file, its line, and the change it made. Where no message names one, the round takes no mutants."
+        "text": "Where the round takes CI's report on the code's last push, from the mutation testing that Test strategy runs on each push apart from the work, open the log of that run, such as its job's log on the pull request, and list each mutant that it reports as surviving, with its file, its line, and the change it made."
        },
        {
         "at": "make",
@@ -244,7 +244,7 @@
        },
        {
         "at": "make",
-        "text": "Where a mutant that N7.6 lists breaks a case that the tests already name, make that case's test assert more closely so that the mutant fails it, and give `asks` at the end in place of `done`, naming the mutant, its case, and why the design of the cases missed it, so that whoever designs them mends the cause. Add no case for a mutant, since such a case comes from the code that exists, not from what the part must do."
+        "text": "Where a mutant that N7.6 lists breaks a case that the tests already name, make that case's test assert more closely so that the mutant fails it, and report why the design of the cases missed it, so that whoever designs them mends the cause. Add no case for a mutant, since such a case comes from the code that exists, not from what the part must do."
        }
       ]
      }
