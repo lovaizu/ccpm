@@ -446,6 +446,25 @@ each check run the tests it times: `check.sh` runs `unit/` and `integration/` on
 `quality.sh` runs `properties/` in CI, and the developer runs `prompts/` and `e2e/` on the model when
 the Test strategy says.
 
+### The quality checks of every plugin
+
+A plugin's code passes its unit tests with line and branch coverage of 100%, 0 surviving mutants,
+0 counterexamples from its property-based tests, each function within the limits that
+`pyproject.toml` sets for ruff and complexipy, and 0 findings from pyrefly, ruff, and pylint's
+duplicate-code and cyclic-import checks. Its integration tests pass where
+`python3 dev/scripts/trace.py check <plugin>` gives 0: every story, principle, component, and kind
+of data of its architecture has an integration test that names it; every test names an element or
+a case one level up that exists; every unit case names an integration case; each test of a
+principle fails where its fixture `broken` takes out the part that holds the principle; and each
+result of a double names the recorded run or the page of the documentation that shows it.
+`check.sh` runs the code's unit tests, the integration tests, and `trace.py` before each push and
+on each push in CI, and `quality.sh` runs mutation testing and the property-based tests in CI, as
+[the architecture best practice](../plugins/rn/domain/best-practices/architecture/best-practice.md)
+times them.
+
+*Why*: every plugin is built with the same tools in one repository, so one statement of the
+checks keeps two plugins from passing by two measures.
+
 ### A prompt's unit tests on the model
 
 Each prompt, a skill or an agent with its part, has unit tests that start its role alone on the

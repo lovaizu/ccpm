@@ -98,7 +98,7 @@
       "status": "done"
     },
     {
-      "name": "A developer sees, before building any part, each test case that names nothing one level up and each element of the architecture that no case tests",
+      "name": "A developer sees, before building any part, each test case that names nothing one level up and each element of the architecture that no case tests, and check.sh runs every plugin's cases with that check",
       "path": "dev/scripts/trace.py",
       "kind": "code",
       "inputs": [
@@ -126,7 +126,13 @@
         {
           "id": "N4",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "What runs the cases",
+              "decided": "check.sh runs trace.py check on each plugin, each plugin's unit/ and integration/ cases, and pylint's cyclic-import check, as the plugin guide's quality checks of every plugin say, and pyproject.toml registers the supports marker",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N5",
