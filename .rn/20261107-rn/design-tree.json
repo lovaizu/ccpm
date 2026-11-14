@@ -14,7 +14,21 @@
       "name": "Each best practice holds the field's established way, named so its maker grasps the intent",
       "path": "plugins/rn/domain/best-practices/meta",
       "kind": "meta",
-      "status": "done"
+      "status": "doing",
+      "good": false,
+      "necessary_conditions": [
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "What a practice gives",
+              "decided": "the steps in the order a practitioner takes them on site, each an act on something at hand with its question, criterion, and one example; no theory, model, or standard stands in for the steps; research finds the field's way of working and the lists a step uses; a reader of a step can say what they open next and what they do there",
+              "by": "user"
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "ccpm's guide to building a Claude Code plugin says what each plugin takes from it, as its architecture names",
@@ -47,7 +61,26 @@
       "name": "Each part a developer builds by the design gives, with the others, what the README promises",
       "path": "plugins/rn/domain/best-practices/architecture",
       "kind": "meta",
-      "status": "done"
+      "status": "doing",
+      "good": false,
+      "necessary_conditions": [
+        {
+          "id": "N12",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Test types",
+              "decided": "Test strategy lists from a list of test types gathered under their common names (test-types.md beside the best practice, with its sources linked, not copied); the parts take every type of code quality and test quality, and a prompt's evaluation where a part holds a prompt; the product vision takes only the types whose absence would let a key result worsen unseen; the architecture's checks stay as they are",
+              "by": "user"
+            },
+            {
+              "about": "Compatibility with what the product builds on",
+              "decided": "where kept, the steps that made each recorded run run again on each new version of the outside thing, and what the real thing gives is compared with what the double gives",
+              "by": "user"
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "A maker of code designs it, tests it first, and writes it as the field's established practice says",
