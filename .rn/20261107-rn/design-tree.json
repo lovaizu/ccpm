@@ -378,8 +378,14 @@
         },
         {
           "id": "N15",
-          "good": true,
-          "decisions": []
+          "good": false,
+          "decisions": [
+            {
+              "about": "No limit on rounds",
+              "decided": "rounds go on until the evaluators find each necessary condition good, with no set limit, and the architecture says what a limit would lose: a deliverable handed over that its people can't use, raising KR1.1, which comes before KR1.2, as the README's Non-goals and the product vision's order of key results settle",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N16",
