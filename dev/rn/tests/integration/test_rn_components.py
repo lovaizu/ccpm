@@ -1,15 +1,19 @@
 """The integration cases of the decisions that a component of rn makes alone and that no story's
 case holds: tree.py's form of the design tree and the nodes a change touches; record.py's form of a
-record and rn's check of the orchestrator's turn; the adapters' text of a start; and throwaway.py's
-home. The test plays the orchestrator and each role."""
+record and rn's check of the orchestrator's turn; the adapters' text of a start; throwaway.py's
+home; and repository's reading of what gh prints, as the double of gh gives it from each recorded
+run. The test plays the orchestrator and each role."""
 
 from __future__ import annotations
 
 import json
 import os
+import shlex
 
 import pytest
 from claude_code import Conversation
+from compatibility import Ran, differences, runs
+from gh_double import main as gh
 from rn_example import (
     ANSWERED,
     HINTS,
@@ -117,3 +121,25 @@ def test_a_try_runs_with_a_home_of_its_own(conv: Conversation, repo: Repo, run: 
     _, generator = started(conv, repo, run, "generator", HINTS)
     tried = generator.bash(throwaway(repo, "try", run.folder, HINTS, "1", "echo $HOME"))
     assert tried.output.strip().startswith(os.path.join(repo.temp, "rn", ""))
+
+
+@pytest.mark.supports("repository")
+def test_the_double_of_gh_agrees_with_each_recorded_run_of_gh(tmp_path):
+    """Given each line of each record of a run of gh, and GitHub holding what the line's event
+    names: no login for one that finds none, and the pull request of the record otherwise
+    When the double of gh runs the line's command, and the compatibility test compares what it
+    gives with the line
+    Then no difference comes, so that the compatibility test, run on a new gh, compares the new gh
+    with what repository's tests meet"""
+    for _, each in runs():
+        argv = shlex.split(each["command"])[1:]
+        shown = json.loads(each["stdout"]) if each["stdout"].startswith("{") else {}
+        pull = {"number": 1, "draft": shown.get("isDraft"), "comments": shown.get("comments")}
+        state = {
+            "logged_in": "no login" not in each["event"],
+            "pulls": {argv[2]: pull} if shown else {},
+            "issues": [],
+        }
+        held = tmp_path / "github.json"
+        held.write_text(json.dumps(state), encoding="utf-8")
+        assert differences(each, Ran(*gh(argv, {"RN_GH_STATE": str(held)}))) == []

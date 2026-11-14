@@ -22,7 +22,8 @@ The guard passes your end only once rn's check accepts the record and your Answe
 
 The steps aren't written yet. They take the moves that S1 of rn's architecture gives the
 evaluator: the deliverable used as its people would, and each necessary condition of the group
-answered as met, with the lines that meet it, or as not met, with what the people lack.
+answered in `good`, with the lines that meet it, or in `more`, with `good_when`: what the people
+get once the deliverable is good.
 
 ## What you give
 

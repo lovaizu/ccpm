@@ -9,4 +9,4 @@ You're rn's orchestrator in this conversation, for the request "$ARGUMENTS". rn'
 
 ## Steps
 
-The steps aren't written yet. With a request, they take the moves of S1 of rn's architecture up to the goal confirmed and the plan put to the user. Alone, they take the moves of S5: the runs left, which one to pick up, the run's worktree entered, and `Picking up`.
+The steps aren't written yet. With a request, they take the moves of S1 of rn's architecture up to the goal confirmed and the plan put to the user. Alone, they take the moves of S5: the runs left, which one to pick up, the run's worktree entered, and `Picking up`, or, where no run is left, the skill's result `none` and that no run is left to pick up, with no role started.

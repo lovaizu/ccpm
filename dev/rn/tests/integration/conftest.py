@@ -39,15 +39,15 @@ def cut(run, role, deliverable="", group=""):
     )
     return dataclasses.replace(_cut_alone(run, role, deliverable, group), decisions=every)
 '''
-NO_LACKS = '''
-_cut_with_lacks = cut
+NO_MORE_KEPT = '''
+_cut_with_more_kept = cut
 
 
 def cut(run, role, deliverable="", group=""):
-    """The Cut without the lacks kept for its round."""
+    """The Cut without the More kept for its round."""
     import dataclasses
 
-    return dataclasses.replace(_cut_with_lacks(run, role, deliverable, group), lacks=())
+    return dataclasses.replace(_cut_with_more_kept(run, role, deliverable, group), more=())
 '''
 NO_RECORD_FAULTS = '''
 def record_faults(record, steps, best_practices):
@@ -55,7 +55,7 @@ def record_faults(record, steps, best_practices):
     return ()
 '''
 NO_RESULT_FAULTS = '''
-def made_faults(cut, decisions, lacks):
+def made_faults(cut, decisions, more):
     """No fault of anything a generator made."""
     return ()
 
@@ -86,7 +86,7 @@ def copy(worktree, run_name):
 '''
 ALWAYS_CHANGED = '''
 def changed(run, deliverable, condition):
-    """Every lack kept, whether or not a decision of its condition changed."""
+    """Every `more` kept, whether or not a decision of its condition changed."""
     return True
 '''
 NO_COMMIT = '''
@@ -157,7 +157,7 @@ PARTS: dict[str, tuple[Callable[[str], None], ...]] = {
     "Judged by the people it's for": (without_lanes("read_never", "evaluator"),),
     "Signed off before it's built on": (appended("domain/tree/turn.py", ALL_DUE), without_waits),
     "Back to the design tree on a problem": (
-        appended("domain/tree/cut.py", NO_LACKS),
+        appended("domain/tree/cut.py", NO_MORE_KEPT),
         appended("domain/tree/cut.py", ALWAYS_CHANGED),
     ),
     "The design tree revised on each run": (

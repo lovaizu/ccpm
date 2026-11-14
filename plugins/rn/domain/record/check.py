@@ -1,7 +1,7 @@
 """Decides rn's check of a role's end, and of the orchestrator's turn: whether the record holds each
 step of the role's prompt in order and each practice of each best practice of its Cut within the
 step that takes it, a generator's kind's and the refactor one that finishes its deliverable, and
-whether its result names each item of each list it carries, each decision and lack of a
+whether its result names each item of each list it carries, each decision and More kept of a
 generator's cut, and each necessary condition of an evaluator's group."""
 
 from __future__ import annotations
@@ -23,9 +23,9 @@ def record_faults(
     raise NotImplementedError("check.record_faults")
 
 
-def made_faults(cut: Cut, decisions: tuple[str, ...], lacks: tuple[str, ...]) -> tuple[str, ...]:
-    """Each decision of the generator's Cut, by its `about`, and each lack, by its condition, that
-    what it made doesn't name."""
+def made_faults(cut: Cut, decisions: tuple[str, ...], more: tuple[str, ...]) -> tuple[str, ...]:
+    """Each decision of the generator's Cut, by its `about`, and each More kept, by its condition,
+    that what it made doesn't name."""
     raise NotImplementedError("check.made_faults")
 
 

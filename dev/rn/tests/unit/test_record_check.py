@@ -17,7 +17,7 @@ from rn_example import HINTS, POINT, RN
 from rn_parts import ANSWERED, RUN
 from tree.cut import Cut
 from tree.practices import DECIDE, MAKE, BestPractice, NecessaryCondition, Practice
-from tree.rounds import Answers, LackKept, Met, NotMet
+from tree.rounds import Answers, Good, More, MoreKept
 
 pytestmark = pytest.mark.xfail(strict=True, reason="rn's parts are skeletons, their bodies unbuilt")
 
@@ -49,7 +49,12 @@ REFACTOR = BestPractice(
     (NecessaryCondition("N1", "C1", "Reads as meant?", (Practice("N1.1", MAKE, "Rename."),)),),
 )
 GENERATOR = Cut(
-    "generator", RUN, "r", deliverable=HINTS, decisions=(ANSWERED,), lacks=(LackKept("N2", "lack"),)
+    "generator",
+    RUN,
+    "r",
+    deliverable=HINTS,
+    decisions=(ANSWERED,),
+    more=(MoreKept("N2", "good_when"),),
 )
 EVALUATOR = Cut("evaluator", RUN, "r", deliverable=HINTS, group="C1", conditions=("N1", "N2"))
 
@@ -128,8 +133,8 @@ def test_a_record_of_a_role_with_no_best_practice_needs_only_its_steps():
 @pytest.mark.supports(
     "test_a_generator_whose_made_leaves_out_a_decision_of_its_cut_is_held_at_its_end"
 )
-def test_made_naming_each_decision_and_lack_has_no_fault():
-    """Given the generator's cut with the answer and a lack of N2
+def test_made_naming_each_decision_and_more_kept_has_no_fault():
+    """Given the generator's cut with the answer and a More kept of N2
     When what it made names both
     Then it has no fault"""
     assert made_faults(GENERATOR, (POINT,), ("N2",)) == ()
@@ -146,10 +151,10 @@ def test_made_leaving_out_a_decision_names_it():
     assert POINT in fault
 
 
-@pytest.mark.supports("test_the_next_round_is_made_from_the_decision_changed_and_the_lack_kept")
-def test_made_leaving_out_a_lack_names_its_condition():
-    """Given the generator's cut with a lack of N2
-    When what it made names no lack
+@pytest.mark.supports("test_the_next_round_is_made_from_the_decision_changed_and_the_more_kept")
+def test_made_leaving_out_a_more_kept_names_its_condition():
+    """Given the generator's cut with a More kept of N2
+    When what it made names no More kept
     Then the fault names N2"""
     (fault,) = made_faults(GENERATOR, (POINT,), ())
     assert "N2" in fault
@@ -162,7 +167,7 @@ def test_answers_of_each_condition_of_the_group_have_no_fault():
     """Given an evaluator of C1, whose conditions are N1 and N2
     When its Answers meet N1 and not N2
     Then they have no fault"""
-    answers = Answers("C1", (Met("N1", ("invoicer/totals.py:3",)),), (NotMet("N2", "lack"),))
+    answers = Answers("C1", (Good("N1", ("invoicer/totals.py:3",)),), (More("N2", "good_when"),))
     assert answers_faults(EVALUATOR, answers) == ()
 
 
@@ -173,7 +178,7 @@ def test_answers_leaving_a_condition_unanswered_name_it():
     """Given an evaluator of C1
     When its Answers meet N1 alone
     Then the fault names N2"""
-    (fault,) = answers_faults(EVALUATOR, Answers("C1", (Met("N1", ("x",)),)))
+    (fault,) = answers_faults(EVALUATOR, Answers("C1", (Good("N1", ("x",)),)))
     assert "N2" in fault
 
 
@@ -184,10 +189,9 @@ def test_answers_of_a_condition_outside_the_group_name_it():
     """Given an evaluator of C1
     When its Answers also meet N8
     Then a fault names N8"""
-    met = (Met("N1", ("x",)), Met("N8", ("y",)))
+    met = (Good("N1", ("x",)), Good("N8", ("y",)))
     assert any(
-        "N8" in fault
-        for fault in answers_faults(EVALUATOR, Answers("C1", met, (NotMet("N2", "z"),)))
+        "N8" in fault for fault in answers_faults(EVALUATOR, Answers("C1", met, (More("N2", "z"),)))
     )
 
 

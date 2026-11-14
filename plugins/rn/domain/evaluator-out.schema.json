@@ -16,19 +16,19 @@
       ]
     },
     "reply": {
-      "description": "Its last message: how many necessary conditions of its group it found met and not met.",
+      "description": "Its last message: how many necessary conditions of its group it put in good and in more.",
       "type": "string"
     },
     "answers": {
-      "description": "The evaluator's Answers, in the file that its run value answers names, which rn's check reads at done: each necessary condition of its group met, with the lines of the deliverable that meet it, or not met, with what its people still lack, and each point open that only the user can settle.",
+      "description": "The evaluator's Answers, in the file that its run value answers names, which rn's check reads at done: each necessary condition of its group in good, with the lines of the deliverable that meet it, or in more, with good_when, and each point open that only the user can settle.",
       "type": "object",
       "required": [
-        "met",
-        "not_met"
+        "good",
+        "more"
       ],
       "additionalProperties": false,
       "properties": {
-        "met": {
+        "good": {
           "type": "array",
           "items": {
             "type": "object",
@@ -53,13 +53,13 @@
             }
           }
         },
-        "not_met": {
+        "more": {
           "type": "array",
           "items": {
             "type": "object",
             "required": [
               "question",
-              "lacks"
+              "good_when"
             ],
             "additionalProperties": false,
             "properties": {
@@ -67,8 +67,8 @@
                 "description": "The question, by its ID.",
                 "type": "string"
               },
-              "lacks": {
-                "description": "What the work's user still lacks, in their terms, never how to make it, because the generator holds the sources and mends the work in its own way.",
+              "good_when": {
+                "description": "What the work's user gets once the work is good, in their terms, never how to make it, because the generator holds the sources and mends the work in its own way.",
                 "type": "string"
               }
             }

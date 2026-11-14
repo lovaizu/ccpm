@@ -22,11 +22,11 @@
       "type": "string"
     },
     "made": {
-      "description": "What the generator made, in the file that its run value made names, which rn's check reads at done: each decision of its cut, by its `about`, with where the deliverable carries it out, each lack of its cut, with where the deliverable now meets it, and each point it settled without asking, with its ground, which the orchestrator lists on the deliverable's sign-off.",
+      "description": "What the generator made, in the file that its run value made names, which rn's check reads at done: each decision of its cut, by its `about`, with where the deliverable carries it out, each `more` kept in its cut, with where the deliverable now makes it good, and each point it settled without asking, with its ground, which the orchestrator lists on the deliverable's sign-off.",
       "type": "object",
       "required": [
         "decisions",
-        "lacks",
+        "more",
         "settled"
       ],
       "additionalProperties": false,
@@ -52,7 +52,7 @@
             }
           }
         },
-        "lacks": {
+        "more": {
           "type": "array",
           "items": {
             "type": "object",
@@ -63,11 +63,11 @@
             "additionalProperties": false,
             "properties": {
               "condition": {
-                "description": "The necessary condition of the lack, by its ID, as its cut gives it.",
+                "description": "The necessary condition of the `more`, by its ID, as its cut gives it.",
                 "type": "string"
               },
               "where": {
-                "description": "The place in the deliverable where its people now meet it.",
+                "description": "The place in the deliverable that now gives its people what its `good_when` says.",
                 "type": "string"
               }
             }

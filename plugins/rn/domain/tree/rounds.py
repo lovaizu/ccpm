@@ -1,7 +1,9 @@
 """Decides where each round of a deliverable keeps its records, `rounds/<deliverable>/<n>/` in the
-run's folder, and their forms: the Try record that throwaway.py keeps, what the generator made,
-the Answers of each evaluator, each Lack kept for the next round, and the Place of each role at
-the end of each step. A deliverable's folder name is its path with each `/` as `--`."""
+run's folder: the Try record that throwaway.py keeps, what the generator made, the Answers of each
+evaluator, each More kept for the next round, and the Place of each role at the end of each step;
+and the forms of the Try record, each More kept, and each Place, as what the generator made and the
+Answers take the forms of their roles' out schemas. A deliverable's folder name is its path with
+each `/` as `--`."""
 
 from __future__ import annotations
 
@@ -22,20 +24,21 @@ class Tried:
 
 
 @dataclass(frozen=True)
-class Met:
-    """A necessary condition an evaluator found met, with each line of the deliverable that meets
-    it."""
+class Good:
+    """A necessary condition an evaluator put in `good`, with each line of the deliverable that
+    meets it."""
 
     condition: str
     lines: tuple[str, ...]
 
 
 @dataclass(frozen=True)
-class NotMet:
-    """A necessary condition an evaluator found not met, with what the people still lack."""
+class More:
+    """A necessary condition an evaluator put in `more`, with its `good_when`: what the people get
+    once the deliverable is good."""
 
     condition: str
-    lacks: str
+    good_when: str
 
 
 @dataclass(frozen=True)
@@ -44,8 +47,8 @@ class Answers:
     `evaluator-out.schema.json` gives them, with each point open that only the user can settle."""
 
     group: str
-    met: tuple[Met, ...] = ()
-    not_met: tuple[NotMet, ...] = ()
+    good: tuple[Good, ...] = ()
+    more: tuple[More, ...] = ()
     open: tuple[tuple[str, str], ...] = ()
 
 
@@ -62,21 +65,21 @@ class Settled:
 @dataclass(frozen=True)
 class Made:
     """What the generator made, as `made` of `generator-out.schema.json` gives it: the `about` of
-    each decision of its cut and the condition of each lack, each with where the deliverable carries
-    it out, and each point it settled without asking."""
+    each decision of its cut and the condition of each More kept, each with where the deliverable
+    carries it out, and each point it settled without asking."""
 
     decisions: tuple[tuple[str, str], ...] = ()
-    lacks: tuple[tuple[str, str], ...] = ()
+    more: tuple[tuple[str, str], ...] = ()
     settled: tuple[Settled, ...] = ()
 
 
 @dataclass(frozen=True)
-class LackKept:
-    """A lack that the orchestrator judged the people fall short by, by its necessary condition,
-    which the deliverable's next round gets."""
+class MoreKept:
+    """An evaluator's `more` that the orchestrator judged the people fall short by, by its
+    necessary condition, with its `good_when`, which the deliverable's next round gets."""
 
     condition: str
-    lack: str
+    good_when: str
 
 
 @dataclass(frozen=True)
@@ -93,7 +96,7 @@ class Place:
 @dataclass(frozen=True)
 class Round:
     """One round of a deliverable: its number, the Try record's commands, what the generator made,
-    None until it ends with `done`, the Answers of each evaluator, each Lack kept for the round
+    None until it ends with `done`, the Answers of each evaluator, each More kept for the round
     after it, and each Place, the last one of each role last."""
 
     deliverable: str
@@ -101,7 +104,7 @@ class Round:
     tried: tuple[Tried, ...] = ()
     made: Made | None = None
     answers: tuple[Answers, ...] = ()
-    lacks: tuple[LackKept, ...] = ()
+    more: tuple[MoreKept, ...] = ()
     places: tuple[Place, ...] = ()
 
 
@@ -141,10 +144,10 @@ def keep_try(run: str, deliverable: str, number: int, tried: Tried) -> str:
     raise NotImplementedError("rounds.keep_try")
 
 
-def keep_lack(run: str, deliverable: str, lack: LackKept) -> str:
-    """Keeps the lack in the deliverable's last round, for the round after it, and gives the path
-    of the file that holds it."""
-    raise NotImplementedError("rounds.keep_lack")
+def keep_more(run: str, deliverable: str, more: MoreKept) -> str:
+    """Keeps the More kept in the deliverable's last round, for the round after it, and gives the
+    path of the file that holds it."""
+    raise NotImplementedError("rounds.keep_more")
 
 
 def keep_place(run: str, deliverable: str, place: Place) -> str:

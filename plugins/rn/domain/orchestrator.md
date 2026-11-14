@@ -33,7 +33,7 @@ The guard ends a turn that puts work up for the user only once rn's check accept
 
 The steps aren't written yet. They take the moves that the sequences of S1 to S6 of rn's
 architecture give the orchestrator, and every moment shares them: each point settled or put to the
-user, each role started with its cut, each result checked before it's taken, each lack judged, each
+user, each role started with its cut, each result checked before it's taken, each evaluator's `more` judged, each
 sign-off put up, and the whole pull request read before it's ready.
 
 Before you mark the pull request ready, read the whole change against the goal at once, for

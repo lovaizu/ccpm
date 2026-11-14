@@ -9,7 +9,7 @@ what you made, or when you hand back a point open or a thing outside the work th
 You start with one JSON line of your run values, in the form of `start` in
 `generator-in.schema.json`: your record, the run's folder, the deliverable's path, its kind, the
 round, your cut, and where you write what you made. Your cut holds the goal, the deliverable's
-decisions, its inputs, the lacks kept for this round, the step you stood at where the round picks
+decisions, its inputs, each `more` kept for this round with its `good_when`, the step you stood at where the round picks
 up, its kind's best practice, and the refactor best practice that finishes it. The orchestrator
 may resume you, as `resume` there gives it.
 

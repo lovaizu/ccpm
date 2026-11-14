@@ -1,18 +1,18 @@
 """Decides each role's Cut, the part of the design tree that the role starts with and nothing else,
 and the run values that the guard holds the role to: the tree-keeper's design tree; the
-generator's goal, deliverable, decisions, inputs, the lacks kept for its round, the step it stood
+generator's goal, deliverable, decisions, inputs, the More kept for its round, the step it stood
 at, and the refactor best practice that finishes its deliverable; and the evaluator's deliverable,
 its people, one group of necessary conditions, and the step it stood at. It decides too where each
 start's record lies, a new file of the run's `records/` for each start, and the order of the
 starts, by which the adapter of the results kept reads them, and whether a decision changed since
-a round's Cut, on which a lack is kept."""
+a round's Cut, on which a More kept rests."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 
 from tree.design import Decision
-from tree.rounds import LackKept, Place
+from tree.rounds import MoreKept, Place
 
 TREE_KEEPER, GENERATOR, EVALUATOR = "tree-keeper", "generator", "evaluator"
 
@@ -23,7 +23,7 @@ class Cut:
     the role's record, and what the role's `<role>-in.schema.json` names beside them, each "" or
     empty where the role takes none: the design tree's path for the tree-keeper; the deliverable,
     its kind, its best practice, the round, the goal, the decisions it builds from, its inputs, the
-    lacks kept, the Place it picks up from, the path of the refactor best practice that finishes
+    More kept, the Place it picks up from, the path of the refactor best practice that finishes
     the deliverable, and where it writes what it made, for the generator;
     and the deliverable, its best practice, the round, the goal, who its people are, the group, its
     necessary conditions, the Place it picks up from, and where it writes its Answers, for the
@@ -40,7 +40,7 @@ class Cut:
     goal: str = ""
     decisions: tuple[Decision, ...] = ()
     inputs: tuple[str, ...] = ()
-    lacks: tuple[LackKept, ...] = ()
+    more: tuple[MoreKept, ...] = ()
     place: Place | None = None
     finish: str = ""
     group: str = ""
@@ -68,8 +68,9 @@ def save(cut: Cut) -> Cut:
 
 def changed(run: str, deliverable: str, condition: str) -> bool:
     """Whether the decisions that answer the necessary condition of the deliverable in the run's
-    design tree differ from those of the generator's Cut of its last round, as a lack is kept only
-    with a change to the decision it comes from; False where that round has no generator's Cut."""
+    design tree differ from those of the generator's Cut of its last round, as a `more` is kept
+    only with a change to the decision it comes from; False where that round has no generator's
+    Cut."""
     raise NotImplementedError("cut.changed")
 
 

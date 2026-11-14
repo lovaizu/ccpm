@@ -92,7 +92,7 @@
   <rect class="box" x="960" y="660" width="180" height="48" rx="0"/>
   <text class="name" x="1050.0" y="689.0" text-anchor="middle">Answers</text>
   <rect class="box" x="610" y="800" width="180" height="48" rx="0"/>
-  <text class="name" x="700.0" y="829.0" text-anchor="middle">Lack kept</text>
+  <text class="name" x="700.0" y="829.0" text-anchor="middle">More kept</text>
   <path class="line" d="M220,124 L330,124"/>
   <text class="label small halo" x="275.0" y="116" text-anchor="middle">cut from</text>
   <text class="label small" x="226" y="140" text-anchor="start">0..*</text>

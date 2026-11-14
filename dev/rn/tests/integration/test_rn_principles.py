@@ -117,7 +117,7 @@ def test_a_generator_whose_record_holds_each_step_and_practice_ends_with_its_res
     hints_doing(conv, repo, run)
     given, generator = started(conv, repo, run, "generator", HINTS)
     records_all(generator, repo, given, "generator", "code", "refactor-code")
-    made = {"decisions": [{"about": POINT, "where": "invoicer/"}], "lacks": [], "settled": []}
+    made = {"decisions": [{"about": POINT, "where": "invoicer/"}], "more": [], "settled": []}
     write(run.worktree, given["made"], json.dumps(made))
     stopped, reached = gives(generator, repo, "generator", "done")
     assert not stopped.blocked and reached
@@ -135,7 +135,7 @@ def test_a_generator_whose_made_leaves_out_a_decision_of_its_cut_is_held_at_its_
     hints_doing(conv, repo, run)
     given, generator = started(conv, repo, run, "generator", HINTS)
     records_all(generator, repo, given, "generator", "code", "refactor-code")
-    write(run.worktree, given["made"], json.dumps({"decisions": [], "lacks": [], "settled": []}))
+    write(run.worktree, given["made"], json.dumps({"decisions": [], "more": [], "settled": []}))
     stopped, _ = gives(generator, repo, "generator", "done")
     assert stopped.blocked and POINT in stopped.said
 
@@ -150,7 +150,7 @@ def test_an_evaluator_whose_answers_leave_a_condition_of_its_group_is_held_at_it
     hints_doing(conv, repo, run)
     given, evaluator = started(conv, repo, run, "evaluator", HINTS, "C3")
     records_all(evaluator, repo, given, "evaluator")
-    write(run.worktree, given["answers"], json.dumps({"met": [], "not_met": []}))
+    write(run.worktree, given["answers"], json.dumps({"good": [], "more": []}))
     stopped, _ = gives(evaluator, repo, "evaluator", "done")
     assert stopped.blocked and "N8" in stopped.said
 
@@ -212,49 +212,47 @@ def test_the_orchestrator_cant_start_the_typed_markers_generator_before_the_hint
     assert agent is None and started_answer.blocked
 
 
-@pytest.mark.supports("Back to the design tree on a problem", "Lack kept", "Decision", "Cut")
-def test_the_next_round_is_made_from_the_decision_changed_and_the_lack_kept(
+@pytest.mark.supports("Back to the design tree on a problem", "More kept", "Decision", "Cut")
+def test_the_next_round_is_made_from_the_decision_changed_and_the_more_kept(
     broken: bool, conv: Conversation, repo: Repo, run: Run
 ):
-    """Given the hints' round 1 judged, with a lack the people fall short by
-    When the tree-keeper writes the decision it changes and keeps the lack
-    Then the generator's cut of round 2 holds the decision and the lack, so that the round makes
-    the deliverable from the design"""
+    """Given the hints' round 1 judged, with a `more` the people fall short by
+    When the tree-keeper writes the decision it changes and keeps the `more`
+    Then the generator's cut of round 2 holds the decision and the More kept, so that the round
+    makes the deliverable from the design"""
     hints_doing(conv, repo, run)
     started(conv, repo, run, "generator", HINTS)
     _, keeper = started(conv, repo, run, "tree-keeper")
     rate = decided("How a rate is typed", "a Decimal named Rate", "maker")
     changed = plan(condition("N3", decided(POINT, "each file", "user")), condition("N2", rate))
     keeper_writes(keeper, repo, run, changed, "A rate reads apart from an amount.")
-    keeper.bash(
-        tree(repo, "lack", run.folder, HINTS, "N2", "A caller can't tell a rate from an amount.")
-    )
+    keeper.bash(tree(repo, "more", run.folder, HINTS, "N2", "A caller tells a rate by its type."))
     given, _ = started(conv, repo, run, "generator", HINTS)
     held = json.loads(text_of(os.path.join(run.worktree, given["cut"])))
     assert rate in held["decisions"]
-    assert [each["condition"] for each in held["lacks"]] == ["N2"]
+    assert [each["condition"] for each in held["more"]] == ["N2"]
 
 
 @pytest.mark.supports(
-    "Back to the design tree on a problem", "S1", "tree.py", "Lack kept", "Necessary condition"
+    "Back to the design tree on a problem", "S1", "tree.py", "More kept", "Necessary condition"
 )
-def test_a_lack_kept_with_no_change_to_a_decision_of_its_condition_is_refused(
+def test_a_more_kept_with_no_change_to_a_decision_of_its_condition_is_refused(
     broken: bool, conv: Conversation, repo: Repo, run: Run
 ):
-    """Given the hints' round 1 judged, with a lack under N2 that the people fall short by, and no
+    """Given the hints' round 1 judged, with a `more` under N2 that the people fall short by, and no
     decision of N2 changed since the round's cut
-    When the tree-keeper keeps the lack
-    Then tree.py exits 1, naming N2, and the generator's cut of round 2 holds no lack, as the round
-    would make it good by a fix beside the design"""
+    When the tree-keeper keeps the `more`
+    Then tree.py exits 1, naming N2, and the generator's cut of round 2 holds no More kept, as the
+    round would make it good by a fix beside the design"""
     hints_doing(conv, repo, run)
     started(conv, repo, run, "generator", HINTS)
     _, keeper = started(conv, repo, run, "tree-keeper")
     kept = keeper.bash(
-        tree(repo, "lack", run.folder, HINTS, "N2", "A caller can't tell a rate from an amount.")
+        tree(repo, "more", run.folder, HINTS, "N2", "A caller tells a rate by its type.")
     )
     given, _ = started(conv, repo, run, "generator", HINTS)
     held = json.loads(text_of(os.path.join(run.worktree, given["cut"])))
-    assert kept.exit_code == 1 and "N2" in kept.output and held["lacks"] == []
+    assert kept.exit_code == 1 and "N2" in kept.output and held["more"] == []
 
 
 @pytest.mark.supports("The design tree revised on each run", "Best practice", "Cut")

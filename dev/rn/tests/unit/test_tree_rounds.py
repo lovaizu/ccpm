@@ -1,6 +1,6 @@
 """The unit cases of tree/rounds.py, where each round of a deliverable keeps its records and their
 forms, through `folder`, `latest`, `load`, `parse_answers`, `parse_made`, `keep_try`,
-`keep_lack`, and `keep_place`."""
+`keep_more`, and `keep_place`."""
 
 from __future__ import annotations
 
@@ -13,16 +13,16 @@ from rn_example import DECIMAL, HINTS, POINT, SETTLED, TYPED
 from rn_parts import RUN
 from tree.rounds import (
     Answers,
-    LackKept,
+    Good,
     Made,
-    Met,
-    NotMet,
+    More,
+    MoreKept,
     Place,
     Round,
     Settled,
     Tried,
     folder,
-    keep_lack,
+    keep_more,
     keep_place,
     keep_try,
     latest,
@@ -59,7 +59,7 @@ def test_latest_of_a_deliverable_with_no_round_is_0(run: str):
 
 
 @pytest.mark.supports(
-    "test_a_lack_the_people_fall_short_by_changes_its_decision_and_reaches_the_next_round"
+    "test_a_more_the_people_fall_short_by_changes_its_decision_and_reaches_the_next_round"
 )
 def test_latest_is_the_highest_round_kept(run: str):
     """Given the hints' rounds 1, 2, and 10 kept
@@ -83,16 +83,16 @@ def test_keep_try_adds_each_command_to_the_rounds_try_record_in_order(run: str):
 
 
 @pytest.mark.supports(
-    "test_a_lack_the_people_fall_short_by_changes_its_decision_and_reaches_the_next_round"
+    "test_a_more_the_people_fall_short_by_changes_its_decision_and_reaches_the_next_round"
 )
-def test_keep_lack_keeps_the_lack_in_the_last_round(run: str):
+def test_keep_more_keeps_the_more_in_the_last_round(run: str):
     """Given the hints' round 1
-    When a lack of N2 is kept
+    When a `more` of N2 is kept
     Then round 1 holds it, for the round after it"""
     os.makedirs(folder(run, HINTS, 1))
-    lack = LackKept("N2", "A caller can't tell a rate from an amount.")
-    keep_lack(run, HINTS, lack)
-    assert load(run, HINTS, 1).lacks == (lack,)
+    more = MoreKept("N2", "A caller tells a rate by its type.")
+    keep_more(run, HINTS, more)
+    assert load(run, HINTS, 1).more == (more,)
 
 
 @pytest.mark.supports("test_a_generators_place_commits_its_work_with_the_step_it_stands_at")
@@ -120,11 +120,12 @@ def test_keep_place_keeps_an_evaluators_place_with_its_group(run: str):
 @pytest.mark.supports(
     "test_the_orchestrator_gets_the_round_and_puts_up_the_points_the_generator_settled"
 )
-def test_parse_made_reads_each_decision_lack_and_point_settled():
+def test_parse_made_reads_each_decision_more_kept_and_point_settled():
     """Given what the hints' generator made, naming the point on each file and the point on amounts
     it settled without asking
     When it's read
-    Then it holds the decision with where it lies, no lack, and the point settled with its ground"""
+    Then it holds the decision with where it lies, no More kept, and the point settled with its
+    ground"""
     given = {
         "decisions": [{"about": POINT, "where": "invoicer/"}],
         "lacks": [],
@@ -140,9 +141,9 @@ def test_parse_made_reads_each_decision_lack_and_point_settled():
 @pytest.mark.parametrize(
     "given",
     [
-        {"decisions": [], "lacks": []},
-        {"decisions": [], "lacks": [], "settled": [dict(SETTLED, ground="")]},
-        {"decisions": [], "lacks": [], "settled": [{"point": "x", "decided": "y"}]},
+        {"decisions": [], "more": []},
+        {"decisions": [], "more": [], "settled": [dict(SETTLED, ground="")]},
+        {"decisions": [], "more": [], "settled": [{"point": "x", "decided": "y"}]},
     ],
 )
 @pytest.mark.supports(
@@ -168,36 +169,36 @@ def test_load_of_a_round_not_kept_holds_nothing(run: str):
 @pytest.mark.supports(
     "test_an_evaluators_end_is_held_until_its_answers_name_each_condition_of_its_group"
 )
-def test_parse_answers_reads_each_condition_met_and_not_met():
-    """Given an evaluator's Answers on C1, N1 met with one line and N2 not met
+def test_parse_answers_reads_each_condition_in_good_and_in_more():
+    """Given an evaluator's Answers on C1, N1 in good with one line and N2 in more
     When they're read
-    Then they hold N1 met with its line and N2 with what the people lack"""
+    Then they hold N1 in good with its line and N2 with its good_when"""
     given = {
-        "met": [{"question": "N1", "lines": ["invoicer/totals.py:3"]}],
-        "not_met": [{"question": "N2", "lacks": "A caller can't tell a rate from an amount."}],
+        "good": [{"question": "N1", "lines": ["invoicer/totals.py:3"]}],
+        "more": [{"question": "N2", "good_when": "A caller tells a rate by its type."}],
     }
     assert parse_answers(given, "C1", "a.json") == Answers(
         "C1",
-        (Met("N1", ("invoicer/totals.py:3",)),),
-        (NotMet("N2", "A caller can't tell a rate from an amount."),),
+        (Good("N1", ("invoicer/totals.py:3",)),),
+        (More("N2", "A caller tells a rate by its type."),),
     )
 
 
 @pytest.mark.parametrize(
     "given",
     [
-        {"met": [{"question": "N1", "lines": []}], "not_met": []},
-        {"met": [{"question": "N1"}], "not_met": []},
-        {"met": []},
-        {"met": [], "not_met": [{"question": "N2", "lacks": "x", "fix": "y"}]},
-        "N1 met",
+        {"good": [{"question": "N1", "lines": []}], "more": []},
+        {"good": [{"question": "N1"}], "more": []},
+        {"good": []},
+        {"good": [], "more": [{"question": "N2", "good_when": "x", "fix": "y"}]},
+        "N1 in good",
     ],
 )
 @pytest.mark.supports(
     "test_an_evaluators_end_is_held_until_its_answers_name_each_condition_of_its_group"
 )
 def test_parse_answers_refuses_answers_out_of_their_form(given: Any):
-    """Given a condition met with no line, one with no lines, no `not_met`, a lack with a fix
+    """Given a condition in good with no line, one with no lines, no `more`, a good_when with a fix
     beside it, or plain words
     When they're read
     Then they're refused, naming the file"""

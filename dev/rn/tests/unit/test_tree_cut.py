@@ -23,7 +23,7 @@ from tree.cut import (
     values,
 )
 from tree.design import Decision
-from tree.rounds import LackKept, Place, folder, keep_lack, keep_place
+from tree.rounds import MoreKept, Place, folder, keep_more, keep_place
 
 pytestmark = pytest.mark.xfail(strict=True, reason="rn's parts are skeletons, their bodies unbuilt")
 
@@ -56,10 +56,10 @@ def test_the_tree_keepers_cut_names_the_runs_design_tree(run: str):
 def test_the_generators_cut_of_the_hints_is_of_round_1_with_the_goal_and_its_decisions(run: str):
     """Given the hints doing, with no round yet
     When the generator's cut of the hints is asked for
-    Then it's of round 1, with the goal, the kind code, and the answer, and no lack or Place"""
+    Then it's of round 1, with the goal, the kind code, and the answer, and no More kept or Place"""
     found = cut(run, GENERATOR, HINTS)
     assert (found.round, found.goal, found.kind) == (1, GOAL, "code")
-    assert found.decisions == (ANSWERED,) and found.lacks == () and found.place is None
+    assert found.decisions == (ANSWERED,) and found.more == () and found.place is None
 
 
 @pytest.mark.supports(
@@ -87,17 +87,17 @@ def test_the_generators_cut_holds_no_decision_of_another_deliverable(run: str):
 
 
 @pytest.mark.supports(
-    "test_a_lack_the_people_fall_short_by_changes_its_decision_and_reaches_the_next_round"
+    "test_a_more_the_people_fall_short_by_changes_its_decision_and_reaches_the_next_round"
 )
-def test_after_a_round_with_a_lack_kept_the_generators_cut_is_of_the_next_round_with_it(run: str):
-    """Given the hints' round 1 with a lack of N2 kept
+def test_after_a_round_with_a_more_kept_the_generators_cut_is_of_the_next_round_with_it(run: str):
+    """Given the hints' round 1 with a `more` of N2 kept
     When the generator's cut of the hints is asked for
-    Then it's of round 2 and holds the lack"""
+    Then it's of round 2 and holds the More kept"""
     os.makedirs(folder(run, HINTS, 1))
-    lack = LackKept("N2", "A caller can't tell a rate from an amount.")
-    keep_lack(run, HINTS, lack)
+    more = MoreKept("N2", "A caller tells a rate by its type.")
+    keep_more(run, HINTS, more)
     found = cut(run, GENERATOR, HINTS)
-    assert found.round == 2 and found.lacks == (lack,)
+    assert found.round == 2 and found.more == (more,)
 
 
 @pytest.mark.supports("test_the_picked_up_generator_starts_at_the_step_it_stood_at")
@@ -214,7 +214,7 @@ def test_records_are_each_starts_record_in_the_order_of_the_starts(run: str):
     assert records(run) == (first.record, second.record)
 
 
-@pytest.mark.supports("test_a_lack_kept_with_no_change_to_a_decision_of_its_condition_is_refused")
+@pytest.mark.supports("test_a_more_kept_with_no_change_to_a_decision_of_its_condition_is_refused")
 def test_changed_holds_only_once_a_decision_of_the_condition_differs_from_the_rounds_cut(
     run: str,
 ):
@@ -229,11 +229,11 @@ def test_changed_holds_only_once_a_decision_of_the_condition_differs_from_the_ro
     assert changed(run, HINTS, "N3")
 
 
-@pytest.mark.supports("test_a_lack_kept_with_no_change_to_a_decision_of_its_condition_is_refused")
+@pytest.mark.supports("test_a_more_kept_with_no_change_to_a_decision_of_its_condition_is_refused")
 def test_changed_of_a_round_with_no_generators_cut_is_false(run: str):
     """Given the hints' round 1 with no generator's cut
     When N3's decisions are asked about
-    Then they count as unchanged, so no lack is kept"""
+    Then they count as unchanged, so no `more` is kept"""
     os.makedirs(folder(run, HINTS, 1))
     assert not changed(run, HINTS, "N3")
 

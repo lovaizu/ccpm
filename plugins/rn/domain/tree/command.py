@@ -11,7 +11,7 @@ usage: tree.py begin <words>
        tree.py runs
        tree.py cut <run> <role> [<deliverable> [<group>]]
        tree.py write <run> <design-tree.json> <ground>
-       tree.py lack <run> <deliverable> <condition> <lack>
+       tree.py more <run> <deliverable> <condition> <good_when>
        tree.py place <run> <deliverable> <role> <step> [<group>]
        tree.py round <run> <deliverable>
        tree.py sign-off <run> <sign-off.json>
@@ -39,13 +39,13 @@ def main(argv: list[str], environ: Mapping[str, str], cwd: str) -> tuple[int, st
       each deliverable whose turn has come doing, writes it as the run's design tree, commits it
       with the ground, and prints `{"changed", "touched", "doing"}` as JSON; 1 with each fault
       where the tree isn't in its form or its order, and the run's tree is left as it was.
-    - `lack <run> <deliverable> <condition> <lack>` keeps the Lack kept for the next round; 1,
-      naming the condition, where no decision that answers it changed since the round's Cut, as
+    - `more <run> <deliverable> <condition> <good_when>` keeps the More kept for the next round;
+      1, naming the condition, where no decision that answers it changed since the round's Cut, as
       the next round would make it good by a fix beside the design.
     - `place <run> <deliverable> <role> <step> [<group>]` keeps the Place of the generator, or of
       the evaluator of the group, and commits its work.
     - `round <run> <deliverable>` prints the deliverable's last round as JSON: its number, what
-      the generator made, each evaluator's Answers, and each Lack kept; 1 where the deliverable
+      the generator made, each evaluator's Answers, and each More kept; 1 where the deliverable
       has no round.
     - `sign-off <run> <sign-off.json>` puts the Sign-off up, waiting; 1 where it isn't in its form.
     - `approve` and `send-back`, which only /rn:ty and /rn:gm run as they load, decide the first

@@ -5,9 +5,10 @@ promises. rn builds up only the vital few of each deliverable, what its people c
 decisions in a design tree: the orchestrator, the main conversation, settles them, asking the user
 only the points that are theirs, and a tree-keeper keeps them. A generator makes each deliverable
 from its decisions, round after round, until evaluators that have only what its people have find
-every necessary condition met, and the user signs it off before anything rests on it, while the
+every necessary condition good, and the user signs it off before anything rests on it, while the
 work that rests on no point or sign-off still waiting goes on. The orchestrator checks every result
-before it takes it, and a lack changes the decision it comes from, not the deliverable.
+before it takes it, and what an evaluator puts in `more` changes the decision it comes from, not
+the deliverable.
 
 ## User stories
 
@@ -51,33 +52,38 @@ What each decides alone:
   Whether a point is the user's, and each other point that the design tree holds, from the purpose
   and the best practices: the deliverables and their plan, each decision of a necessary condition,
   each point that a role hands back, which point or sign-off to put to the user next, whether to
-  take each role's result or send it back, which lacks the people fall short by, the decisions that
-  each sign-off shows as taken without asking, whether the whole pull request holds together, and
-  what to propose at Done.
+  take each role's result or send it back, which of the evaluators' `more` the people fall short
+  by, the decisions that each sign-off shows as taken without asking, whether the whole pull
+  request holds together, and what to propose at Done.
 - tree-keeper\
   How each decision of the orchestrator's goes into the design tree, and whether each node that the
-  change touches still agrees with it.
+  change touches still agrees with it. It decides the form of the Cut it takes and of what it
+  gives.
 - generator\
   The deliverable, and each point that lies within it alone: one that its cut, the goal, and its
   best practice settle one way, and whose answer changes no decision of its cut and nothing of
   another deliverable, such as typing amounts as Decimal where the code already computes with
   Decimal. It hands each other point back with `asks`, as only the orchestrator sees the whole
-  design tree.
+  design tree. It decides the form of the Cut it takes and of the Made it gives.
 - evaluator\
-  Where the deliverable meets each necessary condition of its group for its people, and, where it
-  doesn't, what they still lack.
+  Which necessary conditions of its group the deliverable meets for its people, each in `good` with
+  the lines that meet it, and, for each other, in `more`, its `good_when`: what the people get once
+  the deliverable is good, as the plugin guide's
+  [Read by those who did not make it](../plugin-development-guide.md#read-by-those-who-did-not-make-it)
+  words it. It decides the form of the Cut it takes and of the Answers it gives.
 - tree.py\
   The tree's form and which nodes a change touches; each deliverable whose turn has come to be
   doing, which is each one that rests on no open point and on no plan or deliverable not yet signed
   off; each role's cut, with each best practice the role works by; where each start's Record
   lies, a new file of the run's `records/` for each start, and the order of the starts; where each
-  round keeps its Try record, Made, Answers, Lack kept, and Place, and their form; whether a lack
-  is kept, only once a decision that answers its necessary condition changed since the round's
-  cut; what waits for the user's sign-off, the pull request handed over among them, and what they
-  signed off; the run's name, worktree, and branch; the runs left, and where each stopped; and when
-  the run's work reaches its branch and its pull request: each commit, each push, the user's
-  comments since a sign-off, the pull request marked ready, and a draft again when the user sends
-  it back, and the issue of each lesson that the user signs off.
+  round keeps its Try record, Made, Answers, More kept, and Place, and the form of the Try record,
+  each More kept, and each Place; whether a `more` is kept, only once a decision that answers its
+  necessary condition changed since the round's cut; the form of each Sign-off; what waits for the
+  user's sign-off, the pull request handed over among them, and what they signed off; the run's
+  name, worktree, and branch; the runs left, and where each stopped; and when the run's work reaches
+  its branch and its pull request: each commit, each push, the user's comments since a sign-off, the
+  pull request marked ready, and a draft again when the user sends it back, and the issue of each
+  lesson that the user signs off.
 - repository\
   Each git and gh command that tree.py runs, and how it reads what they print: the worktree, each
   commit and push, the draft pull request, its comments, marking it ready and a draft again, and
@@ -124,7 +130,12 @@ The choices made, and why:
   lead its answer on another, which keeps KR1.1 low, and the evaluators run side by side, so a round
   takes about as long as one evaluator's reading, which keeps KR1.2 short. The cost: each evaluator
   reads the whole deliverable, so a round spends one reading for each group, and the orchestrator
-  joins a lack that two groups each name in part.
+  joins a `more` that two groups each name in part.
+- Rounds until the evaluators find every necessary condition good over a set limit on rounds\
+  A limit would hand over a deliverable whose people still can't use it, which raises KR1.1, and
+  KR1.1 comes before KR1.2, as the product vision orders them and the README's Non-goals promise.
+  The cost: a deliverable whose conditions are hard to meet takes as many rounds as it needs, which
+  adds to KR1.2.
 - The adapter of the results kept picking up the one run left from the root of the repository over
   picking up only in a run's worktree\
   The user types `/rn:up` at the root, as the README's walkthrough shows, and Lane asks the adapter
@@ -157,13 +168,16 @@ The choices made, and why:
   deliverable, each point that its last round's Made names.
 - Made\
   What a generator made, as it ends with `done`: where the deliverable carries out each decision of
-  its cut and meets each Lack kept, and each point it settled without asking, with its ground.
+  its cut and makes each More kept good, and each point it settled without asking, with its ground.
 - Place\
   The step that each role of a round stands at, with the work it has made, kept at the end of each
   step and at a pause.
-- Lack kept\
-  A lack an evaluator named that the orchestrator judged the people fall short by, which the next
-  round's generator gets.
+- Answers\
+  An evaluator's answer to each necessary condition of its group, in `good` or in `more`, apart
+  from the user's answer to a Point.
+- More kept\
+  An evaluator's `more`, with its `good_when`, that the orchestrator judged the people fall short
+  by, which the next round's generator gets.
 - Record\
   What one start of a role, or the orchestrator in a run, carried out: each step and practice in the
   order taken, and the result that rn's check accepted, one for each start. A Try record is another
@@ -202,7 +216,7 @@ Each role reads in full what it starts with and each best practice its part name
 step and each practice item it takes at the time each names, as
 [the plugin guide](../plugin-development-guide.md#a-record-of-each-step-and-practice) says. Its result
 names each item of each other list it carries: each decision of its cut it checked, each necessary
-condition it judged, and each lack and comment it judged. Lane holds each read by its trace, and
+condition it judged, and each `more` and comment it judged. Lane holds each read by its trace, and
 the guard runs rn's check of the record and the result against the whole list at the role's end,
 and at the end of the orchestrator's turn that puts work up for the user, as the guide says.
 
@@ -227,8 +241,9 @@ point and sign-off would add the user's time away to the run's, which adds to KR
 
 ### Back to the design tree on a problem
 
-A lack, or what the user sends back with `/rn:gm`, changes the decision it comes from, and the next
-round makes the deliverable from the design, never with a fix beside it.
+What an evaluator puts in `more`, or what the user sends back with `/rn:gm`, changes the decision
+it comes from, and the next round makes the deliverable from the design, never with a fix beside
+it.
 
 *Why*: a fix beside the design rests on no decision, so the next round, made from the design, loses
 it or breaks another necessary condition with it, which raises KR1.1.
@@ -295,7 +310,7 @@ sequenceDiagram
     A->>T: gets each deliverable doing, and the Cut of the first that no start that runs holds, with the path of a new Record for the start (Cut)
     A-->>GD: that start's text and run values in Lane's form, or none where no work waits
     GD-->>O: the generator's start due, with its text
-    O->>G: starts it, with that text (Cut, Lack kept)
+    O->>G: starts it, with that text (Cut, More kept)
     Note over O,A: The guard lets a start through only with the text the adapters gave for its role, and stops any other. Each start of the tree-keeper and of each evaluator goes the same way.
     G->>G: makes the deliverable from the design, and checks it by the best practice
     G->>R: records each step and practice as it takes it (Record)
@@ -327,24 +342,24 @@ sequenceDiagram
         par one for each group of necessary conditions
           O->>E: starts it (Cut)
           E->>T: commits its work at the end of each step (Place)
-          E->>F: writes each necessary condition met, or what the people lack (Answers)
+          E->>F: writes each necessary condition in good, with its lines, or in more, with its good_when (Answers)
           E-->>O: done
         end
         O->>T: gets the round (Answers, Made)
         T-->>O: each evaluator's Answers, and what the generator made (Answers, Made)
-        O->>O: judges each lack by the purpose and the best practices
-        alt a lack the people fall short by
-          O->>K: the decision it changes, and the lack kept (Decision, Lack kept)
-          K->>T: writes the decision, and keeps the lack (Design tree, Lack kept)
-          alt no decision that answers the lack's necessary condition changed since the round's cut
-            T-->>K: refuses the lack, naming its necessary condition
-            K-->>O: what it lacks
-            Note over O,K: The orchestrator takes the lack back to the decision it comes from, as a fix beside the design rests on no decision.
+        O->>O: judges each more by the purpose and the best practices
+        alt a more the people fall short by
+          O->>K: the decision it changes, and the more to keep (Decision, More kept)
+          K->>T: writes the decision, and keeps the more (Design tree, More kept)
+          alt no decision that answers the more's necessary condition changed since the round's cut
+            T-->>K: refuses the more, naming its necessary condition
+            K-->>O: that tree.py refused it, and why
+            Note over O,K: The orchestrator takes the more back to the decision it comes from, as a fix beside the design rests on no decision.
           else
-            T-->>K: what changed, and the lack kept
+            T-->>K: what changed, and the More kept
             Note over O,G: The next round starts from the design.
           end
-        else every necessary condition is met
+        else every necessary condition is good
           Note over U,O: The orchestrator puts up the deliverable, with each decision under it that the user didn't settle and each point that its Made names, as S3 draws.
         end
       end
@@ -491,21 +506,28 @@ sequenceDiagram
     GD-->>O: where the run picks up, and the start due
   else no run is left, or more than one
     A-->>GD: none
-    GD-->>O: the run started anew, and its first start due
+    GD->>A: asks for the text of the tree-keeper's start, the run's first move
+    A-->>GD: fails, as the folder lies in no run's worktree
+    GD-->>O: the run started anew, with the tree-keeper's start due and why its text can't be given yet
   end
   O->>T: lists the runs left
   alt no run is left
-    O->>U: says so
-  else more than one is left
-    O->>U: which one (Point)
-    U->>O: answers
+    O->>GD: gives the skill's result none, by Lane's result script, a move of the route at the run's start
+    GD-->>O: ends the run that Lane began at /rn:up, and gives no start
+    O->>U: says that no run is left to pick up, and starts no role
+    Note over U,GD: The turn ends outside any run, so the guard holds nothing that the user does next, and rn's check, which holds a turn of a run, doesn't run.
+  else
+    opt more than one is left
+      O->>U: which one (Point)
+      U->>O: answers
+    end
+    O->>O: enters the run's worktree
+    O->>U: Picking up, where it stopped, and the point or sign-off waiting
+    O->>K: starts it, on the run picked up (Cut)
+    O->>G: starts each that stood in a step, at that step (Cut, Place)
+    O->>E: starts each that stood in a step, at that step (Cut, Place)
+    Note over O,E: Each start goes through the guard and the adapters in the run's worktree, the tree-keeper's first where the guard started the run anew, and the work goes on, as S1, S2, or S3 draws.
   end
-  O->>O: enters the run's worktree
-  O->>U: Picking up, where it stopped, and the point or sign-off waiting
-  O->>K: starts it, on the run picked up (Cut)
-  O->>G: starts each that stood in a step, at that step (Cut, Place)
-  O->>E: starts each that stood in a step, at that step (Cut, Place)
-  Note over O,E: Each start goes through the guard and the adapters in the run's worktree, the tree-keeper's first where the guard started the run anew, and the work goes on, as S1, S2, or S3 draws.
 ```
 
 ### S6, S7: the work handed over, and each lesson sent to rn's repository
@@ -519,7 +541,7 @@ sequenceDiagram
   participant RP as repository
   participant GH as GitHub
   actor D as rn's developers
-  O->>O: finds each change to a best practice and each general lesson in the run's lacks
+  O->>O: finds each change to a best practice and each general lesson in what the run's evaluators put in more
   loop each change to a best practice found
     O->>U: the change, with a recommendation (Point)
     U->>O: answers
@@ -545,7 +567,7 @@ sequenceDiagram
       end
     end
   and
-    O->>O: reads the whole pull request at once, for each clash between deliverables and each part the goal doesn't need
+    O->>O: reads the whole pull request at once against the goal, for deliverables that contradict one another, a part beyond what the goal needs, work that does nothing toward it, and a file resting on a changed best practice, rule, or name that still says the old thing
     opt it finds one
       O->>K: the decision it changes (Decision)
       Note over O,K: The rounds start again from the design, as S1 draws, and S6 starts again once they end.
@@ -582,15 +604,19 @@ Lane with it, and types `/rn:up` in Claude Code at the root of their repository.
 
 - rn's own git worktree for each run, over the user's checkout\
   The user goes on with their own work while rn runs, and a pause leaves nothing of theirs to set right, which keeps KR1.2 short. The cost: a worktree on disk for each run until its merge.
-- A best practice made on a run in `.rn/best-practices/` over the run's folder\
-  Every later run in the repository finds it, and takes it over rn's own of the same kind, which keeps
-  KR1.1 low. The cost: a later run misses what rn's own gains after it.
+- A best practice made on a run in `.rn/best-practices/<kind>/` over the run's folder\
+  It's a deliverable that the run makes for the user, not a file of the run, so it lies where every
+  later run in the repository looks for it, as the plugin guide's
+  [Where a plugin writes its files](../plugin-development-guide.md#where-a-plugin-writes-its-files)
+  says of a deliverable, and a later run takes it over rn's own of the same kind, which keeps KR1.1
+  low. The cost: a later run misses what rn's own gains after it.
 
 ## Directory structure
 
 rn's folder holds what Claude Code installs for the user. `dev/rn/` holds what only rn's developers
-use. `.claude/worktrees/` holds rn's worktree of each run, and `.rn/` is what rn writes on the work's
-branch.
+use. `.claude/worktrees/` holds rn's worktree of each run. `.rn/` is what rn writes on the work's
+branch: the run's folder, as the plugin guide names it, and each best practice made on a run, a
+deliverable for the user.
 
 ```text
 plugins/rn/
@@ -614,9 +640,18 @@ plugins/rn/
 │   ├── tree-keeper.md             what the tree-keeper does
 │   ├── generator.md               what the generator does
 │   ├── evaluator.md               what the evaluator does
+│   ├── tree-keeper-in.schema.json   the form of the tree-keeper's Cut and of each resume
+│   ├── tree-keeper-out.schema.json  the form of what the tree-keeper gives
+│   ├── generator-in.schema.json   the form of the generator's Cut and of each resume
+│   ├── generator-out.schema.json  the form of what the generator gives, its Made among it
+│   ├── evaluator-in.schema.json   the form of the evaluator's Cut
+│   ├── evaluator-out.schema.json  the form of what the evaluator gives, its Answers among it
 │   ├── tree/                      the code of tree.py, a module for each decision it makes
+│   ├── sign-off.schema.json       the form of a Sign-off, which tree.py decides
 │   ├── repository/                the code of repository, a module for each tool it runs
 │   ├── record/                    the code of record.py, a module for each decision it makes
+│   ├── record.schema.json         the form of a Record, which record.py decides
+│   ├── fault.py                   how tree.py, record.py, and repository say why they stopped
 │   ├── throwaway.py               the code of throwaway.py
 │   └── best-practices/            rn's own best practice of each kind
 ├── scripts/
@@ -636,7 +671,9 @@ dev/rn/
 ├── architecture.md                this document
 ├── README.md                      for rn's developers
 └── tests/                         the test cases, in unit/, properties/, prompts/, integration/,
-                                   and e2e/, with the E2E test files that dev/scripts/e2e.py runs
+    │                              and e2e/, with the E2E test files that dev/scripts/e2e.py runs
+    └── gh/                        the double of gh, the records of gh it gives from in recorded/,
+                                   and compatibility.py, which compares a new gh with them
 
 .claude/worktrees/
 └── rn-<yyyymmdd>-<goal>/          rn's worktree of one run, on the work's branch
@@ -645,7 +682,7 @@ dev/rn/
 ├── <yyyymmdd>-<goal>/             one run
 │   ├── design-tree.json           the design tree
 │   ├── sign-offs.json             what waits for /rn:ty, and what the user signed off
-│   ├── rounds/                    each round's Try record, Made, Answers, Lack kept, and Place
+│   ├── rounds/                    each round's Try record, Made, Answers, More kept, and Place
 │   └── records/                   the record of each start of a role, and the orchestrator's
 └── best-practices/                each best practice made on a run
 ```
@@ -660,7 +697,10 @@ checks that each names an element or a case one level up.
 
 - Tries: `tree.py`, repository, `record.py`, `throwaway.py`, and the adapters, each against its
   contract, and the prompts of the orchestrator, the tree-keeper, the generator, and the evaluator,
-  each against what its line in Components and its steps in the sequences ask of it.
+  each against what its line in Components and its steps in the sequences ask of it, by each type
+  of a prompt's evaluation: accuracy, fabrication, precision and recall, consistency over repeated
+  runs, adversarial testing, metamorphic testing, and drift testing, which guards KR1.1 as the
+  model behind Opus changes.
 - Runs real: the part, with git in a temporary folder. A bare repository stands in for the remote,
   and a double of `gh` gives what [the manual of `gh`](https://cli.github.com/manual/) shows. A
   prompt's role runs alone on Opus in a throwaway copy of a repository that the test sets up, with
@@ -673,34 +713,54 @@ checks that each names an element or a case one level up.
   practices' practices, and each adapter's reading of a Cut or a record into Lane's form; for each
   function, McCabe complexity of 10 at most, cognitive complexity of 15 at most, and at most 6
   returns, 12 branches, 5 arguments, and 50 statements; 0 findings from pyrefly, ruff, and pylint's
-  checks; and each case of a prompt passing on all of its k = 3 runs.
+  checks; and, for each prompt, each case passing on all of its k = 3 runs, so that its accuracy,
+  the share of cases right, is 1; no fabrication, each line that an evaluator puts in `good` and
+  each place that a generator's Made names lying in the deliverable as it stands, as code checks; a
+  precision and a recall of 1 where a prompt picks from a set, the points that the orchestrator puts
+  to the user and the evaluators' `more` it judges the people fall short by; no run following an
+  instruction written in a file that the role reads; each metamorphic relation holding on every
+  run, such as a condition in `good` that moves to `more` once the lines that meet it are taken
+  out, and none that moves back; and, on a new model, no case failing that passed on the last.
 - Runs: the code's tests with their coverage and static analysis before each push and on each push
   in CI; mutation testing and the property-based tests in CI over the lines that a push changed on
   each push, and over the whole each night; and a prompt's tests before a change of the prompt is
-  taken.
+  taken, and every prompt's tests again once the model ID that a run's record shows differs from
+  the last run's.
 
 ### Integration tests
 
 - Tries: each path through the sequences of S1 to S7, each principle, where the parts keep it and
   where one breaks it, each decision of each component in Components, each handoff between parts
-  with the data it passes, and each kind of data in the data model.
+  with the data it passes, and each kind of data in the data model; and the compatibility with each
+  new version of gh, which guards KR1.1. The compatibility with each new version of Claude Code is
+  Lane's compatibility test, as
+  [Lane's Test strategy](../lane/architecture.md#integration-tests) says, which keeps true the
+  double of Claude Code that rn's tests share.
 - Runs real: `tree.py`, repository, `record.py`, `throwaway.py`, the adapters, the guard as Lane
   lays it, and rn's lanes. The double of Claude Code in `dev/tests/` stands in for Claude Code, and
   sends each event as the recorded runs in `dev/tests/recorded/` show. A test plays the user, the
   orchestrator, and each role by the calls it makes on the double, and each role gives only results
   in the form of its part's output, which the role's unit tests show the real prompt giving. GitHub
-  is the bare repository and the double of `gh` of the unit tests.
-- Tools: pytest, the double of Claude Code, `claude plugin validate --strict`, and
-  `dev/scripts/trace.py`.
+  is the bare repository and the double of `gh` of the unit tests. The compatibility test runs the
+  real `gh` of each new version, logged in to an account that reads the repository that each
+  recorded command names.
+- Tools: pytest, the double of Claude Code, `claude plugin validate --strict`,
+  `dev/scripts/trace.py`, and, for the compatibility test, `dev/rn/tests/gh/compatibility.py`.
 - Passes when: every story, principle, component, and kind of data of this document has an
   integration test that names it; every test names an element or a case one level up that exists;
   every unit case names an integration case; each test of a principle fails where its fixture
   `broken` takes out the part that holds the principle, which `trace.py` runs; and each result of a
   double comes from a line of a record that names the recorded run or the page of the documentation
   that shows it, which `trace.py doubles` checks, and each such page still shows its words, which
-  `trace.py sources` checks.
+  `trace.py sources` checks; and, on each new version of gh, each command of each recorded run of
+  gh, run again by `compatibility.py`, gives what its line shows, with the same exit code, the same
+  fields of its JSON, and the same words apart from the values that change on each run. Where it
+  doesn't, the developers keep the new version's run in `dev/rn/tests/gh/recorded/`, change the
+  double to give what it shows, and fix rn where a test then fails.
 - Runs: with the unit tests of the code before each push and on each push in CI, and the check of
-  the pages in CI with the checks of the tests, as a page changes apart from any push.
+  the pages in CI with the checks of the tests, as a page changes apart from any push; and the
+  compatibility test on each new version of gh, which a job in CI finds each night by
+  `gh --version`, as only a new version changes what the double must give.
 
 ### E2E tests
 
@@ -733,3 +793,9 @@ checks that each names an element or a case one level up.
   An AI writes the tree and each record, so they take forms that no developer foresees, and a fault
   there hands a role another's cut or passes a record that skipped a practice, which raises KR1.1.
   The cost: each night's run of every input.
+- The compatibility test on each new version of gh over the records of the version that rn was
+  built on\
+  gh changes on its own schedule, and a double that the real gh has outgrown passes a test that the
+  users' gh fails, so that repository misreads what a new gh prints, such as the comments that a
+  `/rn:gm` alone sends, and the next round goes on without what the user asked, which raises KR1.1
+  unseen. The cost: each new version waits on a run of the real gh for each recorded command.

@@ -1,8 +1,8 @@
 """The integration cases of S5, picking up: the user types /rn:up alone in a new conversation at
 the root of the repository, the guard picks the run up from the results that rn kept, or starts it
-anew where more than one run is left, tree.py lists the runs left, the orchestrator enters the
-run's worktree, and each role that stood in a step starts again at that step. The test plays the
-user, the orchestrator, and each role."""
+anew where more than one run is left, tree.py lists the runs left, the run that Lane began ends
+where none is left, the orchestrator enters the run's worktree, and each role that stood in a step
+starts again at that step. The test plays the user, the orchestrator, and each role."""
 
 from __future__ import annotations
 
@@ -22,6 +22,7 @@ from rn_example import (
     gives,
     keeper_writes,
     records_all,
+    result,
     started,
     text_of,
     tree,
@@ -49,6 +50,23 @@ def test_runs_with_no_run_left_lists_none(conv: Conversation, repo: Repo):
     conv.type("/rn:up")
     listed = conv.bash(tree(repo, "runs"))
     assert listed.exit_code == 0 and json.loads(listed.output) == {"runs": []}
+
+
+@pytest.mark.supports("S5", "orchestrator", "guard", "adapters")
+def test_up_alone_with_no_run_left_ends_the_guards_run_with_no_role_started(
+    conv: Conversation, repo: Repo
+):
+    """Given the repository of invoicer with no run of rn
+    When the user types /rn:up alone, the orchestrator runs `tree.py runs`, gives the skill's
+    result `none` by Lane's result script, and ends its turn saying that no run is left
+    Then the result script takes `none`, and the guard lets the turn end with no start due, as the
+    run that Lane began at /rn:up has ended"""
+    conv.type("/rn:up")
+    conv.bash(tree(repo, "runs"))
+    given = conv.bash(result(repo, "up", "none"))
+    stopped = conv.stop("No run of rn is left to pick up.")
+    assert given.exit_code == 0
+    assert not stopped.blocked and "rn:tree-keeper" not in stopped.said
 
 
 @pytest.mark.supports("S5", "tree.py", "Place")
@@ -158,7 +176,7 @@ def test_a_picked_up_evaluator_starts_at_the_step_it_stood_at(
     keeper_writes(keeper, repo, run, ANSWERED, "The user signed the plan off.")
     given, generator = started(conv, repo, run, "generator", HINTS)
     records_all(generator, repo, given, "generator", "code", "refactor-code")
-    made = {"decisions": [{"about": POINT, "where": "invoicer/"}], "lacks": [], "settled": []}
+    made = {"decisions": [{"about": POINT, "where": "invoicer/"}], "more": [], "settled": []}
     write(run.worktree, given["made"], json.dumps(made))
     gives(generator, repo, "generator", "done")
     _, evaluator = started(conv, repo, run, "evaluator", HINTS, "C1")
