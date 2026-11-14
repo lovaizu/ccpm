@@ -29,9 +29,9 @@ architecture.** It makes each to its best practice and its template, and keeps o
   the evaluators named, until the documents held trivia that no decision of the tree asked for.
 
 **From the test cases on, a subagent makes each deliverable, and the main conversation checks it**
-against its best practice and the tree before it takes the result. The subagent is briefed by its
-role's part of [the plugin template](../../dev/plugin-template/domain/), with the role's cut of the
-tree, and writes its record to a file in the system's temporary folder, in the form of
+against its best practice and the tree before it takes the result. The main conversation briefs the
+subagent by its role's part of [the plugin template](../../dev/plugin-template/domain/), with the
+role's cut of the tree, and the subagent writes its record to a file in the system's temporary folder, in the form of
 [the record](../../dev/plugin-template/domain/record.schema.json). The main conversation reads the
 record against the part's steps and the best practice's practices, then removes the file.
 
