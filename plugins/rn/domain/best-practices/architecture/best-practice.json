@@ -377,12 +377,16 @@
      {
       "id": "N13",
       "about": "Test strategy",
-      "what": "Does every part, every element of this document, and every key result have its test cases in the test code, each written as Given, When, and Then, and each naming the case or the element one level up that it supports?",
-      "why": "Every case written before any part is built checks the architecture while a gap between the parts is still cheap to fix: a case that no part can hold, or a handoff that no interface carries, shows the gap before anyone builds around it. The V-model of the [ISTQB glossary](https://glossary.istqb.org) designs each level's tests during the development activity it pairs with, and Steve Freeman and Nat Pryce's outside-in test-driven development, in [Growing Object-Oriented Software, Guided by Tests](http://www.growing-object-oriented-software.com/) and [Mock Roles, not Objects](http://jmock.org/oopsla2004.pdf), finds each part's roles and interface by first writing the tests one level up.",
+      "what": "Does each part have its skeleton, and every part, every element of this document, and every key result its test cases in the test code, each written as Given, When, and Then through that skeleton, and each naming the case or the element one level up that it supports?",
+      "why": "Every case written through a skeleton of the parts before any body is built checks the architecture while a gap between the parts is still cheap to fix: a case that no part can hold, or a handoff that no interface carries, shows the gap before anyone builds around it. The V-model of the [ISTQB glossary](https://glossary.istqb.org) designs each level's tests during the development activity it pairs with, and Steve Freeman and Nat Pryce's outside-in test-driven development, in [Growing Object-Oriented Software, Guided by Tests](http://www.growing-object-oriented-software.com/) and [Mock Roles, not Objects](http://jmock.org/oopsla2004.pdf), finds each part's roles and interface by first writing the tests one level up. A case finds a gap only where it calls a real interface, and the skeleton is code, apart from this document, which keeps no part's internals.",
       "items": [
        {
         "at": "make",
-        "text": "Once Test strategy names the tools, write the E2E cases first: for each key result, a case that runs an objective's main use, as the README's walkthrough shows it, at the size of a real request, and names the key result, such as `KR1.1`."
+        "text": "Once Test strategy names the tools, make the skeleton of each part where Directory structure places it, from the arrows and the data that Sequences hand to the part: each module with the decision it alone makes and each interface with its contract, as [the code best practice](../code/best-practice.md) says of modules and interfaces, and each prompt with its description and the form of what it takes and gives, as [the prompt best practice](../prompt/best-practice.md) says, each body left empty, such as one that raises `NotImplementedError`."
+       },
+       {
+        "at": "make",
+        "text": "Write the E2E cases first: for each key result, a case that runs an objective's main use, as the README's walkthrough shows it, at the size of a real request, and names the key result, such as `KR1.1`."
        },
        {
         "at": "make",
@@ -390,7 +394,7 @@
        },
        {
         "at": "make",
-        "text": "Write the unit cases of each part through its interface, each naming the integration case it supports, so that the interface a part offers comes from what the cases one level up need of it."
+        "text": "Write the unit cases of each part through its interface, each naming the integration case it supports, so that the interface a part offers comes from what the cases one level up need of it, and change the skeleton where a case needs an interface it lacks or calls none it offers."
        },
        {
         "at": "make",
@@ -414,7 +418,11 @@
        },
        {
         "at": "make",
-        "text": "Read the cases against the architecture, and go back to the architecture where they show a gap: a case that no part can hold needs a part, or a decision given to one; a part that no case reaches serves no element, as N3 says; a part whose cases change for more than one reason, such as a file's form and a remote's commands, holds more than one part, as Robert C. Martin's single responsibility principle has it; and a handoff that no interface carries needs an arrow and a kind of data. Change the architecture first, and then the cases."
+        "text": "Run the type checker over the skeleton and the cases, and see every case fail: a type that doesn't fit across a handoff is a gap between the parts, and a case that passes on an empty body tests nothing."
+       },
+       {
+        "at": "make",
+        "text": "Read the cases and the skeleton against the architecture, and go back to the architecture where they show a gap: a case that no part can hold needs a part, or a decision given to one; a part that no case reaches serves no element, as N3 says; a module that can't state its decision in a few words makes more than one; a part whose cases change for more than one reason, such as a file's form and a remote's commands, holds more than one part, as Robert C. Martin's single responsibility principle has it; and a handoff that no interface carries needs an arrow and a kind of data. Change the architecture first, and then the skeleton and the cases."
        },
        {
         "at": "make",
