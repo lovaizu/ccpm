@@ -14,7 +14,15 @@
       "items": [
        {
         "at": "decide",
-        "text": "Before any change, open the code's manifest, the file that says how to set the code up and run its tests, such as pyproject.toml or a Makefile, and run the command it gives for the tests, else the one that the code's README or the Test strategy of the architecture in your cut's inputs gives. If a test fails, change nothing, and end with `asks`, naming the test and its failure, since a test that already fails can't tell you whether a change broke something.",
+        "text": "Before any change, open the code's manifest, the file that says how to set the code up and run its tests, such as pyproject.toml or a Makefile, and take the command it gives for the tests, else the one that the code's README or the Test strategy of the architecture in your cut's inputs gives."
+       },
+       {
+        "at": "decide",
+        "text": "Where none of them gives a command, search the repository for test files, such as by `find . -name 'test_*.py'`, and take the runner that those files import, such as `python -m pytest` for files that import pytest. Where the code has no tests, take the runner that the Test strategy names, else the one that comes with the language, such as `python -m unittest`, since the tests that you write before each step run by it."
+       },
+       {
+        "at": "decide",
+        "text": "Run the command. Where the code has no tests yet, the runner reports that none ran, which isn't a failure. If a test fails, change nothing, and end with `asks`, naming the test and its failure, since a test that already fails can't tell you whether a change broke something.",
         "trace": {
          "action": "run",
          "takes": [
@@ -70,7 +78,7 @@
        },
        {
         "at": "make",
-        "text": "For each parameter, read every call of its function, and drop the parameter where every call gives it the same value, writing that value in the body, such as `retries=3` at each call."
+        "text": "For each parameter, read every call of its function, and drop the parameter where every call gives it the same value, writing that value in the body, such as `retries=3` at each call, unless an entry point in the manifest or a document that a person follows names the function, since a caller outside the repository may give it another value."
        },
        {
         "at": "make",
@@ -204,7 +212,7 @@
        },
        {
         "at": "decide",
-        "text": "For each rule that several places write, choose the module that keeps it: the one whose job, as its opening or the architecture says, the rule belongs to, such as the date format in the module that writes the reports."
+        "text": "For each rule that several places write, choose the module that keeps it: the one whose job, as its opening or the architecture says, the rule belongs to, such as the date format in the module that writes the reports. Where neither says a job that the rule belongs to, choose the module whose code reads or writes what the rule acts on, such as a page size in the module that queries the pages, and, where several such modules do, the one that the others already import, so that no two modules come to import each other."
        },
        {
         "at": "make",
@@ -212,7 +220,7 @@
        },
        {
         "at": "make",
-        "text": "Where a shared function takes a flag that picks which branch runs, and each caller always passes the same value, such as `export(data, as_csv=True)`, split it into one function for each branch, such as `export_csv` and `export_json`."
+        "text": "Where a shared function takes a flag that picks which branch runs, and each caller always passes the same value, such as `export(data, as_csv=True)`, split it into one function for each branch, such as `export_csv` and `export_json`, unless an entry point in the manifest or a document that a person follows names the function, since a caller outside the repository may pass the other value."
        },
        {
         "at": "make",
