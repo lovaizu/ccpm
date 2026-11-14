@@ -44,6 +44,16 @@ fi
 held design pyrefly check --search-path dev/scripts --search-path dev/scripts/tests \
   --search-path dev/tests dev/scripts/*.py dev/scripts/tests/*.py dev/tests/*.py
 
+# Lane's parts and its test cases, which call them, as a type that doesn't fit across a handoff is a
+# gap between the parts, as N13 of the architecture best practice says. Each folder on the search
+# path is one that Claude Code, lay.py, or pytest puts on the import path of the code in it.
+held design pyrefly check --search-path plugins/lane/hooks/lane --search-path plugins/lane/scripts \
+  --search-path dev/tests --search-path dev/lane/tests --search-path dev/lane/tests/unit \
+  --search-path dev/lane/tests/e2e --search-path dev/lane/tests/prompts \
+  plugins/lane/hooks/lane/*.py plugins/lane/hooks/lane/domain/*.py \
+  plugins/lane/hooks/lane/domain/lanes/*.py plugins/lane/scripts/*.py dev/lane/tests/*.py \
+  dev/lane/tests/*/*.py
+
 # Each kind's best practice lies in a folder of its own in rn, as `best-practice.json`. Its template
 # lies beside it. The check fails on:
 # - a fault in a best practice's form

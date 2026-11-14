@@ -61,7 +61,6 @@
   <polyline class="line" points="525,120 625,120" marker-end="url(#arrow)"/>
   <polyline class="line" points="815,120 915,120" marker-end="url(#arrow)"/>
   <polyline class="line" points="420,150 420,330" marker-end="url(#arrow)"/>
-  <polyline class="line" points="420,90 420,22 1320,22 1320,330" marker-end="url(#arrow)"/>
   <polyline class="line" points="682,150 458,330" marker-end="url(#arrow)"/>
   <polyline class="line" points="758,150 982,330" marker-end="url(#arrow)"/>
   <polyline class="line" points="720,150 720,510" marker-end="url(#arrow)"/>
@@ -110,7 +109,7 @@
   <text class="kind" x="1320" y="554">script: Python 3.9</text>
   <rect class="ext" x="30.0" y="700.0" width="180" height="60" rx="4"/>
   <text class="name" x="120" y="725">Claude Code</text>
-  <text class="kind" x="120" y="744">external: 2.1.319 or later</text>
+  <text class="kind" x="120" y="744">external: 2.1.322 or later</text>
   <rect class="store" x="900.0" y="700.0" width="240" height="60" rx="4"/>
   <text class="name" x="1020" y="725">run record</text>
   <text class="kind" x="1020" y="744">store: JSON Lines, temporary folder</text>
@@ -123,7 +122,6 @@
   <text class="label small halo start" x="842" y="82">keeps the Proposal</text>
   <text class="label small halo start" x="430" y="205">reads each Step,</text>
   <text class="label small halo start" x="430" y="220">writes a change</text>
-  <text class="label small halo mid" x="870" y="16">asks for the Steps in Lane&#x27;s form</text>
   <text class="label small halo start" x="505" y="302">writes each Lane&#x27;s sentence</text>
   <text class="label small halo start" x="880" y="215">replaces the Laid</text>
   <text class="label small halo start" x="730" y="425">takes each type</text>

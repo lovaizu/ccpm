@@ -55,7 +55,7 @@
   </defs>
   <rect class="bg" x="0" y="0" width="1560" height="800"/>
   <rect class="frame" x="40" y="30" width="980" height="440" rx="6"/>
-  <text class="frame-name" x="54" y="50">The user&#x27;s computer, where they build: Claude Code 2.1.319 or later, Python 3.9 or later</text>
+  <text class="frame-name" x="54" y="50">The user&#x27;s computer, where they build: Claude Code 2.1.322 or later, Python 3.9 or later</text>
   <rect class="frame" x="60" y="70" width="440" height="190" rx="6"/>
   <text class="frame-name" x="74" y="90">Lane, installed from the ccpm marketplace</text>
   <rect class="frame" x="540" y="70" width="460" height="190" rx="6"/>

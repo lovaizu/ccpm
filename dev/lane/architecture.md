@@ -683,7 +683,7 @@ plugins/lane/
 ├── skills/up/SKILL.md            /lane:up, which has the main conversation run up's part
 ├── domain/up.md                  up's part: how it proposes from a plugin's steps
 ├── domain/proposal.schema.json   the Proposal's form, which up writes to and lay.py print holds
-├── scripts/lay.py                lay.py print and lay.py write
+├── scripts/lay.py                lay.py types, lay.py print, and lay.py write
 ├── hooks/
 │   ├── hooks.json                starts Lane's own guard on up
 │   ├── lanes.json                the lanes and the routes that hold up

@@ -19,14 +19,14 @@ template of the architecture best practice names them:
 A case in `e2e/` names a key result, one in `integration/` an element, and one in `unit/`,
 `properties/`, or `prompts/`, the unit tests, an integration case by its function's name. Each
 integration case that names a principle takes the fixture `broken`, and trace.py runs it alone by
-pytest with `TRACE_BROKEN=1`, under which the fixture takes out the part that holds the principle,
-as the guide's A principle's test seen to fail says. It exits 0 where every case names only what
-exists one level up, every element has an integration case, and every case of a principle fails
-with its part taken out, 1 where it reports one that doesn't, and 2 where it could not read or run
-what it checks, such as an architecture without one of those sections, as a check that can't read
-its input passes nothing. A 0 shows only that every name leads somewhere and that each case of a
-principle can fail, not that the cases are enough, as N13 of
-plugins/rn/domain/best-practices/architecture/best-practice.md says.
+pytest with `TRACE_BROKEN=1` and `--runxfail`, under which the fixture takes out the part that holds
+the principle, as the guide's A principle's test seen to fail says, and a case marked xfail runs as
+if unmarked. It exits 0 where every case names only what exists one level up, every element has an
+integration case, and every case of a principle fails with its part taken out, 1 where it reports
+one that doesn't, and 2 where it could not read or run what it checks, such as an architecture
+without one of those sections, as a check that can't read its input passes nothing. A 0 shows only
+that every name leads somewhere and that each case of a principle can fail, not that the cases are
+enough, as N13 of plugins/rn/domain/best-practices/architecture/best-practice.md says.
 
 `doubles` reads each folder `recorded/` under dev/tests/ and each plugin's tests, as the guide's
 Each result of a double from a record says: each line of each record names its event once, and,
@@ -229,9 +229,11 @@ def cases(plugin: str) -> tuple[dict[str, list[Case]], list[str]]:
 
 def fails_broken(case: Case) -> bool:
     """Whether pytest fails the case run alone with TRACE_BROKEN=1, which has its fixture `broken`
-    take out the part that holds its principle."""
+    take out the part that holds its principle. It runs a case marked xfail as if unmarked, as a
+    case of a part not yet built is, so that the mark hides no case that passes broken."""
     env = dict(os.environ, TRACE_BROKEN="1")
-    command = [sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", case.node]
+    command = [sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", "--runxfail"]
+    command.append(case.node)
     ran = subprocess.run(command, env=env, capture_output=True, text=True, check=False)
     # pytest exits 0 where every test passed or was skipped, and 1 where one failed, which its
     # summary then counts. Python exits 1 too where pytest isn't there to run.

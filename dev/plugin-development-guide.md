@@ -465,6 +465,20 @@ plugin. An environment variable reaches the fixture of each plugin, where an opt
 two plugins' `conftest.py` both added would stop the run that `check.sh` makes of their cases
 together.
 
+### A case of a part not yet built
+
+A case written before the body of the part it calls carries
+`pytest.mark.xfail(strict=True, reason="<why it fails now>")`, as `pytestmark` at the top of its
+file where no case of the file passes yet. The developer who builds the body takes the mark off each
+case it makes pass. `trace.py check <plugin>` runs each case of a principle with `--runxfail`, so the
+mark changes nothing it sees.
+
+*Why*: every case is written through a skeleton of the parts before any body, and fails on the empty
+bodies, yet the work is pushed only once `check.sh` gives 0. The mark lets `check.sh` pass while each
+case still fails, and `strict` fails a case that passes with the mark on, so no mark outlives the
+body that makes its case pass. An expected failure would also hide a case of a principle that passes
+with its part taken out, so `trace.py` runs the case as if unmarked.
+
 ### Each result of a double from a record
 
 A double of something outside the product, such as Claude Code or `gh`, gives each result from one

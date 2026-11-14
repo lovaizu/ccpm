@@ -1,0 +1,12 @@
+{
+  "intent": "You build a Claude Code plugin named changelog, in the folder changelog/ of this repository, whose skill write has a subagent writer write the CHANGELOG.md entries for the commits since the last version and a subagent reviewer review them, sending them back to writer until every entry is right. writer must run no command but git log and git show, and write no file but CHANGELOG.md. You have the Lane plugin, and you want Lane to hold the plugin to its steps: have Claude build the plugin, then type /lane:up changelog yourself and approve its proposal once you have read it, and run /changelog:write. Then have the steps changed so that writer and reviewer read each commit with git show, and this time have Claude run /lane:up itself and approve the proposal on its own, and run /changelog:write again. You are done once CHANGELOG.md holds right entries for every commit since 0.1.0.",
+  "repository": "https://github.com/lovaizu/playground",
+  "commits": "dev/lane/tests/e2e/tally-commits.json",
+  "plugin_dirs": [
+    "{top}/plugins/lane",
+    "{clone}/changelog"
+  ],
+  "turns": 12,
+  "records": "dev/lane/tests/e2e/records",
+  "push": false
+}

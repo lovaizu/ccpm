@@ -364,6 +364,23 @@ class BrokenTest(TraceTest):
         self.write("dev/p/tests/integration/test_x.py", cases_file(passing))
         self.fails_with(1, "test_x.py:4: test_x doesn't fail with TRACE_BROKEN=1")
 
+    def test_a_principle_case_marked_xfail_that_passes_with_the_part_taken_out_is_reported(self):
+        self.every_element_named()
+        marked = "pytestmark = pytest.mark.xfail(strict=True, reason='unbuilt')\n\n\n"
+        passing = principle_case("test_x", PRINCIPLE, "assert broken")
+        self.write("dev/p/tests/integration/test_x.py", cases_file(marked, passing))
+        self.fails_with(1, "test_x.py:7: test_x doesn't fail with TRACE_BROKEN=1")
+
+    def test_a_principle_case_marked_xfail_that_fails_with_the_part_taken_out_passes(self):
+        self.every_element_named()
+        marked = "pytestmark = pytest.mark.xfail(strict=True, reason='unbuilt')\n\n\n"
+        self.write(
+            "dev/p/tests/integration/test_x.py",
+            cases_file(marked, principle_case("test_x", PRINCIPLE)),
+        )
+        result = self.trace()
+        self.assertEqual((result.returncode, result.stderr), (0, ""))
+
     def test_a_principle_case_without_the_fixture_is_reported(self):
         self.every_element_named()
         self.write("dev/p/tests/integration/test_x.py", cases_file(case("test_x", PRINCIPLE)))

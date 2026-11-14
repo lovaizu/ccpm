@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Proposal",
+  "description": "The lanes and the routes that up proposes from a plugin's steps, which up writes to a file and passes to `lay.py print <plugin> <file>`. Each lane names its type, and lay.py makes its sentence from that type alone.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["plugin", "skill", "lanes", "routes"],
+  "properties": {
+    "plugin": {"type": "string", "description": "The plugin's name, as its plugin.json gives it."},
+    "skill": {"type": "string", "description": "The skill whose call starts a run."},
+    "lanes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["role", "step", "type", "takes"],
+        "properties": {
+          "role": {"type": "string", "description": "The skill's or a subagent's name."},
+          "step": {"type": "integer", "minimum": 1, "description": "The step's number in the role's Steps."},
+          "type": {"type": "string", "description": "A lane type's name, as `lay.py types` gives it."},
+          "takes": {"type": "array", "items": {"type": "string"}, "description": "What the type takes, each command or path word for word, each name in braces a run value."}
+        }
+      }
+    },
+    "routes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["after", "moves"],
+        "properties": {
+          "after": {"type": "string", "description": "`first`, `<role> <result>`, or a command the person types, such as `/changelog:pause`."},
+          "moves": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["kind"],
+              "properties": {
+                "kind": {"enum": ["start", "resume", "wait", "no_more"]},
+                "role": {"type": "string", "description": "The role that a start or a resume names."},
+                "waits_for": {"type": "string", "description": "The command the person types before the move is due."}
+              }
+            }
+          }
+        }
+      }
+    },
+    "text_adapter": {"type": "string", "description": "The program in hooks/adapters/ that gives a start's text, where the plugin has one."},
+    "results_adapter": {"type": "string", "description": "The program in hooks/adapters/ that gives the Kept results, where the plugin has one."}
+  }
+}
