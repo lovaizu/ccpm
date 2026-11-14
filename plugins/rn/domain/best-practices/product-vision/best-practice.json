@@ -1,0 +1,204 @@
+{
+ "goal": {
+  "what": "The developers build a product with which its users achieve their goals.",
+  "critical_success_factors": [
+   {
+    "id": "C1",
+    "what": "The developers know whom the product serves and what each of them is trying to achieve.",
+    "necessary_conditions": [
+     {
+      "id": "N1",
+      "about": "Roles",
+      "what": "Does Roles list every kind of person who comes to the product with a goal of their own?",
+      "why": "The developers build for the people Roles lists, so a missing role goes unserved, and two roles merged into one get a product that fits neither.",
+      "items": [
+       {
+        "at": "decide",
+        "text": "Find the job that the product exists to do in the goal and the decisions of your cut, and, where the repository already holds the product, in its README. Write it in one sentence as what the product gets done for the people who come to it, such as `turns a request into a deliverable that the people it's for can use`. Where none of these says it, ask the user what the product gets done, and for whom."
+       },
+       {
+        "at": "decide",
+        "text": "Name each kind of person who comes to the product for that job by the part of it they come to get done, not by a job title, such as `one who asks rn for a deliverable` in place of `developer`."
+       },
+       {
+        "at": "decide",
+        "text": "Ask whether that job gets done only if someone else also does a job with the product, such as an administrator who sets it up on a shared server for a team. Name each such person as a role as well."
+       },
+       {
+        "at": "decide",
+        "text": "For each person whose job the goal, the decisions, and what the product does leave unclear, ask the user `What does <person> come to the product to get done?`, with the job you'd guess as your recommendation."
+       },
+       {
+        "at": "decide",
+        "text": "Split a role where two of its members would count different results as their job done, such as a guest who browses a shop and a member who buys from it."
+       },
+       {
+        "at": "decide",
+        "text": "Merge two roles where their members would count the same result as their job done, such as a new customer and a returning customer who both buy from a shop."
+       },
+       {
+        "at": "decide",
+        "text": "Name the role `user` where there's only one."
+       }
+      ]
+     },
+     {
+      "id": "N2",
+      "about": "Objectives and key results",
+      "what": "Does each objective state, in one sentence, what one role is trying to achieve in their own work?",
+      "why": "The developers build toward the objectives, so each must name the end that a role reaches in their own work, and neither a feature nor a measure of that end.",
+      "items": [
+       {
+        "at": "decide",
+        "text": "For each role, take its job from Roles and write it as the end the role reaches in their own work, in one sentence with the role as the subject, such as `the user gets each deliverable they mean`."
+       },
+       {
+        "at": "decide",
+        "text": "Ask why that end matters to the role, and ask again of each answer, until the answer is something the role reaches in their own work and no longer something the product does, such as going on from `rn writes the README` to `the people the README is for decide on the product with it`."
+       },
+       {
+        "at": "decide",
+        "text": "Write one objective for each distinct end, where two ends are distinct if a role can reach one without the other, such as a member who buys and an administrator who keeps the shop running."
+       },
+       {
+        "at": "make",
+        "text": "Read each objective with the product's name taken out. Where it then reads as a feature, such as `manage tasks in the app`, rewrite it as the end the role reaches, such as `the team finishes its work on time`."
+       }
+      ]
+     },
+     {
+      "id": "N3",
+      "about": "the whole",
+      "what": "Does the vision describe only what the users do and get, not how the product works inside?",
+      "why": "The vision must stay true while the inside of the product changes, so it describes only what the users do and get, and leaves how the product does it to the architecture.",
+      "items": [
+       {
+        "at": "make",
+        "text": "For each sentence of the vision, ask whether it would change if the product's insides changed while the users saw the same. If it would, take it out, and where it carried something the users see, write that in its place, such as `answers within a second` in place of `keeps an index in memory`."
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "C2",
+    "what": "The developers can tell whether a change brings the users closer to their goals.",
+    "necessary_conditions": [
+     {
+      "id": "N4",
+      "about": "Objectives and key results",
+      "what": "Does each objective have key results that measure how well and how fast its role achieves it, each with the direction that's better?",
+      "why": "The developers keep a change only if it brings the users closer to their goals, so each objective needs measures that a developer reads after a change. Usability testers judge a change by the [success rate and the time on task](https://www.nngroup.com/articles/usability-metrics/) of each task the users do, and the two key results take these.",
+      "items": [
+       {
+        "at": "decide",
+        "text": "For each objective, write the task its role does to reach it, from where they start to the result they keep, such as from the user's request to the deliverable they sign off."
+       },
+       {
+        "at": "decide",
+        "text": "Make the first key result measure how well: the share of those tasks in which the role reaches the result. Where a run of the task shows the failures rather than the successes, such as a deliverable that its people can't use, measure the share that fails instead, such as `the share of the deliverables rn hands over that the people they're for couldn't use`."
+       },
+       {
+        "at": "decide",
+        "text": "Make the second key result measure how fast: the time from the task's start to its result, the role's own time in it included, such as the time the user spends answering questions. Where that time depends mostly on things outside the product, such as the speed of the machine, count the role's own effort instead, such as the questions they answer."
+       },
+       {
+        "at": "decide",
+        "text": "Give each key result the direction that's better, such as `Lower is better.`"
+       },
+       {
+        "at": "decide",
+        "text": "Rank the key results, how well before how fast, so that a developer keeps a change that improves one only if none ranked before it gets worse."
+       },
+       {
+        "at": "decide",
+        "text": "Give no targets, since developers who aim at a number improve the number in place of the users' result."
+       },
+       {
+        "at": "make",
+        "text": "For each key result, write down what one end-to-end (E2E) run of the role's task would record that a developer counts the key result from, such as each deliverable that a judge marks unusable, or the times at which the task starts and ends. Where no record of such a run would show it, rewrite the key result."
+       }
+      ]
+     },
+     {
+      "id": "N5",
+      "about": "Objectives and key results",
+      "what": "Are the objectives distinct, so that each piece of work serves one of them?",
+      "why": "The developers decide what to build by asking which objective a piece of work serves, which works only where each piece serves one objective.",
+      "items": [
+       {
+        "at": "decide",
+        "text": "Once each role has its objectives, and before you write any key result, list each piece of work the product plans that the decisions of your cut name. Where the repository already holds the product, add each of its open issues and each feature its README names. Where none of these lists any work, ask the user what the product is to do next."
+       },
+       {
+        "at": "decide",
+        "text": "For each piece of work, name each objective it serves, such as `O1` for `ask the user only what the best practice doesn't settle`."
+       },
+       {
+        "at": "decide",
+        "text": "For each pair of objectives, ask whether a piece of work could serve one without the other. If no piece could, merge the two into one objective, and name it in place of either wherever a piece names one of them."
+       },
+       {
+        "at": "decide",
+        "text": "For each piece that still names more than one objective, split it into parts that each serve one, such as `search and checkout` into `search` for the guest's objective and `checkout` for the member's. Where it doesn't split, name only the objective whose role would miss it most, such as the guest's for a faster first page, which a guest meets on every visit and a member once before checkout."
+       },
+       {
+        "at": "decide",
+        "text": "For each piece that serves no objective, ask the user `Is <piece> not needed, or does it serve an end that no objective names?`, with the answer you'd give as your recommendation, and add the objective where it shows one missing."
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "C3",
+    "what": "The developers know the one way by which the product brings its users to their goals, so that every choice leans toward it.",
+    "necessary_conditions": [
+     {
+      "id": "N6",
+      "about": "Concept",
+      "what": "Does the concept state first the one way, as its maker means it, by which the product brings the users to their objectives, and then the ideas that keep this way holding at each moment of their use?",
+      "why": "The developers make many choices that no line of the vision names, and the concept lets each of them lean the same way, so that the users meet one product and not a set of parts that pull apart.",
+      "items": [
+       {
+        "at": "decide",
+        "text": "Ask the user `How does the product bring its users to their objectives, and by which ideas?` before you write the concept, since the one way and the ideas that carry it out come from whoever conceived the product, and an analysis of what goes wrong today yields only a list of fixes with no center."
+       },
+       {
+        "at": "decide",
+        "text": "Write the one way in one sentence as what the users see the product do, such as `rn works only on the vital few, the things that decide whether the people a deliverable is for can use it`."
+       },
+       {
+        "at": "decide",
+        "text": "Write each idea the user gave, with what it gives the role toward the objective."
+       },
+       {
+        "at": "decide",
+        "text": "List the moments of the users' use, from the moment they first meet the product to the moment they reach the objective, as a [customer journey map](https://www.nngroup.com/articles/journey-mapping-101/) does, such as the request, the goal confirmed, the questions answered, the plan signed off, and each deliverable signed off."
+       },
+       {
+        "at": "decide",
+        "text": "At each moment, ask what keeps the one way holding there. Where no idea answers, propose one."
+       },
+       {
+        "at": "decide",
+        "text": "For each idea you propose, ask the user `Does <idea> keep <the one way> holding at <moment>, as you mean it?`, and keep it only where they say yes."
+       },
+       {
+        "at": "decide",
+        "text": "Drop each idea where taking it out leaves the one way holding at every moment."
+       },
+       {
+        "at": "make",
+        "text": "At each moment, take a design choice that no line of the vision names, such as whether to ask the user about a point the best practice settles, and decide it by the one way and its ideas. Where they don't decide it one way, rewrite the idea for that moment until they do."
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "template": "template.md",
+ "inputs": [],
+ "preconditions": []
+}

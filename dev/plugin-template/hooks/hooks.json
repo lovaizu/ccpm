@@ -1,0 +1,4 @@
+{
+  "DELETE_TEMPLATE_COMMENT": "Lane's /lane:up writes this file from the proposal that the developer approved, with hooks/lanes.json and hooks/lane/ beside it. Add an entry by hand only for a hook that no lane holds: a command that runs python3 on a file under hooks/, with onFailure block where a failure must stop the call.",
+  "hooks": {}
+}

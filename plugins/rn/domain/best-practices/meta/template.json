@@ -1,0 +1,45 @@
+{
+ "DELETE_TEMPLATE_COMMENT": "<users>: who uses the deliverable, such as `the developer`. <achieve what>: what they achieve with it. <kind>: the kind of deliverable, such as `readme`. <ext>: the deliverable's own format, such as `md`. inputs: each kind of deliverable that this kind builds on. preconditions: each kind whose deliverables must pass before work on this kind starts. Each <kind> is the folder name of its best practice. Each list is empty where there's none.",
+ "goal": {
+  "what": "<Users> <achieve what>.",
+  "critical_success_factors": [
+   {
+    "DELETE_TEMPLATE_COMMENT": "One for each thing that must go right for the users to reach the goal. <state>: the thing, as a state, in one sentence.",
+    "id": "C<n>",
+    "what": "<State>.",
+    "necessary_conditions": [
+     {
+      "DELETE_TEMPLATE_COMMENT": "One for each state of the deliverable that its critical success factor needs, with the practice that meets it. <section>: each heading of the template that holds the condition, as written there, or `the whole` where the whole deliverable holds it. <question>: the state, as a yes-or-no question about the deliverable. <gives>: what the condition gives the users. <source>: the practitioners' way of doing the work that the items follow, where N5 of the meta best practice has one named. Optional. Items: in the order, and each in the form, that N5 of the meta best practice gives them. at: `decide` or `make`. <item>: the decision, the step, or the check. <case>: when the item applies. Optional. trace: the tool call that shows the item done. Given only to an item that every run takes. <action>: `run` for a command, matched in full, `read` for a file read in full, or `write` for a file written. <take>: the command or the file's path, as the item writes it, with a value given at the start of the run written as `{<name>}`, such as `{deliverable}`. For `run` and `write`, any one of several `takes` shows the item done. For `read`, the item reads each of them in full.",
+      "id": "N<n>",
+      "about": "<section>, <section>",
+      "what": "<Question>?",
+      "why": "<Gives>. <Source>.",
+      "items": [
+       {
+        "at": "decide",
+        "text": "<Item>.",
+        "trace": {
+         "action": "<action>",
+         "takes": [
+          "<take>"
+         ]
+        }
+       },
+       {
+        "at": "make",
+        "text": "Where <case>, <item>."
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "template": "<kind>-template.<ext>",
+ "inputs": [
+  "<kind>"
+ ],
+ "preconditions": [
+  "<kind>"
+ ]
+}

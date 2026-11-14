@@ -1,0 +1,2 @@
+{"event": "a valid plugin passes", "command": "claude plugin validate <plugin>", "exit": 0, "said": "✔ Validation passed with warnings"}
+{"event": "a plugin.json whose version is a number fails", "command": "claude plugin validate <plugin>", "exit": 1, "said": "✘ Found 1 error:\n  ❯ version: Invalid input: expected string, received number\n✘ Validation failed"}

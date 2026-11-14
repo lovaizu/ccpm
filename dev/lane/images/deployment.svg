@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1560 800">
+  <title>Lane&#x27;s deployment: the user&#x27;s computer, where Lane lays into their plugin, a computer where the plugin runs with no Lane, and CI</title>
+  <style>
+    svg { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, 'Hiragino Sans', 'Noto Sans CJK JP', 'Noto Sans JP', 'Yu Gothic', Meiryo, sans-serif; }
+    .bg { fill: #ffffff; }
+    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .lane { fill: #ddf4ff; stroke: #54aeff; }
+    .store { fill: #fff8c5; stroke: #9a6700; stroke-width: 1.5; }
+    .ext { fill: #eaeef2; stroke: #d0d7de; stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .unit { fill: #ddf4ff; fill-opacity: 0.35; stroke: #0969da; stroke-width: 1.2; }
+    .frame { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    .frame-name { fill: #0969da; font-size: 13px; font-weight: 600; }
+    .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
+    .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
+    .label { fill: #1f2328; font-size: 13px; }
+    .small { font-size: 12px; }
+    .data { fill: #8250df; font-size: 12px; font-style: italic; }
+    .quote { fill: #8250df; font-size: 12px; font-style: italic; }
+    .gets { fill: #1a7f37; font-size: 12px; font-weight: 600; }
+    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .dashed { stroke-dasharray: 5 4; }
+    .head { fill: #59636e; }
+    .hole { fill: #ffffff; stroke: #59636e; stroke-width: 1.5; }
+    .halo { stroke: #ffffff; stroke-width: 7; stroke-linejoin: round; paint-order: stroke; }
+    .mid { text-anchor: middle; }
+    .start { text-anchor: start; }
+    .end { text-anchor: end; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; }
+      .box { fill: #161b22; stroke: #3d444d; }
+      .lane { fill: #0c2d6b; stroke: #4493f8; }
+      .store { fill: #2e2a1a; stroke: #d29922; }
+      .ext { fill: #21262d; stroke: #3d444d; }
+      .unit { fill: #0c2d6b; stroke: #4493f8; }
+      .frame { stroke: #4493f8; }
+      .frame-name { fill: #4493f8; }
+      .name, .label { fill: #f0f6fc; }
+      .kind { fill: #9198a1; }
+      .data { fill: #c297ff; }
+      .quote { fill: #c297ff; }
+      .gets { fill: #3fb950; }
+      .line { stroke: #9198a1; }
+      .head { fill: #9198a1; }
+      .hole { fill: #0d1117; stroke: #9198a1; }
+      .halo { stroke: #0d1117; }
+    }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path class="head" d="M0,0 L10,5 L0,10 z"/>
+    </marker>
+    <marker id="diamond" viewBox="0 0 16 10" refX="16" refY="5" markerWidth="14" markerHeight="9" orient="auto-start-reverse">
+      <path class="head" d="M0,5 L8,0 L16,5 L8,10 z"/>
+    </marker>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1560" height="800"/>
+  <rect class="frame" x="40" y="30" width="980" height="440" rx="6"/>
+  <text class="frame-name" x="54" y="50">The user&#x27;s computer, where they build: Claude Code 2.1.322 or later, Python 3.9 or later</text>
+  <rect class="frame" x="60" y="70" width="440" height="190" rx="6"/>
+  <text class="frame-name" x="74" y="90">Lane, installed from the ccpm marketplace</text>
+  <rect class="frame" x="540" y="70" width="460" height="190" rx="6"/>
+  <text class="frame-name" x="554" y="90">the user&#x27;s repository: their plugin&#x27;s folder</text>
+  <rect class="frame" x="60" y="290" width="940" height="160" rx="6"/>
+  <text class="frame-name" x="74" y="310">the system&#x27;s temporary folder</text>
+  <rect class="frame" x="1060" y="30" width="470" height="440" rx="6"/>
+  <text class="frame-name" x="1074" y="50">A computer where the plugin runs, with no Lane</text>
+  <rect class="frame" x="40" y="520" width="980" height="130" rx="6"/>
+  <text class="frame-name" x="54" y="540">CI: GitHub Actions on Python 3.9 and the newest Python</text>
+  <polyline class="line" points="470,165 570,165" marker-end="url(#arrow)"/>
+  <polyline class="line" points="280,197 280,348" marker-end="url(#arrow)"/>
+  <polyline class="line" points="353,197 697,348" marker-end="url(#arrow)"/>
+  <polyline class="line" points="970,165 1095,165" marker-end="url(#arrow)"/>
+  <polyline class="line" points="1295,197 1295,268" marker-end="url(#arrow)"/>
+  <polyline class="line" points="130,740 20,740 20,165 90,165" marker-end="url(#arrow)"/>
+  <polyline class="line" points="1495,680 1545,680 1545,165 1495,165" marker-end="url(#arrow)"/>
+  <rect class="lane" x="90.0" y="133.0" width="380" height="64" rx="4"/>
+  <text class="name" x="280" y="160">up, lay.py, lane types</text>
+  <text class="kind" x="280" y="179">and Lane&#x27;s guard on up</text>
+  <rect class="store" x="570.0" y="133.0" width="400" height="64" rx="4"/>
+  <text class="name" x="770" y="160">steps, laid set, hooks/lane/</text>
+  <text class="kind" x="770" y="179">the adapter, where the user writes one</text>
+  <rect class="store" x="90.0" y="348.0" width="380" height="64" rx="4"/>
+  <text class="name" x="280" y="375">Proposal</text>
+  <text class="kind" x="280" y="394">kept by its ID</text>
+  <rect class="store" x="570.0" y="348.0" width="400" height="64" rx="4"/>
+  <text class="name" x="770" y="375">run record of up</text>
+  <text class="kind" x="770" y="394">with its Approval</text>
+  <rect class="lane" x="1095.0" y="133.0" width="400" height="64" rx="4"/>
+  <text class="name" x="1295" y="160">the user&#x27;s plugin</text>
+  <text class="kind" x="1295" y="179">with its laid set and hooks/lane/</text>
+  <rect class="store" x="1095.0" y="268.0" width="400" height="64" rx="4"/>
+  <text class="name" x="1295" y="295">run record</text>
+  <text class="kind" x="1295" y="314">in the system&#x27;s temporary folder</text>
+  <rect class="store" x="1095.0" y="395.0" width="400" height="50" rx="4"/>
+  <text class="name" x="1295" y="415">kept results</text>
+  <text class="kind" x="1295" y="434">where the plugin keeps them</text>
+  <rect class="lane" x="330.0" y="568.0" width="400" height="64" rx="4"/>
+  <text class="name" x="530" y="595">dev/scripts/check.sh</text>
+  <text class="kind" x="530" y="614">Lane&#x27;s unit and integration tests</text>
+  <rect class="ext" x="130.0" y="708.0" width="300" height="64" rx="4"/>
+  <text class="name" x="280" y="735">GitHub: lovaizu/ccpm</text>
+  <text class="kind" x="280" y="754">the marketplace</text>
+  <rect class="ext" x="1095.0" y="648.0" width="400" height="64" rx="4"/>
+  <text class="name" x="1295" y="675">Claude Code</text>
+  <text class="kind" x="1295" y="694">hook events, the Skill and Agent tools</text>
+  <text class="label small halo mid" x="525" y="155">lays</text>
+  <text class="label small halo start" x="290" y="270">keeps</text>
+  <text class="label small halo start" x="530" y="270">keeps</text>
+  <text class="label small halo mid" x="1030" y="155">ships</text>
+  <text class="label small halo start" x="1305" y="240">keeps</text>
+  <text class="label small halo start" x="36" y="500">gives Lane at install and update</text>
+  <text class="label small halo end" x="1540" y="500">runs the guard on each hook event</text>
+</svg>

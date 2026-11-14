@@ -1,0 +1,90 @@
+# The tools that build and check the plugins, set up by `uv sync --locked` from uv.lock, which holds
+# each at the version and hashes of its lock. The plugins' users install nothing here.
+[project]
+name = "ccpm"
+version = "0"
+# The oldest Python that users run, as Python 3.9 and the standard library of
+# dev/plugin-development-guide.md says, which ruff takes as the version it checks for.
+requires-python = ">=3.9"
+
+[dependency-groups]
+# The checks of dev/scripts/check.sh, on every Python users run.
+dev = [
+  "pyrefly>=1.4.0",
+  "pytest>=8.4",
+  "pytest-xdist>=3.8.0",
+  "ruff>=0.17.2",
+]
+# The checks that need a newer Python only to check, not to run: copied code, how deep each function
+# nests, and how well the tests catch faults, as N7 of
+# plugins/rn/domain/best-practices/code/best-practice.md says.
+test-quality = [
+  "complexipy>=9.0.0",
+  "cosmic-ray>=8.8.0",
+  "coverage>=7.17.2",
+  "hypothesis>=6.170.15",
+  "pylint>=4.1.3",
+]
+
+[tool.uv]
+required-version = ">=0.13.5"
+# The repository is plugins, not a package to build.
+package = false
+
+[tool.uv.dependency-groups]
+test-quality = { requires-python = ">=3.11" }
+
+[tool.ruff]
+# The widest a line may be: of the Python, which E501 below checks, and of the documents, which no
+# check reads.
+line-length = 100
+
+[tool.ruff.lint]
+# The rules ruff checks by default, lines past that width, and a function with more paths, returns,
+# branches, parameters, or statements than its maintainer can follow in one reading, each a sign
+# of a function that does more than one thing, as N5 of
+# plugins/rn/domain/best-practices/refactor-code/best-practice.md asks.
+extend-select = ["E501", "C901", "PLR0911", "PLR0912", "PLR0913", "PLR0915"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.lint.pylint]
+max-returns = 6
+max-branches = 12
+max-args = 5
+max-statements = 50
+
+# The most cognitive complexity that complexipy, which check.sh runs, lets a function have.
+[tool.complexipy]
+max-complexity-allowed = 15
+
+[tool.pyrefly]
+# requires-python's oldest, as pyrefly doesn't read it there.
+python-version = "3.9"
+
+[tool.pytest.ini_options]
+# unittest's own pattern, which the names of the tests follow.
+python_files = ["test*.py"]
+norecursedirs = [".*", "__pycache__", "node_modules"]
+addopts = ["-p", "no:cacheprovider"]
+# The mark by which each test case of a plugin names what it supports one level up, which
+# dev/scripts/trace.py reads, as the plugin guide's Test says.
+markers = ["supports(name): the key result, element, or integration case one level up"]
+
+# How much of the E2E runner, of the trace script, and of the double of Claude Code the tests run,
+# as N7 of plugins/rn/domain/best-practices/code/best-practice.md says: every line and branch.
+[tool.coverage.run]
+branch = true
+parallel = true
+include = [
+  "*/dev/scripts/e2e.py",
+  "*/dev/scripts/trace.py",
+  "*/dev/tests/claude_code.py",
+]
+
+[tool.coverage.report]
+fail_under = 100
+show_missing = true
+# A script runs only as `__main__`, so its other branch never runs.
+partial_also = ["if __name__ == .__main__.:"]

@@ -1,0 +1,222 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1480 1240">
+  <title>rn&#x27;s components</title>
+  <style>
+    svg { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, 'Hiragino Sans', 'Noto Sans CJK JP', 'Noto Sans JP', 'Yu Gothic', Meiryo, sans-serif; }
+    .bg { fill: #ffffff; }
+    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .lane { fill: #ddf4ff; stroke: #54aeff; }
+    .store { fill: #fff8c5; stroke: #9a6700; stroke-width: 1.5; }
+    .ext { fill: #eaeef2; stroke: #d0d7de; stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .unit { fill: #ddf4ff; fill-opacity: 0.35; stroke: #0969da; stroke-width: 1.2; }
+    .frame { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    .frame-name { fill: #0969da; font-size: 13px; font-weight: 600; }
+    .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
+    .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
+    .label { fill: #1f2328; font-size: 13px; }
+    .small { font-size: 12px; }
+    .data { fill: #8250df; font-size: 12px; font-style: italic; }
+    .quote { fill: #8250df; font-size: 12px; font-style: italic; }
+    .gets { fill: #1a7f37; font-size: 12px; font-weight: 600; }
+    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .dashed { stroke-dasharray: 5 4; }
+    .head { fill: #59636e; }
+    .hole { fill: #ffffff; stroke: #59636e; stroke-width: 1.5; }
+    .halo { stroke: #ffffff; stroke-width: 7; stroke-linejoin: round; paint-order: stroke; }
+    .mid { text-anchor: middle; }
+    .start { text-anchor: start; }
+    .end { text-anchor: end; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; }
+      .box { fill: #161b22; stroke: #3d444d; }
+      .lane { fill: #0c2d6b; stroke: #4493f8; }
+      .store { fill: #2e2a1a; stroke: #d29922; }
+      .ext { fill: #21262d; stroke: #3d444d; }
+      .unit { fill: #0c2d6b; stroke: #4493f8; }
+      .frame { stroke: #4493f8; }
+      .frame-name { fill: #4493f8; }
+      .name, .label { fill: #f0f6fc; }
+      .kind { fill: #9198a1; }
+      .data { fill: #c297ff; }
+      .quote { fill: #c297ff; }
+      .gets { fill: #3fb950; }
+      .line { stroke: #9198a1; }
+      .head { fill: #9198a1; }
+      .hole { fill: #0d1117; stroke: #9198a1; }
+      .halo { stroke: #0d1117; }
+    }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path class="head" d="M0,0 L10,5 L0,10 z"/>
+    </marker>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1480" height="1240"/>
+  <rect class="frame" x="320" y="240" width="800" height="340" rx="6"/>
+  <text class="frame-name" x="880" y="570">each AI of rn</text>
+  <rect class="ext" x="60" y="80" width="200" height="64" rx="4"/>
+  <text class="name" x="160" y="112" text-anchor="middle">GitHub</text>
+  <text class="kind" x="160" y="129" text-anchor="middle">[git host, gh]</text>
+  <circle class="ext" cx="720" cy="70" r="11"/>
+  <rect class="ext" x="620" y="80" width="200" height="64" rx="22"/>
+  <text class="name" x="720" y="112" text-anchor="middle">user</text>
+  <text class="kind" x="720" y="129" text-anchor="middle">[a person]</text>
+  <rect class="ext" x="375" y="150" width="160" height="64" rx="22"/>
+  <text class="name" x="455" y="182" text-anchor="middle">rn&#x27;s developers</text>
+  <text class="kind" x="455" y="199" text-anchor="middle">[people]</text>
+  <rect class="box" x="1180" y="80" width="200" height="64" rx="0"/>
+  <text class="name" x="1280" y="112" text-anchor="middle">adapters</text>
+  <text class="kind" x="1280" y="129" text-anchor="middle">[scripts · Python 3.9]</text>
+  <rect class="box" x="60" y="260" width="200" height="64" rx="0"/>
+  <text class="name" x="160" y="292" text-anchor="middle">repository</text>
+  <text class="kind" x="160" y="309" text-anchor="middle">[library · Python 3.9]</text>
+  <rect class="box" x="620" y="260" width="200" height="64" rx="0"/>
+  <text class="name" x="720" y="292" text-anchor="middle">orchestrator</text>
+  <text class="kind" x="720" y="309" text-anchor="middle">[skill · part in Markdown]</text>
+  <rect class="box" x="1180" y="260" width="200" height="64" rx="0"/>
+  <text class="name" x="1280" y="292" text-anchor="middle">record.py</text>
+  <text class="kind" x="1280" y="309" text-anchor="middle">[command line · Python 3.9]</text>
+  <rect class="box" x="60" y="480" width="200" height="64" rx="0"/>
+  <text class="name" x="160" y="512" text-anchor="middle">tree.py</text>
+  <text class="kind" x="160" y="529" text-anchor="middle">[command line · Python 3.9]</text>
+  <rect class="box" x="340" y="480" width="200" height="64" rx="0"/>
+  <text class="name" x="440" y="512" text-anchor="middle">tree-keeper</text>
+  <text class="kind" x="440" y="529" text-anchor="middle">[agent · part in Markdown]</text>
+  <rect class="box" x="620" y="480" width="200" height="64" rx="0"/>
+  <text class="name" x="720" y="512" text-anchor="middle">generator</text>
+  <text class="kind" x="720" y="529" text-anchor="middle">[agent · part in Markdown]</text>
+  <rect class="box" x="900" y="480" width="200" height="64" rx="0"/>
+  <text class="name" x="1000" y="512" text-anchor="middle">evaluator</text>
+  <text class="kind" x="1000" y="529" text-anchor="middle">[agent · part in Markdown]</text>
+  <rect class="box" x="1180" y="480" width="200" height="64" rx="0"/>
+  <text class="name" x="1280" y="512" text-anchor="middle">guard</text>
+  <text class="kind" x="1280" y="529" text-anchor="middle">[hook scripts · Lane&#x27;s code]</text>
+  <rect class="box" x="620" y="720" width="200" height="64" rx="0"/>
+  <text class="name" x="720" y="752" text-anchor="middle">throwaway.py</text>
+  <text class="kind" x="720" y="769" text-anchor="middle">[command line · Python 3.9]</text>
+  <rect class="box" x="900" y="720" width="160" height="64" rx="0"/>
+  <text class="name" x="980" y="752" text-anchor="middle">Deliverables</text>
+  <text class="kind" x="980" y="769" text-anchor="middle">[files in rn&#x27;s worktree]</text>
+  <rect class="box" x="1180" y="720" width="200" height="64" rx="0"/>
+  <text class="name" x="1280" y="752" text-anchor="middle">Lanes laid</text>
+  <text class="kind" x="1280" y="769" text-anchor="middle">[file · JSON]</text>
+  <rect class="box" x="60" y="940" width="760" height="64" rx="0"/>
+  <text class="name" x="440" y="972" text-anchor="middle">Run&#x27;s folder</text>
+  <text class="kind" x="440" y="989" text-anchor="middle">[folder · JSON, text]</text>
+  <rect class="box" x="1180" y="940" width="200" height="64" rx="0"/>
+  <text class="name" x="1280" y="972" text-anchor="middle">Best practices</text>
+  <text class="kind" x="1280" y="989" text-anchor="middle">[folders · JSON, Markdown]</text>
+  <path class="line" d="M620,102 L260,102" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="440" y="94" text-anchor="middle">merges the pull request</text>
+  <path class="line" d="M455,150 L455,124 L260,124" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="268" y="118" text-anchor="start">reads each lesson&#x27;s issue [web]</text>
+  <text class="data halo" x="268" y="140" text-anchor="start">Sign-off</text>
+  <path class="line" d="M700,144 L700,260" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="692" y="188" text-anchor="end">types /rn:up, /rn:dn,</text>
+  <text class="label small halo" x="692" y="202" text-anchor="end">/rn:ty, /rn:gm, answers</text>
+  <path class="line" d="M760,260 L760,144" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="768" y="174" text-anchor="start">asks each point that&#x27;s theirs,</text>
+  <text class="label small halo" x="768" y="188" text-anchor="start">and puts up each sign-off</text>
+  <text class="data halo" x="768" y="202" text-anchor="start">Point, Sign-off</text>
+  <path class="line" d="M160,260 L160,144" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="168" y="168" text-anchor="start">pushes, keeps the pull request,</text>
+  <text class="label small halo" x="168" y="182" text-anchor="start">marks it ready, reads its</text>
+  <text class="label small halo" x="168" y="196" text-anchor="start">comments, opens each issue</text>
+  <text class="label small halo" x="168" y="210" text-anchor="start">the user says yes to [git, gh]</text>
+  <path class="line" d="M160,480 L160,324" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="168" y="380" text-anchor="start">runs each git</text>
+  <text class="label small halo" x="168" y="394" text-anchor="start">and gh command</text>
+  <text class="label small halo" x="168" y="408" text-anchor="start">by it [import]</text>
+  <text class="data halo" x="168" y="422" text-anchor="start">Comment, Sign-off</text>
+  <path class="line" d="M620,312 L290,312 L290,496 L260,496" marker-end="url(#arrow)"/>
+  <text class="data halo" x="465" y="304" text-anchor="middle">Cut, Answers, Made, Sign-off, Place, Comment</text>
+  <text class="label small halo" x="465" y="332" text-anchor="middle">makes the run&#x27;s worktree, gets each cut and</text>
+  <text class="label small halo" x="465" y="346" text-anchor="middle">each round&#x27;s Answers and Made, lists the runs</text>
+  <text class="label small halo" x="465" y="360" text-anchor="middle">left, puts up each sign-off, approves or sends</text>
+  <text class="label small halo" x="465" y="374" text-anchor="middle">it back as /rn:ty or /rn:gm loads, pushes,</text>
+  <text class="label small halo" x="465" y="388" text-anchor="middle">commits a pause, gets the comments, marks the</text>
+  <text class="label small halo" x="465" y="402" text-anchor="middle">pull request ready, opens each issue [Bash]</text>
+  <path class="line" d="M380,544 L380,630"/>
+  <path class="line" d="M640,544 L640,630 L210,630 L210,544" marker-end="url(#arrow)"/>
+  <path class="line" d="M920,544 L920,630 L640,630"/>
+  <text class="label small halo" x="425" y="648" text-anchor="middle">the tree-keeper writes the tree and keeps each more,</text>
+  <text class="label small halo" x="425" y="662" text-anchor="middle">and the generator and each evaluator commit each</text>
+  <text class="label small halo" x="425" y="676" text-anchor="middle">step&#x27;s work [Bash]</text>
+  <text class="data halo" x="425" y="690" text-anchor="middle">Design tree, More kept, Place</text>
+  <path class="line" d="M120,544 L120,940" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="128" y="850" text-anchor="start">writes, reads,</text>
+  <text class="label small halo" x="128" y="864" text-anchor="start">cuts, commits</text>
+  <text class="data halo" x="128" y="878" text-anchor="start">Design tree, Sign-off,</text>
+  <text class="data halo" x="128" y="892" text-anchor="start">Try record, Made, Answers,</text>
+  <text class="data halo" x="128" y="906" text-anchor="start">More kept, Place</text>
+  <path class="line" d="M720,324 L720,440"/>
+  <path class="line" d="M440,440 L1000,440"/>
+  <path class="line" d="M440,440 L440,480" marker-end="url(#arrow)"/>
+  <path class="line" d="M720,440 L720,480" marker-end="url(#arrow)"/>
+  <path class="line" d="M1000,440 L1000,480" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="730" y="346" text-anchor="start">starts each role, gets its result, resumes the</text>
+  <text class="label small halo" x="730" y="360" text-anchor="start">tree-keeper or a generator, and stops each</text>
+  <text class="label small halo" x="730" y="374" text-anchor="start">[Agent, SendMessage, TaskStop]</text>
+  <text class="data halo" x="730" y="390" text-anchor="start">Cut, Decision, Deliverable, More kept, Place, Sign-off</text>
+  <path class="line" d="M720,544 L720,720" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="712" y="680" text-anchor="end">tries it [Bash]</text>
+  <text class="data halo" x="712" y="694" text-anchor="end">Try record</text>
+  <path class="line" d="M820,516 L860,516 L860,752 L900,752" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="868" y="670" text-anchor="start">makes</text>
+  <text class="label small halo" x="868" y="684" text-anchor="start">[Write, Edit]</text>
+  <text class="data halo" x="868" y="698" text-anchor="start">Deliverable</text>
+  <path class="line" d="M1000,544 L1000,720" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="1008" y="650" text-anchor="start">reads</text>
+  <text class="data halo" x="1008" y="664" text-anchor="start">Deliverable</text>
+  <path class="line" d="M1080,544 L1080,1080 L400,1080 L400,1004" marker-end="url(#arrow)"/>
+  <path class="line" d="M780,544 L780,600 L1080,600"/>
+  <text class="label small halo" x="740" y="1072" text-anchor="middle">the generator writes what it made, and each evaluator its Answers [Write]</text>
+  <text class="data halo" x="740" y="1096" text-anchor="middle">Made, Answers</text>
+  <path class="line" d="M620,760 L240,760 L240,544" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="430" y="782" text-anchor="middle">keeps each command tried in the</text>
+  <text class="label small halo" x="430" y="796" text-anchor="middle">round&#x27;s Try record by it [import]</text>
+  <text class="data halo" x="430" y="810" text-anchor="middle">Try record</text>
+  <path class="line" d="M1120,302 L1180,302" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="1112" y="288" text-anchor="end">records each step and practice [Bash]</text>
+  <text class="data halo" x="1112" y="320" text-anchor="end">Record</text>
+  <path class="line" d="M1180,272 L1150,272 L1150,46"/>
+  <path class="line" d="M1280,480 L1280,324" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="1288" y="392" text-anchor="start">runs rn&#x27;s check</text>
+  <text class="label small halo" x="1288" y="406" text-anchor="start">at each end [stdio]</text>
+  <text class="data halo" x="1288" y="420" text-anchor="start">Record</text>
+  <path class="line" d="M1180,510 L1120,510" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="1272" y="412" text-anchor="end">holds each call, start,</text>
+  <text class="label small halo" x="1272" y="426" text-anchor="end">and end, and gives each</text>
+  <text class="label small halo" x="1272" y="440" text-anchor="end">start due and where a</text>
+  <text class="label small halo" x="1272" y="454" text-anchor="end">run picks up [hooks]</text>
+  <path class="line" d="M1380,510 L1420,510 L1420,112 L1380,112" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="1412" y="336" text-anchor="end">runs, with the</text>
+  <text class="label small halo" x="1412" y="350" text-anchor="end">words after</text>
+  <text class="label small halo" x="1412" y="364" text-anchor="end">/rn:up [stdio]</text>
+  <path class="line" d="M1280,544 L1280,720" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="1288" y="636" text-anchor="start">reads</text>
+  <path class="line" d="M1280,144 L1280,260" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="1288" y="190" text-anchor="start">gets each result</text>
+  <text class="label small halo" x="1288" y="204" text-anchor="start">kept [import]</text>
+  <text class="data halo" x="1288" y="218" text-anchor="start">Record</text>
+  <path class="line" d="M1200,80 L1200,46 L30,46 L30,512 L60,512" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="600" y="24" text-anchor="middle">the adapters get each Cut, the work of each role that tree.py gave its turn, the runs left, and each Record</text>
+  <text class="label small halo" x="600" y="38" text-anchor="middle">of a run in the order of its starts, and record.py gets the Cut, the Made, the Answers, and the best practice of the role it checks [import]</text>
+  <text class="data halo" x="38" y="340" text-anchor="start">Cut, Answers,</text>
+  <text class="data halo" x="38" y="354" text-anchor="start">Made, Record,</text>
+  <text class="data halo" x="38" y="368" text-anchor="start">Best practice</text>
+  <path class="line" d="M1380,302 L1450,302 L1450,1130 L300,1130 L300,1004" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="870" y="1122" text-anchor="middle">writes and reads each record</text>
+  <text class="data halo" x="870" y="1146" text-anchor="middle">Record</text>
+  <path class="line" d="M1120,560 L1150,560 L1150,972 L1180,972" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="1158" y="840" text-anchor="start">each reads its best practice</text>
+  <text class="data halo" x="1158" y="854" text-anchor="start">Best practice</text>
+  <text class="frame-name" x="30" y="1190">Legend</text>
+  <rect class="box" x="100" y="1176" width="30" height="20"/>
+  <text class="label small" x="140" y="1190" text-anchor="start">a component of rn, or a store of its data</text>
+  <rect class="ext" x="440" y="1176" width="30" height="20" rx="6"/>
+  <text class="label small" x="480" y="1190" text-anchor="start">outside rn; with a head: the product vision&#x27;s role</text>
+  <rect class="frame" x="820" y="1176" width="30" height="20"/>
+  <text class="label small" x="860" y="1190" text-anchor="start">an arrow to or from it: one for each component in it</text>
+  <text class="label small" x="100" y="1216" text-anchor="start">a box: name and [type · technology]. An arrow: what it does [tool]</text>
+  <text class="data" x="560" y="1216">data handed on, named as in the data model</text>
+</svg>

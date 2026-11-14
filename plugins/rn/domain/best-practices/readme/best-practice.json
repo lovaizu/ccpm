@@ -1,0 +1,428 @@
+{
+ "goal": {
+  "what": "A newcomer decides from the README alone whether the product fits their work, and if it does, starts using it.",
+  "critical_success_factors": [
+   {
+    "id": "C1",
+    "what": "The reader knows whether the product fits their work.",
+    "necessary_conditions": [
+     {
+      "id": "N1",
+      "about": "the opening",
+      "what": "Does the opening say what the product is, who it's for, and what it lets them achieve?",
+      "why": "Most readers decide from the opening alone whether to read on, so it lets a newcomer tell within a few sentences whether the product is for them.",
+      "items": [
+       {
+        "at": "decide",
+        "text": "Open the product vision and take from Roles the people the product is for, named by the work they want done, narrowly enough that a reader outside the role can tell it isn't for them, such as `you keep a Python library that others install` in place of `you write Python`.",
+        "trace": {
+         "action": "read",
+         "takes": [
+          "{inputs}"
+         ]
+        }
+       },
+       {
+        "at": "decide",
+        "text": "Take from that role's objective what they achieve with the product, as an end they reach in their own work, not a feature, such as `release without breaking the code of those who use your library` in place of `checks for semantic versioning`."
+       },
+       {
+        "at": "decide",
+        "text": "Take from the concept's one way the one thing the product gives the reader, in words the reader already uses, such as `finds each change in a release that breaks code that calls it`."
+       },
+       {
+        "at": "decide",
+        "text": "Open the product's manifest, such as plugin.json or pyproject.toml, which N3 and N9 take from too.",
+        "trace": {
+         "action": "read",
+         "takes": [
+          "{manifest}"
+         ]
+        }
+       },
+       {
+        "at": "decide",
+        "text": "Name the kind of thing the reader installs, as the manifest shows it, by the word they already use for things of that kind, such as a command-line tool or a Claude Code plugin, so that they have something to compare it with."
+       },
+       {
+        "at": "make",
+        "text": "Write the opening by the template from these, and leave out feature names and internals."
+       },
+       {
+        "at": "make",
+        "text": "Take out each sentence of the opening in turn, and ask whether the rest still says what the product is, who it's for, what they achieve with it, and, where the product isn't ready, what works now. Where it does, delete that sentence."
+       },
+       {
+        "at": "make",
+        "text": "Replace each vague or praising word in the opening, such as powerful or seamless, with what the product does."
+       },
+       {
+        "at": "make",
+        "text": "Read the opening as someone outside the role, such as, for a tool for those who publish libraries, a developer of an app who publishes none. If they couldn't tell that the product isn't for them, name the role's work more narrowly."
+       }
+      ]
+     },
+     {
+      "id": "N2",
+      "about": "Non-goals",
+      "what": "Does the README list what readers might expect the product to do but it doesn't?",
+      "why": "A reader who needs something the product doesn't do finds out before they install it, not after their work depends on it.",
+      "items": [
+       {
+        "at": "decide",
+        "text": "Open the READMEs of two or three products of the kind that the opening names, such as those that the product's issues mention or that a search for the kind finds first, and list what each does that a reader of this product might expect too."
+       },
+       {
+        "at": "decide",
+        "text": "Add what the opening's benefit leads a reader to expect on the way to that end, such as undoing its changes, from a tool that edits files."
+       },
+       {
+        "at": "decide",
+        "text": "Where the product has an issue tracker, add each request it closed without doing, such as one labeled `wontfix`."
+       },
+       {
+        "at": "decide",
+        "text": "For each expectation, find whether the product meets it, in its commands and settings in the manifest and code, or by trying it."
+       },
+       {
+        "at": "decide",
+        "text": "For each expectation it doesn't meet, ask whether a reader who needs it would decide against the product, and keep only those."
+       },
+       {
+        "at": "decide",
+        "text": "For each expectation kept that the product vision neither has the users do or get nor rules out, ask the user `Should <Product> <expectation>?`, and name what each answer does, such as `Should it undo its changes? No lists it in Non-goals; yes adds it to the product vision, and the README says at the top that it doesn't undo them yet.`"
+       },
+       {
+        "at": "decide",
+        "text": "Keep each expectation that the product vision rules out or the user answers no to for Non-goals. Take each that the user answers yes to out of Non-goals, as what doesn't work yet for the opening's status."
+       },
+       {
+        "at": "make",
+        "text": "List each kept expectation as a thing the product doesn't do."
+       },
+       {
+        "at": "make",
+        "text": "Where the product meets the need another way, say so in the same item, such as `doesn't undo its changes: commit before you run it, and git brings them back`."
+       }
+      ]
+     },
+     {
+      "id": "N3",
+      "about": "the opening",
+      "what": "Does the README say at the top where the product isn't ready for use yet?",
+      "why": "A reader who builds on a product that isn't ready finds out before their work depends on it, not after.",
+      "items": [
+       {
+        "at": "decide",
+        "text": "Take the product's version from the manifest and from its releases, such as the tags of its repository: a version below 1.0, or no release, means what it does may still change."
+       },
+       {
+        "at": "decide",
+        "text": "For each objective of the product vision, find the product's test of its role's use toward it, such as an end-to-end test, and check that it passes, or try the use where there's no test."
+       },
+       {
+        "at": "decide",
+        "text": "Where the repository's archived mark or a notice in it says that no one keeps the product up, take that."
+       },
+       {
+        "at": "decide",
+        "text": "Decide that the product is ready where it has a release of 1.0 or later, the use toward each objective works, it meets each expectation that the user said it should, and someone keeps it up. Otherwise, take what works now and what doesn't."
+       },
+       {
+        "at": "make",
+        "text": "Where the product isn't ready, write at the top what works now and what a reader gets who installs it today, such as `In development: it checks a release's functions, not yet its classes.`"
+       }
+      ]
+     },
+     {
+      "id": "N4",
+      "about": "License",
+      "what": "Does the README name the license and link its full text?",
+      "why": "Some readers rule a product in or out by its license alone, so they find it at once and recognize it.",
+      "items": [
+       {
+        "at": "decide",
+        "text": "Open the product's license file, such as LICENSE in the product's folder, and read which license it holds.",
+        "trace": {
+         "action": "read",
+         "takes": [
+          "{license}"
+         ]
+        }
+       },
+       {
+        "at": "decide",
+        "text": "Name the license by its identifier in the [Software Package Data Exchange (SPDX) License List](https://spdx.org/licenses/), which readers and their tools recognize, such as MIT or Apache-2.0. Where the text matches no license on the list, ask the user."
+       },
+       {
+        "at": "decide",
+        "text": "Search the product's folder for the license files and notices of others' work, such as a copied library's own LICENSE, and list each work with its license's identifier and the path of its file."
+       },
+       {
+        "at": "make",
+        "text": "Write the License section by the template: the product's license, linked by its file's path from the README's folder, and below it each work of others with its license."
+       },
+       {
+        "at": "make",
+        "text": "Follow each link from the README's folder, and check that it opens the license file that the README names beside it.",
+        "trace": {
+         "action": "read",
+         "takes": [
+          "{license}"
+         ]
+        }
+       }
+      ]
+     },
+     {
+      "id": "N5",
+      "about": "the whole",
+      "what": "Does the README answer each question in the order a reader comes to ask it?",
+      "why": "Readers come with questions in a typical order and leave when the next answer isn't where they look, so each answer stands where its question comes, and each reader stops once they have what they came for.",
+      "items": [
+       {
+        "at": "make",
+        "text": "Keep the sections in the template's order, which answers the questions in the order readers ask them: what the product is and whether it's for them, what it doesn't do, how to install it, what it gives in work like theirs, how it gives it, and where to go next."
+       },
+       {
+        "at": "make",
+        "text": "Within each section, put first what every reader of it needs, and after it what only some need, such as the one install command before the steps for another platform."
+       },
+       {
+        "at": "make",
+        "text": "Read the README from the top as a newcomer in the product vision's role, and after each section, write down the question you have next.",
+        "trace": {
+         "action": "read",
+         "takes": [
+          "{deliverable}"
+         ]
+        }
+       },
+       {
+        "at": "make",
+        "text": "Where a section answers a question that a newcomer asks only later, move that answer to the section of that question."
+       },
+       {
+        "at": "make",
+        "text": "Where the next section doesn't answer the question you wrote, add the answer at its start, or, where a newcomer needs it neither to decide nor to start, link the document that holds it from Documentation."
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "C2",
+    "what": "The reader learns what they get from the product in work like their own.",
+    "necessary_conditions": [
+     {
+      "id": "N6",
+      "about": "Walkthrough",
+      "what": "Does the walkthrough show a real run on typical work that delivers what the product vision's key results promise, in a form the reader can see?",
+      "why": "A reader trusts a benefit they've seen happen in work like their own more than one they only read about, so the walkthrough shows it happen.",
+      "items": [
+       {
+        "at": "decide",
+        "text": "Open the product vision and take as the use the objective of the role that the opening names, or, where the role has several, the one whose use most readers come for, by the issues they open where the product has a tracker, and else the first."
+       },
+       {
+        "at": "decide",
+        "text": "Choose the task from the work that readers bring to that use: the issues and questions they open, where the product has a tracker, or else the role's job in the product vision. Take one like most of theirs, small enough to show from start to end, and whose result shows the benefit the opening promises, such as, for a release checker, one release of a small library with one change that breaks its callers."
+       },
+       {
+        "at": "decide",
+        "text": "For each key result of that objective, decide what in the run shows it. For how well, show the result in use as its users would use it, such as the caller's test that fails on the broken release. For how fast, show what the reader spent, such as the questions they answered."
+       },
+       {
+        "at": "decide",
+        "text": "Decide the cut: keep every exchange from what the reader gives to the result they keep, and cut only output that doesn't bear on the result, such as progress lines."
+       },
+       {
+        "at": "make",
+        "text": "Take a recorded run where one ran the same task on the version that the manifest names, such as an end-to-end test's record, as it shows what readers get today. Otherwise run the task with the product from a fresh start, such as in a throwaway copy of the repository with an empty home folder. Keep each input and output as it came."
+       },
+       {
+        "at": "make",
+        "text": "Write each exchange from that run in the form the reader meets it: text as a code block, and a screen as an image from the run, kept in images/."
+       },
+       {
+        "at": "make",
+        "text": "Write the result first, so that the reader knows where the run goes."
+       },
+       {
+        "at": "make",
+        "text": "Check that a newcomer can say, after reading, what the product would give them on their own work."
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "C3",
+    "what": "The reader understands why the product can give it, and trusts that it does.",
+    "necessary_conditions": [
+     {
+      "id": "N7",
+      "about": "How it works",
+      "what": "Does How it works state first, in the reader's words, the one way that the product vision's concept puts first, and build the rest of its explanation from it?",
+      "why": "A reader trusts a product they can explain to themselves, and they explain it from one idea, not from a list of parts.",
+      "items": [
+       {
+        "at": "decide",
+        "text": "Open the product vision's Concept and take the one way it states first, which is what the product values most."
+       },
+       {
+        "at": "make",
+        "text": "Say it in the reader's words, as what they see the product do in their work, in one sentence, such as `It copies each file the moment you save it` in place of `continuous data protection`."
+       },
+       {
+        "at": "make",
+        "text": "Put that sentence first in How it works, before the figure and the answers, so that each part that N8 adds after it reads as following from it."
+       },
+       {
+        "at": "make",
+        "text": "Check that a newcomer who reads only that sentence can say the one way back in their own words."
+       }
+      ]
+     },
+     {
+      "id": "N8",
+      "about": "How it works",
+      "what": "Does How it works answer the problems and doubts that bring readers to the product, each by the part of the product that answers it and how that part follows from the one way?",
+      "why": "A reader tries a product when what it gives them for their problem outweighs their doubts about it, so How it works answers both by a mechanism the reader can follow and trust.",
+      "items": [
+       {
+        "at": "decide",
+        "text": "Open the product vision, and for each objective, write the problem its role has in that work today, in their words, such as, for a backup tool, `my backups fail without warning`."
+       },
+       {
+        "at": "decide",
+        "text": "For each key result, write the doubt a reader would raise about whether the product gives it, in their words, such as `does it work with my network drive?`"
+       },
+       {
+        "at": "decide",
+        "text": "Where the product has an issue tracker or discussions, add each problem or doubt that someone raised there before they used the product."
+       },
+       {
+        "at": "decide",
+        "text": "Keep only those whose answer would change whether the reader tries the product, and drop each that the walkthrough already settles."
+       },
+       {
+        "at": "decide",
+        "text": "For each one left, take from the concept the idea that answers it."
+       },
+       {
+        "at": "decide",
+        "text": "Where the concept has none, tell what's missing: an idea that matters to the users, where the answer would change what they do or get, or only the way to make it work, where they'd do and get the same."
+       },
+       {
+        "at": "decide",
+        "text": "Where an idea that matters to the users is missing, ask the user to add it to the product vision."
+       },
+       {
+        "at": "decide",
+        "text": "Where only the way to make it work is missing, hand it back as a requirement that the architecture meets, such as with rn's `asks`."
+       },
+       {
+        "at": "make",
+        "text": "Put those parts together as one mechanism below the one way, and say for each part how it follows from that way."
+       },
+       {
+        "at": "make",
+        "text": "Show the mechanism in one figure, with each problem and doubt beside the part that answers it, and what the reader gets from that part."
+       },
+       {
+        "at": "make",
+        "text": "Label each part in the reader's words."
+       },
+       {
+        "at": "make",
+        "text": "Where a part has a name of the product's own, explain the part in a few words."
+       },
+       {
+        "at": "make",
+        "text": "Check that a newcomer can say back how the product gives them what it promises, and why they can trust that it does."
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "C4",
+    "what": "The reader installs the product and starts using it without help.",
+    "necessary_conditions": [
+     {
+      "id": "N9",
+      "about": "Requirements, Installation",
+      "what": "Can a reader with nothing set up install the product by the README alone, and see that it works?",
+      "why": "A reader who can't install the product never gets to use it, and the author's own setup hides what a newcomer lacks.",
+      "items": [
+       {
+        "at": "decide",
+        "text": "List each requirement and install command that the manifest and the code show, such as `engines` in package.json or `requires-python` in pyproject.toml, never from memory."
+       },
+       {
+        "at": "decide",
+        "text": "For each install command, list what it needs on a machine with nothing on it, such as the tool it calls or an account it signs in to, and add each to the requirements."
+       },
+       {
+        "at": "decide",
+        "text": "For each requirement, choose a command whose output shows the reader they have it, such as `git --version`."
+       },
+       {
+        "at": "make",
+        "text": "Write each install step as a command the reader can copy."
+       },
+       {
+        "at": "make",
+        "text": "End the steps with a sign the reader can see that the product works, such as the version it prints or its first command answering."
+       },
+       {
+        "at": "make",
+        "text": "Run each check and install command exactly as the README writes it, on a machine with nothing the product needs, such as a throwaway copy with an empty home folder. Where a step fails or needs something the README doesn't name, add it, and start again.",
+        "trace": {
+         "action": "run",
+         "takes": [
+          "{install}"
+         ]
+        }
+       }
+      ]
+     },
+     {
+      "id": "N10",
+      "about": "Documentation",
+      "what": "Does the README link where to go for fuller use and for help?",
+      "why": "The README stays short only if each later need has its own place to go, so a reader who has started finds where to go for fuller use and for help.",
+      "items": [
+       {
+        "at": "decide",
+        "text": "List what the product has for a reader who has started: the documents in its folder, such as a docs folder or a changelog, and the place for help that its manifest names, such as `bugs.url` in package.json or the issues of `repository` in plugin.json."
+       },
+       {
+        "at": "decide",
+        "text": "Keep each that serves a need the README leaves, such as fuller use, reference, help, or the changes in each version."
+       },
+       {
+        "at": "decide",
+        "text": "Where help has no place, ask the user where readers go for it."
+       },
+       {
+        "at": "make",
+        "text": "Give one link for each, by its path from the README's folder or by its URL, with whom it's for and what it gives."
+       },
+       {
+        "at": "make",
+        "text": "Open each link from the README's folder, and check that it opens the page it names."
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "template": "template.md",
+ "inputs": [
+  "product-vision"
+ ],
+ "preconditions": []
+}

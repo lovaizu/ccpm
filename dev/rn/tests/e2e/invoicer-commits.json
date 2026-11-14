@@ -1,0 +1,20 @@
+[
+  {
+    "message": "invoicer 1.4.0: Line, subtotal, and total with tax",
+    "files": {
+      "invoicer/__init__.py": "\"\"\"invoicer: totals the lines of an invoice, with its tax.\"\"\"\nfrom invoicer.lines import Line\nfrom invoicer.totals import subtotal, total\n\n__all__ = [\"Line\", \"subtotal\", \"total\"]\n",
+      "invoicer/lines.py": "\"\"\"One line of an invoice.\"\"\"\nfrom decimal import Decimal\n\n\nclass Line:\n    def __init__(self, description, amount, quantity=1):\n        if amount < 0:\n            raise ValueError(\"an amount is never negative\")\n        self.description = description\n        self.amount = amount\n        self.quantity = quantity\n\n    def value(self):\n        return self.amount * self.quantity\n\n    def __repr__(self):\n        return f\"Line({self.description!r}, {self.amount!r}, {self.quantity!r})\"\n\n\ndef parse(text):\n    \"\"\"A Line from `description;amount;quantity`, as the teams' CSV exports write it.\"\"\"\n    description, amount, quantity = text.split(\";\")\n    return Line(description, Decimal(amount), int(quantity))\n",
+      "invoicer/tax.py": "\"\"\"The tax on an amount, rounded to the cent.\"\"\"\nfrom decimal import ROUND_HALF_UP, Decimal\n\nCENT = Decimal(\"0.01\")\n\n\ndef tax(amount, rate):\n    return (amount * rate).quantize(CENT, rounding=ROUND_HALF_UP)\n\n\ndef with_tax(amount, rate):\n    return amount + tax(amount, rate)\n",
+      "invoicer/totals.py": "\"\"\"The totals of an invoice.\"\"\"\nfrom decimal import Decimal\n\nfrom invoicer.tax import with_tax\n\n\ndef subtotal(lines):\n    return sum((line.value() for line in lines), Decimal(\"0\"))\n\n\ndef total(lines, rate):\n    return with_tax(subtotal(lines), rate)\n",
+      "README.md": "# invoicer\n\ninvoicer totals the lines of an invoice, with its tax.\n\n```python\nfrom decimal import Decimal\nfrom invoicer import Line, total\n\nlines = [Line(\"Hosting\", Decimal(\"40.00\")), Line(\"Support\", Decimal(\"15.00\"), 2)]\nprint(total(lines, Decimal(\"0.19\")))  # 83.30\n```\n",
+      "pyproject.toml": "[project]\nname = \"invoicer\"\nversion = \"1.4.0\"\nrequires-python = \">=3.9\"\n",
+      "tests/test_totals.py": "from decimal import Decimal\n\nfrom invoicer import Line, total\n\n\ndef test_total_adds_the_tax():\n    lines = [Line(\"Hosting\", Decimal(\"40.00\")), Line(\"Support\", Decimal(\"15.00\"), 2)]\n    assert total(lines, Decimal(\"0.19\")) == Decimal(\"83.30\")\n"
+    }
+  },
+  {
+    "message": "Format amounts as the invoices print them",
+    "files": {
+      "invoicer/format.py": "\"\"\"An amount as the invoices print it.\"\"\"\n\n\ndef amount(value, currency=\"EUR\"):\n    return f\"{value:,.2f} {currency}\"\n\n\ndef line(item, currency=\"EUR\"):\n    return f\"{item.description}: {amount(item.value(), currency)}\"\n"
+    }
+  }
+]

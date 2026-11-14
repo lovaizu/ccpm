@@ -1,0 +1,304 @@
+{
+ "goal": {
+  "what": "Maintainers, people or AI agents, change what the code does and know that every behavior its specification asks for still holds, and whoever runs the code can fix a wrong input from outside.",
+  "critical_success_factors": [
+   {
+    "id": "C1",
+    "what": "The maintainer finds the one place where a change belongs.",
+    "necessary_conditions": [
+     {
+      "id": "N1",
+      "about": "Module opening",
+      "what": "Does each module say, where the maintainer first meets it, the one thing it alone decides?",
+      "why": "A maintainer with one behavior to change finds the one module to open from what the modules say at their top, without reading a body, and changes the code in that one place.",
+      "items": [
+       {
+        "at": "decide",
+        "text": "Open the architecture at the part's line in Components, the principles, and each sequence that the part takes a step in, and open the part's skeleton and its unit cases in the test code. The unit cases, each with its Given, When, and Then, are the code's specification: each behavior of the code answers one of them, and the architecture's lines say only why a case asks what it does.",
+        "trace": {
+         "action": "read",
+         "takes": [
+          "{inputs}"
+         ]
+        }
+       },
+       {
+        "at": "decide",
+        "text": "List the decisions that the specification leaves to the code: for each unit case, ask what the code could do in more than one way while the case still passes, such as the layout of a file that only the part reads, or the order in which it tries two sources. Each such choice is a decision left to the code, and a choice that a case, a principle, or the skeleton's interface already fixes isn't."
+       },
+       {
+        "at": "decide",
+        "text": "Give each decision to one module. Keep the skeleton's modules, which hold the decisions that the architecture gave the part, and add a module inside the part only for a decision that could change while the rest of the part stays, such as a file's layout that may change apart from the rules that read it. Keep two decisions in one module where a change of one always changes the other."
+       },
+       {
+        "at": "decide",
+        "text": "Where a decision has variants that the cases call for now, such as two remotes that each take their own commands, give each variant its own module behind one interface, and name that shape by its design pattern, such as Adapter, in the module that chooses among them, since the name tells the maintainer where a new variant goes. Make no variant that no case calls for, as N3 says."
+       },
+       {
+        "at": "make",
+        "text": "Write at the top of each module, such as in its docstring, the sentence that the note of Module opening in the template asks for, naming what the module decides, not the steps it takes, such as `The layout of a record on disk.` Where the sentence joins two decisions that change for different reasons, split the module."
+       },
+       {
+        "at": "make",
+        "text": "Once every module states its decision, take a change that a unit case might come to ask for, such as a new field in what the part keeps, read only the modules' first sentences, and name the one module to open. Where you name none or more than one, move the decision or rewrite the sentence, and repeat with a change of another kind until each change names one module."
+       }
+      ]
+     },
+     {
+      "id": "N2",
+      "about": "Interface",
+      "what": "Does each name that a module offers state everything a caller needs to call it without reading its body?",
+      "why": "A caller who learns from the interface alone how to call a name calls it right without reading its body, and the body can then change without breaking any caller.",
+      "items": [
+       {
+        "at": "decide",
+        "text": "List, for each module, the names that another module or a unit case calls, from the skeleton and the cases, and offer only those. Mark every other name as internal in the language's way, such as a leading underscore in Python, since a name that nothing outside calls is one the maintainer can change freely."
+       },
+       {
+        "at": "make",
+        "text": "Give each offered name the types it takes and gives, such as in its signature where the language allows."
+       },
+       {
+        "at": "make",
+        "text": "Write beside each offered name, such as in its doc comment, what the note of Interface in the template lists, leaving out what the types already say, such as `Gives the entries in the order they were added, or [] where the file is empty. Raises Wrong, naming the line, where a line isn't an entry.`"
+       },
+       {
+        "at": "make",
+        "text": "Once the unit tests pass, take each offered name and each test that calls it, and check that each value the test passes and each result it asserts is one that the signature and the doc comment state. Where a test relies on what only the body shows, such as the order of what comes back or a refusal, add it to the doc comment."
+       }
+      ]
+     },
+     {
+      "id": "N3",
+      "about": "Interface, Body",
+      "what": "Does each behavior of the code trace to a case of its specification, which is what the architecture asks of its part?",
+      "why": "Every behavior that no case asks for is code the maintainer must carry and keep working, while no test tells them whether it still holds.",
+      "items": [
+       {
+        "at": "decide",
+        "text": "For each option, mode, parameter, and branch that you plan for a module, name the unit case that calls for it, and drop it from the plan where none does, such as a `--dry-run` flag that no case runs, or a second file format that no case reads."
+       },
+       {
+        "at": "make",
+        "text": "Write the body one test at a time, once you see the test fail as N5.8 says: under the interface that the test calls, write the least code that makes it pass, such as `return []` for a test of an empty file before any code that reads an entry, and leave each other behavior to the test of its own case."
+       },
+       {
+        "at": "make",
+        "text": "Run the tests once you write the code for a test, and take the next failing test only once all of them pass. Where a test that passed before fails, mend the body before you go on.",
+        "trace": {
+         "action": "run",
+         "takes": [
+          "{tests}"
+         ]
+        }
+       },
+       {
+        "at": "make",
+        "text": "Once the tests pass, read each module's body and remove each option, mode, parameter, and branch that no case calls for, such as a fallback for an input that the interface already refuses."
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "C2",
+    "what": "The tests show whether every behavior still holds.",
+    "necessary_conditions": [
+     {
+      "id": "N4",
+      "about": "Manifest, Tests",
+      "what": "Do the tests pass in any order and on every run, on a fresh machine set up from the code's setup alone?",
+      "why": "When a test fails, the maintainer finds the cause in the code, never in the machine or in the order the tests ran, and so can trust each failure.",
+      "items": [
+       {
+        "at": "make",
+        "text": "Write the code's setup, such as pyproject.toml with its lock file, as the note of Manifest in the template says."
+       },
+       {
+        "at": "make",
+        "text": "Have each test make each file, folder, and setting it uses, such as in a temporary folder of its own, and remove them when it ends, so that no test reads what another test or the machine left."
+       },
+       {
+        "at": "make",
+        "text": "For each real tool that the tests run, such as git, read its documentation for what it reads and starts on its own beyond the call, such as the machine's settings or maintenance in the background, and turn each off in the test's own settings, such as by pointing `GIT_CONFIG_GLOBAL` at an empty file and setting `gc.auto` to 0."
+       },
+       {
+        "at": "make",
+        "text": "Once the tests pass, run them at least three times, each in a new shuffled order whose seed the run prints, such as by the test runner's option to shuffle. Where a run fails, run its seed again to see the failure, and have the failing test set up itself what it took from another test, as N4.2 says."
+       },
+       {
+        "at": "make",
+        "text": "Last, set the code up in a fresh container or a throwaway copy with an empty home, by the setup's commands alone, and run the tests there. Add to the setup each thing that the setup or a test found missing, such as a runtime or a tool, and run again until the tests pass."
+       }
+      ]
+     },
+     {
+      "id": "N5",
+      "about": "Tests",
+      "what": "Does each case of the specification, its edges and refusals included, have one test whose name says the case?",
+      "why": "A maintainer whose test fails knows from its name which case of the specification broke, and so what to mend.",
+      "items": [
+       {
+        "at": "decide",
+        "text": "For each module that N1.3 adds inside the part, design its cases before its code, each as a test's name with its Given, When, and Then, naming the unit case of the part that it supports: one for the usual input, one for each class of input that its interface treats alike, refusals among them, and one at each end of a class on an ordered scale, as [the architecture best practice](../architecture/best-practice.md) divides the inputs of a part into its unit cases. For example, `test_reads_back_an_entry_whose_text_holds_a_newline` supports `test_add_then_check_accepts_the_record`."
+       },
+       {
+        "at": "decide",
+        "text": "Where the code seems to need a case that supports no unit case of the part, such as a mode that the part's tests never reach, end with `asks` to take it back to the architecture, and don't write it, since it tests what no element asks for."
+       },
+       {
+        "at": "make",
+        "text": "Write one test for each case that N5.1 designs, in the test code beside the part's unit tests, in the form that the note of Tests in the template gives. Where its name needs `and`, split it into two tests."
+       },
+       {
+        "at": "make",
+        "text": "Take each value that a test expects from its case's Then, never from what the code gives when run, since a value copied from the code passes whatever the code does."
+       },
+       {
+        "at": "make",
+        "text": "Keep in each test's own body the values that its case turns on, and put in a shared helper only the setup that many tests share, such as building the object under test, so that a reader grasps the test without opening another."
+       },
+       {
+        "at": "make",
+        "text": "Keep loops and branches out of each test, since a test that loops over inputs hides which one failed: write one test for each input instead, or a parametrized test that names each."
+       },
+       {
+        "at": "make",
+        "text": "Give an assertion a failure message that names the part of the case it checks, wherever the test's name and the values compared don't already say it, such as `the refused line is named`."
+       },
+       {
+        "at": "make",
+        "text": "Run each test before you write the code it tests, and see it fail for the reason its Then names, not for a fault of the test itself, such as a misspelled name.",
+        "trace": {
+         "action": "run",
+         "takes": [
+          "{tests}"
+         ]
+        }
+       }
+      ]
+     },
+     {
+      "id": "N6",
+      "about": "Interface, Tests",
+      "what": "Do the tests call the code only as its callers do, through its interfaces?",
+      "why": "A test that calls the code as its callers do fails only where a caller would break, so the maintainer can improve a body without rewriting a test.",
+      "items": [
+       {
+        "at": "make",
+        "text": "Use in each test the real modules that run fast and wholly inside the test, such as a file in the test's own temporary folder, and a test double only for what's slow or outside the test, such as a network service or a model, as Test strategy sets for the unit level."
+       },
+       {
+        "at": "make",
+        "text": "Read each test and ask whether it reaches anything that a caller can't, such as an internal name, a field of an object, or a file that the part keeps for itself. Where it does, rewrite it to call the interface, such as `store.entries()` in place of `store._lines`."
+       },
+       {
+        "at": "make",
+        "text": "Once the tests pass, change a body without changing what its interface says, such as by renaming an internal helper, and run the tests. Rewrite each test that fails so that it calls the code through the interface."
+       }
+      ]
+     },
+     {
+      "id": "N7",
+      "about": "Body, Tests",
+      "what": "Does breaking any behavior make a test fail?",
+      "why": "The maintainer knows that every behavior still holds only where breaking any of them makes a test fail, so a test is worth the faults it catches.",
+      "items": [
+       {
+        "at": "make",
+        "text": "Have each test assert the whole result that its case's Then names, such as the full list that a call gives, not only that the call returned or that the list isn't empty."
+       },
+       {
+        "at": "make",
+        "text": "Once the tests pass, run them with line and branch coverage measured by the tool that Test strategy names, such as coverage.py, and list each line and branch that no test runs.",
+        "trace": {
+         "action": "run",
+         "takes": [
+          "{coverage}"
+         ]
+        }
+       },
+       {
+        "at": "make",
+        "text": "For each line or branch that no test runs, name the case that calls for it. Where none does, remove it, as N3 says. Where a case that the tests name does, make that case's test reach it through the interface. Where only a case that no test names would, take that case back to whoever designs the cases, such as with `asks`, and write no test for it."
+       },
+       {
+        "at": "make",
+        "text": "For each interface that Test strategy names for property-based tests, write one property that holds for every input its contract allows, with a generator of those inputs, such as that reading back what was written gives it again."
+       },
+       {
+        "at": "make",
+        "text": "For each input on which a property-based test finds the code fails, ask whether the contract must take it. Where it needn't, narrow what the interface takes, and refuse the input as N8 says. Where it must, fix the code, keep the input as a test of the case it falls in, and report why the design of the cases missed it."
+       },
+       {
+        "at": "make",
+        "text": "Where the round takes CI's report on the code's last push, from the mutation testing that Test strategy runs on each push apart from the work, open the log of that run, such as its job's log on the pull request, and list each mutant that it reports as surviving, with its file, its line, and the change it made."
+       },
+       {
+        "at": "make",
+        "text": "For each mutant that N7.6 lists, name the case that the changed code serves. Where none does, remove the code or make it simpler, so that no change of it passes unseen."
+       },
+       {
+        "at": "make",
+        "text": "Where a mutant that N7.6 lists can't change what the code does, such as `<` turned into `<=` where the two values are never equal, mark it beside the code as one that changes nothing, with why."
+       },
+       {
+        "at": "make",
+        "text": "Where a mutant that N7.6 lists breaks a case that the tests already name, make that case's test assert more closely so that the mutant fails it, and report why the design of the cases missed it, so that whoever designs them mends the cause. Add no case for a mutant, since such a case comes from the code that exists, not from what the part must do."
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "C3",
+    "what": "Whoever runs the code can fix a wrong input from outside.",
+    "necessary_conditions": [
+     {
+      "id": "N8",
+      "about": "Body",
+      "what": "Does the code refuse a wrong input from outside before it acts, with a message from which whoever ran it can fix the input?",
+      "why": "Whoever ran the code fixes a wrong input from the message alone, and never finds their data half changed by a run that went on with it.",
+      "items": [
+       {
+        "at": "decide",
+        "text": "List each input that comes into the part from outside, from its interface and its unit cases, such as arguments, environment variables, files it reads, settings, and the replies of other programs, with the place in the code where each first comes in."
+       },
+       {
+        "at": "make",
+        "text": "In the body, at the place where each input comes in, and before the code acts on it, read it into the form that the inside of the code works with, checking its type, its format, and whether its value makes sense for the task, such as reading a JSON line into an object whose fields hold only allowed values, so that no code inside meets the raw text."
+       },
+       {
+        "at": "make",
+        "text": "Refuse a value that the code can't read in exactly one way, instead of guessing it, such as a date written `03/04`, or a missing field that the specification gives no default for."
+       },
+       {
+        "at": "make",
+        "text": "Catch an error only where the code can tell whoever ran it what to fix, such as a file they named that doesn't exist, and let every other error stop the program with its trace, never catching all errors at once, such as with a bare `except`."
+       },
+       {
+        "at": "make",
+        "text": "Write each message so that whoever ran the code learns which program refused, what was wrong, where, and what the code accepts, such as `tally: plan.json, line 4: round must be a whole number from 1, not \"one\"`."
+       },
+       {
+        "at": "make",
+        "text": "Write each check so that it runs however the code is run, such as an `if` that raises, never an `assert`, which `python -O` drops."
+       },
+       {
+        "at": "make",
+        "text": "Last, run the code as its users run it, such as from the command line, with each wrong input that a refusal case names, and read each message alone: check that you can fix the input from it without opening the code."
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "template": "template.md",
+ "inputs": [
+  "architecture"
+ ],
+ "preconditions": [
+  "architecture"
+ ]
+}

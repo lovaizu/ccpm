@@ -1,0 +1,22 @@
+{
+  "hooks": {
+    "UserPromptExpansion": [
+      {"hooks": [{"type": "command", "command": "python3", "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/lane/hook.py"], "onFailure": "block"}]}
+    ],
+    "UserPromptSubmit": [
+      {"hooks": [{"type": "command", "command": "python3", "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/lane/hook.py"], "onFailure": "block"}]}
+    ],
+    "PreToolUse": [
+      {"hooks": [{"type": "command", "command": "python3", "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/lane/hook.py"], "onFailure": "block"}]}
+    ],
+    "PostToolUse": [
+      {"hooks": [{"type": "command", "command": "python3", "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/lane/hook.py"], "onFailure": "block"}]}
+    ],
+    "Stop": [
+      {"hooks": [{"type": "command", "command": "python3", "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/lane/hook.py"]}]}
+    ],
+    "SubagentStop": [
+      {"hooks": [{"type": "command", "command": "python3", "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/lane/hook.py"]}]}
+    ]
+  }
+}

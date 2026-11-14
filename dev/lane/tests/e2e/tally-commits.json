@@ -1,0 +1,28 @@
+[
+  {
+    "message": "tally 0.1.0: tally FILE prints the number of words in FILE",
+    "files": {
+      "tally.py": "\"\"\"tally: counts the words of a file.\"\"\"\nimport sys\n\n\ndef main(argv):\n    with open(argv[1], encoding=\"utf-8\") as f:\n        print(len(f.read().split(\" \")))\n\n\nif __name__ == \"__main__\":\n    main(sys.argv)\n",
+      "README.md": "# tally\n\n`tally FILE` prints the number of words in FILE.\n",
+      "CHANGELOG.md": "# Changelog\n\n## [0.1.0]\n\n### Added\n\n- `tally FILE` prints the number of words in FILE.\n"
+    }
+  },
+  {
+    "message": "Count words split by tabs and newlines apart",
+    "files": {
+      "tally.py": "\"\"\"tally: counts the words of a file.\"\"\"\nimport sys\n\n\ndef main(argv):\n    with open(argv[1], encoding=\"utf-8\") as f:\n        print(len(f.read().split()))\n\n\nif __name__ == \"__main__\":\n    main(sys.argv)\n"
+    }
+  },
+  {
+    "message": "Print the file's name after its count",
+    "files": {
+      "tally.py": "\"\"\"tally: counts the words of a file.\"\"\"\nimport sys\n\n\ndef main(argv):\n    with open(argv[1], encoding=\"utf-8\") as f:\n        print(len(f.read().split()), argv[1])\n\n\nif __name__ == \"__main__\":\n    main(sys.argv)\n"
+    }
+  },
+  {
+    "message": "Add --lines and --chars",
+    "files": {
+      "tally.py": "\"\"\"tally: counts the words, lines, or characters of a file.\"\"\"\nimport sys\n\n\ndef count(text, how):\n    if how == \"--lines\":\n        return len(text.splitlines())\n    if how == \"--chars\":\n        return len(text)\n    return len(text.split())\n\n\ndef main(argv):\n    how = argv[1] if argv[1].startswith(\"--\") else \"\"\n    name = argv[-1]\n    with open(name, encoding=\"utf-8\") as f:\n        print(count(f.read(), how), name)\n\n\nif __name__ == \"__main__\":\n    main(sys.argv)\n"
+    }
+  }
+]

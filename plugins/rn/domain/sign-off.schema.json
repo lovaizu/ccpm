@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "a sign-off",
+  "description": "What is put up for the user's /rn:ty or /rn:gm: the plan, a deliverable, or a lesson for rn's repository, which the orchestrator puts up by tree.py sign-off, or the pull request handed over, which tree.py ready puts up. tree.py keeps it in the run's sign-offs.json until the user's command decides it.",
+  "type": "object",
+  "required": [
+    "of",
+    "can_do",
+    "decisions",
+    "words"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "of": {
+      "description": "What the sign-off is of: `plan`, the path of a deliverable of the design tree, `lesson`, or `pull request`, which only tree.py ready puts up.",
+      "type": "string"
+    },
+    "can_do": {
+      "description": "What the deliverable's people can do with it, or, for the plan, the goal it serves. Empty for a lesson.",
+      "type": "string"
+    },
+    "decisions": {
+      "description": "Each decision taken without asking the user, in a line, so that the user sees what rn settled for them: each decision under it in the design tree that the user didn't settle, and, for a deliverable, each point that what its generator made in its last round names as settled.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "words": {
+      "description": "For a lesson, its words, exactly as the issue on rn's repository will hold them, as no AI may send what the user didn't read. Empty otherwise.",
+      "type": "string"
+    }
+  }
+}

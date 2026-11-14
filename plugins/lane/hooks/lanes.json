@@ -1,0 +1,11 @@
+{
+  "plugin": "lane",
+  "skills": ["up"],
+  "roles": ["up"],
+  "lanes": [],
+  "routes": [],
+  "text_adapter": "",
+  "results_adapter": "",
+  "laid": {"sentences": [], "hooks": []},
+  "proposes": true
+}

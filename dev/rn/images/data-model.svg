@@ -1,0 +1,183 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 960">
+  <title>rn&#x27;s data</title>
+  <style>
+    svg { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, 'Hiragino Sans', 'Noto Sans CJK JP', 'Noto Sans JP', 'Yu Gothic', Meiryo, sans-serif; }
+    .bg { fill: #ffffff; }
+    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .lane { fill: #ddf4ff; stroke: #54aeff; }
+    .store { fill: #fff8c5; stroke: #9a6700; stroke-width: 1.5; }
+    .ext { fill: #eaeef2; stroke: #d0d7de; stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .unit { fill: #ddf4ff; fill-opacity: 0.35; stroke: #0969da; stroke-width: 1.2; }
+    .frame { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    .frame-name { fill: #0969da; font-size: 13px; font-weight: 600; }
+    .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
+    .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
+    .label { fill: #1f2328; font-size: 13px; }
+    .small { font-size: 12px; }
+    .data { fill: #8250df; font-size: 12px; font-style: italic; }
+    .quote { fill: #8250df; font-size: 12px; font-style: italic; }
+    .gets { fill: #1a7f37; font-size: 12px; font-weight: 600; }
+    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .dashed { stroke-dasharray: 5 4; }
+    .head { fill: #59636e; }
+    .hole { fill: #ffffff; stroke: #59636e; stroke-width: 1.5; }
+    .halo { stroke: #ffffff; stroke-width: 7; stroke-linejoin: round; paint-order: stroke; }
+    .mid { text-anchor: middle; }
+    .start { text-anchor: start; }
+    .end { text-anchor: end; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; }
+      .box { fill: #161b22; stroke: #3d444d; }
+      .lane { fill: #0c2d6b; stroke: #4493f8; }
+      .store { fill: #2e2a1a; stroke: #d29922; }
+      .ext { fill: #21262d; stroke: #3d444d; }
+      .unit { fill: #0c2d6b; stroke: #4493f8; }
+      .frame { stroke: #4493f8; }
+      .frame-name { fill: #4493f8; }
+      .name, .label { fill: #f0f6fc; }
+      .kind { fill: #9198a1; }
+      .data { fill: #c297ff; }
+      .quote { fill: #c297ff; }
+      .gets { fill: #3fb950; }
+      .line { stroke: #9198a1; }
+      .head { fill: #9198a1; }
+      .hole { fill: #0d1117; stroke: #9198a1; }
+      .halo { stroke: #0d1117; }
+    }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path class="head" d="M0,0 L10,5 L0,10 z"/>
+    </marker>
+    <marker id="diamond" viewBox="0 0 16 10" refX="16" refY="5" markerWidth="14" markerHeight="9" orient="auto-start-reverse">
+      <path class="head" d="M0,5 L8,0 L16,5 L8,10 z"/>
+    </marker>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1500" height="960"/>
+  <rect class="frame" x="20" y="70" width="230" height="130" rx="6"/>
+  <text class="frame-name" x="32" y="188">a start&#x27;s record</text>
+  <rect class="box" x="40" y="100" width="170" height="48" rx="0"/>
+  <text class="name" x="125.0" y="129.0" text-anchor="middle">Record</text>
+  <path class="line" d="M210,124 L340,124"/>
+  <text class="label small halo" x="275.0" y="116" text-anchor="middle">records</text>
+  <text class="label small" x="216" y="140" text-anchor="start">1</text>
+  <text class="label small" x="334" y="140" text-anchor="end">0..1</text>
+  <g transform="translate(300,0)">
+  <rect class="frame" x="20" y="70" width="240" height="420" rx="6"/>
+  <text class="frame-name" x="32" y="478">the orchestrator&#x27;s handoffs</text>
+  <rect class="frame" x="310" y="70" width="500" height="320" rx="6"/>
+  <text class="frame-name" x="322" y="378">the design tree</text>
+  <rect class="frame" x="940" y="70" width="220" height="320" rx="6"/>
+  <text class="frame-name" x="952" y="378">the best practices</text>
+  <rect class="frame" x="310" y="610" width="850" height="260" rx="6"/>
+  <text class="frame-name" x="322" y="858">a round&#x27;s records</text>
+  <rect class="box" x="40" y="100" width="180" height="48" rx="0"/>
+  <text class="name" x="130.0" y="129.0" text-anchor="middle">Cut</text>
+  <rect class="box" x="40" y="300" width="180" height="48" rx="0"/>
+  <text class="name" x="130.0" y="329.0" text-anchor="middle">Point</text>
+  <rect class="box" x="330" y="100" width="180" height="48" rx="0"/>
+  <text class="name" x="420.0" y="129.0" text-anchor="middle">Design tree</text>
+  <rect class="box" x="610" y="100" width="180" height="48" rx="0"/>
+  <text class="name" x="700.0" y="129.0" text-anchor="middle">Deliverable</text>
+  <rect class="box" x="330" y="300" width="180" height="48" rx="0"/>
+  <text class="name" x="420.0" y="329.0" text-anchor="middle">Decision</text>
+  <rect class="box" x="960" y="100" width="180" height="48" rx="0"/>
+  <text class="name" x="1050.0" y="129.0" text-anchor="middle">Best practice</text>
+  <rect class="box" x="960" y="300" width="180" height="48" rx="0"/>
+  <text class="name" x="1050.0" y="329.0" text-anchor="middle">Necessary condition</text>
+  <rect class="box" x="610" y="660" width="180" height="48" rx="0"/>
+  <text class="name" x="700.0" y="689.0" text-anchor="middle">Round</text>
+  <rect class="box" x="330" y="660" width="180" height="48" rx="0"/>
+  <text class="name" x="420.0" y="689.0" text-anchor="middle">Try record</text>
+  <rect class="box" x="960" y="660" width="180" height="48" rx="0"/>
+  <text class="name" x="1050.0" y="689.0" text-anchor="middle">Answers</text>
+  <rect class="box" x="610" y="800" width="180" height="48" rx="0"/>
+  <text class="name" x="700.0" y="829.0" text-anchor="middle">More kept</text>
+  <path class="line" d="M220,124 L330,124"/>
+  <text class="label small halo" x="275.0" y="116" text-anchor="middle">cut from</text>
+  <text class="label small" x="226" y="140" text-anchor="start">0..*</text>
+  <text class="label small" x="324" y="140" text-anchor="end">1</text>
+  <path class="line" d="M220,324 L330,324"/>
+  <text class="label small halo" x="275.0" y="316" text-anchor="middle">asks for</text>
+  <text class="label small" x="226" y="340" text-anchor="start">0..1</text>
+  <text class="label small" x="324" y="340" text-anchor="end">0..1</text>
+  <path class="line" d="M510,124 L610,124" marker-start="url(#diamond)"/>
+  <text class="label small halo" x="560.0" y="116" text-anchor="middle">holds</text>
+  <text class="label small" x="604" y="140" text-anchor="end">1..*</text>
+  <path class="line" d="M450,148 L450,300" marker-start="url(#diamond)"/>
+  <text class="label small halo" x="458" y="270" text-anchor="start">holds, as its goal</text>
+  <text class="label small" x="458" y="294" text-anchor="start">1</text>
+  <path class="line" d="M640,148 L640,324 L510,324" marker-start="url(#diamond)"/>
+  <text class="label small halo" x="648" y="240" text-anchor="start">holds</text>
+  <text class="label small" x="516" y="340" text-anchor="start">0..*</text>
+  <path class="line" d="M790,124 L960,124"/>
+  <text class="label small halo" x="875.0" y="116" text-anchor="middle">follows its kind&#x27;s</text>
+  <text class="label small" x="814" y="140" text-anchor="start">0..*</text>
+  <text class="label small" x="954" y="140" text-anchor="end">1</text>
+  <path class="line" d="M770,148 L770,324 L960,324"/>
+  <text class="label small halo" x="818" y="316" text-anchor="start">meets each of</text>
+  <text class="label small" x="936" y="340" text-anchor="end">1..*</text>
+  <path class="line" d="M1050,148 L1050,300" marker-start="url(#diamond)"/>
+  <text class="label small halo" x="1058" y="230" text-anchor="start">holds</text>
+  <text class="label small" x="1058" y="294" text-anchor="start">1..*</text>
+  <path class="line" d="M730,148 L730,660"/>
+  <text class="label small halo" x="738" y="600" text-anchor="start">takes rounds</text>
+  <text class="label small" x="738" y="654" text-anchor="start">1..*</text>
+  <path class="line" d="M610,684 L510,684" marker-start="url(#diamond)"/>
+  <text class="label small halo" x="560.0" y="676" text-anchor="middle">holds</text>
+  <text class="label small" x="516" y="700" text-anchor="start">0..1</text>
+  <path class="line" d="M790,684 L960,684" marker-start="url(#diamond)"/>
+  <text class="label small halo" x="875.0" y="676" text-anchor="middle">holds</text>
+  <text class="label small" x="954" y="700" text-anchor="end">1..*</text>
+  <path class="line" d="M700,708 L700,800" marker-start="url(#diamond)"/>
+  <text class="label small halo" x="708" y="760" text-anchor="start">keeps, for the next round</text>
+  <text class="label small" x="708" y="794" text-anchor="start">0..*</text>
+  <path class="line" d="M1100,660 L1100,348"/>
+  <text class="label small halo" x="1108" y="500" text-anchor="start">answers</text>
+  <text class="label small" x="1108" y="654" text-anchor="start">0..*</text>
+  <text class="label small" x="1108" y="364" text-anchor="start">1..*</text>
+  <path class="line" d="M420,348 L420,420 L1000,420 L1000,348"/>
+  <text class="label small halo" x="700" y="412" text-anchor="middle">answers</text>
+  <text class="label small" x="428" y="364" text-anchor="start">0..*</text>
+  <text class="label small" x="1008" y="364" text-anchor="start">0..1</text>
+  <path class="line" d="M670,100 L670,40 L750,40 L750,100"/>
+  <text class="label small halo" x="710" y="32" text-anchor="middle">takes from, or waits for</text>
+  <text class="label small" x="664" y="94" text-anchor="end">0..*</text>
+  <text class="label small" x="756" y="94" text-anchor="start">0..*</text>
+  <rect class="box" x="960" y="760" width="180" height="48" rx="0"/>
+  <text class="name" x="1050.0" y="789.0" text-anchor="middle">Made</text>
+  <path class="line" d="M790,700 L880,700 L880,784 L960,784" marker-start="url(#diamond)"/>
+  <text class="label small halo" x="888" y="748" text-anchor="start">holds</text>
+  <text class="label small" x="954" y="800" text-anchor="end">0..1</text>
+  <path class="line" d="M790,840 L1170,840 L1170,336 L1140,336"/>
+  <text class="label small halo" x="875" y="832" text-anchor="middle">falls short of</text>
+  <text class="label small" x="796" y="862" text-anchor="start">0..*</text>
+  <text class="label small" x="1146" y="330" text-anchor="start">1</text>
+  <rect class="box" x="40" y="200" width="180" height="48" rx="0"/>
+  <text class="name" x="130.0" y="229.0" text-anchor="middle">Sign-off</text>
+  <path class="line" d="M220,218 L360,218 L360,148"/>
+  <text class="label small halo" x="310" y="210" text-anchor="middle">of the plan</text>
+  <text class="label small" x="226" y="210" text-anchor="start">0..*</text>
+  <text class="label small" x="368" y="166" text-anchor="start">0..1</text>
+  <path class="line" d="M220,236 L620,236 L620,148"/>
+  <text class="label small halo" x="520" y="228" text-anchor="middle">of a deliverable</text>
+  <text class="label small" x="226" y="252" text-anchor="start">0..*</text>
+  <text class="label small" x="614" y="166" text-anchor="end">0..1</text>
+  <rect class="box" x="330" y="760" width="180" height="48" rx="0"/>
+  <text class="name" x="420.0" y="789.0" text-anchor="middle">Place</text>
+  <path class="line" d="M650,708 L650,784 L510,784" marker-start="url(#diamond)"/>
+  <text class="label small halo" x="580" y="776" text-anchor="middle">keeps, at each step</text>
+  <text class="label small" x="516" y="800" text-anchor="start">0..*</text>
+  <rect class="box" x="40" y="400" width="180" height="48" rx="0"/>
+  <text class="name" x="130.0" y="429.0" text-anchor="middle">Comment</text>
+  <path class="line" d="M50,400 L50,374 L30,374 L30,224 L40,224"/>
+  <text class="label small halo" x="38" y="278" text-anchor="start">sent back with</text>
+  <text class="label small" x="34" y="216" text-anchor="end">1</text>
+  <text class="label small" x="56" y="394" text-anchor="start">0..*</text>
+  </g>
+  <text class="frame-name" x="30" y="910">Legend</text>
+  <text class="label small" x="100" y="910" text-anchor="start">a number at a line&#x27;s end: how many of the data at that end the other joins: 1 one, 0..1 none or one, 1..* one or more, 0..* any number</text>
+  <path class="line" d="M100,936 L130,936" marker-start="url(#diamond)"/>
+  <text class="label small" x="140" y="940" text-anchor="start">at the whole, which holds its parts</text>
+  <text class="label small" x="420" y="940" text-anchor="start">a frame: a part or a store of rn, and the data it keeps or passes</text>
+</svg>

@@ -1,3 +1,0 @@
-wip: pause at plan
-
-● plan ── plan settled, its proposal not yet drafted → paused at plan

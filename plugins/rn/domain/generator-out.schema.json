@@ -1,0 +1,107 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "generator's out",
+  "description": "What the generator gives as it ends: its result, its last message, and, at `done`, what it made. generator.md names this file.",
+  "type": "object",
+  "required": [
+    "result",
+    "reply"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "description": "The fixed word the generator gives as it ends, by running python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py generator <result>: done once the deliverable meets each necessary condition by its own check, asks where the design leaves a point open, and lacks where something outside the work stops it, such as a missing tool. The routes go on by this word.",
+      "enum": [
+        "done",
+        "asks",
+        "lacks"
+      ]
+    },
+    "reply": {
+      "description": "Its last message. At asks, the point open, with the generator's recommendation; at lacks, what stops the work, and what clears it; at done, what the deliverable now does for its people.",
+      "type": "string"
+    },
+    "made": {
+      "description": "What the generator made, in the file that its run value made names, which rn's check reads at done: each decision of its cut, by its `about`, with where the deliverable carries it out, each `more` kept in its cut, with where the deliverable now makes it good, and each point it settled without asking, with its ground, which the orchestrator lists on the deliverable's sign-off.",
+      "type": "object",
+      "required": [
+        "decisions",
+        "more",
+        "settled"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "decisions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "about",
+              "where"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "about": {
+                "description": "The decision's about, as its cut gives it.",
+                "type": "string"
+              },
+              "where": {
+                "description": "The place in the deliverable that carries it out, such as a path and a line.",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "more": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "condition",
+              "where"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "condition": {
+                "description": "The necessary condition of the `more`, by its ID, as its cut gives it.",
+                "type": "string"
+              },
+              "where": {
+                "description": "The place in the deliverable that now gives its people what its `good_when` says.",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "settled": {
+          "description": "Each point that lies within the deliverable alone, which its cut, the goal, and its best practice settle one way, and whose answer changes no decision of its cut and nothing of another deliverable, so that the generator settled it without asking.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "point",
+              "decided",
+              "ground"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "point": {
+                "description": "The point, as a question the deliverable answers.",
+                "type": "string"
+              },
+              "decided": {
+                "description": "What the generator settled for it, in a line the user reads on the sign-off.",
+                "type": "string"
+              },
+              "ground": {
+                "description": "What settles it one way: the line of the cut, the goal, the best practice, or the repository that it rests on.",
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
