@@ -238,7 +238,7 @@
         "plugins/rn/domain/best-practices/architecture",
         "dev/scripts/trace.py"
       ],
-      "status": "doing",
+      "status": "done",
       "necessary_conditions": [
         {
           "id": "N1",
@@ -351,7 +351,7 @@
         },
         {
           "id": "N9",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
@@ -447,7 +447,7 @@
       "necessary_conditions": [
         {
           "id": "N1",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
@@ -514,7 +514,7 @@
         },
         {
           "id": "N7",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
@@ -572,6 +572,11 @@
               "about": "A prompt's evaluation",
               "decided": "Test strategy takes every type of a prompt's evaluation that test-types.md lists for up's prompt, each with its level and its criterion, as the architecture best practice's node decides that the parts take every type, so a proposal that holds a rule the steps don't support, or lays without the caller's act, shows before it reaches users",
               "by": "reasoning"
+            },
+            {
+              "about": "Plugins laid by an earlier Lane",
+              "decided": "the newest lay.py reads the laid set that each released Lane wrote, and takes that Lane's sentences out of the steps, and Test strategy keeps the laid set of each release to test it on, as the README promises that /lane:up brings a plugin to the new version after an update, and a plugin left with a stale or doubled rule raises KR1.1",
+              "by": "reasoning"
             }
           ]
         },
@@ -593,12 +598,12 @@
         },
         {
           "id": "N15",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N16",
-          "good": true,
+          "good": false,
           "decisions": [
             {
               "about": "Where the list of Claude Code's states lies",
