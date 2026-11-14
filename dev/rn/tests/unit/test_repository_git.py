@@ -1,4 +1,4 @@
-"""The unit cases of tree/repository.py, the git commands that tree.py runs, through
+"""The unit cases of repository/git.py, the git commands that tree.py runs by it, through
 `make_worktree`, `worktrees`, `commit`, and `push`, on a git repository of the test's own with a
 bare repository as its remote."""
 
@@ -8,10 +8,10 @@ import os
 from typing import Any
 
 import pytest
+from fault import Missing, Wrong
+from repository.git import commit, make_worktree, push, worktrees
 from rn_example import git, write
 from rn_parts import environ, repository
-from tree.fault import Missing, Wrong
-from tree.repository import commit, make_worktree, push, worktrees
 
 pytestmark = pytest.mark.xfail(strict=True, reason="rn's parts are skeletons, their bodies unbuilt")
 

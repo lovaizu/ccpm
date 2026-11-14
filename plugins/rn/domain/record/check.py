@@ -7,9 +7,10 @@ from __future__ import annotations
 
 from tree.cut import Cut
 from tree.practices import BestPractice
-from tree.record import Record
 from tree.rounds import Answers
-from tree.steps import Step
+
+from record.form import Record
+from record.steps import Step
 
 
 def record_faults(

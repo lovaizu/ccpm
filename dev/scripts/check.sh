@@ -55,11 +55,12 @@ held design pyrefly check --search-path plugins/lane/hooks/lane --search-path pl
   dev/lane/tests/*/*.py
 
 # rn's parts and its test cases, in the same way. plugins/rn/scripts stays off the search path, as
-# its tree.py and throwaway.py share their names with the modules of plugins/rn/domain they run.
+# its tree.py, record.py, and throwaway.py share their names with the code of plugins/rn/domain
+# they run.
 held design pyrefly check --search-path plugins/rn/domain --search-path plugins/rn/hooks/adapters \
   --search-path dev/tests --search-path dev/rn/tests --search-path dev/rn/tests/unit \
   --search-path dev/rn/tests/gh --search-path dev/rn/tests/e2e --search-path dev/rn/tests/prompts \
-  plugins/rn/domain/*.py plugins/rn/domain/tree/*.py plugins/rn/hooks/adapters/*.py \
+  plugins/rn/domain/*.py plugins/rn/domain/*/*.py plugins/rn/hooks/adapters/*.py \
   plugins/rn/scripts/*.py dev/rn/tests/*.py dev/rn/tests/*/*.py
 
 # Each kind's best practice lies in a folder of its own in rn, as `best-practice.json`. Its template

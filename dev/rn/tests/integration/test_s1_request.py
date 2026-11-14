@@ -286,7 +286,7 @@ def test_a_lack_the_people_fall_short_by_changes_its_decision_and_reaches_the_ne
     assert rate in held["decisions"] and held["lacks"] == [{"condition": "N2", "lack": lack}]
 
 
-@pytest.mark.supports("S1", "guard", "generator")
+@pytest.mark.supports("S1", "guard", "generator", "record.py", "Record")
 def test_the_guard_holds_a_generators_end_whose_record_lacks_a_step(
     conv: Conversation, repo: Repo, run: Run
 ):

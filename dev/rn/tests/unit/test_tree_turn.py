@@ -1,5 +1,5 @@
-"""The unit cases of tree/turn.py, each deliverable whose turn has come, through `due`, `marked`,
-and `waiting_work`. Whether a deliverable is due turns on a combination of conditions, so the
+"""The unit cases of tree/turn.py, each deliverable whose turn has come, through `due` and
+`marked`. Whether a deliverable is due turns on a combination of conditions, so the
 cases take one for each combination that can occur, as decision table testing does."""
 
 from __future__ import annotations
@@ -17,9 +17,9 @@ from rn_parts import (
     typed,
     walkthrough,
 )
-from tree.design import DOING, Decision
+from tree.design import DOING
 from tree.sign_offs import SIGNED, SignOff
-from tree.turn import due, marked, waiting_work
+from tree.turn import due, marked
 
 pytestmark = pytest.mark.xfail(strict=True, reason="rn's parts are skeletons, their bodies unbuilt")
 
@@ -106,20 +106,3 @@ def test_marked_with_none_due_leaves_the_tree_as_it_was():
     When the tree is marked
     Then it's the same tree, with no path marked"""
     assert marked(walkthrough(), PLAN_WAITING) == (walkthrough(), ())
-
-
-@pytest.mark.supports("test_a_second_evaluator_of_the_same_group_isnt_due_beside_the_first")
-def test_waiting_work_leaves_out_the_deliverable_a_role_running_works_on():
-    """Given the hints and the typed marker both doing, and a role running on the hints
-    When the work that waits is asked for
-    Then it's the typed marker alone"""
-    tree = walkthrough(doing(hints(ANSWERED)), doing(typed(Decision("x", "y", "maker"))))
-    assert waiting_work(tree, (HINTS,)) == (TYPED,)
-
-
-@pytest.mark.supports("test_the_guard_names_the_generators_start_with_the_text_the_adapter_gives")
-def test_waiting_work_with_nothing_running_is_each_deliverable_doing():
-    """Given the hints doing and the typed marker open
-    When the work that waits is asked for, with nothing running
-    Then it's the hints"""
-    assert waiting_work(walkthrough(doing(hints(ANSWERED)), typed()), ()) == (HINTS,)

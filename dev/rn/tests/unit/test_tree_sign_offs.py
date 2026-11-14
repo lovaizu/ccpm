@@ -6,8 +6,8 @@ from __future__ import annotations
 from typing import Any
 
 import pytest
+from fault import Wrong
 from rn_example import CAN_DO, DECIMAL, HINTS, LESSON
-from tree.fault import Wrong
 from tree.sign_offs import (
     LESSON as OF_LESSON,
 )

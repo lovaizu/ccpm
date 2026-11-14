@@ -1,11 +1,12 @@
-"""Decides how tree.py says what stopped a command: a fault of the input that whoever ran it can
-mend, a thing outside the work that's missing, or a check that couldn't run."""
+"""Decides how each of rn's commands, tree.py and record.py, says what stopped it, as repository
+raises it to tree.py too: a fault of the input that whoever ran it can mend, a thing outside the
+work that's missing, or a check that couldn't run."""
 
 from __future__ import annotations
 
 
 class Wrong(Exception):
-    """An input from outside that tree.py refuses, such as a file out of its form, said so that
+    """An input from outside that a command refuses, such as a file out of its form, said so that
     whoever ran the command can mend it: which file or argument, what's wrong, and what it takes.
     The command gives 1."""
 

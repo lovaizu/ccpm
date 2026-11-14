@@ -23,7 +23,7 @@ the run proposed.
 
 Your record is `.rn/<run>/records/orchestrator.json`. Record each step of the command's and of
 these once its result holds, and each practice of a best practice as you carry it out, by
-`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py record <the record> <the command, or orchestrator, or the best practice> <the step's number, or the practice's ID> '<what it left or gave>'`.
+`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add <the record> <the command, or orchestrator, or the best practice> <the step's number, or the practice's ID> '<what it left or gave>'`.
 The guard ends each of your turns in a run only once rn's check accepts the record.
 
 ## Steps

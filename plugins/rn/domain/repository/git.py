@@ -1,5 +1,6 @@
-"""Decides each git command that tree.py runs on the user's repository: a run's worktree and
-branch made from the checkout's HEAD, each commit of the run's work, and each push of its branch."""
+"""Decides each git command that repository runs for tree.py on the user's repository, and how it
+reads what git prints: a run's worktree and branch made from the checkout's HEAD, each worktree that
+git lists, each commit of the run's work, and each push of its branch."""
 
 from __future__ import annotations
 

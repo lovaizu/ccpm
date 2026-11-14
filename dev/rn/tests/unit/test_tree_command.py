@@ -43,7 +43,7 @@ def repo(tmp_path: Any) -> Repo:
 
 
 @pytest.mark.parametrize(
-    "argv", [[], ["start"], ["begin"], ["cut", "x"], ["record", "r", "generator", "1"], ["check"]]
+    "argv", [[], ["start"], ["begin"], ["cut", "x"], ["record", "r", "generator", "1", "Read."]]
 )
 @pytest.mark.supports(
     "test_up_with_a_request_makes_the_runs_worktree_on_its_branch_with_its_folder"
@@ -192,26 +192,3 @@ def test_ready_with_a_deliverable_open_gives_1_naming_it(repo: Repo):
     repo.run("write", run, path, "The plan.")
     code, _, err = repo.run("ready", run)
     assert code == 1 and HINTS in err
-
-
-@pytest.mark.supports("test_record_refuses_an_id_that_is_neither_a_step_nor_a_practice")
-def test_record_gives_0_and_1_by_whether_the_entry_is_in_its_form(repo: Repo):
-    """Given the walkthrough's run
-    When `tree.py record` adds step 1, and then `step-one`
-    Then the first gives 0, and the second 1"""
-    run = repo.begin()
-    record = os.path.join(run, "records", "tree-keeper-1.json")
-    assert repo.run("record", record, "tree-keeper", "1", "Read.")[0] == 0
-    assert repo.run("record", record, "tree-keeper", "step-one", "Read.")[0] == 1
-
-
-@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
-def test_check_gives_1_with_each_fault_and_2_where_it_cant_check(repo: Repo):
-    """Given the walkthrough's run, the tree-keeper's cut, and its record holding no step
-    When `tree.py check tree-keeper done <cut>` runs, and then with a cut that isn't there
-    Then the first gives 1 naming step 1, and the second 2"""
-    run = repo.begin()
-    cut = json.loads(repo.run("cut", run, "tree-keeper")[1])["cut"]
-    code, _, err = repo.run("check", "tree-keeper", "done", cut)
-    assert code == 1 and "step 1" in err
-    assert repo.run("check", "tree-keeper", "done", "nowhere.json")[0] == 2

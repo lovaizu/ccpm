@@ -1,5 +1,5 @@
-"""The unit cases of tree/steps.py, how tree.py reads the steps of one of rn's prompts, through
-`read` and `of_role`, on parts that each test writes."""
+"""The unit cases of record/steps.py, how record.py reads the steps of one of rn's prompts,
+through `read` and `of_role`, on parts that each test writes."""
 
 from __future__ import annotations
 
@@ -7,10 +7,10 @@ import os
 from typing import Any
 
 import pytest
+from fault import Wrong
+from record.steps import Step, of_role, read
 from rn_example import RN, write
-from tree.fault import Wrong
 from tree.practices import DECIDE, MAKE
-from tree.steps import Step, of_role, read
 
 pytestmark = pytest.mark.xfail(strict=True, reason="rn's parts are skeletons, their bodies unbuilt")
 

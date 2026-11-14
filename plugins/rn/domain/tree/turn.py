@@ -1,6 +1,6 @@
 """Decides each deliverable whose turn has come to be doing: each one open that rests on no open
-point and on no plan or deliverable not yet signed off, and which of those doing start side by side
-beside the work that runs."""
+point and on no plan or deliverable not yet signed off. Which work of a role waits for a start
+beside the starts that run is the adapter's, as Lane gives each start that runs only to it."""
 
 from __future__ import annotations
 
@@ -19,10 +19,3 @@ def marked(tree: DesignTree, sign_offs: tuple[SignOff, ...]) -> tuple[DesignTree
     """The tree with each deliverable whose turn has come marked doing, and the path of each one
     marked."""
     raise NotImplementedError("turn.marked")
-
-
-def waiting_work(tree: DesignTree, running: tuple[str, ...]) -> tuple[str, ...]:
-    """The path of each deliverable doing that no work that runs holds, given the path of each
-    deliverable that a role running works on, in the order of the tree, so that those start side
-    by side."""
-    raise NotImplementedError("turn.waiting_work")

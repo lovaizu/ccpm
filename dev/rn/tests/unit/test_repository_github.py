@@ -1,6 +1,6 @@
-"""The unit cases of tree/github.py, the gh commands that tree.py runs, through `logged_in`,
-`pull_request`, `open_draft`, `comments`, `mark_ready`, and `open_issue`, with the double of gh,
-whose results come from gh's recorded runs and manual."""
+"""The unit cases of repository/github.py, the gh commands that tree.py runs by it, through
+`logged_in`, `pull_request`, `open_draft`, `comments`, `mark_ready`, and `open_issue`, with the
+double of gh, whose results come from gh's recorded runs and manual."""
 
 from __future__ import annotations
 
@@ -8,10 +8,8 @@ import json
 from typing import Any
 
 import pytest
-from rn_example import LESSON, write
-from rn_parts import environ
-from tree.fault import Missing
-from tree.github import (
+from fault import Missing
+from repository.github import (
     RN_REPOSITORY,
     Comment,
     PullRequest,
@@ -22,6 +20,8 @@ from tree.github import (
     open_issue,
     pull_request,
 )
+from rn_example import LESSON, write
+from rn_parts import environ
 
 pytestmark = pytest.mark.xfail(strict=True, reason="rn's parts are skeletons, their bodies unbuilt")
 

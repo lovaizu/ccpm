@@ -9,15 +9,15 @@ import os
 from typing import Any
 
 import pytest
+from fault import Wrong
 from kept_results import kept
 from kept_results import main as kept_main
+from record.form import Entry, add, keep_result
 from rn_example import HINTS, TYPED
 from rn_parts import ANSWERED, NAME, PLAN_SIGNED, doing, hints, typed, walkthrough
 from start_text import StartText, start_text
 from start_text import main as text_main
 from tree import design, sign_offs
-from tree.fault import Wrong
-from tree.record import Entry, add, keep_result
 
 pytestmark = pytest.mark.xfail(strict=True, reason="rn's parts are skeletons, their bodies unbuilt")
 

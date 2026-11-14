@@ -9,6 +9,7 @@ import os
 from typing import Any
 
 import pytest
+from fault import Wrong
 from rn_example import GOAL, HINTS, POINT, TYPED
 from rn_parts import ANSWERED, OPEN_POINT, done, hints, schema_tree, typed, walkthrough
 from tree.design import (
@@ -22,7 +23,6 @@ from tree.design import (
     points,
     save,
 )
-from tree.fault import Wrong
 
 pytestmark = pytest.mark.xfail(strict=True, reason="rn's parts are skeletons, their bodies unbuilt")
 

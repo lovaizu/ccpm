@@ -47,19 +47,27 @@ What each decides alone:
   each role's result or send it back, which lacks the people fall short by, whether the whole pull
   request holds together, and what to propose at Done.
 - tree-keeper\
-  How each decision of the orchestrator's goes into the design tree, which nodes a change touches,
-  and the plan drafted again at each turn's end.
+  How each decision of the orchestrator's goes into the design tree, and whether each node that the
+  change touches still agrees with it.
 - generator\
   The deliverable, and each small point that the purpose and the best practice settle one way.
 - evaluator\
-  Where the deliverable meets each necessary condition of its group for its people, or what would make it good.
+  Where the deliverable meets each necessary condition of its group for its people, and, where it
+  doesn't, what they still lack.
 - tree.py\
-  The tree's form and each deliverable whose turn has come to be doing, which is each one that rests
-  on no open point and on no plan or deliverable not yet signed off, each role's cut and the
-  deliverables that start side by side, the run's worktree, the runs left and where each stopped, each
-  commit, the pull request and the user's comments on it, the issue of each lesson that the user
-  signs off, and each role's record and whether it holds each step and practice, which is rn's
-  check.
+  The tree's form, which nodes a change touches, and each deliverable whose turn has come to be
+  doing, which is each one that rests on no open point and on no plan or deliverable not yet signed
+  off, each role's cut, what waits for the user's sign-off and what they signed off, the run's
+  name, worktree, and branch, the runs left and where each stopped, and when the run's work reaches
+  its branch and its pull request: each commit, each push, the user's comments since a sign-off,
+  the pull request marked ready, and the issue of each lesson that the user signs off.
+- repository\
+  Each git and gh command that tree.py runs, and how it reads what they print: the worktree, each
+  commit and push, the draft pull request, its comments, marking it ready, and the issue.
+- record.py\
+  A record's form, and rn's check: whether a role's record holds each step of its part and each
+  practice of its best practice where the step takes it, and whether its result names each item of
+  each list it carries.
 - throwaway.py\
   Where a deliverable's commands run.
 - guard\
@@ -67,7 +75,9 @@ What each decides alone:
   throwaway.py, and whether the run passes a sign-off only after the user's `/rn:ty`, by the lanes
   that rn lays in [Lane](../lane/architecture.md).
 - adapters\
-  How rn's best practices and design tree reach the guard in the form Lane reads.
+  How the Cut of a role's start, and the result that each record kept, read in the form Lane reads,
+  and which work of each role waits for a start beside the starts that run, as
+  [Lane's adapter](../lane/architecture.md#data-model) decides it.
 
 The choices made, and why:
 
@@ -82,6 +92,18 @@ The choices made, and why:
   didn't sign off, which keeps KR1.1 low, and no work waits that rests on neither, which keeps KR1.2
   short. The cost: each point waits for the tree-keeper to write it into the design tree before the
   user sees it.
+- A tree-keeper that writes the design tree over the orchestrator writing it\
+  The orchestrator checks each change to the tree against the design tree best practice as a
+  change that another made, since a writer who checks their own change reads what they meant, not
+  what they wrote, so fewer nodes that still disagree with a change reach a generator, which keeps
+  KR1.1 low. The cost: each decision waits for a resume of the tree-keeper before the work that
+  rests on it starts, which adds to KR1.2.
+- One evaluator for each group of necessary conditions over one evaluator for all of them\
+  Each evaluator judges one group in a context of its own, so what it found on one group doesn't
+  lead its answer on another, which keeps KR1.1 low, and the evaluators run side by side, so a round
+  takes about as long as one evaluator's reading, which keeps KR1.2 short. The cost: each evaluator
+  reads the whole deliverable, so a round spends one reading for each group, and the orchestrator
+  joins a lack that two groups each name in part.
 
 ## Data model
 
@@ -101,6 +123,10 @@ The choices made, and why:
 - Lack kept\
   A lack an evaluator named that the orchestrator judged the people fall short by, which the next
   round's generator gets.
+- Record\
+  What one start of a role, or the orchestrator in a run, carried out: each step and practice in the
+  order taken, and the result that rn's check accepted. A Try record is another thing: the commands
+  that a generator tried in a throwaway copy.
 
 ## Principles
 
@@ -196,6 +222,8 @@ sequenceDiagram
   participant G as generator
   participant W as throwaway.py
   participant E as evaluator
+  participant GD as guard
+  participant R as record.py
   U->>O: /rn:up with what they want
   O->>T: makes the run's worktree
   O->>O: enters it
@@ -206,13 +234,16 @@ sequenceDiagram
   O->>U: the goal, to confirm (Point)
   U->>O: answers
   O->>K: resumes it, with the goal and the plan (Decision)
-  K->>T: writes them, checks each node they touch, and commits
+  K->>T: writes them, and commits (Design tree)
+  T-->>K: what changed, and each node they touch
+  K->>K: checks that each node touched agrees with them
   K-->>O: what changed, and each node checked
   O->>O: checks it against the design tree best practice
   Note over U,O: The orchestrator settles each point, as S2 draws, and puts up the plan, as S3 draws.
   loop each deliverable whose turn has come, as it rests on no open point and on nothing not signed off
     O->>G: starts it (Cut, Lack kept)
     G->>G: makes the deliverable from the design, and checks it by the best practice
+    G->>R: records each step and practice as it takes it (Record)
     G->>T: commits its work at the end of each step (Place)
     G->>W: tries it (Try record)
     alt the design leaves a point open
@@ -224,8 +255,14 @@ sequenceDiagram
       U->>O: clears it
       O->>G: resumes it
     else done
-      Note over G,T: As each role ends, and each turn of the orchestrator's, the guard runs tree.py check of its record.
-      G-->>O: done
+      G->>GD: ends, with done
+      GD->>R: checks its record and its result (Record)
+      R-->>GD: each step, practice, or item they lack, or none, keeping the result in the record
+      opt they lack one
+        GD-->>G: holds its end, with what they lack
+        Note over G,R: The generator carries out what they lack, and ends again. The guard holds each role's end, and each turn's end of the orchestrator's, in the same way.
+      end
+      GD-->>O: done
       O->>O: checks it against the cut and the best practice
       alt it falls short
         O->>G: sends it back, with the ground
@@ -268,8 +305,10 @@ sequenceDiagram
     else the purpose or a best practice settles it
       O->>O: settles it
     end
-    O->>K: the decision, with its ground (Decision)
-    K->>T: writes it, checks the path up and each node touched, and commits it with each deliverable whose turn has come marked doing
+    O->>K: the decision, with its ground, and the plan where the decision changes it (Decision)
+    K->>T: writes it, and commits it with each deliverable whose turn has come marked doing (Design tree)
+    T-->>K: what changed, each node it touches, and each deliverable marked doing
+    K->>K: checks that the path up and each node touched agree with it
     K-->>O: what changed, each node checked, and each deliverable marked doing
     alt the change falls short
       O->>K: sends it back, with the ground
@@ -287,31 +326,47 @@ sequenceDiagram
   participant O as orchestrator
   participant K as tree-keeper
   participant T as tree.py
+  participant RP as repository
   participant GH as GitHub
+  participant GD as guard
   O->>T: pushes the work
+  T->>RP: pushes, and opens or keeps the draft pull request
   alt git or gh can't push, such as with no login
+    RP-->>T: what's missing
     T-->>O: what's missing
     O->>U: asks for it (Point)
   else
-    T->>GH: pushes, and opens or keeps the draft pull request
+    RP->>GH: pushes, and opens or keeps the draft pull request
   end
+  O->>T: puts it up (Sign-off)
   O->>U: the plan or the deliverable, with what the people can do with it, the decisions taken without asking, and its changes, once no point or sign-off before it waits (Sign-off)
-  Note over U,O: Meanwhile, the rounds of each deliverable whose turn has come go on, as S1 draws, and each that rests on this sign-off waits.
+  Note over U,O: Meanwhile, the rounds of each deliverable whose turn has come go on, as S1 draws, and each that rests on this sign-off waits, as tree.py gives it no turn.
+  opt the orchestrator moves past the sign-off itself
+    O->>GD: a call of /rn:ty or /rn:gm by the Skill tool, or a start of work that rests on the sign-off
+    GD-->>O: stops it, as only the user's own /rn:ty or /rn:gm decides a sign-off, and work that tree.py gave no turn has no start
+  end
   alt the user approves
     U->>O: /rn:ty
-    O->>K: it's signed off (Decision)
-    K->>T: writes it, and commits it with each deliverable whose turn has come marked doing
-    K-->>O: the plan drafted again
-    O->>O: checks the plan, and takes it or sends it back
+    O->>T: approves the sign-off waiting, as /rn:ty loads (Sign-off)
+    O->>O: plans the rest again from what the user signed off
+    O->>K: it's signed off, with the plan where it changed (Decision)
+    K->>T: writes it, and commits it with each deliverable whose turn has come marked doing (Design tree)
+    T-->>K: what changed, each node it touches, and each deliverable marked doing
+    K->>K: checks that each node touched agrees with it
+    K-->>O: what changed, each node checked, and each deliverable marked doing
+    O->>O: checks it against the design tree best practice, and takes it or sends it back
     opt no deliverable is left
       Note over U,O: The work is handed over, as S6 draws.
     end
   else the user sends it back
     U->>O: /rn:gm with what to change, or alone
+    O->>T: sends the sign-off waiting back, as /rn:gm loads (Sign-off)
     opt alone
       O->>T: gets the user's comments since the sign-off
-      T->>GH: reads them
-      T-->>O: the comments
+      T->>RP: gets them
+      RP->>GH: reads them
+      RP-->>T: the comments (Comment)
+      T-->>O: the comments (Comment)
     end
     O->>O: judges each by the purpose and the best practices, for the decision it changes
     O->>K: each decision it changes (Decision)
@@ -328,14 +383,19 @@ sequenceDiagram
   participant G as generator
   participant E as evaluator
   participant T as tree.py
+  participant RP as repository
+  participant GH as GitHub
   U->>O: /rn:dn
   O->>G: stops each one still running
   O->>E: stops each one still running
   O->>T: commits and pushes each role's work so far, with the step it stood at (Place)
+  T->>RP: commits, and pushes
   alt git or gh can't push
+    RP-->>T: what's missing
     T-->>O: what's missing
     O->>U: Paused, committed but not pushed, and what's missing
   else
+    RP->>GH: pushes
     O->>U: Paused, where it stopped, what comes next, and the point or sign-off waiting
   end
 ```
@@ -372,6 +432,7 @@ sequenceDiagram
   participant O as orchestrator
   participant K as tree-keeper
   participant T as tree.py
+  participant RP as repository
   participant GH as GitHub
   O->>O: finds each change to a best practice and each general lesson in the run's lacks
   loop each change to a best practice found
@@ -403,7 +464,8 @@ sequenceDiagram
     end
   end
   O->>T: marks the pull request ready
-  T->>GH: marks it ready
+  T->>RP: marks it ready
+  RP->>GH: marks it ready
   O->>U: Done, with the pull request
   alt the user sends it back
     U->>O: /rn:gm with what to change, or alone
@@ -455,10 +517,13 @@ plugins/rn/
 │   ├── generator.md               what the generator does
 │   ├── evaluator.md               what the evaluator does
 │   ├── tree/                      the code of tree.py, a module for each decision it makes
+│   ├── repository/                the code of repository, a module for each tool it runs
+│   ├── record/                    the code of record.py, a module for each decision it makes
 │   ├── throwaway.py               the code of throwaway.py
 │   └── best-practices/            rn's own best practice of each kind
 ├── scripts/
 │   ├── tree.py                    runs the code of tree.py
+│   ├── record.py                  runs the code of record.py
 │   └── throwaway.py               runs the code of throwaway.py
 ├── hooks/
 │   ├── hooks.json                 starts the guard on each call
@@ -494,20 +559,20 @@ checks that each names an element or a case one level up.
 
 ### Unit tests
 
-- Tries: `tree.py`, `throwaway.py`, and the adapters, each against its contract, and the prompts of
-  the orchestrator, the tree-keeper, the generator, and the evaluator, each against what its line in
-  Components and its steps in the sequences ask of it.
+- Tries: `tree.py`, repository, `record.py`, `throwaway.py`, and the adapters, each against its
+  contract, and the prompts of the orchestrator, the tree-keeper, the generator, and the evaluator,
+  each against what its line in Components and its steps in the sequences ask of it.
 - Runs real: the part, with git in a temporary folder. A bare repository stands in for the remote,
   and a double of `gh` gives what [the manual of `gh`](https://cli.github.com/manual/) shows. A
   prompt's role runs alone on Opus in a throwaway copy of a repository that the test sets up, with
-  `tree.py` and `throwaway.py` real.
+  `tree.py`, `record.py`, and `throwaway.py` real.
 - Tools: pytest, coverage, cosmic-ray, hypothesis, ruff, complexipy, pyrefly, pylint's
   duplicate-code and cyclic-import checks, and `claude -p` on Opus for the prompts.
 - Passes when: line and branch coverage of 100%; 0 surviving mutants; 0 counterexamples from the
-  property-based tests of `tree.py`'s reading and writing of the design tree, its list of the nodes
-  that a change touches, its check of a record against a prompt's steps and a best practice's
-  practices, and each adapter's reading of a best practice or a design tree into Lane's form; for
-  each function, McCabe complexity of 10 at most, cognitive complexity of 15 at most, and at most 6
+  property-based tests of `tree.py`'s reading and writing of the design tree and its list of the
+  nodes that a change touches, `record.py`'s check of a record against a prompt's steps and a best
+  practice's practices, and each adapter's reading of a Cut or a record into Lane's form; for each
+  function, McCabe complexity of 10 at most, cognitive complexity of 15 at most, and at most 6
   returns, 12 branches, 5 arguments, and 50 statements; 0 findings from pyrefly, ruff, and pylint's
   checks; and each case of a prompt passing on all of its k = 3 runs.
 - Runs: the code's tests with their coverage and static analysis before each push and on each push
@@ -520,12 +585,12 @@ checks that each names an element or a case one level up.
 - Tries: each path through the sequences of S1 to S6, each principle, where the parts keep it and
   where one breaks it, each decision of each component in Components, each handoff between parts
   with the data it passes, and each kind of data in the data model.
-- Runs real: `tree.py`, `throwaway.py`, the adapters, the guard as Lane lays it, and rn's lanes. The
-  double of Claude Code in `dev/tests/` stands in for Claude Code, and sends each event as the
-  recorded runs in `dev/tests/recorded/` show. A test plays the user, the orchestrator, and each
-  role by the calls it makes on the double, and each role gives only results in the form of its
-  part's output, which the role's unit tests show the real prompt giving. GitHub is the bare
-  repository and the double of `gh` of the unit tests.
+- Runs real: `tree.py`, repository, `record.py`, `throwaway.py`, the adapters, the guard as Lane
+  lays it, and rn's lanes. The double of Claude Code in `dev/tests/` stands in for Claude Code, and
+  sends each event as the recorded runs in `dev/tests/recorded/` show. A test plays the user, the
+  orchestrator, and each role by the calls it makes on the double, and each role gives only results
+  in the form of its part's output, which the role's unit tests show the real prompt giving. GitHub
+  is the bare repository and the double of `gh` of the unit tests.
 - Tools: pytest, the double of Claude Code, `claude plugin validate --strict`, and
   `dev/scripts/trace.py`.
 - Passes when: every story, principle, component, and kind of data of this document has an
@@ -564,8 +629,8 @@ checks that each names an element or a case one level up.
 - 3 runs of the walkthrough over 1\
   KR1.1 is a share, and one run hands over too few deliverables to show it move, which keeps a
   change that raised KR1.1 unseen. The cost: each change waits on 3 whole runs on Opus.
-- Property-based tests of `tree.py`'s reading of the design tree and its check of a record over
-  cases drawn by hand alone\
+- Property-based tests of `tree.py`'s reading of the design tree and `record.py`'s check of a
+  record over cases drawn by hand alone\
   An AI writes the tree and each record, so they take forms that no developer foresees, and a fault
   there hands a role another's cut or passes a record that skipped a practice, which raises KR1.1.
   The cost: each night's run of every input.

@@ -7,12 +7,12 @@ import os
 from typing import Any
 
 import pytest
+from fault import Wrong
 from rn_example import GOAL, HINTS, TYPED
 from rn_parts import ANSWERED, PLAN_SIGNED, RUN, doing, hints, typed, walkthrough
 from tree import design, sign_offs
 from tree.cut import EVALUATOR, GENERATOR, TREE_KEEPER, cut, load, save, values
 from tree.design import Decision
-from tree.fault import Wrong
 from tree.rounds import LackKept, Place, folder, keep_lack, keep_place
 
 pytestmark = pytest.mark.xfail(strict=True, reason="rn's parts are skeletons, their bodies unbuilt")

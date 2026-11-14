@@ -220,6 +220,11 @@ def tree(repo: Repo, *args: str) -> str:
     return shlex.join(["python3", os.path.join(repo.plugin, "scripts", "tree.py"), *args])
 
 
+def record(repo: Repo, *args: str) -> str:
+    """The command line of the installed record.py with the arguments."""
+    return shlex.join(["python3", os.path.join(repo.plugin, "scripts", "record.py"), *args])
+
+
 def throwaway(repo: Repo, *args: str) -> str:
     """The command line of the installed throwaway.py with the arguments."""
     return shlex.join(["python3", os.path.join(repo.plugin, "scripts", "throwaway.py"), *args])
@@ -309,9 +314,9 @@ def records_all(agent: Agent, repo: Repo, given: dict[str, str], role: str, kind
     """The role records each step of its part, and, where it works by a best practice, each
     practice of it, each with what it gave, as rn's check reads a record that holds every item."""
     for step in steps_of(repo, role):
-        agent.bash(tree(repo, "record", given["record"], role, str(step), f"step {step} held"))
+        agent.bash(record(repo, "add", given["record"], role, str(step), f"step {step} held"))
     for practice in practices_of(repo, kind) if kind else []:
-        agent.bash(tree(repo, "record", given["record"], kind, practice, f"{practice} carried out"))
+        agent.bash(record(repo, "add", given["record"], kind, practice, f"{practice} carried out"))
 
 
 def gives(

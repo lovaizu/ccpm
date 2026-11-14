@@ -8,9 +8,9 @@ import os
 from typing import Any
 
 import pytest
+from fault import Wrong
 from rn_example import HINTS, TYPED
 from rn_parts import RUN
-from tree.fault import Wrong
 from tree.rounds import (
     Answers,
     LackKept,

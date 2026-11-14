@@ -142,8 +142,8 @@ PARTS: dict[str, tuple[Callable[[str], None], ...]] = {
         appended("domain/tree/cut.py", EVERY_DECISION),
         without_lanes("read_never", "generator"),
     ),
-    "Every step by best practice": (appended("domain/tree/check.py", NO_RECORD_FAULTS),),
-    "Every item handled": (appended("domain/tree/check.py", NO_RESULT_FAULTS),),
+    "Every step by best practice": (appended("domain/record/check.py", NO_RECORD_FAULTS),),
+    "Every item handled": (appended("domain/record/check.py", NO_RESULT_FAULTS),),
     "Judged by the people it's for": (without_lanes("read_never", "evaluator"),),
     "Signed off before it's built on": (appended("domain/tree/turn.py", ALL_DUE), without_waits),
     "Back to the design tree on a problem": (appended("domain/tree/cut.py", NO_LACKS),),
@@ -153,7 +153,7 @@ PARTS: dict[str, tuple[Callable[[str], None], ...]] = {
         without_lanes("run_only", "generator"),
     ),
     "The repository holds the work": (
-        appended("domain/tree/repository.py", NO_COMMIT),
+        appended("domain/repository/git.py", NO_COMMIT),
         without_lanes("write_only"),
     ),
 }

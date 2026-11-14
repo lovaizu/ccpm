@@ -44,7 +44,7 @@ def making_hints(conv: Conversation, repo: Repo, run: Run) -> None:
     conv.task_stop(generator)
 
 
-@pytest.mark.supports("S4", "tree.py", "Place")
+@pytest.mark.supports("S4", "tree.py", "repository", "Place")
 def test_pause_commits_the_work_so_far_with_each_roles_step_and_pushes_it(
     conv: Conversation, repo: Repo, run: Run
 ):
@@ -61,7 +61,7 @@ def test_pause_commits_the_work_so_far_with_each_roles_step_and_pushes_it(
     assert git(run.worktree, "status", "--porcelain") == ""
 
 
-@pytest.mark.supports("S4", "tree.py", "Place")
+@pytest.mark.supports("S4", "tree.py", "repository", "Place")
 def test_pause_without_gh_logged_in_commits_and_says_its_not_pushed(tmp_path):
     """Given a run with work not yet committed, and gh logged in nowhere
     When the orchestrator runs `tree.py pause`

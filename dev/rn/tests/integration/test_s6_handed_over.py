@@ -89,7 +89,7 @@ def test_a_lesson_without_its_words_cant_be_put_up(conv: Conversation, repo: Rep
     assert put_up(conv, repo, run, "lesson") == 1
 
 
-@pytest.mark.supports("S6", "tree.py", "orchestrator")
+@pytest.mark.supports("S6", "tree.py", "repository", "orchestrator")
 def test_ready_marks_the_pull_request_ready_once_every_deliverable_is_signed_off(
     conv: Conversation, repo: Repo, run: Run
 ):

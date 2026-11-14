@@ -8,8 +8,8 @@ import os
 from typing import Any
 
 import pytest
+from fault import Wrong
 from rn_example import RN, text_of, write
-from tree.fault import Wrong
 from tree.practices import DECIDE, MAKE, Practice, find, groups, load, loads
 
 pytestmark = pytest.mark.xfail(strict=True, reason="rn's parts are skeletons, their bodies unbuilt")

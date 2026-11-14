@@ -53,7 +53,7 @@ def sign_offs(run: Run) -> list[dict]:
     return json.loads(text_of(os.path.join(run.worktree, run.folder, "sign-offs.json")))
 
 
-@pytest.mark.supports("S3", "tree.py", "orchestrator")
+@pytest.mark.supports("S3", "tree.py", "repository", "orchestrator")
 def test_push_pushes_the_runs_branch_and_opens_its_draft_pull_request_once(
     conv: Conversation, repo: Repo, run: Run
 ):
@@ -69,7 +69,7 @@ def test_push_pushes_the_runs_branch_and_opens_its_draft_pull_request_once(
     assert first.output == second.output and first.output.strip().endswith("/pull/1")
 
 
-@pytest.mark.supports("S3", "tree.py", "Point")
+@pytest.mark.supports("S3", "tree.py", "repository", "Point")
 def test_push_without_gh_logged_in_says_whats_missing_and_pushes_nothing(tmp_path):
     """Given a run begun, with gh logged in nowhere
     When the orchestrator runs `tree.py push`
@@ -147,7 +147,7 @@ def test_gm_with_what_to_change_sends_the_sign_off_back_and_carries_their_words(
     assert sign_offs(run)[-1]["state"] == "sent back"
 
 
-@pytest.mark.supports("S3", "tree.py", "user")
+@pytest.mark.supports("S3", "tree.py", "repository", "user", "Comment")
 def test_gm_alone_has_tree_py_give_the_users_comments_since_the_sign_off(
     conv: Conversation, repo: Repo, run: Run
 ):

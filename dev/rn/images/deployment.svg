@@ -69,9 +69,9 @@
   <text class="name start" x="402" y="122">rn&#x27;s folder</text>
   <text class="kind start" x="402" y="139">[Claude Code plugin, installed]</text>
   <text class="label small" x="402" y="156">the skills, the agents, the parts, rn&#x27;s best</text>
-  <text class="label small" x="402" y="173">practices, tree.py, throwaway.py, the</text>
-  <text class="label small" x="402" y="190">adapters, and the guard, which is Lane&#x27;s code</text>
-  <text class="label small" x="402" y="207">copied in by Lane</text>
+  <text class="label small" x="402" y="173">practices, tree.py, record.py, throwaway.py,</text>
+  <text class="label small" x="402" y="190">the adapters, and the guard, which is Lane&#x27;s</text>
+  <text class="label small" x="402" y="207">code copied in by Lane</text>
   <rect class="unit" x="40" y="100" width="320" height="90" rx="4"/>
   <text class="name start" x="52" y="122">hook process</text>
   <text class="kind start" x="52" y="139">[python3 · one for each event]</text>
@@ -79,11 +79,12 @@
   <rect class="unit" x="40" y="220" width="320" height="90" rx="4"/>
   <text class="name start" x="52" y="242">adapter process</text>
   <text class="kind start" x="52" y="259">[python3]</text>
-  <text class="label small" x="52" y="276">adapters</text>
+  <text class="label small" x="52" y="276">adapters, with the code of tree.py and</text>
+  <text class="label small" x="52" y="293">record.py that they ask</text>
   <rect class="unit" x="390" y="280" width="320" height="90" rx="4"/>
-  <text class="name start" x="402" y="302">tree.py process</text>
-  <text class="kind start" x="402" y="319">[python3 · git, gh]</text>
-  <text class="label small" x="402" y="336">tree.py</text>
+  <text class="name start" x="402" y="302">tree.py and record.py processes</text>
+  <text class="kind start" x="402" y="319">[python3 · git, gh · one for each call]</text>
+  <text class="label small" x="402" y="336">tree.py, with repository; record.py</text>
   <rect class="unit" x="390" y="400" width="320" height="90" rx="4"/>
   <text class="name start" x="402" y="422">throwaway.py process</text>
   <text class="kind start" x="402" y="439">[python3]</text>
@@ -94,6 +95,7 @@
   <text class="data" x="52" y="394">Deliverable</text>
   <text class="data" x="52" y="409">Design tree, and each Round&#x27;s records</text>
   <text class="data" x="52" y="424">Best practice made on a run</text>
+  <text class="data" x="52" y="439">Record of each start</text>
   <rect class="unit" x="390" y="520" width="320" height="90" rx="4"/>
   <text class="name start" x="402" y="542">temporary folder</text>
   <text class="kind start" x="402" y="559">[the system&#x27;s]</text>

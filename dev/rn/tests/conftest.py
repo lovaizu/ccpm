@@ -1,6 +1,7 @@
 """What every level of rn's cases shares: the folders of rn's code on the import path, as tree.py,
-throwaway.py, and the adapters put `domain/` there, the double of Claude Code in dev/tests/, and
-this folder, which holds the example the cases take their words from, with the double of gh."""
+record.py, throwaway.py, and the adapters put `domain/` there, the double of Claude Code in
+dev/tests/, and this folder, which holds the example the cases take their words from, with the
+double of gh."""
 
 from __future__ import annotations
 

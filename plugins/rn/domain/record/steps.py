@@ -1,6 +1,6 @@
-"""Decides how tree.py reads the steps of one of rn's prompts: each item of the numbered list under
-`## Steps` of a part in `domain/` or of a command's `SKILL.md`, and the phase of practices that a
-step takes, where its words name `*While deciding*` or `*While making*`."""
+"""Decides how record.py reads the steps of one of rn's prompts: each item of the numbered list
+under `## Steps` of a part in `domain/` or of a command's `SKILL.md`, and the phase of practices
+that a step takes, where its words name `*While deciding*` or `*While making*`."""
 
 from __future__ import annotations
 

@@ -1,4 +1,4 @@
-"""The unit cases of tree/check.py, rn's check of a role's end, through `record_faults`,
+"""The unit cases of record/check.py, rn's check of a role's end, through `record_faults`,
 `made_faults`, `answers_faults`, and `check`. Whether a record passes turns on each step being
 there, in order, and on each practice lying in a step that takes its phase, so the cases take one
 for each combination, as decision table testing does."""
@@ -9,15 +9,15 @@ import os
 from typing import Any
 
 import pytest
+from fault import CantRun
+from record.check import answers_faults, check, made_faults, record_faults
+from record.form import Entry, Record
+from record.steps import Step
 from rn_example import HINTS, POINT, RN
 from rn_parts import ANSWERED, RUN
-from tree.check import answers_faults, check, made_faults, record_faults
 from tree.cut import Cut
-from tree.fault import CantRun
 from tree.practices import DECIDE, MAKE, BestPractice, NecessaryCondition, Practice
-from tree.record import Entry, Record
 from tree.rounds import Answers, LackKept, Met, NotMet
-from tree.steps import Step
 
 pytestmark = pytest.mark.xfail(strict=True, reason="rn's parts are skeletons, their bodies unbuilt")
 

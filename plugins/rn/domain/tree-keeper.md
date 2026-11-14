@@ -17,14 +17,15 @@ doing. `tree.py lack <run> <deliverable> <condition> <lack>` keeps a lack for th
 next round.
 
 Record each step and practice as you take it, by
-`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py record {record} <tree-keeper, or design-tree> <the step's number, or the practice's ID> '<what it left or gave>'`.
+`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add {record} <tree-keeper, or design-tree> <the step's number, or the practice's ID> '<what it left or gave>'`.
 The guard passes your end only once rn's check accepts the record.
 
 ## Steps
 
 The steps aren't written yet. They take the moves that S1, S2, S3, S5, and S6 of rn's architecture
 give the tree-keeper: its part, the design tree best practice, and the design tree read, each
-decision written, each node it touches checked, and the plan drafted again.
+decision written as the orchestrator gives it, and each node that `tree.py write` lists as touched
+checked against it.
 
 ## What you give
 

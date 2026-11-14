@@ -8,10 +8,10 @@ import os
 from typing import Any
 
 import pytest
+from fault import Wrong
 from rn_example import HINTS_NAME, WORDS, git
 from rn_parts import ANSWERED, NAME, doing, hints, repository, typed, walkthrough
 from tree import design
-from tree.fault import Wrong
 from tree.rounds import Place, folder, keep_place
 from tree.runs import Left, Run, here, left, name, of, title
 

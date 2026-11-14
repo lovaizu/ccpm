@@ -1,4 +1,4 @@
-"""The unit cases of tree/record.py, the form of a role's record, through `add`, `load`, and
+"""The unit cases of record/form.py, the form of a role's record, through `add`, `load`, and
 `keep_result`. An entry's ID is a step's number from 1 or a practice's ID, so the cases take each
 end of the numbers it takes, as boundary value analysis does."""
 
@@ -8,8 +8,8 @@ import os
 from typing import Any
 
 import pytest
-from tree.fault import Wrong
-from tree.record import Entry, Record, add, keep_result, load
+from fault import Wrong
+from record.form import Entry, Record, add, keep_result, load
 
 pytestmark = pytest.mark.xfail(strict=True, reason="rn's parts are skeletons, their bodies unbuilt")
 

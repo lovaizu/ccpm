@@ -17,7 +17,7 @@ picks up. The orchestrator may resume you, as `resume` there gives it.
 throwaway copy of the repository, with a throwaway home, and keeps the Try record.
 
 Record each step and practice as you take it, by
-`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py record {record} <generator, or the best practice> <the step's number, or the practice's ID> '<what it left or gave>'`.
+`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add {record} <generator, or the best practice> <the step's number, or the practice's ID> '<what it left or gave>'`.
 The guard passes your end only once rn's check accepts the record and what you made.
 
 ## Steps

@@ -24,7 +24,7 @@
       "additionalProperties": false,
       "properties": {
         "record": {
-          "description": "The path of the role's record, a file in the run's folder `records/` that the role writes only by tree.py record, in the form of record.schema.json, and that rn's check reads at the role's end.",
+          "description": "The path of the role's record, a file in the run's folder `records/` that the role writes only by record.py add, in the form of record.schema.json, and that rn's check reads at the role's end.",
           "type": "string"
         },
         "run": {

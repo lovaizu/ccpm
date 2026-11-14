@@ -12,12 +12,15 @@ import tempfile
 from typing import Any
 
 import pytest
+from fault import Wrong
 from hypothesis import given
 from hypothesis import strategies as st
+from record.check import record_faults
+from record.form import Entry, Record
+from record.steps import Step
 from rn_parts import NAME, PLAN_SIGNED
 from start_text import start_text
 from tree import design, sign_offs
-from tree.check import record_faults
 from tree.design import (
     BY,
     DOING,
@@ -29,11 +32,8 @@ from tree.design import (
     dumps,
     loads,
 )
-from tree.fault import Wrong
 from tree.practices import DECIDE, MAKE, BestPractice, Practice
 from tree.practices import NecessaryCondition as Condition
-from tree.record import Entry, Record
-from tree.steps import Step
 from tree.touched import changed, touched
 
 pytestmark = pytest.mark.xfail(strict=True, reason="rn's parts are skeletons, their bodies unbuilt")

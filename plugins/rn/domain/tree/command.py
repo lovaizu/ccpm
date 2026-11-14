@@ -20,8 +20,6 @@ usage: tree.py begin <words>
        tree.py comments <run>
        tree.py pause <run>
        tree.py ready <run>
-       tree.py record <record> <of> <id> <gave>
-       tree.py check <role> <result> [<cut>]
 """
 
 
@@ -56,9 +54,6 @@ def main(argv: list[str], environ: Mapping[str, str], cwd: str) -> tuple[int, st
       fails.
     - `ready <run>` marks the pull request ready; 1 where a deliverable isn't done and signed off,
       or a Sign-off waits.
-    - `record <record> <of> <id> <gave>` adds the entry to the record.
-    - `check <role> <result> [<cut>]` gives 0 where rn's check finds no fault in the role's end, 1
-      with each fault, and 2 where it can't check.
 
     2 with the usage where the arguments are none of these."""
     raise NotImplementedError("command.main")

@@ -1,6 +1,7 @@
-"""Decides each gh command that tree.py runs on GitHub: whether gh is logged in, the draft pull
-request of the run's branch, the user's comments on it, marking it ready, and the issue of each
-lesson on rn's repository, each read from what gh prints as its manual and recorded runs show."""
+"""Decides each gh command that repository runs for tree.py on GitHub: whether gh is logged in, the
+draft pull request of the run's branch, the user's comments on it, marking it ready, and the issue
+of each lesson on rn's repository, each read from what gh prints as its manual and recorded runs
+show."""
 
 from __future__ import annotations
 
