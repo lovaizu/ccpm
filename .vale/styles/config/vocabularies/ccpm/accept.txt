@@ -9,3 +9,6 @@ README
 MIT
 SPDX
 rn
+# The abbreviation of end-to-end, which the architecture best practice names
+# a test level by, in a heading too.
+E2E

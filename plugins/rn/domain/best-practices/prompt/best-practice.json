@@ -254,7 +254,7 @@
        },
        {
         "at": "make",
-        "text": "Test the hook on each case, one case at a time, with code in the AI's place, which tries the hook in seconds without the model, so that checking the rule needs no trial of the prompt."
+        "text": "Test the hook on each case, one case at a time, with code in the AI's place, which tries the hook in seconds without the model, so that checking the rule needs no run of the model."
        }
       ]
      }
@@ -356,33 +356,37 @@
    },
    {
     "id": "C6",
-    "what": "The writer knows from real use that the prompt works.",
+    "what": "The writer knows from tests that the prompt works on every run and in real use.",
     "necessary_conditions": [
      {
       "id": "N16",
       "about": "the whole",
-      "what": "Do trials on each kind of request the prompt is for, each run several times on the model its users run, show the AI reaching the result on every run?",
-      "why": "The writer knows a prompt only by what the AI does with it in real use, where the AI's variance and the faults of the design show. The method is the repeated trials of Anthropic's [demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), whose pass^k is the chance that all k trials succeed.",
+      "what": "Do the prompt's unit tests, each case run k times on the model its users run, and the end-to-end (E2E) tests of the product it's part of show the AI reaching the result on every run?",
+      "why": "The writer knows a prompt only by what the AI does with it, where the AI's variance and the faults of the design show. The method is the repeated runs of Anthropic's [demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), whose pass^k is the chance that all k runs succeed.",
       "items": [
        {
         "at": "make",
-        "text": "Run the product vision trial on each kind of request that the prompt is for several times, on the model its users run. A rule that must hold on every run rests on a hook, as N12 says, so the trial tries the rest."
+        "text": "Run each case that the architecture's test cases hold for the prompt k times on the model its users run, with the k that the architecture's Test strategy sets. A rule that must hold on every run rests on a hook, as N12 says, so the unit tests try the rest."
        },
        {
         "at": "make",
-        "text": "Where a run doesn't reach the result, change the prompt only for a cause that its record shows, as N17 says, and run the trial again."
+        "text": "Where a run doesn't reach the result, change the prompt only for a cause that its record shows, as N17 says, and run the case k times again."
        },
        {
         "at": "make",
         "text": "Judge the prompt from the record of what the AI did on each run, and check that every run reached the result."
+       },
+       {
+        "at": "make",
+        "text": "Confirm by the E2E tests that the prompt, among the other parts, reaches the result on requests as big as real ones, since a unit test meets only the cases that its writer set up."
        }
       ]
      },
      {
       "id": "N17",
-      "about": "Trials",
-      "what": "Can the maintainer tell from a failed trial's record whether the prompt or the trial went wrong?",
-      "why": "A trial's own parts, its set-up, its stand-ins, its judges, and its checks, are code and prompts of their own, and can fail like the prompt. The method is Anthropic's [demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), which takes code over a model to grade where it can, calibrates a model grader against human judgment, and reads the records to tell a failure of the agent from a failure of the trial.",
+      "about": "the whole",
+      "what": "Can the maintainer tell from a failed test's record whether the prompt or the test went wrong?",
+      "why": "A test's own parts, its set-up, its doubles, its judges, and its checks, are code and prompts of their own, and can fail like the prompt. The method is Anthropic's [demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), which takes code over a model to grade where it can, calibrates a model grader against human judgment, and reads the records to tell a failure of the agent from a failure of the test.",
       "items": [
        {
         "at": "decide",
@@ -402,11 +406,11 @@
        },
        {
         "at": "make",
-        "text": "Between two runs, change one thing, the prompt or a part of the trial, never both."
+        "text": "Between two runs, change one thing, the prompt or a part of the test, never both."
        },
        {
         "at": "make",
-        "text": "Where a trial fails, look first in its record at the trial's own parts, and change the prompt only for a cause in the prompt."
+        "text": "Where a test fails, look first in its record at the test's own parts, and change the prompt only for a cause in the prompt."
        }
       ]
      }
@@ -418,5 +422,7 @@
  "inputs": [
   "architecture"
  ],
- "preconditions": []
+ "preconditions": [
+  "architecture"
+ ]
 }

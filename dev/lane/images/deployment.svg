@@ -96,7 +96,7 @@
   <text class="kind" x="1295" y="434">where the plugin keeps them</text>
   <rect class="lane" x="330.0" y="568.0" width="400" height="64" rx="4"/>
   <text class="name" x="530" y="595">dev/scripts/check.sh</text>
-  <text class="kind" x="530" y="614">Lane&#x27;s unit and architecture tests</text>
+  <text class="kind" x="530" y="614">Lane&#x27;s unit and integration tests</text>
   <rect class="ext" x="130.0" y="708.0" width="300" height="64" rx="4"/>
   <text class="name" x="280" y="735">GitHub: lovaizu/ccpm</text>
   <text class="kind" x="280" y="754">the marketplace</text>

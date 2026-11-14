@@ -70,7 +70,7 @@
        },
        {
         "at": "decide",
-        "text": "Give a deliverable of this product alone the kind `specific`, such as a file that keeps a run's state, a file of the product's own specification, a test of a path of its architecture, or a product vision trial. The tree's decisions make it, and the check that its `check` names judges it."
+        "text": "Give a deliverable of this product alone the kind `specific`, such as a file that keeps a run's state, a file of the product's own specification, an integration test of its architecture, or an end-to-end test. The tree's decisions make it, and the check that its `check` names judges it."
        },
        {
         "at": "decide",

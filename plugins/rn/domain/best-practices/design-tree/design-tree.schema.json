@@ -271,7 +271,7 @@
      ]
     },
     "check": {
-     "description": "The check that judges the deliverable, such as a test that passes or a product vision trial whose key results the records show.",
+     "description": "The check that judges the deliverable, such as a test that passes or an end-to-end test whose key results the records show.",
      "type": "string"
     },
     "good": {

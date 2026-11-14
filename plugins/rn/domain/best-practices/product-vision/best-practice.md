@@ -67,7 +67,7 @@ The developers keep a change only if it brings the users closer to their goals, 
 3. *While deciding.* Give each the direction that's better.
 4. *While deciding.* Rank them: keep a change that improves one only if none ranked before it gets worse, with how well before how fast.
 5. *While deciding.* Give no targets, since a measure made a target stops being a good measure, as Goodhart's law says.
-6. *While making.* Check that a developer can measure both after a change and decide from them whether to keep it.
+6. *While making.* Check that a developer can measure both from the records of the end-to-end (E2E) tests run after a change, and decide from them whether to keep it.
 
 ### N5
 

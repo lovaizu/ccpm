@@ -18,4 +18,4 @@ Add the marketplace once, then install any plugin from it:
 
 ## Building the plugins
 
-Each plugin's architecture, tests, and trials are in [`dev/`](./dev/README.md), outside the folder that Claude Code installs.
+Each plugin's architecture and tests are in [`dev/`](./dev/README.md), outside the folder that Claude Code installs.

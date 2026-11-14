@@ -59,11 +59,11 @@ replaced on PyPI or npm after the lock doesn't install. The Python tools come fr
 `uv lock` makes that file from `pyproject.toml`, with each tool at the newest version that runs on
 each Python. Claude Code and Mermaid's parser come from `dev/scripts/package-lock.json`.
 
-## The product vision trials
+## The end-to-end (E2E) tests
 
-`dev/scripts/trial.py` runs a product vision trial of a plugin from a trial file on the real Claude
-Code, and keeps the run's records, from which the plugin's product vision test counts its key
-results. The opening of the script says how to run it and what it reads and keeps.
+`dev/scripts/trial.py` runs one run of a plugin's E2E test from a trial file on the real Claude
+Code, and keeps the run's records, from which the E2E test counts its key results. The opening of
+the script says how to run it and what it reads and keeps.
 
 ## Before each commit and each push
 

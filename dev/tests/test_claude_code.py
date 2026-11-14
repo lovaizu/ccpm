@@ -1,4 +1,4 @@
-"""The tests of the double of Claude Code, as Lane's architecture tests rest on it: it sends each
+"""The tests of the double of Claude Code, as Lane's integration tests rest on it: it sends each
 event as the recorded run of Claude Code 2.1.322 shows, and reads what a hook gives as Claude Code's
 hooks reference says. A plugin of the test's own logs each payload that the double sends."""
 

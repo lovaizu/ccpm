@@ -67,7 +67,7 @@ What each decides alone:
 The choices made, and why:
 
 - One generator for each deliverable over several side by side\
-  Three generators would take about three times as long for a gain in KR1.1 that no trial has shown,
+  Three generators would take about three times as long for a gain in KR1.1 that no end-to-end test has shown,
   which adds to KR1.2. The cost: a lack in a best practice shows only when its developers run several
   generators to check it.
 - The orchestrator judging every point over a role of its own that settles them\
@@ -443,8 +443,8 @@ dev/rn/
 ├── product-vision.md              rn's product vision
 ├── architecture.md                this document
 ├── README.md                      for rn's developers
-├── tests/                         the unit and architecture tests
-└── trials/                        the product vision trials, which dev/scripts/trial.py runs
+└── tests/                         the test cases, in unit/, properties/, prompts/, integration/,
+                                   and e2e/, with the trial files that dev/scripts/trial.py runs
 
 .claude/worktrees/
 └── rn-<yyyymmdd>-<goal>/          rn's worktree of one run, on the work's branch
@@ -458,15 +458,83 @@ dev/rn/
 └── best-practices/                each best practice made on a run
 ```
 
-## Tests
+## Test strategy
 
-rn tests by the test rules of [the architecture best
-practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md) and [the plugin
-guide](../plugin-development-guide.md#test), and differs from them
-where this section says.
+rn tests by [the plugin guide](../plugin-development-guide.md#test), in unit tests, integration
+tests, and end-to-end (E2E) tests. Its test cases lie in `dev/rn/tests/`, and `dev/scripts/trace.py`
+checks that each names an element or a case one level up.
 
-![rn's tests](images/tests.svg)
+### Unit tests
 
-- `tree.py` tried `FULL` at architecture over `HAPPY`\
-  A fault there writes the tree wrong or hands a role another's cut, and no higher level checks each
-  case, which raises KR1.1. The cost: the most tests to keep up as the tree's form changes.
+- Tries: `tree.py`, `throwaway.py`, and the adapters, each against its contract, and the prompts of
+  the orchestrator, the tree-keeper, the generator, and the evaluator, each against what its line in
+  Components and its steps in the sequences ask of it.
+- Runs real: the part, with git in a temporary folder. A bare repository stands in for the remote,
+  and a double of `gh` gives what [the manual of `gh`](https://cli.github.com/manual/) shows. A
+  prompt's role runs alone on Opus in a throwaway copy of a repository that the test sets up, with
+  `tree.py` and `throwaway.py` real.
+- Tools: pytest, coverage, cosmic-ray, hypothesis, ruff, complexipy, pyrefly, pylint's
+  duplicate-code and cyclic-import checks, and `claude -p` on Opus for the prompts.
+- Passes when: line and branch coverage of 100%; 0 surviving mutants; 0 counterexamples from the
+  property-based tests of `tree.py`'s reading and writing of the design tree, its list of the nodes
+  that a change touches, its check of a record against a prompt's steps and a best practice's
+  practices, and each adapter's reading of a best practice or a design tree into Lane's form; for
+  each function, McCabe complexity of 10 at most, cognitive complexity of 15 at most, and at most 6
+  returns, 12 branches, 5 arguments, and 50 statements; 0 findings from pyrefly, ruff, and pylint's
+  checks; and each case of a prompt passing on all of its k = 3 runs.
+- Runs: the code's tests with their coverage and static analysis before each push and on each push
+  in CI; mutation testing and the property-based tests in CI over the lines that a push changed on
+  each push, and over the whole each night; and a prompt's tests before a change of the prompt is
+  taken.
+
+### Integration tests
+
+- Tries: each path through the sequences of S1 to S6, each principle, where the parts keep it and
+  where one breaks it, each decision of each component in Components, each handoff between parts
+  with the data it passes, and each kind of data in the data model.
+- Runs real: `tree.py`, `throwaway.py`, the adapters, the guard as Lane lays it, and rn's lanes. The
+  double of Claude Code in `dev/tests/` stands in for Claude Code, and sends each event as the
+  recorded runs in `dev/tests/recorded/` show. A test plays the user, the orchestrator, and each
+  role by the calls it makes on the double, and each role gives only results in the form of its
+  part's output, which the role's unit tests show the real prompt giving. GitHub is the bare
+  repository and the double of `gh` of the unit tests.
+- Tools: pytest, the double of Claude Code, `claude plugin validate --strict`, and
+  `dev/scripts/trace.py`.
+- Passes when: every story, principle, component, and kind of data of this document has an
+  integration test that names it; every test names an element or a case one level up that exists;
+  every unit case names an integration case; each test of a principle fails where its fixture
+  `broken` takes out the part that holds the principle, which `trace.py` runs; and each result of a
+  double names the recorded run or the page of the documentation that shows it, which `trace.py`
+  checks against that source.
+- Runs: with the unit tests of the code before each push and on each push in CI.
+
+### E2E tests
+
+- Tries: the key results KR1.1 and KR1.2, by the README's walkthrough at its real size: a request
+  for a small feature of tally in [lovaizu/playground](https://github.com/lovaizu/playground), its
+  tallies given as CSV, with its tests and README, so that one plan makes both code and a document.
+- Runs real: rn and Lane, installed as the README says, on the real Claude Code on Opus, in a fresh
+  clone of lovaizu/playground. An AI on Opus in the user's place holds an intent that rn never
+  receives, and reads only what the screen shows, as `dev/scripts/trial.py` runs it.
+- Tools: pytest, `dev/scripts/trial.py`, and a judge on Opus for KR1.1.
+- Passes when: the key results, KR1.1, the share of the deliverables handed over that the judge
+  finds their people can't use, and KR1.2, the time from the request to the deliverable, the
+  stand-in's own time answering included, each taken from the records of every run; a change kept
+  only where it improves a key result and leaves none before it worse than in the last runs, as the
+  product vision orders them; the judge used only once it's right on each kept record whose answer
+  is known; and 3 runs of the walkthrough after each change.
+- Runs: once every unit and integration test passes, started by the developer.
+
+- k = 3 runs of each case of a prompt over 1 or 5\
+  A prompt that slips on 3 runs in 10 fails 3 runs of 3 about two times in three, so most slips
+  that would make a deliverable unusable show before the E2E tests, which keeps KR1.1 low. The cost:
+  each change of a prompt waits on 3 runs of each of its cases, and a slip rarer than 1 run in 5
+  passes them more often than not.
+- 3 runs of the walkthrough over 1\
+  KR1.1 is a share, and one run hands over too few deliverables to show it move, which keeps a
+  change that raised KR1.1 unseen. The cost: each change waits on 3 whole runs on Opus.
+- Property-based tests of `tree.py`'s reading of the design tree and its check of a record over
+  cases drawn by hand alone\
+  An AI writes the tree and each record, so they take forms that no developer foresees, and a fault
+  there hands a role another's cut or passes a record that skipped a practice, which raises KR1.1.
+  The cost: each night's run of every input.

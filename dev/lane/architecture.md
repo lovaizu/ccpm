@@ -696,7 +696,8 @@ plugins/lane/
 
 dev/lane/
 ├── product-vision.md, architecture.md, images/
-└── tests/                        the unit, architecture, and product vision tests
+└── tests/                        the test cases, in unit/, properties/, prompts/, integration/,
+                                  and e2e/, with the trial files that dev/scripts/trial.py runs
 
 <the user's plugin>/
 ├── skills/<skill>/SKILL.md       the skill's Steps, with the sentences that Lane laid
@@ -721,24 +722,83 @@ dev/lane/
   plugin can't hold a sentence and a check from two versions, which keeps KR1.1 low. The cost:
   `lay.py` reaches into the folder that it copies.
 
-## Tests
+## Test strategy
 
-Lane tests by the test rules of [the architecture best
-practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md) and [the plugin
-guide](../plugin-development-guide.md#test), and differs from them
-where this section says.
+Lane tests by [the plugin guide](../plugin-development-guide.md#test), in unit tests, integration
+tests, and end-to-end (E2E) tests. Its test cases lie in `dev/lane/tests/`, and
+`dev/scripts/trace.py` checks that each names an element or a case one level up.
 
-![Lane's tests](images/tests.svg)
+### Unit tests
 
-- No unit test of up over a trial of up alone on a model\
-  The guard on up holds what up must do on every run, and the architecture tests run each path of
-  S1 to S4 with a double in up's place, so a trial alone would meet only the cases set up for it.
-  The cost: whether up reads the sense of the steps as their writer meant shows only in a product
-  vision trial.
-- The guard `FULL` at architecture over `HAPPY`\
-  Each path of S5 to S7 is a move that KR1.1 counts when it goes wrong, and no higher level tries
-  each one, which keeps KR1.1 low. The cost: the most architecture tests to keep as the routes and
-  the hook events change.
+- Tries: `lay.py`, the lane types, the guard, and `result.py`, each against its contract, and up's
+  prompt against what its line in Components and its steps in S1 to S4 ask of it.
+- Runs real: the part, with git and the files of a plugin that the test sets up in a temporary
+  folder. Up runs alone on Opus, by `/lane:up` in a throwaway copy of a repository that holds such a
+  plugin, with `lay.py` real.
+- Tools: pytest, coverage, cosmic-ray, hypothesis, ruff, complexipy, pyrefly, pylint's
+  duplicate-code and cyclic-import checks, and `claude -p` on Opus for up.
+- Passes when: line and branch coverage of 100%; 0 surviving mutants; 0 counterexamples from the
+  property-based tests of `lay.py`'s reading of a plugin's Steps and its check of a Proposal against
+  the lane types and the steps, each lane type's check of a call against the paths and the commands
+  it takes, the guard's reading of each hook event in the form the recorded runs show, and the Run
+  written to its file and read back; for each function, McCabe complexity of 10 at most, cognitive
+  complexity of 15 at most, and at most 6 returns, 12 branches, 5 arguments, and 50 statements; 0
+  findings from pyrefly, ruff, and pylint's checks; and each case of up passing on all of its k = 3
+  runs.
+- Runs: the code's tests with their coverage and static analysis before each push and on each push
+  in CI; mutation testing and the property-based tests in CI over the lines that a push changed on
+  each push, and over the whole each night; and up's tests before a change of up is taken.
+
+### Integration tests
+
+- Tries: each path through the sequences of S1 to S7, each principle, where the parts keep it and
+  where one breaks it, each decision of each component in Components, each handoff between parts
+  with the data it passes, and each kind of data in the data model.
+- Runs real: `lay.py`, the guard, `result.py`, the files that `lay.py write` lays in a plugin that
+  the test sets up, and an adapter of the test's own. The double of Claude Code in `dev/tests/`
+  stands in for Claude Code, and sends each event as the recorded runs in `dev/tests/recorded/`
+  show. A test plays the person, up, the main conversation, and each subagent by the calls it makes
+  on the double, and up gives only proposals in the form of `proposal.schema.json`, which up's unit
+  tests show the real up giving.
+- Tools: pytest, the double of Claude Code, `claude plugin validate --strict` on each plugin that
+  Lane lays, and `dev/scripts/trace.py`.
+- Passes when: every story, principle, component, and kind of data of this document has an
+  integration test that names it; every test names an element or a case one level up that exists;
+  every unit case names an integration case; each test of a principle fails where its fixture
+  `broken` takes out the part that holds the principle, which `trace.py` runs; and each result of a
+  double names the recorded run or the page of the documentation that shows it, which `trace.py`
+  checks against that source.
+- Runs: with the unit tests of the code before each push and on each push in CI.
+
+### E2E tests
+
+- Tries: the key results KR1.1 and KR1.2, by the README's walkthrough at its real size: an AI builds
+  a plugin the size of changelog from an intent that Lane never sees, approves its proposal once by
+  a person's reply and once by its own act, changes the steps between two runs of `/lane:up`, and
+  runs the plugin.
+- Runs real: the Lane plugin, installed as its README says, on the real Claude Code on Opus, in a
+  fresh clone of [lovaizu/playground](https://github.com/lovaizu/playground). An AI on Opus in the
+  user's place holds the intent, and reads only what the screen shows, as `dev/scripts/trial.py`
+  runs it.
+- Tools: pytest, `dev/scripts/trial.py`, and a judge on Opus for each way of KR1.1 that the hook
+  events don't show.
+- Passes when: the key results, KR1.1, the share of the plugin's runs that go wrong in one of the
+  product vision's ways, counted by code from each run's hook events where they show the way and by
+  the judge elsewhere, and KR1.2, the time from the first step to the first run that keeps them,
+  each taken from the records of every run; a change kept only where it improves a key result and
+  leaves none before it worse than in the last runs, as the product vision orders them; the judge
+  used only once it's right on each kept record whose answer is known; and 3 runs of the walkthrough
+  after each change.
+- Runs: once every unit and integration test passes, started by the developer.
+
+- k = 3 runs of each case of up over 1 or 5\
+  An up that slips on 3 runs in 10 fails 3 runs of 3 about two times in three, so most proposals
+  that would leave a step unheld show before the E2E tests, which keeps KR1.1 low. The cost: each
+  change of up waits on 3 runs of each of its cases, and a slip rarer than 1 run in 5 passes them
+  more often than not.
+- 3 runs of the walkthrough over 1\
+  KR1.1 is a share of runs, and one walkthrough holds too few runs to show it move, which keeps a
+  change that raised KR1.1 unseen. The cost: each change waits on 3 whole runs on Opus.
 - The double of Claude Code sending events as a recorded run of Claude Code 2.1.322 shows over what
   the hooks reference alone says\
   Where the reference says nothing, such as how a typed `/lane:up` differs from a call of the Skill

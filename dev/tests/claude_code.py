@@ -1,8 +1,8 @@
-"""The double of Claude Code that Lane's architecture tests run in its place, as Lane's architecture
-says under Tests. It sends each hook event of one conversation in the form that the recorded run of
-Claude Code 2.1.322 in recorded/claude-code-2.1.322.jsonl shows, runs each matching entry of each
-plugin's hooks/hooks.json, reads what the entry gives as Claude Code's hooks reference says, and
-runs each tool call that the hooks let through, a Bash command with the environment that
+"""The double of Claude Code that Lane's integration tests run in its place, as Lane's architecture
+says under Test strategy. It sends each hook event of one conversation in the form that the recorded
+run of Claude Code 2.1.322 in recorded/claude-code-2.1.322.jsonl shows, runs each matching entry of
+each plugin's hooks/hooks.json, reads what the entry gives as Claude Code's hooks reference says,
+and runs each tool call that the hooks let through, a Bash command with the environment that
 recorded/claude-code-2.1.322-bash-environment.jsonl shows. A hook entry whose command isn't on the
 PATH fails as recorded/claude-code-2.1.322-hook-failures.jsonl shows, and an entry in shell form
 runs in /bin/sh, as that record shows. /compact sends the events that
@@ -11,17 +11,15 @@ the events that recorded/claude-code-2.1.322-skill.jsonl shows, and a subagent r
 SendMessage the events that recorded/claude-code-2.1.322-send-message.jsonl shows. An Edit, which no
 record holds, carries the input that the hooks reference gives it. A subagent's start of a subagent
 sends the main conversation's start with the subagent's `agent_id` and `agent_type`, as each other
-call of a subagent carries them, and as the product vision trial's record of Claude Code 2.1.322
-shows at line 71 of the hooks.jsonl of its changelog run 20261112T054832Z, which commit eb093f4c
-holds. A subagent stopped by
-TaskStop sends the events that recorded/claude-code-2.1.323-task-stop.jsonl shows, a command that a
-skill's SKILL.md runs as the skill loads runs as recorded/claude-code-2.1.323-skill-command.jsonl
-shows, and fails on a typed command as recorded/claude-code-2.1.323-skill-command-fails.jsonl
-shows, and EnterWorktree and ExitWorktree move the conversation's folder as
-recorded/claude-code-2.1.323-worktree.jsonl shows, each a record of Claude Code 2.1.323, as LATER
-says. A test plays the person,
-the main conversation, and each subagent by the calls it makes on the double. Lane's tests and rn's
-tests share it."""
+call of a subagent carries them, and as the end-to-end test's record of Claude Code 2.1.322 shows at
+line 71 of the hooks.jsonl of its changelog run 20261112T054832Z, which commit eb093f4c holds. A
+subagent stopped by TaskStop sends the events that recorded/claude-code-2.1.323-task-stop.jsonl
+shows, a command that a skill's SKILL.md runs as the skill loads runs as
+recorded/claude-code-2.1.323-skill-command.jsonl shows, and fails on a typed command as
+recorded/claude-code-2.1.323-skill-command-fails.jsonl shows, and EnterWorktree and ExitWorktree
+move the conversation's folder as recorded/claude-code-2.1.323-worktree.jsonl shows, each a record
+of Claude Code 2.1.323, as LATER says. A test plays the person, the main conversation, and each
+subagent by the calls it makes on the double. Lane's tests and rn's tests share it."""
 
 from __future__ import annotations
 

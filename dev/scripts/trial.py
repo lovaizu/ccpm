@@ -1,13 +1,13 @@
-"""Runs a product vision trial of a plugin, as the product vision tests of
+"""Runs a trial, one run of a plugin's end-to-end (E2E) test, as the E2E tests of
 plugins/rn/domain/best-practices/architecture/best-practice.md say: the real Claude Code on Opus,
 with the plugins under trial, in a fresh clone of the trial's repository, and a stand-in in the
 person's place that holds an intent the plugins never receive and reads only what the person's
-screen shows. It keeps each run's records, from which the plugin's product vision test counts its
-key results. It names no plugin, so the trials of every plugin of the repository run on it.
+screen shows. It keeps each run's records, from which the plugin's E2E test counts its key
+results. It names no plugin, so the E2E tests of every plugin of the repository run on it.
 
 Run it from the top of the repository as `python3 dev/scripts/trial.py run <trial file>`, with the
-developer's login as CLAUDE_CODE_OAUTH_TOKEN, as dev/plugin-development-guide.md says of a product
-vision trial's own Claude Code. It prints the folder of the run's records. Claude Code's hooks run
+developer's login as CLAUDE_CODE_OAUTH_TOKEN, as dev/plugin-development-guide.md says of the Claude
+Code of a test on the model. It prints the folder of the run's records. Claude Code's hooks run
 `trial.py hook <file>`, which adds each event to the file.
 
 A trial file is one JSON object:
@@ -54,7 +54,7 @@ import uuid
 from dataclasses import dataclass
 from typing import Any, Union
 
-# The model the plugins' users run, as .claude/rules/dev.md says of every trial.
+# The model the plugins' users run, as .claude/rules/dev.md says of every test on the model.
 MODEL = "opus"
 # What .claude/rules/dev.md says each `claude -p` started is told.
 RULE = (

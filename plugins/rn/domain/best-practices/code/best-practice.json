@@ -126,11 +126,11 @@
       "items": [
        {
         "at": "decide",
-        "text": "Build from the outside in, as Steve Freeman and Nat Pryce's [Growing Object-Oriented Software, Guided by Tests](http://www.growing-object-oriented-software.com/) does: first a walking skeleton, the thinnest path through every part by which the user reaches one key result of the product vision, across as many user stories as that path needs, with its test at the architecture level, then each further story in the same way, and the cases of each part only as a story reaches them."
+        "text": "Take the unit cases that the architecture's test cases hold for the part, each naming the integration case it supports, as [the architecture best practice](../architecture/best-practice.md) writes them before any code. These cases are the specification, so a case that no test names isn't in it."
        },
        {
         "at": "decide",
-        "text": "Design the test cases before any code, from what the part must do for the design: write each case as a test's name and its Given, When, and Then, the usual one, each edge, and each refusal. These tests are the specification, so a case that no test names isn't in it."
+        "text": "Where the code needs a case that they don't hold, such as for a module inside the part, design it before its code as a test's name and its Given, When, and Then, the usual one, each edge, and each refusal, naming the case one level up that it supports. Take a case that names none back to the architecture, since it tests what no element asks for."
        },
        {
         "at": "make",
@@ -164,7 +164,7 @@
        },
        {
         "at": "make",
-        "text": "Compare the list of cases with the tests, as a maintainer whose test failed would, and check that each case points to one test and each test's name to its case."
+        "text": "Read the tests as a maintainer whose test failed would, and check that each test checks one case, that its name says the case, and that it names the case one level up that it supports."
        }
       ]
      },
@@ -268,5 +268,7 @@
  "inputs": [
   "architecture"
  ],
- "preconditions": []
+ "preconditions": [
+  "architecture"
+ ]
 }

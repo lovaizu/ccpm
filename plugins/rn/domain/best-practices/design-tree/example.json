@@ -63,17 +63,17 @@
         },
         {
           "id": "N3",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N4",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N5",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "Tests designed with the architecture",
@@ -84,7 +84,7 @@
         },
         {
           "id": "N6",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
@@ -217,7 +217,7 @@
         },
         {
           "id": "N12",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "Test strategy and test cases",
@@ -233,7 +233,7 @@
         },
         {
           "id": "N14",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
@@ -324,7 +324,7 @@
         },
         {
           "id": "N12",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "Test strategy and test cases",
@@ -340,7 +340,7 @@
         },
         {
           "id": "N14",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
@@ -357,120 +357,120 @@
     },
     {
       "name": "A person's /lane:up lays a lane that stops a subagent's command outside its step with the step's sentence, and the run starts that subagent and ends on its result",
-      "path": "dev/lane/tests/architecture/test_lane_walking_skeleton.py",
+      "path": "dev/lane/tests/integration/test_lane_walking_skeleton.py",
       "kind": "specific",
       "inputs": [
         "dev/lane/architecture.md"
       ],
       "preconditions": [],
       "status": "open",
-      "check": "the architecture tests in dev/lane/tests/architecture/test_lane_walking_skeleton.py pass, each seen to fail first",
+      "check": "the integration tests in dev/lane/tests/integration/test_lane_walking_skeleton.py pass, each seen to fail first",
       "good": false,
       "decisions": []
     },
     {
       "name": "The user's plugin starts each subagent in the order they set, and only that one",
-      "path": "dev/lane/tests/architecture/test_lane_s5_run_in_order.py",
+      "path": "dev/lane/tests/integration/test_lane_s5_run_in_order.py",
       "kind": "specific",
       "inputs": [
         "dev/lane/architecture.md"
       ],
       "preconditions": [
-        "dev/lane/tests/architecture/test_lane_walking_skeleton.py"
+        "dev/lane/tests/integration/test_lane_walking_skeleton.py"
       ],
       "status": "open",
-      "check": "the architecture tests in dev/lane/tests/architecture/test_lane_s5_run_in_order.py pass, each seen to fail first",
+      "check": "the integration tests in dev/lane/tests/integration/test_lane_s5_run_in_order.py pass, each seen to fail first",
       "good": false,
       "decisions": []
     },
     {
       "name": "Each subagent that leaves a step goes back to it",
-      "path": "dev/lane/tests/architecture/test_lane_s6_role_held.py",
+      "path": "dev/lane/tests/integration/test_lane_s6_role_held.py",
       "kind": "specific",
       "inputs": [
         "dev/lane/architecture.md"
       ],
       "preconditions": [
-        "dev/lane/tests/architecture/test_lane_walking_skeleton.py"
+        "dev/lane/tests/integration/test_lane_walking_skeleton.py"
       ],
       "status": "open",
-      "check": "the architecture tests in dev/lane/tests/architecture/test_lane_s6_role_held.py pass, each seen to fail first",
+      "check": "the integration tests in dev/lane/tests/integration/test_lane_s6_role_held.py pass, each seen to fail first",
       "good": false,
       "decisions": []
     },
     {
       "name": "A run that stopped goes on where it stopped, after /compact or in a new conversation",
-      "path": "dev/lane/tests/architecture/test_lane_s7_run_picked_up.py",
+      "path": "dev/lane/tests/integration/test_lane_s7_run_picked_up.py",
       "kind": "specific",
       "inputs": [
         "dev/lane/architecture.md"
       ],
       "preconditions": [
-        "dev/lane/tests/architecture/test_lane_s5_run_in_order.py"
+        "dev/lane/tests/integration/test_lane_s5_run_in_order.py"
       ],
       "status": "open",
-      "check": "the architecture tests in dev/lane/tests/architecture/test_lane_s7_run_picked_up.py pass, each seen to fail first",
+      "check": "the integration tests in dev/lane/tests/integration/test_lane_s7_run_picked_up.py pass, each seen to fail first",
       "good": false,
       "decisions": []
     },
     {
       "name": "The user reads each step as it'll read with its rules, and the order, before anything holds their plugin",
-      "path": "dev/lane/tests/architecture/test_lane_s1_proposal.py",
+      "path": "dev/lane/tests/integration/test_lane_s1_proposal.py",
       "kind": "specific",
       "inputs": [
         "dev/lane/architecture.md"
       ],
       "preconditions": [
-        "dev/lane/tests/architecture/test_lane_s5_run_in_order.py",
-        "dev/lane/tests/architecture/test_lane_s6_role_held.py"
+        "dev/lane/tests/integration/test_lane_s5_run_in_order.py",
+        "dev/lane/tests/integration/test_lane_s6_role_held.py"
       ],
       "status": "open",
-      "check": "the architecture tests in dev/lane/tests/architecture/test_lane_s1_proposal.py pass, each seen to fail first",
+      "check": "the integration tests in dev/lane/tests/integration/test_lane_s1_proposal.py pass, each seen to fail first",
       "good": false,
       "decisions": []
     },
     {
       "name": "Lane lays only what a person approved, and proposes again on a change they ask for",
-      "path": "dev/lane/tests/architecture/test_lane_s2_person_approves.py",
+      "path": "dev/lane/tests/integration/test_lane_s2_person_approves.py",
       "kind": "specific",
       "inputs": [
         "dev/lane/architecture.md"
       ],
       "preconditions": [
-        "dev/lane/tests/architecture/test_lane_s1_proposal.py"
+        "dev/lane/tests/integration/test_lane_s1_proposal.py"
       ],
       "status": "open",
-      "check": "the architecture tests in dev/lane/tests/architecture/test_lane_s2_person_approves.py pass, each seen to fail first",
+      "check": "the integration tests in dev/lane/tests/integration/test_lane_s2_person_approves.py pass, each seen to fail first",
       "good": false,
       "decisions": []
     },
     {
       "name": "An AI that builds a plugin approves Lane's proposal by its own act and reaches the first held run",
-      "path": "dev/lane/tests/architecture/test_lane_s3_ai_approves.py",
+      "path": "dev/lane/tests/integration/test_lane_s3_ai_approves.py",
       "kind": "specific",
       "inputs": [
         "dev/lane/architecture.md"
       ],
       "preconditions": [
-        "dev/lane/tests/architecture/test_lane_s2_person_approves.py"
+        "dev/lane/tests/integration/test_lane_s2_person_approves.py"
       ],
       "status": "open",
-      "check": "the architecture tests in dev/lane/tests/architecture/test_lane_s3_ai_approves.py pass, each seen to fail first",
+      "check": "the integration tests in dev/lane/tests/integration/test_lane_s3_ai_approves.py pass, each seen to fail first",
       "good": false,
       "decisions": []
     },
     {
       "name": "After the steps change or Lane updates, the checks hold the steps as they now read, with Lane's newest code",
-      "path": "dev/lane/tests/architecture/test_lane_s4_proposed_again.py",
+      "path": "dev/lane/tests/integration/test_lane_s4_proposed_again.py",
       "kind": "specific",
       "inputs": [
         "dev/lane/architecture.md"
       ],
       "preconditions": [
-        "dev/lane/tests/architecture/test_lane_s2_person_approves.py"
+        "dev/lane/tests/integration/test_lane_s2_person_approves.py"
       ],
       "status": "open",
-      "check": "the architecture tests in dev/lane/tests/architecture/test_lane_s4_proposed_again.py pass, each seen to fail first",
+      "check": "the integration tests in dev/lane/tests/integration/test_lane_s4_proposed_again.py pass, each seen to fail first",
       "good": false,
       "decisions": []
     },
@@ -482,17 +482,17 @@
         "dev/lane/architecture.md"
       ],
       "preconditions": [
-        "dev/lane/tests/architecture/test_lane_walking_skeleton.py",
-        "dev/lane/tests/architecture/test_lane_s5_run_in_order.py",
-        "dev/lane/tests/architecture/test_lane_s6_role_held.py",
-        "dev/lane/tests/architecture/test_lane_s7_run_picked_up.py",
-        "dev/lane/tests/architecture/test_lane_s1_proposal.py",
-        "dev/lane/tests/architecture/test_lane_s2_person_approves.py",
-        "dev/lane/tests/architecture/test_lane_s3_ai_approves.py",
-        "dev/lane/tests/architecture/test_lane_s4_proposed_again.py"
+        "dev/lane/tests/integration/test_lane_walking_skeleton.py",
+        "dev/lane/tests/integration/test_lane_s5_run_in_order.py",
+        "dev/lane/tests/integration/test_lane_s6_role_held.py",
+        "dev/lane/tests/integration/test_lane_s7_run_picked_up.py",
+        "dev/lane/tests/integration/test_lane_s1_proposal.py",
+        "dev/lane/tests/integration/test_lane_s2_person_approves.py",
+        "dev/lane/tests/integration/test_lane_s3_ai_approves.py",
+        "dev/lane/tests/integration/test_lane_s4_proposed_again.py"
       ],
       "status": "open",
-      "check": "the product vision trials of the README's main use, judged from their records, show KR1.1 and KR1.2 of the product vision",
+      "check": "the E2E tests of the README's main use, judged from their records, show KR1.1 and KR1.2 of the product vision",
       "good": false,
       "decisions": [
         {
@@ -515,91 +515,91 @@
     },
     {
       "name": "A person's /rn:up with a request gets one deliverable that a generator makes and an evaluator judges, in a pull request of its own",
-      "path": "dev/rn/tests/architecture/test_rn_walking_skeleton.py",
+      "path": "dev/rn/tests/integration/test_rn_walking_skeleton.py",
       "kind": "specific",
       "inputs": [
         "dev/rn/architecture.md"
       ],
       "preconditions": [
-        "dev/lane/tests/architecture/test_lane_s5_run_in_order.py"
+        "dev/lane/tests/integration/test_lane_s5_run_in_order.py"
       ],
       "status": "open",
-      "check": "the architecture tests in dev/rn/tests/architecture/test_rn_walking_skeleton.py pass, each seen to fail first",
+      "check": "the integration tests in dev/rn/tests/integration/test_rn_walking_skeleton.py pass, each seen to fail first",
       "good": false,
       "decisions": []
     },
     {
       "name": "rn puts to the person only what's theirs, one point at a time, and goes on from their answer",
-      "path": "dev/rn/tests/architecture/test_rn_s2_point_settled.py",
+      "path": "dev/rn/tests/integration/test_rn_s2_point_settled.py",
       "kind": "specific",
       "inputs": [
         "dev/rn/architecture.md"
       ],
       "preconditions": [
-        "dev/rn/tests/architecture/test_rn_walking_skeleton.py"
+        "dev/rn/tests/integration/test_rn_walking_skeleton.py"
       ],
       "status": "open",
-      "check": "the architecture tests in dev/rn/tests/architecture/test_rn_s2_point_settled.py pass, each seen to fail first",
+      "check": "the integration tests in dev/rn/tests/integration/test_rn_s2_point_settled.py pass, each seen to fail first",
       "good": false,
       "decisions": []
     },
     {
       "name": "Nothing rests on a plan or a deliverable that the person didn't sign off with /rn:ty",
-      "path": "dev/rn/tests/architecture/test_rn_s3_sign_off.py",
+      "path": "dev/rn/tests/integration/test_rn_s3_sign_off.py",
       "kind": "specific",
       "inputs": [
         "dev/rn/architecture.md"
       ],
       "preconditions": [
-        "dev/rn/tests/architecture/test_rn_walking_skeleton.py"
+        "dev/rn/tests/integration/test_rn_walking_skeleton.py"
       ],
       "status": "open",
-      "check": "the architecture tests in dev/rn/tests/architecture/test_rn_s3_sign_off.py pass, each seen to fail first",
+      "check": "the integration tests in dev/rn/tests/integration/test_rn_s3_sign_off.py pass, each seen to fail first",
       "good": false,
       "decisions": []
     },
     {
       "name": "The person's /rn:dn stops the run at any moment and keeps the work so far",
-      "path": "dev/rn/tests/architecture/test_rn_s4_pause.py",
+      "path": "dev/rn/tests/integration/test_rn_s4_pause.py",
       "kind": "specific",
       "inputs": [
         "dev/rn/architecture.md"
       ],
       "preconditions": [
-        "dev/rn/tests/architecture/test_rn_walking_skeleton.py"
+        "dev/rn/tests/integration/test_rn_walking_skeleton.py"
       ],
       "status": "open",
-      "check": "the architecture tests in dev/rn/tests/architecture/test_rn_s4_pause.py pass, each seen to fail first",
+      "check": "the integration tests in dev/rn/tests/integration/test_rn_s4_pause.py pass, each seen to fail first",
       "good": false,
       "decisions": []
     },
     {
       "name": "/rn:up alone in a new conversation goes on where the run stopped",
-      "path": "dev/rn/tests/architecture/test_rn_s5_picking_up.py",
+      "path": "dev/rn/tests/integration/test_rn_s5_picking_up.py",
       "kind": "specific",
       "inputs": [
         "dev/rn/architecture.md"
       ],
       "preconditions": [
-        "dev/rn/tests/architecture/test_rn_walking_skeleton.py"
+        "dev/rn/tests/integration/test_rn_walking_skeleton.py"
       ],
       "status": "open",
-      "check": "the architecture tests in dev/rn/tests/architecture/test_rn_s5_picking_up.py pass, each seen to fail first",
+      "check": "the integration tests in dev/rn/tests/integration/test_rn_s5_picking_up.py pass, each seen to fail first",
       "good": false,
       "decisions": []
     },
     {
       "name": "The person gets one pull request, each decision rn took without asking, and the run's lessons",
-      "path": "dev/rn/tests/architecture/test_rn_s6_handed_over.py",
+      "path": "dev/rn/tests/integration/test_rn_s6_handed_over.py",
       "kind": "specific",
       "inputs": [
         "dev/rn/architecture.md"
       ],
       "preconditions": [
-        "dev/rn/tests/architecture/test_rn_walking_skeleton.py"
+        "dev/rn/tests/integration/test_rn_walking_skeleton.py"
       ],
       "status": "open",
-      "check": "the architecture tests in dev/rn/tests/architecture/test_rn_s6_handed_over.py pass, each seen to fail first",
+      "check": "the integration tests in dev/rn/tests/integration/test_rn_s6_handed_over.py pass, each seen to fail first",
       "good": false,
       "decisions": []
     },
@@ -611,15 +611,15 @@
         "dev/rn/architecture.md"
       ],
       "preconditions": [
-        "dev/rn/tests/architecture/test_rn_walking_skeleton.py",
-        "dev/rn/tests/architecture/test_rn_s2_point_settled.py",
-        "dev/rn/tests/architecture/test_rn_s3_sign_off.py",
-        "dev/rn/tests/architecture/test_rn_s4_pause.py",
-        "dev/rn/tests/architecture/test_rn_s5_picking_up.py",
-        "dev/rn/tests/architecture/test_rn_s6_handed_over.py"
+        "dev/rn/tests/integration/test_rn_walking_skeleton.py",
+        "dev/rn/tests/integration/test_rn_s2_point_settled.py",
+        "dev/rn/tests/integration/test_rn_s3_sign_off.py",
+        "dev/rn/tests/integration/test_rn_s4_pause.py",
+        "dev/rn/tests/integration/test_rn_s5_picking_up.py",
+        "dev/rn/tests/integration/test_rn_s6_handed_over.py"
       ],
       "status": "open",
-      "check": "the product vision trials of the README's main use, judged from their records, show KR1.1 and KR1.2 of the product vision",
+      "check": "the E2E tests of the README's main use, judged from their records, show KR1.1 and KR1.2 of the product vision",
       "good": false,
       "decisions": [
         {
@@ -628,13 +628,13 @@
           "by": "user"
         },
         {
-          "about": "The product vision trial's request",
+          "about": "The E2E test's request",
           "decided": "a small feature of tally in lovaizu/playground, its tallies given as CSV, with its tests and README, so that the run makes code and a document under one plan",
           "by": "user"
         },
         {
           "about": "A comparison with Claude Code alone",
-          "decided": "none: the trial shows KR1.1 and KR1.2 alone, as rn's worth is that once the user has answered what's theirs, a deliverable that meets their purpose comes without them, which a request this small, where Claude Code alone wins plainly, can't show, nor the two deliverables' quality side by side",
+          "decided": "none: the E2E test shows KR1.1 and KR1.2 alone, as rn's worth is that once the user has answered what's theirs, a deliverable that meets their purpose comes without them, which a request this small, where Claude Code alone wins plainly, can't show, nor the two deliverables' quality side by side",
           "by": "user"
         },
         {
@@ -692,7 +692,7 @@
           "decisions": [
             {
               "about": "The walkthrough recorded",
-              "decided": "the walkthrough takes its output from a recorded run of the rebuilt rn, the product vision test's own",
+              "decided": "the walkthrough takes its output from a recorded run of the rebuilt rn, the E2E test's own",
               "by": "reasoning"
             },
             {

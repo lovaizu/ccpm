@@ -54,13 +54,3 @@
 > DELETE_TEMPLATE_COMMENT:
 > - `<output>`: what the AI hands back, in what form, and to whom.
 
-## Trials
-
-`<trials>`
-
-> [!NOTE]
-> DELETE_TEMPLATE_COMMENT:
-> - `<trials>`: the trials that try the prompt in real use: runs of the whole that the prompt is
->   part of, on requests as big as real ones. They also hold the stand-ins that play the person the
->   AI talks with and the parts the prompt works with, the judges, each an AI that gives pass or
->   fail on one point, and the checks on each run's record.

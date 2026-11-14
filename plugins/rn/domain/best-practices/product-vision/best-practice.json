@@ -112,7 +112,7 @@
        },
        {
         "at": "make",
-        "text": "Check that a developer can measure both after a change and decide from them whether to keep it."
+        "text": "Check that a developer can measure both from the records of the end-to-end (E2E) tests run after a change, and decide from them whether to keep it."
        }
       ]
      },

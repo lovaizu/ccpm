@@ -23,6 +23,10 @@
 
 - [architecture](../architecture/best-practice.md)
 
+## Preconditions
+
+- [architecture](../architecture/best-practice.md)
+
 ## Practices
 
 ### N1
@@ -76,15 +80,15 @@ Does each case of the specification, its edges and refusals included, have one t
 
 A maintainer whose test fails should know which case it breaks. [Test-driven development](https://martinfowler.com/bliki/TestDrivenDevelopment.html) writes the tests from the specification's cases before the code.
 
-1. *While deciding.* Build from the outside in, as Steve Freeman and Nat Pryce's [Growing Object-Oriented Software, Guided by Tests](http://www.growing-object-oriented-software.com/) does: first a walking skeleton, the thinnest path through every part by which the user reaches one key result of the product vision, across as many user stories as that path needs, with its test at the architecture level, then each further story in the same way, and the cases of each part only as a story reaches them.
-2. *While deciding.* Design the test cases before any code, from what the part must do for the design: write each case as a test's name and its Given, When, and Then, the usual one, each edge, and each refusal. These tests are the specification, so a case that no test names isn't in it.
+1. *While deciding.* Take the unit cases that the architecture's test cases hold for the part, each naming the integration case it supports, as [the architecture best practice](../architecture/best-practice.md) writes them before any code. These cases are the specification, so a case that no test names isn't in it.
+2. *While deciding.* Where the code needs a case that they don't hold, such as for a module inside the part, design it before its code as a test's name and its Given, When, and Then, the usual one, each edge, and each refusal, naming the case one level up that it supports. Take a case that names none back to the architecture, since it tests what no element asks for.
 3. *While making.* Write one test for each case, named for the behavior it checks. If the name needs `and`, split the test.
 4. *While making.* Write each test so that its reader grasps the situation, the action, and what must be so, such as in the three parts [Given, When, and Then](https://martinfowler.com/bliki/GivenWhenThen.html), with each expected value taken from the specification, not from what the code gives.
 5. *While making.* Keep each test readable on its own, with the values that its case turns on in its own body, and put in one helper only setup that many tests share, such as building the object under test, since Software Engineering at Google advises that [unit tests](https://abseil.io/resources/swe-book/html/ch12.html) be descriptive and meaningful rather than free of repetition.
 6. *While making.* Keep loops and branches out of a test, as the same source advises.
 7. *While making.* Give each failure a message that names the case, as the same source advises.
 8. *While making.* Run each test before you write its code, and see it fail. The trace: `{tests}` run.
-9. *While making.* Compare the list of cases with the tests, as a maintainer whose test failed would, and check that each case points to one test and each test's name to its case.
+9. *While making.* Read the tests as a maintainer whose test failed would, and check that each test checks one case, that its name says the case, and that it names the case one level up that it supports.
 
 ### N6
 

@@ -23,15 +23,19 @@
     - **N13** Can the caller act on what comes back, in the form that the architecture's sequences hand on, without asking the AI anything further? (Steps, Output)
     - **N14** Can the person decide from the first lines of each message that the AI writes to them? (Output)
     - **N15** Does each claim that the AI reports rest on a check it ran on the real thing, with what it didn't check stated? (Output)
-  - **C6** The writer knows from real use that the prompt works.
-    - **N16** Do trials on each kind of request the prompt is for, each run several times on the model its users run, show the AI reaching the result on every run? (the whole)
-    - **N17** Can the maintainer tell from a failed trial's record whether the prompt or the trial went wrong? (Trials)
+  - **C6** The writer knows from tests that the prompt works on every run and in real use.
+    - **N16** Do the prompt's unit tests, each case run k times on the model its users run, and the end-to-end (E2E) tests of the product it's part of show the AI reaching the result on every run? (the whole)
+    - **N17** Can the maintainer tell from a failed test's record whether the prompt or the test went wrong? (the whole)
 
 ## Template
 
 [template.md](template.md)
 
 ## Inputs
+
+- [architecture](../architecture/best-practice.md)
+
+## Preconditions
 
 - [architecture](../architecture/best-practice.md)
 
@@ -152,7 +156,7 @@ The AI keeps a rule on most runs, not on every run. The method is Claude Code's 
 
 1. *While deciding.* List each rule of the steps that must hold on every run, and for each, a case where the AI keeps it and a case where it breaks it.
 2. *While deciding.* Hold each such rule with a hook or a deny rule, not with the prompt's words alone, since a [hook](https://code.claude.com/docs/en/hooks) runs on every call, so it holds a rule that must hold, such as a file that the AI must not write.
-3. *While making.* Test the hook on each case, one case at a time, with code in the AI's place, which tries the hook in seconds without the model, so that checking the rule needs no trial of the prompt.
+3. *While making.* Test the hook on each case, one case at a time, with code in the AI's place, which tries the hook in seconds without the model, so that checking the rule needs no run of the model.
 
 ### N13
 
@@ -193,23 +197,24 @@ The caller can't tell a claim that the AI checked from one it guessed, and acts 
 
 ### N16
 
-Do trials on each kind of request the prompt is for, each run several times on the model its users run, show the AI reaching the result on every run?
+Do the prompt's unit tests, each case run k times on the model its users run, and the end-to-end (E2E) tests of the product it's part of show the AI reaching the result on every run?
 
-The writer knows a prompt only by what the AI does with it in real use, where the AI's variance and the faults of the design show. The method is the repeated trials of Anthropic's [demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), whose pass^k is the chance that all k trials succeed.
+The writer knows a prompt only by what the AI does with it, where the AI's variance and the faults of the design show. The method is the repeated runs of Anthropic's [demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), whose pass^k is the chance that all k runs succeed.
 
-1. *While making.* Run the product vision trial on each kind of request that the prompt is for several times, on the model its users run. A rule that must hold on every run rests on a hook, as N12 says, so the trial tries the rest.
-2. *While making.* Where a run doesn't reach the result, change the prompt only for a cause that its record shows, as N17 says, and run the trial again.
+1. *While making.* Run each case that the architecture's test cases hold for the prompt k times on the model its users run, with the k that the architecture's Test strategy sets. A rule that must hold on every run rests on a hook, as N12 says, so the unit tests try the rest.
+2. *While making.* Where a run doesn't reach the result, change the prompt only for a cause that its record shows, as N17 says, and run the case k times again.
 3. *While making.* Judge the prompt from the record of what the AI did on each run, and check that every run reached the result.
+4. *While making.* Confirm by the E2E tests that the prompt, among the other parts, reaches the result on requests as big as real ones, since a unit test meets only the cases that its writer set up.
 
 ### N17
 
-Can the maintainer tell from a failed trial's record whether the prompt or the trial went wrong?
+Can the maintainer tell from a failed test's record whether the prompt or the test went wrong?
 
-A trial's own parts, its set-up, its stand-ins, its judges, and its checks, are code and prompts of their own, and can fail like the prompt. The method is Anthropic's [demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), which takes code over a model to grade where it can, calibrates a model grader against human judgment, and reads the records to tell a failure of the agent from a failure of the trial.
+A test's own parts, its set-up, its doubles, its judges, and its checks, are code and prompts of their own, and can fail like the prompt. The method is Anthropic's [demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents), which takes code over a model to grade where it can, calibrates a model grader against human judgment, and reads the records to tell a failure of the agent from a failure of the test.
 
 1. *While deciding.* Decide by code every point that the record shows, such as a tool called, a file's content, or a command's output. Leave to a judge only what code can't decide.
 2. *While making.* Build each part alone, test first, and run it small on a record kept from an earlier run before any whole run relies on it, so that a whole run only confirms, and a failure in it points to the prompt.
 3. *While making.* Give each judge one point, its definitions, and a pass or fail result. Give it messages of each kind whose answer the maintainer knows, and use it only once it judges them right.
 4. *While making.* Give the stand-in for the person only their intent, which the prompt never gets, and the whole of each message it answers. Check on kept conversations that it answers from the intent alone and invents nothing.
-5. *While making.* Between two runs, change one thing, the prompt or a part of the trial, never both.
-6. *While making.* Where a trial fails, look first in its record at the trial's own parts, and change the prompt only for a cause in the prompt.
+5. *While making.* Between two runs, change one thing, the prompt or a part of the test, never both.
+6. *While making.* Where a test fails, look first in its record at the test's own parts, and change the prompt only for a cause in the prompt.

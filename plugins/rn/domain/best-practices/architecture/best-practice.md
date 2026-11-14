@@ -17,12 +17,12 @@
   - **C3** The developers can place, set up, and start every part without asking anyone.
     - **N10** Does Deployment show where each component runs, where the product keeps each kind of data, and how the product starts? (Components, Data model, Deployment)
     - **N11** Does each component and each kind of data have one place for its files? (Components, Data model, Directory structure)
-  - **C4** The developers know that the product does what the document says before users try it.
-    - **N12** Does Tests show, for each deployment unit, which test levels cover it, how thoroughly, and why a level is missing? (Deployment, Tests)
-    - **N13** Does each test level say what runs real, what test doubles replace, what the tests cover, and when they pass? (Tests)
-    - **N14** Does each thing that the document says the product does rest on a part that a unit or architecture test can check? (Components, Tests)
+  - **C4** The developers find each gap between the parts before they build any part, and know, as they build, that the product does what the document and the product vision say.
+    - **N12** Does Test strategy decide, for each test level, what it tests, what runs real, its tools, when it runs, and each quality check with the criterion by which it passes? (Test strategy)
+    - **N13** Does every part, every element of this document, and every key result have its test cases in the test code, each written as Given, When, and Then, and each naming the case or the element one level up that it supports? (Test strategy)
+    - **N14** Does each thing that the document says the product does rest on a part that a unit or integration test can check? (Components, Test strategy)
   - **C5** The developers can change the product without making the document wrong.
-    - **N15** Does each choice whose other way would cost a key result say what the other way would lose? (Components, Deployment, Directory structure, Tests)
+    - **N15** Does each choice whose other way would cost a key result say what the other way would lose? (Components, Deployment, Directory structure, Test strategy)
     - **N16** Does the document hold only what stays true while the product vision and the principles stay, and leave each component's internals out? (the whole)
 
 ## Template
@@ -131,7 +131,7 @@ Does each user story have a sequence that shows, at each step, which component a
 A developer building a step must know who acts there, on what, and what comes next. A [UML](https://www.omg.org/spec/UML) sequence diagram draws a story's steps in order, from the role's first request to what the story gives them.
 
 1. *While making.* For each story, draw each step as a message from one component to another along an arrow of Components, with the data it passes, named as in the data model.
-2. *While making.* Draw each branch, each step that sends work back, and each question put to the role, since each path of the story, and its test, rests on them.
+2. *While making.* Draw each branch, each step that sends work back, and each question put to the role, since each path of the story, and its integration test, rests on them.
 3. *While making.* Let stories that share their steps share a diagram.
 4. *While making.* Read each sequence as the developer who builds one of its steps, and check that they can tell, at each step, which component acts, along which arrow of Components, with which data, and what comes next. Where no arrow carries a step, add the arrow, or give the step to another component.
 
@@ -170,59 +170,54 @@ A developer making a change must find the one place it belongs. Simon Brown's pa
 
 ### N12
 
-Does Tests show, for each deployment unit, which test levels cover it, how thoroughly, and why a level is missing?
+Does Test strategy decide, for each test level, what it tests, what runs real, its tools, when it runs, and each quality check with the criterion by which it passes?
 
-A part that no test level covers can break unseen. The [test pyramid](https://martinfowler.com/articles/practical-test-pyramid.html) puts most checks at the narrow, fast levels and few at the wide, slow ones.
+A case's pass or fail decides the work only where its level's tools and criteria are set before anyone writes the case. The V-model, as the [glossary](https://glossary.istqb.org) of the International Software Testing Qualifications Board (ISTQB) defines it, pairs each level of development with a test level, and the [test pyramid](https://martinfowler.com/articles/practical-test-pyramid.html) puts most checks at the narrow, fast levels.
 
-1. *While deciding.* Name each level by what it checks against: unit against a part's contract, architecture against this document, and product vision against the product vision, in real use.
-2. *While deciding.* List each deployment unit as a row.
-3. *While deciding.* For each level, ask what the unit must do by that level's ground, and fill the cell with the tool and how far it tries the unit, and nothing more. `FULL` tries each case and edge, `HAPPY` the main paths, and `SMOKE` one run that confirms what the lower levels checked.
-4. *While deciding.* Give unit and architecture most of the checking, and run them on every change.
-5. *While deciding.* Where a cell stays empty, say why.
-6. *While making.* Leave out a unit whose every cell would be empty, and say why under the table.
-7. *While making.* Check that each story's sequence runs from start to end at the architecture level in some row.
+1. *While deciding.* Name the levels unit tests, integration tests, and end-to-end (E2E) tests, and use no other name for a test. Unit tests try each part, each prompt among them, against its contract. Integration tests try the parts joined against each element of this document. E2E tests try the product in real use against each key result of the product vision.
+2. *While deciding.* For each level, run real only what it tests, and replace the rest with [test doubles](https://martinfowler.com/bliki/TestDouble.html). At unit, run the part, with a double for each part it works with that's slow or outside the test. At integration, run what joins the components, such as hooks and scripts, with a double for each component that an AI runs and for each thing outside the product, so that the level calls no model and gives the same result on each run. At E2E, run the whole product on the model its users run, with an AI in the role that holds an intent the product never receives, since another model makes other mistakes than the users meet.
+3. *While deciding.* Choose each level's tools from the product's constraints, such as the runtime its users have, and name each: the test runner, and the tool of each quality check.
+4. *While deciding.* Set the quality checks of the parts, each with its criterion, since a check without one passes whatever it finds: line and branch coverage, the mutants that survive, the limits on each function's complexity, its returns, branches, arguments, and statements, and the findings of static analysis, such as types, import cycles, and copied code, and of lint.
+5. *While deciding.* Name each contract that takes a wide input, such as the reader of a file that an AI writes, for property-based tests that find no counterexample, and leave the other contracts to the cases drawn by hand.
+6. *While deciding.* Set k, how many times a prompt's unit tests run each case on the model its users run, and pass the case only where all k runs pass, as pass^k of Anthropic's [demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents) measures it. Choose k by how rare a slip must still show against what each run costs.
+7. *While deciding.* Set the quality checks of the architecture, and name the script that checks them by the names of the elements, not by reading: every element of this document, each story, principle, component, and kind of data, has an integration test; every test names an element or a case one level up that exists; every unit case names an integration case; a test of a principle that must not break is trusted only once seen to fail with the principle broken; and each double gives only what a recorded run or the official documentation shows, as N14 says.
+8. *While deciding.* Set the quality checks of the product vision: each key result's value, compared with the last run's by the order the product vision gives, since the product vision sets no target; a judge, trusted only once it's right on kept records whose answer is known; and how many times each E2E test runs its main use at real size, since the AI's variance shows only across runs.
+9. *While deciding.* Run each check at the time that what it checks calls for, not by how long it takes. Before each push, run the static analysis, the unit tests of code and the integration tests that the change reaches, and their coverage, since these show whether the change does what its design says, and the work waits on them. Running every such test there meets this too, as a selection by what the change reaches misses a test that reads a file the change edits. On each push, in CI, run every unit test of code and every integration test, and mutation testing and property-based tests over the lines that the push changed, apart from the work, since these check the tests and not the change. Each night, in CI, run every check that runs on its own over the whole, property-based tests at their most inputs among them, since a run over a push's lines misses a test changed alone and a fault between parts that no one push changed together. Run a prompt's unit tests before a change of the prompt is taken, and the E2E tests once every lower level passes, since each run calls the model and is slow and costly.
+10. *While making.* Write a subsection for each level, from unit to E2E, in the form of the template.
+11. *While making.* Point to the test rules of the architecture that the product builds on, such as the form each case takes, and write only what this product sets.
 
 ### N13
 
-Does each test level say what runs real, what test doubles replace, what the tests cover, and when they pass?
+Does every part, every element of this document, and every key result have its test cases in the test code, each written as Given, When, and Then, and each naming the case or the element one level up that it supports?
 
-A failing test should name the rule, path, or use that it breaks. Each level runs real only what it checks against and replaces the rest with [test doubles](https://martinfowler.com/bliki/TestDouble.html), and draws its unit tests by the test techniques that the [glossary](https://glossary.istqb.org) of the International Software Testing Qualifications Board (ISTQB) defines: equivalence partitioning, boundary value analysis, and decision table testing.
+Every case written before any part is built checks the architecture while a gap between the parts is still cheap to fix: a case that no part can hold, or a handoff that no interface carries, shows the gap before anyone builds around it. The V-model of the [ISTQB glossary](https://glossary.istqb.org) designs each level's tests during the development activity it pairs with, and Steve Freeman and Nat Pryce's outside-in test-driven development, in [Growing Object-Oriented Software, Guided by Tests](http://www.growing-object-oriented-software.com/) and [Mock Roles, not Objects](http://jmock.org/oopsla2004.pdf), finds each part's roles and interface by first writing the tests one level up.
 
-1. *While making.* Draw each test from the one thing its level checks against: the ways a part's contract divides at unit, the paths the sequences draw at architecture, and an objective's main use at real size at product vision.
-2. *While making.* Run only that thing real, and replace the rest with test doubles.
-3. *While making.* Point to the test rules of the best practices that the product follows, and write only where this product differs from them.
-4. *While making.* At unit, divide each input and each result that the contract names into classes that the part treats alike, the refused ones among them, and write one test for each class. This is equivalence partitioning.
-5. *While making.* Where a class ends on an ordered scale, such as a length or a count, write one test at each end and one at the nearest value of the next class. This is boundary value analysis.
-6. *While making.* Where the contract's result depends on a combination of conditions, write one test for each combination that can occur, with the result it gives. This is decision table testing.
-7. *While making.* At unit, pass when the tests all pass and run every line and branch.
-8. *While making.* Close each gap that coverage, mutation testing, or a property-based test finds from the contract, as the code best practice says of the faults that the tests catch. These tools confirm the tests drawn from the contract, and draw none themselves.
-9. *While making.* At unit, where no guard holds each rule of a part that an AI does on every run, run the part on the real model, with one input for each class, both where the contract says the part acts and where it says it doesn't, and doubles for the parts it works with.
-10. *While making.* At architecture, run real what joins the components, such as hooks and scripts, and replace each component that an AI runs and each thing outside the product with a double, so that the level calls no model and gives the same result on each run.
-11. *While making.* At architecture, write one test for each path through each story's sequence: the main flow, each branch, each step that sends work back, and each question put to the role, until every move from one step to the next lies on some path.
-12. *While making.* Run each check at the time that what it checks calls for, not by how long it takes. Before each push, run the static analysis, the unit and architecture tests that the change reaches, and their coverage, since these show whether the change does what its design says, and the work waits on them. Running every test there meets this too, as a selection by what the change reaches misses a test that reads a file the change edits. On each push, in CI, run every test, and mutation testing and property-based tests over the lines that the push changed, apart from the work, since these check the tests and not the change, and tests drawn from the design before the code leave few gaps for them to find. Each night, in CI, run every check that runs on its own over the whole, property-based tests at their most inputs among them, since a run over a push's lines misses a test changed alone and a fault between parts that no one push changed together.
-13. *While making.* At product vision, once unit and architecture pass, run the real product on each objective's main use, as the README's walkthrough shows it, at the size of a real request, with an AI in the role that holds an intent the product never receives.
-14. *While making.* At product vision, measure each key result as the product vision words it, and compare each measure with the last one by the direction the product vision gives, since the product vision sets no target.
-15. *While making.* At product vision, run each role on the model its users run, since another model makes other mistakes than the users meet.
-16. *While making.* At product vision, judge each run from its records.
-17. *While making.* At product vision, try no case that a lower level can test, since each run is slow and costly.
-18. *While making.* For a test whose result varies from run to run, write how many runs out of how many must meet the expectation.
+1. *While making.* Once Test strategy names the tools, write the E2E cases first: for each key result, a case that runs an objective's main use, as the README's walkthrough shows it, at the size of a real request, and names the key result, such as `KR1.1`.
+2. *While making.* Write the integration cases from the elements of this document, each naming its element by its name: a case for each path through each story's sequence, the main flow, each branch, each step that sends work back, and each question put to the role, until every move from one step to the next lies on some path; a case for each principle, where the parts keep it and where one breaks it; a case for each decision that a component alone makes; and a case for each handoff between parts, with the data it passes as the data model names it.
+3. *While making.* Write the unit cases of each part through its interface, each naming the integration case it supports, so that the interface a part offers comes from what the cases one level up need of it.
+4. *While making.* Divide each input and each result that a part's contract names into classes that the part treats alike, the refused ones among them, and write one case for each class. This is equivalence partitioning, as the ISTQB glossary defines it.
+5. *While making.* Where a class ends on an ordered scale, such as a length or a count, write one case at each end and one at the nearest value of the next class. This is boundary value analysis.
+6. *While making.* Where the contract's result depends on a combination of conditions, write one case for each combination that can occur, with the result it gives. This is decision table testing.
+7. *While making.* For a prompt, write a case where its contract says it acts and one where it says it doesn't, for each kind of request it's for, and decide by code each point of the result that its record shows.
+8. *While making.* Write each case as a test in the test code, in the place that Directory structure names, with its Given, When, and Then stated, and write no list of the cases in a document, since a list beside the code says each case twice.
+9. *While making.* Read the cases against the architecture, and go back to the architecture where they show a gap: a case that no part can hold needs a part, or a decision given to one; a part that no case reaches serves no element, as N3 says; a part whose cases fall under more than one decision makes more than one, as N5 says; and a handoff that no interface carries needs an arrow and a kind of data. Change the architecture first, and then the cases.
+10. *While making.* Run the script that checks the trace, and mend each case or element it names until it names none.
+11. *While making.* Once the parts are being built, add a case only where it names a case one level up, and take a case that names none back to the architecture, since such a case tests what no element asks for.
 
 ### N14
 
-Does each thing that the document says the product does rest on a part that a unit or architecture test can check?
+Does each thing that the document says the product does rest on a part that a unit or integration test can check?
 
-The product vision tests are slow and few, so they can only confirm what the lower levels already showed, and a thing that only a prompt holds, such as a rule an AI keeps by its instructions, varies from run to run where no unit or architecture test can show it. The [Humble Object](https://martinfowler.com/bliki/HumbleObject.html) pattern of Gerard Meszaros's *xUnit Test Patterns* moves the logic out of a part that's hard to test into a part that a test can run.
+The E2E tests are slow and few, so they can only confirm what the lower levels already showed, and a thing that only a prompt holds varies from run to run, where only many runs on the model show it. The [Humble Object](https://martinfowler.com/bliki/HumbleObject.html) pattern of Gerard Meszaros's *xUnit Test Patterns* moves the logic out of a part that's hard to test into a part that a test can run.
 
 1. *While deciding.* For each thing the document says the product does, name the part that holds it.
-2. *While deciding.* Where only a prompt holds it, give it to a part that a test can run, such as a guard of the architecture the product builds on, and draw that part in Components.
-3. *While deciding.* Leave a judgment that only an AI can make, such as whether a point is the user's, with the AI.
-4. *While deciding.* Decide where to test such a judgment: on the real model, as N13.9 says, or, where the architecture the product builds on runs no prompt alone, only in the product vision tests.
-5. *While making.* Where only the product vision tests show such a judgment, say so in Tests.
-6. *While making.* The lower levels show a part only if each double behaves like the part it replaces, so give each double only results in the form the part's contract gives, refusals among them.
-7. *While making.* Test each double as the part's unit tests test the part.
-8. *While making.* Draw a double of something outside the product from its documentation or from a recorded run of the real thing. A double that gives what the real thing never would passes a test that the real one fails.
-9. *While making.* For a fault that a higher level finds, name the case or path that the lower level missed, add its test at the level that must catch it, see it fail, and then fix it there.
-10. *While making.* Trust a check, such as a test, a hook, or the judge of a trial, only once you have seen it fail on a case that breaks what it checks. Trust a judge once it's right on kept records whose answer you know.
+2. *While deciding.* Where only a prompt holds a rule that must hold on every run, give the rule to a part that a test can run, such as a guard of the architecture the product builds on, and draw that part in Components.
+3. *While deciding.* Leave a judgment that only an AI can make, such as whether a point is the user's, with the AI, and try it by the prompt's unit tests on the model, as N12.6 sets.
+4. *While making.* The lower levels show a part only if each double behaves like the part it replaces, so give each double only results in the form the part's contract gives, refusals among them.
+5. *While making.* Test each double as the part's unit tests test the part.
+6. *While making.* Draw a double of something outside the product from its documentation or from a recorded run of the real thing, and name that source beside what the double gives, so that the script of N12.7 can check it. A double that gives what the real thing never would passes a test that the real one fails.
+7. *While making.* For a fault that a higher level finds, name the case that the lower level missed, add it at the level that must catch it, naming the case one level up, see it fail, and then fix it there.
+8. *While making.* Trust a check, such as a test, a hook, or the judge of an E2E test, only once you have seen it fail on a case that breaks what it checks, such as a test of a principle run with the part that holds the principle taken out, which the script of N12.7 can run. Trust a judge once it's right on kept records whose answer you know.
 
 ### N15
 
@@ -230,7 +225,7 @@ Does each choice whose other way would cost a key result say what the other way 
 
 A developer who doubts a choice and can't see what it was for may undo it and bring back the problem it solved. An [architecture decision record](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions), by Michael Nygard, keeps a decision with its context and consequences.
 
-1. *While deciding.* For each choice whose other way would bring back a problem that costs a key result, such as a technology, a tool, or how far a level tests a unit, name the other way it beat, what the choice gives, ending with the key result it serves, and what it costs.
+1. *While deciding.* For each choice whose other way would bring back a problem that costs a key result, such as a technology, a tool, or the k of a prompt's unit tests, name the other way it beat, what the choice gives, ending with the key result it serves, and what it costs.
 2. *While making.* Write it beside the choice, one sentence for each.
 3. *While making.* For each choice that a figure shows, ask what the other way would bring back. Give a reason and a cost only where it would cost a key result.
 

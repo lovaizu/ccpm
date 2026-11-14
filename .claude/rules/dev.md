@@ -94,21 +94,31 @@ vision, as step 1 says. Have the user agree to it before you make the architectu
 - Rationale: you build everything after the README to what it promises the user. Built before it,
   that work would stand on a measure that no one has settled.
 
-### 3. Write the architecture
+### 3. Write the architecture, its Test strategy, and every test case
 
 **With `architecture/best-practice.json` open, write `dev/<plugin>/architecture.md` on
-[the plugin guide](../../dev/plugin-development-guide.md). Have the user agree to it.** Place its
+[the plugin guide](../../dev/plugin-development-guide.md).** Place its
 files as [the plugin template](../../dev/plugin-template) lays them out. Design the plugin so that each general lesson of a run reaches the plugin's repository, as
 [the plugin guide](../../dev/plugin-development-guide.md#learning-from-each-run) asks of what a run learns.
 
 **Make each figure as [the figure rules](figures.md) say.**
 
+**Once its Test strategy names the tools, write every test case in the test code: the end-to-end
+(E2E), the integration, and the unit cases. Write them as
+[the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md)
+and [the plugin guide](../../dev/plugin-development-guide.md#test) say. Where a case shows a gap,
+mend the architecture first, and then the cases. Have the user agree to the architecture with its
+cases before you build any part.**
+
+- Rationale: a gap between parts that the cases find costs a change of the document. Found once the
+  parts are built, it costs a change of every part on both sides of it.
+
 ### 4. Build each deliverable
 
-**For each deliverable of the design tree, in its order, have a subagent make each part of a to e.
+**For each deliverable of the design tree, in its order, have a subagent make each part of a to d.
 Brief it by [the generator's part of the plugin template](../../dev/plugin-template/domain/generator.md),
 filled for the part: what it makes, for whom, the best practice that the part names, the part's
-inputs, and what holds at the end. Its steps have it read that best practice in full, and take
+inputs, its test cases, and what holds at the end. Its steps have it read that best practice in full, and take
 its practices in their order and at the time each names. Before you take its result, check the result
 against the purpose and the best practice.**
 
@@ -116,64 +126,60 @@ against the purpose and the best practice.**
   it read before as known, and skips its items. A subagent starts from its brief alone, so it
   works from the best practice itself.
 
-a. **First write the deliverable's architecture tests, as the practices on tests of
-   [the code best practice](../../plugins/rn/domain/best-practices/code/best-practice.md),
-   [the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md), and
-   [the plugin guide](../../dev/plugin-development-guide.md#test)
-   say: one for each path through its sequences, with what joins the parts run real and a double for
-   each role an AI runs. See each fail.**
+a. **Make the code with `code/best-practice.json`, to the unit cases of step 3, and as
+   [the plugin guide](../../dev/plugin-development-guide.md#development) asks of a plugin's code.**
 
-b. **Make the code with `code/best-practice.json`, its unit tests by the test levels of
-   [the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md), and its
-   code as [the plugin guide](../../dev/plugin-development-guide.md#development) asks of a plugin's code.**
-
-c. **Write each prompt, a skill or an agent, with
+b. **Write each prompt, a skill or an agent, with
    [prompt/best-practice.json](../../plugins/rn/domain/best-practices/prompt/best-practice.md)
-   open. Run no trial of it alone, as
-   [the plugin guide](../../dev/plugin-development-guide.md#no-trial-of-a-prompt-alone)
-   says.** Each rule of its steps that must hold on every run goes to a lane in d, as
-   `prompt/best-practice.json` holds such a rule with a hook, and a tests it.
+   open, and run its unit tests on the model, as
+   [the plugin guide](../../dev/plugin-development-guide.md#a-prompts-unit-tests-on-the-model)
+   says.** Each rule of its steps that must hold on every run goes to a lane in c, as
+   `prompt/best-practice.json` holds such a rule with a hook.
 
-d. **Lay the lanes the prompts' steps call for, with `prompt/best-practice.json` open, by
+c. **Lay the lanes the prompts' steps call for, with `prompt/best-practice.json` open, by
    running the up skill of Lane.** Read the proposal that it shows, and approve it once it
    holds each rule that the steps call for. Where a step needs a check that no lane holds,
    add the check to Lane as a lane of its own, in a file of its own, with `code/best-practice.json`
    open. Each check then lives in one place in Lane, so you write and test it once.
-   - Rationale: the architecture tests run the lanes and routes as laid, so lay them before those
-     tests.
+   - Rationale: the integration tests run the lanes and routes as laid, so lay them before those
+     tests run.
 
-e. **Run the architecture tests of a, and fix each failure at the part or the handoff where it
+d. **Run the integration tests of step 3, and fix each failure at the part or the handoff where it
    lies.**
 
-**After a trial, change a prompt or a document only for a cause that the records confirm, as
-`prompt/best-practice.json` says of a failed trial. Trace that cause to what the README and the architecture say the
+**Add a case only where it names a case one level up. Take a case that names none back to the
+architecture.**
+
+- Rationale: a case that names nothing one level up tests what no element of the architecture asks for, and
+  the parts grow toward it instead of toward the design.
+
+**After a test on the model fails, change a prompt or a document only for a cause that the records confirm, as
+`prompt/best-practice.json` says of a failed test. Trace that cause to what the README and the architecture say the
 prompt or document should be.**
 
 - Rationale: what an AI does varies from run to run. A line added for one run's slip meets a
   different slip in the next run, so the additions never settle.
 
-**Run every trial on Opus, and set the model in the command that starts the trial, such as
+**Run every test on the model on Opus, and set the model in the command that starts it, such as
 `claude --model opus`.**
 
 - Rationale: the plugins' users run Opus.
-  [The architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md)'s tests run each role on the model its users run.
+  [The architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md) runs each test on the model its users run.
 
-**Run a trial that needs a real GitHub repository in `lovaizu/playground`.** This repository
-exists for the product vision trials that
-[the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md)'s tests
-ask for.
+**Run an E2E test that needs a real GitHub repository in `lovaizu/playground`.** This repository
+exists for the E2E tests that
+[the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md)
+asks for.
 
 ### 5. Confirm the whole in real use
 
-**Once you have built every deliverable and every unit and architecture test passes, try the plugin as its
-user to confirm the product vision, as the product vision tests of
-[the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md) say.**
-Try it on each objective's main use, as the README's walkthrough shows it, at the size of a real
-request. Use a stand-in that holds an intent the plugin never receives.
+**Once you have built every deliverable and every unit and integration test passes, run the E2E
+tests, as [the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md)
+and the plugin's Test strategy say.**
 
-**When the trial finds a fault, first test it at the level that missed it, as
+**When an E2E test finds a fault, first test it at the level that missed it, as
 [the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md)
-says of a fault that a higher level finds. Then confirm the whole again.**
+says of a fault that a higher level finds. Then run the E2E tests again.**
 
 ### 6. Check the structure
 

@@ -75,14 +75,13 @@ sequenceDiagram
     ├── plugin-development-guide.md         this document
     ├── plugin-template/                the files a plugin starts from
     ├── images/                         the figures' style, and this document's figures <CSS, SVG>
-    ├── scripts/                        the checks and the trial driver <Python 3>
+    ├── scripts/                        the checks, and trial.py, which runs an E2E test <Python 3>
     ├── tests/                          the double of Claude Code that the plugins' tests share <Python 3>
     └── <plugin>/                       one for each folder in plugins/
         ├── product-vision.md           the plugin's product vision <Markdown>
         ├── architecture.md             the plugin's architecture <Markdown>
         ├── images/                     the architecture's figures <SVG>
-        ├── tests/                      unit/ and architecture/, as Test says
-        └── trials/                     the product vision trials, as Test says <JSON>
+        └── tests/                      the test cases, by when each runs, as Test says <Python 3>
 ```
 
 An entry is a file whose form Claude Code fixes: a skill, an agent, a hook, or a command line. Its
@@ -179,7 +178,7 @@ routes keep the course](#where-the-routes-keep-the-course) says.
 conversation's calls and its end too, with no `agent_type`, while a role's start and end carry the
 role's ([hooks](https://code.claude.com/docs/en/hooks)). A plugin's agent ignores
 `hooks`, `mcpServers` and `permissionMode` in its own frontmatter, and a `SubagentStop` hook in a
-skill's frontmatter did not fire in a trial on Claude Code 2.1.318, so the plugin keeps its hooks in
+skill's frontmatter did not fire in a run of Claude Code 2.1.318, so the plugin keeps its hooks in
 `hooks/hooks.json`
 ([plugin agents](https://code.claude.com/docs/en/plugins/components#frontmatter-fields-in-plugin-agents)).
 
@@ -422,29 +421,49 @@ that depend on each other can't change or install alone.
 
 A plugin is tested at the test levels of
 [the architecture best practice](../plugins/rn/domain/best-practices/architecture/best-practice.md):
-unit, architecture, and product vision. Its unit tests follow
-[the code best practice](../plugins/rn/domain/best-practices/code/best-practice.md). This section
-holds only what a plugin adds to them.
+unit, integration, and end-to-end (E2E) tests. The unit tests of its code follow
+[the code best practice](../plugins/rn/domain/best-practices/code/best-practice.md), and those of
+its prompts [the prompt best practice](../plugins/rn/domain/best-practices/prompt/best-practice.md).
+Its architecture's Test strategy sets the tools and the criteria. This section holds only what
+every plugin adds to them.
 
-### No trial of a prompt alone
+### Each case a test that names what it supports
 
-No level runs a prompt, a skill or an agent, alone on a model. The guard holds each rule of a
-role's steps that must hold on every run. The architecture tests run the guard on each path, with a
-double in each role's place. The product vision trials find the faults of a prompt's design, and
-measure how its results vary by the key results.
+Each test case is a pytest test. Its docstring states its Given, When, and Then, a line each, and
+`@pytest.mark.supports("<name>")` names what it supports one level up: a key result, such as
+`KR1.1`, for an E2E case, an element of the architecture by its name, such as `S1` or a principle's
+heading, for an integration case, and an integration case by its test's name for a unit case. A
+plugin's cases lie in `dev/<plugin>/tests/`: the unit tests of its code in `unit/`, its
+property-based tests in `properties/`, the unit tests of its prompts in `prompts/`, the integration
+tests in `integration/`, and the E2E tests in `e2e/`, with the trial files that
+`dev/scripts/trial.py` runs. `python3 dev/scripts/trace.py check <plugin>` reads the cases and the
+elements of the plugin's architecture by their names, and gives 0 only where each check of the
+trace that the architecture's Test strategy sets holds.
 
-*Why*: a prompt written by
-[the best practice for prompts](../plugins/rn/domain/best-practices/prompt/best-practice.md)
-leaves only the model's variance and the faults of its design. A hook holds a rule on every run,
-which a prompt's words cannot
-([best practices](https://code.claude.com/docs/en/best-practices)). A trial of one role alone meets
-only the cases that its developer set up, so it finds no fault that a real request brings out. The
-cost: a fault in a prompt shows only in a product vision trial, which runs once every lower level
-passes.
+*Why*: one form lets one script check the trace of every plugin, as every architecture names its
+elements by the template of the architecture best practice. A folder for each time a test runs lets
+each check run the tests it times: `check.sh` runs `unit/` and `integration/` on each push,
+`quality.sh` runs `properties/` in CI, and the developer runs `prompts/` and `e2e/` on the model when
+the Test strategy says.
+
+### A prompt's unit tests on the model
+
+Each prompt, a skill or an agent with its part, has unit tests that start its role alone on the
+model its users run, in a throwaway copy of a repository that the test sets up, with its inputs
+given as files. Each case runs k times, as the plugin's Test strategy sets, and passes only where
+every run passes. The guard holds each rule of a role's steps that must hold on every run, and the
+integration tests try the guard, so a prompt's unit tests try what only the AI's judgment holds.
+
+*Why*: a prompt is a part whose results vary from run to run, so only runs on the model show that it
+gives what the double in its place gives in the integration tests, and only k runs that all pass
+show a slip that comes on some runs. A hook holds a rule on every run, which a prompt's words cannot
+([best practices](https://code.claude.com/docs/en/best-practices)). A unit test meets only the cases
+that its developer set up, so the E2E tests confirm the prompt on real requests. The cost: each
+change of a prompt waits on k runs of each of its cases on the model.
 
 ### The parts joined in the test's own process
 
-The architecture tests run with a double of Claude Code that runs each hook's entry and script in
+The integration tests run with a double of Claude Code that runs each hook's entry and script in
 the test's own process, as a new process of Python would run it, and sends what its documentation
 says or what a recorded run of the real Claude Code showed. `claude plugin validate` checks each
 configuration written by hand, such as `hooks.json`, since no test runs its commands.
@@ -452,15 +471,16 @@ configuration written by hand, such as `hooks.json`, since no test runs its comm
 *Why*: a process started for each call checks nothing a call does not, and a path would wait on
 hundreds of them.
 
-### A product vision trial's own Claude Code
+### The Claude Code of a test on the model
 
-Each Claude Code that a product vision trial starts runs on a configuration folder of its own that
-holds only the plugins under test, with the developer's login as `CLAUDE_CODE_OAUTH_TOKEN`
+Each Claude Code that a prompt's unit test or an E2E test starts runs on a configuration folder of
+its own that holds only the plugins under test, with the developer's login as
+`CLAUDE_CODE_OAUTH_TOKEN`
 ([multiple accounts](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts)).
 It runs on Opus, as [the plugin development rules](../.claude/rules/dev.md) set. Where Claude Code
 asks to allow a call, the stand-in answers from what the screen shows, as a person would.
 
-*Why*: the developer's own settings would change what the trial tries. Another model makes other
+*Why*: the developer's own settings would change what the test tries. Another model makes other
 slips than the ones users meet.
 
 ## Release
