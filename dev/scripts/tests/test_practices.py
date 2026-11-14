@@ -562,6 +562,16 @@ class Leftovers(helpers.FolderTest):
             [self.at("images", "old.svg"), self.at("notes.md")],
         )
 
+    def test_a_file_its_markdown_links_is_held(self):
+        self.write(self.at("best-practice.md"), "# kind\n\nList from [the types](test-types.md).\n")
+        self.write(self.at("test-types.md"), "t")
+        self.assertEqual(practices.leftovers(self.path, self.data), [])
+
+    def test_a_file_its_markdown_links_only_in_a_code_block_is_not_held(self):
+        self.write(self.at("best-practice.md"), "# kind\n```text\n[t](test-types.md)\n```\n")
+        self.write(self.at("test-types.md"), "t")
+        self.assertEqual(practices.leftovers(self.path, self.data), [self.at("test-types.md")])
+
     def test_a_hidden_file_is_no_leftover(self):
         self.write(self.at("images", ".DS_Store"), "")
         self.assertEqual(practices.leftovers(self.path, self.data), [])

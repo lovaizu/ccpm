@@ -218,26 +218,31 @@ def missing(path: str, data: dict[str, Any]) -> list[str]:
     return found
 
 
-def shown(text: str) -> list[str]:
-    """Each figure the Markdown shows from under its own folder, by its path from there, but none
-    in a code block, whose text shows nothing."""
+def shown(text: str, figures_only: bool = True) -> list[str]:
+    """Each figure the Markdown shows from under its own folder, or each file it links there where
+    figures_only is false, by its path from there, but none in a code block, whose text shows
+    nothing."""
     pieces = FENCE.split(text)
     return [
         link.group(3).split("#")[0]
         for n, piece in enumerate(pieces)
         if not n % 2
         for link in LINK.finditer(piece)
-        if link.group(1)
+        if (link.group(1) or not figures_only)
         and not KEPT.match(link.group(3))
         and not os.path.normpath(link.group(3)).startswith("..")
     ]
 
 
 def kept(path: str, data: dict[str, Any]) -> set[str]:
-    """The files the folder of the best practice at the path holds by right: the best practice and
-    its Markdown, and its template, each file in it where it's a folder, else the figures it
-    shows."""
-    files = {path, os.path.splitext(path)[0] + ".md"}
+    """The files the folder of the best practice at the path holds by right: the best practice, its
+    Markdown and each file the Markdown links, and its template, each file in it where it's a
+    folder, else the figures it shows."""
+    markdown = os.path.splitext(path)[0] + ".md"
+    files = {path, markdown}
+    if os.path.isfile(markdown):
+        with open(markdown, encoding="utf-8") as f:
+            files.update(beside(markdown, linked) for linked in shown(f.read(), figures_only=False))
     if "template" in data:
         named = os.path.normpath(beside(path, data["template"]))
         files.add(named)

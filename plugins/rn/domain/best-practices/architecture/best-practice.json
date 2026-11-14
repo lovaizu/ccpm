@@ -337,7 +337,7 @@
      {
       "id": "N12",
       "about": "Test strategy",
-      "what": "Does Test strategy decide the types of testing that the key results call for, and, for each test level, what it tests, what runs real, its tools, when it runs, and each quality check with the criterion by which it passes?",
+      "what": "Does Test strategy decide the types of testing of each target, every type of code and test quality for the parts and those the key results call for in the product vision's, and, for each test level, what it tests, what runs real, its tools, when it runs, and each quality check with the criterion by which it passes?",
       "why": "A case's pass or fail decides the work only where the developers set its level's tools and criteria before anyone writes the case, and a failure that no type of testing looks for reaches the users unseen.",
       "items": [
        {

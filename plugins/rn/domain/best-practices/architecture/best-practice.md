@@ -18,7 +18,7 @@
     - **N10** Does Deployment show where each component runs, where the product keeps each kind of data, and how the product starts? (Components, Data model, Deployment)
     - **N11** Does each component and each kind of data have one place for its files? (Components, Data model, Directory structure)
   - **C4** The developers find each gap between the parts before they build any part, and know, as they build, that the product does what the document and the product vision say.
-    - **N12** Does Test strategy decide the types of testing that the key results call for, and, for each test level, what it tests, what runs real, its tools, when it runs, and each quality check with the criterion by which it passes? (Test strategy)
+    - **N12** Does Test strategy decide the types of testing of each target, every type of code and test quality for the parts and those the key results call for in the product vision's, and, for each test level, what it tests, what runs real, its tools, when it runs, and each quality check with the criterion by which it passes? (Test strategy)
     - **N13** Does each part have its skeleton, and every part, every element of this document, and every key result its test cases in the test code, each written as Given, When, and Then through that skeleton, and each naming the case or the element one level up that it supports? (Test strategy)
     - **N14** Does each thing that the document says the product does rest on a part that a unit or integration test can check? (Components, Test strategy)
   - **C5** The developers can change the product without making the document wrong.
@@ -169,7 +169,7 @@ A developer making a change must find the one place it belongs. Simon Brown's pa
 
 ### N12
 
-Does Test strategy decide the types of testing that the key results call for, and, for each test level, what it tests, what runs real, its tools, when it runs, and each quality check with the criterion by which it passes?
+Does Test strategy decide the types of testing of each target, every type of code and test quality for the parts and those the key results call for in the product vision's, and, for each test level, what it tests, what runs real, its tools, when it runs, and each quality check with the criterion by which it passes?
 
 A case's pass or fail decides the work only where the developers set its level's tools and criteria before anyone writes the case, and a failure that no type of testing looks for reaches the users unseen.
 
