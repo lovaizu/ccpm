@@ -140,14 +140,7 @@
       "name": "A person's /lane:up lays a lane that stops a subagent's command outside its step with the step's sentence, and the run starts that subagent and ends on its result",
       "path": "dev/lane/tests/integration/test_lane_walking_skeleton.py",
       "kind": "specific",
-      "inputs": [
-        "dev/lane/architecture.md"
-      ],
-      "preconditions": [],
-      "status": "open",
-      "check": "the integration tests in dev/lane/tests/integration/test_lane_walking_skeleton.py pass, each seen to fail first",
-      "good": false,
-      "decisions": []
+      "status": "done"
     },
     {
       "name": "The user's plugin starts each subagent in the order they set, and only that one",
