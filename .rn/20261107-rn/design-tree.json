@@ -64,6 +64,11 @@
           "about": "An evaluator's words",
           "decided": "an evaluator answers each question good, with the lines that meet it, or what would make it good, in the plugin guide's words good, more, and good_when, and the plugin template, rn, and Lane use those words wherever they carry an evaluator's answer, as the guide is the one source and met, not met, and lacks say the same thing with other words",
           "by": "user"
+        },
+        {
+          "about": "Where a plugin writes its files, and the deliverables it makes",
+          "decided": "the guide's rule of where a plugin writes covers the files of the plugin's own run; a deliverable that a run makes for the user lies where the repository's layout or the tool that reads it puts it, such as a best practice rn makes at .rn/best-practices/<kind>/, as the design tree best practice decides a deliverable's path",
+          "by": "reasoning"
         }
       ]
     },
@@ -269,7 +274,7 @@
         },
         {
           "id": "N5",
-          "good": true,
+          "good": false,
           "decisions": [
             {
               "about": "The whole pull request read before Done",
@@ -289,6 +294,11 @@
             {
               "about": "tree.py's parts",
               "decided": "tree.py keeps the run's files, repository runs git and gh, and record.py keeps each record's form and rn's check, as the architecture best practice cuts a part by its reasons to change",
+              "by": "reasoning"
+            },
+            {
+              "about": "A new run or one picked up",
+              "decided": "a /rn:up with a request starts a new run whatever runs are left, and /rn:up alone picks one up; exactly one component decides which, and S1 shows what the guard and the adapters give at the /rn:up with a request, as the user decided the commands",
               "by": "reasoning"
             }
           ]
@@ -331,12 +341,17 @@
               "about": "When rn's check runs",
               "decided": "at each role's end and at the end of the orchestrator's turn that puts work up for the user, as the plugin guide says",
               "by": "reasoning"
+            },
+            {
+              "about": "/rn:up alone with no run left",
+              "decided": "rn says that no run is left and starts no role, and S5 shows how that turn and the run Lane began for it end",
+              "by": "reasoning"
             }
           ]
         },
         {
           "id": "N9",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
