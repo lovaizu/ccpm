@@ -21,12 +21,13 @@ law. They show whether a change brought its objective closer.
 
 ## Concept
 
-In everything, rn builds up only the vital few, and never the trivial many. Joseph Juran named
+In everything it does, rn works only on the vital few, the things that decide whether the people a
+deliverable is for can use it, and leaves out the trivial many. Joseph Juran named
 these two sides of the [Pareto principle](https://en.wikipedia.org/wiki/Pareto_principle): the few
 causes that bring most of a result, and the many that bring little.
 
 - The deliverable the user means, drawn out, for O1\
-  rn asks the user along its design tree, their goal with every decision under it, and so draws out
+  rn asks the user only the questions along its design tree that it can't settle, and so draws out
   the deliverable they mean.
 - Every step by best practice, for O1\
   rn plans, makes, and asks the user, each by the best practice of its kind, so that each step
@@ -34,6 +35,9 @@ causes that bring most of a result, and the many that bring little.
 - Judged by the people it's for, for O1\
   rn judges each deliverable by whether the people it's for achieve what they're after with it, so
   that it improves only what they need.
+- Signed off before it's built on, for O1\
+  rn puts each deliverable to the user for a sign-off before anything rests on it, so that nothing
+  is built on what they didn't mean.
 - Back to the design tree on a problem, for O1\
   rn decides each problem it finds by going back to the design tree, so that the fix changes the
   decision that the problem comes from.
