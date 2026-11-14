@@ -490,8 +490,10 @@ sequenceDiagram
       end
     end
   end
+  G-->>M: start no more subagents, where the move after a Result starts no more
   M->>CC: result.py <skill> <result>
-  G-->>M: start no more subagents
+  CC->>G: the PostToolUse, with no agent_id
+  G->>RS: adds the skill's Result, which ends the Run
 ```
 
 ### S6: a subagent held to its steps
