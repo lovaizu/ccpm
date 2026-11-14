@@ -346,23 +346,39 @@
         },
         {
           "id": "N11",
-          "good": true,
-          "decisions": []
+          "good": false,
+          "decisions": [
+            {
+              "about": "Files of data forms and shared modules",
+              "decided": "Directory structure gives one place to each schema that holds a kind of data's form, beside the component that decides that form, and to fault.py, which tree.py, record.py, and repository share to say why they stopped, as a developer changing a form or a stop reason otherwise can't tell which folder holds it",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N12",
-          "good": true,
+          "good": false,
           "decisions": [
             {
               "about": "Test strategy and test cases",
               "decided": "its Test strategy, by the architecture best practice, decides each level's tools and each quality check with its criterion, and every test case is written in test code before any implementation, as the architecture best practice's node decides",
+              "by": "user"
+            },
+            {
+              "about": "Compatibility with gh and Claude Code",
+              "decided": "Test strategy holds a compatibility test for gh: on each new gh version, the steps that made each recorded gh run run again, and what gh gives is compared with what rn's double gives; for Claude Code it points to Lane's compatibility test, as the architecture best practice's node decides",
+              "by": "user"
+            },
+            {
+              "about": "A prompt's evaluation",
+              "decided": "Test strategy takes every type of a prompt's evaluation that test-types.md lists for rn's prompts, each with its level and its criterion, as the architecture best practice's node decides that the parts take every type",
               "by": "user"
             }
           ]
         },
         {
           "id": "N13",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
