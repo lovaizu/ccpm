@@ -141,13 +141,15 @@
   <text class="label small halo start" x="430" y="220">writes a change</text>
   <text class="label small halo start" x="505" y="300">reads each Step, writes</text>
   <text class="label small halo start" x="505" y="315">each Lane&#x27;s sentence</text>
-  <text class="label small halo start" x="880" y="215">reads, replaces the Laid</text>
+  <text class="label small halo start" x="880" y="215">reads the Laid, replaces</text>
+  <text class="label small halo start" x="880" y="230">Lane&#x27;s hook entries</text>
   <text class="label small halo end" x="710" y="425">takes each type</text>
   <text class="label small halo start" x="40" y="268">runs claude plugin validate</text>
   <text class="label small halo mid" x="430" y="638">sends each hook event; gets a stop</text>
   <text class="label small halo mid" x="430" y="653">with the step&#x27;s sentence, or the start due</text>
-  <text class="label small halo start" x="1030" y="420">reads the Lanes,</text>
-  <text class="label small halo start" x="1030" y="435">Routes, adapters</text>
+  <text class="label small halo start" x="1030" y="405">reads the Lanes,</text>
+  <text class="label small halo start" x="1030" y="420">Routes, adapters;</text>
+  <text class="label small halo start" x="1030" y="435">writes lanes.json</text>
   <text class="label small halo mid" x="870" y="516">checks a Call</text>
   <text class="label small halo mid" x="870" y="531">or an end</text>
   <text class="label small halo start" x="1030" y="632">adds each fact it keeps,</text>
@@ -162,7 +164,8 @@
   <text class="label small halo mid" x="565" y="522">Lane names, with</text>
   <text class="label small halo mid" x="565" y="536">the run values</text>
   <text class="label small halo mid" x="565" y="550">and the Result</text>
-  <text class="label small halo start" x="750" y="433">asks where the Run of up stands</text>
+  <text class="label small halo start" x="750" y="418">asks where the Run of up stands,</text>
+  <text class="label small halo start" x="750" y="433">writes lanes.json through its code</text>
   <!-- Frame names a line crosses, drawn last so their halo masks the line. -->
   <text class="frame-name halo" x="319" y="60">Lane&#x27;s plugin</text>
   <text class="frame-name halo" x="314" y="300">the user&#x27;s plugin</text>

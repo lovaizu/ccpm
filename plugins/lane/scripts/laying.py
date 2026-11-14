@@ -37,7 +37,8 @@ def lay(
 ) -> Laying:
     """Lays the Proposal into the plugin in the folder: takes out of each Step and each hook entry
     what the plugin's Laid names, writes each Lane's sentence where its Step doesn't say it
-    already, Lane's hook entries, `hooks/lanes.json` with the new Laid, and a copy of the folder
-    `lane_code` as `hooks/lane/`, and then runs `validate` on the plugin's folder. Where it fails,
-    it puts back each file it changed. Leaves every other file of the plugin as it stands."""
+    already, Lane's hook entries, `hooks/lanes.json` with the new Laid as the guard's
+    `laid_set.dumps` gives it, and a copy of the folder `lane_code` as `hooks/lane/`, and then runs
+    `validate` on the plugin's folder. Where it fails, it puts back each file it changed. Leaves
+    every other file of the plugin as it stands."""
     raise NotImplementedError("laying.lay")

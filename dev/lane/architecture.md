@@ -513,7 +513,9 @@ sequenceDiagram
         L-->>UP: refused, with why
         Note over UP,L: up proposes again, as S1 draws.
       else
-        L->>F: replaces what the Laid names with each Lane's sentence, the hook entries, lanes.json, and hooks/lane/
+        L->>F: replaces what the Laid names with each Lane's sentence, the hook entries, and hooks/lane/
+        L->>G: writes lanes.json, with the Lanes, the Routes, the adapters, and the new Laid, through the guard's code
+        G->>F: lanes.json, in the form that the guard reads
         L->>CC: claude plugin validate <plugin>
         alt it fails
           L->>F: puts back each file it changed
