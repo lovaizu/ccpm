@@ -38,8 +38,8 @@ jobs:
 
   # Every check that runs on its own, over the whole, as the architecture best practice times them:
   # each check of Tests on the oldest Python and the newest, and on the newest, every mutant of
-  # Lane's code and the property-based tests at their most inputs. A run over a push's lines misses
-  # a test changed alone and a fault between parts that no one push changed together.
+  # each plugin's code, and the property-based tests at their most inputs. A run over a push's
+  # lines misses a test changed alone and a fault between parts that no one push changed together.
   check:
     if: github.event_name == 'workflow_dispatch'
     strategy:
@@ -82,4 +82,5 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: lovaizu/checks@9880b8247f74c50a51a526f178832422da33e493 # v0.1.6
+      # The prose checks of Lint, at the commit that lint.yml names.
+      - uses: lovaizu/repofiles@010d9902155cd9d154202589dc78bb5ec2d5f6ac # v0.3.0

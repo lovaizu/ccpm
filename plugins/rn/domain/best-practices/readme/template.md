@@ -1,0 +1,115 @@
+# `<Product>`
+
+`<Product>` is `<kind>` that `<what it gives>`.
+
+`<status>`.
+
+`<Product>` is for you when `<your situation>`. With it, you `<benefit>`.
+
+> [!NOTE]
+> DELETE_TEMPLATE_COMMENT:
+> - `<kind>`: the kind of thing the product is, such as a command-line tool.
+> - `<what it gives>`: the one thing the product gives the reader, in words the reader already uses.
+> - `<status>`: where the product isn't yet fit for use, such as a release still in development.
+>   Leave it out where the product is ready for use.
+> - `<your situation>`: the work the reader wants done.
+> - `<benefit>`: what the reader achieves with the product.
+
+## Non-goals
+
+- `<Product>` doesn't `<expectation>`.
+
+> [!NOTE]
+> DELETE_TEMPLATE_COMMENT:
+> - `<expectation>`: each thing a reader might expect of the product that it doesn't do. Leave out
+>   Non-goals where there's none.
+
+## Requirements
+
+- `<requirement>`: `<check>` shows it.
+
+> [!NOTE]
+> DELETE_TEMPLATE_COMMENT:
+> - `<requirement>`: each thing that must be in place before installing.
+> - `<check>`: a command whose output shows the reader they have it.
+
+## Installation
+
+```console
+<command>
+```
+
+`<sign>`.
+
+> [!NOTE]
+> DELETE_TEMPLATE_COMMENT:
+> - `<command>`: each command that installs the product.
+> - `<sign>`: what shows the reader that the installation worked.
+
+## Walkthrough
+
+At the end, you have `<result>`.
+
+`<situation>`. You type:
+
+```<language>
+<input>
+```
+
+`<Product>` shows:
+
+```<language>
+<output>
+```
+
+> [!NOTE]
+> DELETE_TEMPLATE_COMMENT:
+> - `<result>`: what the reader has once the run ends.
+> - `<situation>`: what the run starts from, in one sentence.
+> - `<input>`, `<output>`: what the user gave and what the product showed in a real run, as they
+>   were, in the form the reader meets them. One pair goes for each exchange up to the result.
+> - `<language>`: the language of the text, such as console, python, or json. A screen goes in place
+>   of its code block, as an image taken from the run and kept in images/.
+
+## How it works
+
+`<the one way>`.
+
+![How the product works](images/template-how-it-works.svg)
+
+### `<problem or doubt>`
+
+`<answer>`.
+
+> [!NOTE]
+> DELETE_TEMPLATE_COMMENT:
+> - `<the one way>`: the one way that the product vision's concept puts first, in the reader's
+>   words, as what they see the product do in their work, in one sentence.
+> - The figure: the deliverable's own, at images/how-it-works.svg, with the product named in its alt
+>   text. It shows the product's mechanism as one flow below the one way, with each problem and
+>   doubt beside the part that answers it, and what the reader gets from that part. The skeleton
+>   here is one such form.
+> - `<problem or doubt>`, `<answer>`: each problem or doubt that would change whether the reader
+>   tries the product, as they would say it, as a heading of its own, and in a sentence or two the
+>   part of the mechanism that answers it, how it follows from the one way, and what the reader
+>   gets from it.
+
+## Documentation
+
+- [`<title>`](<path>): `<what it gives>`.
+
+> [!NOTE]
+> DELETE_TEMPLATE_COMMENT:
+> - `<title>`, `<path>`: each document a reader goes to next, by a path relative to the README, and
+>   the place they get help, such as an issue tracker, by its URL. Leave out Documentation where
+>   there's none.
+> - `<what it gives>`: for whom the document or the place is and what it gives them.
+
+## License
+
+[`<license>`](<path>)
+
+> [!NOTE]
+> DELETE_TEMPLATE_COMMENT:
+> - `<license>`: the license's identifier in the SPDX License List, such as MIT.
+> - `<path>`: the license's full text.

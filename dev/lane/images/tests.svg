@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 560">
+  <title>Lane&#x27;s tests</title>
+  <style>
+    svg { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, 'Hiragino Sans', 'Noto Sans CJK JP', 'Noto Sans JP', 'Yu Gothic', Meiryo, sans-serif; }
+    .bg { fill: #ffffff; }
+    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .lane { fill: #ddf4ff; stroke: #54aeff; }
+    .store { fill: #fff8c5; stroke: #9a6700; stroke-width: 1.5; }
+    .ext { fill: #eaeef2; stroke: #d0d7de; stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .unit { fill: #ddf4ff; fill-opacity: 0.35; stroke: #0969da; stroke-width: 1.2; }
+    .frame { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    .frame-name { fill: #0969da; font-size: 13px; font-weight: 600; }
+    .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
+    .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
+    .label { fill: #1f2328; font-size: 13px; }
+    .small { font-size: 12px; }
+    .data { fill: #8250df; font-size: 12px; font-style: italic; }
+    .quote { fill: #8250df; font-size: 12px; font-style: italic; }
+    .gets { fill: #1a7f37; font-size: 12px; font-weight: 600; }
+    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .dashed { stroke-dasharray: 5 4; }
+    .head { fill: #59636e; }
+    .hole { fill: #ffffff; stroke: #59636e; stroke-width: 1.5; }
+    .halo { stroke: #ffffff; stroke-width: 7; stroke-linejoin: round; paint-order: stroke; }
+    .mid { text-anchor: middle; }
+    .start { text-anchor: start; }
+    .end { text-anchor: end; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; }
+      .box { fill: #161b22; stroke: #3d444d; }
+      .lane { fill: #0c2d6b; stroke: #4493f8; }
+      .store { fill: #2e2a1a; stroke: #d29922; }
+      .ext { fill: #21262d; stroke: #3d444d; }
+      .unit { fill: #0c2d6b; stroke: #4493f8; }
+      .frame { stroke: #4493f8; }
+      .frame-name { fill: #4493f8; }
+      .name, .label { fill: #f0f6fc; }
+      .kind { fill: #9198a1; }
+      .data { fill: #c297ff; }
+      .quote { fill: #c297ff; }
+      .gets { fill: #3fb950; }
+      .line { stroke: #9198a1; }
+      .head { fill: #9198a1; }
+      .hole { fill: #0d1117; stroke: #9198a1; }
+      .halo { stroke: #0d1117; }
+    }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path class="head" d="M0,0 L10,5 L0,10 z"/>
+    </marker>
+    <marker id="diamond" viewBox="0 0 16 10" refX="16" refY="5" markerWidth="14" markerHeight="9" orient="auto-start-reverse">
+      <path class="head" d="M0,5 L8,0 L16,5 L8,10 z"/>
+    </marker>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1180" height="560"/>
+  <rect class="frame" x="20" y="410" width="1140" height="130" rx="6"/>
+  <text class="frame-name" x="34" y="430">Where Lane&#x27;s tests differ from the best practices</text>
+  <text class="name start" x="30" y="50">Deployment unit</text>
+  <text class="name start" x="250" y="50">unit</text>
+  <text class="kind start" x="250" y="68">one part against its contract</text>
+  <text class="name start" x="560" y="50">architecture</text>
+  <text class="kind start" x="560" y="68">the parts joined, against this document</text>
+  <text class="name start" x="870" y="50">product vision</text>
+  <text class="kind start" x="870" y="68">Lane in real use</text>
+  <rect class="box" x="20" y="90" width="210" height="56" rx="4"/>
+  <text class="name" x="125" y="123">up</text>
+  <rect class="box" x="250" y="90" width="290" height="56" rx="4"/>
+  <text class="name start" x="262" y="123">none: no prompt alone</text>
+  <rect class="lane" x="560" y="90" width="290" height="56" rx="4"/>
+  <text class="name start" x="572" y="123">unittest · HAPPY</text>
+  <rect class="box" x="870" y="90" width="290" height="56" rx="4"/>
+  <text class="name start" x="882" y="123">a trial · SMOKE</text>
+  <rect class="box" x="20" y="158" width="210" height="56" rx="4"/>
+  <text class="name" x="125" y="191">lay.py</text>
+  <rect class="lane" x="250" y="158" width="290" height="56" rx="4"/>
+  <text class="name start" x="262" y="191">unittest · FULL</text>
+  <rect class="lane" x="560" y="158" width="290" height="56" rx="4"/>
+  <text class="name start" x="572" y="191">unittest · FULL</text>
+  <rect class="box" x="870" y="158" width="290" height="56" rx="4"/>
+  <text class="name start" x="882" y="191">a trial · SMOKE</text>
+  <rect class="box" x="20" y="226" width="210" height="56" rx="4"/>
+  <text class="name" x="125" y="259">hooks/lane/</text>
+  <rect class="lane" x="250" y="226" width="290" height="56" rx="4"/>
+  <text class="name start" x="262" y="259">unittest · FULL</text>
+  <rect class="lane" x="560" y="226" width="290" height="56" rx="4"/>
+  <text class="name start" x="572" y="259">unittest · FULL</text>
+  <rect class="box" x="870" y="226" width="290" height="56" rx="4"/>
+  <text class="name start" x="882" y="259">a trial · SMOKE</text>
+  <rect class="box" x="20" y="294" width="210" height="56" rx="4"/>
+  <text class="name" x="125" y="327">laid files</text>
+  <rect class="box" x="250" y="294" width="290" height="56" rx="4"/>
+  <text class="name start" x="262" y="327">none: lay.py&#x27;s tests</text>
+  <rect class="lane" x="560" y="294" width="290" height="56" rx="4"/>
+  <text class="name start" x="572" y="327">plugin validate · FULL</text>
+  <rect class="box" x="870" y="294" width="290" height="56" rx="4"/>
+  <text class="name start" x="882" y="327">a trial · SMOKE</text>
+  <text class="frame-name" x="30" y="386">Legend</text>
+  <rect class="lane" x="100" y="372" width="30" height="20" rx="4"/>
+  <text class="label small start" x="140" y="386">runs on every push and in CI</text>
+  <rect class="box" x="370" y="372" width="30" height="20" rx="4"/>
+  <text class="label small start" x="410" y="386">runs once each lower level passes, or no test</text>
+  <text class="label small start" x="730" y="386">tool · FULL each case, HAPPY the main paths, SMOKE one run</text>
+  <text class="label small start" x="36" y="456">Architecture: real lay.py, guard, result.py, and laid files, with a double of Claude Code that sends events as a recorded run shows,</text>
+  <text class="label small start" x="36" y="474">and doubles for up, the main conversation, and each subagent.</text>
+  <text class="label small start" x="36" y="500">Product vision: an AI on Opus builds a plugin the size of changelog from an intent Lane never sees, approves once by a person&#x27;s reply</text>
+  <text class="label small start" x="36" y="518">and once by its own act, changes the steps between two /lane:up, and runs it.</text>
+</svg>

@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640">
+  <title>The product's tests</title>
+  <style>
+    svg { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, 'Hiragino Sans', 'Noto Sans CJK JP', 'Noto Sans JP', 'Yu Gothic', Meiryo, sans-serif; }
+    .bg { fill: #ffffff; }
+    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .lane { fill: #ddf4ff; stroke: #54aeff; }
+    .store { fill: #fff8c5; stroke: #9a6700; stroke-width: 1.5; }
+    .ext { fill: #eaeef2; stroke: #d0d7de; stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .unit { fill: #ddf4ff; fill-opacity: 0.35; stroke: #0969da; stroke-width: 1.2; }
+    .frame { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    .frame-name { fill: #0969da; font-size: 13px; font-weight: 600; }
+    .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
+    .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
+    .label { fill: #1f2328; font-size: 13px; }
+    .small { font-size: 12px; }
+    .data { fill: #8250df; font-size: 12px; font-style: italic; }
+    .quote { fill: #8250df; font-size: 12px; font-style: italic; }
+    .gets { fill: #1a7f37; font-size: 12px; font-weight: 600; }
+    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .dashed { stroke-dasharray: 5 4; }
+    .head { fill: #59636e; }
+    .hole { fill: #ffffff; stroke: #59636e; stroke-width: 1.5; }
+    .halo { stroke: #ffffff; stroke-width: 7; stroke-linejoin: round; paint-order: stroke; }
+    .mid { text-anchor: middle; }
+    .start { text-anchor: start; }
+    .end { text-anchor: end; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; }
+      .box { fill: #161b22; stroke: #3d444d; }
+      .lane { fill: #0c2d6b; stroke: #4493f8; }
+      .store { fill: #2e2a1a; stroke: #d29922; }
+      .ext { fill: #21262d; stroke: #3d444d; }
+      .unit { fill: #0c2d6b; stroke: #4493f8; }
+      .frame { stroke: #4493f8; }
+      .frame-name { fill: #4493f8; }
+      .name, .label { fill: #f0f6fc; }
+      .kind { fill: #9198a1; }
+      .data { fill: #c297ff; }
+      .quote { fill: #c297ff; }
+      .gets { fill: #3fb950; }
+      .line { stroke: #9198a1; }
+      .head { fill: #9198a1; }
+      .hole { fill: #0d1117; stroke: #9198a1; }
+      .halo { stroke: #0d1117; }
+    }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path class="head" d="M0,0 L10,5 L0,10 z"/>
+    </marker>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1200" height="640"/>
+  <text class="name start" x="42" y="40" text-anchor="start">Deployment unit</text>
+  <text class="name start" x="282" y="40" text-anchor="start">unit</text>
+  <text class="kind start" x="282" y="58" text-anchor="start">a part against its contract</text>
+  <text class="name start" x="602" y="40" text-anchor="start">architecture</text>
+  <text class="kind start" x="602" y="58" text-anchor="start">the parts joined, against this document</text>
+  <text class="name start" x="922" y="40" text-anchor="start">product vision</text>
+  <text class="kind start" x="922" y="58" text-anchor="start">&lt;Product&gt; in real use, against its product vision</text>
+  <rect class="box" x="30" y="80" width="220" height="100" rx="4"/>
+  <text class="name start" x="42" y="106" text-anchor="start">&lt;deployment unit&gt;</text>
+  <text class="kind start" x="42" y="124" text-anchor="start">[&lt;technology&gt;]</text>
+  <rect class="unit" x="270" y="80" width="300" height="100" rx="4"/>
+  <text class="name start" x="282" y="106" text-anchor="start">&lt;tool&gt; · &lt;how far&gt;</text>
+  <rect class="unit" x="590" y="80" width="300" height="100" rx="4"/>
+  <text class="name start" x="602" y="106" text-anchor="start">&lt;tool&gt; · &lt;how far&gt;</text>
+  <rect class="unit" x="910" y="80" width="270" height="100" rx="4"/>
+  <text class="name start" x="922" y="106" text-anchor="start">&lt;tool&gt; · &lt;how far&gt;</text>
+  <rect class="box" x="30" y="200" width="220" height="100" rx="4"/>
+  <text class="name start" x="42" y="226" text-anchor="start">&lt;deployment unit&gt;</text>
+  <text class="kind start" x="42" y="244" text-anchor="start">[&lt;technology&gt;]</text>
+  <rect class="ext" x="270" y="200" width="300" height="100" rx="4"/>
+  <text class="name start" x="282" y="226" text-anchor="start">empty</text>
+  <text class="label small start" x="282" y="246" text-anchor="start">&lt;why&gt;</text>
+  <rect class="unit" x="590" y="200" width="300" height="100" rx="4"/>
+  <text class="name start" x="602" y="226" text-anchor="start">&lt;tool&gt; · &lt;how far&gt;</text>
+  <rect class="unit" x="910" y="200" width="270" height="100" rx="4"/>
+  <text class="name start" x="922" y="226" text-anchor="start">&lt;tool&gt; · &lt;how far&gt;</text>
+  <text class="frame-name start" x="30" y="330" text-anchor="start">Legend</text>
+  <rect class="unit" x="100" y="315" width="36" height="22" rx="4"/>
+  <text class="label small start" x="144" y="330" text-anchor="start">a level's tests on the unit</text>
+  <rect class="ext" x="340" y="315" width="36" height="22" rx="4"/>
+  <text class="label small start" x="384" y="330" text-anchor="start">empty, with why</text>
+  <text class="label small start" x="540" y="330" text-anchor="start">tool · FULL each case, HAPPY the main paths, or SMOKE one run</text>
+  <rect class="frame" x="20" y="360" width="1160" height="260" rx="8"/>
+  <text class="frame-name start" x="34" y="382" text-anchor="start">Where &lt;Product&gt;'s tests differ from &lt;shared rules&gt;</text>
+  <text class="name start" x="40" y="410" text-anchor="start">unit</text>
+  <text class="label small start" x="40" y="436" text-anchor="start">Real: &lt;what runs real&gt;</text>
+  <text class="label small start" x="40" y="456" text-anchor="start">Doubles: &lt;what each stands in for,</text>
+  <text class="label small start" x="40" y="476" text-anchor="start">and where its results come from&gt;</text>
+  <text class="label small start" x="40" y="496" text-anchor="start">Stand-in: &lt;who stands in for the role&gt;</text>
+  <text class="label small start" x="40" y="516" text-anchor="start">Passes: &lt;when, with how many runs</text>
+  <text class="label small start" x="40" y="536" text-anchor="start">of how many where a result varies&gt;</text>
+  <text class="name start" x="420" y="410" text-anchor="start">architecture</text>
+  <text class="label small start" x="420" y="436" text-anchor="start">Real: &lt;what runs real&gt;</text>
+  <text class="label small start" x="420" y="456" text-anchor="start">Doubles: &lt;what each stands in for,</text>
+  <text class="label small start" x="420" y="476" text-anchor="start">and where its results come from&gt;</text>
+  <text class="label small start" x="420" y="496" text-anchor="start">Stand-in: &lt;who stands in for the role&gt;</text>
+  <text class="label small start" x="420" y="516" text-anchor="start">Passes: &lt;when, with how many runs</text>
+  <text class="label small start" x="420" y="536" text-anchor="start">of how many where a result varies&gt;</text>
+  <text class="name start" x="800" y="410" text-anchor="start">product vision</text>
+  <text class="label small start" x="800" y="436" text-anchor="start">Real: &lt;what runs real&gt;</text>
+  <text class="label small start" x="800" y="456" text-anchor="start">Doubles: &lt;what each stands in for,</text>
+  <text class="label small start" x="800" y="476" text-anchor="start">and where its results come from&gt;</text>
+  <text class="label small start" x="800" y="496" text-anchor="start">Stand-in: &lt;who stands in for the role&gt;</text>
+  <text class="label small start" x="800" y="516" text-anchor="start">Passes: &lt;when, with how many runs</text>
+  <text class="label small start" x="800" y="536" text-anchor="start">of how many where a result varies&gt;</text>
+  <text class="label small start" x="40" y="600" text-anchor="start">Only where the product differs from the shared rules.</text>
+</svg>

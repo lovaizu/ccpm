@@ -1,0 +1,2 @@
+{"call": "the main conversation runs Bash", "session_id": "4344a6c5-dc82-48d7-9cfd-249b08288cea", "command": "echo \"${CLAUDE_CODE_SESSION_ID:-unset}\" | cut -c1-8", "printed": "4344a6c5", "environment": {"CLAUDE_CODE_SESSION_ID": "<session_id>"}}
+{"call": "a subagent runs Bash", "session_id": "4344a6c5-dc82-48d7-9cfd-249b08288cea", "agent_id": "a454881c2675ca007", "command": "echo \"here: ${CLAUDE_CODE_SESSION_ID:-unset}\"", "printed": "here: 4344a6c5-dc82-48d7-9cfd-249b08288cea", "environment": {"CLAUDE_CODE_SESSION_ID": "<session_id>"}}

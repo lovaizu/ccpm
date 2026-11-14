@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 700">
+  <title>Lane&#x27;s data: the Roles, Steps, and kept results of the user&#x27;s plugin, the lane types, the Proposal, the Lanes, Routes, and Laid of lanes.json, and the Run with its Approval, Starts, Calls, and Results</title>
+  <style>
+    svg { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, 'Hiragino Sans', 'Noto Sans CJK JP', 'Noto Sans JP', 'Yu Gothic', Meiryo, sans-serif; }
+    .bg { fill: #ffffff; }
+    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .lane { fill: #ddf4ff; stroke: #54aeff; }
+    .store { fill: #fff8c5; stroke: #9a6700; stroke-width: 1.5; }
+    .ext { fill: #eaeef2; stroke: #d0d7de; stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .unit { fill: #ddf4ff; fill-opacity: 0.35; stroke: #0969da; stroke-width: 1.2; }
+    .frame { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    .frame-name { fill: #0969da; font-size: 13px; font-weight: 600; }
+    .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
+    .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
+    .label { fill: #1f2328; font-size: 13px; }
+    .small { font-size: 12px; }
+    .data { fill: #8250df; font-size: 12px; font-style: italic; }
+    .quote { fill: #8250df; font-size: 12px; font-style: italic; }
+    .gets { fill: #1a7f37; font-size: 12px; font-weight: 600; }
+    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .dashed { stroke-dasharray: 5 4; }
+    .head { fill: #59636e; }
+    .hole { fill: #ffffff; stroke: #59636e; stroke-width: 1.5; }
+    .halo { stroke: #ffffff; stroke-width: 7; stroke-linejoin: round; paint-order: stroke; }
+    .mid { text-anchor: middle; }
+    .start { text-anchor: start; }
+    .end { text-anchor: end; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; }
+      .box { fill: #161b22; stroke: #3d444d; }
+      .lane { fill: #0c2d6b; stroke: #4493f8; }
+      .store { fill: #2e2a1a; stroke: #d29922; }
+      .ext { fill: #21262d; stroke: #3d444d; }
+      .unit { fill: #0c2d6b; stroke: #4493f8; }
+      .frame { stroke: #4493f8; }
+      .frame-name { fill: #4493f8; }
+      .name, .label { fill: #f0f6fc; }
+      .kind { fill: #9198a1; }
+      .data { fill: #c297ff; }
+      .quote { fill: #c297ff; }
+      .gets { fill: #3fb950; }
+      .line { stroke: #9198a1; }
+      .head { fill: #9198a1; }
+      .hole { fill: #0d1117; stroke: #9198a1; }
+      .halo { stroke: #0d1117; }
+    }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path class="head" d="M0,0 L10,5 L0,10 z"/>
+    </marker>
+    <marker id="diamond" viewBox="0 0 16 10" refX="16" refY="5" markerWidth="14" markerHeight="9" orient="auto-start-reverse">
+      <path class="head" d="M0,5 L8,0 L16,5 L8,10 z"/>
+    </marker>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1180" height="700"/>
+  <rect class="frame" x="20" y="30" width="800" height="120" rx="6"/>
+  <text class="frame-name" x="34" y="50">the user&#x27;s plugin</text>
+  <rect class="frame" x="860" y="30" width="300" height="120" rx="6"/>
+  <text class="frame-name" x="874" y="50">lane types</text>
+  <rect class="frame" x="20" y="250" width="260" height="120" rx="6"/>
+  <text class="frame-name" x="34" y="270">temporary folder: the proposal</text>
+  <rect class="frame" x="320" y="250" width="840" height="120" rx="6"/>
+  <text class="frame-name" x="334" y="270">lanes.json</text>
+  <rect class="frame" x="20" y="470" width="1140" height="180" rx="6"/>
+  <polyline class="line" points="215,100 325,100" marker-start="url(#diamond)"/>
+  <polyline class="line" points="178,296 382,124" marker-end="url(#arrow)"/>
+  <polyline class="line" points="446,296 414,124" marker-end="url(#arrow)"/>
+  <polyline class="line" points="511,296 949,124" marker-end="url(#arrow)"/>
+  <polyline class="line" points="945,296 475,124" marker-end="url(#arrow)"/>
+  <polyline class="line" points="730,296 730,230 130,230 130,124" marker-end="url(#arrow)"/>
+  <polyline class="line" points="235,320 365,320" marker-start="url(#diamond)"/>
+  <polyline class="line" points="183,344 260,400 700,400 721,344" marker-start="url(#diamond)"/>
+  <polyline class="line" points="745,344 800,430 1040,430 1040,516" marker-end="url(#arrow)"/>
+  <polyline class="line" points="132,516 148,344" marker-end="url(#arrow)"/>
+  <polyline class="line" points="445,540 505,540" marker-start="url(#diamond)"/>
+  <polyline class="line" points="376,564 400,600 810,600 810,564" marker-start="url(#diamond)"/>
+  <polyline class="line" points="349,564 320,625 1040,625 1040,564" marker-start="url(#diamond)"/>
+  <polyline class="line" points="771,516 489,344" marker-end="url(#arrow)"/>
+  <polyline class="line" points="690,76 690,18 1170,18 1170,540 1125,540" marker-end="url(#arrow)"/>
+  <rect class="box" x="45.0" y="76.0" width="170" height="48" rx="4"/>
+  <text class="name" x="130" y="105">Role</text>
+  <rect class="box" x="325.0" y="76.0" width="170" height="48" rx="4"/>
+  <text class="name" x="410" y="105">Step</text>
+  <rect class="box" x="605.0" y="76.0" width="170" height="48" rx="4"/>
+  <text class="name" x="690" y="105">Kept results</text>
+  <rect class="box" x="925.0" y="76.0" width="170" height="48" rx="4"/>
+  <text class="name" x="1010" y="105">Lane type</text>
+  <rect class="box" x="65.0" y="296.0" width="170" height="48" rx="4"/>
+  <text class="name" x="150" y="325">Proposal</text>
+  <rect class="box" x="365.0" y="296.0" width="170" height="48" rx="4"/>
+  <text class="name" x="450" y="325">Lane</text>
+  <rect class="box" x="645.0" y="296.0" width="170" height="48" rx="4"/>
+  <text class="name" x="730" y="325">Route</text>
+  <rect class="box" x="925.0" y="296.0" width="170" height="48" rx="4"/>
+  <text class="name" x="1010" y="325">Laid</text>
+  <rect class="box" x="45.0" y="516.0" width="170" height="48" rx="4"/>
+  <text class="name" x="130" y="545">Approval</text>
+  <rect class="box" x="275.0" y="516.0" width="170" height="48" rx="4"/>
+  <text class="name" x="360" y="545">Run</text>
+  <rect class="box" x="505.0" y="516.0" width="170" height="48" rx="4"/>
+  <text class="name" x="590" y="545">Start</text>
+  <rect class="box" x="725.0" y="516.0" width="170" height="48" rx="4"/>
+  <text class="name" x="810" y="545">Call</text>
+  <rect class="box" x="955.0" y="516.0" width="170" height="48" rx="4"/>
+  <text class="name" x="1040" y="545">Result</text>
+  <text class="label small halo mid" x="270" y="68">holds 1..*</text>
+  <text class="label small halo end" x="285" y="190">made from the text of</text>
+  <text class="label small halo start" x="445" y="180">holds</text>
+  <text class="label small halo start" x="925" y="166">of</text>
+  <text class="label small halo start" x="870" y="245">adds a sentence to</text>
+  <text class="label small halo mid" x="500" y="226">starts 0..1</text>
+  <text class="label small halo mid" x="300" y="300">proposes 0..*</text>
+  <text class="label small halo mid" x="440" y="416">proposes 1..*</text>
+  <text class="label small halo mid" x="920" y="424">goes on from</text>
+  <text class="label small halo start" x="150" y="440">approves 1</text>
+  <text class="label small halo mid" x="475" y="506">holds 0..*</text>
+  <text class="label small halo mid" x="585" y="592">holds 0..*</text>
+  <text class="label small halo mid" x="700" y="641">holds 0..*</text>
+  <text class="label small halo start" x="660" y="455">stopped by 0..1</text>
+  <text class="label small halo end" x="1165" y="440">gives back</text>
+  <!-- Frame names a line crosses, drawn last so their halo masks the line. -->
+  <text class="frame-name halo" x="34" y="490">temporary folder: the run record</text>
+</svg>

@@ -1,0 +1,265 @@
+{
+ "goal": {
+  "what": "Maintainers, people or AI agents who come to the code at any time, change it quickly without breaking another behavior.",
+  "critical_success_factors": [
+   {
+    "id": "C1",
+    "what": "Every caller gets the same behavior after a change of structure.",
+    "necessary_conditions": [
+     {
+      "id": "N1",
+      "about": "the whole",
+      "what": "After a change of structure, does each caller, whether a person, a script, or other code, get every behavior it got before?",
+      "why": "A change of structure is safe only if no caller can tell it happened. Martin Fowler's [refactoring](https://refactoring.com) changes the structure in small steps, each of which keeps every behavior, checked by the tests from before the change.",
+      "items": [
+       {
+        "at": "make",
+        "text": "Run the tests before any change, and begin only when every one passes.",
+        "trace": {
+         "action": "run",
+         "takes": [
+          "{tests}"
+         ]
+        }
+       },
+       {
+        "at": "make",
+        "text": "Decide each step by asking whether the tests can tell you it kept every behavior."
+       },
+       {
+        "at": "make",
+        "text": "Where a behavior that the change reaches has no test, write a test of what the code does now, and see it pass."
+       },
+       {
+        "at": "make",
+        "text": "If a step is too big to check, make a smaller one."
+       },
+       {
+        "at": "make",
+        "text": "After each small change of structure, such as a rename or a moved function, run the tests. Where a test fails, undo the change, and make a smaller one."
+       },
+       {
+        "at": "make",
+        "text": "Leave each test's expected result as it was, and change a test's call only where the change renamed a name it uses."
+       },
+       {
+        "at": "make",
+        "text": "Keep a behavior that looks wrong, along with its test."
+       },
+       {
+        "at": "make",
+        "text": "Report a behavior that looks wrong as a point about what the code does, instead of changing it here."
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "C2",
+    "what": "The maintainer understands each part in one reading.",
+    "necessary_conditions": [
+     {
+      "id": "N2",
+      "about": "the whole",
+      "what": "Does each line, whether code or a comment, give the maintainer something they need?",
+      "why": "Every line costs the maintainer reading time. The method is the removal of the smells Lazy Element, Speculative Generality, Middle Man, and Comments in Martin Fowler's Refactoring, second edition.",
+      "items": [
+       {
+        "at": "make",
+        "text": "For each line, ask what the maintainer would lose without it. Remove what gives them nothing, since version control keeps it."
+       },
+       {
+        "at": "make",
+        "text": "Fold into its caller each function or layer that only passes a call on."
+       },
+       {
+        "at": "make",
+        "text": "Drop each parameter to which every caller gives the same value."
+       },
+       {
+        "at": "make",
+        "text": "Keep a comment that says what the code can't say plainly, such as what a regular expression matches."
+       }
+      ]
+     },
+     {
+      "id": "N3",
+      "about": "the whole",
+      "what": "Does each name say what it holds or does, without its definition?",
+      "why": "A name that says what it holds lets the maintainer read each line without going to a definition. The method is the intention-revealing names of Robert C. Martin's Clean Code, with longer names for wider scopes.",
+      "items": [
+       {
+        "at": "make",
+        "text": "For each name, write in a few words what it holds or does without looking at its definition."
+       },
+       {
+        "at": "make",
+        "text": "Compare those words with the definition, and rename the name where the two differ."
+       },
+       {
+        "at": "make",
+        "text": "Make a name say more the farther from its definition the maintainer reads it."
+       }
+      ]
+     },
+     {
+      "id": "N4",
+      "about": "the whole",
+      "what": "Does each thing have one name, and does each name refer to one thing?",
+      "why": "A maintainer who meets two names takes them for two things, and one name used for two things merges them. The method is the ubiquitous language of Eric Evans's Domain-Driven Design: the code names each thing with the word its users use.",
+      "items": [
+       {
+        "at": "make",
+        "text": "List the things the code handles, and the names the code gives each."
+       },
+       {
+        "at": "make",
+        "text": "For each thing, keep the word its users already use, such as the one in its documents."
+       },
+       {
+        "at": "make",
+        "text": "If two names refer to one thing, keep one."
+       },
+       {
+        "at": "make",
+        "text": "If one name refers to two things, give one of them another name."
+       }
+      ]
+     },
+     {
+      "id": "N5",
+      "about": "the whole",
+      "what": "Can the maintainer say in one sentence what each function does after one reading from the top?",
+      "why": "A function that does one thing at one level, and takes what it uses as inputs, asks its reader to hold only what it says. The method is the Composed Method of Kent Beck's Smalltalk Best Practice Patterns: each method does one identifiable task, with all its operations at one level of abstraction.",
+      "items": [
+       {
+        "at": "make",
+        "text": "Read each function, test functions included, once from the top, and write in one sentence what it does."
+       },
+       {
+        "at": "make",
+        "text": "If the sentence needs `and`, or you had to read another body, split the function, or make it take what it reached for as an input."
+       },
+       {
+        "at": "make",
+        "text": "Write a long function as calls to steps, each named for what it does."
+       },
+       {
+        "at": "make",
+        "text": "Join back two functions that the reader can't understand apart."
+       },
+       {
+        "at": "make",
+        "text": "Write a clever construct in its plain form."
+       },
+       {
+        "at": "make",
+        "text": "Read each changed function once from the top as a maintainer new to it, and check that you can say in one sentence what it does."
+       }
+      ]
+     },
+     {
+      "id": "N6",
+      "about": "the whole",
+      "what": "Where code looks wrong or roundabout, does it say why right there?",
+      "why": "A maintainer who doesn't know why odd code is so may undo what it's there for. The method is the Comments smell of Martin Fowler's Refactoring: first change the code until it says the point itself, and comment only where it can't.",
+      "items": [
+       {
+        "at": "make",
+        "text": "Read each line as a maintainer who knows the language but not the purpose, and mark code that looks wrong, roundabout, or more than it needs."
+       },
+       {
+        "at": "make",
+        "text": "For each mark, make the code say it plainly where it can."
+       },
+       {
+        "at": "make",
+        "text": "Where the code can't say it, state the reason right there, such as a limit outside the code or a way tried and dropped."
+       },
+       {
+        "at": "make",
+        "text": "Check each comment against the code beside it, and correct or remove one that no longer holds."
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "C3",
+    "what": "The maintainer finds the one place where a change belongs.",
+    "necessary_conditions": [
+     {
+      "id": "N7",
+      "about": "the whole",
+      "what": "Does the code write each rule or design decision once, in the module that has that job?",
+      "why": "A rule written in several places changes in some of them and not the others. The method is the principle Don't Repeat Yourself of Andy Hunt and Dave Thomas's The Pragmatic Programmer: each piece of knowledge has one authoritative place in the system.",
+      "items": [
+       {
+        "at": "make",
+        "text": "For each rule or design decision the code holds, such as a limit, a format, or a path, list every place that writes it."
+       },
+       {
+        "at": "make",
+        "text": "Keep one of those places, in the module that has that job."
+       },
+       {
+        "at": "make",
+        "text": "Leave apart things that only look alike but differ in meaning."
+       },
+       {
+        "at": "make",
+        "text": "Where a shared function takes flags so that each caller gets its own path, split it into one function for each rule."
+       },
+       {
+        "at": "make",
+        "text": "Where code reaches into another module's insides, have it use what that module offers its callers."
+       },
+       {
+        "at": "make",
+        "text": "Where the code truly can't keep a rule in one place, say at each place where the others are, such as in a comment beside it."
+       },
+       {
+        "at": "make",
+        "text": "Pick one rule, imagine that it changed, and count the places that would change. Change the code until that count is one."
+       }
+      ]
+     },
+     {
+      "id": "N8",
+      "about": "the whole",
+      "what": "Does the code do each kind of thing the same way throughout, with a reason beside each difference?",
+      "why": "When the code does each kind of thing one way, a difference means a real difference. The method is the consistency rule of [Python's style guide](https://peps.python.org/pep-0008/#a-foolish-consistency-is-the-hobgoblin-of-little-minds): consistency within a module matters most, then consistency within the project.",
+      "items": [
+       {
+        "at": "make",
+        "text": "List the kinds of thing the code does in many places, such as reporting an error, checking an input, reading a file, or laying out a module or a test."
+       },
+       {
+        "at": "make",
+        "text": "For each kind, gather each way the code does it."
+       },
+       {
+        "at": "make",
+        "text": "Keep the way that the code already uses most."
+       },
+       {
+        "at": "make",
+        "text": "Where the code uses two ways alike, keep the way of the code nearest to the place."
+       },
+       {
+        "at": "make",
+        "text": "Choose a better way only where it replaces the others everywhere."
+       },
+       {
+        "at": "make",
+        "text": "Where a place needs another way, say why beside it, such as in a comment."
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "inputs": [],
+ "preconditions": []
+}

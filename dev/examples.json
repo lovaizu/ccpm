@@ -1,0 +1,5 @@
+{
+  "plugins/rn/domain/best-practices/architecture/best-practice.json": "dev/rn/architecture.md",
+  "plugins/rn/domain/best-practices/design-tree/best-practice.json": ".rn/20261107-rn/design-tree.json",
+  "plugins/rn/domain/best-practices/product-vision/best-practice.json": "dev/rn/product-vision.md"
+}

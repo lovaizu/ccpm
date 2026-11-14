@@ -1,0 +1,41 @@
+name: Test quality
+
+on: push
+
+# The checks only read the repository, so the token the workflow gives them can change nothing.
+permissions:
+  contents: read
+
+# No push stops the run of the one before it, as each run checks only the lines its own push
+# changed, and a stopped run would leave them unchecked.
+
+jobs:
+  # Mutation testing and the property-based tests over the lines the push changed, apart from the
+  # work, as the architecture best practice times them. No job of Tests waits on it.
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # The commit the push started from, which the lines changed are counted from.
+          fetch-depth: 0
+      - id: python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.x"
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+      - env:
+          UV_PYTHON: ${{ steps.python.outputs.python-path }}
+        run: uv sync --locked --group test-quality
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "24"
+      # Claude Code, whose check of each manifest the tests that each mutant runs call.
+      - working-directory: dev/scripts
+        run: |
+          npm ci --ignore-scripts
+          node node_modules/@anthropic-ai/claude-code/install.cjs
+          echo "$PWD/node_modules/.bin" >> "$GITHUB_PATH"
+      - env:
+          BEFORE: ${{ github.event.before }}
+        run: uv run --no-sync sh dev/scripts/quality.sh "$BEFORE"

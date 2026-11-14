@@ -1,0 +1,160 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "best practice",
+  "description": "A kind's best practice. Its goal holds the goal's sentence and the critical success factors, the few things that must go right for the deliverable's users to reach that goal. Each factor holds its necessary conditions, each a state of the deliverable that the factor needs, written as a question such a deliverable answers yes to, and each condition holds its practice: its why, which says what the condition gives the users and the method the items come from, and its items, each marked `decide` or `make` by when the maker takes it, and each with the call that shows it done where every run makes one. It names the template beside it, which holds the form a good deliverable of the kind takes, and whose sections each condition's about names. It names the example beside it, one deliverable made by it, and the deliverable the example copies, if it copies one, by its path from the best practice's folder. It names the kinds such a deliverable takes its content from, in inputs, and those whose deliverables must pass before it starts, in preconditions, each by the name of its best practice's folder. An evaluator gets its goal, its factors, and its conditions, without their practices.",
+  "type": "object",
+  "required": [
+    "goal",
+    "inputs",
+    "preconditions"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "goal": {
+      "type": "object",
+      "required": [
+        "what",
+        "critical_success_factors"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "what": {
+          "type": "string"
+        },
+        "critical_success_factors": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/factor"
+          }
+        }
+      }
+    },
+    "template": {
+      "type": "string"
+    },
+    "example": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string"
+    },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "preconditions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "$defs": {
+    "factor": {
+      "type": "object",
+      "required": [
+        "id",
+        "what",
+        "necessary_conditions"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "what": {
+          "type": "string"
+        },
+        "necessary_conditions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/condition"
+          }
+        }
+      }
+    },
+    "condition": {
+      "description": "A necessary condition, with its practice.",
+      "type": "object",
+      "required": [
+        "id",
+        "about",
+        "what",
+        "why",
+        "items"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "about": {
+          "type": "string"
+        },
+        "what": {
+          "type": "string"
+        },
+        "why": {
+          "description": "What the condition gives the users, and the method the items come from, with its source.",
+          "type": "string",
+          "minLength": 1
+        },
+        "items": {
+          "description": "Each decision with its question and criterion, each step, and the check from the users' side, in the order the maker takes them. An item's ID is its condition's ID and its place, such as N6.2, which a role names in its result once it has taken the item.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "at",
+              "text"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "at": {
+                "description": "When the maker takes the item: `decide` while it settles the work's decisions, `make` while it makes the deliverable.",
+                "enum": [
+                  "decide",
+                  "make"
+                ]
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              },
+              "trace": {
+                "description": "The call that shows the item done, which Lane holds the item by as a lane of the trace kind: a command run, matched whole, a file read to its end, or a file made, each take one such call. Lane counts the item done once one command taken comes back, once the role makes one file taken, or once it reads each file taken to its end. An item whose trace not every run makes carries none.",
+                "type": "object",
+                "required": [
+                  "action",
+                  "takes"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "action": {
+                    "enum": [
+                      "run",
+                      "read",
+                      "write"
+                    ]
+                  },
+                  "takes": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

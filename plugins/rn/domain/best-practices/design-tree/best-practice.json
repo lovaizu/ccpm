@@ -1,0 +1,243 @@
+{
+ "goal": {
+  "what": "The maker builds every deliverable that the user's goal needs, each after what it needs and from settled decisions, and the user knows where the work stands.",
+  "critical_success_factors": [
+   {
+    "id": "C1",
+    "what": "The design tree holds every deliverable that the goal needs, each after the deliverables it needs.",
+    "necessary_conditions": [
+     {
+      "id": "N1",
+      "about": "goal",
+      "what": "Does the goal state, in one sentence, what the user is trying to achieve?",
+      "why": "Every deliverable in the design tree is there to serve the goal, so the goal decides what goes in and what stays out. The method is the why laddering of goal-oriented requirements engineering, as Axel van Lamsweerde's [guided tour](https://doi.org/10.1109/ISRE.2001.948567) describes it: asking why moves up from a deliverable toward the purpose it serves.",
+      "items": [
+       {
+        "at": "decide",
+        "text": "Write what the user is trying to achieve as one sentence with the user as its subject."
+       },
+       {
+        "at": "decide",
+        "text": "Ask why until the answer is the user's own purpose and no longer a deliverable."
+       },
+       {
+        "at": "decide",
+        "text": "Name in `by` who settled it."
+       },
+       {
+        "at": "make",
+        "text": "Check that each deliverable of the design tree serves the goal, and drop one that serves nothing."
+       }
+      ]
+     },
+     {
+      "id": "N2",
+      "about": "deliverables",
+      "what": "Does the tree hold every deliverable that the goal needs?",
+      "why": "A deliverable left out shows up only when the work reaches it, and the work stops there. A [work breakdown structure](https://en.wikipedia.org/wiki/Work_breakdown_structure) finds every deliverable up front by working back from the goal.",
+      "items": [
+       {
+        "at": "decide",
+        "text": "Ask which deliverables together make the goal true."
+       },
+       {
+        "at": "decide",
+        "text": "For each, ask which deliverables it takes its content from. Repeat until a deliverable takes nothing."
+       },
+       {
+        "at": "decide",
+        "text": "Break each deliverable down until it's a work package: a part that ends at a check showing, on its own, that the people the goal serves get a part of what it promises them. A larger part leaves its maker to settle at once what no one checks between, and a smaller one passes checks that show nothing toward the goal."
+       },
+       {
+        "at": "decide",
+        "text": "Where a decision needs facts that no one has found yet, put a research deliverable before it."
+       },
+       {
+        "at": "decide",
+        "text": "Put each research deliverable at the top level, in the order of the work."
+       }
+      ]
+     },
+     {
+      "id": "N3",
+      "about": "deliverables",
+      "what": "Does each deliverable name its kind: the best practice of the field's established way of making it, or `specific` where the deliverable is this product's alone?",
+      "why": "A deliverable of a kind that every product shares has a way of making it that the field has settled, and its best practice brings that way to the maker. A deliverable of this product alone has no such way, and a best practice made for it would only restate the product's own decisions, which leaves nothing but trivia to meet. The method is the [Definition of Done](https://scrumguides.org/scrum-guide.html) of the Scrum Guide: where the organization's standards hold one, the work follows it, and where they don't, the team states what done means for that work.",
+      "items": [
+       {
+        "at": "decide",
+        "text": "Give a deliverable the folder name of a best practice where the field has an established way of making it that holds across products, as it has for a README. Where a deliverable holds parts of several such kinds, its kind is the one whose best practice names the others for those parts."
+       },
+       {
+        "at": "decide",
+        "text": "Give a deliverable of this product alone the kind `specific`, such as a file that keeps a run's state, a file of the product's own specification, a test of a path of its architecture, or a product vision trial. The tree's decisions make it, and the check that its `check` names judges it."
+       },
+       {
+        "at": "decide",
+        "text": "Where a kind that every product shares has no best practice yet, put a deliverable that makes one, of the kind `meta`, at the top level before the first deliverable of that kind."
+       }
+      ]
+     },
+     {
+      "id": "N4",
+      "about": "deliverables",
+      "what": "Does each deliverable name the deliverables it takes content from and those that must pass before it starts, and come after all of them?",
+      "why": "A deliverable started before its inputs rests on a guess. A [topological sort](https://en.wikipedia.org/wiki/Topological_sorting) of the deliverables by what each takes from and waits for gives an order that keeps every dependency.",
+      "items": [
+       {
+        "at": "decide",
+        "text": "Give each deliverable, in `inputs`, the path of each deliverable it takes content from, and in `preconditions`, the path of each one that must pass before it starts, each of a kind that its best practice names there. Use paths, not kinds, since deliverables of one kind can serve different products."
+       },
+       {
+        "at": "decide",
+        "text": "Have each level of tests pass only once the level below it passes: unit, then architecture, then product vision. A higher level finds a fault later, at a higher cost."
+       },
+       {
+        "at": "decide",
+        "text": "Put a check, and a test that shows the check failing, before the deliverables that trust its results, as [the architecture best practice](../architecture/best-practice.md) trusts a check only then."
+       },
+       {
+        "at": "make",
+        "text": "Let a script order the deliverables by these paths, instead of working out the order case by case."
+       },
+       {
+        "at": "make",
+        "text": "After each change, have a script, such as rn's `tree.py`, check that each deliverable comes after its inputs and preconditions, that each research deliverable serves a later decision, and that a later deliverable uses each meta deliverable's kind."
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "C2",
+    "what": "The maker builds each deliverable from settled decisions, and asks the user only what's theirs to decide.",
+    "necessary_conditions": [
+     {
+      "id": "N5",
+      "about": "deliverables",
+      "what": "Does each deliverable hold the decisions and the open points for each necessary condition of its best practice?",
+      "why": "The maker builds a deliverable from the decisions that answer its best practice's conditions, and asks about the points still open instead of guessing. The [last responsible moment](https://blog.codinghorror.com/the-last-responsible-moment/) of Mary and Tom Poppendieck's *Lean Software Development* settles a decision once its inputs exist, and no earlier, so that it rests on no guess.",
+      "items": [
+       {
+        "at": "decide",
+        "text": "Give each deliverable the necessary conditions of its best practice, in that best practice's order, each with its decisions, and a `specific` one the check that judges it, with its decisions."
+       },
+       {
+        "at": "decide",
+        "text": "Leave a point's `decided` null while it's open."
+       },
+       {
+        "at": "decide",
+        "text": "Settle each decision once its inputs exist, and no earlier."
+       },
+       {
+        "at": "make",
+        "text": "After each result, revise the design tree forward from it."
+       }
+      ]
+     },
+     {
+      "id": "N6",
+      "about": "deliverables",
+      "what": "Does each decision say who settled it?",
+      "why": "The user should spend their time only on the decisions that are theirs, and finds the grounds of each in git.",
+      "items": [
+       {
+        "at": "decide",
+        "text": "Name in `by` who settled each decision: the user, the maker, reasoning from the goal and the best practices, or research."
+       },
+       {
+        "at": "make",
+        "text": "Keep the grounds out of the tree, and write them in the commit message that makes the decision, so that the user finds them in git."
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "C3",
+    "what": "The maker and the user see where the work stands, and pick it up from there.",
+    "necessary_conditions": [
+     {
+      "id": "N7",
+      "about": "deliverables",
+      "what": "Does each deliverable's name say what it brings toward the goal?",
+      "why": "The user reads the design tree to see where the work stands and what comes next, without opening each deliverable. Each name is a goal, as in the goal models of Knowledge Acquisition in Automated Specification (KAOS) that Axel van Lamsweerde's [guided tour](https://doi.org/10.1109/ISRE.2001.948567) describes: a state that holds once the deliverable exists.",
+      "items": [
+       {
+        "at": "make",
+        "text": "For each deliverable, ask what holds toward the goal once it exists, and write that as its name."
+       },
+       {
+        "at": "make",
+        "text": "Leave out its path and its kind, which have fields of their own."
+       }
+      ]
+     },
+     {
+      "id": "N8",
+      "about": "deliverables",
+      "what": "Does each deliverable show its status and which necessary conditions it meets?",
+      "why": "Whoever picks up the work must go on from where it stopped, without reading back through what came before. David J. Anderson's *Kanban* makes the work visible by showing each item in the state it's in.",
+      "items": [
+       {
+        "at": "make",
+        "text": "Keep each deliverable's status: `open`, `doing`, or `done`."
+       },
+       {
+        "at": "make",
+        "text": "Keep, for each necessary condition, whether the deliverable meets it, in `good`, and for a `specific` deliverable, whether it passes its check."
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "C4",
+    "what": "The design tree stays true as the work changes it.",
+    "necessary_conditions": [
+     {
+      "id": "N9",
+      "about": "goal, deliverables",
+      "what": "After a change to a node, does every node that the change touches agree with it?",
+      "why": "A node that a change touches, left unread, goes on saying what held before. Change impact analysis, as Shawn Bohner and Robert Arnold's *Software Change Impact Analysis* describes it, follows the dependencies of a changed item to each item that the change touches.",
+      "items": [
+       {
+        "at": "make",
+        "text": "After each change to a node, go through the nodes that a script, such as rn's `tree.py`, lists: up to the goal, then the later decisions of the deliverable, then the deliverables before and after it that it takes from or gives to."
+       },
+       {
+        "at": "make",
+        "text": "Answer each as holding or as changed."
+       },
+       {
+        "at": "make",
+        "text": "Start the list again after each change."
+       }
+      ]
+     },
+     {
+      "id": "N10",
+      "about": "goal, deliverables",
+      "what": "Does the tree hold only what holds now?",
+      "why": "A reader acts on what the design tree says, and reads any history in it as part of the current decision, while git keeps how each point came about. The method is Robert C. Martin's rule against journal comments and commented-out code, in *Clean Code*: the source keeps only what holds now, since version control remembers the rest.",
+      "items": [
+       {
+        "at": "make",
+        "text": "Keep one line for a deliverable that's done: its name, path, kind, and status."
+       },
+       {
+        "at": "make",
+        "text": "Drop a research deliverable once the decisions hold what it found."
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "template": "design-tree.schema.json",
+ "example": "example.json",
+ "inputs": [],
+ "preconditions": []
+}

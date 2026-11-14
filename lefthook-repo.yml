@@ -1,0 +1,16 @@
+# The settings of ccpm's own checks, which lefthook.yml of lovaizu/repofiles extends.
+# Turned on once in a clone by `lefthook install`.
+
+# ccpm holds no Japanese, so the Japanese check is off.
+pre-commit:
+  jobs:
+    - name: japanese
+      skip: true
+
+# The checks of what a push changes, on the commits pushed, which git gives
+# the hook on its standard input. dev/README.md describes them.
+pre-push:
+  jobs:
+    - name: check
+      run: sh dev/scripts/pre-push.sh
+      use_stdin: true

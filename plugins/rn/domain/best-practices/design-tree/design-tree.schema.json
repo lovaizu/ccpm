@@ -1,0 +1,298 @@
+{
+ "$schema": "http://json-schema.org/draft-07/schema#",
+ "title": "design tree",
+ "description": "The plan of a piece of work, at .rn/<yyyymmdd>-<goal>/design-tree.json: the goal, and the deliverables in the order of the work, each with the necessary conditions of its best practice in that best practice's order, each necessary condition with its decisions. It keeps only what holds now, and git keeps the history of each point.",
+ "type": "object",
+ "required": [
+  "goal",
+  "deliverables"
+ ],
+ "additionalProperties": false,
+ "properties": {
+  "goal": {
+   "description": "The one end the user is after, which every deliverable serves.",
+   "type": "object",
+   "required": [
+    "decided",
+    "by"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "decided": {
+     "description": "The end, as one sentence with the user as its subject.",
+     "type": "string"
+    },
+    "by": {
+     "$ref": "#/$defs/by"
+    }
+   }
+  },
+  "deliverables": {
+   "description": "Every deliverable the goal needs, in the order of the work, each after the deliverables its inputs and preconditions name. A research deliverable comes before the decisions it serves, and a meta deliverable before the first deliverable of its kind, each at the top level.",
+   "type": "array",
+   "items": {
+    "anyOf": [
+     {
+      "$ref": "#/$defs/done"
+     },
+     {
+      "$ref": "#/$defs/open"
+     },
+     {
+      "$ref": "#/$defs/specific"
+     }
+    ]
+   }
+  }
+ },
+ "$defs": {
+  "by": {
+   "description": "Who settled the point. user: the user decided it. maker: the maker of the deliverable decided it. reasoning: it follows from the goal and the best practices. research: a source found it. The reason itself goes in the commit message that makes the decision.",
+   "enum": [
+    "user",
+    "maker",
+    "reasoning",
+    "research"
+   ]
+  },
+  "name": {
+   "description": "The one thing that holds toward the goal once the deliverable exists. It leaves out the path and the kind, which have fields of their own.",
+   "type": "string"
+  },
+  "path": {
+   "description": "Where the deliverable lies, from the top of the repository: a file, or a folder for a deliverable of many files.",
+   "type": "string"
+  },
+  "kind": {
+   "description": "The name of the folder of the best practice whose necessary conditions the deliverable meets, such as readme, or `specific` for a deliverable of this product alone, which the check that its `check` names judges.",
+   "type": "string"
+  },
+  "done": {
+   "description": "A deliverable that meets every necessary condition of its best practice, or passes its check where it's `specific`. It keeps one line: its name, path, kind, and status.",
+   "type": "object",
+   "required": [
+    "name",
+    "path",
+    "kind",
+    "status"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "name": {
+     "$ref": "#/$defs/name"
+    },
+    "path": {
+     "$ref": "#/$defs/path"
+    },
+    "kind": {
+     "$ref": "#/$defs/kind"
+    },
+    "status": {
+     "description": "done: the deliverable meets every necessary condition of its best practice, or passes its check.",
+     "const": "done"
+    }
+   }
+  },
+  "open": {
+   "description": "A deliverable not yet done, with the necessary conditions of its best practice and the decisions that answer them.",
+   "type": "object",
+   "required": [
+    "name",
+    "path",
+    "kind",
+    "inputs",
+    "preconditions",
+    "status",
+    "necessary_conditions"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "name": {
+     "$ref": "#/$defs/name"
+    },
+    "path": {
+     "$ref": "#/$defs/path"
+    },
+    "kind": {
+     "$ref": "#/$defs/kind"
+    },
+    "inputs": {
+     "description": "The path of each deliverable this one takes its content from, each of a kind that its best practice names in inputs. A path may name a file outside the tree that already exists. The list stays empty where the deliverable takes none.",
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "preconditions": {
+     "description": "The path of each deliverable that must pass before this one starts, each of a kind that its best practice names in preconditions. The list stays empty where the deliverable needs none.",
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "status": {
+     "description": "Where the deliverable stands. open: no work on it has started. doing: someone is making it.",
+     "enum": [
+      "open",
+      "doing"
+     ]
+    },
+    "necessary_conditions": {
+     "description": "Each necessary condition of the deliverable's best practice, in that best practice's order.",
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/necessary_condition"
+     }
+    }
+   }
+  },
+  "necessary_condition": {
+   "description": "One necessary condition of the best practice, with whether the deliverable meets it and the decisions that answer it.",
+   "type": "object",
+   "required": [
+    "id",
+    "good",
+    "decisions"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "id": {
+     "description": "The necessary condition's ID in its best practice, such as N1.",
+     "type": "string"
+    },
+    "good": {
+     "description": "true once the deliverable meets the necessary condition, false until then.",
+     "type": "boolean"
+    },
+    "decisions": {
+     "description": "The decisions that answer the necessary condition, each settled once its inputs exist. The list stays empty until a point of the necessary condition comes up.",
+     "type": "array",
+     "items": {
+      "anyOf": [
+       {
+        "$ref": "#/$defs/settled"
+       },
+       {
+        "$ref": "#/$defs/unsettled"
+       }
+      ]
+     }
+    }
+   }
+  },
+  "about": {
+   "description": "The point of the necessary condition that the decision settles, in a few words.",
+   "type": "string"
+  },
+  "settled": {
+   "description": "A decision someone has settled.",
+   "type": "object",
+   "required": [
+    "about",
+    "decided",
+    "by"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "about": {
+     "$ref": "#/$defs/about"
+    },
+    "decided": {
+     "description": "What holds for the point.",
+     "type": "string"
+    },
+    "by": {
+     "$ref": "#/$defs/by"
+    }
+   }
+  },
+  "unsettled": {
+   "description": "A point still open, which the maker asks about instead of guessing.",
+   "type": "object",
+   "required": [
+    "about",
+    "decided"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "about": {
+     "$ref": "#/$defs/about"
+    },
+    "decided": {
+     "description": "null while the point is open.",
+     "type": "null"
+    }
+   }
+  },
+  "specific": {
+   "description": "A `specific` deliverable not yet done, with the check that judges it and the decisions that make it.",
+   "type": "object",
+   "required": [
+    "name",
+    "path",
+    "kind",
+    "inputs",
+    "preconditions",
+    "status",
+    "check",
+    "good",
+    "decisions"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "name": {
+     "$ref": "#/$defs/name"
+    },
+    "path": {
+     "$ref": "#/$defs/path"
+    },
+    "kind": {
+     "const": "specific"
+    },
+    "inputs": {
+     "description": "The path of each deliverable this one takes its content from, each of a kind that its best practice names in inputs. A path may name a file outside the tree that already exists. The list stays empty where the deliverable takes none.",
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "preconditions": {
+     "description": "The path of each deliverable that must pass before this one starts, each of a kind that its best practice names in preconditions. The list stays empty where the deliverable needs none.",
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "status": {
+     "description": "Where the deliverable stands. open: no work on it has started. doing: someone is making it.",
+     "enum": [
+      "open",
+      "doing"
+     ]
+    },
+    "check": {
+     "description": "The check that judges the deliverable, such as a test that passes or a product vision trial whose key results the records show.",
+     "type": "string"
+    },
+    "good": {
+     "description": "true once the deliverable passes its check, false until then.",
+     "type": "boolean"
+    },
+    "decisions": {
+     "description": "The decisions that answer the necessary condition, each settled once its inputs exist. The list stays empty until a point of the necessary condition comes up.",
+     "type": "array",
+     "items": {
+      "anyOf": [
+       {
+        "$ref": "#/$defs/settled"
+       },
+       {
+        "$ref": "#/$defs/unsettled"
+       }
+      ]
+     }
+    }
+   }
+  }
+ }
+}

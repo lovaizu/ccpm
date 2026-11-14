@@ -1,0 +1,510 @@
+{
+  "goal": {
+    "decided": "The user gets from rn each deliverable they mean, every one meeting each necessary condition of its best practice, and answers only what's theirs.",
+    "by": "user"
+  },
+  "deliverables": [
+    {
+      "name": "lovaizu/repofiles checks the English that ccpm keeps in Markdown, the files that people read and the prompts, and in each issue and pull request",
+      "path": "lefthook.yml",
+      "kind": "code",
+      "status": "done"
+    },
+    {
+      "name": "Each best practice holds the field's established way, named so its maker grasps the intent",
+      "path": "plugins/rn/domain/best-practices/meta",
+      "kind": "meta",
+      "status": "done"
+    },
+    {
+      "name": "ccpm's guide to building a Claude Code plugin says what each plugin takes from it, as its architecture names",
+      "path": "dev/plugin-development-guide.md",
+      "kind": "specific",
+      "inputs": [],
+      "preconditions": [],
+      "status": "doing",
+      "check": "the plugin guide and dev/plugin-template say what each plugin takes from them, and rn and Lane follow them",
+      "good": false,
+      "decisions": [
+        {
+          "about": "Where the steps of a typed command lie",
+          "decided": "each command the person types has its SKILL.md hold the steps of that moment, as Claude Code loads it when typed, and the orchestrator holds only the steps that every moment shares, as a controller and its domain logic",
+          "by": "user"
+        },
+        {
+          "about": "Each step and each practice carried out",
+          "decided": "each role, the main conversation's skill among them, records each step of its prompt and each practice of the best practice it works by, at the time each names, and its end, or the skill's turn's end where it puts work up, passes only where the plugin's own check accepts the record, as the guard runs that check",
+          "by": "reasoning"
+        }
+      ]
+    },
+    {
+      "name": "Each part a developer builds by the design gives, with the others, what the README promises",
+      "path": "plugins/rn/domain/best-practices/architecture",
+      "kind": "meta",
+      "status": "done"
+    },
+    {
+      "name": "A maker of code designs it, tests it first, and writes it as the field's established practice says",
+      "path": "plugins/rn/domain/best-practices/code",
+      "kind": "meta",
+      "status": "done"
+    },
+    {
+      "name": "An AI given a prompt does the task as its writer means, in cases the writer didn't foresee",
+      "path": "plugins/rn/domain/best-practices/prompt",
+      "kind": "meta",
+      "status": "done"
+    },
+    {
+      "name": "The user reaches their goal through the design tree's deliverables, which leave nothing out and start nothing too early",
+      "path": "plugins/rn/domain/best-practices/design-tree",
+      "kind": "design-tree",
+      "status": "done"
+    },
+    {
+      "name": "This design tree holds every deliverable the goal needs, each after what it stands on",
+      "path": ".rn/20261107-rn/design-tree.json",
+      "kind": "design-tree",
+      "status": "done"
+    },
+    {
+      "name": "A developer builds from the product vision a product with which its users achieve their aim",
+      "path": "plugins/rn/domain/best-practices/product-vision",
+      "kind": "meta",
+      "status": "done"
+    },
+    {
+      "name": "A newcomer starts using the product from its README alone, only when it serves their work",
+      "path": "plugins/rn/domain/best-practices/readme",
+      "kind": "meta",
+      "status": "done"
+    },
+    {
+      "name": "A reader takes in a reworked document as its writer meant, reading once from the top",
+      "path": "plugins/rn/domain/best-practices/refactor-doc",
+      "kind": "meta",
+      "status": "done"
+    },
+    {
+      "name": "rn's product vision says what rn is for",
+      "path": "dev/rn/product-vision.md",
+      "kind": "product-vision",
+      "status": "done"
+    },
+    {
+      "name": "rn's developers build its parts so that together they give what its README promises",
+      "path": "dev/rn/architecture.md",
+      "kind": "architecture",
+      "status": "done"
+    },
+    {
+      "name": "Lane's product vision says what Lane is for",
+      "path": "dev/lane/product-vision.md",
+      "kind": "product-vision",
+      "status": "done"
+    },
+    {
+      "name": "Lane's developers build its parts so that together they give what its README promises",
+      "path": "dev/lane/architecture.md",
+      "kind": "architecture",
+      "status": "done"
+    },
+    {
+      "name": "A person's /lane:up lays a lane that stops a subagent's command outside its step with the step's sentence, and the run starts that subagent and ends on its result",
+      "path": "dev/lane/tests/architecture/test_lane_walking_skeleton.py",
+      "kind": "specific",
+      "inputs": [
+        "dev/lane/architecture.md"
+      ],
+      "preconditions": [],
+      "status": "open",
+      "check": "the architecture tests in dev/lane/tests/architecture/test_lane_walking_skeleton.py pass, each seen to fail first",
+      "good": false,
+      "decisions": []
+    },
+    {
+      "name": "The user's plugin starts each subagent in the order they set, and only that one",
+      "path": "dev/lane/tests/architecture/test_lane_s5_run_in_order.py",
+      "kind": "specific",
+      "inputs": [
+        "dev/lane/architecture.md"
+      ],
+      "preconditions": [
+        "dev/lane/tests/architecture/test_lane_walking_skeleton.py"
+      ],
+      "status": "open",
+      "check": "the architecture tests in dev/lane/tests/architecture/test_lane_s5_run_in_order.py pass, each seen to fail first",
+      "good": false,
+      "decisions": []
+    },
+    {
+      "name": "Each subagent that leaves a step goes back to it",
+      "path": "dev/lane/tests/architecture/test_lane_s6_role_held.py",
+      "kind": "specific",
+      "inputs": [
+        "dev/lane/architecture.md"
+      ],
+      "preconditions": [
+        "dev/lane/tests/architecture/test_lane_walking_skeleton.py"
+      ],
+      "status": "open",
+      "check": "the architecture tests in dev/lane/tests/architecture/test_lane_s6_role_held.py pass, each seen to fail first",
+      "good": false,
+      "decisions": []
+    },
+    {
+      "name": "A run that stopped goes on where it stopped, after /compact or in a new conversation",
+      "path": "dev/lane/tests/architecture/test_lane_s7_run_picked_up.py",
+      "kind": "specific",
+      "inputs": [
+        "dev/lane/architecture.md"
+      ],
+      "preconditions": [
+        "dev/lane/tests/architecture/test_lane_s5_run_in_order.py"
+      ],
+      "status": "open",
+      "check": "the architecture tests in dev/lane/tests/architecture/test_lane_s7_run_picked_up.py pass, each seen to fail first",
+      "good": false,
+      "decisions": []
+    },
+    {
+      "name": "The user reads each step as it'll read with its rules, and the order, before anything holds their plugin",
+      "path": "dev/lane/tests/architecture/test_lane_s1_proposal.py",
+      "kind": "specific",
+      "inputs": [
+        "dev/lane/architecture.md"
+      ],
+      "preconditions": [
+        "dev/lane/tests/architecture/test_lane_s5_run_in_order.py",
+        "dev/lane/tests/architecture/test_lane_s6_role_held.py"
+      ],
+      "status": "open",
+      "check": "the architecture tests in dev/lane/tests/architecture/test_lane_s1_proposal.py pass, each seen to fail first",
+      "good": false,
+      "decisions": []
+    },
+    {
+      "name": "Lane lays only what a person approved, and proposes again on a change they ask for",
+      "path": "dev/lane/tests/architecture/test_lane_s2_person_approves.py",
+      "kind": "specific",
+      "inputs": [
+        "dev/lane/architecture.md"
+      ],
+      "preconditions": [
+        "dev/lane/tests/architecture/test_lane_s1_proposal.py"
+      ],
+      "status": "open",
+      "check": "the architecture tests in dev/lane/tests/architecture/test_lane_s2_person_approves.py pass, each seen to fail first",
+      "good": false,
+      "decisions": []
+    },
+    {
+      "name": "An AI that builds a plugin approves Lane's proposal by its own act and reaches the first held run",
+      "path": "dev/lane/tests/architecture/test_lane_s3_ai_approves.py",
+      "kind": "specific",
+      "inputs": [
+        "dev/lane/architecture.md"
+      ],
+      "preconditions": [
+        "dev/lane/tests/architecture/test_lane_s2_person_approves.py"
+      ],
+      "status": "open",
+      "check": "the architecture tests in dev/lane/tests/architecture/test_lane_s3_ai_approves.py pass, each seen to fail first",
+      "good": false,
+      "decisions": []
+    },
+    {
+      "name": "After the steps change or Lane updates, the checks hold the steps as they now read, with Lane's newest code",
+      "path": "dev/lane/tests/architecture/test_lane_s4_proposed_again.py",
+      "kind": "specific",
+      "inputs": [
+        "dev/lane/architecture.md"
+      ],
+      "preconditions": [
+        "dev/lane/tests/architecture/test_lane_s2_person_approves.py"
+      ],
+      "status": "open",
+      "check": "the architecture tests in dev/lane/tests/architecture/test_lane_s4_proposed_again.py pass, each seen to fail first",
+      "good": false,
+      "decisions": []
+    },
+    {
+      "name": "A plugin held by Lane runs as its maker designed it at the size of a real request, as the product vision's key results show",
+      "path": "plugins/lane",
+      "kind": "specific",
+      "inputs": [
+        "dev/lane/architecture.md"
+      ],
+      "preconditions": [
+        "dev/lane/tests/architecture/test_lane_walking_skeleton.py",
+        "dev/lane/tests/architecture/test_lane_s5_run_in_order.py",
+        "dev/lane/tests/architecture/test_lane_s6_role_held.py",
+        "dev/lane/tests/architecture/test_lane_s7_run_picked_up.py",
+        "dev/lane/tests/architecture/test_lane_s1_proposal.py",
+        "dev/lane/tests/architecture/test_lane_s2_person_approves.py",
+        "dev/lane/tests/architecture/test_lane_s3_ai_approves.py",
+        "dev/lane/tests/architecture/test_lane_s4_proposed_again.py"
+      ],
+      "status": "open",
+      "check": "the product vision trials of the README's main use, judged from their records, show KR1.1 and KR1.2 of the product vision",
+      "good": false,
+      "decisions": [
+        {
+          "about": "The plugin's folder",
+          "decided": "lane's folder holds everything lane needs and its own copy of the repository's LICENSE, links any page outside it by its URL on GitHub, and sets homepage and repository in plugin.json, and Lane uses no other plugin, as rn uses Lane",
+          "by": "user"
+        },
+        {
+          "about": "The release",
+          "decided": "Lane releases together with rn, in one pull request, once rn is done",
+          "by": "user"
+        }
+      ]
+    },
+    {
+      "name": "A newcomer decides from Lane's README alone whether Lane fits their plugin, and starts using it",
+      "path": "plugins/lane/README.md",
+      "kind": "readme",
+      "status": "done"
+    },
+    {
+      "name": "A person's /rn:up with a request gets one deliverable that a generator makes and an evaluator judges, in a pull request of its own",
+      "path": "dev/rn/tests/architecture/test_rn_walking_skeleton.py",
+      "kind": "specific",
+      "inputs": [
+        "dev/rn/architecture.md"
+      ],
+      "preconditions": [
+        "dev/lane/tests/architecture/test_lane_s5_run_in_order.py"
+      ],
+      "status": "open",
+      "check": "the architecture tests in dev/rn/tests/architecture/test_rn_walking_skeleton.py pass, each seen to fail first",
+      "good": false,
+      "decisions": []
+    },
+    {
+      "name": "rn puts to the person only what's theirs, one point at a time, and goes on from their answer",
+      "path": "dev/rn/tests/architecture/test_rn_s2_point_settled.py",
+      "kind": "specific",
+      "inputs": [
+        "dev/rn/architecture.md"
+      ],
+      "preconditions": [
+        "dev/rn/tests/architecture/test_rn_walking_skeleton.py"
+      ],
+      "status": "open",
+      "check": "the architecture tests in dev/rn/tests/architecture/test_rn_s2_point_settled.py pass, each seen to fail first",
+      "good": false,
+      "decisions": []
+    },
+    {
+      "name": "Nothing rests on a plan or a deliverable that the person didn't sign off with /rn:ty",
+      "path": "dev/rn/tests/architecture/test_rn_s3_sign_off.py",
+      "kind": "specific",
+      "inputs": [
+        "dev/rn/architecture.md"
+      ],
+      "preconditions": [
+        "dev/rn/tests/architecture/test_rn_walking_skeleton.py"
+      ],
+      "status": "open",
+      "check": "the architecture tests in dev/rn/tests/architecture/test_rn_s3_sign_off.py pass, each seen to fail first",
+      "good": false,
+      "decisions": []
+    },
+    {
+      "name": "The person's /rn:dn stops the run at any moment and keeps the work so far",
+      "path": "dev/rn/tests/architecture/test_rn_s4_pause.py",
+      "kind": "specific",
+      "inputs": [
+        "dev/rn/architecture.md"
+      ],
+      "preconditions": [
+        "dev/rn/tests/architecture/test_rn_walking_skeleton.py"
+      ],
+      "status": "open",
+      "check": "the architecture tests in dev/rn/tests/architecture/test_rn_s4_pause.py pass, each seen to fail first",
+      "good": false,
+      "decisions": []
+    },
+    {
+      "name": "/rn:up alone in a new conversation goes on where the run stopped",
+      "path": "dev/rn/tests/architecture/test_rn_s5_picking_up.py",
+      "kind": "specific",
+      "inputs": [
+        "dev/rn/architecture.md"
+      ],
+      "preconditions": [
+        "dev/rn/tests/architecture/test_rn_walking_skeleton.py"
+      ],
+      "status": "open",
+      "check": "the architecture tests in dev/rn/tests/architecture/test_rn_s5_picking_up.py pass, each seen to fail first",
+      "good": false,
+      "decisions": []
+    },
+    {
+      "name": "The person gets one pull request, each decision rn took without asking, and the run's lessons",
+      "path": "dev/rn/tests/architecture/test_rn_s6_handed_over.py",
+      "kind": "specific",
+      "inputs": [
+        "dev/rn/architecture.md"
+      ],
+      "preconditions": [
+        "dev/rn/tests/architecture/test_rn_walking_skeleton.py"
+      ],
+      "status": "open",
+      "check": "the architecture tests in dev/rn/tests/architecture/test_rn_s6_handed_over.py pass, each seen to fail first",
+      "good": false,
+      "decisions": []
+    },
+    {
+      "name": "rn gives the deliverable a person means at the size of a real request, as the product vision's key results show",
+      "path": "plugins/rn",
+      "kind": "specific",
+      "inputs": [
+        "dev/rn/architecture.md"
+      ],
+      "preconditions": [
+        "dev/rn/tests/architecture/test_rn_walking_skeleton.py",
+        "dev/rn/tests/architecture/test_rn_s2_point_settled.py",
+        "dev/rn/tests/architecture/test_rn_s3_sign_off.py",
+        "dev/rn/tests/architecture/test_rn_s4_pause.py",
+        "dev/rn/tests/architecture/test_rn_s5_picking_up.py",
+        "dev/rn/tests/architecture/test_rn_s6_handed_over.py"
+      ],
+      "status": "open",
+      "check": "the product vision trials of the README's main use, judged from their records, show KR1.1 and KR1.2 of the product vision",
+      "good": false,
+      "decisions": [
+        {
+          "about": "The plugin's folder",
+          "decided": "rn's folder holds everything rn needs and its own copy of the repository's LICENSE, links any page outside it by its URL on GitHub, and sets homepage and repository in plugin.json, and rn uses Lane through dependencies, never the other way",
+          "by": "user"
+        },
+        {
+          "about": "The product vision trial's request",
+          "decided": "a small feature of tally in lovaizu/playground, its tallies given as CSV, with its tests and README, so that the run makes code and a document under one plan",
+          "by": "user"
+        },
+        {
+          "about": "A comparison with Claude Code alone",
+          "decided": "none: the trial shows KR1.1 and KR1.2 alone, as rn's worth is that once the user has answered what's theirs, a deliverable that meets their purpose comes without them, which a request this small, where Claude Code alone wins plainly, can't show, nor the two deliverables' quality side by side",
+          "by": "user"
+        },
+        {
+          "about": "Deliverables that rest on none of each other",
+          "decided": "the orchestrator's steps start, side by side, each deliverable of the tree whose inputs and preconditions have passed, each in a worktree of its own, as the orchestrator gives the work its plan; it comes with the package of the story that first needs it, after the walking skeleton",
+          "by": "user"
+        },
+        {
+          "about": "The design tree's file",
+          "decided": "JSON in the form of the design tree's schema, written through tree.py, whose tree_file.py alone decides the form, as the deliverables rest on one another many to many by path, which no nested list holds",
+          "by": "user"
+        }
+      ]
+    },
+    {
+      "name": "A newcomer decides from the README alone whether rn fits their work, and starts using it",
+      "path": "plugins/rn/README.md",
+      "kind": "readme",
+      "inputs": [
+        "dev/rn/product-vision.md"
+      ],
+      "preconditions": [
+        "plugins/rn"
+      ],
+      "status": "doing",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The walkthrough recorded",
+              "decided": "the walkthrough takes its output from a recorded run of the rebuilt rn, the product vision test's own",
+              "by": "reasoning"
+            },
+            {
+              "about": "Sign-offs",
+              "decided": "the user signs off the plan, the goal and the deliverables with their decisions, before rn makes anything, and each deliverable once its evaluators find it good, before the next rests on it. The last sign-off marks the draft pull request ready, and the merge stays the user's",
+              "by": "user"
+            },
+            {
+              "about": "Commands",
+              "decided": "/rn:up starts a run and picks one up, /rn:dn pauses it, /rn:ty approves the sign-off waiting, and /rn:gm sends it back with the user's words or their comments on the pull request, Done included",
+              "by": "user"
+            },
+            {
+              "about": "What a pause keeps",
+              "decided": "/rn:dn stops each role at once and commits and pushes its work so far with the step it was on. /rn:up, in any conversation or on another computer, goes on from that step, and shows where it stopped, what comes next, and the point or sign-off waiting. A run closed without /rn:dn goes back only to its last step, as rn keeps its state at the end of each step",
+              "by": "user"
+            },
+            {
+              "about": "What a sign-off shows",
+              "decided": "what the evaluators found the people can do with the deliverable, the decisions taken without asking, and a link to its changes in the pull request. /rn:gm alone takes every comment the user wrote on the pull request since the sign-off",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N7",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": true,
+          "decisions": [
+            {
+              "about": "The user's own checkout",
+              "decided": "rn works in a git worktree of its own on the work's branch, so the user goes on with their own work while rn runs",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N9",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Installation tried",
+              "decided": "once the rebuilt rn exists, the maker follows its install steps from nothing as a newcomer would, and mends the README where they fall short",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N10",
+          "good": true,
+          "decisions": []
+        }
+      ]
+    }
+  ]
+}

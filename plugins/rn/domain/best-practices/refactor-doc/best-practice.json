@@ -1,0 +1,239 @@
+{
+ "goal": {
+  "what": "Whether they read the original or a machine translation, readers understand the document as its writer meant, in one read of only the parts they need.",
+  "critical_success_factors": [
+   {
+    "id": "C1",
+    "what": "The reader finds the parts they need without reading the rest.",
+    "necessary_conditions": [
+     {
+      "id": "N1",
+      "about": "the whole",
+      "what": "Do each heading and the first sentence under it say what the section gives the reader?",
+      "why": "Readers choose what to read by the headings and the first sentences, and skip the rest. Nielsen Norman Group found that readers scan the first words of [headings](https://www.nngroup.com/articles/headings-pickup-lines/).",
+      "items": [
+       {
+        "at": "decide",
+        "text": "List the readers with the purposes they come with."
+       },
+       {
+        "at": "decide",
+        "text": "Split the document so that each section serves one topic: a reader with a given purpose reads a section whole or skips it whole."
+       },
+       {
+        "at": "decide",
+        "text": "Give each item that a reader looks for, such as a question they have, a heading of its own, so that it shows in the outline and a link can point to it."
+       },
+       {
+        "at": "make",
+        "text": "Write each heading so that its first words are the ones the reader scans for."
+       },
+       {
+        "at": "make",
+        "text": "Make the first sentence under the heading say what the section gives."
+       },
+       {
+        "at": "make",
+        "text": "Read only the headings and the first sentences for each purpose. Rewrite a heading or first sentence that would make the reader miss a section the purpose needs. Rewrite one that would make them read a section it doesn't need."
+       }
+      ]
+     },
+     {
+      "id": "N2",
+      "about": "the whole",
+      "what": "Does the document hold only what its readers need?",
+      "why": "Every word costs the reader time, and words that carry nothing still cost it. The method is the rule to omit needless words in William Strunk and E. B. White's The Elements of Style.",
+      "items": [
+       {
+        "at": "make",
+        "text": "For each sentence, ask which reader needs it, at this point, and for what. If no reader does, cut it, or move it to a linked document where a reader does."
+       },
+       {
+        "at": "make",
+        "text": "Within a sentence, ask the same of each word."
+       },
+       {
+        "at": "make",
+        "text": "Keep the small words that show the structure of a sentence, such as articles and `that`, since without them both a reader and a machine translator parse the sentence with more effort."
+       },
+       {
+        "at": "make",
+        "text": "After cutting, read each changed section again from the top as its reader, and check that it still says everything it said before.",
+        "trace": {
+         "action": "read",
+         "takes": [
+          "{deliverable}"
+         ]
+        }
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "C2",
+    "what": "The reader understands each sentence and figure on the first read.",
+    "necessary_conditions": [
+     {
+      "id": "N3",
+      "about": "the whole",
+      "what": "Does each sentence come after everything it depends on?",
+      "why": "A reader who has to turn back or read ahead loses the thread. The method is the given-new order of [information structure](https://en.wikipedia.org/wiki/Information_structure): what the reader already knows comes before what's new.",
+      "items": [
+       {
+        "at": "make",
+        "text": "For each sentence, ask what the reader must already know to understand it, and place it after that."
+       },
+       {
+        "at": "make",
+        "text": "If a sentence depends on something outside the document, such as an earlier discussion, state it in the sentence or link to where it's stated."
+       },
+       {
+        "at": "make",
+        "text": "Within a sentence, start with what the reader already knows and end with what's new."
+       },
+       {
+        "at": "make",
+        "text": "Put a short condition before its instruction, so that a reader it doesn't apply to can skip the instruction."
+       },
+       {
+        "at": "make",
+        "text": "Put the exceptions of a rule next to the rule."
+       },
+       {
+        "at": "make",
+        "text": "Read the document from the top, and mark each place where you had to look back or ahead. Move what the place needed to before it."
+       }
+      ]
+     },
+     {
+      "id": "N4",
+      "about": "the whole",
+      "what": "Do lists, tables, and diagrams show the steps, the choices, and the relations that prose would make the reader piece together?",
+      "why": "A reader takes in at once a relation that a form shows, but has to assemble it from sentences. Jill Larkin and Herbert Simon, in their study of why a diagram is worth ten thousand words, found that a diagram puts by place what sentences make the reader search for.",
+      "items": [
+       {
+        "at": "decide",
+        "text": "For each passage, ask what relation it describes, and choose the form by the answer. Steps in order take a numbered list. Items in no order take a bulleted list. Things compared on the same points take a table. Who passes what to whom takes a diagram. An argument, where one point leads to the next by because or but, stays in prose, since a list drops those links."
+       },
+       {
+        "at": "make",
+        "text": "Draw a sequence diagram as text that the page renders, such as Mermaid, because its steps run from top to bottom and leave no layout to choose."
+       },
+       {
+        "at": "make",
+        "text": "Draw a structure diagram, such as parts and what passes between them, as a file whose layout the writer sets, such as SVG, because its layout carries meaning."
+       }
+      ]
+     },
+     {
+      "id": "N5",
+      "about": "the whole",
+      "what": "Does each sentence make one point, with the actor as its subject and an active verb?",
+      "why": "A sentence with one meaning reads the same for every reader, and for a machine translator. [Simplified Technical English](https://www.asd-ste100.org) and the [Google developer documentation style guide](https://developers.google.com/style/translation) give the rules for this, for readers who read in a second language.",
+      "items": [
+       {
+        "at": "make",
+        "text": "For each sentence, ask how many points it makes, and split it into one sentence for each."
+       },
+       {
+        "at": "make",
+        "text": "Ask who acts, make the actor the subject, and follow it with a verb that carries the action."
+       },
+       {
+        "at": "make",
+        "text": "Ask whether each pronoun could refer to two nouns, and if so, use the noun."
+       },
+       {
+        "at": "make",
+        "text": "Turn a noun made from a verb, such as `decision`, back into the verb."
+       },
+       {
+        "at": "make",
+        "text": "Keep the object close to the verb."
+       },
+       {
+        "at": "make",
+        "text": "Read each sentence as a machine translator would: word by word, with nothing from outside the sentence. If it reads two ways, or would read unnaturally in another language, rewrite it.",
+        "trace": {
+         "action": "read",
+         "takes": [
+          "{deliverable}"
+         ]
+        }
+       }
+      ]
+     },
+     {
+      "id": "N6",
+      "about": "the whole",
+      "what": "Does the document use the words its readers already use, in their usual meaning?",
+      "why": "A reader reads each word with the meaning they already know, so any other word makes them guess, such as a term the team coined. The [Federal Plain Language Guidelines](https://www.plainlanguage.gov/guidelines/) call for familiar words for the same reason.",
+      "items": [
+       {
+        "at": "make",
+        "text": "For each word, ask whether a reader in the field would use it for this thing, in this meaning. If not, use the word they would use. If no such word exists, define the term where the reader first meets it."
+       },
+       {
+        "at": "make",
+        "text": "Write out each abbreviation where the reader first meets it, as the [Google developer documentation style guide](https://developers.google.com/style/abbreviations) does."
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "C3",
+    "what": "Every part of the document says the same thing about each fact and uses the same name for each thing.",
+    "necessary_conditions": [
+     {
+      "id": "N7",
+      "about": "the whole",
+      "what": "Does the document state each fact in one place, with every other place linking to it?",
+      "why": "Two places that state one fact drift apart, and the reader can't tell which one holds. It's the principle of a [single source of truth](https://en.wikipedia.org/wiki/Single_source_of_truth).",
+      "items": [
+       {
+        "at": "make",
+        "text": "For each fact, including one that a figure draws or the work itself shows, ask where a reader would look for it first, and state it there."
+       },
+       {
+        "at": "make",
+        "text": "If two places state a fact differently, keep both, and ask whoever owns the document which is right, since choosing one yourself would change what the document says."
+       },
+       {
+        "at": "make",
+        "text": "In every other place, link to the place that states the fact, with a few words on what the reader finds there."
+       }
+      ]
+     },
+     {
+      "id": "N8",
+      "about": "the whole",
+      "what": "Does each thing have one name, used the same way throughout, and does each name refer to one thing?",
+      "why": "A reader who meets two names takes them for two things, and one name used for two things merges them, while one name for each thing lets the reader and a translator keep one picture of it from start to end. [Simplified Technical English](https://www.asd-ste100.org) gives each word one meaning for the same reason.",
+      "items": [
+       {
+        "at": "make",
+        "text": "List the names the document uses for things."
+       },
+       {
+        "at": "make",
+        "text": "For each thing, keep the name its readers already use, spelled the same way each time."
+       },
+       {
+        "at": "make",
+        "text": "If two names refer to one thing, keep one."
+       },
+       {
+        "at": "make",
+        "text": "If one name refers to two things, give one of them another name."
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "inputs": [],
+ "preconditions": []
+}
