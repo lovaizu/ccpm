@@ -15,15 +15,25 @@ as rn runs it, by [rn's architecture](../../dev/rn/architecture.md).**
   ccpm's own plugins goes the way rn's architecture draws, and a lack that the work meets is a lack
   of rn's.
 
-**Until rn runs, the main conversation runs rn's architecture by hand.** It's the orchestrator, and
-keeps the design tree `.rn/20261107-rn/design-tree.json` as the tree-keeper would. It starts each
-other role as a subagent, briefed by that role's part of
-[the plugin template](../../dev/plugin-template/domain/), with the role's cut of the tree. Where
-rn's guard would check a role's record, the subagent writes its record to a file in the system's
-temporary folder, in the form of
-[the record](../../dev/plugin-template/domain/record.schema.json), and the main conversation reads
-it against the part's steps and the best practice's practices before it takes the result, then
-removes the file.
+**Until rn runs, the main conversation keeps the design tree `.rn/20261107-rn/design-tree.json`,
+and takes its deliverables from the top.** Each session resumes from the tree.
+
+- Rationale: the tree holds each decision and where the work stands, so a new session needs nothing
+  else.
+
+**Until rn runs, the main conversation makes each document itself, with no evaluators: the best
+practices and their templates, the plugin guide, and each plugin's product vision, README, and
+architecture.** It makes each to its best practice and its template, and keeps only the vital few.
+
+- Rationale: rounds of evaluators work only once rn runs them. Run by hand, each round added what
+  the evaluators named, until the documents held trivia that no decision of the tree asked for.
+
+**From the test cases on, a subagent makes each deliverable, and the main conversation checks it**
+against its best practice and the tree before it takes the result. The subagent is briefed by its
+role's part of [the plugin template](../../dev/plugin-template/domain/), with the role's cut of the
+tree, and writes its record to a file in the system's temporary folder, in the form of
+[the record](../../dev/plugin-template/domain/record.schema.json). The main conversation reads the
+record against the part's steps and the best practice's practices, then removes the file.
 
 - Rationale: no guard holds a subagent here yet, so the main conversation does what the guard and
   rn's check would.

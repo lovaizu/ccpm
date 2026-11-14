@@ -237,6 +237,11 @@
               "about": "Two kinds of evaluators",
               "decided": "each deliverable has two kinds of evaluators: one by its kind's best practice, on whether its people reach their goal with it, and one by the refactor best practice, on whether its structure lets them understand it in one read and change it rightly, its meaning unchanged, as adding function and reworking structure are two jobs, and judged as one, what each round adds breaks the structure unseen, so the people misread the deliverable and the next change contradicts it, which raises KR1.1",
               "by": "user"
+            },
+            {
+              "about": "The template check",
+              "decided": "rn's check reads the template of the deliverable's kind and the deliverable, and finds each section of the template in its order and no other, each item in the template's form, each slot in the template's sentence pattern where it has one and else in its number of sentences, no note or placeholder of the template left, each figure and block the template asks for, and no sentence longer than a set number of words, as the template holds only the vital few, so each sentence beyond it is trivia that an evaluator reading for its conditions passes",
+              "by": "user"
             }
           ]
         },
@@ -545,16 +550,11 @@
         },
         {
           "id": "N16",
-          "good": true,
+          "good": false,
           "decisions": [
             {
               "about": "Where the list of Claude Code's states lies",
               "decided": "the states of Claude Code that the guard meets, each with the events it sends and the records that show it, lie in a file of their own that the architecture links, as they change with each Claude Code version while the architecture holds only what stays true",
-              "by": "reasoning"
-            },
-            {
-              "about": "What the guard adds to the run record, in the sequences",
-              "decided": "each sequence draws what the guard adds to the run record and reads from it as a message along the arrow to that store, as the run record is a store of the components figure and a message to it is an exchange between the parts that each sequence shows, not the guard's internals; the Data model's Run names no list of the record's lines",
               "by": "reasoning"
             }
           ]
@@ -767,11 +767,6 @@
             {
               "about": "The call of another plugin's skill",
               "decided": "How it works names the call of another plugin's skill among the moves that Lane holds, and that Lane's guard stands aside while the other plugin's run lasts, as Lane's architecture decides it by the plugin guide's 'A plugin that uses another', so a newcomer whose plugin uses another sees whether Lane fits it",
-              "by": "reasoning"
-            },
-            {
-              "about": "What the run record keeps",
-              "decided": "How it works says Lane keeps each run's starts and results, not its calls, as Lane's architecture keeps no Call in the run record",
               "by": "reasoning"
             }
           ]
