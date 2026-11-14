@@ -48,19 +48,23 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open the README's walkthrough, and lay its steps in order as the backbone, with the steps of the main use of each objective that the walkthrough doesn't run."
+        "text": "Open the README's walkthrough, and lay its exchanges in order as the backbone of the objective whose use it runs."
        },
        {
         "at": "decide",
-        "text": "For each step, ask how the role meets the product at its edge there, such as a command they type, and write one story for each such way, naming the steps it carries."
+        "text": "For each other objective of the product vision, lay as its backbone the steps its role takes from where they start to the result they keep, as a recorded run or the end-to-end test of that use shows them where the product has one. Where none does, ask the user `Which steps does <role> take toward <objective>, from <start> to <result>?`, with the steps you'd expect as your recommendation, since only whoever conceived the product knows a use that no run shows."
        },
        {
         "at": "decide",
-        "text": "Read the product vision's intent, and add a story for each convenience it asks for, such as resuming a run that stopped."
+        "text": "For each step of each backbone, ask how the role meets the product at its edge there, such as a command they type, and write one story for each such way, naming the steps it carries."
+       },
+       {
+        "at": "decide",
+        "text": "Read each idea of the product vision's Concept, and ask at which moment of the use it keeps the product's one way holding. Where the role meets the product there in a way that no story carries, add a story for it, such as resuming a run that stopped, for an idea that keeps every decision of a run in one file."
        },
        {
         "at": "make",
-        "text": "Go through each exchange of the README's walkthrough, and the main use of each objective it doesn't run, and name the one story that carries each step. Add a story where none does."
+        "text": "Go through each step of each backbone, and name the one story that carries it. Add a story where none does."
        }
       ]
      },
@@ -72,7 +76,11 @@
       "items": [
        {
         "at": "decide",
-        "text": "For each principle and each story, ask which step, doubt, or need it carries, from three sources. The README carries what the users get from the product vision: the steps of its walkthrough, and the doubts that its How it works answers. Development adds what the developers need to build, test, and change the parts. Operation adds what keeps the product working across runs and updates, such as where its work outlives a run."
+        "text": "For each story, ask which step, doubt, or need it carries, from three sources. The README and the product vision carry what the users get: the steps of each backbone that N2 lays out, and the doubts that the README's How it works answers. Development adds what the developers need to build, test, and change the parts. Operation adds what keeps the product working across runs and updates, such as where its work outlives a run."
+       },
+       {
+        "at": "make",
+        "text": "Once you have written Principles, for each principle, name the doubt of the README's How it works, or the need of development or operation, that it carries."
        },
        {
         "at": "make",
@@ -80,7 +88,7 @@
        },
        {
         "at": "make",
-        "text": "Remove whatever reaches none, from every figure, list, and sentence that names it."
+        "text": "Remove each story or principle that carries none, and each component or kind of data that none reaches, from every figure, list, and sentence that names it."
        }
       ]
      }
@@ -372,7 +380,7 @@
        },
        {
         "at": "decide",
-        "text": "Set k, how many times a prompt's unit tests run each case on the model its users run, passing a case only where all k runs pass, as pass^k of Anthropic's [demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents) measures it. Take r, the number of runs a user makes before a slip would cost them a key result, such as the runs of one session, and set k to 2.3 times r, rounded up, so that a slip once in r runs shows in the k runs nine times in ten, such as k of 7 for r of 3."
+        "text": "Set k, how many times a prompt's unit tests run each case on the model its users run, passing a case only where all k runs pass, as pass^k measures it, which Anthropic's [demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents) takes from [τ-bench](https://arxiv.org/abs/2406.12045) for an agent whose users expect it to act right every time. Set k to the number of times one main use of an objective runs the prompt at the size of a real request, as the backbones that N2 lays out show it, such as 5 for a prompt run once for each of five deliverables, since a slip in any of those runs costs that use its key result. Where no backbone shows how many times, ask the user `How many times does <prompt> run in one use toward <objective> at its real size?`, with your count as your recommendation."
        },
        {
         "at": "decide",
@@ -412,7 +420,7 @@
        },
        {
         "at": "decide",
-        "text": "Set how many times each E2E test runs its main use at real size by the rule that N12.7 gives k, from how many main uses a user runs before a slip would cost a key result, since the AI's variance shows only across runs."
+        "text": "Set how many times each E2E test runs its main use at real size by its first runs: run the main use on the product, and add runs until one more no longer moves the mean of each key result by a step of its measure, such as one question answered, since the AI's variance shows only across runs, and a mean that one more run would move can't tell a change from noise. Where the product can't run its main use yet, write this rule in place of the number, for the first E2E run to set it."
        },
        {
         "at": "decide",
@@ -516,6 +524,10 @@
        },
        {
         "at": "make",
+        "text": "Make the script that checks the trace, which N12.8 names, beside the test code where Directory structure places it, so that it finds each element by where the template puts its name, such as each story by its `S<n>` and each key result by its `KR<n>.<m>`, finds each case by the name it gives of what it supports, and checks each rule that N12.8 sets. Where the architecture the product builds on keeps such a script, such as one that a guide to building plugins runs on every plugin, run that one on this product instead, and add only the checks it lacks."
+       },
+       {
+        "at": "make",
         "text": "Run the script that checks the trace, and mend each case or element it names until it names none. The script finds only a name that leads nowhere, so its 0 shows no more than that: whether the cases are enough, and whether the parts are cut right, the reading before it judges."
        }
       ]
@@ -548,11 +560,11 @@
        },
        {
         "at": "make",
-        "text": "Draw a double of something outside the product from its documentation or from a recorded run of the real thing, and name that source beside what the double gives, so that the script of N12.8 can check it. A double that gives what the real thing never would passes a test that the real one fails."
+        "text": "Draw a double of something outside the product from its documentation or from a recorded run of the real thing, and name that source beside what the double gives, so that the script that N13.15 makes to check the trace can check it. A double that gives what the real thing never would passes a test that the real one fails."
        },
        {
         "at": "make",
-        "text": "Trust a check, such as a test, a hook, or the judge of an E2E test, only once you have seen it fail on a case that breaks what it checks, such as a test of a principle run with the part that holds the principle taken out, which the script of N12.8 can run. Trust a judge once it's right on kept records whose answer you know."
+        "text": "Trust a check, such as a test, a hook, or the judge of an E2E test, only once you have seen it fail on a case that breaks what it checks, such as a test of a principle run with the part that holds the principle taken out, which the script that N13.15 makes to check the trace can run. Trust a judge once it's right on kept records whose answer you know."
        }
       ]
      }

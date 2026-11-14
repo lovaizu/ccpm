@@ -17,8 +17,8 @@ This document says how the parts of `<Product>` give what [its README](<readme>)
 > - `<role>`: a role of the product vision, as the product vision names it.
 > - `<way>`: one way the role meets the product at its edge, such as a command they type.
 > - `<benefit>`: what the role gains by it, toward an objective of the product vision.
-> - `<steps>`: the steps of the README's walkthrough, or of an objective's main use it doesn't
->   run, that rest on it, and each convenience the product vision's intent asks for that it
+> - `<steps>`: the steps of the README's walkthrough, or of another objective's main use, that rest
+>   on it, and each idea of the product vision's Concept whose way of meeting the product it
 >   carries, such as resuming a run that stopped.
 
 ## Components
