@@ -242,7 +242,7 @@
         },
         {
           "id": "N3",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "Lessons sent to rn's repository",
