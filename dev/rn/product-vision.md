@@ -27,21 +27,23 @@ these two sides of the [Pareto principle](https://en.wikipedia.org/wiki/Pareto_p
 causes that bring most of a result, and the many that bring little.
 
 - The deliverable the user means, drawn out, for O1\
-  rn asks the user only the questions along its design tree that it can't settle, and has them sign
-  off the plan and each deliverable before the next work rests on it, and so draws out the
-  deliverable they mean.
+  rn keeps the user's goal and their decisions under it in a design tree, asks them only the
+  questions it can't settle, and has them sign off the plan and each deliverable before the next
+  work rests on it, and so draws out the deliverable they mean.
 - Every step by best practice, for O1\
-  rn plans, makes, and asks the user, each by the best practice of its kind, so that each step
-  holds the few things its kind of work needs.
+  rn plans, makes, and asks the user, each by the best practice of its kind, and lists for the user
+  what a best practice settled without asking them, so that each step holds the few things its kind
+  of work needs.
 - Judged by the people it's for, for O1\
   rn judges each deliverable by whether the people it's for achieve what they're after with it, so
   that it improves only what they need.
 - Back to the design tree on a problem, for O1\
-  rn decides each problem it finds by going back to the design tree, so that the fix changes the
-  decision that the problem comes from.
+  rn takes each problem it finds back to the user's design tree, so that the fix changes the
+  decision there that the problem comes from.
 - The design tree revised on each run, for O1\
-  rn revises the design tree by what each run found, so that the next run goes toward the user's
+  rn revises the user's design tree by what each run found, so that the next run goes toward their
   goal by what rn now knows.
 - Best practices improved by each run, for O1\
-  rn mends the best practice of a kind by each lesson a run finds, once the user takes it, so that
-  every later deliverable of that kind comes better from the next run on.
+  rn brings each lesson a run finds to the user as a change to the best practice of its kind, and
+  makes the change once they take it, so that every later deliverable of that kind comes better
+  from the next run on.
