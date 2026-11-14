@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "tree-keeper's in",
+  "description": "What the main conversation gives the tree-keeper: its run values as it starts, and each decision of the orchestrator's as it resumes it. tree-keeper.md names this file, and the guard limits the tree-keeper's calls to the run values.",
+  "type": "object",
+  "required": [
+    "start"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "start": {
+      "description": "The run values, one JSON object on the first line of the prompt that starts the role, as the guard gives it from tree.py's cut, each one a value that the guard limits the role's calls to.",
+      "type": "object",
+      "required": [
+        "record",
+        "run",
+        "tree",
+        "cut"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "record": {
+          "description": "The path of the role's record, a file in the run's folder `records/` that the role writes only by tree.py record, in the form of record.schema.json, and that rn's check reads at the role's end.",
+          "type": "string"
+        },
+        "run": {
+          "description": "The run's folder, `.rn/<yyyymmdd>-<goal>`, from the root of the run's worktree.",
+          "type": "string"
+        },
+        "tree": {
+          "description": "The path of the run's design tree, `design-tree.json` in the run's folder, in the form of design-tree.schema.json.",
+          "type": "string"
+        },
+        "cut": {
+          "description": "The path of the tree-keeper's cut, the file that tree.py cut wrote in the run's folder, which rn's check reads at its end.",
+          "type": "string"
+        }
+      }
+    },
+    "resume": {
+      "description": "The message by which the main conversation resumes the role with SendMessage: its first line, then its decision on the role's last result and why, and, where the user answered, a line that opens the user's words as they wrote them, because a summary loses what the user meant.",
+      "type": "string",
+      "pattern": "^The main conversation's grounds:\\n"
+    }
+  }
+}

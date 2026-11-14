@@ -454,7 +454,7 @@ plugins/rn/
 │   ├── tree-keeper.md             what the tree-keeper does
 │   ├── generator.md               what the generator does
 │   ├── evaluator.md               what the evaluator does
-│   ├── tree.py                    the code of tree.py
+│   ├── tree/                      the code of tree.py, a module for each decision it makes
 │   ├── throwaway.py               the code of throwaway.py
 │   └── best-practices/            rn's own best practice of each kind
 ├── scripts/

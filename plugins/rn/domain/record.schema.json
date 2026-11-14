@@ -1,0 +1,77 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "A record",
+  "description": "What one start of a role, or the orchestrator of a run, carried out, in the order it did: each step of its prompt once the step's result held, and each practice of a best practice while it carried the practice out. Only tree.py record writes it, and rn's check, tree.py check, reads it at the role's end, or at the end of the orchestrator's turn that puts work up for the person. Once the check accepts a role's end, it keeps the result the role gave, which the guard reads back through the adapter of kept results in a new conversation.",
+  "type": "object",
+  "required": [
+    "entries"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "entries": {
+      "description": "Each step and practice, in the order recorded, as the check reads each practice by where it falls among the steps.",
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "type": "object",
+            "required": [
+              "of",
+              "step",
+              "gave"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "of": {
+                "description": "The prompt that holds the step, by its role, such as generator, or by its command.",
+                "type": "string"
+              },
+              "step": {
+                "description": "The step's number in the prompt's Steps.",
+                "type": "integer",
+                "minimum": 1
+              },
+              "gave": {
+                "$ref": "#/definitions/gave"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "of",
+              "practice",
+              "gave"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "of": {
+                "description": "The best practice that holds the practice, by its kind, such as code.",
+                "type": "string"
+              },
+              "practice": {
+                "description": "The practice's ID, its condition's ID and its place, such as N6.2.",
+                "type": "string",
+                "pattern": "^N[0-9]+\\.[0-9]+$"
+              },
+              "gave": {
+                "$ref": "#/definitions/gave"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "result": {
+      "description": "The result that the role gave at the end that rn's check accepted, such as done, which only tree.py check writes. Absent until then, and on the orchestrator's record.",
+      "type": "string"
+    }
+  },
+  "definitions": {
+    "gave": {
+      "description": "What the step left, or what the practice gave, in a line, so that the orchestrator checks the result against it.",
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

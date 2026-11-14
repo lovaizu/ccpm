@@ -1,0 +1,3 @@
+{"event": "gh pr create prints the URL of the pull request", "source": "https://cli.github.com/manual/gh_pr_create", "shows": "gh pr create --title \"Pull request title\" --body \"Pull request body\" http://github.com/owner/repo/pull/1", "exit": 0, "stdout": "http://github.com/owner/repo/pull/1\n"}
+{"event": "gh pr ready marks the pull request ready", "source": "https://cli.github.com/manual/gh_pr_ready", "shows": "Mark a pull request as ready for review.", "exit": 0}
+{"event": "gh issue create prints the URL of the issue", "source": "https://cli.github.com/manual/gh_issue_create", "shows": "gh issue create --title \"Issue title\" --body \"Issue body\" http://github.com/owner/repo/issues/1", "exit": 0, "stdout": "http://github.com/owner/repo/issues/1\n"}

@@ -1,0 +1,12 @@
+{
+  "intent": "You maintain invoicer, the Python library in this repository that other teams call to total their invoices. It has no type hints, so a caller learns of a wrong argument only when their code fails. You want rn to add type hints, so that the people who call invoicer see what each function takes before their code runs: type /rn:up with that request in your own words. You want the hints in every file of invoicer, not only in what callers import. Answer each question rn asks from what you mean. Approve with /rn:ty what rn puts up for your sign-off where it's what you mean, and send it back with /rn:gm and what to change where it isn't. Once rn is making the hints, pause it with /rn:dn, then type /clear to start a new conversation, and type /rn:up alone to go on. You're done once rn says the pull request is ready for your merge.",
+  "repository": "https://github.com/lovaizu/playground",
+  "commits": "dev/rn/tests/e2e/invoicer-commits.json",
+  "plugin_dirs": [
+    "{top}/plugins/lane",
+    "{top}/plugins/rn"
+  ],
+  "turns": 20,
+  "records": "dev/rn/tests/e2e/records",
+  "push": true
+}

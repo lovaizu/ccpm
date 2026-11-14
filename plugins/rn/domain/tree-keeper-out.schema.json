@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "tree-keeper's out",
+  "description": "What the tree-keeper gives as it ends. tree-keeper.md names this file.",
+  "type": "object",
+  "required": [
+    "result",
+    "reply"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "description": "The fixed word the tree-keeper gives as it ends, by running python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py tree-keeper done. The routes go on by this word, never by what it writes.",
+      "enum": [
+        "done"
+      ]
+    },
+    "reply": {
+      "description": "Its last message: what tree.py write printed of what changed, each node it touches, and each deliverable marked doing, with how each node checked reads, as holding or as changed, so that the orchestrator checks the change against the design tree best practice.",
+      "type": "string"
+    }
+  }
+}

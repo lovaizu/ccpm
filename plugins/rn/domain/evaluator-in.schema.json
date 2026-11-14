@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "evaluator's in",
+  "description": "What the main conversation gives the evaluator as it starts. evaluator.md names this file, and the guard limits the evaluator's calls to the run values, so that it reads only what the deliverable's people have.",
+  "type": "object",
+  "required": [
+    "start"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "start": {
+      "description": "The run values, one JSON object on the first line of the prompt that starts the role, as the guard gives it from tree.py's cut, each one a value that the guard limits the role's calls to.",
+      "type": "object",
+      "required": [
+        "record",
+        "run",
+        "deliverable",
+        "best_practice",
+        "group",
+        "round",
+        "cut",
+        "answers"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "record": {
+          "description": "The path of the role's record, a file in the run's folder `records/` that the role writes only by tree.py record, in the form of record.schema.json, and that rn's check reads at the role's end.",
+          "type": "string"
+        },
+        "run": {
+          "description": "The run's folder, `.rn/<yyyymmdd>-<goal>`, from the root of the run's worktree.",
+          "type": "string"
+        },
+        "deliverable": {
+          "description": "The path of the deliverable that the evaluator judges, from the root of the run's worktree.",
+          "type": "string"
+        },
+        "best_practice": {
+          "description": "The path of the best practice of the deliverable's kind, `best-practice.json` in its folder.",
+          "type": "string"
+        },
+        "group": {
+          "description": "The group of necessary conditions that the evaluator answers, by its critical success factor's ID, such as C2.",
+          "type": "string"
+        },
+        "round": {
+          "description": "The number of the deliverable's round that the evaluator judges.",
+          "type": "string"
+        },
+        "cut": {
+          "description": "The path of the role's cut, the file that tree.py cut wrote in the run's folder, which holds the part of the design tree that the role starts with and nothing else.",
+          "type": "string"
+        },
+        "answers": {
+          "description": "The path where the evaluator writes its Answers, in the form of `answers` in evaluator-out.schema.json, in the round's folder.",
+          "type": "string"
+        }
+      }
+    }
+  }
+}
