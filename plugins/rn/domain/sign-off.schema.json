@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "a sign-off",
-  "description": "What the orchestrator puts up for the user's /rn:ty or /rn:gm by tree.py sign-off: the plan, a deliverable, or a lesson for rn's repository. tree.py keeps it in the run's sign-offs.json until the user's command decides it.",
+  "description": "What is put up for the user's /rn:ty or /rn:gm: the plan, a deliverable, or a lesson for rn's repository, which the orchestrator puts up by tree.py sign-off, or the pull request handed over, which tree.py ready puts up. tree.py keeps it in the run's sign-offs.json until the user's command decides it.",
   "type": "object",
   "required": [
     "of",
@@ -12,7 +12,7 @@
   "additionalProperties": false,
   "properties": {
     "of": {
-      "description": "What the sign-off is of: `plan`, the path of a deliverable of the design tree, or `lesson`.",
+      "description": "What the sign-off is of: `plan`, the path of a deliverable of the design tree, `lesson`, or `pull request`, which only tree.py ready puts up.",
       "type": "string"
     },
     "can_do": {
@@ -20,7 +20,7 @@
       "type": "string"
     },
     "decisions": {
-      "description": "Each decision taken without asking the user, in a line, so that the user sees what rn settled for them.",
+      "description": "Each decision taken without asking the user, in a line, so that the user sees what rn settled for them: each decision under it in the design tree that the user didn't settle, and, for a deliverable, each point that what its generator made in its last round names as settled.",
       "type": "array",
       "items": {
         "type": "string"

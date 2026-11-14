@@ -1,5 +1,5 @@
-"""The unit cases of tree/cut.py, each role's Cut, through `cut`, `save`, `load`, and `values`,
-on a run's folder that each test writes as tree.py keeps it."""
+"""The unit cases of tree/cut.py, each role's Cut, through `cut`, `save`, `load`, `values`,
+`records`, and `changed`, on a run's folder that each test writes as tree.py keeps it."""
 
 from __future__ import annotations
 
@@ -11,7 +11,17 @@ from fault import Wrong
 from rn_example import GOAL, HINTS, TYPED
 from rn_parts import ANSWERED, PLAN_SIGNED, RUN, doing, hints, typed, walkthrough
 from tree import design, sign_offs
-from tree.cut import EVALUATOR, GENERATOR, TREE_KEEPER, cut, load, save, values
+from tree.cut import (
+    EVALUATOR,
+    GENERATOR,
+    TREE_KEEPER,
+    changed,
+    cut,
+    load,
+    records,
+    save,
+    values,
+)
 from tree.design import Decision
 from tree.rounds import LackKept, Place, folder, keep_lack, keep_place
 
@@ -181,6 +191,51 @@ def test_values_of_the_evaluators_cut_are_those_its_in_schema_names(run: str):
         "cut",
         "answers",
     }
+
+
+@pytest.mark.supports("test_a_picked_up_evaluator_starts_at_the_step_it_stood_at")
+def test_the_evaluators_cut_picks_up_the_place_of_its_group_alone(run: str):
+    """Given the hints' round 1 with the evaluator of C1 at step 2
+    When the evaluators' cuts of the hints for C1 and for C2 are asked for
+    Then C1's holds that Place, and C2's none"""
+    os.makedirs(folder(run, HINTS, 1))
+    keep_place(run, HINTS, Place("evaluator", 2, group="C1"))
+    assert cut(run, EVALUATOR, HINTS, "C1").place == Place("evaluator", 2, group="C1")
+    assert cut(run, EVALUATOR, HINTS, "C2").place is None
+
+
+@pytest.mark.supports("test_the_guard_of_a_new_conversation_picks_the_run_up_from_the_results_kept")
+def test_records_are_each_starts_record_in_the_order_of_the_starts(run: str):
+    """Given the tree-keeper's cut saved, and then the generator's of the hints
+    When the run's records are asked for
+    Then they're the tree-keeper's record and then the generator's"""
+    first = save(cut(run, TREE_KEEPER))
+    second = save(cut(run, GENERATOR, HINTS))
+    assert records(run) == (first.record, second.record)
+
+
+@pytest.mark.supports("test_a_lack_kept_with_no_change_to_a_decision_of_its_condition_is_refused")
+def test_changed_holds_only_once_a_decision_of_the_condition_differs_from_the_rounds_cut(
+    run: str,
+):
+    """Given the generator's cut of the hints' round 1 saved, its N3 holding the answer
+    When N3's decisions are asked about as the tree holds them, and again once the tree adds a
+    decision under N3
+    Then they haven't changed, and then they have"""
+    save(cut(run, GENERATOR, HINTS))
+    assert not changed(run, HINTS, "N3")
+    rate = Decision("How a rate is typed", "a Decimal named Rate", "reasoning")
+    design.save(run, walkthrough(doing(hints(ANSWERED, rate)), typed(TYPED_DECISION)))
+    assert changed(run, HINTS, "N3")
+
+
+@pytest.mark.supports("test_a_lack_kept_with_no_change_to_a_decision_of_its_condition_is_refused")
+def test_changed_of_a_round_with_no_generators_cut_is_false(run: str):
+    """Given the hints' round 1 with no generator's cut
+    When N3's decisions are asked about
+    Then they count as unchanged, so no lack is kept"""
+    os.makedirs(folder(run, HINTS, 1))
+    assert not changed(run, HINTS, "N3")
 
 
 @pytest.mark.supports("test_the_tree_keeper_starts_with_its_cut_of_the_run_alone")

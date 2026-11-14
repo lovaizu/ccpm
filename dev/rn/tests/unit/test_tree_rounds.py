@@ -1,6 +1,6 @@
 """The unit cases of tree/rounds.py, where each round of a deliverable keeps its records and their
-forms, through `folder`, `latest`, `load`, `parse_answers`, `keep_try`, `keep_lack`, and
-`keep_place`."""
+forms, through `folder`, `latest`, `load`, `parse_answers`, `parse_made`, `keep_try`,
+`keep_lack`, and `keep_place`."""
 
 from __future__ import annotations
 
@@ -9,15 +9,17 @@ from typing import Any
 
 import pytest
 from fault import Wrong
-from rn_example import HINTS, TYPED
+from rn_example import DECIMAL, HINTS, POINT, SETTLED, TYPED
 from rn_parts import RUN
 from tree.rounds import (
     Answers,
     LackKept,
+    Made,
     Met,
     NotMet,
     Place,
     Round,
+    Settled,
     Tried,
     folder,
     keep_lack,
@@ -26,6 +28,7 @@ from tree.rounds import (
     latest,
     load,
     parse_answers,
+    parse_made,
 )
 
 pytestmark = pytest.mark.xfail(strict=True, reason="rn's parts are skeletons, their bodies unbuilt")
@@ -101,6 +104,57 @@ def test_keep_place_keeps_each_place_with_the_last_of_each_role_last(run: str):
     keep_place(run, HINTS, Place("generator", 3, ("invoicer/lines.py",)))
     keep_place(run, HINTS, Place("generator", 4, ("invoicer/tax.py",)))
     assert load(run, HINTS, 1).places[-1] == Place("generator", 4, ("invoicer/tax.py",))
+
+
+@pytest.mark.supports("test_an_evaluators_place_commits_its_work_with_its_group_and_step")
+def test_keep_place_keeps_an_evaluators_place_with_its_group(run: str):
+    """Given the hints' round 1 with the generator at step 7
+    When the evaluator of C1 keeps its Place at step 2
+    Then the round's Places end with the evaluator of C1 at step 2, after the generator's"""
+    os.makedirs(folder(run, HINTS, 1))
+    keep_place(run, HINTS, Place("generator", 7))
+    keep_place(run, HINTS, Place("evaluator", 2, group="C1"))
+    assert load(run, HINTS, 1).places == (Place("generator", 7), Place("evaluator", 2, group="C1"))
+
+
+@pytest.mark.supports(
+    "test_the_orchestrator_gets_the_round_and_puts_up_the_points_the_generator_settled"
+)
+def test_parse_made_reads_each_decision_lack_and_point_settled():
+    """Given what the hints' generator made, naming the point on each file and the point on amounts
+    it settled without asking
+    When it's read
+    Then it holds the decision with where it lies, no lack, and the point settled with its ground"""
+    given = {
+        "decisions": [{"about": POINT, "where": "invoicer/"}],
+        "lacks": [],
+        "settled": [SETTLED],
+    }
+    assert parse_made(given, "made.json") == Made(
+        ((POINT, "invoicer/"),),
+        (),
+        (Settled(SETTLED["point"], DECIMAL, SETTLED["ground"]),),
+    )
+
+
+@pytest.mark.parametrize(
+    "given",
+    [
+        {"decisions": [], "lacks": []},
+        {"decisions": [], "lacks": [], "settled": [dict(SETTLED, ground="")]},
+        {"decisions": [], "lacks": [], "settled": [{"point": "x", "decided": "y"}]},
+    ],
+)
+@pytest.mark.supports(
+    "test_the_orchestrator_gets_the_round_and_puts_up_the_points_the_generator_settled"
+)
+def test_parse_made_refuses_a_point_settled_without_its_ground(given: Any):
+    """Given what a generator made with no `settled`, or a point settled with an empty ground or
+    none
+    When it's read
+    Then it's refused, naming the file"""
+    with pytest.raises(Wrong, match="made.json"):
+        parse_made(given, "made.json")
 
 
 @pytest.mark.supports("test_a_generators_place_commits_its_work_with_the_step_it_stands_at")

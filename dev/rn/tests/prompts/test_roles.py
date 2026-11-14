@@ -80,6 +80,22 @@ def test_the_generator_makes_the_hints_tries_them_in_a_copy_and_ends_done():
 
 
 @pytest.mark.supports(
+    "test_the_orchestrator_gets_the_round_and_puts_up_the_points_the_generator_settled"
+)
+def test_the_generator_names_each_point_it_settled_without_asking_with_its_ground():
+    """Given the plan with the point answered, the hints doing
+    When a generator of the hints starts with its cut and ends with `done`
+    Then on every run what it made names at least one point it settled without asking, as typing
+    invoicer settles points that no decision of its cut names, each with a ground"""
+    done = role_runs("generator", ANSWERED, (HINTS,))
+    made = [
+        json.loads(next(v for k, v in run.files.items() if k.endswith("made.json"))) for run in done
+    ]
+    assert all(run.result == "done" for run in done)
+    assert all(m["settled"] and all(each["ground"] for each in m["settled"]) for m in made)
+
+
+@pytest.mark.supports(
     "test_a_generator_that_asks_ends_with_asks_and_is_resumed_once_the_tree_holds_the_decision"
 )
 def test_the_generator_asks_where_the_design_leaves_a_point_open():

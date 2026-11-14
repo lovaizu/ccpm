@@ -87,6 +87,6 @@ def orchestrator_runs(
     path from the worktree's root, in the forms tree.py writes, and pushed with its draft pull
     request, so that `/rn:up` alone picks it up. Each
     role it starts runs as a double that gives the result the case holds for the role by its name,
-    in the form of its `<role>-out.schema.json`, its design tree or Answers written where the
-    result names one, so that the case tries the orchestrator alone."""
+    in the form of its `<role>-out.schema.json`, its design tree, what it made, or Answers written
+    where the result names one, so that the case tries the orchestrator alone."""
     raise NotImplementedError("rn_prompt_runs.orchestrator_runs")

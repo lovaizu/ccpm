@@ -30,5 +30,12 @@ a throwaway copy.
 
 ## What you give
 
-End by giving `done`, `asks` with the point open and your recommendation, or `lacks` with what
-outside the work stops you, in the form of `generator-out.schema.json`.
+Settle a point yourself only where your cut, the goal, and your best practice settle it one way,
+and its answer changes no decision of your cut and nothing of another deliverable, such as typing
+amounts as Decimal where the code already computes with Decimal. Hand each other point back with
+`asks`, as only the orchestrator sees the whole design tree.
+
+End by giving `done`, with what you made naming each point you settled without asking and its
+ground, as the user reads them on the deliverable's sign-off, `asks` with the point open and your
+recommendation, or `lacks` with what outside the work stops you, in the form of
+`generator-out.schema.json`.

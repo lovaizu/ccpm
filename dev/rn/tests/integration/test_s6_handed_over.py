@@ -1,7 +1,8 @@
 """The integration cases of S6, the work handed over: each change to a best practice that the
 user takes becomes a deliverable, each general lesson goes to rn's repository as an issue only on
-the user's /rn:ty, the whole pull request is read against the goal before it's ready, and tree.py
-marks it ready only once every deliverable is done and signed off. The test plays the user, the
+the user's /rn:ty, the whole pull request is read against the goal before it's ready, tree.py
+marks it ready only once every deliverable is done and signed off, and the user's /rn:gm after
+Done sends the pull request handed over back to a draft. The test plays the user, the
 orchestrator, and the tree-keeper, and the double of gh stands in for GitHub."""
 
 from __future__ import annotations
@@ -157,6 +158,24 @@ def test_a_change_to_a_best_practice_the_user_takes_is_added_as_a_meta_deliverab
     added = dict(ALL_DONE, deliverables=[*ALL_DONE["deliverables"], meta])
     wrote = keeper_writes(keeper, repo, run, added, "The user took the change.")
     assert json.loads(wrote.output)["doing"] == [".rn/best-practices/code/"]
+
+
+@pytest.mark.supports("S6", "tree.py", "repository", "Sign-off", "user")
+def test_gm_after_done_sends_the_pull_request_handed_over_back_to_a_draft(
+    conv: Conversation, repo: Repo, run: Run
+):
+    """Given the pull request marked ready, and Done shown
+    When the user types /rn:gm with what to change
+    Then the command loads, GitHub holds the pull request a draft again, and the run's sign-offs
+    keep the pull request handed over sent back"""
+    handed_over(conv, repo, run)
+    conv.bash(tree(repo, "ready", run.folder))
+    conv.stop("Done. The pull request is ready for your merge.")
+    typed = conv.type("/rn:gm Rates should read apart from amounts.")
+    (pull,) = github(repo)["pulls"].values()
+    kept = json.loads(text_of(os.path.join(run.worktree, run.folder, "sign-offs.json")))
+    assert not typed.blocked and pull["draft"]
+    assert kept[-1]["of"] == "pull request" and kept[-1]["state"] == "sent back"
 
 
 @pytest.mark.supports("S6", "user")

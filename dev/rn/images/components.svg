@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1480 1210">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1480 1240">
   <title>rn&#x27;s components</title>
   <style>
     svg { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, 'Hiragino Sans', 'Noto Sans CJK JP', 'Noto Sans JP', 'Yu Gothic', Meiryo, sans-serif; }
@@ -50,7 +50,7 @@
       <path class="head" d="M0,0 L10,5 L0,10 z"/>
     </marker>
   </defs>
-  <rect class="bg" x="0" y="0" width="1480" height="1210"/>
+  <rect class="bg" x="0" y="0" width="1480" height="1240"/>
   <rect class="frame" x="320" y="240" width="800" height="340" rx="6"/>
   <text class="frame-name" x="880" y="570">each AI of rn</text>
   <rect class="ext" x="60" y="80" width="200" height="64" rx="4"/>
@@ -121,23 +121,26 @@
   <text class="label small halo" x="168" y="394" text-anchor="start">and gh command</text>
   <text class="label small halo" x="168" y="408" text-anchor="start">by it [import]</text>
   <path class="line" d="M620,312 L290,312 L290,496 L260,496" marker-end="url(#arrow)"/>
-  <text class="data halo" x="465" y="304" text-anchor="middle">Cut, Sign-off, Place, Comment</text>
-  <text class="label small halo" x="465" y="332" text-anchor="middle">makes the run&#x27;s worktree, gets each cut,</text>
-  <text class="label small halo" x="465" y="346" text-anchor="middle">lists the runs left, puts up each sign-off,</text>
-  <text class="label small halo" x="465" y="360" text-anchor="middle">approves or sends it back as /rn:ty or</text>
-  <text class="label small halo" x="465" y="374" text-anchor="middle">/rn:gm loads, pushes, commits a pause,</text>
-  <text class="label small halo" x="465" y="388" text-anchor="middle">gets the comments, marks the pull request</text>
-  <text class="label small halo" x="465" y="402" text-anchor="middle">ready, opens each issue [Bash]</text>
+  <text class="data halo" x="465" y="304" text-anchor="middle">Cut, Answers, Made, Sign-off, Place, Comment</text>
+  <text class="label small halo" x="465" y="332" text-anchor="middle">makes the run&#x27;s worktree, gets each cut and</text>
+  <text class="label small halo" x="465" y="346" text-anchor="middle">each round&#x27;s Answers and Made, lists the runs</text>
+  <text class="label small halo" x="465" y="360" text-anchor="middle">left, puts up each sign-off, approves or sends</text>
+  <text class="label small halo" x="465" y="374" text-anchor="middle">it back as /rn:ty or /rn:gm loads, pushes,</text>
+  <text class="label small halo" x="465" y="388" text-anchor="middle">commits a pause, gets the comments, marks the</text>
+  <text class="label small halo" x="465" y="402" text-anchor="middle">pull request ready, opens each issue [Bash]</text>
   <path class="line" d="M380,544 L380,630"/>
   <path class="line" d="M640,544 L640,630 L210,630 L210,544" marker-end="url(#arrow)"/>
+  <path class="line" d="M920,544 L920,630 L640,630"/>
   <text class="label small halo" x="425" y="648" text-anchor="middle">the tree-keeper writes the tree and keeps each lack,</text>
-  <text class="label small halo" x="425" y="662" text-anchor="middle">and the generator commits each step&#x27;s work [Bash]</text>
-  <text class="data halo" x="425" y="676" text-anchor="middle">Design tree, Lack kept, Place</text>
+  <text class="label small halo" x="425" y="662" text-anchor="middle">and the generator and each evaluator commit each</text>
+  <text class="label small halo" x="425" y="676" text-anchor="middle">step&#x27;s work [Bash]</text>
+  <text class="data halo" x="425" y="690" text-anchor="middle">Design tree, Lack kept, Place</text>
   <path class="line" d="M120,544 L120,940" marker-end="url(#arrow)"/>
   <text class="label small halo" x="128" y="850" text-anchor="start">writes, reads,</text>
   <text class="label small halo" x="128" y="864" text-anchor="start">cuts, commits</text>
   <text class="data halo" x="128" y="878" text-anchor="start">Design tree, Sign-off,</text>
-  <text class="data halo" x="128" y="892" text-anchor="start">Try record, Lack kept, Place</text>
+  <text class="data halo" x="128" y="892" text-anchor="start">Try record, Made, Answers,</text>
+  <text class="data halo" x="128" y="906" text-anchor="start">Lack kept, Place</text>
   <path class="line" d="M720,324 L720,440"/>
   <path class="line" d="M440,440 L1000,440"/>
   <path class="line" d="M440,440 L440,480" marker-end="url(#arrow)"/>
@@ -158,8 +161,9 @@
   <text class="label small halo" x="1008" y="650" text-anchor="start">reads</text>
   <text class="data halo" x="1008" y="664" text-anchor="start">Deliverable</text>
   <path class="line" d="M1080,544 L1080,1080 L400,1080 L400,1004" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="740" y="1072" text-anchor="middle">writes</text>
-  <text class="data halo" x="740" y="1096" text-anchor="middle">Answers</text>
+  <path class="line" d="M780,544 L780,600 L1080,600"/>
+  <text class="label small halo" x="740" y="1072" text-anchor="middle">the generator writes what it made, and each evaluator its Answers [Write]</text>
+  <text class="data halo" x="740" y="1096" text-anchor="middle">Made, Answers</text>
   <path class="line" d="M620,760 L240,760 L240,544" marker-end="url(#arrow)"/>
   <text class="label small halo" x="430" y="782" text-anchor="middle">keeps each command tried in the</text>
   <text class="label small halo" x="430" y="796" text-anchor="middle">round&#x27;s Try record by it [import]</text>
@@ -173,8 +177,10 @@
   <text class="label small halo" x="1288" y="406" text-anchor="start">at each end [stdio]</text>
   <text class="data halo" x="1288" y="420" text-anchor="start">Record</text>
   <path class="line" d="M1180,510 L1120,510" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="1272" y="440" text-anchor="end">holds each call,</text>
-  <text class="label small halo" x="1272" y="454" text-anchor="end">start, and end [hooks]</text>
+  <text class="label small halo" x="1272" y="412" text-anchor="end">holds each call, start,</text>
+  <text class="label small halo" x="1272" y="426" text-anchor="end">and end, and gives each</text>
+  <text class="label small halo" x="1272" y="440" text-anchor="end">start due and where a</text>
+  <text class="label small halo" x="1272" y="454" text-anchor="end">run picks up [hooks]</text>
   <path class="line" d="M1380,510 L1420,510 L1420,112 L1380,112" marker-end="url(#arrow)"/>
   <text class="label small halo" x="1412" y="340" text-anchor="end">runs</text>
   <text class="label small halo" x="1412" y="354" text-anchor="end">[stdio]</text>
@@ -185,10 +191,11 @@
   <text class="label small halo" x="1288" y="204" text-anchor="start">kept [import]</text>
   <text class="data halo" x="1288" y="218" text-anchor="start">Record</text>
   <path class="line" d="M1200,80 L1200,46 L30,46 L30,512 L60,512" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="600" y="24" text-anchor="middle">the adapters get the work of each role that tree.py gave its turn, and each Cut, and</text>
-  <text class="label small halo" x="600" y="38" text-anchor="middle">record.py gets the Cut, the Answers, and the best practice of the role it checks [import]</text>
+  <text class="label small halo" x="600" y="24" text-anchor="middle">the adapters get each Cut, the work of each role that tree.py gave its turn, the runs left, and each Record</text>
+  <text class="label small halo" x="600" y="38" text-anchor="middle">of a run in the order of its starts, and record.py gets the Cut, the Made, the Answers, and the best practice of the role it checks [import]</text>
   <text class="data halo" x="38" y="340" text-anchor="start">Cut, Answers,</text>
-  <text class="data halo" x="38" y="354" text-anchor="start">Best practice</text>
+  <text class="data halo" x="38" y="354" text-anchor="start">Made, Record,</text>
+  <text class="data halo" x="38" y="368" text-anchor="start">Best practice</text>
   <path class="line" d="M1380,302 L1450,302 L1450,1130 L300,1130 L300,1004" marker-end="url(#arrow)"/>
   <text class="label small halo" x="870" y="1122" text-anchor="middle">writes and reads each record</text>
   <text class="data halo" x="870" y="1146" text-anchor="middle">Record</text>

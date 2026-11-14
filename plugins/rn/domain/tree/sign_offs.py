@@ -1,7 +1,7 @@
 """Decides what waits for the user's /rn:ty or /rn:gm, and what they signed off, in the run's
-`sign-offs.json`: each Sign-off of the plan, a deliverable, or a lesson, in the order the
-orchestrator put them up, and the decision that only the user's own command makes on the first one
-that waits."""
+`sign-offs.json`: each Sign-off of the plan, a deliverable, a lesson, or the pull request handed
+over, in the order they were put up, and the decision that only the user's own command makes on the
+first one that waits."""
 
 from __future__ import annotations
 
@@ -9,8 +9,9 @@ from dataclasses import dataclass
 from typing import Any
 
 SIGN_OFFS = "sign-offs.json"
-# What a Sign-off is of, beside a deliverable's path.
-PLAN, LESSON = "plan", "lesson"
+# What a Sign-off is of, beside a deliverable's path. Only `tree.py ready` puts up the pull request
+# handed over.
+PLAN, LESSON, PULL_REQUEST = "plan", "lesson", "pull request"
 # Where a Sign-off stands.
 WAITING, SIGNED, SENT_BACK = "waiting", "signed", "sent back"
 
@@ -31,7 +32,8 @@ class SignOff:
 def parse(given: Any, where: str) -> SignOff:
     """The Sign-off of the JSON value that the orchestrator wrote to the file at `where`, waiting.
     Raises Wrong, naming the field and what `sign-off.schema.json` takes there, where it isn't in
-    that form, and where a lesson has no words or another Sign-off has words."""
+    that form, where a lesson has no words or another Sign-off has words, and where it's of the
+    pull request handed over, which only `tree.py ready` puts up."""
     raise NotImplementedError("sign_offs.parse")
 
 

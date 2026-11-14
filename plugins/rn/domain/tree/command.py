@@ -12,7 +12,8 @@ usage: tree.py begin <words>
        tree.py cut <run> <role> [<deliverable> [<group>]]
        tree.py write <run> <design-tree.json> <ground>
        tree.py lack <run> <deliverable> <condition> <lack>
-       tree.py place <run> <deliverable> <role> <step>
+       tree.py place <run> <deliverable> <role> <step> [<group>]
+       tree.py round <run> <deliverable>
        tree.py sign-off <run> <sign-off.json>
        tree.py approve
        tree.py send-back
@@ -38,13 +39,20 @@ def main(argv: list[str], environ: Mapping[str, str], cwd: str) -> tuple[int, st
       each deliverable whose turn has come doing, writes it as the run's design tree, commits it
       with the ground, and prints `{"changed", "touched", "doing"}` as JSON; 1 with each fault
       where the tree isn't in its form or its order, and the run's tree is left as it was.
-    - `lack <run> <deliverable> <condition> <lack>` keeps the Lack kept for the next round.
-    - `place <run> <deliverable> <role> <step>` keeps the role's Place and commits its work.
+    - `lack <run> <deliverable> <condition> <lack>` keeps the Lack kept for the next round; 1,
+      naming the condition, where no decision that answers it changed since the round's Cut, as
+      the next round would make it good by a fix beside the design.
+    - `place <run> <deliverable> <role> <step> [<group>]` keeps the Place of the generator, or of
+      the evaluator of the group, and commits its work.
+    - `round <run> <deliverable>` prints the deliverable's last round as JSON: its number, what
+      the generator made, each evaluator's Answers, and each Lack kept; 1 where the deliverable
+      has no round.
     - `sign-off <run> <sign-off.json>` puts the Sign-off up, waiting; 1 where it isn't in its form.
     - `approve` and `send-back`, which only /rn:ty and /rn:gm run as they load, decide the first
       Sign-off that waits in the run of the worktree that holds `cwd`, and print what they
-      decided; `approve` opens the issue of a lesson and prints its URL, and `send-back` drops a
-      lesson; 1 where nothing waits.
+      decided; `approve` opens the issue of a lesson and prints its URL, `send-back` drops a
+      lesson, and `send-back` of the pull request handed over marks it a draft again, while
+      `approve` of it leaves the merge to the user; 1 where nothing waits.
     - `push <run>` pushes the run's branch and opens its draft pull request where it has none, and
       prints its URL; 1 with what's missing, such as gh's login, where it can't.
     - `comments <run>` prints each comment on the pull request since the Sign-off that the user
@@ -52,8 +60,9 @@ def main(argv: list[str], environ: Mapping[str, str], cwd: str) -> tuple[int, st
     - `pause <run>` commits each role's work so far and pushes it, and prints the run's words and
       where each role stood; 1 with `committed but not pushed` and what's missing where the push
       fails.
-    - `ready <run>` marks the pull request ready; 1 where a deliverable isn't done and signed off,
-      or a Sign-off waits.
+    - `ready <run>` marks the pull request ready, puts the pull request handed over up for the
+      user's /rn:gm, and prints its URL; 1 where a deliverable isn't done and signed off, or a
+      Sign-off waits.
 
     2 with the usage where the arguments are none of these."""
     raise NotImplementedError("command.main")

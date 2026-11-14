@@ -13,6 +13,7 @@ from tree.sign_offs import (
 )
 from tree.sign_offs import (
     PLAN,
+    PULL_REQUEST,
     SENT_BACK,
     SIGNED,
     WAITING,
@@ -67,6 +68,26 @@ def test_parse_refuses_a_sign_off_out_of_its_form_naming_the_field(given: Any):
     Then it's refused, naming the file"""
     with pytest.raises(Wrong, match="sign-off.json"):
         parse(given, "sign-off.json")
+
+
+@pytest.mark.supports("test_gm_after_done_sends_the_pull_request_handed_over_back_to_a_draft")
+def test_parse_refuses_the_pull_request_handed_over_from_the_orchestrator():
+    """Given a sign-off of the pull request handed over, as the orchestrator might write one
+    When it's read
+    Then it's refused, as only `tree.py ready` puts the pull request up"""
+    given = {"of": PULL_REQUEST, "can_do": "", "decisions": [], "words": ""}
+    with pytest.raises(Wrong, match="sign-off.json"):
+        parse(given, "sign-off.json")
+
+
+@pytest.mark.supports("test_gm_after_done_sends_the_pull_request_handed_over_back_to_a_draft")
+def test_decide_not_approved_sends_the_pull_request_handed_over_back():
+    """Given the plan and both deliverables signed off, and the pull request handed over waiting
+    When the user's /rn:gm decides
+    Then the pull request handed over is sent back"""
+    handed = (SignOff(PLAN, "", state=SIGNED), SignOff(PULL_REQUEST, ""))
+    _, decided = decide(handed, approved=False)
+    assert (decided.of, decided.state) == (PULL_REQUEST, SENT_BACK)
 
 
 @pytest.mark.supports("test_the_users_ty_signs_off_the_plan_waiting")

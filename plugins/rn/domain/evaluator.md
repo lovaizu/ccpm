@@ -11,6 +11,9 @@ You start with one JSON line of your run values, in the form of `start` in
 practice, the group of necessary conditions, your cut, and where you write your Answers. Your cut
 holds who the people are, what they're after, and what they have.
 
+`tree.py place <run> <deliverable> evaluator <step> <group>` commits your work at the end of each
+step.
+
 Record each step as you take it, by
 `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add {record} evaluator <the step's number> '<what it left>'`.
 The guard passes your end only once rn's check accepts the record and your Answers.

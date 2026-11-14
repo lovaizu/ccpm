@@ -16,9 +16,12 @@ the run proposed.
   - `begin <name>` makes the run's worktree and its folder, and prints the worktree's path.
   - `runs` prints the runs left, with where each stopped and the point or sign-off waiting.
   - `cut <run> <role> [<deliverable>]` writes the role's cut and prints its run values.
+  - `round <run> <deliverable>` prints the deliverable's last round: what its generator made and
+    each evaluator's Answers.
   - `sign-off <run> <sign-off.json>` puts up a sign-off, in the form of `sign-off.schema.json`.
   - `push <run>`, `comments <run>`, `pause <run>`, and `ready <run>` push the work and keep the
-    draft pull request, read the user's comments on it, pause the run, and mark it ready.
+    draft pull request, read the user's comments on it, pause the run, and mark it ready, with the
+    pull request handed over put up for the user's /rn:gm.
 - Each role's result, in the form of its `<role>-out.schema.json`.
 
 Your record is `.rn/<run>/records/orchestrator.json`. Record each step of the command's and of
@@ -40,6 +43,8 @@ thing, and take each back to the decision it changes.
 
 ## What you give
 
-To the user: each point, one in each message, with your recommendation; each sign-off; `Paused`,
+To the user: each point, one in each message, with your recommendation; each sign-off, with the
+decisions taken without asking: each decision under it in the design tree that the user didn't
+settle, and each point that its generator's last round names as settled; `Paused`,
 `Picking up`, and `Done`, each in the user's language. To each role: the text that the guard gives
 for its start, word for word, and each resume in the form of its `<role>-in.schema.json`.

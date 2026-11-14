@@ -38,6 +38,12 @@ TYPED_NAME = "invoicer marked as typed, so that the callers' type checkers read 
 POINT = "Should the hints cover each file, or only the functions that callers import?"
 ANSWER = "each file"
 DECIMAL = "Typed amounts and rates as Decimal, as the code already computes with Decimal."
+# The point behind DECIMAL, as the hints' generator settles it without asking.
+SETTLED = {
+    "point": "How are amounts and rates typed?",
+    "decided": DECIMAL,
+    "ground": "invoicer/totals.py already computes with Decimal.",
+}
 CAN_DO = "a caller's type checker names a wrong argument before the code runs."
 LESSON = (
     "code: a library's type hints need py.typed\n\nThe plan of type hints for a library left"

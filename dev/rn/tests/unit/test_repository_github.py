@@ -1,6 +1,6 @@
 """The unit cases of repository/github.py, the gh commands that tree.py runs by it, through
-`logged_in`, `pull_request`, `open_draft`, `comments`, `mark_ready`, and `open_issue`, with the
-double of gh, whose results come from gh's recorded runs and manual."""
+`logged_in`, `pull_request`, `open_draft`, `comments`, `mark_ready`, `mark_draft`, and
+`open_issue`, with the double of gh, whose results come from gh's recorded runs and manual."""
 
 from __future__ import annotations
 
@@ -15,6 +15,7 @@ from repository.github import (
     PullRequest,
     comments,
     logged_in,
+    mark_draft,
     mark_ready,
     open_draft,
     open_issue,
@@ -109,6 +110,19 @@ def test_mark_ready_leaves_the_pull_request_no_longer_a_draft(tmp_path: Any):
     mark_ready(str(tmp_path), BRANCH, env)
     assert pull_request(str(tmp_path), BRANCH, env) == PullRequest(
         "http://github.com/owner/repo/pull/1", False
+    )
+
+
+@pytest.mark.supports("test_gm_after_done_sends_the_pull_request_handed_over_back_to_a_draft")
+def test_mark_draft_leaves_the_pull_request_a_draft_again(tmp_path: Any):
+    """Given the branch's pull request marked ready
+    When it's marked a draft
+    Then it's a draft again"""
+    pulls = {BRANCH: {"number": 1, "draft": False, "comments": []}}
+    env = github(str(tmp_path), {"logged_in": True, "pulls": pulls, "issues": []})
+    mark_draft(str(tmp_path), BRANCH, env)
+    assert pull_request(str(tmp_path), BRANCH, env) == PullRequest(
+        "http://github.com/owner/repo/pull/1", True
     )
 
 

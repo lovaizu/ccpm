@@ -10,7 +10,7 @@ import os
 from typing import Any
 
 import pytest
-from rn_example import HINTS, LESSON, WORDS, git, write
+from rn_example import HINTS, HINTS_NAME, LESSON, TYPED, TYPED_NAME, WORDS, git, write
 from rn_parts import environ, repository, schema_tree
 from tree.command import USAGE, main
 
@@ -180,6 +180,45 @@ def test_pause_that_cant_push_gives_1_saying_committed_but_not_pushed(repo: Repo
     write(repo.base, "github.json", json.dumps({"logged_in": False, "pulls": {}, "issues": []}))
     code, _, err = repo.run("pause", run)
     assert code == 1 and "committed but not pushed" in err
+
+
+@pytest.mark.supports(
+    "test_the_orchestrator_gets_the_round_and_puts_up_the_points_the_generator_settled"
+)
+def test_round_of_a_deliverable_with_no_round_gives_1(repo: Repo):
+    """Given the walkthrough's run, its tree holding the hints with no round yet
+    When `tree.py round` runs on the hints
+    Then it gives 1 naming the hints"""
+    run = repo.begin()
+    path = write(repo.base, "design-tree.json", json.dumps(schema_tree()))
+    repo.run("write", run, path, "The plan.")
+    code, _, err = repo.run("round", run, HINTS)
+    assert code == 1 and HINTS in err
+
+
+@pytest.mark.supports("test_gm_after_done_sends_the_pull_request_handed_over_back_to_a_draft")
+def test_send_back_after_ready_marks_the_pull_request_a_draft_again(repo: Repo):
+    """Given the walkthrough's run with both deliverables done and signed off, and the pull request
+    marked ready by `tree.py ready`
+    When `tree.py send-back` runs in its worktree
+    Then it gives 0, and GitHub holds the pull request a draft again"""
+    run = repo.begin()
+    done = [
+        {"name": HINTS_NAME, "path": HINTS, "kind": "code", "status": "done"},
+        {"name": TYPED_NAME, "path": TYPED, "kind": "code", "status": "done"},
+    ]
+    path = write(repo.base, "design-tree.json", json.dumps(schema_tree(deliverables=done)))
+    repo.run("write", run, path, "Both done.")
+    for of in ("plan", HINTS, TYPED):
+        sign_off = {"of": of, "can_do": "", "decisions": [], "words": ""}
+        repo.run("sign-off", run, write(repo.base, "sign-off.json", json.dumps(sign_off)))
+        repo.run("approve")
+    repo.run("push", run)
+    repo.run("ready", run)
+    code, _, _ = repo.run("send-back")
+    with open(os.path.join(repo.base, "github.json"), encoding="utf-8") as f:
+        (pull,) = json.load(f)["pulls"].values()
+    assert code == 0 and pull["draft"]
 
 
 @pytest.mark.supports("test_ready_refuses_while_a_deliverable_isnt_done")

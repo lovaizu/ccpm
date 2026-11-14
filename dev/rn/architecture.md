@@ -42,44 +42,57 @@ What each decides alone:
   The goal, each point the purpose and the best practices leave open, each sign-off, each change to
   a best practice, each lesson sent to rn's repository, when to pause, and whether to merge.
 - orchestrator\
-  Whether a point is the user's, and each other point from the purpose and the best practices: the
-  deliverables and their plan, which point or sign-off to put to the user next, whether to take
-  each role's result or send it back, which lacks the people fall short by, whether the whole pull
-  request holds together, and what to propose at Done.
+  Whether a point is the user's, and each other point that the design tree holds, from the purpose
+  and the best practices: the deliverables and their plan, each decision of a necessary condition,
+  each point that a role hands back, which point or sign-off to put to the user next, whether to
+  take each role's result or send it back, which lacks the people fall short by, the decisions that
+  each sign-off shows as taken without asking, whether the whole pull request holds together, and
+  what to propose at Done.
 - tree-keeper\
   How each decision of the orchestrator's goes into the design tree, and whether each node that the
   change touches still agrees with it.
 - generator\
-  The deliverable, and each small point that the purpose and the best practice settle one way.
+  The deliverable, and each point that lies within it alone: one that its cut, the goal, and its
+  best practice settle one way, and whose answer changes no decision of its cut and nothing of
+  another deliverable, such as typing amounts as Decimal where the code already computes with
+  Decimal. It hands each other point back with `asks`, as only the orchestrator sees the whole
+  design tree.
 - evaluator\
   Where the deliverable meets each necessary condition of its group for its people, and, where it
   doesn't, what they still lack.
 - tree.py\
   The tree's form and which nodes a change touches; each deliverable whose turn has come to be
   doing, which is each one that rests on no open point and on no plan or deliverable not yet signed
-  off; each role's cut, with each best practice the role works by; where each round keeps its Try
-  record, Answers, Lack kept, and Place, and their form; what waits for the user's sign-off, and
-  what they signed off; the run's name, worktree, and branch; the runs left, and where each
-  stopped; and when the run's work reaches its branch and its pull request: each commit, each
-  push, the user's comments since a sign-off, the pull request marked ready, and the issue of each
-  lesson that the user signs off.
+  off; each role's cut, with each best practice the role works by; where each start's Record
+  lies, a new file of the run's `records/` for each start, and the order of the starts; where each
+  round keeps its Try record, Made, Answers, Lack kept, and Place, and their form; whether a lack
+  is kept, only once a decision that answers its necessary condition changed since the round's
+  cut; what waits for the user's sign-off, the pull request handed over among them, and what they
+  signed off; the run's name, worktree, and branch; the runs left, and where each stopped; and when
+  the run's work reaches its branch and its pull request: each commit, each push, the user's
+  comments since a sign-off, the pull request marked ready, and a draft again when the user sends
+  it back, and the issue of each lesson that the user signs off.
 - repository\
   Each git and gh command that tree.py runs, and how it reads what they print: the worktree, each
-  commit and push, the draft pull request, its comments, marking it ready, and the issue.
+  commit and push, the draft pull request, its comments, marking it ready and a draft again, and
+  the issue.
 - record.py\
   A record's form, and rn's check: whether a role's record holds each step of its part and each
   practice of each best practice of its cut where the step takes it, and whether its result names
-  each item of each list it carries.
+  each item of each list it carries, and the result it accepted, kept in the record.
 - throwaway.py\
   Where a deliverable's commands run.
 - guard\
-  Whether a role's call keeps its steps, whether rn's check accepts a role's record and result at its end, whether a deliverable's command runs only through
-  throwaway.py, and whether the run passes a sign-off only after the user's `/rn:ty`, by the lanes
-  that rn lays in [Lane](../lane/architecture.md).
+  Whether a role's call keeps its steps, whether rn's check accepts a role's record and result at
+  its end, whether a deliverable's command runs only through throwaway.py, and whether the run
+  passes a sign-off only after the user's `/rn:ty`, by the lanes that rn lays in
+  [Lane](../lane/architecture.md), and, as Lane's guard decides them, which start is due and where
+  a run picks up.
 - adapters\
-  How the Cut of a role's start, and the result that each record kept, read in the form Lane reads,
-  and which work of each role waits for a start beside the starts that run, as
-  [Lane's adapter](../lane/architecture.md#data-model) decides it.
+  How the Cut of a role's start, and the result that each record kept, read in the form Lane reads;
+  which run's results a conversation picks up: the run of the worktree it works in, or, from
+  anywhere else in the repository, the one run left; and which work of each role waits for a start
+  beside the starts that run, as [Lane's adapter](../lane/architecture.md#data-model) decides it.
 
 The choices made, and why:
 
@@ -106,6 +119,15 @@ The choices made, and why:
   takes about as long as one evaluator's reading, which keeps KR1.2 short. The cost: each evaluator
   reads the whole deliverable, so a round spends one reading for each group, and the orchestrator
   joins a lack that two groups each name in part.
+- The adapter of the results kept picking up the one run left from the root of the repository over
+  picking up only in a run's worktree\
+  The user types `/rn:up` at the root, as the README's walkthrough shows, and Lane asks the adapter
+  only as the skill is called, in the folder the conversation works in, as
+  [Lane's S7](../lane/architecture.md#s7-a-run-picked-up) draws, so the guard picks the run up
+  where it stopped, and no role starts its work over, which keeps KR1.2 short. The cost: with more
+  than one run left, the adapter can't tell which one the user picks, so the guard starts its
+  run anew, and the run's starts pass through the routes from their first move, the tree-keeper's
+  start first.
 
 ## Data model
 
@@ -116,9 +138,14 @@ The choices made, and why:
 - Point\
   A question put to the user, with its recommendation, while its decision is open.
 - Sign-off\
-  The plan, a deliverable, or a lesson for rn's repository put to the user for `/rn:ty` or
-  `/rn:gm`, with what the people can do with it, the decisions taken without asking, and its
-  changes, or with the lesson's words.
+  The plan, a deliverable, a lesson for rn's repository, or the pull request handed over, put to
+  the user for `/rn:ty` or `/rn:gm`, with what the people can do with it, the decisions taken
+  without asking, and its changes, or with the lesson's words. The decisions taken without asking
+  are each decision under it in the design tree that the user didn't settle, and, for a
+  deliverable, each point that its last round's Made names.
+- Made\
+  What a generator made, as it ends with `done`: where the deliverable carries out each decision of
+  its cut and meets each Lack kept, and each point it settled without asking, with its ground.
 - Place\
   The step that each role of a round stands at, with the work it has made, kept at the end of each
   step and at a pause.
@@ -127,8 +154,8 @@ The choices made, and why:
   round's generator gets.
 - Record\
   What one start of a role, or the orchestrator in a run, carried out: each step and practice in the
-  order taken, and the result that rn's check accepted. A Try record is another thing: the commands
-  that a generator tried in a throwaway copy.
+  order taken, and the result that rn's check accepted, one for each start. A Try record is another
+  thing: the commands that a generator tried in a throwaway copy.
 
 ## Principles
 
@@ -137,7 +164,10 @@ which every part keeps. They change none of the guide's: the orchestrator resume
 ends on a point with the decision, and with the user's words word for word where they answered, as
 its [Messages](../plugin-development-guide.md#messages) says, as a new start would give the role
 the tree-keeper's words for what the user meant, while the design tree keeps the decision for each
-later round.
+later round. The guard's run record is Lane's, kept in the system's temporary folder, as
+[Lane's Deployment](../lane/architecture.md#deployment) says. It keeps nothing that a new
+conversation needs and the run's folder lacks, as the guard picks a run up from the result kept in
+each record, so The repository holds the work holds for the guard too.
 
 ### Drawn out along the design tree
 
@@ -231,6 +261,7 @@ sequenceDiagram
   participant GD as guard
   participant A as adapters
   participant R as record.py
+  participant F as Run's folder
   U->>O: /rn:up with what they want
   O->>T: makes the run's worktree
   O->>O: enters it
@@ -238,18 +269,18 @@ sequenceDiagram
   K->>K: reads its part, the design tree best practice, and the design tree
   K-->>O: done
   O->>O: drafts the goal, and plans the deliverables
-  O->>U: the goal, to confirm (Point)
-  U->>O: answers
-  O->>K: resumes it, with the goal and the plan (Decision)
+  O->>K: resumes it, with the goal drafted and the plan (Decision)
   K->>T: writes them, and commits (Design tree)
   T-->>K: what changed, and each node they touch
   K->>K: checks that each node touched agrees with them
   K-->>O: what changed, and each node checked
   O->>O: checks it against the design tree best practice
-  Note over U,O: The orchestrator settles each point, as S2 draws, and puts up the plan, as S3 draws.
+  O->>U: the goal, to confirm, once the tree holds it (Point)
+  U->>O: answers
+  Note over U,O: The orchestrator has the goal written as the user confirmed it, and settles each other point, as S2 draws, and puts up the plan, as S3 draws.
   loop each deliverable whose turn has come, as it rests on no open point and on nothing not signed off
     GD->>A: asks for the text of the generator's start, with each start that runs
-    A->>T: gets each deliverable doing, and the Cut of the first that no start that runs holds (Cut)
+    A->>T: gets each deliverable doing, and the Cut of the first that no start that runs holds, with the path of a new Record for the start (Cut)
     A-->>GD: that start's text and run values in Lane's form, or none where no work waits
     GD-->>O: the generator's start due, with its text
     O->>G: starts it, with that text (Cut, Lack kept)
@@ -258,6 +289,7 @@ sequenceDiagram
     G->>R: records each step and practice as it takes it (Record)
     G->>T: commits its work at the end of each step (Place)
     G->>W: tries it (Try record)
+    G->>F: writes what it made, with each point it settled without asking (Made)
     alt the design leaves a point open
       G-->>O: asks, naming it
       Note over O,G: The orchestrator settles it, as S2 draws, and the rounds of each other deliverable go on meanwhile.
@@ -282,14 +314,26 @@ sequenceDiagram
       else
         par one for each group of necessary conditions
           O->>E: starts it (Cut)
-          E-->>O: each necessary condition met, or what the people lack (Answers)
+          E->>T: commits its work at the end of each step (Place)
+          E->>F: writes each necessary condition met, or what the people lack (Answers)
+          E-->>O: done
         end
+        O->>T: gets the round (Answers, Made)
+        T-->>O: each evaluator's Answers, and what the generator made (Answers, Made)
         O->>O: judges each lack by the purpose and the best practices
         alt a lack the people fall short by
           O->>K: the decision it changes, and the lack kept (Decision, Lack kept)
-          Note over O,G: The next round starts from the design.
+          K->>T: writes the decision, and keeps the lack (Design tree, Lack kept)
+          alt no decision that answers the lack's necessary condition changed since the round's cut
+            T-->>K: refuses the lack, naming its necessary condition
+            K-->>O: what it lacks
+            Note over O,K: The orchestrator takes the lack back to the decision it comes from, as a fix beside the design rests on no decision.
+          else
+            T-->>K: what changed, and the lack kept
+            Note over O,G: The next round starts from the design.
+          end
         else every necessary condition is met
-          Note over U,O: The orchestrator puts up the deliverable, as S3 draws.
+          Note over U,O: The orchestrator puts up the deliverable, with each decision under it that the user didn't settle and each point that its Made names, as S3 draws.
         end
       end
     end
@@ -425,10 +469,18 @@ sequenceDiagram
   participant T as tree.py
   participant K as tree-keeper
   participant G as generator
-  U->>O: /rn:up, alone, in a new conversation
-  GD->>A: asks for the results kept, as /rn:up loads
-  A->>R: gets the result kept in each record of the run whose worktree the conversation works in (Record)
-  A-->>GD: those results in Lane's form, or none where the conversation works in no run's worktree
+  participant E as evaluator
+  U->>O: /rn:up, alone, in a new conversation at the root of the repository
+  GD->>A: asks for the results kept, as /rn:up loads, in the folder the conversation works in
+  A->>T: gets the run of the worktree that holds the folder, or else the runs left, and each Record of the run in the order of its starts (Record)
+  A->>R: gets the result kept in each of those records (Record)
+  alt the folder lies in a run's worktree, or exactly one run is left
+    A-->>GD: those results in Lane's form
+    GD-->>O: where the run picks up, and the start due
+  else no run is left, or more than one
+    A-->>GD: none
+    GD-->>O: the run started anew, and its first start due
+  end
   O->>T: lists the runs left
   alt no run is left
     O->>U: says so
@@ -440,7 +492,8 @@ sequenceDiagram
   O->>U: Picking up, where it stopped, and the point or sign-off waiting
   O->>K: starts it, on the run picked up (Cut)
   O->>G: starts each that stood in a step, at that step (Cut, Place)
-  Note over O,G: Each start goes through the guard and the adapters, and the work goes on, as S1, S2, or S3 draws.
+  O->>E: starts each that stood in a step, at that step (Cut, Place)
+  Note over O,E: Each start goes through the guard and the adapters in the run's worktree, the tree-keeper's first where the guard started the run anew, and the work goes on, as S1, S2, or S3 draws.
 ```
 
 ### S6: the work handed over
@@ -485,10 +538,14 @@ sequenceDiagram
   O->>T: marks the pull request ready
   T->>RP: marks it ready
   RP->>GH: marks it ready
+  T-->>O: its URL, with the pull request handed over put up (Sign-off)
   O->>U: Done, with the pull request
   alt the user sends it back
     U->>O: /rn:gm with what to change, or alone
-    Note over U,O: The work goes on, as S3 draws.
+    O->>T: sends the pull request handed over back, as /rn:gm loads (Sign-off)
+    T->>RP: marks it a draft again
+    RP->>GH: marks it a draft
+    Note over U,O: The work goes on, as S3 draws after a sign-off sent back, and the pull request is marked ready again only at the next Done.
   else
     U->>GH: merges the pull request
   end
@@ -548,7 +605,8 @@ plugins/rn/
 │   ├── hooks.json                 starts the guard on each call
 │   ├── lanes.json                 the steps the guard holds each role to
 │   ├── lane/                      the guard: Lane's code, copied in by Lane
-│   └── adapters/                  give the guard rn's best practices and design tree
+│   └── adapters/                  give the guard each start's text from its Cut, and the results
+│                                  kept
 └── README.md                      for rn's users
 
 dev/rn/
@@ -565,8 +623,8 @@ dev/rn/
 ├── <yyyymmdd>-<goal>/             one run
 │   ├── design-tree.json           the design tree
 │   ├── sign-offs.json             what waits for /rn:ty, and what the user signed off
-│   ├── rounds/                    each round's Try record, Answers, Lack kept, and Place
-│   └── records/                   the record of each role's start, and the orchestrator's
+│   ├── rounds/                    each round's Try record, Made, Answers, Lack kept, and Place
+│   └── records/                   the record of each start of a role, and the orchestrator's
 └── best-practices/                each best practice made on a run
 ```
 

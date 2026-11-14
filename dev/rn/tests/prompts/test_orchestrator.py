@@ -16,6 +16,7 @@ from rn_example import (
     HINTS,
     POINT,
     REQUEST,
+    SETTLED,
     TYPED,
     TYPED_TOTALS,
     WITH_POINT,
@@ -197,6 +198,58 @@ def test_gm_alone_reads_the_users_comments_on_the_pull_request():
     Then on every run the orchestrator runs `tree.py comments`"""
     done = orchestrator_runs(INVOICER, [*TO_THE_PLAN, "/rn:gm"], tree_keeper_wrote(ANSWERED))
     assert all(any("tree.py comments" in c for c in run.commands) for run in done)
+
+
+@pytest.mark.supports(
+    "test_the_orchestrator_gets_the_round_and_puts_up_the_points_the_generator_settled"
+)
+def test_a_deliverables_sign_off_lists_the_points_its_generator_settled():
+    """Given a run left with the plan signed off, and the hints' round 1 done: what its generator
+    made naming the point on amounts it settled without asking, and each group's Answers met
+    When the user types `/rn:up` alone
+    Then on every run the orchestrator puts the hints up with the Decimal point among the
+    decisions taken without asking"""
+    rounds = f"{RUN}/rounds/invoicer--/1"
+    made = {
+        "decisions": [{"about": POINT, "where": "invoicer/"}],
+        "lacks": [],
+        "settled": [SETTLED],
+    }
+    met = {
+        group: {"met": [{"question": n, "lines": ["invoicer/totals.py:1"]} for n in ids]}
+        for group, ids in (
+            ("C1", ("N1", "N2", "N3")),
+            ("C2", ("N4", "N5", "N6", "N7")),
+            ("C3", ("N8",)),
+        )
+    }
+    left = {
+        f"{RUN}/design-tree.json": json.dumps(ANSWERED),
+        f"{RUN}/sign-offs.json": json.dumps(
+            [
+                {
+                    "of": "plan",
+                    "can_do": "",
+                    "decisions": [],
+                    "words": "",
+                    "state": "signed",
+                    "issue": "",
+                }
+            ]
+        ),
+        "invoicer/totals.py": TYPED_TOTALS,
+        f"{rounds}/made.json": json.dumps(made),
+        **{
+            f"{rounds}/answers-{group}.json": json.dumps(dict(each, not_met=[]))
+            for group, each in met.items()
+        },
+    }
+    done = orchestrator_runs(INVOICER, ["/rn:up"], tree_keeper_wrote(ANSWERED), left=left)
+    put_up = [json.loads(run.files[f"{RUN}/sign-offs.json"]) for run in done]
+    assert all(
+        any(each["of"] == HINTS and any("Decimal" in d for d in each["decisions"]) for each in kept)
+        for kept in put_up
+    )
 
 
 @pytest.mark.supports(

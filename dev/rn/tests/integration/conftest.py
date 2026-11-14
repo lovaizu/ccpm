@@ -84,6 +84,11 @@ def copy(worktree, run_name):
 
     return worktree, os.path.expanduser("~")
 '''
+ALWAYS_CHANGED = '''
+def changed(run, deliverable, condition):
+    """Every lack kept, whether or not a decision of its condition changed."""
+    return True
+'''
 NO_COMMIT = '''
 def commit(worktree, message, environ):
     """Nothing committed."""
@@ -151,8 +156,14 @@ PARTS: dict[str, tuple[Callable[[str], None], ...]] = {
     "Every item handled": (appended("domain/record/check.py", NO_RESULT_FAULTS),),
     "Judged by the people it's for": (without_lanes("read_never", "evaluator"),),
     "Signed off before it's built on": (appended("domain/tree/turn.py", ALL_DUE), without_waits),
-    "Back to the design tree on a problem": (appended("domain/tree/cut.py", NO_LACKS),),
-    "The design tree revised on each run": (appended("domain/tree/practices.py", RN_OWN_ONLY),),
+    "Back to the design tree on a problem": (
+        appended("domain/tree/cut.py", NO_LACKS),
+        appended("domain/tree/cut.py", ALWAYS_CHANGED),
+    ),
+    "The design tree revised on each run": (
+        appended("domain/tree/practices.py", RN_OWN_ONLY),
+        without_lanes("write_only", "generator"),
+    ),
     "Tried in a throwaway copy": (
         appended("domain/throwaway.py", IN_THE_WORKTREE),
         without_lanes("run_only", "generator"),

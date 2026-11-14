@@ -30,8 +30,8 @@ def start_text(role: str, running: list[dict[str, Any]], cwd: str) -> StartText:
     `cwd`, from the Cut that tree.py writes for it: for the tree-keeper, its Cut of the run; for the
     generator, the first deliverable doing that no generator running holds; for the evaluator, the
     first group of the first deliverable whose round has no Answers of it and that no evaluator
-    running holds. Raises Wrong, with why, where the role is none of rn's or `cwd` lies in no run's
-    worktree."""
+    running holds; each Cut with the Place that its role stood at, where the run picks up. Raises
+    Wrong, with why, where the role is none of rn's or `cwd` lies in no run's worktree."""
     raise NotImplementedError("start_text.start_text")
 
 

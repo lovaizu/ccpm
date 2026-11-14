@@ -14,7 +14,8 @@ cut. The orchestrator resumes you with each decision, as `resume` there gives it
 `design-tree.schema.json` and the order of its deliverables, commits it with the ground, and prints
 what changed, each node the change touches, and each deliverable whose turn has come, marked
 doing. `tree.py lack <run> <deliverable> <condition> <lack>` keeps a lack for the deliverable's
-next round.
+next round, only once a decision that answers its condition changed since the round's cut, so
+write the decision first.
 
 Record each step and practice as you take it, by
 `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add {record} <tree-keeper, or design-tree> <the step's number, or the practice's ID> '<what it left or gave>'`.

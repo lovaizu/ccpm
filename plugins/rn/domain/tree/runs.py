@@ -59,7 +59,8 @@ def here(cwd: str) -> Run:
     raise NotImplementedError("runs.here")
 
 
-def left(root: str) -> tuple[Left, ...]:
-    """Each run left in the repository at the root, in the order of their names: each worktree of
-    a run that git lists, whose folder the run keeps."""
+def left(folder: str) -> tuple[Left, ...]:
+    """Each run left in the repository that holds the folder, from its root or from any worktree
+    of it, in the order of their names: each worktree of a run that git lists, whose folder the run
+    keeps; none where no repository holds the folder."""
     raise NotImplementedError("runs.left")

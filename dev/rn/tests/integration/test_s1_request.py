@@ -14,8 +14,11 @@ from claude_code import Conversation
 from rn_example import (
     ANSWERED,
     CODE_GROUPS,
+    DECIMAL,
+    GOAL,
     HINTS,
     POINT,
+    SETTLED,
     TYPED,
     WITH_POINT,
     WORDS,
@@ -109,19 +112,39 @@ def test_the_tree_keeper_starts_with_its_cut_of_the_run_alone(
 def test_the_goal_and_the_plan_written_commit_the_design_tree_with_the_point_open(
     conv: Conversation, repo: Repo, run: Run
 ):
-    """Given the tree-keeper started, and the user confirmed the goal
-    When it writes the goal and the walkthrough's plan, with the point on each file open, by
+    """Given the tree-keeper started, and the orchestrator's goal drafted, not yet put to the user
+    When it writes the goal drafted and the walkthrough's plan, with the point on each file open, by
     `tree.py write` with its ground
     Then tree.py exits 0, prints the goal and both deliverables as changed and none doing, and
-    the design tree it committed holds the point with `decided` null"""
+    the design tree it committed holds the goal by reasoning and the point with `decided` null,
+    before the user sees either"""
     _, keeper = started(conv, repo, run, "tree-keeper")
-    wrote = keeper_writes(keeper, repo, run, WITH_POINT, "The user confirmed the goal.")
+    drafted = dict(WITH_POINT, goal={"decided": GOAL, "by": "reasoning"})
+    wrote = keeper_writes(keeper, repo, run, drafted, "The goal drafted, and the plan.")
     printed = json.loads(wrote.output)
     assert wrote.exit_code == 0 and printed["doing"] == []
     assert {"goal", HINTS, TYPED} <= set(printed["changed"])
     committed = git(run.worktree, "show", f"HEAD:{run.folder}/design-tree.json")
-    assert json.loads(committed) == WITH_POINT
-    assert git(run.worktree, "log", "-1", "--format=%B").strip() == "The user confirmed the goal."
+    assert json.loads(committed) == drafted
+    assert (
+        git(run.worktree, "log", "-1", "--format=%B").strip() == "The goal drafted, and the plan."
+    )
+
+
+@pytest.mark.supports("S1", "tree-keeper", "Design tree", "user")
+def test_the_goal_the_user_confirmed_is_written_by_the_user(
+    conv: Conversation, repo: Repo, run: Run
+):
+    """Given the goal drafted and the plan written, and the user's `yes` to the goal put to them
+    When the tree-keeper writes the goal by the user
+    Then tree.py exits 0, prints the goal as changed, and the design tree holds it by the user"""
+    _, keeper = started(conv, repo, run, "tree-keeper")
+    drafted = dict(WITH_POINT, goal={"decided": GOAL, "by": "reasoning"})
+    keeper_writes(keeper, repo, run, drafted, "The goal drafted, and the plan.")
+    wrote = keeper_writes(keeper, repo, run, WITH_POINT, "The user confirmed the goal.")
+    committed = json.loads(git(run.worktree, "show", f"HEAD:{run.folder}/design-tree.json"))
+    assert wrote.exit_code == 0 and "goal" in json.loads(wrote.output)["changed"]
+    assert committed["goal"] == {"decided": GOAL, "by": "user"}
 
 
 @pytest.mark.supports("S1", "tree.py", "Design tree")
@@ -252,13 +275,66 @@ def test_once_the_generator_is_done_an_evaluator_starts_for_each_group_side_by_s
     write(
         run.worktree,
         given["made"],
-        json.dumps({"decisions": [{"about": POINT, "where": "invoicer/"}], "lacks": []}),
+        json.dumps(
+            {"decisions": [{"about": POINT, "where": "invoicer/"}], "lacks": [], "settled": []}
+        ),
     )
     gives(generator, repo, "generator", "done")
     starts = [started(conv, repo, run, "evaluator", HINTS, group) for group in CODE_GROUPS]
     assert [given["group"] for given, _ in starts] == list(CODE_GROUPS)
     assert len({given["answers"] for given, _ in starts}) == 3
     assert all(given["round"] == "1" and agent.running for given, agent in starts)
+
+
+@pytest.mark.supports("S1", "evaluator", "tree.py", "Place")
+def test_an_evaluators_place_commits_its_work_with_its_group_and_step(
+    conv: Conversation, repo: Repo, run: Run
+):
+    """Given an evaluator of the hints' group C1 running, which wrote part of its Answers
+    When it keeps its Place at step 2 for its group
+    Then tree.py exits 0, and the worktree has nothing left uncommitted"""
+    signed_plan(conv, repo, run)
+    given, evaluator = started(conv, repo, run, "evaluator", HINTS, "C1")
+    evaluator.write(os.path.join(run.worktree, given["answers"]), '{"met": [], "not_met": []}')
+    kept = evaluator.bash(tree(repo, "place", run.folder, HINTS, "evaluator", "2", "C1"))
+    assert kept.exit_code == 0 and git(run.worktree, "status", "--porcelain") == ""
+
+
+@pytest.mark.supports("S1", "orchestrator", "tree.py", "Answers", "Made", "Round", "Sign-off")
+def test_the_orchestrator_gets_the_round_and_puts_up_the_points_the_generator_settled(
+    conv: Conversation, repo: Repo, run: Run
+):
+    """Given the hints' generator done in round 1, what it made naming the point on amounts it
+    settled without asking, and the evaluator of C1 done with its Answers
+    When the orchestrator runs `tree.py round` on the hints, and puts the hints up with the point
+    among the decisions taken without asking
+    Then tree.py prints what the generator made with the point settled and the Answers of C1, and
+    the run's sign-offs keep the point"""
+    signed_plan(conv, repo, run)
+    given, generator = started(conv, repo, run, "generator", HINTS)
+    records_all(generator, repo, given, "generator", "code", "refactor-code")
+    made = {
+        "decisions": [{"about": POINT, "where": "invoicer/"}],
+        "lacks": [],
+        "settled": [SETTLED],
+    }
+    write(run.worktree, given["made"], json.dumps(made))
+    gives(generator, repo, "generator", "done")
+    judged, evaluator = started(conv, repo, run, "evaluator", HINTS, "C1")
+    records_all(evaluator, repo, judged, "evaluator")
+    met = [{"question": n, "lines": ["invoicer/totals.py:1"]} for n in ("N1", "N2", "N3")]
+    write(run.worktree, judged["answers"], json.dumps({"met": met, "not_met": []}))
+    gives(evaluator, repo, "evaluator", "done")
+    printed = conv.bash(tree(repo, "round", run.folder, HINTS))
+    held = json.loads(printed.output)
+    assert printed.exit_code == 0 and held["made"]["settled"] == [SETTLED]
+    assert [each["group"] for each in held["answers"]] == ["C1"]
+    path = os.path.join(repo.temp, "hints.json")
+    sign_off = {"of": HINTS, "can_do": "", "decisions": [DECIMAL], "words": ""}
+    conv.write(None, path, json.dumps(sign_off))
+    conv.bash(tree(repo, "sign-off", run.folder, path))
+    kept = json.loads(text_of(os.path.join(run.worktree, run.folder, "sign-offs.json")))
+    assert any(each["of"] == HINTS and DECIMAL in each["decisions"] for each in kept)
 
 
 @pytest.mark.supports("S1", "orchestrator", "tree-keeper", "Lack kept", "Round", "Decision")
@@ -278,7 +354,7 @@ def test_a_lack_the_people_fall_short_by_changes_its_decision_and_reaches_the_ne
         keeper,
         repo,
         run,
-        plan(condition("N3", decided(POINT, "each file", "user"), rate)),
+        plan(condition("N3", decided(POINT, "each file", "user")), condition("N2", rate)),
         "A rate reads apart from an amount.",
     )
     lack = "A caller can't tell a rate from an amount."

@@ -105,6 +105,19 @@ def test_pr_ready_leaves_the_pull_request_no_longer_a_draft(tmp_path: Any):
     assert state(env)["pulls"][BRANCH]["draft"] is False
 
 
+@pytest.mark.supports("test_gm_after_done_sends_the_pull_request_handed_over_back_to_a_draft")
+def test_pr_ready_undo_leaves_the_pull_request_a_draft_again(tmp_path: Any):
+    """Given the branch's pull request marked ready
+    When `gh pr ready <branch> --undo` runs
+    Then it gives 0, and GitHub holds it a draft again"""
+    env = holding(str(tmp_path), pulls={BRANCH: {"number": 1, "draft": False, "comments": []}})
+    assert (
+        main(["pr", "ready", BRANCH, "--undo"], env)[0]
+        == line(MANUAL, "gh pr ready --undo marks the pull request a draft")["exit"]
+    )
+    assert state(env)["pulls"][BRANCH]["draft"] is True
+
+
 @pytest.mark.supports("test_a_lesson_signed_off_by_the_users_ty_opens_its_issue_on_rns_repository")
 def test_issue_create_keeps_the_issue_and_prints_its_url_in_the_manuals_form(tmp_path: Any):
     """Given GitHub holding no issue

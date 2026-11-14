@@ -1,7 +1,7 @@
 """Decides each gh command that repository runs for tree.py on GitHub: whether gh is logged in, the
-draft pull request of the run's branch, the user's comments on it, marking it ready, and the issue
-of each lesson on rn's repository, each read from what gh prints as its manual and recorded runs
-show."""
+draft pull request of the run's branch, the user's comments on it, marking it ready and a draft
+again, and the issue of each lesson on rn's repository, each read from what gh prints as its manual
+and recorded runs show."""
 
 from __future__ import annotations
 
@@ -53,6 +53,11 @@ def comments(cwd: str, branch: str, since: str, environ: Mapping[str, str]) -> t
 def mark_ready(cwd: str, branch: str, environ: Mapping[str, str]) -> None:
     """Marks the branch's pull request ready for review."""
     raise NotImplementedError("github.mark_ready")
+
+
+def mark_draft(cwd: str, branch: str, environ: Mapping[str, str]) -> None:
+    """Marks the branch's pull request a draft again, as `gh pr ready --undo` does."""
+    raise NotImplementedError("github.mark_draft")
 
 
 def open_issue(cwd: str, words: str, environ: Mapping[str, str]) -> str:

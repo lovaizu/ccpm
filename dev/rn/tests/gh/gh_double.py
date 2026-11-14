@@ -90,9 +90,12 @@ def pr_create(argv: list[str], held: dict[str, Any]) -> tuple[int, str, str]:
 
 
 def pr_ready(argv: list[str], held: dict[str, Any]) -> tuple[int, str, str]:
-    """`gh pr ready <branch>`."""
-    ran = line(MANUAL, "gh pr ready marks the pull request ready")
-    held["pulls"][argv[2]]["draft"] = False
+    """`gh pr ready <branch>`, or `gh pr ready <branch> --undo`, which marks it a draft again."""
+    if "--undo" in argv:
+        ran = line(MANUAL, "gh pr ready --undo marks the pull request a draft")
+    else:
+        ran = line(MANUAL, "gh pr ready marks the pull request ready")
+    held["pulls"][argv[2]]["draft"] = "--undo" in argv
     return ran["exit"], "", ""
 
 

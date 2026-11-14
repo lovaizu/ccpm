@@ -117,7 +117,7 @@ def test_a_generator_whose_record_holds_each_step_and_practice_ends_with_its_res
     hints_doing(conv, repo, run)
     given, generator = started(conv, repo, run, "generator", HINTS)
     records_all(generator, repo, given, "generator", "code", "refactor-code")
-    made = {"decisions": [{"about": POINT, "where": "invoicer/"}], "lacks": []}
+    made = {"decisions": [{"about": POINT, "where": "invoicer/"}], "lacks": [], "settled": []}
     write(run.worktree, given["made"], json.dumps(made))
     stopped, reached = gives(generator, repo, "generator", "done")
     assert not stopped.blocked and reached
@@ -135,7 +135,7 @@ def test_a_generator_whose_made_leaves_out_a_decision_of_its_cut_is_held_at_its_
     hints_doing(conv, repo, run)
     given, generator = started(conv, repo, run, "generator", HINTS)
     records_all(generator, repo, given, "generator", "code", "refactor-code")
-    write(run.worktree, given["made"], json.dumps({"decisions": [], "lacks": []}))
+    write(run.worktree, given["made"], json.dumps({"decisions": [], "lacks": [], "settled": []}))
     stopped, _ = gives(generator, repo, "generator", "done")
     assert stopped.blocked and POINT in stopped.said
 
@@ -224,7 +224,7 @@ def test_the_next_round_is_made_from_the_decision_changed_and_the_lack_kept(
     started(conv, repo, run, "generator", HINTS)
     _, keeper = started(conv, repo, run, "tree-keeper")
     rate = decided("How a rate is typed", "a Decimal named Rate", "maker")
-    changed = plan(condition("N3", decided(POINT, "each file", "user"), rate))
+    changed = plan(condition("N3", decided(POINT, "each file", "user")), condition("N2", rate))
     keeper_writes(keeper, repo, run, changed, "A rate reads apart from an amount.")
     keeper.bash(
         tree(repo, "lack", run.folder, HINTS, "N2", "A caller can't tell a rate from an amount.")
@@ -233,6 +233,28 @@ def test_the_next_round_is_made_from_the_decision_changed_and_the_lack_kept(
     held = json.loads(text_of(os.path.join(run.worktree, given["cut"])))
     assert rate in held["decisions"]
     assert [each["condition"] for each in held["lacks"]] == ["N2"]
+
+
+@pytest.mark.supports(
+    "Back to the design tree on a problem", "S1", "tree.py", "Lack kept", "Necessary condition"
+)
+def test_a_lack_kept_with_no_change_to_a_decision_of_its_condition_is_refused(
+    broken: bool, conv: Conversation, repo: Repo, run: Run
+):
+    """Given the hints' round 1 judged, with a lack under N2 that the people fall short by, and no
+    decision of N2 changed since the round's cut
+    When the tree-keeper keeps the lack
+    Then tree.py exits 1, naming N2, and the generator's cut of round 2 holds no lack, as the round
+    would make it good by a fix beside the design"""
+    hints_doing(conv, repo, run)
+    started(conv, repo, run, "generator", HINTS)
+    _, keeper = started(conv, repo, run, "tree-keeper")
+    kept = keeper.bash(
+        tree(repo, "lack", run.folder, HINTS, "N2", "A caller can't tell a rate from an amount.")
+    )
+    given, _ = started(conv, repo, run, "generator", HINTS)
+    held = json.loads(text_of(os.path.join(run.worktree, given["cut"])))
+    assert kept.exit_code == 1 and "N2" in kept.output and held["lacks"] == []
 
 
 @pytest.mark.supports("The design tree revised on each run", "Best practice", "Cut")
@@ -248,6 +270,21 @@ def test_a_best_practice_made_on_a_run_is_taken_over_rns_own_of_its_kind(
     made = write(run.worktree, ".rn/best-practices/code/best-practice.json", text_of(own))
     given, _ = started(conv, repo, run, "evaluator", HINTS, "C1")
     assert os.path.join(run.worktree, given["best_practice"]) == made
+
+
+@pytest.mark.supports("The design tree revised on each run", "guard", "generator", "Best practice")
+def test_a_generator_that_writes_a_best_practice_is_stopped(
+    broken: bool, conv: Conversation, repo: Repo, run: Run
+):
+    """Given the hints' generator running
+    When it writes .rn/best-practices/code/best-practice.json in the run's worktree
+    Then the guard stops the write, as a best practice changes only as a deliverable that the user
+    took at Done"""
+    hints_doing(conv, repo, run)
+    _, generator = started(conv, repo, run, "generator", HINTS)
+    path = os.path.join(run.worktree, ".rn", "best-practices", "code", "best-practice.json")
+    wrote = generator.write(path, "{}")
+    assert wrote.blocked and not os.path.exists(path)
 
 
 @pytest.mark.supports("Tried in a throwaway copy", "throwaway.py", "Try record")

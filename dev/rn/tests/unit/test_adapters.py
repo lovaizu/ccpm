@@ -13,11 +13,22 @@ from fault import Wrong
 from kept_results import kept
 from kept_results import main as kept_main
 from record.form import Entry, add, keep_result
-from rn_example import HINTS, TYPED
-from rn_parts import ANSWERED, NAME, PLAN_SIGNED, doing, hints, typed, walkthrough
+from rn_example import HINTS, TYPED, WORDS
+from rn_parts import (
+    ANSWERED,
+    NAME,
+    PLAN_SIGNED,
+    doing,
+    environ,
+    hints,
+    repository,
+    typed,
+    walkthrough,
+)
 from start_text import StartText, start_text
 from start_text import main as text_main
 from tree import design, sign_offs
+from tree.command import main as tree_main
 
 pytestmark = pytest.mark.xfail(strict=True, reason="rn's parts are skeletons, their bodies unbuilt")
 
@@ -138,9 +149,41 @@ def test_kept_gives_each_result_in_the_order_of_the_starts(worktree: str):
     assert kept(worktree) == [("tree-keeper", "done"), ("generator", "asks")]
 
 
+def begun(base: str, root: str, words: str) -> str:
+    """The run of the words begun by tree.py in the repository at the root, and its worktree."""
+    code, out, err = tree_main(["begin", words], environ(base), root)
+    assert code == 0, err
+    return out.strip()
+
+
+@pytest.mark.supports("test_the_guard_of_a_new_conversation_picks_the_run_up_from_the_results_kept")
+def test_kept_at_the_root_with_one_run_left_gives_that_runs_results(tmp_path: Any):
+    """Given the repository with the walkthrough's run left, its tree-keeper's record keeping
+    `done`
+    When the results kept are asked for at the root of the repository
+    Then they're the tree-keeper's `done`"""
+    root, _ = repository(str(tmp_path))
+    worktree = begun(str(tmp_path), root, WORDS)
+    record = os.path.join(worktree, ".rn", os.path.basename(worktree)[3:], "records", "k-1.json")
+    add(record, Entry("tree-keeper", "1", "Read."))
+    keep_result(record, "done")
+    assert kept(root) == [("tree-keeper", "done")]
+
+
+@pytest.mark.supports("test_the_guard_of_a_new_conversation_with_two_runs_left_starts_the_run_anew")
+def test_kept_at_the_root_with_two_runs_left_is_none(tmp_path: Any):
+    """Given the repository with the walkthrough's run and a run on README for invoicer left
+    When the results kept are asked for at the root of the repository
+    Then there are none, as the adapter can't tell which run the user picks"""
+    root, _ = repository(str(tmp_path))
+    begun(str(tmp_path), root, WORDS)
+    begun(str(tmp_path), root, "README for invoicer")
+    assert kept(root) == []
+
+
 @pytest.mark.supports("test_the_guard_of_a_new_conversation_picks_the_run_up_from_the_results_kept")
 def test_kept_outside_a_runs_worktree_is_none(tmp_path: Any):
-    """Given a folder of no run's worktree
+    """Given a folder that no run's worktree and no repository holds
     When the results kept are asked for
     Then there are none"""
     assert kept(str(tmp_path)) == []
