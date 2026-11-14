@@ -23,8 +23,8 @@ Do each heading and the first sentence under it say what the section gives the r
 
 Readers choose what to read by the headings and the first sentence under each, and skip the rest, so a heading and a first sentence that say what the section gives take each reader straight to the parts they need.
 
-1. *While deciding.* Read the document to its end before you change anything, and note in a line what each section is for. The trace: `{deliverable}` read to its end.
-2. *While deciding.* Find the readers: open the work's goal and its inputs, such as the users that a product vision names, and the document's opening where it names its audience, and list each kind of reader named there with the purpose they come with, such as `a developer who installs the plugin and wants its first command to run`. Where none of these names the readers, or two name different ones, ask the person who owns the document, since a document written for a guessed reader serves someone it wasn't meant for.
+1. *While deciding.* Open `{deliverable}`, the file or folder you write in, and read each document in it to its end before you change anything, such as each Markdown file of a folder, noting in a line what each section is for. Where it holds more than one document, take each item of this best practice for each of them. The trace: `{deliverable}` read to its end.
+2. *While deciding.* Find the readers: open your cut, and read its goal and each input it names, such as a product vision and the users it names, and read the document's opening where it names its audience. List each kind of reader named there with the purpose they come with, such as `a developer who installs the plugin and wants its first command to run`. Where your cut names no input, take the readers from its goal and the document's opening alone. Where none of these names the readers, or two name different ones, ask the person who owns the document, since a document written for a guessed reader serves someone it wasn't meant for. The trace: `{inputs}` read to its end.
 3. *While deciding.* For each reader on the list, write what they already know and what they come to learn, from their role and how close their work is to the subject, such as `knows Claude Code's slash commands, and doesn't know where the plugin keeps its state`.
 4. *While deciding.* Split the document into sections of one topic each: for each section, ask whether a reader with one purpose would read part of it and skip the rest, and if so, split it there. For example, split `Setup` into `Install the plugin` and `Configure the proxy` where only readers behind a proxy configure one.
 5. *While deciding.* Give each item that a reader looks for, such as a question they have or a command they run, a heading of its own, so that it shows in the outline and a link can point to it.
@@ -38,14 +38,15 @@ Does the document hold only what its readers need?
 
 Every sentence costs the reader time, and one that carries nothing they need still costs it and hides the sentences that do.
 
-1. *While making.* For each sentence, ask which reader on your list needs it, and for what, and mark each sentence that no reader on your list needs.
-2. *While making.* For each sentence you marked, look for a document whose readers need it: open each document that the document links, and each other document in `{deliverable}`, and take the one whose opening or headings name readers who come for what the sentence tells, such as a changelog for the story of why a tool was rewritten.
-3. *While making.* Where the document you took lies in `{deliverable}`, move the sentence into it, under the heading whose topic the sentence is.
-4. *While making.* Where the document you took lies outside `{deliverable}`, or you took none and the sentence states a fact that a search of the repository finds in no other place, such as the reason for a choice, ask the person who owns the document where the sentence goes, with the place you'd put it, since cutting it loses the fact and writing outside `{deliverable}` changes another document.
-5. *While making.* Cut each other sentence you marked, since another place states its fact, or it states none, such as `As noted above, this matters.`
-6. *While making.* Within each sentence you keep, ask the same of each word, and cut each word that no reader needs, such as `in order to` for `to`, or `basically`.
-7. *While making.* Keep the small words that show how a sentence is built, such as articles, `that`, and `then`, as the [Google developer documentation style guide](https://developers.google.com/style/translation) lists them, since without them both a reader and a machine translator parse the sentence with more effort.
-8. *While making.* After cutting, read the document again from the top as each reader on your list, for their purpose, since a cut in one section can take what a sentence in another needs. Where a reader no longer finds a step, a value, or a condition that their purpose needs, put back the words that told it. The trace: `{deliverable}` read to its end.
+1. *While deciding.* For each sentence, ask which reader on your list needs it, and for what, and mark each sentence that no reader on your list needs.
+2. *While deciding.* For each sentence you marked, look for a document whose readers need it: open each document that the document links, and each other document in `{deliverable}`, and take the one whose opening or headings name readers who come for what the sentence tells, such as a changelog for the story of why a tool was rewritten.
+3. *While deciding.* Where the document you took lies outside `{deliverable}`, or you took none and the sentence states a fact that a search of the repository finds in no other place, such as the reason for a choice, ask the person who owns the document where the sentence goes, with the place you'd put it, since cutting it loses the fact and writing outside `{deliverable}` changes another document.
+4. *While making.* Where the document you took lies in `{deliverable}`, move the sentence into it, under the heading whose topic the sentence is.
+5. *While making.* Move each sentence you asked about to the place that the person's answer names in `{deliverable}`, and cut it where the answer puts it outside.
+6. *While making.* Cut each other sentence you marked, since another place states its fact, or it states none, such as `As noted above, this matters.`
+7. *While making.* Within each sentence you keep, ask the same of each word, and cut each word that no reader needs, such as `in order to` for `to`, or `basically`.
+8. *While making.* Keep the small words that show how a sentence is built, such as articles, `that`, and `then`, as the [Google developer documentation style guide](https://developers.google.com/style/translation) lists them, since without them both a reader and a machine translator parse the sentence with more effort.
+9. *While making.* After cutting, read the document again from the top as each reader on your list, for their purpose, since a cut in one section can take what a sentence in another needs. Where a reader no longer finds a step, a value, or a condition that their purpose needs, put back the words that told it. The trace: `{deliverable}` read to its end.
 
 ### N3
 
@@ -66,10 +67,11 @@ Do lists, tables, and diagrams show the steps, the choices, and the relations th
 
 A reader takes in at once the steps, the choices, or the relations that a list, a table, or a diagram shows, but has to piece them together from prose.
 
-1. *While deciding.* For each passage, ask what relation it describes, and choose the form by the answer, as the [Google developer documentation style guide](https://developers.google.com/style/lists) chooses a list. Steps in order take a numbered list. Items in no order take a bulleted list. Things compared on the same points take a table. Who passes what to whom takes a diagram. An argument, where one point leads to the next by because or but, stays in prose, since a list drops those links.
-2. *While making.* Rewrite each passage in the form you chose for it, with one list item, table row, or element of the diagram for each step, choice, or thing that the passage names.
-3. *While making.* Draw a sequence diagram as text that the page renders, such as Mermaid, because its steps run from top to bottom and leave no layout to choose.
-4. *While making.* Draw a structure diagram, such as parts and what passes between them, as a file whose layout the writer sets, such as SVG, because its layout carries meaning.
+1. *While deciding.* For each passage, ask what relation it describes, and choose the form by the answer, as the [Google developer documentation style guide](https://developers.google.com/style/lists) chooses a list. Steps in order take a numbered list. Items in no order take a bulleted list. Things compared on the same points take a table. Messages that parts pass one after another, where their order is what the reader needs, take a sequence diagram. Parts and what connects them, where which part connects to which matters and their order doesn't, take a structure diagram. An argument, where one point leads to the next by because or but, stays in prose, since a list drops those links.
+2. *While deciding.* For each sequence diagram you chose, find whether the place where readers read the document renders a diagram written as text: open that place's documentation on the document's format, such as GitHub's page on creating diagrams for a Markdown file read on GitHub, and note the text format it renders, such as Mermaid in a `mermaid` code block, or that it renders none.
+3. *While making.* Rewrite each passage in the form you chose for it, with one list item, table row, or element of the diagram for each step, choice, or thing that the passage names.
+4. *While making.* Write each sequence diagram whose place renders a text format in that format, because its steps run from top to bottom and leave no layout to choose.
+5. *While making.* Draw each structure diagram, and each sequence diagram whose place renders no text format, as a file whose layout the writer sets, such as SVG, because the layout of a structure diagram carries meaning, and a page that renders no diagram text still shows an image.
 
 ### N5
 
@@ -90,7 +92,7 @@ Does the document use the words its readers already use, in their usual meaning?
 
 A reader reads each word with the meaning they already know, so a word they don't use, such as a term the team coined, makes them guess what it means.
 
-1. *While deciding.* Find the words the readers use: open the documentation of the product the readers work in, such as Claude Code's documentation for the readers of a Claude Code plugin, and what the readers wrote for the work themselves, such as the issues they opened and their words in the work's inputs.
+1. *While deciding.* Find the words the readers use: open the documentation of the product the readers work in, such as Claude Code's documentation for the readers of a Claude Code plugin, and what the readers wrote for the work themselves: each decision of your cut that the user settled, with its words, and each input your cut names that they wrote, such as an issue they opened. Where your cut holds none of their words, take the product's documentation alone.
 2. *While deciding.* For each thing the document names, choose its word: take the word the product's documentation uses, since the readers learned it there, such as `subagent` in place of `child agent`. Where that documentation names no such thing, take the word the readers' own writing uses. Where neither has one, keep the document's term, and mark it to define.
 3. *While making.* Replace each word that differs from the one you chose with that word, in its usual meaning.
 4. *While making.* Define each term you marked where the reader first meets it, or link to a page that defines it, such as `A hook, a command that Claude Code runs at a set point of a session, ...`.
@@ -106,7 +108,8 @@ Two places that state one fact drift apart, and a reader who finds both can't te
 2. *While deciding.* For each fact on the list, choose the one place that states it: the work itself where it shows the fact, such as a script's `--help` for its options, and else the section whose topic the fact is, where a reader looks for it first.
 3. *While deciding.* Where two places state a fact differently, keep both, and ask the person who owns the document which one is right, since choosing one yourself would change what the document says.
 4. *While making.* Where the place you chose is a section of the document, state the fact there in full.
-5. *While making.* In every other place, replace the fact with a link to its place and a few words on what the reader finds there, such as `For what each option does, see [Options](#options).`
+5. *While making.* Where the place you chose is a section of the document, replace the fact in every other place with a link to that section and a few words on what the reader finds there, such as `For what each option does, see [Options](#options).`
+6. *While making.* Where the place you chose is the work itself, replace the fact in every place with how to see it there, linked to the file that shows it, such as `For what each option does, run check.sh --help.` with `check.sh` linked to the script.
 
 ### N8
 
