@@ -35,6 +35,11 @@
           "about": "Each step and each practice carried out",
           "decided": "each role, the main conversation's skill among them, records each step of its prompt and each practice of the best practice it works by, at the time each names, and its end, or the skill's turn's end where it puts work up, passes only where the plugin's own check accepts the record, as the guard runs that check",
           "by": "reasoning"
+        },
+        {
+          "about": "A prompt's tests",
+          "decided": "a prompt is a part: unit tests run it on the model its users run, several times, and E2E tests try it in real use",
+          "by": "user"
         }
       ]
     },
@@ -42,7 +47,57 @@
       "name": "Each part a developer builds by the design gives, with the others, what the README promises",
       "path": "plugins/rn/domain/best-practices/architecture",
       "kind": "meta",
-      "status": "done"
+      "inputs": [],
+      "preconditions": [],
+      "status": "doing",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Tests designed with the architecture",
+              "decided": "the architecture is checked by its tests before any implementation: the targets are every part, all of the architecture (each story's paths, principle, component's decisions, handoff, and kind of data), and each key result of the product vision; parts are tried by unit tests, prompts among them on the model their users run several times, the architecture by integration tests, and the key results by E2E tests; right after the architecture's Test strategy decides the tools and each quality check with its criterion, every test case is written as Given/When/Then in test code, each naming the case one level up it supports, so that a case no part holds, a part no case reaches, a part with too many cases, or a handoff no interface carries sends the maker back to the architecture, and a script checks the trace both ways by the elements' names; the user agrees to the architecture with its cases before implementation, which adds a case only where it names one a level up; the words are unit, integration, and E2E tests, and the section is Test strategy, as the V-model and outside-in TDD hold",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": true,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A maker of code designs it, tests it first, and writes it as the field's established practice says",
@@ -96,7 +151,102 @@
       "name": "rn's developers build its parts so that together they give what its README promises",
       "path": "dev/rn/architecture.md",
       "kind": "architecture",
-      "status": "done"
+      "inputs": [
+        "dev/rn/product-vision.md",
+        "plugins/rn/README.md"
+      ],
+      "preconditions": [
+        "plugins/rn/domain/best-practices/architecture"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N11",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N12",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Test strategy and test cases",
+              "decided": "its Test strategy, by the architecture best practice, decides each level's tools and each quality check with its criterion, and every test case is written in test code before any implementation, as the architecture best practice's node decides",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N13",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N14",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N15",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N16",
+          "good": true,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "Lane's product vision says what Lane is for",
@@ -108,7 +258,102 @@
       "name": "Lane's developers build its parts so that together they give what its README promises",
       "path": "dev/lane/architecture.md",
       "kind": "architecture",
-      "status": "done"
+      "inputs": [
+        "dev/lane/product-vision.md",
+        "plugins/lane/README.md"
+      ],
+      "preconditions": [
+        "plugins/rn/domain/best-practices/architecture"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N11",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N12",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Test strategy and test cases",
+              "decided": "its Test strategy, by the architecture best practice, decides each level's tools and each quality check with its criterion, and every test case is written in test code before any implementation, as the architecture best practice's node decides",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N13",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N14",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N15",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N16",
+          "good": true,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A person's /lane:up lays a lane that stops a subagent's command outside its step with the step's sentence, and the run starts that subagent and ends on its result",
