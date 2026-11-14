@@ -134,9 +134,10 @@
   <text class="label small halo" x="425" y="662" text-anchor="middle">and the generator commits each step&#x27;s work [Bash]</text>
   <text class="data halo" x="425" y="676" text-anchor="middle">Design tree, Lack kept, Place</text>
   <path class="line" d="M120,544 L120,940" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="128" y="800" text-anchor="start">writes, reads,</text>
-  <text class="label small halo" x="128" y="814" text-anchor="start">cuts, commits</text>
-  <text class="data halo" x="128" y="828" text-anchor="start">Design tree, Sign-off</text>
+  <text class="label small halo" x="128" y="850" text-anchor="start">writes, reads,</text>
+  <text class="label small halo" x="128" y="864" text-anchor="start">cuts, commits</text>
+  <text class="data halo" x="128" y="878" text-anchor="start">Design tree, Sign-off,</text>
+  <text class="data halo" x="128" y="892" text-anchor="start">Try record, Lack kept, Place</text>
   <path class="line" d="M720,324 L720,440"/>
   <path class="line" d="M440,440 L1000,440"/>
   <path class="line" d="M440,440 L440,480" marker-end="url(#arrow)"/>
@@ -159,9 +160,10 @@
   <path class="line" d="M1080,544 L1080,1080 L400,1080 L400,1004" marker-end="url(#arrow)"/>
   <text class="label small halo" x="740" y="1072" text-anchor="middle">writes</text>
   <text class="data halo" x="740" y="1096" text-anchor="middle">Answers</text>
-  <path class="line" d="M720,784 L720,940" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="728" y="860" text-anchor="start">writes</text>
-  <text class="data halo" x="728" y="874" text-anchor="start">Try record</text>
+  <path class="line" d="M620,760 L240,760 L240,544" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="430" y="782" text-anchor="middle">keeps each command tried in the</text>
+  <text class="label small halo" x="430" y="796" text-anchor="middle">round&#x27;s Try record by it [import]</text>
+  <text class="data halo" x="430" y="810" text-anchor="middle">Try record</text>
   <path class="line" d="M1120,302 L1180,302" marker-end="url(#arrow)"/>
   <text class="label small halo" x="1112" y="288" text-anchor="end">records each step and practice [Bash]</text>
   <text class="data halo" x="1112" y="320" text-anchor="end">Record</text>

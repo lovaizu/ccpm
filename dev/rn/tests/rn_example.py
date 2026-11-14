@@ -97,6 +97,31 @@ def plan(*hints_conditions: dict[str, Any]) -> dict[str, Any]:
 # answered it.
 WITH_POINT = plan(condition("N3", decided(POINT, None)))
 ANSWERED = plan(condition("N3", decided(POINT, ANSWER, "user")))
+# invoicer's totals.py with its type hints, as the hints' generator would make it.
+TYPED_TOTALS = """\
+\"\"\"The totals of an invoice.\"\"\"
+from decimal import Decimal
+
+from invoicer.lines import Line
+from invoicer.tax import with_tax
+
+
+def subtotal(lines: list[Line]) -> Decimal:
+    return sum((line.value() for line in lines), Decimal("0"))
+
+
+def total(lines: list[Line], rate: Decimal) -> Decimal:
+    return with_tax(subtotal(lines), rate)
+"""
+# The tree once both deliverables meet each necessary condition, each done keeping only its name,
+# path, kind, and status.
+ALL_DONE = {
+    "goal": ANSWERED["goal"],
+    "deliverables": [
+        {"name": HINTS_NAME, "path": HINTS, "kind": "code", "status": "done"},
+        {"name": TYPED_NAME, "path": TYPED, "kind": "code", "status": "done"},
+    ],
+}
 
 
 @dataclass(frozen=True)
@@ -310,13 +335,17 @@ def practices_of(repo: Repo, kind: str) -> list[str]:
     ]
 
 
-def records_all(agent: Agent, repo: Repo, given: dict[str, str], role: str, kind: str = "") -> None:
-    """The role records each step of its part, and, where it works by a best practice, each
-    practice of it, each with what it gave, as rn's check reads a record that holds every item."""
+def records_all(agent: Agent, repo: Repo, given: dict[str, str], role: str, *kinds: str) -> None:
+    """The role records each step of its part, and each practice of each best practice it works
+    by, such as code and refactor-code, each with what it gave, as rn's check reads a record that
+    holds every item."""
     for step in steps_of(repo, role):
         agent.bash(record(repo, "add", given["record"], role, str(step), f"step {step} held"))
-    for practice in practices_of(repo, kind) if kind else []:
-        agent.bash(record(repo, "add", given["record"], kind, practice, f"{practice} carried out"))
+    for kind in kinds:
+        for practice in practices_of(repo, kind):
+            agent.bash(
+                record(repo, "add", given["record"], kind, practice, f"{practice} carried out")
+            )
 
 
 def gives(

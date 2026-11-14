@@ -44,6 +44,10 @@ FULL = (
     Entry("code", "N1.2", "Stated."),
     Entry("generator", "3", "Made."),
 )
+REFACTOR = BestPractice(
+    "refactor-code",
+    (NecessaryCondition("N1", "C1", "Reads as meant?", (Practice("N1.1", MAKE, "Rename."),)),),
+)
 GENERATOR = Cut(
     "generator", RUN, "r", deliverable=HINTS, decisions=(ANSWERED,), lacks=(LackKept("N2", "lack"),)
 )
@@ -57,7 +61,7 @@ def test_a_record_with_each_step_and_each_practice_in_its_phase_has_no_fault():
     """Given steps 1 to 3, and each practice recorded before the step that takes its phase ends
     When the record is checked
     Then it has no fault"""
-    assert record_faults(Record(FULL), STEPS, CODE) == ()
+    assert record_faults(Record(FULL), STEPS, (CODE,)) == ()
 
 
 @pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
@@ -65,7 +69,7 @@ def test_a_record_without_a_step_names_it():
     """Given the full record without step 3
     When it's checked
     Then the fault names step 3 of generator"""
-    (fault,) = record_faults(Record(FULL[:-1]), STEPS, CODE)
+    (fault,) = record_faults(Record(FULL[:-1]), STEPS, (CODE,))
     assert "step 3" in fault and "generator" in fault
 
 
@@ -75,7 +79,7 @@ def test_a_record_with_steps_out_of_order_names_the_step_out_of_order():
     When it's checked
     Then a fault names step 1"""
     swapped = (FULL[2], FULL[1], FULL[0], FULL[3], FULL[4])
-    assert any("step 1" in fault for fault in record_faults(Record(swapped), STEPS, CODE))
+    assert any("step 1" in fault for fault in record_faults(Record(swapped), STEPS, (CODE,)))
 
 
 @pytest.mark.supports(
@@ -85,8 +89,20 @@ def test_a_record_without_a_practice_names_it():
     """Given the full record without N1.2
     When it's checked
     Then the fault names N1.2 of code"""
-    (fault,) = record_faults(Record(FULL[:3] + FULL[4:]), STEPS, CODE)
+    (fault,) = record_faults(Record(FULL[:3] + FULL[4:]), STEPS, (CODE,))
     assert "N1.2" in fault and "code" in fault
+
+
+@pytest.mark.supports(
+    "test_a_generator_whose_record_skips_its_refactor_practices_is_held_at_its_end"
+)
+def test_a_record_without_a_practice_of_the_refactor_best_practice_names_it_by_its_kind():
+    """Given the full record of the code best practice, and the refactor-code best practice beside
+    it, none of whose practices it holds
+    When it's checked against both
+    Then the fault names N1.1 of refactor-code"""
+    (fault,) = record_faults(Record(FULL), STEPS, (CODE, REFACTOR))
+    assert "N1.1" in fault and "refactor-code" in fault
 
 
 @pytest.mark.supports(
@@ -97,7 +113,7 @@ def test_a_practice_of_making_recorded_while_deciding_names_it():
     When it's checked
     Then the fault names N1.2"""
     early = (FULL[0], FULL[1], FULL[3], FULL[2], FULL[4])
-    assert any("N1.2" in fault for fault in record_faults(Record(early), STEPS, CODE))
+    assert any("N1.2" in fault for fault in record_faults(Record(early), STEPS, (CODE,)))
 
 
 @pytest.mark.supports("test_the_orchestrators_turn_is_held_until_its_record_holds_each_step")
@@ -106,7 +122,7 @@ def test_a_record_of_a_role_with_no_best_practice_needs_only_its_steps():
     When it's checked
     Then it has no fault"""
     steps_only = (FULL[0], FULL[2], FULL[4])
-    assert record_faults(Record(steps_only), STEPS, None) == ()
+    assert record_faults(Record(steps_only), STEPS, ()) == ()
 
 
 @pytest.mark.supports(

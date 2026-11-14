@@ -12,29 +12,25 @@ import os
 import pytest
 from claude_code import Conversation
 from rn_example import (
+    ALL_DONE,
     ANSWERED,
     HINTS,
-    HINTS_NAME,
     LESSON,
     TYPED,
     TYPED_NAME,
     Repo,
     Run,
+    code_deliverable,
+    condition,
+    decided,
     github,
     keeper_writes,
     started,
+    text_of,
     tree,
 )
 
 pytestmark = pytest.mark.xfail(strict=True, reason="rn's parts are skeletons, their bodies unbuilt")
-
-ALL_DONE = {
-    "goal": ANSWERED["goal"],
-    "deliverables": [
-        {"name": HINTS_NAME, "path": HINTS, "kind": "code", "status": "done"},
-        {"name": TYPED_NAME, "path": TYPED, "kind": "code", "status": "done"},
-    ],
-}
 
 
 def put_up(conv: Conversation, repo: Repo, run: Run, of: str, words: str = "") -> int:
@@ -115,6 +111,28 @@ def test_ready_refuses_while_a_deliverable_isnt_done(conv: Conversation, repo: R
     refused = conv.bash(tree(repo, "ready", run.folder))
     (pull,) = github(repo)["pulls"].values()
     assert refused.exit_code == 1 and TYPED in refused.output and pull["draft"]
+
+
+@pytest.mark.supports("S6", "orchestrator", "tree-keeper", "Decision", "Cut")
+def test_a_clash_the_whole_pull_request_read_finds_starts_the_rounds_again_from_its_decision(
+    conv: Conversation, repo: Repo, run: Run
+):
+    """Given both deliverables done and signed off, and the work pushed
+    When the orchestrator's read of the whole pull request finds that the typed marker contradicts
+    the hints, and the tree-keeper writes the decision it changes, with the typed marker open again
+    Then tree.py marks the typed marker doing, and the generator's cut of it holds the changed
+    decision"""
+    handed_over(conv, repo, run)
+    _, keeper = started(conv, repo, run, "tree-keeper")
+    changed = decided("Where the marker lies", "invoicer/py.typed, in the package the hints type")
+    typed = code_deliverable(
+        TYPED_NAME, TYPED, condition("N1", changed), inputs=[HINTS], preconditions=[HINTS]
+    )
+    reopened = dict(ALL_DONE, deliverables=[ALL_DONE["deliverables"][0], typed])
+    wrote = keeper_writes(keeper, repo, run, reopened, "The typed marker contradicts the hints.")
+    given, _ = started(conv, repo, run, "generator", TYPED)
+    held = json.loads(text_of(os.path.join(run.worktree, given["cut"])))
+    assert json.loads(wrote.output)["doing"] == [TYPED] and changed in held["decisions"]
 
 
 @pytest.mark.supports("S6", "tree-keeper", "Best practice", "Deliverable")

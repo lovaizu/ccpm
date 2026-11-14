@@ -33,6 +33,11 @@ architecture give the orchestrator, and every moment shares them: each point set
 user, each role started with its cut, each result checked before it's taken, each lack judged, each
 sign-off put up, and the whole pull request read before it's ready.
 
+Before you mark the pull request ready, read the whole change against the goal at once, for
+deliverables that contradict one another, a part beyond what the goal needs, work that does nothing
+toward it, and a file resting on a changed best practice, rule, or name that still says the old
+thing, and take each back to the decision it changes.
+
 ## What you give
 
 To the user: each point, one in each message, with your recommendation; each sign-off; `Paused`,

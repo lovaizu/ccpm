@@ -50,7 +50,7 @@ def cut(run, role, deliverable="", group=""):
     return dataclasses.replace(_cut_with_lacks(run, role, deliverable, group), lacks=())
 '''
 NO_RECORD_FAULTS = '''
-def record_faults(record, steps, best_practice):
+def record_faults(record, steps, best_practices):
     """No fault of any record."""
     return ()
 '''
@@ -101,16 +101,25 @@ def appended(path: str, code: str) -> Callable[[str], None]:
     return take_out
 
 
+def laid_lanes(plugin: str) -> tuple[str, dict[str, Any]]:
+    """The path of the lanes that Lane laid in the installed rn, and what it holds. Fails the case
+    where rn has none, as a take-out that took out nothing would let a case of the guard pass with
+    its lane absent; `/lane:up rn` lays them once Lane is built."""
+    path = os.path.join(plugin, "hooks", "lanes.json")
+    if not os.path.exists(path):
+        pytest.fail(
+            f"{path} doesn't exist, so no lane can be taken out: lay rn's lanes by /lane:up rn"
+        )
+    with open(path, encoding="utf-8") as f:
+        return path, json.load(f)
+
+
 def without_lanes(kind: str, role: str = "") -> Callable[[str], None]:
     """A take-out that drops each lane of the type from the lanes that Lane laid in the installed
     rn, of the role only where one is given."""
 
     def take_out(plugin: str) -> None:
-        path = os.path.join(plugin, "hooks", "lanes.json")
-        if not os.path.exists(path):
-            return
-        with open(path, encoding="utf-8") as f:
-            laid = json.load(f)
+        path, laid = laid_lanes(plugin)
         laid["lanes"] = [
             each
             for each in laid["lanes"]
@@ -124,11 +133,7 @@ def without_lanes(kind: str, role: str = "") -> Callable[[str], None]:
 
 def without_waits(plugin: str) -> None:
     """A take-out that has no route of the installed rn wait for a command the user types."""
-    path = os.path.join(plugin, "hooks", "lanes.json")
-    if not os.path.exists(path):
-        return
-    with open(path, encoding="utf-8") as f:
-        laid = json.load(f)
+    path, laid = laid_lanes(plugin)
     for route in laid["routes"]:
         for move in route["moves"]:
             move.pop("waits_for", None)

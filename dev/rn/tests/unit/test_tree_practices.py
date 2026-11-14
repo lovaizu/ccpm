@@ -1,5 +1,5 @@
 """The unit cases of tree/practices.py, how tree.py reads a best practice, through `loads`, `find`,
-`load`, and `groups`, on rn's own best practices and on one made on a run."""
+`load`, `groups`, and `finisher`, on rn's own best practices and on one made on a run."""
 
 from __future__ import annotations
 
@@ -10,7 +10,18 @@ from typing import Any
 import pytest
 from fault import Wrong
 from rn_example import RN, text_of, write
-from tree.practices import DECIDE, MAKE, Practice, find, groups, load, loads
+from tree.practices import (
+    DECIDE,
+    MAKE,
+    REFACTOR_CODE,
+    REFACTOR_DOC,
+    Practice,
+    find,
+    finisher,
+    groups,
+    load,
+    loads,
+)
 
 pytestmark = pytest.mark.xfail(strict=True, reason="rn's parts are skeletons, their bodies unbuilt")
 
@@ -111,3 +122,26 @@ def test_load_reads_the_one_find_gives(tmp_path: Any):
     whole["goal"]["critical_success_factors"] = [first]
     write(str(tmp_path), ".rn/best-practices/code/best-practice.json", json.dumps(whole))
     assert [each.id for each in load(str(tmp_path), RN, "code").conditions] == ["N1"]
+
+
+@pytest.mark.parametrize(
+    ("kind", "path", "finished_by"),
+    [
+        ("code", "invoicer/", REFACTOR_CODE),
+        ("specific", "tests/test_total.py", REFACTOR_CODE),
+        ("specific", "docs/usage.md", REFACTOR_DOC),
+        ("readme", "README.md", REFACTOR_DOC),
+        ("meta", ".rn/best-practices/code/", REFACTOR_DOC),
+    ],
+)
+@pytest.mark.supports(
+    "test_a_generator_whose_record_skips_its_refactor_practices_is_held_at_its_end"
+)
+def test_finisher_gives_refactor_code_for_code_and_refactor_doc_for_a_document(
+    kind: str, path: str, finished_by: str
+):
+    """Given a deliverable of code, of the kind specific in a Python file or a Markdown file, a
+    README, or a best practice
+    When the refactor best practice that finishes it is asked for
+    Then it's refactor-code for code and the Python file, and refactor-doc for each other"""
+    assert finisher(kind, path) == finished_by

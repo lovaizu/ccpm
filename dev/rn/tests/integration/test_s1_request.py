@@ -194,15 +194,15 @@ def test_a_try_runs_the_command_in_a_copy_and_keeps_it_in_the_rounds_try_record(
     assert kept["tried"][-1]["exit_code"] == tried.exit_code
 
 
-@pytest.mark.supports("S1", "generator", "orchestrator")
-def test_a_generator_that_asks_ends_with_asks_and_the_next_one_starts_from_the_decision(
+@pytest.mark.supports("S1", "generator", "orchestrator", "Decision")
+def test_a_generator_that_asks_ends_with_asks_and_is_resumed_once_the_tree_holds_the_decision(
     conv: Conversation, repo: Repo, run: Run
 ):
     """Given the hints' generator running in round 1
-    When it gives `asks` on how to type amounts, the point is written open and then decided as
-    Decimal, and the orchestrator cuts the generator's cut of the hints again
-    Then the guard lets `asks` end the generator, and the new cut holds the Decimal decision in the
-    same round"""
+    When it gives `asks` on how to type amounts, the tree-keeper writes the decision Decimal, and
+    the orchestrator resumes the generator with its ground
+    Then the guard lets `asks` end the generator and the resume through, and the run's design tree
+    holds the Decimal decision"""
     signed_plan(conv, repo, run)
     _, generator = started(conv, repo, run, "generator", HINTS)
     stopped, reached = gives(generator, repo, "generator", "asks", "How should amounts be typed?")
@@ -216,9 +216,12 @@ def test_a_generator_that_asks_ends_with_asks_and_the_next_one_starts_from_the_d
         plan(condition("N3", decided(POINT, "each file", "user"), decimal)),
         "As the code computes with Decimal.",
     )
-    given, _ = started(conv, repo, run, "generator", HINTS)
-    held = json.loads(text_of(os.path.join(run.worktree, given["cut"])))
-    assert given["round"] == "1" and decimal in held["decisions"]
+    resumed = conv.resume(
+        generator, "The main conversation's grounds:\nAmounts are Decimal, as the code computes."
+    )
+    held = json.loads(text_of(os.path.join(run.worktree, run.folder, "design-tree.json")))
+    assert not resumed.blocked and generator.running
+    assert decimal in held["deliverables"][0]["necessary_conditions"][2]["decisions"]
 
 
 @pytest.mark.supports("S1", "generator", "orchestrator")
@@ -245,7 +248,7 @@ def test_once_the_generator_is_done_an_evaluator_starts_for_each_group_side_by_s
     round 1"""
     signed_plan(conv, repo, run)
     given, generator = started(conv, repo, run, "generator", HINTS)
-    records_all(generator, repo, given, "generator", "code")
+    records_all(generator, repo, given, "generator", "code", "refactor-code")
     write(
         run.worktree,
         given["made"],
@@ -309,7 +312,7 @@ def test_a_deliverable_the_orchestrator_sends_back_resumes_its_generator(
     Then the guard lets the resume through, and the generator runs again in round 1"""
     signed_plan(conv, repo, run)
     given, generator = started(conv, repo, run, "generator", HINTS)
-    records_all(generator, repo, given, "generator", "code")
+    records_all(generator, repo, given, "generator", "code", "refactor-code")
     gives(generator, repo, "generator", "done")
     resumed = conv.resume(
         generator, "The main conversation's grounds:\nThe hints of tax.py are missing."

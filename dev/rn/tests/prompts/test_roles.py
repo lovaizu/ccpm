@@ -9,28 +9,23 @@ from __future__ import annotations
 import json
 
 import pytest
-from rn_example import ANSWER, ANSWERED, HINTS, POINT, WITH_POINT, condition, decided, plan
+from rn_example import (
+    ANSWER,
+    ANSWERED,
+    HINTS,
+    POINT,
+    TYPED_TOTALS,
+    WITH_POINT,
+    condition,
+    decided,
+    plan,
+)
 from rn_prompt_runs import Setting, role_runs
 
 pytestmark = pytest.mark.xfail(strict=True, reason="rn's parts are skeletons, their bodies unbuilt")
 
 GROUNDS = "The main conversation's grounds:\n"
-TOTALS = """\
-\"\"\"The totals of an invoice.\"\"\"
-from decimal import Decimal
-
-from invoicer.lines import Line
-from invoicer.tax import with_tax
-
-
-def subtotal(lines: list[Line]) -> Decimal:
-    return sum((line.value() for line in lines), Decimal("0"))
-
-
-def total(lines: list[Line], rate: Decimal) -> Decimal:
-    return with_tax(subtotal(lines), rate)
-"""
-TYPED_HINTS = Setting(files={"invoicer/totals.py": TOTALS})
+TYPED_HINTS = Setting(files={"invoicer/totals.py": TYPED_TOTALS})
 
 
 @pytest.mark.supports(
@@ -85,7 +80,7 @@ def test_the_generator_makes_the_hints_tries_them_in_a_copy_and_ends_done():
 
 
 @pytest.mark.supports(
-    "test_a_generator_that_asks_ends_with_asks_and_the_next_one_starts_from_the_decision"
+    "test_a_generator_that_asks_ends_with_asks_and_is_resumed_once_the_tree_holds_the_decision"
 )
 def test_the_generator_asks_where_the_design_leaves_a_point_open():
     """Given the plan whose hints hold the point on each file open

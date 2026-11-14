@@ -128,7 +128,7 @@ def test_a_record_passes_exactly_where_it_holds_each_step_in_order_and_each_prac
     pool = [Entry("generator", str(n), "held") for n in range(1, steps + 1)]
     pool += [Entry("code", "N1.1", "listed"), Entry("code", "N1.2", "stated")]
     entries = tuple(data.draw(st.lists(st.sampled_from(pool), max_size=steps + 3)))
-    found = record_faults(Record(entries), listed, best)
+    found = record_faults(Record(entries), listed, (best,))
     ids = [each.id for each in entries]
     whole = [each.id for each in pool]
     assert (found == ()) <= (sorted(set(ids)) == sorted(set(whole)))

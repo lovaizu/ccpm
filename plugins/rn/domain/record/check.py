@@ -1,7 +1,8 @@
 """Decides rn's check of a role's end, and of the orchestrator's turn: whether the record holds each
-step of the role's prompt in order and each practice of its best practice within the step that
-takes it, and whether its result names each item of each list it carries, each decision and lack of
-a generator's cut, and each necessary condition of an evaluator's group."""
+step of the role's prompt in order and each practice of each best practice of its Cut within the
+step that takes it, a generator's kind's and the refactor one that finishes its deliverable, and
+whether its result names each item of each list it carries, each decision and lack of a
+generator's cut, and each necessary condition of an evaluator's group."""
 
 from __future__ import annotations
 
@@ -14,11 +15,11 @@ from record.steps import Step
 
 
 def record_faults(
-    record: Record, steps: tuple[Step, ...], best_practice: BestPractice | None
+    record: Record, steps: tuple[Step, ...], best_practices: tuple[BestPractice, ...]
 ) -> tuple[str, ...]:
-    """Each fault of the record against the steps and the best practice: a step left out or out of
-    order, and a practice left out, or recorded in a step that doesn't take its phase. None where
-    the record holds them all."""
+    """Each fault of the record against the steps and each of the best practices: a step left out
+    or out of order, and a practice left out, named by its best practice's kind and its ID, or
+    recorded in a step that doesn't take its phase. None where the record holds them all."""
     raise NotImplementedError("check.record_faults")
 
 

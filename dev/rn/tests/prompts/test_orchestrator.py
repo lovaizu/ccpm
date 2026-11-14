@@ -7,13 +7,46 @@ test there, it shows the real orchestrator keeping."""
 
 from __future__ import annotations
 
+import json
+
 import pytest
-from rn_example import ANSWERED, POINT, REQUEST, WITH_POINT, invoicer
+from rn_example import (
+    ALL_DONE,
+    ANSWERED,
+    HINTS,
+    POINT,
+    REQUEST,
+    TYPED,
+    TYPED_TOTALS,
+    WITH_POINT,
+    invoicer,
+)
 from rn_prompt_runs import orchestrator_runs
 
 pytestmark = pytest.mark.xfail(strict=True, reason="rn's parts are skeletons, their bodies unbuilt")
 
 INVOICER = invoicer()
+# The walkthrough's run up to its plan put up for the user's sign-off.
+TO_THE_PLAN = [f"/rn:up {REQUEST}", "yes", "each file"]
+RUN = ".rn/20261114-type-hints-for-invoicer"
+SIGNED_OFF = json.dumps(
+    [
+        {"of": of, "can_do": "", "decisions": [], "words": "", "state": "signed", "issue": ""}
+        for of in ("plan", HINTS, TYPED)
+    ]
+)
+
+
+def handed_over(readme: str) -> dict[str, str]:
+    """A run left with both deliverables done and signed off: the typed totals, the marker, and
+    invoicer's README as given, on the run's branch."""
+    return {
+        f"{RUN}/design-tree.json": json.dumps(ALL_DONE),
+        f"{RUN}/sign-offs.json": SIGNED_OFF,
+        "invoicer/totals.py": TYPED_TOTALS,
+        "invoicer/py.typed": "",
+        "README.md": readme,
+    }
 
 
 def tree_keeper_wrote(design: dict) -> dict[str, dict]:
@@ -125,3 +158,75 @@ def test_a_lack_the_people_would_never_meet_changes_no_decision():
     results = {**tree_keeper_wrote(ANSWERED), "evaluator": {"result": "done", "answers": answers}}
     done = orchestrator_runs(INVOICER, [f"/rn:up {REQUEST}", "yes", "each file", "/rn:ty"], results)
     assert not any("tree.py lack" in c for run in done for c in run.commands)
+
+
+@pytest.mark.supports("test_the_users_ty_signs_off_the_plan_waiting")
+def test_the_users_own_ty_on_the_plan_starts_the_hints_generator():
+    """Given the plan put up for the user's sign-off
+    When the user types `/rn:ty`
+    Then on every run the orchestrator calls no rn:ty by the Skill tool, and starts a generator
+    whose text names the hints"""
+    done = orchestrator_runs(INVOICER, [*TO_THE_PLAN, "/rn:ty"], tree_keeper_wrote(ANSWERED))
+    assert not any("rn:ty" in run.skills for run in done)
+    assert all(
+        any(role == "rn:generator" and HINTS in text for role, text in run.starts) for run in done
+    )
+
+
+@pytest.mark.supports("test_gm_with_what_to_change_sends_the_sign_off_back_and_carries_their_words")
+def test_gm_with_words_takes_them_to_the_tree_keeper_and_reads_no_comments():
+    """Given the plan put up for the user's sign-off
+    When the user types `/rn:gm only the functions that callers import`
+    Then on every run the orchestrator runs no `tree.py comments`, and starts or resumes the
+    tree-keeper with a text that holds the user's words"""
+    words = "only the functions that callers import"
+    done = orchestrator_runs(
+        INVOICER, [*TO_THE_PLAN, f"/rn:gm {words}"], tree_keeper_wrote(ANSWERED)
+    )
+    assert not any("tree.py comments" in c for run in done for c in run.commands)
+    assert all(
+        any(role == "rn:tree-keeper" and words in text for role, text in run.starts + run.resumes)
+        for run in done
+    )
+
+
+@pytest.mark.supports("test_gm_alone_has_tree_py_give_the_users_comments_since_the_sign_off")
+def test_gm_alone_reads_the_users_comments_on_the_pull_request():
+    """Given the plan put up for the user's sign-off
+    When the user types `/rn:gm` alone
+    Then on every run the orchestrator runs `tree.py comments`"""
+    done = orchestrator_runs(INVOICER, [*TO_THE_PLAN, "/rn:gm"], tree_keeper_wrote(ANSWERED))
+    assert all(any("tree.py comments" in c for c in run.commands) for run in done)
+
+
+@pytest.mark.supports(
+    "test_ready_marks_the_pull_request_ready_once_every_deliverable_is_signed_off"
+)
+def test_a_whole_pull_request_that_holds_together_is_marked_ready_with_done():
+    """Given a run left with both deliverables done and signed off, and invoicer's README as it was
+    When the user types `/rn:up` alone
+    Then on every run the orchestrator runs `tree.py ready`, and its last message starts with
+    `Done`"""
+    left = handed_over(INVOICER["README.md"])
+    done = orchestrator_runs(INVOICER, ["/rn:up"], tree_keeper_wrote(ALL_DONE), left=left)
+    assert all(any("tree.py ready" in c for c in run.commands) for run in done)
+    assert all(run.said[-1].startswith("Done") for run in done)
+
+
+@pytest.mark.supports(
+    "test_a_clash_the_whole_pull_request_read_finds_starts_the_rounds_again_from_its_decision"
+)
+def test_a_clash_in_the_whole_pull_request_goes_back_to_its_decision_before_ready():
+    """Given a run left with both deliverables done and signed off, its README on the branch telling
+    callers to pass the tax rate as text where the hints type it Decimal
+    When the user types `/rn:up` alone
+    Then on no run does the orchestrator run `tree.py ready`, and on every run it starts or resumes
+    the tree-keeper with a text naming README.md"""
+    readme = INVOICER["README.md"] + '\nPass the tax rate as text, such as `"0.19"`.\n'
+    left = handed_over(readme)
+    done = orchestrator_runs(INVOICER, ["/rn:up"], tree_keeper_wrote(ALL_DONE), left=left)
+    assert not any("tree.py ready" in c for run in done for c in run.commands)
+    assert all(
+        any(role == "rn:tree-keeper" and "README.md" in t for role, t in run.starts + run.resumes)
+        for run in done
+    )

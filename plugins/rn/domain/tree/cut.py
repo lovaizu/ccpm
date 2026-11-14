@@ -1,7 +1,8 @@
 """Decides each role's Cut, the part of the design tree that the role starts with and nothing else,
 and the run values that the guard holds the role to: the tree-keeper's design tree; the
-generator's goal, deliverable, decisions, inputs, the lacks kept for its round, and the step it
-stood at; and the evaluator's deliverable, its people, and one group of necessary conditions."""
+generator's goal, deliverable, decisions, inputs, the lacks kept for its round, the step it stood
+at, and the refactor best practice that finishes its deliverable; and the evaluator's deliverable,
+its people, and one group of necessary conditions."""
 
 from __future__ import annotations
 
@@ -19,7 +20,8 @@ class Cut:
     the role's record, and what the role's `<role>-in.schema.json` names beside them, each "" or
     empty where the role takes none: the design tree's path for the tree-keeper; the deliverable,
     its kind, its best practice, the round, the goal, the decisions it builds from, its inputs, the
-    lacks kept, the Place it picks up from, and where it writes what it made, for the generator;
+    lacks kept, the Place it picks up from, the path of the refactor best practice that finishes
+    the deliverable, and where it writes what it made, for the generator;
     and the deliverable, its best practice, the round, the goal, who its people are, the group, its
     necessary conditions, and where it writes its Answers, for the evaluator."""
 
@@ -36,6 +38,7 @@ class Cut:
     inputs: tuple[str, ...] = ()
     lacks: tuple[LackKept, ...] = ()
     place: Place | None = None
+    finish: str = ""
     group: str = ""
     conditions: tuple[str, ...] = ()
     out: str = ""

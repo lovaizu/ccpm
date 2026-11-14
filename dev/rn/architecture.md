@@ -55,19 +55,21 @@ What each decides alone:
   Where the deliverable meets each necessary condition of its group for its people, and, where it
   doesn't, what they still lack.
 - tree.py\
-  The tree's form, which nodes a change touches, and each deliverable whose turn has come to be
+  The tree's form and which nodes a change touches; each deliverable whose turn has come to be
   doing, which is each one that rests on no open point and on no plan or deliverable not yet signed
-  off, each role's cut, what waits for the user's sign-off and what they signed off, the run's
-  name, worktree, and branch, the runs left and where each stopped, and when the run's work reaches
-  its branch and its pull request: each commit, each push, the user's comments since a sign-off,
-  the pull request marked ready, and the issue of each lesson that the user signs off.
+  off; each role's cut, with each best practice the role works by; where each round keeps its Try
+  record, Answers, Lack kept, and Place, and their form; what waits for the user's sign-off, and
+  what they signed off; the run's name, worktree, and branch; the runs left, and where each
+  stopped; and when the run's work reaches its branch and its pull request: each commit, each
+  push, the user's comments since a sign-off, the pull request marked ready, and the issue of each
+  lesson that the user signs off.
 - repository\
   Each git and gh command that tree.py runs, and how it reads what they print: the worktree, each
   commit and push, the draft pull request, its comments, marking it ready, and the issue.
 - record.py\
   A record's form, and rn's check: whether a role's record holds each step of its part and each
-  practice of its best practice where the step takes it, and whether its result names each item of
-  each list it carries.
+  practice of each best practice of its cut where the step takes it, and whether its result names
+  each item of each list it carries.
 - throwaway.py\
   Where a deliverable's commands run.
 - guard\
@@ -131,7 +133,11 @@ The choices made, and why:
 ## Principles
 
 rn builds on [the plugin guide](../plugin-development-guide.md), and adds these rules,
-which every part keeps.
+which every part keeps. They change none of the guide's: the orchestrator resumes a role that
+ends on a point with the decision, and with the user's words word for word where they answered, as
+its [Messages](../plugin-development-guide.md#messages) says, as a new start would give the role
+the tree-keeper's words for what the user meant, while the design tree keeps the decision for each
+later round.
 
 ### Drawn out along the design tree
 
@@ -223,6 +229,7 @@ sequenceDiagram
   participant W as throwaway.py
   participant E as evaluator
   participant GD as guard
+  participant A as adapters
   participant R as record.py
   U->>O: /rn:up with what they want
   O->>T: makes the run's worktree
@@ -241,14 +248,20 @@ sequenceDiagram
   O->>O: checks it against the design tree best practice
   Note over U,O: The orchestrator settles each point, as S2 draws, and puts up the plan, as S3 draws.
   loop each deliverable whose turn has come, as it rests on no open point and on nothing not signed off
-    O->>G: starts it (Cut, Lack kept)
+    GD->>A: asks for the text of the generator's start, with each start that runs
+    A->>T: gets each deliverable doing, and the Cut of the first that no start that runs holds (Cut)
+    A-->>GD: that start's text and run values in Lane's form, or none where no work waits
+    GD-->>O: the generator's start due, with its text
+    O->>G: starts it, with that text (Cut, Lack kept)
+    Note over O,A: The guard lets a start through only with the text the adapters gave for its role, and stops any other. Each start of the tree-keeper and of each evaluator goes the same way.
     G->>G: makes the deliverable from the design, and checks it by the best practice
     G->>R: records each step and practice as it takes it (Record)
     G->>T: commits its work at the end of each step (Place)
     G->>W: tries it (Try record)
     alt the design leaves a point open
       G-->>O: asks, naming it
-      Note over O,G: The orchestrator settles it, as S2 draws, and starts a new generator from its cut once the tree holds the decision. The rounds of each other deliverable go on meanwhile.
+      Note over O,G: The orchestrator settles it, as S2 draws, and the rounds of each other deliverable go on meanwhile.
+      O->>G: resumes it once the tree holds the decision, with its ground, and the user's words word for word where they answered
     else something outside the work stops it, such as a missing tool
       G-->>O: lacks, naming it
       O->>U: what it lacks (Point)
@@ -406,10 +419,16 @@ sequenceDiagram
 sequenceDiagram
   actor U as user
   participant O as orchestrator
+  participant GD as guard
+  participant A as adapters
+  participant R as record.py
   participant T as tree.py
   participant K as tree-keeper
   participant G as generator
   U->>O: /rn:up, alone, in a new conversation
+  GD->>A: asks for the results kept, as /rn:up loads
+  A->>R: gets the result kept in each record of the run whose worktree the conversation works in (Record)
+  A-->>GD: those results in Lane's form, or none where the conversation works in no run's worktree
   O->>T: lists the runs left
   alt no run is left
     O->>U: says so
@@ -421,7 +440,7 @@ sequenceDiagram
   O->>U: Picking up, where it stopped, and the point or sign-off waiting
   O->>K: starts it, on the run picked up (Cut)
   O->>G: starts each that stood in a step, at that step (Cut, Place)
-  Note over O,G: The work goes on, as S1, S2, or S3 draws.
+  Note over O,G: Each start goes through the guard and the adapters, and the work goes on, as S1, S2, or S3 draws.
 ```
 
 ### S6: the work handed over
@@ -457,7 +476,7 @@ sequenceDiagram
       end
     end
   and
-    O->>O: reads the whole pull request against the goal at once: deliverables that contradict one another, a part beyond what the goal needs, work that does nothing toward it, and a file that rests on a changed best practice, rule, or name and still says the old thing
+    O->>O: reads the whole pull request at once, for each clash between deliverables and each part the goal doesn't need
     opt it finds one
       O->>K: the decision it changes (Decision)
       Note over O,K: The rounds start again from the design, as S1 draws, and S6 starts again once they end.
@@ -570,8 +589,8 @@ checks that each names an element or a case one level up.
   duplicate-code and cyclic-import checks, and `claude -p` on Opus for the prompts.
 - Passes when: line and branch coverage of 100%; 0 surviving mutants; 0 counterexamples from the
   property-based tests of `tree.py`'s reading and writing of the design tree and its list of the
-  nodes that a change touches, `record.py`'s check of a record against a prompt's steps and a best
-  practice's practices, and each adapter's reading of a Cut or a record into Lane's form; for each
+  nodes that a change touches, `record.py`'s check of a record against a prompt's steps and its best
+  practices' practices, and each adapter's reading of a Cut or a record into Lane's form; for each
   function, McCabe complexity of 10 at most, cognitive complexity of 15 at most, and at most 6
   returns, 12 branches, 5 arguments, and 50 statements; 0 findings from pyrefly, ruff, and pylint's
   checks; and each case of a prompt passing on all of its k = 3 runs.

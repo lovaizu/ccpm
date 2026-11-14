@@ -91,17 +91,32 @@ def test_a_generator_whose_record_skips_the_practices_of_its_best_practice_is_he
     assert stopped.blocked and reached is None and "N1.1" in stopped.said
 
 
+@pytest.mark.supports("Every step by best practice", "guard", "generator", "Cut")
+def test_a_generator_whose_record_skips_its_refactor_practices_is_held_at_its_end(
+    broken: bool, conv: Conversation, repo: Repo, run: Run
+):
+    """Given the hints' generator running, which recorded each step of its part and each practice
+    of the code best practice, and no practice of the refactor-code best practice that its cut names
+    When it gives `done`
+    Then the guard holds its end, naming the refactor-code best practice"""
+    hints_doing(conv, repo, run)
+    given, generator = started(conv, repo, run, "generator", HINTS)
+    records_all(generator, repo, given, "generator", "code")
+    stopped, reached = gives(generator, repo, "generator", "done")
+    assert stopped.blocked and reached is None and "refactor-code" in stopped.said
+
+
 @pytest.mark.supports("Every step by best practice", "guard", "generator")
 def test_a_generator_whose_record_holds_each_step_and_practice_ends_with_its_result_kept(
     broken: bool, conv: Conversation, repo: Repo, run: Run
 ):
-    """Given the hints' generator running, which recorded each step and practice, and wrote what it
-    made naming each decision of its cut
+    """Given the hints' generator running, which recorded each step and each practice of the code
+    and refactor-code best practices, and wrote what it made naming each decision of its cut
     When it gives `done`
     Then the guard lets its end through, and its record keeps `done`"""
     hints_doing(conv, repo, run)
     given, generator = started(conv, repo, run, "generator", HINTS)
-    records_all(generator, repo, given, "generator", "code")
+    records_all(generator, repo, given, "generator", "code", "refactor-code")
     made = {"decisions": [{"about": POINT, "where": "invoicer/"}], "lacks": []}
     write(run.worktree, given["made"], json.dumps(made))
     stopped, reached = gives(generator, repo, "generator", "done")
@@ -119,7 +134,7 @@ def test_a_generator_whose_made_leaves_out_a_decision_of_its_cut_is_held_at_its_
     Then the guard holds its end, naming the decision it left out"""
     hints_doing(conv, repo, run)
     given, generator = started(conv, repo, run, "generator", HINTS)
-    records_all(generator, repo, given, "generator", "code")
+    records_all(generator, repo, given, "generator", "code", "refactor-code")
     write(run.worktree, given["made"], json.dumps({"decisions": [], "lacks": []}))
     stopped, _ = gives(generator, repo, "generator", "done")
     assert stopped.blocked and POINT in stopped.said

@@ -9,8 +9,9 @@ what you made, or when you hand back a point open or a thing outside the work th
 You start with one JSON line of your run values, in the form of `start` in
 `generator-in.schema.json`: your record, the run's folder, the deliverable's path, its kind, the
 round, your cut, and where you write what you made. Your cut holds the goal, the deliverable's
-decisions, its inputs, the lacks kept for this round, and the step you stood at where the round
-picks up. The orchestrator may resume you, as `resume` there gives it.
+decisions, its inputs, the lacks kept for this round, the step you stood at where the round picks
+up, its kind's best practice, and the refactor best practice that finishes it. The orchestrator
+may resume you, as `resume` there gives it.
 
 `tree.py place <run> <deliverable> generator <step>` commits your work at the end of each step.
 `throwaway.py try <run> <deliverable> <round> <command>` runs a command of the deliverable in a
@@ -23,8 +24,9 @@ The guard passes your end only once rn's check accepts the record and what you m
 ## Steps
 
 The steps aren't written yet. They take the moves that S1 of rn's architecture gives the
-generator: the deliverable made from the design and checked by its best practice, its work
-committed at the end of each step, and it tried in a throwaway copy.
+generator: the deliverable made from the design, finished by the refactor best practice of its
+cut, and checked by its best practice, its work committed at the end of each step, and it tried in
+a throwaway copy.
 
 ## What you give
 

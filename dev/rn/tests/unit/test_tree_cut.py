@@ -52,6 +52,22 @@ def test_the_generators_cut_of_the_hints_is_of_round_1_with_the_goal_and_its_dec
     assert found.decisions == (ANSWERED,) and found.lacks == () and found.place is None
 
 
+@pytest.mark.supports(
+    "test_a_generator_whose_record_skips_its_refactor_practices_is_held_at_its_end"
+)
+def test_the_generators_cut_of_the_hints_names_the_refactor_code_best_practice(run: str):
+    """Given the hints, of the kind code, doing
+    When the generator's cut of the hints is asked for
+    Then it names rn's refactor-code best practice beside the code one"""
+    found = cut(run, GENERATOR, HINTS)
+    assert found.finish.endswith(
+        os.path.join("best-practices", "refactor-code", "best-practice.json")
+    )
+    assert found.best_practice.endswith(
+        os.path.join("best-practices", "code", "best-practice.json")
+    )
+
+
 @pytest.mark.supports("test_a_generators_cut_holds_its_deliverables_decisions_and_no_others")
 def test_the_generators_cut_holds_no_decision_of_another_deliverable(run: str):
     """Given the typed marker holding a decision of its own

@@ -30,12 +30,14 @@ class RoleRun:
 @dataclass(frozen=True)
 class OrchestratorRun:
     """What one run of the orchestrator shows: each message it gave the user, each command it ran,
-    each role it started with its text, each skill it called by the Skill tool, and the text of
-    each file of the run's worktree at its end, by its path."""
+    each role it started with its text, each role it resumed with its message, each skill it
+    called by the Skill tool, and the text of each file of the run's worktree at its end, by its
+    path."""
 
     said: list[str] = field(default_factory=list)
     commands: list[str] = field(default_factory=list)
     starts: list[tuple[str, str]] = field(default_factory=list)
+    resumes: list[tuple[str, str]] = field(default_factory=list)
     skills: list[str] = field(default_factory=list)
     files: dict[str, str] = field(default_factory=dict)
 
@@ -76,9 +78,14 @@ def orchestrator_runs(
     prompts: list[str],
     results: dict[str, dict[str, Any]] | None = None,
     k: int = K,
+    left: dict[str, str] | None = None,
 ) -> list[OrchestratorRun]:
     """Runs the main conversation with rn loaded k times, each in a fresh copy of a git repository
-    holding the files, the user typing each prompt in turn, and gives what each run shows. Each
+    holding the files, the user typing each prompt in turn, and gives what each run shows. Where
+    `left` is given, the repository holds a run of the walkthrough's request left as a pause leaves
+    it: its worktree made by `tree.py begin`, each file of `left` committed on its branch by its
+    path from the worktree's root, in the forms tree.py writes, and pushed with its draft pull
+    request, so that `/rn:up` alone picks it up. Each
     role it starts runs as a double that gives the result the case holds for the role by its name,
     in the form of its `<role>-out.schema.json`, its design tree or Answers written where the
     result names one, so that the case tries the orchestrator alone."""
