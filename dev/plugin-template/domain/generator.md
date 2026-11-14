@@ -42,12 +42,15 @@ record lacks where it doesn't, as a practice skipped leaves its condition unmet.
 2. Read the best practice to its end: its goal, its factors, its conditions, its template, and its
    practices. Read all of it before your first change, as a practice read late comes after the
    part it shapes.
-3. Decide. For each condition, carry out its practices marked *While deciding*. Take a point that
+3. Decide. For each condition, carry out its practices marked *While deciding*, taking an item
+   that reads what a later item settles once that item has settled it. Take a point that
    what you're given decides. Decide a point that the purpose and the best practice settle, and
    keep its ground. Where neither settles a point, end with `asks`, naming the point with your
    recommendation, as a guess makes what the person didn't mean.
 4. Make. Fill each section of the template from your decisions, carrying out the practices marked
-   *While making* of the conditions that the section holds. Make each lack you're given good where
+   *While making* of the conditions that the section holds. Take an item that reads what another
+   section makes once that section is made, and the items of a condition that holds no section,
+   such as one about the whole deliverable, once every section is made. Make each lack you're given good where
    the decision it changed lands, never by a fix beside it, as the next round, made from the
    decisions, would lose such a fix.
 5. Try the deliverable as its people would use it, and keep what the try showed.
