@@ -1,19 +1,19 @@
-"""Runs a trial, one run of a plugin's end-to-end (E2E) test, as the E2E tests of
+"""Runs a plugin's end-to-end (E2E) test once, as the E2E tests of
 plugins/rn/domain/best-practices/architecture/best-practice.md say: the real Claude Code on Opus,
-with the plugins under trial, in a fresh clone of the trial's repository, and a stand-in in the
+with the plugins under test, in a fresh clone of the test's repository, and a stand-in in the
 person's place that holds an intent the plugins never receive and reads only what the person's
 screen shows. It keeps each run's records, from which the plugin's E2E test counts its key
 results. It names no plugin, so the E2E tests of every plugin of the repository run on it.
 
-Run it from the top of the repository as `python3 dev/scripts/trial.py run <trial file>`, with the
+Run it from the top of the repository as `python3 dev/scripts/e2e.py run <E2E test file>`, with the
 developer's login as CLAUDE_CODE_OAUTH_TOKEN, as dev/plugin-development-guide.md says of the Claude
 Code of a test on the model. It prints the folder of the run's records. Claude Code's hooks run
-`trial.py hook <file>`, which adds each event to the file.
+`e2e.py hook <file>`, which adds each event to the file.
 
-A trial file is one JSON object:
+An E2E test file is one JSON object:
 - `intent`: what the person means to do, which only the stand-in reads.
-- `repository`: the URL of the repository the trial clones, such as lovaizu/playground's.
-- `commits`: the path, from the top, of a JSON list of the commits that the trial makes in the
+- `repository`: the URL of the repository that the test clones, such as lovaizu/playground's.
+- `commits`: the path, from the top, of a JSON list of the commits that the test makes in the
   clone, each `{"message": <text>, "files": {<path in the clone>: <text>}}`, where a file's text
   may be `{"from": <path of a file from the top>}`.
 - `plugin_dirs`: each folder that Claude Code loads by `--plugin-dir`, where `{top}` stands for the
@@ -21,23 +21,23 @@ A trial file is one JSON object:
 - `turns`: the most prompts that the stand-in gives, 1 or more.
 - `records`: the folder, from the top, under which the run's records lie.
 - `push`: whether the clone pushes to the repository, true where the plugin needs a repository it
-  can push to, such as for a pull request, and false where it pushes nowhere. trial.py removes
+  can push to, such as for a pull request, and false where it pushes nowhere. e2e.py removes
   from the repository each branch that the run pushed and that the repository didn't hold before,
   so that the next run starts from the same repository.
 
-The records of a run lie in `<records>/<trial>/<UTC time>/`, where `<trial>` is the trial file's
+The records of a run lie in `<records>/<test>/<UTC time>/`, where `<test>` is the E2E test file's
 name without `.json`:
 - `turns.jsonl`: each turn's prompt, its times, Claude Code's exit code, and what the screen showed.
 - `hooks.jsonl`: each hook event, with the time it came.
 - `transcripts/`: Claude Code's transcript of the conversation, and of each subagent beside it.
 - `tmp/`: what the plugins wrote in the system's temporary folder, such as their run records.
-- `run.diff`: what the run changed in the clone after the trial's commits.
+- `run.diff`: what the run changed in the clone after the test's commits.
 - `branches/<branch>.diff`: what the run committed on each branch it made, such as a plugin's work
-  in its worktree, after the trial's commits.
+  in its worktree, after the test's commits.
 
 The records hold neither the login nor an email address, nor the lines of Claude Code's requests to
 its API, as they hold the developer's account and not the run. They give `<top>` for the top of the
-repository and `<trial>` for the trial's temporary folder, whose clone is `<trial>/clone`."""
+repository and `<run>` for the run's temporary folder, whose clone is `<run>/clone`."""
 
 from __future__ import annotations
 
@@ -92,16 +92,16 @@ EVENTS = (
     "UserPromptExpansion",
     "UserPromptSubmit",
 )
-# The push URL of the clone of a trial that pushes nothing, which no push reaches.
-NO_PUSH = "no-push://a-trial-pushes-nothing"
-# The longest one turn of the Claude Code under trial may take.
+# The push URL of the clone of a test that pushes nothing, which no push reaches.
+NO_PUSH = "no-push://an-e2e-test-pushes-nothing"
+# The longest that one turn of the Claude Code under test may take.
 TURN_SECONDS = 3600
-# The identity of the trial's own commits.
+# The identity of the test's own commits.
 AUTHOR = {
-    "GIT_AUTHOR_NAME": "trial",
-    "GIT_AUTHOR_EMAIL": "trial@trial.invalid",
-    "GIT_COMMITTER_NAME": "trial",
-    "GIT_COMMITTER_EMAIL": "trial@trial.invalid",
+    "GIT_AUTHOR_NAME": "e2e",
+    "GIT_AUTHOR_EMAIL": "e2e@e2e.invalid",
+    "GIT_COMMITTER_NAME": "e2e",
+    "GIT_COMMITTER_EMAIL": "e2e@e2e.invalid",
 }
 # The lines of a transcript that hold the account or the requests to the API, and not the run.
 DROPPED = {"api-request", "api-request-blob", "api-request-shape", "session-owner"}
@@ -116,11 +116,11 @@ SHOWN = {
     "Agent": "subagent_type",
     "Skill": "skill",
 }
-USAGE = "usage: python3 dev/scripts/trial.py run <trial file> | hook <file>"
+USAGE = "usage: python3 dev/scripts/e2e.py run <E2E test file> | hook <file>"
 
 
 class Refused(Exception):
-    """What's wrong with the trial, so that whoever ran trial.py can fix it."""
+    """What's wrong with the test, so that whoever ran e2e.py can fix it."""
 
 
 File = Union[str, dict]
@@ -135,12 +135,12 @@ class Commit:
 @dataclass
 class RunRecords:
     """The folder of a run's records, into which each record is written without the login,
-    `token`, or an email address, and with `<top>` and `<trial>` in place of the paths of the top
-    and of the trial's temporary folder, which name the developer's machine and not the run."""
+    `token`, or an email address, and with `<top>` and `<run>` in place of the paths of the top
+    and of the run's temporary folder, which name the developer's machine and not the run."""
 
     folder: str
     top: str
-    trial: str
+    temporary: str
     token: str
 
     def write(self, path: str, text: str) -> None:
@@ -151,12 +151,14 @@ class RunRecords:
             f.write(self.scrubbed(text))
 
     def scrubbed(self, text: str) -> str:
-        text = text.replace(self.token, "<token>").replace(self.trial, "<trial>")
+        text = text.replace(self.token, "<token>").replace(self.temporary, "<run>")
         return EMAIL.sub("<email>", text.replace(self.top, "<top>"))
 
 
 @dataclass
-class Trial:
+class E2ETest:
+    """An E2E test, as its file gives it."""
+
     name: str
     intent: str
     repository: str
@@ -182,7 +184,7 @@ def main(argv: list[str]) -> int:
             )
         print(run(read(argv[1]), os.getcwd(), token))
     except Refused as e:
-        print(f"trial.py: {e}", file=sys.stderr)
+        print(f"e2e.py: {e}", file=sys.stderr)
         return 1
     return 0
 
@@ -199,8 +201,9 @@ def hook(path: str, stdin: str) -> int:
     return 0
 
 
-def read(path: str) -> Trial:
-    """The trial of the file. Raises Refused, naming the file and the field, where it isn't one."""
+def read(path: str) -> E2ETest:
+    """The E2E test of the file. Raises Refused, naming the file and the field, where it isn't
+    one."""
     given = _json(path)
     if not isinstance(given, dict):
         raise Refused(f"{path} isn't a JSON object")
@@ -222,7 +225,7 @@ def read(path: str) -> Trial:
         raise Refused(f"{path} needs `turns` as 1 or more")
     name = os.path.basename(path).rsplit(".json", 1)[0]
     commits = _commits(given["commits"])
-    return Trial(
+    return E2ETest(
         name,
         given["intent"],
         given["repository"],
@@ -259,23 +262,23 @@ def _json(path: str) -> Any:
         raise Refused(f"{path} can't be read as JSON: {e}") from None
 
 
-def run(trial: Trial, top: str, token: str) -> str:
-    """Runs the trial and gives the folder of its records, from the top. Everything it makes
-    outside the records lies in one temporary folder, or, for a trial that pushes, in a branch of
+def run(test: E2ETest, top: str, token: str) -> str:
+    """Runs the test and gives the folder of its records, from the top. Everything it makes
+    outside the records lies in one temporary folder, or, for a test that pushes, in a branch of
     the repository, and it removes each."""
-    root = tempfile.mkdtemp(prefix="trial-")
+    root = tempfile.mkdtemp(prefix="e2e-")
     clone = os.path.join(root, "clone")
     held = None
     try:
-        head = _setup(trial, top, clone)
-        held = _heads(clone) if trial.push else None
+        head = _setup(test, top, clone)
+        held = _heads(clone) if test.push else None
         claude = os.path.join(root, "claude")
         events = os.path.join(root, "hooks.jsonl")
         _settings(claude, events)
         stand_in = os.path.join(root, "stand-in")
         for folder in (stand_in, os.path.join(root, "stand-in-claude"), os.path.join(root, "tmp")):
             os.makedirs(folder)
-        dirs = [d.replace("{top}", top).replace("{clone}", clone) for d in trial.plugin_dirs]
+        dirs = [d.replace("{top}", top).replace("{clone}", clone) for d in test.plugin_dirs]
         env = {k: v for k, v in os.environ.items() if not k.startswith(("CLAUDE", "ANTHROPIC"))}
         env["CLAUDE_CODE_OAUTH_TOKEN"] = token
         person = dict(env, CLAUDE_CONFIG_DIR=claude, TMPDIR=os.path.join(root, "tmp"))
@@ -283,8 +286,8 @@ def run(trial: Trial, top: str, token: str) -> str:
         session = str(uuid.uuid4())
         screen: list[str] = []
         turns = []
-        for n in range(1, trial.turns + 1):
-            prompt = _ask(trial.intent, "\n\n".join(screen), stand_in, standing)
+        for n in range(1, test.turns + 1):
+            prompt = _ask(test.intent, "\n\n".join(screen), stand_in, standing)
             if prompt is None:
                 break
             started = _now()
@@ -309,7 +312,7 @@ def run(trial: Trial, top: str, token: str) -> str:
             except subprocess.TimeoutExpired:
                 code, shown = (
                     None,
-                    f"> {prompt}\n(trial.py stopped the turn after {TURN_SECONDS} s)",
+                    f"> {prompt}\n(e2e.py stopped the turn after {TURN_SECONDS} s)",
                 )
             screen.append(shown)
             turns.append(
@@ -320,7 +323,7 @@ def run(trial: Trial, top: str, token: str) -> str:
                 break
             session = _session(events, session)
         stamp = time.strftime("%Y%m%dT%H%M%SZ", time.gmtime())
-        folder = os.path.join(trial.records, trial.name, stamp)
+        folder = os.path.join(test.records, test.name, stamp)
         _keep(RunRecords(os.path.join(top, folder), top, root, token), head, turns)
         return folder
     finally:
@@ -329,13 +332,13 @@ def run(trial: Trial, top: str, token: str) -> str:
         shutil.rmtree(root)
 
 
-def _setup(trial: Trial, top: str, clone: str) -> str:
-    """Clones the trial's repository, which then pushes nowhere unless the trial pushes, and makes
-    the trial's commits in it. Gives the last commit."""
-    _git(["clone", "-q", trial.repository, clone], os.path.dirname(clone))
-    if not trial.push:
+def _setup(test: E2ETest, top: str, clone: str) -> str:
+    """Clones the test's repository, which then pushes nowhere unless the test pushes, and makes
+    the test's commits in it. Gives the last commit."""
+    _git(["clone", "-q", test.repository, clone], os.path.dirname(clone))
+    if not test.push:
         _git(["remote", "set-url", "--push", "origin", NO_PUSH], clone)
-    for commit in trial.commits:
+    for commit in test.commits:
         for path, text in commit.files.items():
             if isinstance(text, dict):
                 with open(os.path.join(top, text["from"]), encoding="utf-8") as f:
@@ -376,8 +379,8 @@ def _git(args: list[str], cwd: str) -> str:
 
 
 def _settings(claude: str, events: str) -> None:
-    """Writes the configuration of the Claude Code under trial: a hook on each event that keeps it
-    in the events file, and nothing else, so that only the plugins under trial change what it
+    """Writes the configuration of the Claude Code under test: a hook on each event that keeps it
+    in the events file, and nothing else, so that only the plugins under test change what it
     does."""
     command = " ".join(
         shlex.quote(word) for word in (sys.executable, os.path.abspath(__file__), "hook", events)
@@ -473,10 +476,10 @@ def _text(content: Any) -> str:
 
 
 def _keep(records: RunRecords, head: str, turns: list[dict[str, Any]]) -> None:
-    """Writes the run's records from the trial's temporary folder: the turns, the hook events, the
+    """Writes the run's records from the run's temporary folder: the turns, the hook events, the
     transcripts, the plugins' temporary files, and what the run changed in the clone, and on each
     branch it made, after the commit `head`."""
-    root = records.trial
+    root = records.temporary
     records.write(
         "turns.jsonl", "".join(json.dumps(turn, ensure_ascii=False) + "\n" for turn in turns)
     )

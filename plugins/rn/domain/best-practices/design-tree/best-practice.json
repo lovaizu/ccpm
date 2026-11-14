@@ -90,7 +90,7 @@
        },
        {
         "at": "decide",
-        "text": "Have each level of tests pass only once the level below it passes: unit, then architecture, then product vision. A higher level finds a fault later, at a higher cost."
+        "text": "Have each level of tests pass only once the level below it passes: unit, then integration, then end-to-end (E2E). A higher level finds a fault later, at a higher cost."
        },
        {
         "at": "decide",

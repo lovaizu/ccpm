@@ -444,7 +444,7 @@ dev/rn/
 ├── architecture.md                this document
 ├── README.md                      for rn's developers
 └── tests/                         the test cases, in unit/, properties/, prompts/, integration/,
-                                   and e2e/, with the trial files that dev/scripts/trial.py runs
+                                   and e2e/, with the E2E test files that dev/scripts/e2e.py runs
 
 .claude/worktrees/
 └── rn-<yyyymmdd>-<goal>/          rn's worktree of one run, on the work's branch
@@ -515,8 +515,8 @@ checks that each names an element or a case one level up.
   tallies given as CSV, with its tests and README, so that one plan makes both code and a document.
 - Runs real: rn and Lane, installed as the README says, on the real Claude Code on Opus, in a fresh
   clone of lovaizu/playground. An AI on Opus in the user's place holds an intent that rn never
-  receives, and reads only what the screen shows, as `dev/scripts/trial.py` runs it.
-- Tools: pytest, `dev/scripts/trial.py`, and a judge on Opus for KR1.1.
+  receives, and reads only what the screen shows, as `dev/scripts/e2e.py` runs it.
+- Tools: pytest, `dev/scripts/e2e.py`, and a judge on Opus for KR1.1.
 - Passes when: the key results, KR1.1, the share of the deliverables handed over that the judge
   finds their people can't use, and KR1.2, the time from the request to the deliverable, the
   stand-in's own time answering included, each taken from the records of every run; a change kept

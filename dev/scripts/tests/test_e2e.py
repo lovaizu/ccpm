@@ -1,6 +1,6 @@
-"""The tests of dev/scripts/trial.py: it reads a trial file, runs the trial in a fresh clone of the
-trial's repository with the plugins under trial, plays the person with a stand-in that holds the
-trial's intent and reads only the screen, keeps the run's records, and removes what it made. Each
+"""The tests of dev/scripts/e2e.py: it reads an E2E test file, runs the test in a fresh clone of
+the test's repository with the plugins under test, plays the person with a stand-in that holds the
+test's intent and reads only the screen, keeps the run's records, and removes what it made. Each
 test runs it with claude_double.py on the PATH as `claude` and a local repository in place of
 GitHub's."""
 
@@ -23,10 +23,10 @@ from helpers import GIT_ENV, FolderTest, without
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 
-import trial
+import e2e
 
 DOUBLE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "claude_double.py")
-TOKEN = "sk-ant-oat01-trial-token"
+TOKEN = "sk-ant-oat01-e2e-token"
 INTENT = "You want the entries of CHANGELOG.md written."
 COMMITS = [
     {"message": "Add tally", "files": {"tally.py": "print(1)\n"}},
@@ -53,7 +53,7 @@ def refused(text: Any) -> dict[str, Any]:
     return {"type": "user", "parent_tool_use_id": None, "message": {"content": content}}
 
 
-class TrialTest(FolderTest):
+class E2ERunnerTest(FolderTest):
     def setUp(self) -> None:
         super().setUp()
         self.remote = os.path.join(self.base, "remote.git")
@@ -66,11 +66,11 @@ class TrialTest(FolderTest):
             subprocess.run(["git", *args], cwd=seed, env=env, check=True)
         shutil.rmtree(seed)
         self.write("src/plugin.json", '{"name": "p"}\n')
-        self.write_json("dev/trials/commits.json", COMMITS)
-        self.trial: dict[str, Any] = {
+        self.write_json("dev/e2e/commits.json", COMMITS)
+        self.fields: dict[str, Any] = {
             "intent": INTENT,
             "repository": self.remote,
-            "commits": "dev/trials/commits.json",
+            "commits": "dev/e2e/commits.json",
             "plugin_dirs": ["{top}/plugins/lane", "{clone}/p"],
             "turns": 3,
             "records": "records",
@@ -88,7 +88,7 @@ class TrialTest(FolderTest):
             "PATH": self.bin + os.pathsep + path,
             "CLAUDE_CODE_OAUTH_TOKEN": TOKEN,
             "CLAUDE_CODE_SESSION_ID": "the-callers-session",
-            "TRIAL_DOUBLE": os.path.join(self.base, "plan.json"),
+            "DOUBLE_PLAN": os.path.join(self.base, "plan.json"),
         }
         patched = mock.patch.dict(os.environ, self.env)
         patched.start()
@@ -100,14 +100,14 @@ class TrialTest(FolderTest):
     def plan(self, stand_in: list[Any], turns: list[dict[str, Any]]) -> None:
         self.write_json("plan.json", {"stand_in": stand_in, "turns": turns})
 
-    def run_trial(self) -> tuple[int, str, str]:
-        self.write_json("dev/trials/main.json", self.trial)
-        return self.main("run", "dev/trials/main.json")
+    def run_test(self) -> tuple[int, str, str]:
+        self.write_json("dev/e2e/main.json", self.fields)
+        return self.main("run", "dev/e2e/main.json")
 
     def main(self, *argv: str) -> tuple[int, str, str]:
         out, err = io.StringIO(), io.StringIO()
         with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
-            code = trial.main(list(argv))
+            code = e2e.main(list(argv))
         return code, out.getvalue(), err.getvalue()
 
     def calls(self, stand_in: bool) -> list[dict[str, Any]]:
@@ -124,69 +124,69 @@ class TrialTest(FolderTest):
             return [json.loads(line) for line in f]
 
     def refuses(self, why: str) -> None:
-        code, _, err = self.run_trial()
+        code, _, err = self.run_test()
         self.assertEqual(code, 1, err)
         self.assertIn(why, err)
-        self.assertEqual(os.listdir(self.temp), [], "the trial left its temporary folder")
+        self.assertEqual(os.listdir(self.temp), [], "the test left its temporary folder")
 
     # Refusals
 
-    def test_a_trial_without_the_developers_login_is_refused(self):
+    def test_a_test_without_the_developers_login_is_refused(self):
         del os.environ["CLAUDE_CODE_OAUTH_TOKEN"]
         self.refuses("CLAUDE_CODE_OAUTH_TOKEN")
 
-    def test_a_trial_file_that_isnt_json_is_refused(self):
-        self.write("dev/trials/main.json", "{")
-        code, _, err = self.main("run", "dev/trials/main.json")
+    def test_a_test_file_that_isnt_json_is_refused(self):
+        self.write("dev/e2e/main.json", "{")
+        code, _, err = self.main("run", "dev/e2e/main.json")
         self.assertEqual(code, 1)
-        self.assertIn("dev/trials/main.json", err)
+        self.assertIn("dev/e2e/main.json", err)
 
-    def test_a_trial_file_that_isnt_an_object_is_refused(self):
-        self.write_json("dev/trials/main.json", [self.trial])
-        code, _, err = self.main("run", "dev/trials/main.json")
+    def test_a_test_file_that_isnt_an_object_is_refused(self):
+        self.write_json("dev/e2e/main.json", [self.fields])
+        code, _, err = self.main("run", "dev/e2e/main.json")
         self.assertEqual(code, 1)
         self.assertIn("isn't a JSON object", err)
 
-    def test_a_trial_file_missing_a_field_is_refused(self):
-        del self.trial["intent"]
+    def test_a_test_file_missing_a_field_is_refused(self):
+        del self.fields["intent"]
         self.refuses("`intent`")
 
     def test_a_field_of_the_wrong_type_is_refused(self):
-        self.trial["plugin_dirs"] = "{top}/plugins/lane"
+        self.fields["plugin_dirs"] = "{top}/plugins/lane"
         self.refuses("`plugin_dirs`")
 
     def test_a_plugin_dir_that_isnt_text_is_refused(self):
-        self.trial["plugin_dirs"] = ["{top}/plugins/lane", 1]
+        self.fields["plugin_dirs"] = ["{top}/plugins/lane", 1]
         self.refuses("`plugin_dirs` as a list of text")
 
     def test_a_push_that_isnt_true_or_false_is_refused(self):
-        self.trial["push"] = "yes"
+        self.fields["push"] = "yes"
         self.refuses("`push`")
 
-    def test_a_trial_of_one_turn_runs(self):
-        self.trial["turns"] = 1
+    def test_a_test_of_one_turn_runs(self):
+        self.fields["turns"] = 1
         self.plan([{"done": False, "prompt": "go"}], [{}])
-        code, _, err = self.run_trial()
+        code, _, err = self.run_test()
         self.assertEqual(code, 0, err)
 
-    def test_a_trial_of_no_turn_is_refused(self):
-        self.trial["turns"] = 0
+    def test_a_test_of_no_turn_is_refused(self):
+        self.fields["turns"] = 0
         self.refuses("`turns`")
 
     def test_a_commits_file_out_of_form_is_refused(self):
-        self.write_json("dev/trials/commits.json", [{"message": "Add tally", "files": {"a": 1}}])
-        self.refuses("dev/trials/commits.json")
+        self.write_json("dev/e2e/commits.json", [{"message": "Add tally", "files": {"a": 1}}])
+        self.refuses("dev/e2e/commits.json")
 
     def test_commits_that_arent_a_list_are_refused(self):
-        self.write_json("dev/trials/commits.json", COMMITS[0])
-        self.refuses("dev/trials/commits.json")
+        self.write_json("dev/e2e/commits.json", COMMITS[0])
+        self.refuses("dev/e2e/commits.json")
 
     def test_a_commit_without_a_message_is_refused(self):
-        self.write_json("dev/trials/commits.json", [{"files": {}}])
-        self.refuses("dev/trials/commits.json")
+        self.write_json("dev/e2e/commits.json", [{"files": {}}])
+        self.refuses("dev/e2e/commits.json")
 
     def test_a_repository_that_cant_be_cloned_is_refused(self):
-        self.trial["repository"] = os.path.join(self.base, "none.git")
+        self.fields["repository"] = os.path.join(self.base, "none.git")
         self.refuses("none.git")
 
     def test_a_stand_in_reply_out_of_form_is_refused(self):
@@ -196,19 +196,19 @@ class TrialTest(FolderTest):
     def test_wrong_words_give_2(self):
         code, _, err = self.main("go")
         self.assertEqual(code, 2)
-        self.assertIn("trial.py run <trial file>", err)
+        self.assertIn("e2e.py run <E2E test file>", err)
 
     # The clone and the plugins
 
-    def test_the_trial_runs_in_a_clone_with_the_trials_commits(self):
+    def test_the_test_runs_in_a_clone_with_the_tests_commits(self):
         self.plan([{"done": False, "prompt": "/lane:up p"}, {"done": True}], [{}])
-        self.run_trial()
+        self.run_test()
         (turn,) = self.calls(stand_in=False)
         self.assertEqual(turn["log"], ["Add the plugin", "Add tally", "Initial commit"])
 
     def test_a_file_of_a_commit_can_be_copied_from_the_repository(self):
         self.plan([{"done": False, "prompt": "go"}, {"done": True}], [{"show": ["p/plugin.json"]}])
-        self.run_trial()
+        self.run_test()
         (turn,) = self.calls(stand_in=False)
         self.assertEqual(turn["shown"], {"p/plugin.json": '{"name": "p"}\n'})
 
@@ -219,33 +219,33 @@ class TrialTest(FolderTest):
 
     def test_a_push_from_the_clone_fails(self):
         self.plan([{"done": False, "prompt": "go"}, {"done": True}], [{}])
-        self.run_trial()
+        self.run_test()
         (turn,) = self.calls(stand_in=False)
         self.assertFalse(turn["pushed"])
         self.assertNotIn("pushed", self.remote_branches())
 
-    def test_a_trial_that_pushes_reaches_the_repository_and_removes_its_branches_after(self):
-        # Given a trial whose plugin pushes its branch, as rn pushes its work for a pull request,
-        # When the run pushes a branch and the trial ends,
+    def test_a_test_that_pushes_reaches_the_repository_and_removes_its_branches_after(self):
+        # Given a test whose plugin pushes its branch, as rn pushes its work for a pull request,
+        # When the run pushes a branch and the test ends,
         # Then the push went through, and the repository holds only the branches it held before.
-        self.trial["push"] = True
+        self.fields["push"] = True
         self.plan([{"done": False, "prompt": "go"}, {"done": True}], [{}])
-        code, _, err = self.run_trial()
+        code, _, err = self.run_test()
         self.assertEqual(code, 0, err)
         (turn,) = self.calls(stand_in=False)
         self.assertTrue(turn["pushed"])
         self.assertEqual(self.remote_branches(), "* main\n")
 
-    def test_a_trial_that_pushes_leaves_a_branch_the_repository_held_before(self):
+    def test_a_test_that_pushes_leaves_a_branch_the_repository_held_before(self):
         subprocess.run(["git", "branch", "pushed", "main"], cwd=self.remote, check=True)
-        self.trial["push"] = True
+        self.fields["push"] = True
         self.plan([{"done": False, "prompt": "go"}, {"done": True}], [{}])
-        self.run_trial()
+        self.run_test()
         self.assertIn("pushed", self.remote_branches())
 
-    def test_each_turn_runs_claude_on_opus_with_the_plugins_under_trial(self):
+    def test_each_turn_runs_claude_on_opus_with_the_plugins_under_test(self):
         self.plan([{"done": False, "prompt": "/lane:up p"}, {"done": True}], [{}])
-        self.run_trial()
+        self.run_test()
         (turn,) = self.calls(stand_in=False)
         argv = turn["argv"]
         self.assertEqual(argv[:3], ["-p", "--model", "opus"])
@@ -257,7 +257,7 @@ class TrialTest(FolderTest):
     def test_the_first_turn_sets_the_session_and_each_later_one_resumes_it(self):
         replies = [{"done": False, "prompt": "one"}, {"done": False, "prompt": "two"}]
         self.plan([*replies, {"done": True}], [{}, {}])
-        self.run_trial()
+        self.run_test()
         first, second = (call["argv"] for call in self.calls(stand_in=False))
         session = first[first.index("--session-id") + 1]
         self.assertNotIn("--resume", first)
@@ -266,13 +266,13 @@ class TrialTest(FolderTest):
     def test_a_turn_that_starts_a_new_conversation_is_followed_by_the_next(self):
         replies = [{"done": False, "prompt": "/clear"}, {"done": False, "prompt": "two"}]
         self.plan([*replies, {"done": True}], [{"session": "the-new-one"}, {}])
-        self.run_trial()
+        self.run_test()
         second = self.calls(stand_in=False)[1]["argv"]
         self.assertEqual(second[second.index("--resume") + 1], "the-new-one")
 
     def test_claude_runs_on_a_config_of_its_own_with_none_of_the_callers_settings(self):
         self.plan([{"done": False, "prompt": "go"}, {"done": True}], [{}])
-        self.run_trial()
+        self.run_test()
         (turn,) = self.calls(stand_in=False)
         env = turn["env"]
         self.assertEqual(env["CLAUDE_CODE_OAUTH_TOKEN"], TOKEN)
@@ -283,7 +283,7 @@ class TrialTest(FolderTest):
 
     def test_the_temporary_folder_is_removed(self):
         self.plan([{"done": False, "prompt": "go"}, {"done": True}], [{}])
-        code, out, err = self.run_trial()
+        code, out, err = self.run_test()
         self.assertEqual(code, 0, err)
         self.assertEqual(os.listdir(self.temp), [])
         self.assertEqual(out.strip(), self.records())
@@ -292,7 +292,7 @@ class TrialTest(FolderTest):
 
     def test_the_stand_in_holds_the_intent_with_no_tool_outside_the_clone(self):
         self.plan([{"done": True}], [])
-        self.run_trial()
+        self.run_test()
         (stand_in,) = self.calls(stand_in=True)
         argv = stand_in["argv"]
         self.assertIn(INTENT, argv[argv.index("--system-prompt") + 1])
@@ -304,21 +304,21 @@ class TrialTest(FolderTest):
 
     def test_claude_is_told_to_install_and_send_nothing_as_dev_md_says(self):
         self.plan([{"done": False, "prompt": "go"}, {"done": True}], [{}])
-        self.run_trial()
+        self.run_test()
         for call in self.calls(stand_in=False) + self.calls(stand_in=True):
             argv = call["argv"]
             self.assertIn("Install nothing", argv[argv.index("--append-system-prompt") + 1])
 
-    def test_the_trial_ends_when_the_stand_in_is_done(self):
+    def test_the_test_ends_when_the_stand_in_is_done(self):
         self.plan([{"done": False, "prompt": "go"}, {"done": True}], [{}])
-        self.run_trial()
+        self.run_test()
         self.assertEqual(len(self.calls(stand_in=False)), 1)
         self.assertEqual(len(self.calls(stand_in=True)), 2)
 
-    def test_the_trial_ends_at_its_turn_limit(self):
-        self.trial["turns"] = 1
+    def test_the_test_ends_at_its_turn_limit(self):
+        self.fields["turns"] = 1
         self.plan([{"done": False, "prompt": "go"}], [{}])
-        self.run_trial()
+        self.run_test()
         self.assertEqual(len(self.calls(stand_in=False)), 1)
         self.assertEqual(len(self.calls(stand_in=True)), 1)
 
@@ -330,12 +330,12 @@ class TrialTest(FolderTest):
         self.plan([{"done": False, "prompt": ""}], [])
         self.refuses("stand-in")
 
-    def test_a_turn_past_its_time_is_kept_and_ends_the_trial(self):
+    def test_a_turn_past_its_time_is_kept_and_ends_the_test(self):
         self.plan(
             [{"done": False, "prompt": "go"}, {"done": False, "prompt": "again"}], [{"sleep": 3}]
         )
-        with mock.patch.object(trial, "TURN_SECONDS", 1):
-            code, _, err = self.run_trial()
+        with mock.patch.object(e2e, "TURN_SECONDS", 1):
+            code, _, err = self.run_test()
         self.assertEqual(code, 0, err)
         (turn,) = self.kept("turns.jsonl")
         self.assertIsNone(turn["exit"])
@@ -345,7 +345,7 @@ class TrialTest(FolderTest):
 
     def stand_in_read(self, stream: list[Any]) -> str:
         self.plan([{"done": False, "prompt": "go"}, {"done": True}], [{"stream": stream}])
-        self.run_trial()
+        self.run_test()
         argv = self.calls(stand_in=True)[1]["argv"]
         return argv[-1]
 
@@ -401,14 +401,14 @@ class TrialTest(FolderTest):
 
     # The records
 
-    def test_the_records_lie_under_the_trials_name_and_its_utc_time(self):
+    def test_the_records_lie_under_the_tests_name_and_its_utc_time(self):
         self.plan([{"done": True}], [])
-        self.run_trial()
+        self.run_test()
         self.assertRegex(os.path.basename(self.records()), r"\A\d{8}T\d{6}Z\Z")
 
     def test_the_records_keep_each_turn_with_its_screen(self):
         self.plan([{"done": False, "prompt": "go"}, {"done": True}], [{"stream": [said("Hi.")]}])
-        self.run_trial()
+        self.run_test()
         (turn,) = self.kept("turns.jsonl")
         self.assertEqual((turn["turn"], turn["prompt"], turn["exit"]), (1, "go", 0))
         self.assertIn("Hi.", turn["screen"])
@@ -416,14 +416,14 @@ class TrialTest(FolderTest):
 
     def test_a_turn_that_fails_is_kept_with_its_exit_code(self):
         self.plan([{"done": False, "prompt": "go"}, {"done": True}], [{"exit": 1}])
-        code, _, _ = self.run_trial()
+        code, _, _ = self.run_test()
         self.assertEqual(code, 0)
         self.assertEqual(self.kept("turns.jsonl")[0]["exit"], 1)
 
     def test_a_turn_that_sent_no_hook_event_is_resumed_as_it_was(self):
         replies = [{"done": False, "prompt": "one"}, {"done": False, "prompt": "two"}]
         self.plan([*replies, {"done": True}], [{"hooks": False, "exit": 1}, {}])
-        self.run_trial()
+        self.run_test()
         first, second = (call["argv"] for call in self.calls(stand_in=False))
         self.assertEqual(
             second[second.index("--resume") + 1], first[first.index("--session-id") + 1]
@@ -431,7 +431,7 @@ class TrialTest(FolderTest):
 
     def test_the_records_keep_each_hook_event_with_its_time(self):
         self.plan([{"done": False, "prompt": "go"}, {"done": True}], [{}])
-        self.run_trial()
+        self.run_test()
         _, event = self.kept("hooks.jsonl")
         self.assertEqual(event["payload"]["prompt"], "go")
         self.assertRegex(event["time"], r"\A\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d+Z\Z")
@@ -446,7 +446,7 @@ class TrialTest(FolderTest):
         subagent = [{"type": "assistant", "message": {"content": "done"}}]
         turn = {"transcript": transcript, "subagents": {"agent-a1.jsonl": subagent}}
         self.plan([{"done": False, "prompt": "go"}, {"done": True}], [turn])
-        self.run_trial()
+        self.run_test()
         (session,) = (
             n for n in os.listdir(os.path.join(self.records(), "transcripts")) if "." in n
         )
@@ -462,7 +462,7 @@ class TrialTest(FolderTest):
         line = {"type": "user", "message": {"content": f"{self.base}/plugins/lane"}}
         turn = {"transcript": [line], "stream": [said("in the clone")], "show": []}
         self.plan([{"done": False, "prompt": "go"}, {"done": True}], [turn])
-        self.run_trial()
+        self.run_test()
         (clone,) = {call["cwd"] for call in self.calls(stand_in=False)}
         (session,) = (
             n for n in os.listdir(os.path.join(self.records(), "transcripts")) if "." in n
@@ -475,7 +475,7 @@ class TrialTest(FolderTest):
     def test_the_records_keep_the_run_records_in_the_temporary_folder_and_not_claudes_own(self):
         tmp = {"lane/20261112-p/proposal.json": "{}", "claude-1000/x/tasks/a.output": "x"}
         self.plan([{"done": False, "prompt": "go"}, {"done": True}], [{"tmp": tmp}])
-        self.run_trial()
+        self.run_test()
         self.assertTrue(
             os.path.isfile(os.path.join(self.records(), "tmp/lane/20261112-p/proposal.json"))
         )
@@ -484,18 +484,18 @@ class TrialTest(FolderTest):
     def test_the_records_keep_what_the_run_changed_in_the_clone(self):
         turn = {"files": {"CHANGELOG.md": "## 0.2.0\n", "p/hooks/hooks.json": "{}\n"}}
         self.plan([{"done": False, "prompt": "go"}, {"done": True}], [turn])
-        self.run_trial()
+        self.run_test()
         diff = self.read(os.path.join(self.records(), "run.diff"))
         self.assertIn("+## 0.2.0", diff)
         self.assertIn("p/hooks/hooks.json", diff)
 
     def test_the_records_keep_what_the_run_committed_on_each_branch_it_made(self):
         # Given a run that commits on a branch of its own in a worktree, as rn does,
-        # When the trial keeps its records,
-        # Then they hold the branch's change since the trial's commits, by the branch's name.
+        # When the test keeps its records,
+        # Then they hold the branch's change since the test's commits, by the branch's name.
         branches = {"rn-20261114-csv": {"tally.py": "print('a,b')\n"}}
         self.plan([{"done": False, "prompt": "go"}, {"done": True}], [{"branches": branches}])
-        self.run_trial()
+        self.run_test()
         diff = self.read(os.path.join(self.records(), "branches", "rn-20261114-csv.diff"))
         self.assertIn("+print('a,b')", diff)
         self.assertEqual(
@@ -513,10 +513,10 @@ class TrialTest(FolderTest):
         self.assertTrue(re.match(r"\d{4}-", event["time"]))
 
     def test_the_hook_runs_as_claude_codes_command(self):
-        argv = ["trial.py", "hook", "events.jsonl"]
+        argv = ["e2e.py", "hook", "events.jsonl"]
         stdin = mock.patch("sys.stdin", io.StringIO("{}"))
         with mock.patch("sys.argv", argv), stdin, self.assertRaises(SystemExit) as ended:
-            runpy.run_path(trial.__file__, run_name="__main__")
+            runpy.run_path(e2e.__file__, run_name="__main__")
         self.assertEqual(ended.exception.code, 0)
         self.assertEqual(json.loads(self.read("events.jsonl"))["payload"], {})
 

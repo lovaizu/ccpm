@@ -75,7 +75,7 @@ sequenceDiagram
     ├── plugin-development-guide.md         this document
     ├── plugin-template/                the files a plugin starts from
     ├── images/                         the figures' style, and this document's figures <CSS, SVG>
-    ├── scripts/                        the checks, and trial.py, which runs an E2E test <Python 3>
+    ├── scripts/                        the checks, and e2e.py, which runs an E2E test <Python 3>
     ├── tests/                          the double of Claude Code that the plugins' tests share <Python 3>
     └── <plugin>/                       one for each folder in plugins/
         ├── product-vision.md           the plugin's product vision <Markdown>
@@ -435,8 +435,8 @@ Each test case is a pytest test. Its docstring states its Given, When, and Then,
 heading, for an integration case, and an integration case by its test's name for a unit case. A
 plugin's cases lie in `dev/<plugin>/tests/`: the unit tests of its code in `unit/`, its
 property-based tests in `properties/`, the unit tests of its prompts in `prompts/`, the integration
-tests in `integration/`, and the E2E tests in `e2e/`, with the trial files that
-`dev/scripts/trial.py` runs. `python3 dev/scripts/trace.py check <plugin>` reads the cases and the
+tests in `integration/`, and the E2E tests in `e2e/`, with the E2E test files that
+`dev/scripts/e2e.py` runs. `python3 dev/scripts/trace.py check <plugin>` reads the cases and the
 elements of the plugin's architecture by their names, and gives 0 only where each check of the
 trace that the architecture's Test strategy sets holds.
 

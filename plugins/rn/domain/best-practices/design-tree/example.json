@@ -47,57 +47,7 @@
       "name": "Each part a developer builds by the design gives, with the others, what the README promises",
       "path": "plugins/rn/domain/best-practices/architecture",
       "kind": "meta",
-      "inputs": [],
-      "preconditions": [],
-      "status": "doing",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": true,
-          "decisions": [
-            {
-              "about": "Tests designed with the architecture",
-              "decided": "the architecture is checked by its tests before any implementation: the targets are every part, all of the architecture (each story's paths, principle, component's decisions, handoff, and kind of data), and each key result of the product vision; parts are tried by unit tests, prompts among them on the model their users run several times, the architecture by integration tests, and the key results by E2E tests; right after the architecture's Test strategy decides the tools and each quality check with its criterion, every test case is written as Given/When/Then in test code, each naming the case one level up it supports, so that a case no part holds, a part no case reaches, a part with too many cases, or a handoff no interface carries sends the maker back to the architecture, and a script checks the trace both ways by the elements' names; the user agrees to the architecture with its cases before implementation, which adds a case only where it names one a level up; the words are unit, integration, and E2E tests, and the section is Test strategy, as the V-model and outside-in TDD hold",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N6",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": true,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "A maker of code designs it, tests it first, and writes it as the field's established practice says",
@@ -148,6 +98,59 @@
       "status": "done"
     },
     {
+      "name": "A developer sees, before building any part, each test case that names nothing one level up and each element of the architecture that no case tests",
+      "path": "dev/scripts/trace.py",
+      "kind": "code",
+      "inputs": [
+        "plugins/rn/domain/best-practices/architecture",
+        "dev/plugin-development-guide.md"
+      ],
+      "preconditions": [],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
       "name": "rn's developers build its parts so that together they give what its README promises",
       "path": "dev/rn/architecture.md",
       "kind": "architecture",
@@ -156,7 +159,8 @@
         "plugins/rn/README.md"
       ],
       "preconditions": [
-        "plugins/rn/domain/best-practices/architecture"
+        "plugins/rn/domain/best-practices/architecture",
+        "dev/scripts/trace.py"
       ],
       "status": "open",
       "necessary_conditions": [
@@ -263,7 +267,8 @@
         "plugins/lane/README.md"
       ],
       "preconditions": [
-        "plugins/rn/domain/best-practices/architecture"
+        "plugins/rn/domain/best-practices/architecture",
+        "dev/scripts/trace.py"
       ],
       "status": "open",
       "necessary_conditions": [

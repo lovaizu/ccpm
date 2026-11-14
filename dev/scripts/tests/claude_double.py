@@ -1,21 +1,21 @@
 #!/usr/bin/env python3
-"""The double of Claude Code that the tests of dev/scripts/trial.py put on the PATH as `claude`.
+"""The double of Claude Code that the tests of dev/scripts/e2e.py put on the PATH as `claude`.
 
-It plays the plan at $TRIAL_DOUBLE, a JSON object, and adds each call to `calls.jsonl` beside it.
-A call with `--json-schema` is the stand-in's: it prints, as `claude -p --output-format json`
+It plays the plan at $DOUBLE_PLAN, a JSON object, and adds each call to `calls.jsonl` beside
+it. A call with `--json-schema` is the stand-in's: it prints, as `claude -p --output-format json`
 does, a result whose `structured_output` is the plan's next item of `stand_in`, or that item as it
-is where it's text. Any other call is a turn of the Claude Code under trial, of the plan's next
-item of `turns`. It runs each command of `SessionStart` and of `UserPromptSubmit` in
+is where it's text. Any other call is a turn of the Claude Code under test, of the plan's next item
+of `turns`. It runs each command of `SessionStart` and of `UserPromptSubmit` in
 $CLAUDE_CONFIG_DIR/settings.json, as Claude Code runs a hook, on the conversation of the turn's
 `session` where it names one, as /clear starts one, unless its `hooks` is false. It writes its
-`transcript` lines into the session's transcript under $CLAUDE_CONFIG_DIR/projects/, its
-`subagents` beside it, its `tmp` files under $TMPDIR, and its `files` into the working folder,
-commits each of its `branches`, `{<name>: {<path>: <text>}}`, on a branch of that name in a
-worktree `.claude/worktrees/<name>/` of the working folder, as a plugin may commit its work,
-prints its `stream` lines, as `--output-format stream-json` does, sleeps its `sleep` seconds, and
-exits with its `exit`. Each call notes what the working folder's `git log --oneline` gives, the
-text of each file the turn's `show` names, and whether a push from it succeeded, so that a test
-checks the clone that trial.py removed."""
+`transcript` lines into the session's transcript under $CLAUDE_CONFIG_DIR/projects/, its `subagents`
+beside it, its `tmp` files under $TMPDIR, and its `files` into the working folder, commits each of
+its `branches`, `{<name>: {<path>: <text>}}`, on a branch of that name in a worktree
+`.claude/worktrees/<name>/` of the working folder, as a plugin may commit its work, prints its
+`stream` lines, as `--output-format stream-json` does, sleeps its `sleep` seconds, and exits with
+its `exit`. Each call notes what the working folder's `git log --oneline` gives, the text of each
+file the turn's `show` names, and whether a push from it succeeded, so that a test checks the clone
+that e2e.py removed."""
 
 from __future__ import annotations
 
@@ -31,7 +31,7 @@ def after(argv: list[str], flag: str) -> str | None:
 
 
 def main(argv: list[str]) -> int:
-    plan_path = os.environ["TRIAL_DOUBLE"]
+    plan_path = os.environ["DOUBLE_PLAN"]
     with open(plan_path, encoding="utf-8") as f:
         plan = json.load(f)
     log = os.path.join(os.path.dirname(plan_path), "calls.jsonl")
@@ -92,7 +92,7 @@ def _shown(turn: dict) -> dict[str, str]:
 
 
 def _play(turn: dict, argv: list[str]) -> int:
-    """Plays the turn of the Claude Code under trial, and gives its exit code."""
+    """Plays the turn of the Claude Code under test, and gives its exit code."""
     config = os.environ["CLAUDE_CONFIG_DIR"]
     with open(os.path.join(config, "settings.json"), encoding="utf-8") as f:
         settings = json.load(f)

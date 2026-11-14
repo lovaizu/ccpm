@@ -68,7 +68,7 @@ Does each deliverable name the deliverables it takes content from and those that
 A deliverable started before its inputs rests on a guess. A [topological sort](https://en.wikipedia.org/wiki/Topological_sorting) of the deliverables by what each takes from and waits for gives an order that keeps every dependency.
 
 1. *While deciding.* Give each deliverable, in `inputs`, the path of each deliverable it takes content from, and in `preconditions`, the path of each one that must pass before it starts, each of a kind that its best practice names there. Use paths, not kinds, since deliverables of one kind can serve different products.
-2. *While deciding.* Have each level of tests pass only once the level below it passes: unit, then architecture, then product vision. A higher level finds a fault later, at a higher cost.
+2. *While deciding.* Have each level of tests pass only once the level below it passes: unit, then integration, then end-to-end (E2E). A higher level finds a fault later, at a higher cost.
 3. *While deciding.* Put a check, and a test that shows the check failing, before the deliverables that trust its results, as [the architecture best practice](../architecture/best-practice.md) trusts a check only then.
 4. *While making.* Let a script order the deliverables by these paths, instead of working out the order case by case.
 5. *While making.* After each change, have a script, such as rn's `tree.py`, check that each deliverable comes after its inputs and preconditions, that each research deliverable serves a later decision, and that a later deliverable uses each meta deliverable's kind.

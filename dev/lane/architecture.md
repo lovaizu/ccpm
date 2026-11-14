@@ -697,7 +697,7 @@ plugins/lane/
 dev/lane/
 ├── product-vision.md, architecture.md, images/
 └── tests/                        the test cases, in unit/, properties/, prompts/, integration/,
-                                  and e2e/, with the trial files that dev/scripts/trial.py runs
+                                  and e2e/, with the E2E test files that dev/scripts/e2e.py runs
 
 <the user's plugin>/
 ├── skills/<skill>/SKILL.md       the skill's Steps, with the sentences that Lane laid
@@ -778,9 +778,9 @@ tests, and end-to-end (E2E) tests. Its test cases lie in `dev/lane/tests/`, and
   runs the plugin.
 - Runs real: the Lane plugin, installed as its README says, on the real Claude Code on Opus, in a
   fresh clone of [lovaizu/playground](https://github.com/lovaizu/playground). An AI on Opus in the
-  user's place holds the intent, and reads only what the screen shows, as `dev/scripts/trial.py`
+  user's place holds the intent, and reads only what the screen shows, as `dev/scripts/e2e.py`
   runs it.
-- Tools: pytest, `dev/scripts/trial.py`, and a judge on Opus for each way of KR1.1 that the hook
+- Tools: pytest, `dev/scripts/e2e.py`, and a judge on Opus for each way of KR1.1 that the hook
   events don't show.
 - Passes when: the key results, KR1.1, the share of the plugin's runs that go wrong in one of the
   product vision's ways, counted by code from each run's hook events where they show the way and by

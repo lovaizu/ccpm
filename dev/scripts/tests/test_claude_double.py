@@ -1,6 +1,6 @@
-"""The tests of claude_double.py, the double of Claude Code that the tests of trial.py run: each of
-its outputs that trial.py reads has the form that the real Claude Code 2.1.322 gave in
-claude-code-2.1.322-clear.jsonl, the hook events of a /clear that a trial's records kept, and in
+"""The tests of claude_double.py, the double of Claude Code that the tests of e2e.py run: each of
+its outputs that e2e.py reads has the form that the real Claude Code 2.1.322 gave in
+claude-code-2.1.322-clear.jsonl, the hook events of a /clear that an E2E test's records kept, and in
 `claude -p --output-format json --json-schema`."""
 
 from __future__ import annotations
@@ -13,12 +13,12 @@ import sys
 from helpers import FolderTest
 
 DOUBLE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "claude_double.py")
-# The session's first SessionStart and that of its /clear, as a trial run of Claude Code 2.1.322
+# The session's first SessionStart and that of its /clear, as an E2E run of Claude Code 2.1.322
 # recorded them in its hooks.jsonl.
 CLEARED = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "claude-code-2.1.322-clear.jsonl"
 )
-# The hook adds each event it gets to events.jsonl, as trial.py's hook adds it to the records.
+# The hook adds each event it gets to events.jsonl, as e2e.py's hook adds it to the records.
 KEEP = 'import sys; open("events.jsonl", "a").write(sys.stdin.read() + chr(10))'
 HOOK = f"{sys.executable} -c '{KEEP}'"
 
@@ -34,7 +34,7 @@ class ClaudeDoubleTest(FolderTest):
         os.makedirs("tmp")
         self.env = dict(
             os.environ,
-            TRIAL_DOUBLE=os.path.join(self.base, "plan.json"),
+            DOUBLE_PLAN=os.path.join(self.base, "plan.json"),
             CLAUDE_CONFIG_DIR=os.path.join(self.base, "config"),
             TMPDIR=os.path.join(self.base, "tmp"),
         )

@@ -21,7 +21,7 @@ CI runs these checks on every push:
 - the style of every figure
 - Mermaid's parse of every diagram in the Markdown files
 - Claude Code's check of every manifest
-- the tests of the trial driver and of the double of Claude Code, and that they run every line and
+- the tests of the E2E runner and of the double of Claude Code, and that they run every line and
   branch of each
 
 Two more runs check the tests, not the change, as
@@ -61,7 +61,7 @@ each Python. Claude Code and Mermaid's parser come from `dev/scripts/package-loc
 
 ## The end-to-end (E2E) tests
 
-`dev/scripts/trial.py` runs one run of a plugin's E2E test from a trial file on the real Claude
+`dev/scripts/e2e.py` runs a plugin's E2E test once from an E2E test file on the real Claude
 Code, and keeps the run's records, from which the E2E test counts its key results. The opening of
 the script says how to run it and what it reads and keeps.
 

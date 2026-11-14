@@ -69,13 +69,13 @@ python_files = ["test*.py"]
 norecursedirs = [".*", "__pycache__", "node_modules"]
 addopts = ["-p", "no:cacheprovider"]
 
-# How much of the trial driver and of the double of Claude Code the tests run, as N7 of
+# How much of the E2E runner and of the double of Claude Code the tests run, as N7 of
 # plugins/rn/domain/best-practices/code/best-practice.md says: every line and branch.
 [tool.coverage.run]
 branch = true
 parallel = true
 include = [
-  "*/dev/scripts/trial.py",
+  "*/dev/scripts/e2e.py",
   "*/dev/tests/claude_code.py",
 ]
 

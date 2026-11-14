@@ -65,7 +65,7 @@ python3 dev/scripts/standalone.py check
 # the page, so Mermaid's own parser parses each.
 sh dev/scripts/mermaid.sh
 
-# A behavior that no test checks can break unseen, so the tests of the trial driver and of the
+# A behavior that no test checks can break unseen, so the tests of the E2E runner and of the
 # double of Claude Code run every line and branch of their code, as the architecture best practice
 # says a unit passes. pyproject.toml holds what coverage counts. Mutation testing and the
 # property-based tests, which check the tests and not the change, run in CI by
@@ -80,7 +80,7 @@ if command -v coverage >/dev/null 2>&1; then
   COVERAGE_FILE="$scratch/.coverage" held tests coverage report
 else
   pytest -q -n auto dev/scripts/tests dev/tests
-  echo "check.sh: which lines of the trial driver and the double the tests run goes unchecked, as"\
+  echo "check.sh: which lines of the E2E runner and the double the tests run goes unchecked, as"\
     "coverage isn't installed. It comes with pyproject.toml's test-quality group, on Python 3.11"\
     "or later"
 fi
