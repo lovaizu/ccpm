@@ -195,7 +195,9 @@ case one level up.
 > - `<tries>`: what the level tries, by the names that Components, the stories, the principles, the
 >   data model, and the product vision give: at unit, each part, the prompts among them, against
 >   its contract; at integration, each element of this document; at E2E, each key result, by the
->   main use that measures it.
+>   main use that measures it; and at the level that tries it, each type of testing that Test
+>   strategy chose, such as compatibility with the host the product runs in, with the key result it
+>   guards.
 > - `<real>`: what runs real, and the double that replaces each other thing, with the source of
 >   what each double of a thing outside the product gives, such as a recorded run.
 > - `<tools>`: the test runner and the tool of each quality check, by name.
@@ -203,7 +205,8 @@ case one level up.
 >   semicolons: at unit, coverage, surviving mutants, the contracts that take property-based tests,
 >   the limits on each function, static analysis and lint, and k for a prompt; at integration,
 >   each check of the trace; at E2E, how each key result is measured and compared, how a judge is
->   trusted, and how many runs each main use takes.
+>   trusted, and how many runs each main use takes; and at its level, the check of each type of
+>   testing chosen.
 > - `<when>`: when the level runs, such as before each push, in CI, or once every lower level
 >   passes, in one sentence.
 > - `<choice>`, `<other way>`, `<why>`, `<cost>`: as in Components.
