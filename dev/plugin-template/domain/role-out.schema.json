@@ -20,15 +20,15 @@
       "type": "string"
     },
     "answers": {
-      "description": "The answers of a role that judges a work by questions, in a file the role writes: each question met, with the lines of the work that meet it, or not met, with what the work's user still lacks, and each point open that only the person can settle. Optional.",
+      "description": "The answers of a role that judges a work by questions, in a file the role writes: each question in good, with the lines of the work that meet it, or in more, with good_when, and each point open that only the person can settle. Optional.",
       "type": "object",
       "required": [
-        "met",
-        "not_met"
+        "good",
+        "more"
       ],
       "additionalProperties": false,
       "properties": {
-        "met": {
+        "good": {
           "type": "array",
           "items": {
             "type": "object",
@@ -53,13 +53,13 @@
             }
           }
         },
-        "not_met": {
+        "more": {
           "type": "array",
           "items": {
             "type": "object",
             "required": [
               "question",
-              "lacks"
+              "good_when"
             ],
             "additionalProperties": false,
             "properties": {
@@ -67,8 +67,8 @@
                 "description": "The question, by its ID.",
                 "type": "string"
               },
-              "lacks": {
-                "description": "What the work's user still lacks, in their terms, never how to make it, because the generator holds the sources and mends the work in its own way.",
+              "good_when": {
+                "description": "What the work's user gets once the work is good, in their terms, never how to make it, because the generator holds the sources and mends the work in its own way.",
                 "type": "string"
               }
             }

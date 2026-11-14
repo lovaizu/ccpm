@@ -147,7 +147,7 @@ Each role and the orchestrator record each step of their prompt, for the orchest
 its command and of its part, and each practice of the best practice they work by, at the time each
 names: a step once its result holds, and a practice while they carry it out, in the phase that its
 mark names, such as *While deciding*. Each records by a command of the plugin's own, in a file of
-the run's folder, `.<plugin>/<yyyymmdd>-<name>/`, that its run values name, or, for the
+[the run's folder](#where-a-plugin-writes-its-files) that its run values name, or, for the
 orchestrator, its part. Each start of a role has a record of its own, and so has the orchestrator.
 The plugin's own check reads the record against the prompt's steps and the best practice's
 practices. The guard runs that check by a lane of [Lane](../plugins/lane/README.md) at a role's end,
@@ -184,17 +184,23 @@ skill's frontmatter did not fire in a run of Claude Code 2.1.318, so the plugin 
 
 ### Where a plugin writes its files
 
-A plugin writes what may be kept in `.<plugin>/<yyyymmdd>-<name>/` at the root of the repository.
-It writes what it uses only while it runs in `<plugin>/<yyyymmdd>-<name>/` in the system's
-temporary folder, its tests' files included. That folder is the one `tempfile.gettempdir()` gives,
-and TMPDIR moves it. The plugin writes what must outlast an update in `${CLAUDE_PLUGIN_DATA}`. It
-writes nothing in `${CLAUDE_PLUGIN_ROOT}`.
+A plugin writes the files of its own run, such as its records, in these places. It writes what may
+be kept in the run's folder, `.<plugin>/<yyyymmdd>-<name>/` at the root of the repository. It
+writes what it uses only while it runs in `<plugin>/<yyyymmdd>-<name>/` in the system's temporary
+folder, its tests' files included. That folder is the one `tempfile.gettempdir()` gives, and TMPDIR
+moves it. The plugin writes what must outlast an update in `${CLAUDE_PLUGIN_DATA}`. It writes
+nothing in `${CLAUDE_PLUGIN_ROOT}`.
+
+A deliverable that a run makes for the user is not a file of the run. It lies where the
+repository's layout or the tool that reads it puts it. For example, rn writes a best practice that
+it makes in `.rn/best-practices/<kind>/`, where every later run looks for it.
 
 *Why*: one folder named after the plugin lets the user choose with one line of `.gitignore` whether
 git keeps it. The system clears its temporary folder, so a stopped run leaves nothing behind. An
 agent reads without asking only inside the working folder
 ([working directories](https://code.claude.com/docs/en/permissions#working-directories)).
-`${CLAUDE_PLUGIN_ROOT}` changes with each update.
+`${CLAUDE_PLUGIN_ROOT}` changes with each update. The user and their tools look for a deliverable
+where the layout or the tool puts it, and would not find it in the run's folder.
 
 ### Asking for what lies outside the work
 

@@ -36,10 +36,10 @@ gives.
 2. Read the goal, the factors, and the conditions of the best practice to their end.
 3. Use the deliverable as its people would, for what they're after, as far as what you're given
    lets you.
-4. Answer each condition as met, with the lines that meet it, or as not met, with what the people
-   still lack. Never say how to fix the deliverable, as its generator holds the sources and decides
-   the fix. Look for nothing beyond the conditions, as a hunt for defects finds something in every
-   work and never ends.
+4. Answer each condition in `good`, with the lines that meet it, or in `more`, with `good_when`:
+   what the people get once the deliverable is good. Never say how to fix the deliverable, as its
+   generator holds the sources and decides the fix. Look for nothing beyond the conditions, as a
+   hunt for defects finds something in every work and never ends.
 5. End by giving `done`, with your answer to each condition.
 
 ## What you give
