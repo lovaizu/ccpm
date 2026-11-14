@@ -188,7 +188,7 @@ case one level up.
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - `<shared rules>`, `<path>`: the test rules of the architecture that the product builds on, such
->   as the form each case takes.
+>   as the form each case takes. Leave out `by` and the link where the product builds on no other.
 > - `<cases>`: the folders of the test cases, as Directory structure names them. The cases lie
 >   there alone, each written as Given, When, and Then, and no document lists them.
 > - `<trace>`: the script that checks the trace by the names of the elements.
@@ -203,10 +203,10 @@ case one level up.
 > - `<tools>`: the test runner and the tool of each quality check, by name.
 > - `<criteria>`: each quality check with its criterion, as a number where it's one, joined by
 >   semicolons: at unit, coverage, surviving mutants, the contracts that take property-based tests,
->   the limits on each function, static analysis and lint, and k for a prompt; at integration,
->   each check of the trace; at E2E, how each key result is measured and compared, how a judge is
->   trusted, and how many runs each main use takes; and at its level, the check of each type of
->   testing chosen.
+>   the limits on each function, static analysis and lint, and, for a prompt, its k with the
+>   criterion of each type of its evaluation; at integration, each check of the trace; at E2E, how
+>   each key result is measured and compared, how a judge is trusted, and how many runs each main
+>   use takes; and at its level, the check of each type of testing chosen.
 > - `<when>`: when the level runs, such as before each push, in CI, or once every lower level
 >   passes, in one sentence.
 > - `<choice>`, `<other way>`, `<why>`, `<cost>`: as in Components.
