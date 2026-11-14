@@ -75,7 +75,11 @@ def lay(
     hooks = os.path.join(plugin_root, "hooks")
     had_hooks = os.path.isdir(hooks)
     steps = _laid_steps(proposal, found)
-    files = sorted({step.file for step, _ in steps} | {"hooks/hooks.json", "hooks/lanes.json"})
+    unheld = [s for role in found for s in role.steps if all(s is not each for each, _ in steps)]
+    files = sorted(
+        {step.file for role in found for step in role.steps}
+        | {"hooks/hooks.json", "hooks/lanes.json"}
+    )
     saved = {f: _read(os.path.join(plugin_root, f)) for f in files}
     backup = tempfile.mkdtemp()
     code = os.path.join(hooks, "lane")
@@ -83,6 +87,8 @@ def lay(
         if os.path.isdir(code):
             shutil.move(code, os.path.join(backup, "lane"))
         lines, laid = _write_steps(plugin_root, steps)
+        for step in unheld:
+            _write_step(plugin_root, step, step.words)
         lines.append(_write_hooks(plugin_root, proposal, old))
         lines.append(_write_lanes(plugin_root, proposal, laid))
         shutil.copytree(lane_code, code, ignore=shutil.ignore_patterns("__pycache__"))

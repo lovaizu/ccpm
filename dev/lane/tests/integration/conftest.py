@@ -29,20 +29,23 @@ def _without_laid() -> Callable[..., Any]:
 
 
 def _sentence_from_elsewhere() -> Callable[..., Any]:
-    """proposal.keep giving each Lane a sentence of its own words, not its type's."""
+    """proposal.kept giving `lay.py write` each Lane with a sentence of its own words, not its
+    type's, so that laying writes a sentence made apart from the check."""
     import proposal
 
-    original = proposal.keep
+    original = proposal.kept
 
-    def keep(given: Any, found: Any, temp: str, conversation: str = "") -> Any:
-        kept = original(given, found, temp, conversation)
+    def kept(temp: str, plugin: str, id: str) -> Any:
+        found = original(temp, plugin, id)
+        if found is None:
+            return None
         lanes = tuple(
             dataclasses.replace(each, sentence="Run only what the step names.")
-            for each in kept.lanes
+            for each in found.lanes
         )
-        return dataclasses.replace(kept, lanes=lanes)
+        return dataclasses.replace(found, lanes=lanes)
 
-    return keep
+    return kept
 
 
 def _result_from_reply() -> Callable[..., Any]:
@@ -66,7 +69,7 @@ PARTS: dict[str, tuple[str, str, Callable[[], Callable[..., Any]]]] = {
     "The steps are the one source": ("steps", "roles", _without_laid),
     "One type gives the sentence, the check, and the steps it suits": (
         "proposal",
-        "keep",
+        "kept",
         _sentence_from_elsewhere,
     ),
     "Laid only on the caller's own act": (

@@ -159,7 +159,6 @@ def test_write_after_the_run_of_up_that_showed_the_proposal_ended_exits_1_saying
     assert not os.path.exists(os.path.join(cwd, "changelog", "hooks"))
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("test_lay_steps_gives_up_each_role_and_step_of_the_plugin")
 def test_steps_exits_0_with_each_role_and_its_steps(cwd: str):
     """Given the walkthrough's `changelog`
@@ -170,7 +169,6 @@ def test_steps_exits_0_with_each_role_and_its_steps(cwd: str):
     assert "2. Read the commits since then with `git log --oneline`." in out
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("test_lay_steps_gives_up_each_role_and_step_of_the_plugin")
 def test_steps_of_a_plugin_whose_role_has_no_steps_exits_1_naming_its_file(cwd: str):
     """Given `changelog` whose agents/reviewer.md holds no numbered list under `## Steps`

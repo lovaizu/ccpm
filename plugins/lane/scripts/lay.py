@@ -44,7 +44,15 @@ def steps_text(plugin_root: str) -> str:
     plugin's Laid names where a Step still holds them word for word, and beside a Step each laid
     sentence that the user changed, which Lane keeps as their own words, as `steps.roles` reads
     them. Raises Fault as `steps.roles` does."""
-    raise NotImplementedError("lay.steps_text")
+    blocks = []
+    for role in roles(plugin_root, laid_of(plugin_root)):
+        kind = "skill" if role.skill else "subagent"
+        lines = [f"{role.name}, a {kind}, in {role.entry}:"]
+        for step in role.steps:
+            lines.append(step.words)
+            lines += [f"  (kept as your own words: {each})" for each in step.kept]
+        blocks.append("\n".join(lines))
+    return "\n\n".join(blocks) + "\n"
 
 
 def main(argv: list[str], environ: Mapping[str, str], cwd: str) -> tuple[int, str, str]:
@@ -61,6 +69,8 @@ def main(argv: list[str], environ: Mapping[str, str], cwd: str) -> tuple[int, st
     try:
         if len(argv) == 3 and argv[0] == "print":
             return _print(os.path.join(cwd, argv[1]), os.path.join(cwd, argv[2]), environ)
+        if len(argv) == 2 and argv[0] == "steps":
+            return 0, steps_text(os.path.join(cwd, argv[1])), ""
         if len(argv) == 3 and argv[0] == "write":
             return _write(os.path.join(cwd, argv[1]), argv[2], environ)
     except Fault as fault:

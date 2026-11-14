@@ -12,13 +12,13 @@ import pytest
 from claude_code import Conversation
 from lane_example import (
     LANE,
+    LAY,
     PROPOSAL,
+    WRITER_STEP_2,
     Repo,
     conversation,
     gives,
     lay,
-    propose,
-    put,
     read,
     reviewer_after_written,
     starts,
@@ -34,14 +34,14 @@ def test_up_again_on_unchanged_steps_proposes_each_step_without_the_text_lane_la
     broken: bool, laid: Repo
 ):
     """Given `changelog` laid with the walkthrough's Proposal, its steps unchanged since
-    When up proposes the walkthrough's Proposal again
-    Then lay.py print shows writer's step 2 with Lane's sentence once, as the steps alone give it"""
+    When up runs `lay.py steps changelog` to propose again
+    Then it gives writer's step 2 as the user wrote it, without Lane's sentence"""
     up = conversation(laid, LANE, laid.plugin)
     up.type("/lane:up changelog")
-    printed = propose(up, laid, PROPOSAL)
-    assert printed.exit_code == 0
-    assert printed.output.count("Run only `git log --oneline`. Run only") == 0
-    assert STEP_2_LAID in printed.output
+    given = up.bash(f"python3 {LAY} steps changelog")
+    assert given.exit_code == 0
+    assert WRITER_STEP_2 in given.output.splitlines(), "step 2 reads as the user wrote it"
+    assert "Run only `git log --oneline`." not in given.output
 
 
 @pytest.mark.supports(
@@ -122,22 +122,14 @@ def test_the_laid_plugin_runs_on_its_own_copy_of_lanes_code(broken: bool, repo: 
 @pytest.mark.supports("Lane's part replaced whole", "lay.py", "Laid")
 def test_laying_again_leaves_no_rule_of_a_step_that_no_longer_holds_it(broken: bool, repo: Repo):
     """Given `changelog` laid with the walkthrough's Proposal
-    When the user takes writer's step 2 out, and Lane lays a Proposal without its Lane
-    Then writer.md holds no `Run only `git log --oneline`.`, and lanes.json no run_only Lane"""
+    When Lane lays a Proposal without writer's run_only Lane, writer's step 2 left as it is
+    Then writer's step 2 reads as the user wrote it, with no `Run only `git log --oneline`.`, and
+    lanes.json holds no run_only Lane"""
     lay(repo, PROPOSAL)
-    writer = os.path.join(repo.plugin, "agents", "writer.md")
-    text = read(writer).replace(STEP_2_LAID + "\n", "")
-    put(
-        repo.plugin,
-        "agents/writer.md",
-        text.replace("3. Write", "2. Write").replace("4. Reply", "3. Reply"),
-    )
-    lanes = [
-        {**each, "step": each["step"] - 1} if each["role"] == "writer" else each
-        for each in PROPOSAL["lanes"]
-        if each["type"] != "run_only"
-    ]
+    lanes = [each for each in PROPOSAL["lanes"] if each["type"] != "run_only"]
     lay(repo, {**PROPOSAL, "lanes": lanes})
+    writer = os.path.join(repo.plugin, "agents", "writer.md")
+    assert WRITER_STEP_2 in read(writer).splitlines(), "step 2 reads as the user wrote it"
     assert "Run only `git log --oneline`." not in read(writer)
     laid = json.loads(read(os.path.join(repo.plugin, "hooks", "lanes.json")))
     assert all(each["type"] != "run_only" for each in laid["lanes"])
