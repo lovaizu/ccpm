@@ -735,15 +735,19 @@ tests, and end-to-end (E2E) tests. Its test cases lie in `dev/lane/tests/`, and
 - Runs real: the part, with git and the files of a plugin that the test sets up in a temporary
   folder. Up runs alone on Opus, by `/lane:up` in a throwaway copy of a repository that holds such a
   plugin, with `lay.py` real.
-- Tools: those of [the plugin guide's checks](../plugin-development-guide.md#the-quality-checks-of-every-plugin),
-  and `claude -p` on Opus for up.
-- Passes when: the plugin guide's checks of the code, with property-based tests of `lay.py`'s
-  reading of a plugin's Steps and its check of a Proposal against the lane types and the steps,
-  each lane type's check of a call against the paths and the commands it takes, the guard's reading
-  of each hook event in the form the recorded runs show, and the Run written to its file and read
-  back; and each case of up passing on all of its k = 3 runs.
-- Runs: the code's tests as the plugin guide times them, and up's tests before a change of up is
-  taken.
+- Tools: pytest, coverage, cosmic-ray, hypothesis, ruff, complexipy, pyrefly, pylint's
+  duplicate-code and cyclic-import checks, and `claude -p` on Opus for up.
+- Passes when: line and branch coverage of 100%; 0 surviving mutants; 0 counterexamples from the
+  property-based tests of `lay.py`'s reading of a plugin's Steps and its check of a Proposal against
+  the lane types and the steps, each lane type's check of a call against the paths and the commands
+  it takes, the guard's reading of each hook event in the form the recorded runs show, and the Run
+  written to its file and read back; for each function, McCabe complexity of 10 at most, cognitive
+  complexity of 15 at most, and at most 6 returns, 12 branches, 5 arguments, and 50 statements; 0
+  findings from pyrefly, ruff, and pylint's checks; and each case of up passing on all of its k = 3
+  runs.
+- Runs: the code's tests with their coverage and static analysis before each push and on each push
+  in CI; mutation testing and the property-based tests in CI over the lines that a push changed on
+  each push, and over the whole each night; and up's tests before a change of up is taken.
 
 ### Integration tests
 
@@ -758,8 +762,13 @@ tests, and end-to-end (E2E) tests. Its test cases lie in `dev/lane/tests/`, and
   tests show the real up giving.
 - Tools: pytest, the double of Claude Code, `claude plugin validate --strict` on each plugin that
   Lane lays, and `dev/scripts/trace.py`.
-- Passes when: `trace.py` passes the plugin guide's checks of the trace.
-- Runs: with the unit tests of the code, as the plugin guide times them.
+- Passes when: every story, principle, component, and kind of data of this document has an
+  integration test that names it; every test names an element or a case one level up that exists;
+  every unit case names an integration case; each test of a principle fails where its fixture
+  `broken` takes out the part that holds the principle, which `trace.py` runs; and each result of a
+  double names the recorded run or the page of the documentation that shows it, which `trace.py`
+  checks against that source.
+- Runs: with the unit tests of the code before each push and on each push in CI.
 
 ### E2E tests
 

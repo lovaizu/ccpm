@@ -473,15 +473,19 @@ checks that each names an element or a case one level up.
   and a double of `gh` gives what [the manual of `gh`](https://cli.github.com/manual/) shows. A
   prompt's role runs alone on Opus in a throwaway copy of a repository that the test sets up, with
   `tree.py` and `throwaway.py` real.
-- Tools: those of [the plugin guide's checks](../plugin-development-guide.md#the-quality-checks-of-every-plugin),
-  and `claude -p` on Opus for the prompts.
-- Passes when: the plugin guide's checks of the code, with property-based tests of `tree.py`'s
-  reading and writing of the design tree, its list of the nodes that a change touches, its check
-  of a record against a prompt's steps and a best practice's practices, and each adapter's reading
-  of a best practice or a design tree into Lane's form; and each case of a prompt passing on all of
-  its k = 3 runs.
-- Runs: the code's tests as the plugin guide times them, and a prompt's tests before a change of
-  the prompt is taken.
+- Tools: pytest, coverage, cosmic-ray, hypothesis, ruff, complexipy, pyrefly, pylint's
+  duplicate-code and cyclic-import checks, and `claude -p` on Opus for the prompts.
+- Passes when: line and branch coverage of 100%; 0 surviving mutants; 0 counterexamples from the
+  property-based tests of `tree.py`'s reading and writing of the design tree, its list of the nodes
+  that a change touches, its check of a record against a prompt's steps and a best practice's
+  practices, and each adapter's reading of a best practice or a design tree into Lane's form; for
+  each function, McCabe complexity of 10 at most, cognitive complexity of 15 at most, and at most 6
+  returns, 12 branches, 5 arguments, and 50 statements; 0 findings from pyrefly, ruff, and pylint's
+  checks; and each case of a prompt passing on all of its k = 3 runs.
+- Runs: the code's tests with their coverage and static analysis before each push and on each push
+  in CI; mutation testing and the property-based tests in CI over the lines that a push changed on
+  each push, and over the whole each night; and a prompt's tests before a change of the prompt is
+  taken.
 
 ### Integration tests
 
@@ -496,8 +500,13 @@ checks that each names an element or a case one level up.
   repository and the double of `gh` of the unit tests.
 - Tools: pytest, the double of Claude Code, `claude plugin validate --strict`, and
   `dev/scripts/trace.py`.
-- Passes when: `trace.py` passes the plugin guide's checks of the trace.
-- Runs: with the unit tests of the code, as the plugin guide times them.
+- Passes when: every story, principle, component, and kind of data of this document has an
+  integration test that names it; every test names an element or a case one level up that exists;
+  every unit case names an integration case; each test of a principle fails where its fixture
+  `broken` takes out the part that holds the principle, which `trace.py` runs; and each result of a
+  double names the recorded run or the page of the documentation that shows it, which `trace.py`
+  checks against that source.
+- Runs: with the unit tests of the code before each push and on each push in CI.
 
 ### E2E tests
 
@@ -505,8 +514,9 @@ checks that each names an element or a case one level up.
   for a library the size of invoicer, with the plan of its two deliverables, two points answered,
   each sign-off, and a pause and a pick-up in a new conversation.
 - Runs real: rn and Lane, installed as the README says, on the real Claude Code on Opus, in a fresh
-  clone of [lovaizu/playground](https://github.com/lovaizu/playground) that holds the library. An AI on Opus in the user's place holds an intent that rn never
-  receives, and reads only what the screen shows, as `dev/scripts/e2e.py` runs it.
+  clone of [lovaizu/playground](https://github.com/lovaizu/playground) that holds the library. An
+  AI on Opus in the user's place holds an intent that rn never receives, and reads only what the
+  screen shows, as `dev/scripts/e2e.py` runs it.
 - Tools: pytest, `dev/scripts/e2e.py`, and a judge on Opus for KR1.1.
 - Passes when: the key results, KR1.1, the share of the deliverables handed over that the judge
   finds their people can't use, and KR1.2, the time from the request to the deliverable, the

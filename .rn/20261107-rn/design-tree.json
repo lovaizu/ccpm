@@ -129,7 +129,7 @@
           "decisions": [
             {
               "about": "What runs the cases",
-              "decided": "check.sh runs trace.py check on each plugin, each plugin's unit/ and integration/ cases, and pylint's cyclic-import check, as the plugin guide's quality checks of every plugin say, and pyproject.toml registers the supports marker",
+              "decided": "check.sh runs trace.py check on each plugin, each plugin's unit/ and integration/ cases, and pylint's cyclic-import check, as the plugin guide's Test and each architecture's Test strategy say, and pyproject.toml registers the supports marker",
               "by": "reasoning"
             }
           ]
