@@ -238,6 +238,11 @@
               "about": "Lane's text taken out of the steps",
               "decided": "lay.py alone knows which text of a step Lane laid before, and up gets each step without it from lay.py steps, as up working out the Laid itself would make a second owner of that decision, and the two would drift, which raises KR1.1",
               "by": "reasoning"
+            },
+            {
+              "about": "Who decides the form of lanes.json",
+              "decided": "the guard's code alone decides the form of the laid set, and lay.py write writes through that code, as a laid plugin runs with no lay.py, so the form written and the form read must come from the one copy laid; lay.py alone reads the laid set in the form each released Lane wrote, to take that Lane's text out of the steps",
+              "by": "reasoning"
             }
           ]
         },
@@ -309,7 +314,7 @@
             },
             {
               "about": "Plugins laid by an earlier Lane",
-              "decided": "the newest lay.py reads the laid set that each released Lane wrote, and takes that Lane's sentences out of the steps, and Test strategy keeps the laid set of each release to test it on, as the README promises that /lane:up brings a plugin to the new version after an update, and a plugin left with a stale or doubled rule raises KR1.1",
+              "decided": "the newest lay.py reads the laid set that each released Lane wrote, and takes that Lane's sentences out of the steps, and Test strategy keeps the laid set of each release to test it on, as the README promises that /lane:up brings a plugin to the new version after an update, and a plugin left with a stale or doubled rule raises KR1.1; each release keeps the walkthrough's plugin as it laid it in dev/lane/tests/released/<version>/, and until the first release the case runs on the plugin as the current Lane lays it",
               "by": "reasoning"
             }
           ]
