@@ -242,8 +242,14 @@
         },
         {
           "id": "N3",
-          "good": true,
-          "decisions": []
+          "good": false,
+          "decisions": [
+            {
+              "about": "Lessons sent to rn's repository",
+              "decided": "each general lesson that a run's user signs off goes to rn's repository as an issue, traced to a need of rn's development: rn's developers improve rn's own best practices from what each run finds; the user story that carries it is rn's developers', apart from S6's user, who signs off what leaves their project",
+              "by": "user"
+            }
+          ]
         },
         {
           "id": "N4",
