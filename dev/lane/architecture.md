@@ -205,9 +205,9 @@ The choices made, and why:
   a pause to pick up, and no part of the plugin runs before the guard answers the call, so only the
   adapter, given the words that the hook event of the call carries, can, which keeps KR1.1 low.
   The guard then starts the Run anew where the results it gives are none, or picks it up from
-  them. The cost: where the Laid names that adapter, it runs at each call of the skill, even where
-  the conversation's record holds the skill's Run, so an adapter that gives no results there starts
-  the Run anew, and the Run before ends.
+  them. The cost: where `lanes.json` names that adapter, it runs at each call of the skill, even
+  where the conversation's record holds the skill's Run, so an adapter that gives no results there
+  starts the Run anew, and the Run before ends.
 - Subagents in the background over subagents in the foreground\
   The end of a subagent in the background reaches the main conversation as an event of its own, and
   the PostToolUse of its Agent call names the subagent once it starts, so the guard ties each
@@ -414,6 +414,7 @@ sequenceDiagram
   participant RS as run record
   participant UP as up
   participant L as lay.py
+  participant P as proposal
   participant T as lane types
   participant F as the plugin's files
   U->>CC: /lane:up <plugin>
@@ -443,6 +444,7 @@ sequenceDiagram
       UP-->>U: what to fix in their plugin, and stops
     end
   end
+  L->>P: keeps the Proposal by its ID
   L-->>UP: the Routes, each Step as it'll read, the commands each role may run, the notes, and the ID
   CC->>G: the PostToolUse of lay.py print, with what it printed
   G->>RS: adds what lay.py print showed, to up's Run
@@ -459,6 +461,7 @@ sequenceDiagram
   participant RS as run record
   participant UP as up
   participant L as lay.py
+  participant P as proposal
   participant F as the plugin's files
   Note over U,RS: up's Run holds its call by a person and what lay.py print showed, as S1 draws.
   UP->>CC: ends its turn
@@ -483,6 +486,8 @@ sequenceDiagram
     Note over G,RS: With no lay.py write and no new lay.py print since the prompt, up's Run works out as ended, as a Proposal waits for one reply, and a later /lane:up starts a new Run.
     opt the main conversation runs lay.py write <plugin> <ID> after the Run ended
       UP->>L: write <plugin> <ID>
+      L->>P: reads the Proposal back by its ID
+      P-->>L: the Proposal
       L->>G: asks where the Run of up that showed the Proposal stands
       G->>RS: reads the lines of that conversation
       G-->>L: the Run, ended
@@ -497,9 +502,13 @@ sequenceDiagram
     else
       G-->>CC: lets it through
       UP->>L: write <plugin> <ID>, as Claude Code runs the call
-      L->>G: asks where the Run of up that showed the Proposal stands
-      G->>RS: reads the lines of that conversation
-      G-->>L: the Run
+      L->>P: reads the Proposal back by its ID
+      P-->>L: the Proposal, or none where no Proposal has that ID
+      opt the Proposal is there
+        L->>G: asks where the Run of up that showed the Proposal stands
+        G->>RS: reads the lines of that conversation
+        G-->>L: the Run
+      end
       alt no such Proposal, its Run of up no longer waits for its reply, or the Steps changed since it was shown
         L-->>UP: refused, with why
         Note over UP,L: up proposes again, as S1 draws.
@@ -607,7 +616,7 @@ sequenceDiagram
   G->>RS: adds the call of that skill's Run, or picks the Run up, as S7 draws
   Note over G,RS: The Run goes on beside each Run of another skill of the plugin in the conversation, and the guard works each out from the record's lines on each event.
   loop until a move of the Run starts no more
-    opt the Laid names an adapter of a start's text, and a start is among the Run's moves
+    opt lanes.json names an adapter of a start's text, and a start is among the Run's moves
       G->>A: asks for the text of that start's role, with each Start that runs
       alt the adapter gives it
         A-->>G: the text, and the role's run values where it gives them, in Lane's form
@@ -795,7 +804,7 @@ sequenceDiagram
   U->>CC: a command of the plugin's skill, after /compact or in a new conversation
   CC->>G: the skill's call, with the words typed after the command
   G->>RS: reads the conversation's lines, for the Run of that skill
-  alt the Laid names an adapter of the plugin's records
+  alt lanes.json names an adapter of the plugin's records
     G->>A: asks for the Kept results, with the words typed after the command
     alt the adapter gives them
       A-->>G: the Results given, in order, in Lane's form
@@ -921,7 +930,7 @@ dev/tests/
 ├── <the file a body names>       the Steps of the skill or subagent that names it, such as a part
 └── hooks/
     ├── hooks.json                the guard's hook entries, beside the user's own
-    ├── lanes.json                the Lanes, the Routes, and the Laid
+    ├── lanes.json                the Lanes, the Routes, the adapters, and the Laid
     ├── lane/                     the copy of Lane's code
     └── adapters/                 each adapter, the user's own
 

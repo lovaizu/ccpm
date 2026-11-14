@@ -146,7 +146,8 @@
   <text class="label small halo start" x="40" y="268">runs claude plugin validate</text>
   <text class="label small halo mid" x="430" y="638">sends each hook event; gets a stop</text>
   <text class="label small halo mid" x="430" y="653">with the step&#x27;s sentence, or the start due</text>
-  <text class="label small halo start" x="1030" y="425">reads the Lanes, Routes</text>
+  <text class="label small halo start" x="1030" y="420">reads the Lanes,</text>
+  <text class="label small halo start" x="1030" y="435">Routes, adapters</text>
   <text class="label small halo mid" x="870" y="516">checks a Call</text>
   <text class="label small halo mid" x="870" y="531">or an end</text>
   <text class="label small halo start" x="1030" y="632">adds each fact it keeps,</text>
