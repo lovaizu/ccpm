@@ -36,8 +36,8 @@ causes that bring most of a result, and the many that bring little.
   rn judges each deliverable by whether the people it's for achieve what they're after with it, so
   that it improves only what they need.
 - Signed off before it's built on, for O1\
-  rn puts each deliverable to the user for a sign-off before anything rests on it, so that nothing
-  is built on what they didn't mean.
+  rn puts each deliverable to the user for a sign-off before the next work rests on it, so that
+  nothing rests on what they didn't mean.
 - Back to the design tree on a problem, for O1\
   rn decides each problem it finds by going back to the design tree, so that the fix changes the
   decision that the problem comes from.
