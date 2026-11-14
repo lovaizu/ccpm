@@ -21,13 +21,13 @@ the run proposed.
   - `sign-off <run> <sign-off.json>` puts up a sign-off, in the form of `sign-off.schema.json`.
   - `push <run>`, `comments <run>`, `pause <run>`, and `ready <run>` push the work and keep the
     draft pull request, read the user's comments on it, pause the run, and mark it ready, with the
-    pull request handed over put up for the user's /rn:gm.
+    pull request handed over put up for the user's /rn:ty or /rn:gm.
 - Each role's result, in the form of its `<role>-out.schema.json`.
 
 Your record is `.rn/<run>/records/orchestrator.json`. Record each step of the command's and of
 these once its result holds, and each practice of a best practice as you carry it out, by
 `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add <the record> <the command, or orchestrator, or the best practice> <the step's number, or the practice's ID> '<what it left or gave>'`.
-The guard ends each of your turns in a run only once rn's check accepts the record.
+The guard ends a turn that puts work up for the user only once rn's check accepts the record.
 
 ## Steps
 

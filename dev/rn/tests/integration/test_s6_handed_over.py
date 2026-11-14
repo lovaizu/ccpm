@@ -1,8 +1,9 @@
 """The integration cases of S6, the work handed over: each change to a best practice that the
 user takes becomes a deliverable, each general lesson goes to rn's repository as an issue only on
 the user's /rn:ty, the whole pull request is read against the goal before it's ready, tree.py
-marks it ready only once every deliverable is done and signed off, and the user's /rn:gm after
-Done sends the pull request handed over back to a draft. The test plays the user, the
+marks it ready only once every deliverable is done and signed off, the user's /rn:ty after Done
+signs off the pull request handed over and leaves it ready for their merge, and their /rn:gm after
+Done sends it back to a draft. The test plays the user, the
 orchestrator, and the tree-keeper, and the double of gh stands in for GitHub."""
 
 from __future__ import annotations
@@ -176,6 +177,24 @@ def test_gm_after_done_sends_the_pull_request_handed_over_back_to_a_draft(
     kept = json.loads(text_of(os.path.join(run.worktree, run.folder, "sign-offs.json")))
     assert not typed.blocked and pull["draft"]
     assert kept[-1]["of"] == "pull request" and kept[-1]["state"] == "sent back"
+
+
+@pytest.mark.supports("S6", "tree.py", "Sign-off", "user")
+def test_ty_after_done_signs_off_the_pull_request_handed_over_and_leaves_it_ready(
+    conv: Conversation, repo: Repo, run: Run
+):
+    """Given the pull request marked ready, and Done shown
+    When the user types /rn:ty
+    Then the command loads, GitHub holds the pull request ready and unmerged, and the run's
+    sign-offs keep the pull request handed over signed"""
+    handed_over(conv, repo, run)
+    conv.bash(tree(repo, "ready", run.folder))
+    conv.stop("Done. The pull request is ready for your merge.")
+    typed = conv.type("/rn:ty")
+    (pull,) = github(repo)["pulls"].values()
+    kept = json.loads(text_of(os.path.join(run.worktree, run.folder, "sign-offs.json")))
+    assert not typed.blocked and set(pull) == {"number", "draft", "comments"} and not pull["draft"]
+    assert kept[-1]["of"] == "pull request" and kept[-1]["state"] == "signed"
 
 
 @pytest.mark.supports("S6", "user")

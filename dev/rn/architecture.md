@@ -198,7 +198,7 @@ step and each practice item it takes at the time each names, as
 names each item of each other list it carries: each decision of its cut it checked, each necessary
 condition it judged, and each lack and comment it judged. Lane holds each read by its trace, and
 the guard runs rn's check of the record and the result against the whole list at the role's end,
-and at the end of each turn of the orchestrator's in a run.
+and at the end of the orchestrator's turn that puts work up for the user, as the guide says.
 
 *Why*: an item dropped takes from the deliverable what the item holds, which raises KR1.1.
 
@@ -311,7 +311,7 @@ sequenceDiagram
       R-->>GD: each step, practice, or item they lack, or none, keeping the result in the record
       opt they lack one
         GD-->>G: holds its end, with what they lack
-        Note over G,R: The generator carries out what they lack, and ends again. The guard holds each role's end, and each turn's end of the orchestrator's, in the same way.
+        Note over G,R: The generator carries out what they lack, and ends again. The guard holds each role's end, and the end of each turn of the orchestrator's that puts work up for the user, in the same way.
       end
       GD-->>O: done
       O->>O: checks it against the cut and the best practice
@@ -552,7 +552,13 @@ sequenceDiagram
     T->>RP: marks it a draft again
     RP->>GH: marks it a draft
     Note over U,O: The work goes on, as S3 draws after a sign-off sent back, and the pull request is marked ready again only at the next Done.
-  else
+  else the user takes it
+    opt the user approves it
+      U->>O: /rn:ty
+      O->>T: approves the pull request handed over, as /rn:ty loads (Sign-off)
+      T-->>O: the pull request signed off, left ready
+      Note over U,T: Nothing of the run waits for the user any more, and tree.py merges nothing, as the merge stays the user's.
+    end
     U->>GH: merges the pull request
   end
 ```

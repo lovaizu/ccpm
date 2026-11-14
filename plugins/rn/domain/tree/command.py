@@ -61,8 +61,8 @@ def main(argv: list[str], environ: Mapping[str, str], cwd: str) -> tuple[int, st
       where each role stood; 1 with `committed but not pushed` and what's missing where the push
       fails.
     - `ready <run>` marks the pull request ready, puts the pull request handed over up for the
-      user's /rn:gm, and prints its URL; 1 where a deliverable isn't done and signed off, or a
-      Sign-off waits.
+      user's /rn:ty or /rn:gm, and prints its URL; 1 where a deliverable isn't done and signed
+      off, or a Sign-off waits.
 
     2 with the usage where the arguments are none of these."""
     raise NotImplementedError("command.main")

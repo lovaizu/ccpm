@@ -1,6 +1,6 @@
 ---
 name: ty
-description: Approves the plan, a deliverable, or a lesson for rn's repository that rn put up for the user's sign-off and that waits for it. Use when the user types /rn:ty.
+description: Approves the plan, a deliverable, a lesson for rn's repository, or the pull request handed over at Done, that rn put up for the user's sign-off and that waits for it. Use when the user types /rn:ty.
 disable-model-invocation: true
 ---
 
@@ -12,4 +12,4 @@ As rn's orchestrator, carry out the steps below, with your part in `${CLAUDE_PLU
 
 ## Steps
 
-The steps aren't written yet. They take the moves of S3 of rn's architecture after the user approves, and of S6 after they approve a lesson.
+The steps aren't written yet. They take the moves of S3 of rn's architecture after the user approves, and of S6 after they approve a lesson or the pull request handed over.

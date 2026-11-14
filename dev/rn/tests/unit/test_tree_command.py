@@ -221,6 +221,33 @@ def test_send_back_after_ready_marks_the_pull_request_a_draft_again(repo: Repo):
     assert code == 0 and pull["draft"]
 
 
+@pytest.mark.supports(
+    "test_ty_after_done_signs_off_the_pull_request_handed_over_and_leaves_it_ready"
+)
+def test_approve_after_ready_leaves_the_pull_request_ready_and_unmerged(repo: Repo):
+    """Given the walkthrough's run with both deliverables done and signed off, and the pull request
+    marked ready by `tree.py ready`
+    When `tree.py approve` runs in its worktree
+    Then it gives 0, and GitHub holds the pull request ready and unmerged"""
+    run = repo.begin()
+    done = [
+        {"name": HINTS_NAME, "path": HINTS, "kind": "code", "status": "done"},
+        {"name": TYPED_NAME, "path": TYPED, "kind": "code", "status": "done"},
+    ]
+    path = write(repo.base, "design-tree.json", json.dumps(schema_tree(deliverables=done)))
+    repo.run("write", run, path, "Both done.")
+    for of in ("plan", HINTS, TYPED):
+        sign_off = {"of": of, "can_do": "", "decisions": [], "words": ""}
+        repo.run("sign-off", run, write(repo.base, "sign-off.json", json.dumps(sign_off)))
+        repo.run("approve")
+    repo.run("push", run)
+    repo.run("ready", run)
+    code, _, _ = repo.run("approve")
+    with open(os.path.join(repo.base, "github.json"), encoding="utf-8") as f:
+        (pull,) = json.load(f)["pulls"].values()
+    assert code == 0 and set(pull) == {"number", "draft", "comments"} and not pull["draft"]
+
+
 @pytest.mark.supports("test_ready_refuses_while_a_deliverable_isnt_done")
 def test_ready_with_a_deliverable_open_gives_1_naming_it(repo: Repo):
     """Given the walkthrough's run, its tree holding the hints open

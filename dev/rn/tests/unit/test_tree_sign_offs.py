@@ -80,6 +80,18 @@ def test_parse_refuses_the_pull_request_handed_over_from_the_orchestrator():
         parse(given, "sign-off.json")
 
 
+@pytest.mark.supports(
+    "test_ty_after_done_signs_off_the_pull_request_handed_over_and_leaves_it_ready"
+)
+def test_decide_approved_signs_off_the_pull_request_handed_over():
+    """Given the plan and both deliverables signed off, and the pull request handed over waiting
+    When the user's /rn:ty decides
+    Then the pull request handed over is signed, and nothing waits"""
+    handed = (SignOff(PLAN, "", state=SIGNED), SignOff(PULL_REQUEST, ""))
+    kept, decided = decide(handed, approved=True)
+    assert (decided.of, decided.state) == (PULL_REQUEST, SIGNED) and waiting(kept) is None
+
+
 @pytest.mark.supports("test_gm_after_done_sends_the_pull_request_handed_over_back_to_a_draft")
 def test_decide_not_approved_sends_the_pull_request_handed_over_back():
     """Given the plan and both deliverables signed off, and the pull request handed over waiting
