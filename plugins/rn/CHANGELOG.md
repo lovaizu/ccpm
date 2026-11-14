@@ -4,18 +4,22 @@
 
 ### Changed
 
-- `/rn:up` with what you want lays out every piece the goal needs, and the order it needs them in, before it makes any, so no piece goes missing or comes before what it takes.
-- rn makes each piece by the best practice of its kind. A second AI judges it as its people would, given only the piece, what it takes from, and a record of its commands tried in a throwaway copy. rn makes the piece again until it meets every question of its kind, so what you get is usable as it comes.
-- rn asks you one point at a time, only what the purpose and the best practices leave to you, with its recommendation, and says at the end what it decided without asking, so your answers go only to what's yours.
-- `/rn:up` alone, in a new conversation, picks the work up where it stopped from `.rn/<date>-<goal>/` in your repository, so you never answer a point twice.
-- rn commits each piece on its own branch `rn/<date>-<goal>` and keeps one draft pull request for you to merge, so the work stays in your repository and the merge stays yours.
-- rn now installs Lane with it, which holds each of its steps on every run.
+- `/rn:up` with what you want starts a run: rn drafts the goal from your words for you to confirm, asks the decisions under it, and puts up the plan of the deliverables the goal needs for your sign-off before it makes any, so nothing rests on a goal or a plan you didn't mean.
+- rn keeps your goal and every decision under it in a design tree, and plans again after each answer and each finished deliverable, so the plan always follows what you decided.
+- rn asks you one decision at a time, each with its recommendation, and only the decisions that change what the people get. rn doesn't ask you what a best practice settles. It lists each such decision in its report. While a question or a sign-off waits for you, rn goes on with the work that doesn't rest on it, so your time goes only to what's yours.
+- rn makes each deliverable by the best practice of its kind, and makes that best practice first where it has none. Its evaluators, AI subagents, read the deliverable as its people would, given only what those people have, while rn runs the deliverable's commands only in a throwaway copy of your repository with a throwaway home folder. rn makes the deliverable again until the evaluators find each of its aims met for those people, so you get a deliverable they can use.
+- rn takes each shortfall back to the decision it comes from, changes that decision, and makes the deliverable again from the design tree instead of patching it. Before it marks the pull request ready, rn reads the whole of it at once, and takes each clash between deliverables, and each part your goal doesn't need, back to its decision in the same way, so a fix holds and the deliverable doesn't grow with each round.
+- You sign off the plan, and each deliverable before the next one rests on it, in place of the Plan, Design, and Deliverable sign-offs. Each deliverable's sign-off shows what the evaluators found its people can do with it, the decisions rn took without asking, and a link to its changes in the pull request, and the last sign-off marks the pull request ready, so only the merge remains for you.
+- `/rn:ty` approves the sign-off waiting, and rn goes on at once. It no longer stops until you say to go on, so one command moves the work forward.
+- `/rn:gm` with what to change, or alone to send every comment you wrote on the pull request since the sign-off, sends the sign-off back, and rn takes it back to the design tree, so a fix changes the decision behind your words.
+- rn works in a git worktree of its own, on its own branch, instead of on the branch you have checked out, so you go on with your own work meanwhile.
+- `/rn:dn` pauses the run at any moment and pushes its work so far, and `/rn:up` alone, in any conversation, picks the run up where it stopped. rn commits each answer and each step's work on its branch, so you never answer a question twice, even after a closed conversation.
+- Installing rn installs Lane with it, in place of writ. Lane holds each part of rn to the steps of its best practice on every run, and stops a call that leaves those steps, so none of them goes missing.
 - rn's folder carries its own license, and its manifest names its homepage and repository, so a copy of the folder alone says how you may use rn and where it comes from.
 
 ### Removed
 
-- `/rn:ty` and `/rn:gm`: you answer each point in your own words, and merge the draft pull request yourself.
-- rn no longer needs Turn, which it now holds.
+- `/rn:on`: `/rn:up` with what you want starts a run.
 
 ## [0.9.0] - 2026-10-06
 
