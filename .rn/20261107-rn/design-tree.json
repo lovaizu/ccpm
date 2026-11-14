@@ -457,12 +457,17 @@
         },
         {
           "id": "N3",
-          "good": true,
+          "good": false,
           "decisions": [
             {
               "about": "Plugins with several skills",
               "decided": "Lane holds a plugin with several skills that each start a run of their own: each skill's run is held to that skill's steps and routes, as a plugin with several commands is common and a skill left unheld raises KR1.1",
               "by": "user"
+            },
+            {
+              "about": "Runs of several skills in one conversation",
+              "decided": "the runs of several skills of one plugin go on side by side in one conversation, each held to its own skill's steps and routes: each Start records the skill whose run started it, a subagent's events go to its Start's run by agent_id, a result goes to the skill it names, and the main conversation's start goes to the run whose due start it matches, as a person typing another command while a background subagent works is common use, and a plugin that refuses it doesn't run as its maker designed, which raises KR1.1",
+              "by": "reasoning"
             }
           ]
         },
