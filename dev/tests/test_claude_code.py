@@ -16,10 +16,14 @@ from typing import Any
 
 from claude_code import (
     COMPACT,
+    FOREGROUND,
+    POSTED_FIRST,
     RECORDED,
     RUN,
     SEND_MESSAGE,
     SKILL,
+    SKILL_WHILE_SUBAGENT,
+    SUBAGENT_OF_SUBAGENT,
     Conversation,
     lines,
     record_lines,
@@ -551,6 +555,163 @@ class ClaudeCodeDoubleTest(unittest.TestCase):
         self.assertTrue(answer.blocked, "exit 2 stops the SendMessage call")
         self.assertFalse(agent.running, "the agent stays ended")
         self.assertEqual(self.sent()[-1]["tool_name"], "SendMessage", "no event after the stop")
+
+    def assert_forms_as_recorded(self, names, records):
+        """Each event sent carries the fields of the recorded event of its name, in order, wherever
+        the record's conversation worked."""
+        sent = self.sent()
+        self.assertEqual(len(sent), len(names), "the double sends one event for each recorded")
+        for name, payload in zip(names, sent):
+            with self.subTest(event=name):
+                record = records[name]
+                self.assertEqual(sorted(payload), sorted(record), f"{name}: fields as recorded")
+                self.assertEqual(payload["hook_event_name"], record["hook_event_name"])
+                for key in ("tool_input", "tool_response"):
+                    if key in record:
+                        self.assertEqual(sorted(payload[key]), sorted(record[key]), name)
+
+    def test_a_subagents_events_after_a_later_prompt_carry_that_prompts_id_as_recorded(self):
+        _, agent = self.conversation.start("changelog:writer", "/changelog:write", "Write entries")
+        assert agent is not None  # No hook of the test's plugin stops the start.
+        started = self.sent()[-1]["prompt_id"]
+        self.conversation.type("/changelog:write")
+        typed = self.sent()[-1]["prompt_id"]
+        agent.bash("true")
+        agent.end("written")
+        record = payloads(SKILL_WHILE_SUBAGENT)
+        self.assertNotEqual(
+            record["sleeper's `echo after-sleep` ran"]["prompt_id"],
+            record["the main conversation starts sleeper in the background"]["prompt_id"],
+            "the record's subagent runs on with the later prompt's ID",
+        )
+        self.assertNotEqual(typed, started)
+        called, ran, ended = self.sent()[-4:-1]
+        self.assertEqual(
+            [called["prompt_id"], ran["prompt_id"], ended["prompt_id"]], [typed, typed, typed]
+        )
+
+    def test_a_start_whose_post_tool_use_comes_first_sends_the_events_recorded(self):
+        answer, agent = self.conversation.start(
+            "changelog:writer", "/changelog:write", "Write entries", how=POSTED_FIRST
+        )
+        self.assertFalse(answer.blocked)
+        assert agent is not None  # No hook of the test's plugin stops the start.
+        self.assert_forms_as_recorded(
+            [
+                "session started",
+                "the main conversation starts writer in the background",
+                "sleeper runs in the background",
+                "sleeper starts",
+            ],
+            {**recorded(), **payloads(SKILL_WHILE_SUBAGENT)},
+        )
+        ran, started = self.sent()[2:]
+        self.assertEqual(ran["tool_response"]["agentId"], agent.id)
+        self.assertEqual(started["agent_id"], agent.id)
+
+    def test_a_subagent_in_the_foreground_ends_before_its_agent_calls_post_tool_use(self):
+        _, agent = self.conversation.start(
+            "changelog:writer", "/changelog:write", "Write entries", how=FOREGROUND
+        )
+        assert agent is not None  # No hook of the test's plugin stops the start.
+        agent.bash("git --version")
+        _, reached = agent.end("written")
+        self.assertIsNotNone(reached, "its end reaches the main conversation")
+        self.assertFalse(agent.running)
+        self.assert_forms_as_recorded(
+            [
+                "session started",
+                "the main conversation starts where in the worktree",
+                "where starts in the worktree",
+                "writer runs git log",
+                "git log ran",
+                "where ends in the worktree",
+                "where's end reaches the main conversation",
+            ],
+            {**recorded(), **self.worktree_records()},
+        )
+        called, ended, ran = (self.sent()[i] for i in (1, -2, -1))
+        self.assertFalse(called["tool_input"]["run_in_background"])
+        self.assertEqual(ended["background_tasks"], [], "no background task runs")
+        self.assertEqual(ran["tool_use_id"], called["tool_use_id"], "one call's two events")
+        self.assertEqual(ran["tool_response"]["agentId"], agent.id)
+        self.assertEqual(ran["tool_response"]["content"], [{"type": "text", "text": "written"}])
+
+    def test_a_subagents_start_of_a_subagent_sends_the_events_recorded(self):
+        _, writer = self.conversation.start("changelog:writer", "/changelog:write", "Write")
+        assert writer is not None  # No hook of the test's plugin stops the start.
+        _, reviewer = writer.start("changelog:reviewer", "Carry out your steps", "Review")
+        assert reviewer is not None  # No hook of the test's plugin stops the start.
+        self.assert_sent_as_recorded(
+            [
+                "session started",
+                "the main conversation starts writer in the background",
+                "writer starts",
+                "writer runs in the background",
+                "writer starts a writer in the background",
+                "the writer that writer started starts",
+                "the writer that writer started runs in the background",
+            ],
+            {**recorded(), **payloads(SUBAGENT_OF_SUBAGENT)},
+        )
+        called, started, ran = self.sent()[4:]
+        self.assertEqual((called["agent_id"], ran["agent_id"]), (writer.id, writer.id))
+        self.assertEqual(started["agent_id"], reviewer.id)
+        self.assertEqual(ran["tool_response"]["agentId"], reviewer.id)
+
+    def test_a_message_to_a_running_subagent_is_queued_and_its_end_starts_it_again(self):
+        _, agent = self.conversation.start("changelog:writer", "/changelog:write", "Write entries")
+        assert agent is not None  # No hook of the test's plugin stops the start.
+        queued = self.conversation.resume(agent, "Run result.py too.", "Remind")
+        self.assertFalse(queued.blocked)
+        _, reached = agent.end("written")
+        self.assertIsNone(reached, "no end reaches the main conversation")
+        self.assertTrue(agent.running, "it runs again on the message")
+        names = [
+            "writer sends the writer it started a message while it runs",
+            "the message to the running writer is queued",
+            "writer ends",
+            "the writer with a message queued starts again on the message",
+        ]
+        records = {**recorded(), **payloads(SUBAGENT_OF_SUBAGENT)}
+        called, ran, _, started = self.sent()[4:]
+        for payload in (called, ran):
+            self.assertNotIn("agent_id", payload, "the main conversation's call")
+        self.assertEqual(
+            sorted(called), sorted(set(records[names[0]]) - {"agent_id", "agent_type"})
+        )
+        self.assertEqual(called["tool_input"]["to"], agent.id)
+        self.assertIn(agent.id, ran["tool_response"]["message"])
+        self.assertEqual(ran["tool_response"]["pin"]["id"], agent.id)
+        self.assertEqual(started["agent_id"], agent.id)
+        self.assertEqual(
+            [p["hook_event_name"] for p in self.sent()[4:]],
+            [records[n]["hook_event_name"] for n in names],
+        )
+        _, reached = agent.end("written again")
+        self.assertIsNotNone(reached, "its next end reaches the main conversation")
+
+    def test_a_subagents_message_to_a_running_subagent_carries_the_sender(self):
+        _, writer = self.conversation.start("changelog:writer", "/changelog:write", "Write")
+        assert writer is not None  # No hook of the test's plugin stops the start.
+        _, reviewer = writer.start("changelog:reviewer", "Carry out your steps", "Review")
+        assert reviewer is not None  # No hook of the test's plugin stops the start.
+        writer.send(reviewer, "Run result.py too.")
+        called, ran = self.sent()[-2:]
+        record = payloads(SUBAGENT_OF_SUBAGENT)
+        self.assertEqual(
+            sorted(called),
+            sorted(record["writer sends the writer it started a message while it runs"]),
+        )
+        self.assertEqual((called["agent_id"], ran["agent_id"]), (writer.id, writer.id))
+        self.assertTrue(reviewer.queued)
+
+    def test_a_queued_message_that_a_hook_denies_leaves_the_subagent_to_end(self):
+        _, agent = self.conversation.start("changelog:writer", "/changelog:write", "Write entries")
+        assert agent is not None  # No hook of the test's plugin stops the start.
+        self.assertTrue(self.conversation.resume(agent, "deny me").blocked)
+        _, reached = agent.end("written")
+        self.assertIsNotNone(reached, "its end reaches the main conversation")
 
     # A command of a skill's SKILL.md that runs as the skill loads, which prints what the record's
     # command printed: its plugin's folder filled in its text, the same name in its environment, its

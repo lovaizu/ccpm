@@ -8,7 +8,20 @@ import os
 from typing import Any
 
 import pytest
-from domain.event import BEGUN, CALL, ENDS, RAN, REACHED, SKILL, START, TURN_ENDS, TYPED, Call
+from domain.event import (
+    BEGUN,
+    CALL,
+    COMMAND,
+    ENDS,
+    RAN,
+    REACHED,
+    SKILL,
+    START,
+    TURN_ENDS,
+    TYPED,
+    Call,
+    Event,
+)
 from domain.guard import LET_THROUGH, decide, in_run, result_since, starts_from_main
 from domain.laid_set import Lane
 from domain.run_record import AI, PERSON, Result, Start, load, save
@@ -16,6 +29,7 @@ from lane_parts import (
     CARRY_OUT,
     PLUGIN_ROOT,
     REVIEWER_END,
+    ROOT,
     RUN_ONLY,
     SESSION,
     command,
@@ -254,6 +268,37 @@ def test_a_call_of_a_subagent_of_another_plugin_lies_outside_the_run():
     When subagent a9 of `other:helper` runs `git status`
     Then the moment lies outside the Run"""
     assert not in_run(command("git status", "a9", "other:helper"), laid_set(), writer_running())
+
+
+@pytest.mark.supports("test_a_subagent_of_a_role_that_no_start_of_the_run_ties_goes_unchecked")
+def test_a_call_of_a_subagent_of_a_role_that_no_start_ties_lies_outside_the_run():
+    """Given a Run of `changelog` whose Start 1 ties writer's subagent a1
+    When subagent a7 of `changelog:writer` runs `git status`
+    Then the moment lies outside the Run"""
+    moment = command("git status", "a7", "changelog:writer")
+    assert not in_run(moment, laid_set(), writer_running())
+
+
+@pytest.mark.supports(
+    "test_compact_while_a_subagent_runs_lets_the_summary_end_and_holds_the_subagent_after_it"
+)
+def test_the_end_of_the_compactions_summary_lies_outside_the_run():
+    """Given a Run of `changelog` in which writer runs
+    When subagent a8, with no role, ends, as the compaction's summary does
+    Then the moment lies outside the Run"""
+    moment = event(ENDS, agent="a8", role="", message="<the compaction's summary>")
+    assert not in_run(moment, laid_set(), writer_running())
+
+
+@pytest.mark.supports(
+    "test_a_run_in_one_conversation_holds_nothing_in_another_in_the_same_repository"
+)
+def test_a_moment_of_another_conversation_lies_outside_the_run():
+    """Given a Run of `changelog` in one conversation
+    When the main conversation of another conversation, by its `session_id`, runs `git status`
+    Then the moment lies outside the Run"""
+    moment = Event(CALL, "another-session", ROOT, ROOT, call=Call(COMMAND, command="git status"))
+    assert not in_run(moment, laid_set(), writer_running())
 
 
 @pytest.mark.supports("test_an_end_with_no_result_is_held_with_the_sentence_of_the_last_step")

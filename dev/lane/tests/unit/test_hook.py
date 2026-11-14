@@ -10,7 +10,17 @@ from typing import Any
 
 import hook
 import pytest
-from claude_code import COMPACT, REFERENCE, RUN, SEND_MESSAGE, SKILL, TASK_STOP, WORKTREE, line
+from claude_code import (
+    COMPACT,
+    REFERENCE,
+    RUN,
+    SEND_MESSAGE,
+    SKILL,
+    SKILL_WHILE_SUBAGENT,
+    TASK_STOP,
+    WORKTREE,
+    line,
+)
 from domain.event import (
     BEGUN,
     CALL,
@@ -241,6 +251,62 @@ def test_a_start_that_ran_reads_as_begun_of_the_subagent_its_response_names():
         "a6253d9786133b1e1",
         "changelog:writer",
     )
+
+
+@pytest.mark.supports(
+    "test_a_subagent_whose_start_comes_after_its_agent_calls_post_tool_use_is_tied_to_its_start"
+)
+def test_a_start_whose_post_tool_use_comes_before_its_subagent_starts_reads_as_begun():
+    """Given the recorded PostToolUse of sleeper's start that Claude Code 2.1.325 sent before
+    sleeper's SubagentStart
+    When it's read
+    Then it's BEGUN of the `agentId` that its response names, of `rec:sleeper`"""
+    recorded = line(SKILL_WHILE_SUBAGENT, "sleeper runs in the background")["payload"]
+    _, moment = hook.read(payload(SKILL_WHILE_SUBAGENT, "sleeper runs in the background"), ENV)
+    assert (moment.moment, moment.agent, moment.role) == (
+        BEGUN,
+        recorded["tool_response"]["agentId"],
+        "rec:sleeper",
+    )
+
+
+@pytest.mark.supports(
+    "test_a_background_subagents_calls_after_a_later_prompt_are_held_by_its_own_start"
+)
+def test_a_subagents_call_after_a_later_prompt_reads_as_its_own_by_its_agent_id():
+    """Given the recorded PreToolUse of sleeper's `echo after-sleep`, which carries the
+    `prompt_id` of a prompt typed after sleeper started
+    When it's read
+    Then it's a CALL by sleeper's `agent_id`, of `rec:sleeper`"""
+    event = "sleeper runs `echo after-sleep`"
+    recorded = line(SKILL_WHILE_SUBAGENT, event)["payload"]
+    _, moment = hook.read(payload(SKILL_WHILE_SUBAGENT, event), ENV)
+    assert (moment.moment, moment.agent, moment.role) == (
+        CALL,
+        recorded["agent_id"],
+        "rec:sleeper",
+    )
+
+
+@pytest.mark.supports("test_a_call_that_keeps_every_lane_of_its_role_passes")
+def test_an_event_with_no_agent_id_reads_as_the_main_conversations():
+    """Given the recorded PreToolUse of the main conversation's `lay.py print`
+    When it's read
+    Then it's a CALL with no agent and no role"""
+    _, moment = hook.read(payload(RUN, "the main conversation runs lay.py print"), ENV)
+    assert (moment.moment, moment.agent, moment.role) == (CALL, "", "")
+
+
+@pytest.mark.supports(
+    "test_compact_while_a_subagent_runs_lets_the_summary_end_and_holds_the_subagent_after_it"
+)
+def test_the_compaction_summarys_end_reads_as_ends_with_no_role():
+    """Given the recorded SubagentStop of the compaction's summary, whose `agent_type` is empty
+    When it's read
+    Then it's ENDS of its `agent_id`, with no role"""
+    recorded = line(COMPACT, "the compaction's summary ends")["payload"]
+    _, moment = hook.read(payload(COMPACT, "the compaction's summary ends"), ENV)
+    assert (moment.moment, moment.agent, moment.role) == (ENDS, recorded["agent_id"], "")
 
 
 @pytest.mark.supports(

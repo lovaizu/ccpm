@@ -10,10 +10,12 @@ recorded/claude-code-2.1.322-compact.jsonl shows, in the same conversation, a ca
 the events that recorded/claude-code-2.1.322-skill.jsonl shows, and a subagent resumed by
 SendMessage the events that recorded/claude-code-2.1.322-send-message.jsonl shows. An Edit and a
 Read, which no record of a run holds, carry the input that the hooks reference gives them, as
-recorded/claude-code-hooks-reference.jsonl takes it from there. A subagent's start of a subagent
-sends the main conversation's start with the subagent's `agent_id` and `agent_type`, as each other
-call of a subagent carries them, and as the end-to-end test's record of Claude Code 2.1.322 shows at
-line 71 of the hooks.jsonl of its changelog run 20261112T054832Z, which commit eb093f4c holds. A
+recorded/claude-code-hooks-reference.jsonl takes it from there. A subagent's start of a subagent,
+and a message queued by SendMessage for a subagent that runs, send the events that
+recorded/claude-code-2.1.322-subagent-of-subagent.jsonl shows, and a start in the foreground, or
+one whose SubagentStart comes after the PostToolUse of its Agent call, those that `start` names.
+Each event carries the `prompt_id` of the conversation's latest prompt, a subagent's among them, as
+recorded/claude-code-2.1.325-skill-command-while-subagent.jsonl shows. A
 subagent stopped by TaskStop sends the events that recorded/claude-code-2.1.323-task-stop.jsonl
 shows, a command that a skill's SKILL.md runs as the skill loads runs as
 recorded/claude-code-2.1.323-skill-command.jsonl shows, and fails on a typed command as
@@ -66,6 +68,14 @@ WORKTREE = "claude-code-2.1.323-worktree.jsonl"
 HOOKS_RELOAD = "claude-code-2.1.323-hooks-reload.jsonl"
 # What the hooks reference shows of a call that no record of a run holds.
 REFERENCE = "claude-code-hooks-reference.jsonl"
+# The record of a subagent that a subagent starts, and of a message queued for a subagent that runs,
+# cut from the E2E test's run of the walkthrough on Claude Code 2.1.322, as its first line says.
+SUBAGENT_OF_SUBAGENT = "claude-code-2.1.322-subagent-of-subagent.jsonl"
+# The record of a skill command typed while a background subagent runs, of Claude Code 2.1.325,
+# whose start sends the SubagentStart after the PostToolUse of the Agent call.
+SKILL_WHILE_SUBAGENT = "claude-code-2.1.325-skill-command-while-subagent.jsonl"
+# How a subagent starts, by the order of the events of its start, as `Conversation.start` says.
+BACKGROUND, POSTED_FIRST, FOREGROUND = "background", "posted first", "foreground"
 
 
 # The events whose plain standard output Claude Code adds to what the model reads, and those that
@@ -628,41 +638,40 @@ class Conversation:
             )
         tool_input = {"command": command, "description": "Run a command"}
         use = {"tool_input": tool_input, "tool_use_id": self.next_id("toolu_", 24)}
-        with self.acting(agent):
-            answer = self.send("PreToolUse", record, {**who, **use})
-            if answer.blocked:
-                return answer
-            env = dict(self.env, **bash_environment(self.session_id))
-            env.pop("CLAUDE_PROJECT_DIR", None)
-            script = python_call(command)
-            if script and found(shlex.split(command)[0], env):
-                code, out, err = run_python(script[0], script[1:], "", env, self.cwd)
-            else:
-                done = subprocess.run(
-                    command,
-                    shell=True,
-                    env=env,
-                    cwd=self.cwd,
-                    capture_output=True,
-                    text=True,
-                    check=False,
-                )
-                code, out, err = done.returncode, done.stdout, done.stderr
-            answer.exit_code, answer.output = code, out + err
-            if code == 0:
-                response = ran["payload"]["tool_response"]
-                response.update(stdout=out.rstrip("\n"), stderr=err.rstrip("\n"))
-                after = self.send("PostToolUse", ran, {**who, **use, "tool_response": response})
-            else:
-                error = f"Exit code {code}\n" + (out + err).rstrip("\n")
-                after = self.send(
-                    "PostToolUseFailure",
-                    line(RUN, "a command fails"),
-                    {**who, **use, "error": error},
-                )
-            answer.said = "\n".join(s for s in (answer.said, after.said) if s)
-            answer.ran += after.ran
+        answer = self.send("PreToolUse", record, {**who, **use})
+        if answer.blocked:
             return answer
+        env = dict(self.env, **bash_environment(self.session_id))
+        env.pop("CLAUDE_PROJECT_DIR", None)
+        script = python_call(command)
+        if script and found(shlex.split(command)[0], env):
+            code, out, err = run_python(script[0], script[1:], "", env, self.cwd)
+        else:
+            done = subprocess.run(
+                command,
+                shell=True,
+                env=env,
+                cwd=self.cwd,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            code, out, err = done.returncode, done.stdout, done.stderr
+        answer.exit_code, answer.output = code, out + err
+        if code == 0:
+            response = ran["payload"]["tool_response"]
+            response.update(stdout=out.rstrip("\n"), stderr=err.rstrip("\n"))
+            after = self.send("PostToolUse", ran, {**who, **use, "tool_response": response})
+        else:
+            error = f"Exit code {code}\n" + (out + err).rstrip("\n")
+            after = self.send(
+                "PostToolUseFailure",
+                line(RUN, "a command fails"),
+                {**who, **use, "error": error},
+            )
+        answer.said = "\n".join(s for s in (answer.said, after.said) if s)
+        answer.ran += after.ran
+        return answer
 
     def write(self, agent: Agent | None, path: str, content: str) -> Answer:
         """The agent, or the main conversation where `agent` is None, calls the Write tool to create
@@ -682,18 +691,17 @@ class Conversation:
             use["tool_name"] = written["tool_name"]
             before = line(RUN, "the main conversation runs lay.py print")
             ran = line(RUN, "lay.py print ran")
-        with self.acting(agent):
-            answer = self.send("PreToolUse", before, use)
-            if answer.blocked:
-                return answer
-            os.makedirs(os.path.dirname(path), exist_ok=True)
-            with open(path, "w", encoding="utf-8") as f:
-                f.write(content)
-            response = dict(written["tool_response"], filePath=path, content=content)
-            after = self.send("PostToolUse", ran, {**use, "tool_response": response})
-            answer.said = "\n".join(s for s in (answer.said, after.said) if s)
-            answer.ran += after.ran
+        answer = self.send("PreToolUse", before, use)
+        if answer.blocked:
             return answer
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(content)
+        response = dict(written["tool_response"], filePath=path, content=content)
+        after = self.send("PostToolUse", ran, {**use, "tool_response": response})
+        answer.said = "\n".join(s for s in (answer.said, after.said) if s)
+        answer.ran += after.ran
+        return answer
 
     def read(self, agent: Agent, path: str) -> Answer:
         """The agent calls the Read tool on the file at the path. The double sends the PreToolUse
@@ -710,8 +718,7 @@ class Conversation:
             "agent_id": agent.id,
             "agent_type": agent.type,
         }
-        with self.acting(agent):
-            return self.send("PreToolUse", line(RUN, "writer writes CHANGELOG.md"), use)
+        return self.send("PreToolUse", line(RUN, "writer writes CHANGELOG.md"), use)
 
     def edit(self, path: str, old: str, new: str) -> Answer:
         """The main conversation calls the Edit tool to replace the one place of `old` in the file
@@ -774,70 +781,114 @@ class Conversation:
         answer.ran += after.ran
         return answer
 
-    @contextlib.contextmanager
-    def acting(self, agent: Agent | None):
-        """Sends the events of the block with the agent's prompt ID, where an agent acts."""
-        prompt_id = self.prompt_id
-        if agent:
-            self.prompt_id = agent.prompt_id
-        try:
-            yield
-        finally:
-            self.prompt_id = prompt_id
-
     def start(
-        self, subagent_type: str, prompt: str, description: str, by: Agent | None = None
+        self,
+        subagent_type: str,
+        prompt: str,
+        description: str,
+        by: Agent | None = None,
+        how: str = BACKGROUND,
     ) -> tuple[Answer, Agent | None]:
-        """The main conversation, or the agent `by`, starts the subagent in the background with the
-        prompt, by the Agent tool. Where the hooks let it through, the subagent starts, and the
-        answer says what it reads as it starts; the Agent stands for it. Where the hooks stop the
-        start, the answer says what the starter reads. The double holds only a subagent's start
-        that the hooks stop, as no test runs a subagent that another one started."""
+        """The main conversation, or the agent `by`, starts the subagent with the prompt, by the
+        Agent tool. Where the hooks let it through, the subagent starts, and the answer says what it
+        reads as it starts; the Agent stands for it. Where the hooks stop the start, the answer says
+        what the starter reads. `how` gives the order of the start's events, each as a record shows
+        it: BACKGROUND sends the SubagentStart before the PostToolUse of the Agent call, as
+        recorded/claude-code-2.1.322.jsonl shows; POSTED_FIRST sends it after that PostToolUse, as
+        recorded/claude-code-2.1.325-skill-command-while-subagent.jsonl shows; and FOREGROUND runs
+        the subagent in the foreground, its PostToolUse coming only after its end, as
+        recorded/claude-code-2.1.323-worktree.jsonl shows. A subagent's start of a subagent sends
+        the events that recorded/claude-code-2.1.322-subagent-of-subagent.jsonl shows, each with
+        the starter's `agent_id` and `agent_type`, in the background, as no record shows another
+        way."""
+        assert by is None or how == BACKGROUND, "the record starts a subagent's subagent so alone"
         tool_input = {
             "description": description,
             "prompt": prompt,
             "subagent_type": subagent_type,
-            "run_in_background": True,
+            "run_in_background": how != FOREGROUND,
         }
         who = {"agent_id": by.id, "agent_type": by.type} if by else {}
         use = {"tool_input": tool_input, "tool_use_id": self.next_id("toolu_", 24)}
-        with self.acting(by):
-            answer = self.send(
-                "PreToolUse",
-                line(RUN, "the main conversation starts writer in the background"),
-                {**who, **use},
-            )
+        answer = self.send("PreToolUse", self.start_call(how, by), {**who, **use})
         if answer.blocked:
             return answer, None
-        assert by is None, f"the double runs no subagent that a subagent started: {subagent_type}"
         agent = Agent(self, self.next_id("a", 16), subagent_type, description, use["tool_use_id"])
+        agent.background = how != FOREGROUND
+        agent.start_use = {**who, **use}
         self.agents.append(agent)
+        started_line, posted_line = self.start_lines(how, by)
+        posted = Answer()
+        if how == POSTED_FIRST:
+            posted = self.posted(agent, posted_line)
         started = self.send(
-            "SubagentStart",
-            line(RUN, "writer starts"),
-            {"agent_id": agent.id, "agent_type": agent.type},
+            "SubagentStart", started_line, {"agent_id": agent.id, "agent_type": agent.type}
         )
-        ran = line(RUN, "writer runs in the background")
+        if how == BACKGROUND:
+            posted = self.posted(agent, posted_line)
+        ran = answer.ran + posted.ran + started.ran
+        return Answer(started.blocked, started.said, ran=ran), agent
+
+    @staticmethod
+    def start_call(how: str, by: Agent | None) -> dict[str, Any]:
+        """The recorded PreToolUse of a start in the way given."""
+        if by:
+            return line(SUBAGENT_OF_SUBAGENT, "writer starts a writer in the background")
+        if how == FOREGROUND:
+            return line(WORKTREE, "the main conversation starts where in the worktree")
+        return line(RUN, "the main conversation starts writer in the background")
+
+    @staticmethod
+    def start_lines(how: str, by: Agent | None) -> tuple[dict[str, Any], dict[str, Any]]:
+        """The recorded SubagentStart of a start in the way given, and the PostToolUse of its Agent
+        call where that comes as the subagent starts, or else that of a start in the background."""
+        if by:
+            return (
+                line(SUBAGENT_OF_SUBAGENT, "the writer that writer started starts"),
+                line(SUBAGENT_OF_SUBAGENT, "the writer that writer started runs in the background"),
+            )
+        if how == POSTED_FIRST:
+            return (
+                line(SKILL_WHILE_SUBAGENT, "sleeper starts"),
+                line(SKILL_WHILE_SUBAGENT, "sleeper runs in the background"),
+            )
+        if how == FOREGROUND:
+            started = line(WORKTREE, "where starts in the worktree")
+        else:
+            started = line(RUN, "writer starts")
+        return started, line(RUN, "writer runs in the background")
+
+    def posted(self, agent: Agent, ran: dict[str, Any]) -> Answer:
+        """Sends the PostToolUse of the agent's start in the background, with the `tool_response`
+        that the recorded line holds, telling of the agent."""
         response = ran["payload"]["tool_response"]
         response.update(
             agentId=agent.id,
-            description=description,
-            prompt=prompt,
+            description=agent.description,
+            prompt=agent.start_use["tool_input"]["prompt"],
             outputFile=agent.output_file,
         )
-        self.send("PostToolUse", ran, {**use, "tool_response": response})
-        return Answer(started.blocked, started.said, ran=answer.ran + started.ran), agent
+        return self.send("PostToolUse", ran, {**agent.start_use, "tool_response": response})
 
-    def resume(self, agent: Agent, message: str, summary: str = "Resume") -> Answer:
-        """The main conversation resumes the agent, whose end reached it, by SendMessage with the
-        message, which keeps the agent's whole conversation. The double sends the PreToolUse that
-        the record holds, with the input that Claude Code fills in beside `to`, `summary`, and
-        `message`, and, where the hooks let it through, the PostToolUse with the `tool_response`
-        that the record holds and the SubagentStart of the same agent again. The agent then runs
-        until its next end, which reaches the main conversation with the ID of the SendMessage
-        call, as the record shows. The answer says whether a hook stopped the call, and what the
-        agent reads as it starts again."""
-        assert not agent.running, f"the record resumes only an agent whose end came: {agent.id}"
+    def resume(
+        self, agent: Agent, message: str, summary: str = "Resume", by: Agent | None = None
+    ) -> Answer:
+        """The main conversation, or the agent `by`, sends the agent a message by SendMessage. To an
+        agent whose end came, it resumes the agent, which keeps its whole conversation: the double
+        sends the PreToolUse that recorded/claude-code-2.1.322-send-message.jsonl holds, with the
+        input that Claude Code fills in beside `to`, `summary`, and `message`, and, where the hooks
+        let it through, the PostToolUse with the `tool_response` that the record holds and the
+        SubagentStart of the same agent again. The agent then runs until its next end, which
+        reaches the main conversation with the ID of the SendMessage call, as the record shows. To
+        an agent that runs, the message is queued: the double sends the events that
+        recorded/claude-code-2.1.322-subagent-of-subagent.jsonl shows, and the agent's next end
+        starts it again on the message, as `Agent.end` says. That record holds only a subagent's
+        message to a running agent, so the main conversation's carries no `agent_id` and no
+        `agent_type`, as each other call of the main conversation in the records. The answer says
+        whether a hook stopped the call, and what the agent reads as it starts again."""
+        if agent.running:
+            return self.queue(agent, message, summary, by)
+        assert by is None, f"the record resumes only by the main conversation: {agent.id}"
         to = {"to": agent.id, "summary": summary, "message": message}
         filled = {"type": "message", "recipient": agent.id, "recipient_kind": "agent"}
         use = {
@@ -866,6 +917,42 @@ class Conversation:
             {"agent_id": agent.id, "agent_type": agent.type},
         )
         return Answer(started.blocked, started.said, ran=answer.ran + started.ran)
+
+    def queue(self, agent: Agent, message: str, summary: str, by: Agent | None) -> Answer:
+        """Sends the message by SendMessage to the agent, which runs, as `resume` says, and queues
+        it for the agent's next end."""
+        called = line(
+            SUBAGENT_OF_SUBAGENT, "writer sends the writer it started a message while it runs"
+        )
+        ran = line(SUBAGENT_OF_SUBAGENT, "the message to the running writer is queued")
+        to = {"to": agent.id, "summary": summary, "message": message}
+        filled = {"type": "message", "recipient": agent.id, "recipient_kind": "agent"}
+        use = {
+            "tool_input": {**to, **filled, "content": message},
+            "tool_use_id": self.next_id("toolu_", 24),
+        }
+        who = {"agent_id": by.id, "agent_type": by.type} if by else {}
+        answer = self.deliver(self.as_caller(called["payload"], {**who, **use}))
+        if answer.blocked:
+            return answer
+        response = ran["payload"]["tool_response"]
+        recorded_id = response["pin"]["id"]
+        response.update(message=response["message"].replace(recorded_id, agent.id))
+        response["pin"].update(id=agent.id, name=agent.id)
+        fields = {**who, "tool_input": to, "tool_use_id": use["tool_use_id"]}
+        after = self.deliver(self.as_caller(ran["payload"], {**fields, "tool_response": response}))
+        agent.queued = True
+        said = "\n".join(x for x in (answer.said, after.said) if x)
+        return Answer(False, said, ran=answer.ran + after.ran)
+
+    def as_caller(self, recorded: dict[str, Any], fields: dict[str, Any]) -> dict[str, Any]:
+        """The recorded payload of a subagent's call made this conversation's with the fields, as
+        the main conversation's call where the fields name no agent."""
+        payload = self.made(recorded, fields)
+        if "agent_id" not in fields:
+            payload.pop("agent_id")
+            payload.pop("agent_type")
+        return payload
 
     def task_stop(self, agent: Agent) -> Answer:
         """The main conversation stops the agent by TaskStop, with the agent's ID as `task_id`, as
@@ -1012,7 +1099,7 @@ class Conversation:
         return [
             dict(task, id=a.id, description=a.description, agent_type=a.type)
             for a in self.agents
-            if a.running
+            if a.running and a.background
         ]
 
     def stop(self, last_message: str) -> Answer:
@@ -1030,7 +1117,7 @@ class Conversation:
 
 
 class Agent:
-    """A subagent that the main conversation started in the background."""
+    """A subagent that the main conversation, or a subagent, started."""
 
     def __init__(self, conversation: Conversation, id: str, type: str, description: str, use: str):
         self.conversation = conversation
@@ -1038,8 +1125,12 @@ class Agent:
         self.type = type
         self.description = description
         self.tool_use_id = use
-        self.prompt_id = conversation.prompt_id
         self.running = True
+        # Whether it runs in the background, and the fields of the Agent call that started it.
+        self.background = True
+        self.start_use: dict[str, Any] = {}
+        # Whether a message waits for its next end, which starts it again on the message.
+        self.queued = False
         # Whether TaskStop stopped the subagent, after which it ends no more.
         self.killed = False
         # Whether a hook stopped an end of the subagent, after which each end carries
@@ -1067,16 +1158,25 @@ class Agent:
         """The subagent starts a subagent in the background by the Agent tool."""
         return self.conversation.start(subagent_type, prompt, description, by=self)
 
+    def send(self, agent: Agent, message: str, summary: str = "Message") -> Answer:
+        """The subagent sends the agent, which runs, a message by SendMessage."""
+        return self.conversation.resume(agent, message, summary, by=self)
+
     def end(self, last_message: str) -> tuple[Answer, Answer | None]:
-        """The subagent ends with the message. The first answer says whether the hooks stopped the
-        end, and what the subagent reads. Where they let it end, its end reaches the main
-        conversation as a UserPromptSubmit whose prompt is a task-notification, as the record shows,
-        and the second answer says what the main conversation reads beside it. Where they stop it,
-        the subagent goes on, and each end after that carries `stop_hook_active`."""
+        """The subagent ends with the message, with the `prompt_id` of the conversation's latest
+        prompt, as recorded/claude-code-2.1.325-skill-command-while-subagent.jsonl shows of a
+        subagent that runs on through a later prompt. The first answer says whether the hooks
+        stopped the end, and what the subagent reads. Where they stop it, the subagent goes on, and
+        each end after that carries `stop_hook_active`. Where they let it end and a message is
+        queued for it, it starts again on the message, with no event that tells the main
+        conversation of its end, as recorded/claude-code-2.1.322-subagent-of-subagent.jsonl shows.
+        Else its end reaches the main conversation, and the second answer says what the main
+        conversation reads beside it: in the background, as a UserPromptSubmit whose prompt is a
+        task-notification, with a new `prompt_id`, as the record of 2.1.322 shows; in the
+        foreground, as the PostToolUse of its Agent call, as
+        recorded/claude-code-2.1.323-worktree.jsonl shows."""
         assert not self.killed, f"no end comes of a subagent that TaskStop stopped: {self.id}"
         c = self.conversation
-        prompt_id = c.prompt_id
-        c.prompt_id = self.prompt_id
         transcript = os.path.join(c.transcripts(), c.session_id, "subagents")
         if self.stopped:
             record = line(RUN, "writer ends again after its end was stopped")
@@ -1094,26 +1194,51 @@ class Agent:
                 "stop_hook_active": self.stopped,
             },
         )
-        c.prompt_id = prompt_id
         if stopped.blocked:
             self.stopped = True
             return stopped, None
+        if self.queued:
+            self.queued = False
+            again = line(
+                SUBAGENT_OF_SUBAGENT,
+                "the writer with a message queued starts again on the message",
+            )
+            started = c.send("SubagentStart", again, {"agent_id": self.id, "agent_type": self.type})
+            said = "\n".join(x for x in (stopped.said, started.said) if x)
+            return Answer(False, said, ran=stopped.ran + started.ran), None
         self.running = False
+        if not self.background:
+            return stopped, self.completed(last_message)
+        return stopped, self.notified(last_message)
+
+    def completed(self, last_message: str) -> Answer:
+        """Sends the PostToolUse of the Agent call that started the subagent in the foreground,
+        with the `tool_response` that the record holds, telling of the subagent and its last
+        message, and gives what the main conversation reads beside it."""
+        ran = line(WORKTREE, "where's end reaches the main conversation")
+        response = ran["payload"]["tool_response"]
+        response.update(
+            agentId=self.id,
+            agentType=self.type,
+            prompt=self.start_use["tool_input"]["prompt"],
+            content=[{"type": "text", "text": last_message}],
+        )
+        return self.conversation.send(
+            "PostToolUse", ran, {**self.start_use, "tool_response": response}
+        )
+
+    def notified(self, last_message: str) -> Answer:
+        """Sends the task-notification of the subagent's end in the background, with a new
+        `prompt_id`, and gives what the main conversation reads beside it."""
+        c = self.conversation
         reached = line(RUN, "writer's end reaches the main conversation")
         notification = reached["payload"]["prompt"]
-        notification = re.sub(
-            r"<task-id>.*?</task-id>", f"<task-id>{self.id}</task-id>", notification
-        )
-        notification = re.sub(
-            r"<tool-use-id>.*?</tool-use-id>",
-            f"<tool-use-id>{self.tool_use_id}</tool-use-id>",
-            notification,
-        )
-        notification = re.sub(
-            r"<output-file>.*?</output-file>",
-            f"<output-file>{self.output_file}</output-file>",
-            notification,
-        )
+        for tag, value in (
+            ("task-id", self.id),
+            ("tool-use-id", self.tool_use_id),
+            ("output-file", self.output_file),
+        ):
+            notification = re.sub(rf"<{tag}>.*?</{tag}>", f"<{tag}>{value}</{tag}>", notification)
         notification = re.sub(
             r'<summary>Agent ".*?" finished</summary>',
             f'<summary>Agent "{self.description}" finished</summary>',
@@ -1126,9 +1251,4 @@ class Agent:
             flags=re.DOTALL,
         )
         c.prompt_id = str(uuid.uuid4())
-        notified = c.send(
-            "UserPromptSubmit",
-            reached,
-            {"prompt": notification},
-        )
-        return stopped, notified
+        return c.send("UserPromptSubmit", reached, {"prompt": notification})

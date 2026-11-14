@@ -21,7 +21,8 @@ def read(payload: str, environ: Mapping[str, str]) -> tuple[str, Event]:
     failed; a person's prompt, or a command of a plugin's skill that expands, as TYPED; a prompt
     that tells a subagent's end as REACHED with its status and result; a SubagentStop as ENDS; a
     Stop as TURN_ENDS with each subagent that runs; and each other event as OTHER, in the form that
-    the recorded runs of Claude Code 2.1.322 and 2.1.323 show. Raises
+    the recorded runs of Claude Code show, the acting subagent by `agent_id` alone, never by
+    `prompt_id`, which changes as the person types while a subagent runs. Raises
     Fault, naming what it lacks, with Lane to fix it, where the payload isn't such an event."""
     raise NotImplementedError("hook.read")
 

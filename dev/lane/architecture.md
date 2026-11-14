@@ -71,9 +71,10 @@ What each decides alone:
   printed, and, as for `ends_checked`, a subagent's end or the skill's turn's end by a command of
   the plugin's own, which the guard runs with the role's run values and its result filled in.
 - guard\
-  When a run starts and ends, whether each call, start, and end passes, which start the routes make
-  due, what a stopped role or the main conversation reads, whether up gave the person the proposal
-  word for word, and whether the act that lays it is the caller's own.
+  Which Run, Start, and role each hook event belongs to, when a run starts and ends, whether each
+  call, start, and end passes, which start the routes make due, what a stopped role reads, what
+  the main conversation reads, whether up gave the person the proposal word for word, and whether
+  the act that lays it is the caller's own.
 - result.py\
   Whether a result is one that the role may give, and the Result recorded.
 - adapter\
@@ -136,11 +137,24 @@ The choices made, and why:
   say one rule, and its maker writes the sentence into the step to say it once. A step that names
   the check for the role to run takes no sentence either, so the role learns that the guard holds
   its end only where the guard stops it.
+- Each hook event placed by its `session_id` and `agent_id` over its `prompt_id` or its
+  `transcript_path`, with each Start tied to its subagent at the PostToolUse of its Agent call over
+  the SubagentStart\
+  The guard places an event on the Run of its `session_id`, on the main conversation where it
+  carries no `agent_id`, and else on the Start whose Agent call's PostToolUse named that `agent_id`.
+  A `prompt_id` changes as the person types while a subagent runs, a `transcript_path` moves as the
+  conversation enters a worktree, and a SubagentStart may come before or after that PostToolUse and
+  names no Agent call, as [Claude Code's states](claude-code-states.md) shows each with its records,
+  so the guard holds each call to the lanes and the run values of its own Start, in each state that
+  the README's main use and rn bring about, which keeps KR1.1 low. The cost: a state that no record
+  shows may place an event apart from its Start, so each rare state gets one line there that names
+  what Lane does, never holding a call to the rules of another Run, and the compatibility test of
+  Test strategy checks the states on each new version of Claude Code.
 - Subagents in the background over subagents in the foreground\
   The end of a subagent in the background reaches the main conversation as an event of its own, and
-  Claude Code names the subagent as its start runs, so the guard ties each subagent to its Start,
-  counts the Start once its subagent ends, and gives the next start beside that end, which keeps
-  KR1.1 low. The cost: each subagent's file sets `background: true`, as the README's Requirements
+  the PostToolUse of its Agent call names the subagent once it starts, so the guard ties each
+  subagent to its Start, counts the Start once its subagent ends, and gives the next start beside
+  that end, which keeps KR1.1 low. The cost: each subagent's file sets `background: true`, as the README's Requirements
   names, and `lay.py print` refuses a proposal whose subagent's file doesn't.
 
 ## Data model
@@ -184,9 +198,9 @@ The choices made, and why:
   that value alone, so that the role is held to what it was started for, such as one deliverable.
   A name they don't give stands for any value, as in a plugin with no adapter, or in a lane of the
   skill, whose run no adapter starts. A Start runs beside each other Start that runs until its end
-  reaches the main conversation, and Claude Code names the subagent it started as it runs, which
-  holds that subagent to the Start's run values while others of its role run. A Start of a role
-  with the text of one of its role that runs isn't due, as it would start that work again, so the
+  reaches the main conversation, and the PostToolUse of its Agent call names the subagent it
+  started, which holds that subagent to the Start's run values while others of its role run. A
+  Start of a role with the text of one of its role that runs isn't due, as it would start that work again, so the
   adapter, asked again after each Start and given each Start that runs, decides which work of the
   role waits, as only Lane knows which Starts run. A resume
   that a Route lists counts as a Start of the subagent
@@ -499,7 +513,7 @@ sequenceDiagram
         G->>RS: adds the Start, beside each Start that runs
         G-->>CC: lets it through
         CC->>SA: starts it in the background
-        CC->>G: the start that runs, with its subagent's ID
+        CC->>G: the PostToolUse of the start, with its subagent's agent_id
         G->>RS: ties the subagent to its Start
       else a start that they open, whose text the adapter can't give
         G-->>M: stops it, with why and who must fix it
@@ -706,8 +720,9 @@ runs.
 ## Directory structure
 
 `plugins/lane/` holds what Claude Code installs for the user, and `lay.py write` copies
-`hooks/lane/` in it into each plugin. `dev/lane/` holds what only Lane's developers use. In the
-user's plugin, Lane writes only the sentences in the steps and the files under `hooks/`.
+`hooks/lane/` in it into each plugin. `dev/lane/` holds what only Lane's developers use, and
+`dev/tests/` what the developers of Lane and rn share for their tests. In the user's plugin, Lane
+writes only the sentences in the steps and the files under `hooks/`.
 
 ```text
 plugins/lane/
@@ -727,8 +742,15 @@ plugins/lane/
 
 dev/lane/
 ├── product-vision.md, architecture.md, images/
+├── claude-code-states.md         each state of Claude Code that the guard meets, with its records
 └── tests/                        the test cases, in unit/, properties/, prompts/, integration/,
                                   and e2e/, with the E2E test files that dev/scripts/e2e.py runs
+
+dev/tests/
+├── claude_code.py                the double of Claude Code, with its tests beside it
+├── recorded/                     the records of Claude Code that the double's results come from
+└── recorder/                     what records a state of Claude Code again, and compare.py, which
+                                  compares the new record with the one that the double gives
 
 <the user's plugin>/
 ├── skills/<skill>/SKILL.md       the skill's Steps, with the sentences that Lane laid
@@ -784,25 +806,35 @@ tests, and end-to-end (E2E) tests. Its test cases lie in `dev/lane/tests/`, and
 
 - Tries: each path through the sequences of S1 to S7, each principle, where the parts keep it and
   where one breaks it, each decision of each component in Components, each handoff between parts
-  with the data it passes, and each kind of data in the data model.
+  with the data it passes, and each kind of data in the data model, the guard's placing of each
+  event in each state of [Claude Code's states](claude-code-states.md) among them; and the
+  compatibility with each new version of Claude Code, which guards KR1.1.
 - Runs real: `lay.py`, the guard, `result.py`, the files that `lay.py write` lays in a plugin that
   the test sets up, and an adapter of the test's own. The double of Claude Code in `dev/tests/`
   stands in for Claude Code, and sends each event, and loads each plugin's hooks as a conversation
   starts and once the person types `/reload-plugins`, as the recorded runs in `dev/tests/recorded/`
   show. A test plays the person, up, the main conversation, and each subagent by the calls it makes
   on the double, and up gives only proposals in the form of `proposal.schema.json`, which up's unit
-  tests show the real up giving.
+  tests show the real up giving. The compatibility test runs the real Claude Code of each new
+  version, on the throwaway plugin of `dev/tests/recorder/`.
 - Tools: pytest, the double of Claude Code, `claude plugin validate --strict` on each plugin that
-  Lane lays, and `dev/scripts/trace.py`.
+  Lane lays, `dev/scripts/trace.py`, and, for the compatibility test, `dev/tests/recorder/` and its
+  `compare.py`.
 - Passes when: every story, principle, component, and kind of data of this document has an
   integration test that names it; every test names an element or a case one level up that exists;
   every unit case names an integration case; each test of a principle fails where its fixture
   `broken` takes out the part that holds the principle, which `trace.py` runs; and each result of a
   double comes from a line of a record that names the recorded run or the page of the documentation
   that shows it, which `trace.py doubles` checks, and each such page still shows its words, which
-  `trace.py sources` checks.
+  `trace.py sources` checks; and, on each new version of Claude Code, each state that a record shows,
+  recorded again by `dev/tests/recorder/`, gives each event of the record that the double gives, with
+  the same fields and in the same order for its caller, which `compare.py` checks. Where it doesn't,
+  the developers keep the new version's record in `dev/tests/recorded/`, change the double to give
+  what it shows, and fix Lane where a test then fails.
 - Runs: with the unit tests of the code before each push and on each push in CI, and the check of
-  the pages in CI with the checks of the tests, as a page changes apart from any push.
+  the pages in CI with the checks of the tests, as a page changes apart from any push; and the
+  compatibility test on each new version of Claude Code, which a job in CI finds each night by
+  `claude --version`, as only a new version changes what the double must give.
 
 ### E2E tests
 
@@ -833,8 +865,14 @@ tests, and end-to-end (E2E) tests. Its test cases lie in `dev/lane/tests/`, and
 - 3 runs of the walkthrough over 1\
   KR1.1 is a share of runs, and one walkthrough holds too few runs to show it move, which keeps a
   change that raised KR1.1 unseen. The cost: each change waits on 3 whole runs on Opus.
-- The double of Claude Code sending events as a recorded run of Claude Code 2.1.322 shows over what
-  the hooks reference alone says\
+- The double of Claude Code sending events as the recorded runs of Claude Code show over what the
+  hooks reference alone says\
   Where the reference says nothing, such as how a typed `/lane:up` differs from a call of the Skill
   tool, a double would send what no Claude Code sends, and pass a test that the real one fails,
-  which raises KR1.1. The cost: another recorded run for each new version of Claude Code.
+  which raises KR1.1. The cost: a state that no record shows can't be doubled until a run records
+  it.
+- The compatibility test on each new version of Claude Code over the records of the versions that
+  Lane was built on\
+  Claude Code changes on its own schedule, and a double that the real one has outgrown passes a test
+  that the users' version fails, which raises KR1.1 unseen. The cost: each new version waits on a
+  run of the real Claude Code for each recorded state.
