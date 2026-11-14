@@ -445,8 +445,14 @@
         },
         {
           "id": "N9",
-          "good": true,
-          "decisions": []
+          "good": false,
+          "decisions": [
+            {
+              "about": "How the guard tells each hook event apart",
+              "decided": "the architecture says, from the records, how the guard tells which run, Start, and role each hook event belongs to: a run by session_id, a Start and its role by agent_id, the main conversation by an event with no agent_id, and a Start tied to its agent_id at the PostToolUse of its Agent call; it does so for the states that the README's main use and rn bring about, and gives each rare state one line that names what Lane does there, never holding a call to another run's rules, as Lane's purpose needs no more",
+              "by": "user"
+            }
+          ]
         },
         {
           "id": "N10",
@@ -466,11 +472,16 @@
         },
         {
           "id": "N12",
-          "good": true,
+          "good": false,
           "decisions": [
             {
               "about": "Test strategy and test cases",
               "decided": "its Test strategy, by the architecture best practice, decides each level's tools and each quality check with its criterion, and every test case is written in test code before any implementation, as the architecture best practice's node decides",
+              "by": "user"
+            },
+            {
+              "about": "Compatibility with Claude Code",
+              "decided": "Test strategy holds a compatibility test: on each new Claude Code version, the recorder scripts run each recorded state again, and what Claude Code gives is compared with what the test double gives",
               "by": "user"
             }
           ]
@@ -478,7 +489,13 @@
         {
           "id": "N13",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The test double of Claude Code",
+              "decided": "the double gives each event as the records show it: a prompt_id that changes within a turn, the prompt_id of a notification, SubagentStart before the PostToolUse of its Agent call, the order of a foreground subagent's events, a subagent started by a subagent, and a queued SendMessage that resumes a subagent",
+              "by": "research"
+            }
+          ]
         },
         {
           "id": "N14",
@@ -492,8 +509,14 @@
         },
         {
           "id": "N16",
-          "good": true,
-          "decisions": []
+          "good": false,
+          "decisions": [
+            {
+              "about": "Where the list of Claude Code's states lies",
+              "decided": "the states of Claude Code that the guard meets, each with the events it sends and the records that show it, lie in a file of their own that the architecture links, as they change with each Claude Code version while the architecture holds only what stays true",
+              "by": "reasoning"
+            }
+          ]
         }
       ]
     },
