@@ -59,21 +59,23 @@ What each decides alone:
   results that the steps name, the result named where a subagent's steps name none, and how a
   change the user asks for reads in its step.
 - lay.py\
-  Which text of a step Lane laid before, and so how each step reads without it for up, whether a
+  Which text of a step Lane laid before, read from the laid set in the form that the released Lane
+  that laid it wrote, and so how each step reads without it for up, whether a
   proposal can stand against the lane types, the steps, and the plugin's files, how each step reads
   once laid, whether a proposal can still be laid, as the steps it came from still read as they did
   and the Run of up that showed it still waits for its reply, as the guard works that Run out, and
   which files laying writes or replaces, as one change.
 - lane types\
   For each type, such as `run_only` or `write_only`, what it takes, such as the paths that
-  `read_never` keeps unread and each part of them, under `!`, that the role may still read, the
-  steps it suits, the sentence that the role reads in its step, whether a step's own words already
-  say that sentence, and the check of a call against it,
-  or of an end: as for `names_printed`, a subagent's end against what the commands it takes
-  printed, and, as for `ends_checked`, a subagent's end or the skill's turn's end by a command of
-  the plugin's own, which the guard runs with the role's run values and its result filled in.
+  `read_never` keeps unread, the steps it suits, the sentence that the role reads in its step,
+  whether a step's own words already say that sentence, what it keeps of a call's result for a
+  later check, and the check of a call or of an end against it, such as, for `ends_checked`, a
+  subagent's end or the skill's turn's end by a command of the plugin's own, which the guard runs
+  with the role's run values and its result filled in.
 - guard\
-  Which Run, Start, and role each hook event belongs to, among the Runs of the plugin's skills
+  The form of the laid set, `lanes.json`, with its Lanes, Routes, adapters, and Laid, which
+  `lay.py write` writes through the guard's code, which Run, Start, and role each hook event
+  belongs to, among the Runs of the plugin's skills
   that go on side by side in a conversation, which facts of an event the run record keeps, where
   each Run stands, worked out from the record's lines on each event for itself, `result.py`, and
   `lay.py`, when a run starts, ends, and stands aside while the main conversation follows another
@@ -224,6 +226,13 @@ The choices made, and why:
   would each stop the other's moves, which raises KR1.1. The cost: the main conversation's calls in
   between rest on the other plugin's guard alone, and a subagent of the skill that runs stays held
   by its own Start.
+- The form of `lanes.json` decided by the guard's code, which `lay.py write` writes through, over
+  `lay.py` deciding it as the part that writes it\
+  The guard reads `lanes.json` on each hook event of a plugin that runs with no `lay.py`, so the
+  form that `lay.py write` writes and the form that the guard reads come from the one copy laid, and
+  a change to the form made for one is the change the other reads, which keeps KR1.1 low. The
+  cost: `lay.py` reads apart each form that a released Lane wrote, to take that Lane's sentences
+  out of the steps.
 
 ## Data model
 
@@ -251,8 +260,8 @@ The choices made, and why:
   that they can start side by side the work that rests on none waiting.
 - Laid\
   The sentences that Lane added to the steps, by the file they lie in, with the words of each step
-  they follow, and the hook entries that are Lane's, so that the next `/lane:up` can take Lane's
-  text apart from the user's.
+  they follow, and the hook entries that are Lane's, in the form of the Lane that laid them, so that
+  the next `/lane:up`, of that Lane or of a newer one, can take Lane's text apart from the user's.
 - Approval\
   The caller's own act that approves one Proposal: a person's reply, or an AI's own run of `lay.py
   write`.
@@ -286,8 +295,8 @@ The choices made, and why:
   go on side by side, one Run for each skill. No Run is written whole: the guard works each out on
   each event from the lines of the conversation's run record, which keeps only what no later payload
   gives again, each Run's call, each Start, its tie to a subagent, each Result, and each other fact
-  that one event alone tells, such as a subagent's end, a command that the person typed, a line that
-  a Lane's command printed, a call of another plugin's skill that a move names, and, for up, its
+  that one event alone tells, such as a subagent's end, a command that the person typed, what a
+  Lane keeps of a Call's result, a call of another plugin's skill that a move names, and, for up, its
 call by a person or an AI, what `lay.py print` showed, each prompt after it, each end of its turn,
 and the lay of `lay.py write`. A Run stands aside from that call of another plugin's skill until
 the main conversation makes a move of the Route after it. A call
@@ -474,7 +483,7 @@ sequenceDiagram
     G->>RS: adds the end of the turn
     Note over G,RS: With no lay.py write and no new lay.py print since the prompt, up's Run works out as ended, as a Proposal waits for one reply, and a later /lane:up starts a new Run.
     opt the main conversation runs lay.py write <plugin> <ID> after the Run ended
-      CC->>L: write <plugin> <ID>
+      UP->>L: write <plugin> <ID>
       L->>G: asks where the Run of up that showed the Proposal stands
       G->>RS: reads the lines of that conversation
       G-->>L: the Run, ended
@@ -488,7 +497,7 @@ sequenceDiagram
       G-->>UP: stops it: lay only after the person's reply
     else
       G-->>CC: lets it through
-      CC->>L: write <plugin> <ID>
+      UP->>L: write <plugin> <ID>, as Claude Code runs the call
       L->>G: asks where the Run of up that showed the Proposal stands
       G->>RS: reads the lines of that conversation
       G-->>L: the Run
@@ -525,7 +534,7 @@ sequenceDiagram
   participant RS as run record
   participant L as lay.py
   participant F as the plugin's files
-  actor D as whoever gives the conversation its prompts, a person or a program
+  actor D as user, as whoever gives the conversation its prompts, a person or a program of theirs
   A->>CC: calls up by the Skill tool, for <plugin>
   CC->>G: the Skill tool call
   G->>RS: reads the lines, for up's Run
@@ -545,8 +554,9 @@ sequenceDiagram
     CC->>G: the call (Approval)
     G-->>CC: lets it through
     Note over L,F: lay.py lays the Proposal, as S2 draws.
-    L-->>A: each file written, that the check passed, and to type /reload-plugins
-    A-->>D: ends its turn, asking for /reload-plugins
+    CC-->>A: what lay.py write printed: each file written, that the check passed, and to type /reload-plugins
+    A->>CC: ends its turn, asking for /reload-plugins
+    CC-->>D: shows the ask
     D->>CC: /reload-plugins
     Note over A,CC: Claude Code loads the laid hooks, which hold from the next prompt, as S5 draws.
   end
@@ -557,13 +567,16 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
   actor U as user
+  participant CC as Claude Code
   participant UP as up
   participant L as lay.py
   participant F as the plugin's files
-  U->>F: changes the Steps, or updates Lane
-  U->>UP: /lane:up <plugin>
+  U->>F: changes the Steps
+  Note over U,F: Or the user updates Lane, and the Steps stay as they are.
+  U->>CC: /lane:up <plugin>
+  Note over CC,UP: Claude Code runs up's steps in the main conversation, as S1 draws.
   UP->>L: steps <plugin>
-  L->>F: reads the Laid, and each Step
+  L->>F: reads the Laid, in the form that the released Lane that laid it wrote, and each Step
   loop each sentence that the Laid added to a Step
     alt the Step still holds it word for word
       L->>L: takes it out
@@ -704,9 +717,9 @@ sequenceDiagram
     G->>T: checks the Call by each Lane of the role, with the run values of the subagent's Start
     alt it keeps every Lane
       G-->>CC: lets it through
-      opt a Lane of the role checks the end against what a command printed, and the Call runs that command
-        CC->>G: what the command printed, once it succeeded
-        G->>RS: adds each line it printed, for the subagent
+      opt a Lane of the role keeps something of the Call's result for its check of the end
+        CC->>G: the PostToolUse of the Call, with its result
+        G->>RS: adds what the Lane keeps of it, for the subagent
       end
     else it breaks a Lane, as git commit does
       G-->>SA: stops it, with the Step's sentence and what it may do there
@@ -718,13 +731,12 @@ sequenceDiagram
       G-->>SA: stops it, with why and who must fix it
     end
   end
-  SA->>CC: runs result.py <role> <result>, word for word
-  CC->>R: result.py <role> <result>
+  SA->>R: runs result.py <role> <result>, word for word, by Bash
   R->>G: asks where each Run of the conversation stands
   G->>RS: reads the conversation's lines
   G-->>R: the Runs
   alt a Result the role may give, in a Run of the conversation
-    R-->>CC: exits 0
+    R-->>SA: exits 0
     CC->>G: the PostToolUse of the call, with the agent_id
     G->>RS: adds the Result, for the subagent of that agent_id
   else
@@ -734,8 +746,8 @@ sequenceDiagram
   CC->>G: the end
   alt no Result for this start
     G-->>SA: stops the end, with the sentence of its last Step
-  else its last message starts no line with a line that a Lane's command printed since its Start or resume
-    G-->>SA: stops the end, with the Lane's sentence and each such line
+  else a Lane of the role checks the end against what it kept since the Start or resume, and the end breaks it
+    G-->>SA: stops the end, with the Lane's sentence and what the end lacks
   else a Lane of the role holds its end, and the plugin's command that it names gives other than 0
     G->>G: runs the command, with the run values of the Start and the Result, in the folder that the conversation works in
     G-->>SA: stops the end, with the Lane's sentence and what the command printed
@@ -772,11 +784,13 @@ sequenceDiagram
         G->>RS: adds the call of the skill's Run, and each Result given
         G-->>M: where the run picks up, and the Start due
       else they don't
-        G-->>U: stops the command, with why and who must fix it
+        G-->>CC: stops the command, with why and who must fix it
+        CC-->>U: shows why and who must fix it
       end
     else it fails
       A-->>G: why
-      G-->>U: stops the command, with why and who must fix it
+      G-->>CC: stops the command, with why and who must fix it
+      CC-->>U: shows why and who must fix it
     end
   else the Run is there, as after /compact
     G-->>M: the Start due it holds
@@ -857,7 +871,8 @@ plugins/lane/
 │   └── lane/                     Lane's code, copied whole into each plugin
 │       ├── hook.py               the guard, which each hook entry runs
 │       ├── result.py             the result script
-│       └── domain/               the guard's code, with lanes/, one file for each lane type
+│       └── domain/               the guard's code, with the form of lanes.json, and lanes/, one
+│                                 file for each lane type
 ├── CHANGELOG.md                  the changes in each version
 └── README.md                     for Lane's users
 
@@ -865,7 +880,8 @@ dev/lane/
 ├── product-vision.md, architecture.md, images/
 ├── claude-code-states.md         each state of Claude Code that the guard meets, with its records
 └── tests/                        the test cases, in unit/, properties/, prompts/, integration/,
-                                  and e2e/, with the E2E test files that dev/scripts/e2e.py runs
+    │                             and e2e/, with the E2E test files that dev/scripts/e2e.py runs
+    └── released/<version>/       the walkthrough's plugin as each released Lane laid it
 
 dev/tests/
 ├── claude_code.py                the double of Claude Code, with its tests beside it
@@ -940,8 +956,10 @@ tests, and end-to-end (E2E) tests. Its test cases lie in `dev/lane/tests/`, and
 - Tries: each path through the sequences of S1 to S7, each principle, where the parts keep it and
   where one breaks it, each decision of each component in Components, each handoff between parts
   with the data it passes, and each kind of data in the data model, the guard's placing of each
-  event in each state of [Claude Code's states](claude-code-states.md) among them; and the
-  compatibility with each new version of Claude Code, which guards KR1.1.
+  event in each state of [Claude Code's states](claude-code-states.md) among them; the
+  compatibility with each new version of Claude Code, which guards KR1.1; and data compatibility,
+  whether the newest `lay.py` reads the laid set that each released Lane wrote, which guards KR1.1,
+  as the README promises that `/lane:up` brings a plugin to the new version after an update.
 - Runs real: `lay.py`, the guard, `result.py`, the files that `lay.py write` lays in a plugin that
   the test sets up, and an adapter of the test's own. The double of Claude Code in `dev/tests/`
   stands in for Claude Code, and sends each event, and loads each plugin's hooks as a conversation
@@ -949,7 +967,10 @@ tests, and end-to-end (E2E) tests. Its test cases lie in `dev/lane/tests/`, and
   show. A test plays the person, up, the main conversation, and each subagent by the calls it makes
   on the double, and up gives only proposals in the form of `proposal.schema.json`, which up's unit
   tests show the real up giving. The compatibility test runs the real Claude Code of each new
-  version, on the throwaway plugin of `dev/tests/recorder/`.
+  version, on the throwaway plugin of `dev/tests/recorder/`. The data compatibility test lays again,
+  with the newest `lay.py`, each plugin kept in `dev/lane/tests/released/`, which each release of
+  Lane adds as it laid the walkthrough's plugin, and, until the first release, the plugin as the
+  Lane about to be released lays it.
 - Tools: pytest, the double of Claude Code, `claude plugin validate --strict` on each plugin that
   Lane lays, `dev/scripts/trace.py`, and, for the compatibility test, `dev/tests/recorder/` and its
   `compare.py`.
@@ -963,8 +984,12 @@ tests, and end-to-end (E2E) tests. Its test cases lie in `dev/lane/tests/`, and
   recorded again by `dev/tests/recorder/`, gives each event of the record that the double gives, with
   the same fields and in the same order for its caller, which `compare.py` checks. Where it doesn't,
   the developers keep the new version's record in `dev/tests/recorded/`, change the double to give
-  what it shows, and fix Lane where a test then fails.
-- Runs: with the unit tests of the code before each push and on each push in CI, and the check of
+  what it shows, and fix Lane where a test then fails; and, for each plugin kept in
+  `dev/lane/tests/released/`, `lay.py steps` gives each Step without a sentence that its Lane laid,
+  and laying again leaves no such sentence in a step, none doubled, and `lanes.json` and
+  `hooks/lane/` of the newest Lane.
+- Runs: with the unit tests of the code before each push and on each push in CI, the data
+  compatibility test among them, and the check of
   the pages in CI with the checks of the tests, as a page changes apart from any push; and the
   compatibility test on each new version of Claude Code, which a job in CI finds each night by
   `claude --version`, as only a new version changes what the double must give.
@@ -1009,3 +1034,9 @@ tests, and end-to-end (E2E) tests. Its test cases lie in `dev/lane/tests/`, and
   Claude Code changes on its own schedule, and a double that the real one has outgrown passes a test
   that the users' version fails, which raises KR1.1 unseen. The cost: each new version waits on a
   run of the real Claude Code for each recorded state.
+- The walkthrough's plugin kept as each released Lane laid it over a laid set that the test writes
+  by hand in an earlier form\
+  Only what a released Lane wrote shows what the newest `lay.py` must read, and a form written by
+  hand passes a test that a user's plugin, laid by that Lane, fails, which raises KR1.1. The cost:
+  each release adds a folder to `dev/lane/tests/released/`, kept while a user may hold a plugin
+  that it laid.

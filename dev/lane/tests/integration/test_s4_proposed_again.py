@@ -1,12 +1,13 @@
 """The integration cases of S4, proposed again after the steps or Lane change: up reads each Step
 without the sentences that the Laid names, lay.py keeps a laid sentence the user changed as their
 own words, and laying again replaces Lane's part laid before and keeps the user's own hook
-entries."""
+entries, on a plugin that the newest Lane or a released one laid."""
 
 from __future__ import annotations
 
 import json
 import os
+import shutil
 
 import pytest
 from claude_code import Conversation
@@ -30,6 +31,17 @@ from lane_example import (
 pytestmark = pytest.mark.xfail(
     strict=True, reason="Lane's parts are skeletons, their bodies unbuilt"
 )
+
+RELEASED = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "released")
+STEP_2_WRITTEN = "2. Read the commits since then with `git log --oneline`.\n"
+
+
+def released() -> list[str]:
+    """Each version whose laid `changelog` dev/lane/tests/released/ keeps, in order, or
+    `unreleased` while none is kept, for the plugin as the Lane about to be released lays it."""
+    kept = sorted(os.listdir(RELEASED)) if os.path.isdir(RELEASED) else []
+    return kept or ["unreleased"]
+
 
 STEP_2_SENTENCE = "Run only `git log --oneline`."
 STEP_2_LAID = (
@@ -146,3 +158,29 @@ def test_lay_steps_gives_each_step_without_the_sentences_that_lane_laid(laid: Re
     assert printed.exit_code == 0
     assert "2. Read the commits since then with `git log --oneline`." in printed.output
     assert STEP_2_LAID not in printed.output
+
+
+@pytest.mark.supports("S4", "lay.py", "Laid", "Step")
+@pytest.mark.parametrize("version", released())
+def test_up_after_an_update_of_lane_takes_each_sentence_that_a_released_lane_laid_out_of_the_steps(
+    repo: Repo, version: str
+):
+    """Given `changelog` as the released Lane of the version laid the walkthrough's Proposal, kept
+    in dev/lane/tests/released/, or, while none is kept, as the Lane about to be released lays it
+    When the person types `/lane:up changelog`, up runs `lay.py steps changelog`, and the caller
+    lays the walkthrough's Proposal again with the newest Lane
+    Then writer's step 2 reads as the user wrote it, holds the newest Lane's sentence once, and
+    hooks/lane/ holds the newest Lane's code"""
+    if version == "unreleased":
+        lay(repo, PROPOSAL)
+    else:
+        shutil.copytree(os.path.join(RELEASED, version), repo.plugin, dirs_exist_ok=True)
+    up = conversation(repo, LANE, repo.plugin)
+    up.type("/lane:up changelog")
+    printed = up.bash(f"python3 {LAY} steps changelog")
+    assert printed.exit_code == 0 and STEP_2_WRITTEN in printed.output
+    lay(repo, PROPOSAL)
+    writer = read(os.path.join(repo.plugin, "agents", "writer.md"))
+    assert writer.count(STEP_2_SENTENCE) == 1
+    newest = os.path.join(LANE, "hooks", "lane", "result.py")
+    assert read(os.path.join(repo.plugin, "hooks", "lane", "result.py")) == read(newest)

@@ -1,5 +1,6 @@
-"""The unit cases of scripts/steps.py: where a plugin's Roles and Steps lie, and how each Step reads
-without Lane's text, through `roles`, `files_of`, and `fingerprint`, on plugins each test writes."""
+"""The unit cases of scripts/steps.py: where a plugin's Roles and Steps lie, which text a released
+Lane laid, and how each Step reads without it, through `laid_of`, `roles`, `files_of`, and
+`fingerprint`, on plugins each test writes."""
 
 from __future__ import annotations
 
@@ -8,9 +9,10 @@ from typing import Any
 
 import pytest
 from domain.fault import Fault
-from domain.laid_set import Laid, LaidSentence
+from domain.laid_set import Laid, LaidSentence, dumps
 from lane_example import WRITER, put, put_plugin
-from steps import files_of, fingerprint, roles
+from lane_parts import laid_set
+from steps import files_of, fingerprint, laid_of, roles
 
 pytestmark = pytest.mark.xfail(
     strict=True, reason="Lane's parts are skeletons, their bodies unbuilt"
@@ -144,3 +146,39 @@ def test_a_second_skill_that_no_route_names_as_a_command_raises_a_fault(plugin: 
     put(plugin, "skills/approve/SKILL.md", "---\nname: approve\n---\n\n## Steps\n\n1. Go on.\n")
     with pytest.raises(Fault, match="approve"):
         roles(plugin, Laid())
+
+
+ONE_SENTENCE = Laid((LaidSentence("agents/writer.md", STEP_2, SENTENCE),))
+
+
+@pytest.mark.supports(
+    "test_up_after_an_update_of_lane_takes_each_sentence_that_a_released_lane_laid_out_of_the_steps"
+)
+def test_the_laid_of_a_laid_set_in_the_newest_form_reads_as_it_was_laid(plugin: str):
+    """Given `changelog` whose hooks/lanes.json holds a laid set in the newest form, with one laid
+    sentence on writer's step 2
+    When its Laid is read
+    Then it is that one sentence"""
+    put(plugin, "hooks/lanes.json", dumps(laid_set(laid=ONE_SENTENCE)))
+    assert laid_of(plugin) == ONE_SENTENCE
+
+
+@pytest.mark.supports("test_lay_steps_gives_each_step_without_the_sentences_that_lane_laid")
+def test_a_plugin_with_no_lanes_json_has_nothing_laid(plugin: str):
+    """Given `changelog` with no hooks/lanes.json
+    When its Laid is read
+    Then it is empty"""
+    assert laid_of(plugin) == NOTHING_LAID
+
+
+@pytest.mark.supports(
+    "test_up_after_an_update_of_lane_takes_each_sentence_that_a_released_lane_laid_out_of_the_steps"
+)
+def test_a_lanes_json_in_no_released_form_raises_a_fault_naming_the_file(plugin: str):
+    """Given `changelog` whose hooks/lanes.json holds `{"lanes": 1}`, a form no Lane wrote
+    When its Laid is read
+    Then a Fault names hooks/lanes.json, with the plugin's maker to fix it"""
+    put(plugin, "hooks/lanes.json", '{"lanes": 1}')
+    with pytest.raises(Fault, match="lanes.json") as raised:
+        laid_of(plugin)
+    assert "maker" in raised.value.who

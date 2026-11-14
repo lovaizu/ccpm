@@ -9,6 +9,7 @@ import os
 
 import pytest
 from claude_code import Conversation
+from domain.laid_set import load
 from lane_example import (
     LAID,
     PROPOSAL,
@@ -195,3 +196,15 @@ def test_after_lane_lays_the_persons_reload_plugins_has_the_plugins_next_run_hel
     up.type("/reload-plugins")
     typed = up.type("/changelog:write")
     assert "changelog: Start `changelog:writer` with `Carry out your steps`." in typed.said
+
+
+@pytest.mark.supports("S2", "guard", "lay.py", "Lane", "Route", "Laid")
+def test_the_laid_set_that_lay_py_writes_is_the_one_that_the_guards_code_reads(laid: Repo):
+    """Given `changelog` laid with the walkthrough's Proposal by `lay.py write`
+    When the guard's code reads the plugin's hooks/lanes.json
+    Then it reads each Lane and each Route of the Proposal, and the sentences laid in the Laid"""
+    found = load(laid.plugin)
+    assert found is not None
+    assert len(found.lanes) == len(PROPOSAL["lanes"])
+    assert len(found.routes) == len(PROPOSAL["routes"])
+    assert found.laid.sentences

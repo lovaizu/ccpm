@@ -1,7 +1,8 @@
-"""Decides where a plugin's Roles and Steps lie and how each Step reads without the text that Lane
-laid: the numbered list under `## Steps` of the skill's SKILL.md, of each subagent's file in
-`agents/`, of each file of the plugin that a body names by `${CLAUDE_PLUGIN_ROOT}/`, and, for each
-skill, of the SKILL.md of each command that its Route waits for or goes after."""
+"""Decides where a plugin's Roles and Steps lie, which text of a Step a released Lane laid, read
+from the laid set in the form that Lane wrote, and how each Step reads without it: the numbered list
+under `## Steps` of the skill's SKILL.md, of each subagent's file in `agents/`, of each file of the
+plugin that a body names by `${CLAUDE_PLUGIN_ROOT}/`, and, for each skill, of the SKILL.md of each
+command that its Route waits for or goes after."""
 
 from __future__ import annotations
 
@@ -33,6 +34,15 @@ class Role:
     skill: bool
     entry: str
     steps: tuple[Step, ...] = field(default_factory=tuple)
+
+
+def laid_of(plugin_root: str) -> Laid:
+    """The Laid of the plugin in the folder, read from its `hooks/lanes.json` in the form that the
+    released Lane that laid it wrote, the newest form as the guard's `laid_set.load` reads it; an
+    empty Laid where the plugin has no `hooks/lanes.json`. Raises Fault, naming the file, with the
+    plugin's maker to fix it by running `/lane:up` again, where the file is in no form that a
+    released Lane wrote."""
+    raise NotImplementedError("steps.laid_of")
 
 
 def roles(plugin_root: str, laid: Laid, commands: Mapping[str, str] | None = None) -> list[Role]:
