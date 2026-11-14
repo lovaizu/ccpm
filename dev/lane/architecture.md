@@ -4,10 +4,11 @@ This document says how the parts of Lane give what [its README](../../plugins/la
 promises. Lane's up reads the user's steps alone and proposes from them the rules and the routes,
 each rule of a lane type that gives both the sentence the role reads and the check the guard runs.
 Lane lays them into the user's plugin only on the caller's own approval, a person's reply or an
-AI's own act. On each run once Claude Code loads it, the guard laid there holds each role to the
-sentence of its step and gives the main conversation each start that the routes name, from results that only the result
-script records. Each change goes into the steps, so each `/lane:up` proposes from them again and
-replaces what it laid before.
+AI's own act. Once Claude Code loads them, the guard laid there holds each run of each skill of the
+plugin, beside the runs of its other skills in the same conversation. It holds each role to the
+sentence of its step, and gives the main conversation each start that the routes of that skill
+name, from results that only the result script gives. Each change goes into the steps, so each
+`/lane:up` proposes from them again and replaces what it laid before.
 
 ## User stories
 
@@ -34,9 +35,9 @@ replaces what it laid before.
   `/changelog:write`, each `Start` line, each `gave` line, a start with only the text the plugin
   gives, starts side by side, each with a text other than those of its role that run, the route
   that waits for a command the person types, the route after a command they type at any moment,
-  the moves that a route lists for the
-  skill's steps to choose among, `Start no more subagents`, and the work after it that Lane doesn't
-  check.
+  the moves that a route lists for the skill's steps to choose among, the command of another skill
+  of the plugin typed while a run goes on, which starts that skill's run beside it,
+  `Start no more subagents`, and the work after it that Lane doesn't check.
 - S6: the user wants each subagent held to its steps on every call, so that a subagent that leaves a
   step goes back to it. It carries the calls that Lane lets through, the stopped `git -C <repo> log --oneline`, and
   the step's sentence and the commands that `writer` may run.
@@ -54,7 +55,7 @@ What each decides alone:
   What each step says, whether the proposal holds what they meant, what to change in it, and
   whether to approve.
 - up\
-  Which lane type each step takes and what it takes, the routes from the skill's step and the
+  Which lane type each step takes and what it takes, the routes of each skill from its step and the
   results that the steps name, the result named where a subagent's steps name none, and how a
   change the user asks for reads in its step.
 - lay.py\
@@ -71,14 +72,19 @@ What each decides alone:
   printed, and, as for `ends_checked`, a subagent's end or the skill's turn's end by a command of
   the plugin's own, which the guard runs with the role's run values and its result filled in.
 - guard\
-  Which Run, Start, and role each hook event belongs to, when a run starts and ends, whether each
-  call, start, and end passes, which start the routes make due, what a stopped role reads, what
-  the main conversation reads, whether up gave the person the proposal word for word, and whether
-  the act that lays it is the caller's own.
+  Which Run, Start, and role each hook event belongs to, among the Runs of the plugin's skills
+  that go on side by side in a conversation, which facts of an event the run record keeps, where
+  each Run stands, worked out from the record's lines on each event, when a run starts and ends,
+  whether each call, start, and end passes, which Result a run of the result script gave, which
+  start the routes make due, what a stopped role reads, what the main conversation reads, whether
+  up gave the person the proposal word for word, and whether the act that lays it is the caller's
+  own.
 - result.py\
-  Whether a result is one that the role may give, and the Result recorded.
+  Whether a result is one that the role may give in a Run of the conversation.
 - adapter\
-  How the plugin's own form of its records, or of a start's text, reads in Lane's form.
+  How the plugin's own form of its records, or of a start's text, reads in Lane's form, and, from
+  the words typed after the skill's command, whether a call of the skill starts a run or picks one
+  up.
 
 The choices made, and why:
 
@@ -98,7 +104,7 @@ The choices made, and why:
   can't approve for a person who typed `/lane:up`, on every run, which keeps KR1.1 low. The cost:
   the guard rests on Claude Code telling a typed `/lane:up` from a call of the Skill tool, which a
   recorded run must show.
-- The skill as one role whose Steps lie in several files over a role for each command that the
+- Each skill as one role whose Steps lie in several files over a role for each command that the
   person types\
   The main conversation runs the steps of every command in one conversation, and no hook event
   marks where a command's steps end and the skill's go on, so the guard holds it to every Lane of
@@ -140,8 +146,9 @@ The choices made, and why:
 - Each hook event placed by its `session_id` and `agent_id` over its `prompt_id` or its
   `transcript_path`, with each Start tied to its subagent at the PostToolUse of its Agent call over
   the SubagentStart\
-  The guard places an event on the Run of its `session_id`, on the main conversation where it
-  carries no `agent_id`, and else on the Start whose Agent call's PostToolUse named that `agent_id`.
+  The guard places an event on the Runs of its `session_id`, on the main conversation where it
+  carries no `agent_id`, and else on the Start whose Agent call's PostToolUse named that `agent_id`,
+  and on that Start's Run.
   A `prompt_id` changes as the person types while a subagent runs, a `transcript_path` moves as the
   conversation enters a worktree, and a SubagentStart may come before or after that PostToolUse and
   names no Agent call, as [Claude Code's states](claude-code-states.md) shows each with its records,
@@ -150,6 +157,50 @@ The choices made, and why:
   shows may place an event apart from its Start, so each rare state gets one line there that names
   what Lane does, never holding a call to the rules of another Run, and the compatibility test of
   Test strategy checks the states on each new version of Claude Code.
+- The runs of several skills of one plugin side by side in one conversation, each held to its own
+  skill's Routes, over one run at a time\
+  A person types another command of the plugin while a subagent of the first runs in the
+  background, as a recorded run shows, and a plugin whose second command Lane refuses or leaves
+  unheld doesn't run as its maker designed, which raises KR1.1. So each Start keeps the skill whose
+  Run made it due, a subagent's events go to its Start's Run by its `agent_id`, a Result of the
+  main conversation goes to the Run of the skill that its command names, a command that the person
+  types goes to each Run whose Route waits for it or goes after it, and a start of the main
+  conversation goes to the Run whose moves open it. The cost: where the moves of two Runs open the
+  same start, of one role with one text, the start goes to the Run that began first, and the other
+  Run's start stays due.
+- The main conversation held to the Lanes of the skill of each Run that goes on, joined as the
+  Lanes of one role's Steps, over the Lanes of one skill\
+  No hook event says which skill's step a call of the main conversation serves, so the guard checks
+  the call by the Lanes of each skill whose Run goes on, joined as each lane type joins the Lanes of
+  one role, such as the commands of each `run_only` lane, so that a call one skill's steps allow
+  passes and no skill's step goes unheld, which keeps KR1.1 low. The cost: a Lane that keeps a
+  path unread in one skill holds the main conversation while the other skill's run goes on too.
+- The run record kept as lines that each hook adds and never rewrites, holding only the facts that
+  no later payload gives again, over a Run written whole\
+  The hooks of subagents that run side by side run at once, so a Run written whole by one hook loses
+  the line that another added, and a value worked out and kept, such as the moves due, goes stale
+  once another line comes. So the record keeps each Start with its skill, its tie to an `agent_id`,
+  each Result, and each other fact that one event alone tells, such as a subagent's end or a
+  command that the person typed, and the guard works out where each Run stands from those lines on
+  each event, and reads from the payload what it carries each time, such as the `session_id`, the
+  `agent_type`, and the skill that a result names, which keeps KR1.1 low. The cost: the guard reads
+  the conversation's whole record on each event, so a long run makes each hook slower.
+- Each Result added by the guard at the PostToolUse of a run of `result.py` that gave 0, with the
+  `agent_id` of that payload, over `result.py` adding it\
+  Claude Code gives a Bash command no `agent_id`, only `CLAUDE_CODE_SESSION_ID`, as a recorded run
+  shows, so only the hook of the call ties a Result to the subagent that gave it, even where two
+  subagents of one role give results at once, which keeps KR1.1 low. The cost: a Result counts only
+  once its PostToolUse comes, and `result.py` only checks the result and refuses one that the role
+  may not give.
+- The adapter of the plugin's records given the words typed after the skill's command, or the
+  Skill tool's arguments, to decide whether the call starts a run or picks one up, over the guard
+  deciding it from the run record alone\
+  A plugin whose command takes a request, such as `/rn:up <request>`, must tell a new request from
+  a pause to pick up, and no part of the plugin runs before the guard answers the call, so only the
+  adapter, given the words that the hook event of the call carries, can, which keeps KR1.1 low.
+  The cost: where the Laid names that adapter, it decides at each call of the skill, even where the
+  conversation's record holds the skill's Run, so an adapter that gives no results there starts
+  the Run anew, and the Run before ends.
 - Subagents in the background over subagents in the foreground\
   The end of a subagent in the background reaches the main conversation as an event of its own, and
   the PostToolUse of its Agent call names the subagent once it starts, so the guard ties each
@@ -163,9 +214,9 @@ The choices made, and why:
 
 - Step\
   One item of the numbered list under `## Steps` of a skill or a subagent, or of the file in the
-  plugin's folder that its body names by `${CLAUDE_PLUGIN_ROOT}/`, as the user wrote it. The
+  plugin's folder that its body names by `${CLAUDE_PLUGIN_ROOT}/`, as the user wrote it. A
   skill's Steps lie in its own file and that file both, and in the `SKILL.md` of each command that
-  a Route waits for or goes after, as the main conversation runs them all.
+  its Route waits for or goes after, as the main conversation runs them all.
 - Proposal\
   The lanes and the routes proposed from the steps as they read at one time, with its ID, kept for
   the Run of up that showed it, if any: until the caller approves it, the steps change, or that Run
@@ -174,11 +225,11 @@ The choices made, and why:
   A rule on one step of one role, in the file that holds the step, of one lane type. It holds the
   role on every call and every end of the Run, as its type checks them. The README calls it a rule.
 - Route\
-  The moves after the start of a run, a role's result, or a command the person types: one move,
-  or several among which the skill's steps choose by their own judgment. A move starts a role,
-  resumes a role's subagent by SendMessage, starts no more, or ends the turn for the person's reply
-  with no start due, and each but that wait may wait for a command that the person types. A Run
-  holds the moves of the Route after each Result at once, until the skill's steps make them, so
+  The moves of one skill after the start of its run, a role's result, or a command the person types:
+  one move, or several among which the skill's steps choose by their own judgment. A move starts a
+  role, resumes a role's subagent by SendMessage, starts no more, or ends the turn for the person's
+  reply with no start due, and each but that wait may wait for a command that the person types. A
+  Run holds the moves of the Route after each Result at once, until the skill's steps make them, so
   that they can start side by side the work that rests on none waiting.
 - Laid\
   The sentences that Lane added to the steps, by the file they lie in, with the words of each step
@@ -188,31 +239,40 @@ The choices made, and why:
   The caller's own act that approves one Proposal: a person's reply, or an AI's own run of `lay.py
   write`.
 - Start\
-  One start of a role that a Route makes due, with its text: what the adapter gives for the role,
-  such as its run values, or else Lane's words `Carry out your steps`, with the words that the
-  person typed after the plugin's command, or that an AI's call of the skill by the Skill tool gives
-  as its arguments. The text names no command, as a role given the plugin's command runs it and
-  starts roles of its own. The main conversation passes the text word for word, so a role gets
-  nothing of the talk that started it. Where the adapter gives the role's run values beside its
-  text, the Start keeps them, and each name in braces of the role's lanes that they name stands for
-  that value alone, so that the role is held to what it was started for, such as one deliverable.
-  A name they don't give stands for any value, as in a plugin with no adapter, or in a lane of the
-  skill, whose run no adapter starts. A Start runs beside each other Start that runs until its end
-  reaches the main conversation, and the PostToolUse of its Agent call names the subagent it
-  started, which holds that subagent to the Start's run values while others of its role run. A
-  Start of a role with the text of one of its role that runs isn't due, as it would start that work again, so the
-  adapter, asked again after each Start and given each Start that runs, decides which work of the
-  role waits, as only Lane knows which Starts run. A resume
-  that a Route lists counts as a Start of the subagent
-  it resumes, which keeps the run values of its first Start, and the Result that the subagent gives
-  after it moves the Run as a Start's does. Where no Route lists a resume, a resume is the main
-  conversation's talk with a subagent, which moves no Run, so that a plugin whose routes give one
-  start each runs as before.
+  One start of a role that a Route makes due, with the skill whose Run made it due, and its text:
+  what the adapter gives for the role, such as its run values, or else Lane's words `Carry out your
+  steps`, with the words that the person typed after the plugin's command, or that an AI's call of
+  the skill by the Skill tool gives as its arguments. The text names no command, as a role given the
+  plugin's command runs it and starts roles of its own. The main conversation passes the text word
+  for word, so a role gets nothing of the talk that started it. Where the adapter gives the role's
+  run values beside its text, the Start keeps them, and each name in braces of the role's lanes that
+  they name stands for that value alone, so that the role is held to what it was started for, such
+  as one deliverable. A name they don't give stands for any value, as in a plugin with no adapter,
+  or in a lane of the skill, whose run no adapter starts. A Start runs beside each other Start that
+  runs until its end reaches the main conversation, and the PostToolUse of its Agent call names the
+  subagent it started, which holds that subagent to the Start's run values while others of its role
+  run. A Start of a role with the text of one of its role that runs isn't due, as it would start
+  that work again, so the adapter, asked again after each Start and given each Start that runs,
+  decides which work of the role waits, as only Lane knows which Starts run. A resume that a Route
+  lists counts as a Start of the subagent it resumes, which keeps the run values of its first Start,
+  and the Result that the subagent gives after it moves the Run as a Start's does. Where no Route
+  lists a resume, a resume is the main conversation's talk with a subagent, which moves no Run, so
+  that a plugin whose routes give one start each runs as before.
+- Call\
+  One tool call of a role, which the guard checks as it comes, and which the run record doesn't
+  keep, as no later move rests on it. A subagent's Call lies in its Start's Run, and the main
+  conversation's in each Run that goes on.
 - Run\
-  One run of the plugin's skill, from its call to the route that starts no more, with each Start,
-  Call, and Result. A run of up ends instead once `lay.py write` lays a Proposal, or once the turn
-  on the person's prompt after a Proposal shown ends with no `lay.py write` and no new `lay.py
-  print`, as a Proposal waits for one reply.
+  One run of one skill of the plugin in one conversation, from its call to the route that starts no
+  more, with each Start, each Result, and each Call that lies in it. The runs of the plugin's skills
+  go on side by side, one Run for each skill. No Run is written whole: the guard works each out on
+  each event from the lines of the conversation's run record, which keeps only what no later payload
+  gives again, each Run's call, each Start, its tie to a subagent, each Result, and each other fact
+  that one event alone tells, such as a subagent's end, a command that the person typed, a line that
+  a Lane's command printed, and, for up, what `lay.py print` showed and each prompt after it. A call
+  of the skill that starts its run anew ends the Run before. A run of up ends instead once `lay.py
+  write` lays a Proposal, or once the turn on the person's prompt after a Proposal shown ends with
+  no `lay.py write` and no new `lay.py print`, as a Proposal waits for one reply.
 - Kept results\
   The results of a run that the user's plugin keeps in its own records, which the adapter gives.
 
@@ -261,8 +321,8 @@ entry of the user's own that Lane removed would leave their step unheld, which r
 
 ### A result only from the result script
 
-The guard goes on by the routes only on a Result that `result.py` recorded for the role that ran
-it, from the subagent that the Start started, never on what a role wrote in its reply.
+The guard goes on by the routes only on a Result that a run of `result.py` gave for the role that
+ran it, from the subagent that the Start started, never on what a role wrote in its reply.
 
 *Why*: a reply such as `No more entries` read as `more` starts a role that the order doesn't name,
 and a result of another subagent of the same role, read as the Start's, moves the run on a result
@@ -288,16 +348,16 @@ unchecked could break it, which raises KR1.1.
 
 ### The run kept in a file
 
-The guard and `result.py` keep each run's starts, calls, and results in the run record, and decide
-each move from that record and the plugin's kept results, never from the conversation.
+The guard keeps each run's starts and results in the run record, and the guard and `result.py`
+decide each move from that record and the plugin's kept results, never from the conversation.
 
 *Why*: a compacted or new conversation forgets where the run stood, so the run stops while the order
 names a move, which raises KR1.1.
 
 ### The guard checks only the run
 
-The guard checks a call only between the call of the plugin's skill and the end of its Run, and
-only for the role whose lanes name it.
+The guard checks a call only between the call of a skill of the plugin and the end of that
+skill's Run, and only for the role whose lanes name it.
 
 *Why*: a check that reaches the user's own work stops a move that no step forbids, which raises
 KR1.1.
@@ -482,16 +542,16 @@ sequenceDiagram
   participant RS as run record
   participant A as adapter
   participant SA as the plugin's subagent
-  U->>CC: the plugin's command, such as /changelog:write
+  U->>CC: a command of the plugin's skill, such as /changelog:write
   Note over U,CC: An AI's call of the skill by the Skill tool starts the Run in the same way.
   CC->>G: the skill's call
-  G->>RS: starts the Run, or picks it up, as S7 draws
-  loop until a move starts no more
-    opt the Laid names an adapter of a start's text, and the Run keeps no text for a start that the Route's moves open
+  G->>RS: adds the call of that skill's Run, or picks the Run up, as S7 draws
+  Note over G,RS: The Run goes on beside each Run of another skill of the plugin in the conversation, and the guard works each out from the record's lines on each event.
+  loop until a move of the Run starts no more
+    opt the Laid names an adapter of a start's text, and a start is among the Run's moves
       G->>A: asks for the text of that start's role, with each Start that runs
       alt the adapter gives it
         A-->>G: the text, and the role's run values where it gives them, in Lane's form
-        G->>RS: keeps the text and the run values with that start
       else it fails at the skill's call
         A-->>G: why
         G->>G: gives that start with why, and lets the call run
@@ -503,27 +563,27 @@ sequenceDiagram
         A-->>G: why
         G->>G: gives that start with why, beside the other moves
       end
-      Note over G,A: The guard asks the adapter again at the next move that needs the text, such as the start's call.
+      Note over G,A: The run record keeps no text before a Start takes it, so the guard asks the adapter again at each move that needs the text, such as the start's call.
     end
     G-->>M: the Route's one move, or the moves among which the skill's steps choose, each start with its text
     alt the main conversation starts a subagent
       M->>CC: starts a subagent, with its text
       CC->>G: the start
-      alt a start that the moves open, with only the text the plugin gives, which no Start of its role that runs took
-        G->>RS: adds the Start, beside each Start that runs
+      alt a start that a Run's moves open, with only the text the plugin gives, which no Start of its role that runs took
+        G->>RS: adds the Start, with the skill of that Run, the one that began first where two Runs' moves open it
         G-->>CC: lets it through
         CC->>SA: starts it in the background
         CC->>G: the PostToolUse of the start, with its subagent's agent_id
-        G->>RS: ties the subagent to its Start
+        G->>RS: adds the tie of the Start to that agent_id
       else a start that they open, whose text the adapter can't give
         G-->>M: stops it, with why and who must fix it
       else any other start
-        G-->>M: stops it, with the moves
+        G-->>M: stops it, with the moves of each Run
       end
     else it resumes a subagent by SendMessage, where a Route lists a resume
       M->>CC: resumes a subagent
       CC->>G: the resume
-      alt a resume that the moves open, of a subagent of that role that the Run started and that runs no more
+      alt a resume that the moves of its Start's Run open, of a subagent of that role that runs no more
         G->>RS: adds the resume, which counts as a Start of that subagent
         G-->>CC: lets it through
         CC->>SA: resumes it in the background
@@ -532,46 +592,45 @@ sequenceDiagram
       end
     else it gives the skill's Result, where a move starts no more
       M->>CC: result.py <skill> <result>
-      Note over CC,RS: result.py records the Result, as S6 draws, and the Run starts no more.
+      Note over CC,RS: The guard adds the Result to the Run of the skill that the command names, as S6 draws, and that Run starts no more.
     else it ends its turn, where a move is a wait or waits for a command
       U->>CC: replies, or types a command, such as an approval
       CC->>G: the prompt
-      opt the command that a move waits for
+      opt the command that a move of a Run waits for
+        G->>RS: adds the command typed
         G-->>M: that move, now due
       end
     end
     opt the person types a command that a route goes after, at any moment of the run
       U->>CC: the command, such as a pause
       CC->>G: the prompt
-      G->>RS: closes the Routes open, and opens that route's moves, while each subagent that runs goes on
+      G->>RS: adds the command typed, so the Routes open of each Run whose route goes after it close, and that route's moves open, while each subagent that runs goes on
       G-->>M: the route's moves
     end
     opt a subagent started or resumed
       Note over SA,G: The subagent works and ends, held as S6 draws.
       CC->>G: the subagent's end, as it reaches the main conversation
+      G->>RS: adds the end of the subagent
       alt the subagent gave a Result since its Start
-        G->>RS: reads the Result, and opens its Route's moves beside those open
-        G-->>M: the Result
+        G-->>M: the Result, and the moves of its Route, which open in its Start's Run beside those open
       else it gave none, as one that TaskStop stopped
-        G->>RS: the Start runs no more
-        G-->>M: that it ended with no Result
+        G-->>M: that it ended with no Result, as its Start runs no more
       end
     end
     opt the main conversation stops while a move is due
       CC->>G: the stop
-      alt no move is a wait or waits for a command, no subagent runs, and the adapter gave a text for a start among the moves or a move is no start
-        G-->>M: stops it, with the moves
-      else a Lane of the skill holds its end, and the plugin's command that it names gives other than 0
+      alt a Run has a move due that is no wait and waits for no command, no subagent of that Run runs, and the adapter gave a text for a start among its moves or a move is no start
+        G-->>M: stops it, with the moves of each such Run
+      else a Lane of a skill whose Run goes on holds its end, and the plugin's command that it names gives other than 0
         G->>G: runs the command, in the folder that the conversation works in
         G-->>M: stops it, with the Lane's sentence and what the command printed
-      else a subagent runs, as one that the main conversation resumed by SendMessage where no Route lists a resume does until its end reaches it, or the adapter failed
+      else a subagent of each Run with a move due runs, as one that the main conversation resumed by SendMessage where no Route lists a resume does until its end reaches it, or the adapter failed
         G-->>CC: lets it stop
       end
     end
   end
-  G->>RS: ends the Run
   G-->>M: start no more subagents, where the Route's one move starts no more
-  Note over U,G: What the user asks next is their own work, which the guard doesn't check.
+  Note over U,G: The Run ends there, and each Run of another skill goes on. What the user asks next is their own work, which the guard doesn't check.
 ```
 
 ### S6: a subagent held to its steps
@@ -586,14 +645,14 @@ sequenceDiagram
   participant RS as run record
   loop each call the subagent makes
     SA->>CC: a tool call
-    CC->>G: the call, with the role
+    CC->>G: the call, with the subagent's agent_id and role
+    G->>RS: reads the lines, for the Start that the agent_id ties and that Start's Run
     G->>T: checks the Call by each Lane of the role, with the run values of the subagent's Start
     alt it keeps every Lane
-      G->>RS: adds the Call
       G-->>CC: lets it through
       opt a Lane of the role checks the end against what a command printed, and the Call runs that command
         CC->>G: what the command printed, once it succeeded
-        G->>RS: keeps each line it printed for the subagent
+        G->>RS: adds each line it printed, for the subagent
       end
     else it breaks a Lane, as git commit does
       G-->>SA: stops it, with the Step's sentence and what it may do there
@@ -605,15 +664,18 @@ sequenceDiagram
       G-->>SA: stops it, with why and who must fix it
     end
   end
-  SA->>R: result.py <role> <result>
-  alt a Result the role may give
-    R->>RS: adds the Result
+  SA->>CC: runs result.py <role> <result>, word for word
+  CC->>R: result.py <role> <result>
+  alt a Result the role may give, in a Run of the conversation
+    R-->>CC: exits 0
+    CC->>G: the PostToolUse of the call, with the agent_id
+    G->>RS: adds the Result, for the subagent of that agent_id
   else
     R-->>SA: refuses it, with the Results it may give
   end
   SA->>CC: ends
   CC->>G: the end
-  alt no Result recorded for this start
+  alt no Result for this start
     G-->>SA: stops the end, with the sentence of its last Step
   else its last message starts no line with a line that a Lane's command printed since its Start or resume
     G-->>SA: stops the end, with the Lane's sentence and each such line
@@ -637,20 +699,20 @@ sequenceDiagram
   participant RS as run record
   participant A as adapter
   participant M as the plugin's main conversation
-  U->>CC: the plugin's command, after /compact or in a new conversation
-  CC->>G: the skill's call
-  G->>RS: looks for the conversation's Run
-  alt the Run is there, as after /compact
-    G-->>M: the Start due it holds
-  else the Laid names an adapter of the plugin's records
-    G->>A: asks for the Kept results
+  U->>CC: a command of the plugin's skill, after /compact or in a new conversation
+  CC->>G: the skill's call, with the words typed after the command
+  G->>RS: reads the conversation's lines, for the Run of that skill
+  alt the Laid names an adapter of the plugin's records
+    G->>A: asks for the Kept results, with the words typed after the command
     alt the adapter gives them
       A-->>G: the Results given, in order, in Lane's form
-      alt they hold none, or reach a Route that starts no more, as a run that ended picks up nothing
-        G->>RS: starts the Run anew
+      alt they hold none, as for a new request, or reach a Route that starts no more, as a run that ended picks up nothing
+        G->>RS: adds the call of the skill's Run, which ends any Run of it before
         G-->>M: the first Start due
-      else they follow the Routes
-        G->>RS: starts the Run from them
+      else they follow the Routes of the skill, and the conversation's Run of the skill already holds them, as after /compact
+        G-->>M: the Start due it holds
+      else they follow the Routes of the skill
+        G->>RS: adds the call of the skill's Run, and each Result given
         G-->>M: where the run picks up, and the Start due
       else they don't
         G-->>U: stops the command, with why and who must fix it
@@ -659,8 +721,10 @@ sequenceDiagram
       A-->>G: why
       G-->>U: stops the command, with why and who must fix it
     end
+  else the Run is there, as after /compact
+    G-->>M: the Start due it holds
   else
-    G->>RS: starts the Run
+    G->>RS: adds the call of the skill's Run
     G-->>M: the first Start due
   end
   Note over M,G: The run goes on, as S5 draws.
@@ -753,9 +817,9 @@ dev/tests/
                                   compares the new record with the one that the double gives
 
 <the user's plugin>/
-├── skills/<skill>/SKILL.md       the skill's Steps, with the sentences that Lane laid
-├── skills/<command>/SKILL.md     the skill's Steps of the moment when the person types a command
-│                                 that a Route waits for or goes after
+├── skills/<skill>/SKILL.md       each skill's Steps, with the sentences that Lane laid
+├── skills/<command>/SKILL.md     a skill's Steps of the moment when the person types a command
+│                                 that its Route waits for or goes after
 ├── agents/<role>.md              each subagent's Steps, with the sentences that Lane laid
 ├── <the file a body names>       the Steps of the skill or subagent that names it, such as a part
 └── hooks/
@@ -766,7 +830,7 @@ dev/tests/
 
 <system temporary folder>/
 ├── lane/<yyyymmdd>-<plugin>/     the Proposal that lay.py print showed, by its ID
-└── <plugin>/<yyyymmdd>-<id>/     the run record of one conversation's run
+└── <plugin>/<yyyymmdd>-<id>/     the run record of one conversation, the lines of each skill's Run
 ```
 
 - The lane types inside `hooks/lane/`, which `lay.py` imports, over a copy of their own beside
@@ -793,8 +857,8 @@ tests, and end-to-end (E2E) tests. Its test cases lie in `dev/lane/tests/`, and
 - Passes when: line and branch coverage of 100%; 0 surviving mutants; 0 counterexamples from the
   property-based tests of `lay.py`'s reading of a plugin's Steps and its check of a Proposal against
   the lane types and the steps, each lane type's check of a call against the paths and the commands
-  it takes, the guard's reading of each hook event in the form the recorded runs show, and the Run
-  written to its file and read back; for each function, McCabe complexity of 10 at most, cognitive
+  it takes, the guard's reading of each hook event in the form the recorded runs show, each line of
+  the run record written and read back, and where each Run stands, worked out from any lines; for each function, McCabe complexity of 10 at most, cognitive
   complexity of 15 at most, and at most 6 returns, 12 branches, 5 arguments, and 50 statements; 0
   findings from pyrefly, ruff, and pylint's checks; and each case of up passing on all of its k = 3
   runs.

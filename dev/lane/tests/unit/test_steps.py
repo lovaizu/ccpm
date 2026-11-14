@@ -30,7 +30,7 @@ NOTHING_LAID = Laid()
 
 
 def by_name(
-    plugin: str, laid: Laid = NOTHING_LAID, commands: tuple[str, ...] = ()
+    plugin: str, laid: Laid = NOTHING_LAID, commands: dict[str, str] | None = None
 ) -> dict[str, Any]:
     return {role.name: role for role in roles(plugin, laid, commands)}
 
@@ -68,10 +68,10 @@ def test_steps_in_a_file_that_the_body_names_by_the_plugin_root_belong_to_the_ro
 @pytest.mark.supports("test_a_move_that_waits_for_a_command_is_due_once_the_person_types_it")
 def test_the_skills_steps_hold_those_of_each_command_named(plugin: str):
     """Given `changelog` with a command `approve` whose SKILL.md holds one Step
-    When the Roles are read with `approve` named as a command of a Route
-    Then the skill's Steps hold that Step, and approve is no Role of its own"""
+    When the Roles are read with `approve` named as a command of a Route of `write`
+    Then the Steps of `write` hold that Step, and approve is no Role of its own"""
     put(plugin, "skills/approve/SKILL.md", "---\nname: approve\n---\n\n## Steps\n\n1. Go on.\n")
-    found = by_name(plugin, commands=("approve",))
+    found = by_name(plugin, commands={"approve": "write"})
     assert "approve" not in found
     assert "1. Go on." in [s.words for s in found["write"].steps]
 

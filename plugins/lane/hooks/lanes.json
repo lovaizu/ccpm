@@ -1,6 +1,6 @@
 {
   "plugin": "lane",
-  "skill": "up",
+  "skills": ["up"],
   "roles": ["up"],
   "lanes": [],
   "routes": [],

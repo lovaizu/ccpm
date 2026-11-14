@@ -2,8 +2,9 @@
 skill's call, gives the main conversation each move due with the text of each start, lets through
 only the starts and resumes the moves open, opens the Route after each Result, a waited command, or
 a command typed at any moment, holds the main conversation's stop while a move is due, and ends the
-Run where a move starts no more. The test plays the person, the main conversation, and each
-subagent."""
+Run where a move starts no more, with the Runs of two skills of the plugin side by side in one
+conversation, each moved by its own Routes. The test plays the person, the main conversation, and
+each subagent."""
 
 from __future__ import annotations
 
@@ -17,6 +18,9 @@ from lane_example import (
     CARRY_OUT,
     NO_MORE,
     PROPOSAL,
+    PROPOSAL_TWO_SKILLS,
+    REVIEW,
+    WRITE,
     Repo,
     conversation,
     gives,
@@ -442,3 +446,138 @@ def test_a_lane_of_the_skill_holds_its_turns_end_until_the_plugins_command_gives
     assert held.blocked and "CHANGELOG.md lacks [Unreleased]" in held.said
     put(repo.root, "CHANGELOG.md", "# Changelog\n\n## [Unreleased]\n")
     assert not conv.stop("Done.").blocked
+
+
+START_NO_MORE = "Start no more subagents."
+
+
+def two_skills(repo: Repo, proposal: dict[str, Any] = PROPOSAL_TWO_SKILLS) -> Conversation:
+    """`changelog` with its second skill `review` beside `write`, laid with the Proposal, and a
+    conversation that loads it."""
+    put(repo.plugin, "skills/review/SKILL.md", REVIEW)
+    return laid_with(repo, proposal)
+
+
+@pytest.mark.supports("S5", "guard", "Run", "Start", "Result", "Route")
+def test_runs_of_two_skills_go_on_side_by_side_each_moved_by_its_own_results(repo: Repo):
+    """Given `changelog` laid with the skills `write` and `review`, and a Run of `write` in which
+    writer runs in the background
+    When the person types `/changelog:review`, the main conversation starts reviewer, which gives
+    `more`, and writer then gives `written`
+    Then Lane names reviewer's start for `review`, lets it through, names no more starts after
+    reviewer's `more`, as the Routes of `review` say, and names reviewer's start after writer's
+    `written`, as those of `write` say"""
+    conv = two_skills(repo)
+    conv.type("/changelog:write")
+    _, writer = starts(conv, "writer")
+    assert writer
+    conv.stop("writer runs.")
+    assert START_REVIEWER in conv.type("/changelog:review").said
+    answer, reviewer = starts(conv, "reviewer")
+    assert not answer.blocked and reviewer
+    after_more = gives(repo, reviewer, "more").said
+    assert START_NO_MORE in after_more and START_WRITER not in after_more
+    assert START_REVIEWER in gives(repo, writer, "written").said
+
+
+@pytest.mark.supports("S5", "guard", "Run", "Result", "result.py")
+def test_the_skills_own_result_ends_only_the_run_of_the_skill_it_names(repo: Repo):
+    """Given the Runs of `write` and `review` in one conversation, writer of `write` having given
+    `written`, and reviewer of `review` having given `good`
+    When the main conversation runs `result.py review good`, and ends its turn
+    Then the guard lets the result through, and holds the stop with reviewer's start, as the Run of
+    `write` goes on with that start due"""
+    conv = two_skills(repo)
+    conv.type("/changelog:write")
+    _, writer = starts(conv, "writer")
+    assert writer
+    gives(repo, writer, "written")
+    conv.type("/changelog:review")
+    _, reviewer = starts(conv, "reviewer")
+    assert reviewer
+    gives(repo, reviewer, "good")
+    assert not conv.bash(result_command(repo, "review", "good")).blocked
+    stopped = conv.stop("Done.")
+    assert stopped.blocked and START_REVIEWER in stopped.said
+
+
+@pytest.mark.supports("S5", "guard", "Run")
+def test_the_stop_is_held_while_one_runs_start_is_due_though_another_runs_subagent_runs(
+    repo: Repo,
+):
+    """Given the Runs of `write` and `review` in one conversation, writer of `write` having given
+    `written`, and reviewer of `review` running in the background
+    When the main conversation ends its turn
+    Then the guard holds the stop with reviewer's start of `write`, as no subagent of that Run
+    runs"""
+    conv = two_skills(repo)
+    conv.type("/changelog:review")
+    _, reviewer = starts(conv, "reviewer")
+    assert reviewer
+    conv.type("/changelog:write")
+    _, writer = starts(conv, "writer")
+    assert writer
+    gives(repo, writer, "written")
+    stopped = conv.stop("Waiting for reviewer.")
+    assert stopped.blocked and START_REVIEWER in stopped.said
+
+
+@pytest.mark.supports("S5", "guard", "Start", "Run")
+def test_a_start_that_the_moves_of_two_runs_open_goes_to_the_run_that_began_first(repo: Repo):
+    """Given a Run of `write` whose move due starts reviewer, and then a Run of `review`, whose
+    first move starts reviewer too
+    When the main conversation starts reviewer, which gives `more`, and starts reviewer again,
+    which gives `more`
+    Then Lane names writer's start after the first `more`, as the start went to the Run of `write`,
+    which began first, and no more starts after the second, as it went to the Run of `review`"""
+    conv = two_skills(repo)
+    conv.type("/changelog:write")
+    _, writer = starts(conv, "writer")
+    assert writer
+    gives(repo, writer, "written")
+    conv.type("/changelog:review")
+    _, first = starts(conv, "reviewer")
+    assert first and START_WRITER in gives(repo, first, "more").said
+    _, second = starts(conv, "reviewer")
+    assert second and START_NO_MORE in gives(repo, second, "more").said
+
+
+@pytest.mark.supports("S5", "guard", "Run", "Lane", "lane types", "Call")
+def test_the_main_conversation_is_held_to_the_lanes_of_each_skill_whose_run_goes_on(repo: Repo):
+    """Given `changelog` laid with `write`, whose step runs only `git log --oneline`, and
+    `review`, whose step runs only `git diff`, and a Run of each going on
+    When the main conversation runs `git diff`, then `git status`, and, once the Run of `review`
+    ended, `git diff` again
+    Then the guard lets the first through, as the steps of `review` allow it, stops the second
+    with the sentence of each skill's step, and stops the third, as only `write` goes on"""
+    put(
+        repo.plugin,
+        "skills/write/SKILL.md",
+        WRITE.replace("1. Have", "1. Read the last version with `git log --oneline`, and have"),
+    )
+    put(
+        repo.plugin,
+        "skills/review/SKILL.md",
+        REVIEW.replace("1. Have", "1. Read the changes with `git diff`, and have"),
+    )
+    proposal = {
+        **PROPOSAL_TWO_SKILLS,
+        "lanes": [
+            *PROPOSAL_TWO_SKILLS["lanes"],
+            lane("write", 1, "run_only", "git log --oneline"),
+            lane("review", 1, "run_only", "git diff"),
+        ],
+    }
+    conv = laid_with(repo, proposal)
+    conv.type("/changelog:write")
+    conv.type("/changelog:review")
+    assert not conv.bash("git diff").blocked
+    stopped = conv.bash("git status")
+    assert stopped.blocked
+    assert "Run only `git log --oneline`." in stopped.said
+    assert "Run only `git diff`." in stopped.said
+    _, reviewer = starts(conv, "reviewer")
+    assert reviewer
+    gives(repo, reviewer, "good")
+    conv.bash(result_command(repo, "review", "good"))
+    assert conv.bash("git diff").blocked

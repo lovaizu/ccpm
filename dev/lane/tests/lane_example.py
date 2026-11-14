@@ -79,9 +79,9 @@ TYPES = ("run_only", "write_only", "read_never", "names_printed", "ends_checked"
 RESULT = "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py"
 
 
-def route(after: str, *moves: dict[str, str]) -> dict[str, Any]:
-    """A Route of a Proposal in the form of proposal.schema.json."""
-    return {"after": after, "moves": list(moves)}
+def route(after: str, *moves: dict[str, str], skill: str = "write") -> dict[str, Any]:
+    """A Route of the skill in a Proposal in the form of proposal.schema.json."""
+    return {"skill": skill, "after": after, "moves": list(moves)}
 
 
 def lane(role: str, step: int, type: str, *takes: str) -> dict[str, Any]:
@@ -99,7 +99,7 @@ NO_MORE = {"kind": "no_more"}
 # The Proposal that up gives for the walkthrough's first `/lane:up changelog`.
 PROPOSAL: dict[str, Any] = {
     "plugin": "changelog",
-    "skill": "write",
+    "skills": ["write"],
     "lanes": [
         lane("write", 1, "gives_result", "good"),
         lane("writer", 2, "run_only", "git log --oneline"),
@@ -125,6 +125,33 @@ PROPOSAL_AGAIN: dict[str, Any] = {
         lane("writer", 4, "gives_result", "written"),
         lane("reviewer", 1, "run_only", "git log --oneline", "git show {commit}"),
         lane("reviewer", 2, "gives_result", "more", "good"),
+    ],
+}
+
+# A second skill of `changelog`, `review`, which has the entries reviewed alone, so that a run of it
+# goes on beside a run of `write` in one conversation. Its routes end its run on either result of
+# reviewer, where those of `write` start writer again after `more`, so that a case tells the two
+# Runs apart by what Lane names after a result.
+REVIEW = """\
+---
+name: review
+description: Has the CHANGELOG.md entries reviewed.
+---
+
+## Steps
+
+1. Have the entries reviewed.
+"""
+
+PROPOSAL_TWO_SKILLS: dict[str, Any] = {
+    **PROPOSAL,
+    "skills": ["write", "review"],
+    "lanes": [*PROPOSAL["lanes"], lane("review", 1, "gives_result", "good")],
+    "routes": [
+        *PROPOSAL["routes"],
+        route("first", start("reviewer"), skill="review"),
+        route("reviewer more", NO_MORE, skill="review"),
+        route("reviewer good", NO_MORE, skill="review"),
     ],
 }
 

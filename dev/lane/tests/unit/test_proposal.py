@@ -42,11 +42,11 @@ def changed(**fields: Any) -> dict[str, Any]:
 def test_the_walkthroughs_json_reads_as_its_proposal():
     """Given the walkthrough's Proposal as up writes it
     When it's parsed
-    Then it holds `changelog`, `write`, five Lanes, and four Routes, with no ID yet"""
+    Then it holds `changelog`, the skill `write`, five Lanes, and four Routes, with no ID yet"""
     found = parse(PROPOSAL, "p.json")
-    assert (found.plugin, found.skill, len(found.lanes), len(found.routes), found.id) == (
+    assert (found.plugin, found.skills, len(found.lanes), len(found.routes), found.id) == (
         "changelog",
-        "write",
+        ("write",),
         5,
         4,
         "",
@@ -173,7 +173,7 @@ def test_a_waited_command_the_model_may_call_is_refused_for_the_user_to_mend(plu
         route("reviewer good", start("writer", "/changelog:approve")),
     ]
     given = parse(changed(routes=routes), "p.json")
-    found = check(given, roles(plugin, Laid(), ("approve",)), plugin)
+    found = check(given, roles(plugin, Laid(), {"approve": "write"}), plugin)
     assert found and found.in_files and "skills/approve/SKILL.md" in " ".join(found.faults)
 
 
@@ -222,11 +222,13 @@ def test_two_roles_that_take_their_steps_from_one_file_are_refused_for_the_user(
 )
 def test_the_moves_after_a_moment_are_those_of_its_route_or_none():
     """Given the walkthrough's Proposal
-    When the moves after `writer written`, and after `writer skipped`, are asked
-    Then the first start reviewer, and the second are none"""
+    When the moves of `write` after `writer written`, after `writer skipped`, and those of a skill
+    `review` that it doesn't name, are asked
+    Then the first start reviewer, and the others are none"""
     given = parse(PROPOSAL, "p.json")
-    assert moves_of(given, "writer written") == (Move("start", "reviewer"),)
-    assert moves_of(given, "writer skipped") == ()
+    assert moves_of(given, "write", "writer written") == (Move("start", "reviewer"),)
+    assert moves_of(given, "write", "writer skipped") == ()
+    assert moves_of(given, "review", "writer written") == ()
 
 
 @pytest.mark.supports("test_lay_print_shows_each_step_as_it_will_read_with_the_routes_and_an_id")
@@ -271,7 +273,7 @@ def shown_in(id: str, **fields: Any) -> Run:
     return Run(**given)
 
 
-KEPT = Proposal("changelog", "write", (), (), id="b9fd8fd8", conversation="c1")
+KEPT = Proposal("changelog", ("write",), (), (), id="b9fd8fd8", conversation="c1")
 
 
 @pytest.mark.supports("test_lay_write_after_the_run_of_up_ended_without_approval_is_refused")

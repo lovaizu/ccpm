@@ -25,7 +25,7 @@ def _without_laid() -> Callable[..., Any]:
     from domain.laid_set import Laid
 
     original = steps.roles
-    return lambda plugin_root, laid, commands=(): original(plugin_root, Laid(), commands)
+    return lambda plugin_root, laid, commands=None: original(plugin_root, Laid(), commands)
 
 
 def _sentence_from_elsewhere() -> Callable[..., Any]:
@@ -89,7 +89,7 @@ PARTS: dict[str, tuple[str, str, Callable[[], Callable[..., Any]]]] = {
     "The run kept in a file": (
         "domain.run_record",
         "load",
-        lambda: lambda temp, plugin, session: None,
+        lambda: lambda temp, plugin, session: (),
     ),
     "The guard checks only the run": (
         "domain.guard",

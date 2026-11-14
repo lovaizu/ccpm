@@ -2,8 +2,9 @@
 
 This document lists each state of Claude Code in which Lane's guard places a hook event on its Run,
 its Start, and its role, by the rule of the guard in [the architecture](architecture.md#components):
-a Run by `session_id`, the main conversation by an event with no `agent_id`, and a Start and its role
-by the `agent_id` that the PostToolUse of its Agent call ties to it. Each state names the events
+the Runs of a conversation by `session_id`, the main conversation by an event with no `agent_id`, a
+Start and its role by the `agent_id` that the PostToolUse of its Agent call ties to it, and the Run
+of a skill by the skill that a command, a Start, or a result names. Each state names the events
 that Claude Code sends, what the guard places them by, and the records in
 [`dev/tests/recorded/`](../tests/recorded/) that show them, as `<file>:<lines>`. The events change
 with each version of Claude Code, so the compatibility test of the architecture's Test strategy
@@ -23,6 +24,8 @@ checks them on each new version, and this list changes with the records.
 | EnterWorktree | From the PostToolUse of EnterWorktree on, each event's `cwd` and `transcript_path` lie in the worktree, the `session_id` stays, and each hook's `CLAUDE_PROJECT_DIR` stays the root. | The `session_id`, never the `transcript_path`, so the Run goes on in the worktree. | `claude-code-2.1.323-worktree.jsonl:5-12` and `:21-30` |
 | A skill typed by a person | UserPromptSubmit, then UserPromptExpansion with `command_name` and `command_args`. | The `command_name`, which starts a Run that a person called. | `claude-code-2.1.322.jsonl:8-9` |
 | A skill called by the Skill tool | PreToolUse and PostToolUse of Skill with `tool_input.skill` and `args`, and no UserPromptExpansion; a skill that sets `disable-model-invocation: true` is refused before any hook. | `tool_input.skill`, which starts a Run that an AI called. | `claude-code-2.1.322-skill.jsonl:3-4`, `claude-code-2.1.323-skill-command.jsonl:16` |
+| A command of another skill typed while a subagent runs | The main conversation's Stop, then UserPromptSubmit and UserPromptExpansion of the other skill's `command_name`, with a new `prompt_id`, while the subagent runs on; its later calls and SubagentStop carry that `prompt_id`. | The `command_name`, which starts that skill's Run beside the first, and each event of the subagent by its `agent_id`, which keeps it on its Start's Run. | `claude-code-2.1.325-skill-command-while-subagent.jsonl:12-21` |
+| The result script run by Bash | PreToolUse and PostToolUse of Bash, with the subagent's `agent_id` where a subagent runs it; the command's environment holds `CLAUDE_CODE_SESSION_ID` and no ID of the subagent. | The `agent_id` of the PostToolUse, by which the guard adds the Result for the subagent that ran the script. | `claude-code-2.1.322.jsonl:14-16`, and the environment in `claude-code-2.1.322-bash-environment.jsonl:1-2` |
 
 ## Rare states
 

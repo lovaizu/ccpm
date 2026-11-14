@@ -1,9 +1,13 @@
-"""Decides whether a result is one that the role may give, and records it for the Start of the
-subagent that gave it, as result.py runs it, so that the guard goes on only from a Result that
-this module recorded, as the principle A result only from the result script says."""
+"""Decides whether a result is one that the role may give, as result.py asks it, and which Result a
+run of result.py gave, as the guard asks it at the PostToolUse of that run, so that the guard goes
+on only from a Result that a run of result.py gave, as the principle A result only from the result
+script says."""
 
 from __future__ import annotations
 
+from collections.abc import Sequence
+
+from domain.event import Event
 from domain.laid_set import LaidSet
 from domain.run_record import Result, Run
 
@@ -14,10 +18,10 @@ def may_give(laid_set: LaidSet, role: str) -> tuple[str, ...]:
     raise NotImplementedError("results.may_give")
 
 
-def record(run: Run, laid_set: LaidSet, role: str, result: str) -> Result:
-    """Adds to the Run the result of the role, for the Start of the subagent of that role whose
-    call of result.py the guard let through last, or for the skill where the main conversation
-    ran it, and gives the Result. Raises Fault, naming each result that the role may give, where
-    the role may give no such result, or where no call of result.py by the role is in the Run, as
-    when a role runs it at the end of a longer command."""
-    raise NotImplementedError("results.record")
+def given(event: Event, laid_set: LaidSet, runs: Sequence[Run]) -> Result | None:
+    """The Result that a run of result.py gave, from the moment that tells it ran: a RAN of the
+    command of the plugin's result.py, word for word with a role and a result, that gave 0. A
+    subagent's Result is for the subagent of the moment's `agent_id`, of the Start that ties it;
+    the main conversation's is for the skill it names, in the Run of that skill. None for any other
+    moment, as for result.py at the end of a longer command, which gives no Result."""
+    raise NotImplementedError("results.given")

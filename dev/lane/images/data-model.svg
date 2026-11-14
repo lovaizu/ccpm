@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 700">
-  <title>Lane&#x27;s data: the Roles, Steps, and kept results of the user&#x27;s plugin, the lane types, the Proposal, the Lanes, Routes, and Laid of lanes.json, and the Run with its Approval, Starts, Calls, and Results</title>
+  <title>Lane&#x27;s data: the Roles, Steps, and kept results of the user&#x27;s plugin, the lane types, the Proposal, the Lanes, Routes, and Laid of lanes.json, and each Run, worked out from the lines of the run record, with its Approval, Starts, and Results, and the Calls that lie in it</title>
   <style>
     svg { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, 'Hiragino Sans', 'Noto Sans CJK JP', 'Noto Sans JP', 'Yu Gothic', Meiryo, sans-serif; }
     .bg { fill: #ffffff; }
@@ -74,7 +74,7 @@
   <polyline class="line" points="745,344 800,430 1040,430 1040,516" marker-end="url(#arrow)"/>
   <polyline class="line" points="132,516 148,344" marker-end="url(#arrow)"/>
   <polyline class="line" points="445,540 505,540" marker-start="url(#diamond)"/>
-  <polyline class="line" points="376,564 400,600 810,600 810,564" marker-start="url(#diamond)"/>
+  <polyline class="line" points="810,564 810,600 400,600 376,564" marker-end="url(#arrow)"/>
   <polyline class="line" points="349,564 320,625 1040,625 1040,564" marker-start="url(#diamond)"/>
   <polyline class="line" points="771,516 489,344" marker-end="url(#arrow)"/>
   <polyline class="line" points="690,76 690,18 1170,18 1170,540 1125,540" marker-end="url(#arrow)"/>
@@ -117,10 +117,10 @@
   <text class="label small halo end" x="268" y="455">shown in 0..1</text>
   <text class="label small halo start" x="150" y="440">approves 1</text>
   <text class="label small halo mid" x="475" y="506">holds 0..*</text>
-  <text class="label small halo mid" x="585" y="592">holds 0..*</text>
+  <text class="label small halo mid" x="585" y="592">lies in 1..*</text>
   <text class="label small halo mid" x="700" y="641">holds 0..*</text>
   <text class="label small halo start" x="660" y="455">stopped by 0..1</text>
   <text class="label small halo end" x="1165" y="440">gives back</text>
   <!-- Frame names a line crosses, drawn last so their halo masks the line. -->
-  <text class="frame-name halo" x="34" y="490">temporary folder: the run record</text>
+  <text class="frame-name halo" x="34" y="490">temporary folder: the run record, whose lines give each Run, and the Calls the guard checks in them</text>
 </svg>

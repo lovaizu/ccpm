@@ -1,11 +1,11 @@
 """Decides where a plugin's Roles and Steps lie and how each Step reads without the text that Lane
 laid: the numbered list under `## Steps` of the skill's SKILL.md, of each subagent's file in
-`agents/`, of each file of the plugin that a body names by `${CLAUDE_PLUGIN_ROOT}/`, and, for the
-skill, of the SKILL.md of each command that a Route waits for or goes after."""
+`agents/`, of each file of the plugin that a body names by `${CLAUDE_PLUGIN_ROOT}/`, and, for each
+skill, of the SKILL.md of each command that its Route waits for or goes after."""
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 
 from domain.laid_set import Laid
@@ -26,7 +26,7 @@ class Step:
 
 @dataclass(frozen=True)
 class Role:
-    """The skill or a subagent of the plugin, the data model's Role: its name, whether it's the
+    """A skill or a subagent of the plugin, the data model's Role: its name, whether it's a
     skill, the file of its entry, and its Steps in order."""
 
     name: str
@@ -35,14 +35,14 @@ class Role:
     steps: tuple[Step, ...] = field(default_factory=tuple)
 
 
-def roles(plugin_root: str, laid: Laid, commands: Sequence[str] = ()) -> list[Role]:
-    """The plugin's skill and each of its subagents with their Steps, each Step without the
+def roles(plugin_root: str, laid: Laid, commands: Mapping[str, str] | None = None) -> list[Role]:
+    """Each skill of the plugin and each of its subagents with their Steps, each Step without the
     sentences that the Laid names where it still holds them word for word, and with each it holds
-    changed kept as the user's, the skill's Steps from its own file, from each file its body names,
-    and from the SKILL.md of each command named, such as `approve`. Raises Fault, naming the file
-    and the line, with the plugin's maker to fix it, where the plugin has no skill, has more than
-    one skill that no Route names as a command, or where a Role has no numbered list under
-    `## Steps`."""
+    changed kept as the user's, each skill's Steps from its own file, from each file its body names,
+    and from the SKILL.md of each command that `commands` gives it, by the command's name, such as
+    `{"approve": "write"}`; a command so given is no skill of its own. Raises Fault, naming the file
+    and the line, with the plugin's maker to fix it, where the plugin has no skill, or where a Role
+    has no numbered list under `## Steps`."""
     raise NotImplementedError("steps.roles")
 
 

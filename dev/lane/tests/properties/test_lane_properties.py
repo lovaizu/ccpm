@@ -1,7 +1,8 @@
 """The property-based tests of Lane's parts whose contracts take a wide input, as Lane's Test
 strategy names them: lay.py's reading of a plugin's Steps and its check of a Proposal, each lane
 type's check of a call against the commands and the paths it takes, the guard's reading of each
-hook event, and the Run written to its file and read back. Each finds no counterexample, by
+hook event, each line of the run record written and read back, and where each Run stands, worked
+out from any lines. Each finds no counterexample, by
 hypothesis, and quality.sh runs them in CI."""
 
 from __future__ import annotations
@@ -21,11 +22,12 @@ from domain.laid_set import Laid
 from domain.lanes import Where
 from domain.lanes.run_only import LANE_TYPE as RUN_ONLY
 from domain.lanes.write_only import LANE_TYPE as WRITE_ONLY
-from domain.run_record import Result, Start, dumps, loads
+from domain.routes import stand
+from domain.run_record import PERSON, Called, Result, Start, Tied, dumps, loads
 from hypothesis import given
 from hypothesis import strategies as st
 from lane_example import PROPOSAL, put
-from lane_parts import run
+from lane_parts import SESSION, two_skills
 from proposal import parse
 
 pytestmark = pytest.mark.xfail(
@@ -131,12 +133,44 @@ def test_any_payload_reads_as_an_event_or_raises_a_fault(fields: dict[str, Any])
     st.lists(st.tuples(NAMES, WORDS, st.dictionaries(NAMES, WORDS, max_size=2)), max_size=4),
     st.lists(st.tuples(NAMES, NAMES), max_size=4),
 )
-def test_any_run_written_reads_back_equal(started: list[Any], given_results: list[Any]):
-    """Given a Run with any Starts, their texts and run values, and any Results
-    When it's written to its record and read back
-    Then it reads back equal"""
-    written = run(
-        starts=[Start(n, role, text, values) for n, (role, text, values) in enumerate(started, 1)],
-        results=[Result(role, result) for role, result in given_results],
+def test_any_lines_written_read_back_equal(started: list[Any], given_results: list[Any]):
+    """Given any Starts, with their texts and run values, their ties, and any Results
+    When each is written as a line of the run record and the lines are read back
+    Then they read back equal, in order"""
+    written = [
+        line
+        for n, (role, text, values) in enumerate(started, 1)
+        for line in (Start(n, role, text, values, skill="write"), Tied(n, f"a{n}"))
+    ] + [Result(role, result) for role, result in given_results]
+    text = "".join(dumps(line) for line in written)
+    assert loads(text, os.path.join("/tmp", "run.jsonl")) == tuple(written)
+
+
+@pytest.mark.supports("test_runs_of_two_skills_go_on_side_by_side_each_moved_by_its_own_results")
+@given(
+    st.lists(
+        st.one_of(
+            st.builds(Called, st.sampled_from(["write", "review"]), st.just(PERSON)),
+            st.builds(
+                Start,
+                st.integers(1, 4),
+                st.sampled_from(["writer", "reviewer"]),
+                WORDS,
+                skill=st.sampled_from(["write", "review"]),
+            ),
+            st.builds(Tied, st.integers(1, 4), NAMES),
+            st.builds(Result, st.sampled_from(["writer", "reviewer", "review"]), NAMES, NAMES),
+        ),
+        max_size=8,
     )
-    assert loads(dumps(written), os.path.join("/tmp", "run.jsonl")) == written
+)
+def test_any_lines_give_runs_each_holding_only_starts_of_its_own_skill(lines: list[Any]):
+    """Given any lines of the run record of `changelog` with the skills `write` and `review`
+    When where each Run stands is worked out
+    Then it gives Runs, each holding only Starts of its own skill, or raises a Fault, and nothing
+    else"""
+    try:
+        runs = stand(lines, two_skills(), SESSION)
+    except Fault:
+        return
+    assert all(s.skill == r.skill for r in runs for s in r.starts)

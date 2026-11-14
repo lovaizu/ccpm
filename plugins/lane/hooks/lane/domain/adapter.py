@@ -27,8 +27,11 @@ def start_text(program: str, role: str, running: Sequence[Start], cwd: str) -> S
     raise NotImplementedError("adapter.start_text")
 
 
-def kept_results(program: str, cwd: str) -> list[Result]:
-    """The Kept results that the adapter at the path gives, in the order the run gave them: it
-    runs with no argument and prints `{"results": [{"role", "result"}, ...]}`. Raises Fault as
-    start_text does."""
+def kept_results(program: str, args: str, cwd: str) -> list[Result]:
+    """The Kept results that the adapter at the path gives, in the order the run gave them, for a
+    call of the skill: it runs with no argument and `{"args": ...}` on stdin, the words typed after
+    the skill's command or the Skill tool's arguments, "" for none, which the hook event of the
+    call carries, and prints `{"results": [{"role", "result"}, ...]}`, none where the plugin starts
+    a run from the call, so that the plugin alone decides from the words whether the call starts a
+    run or picks one up. Raises Fault as start_text does."""
     raise NotImplementedError("adapter.kept_results")

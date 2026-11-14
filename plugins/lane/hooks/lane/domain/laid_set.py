@@ -37,10 +37,12 @@ class Move:
 
 @dataclass(frozen=True)
 class Route:
-    """The moves after one moment: `after` is `first` for the start of a Run, `<role> <result>` for
-    a Result, or the command the person types, such as `/changelog:pause`. One move is the move
-    due, and several are those among which the skill's steps choose."""
+    """The moves of one skill after one moment: `skill` is the skill whose Run the Route moves,
+    `after` is `first` for the start of its Run, `<role> <result>` for a Result, or the command the
+    person types, such as `/changelog:pause`. One move is the move due, and several are those among
+    which the skill's steps choose."""
 
+    skill: str
     after: str
     moves: tuple[Move, ...]
 
@@ -67,13 +69,14 @@ class Laid:
 
 @dataclass(frozen=True)
 class LaidSet:
-    """What `hooks/lanes.json` holds: the plugin's name, its skill, its roles, the Lanes, the
-    Routes, the program in `hooks/adapters/` that gives a start's text and the one that gives the
-    Kept results, each "" where the plugin has none, the Laid, and `proposes`, true only for
-    Lane's own up, whose Run waits for the caller's Approval of a Proposal."""
+    """What `hooks/lanes.json` holds: the plugin's name, each skill whose call begins a Run of its
+    own, its roles, the Lanes, the Routes of each skill, the program in `hooks/adapters/` that gives
+    a start's text and the one that gives the Kept results, each "" where the plugin has none, the
+    Laid, and `proposes`, true only for Lane's own up, whose Run waits for the caller's Approval of
+    a Proposal."""
 
     plugin: str
-    skill: str
+    skills: tuple[str, ...]
     roles: tuple[str, ...]
     lanes: tuple[Lane, ...]
     routes: tuple[Route, ...]
@@ -99,6 +102,12 @@ def load(plugin_root: str) -> LaidSet | None:
     """The laid set of the plugin in the folder, or None where it has no `hooks/lanes.json`. Raises
     Fault as `loads` does."""
     raise NotImplementedError("laid_set.load")
+
+
+def routes_of(laid_set: LaidSet, skill: str) -> tuple[Route, ...]:
+    """Each Route of the skill, in their order; none for a name that isn't a skill of the laid
+    set."""
+    raise NotImplementedError("laid_set.routes_of")
 
 
 def lanes_of(laid_set: LaidSet, role: str) -> tuple[Lane, ...]:

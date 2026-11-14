@@ -17,12 +17,13 @@ from steps import Role
 @dataclass(frozen=True)
 class Proposal:
     """The lanes and the routes proposed from the Steps as they read at one time, the data model's
-    Proposal, in the form of `domain/proposal.schema.json`: the plugin, its skill, each Lane with
-    its sentence, each Route, the adapters named, the ID, the fingerprint of the Steps, and the ID
-    of the conversation in which `lay.py print` showed it, "" for none."""
+    Proposal, in the form of `domain/proposal.schema.json`: the plugin, each skill whose call begins
+    a run of its own, each Lane with its sentence, each Route of each skill, the adapters named, the
+    ID, the fingerprint of the Steps, and the ID of the conversation in which `lay.py print` showed
+    it, "" for none."""
 
     plugin: str
-    skill: str
+    skills: tuple[str, ...]
     lanes: tuple[Lane, ...]
     routes: tuple[Route, ...]
     text_adapter: str = ""
@@ -50,15 +51,16 @@ def parse(given: Any, where: str) -> Proposal:
 
 def check(proposal: Proposal, found: Sequence[Role], plugin_root: str) -> Refusal | None:
     """Why the Proposal can't stand, or None where it can: each Lane of a type there is, on a Step
-    there is, taking what its type takes; each Role reached by the Routes and each Result named by a
-    Route; each subagent's file setting `background: true`; each command that a Route waits for or
-    goes after setting `disable-model-invocation: true`; each program in `hooks/adapters/` named;
+    there is, taking what its type takes; each skill a skill of the plugin, with a Route `first`,
+    and each Route of a skill of the Proposal; each Role reached by the Routes and each Result named
+    by a Route; each subagent's file setting `background: true`; each command that a Route waits for
+    or goes after setting `disable-model-invocation: true`; each program in `hooks/adapters/` named;
     and no two Roles taking their Steps from one file."""
     raise NotImplementedError("proposal.check")
 
 
-def moves_of(proposal: Proposal, after: str) -> tuple[Move, ...]:
-    """The moves of the Proposal's Route after the moment, none where no Route goes after it."""
+def moves_of(proposal: Proposal, skill: str, after: str) -> tuple[Move, ...]:
+    """The moves of the skill's Route after the moment, none where no Route of it goes after it."""
     raise NotImplementedError("proposal.moves_of")
 
 

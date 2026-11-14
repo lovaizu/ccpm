@@ -4,10 +4,10 @@
   "description": "The lanes and the routes that up proposes from a plugin's steps, which up writes to a file and passes to `lay.py print <plugin> <file>`. Each lane names its type, and lay.py makes its sentence from that type alone.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["plugin", "skill", "lanes", "routes"],
+  "required": ["plugin", "skills", "lanes", "routes"],
   "properties": {
     "plugin": {"type": "string", "description": "The plugin's name, as its plugin.json gives it."},
-    "skill": {"type": "string", "description": "The skill whose call starts a run."},
+    "skills": {"type": "array", "minItems": 1, "items": {"type": "string"}, "description": "Each skill whose call begins a run of its own, beside the runs of the others in a conversation."},
     "lanes": {
       "type": "array",
       "items": {
@@ -27,8 +27,9 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["after", "moves"],
+        "required": ["skill", "after", "moves"],
         "properties": {
+          "skill": {"type": "string", "description": "The skill whose run the route moves."},
           "after": {"type": "string", "description": "`first`, `<role> <result>`, or a command the person types, such as `/changelog:pause`."},
           "moves": {
             "type": "array",

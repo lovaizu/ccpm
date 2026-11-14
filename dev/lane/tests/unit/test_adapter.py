@@ -134,7 +134,10 @@ def test_kept_results_read_in_their_order(folder: str):
         ' {"role": "reviewer", "result": "more"}]}'
     )
     path = program(folder, f"print({printed!r})\n")
-    assert kept_results(path, folder) == [Result("writer", "written"), Result("reviewer", "more")]
+    assert kept_results(path, "", folder) == [
+        Result("writer", "written"),
+        Result("reviewer", "more"),
+    ]
 
 
 @pytest.mark.supports("test_an_adapter_of_the_records_that_fails_stops_the_command_with_why")
@@ -144,4 +147,20 @@ def test_kept_results_not_in_the_form_raise_a_fault(folder: str):
     Then a Fault names `result`"""
     path = program(folder, 'print(json.dumps({"results": [{"role": "writer"}]}))\n')
     with pytest.raises(Fault, match="result"):
-        kept_results(path, folder)
+        kept_results(path, "", folder)
+
+
+@pytest.mark.supports("test_the_kept_results_adapter_gets_the_words_typed_after_the_command")
+def test_the_kept_results_adapter_gets_the_words_of_the_call_on_stdin(folder: str):
+    """Given an adapter that gives writer `written` where it gets no words, and no results where it
+    gets any, as a plugin whose command takes a new request does
+    When the Kept results are asked with no words, and with `Write the 0.2.0 entries`
+    Then the first gives writer `written`, and the second none"""
+    body = (
+        "words = json.load(sys.stdin)['args']\n"
+        "results = [] if words else [{'role': 'writer', 'result': 'written'}]\n"
+        "print(json.dumps({'results': results}))\n"
+    )
+    path = program(folder, body)
+    assert kept_results(path, "", folder) == [Result("writer", "written")]
+    assert kept_results(path, "Write the 0.2.0 entries", folder) == []

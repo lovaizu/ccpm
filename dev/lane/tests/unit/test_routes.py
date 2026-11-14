@@ -16,9 +16,20 @@ from domain.routes import (
     opens_resume,
     opens_start,
     pick_up,
+    stand,
 )
-from domain.run_record import Result, Start
-from lane_parts import CARRY_OUT, ROUTES, run, writer_gave_written
+from domain.run_record import PERSON, Called, Noted, Result, Start, Tied
+from lane_parts import (
+    CARRY_OUT,
+    ROUTES,
+    SESSION,
+    WRITER_GAVE_WRITTEN,
+    WRITER_RUNNING,
+    laid_set,
+    run,
+    two_skills,
+    writer_gave_written,
+)
 
 pytestmark = pytest.mark.xfail(
     strict=True, reason="Lane's parts are skeletons, their bodies unbuilt"
@@ -75,7 +86,7 @@ def test_the_moves_after_a_command_are_those_of_its_route_and_none_for_another()
     """Given the walkthrough's Routes with a Route after `/changelog:pause` that starts no more
     When the moves after `/changelog:pause`, and after `/changelog:write`, are asked
     Then the first are the move that starts no more, and the second None"""
-    routes = (*ROUTES, Route("/changelog:pause", (Move(NO_MORE),)))
+    routes = (*ROUTES, Route("write", "/changelog:pause", (Move(NO_MORE),)))
     assert after_command(routes, "/changelog:pause") == (Move(NO_MORE),)
     assert after_command(routes, "/changelog:write") is None
 
@@ -95,11 +106,11 @@ def test_a_move_that_waits_for_a_command_is_due_only_once_the_command_is_typed()
 @pytest.mark.supports(
     "test_the_command_gives_the_first_start_and_each_result_gives_the_next_until_no_more"
 )
-def test_a_start_of_the_role_due_with_the_text_kept_is_opened():
-    """Given a Run whose move due starts reviewer with `Carry out your steps`
+def test_a_start_of_the_role_due_with_the_text_given_is_opened():
+    """Given a Run whose move due starts reviewer, and `Carry out your steps` the text given for it
     When reviewer's start with `Carry out your steps` is asked
     Then the moves open it"""
-    assert opens_start(writer_gave_written(), "reviewer", CARRY_OUT)
+    assert opens_start(writer_gave_written(), "reviewer", CARRY_OUT, CARRY_OUT)
 
 
 @pytest.mark.supports("test_a_start_that_the_moves_dont_open_is_stopped_with_the_moves")
@@ -107,15 +118,16 @@ def test_a_start_of_a_role_not_due_isnt_opened():
     """Given a Run whose move due starts reviewer
     When writer's start is asked
     Then the moves don't open it"""
-    assert not opens_start(writer_gave_written(), "writer", CARRY_OUT)
+    assert not opens_start(writer_gave_written(), "writer", CARRY_OUT, CARRY_OUT)
 
 
 @pytest.mark.supports("test_a_start_with_a_text_other_than_the_plugins_is_stopped")
 def test_a_start_with_another_text_isnt_opened():
-    """Given a Run whose move due starts reviewer with `Carry out your steps`
+    """Given a Run whose move due starts reviewer, and `Carry out your steps` the text given for it
     When reviewer's start with `Carry out your steps. Also commit.` is asked
     Then the moves don't open it"""
-    assert not opens_start(writer_gave_written(), "reviewer", CARRY_OUT + " Also commit.")
+    given = writer_gave_written()
+    assert not opens_start(given, "reviewer", CARRY_OUT + " Also commit.", CARRY_OUT)
 
 
 @pytest.mark.supports(
@@ -123,15 +135,14 @@ def test_a_start_with_another_text_isnt_opened():
 )
 def test_a_start_with_the_text_of_a_start_of_its_role_that_runs_isnt_opened():
     """Given a Run whose two moves due start writer, with writer running on `Write section 1`, and
-    `Write section 1` kept for writer
+    `Write section 1` the text given for writer
     When writer's start with `Write section 1` is asked
     Then the moves don't open it"""
     given = run(
         starts=[Start(1, "writer", "Write section 1", agent="a1", running=True)],
         moves=[Move(START, "writer"), Move(START, "writer")],
-        texts={"writer": ("Write section 1", {})},
     )
-    assert not opens_start(given, "writer", "Write section 1")
+    assert not opens_start(given, "writer", "Write section 1", "Write section 1")
 
 
 @pytest.mark.supports(
@@ -246,3 +257,60 @@ def test_kept_results_that_dont_follow_the_routes_raise_a_fault_naming_the_first
     Then a Fault names reviewer's `good`"""
     with pytest.raises(Fault, match="good"):
         pick_up(ROUTES, [Result("reviewer", "good")])
+
+
+@pytest.mark.supports("test_after_compact_the_run_goes_on_with_the_start_due")
+def test_the_lines_of_a_run_give_where_it_stands():
+    """Given the lines of a Run of `write` in which writer, a1, gave `written` and ended
+    When where it stands is worked out
+    Then it is one Run of `write`, its Start 1 tied to a1 and running no more, writer's Result for
+    Start 1, and reviewer's start due"""
+    (found,) = stand(WRITER_GAVE_WRITTEN, laid_set(), SESSION)
+    assert (found.skill, found.by, found.ended) == ("write", PERSON, False)
+    assert found.starts == [Start(1, "writer", CARRY_OUT, agent="a1", skill="write")]
+    assert found.results == [Result("writer", "written", "a1", 1)]
+    assert found.moves == [Move(START, "reviewer")]
+
+
+@pytest.mark.supports("test_runs_of_two_skills_go_on_side_by_side_each_moved_by_its_own_results")
+def test_the_lines_of_two_skills_give_a_run_of_each_holding_its_own_starts_and_results():
+    """Given the lines of a Run of `write` in which writer, a1, runs, then of a Run of `review`
+    whose reviewer, a2, gave `more`
+    When where they stand is worked out
+    Then there are two Runs: `write`'s with writer's Start, running, and no move due, and
+    `review`'s with reviewer's Start and Result, ended by its Route after `more`"""
+    lines = (
+        *WRITER_RUNNING,
+        Called("review", PERSON),
+        Start(2, "reviewer", CARRY_OUT, skill="review"),
+        Tied(2, "a2"),
+        Result("reviewer", "more", "a2"),
+        Noted("ended", "a2", "completed"),
+    )
+    write, review = stand(lines, two_skills(), SESSION)
+    assert [s.role for s in write.starts] == ["writer"] and write.starts[0].running
+    assert (write.moves, write.ended) == ([], False)
+    assert [s.role for s in review.starts] == ["reviewer"]
+    assert review.results == [Result("reviewer", "more", "a2", 2)] and review.ended
+
+
+@pytest.mark.supports("test_the_skills_own_result_ends_only_the_run_of_the_skill_it_names")
+def test_the_main_conversations_result_moves_the_run_of_the_skill_it_names():
+    """Given the lines of a Run of `write` whose reviewer's start is due, and of a Run of
+    `review`, and the main conversation's Result `good` of `review`
+    When where they stand is worked out
+    Then the Run of `review` ended, and that of `write` still has reviewer's start due"""
+    lines = (*WRITER_GAVE_WRITTEN, Called("review", PERSON), Result("review", "good"))
+    write, review = stand(lines, two_skills(), SESSION)
+    assert review.ended and not write.ended
+    assert write.moves == [Move(START, "reviewer")]
+
+
+@pytest.mark.supports("test_the_kept_results_adapter_gets_the_words_typed_after_the_command")
+def test_a_later_call_of_a_skill_begins_a_new_run_and_ends_the_one_before():
+    """Given the lines of a Run of `write` in which writer runs, and a later call of `write`
+    When where they stand is worked out
+    Then there are two Runs of `write`: the first ended, and the second with writer's start due"""
+    before, after = stand((*WRITER_RUNNING, Called("write", PERSON)), laid_set(), SESSION)
+    assert before.ended and not after.ended
+    assert after.moves == [Move(START, "writer")]

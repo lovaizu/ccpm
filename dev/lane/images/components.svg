@@ -131,12 +131,12 @@
   <text class="label small halo mid" x="430" y="653">with the step&#x27;s sentence, or the start due</text>
   <text class="label small halo end" x="1010" y="432">reads the Lanes, Routes</text>
   <text class="label small halo mid" x="870" y="530">checks a Call</text>
-  <text class="label small halo start" x="1030" y="632">adds each Start and Call,</text>
-  <text class="label small halo start" x="1030" y="647">reads each Result</text>
+  <text class="label small halo start" x="1030" y="632">adds Starts, ties, Results,</text>
+  <text class="label small halo start" x="1030" y="647">works out each Run</text>
   <text class="label small halo start" x="1190" y="422">asks for the Kept results</text>
   <text class="label small halo mid" x="1460" y="350">reads them</text>
   <text class="label small halo start" x="1478" y="634">runs it to give a Result</text>
-  <text class="label small halo start" x="1240" y="650">adds the Result</text>
+  <text class="label small halo start" x="1240" y="650">reads the Runs</text>
   <text class="label small halo mid" x="860" y="814">runs the skill, and starts each subagent</text>
   <text class="label small halo mid" x="985" y="16">reads the Run of up</text>
   <!-- Frame names a line crosses, drawn last so their halo masks the line. -->

@@ -1,5 +1,5 @@
 """The unit cases of domain/laid_set.py: the form of hooks/lanes.json, through `dumps`, `loads`,
-`load`, and `lanes_of`."""
+`load`, `routes_of`, and `lanes_of`."""
 
 from __future__ import annotations
 
@@ -8,8 +8,8 @@ from typing import Any
 
 import pytest
 from domain.fault import Fault
-from domain.laid_set import Laid, LaidSentence, dumps, lanes_of, load, loads
-from lane_parts import LANES, laid_set
+from domain.laid_set import Laid, LaidSentence, dumps, lanes_of, load, loads, routes_of
+from lane_parts import LANES, REVIEW_ROUTES, ROUTES, laid_set, two_skills
 
 pytestmark = pytest.mark.xfail(
     strict=True, reason="Lane's parts are skeletons, their bodies unbuilt"
@@ -29,7 +29,7 @@ def test_a_laid_set_written_reads_back_as_it_was():
         ),
         (("PreToolUse", "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/hook.py"),),
     )
-    given = laid_set(laid=laid, text_adapter="text")
+    given = two_skills(laid=laid, text_adapter="text")
     assert loads(dumps(given), "hooks/lanes.json") == given
 
 
@@ -84,3 +84,13 @@ def test_the_lanes_of_a_role_are_its_own_in_the_order_of_its_steps():
     Then writer's are its Lanes of steps 2, 3, and 4, and the other's none"""
     assert lanes_of(laid_set(), "writer") == LANES[1:4]
     assert lanes_of(laid_set(), "helper") == ()
+
+
+@pytest.mark.supports("test_runs_of_two_skills_go_on_side_by_side_each_moved_by_its_own_results")
+def test_the_routes_of_a_skill_are_its_own_in_their_order():
+    """Given the laid set of `changelog` with the skills `write` and `review`
+    When the Routes of `write`, of `review`, and of writer, which is no skill, are asked
+    Then each skill's are its own, in order, and writer's none"""
+    assert routes_of(two_skills(), "write") == ROUTES
+    assert routes_of(two_skills(), "review") == REVIEW_ROUTES
+    assert routes_of(two_skills(), "writer") == ()

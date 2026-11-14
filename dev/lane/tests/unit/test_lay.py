@@ -9,7 +9,7 @@ import re
 from typing import Any
 
 import pytest
-from domain.run_record import PERSON, Run, save
+from domain.run_record import PERSON, PROMPTED, SHOWN, TURN_ENDED, Called, Noted, add
 from lane_example import PROPOSAL, RELOAD, REVIEWER, TYPES, WRITE, WRITER, put, read
 from lay import USAGE, main, types_text
 
@@ -152,8 +152,9 @@ def test_write_after_the_run_of_up_that_showed_the_proposal_ended_exits_1_saying
     _, out, _ = main(["print", "changelog", "proposal.json"], given, cwd)
     found = re.search(r"^ID: (\S+)$", out, re.MULTILINE)
     assert found
-    ended = Run("lane", "up", "c1", PERSON, shown=out, prompted=True, ended=True)
-    save(ended, os.path.join(cwd, "tmp"))
+    temp = os.path.join(cwd, "tmp")
+    for line in (Called("up", PERSON), Noted(SHOWN, text=out), Noted(PROMPTED), Noted(TURN_ENDED)):
+        add(line, temp, "lane", "c1")
     code, out, err = main(["write", "changelog", found[1]], given, cwd)
     assert code == 1 and "ended" in out + err
     assert not os.path.exists(os.path.join(cwd, "changelog", "hooks"))

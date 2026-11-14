@@ -1,6 +1,6 @@
 """The unit cases of hooks/lane/result.py, the result script's entry, through `main`, run from a
-copy of Lane's code laid in a plugin of the test's own, with a Run of the conversation in its
-record."""
+copy of Lane's code laid in a plugin of the test's own, with the lines of a Run of the conversation
+in its record."""
 
 from __future__ import annotations
 
@@ -10,11 +10,10 @@ from typing import Any
 
 import pytest
 from claude_code import run_python
-from domain.event import COMMAND, Call
 from domain.laid_set import dumps
-from domain.run_record import load, save
+from domain.run_record import add, load
 from lane_example import LANE
-from lane_parts import SESSION, laid_set, writer_running
+from lane_parts import SESSION, WRITER_RUNNING, laid_set
 
 pytestmark = pytest.mark.xfail(
     strict=True, reason="Lane's parts are skeletons, their bodies unbuilt"
@@ -42,35 +41,33 @@ def result(plugin: dict[str, str], *args: str) -> tuple[int, str, str]:
     return run_python(script, list(args), "", env, plugin["root"])
 
 
-def called(plugin: dict[str, str], role: str, given: str) -> None:
-    """A Run in which writer runs, and the guard let through the role's call of result.py."""
-    run = writer_running()
-    script = os.path.join(plugin["root"], "hooks", "lane", "result.py")
-    run.calls.append(("a1", Call(COMMAND, command=f"python3 {script} {role} {given}")))
-    save(run, plugin["temp"])
+def writer_runs(plugin: dict[str, str]) -> None:
+    """The lines of a Run in which writer, subagent a1, runs."""
+    for line in WRITER_RUNNING:
+        add(line, plugin["temp"], "changelog", SESSION)
 
 
 @pytest.mark.supports(
     "test_the_command_gives_the_first_start_and_each_result_gives_the_next_until_no_more"
 )
-def test_a_result_the_role_may_give_exits_0_and_is_recorded(plugin: dict[str, str]):
-    """Given a Run in which writer's call of `result.py writer written` was let through
-    When it runs
-    Then it exits 0, and the Run holds writer's `written`"""
-    called(plugin, "writer", "written")
+def test_a_result_the_role_may_give_exits_0_and_writes_no_line(plugin: dict[str, str]):
+    """Given a Run in which writer runs
+    When `result.py writer written` runs
+    Then it exits 0, and the run record holds the lines it held, as the guard adds the Result at
+    the PostToolUse of the run"""
+    writer_runs(plugin)
     code, _, _ = result(plugin, "writer", "written")
-    kept = load(plugin["temp"], "changelog", SESSION)
-    assert code == 0 and kept is not None and [r.result for r in kept.results] == ["written"]
+    assert code == 0 and load(plugin["temp"], "changelog", SESSION) == WRITER_RUNNING
 
 
 @pytest.mark.supports(
     "test_result_py_refuses_a_result_that_the_role_may_not_give_with_those_it_may"
 )
 def test_a_result_the_role_may_not_give_exits_1_naming_those_it_may(plugin: dict[str, str]):
-    """Given a Run in which writer's call of `result.py writer done` was let through
-    When it runs
+    """Given a Run in which writer runs
+    When `result.py writer done` runs
     Then it exits 1, naming `written`"""
-    called(plugin, "writer", "done")
+    writer_runs(plugin)
     code, out, err = result(plugin, "writer", "done")
     assert code == 1 and "written" in out + err
 
@@ -79,7 +76,7 @@ def test_a_result_the_role_may_not_give_exits_1_naming_those_it_may(plugin: dict
 def test_a_result_with_no_run_of_the_conversation_exits_1_with_why(plugin: dict[str, str]):
     """Given no Run of the conversation
     When `result.py writer written` runs
-    Then it exits 1, saying no Run holds the call"""
+    Then it exits 1, saying no Run holds the role"""
     code, out, err = result(plugin, "writer", "written")
     assert code == 1 and out + err
 
@@ -91,6 +88,6 @@ def test_arguments_other_than_a_role_and_a_result_exit_2_with_the_usage(plugin: 
     """Given a Run of the conversation
     When `result.py writer` runs, with no result
     Then it exits 2 with the usage"""
-    called(plugin, "writer", "written")
+    writer_runs(plugin)
     code, _, err = result(plugin, "writer")
     assert code == 2 and "usage" in err

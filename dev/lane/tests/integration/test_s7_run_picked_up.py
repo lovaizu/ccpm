@@ -1,6 +1,7 @@
 """The integration cases of S7, a run picked up: after `/compact` the guard finds the conversation's
 Run in its run record, and in a new conversation it starts the Run from the Kept results that the
-plugin's adapter gives, anew where they hold none or reach the end, and stops the command where
+plugin's adapter gives for the words typed after the command, anew where they hold none or reach
+the end, and stops the command where
 they don't follow the Routes or the adapter fails. The test plays the person, the main
 conversation, and each subagent."""
 
@@ -107,3 +108,26 @@ def test_without_an_adapter_of_the_records_a_new_conversation_starts_the_run_ove
     gives(laid, writer, "written")
     second = conversation(laid, laid.plugin)
     assert START_WRITER in second.type("/changelog:write").said
+
+
+@pytest.mark.supports("S7", "adapter", "Kept results", "guard")
+def test_the_kept_results_adapter_gets_the_words_typed_after_the_command(repo: Repo):
+    """Given `changelog` laid with an adapter of its records that gives writer `written` where the
+    command comes with no words, and none where it comes with words, as a new request
+    When the person types `/changelog:write` in a new conversation, and then
+    `/changelog:write Write the 0.2.0 entries` in another
+    Then Lane names reviewer's start the first time, where the run picks up, and writer's the
+    second, the first start of a new Run"""
+    body = (
+        "import json, sys\n"
+        "words = json.load(sys.stdin)['args']\n"
+        "results = [] if words else [{'role': 'writer', 'result': 'written'}]\n"
+        "print(json.dumps({'results': results}))\n"
+    )
+    path = put(repo.plugin, "hooks/adapters/kept", "#!/usr/bin/env python3\n" + body)
+    os.chmod(path, os.stat(path).st_mode | stat.S_IXUSR)
+    lay(repo, {**PROPOSAL, "results_adapter": "kept"})
+    picked = conversation(repo, repo.plugin).type("/changelog:write")
+    assert START_REVIEWER in picked.said
+    fresh = conversation(repo, repo.plugin).type("/changelog:write Write the 0.2.0 entries")
+    assert START_WRITER in fresh.said and START_REVIEWER not in fresh.said
