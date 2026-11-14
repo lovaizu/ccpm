@@ -14,7 +14,21 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open the cut of the design tree, the product vision where the product has one, and each best practice whose `inputs` name this kind, and list each kind of person who reads or runs a deliverable of the kind, with what they're trying to get done when they do, such as a developer who opens a README to decide whether a plugin solves their problem."
+        "text": "Open your cut, and read to its end each input it names, such as the product vision, whose roles name the product's people.",
+        "trace": {
+         "action": "read",
+         "takes": [
+          "{inputs}"
+         ]
+        }
+       },
+       {
+        "at": "decide",
+        "text": "Open `best-practice.json` in each folder of `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/`, where rn keeps its own, and of `.rn/best-practices/`, where it keeps those made on the product's runs, and take each best practice whose `inputs` hold this kind's folder name, as its users use a deliverable of this kind through the deliverable it makes."
+       },
+       {
+        "at": "decide",
+        "text": "From the inputs and the best practices you took, list each kind of person who reads or runs a deliverable of the kind, with what they're trying to get done when they do, such as a developer who opens a README to decide whether a plugin solves their problem."
        },
        {
         "at": "decide",
@@ -46,7 +60,15 @@
        },
        {
         "at": "decide",
-        "text": "Write each thing as a state in one sentence, such as `The reader sees on the first screen which problem the product solves`."
+        "text": "Write down, in order, each moment of the users' use of the deliverable, from the moment they first meet it to the moment they reach the goal, such as a README's reader landing on the page, deciding to install, installing, and first using the product."
+       },
+       {
+        "at": "decide",
+        "text": "At each moment, ask whether the users could still stop or go wrong there while every thing on the list goes right. Where they could, add to the list the thing that would stop it."
+       },
+       {
+        "at": "decide",
+        "text": "Write each thing on the list as a state in one sentence, such as `The reader sees on the first screen which problem the product solves`."
        },
        {
         "at": "decide",
@@ -55,14 +77,6 @@
        {
         "at": "decide",
         "text": "Of each state, ask: if it failed, would the users still reach the goal? Where they would, drop it."
-       },
-       {
-        "at": "decide",
-        "text": "Write down, in order, each moment of the users' use of the deliverable, from the moment they first meet it to the moment they reach the goal, such as a README's reader landing on the page, deciding to install, installing, and first using the product."
-       },
-       {
-        "at": "decide",
-        "text": "At each moment, ask whether the users could still stop or go wrong there while every factor holds. Where they could, write the state that would stop it as a factor."
        }
       ]
      },
@@ -94,7 +108,15 @@
        },
        {
         "at": "make",
-        "text": "Open a deliverable of the kind that the product has, such as its README, or, where it has none, write one from the template for the product in the cut, and answer each condition yes or no about it."
+        "text": "Search the repository for the deliverable of the kind that the product in your cut has, by the names and folders in which the deliverables you opened at N4.1 keep theirs, such as `README.md` at the top of the repository for a README."
+       },
+       {
+        "at": "make",
+        "text": "Where the product has none, write one from the template for the product in your cut, as `trial.<ext>` in the round's folder, the folder of `{made}`, so that the trial stays out of the product."
+       },
+       {
+        "at": "make",
+        "text": "Answer each condition yes or no about that deliverable."
        },
        {
         "at": "make",
@@ -296,7 +318,7 @@
        },
        {
         "at": "make",
-        "text": "Where you change a best practice that exists, search the other best practices for this kind's folder name in their `inputs`, and, in the same change, update each of their conditions that carries what you changed, such as a README's condition on the key results when the product vision's key results change."
+        "text": "Where you change a best practice that exists, update, in the same change, each condition that carries what you changed in each best practice that N1.2 took, such as a README's condition on the key results when the product vision's key results change."
        },
        {
         "at": "make",

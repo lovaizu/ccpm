@@ -26,11 +26,13 @@ Does the goal state, in one sentence, who uses the deliverable and what purpose 
 
 Every later decision rests on the goal, so a goal that names the purpose the users have, not a means to it, lets each factor, condition, and step serve what the users came for.
 
-1. *While deciding.* Open the cut of the design tree, the product vision where the product has one, and each best practice whose `inputs` name this kind, and list each kind of person who reads or runs a deliverable of the kind, with what they're trying to get done when they do, such as a developer who opens a README to decide whether a plugin solves their problem.
-2. *While deciding.* Write one sentence with those people as the subject and what they achieve as the verb.
-3. *While deciding.* Ask of the sentence why that achievement matters to the users, and write the answer as a sentence in the same form. Repeat until the next answer goes beyond what the deliverable can affect, and keep the last sentence within its reach as the goal, such as `starts using the plugin` for a README, where `ships their product sooner` goes beyond it.
-4. *While deciding.* If the sentence names a part of the deliverable, such as a section or a feature, it states a means: ask why once more.
-5. *While making.* Read the goal's sentence with the deliverable's name taken out. If it no longer says what the users achieve, rewrite it.
+1. *While deciding.* Open your cut, and read to its end each input it names, such as the product vision, whose roles name the product's people. The trace: `{inputs}` read to its end.
+2. *While deciding.* Open `best-practice.json` in each folder of `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/`, where rn keeps its own, and of `.rn/best-practices/`, where it keeps those made on the product's runs, and take each best practice whose `inputs` hold this kind's folder name, as its users use a deliverable of this kind through the deliverable it makes.
+3. *While deciding.* From the inputs and the best practices you took, list each kind of person who reads or runs a deliverable of the kind, with what they're trying to get done when they do, such as a developer who opens a README to decide whether a plugin solves their problem.
+4. *While deciding.* Write one sentence with those people as the subject and what they achieve as the verb.
+5. *While deciding.* Ask of the sentence why that achievement matters to the users, and write the answer as a sentence in the same form. Repeat until the next answer goes beyond what the deliverable can affect, and keep the last sentence within its reach as the goal, such as `starts using the plugin` for a README, where `ships their product sooner` goes beyond it.
+6. *While deciding.* If the sentence names a part of the deliverable, such as a section or a feature, it states a means: ask why once more.
+7. *While making.* Read the goal's sentence with the deliverable's name taken out. If it no longer says what the users achieve, rewrite it.
 
 ### N2
 
@@ -39,11 +41,11 @@ Do the critical success factors name the few things that must all hold for the u
 The factors decide where the generator spends its effort, so when they're the few things that the users can't reach the goal without, the effort goes where the users would otherwise fail.
 
 1. *While deciding.* Read the goal's sentence and list each thing that must go right for the users to reach it, or they fail.
-2. *While deciding.* Write each thing as a state in one sentence, such as `The reader sees on the first screen which problem the product solves`.
-3. *While deciding.* Of each pair of states, ask whether one can fail while the other holds. Where neither can, merge the two into one.
-4. *While deciding.* Of each state, ask: if it failed, would the users still reach the goal? Where they would, drop it.
-5. *While deciding.* Write down, in order, each moment of the users' use of the deliverable, from the moment they first meet it to the moment they reach the goal, such as a README's reader landing on the page, deciding to install, installing, and first using the product.
-6. *While deciding.* At each moment, ask whether the users could still stop or go wrong there while every factor holds. Where they could, write the state that would stop it as a factor.
+2. *While deciding.* Write down, in order, each moment of the users' use of the deliverable, from the moment they first meet it to the moment they reach the goal, such as a README's reader landing on the page, deciding to install, installing, and first using the product.
+3. *While deciding.* At each moment, ask whether the users could still stop or go wrong there while every thing on the list goes right. Where they could, add to the list the thing that would stop it.
+4. *While deciding.* Write each thing on the list as a state in one sentence, such as `The reader sees on the first screen which problem the product solves`.
+5. *While deciding.* Of each pair of states, ask whether one can fail while the other holds. Where neither can, merge the two into one.
+6. *While deciding.* Of each state, ask: if it failed, would the users still reach the goal? Where they would, drop it.
 
 ### N3
 
@@ -56,8 +58,10 @@ The conditions are what the generator meets and the evaluator checks, so when ea
 3. *While deciding.* Judge each condition by three tests, and rewrite or drop one that fails any. It's checkable: two readers of the deliverable give the same answer. It's about the deliverable, not about how someone made it, as `Did the maker interview users?` is. It's necessary: if the answer were no, its factor would fail.
 4. *While deciding.* If a condition needs several states of its own, make it a factor.
 5. *While deciding.* If a condition only says how to meet another condition, move it into that condition's practice.
-6. *While making.* Open a deliverable of the kind that the product has, such as its README, or, where it has none, write one from the template for the product in the cut, and answer each condition yes or no about it.
-7. *While making.* Read that deliverable from the top as its users would. Where they would stop or go wrong in a part that every condition passes, find the level that caused it, whether the goal, a factor, a condition, or a practice, and rebuild that level from the level it serves.
+6. *While making.* Search the repository for the deliverable of the kind that the product in your cut has, by the names and folders in which the deliverables you opened at N4.1 keep theirs, such as `README.md` at the top of the repository for a README.
+7. *While making.* Where the product has none, write one from the template for the product in your cut, as `trial.<ext>` in the round's folder, the folder of `{made}`, so that the trial stays out of the product.
+8. *While making.* Answer each condition yes or no about that deliverable.
+9. *While making.* Read that deliverable from the top as its users would. Where they would stop or go wrong in a part that every condition passes, find the level that caused it, whether the goal, a factor, a condition, or a practice, and rebuild that level from the level it serves.
 
 ### N4
 
@@ -112,7 +116,7 @@ A deliverable must say what the deliverables it builds on say, and the deliverab
 6. *While making.* List the inputs in `inputs` and the preconditions in `preconditions`, each by the folder name of its best practice.
 7. *While making.* Leave out the kinds built on this kind, since their best practices name it in `inputs`, and listing them here as well would write the same fact twice.
 8. *While making.* Leave out the paths of the inputs, since the plan holds the paths of each deliverable's inputs and orders the deliverable after them.
-9. *While making.* Where you change a best practice that exists, search the other best practices for this kind's folder name in their `inputs`, and, in the same change, update each of their conditions that carries what you changed, such as a README's condition on the key results when the product vision's key results change.
+9. *While making.* Where you change a best practice that exists, update, in the same change, each condition that carries what you changed in each best practice that N1.2 took, such as a README's condition on the key results when the product vision's key results change.
 10. *While making.* Where an input's best practice changed since this one last changed, open it, and check each condition here that carries its vital few against what it holds now.
 
 ### N7
