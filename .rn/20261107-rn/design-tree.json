@@ -70,6 +70,11 @@
           "about": "Where a plugin writes its files, and the deliverables it makes",
           "decided": "the guide's rule of where a plugin writes covers the files of the plugin's own run; a deliverable that a run makes for the user lies where the repository's layout or the tool that reads it puts it, such as a best practice rn makes at .rn/best-practices/<kind>/, as the design tree best practice decides a deliverable's path",
           "by": "reasoning"
+        },
+        {
+          "about": "When the guard runs the record check on the main conversation",
+          "decided": "the guard runs the plugin's own record check at a role's end and at each end of the main conversation's turn in a run, and the check passes a turn that puts no work up for the caller, such as one that asks a question, as Lane serves any plugin and can't tell which turn puts work up, which only the plugin knows",
+          "by": "reasoning"
         }
       ]
     },
