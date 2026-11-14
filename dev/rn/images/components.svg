@@ -120,6 +120,7 @@
   <text class="label small halo" x="168" y="380" text-anchor="start">runs each git</text>
   <text class="label small halo" x="168" y="394" text-anchor="start">and gh command</text>
   <text class="label small halo" x="168" y="408" text-anchor="start">by it [import]</text>
+  <text class="data halo" x="168" y="422" text-anchor="start">Comment</text>
   <path class="line" d="M620,312 L290,312 L290,496 L260,496" marker-end="url(#arrow)"/>
   <text class="data halo" x="465" y="304" text-anchor="middle">Cut, Answers, Made, Sign-off, Place, Comment</text>
   <text class="label small halo" x="465" y="332" text-anchor="middle">makes the run&#x27;s worktree, gets each cut and</text>
@@ -149,7 +150,7 @@
   <text class="label small halo" x="730" y="346" text-anchor="start">starts each role, gets its result, resumes the</text>
   <text class="label small halo" x="730" y="360" text-anchor="start">tree-keeper or a generator, and stops each</text>
   <text class="label small halo" x="730" y="374" text-anchor="start">[Agent, SendMessage, TaskStop]</text>
-  <text class="data halo" x="730" y="390" text-anchor="start">Cut, Decision, Lack kept, Place</text>
+  <text class="data halo" x="730" y="390" text-anchor="start">Cut, Decision, Deliverable, Lack kept, Place, Sign-off</text>
   <path class="line" d="M720,544 L720,720" marker-end="url(#arrow)"/>
   <text class="label small halo" x="712" y="680" text-anchor="end">tries it [Bash]</text>
   <text class="data halo" x="712" y="694" text-anchor="end">Try record</text>

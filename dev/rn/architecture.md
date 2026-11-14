@@ -281,7 +281,7 @@ sequenceDiagram
   K->>K: checks that each node touched agrees with them
   K-->>O: what changed, and each node checked
   O->>O: checks it against the design tree best practice
-  O->>U: the goal, to confirm, once the tree holds it (Point, Decision)
+  O->>U: the goal, to confirm, once the tree holds it (Point)
   U->>O: answers
   Note over U,O: The orchestrator has the goal written as the user confirmed it, and settles each other point, as S2 draws, and puts up the plan, as S3 draws.
   loop each deliverable whose turn has come, as it rests on no open point and on nothing not signed off
