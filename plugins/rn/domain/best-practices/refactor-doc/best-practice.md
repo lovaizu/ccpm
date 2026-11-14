@@ -38,10 +38,14 @@ Does the document hold only what its readers need?
 
 Every sentence costs the reader time, and one that carries nothing they need still costs it and hides the sentences that do.
 
-1. *While making.* For each sentence, ask which reader on your list needs it, at this point, and for what. Where no reader does, cut it, or move it to a linked document whose readers do, such as the story of why a tool was rewritten, which moves from its install page to its changelog.
-2. *While making.* Within each sentence you keep, ask the same of each word, and cut each word that no reader needs, such as `in order to` for `to`, or `basically`.
-3. *While making.* Keep the small words that show how a sentence is built, such as articles, `that`, and `then`, as the [Google developer documentation style guide](https://developers.google.com/style/translation) lists them, since without them both a reader and a machine translator parse the sentence with more effort.
-4. *While making.* After cutting, read each changed section again from the top as its reader, and check that it still says everything it said before. The trace: `{deliverable}` read to its end.
+1. *While making.* For each sentence, ask which reader on your list needs it, and for what, and mark each sentence that no reader on your list needs.
+2. *While making.* For each sentence you marked, look for a document whose readers need it: open each document that the document links, and each other document in `{deliverable}`, and take the one whose opening or headings name readers who come for what the sentence tells, such as a changelog for the story of why a tool was rewritten.
+3. *While making.* Where the document you took lies in `{deliverable}`, move the sentence into it, under the heading whose topic the sentence is.
+4. *While making.* Where the document you took lies outside `{deliverable}`, or you took none and the sentence states a fact that a search of the repository finds in no other place, such as the reason for a choice, ask the person who owns the document where the sentence goes, with the place you'd put it, since cutting it loses the fact and writing outside `{deliverable}` changes another document.
+5. *While making.* Cut each other sentence you marked, since another place states its fact, or it states none, such as `As noted above, this matters.`
+6. *While making.* Within each sentence you keep, ask the same of each word, and cut each word that no reader needs, such as `in order to` for `to`, or `basically`.
+7. *While making.* Keep the small words that show how a sentence is built, such as articles, `that`, and `then`, as the [Google developer documentation style guide](https://developers.google.com/style/translation) lists them, since without them both a reader and a machine translator parse the sentence with more effort.
+8. *While making.* After cutting, read the document again from the top as each reader on your list, for their purpose, since a cut in one section can take what a sentence in another needs. Where a reader no longer finds a step, a value, or a condition that their purpose needs, put back the words that told it. The trace: `{deliverable}` read to its end.
 
 ### N3
 
@@ -54,7 +58,7 @@ A reader who has to turn back or read ahead to understand a sentence loses the t
 3. *While making.* Within a sentence, start with what the reader already knows and end with what's new. For example, after `The plugin keeps its state in .rn/.`, write `.rn/ holds one folder for each run.` in place of `One folder for each run lies in .rn/.`
 4. *While making.* Put a short condition before its instruction, such as `If you use a proxy, set HTTPS_PROXY.`, so that a reader it doesn't apply to can skip the instruction.
 5. *While making.* Put each exception to a rule in the sentence right after the rule, such as `Write each name in lowercase. Write the plugin's own name as its manifest does.`
-6. *While making.* Read the document from the top, and mark each place where you had to look back or ahead. Move what the place needed to before it.
+6. *While making.* Read the document from the top, and mark each place where you had to look back or ahead. Move what the place needed to before it. The trace: `{deliverable}` read to its end.
 
 ### N4
 
