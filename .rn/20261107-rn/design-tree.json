@@ -274,7 +274,7 @@
         },
         {
           "id": "N5",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The whole pull request read before Done",
@@ -298,7 +298,7 @@
             },
             {
               "about": "A new run or one picked up",
-              "decided": "a /rn:up with a request starts a new run whatever runs are left, and /rn:up alone picks one up; exactly one component decides which, and S1 shows what the guard and the adapters give at the /rn:up with a request, as the user decided the commands",
+              "decided": "a /rn:up with a request starts a new run whatever runs are left, and /rn:up alone picks one up; rn's kept-results adapter alone decides which, from the words typed after the command that Lane's guard gives it, and S1 shows what the guard and the adapters give at the /rn:up with a request, as the user decided the commands and Lane's architecture gives that decision to the plugin's adapter",
               "by": "reasoning"
             }
           ]
@@ -315,7 +315,7 @@
         },
         {
           "id": "N8",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "Work while a point or a sign-off waits",
@@ -361,7 +361,7 @@
         },
         {
           "id": "N11",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "Files of data forms and shared modules",
@@ -372,7 +372,7 @@
         },
         {
           "id": "N12",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "Test strategy and test cases",
@@ -409,7 +409,7 @@
         },
         {
           "id": "N15",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "No limit on rounds",
@@ -420,7 +420,7 @@
         },
         {
           "id": "N16",
-          "good": true,
+          "good": false,
           "decisions": []
         }
       ]
@@ -447,7 +447,7 @@
       "necessary_conditions": [
         {
           "id": "N1",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
@@ -457,7 +457,7 @@
         },
         {
           "id": "N3",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "Plugins with several skills",
@@ -494,6 +494,11 @@
               "about": "Who adds each Result",
               "decided": "the guard adds each Result at the PostToolUse of a run of result.py that gave 0, and result.py only checks the result and refuses one the run doesn't wait for, as Claude Code gives a Bash command only CLAUDE_CODE_SESSION_ID and no agent_id (claude-code-2.1.322.jsonl:14-16), so only the hook event ties a result to the subagent that gave it, and a Result tied to no Start would let the wrong run go on, which raises KR1.1",
               "by": "reasoning"
+            },
+            {
+              "about": "One part works out each Run",
+              "decided": "the guard's code alone works out where each Run stands from the run record's lines, and result.py and lay.py ask that code for it rather than read the lines and work it out again, as two parts that each work out the Runs drift apart and one lets through what the other stops, which raises KR1.1",
+              "by": "reasoning"
             }
           ]
         },
@@ -504,12 +509,12 @@
         },
         {
           "id": "N7",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N8",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
@@ -520,6 +525,11 @@
               "about": "How the guard tells each hook event apart",
               "decided": "the architecture says, from the records, how the guard tells which run, Start, and role each hook event belongs to: a run by session_id, a Start and its role by agent_id, the main conversation by an event with no agent_id, and a Start tied to its agent_id at the PostToolUse of its Agent call; it does so for the states that the README's main use and rn bring about, and gives each rare state one line that names what Lane does there, never holding a call to another run's rules, as Lane's purpose needs no more",
               "by": "user"
+            },
+            {
+              "about": "A plugin that uses another plugin's run",
+              "decided": "Lane holds a plugin that calls another plugin's skill as the plugin guide's 'A plugin that uses another' says: a Route's move may be a call of another plugin's skill, and from that call the guard checks none of the main conversation's calls and holds no stop until the main conversation makes the move the route names after it, as two guards holding one conversation at once would each stop the other's moves, which raises KR1.1; the cost: the main conversation's calls in between rest on the other plugin's guard alone",
+              "by": "reasoning"
             }
           ]
         },
@@ -552,12 +562,17 @@
               "about": "Compatibility with Claude Code",
               "decided": "Test strategy holds a compatibility test: on each new Claude Code version, the recorder scripts run each recorded state again, and what Claude Code gives is compared with what the test double gives",
               "by": "user"
+            },
+            {
+              "about": "A prompt's evaluation",
+              "decided": "Test strategy takes every type of a prompt's evaluation that test-types.md lists for up's prompt, each with its level and its criterion, as the architecture best practice's node decides that the parts take every type, so a proposal that holds a rule the steps don't support, or lays without the caller's act, shows before it reaches users",
+              "by": "reasoning"
             }
           ]
         },
         {
           "id": "N13",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The test double of Claude Code",
@@ -573,12 +588,12 @@
         },
         {
           "id": "N15",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N16",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "Where the list of Claude Code's states lies",
