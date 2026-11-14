@@ -59,7 +59,8 @@ What each decides alone:
   results that the steps name, the result named where a subagent's steps name none, and how a
   change the user asks for reads in its step.
 - lay.py\
-  Which text of a step Lane laid before, read from the laid set in the form that the released Lane
+  The form of the Proposal, in `proposal.schema.json`, which up writes to and `lay.py print`
+  holds, which text of a step Lane laid before, read from the laid set in the form that the released Lane
   that laid it wrote, and so how each step reads without it for up, whether a
   proposal can stand against the lane types, the steps, and the plugin's files, how each step reads
   once laid, whether a proposal can still be laid, as the steps it came from still read as they did
@@ -87,9 +88,10 @@ What each decides alone:
   Whether a result is one that the role may give, in a Run of the conversation as the guard works
   it out.
 - adapter\
-  How the plugin's own form of its records, or of a start's text, reads in Lane's form, and, from
-  the words typed after the skill's command, which of the plugin's kept work the call picks up,
-  none for a new request.
+  How the plugin's own form of its records, or of a start's text, reads in Lane's form, which work
+  of a role waits, given each Start that runs with each start's text it's asked for, and, from the
+  words typed after the skill's command, which of the plugin's kept work the call picks up, none
+  for a new request.
 
 The choices made, and why:
 
@@ -415,8 +417,10 @@ sequenceDiagram
   participant UP as up
   participant L as lay.py
   participant P as proposal
-  participant T as lane types
-  participant F as the plugin's files
+  participant T as lane types, in Lane's plugin
+  participant ST as steps
+  participant LS as laid set
+  participant A as adapter
   U->>CC: /lane:up <plugin>
   CC->>G: the skill's call, typed by a person
   G->>RS: adds the call of up's Run, by a person
@@ -425,17 +429,18 @@ sequenceDiagram
   L->>T: each type's sentence, what it takes, and the steps it suits
   L-->>UP: the types
   UP->>L: steps <plugin>
-  L->>F: reads each Role, each Step, and the Laid
+  L->>ST: reads each Role and each Step
+  L->>LS: reads the Laid
   L-->>UP: each Role and each Step without the text that the Laid names
   UP->>UP: writes the Lanes, the Routes, and each Result named where none is (Proposal)
   loop until the proposal can stand
     UP->>L: print (Proposal)
     L->>T: checks each Lane, and makes its sentence where its Step doesn't say it already
     L->>L: checks that the Routes reach each Result and each Role
-    L->>F: checks that each subagent's file sets background: true
-    L->>F: checks that each command a Route waits for or goes after sets disable-model-invocation: true
-    L->>F: checks that the Proposal names each program in hooks/adapters/
-    L->>F: checks that no two Roles take their Steps from one file
+    L->>ST: checks that each subagent's file sets background: true
+    L->>ST: checks that each command a Route waits for or goes after sets disable-model-invocation: true
+    L->>A: checks that the Proposal names each program in hooks/adapters/
+    L->>ST: checks that no two Roles take their Steps from one file
     alt the Proposal can't stand, such as with a program in hooks/adapters/ left out
       L-->>UP: what's wrong, and exits 1
       UP->>UP: mends the Proposal
@@ -462,7 +467,9 @@ sequenceDiagram
   participant UP as up
   participant L as lay.py
   participant P as proposal
-  participant F as the plugin's files
+  participant ST as steps
+  participant LS as laid set
+  participant HL as hooks/lane/, in the plugin
   Note over U,RS: up's Run holds its call by a person and what lay.py print showed, as S1 draws.
   UP->>CC: ends its turn
   CC->>G: the stop
@@ -477,8 +484,8 @@ sequenceDiagram
   CC->>G: the person's prompt (Approval)
   G->>RS: adds the prompt, to up's Run
   alt a change
-    UP->>F: writes the change into the Step it rests on, and shows it
-    Note over U,F: up proposes again, as S1 draws.
+    UP->>ST: writes the change into the Step it rests on, and shows it
+    Note over U,ST: up proposes again, as S1 draws.
   else neither a change nor yes, such as other work
     UP-->>U: does what the reply asks, held by up's lanes until the turn ends
     CC->>G: the end of the turn
@@ -513,12 +520,16 @@ sequenceDiagram
         L-->>UP: refused, with why
         Note over UP,L: up proposes again, as S1 draws.
       else
-        L->>F: replaces what the Laid names with each Lane's sentence, the hook entries, and hooks/lane/
+        L->>ST: replaces the sentences that the Laid names with each Lane's sentence
+        L->>LS: replaces Lane's hook entries in hooks.json
+        L->>HL: copies Lane's code from Lane's plugin, in place of the copy before
         L->>G: writes lanes.json, with the Lanes, the Routes, the adapters, and the new Laid, through the guard's code
-        G->>F: lanes.json, in the form that the guard reads
+        G->>LS: lanes.json, in the form that the guard reads
         L->>CC: claude plugin validate <plugin>
         alt it fails
-          L->>F: puts back each file it changed
+          L->>ST: puts back each Step it changed
+          L->>LS: puts back hooks.json and lanes.json
+          L->>HL: puts back the copy before
           L-->>UP: what failed
           UP-->>U: what to fix in the plugin
         else it passes
@@ -543,7 +554,7 @@ sequenceDiagram
   participant G as Lane's guard on up
   participant RS as run record
   participant L as lay.py
-  participant F as the plugin's files
+  participant ST as steps
   actor D as user, as whoever gives the conversation its prompts, a person or a program of theirs
   A->>CC: calls up by the Skill tool, for <plugin>
   CC->>G: the Skill tool call
@@ -554,16 +565,16 @@ sequenceDiagram
   else
     G->>RS: adds the call of up's Run, by an AI
     loop until the Proposal holds each rule its steps call for
-      Note over A,F: up proposes, as S1 draws.
+      Note over A,ST: up proposes, as S1 draws.
       A->>A: reads the Proposal against the steps and the order it means
       opt it falls short
-        A->>F: writes the change into the Step it rests on
+        A->>ST: writes the change into the Step it rests on
       end
     end
     A->>CC: runs lay.py write <plugin> <ID>
     CC->>G: the call (Approval)
     G-->>CC: lets it through
-    Note over L,F: lay.py lays the Proposal, as S2 draws.
+    Note over L,ST: lay.py lays the Proposal, as S2 draws.
     CC-->>A: what lay.py write printed: each file written, that the check passed, and to type /reload-plugins
     A->>CC: ends its turn, asking for /reload-plugins
     CC-->>D: shows the ask
@@ -580,13 +591,16 @@ sequenceDiagram
   participant CC as Claude Code
   participant UP as up
   participant L as lay.py
-  participant F as the plugin's files
-  U->>F: changes the Steps
-  Note over U,F: Or the user updates Lane, and the Steps stay as they are.
+  participant ST as steps
+  participant LS as laid set
+  participant HL as hooks/lane/, in the plugin
+  U->>ST: changes the Steps
+  Note over U,ST: Or the user updates Lane, and the Steps stay as they are.
   U->>CC: /lane:up <plugin>
   Note over CC,UP: Claude Code runs up's steps in the main conversation, as S1 draws.
   UP->>L: steps <plugin>
-  L->>F: reads the Laid, in the form that the released Lane that laid it wrote, and each Step
+  L->>LS: reads the Laid, in the form that the released Lane that laid it wrote
+  L->>ST: reads each Step
   loop each sentence that the Laid added to a Step
     alt the Step still holds it word for word
       L->>L: takes it out
@@ -596,7 +610,9 @@ sequenceDiagram
   end
   L-->>UP: each Role and each Step that remains, with the notes
   Note over U,L: up proposes from the Steps that remain, as S1 draws, and the caller approves, as S2 or S3 draws.
-  L->>F: replaces Lane's part laid before, takes the Laid's sentences out of each role it names, and keeps each hook entry of the user's own
+  L->>ST: takes the Laid's sentences out of each role it names, and writes each Lane's sentence
+  L->>LS: replaces Lane's hook entries laid before, and keeps each hook entry of the user's own
+  L->>HL: copies the newest Lane's code, in place of the copy before
 ```
 
 ### S5: a run in the order the user set

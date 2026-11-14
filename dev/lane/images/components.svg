@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1720 910">
-  <title>Lane&#x27;s components: the user, up, lay.py, the lane types, the guard, the result script, the adapter, the plugin&#x27;s command, Claude Code, which the user and the roles call, with the plugin&#x27;s roles, and the stores of the proposal, the steps, the laid set, the kept results, and the run record</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -100 1720 1030">
+  <title>Lane&#x27;s components: the user, up, lay.py, the lane types and the guard of Lane&#x27;s code, which lies in Lane&#x27;s plugin, where its guard holds up, and in each plugin that lay.py lays it into, the result script, the adapter, the plugin&#x27;s command, Claude Code, which the user and the roles call, with the plugin&#x27;s roles, and the stores of the proposal, the steps, the laid set, the kept results, and the run record</title>
   <style>
     svg { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, 'Hiragino Sans', 'Noto Sans CJK JP', 'Noto Sans JP', 'Yu Gothic', Meiryo, sans-serif; }
     .bg { fill: #ffffff; }
@@ -53,8 +53,9 @@
       <path class="head" d="M0,5 L8,0 L16,5 L8,10 z"/>
     </marker>
   </defs>
-  <rect class="bg" x="0" y="0" width="1720" height="910"/>
-  <rect class="frame" x="305" y="40" width="530" height="125" rx="6"/>
+  <rect class="bg" x="0" y="-100" width="1720" height="1030"/>
+  <rect class="frame" x="305" y="40" width="1060" height="130" rx="6"/>
+  <rect class="frame" x="880" y="66" width="470" height="96" rx="6"/>
   <rect class="frame" x="300" y="280" width="1180" height="335" rx="6"/>
   <rect class="frame" x="520" y="450" width="940" height="150" rx="6"/>
   <polyline class="line" points="382,150 158,330" marker-end="url(#arrow)"/>
@@ -63,11 +64,16 @@
   <polyline class="line" points="360,90 360,22 12,22 12,745 30,745" marker-end="url(#arrow)"/>
   <polyline class="line" points="1650,760 1650,850 70,850 70,760" marker-end="url(#arrow)"/>
   <polyline class="line" points="525,120 625,120" marker-end="url(#arrow)"/>
-  <polyline class="line" points="815,120 915,120" marker-end="url(#arrow)"/>
+  <polyline class="line" points="770,90 770,0" marker-end="url(#arrow)"/>
+  <polyline class="line" points="815,135 905,135" marker-end="url(#arrow)"/>
+  <polyline class="line" points="800,90 800,62 1240,62 1240,94" marker-end="url(#arrow)"/>
+  <polyline class="line" points="30,755 6,755 6,-80 1300,-80 1300,94" marker-end="url(#arrow)"/>
+  <polyline class="line" points="1170,154 1110,330" marker-end="url(#arrow)"/>
+  <polyline class="line" points="812,150 812,190 1300,190 1300,330" marker-end="url(#arrow)"/>
+  <polyline class="line" points="1335,140 1712,140 1712,680 1130,680 1130,700" marker-end="url(#arrow)"/>
   <polyline class="line" points="420,150 420,330" marker-end="url(#arrow)"/>
   <polyline class="line" points="682,150 458,330" marker-end="url(#arrow)"/>
   <polyline class="line" points="758,150 982,330" marker-end="url(#arrow)"/>
-  <polyline class="line" points="720,150 720,510" marker-end="url(#arrow)"/>
   <polyline class="line" points="706,150 660,250 24,250 24,730 30,730" marker-end="url(#arrow)"/>
   <polyline class="line" points="210,711 925,560" marker-end="url(#arrow)"/>
   <polyline class="line" points="1020,510 1020,390" marker-end="url(#arrow)"/>
@@ -78,7 +84,7 @@
   <polyline class="line" points="1556,700 1364,570" marker-end="url(#arrow)"/>
   <polyline class="line" points="1290,570 1290,590 1095,590 1095,570" marker-end="url(#arrow)"/>
   <polyline class="line" points="120,760 120,820 1600,820 1600,760" marker-end="url(#arrow)"/>
-  <polyline class="line" points="740,150 740,440 940,440 940,510" marker-end="url(#arrow)"/>
+  <polyline class="line" points="740,150 740,450" marker-end="url(#arrow)"/>
   <polyline class="line" points="625,560 505,560" marker-end="url(#arrow)"/>
   <rect class="box" x="30.0" y="330.0" width="180" height="60" rx="30.0"/>
   <text class="name" x="120" y="355">user</text>
@@ -89,9 +95,15 @@
   <rect class="lane" x="625.0" y="90.0" width="190" height="60" rx="4"/>
   <text class="name" x="720" y="115">lay.py</text>
   <text class="kind" x="720" y="134">script: Python 3.9</text>
-  <rect class="store" x="915.0" y="90.0" width="210" height="60" rx="4"/>
-  <text class="name" x="1020" y="115">proposal</text>
-  <text class="kind" x="1020" y="134">store: JSON, temporary folder</text>
+  <rect class="store" x="665.0" y="-60.0" width="210" height="60" rx="4"/>
+  <text class="name" x="770" y="-35">proposal</text>
+  <text class="kind" x="770" y="-16">store: JSON, temporary folder</text>
+  <rect class="lane" x="905.0" y="94.0" width="190" height="60" rx="4"/>
+  <text class="name" x="1000" y="119">lane types</text>
+  <text class="kind" x="1000" y="138">modules: Python 3.9</text>
+  <rect class="lane" x="1145.0" y="94.0" width="190" height="60" rx="4"/>
+  <text class="name" x="1240" y="119">guard</text>
+  <text class="kind" x="1240" y="138">hook script: Python 3.9</text>
   <rect class="store" x="315.0" y="330.0" width="210" height="60" rx="4"/>
   <text class="name" x="420" y="355">steps</text>
   <text class="kind" x="420" y="374">store: SKILL.md, agents/*.md</text>
@@ -136,20 +148,31 @@
   <text class="label small halo mid" x="860" y="844">makes each tool call, start of a subagent, and end</text>
   <text class="label small start" x="12" y="882">Each arrow reads from the one that acts to the one it acts on, and a reply goes back along it.</text>
   <text class="label small start" x="12" y="900">The guard&#x27;s answer to a hook event, such as a stop or the start due, reaches the role or the user through Claude Code.</text>
+  <text class="label small start" x="12" y="918">Lane&#x27;s code lies twice: in Lane&#x27;s plugin, where its guard holds up and lay.py takes the lane types from it, and in the user&#x27;s plugin, where lay.py copies it.</text>
   <text class="label small halo mid" x="570" y="82">runs types, steps, print, write</text>
-  <text class="label small halo start" x="842" y="82">keeps the Proposal</text>
+  <text class="label small halo start" x="780" y="30">keeps the Proposal</text>
+  <text class="label small halo mid" x="848" y="106">takes</text>
+  <text class="label small halo mid" x="848" y="120">each type</text>
+  <text class="label small halo start" x="810" y="55">asks where the Run of up stands, writes lanes.json through its code</text>
+  <text class="label small halo start" x="1310" y="-45">sends each hook event of up;</text>
+  <text class="label small halo start" x="1310" y="-30">gets a stop, or lets it through</text>
+  <text class="label small halo start" x="1165" y="240">writes lanes.json</text>
+  <text class="label small halo start" x="1165" y="255">for lay.py write</text>
+  <text class="label small halo start" x="860" y="184">checks each program in hooks/adapters/</text>
+  <text class="label small halo end" x="1704" y="162">adds each fact of up&#x27;s Run,</text>
+  <text class="label small halo end" x="1704" y="177">works out where it stands</text>
   <text class="label small halo start" x="430" y="220">writes a change</text>
-  <text class="label small halo start" x="505" y="300">reads each Step, writes</text>
-  <text class="label small halo start" x="505" y="315">each Lane&#x27;s sentence</text>
-  <text class="label small halo start" x="880" y="215">reads the Laid, replaces</text>
-  <text class="label small halo start" x="880" y="230">Lane&#x27;s hook entries</text>
-  <text class="label small halo end" x="710" y="425">takes each type</text>
+  <text class="label small halo start" x="530" y="300">reads and checks each Step&#x27;s</text>
+  <text class="label small halo start" x="530" y="315">file, writes each Lane&#x27;s</text>
+  <text class="label small halo start" x="530" y="330">sentence or puts it back</text>
+  <text class="label small halo start" x="890" y="215">reads the Laid, replaces</text>
+  <text class="label small halo start" x="890" y="230">Lane&#x27;s hook entries,</text>
+  <text class="label small halo start" x="890" y="245">or puts them back</text>
   <text class="label small halo start" x="40" y="268">runs claude plugin validate</text>
   <text class="label small halo mid" x="430" y="638">sends each hook event; gets a stop</text>
   <text class="label small halo mid" x="430" y="653">with the step&#x27;s sentence, or the start due</text>
   <text class="label small halo start" x="1030" y="405">reads the Lanes,</text>
-  <text class="label small halo start" x="1030" y="420">Routes, adapters;</text>
-  <text class="label small halo start" x="1030" y="435">writes lanes.json</text>
+  <text class="label small halo start" x="1030" y="420">Routes, adapters</text>
   <text class="label small halo mid" x="870" y="516">checks a Call</text>
   <text class="label small halo mid" x="870" y="531">or an end</text>
   <text class="label small halo start" x="1030" y="632">adds each fact it keeps,</text>
@@ -164,10 +187,11 @@
   <text class="label small halo mid" x="565" y="522">Lane names, with</text>
   <text class="label small halo mid" x="565" y="536">the run values</text>
   <text class="label small halo mid" x="565" y="550">and the Result</text>
-  <text class="label small halo start" x="750" y="418">asks where the Run of up stands,</text>
-  <text class="label small halo start" x="750" y="433">writes lanes.json through its code</text>
+  <text class="label small halo start" x="750" y="418">copies Lane&#x27;s code into it,</text>
+  <text class="label small halo start" x="750" y="433">or puts the copy before back</text>
   <!-- Frame names a line crosses, drawn last so their halo masks the line. -->
   <text class="frame-name halo" x="319" y="60">Lane&#x27;s plugin</text>
+  <text class="frame-name halo" x="894" y="84">hooks/lane/: Lane&#x27;s code</text>
   <text class="frame-name halo" x="314" y="300">the user&#x27;s plugin</text>
   <text class="frame-name halo" x="534" y="470">hooks/lane/: Lane&#x27;s code, laid into the plugin</text>
 </svg>
