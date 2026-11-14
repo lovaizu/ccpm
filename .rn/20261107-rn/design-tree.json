@@ -487,7 +487,7 @@
             },
             {
               "about": "What the kept-results adapter is given",
-              "decided": "the guard gives the plugin's kept-results adapter the words typed after the command, or the Skill tool's args, which the hook event carries, so that the plugin alone decides from them whether the call starts a run or picks one up, as a plugin whose command takes a request needs to tell the two apart and no part of the plugin is asked before the guard",
+              "decided": "the guard gives the plugin's kept-results adapter the words typed after the command, or the Skill tool's args, which the hook event carries; from them the adapter alone names which kept work the call picks up, if any, and the guard starts a new run where it names none, as a plugin whose command takes a request needs to tell the two apart and no part of the plugin is asked before the guard",
               "by": "reasoning"
             },
             {
@@ -498,6 +498,11 @@
             {
               "about": "One part works out each Run",
               "decided": "the guard's code alone works out where each Run stands from the run record's lines, and result.py and lay.py ask that code for it rather than read the lines and work it out again, as two parts that each work out the Runs drift apart and one lets through what the other stops, which raises KR1.1",
+              "by": "reasoning"
+            },
+            {
+              "about": "Lane's text taken out of the steps",
+              "decided": "lay.py alone knows which text of a step Lane laid before, and up gets each step without it from lay.py steps, as up working out the Laid itself would make a second owner of that decision, and the two would drift, which raises KR1.1",
               "by": "reasoning"
             }
           ]
