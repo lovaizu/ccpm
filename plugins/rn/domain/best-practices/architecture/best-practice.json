@@ -319,12 +319,16 @@
         "text": "Lay out the folders by component, so that each component and each kind of data has its own place, such as a folder for the hooks and one for the code they call."
        },
        {
+        "at": "decide",
+        "text": "Once Test strategy names its levels and tools, give the test code its place, as a component's tests are files that a developer changes with it: one folder for each level, and the script that checks the trace beside them. Take the folder where the repository already keeps its tests, else the one where the architecture that the product builds on keeps them, else the one where the test runner that Test strategy names looks by default, such as `tests/unit/`, `tests/integration/`, and `tests/e2e/` for pytest. Keep the test code out of every folder that the users install, and each level in a folder of its own, since each level runs at its own time and a command that runs one level names its folder."
+       },
+       {
         "at": "make",
         "text": "Say in one sentence for each top folder whom its files are for, such as the users who install the product or only its developers."
        },
        {
         "at": "make",
-        "text": "Show each folder and file that holds a component or a kind of data, by its real name, one line each, nested as on disk, without the files inside a component."
+        "text": "Show each folder and file that holds a component, a kind of data, a level's test cases, or the script that checks the trace, by its real name, one line each, nested as on disk, without the files inside a component or a level's folder."
        },
        {
         "at": "make",
@@ -504,7 +508,7 @@
        },
        {
         "at": "make",
-        "text": "Write each case as a test in the test code, in the place that Directory structure names, with its Given, When, and Then stated, and write no list of the cases in a document, since a list beside the code says each case twice."
+        "text": "Write each case as a test in the test code, in the folder of its level that Directory structure names, with its Given, When, and Then stated, and write no list of the cases in a document, since a list beside the code says each case twice."
        },
        {
         "at": "make",

@@ -164,10 +164,11 @@ Does each component and each kind of data have one place for its files?
 A developer making a change must find the one place it belongs. Simon Brown's package by component, in Robert C. Martin's *Clean Architecture*, lays out the code by the components that the architecture draws.
 
 1. *While deciding.* Lay out the folders by component, so that each component and each kind of data has its own place, such as a folder for the hooks and one for the code they call.
-2. *While making.* Say in one sentence for each top folder whom its files are for, such as the users who install the product or only its developers.
-3. *While making.* Show each folder and file that holds a component or a kind of data, by its real name, one line each, nested as on disk, without the files inside a component.
-4. *While making.* Beside each, say what it does or holds, in the words a developer looks for when making a change.
-5. *While making.* Check that, for any change to a component, a developer can name the one folder it goes in.
+2. *While deciding.* Once Test strategy names its levels and tools, give the test code its place, as a component's tests are files that a developer changes with it: one folder for each level, and the script that checks the trace beside them. Take the folder where the repository already keeps its tests, else the one where the architecture that the product builds on keeps them, else the one where the test runner that Test strategy names looks by default, such as `tests/unit/`, `tests/integration/`, and `tests/e2e/` for pytest. Keep the test code out of every folder that the users install, and each level in a folder of its own, since each level runs at its own time and a command that runs one level names its folder.
+3. *While making.* Say in one sentence for each top folder whom its files are for, such as the users who install the product or only its developers.
+4. *While making.* Show each folder and file that holds a component, a kind of data, a level's test cases, or the script that checks the trace, by its real name, one line each, nested as on disk, without the files inside a component or a level's folder.
+5. *While making.* Beside each, say what it does or holds, in the words a developer looks for when making a change.
+6. *While making.* Check that, for any change to a component, a developer can name the one folder it goes in.
 
 ### N12
 
@@ -217,7 +218,7 @@ Every case written through a skeleton of the parts before any body is built chec
 7. *While making.* Where a class ends on an ordered scale, such as a length or a count, write one case at each end and one at the nearest value of the next class. This is boundary value analysis.
 8. *While making.* Where the contract's result depends on a combination of conditions, write one case for each combination that can occur, with the result it gives. This is decision table testing.
 9. *While making.* For a prompt, write a case where its contract says it acts and one where it says it doesn't, for each kind of request it's for, and decide by code each point of the result that the record of each of its runs on the model shows: each tool call the prompt's AI made, each message it gave, and each file at the run's end, such as the JSON it passed to a script, since an AI that judged them would vary from run to run.
-10. *While making.* Write each case as a test in the test code, in the place that Directory structure names, with its Given, When, and Then stated, and write no list of the cases in a document, since a list beside the code says each case twice.
+10. *While making.* Write each case as a test in the test code, in the folder of its level that Directory structure names, with its Given, When, and Then stated, and write no list of the cases in a document, since a list beside the code says each case twice.
 11. *While making.* Run the type checker over the skeleton and the cases, and see every case fail: a type that doesn't fit across a handoff is a gap between the parts, and a case that passes on an empty body tests nothing.
 12. *While making.* Read the cases and the skeleton against the architecture, and list each gap they show: a case that no part can hold; a part that no case reaches; a module that can't state its decision in a few words; a part whose cases change for more than one reason, such as a file's form and a remote's commands; and a handoff that no interface carries.
 13. *While making.* For each gap, change the architecture first: give the case a part, or a decision to a part; remove the part that no case reaches, as N3 says; split the module or the part by its decisions or its reasons to change; and give the handoff an arrow and a kind of data.

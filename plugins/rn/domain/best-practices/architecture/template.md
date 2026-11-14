@@ -146,10 +146,12 @@ sequenceDiagram
 > DELETE_TEMPLATE_COMMENT:
 > - `<places>`: one sentence for each top folder, saying whom its files are for, such as the users
 >   who install the product or only its developers.
-> - `<path>`: each folder and file that holds a component or a data, by its real name, nested as on
->   disk, without the files inside a component.
+> - `<path>`: each folder and file that holds a component, a data, a level's test cases, or the
+>   script that checks the trace, by its real name, nested as on disk, without the files inside a
+>   component or a level's folder.
 > - `<holds>`: what it does or holds, in the words a developer looks for when making a change,
->   naming the component or the data as Components and the data model name them.
+>   naming the component or the data as Components and the data model name them, and the level as
+>   Test strategy names it.
 > - `<choice>`, `<other way>`, `<why>`, `<cost>`: as in Components.
 
 ## Test strategy
