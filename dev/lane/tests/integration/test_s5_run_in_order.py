@@ -101,7 +101,6 @@ def test_the_skills_own_result_where_a_move_starts_no_more_ends_the_run(
     assert not after.blocked
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S5", "adapter", "Start")
 def test_the_adapter_gives_a_start_its_text_and_run_values(repo: Repo):
     """Given `changelog` laid with an adapter of a start's text that gives writer
@@ -118,7 +117,6 @@ def test_the_adapter_gives_a_start_its_text_and_run_values(repo: Repo):
     assert writer and not started.blocked
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S5", "adapter", "guard")
 def test_an_adapter_failing_at_the_skills_call_gives_the_start_with_why_and_lets_the_call_run(
     repo: Repo,
@@ -133,7 +131,6 @@ def test_an_adapter_failing_at_the_skills_call_gives_the_start_with_why_and_lets
     assert "changelog:writer" in typed.said and "no plan yet" in typed.said
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S5", "adapter", "guard")
 def test_an_adapter_failing_at_a_later_single_move_gives_why_and_who_must_fix_it_in_its_place(
     repo: Repo,
@@ -158,7 +155,6 @@ def test_an_adapter_failing_at_a_later_single_move_gives_why_and_who_must_fix_it
     assert START_REVIEWER not in reached.said
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S5", "adapter", "Route")
 def test_an_adapter_failing_for_one_of_several_moves_gives_that_start_with_why_beside_the_rest(
     repo: Repo,
@@ -200,7 +196,6 @@ def test_a_start_with_a_text_other_than_the_plugins_is_stopped(run: Conversation
     assert agent is None and stopped.blocked and START_WRITER in stopped.said
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S5", "adapter", "guard")
 def test_a_start_whose_text_the_adapter_cant_give_is_stopped_with_who_must_fix_it(repo: Repo):
     """Given `changelog` laid with an adapter of a start's text that exits 1 for writer, saying
@@ -215,7 +210,6 @@ def test_a_start_whose_text_the_adapter_cant_give_is_stopped_with_who_must_fix_i
     assert "no plan yet" in stopped.said and "maker" in stopped.said
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S5", "Start", "adapter", "Route")
 def test_starts_side_by_side_each_with_a_text_other_than_those_of_its_role_that_run(repo: Repo):
     """Given `changelog` laid with a Route after `writer written` that starts writer again, and an

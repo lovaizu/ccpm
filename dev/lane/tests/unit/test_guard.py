@@ -117,6 +117,30 @@ def test_a_start_that_the_moves_open_is_let_through_and_added(temp: str):
     assert load(temp, "changelog", SESSION) == (*WRITER_GAVE_WRITTEN, added)
 
 
+@pytest.mark.supports("test_the_adapter_gives_a_start_its_text_and_run_values")
+def test_a_start_with_the_adapters_text_is_let_through_and_kept_with_its_values(temp: str):
+    """Given `changelog` laid with an adapter `text` that gives writer `Write 0.2.0` and the value
+    `version` `0.2.0`, and a Run whose move due starts writer
+    When the main conversation starts `changelog:writer` with `Write 0.2.0`
+    Then the guard lets it through, and adds the Start with the value"""
+    root = os.path.join(temp, "changelog")
+    os.makedirs(os.path.join(root, "hooks", "adapters"))
+    program = os.path.join(root, "hooks", "adapters", "text")
+    with open(program, "w", encoding="utf-8") as f:
+        f.write(
+            "#!/usr/bin/env python3\nimport json\n"
+            'print(json.dumps({"text": "Write 0.2.0", "values": {"version": "0.2.0"}}))\n'
+        )
+    os.chmod(program, 0o755)
+    keep(temp, Called("write", PERSON))
+    call = Call(START, role="changelog:writer", text="Write 0.2.0")
+    moment = Event(CALL, SESSION, temp, temp, call=call)
+    given = laid_set(text_adapter="text")
+    assert not decide(moment, given, root, temp).stop
+    added = Start(1, "writer", "Write 0.2.0", {"version": "0.2.0"}, skill="write")
+    assert load(temp, "changelog", SESSION)[-1] == added
+
+
 @pytest.mark.supports("test_a_start_that_the_moves_dont_open_is_stopped_with_the_moves")
 def test_a_start_that_the_moves_dont_open_is_stopped_with_the_moves(temp: str):
     """Given a Run whose move due starts reviewer

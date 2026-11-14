@@ -5,30 +5,47 @@ stop gives the step back says. Each line starts with the plugin's name."""
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
+from typing import Union
 
+from domain.fault import Fault
 from domain.laid_set import NO_MORE, START, Move
 
+# The text of each start due by its role, or the Fault of the adapter that can't give it. Python
+# 3.9, which the laid plugin runs on, has no `|` between classes.
+Texts = Mapping[str, Union[str, Fault]]
 
-def moves(plugin: str, due: Sequence[Move], texts: dict[str, str]) -> str:
+
+def moves(plugin: str, due: Sequence[Move], texts: Texts, at_call: bool = False) -> str:
     """The moves due, each start with its text, such as ``changelog: Start `changelog:writer` with
-    `Carry out your steps`.``, and `Start no more subagents.` for the move that starts no more."""
-    return f"{plugin}: {_moves(plugin, due, texts)}"
+    `Carry out your steps`.``, and `Start no more subagents.` for the move that starts no more. A
+    start whose text the adapter can't give reads, at the skill's call, `at_call`, as the start
+    once its text can be given, with why, as the skill's own steps may make what the adapter reads,
+    and elsewhere as why and who must fix it, in its place."""
+    return f"{plugin}: {_moves(plugin, due, texts, at_call)}"
 
 
-def _moves(plugin: str, due: Sequence[Move], texts: dict[str, str]) -> str:
-    return " ".join(_move(plugin, move, texts) for move in due)
+def _moves(plugin: str, due: Sequence[Move], texts: Texts, at_call: bool = False) -> str:
+    return " ".join(_move(plugin, move, texts, at_call) for move in due)
 
 
-def _move(plugin: str, move: Move, texts: dict[str, str]) -> str:
+def _move(plugin: str, move: Move, texts: Texts, at_call: bool) -> str:
     if move.kind == START:
-        return f"Start `{plugin}:{move.role}` with `{texts[move.role]}`."
+        return _start(f"{plugin}:{move.role}", texts[move.role], at_call)
     if move.kind == NO_MORE:
         return "Start no more subagents."
     raise NotImplementedError(f"said: the words of a move of the kind {move.kind}")
 
 
-def gave(plugin: str, role: str, result: str, due: Sequence[Move], texts: dict[str, str]) -> str:
+def _start(role: str, given: str | Fault, at_call: bool) -> str:
+    if not isinstance(given, Fault):
+        return f"Start `{role}` with `{given}`."
+    if at_call:
+        return f"Start `{role}` once its text can be given, which it can't be now, as {given.why}."
+    return f"Lane can't give the start of `{role}`, as {given.why}, and {given.who} must fix it."
+
+
+def gave(plugin: str, role: str, result: str, due: Sequence[Move], texts: Texts) -> str:
     """That the role gave the result, then the moves due, as ``changelog: writer gave `written`.
     Start `changelog:reviewer` with `Carry out your steps`.``"""
     return f"{plugin}: {role} gave `{result}`. {_moves(plugin, due, texts)}"

@@ -12,9 +12,8 @@ from domain.adapter import StartText, kept_results, start_text
 from domain.fault import Fault
 from domain.run_record import Result, Start
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="Lane's parts are skeletons, their bodies unbuilt"
-)
+# kept_results is S7's, whose bodies are unbuilt.
+UNBUILT = pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 
 
 @pytest.fixture
@@ -122,6 +121,7 @@ def test_an_adapter_that_cant_run_raises_a_fault(folder: str):
         start_text(path, "writer", [], folder)
 
 
+@UNBUILT
 @pytest.mark.supports(
     "test_a_new_conversation_picks_up_from_the_kept_results_that_follow_the_routes"
 )
@@ -140,6 +140,7 @@ def test_kept_results_read_in_their_order(folder: str):
     ]
 
 
+@UNBUILT
 @pytest.mark.supports("test_an_adapter_of_the_records_that_fails_stops_the_command_with_why")
 def test_kept_results_not_in_the_form_raise_a_fault(folder: str):
     """Given an adapter that prints `{"results": [{"role": "writer"}]}`
@@ -150,6 +151,7 @@ def test_kept_results_not_in_the_form_raise_a_fault(folder: str):
         kept_results(path, "", folder)
 
 
+@UNBUILT
 @pytest.mark.supports("test_the_kept_results_adapter_gets_the_words_typed_after_the_command")
 def test_the_kept_results_adapter_gets_the_words_of_the_call_on_stdin(folder: str):
     """Given an adapter that gives writer `written` where it gets no words, and no results where it

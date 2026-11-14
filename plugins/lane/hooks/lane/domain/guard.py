@@ -13,6 +13,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 
 from domain import adapter, results, said
+from domain.adapter import StartText
 from domain.event import (
     BEGUN,
     CALL,
@@ -116,7 +117,7 @@ def _typed(at: _At) -> Decision:
     if skill in laid_set.skills:
         at = at.keep(Called(skill, PERSON))
         run = at.runs()[-1]
-        return Decision(context=_moves(at, [run])) if run.moves else LET_THROUGH
+        return Decision(context=_moves(at, [run], at_call=True)) if run.moves else LET_THROUGH
     going = [run for run in at.runs() if not run.ended]
     if laid_set.proposes and going and not event.command:
         at.keep(Noted(PROMPTED))
@@ -147,28 +148,49 @@ def _stopped(at: _At, lane: Lane, may: Sequence[str], printed: str) -> Decision:
 def _start(at: _At, runs: Sequence[Run], call: Call) -> Decision:
     role = at.name(call.role)
     run = run_of(at.event, at.laid_set, runs)
-    if run is not None and opens_start(run, role, call.text, _texts(at, run)[role]):
-        number = 1 + sum(isinstance(line, Start) for line in at.lines)
-        at.keep(Start(number, role, call.text, skill=run.skill))
-        return LET_THROUGH
+    if run is not None:
+        given = _given(at, run)[role]
+        if isinstance(given, Fault):
+            raise given
+        if opens_start(run, role, call.text, given.text):
+            number = 1 + sum(isinstance(line, Start) for line in at.lines)
+            at.keep(Start(number, role, call.text, given.values, skill=run.skill))
+            return LET_THROUGH
     going = [each for each in runs if not each.ended]
     return Decision(stop=True, said=_moves(at, going))
 
 
-def _texts(at: _At, run: Run) -> dict[str, str]:
-    """The text of each start due in the Run, Lane's own or the adapter's."""
+def _given(at: _At, run: Run) -> dict[str, StartText | Fault]:
+    """The text and the run values of each start due in the Run, Lane's own text or the adapter's,
+    or the Fault of the adapter where it can't give them."""
     roles = [move.role for move in due(run.moves, "") if move.kind == MOVE_START]
     if not at.laid_set.text_adapter:
-        return {role: _CARRY_OUT for role in roles}
+        return {role: StartText(_CARRY_OUT) for role in roles}
     program = os.path.join(at.root, "hooks", "adapters", at.laid_set.text_adapter)
     running = [start for start in run.starts if start.running]
-    return {role: adapter.start_text(program, role, running, at.event.cwd).text for role in roles}
+    found: dict[str, StartText | Fault] = {}
+    for role in roles:
+        try:
+            found[role] = adapter.start_text(program, role, running, at.event.cwd)
+        except Fault as fault:
+            found[role] = fault
+    return found
 
 
-def _moves(at: _At, runs: Sequence[Run]) -> str:
-    """The moves due in each of the Runs, a line for each."""
+def _texts(at: _At, run: Run) -> said.Texts:
+    """The text of each start due in the Run, or the Fault of the adapter that can't give it."""
+    return {
+        role: given if isinstance(given, Fault) else given.text
+        for role, given in _given(at, run).items()
+    }
+
+
+def _moves(at: _At, runs: Sequence[Run], at_call: bool = False) -> str:
+    """The moves due in each of the Runs, a line for each, `at_call` at the skill's call."""
     plugin = at.laid_set.plugin
-    return "\n".join(said.moves(plugin, due(run.moves, ""), _texts(at, run)) for run in runs)
+    return "\n".join(
+        said.moves(plugin, due(run.moves, ""), _texts(at, run), at_call) for run in runs
+    )
 
 
 def _ran(at: _At) -> Decision:

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import pytest
+from domain.fault import Fault
 from domain.laid_set import NO_MORE, START, Move
 from domain.said import cant_check, ended_without, gave, moves, stop
 
@@ -58,6 +59,41 @@ def test_the_last_result_reads_start_no_more():
     Then it reads ``changelog: reviewer gave `good`. Start no more subagents.``"""
     told = gave("changelog", "reviewer", "good", (Move(NO_MORE),), CARRY)
     assert told == "changelog: reviewer gave `good`. Start no more subagents."
+
+
+@pytest.mark.supports(
+    "test_an_adapter_failing_at_the_skills_call_gives_the_start_with_why_and_lets_the_call_run"
+)
+def test_a_start_whose_text_cant_be_given_at_the_skills_call_names_it_with_why():
+    """Given the move that starts writer, whose text the adapter can't give, saying `no plan yet`
+    When the moves are told at the skill's call
+    Then they name writer's start once its text can be given, with `no plan yet`"""
+    texts = {
+        "writer": Fault("hooks/adapters/text gave 1, saying no plan yet", "the plugin's maker")
+    }
+    told = moves("changelog", (Move(START, "writer"),), texts, at_call=True)
+    assert told == (
+        "changelog: Start `changelog:writer` once its text can be given, which it can't be now,"
+        " as hooks/adapters/text gave 1, saying no plan yet."
+    )
+
+
+@pytest.mark.supports(
+    "test_an_adapter_failing_at_a_later_single_move_gives_why_and_who_must_fix_it_in_its_place"
+)
+def test_a_start_whose_text_cant_be_given_later_reads_why_and_who_in_its_place():
+    """Given writer gave `written`, and reviewer's start is due, whose text the adapter can't
+    give, saying `no entries`
+    When it's told
+    Then it reads why and who must fix it, in place of reviewer's start"""
+    texts = {
+        "reviewer": Fault("hooks/adapters/text gave 1, saying no entries", "the plugin's maker")
+    }
+    told = gave("changelog", "writer", "written", (Move(START, "reviewer"),), texts)
+    assert told == (
+        "changelog: writer gave `written`. Lane can't give the start of `changelog:reviewer`, as"
+        " hooks/adapters/text gave 1, saying no entries, and the plugin's maker must fix it."
+    )
 
 
 @pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
