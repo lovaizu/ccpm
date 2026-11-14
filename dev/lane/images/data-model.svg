@@ -78,6 +78,7 @@
   <polyline class="line" points="349,564 320,625 1040,625 1040,564" marker-start="url(#diamond)"/>
   <polyline class="line" points="771,516 489,344" marker-end="url(#arrow)"/>
   <polyline class="line" points="690,76 690,18 1170,18 1170,540 1125,540" marker-end="url(#arrow)"/>
+  <polyline class="line" points="215,344 320,516" marker-end="url(#arrow)"/>
   <rect class="box" x="45.0" y="76.0" width="170" height="48" rx="4"/>
   <text class="name" x="130" y="105">Role</text>
   <rect class="box" x="325.0" y="76.0" width="170" height="48" rx="4"/>
@@ -113,6 +114,7 @@
   <text class="label small halo mid" x="300" y="300">proposes 0..*</text>
   <text class="label small halo mid" x="440" y="416">proposes 1..*</text>
   <text class="label small halo mid" x="920" y="424">goes on from</text>
+  <text class="label small halo end" x="268" y="455">shown in 0..1</text>
   <text class="label small halo start" x="150" y="440">approves 1</text>
   <text class="label small halo mid" x="475" y="506">holds 0..*</text>
   <text class="label small halo mid" x="585" y="592">holds 0..*</text>

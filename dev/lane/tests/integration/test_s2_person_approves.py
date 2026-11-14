@@ -101,6 +101,23 @@ def test_a_reply_that_is_neither_yes_nor_a_change_ends_the_run_of_up(up: Convers
     assert not up.stop("Done.").blocked
 
 
+@pytest.mark.supports("S2", "lay.py", "Proposal", "Run")
+def test_lay_write_after_the_run_of_up_ended_without_approval_is_refused(
+    up: Conversation, repo: Repo
+):
+    """Given up gave the person the walkthrough's Proposal, and the person asked for other work, so
+    that the Run of up ended as the turn ended
+    When the main conversation runs `lay.py write` on that Proposal's ID
+    Then lay.py exits 1 saying the Run of up that showed it ended without its approval, and
+    nothing is laid"""
+    printed = shown_to_person(up, repo)
+    up.type("What does tally do?")
+    up.stop("tally counts words.")
+    late = up.bash(write_command(id_of(printed)))
+    assert late.exit_code == 1 and "ended" in late.output
+    assert not os.path.exists(os.path.join(repo.plugin, "hooks", "lanes.json"))
+
+
 @pytest.mark.supports("S2", "guard", "Approval", "Laid only on the caller's own act")
 def test_lay_write_before_the_persons_reply_is_stopped(broken: bool, up: Conversation, repo: Repo):
     """Given the person typed `/lane:up changelog` and `lay.py print` showed a Proposal

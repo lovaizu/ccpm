@@ -11,8 +11,9 @@ from typing import Any
 import pytest
 from domain.fault import Fault
 from domain.laid_set import Laid, Move
+from domain.run_record import PERSON, Run
 from lane_example import PROPOSAL, REVIEWER, lane, put, put_plugin, route, start
-from proposal import Proposal, check, keep, kept, moves_of, parse
+from proposal import Proposal, check, keep, kept, moves_of, parse, waits
 from steps import roles
 
 pytestmark = pytest.mark.xfail(
@@ -260,3 +261,59 @@ def test_two_proposals_kept_get_two_ids(plugin: str, tmp_path: Any):
     first = keep(parse(PROPOSAL, "p.json"), roles(plugin, Laid()), str(tmp_path))
     second = keep(parse(PROPOSAL, "p.json"), roles(plugin, Laid()), str(tmp_path))
     assert first.id != second.id
+
+
+def shown_in(id: str, **fields: Any) -> Run:
+    """A Run of up of the conversation c1 that a person started, which showed the Proposal of the
+    ID last, with the fields given."""
+    given: dict[str, Any] = {"plugin": "lane", "skill": "up", "session": "c1", "by": PERSON}
+    given.update(shown=f"Routes of write, laid on its step 1:\n\nID: {id}\n", **fields)
+    return Run(**given)
+
+
+KEPT = Proposal("changelog", "write", (), (), id="b9fd8fd8", conversation="c1")
+
+
+@pytest.mark.supports("test_lay_write_after_the_run_of_up_ended_without_approval_is_refused")
+def test_a_proposal_kept_holds_the_conversation_that_showed_it(plugin: str, tmp_path: Any):
+    """Given the walkthrough's Proposal, shown in the conversation c1
+    When it's kept, and looked for by its ID
+    Then the Proposal found holds c1"""
+    found = keep(parse(PROPOSAL, "p.json"), roles(plugin, Laid()), str(tmp_path), "c1")
+    again = kept(str(tmp_path), "changelog", found.id)
+    assert found.conversation == "c1" and again is not None and again.conversation == "c1"
+
+
+@pytest.mark.supports("test_a_persons_yes_lays_the_proposal_and_validation_passes")
+def test_a_proposal_whose_run_of_up_goes_on_and_showed_it_last_waits():
+    """Given a Proposal shown in c1, whose Run of up goes on and showed it last
+    When it's asked whether the Proposal still waits
+    Then it does"""
+    assert waits(KEPT, shown_in("b9fd8fd8"))
+
+
+@pytest.mark.supports("test_lay_write_after_the_run_of_up_ended_without_approval_is_refused")
+def test_a_proposal_whose_run_of_up_ended_waits_not():
+    """Given a Proposal shown in c1, whose Run of up showed it last and then ended
+    When it's asked whether the Proposal still waits
+    Then it doesn't"""
+    assert not waits(KEPT, shown_in("b9fd8fd8", ended=True))
+
+
+@pytest.mark.supports("test_lay_write_after_the_run_of_up_ended_without_approval_is_refused")
+def test_a_proposal_that_its_conversations_run_of_up_doesnt_show_last_waits_not():
+    """Given a Proposal shown in c1, whose Run of up a later `/lane:up` replaced with one that
+    showed the Proposal 0c0c0c0c
+    When it's asked whether the Proposal still waits
+    Then it doesn't"""
+    assert not waits(KEPT, shown_in("0c0c0c0c"))
+
+
+@pytest.mark.supports(
+    "test_an_ai_that_called_up_by_the_skill_tool_lays_by_its_own_run_of_lay_write"
+)
+def test_a_proposal_whose_conversation_has_no_run_of_up_waits():
+    """Given a Proposal whose conversation holds no Run of up, as no Run of up showed it
+    When it's asked whether the Proposal still waits
+    Then it does"""
+    assert waits(KEPT, None)

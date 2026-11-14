@@ -34,8 +34,8 @@ def _sentence_from_elsewhere() -> Callable[..., Any]:
 
     original = proposal.keep
 
-    def keep(given: Any, found: Any, temp: str) -> Any:
-        kept = original(given, found, temp)
+    def keep(given: Any, found: Any, temp: str, conversation: str = "") -> Any:
+        kept = original(given, found, temp, conversation)
         lanes = tuple(
             dataclasses.replace(each, sentence="Run only what the step names.")
             for each in kept.lanes

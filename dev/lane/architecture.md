@@ -57,8 +57,9 @@ What each decides alone:
   change the user asks for reads in its step.
 - lay.py\
   Whether a proposal can stand against the lane types, the steps, and the plugin's files, how each
-  step reads once laid, which text of a step Lane laid before, whether a proposal still matches the
-  steps it came from, and which files laying writes or replaces, as one change.
+  step reads once laid, which text of a step Lane laid before, whether a proposal can still be laid,
+  as the steps it came from still read as they did and the Run of up that showed it still waits for
+  its reply, and which files laying writes or replaces, as one change.
 - lane types\
   For each type, such as `run_only` or `write_only`, what it takes, such as the paths that
   `read_never` keeps unread and each part of them, under `!`, that the role may still read, the
@@ -150,8 +151,9 @@ The choices made, and why:
   skill's Steps lie in its own file and that file both, and in the `SKILL.md` of each command that
   a Route waits for or goes after, as the main conversation runs them all.
 - Proposal\
-  The lanes and the routes proposed from the steps as they read at one time, with its ID, until the
-  caller approves it or the steps change.
+  The lanes and the routes proposed from the steps as they read at one time, with its ID, kept for
+  the Run of up that showed it, if any: until the caller approves it, the steps change, or that Run
+  ends without its approval.
 - Lane\
   A rule on one step of one role, in the file that holds the step, of one lane type. It holds the
   role on every call and every end of the Run, as its type checks them. The README calls it a rule.
@@ -341,6 +343,7 @@ sequenceDiagram
   participant G as Lane's guard on up
   participant UP as up
   participant L as lay.py
+  participant RS as run record
   participant F as the plugin's files
   Note over U,G: The guard saw /lane:up typed, so the run of up waits for the person.
   UP->>CC: ends its turn
@@ -358,6 +361,11 @@ sequenceDiagram
     CC->>G: the end of the turn, with no lay.py write and no new lay.py print since the prompt
     G->>G: ends the Run of up, as a Proposal waits for one reply
     Note over U,G: up's lanes hold no more, and a later /lane:up starts a new Run.
+    opt the main conversation runs lay.py write <plugin> <ID> after the Run ended
+      CC->>L: write <plugin> <ID>
+      L->>RS: reads the Run of up that showed the Proposal
+      L-->>CC: refused, as that Run ended without its approval
+    end
   else yes
     UP->>CC: runs lay.py write <plugin> <ID>
     CC->>G: the call
@@ -366,7 +374,8 @@ sequenceDiagram
     else
       G-->>CC: lets it through
       CC->>L: write <plugin> <ID>
-      alt no such Proposal, or the Steps changed since it was shown
+      L->>RS: reads the Run of up that showed the Proposal
+      alt no such Proposal, its Run of up no longer waits for its reply, or the Steps changed since it was shown
         L-->>UP: refused, with why
         Note over UP,L: up proposes again, as S1 draws.
       else

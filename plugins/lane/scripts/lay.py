@@ -23,9 +23,13 @@ def types_text() -> str:
 def main(argv: list[str], environ: Mapping[str, str], cwd: str) -> tuple[int, str, str]:
     """The exit code, stdout, and stderr of `lay.py` with the arguments, from the folder `cwd`,
     where `<plugin>` is the plugin's folder from there: 0 with what `types`, `print`, or `write`
-    prints; 1 with what's wrong where the Proposal can't stand, where no Proposal has the ID or
-    the Steps changed since it was shown, or where `claude plugin validate` fails after laying,
-    with what it said; 2 with the usage where the arguments are none of these."""
+    prints; 1 with what's wrong where the Proposal can't stand, where no Proposal has the ID, where
+    the Steps changed since it was shown, where the Run of up that showed it no longer waits for its
+    reply, as `proposal.waits` reads the Run of up of the conversation, in the run records of the
+    system's temporary folder, or where `claude plugin validate` fails after laying, with what it
+    said; 2 with the usage where the arguments are none of these. `print` keeps the Proposal with
+    the conversation that `CLAUDE_CODE_SESSION_ID` names, which Claude Code gives each Bash
+    command."""
     raise NotImplementedError("lay.main")
 
 

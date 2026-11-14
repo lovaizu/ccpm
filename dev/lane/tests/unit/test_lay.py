@@ -9,6 +9,7 @@ import re
 from typing import Any
 
 import pytest
+from domain.run_record import PERSON, Run, save
 from lane_example import PROPOSAL, REVIEWER, TYPES, WRITE, WRITER, put, read
 from lay import USAGE, main, types_text
 
@@ -137,3 +138,20 @@ def test_other_arguments_exit_2_with_the_usage(cwd: str):
     When `lay.py print changelog` runs, with no Proposal named
     Then it exits 2 with the usage"""
     assert main(["print", "changelog"], env(cwd), cwd) == (2, "", USAGE + "\n")
+
+
+@pytest.mark.supports("test_lay_write_after_the_run_of_up_ended_without_approval_is_refused")
+def test_write_after_the_run_of_up_that_showed_the_proposal_ended_exits_1_saying_so(cwd: str):
+    """Given `lay.py print` showed the walkthrough's Proposal in the conversation c1, whose Run of
+    up showed it and then ended without its approval
+    When `lay.py write` runs on its ID
+    Then it exits 1 saying that Run ended, and nothing is laid"""
+    given = dict(env(cwd), CLAUDE_CODE_SESSION_ID="c1")
+    _, out, _ = main(["print", "changelog", "proposal.json"], given, cwd)
+    found = re.search(r"^ID: (\S+)$", out, re.MULTILINE)
+    assert found
+    ended = Run("lane", "up", "c1", PERSON, shown=out, prompted=True, ended=True)
+    save(ended, os.path.join(cwd, "tmp"))
+    code, out, err = main(["write", "changelog", found[1]], given, cwd)
+    assert code == 1 and "ended" in out + err
+    assert not os.path.exists(os.path.join(cwd, "changelog", "hooks"))

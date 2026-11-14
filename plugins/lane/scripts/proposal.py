@@ -1,6 +1,7 @@
 """Decides whether a Proposal can stand against the lane types, the plugin's Steps, and its files,
-and keeps each Proposal shown by its ID with the Steps it came from, in
-`<temp>/lane/<yyyymmdd>-<plugin>/`, until the caller approves it or the Steps change."""
+and keeps each Proposal shown by its ID with the Steps it came from and the conversation that
+showed it, in `<temp>/lane/<yyyymmdd>-<plugin>/`, for the Run of up that showed it, if any: until
+the caller approves it, the Steps change, or that Run ends without its approval."""
 
 from __future__ import annotations
 
@@ -9,6 +10,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from domain.laid_set import Lane, Move, Route
+from domain.run_record import Run
 from steps import Role
 
 
@@ -16,7 +18,8 @@ from steps import Role
 class Proposal:
     """The lanes and the routes proposed from the Steps as they read at one time, the data model's
     Proposal, in the form of `domain/proposal.schema.json`: the plugin, its skill, each Lane with
-    its sentence, each Route, the adapters named, the ID, and the fingerprint of the Steps."""
+    its sentence, each Route, the adapters named, the ID, the fingerprint of the Steps, and the ID
+    of the conversation in which `lay.py print` showed it, "" for none."""
 
     plugin: str
     skill: str
@@ -26,6 +29,7 @@ class Proposal:
     results_adapter: str = ""
     id: str = ""
     steps: str = ""
+    conversation: str = ""
 
 
 @dataclass(frozen=True)
@@ -58,12 +62,22 @@ def moves_of(proposal: Proposal, after: str) -> tuple[Move, ...]:
     raise NotImplementedError("proposal.moves_of")
 
 
-def keep(proposal: Proposal, found: Sequence[Role], temp: str) -> Proposal:
-    """Keeps the Proposal, with the sentence of each Lane made by its type and the fingerprint of
-    the Roles' Steps it came from, under a new ID of 8 hex digits, and gives it with its ID."""
+def keep(proposal: Proposal, found: Sequence[Role], temp: str, conversation: str = "") -> Proposal:
+    """Keeps the Proposal, with the sentence of each Lane made by its type, the fingerprint of the
+    Roles' Steps it came from, and the ID of the conversation that showed it, "" for none, under a
+    new ID of 8 hex digits, and gives it with its ID."""
     raise NotImplementedError("proposal.keep")
 
 
 def kept(temp: str, plugin: str, id: str) -> Proposal | None:
     """The Proposal kept for the plugin under the ID, or None where none is."""
     raise NotImplementedError("proposal.kept")
+
+
+def waits(proposal: Proposal, run: Run | None) -> bool:
+    """Whether the Proposal can still be laid as far as the Run of up that showed it goes, given
+    the Run of up of the conversation that showed it, None where that conversation has none: true
+    where it has none, as no Run of up showed the Proposal, or where its Run goes on and showed this
+    Proposal last; false where that Run ended, or showed another Proposal since, as a later Run of
+    up in the same conversation does."""
+    raise NotImplementedError("proposal.waits")
