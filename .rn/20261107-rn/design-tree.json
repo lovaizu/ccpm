@@ -59,6 +59,11 @@
           "about": "A prompt's tests",
           "decided": "a prompt is a part: unit tests run it on the model its users run, several times, and E2E tests try it in real use",
           "by": "user"
+        },
+        {
+          "about": "An evaluator's words",
+          "decided": "an evaluator answers each question good, with the lines that meet it, or what would make it good, in the plugin guide's words good, more, and good_when, and the plugin template, rn, and Lane use those words wherever they carry an evaluator's answer, as the guide is the one source and met, not met, and lacks say the same thing with other words",
+          "by": "user"
         }
       ]
     },
