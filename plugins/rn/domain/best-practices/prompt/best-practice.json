@@ -28,7 +28,7 @@
        },
        {
         "at": "decide",
-        "text": "Write down several near requests that the prompt isn't for, each from a user story that another component carries, in a user's own words."
+        "text": "Write down several near requests that the prompt isn't for, each in a user's own words: a request that shares words or an input with one on the first list and needs another task, such as `review the plan for issue 12` beside `turn issue 12 into a plan`. Take them from the user stories that other components carry, and from the host's own prompts where the host lists them, such as the [commands reference](https://code.claude.com/docs/en/commands) of Claude Code, since the host chooses among its own prompts too."
        },
        {
         "at": "make",
@@ -44,7 +44,7 @@
        },
        {
         "at": "make",
-        "text": "For each near request that names one of the host's own prompts, such as a built-in command or a bundled skill, open its description where the host lists them, such as the [commands reference](https://code.claude.com/docs/en/commands) of Claude Code."
+        "text": "For each near request that names one of the host's own prompts, such as a built-in command or a bundled skill, open its description in the host's list that N1.3 took it from."
        },
        {
         "at": "make",
@@ -212,7 +212,7 @@
        },
        {
         "at": "make",
-        "text": "Move detail that the AI needs only in some runs to a file that the prompt links directly, and say in the prompt when to read it."
+        "text": "For detail that the AI needs only in some runs, where the deliverable is a folder that holds the prompt, such as a skill's, move the detail to a file in that folder that the prompt links directly, such as `reference.md`, and say in the prompt when to read it. Where the deliverable is the prompt's one file, such as an agent's, end with `asks`, naming the detail and the file it needs, as for a program in N9.2, since a file outside the deliverable is a decision of the architecture."
        }
       ]
      }
@@ -474,11 +474,11 @@
        },
        {
         "at": "make",
-        "text": "Give the stand-in for the person only their intent, which the test case gives and the prompt never gets, and the whole of each message it answers."
+        "text": "Where N14.1 found a message that the prompt has its AI write to a person, open the stand-in for the person, the AI that answers each such message in the person's place, among the test's parts in the folder of each case that the architecture's Test strategy names, or write it there where the case has none. Give it only the person's intent, which the test case gives and the prompt never gets, and the whole of each message it answers. Where N14.1 found none, the tests need no stand-in, since no message waits on a person."
        },
        {
         "at": "make",
-        "text": "Read the stand-in's answers in the conversations of the first records, and check that each answer comes from the intent alone and invents nothing."
+        "text": "Read the answers of each stand-in that N17.6 opened or wrote in the conversations of the first records, and check that each answer comes from the intent alone and invents nothing."
        },
        {
         "at": "make",

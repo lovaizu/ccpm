@@ -49,11 +49,11 @@ To pick a prompt for a request, the host reads only the name and the description
 
 1. *While deciding.* Open the architecture, and find the component that the prompt carries out: its line in Components, and its file in Directory structure, such as `agents/planner.md`. This best practice calls it the prompt's component, and the person of a user story the story's role, as the architecture does. The trace: `{inputs}` read to its end.
 2. *While deciding.* Open the user stories whose sequences the prompt's component takes part in, and write down several requests that the prompt is for, each in a user's own words, from the way the story's role meets the product, such as `turn issue 12 into a plan`.
-3. *While deciding.* Write down several near requests that the prompt isn't for, each from a user story that another component carries, in a user's own words.
+3. *While deciding.* Write down several near requests that the prompt isn't for, each in a user's own words: a request that shares words or an input with one on the first list and needs another task, such as `review the plan for issue 12` beside `turn issue 12 into a plan`. Take them from the user stories that other components carry, and from the host's own prompts where the host lists them, such as the [commands reference](https://code.claude.com/docs/en/commands) of Claude Code, since the host chooses among its own prompts too.
 4. *While making.* Write the prompt's name: the name of its file in Directory structure without the extension, such as `planner` for `agents/planner.md`. Where Directory structure gives no file, name it by what it does, in lowercase words joined by hyphens, such as `processing-pdfs`.
 5. *While making.* Write the description in the third person: first what the prompt does, then `Use when` with the requests and situations of the first list, the main use first, such as `Extracts text and tables from PDF files. Use when the user mentions PDFs, forms, or document extraction.`
 6. *While making.* Open the `name` and the `description` in the frontmatter of each other skill and agent of the product, in the folders that the architecture's Directory structure gives them. Where a prompt's file isn't written yet, take its component's line in Components in place of its description, since that line says what the prompt is to do.
-7. *While making.* For each near request that names one of the host's own prompts, such as a built-in command or a bundled skill, open its description where the host lists them, such as the [commands reference](https://code.claude.com/docs/en/commands) of Claude Code.
+7. *While making.* For each near request that names one of the host's own prompts, such as a built-in command or a bundled skill, open its description in the host's list that N1.3 took it from.
 8. *While making.* Where a near request fits the prompt's description as well as another's, add what sets the prompt apart, such as the kind of input it takes.
 9. *While making.* Read only the name and the description, as the host does, and check that each request on the first list leads to the prompt and none on the second does.
 
@@ -127,7 +127,7 @@ Does every line change what the AI does toward the task?
 Every line takes some of the AI's attention from the lines that matter, so prompt writers keep detail that the AI needs only in some runs in a file that it reads only then, as the [progressive disclosure](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices) of the skill authoring best practices does.
 
 1. *While making.* For each line, ask whether removing it would change what the AI does. If not, cut it, such as `Read the files carefully`, which the AI does without the line.
-2. *While making.* Move detail that the AI needs only in some runs to a file that the prompt links directly, and say in the prompt when to read it.
+2. *While making.* For detail that the AI needs only in some runs, where the deliverable is a folder that holds the prompt, such as a skill's, move the detail to a file in that folder that the prompt links directly, such as `reference.md`, and say in the prompt when to read it. Where the deliverable is the prompt's one file, such as an agent's, end with `asks`, naming the detail and the file it needs, as for a program in N9.2, since a file outside the deliverable is a decision of the architecture.
 
 ### N9
 
@@ -230,7 +230,7 @@ A test's own parts, its set-up, its doubles, its judges, and its checks, are cod
 3. *While making.* Give each judge one point, its definitions, and a pass or fail result.
 4. *While making.* Where a judge has no messages that the maintainer has marked, end with `asks`, handing the maintainer the messages of its point from the first records, each with the mark you'd give it, since only the maintainer's marks say what passes. Their marks come back as the person's words when you're resumed.
 5. *While making.* Run each judge on the marked messages, and use it only once it gives each message the maintainer's mark.
-6. *While making.* Give the stand-in for the person only their intent, which the test case gives and the prompt never gets, and the whole of each message it answers.
-7. *While making.* Read the stand-in's answers in the conversations of the first records, and check that each answer comes from the intent alone and invents nothing.
+6. *While making.* Where N14.1 found a message that the prompt has its AI write to a person, open the stand-in for the person, the AI that answers each such message in the person's place, among the test's parts in the folder of each case that the architecture's Test strategy names, or write it there where the case has none. Give it only the person's intent, which the test case gives and the prompt never gets, and the whole of each message it answers. Where N14.1 found none, the tests need no stand-in, since no message waits on a person.
+7. *While making.* Read the answers of each stand-in that N17.6 opened or wrote in the conversations of the first records, and check that each answer comes from the intent alone and invents nothing.
 8. *While making.* Between two runs, change one thing, the prompt or a part of the test, never both.
 9. *While making.* Where a test fails, open its record and look first at the test's own parts, and change the prompt only for a cause in the prompt.
