@@ -414,11 +414,11 @@
        },
        {
         "at": "make",
-        "text": "Read the cases against the architecture, and go back to the architecture where they show a gap: a case that no part can hold needs a part, or a decision given to one; a part that no case reaches serves no element, as N3 says; a part whose cases fall under more than one decision makes more than one, as N5 says; and a handoff that no interface carries needs an arrow and a kind of data. Change the architecture first, and then the cases."
+        "text": "Read the cases against the architecture, and go back to the architecture where they show a gap: a case that no part can hold needs a part, or a decision given to one; a part that no case reaches serves no element, as N3 says; a part whose cases change for more than one reason, such as a file's form and a remote's commands, holds more than one part, as Robert C. Martin's single responsibility principle has it; and a handoff that no interface carries needs an arrow and a kind of data. Change the architecture first, and then the cases."
        },
        {
         "at": "make",
-        "text": "Run the script that checks the trace, and mend each case or element it names until it names none."
+        "text": "Run the script that checks the trace, and mend each case or element it names until it names none. The script finds only a name that leads nowhere, so its 0 shows no more than that: whether the cases are enough, and whether the parts are cut right, the reading before it judges."
        },
        {
         "at": "make",
