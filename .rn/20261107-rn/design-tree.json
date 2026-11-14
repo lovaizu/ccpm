@@ -347,11 +347,16 @@
         },
         {
           "id": "N16",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "Where the list of Claude Code's states lies",
               "decided": "the states of Claude Code that the guard meets, each with the events it sends and the records that show it, lie in a file of their own that the architecture links, as they change with each Claude Code version while the architecture holds only what stays true",
+              "by": "reasoning"
+            },
+            {
+              "about": "What the guard adds to the run record, in the sequences",
+              "decided": "each sequence draws what the guard adds to the run record and reads from it as a message along the arrow to that store, as the run record is a store of the components figure and a message to it is an exchange between the parts that each sequence shows, not the guard's internals; the Data model's Run names no list of the record's lines",
               "by": "reasoning"
             }
           ]
