@@ -203,6 +203,19 @@ class ClaudeCodeDoubleTest(unittest.TestCase):
         )
         self.assertEqual(self.sent()[-1]["command_name"], "changelog:approve")
 
+    def test_a_hooks_file_written_in_the_conversation_holds_only_after_reload_plugins(self):
+        self.write("changelog/hooks/hooks.json", json.dumps({"hooks": {}}))
+        self.conversation.type("before the reload")
+        self.assert_sent_as_recorded(["session started", "a person types /lane:up changelog"])
+        _, agent = self.conversation.start("changelog:writer", "/changelog:write", "Write")
+        assert agent is not None  # No hook of the test's plugin stops the start.
+        agent.bash("true")
+        self.assertIn(agent.id, {p.get("agent_id") for p in self.sent()}, "the old hooks hold")
+        before = len(self.sent())
+        self.conversation.type("/reload-plugins")
+        self.conversation.type("after the reload")
+        self.assertEqual(len(self.sent()), before, "no hook runs on or after /reload-plugins")
+
     def test_compact_sends_the_events_recorded_in_the_same_conversation(self):
         self.conversation.compact()
         self.assert_sent_as_recorded(

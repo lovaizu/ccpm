@@ -19,7 +19,10 @@ shows, a command that a skill's SKILL.md runs as the skill loads runs as
 recorded/claude-code-2.1.323-skill-command.jsonl shows, and fails on a typed command as
 recorded/claude-code-2.1.323-skill-command-fails.jsonl shows, and EnterWorktree and ExitWorktree
 move the conversation's folder as recorded/claude-code-2.1.323-worktree.jsonl shows, each a record
-of Claude Code 2.1.323, as the comment on those records below says. A test plays the person, the
+of Claude Code 2.1.323, as the comment on those records below says. Each plugin's hooks/hooks.json
+holds as it read when the conversation started, a subagent's calls among them, until the person
+types /reload-plugins, as recorded/claude-code-2.1.323-hooks-reload.jsonl and
+recorded/claude-code-2.1.325-hooks-self-reload.jsonl show. A test plays the person, the
 main conversation, and each subagent by the calls it makes on the double. Lane's tests and rn's
 tests share it. It takes each result from one line of a record, by `line` or `lines`, as the plugin
 guide's Test says of a double's results."""
@@ -58,6 +61,9 @@ ENVIRONMENT = "claude-code-2.1.322-bash-environment.jsonl"
 SKILL_COMMAND = "claude-code-2.1.323-skill-command.jsonl"
 TASK_STOP = "claude-code-2.1.323-task-stop.jsonl"
 WORKTREE = "claude-code-2.1.323-worktree.jsonl"
+# The record of a plugin's hooks.json written during a session, which holds only from the prompt
+# after the person types /reload-plugins.
+HOOKS_RELOAD = "claude-code-2.1.323-hooks-reload.jsonl"
 # What the hooks reference shows of a call that no record of a run holds.
 REFERENCE = "claude-code-hooks-reference.jsonl"
 
@@ -465,7 +471,10 @@ class Conversation:
         is the skill's text as the main conversation reads it. Where such a command fails, the skill
         doesn't load: no model is called, so no Stop comes, the answer's output is empty, and it
         shows what Claude Code shows the person in place of a reply, as
-        recorded/claude-code-2.1.323-skill-command-fails.jsonl shows."""
+        recorded/claude-code-2.1.323-skill-command-fails.jsonl shows. /reload-plugins sends no
+        event, as `reload_plugins` says."""
+        if prompt == "/reload-plugins":
+            return self.reload_plugins()
         self.prompt_id = str(uuid.uuid4())
         answer = self.send(
             "UserPromptSubmit", line(RUN, "a person types /lane:up changelog"), {"prompt": prompt}
@@ -491,6 +500,18 @@ class Conversation:
         except SkillCommandFailed as e:
             return Answer(False, said, ran=ran, shown=str(e))
         return Answer(False, said, output=text, ran=ran)
+
+    def reload_plugins(self) -> Answer:
+        """The person types /reload-plugins. No hook runs on it, and from the next prompt on each
+        plugin's hooks/hooks.json holds as it then reads, as the record shows. Before it, a
+        hooks.json written in the conversation holds in no turn, as the record shows too, nor for a
+        subagent started after the write, as recorded/claude-code-2.1.325-hooks-self-reload.jsonl
+        shows. No record shows a subagent's calls after /reload-plugins, and the double holds them
+        to the hooks reloaded as it holds the main conversation's."""
+        typed = line(HOOKS_RELOAD, "the person types /reload-plugins after hooks.json changed")
+        assert not typed["fired"], "the record shows no hook run on /reload-plugins"
+        self.plugins = [Plugin.load(p.root) for p in self.plugins]
+        return Answer()
 
     def compact(self) -> Answer:
         """The person types /compact. The double sends each event of the compaction as the record
