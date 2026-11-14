@@ -15,6 +15,8 @@ from typing import Any
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "domain"))
 
+from fault import end
+
 
 @dataclass(frozen=True)
 class StartText:
@@ -43,7 +45,4 @@ def main(argv: list[str], stdin: str, cwd: str) -> tuple[int, str, str]:
 
 
 if __name__ == "__main__":
-    exit_code, printed, said = main(sys.argv[1:], sys.stdin.read(), os.getcwd())
-    sys.stdout.write(printed)
-    sys.stderr.write(said)
-    raise SystemExit(exit_code)
+    end(main(sys.argv[1:], sys.stdin.read(), os.getcwd()))

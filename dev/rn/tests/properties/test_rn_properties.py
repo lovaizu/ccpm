@@ -183,7 +183,7 @@ def test_the_results_kept_are_each_records_result_in_the_order_of_the_starts(
 ):
     """Given any starts of the tree-keeper and of the hints' generator, in the order tree.py's cut
     saved them, each record keeping a result or none
-    When the adapter of the results kept runs in the run's worktree
+    When the adapter of the results kept runs in the run's worktree with no words after /rn:up
     Then it gives 0 and one JSON line of Lane's form, whose results are each role and result kept,
     in the order of the starts, and none of a record that keeps none"""
     with tempfile.TemporaryDirectory() as base:
@@ -194,8 +194,8 @@ def test_the_results_kept_are_each_records_result_in_the_order_of_the_starts(
             if result:
                 keep_result(saved.record, result)
         expected = [(role, result) for role, result in starts if result]
-        code, printed, _ = kept_main([], worktree)
-        assert kept(worktree) == expected and code == 0
+        code, printed, _ = kept_main([], '{"args": ""}', worktree)
+        assert kept("", worktree) == expected and code == 0
         assert json.loads(printed) == {
             "results": [{"role": role, "result": result} for role, result in expected]
         }
@@ -211,7 +211,7 @@ def test_the_results_kept_are_each_records_result_in_the_order_of_the_starts(
 )
 def test_any_json_in_a_record_reads_as_lanes_form_or_is_refused_naming_the_record(value: Any):
     """Given the tree-keeper's start saved, its record holding any JSON value
-    When the adapter of the results kept runs in the run's worktree
+    When the adapter of the results kept runs in the run's worktree with no words after /rn:up
     Then it gives 0 with one JSON line of Lane's form, or 1 naming the record, and raises
     nothing"""
     with tempfile.TemporaryDirectory() as base:
@@ -219,7 +219,24 @@ def test_any_json_in_a_record_reads_as_lanes_form_or_is_refused_naming_the_recor
         record = save(cut(folder, TREE_KEEPER)).record
         with open(record, "w", encoding="utf-8") as file:
             json.dump(value, file)
-        code, printed, said = kept_main([], worktree)
+        code, printed, said = kept_main([], '{"args": ""}', worktree)
         assert (code == 0 and set(json.loads(printed)) == {"results"}) or (
             code == 1 and os.path.basename(record) in said
         )
+
+
+@pytest.mark.supports("test_up_with_a_request_while_a_run_is_left_starts_a_new_run")
+@given(WORDS.filter(lambda words: words.strip() != ""))
+def test_any_request_after_the_command_gives_no_results_kept(args: str):
+    """Given the tree-keeper's record of the run keeping `done`
+    When the adapter of the results kept runs in the run's worktree with any request after /rn:up,
+    words that aren't all white space
+    Then it gives 0 with no results, as a request starts a new run whatever runs are left"""
+    with tempfile.TemporaryDirectory() as base:
+        worktree, folder = run_worktree(base)
+        saved = save(cut(folder, TREE_KEEPER))
+        add(saved.record, Entry(TREE_KEEPER, "1", "Read."))
+        keep_result(saved.record, "done")
+        code, printed, _ = kept_main([], json.dumps({"args": args}), worktree)
+        assert kept(args, worktree) == [] and code == 0
+        assert json.loads(printed) == {"results": []}

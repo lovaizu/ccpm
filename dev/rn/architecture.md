@@ -102,9 +102,12 @@ What each decides alone:
   a run picks up.
 - adapters\
   How the Cut of a role's start, and the result that each record kept, read in the form Lane reads;
-  which run's results a conversation picks up: the run of the worktree it works in, or, from
-  anywhere else in the repository, the one run left; and which work of each role waits for a start
-  beside the starts that run, as [Lane's adapter](../lane/architecture.md#data-model) decides it.
+  from the words typed after `/rn:up`, which Lane's guard gives them, whether the call starts a new
+  run, as a request does whatever runs are left, or picks one up, as `/rn:up` alone does; which
+  run's results `/rn:up` alone picks up: the run of the worktree the conversation works in, or,
+  from anywhere else in the repository, the one run left; and which work of each role waits for a
+  start beside the starts that run, as [Lane's adapter](../lane/architecture.md#components) decides
+  it.
 
 The choices made, and why:
 
@@ -136,8 +139,8 @@ The choices made, and why:
   KR1.1 comes before KR1.2, as the product vision orders them and the README's Non-goals promise.
   The cost: a deliverable whose conditions are hard to meet takes as many rounds as it needs, which
   adds to KR1.2.
-- The adapter of the results kept picking up the one run left from the root of the repository over
-  picking up only in a run's worktree\
+- The adapter of the results kept picking up, at `/rn:up` alone, the one run left from the root of
+  the repository over picking up only in a run's worktree\
   The user types `/rn:up` at the root, as the README's walkthrough shows, and Lane asks the adapter
   only as the skill is called, in the folder the conversation works in, as
   [Lane's S7](../lane/architecture.md#s7-a-run-picked-up) draws, so the guard picks the run up
@@ -290,9 +293,15 @@ sequenceDiagram
   participant R as record.py
   participant F as Run's folder
   U->>O: /rn:up with what they want
+  GD->>A: asks for the results kept, as /rn:up loads, with the words typed after it
+  A-->>GD: none, as words after /rn:up are a request, which starts a new run whatever runs are left
+  GD->>A: asks for the text of the tree-keeper's start, the run's first move
+  A-->>GD: fails, as the folder lies in no run's worktree yet
+  GD-->>O: the run started anew, with the tree-keeper's start due and why its text can't be given yet
+  Note over O,A: A run of /rn:up that the conversation held before ends, as Lane's guard ends it at a run started anew.
   O->>T: makes the run's worktree
   O->>O: enters it
-  O->>K: starts it (Cut)
+  O->>K: starts it, with the text that the adapters give in the run's worktree, as the loop below draws for the generator (Cut)
   K->>K: reads its part, the design tree best practice, and the design tree
   K-->>O: done
   O->>O: drafts the goal, and plans the deliverables
@@ -498,7 +507,8 @@ sequenceDiagram
   participant G as generator
   participant E as evaluator
   U->>O: /rn:up, alone, in a new conversation at the root of the repository
-  GD->>A: asks for the results kept, as /rn:up loads, in the folder the conversation works in
+  GD->>A: asks for the results kept, as /rn:up loads, with the words typed after it, none, in the folder the conversation works in
+  Note over GD,A: Where words follow /rn:up, they're a request, so the adapters give none, and a new run starts, as S1 draws.
   A->>T: gets the run of the worktree that holds the folder, or else the runs left, and each Record of the run in the order of its starts (Record)
   A->>R: gets the result kept in each of those records (Record)
   alt the folder lies in a run's worktree, or exactly one run is left
@@ -567,7 +577,7 @@ sequenceDiagram
       end
     end
   and
-    O->>O: reads the whole pull request at once against the goal, for deliverables that contradict one another, a part beyond what the goal needs, work that does nothing toward it, and a file resting on a changed best practice, rule, or name that still says the old thing
+    O->>O: reads the whole pull request at once against the goal, by its part
     opt it finds one
       O->>K: the decision it changes (Decision)
       Note over O,K: The rounds start again from the design, as S1 draws, and S6 starts again once they end.
@@ -651,7 +661,8 @@ plugins/rn/
 │   ├── repository/                the code of repository, a module for each tool it runs
 │   ├── record/                    the code of record.py, a module for each decision it makes
 │   ├── record.schema.json         the form of a Record, which record.py decides
-│   ├── fault.py                   how tree.py, record.py, and repository say why they stopped
+│   ├── fault.py                   how tree.py, record.py, throwaway.py, repository, and the
+│   │                              adapters say why they stopped, and how each command ends
 │   ├── throwaway.py               the code of throwaway.py
 │   └── best-practices/            rn's own best practice of each kind
 ├── scripts/

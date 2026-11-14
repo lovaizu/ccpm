@@ -189,8 +189,9 @@
   <text class="label small halo" x="1272" y="440" text-anchor="end">start due and where a</text>
   <text class="label small halo" x="1272" y="454" text-anchor="end">run picks up [hooks]</text>
   <path class="line" d="M1380,510 L1420,510 L1420,112 L1380,112" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="1412" y="340" text-anchor="end">runs</text>
-  <text class="label small halo" x="1412" y="354" text-anchor="end">[stdio]</text>
+  <text class="label small halo" x="1412" y="336" text-anchor="end">runs, with the</text>
+  <text class="label small halo" x="1412" y="350" text-anchor="end">words after</text>
+  <text class="label small halo" x="1412" y="364" text-anchor="end">/rn:up [stdio]</text>
   <path class="line" d="M1280,544 L1280,720" marker-end="url(#arrow)"/>
   <text class="label small halo" x="1288" y="636" text-anchor="start">reads</text>
   <path class="line" d="M1280,144 L1280,260" marker-end="url(#arrow)"/>

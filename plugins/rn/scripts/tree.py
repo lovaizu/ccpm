@@ -10,10 +10,8 @@ import sys
 # The code lies in domain/, which comes on the import path before it's imported.
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "domain"))
 
+from fault import end
 from tree.command import main
 
 if __name__ == "__main__":
-    exit_code, printed, said = main(sys.argv[1:], os.environ, os.getcwd())
-    print(printed, end="")
-    print(said, end="", file=sys.stderr)
-    sys.exit(exit_code)
+    end(main(sys.argv[1:], os.environ, os.getcwd()))

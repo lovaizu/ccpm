@@ -25,9 +25,11 @@ from rn_example import (
     Repo,
     Run,
     condition,
+    conversation,
     decided,
     git,
     gives,
+    keeper_done_and_paused,
     keeper_writes,
     plan,
     records_all,
@@ -79,6 +81,21 @@ def test_up_with_a_request_makes_the_runs_worktree_on_its_branch_with_its_folder
     assert git(worktree, "status", "--porcelain") == ""
     assert os.path.isdir(os.path.join(worktree, ".rn", name, "records"))
     assert git(repo.root, "status", "--porcelain") == ""
+
+
+@pytest.mark.supports("S1", "adapters", "guard", "tree-keeper")
+def test_up_with_a_request_while_a_run_is_left_starts_a_new_run(
+    conv: Conversation, repo: Repo, run: Run
+):
+    """Given the walkthrough's run paused with the tree-keeper's `done` kept in its record, the one
+    run left
+    When the user types `/rn:up README for invoicer` in a new conversation at the root of the
+    repository
+    Then the guard gives the tree-keeper's start, the first move of a new run, and not the
+    walkthrough's run picked up, as a request starts a new run whatever runs are left"""
+    keeper_done_and_paused(conv, repo, run)
+    typed = conversation(repo).type("/rn:up README for invoicer")
+    assert "rn:tree-keeper" in typed.said
 
 
 @pytest.mark.supports("S1", "tree.py")

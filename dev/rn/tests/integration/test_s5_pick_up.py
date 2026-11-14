@@ -20,6 +20,7 @@ from rn_example import (
     Run,
     conversation,
     gives,
+    keeper_done_and_paused,
     keeper_writes,
     records_all,
     result,
@@ -114,17 +115,6 @@ def test_the_picked_up_generator_starts_at_the_step_it_stood_at(
     given, _ = started(fresh, repo, run, "generator", HINTS)
     held = json.loads(text_of(os.path.join(run.worktree, given["cut"])))
     assert given["round"] == "1" and held["place"]["step"] == 4
-
-
-def keeper_done_and_paused(conv: Conversation, repo: Repo, run: Run) -> dict[str, str]:
-    """The tree-keeper's `done` accepted by rn's check and kept in its record, and the run paused;
-    gives the tree-keeper's run values."""
-    given, keeper = started(conv, repo, run, "tree-keeper")
-    keeper_writes(keeper, repo, run, ANSWERED, "The user answered each file.")
-    records_all(keeper, repo, given, "tree-keeper", "design-tree")
-    gives(keeper, repo, "tree-keeper", "done")
-    conv.bash(tree(repo, "pause", run.folder))
-    return given
 
 
 @pytest.mark.supports("S5", "adapters", "guard", "tree-keeper", "Record")

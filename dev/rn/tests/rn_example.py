@@ -361,3 +361,14 @@ def gives(
     stopped its end, or what the main conversation reads beside it."""
     agent.bash(result(repo, role, given))
     return agent.end(reply or f"Gave {given}.")
+
+
+def keeper_done_and_paused(conv: Conversation, repo: Repo, run: Run) -> dict[str, str]:
+    """The tree-keeper's `done` accepted by rn's check and kept in its record, and the run paused;
+    gives the tree-keeper's run values."""
+    given, keeper = started(conv, repo, run, "tree-keeper")
+    keeper_writes(keeper, repo, run, ANSWERED, "The user answered each file.")
+    records_all(keeper, repo, given, "tree-keeper", "design-tree")
+    gives(keeper, repo, "tree-keeper", "done")
+    conv.bash(tree(repo, "pause", run.folder))
+    return given

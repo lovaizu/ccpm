@@ -12,10 +12,8 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "domain"))
 
+from fault import end
 from record.command import main
 
 if __name__ == "__main__":
-    exit_code, printed, said = main(sys.argv[1:], os.getcwd(), os.path.dirname(HERE))
-    print(printed, end="")
-    print(said, end="", file=sys.stderr)
-    sys.exit(exit_code)
+    end(main(sys.argv[1:], os.getcwd(), os.path.dirname(HERE)))

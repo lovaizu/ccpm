@@ -1,6 +1,6 @@
 ---
 name: tree-keeper
-description: rn's role that writes each decision of rn's orchestrator into the run's design tree, checks each node the change touches, and drafts the plan again. Started by rn's orchestrator alone.
+description: rn's role that writes each decision of rn's orchestrator, the plan it gives among them, into the run's design tree, and checks each node the change touches. Started by rn's orchestrator alone.
 tools: Read, Write, Bash
 background: true
 ---

@@ -1,8 +1,12 @@
-"""Decides how each of rn's commands, tree.py and record.py, says what stopped it, as repository
-raises it to tree.py too: a fault of the input that whoever ran it can mend, a thing outside the
-work that's missing, or a check that couldn't run."""
+"""Decides how each of rn's commands, tree.py, record.py, throwaway.py, and the adapters, says what
+stopped it, as repository raises it to tree.py too: a fault of the input that whoever ran it can
+mend, a thing outside the work that's missing, or a check that couldn't run; and how each ends,
+with what it prints and the exit code it gives."""
 
 from __future__ import annotations
+
+import sys
+from typing import NoReturn
 
 
 class Wrong(Exception):
@@ -19,3 +23,12 @@ class Missing(Exception):
 class CantRun(Exception):
     """What kept a command from doing what it names, such as a file it couldn't read, so that it
     passes nothing it didn't check. The command gives 2."""
+
+
+def end(result: tuple[int, str, str]) -> NoReturn:
+    """Ends the command with what its `main` gave: the exit code, what goes to stdout, and what
+    goes to stderr."""
+    code, printed, said = result
+    sys.stdout.write(printed)
+    sys.stderr.write(said)
+    raise SystemExit(code)

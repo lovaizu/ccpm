@@ -138,7 +138,7 @@ def test_main_refuses_arguments_or_stdin_out_of_lanes_form(
 def test_kept_gives_each_result_in_the_order_of_the_starts(worktree: str):
     """Given the tree-keeper's record keeping `done`, and then a generator's keeping `asks`, and a
     second generator's keeping nothing
-    When the results kept are asked for
+    When the results kept are asked for with no words after /rn:up
     Then they're the tree-keeper's `done` and then the generator's `asks`"""
     records = os.path.join(worktree, ".rn", NAME, "records")
     add(os.path.join(records, "tree-keeper-1.json"), Entry("tree-keeper", "1", "Read."))
@@ -146,7 +146,36 @@ def test_kept_gives_each_result_in_the_order_of_the_starts(worktree: str):
     add(os.path.join(records, "generator-2.json"), Entry("generator", "1", "Read."))
     keep_result(os.path.join(records, "generator-2.json"), "asks")
     add(os.path.join(records, "generator-3.json"), Entry("generator", "1", "Read."))
-    assert kept(worktree) == [("tree-keeper", "done"), ("generator", "asks")]
+    assert kept("", worktree) == [("tree-keeper", "done"), ("generator", "asks")]
+
+
+def kept_done(worktree: str) -> None:
+    """The tree-keeper's record of the run keeping `done`."""
+    record = os.path.join(worktree, ".rn", NAME, "records", "tree-keeper-1.json")
+    add(record, Entry("tree-keeper", "1", "Read."))
+    keep_result(record, "done")
+
+
+@pytest.mark.parametrize("args", [" ", "\n\t"])
+@pytest.mark.supports("test_the_guard_of_a_new_conversation_picks_the_run_up_from_the_results_kept")
+def test_kept_with_only_white_space_after_the_command_picks_the_run_up(worktree: str, args: str):
+    """Given the tree-keeper's record keeping `done`
+    When the results kept are asked for with only white space after /rn:up, the nearest words to
+    a request
+    Then they're the tree-keeper's `done`, as /rn:up alone picks the run up"""
+    kept_done(worktree)
+    assert kept(args, worktree) == [("tree-keeper", "done")]
+
+
+@pytest.mark.parametrize("args", ["x", WORDS])
+@pytest.mark.supports("test_up_with_a_request_while_a_run_is_left_starts_a_new_run")
+def test_kept_with_a_request_in_the_runs_worktree_is_none(worktree: str, args: str):
+    """Given the tree-keeper's record keeping `done`
+    When the results kept are asked for in the run's worktree with a request of one letter, or
+    with the walkthrough's request
+    Then there are none, as a request starts a new run whatever runs are left"""
+    kept_done(worktree)
+    assert kept(args, worktree) == []
 
 
 def begun(base: str, root: str, words: str) -> str:
@@ -160,14 +189,32 @@ def begun(base: str, root: str, words: str) -> str:
 def test_kept_at_the_root_with_one_run_left_gives_that_runs_results(tmp_path: Any):
     """Given the repository with the walkthrough's run left, its tree-keeper's record keeping
     `done`
-    When the results kept are asked for at the root of the repository
+    When the results kept are asked for at the root of the repository with no words after /rn:up
     Then they're the tree-keeper's `done`"""
-    root, _ = repository(str(tmp_path))
-    worktree = begun(str(tmp_path), root, WORDS)
+    root = one_run_left(str(tmp_path))
+    assert kept("", root) == [("tree-keeper", "done")]
+
+
+@pytest.mark.supports("test_up_with_a_request_while_a_run_is_left_starts_a_new_run")
+def test_kept_with_a_request_at_the_root_with_one_run_left_is_none(tmp_path: Any):
+    """Given the repository with the walkthrough's run left, its tree-keeper's record keeping
+    `done`
+    When the results kept are asked for at the root of the repository with the request README for
+    invoicer
+    Then there are none, as a request starts a new run whatever runs are left"""
+    root = one_run_left(str(tmp_path))
+    assert kept("README for invoicer", root) == []
+
+
+def one_run_left(base: str) -> str:
+    """The repository under the folder with the walkthrough's run left, its tree-keeper's record
+    keeping `done`; gives the repository's root."""
+    root, _ = repository(base)
+    worktree = begun(base, root, WORDS)
     record = os.path.join(worktree, ".rn", os.path.basename(worktree)[3:], "records", "k-1.json")
     add(record, Entry("tree-keeper", "1", "Read."))
     keep_result(record, "done")
-    assert kept(root) == [("tree-keeper", "done")]
+    return root
 
 
 @pytest.mark.supports("test_the_guard_of_a_new_conversation_with_two_runs_left_starts_the_run_anew")
@@ -178,28 +225,34 @@ def test_kept_at_the_root_with_two_runs_left_is_none(tmp_path: Any):
     root, _ = repository(str(tmp_path))
     begun(str(tmp_path), root, WORDS)
     begun(str(tmp_path), root, "README for invoicer")
-    assert kept(root) == []
+    assert kept("", root) == []
 
 
 @pytest.mark.supports("test_the_guard_of_a_new_conversation_picks_the_run_up_from_the_results_kept")
 def test_kept_outside_a_runs_worktree_is_none(tmp_path: Any):
     """Given a folder that no run's worktree and no repository holds
-    When the results kept are asked for
+    When the results kept are asked for with no words after /rn:up
     Then there are none"""
-    assert kept(str(tmp_path)) == []
+    assert kept("", str(tmp_path)) == []
 
 
 @pytest.mark.supports("test_the_guard_of_a_new_conversation_picks_the_run_up_from_the_results_kept")
 def test_kept_main_prints_the_results_as_lanes_form(worktree: str):
     """Given the run with no result kept
-    When kept_results.py runs
+    When kept_results.py runs with `{"args": ""}` on stdin
     Then it gives 0 and prints `{"results": []}`"""
-    assert kept_main([], worktree) == (0, '{"results": []}\n', "")
+    assert kept_main([], '{"args": ""}', worktree) == (0, '{"results": []}\n', "")
 
 
+@pytest.mark.parametrize(
+    ("argv", "stdin", "expected"),
+    [(["generator"], '{"args": ""}', 2), ([], '""', 1), ([], '{"args": 3}', 1), ([], "", 1)],
+)
 @pytest.mark.supports("test_the_guard_of_a_new_conversation_picks_the_run_up_from_the_results_kept")
-def test_kept_main_given_an_argument_gives_2(worktree: str):
+def test_kept_main_refuses_an_argument_or_stdin_out_of_lanes_form(
+    worktree: str, argv: list[str], stdin: str, expected: int
+):
     """Given the run
-    When kept_results.py runs with an argument
-    Then it gives 2"""
-    assert kept_main(["generator"], worktree)[0] == 2
+    When kept_results.py runs with an argument, or with stdin that's no `{"args": <words>}`
+    Then it gives 2 with the usage, or 1 with why"""
+    assert kept_main(argv, stdin, worktree)[0] == expected
