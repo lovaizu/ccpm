@@ -54,7 +54,7 @@ import uuid
 from dataclasses import dataclass
 from typing import Any, Union
 
-# The model the plugins' users run, as .claude/rules/dev.md says of every test on the model.
+# The model the plugins' users run, as the plugin guide says of every test on the model.
 MODEL = "opus"
 # What .claude/rules/dev.md says each `claude -p` started is told.
 RULE = (

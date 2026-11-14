@@ -27,7 +27,7 @@ every result before it takes it, and a lack changes the decision it comes from, 
 - S6: the user wants one pull request, the decisions rn took without asking, and the lessons of the
   run, so that they check the work and merge it themselves. It carries the walkthrough's `Done`,
   each change to a best practice that rn proposes there, each lesson that it puts up for their
-  sign-off, and the merge.
+  sign-off, the whole pull request read before it's ready, and the merge.
 
 ## Components
 
@@ -41,7 +41,7 @@ What each decides alone:
 - orchestrator\
   Whether a point is the user's, and each other point from the purpose and the best practices: the
   deliverables and their plan, whether to take each role's result or send it back, which lacks the
-  people fall short by, and what to propose at Done.
+  people fall short by, whether the whole pull request holds together, and what to propose at Done.
 - tree-keeper\
   How each decision of the orchestrator's goes into the design tree, which nodes a change touches,
   and the plan drafted again at each turn's end.
@@ -106,7 +106,8 @@ the cut that `tree.py` gave for that role.
 
 ### Every step by best practice
 
-Each role works by the best practice of its kind of work, and Lane holds it to the steps.
+Each role works by the best practice of its kind of work, a generator finishes a document by the
+refactor-doc best practice and code by the refactor-code one, and Lane holds it to the steps.
 
 *Why*: an AI that skipped a step once skips it again, and the deliverable misses what the step makes
 sound, which raises KR1.1.
@@ -373,6 +374,11 @@ sequenceDiagram
         Note over U,T: The user's /rn:gm has tree.py drop it, and the orchestrator puts up again a lesson changed.
       end
     end
+  end
+  O->>O: reads the whole pull request against the goal at once: deliverables that contradict one another, a part beyond what the goal needs, work that does nothing toward it, and a file that rests on a changed best practice, rule, or name and still says the old thing
+  opt it finds one
+    O->>K: the decision it changes (Decision)
+    Note over O,K: The rounds start again from the design, as S1 draws, and S6 starts again once they end.
   end
   O->>T: marks the pull request ready
   T->>GH: marks it ready

@@ -188,12 +188,24 @@
         {
           "id": "N4",
           "good": true,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "Deliverables finished by the refactor best practices",
+              "decided": "a generator finishes a document by the refactor-doc best practice and code by the refactor-code one, as ccpm's own work did",
+              "by": "user"
+            }
+          ]
         },
         {
           "id": "N5",
           "good": true,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The whole pull request read before Done",
+              "decided": "before it marks the pull request ready, the orchestrator reads the whole change against the goal at once, for deliverables that contradict one another, a part beyond what the goal needs, work that does nothing toward it, and a file resting on a changed best practice, rule, or name that still says the old thing, and takes each back to the decision it changes",
+              "by": "user"
+            }
+          ]
         },
         {
           "id": "N6",

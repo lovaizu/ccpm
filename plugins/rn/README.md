@@ -214,7 +214,9 @@ people need, and you get a deliverable they can use.
 rn takes each shortfall back to the decision it comes from, changes that decision, and makes the
 deliverable again from the design tree. It doesn't patch the deliverable. A shortfall that the
 people would never meet changes nothing. So a fix holds, and the deliverable doesn't grow with each
-round.
+round. Before it marks the pull request ready, rn reads the whole of it at once, and takes each
+clash between deliverables, and each part your goal doesn't need, back to its decision in the same
+way.
 
 ### "Does it skip a step when no one watches?"
 

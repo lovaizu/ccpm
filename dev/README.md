@@ -5,7 +5,8 @@ copies only its own folder, so nothing here reaches its users' machines.
 
 Every plugin takes from [the plugin guide](plugin-development-guide.md) what its requirements call
 for, and starts from [the plugin template](plugin-template/).
-[.claude/rules/dev.md](../.claude/rules/dev.md) gives the order the work on a plugin goes in.
+[.claude/rules/dev.md](../.claude/rules/dev.md) says how the work on a plugin runs: by the plugin
+guide and rn's architecture.
 
 - [Rn](./rn/)
 - [Lane](./lane/)

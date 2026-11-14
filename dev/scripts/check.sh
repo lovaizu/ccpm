@@ -57,7 +57,7 @@ python3 dev/scripts/practices.py form plugins/rn/domain/best-practices/*/best-pr
 python3 dev/scripts/figures.py check
 
 # Claude Code installs only a plugin's folder, so each plugin works from its own, and uses another
-# plugin one way only, by its dependencies, as .claude/rules/dev.md says.
+# plugin one way only, by its dependencies, as the plugin guide says of a plugin's folder.
 python3 dev/scripts/standalone.py check
 
 # A Mermaid diagram GitHub can't parse shows as an error in its place, unseen until someone opens

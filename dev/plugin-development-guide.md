@@ -477,7 +477,7 @@ Each Claude Code that a prompt's unit test or an E2E test starts runs on a confi
 its own that holds only the plugins under test, with the developer's login as
 `CLAUDE_CODE_OAUTH_TOKEN`
 ([multiple accounts](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts)).
-It runs on Opus, as [the plugin development rules](../.claude/rules/dev.md) set. Where Claude Code
+It runs on Opus, the model the plugins' users run. Where Claude Code
 asks to allow a call, the stand-in answers from what the screen shows, as a person would.
 
 *Why*: the developer's own settings would change what the test tries. Another model makes other
