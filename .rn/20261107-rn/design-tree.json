@@ -478,8 +478,14 @@
         },
         {
           "id": "N5",
-          "good": true,
-          "decisions": []
+          "good": false,
+          "decisions": [
+            {
+              "about": "How the run record is kept",
+              "decided": "the run record keeps only the facts no payload gives again: each Start let through with the skill whose run started it, its tie to an agent_id, and each Result; each hook process adds them as lines and never rewrites one, and the guard works out where each run stands from those lines on each event; what a payload carries each time, such as session_id, agent_type, and the skill a result names, is read from the payload and never kept, as hooks of parallel subagents run at once and a rewritten or derived value kept goes stale or loses another's update, which raises KR1.1",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N6",
