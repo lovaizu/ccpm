@@ -14,8 +14,9 @@
       "name": "Each best practice holds the field's established way, named so its maker grasps the intent",
       "path": "plugins/rn/domain/best-practices/meta",
       "kind": "meta",
+      "inputs": [],
+      "preconditions": [],
       "status": "doing",
-      "good": false,
       "necessary_conditions": [
         {
           "id": "N5",
@@ -76,8 +77,9 @@
       "name": "Each part a developer builds by the design gives, with the others, what the README promises",
       "path": "plugins/rn/domain/best-practices/architecture",
       "kind": "meta",
+      "inputs": [],
+      "preconditions": [],
       "status": "doing",
-      "good": false,
       "necessary_conditions": [
         {
           "id": "N12",
@@ -149,281 +151,13 @@
       "name": "A developer sees, before building any part, each test case that names nothing one level up and each element of the architecture that no case tests, and check.sh runs every plugin's cases with that check",
       "path": "dev/scripts/trace.py",
       "kind": "code",
-      "inputs": [
-        "plugins/rn/domain/best-practices/architecture",
-        "dev/plugin-development-guide.md"
-      ],
-      "preconditions": [],
-      "status": "done",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": true,
-          "decisions": [
-            {
-              "about": "Where trace.py reads each element's name",
-              "decided": "each story by its `S<n>` in User stories, each principle by its heading under Principles, each role and component by its name in Components' list of what each decides alone, and each kind of data by each `<text class=\"name\">` of the architecture's images/data-model.svg, the one place that names every kind, as Data model's text names only the kinds a reader could confuse",
-              "by": "reasoning"
-            },
-            {
-              "about": "The forms the checks read",
-              "decided": "a principle's case takes the fixture `broken`, active where TRACE_BROKEN=1; a double takes each result by `line`/`lines` from a JSONL line in `recorded/`, a run named by its file and a documentation line by `source` and `shows`; each form written once in the plugin guide's Test, as one form lets one script check every plugin",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N3",
-          "good": true,
-          "decisions": [
-            {
-              "about": "What trace.py checks",
-              "decided": "all five checks of the trace that each Test strategy sets: `check <plugin>` the names one level up, an integration case for each element, and each principle's case failing with `broken`; `doubles` each double's result taken from a line of a record that names its source; `sources` each documentation page still showing its words, as the plugin guide's Test says trace.py gives 0 only where each check holds and the architecture best practice lists all five",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N4",
-          "good": true,
-          "decisions": [
-            {
-              "about": "What runs the cases",
-              "decided": "check.sh runs trace.py check on each plugin, each plugin's unit/ and integration/ cases, and pylint's cyclic-import check, as the plugin guide's Test and each architecture's Test strategy say, and pyproject.toml registers the supports marker",
-              "by": "reasoning"
-            },
-            {
-              "about": "When the page check runs",
-              "decided": "`trace.py sources` runs in quality.sh in CI, not in check.sh, as a page changes apart from any push and a check on each push must not fail for a change it didn't make",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N5",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": true,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "rn's developers build its parts so that together they give what its README promises",
       "path": "dev/rn/architecture.md",
       "kind": "architecture",
-      "inputs": [
-        "dev/rn/product-vision.md",
-        "plugins/rn/README.md"
-      ],
-      "preconditions": [
-        "plugins/rn/domain/best-practices/architecture",
-        "dev/scripts/trace.py"
-      ],
-      "status": "done",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": true,
-          "decisions": [
-            {
-              "about": "Lessons sent to rn's repository",
-              "decided": "each general lesson that a run's user signs off goes to rn's repository as an issue, traced to a need of rn's development: rn's developers improve rn's own best practices from what each run finds; the user story that carries it is rn's developers', apart from S6's user, who signs off what leaves their project",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N4",
-          "good": true,
-          "decisions": [
-            {
-              "about": "Deliverables finished by the refactor best practices",
-              "decided": "a generator finishes a document by the refactor-doc best practice and code by the refactor-code one, as ccpm's own work did",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N5",
-          "good": true,
-          "decisions": [
-            {
-              "about": "The whole pull request read before Done",
-              "decided": "before it marks the pull request ready, the orchestrator reads the whole change against the goal at once, for deliverables that contradict one another, a part beyond what the goal needs, work that does nothing toward it, and a file resting on a changed best practice, rule, or name that still says the old thing, and takes each back to the decision it changes",
-              "by": "user"
-            },
-            {
-              "about": "One owner for each decision",
-              "decided": "tree.py alone lists the nodes a change touches and decides each deliverable's turn, where each start's Record and each round's records lie; the orchestrator alone plans; the tree-keeper checks that each node touched agrees; the adapters decide which work of a role waits, as two parts holding one decision leave its builders to guess",
-              "by": "reasoning"
-            },
-            {
-              "about": "The generator's own points",
-              "decided": "a generator settles only a point that its cut, the goal, and its best practice settle one way and that changes no decision of its cut and nothing of another deliverable, hands each other back with asks, and its Made carries each point it settled to the sign-off, as the README promises each sign-off shows the decisions taken without asking",
-              "by": "reasoning"
-            },
-            {
-              "about": "tree.py's parts",
-              "decided": "tree.py keeps the run's files, repository runs git and gh, and record.py keeps each record's form and rn's check, as the architecture best practice cuts a part by its reasons to change",
-              "by": "reasoning"
-            },
-            {
-              "about": "A new run or one picked up",
-              "decided": "a /rn:up with a request starts a new run whatever runs are left, and /rn:up alone picks one up; rn's kept-results adapter alone decides which, from the words typed after the command that Lane's guard gives it, and S1 shows what the guard and the adapters give at the /rn:up with a request, as the user decided the commands and Lane's architecture gives that decision to the plugin's adapter; white space alone after the command counts as /rn:up alone, as it holds no request",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N6",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": true,
-          "decisions": [
-            {
-              "about": "Work while a point or a sign-off waits",
-              "decided": "rn puts each point to the user one at a time and goes on meanwhile with the work that rests on no open point and no unsigned plan or deliverable; only the work that rests on the answer or the sign-off waits",
-              "by": "user"
-            },
-            {
-              "about": "A point answered",
-              "decided": "the orchestrator resumes the role that asked, with the decision and the user's words word for word, as the plugin guide's Messages says and rn changes none of the guide's rules",
-              "by": "reasoning"
-            },
-            {
-              "about": "A run picked up",
-              "decided": "the adapter gives the results kept of the run whose worktree the conversation works in, or, at the repository's root, of the one run left, as the user types /rn:up at the root and Lane asks only as the skill is called",
-              "by": "reasoning"
-            },
-            {
-              "about": "After Done",
-              "decided": "/rn:ty signs off the pull request handed over and leaves the merge to the user, and /rn:gm sends it back to a draft and the work goes on, as the user decided the commands",
-              "by": "reasoning"
-            },
-            {
-              "about": "When rn's check runs",
-              "decided": "at each role's end and at the end of the orchestrator's turn that puts work up for the user, as the plugin guide says",
-              "by": "reasoning"
-            },
-            {
-              "about": "/rn:up alone with no run left",
-              "decided": "rn says that no run is left and starts no role, and S5 shows how that turn and the run Lane began for it end",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N9",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N10",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N11",
-          "good": true,
-          "decisions": [
-            {
-              "about": "Files of data forms and shared modules",
-              "decided": "Directory structure gives one place to each schema that holds a kind of data's form, beside the component that decides that form, and to fault.py, which tree.py, record.py, and repository share to say why they stopped and how each command ends, its output and exit code, which the adapters share too, as a developer changing a form or a stop reason otherwise can't tell which folder holds it",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N12",
-          "good": true,
-          "decisions": [
-            {
-              "about": "Test strategy and test cases",
-              "decided": "its Test strategy, by the architecture best practice, decides each level's tools and each quality check with its criterion, and every test case is written in test code before any implementation, as the architecture best practice's node decides",
-              "by": "user"
-            },
-            {
-              "about": "Compatibility with gh and Claude Code",
-              "decided": "Test strategy holds a compatibility test for gh: on each new gh version, the steps that made each recorded gh run run again, and what gh gives is compared with what rn's double gives; for Claude Code it points to Lane's compatibility test, as the architecture best practice's node decides",
-              "by": "user"
-            },
-            {
-              "about": "A prompt's evaluation",
-              "decided": "Test strategy takes every type of a prompt's evaluation that test-types.md lists for rn's prompts, each with its level and its criterion, as the architecture best practice's node decides that the parts take every type",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N13",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N14",
-          "good": true,
-          "decisions": [
-            {
-              "about": "The refactor best practices",
-              "decided": "the Cut carries the refactor best practice that finishes the deliverable, and rn's check checks the generator's record against each best practice of its cut, so the rule rests on a part",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N15",
-          "good": true,
-          "decisions": [
-            {
-              "about": "No limit on rounds",
-              "decided": "rounds go on until the evaluators find each necessary condition good, with no set limit, and the architecture says what a limit would lose: a deliverable handed over that its people can't use, raising KR1.1, which comes before KR1.2, as the README's Non-goals and the product vision's order of key results settle",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N16",
-          "good": true,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Lane's product vision says what Lane is for",
@@ -770,7 +504,76 @@
       "name": "A newcomer decides from Lane's README alone whether Lane fits their plugin, and starts using it",
       "path": "plugins/lane/README.md",
       "kind": "readme",
-      "status": "done"
+      "inputs": [
+        "dev/lane/product-vision.md"
+      ],
+      "preconditions": [
+        "plugins/rn/domain/best-practices/readme"
+      ],
+      "status": "doing",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The call of another plugin's skill",
+              "decided": "How it works names the call of another plugin's skill among the moves that Lane holds, and that Lane's guard stands aside while the other plugin's run lasts, as Lane's architecture decides it by the plugin guide's 'A plugin that uses another', so a newcomer whose plugin uses another sees whether Lane fits it",
+              "by": "reasoning"
+            },
+            {
+              "about": "What the run record keeps",
+              "decided": "How it works says Lane keeps each run's starts and results, not its calls, as Lane's architecture keeps no Call in the run record",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N9",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": true,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A person's /rn:up with a request gets one deliverable that a generator makes and an evaluator judges, in a pull request of its own",
