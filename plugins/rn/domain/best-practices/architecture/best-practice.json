@@ -52,7 +52,7 @@
        },
        {
         "at": "decide",
-        "text": "For each other objective of the product vision, lay as its backbone the steps its role takes from where they start to the result they keep, as a recorded run or the end-to-end test of that use shows them where the product has one. Where none does, ask the user `Which steps does <role> take toward <objective>, from <start> to <result>?`, with the steps you'd expect as your recommendation, since only whoever conceived the product knows a use that no run shows."
+        "text": "For each other objective of the product vision, lay as its backbone the steps its role takes from where they start to the result they keep, as a recorded run of that use shows them: a file that holds each step of one real run in order, what the role gave and what the product gave back, such as an end-to-end test's record or the files that a run of the product left in its folder. Search the repository's tests and each folder that the README says a run writes for one that ran that objective's use, and take none that ran another use. Where the search finds none, ask the user `Which steps does <role> take toward <objective>, from <start> to <result>?`, with the steps you'd expect as your recommendation, since only whoever conceived the product knows a use that no run shows."
        },
        {
         "at": "decide",
@@ -130,7 +130,7 @@
        },
        {
         "at": "make",
-        "text": "Take a case that no rule names, and decide it from each reason as two developers of different parts would. Where they differ, sharpen the reason."
+        "text": "Take a case that no rule names from a step of a story where two components meet, such as a hook that finds the file of the work's state missing, and decide it from each reason as two developers of those two components would. Where they differ, sharpen the reason. For example, a rule that the work's state lives in one file says nothing of a missing file, and its reason, that every role reads the same decisions, decides that the hook stops the step rather than make a new file."
        }
       ]
      },
@@ -500,7 +500,7 @@
        },
        {
         "at": "make",
-        "text": "For a prompt, write a case where its contract says it acts and one where it says it doesn't, for each kind of request it's for, and decide by code each point of the result that its record shows."
+        "text": "For a prompt, write a case where its contract says it acts and one where it says it doesn't, for each kind of request it's for, and decide by code each point of the result that the record of each of its runs on the model shows: each tool call the prompt's AI made, each message it gave, and each file at the run's end, such as the JSON it passed to a script, since an AI that judged them would vary from run to run."
        },
        {
         "at": "make",
@@ -540,7 +540,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "For each thing the document says the product does, name the part that holds it."
+        "text": "List each thing the product does, as the README's walkthrough and How it works say it and as your decisions so far give it: each step that a story carries, each principle, and each decision that a component alone makes. For each, name the part that holds it, such as the script that writes the file of the work's state for keeping every decision of a run in one file."
        },
        {
         "at": "decide",
@@ -560,11 +560,19 @@
        },
        {
         "at": "make",
-        "text": "Draw a double of something outside the product from its documentation or from a recorded run of the real thing, and name that source beside what the double gives, so that the script that N13.15 makes to check the trace can check it. A double that gives what the real thing never would passes a test that the real one fails."
+        "text": "For each result that a double of something outside the product gives, find what shows the real thing giving it: a page of its documentation that says so, or a recorded run, a file that holds each input the real thing got and each result it gave in one run, named by the thing and its version, such as `claude-code-2.1.322.jsonl` with each hook event that a run of Claude Code 2.1.322 sent. Look for recorded runs where the architecture the product builds on says it keeps them, and else among the test code. Where neither shows the result, run the real thing on the steps that give it and keep each input and result in such a file. Where you can't run it, such as a service you have no account for, ask the user `Can you record a run of <thing> that gives <result>?`."
        },
        {
         "at": "make",
-        "text": "Trust a check, such as a test, a hook, or the judge of an E2E test, only once you have seen it fail on a case that breaks what it checks, such as a test of a principle run with the part that holds the principle taken out, which the script that N13.15 makes to check the trace can run. Trust a judge once it's right on kept records whose answer you know."
+        "text": "Draw each double's results from that source alone, and name the source beside what the double gives, so that the script that N13.15 makes to check the trace can check it. A double that gives what the real thing never would passes a test that the real one fails."
+       },
+       {
+        "at": "make",
+        "text": "For each check, such as a test of a principle or a hook, write a case that breaks what it checks, such as the principle's test with the part that holds the principle taken out, and make the script that N13.15 makes to check the trace run the check on that case and fail where the check passes there, since a check never seen to fail may pass whatever it meets. Every case fails while the bodies are empty, so the run shows a check failing for the break alone only once a developer builds the part's body: write the case and the script now, and leave that run to the developer's push."
+       },
+       {
+        "at": "make",
+        "text": "Leave the trial of each E2E test's judge to the first E2E runs, since they keep the first records: the maintainer, when asked, gives the answer of each record they keep, and the developers trust the judge, as N12.16 sets, once it gives every such answer."
        }
       ]
      }
