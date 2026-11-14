@@ -60,6 +60,9 @@
   <rect class="ext" x="620" y="80" width="200" height="64" rx="22"/>
   <text class="name" x="720" y="112" text-anchor="middle">user</text>
   <text class="kind" x="720" y="129" text-anchor="middle">[a person]</text>
+  <rect class="ext" x="375" y="150" width="160" height="64" rx="22"/>
+  <text class="name" x="455" y="182" text-anchor="middle">rn&#x27;s developers</text>
+  <text class="kind" x="455" y="199" text-anchor="middle">[people]</text>
   <rect class="box" x="1180" y="80" width="200" height="64" rx="0"/>
   <text class="name" x="1280" y="112" text-anchor="middle">adapters</text>
   <text class="kind" x="1280" y="129" text-anchor="middle">[scripts · Python 3.9]</text>
@@ -104,6 +107,9 @@
   <text class="kind" x="1280" y="989" text-anchor="middle">[folders · JSON, Markdown]</text>
   <path class="line" d="M620,102 L260,102" marker-end="url(#arrow)"/>
   <text class="label small halo" x="440" y="94" text-anchor="middle">merges the pull request</text>
+  <path class="line" d="M455,150 L455,124 L260,124" marker-end="url(#arrow)"/>
+  <text class="label small halo" x="268" y="118" text-anchor="start">reads each lesson&#x27;s issue [web]</text>
+  <text class="data halo" x="268" y="140" text-anchor="start">Sign-off</text>
   <path class="line" d="M700,144 L700,260" marker-end="url(#arrow)"/>
   <text class="label small halo" x="692" y="188" text-anchor="end">types /rn:up, /rn:dn,</text>
   <text class="label small halo" x="692" y="202" text-anchor="end">/rn:ty, /rn:gm, answers</text>
@@ -120,7 +126,7 @@
   <text class="label small halo" x="168" y="380" text-anchor="start">runs each git</text>
   <text class="label small halo" x="168" y="394" text-anchor="start">and gh command</text>
   <text class="label small halo" x="168" y="408" text-anchor="start">by it [import]</text>
-  <text class="data halo" x="168" y="422" text-anchor="start">Comment</text>
+  <text class="data halo" x="168" y="422" text-anchor="start">Comment, Sign-off</text>
   <path class="line" d="M620,312 L290,312 L290,496 L260,496" marker-end="url(#arrow)"/>
   <text class="data halo" x="465" y="304" text-anchor="middle">Cut, Answers, Made, Sign-off, Place, Comment</text>
   <text class="label small halo" x="465" y="332" text-anchor="middle">makes the run&#x27;s worktree, gets each cut and</text>

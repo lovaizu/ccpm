@@ -31,6 +31,10 @@ before it takes it, and a lack changes the decision it comes from, not the deliv
   run, so that they check the work and merge it themselves. It carries the walkthrough's `Done`,
   each change to a best practice that rn proposes there, each lesson that it puts up for their
   sign-off, the whole pull request read before it's ready, and the merge.
+- S7: rn's developers want each general lesson that a run's user signs off to reach rn's
+  repository as an issue, so that they improve rn's own best practices from what each run finds.
+  It carries a need of rn's development: the issue that the user's `/rn:ty` of a lesson opens in
+  S6.
 
 ## Components
 
@@ -41,6 +45,8 @@ What each decides alone:
 - user\
   The goal, each point the purpose and the best practices leave open, each sign-off, each change to
   a best practice, each lesson sent to rn's repository, when to pause, and whether to merge.
+- rn's developers\
+  Whether and how each lesson that reaches rn's repository changes rn's own best practices.
 - orchestrator\
   Whether a point is the user's, and each other point that the design tree holds, from the purpose
   and the best practices: the deliverables and their plan, each decision of a necessary condition,
@@ -502,7 +508,7 @@ sequenceDiagram
   Note over O,E: Each start goes through the guard and the adapters in the run's worktree, the tree-keeper's first where the guard started the run anew, and the work goes on, as S1, S2, or S3 draws.
 ```
 
-### S6: the work handed over
+### S6, S7: the work handed over, and each lesson sent to rn's repository
 
 ```mermaid
 sequenceDiagram
@@ -512,6 +518,7 @@ sequenceDiagram
   participant T as tree.py
   participant RP as repository
   participant GH as GitHub
+  actor D as rn's developers
   O->>O: finds each change to a best practice and each general lesson in the run's lacks
   loop each change to a best practice found
     O->>U: the change, with a recommendation (Point)
@@ -528,7 +535,10 @@ sequenceDiagram
       alt the user approves
         U->>O: /rn:ty
         Note over U,T: The user's /rn:ty has tree.py open it, as no AI may send what leaves their project.
-        T->>GH: opens the issue on rn's repository
+        T->>RP: opens the issue on rn's repository (Sign-off)
+        RP->>GH: opens the issue, with the lesson's words
+        D->>GH: reads the issue (Sign-off)
+        Note over GH,D: Apart from the run, rn's developers change rn's own best practices from it.
       else the user sends it back
         U->>O: /rn:gm, to turn it down or with what to change
         Note over U,T: The user's /rn:gm has tree.py drop it, and the orchestrator puts up again a lesson changed.
@@ -671,7 +681,7 @@ checks that each names an element or a case one level up.
 
 ### Integration tests
 
-- Tries: each path through the sequences of S1 to S6, each principle, where the parts keep it and
+- Tries: each path through the sequences of S1 to S7, each principle, where the parts keep it and
   where one breaks it, each decision of each component in Components, each handoff between parts
   with the data it passes, and each kind of data in the data model.
 - Runs real: `tree.py`, repository, `record.py`, `throwaway.py`, the adapters, the guard as Lane

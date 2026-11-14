@@ -1,6 +1,7 @@
-"""The integration cases of S6, the work handed over: each change to a best practice that the
-user takes becomes a deliverable, each general lesson goes to rn's repository as an issue only on
-the user's /rn:ty, the whole pull request is read against the goal before it's ready, tree.py
+"""The integration cases of S6, the work handed over, and of S7, each lesson sent to rn's
+repository: each change to a best practice that the user takes becomes a deliverable, each general
+lesson goes to rn's repository as an issue only on the user's /rn:ty, where rn's developers read it,
+the whole pull request is read against the goal before it's ready, tree.py
 marks it ready only once every deliverable is done and signed off, the user's /rn:ty after Done
 signs off the pull request handed over and leaves it ready for their merge, and their /rn:gm after
 Done sends it back to a draft. The test plays the user, the
@@ -51,14 +52,14 @@ def handed_over(conv: Conversation, repo: Repo, run: Run) -> None:
     conv.bash(tree(repo, "push", run.folder))
 
 
-@pytest.mark.supports("S6", "Sign-off", "tree.py", "user")
+@pytest.mark.supports("S6", "S7", "Sign-off", "tree.py", "repository", "user", "rn's developers")
 def test_a_lesson_signed_off_by_the_users_ty_opens_its_issue_on_rns_repository(
     conv: Conversation, repo: Repo, run: Run
 ):
     """Given the work handed over, and a lesson put up word for word
     When the user types /rn:ty
-    Then GitHub holds one issue on lovaizu/ccpm whose title and body are the lesson's words, and
-    the command loads with its URL"""
+    Then GitHub holds one issue on lovaizu/ccpm whose title and body are the lesson's words, for
+    rn's developers to read, and the command loads with its URL"""
     handed_over(conv, repo, run)
     put_up(conv, repo, run, "lesson", LESSON)
     typed = conv.type("/rn:ty")
