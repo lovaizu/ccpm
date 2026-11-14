@@ -32,7 +32,17 @@
        },
        {
         "at": "decide",
-        "text": "Open the product's manifest, such as plugin.json or pyproject.toml, and name the kind of thing the reader installs by the word they already use for things of that kind, such as a command-line tool or a Claude Code plugin, so that they have something to compare it with."
+        "text": "Open the product's manifest, such as plugin.json or pyproject.toml, which N3 and N9 take from too.",
+        "trace": {
+         "action": "read",
+         "takes": [
+          "{manifest}"
+         ]
+        }
+       },
+       {
+        "at": "decide",
+        "text": "Name the kind of thing the reader installs, as the manifest shows it, by the word they already use for things of that kind, such as a command-line tool or a Claude Code plugin, so that they have something to compare it with."
        },
        {
         "at": "make",
@@ -40,7 +50,7 @@
        },
        {
         "at": "make",
-        "text": "Read only the opening, then put it away and explain the product as you would to a colleague. Shorten any part you forgot or got wrong."
+        "text": "Take out each sentence of the opening in turn, and ask whether the rest still says what the product is, who it's for, what they achieve with it, and, where the product isn't ready, what works now. Where it does, delete that sentence."
        },
        {
         "at": "make",
@@ -80,7 +90,11 @@
        },
        {
         "at": "decide",
-        "text": "Ask the user about each expectation that the product vision doesn't settle, as it neither has the users do or get it nor rules it out."
+        "text": "For each expectation kept that the product vision neither has the users do or get nor rules out, ask the user `Should <Product> <expectation>?`, and name what each answer does, such as `Should it undo its changes? No lists it in Non-goals; yes adds it to the product vision, and the README says at the top that it doesn't undo them yet.`"
+       },
+       {
+        "at": "decide",
+        "text": "Keep each expectation that the product vision rules out or the user answers no to for Non-goals. Take each that the user answers yes to out of Non-goals, as what doesn't work yet for the opening's status."
        },
        {
         "at": "make",
@@ -100,7 +114,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open the product's manifest and its releases, such as the tags of its repository, and take its version: a version below 1.0, or no release, means what it does may still change."
+        "text": "Take the product's version from the manifest and from its releases, such as the tags of its repository: a version below 1.0, or no release, means what it does may still change."
        },
        {
         "at": "decide",
@@ -112,7 +126,7 @@
        },
        {
         "at": "decide",
-        "text": "Decide that the product is ready where it has a release of 1.0 or later, the use toward each objective works, and someone keeps it up. Otherwise, take what works now and what doesn't."
+        "text": "Decide that the product is ready where it has a release of 1.0 or later, the use toward each objective works, it meets each expectation that the user said it should, and someone keeps it up. Otherwise, take what works now and what doesn't."
        },
        {
         "at": "make",
@@ -127,7 +141,7 @@
       "why": "Some readers rule a product in or out by its license alone, so they find it at once and recognize it.",
       "items": [
        {
-        "at": "make",
+        "at": "decide",
         "text": "Open the product's license file, such as LICENSE in the product's folder, and read which license it holds.",
         "trace": {
          "action": "read",
@@ -137,20 +151,20 @@
         }
        },
        {
-        "at": "make",
+        "at": "decide",
         "text": "Name the license by its identifier in the [Software Package Data Exchange (SPDX) License List](https://spdx.org/licenses/), which readers and their tools recognize, such as MIT or Apache-2.0. Where the text matches no license on the list, ask the user."
        },
        {
-        "at": "make",
-        "text": "Link the license file by its path from the README's folder."
+        "at": "decide",
+        "text": "Search the product's folder for the license files and notices of others' work, such as a copied library's own LICENSE, and list each work with its license's identifier and the path of its file."
        },
        {
         "at": "make",
-        "text": "Search the product's folder for the license files and notices of others' work, such as a copied library's own LICENSE, and name each license with the work it covers."
+        "text": "Write the License section by the template: the product's license, linked by its file's path from the README's folder, and below it each work of others with its license."
        },
        {
         "at": "make",
-        "text": "Follow the link from the README's folder, and check that it opens the license file that the README names.",
+        "text": "Follow each link from the README's folder, and check that it opens the license file that the README names beside it.",
         "trace": {
          "action": "read",
          "takes": [
@@ -224,7 +238,7 @@
        },
        {
         "at": "make",
-        "text": "Run the task with the product from a fresh start, such as in a throwaway copy of the repository with an empty home folder, or take a recorded run of the same task, such as an end-to-end test's record, and keep each input and output as it came."
+        "text": "Take a recorded run where one ran the same task on the version that the manifest names, such as an end-to-end test's record, as it shows what readers get today. Otherwise run the task with the product from a fresh start, such as in a throwaway copy of the repository with an empty home folder. Keep each input and output as it came."
        },
        {
         "at": "make",
@@ -262,11 +276,11 @@
        },
        {
         "at": "make",
-        "text": "Build the figure and the answers of How it works below it, so that each part shows how it carries out that one way."
+        "text": "Put that sentence first in How it works, before the figure and the answers, so that each part that N8 adds after it reads as following from it."
        },
        {
         "at": "make",
-        "text": "Check that a newcomer can say the one way back, and say how each answer follows from it."
+        "text": "Check that a newcomer who reads only that sentence can say the one way back in their own words."
        }
       ]
      },
@@ -344,7 +358,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open the product's manifest and code, and list each requirement and install command they show, such as `engines` in package.json or `requires-python` in pyproject.toml, never from memory."
+        "text": "List each requirement and install command that the manifest and the code show, such as `engines` in package.json or `requires-python` in pyproject.toml, never from memory."
        },
        {
         "at": "decide",
