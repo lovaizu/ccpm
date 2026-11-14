@@ -131,7 +131,7 @@ def test_the_goal_and_the_plan_written_commit_the_design_tree_with_the_point_ope
     )
 
 
-@pytest.mark.supports("S1", "tree-keeper", "Design tree", "user")
+@pytest.mark.supports("S1", "tree-keeper", "Design tree", "Decision", "Point", "user")
 def test_the_goal_the_user_confirmed_is_written_by_the_user(
     conv: Conversation, repo: Repo, run: Run
 ):

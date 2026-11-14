@@ -98,12 +98,15 @@
   <text class="label small" x="226" y="140" text-anchor="start">0..*</text>
   <text class="label small" x="324" y="140" text-anchor="end">1</text>
   <path class="line" d="M220,324 L330,324"/>
-  <text class="label small halo" x="275.0" y="316" text-anchor="middle">is, while open</text>
+  <text class="label small halo" x="275.0" y="316" text-anchor="middle">asks for</text>
   <text class="label small" x="226" y="340" text-anchor="start">0..1</text>
-  <text class="label small" x="324" y="340" text-anchor="end">1</text>
+  <text class="label small" x="324" y="340" text-anchor="end">0..1</text>
   <path class="line" d="M510,124 L610,124" marker-start="url(#diamond)"/>
   <text class="label small halo" x="560.0" y="116" text-anchor="middle">holds</text>
   <text class="label small" x="604" y="140" text-anchor="end">1..*</text>
+  <path class="line" d="M450,148 L450,300" marker-start="url(#diamond)"/>
+  <text class="label small halo" x="458" y="270" text-anchor="start">holds, as its goal</text>
+  <text class="label small" x="458" y="294" text-anchor="start">1</text>
   <path class="line" d="M640,148 L640,324 L510,324" marker-start="url(#diamond)"/>
   <text class="label small halo" x="648" y="240" text-anchor="start">holds</text>
   <text class="label small" x="516" y="340" text-anchor="start">0..*</text>
@@ -152,10 +155,10 @@
   <text class="label small" x="1146" y="330" text-anchor="start">1</text>
   <rect class="box" x="40" y="200" width="180" height="48" rx="0"/>
   <text class="name" x="130.0" y="229.0" text-anchor="middle">Sign-off</text>
-  <path class="line" d="M220,218 L400,218 L400,148"/>
+  <path class="line" d="M220,218 L360,218 L360,148"/>
   <text class="label small halo" x="310" y="210" text-anchor="middle">of the plan</text>
   <text class="label small" x="226" y="210" text-anchor="start">0..*</text>
-  <text class="label small" x="408" y="166" text-anchor="start">0..1</text>
+  <text class="label small" x="368" y="166" text-anchor="start">0..1</text>
   <path class="line" d="M220,236 L620,236 L620,148"/>
   <text class="label small halo" x="520" y="228" text-anchor="middle">of a deliverable</text>
   <text class="label small" x="226" y="252" text-anchor="start">0..*</text>

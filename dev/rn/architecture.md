@@ -135,8 +135,14 @@ The choices made, and why:
 
 - Cut\
   The part of the design tree that a role starts with.
+- Design tree\
+  The goal, a Decision with no necessary condition, and the plan: each deliverable in the order of
+  the work, with what it takes from or waits for, as
+  [the design tree best practice](../../plugins/rn/domain/best-practices/design-tree/best-practice.md)
+  gives its form.
 - Point\
-  A question put to the user, with its recommendation, while its decision is open.
+  A question put to the user, with its recommendation: a decision while it's open, the goal
+  drafted, or what a role lacks from outside the work.
 - Sign-off\
   The plan, a deliverable, a lesson for rn's repository, or the pull request handed over, put to
   the user for `/rn:ty` or `/rn:gm`, with what the people can do with it, the decisions taken
@@ -269,13 +275,13 @@ sequenceDiagram
   K->>K: reads its part, the design tree best practice, and the design tree
   K-->>O: done
   O->>O: drafts the goal, and plans the deliverables
-  O->>K: resumes it, with the goal drafted and the plan (Decision)
+  O->>K: resumes it, with the goal drafted and the plan (Decision, Deliverable)
   K->>T: writes them, and commits (Design tree)
   T-->>K: what changed, and each node they touch
   K->>K: checks that each node touched agrees with them
   K-->>O: what changed, and each node checked
   O->>O: checks it against the design tree best practice
-  O->>U: the goal, to confirm, once the tree holds it (Point)
+  O->>U: the goal, to confirm, once the tree holds it (Point, Decision)
   U->>O: answers
   Note over U,O: The orchestrator has the goal written as the user confirmed it, and settles each other point, as S2 draws, and puts up the plan, as S3 draws.
   loop each deliverable whose turn has come, as it rests on no open point and on nothing not signed off
@@ -362,7 +368,7 @@ sequenceDiagram
     else the purpose or a best practice settles it
       O->>O: settles it
     end
-    O->>K: the decision, with its ground, and the plan where the decision changes it (Decision)
+    O->>K: the decision, with its ground, and the plan where the decision changes it (Decision, Deliverable)
     K->>T: writes it, and commits it with each deliverable whose turn has come marked doing (Design tree)
     T-->>K: what changed, each node it touches, and each deliverable marked doing
     K->>K: checks that the path up and each node touched agree with it
@@ -406,7 +412,7 @@ sequenceDiagram
     U->>O: /rn:ty
     O->>T: approves the sign-off waiting, as /rn:ty loads (Sign-off)
     O->>O: plans the rest again from what the user signed off
-    O->>K: it's signed off, with the plan where it changed (Decision)
+    O->>K: it's signed off, with the plan where it changed (Sign-off, Deliverable)
     K->>T: writes it, and commits it with each deliverable whose turn has come marked doing (Design tree)
     T-->>K: what changed, each node it touches, and each deliverable marked doing
     K->>K: checks that each node touched agrees with it
@@ -511,7 +517,7 @@ sequenceDiagram
     O->>U: the change, with a recommendation (Point)
     U->>O: answers
     opt the user takes it
-      O->>K: adds it as a deliverable (Decision)
+      O->>K: adds it as a deliverable (Deliverable)
       Note over O,K: It's made and signed off, as S1 and S3 draw.
     end
   end

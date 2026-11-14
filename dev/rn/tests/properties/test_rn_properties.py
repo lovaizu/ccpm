@@ -1,7 +1,7 @@
 """The property-based tests of rn's parts whose contracts take a wide input, as rn's Test strategy
 names them: tree.py's reading and writing of the design tree, its list of the nodes that a change
 touches, its check of a record against a prompt's steps and a best practice's practices, and each
-adapter's reading of a best practice or a design tree into Lane's form. Each finds no
+adapter's reading of a Cut or a record into Lane's form. Each finds no
 counterexample, by hypothesis, and quality.sh runs them in CI."""
 
 from __future__ import annotations
@@ -15,12 +15,16 @@ import pytest
 from fault import Wrong
 from hypothesis import given
 from hypothesis import strategies as st
+from kept_results import kept
+from kept_results import main as kept_main
 from record.check import record_faults
-from record.form import Entry, Record
+from record.form import Entry, Record, add, keep_result
 from record.steps import Step
-from rn_parts import NAME, PLAN_SIGNED
+from rn_example import HINTS
+from rn_parts import ANSWERED, NAME, PLAN_SIGNED, doing, hints, typed, walkthrough
 from start_text import start_text
 from tree import design, sign_offs
+from tree.cut import GENERATOR, TREE_KEEPER, cut, save
 from tree.design import (
     BY,
     DOING,
@@ -150,4 +154,72 @@ def test_the_text_of_a_generators_start_is_one_json_line_of_its_values(tree: Des
         doing = {each.path for each in tree.deliverables if each.status == DOING}
         assert text.text == "" or (
             json.loads(text.text) == text.values and text.values["deliverable"] in doing
+        )
+
+
+def run_worktree(base: str) -> tuple[str, str]:
+    """The walkthrough's run in a worktree under the folder, its hints and typed marker doing and
+    its plan signed off; gives the worktree and the run's folder."""
+    worktree = os.path.join(base, ".claude", "worktrees", f"rn-{NAME}")
+    folder = os.path.join(worktree, ".rn", NAME)
+    os.makedirs(folder)
+    design.save(folder, walkthrough(doing(hints(ANSWERED)), doing(typed(ANSWERED))))
+    sign_offs.save(folder, PLAN_SIGNED)
+    return worktree, folder
+
+
+@pytest.mark.supports("test_the_guard_of_a_new_conversation_picks_the_run_up_from_the_results_kept")
+@given(
+    st.lists(
+        st.tuples(
+            st.sampled_from((TREE_KEEPER, GENERATOR)),
+            st.sampled_from(("", "done", "asks", "lacks")),
+        ),
+        max_size=6,
+    )
+)
+def test_the_results_kept_are_each_records_result_in_the_order_of_the_starts(
+    starts: list[tuple[str, str]],
+):
+    """Given any starts of the tree-keeper and of the hints' generator, in the order tree.py's cut
+    saved them, each record keeping a result or none
+    When the adapter of the results kept runs in the run's worktree
+    Then it gives 0 and one JSON line of Lane's form, whose results are each role and result kept,
+    in the order of the starts, and none of a record that keeps none"""
+    with tempfile.TemporaryDirectory() as base:
+        worktree, folder = run_worktree(base)
+        for role, result in starts:
+            saved = save(cut(folder, role, HINTS if role == GENERATOR else ""))
+            add(saved.record, Entry(role, "1", "Read."))
+            if result:
+                keep_result(saved.record, result)
+        expected = [(role, result) for role, result in starts if result]
+        code, printed, _ = kept_main([], worktree)
+        assert kept(worktree) == expected and code == 0
+        assert json.loads(printed) == {
+            "results": [{"role": role, "result": result} for role, result in expected]
+        }
+
+
+@pytest.mark.supports("test_the_guard_of_a_new_conversation_picks_the_run_up_from_the_results_kept")
+@given(
+    st.recursive(
+        st.none() | st.booleans() | st.integers() | WORDS,
+        lambda inner: st.lists(inner, max_size=4) | st.dictionaries(WORDS, inner, max_size=4),
+        max_leaves=12,
+    )
+)
+def test_any_json_in_a_record_reads_as_lanes_form_or_is_refused_naming_the_record(value: Any):
+    """Given the tree-keeper's start saved, its record holding any JSON value
+    When the adapter of the results kept runs in the run's worktree
+    Then it gives 0 with one JSON line of Lane's form, or 1 naming the record, and raises
+    nothing"""
+    with tempfile.TemporaryDirectory() as base:
+        worktree, folder = run_worktree(base)
+        record = save(cut(folder, TREE_KEEPER)).record
+        with open(record, "w", encoding="utf-8") as file:
+            json.dump(value, file)
+        code, printed, said = kept_main([], worktree)
+        assert (code == 0 and set(json.loads(printed)) == {"results"}) or (
+            code == 1 and os.path.basename(record) in said
         )
