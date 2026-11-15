@@ -78,7 +78,8 @@ def test_a_document_without_a_block_of_its_template_has_a_fault(
     Then it has a fault"""
     template, document = made
     gone = data.draw(st.integers(0, len(document) - 1))
-    assert faults(template, "\n\n".join(document[:gone] + document[gone + 1 :]) + "\n") != ()
+    left = "\n\n".join(document[:gone] + document[gone + 1 :]) + "\n"
+    assert faults(template, left) != (), f"block {gone} left out is found"
 
 
 @given(st.integers(1, 2 * MOST_WORDS), WORD)
@@ -88,7 +89,8 @@ def test_a_sentence_has_a_fault_only_past_the_most_words(count: int, word: str):
     When the document is checked
     Then it has a fault only where the words are more than the most"""
     document = "# T\n\n" + " ".join([word] * count) + ".\n"
-    assert (faults("# T\n\n`<body>`\n", document) != ()) == (count > MOST_WORDS)
+    found = faults("# T\n\n`<body>`\n", document) != ()
+    assert found == (count > MOST_WORDS), f"a sentence of {count} words is found only past the most"
 
 
 @given(st.sampled_from(KINDS), st.text(max_size=400))
@@ -98,8 +100,8 @@ def test_any_text_checked_against_a_template_gives_faults_at_its_lines(kind: str
     When the text is checked
     Then each fault lies at a line of the text, in the order of the lines"""
     lines = [each.line for each in faults(template_of(kind), text)]
-    assert all(1 <= line <= text.count("\n") + 1 for line in lines)
-    assert lines == sorted(lines)
+    assert all(1 <= line <= text.count("\n") + 1 for line in lines), "each fault lies at a line"
+    assert lines == sorted(lines), "the faults come in the order of the lines"
 
 
 @given(st.text(max_size=400))
@@ -109,5 +111,5 @@ def test_any_text_reads_as_blocks_at_its_lines_in_order(text: str):
     When it's read as Markdown
     Then each block lies at a line of the text, each after the one before it"""
     lines = [block.line for block in read(text)]
-    assert all(1 <= line <= text.count("\n") + 1 for line in lines)
-    assert lines == sorted(set(lines))
+    assert all(1 <= line <= text.count("\n") + 1 for line in lines), "each block lies at a line"
+    assert lines == sorted(set(lines)), "each block comes after the one before it"
