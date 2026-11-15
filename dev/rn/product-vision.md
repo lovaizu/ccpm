@@ -23,16 +23,9 @@ law. They show whether a change brought its objective closer.
 rn works only on the [vital few](https://en.wikipedia.org/wiki/Pareto_principle), what decides
 whether a deliverable's people can use it.
 
-- Decisions drawn out and signed off, for O1\
-  rn asks only the user's decisions and has them sign off each deliverable, so it makes what they
-  mean.
-- Every step by best practice, for O1\
-  rn plans, makes, and asks by each kind's best practice, so each step holds what that work needs.
+- Only the user's decisions asked, for O1\
+  rn asks only what the user alone can decide, so they get what they mean without a specification.
+- Every deliverable by best practice, for O1\
+  rn makes each deliverable by its kind's best practice, so it holds what that work needs.
 - Judged by the people it's for, for O1\
-  rn's evaluators read each deliverable as its people would, so rn improves only what those people
-  need.
-- Each fix made in the design tree, for O1\
-  rn takes each problem back to its decision in the user's design tree, so each fix holds.
-- Each run's lessons kept, for O1\
-  rn proposes each run's lessons as changes to the best practices and the design tree, so later
-  runs start better.
+  rn's evaluators read each deliverable as its people would, so rn improves only what they need.
