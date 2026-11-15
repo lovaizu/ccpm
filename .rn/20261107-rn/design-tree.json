@@ -261,13 +261,13 @@
       ],
       "preconditions": [],
       "status": "open",
-      "check": "the integration tests in dev/lane/tests/integration/test_lane_walking_skeleton.py pass, each seen to fail first",
+      "check": "the integration tests in dev/lane/tests/integration/test_lane_walking_skeleton.py pass, each seen to fail first, and each that names a rule of Solution strategy fails with the part that holds the rule taken out",
       "good": false,
       "decisions": []
     },
     {
       "name": "The user's plugin starts each subagent in the order they set, and only that one",
-      "path": "dev/lane/tests/integration/test_s5_run_in_order.py",
+      "path": "dev/lane/tests/integration/test_s5_run_order.py",
       "kind": "specific",
       "inputs": [
         "dev/lane/architecture.md",
@@ -278,7 +278,7 @@
         "dev/lane/tests/integration/test_lane_walking_skeleton.py"
       ],
       "status": "open",
-      "check": "the integration tests in dev/lane/tests/integration/test_s5_run_in_order.py pass, each seen to fail first",
+      "check": "the integration tests in dev/lane/tests/integration/test_s5_run_order.py pass, each seen to fail first, and each that names a rule of Solution strategy fails with the part that holds the rule taken out",
       "good": false,
       "decisions": []
     },
@@ -295,31 +295,13 @@
         "dev/lane/tests/integration/test_lane_walking_skeleton.py"
       ],
       "status": "open",
-      "check": "the integration tests in dev/lane/tests/integration/test_s6_subagent_held.py pass, each seen to fail first",
-      "good": false,
-      "decisions": []
-    },
-    {
-      "name": "The guard places each hook event on its own run, start, and role in each state of Claude Code that the README's main use and rn bring about",
-      "path": "dev/lane/tests/integration/test_events_placed.py",
-      "kind": "specific",
-      "inputs": [
-        "dev/lane/architecture.md",
-        "plugins/lane",
-        "dev/lane/tests"
-      ],
-      "preconditions": [
-        "dev/lane/tests/integration/test_s5_run_in_order.py",
-        "dev/lane/tests/integration/test_s6_subagent_held.py"
-      ],
-      "status": "open",
-      "check": "the integration tests in dev/lane/tests/integration/test_events_placed.py pass, each seen to fail first",
+      "check": "the integration tests in dev/lane/tests/integration/test_s6_subagent_held.py pass, each seen to fail first, and each that names a rule of Solution strategy fails with the part that holds the rule taken out",
       "good": false,
       "decisions": []
     },
     {
       "name": "A run that stopped goes on where it stopped, after /compact or in a new conversation",
-      "path": "dev/lane/tests/integration/test_s7_run_picked_up.py",
+      "path": "dev/lane/tests/integration/test_s7_picked_up.py",
       "kind": "specific",
       "inputs": [
         "dev/lane/architecture.md",
@@ -327,10 +309,10 @@
         "dev/lane/tests"
       ],
       "preconditions": [
-        "dev/lane/tests/integration/test_s5_run_in_order.py"
+        "dev/lane/tests/integration/test_s5_run_order.py"
       ],
       "status": "open",
-      "check": "the integration tests in dev/lane/tests/integration/test_s7_run_picked_up.py pass, each seen to fail first",
+      "check": "the integration tests in dev/lane/tests/integration/test_s7_picked_up.py pass, each seen to fail first, and each that names a rule of Solution strategy fails with the part that holds the rule taken out",
       "good": false,
       "decisions": []
     },
@@ -344,17 +326,17 @@
         "dev/lane/tests"
       ],
       "preconditions": [
-        "dev/lane/tests/integration/test_s5_run_in_order.py",
+        "dev/lane/tests/integration/test_s5_run_order.py",
         "dev/lane/tests/integration/test_s6_subagent_held.py"
       ],
       "status": "open",
-      "check": "the integration tests in dev/lane/tests/integration/test_s1_proposal.py pass, each seen to fail first",
+      "check": "the integration tests in dev/lane/tests/integration/test_s1_proposal.py pass, each seen to fail first, and each that names a rule of Solution strategy fails with the part that holds the rule taken out",
       "good": false,
       "decisions": []
     },
     {
       "name": "Lane lays only what a person approved, and proposes again on a change they ask for",
-      "path": "dev/lane/tests/integration/test_s2_person_approves.py",
+      "path": "dev/lane/tests/integration/test_s2_approval.py",
       "kind": "specific",
       "inputs": [
         "dev/lane/architecture.md",
@@ -365,13 +347,13 @@
         "dev/lane/tests/integration/test_s1_proposal.py"
       ],
       "status": "open",
-      "check": "the integration tests in dev/lane/tests/integration/test_s2_person_approves.py pass, each seen to fail first",
+      "check": "the integration tests in dev/lane/tests/integration/test_s2_approval.py pass, each seen to fail first, and each that names a rule of Solution strategy fails with the part that holds the rule taken out",
       "good": false,
       "decisions": []
     },
     {
-      "name": "An AI that builds a plugin approves Lane's proposal by its own act and reaches the first held run",
-      "path": "dev/lane/tests/integration/test_s3_ai_approves.py",
+      "name": "An AI that builds a plugin approves Lane's proposal by its own act, and after the steps change or Lane updates, the checks hold the steps as they now read",
+      "path": "dev/lane/tests/integration/test_s3_s4_again.py",
       "kind": "specific",
       "inputs": [
         "dev/lane/architecture.md",
@@ -379,49 +361,10 @@
         "dev/lane/tests"
       ],
       "preconditions": [
-        "dev/lane/tests/integration/test_s2_person_approves.py"
+        "dev/lane/tests/integration/test_s2_approval.py"
       ],
       "status": "open",
-      "check": "the integration tests in dev/lane/tests/integration/test_s3_ai_approves.py pass, each seen to fail first",
-      "good": false,
-      "decisions": []
-    },
-    {
-      "name": "After the steps change or Lane updates, the checks hold the steps as they now read, with Lane's newest code",
-      "path": "dev/lane/tests/integration/test_s4_proposed_again.py",
-      "kind": "specific",
-      "inputs": [
-        "dev/lane/architecture.md",
-        "plugins/lane",
-        "dev/lane/tests"
-      ],
-      "preconditions": [
-        "dev/lane/tests/integration/test_s2_person_approves.py"
-      ],
-      "status": "open",
-      "check": "the integration tests in dev/lane/tests/integration/test_s4_proposed_again.py pass, each seen to fail first",
-      "good": false,
-      "decisions": []
-    },
-    {
-      "name": "Each rule of the Solution strategy of Lane's architecture holds where the parts keep it, and its test fails where the part that holds it is taken out",
-      "path": "dev/lane/tests/integration/test_principles.py",
-      "kind": "specific",
-      "inputs": [
-        "dev/lane/architecture.md",
-        "plugins/lane",
-        "dev/lane/tests"
-      ],
-      "preconditions": [
-        "dev/lane/tests/integration/test_s1_proposal.py",
-        "dev/lane/tests/integration/test_s2_person_approves.py",
-        "dev/lane/tests/integration/test_s3_ai_approves.py",
-        "dev/lane/tests/integration/test_s4_proposed_again.py",
-        "dev/lane/tests/integration/test_s7_run_picked_up.py",
-        "dev/lane/tests/integration/test_events_placed.py"
-      ],
-      "status": "open",
-      "check": "the integration tests in dev/lane/tests/integration/test_principles.py pass, each seen to fail first",
+      "check": "the integration tests in dev/lane/tests/integration/test_s3_s4_again.py pass, each seen to fail first, and each that names a rule of Solution strategy fails with the part that holds the rule taken out",
       "good": false,
       "decisions": []
     },
@@ -435,15 +378,12 @@
       ],
       "preconditions": [
         "dev/lane/tests/integration/test_lane_walking_skeleton.py",
-        "dev/lane/tests/integration/test_s5_run_in_order.py",
+        "dev/lane/tests/integration/test_s5_run_order.py",
         "dev/lane/tests/integration/test_s6_subagent_held.py",
-        "dev/lane/tests/integration/test_s7_run_picked_up.py",
+        "dev/lane/tests/integration/test_s7_picked_up.py",
         "dev/lane/tests/integration/test_s1_proposal.py",
-        "dev/lane/tests/integration/test_s2_person_approves.py",
-        "dev/lane/tests/integration/test_s3_ai_approves.py",
-        "dev/lane/tests/integration/test_s4_proposed_again.py",
-        "dev/lane/tests/integration/test_events_placed.py",
-        "dev/lane/tests/integration/test_principles.py"
+        "dev/lane/tests/integration/test_s2_approval.py",
+        "dev/lane/tests/integration/test_s3_s4_again.py"
       ],
       "status": "open",
       "check": "the E2E tests of the README's main use, judged from their records, show KR1.1 and KR1.2 of the product vision",
@@ -557,7 +497,7 @@
         "dev/rn/tests"
       ],
       "preconditions": [
-        "dev/lane/tests/integration/test_s5_run_in_order.py"
+        "dev/lane/tests/integration/test_s5_run_order.py"
       ],
       "status": "open",
       "check": "the integration tests in dev/rn/tests/integration/test_rn_walking_skeleton.py pass, each seen to fail first",

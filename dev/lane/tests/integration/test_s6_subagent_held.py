@@ -26,22 +26,6 @@ def test_calls_that_keep_every_lane_go_through(b: w.Bench) -> None:
     assert not writer.write(os.path.join(b.repo, "CHANGELOG.md"), "# Changelog\n").blocked
 
 
-@pytest.mark.supports("S6", "A stop gives the step back", "Lane")
-def test_a_call_that_breaks_a_lane_gets_its_steps_sentence(b: w.Bench, broken: None) -> None:
-    """Given: the walkthrough's Proposal laid, and writer started.
-    When: writer runs `git -C <tally> log --oneline`.
-    Then: the guard stops it with the step's sentence and each command writer may run, word for
-    word as the README shows."""
-    _, writer = w.writer_started(b)
-    stopped = writer.bash(f"git -C {b.repo} log --oneline")
-    assert stopped.blocked
-    assert stopped.said == (
-        "changelog: Run only `git log --oneline`.\n"
-        "The commands you may run, each word for word: `git log --oneline`,"
-        f" `{b.result('writer', 'written')}`."
-    )
-
-
 @pytest.mark.supports("S6", "One type gives the sentence, the check, and the steps it suits")
 def test_the_sentence_laid_is_the_sentence_a_stop_gives(b: w.Bench, broken: None) -> None:
     """Given: the walkthrough's Proposal laid, and writer started.

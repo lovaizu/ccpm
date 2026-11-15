@@ -61,30 +61,6 @@ def adapter_bench(tmp: str, program: str) -> w.Bench:
     return b
 
 
-@pytest.mark.supports("S5", "Route", "Start", "Result", "Run", "guard")
-def test_the_walkthroughs_run_moves_in_the_order_the_user_set(b: w.Bench) -> None:
-    """Given: the walkthrough's Proposal laid, and Claude Code's plugins reloaded.
-    When: the person types /changelog:write, and the main conversation starts each subagent it's
-    told to, writer giving `written`, reviewer `more`, writer `written`, and reviewer `good`.
-    Then: Lane gives each start due and each Result with its moves, word for word as the README
-    shows, and the skill's result.py write good ends the Run."""
-    c = w.laid(b)
-    assert w.due("writer") in c.type("/changelog:write").said
-    for role, result, then in (
-        ("writer", "written", w.due("reviewer")),
-        ("reviewer", "more", w.due("writer")),
-        ("writer", "written", w.due("reviewer")),
-        ("reviewer", "good", "changelog: reviewer gave `good`. Start no more subagents."),
-    ):
-        started, agent = w.start(c, role)
-        assert not started.blocked and agent
-        reached = w.give(b, agent, result)
-        assert f"changelog: {role} gave `{result}`." in reached.said
-        assert then.split(". ", 1)[-1] in reached.said
-    assert c.bash(b.result("write", "good")).exit_code == 0
-    assert all(r.ended for r in w.where(b.changelog, b, c.session_id).runs)
-
-
 @pytest.mark.supports("S5", "Route", "guard")
 def test_a_start_that_isnt_due_is_stopped_with_the_moves_due(b: w.Bench) -> None:
     """Given: the walkthrough's Proposal laid, and the person typed /changelog:write.

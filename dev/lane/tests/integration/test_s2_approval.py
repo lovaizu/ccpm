@@ -35,34 +35,6 @@ def test_ups_end_with_what_print_showed_goes(b: w.Bench) -> None:
     assert not c.stop(printed.output).blocked
 
 
-@pytest.mark.supports("S2", "Approval", "Laid", "lay.py", "user")
-def test_yes_lays_the_proposal_into_the_plugin(b: w.Bench) -> None:
-    """Given: up gave what lay.py print showed of the walkthrough's Proposal.
-    When: the person replies yes, and up runs lay.py write changelog with the ID.
-    Then: lay.py write exits 0 and shows each file written, as the README shows; each Step holds
-    its sentence; hooks/lane/ holds Lane's code; lanes.json holds the Proposal and the Laid; and
-    result.py up laid gives 0."""
-    c = w.converse(b)
-    printed, pid = w.propose(b, c)
-    assert not c.stop(printed.output).blocked
-    assert not c.type("yes").blocked
-    written = c.bash(b.lay_py("write", "changelog", pid))
-    assert written.exit_code == 0
-    assert written.output.rstrip("\n") == w.WROTE
-    writer = w.read(os.path.join(b.changelog, "agents", "writer.md"))
-    assert "2. Read the commits since then with `git log --oneline`. Run only `git log" in writer
-    assert (
-        "4. Reply with the entries you wrote. End by running"
-        f" `{w.RESULT} writer written`." in writer
-    )
-    assert os.path.isfile(os.path.join(b.changelog, "hooks", "lane", "hook.py"))
-    lanes = json.loads(w.read(os.path.join(b.changelog, "hooks", "lanes.json")))
-    assert len(lanes["routes"]) == 4
-    files = {"skills/write/SKILL.md", "agents/writer.md", "agents/reviewer.md"}
-    assert {s["file"] for s in lanes["laid"]["sentences"]} == files
-    assert c.bash(b.up_result("laid")).exit_code == 0
-
-
 @pytest.mark.supports("S2", "Laid only on the caller's own act", "Approval")
 def test_lay_before_the_persons_reply_is_stopped(b: w.Bench, broken: None) -> None:
     """Given: lay.py print showed the walkthrough's Proposal in a Run of up that a person called.

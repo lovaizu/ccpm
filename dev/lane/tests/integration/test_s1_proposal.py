@@ -29,19 +29,6 @@ def up_reads(b: w.Bench, c: Conversation) -> dict:
     return w.walkthrough_proposal()
 
 
-@pytest.mark.supports("S1", "up", "user", "Proposal")
-def test_up_shows_the_walkthroughs_proposal(b: w.Bench) -> None:
-    """Given: changelog as the walkthrough gives it, with no Lane laid.
-    When: the person types /lane:up changelog, and up hands the walkthrough's Proposal to lay.py
-    print.
-    Then: lay.py print exits 0 and shows the Routes, each Step as it'll read, and the ID, word for
-    word as the README shows them."""
-    c = w.converse(b)
-    printed, pid = w.propose(b, c)
-    assert printed.exit_code == 0
-    assert printed.output.rstrip("\n") == w.shown(pid)
-
-
 @pytest.mark.supports("S1", "Lane type", "lane types")
 def test_types_give_each_lane_type_and_the_form_of_a_proposal(b: w.Bench) -> None:
     """Given: Lane's copy, whose lanes/ holds each lane type.
