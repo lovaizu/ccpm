@@ -125,6 +125,60 @@
       "status": "done"
     },
     {
+      "name": "Each document of ccpm made by a best practice holds its kind's template and nothing beside it, as rn's check finds each place where one leaves it",
+      "path": "plugins/rn/domain/record/template.py",
+      "kind": "code",
+      "inputs": [
+        "dev/rn/architecture.md"
+      ],
+      "preconditions": [
+        "dev/rn/architecture.md"
+      ],
+      "status": "doing",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
       "name": "Lane's product vision says what Lane is for",
       "path": "dev/lane/product-vision.md",
       "kind": "product-vision",
