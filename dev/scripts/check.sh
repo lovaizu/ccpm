@@ -63,6 +63,13 @@ held design pyrefly check $properties --search-path plugins/rn/domain \
   plugins/rn/domain/*.py plugins/rn/domain/*/*.py plugins/rn/scripts/*.py \
   plugins/rn/hooks/adapters/*.py dev/rn/tests/*.py dev/rn/tests/*/*.py
 
+# Lane's code, as Lane's Test strategy names pyrefly: the guard's code that Lane lays into a plugin,
+# and lay.py's, which imports it.
+held design pyrefly check --search-path plugins/lane/hooks/lane/domain \
+  --search-path plugins/lane/domain plugins/lane/hooks/lane/*.py \
+  plugins/lane/hooks/lane/domain/*.py plugins/lane/hooks/lane/domain/*/*.py \
+  plugins/lane/domain/*/*.py plugins/lane/scripts/*.py
+
 # Each kind's best practice lies in a folder of its own in rn, as `best-practice.json`. Its template
 # lies beside it. The check fails on:
 # - a fault in a best practice's form

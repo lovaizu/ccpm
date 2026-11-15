@@ -52,13 +52,17 @@ class After:
     skill: str | None = None
 
 
+# Each kind of Move.
+MoveKind = Literal["start", "resume", "wait", "no_more", "call"]
+
+
 @dataclass(frozen=True)
 class Move:
     """One move that a Route makes due: start a subagent, resume one by SendMessage, wait for the
     person's reply or the command they type, start no more by the skill's own Result, or call
     another plugin's skill."""
 
-    kind: Literal["start", "resume", "wait", "no_more", "call"]
+    kind: MoveKind
     role: str | None = None
     command: str | None = None
     result: str | None = None
@@ -300,7 +304,7 @@ def _shapes(schemas: Sequence[Mapping[str, Any]]) -> str:
 # Lanes, Routes, and adapters, from their JSON and back.
 
 # Each kind of Move, by its key in JSON, with the field of Move that its value fills.
-_MOVES = {
+_MOVES: dict[MoveKind, str] = {
     "start": "role",
     "resume": "role",
     "wait": "command",
@@ -332,7 +336,8 @@ def _after(held: Mapping[str, Any]) -> After:
 
 
 def _move(held: Mapping[str, str]) -> Move:
-    ((kind, value),) = held.items()
+    ((key, value),) = held.items()
+    kind = next(each for each in _MOVES if each == key)
     return Move(kind, **{_MOVES[kind]: value})
 
 
