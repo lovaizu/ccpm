@@ -26,6 +26,7 @@ from claude_code import (
     SUBAGENT_OF_SUBAGENT,
     Conversation,
     lines,
+    plugin_validate,
     record_lines,
     run_python,
 )
@@ -1196,6 +1197,63 @@ class ClaudeCodeDoubleTest(unittest.TestCase):
         answer = self.conversation.skill("other:review", "")
         # Then: the call goes through with no skill text, as the double has none to read.
         self.assertEqual((answer.blocked, answer.output), (False, ""), "no text of another's skill")
+
+
+class PluginValidateTest(unittest.TestCase):
+    """`claude plugin validate`, as the double's own `claude` gives it from the plugin
+    references."""
+
+    def setUp(self):
+        self.plugin = os.path.realpath(tempfile.mkdtemp(prefix="plugin-validate-"))
+        self.addCleanup(shutil.rmtree, self.plugin)
+        self.put(".claude-plugin/plugin.json", json.dumps({"name": "changelog"}))
+
+    def put(self, path, text):
+        os.makedirs(os.path.dirname(os.path.join(self.plugin, path)), exist_ok=True)
+        with open(os.path.join(self.plugin, path), "w", encoding="utf-8") as f:
+            f.write(text)
+
+    def test_a_bash_command_runs_the_doubles_own_claude_whose_validate_passes_a_plugin(self):
+        self.put("hooks/hooks.json", json.dumps({"hooks": {}}))
+        conversation = Conversation(self.plugin, [], dict(os.environ), self.plugin)
+
+        answer = conversation.bash(f"claude plugin validate {self.plugin}")
+
+        self.assertEqual((answer.exit_code, answer.output), (0, "✔ Validation passed\n"))
+
+    def test_a_plugin_with_no_hooks_file_passes(self):
+        self.assertEqual(plugin_validate(["plugin", "validate", self.plugin])[0], 0)
+
+    def test_a_manifest_whose_name_isnt_a_string_fails(self):
+        self.put(".claude-plugin/plugin.json", json.dumps({"name": 1}))
+
+        code, out, _ = plugin_validate(["plugin", "validate", self.plugin])
+
+        self.assertEqual((code, out), (1, "Validation failed\n"))
+
+    def test_a_missing_manifest_fails(self):
+        os.remove(os.path.join(self.plugin, ".claude-plugin", "plugin.json"))
+        self.assertEqual(plugin_validate(["plugin", "validate", self.plugin])[0], 1)
+
+    def test_a_hooks_file_without_its_hooks_wrapper_fails(self):
+        self.put("hooks/hooks.json", json.dumps({"PreToolUse": []}))
+        self.assertEqual(plugin_validate(["plugin", "validate", self.plugin])[0], 1)
+
+    def test_a_hooks_file_that_isnt_json_fails(self):
+        self.put("hooks/hooks.json", "{")
+        self.assertEqual(plugin_validate(["plugin", "validate", self.plugin])[0], 1)
+
+    def test_a_path_that_isnt_a_folder_fails_unexpectedly_with_why(self):
+        missing = os.path.join(self.plugin, "missing")
+
+        code, out, err = plugin_validate(["plugin", "validate", missing])
+
+        self.assertEqual((code, out), (2, ""))
+        self.assertEqual(err, f"Unexpected error during validation: {missing} isn't a folder\n")
+
+    def test_any_other_command_of_claude_isnt_the_doubles(self):
+        with self.assertRaises(SystemExit):
+            plugin_validate(["plugin", "install", "lane@ccpm"])
 
 
 class RunPythonTest(unittest.TestCase):

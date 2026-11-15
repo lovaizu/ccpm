@@ -1,0 +1,524 @@
+"""The unit cases of lay.py's code in domain/lay/, through `steps.read_steps`,
+`laid_copy.read_laid`, `laid.strip`, `laid.as_laid`, `laid.lay`, `check.check`, `show.render`,
+`proposals.keep`, `proposals.find`, `write.write`, `hooks_file.replace_entries`, and
+`claude.validate`: where Steps lie, the Laid read through the plugin's own copy of Lane's code,
+Lane's sentences taken out, kept, and added once, what a Proposal must be and whose each fault is,
+what print shows, where a Proposal is kept, each refusal of write, Lane's hook entries beside the
+user's, and validate as the double of Claude Code gives it."""
+
+from __future__ import annotations
+
+import dataclasses
+import json
+import os
+import re
+import shutil
+import tempfile
+from typing import Any
+
+import lane_data as d
+import pytest
+import walkthrough as w
+from claude_code import claude_program
+from form import Laid, LaidSentence, OutOfForm, write_lanes
+from lay.check import Checked, Faults, check
+from lay.claude import validate
+from lay.hooks_file import replace_entries
+from lay.laid import Note, as_laid, lay, strip
+from lay.laid_copy import read_laid
+from lay.proposals import find, keep
+from lay.show import render
+from lay.steps import Step, read_steps
+from lay.write import Refused, write
+
+pytestmark = pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
+
+STEP_2 = Step(
+    "writer", "agents/writer.md", 2, "Read the commits since then with `git log --oneline`."
+)
+STEP_3 = Step("writer", "agents/writer.md", 3, "Write the new entries into `CHANGELOG.md`.")
+LAID_2 = Step("writer", "agents/writer.md", 2, f"{STEP_2.text} Run only `git log --oneline`.")
+LAID_3 = Step("writer", "agents/writer.md", 3, f"{STEP_3.text} Write only `CHANGELOG.md`.")
+SENTENCES = {
+    ("agents/writer.md", 2): "Run only `git log --oneline`.",
+    ("agents/writer.md", 3): "Write only `CHANGELOG.md`.",
+}
+# Each sentence of writer's Lanes, its end on step 4 among them.
+WRITERS = {**SENTENCES, ("agents/writer.md", 4): d.LAID.sentences[2].text}
+
+
+@pytest.fixture
+def plugin(tmp_path: Any, monkeypatch: pytest.MonkeyPatch) -> str:
+    """The walkthrough's changelog, and the system's temporary folder set to the case's own."""
+    monkeypatch.setenv("TMPDIR", str(tmp_path / "temp"))
+    monkeypatch.setattr(tempfile, "tempdir", None)
+    os.makedirs(tmp_path / "temp")
+    w.write_files(str(tmp_path / "changelog"), w.FILES)
+    return str(tmp_path / "changelog")
+
+
+def shown_steps() -> list[Step]:
+    """Each Step as the README's walkthrough shows it laid, by its role's file."""
+    files = {
+        "write": "skills/write/SKILL.md",
+        "writer": "agents/writer.md",
+        "reviewer": "agents/reviewer.md",
+    }
+    steps, role = [], ""
+    for line in w.SHOWN.splitlines():
+        heading = re.match(r"(?:Routes|Lanes) of (\w+)", line)
+        numbered = re.match(r"(\d+)\. (.*)$", line)
+        if heading:
+            role = heading[1]
+        elif numbered:
+            steps.append(Step(role, files[role], int(numbered[1]), numbered[2]))
+    return steps
+
+
+def steps_of(plugin: str) -> dict[tuple[str, int], Step]:
+    return {(s.file, s.number): s for s in read_steps(plugin)}
+
+
+@pytest.mark.supports("test_steps_give_each_step_of_each_role")
+def test_each_roles_steps_are_read_from_its_file(plugin: str) -> None:
+    """Given: the walkthrough's changelog.
+    When: read_steps reads it.
+    Then: it gives write's step 1, writer's four, and reviewer's two, each as its file holds it."""
+    steps = steps_of(plugin)
+    assert len(steps) == 7
+    assert steps[("agents/writer.md", 2)] == STEP_2
+    assert steps[("skills/write/SKILL.md", 1)].role == "write"
+
+
+@pytest.mark.supports("test_a_steps_file_two_roles_share_goes_to_the_user")
+def test_steps_in_the_file_a_body_names_are_the_roles(plugin: str) -> None:
+    """Given: writer's body naming `${CLAUDE_PLUGIN_ROOT}/writer-steps.md`, which holds its Steps.
+    When: read_steps reads the plugin.
+    Then: writer's Steps come from writer-steps.md."""
+    body = "Your steps are in `${CLAUDE_PLUGIN_ROOT}/writer-steps.md`.\n"
+    w.write_files(plugin, {"agents/writer.md": w.WRITER.split("## Steps")[0] + body})
+    w.write_files(plugin, {"writer-steps.md": "## Steps\n\n1. Read.\n2. Write.\n"})
+    writer = [s for s in read_steps(plugin) if s.role == "writer"]
+    assert [(s.file, s.number, s.text) for s in writer] == [
+        ("writer-steps.md", 1, "Read."),
+        ("writer-steps.md", 2, "Write."),
+    ]
+
+
+@pytest.mark.supports("test_a_move_that_waits_for_the_person_lets_the_turn_end")
+def test_a_commands_steps_are_read_as_its_own(plugin: str) -> None:
+    """Given: changelog with a command skill approve whose SKILL.md holds one Step.
+    When: read_steps reads the plugin.
+    Then: it gives approve's Step from skills/approve/SKILL.md."""
+    front = "---\nname: approve\ndescription: A.\ndisable-model-invocation: true\n---\n\n"
+    approve = front + "## Steps\n\n1. Go on.\n"
+    w.write_files(plugin, {"skills/approve/SKILL.md": approve})
+    assert steps_of(plugin)[("skills/approve/SKILL.md", 1)].text == "Go on."
+
+
+@pytest.mark.supports("test_steps_give_each_step_of_each_role")
+def test_a_role_with_no_steps_gives_none(plugin: str) -> None:
+    """Given: changelog whose reviewer.md holds no `## Steps`.
+    When: read_steps reads the plugin.
+    Then: it gives no Step of reviewer."""
+    w.write_files(plugin, {"agents/reviewer.md": w.REVIEWER.split("## Steps")[0]})
+    assert not [s for s in read_steps(plugin) if s.role == "reviewer"]
+
+
+@pytest.mark.supports("test_steps_give_each_step_of_each_role")
+def test_a_folder_that_isnt_there_is_refused(tmp_path: Any) -> None:
+    """Given: a path where no folder lies.
+    When: read_steps reads it.
+    Then: it raises FileNotFoundError."""
+    with pytest.raises(FileNotFoundError):
+        read_steps(str(tmp_path / "nowhere"))
+
+
+def copied(plugin: str) -> None:
+    """Puts a copy of Lane's code in the plugin's hooks/lane/, as lay.py write puts it."""
+    shutil.copytree(os.path.join(w.LANE, "hooks", "lane"), os.path.join(plugin, "hooks", "lane"))
+
+
+@pytest.mark.supports("test_steps_give_each_step_of_each_role")
+def test_a_plugin_lane_never_laid_in_has_an_empty_laid(plugin: str) -> None:
+    """Given: changelog with no hooks/lane/.
+    When: read_laid reads it.
+    Then: it gives a Laid with no sentences."""
+    assert read_laid(plugin).sentences == ()
+
+
+@pytest.mark.supports("test_steps_after_a_lay_come_without_lanes_sentences")
+def test_the_laid_is_read_through_the_plugins_copy(plugin: str) -> None:
+    """Given: changelog with a copy of this Lane's code in hooks/lane/, and the walkthrough's
+    lanes.json.
+    When: read_laid reads it.
+    Then: it gives the Laid that lanes.json holds."""
+    copied(plugin)
+    write_lanes(os.path.join(plugin, "hooks", "lanes.json"), d.lanes_file())
+    assert read_laid(plugin) == d.LAID
+
+
+@pytest.mark.supports("test_a_plugin_laid_by_an_earlier_lane_is_read_by_its_own_copy")
+def test_a_laid_of_an_earlier_lane_is_read_by_its_own_form(plugin: str) -> None:
+    """Given: changelog whose hooks/lane/domain/form.py is an earlier Lane's, which keeps the Laid
+    under `added`, and whose lanes.json is in that form.
+    When: read_laid reads it.
+    Then: it gives the Laid of the earlier form as this Lane's Laid, by the fields that every
+    version keeps."""
+    copied(plugin)
+    sentences = [[x.file, x.step, x.text] for x in d.LAID.sentences]
+    w.write_files(
+        plugin,
+        {
+            "hooks/lane/domain/form.py": w.EARLIER_FORM,
+            "hooks/lanes.json": json.dumps({"added": {"version": "0.0.1", "sentences": sentences}}),
+        },
+    )
+    assert read_laid(plugin) == Laid("0.0.1", d.LAID.sentences)
+
+
+@pytest.mark.supports("test_a_call_the_guard_cant_check_is_stopped_with_who_must_fix_it")
+@pytest.mark.parametrize(
+    "code, lanes",
+    [(True, json.dumps({"laid": {"version": 3}})), (False, "{}")],
+    ids=["lanes.json out of its copy's form", "hooks/lane/ with no code"],
+)
+def test_a_laid_that_no_copy_reads_is_refused(plugin: str, code: bool, lanes: str) -> None:
+    """Given: changelog whose lanes.json its copy finds out of form, or whose hooks/lane/ holds no
+    code that reads it.
+    When: read_laid reads it.
+    Then: it raises OutOfForm."""
+    if code:
+        copied(plugin)
+    else:
+        os.makedirs(os.path.join(plugin, "hooks", "lane"))
+    w.write_files(plugin, {"hooks/lanes.json": lanes})
+    with pytest.raises(OutOfForm):
+        read_laid(plugin)
+
+
+@pytest.mark.supports("test_steps_after_a_lay_come_without_lanes_sentences")
+def test_a_sentence_still_word_for_word_is_taken_out() -> None:
+    """Given: writer's steps 2 and 3, each holding the sentence Lane laid.
+    When: strip takes out the Laid's text.
+    Then: each Step reads as the user wrote it, with no note."""
+    assert strip((LAID_2, LAID_3), d.LAID) == ((STEP_2, STEP_3), ())
+
+
+@pytest.mark.supports("test_steps_after_a_lay_come_without_lanes_sentences")
+def test_the_end_laid_on_the_last_step_is_taken_out() -> None:
+    """Given: writer's step 4, holding the sentence of the Lane on its last Step.
+    When: strip takes out the Laid's text.
+    Then: the Step reads as the user wrote it."""
+    step = Step("writer", "agents/writer.md", 4, "Reply with the entries you wrote.")
+    laid = dataclasses.replace(step, text=f"{step.text} {WRITERS[('agents/writer.md', 4)]}")
+    assert strip((laid,), d.LAID) == ((step,), ())
+
+
+@pytest.mark.supports("test_a_sentence_the_user_changed_stays_as_theirs")
+def test_a_sentence_the_user_changed_is_kept_with_a_note() -> None:
+    """Given: writer's step 3, whose laid sentence the user changed to name NEWS.md too.
+    When: strip takes out the Laid's text.
+    Then: the Step keeps the user's sentence, and a Note names the laid and the user's."""
+    now = "Write only `CHANGELOG.md` and `NEWS.md`."
+    changed = Step("writer", "agents/writer.md", 3, f"{STEP_3.text} {now}")
+    steps, notes = strip((changed,), d.LAID)
+    assert steps == (changed,)
+    assert notes == (Note("agents/writer.md", 3, "Write only `CHANGELOG.md`.", now),)
+
+
+@pytest.mark.supports("test_steps_give_each_step_of_each_role")
+def test_steps_with_nothing_laid_are_left_as_they_are() -> None:
+    """Given: writer's steps 2 and 3, and an empty Laid.
+    When: strip takes out the Laid's text.
+    Then: it gives them unchanged."""
+    assert strip((STEP_2, STEP_3), Laid("0.1.0", ())) == ((STEP_2, STEP_3), ())
+
+
+@pytest.mark.supports("test_up_shows_the_walkthroughs_proposal")
+def test_a_steps_sentence_comes_after_its_own_words() -> None:
+    """Given: writer's steps 2 and 3, and each Lane's sentence.
+    When: as_laid gives each Step as it'll read.
+    Then: each sentence follows its Step's own words."""
+    assert as_laid((STEP_2, STEP_3), SENTENCES) == (LAID_2, LAID_3)
+
+
+@pytest.mark.supports("test_up_shows_the_walkthroughs_proposal")
+def test_a_sentence_the_step_already_says_isnt_added() -> None:
+    """Given: writer's step 2, which already says `Run only `git log --oneline`.`.
+    When: as_laid gives it as it'll read.
+    Then: it reads unchanged, the sentence said once."""
+    assert as_laid((LAID_2,), SENTENCES) == (LAID_2,)
+
+
+@pytest.mark.supports("test_yes_lays_the_proposal_into_the_plugin")
+def test_lay_writes_each_sentence_into_its_file(plugin: str) -> None:
+    """Given: the walkthrough's changelog.
+    When: lay writes writer's steps 2 and 3 as laid.
+    Then: agents/writer.md holds them, the rest as it was, and the new Laid names each sentence."""
+    laid = lay(plugin, (LAID_2, LAID_3), "0.1.0")
+    text = w.read(os.path.join(plugin, "agents", "writer.md"))
+    assert f"2. {LAID_2.text}\n3. {LAID_3.text}\n" in text and text.startswith("---\nname: writer")
+    assert set(laid.sentences) == {
+        LaidSentence("agents/writer.md", 2, "Run only `git log --oneline`."),
+        LaidSentence("agents/writer.md", 3, "Write only `CHANGELOG.md`."),
+    }
+
+
+@pytest.mark.supports("test_a_failed_validate_puts_back_each_file")
+def test_lay_into_a_file_that_cant_be_written_is_refused(plugin: str) -> None:
+    """Given: changelog whose agents/writer.md can't be written.
+    When: lay writes writer's steps as laid.
+    Then: it raises OSError."""
+    os.chmod(os.path.join(plugin, "agents", "writer.md"), 0o444)
+    os.chmod(os.path.join(plugin, "agents"), 0o555)
+    try:
+        with pytest.raises(OSError):
+            lay(plugin, (LAID_2,), "0.1.0")
+    finally:
+        os.chmod(os.path.join(plugin, "agents"), 0o755)
+
+
+@pytest.mark.supports("test_up_shows_the_walkthroughs_proposal")
+def test_a_proposal_that_can_stand_gives_each_sentence(plugin: str) -> None:
+    """Given: the walkthrough's changelog, its Steps, and its Proposal.
+    When: check checks the Proposal.
+    Then: it gives Checked, with each Lane's sentence by its Step."""
+    checked = check(plugin, d.proposal(), read_steps(plugin))
+    assert isinstance(checked, Checked)
+    assert {k: v for k, v in checked.sentences.items() if k[0] == "agents/writer.md"} == WRITERS
+
+
+@pytest.mark.supports("test_a_lane_on_a_step_that_isnt_there_goes_back_to_up")
+@pytest.mark.parametrize(
+    "lane",
+    [
+        lambda: d.lane("writer", "agents/writer.md", 2, "run_once"),
+        lambda: dataclasses.replace(d.run_only(), step=9),
+        lambda: d.lane("writer", "agents/writer.md", 2, "run_only"),
+    ],
+    ids=["no such type", "no such Step", "a value missing"],
+)
+def test_a_lane_that_cant_stand_is_ups_to_mend(plugin: str, lane: Any) -> None:
+    """Given: the walkthrough's Proposal with one Lane of no type, on no Step, or without its value.
+    When: check checks it.
+    Then: it gives Faults, each for up to mend, none for the user."""
+    proposal = d.proposal()
+    proposal = dataclasses.replace(proposal, lanes=(*proposal.lanes, lane()))
+    faults = check(plugin, proposal, read_steps(plugin))
+    assert isinstance(faults, Faults) and faults.proposal and not faults.plugin
+
+
+@pytest.mark.supports("test_a_role_with_no_end_on_its_last_step_goes_back_to_up")
+@pytest.mark.parametrize(
+    "left_out, named",
+    [
+        (lambda: d.REVIEWER_END, "reviewer"),
+        (lambda: d.WRITE_END, "write"),
+        (lambda: d.WRITER_END, "writer"),
+    ],
+    ids=["a subagent a Route starts", "the skill", "the first subagent"],
+)
+def test_a_role_with_no_end_on_its_last_step_is_ups_to_mend(
+    plugin: str, left_out: Any, named: str
+) -> None:
+    """Given: the walkthrough's Proposal without the Lane on reviewer's, write's, or writer's last
+    Step.
+    When: check checks it.
+    Then: it gives Faults for up to mend, naming the role and ends_by_result."""
+    proposal = d.proposal()
+    lanes = tuple(x for x in proposal.lanes if x != left_out())
+    faults = check(plugin, dataclasses.replace(proposal, lanes=lanes), read_steps(plugin))
+    assert isinstance(faults, Faults) and not faults.plugin
+    assert any(named in f and "ends_by_result" in f for f in faults.proposal)
+
+
+@pytest.mark.supports("test_a_role_with_no_end_on_its_last_step_goes_back_to_up")
+@pytest.mark.parametrize(
+    "step, stands",
+    [(4, True), (3, False), (1, False)],
+    ids=["its last Step", "the Step before it", "its first Step"],
+)
+def test_an_end_on_a_step_other_than_the_roles_last_is_ups_to_mend(
+    plugin: str, step: int, stands: bool
+) -> None:
+    """Given: the walkthrough's Proposal with the Lane of ends_by_result of writer on its step 4,
+    3, or 1.
+    When: check checks it.
+    Then: it gives Checked where the Lane lies on writer's last Step, step 4, and else Faults for
+    up to mend."""
+    proposal = d.proposal()
+    lanes = tuple(
+        dataclasses.replace(x, step=step) if x == d.WRITER_END else x for x in proposal.lanes
+    )
+    given = check(plugin, dataclasses.replace(proposal, lanes=lanes), read_steps(plugin))
+    assert isinstance(given, Checked if stands else Faults)
+
+
+@pytest.mark.supports("test_a_file_that_cant_carry_the_proposal_goes_to_the_user")
+@pytest.mark.parametrize(
+    "files, named",
+    [
+        (
+            {"agents/reviewer.md": w.REVIEWER.replace("background: true\n", "")},
+            "agents/reviewer.md",
+        ),
+        ({"hooks/adapters/text.py": "print('{}')\n"}, "hooks/adapters/text.py"),
+    ],
+    ids=["a subagent not in the background", "an adapter the Proposal doesn't name"],
+)
+def test_a_file_that_cant_carry_the_proposal_is_the_users_to_fix(
+    plugin: str, files: dict[str, str], named: str
+) -> None:
+    """Given: changelog with a subagent's file that doesn't set `background: true`, or an adapter
+    the Proposal doesn't name.
+    When: check checks the walkthrough's Proposal.
+    Then: it gives Faults for the user, naming the file."""
+    w.write_files(plugin, files)
+    faults = check(plugin, d.proposal(), read_steps(plugin))
+    assert isinstance(faults, Faults) and any(named in f for f in faults.plugin)
+
+
+@pytest.mark.supports("test_up_shows_the_walkthroughs_proposal")
+def test_print_shows_the_walkthroughs_proposal_as_the_readme_does() -> None:
+    """Given: the walkthrough's Proposal, each Step as it'll read, and the ID b9fd8fd8.
+    When: render gives what lay.py print shows.
+    Then: it reads word for word as the README's walkthrough shows."""
+    steps = shown_steps()
+    assert render(d.proposal(), steps, w.README_ID).rstrip("\n") == w.SHOWN
+
+
+@pytest.mark.supports("test_what_print_showed_is_kept_in_ups_run")
+def test_a_kept_proposal_is_found_by_its_id(plugin: str) -> None:
+    """Given: the walkthrough's Proposal and Steps.
+    When: keep keeps it, and find looks for its ID.
+    Then: find gives it back, with the plugin and the Steps, from the plugin's folder of
+    Proposals."""
+    steps = read_steps(plugin)
+    pid = keep(plugin, d.proposal(), steps)
+    kept = find(plugin, pid)
+    assert kept and (kept.id, kept.proposal, kept.steps) == (pid, d.proposal(), steps)
+    folder = os.path.join(os.environ["TMPDIR"], "lane")
+    assert any(name.endswith("-changelog") for name in os.listdir(folder))
+
+
+@pytest.mark.supports("test_an_ai_writes_its_change_into_the_step_before_it_lays")
+def test_each_kept_proposal_has_its_own_id(plugin: str) -> None:
+    """Given: the walkthrough's Proposal and Steps.
+    When: keep keeps it twice.
+    Then: it gives two IDs."""
+    steps = read_steps(plugin)
+    assert keep(plugin, d.proposal(), steps) != keep(plugin, d.proposal(), steps)
+
+
+@pytest.mark.supports("test_lay_of_an_id_no_proposal_has_is_refused")
+def test_an_id_no_proposal_has_finds_none(plugin: str) -> None:
+    """Given: no Proposal kept.
+    When: find looks for b9fd8fd8.
+    Then: it gives None."""
+    assert find(plugin, "b9fd8fd8") is None
+
+
+@pytest.mark.supports("test_lay_of_an_id_no_proposal_has_is_refused")
+def test_lay_of_an_id_no_proposal_has_is_refused_by_write(plugin: str) -> None:
+    """Given: no Proposal kept.
+    When: write lays b9fd8fd8.
+    Then: it raises Refused, and changes no file."""
+    with pytest.raises(Refused):
+        write(plugin, "b9fd8fd8", d.SESSION, w.LANE)
+    assert not os.path.exists(os.path.join(plugin, "hooks"))
+
+
+@pytest.mark.supports("test_neither_yes_nor_a_change_ends_ups_run_unlaid")
+def test_lay_where_ups_run_no_longer_waits_is_refused(plugin: str) -> None:
+    """Given: the walkthrough's Proposal kept, while the conversation's run record holds no Run of
+    up that showed its ID.
+    When: write lays it.
+    Then: it raises Refused, and changes no file."""
+    pid = keep(plugin, d.proposal(), read_steps(plugin))
+    with pytest.raises(Refused):
+        write(plugin, pid, d.SESSION, w.LANE)
+    assert w.read(os.path.join(plugin, "agents", "writer.md")) == w.WRITER
+
+
+@pytest.mark.supports("test_lay_keeps_the_users_hook_entries")
+def test_lanes_entries_go_in_a_new_hooks_json(plugin: str) -> None:
+    """Given: changelog with no hooks/hooks.json.
+    When: replace_entries puts Lane's entries in.
+    Then: hooks.json holds Lane's entries alone."""
+    entries = {
+        "Stop": [
+            {
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "python3",
+                        "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/lane/hook.py"],
+                    }
+                ]
+            }
+        ]
+    }
+    replace_entries(plugin, entries)
+    assert json.loads(w.read(os.path.join(plugin, "hooks", "hooks.json")))["hooks"] == entries
+
+
+@pytest.mark.supports("test_lay_again_replaces_what_the_earlier_lay_added")
+def test_an_earlier_lanes_entries_are_replaced_and_the_users_kept(plugin: str) -> None:
+    """Given: changelog's hooks.json with an earlier Lane's Stop entry and the user's own Stop
+    entry.
+    When: replace_entries puts Lane's new entries in.
+    Then: the earlier Lane's entry is gone, the new one is there once, and the user's stands."""
+    hook = "${CLAUDE_PLUGIN_ROOT}/hooks/lane/hook.py"
+    earlier = {"type": "command", "command": "python3", "args": [hook], "timeout": 5}
+    own = {"type": "command", "command": "echo", "args": ["done"]}
+    w.write_files(
+        plugin, {"hooks/hooks.json": json.dumps({"hooks": {"Stop": [{"hooks": [earlier, own]}]}})}
+    )
+    new = {"type": "command", "command": "python3", "args": [hook], "onFailure": "block"}
+    replace_entries(plugin, {"Stop": [{"hooks": [new]}]})
+    stop = json.loads(w.read(os.path.join(plugin, "hooks", "hooks.json")))["hooks"]["Stop"]
+    held = [h for group in stop for h in group["hooks"]]
+    assert earlier not in held and held.count(new) == 1 and own in held
+
+
+@pytest.mark.supports("test_a_failed_validate_puts_back_each_file")
+def test_a_hooks_json_out_of_form_is_refused(plugin: str) -> None:
+    """Given: changelog whose hooks.json isn't JSON.
+    When: replace_entries puts Lane's entries in.
+    Then: it raises OutOfForm."""
+    w.write_files(plugin, {"hooks/hooks.json": "{"})
+    with pytest.raises(OutOfForm):
+        replace_entries(plugin, {})
+
+
+@pytest.mark.supports("test_yes_lays_the_proposal_into_the_plugin")
+def test_validate_of_a_plugin_claude_code_takes_passes(
+    plugin: str, tmp_path: Any, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Given: the double's `claude` on the PATH, and the walkthrough's changelog.
+    When: validate runs `claude plugin validate` on changelog.
+    Then: it gives passed, with what it said."""
+    monkeypatch.setenv("PATH", claude_program(str(tmp_path / "bin")))
+    given = validate(plugin)
+    assert given.passed and "Validation passed" in given.said
+
+
+@pytest.mark.supports("test_a_failed_validate_puts_back_each_file")
+@pytest.mark.parametrize(
+    "manifest, on_path",
+    [('{"name": 1}\n', True), ('{"name": "changelog"}\n', False)],
+    ids=["a manifest Claude Code doesn't take", "no claude on the PATH"],
+)
+def test_validate_that_fails_doesnt_pass(
+    plugin: str, tmp_path: Any, monkeypatch: pytest.MonkeyPatch, manifest: str, on_path: bool
+) -> None:
+    """Given: changelog whose plugin.json gives a `name` that isn't a string, with the double's
+    `claude` on the PATH; or a PATH that holds no `claude`.
+    When: validate runs `claude plugin validate` on changelog.
+    Then: it gives not passed, saying what failed."""
+    w.write_files(plugin, {".claude-plugin/plugin.json": manifest})
+    folder = claude_program(str(tmp_path / "bin")) if on_path else str(tmp_path / "empty")
+    monkeypatch.setenv("PATH", folder)
+    given = validate(plugin)
+    assert not given.passed and given.said

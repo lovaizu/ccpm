@@ -24,7 +24,10 @@ move the conversation's folder as recorded/claude-code-2.1.323-worktree.jsonl sh
 of Claude Code 2.1.323, as the comment on those records below says. Each plugin's hooks/hooks.json
 holds as it read when the conversation started, a subagent's calls among them, until the person
 types /reload-plugins, as recorded/claude-code-2.1.323-hooks-reload.jsonl and
-recorded/claude-code-2.1.325-hooks-self-reload.jsonl show. A test plays the person, the
+recorded/claude-code-2.1.325-hooks-self-reload.jsonl show. A Bash command finds the double's own
+`claude` first on its PATH, whose `claude plugin validate` gives what Claude Code's plugin
+references say, as recorded/claude-code-plugins-reference.jsonl takes it from there, so that no
+test runs the real `claude`. A test plays the person, the
 main conversation, and each subagent by the calls it makes on the double. Lane's tests and rn's
 tests share it. It takes each result from one line of a record, by `line` or `lines`, as the plugin
 guide's Test says of a double's results."""
@@ -74,6 +77,9 @@ SUBAGENT_OF_SUBAGENT = "claude-code-2.1.322-subagent-of-subagent.jsonl"
 # The record of a skill command typed while a background subagent runs, of Claude Code 2.1.325,
 # whose start sends the SubagentStart after the PostToolUse of the Agent call.
 SKILL_WHILE_SUBAGENT = "claude-code-2.1.325-skill-command-while-subagent.jsonl"
+# What Claude Code's plugin references show of `claude plugin validate`, which no record of a run
+# holds: its verdicts, and the checks of the manifest and of hooks.json that decide them.
+PLUGINS_REFERENCE = "claude-code-plugins-reference.jsonl"
 # How a subagent starts, by the order of the events of its start, as `Conversation.start` says.
 BACKGROUND, POSTED_FIRST, FOREGROUND = "background", "posted first", "foreground"
 
@@ -143,6 +149,61 @@ def bash_environment(session_id: str) -> dict[str, str]:
         for name, value in ran["environment"].items():
             added[name] = value.replace("<session_id>", session_id)
     return added
+
+
+def verdict(given: dict[str, Any], reason: str = "") -> tuple[int, str, str]:
+    """The exit code, standard output, and standard error of the verdict of `claude plugin
+    validate` that the line of the plugin references gives, with the reason in its place."""
+    return given["exit_code"], given["stdout"], given["stderr"].replace("<reason>", reason)
+
+
+def plugin_validate(argv: list[str]) -> tuple[int, str, str]:
+    """What `claude plugin validate <folder>` gives, as the plugin references say: an unexpected
+    error where the folder isn't one; a failure where a file that a check names isn't JSON or its
+    key isn't of the type the check says, a file that the check doesn't require being left out
+    where it isn't there; and else a pass. Any other command of `claude` the double doesn't give."""
+    if argv[:2] != ["plugin", "validate"] or len(argv) < 3:
+        raise SystemExit(f"the double of Claude Code gives only `claude plugin validate`: {argv}")
+    folder = argv[2]
+    if not os.path.isdir(folder):
+        unexpected = line(PLUGINS_REFERENCE, "claude plugin validate fails unexpectedly")
+        return verdict(unexpected, f"{folder} isn't a folder")
+    for check in (
+        line(PLUGINS_REFERENCE, "a manifest whose name isn't a string fails"),
+        line(PLUGINS_REFERENCE, "a hooks file without its hooks wrapper fails"),
+    ):
+        path = os.path.join(folder, check["file"])
+        if not os.path.exists(path) and not check["required"]:
+            continue
+        try:
+            with open(path, encoding="utf-8") as f:
+                value = json.load(f).get(check["key"])
+        except (OSError, ValueError, AttributeError):
+            value = None
+        if not isinstance(value, {"string": str, "object": dict}[check["type"]]):
+            return verdict(line(PLUGINS_REFERENCE, "claude plugin validate fails"))
+    return verdict(line(PLUGINS_REFERENCE, "claude plugin validate passes"))
+
+
+def claude_program(folder: str) -> str:
+    """Writes the double's own `claude` into the folder, a program that gives what
+    `plugin_validate` gives, and gives the folder."""
+    os.makedirs(folder, exist_ok=True)
+    path = os.path.join(folder, "claude")
+    here = os.path.dirname(os.path.abspath(__file__))
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(
+            f"#!{sys.executable}\n"
+            "import sys\n"
+            f"sys.path.insert(0, {here!r})\n"
+            "from claude_code import plugin_validate\n"
+            "code, out, err = plugin_validate(sys.argv[1:])\n"
+            "sys.stdout.write(out)\n"
+            "sys.stderr.write(err)\n"
+            "sys.exit(code)\n"
+        )
+    os.chmod(path, 0o755)
+    return folder
 
 
 @dataclass
@@ -643,6 +704,9 @@ class Conversation:
             return answer
         env = dict(self.env, **bash_environment(self.session_id))
         env.pop("CLAUDE_PROJECT_DIR", None)
+        # The double's own `claude` comes first, so that `claude plugin validate` runs it.
+        own = claude_program(os.path.join(self.temp, "bin"))
+        env["PATH"] = os.pathsep.join([own, env.get("PATH", os.defpath)])
         script = python_call(command)
         if script and found(shlex.split(command)[0], env):
             code, out, err = run_python(script[0], script[1:], "", env, self.cwd)
