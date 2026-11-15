@@ -283,7 +283,13 @@
       "status": "doing",
       "check": "the integration tests in dev/rn/tests/integration/test_rn_walking_skeleton.py pass, each seen to fail first",
       "good": false,
-      "decisions": []
+      "decisions": [
+        {
+          "about": "The coverage of rn's code",
+          "decided": "check.sh's coverage counts rn's code from the walking skeleton on, mapped back from each bench's copy as for Lane's, as rn's Test strategy asks 100% statement and branch coverage of its parts",
+          "by": "reasoning"
+        }
+      ]
     },
     {
       "name": "The user's /rn:up with a request gets the goal put to them, and each deliverable made in rounds until every necessary condition is good",
