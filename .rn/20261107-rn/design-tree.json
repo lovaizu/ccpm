@@ -436,7 +436,13 @@
         {
           "id": "N4",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "How the gap of a start with no work waiting is mended",
+              "decided": "in Lane's architecture, as any plugin whose work waits on its own state meets it: Lane's adapter of a start's text may answer that no work waits for that start, and the guard then drops the start from the moves due instead of giving a fault; the mend comes once Lane's walking skeleton is done, as its maker works in Lane's code now",
+              "by": "maker"
+            }
+          ]
         }
       ]
     },
