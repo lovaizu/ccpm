@@ -82,6 +82,15 @@ that none of them holds:
 {"running": [{"role": "<subagent>", "text": "<its text>", "values": {}}]}
 ```
 
+Where no work waits for the subagent, such as while all of it waits for the person's approval, the
+adapter prints why in place of a text:
+
+```json
+{"none": "<why no work waits>"}
+```
+
+Lane then leaves that start out of the moves due, and gives the main conversation why in its place.
+
 ### The results your plugin keeps
 
 Lane keeps each run's starts and results in a record in the system's temporary folder. So a run

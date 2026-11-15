@@ -375,6 +375,9 @@ sequenceDiagram
       G->>A: asks for the text of each start due, with each Start that runs
       alt it gives one
         A-->>G: the text, and the run values
+      else it gives none, as no work waits for that start
+        A-->>G: why
+        G->>G: leaves that start out of the moves due, with why in its place
       else it fails at the skill's call
         A-->>G: why
         G->>G: gives that start with why, and lets the call run

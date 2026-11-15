@@ -242,13 +242,39 @@
       "name": "Lane's developers see, before anyone writes a body, whether Lane's parts fit together as its architecture draws",
       "path": "plugins/lane",
       "kind": "software-design",
-      "status": "done"
+      "status": "doing",
+      "necessary_conditions": [
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The adapter of a start's text giving none",
+              "decided": "adapters.start_text gives that no work waits for the start, with why, where the adapter prints {\"none\": <why>}, and the guard leaves the start out of the moves due with why in its place, as Lane's S5 now draws for a plugin whose work waits on its own state, such as rn's",
+              "by": "maker"
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "Lane's developers see, before anyone builds a part, whether Lane's parts joined as its architecture draws give each key result",
       "path": "dev/lane/tests",
       "kind": "test-design",
-      "status": "done"
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The cases of an adapter's none",
+              "decided": "a case of S5's new branch, an adapter that gives none for a start, and the unit cases of adapters.start_text that it rests on, once the skeleton takes the branch",
+              "by": "maker"
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "A person's /lane:up lays a lane that stops a subagent's command outside its step with the step's sentence, and the run starts that subagent and ends on its result",
