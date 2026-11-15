@@ -21,6 +21,17 @@ CREDENTIALS = os.path.join(
     os.environ.get("CLAUDE_CONFIG_DIR") or os.path.expanduser("~/.claude"), ".credentials.json"
 )
 
+# The settings by which the developer's machine reaches the model, such as a proxy that a sandbox
+# puts in front of it and through which the login works, which a bench's own environment leaves out.
+NETWORK = {
+    "HTTPS_PROXY",
+    "HTTP_PROXY",
+    "NO_PROXY",
+    "NODE_USE_ENV_PROXY",
+    "NODE_EXTRA_CA_CERTS",
+    "SSL_CERT_FILE",
+}
+
 # A case that runs the real Claude Code runs on the developer's login alone, so it is skipped
 # without one.
 NEEDS_LOGIN = pytest.mark.skipif(
@@ -71,11 +82,13 @@ def judged(prompt: str) -> Any:
 
 def logged_in(env: Mapping[str, str]) -> dict[str, str]:
     """The environment with the developer's login: the token where it is set, or else a copy of
-    the credentials file in the configuration folder that env names."""
+    the credentials file in the configuration folder that env names; and with the settings by
+    which the developer's machine reaches the model, as NETWORK names them."""
+    network = {name: value for name, value in os.environ.items() if name.upper() in NETWORK}
     token = os.environ.get(TOKEN)
     if token:
-        return dict(env, **{TOKEN: token})
+        return dict(env, **network, **{TOKEN: token})
     config = env["CLAUDE_CONFIG_DIR"]
     os.makedirs(config, exist_ok=True)
     shutil.copyfile(CREDENTIALS, os.path.join(config, ".credentials.json"))
-    return dict(env)
+    return dict(env, **network)

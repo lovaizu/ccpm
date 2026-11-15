@@ -3,11 +3,12 @@ strategy says: up alone on Opus by `claude -p`, in a throwaway copy of tally wit
 changelog, each case run RUNS times, a run a test of its own, and the developer adds runs until one
 more changes no case's count. Each case reads by code what up's record shows: the Proposal that
 lay.py print kept, its Lanes and Routes, and the Steps' files. They run on the developer's login, so
-a case without CLAUDE_CODE_OAUTH_TOKEN is skipped."""
+a case without it is skipped, as opus.NEEDS_LOGIN says."""
 
 from __future__ import annotations
 
 import glob
+import json
 import os
 from typing import Any
 
@@ -15,21 +16,37 @@ import opus
 import pytest
 import walkthrough as w
 
-pytestmark = [
-    pytest.mark.xfail(strict=True, reason="up's steps are empty"),
-    opus.NEEDS_LOGIN,
-]
+pytestmark = opus.NEEDS_LOGIN
 
 RUNS = 5
 
 
 def up(tmp: str, prompt: str, files: dict[str, str] | None = None) -> tuple[w.Bench, str]:
     """Runs the prompt on Opus, with Lane and changelog loaded, in a throwaway tally, and gives the
-    bench with what Claude Code printed."""
+    bench with the run's last message. The run's record, each event as Claude Code streamed it, is
+    kept in the case's folder as record.jsonl, and its path printed, which pytest shows where the
+    case fails, so that the maintainer reads what the AI did and tells a fault of up from one of
+    the case."""
     b = w.bench(tmp, files)
     env = dict(b.env, CLAUDE_CONFIG_DIR=os.path.join(tmp, "config"))
     flags = ["--plugin-dir", b.lane, "--plugin-dir", b.changelog]
-    return b, opus.prompted(prompt, b.repo, env, flags, 900)
+    record = opus.prompted(
+        prompt, b.repo, env, [*flags, "--output-format", "stream-json", "--verbose"], 900
+    )
+    path = os.path.join(tmp, "record.jsonl")
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(record)
+    print(f"record: {path}")
+    ended = last_result(record)
+    assert ended.get("terminal_reason") != "api_error", f"the run reached no model: {path}"
+    return b, str(ended.get("result", ""))
+
+
+def last_result(record: str) -> dict[str, Any]:
+    """The record's last result event, which holds the run's last message, or an empty one where
+    the run gave none."""
+    events = [json.loads(line) for line in record.splitlines() if line.startswith("{")]
+    return next((e for e in reversed(events) if e.get("type") == "result"), {})
 
 
 def kept(b: w.Bench, printed: str) -> Any:
