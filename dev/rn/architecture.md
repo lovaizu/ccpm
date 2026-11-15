@@ -2,19 +2,15 @@
 
 ## User stories
 
-- S1: the user wants to ask for what they need in their own words, so that they get what they
-  mean without a specification.
-- S2: the user wants to decide only the points that are theirs, one at a time, so that they spend
-  time only on those.
-- S3: the user wants to approve or say what to change at each sign-off, so that nothing rests on
-  what they didn't mean.
+- S1: the user wants to ask in their own words, so that they get what they mean unspecified.
+- S2: the user wants to decide only their own points, one at a time, so that their time goes there.
+- S3: the user wants to approve or ask a change at each sign-off, so that nothing rests on a
+  misreading.
 - S4: the user wants to pause a run at any moment, so that they lose neither time nor work.
-- S5: the user wants to go on with a paused run in any conversation, so that it goes on where it
-  stopped.
-- S6: the user wants one pull request, with rn's decisions and the run's lessons, so that they
-  merge knowing what it holds.
-- S7: each of rn's developers wants each lesson that a user signs off in rn's issues, so that they
-  improve rn.
+- S5: the user wants to resume a paused run in any conversation, so that it goes on where it stopped.
+- S6: the user wants one pull request with rn's decisions and lessons, so that they merge knowing
+  its content.
+- S7: each of rn's developers wants each signed-off lesson in rn's issues, so that they improve rn.
 
 ## Solution strategy
 

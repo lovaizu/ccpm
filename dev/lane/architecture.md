@@ -2,13 +2,13 @@
 
 ## User stories
 
-- S1: the user wants to read what Lane would hold in their plugin before it changes anything, so
-  that nothing holds their plugin unread.
+- S1: the user wants to read what Lane would hold before any change, so that nothing holds their
+  plugin unread.
 - S2: the user wants to approve the proposal or ask a change, so that Lane lays only what they
   approved.
 - S3: the user, as an AI, wants to approve by its own act, so that it waits for no person.
-- S4: the user wants the checks to follow their steps again after they change them, so that the
-  checks hold the steps as they read.
+- S4: the user wants the checks to follow their changed steps, so that the checks match the steps
+  as written.
 - S5: the user wants their plugin's subagents to start in the order they designed, so that results
   move the run.
 - S6: the user wants each subagent held to its steps, so that one that leaves a step goes back.
