@@ -558,6 +558,8 @@ plugins/rn/
 │   ├── repository/                the code of repository, a module for each tool it runs
 │   ├── record/                    the code of record.py, a module for each decision it makes
 │   ├── record.schema.json         the form of a Record, which record.py decides
+│   ├── template/                  the code of template.py, which holds a document to its kind's
+│   │                              template, alone or within record.py's check of a deliverable
 │   ├── fault.py                   how tree.py, record.py, throwaway.py, repository, and the
 │   │                              adapters say why they stopped, and how each command ends
 │   ├── throwaway.py               the code of throwaway.py
@@ -565,6 +567,7 @@ plugins/rn/
 ├── scripts/
 │   ├── tree.py                    runs the code of tree.py
 │   ├── record.py                  runs the code of record.py
+│   ├── template.py                runs the code of template.py
 │   └── throwaway.py               runs the code of throwaway.py
 ├── hooks/
 │   ├── hooks.json                 starts the guard on each call

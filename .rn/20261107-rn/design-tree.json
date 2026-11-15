@@ -78,57 +78,9 @@
     },
     {
       "name": "Each document of ccpm made by a best practice holds its kind's template and nothing beside it, as rn's check finds each place where one leaves it",
-      "path": "plugins/rn/domain/record/template.py",
+      "path": "plugins/rn/domain/template",
       "kind": "code",
-      "status": "doing",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Standing alone",
-              "decided": "the template check is a pure check of a document against its kind's template, so it stands apart from rn's parts not yet built: a command of its own with no other command beside it, tests that name no case of rn's, and check.sh running it on ccpm's product visions, READMEs, and architectures, which it never did",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N4",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": true,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "rn's product vision says what rn is for",
@@ -158,7 +110,7 @@
       ],
       "preconditions": [
         "plugins/rn/domain/best-practices/architecture",
-        "plugins/rn/domain/record/template.py"
+        "plugins/rn/domain/template"
       ],
       "status": "doing",
       "necessary_conditions": [
@@ -284,7 +236,7 @@
       ],
       "preconditions": [
         "plugins/rn/domain/best-practices/architecture",
-        "plugins/rn/domain/record/template.py"
+        "plugins/rn/domain/template"
       ],
       "status": "doing",
       "necessary_conditions": [
