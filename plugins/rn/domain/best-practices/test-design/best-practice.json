@@ -14,7 +14,7 @@
             "items": [
               {
                 "at": "decide",
-                "text": "Open the product vision, the README, the architecture, and the skeleton, and read each to its end: the key results, the walkthrough, Test strategy with its levels and tools, and each interface that the skeleton offers.",
+                "text": "Open the product vision, the README, the architecture, and the skeleton, and read each to its end: the key results, the walkthrough, Test strategy with its levels and tools, each interface that the skeleton offers, and each double and tool that Test strategy names for the tests to run the parts and the product with, such as a double of the host.",
                 "trace": {
                   "action": "read",
                   "takes": [
@@ -40,7 +40,7 @@
               },
               {
                 "at": "make",
-                "text": "For each rule of Solution strategy, write a case where the parts keep it and one where a part breaks it, so that the case can be seen to fail with the part that holds the rule taken out."
+                "text": "For each rule of Solution strategy, write a case where the parts keep it, which can be run again with the part that holds the rule taken out, to see it fail, such as by the script that checks the trace."
               },
               {
                 "at": "make",
@@ -90,7 +90,7 @@
               },
               {
                 "at": "make",
-                "text": "Run the tests and the type checker that Test strategy names, and see every case fail for the reason its Then names: a type that doesn't fit across a handoff is a gap that N6 lists, and a case that passes on an empty body tests nothing."
+                "text": "Run the tests and the type checker that Test strategy names, and see every case fail at an empty body, not at a fault of the test or a file that the skeleton lacks: a type that doesn't fit across a handoff is a gap that N6 lists, and a case that passes on an empty body tests nothing. Leave unrun a case that runs the real host or a model, which only the type checker reads at this point."
               }
             ]
           }

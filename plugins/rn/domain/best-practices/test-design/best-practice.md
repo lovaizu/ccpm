@@ -33,7 +33,7 @@ Does each key result have an E2E case that runs an objective's main use at the s
 
 The developers know that the product does what its product vision promises only where a case runs it as its users do, and a case written before any part is built fixes what the parts together must give. ISTQB's test analysis takes each test condition from the test basis, here each key result.
 
-1. *While deciding.* Open the product vision, the README, the architecture, and the skeleton, and read each to its end: the key results, the walkthrough, Test strategy with its levels and tools, and each interface that the skeleton offers. The trace: `{inputs}` read to its end.
+1. *While deciding.* Open the product vision, the README, the architecture, and the skeleton, and read each to its end: the key results, the walkthrough, Test strategy with its levels and tools, each interface that the skeleton offers, and each double and tool that Test strategy names for the tests to run the parts and the product with, such as a double of the host. The trace: `{inputs}` read to its end.
 2. *While making.* For each key result, write a case that runs the main use of its objective, as the README's walkthrough shows it, at the size of a real request, and names the key result, such as `KR1.1`.
 
 ### N2
@@ -43,7 +43,7 @@ Does each element of the architecture, each path through each sequence, each rul
 An element that no case reaches is one whose parts no one has seen fit together, and a case written through the skeleton before any body shows a gap between the parts while it's still cheap to mend. Steve Freeman and Nat Pryce's outside-in test-driven development, in [Growing Object-Oriented Software, Guided by Tests](http://www.growing-object-oriented-software.com/), finds each part's roles by first writing the tests one level up.
 
 1. *While making.* For each story's sequence, write a case for each path through it: the main flow, each branch, each step that sends work back, and each question put to the role, until every move from one step to the next lies on some path.
-2. *While making.* For each rule of Solution strategy, write a case where the parts keep it and one where a part breaks it, so that the case can be seen to fail with the part that holds the rule taken out.
+2. *While making.* For each rule of Solution strategy, write a case where the parts keep it, which can be run again with the part that holds the rule taken out, to see it fail, such as by the script that checks the trace.
 3. *While making.* For each decision that a component alone makes, write a case that shows it, and for each handoff between parts, a case with the data it passes as Data model names it, until each kind of data lies on some case.
 
 ### N3
@@ -64,7 +64,7 @@ Is each case a test in the test code, with its Given, When, and Then stated, tha
 A case kept as a test is the one statement of what a part must do, and a case that passes on an empty body tests nothing. Dan North's [behaviour-driven development](https://dannorth.net/introducing-bdd/) writes each scenario as Given, When, and Then.
 
 1. *While making.* Write each case as a test in the place that Directory structure names for its level, in the form that the note of its section in the template gives, and write no list of the cases in a document, since a list beside the code says each case twice.
-2. *While making.* Run the tests and the type checker that Test strategy names, and see every case fail for the reason its Then names: a type that doesn't fit across a handoff is a gap that N6 lists, and a case that passes on an empty body tests nothing.
+2. *While making.* Run the tests and the type checker that Test strategy names, and see every case fail at an empty body, not at a fault of the test or a file that the skeleton lacks: a type that doesn't fit across a handoff is a gap that N6 lists, and a case that passes on an empty body tests nothing. Leave unrun a case that runs the real host or a model, which only the type checker reads at this point.
 
 ### N5
 
