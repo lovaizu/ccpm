@@ -33,7 +33,8 @@ class Kept:
 
 @dataclass(frozen=True)
 class Broken:
-    """The Call, start, or end breaks a Lane: the Lane, its sentence, and what the role may do."""
+    """The Call, start, or end breaks a Lane: the Lane, its sentence, and what the role may do, each
+    with `${CLAUDE_PLUGIN_ROOT}` as the plugin's folder, as the stop reaches the role."""
 
     lane: Lane
     sentence: str
@@ -54,11 +55,13 @@ Verdict = Union[Kept, Broken, CantCheck]
 
 @dataclass(frozen=True)
 class Held:
-    """What a Lane holds a Call or an end to: the Run, and the Start whose role makes it, None for
-    the main conversation, whose run values are then none."""
+    """What a Lane holds a Call or an end to: the Run, the Start whose role makes it, None for the
+    main conversation, whose run values are then none, and the plugin's folder, which
+    `${CLAUDE_PLUGIN_ROOT}` names in a sentence and in a run of its result script."""
 
     run: Run
     start: Start | None
+    root: str
 
 
 class LaneType(Protocol):
@@ -68,8 +71,9 @@ class LaneType(Protocol):
         """What lay.py types shows of the type."""
         ...
 
-    def faults(self, lane: Lane) -> tuple[str, ...]:
-        """Each fault of a Lane of this type, such as a value it lacks; none where it can stand."""
+    def faults(self, lane: Lane, last_step: int, routes: Sequence[Route]) -> tuple[str, ...]:
+        """Each fault of a Lane of this type, such as a value it lacks or a Step it doesn't suit, by
+        the number of its role's last Step and the Proposal's Routes; none where it can stand."""
         ...
 
     def sentence(self, lane: Lane, routes: Sequence[Route]) -> str:

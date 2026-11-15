@@ -130,10 +130,11 @@ class Placed:
     agent_id: str | None
 
 
-def place(event: Event, conversation: Conversation, lanes: LanesFile) -> Placed:
+def place(event: Event, conversation: Conversation, lanes: LanesFile, root: str) -> Placed:
     """The event as Lane's data, on its Runs and its Start.
 
-    Takes: the event, the Conversation as it stands, and the plugin's lanes.json.
+    Takes: the event, the Conversation as it stands, the plugin's lanes.json, and the plugin's
+    folder, by which `script_calls.result_args` reads a run of its result script.
     Gives: what the event is, with no `what` for an event that Lane hooks only for another state;
     for the main conversation's event, each Run of the conversation that isn't aside; for a
     subagent's event, the Run of the Start tied to its agent_id; for a call of lay.py write, the Run
@@ -143,4 +144,4 @@ def place(event: Event, conversation: Conversation, lanes: LanesFile) -> Placed:
     Refuses: nothing.
     Carries: the placing of each `CC->>G` arrow of S1 to S7 on its Run, Start, and role.
     """
-    raise NotImplementedError
+    raise NotImplementedError("place.place")

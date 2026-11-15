@@ -27,15 +27,15 @@ class Routes:
 
         Carries: S1 `L->>T: each type`.
         """
-        raise NotImplementedError
+        raise NotImplementedError("routes.Routes.info")
 
-    def faults(self, lane: Lane) -> tuple[str, ...]:
+    def faults(self, lane: Lane, last_step: int, routes: Sequence[Route]) -> tuple[str, ...]:
         """Each fault of a Lane of this type, such as a Step of a subagent, as the Lane holds only a
         skill's Step.
 
         Carries: S1 `L->>T: checks each Lane, and makes its sentence`.
         """
-        raise NotImplementedError
+        raise NotImplementedError("routes.Routes.faults")
 
     def sentence(self, lane: Lane, routes: Sequence[Route]) -> str:
         """The sentence that the Lane lays on the skill's Step: `Start each subagent you are told to
@@ -44,7 +44,7 @@ class Routes:
         Carries: S1 `L->>T: checks each Lane, and makes its sentence`, and the sentence of each
         Broken.
         """
-        raise NotImplementedError
+        raise NotImplementedError("routes.Routes.sentence")
 
     def allows(self, lane: Lane, call: Call, held: Held) -> bool | None:
         """None: the Lane judges no Call, as the skill's result script is the Lane on its last
@@ -52,7 +52,7 @@ class Routes:
 
         Carries: the Call checks of S2, S5, and S6.
         """
-        raise NotImplementedError
+        raise NotImplementedError("routes.Routes.allows")
 
     def check_start(self, lane: Lane, asked: StartCall, held: Held, due: Sequence[Due]) -> Verdict:
         """The check of the main conversation's start or resume against the moves due.
@@ -67,14 +67,14 @@ class Routes:
         Carries: S5 `G->>T: checks the start by the Lane of the skill's Routes, with the moves due`,
         and its `alt a start due`, `else a resume`, and `else any other start`.
         """
-        raise NotImplementedError
+        raise NotImplementedError("routes.Routes.check_start")
 
     def check_end(self, lane: Lane, end: EndAsked, held: Held) -> Verdict:
         """Kept: the main conversation's end is held by the moves due, which the guard checks.
 
         Carries: S5 `G->>T: checks the end by each Lane of each Run's skill`.
         """
-        raise NotImplementedError
+        raise NotImplementedError("routes.Routes.check_end")
 
 
 TYPE = Routes()

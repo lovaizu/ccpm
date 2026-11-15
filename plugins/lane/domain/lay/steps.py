@@ -27,4 +27,4 @@ def read_steps(plugin: str) -> tuple[Step, ...]:
     Refuses: FileNotFoundError, where the folder isn't there.
     Carries: S1 `L->>ST: reads each Step`, S4 `L->>ST: reads each Step`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("steps.read_steps")

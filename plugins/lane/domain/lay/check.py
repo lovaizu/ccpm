@@ -34,7 +34,8 @@ def check(plugin: str, proposal: Proposal, steps: Sequence[Step]) -> Checked | F
     """Whether the Proposal can be laid in the plugin, with each Lane's sentence where it can.
 
     Takes: the plugin's folder, the Proposal, and the Steps without the Laid's text.
-    Gives: Checked, with each Lane's sentence from `lanes.sentence` with the Proposal's Routes; or
+    Gives: Checked, with each Lane's sentence from `lanes.sentence` with its role's last Step and the
+    Proposal's Routes; or
     Faults, where a Lane is refused, a role or skill lacks the Lane on its last Step, or the
     plugin's files can't carry the Proposal.
     Changes: nothing.
@@ -43,4 +44,4 @@ def check(plugin: str, proposal: Proposal, steps: Sequence[Step]) -> Checked | F
     against the plugin's files`, and its `alt the Proposal can't stand` and `else a file of the
     plugin can't carry it`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("check.check")

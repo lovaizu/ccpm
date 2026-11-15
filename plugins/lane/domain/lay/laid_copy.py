@@ -19,4 +19,4 @@ def read_laid(plugin: str) -> Laid:
     Carries: S1 `L->>LS: reads the Laid`, S4 `L->>LS: reads the Laid by the guard's code in its
     hooks/lane/, the form of the Lane that laid it`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("laid_copy.read_laid")

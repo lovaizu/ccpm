@@ -55,7 +55,7 @@ def start_text(
     Carries: S5 `G->>A: asks for the text of each start due, with each Start that runs`, and its
     `A-->>G` answers.
     """
-    raise NotImplementedError
+    raise NotImplementedError("adapters.start_text")
 
 
 def kept_results(program: str, words: str, cwd: str) -> tuple[KeptResult, ...]:
@@ -70,4 +70,4 @@ def kept_results(program: str, words: str, cwd: str) -> tuple[KeptResult, ...]:
     Refuses: AdapterFailed.
     Carries: S7 `G->>A: asks for the Kept results, with those words`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("adapters.kept_results")

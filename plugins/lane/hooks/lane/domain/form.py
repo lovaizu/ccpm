@@ -122,7 +122,7 @@ def proposal_form() -> dict[str, Any]:
     Refuses: nothing; a lanes.schema.json that can't be read is a fault of Lane's own folder.
     Carries: S1 `L-->>UP: the types, and the form of a Proposal`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("form.proposal_form")
 
 
 def read_proposal(text: str) -> Proposal:
@@ -135,7 +135,7 @@ def read_proposal(text: str) -> Proposal:
     mends the Proposal.
     Carries: S1 `UP->>L: print (Proposal)`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("form.read_proposal")
 
 
 def read_lanes(path: str) -> LanesFile:
@@ -150,7 +150,7 @@ def read_lanes(path: str) -> LanesFile:
     reads the Laid by the guard's code in its hooks/lane/`, as the plugin's copy of this code
     reads it for a later lay.py.
     """
-    raise NotImplementedError
+    raise NotImplementedError("form.read_lanes")
 
 
 def write_lanes(path: str, lanes: LanesFile) -> None:
@@ -163,4 +163,4 @@ def write_lanes(path: str, lanes: LanesFile) -> None:
     changed.
     Carries: S2 `L->>G: writes lanes.json through the guard's code`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("form.write_lanes")

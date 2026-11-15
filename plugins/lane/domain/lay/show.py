@@ -21,4 +21,4 @@ def render(proposal: Proposal, steps: Sequence[Step], proposal_id: str) -> str:
     Refuses: nothing.
     Carries: S1 `L-->>UP: the Routes, each Step as it'll read, and the ID`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("show.render")

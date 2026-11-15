@@ -45,4 +45,4 @@ def handle(event: Event, root: str) -> Answer:
     skill's call, whose start it gives with why while it lets the call run.
     Carries: each `CC->>G` arrow of S1 to S7, and each `G-->>` answer.
     """
-    raise NotImplementedError
+    raise NotImplementedError("guard.handle")

@@ -25,4 +25,4 @@ def validate(plugin: str) -> Validation:
     Carries: S2 `L->>CC: claude plugin validate <plugin>`, and its `alt it fails` and `else it
     passes`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("claude.validate")

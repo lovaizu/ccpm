@@ -15,7 +15,7 @@ def due(plugin: str, moves: Sequence[Due]) -> str:
 
     Carries: S5 `G-->>M: the moves due, each start with its text`, S7 `G-->>M: the start due`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("answers.due")
 
 
 def gave(plugin: str, role: str, result: str, moves: Sequence[Due]) -> str:
@@ -23,7 +23,7 @@ def gave(plugin: str, role: str, result: str, moves: Sequence[Due]) -> str:
 
     Carries: S5 `G-->>M: the Result, and the moves of its Route`, and `start no more subagents`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("answers.gave")
 
 
 def ended_unheld(plugin: str, role: str, moves: Sequence[Due]) -> str:
@@ -31,7 +31,7 @@ def ended_unheld(plugin: str, role: str, moves: Sequence[Due]) -> str:
 
     Carries: S5 `G-->>M: that it ended with no Result, and its start due again`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("answers.ended_unheld")
 
 
 def stopped(plugin: str, broken: Broken) -> str:
@@ -39,7 +39,7 @@ def stopped(plugin: str, broken: Broken) -> str:
 
     Carries: S2 `G-->>UP: stops it`, S5 `G-->>M: stops it`, S6 `G-->>SA: stops it`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("answers.stopped")
 
 
 def cant_check(plugin: str, cant: CantCheck) -> str:
@@ -48,4 +48,4 @@ def cant_check(plugin: str, cant: CantCheck) -> str:
     Carries: S5 `G-->>M: why and who must fix it`, S6 `G-->>SA: stops it, with why and who must fix
     it`, S7 `G-->>U: stops the command, with why and who must fix it`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("answers.cant_check")

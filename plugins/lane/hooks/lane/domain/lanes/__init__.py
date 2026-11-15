@@ -33,19 +33,19 @@ def types() -> tuple[TypeInfo, ...]:
     Refuses: nothing.
     Carries: S1 `L->>T: each type`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("lanes.types")
 
 
-def sentence(lane: Lane, routes: Sequence[Route]) -> str:
+def sentence(lane: Lane, last_step: int, routes: Sequence[Route]) -> str:
     """The Lane's sentence, once its type finds no fault in it.
 
-    Takes: a Lane of a Proposal, and the Proposal's Routes.
+    Takes: a Lane of a Proposal, the number of its role's last Step, and the Proposal's Routes.
     Gives: the sentence that the Lane lays on its Step.
     Changes: nothing.
     Refuses: LaneRefused, where no type has the Lane's name or its type finds a fault.
     Carries: S1 `L->>T: checks each Lane, and makes its sentence`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("lanes.sentence")
 
 
 def check_start(lanes: Sequence[Lane], asked: StartCall, held: Held, due: Sequence[Due]) -> Verdict:
@@ -63,7 +63,7 @@ def check_start(lanes: Sequence[Lane], asked: StartCall, held: Held, due: Sequen
     Carries: S5 `G->>T: checks the start by the Lane of the skill's Routes, with the moves due`,
     and S6 `else it starts a role of the plugin`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("lanes.check_start")
 
 
 def check_call(lanes: Sequence[Lane], call: Call, held: Held) -> Verdict:
@@ -80,7 +80,7 @@ def check_call(lanes: Sequence[Lane], call: Call, held: Held) -> Verdict:
     `G->>T: checks the Call by each Lane of each Run's skill`, S6 `G->>T: checks the Call by each
     Lane of the role, with the Start's run values`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("lanes.check_call")
 
 
 def check_end(lanes: Sequence[Lane], end: EndAsked, held: Held) -> Verdict:
@@ -95,4 +95,4 @@ def check_end(lanes: Sequence[Lane], end: EndAsked, held: Held) -> Verdict:
     Carries: S2 `G->>T: checks the end by each Lane of up`, S5 `G->>T: checks the end by each Lane
     of each Run's skill`, S6 `G->>T: checks the end by each Lane of the role`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("lanes.check_end")

@@ -26,14 +26,14 @@ class LaysAfterReply:
 
         Carries: S1 `L->>T: each type`.
         """
-        raise NotImplementedError
+        raise NotImplementedError("lays_after_reply.LaysAfterReply.info")
 
-    def faults(self, lane: Lane) -> tuple[str, ...]:
+    def faults(self, lane: Lane, last_step: int, routes: Sequence[Route]) -> tuple[str, ...]:
         """Each fault of a Lane of this type, such as a Step of a role other than up.
 
         Carries: S1 `L->>T: checks each Lane, and makes its sentence`.
         """
-        raise NotImplementedError
+        raise NotImplementedError("lays_after_reply.LaysAfterReply.faults")
 
     def sentence(self, lane: Lane, routes: Sequence[Route]) -> str:
         """The sentence that the Lane lays on up's Step, which names no value.
@@ -41,7 +41,7 @@ class LaysAfterReply:
         Carries: S1 `L->>T: checks each Lane, and makes its sentence`, and the sentence of each
         Broken.
         """
-        raise NotImplementedError
+        raise NotImplementedError("lays_after_reply.LaysAfterReply.sentence")
 
     def allows(self, lane: Lane, call: Call, held: Held) -> bool | None:
         """False for a call of lay.py write in a person's Run with no Approval of its ID since the
@@ -49,14 +49,14 @@ class LaysAfterReply:
 
         Carries: the Call checks of S2, S5, and S6.
         """
-        raise NotImplementedError
+        raise NotImplementedError("lays_after_reply.LaysAfterReply.allows")
 
     def check_start(self, lane: Lane, asked: StartCall, held: Held, due: Sequence[Due]) -> Verdict:
         """Kept: the Lane checks no start.
 
         Carries: S5 `G->>T: checks the start by the Lane of the skill's Routes, with the moves due`.
         """
-        raise NotImplementedError
+        raise NotImplementedError("lays_after_reply.LaysAfterReply.check_start")
 
     def check_end(self, lane: Lane, end: EndAsked, held: Held) -> Verdict:
         """Kept: the Lane checks no end.
@@ -64,7 +64,7 @@ class LaysAfterReply:
         Carries: S2 `G->>T: checks the end by each Lane of up`, S5 `G->>T: checks the end by each
         Lane of each Run's skill`, S6 `G->>T: checks the end by each Lane of the role`.
         """
-        raise NotImplementedError
+        raise NotImplementedError("lays_after_reply.LaysAfterReply.check_end")
 
 
 TYPE = LaysAfterReply()

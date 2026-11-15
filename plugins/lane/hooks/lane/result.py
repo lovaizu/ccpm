@@ -29,7 +29,7 @@ def main(argv: Sequence[str], env: Mapping[str, str], root: str) -> tuple[int, s
     Carries: S6 `SA->>R: result.py <role> <result>`, `R->>G: asks where each Run stands`, and
     `R-->>SA: exits 0` or `refuses it, with the Results it may give`; S2 and S5's `result.py`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("result.main")
 
 
 if __name__ == "__main__":

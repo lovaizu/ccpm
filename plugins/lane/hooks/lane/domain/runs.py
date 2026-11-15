@@ -95,7 +95,7 @@ def stand(session_id: str, lines: Sequence[Line], routes: Sequence[Route]) -> Co
     Carries: the guard's working out of each Run on each event of S1 to S7, from `G->>RS: reads
     the lines`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("runs.stand")
 
 
 def where(root: str, session_id: str) -> Conversation:
@@ -109,7 +109,7 @@ def where(root: str, session_id: str) -> Conversation:
     that the script refuses with why.
     Carries: S2 `L->>G: asks where up's Run stands`, S6 `R->>G: asks where each Run stands`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("runs.where")
 
 
 def may_give(conversation: Conversation, role: str, routes: Sequence[Route]) -> tuple[str, ...]:
@@ -123,7 +123,7 @@ def may_give(conversation: Conversation, role: str, routes: Sequence[Route]) -> 
     Refuses: nothing.
     Carries: S6 `alt a Result the role may give`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("runs.may_give")
 
 
 def pick_up(routes: Sequence[Route], skill: str, kept: Sequence[KeptResult]) -> tuple[Result, ...]:
@@ -136,4 +136,4 @@ def pick_up(routes: Sequence[Route], skill: str, kept: Sequence[KeptResult]) -> 
     Refuses: OffRoutes, where a Kept result isn't one that the Routes lead to.
     Carries: S7 `alt results that follow the Routes` and `results that don't follow them`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("runs.pick_up")

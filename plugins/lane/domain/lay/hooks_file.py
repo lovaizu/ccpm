@@ -18,4 +18,4 @@ def replace_entries(plugin: str, entries: Mapping[str, Any]) -> None:
     where it can't be written.
     Carries: S2 `L->>LS: replaces Lane's hook entries, as the guard's code names them`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("hooks_file.replace_entries")

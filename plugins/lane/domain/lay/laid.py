@@ -33,7 +33,7 @@ def strip(steps: Sequence[Step], laid: Laid) -> tuple[tuple[Step, ...], tuple[No
     Carries: S1 `L-->>UP: each Step without the text that the Laid names`, S4's loop over each
     sentence that the Laid added, and `L-->>UP: each Step that remains, with the notes`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("laid.strip")
 
 
 def as_laid(steps: Sequence[Step], sentences: Mapping[tuple[str, int], str]) -> tuple[Step, ...]:
@@ -47,7 +47,7 @@ def as_laid(steps: Sequence[Step], sentences: Mapping[tuple[str, int], str]) -> 
     Refuses: nothing.
     Carries: S1 `L-->>UP: the Routes, each Step as it'll read, and the ID`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("laid.as_laid")
 
 
 def lay(plugin: str, steps: Sequence[Step], version: str) -> Laid:
@@ -59,4 +59,4 @@ def lay(plugin: str, steps: Sequence[Step], version: str) -> Laid:
     Refuses: OSError, where a file can't be written, so that lay.py write puts back each file.
     Carries: S2 `L->>ST: writes each Lane's sentence in place of the Laid's`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("laid.lay")

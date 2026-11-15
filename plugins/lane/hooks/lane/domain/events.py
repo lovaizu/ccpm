@@ -62,7 +62,7 @@ def read_event(text: str) -> Event:
     Refuses: NotAnEvent, where the text isn't JSON or lacks `hook_event_name` or `session_id`.
     Carries: each `CC->>G` arrow of S1 to S7, as it comes in.
     """
-    raise NotImplementedError
+    raise NotImplementedError("events.read_event")
 
 
 def write_answer(event: Event, answer: Answer) -> Output:
@@ -77,7 +77,7 @@ def write_answer(event: Event, answer: Answer) -> Output:
     Carries: each `G-->>` arrow of S1 to S7 that reaches a role, the main conversation, or the
     person through Claude Code.
     """
-    raise NotImplementedError
+    raise NotImplementedError("events.write_answer")
 
 
 def hook_entries() -> dict[str, Any]:
@@ -92,4 +92,4 @@ def hook_entries() -> dict[str, Any]:
     Refuses: nothing.
     Carries: S2 `L->>LS: replaces Lane's hook entries, as the guard's code names them`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("events.hook_entries")

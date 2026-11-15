@@ -30,7 +30,7 @@ def keep(plugin: str, proposal: Proposal, steps: tuple[Step, ...]) -> str:
     Refuses: OSError, where it can't be written.
     Carries: S1 `L->>P: keeps the Proposal by its ID`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("proposals.keep")
 
 
 def find(plugin: str, proposal_id: str) -> KeptProposal | None:
@@ -42,4 +42,4 @@ def find(plugin: str, proposal_id: str) -> KeptProposal | None:
     Refuses: form.OutOfForm, where the kept file isn't in its form.
     Carries: S2 `L->>P: reads the Proposal by its ID`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("proposals.find")

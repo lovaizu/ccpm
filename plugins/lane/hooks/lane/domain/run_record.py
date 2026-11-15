@@ -108,7 +108,7 @@ def record_path(plugin: str, session_id: str) -> str:
     Refuses: nothing.
     Carries: where each `G->>RS` arrow of S1 to S7 reaches, and S2 `G->>RS: reads the lines`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("run_record.record_path")
 
 
 def add(path: str, line: Line) -> None:
@@ -121,7 +121,7 @@ def add(path: str, line: Line) -> None:
     with why.
     Carries: each `G->>RS: adds ...` arrow of S1 to S7.
     """
-    raise NotImplementedError
+    raise NotImplementedError("run_record.add")
 
 
 def lines(path: str) -> tuple[Line, ...]:
@@ -133,4 +133,4 @@ def lines(path: str) -> tuple[Line, ...]:
     Refuses: Unreadable.
     Carries: S2 `G->>RS: reads the lines`, S6 `G->>RS: reads the lines, for its Start and Run`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("run_record.lines")

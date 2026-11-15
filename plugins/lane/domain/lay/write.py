@@ -34,4 +34,4 @@ def write(plugin: str, proposal_id: str, session_id: str, root: str) -> Written:
     Carries: S2 `UP->>L: write <plugin> <ID>` through each arrow from L to `L-->>UP: each file
     written, and to type /reload-plugins`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("write.write")

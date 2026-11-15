@@ -28,15 +28,15 @@ class EndsByResult:
 
         Carries: S1 `L->>T: each type`.
         """
-        raise NotImplementedError
+        raise NotImplementedError("ends_by_result.EndsByResult.info")
 
-    def faults(self, lane: Lane) -> tuple[str, ...]:
+    def faults(self, lane: Lane, last_step: int, routes: Sequence[Route]) -> tuple[str, ...]:
         """Each fault of a Lane of this type, such as a Step that isn't its role's last, or a role
         that the Routes give no Result.
 
         Carries: S1 `L->>T: checks each Lane, and makes its sentence`.
         """
-        raise NotImplementedError
+        raise NotImplementedError("ends_by_result.EndsByResult.faults")
 
     def sentence(self, lane: Lane, routes: Sequence[Route]) -> str:
         """The sentence that the Lane lays on the role's last Step: `End by running` the result
@@ -46,7 +46,7 @@ class EndsByResult:
         Carries: S1 `L->>T: checks each Lane, and makes its sentence`, and the sentence of each
         Broken.
         """
-        raise NotImplementedError
+        raise NotImplementedError("ends_by_result.EndsByResult.sentence")
 
     def allows(self, lane: Lane, call: Call, held: Held) -> bool | None:
         """True for a Bash run of the result script for the Lane's role, as
@@ -56,7 +56,7 @@ class EndsByResult:
 
         Carries: the Call checks of S2, S5, and S6.
         """
-        raise NotImplementedError
+        raise NotImplementedError("ends_by_result.EndsByResult.allows")
 
     def check_start(self, lane: Lane, asked: StartCall, held: Held, due: Sequence[Due]) -> Verdict:
         """Broken, with the Lane's sentence, where a subagent starts or resumes a role of the plugin
@@ -65,7 +65,7 @@ class EndsByResult:
         Carries: S6 `else it starts a role of the plugin` and `G-->>SA: stops it, with the
         sentence of the Lane on its last Step`.
         """
-        raise NotImplementedError
+        raise NotImplementedError("ends_by_result.EndsByResult.check_start")
 
     def check_end(self, lane: Lane, end: EndAsked, held: Held) -> Verdict:
         """Broken, with the Lane's sentence, where the subagent's Start holds no Result; Kept for
@@ -74,7 +74,7 @@ class EndsByResult:
         Carries: S6 `alt the Lane on its last Step finds no Result since its Start` and `G-->>SA:
         stops the end, with that Lane's sentence`.
         """
-        raise NotImplementedError
+        raise NotImplementedError("ends_by_result.EndsByResult.check_end")
 
 
 TYPE = EndsByResult()

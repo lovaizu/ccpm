@@ -31,4 +31,4 @@ def main(
     Carries: S1 `UP->>L: types`, `UP->>L: steps <plugin>`, `UP->>L: print (Proposal)`; S2
     `UP->>L: write <plugin> <ID>`; S4 `UP->>L: steps <plugin>`; and each `L-->>UP` answer.
     """
-    raise NotImplementedError
+    raise NotImplementedError("command.main")

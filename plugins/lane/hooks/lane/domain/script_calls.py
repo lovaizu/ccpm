@@ -17,7 +17,7 @@ def id_line(proposal_id: str) -> str:
     Refuses: nothing.
     Carries: S1 `L-->>UP: the Routes, each Step as it'll read, and the ID`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("script_calls.id_line")
 
 
 def printed(command: str, output: str) -> tuple[str, str] | None:
@@ -30,7 +30,7 @@ def printed(command: str, output: str) -> tuple[str, str] | None:
     Refuses: nothing.
     Carries: S1 `CC->>G: the PostToolUse of lay.py print`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("script_calls.printed")
 
 
 def write_args(words: Sequence[str]) -> tuple[str, str] | None:
@@ -43,7 +43,7 @@ def write_args(words: Sequence[str]) -> tuple[str, str] | None:
     Refuses: nothing.
     Carries: S2 `CC->>G: the call` of lay.py write, and lay.py's own reading of its write command.
     """
-    raise NotImplementedError
+    raise NotImplementedError("script_calls.write_args")
 
 
 def result_command(role: str, result: str) -> str:
@@ -56,7 +56,7 @@ def result_command(role: str, result: str) -> str:
     Carries: S1 `L->>T: checks each Lane, and makes its sentence`, for the Lane on a role's last
     Step.
     """
-    raise NotImplementedError
+    raise NotImplementedError("script_calls.result_command")
 
 
 def result_args(command: str, root: str) -> tuple[str, str] | None:
@@ -70,4 +70,4 @@ def result_args(command: str, root: str) -> tuple[str, str] | None:
     Carries: S6 `SA->>R: result.py <role> <result>` as the guard lets it through, its `CC->>G: the
     PostToolUse, with its agent_id`, and S2 and S5's `CC->>G: the PostToolUse, with no agent_id`.
     """
-    raise NotImplementedError
+    raise NotImplementedError("script_calls.result_args")

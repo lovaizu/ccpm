@@ -25,14 +25,14 @@ class GivesShown:
 
         Carries: S1 `L->>T: each type`.
         """
-        raise NotImplementedError
+        raise NotImplementedError("gives_shown.GivesShown.info")
 
-    def faults(self, lane: Lane) -> tuple[str, ...]:
+    def faults(self, lane: Lane, last_step: int, routes: Sequence[Route]) -> tuple[str, ...]:
         """Each fault of a Lane of this type, such as a Step of a role other than up.
 
         Carries: S1 `L->>T: checks each Lane, and makes its sentence`.
         """
-        raise NotImplementedError
+        raise NotImplementedError("gives_shown.GivesShown.faults")
 
     def sentence(self, lane: Lane, routes: Sequence[Route]) -> str:
         """The sentence that the Lane lays on up's Step, which names no value.
@@ -40,21 +40,21 @@ class GivesShown:
         Carries: S1 `L->>T: checks each Lane, and makes its sentence`, and the sentence of each
         Broken.
         """
-        raise NotImplementedError
+        raise NotImplementedError("gives_shown.GivesShown.sentence")
 
     def allows(self, lane: Lane, call: Call, held: Held) -> bool | None:
         """None: the Lane judges no Call.
 
         Carries: the Call checks of S2, S5, and S6.
         """
-        raise NotImplementedError
+        raise NotImplementedError("gives_shown.GivesShown.allows")
 
     def check_start(self, lane: Lane, asked: StartCall, held: Held, due: Sequence[Due]) -> Verdict:
         """Kept: the Lane checks no start.
 
         Carries: S5 `G->>T: checks the start by the Lane of the skill's Routes, with the moves due`.
         """
-        raise NotImplementedError
+        raise NotImplementedError("gives_shown.GivesShown.check_start")
 
     def check_end(self, lane: Lane, end: EndAsked, held: Held) -> Verdict:
         """Broken, with the words that lay.py print showed, where the last message doesn't hold them
@@ -63,7 +63,7 @@ class GivesShown:
         Carries: S2 `G->>T: checks the end by each Lane of up` and `alt up didn't give what lay.py
         print showed, word for word`.
         """
-        raise NotImplementedError
+        raise NotImplementedError("gives_shown.GivesShown.check_end")
 
 
 TYPE = GivesShown()
