@@ -8,14 +8,15 @@ from collections.abc import Sequence
 
 from form import Move
 from lanes.kind import Broken, CantCheck
-from runs import Due, Left
+from runs import Due, Left, Result
 
 
 def due(plugin: str, moves: Sequence[Due | Left]) -> str:
     """The moves due, such as ``changelog: Start `changelog:writer` with `Carry out your steps`.``,
     with why in place of each start left out, such as ``No work waits for `changelog:writer`:
-    <why>.``, and each call of another plugin's skill, such as ``Call `lint:check` by the Skill
-    tool.``; nothing where no move is one of these or the move to start no more.
+    <why>.``, each resume, such as ``Resume `changelog:writer` by SendMessage.``, and each call
+    of another plugin's skill, such as ``Call `lint:check` by the Skill tool.``; nothing where no
+    move is one of these or the move to start no more.
 
     Carries: S5 `G-->>M: the moves due, each start with its text`, with why in place of each start
     that `G->>G: leaves that start out of the moves due`, S7 `G-->>M: the start due`.
@@ -32,6 +33,21 @@ def gave(plugin: str, role: str, result: str, moves: Sequence[Due | Left]) -> st
     that `G->>G: leaves that start out of the moves due`, and `start no more subagents`.
     """
     return f"{plugin}: {role} gave `{result}`. {_moves(plugin, moves)}".rstrip()
+
+
+def picked_up(plugin: str, results: Sequence[Result], moves: Sequence[Due | Left]) -> str:
+    """Where a run picks up from the Kept results, each Result named in the order the run gave
+    them, and the moves due there.
+
+    Gives: such as ``changelog: The run picks up after writer gave `written`.`` and, on the next
+    line, the moves due as `due` gives them.
+
+    Carries: S7 `G-->>M: where the run picks up, and the start due`.
+    """
+    given = ", then ".join(f"{r.role} gave `{r.result}`" for r in results)
+    return "\n".join(
+        x for x in (f"{plugin}: The run picks up after {given}.", due(plugin, moves)) if x
+    )
 
 
 def ended_unheld(plugin: str, role: str, moves: Sequence[Due | Left]) -> str:
@@ -88,6 +104,8 @@ def _move(plugin: str, told: Due | Left) -> str:
         return f"Start `{plugin}:{move.role}` with `{told.text}`."
     if move.kind == "call":
         return f"Call `{move.skill}` by the Skill tool."
+    if move.kind == "resume":
+        return f"Resume `{plugin}:{move.role}` by SendMessage."
     return "Start no more subagents." if move.kind == "no_more" else ""
 
 

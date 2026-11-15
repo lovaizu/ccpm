@@ -219,6 +219,9 @@ class Answer:
     # What Claude Code shows the person in place of a reply of the model, which it never calls,
     # where a command of a typed skill's SKILL.md fails as the skill loads.
     shown: str = ""
+    # For a start in the background, what the starter reads from the hooks at the PostToolUse of
+    # its Agent call, beside `said`, which the subagent reads as it starts.
+    posted: str = ""
 
 
 class SkillCommandFailed(Exception):
@@ -855,16 +858,16 @@ class Conversation:
     ) -> tuple[Answer, Agent | None]:
         """The main conversation, or the agent `by`, starts the subagent with the prompt, by the
         Agent tool. Where the hooks let it through, the subagent starts, and the answer says what it
-        reads as it starts; the Agent stands for it. Where the hooks stop the start, the answer says
-        what the starter reads. `how` gives the order of the start's events, each as a record shows
-        it: BACKGROUND sends the SubagentStart before the PostToolUse of the Agent call, as
-        recorded/claude-code-2.1.322.jsonl shows; POSTED_FIRST sends it after that PostToolUse, as
-        recorded/claude-code-2.1.325-skill-command-while-subagent.jsonl shows; and FOREGROUND runs
-        the subagent in the foreground, its PostToolUse coming only after its end, as
-        recorded/claude-code-2.1.323-worktree.jsonl shows. A subagent's start of a subagent sends
-        the events that recorded/claude-code-2.1.322-subagent-of-subagent.jsonl shows, each with
-        the starter's `agent_id` and `agent_type`, in the background, as no record shows another
-        way."""
+        reads as it starts, and, as `posted`, what the starter reads at the PostToolUse of the Agent
+        call, none for a start in the foreground; the Agent stands for it. Where the hooks stop the
+        start, the answer says what the starter reads. `how` gives the order of the start's events,
+        each as a record shows it: BACKGROUND sends the SubagentStart before the PostToolUse of the
+        Agent call, as recorded/claude-code-2.1.322.jsonl shows; POSTED_FIRST sends it after that
+        PostToolUse, as recorded/claude-code-2.1.325-skill-command-while-subagent.jsonl shows; and
+        FOREGROUND runs the subagent in the foreground, its PostToolUse coming only after its end,
+        as recorded/claude-code-2.1.323-worktree.jsonl shows. A subagent's start of a subagent sends
+        the events that recorded/claude-code-2.1.322-subagent-of-subagent.jsonl shows, each with the
+        starter's `agent_id` and `agent_type`, in the background, as no record shows another way."""
         assert by is None or how == BACKGROUND, "the record starts a subagent's subagent so alone"
         tool_input = {
             "description": description,
@@ -891,7 +894,7 @@ class Conversation:
         if how == BACKGROUND:
             posted = self.posted(agent, posted_line)
         ran = answer.ran + posted.ran + started.ran
-        return Answer(started.blocked, started.said, ran=ran), agent
+        return Answer(started.blocked, started.said, ran=ran, posted=posted.said), agent
 
     @staticmethod
     def start_call(how: str, by: Agent | None) -> dict[str, Any]:

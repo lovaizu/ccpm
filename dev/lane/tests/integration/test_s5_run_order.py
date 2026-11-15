@@ -94,6 +94,37 @@ def test_a_resume_where_the_routes_open_none_moves_no_run(b: w.Bench) -> None:
     assert stopped.blocked and w.due("reviewer") in stopped.said
 
 
+def resumes_writer_after_more() -> dict[str, Any]:
+    """The walkthrough's Proposal, with the Route after reviewer's `more` resuming writer."""
+    proposal = w.walkthrough_proposal()
+    proposal["routes"][2]["moves"] = [{"resume": "writer"}]
+    return proposal
+
+
+@pytest.mark.supports("S5", "Start", "Route")
+def test_a_resume_a_route_makes_due_adds_a_start_and_moves_the_run(b: w.Bench) -> None:
+    """Given: the walkthrough's Proposal laid with the Route after reviewer's `more` resuming
+    writer; writer gave `written`, and reviewer gave `more`.
+    When: the main conversation resumes writer by SendMessage, and writer gives `written`.
+    Then: the guard tells the main conversation to resume writer, lets the SendMessage through,
+    adding a Start of writer marked resumed, and gives reviewer's start due once writer's Result
+    reaches it."""
+    c, writer = w.writer_started(b, make=resumes_writer_after_more)
+    w.give(b, writer, "written")
+    _, reviewer = w.start(c, "reviewer")
+    assert reviewer
+    reached = w.give(b, reviewer, "more")
+    assert "Resume `changelog:writer` by SendMessage." in reached.said
+    assert not c.resume(writer, "Mend the entries reviewer named.").blocked
+    (run,) = w.where(b.changelog, b, c.session_id).runs
+    resumed = run.starts[-1]
+    assert (resumed.role, resumed.resumed, resumed.agent_id) == ("writer", True, writer.id)
+    reached = w.give(b, writer, "written")
+    assert reached.said == (
+        "changelog: writer gave `written`. Start `changelog:reviewer` with `Carry out your steps`."
+    )
+
+
 @pytest.mark.supports("S5", "Start", "guard")
 def test_a_start_whose_subagent_starts_after_its_post_tool_use_is_held(b: w.Bench) -> None:
     """Given: the walkthrough's Proposal laid, and the person typed /changelog:write.
@@ -170,6 +201,93 @@ def test_an_adapter_that_fails_at_the_skills_call_lets_the_call_run(tmp_path: An
     called = c.type("/changelog:write")
     assert not called.blocked
     assert "changelog:writer" in called.said and "no version to write yet" in called.said
+
+
+# An adapter of a start's text that reads the run's worktree, so that it fails until the
+# conversation works in one, where `.git` is a file and not a folder.
+WORKTREE_ADAPTER = """#!/usr/bin/env python3
+import json, os, sys
+json.load(sys.stdin)
+if os.path.isdir(".git"):
+    sys.exit("enter the run's worktree first")
+print(json.dumps({"text": "Write the entries in the run's worktree"}))
+"""
+
+
+@pytest.mark.supports("S5", "adapter", "Start", "Run")
+def test_a_start_whose_adapter_failed_at_the_call_is_given_once_it_gives_its_text(
+    tmp_path: Any,
+) -> None:
+    """Given: the Proposal laid with an adapter of a start's text that fails with `enter the run's
+    worktree first` until the conversation works in a worktree, and then gives writer `Write the
+    entries in the run's worktree`.
+    When: the person types /changelog:write; the main conversation enters a worktree by
+    EnterWorktree, as the skill's own steps make what the adapter reads, then runs `git status`,
+    then starts writer with the adapter's text.
+    Then: the guard gives writer's start with why at the call; gives the start with the adapter's
+    text after EnterWorktree; says nothing more after `git status`, as it gave the start once; and
+    lets the start through."""
+    b = adapter_bench(str(tmp_path), WORKTREE_ADAPTER)
+    c = w.laid(b, make=with_adapter)
+    called = c.type("/changelog:write")
+    assert not called.blocked
+    assert "enter the run's worktree first" in called.said and "changelog:writer" in called.said
+    text = "Write the entries in the run's worktree"
+    entered = c.enter_worktree(name="run")
+    assert not entered.blocked
+    assert f"changelog: Start `changelog:writer` with `{text}`." in entered.said
+    ran = c.bash("git status")
+    assert (ran.blocked, ran.said) == (False, ""), "the start is given once"
+    started, writer = c.start("changelog:writer", text, "writer")
+    assert not started.blocked and writer
+
+
+# An adapter of a start's text that gives writer a text for each version that no Start that runs
+# holds, and that no work waits for writer once each has its Start.
+SIDE_BY_SIDE_ADAPTER = """#!/usr/bin/env python3
+import json, sys
+held = {s["values"].get("version") for s in json.load(sys.stdin)["running"]}
+waiting = [v for v in ("0.2.0", "0.3.0") if v not in held]
+if waiting:
+    print(json.dumps({"text": f"Write the entries for {waiting[0]}",
+                      "values": {"version": waiting[0]}}))
+else:
+    print(json.dumps({"none": "each version has its writer"}))
+"""
+
+
+@pytest.mark.supports("S5", "adapter", "Start", "Route")
+def test_a_start_stays_due_beside_a_start_of_its_role_with_another_text(tmp_path: Any) -> None:
+    """Given: the Proposal laid with an adapter of a start's text that gives writer `Write the
+    entries for <version>` and the value version for 0.2.0, then 0.3.0, each while no Start that
+    runs holds it, and that no work waits for writer once both run.
+    When: the person types /changelog:write; the main conversation starts writer for 0.2.0, starts
+    it for 0.2.0 again, starts it for 0.3.0, starts it for 0.2.0 once more, and ends its turn.
+    Then: the guard gives writer's start for 0.2.0 at the call; lets the first start through, and
+    gives writer's start for 0.3.0 beside it at the PostToolUse of its Agent call; stops the start
+    for 0.2.0 again with the start for 0.3.0 due; lets the start for 0.3.0 through; stops the last
+    start, as no work waits for writer; lets the turn end; and the Run holds both Starts of
+    writer, each with its own version."""
+    b = adapter_bench(str(tmp_path), SIDE_BY_SIDE_ADAPTER)
+    c = w.laid(b, make=with_adapter)
+    first, second = "Write the entries for 0.2.0", "Write the entries for 0.3.0"
+    assert f"Start `changelog:writer` with `{first}`." in c.type("/changelog:write").said
+    started, writer = c.start("changelog:writer", first, "writer")
+    assert not started.blocked and writer
+    assert started.posted == f"changelog: Start `changelog:writer` with `{second}`."
+    again, _ = c.start("changelog:writer", first, "writer")
+    assert again.blocked and f"Start `changelog:writer` with `{second}`." in again.said
+    beside, other = c.start("changelog:writer", second, "writer")
+    assert not beside.blocked and other
+    last, _ = c.start("changelog:writer", first, "writer")
+    assert last.blocked
+    assert not c.stop("Both writers are working.").blocked
+    (run,) = w.where(b.changelog, b, c.session_id).runs
+    held = [(s.role, s.text, dict(s.values)) for s in run.starts]
+    assert held == [
+        ("writer", first, {"version": "0.2.0"}),
+        ("writer", second, {"version": "0.3.0"}),
+    ]
 
 
 @pytest.mark.supports("S5", "adapter")

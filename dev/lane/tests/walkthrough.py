@@ -24,6 +24,8 @@ LANE = os.path.join(TOP, "plugins", "lane")
 README = os.path.join(LANE, "README.md")
 TEXT = "Carry out your steps"
 RESULT = "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py"
+# What coverage.py reads in a new process to measure it, and where it writes what it measured.
+COVERAGE_SETTINGS = ("COVERAGE_PROCESS_START", "COVERAGE_FILE")
 
 # The walkthrough's plugin, file by file, as the README gives it.
 WRITE = """---
@@ -167,6 +169,9 @@ def bench(tmp: str, files: dict[str, str] | None = None) -> Bench:
         "HOME": os.path.join(tmp, "home"),
         "TMPDIR": os.path.join(tmp, "system-temp"),
     }
+    # Where check.sh measures coverage, a process that a case starts, such as lay.py print with the
+    # Proposal on its standard input, counts toward it as well.
+    env.update({name: os.environ[name] for name in COVERAGE_SETTINGS if name in os.environ})
     os.makedirs(env["TMPDIR"])
     return Bench(lane, os.path.realpath(repo), os.path.realpath(changelog), temp, env)
 

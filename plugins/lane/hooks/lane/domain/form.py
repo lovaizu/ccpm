@@ -205,7 +205,8 @@ def proposal_text(proposal: Proposal) -> str:
 # How the JSON of lanes.json and a Proposal is read and held to lanes.schema.json: the keywords
 # that the schema uses, $ref to its definitions, oneOf, anyOf, type, const, required, properties,
 # additionalProperties, items, minLength, minimum, and minItems, as a laid plugin runs on Python's
-# standard library alone.
+# standard library alone. An object takes a key that it doesn't name only where additionalProperties
+# gives the key's form, as each object of lanes.schema.json sets additionalProperties.
 
 _TYPES = {
     "object": dict,
@@ -281,14 +282,14 @@ def _scalar_problem(value: Any, schema: Mapping[str, Any]) -> str | None:
 def _object_problems(value: dict[str, Any], schema: Mapping[str, Any], where: str) -> list[str]:
     found = [f"{where}: lacks `{key}`" for key in schema.get("required", []) if key not in value]
     properties = schema.get("properties", {})
-    extra = schema.get("additionalProperties", True)
+    extra = schema.get("additionalProperties", False)
     for key, each in value.items():
         if key in properties:
             found += _problems(each, properties[key], f"{where}.{key}")
-        elif extra is False:
-            found.append(f"{where}: takes no `{key}`, only {', '.join(properties) or 'nothing'}")
         elif isinstance(extra, dict):
             found += _problems(each, extra, f"{where}.{key}")
+        else:
+            found.append(f"{where}: takes no `{key}`, only {', '.join(properties) or 'nothing'}")
     return found
 
 

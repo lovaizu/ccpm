@@ -101,11 +101,41 @@ class SteppedAside:
     skill: str
 
 
-Line = Union[Called, Prompted, Shown, Started, Tied, Gave, Ended, SteppedAside]
+@dataclass(frozen=True)
+class TextFailed:
+    """The adapter of a start's text, failed at the skill's call, so that the guard asks it again
+    after each later call of the main conversation, as the skill's own steps may make what it
+    reads."""
+
+    run: str
+
+
+@dataclass(frozen=True)
+class TextGiven:
+    """The adapter of a start's text, which failed at the skill's call, answering at a later call,
+    so that the guard has given each start due with its text and asks it no more."""
+
+    run: str
+
+
+Line = Union[
+    Called, Prompted, Shown, Started, Tied, Gave, Ended, SteppedAside, TextFailed, TextGiven
+]
 # Each kind of line, by the name that a line of the record gives as its `kind`.
 _KINDS = {
     kind.__name__: kind
-    for kind in (Called, Prompted, Shown, Started, Tied, Gave, Ended, SteppedAside)
+    for kind in (
+        Called,
+        Prompted,
+        Shown,
+        Started,
+        Tied,
+        Gave,
+        Ended,
+        SteppedAside,
+        TextFailed,
+        TextGiven,
+    )
 }
 # The file of the record in its conversation's folder.
 RECORD = "record.jsonl"
@@ -165,10 +195,6 @@ def _line(path: str, number: int, text: str) -> Line:
     """One line of the record, read into its kind."""
     try:
         held = json.loads(text)
-        kind = _KINDS[held.pop("kind")]
-        names = {field.name for field in dataclasses.fields(kind)}
-        if set(held) != names:
-            raise ValueError(f"fields {sorted(held)}, not {sorted(names)}")
-        return kind(**held)
+        return _KINDS[held.pop("kind")](**held)
     except (ValueError, KeyError, TypeError, AttributeError) as e:
         raise Unreadable(f"{path}, line {number}: not a line of the run record: {e}") from e

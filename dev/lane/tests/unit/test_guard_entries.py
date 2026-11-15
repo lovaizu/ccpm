@@ -20,7 +20,7 @@ from events import NotAnEvent
 from form import Adapters, write_lanes
 from guard import handle
 from lay.command import main as lay_main
-from run_record import Called, Started, Tied, add, lines, record_path
+from run_record import Called, Started, TextFailed, TextGiven, Tied, add, lines, record_path
 
 LANE = os.path.join(os.path.dirname(d.__file__), *[".."] * 3, "plugins", "lane")
 
@@ -107,11 +107,16 @@ def laid_with_adapter(plugin: str, gives: str) -> str:
     """Writes the walkthrough's lanes.json into the plugin, with an adapter of a start's text that
     prints what `gives` names for writer, `none` or `text`, and gives the run record's path."""
     printed = {"none": {"none": WAITING}, "text": {"text": "Carry out your steps"}}[gives]
+    return laid_with_program(plugin, f"json.load(sys.stdin)\nprint(json.dumps({printed!r}))\n")
+
+
+def laid_with_program(plugin: str, body: str) -> str:
+    """Writes the walkthrough's lanes.json into the plugin, with an adapter of a start's text whose
+    Python, after `import json, sys`, is the body, and gives the run record's path."""
     adapter = os.path.join(plugin, "hooks", "adapters", "text.py")
-    os.makedirs(os.path.dirname(adapter))
+    os.makedirs(os.path.dirname(adapter), exist_ok=True)
     with open(adapter, "w", encoding="utf-8") as f:
-        f.write(f"#!{sys.executable}\nimport json, sys\njson.load(sys.stdin)\n")
-        f.write(f"print(json.dumps({printed!r}))\n")
+        f.write(f"#!{sys.executable}\nimport json, sys\n{body}")
     os.chmod(adapter, 0o755)
     lanes = d.lanes_file()
     adapters = Adapters("hooks/adapters/text.py", None)
@@ -174,6 +179,212 @@ def test_the_main_conversations_end_stops_only_for_a_start_due(
     assert answer.stop is stops
 
 
+# An adapter's body that fails, as one whose steps haven't yet made what it reads.
+FAILS = "sys.exit('no version to write yet')\n"
+# An adapter's body that gives writer the text and value of each version that no Start that runs
+# holds, and that no work waits for writer once each has its Start.
+BY_VERSION = """held = {s["values"].get("version") for s in json.load(sys.stdin)["running"]}
+waiting = [v for v in ("0.2.0", "0.3.0") if v not in held]
+if waiting:
+    print(json.dumps({"text": f"Write {waiting[0]}", "values": {"version": waiting[0]}}))
+else:
+    print(json.dumps({"none": "each version has its writer"}))
+"""
+
+
+def called(plugin: str) -> Any:
+    """The UserPromptExpansion of /changelog:write, in the plugin's folder."""
+    return d.event(
+        "UserPromptExpansion", cwd=plugin, command_name="changelog:write", command_args=""
+    )
+
+
+def posted(plugin: str, tool_name: str = "Bash", **fields: Any) -> Any:
+    """The PostToolUse of a call of the main conversation, `git status` by default."""
+    given: dict[str, Any] = {
+        "tool_input": {"command": "git status"},
+        "tool_use_id": "t9",
+        "tool_response": {"stdout": "", "stderr": ""},
+    }
+    given.update(fields)
+    return d.event("PostToolUse", cwd=plugin, tool_name=tool_name, **given)
+
+
+@pytest.mark.supports(
+    "test_a_start_whose_adapter_failed_at_the_call_is_given_once_it_gives_its_text"
+)
+def test_a_skills_call_whose_adapter_fails_keeps_that_it_failed(plugin: str) -> None:
+    """Given: changelog laid with an adapter of a start's text that fails, and no Run.
+    When: handle answers the UserPromptExpansion of /changelog:write.
+    Then: it lets the call run, and adds the call of write's Run and that the text failed."""
+    path = laid_with_program(plugin, FAILS)
+    answer = handle(called(plugin), plugin)
+    assert not answer.stop and "no version to write yet" in answer.words
+    (call, failed) = lines(path)
+    assert isinstance(call, Called) and failed == TextFailed(call.run)
+
+
+@pytest.mark.supports(
+    "test_a_start_whose_adapter_failed_at_the_call_is_given_once_it_gives_its_text"
+)
+def test_a_later_call_gives_the_start_once_the_adapter_gives_its_text(plugin: str) -> None:
+    """Given: changelog laid with an adapter of a start's text that failed at the call of
+    /changelog:write, and since gives writer `Write 0.2.0`.
+    When: handle answers the PostToolUse of the main conversation's `git status`, twice.
+    Then: it gives writer's start with that text the first time, adding that the text was given,
+    and says nothing the second."""
+    path = laid_with_program(plugin, FAILS)
+    handle(called(plugin), plugin)
+    laid_with_program(plugin, BY_VERSION)
+    first = handle(posted(plugin), plugin)
+    assert (first.stop, first.words) == (
+        False,
+        "changelog: Start `changelog:writer` with `Write 0.2.0`.",
+    )
+    assert lines(path)[-1] == TextGiven(lines(path)[0].run)
+    second = handle(posted(plugin), plugin)
+    assert (second.stop, second.words) == (False, ""), "the start is given once"
+
+
+@pytest.mark.supports(
+    "test_a_start_whose_adapter_failed_at_the_call_is_given_once_it_gives_its_text"
+)
+def test_a_later_call_while_the_adapter_still_fails_says_nothing(plugin: str) -> None:
+    """Given: changelog laid with an adapter of a start's text that failed at the call of
+    /changelog:write, and still fails.
+    When: handle answers the PostToolUse of the main conversation's `git status`.
+    Then: it lets it through, says nothing, and adds no line."""
+    path = laid_with_program(plugin, FAILS)
+    handle(called(plugin), plugin)
+    before = lines(path)
+    answer = handle(posted(plugin), plugin)
+    assert (answer.stop, answer.words) == (False, "")
+    assert lines(path) == before
+
+
+@pytest.mark.supports(
+    "test_a_start_whose_adapter_failed_at_the_call_is_given_once_it_gives_its_text"
+)
+def test_a_subagents_call_asks_no_adapter_again(plugin: str) -> None:
+    """Given: changelog laid with an adapter of a start's text that failed at the call of
+    /changelog:write, and since gives writer `Write 0.2.0`; writer's Start tied to a01.
+    When: handle answers the PostToolUse of a01's `git status`.
+    Then: it says nothing, and adds no line, as only the main conversation's calls follow the
+    skill's own steps."""
+    path = laid_with_program(plugin, FAILS)
+    add(path, Called("r1", "write", "person", ""))
+    add(path, TextFailed("r1"))
+    add(path, Started("r1", "writer", "Write 0.2.0", {}, "t1", False))
+    add(path, Tied("r1", "t1", "a01"))
+    laid_with_program(plugin, BY_VERSION)
+    before = lines(path)
+    answer = handle(posted(plugin, agent_id="a01", agent_type="changelog:writer"), plugin)
+    assert (answer.stop, answer.words) == (False, "")
+    assert lines(path) == before
+
+
+def started(plugin: str, text: str, tool_use_id: str = "t2") -> Any:
+    """The main conversation's Agent call of changelog:writer with the text."""
+    tool_input = {"subagent_type": "changelog:writer", "prompt": text}
+    return d.event(
+        "PreToolUse", cwd=plugin, tool_name="Agent", tool_input=tool_input, tool_use_id=tool_use_id
+    )
+
+
+def agent_posted(plugin: str) -> Any:
+    """The PostToolUse of the main conversation's Agent call t1, naming agentId a01."""
+    tool_input = {"subagent_type": "changelog:writer", "prompt": "Write 0.2.0"}
+    return posted(
+        plugin, "Agent", tool_input=tool_input, tool_use_id="t1", tool_response={"agentId": "a01"}
+    )
+
+
+def writer_running(plugin: str, body: str | None) -> str:
+    """changelog laid with an adapter of a start's text whose body is given, or none, and write's
+    Run with writer's Start for 0.2.0 running; gives the record's path."""
+    path = laid_with_program(plugin, body) if body else laid(plugin)
+    add(path, Called("r1", "write", "person", ""))
+    text = "Write 0.2.0" if body else "Carry out your steps"
+    values = {"version": "0.2.0"} if body else {}
+    add(path, Started("r1", "writer", text, values, "t1", False))
+    return path
+
+
+@pytest.mark.supports("test_a_start_stays_due_beside_a_start_of_its_role_with_another_text")
+def test_a_start_tied_gives_its_roles_start_beside_it_with_another_text(plugin: str) -> None:
+    """Given: changelog laid with an adapter of a start's text that gives writer `Write 0.3.0`
+    while a Start for 0.2.0 runs, and writer's Start for 0.2.0 by the call t1.
+    When: handle answers the PostToolUse of t1, naming agentId a01.
+    Then: it ties the Start to a01, and gives writer's start for 0.3.0 due beside it."""
+    path = writer_running(plugin, BY_VERSION)
+    answer = handle(agent_posted(plugin), plugin)
+    assert (answer.stop, answer.words) == (
+        False,
+        "changelog: Start `changelog:writer` with `Write 0.3.0`.",
+    )
+    assert lines(path)[-1] == Tied("r1", "t1", "a01")
+
+
+@pytest.mark.supports("test_a_start_stays_due_beside_a_start_of_its_role_with_another_text")
+@pytest.mark.parametrize(
+    "body",
+    [
+        "json.load(sys.stdin)\nprint(json.dumps({'text': 'Write 0.2.0'}))\n",
+        "json.load(sys.stdin)\nprint(json.dumps({'none': 'each version has its writer'}))\n",
+        None,
+    ],
+    ids=["the text of the Start that runs", "none", "no adapter, Lane's text"],
+)
+def test_a_start_tied_says_nothing_where_no_other_text_waits(plugin: str, body: str | None) -> None:
+    """Given: changelog laid with an adapter of a start's text that gives writer the text of its
+    Start that runs, or that no work waits for it, or with no adapter, and writer's Start by the
+    call t1.
+    When: handle answers the PostToolUse of t1, naming agentId a01.
+    Then: it ties the Start, and says nothing, as no start of writer waits beside it."""
+    path = writer_running(plugin, body)
+    answer = handle(agent_posted(plugin), plugin)
+    assert (answer.stop, answer.words) == (False, "")
+    assert lines(path)[-1] == Tied("r1", "t1", "a01")
+
+
+@pytest.mark.supports("test_a_start_stays_due_beside_a_start_of_its_role_with_another_text")
+def test_a_start_beside_one_of_its_role_with_another_text_is_added(plugin: str) -> None:
+    """Given: changelog laid with an adapter of a start's text that gives writer `Write 0.3.0`
+    while a Start for 0.2.0 runs, and writer's Start for 0.2.0 running.
+    When: handle answers the main conversation's Agent call of changelog:writer with `Write
+    0.3.0`.
+    Then: it lets the start through, and adds writer's Start for 0.3.0 with its value."""
+    path = writer_running(plugin, BY_VERSION)
+    answer = handle(started(plugin, "Write 0.3.0"), plugin)
+    assert (answer.stop, answer.words) == (False, "")
+    assert lines(path)[-1] == Started(
+        "r1", "writer", "Write 0.3.0", {"version": "0.3.0"}, "t2", False
+    )
+
+
+@pytest.mark.supports("test_a_start_stays_due_beside_a_start_of_its_role_with_another_text")
+@pytest.mark.parametrize(
+    "body, text",
+    [
+        ("json.load(sys.stdin)\nprint(json.dumps({'text': 'Write 0.2.0'}))\n", "Write 0.2.0"),
+        (None, "Carry out your steps"),
+    ],
+    ids=["the adapter's text again", "no adapter, Lane's text"],
+)
+def test_a_start_with_the_text_of_one_of_its_role_that_runs_is_stopped(
+    plugin: str, body: str | None, text: str
+) -> None:
+    """Given: changelog laid with an adapter of a start's text that gives writer the text of its
+    Start that runs, or with no adapter, and writer's Start running.
+    When: handle answers the main conversation's Agent call of changelog:writer with that text.
+    Then: it stops the start, and adds no Start."""
+    path = writer_running(plugin, body)
+    before = lines(path)
+    answer = handle(started(plugin, text), plugin)
+    assert answer.stop
+    assert lines(path) == before
+
+
 def writer_tied(plugin: str) -> str:
     """changelog laid, and write's Run with writer's Start tied to a01; gives the record's path."""
     path = laid(plugin)
@@ -208,6 +419,44 @@ def test_a_subagents_start_of_a_role_is_stopped_with_its_last_lanes_sentence(plu
     assert [x for x in lines(path) if isinstance(x, Started)] == [
         Started("r1", "writer", "Carry out your steps", {}, "t1", False)
     ]
+
+
+@pytest.mark.supports("test_a_subagents_start_of_a_role_is_stopped")
+def test_a_subagents_start_of_an_agent_not_the_plugins_goes_and_adds_nothing(plugin: str) -> None:
+    """Given: changelog laid, and write's Run with writer's Start tied to a01.
+    When: handle answers a01's Agent call of Explore, which isn't changelog's.
+    Then: it lets the start through, says nothing, and adds nothing to the run record."""
+    path = writer_tied(plugin)
+    before = lines(path)
+    tool_input = {"subagent_type": "Explore", "prompt": "Find the tests"}
+    event = d.event(
+        "PreToolUse", agent_id="a01", tool_name="Agent", tool_input=tool_input, tool_use_id="t2"
+    )
+    answer = handle(event, plugin)
+    assert (answer.stop, answer.words) == (False, "")
+    assert lines(path) == before
+
+
+@pytest.mark.supports("test_a_result_is_added_for_the_subagents_start")
+def test_a_roles_result_the_main_conversation_gives_adds_no_result(plugin: str) -> None:
+    """Given: changelog laid, and write's Run with writer's Start tied to a01.
+    When: handle answers the PostToolUse of the main conversation's run of result.py writer
+    written.
+    Then: it lets it through, says nothing, and adds no Result to the run record, as only writer's
+    subagent gives writer's Result."""
+    path = writer_tied(plugin)
+    before = lines(path)
+    command = f"python3 {plugin}/hooks/lane/result.py writer written"
+    event = d.event(
+        "PostToolUse",
+        tool_name="Bash",
+        tool_input={"command": command},
+        tool_use_id="t2",
+        tool_response={"stdout": "", "stderr": ""},
+    )
+    answer = handle(event, plugin)
+    assert (answer.stop, answer.words) == (False, "")
+    assert lines(path) == before
 
 
 @pytest.mark.supports("test_an_end_with_no_result_is_stopped_with_its_last_steps_sentence")

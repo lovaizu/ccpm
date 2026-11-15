@@ -70,13 +70,14 @@ class ToolCall:
 class StartCall:
     """The main conversation's or a subagent's start or resume of a subagent, by its Agent or
     SendMessage call: the role by its name, whether it's a role of the plugin, its text, whether it
-    resumes, and the call."""
+    resumes, the call, and the agent_id of the subagent it resumes."""
 
     role: str
     ours: bool
     text: str
     resume: bool
     tool_use_id: str
+    agent_id: str | None = None
 
 
 @dataclass(frozen=True)
@@ -167,13 +168,14 @@ def _where(
     """The Start that the event comes from and the Runs that hold it: for a subagent's event, or
     the end of one that reaches the main conversation, its tied Start and that Start's Run; for the
     main conversation's, each Run that hasn't ended and doesn't stand aside, and, for its end or a
-    prompt, each Run whose turn's end is still held after its skill's Result ended it."""
+    prompt, each Run whose turn's end is still held after its skill's Result ended it. A subagent
+    resumed lies on its latest Start."""
     agent = event.agent_id or _notified(event)
     going = tuple(r for r in conversation.runs if not r.ended)
     if agent is None:
         return None, tuple(r for r in conversation.runs if _main(r, what))
     for run in going:
-        for start in run.starts:
+        for start in reversed(run.starts):
             if start.agent_id == agent:
                 return start, (run,)
     return None, ()
@@ -190,9 +192,10 @@ def _main(run: Run, what: What | None) -> bool:
 
 
 def _what(event: Event, conversation: Conversation, root: str) -> What | None:
-    """What the event is, by its kind and its tool."""
-    if event.name == "UserPromptExpansion" and event.command_name:
-        plugin, _, skill = event.command_name.partition(":")
+    """What the event is, by its kind and its tool, of the six that `events.hook_entries` hooks."""
+    if event.name == "UserPromptExpansion":
+        # A UserPromptExpansion names the command typed, as dev/lane/claude-code-states.md records.
+        plugin, _, skill = (event.command_name or "").partition(":")
         return SkillCall(plugin, skill, "person", event.command_args or "")
     if event.name == "UserPromptSubmit":
         agent = _notified(event)
@@ -203,9 +206,7 @@ def _what(event: Event, conversation: Conversation, root: str) -> What | None:
     tool_input = event.tool_input or {}
     if event.name == "PreToolUse":
         return _called(event, tool_input, conversation, root)
-    if event.name == "PostToolUse":
-        return _posted(event, tool_input, root)
-    return None
+    return _posted(event, tool_input, root)
 
 
 def _called(
@@ -245,7 +246,9 @@ def _resumed(
     tied = {s.agent_id: s for r in conversation.runs for s in r.starts if s.agent_id}
     start = tied.get(str(tool_input.get("to")))
     message = str(tool_input.get("message", ""))
-    return StartCall(start.role, True, message, True, str(event.tool_use_id)) if start else None
+    if start is None:
+        return None
+    return StartCall(start.role, True, message, True, str(event.tool_use_id), start.agent_id)
 
 
 def _posted(event: Event, tool_input: Mapping[str, Any], root: str) -> What | None:

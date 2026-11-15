@@ -21,6 +21,8 @@ from run_record import (
     Prompted,
     Started,
     SteppedAside,
+    TextFailed,
+    TextGiven,
     Tied,
     Unreadable,
     add,
@@ -53,14 +55,38 @@ def test_a_skills_call_makes_the_first_moves_due() -> None:
     assert (run.skill, run.by, run.due, run.ended) == ("write", "person", START_WRITER, False)
 
 
-@pytest.mark.supports("test_the_walkthroughs_run_moves_in_the_order_the_user_set")
-def test_a_start_leaves_no_move_due_until_its_result() -> None:
+@pytest.mark.supports("test_a_start_stays_due_beside_a_start_of_its_role_with_another_text")
+def test_a_start_keeps_its_move_due_beside_it_until_its_result() -> None:
     """Given: write's call, and writer's Start tied to a01.
     When: stand works out the conversation.
-    Then: the Run holds writer's Start, tied, with no move due."""
+    Then: the Run holds writer's Start, tied, with writer's start still due, so that the guard
+    gives it beside the Start where the adapter gives another text."""
     (run,) = stand(d.SESSION, (CALLED, WRITER, TIED), d.ROUTES_OF_WRITE).runs
     assert [(s.role, s.agent_id) for s in run.starts] == [("writer", "a01")]
-    assert run.due == ()
+    assert run.due == START_WRITER
+
+
+@pytest.mark.supports(
+    "test_a_start_whose_adapter_failed_at_the_call_is_given_once_it_gives_its_text"
+)
+def test_a_text_failed_at_the_call_leaves_the_run_awaiting_it() -> None:
+    """Given: write's call, and the adapter of a start's text failed at it.
+    When: stand works out the conversation.
+    Then: the Run awaits the text, with writer's start due."""
+    (run,) = stand(d.SESSION, (CALLED, TextFailed("r1")), d.ROUTES_OF_WRITE).runs
+    assert (run.awaiting, run.due) == (True, START_WRITER)
+
+
+@pytest.mark.supports(
+    "test_a_start_whose_adapter_failed_at_the_call_is_given_once_it_gives_its_text"
+)
+def test_a_text_given_after_it_failed_ends_the_awaiting() -> None:
+    """Given: write's call, the adapter of a start's text failed at it, and then answered.
+    When: stand works out the conversation.
+    Then: the Run no longer awaits the text, with writer's start due."""
+    given = (CALLED, TextFailed("r1"), TextGiven("r1"))
+    (run,) = stand(d.SESSION, given, d.ROUTES_OF_WRITE).runs
+    assert (run.awaiting, run.due) == (False, START_WRITER)
 
 
 @pytest.mark.supports("test_the_walkthroughs_run_moves_in_the_order_the_user_set")
@@ -216,7 +242,55 @@ def test_nothing_may_be_given_in_a_run_that_ended() -> None:
     assert may_give(c, "writer", d.ROUTES_OF_WRITE) == ()
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
+# write's Routes with the Route after reviewer's `more` resuming writer, and a Run of them up to
+# reviewer's `more`.
+RESUMES = (
+    *d.ROUTES_OF_WRITE[:2],
+    d.route(d.After("result", role="reviewer", result="more"), Move("resume", role="writer")),
+)
+TO_MORE = (
+    CALLED,
+    WRITER,
+    TIED,
+    Gave("r1", "writer", "written", "a01"),
+    REVIEWER,
+    Tied("r1", "toolu_r", "a02"),
+    Gave("r1", "reviewer", "more", "a02"),
+)
+RESUMED = (Started("r1", "writer", "Mend", {}, "toolu_w2", True), Tied("r1", "toolu_w2", "a01"))
+
+
+@pytest.mark.supports("test_a_resume_a_route_makes_due_adds_a_start_and_moves_the_run")
+def test_a_result_whose_route_resumes_makes_the_resume_due() -> None:
+    """Given: reviewer's `more`, whose Route resumes writer.
+    When: stand works out the conversation.
+    Then: writer's resume is due."""
+    (run,) = stand(d.SESSION, TO_MORE, RESUMES).runs
+    assert run.due == (Move("resume", role="writer"),)
+
+
+@pytest.mark.supports("test_a_resume_a_route_makes_due_adds_a_start_and_moves_the_run")
+def test_a_resumed_start_takes_its_move_due() -> None:
+    """Given: writer's resume due, then writer's Start marked resumed, tied to a01.
+    When: stand works out the conversation.
+    Then: the Run's last Start is writer's, resumed and tied to a01, with no move due."""
+    (run,) = stand(d.SESSION, (*TO_MORE, *RESUMED), RESUMES).runs
+    last = run.starts[-1]
+    assert (last.role, last.resumed, last.agent_id, last.results) == ("writer", True, "a01", ())
+    assert run.due == ()
+
+
+@pytest.mark.supports("test_a_resume_a_route_makes_due_adds_a_start_and_moves_the_run")
+def test_a_resumed_starts_result_makes_its_routes_moves_due() -> None:
+    """Given: writer's resumed Start, and its Result `written`.
+    When: stand works out the conversation.
+    Then: the resumed Start holds `written`, and reviewer's start is due."""
+    given = (*TO_MORE, *RESUMED, Gave("r1", "writer", "written", "a01"))
+    (run,) = stand(d.SESSION, given, RESUMES).runs
+    assert run.starts[-1].results == ("written",)
+    assert run.due == START_REVIEWER
+
+
 @pytest.mark.supports("test_no_kept_results_start_a_new_run")
 def test_no_kept_results_pick_up_nothing() -> None:
     """Given: no Kept results.
@@ -225,7 +299,6 @@ def test_no_kept_results_pick_up_nothing() -> None:
     assert pick_up(d.ROUTES_OF_WRITE, "write", ()) == ()
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_a_new_conversation_picks_up_from_the_kept_results")
 def test_kept_results_that_follow_the_routes_are_picked_up() -> None:
     """Given: writer's `written` and reviewer's `more`, which follow write's Routes.
@@ -238,7 +311,6 @@ def test_kept_results_that_follow_the_routes_are_picked_up() -> None:
     )
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_kept_results_that_reach_the_end_start_a_new_run")
 def test_kept_results_that_reach_a_route_that_starts_no_more_pick_up_nothing() -> None:
     """Given: writer's `written` and reviewer's `good`, whose Route starts no more.
@@ -248,7 +320,6 @@ def test_kept_results_that_reach_a_route_that_starts_no_more_pick_up_nothing() -
     assert pick_up(d.ROUTES_OF_WRITE, "write", kept) == ()
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_kept_results_off_the_routes_stop_the_command")
 def test_kept_results_off_the_routes_are_refused() -> None:
     """Given: reviewer's `good` first, which no Route of write leads to.

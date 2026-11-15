@@ -130,7 +130,25 @@ def kept_results(program: str, words: str, cwd: str) -> tuple[KeptResult, ...]:
     given no argument and `{"words": <the words>}` on standard input, as words that begin with `-`
     would read as an option where they came as an argument; none where it gives none.
     Changes: nothing of Lane's.
-    Refuses: AdapterFailed.
-    Carries: S7 `G->>A: asks for the Kept results, with those words`.
+    Refuses: AdapterFailed, naming the adapter and why, where it can't run, exits other than 0
+    (why being what it wrote to standard error), or prints other than a JSON object whose
+    `results` is a list of objects, each with a string `role` and a string `result`.
+    Carries: S7 `G->>A: asks for the Kept results, with those words`, and its `A-->>G` answers.
     """
-    raise NotImplementedError("adapters.kept_results")
+    printed = _run(program, [], {"words": words}, cwd)
+    results = printed.get("results")
+    if not isinstance(results, list) or not all(_kept(each) for each in results):
+        raise AdapterFailed(
+            f'{program}: `results` must be a list of {{"role": ..., "result": ...}}, each a'
+            f" string, not {results!r}"
+        )
+    return tuple(KeptResult(each["role"], each["result"]) for each in results)
+
+
+def _kept(given: Any) -> bool:
+    """Whether one of the results that the adapter printed is a Kept result in its form."""
+    return (
+        isinstance(given, dict)
+        and set(given) == {"role", "result"}
+        and all(isinstance(v, str) for v in given.values())
+    )

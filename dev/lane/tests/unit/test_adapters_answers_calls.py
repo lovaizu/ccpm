@@ -20,10 +20,10 @@ from adapters import (
     kept_results,
     start_text,
 )
-from answers import cant_check, due, ended_unheld, gave, stopped
+from answers import cant_check, due, ended_unheld, gave, picked_up, stopped
 from form import Move
 from lanes.kind import Broken, CantCheck
-from runs import Due, Left
+from runs import Due, Left, Result
 from script_calls import id_line, printed, result_args, result_command, write_args
 
 ECHO = """import json, os, sys
@@ -119,7 +119,6 @@ def test_an_adapter_that_cant_run_is_refused(tmp_path: Any) -> None:
         start_text(str(tmp_path / "missing.py"), "writer", (), "", str(tmp_path))
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_a_new_conversation_picks_up_from_the_kept_results")
 def test_kept_results_come_in_the_order_the_adapter_gives(tmp_path: Any) -> None:
     """Given: an adapter of records that prints writer's `written` and reviewer's `more`.
@@ -133,7 +132,6 @@ def test_kept_results_come_in_the_order_the_adapter_gives(tmp_path: Any) -> None
     )
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_the_words_typed_tell_a_new_request_from_a_pick_up")
 @pytest.mark.parametrize("words", ["", "0.3.0", "--continue", "-c 0.2.0"])
 def test_an_adapter_of_records_gets_the_words_on_standard_input(tmp_path: Any, words: str) -> None:
@@ -152,7 +150,6 @@ def test_an_adapter_of_records_gets_the_words_on_standard_input(tmp_path: Any, w
     assert json.loads(kept.result) == [[], {"words": words}]
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_no_kept_results_start_a_new_run")
 def test_an_adapter_of_records_may_give_none(tmp_path: Any) -> None:
     """Given: an adapter of records that prints no results.
@@ -161,7 +158,6 @@ def test_an_adapter_of_records_may_give_none(tmp_path: Any) -> None:
     assert kept_results(program(tmp_path, "print('{\"results\": []}')\n"), "", str(tmp_path)) == ()
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_an_adapter_of_records_that_fails_stops_the_command")
 def test_an_adapter_of_records_that_fails_is_refused(tmp_path: Any) -> None:
     """Given: an adapter of records that exits 1 with why.
@@ -170,6 +166,34 @@ def test_an_adapter_of_records_that_fails_is_refused(tmp_path: Any) -> None:
     path = program(tmp_path, "import sys\nsys.exit('records.jsonl is not JSON')\n")
     with pytest.raises(AdapterFailed, match="records.jsonl is not JSON"):
         kept_results(path, "", str(tmp_path))
+
+
+@pytest.mark.supports("test_an_adapter_of_records_that_fails_stops_the_command")
+@pytest.mark.parametrize(
+    "text",
+    [
+        "print('{}')\n",
+        'print(\'{"results": {"role": "writer", "result": "written"}}\')\n',
+        'print(\'{"results": ["written"]}\')\n',
+        'print(\'{"results": [{"role": "writer"}]}\')\n',
+        'print(\'{"results": [{"role": "writer", "result": 2}]}\')\n',
+    ],
+    ids=[
+        "prints no results",
+        "prints results that aren't a list",
+        "prints a result that isn't an object",
+        "prints a result with no result",
+        "prints a result that isn't text",
+    ],
+)
+def test_an_adapter_of_records_that_strays_from_its_form_is_refused(
+    tmp_path: Any, text: str
+) -> None:
+    """Given: an adapter of records that prints what isn't its form.
+    When: kept_results asks it.
+    Then: it raises AdapterFailed, naming the form of `results`."""
+    with pytest.raises(AdapterFailed, match="`results` must be a list"):
+        kept_results(program(tmp_path, text), "", str(tmp_path))
 
 
 @pytest.mark.supports("test_the_walkthroughs_run_moves_in_the_order_the_user_set")
@@ -233,6 +257,27 @@ def test_a_start_left_out_beside_a_start_due_is_said_with_both() -> None:
     words = due("changelog", (left("writer"), d.due_start("reviewer")))
     assert said_with_why(words, "writer")
     assert "Start `changelog:reviewer` with `Carry out your steps`." in words
+
+
+@pytest.mark.supports("test_a_resume_a_route_makes_due_adds_a_start_and_moves_the_run")
+def test_a_resume_due_is_said_with_sendmessage() -> None:
+    """Given: writer's resume due.
+    When: due gives its words for changelog.
+    Then: they read ``changelog: Resume `changelog:writer` by SendMessage.``."""
+    resume = Due(Move("resume", role="writer"), "", {})
+    assert due("changelog", (resume,)) == "changelog: Resume `changelog:writer` by SendMessage."
+
+
+@pytest.mark.supports("test_a_new_conversation_picks_up_from_the_kept_results")
+def test_a_pick_up_is_said_with_each_result_kept_and_the_moves_due() -> None:
+    """Given: writer's `written` and reviewer's `more` picked up, and writer's start due.
+    When: picked_up gives its words.
+    Then: they name both Results in order, and on the next line writer's start."""
+    results = (Result("writer", "written"), Result("reviewer", "more"))
+    assert picked_up("changelog", results, (d.due_start("writer"),)) == (
+        "changelog: The run picks up after writer gave `written`, then reviewer gave `more`.\n"
+        "changelog: Start `changelog:writer` with `Carry out your steps`."
+    )
 
 
 @pytest.mark.supports("test_a_start_no_work_waits_for_after_a_result_is_said_with_why")
@@ -311,11 +356,13 @@ def test_a_run_of_print_gives_its_id_and_words() -> None:
         ("python3 /lane/scripts/lay.py steps changelog", "ID: b9fd8fd8\n"),
         ("python3 /lane/scripts/lay.py print changelog", "Lane x: not a lane type\n"),
         ("git log --oneline", "ID: b9fd8fd8\n"),
+        ("python3 /lane/scripts/lay.py print changelog <<'EOF'\nIt's\nEOF", "ID: b9fd8fd8\n"),
     ],
-    ids=["steps", "print with no ID", "another command"],
+    ids=["steps", "print with no ID", "another command", "a command shlex can't split"],
 )
 def test_what_isnt_a_shown_proposal_gives_none(command: str, output: str) -> None:
-    """Given: another command of lay.py, a print whose output names no ID, or another command.
+    """Given: another command of lay.py, a print whose output names no ID, another command, or a
+    command whose quotes shlex can't split, such as a here-document that holds an apostrophe.
     When: printed reads them.
     Then: it gives None."""
     assert printed(command, output) is None
@@ -344,6 +391,7 @@ ROOT = "/home/you/tally/changelog"
         ("python3 /other/hooks/lane/result.py writer written", None),
         (f"python3 {ROOT}/hooks/lane/result.py writer written && rm CHANGELOG.md", None),
         ("git log --oneline", None),
+        (f"python3 {ROOT}/hooks/lane/result.py writer 'written", None),
     ],
     ids=[
         "the plugin's result.py",
@@ -353,6 +401,7 @@ ROOT = "/home/you/tally/changelog"
         "another plugin's",
         "and another command",
         "another command",
+        "a command shlex can't split",
     ],
 )
 def test_a_run_of_result_py_names_its_role_and_result(command: str, read: Any) -> None:

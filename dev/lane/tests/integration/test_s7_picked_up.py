@@ -21,6 +21,15 @@ results = [{"role": "writer", "result": "written"}] if words.startswith("--conti
 print(json.dumps({"results": results}))
 """
 
+# An adapter of changelog's records that gives the results that records.json in the folder it runs
+# in holds, and none where the file isn't there, as changelog keeps its results in that file.
+FROM_FILE = """#!/usr/bin/env python3
+import json, os, sys
+json.load(sys.stdin)
+results = json.load(open("records.json")) if os.path.exists("records.json") else []
+print(json.dumps({"results": results}))
+"""
+
 
 def records_bench(
     tmp: str, results: list[dict[str, str]] | None, fails: bool = False, program: str = ""
@@ -43,7 +52,6 @@ def with_records() -> dict[str, Any]:
     return proposal
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S7", "The run kept in a file", "Run")
 def test_a_run_goes_on_after_compact(b: w.Bench, broken: None) -> None:
     """Given: the walkthrough's Proposal laid, and writer gave `written` in a run of
@@ -54,6 +62,23 @@ def test_a_run_goes_on_after_compact(b: w.Bench, broken: None) -> None:
     w.give(b, writer, "written")
     c.compact()
     assert w.due("reviewer") in c.type("/changelog:write").said
+
+
+@pytest.mark.supports("S7", "adapter", "Run")
+def test_a_run_with_an_adapter_goes_on_after_compact(tmp_path: Any) -> None:
+    """Given: the Proposal laid with an adapter of changelog's records, and writer gave `written`
+    in a run of /changelog:write, which changelog's records then hold.
+    When: the person types /compact, then /changelog:write again.
+    Then: the guard gives reviewer's start due on the same Run, the record holding one Run."""
+    b = records_bench(str(tmp_path), None, program=FROM_FILE)
+    c, writer = w.writer_started(b, make=with_records)
+    w.give(b, writer, "written")
+    with open(os.path.join(b.repo, "records.json"), "w", encoding="utf-8") as f:
+        json.dump([{"role": "writer", "result": "written"}], f)
+    c.compact()
+    assert w.due("reviewer") in c.type("/changelog:write").said
+    (run,) = w.where(b.changelog, b, c.session_id).runs
+    assert [(r.role, r.result) for r in run.results] == [("writer", "written")]
 
 
 @pytest.mark.supports("S7", "Run")
@@ -67,21 +92,21 @@ def test_a_new_conversation_without_an_adapter_starts_over(b: w.Bench) -> None:
     assert w.due("writer") in w.converse(b).type("/changelog:write").said
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S7", "adapter", "Kept results")
 def test_a_new_conversation_picks_up_from_the_kept_results(tmp_path: Any) -> None:
     """Given: the Proposal laid with an adapter of changelog's records that gives writer's
     `written`.
     When: the person types /changelog:write 0.2.0 in a new conversation.
-    Then: the guard says where the run picks up, and gives reviewer's start due."""
+    Then: the guard says where the run picks up, and gives reviewer's start due with Lane's text
+    and the words typed."""
     b = records_bench(str(tmp_path), [{"role": "writer", "result": "written"}])
     c = w.laid(b, make=with_records)
     called = c.type("/changelog:write 0.2.0")
     assert not called.blocked
-    assert "written" in called.said and w.due("reviewer") in called.said
+    reviewer = "changelog: Start `changelog:reviewer` with `Carry out your steps: 0.2.0`."
+    assert "written" in called.said and reviewer in called.said
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S7", "adapter", "Kept results")
 def test_the_words_typed_tell_a_new_request_from_a_pick_up(tmp_path: Any) -> None:
     """Given: the Proposal laid with an adapter of changelog's records that gives writer's
@@ -92,8 +117,10 @@ def test_the_words_typed_tell_a_new_request_from_a_pick_up(tmp_path: Any) -> Non
     second, a new Run."""
     b = records_bench(str(tmp_path), None, program=BY_WORDS)
     w.lay(b, with_records)
-    assert w.due("reviewer") in w.converse(b).type("/changelog:write --continue").said
-    assert w.due("writer") in w.converse(b).type("/changelog:write 0.3.0").said
+    picked_up = "changelog: Start `changelog:reviewer` with `Carry out your steps: --continue`."
+    assert picked_up in w.converse(b).type("/changelog:write --continue").said
+    new_run = "changelog: Start `changelog:writer` with `Carry out your steps: 0.3.0`."
+    assert new_run in w.converse(b).type("/changelog:write 0.3.0").said
 
 
 @pytest.mark.supports("S7", "adapter", "Kept results")
@@ -116,7 +143,6 @@ def test_no_kept_results_start_a_new_run(tmp_path: Any) -> None:
     assert w.due("writer") in c.type("/changelog:write").said
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S7", "adapter", "Kept results")
 def test_kept_results_off_the_routes_stop_the_command(tmp_path: Any) -> None:
     """Given: the Proposal laid with an adapter of changelog's records that gives reviewer's
@@ -129,7 +155,6 @@ def test_kept_results_off_the_routes_stop_the_command(tmp_path: Any) -> None:
     assert stopped.blocked and "reviewer" in stopped.said
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S7", "adapter")
 def test_an_adapter_of_records_that_fails_stops_the_command(tmp_path: Any) -> None:
     """Given: the Proposal laid with an adapter of changelog's records that exits 1 with

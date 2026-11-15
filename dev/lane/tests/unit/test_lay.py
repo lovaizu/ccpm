@@ -28,7 +28,7 @@ from lay.laid import Note, as_laid, lay, strip
 from lay.laid_copy import read_laid
 from lay.proposals import find, keep
 from lay.show import render
-from lay.steps import Step, read_steps
+from lay.steps import Step, as_held, read_steps
 from lay.write import Refused, write
 
 STEP_2 = Step(
@@ -88,7 +88,6 @@ def test_each_roles_steps_are_read_from_its_file(plugin: str) -> None:
     assert steps[("skills/write/SKILL.md", 1)].role == "write"
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_a_steps_file_two_roles_share_goes_to_the_user")
 def test_steps_in_the_file_a_body_names_are_the_roles(plugin: str) -> None:
     """Given: writer's body naming `${CLAUDE_PLUGIN_ROOT}/writer-steps.md`, which holds its Steps.
@@ -102,6 +101,52 @@ def test_steps_in_the_file_a_body_names_are_the_roles(plugin: str) -> None:
         ("writer-steps.md", 1, "Read."),
         ("writer-steps.md", 2, "Write."),
     ]
+
+
+@pytest.mark.supports("test_steps_give_each_step_of_each_role")
+def test_a_name_in_a_body_that_is_no_file_of_the_plugin_holds_no_steps(plugin: str) -> None:
+    """Given: writer's body naming `${CLAUDE_PLUGIN_ROOT}/scripts/check.sh`, which the plugin
+    doesn't hold.
+    When: read_steps reads the plugin.
+    Then: writer's Steps are those of agents/writer.md alone."""
+    before = read_steps(plugin)
+    named = w.WRITER.replace(
+        "## Steps", "Check with `${CLAUDE_PLUGIN_ROOT}/scripts/check.sh`.\n\n## Steps"
+    )
+    w.write_files(plugin, {"agents/writer.md": named})
+    assert read_steps(plugin) == before
+
+
+# The Step of write-steps.md that write's SKILL.md and approve's both name.
+WRITE_STEP = Step("write", "write-steps.md", 1, "Have the entries written and reviewed.")
+APPROVE_STEP = dataclasses.replace(WRITE_STEP, role="approve")
+
+
+@pytest.mark.supports("test_a_steps_file_a_skill_and_its_command_share_is_the_skills")
+@pytest.mark.parametrize(
+    "tie",
+    [
+        lambda: d.route(d.After("first"), d.Move("wait", command="approve")),
+        lambda: d.route(d.After("command", command="approve"), d.Move("no_more", result="good")),
+    ],
+    ids=["a Route waits for the command", "a Route goes after the command"],
+)
+def test_a_commands_step_from_its_skills_file_is_held_as_the_skills(tie: Any) -> None:
+    """Given: write-steps.md's step 1, read as write's and as approve's, and a Route of write that
+    waits for approve or goes after it.
+    When: as_held gives the Steps as Lane holds them.
+    Then: it gives write's alone."""
+    assert as_held((WRITE_STEP, APPROVE_STEP), (tie(),)) == (WRITE_STEP,)
+
+
+@pytest.mark.supports("test_a_steps_file_two_roles_share_goes_to_the_user")
+def test_a_commands_step_that_no_route_ties_is_held_as_its_own() -> None:
+    """Given: write-steps.md's step 1, read as write's and as approve's, and write's Routes, none
+    of which waits for approve or goes after it.
+    When: as_held gives the Steps as Lane holds them.
+    Then: it gives both."""
+    steps = (WRITE_STEP, APPROVE_STEP)
+    assert as_held(steps, d.ROUTES_OF_WRITE) == steps
 
 
 @pytest.mark.supports("test_a_move_that_waits_for_the_person_lets_the_turn_end")
@@ -122,6 +167,17 @@ def test_a_role_with_no_steps_gives_none(plugin: str) -> None:
     Then: it gives no Step of reviewer."""
     w.write_files(plugin, {"agents/reviewer.md": w.REVIEWER.split("## Steps")[0]})
     assert not [s for s in read_steps(plugin) if s.role == "reviewer"]
+
+
+@pytest.mark.supports("test_steps_give_each_step_of_each_role")
+def test_a_folder_in_skills_with_no_skill_md_is_no_role(plugin: str) -> None:
+    """Given: changelog with skills/shared/, which holds a template and no SKILL.md, so that Claude
+    Code loads no skill from it.
+    When: read_steps reads the plugin.
+    Then: it gives the same Steps as without the folder."""
+    before = read_steps(plugin)
+    w.write_files(plugin, {"skills/shared/template.md": "## Steps\n\n1. Not a skill's.\n"})
+    assert read_steps(plugin) == before
 
 
 @pytest.mark.supports("test_steps_give_each_step_of_each_role")
@@ -313,7 +369,6 @@ def test_a_lane_that_cant_stand_is_ups_to_mend(plugin: str, lane: Any) -> None:
     assert isinstance(faults, Faults) and faults.proposal and not faults.plugin
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_a_role_with_no_end_on_its_last_step_goes_back_to_up")
 @pytest.mark.parametrize(
     "left_out, named",
@@ -360,7 +415,6 @@ def test_an_end_on_a_step_other_than_the_roles_last_is_ups_to_mend(
     assert isinstance(given, Checked if stands else Faults)
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_a_file_that_cant_carry_the_proposal_goes_to_the_user")
 @pytest.mark.parametrize(
     "files, named",
@@ -383,6 +437,61 @@ def test_a_file_that_cant_carry_the_proposal_is_the_users_to_fix(
     w.write_files(plugin, files)
     faults = check(plugin, d.proposal(), read_steps(plugin))
     assert isinstance(faults, Faults) and any(named in f for f in faults.plugin)
+
+
+@pytest.mark.supports("test_an_adapter_the_proposal_doesnt_name_goes_to_the_user")
+def test_a_folder_in_hooks_adapters_is_no_adapter(plugin: str) -> None:
+    """Given: changelog whose hooks/adapters/ holds only __pycache__/, which Python leaves beside an
+    adapter that another imports.
+    When: check checks the walkthrough's Proposal, which names no adapter.
+    Then: it gives Checked."""
+    os.makedirs(os.path.join(plugin, "hooks", "adapters", "__pycache__"))
+    assert isinstance(check(plugin, d.proposal(), read_steps(plugin)), Checked)
+
+
+@pytest.mark.supports("test_a_route_command_the_model_may_call_goes_to_the_user")
+def test_a_route_that_waits_for_the_persons_reply_names_no_command(plugin: str) -> None:
+    """Given: the walkthrough's Proposal whose move after reviewer's `good` may also wait for the
+    person's reply, an empty `wait`.
+    When: check checks it.
+    Then: it gives Checked, as no command's SKILL.md is to be read."""
+    proposal = d.proposal()
+    good = dataclasses.replace(
+        proposal.routes[3], moves=(d.Move("wait", command=""), *proposal.routes[3].moves)
+    )
+    proposal = dataclasses.replace(proposal, routes=(*proposal.routes[:3], good))
+    assert isinstance(check(plugin, proposal, read_steps(plugin)), Checked)
+
+
+@pytest.mark.supports("test_a_steps_file_two_roles_share_goes_to_the_user")
+def test_a_steps_file_two_skills_share_is_the_users_to_fix(plugin: str) -> None:
+    """Given: changelog whose skill write and skill tidy, which no Route ties to write, both name
+    write-steps.md by `${CLAUDE_PLUGIN_ROOT}/` as the file of their Steps.
+    When: check checks the walkthrough's Proposal.
+    Then: it gives Faults for the user, naming write-steps.md."""
+    body = "Your steps are in `${CLAUDE_PLUGIN_ROOT}/write-steps.md`.\n"
+    tidy = "---\nname: tidy\ndescription: Tidies.\n---\n\n" + body
+    w.write_files(plugin, {"skills/write/SKILL.md": w.WRITE + body, "skills/tidy/SKILL.md": tidy})
+    w.write_files(plugin, {"write-steps.md": "## Steps\n\n1. Keep it short.\n"})
+    faults = check(plugin, d.proposal(), read_steps(plugin))
+    assert isinstance(faults, Faults) and any("write-steps.md" in f for f in faults.plugin)
+
+
+@pytest.mark.supports("test_a_route_after_a_command_the_model_may_call_goes_to_the_user")
+def test_a_command_a_route_goes_after_that_the_model_may_call_is_the_users_to_fix(
+    plugin: str,
+) -> None:
+    """Given: changelog with a command skill pause whose SKILL.md doesn't set
+    `disable-model-invocation: true`.
+    When: check checks the walkthrough's Proposal with a Route of write after pause.
+    Then: it gives Faults for the user, naming skills/pause/SKILL.md."""
+    pause = "---\nname: pause\ndescription: Pauses.\n---\n\n## Steps\n\n1. Stop.\n"
+    w.write_files(plugin, {"skills/pause/SKILL.md": pause})
+    proposal = d.proposal()
+    paused = d.route(d.After("command", command="pause"), d.Move("no_more", result="paused"))
+    proposal = dataclasses.replace(proposal, routes=(*proposal.routes, paused))
+    faults = check(plugin, proposal, read_steps(plugin))
+    assert isinstance(faults, Faults) and any("skills/pause/SKILL.md" in f for f in faults.plugin)
 
 
 @pytest.mark.supports("test_up_shows_the_walkthroughs_proposal")

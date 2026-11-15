@@ -4,6 +4,7 @@ a Run, aside, or outside every Run."""
 
 from __future__ import annotations
 
+import dataclasses
 from typing import Any
 
 import lane_data as d
@@ -131,12 +132,30 @@ def test_an_agent_call_of_no_role_of_the_plugin_is_a_start_not_ours() -> None:
 def test_a_send_message_to_a_roles_subagent_is_a_resume() -> None:
     """Given: write's Run with writer's Start tied to a01, and SendMessage to a01.
     When: place reads it.
-    Then: it is a StartCall of writer that resumes it."""
+    Then: it is a StartCall of writer that resumes it, naming a01."""
     tool_input = {"to": "a01", "message": "Which version?"}
     got = placed(
         "PreToolUse", RUN, tool_name="SendMessage", tool_input=tool_input, tool_use_id="t2"
     )
-    assert got.what == StartCall("writer", True, "Which version?", True, "t2")
+    assert got.what == StartCall("writer", True, "Which version?", True, "t2", "a01")
+
+
+@pytest.mark.supports("test_a_resume_a_route_makes_due_adds_a_start_and_moves_the_run")
+def test_a_subagents_call_after_its_resume_lies_on_the_resumed_start() -> None:
+    """Given: write's Run with writer's Start tied to a01, ended, and its resumed Start tied to
+    a01 too.
+    When: place reads a01's Bash call.
+    Then: it lies on the resumed Start."""
+    ended = dataclasses.replace(WRITER, results=("written",), ended=True)
+    resumed = dataclasses.replace(WRITER, tool_use_id="t2", resumed=True)
+    got = placed(
+        "PreToolUse",
+        d.run(starts=(ended, resumed), due=()),
+        agent_id="a01",
+        tool_name="Bash",
+        tool_input={"command": "git log --oneline"},
+    )
+    assert got.start == resumed
 
 
 @pytest.mark.supports("test_a_start_whose_subagent_starts_after_its_post_tool_use_is_held")
