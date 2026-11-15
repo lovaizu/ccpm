@@ -18,6 +18,8 @@ class Kind(Enum):
     CODE = "code"
     FIGURE = "figure"
     QUOTE = "quote"
+    TABLE = "table"
+    ROW = "row"
 
 
 HEADING = Kind.HEADING
@@ -26,11 +28,15 @@ ITEM = Kind.ITEM
 CODE = Kind.CODE
 FIGURE = Kind.FIGURE
 QUOTE = Kind.QUOTE
+TABLE = Kind.TABLE
+ROW = Kind.ROW
 
 _HEADING = re.compile(r"(#{1,6})\s+(.+?)\s*")
 _FENCE = re.compile(r"(\s*)(`{3,}|~{3,})(.*)")
 _MARKER = re.compile(r"(\s*)(?:[-*+]|\d+[.)])(?:\s+|$)")
 _QUOTE = re.compile(r"\s*>")
+_TABLE = re.compile(r"\s*\|")
+_DELIMITER = re.compile(r"[\s|:]*-[\s|:-]*")
 _FIGURE = re.compile(r"!\[(.*)\]\((\S+?)\)")
 # A code span of Markdown, which the words of a block keep whole.
 CODE_SPAN = re.compile(r"`[^`\n]*`")
@@ -41,11 +47,13 @@ _SENTENCE_END = re.compile(r"(?<=[.!?])\s+|(?<=[.!?][\"')\]])\s+")
 # A Block or a Node is never changed after it's made, so a mutant that unfreezes it changes nothing.
 @dataclass(frozen=True)  # pragma: no mutate
 class Block:
-    """One block of Markdown: its kind, its line from 1, and its text:
+    """One block of Markdown: its kind, its line from 1, and its text: a table's header or a row,
+    as `| <cell> | <cell> |`;
     a heading's words; a paragraph's or a list item's own words, its lines joined by a space, or by
     a newline after a line that ends with a backslash; a code block's body; a figure's alt text; or
     a quote's lines without their `>`. `info` holds a code block's info string and a figure's path,
-    `level` a heading's number of `#`, and `children` the blocks nested in a list item."""
+    `level` a heading's number of `#`, and `children` the blocks nested in a list item, or the rows
+    of a table but its delimiter row."""
 
     kind: Kind
     line: int
@@ -98,6 +106,8 @@ def _block(lines: list[str], at: int, first: int) -> tuple[Block, int]:
         return _code(lines, at, first, fence)
     if _QUOTE.match(line):
         return _quote(lines, at, first)
+    if _TABLE.match(line):
+        return _table(lines, at, first)
     marker = _MARKER.match(line)
     if marker:
         return _item(lines, at, first, marker)
@@ -110,6 +120,7 @@ def _starts_block(line: str) -> bool:
         _HEADING.fullmatch(line)
         or _FENCE.fullmatch(line)
         or _QUOTE.match(line)
+        or _TABLE.match(line)
         or _MARKER.match(line)
     )
 
@@ -171,6 +182,31 @@ def _quote(lines: list[str], at: int, first: int) -> tuple[Block, int]:
         end += 1
     text = "\n".join(re.sub(r"^\s*> ?", "", line) for line in lines[at:end])
     return Block(QUOTE, first + at, text), end
+
+
+def _table(lines: list[str], at: int, first: int) -> tuple[Block, int]:
+    """The table that starts at the line `at`: its header, holding each row but the delimiter row,
+    each row written with its cells trimmed."""
+    end = at
+    while end < len(lines) and _TABLE.match(lines[end]):
+        end += 1
+    rows = tuple(
+        Block(ROW, first + each, _row(lines[each]))
+        for each in range(at + 1, end)
+        if not _DELIMITER.fullmatch(lines[each])
+    )
+    return Block(TABLE, first + at, _row(lines[at]), children=rows), end
+
+
+def _row(line: str) -> str:
+    """The row of a table as `| <cell> | <cell> |`, each cell trimmed."""
+    cells = line.strip().strip("|").split("|")
+    return "| " + " | ".join(cell.strip() for cell in cells) + " |"
+
+
+def cells(row: str) -> list[str]:
+    """The cells of a row of a table, as `_row` writes it."""
+    return row[2:-2].split(" | ")
 
 
 def _item(lines: list[str], at: int, first: int, marker: re.Match[str]) -> tuple[Block, int]:

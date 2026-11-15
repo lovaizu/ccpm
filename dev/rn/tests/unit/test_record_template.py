@@ -1219,3 +1219,104 @@ def test_a_list_item_out_of_its_form_after_one_in_it_is_named_by_the_form():
             ' "- `<requirement>`: `<check>` shows it." at its line 3',
         ),
     )
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_table_whose_row_holds_slots_takes_a_row_for_each_thing():
+    """Given a template of a table whose one row holds slots, and a document of that table with
+    three rows
+    When the document is checked
+    Then it has no fault"""
+    template = lines(
+        "# T", "", "| Test type | Exit criteria |", "|---|---|", "| `<type>` | `<exit>` |"
+    )
+    document = lines(
+        "# T",
+        "",
+        "| Test type | Exit criteria |",
+        "|---|---|",
+        "| Unit | coverage: 100% |",
+        "| Integration | each case passes |",
+        "| E2E | k = 3 |",
+    )
+    assert faults(template, document) == ()
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_table_with_another_header_leaves_the_form():
+    """Given a template of a table, and a document whose table names another column
+    When the document is checked
+    Then the fault names the header by the template's words"""
+    template = lines(
+        "# T", "", "| Test type | Exit criteria |", "|---|---|", "| `<type>` | `<exit>` |"
+    )
+    document = lines("# T", "", "| Type | Exit criteria |", "|---|---|", "| Unit | all pass |")
+    assert faults(template, document) == (
+        Fault(
+            3,
+            '"| Type | Exit criteria |" leaves the form of the template\'s'
+            ' "| Test type | Exit criteria |" at its line 3',
+        ),
+    )
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_row_without_a_cell_of_the_template_leaves_its_form():
+    """Given a template of a table whose row has two cells of slots, and a document whose row has
+    one
+    When the document is checked
+    Then the fault names the row by the template's words"""
+    template = lines(
+        "# T", "", "| Test type | Exit criteria |", "|---|---|", "| `<type>` | `<exit>` |"
+    )
+    document = lines(
+        "# T", "", "| Test type | Exit criteria |", "|---|---|", "| Unit and all pass |"
+    )
+    assert faults(template, document) == (
+        Fault(
+            5,
+            '"| Unit and all pass |" leaves the form of the template\'s "| `<type>` | `<exit>` |"'
+            " at its line 5",
+        ),
+    )
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_sentence_of_a_cell_holds_to_the_most_words():
+    """Given a template of a table, and a document whose cell holds a sentence of one word more
+    than the most, beside a short one
+    When the document is checked
+    Then the one fault names the cell's long sentence"""
+    template = lines(
+        "# T", "", "| Test type | Exit criteria |", "|---|---|", "| `<type>` | `<exit>` |"
+    )
+    long = " ".join(["word"] * (MOST_WORDS + 1))
+    document = lines(
+        "# T", "", "| Test type | Exit criteria |", "|---|---|", f"| Unit | All pass. {long}. |"
+    )
+    assert faults(template, document) == (
+        Fault(
+            5,
+            f"has a sentence of {MOST_WORDS + 1} words, more than {MOST_WORDS}:"
+            " word word word word word word ...",
+        ),
+    )
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_note_that_says_to_leave_out_a_lead_paragraph_lets_it_and_its_items_go():
+    """Given a template whose lead paragraph Strategies: leads into items, with a note that says to
+    leave out Strategies where there's none, and a document without both
+    When the document is checked
+    Then it has no fault"""
+    template = lines(
+        "# T",
+        "",
+        "Strategies:",
+        "",
+        "- `<strategy>`\\",
+        "  `<intent>`.",
+        "",
+        note("`<strategy>`, `<intent>`: each decision. Leave out Strategies where there's none."),
+    )
+    assert faults(template, lines("# T")) == ()

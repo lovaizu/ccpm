@@ -15,6 +15,8 @@ from record.markdown import (
     ITEM,
     PARAGRAPH,
     QUOTE,
+    ROW,
+    TABLE,
     Block,
     Node,
     flat,
@@ -350,3 +352,19 @@ def test_sections_end_a_section_at_a_heading_above_its_level():
     Then each stands alone"""
     lower, upper = read("## A\n# B")
     assert sections((lower, upper)) == (Node(lower), Node(upper))
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_table_holds_its_header_and_each_row_but_the_delimiter_row():
+    """Given a table of a header, a delimiter row, and two rows, with spaces around its cells
+    When the text is read
+    Then it gives one table of the header, holding the two rows, each cell trimmed"""
+    text = "| Test type | Exit criteria |\n|---|---|\n|  Unit | coverage: 100% |\n| E2E | k = 3 |"
+    assert read(text) == (
+        Block(
+            TABLE,
+            1,
+            "| Test type | Exit criteria |",
+            children=(Block(ROW, 3, "| Unit | coverage: 100% |"), Block(ROW, 4, "| E2E | k = 3 |")),
+        ),
+    )

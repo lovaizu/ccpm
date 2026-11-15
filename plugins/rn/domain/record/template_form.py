@@ -16,8 +16,10 @@ from record.markdown import (
     ITEM,
     PARAGRAPH,
     QUOTE,
+    ROW,
     Block,
     Node,
+    cells,
     flat,
     sections,
     sentences,
@@ -41,6 +43,8 @@ _LEAVE_WORD = re.compile(r"Leave out `([^`<>]+)` and the link")
 _LEAVE_SECTION = re.compile(r"Leave out ([A-Z][\w-]*(?: [\w-]+)*?) where")
 _AS_IN = re.compile(r"\bas in ([A-Z][\w ]*?)\.")
 _EACH = re.compile(r"\beach\b", re.IGNORECASE)
+# The pattern of a slot: any words on its line.
+_ANY = r"[^\n]+?"
 
 
 # Each dataclass marked frozen is never changed after it's made, so a mutant that unfreezes it
@@ -107,7 +111,9 @@ def form(blocks: tuple[Block, ...]) -> Form:
         for note in scoped[node.block.line]
         if note.slots & _slots(node.block)
     )
-    optional = frozenset(words for note in _all_notes(nodes) for words in _left_sections(note))
+    headings = {node.block.text for node in _walk(nodes) if node.block.kind == HEADING}
+    left = {words for note in _all_notes(nodes) for words in _left_sections(note)}
+    optional = frozenset(left & headings)
     units = _units(nodes, _Context(scoped, optional, holders))
     slots = frozenset(name for block in flat(blocks) for name in _slots(block))
     figures = frozenset(block.info for block in flat(blocks) if block.kind == FIGURE)
@@ -242,6 +248,8 @@ def _unit(node: Node, context: _Context) -> Unit:
 def _repeats(block: Block) -> bool:
     """Whether the block may stand more than once, by its form alone: a heading below the top
     whose words hold a slot, or a list item whose first words do."""
+    if block.kind == ROW:
+        return bool(_slots(block))
     if block.kind == HEADING:
         # A heading's level is at least 1, so a mutant of `>` to `!=` changes nothing.
         return block.level > 1 and bool(_slots(block))  # pragma: no mutate
@@ -256,7 +264,7 @@ def _left_out(block: Block, notes: list[_Note], optional: frozenset[str]) -> boo
     return any(
         _LEAVE.search(note.words)
         and not _LEAVE_WORD.search(note.words)
-        and not _LEAVE_SECTION.search(note.words)
+        and not set(_left_sections(note)) & optional
         for note in notes
     )
 
@@ -310,6 +318,9 @@ def _pattern_of(block: Block, notes: list[_Note]) -> re.Pattern[str] | None:  # 
         return None
     if block.kind == CODE:
         return re.compile(".+" if _SLOT.search(block.info) else re.escape(block.info))
+    if block.kind == ROW:
+        row = r" \| ".join(_pattern(cell).replace(_ANY, r"[^|\n]+?") for cell in cells(block.text))
+        return re.compile(rf"\| {row} \|")
     word = next((m.group(1) for n in notes for m in [_LEAVE_WORD.search(n.words)] if m), "")
     return re.compile(_optional_link(block.text, word))
 
@@ -343,7 +354,7 @@ def _token(token: str) -> str:
     if token.startswith("["):
         words, _, target = token[1:-1].partition("](")
         return rf"\[{_pattern(words)}\]\({_pattern(target)}\)"
-    return r"\d+" if token == "<n>" else r"[^\n]+?"
+    return r"\d+" if token == "<n>" else _ANY
 
 
 def _sentences_of(text: str, notes: list[_Note]) -> tuple[int, int | None]:  # pragma: no mutate

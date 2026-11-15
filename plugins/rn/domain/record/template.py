@@ -17,8 +17,10 @@ from record.markdown import (
     HEADING,
     ITEM,
     PARAGRAPH,
+    ROW,
     Block,
     Node,
+    cells,
     flat,
     read,
     sections,
@@ -261,12 +263,11 @@ def _placeholders_left(blocks: tuple[Block, ...], form: Form) -> list[Fault]:
 
 
 def _long_sentences(blocks: tuple[Block, ...]) -> list[Fault]:
-    """A fault for each sentence of a paragraph or an item that holds more than MOST_WORDS words."""
+    """A fault for each sentence of a paragraph, an item, or a cell of a row that holds more than
+    MOST_WORDS words."""
     found = []
     for block in flat(blocks):
-        if block.kind not in (PARAGRAPH, ITEM):
-            continue
-        for sentence in sentences(block.text):
+        for sentence in (each for text in _prose(block) for each in sentences(text)):
             count = words(sentence)
             if count > MOST_WORDS:
                 begins = " ".join(sentence.split()[:6])
@@ -277,3 +278,11 @@ def _long_sentences(blocks: tuple[Block, ...]) -> list[Fault]:
                     )
                 )
     return found
+
+
+def _prose(block: Block) -> list[str]:
+    """The words of the block that a reader reads as sentences: a paragraph's or an item's, or each
+    cell of a row, and none of another block."""
+    if block.kind == ROW:
+        return cells(block.text)
+    return [block.text] if block.kind in (PARAGRAPH, ITEM) else []
