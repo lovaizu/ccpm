@@ -9,8 +9,8 @@ import os
 import uuid
 from dataclasses import dataclass
 
-from adapters import AdapterFailed, NoWork, Running, start_text
-from answers import cant_check, due, ended_unheld, gave, stopped, text_failed
+from adapters import AdapterFailed, NoWork, Running, kept_results, start_text
+from answers import cant_check, due, ended_unheld, gave, picked_up, stopped, text_failed
 from events import Answer, Event
 from form import Lane, LanesFile, Move, OutOfForm, read_lanes
 from lanes import check_call, check_end, check_start
@@ -43,7 +43,7 @@ from run_record import (
     lines,
     record_path,
 )
-from runs import Due, Left, Run, stand
+from runs import Due, Left, OffRoutes, Result, Run, pick_up, stand
 
 # What lets an event through and says nothing.
 PASS = Answer(False, "")
@@ -87,10 +87,10 @@ def handle(event: Event, root: str) -> Answer:
     Changes: the run record, by the lines above, and whatever an adapter or a command of the
     plugin's changes.
     Refuses: nothing; where lanes.json, the run record, an adapter, or a Lane can't be read or
-    run, it stops the event with why and who must fix it, except an adapter that fails at the
-    skill's call, whose start it gives with why while it lets the call run, and one that fails as a
-    subagent's end reaches the main conversation, whose why and who it gives in place of the
-    moves.
+    run, or the Kept results leave the Routes, it stops the event with why and who must fix it,
+    except an adapter of a start's text that fails at the skill's call, whose start it gives with
+    why while it lets the call run, and one that fails as a subagent's end reaches the main
+    conversation, whose why and who it gives in place of the moves.
     Carries: each `CC->>G` arrow of S1 to S7, each `G-->>` answer, and S5 `G->>G: leaves that
     start out of the moves due, with why in its place`.
     """
@@ -149,9 +149,12 @@ class Plugin:
 
 
 def _called(plugin: Plugin, placed: Placed, what: SkillCall, cwd: str) -> Answer:
-    """A skill's call: the call of a new Run, where the skill is the plugin's and a Route goes after
-    its start, with the first moves due; or each Run set aside whose move due calls the skill of
-    another plugin."""
+    """A skill's call, where the skill is the plugin's and a Route goes after its start: the moves
+    due of the latest Run of the skill that the record holds going, as after /compact; else the
+    Run picked up from the Kept results, where lanes.json names an adapter of the plugin's records;
+    else the call of a new Run with the first moves due; stopped with why and who must fix it
+    where the Kept results leave the Routes. Or each Run set aside whose move due calls the skill
+    of another plugin."""
     routes = plugin.lanes.proposal.routes
     first = [r for r in routes if r.skill == what.skill and r.after.kind == "first"]
     if what.plugin != plugin.name:
@@ -161,6 +164,37 @@ def _called(plugin: Plugin, placed: Placed, what: SkillCall, cwd: str) -> Answer
         return PASS
     if not first:
         return PASS
+    records = plugin.lanes.proposal.adapters.records
+    picked: tuple[Result, ...] = ()
+    if records:
+        kept = kept_results(os.path.join(plugin.root, records), what.words, cwd)
+        try:
+            picked = pick_up(routes, what.skill, kept)
+        except OffRoutes as e:
+            who = f"The developer of {plugin.name} must fix its adapter of records"
+            return _stop(plugin.name, CantCheck(str(e), who))
+    going = [r for r in placed.runs if r.skill == what.skill]
+    if going:
+        return Answer(False, due(plugin.name, _told(plugin, going[-1], cwd)))
+    if picked:
+        return _picked_up(plugin, what, picked, cwd)
+    return _begun(plugin, what, cwd)
+
+
+def _picked_up(plugin: Plugin, what: SkillCall, picked: tuple[Result, ...], cwd: str) -> Answer:
+    """The call of a new Run with the Results it picks up from the Kept results, and where it picks
+    up with the moves due; the Run holds the words typed now, as any call does."""
+    run_id = uuid.uuid4().hex[:8]
+    add(plugin.record, Called(run_id, what.skill, what.by, what.words))
+    for result in picked:
+        add(plugin.record, Gave(run_id, result.role, result.result, None))
+    told = _told(plugin, _now(plugin, run_id), cwd)
+    return Answer(False, picked_up(plugin.name, picked, told))
+
+
+def _begun(plugin: Plugin, what: SkillCall, cwd: str) -> Answer:
+    """The call of a new Run, with the first moves due; each start with why where the adapter of a
+    start's text fails, as the skill's own steps may make what it reads."""
     run_id = uuid.uuid4().hex[:8]
     add(plugin.record, Called(run_id, what.skill, what.by, what.words))
     run = _now(plugin, run_id)
@@ -225,7 +259,9 @@ def _notified(plugin: Plugin, placed: Placed, cwd: str) -> Answer:
 
 def _started(plugin: Plugin, placed: Placed, asked: StartCall, cwd: str) -> Answer:
     """A start: the Start added in the Run whose Lanes keep it, or stopped by the first Lane that
-    breaks it; a resume, or a subagent's start of no role, let through with no Start added."""
+    breaks it; a resume let through, with a Start marked resumed where a Route makes it due; a
+    resume that no move due opens, or a subagent's start of no role, let through with no Start
+    added."""
     verdicts: list[Verdict] = []
     for run in placed.runs:
         moves = tuple(d for d in _told(plugin, run, cwd) if isinstance(d, Due))
@@ -235,14 +271,30 @@ def _started(plugin: Plugin, placed: Placed, asked: StartCall, cwd: str) -> Answ
         if verdict != Kept():
             verdicts.append(verdict)
             continue
-        if placed.start is None and not asked.resume:
-            text = next(d for d in moves if (d.move.role, d.text) == (asked.role, asked.text))
-            started = Started(
-                run.id, asked.role, asked.text, dict(text.values), asked.tool_use_id, False
-            )
-            add(plugin.record, started)
+        if placed.start is None:
+            _add_start(plugin, run, asked, moves)
         return PASS
     return _stop(plugin.name, verdicts[0])
+
+
+def _add_start(plugin: Plugin, run: Run, asked: StartCall, moves: tuple[Due, ...]) -> None:
+    """Adds the main conversation's Start that the Routes keep: a start due, with the run values
+    of its text; or a resume due, with the run values of the Start it resumes, tied at once to the
+    subagent it resumes, as no later payload ties a SendMessage to it. A resume that no move due
+    opens adds nothing."""
+    if not asked.resume:
+        text = next(d for d in moves if (d.move.role, d.text) == (asked.role, asked.text))
+        started = Started(
+            run.id, asked.role, asked.text, dict(text.values), asked.tool_use_id, False
+        )
+        add(plugin.record, started)
+        return
+    if Move("resume", role=asked.role) not in run.due or asked.agent_id is None:
+        return
+    (before, *_) = [s for s in reversed(run.starts) if s.agent_id == asked.agent_id]
+    resumed = Started(run.id, asked.role, asked.text, dict(before.values), asked.tool_use_id, True)
+    add(plugin.record, resumed)
+    add(plugin.record, Tied(run.id, asked.tool_use_id, asked.agent_id))
 
 
 def _turn_ended(plugin: Plugin, placed: Placed, cwd: str) -> Answer:

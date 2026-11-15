@@ -47,7 +47,8 @@ class Result:
 @dataclass(frozen=True)
 class Start:
     """One start or resume of a role in the Run: its role, text, and run values, the call that made
-    it, the agent_id it's tied to once tied, each Result it gave, and whether it has ended."""
+    it, the agent_id it's tied to once tied, each Result it gave, whether it has ended, and whether
+    it resumes a subagent that a Start before it started."""
 
     role: str
     text: str
@@ -56,6 +57,7 @@ class Start:
     agent_id: str | None
     results: tuple[str, ...]
     ended: bool
+    resumed: bool = False
 
 
 @dataclass(frozen=True)
@@ -163,9 +165,11 @@ def _of_start(run: Run, line: Started | Tied | Ended) -> Run:
     """The Run after a Start, which ends its standing aside, its tie to an agent_id, or its
     subagent's end."""
     if isinstance(line, Started):
-        start = Start(line.role, line.text, line.values, line.tool_use_id, None, (), False)
+        start = Start(
+            line.role, line.text, line.values, line.tool_use_id, None, (), False, line.resumed
+        )
         due = list(run.due)
-        taken = Move("start", role=line.role)
+        taken = Move("resume" if line.resumed else "start", role=line.role)
         if taken in due:
             due.remove(taken)
         return dataclasses.replace(run, starts=(*run.starts, start), due=tuple(due), aside=False)
@@ -223,14 +227,19 @@ def _gave(run: Run, line: Gave, routes: Sequence[Route]) -> Run:
         else s
         for s in run.starts
     )
-    due = _moves(
+    due = _led(routes, run.skill, Result(line.role, line.result))
+    return dataclasses.replace(run, starts=starts, results=results, due=due)
+
+
+def _led(routes: Sequence[Route], skill: str, result: Result) -> tuple[Move, ...]:
+    """The moves of each Route of the skill that goes after the Result."""
+    return _moves(
         routes,
-        run.skill,
+        skill,
         lambda after: (
-            after.kind == "result" and (after.role, after.result) == (line.role, line.result)
+            after.kind == "result" and (after.role, after.result) == (result.role, result.result)
         ),
     )
-    return dataclasses.replace(run, starts=starts, results=results, due=due)
 
 
 def _moves(routes: Sequence[Route], skill: str, after: Callable[[After], bool]) -> tuple[Move, ...]:
@@ -288,7 +297,19 @@ def pick_up(routes: Sequence[Route], skill: str, kept: Sequence[KeptResult]) -> 
     Gives: the Results, each one that a Route after the one before goes after; none where the Kept
     results are none or reach a Route that starts no more, as the run then starts anew.
     Changes: nothing.
-    Refuses: OffRoutes, where a Kept result isn't one that the Routes lead to.
+    Refuses: OffRoutes, naming the first Kept result whose role no move due before it starts, or
+    that no Route of the skill goes after.
     Carries: S7 `alt results that follow the Routes` and `results that don't follow them`.
     """
-    raise NotImplementedError("runs.pick_up")
+    due = _moves(routes, skill, lambda after: after.kind == "first")
+    for each in kept:
+        led = _led(routes, skill, Result(each.role, each.result))
+        if Move("start", role=each.role) not in due or not led:
+            raise OffRoutes(
+                f"{each.role} gave `{each.result}` in the results kept, which no Route of {skill}"
+                " leads to"
+            )
+        if any(m.kind == "no_more" for m in led):
+            return ()
+        due = led
+    return tuple(Result(each.role, each.result) for each in kept)

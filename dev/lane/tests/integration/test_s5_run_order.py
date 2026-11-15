@@ -94,6 +94,37 @@ def test_a_resume_where_the_routes_open_none_moves_no_run(b: w.Bench) -> None:
     assert stopped.blocked and w.due("reviewer") in stopped.said
 
 
+def resumes_writer_after_more() -> dict[str, Any]:
+    """The walkthrough's Proposal, with the Route after reviewer's `more` resuming writer."""
+    proposal = w.walkthrough_proposal()
+    proposal["routes"][2]["moves"] = [{"resume": "writer"}]
+    return proposal
+
+
+@pytest.mark.supports("S5", "Start", "Route")
+def test_a_resume_a_route_makes_due_adds_a_start_and_moves_the_run(b: w.Bench) -> None:
+    """Given: the walkthrough's Proposal laid with the Route after reviewer's `more` resuming
+    writer; writer gave `written`, and reviewer gave `more`.
+    When: the main conversation resumes writer by SendMessage, and writer gives `written`.
+    Then: the guard tells the main conversation to resume writer, lets the SendMessage through,
+    adding a Start of writer marked resumed, and gives reviewer's start due once writer's Result
+    reaches it."""
+    c, writer = w.writer_started(b, make=resumes_writer_after_more)
+    w.give(b, writer, "written")
+    _, reviewer = w.start(c, "reviewer")
+    assert reviewer
+    reached = w.give(b, reviewer, "more")
+    assert "Resume `changelog:writer` by SendMessage." in reached.said
+    assert not c.resume(writer, "Mend the entries reviewer named.").blocked
+    (run,) = w.where(b.changelog, b, c.session_id).runs
+    resumed = run.starts[-1]
+    assert (resumed.role, resumed.resumed, resumed.agent_id) == ("writer", True, writer.id)
+    reached = w.give(b, writer, "written")
+    assert reached.said == (
+        "changelog: writer gave `written`. Start `changelog:reviewer` with `Carry out your steps`."
+    )
+
+
 @pytest.mark.supports("S5", "Start", "guard")
 def test_a_start_whose_subagent_starts_after_its_post_tool_use_is_held(b: w.Bench) -> None:
     """Given: the walkthrough's Proposal laid, and the person typed /changelog:write.

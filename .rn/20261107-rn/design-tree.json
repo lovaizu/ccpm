@@ -164,18 +164,7 @@
       "name": "A run that stopped goes on where it stopped, after /compact or in a new conversation",
       "path": "dev/lane/tests/integration/test_s7_picked_up.py",
       "kind": "specific",
-      "inputs": [
-        "dev/lane/architecture.md",
-        "plugins/lane",
-        "dev/lane/tests"
-      ],
-      "preconditions": [
-        "dev/lane/tests/integration/test_s5_run_order.py"
-      ],
-      "status": "doing",
-      "check": "the integration tests in dev/lane/tests/integration/test_s7_picked_up.py pass, each seen to fail first, and each that names a rule of Solution strategy fails with the part that holds the rule taken out",
-      "good": false,
-      "decisions": []
+      "status": "done"
     },
     {
       "name": "The user reads each step as it'll read with its rules, and the order, before anything holds their plugin",
@@ -190,7 +179,7 @@
         "dev/lane/tests/integration/test_s5_run_order.py",
         "dev/lane/tests/integration/test_s6_subagent_held.py"
       ],
-      "status": "open",
+      "status": "doing",
       "check": "the integration tests in dev/lane/tests/integration/test_s1_proposal.py pass, each seen to fail first, and each that names a rule of Solution strategy fails with the part that holds the rule taken out",
       "good": false,
       "decisions": []

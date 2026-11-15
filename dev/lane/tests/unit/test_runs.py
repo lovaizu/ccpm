@@ -216,7 +216,55 @@ def test_nothing_may_be_given_in_a_run_that_ended() -> None:
     assert may_give(c, "writer", d.ROUTES_OF_WRITE) == ()
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
+# write's Routes with the Route after reviewer's `more` resuming writer, and a Run of them up to
+# reviewer's `more`.
+RESUMES = (
+    *d.ROUTES_OF_WRITE[:2],
+    d.route(d.After("result", role="reviewer", result="more"), Move("resume", role="writer")),
+)
+TO_MORE = (
+    CALLED,
+    WRITER,
+    TIED,
+    Gave("r1", "writer", "written", "a01"),
+    REVIEWER,
+    Tied("r1", "toolu_r", "a02"),
+    Gave("r1", "reviewer", "more", "a02"),
+)
+RESUMED = (Started("r1", "writer", "Mend", {}, "toolu_w2", True), Tied("r1", "toolu_w2", "a01"))
+
+
+@pytest.mark.supports("test_a_resume_a_route_makes_due_adds_a_start_and_moves_the_run")
+def test_a_result_whose_route_resumes_makes_the_resume_due() -> None:
+    """Given: reviewer's `more`, whose Route resumes writer.
+    When: stand works out the conversation.
+    Then: writer's resume is due."""
+    (run,) = stand(d.SESSION, TO_MORE, RESUMES).runs
+    assert run.due == (Move("resume", role="writer"),)
+
+
+@pytest.mark.supports("test_a_resume_a_route_makes_due_adds_a_start_and_moves_the_run")
+def test_a_resumed_start_takes_its_move_due() -> None:
+    """Given: writer's resume due, then writer's Start marked resumed, tied to a01.
+    When: stand works out the conversation.
+    Then: the Run's last Start is writer's, resumed and tied to a01, with no move due."""
+    (run,) = stand(d.SESSION, (*TO_MORE, *RESUMED), RESUMES).runs
+    last = run.starts[-1]
+    assert (last.role, last.resumed, last.agent_id, last.results) == ("writer", True, "a01", ())
+    assert run.due == ()
+
+
+@pytest.mark.supports("test_a_resume_a_route_makes_due_adds_a_start_and_moves_the_run")
+def test_a_resumed_starts_result_makes_its_routes_moves_due() -> None:
+    """Given: writer's resumed Start, and its Result `written`.
+    When: stand works out the conversation.
+    Then: the resumed Start holds `written`, and reviewer's start is due."""
+    given = (*TO_MORE, *RESUMED, Gave("r1", "writer", "written", "a01"))
+    (run,) = stand(d.SESSION, given, RESUMES).runs
+    assert run.starts[-1].results == ("written",)
+    assert run.due == START_REVIEWER
+
+
 @pytest.mark.supports("test_no_kept_results_start_a_new_run")
 def test_no_kept_results_pick_up_nothing() -> None:
     """Given: no Kept results.
@@ -225,7 +273,6 @@ def test_no_kept_results_pick_up_nothing() -> None:
     assert pick_up(d.ROUTES_OF_WRITE, "write", ()) == ()
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_a_new_conversation_picks_up_from_the_kept_results")
 def test_kept_results_that_follow_the_routes_are_picked_up() -> None:
     """Given: writer's `written` and reviewer's `more`, which follow write's Routes.
@@ -238,7 +285,6 @@ def test_kept_results_that_follow_the_routes_are_picked_up() -> None:
     )
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_kept_results_that_reach_the_end_start_a_new_run")
 def test_kept_results_that_reach_a_route_that_starts_no_more_pick_up_nothing() -> None:
     """Given: writer's `written` and reviewer's `good`, whose Route starts no more.
@@ -248,7 +294,6 @@ def test_kept_results_that_reach_a_route_that_starts_no_more_pick_up_nothing() -
     assert pick_up(d.ROUTES_OF_WRITE, "write", kept) == ()
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_kept_results_off_the_routes_stop_the_command")
 def test_kept_results_off_the_routes_are_refused() -> None:
     """Given: reviewer's `good` first, which no Route of write leads to.
