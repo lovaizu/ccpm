@@ -248,31 +248,7 @@
       "name": "Lane's developers see, before anyone builds a part, whether Lane's parts joined as its architecture draws give each key result",
       "path": "dev/lane/tests",
       "kind": "test-design",
-      "status": "doing",
-      "necessary_conditions": [
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The case of an adapter's none",
-              "decided": "an integration case of S5's new branch: an adapter that gives none for a start, which the guard leaves out of the moves due with why in its place",
-              "by": "maker"
-            }
-          ]
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The unit cases of an adapter's none",
-              "decided": "the unit cases of adapters.start_text and of the guard's moves due that the case of S5's new branch rests on",
-              "by": "maker"
-            }
-          ]
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "A person's /lane:up lays a lane that stops a subagent's command outside its step with the step's sentence, and the run starts that subagent and ends on its result",
@@ -292,7 +268,7 @@
       "preconditions": [
         "dev/lane/tests/integration/test_lane_walking_skeleton.py"
       ],
-      "status": "open",
+      "status": "doing",
       "check": "the integration tests in dev/lane/tests/integration/test_s5_run_order.py pass, each seen to fail first, and each that names a rule of Solution strategy fails with the part that holds the rule taken out",
       "good": false,
       "decisions": []

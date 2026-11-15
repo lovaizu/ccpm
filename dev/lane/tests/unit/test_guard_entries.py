@@ -9,13 +9,15 @@ import importlib.util
 import io
 import json
 import os
+import sys
 import tempfile
+from dataclasses import replace
 from typing import Any
 
 import lane_data as d
 import pytest
 from events import NotAnEvent
-from form import write_lanes
+from form import Adapters, write_lanes
 from guard import handle
 from lay.command import main as lay_main
 from run_record import Called, Started, Tied, add, lines, record_path
@@ -97,6 +99,78 @@ def test_an_event_with_lanes_json_unreadable_is_stopped_with_who_must_fix_it(plu
     event = d.event("PreToolUse", agent_id="a01", tool_name="Bash", tool_input={"command": "ls"})
     answer = handle(event, plugin)
     assert answer.stop and "lanes.json" in answer.words
+
+
+WAITING = "0.2.0 waits for your approval"
+
+
+def laid_with_adapter(plugin: str, gives: str) -> str:
+    """Writes the walkthrough's lanes.json into the plugin, with an adapter of a start's text that
+    prints what `gives` names for writer, `none` or `text`, and gives the run record's path."""
+    printed = {"none": {"none": WAITING}, "text": {"text": "Carry out your steps"}}[gives]
+    adapter = os.path.join(plugin, "hooks", "adapters", "text.py")
+    os.makedirs(os.path.dirname(adapter))
+    with open(adapter, "w", encoding="utf-8") as f:
+        f.write(f"#!{sys.executable}\nimport json, sys\njson.load(sys.stdin)\n")
+        f.write(f"print(json.dumps({printed!r}))\n")
+    os.chmod(adapter, 0o755)
+    lanes = d.lanes_file()
+    adapters = Adapters("hooks/adapters/text.py", None)
+    proposal = replace(lanes.proposal, adapters=adapters)
+    write_lanes(os.path.join(plugin, "hooks", "lanes.json"), replace(lanes, proposal=proposal))
+    return record_path("changelog", d.SESSION)
+
+
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
+@pytest.mark.supports("test_a_start_no_work_waits_for_is_left_out_and_the_turn_ends")
+def test_a_skills_call_gives_why_in_place_of_a_start_no_work_waits_for(plugin: str) -> None:
+    """Given: changelog laid with an adapter of a start's text that gives, for writer, that no work
+    waits for it, and a conversation with no Run.
+    When: handle answers the UserPromptExpansion of /changelog:write.
+    Then: it adds the call of write's Run, lets the call run, and gives why in place of writer's
+    start."""
+    path = laid_with_adapter(plugin, "none")
+    event = d.event("UserPromptExpansion", command_name="changelog:write", command_args="")
+    answer = handle(event, plugin)
+    assert not answer.stop
+    assert WAITING in answer.words and "Start `changelog:writer`" not in answer.words
+    assert [x.skill for x in lines(path) if isinstance(x, Called)] == ["write"]
+
+
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
+@pytest.mark.supports("test_a_start_no_work_waits_for_is_left_out_and_the_turn_ends")
+def test_a_start_of_a_role_no_work_waits_for_is_stopped(plugin: str) -> None:
+    """Given: changelog laid with an adapter of a start's text that gives, for writer, that no work
+    waits for it, and write's Run called.
+    When: handle answers the main conversation's Agent call of changelog:writer.
+    Then: it stops the start, and adds no Start."""
+    path = laid_with_adapter(plugin, "none")
+    add(path, Called("r1", "write", "person", ""))
+    tool_input = {"subagent_type": "changelog:writer", "prompt": "Carry out your steps"}
+    event = d.event("PreToolUse", tool_name="Agent", tool_input=tool_input, tool_use_id="t1")
+    answer = handle(event, plugin)
+    assert answer.stop
+    assert not [x for x in lines(path) if isinstance(x, Started)]
+
+
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
+@pytest.mark.supports("test_a_start_no_work_waits_for_is_left_out_and_the_turn_ends")
+@pytest.mark.parametrize(
+    "gives, stops", [("text", True), ("none", False)], ids=["writer's start due", "left out"]
+)
+def test_the_main_conversations_end_stops_only_for_a_start_due(
+    plugin: str, gives: str, stops: bool
+) -> None:
+    """Given: changelog laid with an adapter of a start's text that gives writer its text, or that
+    no work waits for it, and handle has answered the UserPromptExpansion of /changelog:write, with
+    no subagent started.
+    When: handle answers the main conversation's Stop.
+    Then: it stops the end where writer's start is due, and lets it end where the start is left
+    out."""
+    laid_with_adapter(plugin, gives)
+    handle(d.event("UserPromptExpansion", command_name="changelog:write", command_args=""), plugin)
+    answer = handle(d.event("Stop", last_message="Waiting."), plugin)
+    assert answer.stop is stops
 
 
 def writer_tied(plugin: str) -> str:

@@ -21,6 +21,17 @@ print(json.dumps({"text": f"Write the entries for 0.2.0 as {sys.argv[1]}",
                   "values": {"version": "0.2.0"}}))
 """
 FAILING_ADAPTER = "#!/usr/bin/env python3\nimport sys\nsys.exit('no version to write yet')\n"
+WAITING = "0.2.0 waits for your approval"
+# An adapter of a start's text that gives no work waits for the role named, and Lane's form of a
+# text for each other role.
+NONE_ADAPTER = """#!/usr/bin/env python3
+import json, sys
+json.load(sys.stdin)
+if sys.argv[1] == "{role}":
+    print(json.dumps({{"none": "{why}"}}))
+else:
+    print(json.dumps({{"text": "Carry out your steps"}}))
+"""
 
 
 def with_route(after: dict[str, Any], moves: list[dict[str, Any]]) -> w.Make:
@@ -113,6 +124,44 @@ def test_an_adapter_gives_each_start_its_text_and_values(tmp_path: Any) -> None:
     assert f"changelog: Start `changelog:writer` with `{text}`." in c.type("/changelog:write").said
     started, writer = c.start("changelog:writer", text, "writer")
     assert not started.blocked and writer
+
+
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
+@pytest.mark.supports("S5", "adapter", "Start", "guard")
+def test_a_start_no_work_waits_for_is_left_out_and_the_turn_ends(tmp_path: Any) -> None:
+    """Given: the Proposal laid with an adapter of a start's text that gives, for writer, that no
+    work waits for it, as `0.2.0 waits for your approval`.
+    When: the person types /changelog:write, the main conversation starts writer, and then ends
+    its turn.
+    Then: the guard lets the call run and gives why in place of writer's start, stops the start of
+    writer, and lets the turn end, as no move is due."""
+    b = adapter_bench(str(tmp_path), NONE_ADAPTER.format(role="writer", why=WAITING))
+    c = w.laid(b, make=with_adapter)
+    called = c.type("/changelog:write")
+    assert not called.blocked
+    assert WAITING in called.said and "changelog:writer" in called.said
+    assert "Start `changelog:writer`" not in called.said
+    stopped, agent = w.start(c, "writer")
+    assert stopped.blocked and agent is None
+    assert not c.stop("0.2.0 waits for your approval.").blocked
+
+
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
+@pytest.mark.supports("S5", "adapter", "Result")
+def test_a_start_no_work_waits_for_after_a_result_is_said_with_why(tmp_path: Any) -> None:
+    """Given: the Proposal laid with an adapter of a start's text that gives writer Lane's text,
+    and, for reviewer, that no work waits for it, as `0.2.0 waits for your approval`.
+    When: writer gives `written`, and its end reaches the main conversation.
+    Then: the guard gives writer's Result, with why in place of reviewer's start."""
+    b = adapter_bench(str(tmp_path), NONE_ADAPTER.format(role="reviewer", why=WAITING))
+    c = w.laid(b, make=with_adapter)
+    assert not c.type("/changelog:write").blocked
+    _, writer = w.start(c, "writer")
+    assert writer
+    reached = w.give(b, writer, "written")
+    assert "writer gave `written`" in reached.said
+    assert WAITING in reached.said and "changelog:reviewer" in reached.said
+    assert "Start `changelog:reviewer`" not in reached.said
 
 
 @pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")

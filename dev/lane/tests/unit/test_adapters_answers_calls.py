@@ -11,11 +11,19 @@ from typing import Any
 
 import lane_data as d
 import pytest
-from adapters import AdapterFailed, KeptResult, Running, kept_results, start_text
+from adapters import (
+    AdapterFailed,
+    KeptResult,
+    NoWork,
+    Running,
+    StartText,
+    kept_results,
+    start_text,
+)
 from answers import cant_check, due, ended_unheld, gave, stopped
 from form import Move
 from lanes.kind import Broken, CantCheck
-from runs import Due
+from runs import Due, Left
 from script_calls import id_line, printed, result_args, result_command, write_args
 
 ECHO = """import json, os, sys
@@ -40,6 +48,7 @@ def test_with_no_adapter_a_start_takes_lanes_text_and_the_words(words: str, text
     When: start_text gives writer's text.
     Then: it is Lane's text, `Carry out your steps`, holding the words typed, with no values."""
     given = start_text(None, "writer", (), words, d.REPO)
+    assert isinstance(given, StartText)
     assert given.text.startswith("Carry out your steps") and text in given.text
     assert given.values == {}
 
@@ -54,6 +63,7 @@ def test_an_adapter_is_handed_the_role_and_each_start_that_runs(tmp_path: Any) -
     os.makedirs(tmp_path / "tally")
     running = (Running("writer", "Write 0.2.0", {"version": "0.2.0"}),)
     given = start_text(program(tmp_path, ECHO), "reviewer", running, "", str(tmp_path / "tally"))
+    assert isinstance(given, StartText)
     args, handed, cwd = json.loads(given.text)
     assert args == ["reviewer"]
     assert handed == {
@@ -64,11 +74,27 @@ def test_an_adapter_is_handed_the_role_and_each_start_that_runs(tmp_path: Any) -
 
 
 @pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
+@pytest.mark.supports("test_a_start_no_work_waits_for_is_left_out_and_the_turn_ends")
+def test_an_adapter_that_prints_none_gives_why_no_work_waits(tmp_path: Any) -> None:
+    """Given: an adapter that prints `{"none": "0.2.0 waits for your approval"}`.
+    When: start_text asks it for writer's text.
+    Then: it gives NoWork with that why."""
+    path = program(tmp_path, 'print(\'{"none": "0.2.0 waits for your approval"}\')\n')
+    given = start_text(path, "writer", (), "", str(tmp_path))
+    assert given == NoWork("0.2.0 waits for your approval")
+
+
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_an_adapter_that_fails_at_a_later_move_gives_why_and_who")
 @pytest.mark.parametrize(
     "text",
-    ["import sys\nsys.exit('no version')\n", "print('not json')\n", "print('{\"values\": {}}')\n"],
-    ids=["exits 1", "prints what isn't JSON", "prints no text"],
+    [
+        "import sys\nsys.exit('no version')\n",
+        "print('not json')\n",
+        "print('{\"values\": {}}')\n",
+        "print('{\"none\": 3}')\n",
+    ],
+    ids=["exits 1", "prints what isn't JSON", "prints no text", "prints a none that isn't text"],
 )
 def test_an_adapter_that_fails_or_strays_from_its_form_is_refused(tmp_path: Any, text: str) -> None:
     """Given: an adapter that exits 1, or prints what isn't its form.
@@ -166,6 +192,65 @@ def test_a_result_is_said_with_the_moves_of_its_route(moves: tuple[Due, ...], wo
     assert (
         gave("changelog", "reviewer", "good", moves) == f"changelog: reviewer gave `good`. {words}"
     )
+
+
+WAITING = "0.2.0 waits for your approval"
+
+
+def left(role: str) -> Left:
+    """The start of the role, left out of the moves due as no work waits for it."""
+    return Left(Move("start", role=role), WAITING)
+
+
+def said_with_why(words: str, role: str) -> bool:
+    """Whether the words give why in place of the role's start, and not its start."""
+    return (
+        WAITING in words
+        and f"`changelog:{role}`" in words
+        and f"Start `changelog:{role}`" not in words
+    )
+
+
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
+@pytest.mark.supports("test_a_start_no_work_waits_for_is_left_out_and_the_turn_ends")
+def test_a_start_left_out_is_said_with_why_in_its_place() -> None:
+    """Given: writer's start left out, as no work waits for it, with why.
+    When: due gives its words for changelog.
+    Then: they open with the plugin's name, and give why in place of writer's start."""
+    words = due("changelog", (left("writer"),))
+    assert words.startswith("changelog: ") and said_with_why(words, "writer")
+
+
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
+@pytest.mark.supports("test_a_start_no_work_waits_for_is_left_out_and_the_turn_ends")
+def test_a_start_left_out_beside_a_start_due_is_said_with_both() -> None:
+    """Given: writer's start left out, with why, and reviewer's start due.
+    When: due gives its words for changelog.
+    Then: they give why in place of writer's start, and reviewer's start with its text."""
+    words = due("changelog", (left("writer"), d.due_start("reviewer")))
+    assert said_with_why(words, "writer")
+    assert "Start `changelog:reviewer` with `Carry out your steps`." in words
+
+
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
+@pytest.mark.supports("test_a_start_no_work_waits_for_after_a_result_is_said_with_why")
+def test_a_result_is_said_with_why_in_place_of_a_start_left_out() -> None:
+    """Given: writer's Result `written`, and reviewer's start left out, with why.
+    When: gave gives its words.
+    Then: they give writer's Result, then why in place of reviewer's start."""
+    words = gave("changelog", "writer", "written", (left("reviewer"),))
+    assert words.startswith("changelog: writer gave `written`. ")
+    assert said_with_why(words, "reviewer")
+
+
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
+@pytest.mark.supports("test_a_subagent_stopped_by_task_stop_is_due_again")
+def test_an_end_with_no_result_is_said_with_why_in_place_of_its_start_left_out() -> None:
+    """Given: writer, ended by TaskStop, and its start left out, with why.
+    When: ended_unheld gives its words.
+    Then: they name writer, and give why in place of its start."""
+    words = ended_unheld("changelog", "writer", (left("writer"),))
+    assert words.startswith("changelog: ") and said_with_why(words, "writer")
 
 
 @pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
