@@ -176,6 +176,23 @@
           "good": false,
           "decisions": []
         }
+      ],
+      "decisions": [
+        {
+          "about": "What the check finds",
+          "decided": "rn's check reads the template of the deliverable's kind and the deliverable, and finds each section of the template in its order and no other, each item in the template's form, each slot in the template's sentence pattern where it has one and else in its number of sentences, no note or placeholder of the template left, each figure and block the template asks for, and no sentence longer than a set number of words, as the template holds only the vital few, so each sentence beyond it is trivia that an evaluator reading for its conditions passes",
+          "by": "user"
+        },
+        {
+          "about": "Where it runs on ccpm's own documents",
+          "decided": "check.sh runs it on each document of ccpm made by a best practice, each product vision, README, and architecture against its kind's template, and the documents are mended until it passes, before the work that rests on them goes on, as the user asked to build the check first and improve the documents by it",
+          "by": "user"
+        },
+        {
+          "about": "The set number of words",
+          "decided": null,
+          "by": "user"
+        }
       ]
     },
     {
