@@ -161,27 +161,20 @@ Strategies:
 Each test case lies in `<cases>`, written as Given, When, and Then before anyone builds a part.
 `<trace>` checks that each names an element or a case one level up.
 
-Qualities:
-
-| Test type | Test target | Exit criteria |
-|---|---|---|
-| `<type>` | `<target>` | `<tool>`: `<criterion>` |
-
-Benchmarks:
-
-| Test type | Test target | Measure |
-|---|---|---|
-| `<type>` | `<target>` | `<tool>`: `<measure>` |
+| Check | Test target | Kind | Exit criteria or measure |
+|---|---|---|---|
+| `<check>` | `<target>` | `<kind>` | `<tool>`: `<criterion or measure>` |
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - `<cases>`: the folders of the test cases, as Directory structure names them.
 > - `<trace>`: the script that checks the trace by the names of the elements.
-> - `<type>`, `<target>`: each type that the product's purpose needs, picked from
+> - `<check>`, `<target>`: each check that the product's purpose needs, picked from
 >   [the test strategy guide](test-strategy-guide.md), in its order, with its test target as the
->   guide gives it. A type left out has no row.
-> - `<tool>`: the tool that runs the type, by its name.
-> - `<criterion>`: what passes, as a number where it's one, as the guide recommends unless the row
->   says why not.
-> - `<measure>`: what the benchmark measures, and what it compares the value with, with no
->   criterion. Leave out Benchmarks where the product has none.
+>   guide gives it. A check left out has no row.
+> - `<kind>`: `Quality` or `Benchmark`, as the guide gives it, or `Benchmark` where the test runs a
+>   prompt.
+> - `<tool>`: the tool that runs the check, by its name.
+> - `<criterion or measure>`: for a quality, what passes, as a number where it's one, as the guide
+>   recommends unless the row says why not. For a benchmark, the value it measures, and the value
+>   it compares that with, with no criterion.
