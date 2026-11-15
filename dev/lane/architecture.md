@@ -107,7 +107,7 @@ raising KR1.1.
 - lay.py\
   Checks a Proposal, shows how the steps read once laid, and lays it into the plugin.
 - lane types\
-  Give each rule's sentence, the steps it suits, and its check of a call.
+  Give each rule's sentence, the steps it suits, what it allows, and its check of a call or an end.
 - guard\
   Places each hook event in its Run, and gives each start due, each stop, and each approval.
 - result.py\
@@ -132,6 +132,8 @@ Strategies:
   raising KR1.1.
 - A sentence left out of a step that already says it\
   A rule said twice takes the role's attention from its step, so the step says each once, keeping KR1.1 low.
+- A call kept where, for each lane type, one of the role's Lanes of that type allows it\
+  One Lane alone would stop the result script that another Lane of the role asks for, raising KR1.1.
 - Each event placed by `session_id` and `agent_id`, a Start tied at its Agent call's PostToolUse\
   Only this placing holds each call to its own Start, as [Claude Code's states](claude-code-states.md)
   shows, keeping KR1.1 low.
@@ -180,7 +182,7 @@ Strategies:
 
 - An append-only run record of only what no later payload gives again\
   Parallel hooks run at once, so a Run written whole loses another's line, raising KR1.1.
-- The form of `lanes.json` decided by the guard's code, which `lay.py write` writes through\
+- The form of Lanes and Routes, in `lanes.json` and a Proposal, decided by the guard's code\
   A laid plugin runs without `lay.py`, so the laid copy alone decides the form, keeping KR1.1 low.
 
 ## Sequences
@@ -204,7 +206,7 @@ sequenceDiagram
   G->>RS: adds the call of up's Run, by a person
   UP->>L: types
   L->>T: each type
-  L-->>UP: the types
+  L-->>UP: the types, and the form of a Proposal
   UP->>L: steps <plugin>
   L->>ST: reads each Step
   L->>LS: reads the Laid
@@ -225,7 +227,7 @@ sequenceDiagram
   L->>P: keeps the Proposal by its ID
   L-->>UP: the Routes, each Step as it'll read, and the ID
   CC->>G: the PostToolUse of lay.py print
-  G->>RS: adds what it showed, to up's Run
+  G->>RS: adds what it showed, with the Proposal's ID, to up's Run
   UP-->>U: what lay.py print showed, and asks for yes or a change
 ```
 
@@ -237,6 +239,7 @@ sequenceDiagram
   participant CC as Claude Code
   participant G as Lane's guard on up
   participant RS as run record
+  participant T as lane types
   participant UP as up
   participant L as lay.py
   participant P as proposal
@@ -244,7 +247,8 @@ sequenceDiagram
   participant LS as laid set
   participant HL as hooks/lane/, in the plugin
   UP->>CC: ends its turn
-  CC->>G: the stop
+  CC->>G: the stop, with its last message
+  G->>T: checks the end by each Lane of up
   alt up didn't give what lay.py print showed, word for word
     G-->>UP: stops it, with what lay.py print showed
   end
@@ -255,11 +259,14 @@ sequenceDiagram
     UP->>ST: writes the change into its Step
     Note over U,ST: up proposes again, as S1 draws.
   else neither a change nor yes
-    Note over U,RS: The turn ends with no lay.py write, and up's Run ends with it.
+    UP->>CC: result.py up left
+    CC->>G: the PostToolUse, with no agent_id
+    G->>RS: adds up's Result, which ends up's Run with no lay.py write
   else yes
     UP->>CC: runs lay.py write <plugin> <ID>
     CC->>G: the call
-    alt no person's prompt since the proposal
+    G->>T: checks the Call by each Lane of the Run of up that showed that ID
+    alt no person's prompt since that Run showed it
       G-->>UP: stops it: lay only after the person's reply
     else
       G-->>CC: lets it through
@@ -271,7 +278,7 @@ sequenceDiagram
         L-->>UP: refused, with why
       else
         L->>ST: writes each Lane's sentence in place of the Laid's
-        L->>LS: replaces Lane's hook entries
+        L->>LS: replaces Lane's hook entries, as the guard's code names them
         L->>HL: copies Lane's code
         L->>G: writes lanes.json through the guard's code
         L->>CC: claude plugin validate <plugin>
@@ -280,8 +287,9 @@ sequenceDiagram
           L-->>UP: what failed
         else it passes
           L-->>UP: each file written, and to type /reload-plugins
-          CC->>G: the PostToolUse of lay.py write
-          G->>RS: adds the lay, which ends up's Run
+          UP->>CC: result.py up laid
+          CC->>G: the PostToolUse, with no agent_id
+          G->>RS: adds up's Result, which ends up's Run
           UP-->>U: what Lane wrote, and to type /reload-plugins
           U->>CC: /reload-plugins
         end
@@ -379,6 +387,7 @@ sequenceDiagram
     alt the main conversation starts or resumes a subagent
       M->>CC: the start, with its text
       CC->>G: the start
+      G->>T: checks the start by the Lane of the skill's Routes, with the moves due
       alt a start due, with its text
         G->>RS: adds the Start
         G-->>CC: lets it through
@@ -569,7 +578,6 @@ system's temporary folder holds what Lane keeps only for a run.
 plugins/lane/
 ├── skills/up/SKILL.md            /lane:up, which runs up's part
 ├── domain/up.md                  up's part
-├── domain/proposal.schema.json   the Proposal's form
 ├── scripts/lay.py                lay.py types, steps, print, and write
 ├── hooks/
 │   ├── hooks.json                starts Lane's own guard on up
@@ -634,6 +642,6 @@ Each test case lies in `dev/lane/tests/`, written as Given, When, and Then befor
 | Contract testing | Architecture | Quality | `dev/tests/recorder/compare.py` on each new Claude Code: each recorded state gives the double's events, with their fields in order. |
 | Traceability | Architecture | Quality | `dev/scripts/trace.py`: every element tested, every case naming one level up, each rule's case failing broken. A review: 0 cases that miss what their element says. |
 | Scenario testing | Product | Benchmark | `dev/scripts/e2e.py` on the walkthrough with S3 and S4, judged on Opus: key results KR1.1, then KR1.2, over several runs. Runs: added until one more moves no mean by a step. KR1.1 counts a role off its steps, a wrong stop or start, an early stop, or a step left unheld. |
-| Installation testing | Product | Quality | `dev/scripts/e2e.py`: Lane installs by the README's commands in a fresh home, and `/lane:up` answers. |
+| Installation testing | Product | Quality | `dev/scripts/e2e.py`: Lane installs by the README's commands in a fresh home's shell, and `/lane:up` answers. |
 | Configuration testing | Product | Quality | CI's Tests on Python 3.9 and the newest Python: every case passes on each. |
 | Conformance and compliance testing | Product | Quality | `claude plugin validate --strict` on each laid plugin: passes. |
