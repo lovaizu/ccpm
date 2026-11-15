@@ -720,8 +720,8 @@
         },
         {
           "about": "The E2E test's request",
-          "decided": "a small feature of tally in lovaizu/playground, its tallies given as CSV, with its tests and README, so that the run makes code and a document under one plan",
-          "by": "user"
+          "decided": "the README's walkthrough, type hints for a library the size of invoicer in lovaizu/playground, so that the E2E test runs what the README shows its readers",
+          "by": "reasoning"
         },
         {
           "about": "A comparison with Claude Code alone",
