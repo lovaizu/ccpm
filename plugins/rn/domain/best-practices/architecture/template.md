@@ -161,15 +161,27 @@ Strategies:
 Each test case lies in `<cases>`, written as Given, When, and Then before anyone builds a part.
 `<trace>` checks that each names an element or a case one level up.
 
+Qualities:
+
 | Test type | Test target | Exit criteria |
 |---|---|---|
-| `<type>` | `<target>` | `<exit criteria>` |
+| `<type>` | `<target>` | `<tool>`: `<criterion>` |
+
+Benchmarks:
+
+| Test type | Test target | Measure |
+|---|---|---|
+| `<type>` | `<target>` | `<tool>`: `<measure>` |
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - `<cases>`: the folders of the test cases, as Directory structure names them.
 > - `<trace>`: the script that checks the trace by the names of the elements.
-> - `<type>`, `<target>`: each type of [the list of test types](test-types.md), in its order, with
->   its test target as the list gives it.
-> - `<exit criteria>`: where the product runs the type, `<tool>`: `<criterion>`, the tool by its name
->   and the criterion as a number where it's one. Where it doesn't, why not, in one sentence.
+> - `<type>`, `<target>`: each type that the product's purpose needs, picked from
+>   [the test strategy guide](test-strategy-guide.md), in its order, with its test target as the
+>   guide gives it. A type left out has no row.
+> - `<tool>`: the tool that runs the type, by its name.
+> - `<criterion>`: what passes, as a number where it's one, as the guide recommends unless the row
+>   says why not.
+> - `<measure>`: what the benchmark measures, and what it compares the value with, with no
+>   criterion. Leave out Benchmarks where the product has none.
