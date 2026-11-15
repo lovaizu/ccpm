@@ -23,8 +23,8 @@
     - **N13** Can the caller act on what comes back, in the form that the architecture's sequences hand on, without asking the AI anything further? (Steps, Output)
     - **N14** Can the person decide from the first lines of each message that the AI writes to them? (Output)
     - **N15** Does each claim that the AI reports rest on a check it ran on the real thing, with what it didn't check stated? (Output)
-  - **C6** The writer knows from tests that the prompt works on every run and in real use.
-    - **N16** Do the prompt's unit tests, each case run k times on the model its users run, and the end-to-end (E2E) tests of the product it's part of show the AI reaching the result on every run? (the whole)
+  - **C6** The writer knows from tests how the prompt does over several runs and in real use.
+    - **N16** Do the prompt's unit tests run each case several times on the model its users run, for the writer to judge the prompt from the results, and do the end-to-end (E2E) tests of the product it's part of confirm it on real requests? (the whole)
     - **N17** Can the maintainer tell from a failed test's record whether the prompt or the test went wrong? (the whole)
 
 ## Template
@@ -205,14 +205,14 @@ The caller can't tell a claim that the AI checked from one it guessed, and acts 
 
 ### N16
 
-Do the prompt's unit tests, each case run k times on the model its users run, and the end-to-end (E2E) tests of the product it's part of show the AI reaching the result on every run?
+Do the prompt's unit tests run each case several times on the model its users run, for the writer to judge the prompt from the results, and do the end-to-end (E2E) tests of the product it's part of confirm it on real requests?
 
-The writer knows a prompt only by what the AI does with it, where the AI's variance and the faults of the design show, so Anthropic's [demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents) runs each task k times and counts it passed only where all k runs succeed, its pass^k.
+The writer knows a prompt only by what the AI does with it, where the AI's variance and the faults of the design show. The results vary from run to run, so a criterion would pass or fail by chance, and the writer judges from the results of several runs, as the architecture's [test strategy guide](../architecture/test-strategy-guide.md) says of a test that runs a prompt.
 
 1. *While making.* Run each case of the prompt once, in the folders that the architecture's Test strategy names for its test cases, on the model its users run, with the test's parts as they stand, and keep the record of the run beside the case, such as the JSON lines that `claude -p --output-format stream-json --verbose` writes. Nothing relies on its result yet: it's the first record, on which N17 checks the test's parts. The trace: `{case}` run.
-2. *While making.* Once each part of the test gives the right result on the kept records, as N17.2 to N17.7 check it, run each case k times on the model its users run, with the k that Test strategy sets. A rule that must hold on every run rests on a hook, as N12 says, so the unit tests try the rest. The trace: `{tests}` run.
-3. *While making.* Open the record of each run, and check from what the AI did, not from its last message, that every run reached the result.
-4. *While making.* Where a run didn't reach the result, find the cause in its record, as N17 says, change the prompt only for a cause in the prompt, and run the case k times again.
+2. *While making.* Once each part of the test gives the right result on the kept records, as N17.2 to N17.7 check it, run each case on the model its users run, as many times as Test strategy sets. A rule that must hold on every run rests on a hook, as N12 says, so the unit tests try the rest. The trace: `{tests}` run.
+3. *While making.* Open the record of each run, and see from what the AI did, not from its last message, which runs reached the result.
+4. *While making.* Where a run didn't reach the result, find the cause in its record, as N17 says, and change the prompt only for a cause in the prompt. Run the cases again, and judge from their results whether the change helps.
 5. *While making.* Confirm by the E2E tests that the prompt, among the other parts, reaches the result on requests as big as real ones, since a unit test meets only the cases that its writer set up.
 
 ### N17

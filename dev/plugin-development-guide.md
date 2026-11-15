@@ -510,16 +510,18 @@ would fail for a change that the push didn't make, and it runs with the checks o
 
 Each prompt, a skill or an agent with its part, has unit tests that start its role alone on the
 model its users run, in a throwaway copy of a repository that the test sets up, with its inputs
-given as files. Each case runs k times, as the plugin's Test strategy sets, and passes only where
-every run passes. The guard holds each rule of a role's steps that must hold on every run, and the
-integration tests try the guard, so a prompt's unit tests try what only the AI's judgment holds.
+given as files. Each case runs as many times as the plugin's Test strategy sets, each run a test of
+its own, and the developer judges the prompt from the results. The guard holds each rule of a role's
+steps that must hold on every run, and the integration tests try the guard, so a prompt's unit tests
+try what only the AI's judgment holds.
 
 *Why*: a prompt is a part whose results vary from run to run, so only runs on the model show that it
-gives what the double in its place gives in the integration tests, and only k runs that all pass
-show a slip that comes on some runs. A hook holds a rule on every run, which a prompt's words cannot
+gives what the double in its place gives in the integration tests, and a criterion would pass or
+fail by chance, as the architecture best practice's test strategy guide says. A hook holds a rule on
+every run, which a prompt's words cannot
 ([best practices](https://code.claude.com/docs/en/best-practices)). A unit test meets only the cases
 that its developer set up, so the E2E tests confirm the prompt on real requests. The cost: each
-change of a prompt waits on k runs of each of its cases on the model.
+change of a prompt waits on several runs of each of its cases on the model.
 
 ### The parts joined in the test's own process
 

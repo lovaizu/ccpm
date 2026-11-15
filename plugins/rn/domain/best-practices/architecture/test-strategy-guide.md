@@ -39,9 +39,8 @@ guide links them and copies nothing:
   it has no row of its own.
 - Prompts\
   A test that runs a prompt is a benchmark. The model's result varies from run to run, so a
-  criterion would pass or fail by chance. The test runs each case several times and measures the
-  share of runs that are right. Where the prompt picks items, it measures precision and recall. It
-  measures again on each new version of the model, as CT-AI's drift testing does.
+  criterion would pass or fail by chance. The test runs each case several times, and a person judges
+  from the results. It runs again on each new version of the model, as CT-AI's drift testing does.
 
 ## Parts
 

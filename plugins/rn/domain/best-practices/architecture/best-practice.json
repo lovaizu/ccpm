@@ -392,11 +392,11 @@
        },
        {
         "at": "decide",
-        "text": "For each benchmark, name what it measures, such as a key result or the share of a prompt's runs that are right, and what it compares the value with, such as the last version's. Set no criterion, as the person who decides the change reads it."
+        "text": "For each benchmark, name what it measures, such as a key result or each case's results over several runs of a prompt. Set no criterion, as a person judges from the results."
        },
        {
         "at": "decide",
-        "text": "Set how many times a benchmark runs each case by its first runs: add runs until one more no longer moves the measure by a step, such as one case or one question answered, since the AI's variance shows only across runs. Where the product can't run yet, write this rule in place of the number, for the first run to set it."
+        "text": "Set how many times a benchmark runs each case by its first runs: add runs until one more no longer changes what the results show, such as the mean of a key result by a step of its measure, since the AI's variance shows only across runs. Where the product can't run yet, write this rule in place of the number, for the first run to set it."
        },
        {
         "at": "decide",

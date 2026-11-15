@@ -606,14 +606,14 @@ Each test case lies in `dev/rn/tests/`, written as Given, When, and Then before 
 | Static analysis | Parts | Quality | pyrefly, and pylint's duplicate-code and cyclic-import checks: 0 findings. |
 | Complexity analysis | Parts | Quality | complexipy and ruff: per function, McCabe 10, cognitive 15, 6 returns, 12 branches, 5 arguments, 50 statements at most. |
 | Unit testing | Parts | Quality | pytest, with the double of Claude Code: every case passes. |
-| Unit testing | Parts that hold a prompt | Benchmark | `claude -p` on Opus: each prompt's share of right runs, read by code, against the last version's. Precision and recall for the points put to the user and the `more` judged short. Runs per case: added until one more moves no share. |
+| Unit testing | Parts that hold a prompt | Benchmark | `claude -p` on Opus: each case's results over several runs, read by code from each run's record. Runs per case: added until one more changes no case's count. |
 | Code coverage | Parts | Quality | coverage: 100% statement (C0) and branch (C1) coverage. |
 | Property-based testing | Parts | Quality | hypothesis: 0 counterexamples in reading the design tree, the records, and the adapters' input. |
 | Mutation testing | Parts | Quality | cosmic-ray: 0 surviving mutants. |
 | Integration testing | Architecture | Quality | pytest, with the double of Claude Code: every case passes, each handoff giving the data the data model names. |
 | Contract testing | Architecture | Quality | `dev/rn/tests/gh/compatibility.py` on each new gh: each recorded command gives what its line shows. Claude Code's is Lane's test. |
 | Traceability | Architecture | Quality | `dev/scripts/trace.py`: every element tested, every case naming one level up, each rule's case failing broken. A review: 0 cases that miss what their element says. |
-| Scenario testing | Product | Benchmark | `dev/scripts/e2e.py` on the walkthrough, judged on Opus: the key results KR1.1, then KR1.2, against the last runs. Runs: added until one more moves no mean by a step. |
+| Scenario testing | Product | Benchmark | `dev/scripts/e2e.py` on the walkthrough, judged on Opus: the key results KR1.1, then KR1.2, over several runs. Runs: added until one more moves no mean by a step. |
 | Installation testing | Product | Quality | `dev/scripts/e2e.py`: rn installs by the README's commands in a fresh home, and `/rn:up` answers. |
 | Configuration testing | Product | Quality | CI's Tests on Python 3.9 and the newest Python: every case passes on each. |
 | Conformance and compliance testing | Product | Quality | `claude plugin validate --strict`: passes. |

@@ -176,5 +176,5 @@ Each test case lies in `<cases>`, written as Given, When, and Then before anyone
 >   prompt.
 > - `<tool>`: the tool that runs the check, by its name.
 > - `<criterion or measure>`: for a quality, what passes, as a number where it's one, as the guide
->   recommends unless the row says why not. For a benchmark, the value it measures, and the value
->   it compares that with, with no criterion.
+>   recommends unless the row says why not. For a benchmark, what it measures, with no
+>   criterion.
