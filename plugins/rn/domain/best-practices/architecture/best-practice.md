@@ -4,12 +4,12 @@
 
 - The developers build and change the parts of the product so that together they deliver what the README promises the users.
   - **C1** The developers know what each part must do, for the users or for the product's development and operation, and why.
-    - **N1** Does the opening state the one idea by which the product delivers what its README promises? (the opening)
-    - **N2** Does each step of each objective's main use, as the README's walkthrough shows it, have one user story that carries it? (User stories)
-    - **N3** Does each principle, user story, component, and kind of data trace to what the README promises the users, or to a need of the product's development or operation? (Principles, User stories, Components, Data model, Sequences)
+    - **N1** Does Solution strategy state first the one idea by which the product delivers what its README promises? (Solution strategy)
+    - **N2** Do the user stories together cover each objective of the product vision and each promise of the README, each story a way a role meets the product? (User stories)
+    - **N3** Does each rule of Solution strategy, user story, component, and kind of data trace to what the README promises the users, or to a need of the product's development or operation? (Solution strategy, User stories, Components, Data model, Sequences)
   - **C2** Parts that different developers build fit together.
-    - **N4** Does each principle give a rule and a reason from which two developers decide a case that no line names the same way? (Principles)
-    - **N5** Does each decision that the stories need belong to exactly one component? (User stories, Components)
+    - **N4** Does each rule of Solution strategy give a rule and a reason from which two developers decide a case that no line names the same way? (Solution strategy)
+    - **N5** Does each component state its responsibility, and does each decision that the stories need belong to exactly one component? (User stories, Components)
     - **N6** Does each component state its type and its technology? (Components)
     - **N7** Does the data model show how each kind of data relates to the others, without its fields? (Data model)
     - **N8** Does each user story have a sequence that shows, at each step, which component acts, along which arrow, and with which data? (User stories, Components, Data model, Sequences)
@@ -18,12 +18,12 @@
     - **N10** Does Deployment show where each component runs, where the product keeps each kind of data, and how the product starts? (Components, Data model, Deployment)
     - **N11** Does each component and each kind of data have one place for its files? (Components, Data model, Directory structure)
   - **C4** The developers find each gap between the parts before they build any part, and know, as they build, that the product does what the document and the product vision say.
-    - **N12** Does Test strategy decide the types of testing of each target, every type of code and test quality for the parts and those the key results call for in the product vision's, and, for each test level, what it tests, what runs real, its tools, when it runs, and each quality check with the criterion by which it passes? (Test strategy)
+    - **N12** Does Test strategy give, for each type of the list of test types, its test target and its exit criteria: the tool and the criterion by which it passes, or why the product doesn't run it? (Test strategy)
     - **N13** Does each part have its skeleton, and every part, every element of this document, and every key result its test cases in the test code, each written as Given, When, and Then through that skeleton, and each naming the case or the element one level up that it supports? (Test strategy)
     - **N14** Does each thing that the document says the product does rest on a part that a unit or integration test can check? (Components, Test strategy)
   - **C5** The developers can change the product without making the document wrong.
-    - **N15** Does each choice whose other way would cost a key result say what the other way would lose? (Components, Deployment, Directory structure, Test strategy)
-    - **N16** Does the document hold only what stays true while the product vision and the principles stay, and leave each component's internals out? (the whole)
+    - **N15** Does each view give each decision that a key result rests on, with its intent? (Components, Data model, Sequences, Deployment, Directory structure)
+    - **N16** Does the document hold only what stays true while the product vision and Solution strategy stay, and leave each component's internals out? (the whole)
 
 ## Template
 
@@ -38,56 +38,57 @@
 
 ### N1
 
-Does the opening state the one idea by which the product delivers what its README promises?
+Does Solution strategy state first the one idea by which the product delivers what its README promises?
 
-Each part is a piece of one idea, and a developer who knows the idea builds a part that serves it.
+Each view carries out one idea, and a developer who knows the idea builds a part that serves it. The [solution strategy](https://docs.arc42.org/section-4/) of arc42 sums up first the few decisions that shape the whole.
 
 1. *While deciding.* Open your cut, and read to its end each input it names: the product vision, the README, and, where the product builds on another's rules, the architecture it builds on, such as a guide to building a plugin of the host it runs in. The trace: `{inputs}` read to its end.
 2. *While deciding.* In the README's How it works, take the first way it states, from the product vision's concept, by which the product brings its users to their objectives, such as keeping every decision of a run in one file that each role reads.
 3. *While deciding.* Ask how the system as a whole makes that way work: what it takes in from the roles, and what it turns that into, such as a request typed in a session turned into a deliverable that passed its checks.
-4. *While making.* Write the answer in two or three sentences that a developer can hold in mind while building any part. Point to the README instead of repeating it.
+4. *While making.* Write the answer in two or three sentences that a developer can hold in mind while building any part. Point to the README instead of repeating it, and put it first in Solution strategy, before the rules that follow from it.
 5. *While making.* After writing the rest, read each component's line as a developer who knows only the idea, and check that they can see which piece of the idea it carries out. Change the idea or the component where they can't.
 
 ### N2
 
-Does each step of each objective's main use, as the README's walkthrough shows it, have one user story that carries it?
+Do the user stories together cover each objective of the product vision and each promise of the README, each story a way a role meets the product?
 
-The stories connect the parts to what the users do, so every part can trace back to a step a user takes. Jeff Patton's user story mapping lays the steps of the main use along a backbone, and hangs a [user story](https://www.mountaingoatsoftware.com/agile/user-stories) on each.
+The stories are the product's requirements, and every part traces back to a way a role meets the product. Jeff Patton's user story mapping lays the steps of each use along a backbone and hangs a [user story](https://www.mountaingoatsoftware.com/agile/user-stories) on the steps, so a story covers what the use needs, not one step each.
 
-1. *While deciding.* Open the README's walkthrough, and lay its exchanges in order as the backbone of the objective whose use it runs.
-2. *While deciding.* For each other objective of the product vision, lay as its backbone the steps its role takes from where they start to the result they keep, as a recorded run or the end-to-end test of that use shows them where the product has one. Where none does, ask the user `Which steps does <role> take toward <objective>, from <start> to <result>?`, with the steps you'd expect as your recommendation, since only whoever conceived the product knows a use that no run shows.
-3. *While deciding.* For each step of each backbone, ask how the role meets the product at its edge there, such as a command they type, and write one story for each such way, naming the steps it carries.
-4. *While deciding.* Read each idea of the product vision's Concept, and ask at which moment of the use it keeps the product's one way holding. Where the role meets the product there in a way that no story carries, add a story for it, such as resuming a run that stopped, for an idea that keeps every decision of a run in one file.
-5. *While making.* Go through each step of each backbone, and name the one story that carries it. Add a story where none does.
+1. *While deciding.* Open the product vision and the README, and list each objective and each promise the README makes, in its walkthrough, its Non-goals, and its How it works.
+2. *While deciding.* For each objective, lay out as its backbone the steps its role takes from where they start to the result they keep, as the README's walkthrough shows them for its main use.
+3. *While deciding.* For each step, ask how the role meets the product at its edge there, such as a command they type, and write one story for each such way, since a story is a way of meeting the product, and one way often serves several steps.
+4. *While deciding.* Read each idea of the product vision's Concept, and ask at which moment of the use it keeps the one way holding. Where the role meets the product there in a way that no story carries, add a story for it, such as resuming a run that stopped.
+5. *While deciding.* Where the product's development or operation needs a way to meet the product, such as a release, write a story with the developer or the operator as its role.
+6. *While making.* For each objective and each promise, name the stories that carry it, and add a story where none does. Leave a step without a story of its own where another story already carries it.
 
 ### N3
 
-Does each principle, user story, component, and kind of data trace to what the README promises the users, or to a need of the product's development or operation?
+Does each rule of Solution strategy, user story, component, and kind of data trace to what the README promises the users, or to a need of the product's development or operation?
 
 A part that nothing needs costs effort to build and to keep, and gives no one anything.
 
-1. *While deciding.* For each story, ask which step, doubt, or need it carries, from three sources. The README and the product vision carry what the users get: the steps of each backbone that N2 lays out, and the doubts that the README's How it works answers. Development adds what the developers need to build, test, and change the parts. Operation adds what keeps the product working across runs and updates, such as where its work outlives a run.
-2. *While making.* Once you have written Principles, for each principle, name the doubt of the README's How it works, or the need of development or operation, that it carries.
-3. *While making.* Once you have drawn Sequences, for each component and each kind of data, find the principle or the step of a sequence that reaches it.
-4. *While making.* Remove each story or principle that carries none, and each component or kind of data that none reaches, from every figure, list, and sentence that names it.
+1. *While deciding.* For each story, ask which step, doubt, or need it carries, from three sources. The README and the product vision carry what the users get: the objectives and the promises that N2 lists, and the doubts that the README's How it works answers. Development adds what the developers need to build, test, and change the parts. Operation adds what keeps the product working across runs and updates, such as where its work outlives a run.
+2. *While making.* Once you have written Solution strategy, for each rule, name the doubt of the README's How it works, or the need of development or operation, that it carries.
+3. *While making.* Once you have drawn Sequences, for each component and each kind of data, find the rule or the step of a sequence that reaches it.
+4. *While making.* Remove each story or rule that carries none, and each component or kind of data that none reaches, from every figure, list, and sentence that names it.
 
 ### N4
 
-Does each principle give a rule and a reason from which two developers decide a case that no line names the same way?
+Does each rule of Solution strategy give a rule and a reason from which two developers decide a case that no line names the same way?
 
-Developers of different parts meet the same kind of decision, and decide it apart unless a principle settles it.
+Developers of different parts meet the same kind of decision, and decide it apart unless a rule that every view follows settles it.
 
-1. *While deciding.* Derive the principles from the README's How it works, which answers each doubt of the users from an idea of the product vision's concept, and from the needs of development and operation.
-2. *While deciding.* For each answer and each need, ask what every part must hold alike for it to come true, such as where the work's state lives. A part that held it otherwise would break a key result. Each thing that every part must hold alike is a principle.
-3. *While deciding.* Leave out what a single component's line already says, since a principle holds only a rule that spans parts.
-4. *While making.* For each principle, write the rule in one sentence, naming the parts as Components names them.
+1. *While deciding.* Derive the rules from the README's How it works, which answers each doubt of the users from an idea of the product vision's concept, and from the needs of development and operation.
+2. *While deciding.* For each answer and each need, ask what every part must hold alike for it to come true, such as where the work's state lives. A part that held it otherwise would break a key result. Each thing that every part must hold alike is a rule of Solution strategy.
+3. *While deciding.* Leave out what a single view already says, since a rule of Solution strategy holds only what spans the views.
+4. *While making.* For each rule, write it in one sentence, naming the parts as Components names them.
 5. *While making.* Write the reason in one sentence: what goes wrong without the rule, for a role of the product vision, naming the key result it guards, or for the developers or the operators. A developer carries the reason to a case that the rule doesn't name.
-6. *While making.* Where your cut names an architecture that the product builds on, point to its principles, and write only what this product adds or changes.
+6. *While making.* Where your cut names an architecture that the product builds on, point to its rules, and write only what this product adds or changes.
 7. *While making.* Take a case that no rule names, and decide it from each reason as two developers of different parts would. Where they differ, sharpen the reason.
 
 ### N5
 
-Does each decision that the stories need belong to exactly one component?
+Does each component state its responsibility, and does each decision that the stories need belong to exactly one component?
 
 Two components that make the same decision make it twice, and the two copies drift apart. David Parnas's information hiding gives each module one decision that's hard to make or likely to change, and hides it from the rest.
 
@@ -95,7 +96,7 @@ Two components that make the same decision make it twice, and the two copies dri
 2. *While deciding.* Take from the stories the decisions that are hard to make or likely to change, such as where the product keeps the work's state, or the form of a file that two parts share.
 3. *While deciding.* Give each decision to the one component that holds what it decides on, such as the form of the work's state to the component that writes the state. Where no component holds it, make a component for it.
 4. *While deciding.* Where another component needs the same decision, leave it with the component that holds it, and draw an arrow by which the other asks it, such as a hook that asks a script whether a step is done instead of reading the state itself.
-5. *While making.* List under the figure what each component alone decides.
+5. *While making.* Write under the figure each component's responsibility in one sentence: what the others expect it to do, the decisions it holds among it, such as `renders each page and sends what the user enters to the API`, so that a developer knows what to build and what to leave to the others.
 6. *While making.* Label each arrow with what one component does to another and the data it passes, not a word such as `uses`.
 
 ### N6
@@ -143,7 +144,7 @@ Do the figures, lists, and sentences agree with one another, and with the archit
 A developer who finds two places that say different things about a part must choose which to follow, and two developers choose differently.
 
 1. *While making.* For each part, gather what every figure, list, and sentence says it does, and, where your cut names an architecture that the product builds on, what each of its rules asks of a part of that kind, such as a rule that every hook gives its result as JSON.
-2. *While making.* Where two disagree, decide by the reasons of the principles and of those rules which is right, and change the other.
+2. *While making.* Where two disagree, decide by the reasons of the rules of Solution strategy and of those of the architecture it builds on which is right, and change the other.
 
 ### N10
 
@@ -171,36 +172,21 @@ A developer making a change must find the one place it belongs. Simon Brown's pa
 
 ### N12
 
-Does Test strategy decide the types of testing of each target, every type of code and test quality for the parts and those the key results call for in the product vision's, and, for each test level, what it tests, what runs real, its tools, when it runs, and each quality check with the criterion by which it passes?
+Does Test strategy give, for each type of the list of test types, its test target and its exit criteria: the tool and the criterion by which it passes, or why the product doesn't run it?
 
-A case's pass or fail decides the work only where the developers set its level's tools and criteria before anyone writes the case, and a failure that no type of testing looks for reaches the users unseen.
+A failure that no type of testing looks for reaches the users unseen, and a case's pass or fail decides the work only where its tool and criterion are set before anyone writes it. Going through every type of the list, with a reason for each type left out, shows what was weighed, so no type is left out unasked.
 
-1. *While deciding.* Name the levels unit tests, integration tests, and end-to-end (E2E) tests, and use no other name for a test. Unit tests try each part, each prompt among them, against its contract. Integration tests try the parts joined against each element of this document. E2E tests try the product in real use against each key result of the product vision.
-2. *While deciding.* For each level, run real only what it tests, and replace the rest with [test doubles](https://martinfowler.com/bliki/TestDouble.html). At unit, run the part, with a double for each part it works with that's slow or outside the test. At integration, run what joins the components, such as hooks and scripts, with a double for each component that an AI runs and for each thing outside the product, so that the level calls no model and gives the same result on each run. At E2E, run the whole product on the model its users run, with an AI in the role that holds an intent the product never receives, since another model makes other mistakes than the users meet.
-3. *While deciding.* Read [the list of test types](test-types.md) to its end. The trace: `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/architecture/test-types.md` read to its end.
-4. *While deciding.* For the parts, take every type that the list gives under code quality and test quality, and, for each part that holds a prompt, every type under a prompt's evaluation, since each looks at every part alike, and a fault that one of them would show costs a key result wherever it lands.
-5. *While deciding.* Set the criterion of each type that the parts took. Take it from the architecture that the product builds on where that sets one. Else take the strictest that every part can meet once each line answers a case one level up: every line and branch covered, no mutant left alive, the default limits of the complexity and lint tools, and no finding of static analysis or lint. Where a line can't meet it, mark the line with why, since a check without a criterion passes whatever it finds.
-6. *While deciding.* Name each contract that takes a wide input, one that another program or an AI writes, such as the reader of a file that an AI writes, for property-based tests that find no counterexample, and leave the other contracts to the cases drawn by hand.
-7. *While deciding.* Set k, how many times a prompt's unit tests run each case on the model its users run, passing a case only where all k runs pass, as pass^k measures it, which Anthropic's [demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents) takes from [τ-bench](https://arxiv.org/abs/2406.12045) for an agent whose users expect it to act right every time. Set k to the number of times one main use of an objective runs the prompt at the size of a real request, as the backbones that N2 lays out show it, such as 5 for a prompt run once for each of five deliverables, since a slip in any of those runs costs that use its key result. Where no backbone shows how many times, ask the user `How many times does <prompt> run in one use toward <objective> at its real size?`, with your count as your recommendation.
-8. *While deciding.* Set the quality checks of the architecture, and name the script that checks them by the names of the elements, not by reading: every element of this document, each story, principle, component, and kind of data, has an integration test; every test names an element or a case one level up that exists; every unit case names an integration case; a test of a principle that must not break is trusted only once seen to fail with the principle broken; and each double gives only what a recorded run or the official documentation shows, as N14 says.
-9. *While deciding.* For each key result of the product vision, ask of each type that the parts didn't take whether, without it, the key result could worsen and no check would show it, given what the product is and what it builds on, such as compatibility with a new version of the host where the host changes on its own schedule. Keep each type where it could, and drop the rest, since testing every type that could apply is the trivial many. Leave out functional testing, which every level's cases try, as N13 says.
-10. *While deciding.* For each type kept, write the key result it guards as its reason, and the lowest level at which what it looks at runs real, such as E2E for the time a main use takes.
-11. *While deciding.* Set the criterion of each type kept only as far as the failure it guards calls for, such as no main use slower than in the last run, in place of a fixed time that no key result asks for.
-12. *While deciding.* Where you keep compatibility with a new version of what the product builds on, set its check at the integration level, whose doubles it keeps true: on each new version of the thing outside the product, run again the steps that made each recorded run, and compare what the real thing gives with what each double gives, passing only where they agree. This is Martin Fowler's [contract test](https://martinfowler.com/bliki/ContractTest.html), which runs against the real thing apart from the work.
-13. *While deciding.* Where a double rests on a page of documentation and not on a recorded run, add to that check that the page still shows the words the double rests on.
-14. *While deciding.* Decide what the developers do where that check fails: record the new version's run, change the double to give what the run shows, and fix the product where a test then fails, since a double that the real thing has outgrown passes a test that its users' version fails.
-15. *While deciding.* Set the check of each key result: compare its value with the last run's by the order the product vision gives, and pass where it's no worse, since the product vision sets no target.
-16. *While deciding.* Where an AI judges a key result, trust the judge only once it's right on every kept record whose answer you know.
-17. *While deciding.* Set how many times each E2E test runs its main use at real size by its first runs: run the main use on the product, and add runs until one more no longer moves the mean of each key result by a step of its measure, such as one question answered, since the AI's variance shows only across runs, and a mean that one more run would move can't tell a change from noise. Where the product can't run its main use yet, write this rule in place of the number, for the first E2E run to set it.
-18. *While deciding.* Choose each level's tools from the product's constraints, such as the runtime its users have, and name each: the test runner, and the tool of each check, such as pytest for a product in Python.
-19. *While deciding.* Run before each push the static analysis, the unit tests of code, and the integration tests that the change reaches, with their coverage, since these show whether the change does what its design says, and the work waits on them. Running every such test there meets this too, as a selection by what the change reaches misses a test that reads a file the change edits.
-20. *While deciding.* Run on each push, in CI, every unit test of code and every integration test, and mutation testing and property-based tests over the lines that the push changed, apart from the work, since these check the tests and not the change.
-21. *While deciding.* Run each night, in CI, every check that runs on its own over the whole, property-based tests at their most inputs among them, since a run over a push's lines misses a test changed alone and a fault between parts that no one push changed together.
-22. *While deciding.* Run the compatibility check of each double on each new version of the thing outside the product, which a job in CI finds each night by its version, since only a new version changes what the double must give.
-23. *While deciding.* Run a prompt's unit tests before a change of the prompt is taken, since each run calls the model and is slow and costly.
-24. *While deciding.* Run the E2E tests once every lower level passes, since each run calls the model and is slow and costly.
-25. *While making.* Write a subsection for each level, from unit to E2E, in the form of the template.
-26. *While making.* Where your cut names an architecture that the product builds on, point to its test rules, such as the form each case takes, and write only what this product sets.
+1. *While deciding.* Read [the list of test types](test-types.md) to its end. The trace: `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/architecture/test-types.md` read to its end.
+2. *While deciding.* Take each type's test target from the list. Unit tests try the parts against their contracts, each prompt among them. Integration tests try the parts joined against each element of this document. End-to-end (E2E) tests try the product in real use against each key result of the product vision. Use no other name for a test, so that each case's level tells which target it checks.
+3. *While deciding.* For each type, decide whether the product runs it. Run each type of code quality, of test quality, and, where a part holds a prompt, of a prompt's evaluation, since each looks at every part alike, and a fault it would show costs a key result wherever it lands. Run another type only where, without it, a key result could worsen and no check would show it, given what the product is and what it builds on, such as compatibility with a new version of a host that changes on its own schedule.
+4. *While deciding.* For each type the product runs, choose its tool from the product's constraints, such as the runtime its users have, and name it.
+5. *While deciding.* Set each criterion only as strict as the failure it guards calls for, as a number where it's one. For the parts, take the strictest that every part can meet once each line answers a case one level up, such as every line and branch covered and no mutant left alive, or the one that the architecture the product builds on sets. For a key result, compare its value with the last run's in the product vision's order, and pass where it's no worse, since the product vision sets no target.
+6. *While deciding.* Set k, how many times a prompt's unit tests run each case on the model its users run, passing a case only where all k runs pass, as pass^k measures it, which Anthropic's [demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents) takes from [τ-bench](https://arxiv.org/abs/2406.12045) for an agent whose users expect it to act right every time. Set k to the number of times one main use of an objective runs the prompt at the size of a real request, as the backbones that N2 lays out show it, such as 5 for a prompt run once for each of five deliverables, since a slip in any of those runs costs that use its key result. Where no backbone shows how many times, ask the user `How many times does <prompt> run in one use toward <objective> at its real size?`, with your count as your recommendation.
+7. *While deciding.* For the trace of the architecture, set as the criterion that every element of this document, each story, rule, component, and kind of data, has an integration test, and that every test names an element or a case one level up that exists. Name the script that checks this by the names of the elements, not by reading, since only a check by name finds each element that no test reaches.
+8. *While deciding.* Where an AI judges a key result, trust the judge only once it's right on every kept record whose answer you know.
+9. *While deciding.* Set how many times each E2E test runs its main use at real size by its first runs: run the main use on the product, and add runs until one more no longer moves the mean of each key result by a step of its measure, such as one question answered, since the AI's variance shows only across runs, and a mean that one more run would move can't tell a change from noise. Where the product can't run its main use yet, write this rule in place of the number, for the first E2E run to set it.
+10. *While deciding.* Where the product doesn't run a type, write why in one sentence, naming what the product is or builds on that makes the type needless, such as no screen for usability testing, so that a reader sees that the type was weighed.
+11. *While making.* Write one row for each type of the list, in its order, in the form of the template.
 
 ### N13
 
@@ -211,7 +197,7 @@ Every case written through a skeleton of the parts before any body is built chec
 1. *While making.* Once Test strategy names the tools, make the skeleton of each module where Directory structure places it, from the arrows and the data that Sequences hand to it: a file whose docstring names the decision it alone makes, and, for each arrow it takes, an interface whose signature and docstring state what it takes, what it gives, and what it refuses, each body left empty, such as one that raises `NotImplementedError`.
 2. *While making.* Where a part holds a prompt, make its skeleton where Directory structure places it: a file with its description, which says when to use the prompt and what it gives, and the form of what it takes and gives, such as a JSON Schema, its steps left empty.
 3. *While making.* Write the E2E cases first: for each key result, a case that runs an objective's main use, as the README's walkthrough shows it, at the size of a real request, and names the key result, such as `KR1.1`.
-4. *While making.* Write the integration cases from the elements of this document, each naming its element by its name: a case for each path through each story's sequence, the main flow, each branch, each step that sends work back, and each question put to the role, until every move from one step to the next lies on some path; a case for each principle, where the parts keep it and where one breaks it; a case for each decision that a component alone makes; and a case for each handoff between parts, with the data it passes as the data model names it, until each kind of data lies on some case.
+4. *While making.* Write the integration cases from the elements of this document, each naming its element by its name: a case for each path through each story's sequence, the main flow, each branch, each step that sends work back, and each question put to the role, until every move from one step to the next lies on some path; a case for each rule of Solution strategy, where the parts keep it and where one breaks it; a case for each decision that a component alone makes; and a case for each handoff between parts, with the data it passes as the data model names it, until each kind of data lies on some case.
 5. *While making.* Write the unit cases of each part through its interface, each naming the integration case it supports, so that the interface a part offers comes from what the cases one level up need of it, and change the skeleton where a case needs an interface it lacks or calls none it offers.
 6. *While making.* Divide each input and each result that a part's contract names into classes that the part treats alike, the refused ones among them, and write one case for each class. This is equivalence partitioning, as the ISTQB glossary defines it.
 7. *While making.* Where a class ends on an ordered scale, such as a length or a count, write one case at each end and one at the nearest value of the next class. This is boundary value analysis.
@@ -222,7 +208,7 @@ Every case written through a skeleton of the parts before any body is built chec
 12. *While making.* Read the cases and the skeleton against the architecture, and list each gap they show: a case that no part can hold; a part that no case reaches; a module that can't state its decision in a few words; a part whose cases change for more than one reason, such as a file's form and a remote's commands; and a handoff that no interface carries.
 13. *While making.* For each gap, change the architecture first: give the case a part, or a decision to a part; remove the part that no case reaches, as N3 says; split the module or the part by its decisions or its reasons to change; and give the handoff an arrow and a kind of data.
 14. *While making.* Then change the skeleton and the cases to the architecture.
-15. *While making.* Make the script that checks the trace, which N12.8 names, beside the test code where Directory structure places it, so that it finds each element by where the template puts its name, such as each story by its `S<n>` and each key result by its `KR<n>.<m>`, finds each case by the name it gives of what it supports, and checks each rule that N12.8 sets. Where the architecture the product builds on keeps such a script, such as one that a guide to building plugins runs on every plugin, run that one on this product instead, and add only the checks it lacks.
+15. *While making.* Make the script that checks the trace, which N12.7 names, beside the test code where Directory structure places it, so that it finds each element by where the template puts its name, such as each story by its `S<n>` and each key result by its `KR<n>.<m>`, finds each case by the name it gives of what it supports, and checks each rule that N12.8 sets. Where the architecture the product builds on keeps such a script, such as one that a guide to building plugins runs on every plugin, run that one on this product instead, and add only the checks it lacks.
 16. *While making.* Run the script that checks the trace, and mend each case or element it names until it names none. The script finds only a name that leads nowhere, so its 0 shows no more than that: whether the cases are enough, and whether the parts are cut right, the reading before it judges.
 
 ### N14
@@ -233,28 +219,28 @@ The E2E tests are slow and few, so they can only confirm what the lower levels a
 
 1. *While deciding.* For each thing the document says the product does, name the part that holds it.
 2. *While deciding.* Where only a prompt holds a rule that must hold on every run, give the rule to a part that a test can run, such as a guard of the architecture the product builds on, and draw that part in Components.
-3. *While deciding.* Leave a judgment that only an AI can make, such as whether a point is the user's, with the AI, and try it by the prompt's unit tests on the model, as N12.7 sets.
+3. *While deciding.* Leave a judgment that only an AI can make, such as whether a point is the user's, with the AI, and try it by the prompt's unit tests on the model, as N12.6 sets.
 4. *While making.* The lower levels show a part only if each double behaves like the part it replaces, so give each double only results in the form the part's contract gives, refusals among them.
 5. *While making.* Test each double as the part's unit tests test the part.
 6. *While making.* Draw a double of something outside the product from its documentation or from a recorded run of the real thing, and name that source beside what the double gives, so that the script that N13.15 makes to check the trace can check it. A double that gives what the real thing never would passes a test that the real one fails.
-7. *While making.* Trust a check, such as a test, a hook, or the judge of an E2E test, only once you have seen it fail on a case that breaks what it checks, such as a test of a principle run with the part that holds the principle taken out, which the script that N13.15 makes to check the trace can run. Trust a judge once it's right on kept records whose answer you know.
+7. *While making.* Trust a check, such as a test, a hook, or the judge of an E2E test, only once you have seen it fail on a case that breaks what it checks, such as a test of a rule run with the part that holds the rule taken out, which the script that N13.15 makes to check the trace can run. Trust a judge once it's right on kept records whose answer you know.
 
 ### N15
 
-Does each choice whose other way would cost a key result say what the other way would lose?
+Does each view give each decision that a key result rests on, with its intent?
 
-A developer who doubts a choice and can't see what it was for may undo it and bring back the problem it solved. An [architecture decision record](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions), by Michael Nygard, keeps a decision with its context and consequences.
+A developer who doubts a decision and can't see what it was for may undo it and bring back the problem it solved. An [architecture decision record](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions), by Michael Nygard, keeps a decision with its context, and its intent is what a developer needs to keep it.
 
-1. *While deciding.* For each choice whose other way would bring back a problem that costs a key result, such as a technology, a tool, or the k of a prompt's unit tests, name the other way it beat, what the choice gives, ending with the key result it serves, and what it costs.
-2. *While making.* Write it beside the choice, one sentence for each.
-3. *While making.* For each choice that a figure shows, ask what the other way would bring back. Give a reason and a cost only where it would cost a key result.
+1. *While deciding.* For each view, take each decision that a key result rests on, such as a technology, a tool, or the form of a file that two parts share, and ask why it's taken, ending with the key result it serves.
+2. *While making.* Write each under its view's Strategies: the decision in a few words, and its intent in one sentence.
+3. *While making.* Leave out a decision that no key result rests on, since its intent gives a developer nothing to keep.
 
 ### N16
 
-Does the document hold only what stays true while the product vision and the principles stay, and leave each component's internals out?
+Does the document hold only what stays true while the product vision and Solution strategy stay, and leave each component's internals out?
 
 A line about how a component works inside becomes untrue at the next change to that component, and the developer then can't trust the document. David Parnas's [information hiding](https://doi.org/10.1145/361598.361623) keeps such details inside the module.
 
-1. *While making.* For each line, ask whether it would become untrue if a component's internals changed while the product vision and the principles stayed.
+1. *While making.* For each line, ask whether it would become untrue if a component's internals changed while the product vision and Solution strategy stayed.
 2. *While making.* If it would, move it to where the developer builds the component.
 3. *While making.* Imagine a change to how a component works inside, such as its steps, a value it uses, or a data's fields, and mark each line it would make untrue. Repeat with a change of another kind until you mark no line.

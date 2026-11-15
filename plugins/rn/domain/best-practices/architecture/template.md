@@ -1,39 +1,49 @@
 # `<Product>` architecture
 
-This document says how the parts of `<Product>` give what [its README](<readme>) promises. `<idea>`.
-
-> [!NOTE]
-> DELETE_TEMPLATE_COMMENT:
-> - `<readme>`: the path to the product's README.
-> - `<idea>`: how the product turns what its roles bring into what the README promises, as one
->   idea seen as a whole that every part carries out. Two or three sentences.
-
 ## User stories
 
-- `S<n>`: `<role>` wants `<way>`, so that `<benefit>`. It carries `<steps>`.
+- `S<n>`: `<role>` wants `<way>`, so that `<benefit>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<role>`: a role of the product vision, as the product vision names it.
+> - `<role>`: a role of the product vision, as the product vision names it, or the product's
+>   developer or operator for a need of development or operation.
 > - `<way>`: one way the role meets the product at its edge, such as a command they type.
 > - `<benefit>`: what the role gains by it, toward an objective of the product vision.
-> - `<steps>`: the steps of the README's walkthrough, or of another objective's main use, that rest
->   on it, and each idea of the product vision's Concept whose way of meeting the product it
->   carries, such as resuming a run that stopped.
+> - The stories together cover each objective of the product vision and each promise of the README.
+>   A story needn't match one step of the README's walkthrough.
+
+## Solution strategy
+
+`<idea>`.
+
+### `<name>`
+
+`<rule>`.
+
+*Why*: `<why>`.
+
+> [!NOTE]
+> DELETE_TEMPLATE_COMMENT:
+> - `<idea>`: how the product turns what its roles bring into what the README promises, as one
+>   idea seen as a whole that every view carries out. Two or three sentences.
+> - `<name>`: the few words a reader finds the rule by.
+> - `<rule>`: one sentence that every part meeting the same decision follows, naming the parts as
+>   Components names them. It holds what no single view can say.
+> - `<why>`: one sentence: what goes wrong without the rule for a role of the product vision,
+>   naming the key result it guards, or for the product's developer or operator.
 
 ## Components
 
 ![The product's components](images/template-components.svg)
 
-What each decides alone:
-
 - `<component>`\
-  `<what it alone decides>`.
+  `<responsibility>`.
 
-The choices made, and why:
+Strategies:
 
-- `<choice>` over `<other way>`\
-  `<why>`. The cost: `<cost>`.
+- `<strategy>`\
+  `<intent>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
@@ -42,14 +52,11 @@ The choices made, and why:
 >   component's. Each box holds its name, its type, and its technology alone.
 >   Each arrow says what one does to another, with the data it hands on, named as in the data
 >   model. A legend explains every symbol.
-> - `<component>`, `<what it alone decides>`: each role of the figure and each component, by its
->   name in the figure, and the decisions that are hard to make or likely to change that it alone
->   makes, each in a few words, joined by commas, in one sentence.
-> - `<choice>`, `<other way>`: each choice whose other way would cost a key result, such as a
->   technology, or a tool, and the way it beat, in a few words each. Leave them out where no
->   choice is such.
-> - `<why>`, `<cost>`: what the choice gives, ending with the key result as the `<why>` of a
->   principle does, and what it costs, in one sentence each.
+> - `<component>`, `<responsibility>`: each role of the figure and each component, by its name in
+>   the figure, and what it's expected to do, in one sentence.
+> - `<strategy>`, `<intent>`: each decision of the view that a key result rests on, such as a
+>   technology or a tool, in a few words, and why it's taken, ending with the key result it serves,
+>   in one sentence. Leave out Strategies where the view takes no such decision.
 
 ## Data model
 
@@ -57,6 +64,11 @@ The choices made, and why:
 
 - `<Data>`\
   `<what it is>`.
+
+Strategies:
+
+- `<strategy>`\
+  `<intent>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
@@ -69,26 +81,7 @@ The choices made, and why:
 >   in the middle.
 > - `<Data>`, `<what it is>`: each data whose name a reader could take for another's, by its name,
 >   and what it's in a few words, without its fields.
-
-## Principles
-
-`<Product>` builds on [`<other>`](<path>), and adds these rules, which every part keeps.
-
-### `<name>`
-
-`<rule>`.
-
-*Why*: `<why>`.
-
-> [!NOTE]
-> DELETE_TEMPLATE_COMMENT:
-> - `<other>`, `<path>`: the architecture whose principles this one builds on, with the sentence
->   that names it. Leave the sentence out where the architecture builds on no other.
-> - `<name>`: the few words a reader finds the principle by.
-> - `<rule>`: one sentence that every part meeting the same decision follows, naming the parts as
->   Components names them. It holds what no single component's line can say.
-> - `<why>`: one sentence: what goes wrong without the rule for a role of the product vision,
->   naming the key result it guards, or for the product's developer or operator.
+> - `<strategy>`, `<intent>`: as in Components.
 
 ## Sequences
 
@@ -101,6 +94,11 @@ sequenceDiagram
   A->>B: #lt;step#gt;
 ```
 
+Strategies:
+
+- `<strategy>`\
+  `<intent>`.
+
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - One section for each user story. Stories that share their steps share a section.
@@ -111,6 +109,7 @@ sequenceDiagram
 > - `<step>`: what one does to another and the data it hands on, as the data model names it, in a
 >   few words. Each branch, each step that sends work back, and each question put to the role are
 >   among them.
+> - `<strategy>`, `<intent>`: as in Components.
 
 ## Deployment
 
@@ -118,8 +117,10 @@ sequenceDiagram
 
 `<start>`.
 
-- `<choice>` over `<other way>`\
-  `<why>`. The cost: `<cost>`.
+Strategies:
+
+- `<strategy>`\
+  `<intent>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
@@ -129,7 +130,7 @@ sequenceDiagram
 >   components and the data it holds by their names in Components and the data model. Beside them
 >   is each thing outside the product the components depend on, with what they use of it.
 > - `<start>`: how the product starts, in one sentence.
-> - `<choice>`, `<other way>`, `<why>`, `<cost>`: as in Components.
+> - `<strategy>`, `<intent>`: as in Components.
 
 ## Directory structure
 
@@ -139,8 +140,10 @@ sequenceDiagram
 <path>  <holds>
 ```
 
-- `<choice>` over `<other way>`\
-  `<why>`. The cost: `<cost>`.
+Strategies:
+
+- `<strategy>`\
+  `<intent>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
@@ -150,63 +153,22 @@ sequenceDiagram
 >   disk, without the files inside a component.
 > - `<holds>`: what it does or holds, in the words a developer looks for when making a change,
 >   naming the component or the data as Components and the data model name them.
-> - `<choice>`, `<other way>`, `<why>`, `<cost>`: as in Components.
+> - `<strategy>`, `<intent>`: as in Components.
 
 ## Test strategy
 
-`<Product>` tests by [`<shared rules>`](<path>), in unit tests, integration tests, and end-to-end
-(E2E) tests. Its test cases lie in `<cases>`, and `<trace>` checks that each names an element or a
-case one level up.
+Each test case lies in `<cases>`, written as Given, When, and Then before any part is built, and
+`<trace>` checks that each names an element or a case one level up.
 
-### Unit tests
-
-- Tries: `<tries>`.
-- Runs real: `<real>`.
-- Tools: `<tools>`.
-- Passes when: `<criteria>`.
-- Runs: `<when>`.
-
-### Integration tests
-
-- Tries: `<tries>`.
-- Runs real: `<real>`.
-- Tools: `<tools>`.
-- Passes when: `<criteria>`.
-- Runs: `<when>`.
-
-### E2E tests
-
-- Tries: `<tries>`.
-- Runs real: `<real>`.
-- Tools: `<tools>`.
-- Passes when: `<criteria>`.
-- Runs: `<when>`.
-
-- `<choice>` over `<other way>`\
-  `<why>`. The cost: `<cost>`.
+| Test type | Test target | Exit criteria |
+|---|---|---|
+| `<type>` | `<target>` | `<exit criteria>` |
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<shared rules>`, `<path>`: the test rules of the architecture that the product builds on, such
->   as the form each case takes. Leave out `by` and the link where the product builds on no other.
-> - `<cases>`: the folders of the test cases, as Directory structure names them. The cases lie
->   there alone, each written as Given, When, and Then, and no document lists them.
+> - `<cases>`: the folders of the test cases, as Directory structure names them.
 > - `<trace>`: the script that checks the trace by the names of the elements.
-> - `<tries>`: what the level tries, by the names that Components, the stories, the principles, the
->   data model, and the product vision give: at unit, each part, the prompts among them, against
->   its contract; at integration, each element of this document; at E2E, each key result, by the
->   main use that measures it; and at the level that tries it, each type of testing that Test
->   strategy chose, such as compatibility with the host the product runs in, with the key result it
->   guards.
-> - `<real>`: what runs real, and the double that replaces each other thing, with the source of
->   what each double of a thing outside the product gives, such as a recorded run.
-> - `<tools>`: the test runner and the tool of each quality check, by name.
-> - `<criteria>`: each quality check with its criterion, as a number where it's one, joined by
->   semicolons: at unit, coverage, surviving mutants, the contracts that take property-based tests,
->   the limits on each function, static analysis and lint, and, for a prompt, its k with the
->   criterion of each type of its evaluation; at integration, each check of the trace; at E2E, how
->   each key result is measured and compared, how a judge is trusted, and how many runs each main
->   use takes; and at its level, the check of each type of testing chosen.
-> - `<when>`: when the level runs, such as before each push, in CI, or once every lower level
->   passes, in one sentence.
-> - `<choice>`, `<other way>`, `<why>`, `<cost>`: as in Components.
+> - `<type>`, `<target>`: each type of [the list of test types](test-types.md), in its order, with
+>   its test target as the list gives it.
+> - `<exit criteria>`: where the product runs the type, `<tool>`: `<criterion>`, the tool by its name
+>   and the criterion as a number where it's one. Where it doesn't, why not, in one sentence.
