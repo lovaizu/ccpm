@@ -177,7 +177,18 @@
         {
           "id": "N13",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "Who writes the cases",
+              "decided": "a subagent for each plugin writes the E2E and integration cases, and then one for each part writes its unit cases; the main conversation decides each gap's fix, takes back to the architecture first each case no part holds, and checks each result against the architecture and trace.py",
+              "by": "user"
+            },
+            {
+              "about": "Cases to mend",
+              "decided": "from a reading of the cases against the architecture: start each role with the text the guard gives from the adapters, never a tree.py cut the orchestrator runs (rn_example.py cut and started); start no generator on work resting on the plan before /rn:ty (test_s4_pause, test_s5_pick_up, test_rn_components); start evaluators only after the generator ends done and is checked (test_s1_request, test_rn_principles, test_s4_pause, test_rn_components); write the Made in the falls-short case (test_s1_request ~405); hold the orchestrator's turn end like a role's (test_rn_components ~79); mend the stale Given or Then at test_rn_components ~91, test_s4_pause ~84, test_s6_handed_over ~307; add a case for each path with none: S1 a run the conversation held before ends, the adapters giving none where no work waits, a lack reaching the user as a Point, a resume with the user's words word for word, an evaluator of the refactor best practice; S2 one point at a time, and rounds going on while a point is open; S3 a send-back writing each decision it changes, and work not resting on the sign-off going on; S5 /rn:up inside a run's worktree, the generator's start given at its step, the user picking one of several runs; S6 a lesson put up again changed, and /rn:gm alone after Done; each rule's missing keep or break case: Drawn out along the design tree (another start stopped), Every step by best practice (a call outside its step stopped), Every item handled (reads all it starts with), Signed off before it's built on (other work its turn at once), Back to the design tree on a problem (/rn:gm), The design tree revised on each run (the tree changed before the next deliverable); record.py finding a place that leaves the template; the tree-keeper finding a touched node that disagrees",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N14",
@@ -297,7 +308,18 @@
         {
           "id": "N13",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "Who writes the cases",
+              "decided": "a subagent for each plugin writes the E2E and integration cases, and then one for each part writes its unit cases; the main conversation decides each gap's fix, takes back to the architecture first each case no part holds, and checks each result against the architecture and trace.py",
+              "by": "user"
+            },
+            {
+              "about": "Cases to mend",
+              "decided": "from a reading of the cases against the architecture: the E2E runs added until one more moves no mean by a step, not a fixed 3 (walkthrough_records.py, test_walkthrough.py); S1 lay.py print telling up which branch it hit, an unnamed adapter as a file that can't carry the Proposal (test_s1_proposal ~198); S2 up's Run ended after lay.py write; S3 the case of a person's waiting Proposal naming S3's opt; S5 the person's reply opening its move; the main conversation's calls, the resume where the Routes open none, and the end by TaskStop naming S5's branches drawn for them; the rule The guard checks only the run broken during another plugin's run; the rule The steps are the one source kept and broken in writing each asked change into the steps; result.py refusing outside any Run of the conversation, and the main conversation's result before a move that starts no more",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N14",
