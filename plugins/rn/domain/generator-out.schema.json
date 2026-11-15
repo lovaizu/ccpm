@@ -1,0 +1,101 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "generator's out",
+  "description": "What the generator gives as it ends: its result, its last message, and its Made.",
+  "type": "object",
+  "required": [
+    "result",
+    "reply"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "description": "The fixed word it gives by running python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py generator <result>. done: the deliverable is made, and its Made written. asks: the design leaves a point open. lacks: something outside the work stops it, such as a missing tool. The routes go on by this word.",
+      "enum": [
+        "done",
+        "asks",
+        "lacks"
+      ]
+    },
+    "reply": {
+      "description": "For asks, the point, with its recommendation; for lacks, what it lacks; each beginning with the line For the person:, which the main conversation puts to the person as given. For done, nothing more.",
+      "type": "string"
+    },
+    "made": {
+      "description": "The Made, in the file that its run value made names, written before it gives done.",
+      "type": "object",
+      "required": [
+        "decisions",
+        "more",
+        "settled"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "decisions": {
+          "description": "Where it carries out each decision of its Cut: the decision's path, and the places in the deliverable.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "path",
+              "where"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "where": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "more": {
+          "description": "Where it makes each More kept good: the necessary condition, and the places in the deliverable.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "condition",
+              "where"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "condition": {
+                "type": "string"
+              },
+              "where": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "settled": {
+          "description": "Each point it settled without asking, with its ground, which the main conversation puts up with the deliverable.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "point",
+              "decided",
+              "ground"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "point": {
+                "type": "string"
+              },
+              "decided": {
+                "type": "string"
+              },
+              "ground": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

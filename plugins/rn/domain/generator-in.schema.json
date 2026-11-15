@@ -1,0 +1,153 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "generator's in",
+  "description": "What the main conversation gives the generator: its Cut as it starts, and the main conversation's grounds as it resumes it. tree.py's code gives the Cut, through the adapter of a start's text, and the guard limits the generator's calls to its run values.",
+  "type": "object",
+  "required": [
+    "start"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "start": {
+      "description": "The Cut, one JSON object on the first line of the prompt that starts the generator: its run values, and the part of the design tree it makes the deliverable from.",
+      "type": "object",
+      "required": [
+        "record",
+        "deliverable",
+        "kind",
+        "best_practice",
+        "refactor",
+        "made",
+        "cut"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "record": {
+          "description": "The path of the start's record, a file in the run's records/ that the role writes only by record.py, in the form of record.schema.json, and that rn's check reads at the role's end.",
+          "type": "string"
+        },
+        "deliverable": {
+          "description": "The path of the deliverable it makes, from the top of rn's worktree.",
+          "type": "string"
+        },
+        "kind": {
+          "description": "The deliverable's kind, such as readme.",
+          "type": "string"
+        },
+        "best_practice": {
+          "description": "The folder of the best practice of the deliverable's kind.",
+          "type": "string"
+        },
+        "refactor": {
+          "description": "The folder of the refactor best practice that it finishes by, of documents or of code.",
+          "type": "string"
+        },
+        "made": {
+          "description": "The path of the file in the round where it writes its Made, in the form of generator-out.schema.json's made.",
+          "type": "string"
+        },
+        "cut": {
+          "description": "The part of the design tree it starts with, and nothing else of it.",
+          "type": "object",
+          "required": [
+            "goal",
+            "name",
+            "inputs",
+            "decisions",
+            "more"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "goal": {
+              "description": "The goal, as the user confirmed it.",
+              "type": "string"
+            },
+            "name": {
+              "description": "The one thing that holds toward the goal once the deliverable exists.",
+              "type": "string"
+            },
+            "inputs": {
+              "description": "The path of each deliverable this one takes its content from.",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "decisions": {
+              "description": "Each decision of the deliverable's necessary conditions, by its condition's ID.",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "condition",
+                  "decision"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "condition": {
+                    "type": "string"
+                  },
+                  "decision": {
+                    "description": "A decision of the design tree that the role carries out, by its path, as the design tree best practice gives its form.",
+                    "type": "object",
+                    "required": [
+                      "path",
+                      "point",
+                      "decided",
+                      "ground"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      },
+                      "point": {
+                        "type": "string"
+                      },
+                      "decided": {
+                        "type": "string"
+                      },
+                      "ground": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "more": {
+              "description": "Each More kept from the last round, which the round makes good where the decision it changed lands.",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "condition",
+                  "good_when"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "condition": {
+                    "type": "string"
+                  },
+                  "good_when": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "step": {
+              "description": "The step it stood at, where a paused run picks up, from the start's Place. Absent at a start anew.",
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        }
+      }
+    },
+    "resume": {
+      "description": "The message by which the main conversation resumes the role with SendMessage: its first line, then its decision on the role's last result and why, and, where the person answered, a line that opens the person's words as they wrote them, as a summary loses what the person meant.",
+      "type": "string",
+      "pattern": "^The main conversation's grounds:\\n"
+    }
+  }
+}

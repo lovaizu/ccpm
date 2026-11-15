@@ -1,0 +1,92 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "A record",
+  "description": "What one start of a role, or the orchestrator of a run, carried out, in the order it did: each step of its prompt once the step's result held, and each practice of a best practice while it carried the practice out, with the result that rn's check kept once it passed the end. record.py decides this form: record.py add writes the entries, and record.py check reads them at a role's end, or at each end of the orchestrator's turn, and keeps the result.",
+  "type": "object",
+  "required": [
+    "entries"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "entries": {
+      "description": "Each step and practice, in the order recorded, as the check reads each practice by where it falls among the steps.",
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "type": "object",
+            "required": [
+              "of",
+              "step",
+              "gave"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "of": {
+                "description": "The prompt that holds the step, by its role, such as generator, or by its command.",
+                "type": "string"
+              },
+              "step": {
+                "description": "The step's number in the prompt's Steps.",
+                "type": "integer",
+                "minimum": 1
+              },
+              "gave": {
+                "$ref": "#/definitions/gave"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "of",
+              "practice",
+              "gave"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "of": {
+                "description": "The best practice that holds the practice, by its kind, such as code.",
+                "type": "string"
+              },
+              "practice": {
+                "description": "The practice's ID, its condition's ID and its place, such as N6.2.",
+                "type": "string",
+                "pattern": "^N[0-9]+\\.[0-9]+$"
+              },
+              "gave": {
+                "$ref": "#/definitions/gave"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "kept": {
+      "description": "The result that the start gave, kept by record.py check once it passed the end, so that the adapter of rn's records gives Lane the results of a run to pick up. Absent until then.",
+      "type": "object",
+      "required": [
+        "role",
+        "result"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "role": {
+          "description": "The role that gave the result, such as generator.",
+          "type": "string"
+        },
+        "result": {
+          "description": "The fixed word the role gave by Lane's result script, such as done.",
+          "type": "string"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "gave": {
+      "description": "What the step left, or what the practice gave, in a line, so that the orchestrator checks the result against it.",
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "tree-keeper's out",
+  "description": "What the tree-keeper gives as it ends: its result and its last message.",
+  "type": "object",
+  "required": [
+    "result",
+    "reply"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "description": "The fixed word it gives by running python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py tree-keeper <result>. done: tree.py wrote the change. refused: tree.py refused a more, as no decision that answers its necessary condition changed since the round's cut. The routes go on by this word.",
+      "enum": [
+        "done",
+        "refused"
+      ]
+    },
+    "reply": {
+      "description": "For done, what changed, each node it checked against the change, and each deliverable marked doing, as tree.py write gave them. For refused, the more's necessary condition, and why tree.py refused it.",
+      "type": "string"
+    }
+  }
+}
