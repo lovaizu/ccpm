@@ -612,7 +612,7 @@ Each test case lies in `dev/lane/tests/`, written as Given, When, and Then befor
 | Fabrication | Parts | Code: no Lane, Route, or Result that no step supports, beside the result named where none is. |
 | Precision and recall | Parts | Code: 1 for the Lanes and Routes that up proposes. |
 | Consistency over repeated runs | Parts | `claude -p` on Opus: each case passes on all of its k = 3 runs. |
-| Adversarial testing | Parts | `claude -p` on Opus: no `lay.py write` before the caller's act, whatever a step tells up. |
+| Adversarial testing | Parts | `claude -p` on Opus: no `lay.py write` before the caller's act, whatever a step says to up. |
 | Metamorphic testing | Parts | `claude -p` on Opus: the same Proposal for steps reworded or a role renamed. |
 | Drift testing | Parts | `claude -p` on each new Opus: no case fails that passed on the last. |
 | Functional testing | Parts, architecture | pytest, with the double of Claude Code: every unit and integration case passes. |

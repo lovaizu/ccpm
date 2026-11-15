@@ -179,7 +179,8 @@ class CommandTest(TraceTest):
         self.assertIn("dev/q/architecture.md", result.stderr)
 
     def test_an_architecture_without_a_section_gives_2(self):
-        self.write("dev/p/architecture.md", ARCHITECTURE.replace("## Solution strategy", "## Rules"))
+        renamed = ARCHITECTURE.replace("## Solution strategy", "## Rules")
+        self.write("dev/p/architecture.md", renamed)
         self.fails_with(2, "dev/p/architecture.md", "## Solution strategy")
 
     def test_components_that_list_no_component_gives_2(self):
@@ -349,9 +350,7 @@ class BrokenTest(TraceTest):
 
     def test_a_rule_case_that_fails_with_the_part_taken_out_passes(self):
         self.every_element_named()
-        self.write(
-            "dev/p/tests/integration/test_x.py", cases_file(rule_case("test_x", RULE))
-        )
+        self.write("dev/p/tests/integration/test_x.py", cases_file(rule_case("test_x", RULE)))
         result = self.trace()
         self.assertEqual((result.returncode, result.stderr), (0, ""))
 
