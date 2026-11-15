@@ -1,39 +1,31 @@
 # rn
 
-rn is a Claude Code plugin that makes what you ask for, such as a document, code, or a plugin, so
-that the people it's for can use it for what they're after.
+rn is a Claude Code plugin that makes what you ask for so the people it's for can use it.
 
-rn 0.9.0 is being rebuilt, and the rebuilt rn isn't released yet. Its code isn't built yet, so
-don't install it for your work today. The walkthrough below shows what rn sets out to do. It isn't
-the output of a recorded run.
+In development: this README describes the rebuilt rn, which isn't built yet, so don't install rn
+for your work.
 
 rn is for you when you have Claude Code make something in a GitHub repository for other people to
-use, such as readers, users, or teammates. Often, you get something that looks done, and then you
-find that it isn't what you meant, or that its people can't use it. With rn, you get each
-deliverable you mean, one its people can use, and you spend your own time only on what's yours:
-the questions rn can't settle, and a sign-off on each deliverable.
+use. With it, you get each deliverable you mean, one its people can use, and answer only what's
+yours.
 
 ## Non-goals
 
-- rn doesn't put the deliverable in front of real people. Its evaluators are AI subagents that read
-  the deliverable as its people would.
-- rn doesn't finish on its own where your goal leaves a question open. It asks you, and only the
-  work that rests on your answer waits for it. The rest goes on meanwhile.
-- rn doesn't make a small change faster than Claude Code alone. It plans each deliverable, and its
-  evaluators read it again after each round, with no set limit on rounds. For a one-line fix, ask
-  Claude Code directly.
-- rn doesn't merge. It leaves one pull request, ready once you sign off the last deliverable, and
-  you merge it.
+- rn doesn't put the deliverable in front of real people: its AI subagents read it as they would.
+- rn doesn't finish alone where your goal leaves a question open: it asks you, and other work goes
+  on.
+- rn doesn't make a small change faster than Claude Code alone: for a one-line fix, ask Claude Code.
+- rn doesn't merge: it leaves one pull request, ready once you sign off the last deliverable.
 
 ## Requirements
 
-- macOS or Linux: `uname` shows `Darwin` or `Linux`.
+- macOS or Linux: `uname` shows it.
 - Claude Code 2.1.319 or later: `claude --version` shows it.
 - Python 3.9 or later, run as `python3`: `python3 --version` shows it.
 - Git: `git --version` shows it.
-- The GitHub command-line tool `gh`, logged in to GitHub: `gh auth status` shows `Logged in to github.com`.
-- Your work in a GitHub repository that you can push to: at the repository's root,
-  `gh repo view --json viewerPermission` shows `WRITE`, `MAINTAIN`, or `ADMIN`.
+- The GitHub command-line tool `gh`, logged in: `gh auth status` shows `Logged in to github.com`.
+- A GitHub repository you can push to: at its root, `gh repo view --json viewerPermission` shows
+  `WRITE`, `MAINTAIN`, or `ADMIN`.
 
 ## Installation
 
@@ -42,20 +34,14 @@ claude plugin marketplace add lovaizu/ccpm
 claude plugin install rn@ccpm
 ```
 
-`claude plugin list` then shows `rn@ccpm` and `lane@ccpm`. Installing rn installs Lane with it.
-To see that rn works, start Claude Code at the root of your repository and type `/rn:up` alone.
-rn says that it has no run to pick up.
+At your repository's root in Claude Code, `/rn:up` alone says that rn has no run to pick up.
 
 ## Walkthrough
 
-At the end, you have a pull request, ready to merge, that adds type hints to every file of your
-library. The code of the people who call the library is then checked against those hints. You
-answered two questions, signed off the plan and each of the two deliverables, and paused the run
-once overnight.
+At the end, you have a pull request, ready to merge, that adds type hints to your whole library.
 
-`invoicer` is a Python library on GitHub that other teams call to total their invoices. It has no
-type hints, so a caller learns of a wrong argument only when their code fails. In Claude Code, at
-the root of the repository of `invoicer`, you type:
+`invoicer`, a Python library that other teams call, has no type hints, so wrong arguments fail only
+at run time. You type:
 
 ```text
 /rn:up type hints for invoicer, so that the people who call it see what each function takes
@@ -105,7 +91,7 @@ You type:
 /rn:ty
 ```
 
-rn makes both deliverables. At the end of the day, before rn finishes, you type:
+rn makes both deliverables. That evening, before rn finishes, you type:
 
 ```text
 /rn:dn
@@ -118,7 +104,7 @@ Paused "type hints for invoicer" while making "Type hints in each file of invoic
 Its work so far is pushed. Type /rn:up in any conversation to go on.
 ```
 
-The next day, in a new conversation at the root of the repository, you type:
+The next day, in a new conversation, you type:
 
 ```text
 /rn:up
@@ -149,8 +135,7 @@ You type:
 /rn:ty
 ```
 
-rn puts up "invoicer marked as typed" for your sign-off in the same form, and you type `/rn:ty`
-again.
+rn puts up "invoicer marked as typed" in the same form, and you type `/rn:ty` again.
 
 rn shows:
 
@@ -158,7 +143,7 @@ rn shows:
 Done. The pull request is ready for your merge: https://github.com/<owner>/invoicer/pull/12
 ```
 
-A caller who installs the branch of the pull request and passes the tax rate as text in `app.py`:
+A caller on the pull request's branch passes the tax rate as text in `app.py`:
 
 ```python
 from decimal import Decimal
@@ -168,7 +153,7 @@ lines = [Line("Hosting", Decimal("40.00"))]
 print(total(lines, "0.19"))
 ```
 
-gets this from mypy before the code runs:
+mypy shows, before the code runs:
 
 ```console
 $ mypy app.py
@@ -180,64 +165,46 @@ You then merge the pull request.
 
 ## How it works
 
-In everything it does, rn works only on the few things that decide whether the people a deliverable
-is for can use it, and leaves out the rest.
+rn works only on the few things that decide whether a deliverable's people can use it.
 
-![How rn works: your goal and decisions in a design tree, each deliverable made by a best practice, tried in a copy, read by evaluators as its people, and handed to you in a pull request for your sign-off](images/how-it-works.svg)
+![How rn works, from your decisions to the pull request you sign off](images/how-it-works.svg)
 
 ### "I can't spell out every detail up front, so it builds the wrong thing."
 
-rn drafts your goal from your request, and you confirm it. It then asks you the decisions under
-that goal, one at a time and each with its recommendation, and keeps them in a design tree. The
-design tree is rn's record of your goal and every decision under it. rn asks only the decisions
-that change what the people get, and plans again after each answer and each finished deliverable.
-You sign off the plan, and each deliverable before the next one rests on it. While a question or a
-sign-off waits for you, rn goes on with the work that doesn't rest on it. Type `/rn:gm` with
-what to change, or alone to send your comments on the pull request, and rn takes it back to the
-design tree. So you get the deliverable you mean without writing a specification.
+rn asks only the decisions that change what the people get, one at a time, each with a
+recommendation. You sign off the plan and each deliverable, so you get what you mean without a
+specification.
 
 ### "Its output misses what this kind of work needs."
 
-rn plans, makes, and asks by the best practice for each kind of deliverable: one for a README, one
-for code, and so on. A best practice holds the few things that its kind of work needs. Where rn has none for a
-kind, it makes one before the first deliverable of that kind. What a best practice settles, rn
-settles without asking you, and lists in its report.
+rn plans and makes each deliverable by the best practice of its kind, such as one for a README.
+Where it has none for a kind, it makes one first, and lists what each settled without asking.
 
 ### "It looks done, but the people it's for can't use it."
 
-Before rn hands a deliverable over, its evaluators, AI subagents, read it as its people would. They
-get only what those people have, never what rn meant. rn makes the deliverable again, round after
-round, until the evaluators find each of its aims met for those people. So rn improves only what the
-people need, and you get a deliverable they can use.
+AI evaluators read each deliverable with only what its people have, never what rn meant. rn makes
+it again until they find each aim met, so you get one they can use.
 
 ### "Each fix breaks something else."
 
-rn takes each shortfall back to the decision it comes from, changes that decision, and makes the
-deliverable again from the design tree. It doesn't patch the deliverable. A shortfall that the
-people would never meet changes nothing. So a fix holds, and the deliverable doesn't grow with each
-round. Before it marks the pull request ready, rn reads the whole of it at once, and takes each
-clash between deliverables, and each part your goal doesn't need, back to its decision in the same
-way.
+rn takes each shortfall back to the decision it comes from, and makes the deliverable again from
+the decisions. A shortfall the people would never meet changes nothing, so the deliverable doesn't
+grow with each round.
 
 ### "Does it skip a step when no one watches?"
 
-No. Lane, a plugin installed with rn, holds each part of rn to the steps of its best practice on
-every run. Lane stops a call that leaves those steps, and shows the part the step it's on. The
-steps hold the few things that the work needs, so none of them goes missing.
+No. Lane, installed with rn, stops any part of rn that leaves its steps, and shows it its step.
 
 ### "Does it change the repository's files, or merge on its own?"
 
-No. rn works in a git worktree of its own, on its own branch, so you go on with your own work
-meanwhile. It runs a deliverable's commands only in a throwaway copy of your repository, with a
-throwaway home folder. It commits each answer and each step's work on its branch, so you never
-answer a question twice, even after a closed conversation. It leaves one pull request, and the
-merge is yours.
+No. rn works in its own worktree and branch, runs commands in a throwaway copy, and leaves the
+merge to you.
 
 ## Documentation
 
 - [Changelog](CHANGELOG.md): for you after an update, the changes in each version.
-- [Lane](https://github.com/lovaizu/ccpm/blob/main/plugins/lane/README.md): for you if you want to know what Lane does, or use it in a plugin of
-  your own.
+- [Lane](https://github.com/lovaizu/ccpm/blob/main/plugins/lane/README.md): for you if you want to
+  know what Lane does, or use it in a plugin of your own.
 - [Issues](https://github.com/lovaizu/ccpm/issues): where you ask for help or report a fault.
 
 ## License
