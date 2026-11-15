@@ -45,6 +45,7 @@ An element that no case reaches is one whose parts no one has seen fit together,
 1. *While making.* For each story's sequence, write a case for each path through it: the main flow, each branch, each step that sends work back, and each question put to the role, until every move from one step to the next lies on some path.
 2. *While making.* For each rule of Solution strategy, write a case where the parts keep it, which can be run again with the part that holds the rule taken out, to see it fail, such as by the script that checks the trace.
 3. *While making.* For each decision that a component alone makes, write a case that shows it, and for each handoff between parts, a case with the data it passes as Data model names it, until each kind of data lies on some case.
+4. *While making.* Once the cases are written, go through each sequence arrow by arrow and branch by branch, name the case that runs each, and write a case for each arrow or branch that none runs, since the script that checks the trace finds only an element that no case names, not a branch left out.
 
 ### N3
 
@@ -82,5 +83,5 @@ Does the list of gaps name each place where the cases can't follow the architect
 A gap that the cases show is mended in the architecture while nothing rests on it, and a case bent around it leaves the document wrong for every developer after.
 
 1. *While making.* Read the cases against the architecture and the skeleton, and list each gap: a case that no part can hold; a part that no case reaches; a part whose cases change for more than one reason, such as a file's form and a remote's commands; and a handoff that no interface carries.
-2. *While making.* Write each gap in the form that the note of Gaps in the template gives, and leave the architecture, the skeleton, and the cases as they are around it, since the architecture's maker decides how to mend it.
+2. *While making.* Write each gap in the form that the note of Gaps in the template gives, and write no case of a part, an interface, or a behavior that the architecture doesn't draw, leaving the case that meets the gap as the architecture draws it, since a case built on a part invented around the gap fixes that part in place before the architecture's maker decides the mend.
 3. *While making.* Where the architecture or the skeleton changes, change the cases to it as N1 to N4 say, and read them again for gaps, until you list none.

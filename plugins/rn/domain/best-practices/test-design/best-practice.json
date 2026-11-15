@@ -45,6 +45,10 @@
        {
         "at": "make",
         "text": "For each decision that a component alone makes, write a case that shows it, and for each handoff between parts, a case with the data it passes as Data model names it, until each kind of data lies on some case."
+       },
+       {
+        "at": "make",
+        "text": "Once the cases are written, go through each sequence arrow by arrow and branch by branch, name the case that runs each, and write a case for each arrow or branch that none runs, since the script that checks the trace finds only an element that no case names, not a branch left out."
        }
       ]
      },
@@ -134,7 +138,7 @@
        },
        {
         "at": "make",
-        "text": "Write each gap in the form that the note of Gaps in the template gives, and leave the architecture, the skeleton, and the cases as they are around it, since the architecture's maker decides how to mend it."
+        "text": "Write each gap in the form that the note of Gaps in the template gives, and write no case of a part, an interface, or a behavior that the architecture doesn't draw, leaving the case that meets the gap as the architecture draws it, since a case built on a part invented around the gap fixes that part in place before the architecture's maker decides the mend."
        },
        {
         "at": "make",
