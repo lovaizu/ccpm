@@ -181,7 +181,7 @@
             {
               "about": "Who writes the cases",
               "decided": "a subagent for each plugin writes the E2E and integration cases, and then one for each part writes its unit cases; the main conversation decides each gap's fix, takes back to the architecture first each case no part holds, and checks each result against the architecture and trace.py",
-              "by": "user"
+              "by": "maker"
             },
             {
               "about": "Cases to mend",
@@ -312,7 +312,7 @@
             {
               "about": "Who writes the cases",
               "decided": "a subagent for each plugin writes the E2E and integration cases, and then one for each part writes its unit cases; the main conversation decides each gap's fix, takes back to the architecture first each case no part holds, and checks each result against the architecture and trace.py",
-              "by": "user"
+              "by": "maker"
             },
             {
               "about": "Cases to mend",
