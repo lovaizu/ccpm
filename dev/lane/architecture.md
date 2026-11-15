@@ -613,7 +613,7 @@ Each test case lies in `dev/lane/tests/`, written as Given, When, and Then befor
 | Data compatibility testing | Parts | Quality | pytest: the newest `lay.py` lays again each plugin in `dev/lane/tests/released/`, leaving no earlier sentence, none doubled. |
 | Integration testing | Architecture | Quality | pytest, with the double of Claude Code: every case passes, each handoff giving the data the data model names. |
 | Contract testing | Architecture | Quality | `dev/tests/recorder/compare.py` on each new Claude Code: each recorded state gives the double's events, with their fields in order. |
-| Traceability | Architecture | Quality | `dev/scripts/trace.py`: every element tested, every case naming one level up, each rule's case failing broken. |
+| Traceability | Architecture | Quality | `dev/scripts/trace.py`: every element tested, every case naming one level up, each rule's case failing broken. A review: 0 cases that miss what their element says. |
 | Scenario testing | Product | Benchmark | `dev/scripts/e2e.py` on the walkthrough with S3 and S4, judged on Opus: key results KR1.1, then KR1.2, against the last runs. Runs: added until one more moves no mean by a step. KR1.1 counts a role off its steps, a wrong stop or start, an early stop, or a step left unheld. |
 | Installation testing | Product | Quality | `dev/scripts/e2e.py`: Lane installs by the README's commands in a fresh home, and `/lane:up` answers. |
 | Configuration testing | Product | Quality | CI's Tests on Python 3.9 and the newest Python: every case passes on each. |
