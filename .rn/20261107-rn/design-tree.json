@@ -89,7 +89,23 @@
         {
           "id": "N3",
           "good": true,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "What the check finds",
+              "decided": "rn's check reads the template of the deliverable's kind and the deliverable, and finds each section of the template in its order and no other, each item in the template's form, each slot in the template's sentence pattern where it has one and else in its number of sentences, no note or placeholder of the template left, each figure and block the template asks for, and no sentence longer than a set number of words, as the template holds only the vital few, so each sentence beyond it is trivia that an evaluator reading for its conditions passes",
+              "by": "user"
+            },
+            {
+              "about": "Where it runs on ccpm's own documents",
+              "decided": "check.sh runs it on each document of ccpm made by a best practice, each product vision, README, and architecture against its kind's template, and the documents are mended until it passes, before the work that rests on them goes on, as the user asked to build the check first and improve the documents by it",
+              "by": "user"
+            },
+            {
+              "about": "The set number of words",
+              "decided": "A sentence takes at most 20 words, the limit that ASD-STE100 sets for procedures, below the 25 of GOV.UK and the Australian Government Style Manual, as the user judged 25 too long to read",
+              "by": "user"
+            }
+          ]
         },
         {
           "id": "N4",
@@ -116,32 +132,49 @@
           "good": true,
           "decisions": []
         }
-      ],
-      "decisions": [
-        {
-          "about": "What the check finds",
-          "decided": "rn's check reads the template of the deliverable's kind and the deliverable, and finds each section of the template in its order and no other, each item in the template's form, each slot in the template's sentence pattern where it has one and else in its number of sentences, no note or placeholder of the template left, each figure and block the template asks for, and no sentence longer than a set number of words, as the template holds only the vital few, so each sentence beyond it is trivia that an evaluator reading for its conditions passes",
-          "by": "user"
-        },
-        {
-          "about": "Where it runs on ccpm's own documents",
-          "decided": "check.sh runs it on each document of ccpm made by a best practice, each product vision, README, and architecture against its kind's template, and the documents are mended until it passes, before the work that rests on them goes on, as the user asked to build the check first and improve the documents by it",
-          "by": "user"
-        },
-        {
-          "about": "The set number of words",
-          "decided": "A sentence takes at most 20 words, the limit that ASD-STE100 sets for procedures, below the 25 of GOV.UK and the Australian Government Style Manual, as the user judged 25 too long to read",
-          "by": "user"
-        }
       ]
     },
     {
       "name": "rn's product vision says what rn is for",
       "path": "dev/rn/product-vision.md",
       "kind": "product-vision",
-      "status": "doing",
+      "inputs": [],
       "preconditions": [
+        "plugins/rn/domain/best-practices/product-vision",
         "plugins/rn/domain/record/template.py"
+      ],
+      "status": "doing",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
       ]
     },
     {
@@ -257,20 +290,12 @@
       "name": "A developer sees, before building any part, each test case that names nothing one level up and each element of the architecture that no case tests, and check.sh runs every plugin's cases with that check",
       "path": "dev/scripts/trace.py",
       "kind": "code",
-      "status": "done",
-      "decisions": [
-        {
-          "about": "Where it finds the rules",
-          "decided": "trace.py finds each rule under the architecture's Solution strategy, where it found each principle under Principles, as the architecture template now holds the rules there",
-          "by": "user"
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "rn's developers build its parts so that together they give what its README promises",
       "path": "dev/rn/architecture.md",
       "kind": "architecture",
-      "status": "doing",
       "inputs": [
         "dev/rn/product-vision.md",
         "plugins/rn/README.md"
@@ -278,15 +303,144 @@
       "preconditions": [
         "plugins/rn/domain/best-practices/architecture",
         "plugins/rn/domain/record/template.py"
+      ],
+      "status": "doing",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": [
+            {
+              "about": "What a user story states",
+              "decided": "each story states what its role wants, in the role's words, without the command or reply that meets it, which Sequences shows, as the architecture best practice's N2 now says from Cohn's user stories and Patton's story mapping",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N11",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N12",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Which checks Test strategy holds",
+              "decided": "Test strategy holds only the checks of the test strategy guide to pick always and those whose condition the product meets, each a quality with its criterion or a benchmark with none, a test that runs a prompt a benchmark whose runs a person judges; security and reliability testing aren't picked, as no access needs authorization and going on after a stop is a story that integration tests already try; configuration testing stays at Python 3.9 and the newest, as the code is the standard library alone and only the Python version risks what the team built",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N13",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N14",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N15",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N16",
+          "good": false,
+          "decisions": []
+        }
       ]
     },
     {
       "name": "Lane's product vision says what Lane is for",
       "path": "dev/lane/product-vision.md",
       "kind": "product-vision",
-      "status": "doing",
+      "inputs": [],
       "preconditions": [
+        "plugins/rn/domain/best-practices/product-vision",
         "plugins/rn/domain/record/template.py"
+      ],
+      "status": "doing",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
       ]
     },
     {
@@ -364,7 +518,6 @@
       "name": "Lane's developers build its parts so that together they give what its README promises",
       "path": "dev/lane/architecture.md",
       "kind": "architecture",
-      "status": "doing",
       "inputs": [
         "dev/lane/product-vision.md",
         "plugins/lane/README.md"
@@ -372,6 +525,101 @@
       "preconditions": [
         "plugins/rn/domain/best-practices/architecture",
         "plugins/rn/domain/record/template.py"
+      ],
+      "status": "doing",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": [
+            {
+              "about": "What a user story states",
+              "decided": "each story states what its role wants, in the role's words, without the command or reply that meets it, which Sequences shows, as the architecture best practice's N2 now says from Cohn's user stories and Patton's story mapping",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N11",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N12",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Which checks Test strategy holds",
+              "decided": "Test strategy holds only the checks of the test strategy guide to pick always and those whose condition the product meets, each a quality with its criterion or a benchmark with none, a test that runs a prompt a benchmark whose runs a person judges; security and reliability testing aren't picked, as no access needs authorization and going on after a stop is a story that integration tests already try; configuration testing stays at Python 3.9 and the newest, as the code is the standard library alone and only the Python version risks what the team built",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N13",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N14",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N15",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N16",
+          "good": false,
+          "decisions": []
+        }
       ]
     },
     {
@@ -811,6 +1059,11 @@
           "about": "When the guard runs the record check on the main conversation",
           "decided": "the guard runs the plugin's own record check at a role's end and at each end of the main conversation's turn in a run, and the check passes a turn that puts no work up for the caller, such as one that asks a question, as Lane serves any plugin and can't tell which turn puts work up, which only the plugin knows",
           "by": "reasoning"
+        },
+        {
+          "about": "How a prompt's unit tests judge",
+          "decided": "each case runs as many times as Test strategy sets, each run a test of its own, and the developer judges the prompt from the results, with no criterion, as a criterion over runs that vary passes or fails by chance",
+          "by": "user"
         }
       ]
     }

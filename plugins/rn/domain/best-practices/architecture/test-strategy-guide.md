@@ -79,7 +79,7 @@ End-to-end (E2E) tests test the product in real use against each key result of t
 |---|---|---|---|---|---|
 | Scenario testing | Quality | Always. | A user's whole task from start to end, through every part that it crosses, as the E2E test runs it. | Every case passes. | Fintan |
 | Installation testing | Quality | Always. | Whether the product installs, updates, and uninstalls as its documentation says. | The documented commands install, update, and uninstall the product on a fresh system. | SWEBOK |
-| Configuration testing | Quality | When the product supports more than one system, runtime, or setting. | The product on each combination of system, runtime, and settings that it supports. | Every case passes on each supported combination. | SWEBOK, Fintan |
+| Configuration testing | Quality | When the product supports more than one system, runtime, or setting. | The product on each combination of system, runtime, and settings that it supports. | Every case passes on each supported combination. | SWEBOK |
 | Back-to-back testing | Quality | When a change replaces a version and must keep its behavior. | Whether the new version gives the old version's result for the same input. | Each input gives the old version's result. | Fintan, CT-AI |
 | Conformance and compliance testing | Quality | When the product must follow a standard or a regulation. | The product against that standard or regulation. | The standard's validator or checklist finds 0 faults. | SWEBOK |
 | Migration testing | Quality | When the product takes over data or work from an old system. | Whether the data and the work move from the old system to the new one, and back if the move fails. | All the data moves, and moving back restores the old system. | Fintan |
