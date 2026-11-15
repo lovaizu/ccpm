@@ -33,8 +33,6 @@ from place import EndAsked, StartCall
 from run_record import Shown
 from runs import Approval
 
-pytestmark = pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
-
 MODULES = {
     "routes": routes,
     "ends_by_result": ends_by_result,
@@ -46,8 +44,8 @@ MODULES = {
 }
 TYPES = {name: module.TYPE for name, module in MODULES.items()}
 WRITER = d.start("writer")
-HELD = Held(d.run(starts=(WRITER,), due=()), WRITER, d.ROOT)
-MAIN = Held(d.run(starts=(WRITER,), due=()), None, d.ROOT)
+HELD = Held(d.run(starts=(WRITER,), due=()), WRITER, d.ROOT, d.ROUTES_OF_WRITE)
+MAIN = Held(d.run(starts=(WRITER,), due=()), None, d.ROOT, d.ROUTES_OF_WRITE)
 LAY = "python3 /lane/scripts/lay.py write changelog b9fd8fd8"
 SHOWN = "Routes of write...\nID: b9fd8fd8\nReply yes to lay these into changelog."
 
@@ -58,7 +56,7 @@ def up_held(by: str = "person", approved: bool = False) -> Held:
     run = d.run(
         skill="up", by=by, shown=(Shown("r1", "b9fd8fd8", SHOWN),), approvals=approvals, due=()
     )
-    return Held(run, None, d.ROOT)
+    return Held(run, None, d.ROOT, d.ROUTES_OF_WRITE)
 
 
 def up_lane(kind: str) -> Any:
@@ -86,7 +84,7 @@ def faults(lane: Any) -> tuple[str, ...]:
 def held_with(*results: str) -> Held:
     """writer's Start, with the Results it gave, in write's Run."""
     start = d.start("writer", results=results)
-    return Held(d.run(starts=(start,), due=()), start, d.ROOT)
+    return Held(d.run(starts=(start,), due=()), start, d.ROOT, d.ROUTES_OF_WRITE)
 
 
 def start_call(role: str, text: str = "Carry out your steps", **fields: Any) -> StartCall:
@@ -302,6 +300,7 @@ def test_a_subagents_start_of_a_role_breaks_the_lane_on_its_last_step(
         assert isinstance(verdict, Broken) and verdict.sentence == stop_of("writer", "written")
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_a_call_the_guard_cant_check_is_stopped_with_who_must_fix_it")
 def test_a_subagents_start_with_no_lane_that_checks_starts_cant_be_checked() -> None:
     """Given: writer's Lanes without the Lane on its last Step.
@@ -378,7 +377,7 @@ def test_run_only_fills_in_the_starts_run_values(
     Then: it allows the command with the Start's value, stops another, and allows any word where
     the values give no version."""
     start = dataclasses.replace(d.start("writer"), values=values)
-    held = Held(d.run(starts=(start,), due=()), start, d.ROOT)
+    held = Held(d.run(starts=(start,), due=()), start, d.ROOT, d.ROUTES_OF_WRITE)
     lane = d.run_only("git tag v{version}")
     assert TYPES["run_only"].allows(lane, d.bash(command), held) is allowed
 
@@ -442,6 +441,7 @@ def test_ends_by_result_allows_its_roles_run_of_the_result_script(
     assert TYPES["ends_by_result"].allows(d.WRITER_END, d.bash(command), HELD) is allowed
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_lay_before_the_persons_reply_is_stopped")
 @pytest.mark.parametrize(
     "held, call, allowed",
@@ -465,6 +465,7 @@ def test_lays_after_reply_holds_write_to_the_callers_own_act(
     assert TYPES["lays_after_reply"].allows(lane, call, held) is allowed
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_ups_end_without_what_print_showed_is_stopped")
 @pytest.mark.parametrize(
     "message, kept",
@@ -509,6 +510,7 @@ def test_ends_by_result_holds_a_subagents_end_to_a_result_since_its_start(
         assert isinstance(verdict, Broken) and verdict.sentence == stop_of("writer", "written")
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_an_end_held_to_the_plugins_command_goes_once_it_gives_0")
 @pytest.mark.parametrize(
     "command, verdict",
@@ -585,6 +587,7 @@ def test_a_call_is_kept_where_one_lane_of_each_type_allows_it(
         assert isinstance(verdict, Broken) and verdict.sentence == "Run only `git log --oneline`."
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_an_end_held_to_the_plugins_command_goes_once_it_gives_0")
 @pytest.mark.parametrize(
     "commands, verdict",

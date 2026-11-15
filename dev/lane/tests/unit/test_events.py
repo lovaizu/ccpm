@@ -11,8 +11,6 @@ import lane_data as d
 import pytest
 from events import Answer, NotAnEvent, hook_entries, read_event, write_answer
 
-pytestmark = pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
-
 HOOKS = os.path.join(os.path.dirname(d.__file__), *[".."] * 3, "plugins", "lane", "hooks")
 
 

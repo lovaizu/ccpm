@@ -3,6 +3,8 @@ holds, the code of the Lane that laid it, loaded apart from this Lane's code of 
 
 from __future__ import annotations
 
+import os
+
 from form import Laid
 
 
@@ -19,4 +21,6 @@ def read_laid(plugin: str) -> Laid:
     Carries: S1 `L->>LS: reads the Laid`, S4 `L->>LS: reads the Laid by the guard's code in its
     hooks/lane/, the form of the Lane that laid it`.
     """
-    raise NotImplementedError("laid_copy.read_laid")
+    if not os.path.isdir(os.path.join(plugin, "hooks", "lane")):
+        return Laid("", ())
+    raise NotImplementedError("laid_copy.read_laid, of a plugin Lane laid in")

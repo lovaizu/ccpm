@@ -11,11 +11,13 @@ from runs import Due
 
 
 def due(plugin: str, moves: Sequence[Due]) -> str:
-    """The moves due, such as ``changelog: Start `changelog:writer` with `Carry out your steps`.``
+    """The moves due, such as ``changelog: Start `changelog:writer` with `Carry out your steps`.``,
+    or nothing where no move due is a start or the move to start no more.
 
     Carries: S5 `G-->>M: the moves due, each start with its text`, S7 `G-->>M: the start due`.
     """
-    raise NotImplementedError("answers.due")
+    said = _moves(plugin, moves)
+    return f"{plugin}: {said}" if said else ""
 
 
 def gave(plugin: str, role: str, result: str, moves: Sequence[Due]) -> str:
@@ -23,7 +25,7 @@ def gave(plugin: str, role: str, result: str, moves: Sequence[Due]) -> str:
 
     Carries: S5 `G-->>M: the Result, and the moves of its Route`, and `start no more subagents`.
     """
-    raise NotImplementedError("answers.gave")
+    return f"{plugin}: {role} gave `{result}`. {_moves(plugin, moves)}".rstrip()
 
 
 def ended_unheld(plugin: str, role: str, moves: Sequence[Due]) -> str:
@@ -39,7 +41,19 @@ def stopped(plugin: str, broken: Broken) -> str:
 
     Carries: S2 `G-->>UP: stops it`, S5 `G-->>M: stops it`, S6 `G-->>SA: stops it`.
     """
-    raise NotImplementedError("answers.stopped")
+    return "\n".join(x for x in (f"{plugin}: {broken.sentence}", broken.may) if x)
+
+
+def _moves(plugin: str, moves: Sequence[Due]) -> str:
+    """The words of the moves due: each start with its text, and the move to start no more."""
+    said = [
+        f"Start `{plugin}:{d.move.role}` with `{d.text}`."
+        if d.move.kind == "start"
+        else "Start no more subagents."
+        for d in moves
+        if d.move.kind in ("start", "no_more")
+    ]
+    return " ".join(dict.fromkeys(said))
 
 
 def cant_check(plugin: str, cant: CantCheck) -> str:

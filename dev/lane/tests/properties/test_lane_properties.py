@@ -21,14 +21,14 @@ from lanes.write_only import TYPE as WRITE_ONLY
 from lay.laid import as_laid, strip
 from lay.steps import Step
 
-pytestmark = pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
-
 WORD = st.text("abcdefghijklmnopqrstuvwxyz`.-", min_size=1, max_size=10)
 SENTENCE = st.lists(WORD, min_size=1, max_size=6).map(
     lambda words: " ".join(words).capitalize() + "."
 )
 NAME = st.text("abcdefghijklmnopqrstuvwxyz_", min_size=1, max_size=8)
-HELD = Held(d.run(starts=(d.start("writer"),), due=()), d.start("writer"), d.ROOT)
+HELD = Held(
+    d.run(starts=(d.start("writer"),), due=()), d.start("writer"), d.ROOT, d.ROUTES_OF_WRITE
+)
 
 
 @st.composite
@@ -77,6 +77,7 @@ def proposals(draw: Any) -> dict[str, Any]:
     }
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_steps_after_a_lay_come_without_lanes_sentences")
 @given(steps_and_sentences())
 def test_steps_laid_then_stripped_read_as_written(given_: Any) -> None:

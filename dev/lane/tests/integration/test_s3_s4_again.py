@@ -10,11 +10,10 @@ import os
 import pytest
 import walkthrough as w
 
-pytestmark = pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 
-
-@pytest.mark.supports("S3", "Approval", "Laid only on the caller's own act")
-def test_an_ai_lays_by_its_own_run_of_lay(b: w.Bench, broken: None) -> None:
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
+@pytest.mark.supports("S3", "Approval")
+def test_an_ai_lays_by_its_own_run_of_lay(b: w.Bench) -> None:
     """Given: an AI in the main conversation called up by the Skill tool, and lay.py print showed
     the walkthrough's Proposal.
     When: it runs lay.py write changelog with the ID, with no person's prompt since.
@@ -28,6 +27,7 @@ def test_an_ai_lays_by_its_own_run_of_lay(b: w.Bench, broken: None) -> None:
     assert os.path.isfile(os.path.join(b.changelog, "hooks", "lanes.json"))
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S3", "Run")
 def test_an_ais_run_keeps_a_persons_waiting_proposal(b: w.Bench) -> None:
     """Given: a person typed /lane:up changelog and up showed a Proposal that waits for their
@@ -67,6 +67,7 @@ def test_an_ai_writes_its_change_into_the_step_before_it_lays(b: w.Bench) -> Non
     assert w.proposal_id(printed.output) != first
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S4", "Laid", "Step")
 def test_steps_after_a_lay_come_without_lanes_sentences(b: w.Bench) -> None:
     """Given: the walkthrough's Proposal laid.
@@ -86,6 +87,7 @@ def test_steps_after_a_lay_come_without_lanes_sentences(b: w.Bench) -> None:
     assert given["notes"] == []
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S4", "Laid", "user")
 def test_a_sentence_the_user_changed_stays_as_theirs(b: w.Bench) -> None:
     """Given: the walkthrough's Proposal laid, then the user changed the sentence that Lane laid on
@@ -114,6 +116,7 @@ def test_a_sentence_the_user_changed_stays_as_theirs(b: w.Bench) -> None:
     ]
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S4", "lay.py", "Laid")
 def test_a_lay_after_lane_updates_lays_with_the_newest_code(b: w.Bench) -> None:
     """Given: the walkthrough's Proposal laid, then Lane updated, its result.py changed.
@@ -131,6 +134,7 @@ def test_a_lay_after_lane_updates_lays_with_the_newest_code(b: w.Bench) -> None:
     assert lanes["laid"]["version"] == plugin["version"]
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S4", "lay.py", "Laid", "Step")
 def test_a_plugin_laid_by_an_earlier_lane_is_read_by_its_own_copy(b: w.Bench) -> None:
     """Given: the walkthrough's Proposal laid, then changelog's hooks/lane/ and lanes.json put in

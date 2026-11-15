@@ -11,8 +11,6 @@ import pytest
 import walkthrough as w
 from claude_code import Conversation
 
-pytestmark = pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
-
 
 def propose_part(b: w.Bench, c: Conversation) -> dict:
     """The person types /lane:up changelog, and up reads the types; gives what lay.py types gave."""
@@ -73,6 +71,7 @@ def test_steps_give_each_step_of_each_role(b: w.Bench) -> None:
     assert given["notes"] == []
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S1", "lay.py")
 def test_a_proposal_that_cant_stand_goes_back_to_up(b: w.Bench) -> None:
     """Given: the walkthrough's Proposal with a Lane of a type that no lane type has.
@@ -102,6 +101,7 @@ def test_a_lane_on_a_step_that_isnt_there_goes_back_to_up(b: w.Bench) -> None:
     assert "agents/writer.md" in printed.output and "9" in printed.output
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S1", "lay.py", "Lane")
 def test_a_role_with_no_end_on_its_last_step_goes_back_to_up(b: w.Bench) -> None:
     """Given: the walkthrough's Proposal without reviewer's Lane of ends_by_result on its step 2,
@@ -117,6 +117,7 @@ def test_a_role_with_no_end_on_its_last_step_goes_back_to_up(b: w.Bench) -> None
     assert "ID:" not in printed.output
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S1", "lay.py", "Lane")
 def test_a_skill_with_no_end_on_its_last_step_goes_back_to_up(b: w.Bench) -> None:
     """Given: the walkthrough's Proposal without write's Lane of ends_by_result on its step 1.
@@ -132,6 +133,7 @@ def test_a_skill_with_no_end_on_its_last_step_goes_back_to_up(b: w.Bench) -> Non
     assert "write" in printed.output and "ends_by_result" in printed.output
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S1", "lay.py", "user")
 def test_a_file_that_cant_carry_the_proposal_goes_to_the_user(tmp_path: object) -> None:
     """Given: changelog whose agents/reviewer.md doesn't set `background: true`.
@@ -145,6 +147,7 @@ def test_a_file_that_cant_carry_the_proposal_goes_to_the_user(tmp_path: object) 
     assert "agents/reviewer.md" in printed.output and "background: true" in printed.output
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S1", "lay.py")
 def test_a_route_command_the_model_may_call_goes_to_the_user(tmp_path: object) -> None:
     """Given: changelog with a command skill approve, which a Route waits for, whose SKILL.md
@@ -162,6 +165,7 @@ def test_a_route_command_the_model_may_call_goes_to_the_user(tmp_path: object) -
     assert "skills/approve/SKILL.md" in printed.output
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S1", "lay.py")
 def test_an_adapter_the_proposal_doesnt_name_goes_to_the_user(tmp_path: object) -> None:
     """Given: changelog whose hooks/adapters/ holds text.py.
@@ -175,6 +179,7 @@ def test_an_adapter_the_proposal_doesnt_name_goes_to_the_user(tmp_path: object) 
     assert "hooks/adapters/text.py" in printed.output
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S1", "lay.py")
 def test_a_steps_file_two_roles_share_goes_to_the_user(tmp_path: object) -> None:
     """Given: changelog whose writer and reviewer both name steps.md by `${CLAUDE_PLUGIN_ROOT}/` as

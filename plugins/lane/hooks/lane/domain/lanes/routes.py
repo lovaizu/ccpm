@@ -7,10 +7,11 @@ from __future__ import annotations
 from collections.abc import Sequence
 
 from form import Lane, Route
+from manifest import plugin_name
 from place import Call, EndAsked, StartCall
 from runs import Due
 
-from lanes.kind import Held, TypeInfo, Verdict
+from lanes.kind import Broken, Held, Kept, TypeInfo, Verdict
 
 # Each value that a Lane of this type takes, by the name it lies under in the Lane's `args`, with
 # what it is, as lay.py types shows it. A Lane of Routes takes none, as the Proposal's Routes hold
@@ -27,7 +28,15 @@ class Routes:
 
         Carries: S1 `L->>T: each type`.
         """
-        raise NotImplementedError("routes.Routes.info")
+        return TypeInfo(
+            name="routes",
+            sentence="Start each subagent you are told to start, until you are told to start no"
+            " more.",
+            suits="the skill's Step that starts its subagents",
+            allows="the main conversation's start of each subagent that a Route makes due, with"
+            " its text",
+            args=ARGS,
+        )
 
     def faults(self, lane: Lane, last_step: int, routes: Sequence[Route]) -> tuple[str, ...]:
         """Each fault of a Lane of this type, such as a Step of a subagent, as the Lane holds only a
@@ -35,7 +44,7 @@ class Routes:
 
         Carries: S1 `L->>T: checks each Lane, and makes its sentence`.
         """
-        raise NotImplementedError("routes.Routes.faults")
+        return ()
 
     def sentence(self, lane: Lane, routes: Sequence[Route]) -> str:
         """The sentence that the Lane lays on the skill's Step: `Start each subagent you are told to
@@ -44,7 +53,7 @@ class Routes:
         Carries: S1 `L->>T: checks each Lane, and makes its sentence`, and the sentence of each
         Broken.
         """
-        raise NotImplementedError("routes.Routes.sentence")
+        return "Start each subagent you are told to start, until you are told to start no more."
 
     def allows(self, lane: Lane, call: Call, held: Held) -> bool | None:
         """None: the Lane judges no Call, as the skill's result script is the Lane on its last
@@ -52,7 +61,7 @@ class Routes:
 
         Carries: the Call checks of S2, S5, and S6.
         """
-        raise NotImplementedError("routes.Routes.allows")
+        return None
 
     def check_start(self, lane: Lane, asked: StartCall, held: Held, due: Sequence[Due]) -> Verdict:
         """The check of the main conversation's start or resume against the moves due.
@@ -67,14 +76,21 @@ class Routes:
         Carries: S5 `G->>T: checks the start by the Lane of the skill's Routes, with the moves due`,
         and its `alt a start due`, `else a resume`, and `else any other start`.
         """
-        raise NotImplementedError("routes.Routes.check_start")
+        starts = [d for d in due if d.move.kind == "start"]
+        if held.start is not None or asked.resume:
+            return Kept()
+        if any(d.move.role == asked.role and d.text == asked.text for d in starts):
+            return Kept()
+        plugin = plugin_name(held.root)
+        named = ", ".join(f"`{plugin}:{d.move.role}` with `{d.text}`" for d in starts) or "none"
+        return Broken(lane, self.sentence(lane, held.routes), f"The starts due: {named}.")
 
     def check_end(self, lane: Lane, end: EndAsked, held: Held) -> Verdict:
         """Kept: the main conversation's end is held by the moves due, which the guard checks.
 
         Carries: S5 `G->>T: checks the end by each Lane of each Run's skill`.
         """
-        raise NotImplementedError("routes.Routes.check_end")
+        return Kept()
 
 
 TYPE = Routes()

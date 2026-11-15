@@ -9,7 +9,7 @@ from form import Lane, Route
 from place import Call, EndAsked, StartCall
 from runs import Due
 
-from lanes.kind import Held, TypeInfo, Verdict
+from lanes.kind import Held, Kept, TypeInfo, Verdict
 
 # Each value that a Lane of this type takes, by the name it lies under in the Lane's `args`, with
 # what it is, as lay.py types shows it.
@@ -30,14 +30,22 @@ class EndsChecked:
 
         Carries: S1 `L->>T: each type`.
         """
-        raise NotImplementedError("ends_checked.EndsChecked.info")
+        return TypeInfo(
+            name="ends_checked",
+            sentence="End once `<command>` gives 0.",
+            suits="a Step whose end a command of the plugin's checks",
+            allows="nothing: it holds the end, as Lane runs `command` with the Result filled in",
+            args=ARGS,
+        )
 
     def faults(self, lane: Lane, last_step: int, routes: Sequence[Route]) -> tuple[str, ...]:
         """Each fault of a Lane of this type, such as `command` missing or not a string.
 
         Carries: S1 `L->>T: checks each Lane, and makes its sentence`.
         """
-        raise NotImplementedError("ends_checked.EndsChecked.faults")
+        if not isinstance(lane.args.get("command"), str):
+            return ("ends_checked takes `command`, the command as one string",)
+        return ()
 
     def sentence(self, lane: Lane, routes: Sequence[Route]) -> str:
         """The sentence that the Lane lays on its Step, with `command` in it.
@@ -59,7 +67,7 @@ class EndsChecked:
 
         Carries: S5 `G->>T: checks the start by the Lane of the skill's Routes, with the moves due`.
         """
-        raise NotImplementedError("ends_checked.EndsChecked.check_start")
+        return Kept()
 
     def check_end(self, lane: Lane, end: EndAsked, held: Held) -> Verdict:
         """Kept where `command`, its values filled in, gives 0; Broken, with the Lane's sentence,

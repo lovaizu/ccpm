@@ -4,9 +4,17 @@ them."""
 
 from __future__ import annotations
 
+import dataclasses
+import datetime
+import glob
+import json
+import os
+import tempfile
+import uuid
 from dataclasses import dataclass
 
-from form import Proposal
+from form import Proposal, proposal_text, read_proposal
+from manifest import plugin_name
 
 from lay.steps import Step
 
@@ -30,7 +38,18 @@ def keep(plugin: str, proposal: Proposal, steps: tuple[Step, ...]) -> str:
     Refuses: OSError, where it can't be written.
     Carries: S1 `L->>P: keeps the Proposal by its ID`.
     """
-    raise NotImplementedError("proposals.keep")
+    proposal_id = uuid.uuid4().hex[:8]
+    day = datetime.date.today().strftime("%Y%m%d")
+    folder = os.path.join(tempfile.gettempdir(), "lane", f"{day}-{plugin_name(plugin)}")
+    os.makedirs(folder, exist_ok=True)
+    held = {
+        "plugin": os.path.abspath(plugin),
+        "proposal": json.loads(proposal_text(proposal)),
+        "steps": [dataclasses.asdict(step) for step in steps],
+    }
+    with open(os.path.join(folder, f"{proposal_id}.json"), "w", encoding="utf-8") as f:
+        json.dump(held, f)
+    return proposal_id
 
 
 def find(plugin: str, proposal_id: str) -> KeptProposal | None:
@@ -42,4 +61,14 @@ def find(plugin: str, proposal_id: str) -> KeptProposal | None:
     Refuses: form.OutOfForm, where the kept file isn't in its form.
     Carries: S2 `L->>P: reads the Proposal by its ID`.
     """
-    raise NotImplementedError("proposals.find")
+    pattern = os.path.join(
+        tempfile.gettempdir(), "lane", f"*-{plugin_name(plugin)}", f"{proposal_id}.json"
+    )
+    found = sorted(glob.glob(pattern))
+    if not found:
+        return None
+    with open(found[-1], encoding="utf-8") as f:
+        held = json.load(f)
+    steps = tuple(Step(**step) for step in held["steps"])
+    proposal = read_proposal(json.dumps(held["proposal"]))
+    return KeptProposal(proposal_id, held["plugin"], proposal, steps)

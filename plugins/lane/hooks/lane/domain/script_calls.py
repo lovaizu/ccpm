@@ -5,7 +5,19 @@ reads them hold one form."""
 
 from __future__ import annotations
 
+import os
+import re
+import shlex
 from collections.abc import Sequence
+
+# What the role types for the plugin's folder in a command, as Claude Code fills it in a hook's
+# command but not in a Bash command.
+ROOT = "${CLAUDE_PLUGIN_ROOT}"
+# The line of print's output that names the Proposal's ID.
+ID_LINE = re.compile(r"^ID: (\S+)$", re.MULTILINE)
+# What in a command makes the shell run more than one program, or read another file than the words
+# name, so that the command is no single run of a script.
+MORE = re.compile(r"[|&;<>()$`\\\n]")
 
 
 def id_line(proposal_id: str) -> str:
@@ -17,7 +29,7 @@ def id_line(proposal_id: str) -> str:
     Refuses: nothing.
     Carries: S1 `L-->>UP: the Routes, each Step as it'll read, and the ID`.
     """
-    raise NotImplementedError("script_calls.id_line")
+    return f"ID: {proposal_id}"
 
 
 def printed(command: str, output: str) -> tuple[str, str] | None:
@@ -30,7 +42,16 @@ def printed(command: str, output: str) -> tuple[str, str] | None:
     Refuses: nothing.
     Carries: S1 `CC->>G: the PostToolUse of lay.py print`.
     """
-    raise NotImplementedError("script_calls.printed")
+    try:
+        words = shlex.split(command)
+    except ValueError:
+        return None
+    ran = any(
+        os.path.basename(word) == "lay.py" and words[i + 1 : i + 2] == ["print"]
+        for i, word in enumerate(words)
+    )
+    found = ID_LINE.search(output)
+    return (found[1], output) if ran and found else None
 
 
 def write_args(words: Sequence[str]) -> tuple[str, str] | None:
@@ -43,7 +64,9 @@ def write_args(words: Sequence[str]) -> tuple[str, str] | None:
     Refuses: nothing.
     Carries: S2 `CC->>G: the call` of lay.py write, and lay.py's own reading of its write command.
     """
-    raise NotImplementedError("script_calls.write_args")
+    if len(words) == 4 and os.path.basename(words[0]) == "lay.py" and words[1] == "write":
+        return words[2], words[3]
+    return None
 
 
 def result_command(role: str, result: str) -> str:
@@ -56,7 +79,7 @@ def result_command(role: str, result: str) -> str:
     Carries: S1 `L->>T: checks each Lane, and makes its sentence`, for the Lane on a role's last
     Step.
     """
-    raise NotImplementedError("script_calls.result_command")
+    return f"python3 {ROOT}/hooks/lane/result.py {role} {result}"
 
 
 def result_args(command: str, root: str) -> tuple[str, str] | None:
@@ -70,4 +93,13 @@ def result_args(command: str, root: str) -> tuple[str, str] | None:
     Carries: S6 `SA->>R: result.py <role> <result>` as the guard lets it through, its `CC->>G: the
     PostToolUse, with its agent_id`, and S2 and S5's `CC->>G: the PostToolUse, with no agent_id`.
     """
-    raise NotImplementedError("script_calls.result_args")
+    if MORE.search(command.replace(ROOT, "")):
+        return None
+    try:
+        words = shlex.split(command.replace(ROOT, root))
+    except ValueError:
+        return None
+    script = os.path.join(root, "hooks", "lane", "result.py")
+    if len(words) == 4 and words[0] == "python3" and os.path.normpath(words[1]) == script:
+        return words[2], words[3]
+    return None

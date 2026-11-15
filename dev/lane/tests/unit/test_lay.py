@@ -31,8 +31,6 @@ from lay.show import render
 from lay.steps import Step, read_steps
 from lay.write import Refused, write
 
-pytestmark = pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
-
 STEP_2 = Step(
     "writer", "agents/writer.md", 2, "Read the commits since then with `git log --oneline`."
 )
@@ -90,6 +88,7 @@ def test_each_roles_steps_are_read_from_its_file(plugin: str) -> None:
     assert steps[("skills/write/SKILL.md", 1)].role == "write"
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_a_steps_file_two_roles_share_goes_to_the_user")
 def test_steps_in_the_file_a_body_names_are_the_roles(plugin: str) -> None:
     """Given: writer's body naming `${CLAUDE_PLUGIN_ROOT}/writer-steps.md`, which holds its Steps.
@@ -147,6 +146,7 @@ def test_a_plugin_lane_never_laid_in_has_an_empty_laid(plugin: str) -> None:
     assert read_laid(plugin).sentences == ()
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_steps_after_a_lay_come_without_lanes_sentences")
 def test_the_laid_is_read_through_the_plugins_copy(plugin: str) -> None:
     """Given: changelog with a copy of this Lane's code in hooks/lane/, and the walkthrough's
@@ -158,6 +158,7 @@ def test_the_laid_is_read_through_the_plugins_copy(plugin: str) -> None:
     assert read_laid(plugin) == d.LAID
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_a_plugin_laid_by_an_earlier_lane_is_read_by_its_own_copy")
 def test_a_laid_of_an_earlier_lane_is_read_by_its_own_form(plugin: str) -> None:
     """Given: changelog whose hooks/lane/domain/form.py is an earlier Lane's, which keeps the Laid
@@ -177,6 +178,7 @@ def test_a_laid_of_an_earlier_lane_is_read_by_its_own_form(plugin: str) -> None:
     assert read_laid(plugin) == Laid("0.0.1", d.LAID.sentences)
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_a_call_the_guard_cant_check_is_stopped_with_who_must_fix_it")
 @pytest.mark.parametrize(
     "code, lanes",
@@ -197,6 +199,7 @@ def test_a_laid_that_no_copy_reads_is_refused(plugin: str, code: bool, lanes: st
         read_laid(plugin)
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_steps_after_a_lay_come_without_lanes_sentences")
 def test_a_sentence_still_word_for_word_is_taken_out() -> None:
     """Given: writer's steps 2 and 3, each holding the sentence Lane laid.
@@ -205,6 +208,7 @@ def test_a_sentence_still_word_for_word_is_taken_out() -> None:
     assert strip((LAID_2, LAID_3), d.LAID) == ((STEP_2, STEP_3), ())
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_steps_after_a_lay_come_without_lanes_sentences")
 def test_the_end_laid_on_the_last_step_is_taken_out() -> None:
     """Given: writer's step 4, holding the sentence of the Lane on its last Step.
@@ -215,6 +219,7 @@ def test_the_end_laid_on_the_last_step_is_taken_out() -> None:
     assert strip((laid,), d.LAID) == ((step,), ())
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_a_sentence_the_user_changed_stays_as_theirs")
 def test_a_sentence_the_user_changed_is_kept_with_a_note() -> None:
     """Given: writer's step 3, whose laid sentence the user changed to name NEWS.md too.
@@ -309,6 +314,7 @@ def test_a_lane_that_cant_stand_is_ups_to_mend(plugin: str, lane: Any) -> None:
     assert isinstance(faults, Faults) and faults.proposal and not faults.plugin
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_a_role_with_no_end_on_its_last_step_goes_back_to_up")
 @pytest.mark.parametrize(
     "left_out, named",
@@ -355,6 +361,7 @@ def test_an_end_on_a_step_other_than_the_roles_last_is_ups_to_mend(
     assert isinstance(given, Checked if stands else Faults)
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_a_file_that_cant_carry_the_proposal_goes_to_the_user")
 @pytest.mark.parametrize(
     "files, named",
@@ -385,7 +392,7 @@ def test_print_shows_the_walkthroughs_proposal_as_the_readme_does() -> None:
     When: render gives what lay.py print shows.
     Then: it reads word for word as the README's walkthrough shows."""
     steps = shown_steps()
-    assert render(d.proposal(), steps, w.README_ID).rstrip("\n") == w.SHOWN
+    assert render(d.proposal(), steps, w.README_ID, "changelog").rstrip("\n") == w.SHOWN
 
 
 @pytest.mark.supports("test_what_print_showed_is_kept_in_ups_run")

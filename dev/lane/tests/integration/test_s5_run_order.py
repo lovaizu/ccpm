@@ -11,8 +11,6 @@ import pytest
 import walkthrough as w
 from claude_code import POSTED_FIRST
 
-pytestmark = pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
-
 COMMAND = "---\nname: {name}\ndescription: {what}\ndisable-model-invocation: true\n---\n\n"
 APPROVE = COMMAND.format(name="approve", what="Approves the entries.") + "## Steps\n\n1. Go on.\n"
 PAUSE = COMMAND.format(name="pause", what="Pauses the run.") + "## Steps\n\n1. Stop here.\n"
@@ -61,6 +59,7 @@ def adapter_bench(tmp: str, program: str) -> w.Bench:
     return b
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S5", "Route", "guard")
 def test_a_start_that_isnt_due_is_stopped_with_the_moves_due(b: w.Bench) -> None:
     """Given: the walkthrough's Proposal laid, and the person typed /changelog:write.
@@ -73,6 +72,7 @@ def test_a_start_that_isnt_due_is_stopped_with_the_moves_due(b: w.Bench) -> None
     assert w.due("writer") in stopped.said
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S5", "Start")
 def test_a_resume_where_the_routes_open_none_moves_no_run(b: w.Bench) -> None:
     """Given: the walkthrough's Proposal laid; writer gave `written` and ended.
@@ -99,6 +99,7 @@ def test_a_start_whose_subagent_starts_after_its_post_tool_use_is_held(b: w.Benc
     assert stopped.blocked and "Run only `git log --oneline`." in stopped.said
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S5", "adapter", "Start")
 def test_an_adapter_gives_each_start_its_text_and_values(tmp_path: Any) -> None:
     """Given: the Proposal laid with an adapter of a start's text that gives writer `Write the
@@ -114,6 +115,7 @@ def test_an_adapter_gives_each_start_its_text_and_values(tmp_path: Any) -> None:
     assert not started.blocked and writer
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S5", "adapter")
 def test_an_adapter_that_fails_at_the_skills_call_lets_the_call_run(tmp_path: Any) -> None:
     """Given: the Proposal laid with an adapter of a start's text that exits 1 with `no version to
@@ -127,6 +129,7 @@ def test_an_adapter_that_fails_at_the_skills_call_lets_the_call_run(tmp_path: An
     assert "changelog:writer" in called.said and "no version to write yet" in called.said
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S5", "adapter")
 def test_an_adapter_that_fails_at_a_later_move_gives_why_and_who(tmp_path: Any) -> None:
     """Given: the Proposal laid with an adapter of a start's text, which gives writer's text, then
@@ -146,6 +149,7 @@ def test_an_adapter_that_fails_at_a_later_move_gives_why_and_who(tmp_path: Any) 
     assert "Start `changelog:reviewer`" not in reached.said
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S5", "guard", "Run")
 def test_the_run_stands_aside_while_another_plugins_skill_runs(tmp_path: Any) -> None:
     """Given: the Proposal laid with reviewer's `good` calling the skill check of another plugin,
@@ -210,6 +214,7 @@ def test_the_skills_result_script_goes_beside_a_lane_that_allows_other_calls(tmp
     assert all(r.ended for r in w.where(b.changelog, b, c.session_id).runs)
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S5", "Route", "Run", "user")
 def test_a_move_that_waits_for_the_person_lets_the_turn_end(tmp_path: Any) -> None:
     """Given: the Proposal laid with reviewer's `good` waiting for /changelog:approve, and a Route
@@ -233,6 +238,7 @@ def test_a_move_that_waits_for_the_person_lets_the_turn_end(tmp_path: Any) -> No
     assert "Start no more subagents." in c.type("/changelog:approve").said
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S5", "Route", "Run")
 def test_a_command_a_route_goes_after_takes_the_place_of_the_moves_due(tmp_path: Any) -> None:
     """Given: the Proposal laid with a Route after /changelog:pause that starts no more, and
@@ -250,6 +256,7 @@ def test_a_command_a_route_goes_after_takes_the_place_of_the_moves_due(tmp_path:
     assert stopped.blocked
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S5", "Start", "Result")
 def test_a_subagent_stopped_by_task_stop_is_due_again(b: w.Bench) -> None:
     """Given: the walkthrough's Proposal laid, and writer started by /changelog:write.
@@ -260,6 +267,7 @@ def test_a_subagent_stopped_by_task_stop_is_due_again(b: w.Bench) -> None:
     assert "writer" in told.said and w.due("writer") in told.said
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S5", "guard")
 def test_the_turns_end_while_a_start_is_due_is_stopped(b: w.Bench) -> None:
     """Given: the walkthrough's Proposal laid; reviewer gave `more`, and writer gave `written`
@@ -286,6 +294,7 @@ def test_the_turns_end_while_the_runs_subagent_runs_goes(b: w.Bench) -> None:
     assert not c.stop("writer is working.").blocked
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S5", "lane types", "Result")
 def test_the_skills_end_held_to_its_command_goes_once_it_gives_0(tmp_path: Any) -> None:
     """Given: the Proposal laid with an ends_checked Lane on write's step 1 whose command passes
@@ -304,6 +313,7 @@ def test_the_skills_end_held_to_its_command_goes_once_it_gives_0(tmp_path: Any) 
     assert not c.stop("Done.").blocked
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S5", "Run", "Route")
 def test_a_second_skills_run_beside_the_first_keeps_its_own_routes(tmp_path: Any) -> None:
     """Given: the Proposal laid with a second skill, check, whose Route starts reviewer first, and

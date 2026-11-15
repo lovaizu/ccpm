@@ -3,6 +3,7 @@ passed."""
 
 from __future__ import annotations
 
+import subprocess
 from dataclasses import dataclass
 
 
@@ -25,4 +26,13 @@ def validate(plugin: str) -> Validation:
     Carries: S2 `L->>CC: claude plugin validate <plugin>`, and its `alt it fails` and `else it
     passes`.
     """
-    raise NotImplementedError("claude.validate")
+    try:
+        done = subprocess.run(
+            ["claude", "plugin", "validate", plugin], capture_output=True, text=True, check=False
+        )
+    except FileNotFoundError:
+        return Validation(
+            False, "claude isn't on the PATH, so lay.py can't run claude plugin validate"
+        )
+    said = (done.stdout + done.stderr).strip()
+    return Validation(done.returncode == 0 and "Validation passed" in said, said)

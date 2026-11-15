@@ -29,6 +29,7 @@ LANE_MODULES = (
     "script_calls",
     "lanes",
     "lay",
+    "manifest",
 )
 
 

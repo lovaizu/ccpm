@@ -56,12 +56,15 @@ Verdict = Union[Kept, Broken, CantCheck]
 @dataclass(frozen=True)
 class Held:
     """What a Lane holds a Call or an end to: the Run, the Start whose role makes it, None for the
-    main conversation, whose run values are then none, and the plugin's folder, which
-    `${CLAUDE_PLUGIN_ROOT}` names in a sentence and in a run of its result script."""
+    main conversation, whose run values are then none, the plugin's folder, which
+    `${CLAUDE_PLUGIN_ROOT}` names in a sentence and in a run of its result script, and the
+    plugin's Routes, which name each Result that the sentence of the Lane on a role's last Step
+    gives."""
 
     run: Run
     start: Start | None
     root: str
+    routes: Sequence[Route]
 
 
 class LaneType(Protocol):

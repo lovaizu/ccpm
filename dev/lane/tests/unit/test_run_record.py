@@ -25,8 +25,6 @@ from run_record import (
     record_path,
 )
 
-pytestmark = pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
-
 EACH_LINE = [
     Called("r1", "write", "person", "0.2.0"),
     Prompted("r1", "/changelog:pause"),

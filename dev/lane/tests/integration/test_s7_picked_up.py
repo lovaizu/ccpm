@@ -12,9 +12,6 @@ from typing import Any
 import pytest
 import walkthrough as w
 
-pytestmark = pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
-
-
 # An adapter of changelog's records that picks up only where the words typed after the command,
 # which it reads on standard input, begin with `--continue`, and else gives no results.
 BY_WORDS = """#!/usr/bin/env python3
@@ -46,6 +43,7 @@ def with_records() -> dict[str, Any]:
     return proposal
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S7", "The run kept in a file", "Run")
 def test_a_run_goes_on_after_compact(b: w.Bench, broken: None) -> None:
     """Given: the walkthrough's Proposal laid, and writer gave `written` in a run of
@@ -69,6 +67,7 @@ def test_a_new_conversation_without_an_adapter_starts_over(b: w.Bench) -> None:
     assert w.due("writer") in w.converse(b).type("/changelog:write").said
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S7", "adapter", "Kept results")
 def test_a_new_conversation_picks_up_from_the_kept_results(tmp_path: Any) -> None:
     """Given: the Proposal laid with an adapter of changelog's records that gives writer's
@@ -82,6 +81,7 @@ def test_a_new_conversation_picks_up_from_the_kept_results(tmp_path: Any) -> Non
     assert "written" in called.said and w.due("reviewer") in called.said
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S7", "adapter", "Kept results")
 def test_the_words_typed_tell_a_new_request_from_a_pick_up(tmp_path: Any) -> None:
     """Given: the Proposal laid with an adapter of changelog's records that gives writer's
@@ -116,6 +116,7 @@ def test_no_kept_results_start_a_new_run(tmp_path: Any) -> None:
     assert w.due("writer") in c.type("/changelog:write").said
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S7", "adapter", "Kept results")
 def test_kept_results_off_the_routes_stop_the_command(tmp_path: Any) -> None:
     """Given: the Proposal laid with an adapter of changelog's records that gives reviewer's
@@ -128,6 +129,7 @@ def test_kept_results_off_the_routes_stop_the_command(tmp_path: Any) -> None:
     assert stopped.blocked and "reviewer" in stopped.said
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S7", "adapter")
 def test_an_adapter_of_records_that_fails_stops_the_command(tmp_path: Any) -> None:
     """Given: the Proposal laid with an adapter of changelog's records that exits 1 with

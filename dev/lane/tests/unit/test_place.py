@@ -23,8 +23,6 @@ from place import (
 from run_record import Shown
 from runs import Approval
 
-pytestmark = pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
-
 WRITER = d.start("writer", agent_id="a01")
 RUN = d.run(starts=(WRITER,), due=())
 NOTIFICATION = (
@@ -47,6 +45,7 @@ def test_a_typed_command_is_a_persons_skill_call() -> None:
     assert got.what == SkillCall("changelog", "write", "person", "0.2.0")
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_an_ai_lays_by_its_own_run_of_lay")
 def test_a_skill_tool_call_is_an_ais_skill_call() -> None:
     """Given: the main conversation's PreToolUse of the Skill tool on lane:up with changelog.
@@ -127,6 +126,7 @@ def test_an_agent_call_of_no_role_of_the_plugin_is_a_start_not_ours() -> None:
     assert got.start == WRITER
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_a_resume_where_the_routes_open_none_moves_no_run")
 def test_a_send_message_to_a_roles_subagent_is_a_resume() -> None:
     """Given: write's Run with writer's Start tied to a01, and SendMessage to a01.
@@ -217,6 +217,7 @@ def test_an_untied_subagents_event_lies_outside() -> None:
     assert got.runs == () and got.start is None
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_the_run_stands_aside_while_another_plugins_skill_runs")
 def test_the_main_conversations_event_while_every_run_stands_aside_lies_outside() -> None:
     """Given: write's Run, standing aside, and the main conversation's Bash call.
@@ -226,6 +227,7 @@ def test_the_main_conversations_event_while_every_run_stands_aside_lies_outside(
     assert placed("PreToolUse", aside, tool_name="Bash", tool_input={"command": "ls"}).runs == ()
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_an_ais_run_keeps_a_persons_waiting_proposal")
 def test_a_call_of_write_lies_on_the_run_of_up_that_showed_its_id() -> None:
     """Given: two Runs of up, the first a person's that showed b9fd8fd8, the second an AI's that

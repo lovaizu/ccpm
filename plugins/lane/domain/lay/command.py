@@ -3,8 +3,24 @@ modules it joins, and what it prints with its exit code."""
 
 from __future__ import annotations
 
+import dataclasses
+import json
+import os
 from collections.abc import Mapping, Sequence
 from typing import TextIO
+
+from form import OutOfForm, proposal_form, read_proposal
+from lanes import types
+from manifest import plugin_name
+
+from lay import laid, laid_copy, proposals, show, steps, write
+from lay.check import Faults, check
+
+# How to call lay.py, as it says where a command line isn't one of its commands.
+USAGE = (
+    "lay.py: give one of `types`, `steps <plugin>`, `print <plugin>` with the Proposal on standard"
+    " input, or `write <plugin> <ID>`\n"
+)
 
 
 def main(
@@ -31,4 +47,65 @@ def main(
     Carries: S1 `UP->>L: types`, `UP->>L: steps <plugin>`, `UP->>L: print (Proposal)`; S2
     `UP->>L: write <plugin> <ID>`; S4 `UP->>L: steps <plugin>`; and each `L-->>UP` answer.
     """
-    raise NotImplementedError("command.main")
+    command, args = (argv[0], list(argv[1:])) if argv else ("", [])
+    if command == "types" and not args:
+        listed = [dataclasses.asdict(each) for each in types()]
+        return 0, json.dumps({"types": listed, "proposal": proposal_form()}) + "\n", ""
+    if command == "steps" and len(args) == 1:
+        read, notes = laid.strip(steps.read_steps(args[0]), laid_copy.read_laid(args[0]))
+        held = {
+            "steps": [dataclasses.asdict(s) for s in read],
+            "notes": [dataclasses.asdict(n) for n in notes],
+        }
+        return 0, json.dumps(held) + "\n", ""
+    if command == "print" and len(args) == 1:
+        return _print(os.path.abspath(args[0]), stdin.read())
+    if command == "write" and len(args) == 2:
+        return _write(os.path.abspath(args[0]), args[1], env, root)
+    return 2, "", USAGE
+
+
+def _print(plugin: str, text: str) -> tuple[int, str, str]:
+    """lay.py print: the Proposal checked, kept, and shown."""
+    try:
+        proposal = read_proposal(text)
+    except OutOfForm as e:
+        return 1, "", "lay.py print: the Proposal is out of form:\n" + "\n".join(e.problems) + "\n"
+    read, _ = laid.strip(steps.read_steps(plugin), laid_copy.read_laid(plugin))
+    checked = check(plugin, proposal, read)
+    if isinstance(checked, Faults):
+        code = 1 if checked.proposal else 3
+        return code, "", "\n".join(checked.proposal or checked.plugin) + "\n"
+    proposal_id = proposals.keep(plugin, proposal, read)
+    shown = laid.as_laid(read, checked.sentences)
+    return 0, show.render(proposal, shown, proposal_id, plugin_name(plugin)), ""
+
+
+def _write(
+    plugin: str, proposal_id: str, env: Mapping[str, str], root: str
+) -> tuple[int, str, str]:
+    """lay.py write: the Proposal laid, and each file written."""
+    try:
+        written = write.write(plugin, proposal_id, env.get("CLAUDE_CODE_SESSION_ID", ""), root)
+    except write.Refused as e:
+        return 1, "", f"lay.py write: laid nothing: {e}\n"
+    lines = []
+    for file in dict.fromkeys(s.file for s in written.steps):
+        at = [s for s in written.steps if s.file == file]
+        noun = "step" if len(at) == 1 else "steps"
+        lines.append(
+            f"Wrote {noun} {_joined([str(s.number) for s in at])} of {at[0].role} into {file}."
+        )
+    lines += [
+        f"Wrote the checks of {_joined(list(written.roles))} into hooks/hooks.json.",
+        "Wrote the lanes laid and the routes into hooks/lanes.json.",
+        f"Put {written.lane}'s code in hooks/lane/.",
+        "claude plugin validate passed.",
+        "Type /reload-plugins, and the checks hold from your next prompt.",
+    ]
+    return 0, "\n".join(lines) + "\n", ""
+
+
+def _joined(words: list[str]) -> str:
+    """The words joined as a list in a sentence: `a, b and c`."""
+    return words[0] if len(words) == 1 else f"{', '.join(words[:-1])} and {words[-1]}"

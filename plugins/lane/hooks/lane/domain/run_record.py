@@ -4,6 +4,12 @@ payload gives again."""
 
 from __future__ import annotations
 
+import dataclasses
+import datetime
+import glob
+import json
+import os
+import tempfile
 from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Literal, Union
@@ -96,6 +102,13 @@ class SteppedAside:
 
 
 Line = Union[Called, Prompted, Shown, Started, Tied, Gave, Ended, SteppedAside]
+# Each kind of line, by the name that a line of the record gives as its `kind`.
+_KINDS = {
+    kind.__name__: kind
+    for kind in (Called, Prompted, Shown, Started, Tied, Gave, Ended, SteppedAside)
+}
+# The file of the record in its conversation's folder.
+RECORD = "record.jsonl"
 
 
 def record_path(plugin: str, session_id: str) -> str:
@@ -108,7 +121,13 @@ def record_path(plugin: str, session_id: str) -> str:
     Refuses: nothing.
     Carries: where each `G->>RS` arrow of S1 to S7 reaches, and S2 `G->>RS: reads the lines`.
     """
-    raise NotImplementedError("run_record.record_path")
+    plugin_folder = os.path.join(tempfile.gettempdir(), plugin)
+    begun = sorted(
+        glob.glob(os.path.join(glob.escape(plugin_folder), f"*-{glob.escape(session_id)}"))
+    )
+    day = datetime.date.today().strftime("%Y%m%d")
+    folder = begun[0] if begun else os.path.join(plugin_folder, f"{day}-{session_id}")
+    return os.path.join(folder, RECORD)
 
 
 def add(path: str, line: Line) -> None:
@@ -121,7 +140,10 @@ def add(path: str, line: Line) -> None:
     with why.
     Carries: each `G->>RS: adds ...` arrow of S1 to S7.
     """
-    raise NotImplementedError("run_record.add")
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    held = {"kind": type(line).__name__, **dataclasses.asdict(line)}
+    with open(path, "a", encoding="utf-8") as f:
+        f.write(json.dumps(held) + "\n")
 
 
 def lines(path: str) -> tuple[Line, ...]:
@@ -133,4 +155,20 @@ def lines(path: str) -> tuple[Line, ...]:
     Refuses: Unreadable.
     Carries: S2 `G->>RS: reads the lines`, S6 `G->>RS: reads the lines, for its Start and Run`.
     """
-    raise NotImplementedError("run_record.lines")
+    if not os.path.exists(path):
+        return ()
+    with open(path, encoding="utf-8") as f:
+        return tuple(_line(path, number, text) for number, text in enumerate(f, 1))
+
+
+def _line(path: str, number: int, text: str) -> Line:
+    """One line of the record, read into its kind."""
+    try:
+        held = json.loads(text)
+        kind = _KINDS[held.pop("kind")]
+        names = {field.name for field in dataclasses.fields(kind)}
+        if set(held) != names:
+            raise ValueError(f"fields {sorted(held)}, not {sorted(names)}")
+        return kind(**held)
+    except (ValueError, KeyError, TypeError, AttributeError) as e:
+        raise Unreadable(f"{path}, line {number}: not a line of the run record: {e}") from e

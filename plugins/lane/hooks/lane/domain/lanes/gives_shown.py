@@ -9,7 +9,7 @@ from form import Lane, Route
 from place import Call, EndAsked, StartCall
 from runs import Due
 
-from lanes.kind import Held, TypeInfo, Verdict
+from lanes.kind import Held, Kept, TypeInfo, Verdict
 
 # Each value that a Lane of this type takes, by the name it lies under in the Lane's `args`, with
 # what it is, as lay.py types shows it. It takes none.
@@ -25,14 +25,22 @@ class GivesShown:
 
         Carries: S1 `L->>T: each type`.
         """
-        raise NotImplementedError("gives_shown.GivesShown.info")
+        return TypeInfo(
+            name="gives_shown",
+            sentence="Give the caller what lay.py print showed, word for word.",
+            suits="up's Step that shows the Proposal",
+            allows="nothing: it holds up's end to the words lay.py print showed",
+            args=ARGS,
+        )
 
     def faults(self, lane: Lane, last_step: int, routes: Sequence[Route]) -> tuple[str, ...]:
         """Each fault of a Lane of this type, such as a Step of a role other than up.
 
         Carries: S1 `L->>T: checks each Lane, and makes its sentence`.
         """
-        raise NotImplementedError("gives_shown.GivesShown.faults")
+        if lane.role != "up":
+            return (f"{lane.type} holds only up's Step, not {lane.role}'s",)
+        return ()
 
     def sentence(self, lane: Lane, routes: Sequence[Route]) -> str:
         """The sentence that the Lane lays on up's Step, which names no value.
@@ -54,7 +62,7 @@ class GivesShown:
 
         Carries: S5 `G->>T: checks the start by the Lane of the skill's Routes, with the moves due`.
         """
-        raise NotImplementedError("gives_shown.GivesShown.check_start")
+        return Kept()
 
     def check_end(self, lane: Lane, end: EndAsked, held: Held) -> Verdict:
         """Broken, with the words that lay.py print showed, where the last message doesn't hold them

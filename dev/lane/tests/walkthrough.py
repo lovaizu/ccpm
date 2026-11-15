@@ -110,7 +110,7 @@ def readme_block(after: str) -> str:
     """The first `text` block of the README's walkthrough after the line that ends with `after`."""
     with open(README, encoding="utf-8") as f:
         text = f.read()
-    start = text.index(after)
+    start = text.index(after) + len(after)
     found = re.search(r"```text\n(.*?)```", text[start:], re.DOTALL)
     assert found, f"the README holds no text block after {after!r}"
     return found[1].rstrip("\n")

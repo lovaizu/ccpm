@@ -11,8 +11,6 @@ import os
 import pytest
 import walkthrough as w
 
-pytestmark = pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
-
 
 @pytest.mark.supports("S1", "up", "user", "Proposal")
 def test_up_shows_the_walkthroughs_proposal(b: w.Bench) -> None:
@@ -74,7 +72,7 @@ def test_the_walkthroughs_run_moves_in_the_order_the_user_set(b: w.Bench) -> Non
         assert not started.blocked and agent
         reached = w.give(b, agent, result)
         assert f"changelog: {role} gave `{result}`." in reached.said
-        assert then.split(". ", 1)[-1] in reached.said
+        assert then.split(": ", 1)[-1] in reached.said
     assert c.bash(b.result("write", "good")).exit_code == 0
     assert all(r.ended for r in w.where(b.changelog, b, c.session_id).runs)
 

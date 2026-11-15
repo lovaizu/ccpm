@@ -11,6 +11,7 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 
 from form import Proposal
+from lanes import LaneRefused, sentence
 
 from lay.steps import Step
 
@@ -43,4 +44,22 @@ def check(plugin: str, proposal: Proposal, steps: Sequence[Step]) -> Checked | F
     against the plugin's files`, and its `alt the Proposal can't stand` and `else a file of the
     plugin can't carry it`.
     """
-    raise NotImplementedError("check.check")
+    last: dict[str, int] = {}
+    for step in steps:
+        last[step.role] = max(last.get(step.role, 0), step.number)
+    sentences: dict[tuple[str, int], list[str]] = {}
+    faults = []
+    there = {(step.file, step.number) for step in steps}
+    for lane in proposal.lanes:
+        if (lane.file, lane.step) not in there:
+            faults.append(f"{lane.role}'s Lane on step {lane.step}: {lane.file} holds no such Step")
+            continue
+        try:
+            said = sentence(lane, last.get(lane.role, 0), proposal.routes)
+        except LaneRefused as e:
+            faults += [f"{lane.role}'s Lane on step {lane.step}: {fault}" for fault in e.faults]
+            continue
+        sentences.setdefault((lane.file, lane.step), []).append(said)
+    if faults:
+        return Faults(tuple(faults), ())
+    return Checked({key: " ".join(said) for key, said in sentences.items()})

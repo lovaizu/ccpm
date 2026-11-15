@@ -10,8 +10,6 @@ from typing import Any
 import pytest
 import walkthrough as w
 
-pytestmark = pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
-
 
 @pytest.mark.supports("S6", "Lane", "Call")
 def test_calls_that_keep_every_lane_go_through(b: w.Bench) -> None:
@@ -56,6 +54,7 @@ def test_a_subagents_start_of_a_role_is_stopped(b: w.Bench, broken: None) -> Non
     assert stopped.said == f"changelog: End by running `{b.result('writer', 'written')}`."
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S6", "guard")
 def test_a_call_the_guard_cant_check_is_stopped_with_who_must_fix_it(b: w.Bench) -> None:
     """Given: the walkthrough's Proposal laid, writer started, then changelog's hooks/lanes.json
@@ -111,6 +110,7 @@ def test_an_end_with_no_result_is_stopped_with_its_last_steps_sentence(
     )
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S6", "lane types", "Result")
 def test_an_end_held_to_the_plugins_command_goes_once_it_gives_0(tmp_path: Any) -> None:
     """Given: the Proposal laid with an ends_checked Lane on reviewer's step 2 whose command passes
@@ -136,6 +136,7 @@ def test_an_end_held_to_the_plugins_command_goes_once_it_gives_0(tmp_path: Any) 
     assert not ended.blocked and reached is not None
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S6", "lane types", "Lane")
 def test_an_end_with_no_result_runs_no_command_of_the_plugins(tmp_path: Any) -> None:
     """Given: the Proposal laid with an ends_checked Lane on reviewer's step 2 whose command writes

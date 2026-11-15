@@ -5,7 +5,47 @@ checks only within a Run."""
 
 from __future__ import annotations
 
+import os
+import uuid
+from dataclasses import dataclass
+
+from adapters import Running, start_text
+from answers import due, gave, stopped
 from events import Answer, Event
+from form import Lane, LanesFile, read_lanes
+from lanes import check_call, check_end, check_start
+from lanes.kind import Broken, Held, Kept, Verdict
+from manifest import plugin_name
+from place import (
+    AgentPosted,
+    EndAsked,
+    Notification,
+    Placed,
+    PrintPosted,
+    Prompt,
+    ResultPosted,
+    SkillCall,
+    StartCall,
+    ToolCall,
+    place,
+)
+from run_record import (
+    Called,
+    Ended,
+    Gave,
+    Line,
+    Prompted,
+    Shown,
+    Started,
+    Tied,
+    add,
+    lines,
+    record_path,
+)
+from runs import Due, Run, stand
+
+# What lets an event through and says nothing.
+PASS = Answer(False, "")
 
 
 def handle(event: Event, root: str) -> Answer:
@@ -45,4 +85,146 @@ def handle(event: Event, root: str) -> Answer:
     skill's call, whose start it gives with why while it lets the call run.
     Carries: each `CC->>G` arrow of S1 to S7, and each `G-->>` answer.
     """
-    raise NotImplementedError("guard.handle")
+    lanes = read_lanes(os.path.join(root, "hooks", "lanes.json"))
+    name = plugin_name(root)
+    plugin = Plugin(name, root, lanes, event.session_id, record_path(name, event.session_id))
+    conversation = stand(event.session_id, lines(plugin.record), lanes.proposal.routes)
+    placed = place(event, conversation, lanes, root)
+    if isinstance(placed.what, SkillCall):
+        return _called(plugin, placed.what, event.cwd)
+    return _answered(plugin, placed, event.cwd) if placed.runs else PASS
+
+
+def _answered(plugin: Plugin, placed: Placed, cwd: str) -> Answer:
+    """The answer to an event within a Run, by what the event is."""
+    what = placed.what
+    if isinstance(what, Notification):
+        return _notified(plugin, placed, cwd)
+    if isinstance(what, StartCall):
+        return _started(plugin, placed, what, cwd)
+    if isinstance(what, (ToolCall, EndAsked)):
+        return _checked(plugin, placed)
+    _record(plugin, placed)
+    return PASS
+
+
+@dataclass(frozen=True)
+class Plugin:
+    """The plugin whose guard answers: its name, its folder, its lanes.json, the conversation's
+    session_id, and the conversation's run record."""
+
+    name: str
+    root: str
+    lanes: LanesFile
+    session_id: str
+    record: str
+
+
+def _called(plugin: Plugin, what: SkillCall, cwd: str) -> Answer:
+    """A skill's call: the call of a new Run, where the skill is the plugin's and a Route goes after
+    its start, with the first moves due."""
+    routes = plugin.lanes.proposal.routes
+    first = [r for r in routes if r.skill == what.skill and r.after.kind == "first"]
+    if what.plugin != plugin.name or not first:
+        return PASS
+    run_id = uuid.uuid4().hex[:8]
+    add(plugin.record, Called(run_id, what.skill, what.by, what.words))
+    conversation = stand(plugin.session_id, lines(plugin.record), routes)
+    (run,) = [r for r in conversation.runs if r.id == run_id]
+    return Answer(False, due(plugin.name, _dues(plugin, run, cwd)))
+
+
+def _record(plugin: Plugin, placed: Placed) -> None:
+    """Adds the line that a prompt, a start's tie, a Result, or a Proposal shown makes."""
+    what = placed.what
+    for run in placed.runs:
+        line: Line | None = None
+        if isinstance(what, Prompt):
+            line = Prompted(run.id, what.text)
+        elif isinstance(what, AgentPosted):
+            if any(s.tool_use_id == what.tool_use_id for s in run.starts):
+                line = Tied(run.id, what.tool_use_id, what.agent_id)
+        elif isinstance(what, ResultPosted):
+            if placed.start is not None or what.role == run.skill:
+                line = Gave(run.id, what.role, what.result, placed.agent_id)
+        elif isinstance(what, PrintPosted):
+            line = Shown(run.id, what.proposal_id, what.words)
+        if line is not None:
+            add(plugin.record, line)
+
+
+def _notified(plugin: Plugin, placed: Placed, cwd: str) -> Answer:
+    """A subagent's end as it reaches the main conversation: the end added, and the Result it gave
+    with the moves of its Route."""
+    what = placed.what
+    assert isinstance(what, Notification) and placed.start is not None
+    (run,) = placed.runs
+    add(plugin.record, Ended(run.id, what.agent_id, what.killed))
+    if not placed.start.results:
+        return PASS
+    result = placed.start.results[-1]
+    return Answer(False, gave(plugin.name, placed.start.role, result, _dues(plugin, run, cwd)))
+
+
+def _started(plugin: Plugin, placed: Placed, asked: StartCall, cwd: str) -> Answer:
+    """A start: the Start added in the Run whose Lanes keep it, or stopped by the first Lane that
+    breaks it."""
+    verdicts: list[Verdict] = []
+    for run in placed.runs:
+        moves = _dues(plugin, run, cwd)
+        verdict = check_start(_lanes(plugin, placed, run), asked, _held(plugin, placed, run), moves)
+        if verdict == Kept():
+            text = next((d for d in moves if d.text == asked.text), None)
+            values = dict(text.values) if text else {}
+            started = Started(
+                run.id, asked.role, asked.text, values, asked.tool_use_id, asked.resume
+            )
+            add(plugin.record, started)
+            return PASS
+        verdicts.append(verdict)
+    return _stop(plugin, verdicts[0])
+
+
+def _checked(plugin: Plugin, placed: Placed) -> Answer:
+    """A Call or an end, checked by each Lane of the role in each Run that holds it."""
+    for run in placed.runs:
+        held = _held(plugin, placed, run)
+        lanes = _lanes(plugin, placed, run)
+        if isinstance(placed.what, ToolCall):
+            verdict = check_call(lanes, placed.what.call, held)
+        else:
+            assert isinstance(placed.what, EndAsked)
+            verdict = check_end(lanes, placed.what, held)
+        if verdict != Kept():
+            return _stop(plugin, verdict)
+    return PASS
+
+
+def _stop(plugin: Plugin, verdict: Verdict) -> Answer:
+    assert isinstance(verdict, Broken)
+    return Answer(True, stopped(plugin.name, verdict))
+
+
+def _lanes(plugin: Plugin, placed: Placed, run: Run) -> tuple[Lane, ...]:
+    """The Lanes of the role that makes the event: the Start's, or the Run's skill's."""
+    role = placed.start.role if placed.start else run.skill
+    return tuple(lane for lane in plugin.lanes.proposal.lanes if lane.role == role)
+
+
+def _held(plugin: Plugin, placed: Placed, run: Run) -> Held:
+    return Held(run, placed.start, plugin.root, plugin.lanes.proposal.routes)
+
+
+def _dues(plugin: Plugin, run: Run, cwd: str) -> tuple[Due, ...]:
+    """The Run's moves due, each start with its text and run values."""
+    running = tuple(Running(s.role, s.text, s.values) for s in run.starts if not s.ended)
+    adapter = plugin.lanes.proposal.adapters.text
+    program = os.path.join(plugin.root, adapter) if adapter else None
+    found = []
+    for move in run.due:
+        if move.kind == "start" and move.role:
+            text = start_text(program, move.role, running, run.words, cwd)
+            found.append(Due(move, text.text, text.values))
+        else:
+            found.append(Due(move, "", {}))
+    return tuple(found)

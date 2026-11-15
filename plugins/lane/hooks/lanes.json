@@ -1,6 +1,24 @@
 {
   "lanes": [],
-  "routes": [],
+  "routes": [
+    {
+      "skill": "up",
+      "after": {
+        "first": true
+      },
+      "moves": [
+        {
+          "wait": ""
+        },
+        {
+          "no_more": "laid"
+        },
+        {
+          "no_more": "left"
+        }
+      ]
+    }
+  ],
   "adapters": {},
   "laid": {
     "version": "0.1.0",

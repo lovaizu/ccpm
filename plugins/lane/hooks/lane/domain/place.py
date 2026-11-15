@@ -5,13 +5,20 @@ each state of Claude Code."""
 
 from __future__ import annotations
 
+import os
+import re
 from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any, Literal, Union
 
 from events import Event
 from form import LanesFile
+from manifest import plugin_name
 from runs import Conversation, Run, Start
+from script_calls import printed, result_args
+
+# A subagent's end as it reaches the main conversation, by its agent_id.
+NOTIFICATION = re.compile(r"<task-notification>\s*<task-id>([^<]+)</task-id>")
 
 
 @dataclass(frozen=True)
@@ -144,4 +151,82 @@ def place(event: Event, conversation: Conversation, lanes: LanesFile, root: str)
     Refuses: nothing.
     Carries: the placing of each `CC->>G` arrow of S1 to S7 on its Run, Start, and role.
     """
-    raise NotImplementedError("place.place")
+    start, runs = _where(event, conversation)
+    return Placed(_what(event, root), runs, start, event.agent_id)
+
+
+def _where(event: Event, conversation: Conversation) -> tuple[Start | None, tuple[Run, ...]]:
+    """The Start that the event comes from and the Runs that hold it: for a subagent's event, or
+    the end of one that reaches the main conversation, its tied Start and that Start's Run; for the
+    main conversation's, each Run that hasn't ended."""
+    agent = event.agent_id or _notified(event)
+    going = tuple(r for r in conversation.runs if not r.ended)
+    if agent is None:
+        return None, going
+    for run in going:
+        for start in run.starts:
+            if start.agent_id == agent:
+                return start, (run,)
+    return None, ()
+
+
+def _what(event: Event, root: str) -> What | None:
+    """What the event is, by its kind and its tool."""
+    if event.name == "UserPromptExpansion" and event.command_name:
+        plugin, _, skill = event.command_name.partition(":")
+        return SkillCall(plugin, skill, "person", event.command_args or "")
+    if event.name == "UserPromptSubmit":
+        agent = _notified(event)
+        killed = "<status>killed</status>" in (event.prompt or "")
+        return Notification(agent, killed) if agent else Prompt(event.prompt or "")
+    if event.name in ("Stop", "SubagentStop"):
+        return EndAsked(event.last_message or "")
+    tool_input = event.tool_input or {}
+    if event.name == "PreToolUse":
+        return _called(event, tool_input, root)
+    if event.name == "PostToolUse":
+        return _posted(event, tool_input, root)
+    return None
+
+
+def _called(event: Event, tool_input: Mapping[str, Any], root: str) -> What:
+    """What a tool call is: a start of a subagent, or another Call."""
+    if event.tool_name == "Agent":
+        owner, _, role = str(tool_input.get("subagent_type", "")).rpartition(":")
+        text = str(tool_input.get("prompt", ""))
+        return StartCall(role, owner == plugin_name(root), text, False, str(event.tool_use_id))
+    return ToolCall(Call(str(event.tool_name), tool_input, event.cwd, _top(event.cwd)))
+
+
+def _posted(event: Event, tool_input: Mapping[str, Any], root: str) -> What | None:
+    """What the PostToolUse of a call tells: a subagent started, a Result given, or a Proposal
+    shown."""
+    response = event.tool_response if isinstance(event.tool_response, dict) else {}
+    if event.tool_name == "Agent" and response.get("agentId"):
+        return AgentPosted(str(event.tool_use_id), str(response["agentId"]))
+    command = tool_input.get("command")
+    if event.tool_name != "Bash" or not isinstance(command, str):
+        return None
+    given = result_args(command, root)
+    if given:
+        return ResultPosted(*given)
+    shown = printed(command, str(response.get("stdout", "")))
+    return PrintPosted(*shown) if shown else None
+
+
+def _notified(event: Event) -> str | None:
+    """The agent_id whose end a task-notification tells the main conversation of."""
+    if event.name != "UserPromptSubmit" or not event.prompt:
+        return None
+    found = NOTIFICATION.match(event.prompt)
+    return found[1] if found else None
+
+
+def _top(cwd: str) -> str:
+    """The top of the worktree that the folder lies in, or the folder where no .git lies above."""
+    folder = cwd
+    while not os.path.exists(os.path.join(folder, ".git")):
+        if os.path.dirname(folder) == folder:
+            return cwd
+        folder = os.path.dirname(folder)
+    return folder

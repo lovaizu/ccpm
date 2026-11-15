@@ -28,8 +28,6 @@ from run_record import (
 )
 from runs import OffRoutes, Result, may_give, pick_up, stand, where
 
-pytestmark = pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
-
 CALLED = Called("r1", "write", "person", "")
 WRITER = Started("r1", "writer", "Carry out your steps", {}, "toolu_w", False)
 TIED = Tied("r1", "toolu_w", "a01")
@@ -92,6 +90,7 @@ def test_the_skills_result_after_no_more_ends_the_run() -> None:
     assert run.ended
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_a_command_a_route_goes_after_takes_the_place_of_the_moves_due")
 def test_a_command_a_route_goes_after_replaces_the_moves_due() -> None:
     """Given: writer's `written`, so reviewer's start is due, then the person's /changelog:pause,
@@ -113,6 +112,7 @@ def test_a_command_a_route_goes_after_replaces_the_moves_due() -> None:
     assert run.due == (Move("no_more", result="paused"),)
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_the_run_stands_aside_while_another_plugins_skill_runs")
 def test_a_call_of_another_plugins_skill_sets_the_run_aside() -> None:
     """Given: write's call, and the main conversation's call of lint:check that a move names.
@@ -122,6 +122,7 @@ def test_a_call_of_another_plugins_skill_sets_the_run_aside() -> None:
     assert run.aside
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_a_subagent_stopped_by_task_stop_is_due_again")
 def test_a_start_ended_with_no_result_is_due_again() -> None:
     """Given: writer's Start, and its end by TaskStop with no Result.
@@ -187,6 +188,7 @@ def test_nothing_may_be_given_in_a_run_that_ended() -> None:
     assert may_give(c, "writer", d.ROUTES_OF_WRITE) == ()
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_no_kept_results_start_a_new_run")
 def test_no_kept_results_pick_up_nothing() -> None:
     """Given: no Kept results.
@@ -195,6 +197,7 @@ def test_no_kept_results_pick_up_nothing() -> None:
     assert pick_up(d.ROUTES_OF_WRITE, "write", ()) == ()
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_a_new_conversation_picks_up_from_the_kept_results")
 def test_kept_results_that_follow_the_routes_are_picked_up() -> None:
     """Given: writer's `written` and reviewer's `more`, which follow write's Routes.
@@ -207,6 +210,7 @@ def test_kept_results_that_follow_the_routes_are_picked_up() -> None:
     )
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_kept_results_that_reach_the_end_start_a_new_run")
 def test_kept_results_that_reach_a_route_that_starts_no_more_pick_up_nothing() -> None:
     """Given: writer's `written` and reviewer's `good`, whose Route starts no more.
@@ -216,6 +220,7 @@ def test_kept_results_that_reach_a_route_that_starts_no_more_pick_up_nothing() -
     assert pick_up(d.ROUTES_OF_WRITE, "write", kept) == ()
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_kept_results_off_the_routes_stop_the_command")
 def test_kept_results_off_the_routes_are_refused() -> None:
     """Given: reviewer's `good` first, which no Route of write leads to.

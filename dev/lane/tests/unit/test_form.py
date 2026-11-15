@@ -12,9 +12,16 @@ from typing import Any
 
 import lane_data as d
 import pytest
-from form import After, Move, OutOfForm, proposal_form, read_lanes, read_proposal, write_lanes
-
-pytestmark = pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
+from form import (
+    After,
+    Move,
+    OutOfForm,
+    Route,
+    proposal_form,
+    read_lanes,
+    read_proposal,
+    write_lanes,
+)
 
 LANE = os.path.join(os.path.dirname(d.__file__), *[".."] * 3, "plugins", "lane")
 SCHEMA = os.path.join(LANE, "hooks", "lane", "domain", "lanes.schema.json")
@@ -139,11 +146,18 @@ def test_a_steps_number_starts_at_1(step: int, stands: bool) -> None:
 
 @pytest.mark.supports("test_a_call_the_guard_cant_check_is_stopped_with_who_must_fix_it")
 def test_lanes_json_with_nothing_laid_is_read() -> None:
-    """Given: Lane's own hooks/lanes.json, which holds no Lanes and no Routes.
+    """Given: Lane's own hooks/lanes.json, which holds no Lanes and only up's Route after its
+    start, which waits for the person's reply and ends by up's `laid` or `left`.
     When: read_lanes reads it.
-    Then: it gives no Lanes, no Routes, and a Laid of 0.1.0 with no sentences."""
+    Then: it gives no Lanes, that one Route, and a Laid of 0.1.0 with no sentences."""
     lanes = read_lanes(os.path.join(LANE, "hooks", "lanes.json"))
-    assert (lanes.proposal.lanes, lanes.proposal.routes) == ((), ())
+    moves = (
+        Move("wait", command=""),
+        Move("no_more", result="laid"),
+        Move("no_more", result="left"),
+    )
+    assert lanes.proposal.lanes == ()
+    assert lanes.proposal.routes == (Route("up", After("first"), moves),)
     assert (lanes.laid.version, lanes.laid.sentences) == ("0.1.0", ())
 
 

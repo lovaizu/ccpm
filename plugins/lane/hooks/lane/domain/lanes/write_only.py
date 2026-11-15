@@ -3,13 +3,14 @@ with the run values filled in."""
 
 from __future__ import annotations
 
+import os
 from collections.abc import Sequence
 
 from form import Lane, Route
 from place import Call, EndAsked, StartCall
 from runs import Due
 
-from lanes.kind import Held, TypeInfo, Verdict
+from lanes.kind import Held, Kept, TypeInfo, Verdict
 
 # Each value that a Lane of this type takes, by the name it lies under in the Lane's `args`, with
 # what it is, as lay.py types shows it.
@@ -30,7 +31,13 @@ class WriteOnly:
 
         Carries: S1 `L->>T: each type`.
         """
-        raise NotImplementedError("write_only.WriteOnly.info")
+        return TypeInfo(
+            name="write_only",
+            sentence="Write only `<path>`, with each of `paths` joined by `or`.",
+            suits="a Step that writes files",
+            allows="a Write or Edit of a path that is one of `paths`, from the top of the worktree",
+            args=ARGS,
+        )
 
     def faults(self, lane: Lane, last_step: int, routes: Sequence[Route]) -> tuple[str, ...]:
         """Each fault of a Lane of this type, such as `paths` missing, empty, or not a list of
@@ -38,7 +45,10 @@ class WriteOnly:
 
         Carries: S1 `L->>T: checks each Lane, and makes its sentence`.
         """
-        raise NotImplementedError("write_only.WriteOnly.faults")
+        given = lane.args.get("paths")
+        if not isinstance(given, list) or not given or not all(isinstance(x, str) for x in given):
+            return ("write_only takes `paths`, a list of one string or more",)
+        return ()
 
     def sentence(self, lane: Lane, routes: Sequence[Route]) -> str:
         """The sentence that the Lane lays on its Step: `Write only` each of `paths`, joined by
@@ -47,7 +57,8 @@ class WriteOnly:
         Carries: S1 `L->>T: checks each Lane, and makes its sentence`, and the sentence of each
         Broken.
         """
-        raise NotImplementedError("write_only.WriteOnly.sentence")
+        named = " or ".join(f"`{path}`" for path in lane.args["paths"])
+        return f"Write only {named}."
 
     def allows(self, lane: Lane, call: Call, held: Held) -> bool | None:
         """True for a Write or Edit of a path that is one of `paths`, read from `call.top`, its run
@@ -56,14 +67,17 @@ class WriteOnly:
 
         Carries: the Call checks of S2, S5, and S6.
         """
-        raise NotImplementedError("write_only.WriteOnly.allows")
+        if call.tool not in ("Write", "Edit"):
+            return None
+        path = os.path.relpath(os.path.join(call.cwd, str(call.input.get("file_path"))), call.top)
+        return path in lane.args["paths"]
 
     def check_start(self, lane: Lane, asked: StartCall, held: Held, due: Sequence[Due]) -> Verdict:
         """Kept: the Lane checks no start.
 
         Carries: S5 `G->>T: checks the start by the Lane of the skill's Routes, with the moves due`.
         """
-        raise NotImplementedError("write_only.WriteOnly.check_start")
+        return Kept()
 
     def check_end(self, lane: Lane, end: EndAsked, held: Held) -> Verdict:
         """Kept: the Lane checks no end.
@@ -71,7 +85,7 @@ class WriteOnly:
         Carries: S2 `G->>T: checks the end by each Lane of up`, S5 `G->>T: checks the end by each
         Lane of each Run's skill`, S6 `G->>T: checks the end by each Lane of the role`.
         """
-        raise NotImplementedError("write_only.WriteOnly.check_end")
+        return Kept()
 
 
 TYPE = WriteOnly()

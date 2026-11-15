@@ -7,6 +7,9 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 
+# The text a start goes with where the plugin names no adapter of a start's text.
+TEXT = "Carry out your steps"
+
 
 class AdapterFailed(Exception):
     """An adapter that exited other than 0, printed what isn't in its form, or couldn't run, with
@@ -55,7 +58,9 @@ def start_text(
     Carries: S5 `G->>A: asks for the text of each start due, with each Start that runs`, and its
     `A-->>G` answers.
     """
-    raise NotImplementedError("adapters.start_text")
+    if program is None:
+        return StartText(f"{TEXT}: {words}" if words else TEXT, {})
+    raise NotImplementedError("adapters.start_text, of an adapter")
 
 
 def kept_results(program: str, words: str, cwd: str) -> tuple[KeptResult, ...]:

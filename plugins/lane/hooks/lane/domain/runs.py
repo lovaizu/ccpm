@@ -4,13 +4,16 @@ stands aside, or has ended."""
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+import dataclasses
+import os
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from typing import Literal
 
 from adapters import KeptResult
-from form import Move, Route
-from run_record import Line, Shown
+from form import After, Move, Route, read_lanes
+from manifest import plugin_name
+from run_record import Called, Gave, Line, Shown, Started, Tied, lines, record_path
 
 
 class OffRoutes(Exception):
@@ -95,7 +98,71 @@ def stand(session_id: str, lines: Sequence[Line], routes: Sequence[Route]) -> Co
     Carries: the guard's working out of each Run on each event of S1 to S7, from `G->>RS: reads
     the lines`.
     """
-    raise NotImplementedError("runs.stand")
+    runs: dict[str, Run] = {}
+    for line in lines:
+        if isinstance(line, Called):
+            runs[line.run] = _called(line, routes)
+        elif line.run in runs:
+            runs[line.run] = _moved(runs[line.run], line, routes)
+    return Conversation(session_id, tuple(runs.values()))
+
+
+def _called(line: Called, routes: Sequence[Route]) -> Run:
+    """A Run as its skill's call starts it, with the moves of the Route after its start due."""
+    due = _moves(routes, line.skill, lambda after: after.kind == "first")
+    return Run(line.run, line.skill, line.by, line.words, (), (), (), (), due, False, False)
+
+
+def _moved(run: Run, line: Line, routes: Sequence[Route]) -> Run:
+    """The Run after one more line of its record."""
+    if isinstance(line, Started):
+        start = Start(line.role, line.text, line.values, line.tool_use_id, None, (), False)
+        due = list(run.due)
+        taken = Move("start", role=line.role)
+        if taken in due:
+            due.remove(taken)
+        return dataclasses.replace(run, starts=(*run.starts, start), due=tuple(due))
+    if isinstance(line, Tied):
+        starts = tuple(
+            dataclasses.replace(s, agent_id=line.agent_id)
+            if s.tool_use_id == line.tool_use_id
+            else s
+            for s in run.starts
+        )
+        return dataclasses.replace(run, starts=starts)
+    if isinstance(line, Gave):
+        return _gave(run, line, routes)
+    if isinstance(line, Shown):
+        return dataclasses.replace(run, shown=(*run.shown, line))
+    return run
+
+
+def _gave(run: Run, line: Gave, routes: Sequence[Route]) -> Run:
+    """The Run after a Result: the skill's own ends it where a move due starts no more by it, and a
+    role's makes the moves of the Route after it due."""
+    results = (*run.results, Result(line.role, line.result))
+    if line.agent_id is None and line.role == run.skill:
+        ended = Move("no_more", result=line.result) in run.due
+        return dataclasses.replace(run, results=results, due=(), ended=ended)
+    starts = tuple(
+        dataclasses.replace(s, results=(*s.results, line.result))
+        if s.agent_id == line.agent_id
+        else s
+        for s in run.starts
+    )
+    due = _moves(
+        routes,
+        run.skill,
+        lambda after: (
+            after.kind == "result" and (after.role, after.result) == (line.role, line.result)
+        ),
+    )
+    return dataclasses.replace(run, starts=starts, results=results, due=due)
+
+
+def _moves(routes: Sequence[Route], skill: str, after: Callable[[After], bool]) -> tuple[Move, ...]:
+    """The moves of each Route of the skill that goes after what `after` takes."""
+    return tuple(m for r in routes if r.skill == skill and after(r.after) for m in r.moves)
 
 
 def where(root: str, session_id: str) -> Conversation:
@@ -109,7 +176,9 @@ def where(root: str, session_id: str) -> Conversation:
     that the script refuses with why.
     Carries: S2 `L->>G: asks where up's Run stands`, S6 `R->>G: asks where each Run stands`.
     """
-    raise NotImplementedError("runs.where")
+    lanes = read_lanes(os.path.join(root, "hooks", "lanes.json"))
+    path = record_path(plugin_name(root), session_id)
+    return stand(session_id, lines(path), lanes.proposal.routes)
 
 
 def may_give(conversation: Conversation, role: str, routes: Sequence[Route]) -> tuple[str, ...]:
@@ -123,7 +192,20 @@ def may_give(conversation: Conversation, role: str, routes: Sequence[Route]) -> 
     Refuses: nothing.
     Carries: S6 `alt a Result the role may give`.
     """
-    raise NotImplementedError("runs.may_give")
+    given: list[str] = []
+    for run in (r for r in conversation.runs if not r.ended):
+        if role == run.skill:
+            given += [m.result for m in run.due if m.kind == "no_more" and m.result]
+        elif any(s.role == role and not s.ended for s in run.starts):
+            given += [
+                r.after.result
+                for r in routes
+                if r.skill == run.skill
+                and r.after.kind == "result"
+                and r.after.role == role
+                and r.after.result
+            ]
+    return tuple(dict.fromkeys(given))
 
 
 def pick_up(routes: Sequence[Route], skill: str, kept: Sequence[KeptResult]) -> tuple[Result, ...]:

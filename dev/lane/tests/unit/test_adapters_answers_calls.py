@@ -18,8 +18,6 @@ from lanes.kind import Broken, CantCheck
 from runs import Due
 from script_calls import id_line, printed, result_args, result_command, write_args
 
-pytestmark = pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
-
 ECHO = """import json, os, sys
 handed = json.load(sys.stdin)
 print(json.dumps({"text": json.dumps([sys.argv[1:], handed, os.getcwd()]),
@@ -46,6 +44,7 @@ def test_with_no_adapter_a_start_takes_lanes_text_and_the_words(words: str, text
     assert given.values == {}
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_an_adapter_gives_each_start_its_text_and_values")
 def test_an_adapter_is_handed_the_role_and_each_start_that_runs(tmp_path: Any) -> None:
     """Given: an adapter that gives back what it's handed, and writer's Start running.
@@ -64,6 +63,7 @@ def test_an_adapter_is_handed_the_role_and_each_start_that_runs(tmp_path: Any) -
     assert given.values == {"version": "0.2.0"}
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_an_adapter_that_fails_at_a_later_move_gives_why_and_who")
 @pytest.mark.parametrize(
     "text",
@@ -78,6 +78,7 @@ def test_an_adapter_that_fails_or_strays_from_its_form_is_refused(tmp_path: Any,
         start_text(program(tmp_path, text), "writer", (), "", str(tmp_path))
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_an_adapter_of_records_that_fails_stops_the_command")
 def test_an_adapter_that_cant_run_is_refused(tmp_path: Any) -> None:
     """Given: an adapter's path where no program lies.
@@ -87,6 +88,7 @@ def test_an_adapter_that_cant_run_is_refused(tmp_path: Any) -> None:
         start_text(str(tmp_path / "missing.py"), "writer", (), "", str(tmp_path))
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_a_new_conversation_picks_up_from_the_kept_results")
 def test_kept_results_come_in_the_order_the_adapter_gives(tmp_path: Any) -> None:
     """Given: an adapter of records that prints writer's `written` and reviewer's `more`.
@@ -100,6 +102,7 @@ def test_kept_results_come_in_the_order_the_adapter_gives(tmp_path: Any) -> None
     )
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_the_words_typed_tell_a_new_request_from_a_pick_up")
 @pytest.mark.parametrize("words", ["", "0.3.0", "--continue", "-c 0.2.0"])
 def test_an_adapter_of_records_gets_the_words_on_standard_input(tmp_path: Any, words: str) -> None:
@@ -118,6 +121,7 @@ def test_an_adapter_of_records_gets_the_words_on_standard_input(tmp_path: Any, w
     assert json.loads(kept.result) == [[], {"words": words}]
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_no_kept_results_start_a_new_run")
 def test_an_adapter_of_records_may_give_none(tmp_path: Any) -> None:
     """Given: an adapter of records that prints no results.
@@ -126,6 +130,7 @@ def test_an_adapter_of_records_may_give_none(tmp_path: Any) -> None:
     assert kept_results(program(tmp_path, "print('{\"results\": []}')\n"), "", str(tmp_path)) == ()
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_an_adapter_of_records_that_fails_stops_the_command")
 def test_an_adapter_of_records_that_fails_is_refused(tmp_path: Any) -> None:
     """Given: an adapter of records that exits 1 with why.
@@ -163,6 +168,7 @@ def test_a_result_is_said_with_the_moves_of_its_route(moves: tuple[Due, ...], wo
     )
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_a_subagent_stopped_by_task_stop_is_due_again")
 def test_an_end_with_no_result_is_said_with_the_start_due_again() -> None:
     """Given: writer, ended by TaskStop, and its start due again.
@@ -185,6 +191,7 @@ def test_a_stop_is_said_with_the_sentence_and_what_the_role_may_do() -> None:
     assert stopped("changelog", broken) == f"changelog: Run only `git log --oneline`.\n{may}"
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_a_call_the_guard_cant_check_is_stopped_with_who_must_fix_it")
 def test_a_check_that_cant_be_made_is_said_with_why_and_who() -> None:
     """Given: a check that couldn't be made, with why, and that the plugin's developer must fix it.

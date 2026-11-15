@@ -10,7 +10,7 @@ from form import Lane, Route
 from place import Call, EndAsked, StartCall
 from runs import Due
 
-from lanes.kind import Held, TypeInfo, Verdict
+from lanes.kind import Held, Kept, TypeInfo, Verdict
 
 # Each value that a Lane of this type takes, by the name it lies under in the Lane's `args`, with
 # what it is, as lay.py types shows it. It takes none.
@@ -26,14 +26,22 @@ class LaysAfterReply:
 
         Carries: S1 `L->>T: each type`.
         """
-        raise NotImplementedError("lays_after_reply.LaysAfterReply.info")
+        return TypeInfo(
+            name="lays_after_reply",
+            sentence="Run lay.py write only once the caller approved by their own act.",
+            suits="up's Step that lays the Proposal",
+            allows="lay.py write once a person replied to the Proposal it shows, or in an AI's run",
+            args=ARGS,
+        )
 
     def faults(self, lane: Lane, last_step: int, routes: Sequence[Route]) -> tuple[str, ...]:
         """Each fault of a Lane of this type, such as a Step of a role other than up.
 
         Carries: S1 `L->>T: checks each Lane, and makes its sentence`.
         """
-        raise NotImplementedError("lays_after_reply.LaysAfterReply.faults")
+        if lane.role != "up":
+            return (f"{lane.type} holds only up's Step, not {lane.role}'s",)
+        return ()
 
     def sentence(self, lane: Lane, routes: Sequence[Route]) -> str:
         """The sentence that the Lane lays on up's Step, which names no value.
@@ -56,7 +64,7 @@ class LaysAfterReply:
 
         Carries: S5 `G->>T: checks the start by the Lane of the skill's Routes, with the moves due`.
         """
-        raise NotImplementedError("lays_after_reply.LaysAfterReply.check_start")
+        return Kept()
 
     def check_end(self, lane: Lane, end: EndAsked, held: Held) -> Verdict:
         """Kept: the Lane checks no end.
@@ -64,7 +72,7 @@ class LaysAfterReply:
         Carries: S2 `G->>T: checks the end by each Lane of up`, S5 `G->>T: checks the end by each
         Lane of each Run's skill`, S6 `G->>T: checks the end by each Lane of the role`.
         """
-        raise NotImplementedError("lays_after_reply.LaysAfterReply.check_end")
+        return Kept()
 
 
 TYPE = LaysAfterReply()

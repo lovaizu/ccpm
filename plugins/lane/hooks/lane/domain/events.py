@@ -4,9 +4,20 @@ the guard on each event, as Claude Code's hooks reference gives them."""
 
 from __future__ import annotations
 
+import json
 from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any
+
+# The events that the guard needs, in the order that hooks.json lists them.
+HOOKED = (
+    "UserPromptSubmit",
+    "UserPromptExpansion",
+    "PreToolUse",
+    "PostToolUse",
+    "Stop",
+    "SubagentStop",
+)
 
 
 class NotAnEvent(Exception):
@@ -62,7 +73,30 @@ def read_event(text: str) -> Event:
     Refuses: NotAnEvent, where the text isn't JSON or lacks `hook_event_name` or `session_id`.
     Carries: each `CC->>G` arrow of S1 to S7, as it comes in.
     """
-    raise NotImplementedError("events.read_event")
+    try:
+        held = json.loads(text)
+    except ValueError as e:
+        raise NotAnEvent(f"standard input isn't JSON: {e}") from e
+    if not isinstance(held, dict):
+        raise NotAnEvent("standard input isn't a JSON object")
+    for key in ("hook_event_name", "session_id"):
+        if not isinstance(held.get(key), str):
+            raise NotAnEvent(f"standard input gives no `{key}` that is a string")
+    return Event(
+        name=held["hook_event_name"],
+        session_id=held["session_id"],
+        cwd=held.get("cwd") or "",
+        agent_id=held.get("agent_id"),
+        agent_type=held.get("agent_type"),
+        tool_name=held.get("tool_name"),
+        tool_input=held.get("tool_input"),
+        tool_use_id=held.get("tool_use_id"),
+        tool_response=held.get("tool_response"),
+        prompt=held.get("prompt"),
+        command_name=held.get("command_name"),
+        command_args=held.get("command_args"),
+        last_message=held.get("last_assistant_message"),
+    )
 
 
 def write_answer(event: Event, answer: Answer) -> Output:
@@ -77,7 +111,23 @@ def write_answer(event: Event, answer: Answer) -> Output:
     Carries: each `G-->>` arrow of S1 to S7 that reaches a role, the main conversation, or the
     person through Claude Code.
     """
-    raise NotImplementedError("events.write_answer")
+    if event.name == "PreToolUse" and answer.stop:
+        output: dict[str, Any] = {
+            "hookSpecificOutput": {
+                "hookEventName": event.name,
+                "permissionDecision": "deny",
+                "permissionDecisionReason": answer.words,
+            }
+        }
+    elif answer.stop:
+        output = {"decision": "block", "reason": answer.words}
+    elif answer.words:
+        output = {
+            "hookSpecificOutput": {"hookEventName": event.name, "additionalContext": answer.words}
+        }
+    else:
+        return Output(0, "", "")
+    return Output(0, json.dumps(output), "")
 
 
 def hook_entries() -> dict[str, Any]:
@@ -92,4 +142,10 @@ def hook_entries() -> dict[str, Any]:
     Refuses: nothing.
     Carries: S2 `L->>LS: replaces Lane's hook entries, as the guard's code names them`.
     """
-    raise NotImplementedError("events.hook_entries")
+    entry = {
+        "type": "command",
+        "command": "python3",
+        "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/lane/hook.py"],
+        "onFailure": "block",
+    }
+    return {event: [{"hooks": [dict(entry)]}] for event in HOOKED}

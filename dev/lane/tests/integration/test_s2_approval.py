@@ -10,9 +10,8 @@ import os
 import pytest
 import walkthrough as w
 
-pytestmark = pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 
-
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S2", "guard", "lane types")
 def test_ups_end_without_what_print_showed_is_stopped(b: w.Bench) -> None:
     """Given: lay.py print showed the walkthrough's Proposal in up's Run.
@@ -35,6 +34,7 @@ def test_ups_end_with_what_print_showed_goes(b: w.Bench) -> None:
     assert not c.stop(printed.output).blocked
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S2", "Laid only on the caller's own act", "Approval")
 def test_lay_before_the_persons_reply_is_stopped(b: w.Bench, broken: None) -> None:
     """Given: lay.py print showed the walkthrough's Proposal in a Run of up that a person called.
@@ -49,6 +49,7 @@ def test_lay_before_the_persons_reply_is_stopped(b: w.Bench, broken: None) -> No
     assert not os.path.exists(os.path.join(b.changelog, "hooks", "lanes.json"))
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S2", "Step", "The steps are the one source")
 def test_a_change_is_written_into_its_step_and_proposed_again(b: w.Bench, broken: None) -> None:
     """Given: the walkthrough's Proposal laid, and up's next Run after the person typed
@@ -101,6 +102,7 @@ def test_lay_of_an_id_no_proposal_has_is_refused(b: w.Bench) -> None:
     assert not os.path.exists(os.path.join(b.changelog, "hooks", "lanes.json"))
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S2", "lay.py", "Step")
 def test_lay_after_the_steps_changed_is_refused(b: w.Bench) -> None:
     """Given: up gave what lay.py print showed, then reviewer's step 1 changed in its file.
@@ -119,6 +121,7 @@ def test_lay_after_the_steps_changed_is_refused(b: w.Bench) -> None:
     assert w.read(os.path.join(b.changelog, "agents", "writer.md")) == w.WRITER
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S2", "lay.py")
 def test_a_failed_validate_puts_back_each_file(b: w.Bench) -> None:
     """Given: up gave what lay.py print showed, then changelog's plugin.json given a `name` that
@@ -151,6 +154,7 @@ def test_lay_keeps_the_users_hook_entries(tmp_path: object, broken: None) -> Non
     assert "PreToolUse" in written
 
 
+@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S2", "Lane's part replaced whole", "Laid")
 def test_lay_again_replaces_what_the_earlier_lay_added(b: w.Bench, broken: None) -> None:
     """Given: the walkthrough's Proposal laid, and hooks.json given an entry of the user's after.
