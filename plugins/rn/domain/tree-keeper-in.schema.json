@@ -33,7 +33,7 @@
       }
     },
     "resume": {
-      "description": "The message by which the main conversation resumes the role with SendMessage: its first line, then its decision on the role's last result and why, and, where the person answered, a line that opens the person's words as they wrote them, as a summary loses what the person meant. After the grounds, a line `The change:` opens the change to write, as one JSON object in the form that tree.py write takes: each node by its path, such as the goal drafted, the plan, a Decision with its ground, or a Deliverable signed off, and each More to keep.",
+      "description": "The message by which the main conversation resumes the role with SendMessage: its first line, then its decision on the role's last result and why, and, where the person answered, a line that opens the person's words as they wrote them, as a summary loses what the person meant. After the grounds, a line `The change:` opens the change to write, as one JSON object in the form that tree.py write takes: each node by its path, such as the goal drafted, the plan, a Decision, or a Deliverable signed off, and each More to keep. The grounds hold each decision's ground, which the tree-keeper gives tree.py write as its <ground>, the commit's message, as the design tree keeps no ground.",
       "type": "string",
       "pattern": "^The main conversation's grounds:\\n"
     }

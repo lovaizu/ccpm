@@ -1,0 +1,2 @@
+{"event": "gh auth status finds no login", "command": "gh auth status", "exit": 1, "stdout": "", "stderr": "You are not logged into any GitHub hosts. To log in, run: gh auth login\n"}
+{"event": "gh auth status finds the login", "command": "gh auth status", "exit": 0, "stdout": "github.com\n  ✓ Logged in to github.com account <account> (GH_TOKEN)\n  - Active account: true\n  - Git operations protocol: https\n  - Token: gho_************************************\n  - Token scopes: none\n", "stderr": ""}

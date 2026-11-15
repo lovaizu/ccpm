@@ -7,6 +7,7 @@ one for each."""
 
 from __future__ import annotations
 
+import pytest
 from template.markdown import (
     CODE,
     FIGURE,
@@ -26,6 +27,7 @@ from template.markdown import (
 )
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_a_heading_gives_its_level_and_words():
     """Given a heading of level 2
     When the text is read
@@ -33,6 +35,7 @@ def test_a_heading_gives_its_level_and_words():
     assert read("## Non-goals") == (Block(HEADING, 1, "Non-goals", level=2),)
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_the_lines_of_a_paragraph_join_with_a_space():
     """Given a paragraph of two lines, after a blank line
     When the text is read
@@ -42,6 +45,7 @@ def test_the_lines_of_a_paragraph_join_with_a_space():
     )
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_a_line_that_ends_with_a_backslash_joins_the_next_with_a_newline():
     """Given a list item whose first line ends with a backslash
     When the text is read
@@ -49,6 +53,7 @@ def test_a_line_that_ends_with_a_backslash_joins_the_next_with_a_newline():
     assert read("- user\\\n  One who asks rn.") == (Block(ITEM, 1, "user\nOne who asks rn."),)
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_a_list_item_holds_its_indented_lines_and_its_nested_items():
     """Given an item whose words go on an indented line, with a nested item under it, and a second
     item
@@ -61,6 +66,7 @@ def test_a_list_item_holds_its_indented_lines_and_its_nested_items():
     )
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_a_line_not_indented_right_after_an_items_words_goes_on_the_item():
     """Given an item whose second line isn't indented, and starts no block
     When the text is read
@@ -70,6 +76,7 @@ def test_a_line_not_indented_right_after_an_items_words_goes_on_the_item():
     )
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_a_list_item_holds_a_paragraph_indented_after_a_blank_line():
     """Given an item, a blank line, and an indented paragraph, and then a paragraph not indented
     When the text is read
@@ -80,6 +87,7 @@ def test_a_list_item_holds_a_paragraph_indented_after_a_blank_line():
     )
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_a_list_item_that_starts_with_a_code_block_has_no_words_of_its_own():
     """Given a heading, a paragraph, and, after a blank line, an item whose first line opens a code
     block indented under it
@@ -92,6 +100,7 @@ def test_a_list_item_that_starts_with_a_code_block_has_no_words_of_its_own():
     )
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_a_list_item_whose_words_start_on_the_next_line_holds_them():
     """Given the marker 10. alone on its line, the item's words after a blank line, indented past
     the marker, and then a paragraph indented less
@@ -103,6 +112,7 @@ def test_a_list_item_whose_words_start_on_the_next_line_holds_them():
     )
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_a_code_block_keeps_its_info_and_its_body_and_a_heading_inside_is_code():
     """Given a paragraph, and a code block of markdown at line 3 that holds a heading
     When the text is read
@@ -115,6 +125,7 @@ def test_a_code_block_keeps_its_info_and_its_body_and_a_heading_inside_is_code()
     )
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_a_code_block_closes_only_at_a_fence_as_long_as_its_own():
     """Given a paragraph, and right under it a code block opened by four backticks that holds a
     fence of three
@@ -126,6 +137,7 @@ def test_a_code_block_closes_only_at_a_fence_as_long_as_its_own():
     )
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_a_code_block_left_open_runs_to_the_end():
     """Given a code block with no closing fence
     When the text is read
@@ -135,6 +147,7 @@ def test_a_code_block_left_open_runs_to_the_end():
     )
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_a_paragraph_that_is_an_image_is_a_figure_with_its_alt_text_and_path():
     """Given a heading, and right under it a paragraph that is an image alone
     When the text is read
@@ -145,6 +158,7 @@ def test_a_paragraph_that_is_an_image_is_a_figure_with_its_alt_text_and_path():
     )
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_a_quote_keeps_its_lines_without_their_mark():
     """Given a quote of two lines
     When the text is read
@@ -154,6 +168,7 @@ def test_a_quote_keeps_its_lines_without_their_mark():
     )
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_a_blank_text_gives_no_block():
     """Given a text of blank lines
     When the text is read
@@ -161,6 +176,7 @@ def test_a_blank_text_gives_no_block():
     assert read("\n  \n") == ()
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_a_heading_ends_the_paragraph_above_it():
     """Given a paragraph line right before a heading
     When the text is read
@@ -171,6 +187,7 @@ def test_a_heading_ends_the_paragraph_above_it():
     )
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_sections_put_each_block_under_the_heading_above_it_to_the_next_of_its_level():
     """Given a title, a section of level 2 with a paragraph and a section of level 3, and a second
     section of level 2
@@ -183,6 +200,7 @@ def test_sections_put_each_block_under_the_heading_above_it_to_the_next_of_its_l
     )
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_sections_put_the_blocks_nested_in_an_item_under_it():
     """Given an item with a nested item
     When the blocks are put into sections
@@ -191,6 +209,7 @@ def test_sections_put_the_blocks_nested_in_an_item_under_it():
     assert sections((item,)) == (Node(item, (Node(item.children[0]),)),)
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_flat_gives_each_block_and_then_each_nested_in_it():
     """Given an item with a nested item, and a paragraph after it
     When the blocks are flattened
@@ -199,6 +218,7 @@ def test_flat_gives_each_block_and_then_each_nested_in_it():
     assert flat((item, after)) == [item, item.children[0], after]
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_sentences_split_after_a_full_stop_a_question_mark_or_an_exclamation_mark():
     """Given words of three sentences, ending with `.`, `?`, and `!`
     When they're split into sentences
@@ -206,6 +226,7 @@ def test_sentences_split_after_a_full_stop_a_question_mark_or_an_exclamation_mar
     assert sentences("It runs. Does it stop? No!") == ["It runs.", "Does it stop?", "No!"]
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_sentences_split_after_a_quote_that_closes_a_sentence():
     """Given a sentence that ends inside a quote, and a sentence after it
     When they're split into sentences
@@ -213,6 +234,7 @@ def test_sentences_split_after_a_quote_that_closes_a_sentence():
     assert sentences('rn says "Done." You merge.') == ['rn says "Done."', "You merge."]
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_sentences_keep_a_code_span_and_a_link_whole():
     """Given a sentence whose code span and link each hold a full stop before a space
     When it's split into sentences
@@ -221,6 +243,7 @@ def test_sentences_keep_a_code_span_and_a_link_whole():
     assert sentences(text) == [text]
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_sentences_split_at_a_newline():
     """Given words with a newline, which a line that ends with a backslash gives
     When they're split into sentences
@@ -231,6 +254,7 @@ def test_sentences_split_at_a_newline():
     ]
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_sentences_of_blank_words_are_none():
     """Given words that are blank
     When they're split into sentences
@@ -238,6 +262,7 @@ def test_sentences_of_blank_words_are_none():
     assert sentences(" ") == []
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_words_count_a_code_span_as_one_word():
     """Given a sentence of two words and a code span of three
     When its words are counted
@@ -245,6 +270,7 @@ def test_words_count_a_code_span_as_one_word():
     assert words("Run `gh auth status` now.") == 3
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_words_count_a_link_as_the_words_it_shows():
     """Given a sentence of one word and a link that shows two
     When its words are counted
@@ -252,6 +278,7 @@ def test_words_count_a_link_as_the_words_it_shows():
     assert words("See [the guide](../dev/plugin-development-guide.md#test).") == 3
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_words_count_no_mark_without_a_letter_or_a_digit():
     """Given a sentence of two words joined by a dash between spaces
     When its words are counted
@@ -259,6 +286,7 @@ def test_words_count_no_mark_without_a_letter_or_a_digit():
     assert words("rn - Lane") == 2
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_a_list_item_holds_an_item_indented_past_its_words():
     """Given an item, and a nested item indented further than the item's words
     When the text is read
@@ -266,6 +294,7 @@ def test_a_list_item_holds_an_item_indented_past_its_words():
     assert read("- a\n    - b") == (Block(ITEM, 1, "a", children=(Block(ITEM, 2, "b"),)),)
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_a_list_item_holds_a_paragraph_indented_past_its_words_after_a_blank_line():
     """Given an item, a blank line, and a paragraph indented further than the item's words
     When the text is read
@@ -273,6 +302,7 @@ def test_a_list_item_holds_a_paragraph_indented_past_its_words_after_a_blank_lin
     assert read("- a\n\n    b") == (Block(ITEM, 1, "a", children=(Block(PARAGRAPH, 3, "b"),)),)
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_a_quote_ends_at_the_first_line_without_its_mark():
     """Given a heading, a quote of one line right under it, and a paragraph right under the quote
     When the text is read
@@ -284,6 +314,7 @@ def test_a_quote_ends_at_the_first_line_without_its_mark():
     )
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_a_fence_with_an_info_string_doesnt_close_a_code_block():
     """Given a heading, and right under it a code block opened by a bare fence, whose body is an
     indented fence with an info string
@@ -295,6 +326,7 @@ def test_a_fence_with_an_info_string_doesnt_close_a_code_block():
     )
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_a_code_block_closed_right_after_its_fence_is_empty():
     """Given a code block whose closing fence is the line after its opening one, and a paragraph
     When the text is read
@@ -305,6 +337,7 @@ def test_a_code_block_closed_right_after_its_fence_is_empty():
     )
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_sentences_keep_each_of_three_code_spans_whole():
     """Given a sentence with three code spans
     When it's split into sentences
@@ -312,6 +345,7 @@ def test_sentences_keep_each_of_three_code_spans_whole():
     assert sentences("Run `a`, `b`, and `c`.") == ["Run `a`, `b`, and `c`."]
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_sections_end_a_section_at_a_heading_above_its_level():
     """Given a heading of level 2, and then one of level 1
     When the blocks are put into sections
@@ -320,6 +354,7 @@ def test_sections_end_a_section_at_a_heading_above_its_level():
     assert sections((lower, upper)) == (Node(lower), Node(upper))
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_a_table_holds_its_header_and_each_row_but_the_delimiter_row():
     """Given two headings and a blank line, then a table of a header, a delimiter row, and two rows,
     with spaces around its cells

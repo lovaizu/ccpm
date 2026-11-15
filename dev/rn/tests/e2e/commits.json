@@ -1,0 +1,13 @@
+[
+  {
+    "message": "invoicer 1.4.0",
+    "files": {
+      "invoicer/__init__.py": {"from": "dev/rn/tests/invoicer/invoicer/__init__.py"},
+      "invoicer/lines.py": {"from": "dev/rn/tests/invoicer/invoicer/lines.py"},
+      "invoicer/render.py": {"from": "dev/rn/tests/invoicer/invoicer/render.py"},
+      "invoicer/tax.py": {"from": "dev/rn/tests/invoicer/invoicer/tax.py"},
+      "invoicer/totals.py": {"from": "dev/rn/tests/invoicer/invoicer/totals.py"},
+      "pyproject.toml": {"from": "dev/rn/tests/invoicer/pyproject.toml"}
+    }
+  }
+]

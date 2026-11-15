@@ -12,8 +12,10 @@ You start with one JSON line, your Cut, in the form of
 run's design tree; and `{best_practice}`, the design tree best practice. The main conversation
 resumes you with each change to write, in the form of that schema's resume.
 
-What `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py write {record}` prints: exit 0 with
-`{"changed", "touched", "doing"}`, or exit 1 with the more's necessary condition that it refused.
+What `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py write {record} '<ground>'` prints, with the
+change on standard input and `<ground>` why it decides as it does, which becomes the commit's
+message: exit 0 with `{"changed", "touched", "doing"}`, or exit 1 with the more's necessary
+condition that it refused, or with an empty `<ground>`.
 
 Record each step once its result holds, and each practice as you carry it out, by
 `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add {record} tree-keeper <the step's number> '<what it left>'`

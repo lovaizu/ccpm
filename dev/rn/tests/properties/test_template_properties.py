@@ -7,6 +7,7 @@ from __future__ import annotations
 import os
 from typing import Any
 
+import pytest
 from hypothesis import given
 from hypothesis import strategies as st
 from template.check import MOST_WORDS, faults
@@ -59,6 +60,7 @@ def filled(draw: Any) -> tuple[str, list[str]]:
     return "\n\n".join(template) + "\n", document
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 @given(filled())
 def test_a_document_that_fills_each_slot_of_a_template_holds_it(made: tuple[str, list[str]]):
     """Given any template of sections, paragraphs, items, and code blocks, and a document that
@@ -69,6 +71,7 @@ def test_a_document_that_fills_each_slot_of_a_template_holds_it(made: tuple[str,
     assert faults(template, "\n\n".join(document) + "\n") == ()
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 @given(filled(), st.data())
 def test_a_document_without_a_block_of_its_template_has_a_fault(
     made: tuple[str, list[str]], data: Any
@@ -83,6 +86,7 @@ def test_a_document_without_a_block_of_its_template_has_a_fault(
     assert faults(template, left) != (), f"block {gone} left out is found"
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 @given(st.integers(1, 2 * MOST_WORDS), WORD)
 def test_a_sentence_has_a_fault_only_past_the_most_words(count: int, word: str):
     """Given a sentence of any number of words, in a document whose template takes any blocks
@@ -93,6 +97,7 @@ def test_a_sentence_has_a_fault_only_past_the_most_words(count: int, word: str):
     assert found == (count > MOST_WORDS), f"a sentence of {count} words is found only past the most"
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 @given(st.sampled_from(KINDS), st.text(max_size=400))
 def test_any_text_checked_against_a_template_gives_faults_at_its_lines(kind: str, text: str):
     """Given any text, and the template of a kind
@@ -103,6 +108,7 @@ def test_any_text_checked_against_a_template_gives_faults_at_its_lines(kind: str
     assert lines == sorted(lines), "the faults come in the order of the lines"
 
 
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 @given(st.text(max_size=400))
 def test_any_text_reads_as_blocks_at_its_lines_in_order(text: str):
     """Given any text

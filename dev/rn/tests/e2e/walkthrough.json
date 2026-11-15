@@ -1,0 +1,12 @@
+{
+  "repository": "https://github.com/lovaizu/playground",
+  "commits": "dev/rn/tests/e2e/commits.json",
+  "plugin_dirs": [
+    "{top}/plugins/lane",
+    "{top}/plugins/rn"
+  ],
+  "records": "dev/rn/tests/e2e/records",
+  "push": true,
+  "intent": "You maintain invoicer, a Python library in this repository that other teams call. It has no type hints, so callers pass wrong arguments and find out only at run time. You want type hints across the whole library, so that the people who call it see what each function takes, as one pull request you can merge. Ask rn for it with /rn:up, answer what it asks as the maintainer would, sign off with /rn:ty what serves you, ask a change with /rn:gm where something doesn't, and stop once the pull request is ready for your merge.",
+  "turns": 30
+}

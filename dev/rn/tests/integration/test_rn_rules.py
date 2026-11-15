@@ -1,0 +1,190 @@
+"""The integration cases of the rules of Solution strategy: for each rule, a case where rn's parts
+keep it, which fails where the fixture `broken` takes out the part that holds it, as
+integration/conftest.py's RULES names that part."""
+
+from __future__ import annotations
+
+import json
+import os
+import shutil
+
+import pytest
+
+from dev.rn.tests import rn_walkthrough as w
+from dev.rn.tests.rn_walkthrough import Bench
+
+pytestmark = pytest.mark.xfail(
+    strict=True, reason="rn's parts have empty bodies, and Lane hasn't laid rn's guard"
+)
+
+
+@pytest.mark.supports("Drawn out along the design tree", "S1", "Cut", "guard")
+def test_a_role_starts_with_only_the_cut_that_tree_py_gave_for_it(b: Bench, broken: None) -> None:
+    """Given: the walkthrough's plan signed off, with the user's decision under "Type hints in each
+    file of invoicer" and none under "invoicer marked as typed".
+    When: the orchestrator starts the generator with the design tree whole as its text, then with
+    the text that the guard gives due.
+    Then: the guard stops the first start, and the Cut of the second holds only the goal, the
+    deliverable's name and inputs, its own decisions, and its More kept."""
+    walk = w.planned(b)
+    whole = json.dumps(w.tree_in(walk))
+    stopped, agent = walk.c.start("rn:generator", whole, "generator")
+    assert stopped.blocked and agent is None
+    _, cut = w.generator_started(walk)
+    assert set(cut["cut"]) == {"goal", "name", "inputs", "decisions", "more"}
+    paths = [each["decision"]["path"] for each in cut["cut"]["decisions"]]
+    assert paths and all(p.startswith("deliverables/0/") for p in paths)
+
+
+@pytest.mark.supports("Every step by best practice", "S1", "record.py", "Record", "guard")
+def test_an_end_whose_record_lacks_a_practice_is_held_with_it(b: Bench, broken: None) -> None:
+    """Given: the generator of "Type hints in each file of invoicer", which made it and wrote its
+    Made, but recorded every practice of the code best practice save N4.1.
+    When: it gives done and ends.
+    Then: the guard holds its end, naming code's N4.1, and once the generator records N4.1 and
+    ends again, the guard passes the end."""
+    walk = w.planned(b)
+    generator, cut = w.generator_started(walk)
+    w.made(b, walk, generator, cut)
+    record = os.path.join(walk.run["worktree"], cut["record"])
+    with open(record, encoding="utf-8") as f:
+        held = json.load(f)
+    held["entries"] = [
+        e for e in held["entries"] if (e["of"], e.get("practice")) != ("code", "N4.1")
+    ]
+    with open(record, "w", encoding="utf-8") as f:
+        json.dump(held, f)
+    ended, _ = w.give(b, generator, "done", "Made.")
+    assert ended.blocked and "N4.1" in ended.said
+    assert (
+        generator.bash(
+            b.record("add", cut["record"], "code", "N4.1", "Typed each module.")
+        ).exit_code
+        == 0
+    )
+    again, _ = generator.end("Made.")
+    assert not again.blocked, again.said
+
+
+@pytest.mark.supports("Every item handled", "S1", "Made", "record.py")
+def test_a_made_that_leaves_out_a_decision_of_the_cut_is_held_with_it(
+    b: Bench, broken: None
+) -> None:
+    """Given: the generator of "Type hints in each file of invoicer", which recorded each step and
+    practice and wrote a Made that names none of the decisions of its Cut.
+    When: it gives done and ends.
+    Then: the guard holds its end, naming the path of the user's decision on which files."""
+    walk = w.planned(b)
+    generator, cut = w.generator_started(walk)
+    w.made(b, walk, generator, cut, every_item=False)
+    ended, _ = w.give(b, generator, "done", "Made.")
+    assert ended.blocked
+    assert "deliverables/0/necessary_conditions/0/decisions/0" in ended.said
+
+
+@pytest.mark.supports("Judged by the people it's for", "S1", "evaluator", "Cut")
+def test_an_evaluator_starts_with_only_what_the_deliverables_people_have(
+    b: Bench, broken: None
+) -> None:
+    """Given: the generator of "Type hints in each file of invoicer" ended done.
+    When: the orchestrator starts each evaluator that the guard gives due.
+    Then: each evaluator's Cut holds only its record, the deliverable, its name, its best
+    practice, the IDs of its group, and where it writes its Answers: no goal, no decision, and no
+    Made."""
+    _, _, cuts = w.first_round(b)
+    people = {"record", "deliverable", "name", "best_practice", "conditions", "answers"}
+    assert cuts and all(set(cut) == people for cut in cuts)
+    assert all(cut["name"] == w.HINTS for cut in cuts)
+
+
+@pytest.mark.supports("Signed off before it's built on", "S3", "Sign-off", "Deliverable")
+def test_work_resting_on_the_plan_waits_until_the_user_signs_it_off(b: Bench, broken: None) -> None:
+    """Given: the walkthrough's plan put up for the user's sign-off.
+    When: the orchestrator starts a generator, then the user types /rn:ty, the sign-off is
+    approved, and the tree-keeper writes it.
+    Then: the guard stops the start before /rn:ty, as no deliverable is doing, and after it both
+    deliverables are doing and the guard gives the generator's start due."""
+    walk = w.plan_put_up(b)
+    assert [d["status"] for d in w.tree_in(walk)["deliverables"]] == ["open", "open"]
+    stopped, agent = walk.c.start("rn:generator", "Carry out your steps", "generator")
+    assert stopped.blocked and agent is None
+    wrote = w.approved(b, walk, "The user signed off the plan.")
+    assert wrote["doing"] == [w.HINTS_PATH, w.TYPED_PATH]
+    assert w.cut_of(w.due_text(walk.said, "generator"))["deliverable"] == w.HINTS_PATH
+
+
+@pytest.mark.supports("Back to the design tree on a problem", "S1", "More kept", "tree-keeper")
+def test_a_more_kept_with_no_decision_changed_is_refused(b: Bench, broken: None) -> None:
+    """Given: the first round of "Type hints in each file of invoicer", with N2 in more.
+    When: the tree-keeper writes the more to keep with no decision changed, and gives refused.
+    Then: tree.py write gives 1, naming N2, keeps no more, and the guard passes the tree-keeper's
+    end with refused for the orchestrator to read."""
+    good_when = "A caller's editor shows the type of each argument as they type the call."
+    walk, _, _ = w.first_round(b, {"N2": good_when})
+    more = [{"deliverable": w.HINTS_PATH, "condition": "N2", "good_when": good_when}]
+    change = {"nodes": {}, "more": more}
+    assert not walk.c.resume(walk.keeper, w.resume_text("Keep the more.", None, change)).blocked
+    record = w.cut_of(w.due_text_of(walk.keeper))["record"]
+    refused = walk.keeper.bash(b.fed(b.tree("write", record, "Keep the more."), change))
+    assert refused.exit_code == 1 and "N2" in refused.output
+    w.keeps(b, walk.keeper, record, "tree-keeper", ("design-tree",))
+    then = w.reached(b, walk.keeper, "refused", "tree.py refused the more of N2.")
+    assert "refused" in then.said
+    assert not w.files_holding(walk.folder("rounds"), good_when)
+
+
+@pytest.mark.supports("The design tree revised on each run", "S1", "Best practice")
+def test_a_best_practice_made_on_the_run_is_taken_over_rns_own(b: Bench, broken: None) -> None:
+    """Given: the walkthrough's plan signed off, and a code best practice made on the run in
+    .rn/best-practices/code/ of the run's worktree, committed.
+    When: the orchestrator starts the generator with the text that the guard gives due.
+    Then: its Cut names the best practice made on the run, not rn's own."""
+    walk = w.planned(b)
+    made = os.path.join(walk.run["worktree"], ".rn", "best-practices", "code")
+    shutil.copytree(os.path.join(b.rn, "domain", "best-practices", "code"), made)
+    w.git(walk.run["worktree"], "add", "-A")
+    w.git(walk.run["worktree"], "commit", "-q", "-m", "The code best practice made on the run")
+    _, cut = w.generator_started(walk)
+    assert cut["best_practice"].rstrip("/").endswith(".rn/best-practices/code")
+
+
+@pytest.mark.supports("Tried in a throwaway copy", "S1", "throwaway.py", "Try record", "guard")
+def test_a_command_tried_leaves_the_worktree_as_it_was_and_is_kept(b: Bench, broken: None) -> None:
+    """Given: the generator of "Type hints in each file of invoicer" running.
+    When: it tries a command that writes a file by throwaway.py, then runs the same command by
+    itself.
+    Then: throwaway.py gives the command's own exit code and output, the worktree holds no file it
+    wrote, the round's Try record keeps the command, and the guard stops the command run by
+    itself."""
+    walk = w.planned(b)
+    generator, cut = w.generator_started(walk)
+    command = "touch tried.txt && echo tried"
+    tried = generator.bash(b.throwaway(cut["deliverable"], command))
+    assert tried.exit_code == 0 and "tried" in tried.output
+    assert not os.path.exists(os.path.join(walk.run["worktree"], "tried.txt"))
+    outside = ("--", ".", ":(exclude).rn")
+    assert w.git(walk.run["worktree"], "status", "--porcelain", "-uall", *outside) == ""
+    assert w.files_holding(walk.folder("rounds"), command)
+    assert generator.bash(command).blocked
+
+
+@pytest.mark.supports("The repository holds the work", "S1", "Place", "repository", "tree.py")
+def test_each_steps_end_commits_the_work_with_its_place(b: Bench, broken: None) -> None:
+    """Given: the generator of "Type hints in each file of invoicer" running, which wrote
+    invoicer/py.typed.
+    When: it runs tree.py commit with its record and step 1.
+    Then: the work's branch holds invoicer/py.typed at its last commit, with a Place in the run's
+    rounds/ that names the generator's record and step 1."""
+    walk = w.planned(b)
+    generator, cut = w.generator_started(walk)
+    assert not generator.write(
+        os.path.join(walk.run["worktree"], "invoicer", "py.typed"), ""
+    ).blocked
+    assert generator.bash(b.tree("commit", cut["record"], "1")).exit_code == 0
+    held = w.git(walk.run["worktree"], "ls-tree", "-r", "--name-only", "HEAD").split()
+    assert "invoicer/py.typed" in held
+    rounds = [p for p in held if p.startswith(f"{walk.run['folder']}/rounds/")]
+    places = [json.loads(w.git(walk.run["worktree"], "show", f"HEAD:{p}")) for p in rounds]
+    assert {"record": cut["record"], "step": 1} in [
+        {"record": p.get("record"), "step": p.get("step")} for p in places if isinstance(p, dict)
+    ]

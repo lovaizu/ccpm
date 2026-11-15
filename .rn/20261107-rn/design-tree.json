@@ -104,115 +104,7 @@
       "name": "rn's developers build its parts so that together they give what its README promises",
       "path": "dev/rn/architecture.md",
       "kind": "architecture",
-      "inputs": [
-        "dev/rn/product-vision.md",
-        "plugins/rn/README.md"
-      ],
-      "preconditions": [
-        "plugins/rn/domain/best-practices/architecture",
-        "plugins/rn/domain/template"
-      ],
-      "status": "doing",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": true,
-          "decisions": [
-            {
-              "about": "What a user story states",
-              "decided": "each story states what its role wants, in the role's words, without the command or reply that meets it, which Sequences shows, as the architecture best practice's N2 now says from Cohn's user stories and Patton's story mapping",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N3",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N9",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N10",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N11",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N12",
-          "good": true,
-          "decisions": [
-            {
-              "about": "Which checks Test strategy holds",
-              "decided": "Test strategy holds only the checks of the test strategy guide to pick always and those whose condition the product meets, each a quality with its criterion or a benchmark with none, a test that runs a prompt a benchmark whose runs a person judges; security and reliability testing aren't picked, as no access needs authorization and going on after a stop is a story that integration tests already try; configuration testing stays at Python 3.9 and the newest, as the code is the standard library alone and only the Python version risks what the team built",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N13",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Who makes the designs",
-              "decided": "a subagent makes the skeleton by the software design best practice, and then one makes the cases by the test design best practice; the main conversation decides how each gap they list is mended in the architecture, and reads each result against the architecture",
-              "by": "maker"
-            }
-          ]
-        },
-        {
-          "id": "N14",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N15",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N16",
-          "good": true,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Lane's product vision says what Lane is for",
@@ -396,48 +288,7 @@
       "name": "rn's developers see, before anyone builds a part, whether rn's parts joined as its architecture draws give each key result",
       "path": "dev/rn/tests",
       "kind": "test-design",
-      "inputs": [
-        "dev/rn/product-vision.md",
-        "plugins/rn/README.md",
-        "dev/rn/architecture.md",
-        "plugins/rn"
-      ],
-      "preconditions": [
-        "plugins/rn/domain/best-practices/test-design"
-      ],
-      "status": "doing",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "A person's /rn:up with a request gets one deliverable that a generator makes and an evaluator judges, in a pull request of its own",
@@ -451,14 +302,14 @@
       "preconditions": [
         "dev/lane/tests/integration/test_s5_run_order.py"
       ],
-      "status": "open",
+      "status": "doing",
       "check": "the integration tests in dev/rn/tests/integration/test_rn_walking_skeleton.py pass, each seen to fail first",
       "good": false,
       "decisions": []
     },
     {
       "name": "The user's /rn:up with a request gets the goal put to them, and each deliverable made in rounds until every necessary condition is good",
-      "path": "dev/rn/tests/integration/test_s1_request.py",
+      "path": "dev/rn/tests/integration/test_rn_s1_request.py",
       "kind": "specific",
       "inputs": [
         "dev/rn/architecture.md",
@@ -469,13 +320,13 @@
         "dev/rn/tests/integration/test_rn_walking_skeleton.py"
       ],
       "status": "open",
-      "check": "the integration tests in dev/rn/tests/integration/test_s1_request.py pass, each seen to fail first",
+      "check": "the integration tests in dev/rn/tests/integration/test_rn_s1_request.py pass, each seen to fail first",
       "good": false,
       "decisions": []
     },
     {
       "name": "rn puts to the person only what's theirs, one point at a time, and goes on from their answer",
-      "path": "dev/rn/tests/integration/test_s2_point.py",
+      "path": "dev/rn/tests/integration/test_rn_s2_points.py",
       "kind": "specific",
       "inputs": [
         "dev/rn/architecture.md",
@@ -486,13 +337,13 @@
         "dev/rn/tests/integration/test_rn_walking_skeleton.py"
       ],
       "status": "open",
-      "check": "the integration tests in dev/rn/tests/integration/test_s2_point.py pass, each seen to fail first",
+      "check": "the integration tests in dev/rn/tests/integration/test_rn_s2_points.py pass, each seen to fail first",
       "good": false,
       "decisions": []
     },
     {
       "name": "Nothing rests on a plan or a deliverable that the person didn't sign off with /rn:ty",
-      "path": "dev/rn/tests/integration/test_s3_sign_off.py",
+      "path": "dev/rn/tests/integration/test_rn_s3_sign_off.py",
       "kind": "specific",
       "inputs": [
         "dev/rn/architecture.md",
@@ -503,13 +354,13 @@
         "dev/rn/tests/integration/test_rn_walking_skeleton.py"
       ],
       "status": "open",
-      "check": "the integration tests in dev/rn/tests/integration/test_s3_sign_off.py pass, each seen to fail first",
+      "check": "the integration tests in dev/rn/tests/integration/test_rn_s3_sign_off.py pass, each seen to fail first",
       "good": false,
       "decisions": []
     },
     {
       "name": "The person's /rn:dn stops the run at any moment and keeps the work so far",
-      "path": "dev/rn/tests/integration/test_s4_pause.py",
+      "path": "dev/rn/tests/integration/test_rn_s4_pause.py",
       "kind": "specific",
       "inputs": [
         "dev/rn/architecture.md",
@@ -520,13 +371,13 @@
         "dev/rn/tests/integration/test_rn_walking_skeleton.py"
       ],
       "status": "open",
-      "check": "the integration tests in dev/rn/tests/integration/test_s4_pause.py pass, each seen to fail first",
+      "check": "the integration tests in dev/rn/tests/integration/test_rn_s4_pause.py pass, each seen to fail first",
       "good": false,
       "decisions": []
     },
     {
       "name": "/rn:up alone in a new conversation goes on where the run stopped",
-      "path": "dev/rn/tests/integration/test_s5_pick_up.py",
+      "path": "dev/rn/tests/integration/test_rn_s5_pick_up.py",
       "kind": "specific",
       "inputs": [
         "dev/rn/architecture.md",
@@ -537,13 +388,13 @@
         "dev/rn/tests/integration/test_rn_walking_skeleton.py"
       ],
       "status": "open",
-      "check": "the integration tests in dev/rn/tests/integration/test_s5_pick_up.py pass, each seen to fail first",
+      "check": "the integration tests in dev/rn/tests/integration/test_rn_s5_pick_up.py pass, each seen to fail first",
       "good": false,
       "decisions": []
     },
     {
-      "name": "The person gets one pull request, each decision rn took without asking, and the run's lessons",
-      "path": "dev/rn/tests/integration/test_s6_handed_over.py",
+      "name": "The person gets one pull request, each decision rn took without asking, and the run's lessons, and rn's developers get each lesson signed off in rn's issues",
+      "path": "dev/rn/tests/integration/test_rn_s6_s7_hand_over.py",
       "kind": "specific",
       "inputs": [
         "dev/rn/architecture.md",
@@ -554,7 +405,7 @@
         "dev/rn/tests/integration/test_rn_walking_skeleton.py"
       ],
       "status": "open",
-      "check": "the integration tests in dev/rn/tests/integration/test_s6_handed_over.py pass, each seen to fail first",
+      "check": "the integration tests in dev/rn/tests/integration/test_rn_s6_s7_hand_over.py pass, each seen to fail first",
       "good": false,
       "decisions": []
     },
@@ -568,12 +419,12 @@
         "dev/rn/tests"
       ],
       "preconditions": [
-        "dev/rn/tests/integration/test_s1_request.py",
-        "dev/rn/tests/integration/test_s2_point.py",
-        "dev/rn/tests/integration/test_s3_sign_off.py",
-        "dev/rn/tests/integration/test_s4_pause.py",
-        "dev/rn/tests/integration/test_s5_pick_up.py",
-        "dev/rn/tests/integration/test_s6_handed_over.py"
+        "dev/rn/tests/integration/test_rn_s1_request.py",
+        "dev/rn/tests/integration/test_rn_s2_points.py",
+        "dev/rn/tests/integration/test_rn_s3_sign_off.py",
+        "dev/rn/tests/integration/test_rn_s4_pause.py",
+        "dev/rn/tests/integration/test_rn_s5_pick_up.py",
+        "dev/rn/tests/integration/test_rn_s6_s7_hand_over.py"
       ],
       "status": "open",
       "check": "the integration tests in dev/rn/tests/integration/test_rn_components.py pass, each seen to fail first",
@@ -582,7 +433,7 @@
     },
     {
       "name": "Each rule of the Solution strategy of rn's architecture holds where the parts keep it, and its test fails where the part that holds it is taken out",
-      "path": "dev/rn/tests/integration/test_rn_principles.py",
+      "path": "dev/rn/tests/integration/test_rn_rules.py",
       "kind": "specific",
       "inputs": [
         "dev/rn/architecture.md",
@@ -590,15 +441,15 @@
         "dev/rn/tests"
       ],
       "preconditions": [
-        "dev/rn/tests/integration/test_s1_request.py",
-        "dev/rn/tests/integration/test_s2_point.py",
-        "dev/rn/tests/integration/test_s3_sign_off.py",
-        "dev/rn/tests/integration/test_s4_pause.py",
-        "dev/rn/tests/integration/test_s5_pick_up.py",
-        "dev/rn/tests/integration/test_s6_handed_over.py"
+        "dev/rn/tests/integration/test_rn_s1_request.py",
+        "dev/rn/tests/integration/test_rn_s2_points.py",
+        "dev/rn/tests/integration/test_rn_s3_sign_off.py",
+        "dev/rn/tests/integration/test_rn_s4_pause.py",
+        "dev/rn/tests/integration/test_rn_s5_pick_up.py",
+        "dev/rn/tests/integration/test_rn_s6_s7_hand_over.py"
       ],
       "status": "open",
-      "check": "the integration tests in dev/rn/tests/integration/test_rn_principles.py pass, each seen to fail first",
+      "check": "the integration tests in dev/rn/tests/integration/test_rn_rules.py pass, each seen to fail first, and each fails with the part that holds its rule taken out, through the fixture `broken`",
       "good": false,
       "decisions": []
     },
@@ -612,14 +463,14 @@
       ],
       "preconditions": [
         "dev/rn/tests/integration/test_rn_walking_skeleton.py",
-        "dev/rn/tests/integration/test_s2_point.py",
-        "dev/rn/tests/integration/test_s3_sign_off.py",
-        "dev/rn/tests/integration/test_s4_pause.py",
-        "dev/rn/tests/integration/test_s5_pick_up.py",
-        "dev/rn/tests/integration/test_s6_handed_over.py",
-        "dev/rn/tests/integration/test_s1_request.py",
+        "dev/rn/tests/integration/test_rn_s2_points.py",
+        "dev/rn/tests/integration/test_rn_s3_sign_off.py",
+        "dev/rn/tests/integration/test_rn_s4_pause.py",
+        "dev/rn/tests/integration/test_rn_s5_pick_up.py",
+        "dev/rn/tests/integration/test_rn_s6_s7_hand_over.py",
+        "dev/rn/tests/integration/test_rn_s1_request.py",
         "dev/rn/tests/integration/test_rn_components.py",
-        "dev/rn/tests/integration/test_rn_principles.py"
+        "dev/rn/tests/integration/test_rn_rules.py"
       ],
       "status": "open",
       "check": "the E2E tests of the README's main use, judged from their records, show KR1.1 and KR1.2 of the product vision",
