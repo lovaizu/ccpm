@@ -20,6 +20,7 @@ steps. With it, you have your plugin run as you designed it, and write no check.
 
 ## Requirements
 
+- macOS or Linux: `uname` shows it.
 - Claude Code 2.1.322 or later, where you build and run your plugin: `claude --version` shows it.
 - Python 3.9 or later, run as `python3`: `python3 --version` shows it.
 - A plugin that Claude Code takes as valid: `claude plugin validate <folder>` shows
@@ -230,7 +231,8 @@ Lane decides each move from a record of the run's starts and results, so a run g
 
 ### "Does it check other work in the same conversation?"
 
-No. A run starts at a call of your skill and ends once a route starts no more.
+No. Lane holds only your skill's run, from its call until its routes end, not another
+plugin's within it.
 
 ### "Does whoever runs the plugin need Lane?"
 

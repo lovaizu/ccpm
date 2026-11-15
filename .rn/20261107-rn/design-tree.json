@@ -270,115 +270,13 @@
       "name": "Lane's product vision says what Lane is for",
       "path": "dev/lane/product-vision.md",
       "kind": "product-vision",
-      "inputs": [],
-      "preconditions": [
-        "plugins/rn/domain/best-practices/product-vision",
-        "plugins/rn/domain/record/template.py"
-      ],
-      "status": "doing",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "A newcomer decides from Lane's README alone whether Lane fits their plugin, and starts using it",
       "path": "plugins/lane/README.md",
       "kind": "readme",
-      "inputs": [
-        "dev/lane/product-vision.md"
-      ],
-      "preconditions": [
-        "plugins/rn/domain/best-practices/readme",
-        "plugins/rn/domain/record/template.py"
-      ],
-      "status": "doing",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The call of another plugin's skill",
-              "decided": "How it works names the call of another plugin's skill among the moves that Lane holds, and that Lane's guard stands aside while the other plugin's run lasts, as Lane's architecture decides it by the plugin guide's 'A plugin that uses another', so a newcomer whose plugin uses another sees whether Lane fits it",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N9",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N10",
-          "good": true,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Lane's developers build its parts so that together they give what its README promises",
