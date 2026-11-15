@@ -45,8 +45,9 @@ record against the part's steps and the best practice's practices, then removes 
   rn's check would.
 
 **Until the user says yes, install nothing, and send nothing to a translator, a web API, or any
-other service outside the repository's git and GitHub. Fetching a public page to read it needs no
-ask. Say so in every brief to a subagent and in every `claude -p` you start.**
+service other than Claude Code and the repository's git and GitHub. Running `claude`, such as a
+prompt's tests and the E2E tests on Opus, needs no ask, and neither does fetching a public page to
+read it. Say so in every brief to a subagent and in every `claude -p` you start.**
 
 - Rationale: text sent out may hold what the user never meant to share, such as their email
-  address.
+  address. Claude Code and GitHub already hold the work, as the user runs the work through them.
