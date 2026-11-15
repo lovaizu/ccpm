@@ -62,6 +62,13 @@ def _routes(routes: Sequence[Route], lane: Lane) -> str:
 
 
 def _after(after: After) -> str:
+    """What a Route goes after, in the words of Lane's page of steps, routes, and adapters: `first`,
+    such as ``writer `written` `` for a Result, `the person types pause` for a command, and `the
+    call of lint:check` for another plugin's run that hands its work back."""
+    if after.kind == "command":
+        return f"the person types {after.command}"
+    if after.kind == "returned":
+        return f"the call of {after.skill}"
     return "first" if after.kind == "first" else f"{after.role} `{after.result}`"
 
 

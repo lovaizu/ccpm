@@ -20,7 +20,7 @@ import lane_data as d
 import pytest
 import walkthrough as w
 from claude_code import claude_program
-from form import Laid, LaidSentence, OutOfForm, write_lanes
+from form import After, Laid, LaidSentence, Move, OutOfForm, Route, write_lanes
 from lay.check import Checked, Faults, check
 from lay.claude import validate
 from lay.hooks_file import replace_entries
@@ -147,6 +147,59 @@ def test_a_commands_step_that_no_route_ties_is_held_as_its_own() -> None:
     Then: it gives both."""
     steps = (WRITE_STEP, APPROVE_STEP)
     assert as_held(steps, d.ROUTES_OF_WRITE) == steps
+
+
+# The front matter of the command approve, which only the person runs.
+APPROVE_FRONT = "---\nname: approve\ndescription: A.\ndisable-model-invocation: true\n---\n\n"
+# A body that names write-steps.md as the file of its Steps.
+NAMES_WRITE_STEPS = "Your steps are in `${CLAUDE_PLUGIN_ROOT}/write-steps.md`.\n"
+
+
+@pytest.mark.supports("test_a_steps_file_a_skill_and_its_command_share_is_the_skills")
+def test_a_steps_file_a_skill_and_its_commands_share_is_read_once_as_the_skills(
+    plugin: str,
+) -> None:
+    """Given: changelog whose skill write and command approve, which sets
+    `disable-model-invocation: true` and comes first by name, both name write-steps.md by
+    `${CLAUDE_PLUGIN_ROOT}/`, and approve's SKILL.md holds a Step of its own.
+    When: read_steps reads the plugin, with no Proposal.
+    Then: it gives write-steps.md's step 1 once, as write's, and approve's own Step as
+    approve's."""
+    w.write_files(
+        plugin,
+        {
+            "skills/write/SKILL.md": w.WRITE.split("## Steps")[0] + NAMES_WRITE_STEPS,
+            "skills/approve/SKILL.md": APPROVE_FRONT
+            + NAMES_WRITE_STEPS
+            + "\n## Steps\n\n1. Go on.\n",
+            "write-steps.md": "## Steps\n\n1. Have the entries written and reviewed.\n",
+        },
+    )
+    skills = [s for s in read_steps(plugin) if s.role in ("write", "approve")]
+    assert skills == [
+        Step("approve", "skills/approve/SKILL.md", 1, "Go on."),
+        WRITE_STEP,
+    ]
+
+
+@pytest.mark.supports("test_a_steps_file_two_roles_share_goes_to_the_user")
+def test_a_steps_file_two_skills_share_is_read_as_each(plugin: str) -> None:
+    """Given: changelog whose skills write and approve, neither setting
+    `disable-model-invocation: true`, both name write-steps.md by `${CLAUDE_PLUGIN_ROOT}/`.
+    When: read_steps reads the plugin.
+    Then: it gives write-steps.md's step 1 as approve's and as write's, so that check names the
+    file to the user."""
+    approve = APPROVE_FRONT.replace("disable-model-invocation: true\n", "")
+    w.write_files(
+        plugin,
+        {
+            "skills/write/SKILL.md": w.WRITE.split("## Steps")[0] + NAMES_WRITE_STEPS,
+            "skills/approve/SKILL.md": approve + NAMES_WRITE_STEPS,
+            "write-steps.md": "## Steps\n\n1. Have the entries written and reviewed.\n",
+        },
+    )
+    skills = [s for s in read_steps(plugin) if s.role in ("write", "approve")]
+    assert skills == [APPROVE_STEP, WRITE_STEP]
 
 
 @pytest.mark.supports("test_a_move_that_waits_for_the_person_lets_the_turn_end")
@@ -508,6 +561,37 @@ def test_print_shows_the_walkthroughs_proposal_as_the_readme_does() -> None:
     Then: it reads word for word as the README's walkthrough shows."""
     steps = shown_steps()
     assert render(d.proposal(), steps, w.README_ID, "changelog").rstrip("\n") == w.SHOWN
+
+
+def routes_shown(*added: Route) -> list[str]:
+    """The rows of write's Routes that render shows for the walkthrough's Proposal with the Routes
+    added."""
+    proposal = d.proposal()
+    proposal = dataclasses.replace(proposal, routes=(*proposal.routes, *added))
+    shown = render(proposal, shown_steps(), w.README_ID, "changelog")
+    return shown.split("\n\n")[0].split("\n")[1:]
+
+
+@pytest.mark.supports("test_a_steps_file_a_skill_and_its_command_share_is_the_skills")
+def test_a_route_after_a_command_shows_the_person_typing_it() -> None:
+    """Given: the walkthrough's Proposal with a Route of write after the command approve that
+    starts no more.
+    When: render gives what lay.py print shows.
+    Then: the Route's row reads `the person types approve`, then `start no more`."""
+    after = d.route(After("command", command="approve"), Move("no_more", result="good"))
+    rows = routes_shown(after)
+    assert rows[-1] == "  the person types approve  start no more"
+
+
+@pytest.mark.supports("test_the_run_stands_aside_while_another_plugins_skill_runs")
+def test_a_route_after_a_called_skill_shows_the_call() -> None:
+    """Given: the walkthrough's Proposal with a Route of write after lint:check's run hands its
+    work back that starts writer.
+    When: render gives what lay.py print shows.
+    Then: the Route's row reads `the call of lint:check`, then `start writer`."""
+    after = d.route(After("returned", skill="lint:check"), Move("start", role="writer"))
+    rows = routes_shown(after)
+    assert rows[-1] == "  the call of lint:check  start writer"
 
 
 @pytest.mark.supports("test_what_print_showed_is_kept_in_ups_run")

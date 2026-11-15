@@ -3,14 +3,14 @@
     {
       "role": "up",
       "file": "domain/up.md",
-      "step": 1,
+      "step": 4,
       "type": "gives_shown",
       "args": {}
     },
     {
       "role": "up",
       "file": "domain/up.md",
-      "step": 1,
+      "step": 6,
       "type": "lays_after_reply",
       "args": {}
     }

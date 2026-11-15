@@ -1,7 +1,8 @@
 """Where a plugin's Steps lie and how lay.py reads them: the numbered list under `## Steps` of each
 skill's SKILL.md, each command's SKILL.md, each subagent's file in agents/, and each file of the
 plugin that such a body names by `${CLAUDE_PLUGIN_ROOT}/`; and whose role each Step is held as, a
-command's that a Route ties to a skill being the skill's where both read one file."""
+command's being the skill's where both read one file: a command whose SKILL.md sets
+`disable-model-invocation: true`, or, by a Proposal, one that a Route ties to the skill."""
 
 from __future__ import annotations
 
@@ -16,6 +17,8 @@ from form import Route
 ITEM = re.compile(r"^(\d+)\. (.*)$")
 # A file of the plugin that a body names, by its path from the plugin's folder.
 NAMED = re.compile(r"\$\{CLAUDE_PLUGIN_ROOT\}/([^\s`'\")]+)")
+# The setting of a command's SKILL.md, by which only the person runs it.
+COMMAND = "disable-model-invocation: true"
 
 
 @dataclass(frozen=True)
@@ -35,26 +38,57 @@ def read_steps(plugin: str) -> tuple[Step, ...]:
     Takes: the plugin's folder.
     Gives: each Step, by role, file, and number: those of the role's own file, then those of each
     file of the plugin that its file names by `${CLAUDE_PLUGIN_ROOT}/`, in the order named; a role
-    whose files hold no `## Steps` gives none.
+    whose files hold no `## Steps` gives none; and a file that a skill and a command both read,
+    the command's SKILL.md setting `disable-model-invocation: true` and the skill's not, gives its
+    Steps once, as the skill's, where the skill's own files stand.
     Changes: nothing.
     Refuses: FileNotFoundError, where the folder isn't there.
     Carries: S1 `L->>ST: reads each Step`, S4 `L->>ST: reads each Step`.
     """
     if not os.path.isdir(plugin):
         raise FileNotFoundError(f"{plugin} is no folder")
+    read = _files_read(plugin)
+    skills = {role for role, file, _ in read if file == f"skills/{role}/SKILL.md"}
+    commands = {s for s in skills if sets(plugin, f"skills/{s}/SKILL.md", COMMAND)}
+    skills_files = {file for role, file, _ in read if role in skills - commands}
+    return tuple(
+        Step(role, file, number, t)
+        for role, file, text in read
+        if not (role in commands and file in skills_files)
+        for _, number, t in items(text.split("\n"))
+    )
+
+
+def _files_read(plugin: str) -> list[tuple[str, str, str]]:
+    """Each file of Steps that each role reads, as its role, its path, and its text: the role's own
+    file, then each file of the plugin that it names, in the order named."""
     files = [(s, f"skills/{s}/SKILL.md") for s in _listed(plugin, "skills")]
     files += [
         (a[: -len(".md")], f"agents/{a}") for a in _listed(plugin, "agents") if a.endswith(".md")
     ]
-    found = []
+    read = []
     for role, file in files:
         if not os.path.isfile(os.path.join(plugin, file)):
             continue
         text = _read(plugin, file)
         named = [n for n in dict.fromkeys(NAMED.findall(text)) if os.path.isfile(_at(plugin, n))]
-        for each, held in [(file, text), *((n, _read(plugin, n)) for n in named)]:
-            found += [Step(role, each, number, t) for _, number, t in items(held.split("\n"))]
-    return tuple(found)
+        read += [(role, file, text), *((role, n, _read(plugin, n)) for n in named)]
+    return read
+
+
+def sets(plugin: str, file: str, setting: str) -> bool:
+    """Whether a file of the plugin sets the setting in its front matter.
+
+    Takes: the plugin's folder, the file by its path from that folder, and the setting as its line
+    reads, such as `background: true`.
+    Gives: whether the file holds the setting as a line of its own before its front matter ends,
+    at its second `---`.
+    Changes: nothing.
+    Refuses: FileNotFoundError, where the file isn't there.
+    Carries: which skill is a command, for read_steps and `check.check`, and which subagent runs
+    in the background, for `check.check`.
+    """
+    return setting in _read(plugin, file).split("\n---\n", 1)[0].split("\n")
 
 
 def as_held(steps: Sequence[Step], routes: Sequence[Route]) -> tuple[Step, ...]:
