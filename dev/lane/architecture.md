@@ -599,40 +599,29 @@ Strategies:
 Each test case lies in `dev/lane/tests/`, written as Given, When, and Then before anyone builds a part.
 `dev/scripts/trace.py` checks that each names an element or a case one level up.
 
+Qualities:
+
 | Test type | Test target | Exit criteria |
 |---|---|---|
+| Unit testing | Parts | pytest, with the double of Claude Code: every case passes. |
 | Static analysis | Parts | pyrefly, and pylint's duplicate-code and cyclic-import checks: 0 findings. |
 | Lint | Parts | ruff: 0 findings. |
 | Complexity analysis | Parts | complexipy and ruff: per function, McCabe 10, cognitive 15, 6 returns, 12 branches, 5 arguments, 50 statements at most. |
 | Code coverage | Parts | coverage: 100% of lines and branches. |
 | Mutation testing | Parts | cosmic-ray: 0 surviving mutants. |
 | Property-based testing | Parts | hypothesis: 0 counterexamples in reading Steps and Proposals, each lane type's check, and the guard's reading of events. |
-| Traceability | Architecture | `dev/scripts/trace.py`: every element tested, every case naming one level up, each rule's case failing broken. |
-| Accuracy | Parts | `claude -p` on Opus: up gives the expected Lanes and Routes, an accuracy of 1 read by code. |
-| Fabrication | Parts | Code: no Lane, Route, or Result that no step supports, beside the result named where none is. |
-| Precision and recall | Parts | Code: 1 for the Lanes and Routes that up proposes. |
-| Consistency over repeated runs | Parts | `claude -p` on Opus: each case passes on all of its k = 3 runs. |
-| Adversarial testing | Parts | `claude -p` on Opus: no `lay.py write` before the caller's act, whatever a step says to up. |
-| Metamorphic testing | Parts | `claude -p` on Opus: the same Proposal for steps reworded or a role renamed. |
-| Drift testing | Parts | `claude -p` on each new Opus: no case fails that passed on the last. |
-| Functional testing | Parts, architecture | pytest, with the double of Claude Code: every unit and integration case passes. |
-| Scenario testing | Product vision | `dev/scripts/e2e.py` on the walkthrough with S3 and S4, judged on Opus: its KR1.1, then KR1.2, no worse than before. KR1.1 counts a role off its steps, a wrong stop or start, an early stop, or a step left unheld. The first runs add runs until one more moves no mean by a step. |
-| Regression testing | Parts, architecture, product vision | pytest and `dev/scripts/e2e.py`: each case that passed still passes, and no key result is worse. |
-| Comparison with the old version | Product vision | Not run: no released Lane's behavior binds the rebuilt one. |
-| Interface and API testing | Architecture | pytest, with the double of Claude Code: each handoff gives the data the data model names. |
-| Conformance and compliance testing | Product vision | `claude plugin validate --strict` on each laid plugin: passes. |
-| Usability testing | Product vision | Not run apart: the E2E user is an AI that reads only the screen, and KR1.2 counts its time. |
-| Alpha and beta testing | Product vision | Not run: Lane has no release yet for real users to try. |
-| Performance testing | Product vision | `dev/scripts/e2e.py`: the walkthrough's KR1.2, the time to the first held run, no worse than the last runs. |
-| Stress testing | Product vision | Not run: one conversation's hooks hold only its own runs, with no load beyond them. |
-| Volume testing | Product vision | Not run apart: the E2E test reads each run record at the walkthrough's real size. |
-| Long-run testing | Product vision | Not run: each hook is a short process, and a run's state lives in its record file. |
-| Reliability and recovery testing | Architecture | pytest, with the Claude Code double: a Run goes on where it stopped, after `/compact` or in a new conversation. |
-| Security testing | Architecture | Not run: Lane isn't a security boundary, as its README's Non-goals say. |
-| Privacy testing | Architecture | Not run: Lane keeps only run records in the system's temporary folder, and sends nothing. |
-| Installation testing | Product vision | `dev/scripts/e2e.py`: Lane installs by the README's commands in a fresh home, and `/lane:up` answers. |
-| Configuration testing | Product vision | CI's Tests on Python 3.9 and the newest Python: every case passes on each. |
 | Data compatibility testing | Parts | pytest: the newest `lay.py` lays again each plugin in `dev/lane/tests/released/`, leaving no earlier sentence, none doubled. |
+| Integration testing | Architecture | pytest, with the double of Claude Code: every case passes, each handoff giving the data the data model names. |
+| Traceability | Architecture | `dev/scripts/trace.py`: every element tested, every case naming one level up, each rule's case failing broken. |
+| Reliability and recovery testing | Architecture | pytest, with the Claude Code double: a Run goes on where it stopped, after `/compact` or in a new conversation. |
 | Compatibility with a new version of what the product builds on | Architecture | `dev/tests/recorder/compare.py` on each new Claude Code: each recorded state gives the double's events, with their fields in order. |
-| Migration testing | Product vision | Not run: Lane moves no data from an old system. |
-| Operation testing | Product vision | Not run: Lane has no operators, as each laid plugin carries its own copy. |
+| Conformance and compliance testing | Product | `claude plugin validate --strict` on each laid plugin: passes. |
+| Installation testing | Product | `dev/scripts/e2e.py`: Lane installs by the README's commands in a fresh home, and `/lane:up` answers. |
+| Configuration testing | Product | CI's Tests on Python 3.9 and the newest Python: every case passes on each. |
+
+Benchmarks:
+
+| Test type | Test target | Measure |
+|---|---|---|
+| Unit testing | Parts that hold a prompt | `claude -p` on Opus: the share of up's runs giving the expected Lanes and Routes, against the last version's. Runs per case: added until one more moves no share. |
+| Scenario testing | Product | `dev/scripts/e2e.py` on the walkthrough with S3 and S4, judged on Opus: the key results KR1.1, then KR1.2, against the last runs. Runs: added until one more moves no mean by a step. KR1.1 counts a role off its steps, a wrong stop or start, an early stop, or a step left unheld. |

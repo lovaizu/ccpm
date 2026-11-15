@@ -602,40 +602,29 @@ dev/rn/
 Each test case lies in `dev/rn/tests/`, written as Given, When, and Then before anyone builds a part.
 `dev/scripts/trace.py` checks that each names an element or a case one level up.
 
+Qualities:
+
 | Test type | Test target | Exit criteria |
 |---|---|---|
+| Unit testing | Parts | pytest, with the double of Claude Code: every case passes. |
 | Static analysis | Parts | pyrefly, and pylint's duplicate-code and cyclic-import checks: 0 findings. |
 | Lint | Parts | ruff: 0 findings. |
 | Complexity analysis | Parts | complexipy and ruff: per function, McCabe 10, cognitive 15, 6 returns, 12 branches, 5 arguments, 50 statements at most. |
 | Code coverage | Parts | coverage: 100% of lines and branches. |
 | Mutation testing | Parts | cosmic-ray: 0 surviving mutants. |
 | Property-based testing | Parts | hypothesis: 0 counterexamples in reading the design tree, the records, and the adapters' input. |
+| Integration testing | Architecture | pytest, with the double of Claude Code: every case passes, each handoff giving the data the data model names. |
 | Traceability | Architecture | `dev/scripts/trace.py`: every element tested, every case naming one level up, each rule's case failing broken. |
-| Accuracy | Parts | `claude -p` on Opus: each prompt's accuracy of 1, read by code from each run's record. |
-| Fabrication | Parts | Code: each line in `good` and each place a Made names lies in the deliverable. |
-| Precision and recall | Parts | Code: 1 for the points put to the user and the `more` judged short. |
-| Consistency over repeated runs | Parts | `claude -p` on Opus: each case passes on all of its k = 3 runs. |
-| Adversarial testing | Parts | `claude -p` on Opus: no run follows an instruction written in a file the role reads. |
-| Metamorphic testing | Parts | `claude -p` on Opus: each relation holds on every run, such as a condition leaving `good` once its lines go. |
-| Drift testing | Parts | `claude -p` on each new Opus: no case fails that passed on the last. |
-| Functional testing | Parts, architecture | pytest, with the double of Claude Code: every unit and integration case passes. |
-| Scenario testing | Product vision | `dev/scripts/e2e.py` on the walkthrough, judged on Opus: the walkthrough's KR1.1, then KR1.2, no worse than the last runs. The first runs add runs until one more moves no mean by a step. |
-| Regression testing | Parts, architecture, product vision | pytest and `dev/scripts/e2e.py`: each case that passed still passes, and no key result is worse. |
-| Comparison with the old version | Product vision | Not run: the rebuilt rn keeps nothing of rn 0.9.0's behavior to match. |
-| Interface and API testing | Architecture | pytest, with the double of Claude Code: each handoff gives the data the data model names. |
-| Conformance and compliance testing | Product vision | `claude plugin validate --strict`: passes. |
-| Usability testing | Product vision | Not run apart: the E2E judge reads each deliverable as its people would, which KR1.1 counts. |
-| Alpha and beta testing | Product vision | Not run: rn has no release yet for real users to try. |
-| Performance testing | Product vision | `dev/scripts/e2e.py`: the walkthrough's KR1.2, the time from the request to the deliverable, no worse than the last runs. |
-| Stress testing | Product vision | Not run: one user runs one run at a time, so no load beyond it arises. |
-| Volume testing | Product vision | Not run apart: the E2E test's request is at the real size of the walkthrough. |
-| Long-run testing | Product vision | Not run: each role's start is short, and a run's state lives in files, not in a process. |
 | Reliability and recovery testing | Architecture | pytest, with the double of Claude Code: a run stopped at any step goes on from that step. |
 | Security testing | Architecture | pytest: the guard stops each command outside the throwaway copy and each start beyond its cut. |
-| Privacy testing | Architecture | Not run: rn sends nothing beyond the user's own git and GitHub. |
-| Installation testing | Product vision | `dev/scripts/e2e.py`: rn installs by the README's commands in a fresh home, and `/rn:up` answers. |
-| Configuration testing | Product vision | CI's Tests on Python 3.9 and the newest Python: every case passes on each. |
-| Data compatibility testing | Parts | Not run: no earlier version of the rebuilt rn has written files for it to read. |
 | Compatibility with a new version of what the product builds on | Architecture | `dev/rn/tests/gh/compatibility.py` on each new gh: each recorded command gives what its line shows. Claude Code's is Lane's test. |
-| Migration testing | Product vision | Not run: rn moves no data from an old system. |
-| Operation testing | Product vision | Not run: rn has no operators, as each user runs it on their own machine. |
+| Conformance and compliance testing | Product | `claude plugin validate --strict`: passes. |
+| Installation testing | Product | `dev/scripts/e2e.py`: rn installs by the README's commands in a fresh home, and `/rn:up` answers. |
+| Configuration testing | Product | CI's Tests on Python 3.9 and the newest Python: every case passes on each. |
+
+Benchmarks:
+
+| Test type | Test target | Measure |
+|---|---|---|
+| Unit testing | Parts that hold a prompt | `claude -p` on Opus: each prompt's share of right runs, read by code, against the last version's. Precision and recall for the points put to the user and the `more` judged short. Runs per case: added until one more moves no share. |
+| Scenario testing | Product | `dev/scripts/e2e.py` on the walkthrough, judged on Opus: the key results KR1.1, then KR1.2, against the last runs. Runs: added until one more moves no mean by a step. |
