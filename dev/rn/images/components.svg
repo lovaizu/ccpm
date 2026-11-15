@@ -128,8 +128,8 @@
   <text class="label small halo" x="168" y="408" text-anchor="start">by it [import]</text>
   <text class="data halo" x="168" y="422" text-anchor="start">Comment, Sign-off</text>
   <path class="line" d="M620,312 L290,312 L290,496 L260,496" marker-end="url(#arrow)"/>
-  <text class="data halo" x="465" y="304" text-anchor="middle">Cut, Answers, Made, Sign-off, Place, Comment</text>
-  <text class="label small halo" x="465" y="332" text-anchor="middle">makes the run&#x27;s worktree, gets each cut and</text>
+  <text class="data halo" x="465" y="304" text-anchor="middle">Answers, Made, Sign-off, Place, Comment</text>
+  <text class="label small halo" x="465" y="332" text-anchor="middle">makes the run&#x27;s worktree, gets</text>
   <text class="label small halo" x="465" y="346" text-anchor="middle">each round&#x27;s Answers and Made, lists the runs</text>
   <text class="label small halo" x="465" y="360" text-anchor="middle">left, puts up each sign-off, approves or sends</text>
   <text class="label small halo" x="465" y="374" text-anchor="middle">it back as /rn:ty or /rn:gm loads, pushes,</text>

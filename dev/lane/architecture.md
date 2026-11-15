@@ -303,6 +303,9 @@ sequenceDiagram
   A->>CC: calls up by the Skill tool
   CC->>G: the Skill tool call
   G->>RS: adds the call of up's Run, by an AI
+  opt a person's Proposal waits for their reply
+    G->>RS: keeps the person's Run, whose lay.py write still waits for their reply, as S2 draws
+  end
   loop until the Proposal holds what it means
     Note over A,ST: up proposes, as S1 draws.
     opt it falls short
@@ -382,6 +385,8 @@ sequenceDiagram
         CC->>SA: starts it in the background
         CC->>G: the PostToolUse, with its agent_id
         G->>RS: adds the tie of the Start to that agent_id
+      else a resume, where the Routes open none
+        G-->>CC: lets it through, and moves no Run
       else any other start
         G-->>M: stops it, with the moves due
       end
@@ -390,6 +395,15 @@ sequenceDiagram
       CC->>G: the call
       G->>RS: adds it, so the Run stands aside
       Note over M,G: The guard checks none of the main conversation's calls until it makes the move after that call.
+    else it makes any other call
+      M->>CC: the call (Call)
+      CC->>G: the call
+      G->>T: checks the Call by each Lane of each Run's skill
+      alt it breaks a Lane
+        G-->>M: stops it, with each skill's Step sentence
+      else
+        G-->>CC: lets it through
+      end
     else it ends its turn, where a move waits for the person
       U->>CC: replies, or types the command the move waits for
       CC->>G: the prompt
@@ -399,6 +413,11 @@ sequenceDiagram
       U->>CC: the command, such as a pause
       CC->>G: the prompt
       G->>RS: adds it, so that route's moves are due in place of those before
+    end
+    opt a subagent ends unheld, as TaskStop stops it
+      CC->>G: its end
+      G->>RS: adds the end, with no Result
+      G-->>M: that it ended with no Result, and its start due again
     end
     opt a subagent ends, held as S6 draws
       CC->>G: its end, as it reaches the main conversation
