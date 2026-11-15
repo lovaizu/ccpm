@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from typing import Any, Literal, Union
 
 from events import Event
-from form import LanesFile
+from form import LanesFile, Move
 from manifest import plugin_name
 from runs import Conversation, Run, Start
 from script_calls import printed, result_args
@@ -142,8 +142,13 @@ def place(event: Event, conversation: Conversation, lanes: LanesFile, root: str)
 
     Takes: the event, the Conversation as it stands, the plugin's lanes.json, and the plugin's
     folder, by which `script_calls.result_args` reads a run of its result script.
-    Gives: what the event is, with no `what` for an event that Lane hooks only for another state;
-    for the main conversation's event, each Run of the conversation that isn't aside; for a
+    Gives: what the event is, with no `what` for an event that Lane hooks only for another state,
+    a call by the Skill tool being a SkillCall by an AI, save one of another plugin's skill that a
+    Run holds and no move due names, which is a ToolCall, and a SendMessage to the subagent of a
+    role's Start a StartCall that resumes that role; for the main conversation's event, each Run of
+    the conversation that hasn't ended and isn't aside, and, for its end or a prompt, each Run that
+    its skill's Result ended in the turn (`Run.closing`), and, for a start, each Run aside whose
+    moves due start its role; for a
     subagent's event, the Run of the Start tied to its agent_id; for a call of lay.py write, the Run
     of up that showed its ID; no Run for an event of a subagent that no Start ties, or of the main
     conversation while every Run stands aside.
@@ -151,18 +156,22 @@ def place(event: Event, conversation: Conversation, lanes: LanesFile, root: str)
     Refuses: nothing.
     Carries: the placing of each `CC->>G` arrow of S1 to S7 on its Run, Start, and role.
     """
-    start, runs = _where(event, conversation)
-    return Placed(_what(event, root), runs, start, event.agent_id)
+    what = _what(event, conversation, root)
+    start, runs = _where(event, conversation, what)
+    return Placed(what, runs, start, event.agent_id)
 
 
-def _where(event: Event, conversation: Conversation) -> tuple[Start | None, tuple[Run, ...]]:
+def _where(
+    event: Event, conversation: Conversation, what: What | None
+) -> tuple[Start | None, tuple[Run, ...]]:
     """The Start that the event comes from and the Runs that hold it: for a subagent's event, or
     the end of one that reaches the main conversation, its tied Start and that Start's Run; for the
-    main conversation's, each Run that hasn't ended."""
+    main conversation's, each Run that hasn't ended and doesn't stand aside, and, for its end or a
+    prompt, each Run whose turn's end is still held after its skill's Result ended it."""
     agent = event.agent_id or _notified(event)
     going = tuple(r for r in conversation.runs if not r.ended)
     if agent is None:
-        return None, going
+        return None, tuple(r for r in conversation.runs if _main(r, what))
     for run in going:
         for start in run.starts:
             if start.agent_id == agent:
@@ -170,7 +179,17 @@ def _where(event: Event, conversation: Conversation) -> tuple[Start | None, tupl
     return None, ()
 
 
-def _what(event: Event, root: str) -> What | None:
+def _main(run: Run, what: What | None) -> bool:
+    """Whether the Run holds an event of the main conversation: a Run going and not aside; for a
+    start, one aside whose moves due after the other plugin's run start that role, the move after
+    that call; and, for its end or a prompt, one that its skill's Result ended in this turn."""
+    if isinstance(what, StartCall) and run.aside:
+        return Move("start", role=what.role) in run.due
+    closing = isinstance(what, (EndAsked, Prompt))
+    return (not run.ended and not run.aside) or (closing and run.closing)
+
+
+def _what(event: Event, conversation: Conversation, root: str) -> What | None:
     """What the event is, by its kind and its tool."""
     if event.name == "UserPromptExpansion" and event.command_name:
         plugin, _, skill = event.command_name.partition(":")
@@ -183,19 +202,50 @@ def _what(event: Event, root: str) -> What | None:
         return EndAsked(event.last_message or "")
     tool_input = event.tool_input or {}
     if event.name == "PreToolUse":
-        return _called(event, tool_input, root)
+        return _called(event, tool_input, conversation, root)
     if event.name == "PostToolUse":
         return _posted(event, tool_input, root)
     return None
 
 
-def _called(event: Event, tool_input: Mapping[str, Any], root: str) -> What:
-    """What a tool call is: a start of a subagent, or another Call."""
+def _called(
+    event: Event, tool_input: Mapping[str, Any], conversation: Conversation, root: str
+) -> What:
+    """What a tool call is: a start of a subagent, a resume of a role's subagent, a call of a
+    skill by the Skill tool, or another Call."""
     if event.tool_name == "Agent":
         owner, _, role = str(tool_input.get("subagent_type", "")).rpartition(":")
         text = str(tool_input.get("prompt", ""))
         return StartCall(role, owner == plugin_name(root), text, False, str(event.tool_use_id))
+    if event.tool_name == "Skill" and not _unnamed(tool_input, conversation, root):
+        plugin, _, skill = str(tool_input.get("skill", "")).partition(":")
+        return SkillCall(plugin, skill, "ai", str(tool_input.get("args", "")))
+    resumed = _resumed(event, tool_input, conversation)
+    if resumed is not None:
+        return resumed
     return ToolCall(Call(str(event.tool_name), tool_input, event.cwd, _top(event.cwd)))
+
+
+def _unnamed(tool_input: Mapping[str, Any], conversation: Conversation, root: str) -> bool:
+    """Whether a Skill call is of another plugin's skill that a Run holds and no move due of it
+    names, so that it is any other call."""
+    name = str(tool_input.get("skill", ""))
+    going = [r for r in conversation.runs if not r.ended and not r.aside]
+    named = any(Move("call", skill=name) in r.due for r in going)
+    return bool(going) and not named and not name.startswith(f"{plugin_name(root)}:")
+
+
+def _resumed(
+    event: Event, tool_input: Mapping[str, Any], conversation: Conversation
+) -> StartCall | None:
+    """A SendMessage to the subagent of a role's Start, as a resume of that role; None for any
+    other call."""
+    if event.tool_name != "SendMessage":
+        return None
+    tied = {s.agent_id: s for r in conversation.runs for s in r.starts if s.agent_id}
+    start = tied.get(str(tool_input.get("to")))
+    message = str(tool_input.get("message", ""))
+    return StartCall(start.role, True, message, True, str(event.tool_use_id)) if start else None
 
 
 def _posted(event: Event, tool_input: Mapping[str, Any], root: str) -> What | None:

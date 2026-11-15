@@ -11,7 +11,6 @@ import pytest
 import walkthrough as w
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S3", "Approval")
 def test_an_ai_lays_by_its_own_run_of_lay(b: w.Bench) -> None:
     """Given: an AI in the main conversation called up by the Skill tool, and lay.py print showed

@@ -121,7 +121,6 @@ def laid_with_adapter(plugin: str, gives: str) -> str:
     return record_path("changelog", d.SESSION)
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_a_start_no_work_waits_for_is_left_out_and_the_turn_ends")
 def test_a_skills_call_gives_why_in_place_of_a_start_no_work_waits_for(plugin: str) -> None:
     """Given: changelog laid with an adapter of a start's text that gives, for writer, that no work
@@ -130,14 +129,15 @@ def test_a_skills_call_gives_why_in_place_of_a_start_no_work_waits_for(plugin: s
     Then: it adds the call of write's Run, lets the call run, and gives why in place of writer's
     start."""
     path = laid_with_adapter(plugin, "none")
-    event = d.event("UserPromptExpansion", command_name="changelog:write", command_args="")
+    event = d.event(
+        "UserPromptExpansion", cwd=plugin, command_name="changelog:write", command_args=""
+    )
     answer = handle(event, plugin)
     assert not answer.stop
     assert WAITING in answer.words and "Start `changelog:writer`" not in answer.words
     assert [x.skill for x in lines(path) if isinstance(x, Called)] == ["write"]
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_a_start_no_work_waits_for_is_left_out_and_the_turn_ends")
 def test_a_start_of_a_role_no_work_waits_for_is_stopped(plugin: str) -> None:
     """Given: changelog laid with an adapter of a start's text that gives, for writer, that no work
@@ -147,13 +147,14 @@ def test_a_start_of_a_role_no_work_waits_for_is_stopped(plugin: str) -> None:
     path = laid_with_adapter(plugin, "none")
     add(path, Called("r1", "write", "person", ""))
     tool_input = {"subagent_type": "changelog:writer", "prompt": "Carry out your steps"}
-    event = d.event("PreToolUse", tool_name="Agent", tool_input=tool_input, tool_use_id="t1")
+    event = d.event(
+        "PreToolUse", cwd=plugin, tool_name="Agent", tool_input=tool_input, tool_use_id="t1"
+    )
     answer = handle(event, plugin)
     assert answer.stop
     assert not [x for x in lines(path) if isinstance(x, Started)]
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_a_start_no_work_waits_for_is_left_out_and_the_turn_ends")
 @pytest.mark.parametrize(
     "gives, stops", [("text", True), ("none", False)], ids=["writer's start due", "left out"]
@@ -168,8 +169,9 @@ def test_the_main_conversations_end_stops_only_for_a_start_due(
     Then: it stops the end where writer's start is due, and lets it end where the start is left
     out."""
     laid_with_adapter(plugin, gives)
-    handle(d.event("UserPromptExpansion", command_name="changelog:write", command_args=""), plugin)
-    answer = handle(d.event("Stop", last_message="Waiting."), plugin)
+    called = {"command_name": "changelog:write", "command_args": ""}
+    handle(d.event("UserPromptExpansion", cwd=plugin, **called), plugin)
+    answer = handle(d.event("Stop", cwd=plugin, last_message="Waiting."), plugin)
     assert answer.stop is stops
 
 

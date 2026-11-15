@@ -3,14 +3,18 @@ command, run in the hook event's cwd with the run values and the Result filled i
 
 from __future__ import annotations
 
+import subprocess
 from collections.abc import Sequence
 
 from form import Lane, Route
 from place import Call, EndAsked, StartCall
 from runs import Due
 
-from lanes.kind import Held, Kept, TypeInfo, Verdict
+from lanes.kind import Broken, CantCheck, Held, Kept, TypeInfo, Verdict
 
+# The exit codes by which the shell says a command couldn't run: found but not executable, and not
+# found, as POSIX's Shell Command Language gives them.
+CANT_RUN = (126, 127)
 # Each value that a Lane of this type takes, by the name it lies under in the Lane's `args`, with
 # what it is, as lay.py types shows it.
 ARGS: dict[str, str] = {
@@ -53,14 +57,14 @@ class EndsChecked:
         Carries: S1 `L->>T: checks each Lane, and makes its sentence`, and the sentence of each
         Broken.
         """
-        raise NotImplementedError("ends_checked.EndsChecked.sentence")
+        return f"End once `{lane.args['command']}` gives 0."
 
     def allows(self, lane: Lane, call: Call, held: Held) -> bool | None:
         """None: Lane runs the command at the end, and the Lane judges no Call.
 
         Carries: the Call checks of S2, S5, and S6.
         """
-        raise NotImplementedError("ends_checked.EndsChecked.allows")
+        return None
 
     def check_start(self, lane: Lane, asked: StartCall, held: Held, due: Sequence[Due]) -> Verdict:
         """Kept: the Lane checks no start.
@@ -70,14 +74,30 @@ class EndsChecked:
         return Kept()
 
     def check_end(self, lane: Lane, end: EndAsked, held: Held) -> Verdict:
-        """Kept where `command`, its values filled in, gives 0; Broken, with the Lane's sentence,
-        where it gives another code; CantCheck, with why and the plugin's developer to fix it,
-        where it can't run.
+        """Kept where `command` gives 0, run by the shell in the hook event's cwd with each run
+        value of the Start filled in and `{result}` as the Start's last Result, or the skill's own
+        for the main conversation; Broken, with the Lane's sentence, where it gives another code;
+        CantCheck, with why and the plugin's developer to fix it, where the shell can't run it.
 
         Carries: S5 and S6 `opt a Lane holds the end to a command of the plugin's`, and `alt a Lane
         is broken`.
         """
-        raise NotImplementedError("ends_checked.EndsChecked.check_end")
+        start = held.start
+        values = dict(start.values) if start else {}
+        skills = tuple(r.result for r in held.run.results if r.role == held.run.skill)
+        results = start.results if start else skills
+        values["result"] = results[-1] if results else ""
+        command = str(lane.args["command"])
+        for name, value in values.items():
+            command = command.replace(f"{{{name}}}", value)
+        code = run(["sh", "-c", command], held.cwd)
+        if code in CANT_RUN:
+            why = f"`{command}` couldn't run, as the shell gave {code}"
+            return CantCheck(why, f"The developer of the plugin must fix {lane.file}")
+        if code != 0:
+            said = self.sentence(lane, held.routes).replace("${CLAUDE_PLUGIN_ROOT}", held.root)
+            return Broken(lane, said, "")
+        return Kept()
 
 
 TYPE = EndsChecked()
@@ -92,4 +112,4 @@ def run(command: Sequence[str], cwd: str) -> int:
     Refuses: OSError, where the command can't start, which the Lane gives as CantCheck.
     Carries: S5 and S6 `T->>PC: runs it` and `PC-->>T: its exit code`.
     """
-    raise NotImplementedError("ends_checked.run")
+    return subprocess.run(list(command), cwd=cwd, check=False).returncode

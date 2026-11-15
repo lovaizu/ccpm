@@ -4,8 +4,11 @@ text where the plugin names no adapter of a start's text."""
 
 from __future__ import annotations
 
+import json
+import subprocess
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
+from typing import Any
 
 # The text a start goes with where the plugin names no adapter of a start's text.
 TEXT = "Carry out your steps"
@@ -63,14 +66,59 @@ def start_text(
     `{"none": <why>}`, as no work waits for that start; or, with no adapter, Lane's text, `Carry
     out your steps`, and the words typed, with no values.
     Changes: nothing of Lane's; the adapter may read the plugin's files.
-    Refuses: AdapterFailed.
+    Refuses: AdapterFailed, naming the adapter and why, where it can't run, exits other than 0
+    (why being what it wrote to standard error), or prints other than a JSON object with a
+    string `text` or `none` and, beside `text`, `values` that map strings to strings.
     Carries: S5 `G->>A: asks for the text of each start due, with each Start that runs`, and its
     `A-->>G` answers: `the text, and the run values` and, after `it gives none, as no work waits
     for that start`, and each way it fails, `why`.
     """
     if program is None:
         return StartText(f"{TEXT}: {words}" if words else TEXT, {})
-    raise NotImplementedError("adapters.start_text, of an adapter")
+    handed = {"running": [dict(asdict(each), values=dict(each.values)) for each in running]}
+    printed = _run(program, [role], handed, cwd)
+    if "none" in printed:
+        return NoWork(_text(program, printed, "none"))
+    values = printed.get("values", {})
+    if not isinstance(values, dict) or not all(
+        isinstance(v, str) for v in [*values, *values.values()]
+    ):
+        raise AdapterFailed(f"{program}: `values` must map each name to a string, not {values!r}")
+    return StartText(_text(program, printed, "text"), values)
+
+
+def _run(program: str, args: Sequence[str], handed: Mapping[str, Any], cwd: str) -> dict[str, Any]:
+    """What the adapter printed, as a JSON object, given the arguments and, on standard input, what
+    it's handed, run in the folder."""
+    try:
+        done = subprocess.run(
+            [program, *args],
+            input=json.dumps(handed),
+            capture_output=True,
+            text=True,
+            cwd=cwd,
+            check=False,
+        )
+    except OSError as e:
+        raise AdapterFailed(f"{program} can't run: {e.strerror}") from e
+    if done.returncode != 0:
+        why = done.stderr.strip() or f"it exited {done.returncode}"
+        raise AdapterFailed(f"{program} failed: {why}")
+    try:
+        printed = json.loads(done.stdout)
+    except ValueError as e:
+        raise AdapterFailed(f"{program} printed what isn't JSON: {done.stdout.strip()!r}") from e
+    if not isinstance(printed, dict):
+        raise AdapterFailed(f"{program} printed {printed!r}, not a JSON object")
+    return printed
+
+
+def _text(program: str, printed: Mapping[str, Any], key: str) -> str:
+    """The string that the adapter printed under the key."""
+    given = printed.get(key)
+    if not isinstance(given, str):
+        raise AdapterFailed(f'{program} printed no `"{key}"` that is a string: {dict(printed)!r}')
+    return given
 
 
 def kept_results(program: str, words: str, cwd: str) -> tuple[KeptResult, ...]:

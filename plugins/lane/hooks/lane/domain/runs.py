@@ -8,12 +8,27 @@ import dataclasses
 import os
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
-from typing import Literal
+from typing import Literal, Union
 
 from adapters import KeptResult
 from form import After, Move, Route, read_lanes
 from manifest import plugin_name
-from run_record import Called, Gave, Line, Shown, Started, Tied, lines, record_path
+from run_record import (
+    Called,
+    Ended,
+    Gave,
+    Line,
+    Prompted,
+    Shown,
+    Started,
+    SteppedAside,
+    Tied,
+    lines,
+    record_path,
+)
+
+# Each line of a Run's record after its call.
+Moving = Union[Prompted, Shown, Started, Tied, Gave, Ended, SteppedAside]
 
 
 class OffRoutes(Exception):
@@ -72,7 +87,9 @@ class Left:
 
 @dataclass(frozen=True)
 class Run:
-    """One run of one skill in the conversation, as it stands."""
+    """One run of one skill in the conversation, as it stands; `closing` where the skill's own
+    Result ended it and no prompt has been typed since, so that the end of that turn is still held
+    by the skill's Lanes."""
 
     id: str
     skill: str
@@ -85,6 +102,7 @@ class Run:
     due: tuple[Move, ...]
     aside: bool
     ended: bool
+    closing: bool = False
 
 
 @dataclass(frozen=True)
@@ -95,13 +113,19 @@ class Conversation:
     runs: tuple[Run, ...]
 
 
-def stand(session_id: str, lines: Sequence[Line], routes: Sequence[Route]) -> Conversation:
+def stand(
+    session_id: str, lines: Sequence[Line], routes: Sequence[Route], plugin: str = ""
+) -> Conversation:
     """Where each Run of the conversation stands.
 
-    Takes: the conversation's session_id, the run record's lines, and the plugin's Routes.
-    Gives: each Run, its moves due those of the Route after its latest start, Result, typed command,
-    or returned call, a Route after a typed command taking the place of those before; a Run ended
-    by a Result whose move starts no more.
+    Takes: the conversation's session_id, the run record's lines, the plugin's Routes, and the
+    plugin's name, by which a prompt `/<plugin>:<command>` is the plugin's command.
+    Gives: each Run, its moves due those of the Route after its latest start, Result, typed
+    command, or returned call, a Route after the plugin's command typed taking the place of those
+    before, and a start whose subagent ended with no Result due again; a Run ended, and closing,
+    by the skill's own Result where a move due starts no more by it, until a prompt is typed; a
+    Run aside from the call of another plugin's skill, with the moves of the Route after that call
+    due, until a Start.
     Changes: nothing.
     Refuses: nothing; a line of a Run that the Routes no longer name leaves that Run no moves due.
     Carries: the guard's working out of each Run on each event of S1 to S7, from `G->>RS: reads
@@ -112,7 +136,7 @@ def stand(session_id: str, lines: Sequence[Line], routes: Sequence[Route]) -> Co
         if isinstance(line, Called):
             runs[line.run] = _called(line, routes)
         elif line.run in runs:
-            runs[line.run] = _moved(runs[line.run], line, routes)
+            runs[line.run] = _moved(runs[line.run], line, routes, plugin)
     return Conversation(session_id, tuple(runs.values()))
 
 
@@ -122,15 +146,29 @@ def _called(line: Called, routes: Sequence[Route]) -> Run:
     return Run(line.run, line.skill, line.by, line.words, (), (), (), (), due, False, False)
 
 
-def _moved(run: Run, line: Line, routes: Sequence[Route]) -> Run:
+def _moved(run: Run, line: Moving, routes: Sequence[Route], plugin: str) -> Run:
     """The Run after one more line of its record."""
+    if isinstance(line, (Started, Tied, Ended)):
+        return _of_start(run, line)
+    if isinstance(line, Gave):
+        return _gave(run, line, routes)
+    if isinstance(line, Prompted):
+        return _prompted(run, line, routes, plugin)
+    if isinstance(line, SteppedAside):
+        return _aside(run, line, routes)
+    return dataclasses.replace(run, shown=(*run.shown, line))
+
+
+def _of_start(run: Run, line: Started | Tied | Ended) -> Run:
+    """The Run after a Start, which ends its standing aside, its tie to an agent_id, or its
+    subagent's end."""
     if isinstance(line, Started):
         start = Start(line.role, line.text, line.values, line.tool_use_id, None, (), False)
         due = list(run.due)
         taken = Move("start", role=line.role)
         if taken in due:
             due.remove(taken)
-        return dataclasses.replace(run, starts=(*run.starts, start), due=tuple(due))
+        return dataclasses.replace(run, starts=(*run.starts, start), due=tuple(due), aside=False)
     if isinstance(line, Tied):
         starts = tuple(
             dataclasses.replace(s, agent_id=line.agent_id)
@@ -139,11 +177,37 @@ def _moved(run: Run, line: Line, routes: Sequence[Route]) -> Run:
             for s in run.starts
         )
         return dataclasses.replace(run, starts=starts)
-    if isinstance(line, Gave):
-        return _gave(run, line, routes)
-    if isinstance(line, Shown):
-        return dataclasses.replace(run, shown=(*run.shown, line))
-    return run
+    return _ended(run, line)
+
+
+def _ended(run: Run, line: Ended) -> Run:
+    """The Run after a subagent's end: its Start ended, and due again where it gave no Result."""
+    ended = [s for s in run.starts if s.agent_id == line.agent_id]
+    starts = tuple(dataclasses.replace(s, ended=True) if s in ended else s for s in run.starts)
+    again = tuple(Move("start", role=s.role) for s in ended if not s.results)
+    return dataclasses.replace(run, starts=starts, due=(*run.due, *again))
+
+
+def _prompted(run: Run, line: Prompted, routes: Sequence[Route], plugin: str) -> Run:
+    """The Run after a prompt: the moves of a Route after the plugin's command typed, as
+    `/<plugin>:<command>`, in place of those before, and a Run that its skill's Result ended no
+    longer closing."""
+    typed = line.text.split(maxsplit=1)[0] if line.text.strip() else ""
+    due = _moves(
+        routes,
+        run.skill,
+        lambda after: after.kind == "command" and typed == f"/{plugin}:{after.command}",
+    )
+    return dataclasses.replace(run, due=due or run.due, closing=False)
+
+
+def _aside(run: Run, line: SteppedAside, routes: Sequence[Route]) -> Run:
+    """The Run set aside by the call of another plugin's skill, with the moves of the Route after
+    that call due."""
+    due = _moves(
+        routes, run.skill, lambda after: after.kind == "returned" and after.skill == line.skill
+    )
+    return dataclasses.replace(run, aside=True, due=due)
 
 
 def _gave(run: Run, line: Gave, routes: Sequence[Route]) -> Run:
@@ -152,7 +216,7 @@ def _gave(run: Run, line: Gave, routes: Sequence[Route]) -> Run:
     results = (*run.results, Result(line.role, line.result))
     if line.agent_id is None and line.role == run.skill:
         ended = Move("no_more", result=line.result) in run.due
-        return dataclasses.replace(run, results=results, due=(), ended=ended)
+        return dataclasses.replace(run, results=results, due=(), ended=ended, closing=ended)
     starts = tuple(
         dataclasses.replace(s, results=(*s.results, line.result))
         if s.agent_id == line.agent_id
@@ -186,8 +250,8 @@ def where(root: str, session_id: str) -> Conversation:
     Carries: S2 `L->>G: asks where up's Run stands`, S6 `R->>G: asks where each Run stands`.
     """
     lanes = read_lanes(os.path.join(root, "hooks", "lanes.json"))
-    path = record_path(plugin_name(root), session_id)
-    return stand(session_id, lines(path), lanes.proposal.routes)
+    name = plugin_name(root)
+    return stand(session_id, lines(record_path(name, session_id)), lanes.proposal.routes, name)
 
 
 def may_give(conversation: Conversation, role: str, routes: Sequence[Route]) -> tuple[str, ...]:

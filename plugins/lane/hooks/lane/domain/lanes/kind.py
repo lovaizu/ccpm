@@ -4,6 +4,7 @@ check gives."""
 
 from __future__ import annotations
 
+import os
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from typing import Protocol, Union
@@ -59,12 +60,13 @@ class Held:
     main conversation, whose run values are then none, the plugin's folder, which
     `${CLAUDE_PLUGIN_ROOT}` names in a sentence and in a run of its result script, and the
     plugin's Routes, which name each Result that the sentence of the Lane on a role's last Step
-    gives."""
+    gives, and the hook event's cwd, in which a command of the plugin's that a Lane runs runs."""
 
     run: Run
     start: Start | None
     root: str
     routes: Sequence[Route]
+    cwd: str = os.curdir
 
 
 class LaneType(Protocol):

@@ -9,12 +9,12 @@ import os
 import uuid
 from dataclasses import dataclass
 
-from adapters import NoWork, Running, start_text
-from answers import due, gave, stopped
+from adapters import AdapterFailed, NoWork, Running, start_text
+from answers import cant_check, due, ended_unheld, gave, stopped, text_failed
 from events import Answer, Event
-from form import Lane, LanesFile, read_lanes
+from form import Lane, LanesFile, Move, read_lanes
 from lanes import check_call, check_end, check_start
-from lanes.kind import Broken, Held, Kept, Verdict
+from lanes.kind import Broken, CantCheck, Held, Kept, Verdict
 from manifest import plugin_name
 from place import (
     AgentPosted,
@@ -37,6 +37,7 @@ from run_record import (
     Prompted,
     Shown,
     Started,
+    SteppedAside,
     Tied,
     add,
     lines,
@@ -59,11 +60,11 @@ def handle(event: Event, root: str) -> Answer:
       run picks up; for another plugin's skill that a move names, adds it so that the Run stands
       aside;
     - a prompt typed (S2, S5): adds it to each Run of the conversation, so that the moves of a
-      Route after a typed command are due;
+      Route after a typed command are due, and answers those moves;
     - a start or resume (S5, S6): checks it by `lanes.check_start` with the Lanes of the role that
-      makes it, and adds the Start where it's due, lets a resume that the Routes open none for
-      through, and stops any other with the moves due, or a subagent's start of a role with the
-      sentence of the Lane on its last Step;
+      makes it, and adds the Start where it's due, lets a resume, or a subagent's start of no
+      role, through with no Start added, and stops any other with the moves due, or a subagent's
+      start of a role with the sentence of the Lane on its last Step;
     - the PostToolUse of a start (S5): adds the tie of the Start to its agent_id;
     - the PostToolUse of result.py that gave 0 (S2, S5, S6): adds the Result, for the subagent's
       Start where it has an agent_id;
@@ -75,8 +76,8 @@ def handle(event: Event, root: str) -> Answer:
     - a subagent's end reaching the main conversation (S5): adds the end, and answers the Result and
       the moves of its Route, or, ended with no Result, its start due again;
     - the main conversation's end of its turn (S2, S5): stops it with the moves due where a move is
-      due and no subagent of the Run runs, unless the move waits for the person; else checks it by
-      each Lane of each Run's skill;
+      due and no subagent of the Run runs, unless a move waits for the person; else checks it by
+      each Lane of each Run's skill, a Run that its skill's Result ended in that turn among them;
     - each start due, wherever the guard names the moves due (S5): asks the adapter of a start's
       text for it, where lanes.json names one, and where it gives that no work waits for the
       start, leaves the start out of the moves due, with why in its place in the answer; a start
@@ -87,18 +88,25 @@ def handle(event: Event, root: str) -> Answer:
     plugin's changes.
     Refuses: nothing; where lanes.json, the run record, an adapter, or a Lane can't be read or
     run, it stops the event with why and who must fix it, except an adapter that fails at the
-    skill's call, whose start it gives with why while it lets the call run.
+    skill's call, whose start it gives with why while it lets the call run, and one that fails as a
+    subagent's end reaches the main conversation, whose why and who it gives in place of the
+    moves.
     Carries: each `CC->>G` arrow of S1 to S7, each `G-->>` answer, and S5 `G->>G: leaves that
     start out of the moves due, with why in its place`.
     """
     lanes = read_lanes(os.path.join(root, "hooks", "lanes.json"))
     name = plugin_name(root)
     plugin = Plugin(name, root, lanes, event.session_id, record_path(name, event.session_id))
-    conversation = stand(event.session_id, lines(plugin.record), lanes.proposal.routes)
+    conversation = stand(event.session_id, lines(plugin.record), lanes.proposal.routes, name)
     placed = place(event, conversation, lanes, root)
-    if isinstance(placed.what, SkillCall):
-        return _called(plugin, placed.what, event.cwd)
-    return _answered(plugin, placed, event.cwd) if placed.runs else PASS
+    try:
+        if isinstance(placed.what, SkillCall):
+            return _called(plugin, placed, placed.what, event.cwd)
+        return _answered(plugin, placed, event.cwd) if placed.runs else PASS
+    except AdapterFailed as e:
+        # A notification stopped would be lost to the main conversation, so it goes with why.
+        cant = CantCheck(str(e), f"The developer of {name} must fix its adapter")
+        return Answer(event.name != "UserPromptSubmit", cant_check(name, cant))
 
 
 def _answered(plugin: Plugin, placed: Placed, cwd: str) -> Answer:
@@ -108,8 +116,12 @@ def _answered(plugin: Plugin, placed: Placed, cwd: str) -> Answer:
         return _notified(plugin, placed, cwd)
     if isinstance(what, StartCall):
         return _started(plugin, placed, what, cwd)
+    if isinstance(what, EndAsked) and placed.start is None:
+        return _turn_ended(plugin, placed, cwd)
     if isinstance(what, (ToolCall, EndAsked)):
-        return _checked(plugin, placed)
+        return _checked(plugin, placed, cwd)
+    if isinstance(what, Prompt):
+        return _prompted(plugin, placed, cwd)
     _record(plugin, placed)
     return PASS
 
@@ -126,18 +138,34 @@ class Plugin:
     record: str
 
 
-def _called(plugin: Plugin, what: SkillCall, cwd: str) -> Answer:
+def _called(plugin: Plugin, placed: Placed, what: SkillCall, cwd: str) -> Answer:
     """A skill's call: the call of a new Run, where the skill is the plugin's and a Route goes after
-    its start, with the first moves due."""
+    its start, with the first moves due; or each Run set aside whose move due calls the skill of
+    another plugin."""
     routes = plugin.lanes.proposal.routes
     first = [r for r in routes if r.skill == what.skill and r.after.kind == "first"]
-    if what.plugin != plugin.name or not first:
+    if what.plugin != plugin.name:
+        skill = f"{what.plugin}:{what.skill}"
+        for run in [r for r in placed.runs if Move("call", skill=skill) in r.due]:
+            add(plugin.record, SteppedAside(run.id, skill))
+        return PASS
+    if not first:
         return PASS
     run_id = uuid.uuid4().hex[:8]
     add(plugin.record, Called(run_id, what.skill, what.by, what.words))
-    conversation = stand(plugin.session_id, lines(plugin.record), routes)
+    run = _now(plugin, run_id)
+    try:
+        return Answer(False, due(plugin.name, _told(plugin, run, cwd)))
+    except AdapterFailed as e:
+        return Answer(False, text_failed(plugin.name, run.due, str(e)))
+
+
+def _now(plugin: Plugin, run_id: str) -> Run:
+    """The Run as it stands now, from the run record as it is."""
+    routes = plugin.lanes.proposal.routes
+    conversation = stand(plugin.session_id, lines(plugin.record), routes, plugin.name)
     (run,) = [r for r in conversation.runs if r.id == run_id]
-    return Answer(False, due(plugin.name, _told(plugin, run, cwd)))
+    return run
 
 
 def _record(plugin: Plugin, placed: Placed) -> None:
@@ -159,42 +187,71 @@ def _record(plugin: Plugin, placed: Placed) -> None:
             add(plugin.record, line)
 
 
+def _prompted(plugin: Plugin, placed: Placed, cwd: str) -> Answer:
+    """A prompt typed: added to each Run, with the moves due of each Run whose moves it changed,
+    as a Route goes after the command typed."""
+    _record(plugin, placed)
+    said = []
+    for run in placed.runs:
+        now = _now(plugin, run.id)
+        if now.due != run.due:
+            said.append(due(plugin.name, _told(plugin, now, cwd)))
+    return Answer(False, "\n".join(said))
+
+
 def _notified(plugin: Plugin, placed: Placed, cwd: str) -> Answer:
     """A subagent's end as it reaches the main conversation: the end added, and the Result it gave
-    with the moves of its Route."""
+    with the moves of its Route, or, ended with no Result, its start due again."""
     what = placed.what
     assert isinstance(what, Notification) and placed.start is not None
     (run,) = placed.runs
     add(plugin.record, Ended(run.id, what.agent_id, what.killed))
+    told = _told(plugin, _now(plugin, run.id), cwd)
+    role = placed.start.role
     if not placed.start.results:
-        return PASS
-    result = placed.start.results[-1]
-    return Answer(False, gave(plugin.name, placed.start.role, result, _told(plugin, run, cwd)))
+        return Answer(False, ended_unheld(plugin.name, role, told))
+    return Answer(False, gave(plugin.name, role, placed.start.results[-1], told))
 
 
 def _started(plugin: Plugin, placed: Placed, asked: StartCall, cwd: str) -> Answer:
     """A start: the Start added in the Run whose Lanes keep it, or stopped by the first Lane that
-    breaks it."""
+    breaks it; a resume, or a subagent's start of no role, let through with no Start added."""
     verdicts: list[Verdict] = []
     for run in placed.runs:
         moves = tuple(d for d in _told(plugin, run, cwd) if isinstance(d, Due))
-        verdict = check_start(_lanes(plugin, placed, run), asked, _held(plugin, placed, run), moves)
-        if verdict == Kept():
-            text = next((d for d in moves if d.text == asked.text), None)
-            values = dict(text.values) if text else {}
+        verdict = check_start(
+            _lanes(plugin, placed, run), asked, _held(plugin, placed, run, cwd), moves
+        )
+        if verdict != Kept():
+            verdicts.append(verdict)
+            continue
+        if placed.start is None and not asked.resume:
+            text = next(d for d in moves if (d.move.role, d.text) == (asked.role, asked.text))
             started = Started(
-                run.id, asked.role, asked.text, values, asked.tool_use_id, asked.resume
+                run.id, asked.role, asked.text, dict(text.values), asked.tool_use_id, False
             )
             add(plugin.record, started)
-            return PASS
-        verdicts.append(verdict)
+        return PASS
     return _stop(plugin, verdicts[0])
 
 
-def _checked(plugin: Plugin, placed: Placed) -> Answer:
+def _turn_ended(plugin: Plugin, placed: Placed, cwd: str) -> Answer:
+    """The main conversation's end of its turn: stopped with the moves due where a Run has a move
+    due, none of them waiting for the person, and no subagent of the Run runs; else checked by each
+    Lane of each Run's skill."""
+    for run in placed.runs:
+        told = _told(plugin, run, cwd)
+        moves = [d.move.kind for d in told if isinstance(d, Due)]
+        running = any(not s.ended for s in run.starts)
+        if moves and "wait" not in moves and not running:
+            return Answer(True, due(plugin.name, told))
+    return _checked(plugin, placed, cwd)
+
+
+def _checked(plugin: Plugin, placed: Placed, cwd: str) -> Answer:
     """A Call or an end, checked by each Lane of the role in each Run that holds it."""
     for run in placed.runs:
-        held = _held(plugin, placed, run)
+        held = _held(plugin, placed, run, cwd)
         lanes = _lanes(plugin, placed, run)
         if isinstance(placed.what, ToolCall):
             verdict = check_call(lanes, placed.what.call, held)
@@ -217,13 +274,14 @@ def _lanes(plugin: Plugin, placed: Placed, run: Run) -> tuple[Lane, ...]:
     return tuple(lane for lane in plugin.lanes.proposal.lanes if lane.role == role)
 
 
-def _held(plugin: Plugin, placed: Placed, run: Run) -> Held:
-    return Held(run, placed.start, plugin.root, plugin.lanes.proposal.routes)
+def _held(plugin: Plugin, placed: Placed, run: Run, cwd: str) -> Held:
+    return Held(run, placed.start, plugin.root, plugin.lanes.proposal.routes, cwd)
 
 
 def _told(plugin: Plugin, run: Run, cwd: str) -> tuple[Due | Left, ...]:
     """The Run's moves due, each start with its text and run values, and each start that the
-    adapter gives no work waits for left out, with why in its place."""
+    adapter gives no work waits for left out, with why in its place; raises AdapterFailed where
+    the adapter fails."""
     running = tuple(Running(s.role, s.text, s.values) for s in run.starts if not s.ended)
     adapter = plugin.lanes.proposal.adapters.text
     program = os.path.join(plugin.root, adapter) if adapter else None
@@ -232,8 +290,9 @@ def _told(plugin: Plugin, run: Run, cwd: str) -> tuple[Due | Left, ...]:
         if move.kind == "start" and move.role:
             text = start_text(program, move.role, running, run.words, cwd)
             if isinstance(text, NoWork):
-                raise NotImplementedError("guard.handle, of none")
-            found.append(Due(move, text.text, text.values))
+                found.append(Left(move, text.why))
+            else:
+                found.append(Due(move, text.text, text.values))
         else:
             found.append(Due(move, "", {}))
     return tuple(found)

@@ -53,7 +53,6 @@ def test_with_no_adapter_a_start_takes_lanes_text_and_the_words(words: str, text
     assert given.values == {}
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_an_adapter_gives_each_start_its_text_and_values")
 def test_an_adapter_is_handed_the_role_and_each_start_that_runs(tmp_path: Any) -> None:
     """Given: an adapter that gives back what it's handed, and writer's Start running.
@@ -73,7 +72,6 @@ def test_an_adapter_is_handed_the_role_and_each_start_that_runs(tmp_path: Any) -
     assert given.values == {"version": "0.2.0"}
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_a_start_no_work_waits_for_is_left_out_and_the_turn_ends")
 def test_an_adapter_that_prints_none_gives_why_no_work_waits(tmp_path: Any) -> None:
     """Given: an adapter that prints `{"none": "0.2.0 waits for your approval"}`.
@@ -84,7 +82,6 @@ def test_an_adapter_that_prints_none_gives_why_no_work_waits(tmp_path: Any) -> N
     assert given == NoWork("0.2.0 waits for your approval")
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_an_adapter_that_fails_at_a_later_move_gives_why_and_who")
 @pytest.mark.parametrize(
     "text",
@@ -93,8 +90,17 @@ def test_an_adapter_that_prints_none_gives_why_no_work_waits(tmp_path: Any) -> N
         "print('not json')\n",
         "print('{\"values\": {}}')\n",
         "print('{\"none\": 3}')\n",
+        "print('[]')\n",
+        'print(\'{"text": "Write", "values": {"version": 2}}\')\n',
     ],
-    ids=["exits 1", "prints what isn't JSON", "prints no text", "prints a none that isn't text"],
+    ids=[
+        "exits 1",
+        "prints what isn't JSON",
+        "prints no text",
+        "prints a none that isn't text",
+        "prints what isn't an object",
+        "prints a value that isn't text",
+    ],
 )
 def test_an_adapter_that_fails_or_strays_from_its_form_is_refused(tmp_path: Any, text: str) -> None:
     """Given: an adapter that exits 1, or prints what isn't its form.
@@ -104,7 +110,6 @@ def test_an_adapter_that_fails_or_strays_from_its_form_is_refused(tmp_path: Any,
         start_text(program(tmp_path, text), "writer", (), "", str(tmp_path))
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_an_adapter_of_records_that_fails_stops_the_command")
 def test_an_adapter_that_cant_run_is_refused(tmp_path: Any) -> None:
     """Given: an adapter's path where no program lies.
@@ -211,7 +216,6 @@ def said_with_why(words: str, role: str) -> bool:
     )
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_a_start_no_work_waits_for_is_left_out_and_the_turn_ends")
 def test_a_start_left_out_is_said_with_why_in_its_place() -> None:
     """Given: writer's start left out, as no work waits for it, with why.
@@ -221,7 +225,6 @@ def test_a_start_left_out_is_said_with_why_in_its_place() -> None:
     assert words.startswith("changelog: ") and said_with_why(words, "writer")
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_a_start_no_work_waits_for_is_left_out_and_the_turn_ends")
 def test_a_start_left_out_beside_a_start_due_is_said_with_both() -> None:
     """Given: writer's start left out, with why, and reviewer's start due.
@@ -232,7 +235,6 @@ def test_a_start_left_out_beside_a_start_due_is_said_with_both() -> None:
     assert "Start `changelog:reviewer` with `Carry out your steps`." in words
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_a_start_no_work_waits_for_after_a_result_is_said_with_why")
 def test_a_result_is_said_with_why_in_place_of_a_start_left_out() -> None:
     """Given: writer's Result `written`, and reviewer's start left out, with why.
@@ -243,7 +245,6 @@ def test_a_result_is_said_with_why_in_place_of_a_start_left_out() -> None:
     assert said_with_why(words, "reviewer")
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_a_subagent_stopped_by_task_stop_is_due_again")
 def test_an_end_with_no_result_is_said_with_why_in_place_of_its_start_left_out() -> None:
     """Given: writer, ended by TaskStop, and its start left out, with why.
@@ -253,7 +254,6 @@ def test_an_end_with_no_result_is_said_with_why_in_place_of_its_start_left_out()
     assert words.startswith("changelog: ") and said_with_why(words, "writer")
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_a_subagent_stopped_by_task_stop_is_due_again")
 def test_an_end_with_no_result_is_said_with_the_start_due_again() -> None:
     """Given: writer, ended by TaskStop, and its start due again.
@@ -276,7 +276,6 @@ def test_a_stop_is_said_with_the_sentence_and_what_the_role_may_do() -> None:
     assert stopped("changelog", broken) == f"changelog: Run only `git log --oneline`.\n{may}"
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_a_call_the_guard_cant_check_is_stopped_with_who_must_fix_it")
 def test_a_check_that_cant_be_made_is_said_with_why_and_who() -> None:
     """Given: a check that couldn't be made, with why, and that the plugin's developer must fix it.

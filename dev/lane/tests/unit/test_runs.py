@@ -90,7 +90,6 @@ def test_the_skills_result_after_no_more_ends_the_run() -> None:
     assert run.ended
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_a_command_a_route_goes_after_takes_the_place_of_the_moves_due")
 def test_a_command_a_route_goes_after_replaces_the_moves_due() -> None:
     """Given: writer's `written`, so reviewer's start is due, then the person's /changelog:pause,
@@ -108,11 +107,31 @@ def test_a_command_a_route_goes_after_replaces_the_moves_due() -> None:
         Gave("r1", "writer", "written", "a01"),
         Prompted("r1", "/changelog:pause"),
     )
-    (run,) = stand(d.SESSION, given, routes).runs
+    (run,) = stand(d.SESSION, given, routes, "changelog").runs
     assert run.due == (Move("no_more", result="paused"),)
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
+@pytest.mark.supports("test_a_command_of_another_plugin_leaves_the_moves_due")
+def test_a_command_of_another_plugin_leaves_the_moves_due() -> None:
+    """Given: writer's `written`, so reviewer's start is due, and a Route after changelog's pause,
+    then the person's /other:pause.
+    When: stand works out changelog's conversation.
+    Then: reviewer's start is still due."""
+    routes = (
+        *d.ROUTES_OF_WRITE,
+        d.route(d.After("command", command="pause"), Move("no_more", result="paused")),
+    )
+    given = (
+        CALLED,
+        WRITER,
+        TIED,
+        Gave("r1", "writer", "written", "a01"),
+        Prompted("r1", "/other:pause"),
+    )
+    (run,) = stand(d.SESSION, given, routes, "changelog").runs
+    assert run.due == START_REVIEWER
+
+
 @pytest.mark.supports("test_the_run_stands_aside_while_another_plugins_skill_runs")
 def test_a_call_of_another_plugins_skill_sets_the_run_aside() -> None:
     """Given: write's call, and the main conversation's call of lint:check that a move names.
@@ -122,7 +141,16 @@ def test_a_call_of_another_plugins_skill_sets_the_run_aside() -> None:
     assert run.aside
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
+@pytest.mark.supports("test_the_move_after_another_plugins_skill_brings_the_run_back")
+def test_a_start_on_an_aside_run_ends_the_aside() -> None:
+    """Given: write's call, its call of lint:check that sets it aside, and writer's Start.
+    When: stand works out the conversation.
+    Then: the Run no longer stands aside."""
+    given = (CALLED, SteppedAside("r1", "lint:check"), WRITER)
+    (run,) = stand(d.SESSION, given, d.ROUTES_OF_WRITE).runs
+    assert not run.aside
+
+
 @pytest.mark.supports("test_a_subagent_stopped_by_task_stop_is_due_again")
 def test_a_start_ended_with_no_result_is_due_again() -> None:
     """Given: writer's Start, and its end by TaskStop with no Result.

@@ -8,8 +8,10 @@ from typing import Any
 
 import lane_data as d
 import pytest
+from form import Move
 from place import (
     AgentPosted,
+    Call,
     EndAsked,
     Notification,
     PrintPosted,
@@ -45,7 +47,6 @@ def test_a_typed_command_is_a_persons_skill_call() -> None:
     assert got.what == SkillCall("changelog", "write", "person", "0.2.0")
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_an_ai_lays_by_its_own_run_of_lay")
 def test_a_skill_tool_call_is_an_ais_skill_call() -> None:
     """Given: the main conversation's PreToolUse of the Skill tool on lane:up with changelog.
@@ -126,7 +127,6 @@ def test_an_agent_call_of_no_role_of_the_plugin_is_a_start_not_ours() -> None:
     assert got.start == WRITER
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_a_resume_where_the_routes_open_none_moves_no_run")
 def test_a_send_message_to_a_roles_subagent_is_a_resume() -> None:
     """Given: write's Run with writer's Start tied to a01, and SendMessage to a01.
@@ -217,7 +217,6 @@ def test_an_untied_subagents_event_lies_outside() -> None:
     assert got.runs == () and got.start is None
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_the_run_stands_aside_while_another_plugins_skill_runs")
 def test_the_main_conversations_event_while_every_run_stands_aside_lies_outside() -> None:
     """Given: write's Run, standing aside, and the main conversation's Bash call.
@@ -225,6 +224,51 @@ def test_the_main_conversations_event_while_every_run_stands_aside_lies_outside(
     Then: it lies on no Run."""
     aside = d.run(aside=True)
     assert placed("PreToolUse", aside, tool_name="Bash", tool_input={"command": "ls"}).runs == ()
+
+
+@pytest.mark.supports("test_the_move_after_another_plugins_skill_brings_the_run_back")
+def test_the_main_conversations_start_due_on_an_aside_run_lies_on_it() -> None:
+    """Given: write's Run, standing aside with writer's start due after lint's run hands back.
+    When: place reads the main conversation's Agent call of changelog:writer.
+    Then: it lies on write's Run."""
+    aside = d.run(aside=True)
+    tool_input = {"subagent_type": "changelog:writer", "prompt": "Carry out your steps"}
+    got = placed("PreToolUse", aside, tool_name="Agent", tool_input=tool_input, tool_use_id="t1")
+    assert got.runs == (aside,)
+
+
+@pytest.mark.supports("test_the_move_after_another_plugins_skill_brings_the_run_back")
+def test_the_main_conversations_start_not_due_on_an_aside_run_lies_outside() -> None:
+    """Given: write's Run, standing aside with writer's start due after lint's run hands back.
+    When: place reads the main conversation's Agent call of changelog:reviewer.
+    Then: it lies on no Run."""
+    aside = d.run(aside=True)
+    tool_input = {"subagent_type": "changelog:reviewer", "prompt": "Carry out your steps"}
+    got = placed("PreToolUse", aside, tool_name="Agent", tool_input=tool_input, tool_use_id="t1")
+    assert got.runs == ()
+
+
+@pytest.mark.supports("test_another_plugins_skill_no_move_names_is_checked_as_a_call")
+def test_a_skill_call_of_another_plugin_that_no_move_names_is_a_call() -> None:
+    """Given: write's Run, with writer's start due.
+    When: place reads the main conversation's Skill call of lint:check, which no move names.
+    Then: it is a ToolCall of the Skill tool, on write's Run."""
+    tool_input = {"skill": "lint:check", "args": ""}
+    run = d.run()
+    got = placed("PreToolUse", run, tool_name="Skill", tool_input=tool_input)
+    assert got.what == ToolCall(Call("Skill", tool_input, d.REPO, d.REPO))
+    assert got.runs == (run,)
+
+
+@pytest.mark.supports("test_the_run_stands_aside_while_another_plugins_skill_runs")
+def test_a_skill_call_of_another_plugin_that_a_move_names_is_a_skill_call() -> None:
+    """Given: write's Run, with the call of lint:check due.
+    When: place reads the main conversation's Skill call of lint:check.
+    Then: it is a SkillCall of lint's check by an AI."""
+    run = d.run(due=(Move("call", skill="lint:check"),))
+    tool_input = {"skill": "lint:check", "args": ""}
+    got = placed("PreToolUse", run, tool_name="Skill", tool_input=tool_input)
+    assert got.what == SkillCall("lint", "check", "ai", "")
 
 
 @pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")

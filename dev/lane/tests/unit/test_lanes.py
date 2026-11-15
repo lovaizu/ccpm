@@ -510,7 +510,6 @@ def test_ends_by_result_holds_a_subagents_end_to_a_result_since_its_start(
         assert isinstance(verdict, Broken) and verdict.sentence == stop_of("writer", "written")
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_an_end_held_to_the_plugins_command_goes_once_it_gives_0")
 @pytest.mark.parametrize(
     "command, verdict",
@@ -587,7 +586,6 @@ def test_a_call_is_kept_where_one_lane_of_each_type_allows_it(
         assert isinstance(verdict, Broken) and verdict.sentence == "Run only `git log --oneline`."
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_an_end_held_to_the_plugins_command_goes_once_it_gives_0")
 @pytest.mark.parametrize(
     "commands, verdict",

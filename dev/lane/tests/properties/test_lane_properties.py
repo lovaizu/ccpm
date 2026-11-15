@@ -15,11 +15,13 @@ from form import Laid, LaidSentence, OutOfForm, read_proposal
 from hypothesis import given
 from hypothesis import strategies as st
 from lanes.ends_by_result import TYPE as ENDS_BY_RESULT
-from lanes.kind import Held
+from lanes.ends_checked import TYPE as ENDS_CHECKED
+from lanes.kind import Held, Kept
 from lanes.run_only import TYPE as RUN_ONLY
 from lanes.write_only import TYPE as WRITE_ONLY
 from lay.laid import as_laid, strip
 from lay.steps import Step
+from place import EndAsked
 
 WORD = st.text("abcdefghijklmnopqrstuvwxyz`.-", min_size=1, max_size=10)
 SENTENCE = st.lists(WORD, min_size=1, max_size=6).map(
@@ -176,3 +178,17 @@ def test_ends_by_result_allows_only_its_roles_run_of_the_result_script(
     command = f"{d.RESULT} {role} {result} {more}".rstrip()
     allowed = ENDS_BY_RESULT.allows(d.WRITER_END, d.bash(command), HELD)
     assert allowed is (True if role == "writer" and not more else None)
+
+
+@pytest.mark.supports("test_the_skills_end_held_to_its_command_goes_once_it_gives_0")
+@given(st.one_of(st.just("good"), NAME))
+def test_ends_checked_keeps_an_end_only_where_its_command_gives_0(result: str) -> None:
+    """Given: an ends_checked Lane whose command passes only where the Result is `good`, and
+    writer's Start with any Result.
+    When: the type checks writer's end.
+    Then: it keeps the end only where the Result is `good`."""
+    lane = d.lane("writer", "agents/writer.md", 4, "ends_checked", command='test "{result}" = good')
+    start = d.start("writer", results=(result,))
+    held = Held(d.run(starts=(start,), due=()), start, d.ROOT, d.ROUTES_OF_WRITE)
+    kept = ENDS_CHECKED.check_end(lane, EndAsked("Wrote."), held) == Kept()
+    assert kept is (result == "good")

@@ -6,6 +6,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 
+import answers
 from form import Lane, Route
 from manifest import plugin_name
 from place import Call, EndAsked, StartCall
@@ -69,7 +70,8 @@ class Routes:
         Takes: the Lane of the skill's Routes, the start, the Run, and the moves due with their
         texts.
         Gives: Kept for a start due with its text, or a resume where the Routes open none; Broken,
-        with the moves due as what the main conversation may do, for any other start; Kept for a
+        with the starts due as `answers.due` says them, as what the main conversation may do, for
+        any other start; Kept for a
         subagent's start, which the Lane on the role's last Step checks.
         Changes: nothing.
         Refuses: nothing.
@@ -81,9 +83,8 @@ class Routes:
             return Kept()
         if any(d.move.role == asked.role and d.text == asked.text for d in starts):
             return Kept()
-        plugin = plugin_name(held.root)
-        named = ", ".join(f"`{plugin}:{d.move.role}` with `{d.text}`" for d in starts) or "none"
-        return Broken(lane, self.sentence(lane, held.routes), f"The starts due: {named}.")
+        moves_due = answers.due(plugin_name(held.root), starts)
+        return Broken(lane, self.sentence(lane, held.routes), moves_due)
 
     def check_end(self, lane: Lane, end: EndAsked, held: Held) -> Verdict:
         """Kept: the main conversation's end is held by the moves due, which the guard checks.

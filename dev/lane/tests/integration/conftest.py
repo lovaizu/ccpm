@@ -171,8 +171,8 @@ def runs_never_end(modules: dict[str, Any]) -> Callable[..., Any]:
     __import__("runs")
     original = modules["runs"].stand
 
-    def stand_in(session_id: str, lines: Any, routes: Any) -> Any:
-        conversation = original(session_id, lines, routes)
+    def stand_in(session_id: str, lines: Any, routes: Any, plugin: str = "") -> Any:
+        conversation = original(session_id, lines, routes, plugin)
         kept = tuple(dataclasses.replace(run, ended=False) for run in conversation.runs)
         return dataclasses.replace(conversation, runs=kept)
 

@@ -260,18 +260,7 @@
       "name": "The user's plugin starts each subagent in the order they set, and only that one",
       "path": "dev/lane/tests/integration/test_s5_run_order.py",
       "kind": "specific",
-      "inputs": [
-        "dev/lane/architecture.md",
-        "plugins/lane",
-        "dev/lane/tests"
-      ],
-      "preconditions": [
-        "dev/lane/tests/integration/test_lane_walking_skeleton.py"
-      ],
-      "status": "doing",
-      "check": "the integration tests in dev/lane/tests/integration/test_s5_run_order.py pass, each seen to fail first, and each that names a rule of Solution strategy fails with the part that holds the rule taken out",
-      "good": false,
-      "decisions": []
+      "status": "done"
     },
     {
       "name": "Each subagent that leaves a step goes back to it",
@@ -285,7 +274,7 @@
       "preconditions": [
         "dev/lane/tests/integration/test_lane_walking_skeleton.py"
       ],
-      "status": "open",
+      "status": "doing",
       "check": "the integration tests in dev/lane/tests/integration/test_s6_subagent_held.py pass, each seen to fail first, and each that names a rule of Solution strategy fails with the part that holds the rule taken out",
       "good": false,
       "decisions": []
