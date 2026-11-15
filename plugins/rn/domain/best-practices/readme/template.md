@@ -50,26 +50,15 @@
 
 At the end, you have `<result>`.
 
-`<situation>`. You type:
-
-```<language>
-<input>
-```
-
-`<Product>` shows:
-
-```<language>
-<output>
-```
+`<run>`
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - `<result>`: what the reader has once the run ends.
-> - `<situation>`: what the run starts from, in one sentence.
-> - `<input>`, `<output>`: what the user gave and what the product showed in a real run, as they
->   were, in the form the reader meets them. One pair goes for each exchange up to the result.
-> - `<language>`: the language of the text, such as console, python, or json. A screen goes in place
->   of its code block, as an image taken from the run and kept in images/.
+> - `<run>`: a real run on typical work, from what the reader gives to the result in use, in the
+>   form the reader meets it, such as a terminal's text in code blocks for a command-line tool, or
+>   screens taken from the run, kept in images/, for an app. Its form follows the product, so the
+>   template sets none.
 
 ## How it works
 
