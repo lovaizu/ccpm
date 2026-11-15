@@ -293,12 +293,60 @@
       "status": "done"
     },
     {
+      "name": "ccpm's guide to building a Claude Code plugin says what each plugin takes from it, as its architecture names",
+      "path": "dev/plugin-development-guide.md",
+      "kind": "specific",
+      "inputs": [],
+      "preconditions": [],
+      "status": "doing",
+      "check": "the plugin guide and dev/plugin-template say what each plugin takes from them, and rn and Lane follow them",
+      "good": false,
+      "decisions": [
+        {
+          "about": "Where the steps of a typed command lie",
+          "decided": "each command the person types has its SKILL.md hold the steps of that moment, as Claude Code loads it when typed, and the orchestrator holds only the steps that every moment shares, as a controller and its domain logic",
+          "by": "user"
+        },
+        {
+          "about": "Each step and each practice carried out",
+          "decided": "each role, the main conversation's skill among them, records each step of its prompt and each practice of the best practice it works by, at the time each names, and its end, or the skill's turn's end where it puts work up, passes only where the plugin's own check accepts the record, as the guard runs that check",
+          "by": "reasoning"
+        },
+        {
+          "about": "A prompt's tests",
+          "decided": "a prompt is a part: unit tests run it on the model its users run, several times, and E2E tests try it in real use",
+          "by": "user"
+        },
+        {
+          "about": "An evaluator's words",
+          "decided": "an evaluator answers each question good, with the lines that meet it, or what would make it good, in the plugin guide's words good, more, and good_when, and the plugin template, rn, and Lane use those words wherever they carry an evaluator's answer, as the guide is the one source and met, not met, and lacks say the same thing with other words",
+          "by": "user"
+        },
+        {
+          "about": "Where a plugin writes its files, and the deliverables it makes",
+          "decided": "the guide's rule of where a plugin writes covers the files of the plugin's own run; a deliverable that a run makes for the user lies where the repository's layout or the tool that reads it puts it, such as a best practice rn makes at .rn/best-practices/<kind>/, as the design tree best practice decides a deliverable's path",
+          "by": "reasoning"
+        },
+        {
+          "about": "When the guard runs the record check on the main conversation",
+          "decided": "the guard runs the plugin's own record check at a role's end and at each end of the main conversation's turn in a run, and the check passes a turn that puts no work up for the caller, such as one that asks a question, as Lane serves any plugin and can't tell which turn puts work up, which only the plugin knows",
+          "by": "reasoning"
+        },
+        {
+          "about": "How a prompt's unit tests judge",
+          "decided": "each case runs as many times as Test strategy sets, each run a test of its own, and the developer judges the prompt from the results, with no criterion, as a criterion over runs that vary passes or fails by chance",
+          "by": "user"
+        }
+      ]
+    },
+    {
       "name": "rn's developers build its parts so that together they give what its README promises",
       "path": "dev/rn/architecture.md",
       "kind": "architecture",
       "inputs": [
         "dev/rn/product-vision.md",
-        "plugins/rn/README.md"
+        "plugins/rn/README.md",
+        "dev/plugin-development-guide.md"
       ],
       "preconditions": [
         "plugins/rn/domain/best-practices/architecture",
@@ -520,7 +568,8 @@
       "kind": "architecture",
       "inputs": [
         "dev/lane/product-vision.md",
-        "plugins/lane/README.md"
+        "plugins/lane/README.md",
+        "dev/plugin-development-guide.md"
       ],
       "preconditions": [
         "plugins/rn/domain/best-practices/architecture",
@@ -1017,53 +1066,6 @@
           "about": "The README after the E2E test",
           "decided": "the README's walkthrough takes the E2E test's recorded run, and its install steps are mended where the E2E test's install fell short, as the README was made before the product existed",
           "by": "reasoning"
-        }
-      ]
-    },
-    {
-      "name": "ccpm's guide to building a Claude Code plugin says what each plugin takes from it, as its architecture names",
-      "path": "dev/plugin-development-guide.md",
-      "kind": "specific",
-      "inputs": [],
-      "preconditions": [],
-      "status": "doing",
-      "check": "the plugin guide and dev/plugin-template say what each plugin takes from them, and rn and Lane follow them",
-      "good": false,
-      "decisions": [
-        {
-          "about": "Where the steps of a typed command lie",
-          "decided": "each command the person types has its SKILL.md hold the steps of that moment, as Claude Code loads it when typed, and the orchestrator holds only the steps that every moment shares, as a controller and its domain logic",
-          "by": "user"
-        },
-        {
-          "about": "Each step and each practice carried out",
-          "decided": "each role, the main conversation's skill among them, records each step of its prompt and each practice of the best practice it works by, at the time each names, and its end, or the skill's turn's end where it puts work up, passes only where the plugin's own check accepts the record, as the guard runs that check",
-          "by": "reasoning"
-        },
-        {
-          "about": "A prompt's tests",
-          "decided": "a prompt is a part: unit tests run it on the model its users run, several times, and E2E tests try it in real use",
-          "by": "user"
-        },
-        {
-          "about": "An evaluator's words",
-          "decided": "an evaluator answers each question good, with the lines that meet it, or what would make it good, in the plugin guide's words good, more, and good_when, and the plugin template, rn, and Lane use those words wherever they carry an evaluator's answer, as the guide is the one source and met, not met, and lacks say the same thing with other words",
-          "by": "user"
-        },
-        {
-          "about": "Where a plugin writes its files, and the deliverables it makes",
-          "decided": "the guide's rule of where a plugin writes covers the files of the plugin's own run; a deliverable that a run makes for the user lies where the repository's layout or the tool that reads it puts it, such as a best practice rn makes at .rn/best-practices/<kind>/, as the design tree best practice decides a deliverable's path",
-          "by": "reasoning"
-        },
-        {
-          "about": "When the guard runs the record check on the main conversation",
-          "decided": "the guard runs the plugin's own record check at a role's end and at each end of the main conversation's turn in a run, and the check passes a turn that puts no work up for the caller, such as one that asks a question, as Lane serves any plugin and can't tell which turn puts work up, which only the plugin knows",
-          "by": "reasoning"
-        },
-        {
-          "about": "How a prompt's unit tests judge",
-          "decided": "each case runs as many times as Test strategy sets, each run a test of its own, and the developer judges the prompt from the results, with no criterion, as a criterion over runs that vary passes or fails by chance",
-          "by": "user"
         }
       ]
     }
