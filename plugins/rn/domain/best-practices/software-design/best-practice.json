@@ -36,7 +36,7 @@
               },
               {
                 "at": "make",
-                "text": "Once each module states its decision, take a change that the README or the product vision might come to ask for, such as a new field in what a part keeps, read only the modules' first sentences, and name the one module to open. Where you name none or more than one, move the decision or rewrite the sentence, and repeat with a change of another kind until each change names one module."
+                "text": "Once each module states its decision, take a change that the README or the product vision might come to ask for, such as a new field in what a part keeps, read only the modules' first sentences, and name the one module to open. Where you name none or more than one, move the decision or rewrite the sentence, or, where the architecture itself places the decision in two components, list it as a gap as N4 says, and repeat with a change of another kind until each change names one module."
               }
             ]
           }
@@ -54,7 +54,7 @@
             "items": [
               {
                 "at": "decide",
-                "text": "For each sequence, take each arrow that reaches a component, and name the module whose decision answers it. That module offers one interface for the arrow, and offers nothing that no arrow reaches, since a name that nothing calls is a part that no story needs."
+                "text": "For each sequence, take each arrow that reaches a component, and name the module whose decision answers it. That module offers an interface that carries the arrow, and arrows that take one form, such as each event of one kind from a host, may share one interface that names each of them in its contract. A module that no arrow reaches offers only what the other modules of its component call, and a component offers nothing that no arrow reaches, since a name that nothing calls is a part that no story needs."
               },
               {
                 "at": "decide",
@@ -66,7 +66,7 @@
               },
               {
                 "at": "make",
-                "text": "Run the type checker that Test strategy names over the skeleton, and follow each sequence from arrow to arrow: check that what each interface gives is what the interface of the next arrow takes. A type that doesn't fit is a gap that N4 lists."
+                "text": "Follow each sequence from arrow to arrow, and check that what each interface gives is what the interface of the next arrow takes, such as by a throwaway file that passes each call's result to the next call, run through the type checker that Test strategy names, since the checker sees a handoff only where code passes a value on. A type that doesn't fit is a gap that N4 lists."
               }
             ]
           },
@@ -100,7 +100,7 @@
             "items": [
               {
                 "at": "make",
-                "text": "Read the skeleton against the architecture, and list each gap: a decision that no module can hold without another; a module whose first sentence needs `and` for two decisions that change for different reasons; an arrow that no interface can carry, or data on it that Data model lacks; a type that doesn't fit across a handoff; and a module, an interface, or a component that no arrow reaches."
+                "text": "Read the skeleton against the architecture, and list each gap: a decision that no module can hold without another; a module whose first sentence needs `and` for two decisions that change for different reasons; an arrow that no interface can carry, or data on it that Data model lacks; a type that doesn't fit across a handoff; and a component that no arrow reaches."
               },
               {
                 "at": "make",
