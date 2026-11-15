@@ -59,20 +59,17 @@ held design pyrefly check --search-path dev/scripts --search-path dev/scripts/te
 # gap between the parts, as N13 of the architecture best practice says. Each folder on the search
 # path is one that Claude Code, lay.py, or pytest puts on the import path of the code in it.
 held design pyrefly check $properties --search-path plugins/lane/hooks/lane --search-path plugins/lane/scripts \
-  --search-path dev/tests --search-path dev/lane/tests --search-path dev/lane/tests/unit \
-  --search-path dev/lane/tests/e2e --search-path dev/lane/tests/prompts \
+  --search-path dev/tests --search-path dev/lane/tests/unit \
   plugins/lane/hooks/lane/*.py plugins/lane/hooks/lane/domain/*.py \
-  plugins/lane/hooks/lane/domain/lanes/*.py plugins/lane/scripts/*.py dev/lane/tests/*.py \
-  dev/lane/tests/*/*.py
+  plugins/lane/hooks/lane/domain/lanes/*.py plugins/lane/scripts/*.py dev/lane/tests/*/*.py
 
 # rn's parts and its test cases, in the same way. plugins/rn/scripts stays off the search path, as
 # its tree.py, record.py, and throwaway.py share their names with the code of plugins/rn/domain
 # they run.
 held design pyrefly check $properties --search-path plugins/rn/domain --search-path plugins/rn/hooks/adapters \
-  --search-path dev/tests --search-path dev/rn/tests --search-path dev/rn/tests/unit \
-  --search-path dev/rn/tests/gh --search-path dev/rn/tests/e2e --search-path dev/rn/tests/prompts \
+  --search-path dev/tests --search-path dev/rn/tests/gh \
   plugins/rn/domain/*.py plugins/rn/domain/*/*.py plugins/rn/hooks/adapters/*.py \
-  plugins/rn/scripts/*.py dev/rn/tests/*.py dev/rn/tests/*/*.py
+  plugins/rn/scripts/*.py dev/rn/tests/*/*.py
 
 # Each kind's best practice lies in a folder of its own in rn, as `best-practice.json`. Its template
 # lies beside it. The check fails on:
@@ -104,7 +101,7 @@ plugin_tests=""
 for architecture in dev/*/architecture.md; do
   plugin="${architecture#dev/}"
   plugin="${plugin%/architecture.md}"
-  if [ -d "dev/$plugin/tests" ]; then
+  if [ -n "$(find "dev/$plugin/tests" -name 'test_*.py' 2>/dev/null)" ]; then
     python3 dev/scripts/trace.py check "$plugin"
   else
     echo "check.sh: the trace of $plugin's cases goes unchecked, as dev/$plugin/tests/ holds"\
