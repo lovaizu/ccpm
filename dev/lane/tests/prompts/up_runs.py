@@ -1,6 +1,6 @@
 """How the unit tests of up's prompt run up alone on Opus: `claude -p` with Lane's folder as a
-plugin, in a throwaway copy of a repository that holds the test's plugin, with lay.py real, k
-times for each case, and what each run's record shows, which each case decides by code, as the
+plugin, in a throwaway copy of a repository that holds the test's plugin, with lay.py real, once
+for each run of a case, and what the run's record shows, which the case decides by code, as the
 prompt best practice's N17 says."""
 
 from __future__ import annotations
@@ -8,8 +8,10 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
-# How many times each case runs, all of which must pass, as Lane's Test strategy sets.
-K = 3
+# How many times each case runs, each run a test of its own, as Lane's Test strategy sets: the first
+# runs set it, from 3, adding a run until one more changes no case's count of runs that reach its
+# result.
+RUNS = 3
 
 
 @dataclass(frozen=True)
@@ -26,10 +28,10 @@ class UpRun:
     files: dict[str, str] = field(default_factory=dict)
 
 
-def runs(
-    files: dict[str, str], prompts: list[str], by_skill: bool = False, k: int = K
-) -> list[UpRun]:
-    """Runs up k times, each in a fresh copy of a git repository holding the files, the person
-    typing each prompt in turn, or, where `by_skill`, the main conversation's AI calling `lane:up`
-    by the Skill tool with the first prompt as its arguments, and gives what each run shows."""
-    raise NotImplementedError("up_runs.runs")
+def up_run(files: dict[str, str], prompts: list[str], by_skill: bool = False, *, run: int) -> UpRun:
+    """Runs up once, in a fresh copy of a git repository holding the files, the person typing each
+    prompt in turn, or, where `by_skill`, the main conversation's AI calling `lane:up` by the Skill
+    tool with the first prompt as its arguments, and gives what the run shows. `run` numbers the run
+    among the case's RUNS runs, from 0, and the run's record is kept beside the case under that
+    number, so that each run's record stays apart."""
+    raise NotImplementedError("up_runs.up_run")
