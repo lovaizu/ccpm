@@ -38,6 +38,10 @@ the command gives 0.
 - Your skill's steps can start subagents side by side. Lane lets a start through beside those that
   run, where your adapter gives it a text other than theirs. It holds each subagent to the values of
   its own start, and keeps the moves after each result due until your steps make them.
+- Several skills of your plugin can run side by side in one conversation, such as a second command typed
+  while a subagent of the first runs. Lane holds each run to its own routes.
+- A move can call another plugin's skill. Lane stands aside until the main conversation makes the
+  move after that call, as the other plugin's guard holds it meanwhile.
 
 ## Adapters
 
@@ -83,7 +87,8 @@ Lane keeps each run's starts and results in a record in the system's temporary f
 goes on where it stopped in the same conversation, even after `/compact`.
 
 A new conversation goes on from the results that your plugin keeps, through an adapter of them. The
-adapter prints the results in the order the run gave them:
+adapter gets the words typed after your command, so that it separates a new request from a run to pick
+up. It prints the results in the order the run gave them:
 
 ```json
 {"results": [{"role": "<subagent>", "result": "<result>"}]}
