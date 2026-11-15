@@ -364,41 +364,7 @@
       "name": "Lane's developers see, before anyone writes a body, whether Lane's parts fit together as its architecture draws",
       "path": "plugins/lane",
       "kind": "software-design",
-      "inputs": [
-        "dev/lane/architecture.md"
-      ],
-      "preconditions": [
-        "plugins/rn/domain/best-practices/software-design"
-      ],
-      "status": "doing",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Where the skeleton starts",
-              "decided": "a subagent takes the trial's skeleton, which held the vital few, into plugins/lane and changes it to the architecture as e9ebf53c mended it, as the software design best practice's N4.3 says, settling in it the values each lane type takes and how an adapter gets the words typed; the main conversation reads every file before it takes the result",
-              "by": "maker"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Lane's developers see, before anyone builds a part, whether Lane's parts joined as its architecture draws give each key result",
@@ -413,12 +379,18 @@
       "preconditions": [
         "plugins/rn/domain/best-practices/test-design"
       ],
-      "status": "open",
+      "status": "doing",
       "necessary_conditions": [
         {
           "id": "N1",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "Where the cases start",
+              "decided": "a subagent takes the trial's cases, which held the vital few, into dev/lane/tests and changes them to the skeleton in plugins/lane and the architecture as e9ebf53c mended it, as the test design best practice's N6.3 says; the main conversation reads every case before it takes the result",
+              "by": "maker"
+            }
+          ]
         },
         {
           "id": "N2",

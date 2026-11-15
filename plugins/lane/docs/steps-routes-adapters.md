@@ -87,8 +87,14 @@ Lane keeps each run's starts and results in a record in the system's temporary f
 goes on where it stopped in the same conversation, even after `/compact`.
 
 A new conversation goes on from the results that your plugin keeps, through an adapter of them. The
-adapter gets the words typed after your command, so that it separates a new request from a run to pick
-up. It prints the results in the order the run gave them:
+adapter gets the words typed after your command on standard input, so that it separates a new
+request from a run to pick up:
+
+```json
+{"words": "<the words typed after your command>"}
+```
+
+It prints the results in the order the run gave them:
 
 ```json
 {"results": [{"role": "<subagent>", "result": "<result>"}]}
