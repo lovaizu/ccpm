@@ -257,7 +257,14 @@
       "name": "A developer sees, before building any part, each test case that names nothing one level up and each element of the architecture that no case tests, and check.sh runs every plugin's cases with that check",
       "path": "dev/scripts/trace.py",
       "kind": "code",
-      "status": "done"
+      "status": "doing",
+      "decisions": [
+        {
+          "about": "Where it finds the rules",
+          "decided": "trace.py finds each rule under the architecture's Solution strategy, where it found each principle under Principles, as the architecture template now holds the rules there",
+          "by": "user"
+        }
+      ]
     },
     {
       "name": "rn's developers build its parts so that together they give what its README promises",
