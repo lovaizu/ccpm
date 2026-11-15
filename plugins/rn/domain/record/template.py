@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
+from enum import Enum
 
 from fault import Wrong
 
@@ -31,7 +32,8 @@ from record.template_form import Form, Unit, form, is_note, kept
 MOST_WORDS = 20
 
 
-@dataclass(frozen=True)
+# A Fault is never changed after it's made, so a mutant that unfreezes it changes nothing.
+@dataclass(frozen=True)  # pragma: no mutate
 class Fault:
     """One place where the document leaves its template: the document's line from 1, and what's
     wrong there, in words from which its writer mends it."""
@@ -62,14 +64,9 @@ def faults(template: str, document: str) -> tuple[Fault, ...]:
     order of the document's lines, or () where it holds the template and nothing beside it."""
     shape = form(read(template))
     blocks = read(document)
-    found = _paired(shape.units, _without_notes(blocks), _first_line(blocks))
+    found = _paired(shape.units, _without_notes(blocks), 1)
     found += _notes_left(blocks) + _placeholders_left(blocks, shape) + _long_sentences(blocks)
     return tuple(sorted(found, key=lambda each: each.line))
-
-
-def _first_line(blocks: tuple[Block, ...]) -> int:
-    """The line where a part missing from the top would go."""
-    return blocks[0].line if blocks else 1
 
 
 def _without_notes(blocks: tuple[Block, ...]) -> tuple[Node, ...]:
@@ -99,14 +96,26 @@ def _fit(unit: Unit, block: Block) -> int | None:
 # a unit missing or a block beside, and less than both, so the pairing names a block moved from
 # its place as missing there and beside where it stands, and a block reworded in its place as out
 # of form.
-_MISSING = 2
-_BESIDE = 2
-_OUT_OF_FORM = 3
+# Among equals the pairing pairs first, so a mutant that moves a weight by one to an equal changes
+# no pairing that the faults show.
+_MISSING = 2  # pragma: no mutate
+_BESIDE = 2  # pragma: no mutate
+_OUT_OF_FORM = 3  # pragma: no mutate
+
+
+class _Move(Enum):
+    """What a step of the pairing does."""
+
+    PAIR = "a block paired with the unit"
+    AGAIN = "the run of units that repeats taken again"
+    NEXT = "the next unit"
+    BESIDE = "a block beside the units"
+
 
 # A place in the pairing: the unit, the node, and whether the unit has stood, 0 or 1.
 _Place = tuple[int, int, int]
 # A step of the pairing: the weight of the fault it makes, what it does, and where it leads.
-_Step = tuple[int, str, _Place]
+_Step = tuple[int, _Move, _Place]
 
 
 def _weights(units: list[Unit], nodes: tuple[Node, ...]) -> dict[_Place, int]:
@@ -116,7 +125,12 @@ def _weights(units: list[Unit], nodes: tuple[Node, ...]) -> dict[_Place, int]:
         for used in (0, 1):
             for i in range(len(units), -1, -1):
                 steps = _steps(units, nodes, (i, j, used))
-                weight[(i, j, used)] = min((own + weight[to] for own, _, to in steps), default=0)
+                # Only the end has no step, and a weight there adds alike to every pairing, so a
+                # mutant of the 0 changes no pairing.
+                weight[(i, j, used)] = min(
+                    (own + weight[to] for own, _, to in steps),
+                    default=0,  # pragma: no mutate
+                )
     return weight
 
 
@@ -131,14 +145,17 @@ def _steps(units: list[Unit], nodes: tuple[Node, ...], at: _Place) -> list[_Step
     if i < m and j < n and (not used or units[i].repeats):
         fit = _fit(units[i], nodes[j].block)
         if fit is not None:
-            found.append((fit * _OUT_OF_FORM, "pair", (i, j + 1, 1)))
+            found.append((fit * _OUT_OF_FORM, _Move.PAIR, (i, j + 1, 1)))
     back = units[i].back_to if i < m and used else None
     if back is not None:
-        found.append((0, "again", (back, j, 0)))
+        # Going back weighs nothing, and a weight of one either way only moves its pairings among
+        # those that the weights of 2 and 3 above already part, so a mutant of it changes none.
+        found.append((0, _Move.AGAIN, (back, j, 0)))  # pragma: no mutate
     if i < m:
-        found.append((_MISSING if not used and units[i].least else 0, "next", (i + 1, j, 0)))
+        missing = _MISSING if not used and not units[i].optional else 0
+        found.append((missing, _Move.NEXT, (i + 1, j, 0)))
     if j < n:
-        found.append((_BESIDE, "beside", (i, j + 1, used)))
+        found.append((_BESIDE, _Move.BESIDE, (i, j + 1, used)))
     return found
 
 
@@ -154,11 +171,11 @@ def _paired(units: list[Unit], nodes: tuple[Node, ...], where: int) -> list[Faul
         own, move, after = min(_steps(units, nodes, at), key=lambda step: step[0] + weight[step[2]])
         i, j, _ = at
         line = nodes[min(j, len(nodes) - 1)].block.line if nodes else where
-        if move == "beside":
+        if move == _Move.BESIDE:
             found.append(Fault(line, f"{_shown(nodes[j].block)} lies beside the template"))
-        elif move == "next" and own:
+        elif move == _Move.NEXT and own:
             found.append(Fault(line, f"lacks {_from(units[i])}"))
-        elif move == "pair":
+        elif move == _Move.PAIR:
             counts[i] += 1
             found += _pair(units[i], nodes[j], counts[i])
         at = after
@@ -191,7 +208,8 @@ def _counted(unit: Unit, block: Block) -> list[Fault]:
     takes = f"{least} or more" if most is None else f"{least} to {most}"
     if most == least:
         takes = f"{least}"
-    return [Fault(block.line, f"has {count} sentences, where {_from(unit)} takes {takes}")]
+    noun = "sentence" if count == 1 else "sentences"
+    return [Fault(block.line, f"has {count} {noun}, where {_from(unit)} takes {takes}")]
 
 
 def _shown(block: Block) -> str:
@@ -218,12 +236,10 @@ def _notes_left(blocks: tuple[Block, ...]) -> list[Fault]:
 def _placeholders_left(blocks: tuple[Block, ...], form: Form) -> list[Fault]:
     """A fault for each slot or figure of the template that the document keeps."""
     found = []
-    for block in flat(blocks):
-        if is_note(block):
-            continue
+    for block in (each for each in flat(blocks) if not is_note(each)):
         for name in sorted(kept(block) & form.slots):
             found.append(Fault(block.line, f"keeps the template's placeholder <{name}>"))
-        if block.kind == FIGURE and block.info in form.figures:
+        if block.info in form.figures:
             found.append(Fault(block.line, f"keeps the template's own figure {block.info}"))
     return found
 

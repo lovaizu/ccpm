@@ -87,13 +87,14 @@ def test_a_list_item_holds_a_paragraph_indented_after_a_blank_line():
 
 @pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
 def test_a_list_item_that_starts_with_a_code_block_has_no_words_of_its_own():
-    """Given a paragraph, and an item right under it whose first line opens a code block indented
-    under it
+    """Given a heading, a paragraph, and, after a blank line, an item whose first line opens a code
+    block indented under it
     When the text is read
-    Then the item at line 2 has no words, and holds the code block without the item's indent"""
-    assert read("Intro.\n- ```text\n  a\n  ```") == (
-        Block(PARAGRAPH, 1, "Intro."),
-        Block(ITEM, 2, "", children=(Block(CODE, 2, "a", info="text"),)),
+    Then the item at line 4 has no words, and holds the code block without the item's indent"""
+    assert read("# T\nA.\n\n- ```text\n  a\n  ```") == (
+        Block(HEADING, 1, "T", level=1),
+        Block(PARAGRAPH, 2, "A."),
+        Block(ITEM, 4, "", children=(Block(CODE, 4, "a", info="text"),)),
     )
 
 
@@ -146,11 +147,12 @@ def test_a_code_block_left_open_runs_to_the_end():
 
 @pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
 def test_a_paragraph_that_is_an_image_is_a_figure_with_its_alt_text_and_path():
-    """Given a paragraph that is an image alone
+    """Given a heading, and right under it a paragraph that is an image alone
     When the text is read
-    Then it gives a figure with the alt text and the path"""
-    assert read("![How rn works](images/how-it-works.svg)") == (
-        Block(FIGURE, 1, "How rn works", info="images/how-it-works.svg"),
+    Then it gives the heading, and a figure at line 2 with the alt text and the path"""
+    assert read("# T\n![How rn works](images/how-it-works.svg)") == (
+        Block(HEADING, 1, "T", level=1),
+        Block(FIGURE, 2, "How rn works", info="images/how-it-works.svg"),
     )
 
 
@@ -296,3 +298,52 @@ def test_a_list_item_holds_a_paragraph_indented_past_its_words_after_a_blank_lin
     When the text is read
     Then the item holds the paragraph"""
     assert read("- a\n\n    b") == (Block(ITEM, 1, "a", children=(Block(PARAGRAPH, 3, "b"),)),)
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_quote_ends_at_the_first_line_without_its_mark():
+    """Given a heading, a quote of one line right under it, and a paragraph right under the quote
+    When the text is read
+    Then the quote at line 2 holds its line alone, and the paragraph stands after it"""
+    assert read("# T\n> a\nAfter.") == (
+        Block(HEADING, 1, "T", level=1),
+        Block(QUOTE, 2, "a"),
+        Block(PARAGRAPH, 3, "After."),
+    )
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_fence_with_an_info_string_doesnt_close_a_code_block():
+    """Given a code block opened by a bare fence, whose body is an indented fence with an info
+    string
+    When the text is read
+    Then the body keeps the indented fence, and the code block has no info string"""
+    assert read("```\n  ```py\n```") == (Block(CODE, 1, "  ```py"),)
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_code_block_closed_right_after_its_fence_is_empty():
+    """Given a code block whose closing fence is the line after its opening one, and a paragraph
+    When the text is read
+    Then the code block has no body, and the paragraph stands after it"""
+    assert read("```text\n```\nAfter.") == (
+        Block(CODE, 1, "", info="text"),
+        Block(PARAGRAPH, 3, "After."),
+    )
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_sentences_keep_each_of_three_code_spans_whole():
+    """Given a sentence with three code spans
+    When it's split into sentences
+    Then it gives the sentence as it was"""
+    assert sentences("Run `a`, `b`, and `c`.") == ["Run `a`, `b`, and `c`."]
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_sections_end_a_section_at_a_heading_above_its_level():
+    """Given a heading of level 2, and then one of level 1
+    When the blocks are put into sections
+    Then each stands alone"""
+    lower, upper = read("## A\n# B")
+    assert sections((lower, upper)) == (Node(lower), Node(upper))

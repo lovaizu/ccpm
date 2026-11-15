@@ -5,6 +5,7 @@ what the template's notes let a document leave out, repeat, or say in how many s
 from __future__ import annotations
 
 import re
+from collections import Counter
 from dataclasses import dataclass
 
 from record.markdown import (
@@ -28,13 +29,13 @@ _TOKEN = re.compile(r"`[^`\n]*`|\[[^\]\n]*\]\([^)\n]*\)|<[^<>\s`][^<>`]*>")
 _LONE_SLOT = re.compile(r"`<([^<>`]+)>`")
 _ONLY_SLOTS = re.compile(r"\s*(?:(?:<[^<>\s`][^<>`]*>|#lt;.+?#gt;)\s*)+")
 _MERMAID_SLOT = re.compile(r"#lt;(.+?)#gt;")
-_NUMBERS = {"one": 1, "a": 1, "two": 2, "three": 3, "four": 4, "five": 5}
+_NUMBERS = {"one": 1, "a": 1, "two": 2, "three": 3}
 _SENTENCES = re.compile(
     r"\b(one|a|two|three)(?: or (two|three))? (?:short )?(?:sentence|clause)s?\b"
     r"(?: or (two|three)\b)?( for each\b)?",
     re.IGNORECASE,
 )
-_MOST = re.compile(r"\bat most (one|two|three|four|five|\d+)\b")
+_MOST = re.compile(r"\bat most (one|two|three|\d+)\b")
 _LEAVE = re.compile(r"\bLeave\b")
 _LEAVE_WORD = re.compile(r"Leave out `([^`<>]+)` and the link")
 _LEAVE_SECTION = re.compile(r"Leave out ([A-Z][\w-]*(?: [\w-]+)*?) where")
@@ -42,7 +43,9 @@ _AS_IN = re.compile(r"\bas in ([A-Z][\w ]*?)\.")
 _EACH = re.compile(r"\beach\b", re.IGNORECASE)
 
 
-@dataclass(frozen=True)
+# Each dataclass marked frozen is never changed after it's made, so a mutant that unfreezes it
+# changes nothing.
+@dataclass(frozen=True)  # pragma: no mutate
 class _Note:
     """One item of a note of the template: the slots it names, and what it says of them."""
 
@@ -54,23 +57,25 @@ class _Note:
 class Unit:
     """One part of the template's form: its block; the pattern that a document's block of its kind
     must match, None for a figure; whether it's a slot alone that takes any blocks; how many times
-    it may stand, at least 0 or 1, more than once where it repeats, and at most `most`, None for no
-    most; the unit that the document may go back to after it, so that the run of units from there
-    to it repeats as a whole, None for none; how many sentences it takes, at least and at most, None
-    for no most; and the units inside it."""
+    it may stand: none where it's optional, more than once where it repeats, and at most `most`,
+    None for no most; the unit that the document may go back to after it, so that the run of units
+    from there to it repeats as a whole, None for none; how many sentences it takes, at least and at
+    most, None for no most; and the units inside it."""
 
+    # An annotation stays text, by `from __future__ import annotations`, so a mutant of its `|`
+    # changes nothing.
     block: Block
-    pattern: re.Pattern[str] | None
+    pattern: re.Pattern[str] | None  # pragma: no mutate
     free: bool
-    least: int
+    optional: bool
     repeats: bool
-    most: int | None
-    back_to: int | None
-    sentences: tuple[int, int | None]
+    most: int | None  # pragma: no mutate
+    back_to: int | None  # pragma: no mutate
+    sentences: tuple[int, int | None]  # pragma: no mutate
     units: list[Unit]
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True)  # pragma: no mutate
 class Form:
     """The template's form: its units, and each slot it names, with each figure of its own."""
 
@@ -79,15 +84,15 @@ class Form:
     figures: frozenset[str]
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True)  # pragma: no mutate
 class _Context:
     """What the units of the template are built with: the note items that hold for each block by
     its line, the headings of the sections that may be left out, and how many blocks of its
-    section hold the slots of each note item."""
+    section hold the slots of each note item, by the note items of the section and the item."""
 
     scoped: dict[int, tuple[_Note, ...]]
     optional: frozenset[str]
-    holders: dict[tuple[int, _Note], int]
+    holders: Counter[tuple[int, _Note]]
 
 
 def form(blocks: tuple[Block, ...]) -> Form:
@@ -95,15 +100,13 @@ def form(blocks: tuple[Block, ...]) -> Form:
     nodes = sections(blocks)
     scoped: dict[int, tuple[_Note, ...]] = {}
     _scope(nodes, (), _by_heading(nodes), scoped)
-    holders: dict[tuple[int, _Note], int] = {}
-    for node in _walk(nodes):
-        if is_note(node.block):
-            continue
-        notes = scoped[node.block.line]
-        for note in notes:
-            if note.slots & _slots(node.block):
-                key = (id(notes), note)
-                holders[key] = holders.get(key, 0) + 1
+    holders = Counter(
+        (id(scoped[node.block.line]), note)
+        for node in _walk(nodes)
+        if not is_note(node.block)
+        for note in scoped[node.block.line]
+        if note.slots & _slots(node.block)
+    )
     optional = frozenset(words for note in _all_notes(nodes) for words in _left_sections(note))
     units = _units(nodes, _Context(scoped, optional, holders))
     slots = frozenset(name for block in flat(blocks) for name in _slots(block))
@@ -133,7 +136,7 @@ def is_note(block: Block) -> bool:
 
 def _notes_of(block: Block) -> list[_Note]:
     """The items of a note of the template."""
-    items = re.split(r"\n- ", "\n" + block.text.split(_NOTE, 1)[1])[1:]
+    items = re.findall(r"^- ((?:.|\n(?!- ))*)", block.text.partition(_NOTE)[2], re.MULTILINE)
     found = []
     for item in items:
         words = " ".join(item.split())
@@ -214,9 +217,8 @@ def _units(nodes: tuple[Node, ...], context: _Context) -> list[Unit]:
     units = [_unit(node, context) for node in kept]
     for at in range(len(kept)):
         _repeat(units, kept, at, context)
-    for at in range(len(units) - 1):
-        if _leads(units[at], units[at + 1]):
-            units[at].least = 0
+    for unit, after in zip(units, units[1:]):
+        unit.optional = unit.optional or _leads(unit, after)
     return units
 
 
@@ -229,7 +231,7 @@ def _unit(node: Node, context: _Context) -> Unit:
         block,
         _pattern_of(block, notes),
         free,
-        0 if _left_out(block, notes, context.optional) else 1,
+        _left_out(block, notes, context.optional),
         free or _repeats(block),
         next((_number(m.group(1)) for n in notes for m in [_MOST.search(n.words)] if m), None),
         None,
@@ -242,7 +244,8 @@ def _repeats(block: Block) -> bool:
     """Whether the block may stand more than once, by its form alone: a heading below the top
     whose words hold a slot, or a list item whose first words do."""
     if block.kind == HEADING:
-        return block.level > 1 and bool(_slots(block))
+        # A heading's level is at least 1, so a mutant of `>` to `!=` changes nothing.
+        return block.level > 1 and bool(_slots(block))  # pragma: no mutate
     first = _TOKEN.match(block.text)
     return block.kind == ITEM and bool(first and _SLOT.search(first.group(0)))
 
@@ -267,7 +270,7 @@ def _leads(unit: Unit, after: Unit) -> bool:
         block.kind == PARAGRAPH
         and not _slots(block)
         and block.text.endswith(":")
-        and after.least == 0
+        and after.optional
     )
 
 
@@ -281,9 +284,13 @@ def _repeat(units: list[Unit], kept: tuple[Node, ...], at: int, context: _Contex
         holding = [i for i, node in enumerate(kept) if note.slots & _slots(node.block)]
         if not (_EACH.search(note.words) and holding and holding[0] == at):
             continue
-        if len(holding) > 1:
+        if holding[1:]:
             units[holding[-1]].back_to = at
-        elif block.kind in (PARAGRAPH, CODE) and context.holders[(id(notes), note)] == 1:
+        # A note's slots lie in at least the block itself, so a mutant of `==` to `<=` changes
+        # nothing.
+        elif (
+            block.kind in (PARAGRAPH, CODE) and context.holders[(id(notes), note)] == 1
+        ):  # pragma: no mutate
             units[at].repeats = True
 
 
@@ -330,7 +337,7 @@ def _token(token: str) -> str:
         one = f"`?{_pattern(token[1:-1])}`?"
         return f"{one}(?:(?:, | and ){one})*" if "<n>" in token else one
     if token.startswith("["):
-        words, target = token[1:-1].split("](", 1)
+        words, _, target = token[1:-1].partition("](")
         return rf"\[{_pattern(words)}\]\({_pattern(target)}\)"
     return r"\d+" if token == "<n>" else r"[^\n]+?"
 

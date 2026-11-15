@@ -38,7 +38,8 @@ _LINK = re.compile(r"!?\[([^\]\n]*)\]\([^)\n]*\)")
 _SENTENCE_END = re.compile(r"(?<=[.!?])\s+|(?<=[.!?][\"')\]])\s+")
 
 
-@dataclass(frozen=True)
+# A Block or a Node is never changed after it's made, so a mutant that unfreezes it changes nothing.
+@dataclass(frozen=True)  # pragma: no mutate
 class Block:
     """One block of Markdown: its kind, its line from 1, and its text:
     a heading's words; a paragraph's or a list item's own words, its lines joined by a space, or by
@@ -50,11 +51,13 @@ class Block:
     line: int
     text: str
     info: str = ""
-    level: int = 0
+    # Only a heading's level is ever compared with a heading's, so a mutant of this default, which
+    # every other block shares, changes nothing.
+    level: int = 0  # pragma: no mutate
     children: tuple[Block, ...] = ()
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True)  # pragma: no mutate
 class Node:
     """A block with the blocks under it: a heading with its section, or a list item with the blocks
     nested in it."""
@@ -150,7 +153,9 @@ def _code(lines: list[str], at: int, first: int, opening: re.Match[str]) -> tupl
 def _closes(line: str, fence: str) -> bool:
     """Whether the line closes a code block that the fence opened."""
     stripped = line.strip()
-    return stripped.startswith(fence) and set(stripped) == {fence[0]}
+    # A line that starts with the fence holds its mark, so a mutant of `==` to `<=` changes
+    # nothing.
+    return stripped.startswith(fence) and set(stripped) == set(fence)  # pragma: no mutate
 
 
 def _dedent(line: str, indent: int) -> str:

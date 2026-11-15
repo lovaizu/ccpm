@@ -980,3 +980,194 @@ def test_a_title_with_a_slot_stands_once():
     assert faults(lines("# `<Product>`"), lines("# rn", "", "# rn")) == (
         Fault(3, '"# rn" lies beside the template'),
     )
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_heading_reworded_in_the_place_of_the_first_of_two_leaves_its_form():
+    """Given a template of sections A and B, and a document of a section X alone
+    When the document is checked
+    Then X leaves the form of A, and B is missing"""
+    assert faults(lines("# T", "", "## A", "", "## B"), lines("# T", "", "## X")) == (
+        Fault(3, '"## X" leaves the form of the template\'s "## A" at its line 3'),
+        Fault(3, 'lacks the template\'s "## B" at its line 5'),
+    )
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_heading_a_level_below_the_templates_lies_beside_it():
+    """Given a template of the section A at level 2, and a document whose section A is at level 3
+    When the document is checked
+    Then A at level 2 is missing, and A at level 3 lies beside the template"""
+    assert faults(lines("# T", "", "## A"), lines("# T", "", "### A")) == (
+        Fault(3, 'lacks the template\'s "## A" at its line 3'),
+        Fault(3, '"### A" lies beside the template'),
+    )
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_heading_a_level_above_the_templates_lies_beside_it():
+    """Given a template of the section A at level 3, and a document whose section A is at level 2
+    When the document is checked
+    Then A at level 3 is missing, and A at level 2 lies beside the template"""
+    assert faults(lines("# T", "", "### A"), lines("# T", "", "## A")) == (
+        Fault(3, 'lacks the template\'s "### A" at its line 3'),
+        Fault(3, '"## A" lies beside the template'),
+    )
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_list_item_in_the_place_of_a_paragraph_lies_beside_the_template():
+    """Given a template of the paragraph Intro., and a document of the item - Intro.
+    When the document is checked
+    Then the paragraph is missing, and the item lies beside the template"""
+    assert faults(lines("# T", "", "Intro."), lines("# T", "", "- Intro.")) == (
+        Fault(3, 'lacks the template\'s "Intro." at its line 3'),
+        Fault(3, '"- Intro." lies beside the template'),
+    )
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_slot_whose_note_gives_a_sentence_for_each_thing_takes_at_least_one():
+    """Given a template of the paragraph Intro. `<places>`., whose note gives one sentence for each
+    top folder, and a document whose paragraph is Intro. alone
+    When the document is checked
+    Then the faults name the paragraph out of the form, and its one sentence where the template
+    takes two or more"""
+    template = lines(
+        "# T", "", "Intro. `<places>`.", "", note("`<places>`: one sentence for each top folder.")
+    )
+    assert faults(template, lines("# T", "", "Intro.")) == (
+        Fault(3, '"Intro." leaves the form of the template\'s "Intro. `<places>`." at its line 3'),
+        Fault(
+            3,
+            'has 1 sentence, where the template\'s "Intro. `<places>`." at its line 3 takes 2 or'
+            " more",
+        ),
+    )
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_placeholder_kept_after_a_note_kept_is_named():
+    """Given a template of the item `<role>` with a note, and a document that keeps the note and
+    then `<role>`
+    When the document is checked
+    Then the faults name the note and the placeholder"""
+    template = lines("# T", "", "- `<role>`", "", note("`<role>`: each kind of person."))
+    document = lines("# T", "", note("`<role>`: each kind of person."), "", "- `<role>`")
+    assert faults(template, document) == (
+        Fault(3, "keeps a note of the template"),
+        Fault(7, "keeps the template's placeholder <role>"),
+    )
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_note_that_says_as_in_a_section_takes_only_its_items_of_the_same_slots():
+    """Given a template whose Components note lets `<start>` be left out, and whose Deployment
+    note says its choices are as in Components, and a document whose Deployment lacks `<start>`.
+    When the document is checked
+    Then the one fault names Deployment's `<start>`."""
+    template = lines(
+        "# T",
+        "",
+        "## Components",
+        "",
+        note("`<choice>`: each choice.", "`<start>`: where. Leave it out where none."),
+        "",
+        "## Deployment",
+        "",
+        "`<start>`.",
+        "",
+        "- `<choice>` over it",
+        "",
+        note("`<choice>`: as in Components."),
+    )
+    document = lines("# T", "", "## Components", "", "## Deployment", "", "- One over it")
+    assert faults(template, document) == (
+        Fault(7, 'lacks the template\'s "`<start>`." at its line 12'),
+    )
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_note_holds_only_in_its_own_section():
+    """Given a template whose section A has a note that lets `<x>`. be left out, and whose section
+    B has `<x>`. too, without a note, and a document without both
+    When the document is checked
+    Then the one fault names B's `<x>`."""
+    template = lines(
+        "# T",
+        "",
+        "## A",
+        "",
+        "`<x>`.",
+        "",
+        note("`<x>`: a thing. Leave it out where none."),
+        "",
+        "## B",
+        "",
+        "`<x>`.",
+    )
+    assert faults(template, lines("# T", "", "## A", "", "## B")) == (
+        Fault(5, 'lacks the template\'s "`<x>`." at its line 13'),
+    )
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_heading_of_level_2_with_a_slot_may_repeat():
+    """Given a template whose section of level 2 is `<problem>`, and a document with two such
+    sections
+    When the document is checked
+    Then it has no fault"""
+    template = lines("# T", "", "## `<problem>`")
+    assert faults(template, lines("# T", "", "## Slow?", "", "## Costly?")) == ()
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_run_of_three_blocks_whose_note_names_each_repeats_as_a_whole():
+    """Given a template of an input, `<who>` shows:, and an output, whose note names the three
+    slots, each exchange, and a document of two such runs
+    When the document is checked
+    Then it has no fault"""
+    template = lines(
+        "# T",
+        "",
+        "```<language>",
+        "<input>",
+        "```",
+        "",
+        "`<who>` shows:",
+        "",
+        "```<language>",
+        "<output>",
+        "```",
+        "",
+        note("`<input>`, `<who>`, `<output>`: as they were, for each exchange."),
+    )
+    exchange = ("```text", "yes", "```", "", "rn shows:", "", "```text", "Done.", "```", "")
+    assert faults(template, lines("# T", "", *exchange, *exchange)) == ()
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_note_that_says_to_leave_out_a_word_and_the_link_lets_both_stay():
+    """Given the template of the paragraph `<Product>` tests by [`<shared rules>`](<path>), in unit
+    tests., whose note says to leave out `by` and the link, and a document that keeps them
+    When the document is checked
+    Then it has no fault"""
+    template = lines(
+        "# T",
+        "",
+        "`<Product>` tests by [`<shared rules>`](<path>), in unit tests.",
+        "",
+        note("`<shared rules>`, `<path>`: the rules. Leave out `by` and the link where none."),
+    )
+    document = lines("# T", "", "rn tests by [the guide](guide.md), in unit tests.")
+    assert faults(template, document) == ()
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_note_item_without_slots_may_let_a_section_be_left_out():
+    """Given a template whose section Extras has a note item that names no slot and says to leave
+    out Extras where there's none, and a document without it
+    When the document is checked
+    Then it has no fault"""
+    template = lines("# T", "", "## Extras", "", note("Leave out Extras where there's none."))
+    assert faults(template, lines("# T")) == ()
