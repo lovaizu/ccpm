@@ -65,6 +65,7 @@ def hooks_on_lanes_own_folder(lane: str) -> Callable[[], dict[str, Any]]:
 
 def only_lanes_entries(plugin: str, entries: Any) -> None:
     """hooks.json written with Lane's entries alone, the user's own lost."""
+    os.makedirs(os.path.join(plugin, "hooks"), exist_ok=True)
     with open(os.path.join(plugin, "hooks", "hooks.json"), "w", encoding="utf-8") as f:
         json.dump({"hooks": dict(entries)}, f)
 
