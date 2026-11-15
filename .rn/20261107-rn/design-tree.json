@@ -140,7 +140,36 @@
       "name": "Lane's developers see, before anyone builds a part, whether Lane's parts joined as its architecture draws give each key result",
       "path": "dev/lane/tests",
       "kind": "test-design",
-      "status": "done"
+      "status": "doing",
+      "necessary_conditions": [
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The cases of a start's text asked again",
+              "decided": "an integration case of S5: the adapter fails at the skill's call, and gives the start's text once the skill's own steps have made what it reads, which the guard gives after that call",
+              "by": "maker"
+            },
+            {
+              "about": "The cases of starts side by side",
+              "decided": "an integration case of S5: a Route's start of a role stays due beside each Start of it that runs, while the adapter gives a text other than theirs, and leaves it out once the adapter gives none",
+              "by": "maker"
+            }
+          ]
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The unit cases they rest on",
+              "decided": "the unit cases of the guard and of the moves due that the two cases of S5 rest on",
+              "by": "maker"
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "A person's /lane:up lays a lane that stops a subagent's command outside its step with the step's sentence, and the run starts that subagent and ends on its result",
@@ -152,7 +181,18 @@
       "name": "The user's plugin starts each subagent in the order they set, and only that one",
       "path": "dev/lane/tests/integration/test_s5_run_order.py",
       "kind": "specific",
-      "status": "done"
+      "status": "open",
+      "inputs": [
+        "dev/lane/architecture.md",
+        "plugins/lane",
+        "dev/lane/tests"
+      ],
+      "preconditions": [
+        "dev/lane/tests/integration/test_lane_walking_skeleton.py"
+      ],
+      "check": "the integration tests in dev/lane/tests/integration/test_s5_run_order.py pass, each seen to fail first, and each that names a rule of Solution strategy fails with the part that holds the rule taken out",
+      "good": false,
+      "decisions": []
     },
     {
       "name": "Each subagent that leaves a step goes back to it",
