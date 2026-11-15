@@ -52,15 +52,16 @@ Each view carries out one idea, and a developer who knows the idea builds a part
 
 Does each user story state what a role wants, in the role's words and without the product's means, and do the stories together cover each objective of the product vision and each promise of the README?
 
-The stories are the product's requirements: what each role wants, which the views then meet. A story that names a means, such as a command, states a design as a want, so no one asks whether the design serves the want. A [user story](https://www.mountaingoatsoftware.com/agile/user-stories) leaves the interface to the design, and Jeff Patton's user story mapping lays the role's activities along a backbone and hangs the stories on them, so a story covers what the use needs, not one step each.
+The stories are the product's requirements: what each role wants, which the views then meet. A story that names a means, such as a command, states a design as a want, so no one asks whether the design serves the want. A [user story](https://www.mountaingoatsoftware.com/agile/user-stories) doesn't prescribe the solution, which the conversation and the acceptance criteria settle. Jeff Patton's [user story mapping](https://jpattonassociates.com/wp-content/uploads/2015/03/story_mapping.pdf) lays the role's activities along a backbone at one goal level, and hangs the stories on them, so a story covers what the use needs, not one step each.
 
 1. *While deciding.* Open the product vision and the README, and list each objective and each promise the README makes, in its walkthrough, its Non-goals, and its How it works.
 2. *While deciding.* For each objective, lay out as its backbone the activities its role does from where they start to the result they keep, read from the README's walkthrough for its main use. Name each in the words the role would say, such as approving the plan. A command or a screen of the product is no activity.
 3. *While deciding.* For each activity, ask what the role wants there and why, and write it as a story in the role's words, without a command, a screen, or a part of the product, since Sequences shows how the product meets it. One want often serves several activities, such as giving yes or a change at each sign-off.
-4. *While deciding.* Read each idea of the product vision's Concept, and ask at which moment of the use it keeps the one way holding. Where the role wants something there that no story carries, add a story for it, such as going on with a run that stopped.
-5. *While deciding.* Where the product's development or operation wants something of the product, such as a release, write a story with the developer or the operator as its role.
-6. *While making.* For each objective and each promise, name the stories that carry it, and add a story where none does. Leave an activity without a story of its own where another story already carries it.
-7. *While making.* Read each story and ask whether it still holds where the product met it another way, such as a reply in place of a command. Rewrite each that doesn't, as it names a means, not a want.
+4. *While deciding.* Keep each story at the level of a goal the role reaches in one sitting, such as approving a deliverable, not a step within it, such as reading its changes, since stories at mixed levels leave gaps and overlaps that no one sees.
+5. *While deciding.* Read each idea of the product vision's Concept, and ask at which moment of the use it keeps the one way holding. Where the role wants something there that no story carries, add a story for it, such as going on with a run that stopped.
+6. *While deciding.* Where the product's development or operation wants something of the product, such as a release, write a story with the developer or the operator as its role.
+7. *While making.* For each objective and each promise, name the stories that carry it, and add a story where none does. Leave an activity without a story of its own where another story already carries it.
+8. *While making.* Read each story and ask whether it still holds where the product met it another way, such as a reply in place of a command. Rewrite each that doesn't, as it names a means, not a want, unless the role wants that means itself, such as working within the tool they already use.
 
 ### N3
 

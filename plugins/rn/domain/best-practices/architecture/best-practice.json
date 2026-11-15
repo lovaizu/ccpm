@@ -44,7 +44,7 @@
       "id": "N2",
       "about": "User stories",
       "what": "Does each user story state what a role wants, in the role's words and without the product's means, and do the stories together cover each objective of the product vision and each promise of the README?",
-      "why": "The stories are the product's requirements: what each role wants, which the views then meet. A story that names a means, such as a command, states a design as a want, so no one asks whether the design serves the want. A [user story](https://www.mountaingoatsoftware.com/agile/user-stories) leaves the interface to the design, and Jeff Patton's user story mapping lays the role's activities along a backbone and hangs the stories on them, so a story covers what the use needs, not one step each.",
+      "why": "The stories are the product's requirements: what each role wants, which the views then meet. A story that names a means, such as a command, states a design as a want, so no one asks whether the design serves the want. A [user story](https://www.mountaingoatsoftware.com/agile/user-stories) doesn't prescribe the solution, which the conversation and the acceptance criteria settle. Jeff Patton's [user story mapping](https://jpattonassociates.com/wp-content/uploads/2015/03/story_mapping.pdf) lays the role's activities along a backbone at one goal level, and hangs the stories on them, so a story covers what the use needs, not one step each.",
       "items": [
        {
         "at": "decide",
@@ -60,6 +60,10 @@
        },
        {
         "at": "decide",
+        "text": "Keep each story at the level of a goal the role reaches in one sitting, such as approving a deliverable, not a step within it, such as reading its changes, since stories at mixed levels leave gaps and overlaps that no one sees."
+       },
+       {
+        "at": "decide",
         "text": "Read each idea of the product vision's Concept, and ask at which moment of the use it keeps the one way holding. Where the role wants something there that no story carries, add a story for it, such as going on with a run that stopped."
        },
        {
@@ -72,7 +76,7 @@
        },
        {
         "at": "make",
-        "text": "Read each story and ask whether it still holds where the product met it another way, such as a reply in place of a command. Rewrite each that doesn't, as it names a means, not a want."
+        "text": "Read each story and ask whether it still holds where the product met it another way, such as a reply in place of a command. Rewrite each that doesn't, as it names a means, not a want, unless the role wants that means itself, such as working within the tool they already use."
        }
       ]
      },
