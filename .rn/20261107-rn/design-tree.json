@@ -264,12 +264,23 @@
       "status": "open",
       "necessary_conditions": [
         {
+          "id": "N2",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The case of an adapter's none",
+              "decided": "an integration case of S5's new branch: an adapter that gives none for a start, which the guard leaves out of the moves due with why in its place",
+              "by": "maker"
+            }
+          ]
+        },
+        {
           "id": "N3",
           "good": false,
           "decisions": [
             {
-              "about": "The cases of an adapter's none",
-              "decided": "a case of S5's new branch, an adapter that gives none for a start, and the unit cases of adapters.start_text that it rests on, once the skeleton takes the branch",
+              "about": "The unit cases of an adapter's none",
+              "decided": "the unit cases of adapters.start_text and of the guard's moves due that the case of S5's new branch rests on",
               "by": "maker"
             }
           ]
