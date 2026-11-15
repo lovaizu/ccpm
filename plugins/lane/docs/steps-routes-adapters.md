@@ -5,7 +5,8 @@ This page is for you when your plugin's steps go beyond the [README](../README.m
 ## Where the steps lie
 
 - Write each role's steps as a numbered list under `## Steps`. The list may lie in the role's own
-  file, or in a file of your plugin that the role's body names by `${CLAUDE_PLUGIN_ROOT}/`.
+  file, or in a file of your plugin that the role's body names by `${CLAUDE_PLUGIN_ROOT}/` and no
+  other role names.
 - The skill's steps may also lie in the `SKILL.md` of each command that a route waits for or goes
   after, such as an approval. Lane holds them all as the steps of one conversation.
 - Such a command's `SKILL.md` sets `disable-model-invocation: true`, so that only the person runs it.
