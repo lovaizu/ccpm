@@ -9,7 +9,7 @@ import os
 import uuid
 from dataclasses import dataclass
 
-from adapters import Running, start_text
+from adapters import NoWork, Running, start_text
 from answers import due, gave, stopped
 from events import Answer, Event
 from form import Lane, LanesFile, read_lanes
@@ -42,7 +42,7 @@ from run_record import (
     lines,
     record_path,
 )
-from runs import Due, Run, stand
+from runs import Due, Left, Run, stand
 
 # What lets an event through and says nothing.
 PASS = Answer(False, "")
@@ -77,13 +77,19 @@ def handle(event: Event, root: str) -> Answer:
     - the main conversation's end of its turn (S2, S5): stops it with the moves due where a move is
       due and no subagent of the Run runs, unless the move waits for the person; else checks it by
       each Lane of each Run's skill;
+    - each start due, wherever the guard names the moves due (S5): asks the adapter of a start's
+      text for it, where lanes.json names one, and where it gives that no work waits for the
+      start, leaves the start out of the moves due, with why in its place in the answer; a start
+      of that role then stops with the moves due, and the main conversation's end stops for none
+      of it;
     - an event outside every Run: lets it through and adds nothing.
     Changes: the run record, by the lines above, and whatever an adapter or a command of the
     plugin's changes.
     Refuses: nothing; where lanes.json, the run record, an adapter, or a Lane can't be read or
     run, it stops the event with why and who must fix it, except an adapter that fails at the
     skill's call, whose start it gives with why while it lets the call run.
-    Carries: each `CC->>G` arrow of S1 to S7, and each `G-->>` answer.
+    Carries: each `CC->>G` arrow of S1 to S7, each `G-->>` answer, and S5 `G->>G: leaves that
+    start out of the moves due, with why in its place`.
     """
     lanes = read_lanes(os.path.join(root, "hooks", "lanes.json"))
     name = plugin_name(root)
@@ -131,7 +137,7 @@ def _called(plugin: Plugin, what: SkillCall, cwd: str) -> Answer:
     add(plugin.record, Called(run_id, what.skill, what.by, what.words))
     conversation = stand(plugin.session_id, lines(plugin.record), routes)
     (run,) = [r for r in conversation.runs if r.id == run_id]
-    return Answer(False, due(plugin.name, _dues(plugin, run, cwd)))
+    return Answer(False, due(plugin.name, _told(plugin, run, cwd)))
 
 
 def _record(plugin: Plugin, placed: Placed) -> None:
@@ -163,7 +169,7 @@ def _notified(plugin: Plugin, placed: Placed, cwd: str) -> Answer:
     if not placed.start.results:
         return PASS
     result = placed.start.results[-1]
-    return Answer(False, gave(plugin.name, placed.start.role, result, _dues(plugin, run, cwd)))
+    return Answer(False, gave(plugin.name, placed.start.role, result, _told(plugin, run, cwd)))
 
 
 def _started(plugin: Plugin, placed: Placed, asked: StartCall, cwd: str) -> Answer:
@@ -171,7 +177,7 @@ def _started(plugin: Plugin, placed: Placed, asked: StartCall, cwd: str) -> Answ
     breaks it."""
     verdicts: list[Verdict] = []
     for run in placed.runs:
-        moves = _dues(plugin, run, cwd)
+        moves = tuple(d for d in _told(plugin, run, cwd) if isinstance(d, Due))
         verdict = check_start(_lanes(plugin, placed, run), asked, _held(plugin, placed, run), moves)
         if verdict == Kept():
             text = next((d for d in moves if d.text == asked.text), None)
@@ -215,15 +221,18 @@ def _held(plugin: Plugin, placed: Placed, run: Run) -> Held:
     return Held(run, placed.start, plugin.root, plugin.lanes.proposal.routes)
 
 
-def _dues(plugin: Plugin, run: Run, cwd: str) -> tuple[Due, ...]:
-    """The Run's moves due, each start with its text and run values."""
+def _told(plugin: Plugin, run: Run, cwd: str) -> tuple[Due | Left, ...]:
+    """The Run's moves due, each start with its text and run values, and each start that the
+    adapter gives no work waits for left out, with why in its place."""
     running = tuple(Running(s.role, s.text, s.values) for s in run.starts if not s.ended)
     adapter = plugin.lanes.proposal.adapters.text
     program = os.path.join(plugin.root, adapter) if adapter else None
-    found = []
+    found: list[Due | Left] = []
     for move in run.due:
         if move.kind == "start" and move.role:
             text = start_text(program, move.role, running, run.words, cwd)
+            if isinstance(text, NoWork):
+                raise NotImplementedError("guard.handle, of none")
             found.append(Due(move, text.text, text.values))
         else:
             found.append(Due(move, "", {}))

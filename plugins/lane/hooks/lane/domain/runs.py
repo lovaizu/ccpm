@@ -62,6 +62,15 @@ class Due:
 
 
 @dataclass(frozen=True)
+class Left:
+    """A start that the guard leaves out of the moves due, as the adapter gave that no work waits
+    for it, with why in its place."""
+
+    move: Move
+    why: str
+
+
+@dataclass(frozen=True)
 class Run:
     """One run of one skill in the conversation, as it stands."""
 

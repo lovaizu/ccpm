@@ -25,6 +25,14 @@ class StartText:
 
 
 @dataclass(frozen=True)
+class NoWork:
+    """That no work waits for a start, such as while all of it waits for the person's approval, with
+    why, as the adapter printed it in place of a text."""
+
+    why: str
+
+
+@dataclass(frozen=True)
 class Running:
     """A Start of the Run that runs, as the adapter is handed it."""
 
@@ -43,20 +51,22 @@ class KeptResult:
 
 def start_text(
     program: str | None, role: str, running: Sequence[Running], words: str, cwd: str
-) -> StartText:
-    """The text and run values of one start due.
+) -> StartText | NoWork:
+    """The text and run values of one start due, or that no work waits for it.
 
     Takes: the adapter of a start's text that lanes.json names, or None; the role due; the text and
     values of each Start of the Run that runs; the words typed after the skill's command; and the
     hook event's cwd.
     Gives: what the adapter prints, `{"text": ..., "values": {<name>: <value>}}`, its values
     optional, given the role as its one argument and `{"running": [{"role": ..., "text": ...,
-    "values": {...}}]}` on standard input; or, with no adapter, Lane's text, `Carry out your
-    steps`, and the words typed, with no values.
+    "values": {...}}]}` on standard input; NoWork, with why, where the adapter prints
+    `{"none": <why>}`, as no work waits for that start; or, with no adapter, Lane's text, `Carry
+    out your steps`, and the words typed, with no values.
     Changes: nothing of Lane's; the adapter may read the plugin's files.
     Refuses: AdapterFailed.
     Carries: S5 `G->>A: asks for the text of each start due, with each Start that runs`, and its
-    `A-->>G` answers.
+    `A-->>G` answers: `the text, and the run values` and, after `it gives none, as no work waits
+    for that start`, and each way it fails, `why`.
     """
     if program is None:
         return StartText(f"{TEXT}: {words}" if words else TEXT, {})

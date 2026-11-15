@@ -7,29 +7,34 @@ from __future__ import annotations
 from collections.abc import Sequence
 
 from lanes.kind import Broken, CantCheck
-from runs import Due
+from runs import Due, Left
 
 
-def due(plugin: str, moves: Sequence[Due]) -> str:
+def due(plugin: str, moves: Sequence[Due | Left]) -> str:
     """The moves due, such as ``changelog: Start `changelog:writer` with `Carry out your steps`.``,
-    or nothing where no move due is a start or the move to start no more.
+    with why in place of each start left out, such as ``No work waits for `changelog:writer`:
+    <why>.``; nothing where no move is a start, the move to start no more, or a start left out.
 
-    Carries: S5 `G-->>M: the moves due, each start with its text`, S7 `G-->>M: the start due`.
+    Carries: S5 `G-->>M: the moves due, each start with its text`, with why in place of each start
+    that `G->>G: leaves that start out of the moves due`, S7 `G-->>M: the start due`.
     """
     said = _moves(plugin, moves)
     return f"{plugin}: {said}" if said else ""
 
 
-def gave(plugin: str, role: str, result: str, moves: Sequence[Due]) -> str:
-    """A Result and the moves of its Route, such as ``changelog: writer gave `written`. Start ...``.
+def gave(plugin: str, role: str, result: str, moves: Sequence[Due | Left]) -> str:
+    """A Result and the moves of its Route, such as ``changelog: writer gave `written`. Start ...``,
+    with why in place of each start left out, as `due` says it.
 
-    Carries: S5 `G-->>M: the Result, and the moves of its Route`, and `start no more subagents`.
+    Carries: S5 `G-->>M: the Result, and the moves of its Route`, with why in place of each start
+    that `G->>G: leaves that start out of the moves due`, and `start no more subagents`.
     """
     return f"{plugin}: {role} gave `{result}`. {_moves(plugin, moves)}".rstrip()
 
 
-def ended_unheld(plugin: str, role: str, moves: Sequence[Due]) -> str:
-    """That a subagent ended with no Result, and its start due again.
+def ended_unheld(plugin: str, role: str, moves: Sequence[Due | Left]) -> str:
+    """That a subagent ended with no Result, and its start due again, or why in its place where the
+    start is left out, as `due` says it.
 
     Carries: S5 `G-->>M: that it ended with no Result, and its start due again`.
     """
@@ -44,13 +49,17 @@ def stopped(plugin: str, broken: Broken) -> str:
     return "\n".join(x for x in (f"{plugin}: {broken.sentence}", broken.may) if x)
 
 
-def _moves(plugin: str, moves: Sequence[Due]) -> str:
-    """The words of the moves due: each start with its text, and the move to start no more."""
+def _moves(plugin: str, moves: Sequence[Due | Left]) -> str:
+    """The words of the moves due: each start with its text, the move to start no more, and why in
+    place of each start left out."""
+    told = [d for d in moves if isinstance(d, Due)]
+    if len(told) < len(moves):
+        raise NotImplementedError("answers.due and answers.gave, of none")
     said = [
         f"Start `{plugin}:{d.move.role}` with `{d.text}`."
         if d.move.kind == "start"
         else "Start no more subagents."
-        for d in moves
+        for d in told
         if d.move.kind in ("start", "no_more")
     ]
     return " ".join(dict.fromkeys(said))
