@@ -36,7 +36,6 @@ _FENCE = re.compile(r"(\s*)(`{3,}|~{3,})(.*)")
 _MARKER = re.compile(r"(\s*)(?:[-*+]|\d+[.)])(?:\s+|$)")
 _QUOTE = re.compile(r"\s*>")
 _TABLE = re.compile(r"\s*\|")
-_DELIMITER = re.compile(r"[\s|:]*-[\s|:-]*")
 _FIGURE = re.compile(r"!\[(.*)\]\((\S+?)\)")
 # A code span of Markdown, which the words of a block keep whole.
 CODE_SPAN = re.compile(r"`[^`\n]*`")
@@ -120,7 +119,6 @@ def _starts_block(line: str) -> bool:
         _HEADING.fullmatch(line)
         or _FENCE.fullmatch(line)
         or _QUOTE.match(line)
-        or _TABLE.match(line)
         or _MARKER.match(line)
     )
 
@@ -177,25 +175,22 @@ def _dedent(line: str, indent: int) -> str:
 
 def _quote(lines: list[str], at: int, first: int) -> tuple[Block, int]:
     """The quote that starts at the line `at`."""
-    end = at
-    while end < len(lines) and _QUOTE.match(lines[end]):
-        end += 1
+    end = _end(lines, at, _QUOTE)
     text = "\n".join(re.sub(r"^\s*> ?", "", line) for line in lines[at:end])
     return Block(QUOTE, first + at, text), end
 
 
 def _table(lines: list[str], at: int, first: int) -> tuple[Block, int]:
-    """The table that starts at the line `at`: its header, holding each row but the delimiter row,
-    each row written with its cells trimmed."""
-    end = at
-    while end < len(lines) and _TABLE.match(lines[end]):
-        end += 1
-    rows = tuple(
-        Block(ROW, first + each, _row(lines[each]))
-        for each in range(at + 1, end)
-        if not _DELIMITER.fullmatch(lines[each])
-    )
+    """The table that starts at the line `at`: its header, holding each row after its delimiter
+    row, which is the line after the header, each row written with its cells trimmed."""
+    end = _end(lines, at, _TABLE)
+    rows = tuple(Block(ROW, first + each, _row(lines[each])) for each in range(at + 2, end))
     return Block(TABLE, first + at, _row(lines[at]), children=rows), end
+
+
+def _end(lines: list[str], at: int, mark: re.Pattern[str]) -> int:
+    """The line after the run of lines from the line `at` that each start with the mark."""
+    return next((each for each in range(at, len(lines)) if not mark.match(lines[each])), len(lines))
 
 
 def _row(line: str) -> str:

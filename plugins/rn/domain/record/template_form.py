@@ -111,7 +111,13 @@ def form(blocks: tuple[Block, ...]) -> Form:
         for note in scoped[node.block.line]
         if note.slots & _slots(node.block)
     )
-    headings = {node.block.text for node in _walk(nodes) if node.block.kind == HEADING}
+    # A block's kind is a member of Kind, of which Python keeps one copy, so a mutant of `==` to
+    # `is` changes nothing.
+    headings = {
+        node.block.text
+        for node in _walk(nodes)
+        if node.block.kind == HEADING  # pragma: no mutate
+    }
     left = {words for note in _all_notes(nodes) for words in _left_sections(note)}
     optional = frozenset(left & headings)
     units = _units(nodes, _Context(scoped, optional, holders))
@@ -248,7 +254,9 @@ def _unit(node: Node, context: _Context) -> Unit:
 def _repeats(block: Block) -> bool:
     """Whether the block may stand more than once, by its form alone: a heading below the top
     whose words hold a slot, or a list item whose first words do."""
-    if block.kind == ROW:
+    # A block's kind is a member of Kind, of which Python keeps one copy, so a mutant of `==` to
+    # `is` changes nothing.
+    if block.kind == ROW:  # pragma: no mutate
         return bool(_slots(block))
     if block.kind == HEADING:
         # A heading's level is at least 1, so a mutant of `>` to `!=` changes nothing.
@@ -318,7 +326,9 @@ def _pattern_of(block: Block, notes: list[_Note]) -> re.Pattern[str] | None:  # 
         return None
     if block.kind == CODE:
         return re.compile(".+" if _SLOT.search(block.info) else re.escape(block.info))
-    if block.kind == ROW:
+    # A block's kind is a member of Kind, of which Python keeps one copy, so a mutant of `==` to
+    # `is` changes nothing.
+    if block.kind == ROW:  # pragma: no mutate
         row = r" \| ".join(_pattern(cell).replace(_ANY, r"[^|\n]+?") for cell in cells(block.text))
         return re.compile(rf"\| {row} \|")
     word = next((m.group(1) for n in notes for m in [_LEAVE_WORD.search(n.words)] if m), "")

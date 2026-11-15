@@ -283,6 +283,8 @@ def _long_sentences(blocks: tuple[Block, ...]) -> list[Fault]:
 def _prose(block: Block) -> list[str]:
     """The words of the block that a reader reads as sentences: a paragraph's or an item's, or each
     cell of a row, and none of another block."""
-    if block.kind == ROW:
+    # A block's kind is a member of Kind, of which Python keeps one copy, so a mutant of `==` to
+    # `is` changes nothing.
+    if block.kind == ROW:  # pragma: no mutate
         return cells(block.text)
     return [block.text] if block.kind in (PARAGRAPH, ITEM) else []

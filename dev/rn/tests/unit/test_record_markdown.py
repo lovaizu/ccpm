@@ -356,15 +356,22 @@ def test_sections_end_a_section_at_a_heading_above_its_level():
 
 @pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
 def test_a_table_holds_its_header_and_each_row_but_the_delimiter_row():
-    """Given a table of a header, a delimiter row, and two rows, with spaces around its cells
+    """Given two headings and a blank line, then a table of a header, a delimiter row, and two rows,
+    with spaces around its cells
     When the text is read
-    Then it gives one table of the header, holding the two rows, each cell trimmed"""
-    text = "| Test type | Exit criteria |\n|---|---|\n|  Unit | coverage: 100% |\n| E2E | k = 3 |"
+    Then it gives, after the headings, one table of the header at line 4, holding the two rows at
+    lines 6 and 7, each cell trimmed"""
+    text = (
+        "# Strategy\n## Test types\n\n"
+        "| Test type | Exit criteria |\n|---|---|\n|  Unit | coverage: 100% |\n| E2E | k = 3 |"
+    )
     assert read(text) == (
+        Block(HEADING, 1, "Strategy", level=1),
+        Block(HEADING, 2, "Test types", level=2),
         Block(
             TABLE,
-            1,
+            4,
             "| Test type | Exit criteria |",
-            children=(Block(ROW, 3, "| Unit | coverage: 100% |"), Block(ROW, 4, "| E2E | k = 3 |")),
+            children=(Block(ROW, 6, "| Unit | coverage: 100% |"), Block(ROW, 7, "| E2E | k = 3 |")),
         ),
     )
