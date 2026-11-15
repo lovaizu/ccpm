@@ -21,6 +21,18 @@ and takes its deliverables from the top.** Each session resumes from the tree.
 - Rationale: the tree holds each decision and where the work stands, so a new session needs nothing
   else.
 
+**After each change to the tree, read its whole order again, and put each deliverable after each
+one it takes from, waits for, or whose check it rests on.**
+
+- Rationale: a deliverable added or changed in one place leaves another before what it rests on,
+  and the work then starts it on a guess.
+
+**Build a check that a decision of the tree names before the work that the check judges, and judge
+that work by the check, not by a reading.**
+
+- Rationale: a reading passes what the check would find, so the work is called done while it still
+  fails the decision, and is made again once the check exists.
+
 **Until rn runs, the main conversation makes each document itself, with no evaluators: the best
 practices and their templates, the plugin guide, and each plugin's product vision, README, and
 architecture.** It makes each to its best practice and its template, and keeps only the vital few.
