@@ -2,7 +2,7 @@
 
 ## User stories
 
-- S1: the user wants to ask in their own words, so that they get what they mean unspecified.
+- S1: the user wants to ask in their own words, so that they get what they mean with no specification.
 - S2: the user wants to decide only their own points, one at a time, so that their time goes there.
 - S3: the user wants to approve or ask a change at each sign-off, so that nothing rests on a
   misreading.
