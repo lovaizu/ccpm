@@ -217,7 +217,8 @@ def test_a_steps_file_a_skill_and_its_command_share_is_the_skills(tmp_path: obje
     name write-steps.md by `${CLAUDE_PLUGIN_ROOT}/` as the file of their Steps.
     When: up hands lay.py print the walkthrough's Proposal with write's Lanes on write-steps.md,
     reviewer's `good` waiting for approve, and a Route after approve that starts no more.
-    Then: lay.py print exits 0, and shows write-steps.md's step 1 once, under write's Routes."""
+    Then: lay.py print exits 0, shows the Route after approve as the person typing it, and shows
+    write-steps.md's step 1 once, under write's Routes."""
     body = "Your steps are in `${CLAUDE_PLUGIN_ROOT}/write-steps.md`.\n"
     write = w.WRITE.split("## Steps")[0] + body
     front = "---\nname: approve\ndescription: A.\ndisable-model-invocation: true\n---\n\n"
@@ -235,6 +236,8 @@ def test_a_steps_file_a_skill_and_its_command_share_is_the_skills(tmp_path: obje
     proposal["routes"].append(after)
     printed = w.print_proposal(b, c, proposal)
     assert printed.exit_code == 0, printed.output
+    routes = printed.output.split("\n\n")[0].split("\n")
+    assert routes[-1] == "  the person types approve  start no more", "the Route after approve"
     write_block = printed.output.split("\n\n")[1]
     assert write_block.startswith("1. Have the entries written and reviewed."), "write's step 1"
     assert printed.output.count("Have the entries written and reviewed.") == 1, "shown once"

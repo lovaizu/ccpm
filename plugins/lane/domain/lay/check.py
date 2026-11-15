@@ -14,7 +14,7 @@ from dataclasses import dataclass
 from form import Proposal
 from lanes import LaneRefused, sentence
 
-from lay.steps import Step, commands
+from lay.steps import COMMAND, Step, commands, sets
 
 
 @dataclass(frozen=True)
@@ -103,7 +103,7 @@ def _foreground(plugin: str, proposal: Proposal) -> list[str]:
         f"agents/{role}.md: set `background: true` in its front matter, as a Route starts"
         f" {role}, and the guard holds the calls only of a subagent in the background"
         for role in _started(proposal)
-        if not _sets(plugin, f"agents/{role}.md", "background: true")
+        if not sets(plugin, f"agents/{role}.md", "background: true")
     ]
 
 
@@ -116,7 +116,7 @@ def _model_called(plugin: str, proposal: Proposal) -> list[str]:
         f" as a Route waits for the person to type `{command}` or goes after it, which the model"
         " mustn't call"
         for command in dict.fromkeys(named)
-        if not _sets(plugin, f"skills/{command}/SKILL.md", "disable-model-invocation: true")
+        if not sets(plugin, f"skills/{command}/SKILL.md", COMMAND)
     ]
 
 
@@ -146,10 +146,3 @@ def _shared(steps: Sequence[Step]) -> list[str]:
         for file, held in roles.items()
         if len(held) > 1
     ]
-
-
-def _sets(plugin: str, file: str, setting: str) -> bool:
-    """Whether the plugin's file holds the setting as a line of its own before its front matter
-    ends, at its second `---`."""
-    with open(os.path.join(plugin, *file.split("/")), encoding="utf-8") as f:
-        return setting in f.read().split("\n---\n", 1)[0].split("\n")
