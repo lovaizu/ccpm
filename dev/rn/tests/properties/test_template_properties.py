@@ -8,7 +8,7 @@ import os
 from typing import Any
 
 import pytest
-from hypothesis import given
+from hypothesis import example, given
 from hypothesis import strategies as st
 from template.check import MOST_WORDS, faults
 from template.markdown import read
@@ -99,6 +99,8 @@ def test_a_sentence_has_a_fault_only_past_the_most_words(count: int, word: str):
 
 @pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 @given(st.sampled_from(KINDS), st.text(max_size=400))
+@example("readme", "\x000\x00")
+@example("readme", "See [the `x` page](https://example.com/x). It holds `y` too.")
 def test_any_text_checked_against_a_template_gives_faults_at_its_lines(kind: str, text: str):
     """Given any text, and the template of a kind
     When the text is checked

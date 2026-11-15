@@ -244,6 +244,19 @@ def test_sentences_keep_a_code_span_and_a_link_whole():
 
 
 @pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
+@pytest.mark.parametrize(
+    "text",
+    ["See [the `a. b` page](a.md) here.", "A NUL \x000\x00 stays as written."],
+    ids=["a code span in a link", "a NUL around digits"],
+)
+def test_sentences_give_back_each_character_of_the_text(text: str):
+    """Given a sentence with a code span inside a link, or NULs around digits
+    When it's split into sentences
+    Then it gives the one sentence as written"""
+    assert sentences(text) == [text]
+
+
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_sentences_split_at_a_newline():
     """Given words with a newline, which a line that ends with a backslash gives
     When they're split into sentences

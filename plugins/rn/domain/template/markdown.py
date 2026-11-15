@@ -272,11 +272,16 @@ def sentences(text: str) -> list[str]:
         spans.append(match.group(0))
         return f"\0{len(spans) - 1}\0"
 
-    hidden = _LINK.sub(hide, CODE_SPAN.sub(hide, text))
+    def show(hidden: str) -> str:
+        return re.sub(r"\0(\d+)\0", lambda m: show(spans[int(m.group(1))]), hidden)
+
+    # A NUL of the text is hidden first, so that each NUL left marks a span hidden, and a span
+    # hidden inside a link comes back with it.
+    hidden = _LINK.sub(hide, CODE_SPAN.sub(hide, re.sub("\0", hide, text)))
     found = []
     for line in hidden.split("\n"):
         found += [each for each in _SENTENCE_END.split(line) if each.strip()]
-    return [re.sub(r"\0(\d+)\0", lambda m: spans[int(m.group(1))], each) for each in found]
+    return [show(each) for each in found]
 
 
 def words(sentence: str) -> int:
