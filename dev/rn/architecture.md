@@ -1,41 +1,29 @@
-# `rn` architecture
+# rn architecture
 
 This document says how the parts of rn give what [its README](../../plugins/rn/README.md)
-promises. rn builds up only the vital few of each deliverable, what its people can't do without, as
-decisions in a design tree: the orchestrator, the main conversation, settles them, asking the user
-only the points that are theirs, and a tree-keeper keeps them. A generator makes each deliverable
-from its decisions, round after round, until evaluators that have only what its people have find
-every necessary condition good, and the user signs it off before anything rests on it, while the
-work that rests on no point or sign-off still waiting goes on. The orchestrator checks every result
-before it takes it, and what an evaluator puts in `more` changes the decision it comes from, not
-the deliverable.
+promises. rn keeps the vital few of each deliverable as decisions in a design tree, asking the user
+only theirs. A generator makes each deliverable from its decisions until evaluators with only its
+people's view find it good. A shortfall changes the decision it comes from, and the user signs off
+each deliverable before anything rests on it.
 
 ## User stories
 
-- S1: the user wants to type `/rn:up` with what they want, in their own words, so that they get the
-  deliverable they mean without writing a specification. It carries the walkthrough's first
-  `/rn:up`, the goal put to the user, and each deliverable made in rounds.
-- S2: the user wants to answer each point rn puts to them, one at a time, while rn goes on with the
-  work that rests on no open point, so that they spend their time only on what's theirs to decide,
-  and the run waits for them only where the work needs their answer. It carries the answer
-  `each file`.
-- S3: the user wants to sign off the plan and each deliverable with `/rn:ty`, or send it back with
-  `/rn:gm`, so that nothing rests on what they didn't mean, and nothing else waits for it. It
-  carries the plan and each deliverable put up for sign-off, each `/rn:ty`, and `/rn:gm` with what
-  to change or with their comments on the pull request.
-- S4: the user wants to type `/rn:dn` and stop the run at any moment, so that they lose neither
-  their time nor the work so far. It carries the walkthrough's `/rn:dn` and `Paused`.
-- S5: the user wants to type `/rn:up` alone in a new conversation and have rn go on where it
-  stopped, so that they never answer a point twice or wait for work made again. It carries the
-  walkthrough's second `/rn:up` and `Picking up`.
-- S6: the user wants one pull request, the decisions rn took without asking, and the lessons of the
-  run, so that they check the work and merge it themselves. It carries the walkthrough's `Done`,
-  each change to a best practice that rn proposes there, each lesson that it puts up for their
-  sign-off, the whole pull request read before it's ready, and the merge.
-- S7: rn's developers want each general lesson that a run's user signs off to reach rn's
-  repository as an issue, so that they improve rn's own best practices from what each run finds.
-  It carries a need of rn's development: the issue that the user's `/rn:ty` of a lesson opens in
-  S6.
+- S1: the user wants to type `/rn:up` with their request, so that they get what they mean without a
+  specification. It carries the first `/rn:up`, the goal confirmed, and each deliverable made in
+  rounds, by best practice.
+- S2: the user wants to answer each point one at a time, so that they spend time only on theirs. It
+  carries the answer `each file`, the idea of only the user's decisions asked, and the work going on
+  meanwhile.
+- S3: the user wants `/rn:ty` or `/rn:gm` at each sign-off, so that nothing rests on what they didn't
+  mean. It carries each sign-off with what its people can do, each `/rn:ty`, and each `/rn:gm`.
+- S4: the user wants to type `/rn:dn` at any moment, so that they lose neither time nor work. It
+  carries the walkthrough's `/rn:dn` and `Paused`.
+- S5: the user wants to type `/rn:up` alone in a new conversation, so that rn goes on where it
+  stopped. It carries the walkthrough's second `/rn:up` and `Picking up`.
+- S6: the user wants one pull request, the decisions rn took, and the run's lessons, so that they
+  merge it. It carries `Done`, each change to a best practice, each lesson put up, and the merge.
+- S7: rn's developers want each lesson a user signs off as an issue, so that they improve rn's best
+  practices. It carries a need of rn's development: the issue that a lesson's `/rn:ty` opens in S6.
 
 ## Components
 
@@ -44,124 +32,70 @@ the deliverable.
 What each decides alone:
 
 - user\
-  The goal, each point the purpose and the best practices leave open, each sign-off, each change to
-  a best practice, each lesson sent to rn's repository, when to pause, and whether to merge.
+  The goal, each point that's theirs, each sign-off, each change to a best practice, each lesson
+  sent, pausing, and merging.
 - rn's developers\
-  Whether and how each lesson that reaches rn's repository changes rn's own best practices.
+  How each lesson that reaches rn's repository changes rn's own best practices.
 - orchestrator\
-  Whether a point is the user's, and each other point that the design tree holds, from the purpose
-  and the best practices: the deliverables and their plan, each decision of a necessary condition,
-  each point that a role hands back, which point or sign-off to put to the user next, whether to
-  take each role's result or send it back, which of the evaluators' `more` the people fall short
-  by, the decisions that each sign-off shows as taken without asking, whether the whole pull
-  request holds together, and what to propose at Done.
+  Whose a point is, every other point, the plan, each result and `more` taken, the whole pull
+  request, and lessons.
 - tree-keeper\
-  How each decision of the orchestrator's goes into the design tree, and whether each node that the
-  change touches still agrees with it. It decides the form of the Cut it takes and of what it
-  gives.
+  How each decision goes into the design tree, whether each node it touches agrees, and its input and
+  output forms.
 - generator\
-  The deliverable, and each point that lies within it alone: one that its cut, the goal, and its
-  best practice settle one way, and whose answer changes no decision of its cut and nothing of
-  another deliverable, such as typing amounts as Decimal where the code already computes with
-  Decimal. It hands each other point back with `asks`, as only the orchestrator sees the whole
-  design tree. It decides the form of the Cut it takes and of the Made it gives.
+  The deliverable, each point within it alone, which points it hands back with `asks`, and its input
+  and output forms.
 - evaluator\
-  Which necessary conditions of its group the deliverable meets for its people, of the best practice
-  of the deliverable's kind, on whether they reach their goal with it, or of the refactor best
-  practice that finishes it, on whether they understand it in one read and change it rightly, each
-  in `good` with
-  the lines that meet it, and, for each other, in `more`, its `good_when`: what the people get once
-  the deliverable is good, as the plugin guide's
-  [Read by those who did not make it](../plugin-development-guide.md#read-by-those-who-did-not-make-it)
-  words it. It decides the form of the Cut it takes and of the Answers it gives.
+  Which conditions of its group the deliverable meets for its people, each `good_when`, and its input
+  and output forms.
 - tree.py\
-  The tree's form and which nodes a change touches; each deliverable whose turn has come to be
-  doing, which is each one that rests on no open point and on no plan or deliverable not yet signed
-  off; each role's cut, with each best practice the role works by; where each start's Record
-  lies, a new file of the run's `records/` for each start, and the order of the starts; where each
-  round keeps its Try record, Made, Answers, More kept, and Place, and the form of the Try record,
-  each More kept, and each Place; whether a `more` is kept, only once a decision that answers its
-  necessary condition changed since the round's cut; the form of each Sign-off; what waits for the
-  user's sign-off, the pull request handed over among them, and what they signed off; the run's
-  name, worktree, and branch; the runs left, and where each stopped; and when the run's work reaches
-  its branch and its pull request: each commit, each push, the user's comments since a sign-off, the
-  pull request marked ready, and a draft again when the user sends it back, and the issue of each
-  lesson that the user signs off.
+  The tree's form, touched nodes, each deliverable's turn, cuts, the run's files and branch, and what
+  reaches GitHub.
 - repository\
-  Each git and gh command that tree.py runs, and how it reads what they print: the worktree, each
-  commit and push, the draft pull request, its comments, marking it ready and a draft again, and
-  the issue.
+  Each git and gh command that tree.py runs, and how it reads what they print.
 - record.py\
-  A record's form, and rn's check: whether a role's record holds each step of its part and each
-  practice of each best practice of its cut where the step takes it, whether its result names each
-  item of each list it carries, and, at a generator's end, whether the deliverable holds the
-  template of its kind and nothing beside it, and the result it accepted, kept in the record.
+  A record's form, and rn's check of each record, result, and deliverable against its steps,
+  practices, and template.
 - throwaway.py\
   Where a deliverable's commands run.
 - guard\
-  Whether a role's call keeps its steps, whether rn's check accepts a role's record and result at
-  its end, whether a deliverable's command runs only through throwaway.py, and whether the run
-  passes a sign-off only after the user's `/rn:ty`, by the lanes that rn lays in
-  [Lane](../lane/architecture.md), and, as Lane's guard decides them, which start is due and where
-  a run picks up.
+  Whether each call keeps its steps and throwaway copy, each end passes rn's check, and each sign-off
+  waits for `/rn:ty`.
 - adapters\
-  How the Cut of a role's start, and the result that each record kept, read in the form Lane reads;
-  from the words typed after `/rn:up`, which Lane's guard gives them, whether the call starts a new
-  run, as a request does whatever runs are left, or picks one up, as `/rn:up` alone does; which
-  run's results `/rn:up` alone picks up: the run of the worktree the conversation works in, or,
-  from anywhere else in the repository, the one run left; and which work of each role waits for a
-  start beside the starts that run, as [Lane's adapter](../lane/architecture.md#components) decides
-  it.
+  Each start's text, the results kept, which work waits, whether `/rn:up` starts or picks up, and
+  which run.
 
 The choices made, and why:
 
 - One generator for each deliverable over several side by side\
-  Three generators would take about three times as long for a gain in KR1.1 that no end-to-end test has shown,
-  which adds to KR1.2. The cost: a lack in a best practice shows only when its developers run several
-  generators to check it.
-- The orchestrator judging every point over a role of its own that settles them\
-  The user talks with the one that decides, and no answer passes through a role that rewords it, which keeps KR1.2 short. The cost: the main conversation holds every judgment of the run.
-- tree.py finding the work that waits on a point or a sign-off over the orchestrator judging it\
-  A rule held in code holds on every run, so no work starts on an open point or on what the user
-  didn't sign off, which keeps KR1.1 low, and no work waits that rests on neither, which keeps KR1.2
-  short. The cost: each point waits for the tree-keeper to write it into the design tree before the
-  user sees it.
+  Several would take about that many times as long for no gain in KR1.1 shown, adding to KR1.2. The
+  cost: a lack in a best practice shows only when its developers run several.
+- The orchestrator judging every point over a role of its own\
+  The user talks with the one that decides, and no answer is reworded, which keeps KR1.2 short. The
+  cost: the main conversation holds every judgment of the run.
+- tree.py finding the work that waits over the orchestrator judging it\
+  Code holds it every run, so no work starts early or waits idle, keeping KR1.1 low and KR1.2 short.
+  The cost: each point waits for the tree-keeper to write it before the user sees it.
 - A tree-keeper that writes the design tree over the orchestrator writing it\
-  The orchestrator checks each change to the tree against the design tree best practice as a
-  change that another made, since a writer who checks their own change reads what they meant, not
-  what they wrote, so fewer nodes that still disagree with a change reach a generator, which keeps
-  KR1.1 low. The cost: each decision waits for a resume of the tree-keeper before the work that
-  rests on it starts, which adds to KR1.2.
-- One evaluator for each group of necessary conditions over one evaluator for all of them\
-  Each evaluator judges one group in a context of its own, so what it found on one group doesn't
-  lead its answer on another, which keeps KR1.1 low, and the evaluators run side by side, so a round
-  takes about as long as one evaluator's reading, which keeps KR1.2 short. The cost: each evaluator
-  reads the whole deliverable, so a round spends one reading for each group, and the orchestrator
-  joins a `more` that two groups each name in part.
-- Evaluators by the refactor best practice beside those by the kind's best practice over one kind
-  of evaluator judging both\
-  Adding function and reworking structure are two jobs, and judged as one, what each round adds
-  breaks the structure unseen, so the people misread the deliverable and the next change
-  contradicts it, which raises KR1.1. The cost: one more reading in each round, which adds to KR1.2.
-- rn's check holding each deliverable to its kind's template over the evaluators judging its form\
-  The template holds only the vital few, so each sentence beyond it is trivia, which an evaluator
-  reading for its conditions passes and which buries what the people need, which raises KR1.1. The
-  cost: a deliverable that needs a section the template lacks waits for a change of its best
-  practice, which adds to KR1.2.
-- Rounds until the evaluators find every necessary condition good over a set limit on rounds\
-  A limit would hand over a deliverable whose people still can't use it, which raises KR1.1, and
-  KR1.1 comes before KR1.2, as the product vision orders them and the README's Non-goals promise.
-  The cost: a deliverable whose conditions are hard to meet takes as many rounds as it needs, which
-  adds to KR1.2.
-- The adapter of the results kept picking up, at `/rn:up` alone, the one run left from the root of
-  the repository over picking up only in a run's worktree\
-  The user types `/rn:up` at the root, as the README's walkthrough shows, and Lane asks the adapter
-  only as the skill is called, in the folder the conversation works in, as
-  [Lane's S7](../lane/architecture.md#s7-a-run-picked-up) draws, so the guard picks the run up
-  where it stopped, and no role starts its work over, which keeps KR1.2 short. The cost: with more
-  than one run left, the adapter can't tell which one the user picks, so the guard starts its
-  run anew, and the run's starts pass through the routes from their first move, the tree-keeper's
-  start first.
+  The orchestrator then checks each change as another's, and a writer misses their own slips, which
+  keeps KR1.1 low. The cost: each decision waits for a resume of the tree-keeper, which adds to KR1.2.
+- One evaluator for each group of necessary conditions over one for all\
+  Each judges its group in its own context, side by side, which keeps KR1.1 low and KR1.2 short. The
+  cost: each reads the whole deliverable, and the orchestrator joins a `more` split between groups.
+- Evaluators by the refactor best practice beside the kind's over one evaluator for both\
+  Judged as one, what each round adds breaks the structure unseen, so the people misread it, raising
+  KR1.1. The cost: one more reading in each round, which adds to KR1.2.
+- rn's check holding each deliverable to its template over the evaluators judging its form\
+  Each sentence beyond the template's vital few is trivia that evaluators pass and buries what the
+  people need, raising KR1.1. The cost: a deliverable needing a section the template lacks waits for
+  its best practice to change, adding to KR1.2.
+- Rounds until every necessary condition is good over a set limit on rounds\
+  A limit would hand over a deliverable its people can't use, and KR1.1 comes before KR1.2. The cost:
+  a deliverable whose conditions are hard to meet takes many rounds, adding to KR1.2.
+- The adapters picking up the one run left from the repository's root over only in a run's worktree\
+  At the root, where [Lane's S7](../lane/architecture.md#s7-a-run-picked-up) asks the adapters for
+  `/rn:up`, no role starts over, keeping KR1.2 short. The cost: with several runs left, the adapters
+  can't tell which, so the guard starts the run anew.
 
 ## Data model
 
@@ -170,73 +104,49 @@ The choices made, and why:
 - Cut\
   The part of the design tree that a role starts with.
 - Design tree\
-  The goal, a Decision with no necessary condition, and the plan: each deliverable in the order of
-  the work, with what it takes from or waits for, as
-  [the design tree best practice](../../plugins/rn/domain/best-practices/design-tree/best-practice.md)
-  gives its form.
+  The goal, its decisions, and the plan of deliverables, in
+  [the design tree best practice](../../plugins/rn/domain/best-practices/design-tree/best-practice.md)'s
+  form.
 - Point\
-  A question put to the user, with its recommendation: a decision while it's open, the goal
-  drafted, or what a role lacks from outside the work.
+  A question put to the user with its recommendation: an open decision, the goal drafted, or a lack.
 - Sign-off\
-  The plan, a deliverable, a lesson for rn's repository, or the pull request handed over, put to
-  the user for `/rn:ty` or `/rn:gm`, with what the people can do with it, the decisions taken
-  without asking, and its changes, or with the lesson's words. The decisions taken without asking
-  are each decision under it in the design tree that the user didn't settle, and, for a
-  deliverable, each point that its last round's Made names.
+  The plan, a deliverable, a lesson, or the pull request, put up for `/rn:ty` or `/rn:gm`.
 - Made\
-  What a generator made, as it ends with `done`: where the deliverable carries out each decision of
-  its cut and makes each More kept good, and each point it settled without asking, with its ground.
+  What a generator made: where it carries out each decision and More kept, and each point it settled.
 - Place\
-  The step that each role of a round stands at, with the work it has made, kept at the end of each
-  step and at a pause.
+  The step each role of a round stands at, with its work, kept at each step's end and a pause.
 - Answers\
-  An evaluator's answer to each necessary condition of its group, in `good` or in `more`, apart
-  from the user's answer to a Point.
+  An evaluator's answer to each necessary condition of its group, apart from the user's answer to a
+  Point.
 - More kept\
-  An evaluator's `more`, with its `good_when`, that the orchestrator judged the people fall short
-  by, which the next round's generator gets.
+  An evaluator's `more` that the orchestrator judged the people fall short by, for the next round's
+  generator.
 - Record\
-  What one start of a role, or the orchestrator in a run, carried out: each step and practice in the
-  order taken, and the result that rn's check accepted, one for each start. A Try record is another
-  thing: the commands that a generator tried in a throwaway copy.
+  What one start of a role, or the orchestrator, carried out, apart from a Try record of commands
+  tried.
 
 ## Principles
 
-rn builds on [the plugin guide](../plugin-development-guide.md), and adds these rules,
-which every part keeps. They change none of the guide's: the orchestrator resumes a role that
-ends on a point with the decision, and with the user's words word for word where they answered, as
-its [Messages](../plugin-development-guide.md#messages) says, as a new start would give the role
-the tree-keeper's words for what the user meant, while the design tree keeps the decision for each
-later round. The guard's run record is Lane's, kept in the system's temporary folder, as
-[Lane's Deployment](../lane/architecture.md#deployment) says. It keeps nothing that a new
-conversation needs and the run's folder lacks, as the guard picks a run up from the result kept in
-each record, so The repository holds the work holds for the guard too.
+rn builds on [the plugin guide](../plugin-development-guide.md), and adds these rules, which every part keeps.
 
 ### Drawn out along the design tree
 
-Each role starts with its own cut of the design tree alone, and the guard lets it start only with
-the cut that `tree.py` gave for that role.
+Each role starts with only the cut that `tree.py` gave for it, and the guard stops any other start.
 
 *Why*: a role that reads decisions not its own makes what the user didn't mean, which raises KR1.1.
 
 ### Every step by best practice
 
-Each role works by the best practice of its kind of work, a generator finishes a document by the
-refactor-doc best practice and code by the refactor-code one, and Lane holds it to the steps.
+Each role works by its kind's best practice, a generator finishes by the refactor one, and Lane
+holds the steps.
 
-*Why*: an AI that skipped a step once skips it again, and the deliverable misses what the step makes
-sound, which raises KR1.1.
+*Why*: an AI that skipped a step once skips it again, so the deliverable misses what it makes,
+raising KR1.1.
 
 ### Every item handled
 
-Each role reads in full what it starts with and each best practice its part names. It records each
-step and each practice item it takes at the time each names, as
-[the plugin guide](../plugin-development-guide.md#a-record-of-each-step-and-practice) says. Its result
-names each item of each other list it carries: each decision of its cut it checked, each necessary
-condition it judged, and each `more` and comment it judged. Lane holds each read by its trace, and
-the guard runs rn's check of the record and the result against the whole list at the role's end,
-and at each end of the orchestrator's turn, which the check passes where the turn puts no work up
-for the user, as the guide says.
+Each role reads all it starts with, records each step and practice, and names each item its result
+carries.
 
 *Why*: an item dropped takes from the deliverable what the item holds, which raises KR1.1.
 
@@ -244,51 +154,47 @@ for the user, as the guide says.
 
 An evaluator gets only what the deliverable's people have.
 
-*Why*: an evaluator that knows what the maker meant judges the making, not what the people get, which
-raises KR1.1.
+*Why*: an evaluator that knows what the maker meant judges the making, not what the people get,
+raising KR1.1.
 
 ### Signed off before it's built on
 
-The plan and each deliverable reach the work that rests on them, and the pull request becomes ready,
-only after the user's `/rn:ty`, which the guard holds the run to, and meanwhile each part goes on
-with the work that `tree.py` gives its turn, as it rests on no sign-off or point still waiting.
+`tree.py` gives work resting on a sign-off its turn only after `/rn:ty`, and other work its turn at
+once.
 
-*Why*: a wrong reading of what the user means, found only at the end, makes everything that rests
-on it made again, which raises KR1.1 and adds to KR1.2, and a run that held all its work for each
-point and sign-off would add the user's time away to the run's, which adds to KR1.2.
+*Why*: a misreading found late remakes everything resting on it, raising KR1.1, and idle waiting
+adds to KR1.2.
 
 ### Back to the design tree on a problem
 
-What an evaluator puts in `more`, or what the user sends back with `/rn:gm`, changes the decision
-it comes from, and the next round makes the deliverable from the design, never with a fix beside
-it.
+A `more` or a `/rn:gm` changes the decision it comes from, and `tree.py` keeps a `more` only then.
 
-*Why*: a fix beside the design rests on no decision, so the next round, made from the design, loses
-it or breaks another necessary condition with it, which raises KR1.1.
+*Why*: a fix beside the design rests on no decision, so the next round loses or breaks it, raising
+KR1.1.
 
 ### The design tree revised on each run
 
-What a run finds changes the design tree before the next deliverable, and the best practice before
-the next run, once the user takes the change, which the orchestrator proposes before the merge.
+What a run finds changes the design tree before the next deliverable, and a best practice once
+taken.
 
-*Why*: a design tree or a best practice kept as first laid out makes the same miss again, which raises
-KR1.1 and adds to KR1.2.
+*Why*: a design tree or best practice kept as first laid out makes the same miss again, raising
+KR1.1.
 
 ### Tried in a throwaway copy
 
-A deliverable's commands run only in a throwaway copy of the repository, with a throwaway home,
-and a lane of Lane holds each role to it.
+A deliverable's commands run only through `throwaway.py`, in a throwaway copy and home, as the
+guard holds.
 
-*Why*: a command run as the people run it would otherwise change the user's own files, and the
-user would spend their time setting them right, which adds to KR1.2.
+*Why*: a command run as its people run it would change the user's files, and mending them adds to
+KR1.2.
 
 ### The repository holds the work
 
-Every part keeps the run's state only in the run's folder and the deliverables on the work's own
-branch, in rn's own worktree, and `tree.py` commits them at the end of each step and at a pause.
+The run's state lives only in its folder on the work's branch, which `tree.py` commits at each step
+and pause.
 
-*Why*: work kept only in a conversation that ends, or left uncommitted at a pause, makes the user
-answer or wait for it again, which adds to KR1.2.
+*Why*: work kept only in a conversation that ends makes the user answer or wait again, adding to
+KR1.2.
 
 ## Sequences
 
@@ -625,23 +531,20 @@ sequenceDiagram
 ![rn's deployment](images/deployment.svg)
 
 The user installs rn as [the README](../../plugins/rn/README.md#installation) says, which installs
-Lane with it, and types `/rn:up` in Claude Code at the root of their repository.
+Lane, and types `/rn:up` at their repository's root.
 
-- rn's own git worktree for each run, over the user's checkout\
-  The user goes on with their own work while rn runs, and a pause leaves nothing of theirs to set right, which keeps KR1.2 short. The cost: a worktree on disk for each run until its merge.
+- rn's own git worktree for each run over the user's checkout\
+  The user goes on with their work, and a pause leaves nothing of theirs to set right, keeping KR1.2
+  short. The cost: a worktree on disk for each run until its merge.
 - A best practice made on a run in `.rn/best-practices/<kind>/` over the run's folder\
-  It's a deliverable that the run makes for the user, not a file of the run, so it lies where every
-  later run in the repository looks for it, as the plugin guide's
-  [Where a plugin writes its files](../plugin-development-guide.md#where-a-plugin-writes-its-files)
-  says of a deliverable, and a later run takes it over rn's own of the same kind, which keeps KR1.1
-  low. The cost: a later run misses what rn's own gains after it.
+  Every later run finds it and takes it over rn's own of its kind, keeping KR1.1 low. The cost: a
+  later run misses what rn's own gains after it.
 
 ## Directory structure
 
 rn's folder holds what Claude Code installs for the user. `dev/rn/` holds what only rn's developers
-use. `.claude/worktrees/` holds rn's worktree of each run. `.rn/` is what rn writes on the work's
-branch: the run's folder, as the plugin guide names it, and each best practice made on a run, a
-deliverable for the user.
+use. `.claude/worktrees/` holds rn's worktree of each run. `.rn/` holds what rn writes on the work's
+branch: [the run's folder](../plugin-development-guide.md#where-a-plugin-writes-its-files) and each best practice made on a run.
 
 ```text
 plugins/rn/
@@ -713,115 +616,124 @@ dev/rn/
 └── best-practices/                each best practice made on a run
 ```
 
+
 ## Test strategy
 
-rn tests by [the plugin guide](../plugin-development-guide.md#test), in unit tests, integration
-tests, and end-to-end (E2E) tests. Its test cases lie in `dev/rn/tests/`, and `dev/scripts/trace.py`
-checks that each names an element or a case one level up.
+rn tests by [the plugin guide](../plugin-development-guide.md#test), in unit tests, integration tests, and end-to-end (E2E)
+tests. Its test cases lie in `dev/rn/tests/`, and `dev/scripts/trace.py` checks that each names an
+element or a case one level up.
 
 ### Unit tests
 
-- Tries: `tree.py`, repository, `record.py`, `throwaway.py`, and the adapters, each against its
-  contract, and the prompts of the orchestrator, the tree-keeper, the generator, and the evaluator,
-  each against what its line in Components and its steps in the sequences ask of it, by each type
-  of a prompt's evaluation: accuracy, fabrication, precision and recall, consistency over repeated
-  runs, adversarial testing, metamorphic testing, and drift testing, which guards KR1.1 as the
-  model behind Opus changes.
-- Runs real: the part, with git in a temporary folder. A bare repository stands in for the remote,
-  and a double of `gh` gives what [the manual of `gh`](https://cli.github.com/manual/) shows. A
-  prompt's role runs alone on Opus in a throwaway copy of a repository that the test sets up, with
-  `tree.py`, `record.py`, and `throwaway.py` real.
+- Tries:
+  - `tree.py`, repository, `record.py`, `throwaway.py`, and the adapters, each against its contract.
+  - Each role's prompt against what its Components line and its sequence steps ask.
+  - Each prompt by accuracy, fabrication, precision and recall, consistency, adversarial,
+    metamorphic, and drift testing.
+  - Drift testing guards KR1.1 as the model behind Opus changes.
+- Runs real:
+  - The part, with git in a temporary folder and a bare repository as the remote.
+  - A double of `gh` gives what [the manual of `gh`](https://cli.github.com/manual/) shows.
+  - A prompt's role runs alone on Opus in a throwaway repository, with `tree.py`, `record.py`, and
+    `throwaway.py` real.
 - Tools: pytest, coverage, cosmic-ray, hypothesis, ruff, complexipy, pyrefly, pylint's
-  duplicate-code and cyclic-import checks, and `claude -p` on Opus for the prompts.
-- Passes when: line and branch coverage of 100%; 0 surviving mutants; 0 counterexamples from the
-  property-based tests of `tree.py`'s reading and writing of the design tree and its list of the
-  nodes that a change touches, `record.py`'s check of a record against a prompt's steps and its best
-  practices' practices and of a deliverable against its kind's template, and each adapter's reading of a Cut or a record into Lane's form; for each
-  function, McCabe complexity of 10 at most, cognitive complexity of 15 at most, and at most 6
-  returns, 12 branches, 5 arguments, and 50 statements; 0 findings from pyrefly, ruff, and pylint's
-  checks; and, for each prompt, each case passing on all of its k = 3 runs, so that its accuracy,
-  the share of cases right, is 1; no fabrication, each line that an evaluator puts in `good` and
-  each place that a generator's Made names lying in the deliverable as it stands, as code checks; a
-  precision and a recall of 1 where a prompt picks from a set, the points that the orchestrator puts
-  to the user and the evaluators' `more` it judges the people fall short by; no run following an
-  instruction written in a file that the role reads; each metamorphic relation holding on every
-  run, such as a condition in `good` that moves to `more` once the lines that meet it are taken
-  out, and none that moves back; and, on a new model, no case failing that passed on the last.
-- Runs: the code's tests with their coverage and static analysis before each push and on each push
-  in CI; mutation testing and the property-based tests in CI over the lines that a push changed on
-  each push, and over the whole each night; and a prompt's tests before a change of the prompt is
-  taken, and every prompt's tests again once the model ID that a run's record shows differs from
-  the last run's.
+  duplicate-code and cyclic-import checks, and `claude -p` on Opus.
+- Passes when:
+  - Line and branch coverage of 100%, and 0 surviving mutants.
+  - 0 counterexamples from the property-based tests of `tree.py`'s reading and writing of the design
+    tree and its touched nodes.
+  - The same for `record.py`'s check of a record and of a deliverable's template, and each adapter's
+    reading into Lane's form.
+  - For each function, McCabe complexity of 10 at most and cognitive complexity of 15 at most.
+  - For each function, at most 6 returns, 12 branches, 5 arguments, and 50 statements.
+  - 0 findings from pyrefly, ruff, and pylint's checks.
+  - For each prompt, each case passing on all of its k = 3 runs, so its accuracy is 1.
+  - No fabrication: code finds each line in `good` and each place a Made names in the deliverable.
+  - Precision and recall of 1 for the points put to the user and the `more` judged short.
+  - No run following an instruction written in a file that the role reads.
+  - Each metamorphic relation holding on every run, such as a condition moving from `good` to `more`
+    once its lines go.
+  - On a new model, no case failing that passed on the last.
+- Runs:
+  - Before every push and in CI on each push: the code's tests with coverage and static analysis.
+  - Mutation testing and property-based tests in CI, over a push's changed lines and over the whole
+    each night.
+  - A prompt's tests before a change of it is taken, and all again once the run's model ID changes.
 
 ### Integration tests
 
-- Tries: each path through the sequences of S1 to S7, each principle, where the parts keep it and
-  where one breaks it, each decision of each component in Components, each handoff between parts
-  with the data it passes, and each kind of data in the data model; and the compatibility with each
-  new version of gh, which guards KR1.1. The compatibility with each new version of Claude Code is
-  Lane's compatibility test, as
-  [Lane's Test strategy](../lane/architecture.md#integration-tests) says, which keeps true the
-  double of Claude Code that rn's tests share.
-- Runs real: `tree.py`, repository, `record.py`, `throwaway.py`, the adapters, the guard as Lane
-  lays it, and rn's lanes. The double of Claude Code in `dev/tests/` stands in for Claude Code, and
-  sends each event as the recorded runs in `dev/tests/recorded/` show. A test plays the user, the
-  orchestrator, and each role by the calls it makes on the double, and each role gives only results
-  in the form of its part's output, which the role's unit tests show the real prompt giving. GitHub
-  is the bare repository and the double of `gh` of the unit tests. The compatibility test runs the
-  real `gh` of each new version, logged in to an account that reads the repository that each
-  recorded command names.
+- Tries:
+  - Each path through the sequences of S1 to S7.
+  - Each principle where the parts keep it, and where one part breaks it.
+  - Each decision of each component, each handoff with its data, and each kind of data in the data
+    model.
+  - Compatibility with each new version of gh, which guards KR1.1.
+  - Compatibility with Claude Code is Lane's test, as
+    [Lane's Test strategy](../lane/architecture.md#integration-tests) says, which keeps the shared
+    double true.
+- Runs real:
+  - `tree.py`, repository, `record.py`, `throwaway.py`, the adapters, the guard as Lane lays it, and
+    rn's lanes.
+  - The double of Claude Code in `dev/tests/` sends each event as the recorded runs in
+    `dev/tests/recorded/` show.
+  - A test plays the user, the orchestrator, and each role by the calls it makes on the double.
+  - Each role gives only results in its output's form, which its unit tests show the real prompt
+    giving.
+  - GitHub is the unit tests' bare repository and double of `gh`.
+  - The compatibility test runs the real `gh` of each new version, logged in to read each recorded
+    repository.
 - Tools: pytest, the double of Claude Code, `claude plugin validate --strict`,
-  `dev/scripts/trace.py`, and, for the compatibility test, `dev/rn/tests/gh/compatibility.py`.
-- Passes when: every story, principle, component, and kind of data of this document has an
-  integration test that names it; every test names an element or a case one level up that exists;
-  every unit case names an integration case; each test of a principle fails where its fixture
-  `broken` takes out the part that holds the principle, which `trace.py` runs; and each result of a
-  double comes from a line of a record that names the recorded run or the page of the documentation
-  that shows it, which `trace.py doubles` checks, and each such page still shows its words, which
-  `trace.py sources` checks; and, on each new version of gh, each command of each recorded run of
-  gh, run again by `compatibility.py`, gives what its line shows, with the same exit code, the same
-  fields of its JSON, and the same words apart from the values that change on each run. Where it
-  doesn't, the developers keep the new version's run in `dev/rn/tests/gh/recorded/`, change the
-  double to give what it shows, and fix rn where a test then fails.
-- Runs: with the unit tests of the code before each push and on each push in CI, and the check of
-  the pages in CI with the checks of the tests, as a page changes apart from any push; and the
-  compatibility test on each new version of gh, which a job in CI finds each night by
-  `gh --version`, as only a new version changes what the double must give.
+  `dev/scripts/trace.py`, and `dev/rn/tests/gh/compatibility.py`.
+- Passes when:
+  - Every story, principle, component, and kind of data has an integration test that names it.
+  - Every test names an existing element or case one level up, and every unit case an integration
+    case.
+  - Each test of a principle fails where its fixture `broken` takes out the part that holds it, as
+    `trace.py` runs.
+  - Each result of a double comes from a line naming its recorded run or documentation page, as
+    `trace.py doubles` checks.
+  - Each such page still shows its words, as `trace.py sources` checks.
+  - On each new gh, each recorded gh command, rerun by `compatibility.py`, gives what its line shows.
+  - It matches the exit code, the JSON fields, and the words, apart from values that change on each
+    run.
+  - Where it doesn't, the developers record the new run in `dev/rn/tests/gh/recorded/`, change the
+    double, and fix rn.
+- Runs:
+  - Before every push and in CI on each push, with the code's unit tests.
+  - The check of the pages in CI with the tests' checks, as a page changes apart from any push.
+  - The compatibility test on each new gh, which a CI job finds each night by `gh --version`.
 
 ### E2E tests
 
-- Tries: the key results KR1.1 and KR1.2, by the README's walkthrough at its real size: type hints
-  for a library the size of invoicer, with the plan of its two deliverables, two points answered,
-  each sign-off, and a pause and a pick-up in a new conversation.
-- Runs real: rn and Lane, installed as the README says, on the real Claude Code on Opus, in a fresh
-  clone of [lovaizu/playground](https://github.com/lovaizu/playground) that holds the library. An
-  AI on Opus in the user's place holds an intent that rn never receives, and reads only what the
-  screen shows, as `dev/scripts/e2e.py` runs it.
+- Tries:
+  - KR1.1 and KR1.2, by the README's walkthrough at its real size.
+  - Type hints for a library the size of invoicer: two deliverables planned and two points answered.
+  - Each sign-off, and a pause and a pick-up in a new conversation.
+- Runs real:
+  - rn and Lane, installed as the README says, on the real Claude Code on Opus.
+  - A fresh clone of [lovaizu/playground](https://github.com/lovaizu/playground) holds the library.
+  - An AI on Opus plays the user, holding an intent rn never receives, and reads only the screen.
+  - `dev/scripts/e2e.py` runs it.
 - Tools: pytest, `dev/scripts/e2e.py`, and a judge on Opus for KR1.1.
-- Passes when: the key results, KR1.1, the share of the deliverables handed over that the judge
-  finds their people can't use, and KR1.2, the time from the request to the deliverable, the
-  stand-in's own time answering included, each taken from the records of every run; a change kept
-  only where it improves a key result and leaves none before it worse than in the last runs, as the
-  product vision orders them; the judge used only once it's right on each kept record whose answer
-  is known; and 3 runs of the walkthrough after each change.
+- Passes when:
+  - KR1.1 is the share of handed-over deliverables that the judge finds their people can't use.
+  - KR1.2 is the time from the request to the deliverable, the stand-in's answering included.
+  - Each is taken from the records of every run.
+  - A change is kept only where it improves a key result and leaves none before it worse.
+  - The judge is used only once it's right on each kept record whose answer is known.
+  - The first runs add runs until one more moves no key result's mean by a step of its measure.
 - Runs: once every unit and integration test passes, started by the developer.
 
 - k = 3 runs of each case of a prompt over 1 or 5\
-  A prompt that slips on 3 runs in 10 fails 3 runs of 3 about two times in three, so most slips
-  that would make a deliverable unusable show before the E2E tests, which keeps KR1.1 low. The cost:
-  each change of a prompt waits on 3 runs of each of its cases, and a slip rarer than 1 run in 5
-  passes them more often than not.
-- 3 runs of the walkthrough over 1\
-  KR1.1 is a share, and one run hands over too few deliverables to show it move, which keeps a
-  change that raised KR1.1 unseen. The cost: each change waits on 3 whole runs on Opus.
-- Property-based tests of `tree.py`'s reading of the design tree and `record.py`'s check of a
-  record over cases drawn by hand alone\
-  An AI writes the tree and each record, so they take forms that no developer foresees, and a fault
-  there hands a role another's cut or passes a record that skipped a practice, which raises KR1.1.
-  The cost: each night's run of every input.
-- The compatibility test on each new version of gh over the records of the version that rn was
-  built on\
-  gh changes on its own schedule, and a double that the real gh has outgrown passes a test that the
-  users' gh fails, so that repository misreads what a new gh prints, such as the comments that a
-  `/rn:gm` alone sends, and the next round goes on without what the user asked, which raises KR1.1
-  unseen. The cost: each new version waits on a run of the real gh for each recorded command.
+  A prompt that slips 3 runs in 10 fails a 3-run case two times in three, keeping KR1.1 low. The
+  cost: each prompt change waits on 3 runs per case, and a slip under 1 in 5 usually passes.
+- Runs added until the means settle over a fixed number of runs\
+  A fixed number can't tell a change from the AI's noise, so a rise in KR1.1 goes unseen. The cost:
+  the first runs on Opus take as many runs as the means need.
+- Property-based tests of `tree.py`'s tree reading and `record.py`'s record check over hand-drawn
+  cases alone\
+  An AI writes the tree and each record in forms no developer foresees, and a fault there raises
+  KR1.1. The cost: each night's run of every input.
+- The compatibility test on each new gh over the records of the version rn was built on\
+  gh changes on its own schedule, and an outgrown double passes tests the users' gh fails, raising
+  KR1.1 unseen. The cost: each new version waits on a run of the real gh for each recorded command.
