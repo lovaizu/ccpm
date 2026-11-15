@@ -201,11 +201,10 @@ def _resolved(
     for note in notes:
         match = _AS_IN.search(note.words)
         if match and match.group(1) in by_heading:
-            found += [
-                _Note(note.slots & other.slots, other.words)
-                for other in by_heading[match.group(1)]
-                if note.slots & other.slots
-            ]
+            shared = (
+                (note.slots & other.slots, other.words) for other in by_heading[match.group(1)]
+            )
+            found += [_Note(slots, words) for slots, words in shared if slots]
         else:
             found.append(note)
     return tuple(found)
@@ -286,12 +285,15 @@ def _repeat(units: list[Unit], kept: tuple[Node, ...], at: int, context: _Contex
             continue
         if holding[1:]:
             units[holding[-1]].back_to = at
-        # A note's slots lie in at least the block itself, so a mutant of `==` to `<=` changes
-        # nothing.
-        elif (
-            block.kind in (PARAGRAPH, CODE) and context.holders[(id(notes), note)] == 1
-        ):  # pragma: no mutate
+        elif block.kind in (PARAGRAPH, CODE) and _alone(context, notes, note):
             units[at].repeats = True
+
+
+def _alone(context: _Context, notes: tuple[_Note, ...], note: _Note) -> bool:
+    """Whether one block alone of the section whose note items these are holds the item's slots."""
+    # A note item's slots lie in at least the block that asks, so a mutant of `==` to `<=` changes
+    # nothing.
+    return context.holders[(id(notes), note)] == 1  # pragma: no mutate
 
 
 def _number(word: str) -> int:
@@ -299,7 +301,9 @@ def _number(word: str) -> int:
     return _NUMBERS[word] if word in _NUMBERS else int(word)
 
 
-def _pattern_of(block: Block, notes: list[_Note]) -> re.Pattern[str] | None:
+# An annotation stays text, by `from __future__ import annotations`, so a mutant of its `|` changes
+# nothing, here and on each function below that may give None.
+def _pattern_of(block: Block, notes: list[_Note]) -> re.Pattern[str] | None:  # pragma: no mutate
     """The pattern that the document's block must match: a heading's, a paragraph's, or an item's
     words, or a code block's info string, None for a figure."""
     if block.kind == FIGURE:
@@ -342,7 +346,7 @@ def _token(token: str) -> str:
     return r"\d+" if token == "<n>" else r"[^\n]+?"
 
 
-def _sentences_of(text: str, notes: list[_Note]) -> tuple[int, int | None]:
+def _sentences_of(text: str, notes: list[_Note]) -> tuple[int, int | None]:  # pragma: no mutate
     """How many sentences, least and most, None for no most, the template's words take: one for
     each of its sentences, and, for a sentence that is a slot alone, as many as its note says."""
     said = [
@@ -354,7 +358,7 @@ def _sentences_of(text: str, notes: list[_Note]) -> tuple[int, int | None]:
     return sum(low for low, _ in said), None if None in highs else most
 
 
-def _said(slot: str, notes: list[_Note]) -> tuple[int, int | None]:
+def _said(slot: str, notes: list[_Note]) -> tuple[int, int | None]:  # pragma: no mutate
     """How many sentences the notes say the slot takes, (1, 1) where they say none."""
     for note in notes:
         match = _SENTENCES.search(note.words)

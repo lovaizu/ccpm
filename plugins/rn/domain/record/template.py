@@ -79,7 +79,9 @@ def _strip(nodes: tuple[Node, ...]) -> tuple[Node, ...]:
     return tuple(Node(node.block, _strip(node.nodes)) for node in nodes if not is_note(node.block))
 
 
-def _fit(unit: Unit, block: Block) -> int | None:
+# An annotation stays text, by `from __future__ import annotations`, so a mutant of its `|` changes
+# nothing.
+def _fit(unit: Unit, block: Block) -> int | None:  # pragma: no mutate
     """0 where the block holds the unit's form, 1 where it's of the unit's kind but not its form,
     and None where it's of another kind."""
     if unit.free:
@@ -101,6 +103,9 @@ def _fit(unit: Unit, block: Block) -> int | None:
 _MISSING = 2  # pragma: no mutate
 _BESIDE = 2  # pragma: no mutate
 _OUT_OF_FORM = 3  # pragma: no mutate
+# Taking a run of units again weighs nothing, and a weight of one either way only moves a pairing
+# among those that the weights above already part, so a mutant of it changes none.
+_AGAIN = 0  # pragma: no mutate
 
 
 class _Move(Enum):
@@ -142,21 +147,30 @@ def _steps(units: list[Unit], nodes: tuple[Node, ...], at: _Place) -> list[_Step
     i, j, used = at
     m, n = len(units), len(nodes)
     found: list[_Step] = []
-    if i < m and j < n and (not used or units[i].repeats):
-        fit = _fit(units[i], nodes[j].block)
-        if fit is not None:
-            found.append((fit * _OUT_OF_FORM, _Move.PAIR, (i, j + 1, 1)))
+    pairing = _pairing(units[i], nodes[j].block, used) if i < m and j < n else None
+    if pairing is not None:
+        found.append((pairing, _Move.PAIR, (i, j + 1, 1)))
     back = units[i].back_to if i < m and used else None
     if back is not None:
-        # Going back weighs nothing, and a weight of one either way only moves its pairings among
-        # those that the weights of 2 and 3 above already part, so a mutant of it changes none.
-        found.append((0, _Move.AGAIN, (back, j, 0)))  # pragma: no mutate
+        found.append((_AGAIN, _Move.AGAIN, (back, j, 0)))
     if i < m:
         missing = _MISSING if not used and not units[i].optional else 0
         found.append((missing, _Move.NEXT, (i + 1, j, 0)))
     if j < n:
         found.append((_BESIDE, _Move.BESIDE, (i, j + 1, used)))
     return found
+
+
+# An annotation stays text, so a mutant of its `|` changes nothing.
+def _pairing(unit: Unit, block: Block, used: int) -> int | None:  # pragma: no mutate
+    """The weight of the fault of pairing the block with the unit, which has stood where `used`
+    is 1, or None where they can't pair: where the block is of another kind, or the unit has stood
+    and doesn't repeat. A unit that has stood takes another block out of its form at the weight of
+    a block beside, so that the fault names the form the block leaves."""
+    fit = _fit(unit, block) if not used or unit.repeats else None
+    if fit is None:
+        return None
+    return fit * (_BESIDE if used else _OUT_OF_FORM)
 
 
 def _paired(units: list[Unit], nodes: tuple[Node, ...], where: int) -> list[Fault]:
@@ -208,7 +222,9 @@ def _counted(unit: Unit, block: Block) -> list[Fault]:
     takes = f"{least} or more" if most is None else f"{least} to {most}"
     if most == least:
         takes = f"{least}"
-    noun = "sentence" if count == 1 else "sentences"
+    # Words that aren't blank hold at least one sentence, so a mutant of `==` to `<=` changes
+    # nothing.
+    noun = "sentence" if count == 1 else "sentences"  # pragma: no mutate
     return [Fault(block.line, f"has {count} {noun}, where {_from(unit)} takes {takes}")]
 
 

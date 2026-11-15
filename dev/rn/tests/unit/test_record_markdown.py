@@ -314,11 +314,14 @@ def test_a_quote_ends_at_the_first_line_without_its_mark():
 
 @pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
 def test_a_fence_with_an_info_string_doesnt_close_a_code_block():
-    """Given a code block opened by a bare fence, whose body is an indented fence with an info
-    string
+    """Given a heading, and right under it a code block opened by a bare fence, whose body is an
+    indented fence with an info string
     When the text is read
     Then the body keeps the indented fence, and the code block has no info string"""
-    assert read("```\n  ```py\n```") == (Block(CODE, 1, "  ```py"),)
+    assert read("# T\n```\n  ```py\n```") == (
+        Block(HEADING, 1, "T", level=1),
+        Block(CODE, 2, "  ```py"),
+    )
 
 
 @pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")

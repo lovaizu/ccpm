@@ -1171,3 +1171,40 @@ def test_a_note_item_without_slots_may_let_a_section_be_left_out():
     Then it has no fault"""
     template = lines("# T", "", "## Extras", "", note("Leave out Extras where there's none."))
     assert faults(template, lines("# T")) == ()
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_free_slot_holds_its_prose_to_the_most_words_and_not_its_code():
+    """Given a template of the result sentence and the free slot `<run>`, and a document whose run
+    holds a code block of a long line and a paragraph of one word more than the most
+    When the document is checked
+    Then the one fault names the paragraph's sentence"""
+    template = lines("# T", "", "At the end, you have `<result>`.", "", "`<run>`")
+    long = " ".join(["word"] * (MOST_WORDS + 1))
+    document = lines(
+        "# T", "", "At the end, you have a total.", "", "```console", long, "```", "", long + "."
+    )
+    assert faults(template, document) == (
+        Fault(
+            9,
+            f"has a sentence of {MOST_WORDS + 1} words, more than {MOST_WORDS}:"
+            " word word word word word word ...",
+        ),
+    )
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_list_item_out_of_its_form_after_one_in_it_is_named_by_the_form():
+    """Given a template of the item `<requirement>`: `<check>` shows it., and a document of one
+    such item and then one that says what the check shows in its place
+    When the document is checked
+    Then the second item is named as leaving the template's form"""
+    template = lines("# T", "", "- `<requirement>`: `<check>` shows it.")
+    document = lines("# T", "", "- gh: `gh` shows it.", "- Git: `git --version` shows `git`.")
+    assert faults(template, document) == (
+        Fault(
+            4,
+            '"- Git: `git --version` shows `git`." leaves the form of the template\'s'
+            ' "- `<requirement>`: `<check>` shows it." at its line 3',
+        ),
+    )
