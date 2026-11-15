@@ -15,7 +15,10 @@ from tree.more import More
 
 from dev.rn.tests.unit import rn_data as d
 
-pytestmark = pytest.mark.xfail(strict=True, reason="tree/rounds.py has empty bodies")
+LATER = pytest.mark.xfail(
+    strict=True,
+    reason="rounds.each, keep_more, and at_cut have empty bodies",
+)
 
 GOOD_WHEN = "A caller's editor shows the type of each argument as they type the call."
 
@@ -98,6 +101,7 @@ def test_a_place_lies_in_the_round_of_its_start(tmp_path: Any) -> None:
         rounds.place_path(run, record)
 
 
+@LATER
 @pytest.mark.supports("test_every_round_of_a_deliverable_is_read_for_its_lessons")
 def test_each_round_is_given_the_latest_last(tmp_path: Any) -> None:
     """Given: a run whose invoicer has two rounds, the first with an evaluator's Answers.
@@ -115,6 +119,7 @@ def test_each_round_is_given_the_latest_last(tmp_path: Any) -> None:
     assert all(r.made is not None for r in each)
 
 
+@LATER
 @pytest.mark.supports("test_the_round_gives_each_evaluators_answers_and_what_the_generator_made")
 def test_a_deliverable_with_no_round_is_refused(tmp_path: Any) -> None:
     """Given: a run whose invoicer has no round.
@@ -124,6 +129,7 @@ def test_a_deliverable_with_no_round_is_refused(tmp_path: Any) -> None:
         rounds.each(a_run(tmp_path), "invoicer")
 
 
+@LATER
 @pytest.mark.supports("test_a_more_the_people_fall_short_by_reaches_the_next_rounds_generator")
 def test_a_more_kept_is_read_back_for_the_next_round(tmp_path: Any) -> None:
     """Given: a run whose invoicer has one round, and nothing kept yet.
@@ -138,6 +144,7 @@ def test_a_more_kept_is_read_back_for_the_next_round(tmp_path: Any) -> None:
     assert rounds.kept_more(run, "invoicer") == (kept,)
 
 
+@LATER
 @pytest.mark.supports("test_a_more_kept_with_no_decision_changed_is_refused")
 def test_a_more_of_a_deliverable_with_no_round_is_refused(tmp_path: Any) -> None:
     """Given: a run whose invoicer/py.typed has no round.
@@ -147,6 +154,7 @@ def test_a_more_of_a_deliverable_with_no_round_is_refused(tmp_path: Any) -> None
         rounds.keep_more(a_run(tmp_path), [More("invoicer/py.typed", "N1", GOOD_WHEN)])
 
 
+@LATER
 @pytest.mark.supports("test_a_more_kept_with_no_decision_changed_is_refused")
 def test_the_tree_at_the_rounds_cut_is_the_one_its_opening_commit_holds(tmp_path: Any) -> None:
     """Given: a run whose invoicer's round opened on the walkthrough's tree, which changed after.

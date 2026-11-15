@@ -3,8 +3,14 @@ Answers, in the forms that generator-out.schema.json and evaluator-out.schema.js
 
 from __future__ import annotations
 
+import json
+import os
 from collections.abc import Mapping
 from dataclasses import dataclass
+from typing import Any
+
+import json_form
+from fault import CantRun, Wrong
 
 
 @dataclass(frozen=True)
@@ -46,7 +52,12 @@ def read_made(path: str) -> Made:
     can't be read.
     Carries: S1 `T-->>O: each evaluator's Answers, and what the generator made (Answers, Made)`.
     """
-    raise NotImplementedError("results.read_made")
+    held = _read(path, "generator-out.schema.json", "made")
+    return Made(
+        {each["path"]: each["where"] for each in held["decisions"]},
+        {each["condition"]: each["where"] for each in held["more"]},
+        tuple(Settled(e["point"], e["decided"], e["ground"]) for e in held["settled"]),
+    )
 
 
 def read_answers(path: str) -> Answers:
@@ -59,4 +70,23 @@ def read_answers(path: str) -> Answers:
     can't be read.
     Carries: S1 `T-->>O: each evaluator's Answers, and what the generator made (Answers, Made)`.
     """
-    raise NotImplementedError("results.read_answers")
+    held = _read(path, "evaluator-out.schema.json", "answers")
+    return Answers(
+        {each["question"]: tuple(each["lines"]) for each in held["good"]},
+        {each["question"]: each["good_when"] for each in held["more"]},
+    )
+
+
+def _read(path: str, form: str, field: str) -> Any:
+    """The JSON in the file at the path, held to the field's form in the role's out-schema."""
+    try:
+        with open(path, encoding="utf-8") as f:
+            text = f.read()
+    except OSError as e:
+        raise CantRun(f"{path} can't be read: {e}") from None
+    try:
+        held = json.loads(text)
+    except ValueError as e:
+        raise Wrong(f"{os.path.basename(path)}: isn't JSON: {e}") from None
+    json_form.hold(held, json_form.load(form)["properties"][field], os.path.basename(path))
+    return held

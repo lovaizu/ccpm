@@ -3,7 +3,11 @@ the files of its work, kept at each step's end and at a pause."""
 
 from __future__ import annotations
 
+import json
+import os
 from dataclasses import dataclass
+
+from fault import CantRun
 
 
 @dataclass(frozen=True)
@@ -19,7 +23,7 @@ class Place:
 def write(path: str, place: Place) -> None:
     """Writes a Place.
 
-    Takes: the path of its file, and the Place.
+    Takes: the path of its file, whose folder it makes where it isn't there, and the Place.
     Gives: nothing.
     Changes: the file.
     Refuses: fault.CantRun, where it can't be written.
@@ -27,7 +31,14 @@ def write(path: str, place: Place) -> None:
     at the end of each step (Place)`; S4 `O->>T: commits and pushes each role's work so far, with
     the step it stood at (Place)`.
     """
-    raise NotImplementedError("place.write")
+    held = {"record": place.record, "step": place.step, "work": list(place.work)}
+    try:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(held, f, indent=2)
+            f.write("\n")
+    except OSError as e:
+        raise CantRun(f"the Place {path} can't be written: {e}") from None
 
 
 def read(path: str) -> Place:

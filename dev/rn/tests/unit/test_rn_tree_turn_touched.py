@@ -13,10 +13,6 @@ from tree.sign_offs import Kind, SignOff, SignOffs, State
 
 from dev.rn.tests.unit import rn_data as d
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="tree/turn.py and tree/touched.py have empty bodies"
-)
-
 AT = "2026-11-15T09:00:00Z"
 PLAN_SIGNED = SignOffs((SignOff(Kind.PLAN, "", State.SIGNED_OFF, AT),))
 PLAN_WAITING = SignOffs((SignOff(Kind.PLAN, "", State.WAITING, AT),))

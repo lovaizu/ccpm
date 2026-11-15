@@ -60,6 +60,13 @@ REFACTOR = {"code": "refactor-code", "readme": "refactor-doc"}
 # What a README deliverable is for, in a plan of one.
 NEWCOMER = "A newcomer decides from invoicer's README alone whether invoicer fits their work"
 RESUMED = "The main conversation's grounds:\n"
+# Why a case of the walkthrough beyond the walking skeleton still fails: the parts it reaches, and
+# what Lane at rn-rebuild's HEAD doesn't yet do for rn.
+NOT_YET = (
+    "rn's later parts have empty bodies, and Lane at rn-rebuild's HEAD tells no start due as the"
+    " orchestrator enters the run's worktree, lets no second start of a role beside the first, and"
+    " takes no result of a role resumed"
+)
 
 
 # What rn shows at each move of the walkthrough, as the README shows it.

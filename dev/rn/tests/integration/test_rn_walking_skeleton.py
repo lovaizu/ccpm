@@ -16,7 +16,10 @@ from dev.rn.tests import rn_walkthrough as w
 from dev.rn.tests.rn_walkthrough import Bench
 
 pytestmark = pytest.mark.xfail(
-    strict=True, reason="rn's parts have empty bodies, and Lane hasn't laid rn's guard"
+    strict=True,
+    reason="Lane at rn-rebuild's HEAD tells no start due as the orchestrator enters the run's"
+    " worktree, lets no second start of a role beside the first, and takes no result of a role"
+    " resumed",
 )
 
 

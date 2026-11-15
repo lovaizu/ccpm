@@ -15,7 +15,10 @@ from tree.command import main
 
 from dev.rn.tests.unit import rn_data as d
 
-pytestmark = pytest.mark.xfail(strict=True, reason="tree/command.py has empty bodies")
+LATER = pytest.mark.xfail(
+    strict=True,
+    reason="tree.py has no pause yet, and rounds.each has an empty body",
+)
 
 
 def run(argv: list[str], cwd: str, given: Any = "") -> tuple[int, str, str]:
@@ -172,6 +175,7 @@ def test_put_up_lesson_takes_its_words_from_standard_input(tmp_path: Any) -> Non
     assert code == 0 and json.loads(out)["state"] == "sent back"
 
 
+@LATER
 @pytest.mark.supports("test_dn_where_git_cant_push_commits_and_says_what_is_missing")
 def test_pause_with_no_remote_commits_and_says_it_didnt_push(tmp_path: Any) -> None:
     """Given: a run started in a repository with no remote.
@@ -183,6 +187,7 @@ def test_pause_with_no_remote_commits_and_says_it_didnt_push(tmp_path: Any) -> N
     assert code == 1 and "committed" in err and "remote" in err
 
 
+@LATER
 @pytest.mark.supports("test_the_round_gives_each_evaluators_answers_and_what_the_generator_made")
 def test_round_of_a_deliverable_with_no_round_gives_1(tmp_path: Any) -> None:
     """Given: a run started with the walkthrough's tree.

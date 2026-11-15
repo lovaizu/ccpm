@@ -20,8 +20,6 @@ from tree import rounds
 
 from dev.rn.tests.unit import rn_data as d
 
-EMPTY = pytest.mark.xfail(strict=True, reason="throwaway.py and the adapters have empty bodies")
-
 
 def a_round(tmp: Any) -> Any:
     """A run whose invoicer is doing, in its first round."""
@@ -31,7 +29,6 @@ def a_round(tmp: Any) -> Any:
     return run
 
 
-@EMPTY
 @pytest.mark.supports("test_a_command_tried_leaves_the_worktree_as_it_was_and_is_kept")
 @pytest.mark.parametrize(("command", "code"), [("echo tried", 0), ("echo failed >&2; exit 3", 3)])
 def test_a_command_tried_gives_its_own_exit_code_and_output(
@@ -47,7 +44,6 @@ def test_a_command_tried_gives_its_own_exit_code_and_output(
         assert command in f.read()
 
 
-@EMPTY
 @pytest.mark.supports("test_a_command_tried_leaves_the_worktree_as_it_was_and_is_kept")
 def test_a_command_tried_changes_neither_the_worktree_nor_the_home(
     tmp_path: Any, monkeypatch: pytest.MonkeyPatch
@@ -64,7 +60,6 @@ def test_a_command_tried_changes_neither_the_worktree_nor_the_home(
     assert os.listdir(home) == []
 
 
-@EMPTY
 @pytest.mark.supports("test_throwaway_py_refuses_a_folder_in_no_runs_worktree")
 def test_a_command_tried_outside_a_runs_worktree_or_with_no_round_gives_1(tmp_path: Any) -> None:
     """Given: a repository's root, and a run whose invoicer/py.typed has no round.
@@ -77,7 +72,6 @@ def test_a_command_tried_outside_a_runs_worktree_or_with_no_round_gives_1(tmp_pa
     assert not os.path.exists(os.path.join(repo, "tried.txt"))
 
 
-@EMPTY
 @pytest.mark.supports("test_throwaway_py_refuses_a_folder_in_no_runs_worktree")
 @pytest.mark.parametrize("argv", [[], ["invoicer"], ["invoicer", "echo", "more"]])
 def test_a_command_line_out_of_form_gives_2_with_the_usage(tmp_path: Any, argv: list[str]) -> None:
@@ -92,7 +86,6 @@ def text(role: list[str], running: list[dict[str, Any]], cwd: str) -> tuple[int,
     return d.adapter("text").main(role, io.StringIO(json.dumps({"running": running})), cwd)
 
 
-@EMPTY
 @pytest.mark.supports("test_the_generator_starts_with_its_cut_of_the_first_deliverable_doing")
 def test_a_starts_text_is_its_cut_as_one_json_line_with_its_run_values(tmp_path: Any) -> None:
     """Given: a run whose invoicer is doing.
@@ -110,7 +103,6 @@ def test_a_starts_text_is_its_cut_as_one_json_line_with_its_run_values(tmp_path:
     )
 
 
-@EMPTY
 @pytest.mark.supports("test_no_generator_start_is_due_while_every_deliverable_doing_waits")
 def test_a_start_with_no_work_waiting_gives_why(tmp_path: Any) -> None:
     """Given: a run with no deliverable doing.
@@ -122,7 +114,6 @@ def test_a_start_with_no_work_waiting_gives_why(tmp_path: Any) -> None:
     assert code == 0 and set(json.loads(out)) == {"none"} and json.loads(out)["none"]
 
 
-@EMPTY
 @pytest.mark.supports("test_a_request_starts_a_run_anew_with_the_tree_keepers_start_first")
 def test_a_starts_text_outside_a_runs_worktree_gives_1_with_why(tmp_path: Any) -> None:
     """Given: a repository's root with no run.
@@ -132,7 +123,6 @@ def test_a_starts_text_outside_a_runs_worktree_gives_1_with_why(tmp_path: Any) -
     assert (code, out) == (1, "") and err
 
 
-@EMPTY
 @pytest.mark.supports("test_a_request_starts_a_run_anew_with_the_tree_keepers_start_first")
 @pytest.mark.parametrize("role", [[], ["generator", "evaluator"]])
 def test_a_starts_text_without_one_role_gives_2(tmp_path: Any, role: list[str]) -> None:
@@ -160,7 +150,6 @@ def run_with_results(repo: str, name: str = d.NAME) -> Any:
     return run
 
 
-@EMPTY
 @pytest.mark.supports("test_up_alone_in_the_runs_worktree_picks_up_where_it_stopped")
 def test_the_results_kept_of_the_run_of_the_worktree_are_given_in_order(tmp_path: Any) -> None:
     """Given: a run whose tree-keeper kept done and whose generator kept none.
@@ -171,7 +160,6 @@ def test_the_results_kept_of_the_run_of_the_worktree_are_given_in_order(tmp_path
     assert code == 0 and json.loads(out) == {"results": [{"role": "tree-keeper", "result": "done"}]}
 
 
-@EMPTY
 @pytest.mark.supports("test_up_alone_at_the_root_picks_up_the_one_run_left")
 @pytest.mark.parametrize(
     ("runs", "results"), [(0, []), (1, [{"role": "tree-keeper", "result": "done"}]), (2, [])]
@@ -189,7 +177,6 @@ def test_the_results_kept_at_the_root_are_the_one_run_lefts(
     assert code == 0 and json.loads(out) == {"results": results}
 
 
-@EMPTY
 @pytest.mark.supports("test_words_after_up_start_a_new_run_beside_a_run_left")
 def test_words_typed_give_no_results_whatever_runs_are_left(tmp_path: Any) -> None:
     """Given: a run with results kept.
@@ -200,7 +187,6 @@ def test_words_typed_give_no_results_whatever_runs_are_left(tmp_path: Any) -> No
     assert code == 0 and json.loads(out) == {"results": []}
 
 
-@EMPTY
 @pytest.mark.supports("test_up_alone_in_the_runs_worktree_picks_up_where_it_stopped")
 @pytest.mark.parametrize("given", ["not JSON", "{}", '{"words": 1}'])
 def test_input_out_of_form_gives_1_with_why(tmp_path: Any, given: str) -> None:

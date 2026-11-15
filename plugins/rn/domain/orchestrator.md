@@ -39,4 +39,41 @@ The guard ends a turn that puts work up for the person only once rn's check acce
 - `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py up none`, where `/rn:up` alone finds no run
   left.
 
+Each message to the person opens with what it asks or reports and why, in a few plain sentences
+in their words and the README's, and ends with the one decision you need, alone on its last line,
+with the option you recommend, as the person decides from its first lines. Report only what you
+read in the record, file, or command that holds it, never a role's summary, and say what you
+didn't check.
+
 ## Steps
+
+These steps go on from the steps of the command the person typed, at every moment of the run.
+Each turn takes them again from the first that has work.
+
+1. Judge whose each point is: the person's where only they can settle it, such as what the
+   deliverable is for, or where options serve the purpose equally; else settle it by the purpose
+   and the best practices, and keep its ground. Ask the person each point of theirs once the
+   tree-keeper has written it open, one point to a message, with your recommendation, once no
+   point or sign-off before it waits, as each answer can change the next question.
+2. Have the tree-keeper write each decision, the goal and the plan among them, by resuming it with
+   your grounds, the person's words word for word where they answered, and the change, in the
+   form of `${CLAUDE_PLUGIN_ROOT}/domain/tree-keeper-in.schema.json`'s resume. Check what it
+   gives against the design tree best practice, and send it back with the ground where it falls
+   short, as every role reads the tree, so a slip there reaches each deliverable.
+3. Start each role that the guard gives due, with the text the guard gives, and no other start,
+   as a role started with more than its Cut makes what the person didn't mean. Resume a generator
+   that gave `asks` once the tree holds the decision, and put to the person what one that gave
+   `lacks` names; other deliverables' rounds go on meanwhile.
+4. Once a generator gives `done`, open its record and its Made, and check them against its Cut
+   and its best practice. Send it back with the ground where it falls short; else start one
+   evaluator for each group of necessary conditions that the guard gives due.
+5. Once every evaluator of a round ends, read the round by `tree.py round <deliverable>`, and
+   judge each `more` by the purpose and the best practices: one its people would meet changes the
+   decision it comes from, which the tree-keeper writes with the more to keep; one they'd never
+   meet changes nothing, so the deliverable doesn't grow with each round.
+6. Put up the plan once the tree holds it, or a deliverable once every necessary condition of it
+   is good: push the work by `tree.py push`, put it up by `tree.py put-up plan` or
+   `tree.py put-up deliverable <path>`, and show it as the README's walkthrough does, ending with
+   `/rn:ty to approve, or /rn:gm with what to change.` Where `tree.py push` names what's missing,
+   ask the person for it. Only the person's own `/rn:ty` or `/rn:gm` decides a sign-off, so never
+   call either yourself, and start no work that rests on it meanwhile.

@@ -1,0 +1,198 @@
+{
+  "lanes": [
+    {
+      "role": "up",
+      "file": "skills/up/SKILL.md",
+      "step": 2,
+      "type": "routes",
+      "args": {}
+    },
+    {
+      "role": "up",
+      "file": "skills/up/SKILL.md",
+      "step": 4,
+      "type": "ends_checked",
+      "args": {
+        "command": "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py check orchestrator '{result}'"
+      }
+    },
+    {
+      "role": "up",
+      "file": "skills/up/SKILL.md",
+      "step": 5,
+      "type": "ends_by_result",
+      "args": {}
+    }
+  ],
+  "routes": [
+    {
+      "skill": "up",
+      "after": {
+        "first": true
+      },
+      "moves": [
+        {
+          "start": "tree-keeper"
+        },
+        {
+          "no_more": "none"
+        }
+      ]
+    },
+    {
+      "skill": "up",
+      "after": {
+        "role": "tree-keeper",
+        "result": "done"
+      },
+      "moves": [
+        {
+          "resume": "tree-keeper"
+        },
+        {
+          "start": "generator"
+        },
+        {
+          "start": "evaluator"
+        },
+        {
+          "wait": ""
+        }
+      ]
+    },
+    {
+      "skill": "up",
+      "after": {
+        "role": "tree-keeper",
+        "result": "refused"
+      },
+      "moves": [
+        {
+          "resume": "tree-keeper"
+        },
+        {
+          "wait": ""
+        }
+      ]
+    },
+    {
+      "skill": "up",
+      "after": {
+        "role": "generator",
+        "result": "done"
+      },
+      "moves": [
+        {
+          "start": "evaluator"
+        },
+        {
+          "resume": "generator"
+        },
+        {
+          "start": "generator"
+        },
+        {
+          "wait": ""
+        }
+      ]
+    },
+    {
+      "skill": "up",
+      "after": {
+        "role": "generator",
+        "result": "asks"
+      },
+      "moves": [
+        {
+          "resume": "tree-keeper"
+        },
+        {
+          "resume": "generator"
+        },
+        {
+          "start": "generator"
+        },
+        {
+          "start": "evaluator"
+        },
+        {
+          "wait": ""
+        }
+      ]
+    },
+    {
+      "skill": "up",
+      "after": {
+        "role": "generator",
+        "result": "lacks"
+      },
+      "moves": [
+        {
+          "resume": "generator"
+        },
+        {
+          "wait": ""
+        }
+      ]
+    },
+    {
+      "skill": "up",
+      "after": {
+        "role": "evaluator",
+        "result": "done"
+      },
+      "moves": [
+        {
+          "start": "evaluator"
+        },
+        {
+          "resume": "tree-keeper"
+        },
+        {
+          "start": "generator"
+        },
+        {
+          "wait": ""
+        }
+      ]
+    },
+    {
+      "skill": "up",
+      "after": {
+        "command": "ty"
+      },
+      "moves": [
+        {
+          "resume": "tree-keeper"
+        },
+        {
+          "wait": ""
+        }
+      ]
+    }
+  ],
+  "adapters": {
+    "text": "hooks/adapters/text.py",
+    "records": "hooks/adapters/records.py"
+  },
+  "laid": {
+    "version": "0.1.0",
+    "sentences": [
+      {
+        "file": "skills/up/SKILL.md",
+        "step": 2,
+        "text": "Start each subagent you are told to start, until you are told to start no more."
+      },
+      {
+        "file": "skills/up/SKILL.md",
+        "step": 4,
+        "text": "End once `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py check orchestrator '{result}'` gives 0."
+      },
+      {
+        "file": "skills/up/SKILL.md",
+        "step": 5,
+        "text": "End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py up none`."
+      }
+    ]
+  }
+}

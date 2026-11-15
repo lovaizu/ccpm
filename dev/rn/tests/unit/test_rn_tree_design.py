@@ -16,8 +16,6 @@ from tree.design import Change
 
 from dev.rn.tests.unit import rn_data as d
 
-pytestmark = pytest.mark.xfail(strict=True, reason="tree/design.py has empty bodies")
-
 DECISION = "deliverables/0/necessary_conditions/0/decisions/0"
 
 

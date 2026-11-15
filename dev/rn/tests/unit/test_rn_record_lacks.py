@@ -22,7 +22,10 @@ from tree.results import Answers, Made
 
 from dev.rn.tests.unit import rn_data as d
 
-pytestmark = pytest.mark.xfail(strict=True, reason="record/ has empty bodies")
+LATER = pytest.mark.xfail(
+    strict=True,
+    reason="the case's Given holds no more, as the role's part now holds its steps",
+)
 
 STEPS = "\n## Steps\n\n1. Read your Cut.\n2. Decide.\n3. Make.\n\n## What you give\n"
 DECIDE, MAKE = Practice("N1.1", Phase.DECIDE), Practice("N1.2", Phase.MAKE)
@@ -40,7 +43,7 @@ def plugin_with_steps(tmp: Any) -> str:
 
 
 @pytest.mark.supports("test_an_end_whose_record_lacks_a_practice_is_held_with_it")
-@pytest.mark.parametrize("of", ["generator", "dn"])
+@pytest.mark.parametrize("of", [pytest.param("generator", marks=LATER), "dn"])
 def test_the_steps_of_a_roles_part_or_a_command_are_numbered_in_order(
     tmp_path: Any, of: str
 ) -> None:
@@ -50,6 +53,7 @@ def test_the_steps_of_a_roles_part_or_a_command_are_numbered_in_order(
     assert steps.numbers(plugin_with_steps(tmp_path), of) == (1, 2, 3)
 
 
+@LATER
 @pytest.mark.supports("test_an_end_whose_record_lacks_a_practice_is_held_with_it")
 def test_a_prompt_with_no_steps_gives_none() -> None:
     """Given: rn as its skeleton holds it, the evaluator's part with Steps empty.

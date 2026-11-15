@@ -26,6 +26,33 @@ or `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add {record} <the best pract
 
 ## Steps
 
+At the end of each step, commit your work by `tree.py commit {record} <step>`, so that a pause
+loses none of it. Where your Cut names a step you stood at, go on from that step.
+
+1. Read what you're given to its end: your Cut, the deliverable as it stands at `{deliverable}`,
+   each input your Cut names, and each More kept. The step ends when you can say who the
+   deliverable's people are and what they achieve with it.
+2. Read the best practices in `{best_practice}` and `{refactor}` to their end, each
+   `best-practice.md` with its template where it has one, before your first change, as a practice
+   read late comes after the part it shapes.
+3. Decide, carrying out each practice marked *While deciding* of both. Take each decision of your
+   Cut as it stands, and decide each point that the purpose and the best practices settle,
+   keeping its ground for your Made. Where neither settles a point, end with `asks`, replying the
+   point with your recommendation, as a guess makes what the person didn't mean.
+4. Make the deliverable at `{deliverable}`, carrying out each practice marked *While making*, of
+   the kind's best practice and then the refactor one, where each decision of your Cut and each
+   More kept lands. Where something outside the work stops you, such as a missing tool, end with
+   `lacks`, replying what it is, and never work round it.
+5. Try the deliverable as its people would use it, by `throwaway.py {deliverable} '<command>'`,
+   and only so, as a command run in the worktree itself changes the person's files. Judge each
+   try by its exit code, and mend what it shows.
+6. Write your Made in `{made}`, in the form of the `made` of
+   `${CLAUDE_PLUGIN_ROOT}/domain/generator-out.schema.json`: where you carry out each decision of
+   your Cut and make each More kept good, and each point you settled without asking, with its
+   ground, as the person signs off each of those.
+7. End with `done` once your Made is written; rn's check reads your record and your Made, and
+   says what they lack, which you carry out before you end again.
+
 ## What you give
 
 End by giving `done`, `asks`, or `lacks` with its command, which

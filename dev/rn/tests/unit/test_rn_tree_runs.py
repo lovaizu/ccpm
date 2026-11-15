@@ -15,8 +15,6 @@ from tree import runs
 
 from dev.rn.tests.unit import rn_data as d
 
-pytestmark = pytest.mark.xfail(strict=True, reason="tree/runs.py has empty bodies")
-
 
 @pytest.mark.supports("test_a_request_starts_a_run_anew_with_the_tree_keepers_start_first")
 def test_a_run_started_has_its_worktree_branch_and_folder(tmp_path: Any) -> None:

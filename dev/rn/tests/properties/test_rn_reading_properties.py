@@ -21,8 +21,6 @@ from tree.runs import Run
 
 from dev.rn.tests.unit import rn_data as d
 
-pytestmark = pytest.mark.xfail(strict=True, reason="rn's readers have empty bodies")
-
 JSON = st.recursive(
     st.none() | st.booleans() | st.integers() | st.text(max_size=8),
     lambda inner: (

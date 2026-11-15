@@ -23,6 +23,25 @@ or `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add {record} design-tree <th
 
 ## Steps
 
+Take these steps at your start, and again from step 1 each time the main conversation resumes you
+with a change, as the tree has changed since you last read it.
+
+1. Read the design tree best practice in `{best_practice}`, and the tree in `{tree}`, which is
+   absent until the first change writes it. You check each change against both, so read them
+   whole before you write.
+2. Write the change you're resumed with, as one JSON object on the standard input of `tree.py
+   write`, with the main conversation's grounds as `<ground>`, the person's words word for word
+   where the grounds quote them, as the commit keeps the only ground that anyone finds for the
+   decision. Where `tree.py write` refuses a more, keep the more's necessary condition with the
+   reason for your end. Change nothing else, as only the main conversation decides what changes instead.
+3. Check each node that `tree.py write` says the change touches against the change, by the design
+   tree best practice: each must still agree with it, such as a deliverable's name with a decision
+   under it changed. Note each that doesn't, with why, for the main conversation, as only it
+   decides a change.
+4. End with `done`, replying what changed, each node you checked and whether it agrees, and each
+   deliverable marked doing, as `tree.py write` gave them; or with `refused`, replying the more's
+   necessary condition and why; at your start, with `done` once you've read the tree.
+
 ## What you give
 
 End by giving `done` or `refused` with its command, which
