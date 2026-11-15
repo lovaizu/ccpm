@@ -23,10 +23,6 @@
 
 - [architecture](../architecture/best-practice.md)
 
-## Preconditions
-
-- [architecture](../architecture/best-practice.md)
-
 ## Practices
 
 ### N1
@@ -35,9 +31,9 @@ Does each module say, where the maintainer first meets it, the one thing it alon
 
 A maintainer with one behavior to change finds the one module to open from what the modules say at their top, without reading a body, and changes the code in that one place.
 
-1. *While deciding.* Open the architecture at the part's line in Components, the principles, and each sequence that the part takes a step in, and open the part's skeleton and its unit cases in the test code. The unit cases, each with its Given, When, and Then, are the code's specification: each behavior of the code answers one of them, and the architecture's lines say only why a case asks what it does. The trace: `{inputs}` read to its end.
+1. *While deciding.* Open what the code must do: where an architecture holds the part, its line in Components, the principles, each sequence that the part takes a step in, and, where the design made them, the part's skeleton and its unit cases in the test code; elsewhere, the request for the code. Where no unit cases exist, write them first, each as a test's name with its Given, When, and Then: one for the usual input, one for each class of input that the code treats alike, refusals among them, and one at each end of a class on an ordered scale. The unit cases are the code's specification: each behavior of the code answers one of them, and the architecture's lines, where they exist, say only why a case asks what it does. The trace: `{inputs}` read to its end.
 2. *While deciding.* List the decisions that the specification leaves to the code: for each unit case, ask what the code could do in more than one way while the case still passes, such as the layout of a file that only the part reads, or the order in which it tries two sources. Each such choice is a decision left to the code, and a choice that a case, a principle, or the skeleton's interface already fixes isn't.
-3. *While deciding.* Give each decision to one module. Keep the skeleton's modules, which hold the decisions that the architecture gave the part, and add a module inside the part only for a decision that could change while the rest of the part stays, such as a file's layout that may change apart from the rules that read it. Keep two decisions in one module where a change of one always changes the other.
+3. *While deciding.* Give each decision to one module. Keep the skeleton's modules, where one exists, which hold the decisions that the architecture gave the part, and add a module inside the part only for a decision that could change while the rest of the part stays, such as a file's layout that may change apart from the rules that read it. Keep two decisions in one module where a change of one always changes the other.
 4. *While deciding.* Where a decision has variants that the cases call for now, such as two remotes that each take their own commands, give each variant its own module behind one interface, and name that shape by its design pattern, such as Adapter, in the module that chooses among them, since the name tells the maintainer where a new variant goes. Make no variant that no case calls for, as N3 says.
 5. *While making.* Write at the top of each module, such as in its docstring, the sentence that the note of Module opening in the template asks for, naming what the module decides, not the steps it takes, such as `The layout of a record on disk.` Where the sentence joins two decisions that change for different reasons, split the module.
 6. *While making.* Once every module states its decision, take a change that a unit case might come to ask for, such as a new field in what the part keeps, read only the modules' first sentences, and name the one module to open. Where you name none or more than one, move the decision or rewrite the sentence, and repeat with a change of another kind until each change names one module.
@@ -82,8 +78,8 @@ Does each case of the specification, its edges and refusals included, have one t
 
 A maintainer whose test fails knows from its name which case of the specification broke, and so what to mend.
 
-1. *While deciding.* For each module that N1.3 adds inside the part, design its cases before its code, each as a test's name with its Given, When, and Then, naming the unit case of the part that it supports: one for the usual input, one for each class of input that its interface treats alike, refusals among them, and one at each end of a class on an ordered scale, as [the architecture best practice](../architecture/best-practice.md) divides the inputs of a part into its unit cases. For example, `test_reads_back_an_entry_whose_text_holds_a_newline` supports `test_add_then_check_accepts_the_record`.
-2. *While deciding.* Where the code seems to need a case that supports no unit case of the part, such as a mode that the part's tests never reach, end with `asks` to take it back to the architecture, and don't write it, since it tests what no element asks for.
+1. *While deciding.* For each module that N1.3 adds inside the part, design its cases before its code, each as a test's name with its Given, When, and Then, naming the unit case of the part that it supports: one for the usual input, one for each class of input that its interface treats alike, refusals among them, and one at each end of a class on an ordered scale, as [the test design best practice](../test-design/best-practice.md) divides the inputs of a part into its unit cases. For example, `test_reads_back_an_entry_whose_text_holds_a_newline` supports `test_add_then_check_accepts_the_record`.
+2. *While deciding.* Where the code seems to need a case that supports no unit case of the part, such as a mode that the part's tests never reach, end with `asks` to take it back to whoever set the unit cases, such as the architecture's maker, and don't write it, since it tests what no element asks for.
 3. *While making.* Write one test for each case that N5.1 designs, in the test code beside the part's unit tests, in the form that the note of Tests in the template gives. Where its name needs `and`, split it into two tests.
 4. *While making.* Take each value that a test expects from its case's Then, never from what the code gives when run, since a value copied from the code passes whatever the code does.
 5. *While making.* Keep in each test's own body the values that its case turns on, and put in a shared helper only the setup that many tests share, such as building the object under test, so that a reader grasps the test without opening another.

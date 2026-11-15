@@ -14,7 +14,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open the architecture at the part's line in Components, the principles, and each sequence that the part takes a step in, and open the part's skeleton and its unit cases in the test code. The unit cases, each with its Given, When, and Then, are the code's specification: each behavior of the code answers one of them, and the architecture's lines say only why a case asks what it does.",
+        "text": "Open what the code must do: where an architecture holds the part, its line in Components, the principles, each sequence that the part takes a step in, and, where the design made them, the part's skeleton and its unit cases in the test code; elsewhere, the request for the code. Where no unit cases exist, write them first, each as a test's name with its Given, When, and Then: one for the usual input, one for each class of input that the code treats alike, refusals among them, and one at each end of a class on an ordered scale. The unit cases are the code's specification: each behavior of the code answers one of them, and the architecture's lines, where they exist, say only why a case asks what it does.",
         "trace": {
          "action": "read",
          "takes": [
@@ -28,7 +28,7 @@
        },
        {
         "at": "decide",
-        "text": "Give each decision to one module. Keep the skeleton's modules, which hold the decisions that the architecture gave the part, and add a module inside the part only for a decision that could change while the rest of the part stays, such as a file's layout that may change apart from the rules that read it. Keep two decisions in one module where a change of one always changes the other."
+        "text": "Give each decision to one module. Keep the skeleton's modules, where one exists, which hold the decisions that the architecture gave the part, and add a module inside the part only for a decision that could change while the rest of the part stays, such as a file's layout that may change apart from the rules that read it. Keep two decisions in one module where a change of one always changes the other."
        },
        {
         "at": "decide",
@@ -140,11 +140,11 @@
       "items": [
        {
         "at": "decide",
-        "text": "For each module that N1.3 adds inside the part, design its cases before its code, each as a test's name with its Given, When, and Then, naming the unit case of the part that it supports: one for the usual input, one for each class of input that its interface treats alike, refusals among them, and one at each end of a class on an ordered scale, as [the architecture best practice](../architecture/best-practice.md) divides the inputs of a part into its unit cases. For example, `test_reads_back_an_entry_whose_text_holds_a_newline` supports `test_add_then_check_accepts_the_record`."
+        "text": "For each module that N1.3 adds inside the part, design its cases before its code, each as a test's name with its Given, When, and Then, naming the unit case of the part that it supports: one for the usual input, one for each class of input that its interface treats alike, refusals among them, and one at each end of a class on an ordered scale, as [the test design best practice](../test-design/best-practice.md) divides the inputs of a part into its unit cases. For example, `test_reads_back_an_entry_whose_text_holds_a_newline` supports `test_add_then_check_accepts_the_record`."
        },
        {
         "at": "decide",
-        "text": "Where the code seems to need a case that supports no unit case of the part, such as a mode that the part's tests never reach, end with `asks` to take it back to the architecture, and don't write it, since it tests what no element asks for."
+        "text": "Where the code seems to need a case that supports no unit case of the part, such as a mode that the part's tests never reach, end with `asks` to take it back to whoever set the unit cases, such as the architecture's maker, and don't write it, since it tests what no element asks for."
        },
        {
         "at": "make",
@@ -298,7 +298,5 @@
  "inputs": [
   "architecture"
  ],
- "preconditions": [
-  "architecture"
- ]
+ "preconditions": []
 }

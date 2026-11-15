@@ -26,7 +26,8 @@ integration case, and every case of a rule fails with its part taken out, 1 wher
 one that doesn't, and 2 where it could not read or run what it checks, such as an architecture
 without one of those sections, as a check that can't read its input passes nothing. A 0 shows only
 that every name leads somewhere and that each case of a rule can fail, not that the cases are
-enough, as N13 of plugins/rn/domain/best-practices/architecture/best-practice.md says.
+enough, which the reading that N6 of
+plugins/rn/domain/best-practices/test-design/best-practice.md asks for judges.
 
 `doubles` reads each folder `recorded/` under dev/tests/ and each plugin's tests, as the guide's
 Each result of a double from a record says: each line of each record names its event once, and,
