@@ -36,9 +36,10 @@ def main(
     - `steps <plugin>`: 0, with the JSON `{"steps": [...], "notes": [...]}` from `steps.read_steps`,
       `laid_copy.read_laid`, and `laid.strip`.
     - `print <plugin>`, with the Proposal on standard input: 0, with what `show.render` gives, once
-      `form.read_proposal` and `check.check` take it and `proposals.keep` keeps it; 1, with the
-      faults, where the Proposal can't stand; 3, with the faults, where a file of the plugin can't
-      carry it.
+      `form.read_proposal`, `steps.as_held`, and `check.check` take it and `proposals.keep` keeps
+      it; 3, with the faults of the plugin's files, where a file of the plugin can't carry it, as
+      up can't mend what the user must fix first; else 1, with the faults, where the Proposal
+      can't stand.
     - `write <plugin> <ID>`: 0, with each file written and to type /reload-plugins, from
       `write.write`; 1, with why, where it refuses.
     - anything else: 2, with how to call lay.py.
@@ -72,10 +73,11 @@ def _print(plugin: str, text: str) -> tuple[int, str, str]:
     except OutOfForm as e:
         return 1, "", "lay.py print: the Proposal is out of form:\n" + "\n".join(e.problems) + "\n"
     read, _ = laid.strip(steps.read_steps(plugin), laid_copy.read_laid(plugin))
+    read = steps.as_held(read, proposal.routes)
     checked = check(plugin, proposal, read)
     if isinstance(checked, Faults):
-        code = 1 if checked.proposal else 3
-        return code, "", "\n".join(checked.proposal or checked.plugin) + "\n"
+        code = 3 if checked.plugin else 1
+        return code, "", "\n".join(checked.plugin or checked.proposal) + "\n"
     proposal_id = proposals.keep(plugin, proposal, read)
     shown = laid.as_laid(read, checked.sentences)
     return 0, show.render(proposal, shown, proposal_id, plugin_name(plugin)), ""

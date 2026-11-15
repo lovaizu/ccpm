@@ -7,13 +7,14 @@ subagent's file that doesn't set `background: true`."""
 
 from __future__ import annotations
 
+import os
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 
 from form import Proposal
 from lanes import LaneRefused, sentence
 
-from lay.steps import Step
+from lay.steps import Step, commands
 
 
 @dataclass(frozen=True)
@@ -36,8 +37,12 @@ def check(plugin: str, proposal: Proposal, steps: Sequence[Step]) -> Checked | F
 
     Takes: the plugin's folder, the Proposal, and the Steps without the Laid's text.
     Gives: Checked, with each Lane's sentence from `lanes.sentence` with its role's last Step and
-    the Proposal's Routes; or Faults, where a Lane is refused, a role or skill lacks the Lane on its
-    last Step, or the plugin's files can't carry the Proposal.
+    the Proposal's Routes; or Faults, where a Lane is refused, or the skill of a Route or a role
+    that a Route starts has no Lane of `ends_by_result`, each fault naming the role and the lane
+    type; and where a subagent that a Route starts doesn't set `background: true`, a command that
+    a Route waits for or goes after doesn't set `disable-model-invocation: true`, hooks/adapters/
+    holds a file that the Proposal's adapters don't name, or one file holds the Steps of two roles,
+    each fault of the plugin naming the file and what to fix in it.
     Changes: nothing.
     Refuses: nothing.
     Carries: S1 `L->>T: checks each Lane, and makes its sentence`, `L->>ST: checks the Proposal
@@ -60,6 +65,91 @@ def check(plugin: str, proposal: Proposal, steps: Sequence[Step]) -> Checked | F
             faults += [f"{lane.role}'s Lane on step {lane.step}: {fault}" for fault in e.faults]
             continue
         sentences.setdefault((lane.file, lane.step), []).append(said)
-    if faults:
-        return Faults(tuple(faults), ())
+    faults += _unended(proposal)
+    plugin_faults = _files(plugin, proposal, steps)
+    if faults or plugin_faults:
+        return Faults(tuple(faults), plugin_faults)
     return Checked({key: " ".join(said) for key, said in sentences.items()})
+
+
+def _started(proposal: Proposal) -> list[str]:
+    """Each role that a Route of the Proposal starts, in the order named."""
+    moves = [m for route in proposal.routes for m in route.moves]
+    return list(dict.fromkeys(str(m.role) for m in moves if m.kind == "start"))
+
+
+def _unended(proposal: Proposal) -> list[str]:
+    """A fault for each skill of a Route and each role it starts with no Lane of
+    `ends_by_result`, as the guard can tell no end of theirs without it."""
+    ended = {lane.role for lane in proposal.lanes if lane.type == "ends_by_result"}
+    roles = dict.fromkeys([*(route.skill for route in proposal.routes), *_started(proposal)])
+    return [
+        f"{role} has no Lane of ends_by_result on its last Step; add one, as the guard tells its"
+        " end only by the Result it gives"
+        for role in roles
+        if role not in ended
+    ]
+
+
+def _files(plugin: str, proposal: Proposal, steps: Sequence[Step]) -> tuple[str, ...]:
+    """A fault for each file of the plugin that can't carry the Proposal, with what to fix."""
+    faults = _foreground(plugin, proposal) + _model_called(plugin, proposal)
+    return tuple(faults + _unnamed_adapters(plugin, proposal) + _shared(steps))
+
+
+def _foreground(plugin: str, proposal: Proposal) -> list[str]:
+    """A fault for each subagent that a Route starts whose file doesn't set `background: true`."""
+    return [
+        f"agents/{role}.md: set `background: true` in its front matter, as a Route starts"
+        f" {role}, and the guard holds the calls only of a subagent in the background"
+        for role in _started(proposal)
+        if not _sets(plugin, f"agents/{role}.md", "background: true")
+    ]
+
+
+def _model_called(plugin: str, proposal: Proposal) -> list[str]:
+    """A fault for each command that a Route waits for or goes after whose SKILL.md lets the
+    model call it."""
+    named = [c for route in proposal.routes for c in commands(route)]
+    return [
+        f"skills/{command}/SKILL.md: set `disable-model-invocation: true` in its front matter,"
+        f" as a Route waits for the person to type `{command}` or goes after it, which the model"
+        " mustn't call"
+        for command in dict.fromkeys(named)
+        if not _sets(plugin, f"skills/{command}/SKILL.md", "disable-model-invocation: true")
+    ]
+
+
+def _unnamed_adapters(plugin: str, proposal: Proposal) -> list[str]:
+    """A fault for each file of hooks/adapters/ that the Proposal's adapters don't name; a folder
+    there, such as __pycache__/, is no adapter."""
+    named = {proposal.adapters.text, proposal.adapters.records}
+    folder = os.path.join(plugin, "hooks", "adapters")
+    listed = sorted(os.listdir(folder)) if os.path.isdir(folder) else []
+    return [
+        f"hooks/adapters/{name}: the Proposal names it as neither the adapter of a start's text nor"
+        " that of the kept results; move it out of hooks/adapters/, which holds only those, or make"
+        " it one of them as Lane's page of steps, routes, and adapters says"
+        for name in listed
+        if os.path.isfile(os.path.join(folder, name)) and f"hooks/adapters/{name}" not in named
+    ]
+
+
+def _shared(steps: Sequence[Step]) -> list[str]:
+    """A fault for each file that holds the Steps of more than one role."""
+    roles: dict[str, dict[str, None]] = {}
+    for step in steps:
+        roles.setdefault(step.file, {})[step.role] = None
+    return [
+        f"{file}: holds the Steps of {' and '.join(held)}; give each role a file of Steps of its"
+        " own, as the guard holds each role to its own Steps"
+        for file, held in roles.items()
+        if len(held) > 1
+    ]
+
+
+def _sets(plugin: str, file: str, setting: str) -> bool:
+    """Whether the plugin's file holds the setting as a line of its own before its front matter
+    ends, at its second `---`."""
+    with open(os.path.join(plugin, *file.split("/")), encoding="utf-8") as f:
+        return setting in f.read().split("\n---\n", 1)[0].split("\n")
