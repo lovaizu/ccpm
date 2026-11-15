@@ -6,7 +6,7 @@ KR1.1 from each deliverable that the run handed over, judged on Opus with only w
 the deliverable's name and the change on the work's branch, and KR1.2 from the time of the person's
 first turn to the turn that shows the pull request ready, the person's own turns included. Runs are
 added until one more moves no mean by a step: a percent of KR1.1's share, a minute of KR1.2's time.
-They run on the developer's login, so a case without CLAUDE_CODE_OAUTH_TOKEN is skipped."""
+They run on the developer's login, so a case without one is skipped, as opus.NEEDS_LOGIN says."""
 
 from __future__ import annotations
 

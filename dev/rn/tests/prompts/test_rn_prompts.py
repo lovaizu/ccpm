@@ -4,7 +4,7 @@ of invoicer from the walkthrough's bench, each case run RUNS times, a run a test
 developer adds runs until one more changes no case's count. For each kind of request, a case where
 the prompt's description says it acts and one where it says it doesn't, each read by code from
 what the run left: rn's worktree, the run's records, its sign-offs, and what Claude Code printed.
-They run on the developer's login, so a case without CLAUDE_CODE_OAUTH_TOKEN is skipped."""
+They run on the developer's login, so a case without one is skipped, as opus.NEEDS_LOGIN says."""
 
 from __future__ import annotations
 
