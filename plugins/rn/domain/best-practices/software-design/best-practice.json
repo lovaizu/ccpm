@@ -62,7 +62,7 @@
        },
        {
         "at": "make",
-        "text": "Write each interface in its module with the types it takes and gives, such as in its signature where the language allows, and its contract beside it, such as in its doc comment, with its body left so that a call fails, such as one that raises `NotImplementedError`."
+        "text": "Write each interface in its module with the types it takes and gives, such as in its signature where the language allows, and its contract beside it, such as in its doc comment, with its body left so that a call fails and names the interface, such as one that raises `NotImplementedError('answers.due')`, since a failing case then names the part it reached, and empty bodies alike read as copied code to the checks that Test strategy names."
        },
        {
         "at": "make",
