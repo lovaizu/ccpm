@@ -11,13 +11,13 @@ import json
 import os
 import re
 import shutil
-import subprocess
 import tempfile
 from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
 
 from claude_code import Agent, Answer, Conversation
+from repo_files import git, readme_block, write_files
 
 TOP = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), *[".."] * 3))
 LANE = os.path.join(TOP, "plugins", "lane")
@@ -106,19 +106,9 @@ def read_lanes(path):
 """
 
 
-def readme_block(after: str) -> str:
-    """The first `text` block of the README's walkthrough after the line that ends with `after`."""
-    with open(README, encoding="utf-8") as f:
-        text = f.read()
-    start = text.index(after) + len(after)
-    found = re.search(r"```text\n(.*?)```", text[start:], re.DOTALL)
-    assert found, f"the README holds no text block after {after!r}"
-    return found[1].rstrip("\n")
-
-
 # What Lane shows at each move of the walkthrough, as the README shows it.
-SHOWN = readme_block("You type:\n\n```text\n/lane:up changelog\n```\n\nLane shows:")
-WROTE = readme_block("```text\nyes\n```\n\nLane shows:")
+SHOWN = readme_block(README, "You type:\n\n```text\n/lane:up changelog\n```\n\nLane shows:")
+WROTE = readme_block(README, "```text\nyes\n```\n\nLane shows:")
 README_ID = "b9fd8fd8"
 
 
@@ -151,12 +141,6 @@ class Bench:
         return " ".join(["python3", os.path.join(self.lane, "scripts", "lay.py"), *args])
 
 
-def git(repo: str, *args: str) -> str:
-    """Runs git in the repository, and gives what it printed."""
-    done = subprocess.run(["git", "-C", repo, *args], capture_output=True, text=True, check=True)
-    return done.stdout
-
-
 def bench(tmp: str, files: dict[str, str] | None = None) -> Bench:
     """A copy of Lane, and the repository of tally with changelog holding the files, the
     walkthrough's by default, committed after two commits of tally."""
@@ -185,15 +169,6 @@ def bench(tmp: str, files: dict[str, str] | None = None) -> Bench:
     }
     os.makedirs(env["TMPDIR"])
     return Bench(lane, os.path.realpath(repo), os.path.realpath(changelog), temp, env)
-
-
-def write_files(folder: str, files: dict[str, str]) -> None:
-    """Writes each file under the folder, by its path there."""
-    for name, text in files.items():
-        path = os.path.join(folder, name)
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(text)
 
 
 def executable(path: str) -> None:

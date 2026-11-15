@@ -10,27 +10,21 @@ They run on the developer's login, so a case without CLAUDE_CODE_OAUTH_TOKEN is 
 
 from __future__ import annotations
 
-import datetime
 import glob
 import json
 import os
-import statistics
 import subprocess
-import sys
-import tempfile
-from collections.abc import Callable
 from typing import Any
 
 import pytest
 
+from dev.tests import opus, scenario
+
 pytestmark = [
     pytest.mark.xfail(strict=True, reason="rn's parts have empty bodies"),
-    pytest.mark.skipif(
-        not os.environ.get("CLAUDE_CODE_OAUTH_TOKEN"), reason="runs the real Claude Code on Opus"
-    ),
+    opus.NEEDS_LOGIN,
 ]
 
-TOP = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), *[".."] * 4))
 TEST = os.path.join(os.path.dirname(os.path.abspath(__file__)), "walkthrough.json")
 READY = "The pull request is ready for your merge"
 JUDGE = (
@@ -38,23 +32,6 @@ JUDGE = (
     " have: its name and what it changed in the repository, given below. Judge whether you could"
     ' use it for what its name says you\'re after. Reply with JSON {"usable": <true or false>}.'
 )
-
-
-def e2e() -> str:
-    """Runs e2e.py once on the walkthrough, and gives the folder of its records."""
-    done = subprocess.run(
-        [sys.executable, "dev/scripts/e2e.py", "run", TEST],
-        cwd=TOP,
-        capture_output=True,
-        text=True,
-        check=True,
-    )
-    return os.path.join(TOP, done.stdout.strip().splitlines()[-1])
-
-
-def jsonl(path: str) -> list[dict[str, Any]]:
-    with open(path, encoding="utf-8") as f:
-        return [json.loads(line) for line in f if line.strip()]
 
 
 def handed_over(records: str) -> list[tuple[str, str]]:
@@ -84,36 +61,7 @@ def design_tree_in(diff: str) -> dict[str, Any] | None:
 
 def usable(name: str, diff: str) -> bool:
     """Whether the deliverable's people could use it, judged on Opus from its name and change."""
-    done = subprocess.run(
-        [
-            "claude",
-            "-p",
-            "--model",
-            "opus",
-            "--output-format",
-            "json",
-            f"{JUDGE}\n\n{name}\n\n{diff}",
-        ],
-        capture_output=True,
-        text=True,
-        check=True,
-        env=dict(os.environ, CLAUDE_CONFIG_DIR=tempfile.mkdtemp()),
-    )
-    return bool(json.loads(json.loads(done.stdout)["result"])["usable"])
-
-
-def seconds(stamp: str) -> float:
-    moment = datetime.datetime.strptime(stamp, "%Y-%m-%dT%H:%M:%S.%fZ")
-    return moment.replace(tzinfo=datetime.timezone.utc).timestamp()
-
-
-def until_steady(measure: Callable[[], float], step: float) -> float:
-    """The mean of the measure over runs, adding a run until one more moves it by less than the
-    step."""
-    values = [measure(), measure()]
-    while abs(statistics.mean(values) - statistics.mean(values[:-1])) >= step:
-        values.append(measure())
-    return statistics.mean(values)
+    return bool(opus.judged(f"{JUDGE}\n\n{name}\n\n{diff}")["usable"])
 
 
 @pytest.mark.supports("KR1.1")
@@ -125,11 +73,11 @@ def test_the_deliverables_handed_over_are_ones_their_people_can_use() -> None:
     every run hands over at least one."""
 
     def share() -> float:
-        given = handed_over(e2e())
+        given = handed_over(scenario.e2e(TEST))
         assert given, "the run handed over no deliverable"
         return 100 * sum(1 for name, diff in given if not usable(name, diff)) / len(given)
 
-    print(f"KR1.1: {until_steady(share, 1):.1f}% of the deliverables handed over unusable")
+    print(f"KR1.1: {scenario.until_steady(share, 1):.1f}% of the deliverables handed over unusable")
 
 
 @pytest.mark.supports("KR1.2")
@@ -141,12 +89,12 @@ def test_the_pull_request_is_ready_soon_after_the_request() -> None:
     their own turns included, and such a turn comes."""
 
     def minutes() -> float:
-        turns = jsonl(os.path.join(e2e(), "turns.jsonl"))
+        turns = scenario.jsonl(os.path.join(scenario.e2e(TEST), "turns.jsonl"))
         ready = [t for t in turns if READY in t.get("screen", "")]
         assert ready, "no turn showed the pull request ready"
-        return (seconds(ready[0]["ended"]) - seconds(turns[0]["started"])) / 60
+        return (scenario.seconds(ready[0]["ended"]) - scenario.seconds(turns[0]["started"])) / 60
 
-    print(f"KR1.2: {until_steady(minutes, 1):.1f} minutes")
+    print(f"KR1.2: {scenario.until_steady(minutes, 1):.1f} minutes")
 
 
 @pytest.mark.supports("KR1.2")
@@ -155,19 +103,10 @@ def test_rn_installs_by_the_readmes_commands(tmp_path: Any) -> None:
     When: the person runs the README's two commands of Installation in a shell.
     Then: `claude plugin details rn@ccpm` shows rn with its skills up, dn, ty, and gm, and Lane
     installed beside it."""
-    env = dict(os.environ, HOME=str(tmp_path), CLAUDE_CONFIG_DIR=str(tmp_path / ".claude"))
+    env = scenario.fresh_home(str(tmp_path))
     for command in ("claude plugin marketplace add lovaizu/ccpm", "claude plugin install rn@ccpm"):
         subprocess.run(command, shell=True, env=env, check=True, capture_output=True)
-    shown = subprocess.run(
-        "claude plugin details rn@ccpm",
-        shell=True,
-        env=env,
-        capture_output=True,
-        text=True,
-        check=False,
-    ).stdout
+    shown = scenario.shell("claude plugin details rn@ccpm", env)
     assert all(skill in shown for skill in ("up", "dn", "ty", "gm"))
-    listed = subprocess.run(
-        "claude plugin list", shell=True, env=env, capture_output=True, text=True, check=False
-    ).stdout
+    listed = scenario.shell("claude plugin list", env)
     assert "lane" in listed

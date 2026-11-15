@@ -17,39 +17,23 @@ from typing import Any
 import pytest
 
 from dev.rn.tests import rn_walkthrough as w
+from dev.tests import opus
 
 pytestmark = [
     pytest.mark.xfail(strict=True, reason="rn's prompts' steps are empty"),
-    pytest.mark.skipif(
-        not os.environ.get("CLAUDE_CODE_OAUTH_TOKEN"), reason="runs the real Claude Code on Opus"
-    ),
+    opus.NEEDS_LOGIN,
 ]
 
 RUNS = 5
-RULE = (
-    "Install nothing, and send nothing to a translator, a web API, or any other service outside"
-    " this repository's git."
-)
 
 
 def claude(b: w.Bench, folder: str, prompt: str, agent: str | None = None) -> str:
     """Runs the prompt on Opus with rn and Lane loaded, in the folder, as the role `agent` where
     given, and gives what Claude Code printed."""
-    env = dict(b.env, CLAUDE_CODE_OAUTH_TOKEN=os.environ["CLAUDE_CODE_OAUTH_TOKEN"])
-    env["CLAUDE_CONFIG_DIR"] = os.path.join(b.temp, "config")
-    command = ["claude", "-p", "--model", "opus", "--permission-mode", "bypassPermissions"]
-    command += ["--append-system-prompt", RULE, "--plugin-dir", b.lane, "--plugin-dir", b.rn]
-    command += ["--agent", agent] if agent else []
-    done = subprocess.run(
-        [*command, prompt],
-        cwd=folder,
-        env=env,
-        capture_output=True,
-        text=True,
-        timeout=1800,
-        check=False,
-    )
-    return done.stdout
+    env = dict(b.env, CLAUDE_CONFIG_DIR=os.path.join(b.temp, "config"))
+    flags = ["--plugin-dir", b.lane, "--plugin-dir", b.rn]
+    flags += ["--agent", agent] if agent else []
+    return opus.prompted(prompt, folder, env, flags, 1800)
 
 
 def worktrees(b: w.Bench) -> list[str]:

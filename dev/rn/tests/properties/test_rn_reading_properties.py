@@ -5,12 +5,10 @@ fault of the input is the user's or a role's to mend, never a crash of rn's."""
 
 from __future__ import annotations
 
-import importlib.util
 import io
 import json
 import os
 import tempfile
-from types import ModuleType
 from typing import Any
 
 import pytest
@@ -21,11 +19,10 @@ from record import form
 from tree import design
 from tree.runs import Run
 
+from dev.rn.tests.unit import rn_data as d
+
 pytestmark = pytest.mark.xfail(strict=True, reason="rn's readers have empty bodies")
 
-RN = os.path.normpath(
-    os.path.join(os.path.dirname(os.path.abspath(__file__)), *[".."] * 4, "plugins", "rn")
-)
 JSON = st.recursive(
     st.none() | st.booleans() | st.integers() | st.text(max_size=8),
     lambda inner: (
@@ -37,15 +34,6 @@ JSON = st.recursive(
 # checks past the top level.
 TREE = st.fixed_dictionaries({"goal": JSON, "deliverables": st.lists(JSON, max_size=3)})
 RECORD = st.fixed_dictionaries({"entries": st.lists(JSON, max_size=3)}, optional={"kept": JSON})
-
-
-def adapter(name: str) -> ModuleType:
-    path = os.path.join(RN, "hooks", "adapters", f"{name}.py")
-    spec = importlib.util.spec_from_file_location(f"rn_adapter_{name}", path)
-    assert spec and spec.loader
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
 
 
 @pytest.mark.supports("test_tree_py_refuses_a_change_that_leaves_the_design_trees_form")
@@ -89,7 +77,7 @@ def test_any_input_of_the_adapter_of_records_gives_results_or_why(given_text: st
     When: the adapter runs.
     Then: it gives 0 with results in Lane's form, or 1 with why, and no traceback."""
     with tempfile.TemporaryDirectory() as folder:
-        code, out, err = adapter("records").main(io.StringIO(given_text), folder)
+        code, out, err = d.adapter("records").main(io.StringIO(given_text), folder)
     assert code in (0, 1) and "Traceback" not in err
     if code == 0:
         assert set(json.loads(out)) == {"results"}
@@ -105,5 +93,5 @@ def test_any_input_of_the_adapter_of_a_starts_text_gives_a_text_none_or_why(
     When: the adapter runs for the generator.
     Then: it gives 1 with why, and no traceback, as no run's worktree holds the folder."""
     with tempfile.TemporaryDirectory() as folder:
-        code, out, err = adapter("text").main(["generator"], io.StringIO(given_text), folder)
+        code, out, err = d.adapter("text").main(["generator"], io.StringIO(given_text), folder)
     assert (code, out) == (1, "") and err and "Traceback" not in err

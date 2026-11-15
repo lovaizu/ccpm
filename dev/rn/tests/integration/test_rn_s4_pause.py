@@ -36,9 +36,7 @@ def test_dn_stops_the_generator_and_pushes_its_work_with_the_step_it_stood_at(b:
     pause with the generator standing at step 2, and ends its turn with Paused.
     Then: the stop and tree.py pause pass, the remote holds the work's branch at the worktree's
     last commit, which holds the generator's Place at step 2, and the guard lets the turn end."""
-    walk = w.planned(b)
-    generator, cut = w.generator_started(walk)
-    assert generator.bash(b.tree("commit", cut["record"], "1")).exit_code == 0
+    walk, generator, cut = w.generator_in_step_2(b)
     assert not walk.c.type("/rn:dn").blocked
     assert not walk.c.task_stop(generator).blocked
     paused = walk.c.bash(b.fed(b.tree("pause"), {"stood": [{"record": cut["record"], "step": 2}]}))
@@ -56,10 +54,7 @@ def test_dn_stops_each_evaluator_still_running_and_keeps_where_each_stood(b: Ben
     When: the user types /rn:dn, the orchestrator stops each by TaskStop, and runs tree.py pause
     with each at step 1.
     Then: each stop and tree.py pause pass, and the work's branch holds each evaluator's Place."""
-    walk = w.planned(b)
-    generator, cut = w.generator_started(walk)
-    w.made(b, walk, generator, cut)
-    walk.said = w.reached(b, generator, "done", "Made.").said
+    walk, _ = w.deliverable_made(b)
     evaluators = []
     for _ in range(2):
         answer, evaluator = w.started(walk.c, "evaluator", walk.said)

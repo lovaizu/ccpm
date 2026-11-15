@@ -21,6 +21,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from dev.tests.claude_code import Agent, Answer, Conversation
+from dev.tests.repo_files import git, readme_block, write_files
 
 TOP = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), *[".."] * 3))
 RN = os.path.join(TOP, "plugins", "rn")
@@ -50,6 +51,10 @@ DECIMAL = {
     "decided": "Decimal",
     "ground": "the code already computes with Decimal",
 }
+# What an evaluator gives under N2 of the first deliverable where the people fall short by it, and
+# the decision under N2 that the tree-keeper changes for it.
+SHOWN_AS_TYPED = "A caller's editor shows the type of each argument as they type the call."
+EVERY_ARGUMENT = {"about": "what the hints name", "decided": "every argument", "by": "reasoning"}
 # The best practice that finishes a deliverable of each kind, as the generator's Cut names it.
 REFACTOR = {"code": "refactor-code", "readme": "refactor-doc"}
 # What a README deliverable is for, in a plan of one.
@@ -57,22 +62,12 @@ NEWCOMER = "A newcomer decides from invoicer's README alone whether invoicer fit
 RESUMED = "The main conversation's grounds:\n"
 
 
-def readme_block(after: str) -> str:
-    """The first `text` block of the README's walkthrough after the line that ends with `after`."""
-    with open(README, encoding="utf-8") as f:
-        text = f.read()
-    start = text.index(after) + len(after)
-    found = re.search(r"```text\n(.*?)```", text[start:], re.DOTALL)
-    assert found, f"the README holds no text block after {after!r}"
-    return found[1].rstrip("\n")
-
-
 # What rn shows at each move of the walkthrough, as the README shows it.
-GOAL_SHOWN = readme_block(f"/rn:up {WORDS}\n```\n\nrn shows:")
-POINT_SHOWN = readme_block("```text\nyes\n```\n\nrn shows:")
-PLAN_SHOWN = readme_block(f"```text\n{EACH_FILE}\n```\n\nrn shows:")
-PAUSED_SHOWN = readme_block("```text\n/rn:dn\n```\n\nrn shows:")
-PICKED_SHOWN = readme_block("```text\n/rn:up\n```\n\nrn shows:")
+GOAL_SHOWN = readme_block(README, f"/rn:up {WORDS}\n```\n\nrn shows:")
+POINT_SHOWN = readme_block(README, "```text\nyes\n```\n\nrn shows:")
+PLAN_SHOWN = readme_block(README, f"```text\n{EACH_FILE}\n```\n\nrn shows:")
+PAUSED_SHOWN = readme_block(README, "```text\n/rn:dn\n```\n\nrn shows:")
+PICKED_SHOWN = readme_block(README, "```text\n/rn:up\n```\n\nrn shows:")
 NO_RUN_SHOWN = "rn has no run to pick up"
 
 
@@ -125,12 +120,6 @@ class Bench:
             return json.load(f)
 
 
-def git(repo: str, *args: str) -> str:
-    """Runs git in the repository, and gives what it printed."""
-    done = subprocess.run(["git", "-C", repo, *args], capture_output=True, text=True, check=True)
-    return done.stdout
-
-
 def invoicer_files() -> dict[str, str]:
     """Each file of invoicer, by its path, as the walkthrough's library holds it before type
     hints."""
@@ -141,14 +130,6 @@ def invoicer_files() -> dict[str, str]:
             with open(path, encoding="utf-8") as f:
                 found[os.path.relpath(path, INVOICER)] = f.read()
     return found
-
-
-def write_files(folder: str, files: Mapping[str, str]) -> None:
-    for name, text in files.items():
-        path = os.path.join(folder, name)
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(text)
 
 
 def bench(tmp: str, logged_in: bool = True, remote: bool = True) -> Bench:
@@ -559,18 +540,44 @@ def evaluated(
     return cuts
 
 
-def first_round(
-    b: Bench, more: Mapping[str, str] | None = None, change: Any = None
-) -> tuple[Walk, dict[str, Any], list[dict[str, Any]]]:
-    """The walkthrough up to the first round of its first deliverable judged: the plan signed off,
-    the generator's deliverable made and its end passed, and each evaluator's Answers written, with
-    `more` as each necessary condition that falls short; gives the walk, the generator's Cut, and
-    each evaluator's Cut."""
+def generator_in_step_2(b: Bench) -> tuple[Walk, Agent, dict[str, Any]]:
+    """The walkthrough up to its generator in step 2: the plan signed off, and the generator of the
+    first deliverable started, which committed the end of its step 1; gives the walk, the
+    generator, and its Cut."""
+    w = planned(b)
+    generator, cut = generator_started(w)
+    ran = generator.bash(b.tree("commit", cut["record"], "1"))
+    assert ran.exit_code == 0, ran.output or ran.said
+    return w, generator, cut
+
+
+def deliverable_made(b: Bench, change: Any = None) -> tuple[Walk, dict[str, Any]]:
+    """The walkthrough up to its first deliverable made: the plan signed off, and the generator's
+    deliverable made and its end passed; gives the walk and the generator's Cut."""
     w = planned(b, change)
     generator, cut = generator_started(w)
     made(b, w, generator, cut)
     w.said = reached(b, generator, "done", "Made.").said
+    return w, cut
+
+
+def first_round(
+    b: Bench, more: Mapping[str, str] | None = None, change: Any = None
+) -> tuple[Walk, dict[str, Any], list[dict[str, Any]]]:
+    """The walkthrough up to the first round of its first deliverable judged: the deliverable made,
+    and each evaluator's Answers written, with `more` as each necessary condition that falls short;
+    gives the walk, the generator's Cut, and each evaluator's Cut."""
+    w, cut = deliverable_made(b, change)
     return w, cut, evaluated(b, w, kinds_of(cut), more)
+
+
+def short_by_n2_kept(b: Bench, w: Walk) -> None:
+    """The orchestrator judges that the people fall short by N2 of the first round, and the
+    tree-keeper writes EVERY_ARGUMENT under N2 of the first deliverable, with the more of
+    SHOWN_AS_TYPED to keep."""
+    nodes = {"deliverables/0/necessary_conditions/1/decisions/0": EVERY_ARGUMENT}
+    more = [{"deliverable": HINTS_PATH, "condition": "N2", "good_when": SHOWN_AS_TYPED}]
+    keeper_writes(b, w, "The people fall short by N2.", {"nodes": nodes, "more": more})
 
 
 def sign_off_put_up(b: Bench, change: Any = None) -> tuple[Walk, dict[str, Any]]:

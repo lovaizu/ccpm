@@ -10,27 +10,21 @@ CLAUDE_CODE_OAUTH_TOKEN is skipped."""
 
 from __future__ import annotations
 
-import datetime
-import json
 import os
-import statistics
 import subprocess
-import sys
-import tempfile
 from dataclasses import dataclass
 from typing import Any
 
+import opus
 import pytest
+import scenario
 import walkthrough as w
 
 pytestmark = [
     pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies"),
-    pytest.mark.skipif(
-        not os.environ.get("CLAUDE_CODE_OAUTH_TOKEN"), reason="runs the real Claude Code on Opus"
-    ),
+    opus.NEEDS_LOGIN,
 ]
 
-TOP = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), *[".."] * 4))
 HERE = os.path.dirname(os.path.abspath(__file__))
 TESTS = ("walkthrough.json", "ai-approves.json")
 # The routes of the walkthrough's write, as each start after each Result.
@@ -51,28 +45,11 @@ class Run:
     ended: str | None
 
 
-def e2e(test: str) -> str:
-    """Runs e2e.py once on the E2E test file, and gives the folder of its records."""
-    done = subprocess.run(
-        [sys.executable, "dev/scripts/e2e.py", "run", os.path.join(HERE, test)],
-        cwd=TOP,
-        capture_output=True,
-        text=True,
-        check=True,
-    )
-    return os.path.join(TOP, done.stdout.strip().splitlines()[-1])
-
-
-def jsonl(path: str) -> list[dict[str, Any]]:
-    with open(path, encoding="utf-8") as f:
-        return [json.loads(line) for line in f if line.strip()]
-
-
 def runs_of_write(records: str) -> list[Run]:
     """Each run of changelog's write that the records' hook events show: each subagent it started,
     each Result given by result.py, and the time it ended by write's own Result."""
     runs: list[Run] = []
-    for each in jsonl(os.path.join(records, "hooks.jsonl")):
+    for each in scenario.jsonl(os.path.join(records, "hooks.jsonl")):
         event = each.get("payload", each)
         name, tool = event.get("hook_event_name"), event.get("tool_name")
         if name == "UserPromptExpansion" and event.get("command_name") == "changelog:write":
@@ -111,29 +88,7 @@ def off_steps(records: str) -> int:
     steps = "\n\n".join(f"<!-- changelog/{name} -->\n{text}" for name, text in w.FILES.items())
     diff = w.read(os.path.join(records, "run.diff"))
     text = "\n\n".join([steps, f"What the run changed:\n{diff}", *map(w.read, paths)])
-    done = subprocess.run(
-        ["claude", "-p", "--model", "opus", "--output-format", "json", JUDGE + "\n\n" + text],
-        capture_output=True,
-        text=True,
-        check=True,
-        env=dict(os.environ, CLAUDE_CONFIG_DIR=tempfile.mkdtemp()),
-    )
-    return int(json.loads(json.loads(done.stdout)["result"])["off_steps"])
-
-
-def seconds(stamp: str) -> float:
-    """The seconds since the epoch of a time as e2e.py writes it, in UTC."""
-    moment = datetime.datetime.strptime(stamp, "%Y-%m-%dT%H:%M:%S.%fZ")
-    return moment.replace(tzinfo=datetime.timezone.utc).timestamp()
-
-
-def until_steady(measure: Any, step: float) -> float:
-    """The mean of the measure over runs, adding a run until one more moves the mean by less than
-    the step."""
-    values = [measure(), measure()]
-    while abs(statistics.mean(values) - statistics.mean(values[:-1])) >= step:
-        values.append(measure())
-    return statistics.mean(values)
+    return int(opus.judged(JUDGE + "\n\n" + text)["off_steps"])
 
 
 @pytest.mark.supports("KR1.1")
@@ -146,13 +101,13 @@ def test_runs_keep_the_steps_and_order_the_user_designed(test: str) -> None:
     measured, and no run of the walkthrough leaves its order."""
 
     def share() -> float:
-        records = e2e(test)
+        records = scenario.e2e(os.path.join(HERE, test))
         runs = runs_of_write(records)
         off = sum(1 for run in runs if order_faults(run))
         off += min(off_steps(records), len(runs) - off)
         return 100 * off / max(len(runs), 1)
 
-    measured = until_steady(share, 1)
+    measured = scenario.until_steady(share, 1)
     print(f"KR1.1 of {test}: {measured:.1f}% of runs off the user's design")
     assert measured == 0
 
@@ -166,13 +121,13 @@ def test_the_first_run_that_keeps_the_steps_comes_soon(test: str) -> None:
     measured, and such a run comes."""
 
     def minutes() -> float:
-        records = e2e(test)
-        turns = jsonl(os.path.join(records, "turns.jsonl"))
+        records = scenario.e2e(os.path.join(HERE, test))
+        turns = scenario.jsonl(os.path.join(records, "turns.jsonl"))
         kept = [run for run in runs_of_write(records) if not order_faults(run) and run.ended]
         assert kept, "no run kept the steps"
-        return (seconds(kept[0].ended or "") - seconds(turns[0]["started"])) / 60
+        return (scenario.seconds(kept[0].ended or "") - scenario.seconds(turns[0]["started"])) / 60
 
-    print(f"KR1.2 of {test}: {until_steady(minutes, 1):.1f} minutes")
+    print(f"KR1.2 of {test}: {scenario.until_steady(minutes, 1):.1f} minutes")
 
 
 @pytest.mark.supports("KR1.2")
@@ -180,18 +135,11 @@ def test_lane_installs_by_the_readmes_commands(tmp_path: Any) -> None:
     """Given: a fresh home, with no plugin installed.
     When: the person runs the README's two commands of Installation in a shell.
     Then: `claude plugin details lane@ccpm` shows `lane 0.1.0`, with the skill up."""
-    env = dict(os.environ, HOME=str(tmp_path), CLAUDE_CONFIG_DIR=str(tmp_path / ".claude"))
+    env = scenario.fresh_home(str(tmp_path))
     for command in (
         "claude plugin marketplace add lovaizu/ccpm",
         "claude plugin install lane@ccpm",
     ):
         subprocess.run(command, shell=True, env=env, check=True, capture_output=True)
-    details = subprocess.run(
-        "claude plugin details lane@ccpm",
-        shell=True,
-        env=env,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    assert "lane 0.1.0" in details.stdout and "up" in details.stdout
+    details = scenario.shell("claude plugin details lane@ccpm", env)
+    assert "lane 0.1.0" in details and "up" in details

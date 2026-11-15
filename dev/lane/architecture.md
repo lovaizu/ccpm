@@ -602,6 +602,10 @@ dev/lane/
 
 dev/tests/
 ├── claude_code.py                the double of Claude Code, its `claude plugin validate` too
+├── fresh_imports.py              keeps the plugins' modules out of a case's process, so each script imports the bench's copy
+├── opus.py                       runs a prompt on Opus by `claude -p`, and the judge of its runs
+├── repo_files.py                 git, the files a case writes, and a block of the README's text
+├── scenario.py                   a key result measured by e2e.py until its mean holds, and a fresh home
 ├── recorded/                     the records of Claude Code that the double gives from
 └── recorder/                     what records a state again, and compare.py
 

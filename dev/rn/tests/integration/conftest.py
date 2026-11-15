@@ -1,63 +1,30 @@
-"""What rn's integration cases share: the top of the repository on the import path, from which the
-cases take the double of Claude Code and the walkthrough's helpers by their paths, as the type
-checker finds them there; a bench for each case; rn's and Lane's code imported afresh by each
-script and hook that the double runs, as a new process of Python would import the copy it runs; and
-the fixture `broken`, which takes out the part that holds a rule where TRACE_BROKEN is 1, as the
-plugin guide's A principle's test seen to fail says."""
+"""What rn's integration cases share: a bench for each case; rn's and Lane's code imported afresh
+by each script and hook that the double runs, as a new process of Python would import the copy it
+runs; and the fixture `broken`, which takes out the part that holds a rule where TRACE_BROKEN is 1,
+as the plugin guide's A principle's test seen to fail says."""
 
 from __future__ import annotations
 
 import os
-import sys
 from collections.abc import Iterator
 from typing import Any
 
 import pytest
 
-TOP = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), *[".."] * 4))
-if TOP not in sys.path:
-    sys.path.insert(0, TOP)
-
 from dev.rn.tests import rn_walkthrough
+from dev.tests import fresh_imports
 
 # The modules of rn's code and of Lane's guard, by name, which a case's process holds no copy of
 # while the case runs, so that each script and hook imports the code of the bench's copy.
-MODULES = (
-    "fault",
-    "throwaway",
-    "tree",
-    "record",
-    "repository",
-    "template",
-    "events",
-    "guard",
-    "place",
-    "runs",
-    "run_record",
-    "form",
-    "adapters",
-    "answers",
-    "script_calls",
-    "lanes",
-    "manifest",
-)
-
-
-def ours(name: str) -> bool:
-    return name.split(".")[0] in MODULES
+MODULES = ("fault", "throwaway", "tree", "record", "repository", "template", *fresh_imports.GUARD)
 
 
 @pytest.fixture(autouse=True)
 def fresh_modules() -> Iterator[None]:
     """Takes each module of rn's and Lane's code out of the process for the case, and puts back
-    those it held before, as a case at another level may have imported them."""
-    held = {name: module for name, module in sys.modules.items() if ours(name)}
-    for name in held:
-        del sys.modules[name]
-    yield
-    for name in [name for name in sys.modules if ours(name)]:
-        del sys.modules[name]
-    sys.modules.update(held)
+    those it held before."""
+    with fresh_imports.without(MODULES):
+        yield
 
 
 @pytest.fixture

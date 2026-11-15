@@ -179,15 +179,12 @@ def test_a_more_the_people_fall_short_by_reaches_the_next_rounds_generator(b: Be
     decision it changes under N2 with the more to keep.
     Then: tree.py write keeps the more, and the guard gives the generator's start due again, its
     Cut holding the decision and the More kept, with its Made in a new round."""
-    good_when = "A caller's editor shows the type of each argument as they type the call."
-    walk, cut, _ = w.first_round(b, {"N2": good_when})
-    decision = {"about": "what the hints name", "decided": "every argument", "by": "reasoning"}
-    nodes = {"deliverables/0/necessary_conditions/1/decisions/0": decision}
-    more = [{"deliverable": w.HINTS_PATH, "condition": "N2", "good_when": good_when}]
-    w.keeper_writes(b, walk, "The people fall short by N2.", {"nodes": nodes, "more": more})
+    walk, cut, _ = w.first_round(b, {"N2": w.SHOWN_AS_TYPED})
+    w.short_by_n2_kept(b, walk)
     _, again = w.generator_started(walk)
-    assert again["cut"]["more"] == [{"condition": "N2", "good_when": good_when}]
-    assert decision["decided"] in [d["decision"]["decided"] for d in again["cut"]["decisions"]]
+    assert again["cut"]["more"] == [{"condition": "N2", "good_when": w.SHOWN_AS_TYPED}]
+    decided = [d["decision"]["decided"] for d in again["cut"]["decisions"]]
+    assert w.EVERY_ARGUMENT["decided"] in decided
     assert os.path.dirname(again["made"]) != os.path.dirname(cut["made"])
 
 

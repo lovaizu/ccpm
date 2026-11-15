@@ -30,12 +30,8 @@ def test_every_round_of_a_deliverable_is_read_for_its_lessons(b: Bench) -> None:
     kept, and a second round with every condition good.
     When: the orchestrator runs tree.py round invoicer to find each lesson.
     Then: it gives both rounds, the latest last, the first with N2 in more and its good_when."""
-    good_when = "A caller's editor shows the type of each argument as they type the call."
-    walk, cut, _ = w.first_round(b, {"N2": good_when})
-    decision = {"about": "what the hints name", "decided": "every argument", "by": "reasoning"}
-    nodes = {"deliverables/0/necessary_conditions/1/decisions/0": decision}
-    more = [{"deliverable": w.HINTS_PATH, "condition": "N2", "good_when": good_when}]
-    w.keeper_writes(b, walk, "The people fall short by N2.", {"nodes": nodes, "more": more})
+    walk, cut, _ = w.first_round(b, {"N2": w.SHOWN_AS_TYPED})
+    w.short_by_n2_kept(b, walk)
     generator, again = w.generator_started(walk)
     w.made(b, walk, generator, again)
     walk.said = w.reached(b, generator, "done", "Made.").said
@@ -43,7 +39,7 @@ def test_every_round_of_a_deliverable_is_read_for_its_lessons(b: Bench) -> None:
     rounds = w.printed(walk.c.bash(b.tree("round", cut["deliverable"])))
     assert [r["number"] for r in rounds] == [1, 2]
     first = [m for each in rounds[0]["answers"] for m in each["more"]]
-    assert first == [{"question": "N2", "good_when": good_when}]
+    assert first == [{"question": "N2", "good_when": w.SHOWN_AS_TYPED}]
     assert not [m for each in rounds[1]["answers"] for m in each["more"]]
 
 

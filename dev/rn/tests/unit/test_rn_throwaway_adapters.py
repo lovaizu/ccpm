@@ -6,11 +6,9 @@ work waits; the results kept on the words typed and on how many runs are left.""
 
 from __future__ import annotations
 
-import importlib.util
 import io
 import json
 import os
-from types import ModuleType
 from typing import Any
 
 import pytest
@@ -23,16 +21,6 @@ from tree import rounds
 from dev.rn.tests.unit import rn_data as d
 
 EMPTY = pytest.mark.xfail(strict=True, reason="throwaway.py and the adapters have empty bodies")
-
-
-def adapter(name: str) -> ModuleType:
-    """rn's adapter of the name, from hooks/adapters/, as Lane runs it."""
-    path = os.path.join(d.RN, "hooks", "adapters", f"{name}.py")
-    spec = importlib.util.spec_from_file_location(f"rn_adapter_{name}", path)
-    assert spec and spec.loader
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
 
 
 def a_round(tmp: Any) -> Any:
@@ -101,7 +89,7 @@ def test_a_command_line_out_of_form_gives_2_with_the_usage(tmp_path: Any, argv: 
 
 
 def text(role: list[str], running: list[dict[str, Any]], cwd: str) -> tuple[int, str, str]:
-    return adapter("text").main(role, io.StringIO(json.dumps({"running": running})), cwd)
+    return d.adapter("text").main(role, io.StringIO(json.dumps({"running": running})), cwd)
 
 
 @EMPTY
@@ -156,7 +144,7 @@ def test_a_starts_text_without_one_role_gives_2(tmp_path: Any, role: list[str]) 
 
 
 def kept(words: str, cwd: str) -> tuple[int, str, str]:
-    return adapter("records").main(io.StringIO(json.dumps({"words": words})), cwd)
+    return d.adapter("records").main(io.StringIO(json.dumps({"words": words})), cwd)
 
 
 def run_with_results(repo: str, name: str = d.NAME) -> Any:
@@ -221,7 +209,7 @@ def test_input_out_of_form_gives_1_with_why(tmp_path: Any, given: str) -> None:
     that aren't text.
     Then: it gives 1 with why."""
     run = run_with_results(d.repository(str(tmp_path)))
-    code, out, err = adapter("records").main(io.StringIO(given), run.worktree)
+    code, out, err = d.adapter("records").main(io.StringIO(given), run.worktree)
     assert (code, out) == (1, "") and err
 
 

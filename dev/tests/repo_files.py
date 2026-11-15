@@ -1,0 +1,34 @@
+"""How the plugins' cases make and read the files of a bench: git run in a repository, files written
+under a folder, and the text that a README's walkthrough shows."""
+
+from __future__ import annotations
+
+import os
+import re
+import subprocess
+from collections.abc import Mapping
+
+
+def git(repo: str, *args: str) -> str:
+    """Runs git in the repository, and gives what it printed."""
+    done = subprocess.run(["git", "-C", repo, *args], capture_output=True, text=True, check=True)
+    return done.stdout
+
+
+def write_files(folder: str, files: Mapping[str, str]) -> None:
+    """Writes each file under the folder, by its path there."""
+    for name, text in files.items():
+        path = os.path.join(folder, name)
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(text)
+
+
+def readme_block(readme: str, after: str) -> str:
+    """The first `text` block of the README at the path after the line that ends with `after`."""
+    with open(readme, encoding="utf-8") as f:
+        text = f.read()
+    start = text.index(after) + len(after)
+    found = re.search(r"```text\n(.*?)```", text[start:], re.DOTALL)
+    assert found, f"the README holds no text block after {after!r}"
+    return found[1].rstrip("\n")

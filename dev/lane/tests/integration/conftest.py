@@ -12,42 +12,21 @@ import sys
 from collections.abc import Callable, Iterator
 from typing import Any
 
+import fresh_imports
 import pytest
 import walkthrough
 
 # Lane's own modules, by name, which a case's process holds no copy of while the case runs, so that
 # each hook imports the code of the plugin it runs from.
-LANE_MODULES = (
-    "events",
-    "guard",
-    "place",
-    "runs",
-    "run_record",
-    "form",
-    "adapters",
-    "answers",
-    "script_calls",
-    "lanes",
-    "lay",
-    "manifest",
-)
-
-
-def lane_module(name: str) -> bool:
-    return name.split(".")[0] in LANE_MODULES
+LANE_MODULES = (*fresh_imports.GUARD, "lay")
 
 
 @pytest.fixture(autouse=True)
-def fresh_lane() -> Iterator[None]:
+def fresh_modules() -> Iterator[None]:
     """Takes each of Lane's modules out of the process for the case, and puts back those it held
-    before, as an earlier case at another level may have imported them."""
-    held = {name: module for name, module in sys.modules.items() if lane_module(name)}
-    for name in held:
-        del sys.modules[name]
-    yield
-    for name in [name for name in sys.modules if lane_module(name)]:
-        del sys.modules[name]
-    sys.modules.update(held)
+    before."""
+    with fresh_imports.without(LANE_MODULES):
+        yield
 
 
 @pytest.fixture

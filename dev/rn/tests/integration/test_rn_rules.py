@@ -119,9 +119,8 @@ def test_a_more_kept_with_no_decision_changed_is_refused(b: Bench, broken: None)
     When: the tree-keeper writes the more to keep with no decision changed, and gives refused.
     Then: tree.py write gives 1, naming N2, keeps no more, and the guard passes the tree-keeper's
     end with refused for the orchestrator to read."""
-    good_when = "A caller's editor shows the type of each argument as they type the call."
-    walk, _, _ = w.first_round(b, {"N2": good_when})
-    more = [{"deliverable": w.HINTS_PATH, "condition": "N2", "good_when": good_when}]
+    walk, _, _ = w.first_round(b, {"N2": w.SHOWN_AS_TYPED})
+    more = [{"deliverable": w.HINTS_PATH, "condition": "N2", "good_when": w.SHOWN_AS_TYPED}]
     change = {"nodes": {}, "more": more}
     assert not walk.c.resume(walk.keeper, w.resume_text("Keep the more.", None, change)).blocked
     record = w.cut_of(w.due_text_of(walk.keeper))["record"]
@@ -130,7 +129,7 @@ def test_a_more_kept_with_no_decision_changed_is_refused(b: Bench, broken: None)
     w.keeps(b, walk.keeper, record, "tree-keeper", ("design-tree",))
     then = w.reached(b, walk.keeper, "refused", "tree.py refused the more of N2.")
     assert "refused" in then.said
-    assert not w.files_holding(walk.folder("rounds"), good_when)
+    assert not w.files_holding(walk.folder("rounds"), w.SHOWN_AS_TYPED)
 
 
 @pytest.mark.supports("The design tree revised on each run", "S1", "Best practice")

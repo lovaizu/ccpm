@@ -21,9 +21,7 @@ pytestmark = pytest.mark.xfail(
 def paused(b: Bench) -> tuple[w.Walk, dict[str, object]]:
     """The walkthrough paused by /rn:dn while its generator stood at step 2 of "Type hints in each
     file of invoicer"; gives the walk and the generator's Cut."""
-    walk = w.planned(b)
-    generator, cut = w.generator_started(walk)
-    assert generator.bash(b.tree("commit", cut["record"], "1")).exit_code == 0
+    walk, generator, cut = w.generator_in_step_2(b)
     assert not walk.c.type("/rn:dn").blocked
     assert not walk.c.task_stop(generator).blocked
     stand = {"stood": [{"record": cut["record"], "step": 2}]}
@@ -122,10 +120,7 @@ def test_each_evaluator_that_stood_in_a_step_starts_again_at_it(b: Bench) -> Non
     orchestrator starts the tree-keeper with the text that the guard gives due, which ends done.
     Then: the guard gives an evaluator's start due again, its Cut naming the same group at step
     2."""
-    walk = w.planned(b)
-    generator, cut = w.generator_started(walk)
-    w.made(b, walk, generator, cut)
-    walk.said = w.reached(b, generator, "done", "Made.").said
+    walk, _ = w.deliverable_made(b)
     _, evaluator = w.started(walk.c, "evaluator", walk.said)
     first = w.cut_of(w.due_text_of(evaluator))
     assert not walk.c.type("/rn:dn").blocked

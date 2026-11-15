@@ -9,44 +9,27 @@ from __future__ import annotations
 
 import glob
 import os
-import subprocess
 from typing import Any
 
+import opus
 import pytest
 import walkthrough as w
 
 pytestmark = [
     pytest.mark.xfail(strict=True, reason="up's steps are empty"),
-    pytest.mark.skipif(
-        not os.environ.get("CLAUDE_CODE_OAUTH_TOKEN"), reason="runs the real Claude Code on Opus"
-    ),
+    opus.NEEDS_LOGIN,
 ]
 
 RUNS = 5
-RULE = (
-    "Install nothing, and send nothing to a translator, a web API, or any other service outside"
-    " this repository's git."
-)
 
 
 def up(tmp: str, prompt: str, files: dict[str, str] | None = None) -> tuple[w.Bench, str]:
     """Runs the prompt on Opus, with Lane and changelog loaded, in a throwaway tally, and gives the
     bench with what Claude Code printed."""
     b = w.bench(tmp, files)
-    env = dict(b.env, CLAUDE_CODE_OAUTH_TOKEN=os.environ["CLAUDE_CODE_OAUTH_TOKEN"])
-    env["CLAUDE_CONFIG_DIR"] = os.path.join(tmp, "config")
-    command = ["claude", "-p", "--model", "opus", "--permission-mode", "bypassPermissions"]
-    command += ["--append-system-prompt", RULE, "--plugin-dir", b.lane, "--plugin-dir", b.changelog]
-    done = subprocess.run(
-        [*command, prompt],
-        cwd=b.repo,
-        env=env,
-        capture_output=True,
-        text=True,
-        timeout=900,
-        check=False,
-    )
-    return b, done.stdout
+    env = dict(b.env, CLAUDE_CONFIG_DIR=os.path.join(tmp, "config"))
+    flags = ["--plugin-dir", b.lane, "--plugin-dir", b.changelog]
+    return b, opus.prompted(prompt, b.repo, env, flags, 900)
 
 
 def kept(b: w.Bench, printed: str) -> Any:

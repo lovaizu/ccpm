@@ -1,17 +1,22 @@
 """What rn's unit cases share: a repository with rn's worktree of a run, made by git alone so that
 no case of one module rests on another's body, the walkthrough's design tree in the design tree best
-practice's form, and the double of gh on the PATH with what GitHub holds for it."""
+practice's form, the double of gh on the PATH with what GitHub holds for it, and rn's adapters
+as Lane runs them."""
 
 from __future__ import annotations
 
 import copy
+import importlib.util
 import json
 import os
 import subprocess
+from types import ModuleType
 from typing import Any, cast
 
 from tree.design import DesignTree
 from tree.runs import Run
+
+from dev.tests.repo_files import git
 
 TOP = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), *[".."] * 4))
 RN = os.path.join(TOP, "plugins", "rn")
@@ -22,12 +27,6 @@ GOAL = (
     "The people who call invoicer learn from their editor and their type checker what each"
     " function takes and returns, before their code runs."
 )
-
-
-def git(folder: str, *args: str) -> str:
-    """Runs git in the folder, and gives what it printed."""
-    done = subprocess.run(["git", "-C", folder, *args], capture_output=True, text=True, check=True)
-    return done.stdout
 
 
 def repository(tmp: str) -> str:
@@ -174,3 +173,13 @@ def held(tree: DesignTree) -> Any:
 def part(given: Any) -> Any:
     """A Cut's part, as JSON that a case reads by its keys."""
     return cast(Any, given.part)
+
+
+def adapter(name: str) -> ModuleType:
+    """rn's adapter of the name, from hooks/adapters/, as Lane runs it."""
+    path = os.path.join(RN, "hooks", "adapters", f"{name}.py")
+    spec = importlib.util.spec_from_file_location(f"rn_adapter_{name}", path)
+    assert spec and spec.loader
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
