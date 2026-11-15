@@ -69,11 +69,11 @@
       "path": "plugins/rn/domain/record/template.py",
       "kind": "code",
       "inputs": [
-        "dev/rn/architecture.md"
+        "plugins/rn/domain/best-practices/product-vision",
+        "plugins/rn/domain/best-practices/readme",
+        "plugins/rn/domain/best-practices/architecture"
       ],
-      "preconditions": [
-        "dev/rn/architecture.md"
-      ],
+      "preconditions": [],
       "status": "doing",
       "necessary_conditions": [
         {
@@ -139,7 +139,119 @@
       "name": "rn's product vision says what rn is for",
       "path": "dev/rn/product-vision.md",
       "kind": "product-vision",
-      "status": "done"
+      "status": "doing",
+      "preconditions": [
+        "plugins/rn/domain/record/template.py"
+      ]
+    },
+    {
+      "name": "A newcomer decides from the README alone whether rn fits their work, and starts using it",
+      "path": "plugins/rn/README.md",
+      "kind": "readme",
+      "inputs": [
+        "dev/rn/product-vision.md"
+      ],
+      "preconditions": [
+        "plugins/rn/domain/best-practices/readme",
+        "plugins/rn/domain/record/template.py"
+      ],
+      "status": "doing",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Work while a point or a sign-off waits",
+              "decided": "rn puts each point to the user one at a time and goes on meanwhile with the work that rests on no open point and no unsigned plan or deliverable; only the work that rests on the answer or the sign-off waits",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N3",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The walkthrough recorded",
+              "decided": "the walkthrough shows the README's main use as the E2E test will run it, and the opening says rn isn't ready for use yet, as the readme best practice takes no precondition and rn's architecture builds from the README; the plugin's node puts the E2E test's recorded run in its place",
+              "by": "reasoning"
+            },
+            {
+              "about": "Sign-offs",
+              "decided": "the user signs off the plan, the goal and the deliverables with their decisions, before rn makes anything, and each deliverable once its evaluators find it good, before the next rests on it. The last sign-off marks the draft pull request ready, and the merge stays the user's",
+              "by": "user"
+            },
+            {
+              "about": "Commands",
+              "decided": "/rn:up starts a run and picks one up, /rn:dn pauses it, /rn:ty approves the sign-off waiting, and /rn:gm sends it back with the user's words or their comments on the pull request, Done included",
+              "by": "user"
+            },
+            {
+              "about": "What a pause keeps",
+              "decided": "/rn:dn stops each role at once and commits and pushes its work so far with the step it was on. /rn:up, in any conversation or on another computer, goes on from that step, and shows where it stopped, what comes next, and the point or sign-off waiting. A run closed without /rn:dn goes back only to its last step, as rn keeps its state at the end of each step",
+              "by": "user"
+            },
+            {
+              "about": "What a sign-off shows",
+              "decided": "what the evaluators found the people can do with the deliverable, the decisions taken without asking, and a link to its changes in the pull request. /rn:gm alone takes every comment the user wrote on the pull request since the sign-off",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N7",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": true,
+          "decisions": [
+            {
+              "about": "The user's own checkout",
+              "decided": "rn works in a git worktree of its own on the work's branch, so the user goes on with their own work while rn runs",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N9",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Installation tried",
+              "decided": "the E2E test installs rn by the README's steps from nothing, as rn's architecture runs it, and the plugin's node mends the README where they fall short",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N10",
+          "good": true,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A developer sees, before building any part, each test case that names nothing one level up and each element of the architecture that no case tests, and check.sh runs every plugin's cases with that check",
@@ -151,19 +263,109 @@
       "name": "rn's developers build its parts so that together they give what its README promises",
       "path": "dev/rn/architecture.md",
       "kind": "architecture",
-      "status": "done"
+      "status": "doing",
+      "inputs": [
+        "dev/rn/product-vision.md",
+        "plugins/rn/README.md"
+      ],
+      "preconditions": [
+        "plugins/rn/domain/best-practices/architecture",
+        "plugins/rn/domain/record/template.py"
+      ]
     },
     {
       "name": "Lane's product vision says what Lane is for",
       "path": "dev/lane/product-vision.md",
       "kind": "product-vision",
-      "status": "done"
+      "status": "doing",
+      "preconditions": [
+        "plugins/rn/domain/record/template.py"
+      ]
+    },
+    {
+      "name": "A newcomer decides from Lane's README alone whether Lane fits their plugin, and starts using it",
+      "path": "plugins/lane/README.md",
+      "kind": "readme",
+      "inputs": [
+        "dev/lane/product-vision.md"
+      ],
+      "preconditions": [
+        "plugins/rn/domain/best-practices/readme",
+        "plugins/rn/domain/record/template.py"
+      ],
+      "status": "doing",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The call of another plugin's skill",
+              "decided": "How it works names the call of another plugin's skill among the moves that Lane holds, and that Lane's guard stands aside while the other plugin's run lasts, as Lane's architecture decides it by the plugin guide's 'A plugin that uses another', so a newcomer whose plugin uses another sees whether Lane fits it",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N9",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": true,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "Lane's developers build its parts so that together they give what its README promises",
       "path": "dev/lane/architecture.md",
       "kind": "architecture",
-      "status": "done"
+      "status": "doing",
+      "inputs": [
+        "dev/lane/product-vision.md",
+        "plugins/lane/README.md"
+      ],
+      "preconditions": [
+        "plugins/rn/domain/best-practices/architecture",
+        "plugins/rn/domain/record/template.py"
+      ]
     },
     {
       "name": "A person's /lane:up lays a lane that stops a subagent's command outside its step with the step's sentence, and the run starts that subagent and ends on its result",
@@ -336,76 +538,11 @@
           "about": "The release",
           "decided": "Lane releases together with rn, in one pull request, once rn is done",
           "by": "user"
-        }
-      ]
-    },
-    {
-      "name": "A newcomer decides from Lane's README alone whether Lane fits their plugin, and starts using it",
-      "path": "plugins/lane/README.md",
-      "kind": "readme",
-      "inputs": [
-        "dev/lane/product-vision.md"
-      ],
-      "preconditions": [
-        "plugins/rn/domain/best-practices/readme"
-      ],
-      "status": "doing",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": true,
-          "decisions": []
         },
         {
-          "id": "N2",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The call of another plugin's skill",
-              "decided": "How it works names the call of another plugin's skill among the moves that Lane holds, and that Lane's guard stands aside while the other plugin's run lasts, as Lane's architecture decides it by the plugin guide's 'A plugin that uses another', so a newcomer whose plugin uses another sees whether Lane fits it",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N9",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N10",
-          "good": true,
-          "decisions": []
+          "about": "The README after the E2E test",
+          "decided": "the README's walkthrough takes the E2E test's recorded run, and its install steps are mended where the E2E test's install fell short, as the README was made before the product existed",
+          "by": "reasoning"
         }
       ]
     },
@@ -600,6 +737,11 @@
           "about": "The design tree's file",
           "decided": "JSON in the form of the design tree's schema, written through tree.py, whose tree_file.py alone decides the form, as the deliverables rest on one another many to many by path, which no nested list holds",
           "by": "user"
+        },
+        {
+          "about": "The README after the E2E test",
+          "decided": "the README's walkthrough takes the E2E test's recorded run, and its install steps are mended where the E2E test's install fell short, as the README was made before the product existed",
+          "by": "reasoning"
         }
       ]
     },
@@ -642,114 +784,6 @@
           "about": "When the guard runs the record check on the main conversation",
           "decided": "the guard runs the plugin's own record check at a role's end and at each end of the main conversation's turn in a run, and the check passes a turn that puts no work up for the caller, such as one that asks a question, as Lane serves any plugin and can't tell which turn puts work up, which only the plugin knows",
           "by": "reasoning"
-        }
-      ]
-    },
-    {
-      "name": "A newcomer decides from the README alone whether rn fits their work, and starts using it",
-      "path": "plugins/rn/README.md",
-      "kind": "readme",
-      "inputs": [
-        "dev/rn/product-vision.md"
-      ],
-      "preconditions": [
-        "plugins/rn"
-      ],
-      "status": "doing",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Work while a point or a sign-off waits",
-              "decided": "rn puts each point to the user one at a time and goes on meanwhile with the work that rests on no open point and no unsigned plan or deliverable; only the work that rests on the answer or the sign-off waits",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N3",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The walkthrough recorded",
-              "decided": "the walkthrough takes its output from a recorded run of the rebuilt rn, the E2E test's own",
-              "by": "reasoning"
-            },
-            {
-              "about": "Sign-offs",
-              "decided": "the user signs off the plan, the goal and the deliverables with their decisions, before rn makes anything, and each deliverable once its evaluators find it good, before the next rests on it. The last sign-off marks the draft pull request ready, and the merge stays the user's",
-              "by": "user"
-            },
-            {
-              "about": "Commands",
-              "decided": "/rn:up starts a run and picks one up, /rn:dn pauses it, /rn:ty approves the sign-off waiting, and /rn:gm sends it back with the user's words or their comments on the pull request, Done included",
-              "by": "user"
-            },
-            {
-              "about": "What a pause keeps",
-              "decided": "/rn:dn stops each role at once and commits and pushes its work so far with the step it was on. /rn:up, in any conversation or on another computer, goes on from that step, and shows where it stopped, what comes next, and the point or sign-off waiting. A run closed without /rn:dn goes back only to its last step, as rn keeps its state at the end of each step",
-              "by": "user"
-            },
-            {
-              "about": "What a sign-off shows",
-              "decided": "what the evaluators found the people can do with the deliverable, the decisions taken without asking, and a link to its changes in the pull request. /rn:gm alone takes every comment the user wrote on the pull request since the sign-off",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N7",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": true,
-          "decisions": [
-            {
-              "about": "The user's own checkout",
-              "decided": "rn works in a git worktree of its own on the work's branch, so the user goes on with their own work while rn runs",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N9",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Installation tried",
-              "decided": "once the rebuilt rn exists, the maker follows its install steps from nothing as a newcomer would, and mends the README where they fall short",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N10",
-          "good": true,
-          "decisions": []
         }
       ]
     }
