@@ -178,7 +178,6 @@ def test_a_laid_of_an_earlier_lane_is_read_by_its_own_form(plugin: str) -> None:
     assert read_laid(plugin) == Laid("0.0.1", d.LAID.sentences)
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_a_call_the_guard_cant_check_is_stopped_with_who_must_fix_it")
 @pytest.mark.parametrize(
     "code, lanes",

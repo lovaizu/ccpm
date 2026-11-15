@@ -300,7 +300,6 @@ def test_a_subagents_start_of_a_role_breaks_the_lane_on_its_last_step(
         assert isinstance(verdict, Broken) and verdict.sentence == stop_of("writer", "written")
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_a_call_the_guard_cant_check_is_stopped_with_who_must_fix_it")
 def test_a_subagents_start_with_no_lane_that_checks_starts_cant_be_checked() -> None:
     """Given: writer's Lanes without the Lane on its last Step.

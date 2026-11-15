@@ -80,7 +80,6 @@ def test_a_skills_call_adds_a_run_and_gives_the_first_start(plugin: str) -> None
     assert (called.skill, called.by) == ("write", "person")
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_a_call_the_guard_cant_check_is_stopped_with_who_must_fix_it")
 def test_an_event_with_lanes_json_unreadable_is_stopped_with_who_must_fix_it(plugin: str) -> None:
     """Given: changelog whose hooks/lanes.json isn't JSON, and write's Run with writer tied to

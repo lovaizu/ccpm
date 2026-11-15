@@ -158,18 +158,7 @@
       "name": "Each subagent that leaves a step goes back to it",
       "path": "dev/lane/tests/integration/test_s6_subagent_held.py",
       "kind": "specific",
-      "inputs": [
-        "dev/lane/architecture.md",
-        "plugins/lane",
-        "dev/lane/tests"
-      ],
-      "preconditions": [
-        "dev/lane/tests/integration/test_lane_walking_skeleton.py"
-      ],
-      "status": "doing",
-      "check": "the integration tests in dev/lane/tests/integration/test_s6_subagent_held.py pass, each seen to fail first, and each that names a rule of Solution strategy fails with the part that holds the rule taken out",
-      "good": false,
-      "decisions": []
+      "status": "done"
     },
     {
       "name": "A run that stopped goes on where it stopped, after /compact or in a new conversation",
@@ -183,7 +172,7 @@
       "preconditions": [
         "dev/lane/tests/integration/test_s5_run_order.py"
       ],
-      "status": "open",
+      "status": "doing",
       "check": "the integration tests in dev/lane/tests/integration/test_s7_picked_up.py pass, each seen to fail first, and each that names a rule of Solution strategy fails with the part that holds the rule taken out",
       "good": false,
       "decisions": []

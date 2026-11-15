@@ -13,7 +13,7 @@ from place import Call, EndAsked, StartCall
 from runs import Due
 
 from lanes import ends_by_result
-from lanes.kind import Broken, Held, Kept, LaneType, TypeInfo, Verdict
+from lanes.kind import Broken, CantCheck, Held, Kept, LaneType, TypeInfo, Verdict
 
 
 class LaneRefused(Exception):
@@ -87,6 +87,10 @@ def check_start(lanes: Sequence[Lane], asked: StartCall, held: Held, due: Sequen
         verdict = types[lane.type].check_start(lane, asked, held, due)
         if verdict != Kept():
             return verdict
+    if held.start is not None and all(x.type != "ends_by_result" for x in lanes):
+        role = held.start.role
+        why = f"{role} has no Lane on its last Step, which checks its start of `{asked.role}`"
+        return CantCheck(why, "Lane's developer must fix lay.py, which lays that Lane")
     return Kept()
 
 

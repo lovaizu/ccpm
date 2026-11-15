@@ -13,7 +13,12 @@ from script_calls import id_line
 from lay.steps import Step
 
 # The word that names each lane type in the table of a role's Lanes.
-LABELS = {"run_only": "run", "write_only": "write", "ends_by_result": "end"}
+LABELS = {
+    "run_only": "run",
+    "write_only": "write",
+    "ends_checked": "check",
+    "ends_by_result": "end",
+}
 
 
 def render(proposal: Proposal, steps: Sequence[Step], proposal_id: str, plugin: str) -> str:

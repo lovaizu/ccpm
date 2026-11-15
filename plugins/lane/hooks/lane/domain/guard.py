@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from adapters import AdapterFailed, NoWork, Running, start_text
 from answers import cant_check, due, ended_unheld, gave, stopped, text_failed
 from events import Answer, Event
-from form import Lane, LanesFile, Move, read_lanes
+from form import Lane, LanesFile, Move, OutOfForm, read_lanes
 from lanes import check_call, check_end, check_start
 from lanes.kind import Broken, CantCheck, Held, Kept, Verdict
 from manifest import plugin_name
@@ -94,8 +94,12 @@ def handle(event: Event, root: str) -> Answer:
     Carries: each `CC->>G` arrow of S1 to S7, each `G-->>` answer, and S5 `G->>G: leaves that
     start out of the moves due, with why in its place`.
     """
-    lanes = read_lanes(os.path.join(root, "hooks", "lanes.json"))
     name = plugin_name(root)
+    try:
+        lanes = read_lanes(os.path.join(root, "hooks", "lanes.json"))
+    except (OutOfForm, FileNotFoundError) as e:
+        who = f"The developer of {name} must lay it again by `/lane:up {name}`"
+        return _cant(event, name, CantCheck(f"hooks/lanes.json can't be read: {e}", who))
     plugin = Plugin(name, root, lanes, event.session_id, record_path(name, event.session_id))
     conversation = stand(event.session_id, lines(plugin.record), lanes.proposal.routes, name)
     placed = place(event, conversation, lanes, root)
@@ -104,9 +108,15 @@ def handle(event: Event, root: str) -> Answer:
             return _called(plugin, placed, placed.what, event.cwd)
         return _answered(plugin, placed, event.cwd) if placed.runs else PASS
     except AdapterFailed as e:
-        # A notification stopped would be lost to the main conversation, so it goes with why.
         cant = CantCheck(str(e), f"The developer of {name} must fix its adapter")
-        return Answer(event.name != "UserPromptSubmit", cant_check(name, cant))
+        return _cant(event, name, cant)
+
+
+def _cant(event: Event, name: str, cant: CantCheck) -> Answer:
+    """The event stopped with why the guard can't check it and who must fix it; a prompt, which
+    also brings a subagent's end to the main conversation, let through with them, as one stopped
+    would be lost to it."""
+    return Answer(event.name != "UserPromptSubmit", _stop(name, cant).words)
 
 
 def _answered(plugin: Plugin, placed: Placed, cwd: str) -> Answer:
@@ -232,7 +242,7 @@ def _started(plugin: Plugin, placed: Placed, asked: StartCall, cwd: str) -> Answ
             )
             add(plugin.record, started)
         return PASS
-    return _stop(plugin, verdicts[0])
+    return _stop(plugin.name, verdicts[0])
 
 
 def _turn_ended(plugin: Plugin, placed: Placed, cwd: str) -> Answer:
@@ -259,13 +269,17 @@ def _checked(plugin: Plugin, placed: Placed, cwd: str) -> Answer:
             assert isinstance(placed.what, EndAsked)
             verdict = check_end(lanes, placed.what, held)
         if verdict != Kept():
-            return _stop(plugin, verdict)
+            return _stop(plugin.name, verdict)
     return PASS
 
 
-def _stop(plugin: Plugin, verdict: Verdict) -> Answer:
+def _stop(name: str, verdict: Verdict) -> Answer:
+    """The stop of what isn't kept: a broken Lane's sentence and what the role may do, or why the
+    guard can't check and who must fix it."""
+    if isinstance(verdict, CantCheck):
+        return Answer(True, cant_check(name, verdict))
     assert isinstance(verdict, Broken)
-    return Answer(True, stopped(plugin.name, verdict))
+    return Answer(True, stopped(name, verdict))
 
 
 def _lanes(plugin: Plugin, placed: Placed, run: Run) -> tuple[Lane, ...]:
