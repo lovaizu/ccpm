@@ -130,7 +130,7 @@
         },
         {
           "about": "The set number of words",
-          "decided": null,
+          "decided": "A sentence takes at most 20 words, the limit that ASD-STE100 sets for procedures, below the 25 of GOV.UK and the Australian Government Style Manual, as the user judged 25 too long to read",
           "by": "user"
         }
       ]
