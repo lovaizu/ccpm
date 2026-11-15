@@ -28,4 +28,4 @@ whether a deliverable's people can use it.
 - Every deliverable by best practice, for O1\
   rn makes each deliverable by its kind's best practice, so it holds what that work needs.
 - Judged by the people it's for, for O1\
-  rn's evaluators read each deliverable as its people would, so rn improves only what they need.
+  rn judges each deliverable as its people would use it, so it improves only what they need.
