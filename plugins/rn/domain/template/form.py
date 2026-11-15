@@ -1,4 +1,4 @@
-"""Decides how record.py reads a template of a best practice into its form: each part of it, the
+"""Decides how template.py reads a template of a best practice into its form: each part of it, the
 words or the code block's language that a document's part must match, with each slot any words, and
 what the template's notes let a document leave out, repeat, or say in how many sentences."""
 
@@ -8,7 +8,7 @@ import re
 from collections import Counter
 from dataclasses import dataclass
 
-from record.markdown import (
+from template.markdown import (
     CODE,
     CODE_SPAN,
     FIGURE,

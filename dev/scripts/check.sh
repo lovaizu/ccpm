@@ -56,7 +56,7 @@ held design pyrefly check --search-path dev/scripts --search-path dev/scripts/te
   --search-path dev/tests dev/scripts/*.py dev/scripts/tests/*.py dev/tests/*.py
 
 # rn's code and its tests, as a type that doesn't fit across a call is a fault no test may reach.
-# plugins/rn/scripts stays off the search path, as its record.py shares its name with the code of
+# plugins/rn/scripts stays off the search path, as its template.py shares its name with the code of
 # plugins/rn/domain it runs.
 held design pyrefly check $properties --search-path plugins/rn/domain \
   plugins/rn/domain/*.py plugins/rn/domain/*/*.py plugins/rn/scripts/*.py dev/rn/tests/*.py \
@@ -71,6 +71,19 @@ held design pyrefly check $properties --search-path plugins/rn/domain \
 # - a file in the folder that neither uses, such as a figure that the template dropped
 # Each of these would make the folder say what rn doesn't hold.
 python3 dev/scripts/practices.py form plugins/rn/domain/best-practices/*/best-practice.json
+
+# Each plugin's product vision, README, and architecture holds its kind's template and nothing
+# beside it, as .claude/rules/dev.md says each keeps only the vital few, so a section or sentence
+# that drifts from the template shows on the push that adds it.
+for vision in dev/*/product-vision.md; do
+  python3 plugins/rn/scripts/template.py product-vision "$vision"
+done
+for readme in plugins/*/README.md; do
+  python3 plugins/rn/scripts/template.py readme "$readme"
+done
+for architecture in dev/*/architecture.md; do
+  python3 plugins/rn/scripts/template.py architecture "$architecture"
+done
 
 # Every figure carries the one style of dev/images/figures.css and sets no font or color of its own,
 # so the figures look alike and one place changes a look, as .claude/rules/figures.md says.

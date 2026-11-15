@@ -1,4 +1,4 @@
-"""The property-based tests of record.py's check of a deliverable against its kind's template, as
+"""The property-based tests of template.py's check of a deliverable against its kind's template, as
 rn's Test strategy names them: an AI writes each deliverable, so a document takes forms that no
 developer foresees. Each finds no counterexample, by hypothesis, and quality.sh runs them in CI."""
 
@@ -7,11 +7,10 @@ from __future__ import annotations
 import os
 from typing import Any
 
-import pytest
 from hypothesis import given
 from hypothesis import strategies as st
-from record.markdown import read
-from record.template import MOST_WORDS, faults
+from template.check import MOST_WORDS, faults
+from template.markdown import read
 
 # rn's folder, at the top of the repository four folders up from this file.
 RN = os.path.normpath(
@@ -61,7 +60,6 @@ def filled(draw: Any) -> tuple[str, list[str]]:
 
 
 @given(filled())
-@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
 def test_a_document_that_fills_each_slot_of_a_template_holds_it(made: tuple[str, list[str]]):
     """Given any template of sections, paragraphs, items, and code blocks, and a document that
     fills each of its slots
@@ -72,7 +70,6 @@ def test_a_document_that_fills_each_slot_of_a_template_holds_it(made: tuple[str,
 
 
 @given(filled(), st.data())
-@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
 def test_a_document_without_a_block_of_its_template_has_a_fault(
     made: tuple[str, list[str]], data: Any
 ):
@@ -87,7 +84,6 @@ def test_a_document_without_a_block_of_its_template_has_a_fault(
 
 
 @given(st.integers(1, 2 * MOST_WORDS), WORD)
-@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
 def test_a_sentence_has_a_fault_only_past_the_most_words(count: int, word: str):
     """Given a sentence of any number of words, in a document whose template takes any blocks
     When the document is checked
@@ -98,7 +94,6 @@ def test_a_sentence_has_a_fault_only_past_the_most_words(count: int, word: str):
 
 
 @given(st.sampled_from(KINDS), st.text(max_size=400))
-@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
 def test_any_text_checked_against_a_template_gives_faults_at_its_lines(kind: str, text: str):
     """Given any text, and the template of a kind
     When the text is checked
@@ -109,7 +104,6 @@ def test_any_text_checked_against_a_template_gives_faults_at_its_lines(kind: str
 
 
 @given(st.text(max_size=400))
-@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
 def test_any_text_reads_as_blocks_at_its_lines_in_order(text: str):
     """Given any text
     When it's read as Markdown

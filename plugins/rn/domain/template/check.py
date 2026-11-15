@@ -11,7 +11,8 @@ from enum import Enum
 
 from fault import Wrong
 
-from record.markdown import (
+from template.form import Form, Unit, form, is_note, kept
+from template.markdown import (
     CODE,
     FIGURE,
     HEADING,
@@ -27,7 +28,6 @@ from record.markdown import (
     sentences,
     words,
 )
-from record.template_form import Form, Unit, form, is_note, kept
 
 # The most words a sentence takes: the limit that ASD-STE100 sets for procedures, as the user
 # judged the 25 of GOV.UK and the Australian Government Style Manual too long to read.

@@ -1,4 +1,4 @@
-"""What every level of rn's cases shares: the folder of rn's code on the import path, as record.py
+"""What every level of rn's cases shares: the folder of rn's code on the import path, as template.py
 puts `domain/` there."""
 
 from __future__ import annotations
