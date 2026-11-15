@@ -14,8 +14,8 @@ its `branches`, `{<name>: {<path>: <text>}}`, on a branch of that name in a work
 `.claude/worktrees/<name>/` of the working folder, as a plugin may commit its work, prints its
 `stream` lines, as `--output-format stream-json` does, sleeps its `sleep` seconds, and exits with
 its `exit`. Each call notes what the working folder's `git log --oneline` gives, the text of each
-file the turn's `show` names, and whether a push from it succeeded, so that a test checks the clone
-that e2e.py removed."""
+file the turn's `show` names, whether a push from it succeeded, and the credentials file it ran
+on, so that a test checks the clone and the login that e2e.py removed."""
 
 from __future__ import annotations
 
@@ -42,6 +42,7 @@ def main(argv: list[str]) -> int:
         "cwd": os.getcwd(),
         "stand_in": stand_in,
         "env": {k: v for k, v in os.environ.items() if k.startswith("CLAUDE") or k == "TMPDIR"},
+        "credentials": _credentials(),
     }
     if stand_in:
         _note(log, call)
@@ -53,6 +54,15 @@ def main(argv: list[str]) -> int:
     call["shown"] = _shown(turn)
     _note(log, call)
     return _play(turn, argv)
+
+
+def _credentials() -> str | None:
+    """The text of the credentials file in $CLAUDE_CONFIG_DIR, where it holds one."""
+    path = os.path.join(os.environ.get("CLAUDE_CONFIG_DIR", ""), ".credentials.json")
+    if not os.path.isfile(path):
+        return None
+    with open(path, encoding="utf-8") as f:
+        return f.read()
 
 
 def _calls(log: str) -> list[dict]:

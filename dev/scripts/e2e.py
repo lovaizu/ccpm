@@ -5,9 +5,9 @@ person's place that holds an intent the plugins never receive and reads only wha
 screen shows. It keeps each run's records, from which the plugin's E2E test counts its key
 results. It names no plugin, so the E2E tests of every plugin of the repository run on it.
 
-Run it from the top of the repository as `python3 dev/scripts/e2e.py run <E2E test file>`, with the
-developer's login as CLAUDE_CODE_OAUTH_TOKEN, as dev/plugin-development-guide.md says of the Claude
-Code of a test on the model. It prints the folder of the run's records. Claude Code's hooks run
+Run it from the top of the repository as `python3 dev/scripts/e2e.py run <E2E test file>`, on the
+developer's login, as dev/plugin-development-guide.md says of the Claude Code of a test on the
+model. It prints the folder of the run's records. Claude Code's hooks run
 `e2e.py hook <file>`, which adds each event to the file.
 
 An E2E test file is one JSON object:
@@ -141,7 +141,7 @@ class RunRecords:
     folder: str
     top: str
     temporary: str
-    token: str
+    token: str | None
 
     def write(self, path: str, text: str) -> None:
         """Writes the text, scrubbed, to the record at the path in the folder."""
@@ -151,7 +151,9 @@ class RunRecords:
             f.write(self.scrubbed(text))
 
     def scrubbed(self, text: str) -> str:
-        text = text.replace(self.token, "<token>").replace(self.temporary, "<run>")
+        if self.token:
+            text = text.replace(self.token, "<token>")
+        text = text.replace(self.temporary, "<run>")
         return EMAIL.sub("<email>", text.replace(self.top, "<top>"))
 
 
@@ -176,11 +178,12 @@ def main(argv: list[str]) -> int:
         print(USAGE, file=sys.stderr)
         return 2
     try:
-        token = os.environ.get("CLAUDE_CODE_OAUTH_TOKEN")
-        if not token:
+        token = os.environ.get("CLAUDE_CODE_OAUTH_TOKEN") or None
+        if token is None and not os.path.isfile(_credentials()):
             raise Refused(
-                "CLAUDE_CODE_OAUTH_TOKEN holds no login. Set it to the developer's login, as"
-                " `claude setup-token` gives it."
+                "CLAUDE_CODE_OAUTH_TOKEN holds no login, and Claude Code keeps no credentials file"
+                f" at {_credentials()}. Set CLAUDE_CODE_OAUTH_TOKEN to the developer's login, as"
+                " `claude setup-token` gives it, or log in to Claude Code."
             )
         print(run(read(argv[1]), os.getcwd(), token))
     except Refused as e:
@@ -262,7 +265,7 @@ def _json(path: str) -> Any:
         raise Refused(f"{path} can't be read as JSON: {e}") from None
 
 
-def run(test: E2ETest, top: str, token: str) -> str:
+def run(test: E2ETest, top: str, token: str | None) -> str:
     """Runs the test and gives the folder of its records, from the top. Everything it makes
     outside the records lies in one temporary folder, or, for a test that pushes, in a branch of
     the repository, and it removes each."""
@@ -279,8 +282,7 @@ def run(test: E2ETest, top: str, token: str) -> str:
         for folder in (stand_in, os.path.join(root, "stand-in-claude"), os.path.join(root, "tmp")):
             os.makedirs(folder)
         dirs = [d.replace("{top}", top).replace("{clone}", clone) for d in test.plugin_dirs]
-        env = {k: v for k, v in os.environ.items() if not k.startswith(("CLAUDE", "ANTHROPIC"))}
-        env["CLAUDE_CODE_OAUTH_TOKEN"] = token
+        env = _logged_in(token, (claude, os.path.join(root, "stand-in-claude")))
         person = dict(env, CLAUDE_CONFIG_DIR=claude, TMPDIR=os.path.join(root, "tmp"))
         standing = dict(env, CLAUDE_CONFIG_DIR=os.path.join(root, "stand-in-claude"))
         session = str(uuid.uuid4())
@@ -330,6 +332,26 @@ def run(test: E2ETest, top: str, token: str) -> str:
         if held is not None:
             _unpush(clone, held)
         shutil.rmtree(root)
+
+
+def _logged_in(token: str | None, configs: tuple[str, ...]) -> dict[str, str]:
+    """The environment of each Claude Code of the run: the caller's, with none of their Claude
+    Code's settings, and the developer's login, as the token where it's set, or else as a copy of
+    the credentials file in each of the configuration folders."""
+    env = {k: v for k, v in os.environ.items() if not k.startswith(("CLAUDE", "ANTHROPIC"))}
+    if token is not None:
+        env["CLAUDE_CODE_OAUTH_TOKEN"] = token
+        return env
+    for config in configs:
+        shutil.copyfile(_credentials(), os.path.join(config, ".credentials.json"))
+    return env
+
+
+def _credentials() -> str:
+    """The credentials file of the developer's own Claude Code, where it keeps the login on a
+    container or a Linux machine."""
+    config = os.environ.get("CLAUDE_CONFIG_DIR") or os.path.expanduser("~/.claude")
+    return os.path.join(config, ".credentials.json")
 
 
 def _setup(test: E2ETest, top: str, clone: str) -> str:

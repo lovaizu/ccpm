@@ -5,8 +5,8 @@ says under Installation testing. Each run's records give the key results: KR1.1 
 calls, and ends of each run of changelog's write, judged on Opus where only reading the steps
 tells, and KR1.2 from the time of the person's first turn to the end of the first run that keeps
 the steps. Runs are added until one more moves no mean by a step: a percent of KR1.1's share, a
-minute of KR1.2's time. They run on the developer's login, so a case without
-CLAUDE_CODE_OAUTH_TOKEN is skipped."""
+minute of KR1.2's time. They run on the developer's login, so a case without one is
+skipped, as opus.NEEDS_LOGIN says."""
 
 from __future__ import annotations
 
