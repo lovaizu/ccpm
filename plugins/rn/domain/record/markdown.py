@@ -6,13 +6,26 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
+from enum import Enum
 
-HEADING = "heading"
-PARAGRAPH = "paragraph"
-ITEM = "item"
-CODE = "code"
-FIGURE = "figure"
-QUOTE = "quote"
+
+class Kind(Enum):
+    """The kind of a block of Markdown."""
+
+    HEADING = "heading"
+    PARAGRAPH = "paragraph"
+    ITEM = "item"
+    CODE = "code"
+    FIGURE = "figure"
+    QUOTE = "quote"
+
+
+HEADING = Kind.HEADING
+PARAGRAPH = Kind.PARAGRAPH
+ITEM = Kind.ITEM
+CODE = Kind.CODE
+FIGURE = Kind.FIGURE
+QUOTE = Kind.QUOTE
 
 _HEADING = re.compile(r"(#{1,6})\s+(.+?)\s*")
 _FENCE = re.compile(r"(\s*)(`{3,}|~{3,})(.*)")
@@ -27,13 +40,13 @@ _SENTENCE_END = re.compile(r"(?<=[.!?])\s+|(?<=[.!?][\"')\]])\s+")
 
 @dataclass(frozen=True)
 class Block:
-    """One block of Markdown: its kind, one of the constants above, its line from 1, and its text:
+    """One block of Markdown: its kind, its line from 1, and its text:
     a heading's words; a paragraph's or a list item's own words, its lines joined by a space, or by
     a newline after a line that ends with a backslash; a code block's body; a figure's alt text; or
     a quote's lines without their `>`. `info` holds a code block's info string and a figure's path,
     `level` a heading's number of `#`, and `children` the blocks nested in a list item."""
 
-    kind: str
+    kind: Kind
     line: int
     text: str
     info: str = ""
@@ -111,8 +124,9 @@ def _join(lines: list[str]) -> str:
 
 
 def _paragraph(lines: list[str], at: int, first: int) -> tuple[Block, int]:
-    """The paragraph, or the figure that is all of it, that starts at the line `at`."""
-    end = at + 1
+    """The paragraph, or the figure that is all of it, that starts at the line `at`, which starts
+    no other block."""
+    end = at
     while end < len(lines) and lines[end].strip() and not _starts_block(lines[end]):
         end += 1
     text = _join(lines[at:end])
@@ -164,21 +178,22 @@ def _item(lines: list[str], at: int, first: int, marker: re.Match[str]) -> tuple
         body.append(_dedent(lines[end], indent))
         end += 1
     inside = _read(body, first + at)
-    if inside and inside[0].kind == PARAGRAPH and inside[0].line == first + at:
+    if inside and inside[0].kind == PARAGRAPH:
         return Block(ITEM, first + at, inside[0].text, children=inside[1:]), end
     return Block(ITEM, first + at, "", children=inside), end
 
 
 def _in_item(lines: list[str], at: int, indent: int) -> bool:
     """Whether the line `at` lies in a list item whose words start at the column `indent`: a line
-    indented that far, a blank line before one, or a line that goes on the paragraph above it."""
+    indented that far, a blank line before one, or a line that starts no block, which goes on the
+    paragraph above it, as a blank line before it would have ended the item."""
     line = lines[at]
     if not line.strip():
         after = [each for each in lines[at:] if each.strip()]
         return bool(after) and _indent(after[0]) >= indent
     if _indent(line) >= indent:
         return True
-    return bool(lines[at - 1].strip()) and not _starts_block(line)
+    return not _starts_block(line)
 
 
 def _indent(line: str) -> int:

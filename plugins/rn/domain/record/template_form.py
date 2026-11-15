@@ -5,7 +5,7 @@ what the template's notes let a document leave out, repeat, or say in how many s
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from record.markdown import (
     CODE,
@@ -52,18 +52,22 @@ class _Note:
 
 @dataclass
 class Unit:
-    """One part of the template's form: its block, and how many times it may stand, how many
-    sentences it takes, and the parts inside it."""
+    """One part of the template's form: its block; the pattern that a document's block of its kind
+    must match, None for a figure; whether it's a slot alone that takes any blocks; how many times
+    it may stand, at least 0 or 1, more than once where it repeats, and at most `most`, None for no
+    most; the unit that the document may go back to after it, so that the run of units from there
+    to it repeats as a whole, None for none; how many sentences it takes, at least and at most, None
+    for no most; and the units inside it."""
 
     block: Block
-    pattern: re.Pattern[str] | None = None
-    least: int = 1
-    repeats: bool = False
-    most: int | None = None
-    back_to: int | None = None
-    sentences: tuple[int, int | None] = (1, 1)
-    free: bool = False
-    units: list[Unit] = field(default_factory=list)
+    pattern: re.Pattern[str] | None
+    free: bool
+    least: int
+    repeats: bool
+    most: int | None
+    back_to: int | None
+    sentences: tuple[int, int | None]
+    units: list[Unit]
 
 
 @dataclass(frozen=True)
@@ -156,6 +160,11 @@ def _left_sections(note: _Note) -> list[str]:
     return [match.group(1)] if match else []
 
 
+# How the note items of a section of each level are gathered: the top section's from its own
+# blocks, and a section of level 2's from each block under it.
+_GATHER = {1: _own_notes, 2: _all_notes}
+
+
 def _by_heading(nodes: tuple[Node, ...]) -> dict[str, tuple[_Note, ...]]:
     """The note items of each section, by its heading."""
     return {
@@ -174,11 +183,8 @@ def _scope(
     """Keeps in `scoped`, by each block's line, the note items that hold for it: those of its
     section of level 2, at any depth, or, above the first such section, the top section's own."""
     for node in nodes:
-        own = notes
-        if node.block.kind == HEADING and node.block.level == 1:
-            own = _resolved(tuple(_own_notes(node.nodes)), by_heading)
-        elif node.block.kind == HEADING and node.block.level == 2:
-            own = _resolved(by_heading[node.block.text], by_heading)
+        gather = _GATHER.get(node.block.level) if node.block.kind == HEADING else None
+        own = _resolved(tuple(gather(node.nodes)), by_heading) if gather else notes
         scoped[node.block.line] = own
         _scope(node.nodes, own, by_heading, scoped)
 
@@ -218,16 +224,18 @@ def _unit(node: Node, context: _Context) -> Unit:
     """The unit of one node of the template."""
     block = node.block
     notes = [note for note in context.scoped[block.line] if note.slots & _slots(block)]
-    unit = Unit(block, units=_units(node.nodes, context))
-    unit.pattern = _pattern_of(block, notes)
-    unit.free = block.kind == PARAGRAPH and bool(_LONE_SLOT.fullmatch(block.text))
-    unit.repeats = unit.free or _repeats(block)
-    unit.least = 0 if _left_out(block, notes, context.optional) else 1
-    unit.most = next(
-        (_number(m.group(1)) for n in notes for m in [_MOST.search(n.words)] if m), None
+    free = block.kind == PARAGRAPH and bool(_LONE_SLOT.fullmatch(block.text))
+    return Unit(
+        block,
+        _pattern_of(block, notes),
+        free,
+        0 if _left_out(block, notes, context.optional) else 1,
+        free or _repeats(block),
+        next((_number(m.group(1)) for n in notes for m in [_MOST.search(n.words)] if m), None),
+        None,
+        _sentences_of(block.text, notes),
+        _units(node.nodes, context),
     )
-    unit.sentences = _sentences_of(block.text, notes)
-    return unit
 
 
 def _repeats(block: Block) -> bool:
@@ -330,15 +338,13 @@ def _token(token: str) -> str:
 def _sentences_of(text: str, notes: list[_Note]) -> tuple[int, int | None]:
     """How many sentences, least and most, None for no most, the template's words take: one for
     each of its sentences, and, for a sentence that is a slot alone, as many as its note says."""
-    least, most = 0, 0
-    unbounded = False
-    for sentence in sentences(text):
-        alone = _LONE_SLOT.fullmatch(sentence.rstrip(".:!?"))
-        low, high = _said(alone.group(1), notes) if alone else (1, 1)
-        least += low
-        unbounded = unbounded or high is None
-        most += high or 0
-    return least, None if unbounded else most
+    said = [
+        _said(alone.group(1), notes) if alone else (1, 1)
+        for alone in (_LONE_SLOT.fullmatch(each.rstrip(".:!?")) for each in sentences(text))
+    ]
+    highs = [high for _, high in said]
+    most = sum(high for high in highs if high is not None)
+    return sum(low for low, _ in said), None if None in highs else most
 
 
 def _said(slot: str, notes: list[_Note]) -> tuple[int, int | None]:

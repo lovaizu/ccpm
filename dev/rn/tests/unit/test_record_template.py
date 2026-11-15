@@ -253,12 +253,14 @@ def test_a_paragraph_whose_note_says_to_leave_it_out_may_be_left_out():
 
 @pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
 def test_a_paragraph_that_leads_into_items_that_may_be_left_out_may_go_with_them():
-    """Given a template whose fixed paragraph The choices made, and why: leads into items whose
-    note says to leave them out, and a document without both
+    """Given a template of a paragraph, then the fixed paragraph The choices made, and why:, which
+    leads into items whose note says to leave them out, and a document of the first paragraph alone
     When the document is checked
     Then it has no fault"""
     template = lines(
         "# T",
+        "",
+        "Intro.",
         "",
         "The choices made, and why:",
         "",
@@ -266,7 +268,27 @@ def test_a_paragraph_that_leads_into_items_that_may_be_left_out_may_go_with_them
         "",
         note("`<choice>`, `<other way>`: each choice. Leave them out where none."),
     )
-    assert faults(template, lines("# T")) == ()
+    assert faults(template, lines("# T", "", "Intro.")) == ()
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_paragraph_of_fixed_words_before_a_part_that_may_be_left_out_stands():
+    """Given a template of the fixed paragraph Intro., without a colon, before a paragraph whose
+    note says to leave it out, and a document without both
+    When the document is checked
+    Then the one fault names Intro."""
+    template = lines(
+        "# T",
+        "",
+        "Intro.",
+        "",
+        "`<status>`.",
+        "",
+        note("`<status>`: where. Leave it out where none."),
+    )
+    assert faults(template, lines("# T")) == (
+        Fault(1, 'lacks the template\'s "Intro." at its line 3'),
+    )
 
 
 @pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
@@ -469,12 +491,14 @@ def test_a_code_block_whose_language_is_a_slot_takes_any_language():
 
 @pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
 def test_a_run_of_blocks_whose_note_says_each_may_repeat_as_a_whole():
-    """Given a template of an input, `<Product>` shows:, and an output, whose note gives one pair
-    for each exchange, and a document of two such runs
+    """Given a template of a paragraph, and then an input, `<Product>` shows:, and an output, whose
+    note gives one pair for each exchange, and a document of the paragraph and two such runs
     When the document is checked
     Then it has no fault"""
     template = lines(
         "# T",
+        "",
+        "At the end, you have `<result>`.",
         "",
         "```<language>",
         "<input>",
@@ -486,10 +510,14 @@ def test_a_run_of_blocks_whose_note_says_each_may_repeat_as_a_whole():
         "<output>",
         "```",
         "",
-        note("`<input>`, `<output>`: as they were. One pair goes for each exchange."),
+        note(
+            "`<result>`: what the reader has.",
+            "`<input>`, `<output>`: as they were. One pair goes for each exchange.",
+        ),
     )
     exchange = ("```text", "yes", "```", "", "rn shows:", "", "```text", "Done.", "```", "")
-    assert faults(template, lines("# T", "", *exchange, *exchange)) == ()
+    document = lines("# T", "", "At the end, you have a pull request.", "", *exchange, *exchange)
+    assert faults(template, document) == ()
 
 
 @pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
@@ -522,12 +550,14 @@ def test_a_run_of_blocks_repeated_in_part_lacks_the_rest():
 
 @pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
 def test_a_paragraph_whose_note_says_each_may_repeat():
-    """Given a template of the paragraph `<places>`. whose note says each top folder, and a
-    document of two paragraphs
+    """Given a template of a fixed paragraph and the paragraph `<places>`., whose note says each top
+    folder, and a document of the fixed paragraph and two more
     When the document is checked
     Then it has no fault"""
-    template = lines("# T", "", "`<places>`.", "", note("`<places>`: for each top folder."))
-    assert faults(template, lines("# T", "", "One.", "", "Two.")) == ()
+    template = lines(
+        "# T", "", "Intro.", "", "`<places>`.", "", note("`<places>`: for each top folder.")
+    )
+    assert faults(template, lines("# T", "", "Intro.", "", "One.", "", "Two.")) == ()
 
 
 @pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
@@ -796,3 +826,157 @@ def test_template_with_other_than_a_kind_and_a_document_gives_2_with_the_usage(
     When `record.py template` runs
     Then it gives 2 with the usage"""
     assert main(argv, folder, RN) == (2, "", USAGE)
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_slot_with_fewer_sentences_than_its_note_gives_is_named():
+    """Given a template whose paragraph is a fixed sentence and `<idea>`. of two or three
+    sentences, and a document whose paragraph has the fixed sentence and one more
+    When the document is checked
+    Then the fault names the two sentences and the three to four the template takes"""
+    template = lines(
+        "# T",
+        "",
+        "This says how. `<idea>`.",
+        "",
+        note("`<idea>`: one idea. Two or three sentences."),
+    )
+    assert faults(template, lines("# T", "", "This says how. One.")) == (
+        Fault(
+            3,
+            'has 2 sentences, where the template\'s "This says how. `<idea>`." at its line 3 takes'
+            " 3 to 4",
+        ),
+    )
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_link_whose_path_is_a_slot_takes_any_path_after_its_words():
+    """Given a template of the paragraph See [the guide](<path>)., and a document that names a path
+    When the document is checked
+    Then it has no fault"""
+    template = lines("# T", "", "See [the guide](<path>).")
+    assert faults(template, lines("# T", "", "See [the guide](docs/guide.md).")) == ()
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_numbered_slot_takes_only_a_number():
+    """Given a template whose heading is `S<n>`: `<path>`, and a document whose heading is Sx: a
+    request
+    When the document is checked
+    Then the fault names the heading by the template's words"""
+    template = lines("# T", "", "## `S<n>`: `<path>`")
+    assert faults(template, lines("# T", "", "## Sx: a request")) == (
+        Fault(
+            3,
+            '"## Sx: a request" leaves the form of the template\'s "## `S<n>`: `<path>`" at its'
+            " line 3",
+        ),
+    )
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_quote_that_is_no_note_of_the_template_lies_beside_it():
+    """Given a template of a title, and a document with a quote that isn't a note of the template
+    When the document is checked
+    Then the quote lies beside the template"""
+    assert faults(lines("# T"), lines("# T", "", "> A quote.")) == (
+        Fault(3, '"A quote." lies beside the template'),
+    )
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_heading_of_fixed_words_stands_once():
+    """Given a template whose section A has fixed words, and a document with two such sections
+    When the document is checked
+    Then the second lies beside the template"""
+    assert faults(lines("# T", "", "## A"), lines("# T", "", "## A", "", "## A")) == (
+        Fault(5, '"## A" lies beside the template'),
+    )
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_block_of_61_characters_is_named_by_its_first_60():
+    """Given a document whose paragraph beside the template has 61 characters
+    When the document is checked
+    Then the fault names its first 60 characters, and marks the rest left out"""
+    paragraph = "a" * 60 + "."
+    assert faults(lines("# T"), lines("# T", "", paragraph)) == (
+        Fault(3, f'"{"a" * 60}..." lies beside the template'),
+    )
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_block_of_60_characters_is_named_whole():
+    """Given a document whose paragraph beside the template has 60 characters
+    When the document is checked
+    Then the fault names all of it"""
+    paragraph = "a" * 59 + "."
+    assert faults(lines("# T"), lines("# T", "", paragraph)) == (
+        Fault(3, f'"{paragraph}" lies beside the template'),
+    )
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_paragraph_that_leads_into_items_that_must_stand_stands():
+    """Given a template of the fixed paragraph What each decides alone:, which leads into items
+    that must stand, and a document of the items alone
+    When the document is checked
+    Then the one fault names the paragraph"""
+    template = lines("# T", "", "What each decides alone:", "", "- `<component>`")
+    assert faults(template, lines("# T", "", "- user")) == (
+        Fault(3, 'lacks the template\'s "What each decides alone:" at its line 3'),
+    )
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_paragraph_before_a_code_block_that_may_repeat_stands_once():
+    """Given a template of a fixed paragraph and a code block whose note says each command, and a
+    document with the paragraph twice
+    When the document is checked
+    Then the second paragraph lies beside the template"""
+    template = lines(
+        "# T",
+        "",
+        "Intro.",
+        "",
+        "```console",
+        "<command>",
+        "```",
+        "",
+        note("`<command>`: each command."),
+    )
+    document = lines("# T", "", "Intro.", "", "Intro.", "", "```console", "x", "```")
+    assert faults(template, document) == (Fault(5, '"Intro." lies beside the template'),)
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_placeholder_of_mermaid_kept_is_named():
+    """Given a template whose Mermaid code block holds #lt;name#gt;, and a document that keeps it
+    on a line of its own
+    When the document is checked
+    Then the one fault names the placeholder"""
+    template = lines("# T", "", "```mermaid", "sequenceDiagram", "  A->>B: #lt;name#gt;", "```")
+    document = lines("# T", "", "```mermaid", "sequenceDiagram", "#lt;name#gt;", "```")
+    assert faults(template, document) == (Fault(3, "keeps the template's placeholder <name>"),)
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_placeholder_kept_both_in_a_code_span_and_bare_is_named_once():
+    """Given a template of the item `<role>`, and a document whose item keeps `<role>` and <role>
+    When the document is checked
+    Then the one fault names the placeholder"""
+    template = lines("# T", "", "- `<role>`")
+    assert faults(template, lines("# T", "", "- `<role>` or <role>")) == (
+        Fault(3, "keeps the template's placeholder <role>"),
+    )
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_title_with_a_slot_stands_once():
+    """Given a template whose title is `<Product>`, and a document with two titles
+    When the document is checked
+    Then the second lies beside the template"""
+    assert faults(lines("# `<Product>`"), lines("# rn", "", "# rn")) == (
+        Fault(3, '"# rn" lies beside the template'),
+    )

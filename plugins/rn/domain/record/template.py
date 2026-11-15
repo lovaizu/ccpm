@@ -95,8 +95,6 @@ def _fit(unit: Unit, block: Block) -> int | None:
     return 0 if unit.pattern.fullmatch(said) else 1
 
 
-_Cost = list[list[list[int]]]
-
 # The weight of each fault in the pairing. A block paired out of its unit's form weighs more than
 # a unit missing or a block beside, and less than both, so the pairing names a block moved from
 # its place as missing there and beside where it stands, and a block reworded in its place as out
@@ -105,69 +103,64 @@ _MISSING = 2
 _BESIDE = 2
 _OUT_OF_FORM = 3
 
+# A place in the pairing: the unit, the node, and whether the unit has stood, 0 or 1.
+_Place = tuple[int, int, int]
+# A step of the pairing: the weight of the fault it makes, what it does, and where it leads.
+_Step = tuple[int, str, _Place]
 
-def _costs(units: list[Unit], nodes: tuple[Node, ...]) -> _Cost:
-    """The least weight of faults from each unit, each node, and whether the unit has stood, to the
-    end."""
-    m, n = len(units), len(nodes)
-    cost = [[[0, 0] for _ in range(n + 1)] for _ in range(m + 1)]
-    for j in range(n, -1, -1):
+
+def _weights(units: list[Unit], nodes: tuple[Node, ...]) -> dict[_Place, int]:
+    """The least weight of faults from each place of the pairing to its end."""
+    weight: dict[_Place, int] = {}
+    for j in range(len(nodes), -1, -1):
         for used in (0, 1):
-            for i in range(m, -1, -1):
-                cost[i][j][used] = min(
-                    (step[0] for step in _steps(units, nodes, cost, (i, j, used))), default=0
-                )
-    return cost
+            for i in range(len(units), -1, -1):
+                steps = _steps(units, nodes, (i, j, used))
+                weight[(i, j, used)] = min((own + weight[to] for own, _, to in steps), default=0)
+    return weight
 
 
-_Step = tuple[int, str, tuple[int, int, int]]
-
-
-def _steps(
-    units: list[Unit], nodes: tuple[Node, ...], cost: _Cost, at: tuple[int, int, int]
-) -> list[_Step]:
-    """Each step from the place `at`, with the least weight of faults from it to the end, in the
-    order the pairing takes among equals: a block paired, the unit's run again, the next unit, a
-    block beside."""
+def _steps(units: list[Unit], nodes: tuple[Node, ...], at: _Place) -> list[_Step]:
+    """Each step from the place `at`, in the order the pairing takes among equals: a block paired,
+    the run of units again, the next unit, a block beside. Each leads to a place whose weight
+    _weights knows by then: one with the next node, or one with the same node and a later unit or
+    a unit not yet stood."""
     i, j, used = at
     m, n = len(units), len(nodes)
     found: list[_Step] = []
     if i < m and j < n and (not used or units[i].repeats):
         fit = _fit(units[i], nodes[j].block)
         if fit is not None:
-            found.append((fit * _OUT_OF_FORM + cost[i][j + 1][1], "pair", (i, j + 1, 1)))
+            found.append((fit * _OUT_OF_FORM, "pair", (i, j + 1, 1)))
     back = units[i].back_to if i < m and used else None
     if back is not None:
-        found.append((cost[back][j][0], "again", (back, j, 0)))
+        found.append((0, "again", (back, j, 0)))
     if i < m:
-        missing = _MISSING if not used and units[i].least else 0
-        found.append((missing + cost[i + 1][j][0], "next", (i + 1, j, 0)))
+        found.append((_MISSING if not used and units[i].least else 0, "next", (i + 1, j, 0)))
     if j < n:
-        found.append((_BESIDE + cost[i][j + 1][used], "beside", (i, j + 1, used)))
+        found.append((_BESIDE, "beside", (i, j + 1, used)))
     return found
 
 
 def _paired(units: list[Unit], nodes: tuple[Node, ...], where: int) -> list[Fault]:
-    """Each fault of the nodes against the units, by the pairing with the fewest faults, and of
-    each pair's nodes inside against the unit's units. A unit missing at the end goes at the last
-    node's line, or at `where` where there's no node."""
-    cost = _costs(units, nodes)
+    """Each fault of the nodes against the units, by the pairing with the least weight of faults,
+    and of each pair's nodes inside against the unit's units. A unit missing at the end goes at the
+    last node's line, or at `where` where there's no node."""
+    weight = _weights(units, nodes)
     found: list[Fault] = []
     counts = [0] * len(units)
     at = (0, 0, 0)
     while at[0] < len(units) or at[1] < len(nodes):
-        _, move, after = min(_steps(units, nodes, cost, at), key=lambda step: step[0])
-        i, j, used = at
+        own, move, after = min(_steps(units, nodes, at), key=lambda step: step[0] + weight[step[2]])
+        i, j, _ = at
         line = nodes[min(j, len(nodes) - 1)].block.line if nodes else where
         if move == "beside":
             found.append(Fault(line, f"{_shown(nodes[j].block)} lies beside the template"))
-        elif move == "next" and not used and units[i].least:
+        elif move == "next" and own:
             found.append(Fault(line, f"lacks {_from(units[i])}"))
         elif move == "pair":
             counts[i] += 1
             found += _pair(units[i], nodes[j], counts[i])
-        elif move == "again":
-            counts[after[0] : i + 1] = [0] * (i + 1 - after[0])
         at = after
     return found
 

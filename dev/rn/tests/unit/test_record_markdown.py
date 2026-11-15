@@ -87,31 +87,51 @@ def test_a_list_item_holds_a_paragraph_indented_after_a_blank_line():
 
 @pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
 def test_a_list_item_that_starts_with_a_code_block_has_no_words_of_its_own():
-    """Given an item whose first line opens a code block indented under it
+    """Given a paragraph, and an item right under it whose first line opens a code block indented
+    under it
     When the text is read
-    Then the item has no words, and holds the code block without the item's indent"""
-    assert read("- ```text\n  a\n  ```") == (
-        Block(ITEM, 1, "", children=(Block(CODE, 1, "a", info="text"),)),
+    Then the item at line 2 has no words, and holds the code block without the item's indent"""
+    assert read("Intro.\n- ```text\n  a\n  ```") == (
+        Block(PARAGRAPH, 1, "Intro."),
+        Block(ITEM, 2, "", children=(Block(CODE, 2, "a", info="text"),)),
+    )
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_list_item_whose_words_start_on_the_next_line_holds_them():
+    """Given the marker 10. alone on its line, the item's words after a blank line, indented past
+    the marker, and then a paragraph indented less
+    When the text is read
+    Then the item's words are those after the blank line, and the last paragraph stands after it"""
+    assert read("10.\n\n    The words.\n\n   Other.") == (
+        Block(ITEM, 1, "The words."),
+        Block(PARAGRAPH, 5, "Other."),
     )
 
 
 @pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
 def test_a_code_block_keeps_its_info_and_its_body_and_a_heading_inside_is_code():
-    """Given a code block of markdown that holds a heading
+    """Given a paragraph, and a code block of markdown at line 3 that holds a heading
     When the text is read
-    Then it gives one code block with the info string and the heading in its body"""
-    assert read("```markdown\n## Steps\n\n1. Read.\n```\nAfter.") == (
-        Block(CODE, 1, "## Steps\n\n1. Read.", info="markdown"),
-        Block(PARAGRAPH, 6, "After."),
+    Then it gives the paragraph, and one code block with the info string and the heading in its
+    body"""
+    assert read("Intro.\n\n```markdown\n## Steps\n\n1. Read.\n```\nAfter.") == (
+        Block(PARAGRAPH, 1, "Intro."),
+        Block(CODE, 3, "## Steps\n\n1. Read.", info="markdown"),
+        Block(PARAGRAPH, 8, "After."),
     )
 
 
 @pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
 def test_a_code_block_closes_only_at_a_fence_as_long_as_its_own():
-    """Given a code block opened by four backticks that holds a fence of three
+    """Given a paragraph, and right under it a code block opened by four backticks that holds a
+    fence of three
     When the text is read
-    Then the fence of three stays in the body"""
-    assert read("````md\n```\n````") == (Block(CODE, 1, "```", info="md"),)
+    Then the fence of three stays in the body, and nothing follows the code block"""
+    assert read("Intro.\n````md\n```\n````") == (
+        Block(PARAGRAPH, 1, "Intro."),
+        Block(CODE, 2, "```", info="md"),
+    )
 
 
 @pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
@@ -260,3 +280,19 @@ def test_words_count_no_mark_without_a_letter_or_a_digit():
     When its words are counted
     Then they're two"""
     assert words("rn - Lane") == 2
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_list_item_holds_an_item_indented_past_its_words():
+    """Given an item, and a nested item indented further than the item's words
+    When the text is read
+    Then the item holds the nested item"""
+    assert read("- a\n    - b") == (Block(ITEM, 1, "a", children=(Block(ITEM, 2, "b"),)),)
+
+
+@pytest.mark.supports("test_the_guard_holds_a_generators_end_whose_record_lacks_a_step")
+def test_a_list_item_holds_a_paragraph_indented_past_its_words_after_a_blank_line():
+    """Given an item, a blank line, and a paragraph indented further than the item's words
+    When the text is read
+    Then the item holds the paragraph"""
+    assert read("- a\n\n    b") == (Block(ITEM, 1, "a", children=(Block(PARAGRAPH, 3, "b"),)),)
