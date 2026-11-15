@@ -624,4 +624,4 @@ Benchmarks:
 | Test type | Test target | Measure |
 |---|---|---|
 | Unit testing | Parts that hold a prompt | `claude -p` on Opus: the share of up's runs giving the expected Lanes and Routes, against the last version's. Runs per case: added until one more moves no share. |
-| Scenario testing | Product | `dev/scripts/e2e.py` on the walkthrough with S3 and S4, judged on Opus: the key results KR1.1, then KR1.2, against the last runs. Runs: added until one more moves no mean by a step. KR1.1 counts a role off its steps, a wrong stop or start, an early stop, or a step left unheld. |
+| Scenario testing | Product | `dev/scripts/e2e.py` on the walkthrough with S3 and S4, judged on Opus: key results KR1.1, then KR1.2, against the last runs. Runs: added until one more moves no mean by a step. KR1.1 counts a role off its steps, a wrong stop or start, an early stop, or a step left unheld. |
