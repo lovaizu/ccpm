@@ -13,7 +13,8 @@ when the person has the pull request, ready, with each decision you took without
   run's worktree and your record at `start`; each round's Made and Answers at `round`; the runs
   left at `runs`; the sign-off at `put-up`, `approve`, and `send-back`; the comments at `comments`;
   and the pull request's URL at `push` and `ready`; or exit 1 with what's wrong or missing.
-- Each start due with its text, each result of a role, and each stop, from the guard.
+- Each start due with its text, or why no work waits for it, each result of a role, and each stop,
+  from the guard.
 - Each role's result and last message, in the form of its out-schema in `${CLAUDE_PLUGIN_ROOT}/domain/`.
 
 Your record is the one that `tree.py start` or `tree.py runs` names. Record each step of the
