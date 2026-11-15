@@ -368,6 +368,26 @@
       ]
     },
     {
+      "name": "A builder whose plugin goes beyond the README's walkthrough finds each form of steps, routes, and adapters that Lane takes",
+      "path": "plugins/lane/docs/steps-routes-adapters.md",
+      "kind": "specific",
+      "inputs": [
+        "dev/lane/architecture.md",
+        "plugins/lane/README.md"
+      ],
+      "preconditions": [],
+      "status": "doing",
+      "check": "each form that Lane's architecture gives a plugin's steps, routes, and adapters is on the page, as the architecture names it",
+      "good": false,
+      "decisions": [
+        {
+          "about": "Why a page of its own",
+          "decided": "the forms beyond the walkthrough leave the README for this page, which its Documentation links, as the readme best practice links what a newcomer needs neither to decide nor to start",
+          "by": "reasoning"
+        }
+      ]
+    },
+    {
       "name": "A person's /lane:up lays a lane that stops a subagent's command outside its step with the step's sentence, and the run starts that subagent and ends on its result",
       "path": "dev/lane/tests/integration/test_lane_walking_skeleton.py",
       "kind": "specific",
