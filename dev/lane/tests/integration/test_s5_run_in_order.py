@@ -419,7 +419,6 @@ def test_several_moves_let_the_skills_steps_choose_among_them_and_stop_any_other
     assert not chosen.blocked
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S5", "lane types", "Lane", "guard")
 def test_a_lane_of_the_skill_holds_its_turns_end_until_the_plugins_command_gives_0(repo: Repo):
     """Given `changelog` laid with an ends_checked Lane on the skill's step 1 that runs

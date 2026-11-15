@@ -627,3 +627,14 @@ def test_the_main_conversations_start_lies_in_a_run_that_stands_aside_and_its_co
     start = event(CALL, call=Call(START, role="changelog:reviewer", text=CARRY_OUT))
     assert in_run(start, laid_set(), given)
     assert not in_run(command("git status"), laid_set(), given)
+
+
+@pytest.mark.supports("test_a_subagent_of_a_role_that_no_start_of_the_run_ties_goes_unchecked")
+def test_a_resume_of_a_subagent_that_no_start_ties_is_let_through_and_not_kept(temp: str):
+    """Given Routes that list a resume, and a Run whose writer, a1, gave `written`
+    When the main conversation resumes a9, which no Start ties
+    Then the guard lets it through, and adds no line"""
+    keep(temp, *WRITER_GAVE_WRITTEN)
+    moment = event(CALL, call=Call(RESUME, agent="a9", text=CARRY_OUT))
+    assert decide(moment, laid_set(routes=RESUMES), PLUGIN_ROOT, temp) == LET_THROUGH
+    assert load(temp, "changelog", SESSION) == WRITER_GAVE_WRITTEN

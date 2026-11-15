@@ -35,6 +35,7 @@ from domain.run_record import (
 from lane_parts import (
     CARRY_OUT,
     RESUMES,
+    REVIEW_ROUTES,
     REVIEWER_GAVE_GOOD,
     REVIEWER_GAVE_MORE,
     ROUTES,
@@ -508,3 +509,48 @@ def test_a_subagent_that_ended_with_no_result_makes_its_start_due_again():
     Then writer's start is due again"""
     (found,) = stand((*WRITER_RUNNING, Noted(ENDED, "a1", "killed")), laid_set(), SESSION)
     assert found.moves == [Move(START, "writer")]
+
+
+@pytest.mark.supports("test_the_skills_own_result_ends_only_the_run_of_the_skill_it_names")
+def test_a_skills_result_with_no_run_of_that_skill_going_on_moves_no_run():
+    """Given the lines of a Run of `write` whose reviewer's start is due, and a Result `good` of
+    `review`, whose skill has no Run
+    When where it stands is worked out
+    Then the Run of `write` goes on with reviewer's start due, and holds no Result of `review`"""
+    (write,) = stand((*WRITER_GAVE_WRITTEN, Result("review", "good")), two_skills(), SESSION)
+    assert (write.ended, write.moves) == (False, [Move(START, "reviewer")])
+    assert Result("review", "good") not in write.results
+
+
+@pytest.mark.supports(
+    "test_a_command_that_a_route_goes_after_opens_its_moves_while_each_subagent_runs_on"
+)
+def test_a_command_typed_moves_only_the_run_that_goes_on():
+    """Given the lines of a Run of `write` that a later call of `write` ended, and a Route after
+    `/changelog:pause` that starts no more
+    When where they stand is worked out after the person typed `/changelog:pause`
+    Then the ended Run's moves are as they were, and the later Run's move starts no more"""
+    routes = (*ROUTES, Route("write", "/changelog:pause", (Move(NO_MORE),)))
+    lines = (*WRITER_RUNNING, Called("write", PERSON), Noted(TYPED, text="/changelog:pause"))
+    before, after = stand(lines, laid_set(routes=routes), SESSION)
+    assert (before.moves, after.moves) == ([], [Move(NO_MORE)])
+
+
+@pytest.mark.supports(
+    "test_a_call_of_another_plugins_skill_that_a_move_names_sets_the_run_aside_until_a_move_after_it"
+)
+def test_a_call_of_another_plugins_skill_sets_aside_only_the_run_whose_move_names_it():
+    """Given the lines of a Run of `review`, and then of a Run of `write` whose move due calls
+    `tally:check`, and a line of that call
+    When where they stand is worked out
+    Then the Run of `write` stands aside from `tally:check`, and the Run of `review` doesn't"""
+    lines = (
+        Called("review", PERSON),
+        Called("write", PERSON),
+        Start(1, "writer", CARRY_OUT, skill="write"),
+        Tied(1, "a1"),
+        Result("writer", "written", "a1"),
+        Noted(CALLED, "", "tally:check"),
+    )
+    review, write = stand(lines, two_skills(routes=(*CALLS_CHECK, *REVIEW_ROUTES)), SESSION)
+    assert (review.aside, write.aside) == ("", "tally:check")

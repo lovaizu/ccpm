@@ -190,7 +190,6 @@ def test_lay_print_notes_a_step_that_names_a_command_its_subagent_may_not_run(
     assert any("step 1" in each for each in noted), printed.output
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("S1", "lay.py", "Lane")
 def test_lay_print_refuses_an_ends_checked_lane_of_the_skill_naming_a_value_no_start_fills(
     up: Conversation, repo: Repo

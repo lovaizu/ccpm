@@ -52,12 +52,11 @@ def payload(record: str, event: str, **fields: Any) -> str:
     return json.dumps(given).replace("<repo>", "/repo")
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports("test_a_call_that_keeps_every_lane_of_its_role_passes")
 def test_a_subagents_bash_call_reads_as_a_call_of_a_command_by_it():
-    """Given the recorded PreToolUse of writer's `git log --oneline`
+    """Given the recorded PreToolUse of writer's `git -C <repo> log --oneline`
     When it's read
-    Then it's a CALL of COMMAND `git log --oneline` by writer's subagent, at /repo"""
+    Then it's a CALL of COMMAND `git -C /repo log --oneline` by writer's subagent, at /repo"""
     name, moment = hook.read(payload(RUN, "writer runs git log"), ENV)
     assert (name, moment.moment, moment.role, moment.root) == (
         "PreToolUse",
@@ -66,9 +65,7 @@ def test_a_subagents_bash_call_reads_as_a_call_of_a_command_by_it():
         "/repo",
     )
     assert moment.agent and moment.call and moment.call.kind == COMMAND
-    assert (
-        moment.call.command == line(RUN, "writer runs git log")["payload"]["tool_input"]["command"]
-    )
+    assert moment.call.command == "git -C /repo log --oneline"
 
 
 @pytest.mark.supports("test_a_write_of_a_file_that_no_write_only_lane_takes_is_stopped")

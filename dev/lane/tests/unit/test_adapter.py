@@ -112,6 +112,18 @@ def test_an_adapter_whose_json_has_no_text_raises_a_fault_naming_text(folder: st
 @pytest.mark.supports(
     "test_a_start_whose_text_the_adapter_cant_give_is_stopped_with_who_must_fix_it"
 )
+def test_an_adapter_whose_values_arent_names_with_text_raises_a_fault_naming_values(folder: str):
+    """Given an adapter that prints `{"text": "W", "values": {"version": 2}}`
+    When the text of writer's start is asked
+    Then a Fault names `values`"""
+    path = program(folder, 'print(json.dumps({"text": "W", "values": {"version": 2}}))\n')
+    with pytest.raises(Fault, match="values"):
+        start_text(path, "writer", [], folder)
+
+
+@pytest.mark.supports(
+    "test_a_start_whose_text_the_adapter_cant_give_is_stopped_with_who_must_fix_it"
+)
 def test_an_adapter_that_cant_run_raises_a_fault(folder: str):
     """Given an adapter that isn't executable
     When the text of writer's start is asked

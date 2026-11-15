@@ -112,7 +112,6 @@ def test_a_lane_on_a_step_there_isnt_is_refused(plugin: str):
     assert found and "5" in " ".join(found.faults)
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts are skeletons, their bodies unbuilt")
 @pytest.mark.supports(
     "test_lay_print_refuses_an_ends_checked_lane_of_the_skill_naming_a_value_no_start_fills"
 )

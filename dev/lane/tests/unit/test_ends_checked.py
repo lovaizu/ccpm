@@ -13,10 +13,6 @@ from domain.fault import Fault
 from domain.lanes import PASSES, End, Where
 from domain.lanes.ends_checked import LANE_TYPE
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="Lane's parts are skeletons, their bodies unbuilt"
-)
-
 
 @pytest.fixture
 def where(tmp_path: Any) -> Where:
@@ -60,6 +56,18 @@ def test_an_end_whose_command_names_a_value_its_start_didnt_give_raises_a_fault(
     Then the check raises a Fault naming `{version}`"""
     with pytest.raises(Fault, match="version"):
         LANE_TYPE.check_end(("python3 check.py {version}",), End("reviewer", "Done."), where)
+
+
+@pytest.mark.supports(
+    "test_an_end_whose_check_names_a_value_its_start_didnt_give_is_held_with_who_must_fix_it"
+)
+def test_an_end_whose_command_cant_run_raises_a_fault_naming_it(where: Where):
+    """Given an ends_checked Lane that runs `no-such-check {result}`, a program there isn't
+    When reviewer ends having given `good`
+    Then the check raises a Fault naming the command, with the plugin's maker to fix it"""
+    with pytest.raises(Fault, match="no-such-check") as raised:
+        LANE_TYPE.check_end(("no-such-check {result}",), End("reviewer", "", result="good"), where)
+    assert "maker" in raised.value.who
 
 
 @pytest.mark.supports(
