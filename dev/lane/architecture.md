@@ -381,7 +381,7 @@ sequenceDiagram
       else it fails at the skill's call
         A-->>G: why
         G->>G: gives that start with why, and lets the call run
-        Note over M,G: The skill's own steps may make what the adapter reads before its first start.
+        Note over M,G: The skill's own steps may make what the adapter reads before its first start, so the guard asks again after each later call of the main conversation, and gives the start with its text once the adapter gives it.
       else it fails at any other move
         A-->>G: why
         G-->>M: why and who must fix it, in place of that start
@@ -398,6 +398,7 @@ sequenceDiagram
         CC->>SA: starts it in the background
         CC->>G: the PostToolUse, with its agent_id
         G->>RS: adds the tie of the Start to that agent_id
+        Note over M,G: The start stays due beside each Start of its role that runs, while the adapter gives it a text other than theirs, so the skill's steps may start the role side by side.
       else a resume, where the Routes open none
         G-->>CC: lets it through, and moves no Run
       else any other start
