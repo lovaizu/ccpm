@@ -125,7 +125,13 @@
         {
           "id": "N7",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "Where its mutants run",
+              "decided": "CI's Nightly runs cosmic-ray by dev/rn/cosmic-ray.toml on all of rn's code, and N7 is judged from that run's surviving mutants, as each push's Test quality mutates only the lines it changed",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N8",

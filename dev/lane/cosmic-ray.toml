@@ -1,0 +1,24 @@
+# The mutation testing of Lane's code that dev/scripts/quality.sh runs in CI, as N7 of
+# plugins/rn/domain/best-practices/code/best-practice.md says. The check fails on each mutant under
+# which every test still passes. A line marked `# pragma: no mutate` holds only changes that can't
+# alter what the code does.
+[cosmic-ray]
+module-path = "plugins/lane"
+timeout = 30.0
+excluded-modules = []
+# The tests run on every core, as each mutant waits on the tests' runs of claude plugin validate.
+test-command = "python -m pytest -x -q -n auto -p no:cacheprovider dev/lane/tests"
+
+[cosmic-ray.distributor]
+name = "local"
+
+# Lane's code writes `|` only in type annotations, which `from __future__ import annotations` never
+# evaluates, so a change to it can't alter what the code does. Lane compares values and never
+# identities, and Python keeps one copy of each constant it compares with, such as a move's kind or
+# a character, so `is` in place of `==` and `is not` in place of `!=` alter nothing there.
+[cosmic-ray.filters.operators-filter]
+exclude-operators = [
+  "core/ReplaceBinaryOperator_BitOr_.*",
+  "core/ReplaceComparisonOperator_Eq_Is$",
+  "core/ReplaceComparisonOperator_NotEq_IsNot$",
+]
