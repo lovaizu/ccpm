@@ -35,9 +35,8 @@ def check(plugin: str, proposal: Proposal, steps: Sequence[Step]) -> Checked | F
 
     Takes: the plugin's folder, the Proposal, and the Steps without the Laid's text.
     Gives: Checked, with each Lane's sentence from `lanes.sentence` with its role's last Step and the
-    Proposal's Routes; or
-    Faults, where a Lane is refused, a role or skill lacks the Lane on its last Step, or the
-    plugin's files can't carry the Proposal.
+    Proposal's Routes; or Faults, where a Lane is refused, a role or skill lacks the Lane on its last
+    Step, or the plugin's files can't carry the Proposal.
     Changes: nothing.
     Refuses: nothing.
     Carries: S1 `L->>T: checks each Lane, and makes its sentence`, `L->>ST: checks the Proposal
