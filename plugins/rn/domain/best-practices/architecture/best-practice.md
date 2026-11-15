@@ -5,7 +5,7 @@
 - The developers build and change the parts of the product so that together they deliver what the README promises the users.
   - **C1** The developers know what each part must do, for the users or for the product's development and operation, and why.
     - **N1** Does Solution strategy state first the one idea by which the product delivers what its README promises? (Solution strategy)
-    - **N2** Do the user stories together cover each objective of the product vision and each promise of the README, each story a way a role meets the product? (User stories)
+    - **N2** Does each user story state what a role wants, in the role's words and without the product's means, and do the stories together cover each objective of the product vision and each promise of the README? (User stories)
     - **N3** Does each rule of Solution strategy, user story, component, and kind of data trace to what the README promises the users, or to a need of the product's development or operation? (Solution strategy, User stories, Components, Data model, Sequences)
   - **C2** Parts that different developers build fit together.
     - **N4** Does each rule of Solution strategy give a rule and a reason from which two developers decide a case that no line names the same way? (Solution strategy)
@@ -50,16 +50,17 @@ Each view carries out one idea, and a developer who knows the idea builds a part
 
 ### N2
 
-Do the user stories together cover each objective of the product vision and each promise of the README, each story a way a role meets the product?
+Does each user story state what a role wants, in the role's words and without the product's means, and do the stories together cover each objective of the product vision and each promise of the README?
 
-The stories are the product's requirements, and every part traces back to a way a role meets the product. Jeff Patton's user story mapping lays the steps of each use along a backbone and hangs a [user story](https://www.mountaingoatsoftware.com/agile/user-stories) on the steps, so a story covers what the use needs, not one step each.
+The stories are the product's requirements: what each role wants, which the views then meet. A story that names a means, such as a command, states a design as a want, so no one asks whether the design serves the want. A [user story](https://www.mountaingoatsoftware.com/agile/user-stories) leaves the interface to the design, and Jeff Patton's user story mapping lays the role's activities along a backbone and hangs the stories on them, so a story covers what the use needs, not one step each.
 
 1. *While deciding.* Open the product vision and the README, and list each objective and each promise the README makes, in its walkthrough, its Non-goals, and its How it works.
-2. *While deciding.* For each objective, lay out as its backbone the steps its role takes from where they start to the result they keep, as the README's walkthrough shows them for its main use.
-3. *While deciding.* For each step, ask how the role meets the product at its edge there, such as a command they type, and write one story for each such way, since a story is a way of meeting the product, and one way often serves several steps.
-4. *While deciding.* Read each idea of the product vision's Concept, and ask at which moment of the use it keeps the one way holding. Where the role meets the product there in a way that no story carries, add a story for it, such as resuming a run that stopped.
-5. *While deciding.* Where the product's development or operation needs a way to meet the product, such as a release, write a story with the developer or the operator as its role.
-6. *While making.* For each objective and each promise, name the stories that carry it, and add a story where none does. Leave a step without a story of its own where another story already carries it.
+2. *While deciding.* For each objective, lay out as its backbone the activities its role does from where they start to the result they keep, read from the README's walkthrough for its main use. Name each in the words the role would say, such as approving the plan. A command or a screen of the product is no activity.
+3. *While deciding.* For each activity, ask what the role wants there and why, and write it as a story in the role's words, without a command, a screen, or a part of the product, since Sequences shows how the product meets it. One want often serves several activities, such as giving yes or a change at each sign-off.
+4. *While deciding.* Read each idea of the product vision's Concept, and ask at which moment of the use it keeps the one way holding. Where the role wants something there that no story carries, add a story for it, such as going on with a run that stopped.
+5. *While deciding.* Where the product's development or operation wants something of the product, such as a release, write a story with the developer or the operator as its role.
+6. *While making.* For each objective and each promise, name the stories that carry it, and add a story where none does. Leave an activity without a story of its own where another story already carries it.
+7. *While making.* Read each story and ask whether it still holds where the product met it another way, such as a reply in place of a command. Rewrite each that doesn't, as it names a means, not a want.
 
 ### N3
 
@@ -67,7 +68,7 @@ Does each rule of Solution strategy, user story, component, and kind of data tra
 
 A part that nothing needs costs effort to build and to keep, and gives no one anything.
 
-1. *While deciding.* For each story, ask which step, doubt, or need it carries, from three sources. The README and the product vision carry what the users get: the objectives and the promises that N2 lists, and the doubts that the README's How it works answers. Development adds what the developers need to build, test, and change the parts. Operation adds what keeps the product working across runs and updates, such as where its work outlives a run.
+1. *While deciding.* For each story, ask which activity, doubt, or need it carries, from three sources. The README and the product vision carry what the users get: the objectives and the promises that N2 lists, and the doubts that the README's How it works answers. Development adds what the developers need to build, test, and change the parts. Operation adds what keeps the product working across runs and updates, such as where its work outlives a run.
 2. *While making.* Once you have written Solution strategy, for each rule, name the doubt of the README's How it works, or the need of development or operation, that it carries.
 3. *While making.* Once you have drawn Sequences, for each component and each kind of data, find the rule or the step of a sequence that reaches it.
 4. *While making.* Remove each story or rule that carries none, and each component or kind of data that none reaches, from every figure, list, and sentence that names it.

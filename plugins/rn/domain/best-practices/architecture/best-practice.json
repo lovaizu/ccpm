@@ -43,8 +43,8 @@
      {
       "id": "N2",
       "about": "User stories",
-      "what": "Do the user stories together cover each objective of the product vision and each promise of the README, each story a way a role meets the product?",
-      "why": "The stories are the product's requirements, and every part traces back to a way a role meets the product. Jeff Patton's user story mapping lays the steps of each use along a backbone and hangs a [user story](https://www.mountaingoatsoftware.com/agile/user-stories) on the steps, so a story covers what the use needs, not one step each.",
+      "what": "Does each user story state what a role wants, in the role's words and without the product's means, and do the stories together cover each objective of the product vision and each promise of the README?",
+      "why": "The stories are the product's requirements: what each role wants, which the views then meet. A story that names a means, such as a command, states a design as a want, so no one asks whether the design serves the want. A [user story](https://www.mountaingoatsoftware.com/agile/user-stories) leaves the interface to the design, and Jeff Patton's user story mapping lays the role's activities along a backbone and hangs the stories on them, so a story covers what the use needs, not one step each.",
       "items": [
        {
         "at": "decide",
@@ -52,23 +52,27 @@
        },
        {
         "at": "decide",
-        "text": "For each objective, lay out as its backbone the steps its role takes from where they start to the result they keep, as the README's walkthrough shows them for its main use."
+        "text": "For each objective, lay out as its backbone the activities its role does from where they start to the result they keep, read from the README's walkthrough for its main use. Name each in the words the role would say, such as approving the plan. A command or a screen of the product is no activity."
        },
        {
         "at": "decide",
-        "text": "For each step, ask how the role meets the product at its edge there, such as a command they type, and write one story for each such way, since a story is a way of meeting the product, and one way often serves several steps."
+        "text": "For each activity, ask what the role wants there and why, and write it as a story in the role's words, without a command, a screen, or a part of the product, since Sequences shows how the product meets it. One want often serves several activities, such as giving yes or a change at each sign-off."
        },
        {
         "at": "decide",
-        "text": "Read each idea of the product vision's Concept, and ask at which moment of the use it keeps the one way holding. Where the role meets the product there in a way that no story carries, add a story for it, such as resuming a run that stopped."
+        "text": "Read each idea of the product vision's Concept, and ask at which moment of the use it keeps the one way holding. Where the role wants something there that no story carries, add a story for it, such as going on with a run that stopped."
        },
        {
         "at": "decide",
-        "text": "Where the product's development or operation needs a way to meet the product, such as a release, write a story with the developer or the operator as its role."
+        "text": "Where the product's development or operation wants something of the product, such as a release, write a story with the developer or the operator as its role."
        },
        {
         "at": "make",
-        "text": "For each objective and each promise, name the stories that carry it, and add a story where none does. Leave a step without a story of its own where another story already carries it."
+        "text": "For each objective and each promise, name the stories that carry it, and add a story where none does. Leave an activity without a story of its own where another story already carries it."
+       },
+       {
+        "at": "make",
+        "text": "Read each story and ask whether it still holds where the product met it another way, such as a reply in place of a command. Rewrite each that doesn't, as it names a means, not a want."
        }
       ]
      },
@@ -80,7 +84,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "For each story, ask which step, doubt, or need it carries, from three sources. The README and the product vision carry what the users get: the objectives and the promises that N2 lists, and the doubts that the README's How it works answers. Development adds what the developers need to build, test, and change the parts. Operation adds what keeps the product working across runs and updates, such as where its work outlives a run."
+        "text": "For each story, ask which activity, doubt, or need it carries, from three sources. The README and the product vision carry what the users get: the objectives and the promises that N2 lists, and the doubts that the README's How it works answers. Development adds what the developers need to build, test, and change the parts. Operation adds what keeps the product working across runs and updates, such as where its work outlives a run."
        },
        {
         "at": "make",

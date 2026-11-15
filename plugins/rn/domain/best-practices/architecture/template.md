@@ -2,13 +2,14 @@
 
 ## User stories
 
-- `S<n>`: `<role>` wants `<way>`, so that `<benefit>`.
+- `S<n>`: `<role>` wants `<want>`, so that `<benefit>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - `<role>`: a role of the product vision, as the product vision names it, or the product's
 >   developer or operator for a need of development or operation.
-> - `<way>`: one way the role meets the product at its edge, such as a command they type.
+> - `<want>`: what the role wants, in the role's words, without the product's means, such as a
+>   command or a screen, which Sequences shows.
 > - `<benefit>`: what the role gains by it, toward an objective of the product vision.
 > - The stories together cover each objective of the product vision and each promise of the README.
 >   A story needn't match one step of the README's walkthrough.
