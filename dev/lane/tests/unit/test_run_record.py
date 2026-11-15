@@ -18,6 +18,8 @@ from run_record import (
     Shown,
     Started,
     SteppedAside,
+    TextFailed,
+    TextGiven,
     Tied,
     Unreadable,
     add,
@@ -35,6 +37,8 @@ EACH_LINE = [
     Gave("r1", "write", "good", None),
     Ended("r1", "a01", True),
     SteppedAside("r1", "lint:check"),
+    TextFailed("r1"),
+    TextGiven("r1"),
 ]
 
 

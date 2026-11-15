@@ -1108,6 +1108,36 @@ class ClaudeCodeDoubleTest(unittest.TestCase):
         self.write("changelog/hooks/hooks.json", json.dumps({"hooks": {event: [group]}}))
         return Conversation(self.repo, [self.plugin], self.conversation.env, self.temp)
 
+    # A hook that tells the starter of a subagent, at the PostToolUse of the Agent call, the
+    # subagent's ID.
+    TELLS_THE_STARTER = (
+        "import json, sys\n"
+        "event = json.load(sys.stdin)\n"
+        "told = f\"started {event['tool_response']['agentId']}\"\n"
+        "out = {'hookEventName': 'PostToolUse', 'additionalContext': told}\n"
+        "print(json.dumps({'hookSpecificOutput': out}))\n"
+    )
+
+    def test_a_start_in_the_background_carries_what_its_post_tool_use_tells_the_starter(self):
+        # Given: a hook that tells the starter, at the PostToolUse of an Agent call, the subagent.
+        conversation = self.hooked("PostToolUse", self.TELLS_THE_STARTER, matcher="Agent")
+        # When: the main conversation starts writer in the background.
+        answer, agent = conversation.start("changelog:writer", "Write entries", "Write entries")
+        # Then: the answer carries what the starter reads, apart from what writer reads.
+        assert agent is not None  # No hook of the test's own stops the start.
+        self.assertEqual((answer.posted, answer.said), (f"started {agent.id}", ""))
+
+    def test_a_start_in_the_foreground_carries_no_post_tool_use_as_it_comes_at_the_end(self):
+        # Given: a hook that tells the starter, at the PostToolUse of an Agent call, the subagent.
+        conversation = self.hooked("PostToolUse", self.TELLS_THE_STARTER, matcher="Agent")
+        # When: the main conversation starts writer in the foreground.
+        answer, agent = conversation.start(
+            "changelog:writer", "Write entries", "Write entries", how=FOREGROUND
+        )
+        # Then: the answer carries nothing of a PostToolUse, which comes only at writer's end.
+        assert agent is not None  # No hook of the test's own stops the start.
+        self.assertEqual(answer.posted, "")
+
     def test_a_plugin_with_no_hooks_file_runs_no_hook(self):
         # Given: the plugin holds no hooks/hooks.json.
         os.remove(os.path.join(self.plugin, "hooks", "hooks.json"))

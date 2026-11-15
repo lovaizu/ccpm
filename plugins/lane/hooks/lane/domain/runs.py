@@ -22,13 +22,15 @@ from run_record import (
     Shown,
     Started,
     SteppedAside,
+    TextFailed,
+    TextGiven,
     Tied,
     lines,
     record_path,
 )
 
 # Each line of a Run's record after its call.
-Moving = Union[Prompted, Shown, Started, Tied, Gave, Ended, SteppedAside]
+Moving = Union[Prompted, Shown, Started, Tied, Gave, Ended, SteppedAside, TextFailed, TextGiven]
 
 
 class OffRoutes(Exception):
@@ -91,7 +93,9 @@ class Left:
 class Run:
     """One run of one skill in the conversation, as it stands; `closing` where the skill's own
     Result ended it and no prompt has been typed since, so that the end of that turn is still held
-    by the skill's Lanes."""
+    by the skill's Lanes; `awaiting` where the adapter of a start's text failed at the skill's call
+    and hasn't answered since, so that the guard asks it again after each call of the main
+    conversation."""
 
     id: str
     skill: str
@@ -105,6 +109,7 @@ class Run:
     aside: bool
     ended: bool
     closing: bool = False
+    awaiting: bool = False
 
 
 @dataclass(frozen=True)
@@ -124,7 +129,10 @@ def stand(
     plugin's name, by which a prompt `/<plugin>:<command>` is the plugin's command.
     Gives: each Run, its moves due those of the Route after its latest start, Result, typed
     command, or returned call, a Route after the plugin's command typed taking the place of those
-    before, and a start whose subagent ended with no Result due again; a Run ended, and closing,
+    before, a start staying due beside each Start it made, as the guard gives it where the adapter
+    gives a text other than theirs, a resume taken by its Start, and a start whose subagent ended
+    with no Result due again; `awaiting` from the adapter's failure at the skill's call until it
+    answers; a Run ended, and closing,
     by the skill's own Result where a move due starts no more by it, until a prompt is typed; a
     Run aside from the call of another plugin's skill, with the moves of the Route after that call
     due, until a Start.
@@ -158,20 +166,21 @@ def _moved(run: Run, line: Moving, routes: Sequence[Route], plugin: str) -> Run:
         return _prompted(run, line, routes, plugin)
     if isinstance(line, SteppedAside):
         return _aside(run, line, routes)
+    if isinstance(line, (TextFailed, TextGiven)):
+        return dataclasses.replace(run, awaiting=isinstance(line, TextFailed))
     return dataclasses.replace(run, shown=(*run.shown, line))
 
 
 def _of_start(run: Run, line: Started | Tied | Ended) -> Run:
-    """The Run after a Start, which ends its standing aside, its tie to an agent_id, or its
-    subagent's end."""
+    """The Run after a Start, which ends its standing aside and takes the resume it makes, while a
+    start stays due beside it; its tie to an agent_id; or its subagent's end."""
     if isinstance(line, Started):
         start = Start(
             line.role, line.text, line.values, line.tool_use_id, None, (), False, line.resumed
         )
         due = list(run.due)
-        taken = Move("resume" if line.resumed else "start", role=line.role)
-        if taken in due:
-            due.remove(taken)
+        if line.resumed and Move("resume", role=line.role) in due:
+            due.remove(Move("resume", role=line.role))
         return dataclasses.replace(run, starts=(*run.starts, start), due=tuple(due), aside=False)
     if isinstance(line, Tied):
         starts = tuple(
@@ -188,8 +197,9 @@ def _ended(run: Run, line: Ended) -> Run:
     """The Run after a subagent's end: its Start ended, and due again where it gave no Result."""
     ended = [s for s in run.starts if s.agent_id == line.agent_id]
     starts = tuple(dataclasses.replace(s, ended=True) if s in ended else s for s in run.starts)
-    again = tuple(Move("start", role=s.role) for s in ended if not s.results)
-    return dataclasses.replace(run, starts=starts, due=(*run.due, *again))
+    again = [Move("start", role=s.role) for s in ended if not s.results]
+    due = tuple(dict.fromkeys((*run.due, *again)))
+    return dataclasses.replace(run, starts=starts, due=due)
 
 
 def _prompted(run: Run, line: Prompted, routes: Sequence[Route], plugin: str) -> Run:

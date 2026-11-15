@@ -101,11 +101,41 @@ class SteppedAside:
     skill: str
 
 
-Line = Union[Called, Prompted, Shown, Started, Tied, Gave, Ended, SteppedAside]
+@dataclass(frozen=True)
+class TextFailed:
+    """The adapter of a start's text, failed at the skill's call, so that the guard asks it again
+    after each later call of the main conversation, as the skill's own steps may make what it
+    reads."""
+
+    run: str
+
+
+@dataclass(frozen=True)
+class TextGiven:
+    """The adapter of a start's text, which failed at the skill's call, answering at a later call,
+    so that the guard has given each start due with its text and asks it no more."""
+
+    run: str
+
+
+Line = Union[
+    Called, Prompted, Shown, Started, Tied, Gave, Ended, SteppedAside, TextFailed, TextGiven
+]
 # Each kind of line, by the name that a line of the record gives as its `kind`.
 _KINDS = {
     kind.__name__: kind
-    for kind in (Called, Prompted, Shown, Started, Tied, Gave, Ended, SteppedAside)
+    for kind in (
+        Called,
+        Prompted,
+        Shown,
+        Started,
+        Tied,
+        Gave,
+        Ended,
+        SteppedAside,
+        TextFailed,
+        TextGiven,
+    )
 }
 # The file of the record in its conversation's folder.
 RECORD = "record.jsonl"

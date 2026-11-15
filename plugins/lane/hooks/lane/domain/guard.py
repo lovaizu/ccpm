@@ -38,6 +38,8 @@ from run_record import (
     Shown,
     Started,
     SteppedAside,
+    TextFailed,
+    TextGiven,
     Tied,
     add,
     lines,
@@ -65,7 +67,12 @@ def handle(event: Event, root: str) -> Answer:
       makes it, and adds the Start where it's due, lets a resume, or a subagent's start of no
       role, through with no Start added, and stops any other with the moves due, or a subagent's
       start of a role with the sentence of the Lane on its last Step;
-    - the PostToolUse of a start (S5): adds the tie of the Start to its agent_id;
+    - the PostToolUse of a start (S5): adds the tie of the Start to its agent_id, and answers the
+      moves due where a start stays due beside it, as the adapter gives a text other than that of
+      each Start of its role that runs;
+    - the PostToolUse of each call of the main conversation after an adapter of a start's text
+      failed at the skill's call (S5): asks it again, and once it answers, adds that it did and
+      answers the moves due, each start with its text; says nothing while it still fails;
     - the PostToolUse of result.py that gave 0 (S2, S5, S6): adds the Result, for the subagent's
       Start where it has an agent_id;
     - the PostToolUse of lay.py print (S1): adds what it showed, with the Proposal's ID;
@@ -82,17 +89,18 @@ def handle(event: Event, root: str) -> Answer:
       text for it, where lanes.json names one, and where it gives that no work waits for the
       start, leaves the start out of the moves due, with why in its place in the answer; a start
       of that role then stops with the moves due, and the main conversation's end stops for none
-      of it;
+      of it; a start whose text is that of a Start of its role that runs isn't due;
     - an event outside every Run: lets it through and adds nothing.
     Changes: the run record, by the lines above, and whatever an adapter or a command of the
     plugin's changes.
     Refuses: nothing; where lanes.json, the run record, an adapter, or a Lane can't be read or
     run, or the Kept results leave the Routes, it stops the event with why and who must fix it,
     except an adapter of a start's text that fails at the skill's call, whose start it gives with
-    why while it lets the call run, and one that fails as a subagent's end reaches the main
-    conversation, whose why and who it gives in place of the moves.
+    why while it lets the call run, adding that it failed, and one that fails as a subagent's end
+    reaches the main conversation, whose why and who it gives in place of the moves.
     Carries: each `CC->>G` arrow of S1 to S7, each `G-->>` answer, and S5 `G->>G: leaves that
-    start out of the moves due, with why in its place`.
+    start out of the moves due, with why in its place` and `G->>G: gives that start with why, and
+    lets the call run`, with the Notes after it and after the tie of a Start.
     """
     name = plugin_name(root)
     try:
@@ -132,8 +140,7 @@ def _answered(plugin: Plugin, placed: Placed, cwd: str) -> Answer:
         return _checked(plugin, placed, cwd)
     if isinstance(what, Prompt):
         return _prompted(plugin, placed, cwd)
-    _record(plugin, placed)
-    return PASS
+    return _posted(plugin, placed, cwd)
 
 
 @dataclass(frozen=True)
@@ -201,6 +208,7 @@ def _begun(plugin: Plugin, what: SkillCall, cwd: str) -> Answer:
     try:
         return Answer(False, due(plugin.name, _told(plugin, run, cwd)))
     except AdapterFailed as e:
+        add(plugin.record, TextFailed(run_id))
         return Answer(False, text_failed(plugin.name, run.due, str(e)))
 
 
@@ -229,6 +237,44 @@ def _record(plugin: Plugin, placed: Placed) -> None:
             line = Shown(run.id, what.proposal_id, what.words)
         if line is not None:
             add(plugin.record, line)
+
+
+def _posted(plugin: Plugin, placed: Placed, cwd: str) -> Answer:
+    """The PostToolUse of a call: its line added; and, for the main conversation's, each start due
+    with its text once the adapter that failed at the skill's call answers, and the moves due after
+    a Start tied, where a start stays due beside it with another text."""
+    _record(plugin, placed)
+    if placed.start is not None:
+        return PASS
+    said = [_asked_again(plugin, run, cwd) for run in placed.runs if run.awaiting]
+    what = placed.what
+    if isinstance(what, AgentPosted):
+        said += [_beside(plugin, run, cwd) for run in placed.runs if _tied(run, what)]
+    return Answer(False, "\n".join(x for x in said if x))
+
+
+def _asked_again(plugin: Plugin, run: Run, cwd: str) -> str:
+    """The moves due, once the adapter that failed at the skill's call answers, with that it has
+    answered added; nothing while it still fails."""
+    try:
+        told = _told(plugin, run, cwd)
+    except AdapterFailed:
+        return ""
+    add(plugin.record, TextGiven(run.id))
+    return due(plugin.name, told)
+
+
+def _tied(run: Run, what: AgentPosted) -> bool:
+    """Whether the Agent call whose PostToolUse it is made a Start of the Run."""
+    return any(s.tool_use_id == what.tool_use_id for s in run.starts)
+
+
+def _beside(plugin: Plugin, run: Run, cwd: str) -> str:
+    """The moves due after a Start, where a start stays due beside it with another text; nothing
+    where none does."""
+    told = _told(plugin, run, cwd)
+    starts = [d for d in told if isinstance(d, Due) and d.move.kind == "start"]
+    return due(plugin.name, told) if starts else ""
 
 
 def _prompted(plugin: Plugin, placed: Placed, cwd: str) -> Answer:
@@ -346,19 +392,20 @@ def _held(plugin: Plugin, placed: Placed, run: Run, cwd: str) -> Held:
 
 def _told(plugin: Plugin, run: Run, cwd: str) -> tuple[Due | Left, ...]:
     """The Run's moves due, each start with its text and run values, and each start that the
-    adapter gives no work waits for left out, with why in its place; raises AdapterFailed where
-    the adapter fails."""
+    adapter gives no work waits for left out, with why in its place; a start whose text is that of
+    a Start of its role that runs isn't due, so that a start stays due beside those that run only
+    with another text; raises AdapterFailed where the adapter fails."""
     running = tuple(Running(s.role, s.text, s.values) for s in run.starts if not s.ended)
     adapter = plugin.lanes.proposal.adapters.text
     program = os.path.join(plugin.root, adapter) if adapter else None
     found: list[Due | Left] = []
     for move in run.due:
-        if move.kind == "start" and move.role:
-            text = start_text(program, move.role, running, run.words, cwd)
-            if isinstance(text, NoWork):
-                found.append(Left(move, text.why))
-            else:
-                found.append(Due(move, text.text, text.values))
-        else:
+        if move.kind != "start" or not move.role:
             found.append(Due(move, "", {}))
+            continue
+        text = start_text(program, move.role, running, run.words, cwd)
+        if isinstance(text, NoWork):
+            found.append(Left(move, text.why))
+        elif all((r.role, r.text) != (move.role, text.text) for r in running):
+            found.append(Due(move, text.text, text.values))
     return tuple(found)

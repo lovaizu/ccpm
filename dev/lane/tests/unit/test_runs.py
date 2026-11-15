@@ -21,6 +21,8 @@ from run_record import (
     Prompted,
     Started,
     SteppedAside,
+    TextFailed,
+    TextGiven,
     Tied,
     Unreadable,
     add,
@@ -53,14 +55,38 @@ def test_a_skills_call_makes_the_first_moves_due() -> None:
     assert (run.skill, run.by, run.due, run.ended) == ("write", "person", START_WRITER, False)
 
 
-@pytest.mark.supports("test_the_walkthroughs_run_moves_in_the_order_the_user_set")
-def test_a_start_leaves_no_move_due_until_its_result() -> None:
+@pytest.mark.supports("test_a_start_stays_due_beside_a_start_of_its_role_with_another_text")
+def test_a_start_keeps_its_move_due_beside_it_until_its_result() -> None:
     """Given: write's call, and writer's Start tied to a01.
     When: stand works out the conversation.
-    Then: the Run holds writer's Start, tied, with no move due."""
+    Then: the Run holds writer's Start, tied, with writer's start still due, so that the guard
+    gives it beside the Start where the adapter gives another text."""
     (run,) = stand(d.SESSION, (CALLED, WRITER, TIED), d.ROUTES_OF_WRITE).runs
     assert [(s.role, s.agent_id) for s in run.starts] == [("writer", "a01")]
-    assert run.due == ()
+    assert run.due == START_WRITER
+
+
+@pytest.mark.supports(
+    "test_a_start_whose_adapter_failed_at_the_call_is_given_once_it_gives_its_text"
+)
+def test_a_text_failed_at_the_call_leaves_the_run_awaiting_it() -> None:
+    """Given: write's call, and the adapter of a start's text failed at it.
+    When: stand works out the conversation.
+    Then: the Run awaits the text, with writer's start due."""
+    (run,) = stand(d.SESSION, (CALLED, TextFailed("r1")), d.ROUTES_OF_WRITE).runs
+    assert (run.awaiting, run.due) == (True, START_WRITER)
+
+
+@pytest.mark.supports(
+    "test_a_start_whose_adapter_failed_at_the_call_is_given_once_it_gives_its_text"
+)
+def test_a_text_given_after_it_failed_ends_the_awaiting() -> None:
+    """Given: write's call, the adapter of a start's text failed at it, and then answered.
+    When: stand works out the conversation.
+    Then: the Run no longer awaits the text, with writer's start due."""
+    given = (CALLED, TextFailed("r1"), TextGiven("r1"))
+    (run,) = stand(d.SESSION, given, d.ROUTES_OF_WRITE).runs
+    assert (run.awaiting, run.due) == (False, START_WRITER)
 
 
 @pytest.mark.supports("test_the_walkthroughs_run_moves_in_the_order_the_user_set")
