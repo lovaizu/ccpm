@@ -56,89 +56,13 @@
       "name": "A developer sees, before writing any body, whether the architecture can be built as parts that fit together, from a skeleton of each part, and each gap where it can't",
       "path": "plugins/rn/domain/best-practices/software-design",
       "kind": "meta",
-      "status": "doing",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "When the trials end",
-              "decided": "the trials on Lane's architecture end, and the real skeleton and cases begin, once one round by the best practice as written gives, read in full by the main conversation: no part, interface, kind of data, or case that the architecture doesn't draw; a case for each arrow and branch of each sequence, walked by hand, with trace.py at 0; each case failing at an empty body; and each gap listed one that the architecture itself holds; a lack of the best practice counts only where it made the round miss one of these, and naming, file places, duplicated cases, and other spread stay the maker's",
-              "by": "maker"
-            },
-            {
-              "about": "The next trial",
-              "decided": "a subagent makes Lane's skeleton from dev/lane/architecture.md as 699df8f6 mended it, by the software design best practice as eb67c3f3 left it, then another makes the cases by the test design best practice on that skeleton, both in the scratchpad, not the repository; the main conversation reads every file each makes before judging it",
-              "by": "maker"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "A developer sees, before building any part, whether the parts joined as the architecture draws give each key result, from Given, When, and Then test cases that fail until each part is built",
       "path": "plugins/rn/domain/best-practices/test-design",
       "kind": "meta",
-      "status": "doing",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "When the trials end",
-              "decided": "the trials on Lane's architecture end, and the real skeleton and cases begin, once one round by the best practice as written gives, read in full by the main conversation: no part, interface, kind of data, or case that the architecture doesn't draw; a case for each arrow and branch of each sequence, walked by hand, with trace.py at 0; each case failing at an empty body; and each gap listed one that the architecture itself holds; a lack of the best practice counts only where it made the round miss one of these, and naming, file places, duplicated cases, and other spread stay the maker's",
-              "by": "maker"
-            },
-            {
-              "about": "The next trial",
-              "decided": "a subagent makes Lane's skeleton from dev/lane/architecture.md as 699df8f6 mended it, by the software design best practice as eb67c3f3 left it, then another makes the cases by the test design best practice on that skeleton, both in the scratchpad, not the repository; the main conversation reads every file each makes before judging it",
-              "by": "maker"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Each part a developer builds by the design gives, with the others, what the README promises",
