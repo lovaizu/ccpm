@@ -239,8 +239,8 @@
           "good": false,
           "decisions": [
             {
-              "about": "Who writes the cases",
-              "decided": "a subagent for each plugin writes the E2E and integration cases, and then one for each part writes its unit cases; the main conversation decides each gap's fix, takes back to the architecture first each case no part holds, and checks each result against the architecture and trace.py",
+              "about": "Who makes the designs",
+              "decided": "a subagent makes the skeleton by the software design best practice, and then one makes the cases by the test design best practice; the main conversation decides how each gap they list is mended in the architecture, and reads each result against the architecture",
               "by": "maker"
             }
           ]
@@ -365,8 +365,8 @@
           "good": false,
           "decisions": [
             {
-              "about": "Who writes the cases",
-              "decided": "a subagent for each plugin writes the E2E and integration cases, and then one for each part writes its unit cases; the main conversation decides each gap's fix, takes back to the architecture first each case no part holds, and checks each result against the architecture and trace.py",
+              "about": "Who makes the designs",
+              "decided": "a subagent makes the skeleton by the software design best practice, and then one makes the cases by the test design best practice; the main conversation decides how each gap they list is mended in the architecture, and reads each result against the architecture",
               "by": "maker"
             }
           ]
@@ -409,11 +409,94 @@
       ]
     },
     {
+      "name": "Lane's developers see, before anyone writes a body, whether Lane's parts fit together as its architecture draws",
+      "path": "plugins/lane",
+      "kind": "software-design",
+      "inputs": [
+        "dev/lane/architecture.md"
+      ],
+      "preconditions": [
+        "plugins/rn/domain/best-practices/software-design"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "Lane's developers see, before anyone builds a part, whether Lane's parts joined as its architecture draws give each key result",
+      "path": "dev/lane/tests",
+      "kind": "test-design",
+      "inputs": [
+        "dev/lane/product-vision.md",
+        "plugins/lane/README.md",
+        "dev/lane/architecture.md",
+        "plugins/lane"
+      ],
+      "preconditions": [
+        "plugins/rn/domain/best-practices/test-design"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
       "name": "A person's /lane:up lays a lane that stops a subagent's command outside its step with the step's sentence, and the run starts that subagent and ends on its result",
       "path": "dev/lane/tests/integration/test_lane_walking_skeleton.py",
       "kind": "specific",
       "inputs": [
-        "dev/lane/architecture.md"
+        "dev/lane/architecture.md",
+        "plugins/lane",
+        "dev/lane/tests"
       ],
       "preconditions": [],
       "status": "open",
@@ -426,7 +509,9 @@
       "path": "dev/lane/tests/integration/test_s5_run_in_order.py",
       "kind": "specific",
       "inputs": [
-        "dev/lane/architecture.md"
+        "dev/lane/architecture.md",
+        "plugins/lane",
+        "dev/lane/tests"
       ],
       "preconditions": [
         "dev/lane/tests/integration/test_lane_walking_skeleton.py"
@@ -441,7 +526,9 @@
       "path": "dev/lane/tests/integration/test_s6_subagent_held.py",
       "kind": "specific",
       "inputs": [
-        "dev/lane/architecture.md"
+        "dev/lane/architecture.md",
+        "plugins/lane",
+        "dev/lane/tests"
       ],
       "preconditions": [
         "dev/lane/tests/integration/test_lane_walking_skeleton.py"
@@ -456,7 +543,9 @@
       "path": "dev/lane/tests/integration/test_events_placed.py",
       "kind": "specific",
       "inputs": [
-        "dev/lane/architecture.md"
+        "dev/lane/architecture.md",
+        "plugins/lane",
+        "dev/lane/tests"
       ],
       "preconditions": [
         "dev/lane/tests/integration/test_s5_run_in_order.py",
@@ -472,7 +561,9 @@
       "path": "dev/lane/tests/integration/test_s7_run_picked_up.py",
       "kind": "specific",
       "inputs": [
-        "dev/lane/architecture.md"
+        "dev/lane/architecture.md",
+        "plugins/lane",
+        "dev/lane/tests"
       ],
       "preconditions": [
         "dev/lane/tests/integration/test_s5_run_in_order.py"
@@ -487,7 +578,9 @@
       "path": "dev/lane/tests/integration/test_s1_proposal.py",
       "kind": "specific",
       "inputs": [
-        "dev/lane/architecture.md"
+        "dev/lane/architecture.md",
+        "plugins/lane",
+        "dev/lane/tests"
       ],
       "preconditions": [
         "dev/lane/tests/integration/test_s5_run_in_order.py",
@@ -503,7 +596,9 @@
       "path": "dev/lane/tests/integration/test_s2_person_approves.py",
       "kind": "specific",
       "inputs": [
-        "dev/lane/architecture.md"
+        "dev/lane/architecture.md",
+        "plugins/lane",
+        "dev/lane/tests"
       ],
       "preconditions": [
         "dev/lane/tests/integration/test_s1_proposal.py"
@@ -518,7 +613,9 @@
       "path": "dev/lane/tests/integration/test_s3_ai_approves.py",
       "kind": "specific",
       "inputs": [
-        "dev/lane/architecture.md"
+        "dev/lane/architecture.md",
+        "plugins/lane",
+        "dev/lane/tests"
       ],
       "preconditions": [
         "dev/lane/tests/integration/test_s2_person_approves.py"
@@ -533,7 +630,9 @@
       "path": "dev/lane/tests/integration/test_s4_proposed_again.py",
       "kind": "specific",
       "inputs": [
-        "dev/lane/architecture.md"
+        "dev/lane/architecture.md",
+        "plugins/lane",
+        "dev/lane/tests"
       ],
       "preconditions": [
         "dev/lane/tests/integration/test_s2_person_approves.py"
@@ -548,7 +647,9 @@
       "path": "dev/lane/tests/integration/test_principles.py",
       "kind": "specific",
       "inputs": [
-        "dev/lane/architecture.md"
+        "dev/lane/architecture.md",
+        "plugins/lane",
+        "dev/lane/tests"
       ],
       "preconditions": [
         "dev/lane/tests/integration/test_s1_proposal.py",
@@ -565,10 +666,11 @@
     },
     {
       "name": "A plugin held by Lane runs as its maker designed it at the size of a real request, as the product vision's key results show",
-      "path": "plugins/lane",
+      "path": "dev/lane/tests/e2e",
       "kind": "specific",
       "inputs": [
-        "dev/lane/architecture.md"
+        "dev/lane/architecture.md",
+        "dev/lane/tests"
       ],
       "preconditions": [
         "dev/lane/tests/integration/test_lane_walking_skeleton.py",
@@ -604,11 +706,94 @@
       ]
     },
     {
+      "name": "rn's developers see, before anyone writes a body, whether rn's parts fit together as its architecture draws",
+      "path": "plugins/rn",
+      "kind": "software-design",
+      "inputs": [
+        "dev/rn/architecture.md"
+      ],
+      "preconditions": [
+        "plugins/rn/domain/best-practices/software-design"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "rn's developers see, before anyone builds a part, whether rn's parts joined as its architecture draws give each key result",
+      "path": "dev/rn/tests",
+      "kind": "test-design",
+      "inputs": [
+        "dev/rn/product-vision.md",
+        "plugins/rn/README.md",
+        "dev/rn/architecture.md",
+        "plugins/rn"
+      ],
+      "preconditions": [
+        "plugins/rn/domain/best-practices/test-design"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
       "name": "A person's /rn:up with a request gets one deliverable that a generator makes and an evaluator judges, in a pull request of its own",
       "path": "dev/rn/tests/integration/test_rn_walking_skeleton.py",
       "kind": "specific",
       "inputs": [
-        "dev/rn/architecture.md"
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "dev/rn/tests"
       ],
       "preconditions": [
         "dev/lane/tests/integration/test_s5_run_in_order.py"
@@ -623,7 +808,9 @@
       "path": "dev/rn/tests/integration/test_s1_request.py",
       "kind": "specific",
       "inputs": [
-        "dev/rn/architecture.md"
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "dev/rn/tests"
       ],
       "preconditions": [
         "dev/rn/tests/integration/test_rn_walking_skeleton.py"
@@ -638,7 +825,9 @@
       "path": "dev/rn/tests/integration/test_s2_point.py",
       "kind": "specific",
       "inputs": [
-        "dev/rn/architecture.md"
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "dev/rn/tests"
       ],
       "preconditions": [
         "dev/rn/tests/integration/test_rn_walking_skeleton.py"
@@ -653,7 +842,9 @@
       "path": "dev/rn/tests/integration/test_s3_sign_off.py",
       "kind": "specific",
       "inputs": [
-        "dev/rn/architecture.md"
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "dev/rn/tests"
       ],
       "preconditions": [
         "dev/rn/tests/integration/test_rn_walking_skeleton.py"
@@ -668,7 +859,9 @@
       "path": "dev/rn/tests/integration/test_s4_pause.py",
       "kind": "specific",
       "inputs": [
-        "dev/rn/architecture.md"
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "dev/rn/tests"
       ],
       "preconditions": [
         "dev/rn/tests/integration/test_rn_walking_skeleton.py"
@@ -683,7 +876,9 @@
       "path": "dev/rn/tests/integration/test_s5_pick_up.py",
       "kind": "specific",
       "inputs": [
-        "dev/rn/architecture.md"
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "dev/rn/tests"
       ],
       "preconditions": [
         "dev/rn/tests/integration/test_rn_walking_skeleton.py"
@@ -698,7 +893,9 @@
       "path": "dev/rn/tests/integration/test_s6_handed_over.py",
       "kind": "specific",
       "inputs": [
-        "dev/rn/architecture.md"
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "dev/rn/tests"
       ],
       "preconditions": [
         "dev/rn/tests/integration/test_rn_walking_skeleton.py"
@@ -713,7 +910,9 @@
       "path": "dev/rn/tests/integration/test_rn_components.py",
       "kind": "specific",
       "inputs": [
-        "dev/rn/architecture.md"
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "dev/rn/tests"
       ],
       "preconditions": [
         "dev/rn/tests/integration/test_s1_request.py",
@@ -733,7 +932,9 @@
       "path": "dev/rn/tests/integration/test_rn_principles.py",
       "kind": "specific",
       "inputs": [
-        "dev/rn/architecture.md"
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "dev/rn/tests"
       ],
       "preconditions": [
         "dev/rn/tests/integration/test_s1_request.py",
@@ -750,10 +951,11 @@
     },
     {
       "name": "rn gives the deliverable a person means at the size of a real request, as the product vision's key results show",
-      "path": "plugins/rn",
+      "path": "dev/rn/tests/e2e",
       "kind": "specific",
       "inputs": [
-        "dev/rn/architecture.md"
+        "dev/rn/architecture.md",
+        "dev/rn/tests"
       ],
       "preconditions": [
         "dev/rn/tests/integration/test_rn_walking_skeleton.py",
