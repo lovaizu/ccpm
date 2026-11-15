@@ -66,7 +66,6 @@ def test_an_ai_writes_its_change_into_the_step_before_it_lays(b: w.Bench) -> Non
     assert w.proposal_id(printed.output) != first
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S4", "Laid", "Step")
 def test_steps_after_a_lay_come_without_lanes_sentences(b: w.Bench) -> None:
     """Given: the walkthrough's Proposal laid.
@@ -115,7 +114,6 @@ def test_a_sentence_the_user_changed_stays_as_theirs(b: w.Bench) -> None:
     ]
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S4", "lay.py", "Laid")
 def test_a_lay_after_lane_updates_lays_with_the_newest_code(b: w.Bench) -> None:
     """Given: the walkthrough's Proposal laid, then Lane updated, its result.py changed.
@@ -133,7 +131,6 @@ def test_a_lay_after_lane_updates_lays_with_the_newest_code(b: w.Bench) -> None:
     assert lanes["laid"]["version"] == plugin["version"]
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S4", "lay.py", "Laid", "Step")
 def test_a_plugin_laid_by_an_earlier_lane_is_read_by_its_own_copy(b: w.Bench) -> None:
     """Given: the walkthrough's Proposal laid, then changelog's hooks/lane/ and lanes.json put in

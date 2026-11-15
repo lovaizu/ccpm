@@ -290,7 +290,6 @@ def test_a_skill_call_of_another_plugin_that_a_move_names_is_a_skill_call() -> N
     assert got.what == SkillCall("lint", "check", "ai", "")
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_an_ais_run_keeps_a_persons_waiting_proposal")
 def test_a_call_of_write_lies_on_the_run_of_up_that_showed_its_id() -> None:
     """Given: two Runs of up, the first a person's that showed b9fd8fd8, the second an AI's that

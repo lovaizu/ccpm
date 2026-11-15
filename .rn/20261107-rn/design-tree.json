@@ -176,18 +176,7 @@
       "name": "Lane lays only what a person approved, and proposes again on a change they ask for",
       "path": "dev/lane/tests/integration/test_s2_approval.py",
       "kind": "specific",
-      "inputs": [
-        "dev/lane/architecture.md",
-        "plugins/lane",
-        "dev/lane/tests"
-      ],
-      "preconditions": [
-        "dev/lane/tests/integration/test_s1_proposal.py"
-      ],
-      "status": "doing",
-      "check": "the integration tests in dev/lane/tests/integration/test_s2_approval.py pass, each seen to fail first, and each that names a rule of Solution strategy fails with the part that holds the rule taken out",
-      "good": false,
-      "decisions": []
+      "status": "done"
     },
     {
       "name": "An AI that builds a plugin approves Lane's proposal by its own act, and after the steps change or Lane updates, the checks hold the steps as they now read",
@@ -201,7 +190,7 @@
       "preconditions": [
         "dev/lane/tests/integration/test_s2_approval.py"
       ],
-      "status": "open",
+      "status": "doing",
       "check": "the integration tests in dev/lane/tests/integration/test_s3_s4_again.py pass, each seen to fail first, and each that names a rule of Solution strategy fails with the part that holds the rule taken out",
       "good": false,
       "decisions": []

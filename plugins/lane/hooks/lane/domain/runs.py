@@ -128,7 +128,8 @@ def stand(
     Takes: the conversation's session_id, the run record's lines, the plugin's Routes, and the
     plugin's name, by which a prompt `/<plugin>:<command>` is the plugin's command.
     Gives: each Run, its moves due those of the Route after its latest start, Result, typed
-    command, or returned call, a Route after the plugin's command typed taking the place of those
+    command, or returned call, its Approvals, the person's of the Proposal it showed last before
+    each prompt typed, a Route after the plugin's command typed taking the place of those
     before, a start staying due beside each Start it made, as the guard gives it where the adapter
     gives a text other than theirs, a resume taken by its Start, and a start whose subagent ended
     with no Result due again; `awaiting` from the adapter's failure at the skill's call until it
@@ -204,15 +205,18 @@ def _ended(run: Run, line: Ended) -> Run:
 
 def _prompted(run: Run, line: Prompted, routes: Sequence[Route], plugin: str) -> Run:
     """The Run after a prompt: the moves of a Route after the plugin's command typed, as
-    `/<plugin>:<command>`, in place of those before, and a Run that its skill's Result ended no
-    longer closing."""
+    `/<plugin>:<command>`, in place of those before; a Run that its skill's Result ended no
+    longer closing; and the person's Approval of the Proposal that the Run showed last, as the
+    prompt is their reply to it."""
     typed = line.text.split(maxsplit=1)[0] if line.text.strip() else ""
     due = _moves(
         routes,
         run.skill,
         lambda after: after.kind == "command" and typed == f"/{plugin}:{after.command}",
     )
-    return dataclasses.replace(run, due=due or run.due, closing=False)
+    replied = tuple(Approval(s.proposal_id, "person") for s in run.shown[-1:])
+    approvals = tuple(dict.fromkeys((*run.approvals, *replied)))
+    return dataclasses.replace(run, due=due or run.due, closing=False, approvals=approvals)
 
 
 def _aside(run: Run, line: SteppedAside, routes: Sequence[Route]) -> Run:

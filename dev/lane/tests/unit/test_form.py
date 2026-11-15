@@ -146,17 +146,21 @@ def test_a_steps_number_starts_at_1(step: int, stands: bool) -> None:
 
 @pytest.mark.supports("test_a_call_the_guard_cant_check_is_stopped_with_who_must_fix_it")
 def test_lanes_json_with_nothing_laid_is_read() -> None:
-    """Given: Lane's own hooks/lanes.json, which holds no Lanes and only up's Route after its
-    start, which waits for the person's reply and ends by up's `laid` or `left`.
+    """Given: Lane's own hooks/lanes.json, which holds up's Lanes of gives_shown and
+    lays_after_reply, and only up's Route after its start, which waits for the person's reply and
+    ends by up's `laid` or `left`.
     When: read_lanes reads it.
-    Then: it gives no Lanes, that one Route, and a Laid of 0.1.0 with no sentences."""
+    Then: it gives those two Lanes, that one Route, and a Laid of 0.1.0 with no sentences."""
     lanes = read_lanes(os.path.join(LANE, "hooks", "lanes.json"))
     moves = (
         Move("wait", command=""),
         Move("no_more", result="laid"),
         Move("no_more", result="left"),
     )
-    assert lanes.proposal.lanes == ()
+    assert [(x.role, x.type) for x in lanes.proposal.lanes] == [
+        ("up", "gives_shown"),
+        ("up", "lays_after_reply"),
+    ]
     assert lanes.proposal.routes == (Route("up", After("first"), moves),)
     assert (lanes.laid.version, lanes.laid.sentences) == ("0.1.0", ())
 

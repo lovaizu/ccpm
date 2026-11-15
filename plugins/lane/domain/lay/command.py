@@ -13,7 +13,7 @@ from form import OutOfForm, proposal_form, read_proposal
 from lanes import types
 from manifest import plugin_name
 
-from lay import laid, laid_copy, proposals, show, steps, write
+from lay import laid, proposals, show, steps, write
 from lay.check import Faults, check
 
 # How to call lay.py, as it says where a command line isn't one of its commands.
@@ -33,13 +33,12 @@ def main(
     Gives, as the exit code, standard output, and standard error:
     - `types`: 0, with the JSON `{"types": [...], "proposal": <JSON Schema>}` from `lanes.types`
       and `form.proposal_form`, in the form that up's part names.
-    - `steps <plugin>`: 0, with the JSON `{"steps": [...], "notes": [...]}` from `steps.read_steps`,
-      `laid_copy.read_laid`, and `laid.strip`.
+    - `steps <plugin>`: 0, with the JSON `{"steps": [...], "notes": [...]}` from `laid.unlaid`.
     - `print <plugin>`, with the Proposal on standard input: 0, with what `show.render` gives, once
-      `form.read_proposal`, `steps.as_held`, and `check.check` take it and `proposals.keep` keeps
-      it; 3, with the faults of the plugin's files, where a file of the plugin can't carry it, as
-      up can't mend what the user must fix first; else 1, with the faults, where the Proposal
-      can't stand.
+      `form.read_proposal`, `laid.unlaid`, `steps.as_held`, and `check.check` take it and
+      `proposals.keep` keeps it; 3, with the faults of the plugin's files, where a file of the
+      plugin can't carry it, as up can't mend what the user must fix first; else 1, with the
+      faults, where the Proposal can't stand.
     - `write <plugin> <ID>`: 0, with each file written and to type /reload-plugins, from
       `write.write`; 1, with why, where it refuses.
     - anything else: 2, with how to call lay.py.
@@ -53,7 +52,7 @@ def main(
         listed = [dataclasses.asdict(each) for each in types()]
         return 0, json.dumps({"types": listed, "proposal": proposal_form()}) + "\n", ""
     if command == "steps" and len(args) == 1:
-        read, notes = laid.strip(steps.read_steps(args[0]), laid_copy.read_laid(args[0]))
+        read, notes = laid.unlaid(args[0])
         held = {
             "steps": [dataclasses.asdict(s) for s in read],
             "notes": [dataclasses.asdict(n) for n in notes],
@@ -72,8 +71,7 @@ def _print(plugin: str, text: str) -> tuple[int, str, str]:
         proposal = read_proposal(text)
     except OutOfForm as e:
         return 1, "", "lay.py print: the Proposal is out of form:\n" + "\n".join(e.problems) + "\n"
-    read, _ = laid.strip(steps.read_steps(plugin), laid_copy.read_laid(plugin))
-    read = steps.as_held(read, proposal.routes)
+    read = steps.as_held(laid.unlaid(plugin)[0], proposal.routes)
     checked = check(plugin, proposal, read)
     if isinstance(checked, Faults):
         code = 3 if checked.plugin else 1

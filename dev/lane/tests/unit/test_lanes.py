@@ -440,7 +440,6 @@ def test_ends_by_result_allows_its_roles_run_of_the_result_script(
     assert TYPES["ends_by_result"].allows(d.WRITER_END, d.bash(command), HELD) is allowed
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_lay_before_the_persons_reply_is_stopped")
 @pytest.mark.parametrize(
     "held, call, allowed",
@@ -464,7 +463,6 @@ def test_lays_after_reply_holds_write_to_the_callers_own_act(
     assert TYPES["lays_after_reply"].allows(lane, call, held) is allowed
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_ups_end_without_what_print_showed_is_stopped")
 @pytest.mark.parametrize(
     "message, kept",

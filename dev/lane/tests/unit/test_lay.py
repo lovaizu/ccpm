@@ -202,7 +202,6 @@ def test_a_plugin_lane_never_laid_in_has_an_empty_laid(plugin: str) -> None:
     assert read_laid(plugin).sentences == ()
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_steps_after_a_lay_come_without_lanes_sentences")
 def test_the_laid_is_read_through_the_plugins_copy(plugin: str) -> None:
     """Given: changelog with a copy of this Lane's code in hooks/lane/, and the walkthrough's
@@ -214,7 +213,6 @@ def test_the_laid_is_read_through_the_plugins_copy(plugin: str) -> None:
     assert read_laid(plugin) == d.LAID
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_a_plugin_laid_by_an_earlier_lane_is_read_by_its_own_copy")
 def test_a_laid_of_an_earlier_lane_is_read_by_its_own_form(plugin: str) -> None:
     """Given: changelog whose hooks/lane/domain/form.py is an earlier Lane's, which keeps the Laid
@@ -254,7 +252,6 @@ def test_a_laid_that_no_copy_reads_is_refused(plugin: str, code: bool, lanes: st
         read_laid(plugin)
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_steps_after_a_lay_come_without_lanes_sentences")
 def test_a_sentence_still_word_for_word_is_taken_out() -> None:
     """Given: writer's steps 2 and 3, each holding the sentence Lane laid.
@@ -263,7 +260,6 @@ def test_a_sentence_still_word_for_word_is_taken_out() -> None:
     assert strip((LAID_2, LAID_3), d.LAID) == ((STEP_2, STEP_3), ())
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_steps_after_a_lay_come_without_lanes_sentences")
 def test_the_end_laid_on_the_last_step_is_taken_out() -> None:
     """Given: writer's step 4, holding the sentence of the Lane on its last Step.

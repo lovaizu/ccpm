@@ -79,7 +79,6 @@ def proposals(draw: Any) -> dict[str, Any]:
     }
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("test_steps_after_a_lay_come_without_lanes_sentences")
 @given(steps_and_sentences())
 def test_steps_laid_then_stripped_read_as_written(given_: Any) -> None:

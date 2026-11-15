@@ -1,5 +1,20 @@
 {
-  "lanes": [],
+  "lanes": [
+    {
+      "role": "up",
+      "file": "domain/up.md",
+      "step": 1,
+      "type": "gives_shown",
+      "args": {}
+    },
+    {
+      "role": "up",
+      "file": "domain/up.md",
+      "step": 1,
+      "type": "lays_after_reply",
+      "args": {}
+    }
+  ],
   "routes": [
     {
       "skill": "up",

@@ -15,7 +15,7 @@ from events import Event
 from form import LanesFile, Move
 from manifest import plugin_name
 from runs import Conversation, Run, Start
-from script_calls import printed, result_args
+from script_calls import printed, result_args, write_call
 
 # A subagent's end as it reaches the main conversation, by its agent_id.
 NOTIFICATION = re.compile(r"<task-notification>\s*<task-id>([^<]+)</task-id>")
@@ -169,11 +169,16 @@ def _where(
     the end of one that reaches the main conversation, its tied Start and that Start's Run; for the
     main conversation's, each Run that hasn't ended and doesn't stand aside, and, for its end or a
     prompt, each Run whose turn's end is still held after its skill's Result ended it. A subagent
-    resumed lies on its latest Start."""
+    resumed lies on its latest Start. A call of lay.py write lies only on each of those Runs that
+    showed its ID."""
     agent = event.agent_id or _notified(event)
     going = tuple(r for r in conversation.runs if not r.ended)
     if agent is None:
-        return None, tuple(r for r in conversation.runs if _main(r, what))
+        runs = tuple(r for r in conversation.runs if _main(r, what))
+        laid = _laid_id(what)
+        if laid is not None:
+            runs = tuple(r for r in runs if any(s.proposal_id == laid for s in r.shown))
+        return None, runs
     for run in going:
         for start in reversed(run.starts):
             if start.agent_id == agent:
@@ -265,6 +270,14 @@ def _posted(event: Event, tool_input: Mapping[str, Any], root: str) -> What | No
         return ResultPosted(*given)
     shown = printed(command, str(response.get("stdout", "")))
     return PrintPosted(*shown) if shown else None
+
+
+def _laid_id(what: What | None) -> str | None:
+    """The Proposal's ID that a call of lay.py write lays; None for any other event."""
+    if not isinstance(what, ToolCall):
+        return None
+    found = write_call(str(what.call.input.get("command", "")))
+    return found[1] if found else None
 
 
 def _notified(event: Event) -> str | None:

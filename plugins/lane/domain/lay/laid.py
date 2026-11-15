@@ -11,7 +11,8 @@ from dataclasses import dataclass
 
 from form import Laid, LaidSentence
 
-from lay.steps import Step, items
+from lay.laid_copy import read_laid
+from lay.steps import Step, items, read_steps
 
 
 @dataclass(frozen=True)
@@ -35,7 +36,28 @@ def strip(steps: Sequence[Step], laid: Laid) -> tuple[tuple[Step, ...], tuple[No
     Carries: S1 `L-->>UP: each Step without the text that the Laid names`, S4's loop over each
     sentence that the Laid added, and `L-->>UP: each Step that remains, with the notes`.
     """
-    return tuple(steps), ()
+    added = {(x.file, x.step): f" {x.text}" for x in laid.sentences}
+    kept = []
+    for step in steps:
+        sentence = added.get((step.file, step.number))
+        if sentence is not None and step.text.endswith(sentence):
+            step = dataclasses.replace(step, text=step.text[: -len(sentence)])
+        kept.append(step)
+    return tuple(kept), ()
+
+
+def unlaid(plugin: str) -> tuple[tuple[Step, ...], tuple[Note, ...]]:
+    """Each Step of the plugin without the text that its Laid names.
+
+    Takes: the plugin's folder.
+    Gives: what `strip` gives of the Steps that `steps.read_steps` reads, by the Laid that
+    `laid_copy.read_laid` reads.
+    Changes: nothing.
+    Refuses: what `steps.read_steps` and `laid_copy.read_laid` refuse.
+    Carries: S1 `L->>ST: reads each Step` and `L->>LS: reads the Laid`, S2's check that the Steps
+    read as print read them, and S4's reading of each Step.
+    """
+    return strip(read_steps(plugin), read_laid(plugin))
 
 
 def as_laid(steps: Sequence[Step], sentences: Mapping[tuple[str, int], str]) -> tuple[Step, ...]:
@@ -61,27 +83,34 @@ def as_laid(steps: Sequence[Step], sentences: Mapping[tuple[str, int], str]) -> 
 def lay(plugin: str, steps: Sequence[Step], version: str) -> Laid:
     """Writes each Step as laid in place of what the Laid added.
 
-    Takes: the plugin's folder, each Step as it will read once laid, and Lane's version.
-    Gives: the new Laid, with each sentence written.
+    Takes: the plugin's folder, each Step as it will read once laid, its own words first, as
+    `as_laid` gives it, and Lane's version.
+    Gives: the new Laid, which names the text after each Step's own words, as `unlaid` reads them
+    before the lay.
     Changes: each file of the plugin that holds a Step whose text changes.
     Refuses: OSError, where a file can't be written, so that lay.py write puts back each file.
     Carries: S2 `L->>ST: writes each Lane's sentence in place of the Laid's`.
     """
-    written = []
+    own = {(step.file, step.number): step.text for step in unlaid(plugin)[0]}
+    written = tuple(
+        LaidSentence(step.file, step.number, step.text[len(own[(step.file, step.number)]) + 1 :])
+        for step in steps
+        if step.text != own[(step.file, step.number)]
+    )
     for file in dict.fromkeys(step.file for step in steps):
-        path = os.path.join(plugin, file)
-        with open(path, encoding="utf-8") as f:
-            lines = f.read().split("\n")
-        texts = {step.number: step.text for step in steps if step.file == file}
-        changed = [
-            (index, number, text, texts[number])
-            for index, number, text in items(lines)
-            if texts.get(number, text) != text
-        ]
-        for index, number, text, now in changed:
-            written.append(LaidSentence(file, number, now[len(text) + 1 :]))
-            lines[index] = f"{number}. {now}"
-        if changed:
-            with open(path, "w", encoding="utf-8") as f:
-                f.write("\n".join(lines))
-    return Laid(version, tuple(written))
+        _write(plugin, file, {step.number: step.text for step in steps if step.file == file})
+    return Laid(version, written)
+
+
+def _write(plugin: str, file: str, texts: Mapping[int, str]) -> None:
+    """Writes the file of the plugin with each Step that the texts name, by its number, as they
+    give it, where one of them changes."""
+    path = os.path.join(plugin, file)
+    with open(path, encoding="utf-8") as f:
+        lines = f.read().split("\n")
+    changed = [(i, n) for i, n, text in items(lines) if texts.get(n, text) != text]
+    for index, number in changed:
+        lines[index] = f"{number}. {texts[number]}"
+    if changed:
+        with open(path, "w", encoding="utf-8") as f:
+            f.write("\n".join(lines))

@@ -8,7 +8,7 @@ import os
 import sys
 from types import ModuleType
 
-from form import Laid, OutOfForm
+from form import Laid, LaidSentence, OutOfForm
 
 
 def read_laid(plugin: str) -> Laid:
@@ -28,10 +28,10 @@ def read_laid(plugin: str) -> Laid:
         return Laid("", ())
     form = _copy_form(plugin)
     try:
-        form.read_lanes(os.path.join(plugin, "hooks", "lanes.json"))
+        laid = form.read_lanes(os.path.join(plugin, "hooks", "lanes.json")).laid
     except form.OutOfForm as e:
         raise OutOfForm(e.problems) from e
-    raise NotImplementedError("laid_copy.read_laid, of a plugin Lane laid in")
+    return Laid(laid.version, tuple(LaidSentence(x.file, x.step, x.text) for x in laid.sentences))
 
 
 def _copy_form(plugin: str) -> ModuleType:

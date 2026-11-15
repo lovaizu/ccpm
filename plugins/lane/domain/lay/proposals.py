@@ -56,19 +56,20 @@ def find(plugin: str, proposal_id: str) -> KeptProposal | None:
     """The Proposal kept by its ID.
 
     Takes: the plugin's folder, and the ID.
-    Gives: the KeptProposal, or None where no Proposal of the plugin has that ID.
+    Gives: the KeptProposal, or None where no Proposal kept for that folder has that ID; found by
+    the folder, not the plugin's name, which plugin.json may no longer give as it did at print.
     Changes: nothing.
     Refuses: form.OutOfForm, where the kept file isn't in its form.
     Carries: S2 `L->>P: reads the Proposal by its ID`.
     """
-    pattern = os.path.join(
-        tempfile.gettempdir(), "lane", f"*-{plugin_name(plugin)}", f"{proposal_id}.json"
-    )
-    found = sorted(glob.glob(pattern))
+    pattern = os.path.join(tempfile.gettempdir(), "lane", "*", f"{proposal_id}.json")
+    found = []
+    for path in sorted(glob.glob(pattern)):
+        with open(path, encoding="utf-8") as f:
+            found += [held for held in [json.load(f)] if held["plugin"] == os.path.abspath(plugin)]
     if not found:
         return None
-    with open(found[-1], encoding="utf-8") as f:
-        held = json.load(f)
+    held = found[-1]
     steps = tuple(Step(**step) for step in held["steps"])
     proposal = read_proposal(json.dumps(held["proposal"]))
     return KeptProposal(proposal_id, held["plugin"], proposal, steps)

@@ -42,10 +42,7 @@ def printed(command: str, output: str) -> tuple[str, str] | None:
     Refuses: nothing.
     Carries: S1 `CC->>G: the PostToolUse of lay.py print`.
     """
-    try:
-        words = shlex.split(command)
-    except ValueError:
-        return None
+    words = _words(command)
     ran = any(
         os.path.basename(word) == "lay.py" and words[i + 1 : i + 2] == ["print"]
         for i, word in enumerate(words)
@@ -62,10 +59,28 @@ def write_args(words: Sequence[str]) -> tuple[str, str] | None:
     <ID>`.
     Changes: nothing.
     Refuses: nothing.
-    Carries: S2 `CC->>G: the call` of lay.py write, and lay.py's own reading of its write command.
+    Carries: S2 `CC->>G: the call` of lay.py write, through `write_call`.
     """
     if len(words) == 4 and os.path.basename(words[0]) == "lay.py" and words[1] == "write":
         return words[2], words[3]
+    return None
+
+
+def write_call(command: str) -> tuple[str, str] | None:
+    """The plugin and the Proposal's ID of the lay.py write that a Bash command runs.
+
+    Takes: the Bash command.
+    Gives: what `write_args` reads from the words `lay.py write <plugin> <ID>` wherever they stand
+    in the command, or None where it runs no lay.py write or shlex can't split it.
+    Changes: nothing.
+    Refuses: nothing.
+    Carries: S2 `CC->>G: the call` of lay.py write, as the guard places it on the Run of up that
+    showed its ID and checks it.
+    """
+    words = _words(command)
+    for i, word in enumerate(words):
+        if os.path.basename(word) == "lay.py" and words[i + 1 : i + 2] == ["write"]:
+            return write_args(words[i : i + 4])
     return None
 
 
@@ -95,11 +110,17 @@ def result_args(command: str, root: str) -> tuple[str, str] | None:
     """
     if MORE.search(command.replace(ROOT, "")):
         return None
-    try:
-        words = shlex.split(command.replace(ROOT, root))
-    except ValueError:
-        return None
+    words = _words(command.replace(ROOT, root))
     script = os.path.join(root, "hooks", "lane", "result.py")
     if len(words) == 4 and words[0] == "python3" and os.path.normpath(words[1]) == script:
         return words[2], words[3]
     return None
+
+
+def _words(command: str) -> list[str]:
+    """The command's words as shlex splits them; none where it can't, such as a here-document
+    that holds an apostrophe, which then runs none of Lane's scripts as the guard reads them."""
+    try:
+        return shlex.split(command)
+    except ValueError:
+        return []
