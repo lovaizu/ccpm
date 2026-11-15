@@ -125,15 +125,15 @@ Strategies:
   No hook event marks where a command's steps end, so only the skill's lanes hold them all, keeping
   KR1.1 low.
 - `lay.py print` refusing a Proposal the plugin's files can't carry\
-  A model-callable route command, an unnamed adapter, or a shared steps file breaks the run, raising
-  KR1.1.
+  Route commands the model calls, unnamed adapters, shared steps files, and foreground subagents
+  break runs, raising KR1.1.
 - An end held to the plugin's own command, which Lane runs\
   A role that leaves its steps skips the checking step too, and only the plugin knows its measure,
   raising KR1.1.
 - A sentence left out of a step that already says it\
   A rule said twice takes the role's attention from its step, so the step says each once, keeping KR1.1 low.
-- A call kept where, for each lane type, one of the role's Lanes of that type allows it\
-  One Lane alone would stop the result script that another Lane of the role asks for, raising KR1.1.
+- A call kept where one Lane of each lane type allows it, the end's result script by every type\
+  Else one Lane stops what another of its type allows, or the end's result script, raising KR1.1.
 - Each event placed by `session_id` and `agent_id`, a Start tied at its Agent call's PostToolUse\
   Only this placing holds each call to its own Start, as [Claude Code's states](claude-code-states.md)
   shows, keeping KR1.1 low.
@@ -174,7 +174,8 @@ Strategies:
 - Call\
   One tool call of a role, which the guard checks as it comes and the run record doesn't keep.
 - Run\
-  One run of one skill in one conversation, from its call to a route that starts no more.
+  One run of one skill in one conversation, with each prompt typed in it, until a route starts no
+  more.
 - Kept results\
   The results of a run that the user's plugin keeps in its own records.
 
@@ -340,7 +341,7 @@ sequenceDiagram
   U->>ST: changes the Steps, or updates Lane
   U->>UP: /lane:up <plugin>
   UP->>L: steps <plugin>
-  L->>LS: reads the Laid, in the form of the Lane that laid it
+  L->>LS: reads the Laid by the guard's code in its hooks/lane/, the form of the Lane that laid it
   L->>ST: reads each Step
   loop each sentence that the Laid added
     alt the Step still holds it word for word
@@ -479,7 +480,7 @@ sequenceDiagram
       G-->>SA: stops it, with the Step's sentence and what it may do
       SA->>SA: goes back to the Step
     else it starts a role of the plugin
-      G-->>SA: stops it, with the sentence of its last Step
+      G-->>SA: stops it, with the sentence of the Lane on its last Step
     else the guard can't check it
       G-->>SA: stops it, with why and who must fix it
     end
@@ -495,10 +496,10 @@ sequenceDiagram
   end
   SA->>CC: ends
   CC->>G: the end
-  alt no Result since its Start
-    G-->>SA: stops the end, with the sentence of its last Step
+  G->>T: checks the end by each Lane of the role
+  alt the Lane on its last Step finds no Result since its Start
+    G-->>SA: stops the end, with that Lane's sentence
   else
-    G->>T: checks the end by each Lane of the role
     opt a Lane holds the end to a command of the plugin's
       T->>PC: runs it, with the run values and the Result filled in
       PC-->>T: its exit code
@@ -578,6 +579,7 @@ system's temporary folder holds what Lane keeps only for a run.
 plugins/lane/
 ├── skills/up/SKILL.md            /lane:up, which runs up's part
 ├── domain/up.md                  up's part
+├── domain/lay/                   lay.py's code, a module for each of its decisions
 ├── scripts/lay.py                lay.py types, steps, print, and write
 ├── hooks/
 │   ├── hooks.json                starts Lane's own guard on up
@@ -596,7 +598,7 @@ dev/lane/
     └── released/<version>/       the walkthrough's plugin as each released Lane laid it
 
 dev/tests/
-├── claude_code.py                the double of Claude Code
+├── claude_code.py                the double of Claude Code, its `claude plugin validate` too
 ├── recorded/                     the records of Claude Code that the double gives from
 └── recorder/                     what records a state again, and compare.py
 
