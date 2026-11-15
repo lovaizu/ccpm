@@ -184,7 +184,7 @@
       "preconditions": [
         "dev/lane/tests/integration/test_s1_proposal.py"
       ],
-      "status": "open",
+      "status": "doing",
       "check": "the integration tests in dev/lane/tests/integration/test_s2_approval.py pass, each seen to fail first, and each that names a rule of Solution strategy fails with the part that holds the rule taken out",
       "good": false,
       "decisions": []
