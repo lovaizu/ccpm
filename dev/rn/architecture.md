@@ -205,7 +205,7 @@ sequenceDiagram
   K-->>O: done
   O->>O: drafts the goal, and plans the deliverables
   O->>K: resumes it, with the goal drafted and the plan (Decision, Deliverable)
-  K->>T: writes them, and commits (Design tree)
+  K->>T: writes them, and commits them with each decision's ground as the message (Design tree)
   T-->>K: what changed, and each node they touch
   K->>K: checks that each node touched agrees with them
   K-->>O: what changed, and each node checked
@@ -258,7 +258,7 @@ sequenceDiagram
         O->>O: judges each more by the purpose and the best practices
         alt a more the people fall short by
           O->>K: the decision it changes, and the more to keep (Decision, More kept)
-          K->>T: writes the decision, and keeps the more (Design tree, More kept)
+          K->>T: writes the decision, commits it with its ground as the message, and keeps the more (Design tree, More kept)
           alt no decision that answers the more's necessary condition changed since the round's cut
             T-->>K: refuses the more, naming its necessary condition
             K-->>O: that tree.py refused it, and why
@@ -298,7 +298,7 @@ sequenceDiagram
       O->>O: settles it
     end
     O->>K: the decision, with its ground, and the plan where the decision changes it (Decision, Deliverable)
-    K->>T: writes it, and commits it with each deliverable whose turn has come marked doing (Design tree)
+    K->>T: writes it, and commits it with its ground as the message and each deliverable whose turn has come marked doing (Design tree)
     T-->>K: what changed, each node it touches, and each deliverable marked doing
     K->>K: checks that the path up and each node touched agree with it
     K-->>O: what changed, each node checked, and each deliverable marked doing
