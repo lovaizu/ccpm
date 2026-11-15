@@ -1,3 +1,0 @@
-#!/bin/sh
-# The double of gh, which rn's tests put first on the PATH, as gh_double.py says.
-exec python3 "$(dirname "$0")/gh_double.py" "$@"

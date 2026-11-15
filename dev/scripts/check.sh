@@ -55,21 +55,12 @@ fi
 held design pyrefly check --search-path dev/scripts --search-path dev/scripts/tests \
   --search-path dev/tests dev/scripts/*.py dev/scripts/tests/*.py dev/tests/*.py
 
-# Lane's parts and its test cases, which call them, as a type that doesn't fit across a handoff is a
-# gap between the parts, as N13 of the architecture best practice says. Each folder on the search
-# path is one that Claude Code, lay.py, or pytest puts on the import path of the code in it.
-held design pyrefly check $properties --search-path plugins/lane/hooks/lane --search-path plugins/lane/scripts \
-  --search-path dev/tests --search-path dev/lane/tests/unit \
-  plugins/lane/hooks/lane/*.py plugins/lane/hooks/lane/domain/*.py \
-  plugins/lane/hooks/lane/domain/lanes/*.py plugins/lane/scripts/*.py dev/lane/tests/*/*.py
-
-# rn's parts and its test cases, in the same way. plugins/rn/scripts stays off the search path, as
-# its tree.py, record.py, and throwaway.py share their names with the code of plugins/rn/domain
-# they run.
-held design pyrefly check $properties --search-path plugins/rn/domain --search-path plugins/rn/hooks/adapters \
-  --search-path dev/tests --search-path dev/rn/tests/gh \
-  plugins/rn/domain/*.py plugins/rn/domain/*/*.py plugins/rn/hooks/adapters/*.py \
-  plugins/rn/scripts/*.py dev/rn/tests/*/*.py
+# rn's code and its tests, as a type that doesn't fit across a call is a fault no test may reach.
+# plugins/rn/scripts stays off the search path, as its record.py shares its name with the code of
+# plugins/rn/domain it runs.
+held design pyrefly check $properties --search-path plugins/rn/domain \
+  plugins/rn/domain/*.py plugins/rn/domain/*/*.py plugins/rn/scripts/*.py dev/rn/tests/*.py \
+  dev/rn/tests/*/*.py
 
 # Each kind's best practice lies in a folder of its own in rn, as `best-practice.json`. Its template
 # lies beside it. The check fails on:
@@ -96,12 +87,12 @@ sh dev/scripts/mermaid.sh
 # Each test case of a plugin names what it supports one level up, and each element of its
 # architecture has an integration case, as the plugin guide's Test says, so a gap between the
 # parts shows before anyone builds around it. A plugin comes under the check once
-# dev/<plugin>/tests/ holds its cases, as its developers write every case before any part.
+# dev/<plugin>/tests/integration/ holds its cases, as its developers write every case before any part.
 plugin_tests=""
 for architecture in dev/*/architecture.md; do
   plugin="${architecture#dev/}"
   plugin="${plugin%/architecture.md}"
-  if [ -n "$(find "dev/$plugin/tests" -name 'test_*.py' 2>/dev/null)" ]; then
+  if [ -n "$(find "dev/$plugin/tests/integration" -name 'test_*.py' 2>/dev/null)" ]; then
     python3 dev/scripts/trace.py check "$plugin"
   else
     echo "check.sh: the trace of $plugin's cases goes unchecked, as dev/$plugin/tests/ holds"\

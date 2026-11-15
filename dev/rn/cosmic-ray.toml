@@ -1,9 +1,9 @@
 # The mutation testing of rn's own code that dev/scripts/quality.sh runs in CI, as N7 of
-# plugins/rn/domain/best-practices/code/best-practice.md says: its domain, the scripts that run it,
-# and its adapters. The check fails on each mutant under which every test still passes. A line
+# plugins/rn/domain/best-practices/code/best-practice.md says: its domain and the scripts that run
+# it. The check fails on each mutant under which every test still passes. A line
 # marked `# pragma: no mutate` holds only changes that can't alter what the code does.
 [cosmic-ray]
-module-path = ["plugins/rn/domain", "plugins/rn/scripts", "plugins/rn/hooks/adapters"]
+module-path = ["plugins/rn/domain", "plugins/rn/scripts"]
 timeout = 60.0
 excluded-modules = []
 # The unit tests try each case of each command of rn's code through the command, in seconds on every
