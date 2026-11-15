@@ -260,7 +260,7 @@
         "dev/lane/tests"
       ],
       "preconditions": [],
-      "status": "open",
+      "status": "doing",
       "check": "the integration tests in dev/lane/tests/integration/test_lane_walking_skeleton.py pass, each seen to fail first, and each that names a rule of Solution strategy fails with the part that holds the rule taken out",
       "good": false,
       "decisions": []
@@ -416,7 +416,7 @@
       "preconditions": [
         "plugins/rn/domain/best-practices/software-design"
       ],
-      "status": "open",
+      "status": "doing",
       "necessary_conditions": [
         {
           "id": "N1",
