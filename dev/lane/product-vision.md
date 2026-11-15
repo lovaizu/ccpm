@@ -1,4 +1,4 @@
-# Lane product vision
+# Product vision of Lane
 
 ## Roles
 

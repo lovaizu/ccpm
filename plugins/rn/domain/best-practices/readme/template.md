@@ -26,12 +26,14 @@
 
 ## Requirements
 
-- `<requirement>`: `<check>` shows it.
+- `<requirement>`: `<check>` shows `<sign>`.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - `<requirement>`: each thing that must be in place before installing.
 > - `<check>`: a command whose output shows the reader they have it.
+> - `<sign>`: what in that output shows they have it, or "it" where the output names the requirement itself,
+>   such as a version.
 
 ## Installation
 

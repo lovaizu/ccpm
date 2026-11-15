@@ -7,14 +7,14 @@ In development: the rebuild of Lane isn't released, and so far it holds subagent
 and order.
 
 Lane is for you when you build a Claude Code plugin whose skill and subagents must keep numbered
-steps. With it, your plugin runs as you designed it, and you write no check.
+steps. With it, you have your plugin run as you designed it, and write no check.
 
 ## Non-goals
 
 - Lane doesn't check work you do yourself in the conversation: it checks only a run of your plugin's
   skill.
-- Lane isn't a security boundary: hold what must never happen with branch protection or Claude
-  Code's permission rules.
+- Lane doesn't guard security: hold what must never happen with branch protection or Claude Code's
+  permission rules.
 - Lane doesn't judge a step's work: add a review subagent to your order, or end a step on your
   check.
 
@@ -40,7 +40,7 @@ claude plugin install lane@ccpm
 
 ## Walkthrough
 
-At the end, Lane has held each step and each start of your plugin's first run.
+At the end, you have a first run of your plugin that Lane held to each step and each start.
 
 Your plugin `changelog`, loaded by `claude --plugin-dir changelog` in the repository of `tally`, has
 these files:
