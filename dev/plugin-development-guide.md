@@ -536,13 +536,15 @@ hundreds of them.
 ### The Claude Code of a test on the model
 
 Each Claude Code that a prompt's unit test or an E2E test starts runs on a configuration folder of
-its own that holds only the plugins under test, with the developer's login as
-`CLAUDE_CODE_OAUTH_TOKEN`
-([multiple accounts](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts)).
+its own that holds only the plugins under test, with the developer's login:
+`CLAUDE_CODE_OAUTH_TOKEN` where it's set
+([multiple accounts](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts)),
+or else a copy of the credentials file of the developer's own Claude Code.
 It runs on Opus, the model the plugins' users run. Where Claude Code
 asks to allow a call, the stand-in answers from what the screen shows, as a person would.
 
-*Why*: the developer's own settings would change what the test tries. Another model makes other
+*Why*: the developer's own settings would change what the test tries. A container or a Linux
+machine keeps the login in the credentials file, so the developer logs in once, as they already do. Another model makes other
 slips than the ones users meet.
 
 ## Release

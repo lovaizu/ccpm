@@ -58,9 +58,10 @@ def handle(event: Event, root: str) -> Answer:
     and the adapters.
     Gives, and adds to the run record, by what the event is:
     - a skill's call (S1, S3, S5, S7): adds the call of a new Run, by a person or an AI, or picks
-      the Run up from the record or the Kept results, and answers the first start due or where the
-      run picks up; for another plugin's skill that a move names, adds it so that the Run stands
-      aside;
+      the Run up from the record, where it holds one going by the same kind of caller, or from the
+      Kept results, and answers the first start due or where the run picks up, an AI's call
+      keeping beside its new Run a person's Run that waits for their reply; for another plugin's
+      skill that a move names, adds it so that the Run stands aside;
     - a prompt typed (S2, S5): adds it to each Run of the conversation, so that the moves of a
       Route after a typed command are due, and answers those moves;
     - a start or resume (S5, S6): checks it by `lanes.check_start` with the Lanes of the role that
@@ -157,11 +158,11 @@ class Plugin:
 
 def _called(plugin: Plugin, placed: Placed, what: SkillCall, cwd: str) -> Answer:
     """A skill's call, where the skill is the plugin's and a Route goes after its start: the moves
-    due of the latest Run of the skill that the record holds going, as after /compact; else the
-    Run picked up from the Kept results, where lanes.json names an adapter of the plugin's records;
-    else the call of a new Run with the first moves due; stopped with why and who must fix it
-    where the Kept results leave the Routes. Or each Run set aside whose move due calls the skill
-    of another plugin."""
+    due of the latest Run of the skill that the record holds going by the same kind of caller, as
+    after /compact, since a Run's caller decides its Approval; else the Run picked up from the Kept
+    results, where lanes.json names an adapter of the plugin's records; else the call of a new Run
+    with the first moves due; stopped with why and who must fix it where the Kept results leave
+    the Routes. Or each Run set aside whose move due calls the skill of another plugin."""
     routes = plugin.lanes.proposal.routes
     first = [r for r in routes if r.skill == what.skill and r.after.kind == "first"]
     if what.plugin != plugin.name:
@@ -180,7 +181,7 @@ def _called(plugin: Plugin, placed: Placed, what: SkillCall, cwd: str) -> Answer
         except OffRoutes as e:
             who = f"The developer of {plugin.name} must fix its adapter of records"
             return _stop(plugin.name, CantCheck(str(e), who))
-    going = [r for r in placed.runs if r.skill == what.skill]
+    going = [r for r in placed.runs if (r.skill, r.by) == (what.skill, what.by)]
     if going:
         return Answer(False, due(plugin.name, _told(plugin, going[-1], cwd)))
     if picked:

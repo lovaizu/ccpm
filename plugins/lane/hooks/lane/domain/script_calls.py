@@ -71,7 +71,8 @@ def write_call(command: str) -> tuple[str, str] | None:
 
     Takes: the Bash command.
     Gives: what `write_args` reads from the words `lay.py write <plugin> <ID>` wherever they stand
-    in the command, or None where it runs no lay.py write or shlex can't split it.
+    in the command, an operator of the shell beside them, such as `;`, being no part of them, or
+    None where it runs no lay.py write or shlex can't split it.
     Changes: nothing.
     Refuses: nothing.
     Carries: S2 `CC->>G: the call` of lay.py write, as the guard places it on the Run of up that
@@ -118,9 +119,13 @@ def result_args(command: str, root: str) -> tuple[str, str] | None:
 
 
 def _words(command: str) -> list[str]:
-    """The command's words as shlex splits them; none where it can't, such as a here-document
-    that holds an apostrophe, which then runs none of Lane's scripts as the guard reads them."""
+    """The command's words as shlex splits them, each run of the shell's operators, such as `;`
+    or `&&`, a word of its own, so that a word beside one reads apart from it; none where shlex
+    can't split it, such as a here-document that holds an apostrophe, which then runs none of
+    Lane's scripts as the guard reads them."""
+    lexer = shlex.shlex(command, posix=True, punctuation_chars=True)
+    lexer.whitespace_split = True
     try:
-        return shlex.split(command)
+        return list(lexer)
     except ValueError:
         return []

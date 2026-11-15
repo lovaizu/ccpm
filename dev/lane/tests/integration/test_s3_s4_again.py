@@ -26,7 +26,6 @@ def test_an_ai_lays_by_its_own_run_of_lay(b: w.Bench) -> None:
     assert os.path.isfile(os.path.join(b.changelog, "hooks", "lanes.json"))
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S3", "Run")
 def test_an_ais_run_keeps_a_persons_waiting_proposal(b: w.Bench) -> None:
     """Given: a person typed /lane:up changelog and up showed a Proposal that waits for their
@@ -44,6 +43,24 @@ def test_an_ais_run_keeps_a_persons_waiting_proposal(b: w.Bench) -> None:
     assert not runs[0].ended
     assert c.bash(b.lay_py("write", "changelog", person_id)).blocked
     assert c.bash(b.lay_py("write", "changelog", ai_id)).exit_code == 0
+
+
+@pytest.mark.supports("S3", "Laid only on the caller's own act", "Approval")
+def test_a_lay_chained_after_another_command_waits_for_the_persons_reply(
+    b: w.Bench, broken: None
+) -> None:
+    """Given: a person's Run of up that showed a Proposal, which waits for their reply, and an AI's
+    Run of up beside it that showed a second Proposal.
+    When: the AI runs lay.py write of the person's ID with another command after it, by `;`.
+    Then: the guard stops it, saying to lay only after the person's reply, and nothing is laid."""
+    c = w.converse(b)
+    first, person_id = w.propose(b, c)
+    assert not c.stop(first.output).blocked
+    w.propose(b, c, by_ai=True)
+    stopped = c.bash(f"{b.lay_py('write', 'changelog', person_id)}; echo laid")
+    assert stopped.blocked
+    assert "reply" in stopped.said
+    assert not os.path.exists(os.path.join(b.changelog, "hooks", "lanes.json"))
 
 
 @pytest.mark.supports("S3", "Step", "up")
@@ -85,7 +102,6 @@ def test_steps_after_a_lay_come_without_lanes_sentences(b: w.Bench) -> None:
     assert given["notes"] == []
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
 @pytest.mark.supports("S4", "Laid", "user")
 def test_a_sentence_the_user_changed_stays_as_theirs(b: w.Bench) -> None:
     """Given: the walkthrough's Proposal laid, then the user changed the sentence that Lane laid on

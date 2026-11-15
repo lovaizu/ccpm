@@ -29,21 +29,47 @@ def strip(steps: Sequence[Step], laid: Laid) -> tuple[tuple[Step, ...], tuple[No
     """Each Step without the text that the Laid names.
 
     Takes: the Steps as the files hold them, and the Laid.
-    Gives: each Step with each sentence that it still holds word for word taken out, and a Note
-    for each sentence that the user changed, which stays in the Step as theirs.
+    Gives: each Step with each sentence that it still holds word for word, after a space, taken
+    out, and a Note for each sentence that the Step no longer holds, which the user changed: the
+    Step stays as it reads, and the Note names the sentence laid and, as `now`, the Step's last
+    sentences, as many as the laid one holds, since Lane laid its sentence after the Step's own
+    words. A sentence ends at a `.`, `!`, or `?` outside backticks that a space follows.
     Changes: nothing.
     Refuses: nothing.
     Carries: S1 `L-->>UP: each Step without the text that the Laid names`, S4's loop over each
     sentence that the Laid added, and `L-->>UP: each Step that remains, with the notes`.
     """
-    added = {(x.file, x.step): f" {x.text}" for x in laid.sentences}
+    added = {(x.file, x.step): x.text for x in laid.sentences}
     kept = []
+    notes = []
     for step in steps:
-        sentence = added.get((step.file, step.number))
-        if sentence is not None and step.text.endswith(sentence):
-            step = dataclasses.replace(step, text=step.text[: -len(sentence)])
+        sentence = added.get((step.file, step.number), "")
+        at = step.text.rfind(f" {sentence}")
+        if sentence and at >= 0:
+            text = step.text[:at] + step.text[at + 1 + len(sentence) :]
+            step = dataclasses.replace(step, text=text)
+        elif sentence:
+            now = _last_sentences(step.text, len(_starts(sentence)))
+            notes.append(Note(step.file, step.number, sentence, now))
         kept.append(step)
-    return tuple(kept), ()
+    return tuple(kept), tuple(notes)
+
+
+def _starts(text: str) -> list[int]:
+    """Where each sentence of the text starts: at its beginning, and after each `.`, `!`, or `?`
+    outside backticks that a space follows."""
+    starts = [0]
+    quoted = False
+    for i, char in enumerate(text):
+        quoted = quoted != (char == "`")
+        if not quoted and char in ".!?" and text[i + 1 : i + 2] == " ":
+            starts.append(i + 2)
+    return starts
+
+
+def _last_sentences(text: str, count: int) -> str:
+    """The text's last sentences, as many as `count`, or the whole text where it holds fewer."""
+    return text[_starts(text)[-count:][0] :]
 
 
 def unlaid(plugin: str) -> tuple[tuple[Step, ...], tuple[Note, ...]]:

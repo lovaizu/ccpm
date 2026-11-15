@@ -149,10 +149,10 @@ def place(event: Event, conversation: Conversation, lanes: LanesFile, root: str)
     role's Start a StartCall that resumes that role; for the main conversation's event, each Run of
     the conversation that hasn't ended and isn't aside, and, for its end or a prompt, each Run that
     its skill's Result ended in the turn (`Run.closing`), and, for a start, each Run aside whose
-    moves due start its role; for a
-    subagent's event, the Run of the Start tied to its agent_id; for a call of lay.py write, the Run
-    of up that showed its ID; no Run for an event of a subagent that no Start ties, or of the main
-    conversation while every Run stands aside.
+    moves due start its role; for a subagent's event, the Run of the Start tied to its agent_id;
+    for a call of lay.py write, the Run of up that showed its ID; for what lay.py print showed, the
+    latest of the main conversation's Runs, whose call came last; no Run for an event of a subagent
+    that no Start ties, or of the main conversation while every Run stands aside.
     Changes: nothing.
     Refuses: nothing.
     Carries: the placing of each `CC->>G` arrow of S1 to S7 on its Run, Start, and role.
@@ -170,7 +170,8 @@ def _where(
     main conversation's, each Run that hasn't ended and doesn't stand aside, and, for its end or a
     prompt, each Run whose turn's end is still held after its skill's Result ended it. A subagent
     resumed lies on its latest Start. A call of lay.py write lies only on each of those Runs that
-    showed its ID."""
+    showed its ID, and what lay.py print showed only on the latest of them, the Run whose call came
+    last."""
     agent = event.agent_id or _notified(event)
     going = tuple(r for r in conversation.runs if not r.ended)
     if agent is None:
@@ -178,6 +179,8 @@ def _where(
         laid = _laid_id(what)
         if laid is not None:
             runs = tuple(r for r in runs if any(s.proposal_id == laid for s in r.shown))
+        if isinstance(what, PrintPosted):
+            runs = runs[-1:]
         return None, runs
     for run in going:
         for start in reversed(run.starts):

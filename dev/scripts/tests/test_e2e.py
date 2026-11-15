@@ -133,6 +133,7 @@ class E2ERunnerTest(FolderTest):
 
     def test_a_test_without_the_developers_login_is_refused(self):
         del os.environ["CLAUDE_CODE_OAUTH_TOKEN"]
+        os.environ["CLAUDE_CONFIG_DIR"] = os.path.join(self.base, "no-login")
         self.refuses("CLAUDE_CODE_OAUTH_TOKEN")
 
     def test_a_test_file_that_isnt_json_is_refused(self):
@@ -280,6 +281,20 @@ class E2ERunnerTest(FolderTest):
         self.assertTrue(env["CLAUDE_CONFIG_DIR"].startswith(self.temp))
         self.assertTrue(env["TMPDIR"].startswith(self.temp))
         self.assertNotEqual(env["TMPDIR"], self.temp)
+
+    def test_without_a_token_claude_runs_on_a_copy_of_the_developers_credentials_file(self):
+        del os.environ["CLAUDE_CODE_OAUTH_TOKEN"]
+        os.environ["CLAUDE_CONFIG_DIR"] = os.path.join(self.base, "login")
+        self.write("login/.credentials.json", '{"claudeAiOauth": "theirs"}')
+        self.plan([{"done": False, "prompt": "go"}, {"done": True}], [{}])
+        code, _, err = self.run_test()
+        self.assertEqual(code, 0, err)
+        calls = self.calls(stand_in=False) + self.calls(stand_in=True)
+        for call in calls:
+            self.assertEqual(call["credentials"], '{"claudeAiOauth": "theirs"}')
+            self.assertNotIn("CLAUDE_CODE_OAUTH_TOKEN", call["env"])
+            self.assertTrue(call["env"]["CLAUDE_CONFIG_DIR"].startswith(self.temp))
+        self.assertEqual(os.listdir(self.temp), [], "the test left its copy of the login")
 
     def test_the_temporary_folder_is_removed(self):
         self.plan([{"done": False, "prompt": "go"}, {"done": True}], [{}])
