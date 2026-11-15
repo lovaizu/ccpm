@@ -16,6 +16,17 @@ usage: record.py add <record> <of> <id> <gave>
        record.py template <kind> <document>
 """
 
+# What the reader of the faults is to do with them, as the purpose is a document of the vital few,
+# not a fit to the template.
+_BEFORE = (
+    "rn's template check: the template holds only the vital few. Cut each place below as trivia,"
+    " or put its vital point in the template's form."
+)
+_AFTER = (
+    "Where the form would lose what the document's people need, keep it, and propose a change to"
+    " the template."
+)
+
 
 def main(argv: list[str], cwd: str, plugin_root: str) -> tuple[int, str, str]:
     """The exit code, stdout, and stderr of `record.py` with the arguments, from the folder `cwd`,
@@ -26,9 +37,11 @@ def main(argv: list[str], cwd: str, plugin_root: str) -> tuple[int, str, str]:
     - `check <role> <result> [<cut>]` gives 0 where rn's check finds no fault in the role's end, 1
       with each fault, and 2 where it can't check.
     - `template <kind> <document>` gives 0 where the document, by its path from `cwd`, holds the
-      template of its kind among rn's best practices and nothing beside it, and 1 with each place
-      where it leaves it, one to a line as `<document>:<line>: <what>`, or where the kind has no
-      Markdown template, or the document is missing or isn't UTF-8 text.
+      template of its kind among rn's best practices and nothing beside it, printing nothing, and
+      1 with each place where it leaves it, one to a line as `<document>:<line>: <what>`, between
+      a line before them on why the template holds and one after them on when to change the
+      template; or 1 where the kind has no Markdown template, or the document is missing or isn't
+      UTF-8 text.
 
     2 with the usage where the arguments are none of these."""
     if argv[:1] == ["template"]:
@@ -47,8 +60,10 @@ def _template(kind: str, document: str, cwd: str, plugin_root: str) -> tuple[int
     with open(path, encoding="utf-8") as file:
         form = file.read()
     found = template.faults(form, _read(os.path.join(cwd, document), document, kind))
+    if not found:
+        return 0, "", ""
     said = "".join(f"{document}:{each.line}: {each.what}\n" for each in found)
-    return (1 if found else 0), "", said
+    return 1, "", f"{_BEFORE}\n{said}{_AFTER}\n"
 
 
 def _read(path: str, named: str, kind: str) -> str:

@@ -760,15 +760,26 @@ def test_template_gives_0_and_prints_nothing_for_a_document_that_holds_its_kinds
 def test_template_gives_1_with_each_fault_at_the_documents_path_and_line(folder: str):
     """Given a document that is a title alone
     When `record.py template product-vision <document>` runs
-    Then it gives 1, with each fault of the document on a line of its own, at its path and line"""
+    Then it gives 1, with each fault of the document on a line of its own, at its path and line,
+    after a line on why the template holds and before a line on when to change the template"""
     with open(os.path.join(folder, "vision.md"), "w", encoding="utf-8") as file:
         file.write("# Product vision of tally\n")
+    before = (
+        "rn's template check: the template holds only the vital few. Cut each place below as"
+        " trivia, or put its vital point in the template's form."
+    )
+    after = (
+        "Where the form would lose what the document's people need, keep it, and propose a"
+        " change to the template."
+    )
     code, printed, said = main(["template", "product-vision", "vision.md"], folder, RN)
     assert (code, printed) == (1, "")
     assert said.splitlines() == [
+        before,
         'vision.md:1: lacks the template\'s "## Roles" at its line 3',
         'vision.md:1: lacks the template\'s "## Objectives and key results" at its line 14',
         'vision.md:1: lacks the template\'s "## Concept" at its line 33',
+        after,
     ]
 
 
