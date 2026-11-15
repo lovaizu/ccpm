@@ -157,7 +157,7 @@ Strategies:
 
 ## Test strategy
 
-Each test case lies in `<cases>`, written as Given, When, and Then before any part is built, and
+Each test case lies in `<cases>`, written as Given, When, and Then before anyone builds a part.
 `<trace>` checks that each names an element or a case one level up.
 
 | Test type | Test target | Exit criteria |

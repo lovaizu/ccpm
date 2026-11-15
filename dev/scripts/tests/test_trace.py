@@ -22,28 +22,34 @@ USAGE = "usage: trace.py check <plugin> | doubles | sources"
 ARCHITECTURE = """\
 # `p` architecture
 
-This document says how the parts of `p` give what its README promises.
-
 ## User stories
 
-- S1: the user wants to type `/p:up`, so that they get the work. It carries the request.
-- S2: the user wants to stop, so that they lose nothing. It carries the pause.
+- S1: the user wants to type `/p:up`, so that they get the work.
+- S2: the user wants to stop, so that they lose nothing.
+
+## Solution strategy
+
+`p` keeps every decision in one file that each part reads.
+
+### The repository holds the work
+
+Every part keeps the state in the run's folder.
+
+*Why*: work kept in a conversation is lost.
 
 ## Components
 
 ![p's components](images/components.svg)
 
-What each decides alone:
-
 - user\\
-  The goal.
+  Gives the goal.
 - tree.py\\
-  The tree's form.
+  Keeps the tree's form.
 
-The choices made, and why:
+Strategies:
 
-- One generator over several\\
-  It's quicker. The cost: none.
+- One generator\\
+  It's quicker, which serves KR1.2.
 
 ## Data model
 
@@ -51,16 +57,6 @@ The choices made, and why:
 
 - Cut\\
   The part of the tree that a role starts with.
-
-## Principles
-
-`p` builds on the plugin guide, and adds these rules, which every part keeps.
-
-### The repository holds the work
-
-Every part keeps the state in the run's folder.
-
-*Why*: work kept in a conversation is lost.
 
 ## Sequences
 
@@ -100,10 +96,10 @@ def case(name: str, *supports: str) -> str:
     return f"{marks}def {name}():\n    pass\n\n\n"
 
 
-def principle_case(name: str, principle: str, body: str = "assert not broken") -> str:
-    """A test function of the name that supports the principle and takes the fixture `broken`,
+def rule_case(name: str, rule: str, body: str = "assert not broken") -> str:
+    """A test function of the name that supports the rule and takes the fixture `broken`,
     with the body."""
-    return f"@pytest.mark.supports({principle!r})\ndef {name}(broken):\n    {body}\n\n\n"
+    return f"@pytest.mark.supports({rule!r})\ndef {name}(broken):\n    {body}\n\n\n"
 
 
 def cases_file(*cases: str) -> str:
@@ -123,7 +119,7 @@ import pytest
 def broken():
     return os.environ.get("TRACE_BROKEN") == "1"
 """
-PRINCIPLE = "The repository holds the work"
+RULE = "The repository holds the work"
 
 
 class TraceTest(FolderTest):
@@ -138,8 +134,8 @@ class TraceTest(FolderTest):
 
     def every_element_named(self) -> None:
         """Writes an integration case for each element, so that only what a test adds fails."""
-        named = [case(f"test_{n}", each) for n, each in enumerate(ELEMENTS) if each != PRINCIPLE]
-        named.append(principle_case("test_principle", PRINCIPLE))
+        named = [case(f"test_{n}", each) for n, each in enumerate(ELEMENTS) if each != RULE]
+        named.append(rule_case("test_rule", RULE))
         self.write("dev/p/tests/integration/test_all.py", cases_file(*named))
         self.write("dev/p/tests/integration/conftest.py", BROKEN)
 
@@ -183,12 +179,13 @@ class CommandTest(TraceTest):
         self.assertIn("dev/q/architecture.md", result.stderr)
 
     def test_an_architecture_without_a_section_gives_2(self):
-        self.write("dev/p/architecture.md", ARCHITECTURE.replace("## Principles", "## Rules"))
-        self.fails_with(2, "dev/p/architecture.md", "## Principles")
+        self.write("dev/p/architecture.md", ARCHITECTURE.replace("## Solution strategy", "## Rules"))
+        self.fails_with(2, "dev/p/architecture.md", "## Solution strategy")
 
-    def test_components_without_the_list_of_what_each_decides_gives_2(self):
-        self.write("dev/p/architecture.md", ARCHITECTURE.replace("What each decides alone:", ""))
-        self.fails_with(2, "dev/p/architecture.md", "What each decides alone:")
+    def test_components_that_list_no_component_gives_2(self):
+        listed = "- user\\\n  Gives the goal.\n- tree.py\\\n  Keeps the tree's form.\n\n"
+        self.write("dev/p/architecture.md", ARCHITECTURE.replace(listed, ""))
+        self.fails_with(2, "dev/p/architecture.md", "Components lists no component")
 
     def test_a_missing_data_model_gives_2(self):
         os.remove("dev/p/images/data-model.svg")
@@ -209,7 +206,7 @@ class CommandTest(TraceTest):
 
 
 class ElementTest(TraceTest):
-    """Every story, principle, component, and kind of data of the architecture has an integration
+    """Every story, rule, component, and kind of data of the architecture has an integration
     test that names it, as each architecture's Integration tests set."""
 
     def test_without_any_case_every_element_is_reported(self):
@@ -219,25 +216,25 @@ class ElementTest(TraceTest):
     def test_a_story_that_no_case_names_is_reported_at_its_line(self):
         self.every_element_named()
         self.write("dev/p/architecture.md", ARCHITECTURE.replace("- S2:", "- S3: more.\n- S2:"))
-        self.fails_with(1, "dev/p/architecture.md:8: story S3 has no integration test")
+        self.fails_with(1, "dev/p/architecture.md:6: story S3 has no integration test")
 
-    def test_a_principle_that_no_case_names_is_reported(self):
+    def test_a_rule_that_no_case_names_is_reported(self):
         self.every_element_named()
-        added = ARCHITECTURE.replace("## Sequences", "### One source\n\nA rule.\n\n## Sequences")
+        added = ARCHITECTURE.replace("## Components", "### One source\n\nA rule.\n\n## Components")
         self.write("dev/p/architecture.md", added)
-        self.fails_with(1, "principle One source has no integration test")
+        self.fails_with(1, "rule One source has no integration test")
 
     def test_a_component_that_no_case_names_is_reported(self):
         self.every_element_named()
-        added = ARCHITECTURE.replace("- tree.py\\", "- guard\\\n  Each call.\n- tree.py\\")
+        added = ARCHITECTURE.replace("- tree.py\\", "- guard\\\n  Holds each call.\n- tree.py\\")
         self.write("dev/p/architecture.md", added)
         self.fails_with(1, "component guard has no integration test")
 
-    def test_components_without_choices_are_each_read(self):
+    def test_components_without_strategies_are_each_read(self):
         self.every_element_named()
-        choices = "The choices made, and why:\n\n- One generator over several\\\n"
-        bare = ARCHITECTURE.replace(choices + "  It's quicker. The cost: none.\n\n", "")
-        last = bare.replace("## Data model", "- guard\\\n  Each call.\n\n## Data model")
+        strategies = "Strategies:\n\n- One generator\\\n  It's quicker, which serves KR1.2.\n\n"
+        bare = ARCHITECTURE.replace(strategies, "")
+        last = bare.replace("## Data model", "- guard\\\n  Holds each call.\n\n## Data model")
         self.write("dev/p/architecture.md", last)
         self.fails_with(1, "component guard has no integration test")
 
@@ -273,7 +270,7 @@ class NameTest(TraceTest):
     def test_an_integration_case_naming_no_element_is_reported(self):
         self.every_element_named()
         self.write("dev/p/tests/integration/test_x.py", cases_file(case("test_x", "S9")))
-        self.fails_with(1, "test_x.py:4: test_x names S9, which is no story, principle")
+        self.fails_with(1, "test_x.py:4: test_x names S9, which is no story, rule")
 
     def test_a_unit_case_naming_an_integration_case_passes(self):
         self.every_element_named()
@@ -347,61 +344,61 @@ class NameTest(TraceTest):
 
 
 class BrokenTest(TraceTest):
-    """Each test of a principle fails where its fixture `broken` takes out the part that holds the
-    principle, which trace.py runs, as each architecture's Integration tests set."""
+    """Each test of a rule fails where its fixture `broken` takes out the part that holds the
+    rule, which trace.py runs, as each architecture's Integration tests set."""
 
-    def test_a_principle_case_that_fails_with_the_part_taken_out_passes(self):
+    def test_a_rule_case_that_fails_with_the_part_taken_out_passes(self):
         self.every_element_named()
         self.write(
-            "dev/p/tests/integration/test_x.py", cases_file(principle_case("test_x", PRINCIPLE))
+            "dev/p/tests/integration/test_x.py", cases_file(rule_case("test_x", RULE))
         )
         result = self.trace()
         self.assertEqual((result.returncode, result.stderr), (0, ""))
 
-    def test_a_principle_case_that_passes_with_the_part_taken_out_is_reported(self):
+    def test_a_rule_case_that_passes_with_the_part_taken_out_is_reported(self):
         self.every_element_named()
-        passing = principle_case("test_x", PRINCIPLE, "pass")
+        passing = rule_case("test_x", RULE, "pass")
         self.write("dev/p/tests/integration/test_x.py", cases_file(passing))
         self.fails_with(1, "test_x.py:4: test_x doesn't fail with TRACE_BROKEN=1")
 
-    def test_a_principle_case_marked_xfail_that_passes_with_the_part_taken_out_is_reported(self):
+    def test_a_rule_case_marked_xfail_that_passes_with_the_part_taken_out_is_reported(self):
         self.every_element_named()
         marked = "pytestmark = pytest.mark.xfail(strict=True, reason='unbuilt')\n\n\n"
-        passing = principle_case("test_x", PRINCIPLE, "assert broken")
+        passing = rule_case("test_x", RULE, "assert broken")
         self.write("dev/p/tests/integration/test_x.py", cases_file(marked, passing))
         self.fails_with(1, "test_x.py:7: test_x doesn't fail with TRACE_BROKEN=1")
 
-    def test_a_principle_case_marked_xfail_that_fails_with_the_part_taken_out_passes(self):
+    def test_a_rule_case_marked_xfail_that_fails_with_the_part_taken_out_passes(self):
         self.every_element_named()
         marked = "pytestmark = pytest.mark.xfail(strict=True, reason='unbuilt')\n\n\n"
         self.write(
             "dev/p/tests/integration/test_x.py",
-            cases_file(marked, principle_case("test_x", PRINCIPLE)),
+            cases_file(marked, rule_case("test_x", RULE)),
         )
         result = self.trace()
         self.assertEqual((result.returncode, result.stderr), (0, ""))
 
-    def test_a_principle_case_without_the_fixture_is_reported(self):
+    def test_a_rule_case_without_the_fixture_is_reported(self):
         self.every_element_named()
-        self.write("dev/p/tests/integration/test_x.py", cases_file(case("test_x", PRINCIPLE)))
-        self.fails_with(1, "test_x.py:4: test_x names a principle but takes no fixture broken")
+        self.write("dev/p/tests/integration/test_x.py", cases_file(case("test_x", RULE)))
+        self.fails_with(1, "test_x.py:4: test_x names a rule but takes no fixture broken")
 
-    def test_a_principle_case_in_a_class_is_run_by_its_class(self):
+    def test_a_rule_case_in_a_class_is_run_by_its_class(self):
         self.every_element_named()
         body = (
-            "import pytest\n\n\nclass TestX:\n    @pytest.mark.supports(" + repr(PRINCIPLE) + ")\n"
+            "import pytest\n\n\nclass TestX:\n    @pytest.mark.supports(" + repr(RULE) + ")\n"
             "    def test_x(self, broken):\n        pass\n"
         )
         self.write("dev/p/tests/integration/test_x.py", body)
         self.fails_with(1, "test_x.py:5: test_x doesn't fail with TRACE_BROKEN=1")
 
-    def test_a_principle_case_that_pytest_cannot_run_gives_2(self):
+    def test_a_rule_case_that_pytest_cannot_run_gives_2(self):
         self.every_element_named()
-        file = "import nowhere\n" + cases_file(principle_case("test_x", PRINCIPLE))
+        file = "import nowhere\n" + cases_file(rule_case("test_x", RULE))
         self.write("dev/p/tests/integration/test_x.py", file)
         self.fails_with(2, "dev/p/tests/integration/test_x.py::test_x", "pytest")
 
-    def test_a_principle_case_without_pytest_to_run_it_gives_2(self):
+    def test_a_rule_case_without_pytest_to_run_it_gives_2(self):
         self.every_element_named()
         self.write("nopytest/pytest/__init__.py", "")
         self.write("nopytest/pytest/__main__.py", "raise SystemExit(1)\n")
@@ -409,7 +406,7 @@ class BrokenTest(TraceTest):
         env = dict(os.environ, PYTHONPATH=os.path.join(self.base, "nopytest"))
         result = subprocess.run(command, capture_output=True, text=True, env=env, check=False)
         self.assertEqual(result.returncode, 2, result.stderr)
-        self.assertIn("test_all.py::test_principle: pytest couldn't run it, exit 1", result.stderr)
+        self.assertIn("test_all.py::test_rule: pytest couldn't run it, exit 1", result.stderr)
 
 
 # A double of the test's own, which takes each line by `line` or `lines`, its record by a name the

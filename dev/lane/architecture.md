@@ -1,139 +1,24 @@
 # Lane architecture
 
-This document says how the parts of Lane give what [its README](../../plugins/lane/README.md)
-promises. Lane turns the user's steps into checks once, and holds every run by them. up proposes the
-rules and routes from the steps, and `lay.py` lays them once the caller approves. On each hook
-event, the laid guard finds where the run stands, and gives the step or the start due.
-
 ## User stories
 
 - S1: the user wants to type `/lane:up <plugin>` and read the proposal, so that nothing holds their
-  plugin unread. It carries `/lane:up changelog`, the routes, lanes, and `commands` shown, and the
-  result Lane names.
-- S2: the user wants to reply `yes` or a change, so that Lane lays only what they approved. It
-  carries `yes`, each `Wrote` line, `/reload-plugins`, and a change that Lane proposes again from.
-- S3: the user, as an AI, wants to approve by its own act, so that it waits for no
-  person. It carries the AI's approval, and its ask for `/reload-plugins` to whoever gives its
-  prompts.
+  plugin unread.
+- S2: the user wants to reply `yes` or a change, so that Lane lays only what they approved.
+- S3: the user, as an AI, wants to approve by its own act, so that it waits for no person.
 - S4: the user wants to rerun `/lane:up <plugin>` after a change, so that the checks hold the steps
-  as they read. It carries the answer to "Does whoever runs the plugin need Lane?": `/lane:up` after
-  an update.
+  as they read.
 - S5: the user wants to type their command and have subagents start in order, so that results move
-  the run. It carries `/changelog:write`, each `Start`, `gave`, and stop line, and each route
-  form of [the steps page](../../plugins/lane/docs/steps-routes-adapters.md#routes).
-- S6: the user wants each subagent held to its steps, so that one that leaves a step goes back. It
-  carries the stopped `git -C` call, the commands `writer` may run, and the held end of `reviewer`.
+  the run.
+- S6: the user wants each subagent held to its steps, so that one that leaves a step goes back.
 - S7: the user wants a stopped run to go on where it stopped, so that its subagents don't start
-  over. It carries How it works' "A run that stops starts over," and the adapter of kept results.
+  over.
 
-## Components
+## Solution strategy
 
-![Lane's components](images/components.svg)
-
-What each decides alone:
-
-- user\
-  What each step says, whether the proposal holds what they meant, and what to change or approve.
-- up\
-  Each step's lane type and what it takes, each skill's routes, each missing result's name, and each
-  change's wording.
-- lay.py\
-  The Proposal's form, the Laid text, whether a Proposal stands, how steps read once laid, and what
-  laying writes.
-- lane types\
-  What each type takes, the steps it suits, its sentence, whether a step already says it, and its
-  check.
-- guard\
-  `lanes.json`'s form, each event's place, the record's facts, each Run's state, each start due, and
-  each stop and approval.
-- result.py\
-  Whether a result is one that the role may give in a Run of the conversation.
-- adapter\
-  How kept records and start texts read in Lane's form, which work waits, and which work a call
-  picks up.
-
-The choices made, and why:
-
-- A proposal from the steps' sense, by up, over one from their words, by code\
-  Only a reading of their sense gives routes to a step that names no subagent, which keeps KR1.1
-  low. The cost: two runs of `/lane:up` on the same steps may word a proposal apart.
-- The approval held by a guard laid on up over up's instruction alone\
-  The main conversation then can't approve for a person who typed `/lane:up`, which keeps KR1.1
-  low. The cost: the guard rests on Claude Code telling a typed command from a Skill tool call.
-- Each skill as one role whose steps lie in several files over a role for each typed command\
-  No hook event marks where a command's steps end, so only the skill's lanes hold them all, keeping
-  KR1.1 low. The cost: a lane on a command's step holds the main conversation from the run's start.
-- A proposal that `lay.py print` refuses where the plugin's files can't carry it over one laid as
-  it stands\
-  A model-callable route command, an unnamed adapter, or a steps file two roles share breaks the
-  run, raising KR1.1. The cost: up or the user mends the Proposal or the file first.
-- An end held to the plugin's own command, which Lane runs, over a step that has the role run it\
-  A role that leaves its steps skips the checking step too, and only the plugin knows its measure,
-  raising KR1.1. The cost: the command runs at each end and each turn's end, so it must be quick.
-- A sentence left out of a step that already says it over one added to every step it suits\
-  A rule said twice takes the role's attention from the step, so it reads each rule once, keeping
-  KR1.1 low. The cost: a step that says a rule in other words still takes the sentence.
-- Each event placed by `session_id` and `agent_id`, a Start tied at its Agent call's PostToolUse,
-  over `prompt_id`, `transcript_path`, or SubagentStart\
-  Only this placing holds each call to its own Start, as [Claude Code's states](claude-code-states.md)
-  shows, which keeps KR1.1 low. The cost: a state no record shows may place an event apart, so each
-  rare state gets a line there.
-- The runs of several skills side by side, each held to its own routes, over one run at a time\
-  A person types another command while a subagent of the first runs, and refusing or leaving it
-  unheld raises KR1.1. The cost: no event names the skill that a main conversation's call serves, so
-  each running skill's lanes hold it.
-- An append-only run record, holding only what no later payload gives again, over a Run written whole\
-  Parallel hooks run at once, so a whole Run loses another's line, and a kept value goes
-  stale, raising KR1.1. The cost: the guard reads the conversation's whole record on each event.
-- Each Result added by the guard at the PostToolUse of a `result.py` run that gave 0 over
-  `result.py` adding it\
-  A Bash command carries no `agent_id`, so only the hook event ties a Result to its
-  subagent, keeping KR1.1 low. The cost: a Result counts only once its PostToolUse comes.
-- The adapter naming, from the words typed after the command, the work a call picks up, over the guard\
-  Only the adapter, run before the guard answers, separates a new request from a pick-up, keeping KR1.1
-  low. The cost: the adapter runs at each call of the skill.
-- Subagents in the background over subagents in the foreground\
-  A foreground subagent's PostToolUse comes only once it ends, so the guard couldn't hold its calls
-  meanwhile, raising KR1.1. The cost: each subagent's file sets `background: true`, which
-  `lay.py print` checks.
-- The guard standing aside while another plugin's called skill runs over holding the main
-  conversation meanwhile\
-  The other plugin's guard holds the main conversation there, and two guards would stop each other's
-  moves, raising KR1.1. The cost: the main conversation's calls in between rest on the other
-  plugin's guard alone.
-- The form of `lanes.json` decided by the guard's code, which `lay.py write` writes through, over
-  `lay.py` deciding it\
-  A laid plugin runs without `lay.py`, so the laid copy alone decides the form, keeping KR1.1 low. The cost: `lay.py` reads apart each form that a released Lane wrote.
-
-## Data model
-
-![Lane's data](images/data-model.svg)
-
-- Step\
-  One item under `## Steps` of a skill or a subagent, or of the file its body names.
-- Lane\
-  A rule of one lane type on one step, which the README calls a rule.
-- Route\
-  The moves of one skill after its start, a Result, a typed command, or another plugin's run it
-  called.
-- Laid\
-  What Lane added to the plugin, kept in a form that a later Lane separates from the user's text.
-- Approval\
-  The caller's own act that approves one Proposal: a person's reply, or an AI's run of
-  `lay.py write`.
-- Start\
-  One start or resume of a role, made due by a Route, that holds its text and its run values.
-- Call\
-  One tool call of a role, which the guard checks as it comes and the run record doesn't keep.
-- Run\
-  One run of one skill in one conversation, from its call to a route that starts no more.
-- Kept results\
-  The results of a run that the user's plugin keeps in its own records.
-
-## Principles
-
-Lane builds on [the plugin guide](../plugin-development-guide.md), and adds these rules, which every
-part keeps.
+Lane turns the user's steps into checks once, and holds every run by them. up proposes them,
+`lay.py` lays them on approval, and the laid guard gives each run its step or start due. Lane builds
+on [the plugin guide](../plugin-development-guide.md), and every view keeps these rules.
 
 ### The steps are the one source
 
@@ -209,6 +94,93 @@ folder, and name no plugin.
 
 *Why*: whoever runs the plugin may lack Lane or have another version, stopping or changing the run,
 raising KR1.1.
+
+## Components
+
+![Lane's components](images/components.svg)
+
+- user\
+  Writes each step, reads the proposal, and approves it or asks a change.
+- up\
+  Proposes each step's lane type, each skill's routes, and each missing result's name from the steps.
+- lay.py\
+  Checks a Proposal, shows how the steps read once laid, and lays it into the plugin.
+- lane types\
+  Give each rule's sentence, the steps it suits, and its check of a call.
+- guard\
+  Places each hook event in its Run, and gives each start due, each stop, and each approval.
+- result.py\
+  Takes a result only where the role may give it in a Run of the conversation.
+- adapter\
+  Gives each start's text and the kept results in Lane's form, and names the work a call picks up.
+
+Strategies:
+
+- A proposal from the steps' sense, by up\
+  Only a reading of their sense gives routes to a step that names no subagent, keeping KR1.1 low.
+- The approval held by a guard laid on up\
+  The main conversation can't approve for a person who typed `/lane:up`, keeping KR1.1 low.
+- Each skill as one role whose steps lie in several files\
+  No hook event marks where a command's steps end, so only the skill's lanes hold them all, keeping
+  KR1.1 low.
+- `lay.py print` refusing a Proposal the plugin's files can't carry\
+  A model-callable route command, an unnamed adapter, or a shared steps file breaks the run, raising
+  KR1.1.
+- An end held to the plugin's own command, which Lane runs\
+  A role that leaves its steps skips the checking step too, and only the plugin knows its measure,
+  raising KR1.1.
+- A sentence left out of a step that already says it\
+  A rule said twice takes the role's attention from its step, so the step says each once, keeping KR1.1 low.
+- Each event placed by `session_id` and `agent_id`, a Start tied at its Agent call's PostToolUse\
+  Only this placing holds each call to its own Start, as [Claude Code's states](claude-code-states.md)
+  shows, keeping KR1.1 low.
+- The runs of several skills side by side, each held to its own routes\
+  A person types another command while a subagent of the first runs, and leaving it unheld raises
+  KR1.1.
+- Each Result added by the guard at the PostToolUse of a `result.py` run that gave 0\
+  A Bash command carries no `agent_id`, so only the hook event ties a Result to its subagent, keeping
+  KR1.1 low.
+- The adapter naming the work a call picks up, from the words typed after the command\
+  Only the adapter, run before the guard answers, separates a new request from a pick-up, keeping KR1.1
+  low.
+- Subagents in the background\
+  A foreground subagent's PostToolUse comes only once it ends, so the guard couldn't hold its calls,
+  raising KR1.1.
+- The guard standing aside while another plugin's called skill runs\
+  The other plugin's guard holds the main conversation there, and two guards would stop each other's
+  moves, raising KR1.1.
+
+## Data model
+
+![Lane's data](images/data-model.svg)
+
+- Step\
+  One item under `## Steps` of a skill or a subagent, or of the file its body names.
+- Lane\
+  A rule of one lane type on one step, which the README calls a rule.
+- Route\
+  The moves of one skill after its start, a Result, a typed command, or another plugin's run it
+  called.
+- Laid\
+  What Lane added to the plugin, kept in a form that a later Lane separates from the user's text.
+- Approval\
+  The caller's own act that approves one Proposal: a person's reply, or an AI's run of
+  `lay.py write`.
+- Start\
+  One start or resume of a role, made due by a Route, that holds its text and its run values.
+- Call\
+  One tool call of a role, which the guard checks as it comes and the run record doesn't keep.
+- Run\
+  One run of one skill in one conversation, from its call to a route that starts no more.
+- Kept results\
+  The results of a run that the user's plugin keeps in its own records.
+
+Strategies:
+
+- An append-only run record of only what no later payload gives again\
+  Parallel hooks run at once, so a Run written whole loses another's line, raising KR1.1.
+- The form of `lanes.json` decided by the guard's code, which `lay.py write` writes through\
+  A laid plugin runs without `lay.py`, so the laid copy alone decides the form, keeping KR1.1 low.
 
 ## Sequences
 
@@ -548,27 +520,23 @@ sequenceDiagram
 Claude Code runs the laid guard on each hook event of the plugin, from the session's start or after
 `/reload-plugins`.
 
-- The person's `/reload-plugins`, which `lay.py write` asks for, over a new conversation\
+Strategies:
+
+- The person's `/reload-plugins`, which `lay.py write` asks for\
   Hooks load as a session starts or on that command alone, so building goes on unbroken, keeping
-  KR1.2 short. The cost: a run before it goes unheld, and an AI waits for whoever
-  gives its prompts.
-- Lane's code copied into the user's plugin over hooks that call an installed Lane\
+  KR1.2 short.
+- Lane's code copied into the user's plugin\
   Whoever runs the plugin needs no Lane, and the guard runs the code Lane's tests ran, keeping KR1.1
-  low. The cost: an update of Lane reaches a plugin only by `/lane:up`.
-- Lane's code on Python 3.9 and its standard library over a later Python or packages\
-  Whoever runs the plugin installs nothing for Lane, which keeps KR1.2 short. The cost: where Python
-  is missing, each call that a rule holds stops.
-- The proposal and the run record in the system's temporary folder over a folder in the repository\
-  Lane writes nothing that the user's repository must keep or ignore, which keeps KR1.2 short. The
-  cost: a plugin that keeps no results starts a stopped run over in a new conversation.
-- The adapter and each command that a Lane runs in the hook event's `cwd` over the repository's
-  root\
+  low.
+- Lane's code on Python 3.9 and its standard library\
+  Whoever runs the plugin installs nothing for Lane, keeping KR1.2 short.
+- The proposal and the run record in the system's temporary folder\
+  Lane writes nothing that the user's repository must keep or ignore, keeping KR1.2 short.
+- The adapter and each command that a Lane runs in the hook event's `cwd`\
   A conversation that enters a worktree moves its `cwd` there, so they read the run's checkout,
-  keeping KR1.1 low. The cost: one that reads a file at the root finds the root itself, such as by
-  git.
-- Each lane's path read from the top of its worktree, beside the root, over the root alone\
-  Roles may work in worktrees of their own, so a step's path names the file there,
-  keeping KR1.1 low. The cost: a role may write a file its step names in any worktree that holds it.
+  keeping KR1.1 low.
+- Each lane's path read from the top of its worktree, beside the root\
+  Roles may work in worktrees of their own, so a step's path names the file there, keeping KR1.1 low.
 
 ## Directory structure
 
@@ -620,99 +588,51 @@ dev/tests/
 └── <plugin>/<yyyymmdd>-<id>/     the run record of one conversation
 ```
 
-- The lane types inside `hooks/lane/`, which `lay.py` imports, over a copy beside `lay.py`\
+Strategies:
+
+- The lane types inside `hooks/lane/`, which `lay.py` imports\
   The sentence `lay.py print` shows and the check the guard runs come from one copy, keeping KR1.1
-  low. The cost: `lay.py` reaches into the folder that it copies.
+  low.
 
 ## Test strategy
 
-Lane tests by [the plugin guide](../plugin-development-guide.md#test), in unit tests, integration
-tests, and end-to-end (E2E) tests. Its test cases lie in `dev/lane/tests/`, and
+Each test case lies in `dev/lane/tests/`, written as Given, When, and Then before anyone builds a part.
 `dev/scripts/trace.py` checks that each names an element or a case one level up.
 
-### Unit tests
-
-- Tries: `lay.py`, the lane types, the guard, and `result.py` against their contracts, and up's
-  prompt by each evaluation type.
-- Runs real: the part with git and a test plugin, and up on Opus with `lay.py` in a throwaway copy.
-- Tools: pytest, coverage, cosmic-ray, hypothesis, ruff, complexipy, pyrefly, pylint's
-  duplicate-code and cyclic-import checks, and `claude -p` on Opus for up.
-- Passes when: line and branch coverage of 100%; 0 surviving mutants; 0 counterexamples from the
-  property-based tests of `lay.py`'s reading of Steps and check of a Proposal, each lane type's
-  check of a call, the guard's reading of each hook event, and where each Run stands, worked out
-  from any lines of the run record; for each function, McCabe complexity of 10 at most, cognitive
-  complexity of 15 at most, and at most 6 returns, 12 branches, 5 arguments, and 50 statements; 0
-  findings from pyrefly, ruff, and pylint's checks; and, for up, each case passing on all of its
-  k = 3 runs, decided by code from each run's record, each type guarding KR1.1: accuracy, the
-  expected Lanes and Routes; precision and recall of 1; no fabrication, no Lane, Route, or Result
-  that no step supports beside the result named where none is; adversarial, no `lay.py write` before
-  the caller's act, whatever a step tells it; metamorphic, the same Proposal for steps reworded or a
-  role renamed; consistency over the k runs; and drift, each case passing on a new Opus as on the
-  last.
-- Runs: the code's tests with coverage and static analysis before each push and on each push in CI;
-  mutation and property-based tests in CI over the lines a push changed, and over the whole each
-  night; up's tests before a change of up is taken and on each new Opus.
-
-### Integration tests
-
-- Tries: each path through S1 to S7; each principle, where the parts keep it and where one breaks
-  it; each decision of each component; each handoff with its data, and each kind of data; the
-  guard's placing of each event in each state of [Claude Code's states](claude-code-states.md);
-  compatibility with each new version of Claude Code, which guards KR1.1; and data compatibility,
-  the newest `lay.py` laying again each plugin that a released Lane laid, which guards KR1.1 after
-  an update.
-- Runs real: `lay.py`, the guard, `result.py`, the files that `lay.py write` lays, and an adapter of
-  the test's own; the double of Claude Code in `dev/tests/` sends each event as `dev/tests/recorded/`
-  shows, and a test plays the person, up, the main conversation, and each subagent by its calls on
-  the double; the compatibility test runs the real Claude Code of each new version on the plugin of
-  `dev/tests/recorder/`; and the data compatibility test lays again each plugin in
-  `dev/lane/tests/released/`, and, until the first release, the plugin as the current Lane lays it.
-- Tools: pytest, the double of Claude Code, `claude plugin validate --strict`,
-  `dev/scripts/trace.py`, and `dev/tests/recorder/` with its `compare.py`.
-- Passes when: every story, principle, component, and kind of data has an integration test that
-  names it; every test names an element or a case one level up that exists; every unit case names
-  an integration case; each test of a principle fails where its fixture `broken` takes out the part
-  that holds it; each result of a double comes from a record or a page that `trace.py doubles`
-  checks, and each page still shows its words, as `trace.py sources` checks; on each new version of
-  Claude Code, each recorded state gives each event that the double gives, with the same fields in
-  the same order, as `compare.py` checks, and where it doesn't, the new record replaces the old and
-  the double follows it; and each released plugin laid again holds no sentence of the earlier Lane,
-  none doubled, and the newest `lanes.json` and `hooks/lane/`.
-- Runs: before each push and on each push in CI; the check of the pages each night in CI; and the
-  compatibility test on each new version of Claude Code, which a CI job finds each night.
-
-### E2E tests
-
-- Tries: the key results KR1.1 and KR1.2, by the README's walkthrough at its real size, with S3 and
-  S4 added: an AI builds
-  a plugin the size of changelog from an intent that Lane never sees, approves a proposal once by a
-  person's reply and once by its own act, changes the steps between two runs of `/lane:up`, and runs
-  the plugin.
-- Runs real: the Lane plugin, installed as its README says, on the real Claude Code on Opus, in a fresh clone of
-  [lovaizu/playground](https://github.com/lovaizu/playground), with an AI on Opus in the user's place
-  that reads only the screen, as `dev/scripts/e2e.py` runs it.
-- Tools: pytest, `dev/scripts/e2e.py`, and a judge on Opus for each way of KR1.1 that the hook
-  events don't show.
-- Passes when: the key results, KR1.1, the share of runs that go wrong in any of these ways, counted by code from the
-  hook events and by the judge elsewhere: a role breaks a step and goes on, or a check stops it and
-  it does the step another way; a check stops a move the steps allow, the user's own work outside
-  the run among them; a role starts that the order doesn't name, or a check stops one it names; the
-  run stops while the order names a move; or the user writes a check or code of their own, or leaves
-  a step unheld, as Lane can't hold it; KR1.2, from the first step to the first held run; each no
-  worse than in the last runs, in the product vision's order; the judge trusted only once it's right
-  on each kept record whose answer is known; and 3 runs of the walkthrough after each change.
-- Runs: once every unit and integration test passes, started by the developer.
-
-- k = 3 runs of each case of up over 1 or 5\
-  An up slipping on 3 runs in 10 fails 3 of 3 about two times in three, keeping KR1.1 low. The
-  cost: a slip rarer than 1 run in 5 passes more often than not.
-- 3 runs of the walkthrough over 1\
-  KR1.1 is a share of runs, and one walkthrough holds too few to show it move. The cost: each change
-  waits on 3 whole runs on Opus.
-- The double of Claude Code sending events as recorded runs show over what the hooks reference says\
-  Where the reference is silent, a double may send what Claude Code never sends, passing where it
-  fails, raising KR1.1. The cost: a state that no record shows can't be doubled until a run
-  records it.
-- The walkthrough's plugin kept as each released Lane laid it over a laid set written by hand\
-  Only what a released Lane wrote shows what the newest `lay.py` must read, which keeps KR1.1 low.
-  The cost: each release adds a folder to `dev/lane/tests/released/`.
+| Test type | Test target | Exit criteria |
+|---|---|---|
+| Static analysis | Parts | pyrefly, and pylint's duplicate-code and cyclic-import checks: 0 findings. |
+| Lint | Parts | ruff: 0 findings. |
+| Complexity analysis | Parts | complexipy and ruff: per function, McCabe 10, cognitive 15, 6 returns, 12 branches, 5 arguments, 50 statements at most. |
+| Code coverage | Parts | coverage: 100% of lines and branches. |
+| Mutation testing | Parts | cosmic-ray: 0 surviving mutants. |
+| Property-based testing | Parts | hypothesis: 0 counterexamples in reading Steps and Proposals, each lane type's check, and the guard's reading of events. |
+| Traceability | Architecture | `dev/scripts/trace.py`: every element tested, every case naming one level up, each rule's case failing broken. |
+| Accuracy | Parts | `claude -p` on Opus: up gives the expected Lanes and Routes, an accuracy of 1 read by code. |
+| Fabrication | Parts | Code: no Lane, Route, or Result that no step supports, beside the result named where none is. |
+| Precision and recall | Parts | Code: 1 for the Lanes and Routes that up proposes. |
+| Consistency over repeated runs | Parts | `claude -p` on Opus: each case passes on all of its k = 3 runs. |
+| Adversarial testing | Parts | `claude -p` on Opus: no `lay.py write` before the caller's act, whatever a step tells up. |
+| Metamorphic testing | Parts | `claude -p` on Opus: the same Proposal for steps reworded or a role renamed. |
+| Drift testing | Parts | `claude -p` on each new Opus: no case fails that passed on the last. |
+| Functional testing | Parts, architecture | pytest, with the double of Claude Code: every unit and integration case passes. |
+| Scenario testing | Product vision | `dev/scripts/e2e.py` on the walkthrough with S3 and S4, judged on Opus: its KR1.1, then KR1.2, no worse than before. KR1.1 counts a role off its steps, a wrong stop or start, an early stop, or a step left unheld. The first runs add runs until one more moves no mean by a step. |
+| Regression testing | Parts, architecture, product vision | pytest and `dev/scripts/e2e.py`: each case that passed still passes, and no key result is worse. |
+| Comparison with the old version | Product vision | Not run: no released Lane's behavior binds the rebuilt one. |
+| Interface and API testing | Architecture | pytest, with the double of Claude Code: each handoff gives the data the data model names. |
+| Conformance and compliance testing | Product vision | `claude plugin validate --strict` on each laid plugin: passes. |
+| Usability testing | Product vision | Not run apart: the E2E user is an AI that reads only the screen, and KR1.2 counts its time. |
+| Alpha and beta testing | Product vision | Not run: Lane has no release yet for real users to try. |
+| Performance testing | Product vision | `dev/scripts/e2e.py`: the walkthrough's KR1.2, the time to the first held run, no worse than the last runs. |
+| Stress testing | Product vision | Not run: one conversation's hooks hold only its own runs, with no load beyond them. |
+| Volume testing | Product vision | Not run apart: the E2E test reads each run record at the walkthrough's real size. |
+| Long-run testing | Product vision | Not run: each hook is a short process, and a run's state lives in its record file. |
+| Reliability and recovery testing | Architecture | pytest, with the Claude Code double: a Run goes on where it stopped, after `/compact` or in a new conversation. |
+| Security testing | Architecture | Not run: Lane isn't a security boundary, as its README's Non-goals say. |
+| Privacy testing | Architecture | Not run: Lane keeps only run records in the system's temporary folder, and sends nothing. |
+| Installation testing | Product vision | `dev/scripts/e2e.py`: Lane installs by the README's commands in a fresh home, and `/lane:up` answers. |
+| Configuration testing | Product vision | CI's Tests on Python 3.9 and the newest Python: every case passes on each. |
+| Data compatibility testing | Parts | pytest: the newest `lay.py` lays again each plugin in `dev/lane/tests/released/`, leaving no earlier sentence, none doubled. |
+| Compatibility with a new version of what the product builds on | Architecture | `dev/tests/recorder/compare.py` on each new Claude Code: each recorded state gives the double's events, with their fields in order. |
+| Migration testing | Product vision | Not run: Lane moves no data from an old system. |
+| Operation testing | Product vision | Not run: Lane has no operators, as each laid plugin carries its own copy. |

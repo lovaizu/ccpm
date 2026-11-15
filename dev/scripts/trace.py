@@ -1,6 +1,6 @@
 """Decides whether the plugins' tests lead by their names to what they stand on: each test case to
 what it supports one level up, each element of the plugin's architecture to an integration case,
-each case of a principle to a failure with its part taken out, and each result of a double to a
+each case of a rule to a failure with its part taken out, and each result of a double to a
 line of a record that names its source. Run it from the top of the repository as
 `python3 dev/scripts/trace.py check <plugin>`, `doubles`, or `sources`.
 
@@ -8,8 +8,8 @@ It reads what dev/plugin-development-guide.md's Test says a plugin keeps, and th
 template of the architecture best practice names them:
 
 - each story by its `S<n>` in User stories of `dev/<plugin>/architecture.md`
-- each principle by its heading under Principles
-- each role and component by its name in Components' list of what each decides alone
+- each rule by its heading under Solution strategy
+- each role and component by its name in Components' list, above its Strategies
 - each kind of data by each `<text class="name">` of `dev/<plugin>/images/data-model.svg`, the one
   place that names every kind, as Data model's text names only the kinds a reader could confuse
 - each key result by its `KR<n>.<m>` in `dev/<plugin>/product-vision.md`
@@ -18,14 +18,14 @@ template of the architecture best practice names them:
 
 A case in `e2e/` names a key result, one in `integration/` an element, and one in `unit/`,
 `properties/`, or `prompts/`, the unit tests, an integration case by its function's name. Each
-integration case that names a principle takes the fixture `broken`, and trace.py runs it alone by
+integration case that names a rule takes the fixture `broken`, and trace.py runs it alone by
 pytest with `TRACE_BROKEN=1` and `--runxfail`, under which the fixture takes out the part that holds
-the principle, as the guide's A principle's test seen to fail says, and a case marked xfail runs as
+the rule, as the guide's A principle's test seen to fail says, and a case marked xfail runs as
 if unmarked. It exits 0 where every case names only what exists one level up, every element has an
-integration case, and every case of a principle fails with its part taken out, 1 where it reports
+integration case, and every case of a rule fails with its part taken out, 1 where it reports
 one that doesn't, and 2 where it could not read or run what it checks, such as an architecture
 without one of those sections, as a check that can't read its input passes nothing. A 0 shows only
-that every name leads somewhere and that each case of a principle can fail, not that the cases are
+that every name leads somewhere and that each case of a rule can fail, not that the cases are
 enough, as N13 of plugins/rn/domain/best-practices/architecture/best-practice.md says.
 
 `doubles` reads each folder `recorded/` under dev/tests/ and each plugin's tests, as the guide's
@@ -104,17 +104,16 @@ def section(lines: list[str], heading: str, path: str) -> list[tuple[int, str]]:
 
 
 def components(lines: list[tuple[int, str]], path: str) -> list[tuple[int, str]]:
-    """Each name in Components' list of what each decides alone, with its line number."""
-    numbered = iter(lines)
-    if not any(line == "What each decides alone:" for _, line in numbered):
-        raise Unreadable(f"{path}: Components has no line `What each decides alone:`")
+    """Each name in Components' list, above its Strategies, with its line number."""
     found = []
-    for number, line in numbered:
-        if line.startswith("The choices made"):
+    for number, line in lines:
+        if line == "Strategies:":
             break
         named = COMPONENT.match(line)
         if named:
             found.append((number, named.group(1)))
+    if not found:
+        raise Unreadable(f"{path}: Components lists no component, where the template lists each")
     return found
 
 
@@ -136,9 +135,9 @@ def elements(plugin: str) -> list[tuple[str, str, str]]:
         story = STORY.match(line)
         if story:
             found.append((f"{path}:{number}", "story", story.group(1)))
-    for number, line in section(lines, "## Principles", path):
+    for number, line in section(lines, "## Solution strategy", path):
         if line.startswith("### "):
-            found.append((f"{path}:{number}", "principle", line[4:].strip()))
+            found.append((f"{path}:{number}", "rule", line[4:].strip()))
     for number, name in components(section(lines, "## Components", path), path):
         found.append((f"{path}:{number}", "component", name))
     figure = f"dev/{plugin}/images/data-model.svg"
@@ -229,7 +228,7 @@ def cases(plugin: str) -> tuple[dict[str, list[Case]], list[str]]:
 
 def fails_broken(case: Case) -> bool:
     """Whether pytest fails the case run alone with TRACE_BROKEN=1, which has its fixture `broken`
-    take out the part that holds its principle. It runs a case marked xfail as if unmarked, as a
+    take out the part that holds its rule. It runs a case marked xfail as if unmarked, as a
     case of a part not yet built is, so that the mark hides no case that passes broken."""
     env = dict(os.environ, TRACE_BROKEN="1")
     command = [sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", "--runxfail"]
@@ -244,23 +243,23 @@ def fails_broken(case: Case) -> bool:
     return bool(failed)
 
 
-def broken_faults(integration: list[Case], principles: set[str]) -> list[str]:
-    """Each integration case of a principle that takes no `broken`, or that doesn't fail where
-    `broken` takes out the part that holds the principle."""
+def broken_faults(integration: list[Case], rules: set[str]) -> list[str]:
+    """Each integration case of a rule that takes no `broken`, or that doesn't fail where
+    `broken` takes out the part that holds the rule."""
     found = []
     for case in integration:
-        if not principles.intersection(case.names):
+        if not rules.intersection(case.names):
             continue
         if not case.broken:
             found.append(
-                f"{case.place}: {case.name} names a principle but takes no fixture broken, which"
+                f"{case.place}: {case.name} names a rule but takes no fixture broken, which"
                 " takes out the part that holds it where TRACE_BROKEN is 1"
             )
         elif not fails_broken(case):
             found.append(
                 f"{case.place}: {case.name} doesn't fail with TRACE_BROKEN=1, so it doesn't show"
-                " the parts keeping its principle; have its fixture broken take out the part"
-                " that holds the principle"
+                " the parts keeping its rule; have its fixture broken take out the part"
+                " that holds the rule"
             )
     return found
 
@@ -291,7 +290,7 @@ def name_faults(plugin: str, level_cases: dict[str, list[Case]], named: set[str]
     }
     what = {
         "integration": f"integration case of dev/{plugin}/tests/integration/",
-        "element": f"story, principle, component, or kind of data of dev/{plugin}/architecture.md",
+        "element": f"story, rule, component, or kind of data of dev/{plugin}/architecture.md",
         "key result": f"key result of dev/{plugin}/product-vision.md",
     }
     return [
@@ -314,16 +313,16 @@ def untested(named: list[tuple[str, str, str]], integration: list[Case]) -> list
 
 def faults(plugin: str) -> list[str]:
     """Each test file in no level's folder, each case that names nothing one level up or what
-    isn't there, each element that no integration case names, and each case of a principle not
+    isn't there, each element that no integration case names, and each case of a rule not
     seen to fail with its part taken out."""
     named = elements(plugin)
     level_cases, stray = cases(plugin)
-    principles = {name for _, kind, name in named if kind == "principle"}
+    rules = {name for _, kind, name in named if kind == "rule"}
     return (
         stray
         + name_faults(plugin, level_cases, {name for _, _, name in named})
         + untested(named, level_cases["integration"])
-        + broken_faults(level_cases["integration"], principles)
+        + broken_faults(level_cases["integration"], rules)
     )
 
 
