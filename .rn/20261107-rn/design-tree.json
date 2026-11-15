@@ -17,18 +17,6 @@
       "status": "done"
     },
     {
-      "name": "Each part a developer builds by the design gives, with the others, what the README promises",
-      "path": "plugins/rn/domain/best-practices/architecture",
-      "kind": "meta",
-      "status": "done"
-    },
-    {
-      "name": "A maker of code designs it, tests it first, and writes it as the field's established practice says",
-      "path": "plugins/rn/domain/best-practices/code",
-      "kind": "meta",
-      "status": "done"
-    },
-    {
       "name": "An AI given a prompt does the task as its writer means, in cases the writer didn't foresee",
       "path": "plugins/rn/domain/best-practices/prompt",
       "kind": "meta",
@@ -65,10 +53,286 @@
       "status": "done"
     },
     {
+      "name": "A developer sees, before writing any body, whether the architecture can be built as parts that fit together, from a skeleton of each part, and each gap where it can't",
+      "path": "plugins/rn/domain/best-practices/software-design",
+      "kind": "meta",
+      "status": "doing",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The purpose",
+              "decided": "design fills the gap between the architecture, with its Solution strategy and Test strategy, and the code, and its purpose is to check the architecture: a gap that the design shows goes back to the architecture first; the design covers the architecture's level and the parts' level, never the product's; software design makes the skeleton: each module with the one decision it alone hides, and each interface with what it takes, gives, and refuses, from the arrows and data of the Sequences, a prompt's part with when to use it and the form of what it takes and gives",
+              "by": "user"
+            },
+            {
+              "about": "Who judges the architecture checked",
+              "decided": "the software design judges its own skeleton, and lists each gap it finds; the architecture best practice keeps the condition that each gap the two designs found is mended in the architecture, so the architecture is checked once they find none",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "How it's written",
+              "decided": "written for any technology, as the code best practice is: the architecture's Components and Test strategy name the technology and the tools, and the best practice names a language or a tool only as an example",
+              "by": "user"
+            },
+            {
+              "about": "Its grounds",
+              "decided": "Parnas's information hiding, Meyer's design by contract, arc42's building block view at level 2, and SWEBOK v4's Software Design, whose detailed design lies below the architecture",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "A developer sees, before building any part, whether the parts joined as the architecture draws give each key result, from Given, When, and Then test cases that fail until each part is built",
+      "path": "plugins/rn/domain/best-practices/test-design",
+      "kind": "meta",
+      "status": "doing",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The purpose",
+              "decided": "design fills the gap between the architecture, with its Solution strategy and Test strategy, and the code, and its purpose is to check the architecture: a gap that the design shows goes back to the architecture first; the design covers the architecture's level and the parts' level, never the product's; test design writes the test cases of every level that Test strategy names, as Given, When, and Then through the skeleton: E2E cases for each key result, integration cases for each element of the architecture, and unit cases for each part, each naming what it supports one level up, the integration and unit cases checking the architecture and the E2E cases the key results; the script that checks the trace comes here from the architecture best practice",
+              "by": "user"
+            },
+            {
+              "about": "Who judges the architecture checked",
+              "decided": "the test design judges its own cases, and lists each gap it finds, such as a case no part can hold or a part no case reaches; the architecture best practice judges whether each gap is mended in the architecture",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "How it's written",
+              "decided": "written for any technology, as the code best practice is: the architecture's Components and Test strategy name the technology and the tools, and the best practice names a language or a tool only as an example; Given, When, and Then is the cases' form, not a technology",
+              "by": "user"
+            },
+            {
+              "about": "Its grounds",
+              "decided": "ISTQB's test analysis, test design, and test implementation with its test techniques, and Dan North's BDD for Given, When, and Then",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "Each part a developer builds by the design gives, with the others, what the README promises",
+      "path": "plugins/rn/domain/best-practices/architecture",
+      "kind": "meta",
+      "status": "doing",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The architecture checked by design",
+              "decided": "the best practice keeps, in place of writing the skeleton and the cases, a condition that each gap the software design and the test design made on the document found is mended in the document first, and its practice has the two designs made by their best practices; the architecture ends its own making at Test strategy",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "A maker of code designs it, tests it first, and writes it as the field's established practice says",
+      "path": "plugins/rn/domain/best-practices/code",
+      "kind": "meta",
+      "status": "doing",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Used alone",
+              "decided": "the code best practice, and the prompt one, work alone for code or a prompt with no architecture, so they presume no skeleton and no cases: they take a skeleton and cases where the design made them, and design the modules and cases themselves where none exist; the item that opens the part's skeleton and unit cases as given breaks this now",
+              "by": "user"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "Each document of ccpm made by a best practice holds its kind's template and nothing beside it, as rn's check finds each place where one leaves it",
       "path": "plugins/rn/domain/record/template.py",
       "kind": "code",
-      "status": "done"
+      "status": "doing",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Standing alone",
+              "decided": "the template check is a pure check of a document against its kind's template, so it stands apart from rn's parts not yet built: a command of its own with no other command beside it, tests that name no case of rn's, and check.sh running it on ccpm's product visions, READMEs, and architectures, which it never did",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N4",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": true,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "rn's product vision says what rn is for",
