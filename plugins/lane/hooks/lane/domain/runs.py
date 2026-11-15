@@ -137,7 +137,7 @@ def stand(
     for line in lines:
         if isinstance(line, Called):
             runs[line.run] = _called(line, routes)
-        elif line.run in runs:
+        else:
             runs[line.run] = _moved(runs[line.run], line, routes, plugin)
     return Conversation(session_id, tuple(runs.values()))
 

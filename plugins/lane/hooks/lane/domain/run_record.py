@@ -165,10 +165,6 @@ def _line(path: str, number: int, text: str) -> Line:
     """One line of the record, read into its kind."""
     try:
         held = json.loads(text)
-        kind = _KINDS[held.pop("kind")]
-        names = {field.name for field in dataclasses.fields(kind)}
-        if set(held) != names:
-            raise ValueError(f"fields {sorted(held)}, not {sorted(names)}")
-        return kind(**held)
+        return _KINDS[held.pop("kind")](**held)
     except (ValueError, KeyError, TypeError, AttributeError) as e:
         raise Unreadable(f"{path}, line {number}: not a line of the run record: {e}") from e

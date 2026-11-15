@@ -192,9 +192,10 @@ def _main(run: Run, what: What | None) -> bool:
 
 
 def _what(event: Event, conversation: Conversation, root: str) -> What | None:
-    """What the event is, by its kind and its tool."""
-    if event.name == "UserPromptExpansion" and event.command_name:
-        plugin, _, skill = event.command_name.partition(":")
+    """What the event is, by its kind and its tool, of the six that `events.hook_entries` hooks."""
+    if event.name == "UserPromptExpansion":
+        # A UserPromptExpansion names the command typed, as dev/lane/claude-code-states.md records.
+        plugin, _, skill = (event.command_name or "").partition(":")
         return SkillCall(plugin, skill, "person", event.command_args or "")
     if event.name == "UserPromptSubmit":
         agent = _notified(event)
@@ -205,9 +206,7 @@ def _what(event: Event, conversation: Conversation, root: str) -> What | None:
     tool_input = event.tool_input or {}
     if event.name == "PreToolUse":
         return _called(event, tool_input, conversation, root)
-    if event.name == "PostToolUse":
-        return _posted(event, tool_input, root)
-    return None
+    return _posted(event, tool_input, root)
 
 
 def _called(

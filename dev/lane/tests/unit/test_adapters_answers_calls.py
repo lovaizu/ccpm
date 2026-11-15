@@ -356,11 +356,13 @@ def test_a_run_of_print_gives_its_id_and_words() -> None:
         ("python3 /lane/scripts/lay.py steps changelog", "ID: b9fd8fd8\n"),
         ("python3 /lane/scripts/lay.py print changelog", "Lane x: not a lane type\n"),
         ("git log --oneline", "ID: b9fd8fd8\n"),
+        ("python3 /lane/scripts/lay.py print changelog <<'EOF'\nIt's\nEOF", "ID: b9fd8fd8\n"),
     ],
-    ids=["steps", "print with no ID", "another command"],
+    ids=["steps", "print with no ID", "another command", "a command shlex can't split"],
 )
 def test_what_isnt_a_shown_proposal_gives_none(command: str, output: str) -> None:
-    """Given: another command of lay.py, a print whose output names no ID, or another command.
+    """Given: another command of lay.py, a print whose output names no ID, another command, or a
+    command whose quotes shlex can't split, such as a here-document that holds an apostrophe.
     When: printed reads them.
     Then: it gives None."""
     assert printed(command, output) is None
@@ -389,6 +391,7 @@ ROOT = "/home/you/tally/changelog"
         ("python3 /other/hooks/lane/result.py writer written", None),
         (f"python3 {ROOT}/hooks/lane/result.py writer written && rm CHANGELOG.md", None),
         ("git log --oneline", None),
+        (f"python3 {ROOT}/hooks/lane/result.py writer 'written", None),
     ],
     ids=[
         "the plugin's result.py",
@@ -398,6 +401,7 @@ ROOT = "/home/you/tally/changelog"
         "another plugin's",
         "and another command",
         "another command",
+        "a command shlex can't split",
     ],
 )
 def test_a_run_of_result_py_names_its_role_and_result(command: str, read: Any) -> None:

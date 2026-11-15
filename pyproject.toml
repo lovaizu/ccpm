@@ -72,8 +72,9 @@ addopts = ["-p", "no:cacheprovider"]
 # dev/scripts/trace.py reads, as the plugin guide's Test says.
 markers = ["supports(name): the key result, element, or integration case one level up"]
 
-# How much of the E2E runner, of the trace script, and of the double of Claude Code the tests run,
-# as N7 of plugins/rn/domain/best-practices/code/best-practice.md says: every line and branch.
+# How much of the E2E runner, of the trace script, of the double of Claude Code, and of Lane's code
+# the tests run, as N7 of plugins/rn/domain/best-practices/code/best-practice.md says: every line
+# and branch.
 [tool.coverage.run]
 branch = true
 parallel = true
@@ -81,10 +82,24 @@ include = [
   "*/dev/scripts/e2e.py",
   "*/dev/scripts/trace.py",
   "*/dev/tests/claude_code.py",
+  "*/lane/scripts/lay.py",
+  "*/lane/domain/lay/*.py",
+  "*/hooks/lane/*.py",
+  "*/hooks/lane/**/*.py",
 ]
+
+# Lane's cases run Lane's code from copies: a bench's copy of plugins/lane/, and the guard's code
+# that lay.py copies into a plugin's hooks/lane/. Each copy counts as its file in plugins/lane/. The
+# guard's code comes first, as a plugin's hooks/lane/ also ends in lane/.
+[tool.coverage.paths]
+lane_guard = ["plugins/lane/hooks/lane/", "*/hooks/lane/"]
+lane = ["plugins/lane/", "*/lane/"]
 
 [tool.coverage.report]
 fail_under = 100
 show_missing = true
 # A script runs only as `__main__`, so its other branch never runs.
 partial_also = ["if __name__ == .__main__.:"]
+# A body not yet built raises NotImplementedError, and its cases are xfail until it's built, as A
+# case of a part not yet built of dev/plugin-development-guide.md says.
+exclude_also = ["raise NotImplementedError"]

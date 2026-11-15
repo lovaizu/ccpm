@@ -210,6 +210,44 @@ def test_a_subagents_start_of_a_role_is_stopped_with_its_last_lanes_sentence(plu
     ]
 
 
+@pytest.mark.supports("test_a_subagents_start_of_a_role_is_stopped")
+def test_a_subagents_start_of_an_agent_not_the_plugins_goes_and_adds_nothing(plugin: str) -> None:
+    """Given: changelog laid, and write's Run with writer's Start tied to a01.
+    When: handle answers a01's Agent call of Explore, which isn't changelog's.
+    Then: it lets the start through, says nothing, and adds nothing to the run record."""
+    path = writer_tied(plugin)
+    before = lines(path)
+    tool_input = {"subagent_type": "Explore", "prompt": "Find the tests"}
+    event = d.event(
+        "PreToolUse", agent_id="a01", tool_name="Agent", tool_input=tool_input, tool_use_id="t2"
+    )
+    answer = handle(event, plugin)
+    assert (answer.stop, answer.words) == (False, "")
+    assert lines(path) == before
+
+
+@pytest.mark.supports("test_a_result_is_added_for_the_subagents_start")
+def test_a_roles_result_the_main_conversation_gives_adds_no_result(plugin: str) -> None:
+    """Given: changelog laid, and write's Run with writer's Start tied to a01.
+    When: handle answers the PostToolUse of the main conversation's run of result.py writer
+    written.
+    Then: it lets it through, says nothing, and adds no Result to the run record, as only writer's
+    subagent gives writer's Result."""
+    path = writer_tied(plugin)
+    before = lines(path)
+    command = f"python3 {plugin}/hooks/lane/result.py writer written"
+    event = d.event(
+        "PostToolUse",
+        tool_name="Bash",
+        tool_input={"command": command},
+        tool_use_id="t2",
+        tool_response={"stdout": "", "stderr": ""},
+    )
+    answer = handle(event, plugin)
+    assert (answer.stop, answer.words) == (False, "")
+    assert lines(path) == before
+
+
 @pytest.mark.supports("test_an_end_with_no_result_is_stopped_with_its_last_steps_sentence")
 def test_a_subagents_end_with_no_result_is_stopped_with_its_last_lanes_sentence(
     plugin: str,

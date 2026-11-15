@@ -125,6 +125,17 @@ def test_a_role_with_no_steps_gives_none(plugin: str) -> None:
 
 
 @pytest.mark.supports("test_steps_give_each_step_of_each_role")
+def test_a_folder_in_skills_with_no_skill_md_is_no_role(plugin: str) -> None:
+    """Given: changelog with skills/shared/, which holds a template and no SKILL.md, so that Claude
+    Code loads no skill from it.
+    When: read_steps reads the plugin.
+    Then: it gives the same Steps as without the folder."""
+    before = read_steps(plugin)
+    w.write_files(plugin, {"skills/shared/template.md": "## Steps\n\n1. Not a skill's.\n"})
+    assert read_steps(plugin) == before
+
+
+@pytest.mark.supports("test_steps_give_each_step_of_each_role")
 def test_a_folder_that_isnt_there_is_refused(tmp_path: Any) -> None:
     """Given: a path where no folder lies.
     When: read_steps reads it.
