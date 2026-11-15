@@ -207,6 +207,24 @@ def test_the_post_tool_use_of_print_is_what_it_showed() -> None:
     assert got.what == PrintPosted("b9fd8fd8", output)
 
 
+@pytest.mark.supports("test_an_ais_run_keeps_a_persons_waiting_proposal")
+def test_what_print_showed_lies_on_the_run_whose_call_came_last() -> None:
+    """Given: two Runs of up, the first a person's, the second an AI's, called after it.
+    When: place reads the PostToolUse of lay.py print, whose output names ID c0ffee00.
+    Then: it lies on the AI's Run alone."""
+    first = d.run(skill="up", id="r1", due=())
+    second = d.run(skill="up", id="r2", by="ai", due=())
+    got = placed(
+        "PostToolUse",
+        first,
+        second,
+        tool_name="Bash",
+        tool_input={"command": "python3 /lane/scripts/lay.py print changelog < /tmp/p.json"},
+        tool_response={"stdout": "ID: c0ffee00\n", "stderr": ""},
+    )
+    assert got.runs == (second,)
+
+
 @pytest.mark.supports("test_an_end_with_no_result_is_stopped_with_its_last_steps_sentence")
 @pytest.mark.parametrize("name, agent", [("Stop", None), ("SubagentStop", "a01")])
 def test_an_end_is_an_end_asked_with_its_last_message(name: str, agent: Any) -> None:
@@ -306,5 +324,29 @@ def test_a_call_of_write_lies_on_the_run_of_up_that_showed_its_id() -> None:
         due=(),
     )
     command = "python3 /lane/scripts/lay.py write changelog b9fd8fd8"
+    got = placed("PreToolUse", first, second, tool_name="Bash", tool_input={"command": command})
+    assert got.runs == (first,)
+
+
+@pytest.mark.supports("test_a_lay_chained_after_another_command_waits_for_the_persons_reply")
+@pytest.mark.parametrize(
+    "command",
+    [
+        "python3 /lane/scripts/lay.py write changelog b9fd8fd8; echo laid",
+        "python3 /lane/scripts/lay.py write changelog b9fd8fd8&&echo laid",
+        "true;lay.py write changelog b9fd8fd8",
+    ],
+    ids=["a command after it", "a command after it, with no space", "a command before it"],
+)
+def test_a_call_of_write_chained_with_another_command_lies_on_the_run_that_showed_its_id(
+    command: str,
+) -> None:
+    """Given: two Runs of up, the first a person's that showed b9fd8fd8, the second an AI's that
+    showed c0ffee00.
+    When: place reads a Bash call that runs `lay.py write changelog b9fd8fd8` chained with another
+    command.
+    Then: it lies on the person's Run alone, as the ID is read apart from the command beside it."""
+    first = d.run(skill="up", id="r1", shown=(Shown("r1", "b9fd8fd8", "..."),), due=())
+    second = d.run(skill="up", id="r2", by="ai", shown=(Shown("r2", "c0ffee00", "..."),), due=())
     got = placed("PreToolUse", first, second, tool_name="Bash", tool_input={"command": command})
     assert got.runs == (first,)

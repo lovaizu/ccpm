@@ -270,7 +270,18 @@ def test_the_end_laid_on_the_last_step_is_taken_out() -> None:
     assert strip((laid,), d.LAID) == ((step,), ())
 
 
-@pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies")
+@pytest.mark.supports("test_steps_after_a_lay_come_without_lanes_sentences")
+def test_a_sentence_still_held_before_the_users_own_is_taken_out() -> None:
+    """Given: writer's step 3, holding the sentence Lane laid, then a sentence the user added after
+    it.
+    When: strip takes out the Laid's text.
+    Then: the Step keeps the user's words, both before and after, with no note."""
+    added = "Keep its form."
+    held = dataclasses.replace(LAID_3, text=f"{LAID_3.text} {added}")
+    mine = dataclasses.replace(STEP_3, text=f"{STEP_3.text} {added}")
+    assert strip((held,), d.LAID) == ((mine,), ())
+
+
 @pytest.mark.supports("test_a_sentence_the_user_changed_stays_as_theirs")
 def test_a_sentence_the_user_changed_is_kept_with_a_note() -> None:
     """Given: writer's step 3, whose laid sentence the user changed to name NEWS.md too.

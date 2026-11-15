@@ -80,6 +80,19 @@ def test_a_skills_call_adds_a_run_and_gives_the_first_start(plugin: str) -> None
     assert (called.skill, called.by) == ("write", "person")
 
 
+@pytest.mark.supports("test_an_ais_run_keeps_a_persons_waiting_proposal")
+def test_an_ais_call_beside_a_persons_run_adds_its_own_run(plugin: str) -> None:
+    """Given: changelog laid, and write's Run, which a person called, going.
+    When: handle answers the main conversation's Skill call of changelog:write.
+    Then: it adds the call of a second Run of write, by an AI, and keeps the person's."""
+    path = laid(plugin)
+    add(path, Called("r1", "write", "person", ""))
+    event = d.event("PreToolUse", tool_name="Skill", tool_input={"skill": "changelog:write"})
+    assert not handle(event, plugin).stop
+    called = [line for line in lines(path) if isinstance(line, Called)]
+    assert [(c.run == "r1", c.by) for c in called] == [(True, "person"), (False, "ai")]
+
+
 @pytest.mark.supports("test_a_call_the_guard_cant_check_is_stopped_with_who_must_fix_it")
 def test_an_event_with_lanes_json_unreadable_is_stopped_with_who_must_fix_it(plugin: str) -> None:
     """Given: changelog whose hooks/lanes.json isn't JSON, and write's Run with writer tied to

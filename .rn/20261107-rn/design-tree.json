@@ -182,18 +182,7 @@
       "name": "An AI that builds a plugin approves Lane's proposal by its own act, and after the steps change or Lane updates, the checks hold the steps as they now read",
       "path": "dev/lane/tests/integration/test_s3_s4_again.py",
       "kind": "specific",
-      "inputs": [
-        "dev/lane/architecture.md",
-        "plugins/lane",
-        "dev/lane/tests"
-      ],
-      "preconditions": [
-        "dev/lane/tests/integration/test_s2_approval.py"
-      ],
-      "status": "doing",
-      "check": "the integration tests in dev/lane/tests/integration/test_s3_s4_again.py pass, each seen to fail first, and each that names a rule of Solution strategy fails with the part that holds the rule taken out",
-      "good": false,
-      "decisions": []
+      "status": "done"
     },
     {
       "name": "A builder's /lane:up, typed or asked of an AI, proposes their plugin's lanes and routes from its steps alone, shows them as they'll read, and lays what the caller approves",
@@ -210,7 +199,7 @@
         "dev/lane/tests/integration/test_s2_approval.py",
         "dev/lane/tests/integration/test_s3_s4_again.py"
       ],
-      "status": "open",
+      "status": "doing",
       "necessary_conditions": [
         {
           "id": "N1",
