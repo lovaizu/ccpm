@@ -4,9 +4,16 @@ with what's wrong, and 2 with why it couldn't run, or with the usage."""
 
 from __future__ import annotations
 
+import os
+
+from fault import Wrong
+
+from record import template
+
 USAGE = """\
 usage: record.py add <record> <of> <id> <gave>
        record.py check <role> <result> [<cut>]
+       record.py template <kind> <document>
 """
 
 
@@ -18,6 +25,39 @@ def main(argv: list[str], cwd: str, plugin_root: str) -> tuple[int, str, str]:
       step's number nor a practice's ID, or `gave` is empty.
     - `check <role> <result> [<cut>]` gives 0 where rn's check finds no fault in the role's end, 1
       with each fault, and 2 where it can't check.
+    - `template <kind> <document>` gives 0 where the document, by its path from `cwd`, holds the
+      template of its kind among rn's best practices and nothing beside it, and 1 with each place
+      where it leaves it, one to a line as `<document>:<line>: <what>`, or where the kind has no
+      Markdown template, or the document is missing or isn't UTF-8 text.
 
     2 with the usage where the arguments are none of these."""
+    if argv[:1] == ["template"]:
+        if len(argv) != 3:
+            return 2, "", USAGE
+        try:
+            return _template(argv[1], argv[2], cwd, plugin_root)
+        except Wrong as wrong:
+            return 1, "", f"record.py: {wrong}\n"
     raise NotImplementedError("command.main")
+
+
+def _template(kind: str, document: str, cwd: str, plugin_root: str) -> tuple[int, str, str]:
+    """The result of `record.py template` on the document against the kind's template."""
+    path = template.of_kind(plugin_root, kind)
+    with open(path, encoding="utf-8") as file:
+        form = file.read()
+    found = template.faults(form, _read(os.path.join(cwd, document), document, kind))
+    said = "".join(f"{document}:{each.line}: {each.what}\n" for each in found)
+    return (1 if found else 0), "", said
+
+
+def _read(path: str, named: str, kind: str) -> str:
+    """The text of the document at the path, which the call names as `named`. Raises Wrong where
+    it isn't there or isn't UTF-8 text."""
+    try:
+        with open(path, encoding="utf-8") as file:
+            return file.read()
+    except FileNotFoundError:
+        raise Wrong(f"{named}: no such file to check against the template of {kind}") from None
+    except UnicodeDecodeError:
+        raise Wrong(f"{named}: isn't UTF-8 text, which the check of a template reads") from None
