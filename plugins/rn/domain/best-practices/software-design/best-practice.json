@@ -1,124 +1,124 @@
 {
-  "goal": {
-    "what": "The developers see, before anyone writes a body, whether the parts that the architecture draws fit together, and the architecture's maker mends each place where they don't.",
-    "critical_success_factors": [
-      {
-        "id": "C1",
-        "what": "Each decision that the architecture gives a part has one place in the code.",
-        "necessary_conditions": [
-          {
-            "id": "N1",
-            "about": "Module opening",
-            "what": "Does each module state at its top the one decision that it alone hides, and does each decision that the architecture gives a component lie in exactly one module?",
-            "why": "A developer who builds or changes a part finds the one module that holds each decision, and a decision split across modules shows a part that the architecture cut wrong while nothing is built on it yet. David Parnas's [information hiding](https://doi.org/10.1145/361598.361623) divides a system into modules by the decisions likely to change, each hidden in one module, and arc42's [building block view](https://docs.arc42.org/section-5/) at level 2 opens each component of level 1 into its blocks in this way.",
-            "items": [
-              {
-                "at": "decide",
-                "text": "Open the architecture and read it to its end: what each component decides in Components, the kinds of data in Data model, each step in Sequences, where each component's files lie in Directory structure, and the language and the tools in Components and Test strategy.",
-                "trace": {
-                  "action": "read",
-                  "takes": [
-                    "{inputs}"
-                  ]
-                }
-              },
-              {
-                "at": "decide",
-                "text": "List, for each component, each decision that the architecture gives it: each choice its line in Components says it makes, each step it takes in Sequences, and each kind of data that only it reads or writes, such as the layout of a file that it keeps."
-              },
-              {
-                "at": "decide",
-                "text": "Give each decision to one module, and ask of each pair of decisions in a component whether one could change while the other stays, such as a file's layout and the rules that read it. Where one could, give each a module of its own, and where a change of one always changes the other, keep them in one module."
-              },
-              {
-                "at": "make",
-                "text": "Make each module's file where Directory structure places its component, in the language that Components names, and write at its top the sentence that the note of Module opening in the template asks for, naming the decision, not the steps, such as `The layout of a record on disk.` Make too each other file that Directory structure places and the parts read, such as a manifest or a setting, in its form, and have each command's entry call its interface, so that a case reaches each empty body."
-              },
-              {
-                "at": "make",
-                "text": "Once each module states its decision, take a change that the README or the product vision might come to ask for, such as a new field in what a part keeps, read only the modules' first sentences, and name the one module to open. Where you name none or more than one, move the decision or rewrite the sentence, or, where the architecture itself places the decision in two components, list it as a gap as N4 says, and repeat with a change of another kind until each change names one module."
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "id": "C2",
-        "what": "Each handoff between the parts has an interface that both sides build to.",
-        "necessary_conditions": [
-          {
-            "id": "N2",
-            "about": "Interface",
-            "what": "Does each arrow of Sequences that reaches a part have an interface that states what it takes, what it gives, and each way it refuses, with its body left empty?",
-            "why": "Developers who build the two sides of an arrow apart build to one contract, and a body left empty keeps the skeleton about how the parts fit, not how each works. Bertrand Meyer's [design by contract](https://en.wikipedia.org/wiki/Design_by_contract) states each routine by what it requires, what it ensures, and what it refuses.",
-            "items": [
-              {
-                "at": "decide",
-                "text": "For each sequence, take each arrow that reaches a component, and name the module whose decision answers it. That module offers an interface that carries the arrow, and arrows that take one form, such as each event of one kind from a host, may share one interface that names each of them in its contract. A module that no arrow reaches offers only what the other modules of its component call, and a component offers nothing that no arrow reaches, since a name that nothing calls is a part that no story needs."
-              },
-              {
-                "at": "decide",
-                "text": "For each interface, write its contract from the sequence and the data model: what it takes, as the kind of data on the arrow; what it gives, as the kind of data on the arrow back or on the next arrow; what else it changes, such as a file it writes; and each way it refuses, from each branch of the sequence that stops or sends work back."
-              },
-              {
-                "at": "make",
-                "text": "Write each interface in its module with the types it takes and gives, such as in its signature where the language allows, and its contract beside it, such as in its doc comment, with its body left so that a call fails, such as one that raises `NotImplementedError`."
-              },
-              {
-                "at": "make",
-                "text": "Follow each sequence from arrow to arrow, and check that what each interface gives is what the interface of the next arrow takes, such as by a throwaway file that passes each call's result to the next call, run through the type checker that Test strategy names, since the checker sees a handoff only where code passes a value on. A type that doesn't fit is a gap that N4 lists."
-              }
-            ]
-          },
-          {
-            "id": "N3",
-            "about": "Prompt",
-            "what": "Does each part that holds a prompt have a file that states when to use the prompt, what it gives, and the form of what it takes and gives, with its steps left empty?",
-            "why": "A prompt is a part whose body an AI carries out, so the parts beside it fit only where its file states, as an interface does, when it runs and the form of what passes in and out.",
-            "items": [
-              {
-                "at": "decide",
-                "text": "For each component that Components gives a prompt as its type, such as a skill or a subagent, take from Sequences when it starts, what data it takes, and what data it gives back."
-              },
-              {
-                "at": "make",
-                "text": "Make its file where Directory structure places it, with its description, which says when to use the prompt and what it gives, and the form of what it takes and gives, such as a JSON Schema, its steps left empty."
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "id": "C3",
-        "what": "Each place where the architecture can't be built reaches its maker before anyone builds around it.",
-        "necessary_conditions": [
-          {
-            "id": "N4",
-            "about": "Gaps",
-            "what": "Does the list of gaps name each place where the skeleton can't follow the architecture, each with the element of the architecture that it bears on?",
-            "why": "A gap found in the skeleton is mended in the architecture while nothing rests on it, and a gap that the design mends in the code alone leaves the document wrong for every developer after. SWEBOK v4's Software Design places the detailed design below the architecture, so a design that can't follow the architecture goes back to it.",
-            "items": [
-              {
-                "at": "make",
-                "text": "Read the skeleton against the architecture, and list each gap: a decision that no module can hold without another; a module whose first sentence needs `and` for two decisions that change for different reasons; an arrow that no interface can carry, or data on it that Data model lacks; a type that doesn't fit across a handoff; and a component that no arrow reaches."
-              },
-              {
-                "at": "make",
-                "text": "Write each gap in the form that the note of Gaps in the template gives, and leave the architecture and the skeleton as they are around it, since its maker decides how to mend it."
-              },
-              {
-                "at": "make",
-                "text": "Where the architecture changes, change the skeleton to it as N1 to N3 say, and read it again for gaps, until you list none."
-              }
-            ]
-          }
-        ]
-      }
+ "goal": {
+  "what": "The developers see, before anyone writes a body, whether the parts that the architecture draws fit together, and the architecture's maker mends each place where they don't.",
+  "critical_success_factors": [
+   {
+    "id": "C1",
+    "what": "Each decision that the architecture gives a part has one place in the code.",
+    "necessary_conditions": [
+     {
+      "id": "N1",
+      "about": "Module opening",
+      "what": "Does each module state at its top the one decision that it alone hides, and does each decision that the architecture gives a component lie in exactly one module?",
+      "why": "A developer who builds or changes a part finds the one module that holds each decision, and a decision split across modules shows a part that the architecture cut wrong while nothing is built on it yet. David Parnas's [information hiding](https://doi.org/10.1145/361598.361623) divides a system into modules by the decisions likely to change, each hidden in one module, and arc42's [building block view](https://docs.arc42.org/section-5/) at level 2 opens each component of level 1 into its blocks in this way.",
+      "items": [
+       {
+        "at": "decide",
+        "text": "Open the architecture and read it to its end: what each component decides in Components, the kinds of data in Data model, each step in Sequences, where each component's files lie in Directory structure, and the language and the tools in Components and Test strategy.",
+        "trace": {
+         "action": "read",
+         "takes": [
+          "{inputs}"
+         ]
+        }
+       },
+       {
+        "at": "decide",
+        "text": "List, for each component, each decision that the architecture gives it: each choice its line in Components says it makes, each step it takes in Sequences, and each kind of data that only it reads or writes, such as the layout of a file that it keeps."
+       },
+       {
+        "at": "decide",
+        "text": "Give each decision to one module, and ask of each pair of decisions in a component whether one could change while the other stays, such as a file's layout and the rules that read it. Where one could, give each a module of its own, and where a change of one always changes the other, keep them in one module."
+       },
+       {
+        "at": "make",
+        "text": "Make each module's file where Directory structure places its component, in the language that Components names, and write at its top the sentence that the note of Module opening in the template asks for, naming the decision, not the steps, such as `The layout of a record on disk.` Make too each other file that Directory structure places and the parts read, such as a manifest or a setting, in its form, and have each command's entry call its interface, so that a case reaches each empty body."
+       },
+       {
+        "at": "make",
+        "text": "Once each module states its decision, take a change that the README or the product vision might come to ask for, such as a new field in what a part keeps, read only the modules' first sentences, and name the one module to open. Where you name none or more than one, move the decision or rewrite the sentence, or, where the architecture itself places the decision in two components, list it as a gap as N4 says, and repeat with a change of another kind until each change names one module."
+       }
+      ]
+     }
     ]
-  },
-  "template": "template.md",
-  "inputs": [
-    "architecture"
-  ],
-  "preconditions": []
+   },
+   {
+    "id": "C2",
+    "what": "Each handoff between the parts has an interface that both sides build to.",
+    "necessary_conditions": [
+     {
+      "id": "N2",
+      "about": "Interface",
+      "what": "Does each arrow of Sequences that reaches a part have an interface that states what it takes, what it gives, and each way it refuses, with its body left empty?",
+      "why": "Developers who build the two sides of an arrow apart build to one contract, and a body left empty keeps the skeleton about how the parts fit, not how each works. Bertrand Meyer's [design by contract](https://en.wikipedia.org/wiki/Design_by_contract) states each routine by what it requires, what it ensures, and what it refuses.",
+      "items": [
+       {
+        "at": "decide",
+        "text": "For each sequence, take each arrow that reaches a component, and name the module whose decision answers it. That module offers an interface that carries the arrow, and arrows that take one form, such as each event of one kind from a host, may share one interface that names each of them in its contract. A module that no arrow reaches offers only what the other modules of its component call, and a component offers nothing that no arrow reaches, since a name that nothing calls is a part that no story needs."
+       },
+       {
+        "at": "decide",
+        "text": "For each interface, write its contract from the sequence and the data model: what it takes, as the kind of data on the arrow; what it gives, as the kind of data on the arrow back or on the next arrow; what else it changes, such as a file it writes; and each way it refuses, from each branch of the sequence that stops or sends work back."
+       },
+       {
+        "at": "make",
+        "text": "Write each interface in its module with the types it takes and gives, such as in its signature where the language allows, and its contract beside it, such as in its doc comment, with its body left so that a call fails, such as one that raises `NotImplementedError`."
+       },
+       {
+        "at": "make",
+        "text": "Follow each sequence from arrow to arrow, and check that what each interface gives is what the interface of the next arrow takes, such as by a throwaway file that passes each call's result to the next call, run through the type checker that Test strategy names, since the checker sees a handoff only where code passes a value on. A type that doesn't fit is a gap that N4 lists."
+       }
+      ]
+     },
+     {
+      "id": "N3",
+      "about": "Prompt",
+      "what": "Does each part that holds a prompt have a file that states when to use the prompt, what it gives, and the form of what it takes and gives, with its steps left empty?",
+      "why": "A prompt is a part whose body an AI carries out, so the parts beside it fit only where its file states, as an interface does, when it runs and the form of what passes in and out.",
+      "items": [
+       {
+        "at": "decide",
+        "text": "For each component that Components gives a prompt as its type, such as a skill or a subagent, take from Sequences when it starts, what data it takes, and what data it gives back."
+       },
+       {
+        "at": "make",
+        "text": "Make its file where Directory structure places it, with its description, which says when to use the prompt and what it gives, and the form of what it takes and gives, such as a JSON Schema, its steps left empty."
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "C3",
+    "what": "Each place where the architecture can't be built reaches its maker before anyone builds around it.",
+    "necessary_conditions": [
+     {
+      "id": "N4",
+      "about": "Gaps",
+      "what": "Does the list of gaps name each place where the skeleton can't follow the architecture, each with the element of the architecture that it bears on?",
+      "why": "A gap found in the skeleton is mended in the architecture while nothing rests on it, and a gap that the design mends in the code alone leaves the document wrong for every developer after. SWEBOK v4's Software Design places the detailed design below the architecture, so a design that can't follow the architecture goes back to it.",
+      "items": [
+       {
+        "at": "make",
+        "text": "Read the skeleton against the architecture, and list each gap: a decision that no module can hold without another; a module whose first sentence needs `and` for two decisions that change for different reasons; an arrow that no interface can carry, or data on it that Data model lacks; a type that doesn't fit across a handoff; and a component that no arrow reaches."
+       },
+       {
+        "at": "make",
+        "text": "Write each gap in the form that the note of Gaps in the template gives, and leave the architecture and the skeleton as they are around it, since its maker decides how to mend it."
+       },
+       {
+        "at": "make",
+        "text": "Where the architecture changes, change the skeleton to it as N1 to N3 say, and read it again for gaps, until you list none."
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "template": "template.md",
+ "inputs": [
+  "architecture"
+ ],
+ "preconditions": []
 }

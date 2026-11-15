@@ -1,157 +1,157 @@
 {
-  "goal": {
-    "what": "The developers see, before anyone builds a part, whether the parts joined as the architecture draws give each key result, and the architecture's maker mends each place where they can't.",
-    "critical_success_factors": [
-      {
-        "id": "C1",
-        "what": "Each level that Test strategy names has the cases that check what its target promises.",
-        "necessary_conditions": [
-          {
-            "id": "N1",
-            "about": "E2E cases",
-            "what": "Does each key result have an E2E case that runs an objective's main use at the size of a real request, and names the key result?",
-            "why": "The developers know that the product does what its product vision promises only where a case runs it as its users do, and a case written before any part is built fixes what the parts together must give. ISTQB's test analysis takes each test condition from the test basis, here each key result.",
-            "items": [
-              {
-                "at": "decide",
-                "text": "Open the product vision, the README, the architecture, and the skeleton, and read each to its end: the key results, the walkthrough, Test strategy with its levels and tools, each interface that the skeleton offers, and each double and tool that Test strategy names for the tests to run the parts and the product with, such as a double of the host.",
-                "trace": {
-                  "action": "read",
-                  "takes": [
-                    "{inputs}"
-                  ]
-                }
-              },
-              {
-                "at": "make",
-                "text": "For each key result, write a case that runs the main use of its objective, as the README's walkthrough shows it, at the size of a real request, and names the key result, such as `KR1.1`."
-              }
-            ]
-          },
-          {
-            "id": "N2",
-            "about": "Integration cases",
-            "what": "Does each element of the architecture, each path through each sequence, each rule of Solution strategy, each decision of a component, and each handoff with its data, have an integration case that names it?",
-            "why": "An element that no case reaches is one whose parts no one has seen fit together, and a case written through the skeleton before any body shows a gap between the parts while it's still cheap to mend. Steve Freeman and Nat Pryce's outside-in test-driven development, in [Growing Object-Oriented Software, Guided by Tests](http://www.growing-object-oriented-software.com/), finds each part's roles by first writing the tests one level up.",
-            "items": [
-              {
-                "at": "make",
-                "text": "For each story's sequence, write a case for each path through it: the main flow, each branch, each step that sends work back, and each question put to the role, until every move from one step to the next lies on some path."
-              },
-              {
-                "at": "make",
-                "text": "For each rule of Solution strategy, write a case where the parts keep it, which can be run again with the part that holds the rule taken out, to see it fail, such as by the script that checks the trace."
-              },
-              {
-                "at": "make",
-                "text": "For each decision that a component alone makes, write a case that shows it, and for each handoff between parts, a case with the data it passes as Data model names it, until each kind of data lies on some case."
-              }
-            ]
-          },
-          {
-            "id": "N3",
-            "about": "Unit cases",
-            "what": "Does each interface of the skeleton have a unit case for each class of what it takes and gives, its refusals and edges included, each naming the integration case it supports?",
-            "why": "The interface a part offers comes from what the cases one level up need of it, and a case for each class finds the inputs that the part must treat apart before its body is written. The techniques are those of the ISTQB glossary: equivalence partitioning, boundary value analysis, and decision table testing.",
-            "items": [
-              {
-                "at": "make",
-                "text": "Divide each input and each result that an interface's contract names into classes that the part treats alike, the refused ones among them, and write one case for each class, naming the integration case it supports."
-              },
-              {
-                "at": "make",
-                "text": "Where a class ends on an ordered scale, such as a length or a count, write one case at each end and one at the nearest value of the next class."
-              },
-              {
-                "at": "make",
-                "text": "Where the contract's result depends on a combination of conditions, write one case for each combination that can occur, with the result it gives."
-              },
-              {
-                "at": "make",
-                "text": "For a part that holds a prompt, write a case where its description says it acts and one where it says it doesn't, for each kind of request it's for, and decide by code each point of the result that its record shows."
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "id": "C2",
-        "what": "Each case checks the parts through their interfaces, and fails until the parts are built.",
-        "necessary_conditions": [
-          {
-            "id": "N4",
-            "about": "E2E cases, Integration cases, Unit cases",
-            "what": "Is each case a test in the test code, with its Given, When, and Then stated, that calls the skeleton only through its interfaces and fails on the empty bodies?",
-            "why": "A case kept as a test is the one statement of what a part must do, and a case that passes on an empty body tests nothing. Dan North's [behaviour-driven development](https://dannorth.net/introducing-bdd/) writes each scenario as Given, When, and Then.",
-            "items": [
-              {
-                "at": "make",
-                "text": "Write each case as a test in the place that Directory structure names for its level, in the form that the note of its section in the template gives, and write no list of the cases in a document, since a list beside the code says each case twice."
-              },
-              {
-                "at": "make",
-                "text": "Run the tests and the type checker that Test strategy names, and see every case fail at an empty body, not at a fault of the test or a file that the skeleton lacks: a type that doesn't fit across a handoff is a gap that N6 lists, and a case that passes on an empty body tests nothing. Leave unrun a case that runs the real host or a model, which only the type checker reads at this point."
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "id": "C3",
-        "what": "No element and no case is left without the other.",
-        "necessary_conditions": [
-          {
-            "id": "N5",
-            "about": "Trace",
-            "what": "Does the script that checks the trace give 0, finding that every element of the architecture has an integration case and every case names something one level up that exists?",
-            "why": "Only a check by name finds each element that no case reaches among many, while the reading that N6 asks for judges whether the cases are enough.",
-            "items": [
-              {
-                "at": "make",
-                "text": "Where the architecture the product builds on keeps a script that checks the trace, such as one that a guide to building plugins runs on every plugin, take that one, and add only the checks it lacks. Elsewhere, make the script where Directory structure places it, so that it finds each element by where the architecture's template puts its name, such as each story by its `S<n>` and each key result by its `KR<n>.<m>`, and each case by the name it gives of what it supports."
-              },
-              {
-                "at": "make",
-                "text": "Run the script, and mend each case it names until it names none."
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "id": "C4",
-        "what": "Each place where the cases show the architecture can't give a key result reaches its maker before anyone builds around it.",
-        "necessary_conditions": [
-          {
-            "id": "N6",
-            "about": "Gaps",
-            "what": "Does the list of gaps name each place where the cases can't follow the architecture, each with the element of the architecture that it bears on?",
-            "why": "A gap that the cases show is mended in the architecture while nothing rests on it, and a case bent around it leaves the document wrong for every developer after.",
-            "items": [
-              {
-                "at": "make",
-                "text": "Read the cases against the architecture and the skeleton, and list each gap: a case that no part can hold; a part that no case reaches; a part whose cases change for more than one reason, such as a file's form and a remote's commands; and a handoff that no interface carries."
-              },
-              {
-                "at": "make",
-                "text": "Write each gap in the form that the note of Gaps in the template gives, and leave the architecture, the skeleton, and the cases as they are around it, since the architecture's maker decides how to mend it."
-              },
-              {
-                "at": "make",
-                "text": "Where the architecture or the skeleton changes, change the cases to it as N1 to N4 say, and read them again for gaps, until you list none."
-              }
-            ]
-          }
-        ]
-      }
+ "goal": {
+  "what": "The developers see, before anyone builds a part, whether the parts joined as the architecture draws give each key result, and the architecture's maker mends each place where they can't.",
+  "critical_success_factors": [
+   {
+    "id": "C1",
+    "what": "Each level that Test strategy names has the cases that check what its target promises.",
+    "necessary_conditions": [
+     {
+      "id": "N1",
+      "about": "E2E cases",
+      "what": "Does each key result have an E2E case that runs an objective's main use at the size of a real request, and names the key result?",
+      "why": "The developers know that the product does what its product vision promises only where a case runs it as its users do, and a case written before any part is built fixes what the parts together must give. ISTQB's test analysis takes each test condition from the test basis, here each key result.",
+      "items": [
+       {
+        "at": "decide",
+        "text": "Open the product vision, the README, the architecture, and the skeleton, and read each to its end: the key results, the walkthrough, Test strategy with its levels and tools, each interface that the skeleton offers, and each double and tool that Test strategy names for the tests to run the parts and the product with, such as a double of the host.",
+        "trace": {
+         "action": "read",
+         "takes": [
+          "{inputs}"
+         ]
+        }
+       },
+       {
+        "at": "make",
+        "text": "For each key result, write a case that runs the main use of its objective, as the README's walkthrough shows it, at the size of a real request, and names the key result, such as `KR1.1`."
+       }
+      ]
+     },
+     {
+      "id": "N2",
+      "about": "Integration cases",
+      "what": "Does each element of the architecture, each path through each sequence, each rule of Solution strategy, each decision of a component, and each handoff with its data, have an integration case that names it?",
+      "why": "An element that no case reaches is one whose parts no one has seen fit together, and a case written through the skeleton before any body shows a gap between the parts while it's still cheap to mend. Steve Freeman and Nat Pryce's outside-in test-driven development, in [Growing Object-Oriented Software, Guided by Tests](http://www.growing-object-oriented-software.com/), finds each part's roles by first writing the tests one level up.",
+      "items": [
+       {
+        "at": "make",
+        "text": "For each story's sequence, write a case for each path through it: the main flow, each branch, each step that sends work back, and each question put to the role, until every move from one step to the next lies on some path."
+       },
+       {
+        "at": "make",
+        "text": "For each rule of Solution strategy, write a case where the parts keep it, which can be run again with the part that holds the rule taken out, to see it fail, such as by the script that checks the trace."
+       },
+       {
+        "at": "make",
+        "text": "For each decision that a component alone makes, write a case that shows it, and for each handoff between parts, a case with the data it passes as Data model names it, until each kind of data lies on some case."
+       }
+      ]
+     },
+     {
+      "id": "N3",
+      "about": "Unit cases",
+      "what": "Does each interface of the skeleton have a unit case for each class of what it takes and gives, its refusals and edges included, each naming the integration case it supports?",
+      "why": "The interface a part offers comes from what the cases one level up need of it, and a case for each class finds the inputs that the part must treat apart before its body is written. The techniques are those of the ISTQB glossary: equivalence partitioning, boundary value analysis, and decision table testing.",
+      "items": [
+       {
+        "at": "make",
+        "text": "Divide each input and each result that an interface's contract names into classes that the part treats alike, the refused ones among them, and write one case for each class, naming the integration case it supports."
+       },
+       {
+        "at": "make",
+        "text": "Where a class ends on an ordered scale, such as a length or a count, write one case at each end and one at the nearest value of the next class."
+       },
+       {
+        "at": "make",
+        "text": "Where the contract's result depends on a combination of conditions, write one case for each combination that can occur, with the result it gives."
+       },
+       {
+        "at": "make",
+        "text": "For a part that holds a prompt, write a case where its description says it acts and one where it says it doesn't, for each kind of request it's for, and decide by code each point of the result that its record shows."
+       }
+      ]
+     }
     ]
-  },
-  "template": "template.md",
-  "inputs": [
-    "product-vision",
-    "readme",
-    "architecture",
-    "software-design"
-  ],
-  "preconditions": []
+   },
+   {
+    "id": "C2",
+    "what": "Each case checks the parts through their interfaces, and fails until the parts are built.",
+    "necessary_conditions": [
+     {
+      "id": "N4",
+      "about": "E2E cases, Integration cases, Unit cases",
+      "what": "Is each case a test in the test code, with its Given, When, and Then stated, that calls the skeleton only through its interfaces and fails on the empty bodies?",
+      "why": "A case kept as a test is the one statement of what a part must do, and a case that passes on an empty body tests nothing. Dan North's [behaviour-driven development](https://dannorth.net/introducing-bdd/) writes each scenario as Given, When, and Then.",
+      "items": [
+       {
+        "at": "make",
+        "text": "Write each case as a test in the place that Directory structure names for its level, in the form that the note of its section in the template gives, and write no list of the cases in a document, since a list beside the code says each case twice."
+       },
+       {
+        "at": "make",
+        "text": "Run the tests and the type checker that Test strategy names, and see every case fail at an empty body, not at a fault of the test or a file that the skeleton lacks: a type that doesn't fit across a handoff is a gap that N6 lists, and a case that passes on an empty body tests nothing. Leave unrun a case that runs the real host or a model, which only the type checker reads at this point."
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "C3",
+    "what": "No element and no case is left without the other.",
+    "necessary_conditions": [
+     {
+      "id": "N5",
+      "about": "Trace",
+      "what": "Does the script that checks the trace give 0, finding that every element of the architecture has an integration case and every case names something one level up that exists?",
+      "why": "Only a check by name finds each element that no case reaches among many, while the reading that N6 asks for judges whether the cases are enough.",
+      "items": [
+       {
+        "at": "make",
+        "text": "Where the architecture the product builds on keeps a script that checks the trace, such as one that a guide to building plugins runs on every plugin, take that one, and add only the checks it lacks. Elsewhere, make the script where Directory structure places it, so that it finds each element by where the architecture's template puts its name, such as each story by its `S<n>` and each key result by its `KR<n>.<m>`, and each case by the name it gives of what it supports."
+       },
+       {
+        "at": "make",
+        "text": "Run the script, and mend each case it names until it names none."
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "C4",
+    "what": "Each place where the cases show the architecture can't give a key result reaches its maker before anyone builds around it.",
+    "necessary_conditions": [
+     {
+      "id": "N6",
+      "about": "Gaps",
+      "what": "Does the list of gaps name each place where the cases can't follow the architecture, each with the element of the architecture that it bears on?",
+      "why": "A gap that the cases show is mended in the architecture while nothing rests on it, and a case bent around it leaves the document wrong for every developer after.",
+      "items": [
+       {
+        "at": "make",
+        "text": "Read the cases against the architecture and the skeleton, and list each gap: a case that no part can hold; a part that no case reaches; a part whose cases change for more than one reason, such as a file's form and a remote's commands; and a handoff that no interface carries."
+       },
+       {
+        "at": "make",
+        "text": "Write each gap in the form that the note of Gaps in the template gives, and leave the architecture, the skeleton, and the cases as they are around it, since the architecture's maker decides how to mend it."
+       },
+       {
+        "at": "make",
+        "text": "Where the architecture or the skeleton changes, change the cases to it as N1 to N4 say, and read them again for gaps, until you list none."
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "template": "template.md",
+ "inputs": [
+  "product-vision",
+  "readme",
+  "architecture",
+  "software-design"
+ ],
+ "preconditions": []
 }
