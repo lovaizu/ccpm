@@ -376,7 +376,7 @@
        },
        {
         "at": "decide",
-        "text": "Pick a check only where, without it, a key result could worsen and no check picked would show it, given what the product is and what it builds on, such as compatibility with a new version of a host that changes on its own schedule. Unit, integration, and scenario testing, and traceability, pass this for every product, as the cases of N13 rest on them. Write no row for a check left out."
+        "text": "Pick each check that the guide says to pick always, and each other check whose condition the product meets, given what it is and what it builds on, such as a contract test where the tests use a double of a host that changes on its own schedule. Write no row for a check left out."
        },
        {
         "at": "decide",

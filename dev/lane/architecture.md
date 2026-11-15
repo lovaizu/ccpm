@@ -601,20 +601,19 @@ Each test case lies in `dev/lane/tests/`, written as Given, When, and Then befor
 
 | Check | Test target | Kind | Exit criteria or measure |
 |---|---|---|---|
+| Lint | Parts | Quality | ruff: 0 findings. |
+| Static analysis | Parts | Quality | pyrefly, and pylint's duplicate-code and cyclic-import checks: 0 findings. |
+| Complexity analysis | Parts | Quality | complexipy and ruff: per function, McCabe 10, cognitive 15, 6 returns, 12 branches, 5 arguments, 50 statements at most. |
 | Unit testing | Parts | Quality | pytest, with the double of Claude Code: every case passes. |
 | Unit testing | Parts that hold a prompt | Benchmark | `claude -p` on Opus: the share of up's runs giving the expected Lanes and Routes, against the last version's. Runs per case: added until one more moves no share. |
-| Static analysis | Parts | Quality | pyrefly, and pylint's duplicate-code and cyclic-import checks: 0 findings. |
-| Lint | Parts | Quality | ruff: 0 findings. |
-| Complexity analysis | Parts | Quality | complexipy and ruff: per function, McCabe 10, cognitive 15, 6 returns, 12 branches, 5 arguments, 50 statements at most. |
 | Code coverage | Parts | Quality | coverage: 100% statement (C0) and branch (C1) coverage. |
-| Mutation testing | Parts | Quality | cosmic-ray: 0 surviving mutants. |
 | Property-based testing | Parts | Quality | hypothesis: 0 counterexamples in reading Steps and Proposals, each lane type's check, and the guard's reading of events. |
+| Mutation testing | Parts | Quality | cosmic-ray: 0 surviving mutants. |
 | Data compatibility testing | Parts | Quality | pytest: the newest `lay.py` lays again each plugin in `dev/lane/tests/released/`, leaving no earlier sentence, none doubled. |
 | Integration testing | Architecture | Quality | pytest, with the double of Claude Code: every case passes, each handoff giving the data the data model names. |
+| Contract testing | Architecture | Quality | `dev/tests/recorder/compare.py` on each new Claude Code: each recorded state gives the double's events, with their fields in order. |
 | Traceability | Architecture | Quality | `dev/scripts/trace.py`: every element tested, every case naming one level up, each rule's case failing broken. |
-| Reliability and recovery testing | Architecture | Quality | pytest, with the Claude Code double: a Run goes on where it stopped, after `/compact` or in a new conversation. |
-| Compatibility with a new version of what the product builds on | Architecture | Quality | `dev/tests/recorder/compare.py` on each new Claude Code: each recorded state gives the double's events, with their fields in order. |
-| Conformance and compliance testing | Product | Quality | `claude plugin validate --strict` on each laid plugin: passes. |
+| Scenario testing | Product | Benchmark | `dev/scripts/e2e.py` on the walkthrough with S3 and S4, judged on Opus: key results KR1.1, then KR1.2, against the last runs. Runs: added until one more moves no mean by a step. KR1.1 counts a role off its steps, a wrong stop or start, an early stop, or a step left unheld. |
 | Installation testing | Product | Quality | `dev/scripts/e2e.py`: Lane installs by the README's commands in a fresh home, and `/lane:up` answers. |
 | Configuration testing | Product | Quality | CI's Tests on Python 3.9 and the newest Python: every case passes on each. |
-| Scenario testing | Product | Benchmark | `dev/scripts/e2e.py` on the walkthrough with S3 and S4, judged on Opus: key results KR1.1, then KR1.2, against the last runs. Runs: added until one more moves no mean by a step. KR1.1 counts a role off its steps, a wrong stop or start, an early stop, or a step left unheld. |
+| Conformance and compliance testing | Product | Quality | `claude plugin validate --strict` on each laid plugin: passes. |

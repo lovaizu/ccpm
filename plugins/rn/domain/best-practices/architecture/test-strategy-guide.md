@@ -10,6 +10,8 @@ Each check runs as a quality or as a benchmark:
   change stops.
 - A benchmark measures a value, and a person decides from it. It has no criterion.
 
+Each row says when to pick the check: always, or on a condition that the product meets.
+
 Each row names the sources that list the check. The sources explain each check in full, so this
 guide links them and copies nothing:
 
@@ -22,6 +24,9 @@ guide links them and copies nothing:
   International Software Testing Qualifications Board (ISTQB) for the Foundation Level, the Test
   Analyst, the Technical Test Analyst, and AI Testing v2.0, with its
   [glossary](https://glossary.istqb.org) for each term.
+- [ISO/IEC 25010](https://iso25000.com/index.php/en/iso-25000-standards/iso-25010): the product
+  quality model of the International Organization for Standardization (ISO), whose quality
+  characteristics the rows of reliability and security follow, read through the ISO 25000 portal.
 - [Fintan](https://fintan.jp/page/1456/): the テスト種別カタログ (test type catalog) of TIS,
   under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).
 - Added: a check that teams run under its common name but that none of these sources lists.
@@ -42,47 +47,47 @@ guide links them and copies nothing:
 
 Unit tests test each part against its contract.
 
-| Check | Kind | What it checks or measures | Recommended criterion | Sources |
-|---|---|---|---|---|
-| Unit testing | Quality | Each part against its contract. | Every case passes. | CTFL, CTAL-TA, Fintan |
-| Characterization testing | Quality | What a part does now, recorded as its expected result before a change, where no specification says what it should do. | Every case passes. | Added, from [Working Effectively with Legacy Code](https://www.oreilly.com/library/view/working-effectively-with/0131177052/) by Michael Feathers |
-| Static analysis | Quality | Faults found without running the code, such as mismatched types, import cycles, copied code, and calls to an interface that the project forbids. | 0 findings. | CTFL, CTAL-TTA, Fintan |
-| Lint | Quality | The code against the project's coding rules and format. | 0 findings. | Fintan |
-| Complexity analysis | Quality | The complexity of each function, such as its nesting, branches, returns, arguments, and statements. | Each limit at the default of the tool that checks it, such as a cognitive complexity of 15 in [SonarQube](https://docs.sonarsource.com/sonarqube-server/latest/user-guide/code-metrics/metrics-definition/). | CTAL-TTA, Fintan |
-| Code coverage | Quality | The share of statements and branches that the tests run. | 100% statement (C0) and branch (C1) coverage. | CTFL, CTAL-TTA |
-| Mutation testing | Quality | Whether the tests fail when a tool makes small changes to the code. | 0 surviving mutants. | Added |
-| Property-based testing | Quality | Whether the code keeps a stated property over many inputs that a tool generates. | 0 counterexamples. | Added |
-| Data compatibility testing | Quality | Whether the product reads the data that another program or an earlier version wrote. | The product reads, without loss, each kind of data that each earlier version wrote. | Fintan |
+| Check | Kind | When to pick | What it checks or measures | Recommended criterion | Sources |
+|---|---|---|---|---|---|
+| Lint | Quality | Always. | The code against the project's coding rules and format. | 0 findings. | Fintan |
+| Static analysis | Quality | Always. | Faults found without running the code, such as mismatched types, import cycles, copied code, and calls to an interface that the project forbids. | 0 findings. | CTFL, CTAL-TTA, Fintan |
+| Complexity analysis | Quality | Always. | The complexity of each function, such as its nesting, branches, returns, arguments, and statements. | Each limit at the default of the tool that checks it, such as a cognitive complexity of 15 in [SonarQube](https://docs.sonarsource.com/sonarqube-server/latest/user-guide/code-metrics/metrics-definition/). | CTAL-TTA, Fintan |
+| Unit testing | Quality | Always. | Each part against its contract. | Every case passes. | CTFL, CTAL-TA, Fintan |
+| Code coverage | Quality | Always. | The share of statements and branches that the tests run. | 100% statement (C0) and branch (C1) coverage. | CTFL, CTAL-TTA |
+| Property-based testing | Quality | Always. | Whether the code keeps a stated property over many inputs that a tool generates. | 0 counterexamples. | Added |
+| Mutation testing | Quality | Always. | Whether the tests fail when a tool makes small changes to the code. | 0 surviving mutants. | Added |
+| Characterization testing | Quality | When the work changes existing code that no specification describes. | What a part does now, recorded as its expected result before the change. | Every case passes. | Added, from [Working Effectively with Legacy Code](https://www.oreilly.com/library/view/working-effectively-with/0131177052/) by Michael Feathers |
+| Data compatibility testing | Quality | When the product reads data that another program or an earlier version wrote. | Whether the product reads that data. | The product reads, without loss, each kind of data that each earlier version wrote. | Fintan |
 
 ## Architecture
 
 Integration tests test the joined parts against each element of the architecture.
 
-| Check | Kind | What it checks or measures | Recommended criterion | Sources |
-|---|---|---|---|---|
-| Integration testing | Quality | The joined parts against each element of the architecture, including each interface between two parts or to an outside system. | Every case passes. | SWEBOK, CTFL, Fintan |
-| Traceability | Quality | Whether each element of the architecture has a test, and each test names an existing element or case one level up. | Every element has a test, and every test names an existing element or case. | CTFL |
-| Reliability and recovery testing | Quality | Whether the product keeps working through a fault and recovers from it. | The product recovers from each fault that the architecture names, with no work lost. | CTAL-TTA, Fintan |
-| Security testing | Quality | Whether someone can use the product in a way that it must refuse, including by an instruction injected into a prompt's input. | The product refuses each use that it must refuse. | SWEBOK, CTAL-TTA, CT-AI, Fintan |
-| Privacy testing | Quality | Whether the product uses personal data only as it allows. | No personal data reaches a use that the product doesn't allow. | SWEBOK |
-| Compatibility with a new version of what the product builds on | Quality | Whether the product still works on each new version of an outside thing, such as its host. The steps of each recorded run run again, and the real thing's results are compared with its double's, as in [a contract test](https://martinfowler.com/bliki/ContractTest.html). | For each recorded step, the real thing gives the same result as the double. | Added |
+| Check | Kind | When to pick | What it checks or measures | Recommended criterion | Sources |
+|---|---|---|---|---|---|
+| Integration testing | Quality | Always. | The joined parts against each element of the architecture, including each interface between two parts or to an outside system. | Every case passes. | SWEBOK, CTFL, Fintan |
+| Reliability testing | Quality | When a fault or an interruption must not lose data or state, beyond what the user stories already promise. | Fault tolerance and recoverability, as ISO/IEC 25010 defines them: whether the product works as intended despite faults, and recovers the data directly affected. | The product recovers from each fault that the architecture names, with no data lost. | ISO/IEC 25010, CTAL-TTA, Fintan |
+| Security testing | Quality | When some data or operation must be open only to those authorized, such as with several users or with public access. | Security, as ISO/IEC 25010 defines it: whether the product defends against attack, and gives each user or system only the access that its authorization allows. | Each attack and each access beyond authorization that the architecture names is refused. | ISO/IEC 25010, SWEBOK, CTAL-TTA, CT-AI, Fintan |
+| Privacy testing | Quality | When the product handles personal data. | Whether the product uses personal data only as it allows. | No personal data reaches a use that the product doesn't allow. | SWEBOK |
+| Contract testing | Quality | When the tests use a double of an outside thing that the product doesn't control, such as its host. | Whether the double gives what the real thing gives. The steps of each recorded run run again on each new version of the real thing. | For each recorded step, the real thing gives the same result as the double. | Added, from [ContractTest](https://martinfowler.com/bliki/ContractTest.html) by Martin Fowler |
+| Traceability | Quality | Always. | Whether each element of the architecture has a test, and each test names an existing element or case one level up. | Every element has a test, and every test names an existing element or case. | CTFL |
 
 ## Product
 
 End-to-end (E2E) tests test the product in real use against each key result of the product vision.
 
-| Check | Kind | What it checks or measures | Recommended criterion | Sources |
-|---|---|---|---|---|
-| Scenario testing | Quality | A user's whole task from start to end, through every part that it crosses, as the E2E test runs it. | Every case passes. | Fintan |
-| Back-to-back testing | Quality | Whether the new version gives the old version's result for the same input, where a change must keep the behavior. | Each input gives the old version's result. | Fintan, CT-AI |
-| Conformance and compliance testing | Quality | The product against a standard or a regulation that it must follow. | The standard's validator or checklist finds 0 faults. | SWEBOK |
-| Installation testing | Quality | Whether the product installs, updates, and uninstalls as its documentation says. | The documented commands install, update, and uninstall the product on a fresh system. | SWEBOK |
-| Configuration testing | Quality | The product on each combination of system, runtime, and settings that it supports. | Every case passes on each supported combination. | SWEBOK, Fintan |
-| Migration testing | Quality | Whether the data and the work move from the old system to the new one, and back if the move fails. | All the data moves, and moving back restores the old system. | Fintan |
-| Operation testing | Quality | Whether the operators' procedures, such as backup, monitoring, and logs, work. | Each procedure works as written. | Fintan |
-| Performance testing | Benchmark | Response time, throughput, and resource use at normal load and at peak load. | None | CTAL-TTA, Fintan |
-| Stress testing | Benchmark | The most load that the product takes before it fails, and how it fails. | None | Fintan |
-| Volume testing | Benchmark | Response time and resource use with the data at the size it grows to. | None | Fintan |
-| Long-run testing | Benchmark | Memory and other resource use over a long run, where a leak shows. | None | Fintan |
-| Usability testing | Benchmark | The time users take to reach their goal, how many reach it, and how satisfied they are, accessibility included. | None | SWEBOK, CTAL-TA, Fintan |
-| Alpha and beta testing | Benchmark | What real users report from their own use, first at the maker's site and then at theirs. | None | SWEBOK |
+| Check | Kind | When to pick | What it checks or measures | Recommended criterion | Sources |
+|---|---|---|---|---|---|
+| Scenario testing | Quality | Always. | A user's whole task from start to end, through every part that it crosses, as the E2E test runs it. | Every case passes. | Fintan |
+| Installation testing | Quality | Always. | Whether the product installs, updates, and uninstalls as its documentation says. | The documented commands install, update, and uninstall the product on a fresh system. | SWEBOK |
+| Configuration testing | Quality | When the product supports more than one system, runtime, or setting. | The product on each combination of system, runtime, and settings that it supports. | Every case passes on each supported combination. | SWEBOK, Fintan |
+| Back-to-back testing | Quality | When a change replaces a version and must keep its behavior. | Whether the new version gives the old version's result for the same input. | Each input gives the old version's result. | Fintan, CT-AI |
+| Conformance and compliance testing | Quality | When the product must follow a standard or a regulation. | The product against that standard or regulation. | The standard's validator or checklist finds 0 faults. | SWEBOK |
+| Migration testing | Quality | When the product takes over data or work from an old system. | Whether the data and the work move from the old system to the new one, and back if the move fails. | All the data moves, and moving back restores the old system. | Fintan |
+| Operation testing | Quality | When operators run the product, such as with backups and monitoring. | Whether the operators' procedures work. | Each procedure works as written. | Fintan |
+| Performance testing | Benchmark | When someone decides by how fast the product runs or what it uses. | Response time, throughput, and resource use at normal load and at peak load. | None | CTAL-TTA, Fintan |
+| Stress testing | Benchmark | When someone decides by how much load the product takes. | The most load that the product takes before it fails, and how it fails. | None | Fintan |
+| Volume testing | Benchmark | When the product's data grows, and someone decides by how it copes. | Response time and resource use with the data at the size it grows to. | None | Fintan |
+| Long-run testing | Benchmark | When the product runs for a long time in one process. | Memory and other resource use over a long run, where a leak shows. | None | Fintan |
+| Usability testing | Benchmark | When someone decides by how easily users reach their goal. | The time users take to reach their goal, how many reach it, and how satisfied they are, accessibility included. | None | SWEBOK, CTAL-TA, Fintan |
+| Alpha and beta testing | Benchmark | When real users can try a release. | What real users report from their own use, first at the maker's site and then at theirs. | None | SWEBOK |

@@ -169,9 +169,9 @@ Each test case lies in `<cases>`, written as Given, When, and Then before anyone
 > DELETE_TEMPLATE_COMMENT:
 > - `<cases>`: the folders of the test cases, as Directory structure names them.
 > - `<trace>`: the script that checks the trace by the names of the elements.
-> - `<check>`, `<target>`: each check that the product's purpose needs, picked from
->   [the test strategy guide](test-strategy-guide.md), in its order, with its test target as the
->   guide gives it. A check left out has no row.
+> - `<check>`, `<target>`: each check of [the test strategy guide](test-strategy-guide.md) to pick
+>   always, and each other whose condition the product meets, in its order, with its test target as
+>   the guide gives it. A check left out has no row.
 > - `<kind>`: `Quality` or `Benchmark`, as the guide gives it, or `Benchmark` where the test runs a
 >   prompt.
 > - `<tool>`: the tool that runs the check, by its name.
