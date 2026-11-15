@@ -2,17 +2,19 @@
 
 ## User stories
 
-- S1: the user wants to type `/rn:up` with their request, so that they get what they mean without a
-  specification.
-- S2: the user wants to answer each point one at a time, so that they spend time only on theirs.
-- S3: the user wants `/rn:ty` or `/rn:gm` at each sign-off, so that nothing rests on what they didn't
-  mean.
-- S4: the user wants to type `/rn:dn` at any moment, so that they lose neither time nor work.
-- S5: the user wants to type `/rn:up` alone in a new conversation, so that rn goes on where it
+- S1: the user wants to ask for what they need in their own words, so that they get what they
+  mean without a specification.
+- S2: the user wants to decide only the points that are theirs, one at a time, so that they spend
+  time only on those.
+- S3: the user wants to approve or say what to change at each sign-off, so that nothing rests on
+  what they didn't mean.
+- S4: the user wants to pause a run at any moment, so that they lose neither time nor work.
+- S5: the user wants to go on with a paused run in any conversation, so that it goes on where it
   stopped.
-- S6: the user wants one pull request, the decisions rn took, and the run's lessons, so that they
-  merge it.
-- S7: each of rn's developers wants each lesson signed off as an issue, so that they improve rn.
+- S6: the user wants one pull request, with rn's decisions and the run's lessons, so that they
+  merge knowing what it holds.
+- S7: each of rn's developers wants each lesson that a user signs off in rn's issues, so that they
+  improve rn.
 
 ## Solution strategy
 
