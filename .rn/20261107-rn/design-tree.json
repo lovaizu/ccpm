@@ -257,7 +257,7 @@
       "name": "A developer sees, before building any part, each test case that names nothing one level up and each element of the architecture that no case tests, and check.sh runs every plugin's cases with that check",
       "path": "dev/scripts/trace.py",
       "kind": "code",
-      "status": "doing",
+      "status": "done",
       "decisions": [
         {
           "about": "Where it finds the rules",
@@ -514,7 +514,7 @@
       "decisions": []
     },
     {
-      "name": "Each principle of Lane's architecture holds where the parts keep it, and its test fails where the part that holds it is taken out",
+      "name": "Each rule of the Solution strategy of Lane's architecture holds where the parts keep it, and its test fails where the part that holds it is taken out",
       "path": "dev/lane/tests/integration/test_principles.py",
       "kind": "specific",
       "inputs": [
@@ -699,7 +699,7 @@
       "decisions": []
     },
     {
-      "name": "Each principle of rn's architecture holds where the parts keep it, and its test fails where the part that holds it is taken out",
+      "name": "Each rule of the Solution strategy of rn's architecture holds where the parts keep it, and its test fails where the part that holds it is taken out",
       "path": "dev/rn/tests/integration/test_rn_principles.py",
       "kind": "specific",
       "inputs": [
