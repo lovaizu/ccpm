@@ -203,7 +203,8 @@
             },
             {
               "about": "The lines a Read read",
-              "decided": null
+              "decided": "from the Read's PostToolUse, tool_response.file's startLine to startLine plus numLines less one, as claude-code-2.1.325-read.jsonl:6 and 8 show for a Read whole and in part",
+              "by": "research"
             }
           ]
         }
