@@ -8,6 +8,7 @@ import json
 import os
 import subprocess
 from dataclasses import dataclass
+from typing import Any
 
 from fault import CantRun, Missing
 
@@ -24,11 +25,13 @@ class PullRequest:
 
 @dataclass(frozen=True)
 class Comment:
-    """One comment of the user's on the pull request: who wrote it, when, where, and its words."""
+    """One comment of the user's on the pull request: who wrote it, when, the file and line it lies
+    on, "" and None for one of the pull request's conversation, and its words."""
 
     author: str
     at: str
     path: str
+    line: int | None
     body: str
 
 
@@ -75,30 +78,41 @@ def mark_ready(worktree: str, ready: bool) -> PullRequest:
 
 
 def comments(worktree: str, since: str) -> tuple[Comment, ...]:
-    """The comments on the branch's pull request since a moment.
+    """The user's comments on the branch's pull request since a moment.
 
     Takes: the worktree, on the run's branch, and the moment, in ISO 8601 with its offset, such as
     `2026-11-15T09:00:00Z`.
-    Gives: each comment of the pull request's conversation made after it, from `gh pr view
-    --json comments`, in the order gh gives them, the order made, each with its author's login,
-    when it was made, "" as its path, and its words; none where no comment came after it.
+    Gives: each comment made after it by the account gh is logged in as, which runs rn, leaving out
+    every other author, bots among them: those of the pull request's conversation, from `gh pr view
+    --json url,comments`, with the path "" and the line None, and its line comments, from `gh api
+    --paginate --slurp repos/<owner>/<repository>/pulls/<number>/comments`, with the file's path and
+    the line, None where the comment's line is no longer in the diff; all in the order made, each
+    with its author's login, when it was made, and its words; none where no comment came after it.
     Changes: nothing.
     Refuses: fault.Missing, where gh isn't logged in or the branch has no pull request.
     Carries: S3 `T->>RP: gets them`, `RP->>GH: reads them`, and `RP-->>T: the comments (Comment)`.
     """
     _logged_in(worktree)
     branch = _branch(worktree)
-    viewed = _run(worktree, "pr", "view", branch, "--json", "comments")
+    viewed = _run(worktree, "pr", "view", branch, "--json", "url,comments")
     # Runs only where the branch has no pull request, which tree.py push opens before any sign-off,
     # so no case reaches it; taken back to the cases' designer.
     if viewed.returncode != 0:  # pragma: no cover
         raise Missing(f"the branch {branch} has no pull request to read comments from")
+    shown = json.loads(viewed.stdout)
+    talk = [
+        Comment(c["author"]["login"], c["createdAt"], "", None, c["body"])
+        for c in shown["comments"]
+    ]
+    on_lines = [
+        Comment(c["user"]["login"], c["created_at"], c["path"], c["line"], c["body"])
+        for page in _pages(worktree, _review_comments_path(shown["url"]))
+        for c in page
+    ]
+    user = _gh(worktree, "api", "user", "--jq", ".login").strip()
     after = _moment(since)
-    each = (
-        Comment(c["author"]["login"], c["createdAt"], "", c["body"])
-        for c in json.loads(viewed.stdout)["comments"]
-    )
-    return tuple(c for c in each if _moment(c.at) > after)
+    each = [c for c in talk + on_lines if c.author == user and _moment(c.at) > after]
+    return tuple(sorted(each, key=lambda c: _moment(c.at)))
 
 
 def open_issue(repository: str, title: str, body: str) -> str:
@@ -117,6 +131,28 @@ def open_issue(repository: str, title: str, body: str) -> str:
 
 def _run(worktree: str, *args: str) -> subprocess.CompletedProcess[str]:
     return subprocess.run(["gh", *args], cwd=worktree, capture_output=True, text=True, check=False)
+
+
+def _review_comments_path(url: str) -> str:
+    """The REST path of the line comments of the pull request at the URL, which ends in
+    `<owner>/<repository>/pull/<number>`."""
+    owner, repository, _, number = url.rstrip("/").split("/")[-4:]
+    return f"repos/{owner}/{repository}/pulls/{number}/comments"
+
+
+def _pages(worktree: str, path: str) -> list[list[dict[str, Any]]]:
+    """Each page that `gh api --paginate --slurp` gives for the path, as one JSON list of pages."""
+    return json.loads(_gh(worktree, "api", "--paginate", "--slurp", path))
+
+
+def _gh(worktree: str, *args: str) -> str:
+    """What gh printed for the command; raises CantRun, with what gh said, where it fails."""
+    done = _run(worktree, *args)
+    # Runs only where gh fails after its login was found, which no line of the double's record
+    # holds; taken back to the cases' designer.
+    if done.returncode != 0:  # pragma: no cover
+        raise CantRun(f"gh {args[0]} failed: {done.stderr.strip()}")
+    return done.stdout
 
 
 def _branch(worktree: str) -> str:

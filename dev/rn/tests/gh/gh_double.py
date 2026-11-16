@@ -1,7 +1,8 @@
 """The double of `gh` that rn's tests put first on the PATH, as `gh` beside this file, in place of
 GitHub's command line, as rn's Test strategy says: each result comes from a line of a record in
-recorded/, as the plugin guide's Each result of a double from a record says. gh-2.102.1-auth.jsonl
-and gh-2.102.1-pr-view.jsonl are records of runs of gh 2.102.1, its account given as `<account>`;
+recorded/, as the plugin guide's Each result of a double from a record says. gh-2.102.1-auth.jsonl,
+gh-2.102.1-pr-view.jsonl, and gh-2.102.1-api.jsonl are records of runs of gh 2.102.1, the account
+logged in given as `<account>`, which is the author of each comment a test gives no other;
 gh-manual.jsonl takes from gh's manual what no run that changes GitHub could be recorded for. The
 double keeps what GitHub would hold, the login, each pull request with its comments, and each issue,
 in the JSON file that `RN_GH_STATE` names, which the test sets up, and takes only the commands that
@@ -18,6 +19,7 @@ from typing import Any
 RECORDED = os.path.join(os.path.dirname(os.path.abspath(__file__)), "recorded")
 AUTH = "gh-2.102.1-auth.jsonl"
 PR_VIEW = "gh-2.102.1-pr-view.jsonl"
+API = "gh-2.102.1-api.jsonl"
 MANUAL = "gh-manual.jsonl"
 # The branch that the record of a pull request not found names, which the double gives as the
 # branch asked for.
@@ -32,8 +34,10 @@ def line(record: str, event: str) -> dict[str, Any]:
 
 def state(environ: Mapping[str, str]) -> dict[str, Any]:
     """What GitHub holds for the test, as the file that `RN_GH_STATE` names keeps it: `logged_in`,
-    `pulls` by branch, each with its `number`, `draft`, and `comments`, each comment `body` and
-    `createdAt`, and `issues`, each `repository`, `title`, and `body`."""
+    `pulls` by branch, each with its `number`, `draft`, `comments`, each comment `body` and
+    `createdAt`, with `author` where another account wrote it, and `review_comments` where it has
+    any, each line comment `body`, `created_at`, `path`, and `line`, with `user` where another
+    account wrote it, and `issues`, each `repository`, `title`, and `body`."""
     with open(environ["RN_GH_STATE"], encoding="utf-8") as f:
         return json.load(f)
 
@@ -108,7 +112,24 @@ def issue_create(argv: list[str], held: dict[str, Any]) -> tuple[int, str, str]:
     return ran["exit"], url + "\n", ""
 
 
+def api(argv: list[str], held: dict[str, Any]) -> tuple[int, str, str]:
+    """`gh api user --jq .login`, the account logged in, or `gh api --paginate --slurp
+    repos/<owner>/<repository>/pulls/<number>/comments`, the line comments of the pull request of
+    the number that the state holds, in the form of the recorded line comment, as one page."""
+    if argv[1] == "user":
+        ran = line(API, "gh api user gives the login")
+        return ran["exit"], ran["stdout"], ran["stderr"]
+    ran = line(API, "gh api gives the line comments of the pull request")
+    form = json.loads(ran["stdout"])[0][0]
+    number = int(argv[-1].split("/")[-2])
+    pull = next(p for p in held["pulls"].values() if p["number"] == number)
+    page = [dict(form, **each) for each in pull.get("review_comments", [])]
+    return ran["exit"], json.dumps([page]) + "\n", ""
+
+
 COMMANDS = {
+    ("api", "user"): api,
+    ("api", "--paginate"): api,
     ("pr", "view"): pr_view,
     ("pr", "create"): pr_create,
     ("pr", "ready"): pr_ready,

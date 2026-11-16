@@ -68,9 +68,9 @@ def main(argv: Sequence[str], stdin: TextIO, cwd: str, plugin_root: str) -> tupl
     - `approve` or `send-back`: 0, with the sign-off decided, from `sign_offs.decide`; for a lesson
       approved, with its issue's URL from `github.open_lesson`; for the pull request handed over and
       sent back, once `github.hand_over` marks it a draft again.
-    - `comments`: 0, with `[{"author", "at", "path", "body"}]`, each comment on the pull request
-      since the last sign-off sent back was put up, from `github.comments`; 1, where no sign-off
-      was sent back.
+    - `comments`: 0, with `[{"author", "at", "path", "line", "body"}]`, each of the user's
+      comments on the pull request, of its conversation and on its lines, since the last sign-off
+      sent back was put up, from `github.comments`; 1, where no sign-off was sent back.
     - `pause`, with `{"stood": [{"record", "step"}]}` on standard input: 0, once each Place is
       written and `branch.commit`, its message naming each record and step, and `branch.push` take
       it.
@@ -223,7 +223,7 @@ def _comments(args: list[str], stdin: TextIO, cwd: str, plugin_root: str) -> Any
     if not sent:  # pragma: no cover
         raise Wrong("no sign-off was sent back; run comments after send-back, as /rn:gm loads")
     return [
-        {"author": c.author, "at": c.at, "path": c.path, "body": c.body}
+        {"author": c.author, "at": c.at, "path": c.path, "line": c.line, "body": c.body}
         for c in github.comments(run, sent[-1].at)
     ]
 

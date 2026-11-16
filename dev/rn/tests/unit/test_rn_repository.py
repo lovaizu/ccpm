@@ -241,6 +241,70 @@ def test_comments_are_given_from_after_a_moment_in_the_order_made(
     assert [c.body for c in gh.comments(run.worktree, since)] == bodies
 
 
+@pytest.mark.supports("test_gm_alone_reads_the_users_comments_since_the_sign_off")
+def test_a_line_comment_is_given_with_its_path_and_line_among_the_others_in_the_order_made(
+    tmp_path: Any, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Given: a run's pull request with a line comment on invoicer/render.py, line 12, at 10:30,
+    and a comment of its conversation at 10:00 and one at 11:00, each by the account logged in.
+    When: its comments since 09:00 are asked.
+    Then: it gives the three in the order made, the line comment with its path and line, and the
+    others with the path "" and no line."""
+    run = d.run_of(d.repository(str(tmp_path)))
+    talk = [
+        {"body": "Talk at ten.", "createdAt": "2026-11-15T10:00:00Z"},
+        {"body": "Talk at eleven.", "createdAt": "2026-11-15T11:00:00Z"},
+    ]
+    on_line = {
+        "body": "Leave this file out.",
+        "created_at": "2026-11-15T10:30:00Z",
+        "path": "invoicer/render.py",
+        "line": 12,
+    }
+    pull = {"number": 1, "draft": True, "comments": talk, "review_comments": [on_line]}
+    on_github(monkeypatch, tmp_path, pulls={run.branch: pull})
+    given = [(c.body, c.path, c.line) for c in gh.comments(run.worktree, "2026-11-15T09:00:00Z")]
+    assert given == [
+        ("Talk at ten.", "", None),
+        ("Leave this file out.", "invoicer/render.py", 12),
+        ("Talk at eleven.", "", None),
+    ]
+
+
+@pytest.mark.supports("test_gm_alone_reads_the_users_comments_since_the_sign_off")
+def test_comments_of_any_other_account_bots_among_them_are_left_out(
+    tmp_path: Any, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Given: a run's pull request with a comment of its conversation by another account, a line
+    comment by a bot, and one comment of each kind by the account logged in, all after 09:00.
+    When: its comments since 09:00 are asked.
+    Then: it gives only the two by the account logged in, each with that account as its author."""
+    run = d.run_of(d.repository(str(tmp_path)))
+    talk = [
+        {"body": "A reviewer's.", "createdAt": "2026-11-15T10:00:00Z", "author": {"login": "rev"}},
+        {"body": "The user's talk.", "createdAt": "2026-11-15T10:10:00Z"},
+    ]
+    lines = [
+        {
+            "body": "A bot's.",
+            "created_at": "2026-11-15T10:20:00Z",
+            "path": "invoicer/render.py",
+            "line": 3,
+            "user": {"login": "github-actions[bot]", "type": "Bot"},
+        },
+        {
+            "body": "The user's line.",
+            "created_at": "2026-11-15T10:30:00Z",
+            "path": "invoicer/render.py",
+            "line": 4,
+        },
+    ]
+    pull = {"number": 1, "draft": True, "comments": talk, "review_comments": lines}
+    on_github(monkeypatch, tmp_path, pulls={run.branch: pull})
+    given = [(c.author, c.body) for c in gh.comments(run.worktree, "2026-11-15T09:00:00Z")]
+    assert given == [("<account>", "The user's talk."), ("<account>", "The user's line.")]
+
+
 @LATER
 @pytest.mark.supports("test_a_lesson_approved_opens_an_issue_on_rns_repository_word_for_word")
 def test_an_issue_is_opened_with_its_words(tmp_path: Any, monkeypatch: pytest.MonkeyPatch) -> None:

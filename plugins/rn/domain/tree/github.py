@@ -42,7 +42,8 @@ def comments(run: Run, since: str) -> tuple[Comment, ...]:
     """The user's comments on the run's pull request since a sign-off.
 
     Takes: the run, and when the sign-off was put up, in ISO 8601.
-    Gives: each comment since then.
+    Gives: each comment since then by the account gh is logged in as, of the conversation and on
+    the lines, in the order made, as `repository.gh.comments` gives them.
     Changes: nothing.
     Refuses: fault.Missing, naming what's missing, where gh can't read them.
     Carries: S3 `O->>T: gets the user's comments since the sign-off`, `T->>RP: gets them`, and
