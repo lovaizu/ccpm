@@ -311,119 +311,13 @@
       "name": "The user's /rn:up with a request gets the goal put to them, and each deliverable made in rounds until every necessary condition is good",
       "path": "dev/rn/tests/integration/test_rn_s1_request.py",
       "kind": "code",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/rn",
-        "dev/rn/tests"
-      ],
-      "preconditions": [
-        "dev/rn/tests/integration/test_rn_walking_skeleton.py"
-      ],
-      "status": "doing",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Deliverables that rest on none of each other",
-              "decided": "the orchestrator's steps start, side by side, each deliverable of the tree whose inputs and preconditions have passed, each in a worktree of its own, as the orchestrator gives the work its plan; it comes with the package of the story that first needs it, after the walking skeleton",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "rn puts to the person only what's theirs, one point at a time, and goes on from their answer",
       "path": "dev/rn/tests/integration/test_rn_s2_points.py",
       "kind": "code",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/rn",
-        "dev/rn/tests"
-      ],
-      "preconditions": [
-        "dev/rn/tests/integration/test_rn_walking_skeleton.py"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Nothing rests on a plan or a deliverable that the person didn't sign off with /rn:ty",
@@ -437,7 +331,7 @@
       "preconditions": [
         "dev/rn/tests/integration/test_rn_walking_skeleton.py"
       ],
-      "status": "open",
+      "status": "doing",
       "necessary_conditions": [
         {
           "id": "N1",
@@ -653,62 +547,7 @@
       "name": "Each component of rn's architecture makes each decision it alone holds, and hands each part the data the data model names",
       "path": "dev/rn/tests/integration/test_rn_components.py",
       "kind": "code",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/rn",
-        "dev/rn/tests"
-      ],
-      "preconditions": [
-        "dev/rn/tests/integration/test_rn_s1_request.py",
-        "dev/rn/tests/integration/test_rn_s2_points.py",
-        "dev/rn/tests/integration/test_rn_s3_sign_off.py",
-        "dev/rn/tests/integration/test_rn_s4_pause.py",
-        "dev/rn/tests/integration/test_rn_s5_pick_up.py",
-        "dev/rn/tests/integration/test_rn_s6_s7_hand_over.py"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Each rule of the Solution strategy of rn's architecture holds where the parts keep it, and its test fails where the part that holds it is taken out",
