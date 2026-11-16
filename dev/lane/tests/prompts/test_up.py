@@ -84,7 +84,8 @@ WALKTHROUGH_LANES = {
     ("writer", "agents/writer.md", 2, "run_only"),
     ("writer", "agents/writer.md", 3, "write_only"),
     ("writer", "agents/writer.md", 4, "ends_by_result"),
-    ("reviewer", "agents/reviewer.md", 2, "ends_by_result"),
+    ("reviewer", "agents/reviewer.md", 2, "write_only"),
+    ("reviewer", "agents/reviewer.md", 3, "ends_by_result"),
 }
 
 

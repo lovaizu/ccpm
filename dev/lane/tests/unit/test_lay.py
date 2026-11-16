@@ -81,9 +81,10 @@ def steps_of(plugin: str) -> dict[tuple[str, int], Step]:
 def test_each_roles_steps_are_read_from_its_file(plugin: str) -> None:
     """Given: the walkthrough's changelog.
     When: read_steps reads it.
-    Then: it gives write's step 1, writer's four, and reviewer's two, each as its file holds it."""
+    Then: it gives write's step 1, writer's four, and reviewer's three, each as its file holds
+    it."""
     steps = steps_of(plugin)
-    assert len(steps) == 7
+    assert len(steps) == 8
     assert steps[("agents/writer.md", 2)] == STEP_2
     assert steps[("skills/write/SKILL.md", 1)].role == "write"
 

@@ -18,7 +18,7 @@ RESULT = "python3 /home/you/tally/changelog/hooks/lane/result.py"
 LOG = "git log --oneline"
 # changelog's folder, which `${CLAUDE_PLUGIN_ROOT}` names, and the number of each role's last Step.
 ROOT = "/home/you/tally/changelog"
-LAST = {"write": 1, "writer": 4, "reviewer": 2, "up": 1}
+LAST = {"write": 1, "writer": 4, "reviewer": 3, "up": 1}
 
 
 def lane(role: str, file: str, step: int, kind: str, **args: Any) -> Lane:
@@ -37,10 +37,12 @@ def write_only(*paths: str) -> Lane:
 
 
 ROUTES = lane("write", "skills/write/SKILL.md", 1, "routes")
+# reviewer's Lane on its step 2, which lets it write only REVIEW.md.
+REVIEW_ONLY = lane("reviewer", "agents/reviewer.md", 2, "write_only", paths=["REVIEW.md"])
 # The Lane on each role's last Step, by which it ends by the result script.
 WRITE_END = lane("write", "skills/write/SKILL.md", 1, "ends_by_result")
 WRITER_END = lane("writer", "agents/writer.md", 4, "ends_by_result")
-REVIEWER_END = lane("reviewer", "agents/reviewer.md", 2, "ends_by_result")
+REVIEWER_END = lane("reviewer", "agents/reviewer.md", 3, "ends_by_result")
 
 
 def route(after: After, *moves: Move) -> Route:
@@ -67,7 +69,7 @@ LAID = Laid(
 
 def proposal() -> Proposal:
     """The walkthrough's Proposal."""
-    lanes = (ROUTES, WRITE_END, run_only(), write_only(), WRITER_END, REVIEWER_END)
+    lanes = (ROUTES, WRITE_END, run_only(), write_only(), WRITER_END, REVIEW_ONLY, REVIEWER_END)
     return Proposal(lanes=lanes, routes=ROUTES_OF_WRITE, adapters=Adapters(None, None))
 
 

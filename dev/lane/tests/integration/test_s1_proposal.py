@@ -67,8 +67,8 @@ def test_steps_give_each_step_of_each_role(b: w.Bench) -> None:
     assert steps[("writer", "agents/writer.md", 2)] == (
         "Read the commits since then with `git log --oneline`."
     )
-    assert steps[("reviewer", "agents/reviewer.md", 2)].startswith("Give `more`")
-    assert len(steps) == 7
+    assert steps[("reviewer", "agents/reviewer.md", 3)].startswith("Give `more`")
+    assert len(steps) == 8
     assert given["notes"] == []
 
 

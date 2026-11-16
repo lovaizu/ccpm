@@ -172,5 +172,5 @@ def test_a_plugin_laid_by_an_earlier_lane_is_read_by_its_own_copy(b: w.Bench) ->
     given = json.loads(ran.output)
     texts = {(s["file"], s["number"]): s["text"] for s in given["steps"]}
     assert texts[("agents/writer.md", 2)] == "Read the commits since then with `git log --oneline`."
-    assert texts[("agents/reviewer.md", 2)] == w.REVIEWER.splitlines()[-1][3:]
+    assert texts[("agents/reviewer.md", 3)] == w.REVIEWER.splitlines()[-1][3:]
     assert given["notes"] == []

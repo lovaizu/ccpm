@@ -573,13 +573,13 @@ def test_lay_types_gives_the_types_and_the_form(plugin: str) -> None:
 def test_lay_steps_gives_the_steps_and_notes(tmp_path: Any) -> None:
     """Given: a copy of the walkthrough's changelog.
     When: lay.py's main runs `steps` on it.
-    Then: it gives 0 with JSON of seven Steps and no notes."""
+    Then: it gives 0 with JSON of eight Steps and no notes."""
     import walkthrough
 
     walkthrough.write_files(str(tmp_path / "changelog"), walkthrough.FILES)
     code, out, _ = lay_main(["steps", str(tmp_path / "changelog")], io.StringIO(""), {}, LANE)
     given = json.loads(out)
-    assert code == 0 and len(given["steps"]) == 7 and given["notes"] == []
+    assert code == 0 and len(given["steps"]) == 8 and given["notes"] == []
 
 
 @pytest.mark.supports("test_a_proposal_that_cant_stand_goes_back_to_up")

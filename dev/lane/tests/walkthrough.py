@@ -27,40 +27,21 @@ RESULT = "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py"
 # What coverage.py reads in a new process to measure it, and where it writes what it measured.
 COVERAGE_SETTINGS = ("COVERAGE_PROCESS_START", "COVERAGE_FILE")
 
-# The walkthrough's plugin, file by file, as the README gives it.
-WRITE = """---
-name: write
-description: Has the CHANGELOG.md entries written and reviewed.
----
 
-## Steps
+def plugin_file(name: str) -> str:
+    """The file of the walkthrough's plugin at the path in changelog/, word for word as the README
+    gives it."""
+    with open(README, encoding="utf-8") as f:
+        text = f.read()
+    head = f"```markdown\n<!-- changelog/{name} -->\n"
+    start = text.index(head) + len(head)
+    return text[start : text.index("```", start)]
 
-1. Have the entries written and reviewed.
-"""
-WRITER = """---
-name: writer
-description: Writes the CHANGELOG.md entries for the commits since its last version.
-background: true
----
 
-## Steps
-
-1. Read `CHANGELOG.md` to learn its last version and its form.
-2. Read the commits since then with `git log --oneline`.
-3. Write the new entries into `CHANGELOG.md`.
-4. Reply with the entries you wrote.
-"""
-REVIEWER = """---
-name: reviewer
-description: Reviews the CHANGELOG.md entries that writer wrote.
-background: true
----
-
-## Steps
-
-1. Read the new entries in `CHANGELOG.md` against the commits they name.
-2. Give `more` when an entry needs the writer again, and `good` when every entry is right.
-"""
+# The walkthrough's plugin, file by file.
+WRITE = plugin_file("skills/write/SKILL.md")
+WRITER = plugin_file("agents/writer.md")
+REVIEWER = plugin_file("agents/reviewer.md")
 FILES = {
     ".claude-plugin/plugin.json": json.dumps({"name": "changelog", "version": "0.1.0"}) + "\n",
     "skills/write/SKILL.md": WRITE,
@@ -71,47 +52,16 @@ FILES = {
 
 # The guard's form of an earlier Lane, as its copy in a plugin's hooks/lane/domain/ held it: its
 # lanes.json keeps the Laid under `added`, and each sentence as [file, step, text], while the
-# Laid it gives keeps the fields that every version keeps.
-EARLIER_FORM = """from dataclasses import dataclass
-import json
-
-
-class OutOfForm(Exception):
-    pass
-
-
-@dataclass(frozen=True)
-class LaidSentence:
-    file: str
-    step: int
-    text: str
-
-
-@dataclass(frozen=True)
-class Laid:
-    version: str
-    sentences: tuple
-
-
-@dataclass(frozen=True)
-class LanesFile:
-    laid: Laid
-
-
-def read_lanes(path):
-    with open(path, encoding="utf-8") as f:
-        held = json.load(f)
-    if "added" not in held:
-        raise OutOfForm(["no added"])
-    sentences = tuple(LaidSentence(*each) for each in held["added"]["sentences"])
-    return LanesFile(Laid(held["added"]["version"], sentences))
-"""
+# Laid it gives keeps the fields that every version keeps. It's kept as text, as it's a file an
+# earlier Lane wrote, which no fix changes, not code this repository keeps.
+with open(os.path.join(TOP, "dev", "lane", "tests", "earlier-form.txt"), encoding="utf-8") as f:
+    EARLIER_FORM = f.read()
 
 
 # What Lane shows at each move of the walkthrough, as the README shows it.
 SHOWN = readme_block(README, "You type:\n\n```text\n/lane:up changelog\n```\n\nLane shows:")
 WROTE = readme_block(README, "```text\nyes\n```\n\nLane shows:")
-README_ID = "b9fd8fd8"
+README_ID = "6d9b4389"
 
 
 def shown(proposal_id: str) -> str:
@@ -207,7 +157,7 @@ def lane(role: str, file: str, step: int, kind: str, **args: Any) -> dict[str, A
 
 def walkthrough_proposal() -> dict[str, Any]:
     """The Proposal that the walkthrough's lay.py print shows: write's Routes and its end on its
-    step 1, writer's Lanes on its steps 2, 3, and 4, and reviewer's end on its step 2."""
+    step 1, writer's Lanes on its steps 2, 3, and 4, and reviewer's on its steps 2 and 3."""
     return {
         "lanes": [
             lane("write", "skills/write/SKILL.md", 1, "routes"),
@@ -215,7 +165,8 @@ def walkthrough_proposal() -> dict[str, Any]:
             lane("writer", "agents/writer.md", 2, "run_only", commands=["git log --oneline"]),
             lane("writer", "agents/writer.md", 3, "write_only", paths=["CHANGELOG.md"]),
             lane("writer", "agents/writer.md", 4, "ends_by_result"),
-            lane("reviewer", "agents/reviewer.md", 2, "ends_by_result"),
+            lane("reviewer", "agents/reviewer.md", 2, "write_only", paths=["REVIEW.md"]),
+            lane("reviewer", "agents/reviewer.md", 3, "ends_by_result"),
         ],
         "routes": [
             {"skill": "write", "after": {"first": True}, "moves": [{"start": "writer"}]},
