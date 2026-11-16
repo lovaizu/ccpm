@@ -198,12 +198,17 @@
           "decisions": [
             {
               "about": "Why the cases are slow",
-              "decided": "run_python drops each module a script imported once it ends, so each of the 1816 runs of one rn S2 case imports Lane's guard and rn's modules again, 87,885 dataclasses made, most of its 19 seconds; rn_walkthrough.keeps has each role record each step and practice by record.py add, about 350 Bash calls each with two hooks; git takes about 1 second; CI's Tests take 23 to 38 minutes for it",
+              "decided": "each case plays its Given from /rn:up on: in a case of rn's rules, 7.4 of its 8.4 seconds, some 2300 runs of a script or a hook and 194 of git, as rn_walkthrough.keeps has each role record each step and practice by record.py add; planned alone is the Given of 17 cases. Before, run_python dropped each module a script imported once it ended, so that each run imported Lane's guard and rn's modules again, 22 of a case's 27 seconds",
               "by": "research"
             },
             {
-              "about": "The fix",
+              "about": "The fix of the imports",
               "decided": "run_python keeps the modules that a script imported by the script's folder, and hands them to the next run from that folder while each of their files reads as when it was imported, each functools cache in them emptied, so that a case imports a bench's code once; no module of the plugins holds other state that a run changes",
+              "by": "maker"
+            },
+            {
+              "about": "The fix of the Givens",
+              "decided": "rn's integration cases take their bench at one folder of the test process, and each Given of rn_walkthrough, such as planned, is played once for its arguments and kept as a copy of the bench's files with a copy of what it gives; a case whose Given was kept gets the files copied back to that folder and its own copy of what it gives. TRACE_BROKEN plays each Given anew, as its fixture changes rn's code before the Given",
               "by": "maker"
             }
           ]
