@@ -155,31 +155,277 @@
       "name": "Lane's product vision says what Lane is for",
       "path": "dev/lane/product-vision.md",
       "kind": "product-vision",
-      "status": "done"
+      "status": "doing",
+      "inputs": [],
+      "preconditions": [],
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "What Lane is",
+              "decided": "a product of hooks: each hook part takes Claude Code's hook event and gives a stop with the step's sentence or lets it through, so that the AI notices its step; whether the AI then keeps the step is the user's plugin's, not Lane's",
+              "by": "user"
+            },
+            {
+              "about": "The words of each key result, measured from Lane's own outputs on hook events by its parts and their combinations under mocks, not from a plugin's runs, which rest on the plugin and the model",
+              "decided": null,
+              "by": null
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "Lane's developers build its parts so that together they give what its README promises",
       "path": "dev/lane/architecture.md",
       "kind": "architecture",
-      "status": "done"
+      "status": "doing",
+      "inputs": [],
+      "preconditions": [],
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The cut",
+              "decided": "the trivial many cut out, as no user of a plugin reaches the goal with them: Lane's guard on its own up and the approval it holds (up_only, gives_shown, lays_after_reply, the Shown and Approval of up's Run, lay.py write's refusal where up's Run no longer waits, result.py up laid or left); a move that calls another plugin's skill and the Run standing aside for it; reading a plugin that an earlier Lane laid by its own copy of form.py, and the Data compatibility testing of released plugins, as nothing is released yet",
+              "by": "user"
+            },
+            {
+              "about": "The combinations",
+              "decided": "the architecture defines each combination of parts and lane types that one hook event meets, such as keeps_steps on a skill whose subagents run in the background, and each has an integration case",
+              "by": "user"
+            },
+            {
+              "about": "Test strategy",
+              "decided": "unit cases for each part, integration cases for each combination, every case under the double of Claude Code; no E2E test, no Scenario or Installation testing; up's prompt tested by its unit cases alone, a pinpoint prompt to Claude Code whose result code reads; Lane is then put to real use by rn",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N11",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N12",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N13",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N14",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N15",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N16",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A newcomer decides from Lane's README alone whether Lane fits their plugin, and starts using it",
       "path": "plugins/lane/README.md",
       "kind": "readme",
-      "status": "done"
+      "status": "doing",
+      "inputs": [],
+      "preconditions": [],
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "What it promises",
+              "decided": "what the product vision as a product of hooks and the architecture after the cut give, with no approval held on up and no move that calls another plugin's skill",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A builder whose plugin goes beyond the README's walkthrough finds each form of steps, routes, and adapters that Lane takes",
       "path": "plugins/lane/docs/steps-routes-adapters.md",
       "kind": "specific",
-      "status": "done"
+      "status": "doing",
+      "inputs": [],
+      "preconditions": [],
+      "good": false,
+      "decisions": [
+        {
+          "about": "Its forms",
+          "decided": "only those the architecture after the cut keeps, with no move that calls another plugin's skill",
+          "by": "user"
+        }
+      ],
+      "check": "each form the page names is one the architecture keeps, and the page names each"
     },
     {
       "name": "Lane's developers see, before anyone writes a body, whether Lane's parts fit together as its architecture draws",
       "path": "plugins/lane",
       "kind": "software-design",
-      "status": "done"
+      "status": "doing",
+      "inputs": [],
+      "preconditions": [],
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The skeleton",
+              "decided": "each part and interface the architecture after the cut draws; each body that holds and still fits kept, each part or body that traces to no element of the architecture deleted",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "Lane's and rn's developers get each unit and integration case's result in seconds, as each runs in one process through the double of Claude Code",
@@ -191,89 +437,20 @@
       "name": "Lane's developers see, before anyone builds a part, whether Lane's parts joined as its architecture draws give each key result",
       "path": "dev/lane/tests",
       "kind": "test-design",
-      "status": "done"
-    },
-    {
-      "name": "A person's /lane:up lays a lane that stops a subagent's command outside its step with the step's sentence, and the run starts that subagent and ends on its result",
-      "path": "dev/lane/tests/integration/test_lane_walking_skeleton.py",
-      "kind": "code",
-      "status": "done"
-    },
-    {
-      "name": "The user's plugin starts each subagent in the order they set, and only that one",
-      "path": "dev/lane/tests/integration/test_s5_run_order.py",
-      "kind": "code",
-      "status": "done"
-    },
-    {
-      "name": "Each subagent that leaves a step goes back to it",
-      "path": "dev/lane/tests/integration/test_s6_subagent_held.py",
-      "kind": "code",
-      "status": "done"
-    },
-    {
-      "name": "A run that stopped goes on where it stopped, after /compact or in a new conversation",
-      "path": "dev/lane/tests/integration/test_s7_picked_up.py",
-      "kind": "code",
-      "status": "done"
-    },
-    {
-      "name": "The user reads each step as it'll read with its rules, and the order, before anything holds their plugin",
-      "path": "dev/lane/tests/integration/test_s1_proposal.py",
-      "kind": "code",
-      "status": "done"
-    },
-    {
-      "name": "Lane lays only what a person approved, and proposes again on a change they ask for",
-      "path": "dev/lane/tests/integration/test_s2_approval.py",
-      "kind": "code",
-      "status": "done"
-    },
-    {
-      "name": "An AI that builds a plugin approves Lane's proposal by its own act, and after the steps change or Lane updates, the checks hold the steps as they now read",
-      "path": "dev/lane/tests/integration/test_s3_s4_again.py",
-      "kind": "code",
-      "status": "done"
-    },
-    {
-      "name": "A subagent held by Lane does each step of its role in order, reads whole each file its step names and none it must never read, keeps each item of its step's checklist, and ends only once each step is marked",
-      "path": "dev/lane/tests/integration/test_steps_marked.py",
-      "kind": "code",
-      "status": "done"
-    },
-    {
-      "name": "A builder's /lane:up, typed or asked of an AI, proposes their plugin's lanes and routes from its steps alone, shows them as they'll read, and lays what the caller approves",
-      "path": "plugins/lane/domain/up.md",
-      "kind": "prompt",
-      "status": "done"
-    },
-    {
-      "name": "A plugin held by Lane runs as its maker designed it at the size of a real request, as the product vision's key results show",
-      "path": "dev/lane/tests/e2e",
-      "kind": "test-implementation",
-      "inputs": [
-        "dev/lane/product-vision.md",
-        "dev/lane/architecture.md",
-        "dev/lane/tests"
-      ],
-      "preconditions": [
-        "dev/lane/tests",
-        "dev/lane/tests/integration/test_lane_walking_skeleton.py",
-        "dev/lane/tests/integration/test_s5_run_order.py",
-        "dev/lane/tests/integration/test_s6_subagent_held.py",
-        "dev/lane/tests/integration/test_s7_picked_up.py",
-        "dev/lane/tests/integration/test_s1_proposal.py",
-        "dev/lane/tests/integration/test_s2_approval.py",
-        "dev/lane/tests/integration/test_s3_s4_again.py",
-        "dev/lane/tests/integration/test_steps_marked.py",
-        "plugins/lane/domain/up.md"
-      ],
       "status": "doing",
+      "inputs": [],
+      "preconditions": [],
       "necessary_conditions": [
         {
           "id": "N1",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The cases",
+              "decided": "from the architecture after the cut: a unit case for each part, an integration case for each combination it defines; each case of an element the cut removed deleted",
+              "by": "user"
+            }
+          ]
         },
         {
           "id": "N2",
@@ -283,40 +460,166 @@
         {
           "id": "N3",
           "good": false,
-          "decisions": [
-            {
-              "about": "The runs that count",
-              "decided": "KR1.1 and KR1.2 count only the runs of write that start after a /reload-plugins typed after the last lay before them, as Lane holds a plugin only once its checks are loaded; an earlier run is listed apart with why",
-              "by": "user"
-            }
-          ]
+          "decisions": []
         },
         {
           "id": "N4",
           "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "A person's /lane:up lays a lane that stops a subagent's command outside its step with the step's sentence, and the run starts that subagent and ends on its result",
+      "path": "dev/lane/tests/integration/test_lane_walking_skeleton.py",
+      "kind": "code",
+      "status": "open"
+    },
+    {
+      "name": "The user's plugin starts each subagent in the order they set, and only that one",
+      "path": "dev/lane/tests/integration/test_s5_run_order.py",
+      "kind": "code",
+      "status": "open"
+    },
+    {
+      "name": "Each subagent that leaves a step goes back to it",
+      "path": "dev/lane/tests/integration/test_s6_subagent_held.py",
+      "kind": "code",
+      "status": "open"
+    },
+    {
+      "name": "A run that stopped goes on where it stopped, after /compact or in a new conversation",
+      "path": "dev/lane/tests/integration/test_s7_picked_up.py",
+      "kind": "code",
+      "status": "open"
+    },
+    {
+      "name": "The user reads each step as it'll read with its rules, and the order, before anything holds their plugin",
+      "path": "dev/lane/tests/integration/test_s1_proposal.py",
+      "kind": "code",
+      "status": "open"
+    },
+    {
+      "name": "Lane lays only what a person approved, and proposes again on a change they ask for",
+      "path": "dev/lane/tests/integration/test_s2_approval.py",
+      "kind": "code",
+      "status": "open"
+    },
+    {
+      "name": "An AI that builds a plugin approves Lane's proposal by its own act, and after the steps change or Lane updates, the checks hold the steps as they now read",
+      "path": "dev/lane/tests/integration/test_s3_s4_again.py",
+      "kind": "code",
+      "status": "open"
+    },
+    {
+      "name": "A subagent held by Lane does each step of its role in order, reads whole each file its step names and none it must never read, keeps each item of its step's checklist, and ends only once each step is marked",
+      "path": "dev/lane/tests/integration/test_steps_marked.py",
+      "kind": "code",
+      "status": "open"
+    },
+    {
+      "name": "A builder's /lane:up, typed or asked of an AI, proposes their plugin's lanes and routes from its steps alone, shows them as they'll read, and lays what the caller approves",
+      "path": "plugins/lane/domain/up.md",
+      "kind": "prompt",
+      "status": "doing",
+      "inputs": [],
+      "preconditions": [],
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
           "decisions": [
             {
-              "about": "The judge's marked messages",
-              "decided": "each run of write in fixtures/judge/messages.json marked as its maker proposed: a guard's stop of an end after the role ran result.py inside a longer command that gave 0 fails the run, as the step's laid sentence doesn't say to run it alone, so the guard stopped an end the step allows",
+              "about": "What up does",
+              "decided": "proposes from the steps, shows the Proposal by lay.py print, and lays it by lay.py write once the caller says yes, with no approval that Lane's guard holds on up; tested by its unit cases alone",
               "by": "user"
             }
           ]
         },
         {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
           "id": "N5",
           "good": false,
-          "decisions": [
-            {
-              "about": "The stages that held",
-              "decided": "none since Lane holds the skill's Steps at its Result, 9a01a195, and the judge reads Claude Code's structured output, 7366aebf: the pilot comes next",
-              "by": "maker"
-            },
-            {
-              "about": "The stage of the size Test strategy sets",
-              "decided": "after the pilot and each case once: test_walkthrough.py run whole on Opus, runs added until one more moves no mean by a step, its records read by N3 and N4 before the stage counts as held; the E2E's document of the test implementation template, with its Stages, comes once it holds",
-              "by": "maker"
-            }
-          ]
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N11",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N12",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N13",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N14",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N15",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N16",
+          "good": false,
+          "decisions": []
         }
       ]
     },
@@ -1116,21 +1419,19 @@
       ]
     },
     {
-      "name": "Users install Lane and rn together from one pull request, each plugin's folder holding all it needs and its README's walkthrough taken from its E2E test's records",
+      "name": "Users install Lane and rn together from one pull request, each plugin's folder holding all it needs and its README's walkthrough taken from what its tests show",
       "path": ".claude-plugin/marketplace.json",
       "kind": "specific",
       "inputs": [
         "plugins/lane/README.md",
         "plugins/rn/README.md",
-        "dev/lane/tests/e2e",
         "dev/rn/tests/e2e"
       ],
       "preconditions": [
-        "dev/lane/tests/e2e",
         "dev/rn/tests/e2e"
       ],
       "status": "open",
-      "check": "claude plugin validate passes on each plugin's folder, each README's walkthrough is its E2E test's recorded run, and one pull request holds both plugins",
+      "check": "claude plugin validate passes on each plugin's folder, Lane's README walkthrough is what its integration cases show word for word, rn's is its E2E test's recorded run, and one pull request holds both plugins",
       "good": false,
       "decisions": [
         {

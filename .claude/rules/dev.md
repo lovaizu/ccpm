@@ -34,15 +34,17 @@ architecture.** It makes each to its best practice and its template, and keeps o
 - Rationale: rounds of evaluators work only once rn runs them. Run by hand, each round added what
   the evaluators named, until the documents held trivia that no decision of the tree asked for.
 
-**From the test cases on, a subagent makes each deliverable, and the main conversation checks it**
-against its best practice and the tree before it takes the result. The main conversation briefs the
-subagent by its role's part of [the plugin template](../../dev/plugin-template/domain/), with the
-role's cut of the tree, and the subagent writes its record to a file in the system's temporary folder, in the form of
-[the record](../../dev/plugin-template/domain/record.schema.json). The main conversation reads the
-record against the part's steps and the best practice's practices, then removes the file.
+**The main conversation makes the test cases, the skeleton, and the code too, and has subagents
+review the code and the test code.** One subagent reviews each part, and one each combination of
+parts that the architecture defines. Each reads the plugin's product vision, README, and
+architecture whole first, then names each place where the code or the test code misses a case, says
+other than the three documents, or holds what none of them traces to. The main conversation takes
+only the vital few by the plugin's purpose. It writes each into the architecture and the design
+tree before the tests and the code.
 
-- Rationale: no guard holds a subagent here yet, so the main conversation does what the guard and
-  rn's check would.
+- Rationale: a rebuild over existing code needs one maker who holds the whole, as makers apart
+  copied what they saw and missed how the parts meet. A review of one unit finds the gaps that a
+  reader of the whole misses, and most of what it names is trivia that the purpose leaves out.
 
 **Until the user says yes, install nothing, and send nothing to a translator, a web API, or any
 service other than Claude Code and the repository's git and GitHub. Running `claude`, such as a
