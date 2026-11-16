@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import dataclasses
 import os
-from collections.abc import Callable, Mapping, Sequence
+from collections.abc import Callable, Collection, Mapping, Sequence
 from dataclasses import dataclass
 from typing import Literal, Union
 
@@ -137,7 +137,8 @@ def stand(
     Takes: the conversation's session_id, the run record's lines, the plugin's Routes, and the
     plugin's name, by which a prompt `/<plugin>:<command>` is the plugin's command.
     Gives: each Run, its moves due those of the Route after its latest start, Result, typed
-    command, or returned call, its Approvals, the person's of the Proposal it showed last before
+    command, or returned call, a resume after a Result given as a start where no Start of the Run
+    started its role, its Approvals, the person's of the Proposal it showed last before
     each prompt typed, a Route after the plugin's command typed taking the place of those
     before, a start staying due beside each Start it made, as the guard gives it where the adapter
     gives a text other than theirs, a resume taken by its Start, and a start whose subagent ended
@@ -267,8 +268,19 @@ def _gave(run: Run, line: Gave, routes: Sequence[Route]) -> Run:
         else s
         for s in run.starts
     )
-    due = _led(routes, run.skill, Result(line.role, line.result))
+    led = _led(routes, run.skill, Result(line.role, line.result))
+    due = _as_started(led, {s.role for s in run.starts})
     return dataclasses.replace(run, starts=starts, results=results, due=due)
+
+
+def _as_started(moves: Sequence[Move], started: Collection[str]) -> tuple[Move, ...]:
+    """The moves, each resume of a role that no Start of the Run started given as a start of it,
+    as no subagent of that role is here to resume, such as in a Run picked up in a new
+    conversation."""
+    return tuple(
+        Move("start", role=m.role) if m.kind == "resume" and m.role not in started else m
+        for m in moves
+    )
 
 
 def _led(routes: Sequence[Route], skill: str, result: Result) -> tuple[Move, ...]:
@@ -334,12 +346,14 @@ def pick_up(routes: Sequence[Route], skill: str, kept: Sequence[KeptResult]) -> 
     """The Results that a Run picked up in a new conversation takes from the Kept results.
 
     Takes: the Routes, the skill, and the Kept results in the order the run gave them.
-    Gives: the Results, each one that a Route after the one before goes after; none where the Kept
+    Gives: the Results, each one that a Route after the one before goes after, a resume of a
+    role counting as its start, as no Start of the Run picked up started it; none where the Kept
     results are none or reach a Route that starts no more, as the run then starts anew.
     Changes: nothing.
     Refuses: OffRoutes, naming the first Kept result whose role no move due before it starts, or
     that no Route of the skill goes after.
-    Carries: S7 `else results that follow the Routes` and `else results that don't follow them`.
+    Carries: S7 `else results that follow the Routes`, with its Note on a resume due of a role
+    never started, and `else results that don't follow them`.
     """
     due = _moves(routes, skill, lambda after: after.kind == "first")
     for each in kept:
@@ -351,5 +365,5 @@ def pick_up(routes: Sequence[Route], skill: str, kept: Sequence[KeptResult]) -> 
             )
         if any(m.kind == "no_more" for m in led):
             return ()
-        due = led
+        due = _as_started(led, ())
     return tuple(Result(each.role, each.result) for each in kept)

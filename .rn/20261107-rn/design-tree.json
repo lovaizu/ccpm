@@ -203,57 +203,7 @@
       "name": "The user's plugin starts each subagent in the order they set, and only that one",
       "path": "dev/lane/tests/integration/test_s5_run_order.py",
       "kind": "code",
-      "status": "open",
-      "inputs": [
-        "dev/lane/architecture.md",
-        "plugins/lane",
-        "dev/lane/tests"
-      ],
-      "preconditions": [
-        "dev/lane/tests/integration/test_lane_walking_skeleton.py"
-      ],
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Each subagent that leaves a step goes back to it",
@@ -265,63 +215,7 @@
       "name": "A run that stopped goes on where it stopped, after /compact or in a new conversation",
       "path": "dev/lane/tests/integration/test_s7_picked_up.py",
       "kind": "code",
-      "status": "open",
-      "inputs": [
-        "dev/lane/architecture.md",
-        "plugins/lane",
-        "dev/lane/tests"
-      ],
-      "preconditions": [
-        "dev/lane/tests/integration/test_lane_walking_skeleton.py"
-      ],
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Where the guard's bodies stand",
-              "decided": "uncommitted in rn-rebuild, made by their maker as done: runs.py and guard.py, with the xfail marks of S5's and S7's cases taken off and two cases added; to read whole and take",
-              "by": "maker"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "The user reads each step as it'll read with its rules, and the order, before anything holds their plugin",

@@ -115,9 +115,6 @@ def resumes_writer_after_more() -> dict[str, Any]:
     return proposal
 
 
-@pytest.mark.xfail(
-    strict=True, reason="the guard doesn't yet give a resume of a role never started as a start"
-)
 @pytest.mark.supports("S7", "adapter", "Kept results", "Start", "Route")
 def test_a_resume_due_of_a_role_never_started_here_is_due_as_its_start(tmp_path: Any) -> None:
     """Given: the Proposal laid with the Route after reviewer's `more` resuming writer, and an
@@ -139,7 +136,34 @@ def test_a_resume_due_of_a_role_never_started_here_is_due_as_its_start(tmp_path:
     assert not started.blocked and writer
     (run,) = w.where(b.changelog, b, c.session_id).runs
     assert [(s.role, s.resumed) for s in run.starts] == [("writer", False)]
-    assert w.due("reviewer") in w.give(b, writer, "written").said
+    reviewer = (
+        "changelog: writer gave `written`. Start `changelog:reviewer` with `Carry out your steps`."
+    )
+    assert reviewer in w.give(b, writer, "written").said
+
+
+@pytest.mark.supports("S7", "adapter", "Kept results", "Route")
+def test_kept_results_past_a_route_that_resumes_a_role_are_picked_up(tmp_path: Any) -> None:
+    """Given: the Proposal laid with the Route after reviewer's `more` resuming writer, and an
+    adapter of changelog's records that gives writer's `written`, reviewer's `more`, then writer's
+    `written` again.
+    When: the person types /changelog:write in a new conversation.
+    Then: the guard lets the call run, saying where the run picks up, after each of the three, and
+    gives reviewer's start due, as the results follow the Routes."""
+    results = [
+        {"role": "writer", "result": "written"},
+        {"role": "reviewer", "result": "more"},
+        {"role": "writer", "result": "written"},
+    ]
+    b = records_bench(str(tmp_path), results)
+    c = w.laid(b, make=resumes_writer_after_more)
+    called = c.type("/changelog:write")
+    assert not called.blocked
+    where = (
+        "changelog: The run picks up after writer gave `written`, then reviewer gave `more`, then"
+        " writer gave `written`."
+    )
+    assert where in called.said and w.due("reviewer") in called.said
 
 
 @pytest.mark.supports("S7", "adapter", "Kept results")

@@ -135,8 +135,9 @@ def handle(event: Event, root: str) -> Answer:
     - a subagent's end reaching the main conversation (S5): adds the end, and answers the Result and
       the moves of its Route, or, ended with no Result, its start due again;
     - the main conversation's end of its turn (S2, S5): stops it with the moves due where a move is
-      due and no subagent of the Run runs, unless a move waits for the person; else checks it by
-      each Lane of each Run's skill, a Run that its skill's Result ended in that turn among them;
+      due with its text and no subagent of the Run runs, unless a move waits for the person, a Run
+      whose adapter of a start's text fails having none; else checks it by each Lane of each Run's
+      skill, a Run that its skill's Result ended in that turn among them;
     - each start due, wherever the guard names the moves due (S5): asks the adapter of a start's
       text for it, where lanes.json names one, and where it gives that no work waits for the
       start, leaves the start out of the moves due, with why in its place in the answer; a start
@@ -147,9 +148,11 @@ def handle(event: Event, root: str) -> Answer:
     plugin's changes.
     Refuses: nothing; where lanes.json, the run record, an adapter, or a Lane can't be read or
     run, or the Kept results leave the Routes, it stops the event with why and who must fix it,
-    except an adapter of a start's text that fails at the skill's call, whose start it gives with
-    why while it lets the call run, adding that it failed, and one that fails as a subagent's end
-    reaches the main conversation, whose why and who it gives in place of the moves.
+    except an adapter of a start's text that fails at the skill's call, a new Run's or one picked
+    up, whose start it gives with why while it lets the call run, adding that it failed, one that
+    fails at the main conversation's end, which then holds no move due, and one that fails as a
+    subagent's end reaches the main conversation, whose why and who it gives in place of the
+    moves.
     Carries: each `CC->>G` arrow of S1 to S7, each `G-->>` answer, S6 `G->>A: asks for the Step's
     Items, with the role, Step n, and the Start's run values` and `G->>A: asks for the Items of the
     Step due, with the role and the Start's run values`, and S5 `G->>G: leaves that start out of
@@ -245,26 +248,35 @@ def _called(plugin: Plugin, placed: Placed, what: SkillCall, cwd: str) -> Answer
 
 def _picked_up(plugin: Plugin, what: SkillCall, picked: tuple[Result, ...], cwd: str) -> Answer:
     """The call of a new Run with the Results it picks up from the Kept results, and where it picks
-    up with the moves due; the Run holds the words typed now, as any call does."""
+    up with the moves due, as `_at_call` gives them; the Run holds the words typed now, as any call
+    does."""
     run_id = uuid.uuid4().hex[:8]
     add(plugin.record, Called(run_id, what.skill, what.by, what.words))
     for result in picked:
         add(plugin.record, Gave(run_id, result.role, result.result, None))
-    told = _told(plugin, _now(plugin, run_id), cwd)
-    return Answer(False, picked_up(plugin.name, picked, told))
+    return _at_call(plugin, run_id, cwd, lambda told: picked_up(plugin.name, picked, told))
 
 
 def _begun(plugin: Plugin, what: SkillCall, cwd: str) -> Answer:
-    """The call of a new Run, with the first moves due; each start with why where the adapter of a
-    start's text fails, as the skill's own steps may make what it reads."""
+    """The call of a new Run, with the first moves due, as `_at_call` gives them."""
     run_id = uuid.uuid4().hex[:8]
     add(plugin.record, Called(run_id, what.skill, what.by, what.words))
+    return _at_call(plugin, run_id, cwd, lambda told: due(plugin.name, told))
+
+
+def _at_call(
+    plugin: Plugin, run_id: str, cwd: str, said: Callable[[tuple[Due | Left, ...]], str]
+) -> Answer:
+    """The call let run, with what `said` makes of the Run's moves due; where the adapter of a
+    start's text fails, what it makes of none, and each start with why, adding that it failed, as
+    the skill's own steps may make what the adapter reads."""
     run = _now(plugin, run_id)
     try:
-        return Answer(False, due(plugin.name, _told(plugin, run, cwd)))
+        return Answer(False, said(_told(plugin, run, cwd)))
     except AdapterFailed as e:
         add(plugin.record, TextFailed(run_id))
-        return Answer(False, text_failed(plugin.name, run.due, str(e)))
+        failed = text_failed(plugin.name, run.due, str(e))
+        return Answer(False, "\n".join(x for x in (said(()), failed) if x))
 
 
 def _now(plugin: Plugin, run_id: str) -> Run:
@@ -502,10 +514,15 @@ def _add_start(plugin: Plugin, run: Run, asked: StartCall, moves: tuple[Due, ...
 
 def _turn_ended(plugin: Plugin, placed: Placed, cwd: str) -> Answer:
     """The main conversation's end of its turn: stopped with the moves due where a Run has a move
-    due, none of them waiting for the person, and no subagent of the Run runs; else checked by each
-    Lane of each Run's skill."""
+    due with its text, none of them waiting for the person, and no subagent of the Run runs; else
+    checked by each Lane of each Run's skill. A Run whose adapter of a start's text fails has no
+    move due with its text, so that the main conversation may ask the person what the adapter
+    waits for, such as after it failed at the skill's call."""
     for run in placed.runs:
-        told = _told(plugin, run, cwd)
+        try:
+            told = _told(plugin, run, cwd)
+        except AdapterFailed:
+            continue
         moves = [d.move.kind for d in told if isinstance(d, Due)]
         running = any(not s.ended for s in run.starts)
         if moves and "wait" not in moves and not running:

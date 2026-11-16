@@ -243,9 +243,6 @@ def test_a_start_whose_adapter_failed_at_the_call_is_given_once_it_gives_its_tex
     assert not started.blocked and writer
 
 
-@pytest.mark.xfail(
-    strict=True, reason="the guard doesn't yet let the turn end while a start's text can't be given"
-)
 @pytest.mark.supports("S5", "adapter", "guard", "user")
 def test_the_turns_end_goes_while_the_adapter_cant_give_a_starts_text_yet(tmp_path: Any) -> None:
     """Given: the Proposal laid with an adapter of a start's text that fails with `enter the run's
@@ -288,9 +285,6 @@ def with_both_adapters() -> dict[str, Any]:
     return proposal
 
 
-@pytest.mark.xfail(
-    strict=True, reason="the guard doesn't yet catch a text adapter that fails on a pick-up"
-)
 @pytest.mark.supports("S5", "S7", "adapter", "Kept results", "Start")
 def test_a_pick_up_whose_adapter_fails_at_the_call_lets_the_call_run(tmp_path: Any) -> None:
     """Given: the Proposal laid with an adapter of changelog's records that gives writer's

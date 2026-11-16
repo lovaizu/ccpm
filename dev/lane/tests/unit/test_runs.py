@@ -311,6 +311,25 @@ def test_kept_results_that_follow_the_routes_are_picked_up() -> None:
     )
 
 
+@pytest.mark.supports("test_kept_results_past_a_route_that_resumes_a_role_are_picked_up")
+def test_kept_results_that_go_on_past_a_route_that_resumes_are_picked_up() -> None:
+    """Given: write's Routes with the Route after reviewer's `more` resuming writer, and writer's
+    `written`, reviewer's `more`, then writer's `written` again.
+    When: pick_up reads them.
+    Then: it gives the three Results, in order, as writer's resume after `more` is due as its
+    start in a Run picked up."""
+    kept = (
+        KeptResult("writer", "written"),
+        KeptResult("reviewer", "more"),
+        KeptResult("writer", "written"),
+    )
+    assert pick_up(RESUMES, "write", kept) == (
+        Result("writer", "written"),
+        Result("reviewer", "more"),
+        Result("writer", "written"),
+    )
+
+
 @pytest.mark.supports("test_kept_results_that_reach_the_end_start_a_new_run")
 def test_kept_results_that_reach_a_route_that_starts_no_more_pick_up_nothing() -> None:
     """Given: writer's `written` and reviewer's `good`, whose Route starts no more.

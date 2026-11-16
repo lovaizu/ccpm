@@ -450,13 +450,7 @@ def laid_resuming(plugin: str, records: str, text: str | None = None) -> str:
     return record_path("changelog", d.SESSION)
 
 
-NEVER_STARTED = pytest.mark.xfail(
-    strict=True, reason="the guard doesn't yet give a resume of a role never started as a start"
-)
-
-
 @pytest.mark.supports("test_a_resume_due_of_a_role_never_started_here_is_due_as_its_start")
-@NEVER_STARTED
 def test_a_pick_up_gives_a_resume_of_a_role_never_started_as_its_start(plugin: str) -> None:
     """Given: changelog laid with the Route after reviewer's `more` resuming writer, and an adapter
     of its records that gives writer's `written`, then reviewer's `more`; no Run.
@@ -501,11 +495,7 @@ def run_with_starts(path: str) -> None:
 @pytest.mark.parametrize(
     "run, said",
     [
-        pytest.param(
-            picked_up_run,
-            "changelog: Start `changelog:writer` with `Carry out your steps`.",
-            marks=NEVER_STARTED,
-        ),
+        (picked_up_run, "changelog: Start `changelog:writer` with `Carry out your steps`."),
         (run_with_starts, "changelog: Resume `changelog:writer` by SendMessage."),
     ],
     ids=["writer never started here", "writer started here"],
@@ -526,7 +516,6 @@ def test_the_end_stops_with_a_resume_only_where_its_role_was_started(
 
 
 @pytest.mark.supports("test_a_resume_due_of_a_role_never_started_here_is_due_as_its_start")
-@NEVER_STARTED
 def test_a_start_of_a_role_whose_resume_is_due_never_started_is_added(plugin: str) -> None:
     """Given: changelog laid with the Route after reviewer's `more` resuming writer, and write's Run
     picked up after reviewer's `more`, with no Start of writer.
@@ -544,14 +533,7 @@ def test_a_start_of_a_role_whose_resume_is_due_never_started_is_added(plugin: st
 @pytest.mark.parametrize(
     "body, stops",
     [
-        pytest.param(
-            FAILS,
-            False,
-            marks=pytest.mark.xfail(
-                strict=True,
-                reason="the guard doesn't yet let the turn end while a start's text can't be given",
-            ),
-        ),
+        (FAILS, False),
         (BY_VERSION, True),
     ],
     ids=["the adapter still fails", "the adapter gives the text now"],
@@ -575,9 +557,6 @@ def test_the_end_after_the_adapter_failed_at_the_call_stops_only_for_a_text(
 
 
 @pytest.mark.supports("test_a_pick_up_whose_adapter_fails_at_the_call_lets_the_call_run")
-@pytest.mark.xfail(
-    strict=True, reason="the guard doesn't yet catch a text adapter that fails on a pick-up"
-)
 def test_a_pick_up_whose_adapter_fails_keeps_that_it_failed(plugin: str) -> None:
     """Given: changelog laid with an adapter of its records that gives writer's `written`, and an
     adapter of a start's text that fails with `no version to write yet`; no Run.
