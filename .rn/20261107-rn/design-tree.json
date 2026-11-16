@@ -191,8 +191,8 @@
       "status": "done"
     },
     {
-      "name": "A plugin held by Lane runs as its maker designed it at the size of a real request, as the product vision's key results show",
-      "path": "dev/lane/tests/e2e",
+      "name": "Lane's E2E checks tell a fault of Lane from a fault of the test, before any run relies on them",
+      "path": "dev/lane/tests/e2e/test_checks.py",
       "kind": "specific",
       "inputs": [
         "dev/lane/architecture.md",
@@ -209,6 +209,40 @@
         "plugins/lane/domain/up.md"
       ],
       "status": "doing",
+      "check": "each check by code of the E2E records passes its unit cases, each seen to fail first, on the first records; each judge gives each message the user marked the user's mark",
+      "good": false,
+      "decisions": [
+        {
+          "about": "Why the checks come before the runs",
+          "decided": "each check by code is built test first and run on the first records, and each judge is used only once it gives each marked message the user's mark, so that a run of the E2E test only confirms and a failure in it points to the product, as the prompt best practice's N17.2 and N17.5 and the design tree best practice's N4.4 say",
+          "by": "reasoning"
+        },
+        {
+          "about": "The judge's marked messages",
+          "decided": null
+        }
+      ]
+    },
+    {
+      "name": "A plugin held by Lane runs as its maker designed it at the size of a real request, as the product vision's key results show",
+      "path": "dev/lane/tests/e2e",
+      "kind": "specific",
+      "inputs": [
+        "dev/lane/architecture.md",
+        "dev/lane/tests"
+      ],
+      "preconditions": [
+        "dev/lane/tests/integration/test_lane_walking_skeleton.py",
+        "dev/lane/tests/integration/test_s5_run_order.py",
+        "dev/lane/tests/integration/test_s6_subagent_held.py",
+        "dev/lane/tests/integration/test_s7_picked_up.py",
+        "dev/lane/tests/integration/test_s1_proposal.py",
+        "dev/lane/tests/integration/test_s2_approval.py",
+        "dev/lane/tests/integration/test_s3_s4_again.py",
+        "plugins/lane/domain/up.md",
+        "dev/lane/tests/e2e/test_checks.py"
+      ],
+      "status": "open",
       "check": "the E2E tests of the README's main use, judged from their records, show KR1.1 and KR1.2 of the product vision",
       "good": false,
       "decisions": [
@@ -840,6 +874,40 @@
       ]
     },
     {
+      "name": "rn's E2E checks tell a fault of rn from a fault of the test, before any run relies on them",
+      "path": "dev/rn/tests/e2e/test_checks.py",
+      "kind": "specific",
+      "inputs": [
+        "dev/rn/architecture.md",
+        "dev/rn/tests"
+      ],
+      "preconditions": [
+        "dev/rn/tests/integration/test_rn_walking_skeleton.py",
+        "dev/rn/tests/integration/test_rn_s2_points.py",
+        "dev/rn/tests/integration/test_rn_s3_sign_off.py",
+        "dev/rn/tests/integration/test_rn_s4_pause.py",
+        "dev/rn/tests/integration/test_rn_s5_pick_up.py",
+        "dev/rn/tests/integration/test_rn_s6_s7_hand_over.py",
+        "dev/rn/tests/integration/test_rn_s1_request.py",
+        "dev/rn/tests/integration/test_rn_components.py",
+        "dev/rn/tests/integration/test_rn_rules.py",
+        "plugins/rn/domain/orchestrator.md",
+        "plugins/rn/domain/tree-keeper.md",
+        "plugins/rn/domain/generator.md",
+        "plugins/rn/domain/evaluator.md"
+      ],
+      "status": "open",
+      "check": "each check by code of the E2E records passes its unit cases, each seen to fail first, on the first records; each judge gives each message the user marked the user's mark",
+      "good": false,
+      "decisions": [
+        {
+          "about": "Why the checks come before the runs",
+          "decided": "each check by code is built test first and run on the first records, and each judge is used only once it gives each marked message the user's mark, so that a run of the E2E test only confirms and a failure in it points to the product, as the prompt best practice's N17.2 and N17.5 and the design tree best practice's N4.4 say",
+          "by": "reasoning"
+        }
+      ]
+    },
+    {
       "name": "rn gives the deliverable a person means at the size of a real request, as the product vision's key results show",
       "path": "dev/rn/tests/e2e",
       "kind": "specific",
@@ -860,7 +928,8 @@
         "plugins/rn/domain/orchestrator.md",
         "plugins/rn/domain/tree-keeper.md",
         "plugins/rn/domain/generator.md",
-        "plugins/rn/domain/evaluator.md"
+        "plugins/rn/domain/evaluator.md",
+        "dev/rn/tests/e2e/test_checks.py"
       ],
       "status": "open",
       "check": "the E2E tests of the README's main use, judged from their records, show KR1.1 and KR1.2 of the product vision",
