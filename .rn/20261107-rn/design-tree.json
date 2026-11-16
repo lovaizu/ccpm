@@ -167,32 +167,7 @@
       "name": "A newcomer decides from Lane's README alone whether Lane fits their plugin, and starts using it",
       "path": "plugins/lane/README.md",
       "kind": "readme",
-      "inputs": [
-        "dev/lane/product-vision.md"
-      ],
-      "preconditions": [
-        "plugins/rn/domain/best-practices/readme",
-        "plugins/rn/domain/template",
-        "dev/lane/architecture.md"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "A builder whose plugin goes beyond the README's walkthrough finds each form of steps, routes, and adapters that Lane takes",
@@ -205,7 +180,7 @@
       "preconditions": [
         "dev/lane/architecture.md"
       ],
-      "status": "open",
+      "status": "doing",
       "check": "each form that Lane's architecture gives a plugin's steps, routes, and adapters is on the page, as the architecture names it",
       "good": false,
       "decisions": [
